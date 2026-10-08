@@ -69,3 +69,58 @@ def verify_generation_sequence(history_raw, expected_history, generations,
     # Existing independent/prospective/model-install/reward/production flags
     # are retained verbatim from the original signed decision verification.
     return dict(value, id=H(SEQUENCE_DOMAIN, canonical(value)).hex())
+
+
+CONTEXT_SEQUENCE_DOMAIN = 'model-context-bound-generation-sequence-v2'
+
+
+def verify_context_bound_generation_sequence(
+        history_raw, expected_history, generations, receipts, attestations,
+        run_plans, expected_initial_model, contexts):
+    """Join the existing sequence and context owners without upgrading old bytes.
+
+    All original V1 sequence checks and signed V2 consumer decisions still run.
+    Context signatures must additionally bind each window, assessment and plan.
+    The actual plans must disclose exactly the task identities, prompt hashes,
+    source groups and partitions retained by the existing exposure-history owner.
+    Otherwise a caller could report fresh exposure while supplying a reused plan.
+
+    This explicit V2 entry is offline qualification only. It neither replaces
+    the caller's trusted history pin nor proves real installation, complete hidden
+    exposure, independent control, current permission or future model benefit.
+    Callers must keep supplied Python objects immutable for the whole call.
+    """
+    from model_consumer_context import verify_context_bound_prospective_decisions
+
+    require(type(contexts) is list and len(contexts) == 3,
+            'CONSUMER_CONTEXT_COUNT')
+    sequence = verify_generation_sequence(
+        history_raw, expected_history, generations, receipts, attestations,
+        run_plans, expected_initial_model)
+    context = verify_context_bound_prospective_decisions(
+        history_raw, expected_history, generations, receipts, attestations, contexts)
+    require(context['consumer_decisions'] == sequence['verified_decisions'],
+            'GENERATION_SEQUENCE_CONTEXT_DECISIONS')
+    history = _decode_exposure_history(history_raw, expected_history)
+    exposure_bindings = []
+    for row, plan in zip(history['entries'][-3:], run_plans):
+        # Same task projection as model_window_history._projection. Labels are
+        # not interchangeable: calibration cannot conceal evaluation exposure.
+        tasks = sorted((dict(id=task['id'], prompt=task['prompt_sha256'],
+                             group=task['source_group'], partition=task['partition'])
+                        for task in plan['tasks']), key=lambda task: task['id'])
+        require(tasks == row['tasks'], 'GENERATION_SEQUENCE_EXPOSURE_BINDING')
+        exposure_bindings.append(dict(
+            ordinal=row['window']['ordinal'], run_plan=row['window']['run_plan'],
+            task_projection=H('model-generation-plan-exposure-v2', canonical(tasks)).hex()))
+
+    value = dict(sequence)
+    value.pop('id')
+    value.update(
+        schema='pon-model-context-bound-generation-sequence-v2',
+        scope='signed-plan-exposure-context-not-physical-evolution',
+        verified_sequence=sequence['id'], verified_context=context['id'],
+        context_signatures_verified=True, supplied_plan_exposure_verified=True,
+        exposure_bindings=exposure_bindings, hidden_windows_excluded=False,
+        physical_custody_verified=False)
+    return dict(value, id=H(CONTEXT_SEQUENCE_DOMAIN, canonical(value)).hex())
