@@ -290,6 +290,7 @@ class ExecutionBoundaryTests(unittest.TestCase):
         self.assertFalse(result['passed'])
         self.assertTrue(result['all_named_tests_passed'])
         self.assertFalse(result['format_passed'])
+        self.assertIn('NATIVE_FORMAT_CHECK_FAILED', result['failures'])
 
     def test_source_moved_after_build_cannot_pass(self):
         result, _ = self.exercise(source_drift=True)
