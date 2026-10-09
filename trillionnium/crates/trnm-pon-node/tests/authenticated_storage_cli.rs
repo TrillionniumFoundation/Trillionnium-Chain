@@ -180,8 +180,11 @@ mod cached_owner_reads {
     }
 
     fn disk(path: &Path) -> Connection {
-        Connection::open_with_flags(path.join("native.sqlite"), OpenFlags::SQLITE_OPEN_READ_WRITE)
-            .unwrap()
+        Connection::open_with_flags(
+            path.join("native.sqlite"),
+            OpenFlags::SQLITE_OPEN_READ_WRITE,
+        )
+        .unwrap()
     }
 
     #[test]
@@ -225,13 +228,7 @@ mod cached_owner_reads {
         let mut node = open(directory.path());
         let genesis = node.settings().genesis();
         let packet = node
-            .make_consensus_maintenance(
-                genesis,
-                vec![],
-                development_public(0).unwrap(),
-                11,
-                4096,
-            )
+            .make_consensus_maintenance(genesis, vec![], development_public(0).unwrap(), 11, 4096)
             .unwrap();
         let id = node.admit(&packet, 1000).unwrap();
         node.activate(id).unwrap();
@@ -327,13 +324,7 @@ mod cached_owner_reads {
         let expected = node.read_active().unwrap();
         let genesis = node.settings().genesis();
         let packet = node
-            .make_consensus_maintenance(
-                genesis,
-                vec![],
-                development_public(0).unwrap(),
-                11,
-                4096,
-            )
+            .make_consensus_maintenance(genesis, vec![], development_public(0).unwrap(), 11, 4096)
             .unwrap();
         let id = packet.id().unwrap();
         let db = disk(directory.path());
