@@ -1,0 +1,13 @@
+{
+  "scope": "revision3-accepted-block-vector-not-security-acceptance",
+  "genesis": "4f85a14cb3f2754e38cc9989f2897b667f0ff0efef8f54c858750254fb92b0ff",
+  "genesis_state_root": "a38261e0626576626728f955fa597c25420324cf6fd5bc7e55bd3da525f3a338",
+  "post_state_root": "5f2505aadface40ad3d8b6d28ae7b9bd6e2842f37311ae4a990fcba6ff99415f",
+  "header_challenge": "7305ce23c6589ee8ec9a8c7b40f1bdb1a03148dc2ed002f59e511df84b9ecbb7",
+  "tx_id": "16a6bf68484bcd0dd1226f1a1656f341b5a1607630fa192d1d9eb5ab7a2573ef",
+  "work_task": "56dac087e1241f23d72e47421fee9b439d9c8e4ad7eab89598ed46f8c6e61f34",
+  "target": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+  "ticket": "4b259a116dc932601f624aceada0299aef6ccf73bdc8feb5b889ff406e72ede5",
+  "block_id": "703e4606d73d385a3a85bda2d43d386c7e009555a275f80e31e631d04cf8f332",
+  "observed_logical_time": 1800010000
+}
