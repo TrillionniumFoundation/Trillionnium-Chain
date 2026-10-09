@@ -70,7 +70,7 @@ jobs:
         run: |
           set -euo pipefail
           cd "$RUNNER_TEMP/sql-source"
-          cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib store::native_authenticated:: -- --show-output --test-threads=1 2>&1 | tee "$OUT/authenticated.log"
+          cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib store::native_authenticated:: -- --include-ignored --show-output --test-threads=1 2>&1 | tee "$OUT/authenticated.log"
           grep -E '^test result: ok\. 24 passed; 0 failed; 0 ignored;' "$OUT/authenticated.log"
           for test in cached_delta_reads_rebind_and_observe_committed_mutations cached_delta_failure_then_rollback_does_not_reuse_a_verdict cached_delta_cursor_is_released_after_cancellation cached_delta_eviction_or_disabled_cache_keeps_original_results cached_delta_complete_call_observation_keeps_checks_and_results; do
             selector="store::native_authenticated::stored_delta_stream_tests::$test"
