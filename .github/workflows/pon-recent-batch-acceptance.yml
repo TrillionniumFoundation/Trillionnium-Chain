@@ -1,0 +1,96 @@
+name: PoN recent batch exact-source acceptance
+on:
+  pull_request:
+    paths:
+      - trillionnium/crates/trnm-pon-node/src/store.rs
+      - .github/workflows/pon-recent-batch-acceptance.yml
+permissions:
+  contents: read
+jobs:
+  recent:
+    name: recent batch (${{ matrix.runner }}, ${{ matrix.source }})
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ubuntu-24.04, ubuntu-24.04-arm]
+        source: [head, prospective-merge]
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 25
+    env:
+      CARGO_INCREMENTAL: "0"
+      CARGO_BUILD_JOBS: "2"
+      RUST_TEST_THREADS: "1"
+      PYTHONDONTWRITEBYTECODE: "1"
+      EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
+      EXPECTED_BASE: ${{ github.event.pull_request.base.sha }}
+      EXPECTED_MERGE: ${{ github.sha }}
+      SOURCE_KIND: ${{ matrix.source }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          ref: ${{ matrix.source == 'head' && github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify exact source, ordered actual main merge and full repository boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/recent-exact"
+          mkdir -p "$out"
+          echo "OUT=$out" >> "$GITHUB_ENV"
+          echo "CARGO_TARGET_DIR=$RUNNER_TEMP/target-recent-exact" >> "$GITHUB_ENV"
+          args=(--kind "$SOURCE_KIND" --expected-head "$EXPECTED_HEAD")
+          if test "$SOURCE_KIND" = prospective-merge; then
+            args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_MERGE")
+          fi
+          python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$out/source.json"
+          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store.rs)" = 10740c92fa7c0d03f408cbd23c3e858049bc68ca
+          bash scripts/project-preflight.sh --audit
+      - name: Install original pinned native compiler and lint tools
+        run: rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+      - name: Check committed formatting without rewriting source
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check 2>&1 | tee "$OUT/format.log"
+      - name: Execute complete original error-boundary suite and all new controls
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib store::error_boundary_tests:: -- --show-output --test-threads=1 2>&1 | tee "$OUT/error-boundary.log"
+          grep -E '^test result: ok\. 13 passed; 0 failed; 0 ignored;' "$OUT/error-boundary.log"
+          for test in recent_batch_exact_window_and_complete_call_observation recent_batch_retained_corruption_and_read_boundary_match_original recent_batch_branch_reopen_and_callback_errors_preserve_context; do
+            selector="store::error_boundary_tests::$test"
+            cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib "$selector" -- --exact --show-output --test-threads=1 2>&1 | tee "$OUT/$test.log"
+            python3 scripts/ci/check_required_native_test.py "$OUT/$test.log" --test "$selector"
+          done
+      - name: Preserve original source-preserving migration coverage
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib authenticated_migration -- --show-output --test-threads=1 2>&1 | tee "$OUT/migration.log"
+          grep -E '^test result: ok\. [1-9][0-9]* passed; 0 failed;' "$OUT/migration.log"
+      - name: Check complete native target lint
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --all-targets --all-features -- -D warnings 2>&1 | tee "$OUT/clippy.log"
+      - name: Recheck unchanged exact source and hash all native logs
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          args=(--kind "$SOURCE_KIND" --expected-head "$EXPECTED_HEAD")
+          if test "$SOURCE_KIND" = prospective-merge; then
+            args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_MERGE")
+          fi
+          python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$OUT/source-after.json"
+          sha256sum "$OUT"/*.log > "$OUT/logs.sha256"
+          printf 'Exact-source recent-window and migration scope only. Whole baseline, full capacity, long history, public Sybil fairness, physical power loss and WAN acceptance are separate. No cross-call verdict cache; whole-history quadratic traversal remains.\n' > "$OUT/SCOPE.txt"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: recent-exact-${{ matrix.runner }}-${{ matrix.source }}-${{ github.event.pull_request.head.sha }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/recent-exact
+          if-no-files-found: error
+          retention-days: 30
