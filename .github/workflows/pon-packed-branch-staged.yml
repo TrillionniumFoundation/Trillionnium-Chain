@@ -1,0 +1,99 @@
+name: PoN packed branch isolated qualification
+on:
+  pull_request:
+    paths:
+      - scripts/ci/packed_branch_candidate.py
+      - .github/workflows/pon-packed-branch-staged.yml
+permissions:
+  contents: read
+jobs:
+  qualify:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    permissions:
+      contents: write
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ubuntu-24.04, ubuntu-24.04-arm]
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 25
+    env:
+      CARGO_INCREMENTAL: "0"
+      CARGO_BUILD_JOBS: "2"
+      RUST_TEST_THREADS: "1"
+      PYTHONDONTWRITEBYTECODE: "1"
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify unmodified source before isolated staging
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = '${{ github.event.pull_request.head.sha }}'
+          test "$(git show -s --format=%P HEAD)" = 9f5ebd9283457358fcec067fe0452005fa232b42
+          bash scripts/project-preflight.sh --audit
+          mkdir "$RUNNER_TEMP/packed-branch"
+          git rev-parse HEAD HEAD^{tree} > "$RUNNER_TEMP/packed-branch/source.txt"
+      - name: Install original pinned Rust toolchain
+        run: rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+      - name: Construct and format the candidate, not a clean-source acceptance
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/packed_branch_candidate.py
+          cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all
+          git diff --stat
+          git diff > "$RUNNER_TEMP/packed-branch/candidate.patch"
+          git diff --name-only > "$RUNNER_TEMP/packed-branch/changed-paths.txt"
+          python3 - <<'PY'
+          import subprocess
+          expected = {'trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs', 'trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_primitive_tests.rs'}
+          assert set(subprocess.check_output(['git','diff','--name-only'], text=True).splitlines()) == expected
+          PY
+      - name: Execute every original primitive control and the three new controls
+        env:
+          TRNM_NATIVE_ACCOUNT_VERIFY_COST_DIRECTORY: ${{ runner.temp }}/packed-branch/account-cost
+        run: |
+          set -euo pipefail
+          cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib account_archive_prototype::native_primitive_tests -- --include-ignored --nocapture --test-threads=1 2>&1 | tee "$RUNNER_TEMP/packed-branch/primitive.log"
+          grep -F 'test result: ok. 8 passed; 0 failed; 0 ignored;' "$RUNNER_TEMP/packed-branch/primitive.log"
+      - name: Execute retained authenticated storage and native recovery controls
+        run: |
+          set -euo pipefail
+          cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib store::native_authenticated:: -- --nocapture --test-threads=1 2>&1 | tee "$RUNNER_TEMP/packed-branch/authenticated.log"
+          cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test continuity_authenticated --test authenticated_storage_cli -- --nocapture --test-threads=1 2>&1 | tee "$RUNNER_TEMP/packed-branch/recovery.log"
+          cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --all-targets --all-features -- -D warnings 2>&1 | tee "$RUNNER_TEMP/packed-branch/clippy.log"
+      - name: Store exact candidate Git blobs only, never move refs
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import base64, hashlib, json, os, subprocess
+          from pathlib import Path
+          out = Path(os.environ['RUNNER_TEMP']) / 'packed-branch'
+          rows = []
+          for name in ['trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs','trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_primitive_tests.rs']:
+              data = Path(name).read_bytes()
+              expected = hashlib.sha1(b'blob '+str(len(data)).encode()+b'\0'+data).hexdigest()
+              response = subprocess.run(['gh','api','repos/'+os.environ['GITHUB_REPOSITORY']+'/git/blobs','--input','-'], input=json.dumps({'encoding':'base64','content':base64.b64encode(data).decode()}), text=True, capture_output=True, check=True)
+              actual = json.loads(response.stdout)['sha']
+              assert actual == expected
+              (out / Path(name).name).write_bytes(data)
+              rows.append({'path':name,'blob':actual,'sha256':hashlib.sha256(data).hexdigest()})
+          (out/'blobs.json').write_text(json.dumps(rows,indent=2)+'\n')
+          print(json.dumps(rows))
+          PY
+      - name: Preserve all outcomes and staging scope
+        if: always()
+        run: |
+          mkdir -p "$RUNNER_TEMP/packed-branch"
+          printf '%s\n' 'Isolated modified-tree candidate qualification only. No full capacity, final-source pair, attack-cost, independent operator, learning efficacy, physical power-loss, WAN TPS or production acceptance.' > "$RUNNER_TEMP/packed-branch/SCOPE.txt"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: packed-branch-staged-${{ matrix.runner }}-${{ github.event.pull_request.head.sha }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/packed-branch/
+          if-no-files-found: error
+          retention-days: 30
