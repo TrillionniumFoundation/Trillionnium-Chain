@@ -20,6 +20,7 @@ jobs:
       BASE_SOURCE: d148a4158884fe3955ce99034e050b467eb349c7
       STAGING_SOURCE: ${{ github.sha }}
       TARGET_FILE: trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs
+      TRNM_RETAINED_DELTA_COST_PATH: ${{ runner.temp }}/sql-stage/retained-delta-cost.jsonl
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
