@@ -30,7 +30,8 @@ jobs:
           set -euo pipefail
           mkdir "$RUNNER_TEMP/branch-encoding"
           git rev-parse HEAD HEAD^{tree} > "$RUNNER_TEMP/branch-encoding/stage-source.txt"
-          test "$(git rev-parse HEAD^)" = 9f5ebd9283457358fcec067fe0452005fa232b42
+          git merge-base --is-ancestor 9f5ebd9283457358fcec067fe0452005fa232b42 HEAD
+          test "$(git diff --name-only 9f5ebd9283457358fcec067fe0452005fa232b42 HEAD)" = .github/workflows/pon-branch-encoding-stage.yml
           git diff --exit-code
           bash scripts/project-preflight.sh --audit
       - name: Generate two exact bounded candidate files without changing validation rules
@@ -120,7 +121,9 @@ jobs:
           #[test]
           #[ignore = "explicit release branch hashing observation; not Node or WAN throughput"]
           fn native_branch_single_buffer_cost_observation() {
-              assert!(!cfg!(debug_assertions), "release comparison required");
+              if cfg!(debug_assertions) {
+                  panic!("release comparison required");
+              }
               let implementations: [fn(Hash, Hash) -> Hash; 2] = [wire_branch_reference, branch];
               for pair in 0..8usize {
                   let mut checksums = [[0u8; 32]; 2];
