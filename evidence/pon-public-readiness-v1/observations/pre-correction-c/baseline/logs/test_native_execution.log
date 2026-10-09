@@ -1,0 +1,24 @@
+test_all_twelve_tags_match_for_1_2_4_8_workers (__main__.NativeExecutionTests.test_all_twelve_tags_match_for_1_2_4_8_workers) ... ok
+test_bad_signature_rejects_entire_block_without_parent_mutation (__main__.NativeExecutionTests.test_bad_signature_rejects_entire_block_without_parent_mutation) ... ok
+test_block_scoped_workers_and_no_duplicate_main_signature_on_conflict (__main__.NativeExecutionTests.test_block_scoped_workers_and_no_duplicate_main_signature_on_conflict) ... ok
+test_capacity_prefix_commands_do_not_speculate_unbounded_snapshots (__main__.NativeExecutionTests.test_capacity_prefix_commands_do_not_speculate_unbounded_snapshots) ... ok
+test_exact_artifact_copy_across_authors_does_not_gain_second_intake (__main__.NativeExecutionTests.test_exact_artifact_copy_across_authors_does_not_gain_second_intake) ... ok
+test_funding_dependency_replays_state_not_main_signature (__main__.NativeExecutionTests.test_funding_dependency_replays_state_not_main_signature) ... ok
+test_hot_recipient_conflict_reexecutes_once_in_canonical_order (__main__.NativeExecutionTests.test_hot_recipient_conflict_reexecutes_once_in_canonical_order) ... ok
+test_hot_sender_degrades_to_serial_without_speculation (__main__.NativeExecutionTests.test_hot_sender_degrades_to_serial_without_speculation) ... ok
+test_independent_senders_commit_without_false_conflicts (__main__.NativeExecutionTests.test_independent_senders_commit_without_false_conflicts) ... ok
+test_later_invalid_signature_does_not_change_canonical_error (__main__.NativeExecutionTests.test_later_invalid_signature_does_not_change_canonical_error) ... ok
+test_missing_native_binary_is_not_reference_fallback (__main__.NativeExecutionTests.test_missing_native_binary_is_not_reference_fallback) ... ok
+test_native_round_boundary_retires_history_and_rejects_old_signature (__main__.NativeExecutionTests.test_native_round_boundary_retires_history_and_rejects_old_signature) ... ok
+test_revision3_first_pair_is_order_sensitive_and_late_third_rejects (__main__.NativeExecutionTests.test_revision3_first_pair_is_order_sensitive_and_late_third_rejects) ... ok
+test_single_signature_context_cannot_be_reused_for_another_payload (__main__.NativeExecutionTests.test_single_signature_context_cannot_be_reused_for_another_payload) ... ok
+test_spent_quota_retirement_preserves_consent_identity (__main__.NativeExecutionTests.test_spent_quota_retirement_preserves_consent_identity) ... ok
+test_terminal_task_retirement_cannot_reopen_same_resource_id (__main__.NativeExecutionTests.test_terminal_task_retirement_cannot_reopen_same_resource_id) ... ok
+test_three_signed_release_generations_preserve_payout_and_retirement (__main__.NativeExecutionTests.test_three_signed_release_generations_preserve_payout_and_retirement) ... ok
+test_unclaimed_release_budget_refunds_at_reserved_deadline (__main__.NativeExecutionTests.test_unclaimed_release_budget_refunds_at_reserved_deadline) ... ok
+test_wrong_native_context_rejects_even_an_empty_block (__main__.NativeExecutionTests.test_wrong_native_context_rejects_even_an_empty_block) ... ok
+
+----------------------------------------------------------------------
+Ran 19 tests in 3.768s
+
+OK
