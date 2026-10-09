@@ -64,11 +64,14 @@ No test binding or local campaign grants independent acceptance, ordinary Hepta 
 
 ## Executed evidence and scope
 
-The [current measured package](../../evidence/pon-v3/README.md) includes exact source,
-raw command exits and concrete invariant test results. Its verifier distinguishes
-runtime byte identity from documentation edits and cannot grant independent acceptance.
-Module-specific limitations above remain in force even when the referenced local test
-passes. The development plan, not this link or a count of procedures, selects next work.
+[Responsibility-level evidence navigation](README.md#responsibility-and-evidence) reads
+measured commits from immutable receipts. The module's entries in
+[module-maturity-v1.json](../../config/pon/module-maturity-v1.json) identify actual callable
+owners, controlled entrypoints, backends, persistence and exact observed test selectors.
+Run `python3 scripts/ci/report_module_evidence.py --module M12` from the repository
+root to see subject-byte and complete recorded-runtime matches separately, plus scenarios
+not observed in each package. A byte match is not a new test run or product acceptance.
+Historical v1/v3/v4 results are never repinned. The sole plan selects further work.
 
 ## Frozen evaluation and consent continuation
 
@@ -79,3 +82,38 @@ is created by a frozen artifact. The following additional regressions are execut
 - `formal/pon-nakamoto-v1/test_evaluation_bundle.py::SettlementObservationTests.test_mutating_both_summary_and_evaluator_score_does_not_authorize_reward`.
 - `formal/pon-nakamoto-v1/test_evaluation_bundle.py::SettlementObservationTests.test_zero_marginal_candidate_creates_no_ledger_or_reward`.
 - `formal/pon-nakamoto-v1/test_evaluation_bundle.py::SettlementObservationTests.test_undeclared_bundle_cannot_be_read_from_summary_as_authority`.
+
+## Mandatory expiry receipts through the native cache
+
+Funded task/quota/release expiry emits its canonical receipt before ordinary transaction receipts. The existing native session preserves and verifies this prefix, including empty blocks and mixed 16-expiry/transaction blocks. This does not change subsidy, fees or durable ownership.
+
+- `formal/pon-nakamoto-v1/test_native_session.py::ExpiryAndBudgetTests.test_sixteen_expiry_receipts_precede_same_block_transaction`.
+- `formal/pon-nakamoto-v1/test_native_session.py::ExpiryAndBudgetTests.test_empty_expiry_block_runs_through_real_ledger_and_restart`.
+- `formal/pon-nakamoto-v1/test_native_session.py::ExpiryAndBudgetTests.test_expiry_receipt_drop_reorder_and_substitution_cannot_be_rehashed`.
+- `formal/pon-nakamoto-v1/test_native_session.py::ExpiryAndBudgetTests.test_real_quota_and_release_expiry_share_existing_receipt_semantics`.
+
+## Native development continuation and remaining scope
+
+ECONOMICS now isolates the first-two ordering counterexample and the required versioned complete-set/deadline/dispute contract. Native byte parity preserves existing revision3 accounting rather than silently altering rewards. Independent resource funding and the successor policy remain open.
+
+The current callable mappings remain in `config/pon/module-maturity-v1.json`.
+Exact native entry, storage and work behavior is specified by N3 in NETWORK_CLIENT,
+the native continuation in STATE_RECOVERY and the prepared-producer section in WORK_PROFILE.
+No historical receipt is relabelled as executing this source.
+
+The existing frozen evaluator and settlement producer also bind the versioned empirical
+accuracy/marginal-value/bound statement in MODEL_EVALUATION. Its canonical replay rejects
+false prospective/general-circuit authority and numeric aliases. A perfect empirical
+score proves only that fixed accuracy objective, not public reward eligibility or model
+safety. Revision3 first-two attestation arrival semantics remain unchanged and unqualified.
+
+## Complete-evaluator successor and reward conservation
+
+The explicit revision4 policy in [MODEL_EVALUATION](../protocol/pon-nakamoto-v1/details/MODEL_EVALUATION.md)
+changes when an attested score is complete, not the release budget, fee, maturity,
+claim-nullifier or conservation algorithm. Pending and zero-valued rounds cannot publish
+or mint model rewards. Complete positive controlled rounds exercise publish, maturity,
+exact claim and duplicate rejection through both existing implementations.
+
+Selector: `formal/pon-nakamoto-v1/test_evaluation_round.py::ClosedRoundTests.test_complete_round_can_publish_mature_and_claim_exactly_once`.
+This does not establish real model benefit, functional-copy fairness or funded GPU service.
