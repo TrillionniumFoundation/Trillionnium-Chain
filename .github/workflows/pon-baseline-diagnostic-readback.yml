@@ -1,0 +1,66 @@
+name: PoN baseline diagnostic readback
+on:
+  pull_request:
+    paths:
+      - .github/workflows/pon-baseline-diagnostic-readback.yml
+permissions:
+  contents: read
+  actions: read
+jobs:
+  retained-failure:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Read the exact failed baseline without executing repository code
+        env:
+          GH_TOKEN: ${{ github.token }}
+          OUT: ${{ runner.temp }}/baseline-diagnostic-readback
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir "$OUT"
+          api=https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain
+          curl --fail --silent --show-error --location --proto '=https' --proto-redir '=https' --retry 2 --max-time 60 --max-filesize 1048576 -H "Authorization: Bearer $GH_TOKEN" "$api/actions/runs/37861647184" -o "$OUT/run.json"
+          curl --fail --silent --show-error --location --proto '=https' --proto-redir '=https' --retry 2 --max-time 60 --max-filesize 1048576 -H "Authorization: Bearer $GH_TOKEN" "$api/actions/jobs/113599036245" -o "$OUT/job.json"
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          root = Path(os.environ['OUT'])
+          run = json.loads((root / 'run.json').read_text())
+          job = json.loads((root / 'job.json').read_text())
+          assert run['id'] == job['run_id'] == 37861647184
+          assert run['head_sha'] == '544dc613753ac7760af97d378d84da3e2db4e3ff'
+          assert job['id'] == 113599036245 and job['conclusion'] == 'failure'
+          PY
+          # curl does not forward Authorization to another host on a redirect.
+          curl --fail --silent --show-error --location --proto '=https' --proto-redir '=https' --retry 2 --max-time 120 --max-filesize 67108864 -H "Authorization: Bearer $GH_TOKEN" "$api/actions/jobs/113599036245/logs" -o "$OUT/failed-baseline.log"
+          python3 - <<'PY'
+          import hashlib, json, os, re
+          from pathlib import Path
+          root = Path(os.environ['OUT'])
+          raw = (root / 'failed-baseline.log').read_bytes()
+          assert raw and len(raw) <= 64 * 1024 * 1024
+          lines = raw.decode('utf-8', errors='replace').splitlines()
+          selected = set()
+          for i, line in enumerate(lines):
+              if re.search(r'error(?:\[[^]]+\])?:|panicked at|Caused by:', line):
+                  selected.update(range(max(0, i - 3), min(len(lines), i + 14)))
+          excerpt = '\n'.join(lines[i] for i in sorted(selected)[-180:])[-24000:]
+          (root / 'diagnostic-excerpt.txt').write_text(excerpt + '\n')
+          record = dict(schema='pon-retained-baseline-diagnostic-v1',
+                        source='544dc613753ac7760af97d378d84da3e2db4e3ff',
+                        run=37861647184, job=113599036245,
+                        log_sha256=hashlib.sha256(raw).hexdigest(), log_bytes=len(raw),
+                        source_tests_executed=False, acceptance_granted=False)
+          (root / 'readback.json').write_text(json.dumps(record, indent=2) + '\n')
+          print(json.dumps(record))
+          print(excerpt)
+          PY
+      - name: Preserve original failure and bounded diagnostic excerpt
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: retained-baseline-diagnostic-${{ github.event.pull_request.head.sha }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/baseline-diagnostic-readback/
+          if-no-files-found: error
+          retention-days: 30
