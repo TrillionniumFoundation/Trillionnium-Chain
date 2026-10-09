@@ -160,3 +160,247 @@ fn invalid_backend_scope_and_external_owner_combinations_reject_before_open() {
         assert!(!store.exists());
     }
 }
+
+// Exercise the public Node owner, not a second SQL implementation. A separate
+// connection commits deliberate damage to a disposable database while the real
+// owner's statement cache stays warm. Repair is test-only: production services
+// must stop on the local-integrity errors asserted below.
+mod cached_owner_reads {
+    use super::*;
+    use rusqlite::{params, Connection, OpenFlags};
+    use trnm_pon_node::{development_public, Node, Settings};
+
+    fn settings() -> Settings {
+        Settings::development_with_profiles(Some(1), "native-public-evaluation-dev-v1", PROFILE)
+            .unwrap()
+    }
+
+    fn open(path: &Path) -> Node {
+        Node::open_with_authenticated_state(path, settings(), 1).unwrap()
+    }
+
+    fn disk(path: &Path) -> Connection {
+        Connection::open_with_flags(path.join("native.sqlite"), OpenFlags::SQLITE_OPEN_READ_WRITE)
+            .unwrap()
+    }
+
+    #[test]
+    fn live_owner_rechecks_genesis_block_after_committed_damage_and_restore() {
+        let directory = tempfile::tempdir().unwrap();
+        let node = open(directory.path());
+        let expected = node.read_active().unwrap();
+        let genesis = node.settings().genesis();
+        let db = disk(directory.path());
+        for _ in 0..3 {
+            assert_eq!(node.read_active().unwrap(), expected);
+            assert_eq!(
+                db.execute(
+                    "UPDATE blocks SET packet=? WHERE id=?",
+                    params![b"invalid-genesis-packet".as_slice(), genesis.as_slice()],
+                )
+                .unwrap(),
+                1
+            );
+            let error = node.read_active().unwrap_err();
+            assert_eq!(error.to_string(), "NATIVE_STATE_GENESIS");
+            assert!(error.requires_owner_stop());
+            assert_eq!(
+                db.execute(
+                    "UPDATE blocks SET packet=NULL WHERE id=?",
+                    [genesis.as_slice()],
+                )
+                .unwrap(),
+                1
+            );
+            assert_eq!(node.read_active().unwrap(), expected);
+        }
+        drop(db);
+        drop(node);
+        assert_eq!(open(directory.path()).read_active().unwrap(), expected);
+    }
+
+    #[test]
+    fn live_owner_rechecks_parent_work_after_real_admission() {
+        let directory = tempfile::tempdir().unwrap();
+        let mut node = open(directory.path());
+        let genesis = node.settings().genesis();
+        let packet = node
+            .make_consensus_maintenance(
+                genesis,
+                vec![],
+                development_public(0).unwrap(),
+                11,
+                4096,
+            )
+            .unwrap();
+        let id = node.admit(&packet, 1000).unwrap();
+        node.activate(id).unwrap();
+        let expected = node.read_active().unwrap();
+        assert_eq!(expected.0, id);
+        let db = disk(directory.path());
+        let original: Vec<u8> = db
+            .query_row(
+                "SELECT chainwork FROM blocks WHERE id=?",
+                [genesis.as_slice()],
+                |row| row.get(0),
+            )
+            .unwrap();
+        assert_eq!(
+            db.execute(
+                "UPDATE blocks SET chainwork=? WHERE id=?",
+                params![vec![255u8; 64], genesis.as_slice()],
+            )
+            .unwrap(),
+            1
+        );
+        assert!(node.read_active().unwrap_err().requires_owner_stop());
+        db.execute(
+            "UPDATE blocks SET chainwork=? WHERE id=?",
+            params![original, genesis.as_slice()],
+        )
+        .unwrap();
+        assert_eq!(node.read_active().unwrap(), expected);
+        drop(db);
+        drop(node);
+        assert_eq!(open(directory.path()).read_active().unwrap(), expected);
+    }
+
+    #[test]
+    fn live_owner_rechecks_record_limits_missing_rows_and_sql_types() {
+        let directory = tempfile::tempdir().unwrap();
+        let node = open(directory.path());
+        let expected = node.read_active().unwrap();
+        let genesis = node.settings().genesis();
+        let db = disk(directory.path());
+        let original: Vec<u8> = db
+            .query_row(
+                "SELECT data FROM native_state_commitments WHERE block=?",
+                [genesis.as_slice()],
+                |row| row.get(0),
+            )
+            .unwrap();
+        for length in [16 * 1024 + 1, 128 * 1024] {
+            db.execute(
+                "UPDATE native_state_commitments SET data=? WHERE block=?",
+                params![vec![b'x'; length], genesis.as_slice()],
+            )
+            .unwrap();
+            let error = node.read_active().unwrap_err();
+            assert_eq!(error.to_string(), "NATIVE_STATE_RECORD_LIMIT");
+            assert!(error.requires_owner_stop());
+            db.execute(
+                "UPDATE native_state_commitments SET data=? WHERE block=?",
+                params![&original, genesis.as_slice()],
+            )
+            .unwrap();
+            assert_eq!(node.read_active().unwrap(), expected);
+        }
+        db.execute(
+            "UPDATE native_state_commitments SET data=CAST(data AS TEXT) WHERE block=?",
+            [genesis.as_slice()],
+        )
+        .unwrap();
+        assert!(node.read_active().unwrap_err().requires_owner_stop());
+        db.execute(
+            "DELETE FROM native_state_commitments WHERE block=?",
+            [genesis.as_slice()],
+        )
+        .unwrap();
+        let error = node.read_active().unwrap_err();
+        assert_eq!(error.to_string(), "NATIVE_STATE_MISSING");
+        assert!(error.requires_owner_stop());
+        db.execute(
+            "INSERT INTO native_state_commitments(block,data) VALUES(?,?)",
+            params![genesis.as_slice(), original],
+        )
+        .unwrap();
+        assert_eq!(node.read_active().unwrap(), expected);
+        drop(db);
+        drop(node);
+        assert_eq!(open(directory.path()).read_active().unwrap(), expected);
+    }
+
+    #[test]
+    fn live_owner_snapshot_damage_rolls_back_admission_and_rejects_cold_open() {
+        let directory = tempfile::tempdir().unwrap();
+        let mut node = open(directory.path());
+        let expected = node.read_active().unwrap();
+        let genesis = node.settings().genesis();
+        let packet = node
+            .make_consensus_maintenance(
+                genesis,
+                vec![],
+                development_public(0).unwrap(),
+                11,
+                4096,
+            )
+            .unwrap();
+        let id = packet.id().unwrap();
+        let db = disk(directory.path());
+        let original: Vec<u8> = db
+            .query_row(
+                "SELECT state FROM snapshots WHERE block=?",
+                [genesis.as_slice()],
+                |row| row.get(0),
+            )
+            .unwrap();
+        let counts = |db: &Connection| -> (u64, u64, u64, u64, u64) {
+            db.query_row(
+                "SELECT (SELECT COUNT(*) FROM blocks), (SELECT COUNT(*) FROM deltas), \
+                 (SELECT COUNT(*) FROM native_state_commitments), \
+                 (SELECT COUNT(*) FROM archive_nodes), (SELECT COUNT(*) FROM snapshots)",
+                [],
+                |row| {
+                    Ok((
+                        row.get(0)?,
+                        row.get(1)?,
+                        row.get(2)?,
+                        row.get(3)?,
+                        row.get(4)?,
+                    ))
+                },
+            )
+            .unwrap()
+        };
+        let before = counts(&db);
+        db.execute(
+            "UPDATE snapshots SET state=? WHERE block=?",
+            params![b"{}".as_slice(), genesis.as_slice()],
+        )
+        .unwrap();
+        let error = node.admit(&packet, 1000).unwrap_err();
+        assert_eq!(error.to_string(), "NATIVE_STATE_GENESIS");
+        assert!(error.requires_owner_stop());
+        assert_eq!(counts(&db), before);
+        let inserted: u64 = db
+            .query_row(
+                "SELECT COUNT(*) FROM blocks WHERE id=?",
+                [id.as_slice()],
+                |row| row.get(0),
+            )
+            .unwrap();
+        assert_eq!(inserted, 0);
+        assert_eq!(node.read_active().unwrap(), expected);
+        drop(node);
+        let error = Node::open_with_authenticated_state(directory.path(), settings(), 1)
+            .err()
+            .unwrap();
+        assert_eq!(error.to_string(), "NATIVE_STATE_GENESIS");
+        assert!(error.requires_owner_stop());
+        assert_eq!(counts(&db), before);
+        db.execute(
+            "UPDATE snapshots SET state=? WHERE block=?",
+            params![original, genesis.as_slice()],
+        )
+        .unwrap();
+        drop(db);
+        let mut reopened = open(directory.path());
+        assert_eq!(reopened.read_active().unwrap(), expected);
+        assert_eq!(reopened.admit(&packet, 1000).unwrap(), id);
+        reopened.activate(id).unwrap();
+        let restored = reopened.read_active().unwrap();
+        assert_eq!(restored.0, id);
+        drop(reopened);
+        assert_eq!(open(directory.path()).read_active().unwrap(), restored);
+    }
+}
