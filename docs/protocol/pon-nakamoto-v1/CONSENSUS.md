@@ -142,6 +142,6 @@ blocker, not permission to fabricate learning gains or silently switch algorithm
 ## Executable contract binding
 
 The full relation is [W1](details/WORK_PROFILE.md), encoding/application is [L1](details/LEDGER_WIRE.md),
-and disk branch/reorg is [S1](details/STATE_RECOVERY.md). The existing Python reference
+and disk branch/reorg is [S2 and the native owner](details/STATE_RECOVERY.md). The existing Python reference
 remains a small arithmetic model; the new ledger oracle uses actual signed transactions,
 real work verification and SQLite. Neither is a qualified native public-network node.
