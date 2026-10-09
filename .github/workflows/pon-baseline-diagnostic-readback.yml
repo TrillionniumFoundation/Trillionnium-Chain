@@ -3,6 +3,7 @@ on:
   pull_request:
     paths:
       - .github/workflows/pon-baseline-diagnostic-readback.yml
+      - trillionnium/**
 permissions:
   contents: read
   actions: read
@@ -62,5 +63,84 @@ jobs:
         with:
           name: retained-baseline-diagnostic-${{ github.event.pull_request.head.sha }}-${{ github.run_attempt }}
           path: ${{ runner.temp }}/baseline-diagnostic-readback/
+          if-no-files-found: error
+          retention-days: 30
+  native-boundary:
+    name: native boundary (${{ matrix.runner }}, ${{ matrix.source }})
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ubuntu-24.04, ubuntu-24.04-arm]
+        source: [head, prospective-merge]
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 25
+    env:
+      CARGO_INCREMENTAL: "0"
+      CARGO_BUILD_JOBS: "2"
+      RUST_TEST_THREADS: "1"
+      PYTHONDONTWRITEBYTECODE: "1"
+      EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
+      EXPECTED_BASE: ${{ github.event.pull_request.base.sha }}
+      EXPECTED_MERGE: ${{ github.sha }}
+      SOURCE_KIND: ${{ matrix.source }}
+    steps:
+      - name: Checkout exact current source or actual target merge
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ matrix.source == 'head' && github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify source and original project boundary
+        id: source
+        run: |
+          set -euo pipefail
+          export TRNM_CI_RECEIPT_DIR="$RUNNER_TEMP/native-boundary"
+          mkdir "$TRNM_CI_RECEIPT_DIR"
+          echo "TRNM_CI_RECEIPT_DIR=$TRNM_CI_RECEIPT_DIR" >> "$GITHUB_ENV"
+          echo "CARGO_HOME=$RUNNER_TEMP/cargo-boundary" >> "$GITHUB_ENV"
+          echo "CARGO_TARGET_DIR=$RUNNER_TEMP/target-boundary" >> "$GITHUB_ENV"
+          args=(--kind "$SOURCE_KIND" --expected-head "$EXPECTED_HEAD")
+          if test "$SOURCE_KIND" = prospective-merge; then
+            args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_MERGE")
+          fi
+          python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$TRNM_CI_RECEIPT_DIR/source.json"
+          bash scripts/project-preflight.sh --audit
+      - name: Install source-pinned compiler and lint tools
+        id: tools
+        run: rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+      - name: Preserve exact formatter diagnostics without changing source
+        if: ${{ !cancelled() && steps.source.outcome == 'success' && steps.tools.outcome == 'success' }}
+        run: |
+          set -euo pipefail
+          cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check 2>&1 | tee "$TRNM_CI_RECEIPT_DIR/format.log"
+      - name: Execute strict native all-target Clippy before long campaigns
+        if: ${{ !cancelled() && steps.source.outcome == 'success' && steps.tools.outcome == 'success' }}
+        run: |
+          set -euo pipefail
+          cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --all-targets --all-features -- -D warnings 2>&1 | tee "$TRNM_CI_RECEIPT_DIR/clippy.log"
+      - name: Execute original accounting and new cooffered depletion regressions
+        if: ${{ !cancelled() && steps.source.outcome == 'success' && steps.tools.outcome == 'success' }}
+        run: |
+          set -euo pipefail
+          cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test public_v3_request_accounting -- --show-output --test-threads=1 2>&1 | tee "$TRNM_CI_RECEIPT_DIR/accounting.log"
+          python3 scripts/ci/check_required_native_test.py "$TRNM_CI_RECEIPT_DIR/accounting.log" --test actual_depletion::actual_replay_depletion_public_recovery_and_same_epoch_reopen
+          python3 scripts/ci/check_required_native_test.py "$TRNM_CI_RECEIPT_DIR/accounting.log" --test actual_depletion::depleted_domain_serves_honest_block_during_rotating_public_false_work
+      - name: Reverify unchanged tested source
+        if: always()
+        run: |
+          set -euo pipefail
+          args=(--kind "$SOURCE_KIND" --expected-head "$EXPECTED_HEAD")
+          if test "$SOURCE_KIND" = prospective-merge; then
+            args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_MERGE")
+          fi
+          python3 scripts/ci/verify_ci_source.py "${args[@]}"
+      - name: Retain current native results including every failure
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: native-boundary-${{ matrix.runner }}-${{ matrix.source }}-${{ github.event.pull_request.head.sha }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/native-boundary/
           if-no-files-found: error
           retention-days: 30

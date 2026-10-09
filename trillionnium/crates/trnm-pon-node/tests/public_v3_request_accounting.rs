@@ -580,4 +580,243 @@ mod actual_depletion {
             "retain actual-cpu-depletion/report.json; no inferred or synthetic depletion"
         );
     }
+
+    #[test]
+    fn depleted_domain_serves_honest_block_during_rotating_public_false_work() {
+        // The local precondition is actual depletion, not a reduced policy or
+        // a remote-cost claim. False public traffic continues during honest use.
+        const WORKERS: usize = 16;
+        const ATTEMPT_LIMIT: usize = 1024;
+        const WINDOW: Duration = Duration::from_secs(4);
+        let temporary = tempfile::tempdir().unwrap();
+        let path = match std::env::var_os("TRNM_CI_RECEIPT_DIR") {
+            Some(root) => {
+                let path = std::path::PathBuf::from(root).join("depleted-public-overlap");
+                fs::create_dir(&path).unwrap();
+                path
+            }
+            None => temporary.path().to_path_buf(),
+        };
+        let settings = Settings::development(Some(1_750_000_000)).unwrap();
+        let receiver = path.join("receiver");
+        let mut node = Node::open(&receiver, settings.clone(), 1).unwrap();
+        node.enable_local_mempool(PoolLimits {
+            max_records: 16,
+            max_bytes: 32768,
+            max_group_members: 4,
+            critical_reserve: 0,
+            max_removals: 64,
+            preview_miner: development_public(0).unwrap(),
+        })
+        .unwrap();
+        let false_work = false_packet(&node);
+        let false_wire = hex::encode(false_work.encode().unwrap());
+        let mut producer = Node::open(&path.join("producer"), settings.clone(), 1).unwrap();
+        let honest = producer
+            .mine(vec![], settings.genesis_time() + 10, ingress::now().unwrap())
+            .unwrap();
+        let expected = producer.read_active().unwrap();
+        let server = PublicServer::new(identity(71), policy()).unwrap();
+        let domain = server.mutation_cpu_domain();
+        let initial_meter = domain.observe().unwrap();
+        let depletion = deplete(
+            &domain,
+            &false_work,
+            Instant::now() + Duration::from_secs(60),
+        );
+        let owner = Arc::new(Mutex::new(node));
+        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+        let address = listener.local_addr().unwrap();
+        let stop = Arc::new(AtomicBool::new(false));
+        let observer = public_v3::PublicRequestObserver::new(16_384).unwrap();
+        let counters = Arc::new(Mutex::new(public_v3::PublicMetrics::default()));
+        let (shared, signal, capture) = (owner.clone(), stop.clone(), observer.clone());
+        let service = RunningService {
+            stop,
+            worker: Some(thread::spawn(
+                move || match public_v3::serve_public_protected_v3_with_request_observer(
+                    listener,
+                    shared,
+                    Duration::from_secs(30),
+                    signal,
+                    server,
+                    counters,
+                    capture,
+                ) {
+                    Ok(metrics) => json!({"metrics": metrics, "error": null}),
+                    Err(error) => json!({"metrics": null, "error": error.to_string()}),
+                },
+            )),
+        };
+        let epoch = Instant::now();
+        let end = epoch + WINDOW;
+        let barrier = std::sync::Barrier::new(WORKERS + 1);
+        let completed = std::sync::atomic::AtomicU64::new(0);
+        let (attacks, honest_use) = thread::scope(|scope| {
+            let mut workers = Vec::new();
+            for worker in 0..WORKERS {
+                let (barrier, completed, settings, wire) =
+                    (&barrier, &completed, &settings, &false_wire);
+                workers.push(scope.spawn(move || {
+                    barrier.wait();
+                    let mut calls = Vec::new();
+                    for attempt in 0..ATTEMPT_LIMIT {
+                        if Instant::now() >= end {
+                            break;
+                        }
+                        let started = Instant::now();
+                        let started_ns = elapsed_ns(epoch);
+                        let caller = 80 + ((worker * 37 + attempt) % 150) as u8;
+                        let (result, transport) =
+                            public_v3::call_public_protected_v3_with_deadline(
+                                address,
+                                &Request::Submit {
+                                    packet: wire.clone(),
+                                },
+                                settings,
+                                identity(71).public_key(),
+                                &identity(caller),
+                                policy(),
+                                Some(started + CALL_LIMIT),
+                            );
+                        let (accepted, response, error) = match result {
+                            Ok(reply) => (
+                                reply.ok,
+                                Some(serde_json::to_value(reply).unwrap()),
+                                None,
+                            ),
+                            Err(error) => (false, None, Some(error.to_string())),
+                        };
+                        calls.push(json!({"caller_fixture": caller,
+                            "started_ns": started_ns, "ended_ns": elapsed_ns(epoch),
+                            "accepted": accepted, "response": response,
+                            "error": error, "transport": transport}));
+                        completed.fetch_add(1, Ordering::Release);
+                    }
+                    json!({"worker": worker, "cap_reached": calls.len() == ATTEMPT_LIMIT,
+                        "calls": calls})
+                }));
+            }
+            barrier.wait();
+            // A completed false call must precede the honest attempt. A worker
+            // merely being spawned is not evidence that public traffic ran.
+            while completed.load(Ordering::Acquire) == 0 && Instant::now() < end {
+                thread::sleep(Duration::from_millis(1));
+            }
+            let false_calls_before = completed.load(Ordering::Acquire);
+            let started = Instant::now();
+            let started_ns = elapsed_ns(epoch);
+            let (submit, submit_transport) = public_v3::call_public_protected_v3_with_deadline(
+                address,
+                &Request::Submit {
+                    packet: hex::encode(honest.encode().unwrap()),
+                },
+                &settings,
+                identity(71).public_key(),
+                &identity(73),
+                policy(),
+                Some((started + CALL_LIMIT).min(end)),
+            );
+            let submit_on_time = started.elapsed() <= CALL_LIMIT && Instant::now() < end;
+            let submit_ended_ns = elapsed_ns(epoch);
+            let submit_ok = submit.as_ref().is_ok_and(|reply| reply.ok);
+            let read_started = Instant::now();
+            let (head, head_transport) = public_v3::call_public_protected_v3_with_deadline(
+                address,
+                &Request::Head,
+                &settings,
+                identity(71).public_key(),
+                &identity(72),
+                policy(),
+                Some((read_started + CALL_LIMIT).min(end)),
+            );
+            let head_ok = head.as_ref().is_ok_and(|reply| reply.ok);
+            let head_on_time = read_started.elapsed() <= CALL_LIMIT && Instant::now() < end;
+            let use_record = json!({"false_calls_completed_before": false_calls_before,
+                "started_ns": started_ns, "submit_ended_ns": submit_ended_ns,
+                "ended_ns": elapsed_ns(epoch), "submit_ok": submit_ok,
+                "submit_on_time": submit_on_time, "head_ok": head_ok,
+                "head_on_time": head_on_time, "submit_transport": submit_transport,
+                "head_transport": head_transport,
+                "submit_error": submit.err().map(|error| error.to_string()),
+                "head_error": head.err().map(|error| error.to_string())});
+            let rows: Vec<_> = workers
+                .into_iter()
+                .map(|worker| worker.join().unwrap())
+                .collect();
+            (rows, use_record)
+        });
+        let service_outcome = service.finish();
+        let captured = observer.snapshot();
+        let node = Arc::try_unwrap(owner).ok().unwrap().into_inner().unwrap();
+        let before = node.read_active().unwrap();
+        let full_state_equal = before == expected;
+        let final_meter = domain.observe().unwrap();
+        drop(node);
+        let reopened = Node::open(&receiver, settings.clone(), 1).unwrap();
+        let reopen_equal = before == reopened.read_active().unwrap();
+        let resumed =
+            PublicServer::with_continuous_domain(identity(71), policy(), &domain).unwrap();
+        let same_epoch = domain.shares_domain_with(&resumed.mutation_cpu_domain())
+            && final_meter == resumed.mutation_cpu_domain().observe().unwrap();
+        let calls: Vec<_> = attacks
+            .iter()
+            .flat_map(|worker| worker["calls"].as_array().unwrap())
+            .collect();
+        let honest_start = honest_use["started_ns"].as_u64().unwrap();
+        let honest_end = honest_use["ended_ns"].as_u64().unwrap();
+        let overlapping_calls = calls
+            .iter()
+            .filter(|call| {
+                call["started_ns"].as_u64().unwrap() < honest_end
+                    && call["ended_ns"].as_u64().unwrap() > honest_start
+            })
+            .count();
+        let metrics = &service_outcome["metrics"];
+        let captured_complete = captured.records_not_retained == 0
+            && captured.measurement_failures == 0
+            && !captured.counter_overflow
+            && captured.records.iter().all(|record| record.complete);
+        let passed = depletion["depletion_observed"] == true
+            && depletion["cap_reached"] == false
+            && honest_use["false_calls_completed_before"].as_u64().unwrap() > 0
+            && overlapping_calls > 0
+            && honest_use["submit_ok"] == true
+            && honest_use["submit_on_time"] == true
+            && honest_use["head_ok"] == true
+            && honest_use["head_on_time"] == true
+            && attacks.iter().all(|worker| worker["cap_reached"] == false)
+            && calls.iter().all(|call| call["accepted"] == false)
+            && metrics["work_failed"].as_u64().is_some_and(|failed| failed > 0)
+            && metrics["work_started"] == metrics["work_finished"]
+            && metrics["mutation_cpu_clock_failures"] == 0
+            && service_outcome["error"].is_null()
+            && captured_complete
+            && full_state_equal
+            && reopen_equal
+            && same_epoch
+            && final_meter.in_flight == 0
+            && !final_meter.accounting_unavailable;
+        let report = json!({"schema": "public-v3-depleted-cooffered-observation-v1",
+            "network": hex::encode(settings.network()), "parameters": hex::encode(settings.parameters()),
+            "initial_meter": initial_meter, "local_depletion": depletion,
+            "window_ns": WINDOW.as_nanos(), "workers": WORKERS, "attempt_limit": ATTEMPT_LIMIT,
+            "false_packet": false_wire, "attacks": attacks, "honest_use": honest_use,
+            "overlapping_false_calls": overlapping_calls, "observations": captured,
+            "full_native_state_equal": full_state_equal, "reopen_state_equal": reopen_equal,
+            "same_cpu_epoch_across_reopen": same_epoch, "final_meter": final_meter,
+            "service": service_outcome, "passed": passed,
+            "scope": "actual local depletion then bounded rotating loopback false-work traffic cooffered with honest use; shared controller and repeated false proof",
+            "remote_induced_depletion_qualified": false, "work_profile_qualified": false,
+            "public_hostile_saturation_qualified": false, "resource_fairness_qualified": false,
+            "independent_accepted": false, "physical_power_loss": false,
+            "attacker_aggregate_cpu_ns": null, "wan_tps": null, "production_activation": false});
+        fs::write(
+            path.join("report.json"),
+            serde_json::to_vec_pretty(&report).unwrap(),
+        )
+        .unwrap();
+        println!("{}", json!({"schema": report["schema"], "passed": passed}));
+        assert!(passed, "retain depleted-public-overlap/report.json");
+    }
 }
