@@ -597,3 +597,97 @@ fn native_complete_account_verification_cost() {
         &json!({"schema":"pon-native-account-verification-cost-v1", "kind":"terminal", "result":"PASS", "blocks_including_genesis":blocks.len(), "signed_transfers":256, "cold_reopen_equal":true, "whole_node_performance_qualified":false}),
     );
 }
+
+// Freeze the pre-optimization branch grammar independently of branch().
+fn wire_branch_reference(left: Hash, right: Hash) -> Hash {
+    hash(b"account-archive-branch-v1", &[&left, &right])
+}
+
+#[test]
+fn native_branch_single_buffer_matches_original_wire() {
+    for bit_index in 0..512usize {
+        let mut left = [0u8; 32];
+        let mut right = [0u8; 32];
+        if bit_index < 256 {
+            left[bit_index / 8] = 1 << (bit_index % 8);
+        } else {
+            right[(bit_index - 256) / 8] = 1 << (bit_index % 8);
+        }
+        for (left, right) in [(left, right), (right, left)] {
+            assert_eq!(branch(left, right), wire_branch_reference(left, right));
+        }
+    }
+    for index in 0..1024u64 {
+        let left = hash(b"branch-encoding-left-fixture", &[&index.to_le_bytes()]);
+        let right = hash(b"branch-encoding-right-fixture", &[&index.to_le_bytes()]);
+        assert_eq!(branch(left, right), wire_branch_reference(left, right));
+        assert_eq!(branch(right, left), wire_branch_reference(right, left));
+    }
+    for left in [[0; 32], [0xff; 32], [0x80; 32]] {
+        for right in [[0; 32], [0xff; 32], [0x01; 32]] {
+            assert_eq!(branch(left, right), wire_branch_reference(left, right));
+        }
+    }
+}
+
+#[test]
+fn native_branch_single_buffer_preserves_every_lift_depth() {
+    let mut original_empty = [[0; 32]; 257];
+    original_empty[256] = hash(b"account-archive-empty-v1", &[]);
+    for depth in (0..256).rev() {
+        original_empty[depth] =
+            wire_branch_reference(original_empty[depth + 1], original_empty[depth + 1]);
+    }
+    assert_eq!(empty_hashes(), original_empty);
+    for index in 0..8u64 {
+        let node = Node::account(
+            hash(b"branch-lift-owner-fixture", &[&index.to_le_bytes()]),
+            Account {
+                balance: index,
+                nonce: u64::MAX - index,
+            },
+        );
+        for depth in 0..=256 {
+            let mut reference = node.digest;
+            for position in (depth..node.depth).rev() {
+                reference = if bit(&node.path, position) {
+                    wire_branch_reference(original_empty[position + 1], reference)
+                } else {
+                    wire_branch_reference(reference, original_empty[position + 1])
+                };
+            }
+            assert_eq!(node.lift(depth, &original_empty), reference);
+        }
+    }
+}
+
+#[test]
+#[ignore = "explicit release branch hashing observation; not Node or WAN throughput"]
+fn native_branch_single_buffer_cost_observation() {
+    if cfg!(debug_assertions) {
+        panic!("release comparison required");
+    }
+    let implementations: [fn(Hash, Hash) -> Hash; 2] = [wire_branch_reference, branch];
+    for pair in 0..8usize {
+        let mut checksums = [[0u8; 32]; 2];
+        for arm in if pair % 2 == 0 { [0, 1] } else { [1, 0] } {
+            let mut value = [0x5au8; 32];
+            let start = Instant::now();
+            for index in 0..65536u64 {
+                let mut right = [0xa5u8; 32];
+                right[..8].copy_from_slice(&index.to_le_bytes());
+                value = std::hint::black_box(implementations[arm](
+                    std::hint::black_box(value),
+                    std::hint::black_box(right),
+                ));
+            }
+            let elapsed_ns = start.elapsed().as_nanos();
+            checksums[arm] = value;
+            eprintln!(
+                "pon_branch_encoding_cost_v1 {}",
+                json!({"pair":pair,"arm":if arm == 0 {"wire-reference"} else {"single-buffer"},"branch_hashes":65536,"elapsed_ns":elapsed_ns,"checksum":hex::encode(value),"whole_node_performance_qualified":false})
+            );
+        }
+        assert_eq!(checksums[0], checksums[1]);
+    }
+}
