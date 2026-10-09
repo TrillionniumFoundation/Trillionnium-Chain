@@ -1,0 +1,35 @@
+name: PoN exact history source readback
+on:
+  push:
+    branches: [repair/pon-history-cost-20261009]
+    paths: [.github/workflows/pon-history-source-readback.yml]
+permissions:
+  contents: read
+jobs:
+  source:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          ref: d4fe8d6f5fab99c05550570fa01ac21db73a4c7e
+          persist-credentials: false
+          fetch-depth: 1
+      - name: Archive exact tracked source, not an execution receipt
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = d4fe8d6f5fab99c05550570fa01ac21db73a4c7e
+          mkdir -p "$RUNNER_TEMP/history-source"
+          git rev-parse HEAD HEAD^{tree} > "$RUNNER_TEMP/history-source/source.txt"
+          git ls-tree -r HEAD > "$RUNNER_TEMP/history-source/tree.txt"
+          git archive --format=tar.gz HEAD trillionnium config scripts/ci .github/workflows formal/pon-nakamoto-v1 > "$RUNNER_TEMP/history-source/source.tar.gz"
+          sha256sum "$RUNNER_TEMP/history-source/source.tar.gz" > "$RUNNER_TEMP/history-source/archive.sha256"
+          printf 'Exact source copy only. No tests executed, no acceptance or runtime authority granted.\n' > "$RUNNER_TEMP/history-source/SCOPE.txt"
+          test -z "$(git status --porcelain)"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: pon-history-source-d4fe8d6f-${{ github.run_id }}
+          path: ${{ runner.temp }}/history-source
+          if-no-files-found: error
+          retention-days: 14
