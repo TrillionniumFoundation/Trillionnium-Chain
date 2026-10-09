@@ -613,7 +613,11 @@ mod actual_depletion {
         let false_wire = hex::encode(false_work.encode().unwrap());
         let mut producer = Node::open(&path.join("producer"), settings.clone(), 1).unwrap();
         let honest = producer
-            .mine(vec![], settings.genesis_time() + 10, ingress::now().unwrap())
+            .mine(
+                vec![],
+                settings.genesis_time() + 10,
+                ingress::now().unwrap(),
+            )
             .unwrap();
         let expected = producer.read_active().unwrap();
         let server = PublicServer::new(identity(71), policy()).unwrap();
@@ -633,8 +637,8 @@ mod actual_depletion {
         let (shared, signal, capture) = (owner.clone(), stop.clone(), observer.clone());
         let service = RunningService {
             stop,
-            worker: Some(thread::spawn(
-                move || match public_v3::serve_public_protected_v3_with_request_observer(
+            worker: Some(thread::spawn(move || {
+                match public_v3::serve_public_protected_v3_with_request_observer(
                     listener,
                     shared,
                     Duration::from_secs(30),
@@ -645,8 +649,8 @@ mod actual_depletion {
                 ) {
                     Ok(metrics) => json!({"metrics": metrics, "error": null}),
                     Err(error) => json!({"metrics": null, "error": error.to_string()}),
-                },
-            )),
+                }
+            })),
         };
         let epoch = Instant::now();
         let end = epoch + WINDOW;
@@ -667,24 +671,21 @@ mod actual_depletion {
                         let started = Instant::now();
                         let started_ns = elapsed_ns(epoch);
                         let caller = 80 + ((worker * 37 + attempt) % 150) as u8;
-                        let (result, transport) =
-                            public_v3::call_public_protected_v3_with_deadline(
-                                address,
-                                &Request::Submit {
-                                    packet: wire.clone(),
-                                },
-                                settings,
-                                identity(71).public_key(),
-                                &identity(caller),
-                                policy(),
-                                Some(started + CALL_LIMIT),
-                            );
+                        let (result, transport) = public_v3::call_public_protected_v3_with_deadline(
+                            address,
+                            &Request::Submit {
+                                packet: wire.clone(),
+                            },
+                            settings,
+                            identity(71).public_key(),
+                            &identity(caller),
+                            policy(),
+                            Some(started + CALL_LIMIT),
+                        );
                         let (accepted, response, error) = match result {
-                            Ok(reply) => (
-                                reply.ok,
-                                Some(serde_json::to_value(reply).unwrap()),
-                                None,
-                            ),
+                            Ok(reply) => {
+                                (reply.ok, Some(serde_json::to_value(reply).unwrap()), None)
+                            }
                             Err(error) => (false, None, Some(error.to_string())),
                         };
                         calls.push(json!({"caller_fixture": caller,
@@ -787,7 +788,9 @@ mod actual_depletion {
             && honest_use["head_on_time"] == true
             && attacks.iter().all(|worker| worker["cap_reached"] == false)
             && calls.iter().all(|call| call["accepted"] == false)
-            && metrics["work_failed"].as_u64().is_some_and(|failed| failed > 0)
+            && metrics["work_failed"]
+                .as_u64()
+                .is_some_and(|failed| failed > 0)
             && metrics["work_started"] == metrics["work_finished"]
             && metrics["mutation_cpu_clock_failures"] == 0
             && service_outcome["error"].is_null()

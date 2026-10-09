@@ -124,9 +124,17 @@ jobs:
         if: ${{ !cancelled() && steps.source.outcome == 'success' && steps.tools.outcome == 'success' }}
         run: |
           set -euo pipefail
-          cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test public_v3_request_accounting -- --show-output --test-threads=1 2>&1 | tee "$TRNM_CI_RECEIPT_DIR/accounting.log"
-          python3 scripts/ci/check_required_native_test.py "$TRNM_CI_RECEIPT_DIR/accounting.log" --test actual_depletion::actual_replay_depletion_public_recovery_and_same_epoch_reopen
-          python3 scripts/ci/check_required_native_test.py "$TRNM_CI_RECEIPT_DIR/accounting.log" --test actual_depletion::depleted_domain_serves_honest_block_during_rotating_public_false_work
+          # The original transcript validator requires exactly one named invocation.
+          # Execute all four original/current tests once, each with its own full log.
+          for selector in \
+            actual_paid_native_work_rejection_read_frames_and_partial_eof_are_attributed \
+            real_observer_capacity_overflow_does_not_refuse_concurrent_honest_reads \
+            actual_depletion::actual_replay_depletion_public_recovery_and_same_epoch_reopen \
+            actual_depletion::depleted_domain_serves_honest_block_during_rotating_public_false_work; do
+            log="$TRNM_CI_RECEIPT_DIR/accounting-${selector//::/-}.log"
+            cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test public_v3_request_accounting "$selector" -- --exact --show-output --test-threads=1 2>&1 | tee "$log"
+            python3 scripts/ci/check_required_native_test.py "$log" --test "$selector"
+          done
       - name: Reverify unchanged tested source
         if: always()
         run: |
