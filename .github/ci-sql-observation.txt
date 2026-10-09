@@ -1,0 +1,49 @@
+    #[test]
+    fn cached_delta_complete_call_observation_keeps_checks_and_results() {
+        // Warm both modes before timing. Cache capacity zero is the same
+        // candidate with statement reuse disabled, not a different validator.
+        // No speed threshold, whole-node TPS or hardware independence claim.
+        for count in [1, 257, 4096] {
+            let db = database(count, 12);
+            let expected = reference(&db).unwrap();
+            let repetitions = 50;
+            for (round, capacity) in [0, 16, 16, 0].into_iter().enumerate() {
+                db.set_prepared_statement_cache_capacity(capacity);
+                db.flush_prepared_statement_cache();
+                assert_eq!(
+                    stored_delta_root(&db, [7; 32], &mut || Ok(())).unwrap(),
+                    expected
+                );
+                let mut progress_calls = 0;
+                let started = std::time::Instant::now();
+                for _ in 0..repetitions {
+                    let actual = stored_delta_root(&db, [7; 32], &mut || {
+                        progress_calls += 1;
+                        Ok(())
+                    })
+                    .unwrap();
+                    assert_eq!(actual, expected);
+                }
+                let elapsed_ns = started.elapsed().as_nanos();
+                assert_eq!(progress_calls, repetitions * (3 + count / 256));
+                assert_eq!(reference(&db).unwrap(), expected);
+                eprintln!(
+                    "native_statement_cache_observation_v1 {}",
+                    serde_json::json!({
+                        "rows": count,
+                        "width": 12,
+                        "repetitions": repetitions,
+                        "round": round,
+                        "statement_cache_capacity": capacity,
+                        "elapsed_ns": elapsed_ns,
+                        "progress_calls": progress_calls,
+                        "delta_root": hex::encode(expected.1),
+                        "full_checks_preserved": true,
+                        "whole_node_throughput_measured": false,
+                        "independent_operator": false
+                    })
+                );
+            }
+        }
+    }
+

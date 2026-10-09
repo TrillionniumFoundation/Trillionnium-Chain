@@ -1,0 +1,151 @@
+name: PoN SQL candidate native staging
+on:
+  push:
+    branches: [staging/pon-sql-reuse-20261009]
+permissions:
+  contents: read
+jobs:
+  native:
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ubuntu-24.04, ubuntu-24.04-arm]
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 30
+    env:
+      CARGO_INCREMENTAL: "0"
+      CARGO_BUILD_JOBS: "2"
+      RUST_TEST_THREADS: "1"
+      PYTHONDONTWRITEBYTECODE: "1"
+      BASE_SOURCE: d148a4158884fe3955ce99034e050b467eb349c7
+      STAGING_SOURCE: ${{ github.sha }}
+      TARGET_FILE: trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Create exact disposable base and run original preflight before candidate edits
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/sql-stage"
+          mkdir -p "$out"
+          echo "OUT=$out" >> "$GITHUB_ENV"
+          echo "CARGO_TARGET_DIR=$RUNNER_TEMP/sql-target" >> "$GITHUB_ENV"
+          test "$(git rev-parse HEAD)" = "$STAGING_SOURCE"
+          git worktree add --detach "$RUNNER_TEMP/sql-source" "$BASE_SOURCE"
+          cd "$RUNNER_TEMP/sql-source"
+          test "$(git hash-object "$TARGET_FILE")" = 96a2cff8e1ccc18b88e1a015acedd9ee38dea111
+          bash scripts/project-preflight.sh --audit
+          git rev-parse HEAD HEAD^{tree} > "$out/base-identity.txt"
+          printf '%s\n' "$STAGING_SOURCE" > "$out/staging-source.txt"
+          git apply --check "$GITHUB_WORKSPACE/.github/ci-sql-candidate.patch"
+          git apply "$GITHUB_WORKSPACE/.github/ci-sql-candidate.patch"
+          python3 - <<'PY'
+          import os
+          from pathlib import Path
+          p=Path(os.environ['TARGET_FILE'])
+          s=p.read_text()
+          marker='    // Original full-list reader and original all-leaves root algorithm remain\n'
+          assert s.count(marker)==1
+          extra=(Path(os.environ['GITHUB_WORKSPACE'])/'.github/ci-sql-observation.txt').read_text()
+          p.write_text(s.replace(marker,extra+marker))
+          PY
+          test "$(git hash-object "$TARGET_FILE")" = ddcb11d10159cdfcb0e102ff94b87c6cf5c1f1a6
+      - name: Install original pinned compiler and generate actual formatted candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+          cd "$RUNNER_TEMP/sql-source"
+          cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all
+          test "$(git diff --name-only)" = "$TARGET_FILE"
+          cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check 2>&1 | tee "$OUT/format.log"
+          cp "$TARGET_FILE" "$OUT/native_authenticated.rs"
+          git hash-object "$TARGET_FILE" > "$OUT/candidate-blob.txt"
+          git diff --binary > "$OUT/candidate.patch"
+      - name: Run complete authenticated module and five exact new controls
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$RUNNER_TEMP/sql-source"
+          cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib store::native_authenticated:: -- --show-output --test-threads=1 2>&1 | tee "$OUT/authenticated.log"
+          grep -E '^test result: ok\. 24 passed; 0 failed; 0 ignored;' "$OUT/authenticated.log"
+          for test in cached_delta_reads_rebind_and_observe_committed_mutations cached_delta_failure_then_rollback_does_not_reuse_a_verdict cached_delta_cursor_is_released_after_cancellation cached_delta_eviction_or_disabled_cache_keeps_original_results cached_delta_complete_call_observation_keeps_checks_and_results; do
+            selector="store::native_authenticated::stored_delta_stream_tests::$test"
+            cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib "$selector" -- --exact --show-output --test-threads=1 2>&1 | tee "$OUT/$test.log"
+            python3 scripts/ci/check_required_native_test.py "$OUT/$test.log" --test "$selector"
+          done
+      - name: Keep full snapshot corruption error ancestry migration and CLI recovery suites
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$RUNNER_TEMP/sql-source"
+          for suite in store::native_authenticated_tests:: store::error_boundary_tests:: store::native_ancestry_commit_tests:: authenticated_migration; do
+            log="${suite//:/_}"
+            cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib "$suite" -- --show-output --test-threads=1 2>&1 | tee "$OUT/$log.log"
+            grep -E '^test result: ok\. [1-9][0-9]* passed; 0 failed; 0 ignored;' "$OUT/$log.log"
+          done
+          cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test continuity_authenticated --test authenticated_storage_cli -- --show-output --test-threads=1 2>&1 | tee "$OUT/recovery.log"
+      - name: Require complete native strict lint and unchanged candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$RUNNER_TEMP/sql-source"
+          cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --all-targets --all-features -- -D warnings 2>&1 | tee "$OUT/clippy.log"
+          test "$(git diff --name-only)" = "$TARGET_FILE"
+          test "$(git hash-object "$TARGET_FILE")" = "$(cat "$OUT/candidate-blob.txt")"
+          cmp "$TARGET_FILE" "$OUT/native_authenticated.rs"
+          test -z "$(git ls-files --others --exclude-standard)"
+          printf 'Staged bytes only: not committed integration, full capacity, independent operators, public security or production. No cached validity or changed resource budgets.\n' > "$OUT/SCOPE.txt"
+          sha256sum "$OUT"/*.log > "$OUT/logs.sha256"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: sql-stage-${{ matrix.runner }}
+          path: ${{ runner.temp }}/sql-stage
+          if-no-files-found: error
+          retention-days: 30
+  blob:
+    needs: native
+    runs-on: ubuntu-24.04
+    permissions:
+      actions: read
+      contents: write
+    steps:
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          pattern: sql-stage-*
+          path: evidence
+      - name: Store only identical two-platform tested bytes as a Git blob, never move a ref
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import base64,hashlib,json,os,urllib.request
+          from pathlib import Path
+          a=Path('evidence/sql-stage-ubuntu-24.04')
+          b=Path('evidence/sql-stage-ubuntu-24.04-arm')
+          data=(a/'native_authenticated.rs').read_bytes()
+          assert data==(b/'native_authenticated.rs').read_bytes()
+          sha=hashlib.sha1(b'blob '+str(len(data)).encode()+b'\0'+data).hexdigest()
+          assert sha==(a/'candidate-blob.txt').read_text().strip()==(b/'candidate-blob.txt').read_text().strip()
+          assert (a/'base-identity.txt').read_bytes()==(b/'base-identity.txt').read_bytes()
+          assert (a/'staging-source.txt').read_bytes()==(b/'staging-source.txt').read_bytes()
+          payload=json.dumps({'content':base64.b64encode(data).decode(),'encoding':'base64'}).encode()
+          req=urllib.request.Request('https://api.github.com/repos/'+os.environ['REPO']+'/git/blobs',data=payload,headers={'Authorization':'Bearer '+os.environ['GH_TOKEN'],'Accept':'application/vnd.github+json','Content-Type':'application/json'},method='POST')
+          with urllib.request.urlopen(req,timeout=60) as response:
+              result=json.load(response)
+          assert result['sha']==sha
+          Path('blob-result.json').write_text(json.dumps({'sha':sha,'bytes':len(data),'ref_updated':False},indent=2)+'\n')
+          print('tested candidate blob',sha)
+          PY
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: sql-stage-tested-blob
+          path: blob-result.json
+          if-no-files-found: error
+          retention-days: 30
