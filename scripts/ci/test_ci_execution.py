@@ -63,6 +63,116 @@ class ObservationTests(unittest.TestCase):
             self.assertEqual(observations[0]['exit_code'], 7)
             self.assertIn('retained failure', log.read_text())
 
+    def _timeout_with_term_ignoring_descendant(self, *, use_checked):
+        # Run real processes, not mocks. The descendant keeps the observer's
+        # actual stdout descriptor after its parent handles TERM and exits zero.
+        # A returned timeout must not leave that writer running.
+        import os
+        import signal
+        import time
+        with tempfile.TemporaryDirectory(prefix='trnm-ci-descendant-') as directory:
+            root = Path(directory)
+            child = root / 'child.py'
+            child.write_text(
+                'import os, signal, sys, time\n'
+                'from pathlib import Path\n'
+                'signal.signal(signal.SIGTERM, signal.SIG_IGN)\n'
+                'Path(sys.argv[1]).write_text(str(os.getpid()))\n'
+                'print("descendant-ready", flush=True)\n'
+                'deadline = time.monotonic() + 20\n'
+                'while time.monotonic() < deadline:\n'
+                '    print("descendant-output", flush=True)\n'
+                '    time.sleep(0.01)\n')
+            parent = root / 'parent.py'
+            parent.write_text(
+                'import signal, subprocess, sys, time\n'
+                'signal.signal(signal.SIGTERM, lambda *_: sys.exit(0))\n'
+                'subprocess.Popen([sys.executable, "-S", sys.argv[1], sys.argv[2]])\n'
+                'while True: time.sleep(0.01)\n')
+            pidfile = root / 'descendant.pid'
+            log = root / 'command.log'
+            # The fixture uses only stdlib; exclude unrelated site startup hooks.
+            command = [sys.executable, '-S', str(parent), str(child), str(pidfile)]
+            observations = []
+            try:
+                if use_checked:
+                    with self.assertRaisesRegex(RuntimeError, 'command exited 124'):
+                        checked(command, log, observations, timeout=1, cwd=root)
+                    result = observations[0]
+                else:
+                    from ci_observation import run
+                    result = run(command, log, timeout=1, cwd=root)
+                self.assertTrue(pidfile.is_file(), 'fixture descendant never started')
+                self.assertEqual(result['exit_code'], 124)
+                self.assertIs(result['timed_out'], True)
+                self.assertIn('descendant-ready', log.read_text())
+                # Give an already signalled descendant a scheduling turn; a
+                # surviving original writer then changes these exact log bytes.
+                time.sleep(0.05)
+                snapshot = log.read_bytes()
+                time.sleep(0.15)
+                self.assertEqual(log.read_bytes(), snapshot,
+                                 'timeout returned while its descendant still wrote the log')
+            finally:
+                # The regression must clean up even when run against the known
+                # broken baseline. SIGKILL never targets an unrelated process group.
+                if pidfile.is_file():
+                    try:
+                        os.kill(int(pidfile.read_text()), signal.SIGKILL)
+                    except ProcessLookupError:
+                        pass
+
+    def test_timeout_kills_descendant_even_when_term_exits_parent_zero(self):
+        self._timeout_with_term_ignoring_descendant(use_checked=False)
+
+    def test_checked_timeout_retains_failure_and_stops_descendant_writer(self):
+        self._timeout_with_term_ignoring_descendant(use_checked=True)
+
+    def test_real_success_child_is_not_reclassified(self):
+        with tempfile.TemporaryDirectory(prefix='trnm-ci-success-') as directory:
+            log = Path(directory) / 'success.log'
+            observations = []
+            result = checked([sys.executable, '-c', 'print("success-observed")'],
+                             log, observations)
+            self.assertEqual(result['exit_code'], 0)
+            self.assertIs(result['timed_out'], False)
+            self.assertEqual(observations, [result])
+            self.assertEqual(log.read_text(), 'success-observed\n')
+
+    def test_existing_log_is_not_overwritten_or_reused(self):
+        with tempfile.TemporaryDirectory(prefix='trnm-ci-log-owner-') as directory:
+            log = Path(directory) / 'old.log'
+            log.write_text('retained original failure\n')
+            observations = []
+            with self.assertRaises(FileExistsError):
+                checked([sys.executable, '-c', 'print("substitute pass")'], log, observations)
+            self.assertEqual(observations, [])
+            self.assertEqual(log.read_text(), 'retained original failure\n')
+
+    def test_cooperative_timeout_never_becomes_a_success(self):
+        with tempfile.TemporaryDirectory(prefix='trnm-ci-cooperative-timeout-') as directory:
+            from ci_observation import run
+            log = Path(directory) / 'timeout.log'
+            program = ('import signal, sys, time; '
+                       'signal.signal(signal.SIGTERM, lambda *_: sys.exit(0)); '
+                       'print("cooperative-ready", flush=True); time.sleep(30)')
+            result = run([sys.executable, '-S', '-c', program], log, timeout=1)
+            self.assertEqual(result['exit_code'], 124)
+            self.assertIs(result['timed_out'], True)
+            self.assertIn('cooperative-ready', log.read_text())
+
+    def test_term_ignoring_leader_still_uses_original_hard_kill(self):
+        with tempfile.TemporaryDirectory(prefix='trnm-ci-hard-timeout-') as directory:
+            from ci_observation import run
+            log = Path(directory) / 'timeout.log'
+            program = ('import signal, time; '
+                       'signal.signal(signal.SIGTERM, signal.SIG_IGN); '
+                       'print("uncooperative-ready", flush=True); time.sleep(30)')
+            result = run([sys.executable, '-S', '-c', program], log, timeout=1)
+            self.assertEqual(result['exit_code'], 124)
+            self.assertIs(result['timed_out'], True)
+            self.assertIn('uncooperative-ready', log.read_text())
+
     def test_fuzz_receipt_requires_instrumented_mutations(self):
         real_shape = ('INFO: Loaded 1 modules (123 inline 8-bit counters)\n'
                       '#100 DONE cov: 41 ft: 49 corp: 5/321b\n'

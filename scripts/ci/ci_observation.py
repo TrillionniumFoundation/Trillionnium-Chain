@@ -44,11 +44,24 @@ def run(command: list[str], log: Path, *, timeout: int = 900,
             code = process.wait(timeout=timeout)
         except subprocess.TimeoutExpired:
             timed_out = True
-            os.killpg(process.pid, signal.SIGTERM)
             try:
-                process.wait(timeout=10)
-            except subprocess.TimeoutExpired:
-                os.killpg(process.pid, signal.SIGKILL)
+                try:
+                    os.killpg(process.pid, signal.SIGTERM)
+                except ProcessLookupError:
+                    pass
+                try:
+                    process.wait(timeout=10)
+                except subprocess.TimeoutExpired:
+                    pass
+            finally:
+                # Waiting for the leader does not wait for its process group.
+                # Even a TERM handler that exits zero can leave descendants
+                # holding this log open. Always signal the timed-out group;
+                # never turn the leader's graceful exit into a successful run.
+                try:
+                    os.killpg(process.pid, signal.SIGKILL)
+                except ProcessLookupError:
+                    pass
                 process.wait()
             code = 124
     return {'command': command, 'cwd': str(cwd), 'exit_code': code,
