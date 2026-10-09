@@ -63,6 +63,10 @@ struct NativeBlock {
 }
 type StoredBlockRow = (Option<Vec<u8>>, u64, Vec<u8>, Option<Vec<u8>>, Vec<u8>);
 
+// Reuse only SQLite statement bytecode in the connection's existing bounded
+// cache. Every invocation rebinds parameters and rereads the current rows;
+// none of the record, packet, delta, ancestry or state verdicts is cached.
+
 fn local<T>(result: Result<T>) -> Result<T> {
     result.map_err(Error::local_integrity)
 }
@@ -74,10 +78,11 @@ fn complete(settings: &Settings, state: &State) -> Result<StateCommitment> {
 
 fn native_block(db: &Connection, settings: &Settings, id: Hash) -> Result<NativeBlock> {
     local((|| {
-        let (parent, height, work, packet, state): StoredBlockRow = db.query_row(
-            "SELECT parent,height,chainwork,CASE WHEN typeof(packet)='blob' THEN substr(packet,1,1048577) ELSE packet END AS packet,state_root FROM blocks WHERE id=?",
-            [id.as_slice()],
-            |row| {
+        let (parent, height, work, packet, state): StoredBlockRow = db
+            .prepare_cached(
+                "SELECT parent,height,chainwork,CASE WHEN typeof(packet)='blob' THEN substr(packet,1,1048577) ELSE packet END AS packet,state_root FROM blocks WHERE id=?",
+            )?
+            .query_row([id.as_slice()], |row| {
                 Ok((
                     row.get(0)?,
                     row.get(1)?,
@@ -85,8 +90,7 @@ fn native_block(db: &Connection, settings: &Settings, id: Hash) -> Result<Native
                     row.get(3)?,
                     row.get(4)?,
                 ))
-            },
-        )?;
+            })?;
         let parent = parent.map(bytes32).transpose()?;
         let state = bytes32(state)?;
         let work = consensus::Work::from_bytes(bytes64(work)?);
@@ -119,11 +123,9 @@ fn native_block(db: &Connection, settings: &Settings, id: Hash) -> Result<Native
                 && h.transactions == sequence_root("transactions", &packet.transactions),
             "NATIVE_STATE_PACKET",
         )?;
-        let (parent_height, parent_work): (u64, Vec<u8>) = db.query_row(
-            "SELECT height,chainwork FROM blocks WHERE id=?",
-            [h.parent.as_slice()],
-            |row| Ok((row.get(0)?, row.get(1)?)),
-        )?;
+        let (parent_height, parent_work): (u64, Vec<u8>) = db
+            .prepare_cached("SELECT height,chainwork FROM blocks WHERE id=?")?
+            .query_row([h.parent.as_slice()], |row| Ok((row.get(0)?, row.get(1)?)))?;
         ensure(
             parent_height.checked_add(1) == Some(height)
                 && consensus::Work::from_bytes(bytes64(parent_work)?)
@@ -160,7 +162,7 @@ fn visit_deltas(
     mut visit: impl FnMut(Delta) -> Result<()>,
 ) -> Result<usize> {
     progress()?;
-    let mut statement = local(db.prepare(DELTA_ROWS_SQL).map_err(Error::from))?;
+    let mut statement = local(db.prepare_cached(DELTA_ROWS_SQL).map_err(Error::from))?;
     let mut rows = local(statement.query([id.as_slice()]).map_err(Error::from))?;
     let mut previous: Option<String> = None;
     let mut count = 0usize;
@@ -421,11 +423,10 @@ fn save(db: &Connection, record: &mut Record) -> Result<()> {
 pub(crate) fn load(db: &Connection, id: Hash) -> Result<Record> {
     local((|| {
         let bytes: Vec<u8> = db
-            .query_row(
-                "SELECT substr(data,1,?) FROM native_state_commitments WHERE block=?",
-                params![MAX_RECORD_BYTES + 1, id.as_slice()],
-                |row| row.get(0),
-            )
+            .prepare_cached("SELECT substr(data,1,?) FROM native_state_commitments WHERE block=?")?
+            .query_row(params![MAX_RECORD_BYTES + 1, id.as_slice()], |row| {
+                row.get(0)
+            })
             .optional()?
             .ok_or("NATIVE_STATE_MISSING")?;
         ensure(bytes.len() <= MAX_RECORD_BYTES, "NATIVE_STATE_RECORD_LIMIT")?;
@@ -525,11 +526,9 @@ pub(crate) fn verify_history(
             }
             None => {
                 let bytes: Vec<u8> = db
-                    .query_row(
-                        "SELECT state FROM snapshots WHERE block=?",
-                        [current.as_slice()],
-                        |row| row.get(0),
-                    )
+                    .prepare_cached("SELECT state FROM snapshots WHERE block=?")
+                    .map_err(|error| Error::from(error).local_integrity())?
+                    .query_row([current.as_slice()], |row| row.get(0))
                     .map_err(|error| Error::from(error).local_integrity())?;
                 let state: State = serde_json::from_slice(&bytes)
                     .map_err(|error| Error::from(error).local_integrity())?;
@@ -1050,6 +1049,156 @@ mod stored_delta_stream_tests {
         drop(insert);
         db.execute_batch("COMMIT").unwrap();
         db
+    }
+
+    #[test]
+    fn cached_delta_reads_rebind_and_observe_committed_mutations() {
+        let db = database(3, 0);
+        let original = reference(&db).unwrap();
+        assert_eq!(
+            stored_delta_root(&db, [7; 32], &mut || Ok(())).unwrap(),
+            original
+        );
+        assert_eq!(
+            stored_delta_root(&db, [8; 32], &mut || Ok(())).unwrap(),
+            (0, delta_root(&[]).unwrap())
+        );
+        db.execute(
+            "UPDATE deltas SET after=? WHERE key='key-000000'",
+            [b"null".as_slice()],
+        )
+        .unwrap();
+        let changed = stored_delta_root(&db, [7; 32], &mut || Ok(())).unwrap();
+        assert_ne!(changed, original);
+        assert_eq!(changed, reference(&db).unwrap());
+        assert_eq!(
+            stored_delta_root(&db, [8; 32], &mut || Ok(())).unwrap().0,
+            0
+        );
+    }
+
+    #[test]
+    fn cached_delta_failure_then_rollback_does_not_reuse_a_verdict() {
+        let db = database(1, 0);
+        let original = stored_delta_root(&db, [7; 32], &mut || Ok(())).unwrap();
+        db.execute_batch("SAVEPOINT corrupt; UPDATE deltas SET before='null'")
+            .unwrap();
+        let error = stored_delta_root(&db, [7; 32], &mut || Ok(())).unwrap_err();
+        assert!(error.requires_owner_stop());
+        db.execute_batch("ROLLBACK TO corrupt; RELEASE corrupt")
+            .unwrap();
+        assert_eq!(
+            stored_delta_root(&db, [7; 32], &mut || Ok(())).unwrap(),
+            original
+        );
+        db.execute("UPDATE deltas SET after=?", [vec![b'x'; 4097]])
+            .unwrap();
+        let error = stored_delta_root(&db, [7; 32], &mut || Ok(())).unwrap_err();
+        assert_eq!(error.to_string(), "NATIVE_STATE_DELTA_LIMIT");
+        assert!(error.requires_owner_stop());
+    }
+
+    #[test]
+    fn cached_delta_cursor_is_released_after_cancellation() {
+        let db = database(513, 0);
+        let expected = reference(&db).unwrap();
+        let mut calls = 0;
+        let error = stored_delta_root(&db, [7; 32], &mut || {
+            calls += 1;
+            if calls == 2 {
+                Err("CACHED_DELTA_CANCELLED".into())
+            } else {
+                Ok(())
+            }
+        })
+        .unwrap_err();
+        assert_eq!(error.to_string(), "CACHED_DELTA_CANCELLED");
+        assert!(!error.requires_owner_stop());
+        assert_eq!(
+            stored_delta_root(&db, [7; 32], &mut || Ok(())).unwrap(),
+            expected
+        );
+        db.execute(
+            "UPDATE deltas SET after=? WHERE key='key-000000'",
+            [b"0".as_slice()],
+        )
+        .unwrap();
+        assert_eq!(
+            stored_delta_root(&db, [7; 32], &mut || Ok(())).unwrap(),
+            reference(&db).unwrap()
+        );
+    }
+
+    #[test]
+    fn cached_delta_eviction_or_disabled_cache_keeps_original_results() {
+        let db = database(257, 0);
+        let expected = reference(&db).unwrap();
+        for capacity in [0, 1, 16] {
+            db.set_prepared_statement_cache_capacity(capacity);
+            for _ in 0..3 {
+                assert_eq!(
+                    stored_delta_root(&db, [7; 32], &mut || Ok(())).unwrap(),
+                    expected
+                );
+                db.prepare_cached("SELECT 1")
+                    .unwrap()
+                    .query_row([], |row| row.get::<_, i64>(0))
+                    .unwrap();
+                assert_eq!(
+                    stored_delta_root(&db, [8; 32], &mut || Ok(())).unwrap().0,
+                    0
+                );
+            }
+        }
+    }
+
+    #[test]
+    fn cached_delta_complete_call_observation_keeps_checks_and_results() {
+        // Warm both modes before timing. Cache capacity zero is the same
+        // candidate with statement reuse disabled, not a different validator.
+        // No speed threshold, whole-node TPS or hardware independence claim.
+        for count in [1, 257, 4096] {
+            let db = database(count, 12);
+            let expected = reference(&db).unwrap();
+            let repetitions = 50;
+            for (round, capacity) in [0, 16, 16, 0].into_iter().enumerate() {
+                db.set_prepared_statement_cache_capacity(capacity);
+                db.flush_prepared_statement_cache();
+                assert_eq!(
+                    stored_delta_root(&db, [7; 32], &mut || Ok(())).unwrap(),
+                    expected
+                );
+                let mut progress_calls = 0;
+                let started = std::time::Instant::now();
+                for _ in 0..repetitions {
+                    let actual = stored_delta_root(&db, [7; 32], &mut || {
+                        progress_calls += 1;
+                        Ok(())
+                    })
+                    .unwrap();
+                    assert_eq!(actual, expected);
+                }
+                let elapsed_ns = started.elapsed().as_nanos();
+                assert_eq!(progress_calls, repetitions * (3 + count / 256));
+                assert_eq!(reference(&db).unwrap(), expected);
+                eprintln!(
+                    "native_statement_cache_observation_v1 {}",
+                    serde_json::json!({
+                        "rows": count,
+                        "width": 12,
+                        "repetitions": repetitions,
+                        "round": round,
+                        "statement_cache_capacity": capacity,
+                        "elapsed_ns": elapsed_ns,
+                        "progress_calls": progress_calls,
+                        "delta_root": hex::encode(expected.1),
+                        "full_checks_preserved": true,
+                        "whole_node_throughput_measured": false,
+                        "independent_operator": false
+                    })
+                );
+            }
+        }
     }
 
     // Original full-list reader and original all-leaves root algorithm remain
