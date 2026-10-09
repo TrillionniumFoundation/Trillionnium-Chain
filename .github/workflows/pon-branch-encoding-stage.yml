@@ -1,0 +1,195 @@
+name: PoN branch encoding staged validation
+on:
+  push:
+    branches: [perf/pon-branch-encoding-stage-20261009]
+    paths: [.github/workflows/pon-branch-encoding-stage.yml]
+permissions:
+  contents: read
+jobs:
+  stage:
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ubuntu-24.04, ubuntu-24.04-arm]
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 25
+    permissions:
+      contents: write
+    env:
+      CARGO_INCREMENTAL: "0"
+      CARGO_BUILD_JOBS: "2"
+      RUST_TEST_THREADS: "1"
+      PYTHONDONTWRITEBYTECODE: "1"
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify exact unmodified baseline before candidate generation
+        run: |
+          set -euo pipefail
+          mkdir "$RUNNER_TEMP/branch-encoding"
+          git rev-parse HEAD HEAD^{tree} > "$RUNNER_TEMP/branch-encoding/stage-source.txt"
+          test "$(git rev-parse HEAD^)" = 9f5ebd9283457358fcec067fe0452005fa232b42
+          git diff --exit-code
+          bash scripts/project-preflight.sh --audit
+      - name: Generate two exact bounded candidate files without changing validation rules
+        run: |
+          python3 - <<'PY'
+          import hashlib
+          from pathlib import Path
+          a=Path('trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs')
+          b=a.parent/'account_archive_prototype/native_primitive_tests.rs'
+          def blob(data): return hashlib.sha1(b'blob '+str(len(data)).encode()+b'\0'+data).hexdigest()
+          assert blob(a.read_bytes())=='4288f23e49db89b9b3d0f1a61011240431bb1bb7'
+          assert blob(b.read_bytes())=='2376d7d90c54ade7c751dc76612f87c9d0bee935'
+          old='''fn branch(left: Hash, right: Hash) -> Hash {
+              hash(b"account-archive-branch-v1", &[&left, &right])
+          }'''
+          new=r'''fn branch(left: Hash, right: Hash) -> Hash {
+              use sha2::Digest;
+              // Exactly the existing pon_wire::hash preimage: domain, u16 tag length,
+              // tag, u32 left length, left, u32 right length, right. Only the fixed-width
+              // encoding is combined; no hash, ancestor or persisted-byte check is cached.
+              let mut encoded = [0u8; 109];
+              encoded[..41].copy_from_slice(b"TRNM-PON1\0\x19\0account-archive-branch-v1\x20\0\0\0");
+              encoded[41..73].copy_from_slice(&left);
+              encoded[73..77].copy_from_slice(&32u32.to_le_bytes());
+              encoded[77..].copy_from_slice(&right);
+              sha2::Sha256::digest(encoded).into()
+          }'''
+          s=a.read_text(); assert s.count(old)==1; a.write_text(s.replace(old,new))
+          b.write_text(b.read_text()+r'''
+
+          // Freeze the pre-optimization branch grammar independently of branch().
+          fn wire_branch_reference(left: Hash, right: Hash) -> Hash {
+              hash(b"account-archive-branch-v1", &[&left, &right])
+          }
+
+          #[test]
+          fn native_branch_single_buffer_matches_original_wire() {
+              for bit_index in 0..512usize {
+                  let mut left = [0u8; 32];
+                  let mut right = [0u8; 32];
+                  if bit_index < 256 {
+                      left[bit_index / 8] = 1 << (bit_index % 8);
+                  } else {
+                      right[(bit_index - 256) / 8] = 1 << (bit_index % 8);
+                  }
+                  for (left, right) in [(left, right), (right, left)] {
+                      assert_eq!(branch(left, right), wire_branch_reference(left, right));
+                  }
+              }
+              for index in 0..1024u64 {
+                  let left = hash(b"branch-encoding-left-fixture", &[&index.to_le_bytes()]);
+                  let right = hash(b"branch-encoding-right-fixture", &[&index.to_le_bytes()]);
+                  assert_eq!(branch(left, right), wire_branch_reference(left, right));
+                  assert_eq!(branch(right, left), wire_branch_reference(right, left));
+              }
+              for left in [[0; 32], [0xff; 32], [0x80; 32]] {
+                  for right in [[0; 32], [0xff; 32], [0x01; 32]] {
+                      assert_eq!(branch(left, right), wire_branch_reference(left, right));
+                  }
+              }
+          }
+
+          #[test]
+          fn native_branch_single_buffer_preserves_every_lift_depth() {
+              let mut original_empty = [[0; 32]; 257];
+              original_empty[256] = hash(b"account-archive-empty-v1", &[]);
+              for depth in (0..256).rev() {
+                  original_empty[depth] = wire_branch_reference(original_empty[depth + 1], original_empty[depth + 1]);
+              }
+              assert_eq!(empty_hashes(), original_empty);
+              for index in 0..8u64 {
+                  let node = Node::account(hash(b"branch-lift-owner-fixture", &[&index.to_le_bytes()]), Account { balance: index, nonce: u64::MAX - index });
+                  for depth in 0..=256 {
+                      let mut reference = node.digest;
+                      for position in (depth..node.depth).rev() {
+                          reference = if bit(&node.path, position) {
+                              wire_branch_reference(original_empty[position + 1], reference)
+                          } else {
+                              wire_branch_reference(reference, original_empty[position + 1])
+                          };
+                      }
+                      assert_eq!(node.lift(depth, &original_empty), reference);
+                  }
+              }
+          }
+
+          #[test]
+          #[ignore = "explicit release branch hashing observation; not Node or WAN throughput"]
+          fn native_branch_single_buffer_cost_observation() {
+              assert!(!cfg!(debug_assertions), "release comparison required");
+              let implementations: [fn(Hash, Hash) -> Hash; 2] = [wire_branch_reference, branch];
+              for pair in 0..8usize {
+                  let mut checksums = [[0u8; 32]; 2];
+                  for arm in if pair % 2 == 0 { [0, 1] } else { [1, 0] } {
+                      let mut value = [0x5au8; 32];
+                      let start = Instant::now();
+                      for index in 0..65536u64 {
+                          let mut right = [0xa5u8; 32];
+                          right[..8].copy_from_slice(&index.to_le_bytes());
+                          value = std::hint::black_box(implementations[arm](std::hint::black_box(value), std::hint::black_box(right)));
+                      }
+                      let elapsed_ns = start.elapsed().as_nanos();
+                      checksums[arm] = value;
+                      eprintln!("pon_branch_encoding_cost_v1 {}", json!({"pair":pair,"arm":if arm == 0 {"wire-reference"} else {"single-buffer"},"branch_hashes":65536,"elapsed_ns":elapsed_ns,"checksum":hex::encode(value),"whole_node_performance_qualified":false}));
+                  }
+                  assert_eq!(checksums[0], checksums[1]);
+              }
+          }
+          ''')
+          PY
+      - name: Install pinned toolchain and format candidate only
+        run: |
+          set -euo pipefail
+          rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+          cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all
+          git diff --stat
+          python3 - <<'PY'
+          import subprocess
+          assert set(subprocess.check_output(['git','diff','--name-only'],text=True).splitlines()) == {'trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs','trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_primitive_tests.rs'}
+          PY
+          git diff --binary > "$RUNNER_TEMP/branch-encoding/candidate.patch"
+      - name: Run complete retained primitive controls and strict lint
+        run: |
+          set -euo pipefail
+          cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib account_archive_prototype::native_primitive_tests -- --show-output --test-threads=1 2>&1 | tee "$RUNNER_TEMP/branch-encoding/primitive.log"
+          cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --all-targets --all-features -- -D warnings 2>&1 | tee "$RUNNER_TEMP/branch-encoding/clippy.log"
+      - name: Execute exact comparison, native batch and migration controls
+        run: |
+          set -euo pipefail
+          selector=account_archive_prototype::native_primitive_tests::native_branch_single_buffer_cost_observation
+          cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib "$selector" -- --exact --ignored --show-output --test-threads=1 2>&1 | tee "$RUNNER_TEMP/branch-encoding/cost.log"
+          python3 scripts/ci/check_required_native_test.py "$RUNNER_TEMP/branch-encoding/cost.log" --test "$selector"
+          cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib account_archive_prototype::native_store::batch_tests -- --show-output --test-threads=1 2>&1 | tee "$RUNNER_TEMP/branch-encoding/batch.log"
+          cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib migration -- --show-output --test-threads=1 2>&1 | tee "$RUNNER_TEMP/branch-encoding/migration.log"
+      - name: Store exact formatted candidate blobs without updating any branch
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 - <<'PY'
+          import base64, hashlib, json, os, subprocess, urllib.request
+          from pathlib import Path
+          out=Path(os.environ['RUNNER_TEMP'])/'branch-encoding'
+          result={'stage_commit':subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),'base_commit':'9f5ebd9283457358fcec067fe0452005fa232b42','final_source_acceptance':False,'files':[]}
+          for path in ['trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs','trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_primitive_tests.rs']:
+              data=Path(path).read_bytes()
+              sha=hashlib.sha1(b'blob '+str(len(data)).encode()+b'\0'+data).hexdigest()
+              request=urllib.request.Request('https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs',data=json.dumps({'encoding':'base64','content':base64.b64encode(data).decode()}).encode(),headers={'Authorization':'Bearer '+os.environ['GH_TOKEN'],'Accept':'application/vnd.github+json','Content-Type':'application/json'},method='POST')
+              with urllib.request.urlopen(request,timeout=60) as response: record=json.load(response)
+              assert record['sha']==sha
+              result['files'].append({'path':path,'blob':sha,'sha256':hashlib.sha256(data).hexdigest(),'bytes':len(data)})
+              destination=out/Path(path).name; destination.write_bytes(data)
+          (out/'candidate-blobs.json').write_text(json.dumps(result,indent=2)+'\n')
+          print(json.dumps(result))
+          PY
+      - name: Preserve every stage result, not final-source or full-capacity acceptance
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: branch-encoding-stage-${{ matrix.runner }}-${{ github.sha }}
+          path: ${{ runner.temp }}/branch-encoding/
+          if-no-files-found: error
+          retention-days: 30
