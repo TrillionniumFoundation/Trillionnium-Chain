@@ -386,6 +386,13 @@ fn native_authenticated_full_capacity_refund_entry_and_pending_reorganization_re
         panic!("the full 65,536-key native acceptance gate requires --release --exact --ignored");
     }
     let started = std::time::Instant::now();
+    // BEGIN PON_CAPACITY_PHASE_V1
+    let pon_phase_clock_0 = std::time::Instant::now();
+    eprintln!(
+        "pon_capacity_phase_v1 {}",
+        json!({"event":"begin","phase":"genesis_and_both_nodes_open","height":0,"elapsed_seconds":0.0})
+    );
+    // END PON_CAPACITY_PHASE_V1
     let mut settings = Settings::development_with_profiles(
         Some(1),
         "native-public-evaluation-dev-v1",
@@ -434,6 +441,12 @@ fn native_authenticated_full_capacity_refund_entry_and_pending_reorganization_re
     let mut validator =
         NativeNode::open_with_authenticated_state(&validator_directory, settings.clone(), 1)
             .unwrap();
+    // BEGIN PON_CAPACITY_PHASE_V1
+    eprintln!(
+        "pon_capacity_phase_v1 {}",
+        json!({"event":"end","phase":"genesis_and_both_nodes_open","height":0,"elapsed_seconds":pon_phase_clock_0.elapsed().as_secs_f64()})
+    );
+    // END PON_CAPACITY_PHASE_V1
     let miner = crate::development_public(0).unwrap();
     let miner_key = format!("account:{}", hex::encode(miner));
     let consumer = crate::development_public(1).unwrap();
@@ -466,6 +479,13 @@ fn native_authenticated_full_capacity_refund_entry_and_pending_reorganization_re
         started.elapsed()
     );
     for height in 1..=20u64 {
+        // BEGIN PON_CAPACITY_PHASE_V1
+        let pon_phase_clock_1 = std::time::Instant::now();
+        eprintln!(
+            "pon_capacity_phase_v1 {}",
+            json!({"event":"begin","phase":"producer_make","height":height,"elapsed_seconds":0.0})
+        );
+        // END PON_CAPACITY_PHASE_V1
         let packet = producer
             .make_consensus_maintenance(
                 producer.active().unwrap().0,
@@ -479,15 +499,80 @@ fn native_authenticated_full_capacity_refund_entry_and_pending_reorganization_re
                 4096,
             )
             .unwrap();
+        // BEGIN PON_CAPACITY_PHASE_V1
+        eprintln!(
+            "pon_capacity_phase_v1 {}",
+            json!({"event":"end","phase":"producer_make","height":height,"elapsed_seconds":pon_phase_clock_1.elapsed().as_secs_f64()})
+        );
+        // END PON_CAPACITY_PHASE_V1
+        // BEGIN PON_CAPACITY_PHASE_V1
+        let pon_phase_clock_2 = std::time::Instant::now();
+        eprintln!(
+            "pon_capacity_phase_v1 {}",
+            json!({"event":"begin","phase":"producer_admit","height":height,"elapsed_seconds":0.0})
+        );
+        // END PON_CAPACITY_PHASE_V1
         let id = producer.admit(&packet, 100_000).unwrap();
+        // BEGIN PON_CAPACITY_PHASE_V1
+        eprintln!(
+            "pon_capacity_phase_v1 {}",
+            json!({"event":"end","phase":"producer_admit","height":height,"elapsed_seconds":pon_phase_clock_2.elapsed().as_secs_f64()})
+        );
+        // END PON_CAPACITY_PHASE_V1
+        // BEGIN PON_CAPACITY_PHASE_V1
+        let pon_phase_clock_3 = std::time::Instant::now();
+        eprintln!(
+            "pon_capacity_phase_v1 {}",
+            json!({"event":"begin","phase":"producer_activate","height":height,"elapsed_seconds":0.0})
+        );
+        // END PON_CAPACITY_PHASE_V1
         producer.activate(id).unwrap();
+        // BEGIN PON_CAPACITY_PHASE_V1
+        eprintln!(
+            "pon_capacity_phase_v1 {}",
+            json!({"event":"end","phase":"producer_activate","height":height,"elapsed_seconds":pon_phase_clock_3.elapsed().as_secs_f64()})
+        );
+        // END PON_CAPACITY_PHASE_V1
+        // BEGIN PON_CAPACITY_PHASE_V1
+        let pon_phase_clock_4 = std::time::Instant::now();
+        eprintln!(
+            "pon_capacity_phase_v1 {}",
+            json!({"event":"begin","phase":"validator_admit","height":height,"elapsed_seconds":0.0})
+        );
+        // END PON_CAPACITY_PHASE_V1
         assert_eq!(validator.admit(&packet, 100_000).unwrap(), id);
+        // BEGIN PON_CAPACITY_PHASE_V1
+        eprintln!(
+            "pon_capacity_phase_v1 {}",
+            json!({"event":"end","phase":"validator_admit","height":height,"elapsed_seconds":pon_phase_clock_4.elapsed().as_secs_f64()})
+        );
+        // END PON_CAPACITY_PHASE_V1
+        // BEGIN PON_CAPACITY_PHASE_V1
+        let pon_phase_clock_5 = std::time::Instant::now();
+        eprintln!(
+            "pon_capacity_phase_v1 {}",
+            json!({"event":"begin","phase":"validator_activate","height":height,"elapsed_seconds":0.0})
+        );
+        // END PON_CAPACITY_PHASE_V1
         assert_eq!(validator.activate(id).unwrap(), id);
+        // BEGIN PON_CAPACITY_PHASE_V1
+        eprintln!(
+            "pon_capacity_phase_v1 {}",
+            json!({"event":"end","phase":"validator_activate","height":height,"elapsed_seconds":pon_phase_clock_5.elapsed().as_secs_f64()})
+        );
+        // END PON_CAPACITY_PHASE_V1
         eprintln!(
             "authenticated full capacity: actual admitted height {height}, elapsed {:?}",
             started.elapsed()
         );
     }
+    // BEGIN PON_CAPACITY_PHASE_V1
+    let pon_phase_clock_6 = std::time::Instant::now();
+    eprintln!(
+        "pon_capacity_phase_v1 {}",
+        json!({"event":"begin","phase":"h20_full_state_and_capacity_checks","height":20,"elapsed_seconds":0.0})
+    );
+    // END PON_CAPACITY_PHASE_V1
     let full = validator.read_active().unwrap();
     assert_eq!(full, producer.read_active().unwrap());
     assert_eq!(full.2.len(), continuity_v1::MAX_KEYS);
@@ -498,11 +583,24 @@ fn native_authenticated_full_capacity_refund_entry_and_pending_reorganization_re
         continuity_v1::MAX_KEYS
     );
     assert_eq!(full.2[&dormant]["nonce"], 7);
+    // BEGIN PON_CAPACITY_PHASE_V1
+    eprintln!(
+        "pon_capacity_phase_v1 {}",
+        json!({"event":"end","phase":"h20_full_state_and_capacity_checks","height":20,"elapsed_seconds":pon_phase_clock_6.elapsed().as_secs_f64()})
+    );
+    // END PON_CAPACITY_PHASE_V1
     let recipient = crate::development_public(4).unwrap();
     let recipient_key = format!("account:{}", hex::encode(recipient));
     let mut payload = recipient.to_vec();
     payload.extend(1u64.to_le_bytes());
     let enter = signed(&settings, 2, 1, payload);
+    // BEGIN PON_CAPACITY_PHASE_V1
+    let pon_phase_clock_7 = std::time::Instant::now();
+    eprintln!(
+        "pon_capacity_phase_v1 {}",
+        json!({"event":"begin","phase":"h21_growth_rejection_and_rollback_checks","height":21,"elapsed_seconds":0.0})
+    );
+    // END PON_CAPACITY_PHASE_V1
     // The h21 refund consumes no new key, but its expired quota row cannot be
     // reclaimed until h22. Rejected optional growth rolls back that prologue.
     assert_eq!(
@@ -514,6 +612,19 @@ fn native_authenticated_full_capacity_refund_entry_and_pending_reorganization_re
     );
     assert_eq!(validator.read_active().unwrap(), full);
     assert_eq!(validator.next_nonce(miner).unwrap(), 2);
+    // BEGIN PON_CAPACITY_PHASE_V1
+    eprintln!(
+        "pon_capacity_phase_v1 {}",
+        json!({"event":"end","phase":"h21_growth_rejection_and_rollback_checks","height":21,"elapsed_seconds":pon_phase_clock_7.elapsed().as_secs_f64()})
+    );
+    // END PON_CAPACITY_PHASE_V1
+    // BEGIN PON_CAPACITY_PHASE_V1
+    let pon_phase_clock_8 = std::time::Instant::now();
+    eprintln!(
+        "pon_capacity_phase_v1 {}",
+        json!({"event":"begin","phase":"h21_refund_and_state_checks","height":21,"elapsed_seconds":0.0})
+    );
+    // END PON_CAPACITY_PHASE_V1
     let packet = producer
         .make_consensus_maintenance(full.0, vec![], miner, 211, 4096)
         .unwrap();
@@ -539,6 +650,19 @@ fn native_authenticated_full_capacity_refund_entry_and_pending_reorganization_re
             + mature
             + full.2[&quota_key]["remaining"].as_u64().unwrap()
     );
+    // BEGIN PON_CAPACITY_PHASE_V1
+    eprintln!(
+        "pon_capacity_phase_v1 {}",
+        json!({"event":"end","phase":"h21_refund_and_state_checks","height":21,"elapsed_seconds":pon_phase_clock_8.elapsed().as_secs_f64()})
+    );
+    // END PON_CAPACITY_PHASE_V1
+    // BEGIN PON_CAPACITY_PHASE_V1
+    let pon_phase_clock_9 = std::time::Instant::now();
+    eprintln!(
+        "pon_capacity_phase_v1 {}",
+        json!({"event":"begin","phase":"h22_reentry_state_and_membership_proof","height":22,"elapsed_seconds":0.0})
+    );
+    // END PON_CAPACITY_PHASE_V1
     let packet = producer
         .make_consensus_maintenance(refunded_id, vec![enter], miner, 221, 4096)
         .unwrap();
@@ -574,6 +698,19 @@ fn native_authenticated_full_capacity_refund_entry_and_pending_reorganization_re
             nonce: 0
         })
     );
+    // BEGIN PON_CAPACITY_PHASE_V1
+    eprintln!(
+        "pon_capacity_phase_v1 {}",
+        json!({"event":"end","phase":"h22_reentry_state_and_membership_proof","height":22,"elapsed_seconds":pon_phase_clock_9.elapsed().as_secs_f64()})
+    );
+    // END PON_CAPACITY_PHASE_V1
+    // BEGIN PON_CAPACITY_PHASE_V1
+    let pon_phase_clock_10 = std::time::Instant::now();
+    eprintln!(
+        "pon_capacity_phase_v1 {}",
+        json!({"event":"begin","phase":"side_branch_construction_and_admission","height":23,"elapsed_seconds":0.0})
+    );
+    // END PON_CAPACITY_PHASE_V1
     // A real equal-work side block remains unselected. Only its strictly
     // heavier child starts the ordinary resumable reorganization.
     let fork22 = producer
@@ -587,6 +724,19 @@ fn native_authenticated_full_capacity_refund_entry_and_pending_reorganization_re
         .unwrap();
     let fork23_id = producer.admit(&fork23, 100_000).unwrap();
     assert_eq!(validator.admit(&fork23, 100_000).unwrap(), fork23_id);
+    // BEGIN PON_CAPACITY_PHASE_V1
+    eprintln!(
+        "pon_capacity_phase_v1 {}",
+        json!({"event":"end","phase":"side_branch_construction_and_admission","height":23,"elapsed_seconds":pon_phase_clock_10.elapsed().as_secs_f64()})
+    );
+    // END PON_CAPACITY_PHASE_V1
+    // BEGIN PON_CAPACITY_PHASE_V1
+    let pon_phase_clock_11 = std::time::Instant::now();
+    eprintln!(
+        "pon_capacity_phase_v1 {}",
+        json!({"event":"begin","phase":"reorganization_fault_and_old_state_check","height":23,"elapsed_seconds":0.0})
+    );
+    // END PON_CAPACITY_PHASE_V1
     let mut cuts = 0;
     let error = validator
         .activate_with_fault(
@@ -604,7 +754,20 @@ fn native_authenticated_full_capacity_refund_entry_and_pending_reorganization_re
     assert_eq!(error.to_string(), "AUTHENTICATED_FULL_CAPACITY_REORG_CUT");
     assert_eq!(cuts, 1);
     assert_eq!(validator.read_active().unwrap(), entered);
+    // BEGIN PON_CAPACITY_PHASE_V1
+    eprintln!(
+        "pon_capacity_phase_v1 {}",
+        json!({"event":"end","phase":"reorganization_fault_and_old_state_check","height":23,"elapsed_seconds":pon_phase_clock_11.elapsed().as_secs_f64()})
+    );
+    // END PON_CAPACITY_PHASE_V1
     drop(validator);
+    // BEGIN PON_CAPACITY_PHASE_V1
+    let pon_phase_clock_12 = std::time::Instant::now();
+    eprintln!(
+        "pon_capacity_phase_v1 {}",
+        json!({"event":"begin","phase":"first_cold_reopen_recovery_and_proof","height":23,"elapsed_seconds":0.0})
+    );
+    // END PON_CAPACITY_PHASE_V1
     let validator =
         NativeNode::open_with_authenticated_state(&validator_directory, settings.clone(), 1)
             .unwrap();
@@ -641,9 +804,28 @@ fn native_authenticated_full_capacity_refund_entry_and_pending_reorganization_re
         validator.packet(entered_id).unwrap().header.state,
         root(&entered.2).unwrap()
     );
+    // BEGIN PON_CAPACITY_PHASE_V1
+    eprintln!(
+        "pon_capacity_phase_v1 {}",
+        json!({"event":"end","phase":"first_cold_reopen_recovery_and_proof","height":23,"elapsed_seconds":pon_phase_clock_12.elapsed().as_secs_f64()})
+    );
+    // END PON_CAPACITY_PHASE_V1
     drop(validator);
+    // BEGIN PON_CAPACITY_PHASE_V1
+    let pon_phase_clock_13 = std::time::Instant::now();
+    eprintln!(
+        "pon_capacity_phase_v1 {}",
+        json!({"event":"begin","phase":"second_cold_reopen_final_state_check","height":23,"elapsed_seconds":0.0})
+    );
+    // END PON_CAPACITY_PHASE_V1
     let reopened =
         NativeNode::open_with_authenticated_state(&validator_directory, settings, 1).unwrap();
     assert_eq!(reopened.read_active().unwrap(), recovered);
+    // BEGIN PON_CAPACITY_PHASE_V1
+    eprintln!(
+        "pon_capacity_phase_v1 {}",
+        json!({"event":"end","phase":"second_cold_reopen_final_state_check","height":23,"elapsed_seconds":pon_phase_clock_13.elapsed().as_secs_f64()})
+    );
+    // END PON_CAPACITY_PHASE_V1
     eprintln!("authenticated full capacity: accepted_native_packets=24, signed_transactions=2, rejected_growth=1, full_keys=65536, quota_refund=1, recipient_reentry=1, reorg_cut=detach:0, cold_reopens=2, synthetic_preallocated_genesis=true, elapsed {:?}", started.elapsed());
 }

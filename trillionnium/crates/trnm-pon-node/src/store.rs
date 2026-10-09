@@ -3177,7 +3177,13 @@ impl Node {
                 }
             }
         }
-        if h.height.is_multiple_of(128) {
+        // Authenticated admission otherwise reconstructs the just-written state
+        // from genesis, verifying every intermediate complete account tree.
+        // Keep an ordinary canonical snapshot for each admitted native block.
+        // These are disposable accelerators: retain the existing 64-row policy,
+        // genesis anchor, full history/delta checks and post-write readback.
+        // Legacy cadence remains unchanged; no validity verdict is cached.
+        if self.state_backend == StateBackend::AuthenticatedV1 || h.height.is_multiple_of(128) {
             ensure(
                 tx.execute(
                     "INSERT INTO snapshots VALUES(?,?)",
@@ -3187,6 +3193,12 @@ impl Node {
             )
             .map_err(Error::local_integrity)?;
             tx.execute("DELETE FROM snapshots WHERE block!=? AND block NOT IN (SELECT snapshots.block FROM snapshots JOIN blocks ON blocks.id=snapshots.block ORDER BY blocks.height DESC,blocks.id LIMIT 64)",[self.settings.genesis.as_slice()])?;
+            let retained: u64 = tx.query_row(
+                "SELECT COUNT(*) FROM snapshots WHERE block!=?",
+                [self.settings.genesis.as_slice()],
+                |row| row.get(0),
+            )?;
+            ensure(retained <= 64, "SNAPSHOT_LIMIT").map_err(Error::local_integrity)?;
         }
         if self.state_backend == StateBackend::AuthenticatedV1 {
             native_authenticated::publish(
