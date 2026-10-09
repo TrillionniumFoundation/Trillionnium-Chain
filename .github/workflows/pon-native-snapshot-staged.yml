@@ -1,0 +1,99 @@
+name: PoN native snapshots isolated qualification
+on:
+  pull_request:
+    paths:
+      - scripts/ci/native_snapshot_candidate.py
+      - .github/workflows/pon-native-snapshot-staged.yml
+permissions:
+  contents: read
+jobs:
+  qualify:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    permissions:
+      contents: write
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ubuntu-24.04, ubuntu-24.04-arm]
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 40
+    env:
+      CARGO_INCREMENTAL: "0"
+      CARGO_BUILD_JOBS: "2"
+      RUST_TEST_THREADS: "1"
+      PYTHONDONTWRITEBYTECODE: "1"
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify original source before staging
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = '${{ github.event.pull_request.head.sha }}'
+          git merge-base --is-ancestor 9f5ebd9283457358fcec067fe0452005fa232b42 HEAD
+          bash scripts/project-preflight.sh --audit
+          mkdir "$RUNNER_TEMP/native-snapshot"
+          git rev-parse HEAD HEAD^{tree} > "$RUNNER_TEMP/native-snapshot/source.txt"
+      - name: Install original pinned toolchain
+        run: rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+      - name: Construct and format candidate in explicitly modified staging tree
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/native_snapshot_candidate.py
+          cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all
+          git diff > "$RUNNER_TEMP/native-snapshot/candidate.patch"
+          python3 - <<'PY'
+          import subprocess
+          expected = {'trillionnium/crates/trnm-pon-node/src/store.rs','trillionnium/crates/trnm-pon-node/src/native_authenticated_tests.rs'}
+          assert set(subprocess.check_output(['git','diff','--name-only'],text=True).splitlines()) == expected
+          PY
+      - name: Execute original native authenticated controls and all five new tests
+        run: |
+          set -euo pipefail
+          cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib store::native_authenticated_tests:: -- --nocapture --test-threads=1 2>&1 | tee "$RUNNER_TEMP/native-snapshot/native-tests.log"
+          grep -F 'test result: ok. 16 passed; 0 failed; 0 ignored;' "$RUNNER_TEMP/native-snapshot/native-tests.log"
+      - name: Execute original recovery, ancestry, migration and strict Clippy
+        run: |
+          set -euo pipefail
+          for suite in store::native_authenticated:: store::native_ancestry_commit_tests:: store::error_boundary_tests:: authenticated_migration; do
+            name="${suite//:/_}"
+            cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib "$suite" -- --nocapture --test-threads=1 2>&1 | tee "$RUNNER_TEMP/native-snapshot/$name.log"
+            grep -E '^test result: ok\. [1-9][0-9]* passed; 0 failed;' "$RUNNER_TEMP/native-snapshot/$name.log"
+          done
+          cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test continuity_authenticated --test authenticated_storage_cli -- --nocapture --test-threads=1 2>&1 | tee "$RUNNER_TEMP/native-snapshot/recovery.log"
+          cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --all-targets --all-features -- -D warnings 2>&1 | tee "$RUNNER_TEMP/native-snapshot/clippy.log"
+      - name: Retain exact successfully tested candidate blobs without moving refs
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import base64,hashlib,json,os,subprocess
+          from pathlib import Path
+          out=Path(os.environ['RUNNER_TEMP'])/'native-snapshot'
+          rows=[]
+          for name in ['trillionnium/crates/trnm-pon-node/src/store.rs','trillionnium/crates/trnm-pon-node/src/native_authenticated_tests.rs']:
+              data=Path(name).read_bytes()
+              expected=hashlib.sha1(b'blob '+str(len(data)).encode()+b'\0'+data).hexdigest()
+              response=subprocess.run(['gh','api','repos/'+os.environ['GITHUB_REPOSITORY']+'/git/blobs','--input','-'],input=json.dumps({'encoding':'base64','content':base64.b64encode(data).decode()}),text=True,capture_output=True,check=True)
+              actual=json.loads(response.stdout)['sha']
+              assert actual==expected
+              (out/Path(name).name).write_bytes(data)
+              rows.append({'path':name,'blob':actual,'sha256':hashlib.sha256(data).hexdigest()})
+          (out/'blobs.json').write_text(json.dumps(rows,indent=2)+'\n')
+          print(json.dumps(rows))
+          PY
+      - name: Preserve all outcomes and limited staging scope
+        if: always()
+        run: |
+          mkdir -p "$RUNNER_TEMP/native-snapshot"
+          printf '%s\n' 'Modified-tree native qualification only. Original 65536-key capacity, full baseline, exact-source pair and external security/evolution/DA/WAN acceptance remain separate. No raised limit, skipped history or validity cache.' > "$RUNNER_TEMP/native-snapshot/SCOPE.txt"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: native-snapshot-staged-${{ matrix.runner }}-${{ github.event.pull_request.head.sha }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/native-snapshot/
+          if-no-files-found: error
+          retention-days: 30
