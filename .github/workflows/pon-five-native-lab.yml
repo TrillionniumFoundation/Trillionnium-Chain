@@ -12,55 +12,37 @@ jobs:
     env:
       SOURCE_SHA: 6b34dfe3c68f784465663dc68a48a938ecb7f356
       SOURCE_TREE: 7d0202cbb892bf204d12d659dba4596eb8ee4562
-      CARGO_BUILD_JOBS: '2'
-      CARGO_INCREMENTAL: '0'
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
           ref: 6b34dfe3c68f784465663dc68a48a938ecb7f356
           fetch-depth: 0
           persist-credentials: false
-      - name: Preserve source and exact identities
+      - name: Preserve complete original tree and identities
         shell: bash
         run: |
           set -euo pipefail
           out="$RUNNER_TEMP/pon-native-lab"
           mkdir -p "$out"
-          echo "OUT=$out" >> "$GITHUB_ENV"
           test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
           test "$(git rev-parse HEAD^{tree})" = "$SOURCE_TREE"
           test -z "$(git status --porcelain --untracked-files=no)"
-          git archive --format=tar HEAD trillionnium scripts .github | gzip -n > "$out/source.tar.gz"
+          git archive --format=tar HEAD | gzip -n > "$out/source.tar.gz"
+          git ls-tree -r HEAD > "$out/git-tree.txt"
+          git bundle create "$out/source.bundle" HEAD
           python3 - <<'PY'
-          import json, os, pathlib, subprocess
+          import hashlib, json, os, pathlib, subprocess
           out=pathlib.Path(os.environ['RUNNER_TEMP'])/'pon-native-lab'
           get=lambda *args:subprocess.check_output(['git',*args],text=True).strip()
-          (out/'source.json').write_text(json.dumps({'sha':get('rev-parse','HEAD'),'tree':get('rev-parse','HEAD^{tree}'),'source_archive_scope':['trillionnium','scripts','.github'],'diagnostic_only':True,'acceptance':False},indent=2)+'\n')
+          assert not get('status','--porcelain','--untracked-files=no')
+          (out/'source.json').write_text(json.dumps({'sha':get('rev-parse','HEAD'),'tree':get('rev-parse','HEAD^{tree}'),'source_archive_scope':'entire tracked repository','diagnostic_only':True,'acceptance':False,'compiler_and_locked_vendor_run':37901384503,'previous_scope_omission':'config/pon required by include_str; prior incomplete local compile failed, not a product failure'},indent=2)+'\n')
+          (out/'SCOPE.txt').write_text('Complete original source preservation only. No tests or acceptance. Reuses separately verified original compiler/dependencies. No source rewrite, deployment or restart of an existing acceptance campaign.\n')
+          (out/'SHA256SUMS').write_text(''.join(hashlib.sha256(p.read_bytes()).hexdigest()+'  '+p.name+'\n' for p in sorted(out.iterdir()) if p.is_file()))
           PY
-      - name: Preserve original compiler and locked dependencies for offline reproduction
-        shell: bash
-        run: |
-          set -euo pipefail
-          rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
-          rustc +1.95.0 --version --verbose | tee "$OUT/rustc.txt"
-          cargo +1.95.0 vendor --locked --manifest-path trillionnium/Cargo.toml "$RUNNER_TEMP/pon-vendor" > "$OUT/vendor-config.toml"
-          tar -C "$RUNNER_TEMP/pon-vendor" -czf "$OUT/vendor.tar.gz" .
-          compiler="$(rustup which --toolchain 1.95.0 rustc)"
-          root="$(dirname "$(dirname "$compiler")")"
-          tar -C "$root" -czf "$OUT/toolchain.tar.gz" bin lib
-      - name: Recheck unchanged source and hash preserved evidence
-        shell: bash
-        run: |
-          set -euo pipefail
-          test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
-          test "$(git rev-parse HEAD^{tree})" = "$SOURCE_TREE"
-          test -z "$(git status --porcelain --untracked-files=no)"
-          printf 'Source/toolchain/dependency preservation only. No tests run; no security, capacity, installation, physical-power-loss, WAN or whole-repository acceptance. No source rewrite, push, deployment or restart of an existing campaign.\n' > "$OUT/SCOPE.txt"
-          (cd "$OUT"; sha256sum source.tar.gz vendor.tar.gz toolchain.tar.gz source.json rustc.txt vendor-config.toml SCOPE.txt > SHA256SUMS)
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:
-          name: pon-native-lab-6b34-${{ github.run_attempt }}
+          name: pon-native-complete-6b34-${{ github.run_attempt }}
           path: ${{ runner.temp }}/pon-native-lab
           compression-level: 0
           retention-days: 7
