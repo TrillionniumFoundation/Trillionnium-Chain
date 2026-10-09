@@ -20,7 +20,6 @@ jobs:
       BASE_SOURCE: d148a4158884fe3955ce99034e050b467eb349c7
       STAGING_SOURCE: ${{ github.sha }}
       TARGET_FILE: trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs
-      TRNM_RETAINED_DELTA_COST_PATH: ${{ runner.temp }}/sql-stage/retained-delta-cost.jsonl
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
@@ -33,6 +32,7 @@ jobs:
           out="$RUNNER_TEMP/sql-stage"
           mkdir -p "$out"
           echo "OUT=$out" >> "$GITHUB_ENV"
+          echo "TRNM_RETAINED_DELTA_COST_PATH=$out/retained-delta-cost.jsonl" >> "$GITHUB_ENV"
           echo "CARGO_TARGET_DIR=$RUNNER_TEMP/sql-target" >> "$GITHUB_ENV"
           test "$(git rev-parse HEAD)" = "$STAGING_SOURCE"
           git worktree add --detach "$RUNNER_TEMP/sql-source" "$BASE_SOURCE"
