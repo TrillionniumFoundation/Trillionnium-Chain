@@ -2195,6 +2195,21 @@ impl Node {
         start: Hash,
         visit: &mut impl FnMut(Hash, StoredHeaderLink) -> Result<()>,
     ) -> Result<(Hash, u64)> {
+        self.visit_header_batch_limited(start, HISTORY_HEADER_BATCH, visit)
+    }
+    /// A caller may shorten a batch, but cannot read beyond the existing bound.
+    /// Recent-target walks use their exact remaining window; full-history walks
+    /// retain the original batch size and current observed-clock checks.
+    fn visit_header_batch_limited(
+        &self,
+        start: Hash,
+        maximum: u64,
+        visit: &mut impl FnMut(Hash, StoredHeaderLink) -> Result<()>,
+    ) -> Result<(Hash, u64)> {
+        ensure(
+            (1..=HISTORY_HEADER_BATCH).contains(&maximum),
+            "ANCESTRY_LIMIT",
+        )?;
         if start == self.settings.genesis() {
             return Ok((start, 0));
         }
@@ -2216,7 +2231,7 @@ impl Node {
         let mut rows = statement.query(params![
             start.as_slice(),
             self.settings.genesis().as_slice(),
-            HISTORY_HEADER_BATCH,
+            maximum,
             HEADER_BYTES,
         ])?;
         let mut current = start;
@@ -2224,9 +2239,7 @@ impl Node {
         while let Some(row) = rows.next()? {
             let id = bytes32(row.get(11)?)?;
             ensure(
-                checked < HISTORY_HEADER_BATCH
-                    && row.get::<_, u64>(12)? == checked
-                    && id == current,
+                checked < maximum && row.get::<_, u64>(12)? == checked && id == current,
                 "ANCESTRY_HEIGHT",
             )
             .map_err(Error::local_integrity)?;
@@ -2236,7 +2249,7 @@ impl Node {
             checked = checked.checked_add(1).ok_or("ANCESTRY_LIMIT")?;
         }
         let complete = ensure(
-            checked == HISTORY_HEADER_BATCH || current == self.settings.genesis(),
+            checked == maximum || current == self.settings.genesis(),
             "UNKNOWN_PARENT",
         );
         // An absent caller locator is stale context. Once a retained row was
@@ -2395,9 +2408,14 @@ impl Node {
         let mut out = Vec::new();
         let bound = self.settings.limit("retarget_interval")?.max(11);
         while parent != self.settings.genesis() && out.len() < (bound as usize) {
-            let header = self.stored_header(parent)?;
-            out.push((header.timestamp, header.target));
-            parent = self.parent(parent)?;
+            // The per-link projection already validates the complete child and
+            // parent record shapes. Batch the exact window, without keeping a
+            // previous ancestry, time or target verdict across calls.
+            let maximum = (bound - out.len() as u64).min(HISTORY_HEADER_BATCH);
+            (parent, _) = self.visit_header_batch_limited(parent, maximum, &mut |_, link| {
+                out.push((link.header.timestamp, link.header.target));
+                Ok(())
+            })?;
         }
         if parent == self.settings.genesis() {
             out.push((
@@ -5053,6 +5071,281 @@ mod error_boundary_tests {
         assert_eq!(error.kind(), ErrorKind::StaleContext);
         assert!(!error.requires_owner_stop());
         node.check_observed_history(id, timestamp).unwrap();
+    }
+
+    // Independent old walk: deliberately retain both original per-link calls.
+    fn recent_reference(node: &Node, mut parent: Hash) -> Result<Vec<(u64, Hash)>> {
+        let mut out = Vec::new();
+        let bound = node.settings.limit("retarget_interval")?.max(11);
+        while parent != node.settings.genesis() && out.len() < bound as usize {
+            let header = node.stored_header(parent)?;
+            out.push((header.timestamp, header.target));
+            parent = node.parent(parent)?;
+        }
+        if parent == node.settings.genesis() {
+            out.push((
+                node.settings.genesis_time(),
+                node.settings.target("initial_target_hex")?,
+            ));
+        }
+        Ok(out)
+    }
+
+    fn recent_chain(node: &mut Node, blocks: u64) -> Vec<Hash> {
+        let mut ids = vec![node.settings.genesis()];
+        for height in 1..=blocks {
+            let block = packet(node, *ids.last().unwrap(), 1 + 10 * height, 0);
+            let id = node.admit(&block, 100_000).unwrap();
+            node.activate_observed(id, 100_000).unwrap();
+            ids.push(id);
+        }
+        ids
+    }
+
+    fn assert_recent_error(node: &Node, tip: Hash) {
+        let expected = recent_reference(node, tip).unwrap_err();
+        let actual = node.recent(tip).unwrap_err();
+        assert_eq!(actual.to_string(), expected.to_string());
+        assert_eq!(actual.kind(), expected.kind());
+        assert_eq!(actual.requires_owner_stop(), expected.requires_owner_stop());
+    }
+
+    #[test]
+    fn recent_batch_exact_window_and_complete_call_observation() {
+        let directory = tempfile::tempdir().unwrap();
+        let settings = Settings::development(Some(1)).unwrap();
+        let mut node = Node::open(directory.path(), settings, 1).unwrap();
+        let ids = recent_chain(&mut node, 70);
+        let before = node.read_active().unwrap();
+        for &id in &ids {
+            assert_eq!(
+                node.recent(id).unwrap(),
+                recent_reference(&node, id).unwrap()
+            );
+        }
+        for maximum in [1, 2, 11, 16, 63, 64] {
+            let mut timestamps = Vec::new();
+            let (next, count) = node
+                .visit_header_batch_limited(ids[70], maximum, &mut |_, link| {
+                    timestamps.push(link.header.timestamp);
+                    Ok(())
+                })
+                .unwrap();
+            assert_eq!(count, maximum);
+            assert_eq!(next, ids[70 - maximum as usize]);
+            assert_eq!(
+                timestamps,
+                (71 - maximum..=70)
+                    .rev()
+                    .map(|h| 1 + 10 * h)
+                    .collect::<Vec<_>>()
+            );
+        }
+        for maximum in [0, HISTORY_HEADER_BATCH + 1] {
+            let mut called = false;
+            assert_eq!(
+                node.visit_header_batch_limited(ids[70], maximum, &mut |_, _| {
+                    called = true;
+                    Ok(())
+                })
+                .unwrap_err()
+                .to_string(),
+                "ANCESTRY_LIMIT"
+            );
+            assert!(!called);
+        }
+        let n = 100_u64;
+        let start = std::time::Instant::now();
+        let counters0 = node.history_read_counters();
+        for _ in 0..n {
+            std::hint::black_box(recent_reference(&node, ids[70]).unwrap());
+        }
+        let reference_ns = start.elapsed().as_nanos();
+        let counters1 = node.history_read_counters();
+        let start = std::time::Instant::now();
+        for _ in 0..n {
+            std::hint::black_box(node.recent(ids[70]).unwrap());
+        }
+        let batched_ns = start.elapsed().as_nanos();
+        let counters2 = node.history_read_counters();
+        let bound = node.settings.limit("retarget_interval").unwrap().max(11);
+        assert_eq!(
+            counters1.header_link_queries - counters0.header_link_queries,
+            n * bound
+        );
+        assert_eq!(
+            counters2.header_link_queries - counters1.header_link_queries,
+            n * bound.div_ceil(HISTORY_HEADER_BATCH)
+        );
+        assert_eq!(
+            counters2.header_trace_bytes - counters1.header_trace_bytes,
+            counters1.header_trace_bytes - counters0.header_trace_bytes
+        );
+        assert_eq!(node.read_active().unwrap(), before);
+        println!(
+            "{}",
+            serde_json::json!({
+                "schema": "native-recent-batch-complete-call-v1", "calls_per_path": n,
+                "reference_header_projection_queries": counters1.header_link_queries - counters0.header_link_queries,
+                "batched_header_projection_queries": counters2.header_link_queries - counters1.header_link_queries,
+                "reference_complete_wall_ns": reference_ns, "batched_complete_wall_ns": batched_ns,
+                "returned_header_trace_bytes_per_path": counters2.header_trace_bytes - counters1.header_trace_bytes,
+                "all_sql_statements_counted": false, "state_unchanged": true,
+                "quadratic_observed_history_removed": false, "confirmed_transaction_tps": false,
+                "independent_wan": false, "scope": "local complete recent-target calls; no cross-call verdict cache"
+            })
+        );
+    }
+
+    #[test]
+    fn recent_batch_retained_corruption_and_read_boundary_match_original() {
+        let directory = tempfile::tempdir().unwrap();
+        let settings = Settings::development(Some(1)).unwrap();
+        let mut node = Node::open(directory.path(), settings, 1).unwrap();
+        let ids = recent_chain(&mut node, 70);
+        let before = node.read_active().unwrap();
+        let bound = node.settings.limit("retarget_interval").unwrap().max(11) as usize;
+        let first = 71 - bound;
+        let expected = node.recent(ids[70]).unwrap();
+        assert_recent_error(&node, [93; 32]);
+        // An earlier header body lies outside the recent window, but must still
+        // be inspected by the unchanged whole-history current-clock validator.
+        for height in [first - 1, first, 70] {
+            let raw: Vec<u8> = node
+                .db
+                .query_row(
+                    "SELECT packet FROM blocks WHERE id=?",
+                    [ids[height].as_slice()],
+                    |r| r.get(0),
+                )
+                .unwrap();
+            let mut corrupt = raw.clone();
+            corrupt[0] ^= 0xff;
+            node.db
+                .execute(
+                    "UPDATE blocks SET packet=? WHERE id=?",
+                    params![corrupt, ids[height].as_slice()],
+                )
+                .unwrap();
+            if height == first - 1 {
+                assert_eq!(node.recent(ids[70]).unwrap(), expected);
+                assert_eq!(recent_reference(&node, ids[70]).unwrap(), expected);
+            } else {
+                assert_recent_error(&node, ids[70]);
+            }
+            local(
+                node.check_observed_history(ids[70], 100_000).unwrap_err(),
+                "HEADER_CODEC",
+            );
+            node.db
+                .execute(
+                    "UPDATE blocks SET packet=? WHERE id=?",
+                    params![raw, ids[height].as_slice()],
+                )
+                .unwrap();
+            assert_eq!(node.recent(ids[70]).unwrap(), expected);
+        }
+        // The final visited header's parent is still fully shape-checked.
+        use rusqlite::types::Value as SqlValue;
+        for (column, corrupt) in [
+            ("height", SqlValue::Integer(999)),
+            ("chainwork", SqlValue::Blob(vec![0; 3])),
+            ("state_root", SqlValue::Blob(vec![0; 3])),
+            ("parent", SqlValue::Blob(vec![0; 3])),
+        ] {
+            let id = ids[first - 1];
+            let raw: SqlValue = node
+                .db
+                .query_row(
+                    &format!("SELECT {column} FROM blocks WHERE id=?"),
+                    [id.as_slice()],
+                    |r| r.get(0),
+                )
+                .unwrap();
+            let sql = format!("UPDATE blocks SET {column}=? WHERE id=?");
+            node.db
+                .execute(&sql, params![corrupt, id.as_slice()])
+                .unwrap();
+            assert_recent_error(&node, ids[70]);
+            node.db.execute(&sql, params![raw, id.as_slice()]).unwrap();
+        }
+        // A missing retained parent must not become an unknown caller verdict.
+        node.db
+            .execute_batch("PRAGMA foreign_keys=OFF; BEGIN IMMEDIATE;")
+            .unwrap();
+        node.db
+            .execute("DELETE FROM blocks WHERE id=?", [ids[first - 1].as_slice()])
+            .unwrap();
+        assert_recent_error(&node, ids[70]);
+        assert!(node.recent(ids[70]).unwrap_err().requires_owner_stop());
+        node.db
+            .execute_batch("ROLLBACK; PRAGMA foreign_keys=ON;")
+            .unwrap();
+        let genesis_height: u64 = node
+            .db
+            .query_row(
+                "SELECT height FROM blocks WHERE id=?",
+                [ids[0].as_slice()],
+                |r| r.get(0),
+            )
+            .unwrap();
+        node.db
+            .execute("UPDATE blocks SET height=9 WHERE id=?", [ids[0].as_slice()])
+            .unwrap();
+        assert_recent_error(&node, ids[1]);
+        node.db
+            .execute(
+                "UPDATE blocks SET height=? WHERE id=?",
+                params![genesis_height, ids[0].as_slice()],
+            )
+            .unwrap();
+        assert_eq!(node.read_active().unwrap(), before);
+        assert_eq!(node.recent(ids[70]).unwrap(), expected);
+    }
+
+    #[test]
+    fn recent_batch_branch_reopen_and_callback_errors_preserve_context() {
+        let directory = tempfile::tempdir().unwrap();
+        let settings = Settings::development(Some(1)).unwrap();
+        let mut node = Node::open(directory.path(), settings.clone(), 1).unwrap();
+        let ids = recent_chain(&mut node, 20);
+        let mut fork = ids[10];
+        for height in 11..=22 {
+            let block = packet(&node, fork, 2 + height * 10, 1);
+            fork = node.admit(&block, 100_000).unwrap();
+            assert_eq!(
+                node.recent(fork).unwrap(),
+                recent_reference(&node, fork).unwrap()
+            );
+        }
+        node.activate_observed(fork, 100_000).unwrap();
+        for code in [
+            ErrorCode::PublicRequestCancelled,
+            ErrorCode::PublicMutationCpuBudget,
+            ErrorCode::UnknownParent,
+        ] {
+            let mut visited = 0;
+            let error = node
+                .visit_header_batch_limited(fork, 11, &mut |_, _| {
+                    visited += 1;
+                    Err(Error::new(code))
+                })
+                .unwrap_err();
+            assert!(error.is(code));
+            assert!(!error.requires_owner_stop());
+            assert_eq!(visited, 1);
+        }
+        let expected = node.recent(fork).unwrap();
+        let before = node.read_active().unwrap();
+        drop(node);
+        let reopened = Node::open(directory.path(), settings, 1).unwrap();
+        assert_eq!(reopened.read_active().unwrap(), before);
+        assert_eq!(reopened.recent(fork).unwrap(), expected);
+        assert_eq!(
+            reopened.recent(ids[20]).unwrap(),
+            recent_reference(&reopened, ids[20]).unwrap()
+        );
+        reopened.check_observed_history(fork, 100_000).unwrap();
     }
 
     #[test]
