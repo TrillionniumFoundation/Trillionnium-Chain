@@ -1,0 +1,132 @@
+name: PoN cached owner staging
+on:
+  push:
+    branches: [test/chain-cached-owner-stage-20261009]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native:
+    name: cached owner staging (${{ matrix.runner }})
+    permissions:
+      contents: write
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ubuntu-24.04, ubuntu-24.04-arm]
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 30
+    env:
+      CARGO_INCREMENTAL: "0"
+      CARGO_BUILD_JOBS: "2"
+      RUST_TEST_THREADS: "1"
+      PYTHONDONTWRITEBYTECODE: "1"
+      OWNER: trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Audit original complete checkout before source edits
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/cached-owner-stage"
+          mkdir -p "$out"
+          echo "OUT=$out" >> "$GITHUB_ENV"
+          echo "CARGO_TARGET_DIR=$RUNNER_TEMP/cached-owner-target" >> "$GITHUB_ENV"
+          git rev-parse HEAD > "$out/source.txt"
+          git rev-parse HEAD^{tree} > "$out/tree.txt"
+          test "$(git rev-parse HEAD^)" = c664737f8b135f4a9b8aa9adcbd9c5738ca70238
+          test "$(git hash-object "$OWNER")" = 226d906a433af6b38c01b90e747668583fe7029f
+          bash scripts/project-preflight.sh --audit 2>&1 | tee "$out/preflight.log"
+          cp "$OWNER" "$out/original.rs"
+      - name: Install original pinned toolchain
+        run: rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+      - name: Append only the four retained owner regressions and format candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat scripts/ci/staged_cached_owner_tests.rs >> "$OWNER"
+          cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all
+          test "$(git diff --name-only)" = "$OWNER"
+          python3 - <<'PY'
+          import os, pathlib
+          p=pathlib.Path(os.environ['OWNER']).read_bytes()
+          original=(pathlib.Path(os.environ['OUT'])/'original.rs').read_bytes()
+          assert p.startswith(original), 'original runtime or retained tests changed'
+          assert p[len(original):].count(b'#[test]') == 4
+          PY
+          cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check 2>&1 | tee "$OUT/format.log"
+          cp "$OWNER" "$OUT/native_authenticated.rs"
+          git diff -- "$OWNER" > "$OUT/candidate.patch"
+          git hash-object "$OWNER" > "$OUT/candidate-blob.txt"
+          rustc +1.95.0 --version --verbose > "$OUT/rustc.txt"
+      - name: Execute complete authenticated owner and each new exact selector
+        shell: bash
+        run: |
+          set -euo pipefail
+          export TRNM_RETAINED_DELTA_COST_PATH="$OUT/retained-delta-cost.jsonl"
+          cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib store::native_authenticated:: -- --include-ignored --show-output --test-threads=1 2>&1 | tee "$OUT/authenticated.log"
+          grep -E '^test result: ok\. 28 passed; 0 failed; 0 ignored;' "$OUT/authenticated.log"
+          for name in cached_block_reads_do_not_hide_genesis_damage_or_rollback cached_parent_reads_observe_changed_work_then_exact_restore cached_commitment_reads_preserve_limits_missing_and_rollback cached_genesis_snapshot_is_reread_and_survives_cold_reopen; do
+            selector="store::native_authenticated::cached_owner_read_tests::$name"
+            cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib "$selector" -- --exact --show-output --test-threads=1 2>&1 | tee "$OUT/$name.log"
+            python3 scripts/ci/check_required_native_test.py "$OUT/$name.log" --test "$selector"
+          done
+      - name: Preserve complete snapshot and migration owner controls
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib store::native_authenticated_tests:: -- --show-output --test-threads=1 2>&1 | tee "$OUT/snapshot.log"
+          grep -E '^test result: ok\. 16 passed; 0 failed; 0 ignored;' "$OUT/snapshot.log"
+          cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib authenticated_migration -- --show-output --test-threads=1 2>&1 | tee "$OUT/migration.log"
+          grep -E '^test result: ok\. 14 passed; 0 failed; 0 ignored;' "$OUT/migration.log"
+      - name: Strict complete native target lint and unchanged original bytes
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --all-targets --all-features -- -D warnings 2>&1 | tee "$OUT/clippy.log"
+          test "$(git diff --name-only)" = "$OWNER"
+          cmp "$OWNER" "$OUT/native_authenticated.rs"
+          bash scripts/project-preflight.sh --audit 2>&1 | tee "$OUT/preflight-after.log"
+      - name: Store the tested source blob without moving any branch
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib, json, os, pathlib, urllib.request
+          out=pathlib.Path(os.environ['OUT'])
+          data=(out/'native_authenticated.rs').read_bytes()
+          expected=hashlib.sha1(b'blob '+str(len(data)).encode()+b'\0'+data).hexdigest()
+          request=urllib.request.Request(
+              'https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs',
+              data=json.dumps({'content': data.decode('utf-8'), 'encoding': 'utf-8'}).encode(),
+              headers={'Authorization': 'Bearer '+os.environ['GH_TOKEN'], 'Accept': 'application/vnd.github+json', 'Content-Type': 'application/json'},
+              method='POST')
+          with urllib.request.urlopen(request, timeout=60) as response:
+              result=json.load(response)
+          assert result['sha']==expected
+          (out/'stored-blob.json').write_text(json.dumps({'sha':expected,'bytes':len(data),'sha256':hashlib.sha256(data).hexdigest(),'branch_updated':False},indent=2)+'\n')
+          PY
+      - name: Preserve exact staging boundary and failures
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/cached-owner-stage"
+          mkdir -p "$out"
+          git rev-parse HEAD > "$out/source-after.txt"
+          git diff --stat > "$out/diff-stat.txt"
+          printf 'Staged appended owner tests on c664737f. Not committed-source acceptance. No branch update, main merge, force push, deployment, changed runtime, discarded retained test, budget increase, or new scientific/external acceptance. Full final-source CI and independent review remain required.\n' > "$out/SCOPE.txt"
+          find "$out" -type f ! -name SHA256SUMS -print0 | sort -z | xargs -0 sha256sum > "$out/SHA256SUMS"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: cached-owner-stage-${{ matrix.runner }}-${{ github.sha }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/cached-owner-stage
+          if-no-files-found: error
+          retention-days: 30
