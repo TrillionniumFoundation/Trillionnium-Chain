@@ -1,0 +1,44 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.11s
+     Running tests/native_node.rs (/home/qian-qi/Documents/chain-pr204-finish-20260930-jKKNVx/target/debug/deps/native_node-b043bd485b44c196)
+
+running 23 tests
+test abrupt_child ... ignored, owned subprocess helper, invoked by the process-cut tests
+test test_cached_work_never_reuses_an_old_clock_verdict ... ok
+test test_confirmed_transfer_is_removed_by_a_real_heavier_fork ... ok
+test test_every_reorg_process_cut_and_admission_gap_recovers_once ... actual child exit86 at admitted
+actual child exit86 at intent
+actual child exit86 at detach:0
+actual child exit86 at detach:1
+actual child exit86 at attach:2
+actual child exit86 at attach:3
+actual child exit86 at attach:4
+actual child exit86 at before-publish
+actual child exit86 at published
+ok
+test test_existing_output_path_cannot_publish_a_new_cli_block ... ok
+test test_full_transaction_pages_use_byte_limits_and_recover_all_native_state ... ok
+test test_golden_native_state_matches_separate_oracle_and_duplicate_is_idempotent ... ok
+test test_initialization_process_cuts_recover_only_the_owned_context ... actual child exit86 at init-intent
+actual child exit86 at init-schema
+actual child exit86 at init-before-commit
+actual child exit86 at init-committed
+ok
+test test_lower_height_higher_required_work_wins_after_native_retarget ... ok
+test test_malformed_work_and_changed_duplicate_never_mutate_state ... ok
+test test_native_batch_actual_heavier_reorg_removes_all_confirmations ... ok
+test test_native_batch_and_history_cancel_after_traversal_without_writes_or_cache ... ok
+test test_native_batch_checks_one_history_and_one_shared_body ... ok
+test test_native_batch_cli_uses_the_real_persisted_owner ... ok
+test test_native_batch_generation_change_is_detected_before_any_response ... ok
+test test_native_batch_invalid_tail_duplicate_and_limits_return_no_partial_success ... ok
+test test_native_batch_rechecks_future_ancestor_below_all_inclusions ... ok
+test test_native_body_membership_is_still_checked_after_header_projection ... ok
+test test_native_cli_replays_the_existing_signed_vector_without_a_reference_backend ... ok
+test test_native_header_projection_rejects_changed_header_or_trace ... ok
+test test_native_writer_and_namespace_fences_are_not_optional ... ok
+test test_socket_false_transcripts_and_honest_native_batch_use_the_actual_entry ... actual native loopback: 32 ticket-passing false transcripts rejected; 16 four-query batches served; not public/Sybil qualification
+ok
+test test_socket_history_uses_real_native_validation_and_separate_stores ... ok
+
+test result: ok. 22 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 149.50s
+

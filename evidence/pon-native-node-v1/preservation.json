@@ -1,0 +1,12 @@
+{
+  "untouched_qualification_worktree_head": "74bc8b0a61d5a38dd46e74388436bd71117ef9cf",
+  "untouched_qualification_worktree_clean": true,
+  "delivery_start_head": "d7d11f0edc142bf1539cf656baeb5caf2cdc6a88",
+  "delivery_fast_forward_to": "74bc8b0a61d5a38dd46e74388436bd71117ef9cf",
+  "runtime_measured_head": "b34561d1ade376512a34fed3fd78938ed2431ecd",
+  "runtime_measured_tree": "5a91b1ecc696b8a0c468ee8ba2a3dd0fe9e8d3d8",
+  "same_existing_delivery_branch": "fix/chain-pr204-session-delivery-20260929",
+  "existing_services_keys_and_user_databases_modified": false,
+  "production_activation": false,
+  "same_remote_candidate": "fix/chain-pon-contract-authority-20260929"
+}
