@@ -29,7 +29,7 @@ const NATIVE_BLOCK_SQL: &str = "SELECT
  CASE WHEN typeof(parent)='blob' AND length(parent)>32 THEN substr(parent,1,33) ELSE parent END AS parent,
  height,
  CASE WHEN typeof(chainwork)='blob' AND length(chainwork)>64 THEN substr(chainwork,1,65) ELSE chainwork END AS chainwork,
- CASE WHEN typeof(packet)='blob' THEN substr(packet,1,1048577) ELSE packet END AS packet,
+ CASE WHEN typeof(packet)='blob' AND length(packet)>1048576 THEN substr(packet,1,1048577) ELSE packet END AS packet,
  CASE WHEN typeof(state_root)='blob' AND length(state_root)>32 THEN substr(state_root,1,33) ELSE state_root END AS state_root
  FROM blocks WHERE id=?";
 const NATIVE_PARENT_SQL: &str = "SELECT height,
@@ -160,10 +160,12 @@ fn native_block(db: &Connection, settings: &Settings, id: Hash) -> Result<Native
 // value bytes. SQL projects at most one extra byte, so corrupt retained rows
 // cannot allocate their entire payload in Rust before the limit is checked.
 // CASE preserves SQLite types: a TEXT "before" is still not a BLOB.
+// Truncate only oversized BLOBs: substr(empty BLOB) can yield SQL NULL.
+// An empty preimage/postimage must still fail canonical JSON, not become absence.
 const DELTA_ROWS_SQL: &str = "SELECT
  CASE WHEN typeof(key)='text' THEN CAST(substr(CAST(key AS BLOB),1,161) AS TEXT) ELSE key END AS key,
- CASE WHEN typeof(before)='blob' THEN substr(before,1,4097) ELSE before END AS before,
- CASE WHEN typeof(after)='blob' THEN substr(after,1,4097) ELSE after END AS after,
+ CASE WHEN typeof(before)='blob' AND length(before)>4096 THEN substr(before,1,4097) ELSE before END AS before,
+ CASE WHEN typeof(after)='blob' AND length(after)>4096 THEN substr(after,1,4097) ELSE after END AS after,
  length(CAST(key AS BLOB)),length(CAST(before AS BLOB)),length(CAST(after AS BLOB))
  FROM deltas WHERE block=? ORDER BY deltas.key";
 
@@ -1750,3 +1752,272 @@ mod cached_owner_read_tests {
 #[cfg(test)]
 #[path = "native_fixed_blob_tests.rs"]
 mod native_fixed_blob_tests;
+
+#[cfg(test)]
+mod nullable_blob_tests {
+    use super::*;
+    use crate::{ErrorCode, Node};
+    use rusqlite::types::Value as SqlValue;
+
+    fn database(count: usize) -> Connection {
+        let db = Connection::open_in_memory().unwrap();
+        db.execute_batch("CREATE TABLE deltas(block BLOB NOT NULL,key TEXT NOT NULL,before BLOB,after BLOB,PRIMARY KEY(block,key));").unwrap();
+        for index in 0..count {
+            db.execute(
+                "INSERT INTO deltas VALUES(?,?,NULL,?)",
+                params![
+                    [7u8; 32].as_slice(),
+                    format!("entry-{index:05}"),
+                    b"null".as_slice()
+                ],
+            )
+            .unwrap();
+        }
+        db
+    }
+
+    // Independent unprojected reader: an empty byte string is present but is
+    // not canonical JSON. Do not reuse the bounded SQL or streaming builder.
+    fn raw_reference(db: &Connection) -> Result<(usize, Hash)> {
+        local((|| {
+            let mut stmt =
+                db.prepare("SELECT key,before,after FROM deltas WHERE block=? ORDER BY key")?;
+            let rows = stmt.query_map([[7u8; 32].as_slice()], |row| {
+                Ok((row.get(0)?, row.get(1)?, row.get(2)?))
+            })?;
+            let mut out: Vec<Delta> = Vec::new();
+            for row in rows {
+                let row: Delta = row?;
+                ensure(
+                    out.last().is_none_or(|prior| prior.0 < row.0)
+                        && row.1 != row.2
+                        && out.len() < 131_072,
+                    "NATIVE_STATE_DELTA",
+                )?;
+                for bytes in [&row.1, &row.2].into_iter().flatten() {
+                    let value: Value = serde_json::from_slice(bytes)?;
+                    ensure(canonical(&value)? == *bytes, "NATIVE_STATE_DELTA_BYTES")?;
+                }
+                out.push(row);
+            }
+            let encoded = out.iter().map(canonical).collect::<Result<Vec<_>>>()?;
+            Ok((
+                out.len(),
+                sequence_root("native-authenticated-deltas-v1", &encoded),
+            ))
+        })())
+    }
+
+    fn assert_same_refusal(db: &Connection) {
+        let expected = raw_reference(db).unwrap_err();
+        let actual = stored_delta_root(db, [7; 32], &mut || Ok(())).unwrap_err();
+        assert_eq!(actual.to_string(), expected.to_string());
+        assert_eq!(actual.kind(), expected.kind());
+        assert_eq!(actual.requires_owner_stop(), expected.requires_owner_stop());
+        assert!(actual.requires_owner_stop());
+        let list_error = deltas(db, [7; 32]).unwrap_err();
+        assert_eq!(list_error.to_string(), expected.to_string());
+        assert_eq!(list_error.kind(), expected.kind());
+        assert!(list_error.requires_owner_stop());
+    }
+
+    fn settings() -> Settings {
+        Settings::development_with_profiles(
+            Some(1),
+            "native-public-evaluation-dev-v1",
+            trnm_mvcc_fee::continuity_v1::PROFILE,
+        )
+        .unwrap()
+    }
+
+    #[test]
+    fn nullable_delta_projection_preserves_null_empty_types_and_bounds() {
+        let db = database(1);
+        eprintln!(
+            "nullable_blob_sqlite_version {}",
+            db.query_row("SELECT sqlite_version()", [], |row| row.get::<_, String>(0))
+                .unwrap()
+        );
+        for value in [
+            SqlValue::Null,
+            SqlValue::Blob(vec![]),
+            SqlValue::Blob(b"null".to_vec()),
+            SqlValue::Text(String::new()),
+            SqlValue::Text("null".into()),
+            SqlValue::Integer(0),
+            SqlValue::Real(1.5),
+            SqlValue::Blob(vec![b'x'; 4096]),
+            SqlValue::Blob(vec![b'x'; 4097]),
+            SqlValue::Blob(vec![b'x'; 1024 * 1024]),
+        ] {
+            for (field, column) in [("before", 1usize), ("after", 2usize)] {
+                db.execute(&format!("UPDATE deltas SET {field}=?"), [&value])
+                    .unwrap();
+                let actual: SqlValue = db
+                    .prepare_cached(DELTA_ROWS_SQL)
+                    .unwrap()
+                    .query_row([[7u8; 32].as_slice()], |row| row.get(column))
+                    .unwrap();
+                let expected = match &value {
+                    SqlValue::Blob(bytes) if bytes.len() > 4096 => {
+                        SqlValue::Blob(bytes[..4097].to_vec())
+                    }
+                    _ => value.clone(),
+                };
+                assert_eq!(actual, expected, "field={field}");
+            }
+        }
+    }
+
+    #[test]
+    fn nullable_delta_empty_bytes_are_not_absence_after_warm_cache() {
+        for capacity in [0, 1, 16] {
+            let db = database(1);
+            db.set_prepared_statement_cache_capacity(capacity);
+            for sql in [
+                "UPDATE deltas SET before=NULL,after=X'6e756c6c'",
+                "UPDATE deltas SET before=X'6e756c6c',after=NULL",
+            ] {
+                db.execute_batch(sql).unwrap();
+                let expected = raw_reference(&db).unwrap();
+                assert_eq!(
+                    stored_delta_root(&db, [7; 32], &mut || Ok(())).unwrap(),
+                    expected
+                );
+                db.execute_batch("SAVEPOINT empty_delta; UPDATE deltas SET before=CASE WHEN before IS NULL THEN X'' ELSE before END,after=CASE WHEN after IS NULL THEN X'' ELSE after END;").unwrap();
+                assert_same_refusal(&db);
+                db.execute_batch("ROLLBACK TO empty_delta; RELEASE empty_delta")
+                    .unwrap();
+                assert_eq!(
+                    stored_delta_root(&db, [7; 32], &mut || Ok(())).unwrap(),
+                    expected
+                );
+            }
+            for sql in [
+                "UPDATE deltas SET before=X'',after=NULL",
+                "UPDATE deltas SET before=NULL,after=X''",
+                "UPDATE deltas SET before=X'',after=X''",
+            ] {
+                db.execute_batch(sql).unwrap();
+                assert_same_refusal(&db);
+            }
+        }
+    }
+
+    #[test]
+    fn nullable_delta_late_failure_keeps_cancellation_and_cursor_recovery() {
+        let db = database(513);
+        let expected = stored_delta_root(&db, [7; 32], &mut || Ok(())).unwrap();
+        db.execute_batch("UPDATE deltas SET before=X'' WHERE key='entry-00256'")
+            .unwrap();
+        let mut calls = 0;
+        let error = stored_delta_root(&db, [7; 32], &mut || {
+            calls += 1;
+            if calls == 2 {
+                Err("FRAME_DEADLINE".into())
+            } else {
+                Ok(())
+            }
+        })
+        .unwrap_err();
+        assert_eq!(calls, 2);
+        assert!(error.is(ErrorCode::FrameDeadline));
+        assert!(!error.requires_owner_stop());
+        assert_same_refusal(&db);
+        db.execute_batch("UPDATE deltas SET before=NULL WHERE key='entry-00256'")
+            .unwrap();
+        assert_eq!(
+            stored_delta_root(&db, [7; 32], &mut || Ok(())).unwrap(),
+            expected
+        );
+        assert_eq!(raw_reference(&db).unwrap(), expected);
+    }
+
+    #[test]
+    fn nullable_genesis_packet_empty_rejects_and_rollback_restores() {
+        let directory = tempfile::tempdir().unwrap();
+        let node = Node::open_with_authenticated_state(directory.path(), settings(), 1).unwrap();
+        let id = node.settings.genesis();
+        let expected = node.read_active().unwrap();
+        for capacity in [0, 1, 16] {
+            node.db.set_prepared_statement_cache_capacity(capacity);
+            verify_history(&node.db, &node.settings, id, &mut || Ok(())).unwrap();
+            node.db.execute_batch("SAVEPOINT empty_packet").unwrap();
+            node.db
+                .execute("UPDATE blocks SET packet=X'' WHERE id=?", [id.as_slice()])
+                .unwrap();
+            let error = native_block(&node.db, &node.settings, id)
+                .err()
+                .expect("present empty packet cannot be absent at genesis");
+            assert_eq!(error.to_string(), "NATIVE_STATE_GENESIS");
+            assert!(error.requires_owner_stop());
+            let error = verify_history(&node.db, &node.settings, id, &mut || Ok(())).unwrap_err();
+            assert_eq!(error.to_string(), "NATIVE_STATE_GENESIS");
+            assert!(error.requires_owner_stop());
+            node.db
+                .execute_batch("ROLLBACK TO empty_packet; RELEASE empty_packet")
+                .unwrap();
+            verify_history(&node.db, &node.settings, id, &mut || Ok(())).unwrap();
+            assert_eq!(node.read_active().unwrap(), expected);
+        }
+        drop(node);
+        let reopened =
+            Node::open_with_authenticated_state(directory.path(), settings(), 1).unwrap();
+        assert_eq!(reopened.read_active().unwrap(), expected);
+        verify_history(&reopened.db, &reopened.settings, id, &mut || Ok(())).unwrap();
+    }
+
+    #[test]
+    fn nullable_real_insertion_empty_preimage_rejects_live_and_cold_owner() {
+        let directory = tempfile::tempdir().unwrap();
+        let mut node =
+            Node::open_with_authenticated_state(directory.path(), settings(), 1).unwrap();
+        let genesis = node.settings.genesis();
+        let packet = node
+            .make_consensus_maintenance(
+                genesis,
+                vec![],
+                crate::development_public(0).unwrap(),
+                11,
+                4096,
+            )
+            .unwrap();
+        let id = node.admit(&packet, 100_000).unwrap();
+        node.activate(id).unwrap();
+        let expected = node.read_active().unwrap();
+        verify_history(&node.db, &node.settings, id, &mut || Ok(())).unwrap();
+        let key: String = node.db.query_row("SELECT key FROM deltas WHERE block=? AND before IS NULL AND after IS NOT NULL ORDER BY key LIMIT 1", [id.as_slice()], |row| row.get(0)).unwrap();
+        let writer = Connection::open(directory.path().join("native.sqlite")).unwrap();
+        assert_eq!(
+            writer
+                .execute(
+                    "UPDATE deltas SET before=X'' WHERE block=? AND key=?",
+                    params![id.as_slice(), &key]
+                )
+                .unwrap(),
+            1
+        );
+        let error = verify_history(&node.db, &node.settings, id, &mut || Ok(())).unwrap_err();
+        assert!(error.requires_owner_stop());
+        assert!(node.read_active().unwrap_err().requires_owner_stop());
+        drop(node);
+        let error = Node::open_with_authenticated_state(directory.path(), settings(), 1)
+            .err()
+            .expect("cold opener must not reinterpret empty preimage as absent");
+        assert!(error.requires_owner_stop());
+        assert_eq!(
+            writer
+                .execute(
+                    "UPDATE deltas SET before=NULL WHERE block=? AND key=?",
+                    params![id.as_slice(), &key]
+                )
+                .unwrap(),
+            1
+        );
+        drop(writer);
+        let reopened =
+            Node::open_with_authenticated_state(directory.path(), settings(), 1).unwrap();
+        assert_eq!(reopened.read_active().unwrap(), expected);
+        verify_history(&reopened.db, &reopened.settings, id, &mut || Ok(())).unwrap();
+    }
+}

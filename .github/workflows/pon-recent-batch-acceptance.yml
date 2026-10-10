@@ -55,7 +55,7 @@ jobs:
           python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$out/source.json"
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store.rs)" = 13164f58b2f625c6ece012012f9ce8b6e5ec7be7
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/native_authenticated_tests.rs)" = 8431605c238f88843c8eb31dc5bb6bfb3df4a7b7
-          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs)" = 8927902b0cb0b9d4fe0160ba4f52ce9298948f9b
+          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs)" = 67319ff55fa55f5d245185d24eb8bdfc4725ec73
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_fixed_blob_tests.rs)" = cecb8a984c02ffca7590e69c4392223ea748b40f
           test "$(git hash-object trillionnium/crates/trnm-pon-node/tests/authenticated_storage_cli.rs)" = 7301aeb3033913f080b23767bfca52a2bf76d45b
           test "$(git hash-object formal/pon-nakamoto-v1/work_query_bound.py)" = 2d568879899da290c7bec8add6eb2746554897d6
@@ -117,7 +117,7 @@ jobs:
             cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib "$suite" -- "${options[@]}" --show-output --test-threads=1 2>&1 | tee "$OUT/$name.log"
             grep -E '^test result: ok\. [1-9][0-9]* passed; 0 failed;' "$OUT/$name.log"
             if test "$suite" = store::native_authenticated::; then
-              grep -E '^test result: ok\. 32 passed; 0 failed; 0 ignored;' "$OUT/$name.log"
+              grep -E '^test result: ok\. 37 passed; 0 failed; 0 ignored;' "$OUT/$name.log"
             fi
           done
           cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test continuity_authenticated --test authenticated_storage_cli -- --show-output --test-threads=1 2>&1 | tee "$OUT/recovery.log"
@@ -158,6 +158,15 @@ jobs:
             cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib "$selector" -- --exact --show-output --test-threads=1 2>&1 | tee "$OUT/$test.log"
             python3 scripts/ci/check_required_native_test.py "$OUT/$test.log" --test "$selector"
           done
+      - name: Reject empty nullable BLOB corruption through original native owners
+        shell: bash
+        run: |
+          set -euo pipefail
+          for test in nullable_delta_projection_preserves_null_empty_types_and_bounds nullable_delta_empty_bytes_are_not_absence_after_warm_cache nullable_delta_late_failure_keeps_cancellation_and_cursor_recovery nullable_genesis_packet_empty_rejects_and_rollback_restores nullable_real_insertion_empty_preimage_rejects_live_and_cold_owner; do
+            selector="store::native_authenticated::nullable_blob_tests::$test"
+            cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib "$selector" -- --exact --show-output --test-threads=1 2>&1 | tee "$OUT/$test.log"
+            python3 scripts/ci/check_required_native_test.py "$OUT/$test.log" --test "$selector"
+          done
       - name: Preserve original source-preserving migration coverage
         shell: bash
         run: |
@@ -169,6 +178,17 @@ jobs:
         run: |
           set -euo pipefail
           cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --all-targets --all-features -- -D warnings 2>&1 | tee "$OUT/clippy.log"
+      - name: Retain reproducible source and native replay executable
+        if: matrix.runner == 'ubuntu-24.04' && matrix.source == 'head'
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo +1.95.0 build --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --bin trnm-pon-node 2>&1 | tee "$OUT/replay-build.log"
+          git bundle create "$OUT/source.bundle" HEAD
+          git bundle verify "$OUT/source.bundle" 2>&1 | tee "$OUT/source-bundle.log"
+          cp "$CARGO_TARGET_DIR/release/trnm-pon-node" "$OUT/trnm-pon-node"
+          rustc +1.95.0 -vV > "$OUT/replay-compiler.txt"
+          (cd "$OUT" && sha256sum source.bundle trnm-pon-node replay-compiler.txt > replay-inputs.sha256)
       - name: Recheck unchanged exact source and hash all native logs
         if: always()
         shell: bash
