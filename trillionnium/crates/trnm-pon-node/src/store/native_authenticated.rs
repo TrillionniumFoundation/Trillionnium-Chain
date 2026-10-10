@@ -20,6 +20,22 @@ pub(crate) const DDL: &str = "CREATE TABLE archive_nodes(id BLOB PRIMARY KEY,dat
 pub(crate) const RECORD_SCHEMA: &str = "pon-native-authenticated-state-record-v1";
 const MAX_RECORD_BYTES: usize = 16 * 1024;
 
+// The original fixed-width checks still reject a one-byte sentinel. Restrict
+// owned Rust payload copies before those checks, without coercing SQL types or
+// changing packet bytes, field order, error identity, ancestry or work checks.
+// Leave empty/short BLOBs untouched: substr of an empty BLOB can yield NULL.
+// SQLite page reads/allocations and full history traversal are not bounded here.
+const NATIVE_BLOCK_SQL: &str = "SELECT
+ CASE WHEN typeof(parent)='blob' AND length(parent)>32 THEN substr(parent,1,33) ELSE parent END AS parent,
+ height,
+ CASE WHEN typeof(chainwork)='blob' AND length(chainwork)>64 THEN substr(chainwork,1,65) ELSE chainwork END AS chainwork,
+ CASE WHEN typeof(packet)='blob' THEN substr(packet,1,1048577) ELSE packet END AS packet,
+ CASE WHEN typeof(state_root)='blob' AND length(state_root)>32 THEN substr(state_root,1,33) ELSE state_root END AS state_root
+ FROM blocks WHERE id=?";
+const NATIVE_PARENT_SQL: &str = "SELECT height,
+ CASE WHEN typeof(chainwork)='blob' AND length(chainwork)>64 THEN substr(chainwork,1,65) ELSE chainwork END AS chainwork
+ FROM blocks WHERE id=?";
+
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub(crate) struct Record {
@@ -79,9 +95,7 @@ fn complete(settings: &Settings, state: &State) -> Result<StateCommitment> {
 fn native_block(db: &Connection, settings: &Settings, id: Hash) -> Result<NativeBlock> {
     local((|| {
         let (parent, height, work, packet, state): StoredBlockRow = db
-            .prepare_cached(
-                "SELECT parent,height,chainwork,CASE WHEN typeof(packet)='blob' THEN substr(packet,1,1048577) ELSE packet END AS packet,state_root FROM blocks WHERE id=?",
-            )?
+            .prepare_cached(NATIVE_BLOCK_SQL)?
             .query_row([id.as_slice()], |row| {
                 Ok((
                     row.get(0)?,
@@ -124,7 +138,7 @@ fn native_block(db: &Connection, settings: &Settings, id: Hash) -> Result<Native
             "NATIVE_STATE_PACKET",
         )?;
         let (parent_height, parent_work): (u64, Vec<u8>) = db
-            .prepare_cached("SELECT height,chainwork FROM blocks WHERE id=?")?
+            .prepare_cached(NATIVE_PARENT_SQL)?
             .query_row([h.parent.as_slice()], |row| Ok((row.get(0)?, row.get(1)?)))?;
         ensure(
             parent_height.checked_add(1) == Some(height)
@@ -1732,3 +1746,7 @@ mod cached_owner_read_tests {
         verify_history(&reopened.db, &reopened.settings, id, &mut || Ok(())).unwrap();
     }
 }
+
+#[cfg(test)]
+#[path = "native_fixed_blob_tests.rs"]
+mod native_fixed_blob_tests;
