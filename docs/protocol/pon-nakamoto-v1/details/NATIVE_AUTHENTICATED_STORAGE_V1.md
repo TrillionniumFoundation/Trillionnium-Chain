@@ -442,3 +442,35 @@ recursive path-based cleanup no longer risks deleting a replacement directory.
 No subsequent caller may interpret an absent/successful local reservation as a
 complete native growth migration, capacity-sufficiency proof or activation grant.
 This is not a physical power-loss or filesystem-snapshot-isolation claim.
+
+
+## Read-only proof completion and batched nonce observations
+
+The account multiproof reader retains its complete state, record, node, root and
+callback checks. After the final callback it rejects same-connection row writes
+with local `NATIVE_ACCOUNT_PROOF_WRITE`, including write-then-restore. Successful
+reads end by rollback, never commit. Existing cancellation keeps its original
+identity and rolls back; this is a local ownership fence, not a sandbox for an
+arbitrary callback or proof against a privileged writer. No schema or consensus
+bytes change. The original mutation/cancellation tests remain.
+
+`Node::next_nonces` accepts 1..256 distinct senders, rejects malformed dimensions
+before storage, and returns results in input order from one current, complete
+checked SQLite snapshot. It shares exact absence/nonce/overflow arithmetic with
+`next_nonce`, without changing the singleton's existing I/O path. The snapshot
+ends by rollback and stores no nonce reservation. The next call rereads actual
+state; a returned nonce is not a signing or final-use capability.
+
+The existing continuous pipeline now obtains its one-to-four sender nonces in
+one call per business block instead of one complete state read per sender.
+All mining, admission, activation, TCP, membership and confirmation stages
+remain. This removes repeated full-state acquisition within this specific caller;
+full state/root/account verification and full retained history costs remain.
+No constant-time state, throughput multiplier, saturated TPS, independent WAN,
+physical power-loss or public work qualification follows from the source change.
+
+The native comparison runs 16 complete four-sender calls in singleton/batch/batch/
+single order on each backend, with exact result and durable-state equality. It
+reports observed timings without a speed threshold. A signed transfer followed
+by a genuinely heavier fork and cold reopen separately verifies nonce rollback.
+These finite controls are not sustained TPS, independent operation or efficacy.

@@ -444,6 +444,21 @@ impl NativeAccountProofFailure {
     }
 }
 
+// The same checked successor arithmetic serves singleton and batched reads.
+fn next_nonce_from_state(state: &State, sender: Hash) -> Result<u64> {
+    let key = format!("account:{}", hex::encode(sender));
+    let current = match state.get(&key) {
+        None => 0,
+        Some(account) => account
+            .get("nonce")
+            .and_then(serde_json::Value::as_u64)
+            .ok_or("STATE_NONCE")?,
+    };
+    current
+        .checked_add(1)
+        .ok_or_else(|| "NONCE_OVERFLOW".into())
+}
+
 /// One private native namespace; no reference subprocess or remote state setter exists.
 pub struct Node {
     db: Connection,
@@ -1112,6 +1127,7 @@ impl Node {
         progress(NativeAccountProofProgress::BeforeRead)?;
         self.namespace()?;
         let tx = self.db.unchecked_transaction()?;
+        let read_changes = tx.total_changes();
         self.storage_context()?;
         let state = self.state_at_with_progress(block, &mut || {
             progress(NativeAccountProofProgress::StateReplay)
@@ -1140,7 +1156,15 @@ impl Node {
             })
             .map_err(NativeAccountProofFailure::into_error)?;
         progress(NativeAccountProofProgress::BeforeOutput)?;
-        tx.commit()?;
+        // A completed read has no write authority. Count same-connection row
+        // writes, including a write that a callback subsequently restores.
+        // This is a local ownership fence, not an external-writer attestation.
+        if tx.total_changes() != read_changes {
+            self.invalidate_commitment();
+            return Err(Error::from("NATIVE_ACCOUNT_PROOF_WRITE").local_integrity());
+        }
+        // Never commit a query transaction (including uncounted schema changes).
+        tx.rollback()?;
         Ok((checkpoint, proof, observation))
     }
     fn decode_replay_row(row: ReplayRow) -> Result<PeerReplayStateV0> {
@@ -1782,17 +1806,25 @@ impl Node {
     }
     pub fn next_nonce(&self, sender: Hash) -> Result<u64> {
         let state = self.state_at(self.active()?.0)?;
-        let key = format!("account:{}", hex::encode(sender));
-        let current = match state.get(&key) {
-            None => 0,
-            Some(account) => account
-                .get("nonce")
-                .and_then(serde_json::Value::as_u64)
-                .ok_or("STATE_NONCE")?,
-        };
-        current
-            .checked_add(1)
-            .ok_or_else(|| "NONCE_OVERFLOW".into())
+        next_nonce_from_state(&state, sender)
+    }
+    /// Read up to 256 distinct senders from ONE fully checked SQLite snapshot.
+    /// Results preserve input order and reserve no nonce or execution authority.
+    /// The legacy singleton path is unchanged; no successful verdict survives a call.
+    pub fn next_nonces(&self, senders: &[Hash]) -> Result<Vec<u64>> {
+        ensure((1..=256).contains(&senders.len()), "NONCE_QUERY_LIMIT")?;
+        let unique: std::collections::BTreeSet<_> = senders.iter().collect();
+        ensure(unique.len() == senders.len(), "DUPLICATE_NONCE_QUERY")?;
+        self.namespace()?;
+        let tx = self.db.unchecked_transaction()?;
+        self.storage_context()?;
+        let state = self.state_at(self.active()?.0)?;
+        let values = senders
+            .iter()
+            .map(|sender| next_nonce_from_state(&state, *sender))
+            .collect::<Result<Vec<_>>>()?;
+        tx.rollback()?;
+        Ok(values)
     }
     fn slot(&self) -> Result<u64> {
         Ok(self

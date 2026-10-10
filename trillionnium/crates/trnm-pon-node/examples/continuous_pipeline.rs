@@ -160,6 +160,14 @@ fn run() -> Result<()> {
             let mut transactions = Vec::new();
             if index < blocks {
                 first_intake.get_or_insert(intake);
+                let sender_count = if pattern == "hot" { 1 } else { batch.min(4) };
+                let senders = (0..sender_count)
+                    .map(|index| development_public(index as u64))
+                    .collect::<Result<Vec<_>>>()?;
+                let nonces = producer.next_nonces(&senders)?;
+                for (index, nonce) in nonces.into_iter().enumerate() {
+                    next.insert(index as u64, nonce);
+                }
                 for offset in 0..batch {
                     let sender_index = if pattern == "hot" {
                         0
@@ -167,14 +175,9 @@ fn run() -> Result<()> {
                         (offset % 4) as u64
                     };
                     let sender = development_public(sender_index)?;
-                    // One owner read per sender and block. An eager or_insert argument
-                    // rereads the entire authenticated state for every transfer.
-                    let nonce = match next.entry(sender_index) {
-                        std::collections::btree_map::Entry::Vacant(entry) => {
-                            entry.insert(producer.next_nonce(sender)?)
-                        }
-                        std::collections::btree_map::Entry::Occupied(entry) => entry.into_mut(),
-                    };
+                    // All senders share one checked snapshot, not one full
+                    // state read per sender. The existing signed nonce rules remain.
+                    let nonce = next.get_mut(&sender_index).ok_or("NONCE_QUERY_RESULT")?;
                     let receiver = match pattern {
                         "hot" => hash(b"pipeline-receiver-v1", &[&0u64.to_le_bytes()]),
                         "disjoint4" => {
