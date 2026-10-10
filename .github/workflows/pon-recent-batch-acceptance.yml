@@ -244,7 +244,10 @@ jobs:
           set -euo pipefail
           cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test public_v3_service_campaign -- --show-output --test-threads=1 2>&1 | tee "$OUT/network-business.log"
           grep -E '^test result: ok\. 2 passed; 0 failed; 0 ignored;' "$OUT/network-business.log"
-          python3 scripts/ci/check_required_native_test.py "$OUT/network-business.log" --test network_only_business::network_only_business_confirmations_survive_rotating_false_work
+          mkdir "$OUT/network-singleton"
+          selector=network_only_business::network_only_business_confirmations_survive_rotating_false_work
+          TRNM_CI_RECEIPT_DIR="$OUT/network-singleton" cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test public_v3_service_campaign "$selector" -- --exact --show-output --test-threads=1 2>&1 | tee "$OUT/network-business-singleton.log"
+          python3 scripts/ci/check_required_native_test.py "$OUT/network-business-singleton.log" --test "$selector"
           python3 - <<'PYNETWORK'
           import json, os
           from pathlib import Path
