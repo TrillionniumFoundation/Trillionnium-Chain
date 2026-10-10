@@ -1,0 +1,10 @@
+evidence/pon-native-node-v1/logs/native-doctests.log:163: new blank line at EOF.
+evidence/pon-native-node-v1/logs/native-ignored-helper.log:23: new blank line at EOF.
+evidence/pon-native-node-v1/logs/native-node-contracts.log:44: new blank line at EOF.
+evidence/pon-native-node-v1/logs/native-suite.log:2299: trailing whitespace.
++test wal_reopens_across_process_and_excludes_a_second_owner ... 
+evidence/pon-native-node-v1/logs/native-suite.log:2488: trailing whitespace.
++test tests::sqlite_process_kill_rolls_back_uncommitted_delta ... 
+evidence/pon-native-node-v1/logs/native-suite.log:2542: trailing whitespace.
++test archive_store_process_loss_after_commit_reopens_and_retries_exact_batch ... 
+evidence/pon-native-node-v1/logs/native-suite.log:3313: new blank line at EOF.
