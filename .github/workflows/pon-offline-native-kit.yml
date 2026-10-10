@@ -35,7 +35,7 @@ jobs:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
           repository: TrillionniumFoundation/hepta-private-ci
-          ref: 236f048768a786ff2831eb69b743750145634251
+          ref: e518fcdb6b25e2d6ef1320f80842d3bb8a606230
           fetch-depth: 0
           persist-credentials: false
           path: hepta-source
@@ -43,7 +43,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          test "$(git -C hepta-source rev-parse HEAD)" = 236f048768a786ff2831eb69b743750145634251
+          test "$(git -C hepta-source rev-parse HEAD)" = e518fcdb6b25e2d6ef1320f80842d3bb8a606230
           git -C hepta-source rev-parse HEAD HEAD^{tree} > "$KIT/receipts/hepta-source.txt"
           git -C hepta-source bundle create "$KIT/hepta.bundle" HEAD
           test -z "$(git status --porcelain --untracked-files=no)"
@@ -52,7 +52,7 @@ jobs:
           sha256sum "$RUNNER_TEMP/offline-native-kit.tar.gz" > "$RUNNER_TEMP/offline-native-kit.sha256"
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: pon-offline-native-kit-fecfcf93-236f0487
+          name: pon-offline-native-kit-fecfcf93-e518fcdb
           compression-level: 0
           retention-days: 3
           path: |
