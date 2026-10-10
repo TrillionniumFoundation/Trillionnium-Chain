@@ -1,0 +1,139 @@
+name: PoN authenticated SQL exact-source acceptance
+on:
+  pull_request:
+    paths:
+      - trillionnium/crates/trnm-pon-node/**
+      - .github/workflows/pon-authenticated-sql-acceptance.yml
+permissions:
+  contents: read
+jobs:
+  authenticated-sql:
+    name: authenticated SQL (${{ matrix.runner }}, ${{ matrix.source }})
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ubuntu-24.04, ubuntu-24.04-arm]
+        source: [head, prospective-merge]
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 25
+    env:
+      CARGO_INCREMENTAL: "0"
+      CARGO_BUILD_JOBS: "2"
+      RUST_TEST_THREADS: "1"
+      PYTHONDONTWRITEBYTECODE: "1"
+      EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
+      EXPECTED_BASE: ${{ github.event.pull_request.base.sha }}
+      EXPECTED_MERGE: ${{ github.sha }}
+      SOURCE_KIND: ${{ matrix.source }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ matrix.source == 'head' && github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify exact committed source and actual ordered main merge
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/authenticated-sql"
+          mkdir -p "$out"
+          echo "OUT=$out" >> "$GITHUB_ENV"
+          echo "CARGO_TARGET_DIR=$RUNNER_TEMP/target-authenticated-sql" >> "$GITHUB_ENV"
+          args=(--kind "$SOURCE_KIND" --expected-head "$EXPECTED_HEAD")
+          if test "$SOURCE_KIND" = prospective-merge; then
+            args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_MERGE")
+          fi
+          python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$out/source.json"
+          git rev-parse HEAD:trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs > "$out/runtime-blob.txt"
+          bash scripts/project-preflight.sh --audit
+      - name: Install source-pinned compiler and lint tools
+        run: rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+      - name: Check committed formatting without rewriting source
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check 2>&1 | tee "$OUT/format.log"
+      - name: Build actual native test binary before observations
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib --no-run 2>&1 | tee "$OUT/build.log"
+          rustc +1.95.0 -Vv > "$OUT/rustc.txt"
+          uname -a > "$OUT/uname.txt"
+          find "$CARGO_TARGET_DIR/release/deps" -maxdepth 1 -type f -name 'trnm_pon_node-*' -executable -exec sha256sum '{}' \; > "$OUT/binaries.sha256"
+          test -s "$OUT/binaries.sha256"
+      - name: Execute all retained authenticated-storage tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib store::native_authenticated:: -- --show-output --test-threads=1 2>&1 | tee "$OUT/authenticated.log"
+          grep -E '^test result: ok\. 26 passed; 0 failed; 1 ignored;' "$OUT/authenticated.log"
+      - name: Require nonempty actual execution of all eight new cache regressions
+        shell: bash
+        run: |
+          set -euo pipefail
+          for name in cached_delta_reads_rebind_and_observe_committed_mutations cached_delta_failure_then_rollback_does_not_reuse_a_verdict cached_delta_cursor_is_released_after_cancellation cached_delta_eviction_or_disabled_cache_keeps_original_results; do
+            selector="store::native_authenticated::stored_delta_stream_tests::$name"
+            cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib "$selector" -- --exact --show-output --test-threads=1 2>&1 | tee "$OUT/$name.log"
+            python3 scripts/ci/check_required_native_test.py "$OUT/$name.log" --test "$selector"
+          done
+          for name in cached_block_reads_do_not_hide_genesis_damage_or_rollback cached_parent_reads_observe_changed_work_then_exact_restore cached_commitment_reads_preserve_limits_missing_and_rollback cached_genesis_snapshot_is_reread_and_survives_cold_reopen; do
+            selector="store::native_authenticated::cached_owner_read_tests::$name"
+            cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib "$selector" -- --exact --show-output --test-threads=1 2>&1 | tee "$OUT/$name.log"
+            python3 scripts/ci/check_required_native_test.py "$OUT/$name.log" --test "$selector"
+          done
+      - name: Execute original explicit native retained-delta cost observation
+        shell: bash
+        run: |
+          set -euo pipefail
+          export TRNM_RETAINED_DELTA_COST_PATH="$OUT/retained-delta-cost.jsonl"
+          selector=store::native_authenticated::stored_delta_stream_tests::retained_delta_stream_cost_preserves_all_paired_observations
+          cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib "$selector" -- --exact --ignored --show-output --test-threads=1 2>&1 | tee "$OUT/cost.log"
+          python3 scripts/ci/check_required_native_test.py "$OUT/cost.log" --test "$selector"
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          rows = [json.loads(line) for line in (Path(os.environ['OUT']) / 'retained-delta-cost.jsonl').read_text().splitlines()]
+          assert len(rows) == 34
+          assert rows[0]['schema'] == 'pon-native-retained-delta-cost-v1'
+          assert rows[-1]['completed'] is True and rows[-1]['observations'] == 32
+          assert rows[-1]['pairs'] == 16
+          observed = set()
+          for row in rows[1:-1]:
+              key = (row['case'], row['pair'], row['arm'])
+              assert key not in observed
+              observed.add(key)
+              assert row['equal'] is True and row['error'] is None
+              assert row['count'] == row['rows'] and int(row['wall_ns']) >= 0
+          assert observed == {(case, pair, arm) for case in range(4) for pair in range(4) for arm in ('baseline226', 'streamed')}
+          PY
+      - name: Preserve original source-preserving migration controls
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib authenticated_migration -- --show-output --test-threads=1 2>&1 | tee "$OUT/migration.log"
+          grep -E '^test result: ok\. 14 passed; 0 failed; 0 ignored;' "$OUT/migration.log"
+      - name: Check complete native target lint without allowances
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --all-targets --all-features -- -D warnings 2>&1 | tee "$OUT/clippy.log"
+      - name: Reverify source and retain failures without promoting acceptance
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          args=(--kind "$SOURCE_KIND" --expected-head "$EXPECTED_HEAD")
+          if test "$SOURCE_KIND" = prospective-merge; then
+            args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_MERGE")
+          fi
+          python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$OUT/source-after.json"
+          find "$OUT" -maxdepth 1 -type f -name '*.log' -exec sha256sum '{}' \; > "$OUT/logs.sha256"
+          printf 'Actual committed Rust SQL-cache regressions and retained native controls only. The original cost comparison is baseline226 full-list/root versus current bounded streamed/root; it does not isolate SQL reuse, whole Node cost, physical I/O, TPS or WAN. Full ancestry/state traversal, original 65536-key capacity, 4105-block history and complete baseline remain mandatory. No minimum attack-cost, general Sybil fairness, real independently authorized future-model adoption, physical power-loss, long-term DA or independent-operator qualification.\n' > "$OUT/SCOPE.txt"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: authenticated-sql-${{ matrix.runner }}-${{ matrix.source }}-${{ github.event.pull_request.head.sha }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/authenticated-sql
+          if-no-files-found: error
+          retention-days: 30
