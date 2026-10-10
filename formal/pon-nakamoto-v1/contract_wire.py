@@ -3,7 +3,7 @@ Public schemas in config/pon are loaded strictly; unsigned/decoded records are n
 """
 from __future__ import annotations
 from pathlib import Path
-import hashlib,json,struct
+import hashlib,json,struct,os
 ROOT=Path(__file__).resolve().parents[2]
 
 def unique(pairs):
@@ -16,7 +16,6 @@ def unique(pairs):
 def read_config(path):
     return json.loads((ROOT/path).read_text(),object_pairs_hook=unique)
 SCHEMA=read_config('config/pon/ledger-v1.json')
-PARAMS=read_config('config/pon/devnet-v1.json')
 WORK_PROFILE=read_config('config/pon/work-profile-v1.json')
 MODEL_FAMILY=read_config('config/pon/model-family-v1.json')
 COMMANDS={row['tag']:row for row in SCHEMA['commands']}
@@ -43,6 +42,22 @@ def H(tag,*parts):
     h=hashlib.sha256(b'TRNM-PON1\0'+struct.pack('<H',len(tag))+tag)
     for p in parts:h.update(struct.pack('<I',len(p)));h.update(p)
     return h.digest()
+def development_parameters(policy="legacy-first-two-v3"):
+    params = read_config('config/pon/devnet-v1.json')
+    if policy == "legacy-first-two-v3":
+        return params
+    if policy != "closed-round-all-eligible-min-v1":
+        raise ValueError("EVALUATION_POLICY")
+    rule = read_config('config/pon/evaluation-round-v1.json')
+    if rule['id'] != policy or rule['production_activation'] is not False:
+        raise ValueError("EVALUATION_POLICY")
+    params.update(rule['genesis_overrides'])
+    params['evaluation_policy_hash'] = H('evaluation-policy', canonical(rule)).hex()
+    return params
+
+# Explicit process-start experimental selection; never switch a running ledger or
+# rewrite an existing namespace. The native CLI requires its own matching option.
+PARAMS=development_parameters(os.environ.get('TRNM_PON_EVALUATION_POLICY', 'legacy-first-two-v3'))
 NETWORK=H('network',PARAMS['chain_label'].encode())
 PARAMETER_HASH=H('parameters',canonical(PARAMS),canonical(SCHEMA),canonical(WORK_PROFILE),canonical(MODEL_FAMILY))
 

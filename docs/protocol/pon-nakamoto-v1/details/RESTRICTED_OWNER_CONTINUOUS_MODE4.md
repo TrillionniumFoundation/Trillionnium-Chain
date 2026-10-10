@@ -1,0 +1,43 @@
+# Restricted owner continuous mode4 source candidate
+
+The basis is qualified Mode3 commit `978e775dcae2181d08a38fbe6bb22985b67aa0c4`, tree `3c8e7c6e0f12e587645375498f52bf579e6d1aa1`. This candidate introduces a **fresh local mode4 namespace** and an actual protected Node command. There is no migration, old permit fallback, or inherited Mode4 qualification. The PNW1 packet, Work/M06 arithmetic and original executor/SQL publication remain unchanged. Only Root applies, formats, builds, signs and executes.
+
+## Actual source entry
+
+Release target remains `trnm-pon-node`; retain the existing `operator_mining_controller` example. The command is:
+
+```
+trnm-pon-node operator-continuous --launch /absolute/launch.json --launch-sha256 FULLSHA --registry-key REGISTRY_PUBLIC --task-key TASK_PUBLIC --source-commit ACTUAL_NEW_H40 --policy-source POLICY_SHA --registry2-package REGISTRY2_SHA
+```
+
+A protected 0600 regular single-link, held-FD launch file binds exact external keys, source/package/context, journal and store. Its schema is `restricted-owner-continuous-launch-v1`. Root fixes the complete typed Inputs and expected envelopes independently. No request selects the authority or latest view. Unknown actual source, binary, context, grants, keys or receiver evidence remains None/HOLD in external templates.
+
+The owner keeps one real Node and CPU epoch. Newline-delimited strict JSON Steps are Refresh (boxed Inputs), Search (exact operation and transaction bytes), WinnerValidation (full packet and retained local Search), ReceiverValidation (full packet and distinct recipient origin), Activate (durable id and local/receiver purpose), ReadScopeSnapshot, ReadHead, ReadHistory, ReadStatus and CancelEpoch. Empty struct variants reject unknown and duplicate fields. Each accepted control frame is retained after its action; Drop before persistence marks a held-directory terminal unknown. Frames do not manufacture Work capabilities.
+
+Startup emits `restricted-owner-continuous-startup-v1` with the actual startup ScopeReceipt. Step output is `restricted-owner-continuous-step-result-v1`: step, optional actual parent/generation/journal_head, control_frame_recorded, metadata_errors, result and native_error. A late metadata error preserves the Native result and leaves unknown metadata None. A qualifier must reject metadata_errors or unrecorded frames. A Search retains every actually started proof/trial, failed nonce, full winning packet and real scalar settlement; it is not a claim of cheapest global mining. EOF joins the optional real public receiver and emits `restricted-owner-continuous-pipe-closed-v1` after a durable clean checkpoint. Unfinished, poisoned or failed settlement cannot be reopened as clean.
+
+## Authorization and budget history
+
+Original Registry2 complete admission and fsynced O_EXCL claim occurs **once per signed BudgetIncrease** outside the Node. This is explicit delegation, not original per-operation Registry2 verification. Original MAX_RECORDS=256 is retained; original view sequence and max_operations are U64. Each new operation requires the two-role Mode4 signatures, exact task/class/full declaration, recipient, allocator record, operation nonce, parent and actual generation. The original Registry2 actual_parent is the initial authorization anchor; each descendant parent is independently signed and checked against actual Node state. Keys alone do not delegate permission.
+
+BudgetIncrease and TaskView are separately signed domains. Budget updates must link the previous budget, complete local journal head and exact cumulative usage digest. Ceilings never decrease, existing claims and actual CPU never refund, and revocation or unknown is terminal. Task/class/global counters are independent. The full original context/package/source mapping is checked, including Registry2 scope `same-operator-declared-task-permission-no-consensus-or-reward-v1`.
+
+StartupCatalog and unchanged ParentReconcile consume two distinct claims but one actual CPU interval. Search, WinnerValidation and Activate have separate purposes. ReceiverValidation and ReceiverActivate use independent global allocations and signed full packet origins; a receiver does not insert or borrow a local Search claim. The public Submit path attaches both claims to the original already-running paid CPU interval and verifies full actual lease/model/input/A-B binding before Work. Ordinary read queries keep the original public budgets. Unsigned new packets are rejected before full State/context/proof processing.
+
+The journal cold-scans its complete exact outside-pinned prefix once. In-memory bounded indexes increment task/class/global claims and real CPU; each mutation appends an exclusive held-FD row, fsyncs file and directory, then updates the index. It does not clone or rescan all prior operations per operation. Bounds are 32768 claims/scopes/view sequences, 131072 rows, 192 MiB total logical journal bytes, 64 KiB per row, 256 task keys and three declared classes. The global frame limit is 65536, not reset per reopen. Fault headroom is retained. Scope receipts bind actual O+C once, live-paid plus residual, all worker counts and full started/settled record hashes. Material catalog reading retains the original complete six files and the 512 MiB catalog limit. Allocations reserve declared CPU/material/DA/funding/reuse without proving balances, marginal costs or physical consumption.
+
+A clean cold reopen consumes a one-use verified checkpoint and starts the **same restored service policy with zero volatile credit**. It waits in the retained domain for the original 0.25 CPU/s elapsed-time refill to reach the original 2 s ceiling, clipped by the business absolute deadline. It never injects a new burst, rotates identity, refunds claims or silently replaces a depleted domain. Deep roots and SQLite remain nonpreemptive; no hard CPU deadline is claimed. Owner/scoped intervals cover the Native stages, not every process instruction or physical GPU use.
+
+ReadScopeSnapshot may export a known settled scope from a still-running Node. Its own journal_head can precede the later ControlFrame head. Root's immutable-prefix observation must use that exact receipt head, full chain, external anchor and all known totals. It is not Node clean-close evidence. Final actual Node join/clean-close, complete original Work/M06/State/SQL and source before/after remain mandatory.
+
+## Explicit pending continuous service
+
+This package makes a short owner Search→Winner→Activate and distinct receiver cycle executable. Mode4 has no Pool purpose. Automatic Pool selection/status/prune, PoolPush, serve--mine, lease-changing tag22 declaration transitions and original normal8193 network workload remain HOLD. The full declared task is fixed across views and bumps; a renewal changing lease bytes requires an independently specified authorized declaration transition, not a self-selected hash. Larger journal capacity alone is not continuous-service acceptance. Original 8193 inputs, depth/work6, all full Work/State/three SQL stores, hardware and budgets must be preserved when those interfaces are implemented. Planned kill/reopen requires an actual clean checkpoint; a crash during unknown or unfinished work stays HOLD.
+
+Each stdout frame is bounded at 2 MiB; stdin is at 4 MiB, original Root aggregate log/FS caps stay fixed. Long Search traces or unpaged History may fail those caps. A later retained artifact/page interface must retain all failed nonce and full-reference denominators rather than dropping data or extending caps silently.
+
+## Root acceptance
+
+Apply the complete patch only on the exact basis, run required preflight, fmt, embedded inventory, original Cargo graph/lock checks, release Node plus retained Mode3 example, all retained Node tests and new meaningful definitions, strict all-target/all-feature Clippy. The original build envelope remains 600 wall / 480 CPU / 8 GiB AS / 2 GiB FS / jobs2. Tests defined here exercise real signatures, files, original scalar intervals and guard mechanisms; synthetic declarations are not Native evidence.
+
+Then use outside complete original Registry2 admission+claim, global allocations and current view with actual qualified new binary. Execute a short real cycle and independent original full nonce/Work/M06/State/SQL reference under original stage/whole limits. Preserve all failures. No source-only checks or old Mode3/8193/104 receipts grant this candidate actual acceptance. Source, funding, independent governance, economic hardness, usefulness, anonymous fairness and permissionless public-ready flags remain false.
