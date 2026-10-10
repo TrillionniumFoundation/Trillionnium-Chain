@@ -5,6 +5,7 @@ on:
       - trillionnium/crates/trnm-pon-node/src/store.rs
       - trillionnium/crates/trnm-pon-node/src/native_authenticated_tests.rs
       - trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs
+      - trillionnium/crates/trnm-pon-node/src/store/native_fixed_blob_tests.rs
       - trillionnium/crates/trnm-pon-node/tests/authenticated_storage_cli.rs
       - formal/pon-nakamoto-v1/work_query_bound.py
       - formal/pon-nakamoto-v1/test_work_query_bound.py
@@ -54,7 +55,8 @@ jobs:
           python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$out/source.json"
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store.rs)" = 13164f58b2f625c6ece012012f9ce8b6e5ec7be7
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/native_authenticated_tests.rs)" = 8431605c238f88843c8eb31dc5bb6bfb3df4a7b7
-          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs)" = 16773890b8a5f7f714f0900a8d6eccc1b1f9ad34
+          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs)" = 8927902b0cb0b9d4fe0160ba4f52ce9298948f9b
+          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_fixed_blob_tests.rs)" = cecb8a984c02ffca7590e69c4392223ea748b40f
           test "$(git hash-object trillionnium/crates/trnm-pon-node/tests/authenticated_storage_cli.rs)" = 7301aeb3033913f080b23767bfca52a2bf76d45b
           test "$(git hash-object formal/pon-nakamoto-v1/work_query_bound.py)" = 2d568879899da290c7bec8add6eb2746554897d6
           test "$(git hash-object formal/pon-nakamoto-v1/test_work_query_bound.py)" = 2161dd7d25b605b9e67f05bee5aa20038cf4469d
@@ -115,7 +117,7 @@ jobs:
             cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib "$suite" -- "${options[@]}" --show-output --test-threads=1 2>&1 | tee "$OUT/$name.log"
             grep -E '^test result: ok\. [1-9][0-9]* passed; 0 failed;' "$OUT/$name.log"
             if test "$suite" = store::native_authenticated::; then
-              grep -E '^test result: ok\. 28 passed; 0 failed; 0 ignored;' "$OUT/$name.log"
+              grep -E '^test result: ok\. 32 passed; 0 failed; 0 ignored;' "$OUT/$name.log"
             fi
           done
           cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test continuity_authenticated --test authenticated_storage_cli -- --show-output --test-threads=1 2>&1 | tee "$OUT/recovery.log"
@@ -145,6 +147,15 @@ jobs:
           for test in live_owner_rechecks_genesis_block_after_committed_damage_and_restore live_owner_rechecks_parent_work_after_real_admission live_owner_rechecks_record_limits_missing_rows_and_sql_types live_owner_snapshot_damage_rolls_back_admission_and_rejects_cold_open; do
             selector="cached_owner_reads::$test"
             cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test authenticated_storage_cli "$selector" -- --exact --show-output --test-threads=1 2>&1 | tee "$OUT/$test.log"
+            python3 scripts/ci/check_required_native_test.py "$OUT/$test.log" --test "$selector"
+          done
+      - name: Require fixed-BLOB allocation bounds with original errors and rollback semantics
+        shell: bash
+        run: |
+          set -euo pipefail
+          for test in fixed_blob_projection_bounds_owned_bytes_and_preserves_sql_types fixed_block_fields_match_original_errors_after_warm_cache_and_rollback fixed_parent_work_matches_original_and_rereads_after_restore fixed_fields_genesis_failure_order_and_cold_reopen_keep_state; do
+            selector="store::native_authenticated::native_fixed_blob_tests::$test"
+            cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib "$selector" -- --exact --show-output --test-threads=1 2>&1 | tee "$OUT/$test.log"
             python3 scripts/ci/check_required_native_test.py "$OUT/$test.log" --test "$selector"
           done
       - name: Preserve original source-preserving migration coverage
