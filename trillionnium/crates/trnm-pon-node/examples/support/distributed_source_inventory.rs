@@ -3305,6 +3305,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-pon-node/src/store/native_fixed_blob_tests.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/store/native_fixed_blob_tests.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
