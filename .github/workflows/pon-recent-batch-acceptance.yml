@@ -3,6 +3,7 @@ on:
   pull_request:
     paths:
       - trillionnium/crates/trnm-pon-node/src/store.rs
+      - trillionnium/crates/trnm-pon-node/src/native_account_query_tests.rs
       - trillionnium/crates/trnm-pon-node/src/native_authenticated_tests.rs
       - trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs
       - trillionnium/crates/trnm-pon-node/src/store/native_fixed_blob_tests.rs
@@ -54,13 +55,14 @@ jobs:
             args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_MERGE")
           fi
           python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$out/source.json"
-          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store.rs)" = 13164f58b2f625c6ece012012f9ce8b6e5ec7be7
+          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store.rs)" = e88537a341529a88bb137381c5755cd87d4760fa
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/native_authenticated_tests.rs)" = 8431605c238f88843c8eb31dc5bb6bfb3df4a7b7
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs)" = 67319ff55fa55f5d245185d24eb8bdfc4725ec73
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_fixed_blob_tests.rs)" = cecb8a984c02ffca7590e69c4392223ea748b40f
           test "$(git hash-object trillionnium/crates/trnm-pon-node/tests/authenticated_storage_cli.rs)" = 7301aeb3033913f080b23767bfca52a2bf76d45b
           test "$(git hash-object formal/pon-nakamoto-v1/work_query_bound.py)" = 2d568879899da290c7bec8add6eb2746554897d6
           test "$(git hash-object formal/pon-nakamoto-v1/test_work_query_bound.py)" = 2161dd7d25b605b9e67f05bee5aa20038cf4469d
+          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/native_account_query_tests.rs)" = c8567475a36cf449d9fd2b33363a545fbd4704ab
           bash scripts/project-preflight.sh --audit
       - name: Execute conditional query accounting and anytime-bound counterexamples
         shell: bash
@@ -212,6 +214,17 @@ jobs:
               assert report['whole_campaign_seconds'] > 0
           print('PASS: two local pipelines, exact stage counts, no WAN or saturation claim')
           PYTHON
+      - name: Require non-committing proof reads and actual nonce snapshot callers
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib store::native_account_query_tests:: -- --show-output --test-threads=1 2>&1 | tee "$OUT/native-read-snapshot.log"
+          grep -E '^test result: ok\. 11 passed; 0 failed; 0 ignored;' "$OUT/native-read-snapshot.log"
+          for test in native_account_query_final_callback_write_is_rejected_and_rolled_back native_account_query_write_then_restore_still_has_no_commit_authority native_account_query_cancel_after_write_keeps_original_error_and_rollback native_nonce_batch_dimensions_precede_database_and_preserve_single_reads native_nonce_batch_rechecks_actual_state_and_reopens_without_a_verdict_cache native_nonce_batch_arithmetic_retains_absence_bad_nonce_and_overflow_rules native_nonce_batch_tracks_signed_execution_heavier_reorg_and_cold_reopen native_nonce_batch_complete_call_observation_preserves_reference_results; do
+            selector="store::native_account_query_tests::$test"
+            cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib "$selector" -- --exact --show-output --test-threads=1 2>&1 | tee "$OUT/$test.log"
+            python3 scripts/ci/check_required_native_test.py "$OUT/$test.log" --test "$selector"
+          done
       - name: Check complete native target lint
         shell: bash
         run: |
