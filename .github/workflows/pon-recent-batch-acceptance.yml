@@ -73,7 +73,7 @@ jobs:
         run: |
           set -euo pipefail
           python3 -m unittest discover -s scripts/ci -p test_read_native_cache_observation.py -v 2>&1 | tee "$OUT/cache-receipt-tests.log"
-          grep -E '^Ran 18 tests in ' "$OUT/cache-receipt-tests.log"
+          grep -E '^Ran 34 tests in ' "$OUT/cache-receipt-tests.log"
           grep -x 'OK' "$OUT/cache-receipt-tests.log"
       - name: Install original pinned native compiler and lint tools
         run: rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy

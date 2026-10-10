@@ -3,8 +3,10 @@
 import argparse
 import hashlib
 import json
+import os
 from pathlib import Path
 import re
+import stat
 
 SELECTOR = (
     "store::native_authenticated::stored_delta_stream_tests::"
@@ -47,11 +49,41 @@ def strict_json(text):
 
 
 def read_bounded(path, limit):
-    with Path(path).open("rb") as stream:
-        data = stream.read(limit + 1)
-    require(0 < len(data) <= limit, "empty or oversized input")
-    return data
+    """Read a bounded regular-file snapshot, rejecting observed replacement.
 
+    Nonblocking open also covers a FIFO substituted after the initial lstat.
+    Metadata checks detect ordinary concurrent mutation; they are not a lock,
+    filesystem latency bound, or attestation against a privileged writer.
+    """
+    require(type(limit) is int and 0 < limit < 2**31, "invalid input limit")
+
+    def snapshot(info):
+        require(stat.S_ISREG(info.st_mode), "regular input file required")
+        require(0 < info.st_size <= limit, "empty or oversized input")
+        return (info.st_dev, info.st_ino, info.st_mode, info.st_size,
+                info.st_mtime_ns, info.st_ctime_ns)
+
+    before = snapshot(os.lstat(path))
+    flags = (os.O_RDONLY | os.O_NONBLOCK | getattr(os, "O_NOFOLLOW", 0)
+             | getattr(os, "O_BINARY", 0))
+    descriptor = os.open(path, flags)
+    try:
+        require(snapshot(os.fstat(descriptor)) == before, "input changed before read")
+        chunks = []
+        size = 0
+        while True:
+            chunk = os.read(descriptor, min(65536, limit - size + 1))
+            if not chunk:
+                break
+            size += len(chunk)
+            require(size <= limit, "empty or oversized input")
+            chunks.append(chunk)
+        require(size == before[3], "input size changed during read")
+        require(snapshot(os.fstat(descriptor)) == before, "input changed during read")
+        require(snapshot(os.lstat(path)) == before, "input path changed during read")
+        return b"".join(chunks)
+    finally:
+        os.close(descriptor)
 
 def validate(log, source, after, *, head, kind, base=None, merge=None):
     """Validate supplied receipts; the CI source verifier owns checkout checks."""
