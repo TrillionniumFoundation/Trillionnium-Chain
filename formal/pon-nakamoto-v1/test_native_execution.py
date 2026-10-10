@@ -64,6 +64,41 @@ class NativeExecutionTests(unittest.TestCase):
         self.run_block([self.tx(1,'consume_quota',dict(quota=quota,units=1,result=result,consumer_signature=signature))])
         self.assertEqual(self.tags,set(range(1,13)));self.assertNotIn('account:'+public(consumer).hex(),self.state)
 
+    def test_revision3_first_pair_is_order_sensitive_and_late_third_rejects(self):
+        # A retained counterexample, not a claimed fix or a new consensus profile.
+        from itertools import permutations
+        author=public(key(3));artifact=H('ordering-counterexample')
+        cid=contribution_id(author,FAMILY,ZERO,artifact,ZERO,0)
+        self.run_block([self.tx(3,'contribute',dict(contribution=cid,family=FAMILY,
+            parent_release=ZERO,artifact=artifact,size=100,components_root=ZERO,submission_round=0))])
+        before=copy.deepcopy(self.state);scores={0:10,1:100,2:100};outcomes=set()
+        signed={i:sign(key(i),1,'evaluate',dict(contribution=cid,plan=PLAN,
+            evidence=H('ordering-evidence',u64(i)),score=scores[i]),expiry=100000) for i in scores}
+        for order in permutations(scores):
+            txs=[signed[i] for i in order[:2]];parent=H('ordering-parent')
+            expected,receipts=execute_reference(before,txs,2,public(key(0)),parent)
+            score=expected['contribution:'+cid.hex()]['score'];outcomes.add(score)
+            self.assertEqual(score,min(scores[i] for i in order[:2]))
+            for workers in [1,2,4,8]:
+                actual,observed,_=execute_native(before,txs,2,public(key(0)),parent,workers,BINARY)
+                self.assertEqual(actual,expected);self.assertEqual(observed,receipts)
+                with self.assertRaisesRegex(ValueError,'STATE'):
+                    execute_native(actual,[signed[order[2]]],3,public(key(0)),H('late-evidence'),workers,BINARY)
+        self.assertEqual(outcomes,{10,100});self.assertEqual(self.state,before)
+
+    def test_exact_artifact_copy_across_authors_does_not_gain_second_intake(self):
+        artifact=H('same-parameter-bytes');parent=ZERO
+        txs=[]
+        for author in [0,3]:
+            cid=contribution_id(public(key(author)),FAMILY,parent,artifact,ZERO,0)
+            txs.append(sign(key(author),1,'contribute',dict(contribution=cid,family=FAMILY,
+                parent_release=parent,artifact=artifact,size=100,components_root=ZERO,submission_round=0)))
+        before=copy.deepcopy(self.state)
+        for workers in [1,2,4,8]:
+            with self.assertRaisesRegex(ValueError,'DUPLICATE'):
+                execute_native(before,txs,1,public(key(0)),GENESIS,workers,BINARY)
+        self.assertEqual(self.state,before)
+
     def test_independent_senders_commit_without_false_conflicts(self):
         self.run_block([self.tx(0,'transfer',dict(recipient=public(key(i)),amount=10000))for i in range(4,20)])
         self.run_block([self.tx(i,'transfer',dict(recipient=H('isolated-recipient',u64(i)),amount=1))for i in range(4,20)])
