@@ -374,7 +374,7 @@ fn run() -> Result<()> {
     let inclusion_rate = offered_window
         .filter(|seconds| *seconds > 0.0)
         .map(|seconds| accepted_transactions as f64 / seconds);
-    let summary = json!({
+    let mut summary = json!({
         "schema":"trnm-continuous-native-pipeline-v1",
         "scope":"single-host closed-loop durable CPU TCP service workload; local confirmation; no saturation, WAN or public qualification",
         "campaign_passed":campaign_result.is_ok() && pending.is_empty() && heads_agree && server_result.is_ok(),
@@ -390,22 +390,27 @@ fn run() -> Result<()> {
         "whole_campaign_seconds":completed.duration_since(started).as_secs_f64(),
         "whole_campaign_confirmed_transactions_per_second":confirmed_transactions as f64/completed.duration_since(started).as_secs_f64(),
         "admission_profile":if protected{"connection-work-v1"}else{"legacy-development"},
-        "socket_metrics":server_result.as_ref().ok(),"server_error":server_result.as_ref().err().map(ToString::to_string),"inclusion_latency_block_samples":quantiles(&inclusion_latencies),
+        "socket_metrics":server_result.as_ref().ok(),"inclusion_latency_block_samples":quantiles(&inclusion_latencies),
         "confirmation_latency_block_samples":quantiles(&confirmation_latencies),
-        "producer_final_state":producer_final.as_ref().ok(),"producer_final_error":producer_final.as_ref().err().map(ToString::to_string),"validator_final_head":final_head.as_ref().ok(),
+        "producer_final_state":producer_final.as_ref().ok(),"validator_final_head":final_head.as_ref().ok(),
         "final_head_error":final_head.as_ref().err().map(ToString::to_string),"producer_validator_heads_agree":heads_agree,
         "disk_bytes":bytes_on_disk(&directory)?,"disk_scope":"complete run directory before summary write, including exported proof/evidence",
         "ledger_disk_bytes":bytes_on_disk(&directory.join("producer"))? + bytes_on_disk(&directory.join("validator"))?,
         "producer_close_ns":producer_close_ns,"gpu_used":false,"gpu_device":null,"vram_bytes":null,
         "gpu_measurement":"no GPU inference/training in this CPU chain workload; model deployment VRAM unmeasured",
         "mempool_latency":null,"mempool_note":"prebuilt block submission; no standalone transaction RPC/mempool",
-        "stage_counts":stages,
-        "stage_count_scope":"completed local and remote-observation boundaries only; ACK is not membership or confirmation; execution/work are jointly observed, standalone executor completion is unmeasured",
-        "application_executed_transactions":null,
-        "pending_confirmation_scope":"membership-checked batches; earlier uncertain delivery remains a stage gap, not proof of non-execution",
-        "pending_confirmation_record_indices":pending.iter().map(|(index, _, _)| *index).collect::<Vec<_>>(),
         "records":records
     });
+    // Keep additive observations outside the original summary macro: its field
+    // count is already close to the compiler's default macro recursion limit.
+    summary["server_error"] = json!(server_result.as_ref().err().map(ToString::to_string));
+    summary["producer_final_error"] = json!(producer_final.as_ref().err().map(ToString::to_string));
+    summary["stage_counts"] = serde_json::to_value(&stages)?;
+    summary["stage_count_scope"] = json!("completed local and remote-observation boundaries only; ACK is not membership or confirmation; execution/work are jointly observed, standalone executor completion is unmeasured");
+    summary["application_executed_transactions"] = Value::Null;
+    summary["pending_confirmation_scope"] = json!("membership-checked batches; earlier uncertain delivery remains a stage gap, not proof of non-execution");
+    summary["pending_confirmation_record_indices"] =
+        json!(pending.iter().map(|(index, _, _)| *index).collect::<Vec<_>>());
     fs::write(
         directory.join("summary.json"),
         serde_json::to_vec_pretty(&summary)?,
