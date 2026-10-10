@@ -1,0 +1,42 @@
+name: PoN offline maintenance toolchain
+on:
+  pull_request:
+    paths:
+      - .github/workflows/pon-local-toolchain-export.yml
+permissions:
+  contents: read
+jobs:
+  export:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Export only pinned tools and public Cargo dependency sources
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash scripts/project-preflight.sh --audit
+          out="$RUNNER_TEMP/offline-native-tools"
+          mkdir -p "$out" "$RUNNER_TEMP/isolated-cargo"
+          export CARGO_HOME="$RUNNER_TEMP/isolated-cargo"
+          rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+          sysroot="$(rustc +1.95.0 --print sysroot)"
+          cargo +1.95.0 fetch --locked --manifest-path trillionnium/Cargo.toml
+          tar -czf "$out/rust-toolchain.tar.gz" -C "$sysroot" bin lib
+          tar -czf "$out/public-cargo-sources.tar.gz" -C "$CARGO_HOME" registry
+          rustc +1.95.0 -vV > "$out/compiler.txt"
+          git rev-parse HEAD HEAD^{tree} > "$out/source.txt"
+          git diff --exit-code
+          (cd "$out" && sha256sum *.tar.gz compiler.txt source.txt > SHA256SUMS)
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: pinned-offline-native-tools-${{ github.event.pull_request.head.sha }}
+          path: ${{ runner.temp }}/offline-native-tools
+          if-no-files-found: error
+          retention-days: 3
