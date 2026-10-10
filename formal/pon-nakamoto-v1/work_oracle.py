@@ -41,14 +41,24 @@ def evaluate(c,a,b):
 def prove(c,a,b):
     product,trace=evaluate(c,a,b)
     return b'PNW1'+field_bytes(a)+field_bytes(b)+field_bytes(product)+trace
-def verify(c,task,target,proof):
+def precheck(c,task,target,proof):
+    """Cheap syntactic/commitment filter only. Passing this is NOT verified work.
+
+    In particular a fabricated trace passing the hash threshold can pass this filter;
+    callers still need the complete transcript and product check before acceptance.
+    """
+    if len(c)!=32 or len(task)!=32 or len(target)!=32:raise ValueError('LENGTH')
     if len(proof)!=PROOF_BYTES:raise ValueError('LENGTH')
     if proof[:4]!=b'PNW1':raise ValueError('VERSION')
     values=list(struct.unpack('<'+'I'*(3*CELLS),proof[4:-32]));a,b,p=values[:CELLS],values[CELLS:2*CELLS],values[2*CELLS:]
     check(p)
     if task_id(a,b)!=task:raise ValueError('TASK')
     ticket=H('ticket',c,proof[-32:])
-    if len(target)!=32 or target==bytes(32)or ticket>target:raise ValueError('TARGET')
+    if target==bytes(32)or ticket>target:raise ValueError('TARGET')
+    return a,b,p,ticket
+
+def verify(c,task,target,proof):
+    a,b,p,ticket=precheck(c,task,target,proof)
     product,trace=evaluate(c,a,b)
     if trace!=proof[-32:]:raise ValueError('TRANSCRIPT')
     if p!=product:raise ValueError('PRODUCT')
