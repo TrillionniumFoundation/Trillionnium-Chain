@@ -424,7 +424,9 @@ pub(crate) fn load(db: &Connection, id: Hash) -> Result<Record> {
     local((|| {
         let bytes: Vec<u8> = db
             .prepare_cached("SELECT substr(data,1,?) FROM native_state_commitments WHERE block=?")?
-            .query_row(params![MAX_RECORD_BYTES + 1, id.as_slice()], |row| row.get(0))
+            .query_row(params![MAX_RECORD_BYTES + 1, id.as_slice()], |row| {
+                row.get(0)
+            })
             .optional()?
             .ok_or("NATIVE_STATE_MISSING")?;
         ensure(bytes.len() <= MAX_RECORD_BYTES, "NATIVE_STATE_RECORD_LIMIT")?;
@@ -1069,7 +1071,10 @@ mod stored_delta_stream_tests {
         let changed = stored_delta_root(&db, [7; 32], &mut || Ok(())).unwrap();
         assert_ne!(changed, original);
         assert_eq!(changed, reference(&db).unwrap());
-        assert_eq!(stored_delta_root(&db, [8; 32], &mut || Ok(())).unwrap().0, 0);
+        assert_eq!(
+            stored_delta_root(&db, [8; 32], &mut || Ok(())).unwrap().0,
+            0
+        );
     }
 
     #[test]
@@ -1139,7 +1144,59 @@ mod stored_delta_stream_tests {
                     .unwrap()
                     .query_row([], |row| row.get::<_, i64>(0))
                     .unwrap();
-                assert_eq!(stored_delta_root(&db, [8; 32], &mut || Ok(())).unwrap().0, 0);
+                assert_eq!(
+                    stored_delta_root(&db, [8; 32], &mut || Ok(())).unwrap().0,
+                    0
+                );
+            }
+        }
+    }
+
+    #[test]
+    fn cached_delta_complete_call_observation_keeps_checks_and_results() {
+        // Warm both modes before timing. Cache capacity zero is the same
+        // candidate with statement reuse disabled, not a different validator.
+        // No speed threshold, whole-node TPS or hardware independence claim.
+        for count in [1, 257, 4096] {
+            let db = database(count, 12);
+            let expected = reference(&db).unwrap();
+            let repetitions = 50;
+            for (round, capacity) in [0, 16, 16, 0].into_iter().enumerate() {
+                db.set_prepared_statement_cache_capacity(capacity);
+                db.flush_prepared_statement_cache();
+                assert_eq!(
+                    stored_delta_root(&db, [7; 32], &mut || Ok(())).unwrap(),
+                    expected
+                );
+                let mut progress_calls = 0;
+                let started = std::time::Instant::now();
+                for _ in 0..repetitions {
+                    let actual = stored_delta_root(&db, [7; 32], &mut || {
+                        progress_calls += 1;
+                        Ok(())
+                    })
+                    .unwrap();
+                    assert_eq!(actual, expected);
+                }
+                let elapsed_ns = started.elapsed().as_nanos();
+                assert_eq!(progress_calls, repetitions * (3 + count / 256));
+                assert_eq!(reference(&db).unwrap(), expected);
+                eprintln!(
+                    "native_statement_cache_observation_v1 {}",
+                    serde_json::json!({
+                        "rows": count,
+                        "width": 12,
+                        "repetitions": repetitions,
+                        "round": round,
+                        "statement_cache_capacity": capacity,
+                        "elapsed_ns": elapsed_ns,
+                        "progress_calls": progress_calls,
+                        "delta_root": hex::encode(expected.1),
+                        "full_checks_preserved": true,
+                        "whole_node_throughput_measured": false,
+                        "independent_operator": false
+                    })
+                );
             }
         }
     }
@@ -1556,13 +1613,13 @@ mod cached_owner_read_tests {
                     recovered.parent,
                     recovered.height,
                     recovered.root,
-                    recovered.packet_digest,
+                    recovered.packet_digest
                 ),
                 (
                     original.parent,
                     original.height,
                     original.root,
-                    original.packet_digest,
+                    original.packet_digest
                 )
             );
         }
@@ -1599,13 +1656,13 @@ mod cached_owner_read_tests {
                 actual.parent,
                 actual.height,
                 actual.root,
-                actual.packet_digest,
+                actual.packet_digest
             ),
             (
                 expected.parent,
                 expected.height,
                 expected.root,
-                expected.packet_digest,
+                expected.packet_digest
             )
         );
     }
@@ -1639,10 +1696,9 @@ mod cached_owner_read_tests {
                 [id.as_slice()],
             )
             .unwrap();
-        assert_eq!(
-            load(&node.db, id).unwrap_err().to_string(),
-            "NATIVE_STATE_MISSING"
-        );
+        let missing = load(&node.db, id).unwrap_err();
+        assert_eq!(missing.to_string(), "NATIVE_STATE_MISSING");
+        assert!(missing.requires_owner_stop());
         node.db
             .execute_batch("ROLLBACK TO removed_record; RELEASE removed_record")
             .unwrap();
