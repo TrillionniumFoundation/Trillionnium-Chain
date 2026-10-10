@@ -95,7 +95,8 @@ jobs:
                     done
           '''
           lines = step.splitlines()
-          step = lines[0] + '\n' + '\n'.join(line[10:] for line in lines[1:] if line.strip()) + '\n'
+          step = lines[0] + '\n' + '\n'.join(line for line in lines[1:] if line.strip()) + '\n'
+          assert step.splitlines()[1].startswith('        shell:'), repr(step)
           text = text.replace(anchor, step + anchor)
           p.write_text(text)
           actual = set(subprocess.check_output(['git','diff','--name-only'], text=True).splitlines())
