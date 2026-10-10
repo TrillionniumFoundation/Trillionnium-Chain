@@ -154,7 +154,7 @@ def validate_sustained_report(path: Path) -> dict:
         raw = stream.read(REPORT_LIMIT + 1)
     require(len(raw) <= REPORT_LIMIT, 'SUSTAINED_REPORT_LIMIT')
     doc = json_load(raw)
-    require(isinstance(doc, dict) and doc.get('schema') == 'public-v3-sustained-local-from-zero-v1',
+    require(isinstance(doc, dict) and doc.get('schema') == 'public-v3-sustained-local-from-zero-v2',
             'SUSTAINED_SCHEMA')
 
     def number(value):
@@ -179,7 +179,7 @@ def validate_sustained_report(path: Path) -> dict:
                 == (2_000_000_000, 250_000_000, 100_000_000, 2), 'SUSTAINED_POLICY_CHANGED')
         return value['stored_credit_ns']
 
-    def call(value):
+    def call(value, outer=None):
         require(isinstance(value, dict) and value.get('status') in ('ok', 'refused', 'error'),
                 'SUSTAINED_CALL')
         number(value.get('client_thread_cpu_ns'))
@@ -187,8 +187,13 @@ def validate_sustained_report(path: Path) -> dict:
         require(start <= end and type(value.get('returned_after_deadline')) is bool,
                 'SUSTAINED_CALL')
         elapsed = number(value.get('elapsed_wall_ns'))
-        require(number(value.get('deadline_ms')) == 2000 and elapsed >= end - start
-                and value['returned_after_deadline'] == (elapsed > 2_000_000_000),
+        expected_deadline = start + 2_000_000_000
+        if outer is not None:
+            expected_deadline = min(expected_deadline, outer)
+        require(number(value.get('deadline_ms')) == 2000 and elapsed == end - start
+                and number(value.get('effective_deadline_at_ns')) == expected_deadline
+                and 'outer_deadline_at_ns' in value and value['outer_deadline_at_ns'] == outer
+                and value['returned_after_deadline'] == (end > expected_deadline),
                 'SUSTAINED_CALL_TIME')
         return value['status'] == 'ok' and value['returned_after_deadline'] is False
 
@@ -196,7 +201,8 @@ def validate_sustained_report(path: Path) -> dict:
         require(type(doc.get(key)) is str and re.fullmatch('[0-9a-f]{64}', doc[key]), 'SUSTAINED_CONTEXT')
     flags(doc, ('reopen_state_equal', 'same_stored_cpu_meter_across_reopen', 'finite_service_target_met'),
           ('public_network_ready', 'resource_fairness_qualified', 'work_profile_qualified',
-           'production_activation', 'ordinary_hepta_entry', 'independent_accepted', 'physical_power_loss'))
+           'production_activation', 'ordinary_hepta_entry', 'independent_accepted', 'physical_power_loss',
+           'budget_depletion_demonstrated'))
     number(doc.get('reopen_wall_ns'))
     phases = doc.get('phases')
     require(isinstance(phases, list) and len(phases) == 2, 'SUSTAINED_PHASES')
@@ -213,6 +219,9 @@ def validate_sustained_report(path: Path) -> dict:
                 'SUSTAINED_SCOPE')
         require(number(phase.get('requested_window_ns')) == 4_000_000_000
                 and number(phase.get('traffic_and_join_wall_ns')) >= 4_000_000_000, 'SUSTAINED_WINDOW')
+        window_start = number(phase.get('window_started_ns'))
+        window_end = number(phase.get('window_ended_ns'))
+        require(window_end - window_start == phase['requested_window_ns'], 'SUSTAINED_WINDOW')
         for key in ('preparation_wall_ns', 'diagnostic_verification_wall_ns', 'reader_cpu_ns',
                     'honest_build_wall_ns', 'honest_build_calling_thread_cpu_ns'):
             number(phase.get(key))
@@ -258,7 +267,8 @@ def validate_sustained_report(path: Path) -> dict:
                     # This attempt consumed construction/worker CPU but opened
                     # no connection. Keep it without inventing client timing.
                     continue
-                call(row)
+                call(row, window_end)
+                require(number(row.get('started_ns')) >= window_start, 'SUSTAINED_WINDOW')
                 require(row['status'] != 'ok', 'SUSTAINED_ATTACK_ACCEPTED')
                 require(constructions[packet_index]['status'] == 'target_hit_unverified',
                         'SUSTAINED_EXHAUSTED_DISPATCH')
@@ -292,6 +302,12 @@ def validate_sustained_report(path: Path) -> dict:
         require(isinstance(service, dict) and service.get('error', 'missing') is None, 'SUSTAINED_SERVICE')
         metrics = service.get('metrics')
         require(isinstance(metrics, dict), 'SUSTAINED_SERVICE')
+        refusals = number(metrics.get('mutation_cpu_refusals'))
+        require(number(phase.get('mutation_cpu_refusals')) == refusals, 'SUSTAINED_REFUSALS')
+        pressure = any(v < 100_000_000 for v in credit) or refusals > 0
+        require(type(phase.get('budget_pressure_observed')) is bool
+                and phase['budget_pressure_observed'] == pressure, 'SUSTAINED_PRESSURE_CLAIM')
+        require('budget_depletion_observed' not in phase, 'SUSTAINED_DEPLETION_CLAIM')
         total = number(metrics.get('mutation_cpu_charged_ns'))
         work = number(metrics.get('mutation_full_work_cpu_ns'))
         rest = number(metrics.get('mutation_dispatch_excluding_work_cpu_ns'))
@@ -324,6 +340,9 @@ def validate_sustained_report(path: Path) -> dict:
             'honest_reads': len(reads), 'honest_submissions': len(submits), 'connections': connections,
             'mutation_cpu_refusals': number(metrics.get('mutation_cpu_refusals')),
             'minimum_sampled_stored_credit_ns': min(credit)})
+    require(type(doc.get('budget_pressure_observed')) is bool
+            and doc['budget_pressure_observed'] == any(p['budget_pressure_observed'] for p in phases),
+            'SUSTAINED_PRESSURE_CLAIM')
     meter(doc.get('meter_before_reopen'))
     meter(doc.get('meter_after_reopen'))
     require(doc['meter_before_reopen'] == doc['meter_after_reopen'] == phases[1]['initial_meter'],

@@ -63,18 +63,21 @@ def simulated_sustained_report():
                   in_flight=0, accounting_unavailable=False, burst_ns=2_000_000_000,
                   refill_ns_per_second=250_000_000, start_reserve_ns=100_000_000, worker_limit=2)
     call = dict(status='ok', client_thread_cpu_ns=1, started_ns=10, ended_ns=20,
-                elapsed_wall_ns=10, deadline_ms=2000, returned_after_deadline=False)
+                elapsed_wall_ns=10, deadline_ms=2000, returned_after_deadline=False,
+                effective_deadline_at_ns=2_000_000_010, outer_deadline_at_ns=None)
     phases = []
     for index in range(2):
         constructions = [dict(status='target_hit_unverified', attacker_cpu_ns=1, attempt_budget=4096,
             attempts=[dict(nonce=0, target_hit=True)], winner_nonce=0, packet='00') for _ in range(16)]
         workers = [dict(worker=i, attempt_cap=1024, attempt_cap_reached=False, calling_thread_cpu_ns=2,
-            calls=[dict(call, status='refused', packet_index=i,
+            calls=[dict(call, status='refused', packet_index=i, outer_deadline_at_ns=4_000_000_000,
                         response={'value': {'error': 'WORK:Transcript'}})]) for i in range(16)]
         records = [dict(connection_id=i+1, complete=True, connection_closed=True,
                         observation_failed=False, task_created=True, task_closed=True) for i in range(19)]
         phases.append(dict(phase=index, target='7f'+'ff'*31, construction=constructions, attacks=workers,
             requested_window_ns=4_000_000_000, traffic_and_join_wall_ns=4_000_000_001,
+            window_started_ns=0, window_ended_ns=4_000_000_000,
+            mutation_cpu_refusals=0, budget_pressure_observed=False,
             preparation_cpu_ns=16, attacker_preparation_plus_workers_cpu_ns=48,
             preparation_wall_ns=20, diagnostic_verification_wall_ns=30, reader_cpu_ns=1,
             honest_build_wall_ns=40, honest_build_calling_thread_cpu_ns=20,
@@ -95,7 +98,8 @@ def simulated_sustained_report():
                 records_not_retained=0, measurement_failures=0, counter_overflow=False,
                 cpu_intervals_are_nested_not_additive=True, observation_has_consensus_authority=False,
                 cpu_includes_reactor_authentication_or_response_signing=False)))
-    return dict(schema='public-v3-sustained-local-from-zero-v1', simulated_control=True,
+    return dict(schema='public-v3-sustained-local-from-zero-v2', simulated_control=True,
+        budget_pressure_observed=False, budget_depletion_demonstrated=False,
         network='a'*64, parameters='b'*64, genesis='c'*64, policy_id='d'*64,
         phases=phases, reopen_state_equal=True, same_stored_cpu_meter_across_reopen=True,
         meter_before_reopen=policy.copy(), meter_after_reopen=policy.copy(),
@@ -481,7 +485,7 @@ class ExecutionBoundaryTests(unittest.TestCase):
         self.sustained_refusal(edit, 'SUSTAINED_EXHAUSTED_DISPATCH')
 
     def test_sustained_honest_deadline_and_missing_reads_refused(self):
-        self.sustained_refusal(lambda d: d['phases'][0]['honest_reads'][0].update(returned_after_deadline=True, elapsed_wall_ns=2_000_000_001), 'SUSTAINED_HONEST_GAP')
+        self.sustained_refusal(lambda d: d['phases'][0]['honest_reads'][0].update(returned_after_deadline=True, elapsed_wall_ns=2_000_000_001, ended_ns=2_000_000_011), 'SUSTAINED_HONEST_GAP')
         self.sustained_refusal(lambda d: d['phases'][0].update(honest_reads=[]), 'SUSTAINED_HONEST_COUNT')
 
     def test_sustained_double_ack_is_not_two_honest_blocks(self):
@@ -553,6 +557,52 @@ class ExecutionBoundaryTests(unittest.TestCase):
         self.sustained_refusal(lambda d: d['phases'][0]['honest_reads'][0].update(
             elapsed_wall_ns=0), 'SUSTAINED_CALL_TIME')
 
+
+    def test_sustained_pressure_is_not_depletion_qualification(self):
+        self.sustained_refusal(lambda d: d.update(budget_depletion_demonstrated=True), 'SUSTAINED_SCOPE')
+        self.sustained_refusal(lambda d: d.update(budget_depletion_demonstrated=0), 'SUSTAINED_SCOPE')
+        self.sustained_refusal(lambda d: d['phases'][0].update(budget_depletion_observed=True), 'SUSTAINED_DEPLETION_CLAIM')
+
+    def test_sustained_refusal_summary_must_equal_real_metric(self):
+        self.sustained_refusal(lambda d: d['phases'][0].update(mutation_cpu_refusals=1), 'SUSTAINED_REFUSALS')
+        self.sustained_refusal(lambda d: d['phases'][0]['service']['metrics'].update(mutation_cpu_refusals=True), 'SUSTAINED_NUMBER')
+
+    def test_sustained_pressure_aggregate_is_recomputed(self):
+        self.sustained_refusal(lambda d: d.update(budget_pressure_observed=True), 'SUSTAINED_PRESSURE_CLAIM')
+        self.sustained_refusal(lambda d: d['phases'][0].update(budget_pressure_observed=True), 'SUSTAINED_PRESSURE_CLAIM')
+
+    def test_sustained_occupied_worker_refusal_is_retained_without_depletion(self):
+        def edit(d):
+            d['phases'][0]['service']['metrics']['mutation_cpu_refusals'] = 1
+            d['phases'][0]['mutation_cpu_refusals'] = 1
+            d['phases'][0]['budget_pressure_observed'] = True
+            d['budget_pressure_observed'] = True
+        result, _ = self.exercise(sustained_edit=edit)
+        self.assertTrue(result['passed'])
+        self.assertEqual(result['sustained_report']['phases'][0]['mutation_cpu_refusals'], 1)
+
+    def test_sustained_attack_deadline_must_clip_to_common_window(self):
+        def edit(d):
+            row = d['phases'][0]['attacks'][0]['calls'][0]
+            row.update(started_ns=3_999_999_000, ended_ns=3_999_999_010,
+                       effective_deadline_at_ns=5_999_999_000)
+        self.sustained_refusal(edit, 'SUSTAINED_CALL_TIME')
+
+    def test_sustained_outer_deadline_cannot_be_removed_or_renewed(self):
+        self.sustained_refusal(lambda d: d['phases'][0]['attacks'][0]['calls'][0].update(outer_deadline_at_ns=None), 'SUSTAINED_CALL_TIME')
+        self.sustained_refusal(lambda d: d['phases'][0]['attacks'][0]['calls'][0].update(outer_deadline_at_ns=6_000_000_000), 'SUSTAINED_CALL_TIME')
+
+    def test_sustained_real_clipped_deadline_and_late_refusal_are_retained(self):
+        def edit(d):
+            row = d['phases'][0]['attacks'][0]['calls'][0]
+            row.update(started_ns=3_999_999_000, ended_ns=4_000_000_001,
+                       elapsed_wall_ns=1001, effective_deadline_at_ns=4_000_000_000,
+                       returned_after_deadline=True)
+        result, _ = self.exercise(sustained_edit=edit)
+        self.assertTrue(result['passed'])
+
+    def test_sustained_shifted_window_cannot_inherit_old_call_times(self):
+        self.sustained_refusal(lambda d: d['phases'][0].update(window_started_ns=1000, window_ended_ns=4_000_001_000), 'SUSTAINED_CALL_TIME')
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)

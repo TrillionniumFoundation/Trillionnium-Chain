@@ -61,3 +61,31 @@ They are not independent operators. Aggregate adversary CPU and WAN TPS remain
 unmeasured; restart is a same-process Node reopen, not physical power loss. No
 model installation, independent future learning, permanent DA or production
 acceptance follows from this result. Those remain separate full-project exits.
+
+
+## Separate from-zero pressure observation V2
+
+The existing `public_v3_from_zero` target also creates a fresh-domain, two-phase
+local public TCP observation without the trusted pre-depletion used above. Its
+V2 report clips each attack call to the earlier of the original two-second call
+budget and the shared four-second attack-window deadline. Honest probes retain
+their own original two-second service objective; their completion and joined
+cleanup are not credited as additional offered attack time. An expired caller
+cut is tested through the actual public client against a nonblocking listener,
+requiring no connection and no ticket search. Cancellation is cooperative and
+finite cleanup can outlive the cut; this is not a physical preemption guarantee.
+
+V2 records the exact start, end, effective deadline and outer deadline on each
+call. The source-bound reader recomputes all deadline and pressure aggregates.
+It retains late failed attacks and refuses late successful honest service as
+evidence of an on-time service target. All original finite V2 service tests,
+state comparisons, CPU accounting and same-domain reopen checks remain.
+
+`budget_pressure_observed` means sampled low stored credit or actual CPU-domain
+refusals. Stored credit includes pending start reservations; refusals may mean
+occupied workers, and a meter snapshot does not advance refill time. These
+observations alone do not identify a causal remotely induced budget exhaustion.
+Consequently `budget_depletion_demonstrated` remains false in this report. V1
+historical reports keep their original source/reader and are not rewritten or
+relabelled. This corrected observation does not qualify cheapest physical work,
+independent Sybil fairness, future-task custody, long-term DA, WAN or production.

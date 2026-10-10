@@ -188,11 +188,23 @@ struct Client {
     settings: Settings,
     epoch: Instant,
 }
+fn call_deadline(start: Instant, outer: Option<Instant>) -> Instant {
+    let local = start + Duration::from_millis(CALL_MS);
+    outer.map(|deadline| deadline.min(local)).unwrap_or(local)
+}
 impl Client {
     fn call(&self, lane: &str, who: u8, request: Request) -> Value {
+        self.call_before(lane, who, request, None)
+    }
+    fn call_before(&self, lane: &str, who: u8, request: Request, outer: Option<Instant>) -> Value {
         let start = Instant::now();
+        let deadline = call_deadline(start, outer);
         let client_cpu = ThreadCpuStamp::start();
-        let started_ns = ns(self.epoch);
+        let started_ns: u64 = start
+            .duration_since(self.epoch)
+            .as_nanos()
+            .try_into()
+            .unwrap();
         let (reply, metrics) = public_v3::call_public_protected_v3_with_deadline(
             self.address,
             &request,
@@ -200,12 +212,24 @@ impl Client {
             identity(71).public_key(),
             &identity(who),
             policy(),
-            Some(start + Duration::from_millis(CALL_MS)),
+            Some(deadline),
         );
         let client_thread_cpu_ns = cpu_elapsed(client_cpu);
-        let ended_ns = ns(self.epoch);
-        let elapsed_ns = ns(start);
-        let late = elapsed_ns > CALL_MS * 1_000_000;
+        let end = Instant::now();
+        let ended_ns: u64 = end
+            .duration_since(self.epoch)
+            .as_nanos()
+            .try_into()
+            .unwrap();
+        let elapsed_ns: u64 = end.duration_since(start).as_nanos().try_into().unwrap();
+        let deadline_at_ns: u64 = deadline
+            .duration_since(self.epoch)
+            .as_nanos()
+            .try_into()
+            .unwrap();
+        let outer_at_ns =
+            outer.map(|value| u64::try_from(value.duration_since(self.epoch).as_nanos()).unwrap());
+        let late = end > deadline;
         let (status, response, error) = match reply {
             Ok(reply) => (
                 if reply.ok { "ok" } else { "refused" },
@@ -218,6 +242,7 @@ impl Client {
             "lane": lane, "caller_fixture": who, "request": request,
             "started_ns": started_ns, "ended_ns": ended_ns,
             "elapsed_wall_ns": elapsed_ns, "deadline_ms": CALL_MS,
+            "effective_deadline_at_ns": deadline_at_ns, "outer_deadline_at_ns": outer_at_ns,
             "client_thread_cpu_ns": client_thread_cpu_ns,
             "client_cpu_scope": "identity creation, negotiation, ticket search, request encoding, I/O and reply validation on this calling thread; excludes receiver and final diagnostic JSON",
             "returned_after_deadline": late,
@@ -643,6 +668,35 @@ fn from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection() {
 
 #[test]
 fn caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct() {
+    // Expiry is exercised through the actual client, not a timer-only mock.
+    let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+    listener.set_nonblocking(true).unwrap();
+    let epoch = Instant::now();
+    let client = Client {
+        address: listener.local_addr().unwrap(),
+        settings: Settings::development(Some(1_750_000_000)).unwrap(),
+        epoch,
+    };
+    let start = Instant::now();
+    assert_eq!(
+        call_deadline(start, None),
+        start + Duration::from_millis(CALL_MS)
+    );
+    assert_eq!(call_deadline(start, Some(start)), start);
+    assert_eq!(call_deadline(start, Some(epoch)), epoch);
+    assert_eq!(
+        call_deadline(start, Some(start + Duration::from_secs(4))),
+        start + Duration::from_millis(CALL_MS)
+    );
+    let row = client.call_before("expired_pressure", 72, Request::Head, Some(epoch));
+    assert_eq!(row["status"], "error");
+    assert_eq!(row["error"], "PUBLIC_CLIENT_DEADLINE");
+    assert_eq!(row["effective_deadline_at_ns"], 0);
+    assert_eq!(row["metrics"]["solution_trials"], 0);
+    assert_eq!(row["metrics"]["failed_stage"], "construction");
+    assert!(
+        matches!(listener.accept(), Err(error) if error.kind() == std::io::ErrorKind::WouldBlock)
+    );
     assert_eq!(checked_cpu_ns(0, 0), Some(0));
     assert_eq!(checked_cpu_ns(1, 999_999_999), Some(1_999_999_999));
     assert_eq!(checked_cpu_ns(-1, 0), None);
@@ -796,8 +850,9 @@ fn sustained_phase(
         epoch,
     };
     let barrier = Arc::new(Barrier::new(PRESSURE_WORKERS + 2));
-    // One common wall window. Request construction, negotiation, backpressure,
-    // ticket search and failures all consume it; no retry renews that window.
+    // One common attacker window, passed into every actual TCP call. Honest
+    // probes retain their original two-second SLO and are reported separately;
+    // joined cleanup is not credited as additional offered attack time.
     let window_start = Instant::now();
     let window_end = window_start + Duration::from_millis(PRESSURE_MS);
     let mut attacks = Vec::new();
@@ -815,12 +870,13 @@ fn sustained_phase(
                 let index = (attempt * PRESSURE_WORKERS + worker) % packets.len();
                 if let Some(packet) = &packets[index] {
                     let who = 80 + ((attempt + worker * 37) % 150) as u8;
-                    let call = client.call(
+                    let call = client.call_before(
                         "sustained_from_zero",
                         who,
                         Request::Submit {
                             packet: packet.clone(),
                         },
+                        Some(window_end),
                     );
                     rows.push(compact_pressure_call(call, Some(index)));
                 } else {
@@ -926,7 +982,9 @@ fn sustained_phase(
             .is_some_and(|v| v < 0)
     });
     let mutation_cpu_refusals = m["mutation_cpu_refusals"].as_u64().unwrap_or(0);
-    let budget_depletion_observed =
+    // Raw credit includes outstanding start reservations, and reserve refusals
+    // can mean occupied workers. Neither is a causal public-depletion witness.
+    let budget_pressure_observed =
         below_start_reserve_observed || observed_debt || mutation_cpu_refusals > 0;
     let attack_cpu = attack_rows.iter().try_fold(0u64, |n, r| {
         n.checked_add(r["calling_thread_cpu_ns"].as_u64()?)
@@ -947,35 +1005,37 @@ fn sustained_phase(
         && accounting_closed
         && attacker_cpu_ns.is_some()
         && service_outcome["error"].is_null();
-    (
-        node,
-        json!({
-            "phase": number, "target": hex::encode(target), "initial_meter": initial_budget,
-            "construction": construction, "preparation_cpu_ns": preparation_cpu_ns,
-            "preparation_wall_ns": preparation_wall_ns, "diagnostic_verification_wall_ns": diagnostic_wall_ns,
-            "honest_packet": hex::encode(honest_packet.encode().unwrap()),
-            "honest_build_wall_ns": honest_build_wall_ns,
-            "honest_build_calling_thread_cpu_ns": honest_build_calling_thread_cpu_ns,
-            "honest_build_aggregate_cpu_ns": null,
-            "requested_window_ns": PRESSURE_MS * 1_000_000, "traffic_and_join_wall_ns": traffic_wall_ns,
-            "attacks": attack_rows, "attacker_preparation_plus_workers_cpu_ns": attacker_cpu_ns,
-            "attacker_cpu_scope": "disjoint preparation plus joined client threads; excludes parent setup/join, diagnostic verifiers, server, energy and final report encoding",
-            "honest_reads": read_rows, "reader_cpu_ns": reader_cpu_ns, "reads_on_time": reads_on_time,
-            "honest_submissions": submissions, "post_pressure_head": after_pressure,
-            "meter_samples": budget_samples, "meter_at_traffic_end": budget_at_traffic_end,
-            "stored_credit_below_start_reserve_observed": below_start_reserve_observed,
-            "negative_stored_credit_observed": observed_debt,
-            "mutation_cpu_refusals": mutation_cpu_refusals,
-            "budget_depletion_observed": budget_depletion_observed,
-            "attempt_caps_not_reached": caps_not_reached, "observations": captured,
-            "service": service_outcome, "no_attack_accepted": no_attack_accepted,
-            "accounting_closed": accounting_closed, "full_native_state_equal": honest_admitted,
-            "service_target_met": service_target_met, "invariant_target_met": invariant_target_met,
-            "client_confirmed_transactions": null, "strongest_honest_producer_used": false,
-            "public_network_ready": false, "resource_fairness_qualified": false,
-            "work_profile_qualified": false, "production_activation": false,
-        }),
-    )
+    let mut observation = json!({
+        "phase": number, "target": hex::encode(target), "initial_meter": initial_budget,
+        "construction": construction, "preparation_cpu_ns": preparation_cpu_ns,
+        "preparation_wall_ns": preparation_wall_ns, "diagnostic_verification_wall_ns": diagnostic_wall_ns,
+        "honest_packet": hex::encode(honest_packet.encode().unwrap()),
+        "honest_build_wall_ns": honest_build_wall_ns,
+        "honest_build_calling_thread_cpu_ns": honest_build_calling_thread_cpu_ns,
+        "honest_build_aggregate_cpu_ns": null,
+        "requested_window_ns": PRESSURE_MS * 1_000_000, "traffic_and_join_wall_ns": traffic_wall_ns,
+        "attacks": attack_rows, "attacker_preparation_plus_workers_cpu_ns": attacker_cpu_ns,
+        "attacker_cpu_scope": "disjoint preparation plus joined client threads; excludes parent setup/join, diagnostic verifiers, server, energy and final report encoding",
+        "honest_reads": read_rows, "reader_cpu_ns": reader_cpu_ns, "reads_on_time": reads_on_time,
+        "honest_submissions": submissions, "post_pressure_head": after_pressure,
+        "meter_samples": budget_samples, "meter_at_traffic_end": budget_at_traffic_end,
+        "stored_credit_below_start_reserve_observed": below_start_reserve_observed,
+        "negative_stored_credit_observed": observed_debt,
+        "mutation_cpu_refusals": mutation_cpu_refusals,
+        "budget_pressure_observed": budget_pressure_observed,
+        "attempt_caps_not_reached": caps_not_reached, "observations": captured,
+        "service": service_outcome, "no_attack_accepted": no_attack_accepted,
+        "accounting_closed": accounting_closed, "full_native_state_equal": honest_admitted,
+        "service_target_met": service_target_met, "invariant_target_met": invariant_target_met,
+        "client_confirmed_transactions": null, "strongest_honest_producer_used": false,
+        "public_network_ready": false, "resource_fairness_qualified": false,
+        "work_profile_qualified": false, "production_activation": false,
+    });
+    observation["window_started_ns"] =
+        json!(u64::try_from(window_start.duration_since(epoch).as_nanos()).unwrap());
+    observation["window_ended_ns"] =
+        json!(u64::try_from(window_end.duration_since(epoch).as_nanos()).unwrap());
+    (node, observation)
 }
 
 fn sustained_observation(path: &std::path::Path) {
@@ -1020,15 +1080,16 @@ fn sustained_observation(path: &std::path::Path) {
         && second["service_target_met"] == true
         && first["attempt_caps_not_reached"] == true
         && second["attempt_caps_not_reached"] == true;
-    let report = json!({"schema": "public-v3-sustained-local-from-zero-v1",
+    let report = json!({"schema": "public-v3-sustained-local-from-zero-v2",
         "network": hex::encode(settings.network()), "parameters": hex::encode(settings.parameters()),
         "genesis": hex::encode(settings.genesis()), "policy_id": hex::encode(policy().id()),
         "phases": [first, second], "reopen_state_equal": reopen_equal,
         "same_stored_cpu_meter_across_reopen": same_meter,
         "meter_before_reopen": meter_before, "meter_after_reopen": meter_after,
         "reopen_wall_ns": reopen_wall_ns,
-        "budget_depletion_demonstrated": first["budget_depletion_observed"] == true
-            || second["budget_depletion_observed"] == true,
+        "budget_pressure_observed": first["budget_pressure_observed"] == true
+            || second["budget_pressure_observed"] == true,
+        "budget_depletion_demonstrated": false,
         "finite_service_target_met": passed, "independent_accepted": false,
         "physical_power_loss": false, "ordinary_hepta_entry": false,
         "public_network_ready": false, "resource_fairness_qualified": false,
