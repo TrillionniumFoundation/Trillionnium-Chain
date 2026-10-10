@@ -1,0 +1,37 @@
+name: PoN pressure window source staging
+on:
+  push:
+    branches: [ci/pon-pressure-window-source-20261010]
+    paths: [.github/workflows/pon-pressure-window-source.yml]
+permissions:
+  contents: write
+jobs:
+  native:
+    if: github.repository == 'TrillionniumFoundation/Trillionnium-Chain' && github.ref == 'refs/heads/ci/pon-pressure-window-source-20261010'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    env:
+      RUSTUP_TOOLCHAIN: 1.95.0
+      CARGO_INCREMENTAL: '0'
+      CARGO_BUILD_JOBS: '2'
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          fetch-depth: 0
+      - name: Install source-owned native formatter and compiler
+        run: rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+      - name: Materialize reviewed patch and publish exact committed source
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/pressure-window"
+          mkdir -p "$out"
+          echo "OUT=$out" >> "$GITHUB_ENV"
+          echo "CARGO_TARGET_DIR=$RUNNER_TEMP/pressure-target" >> "$GITHUB_ENV"
+          git checkout --detach 228b156dc14ea938300b9503092e1ddd55014e4a
+          bash scripts/project-preflight.sh --audit | tee "$out/preflight-before.log"
+          python3 - "$out/patch.diff" <<'PY'
+          import base64, hashlib, pathlib, sys, zlib
+          encoded = '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'
+          PY
