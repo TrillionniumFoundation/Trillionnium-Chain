@@ -165,3 +165,103 @@ fn native_account_query_reads_real_nodes_and_rolls_back_callback_mutations() {
     node.authenticated_account_multiproof(settings.genesis(), &owners)
         .unwrap();
 }
+
+#[test]
+fn native_account_query_final_callback_write_is_rejected_and_rolled_back() {
+    let directory = tempfile::tempdir().unwrap();
+    let settings = Settings::development(Some(1)).unwrap();
+    let node = open(directory.path(), settings.clone(), true);
+    let owners = [development_public(0).unwrap()];
+    let before = logical_rows(&node.db);
+    let expected = node
+        .authenticated_account_multiproof(settings.genesis(), &owners)
+        .unwrap();
+    let touched = Cell::new(false);
+    let result = node.authenticated_account_multiproof_with_progress(
+        settings.genesis(),
+        &owners,
+        &|point| {
+            if point == NativeAccountProofProgress::BeforeOutput {
+                touched.set(true);
+                node.db
+                    .execute("UPDATE active SET generation=generation+1", [])?;
+            }
+            Ok(())
+        },
+    );
+    assert!(touched.get());
+    assert!(
+        result.is_err(),
+        "a read-only proof must not commit callback writes"
+    );
+    let error = result.unwrap_err();
+    assert_eq!(error.to_string(), "NATIVE_ACCOUNT_PROOF_WRITE");
+    assert!(error.requires_owner_stop());
+    assert!(node.db.is_autocommit());
+    assert_eq!(logical_rows(&node.db), before);
+    assert_eq!(
+        node.authenticated_account_multiproof(settings.genesis(), &owners)
+            .unwrap()
+            .1
+            .encode()
+            .unwrap(),
+        expected.1.encode().unwrap()
+    );
+    drop(node);
+    let node = open(directory.path(), settings, true);
+    assert_eq!(logical_rows(&node.db), before);
+}
+
+#[test]
+fn native_account_query_write_then_restore_still_has_no_commit_authority() {
+    let directory = tempfile::tempdir().unwrap();
+    let settings = Settings::development(Some(1)).unwrap();
+    let node = open(directory.path(), settings.clone(), true);
+    let before = logical_rows(&node.db);
+    let error = node
+        .authenticated_account_multiproof_with_progress(
+            settings.genesis(),
+            &[development_public(0).unwrap()],
+            &|point| {
+                if point == NativeAccountProofProgress::BeforeOutput {
+                    node.db
+                        .execute("UPDATE active SET generation=generation+1", [])?;
+                    node.db
+                        .execute("UPDATE active SET generation=generation-1", [])?;
+                }
+                Ok(())
+            },
+        )
+        .unwrap_err();
+    assert_eq!(error.to_string(), "NATIVE_ACCOUNT_PROOF_WRITE");
+    assert!(error.requires_owner_stop());
+    assert!(node.db.is_autocommit());
+    assert_eq!(logical_rows(&node.db), before);
+}
+
+#[test]
+fn native_account_query_cancel_after_write_keeps_original_error_and_rollback() {
+    let directory = tempfile::tempdir().unwrap();
+    let settings = Settings::development(Some(1)).unwrap();
+    let node = open(directory.path(), settings.clone(), true);
+    let before = logical_rows(&node.db);
+    let error = node
+        .authenticated_account_multiproof_with_progress(
+            settings.genesis(),
+            &[development_public(0).unwrap()],
+            &|point| {
+                if point == NativeAccountProofProgress::BeforeOutput {
+                    node.db
+                        .execute("UPDATE active SET generation=generation+1", [])?;
+                    return Err(Error::new(ErrorCode::PublicRequestCancelled));
+                }
+                Ok(())
+            },
+        )
+        .unwrap_err();
+    assert_eq!(error.code(), Some(ErrorCode::PublicRequestCancelled));
+    assert_eq!(error.kind(), ErrorKind::Cancelled);
+    assert!(!error.requires_owner_stop());
+    assert!(node.db.is_autocommit());
+    assert_eq!(logical_rows(&node.db), before);
+}
