@@ -1,0 +1,83 @@
+name: PoN verified snapshot source delivery
+on:
+  push:
+    branches: [dev/pon-snapshot-verified-delivery-20261010]
+permissions:
+  contents: read
+jobs:
+  deliver:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    permissions:
+      contents: write
+    env:
+      SOURCE_SHA: 228b156dc14ea938300b9503092e1ddd55014e4a
+      DELIVERY_BRANCH: feat/pon-snapshot-read-verified-20261010
+      CARGO_BUILD_JOBS: "2"
+      CARGO_INCREMENTAL: "0"
+      RUST_TEST_THREADS: "1"
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.SOURCE_SHA }}
+          path: product
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: b72e8cb7c6fdb096ec859d04c7ad30b47115eb33
+          path: authoring
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Execute all original frozen authoring commands and unchanged native gates
+        working-directory: product
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 - <<'PY'
+          import os,subprocess,yaml
+          from pathlib import Path
+          assert subprocess.check_output(['git','-C','../authoring','rev-parse','HEAD'],text=True).strip()=='b72e8cb7c6fdb096ec859d04c7ad30b47115eb33'
+          original=yaml.safe_load(Path('../authoring/.github/workflows/pon-five-axis-native-work.yml').read_text())
+          selected=[
+            'Original preflight and exact source',
+            'Install original compiler',
+            'Freeze additive counterexamples against the original owner',
+            'Freeze repaired native owner, actual batch caller and contract before tests',
+            'Actual native controls, whole owner regression and strict lint',
+            'Real native TCP pipeline using the one-snapshot batch caller',
+            'Publish only the exact tested product branch without force',
+            'Prepare additive original acceptance workflow object',
+            'Hash retained commands and results',
+          ]
+          commands={s.get('name'):s for s in original['jobs']['native']['steps'] if 'run' in s}
+          assert all(name in commands for name in selected)
+          token=os.environ.pop('GH_TOKEN')
+          for name in selected:
+              command=commands[name]['run']
+              if name=='Publish only the exact tested product branch without force':
+                  assert command.count('feat/pon-snapshot-read-owner-20261010')==1
+                  command=command.replace('feat/pon-snapshot-read-owner-20261010',os.environ['DELIVERY_BRANCH'])
+              if name=='Prepare additive original acceptance workflow object':
+                  # YAML has already removed its uniform block indentation.
+                  # Delete only the two erroneous extra normalization statements.
+                  lines=command.splitlines()
+                  rejected=[line for line in lines if line.startswith('lines=step.splitlines()') or line.startswith('step=lines[0]+')]
+                  assert len(rejected)==2,rejected
+                  command='\n'.join(line for line in lines if line not in rejected)+'\n'
+              env=os.environ.copy()
+              env['TRNM_RETAINED_DELTA_COST_PATH']=str(Path(env['RUNNER_TEMP'])/'five-axis'/'retained-delta.jsonl')
+              if name in ['Publish only the exact tested product branch without force','Prepare additive original acceptance workflow object']:
+                  env['GH_TOKEN']=token
+              print('::group::'+name,flush=True)
+              print(command,flush=True)
+              subprocess.run(['bash','-e','-o','pipefail','-c',command],env=env,check=True)
+              print('::endgroup::',flush=True)
+          PY
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: verified-snapshot-native-${{ github.sha }}
+          path: ${{ runner.temp }}/five-axis/
+          if-no-files-found: error
+          retention-days: 14
