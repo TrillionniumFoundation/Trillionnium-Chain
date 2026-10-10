@@ -28,12 +28,13 @@ jobs:
           bash scripts/project-preflight.sh --audit
           mkdir -p "$OUT"
           python3 - <<'PY'
-          import base64, hashlib, json, os, subprocess, zlib
+          import base64, hashlib, json, os, subprocess
           from pathlib import Path
-          encoded = '''eNrtXWl72ziS/q5fgahnHSmiaMlXHDpOTzrjfjq7nWNjT+/M49VyKBKy2aZINQ8fHfu/b1UBIMFTcpKenQ+bSccWCRQKhTreKgAaz18s2Hh84afM2Tbhx2U2376J4qtFEN0k26soHMfc5WE6njupezl2XJevUid0uXm3DNj88X16fujxW8bni8MX88M5N02+mDqTA3f3OZtOJgd7eaf7b690cb9bb93e093'''
-          # The sealed patch is supplied by the follow-on source-authoring commit.
-          # This deliberately fails until its exact bytes and expected hash agree.
-          patch = zlib.decompress(base64.b64decode(encoded))
+          reply = subprocess.check_output(['gh', 'api', 'repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs/4ab0b6565722ddb4f6a04b58c40b90de0408062c'])
+          patch_object = json.loads(reply)
+          assert patch_object['sha'] == '4ab0b6565722ddb4f6a04b58c40b90de0408062c'
+          patch = base64.b64decode(patch_object['content'])
+          assert len(patch) == 26927
           assert hashlib.sha256(patch).hexdigest() == '24c0760063471ff72d8fd0a1b90652679648fe587daaa00da2d67a24a2aa34f5'
           out = Path(os.environ['OUT'])
           (out / 'change.patch').write_bytes(patch)
