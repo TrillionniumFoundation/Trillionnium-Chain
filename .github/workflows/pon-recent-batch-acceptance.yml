@@ -9,6 +9,7 @@ on:
       - trillionnium/crates/trnm-pon-node/src/store/native_fixed_blob_tests.rs
       - trillionnium/crates/trnm-pon-node/tests/authenticated_storage_cli.rs
       - trillionnium/crates/trnm-pon-node/examples/continuous_pipeline.rs
+      - trillionnium/crates/trnm-pon-node/tests/public_v3_service_campaign.rs
       - formal/pon-nakamoto-v1/work_query_bound.py
       - formal/pon-nakamoto-v1/test_work_query_bound.py
       - scripts/ci/read_native_cache_observation.py
@@ -235,6 +236,32 @@ jobs:
             cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib "$selector" -- --exact --show-output --test-threads=1 2>&1 | tee "$OUT/$test.log"
             python3 scripts/ci/check_required_native_test.py "$OUT/$test.log" --test "$selector"
           done
+      - name: Execute public TCP business confirmation under rotating false work
+        shell: bash
+        env:
+          TRNM_CI_RECEIPT_DIR: ${{ runner.temp }}/recent-exact
+        run: |
+          set -euo pipefail
+          cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test public_v3_service_campaign -- --show-output --test-threads=1 2>&1 | tee "$OUT/network-business.log"
+          grep -E '^test result: ok\. 2 passed; 0 failed; 0 ignored;' "$OUT/network-business.log"
+          python3 scripts/ci/check_required_native_test.py "$OUT/network-business.log" --test network_only_business::network_only_business_confirmations_survive_rotating_false_work
+          python3 - <<'PYNETWORK'
+          import json, os
+          from pathlib import Path
+          report = json.loads((Path(os.environ['OUT']) / 'network-only-business/report.json').read_text())
+          assert report['schema'] == 'public-v3-network-only-business-v1'
+          assert report['passed'] is True and report['no_local_depletion_hook'] is True
+          assert report['business_transactions'] == report['native_verified_confirmed_transactions'] == 24
+          assert report['overlapping_false_calls'] > 0
+          assert report['full_state_equal'] is True and report['reopen_equal'] is True
+          assert report['honest_error'] is None and report['service_error'] is None
+          assert all(row['ok'] is True and row['on_time'] is True for row in report['honest_calls'])
+          assert all(row['ok'] is False for worker in report['attack_workers'] for row in worker['calls'])
+          for key in ('independent_accepted', 'work_profile_qualified', 'resource_fairness_qualified', 'physical_power_loss', 'production_activation'):
+              assert report[key] is False
+          assert report['wan_tps'] is None
+          print('PASS: paid TCP pressure and full native consumer confirmations; no external qualification')
+          PYNETWORK
       - name: Check complete native target lint
         shell: bash
         run: |

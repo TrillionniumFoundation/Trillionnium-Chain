@@ -61,3 +61,40 @@ They are not independent operators. Aggregate adversary CPU and WAN TPS remain
 unmeasured; restart is a same-process Node reopen, not physical power loss. No
 model installation, independent future learning, permanent DA or production
 acceptance follows from this result. Those remain separate full-project exits.
+
+
+## Network-only public business confirmation observation
+
+The additive `public_v3_service_campaign` regression
+`network_only_business::network_only_business_confirmations_survive_rotating_false_work`
+uses the original public V3 r9 policy and one actual authenticated receiver. Four
+public TCP clients rotate fixture keys while sending bounded false-trace traffic.
+The receiver CPU domain is never charged through a local replay/debit hook. The
+original acquisition and trace-search costs are retained; the supplied strategy is
+not claimed to be the cheapest adversary. Each client attempt keeps its original
+absolute deadline, success/refusal/error, transport counters and actual thread CPU.
+
+Three prebuilt blocks carry eight signed hot-account transfers each; six ordinary
+descendants provide the unchanged development confirmation depth and required work.
+A distinct native consumer obtains the original packets through paid public History
+requests and independently runs complete native admission and execution before
+local confirmation. A remote ACK or Head value alone never increments the verified
+confirmation count. Producer, receiver and consumer must have identical complete
+active states; the receiver is then cold-reopened and compared again. Shutdown
+joins the existing worker owner, with zero retained body/output/grant/CPU leases.
+Every false attempt and all honest calls remain in the failure-preserving report.
+
+The finite six-second offered-load window has four clients and at most512 calls
+per client, with at most2176 observation records. Reaching a client cap is reported,
+not silently represented as continuous saturation. Runtime tests require actual
+overlap, complete measurements, no accepted false work and24 native-confirmed
+business transactions. Full original service controls run alongside the new test
+in the existing x64/ARM64 head/actual-main-merge lanes and unchanged25-minute budget.
+
+These are same-process loopback clients and a same-implementation consumer with
+separate stores, not independently operated parties. Logical prebuilt blocks,
+reference-acquired false traces and finite attack load do not establish mining
+throughput, cheapest physical/matrix cost, remotely sustained CPU exhaustion,
+general Sybil fairness, future-task efficacy, physical power loss or WAN TPS. No
+readiness or authority flag changes. Full65536-key/4105-block and two-repository
+baselines retain their original independent execution requirements.

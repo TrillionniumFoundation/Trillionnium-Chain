@@ -401,3 +401,382 @@ fn public_v3_mixed_calls_reopen_with_complete_failure_denominators() {
         "see retained request and phase outcomes"
     );
 }
+
+#[cfg(target_os = "linux")]
+mod network_only_business {
+    //! The receiver has no local load/debit hook. Every charged mutation comes
+    //! through paid public TCP. A separate native consumer reexecutes downloaded
+    //! packets before observing confirmation; an ACK/Head is not that proof.
+    use super::*;
+    use std::sync::atomic::AtomicU64;
+    use trnm_pon_node::{Packet, Result};
+
+    const WORKERS: usize = 4;
+    const CALLS_PER_WORKER: usize = 512;
+    const WINDOW: Duration = Duration::from_secs(6);
+    const CALL_LIMIT: Duration = Duration::from_secs(2);
+    const BLOCKS: usize = 9;
+    const BUSINESS_BLOCKS: usize = 3;
+    const TRANSACTIONS: usize = 8;
+
+    fn cpu_ns() -> Option<u64> {
+        use rustix::time::{clock_gettime_dynamic, ClockId, DynamicClockId};
+        let now = clock_gettime_dynamic(DynamicClockId::Known(ClockId::ThreadCPUTime)).ok()?;
+        let seconds = u64::try_from(now.tv_sec).ok()?;
+        let nanos = u64::try_from(now.tv_nsec).ok()?;
+        if nanos >= 1_000_000_000 {
+            return None;
+        }
+        seconds.checked_mul(1_000_000_000)?.checked_add(nanos)
+    }
+
+    struct Service {
+        stop: Arc<AtomicBool>,
+        worker: Option<thread::JoinHandle<Result<public_v3::PublicMetrics>>>,
+    }
+    impl Service {
+        fn finish(mut self) -> Result<public_v3::PublicMetrics> {
+            self.stop.store(true, Ordering::Release);
+            self.worker
+                .take()
+                .unwrap()
+                .join()
+                .map_err(|_| "SERVICE_PANIC")?
+        }
+    }
+    impl Drop for Service {
+        fn drop(&mut self) {
+            self.stop.store(true, Ordering::Release);
+            if let Some(worker) = self.worker.take() {
+                let _ = worker.join();
+            }
+        }
+    }
+
+    fn call(
+        address: SocketAddr,
+        settings: &Settings,
+        epoch: Instant,
+        who: u8,
+        request: &Request,
+    ) -> (Option<Value>, Value) {
+        let started = Instant::now();
+        let started_ns = ns(epoch);
+        let cpu_before = cpu_ns();
+        let (outcome, metrics) = public_v3::call_public_protected_v3_with_deadline(
+            address,
+            request,
+            settings,
+            identity(71).public_key(),
+            &identity(who),
+            PublicPolicy::new(8, CALL_LIMIT).unwrap(),
+            Some(started + CALL_LIMIT),
+        );
+        let elapsed_cpu = cpu_before.and_then(|before| cpu_ns()?.checked_sub(before));
+        let ended_ns = ns(epoch);
+        match outcome {
+            Ok(reply) => {
+                let ok = reply.ok;
+                let value = reply.value;
+                let row = json!({"caller_fixture":who,"started_ns":started_ns,
+                    "ended_ns":ended_ns,"ok":ok,"on_time":started.elapsed()<=CALL_LIMIT,
+                    "client_thread_cpu_ns":elapsed_cpu,"transport":metrics,
+                    "response":if ok {Value::Null}else{value.clone()},"error":null});
+                (ok.then_some(value), row)
+            }
+            Err(error) => (
+                None,
+                json!({"caller_fixture":who,"started_ns":started_ns,
+                "ended_ns":ended_ns,"ok":false,"on_time":started.elapsed()<=CALL_LIMIT,
+                "client_thread_cpu_ns":elapsed_cpu,"transport":metrics,
+                "response":null,"error":error.to_string()}),
+            ),
+        }
+    }
+
+    #[test]
+    fn network_only_business_confirmations_survive_rotating_false_work() {
+        let temporary = tempfile::tempdir().unwrap();
+        let path = match std::env::var_os("TRNM_CI_RECEIPT_DIR") {
+            Some(root) => {
+                let path = std::path::PathBuf::from(root).join("network-only-business");
+                fs::create_dir(&path).unwrap();
+                path
+            }
+            None => temporary.path().to_path_buf(),
+        };
+        let settings = Settings::development(Some(1_750_000_000)).unwrap();
+        let receiver_path = path.join("receiver");
+        let mut receiver =
+            Node::open_with_authenticated_state(&receiver_path, settings.clone(), 2).unwrap();
+        receiver
+            .enable_local_mempool(PoolLimits {
+                max_records: 16,
+                max_bytes: 32768,
+                max_group_members: 4,
+                critical_reserve: 0,
+                max_removals: 64,
+                preview_miner: development_public(0).unwrap(),
+            })
+            .unwrap();
+        let mut producer = Node::open(&path.join("producer"), settings.clone(), 1).unwrap();
+        // Keep full acquisition and bounded trace-search costs rather than
+        // presenting the supplied strategy as a physical lower bound.
+        let attacks: Vec<_> = (0..WORKERS)
+            .map(|i| false_transcript(&mut producer, i as u64))
+            .collect();
+        let mut queries = Vec::new();
+        let packets: Vec<_> = (0..BLOCKS)
+            .map(|height| {
+                let transactions: Vec<_> = if height < BUSINESS_BLOCKS {
+                    (0..TRANSACTIONS)
+                        .map(|offset| {
+                            transfer(&settings, (height * TRANSACTIONS + offset + 1) as u64)
+                        })
+                        .collect()
+                } else {
+                    Vec::new()
+                };
+                let packet = producer
+                    .mine(
+                        transactions,
+                        settings.genesis_time() + (height as u64 + 1) * 10,
+                        ingress::now().unwrap(),
+                    )
+                    .unwrap();
+                for raw in &packet.transactions {
+                    queries.push((
+                        Envelope::decode(raw).unwrap().id().unwrap(),
+                        packet.id().unwrap(),
+                    ));
+                }
+                packet
+            })
+            .collect();
+        let expected = producer.read_active().unwrap();
+        let owner = Arc::new(Mutex::new(receiver));
+        let server =
+            PublicServer::new(identity(71), PublicPolicy::new(8, CALL_LIMIT).unwrap()).unwrap();
+        let domain = server.mutation_cpu_domain();
+        let initial_meter = domain.observe().unwrap();
+        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+        let address = listener.local_addr().unwrap();
+        let stop = Arc::new(AtomicBool::new(false));
+        let observer =
+            public_v3::PublicRequestObserver::new(WORKERS * CALLS_PER_WORKER + 128).unwrap();
+        let metrics = Arc::new(Mutex::new(public_v3::PublicMetrics::default()));
+        let (shared, signal, capture) = (owner.clone(), stop.clone(), observer.clone());
+        let service = Service {
+            stop,
+            worker: Some(thread::spawn(move || {
+                public_v3::serve_public_protected_v3_with_request_observer(
+                    listener,
+                    shared,
+                    Duration::from_secs(30),
+                    signal,
+                    server,
+                    metrics,
+                    capture,
+                )
+            })),
+        };
+        let epoch = Instant::now();
+        let end = epoch + WINDOW;
+        let barrier = Barrier::new(WORKERS + 1);
+        let completed = AtomicU64::new(0);
+        let mut honest_rows = Vec::new();
+        let mut consumer =
+            Node::open_with_authenticated_state(&path.join("consumer"), settings.clone(), 1)
+                .unwrap();
+        let (attack_rows, honest_result) = thread::scope(|scope| {
+            let handles: Vec<_> = attacks.iter().enumerate().map(|(worker,(wire,_))| {
+                let (barrier,completed,settings) = (&barrier,&completed,&settings);
+                scope.spawn(move || {
+                    barrier.wait();
+                    let mut rows = Vec::new();
+                    for attempt in 0..CALLS_PER_WORKER {
+                        if Instant::now() >= end { break; }
+                        let who = 80 + ((worker * 37 + attempt) % 150) as u8;
+                        let (_,row) = call(address,settings,epoch,who,&Request::Submit {packet:wire.clone()});
+                        rows.push(row);
+                        completed.fetch_add(1,Ordering::Release);
+                    }
+                    json!({"worker":worker,"cap_reached":rows.len()==CALLS_PER_WORKER,"calls":rows})
+                })
+            }).collect();
+            barrier.wait();
+            while completed.load(Ordering::Acquire) == 0 && Instant::now() < end {
+                thread::sleep(Duration::from_millis(1));
+            }
+            let result = (|| -> Result<()> {
+                for packet in &packets {
+                    let (reply, mut row) = call(
+                        address,
+                        &settings,
+                        epoch,
+                        73,
+                        &Request::Submit {
+                            packet: hex::encode(packet.encode()?),
+                        },
+                    );
+                    row["kind"] = json!("honest_submit");
+                    row["block"] = json!(hex::encode(packet.id()?));
+                    row["transactions"] = json!(packet.transactions.len());
+                    honest_rows.push(row);
+                    if reply
+                        .as_ref()
+                        .is_none_or(|r| r["block"] != hex::encode(packet.id().unwrap()))
+                    {
+                        return Err("NETWORK_ONLY_SUBMIT".into());
+                    }
+                }
+                let tip = hex::encode(packets.last().unwrap().id()?);
+                let (head, mut row) = call(address, &settings, epoch, 72, &Request::Head);
+                row["kind"] = json!("head");
+                honest_rows.push(row);
+                if head.as_ref().is_none_or(|h| h["tip"] != tip) {
+                    return Err("NETWORK_ONLY_HEAD".into());
+                }
+                let mut after = hex::encode(settings.genesis());
+                for expected_packet in &packets {
+                    let (page, mut row) = call(
+                        address,
+                        &settings,
+                        epoch,
+                        72,
+                        &Request::History {
+                            tip: tip.clone(),
+                            after: after.clone(),
+                        },
+                    );
+                    row["kind"] = json!("history");
+                    honest_rows.push(row);
+                    let page = page.ok_or("NETWORK_ONLY_HISTORY")?;
+                    if page["tip"] != tip
+                        || page["after"] != after
+                        || page["network"] != hex::encode(settings.network())
+                        || page["parameters"] != hex::encode(settings.parameters())
+                        || page["genesis"] != hex::encode(settings.genesis())
+                    {
+                        return Err("NETWORK_ONLY_CONTEXT".into());
+                    }
+                    let rows = page["packets"].as_array().ok_or("NETWORK_ONLY_PAGE")?;
+                    if rows.len() != 1 {
+                        return Err("NETWORK_ONLY_PAGE".into());
+                    }
+                    let raw = hex::decode(rows[0].as_str().ok_or("NETWORK_ONLY_PACKET")?)
+                        .map_err(|_| "NETWORK_ONLY_PACKET")?;
+                    // No direct producer-to-consumer copy supplies authority.
+                    let packet = Packet::decode(&raw)?;
+                    let id = consumer.admit(&packet, ingress::now()?)?;
+                    consumer.activate_observed(id, ingress::now()?)?;
+                    if raw != expected_packet.encode()?
+                        || page["next"] != hex::encode(id)
+                        || page["complete"] != (hex::encode(id) == tip)
+                    {
+                        return Err("NETWORK_ONLY_HISTORY_BYTES".into());
+                    }
+                    after = hex::encode(id);
+                }
+                Ok(())
+            })();
+            let rows = handles
+                .into_iter()
+                .map(|h| h.join().unwrap())
+                .collect::<Vec<_>>();
+            (rows, result)
+        });
+        let server_result = service.finish();
+        let observations = observer.snapshot();
+        let receiver = Arc::try_unwrap(owner).ok().unwrap().into_inner().unwrap();
+        let receiver_state = receiver.read_active().unwrap();
+        let consumer_state = consumer.read_active().unwrap();
+        let confirmation = consumer.confirmations(&queries, ingress::now().unwrap());
+        let confirmed = confirmation.as_ref().map_or(0, |batch| {
+            batch
+                .observations
+                .iter()
+                .filter(|o| o.confirmed && !o.reorged && !o.finalized && !o.execution_authority)
+                .count()
+        });
+        let full_state_equal = receiver_state == expected && consumer_state == expected;
+        drop(receiver);
+        let reopened =
+            Node::open_with_authenticated_state(&receiver_path, settings.clone(), 2).unwrap();
+        let reopen_equal = reopened.read_active().unwrap() == expected;
+        let final_meter = domain.observe().unwrap();
+        let calls = attack_rows
+            .iter()
+            .flat_map(|r| r["calls"].as_array().unwrap())
+            .collect::<Vec<_>>();
+        let honest_start = honest_rows.first().unwrap()["started_ns"].as_u64().unwrap();
+        let honest_end = honest_rows.last().unwrap()["ended_ns"].as_u64().unwrap();
+        let overlap = calls
+            .iter()
+            .filter(|r| {
+                r["started_ns"].as_u64().unwrap() < honest_end
+                    && r["ended_ns"].as_u64().unwrap() > honest_start
+            })
+            .count();
+        let pass = honest_result.is_ok()
+            && server_result.as_ref().is_ok_and(|m| {
+                m.work_failed > 0
+                    && m.work_started == m.work_finished
+                    && m.mutation_cpu_clock_failures == 0
+                    && m.peak_connections <= 64
+                    && m.peak_paid_body_bytes <= 8 * 1024 * 1024
+                    && m.peak_output_reserved_bytes <= 32 * 1024 * 1024
+                    && m.mutation_cpu_in_flight_after_shutdown == 0
+                    && m.paid_body_reserved_bytes_after_shutdown == 0
+                    && m.output_reserved_bytes_after_shutdown == 0
+                    && m.mutating_grants_after_shutdown == 0
+                    && m.read_grants_after_shutdown == 0
+            })
+            && overlap > 0
+            && !calls.is_empty()
+            && calls.iter().all(|r| r["ok"] == false)
+            && honest_rows
+                .iter()
+                .all(|r| r["ok"] == true && r["on_time"] == true)
+            && confirmed == BUSINESS_BLOCKS * TRANSACTIONS
+            && full_state_equal
+            && reopen_equal
+            && observations.records_not_retained == 0
+            && observations.measurement_failures == 0
+            && !observations.counter_overflow
+            && observations.records.iter().all(|r| r.complete)
+            && final_meter.in_flight == 0
+            && !final_meter.accounting_unavailable;
+        let mut report = json!({"schema":"public-v3-network-only-business-v1","passed":pass,
+            "network":hex::encode(settings.network()),"parameters":hex::encode(settings.parameters()),
+            "policy":hex::encode(PublicPolicy::new(8,CALL_LIMIT).unwrap().id()),
+            "window_ns":WINDOW.as_nanos(),"workers":WORKERS,"calls_per_worker":CALLS_PER_WORKER,
+            "supplied_attack_fixtures":attacks.iter().map(|(_,r)|r).collect::<Vec<_>>(),
+            "attack_workers":attack_rows,"honest_calls":honest_rows,"overlapping_false_calls":overlap,
+            "initial_meter":initial_meter,"final_meter":final_meter,"observations":observations,
+            "full_state_equal":full_state_equal,"reopen_equal":reopen_equal,
+            "business_transactions":queries.len(),"native_verified_confirmed_transactions":confirmed,
+            "no_local_depletion_hook":true,"independent_accepted":false,
+            "work_profile_qualified":false,"resource_fairness_qualified":false,
+            "physical_power_loss":false,"wan_tps":null,"production_activation":false});
+        report["service"] = json!(server_result.as_ref().ok());
+        report["service_error"] = json!(server_result.as_ref().err().map(ToString::to_string));
+        report["honest_error"] = json!(honest_result.as_ref().err().map(ToString::to_string));
+        report["confirmation"] = json!(confirmation.as_ref().ok());
+        report["confirmation_error"] = json!(confirmation.as_ref().err().map(ToString::to_string));
+        report["scope"]=json!("bounded same-process loopback public TCP load; original r9 resource policy; reference-acquired false traces and rotating keys; distinct native consumer reexecutes downloaded history; prebuilt blocks/logical timestamps; not independent operators, physical cost lower bound, remote exhaustion guarantee, saturated TPS or WAN");
+        fs::write(
+            path.join("report.json"),
+            serde_json::to_vec_pretty(&report).unwrap(),
+        )
+        .unwrap();
+        println!(
+            "{}",
+            json!({"schema":report["schema"],"passed":pass,"confirmed":confirmed,"false_calls":calls.len(),"overlap":overlap})
+        );
+        assert!(
+            pass,
+            "retain network-only-business/report.json and original failure"
+        );
+    }
+}
