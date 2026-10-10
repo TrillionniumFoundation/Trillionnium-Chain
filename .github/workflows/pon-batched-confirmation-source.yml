@@ -1,0 +1,68 @@
+name: PoN exact confirmation source materialization
+on:
+  pull_request:
+    paths:
+      - .github/workflows/pon-batched-confirmation-source.yml
+permissions:
+  contents: read
+jobs:
+  objects:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          ref: 657512e850e128c605830c4bb961706cb74d03b3
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Materialize exact source objects without updating a reference
+        env:
+          GH_TOKEN: ${{ github.token }}
+          OUT: ${{ runner.temp }}/batch-source
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash scripts/project-preflight.sh --audit
+          mkdir -p "$OUT"
+          python3 - <<'PY'
+          import base64, hashlib, json, os, subprocess, zlib
+          from pathlib import Path
+          encoded = '''eNrtXWl72ziS/q5fgahnHSmiaMlXHDpOTzrjfjq7nWNjT+/M49VyKBKy2aZINQ8fHfu/b1UBIMFTcpKenQ+bSccWCRQKhTreKgAaz18s2Hh84afM2Tbhx2U2376J4qtFEN0k26soHMfc5WE6njupezl2XJevUid0uXm3DNj88X16fujxW8bni8MX88M5N02+mDqTA3f3OZtOJgd7eaf7b690cb9bb93e093'''
+          # The sealed patch is supplied by the follow-on source-authoring commit.
+          # This deliberately fails until its exact bytes and expected hash agree.
+          patch = zlib.decompress(base64.b64decode(encoded))
+          assert hashlib.sha256(patch).hexdigest() == '24c0760063471ff72d8fd0a1b90652679648fe587daaa00da2d67a24a2aa34f5'
+          out = Path(os.environ['OUT'])
+          (out / 'change.patch').write_bytes(patch)
+          subprocess.run(['git', 'apply', '--check', '-'], input=patch, check=True)
+          subprocess.run(['git', 'apply', '-'], input=patch, check=True)
+          expected = {
+              'trillionnium/crates/trnm-pon-node/examples/continuous_pipeline.rs': '200a9652df5bcdfdf54d901f12eaf40b3b7fcf49',
+              '.github/workflows/pon-recent-batch-acceptance.yml': 'ef1a06c370300d3965e02a63804135896a18a912',
+              'docs/protocol/pon-nakamoto-v1/details/PERFORMANCE_ACCEPTANCE.md': '5d1a78501bb6f41ad45527ebda11df9a4d370ad6',
+          }
+          paths = subprocess.check_output(['git', 'diff', '--name-only'], text=True).splitlines()
+          assert set(paths) == set(expected)
+          subprocess.run(['git', 'diff', '--check'], check=True)
+          objects = []
+          for path, sha in expected.items():
+              raw = Path(path).read_bytes()
+              assert hashlib.sha1(b'blob ' + str(len(raw)).encode() + b'\0' + raw).hexdigest() == sha
+              payload = json.dumps({'content': base64.b64encode(raw).decode(), 'encoding': 'base64'}).encode()
+              reply = subprocess.check_output(['gh', 'api', '--method', 'POST', 'repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs', '--input', '-'], input=payload)
+              result = json.loads(reply)
+              assert result['sha'] == sha
+              objects.append({'path': path, 'sha': sha, 'mode': '100644', 'type': 'blob'})
+          (out / 'objects.json').write_text(json.dumps(objects, indent=2) + '\n')
+          print(json.dumps(objects))
+          PY
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: exact-confirmation-source-${{ github.event.pull_request.head.sha }}
+          path: ${{ runner.temp }}/batch-source
+          if-no-files-found: error
+          retention-days: 7
