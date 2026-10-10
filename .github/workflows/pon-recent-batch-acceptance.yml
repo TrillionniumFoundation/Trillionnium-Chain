@@ -5,6 +5,7 @@ on:
       - trillionnium/crates/trnm-pon-node/src/store.rs
       - trillionnium/crates/trnm-pon-node/src/native_authenticated_tests.rs
       - trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs
+      - trillionnium/crates/trnm-pon-node/tests/authenticated_storage_cli.rs
       - formal/pon-nakamoto-v1/work_query_bound.py
       - formal/pon-nakamoto-v1/test_work_query_bound.py
       - .github/workflows/pon-recent-batch-acceptance.yml
@@ -52,6 +53,7 @@ jobs:
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store.rs)" = 13164f58b2f625c6ece012012f9ce8b6e5ec7be7
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/native_authenticated_tests.rs)" = 8431605c238f88843c8eb31dc5bb6bfb3df4a7b7
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs)" = 16773890b8a5f7f714f0900a8d6eccc1b1f9ad34
+          test "$(git hash-object trillionnium/crates/trnm-pon-node/tests/authenticated_storage_cli.rs)" = 7301aeb3033913f080b23767bfca52a2bf76d45b
           test "$(git hash-object formal/pon-nakamoto-v1/work_query_bound.py)" = 2d568879899da290c7bec8add6eb2746554897d6
           test "$(git hash-object formal/pon-nakamoto-v1/test_work_query_bound.py)" = 2161dd7d25b605b9e67f05bee5aa20038cf4469d
           bash scripts/project-preflight.sh --audit
@@ -108,6 +110,7 @@ jobs:
             fi
           done
           cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test continuity_authenticated --test authenticated_storage_cli -- --show-output --test-threads=1 2>&1 | tee "$OUT/recovery.log"
+          grep -E '^test result: ok\. 7 passed; 0 failed; 0 ignored;' "$OUT/recovery.log"
       - name: Require all five statement-reuse controls and complete-call observations separately
         shell: bash
         run: |
@@ -124,6 +127,15 @@ jobs:
           for test in cached_block_reads_do_not_hide_genesis_damage_or_rollback cached_parent_reads_observe_changed_work_then_exact_restore cached_commitment_reads_preserve_limits_missing_and_rollback cached_genesis_snapshot_is_reread_and_survives_cold_reopen; do
             selector="store::native_authenticated::cached_owner_read_tests::$test"
             cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib "$selector" -- --exact --show-output --test-threads=1 2>&1 | tee "$OUT/$test.log"
+            python3 scripts/ci/check_required_native_test.py "$OUT/$test.log" --test "$selector"
+          done
+      - name: Require live public owner mutation, admission rollback and cold reopen controls
+        shell: bash
+        run: |
+          set -euo pipefail
+          for test in live_owner_rechecks_genesis_block_after_committed_damage_and_restore live_owner_rechecks_parent_work_after_real_admission live_owner_rechecks_record_limits_missing_rows_and_sql_types live_owner_snapshot_damage_rolls_back_admission_and_rejects_cold_open; do
+            selector="cached_owner_reads::$test"
+            cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test authenticated_storage_cli "$selector" -- --exact --show-output --test-threads=1 2>&1 | tee "$OUT/$test.log"
             python3 scripts/ci/check_required_native_test.py "$OUT/$test.log" --test "$selector"
           done
       - name: Preserve original source-preserving migration coverage
