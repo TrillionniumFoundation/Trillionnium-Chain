@@ -1,0 +1,167 @@
+name: PoN nullable BLOB source staging
+on:
+  push:
+    branches: [work/pon-nullable-blob-staging-20261010]
+    paths:
+      - .github/nullable-blob-tests.rs.txt
+      - .github/workflows/pon-nullable-blob-staging.yml
+permissions:
+  contents: write
+jobs:
+  native:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    env:
+      CARGO_INCREMENTAL: "0"
+      CARGO_BUILD_JOBS: "2"
+      RUST_TEST_THREADS: "1"
+      PYTHONDONTWRITEBYTECODE: "1"
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          fetch-depth: 0
+      - name: Preserve proposed tests and checkout exact delivered original
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/nullable-blob-evidence"
+          mkdir -p "$out"
+          echo "OUT=$out" >> "$GITHUB_ENV"
+          echo "CARGO_TARGET_DIR=$RUNNER_TEMP/nullable-blob-target" >> "$GITHUB_ENV"
+          cp .github/nullable-blob-tests.rs.txt "$out/proposed-tests.rs"
+          git rev-parse HEAD > "$out/authoring-source.txt"
+          git checkout --detach 8f17e2a777df8ddee8d1645457a75b8da8cc2a61
+          test -z "$(git status --porcelain)"
+          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs)" = 8927902b0cb0b9d4fe0160ba4f52ce9298948f9b
+          git rev-parse HEAD HEAD^{tree} > "$out/original-source.txt"
+          bash scripts/project-preflight.sh --audit 2>&1 | tee "$out/original-preflight.log"
+      - name: Install the unchanged source compiler
+        run: rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+      - name: Compile and retain the original native counterexamples
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat "$OUT/proposed-tests.rs" >> trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs
+          cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all
+          git diff --binary > "$OUT/original-plus-tests.patch"
+          set +e
+          cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib store::native_authenticated::nullable_blob_tests:: -- --show-output --test-threads=1 2>&1 | tee "$OUT/original-counterexamples.log"
+          status=${PIPESTATUS[0]}
+          set -e
+          printf '%s\n' "$status" > "$OUT/original-counterexamples.exit"
+          test "$status" -ne 0
+          grep -x 'running 5 tests' "$OUT/original-counterexamples.log"
+          grep -E '^test result: FAILED\. [0-9]+ passed; [1-9][0-9]* failed; 0 ignored;' "$OUT/original-counterexamples.log"
+          grep -E '^test store::native_authenticated::nullable_blob_tests::nullable_delta_empty_bytes_are_not_absence_after_warm_cache \.\.\. FAILED$' "$OUT/original-counterexamples.log"
+          grep -E '^test store::native_authenticated::nullable_blob_tests::nullable_genesis_packet_empty_rejects_and_rollback_restores \.\.\. FAILED$' "$OUT/original-counterexamples.log"
+      - name: Preserve NULL and empty bytes, then freeze the exact additive source
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs')
+          text = p.read_text()
+          for name, bound in [('packet', 1048576), ('before', 4096), ('after', 4096)]:
+              old = f"CASE WHEN typeof({name})='blob' THEN substr({name},1,{bound+1}) ELSE {name} END AS {name}"
+              new = f"CASE WHEN typeof({name})='blob' AND length({name})>{bound} THEN substr({name},1,{bound+1}) ELSE {name} END AS {name}"
+              assert text.count(old) == 1, name
+              text = text.replace(old, new)
+          old = '// CASE preserves SQLite types: a TEXT "before" is still not a BLOB.\n'
+          assert text.count(old) == 1
+          text = text.replace(old, old + '// Truncate only oversized BLOBs: substr(empty BLOB) can yield SQL NULL.\n// An empty preimage/postimage must still fail canonical JSON, not become absence.\n')
+          p.write_text(text)
+          PY
+          cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all
+          python3 - <<'PY'
+          from pathlib import Path
+          import subprocess
+          p = Path('.github/workflows/pon-recent-batch-acceptance.yml')
+          text = p.read_text()
+          blob = subprocess.check_output(['git','hash-object','trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs'], text=True).strip()
+          assert text.count('8927902b0cb0b9d4fe0160ba4f52ce9298948f9b') == 1
+          assert text.count('32 passed; 0 failed; 0 ignored;') == 1
+          text = text.replace('8927902b0cb0b9d4fe0160ba4f52ce9298948f9b', blob).replace('32 passed; 0 failed; 0 ignored;', '37 passed; 0 failed; 0 ignored;')
+          anchor = '      - name: Preserve original source-preserving migration coverage\n'
+          assert text.count(anchor) == 1
+          step = '''      - name: Reject empty nullable BLOB corruption through original native owners
+                  shell: bash
+                  run: |
+                    set -euo pipefail
+                    for test in nullable_delta_projection_preserves_null_empty_types_and_bounds nullable_delta_empty_bytes_are_not_absence_after_warm_cache nullable_delta_late_failure_keeps_cancellation_and_cursor_recovery nullable_genesis_packet_empty_rejects_and_rollback_restores nullable_real_insertion_empty_preimage_rejects_live_and_cold_owner; do
+                      selector="store::native_authenticated::nullable_blob_tests::$test"
+                      cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib "$selector" -- --exact --show-output --test-threads=1 2>&1 | tee "$OUT/$test.log"
+                      python3 scripts/ci/check_required_native_test.py "$OUT/$test.log" --test "$selector"
+                    done
+          '''
+          lines = step.splitlines()
+          step = lines[0] + '\n' + '\n'.join(line[10:] for line in lines[1:] if line.strip()) + '\n'
+          text = text.replace(anchor, step + anchor)
+          p.write_text(text)
+          actual = set(subprocess.check_output(['git','diff','--name-only'], text=True).splitlines())
+          assert actual == {'trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs', str(p)}, actual
+          PY
+          git diff --check
+          git config user.name 'PoN source maintenance'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs .github/workflows/pon-recent-batch-acceptance.yml
+          git commit -m "fix(pon): reject empty nullable BLOB corruption without changing valid bytes" -m "Continue exact8f17 delivery. Guard packet/before/after truncation by original byte limits so empty BLOB stays distinct from SQL NULL. Preserve bounded copies, current-row reads, all packet/work/state/delta/ancestry checks and errors. Five additive native controls compare an unprojected reader, cache0/1/16, cancellation, rollback, actual maintenance admission/activation, live external mutation and cold recovery. Preserve all prior32 tests and add all five exact selectors to the original four-lane workflow; no new delivered workflow or source module. Original compiled counterexamples remain in staging evidence. Full final-source baseline/capacity/history and a new exact Hepta pair remain required. No physical work-cost, Sybil, independent model, power-loss/DA or WAN/TPS qualification; no main merge, force push or readiness/permission change."
+          git rev-parse HEAD HEAD^{tree} > "$OUT/candidate-source.txt"
+          git diff 8f17e2a777df8ddee8d1645457a75b8da8cc2a61 HEAD --binary > "$OUT/candidate.patch"
+          test -z "$(git status --porcelain)"
+          bash scripts/project-preflight.sh --audit 2>&1 | tee "$OUT/candidate-preflight.log"
+      - name: Execute the full stored-state suite including the original ignored observation
+        shell: bash
+        run: |
+          set -euo pipefail
+          export TRNM_RETAINED_DELTA_COST_PATH="$OUT/retained-delta-cost.jsonl"
+          cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check 2>&1 | tee "$OUT/format.log"
+          cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib store::native_authenticated:: -- --include-ignored --show-output --test-threads=1 2>&1 | tee "$OUT/all-native.log"
+          grep -E '^test result: ok\. 37 passed; 0 failed; 0 ignored;' "$OUT/all-native.log"
+          for test in nullable_delta_projection_preserves_null_empty_types_and_bounds nullable_delta_empty_bytes_are_not_absence_after_warm_cache nullable_delta_late_failure_keeps_cancellation_and_cursor_recovery nullable_genesis_packet_empty_rejects_and_rollback_restores nullable_real_insertion_empty_preimage_rejects_live_and_cold_owner; do
+            selector="store::native_authenticated::nullable_blob_tests::$test"
+            cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib "$selector" -- --exact --show-output --test-threads=1 2>&1 | tee "$OUT/$test.log"
+            python3 scripts/ci/check_required_native_test.py "$OUT/$test.log" --test "$selector"
+          done
+      - name: Preserve original snapshot, error, ancestry, migration and public CLI regressions
+        shell: bash
+        run: |
+          set -euo pipefail
+          for suite in store::error_boundary_tests:: store::native_authenticated_tests:: store::native_ancestry_commit_tests:: authenticated_migration; do
+            log="$OUT/${suite//:/_}.log"
+            cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib "$suite" -- --show-output --test-threads=1 2>&1 | tee "$log"
+            grep -E '^test result: ok\. [1-9][0-9]* passed; 0 failed;' "$log"
+          done
+          cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test continuity_authenticated --test authenticated_storage_cli -- --show-output --test-threads=1 2>&1 | tee "$OUT/cli-recovery.log"
+          grep -E '^test result: ok\. 7 passed; 0 failed; 0 ignored;' "$OUT/cli-recovery.log"
+          cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --all-targets --all-features -- -D warnings 2>&1 | tee "$OUT/clippy.log"
+      - name: Recheck frozen source and publish only the tested successor
+        shell: bash
+        run: |
+          set -euo pipefail
+          git rev-parse HEAD HEAD^{tree} > "$OUT/candidate-source-after.txt"
+          cmp "$OUT/candidate-source.txt" "$OUT/candidate-source-after.txt"
+          test -z "$(git status --porcelain)"
+          bash scripts/project-preflight.sh --audit 2>&1 | tee "$OUT/final-preflight.log"
+          git push origin HEAD:refs/heads/fix/pon-nullable-blob-integrity-20261010
+          git ls-remote origin refs/heads/fix/pon-nullable-blob-integrity-20261010 > "$OUT/published-ref.txt"
+          test "$(cut -f1 "$OUT/published-ref.txt")" = "$(git rev-parse HEAD)"
+          git archive --format=tar.gz HEAD > "$OUT/source.tar.gz"
+      - name: Retain original failures, exact source and native evidence
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "$OUT"
+          git status --porcelain > "$OUT/final-status.txt"
+          cp trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs "$OUT/observed-native_authenticated.rs"
+          cp .github/workflows/pon-recent-batch-acceptance.yml "$OUT/observed-recent-workflow.yml"
+          cd "$OUT"
+          find . -type f ! -name SHA256SUMS -print0 | sort -z | xargs -0 sha256sum > SHA256SUMS
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: nullable-blob-native-staging-${{ github.sha }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/nullable-blob-evidence
+          if-no-files-found: error
+          retention-days: 30
