@@ -6,7 +6,7 @@ permissions:
   contents: read
 jobs:
   export:
-    runs-on: ubuntu-24.04
+    runs-on: macos-14
     timeout-minutes: 30
     steps:
       - name: Checkout exact Chain source without persisted credentials
@@ -50,33 +50,12 @@ jobs:
           git bundle verify "$RUNNER_TEMP/source-export/hepta.bundle"
           git show -s --format='%H%n%T%n%P' HEAD > "$RUNNER_TEMP/source-export/hepta.txt"
           git show -s --format='%H%n%T%n%P' refs/export/migration > "$RUNNER_TEMP/source-export/hepta-migration.txt"
-          sha256sum "$RUNNER_TEMP/source-export/"*.bundle > "$RUNNER_TEMP/source-export/bundles.sha256"
+          shasum -a 256 "$RUNNER_TEMP/source-export/"*.bundle > "$RUNNER_TEMP/source-export/bundles.sha256"
       - name: Retain exact source transport
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: pon-five-axis-exact-sources
           path: ${{ runner.temp }}/source-export/
-          if-no-files-found: error
-          retention-days: 7
-          compression-level: 0
-      - name: Fetch current locked Chain dependencies for offline native work
-        shell: bash
-        working-directory: chain
-        run: |
-          set -euo pipefail
-          export CARGO_HOME="$RUNNER_TEMP/offline-cargo"
-          mkdir -p "$CARGO_HOME" "$RUNNER_TEMP/dependency-export"
-          rustup toolchain install 1.95.0 --profile minimal
-          rustup run 1.95.0 cargo fetch --locked --manifest-path trillionnium/Cargo.toml
-          test "$(git rev-parse HEAD)" = fecfcf93a51ad987262fa1752c344933ca786611
-          test -z "$(git status --porcelain)"
-          tar -C "$CARGO_HOME" -czf "$RUNNER_TEMP/dependency-export/cargo-registry.tar.gz" registry
-          sha256sum "$RUNNER_TEMP/dependency-export/cargo-registry.tar.gz" > "$RUNNER_TEMP/dependency-export/archives.sha256"
-      - name: Retain current locked dependency transport
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        with:
-          name: pon-five-axis-offline-dependencies
-          path: ${{ runner.temp }}/dependency-export/
           if-no-files-found: error
           retention-days: 7
           compression-level: 0
