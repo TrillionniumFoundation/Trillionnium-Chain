@@ -53,7 +53,10 @@ struct StageCounts {
 
 // Remove an obligation only after a complete successful observation. In particular,
 // an error must retain earlier deferred work, the failing item and the unread tail.
-fn poll_pending<T>(pending: &mut Vec<T>, mut observe: impl FnMut(&T) -> Result<bool>) -> Result<()> {
+fn poll_pending<T>(
+    pending: &mut Vec<T>,
+    mut observe: impl FnMut(&T) -> Result<bool>,
+) -> Result<()> {
     let mut index = 0;
     while index < pending.len() {
         if observe(&pending[index])? {
