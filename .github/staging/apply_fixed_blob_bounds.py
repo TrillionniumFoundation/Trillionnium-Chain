@@ -21,26 +21,23 @@ constants = '''
 // The original fixed-width checks still reject a one-byte sentinel. Restrict
 // owned Rust payload copies before those checks, without coercing SQL types or
 // changing packet bytes, field order, error identity, ancestry or work checks.
+// Leave empty/short BLOBs untouched: substr of an empty BLOB can yield NULL.
 // SQLite page reads/allocations and full history traversal are not bounded here.
 const NATIVE_BLOCK_SQL: &str = "SELECT
- CASE WHEN typeof(parent)='blob' THEN substr(parent,1,33) ELSE parent END AS parent,
+ CASE WHEN typeof(parent)='blob' AND length(parent)>32 THEN substr(parent,1,33) ELSE parent END AS parent,
  height,
- CASE WHEN typeof(chainwork)='blob' THEN substr(chainwork,1,65) ELSE chainwork END AS chainwork,
+ CASE WHEN typeof(chainwork)='blob' AND length(chainwork)>64 THEN substr(chainwork,1,65) ELSE chainwork END AS chainwork,
  CASE WHEN typeof(packet)='blob' THEN substr(packet,1,1048577) ELSE packet END AS packet,
- CASE WHEN typeof(state_root)='blob' THEN substr(state_root,1,33) ELSE state_root END AS state_root
+ CASE WHEN typeof(state_root)='blob' AND length(state_root)>32 THEN substr(state_root,1,33) ELSE state_root END AS state_root
  FROM blocks WHERE id=?";
 const NATIVE_PARENT_SQL: &str = "SELECT height,
- CASE WHEN typeof(chainwork)='blob' THEN substr(chainwork,1,65) ELSE chainwork END AS chainwork
+ CASE WHEN typeof(chainwork)='blob' AND length(chainwork)>64 THEN substr(chainwork,1,65) ELSE chainwork END AS chainwork
  FROM blocks WHERE id=?";
 '''
 if text.count(anchor) != 1:
     raise SystemExit('CONSTANT_ANCHOR_MISMATCH')
 text = text.replace(anchor, anchor + constants)
-text += '\n#[cfg(test)]\nmod native_fixed_blob_tests;\n'
-target = path.parent / 'native_authenticated' / 'native_fixed_blob_tests.rs'
-# A submodule declared from native_authenticated.rs resolves in its matching
-# directory; explicitly use the existing store directory instead.
-text = text.replace('#[cfg(test)]\nmod native_fixed_blob_tests;\n', '#[cfg(test)]\n#[path = "native_fixed_blob_tests.rs"]\nmod native_fixed_blob_tests;\n')
+text += '\n#[cfg(test)]\n#[path = "native_fixed_blob_tests.rs"]\nmod native_fixed_blob_tests;\n'
 target = path.with_name('native_fixed_blob_tests.rs')
 if target.exists():
     raise SystemExit('TEST_TARGET_EXISTS')

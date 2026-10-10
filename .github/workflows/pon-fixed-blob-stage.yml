@@ -25,6 +25,7 @@ jobs:
           out="$RUNNER_TEMP/fixed-blob-stage"
           mkdir -p "$out"
           echo "OUT=$out" >> "$GITHUB_ENV"
+          echo "TRNM_RETAINED_DELTA_COST_PATH=$out/retained-delta-cost.jsonl" >> "$GITHUB_ENV"
           echo "CARGO_TARGET_DIR=$RUNNER_TEMP/fixed-blob-target" >> "$GITHUB_ENV"
           git rev-parse HEAD > "$out/staging-source.txt"
           cp .github/staging/apply_fixed_blob_bounds.py "$out/"
@@ -46,7 +47,7 @@ jobs:
           git diff --cached --check
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git commit -m 'fix(pon): bound fixed block payloads before owned decoding' -m 'Preserve all original checks, field/error order and SQL types. Four native tests retain the independent original verifier, oversized and mistyped records, warm cache, rollback, genesis and cold reopen. Source staging is not complete final-source or external acceptance.'
+          git commit -m 'fix(pon): bound fixed block payloads before owned decoding' -m 'Preserve all original checks, field/error order and SQL types, including empty BLOB rejection. Four native tests retain the independent original verifier, oversized and mistyped records, warm cache, rollback, genesis and cold reopen. Source staging is not complete final-source or external acceptance.'
           git rev-parse HEAD > "$OUT/candidate.txt"
           git rev-parse HEAD^{tree} > "$OUT/tree.txt"
           git show --stat HEAD > "$OUT/commit-stat.txt"
