@@ -1,0 +1,71 @@
+name: PoN five-axis native development
+on:
+  push:
+    branches: [dev/pon-five-axis-native-work-20261010]
+permissions:
+  contents: read
+jobs:
+  native:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    env:
+      SOURCE_SHA: 228b156dc14ea938300b9503092e1ddd55014e4a
+      CARGO_BUILD_JOBS: "2"
+      CARGO_INCREMENTAL: "0"
+      RUST_TEST_THREADS: "1"
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.SOURCE_SHA }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Inspect exact existing storage ownership and run original preflight
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
+          test -z "$(git status --porcelain)"
+          bash scripts/project-preflight.sh --audit
+          mkdir -p "$RUNNER_TEMP/five-axis"
+          git show -s --format='%H%n%T%n%P' HEAD > "$RUNNER_TEMP/five-axis/source.txt"
+          python3 - <<'PY' | tee "$RUNNER_TEMP/five-axis/owner-inspection.txt"
+          import re
+          from pathlib import Path
+          p=Path('trillionnium/crates/trnm-pon-node/src/store.rs')
+          lines=p.read_text().splitlines()
+          names=['state_at','state_at_with_progress','read_active','read_active_with_progress','ready','read_snapshot','confirmations_with_progress','authenticated_account_multiproof_with_progress']
+          for name in names:
+              for start,line in enumerate(lines):
+                  if re.search(r'\bfn '+name+r'\b',line):
+                      indent=len(line)-len(line.lstrip())
+                      end=start+1
+                      while end<len(lines):
+                          other=lines[end]
+                          if end>start+1 and re.search(r'\bfn \w+',other) and len(other)-len(other.lstrip())==indent:
+                              break
+                          end+=1
+                      print('\n###',str(p),name,start+1,end)
+                      for i in range(start,min(end,start+360)):
+                          print(f'{i+1}: {lines[i]}')
+          for p in [Path('trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs'),Path('trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs')]:
+              print('\n### symbols',p)
+              for i,line in enumerate(p.read_text().splitlines(),1):
+                  if re.search(r'\bfn \w+',line):print(f'{i}: {line}')
+          PY
+      - name: Install original compiler
+        run: rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+      - name: Compile and execute the current authenticated owner
+        env:
+          TRNM_RETAINED_DELTA_COST_PATH: ${{ runner.temp }}/five-axis/retained-delta.jsonl
+        run: |
+          set -euo pipefail
+          rustup run 1.95.0 rustc -Vv > "$RUNNER_TEMP/five-axis/compiler.txt"
+          cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib store::native_authenticated:: -- --include-ignored --show-output --test-threads=1 2>&1 | tee "$RUNNER_TEMP/five-axis/native.log"
+          test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
+          test -z "$(git status --porcelain)"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: five-axis-native-development-${{ github.sha }}
+          path: ${{ runner.temp }}/five-axis/
+          if-no-files-found: error
+          retention-days: 14
