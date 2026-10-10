@@ -279,3 +279,39 @@ hardness flags false. Independently authored/reproduced algorithms, identified e
 reviewers/operators, source-bound public ordinary-ingress measurements and an accepted
 security argument remain separate prerequisites. The supplied Rust/Python implementations
 share development authorship and cannot satisfy that external obligation themselves.
+
+
+## Continuous pipeline failure ownership and stage observations
+
+The existing `continuous_pipeline` example now retains pending confirmation items
+until a complete contextual observation succeeds. A read refusal, malformed response
+or later failed item does not discard earlier unconfirmed items or the unread tail.
+The failure report records the remaining original record indices; a later successful
+poll removes only its completed items and does not recount earlier completions.
+This is in-memory campaign bookkeeping, not a second durable transaction journal or
+an authorization to redispatch a packet after an uncertain remote outcome.
+
+Final producer/validator readbacks are collected without returning before the original
+server receives stop and is joined. Its actual failure is reported separately from the
+primary campaign failure; a server error prevents a successful campaign result. Disk
+failure may still prevent writing a report. No detached worker or new background service
+is introduced, and no deadline, wire rule, work verification or state fence is relaxed.
+
+Additive `stage_counts` distinguish fully constructed transaction batches, completed
+execution-plus-work packets, local durable admission, local activation, remote ACK,
+verified remote membership and policy confirmation. The standalone executor completion
+count remains null because `make` couples execution with proof search; it cannot be
+inferred for a failed search. ACK is neither membership nor confirmation. The existing
+accepted/confirmed fields now count the actual verified query cardinalities, not the
+number of latency samples multiplied by the configured batch size. Pending entries
+cover membership-checked batches; earlier delivery uncertainty is visible as a stage
+gap and campaign error, never reclassified as proof of non-execution.
+
+Native controls reproduce the original drain-on-error loss, exercise every failure
+position and successful retry, and join real successful, failed and panicked server
+threads. Existing exact-head/actual-main-merge x64/ARM64 lanes run these controls and
+both original legacy/protected TCP pipelines with actual mined, stored and confirmed
+transactions. The tiny logical-clock runs check scope and count consistency only; they
+are not saturated throughput, live-paced latency, public V3 fairness, independent WAN,
+physical power-loss or long-term data-availability measurements. All original full
+baseline, capacity/history, native owner and cross-repository gates remain required.

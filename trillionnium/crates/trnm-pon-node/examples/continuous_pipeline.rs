@@ -1,5 +1,6 @@
 //! Real durable producer -> TCP validator -> inclusion -> local client observation.
 //! Public readiness and GPU throughput are deliberately not inferred from this campaign.
+use serde::Serialize;
 use serde_json::{json, Value};
 use std::{
     collections::BTreeMap,
@@ -38,6 +39,37 @@ fn quantiles(values: &[u128]) -> Value {
     let rank = |p: usize| sorted[(sorted.len() * p).div_ceil(100).saturating_sub(1)];
     json!({"count":sorted.len(),"p50_ns":if sorted.is_empty(){None}else{Some(rank(50))},"p95_ns":if sorted.len()<20{None}else{Some(rank(95))},"p99_ns":if sorted.len()<100{None}else{Some(rank(99))},"tail_rule":"empirical block sample quantiles only;20 samples for p95 resolution,100 for p99; correlation and confidence are not established"})
 }
+// These count actual completed boundaries, not an inferred executor or network rate.
+#[derive(Default, Serialize)]
+struct StageCounts {
+    input_constructed: usize,
+    execution_and_work_completed: usize,
+    local_durable_admitted: usize,
+    local_active: usize,
+    remote_acknowledged: usize,
+    remote_membership_verified: usize,
+    policy_confirmed: usize,
+}
+
+// Remove an obligation only after a complete successful observation. In particular,
+// an error must retain earlier deferred work, the failing item and the unread tail.
+fn poll_pending<T>(pending: &mut Vec<T>, mut observe: impl FnMut(&T) -> Result<bool>) -> Result<()> {
+    let mut index = 0;
+    while index < pending.len() {
+        if observe(&pending[index])? {
+            drop(pending.remove(index));
+        } else {
+            index += 1;
+        }
+    }
+    Ok(())
+}
+
+fn stop_and_join<T>(stop: &AtomicBool, server: thread::JoinHandle<Result<T>>) -> Result<T> {
+    stop.store(true, Ordering::Release);
+    server.join().map_err(|_| "SERVER_THREAD")?
+}
+
 fn run() -> Result<()> {
     let args: Vec<_> = std::env::args().skip(1).collect();
     if args.len() != 6 {
@@ -104,6 +136,7 @@ fn run() -> Result<()> {
     };
     let started = Instant::now();
     let mut records = Vec::new();
+    let mut stages = StageCounts::default();
     let mut pending: Vec<(usize, Instant, Vec<ConfirmationQuery>)> = Vec::new();
     let mut inclusion_latencies = Vec::new();
     let mut confirmation_latencies = Vec::new();
@@ -175,6 +208,7 @@ fn run() -> Result<()> {
                     *nonce += 1;
                 }
             }
+            stages.input_constructed += transactions.len();
             let constructed = Instant::now();
             let timestamp = if logical {
                 genesis + ((index + 1) as u64) * 10
@@ -194,10 +228,13 @@ fn run() -> Result<()> {
                 timestamp,
                 4096,
             )?;
+            stages.execution_and_work_completed += packet.transactions.len();
             let made = Instant::now();
             let id = producer.admit(&packet, ingress::now()?)?;
+            stages.local_durable_admitted += packet.transactions.len();
             let checked = Instant::now();
             producer.activate_observed(id, ingress::now()?)?;
+            stages.local_active += packet.transactions.len();
             let local_committed = Instant::now();
             let encoded = packet.encode()?;
             fs::write(directory.join(format!("block-{index:04}.bin")), &encoded)?;
@@ -209,6 +246,7 @@ fn run() -> Result<()> {
             if response["block"] != hex::encode(id) {
                 return Err("INCLUSION_RESPONSE".into());
             }
+            stages.remote_acknowledged += packet.transactions.len();
             let queries: Vec<_> = packet
                 .transactions
                 .iter()
@@ -251,6 +289,7 @@ fn run() -> Result<()> {
                 {
                     return Err("MEMBERSHIP".into());
                 }
+                stages.remote_membership_verified += queries.len();
                 inclusion_latencies.push(included.duration_since(intake).as_nanos());
                 pending.push((index, intake, queries));
                 last_inclusion = Some(included);
@@ -262,8 +301,7 @@ fn run() -> Result<()> {
                 bytes_on_disk(&directory.join("producer"))?
                     + bytes_on_disk(&directory.join("validator"))?
             );
-            let mut remaining = Vec::new();
-            for (record_index, intake, queries) in pending.drain(..) {
+            poll_pending(&mut pending, |(record_index, intake, queries)| {
                 let confirmation_started = Instant::now();
                 let result = call(&Request::ConfirmMany {
                     queries: queries.clone(),
@@ -273,7 +311,7 @@ fn run() -> Result<()> {
                     .as_array()
                     .ok_or("CONFIRMATION_FORMAT")?;
                 if observations.len() != queries.len()
-                    || observations.iter().zip(&queries).any(|(o, q)| {
+                    || observations.iter().zip(queries).any(|(o, q)| {
                         o["transaction"] != q.transaction
                             || o["included_block"] != q.block
                             || o["network"] != hex::encode(settings.network())
@@ -289,17 +327,18 @@ fn run() -> Result<()> {
                         && o["finalized"] == false
                         && o["execution_authority"] == false
                 }) {
-                    let latency = observed.duration_since(intake).as_nanos();
+                    let latency = observed.duration_since(*intake).as_nanos();
                     confirmation_latencies.push(latency);
-                    records[record_index]["intake_to_confirmation_ns"] = json!(latency);
-                    records[record_index]["confirmation_query_ns"] =
+                    records[*record_index]["intake_to_confirmation_ns"] = json!(latency);
+                    records[*record_index]["confirmation_query_ns"] =
                         json!(observed.duration_since(confirmation_started).as_nanos());
-                    records[record_index]["confirmation"] = result;
+                    records[*record_index]["confirmation"] = result;
+                    stages.policy_confirmed += queries.len();
+                    Ok(true)
                 } else {
-                    remaining.push((record_index, intake, queries));
+                    Ok(false)
                 }
-            }
-            pending = remaining;
+            })?;
             fs::write(
                 directory.join("progress.json"),
                 serde_json::to_vec(
@@ -309,15 +348,17 @@ fn run() -> Result<()> {
         }
         Ok(())
     })();
+    // Readback failure is diagnostic, not permission to detach a running server.
+    // Always request stop and join before any fallible final report construction.
     let final_head = call(&Request::Head);
-    let producer_final = producer.stats()?;
-    let heads_agree = final_head.as_ref().is_ok_and(|head| {
-        ["tip", "height", "state_root", "chainwork_hex"]
+    let producer_final = producer.stats();
+    let heads_agree = match (&final_head, &producer_final) {
+        (Ok(head), Ok(producer)) => ["tip", "height", "state_root", "chainwork_hex"]
             .iter()
-            .all(|key| head[*key] == producer_final[*key])
-    });
-    stop.store(true, Ordering::Release);
-    let metrics = server.join().map_err(|_| "SERVER_THREAD")??;
+            .all(|key| head[*key] == producer[*key]),
+        _ => false,
+    };
+    let server_result = stop_and_join(&stop, server);
     let close_started = Instant::now();
     drop(producer);
     let producer_close_ns = close_started.elapsed().as_nanos();
@@ -325,38 +366,41 @@ fn run() -> Result<()> {
     let offered_window = last_inclusion
         .zip(first_intake)
         .map(|(last, first)| last.duration_since(first).as_secs_f64());
-    let accepted_transactions: usize = records
-        .iter()
-        .map(|record| record["transaction_count"].as_u64().unwrap_or(0) as usize)
-        .sum();
+    let accepted_transactions = stages.remote_membership_verified;
+    let confirmed_transactions = stages.policy_confirmed;
     let inclusion_rate = offered_window
         .filter(|seconds| *seconds > 0.0)
         .map(|seconds| accepted_transactions as f64 / seconds);
     let summary = json!({
         "schema":"trnm-continuous-native-pipeline-v1",
         "scope":"single-host closed-loop durable CPU TCP service workload; local confirmation; no saturation, WAN or public qualification",
-        "campaign_passed":campaign_result.is_ok() && pending.is_empty() && heads_agree,
+        "campaign_passed":campaign_result.is_ok() && pending.is_empty() && heads_agree && server_result.is_ok(),
         "campaign_error":campaign_result.as_ref().err().map(ToString::to_string),
         "logical_pacing":logical,"pace_ms":pace,
         "network":hex::encode(settings.network()),"parameters":hex::encode(settings.parameters()),
         "genesis":hex::encode(settings.genesis()),"genesis_timestamp":settings.genesis_time(),
         "transaction_type":"signed PNX1 transfer tag1 only","pattern":pattern,
         "funded_senders":if pattern=="hot"{1}else{4},"requested_blocks":blocks,"transactions_per_block":batch,
-        "accepted_transactions":accepted_transactions,"confirmed_transactions":confirmation_latencies.len()*batch,
+        "accepted_transactions":accepted_transactions,"confirmed_transactions":confirmed_transactions,
         "pending_confirmation_blocks":pending.len(),"inclusion_window_seconds":offered_window,
         "measured_inclusion_transactions_per_second":inclusion_rate,
         "whole_campaign_seconds":completed.duration_since(started).as_secs_f64(),
-        "whole_campaign_confirmed_transactions_per_second":(confirmation_latencies.len()*batch) as f64/completed.duration_since(started).as_secs_f64(),
+        "whole_campaign_confirmed_transactions_per_second":confirmed_transactions as f64/completed.duration_since(started).as_secs_f64(),
         "admission_profile":if protected{"connection-work-v1"}else{"legacy-development"},
-        "socket_metrics":metrics,"inclusion_latency_block_samples":quantiles(&inclusion_latencies),
+        "socket_metrics":server_result.as_ref().ok(),"server_error":server_result.as_ref().err().map(ToString::to_string),"inclusion_latency_block_samples":quantiles(&inclusion_latencies),
         "confirmation_latency_block_samples":quantiles(&confirmation_latencies),
-        "producer_final_state":producer_final,"validator_final_head":final_head.as_ref().ok(),
+        "producer_final_state":producer_final.as_ref().ok(),"producer_final_error":producer_final.as_ref().err().map(ToString::to_string),"validator_final_head":final_head.as_ref().ok(),
         "final_head_error":final_head.as_ref().err().map(ToString::to_string),"producer_validator_heads_agree":heads_agree,
         "disk_bytes":bytes_on_disk(&directory)?,"disk_scope":"complete run directory before summary write, including exported proof/evidence",
         "ledger_disk_bytes":bytes_on_disk(&directory.join("producer"))? + bytes_on_disk(&directory.join("validator"))?,
         "producer_close_ns":producer_close_ns,"gpu_used":false,"gpu_device":null,"vram_bytes":null,
         "gpu_measurement":"no GPU inference/training in this CPU chain workload; model deployment VRAM unmeasured",
         "mempool_latency":null,"mempool_note":"prebuilt block submission; no standalone transaction RPC/mempool",
+        "stage_counts":stages,
+        "stage_count_scope":"completed local and remote-observation boundaries only; ACK is not membership or confirmation; execution/work are jointly observed, standalone executor completion is unmeasured",
+        "application_executed_transactions":null,
+        "pending_confirmation_scope":"membership-checked batches; earlier uncertain delivery remains a stage gap, not proof of non-execution",
+        "pending_confirmation_record_indices":pending.iter().map(|(index, _, _)| *index).collect::<Vec<_>>(),
         "records":records
     });
     fs::write(
@@ -365,9 +409,11 @@ fn run() -> Result<()> {
     )?;
     println!(
         "{}",
-        json!({"report":directory.join("summary.json"),"accepted_transactions":accepted_transactions,"confirmed_transactions":confirmation_latencies.len()*batch,"measured_inclusion_transactions_per_second":inclusion_rate,"public_qualified":false})
+        json!({"report":directory.join("summary.json"),"accepted_transactions":accepted_transactions,"confirmed_transactions":confirmed_transactions,"measured_inclusion_transactions_per_second":inclusion_rate,"public_qualified":false})
     );
     campaign_result?;
+    producer_final?;
+    server_result?;
     if !heads_agree {
         return Err("PRODUCER_VALIDATOR_HEAD_MISMATCH".into());
     }
@@ -380,5 +426,117 @@ fn main() {
     if let Err(error) = run() {
         eprintln!("{error}");
         std::process::exit(2);
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn failed_poll_retains_deferred_failed_and_unread_obligations() {
+        let mut pending = vec![0, 1, 2, 3];
+        let mut seen = Vec::new();
+        let error = poll_pending(&mut pending, |item| {
+            seen.push(*item);
+            match item {
+                0 => Ok(false),
+                1 => Ok(true),
+                _ => Err("OBSERVATION_FAILED".into()),
+            }
+        })
+        .unwrap_err();
+        assert_eq!(error.to_string(), "OBSERVATION_FAILED");
+        assert_eq!(seen, [0, 1, 2]);
+        assert_eq!(pending, [0, 2, 3]);
+        let mut retry = Vec::new();
+        poll_pending(&mut pending, |item| {
+            retry.push(*item);
+            Ok(true)
+        })
+        .unwrap();
+        assert_eq!(retry, [0, 2, 3]);
+        assert!(pending.is_empty());
+    }
+
+    #[test]
+    fn original_drain_loses_obligations_on_the_same_failure() {
+        fn original(pending: &mut Vec<usize>) -> Result<()> {
+            let mut remaining = Vec::new();
+            for item in pending.drain(..) {
+                let complete = match item {
+                    0 => false,
+                    1 => true,
+                    _ => return Err("OBSERVATION_FAILED".into()),
+                };
+                if !complete {
+                    remaining.push(item);
+                }
+            }
+            *pending = remaining;
+            Ok(())
+        }
+        let mut pending = vec![0, 1, 2, 3];
+        assert!(original(&mut pending).is_err());
+        assert!(pending.is_empty());
+        let mut repaired = vec![0, 1, 2, 3];
+        assert!(poll_pending(&mut repaired, |item| match item {
+            0 => Ok(false),
+            1 => Ok(true),
+            _ => Err("OBSERVATION_FAILED".into()),
+        })
+        .is_err());
+        assert_eq!(repaired, [0, 2, 3]);
+    }
+
+    #[test]
+    fn every_failure_cut_preserves_exact_remaining_order() {
+        for cut in 0..=16 {
+            let mut pending: Vec<usize> = (0..16).collect();
+            let result = poll_pending(&mut pending, |item| {
+                if *item == cut {
+                    Err("CUT".into())
+                } else {
+                    Ok(item % 2 == 0)
+                }
+            });
+            assert_eq!(result.is_err(), cut < 16);
+            let expected: Vec<_> = (0..16)
+                .filter(|item| *item >= cut || item % 2 == 1)
+                .collect();
+            assert_eq!(pending, expected);
+        }
+        let mut empty: Vec<usize> = Vec::new();
+        poll_pending(&mut empty, |_| Err("EMPTY_CALLED".into())).unwrap();
+    }
+
+    #[test]
+    fn shutdown_joins_before_returning_server_failure() {
+        let stop = Arc::new(AtomicBool::new(false));
+        let worker_stop = stop.clone();
+        let exited = Arc::new(AtomicBool::new(false));
+        let worker_exited = exited.clone();
+        let server = thread::spawn(move || -> Result<()> {
+            while !worker_stop.load(Ordering::Acquire) {
+                thread::yield_now();
+            }
+            worker_exited.store(true, Ordering::Release);
+            Err("SERVER_FAILED".into())
+        });
+        let error = stop_and_join(&stop, server).unwrap_err();
+        assert_eq!(error.to_string(), "SERVER_FAILED");
+        assert!(exited.load(Ordering::Acquire));
+    }
+
+    #[test]
+    fn shutdown_preserves_success_and_reports_panicked_server() {
+        let stop = AtomicBool::new(false);
+        assert_eq!(stop_and_join(&stop, thread::spawn(|| Ok(7))).unwrap(), 7);
+        assert!(stop.load(Ordering::Acquire));
+        let server = thread::spawn(|| -> Result<()> { panic!("controlled server panic") });
+        assert_eq!(
+            stop_and_join(&stop, server).unwrap_err().to_string(),
+            "SERVER_THREAD"
+        );
     }
 }
