@@ -1,0 +1,359 @@
+﻿2026-09-30T19:17:16.4361305Z Current runner version: '2.337.0'
+2026-09-30T19:17:16.4385356Z ##[group]Runner Image Provisioner
+2026-09-30T19:17:16.4386191Z Hosted Compute Agent
+2026-09-30T19:17:16.4386689Z Version: 20260901.588
+2026-09-30T19:17:16.4387211Z Commit: f88ec8081b781fac6c440065ac7ff9e710ce3d0b
+2026-09-30T19:17:16.4387839Z Build Date: 2026-09-01T19:56:44Z
+2026-09-30T19:17:16.4388399Z Worker ID: {66d360e7-1ca8-40e4-9859-ccb5393d6fd4}
+2026-09-30T19:17:16.4389006Z Azure Region: centralus
+2026-09-30T19:17:16.4389607Z ##[endgroup]
+2026-09-30T19:17:16.4390710Z ##[group]Operating System
+2026-09-30T19:17:16.4391234Z Ubuntu
+2026-09-30T19:17:16.4391661Z 24.04.5
+2026-09-30T19:17:16.4392096Z LTS
+2026-09-30T19:17:16.4392554Z ##[endgroup]
+2026-09-30T19:17:16.4393014Z ##[group]Runner Image
+2026-09-30T19:17:16.4393513Z Image: ubuntu-24.04
+2026-09-30T19:17:16.4394221Z Version: 20260927.320.1
+2026-09-30T19:17:16.4395332Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20260927.320/images/ubuntu/Ubuntu2404-Readme.md
+2026-09-30T19:17:16.4396565Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20260927.320
+2026-09-30T19:17:16.4397360Z ##[endgroup]
+2026-09-30T19:17:16.4398319Z ##[group]GITHUB_TOKEN Permissions
+2026-09-30T19:17:16.4400044Z Contents: read
+2026-09-30T19:17:16.4400526Z Metadata: read
+2026-09-30T19:17:16.4401001Z ##[endgroup]
+2026-09-30T19:17:16.4402704Z Secret source: Actions
+2026-09-30T19:17:16.4403457Z Cache mode: write
+2026-09-30T19:17:16.4404295Z Prepare workflow directory
+2026-09-30T19:17:16.5146125Z Prepare all required actions
+2026-09-30T19:17:16.5208994Z Getting action download info
+2026-09-30T19:17:16.8309120Z Download action repository 'actions/checkout@11d5960a326750d5838078e36cf38b85af677262' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+2026-09-30T19:17:17.3170245Z Complete job name: external-evidence-contract
+2026-09-30T19:17:17.3754463Z ##[group]Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+2026-09-30T19:17:17.3755381Z with:
+2026-09-30T19:17:17.3755914Z   ref: 190d952c2f1d0e8364c958d1060ace2b560eb4a6
+2026-09-30T19:17:17.3756480Z   fetch-depth: 0
+2026-09-30T19:17:17.3756942Z   persist-credentials: false
+2026-09-30T19:17:17.3757539Z   repository: TrillionniumFoundation/Trillionnium-Chain
+2026-09-30T19:17:17.3761092Z   token: ***
+2026-09-30T19:17:17.3761531Z   ssh-strict: true
+2026-09-30T19:17:17.3761973Z   ssh-user: git
+2026-09-30T19:17:17.3762389Z   clean: true
+2026-09-30T19:17:17.3762843Z   sparse-checkout-cone-mode: true
+2026-09-30T19:17:17.3763364Z   fetch-tags: false
+2026-09-30T19:17:17.3764017Z   show-progress: true
+2026-09-30T19:17:17.3764500Z   lfs: false
+2026-09-30T19:17:17.3764917Z   submodules: false
+2026-09-30T19:17:17.3765686Z   set-safe-directory: true
+2026-09-30T19:17:17.3766216Z   allow-unsafe-pr-checkout: false
+2026-09-30T19:17:17.3766888Z env:
+2026-09-30T19:17:17.3767404Z   CI: true
+2026-09-30T19:17:17.3767809Z   CARGO_INCREMENTAL: 0
+2026-09-30T19:17:17.3768304Z   CARGO_BUILD_JOBS: 2
+2026-09-30T19:17:17.3768750Z   RUST_TEST_THREADS: 1
+2026-09-30T19:17:17.3769207Z   CARGO_TERM_COLOR: never
+2026-09-30T19:17:17.3769691Z   PYTHONDONTWRITEBYTECODE: 1
+2026-09-30T19:17:17.3770311Z   TRNM_EXPECTED_SOURCE_SHA: 190d952c2f1d0e8364c958d1060ace2b560eb4a6
+2026-09-30T19:17:17.3770976Z ##[endgroup]
+2026-09-30T19:17:17.4623576Z Syncing repository: TrillionniumFoundation/Trillionnium-Chain
+2026-09-30T19:17:17.4626146Z ##[group]Getting Git version info
+2026-09-30T19:17:17.4626977Z Working directory is '/home/runner/work/Trillionnium-Chain/Trillionnium-Chain'
+2026-09-30T19:17:17.4628137Z [command]/usr/bin/git version
+2026-09-30T19:17:17.4711650Z git version 2.55.0
+2026-09-30T19:17:17.4730175Z ##[endgroup]
+2026-09-30T19:17:17.4743459Z Temporarily overriding HOME='/home/runner/work/_temp/ae473be2-2e76-4a9b-a5af-0feb49f97cb4' before making global git config changes
+2026-09-30T19:17:17.4745802Z Adding repository directory to the temporary git global config as a safe directory
+2026-09-30T19:17:17.4749849Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Trillionnium-Chain/Trillionnium-Chain
+2026-09-30T19:17:17.4995784Z Deleting the contents of '/home/runner/work/Trillionnium-Chain/Trillionnium-Chain'
+2026-09-30T19:17:17.4999317Z ##[group]Initializing the repository
+2026-09-30T19:17:17.5004041Z [command]/usr/bin/git init /home/runner/work/Trillionnium-Chain/Trillionnium-Chain
+2026-09-30T19:17:17.5599679Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-09-30T19:17:17.5601131Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-09-30T19:17:17.5601987Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-09-30T19:17:17.5602663Z hint: call:
+2026-09-30T19:17:17.5603097Z hint:
+2026-09-30T19:17:17.5603595Z hint: 	git config --global init.defaultBranch <name>
+2026-09-30T19:17:17.5604495Z hint:
+2026-09-30T19:17:17.5605132Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-09-30T19:17:17.5605946Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-09-30T19:17:17.5606633Z hint:
+2026-09-30T19:17:17.5607102Z hint: 	git branch -m <name>
+2026-09-30T19:17:17.5607539Z hint:
+2026-09-30T19:17:17.5608141Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-09-30T19:17:17.5612007Z Initialized empty Git repository in /home/runner/work/Trillionnium-Chain/Trillionnium-Chain/.git/
+2026-09-30T19:17:17.5620472Z [command]/usr/bin/git remote add origin https://github.com/TrillionniumFoundation/Trillionnium-Chain
+2026-09-30T19:17:17.6484318Z ##[endgroup]
+2026-09-30T19:17:17.6485271Z ##[group]Disabling automatic garbage collection
+2026-09-30T19:17:17.6488817Z [command]/usr/bin/git config --local gc.auto 0
+2026-09-30T19:17:17.7028281Z ##[endgroup]
+2026-09-30T19:17:17.7029164Z ##[group]Setting up auth
+2026-09-30T19:17:17.7036065Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-09-30T19:17:17.7064719Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-09-30T19:17:17.7325351Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-09-30T19:17:17.7350039Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-09-30T19:17:17.7509744Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-09-30T19:17:17.7535892Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-09-30T19:17:17.7694672Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-09-30T19:17:17.8590088Z ##[endgroup]
+2026-09-30T19:17:17.8591466Z ##[group]Fetching the repository
+2026-09-30T19:17:17.8609731Z [command]/usr/bin/git -c protocol.version=2 fetch --prune --no-recurse-submodules origin +refs/heads/*:refs/remotes/origin/* +refs/tags/*:refs/tags/*
+2026-09-30T19:17:26.0707445Z From https://github.com/TrillionniumFoundation/Trillionnium-Chain
+2026-09-30T19:17:26.0709432Z  * [new branch]          chore/chain-clear-readme-20260929 -> origin/chore/chain-clear-readme-20260929
+2026-09-30T19:17:26.0711486Z  * [new branch]          dependabot/cargo/trillionnium/borsh-1.8.1 -> origin/dependabot/cargo/trillionnium/borsh-1.8.1
+2026-09-30T19:17:26.0713575Z  * [new branch]          dependabot/cargo/trillionnium/clap-4.6.7 -> origin/dependabot/cargo/trillionnium/clap-4.6.7
+2026-09-30T19:17:26.0715879Z  * [new branch]          dependabot/cargo/trillionnium/ed25519-dalek-3.0.0 -> origin/dependabot/cargo/trillionnium/ed25519-dalek-3.0.0
+2026-09-30T19:17:26.0718271Z  * [new branch]          dependabot/cargo/trillionnium/rusqlite-0.40.2 -> origin/dependabot/cargo/trillionnium/rusqlite-0.40.2
+2026-09-30T19:17:26.0720669Z  * [new branch]          dependabot/cargo/trillionnium/serde-1.0.229 -> origin/dependabot/cargo/trillionnium/serde-1.0.229
+2026-09-30T19:17:26.0722513Z  * [new branch]          fix/chain-pon-contract-authority-20260929 -> origin/fix/chain-pon-contract-authority-20260929
+2026-09-30T19:17:26.0724133Z  * [new branch]          main       -> origin/main
+2026-09-30T19:17:26.0725653Z  * [new branch]          ops/recover-qian-qi-20260925 -> origin/ops/recover-qian-qi-20260925
+2026-09-30T19:17:26.0728498Z [command]/usr/bin/git rev-parse --verify --quiet 190d952c2f1d0e8364c958d1060ace2b560eb4a6^{object}
+2026-09-30T19:17:26.0741446Z 190d952c2f1d0e8364c958d1060ace2b560eb4a6
+2026-09-30T19:17:26.0744259Z ##[endgroup]
+2026-09-30T19:17:26.0745683Z ##[group]Determining the checkout info
+2026-09-30T19:17:26.0747059Z ##[endgroup]
+2026-09-30T19:17:26.0750681Z [command]/usr/bin/git sparse-checkout disable
+2026-09-30T19:17:26.0794632Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-09-30T19:17:26.0817374Z ##[group]Checking out the ref
+2026-09-30T19:17:26.0819926Z [command]/usr/bin/git checkout --progress --force 190d952c2f1d0e8364c958d1060ace2b560eb4a6
+2026-09-30T19:17:26.5706777Z Note: switching to '190d952c2f1d0e8364c958d1060ace2b560eb4a6'.
+2026-09-30T19:17:26.5708004Z 
+2026-09-30T19:17:26.5708680Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-09-30T19:17:26.5710487Z changes and commit them, and you can discard any commits you make in this
+2026-09-30T19:17:26.5712145Z state without impacting any branches by switching back to a branch.
+2026-09-30T19:17:26.5713046Z 
+2026-09-30T19:17:26.5713737Z If you want to create a new branch to retain commits you create, you may
+2026-09-30T19:17:26.5715372Z do so (now or later) by using -c with the switch command. Example:
+2026-09-30T19:17:26.5716491Z 
+2026-09-30T19:17:26.5717330Z   git switch -c <new-branch-name>
+2026-09-30T19:17:26.5718300Z 
+2026-09-30T19:17:26.5718780Z Or undo this operation with:
+2026-09-30T19:17:26.5719576Z 
+2026-09-30T19:17:26.5719937Z   git switch -
+2026-09-30T19:17:26.5720531Z 
+2026-09-30T19:17:26.5721574Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-09-30T19:17:26.5722928Z 
+2026-09-30T19:17:26.5724544Z HEAD is now at 190d952c2 test(PoN): retain source-bound sustained qualification and failed observations
+2026-09-30T19:17:26.5729701Z ##[endgroup]
+2026-09-30T19:17:26.5759840Z [command]/usr/bin/git log -1 --format=%H
+2026-09-30T19:17:26.5780507Z 190d952c2f1d0e8364c958d1060ace2b560eb4a6
+2026-09-30T19:17:26.5787879Z ##[group]Removing auth
+2026-09-30T19:17:26.5790851Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-09-30T19:17:26.5814610Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-09-30T19:17:26.5979770Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-09-30T19:17:26.5999543Z http.https://github.com/.extraheader
+2026-09-30T19:17:26.6007769Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-09-30T19:17:26.6036597Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-09-30T19:17:26.6190409Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-09-30T19:17:26.6215606Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-09-30T19:17:26.6374926Z ##[endgroup]
+2026-09-30T19:17:26.6591878Z ##[group]Run test "$(git rev-parse HEAD)" = "$TRNM_EXPECTED_SOURCE_SHA"
+2026-09-30T19:17:26.6594146Z [36;1mtest "$(git rev-parse HEAD)" = "$TRNM_EXPECTED_SOURCE_SHA"[0m
+2026-09-30T19:17:26.6757778Z shell: /usr/bin/bash -e {0}
+2026-09-30T19:17:26.6759090Z env:
+2026-09-30T19:17:26.6759892Z   CI: true
+2026-09-30T19:17:26.6760728Z   CARGO_INCREMENTAL: 0
+2026-09-30T19:17:26.6761669Z   CARGO_BUILD_JOBS: 2
+2026-09-30T19:17:26.6762600Z   RUST_TEST_THREADS: 1
+2026-09-30T19:17:26.6763578Z   CARGO_TERM_COLOR: never
+2026-09-30T19:17:26.6765034Z   PYTHONDONTWRITEBYTECODE: 1
+2026-09-30T19:17:26.6766395Z   TRNM_EXPECTED_SOURCE_SHA: 190d952c2f1d0e8364c958d1060ace2b560eb4a6
+2026-09-30T19:17:26.6767817Z ##[endgroup]
+2026-09-30T19:17:26.6939154Z ##[group]Run set -euo pipefail
+2026-09-30T19:17:26.6940264Z [36;1mset -euo pipefail[0m
+2026-09-30T19:17:26.6941744Z [36;1mprintf 'CARGO_HOME=%s/cargo-%s\n' "$RUNNER_TEMP" "$GITHUB_JOB" >> "$GITHUB_ENV"[0m
+2026-09-30T19:17:26.6944161Z [36;1mprintf 'CARGO_TARGET_DIR=%s/target-%s\n' "$RUNNER_TEMP" "$GITHUB_JOB" >> "$GITHUB_ENV"[0m
+2026-09-30T19:17:26.6980438Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-09-30T19:17:26.6981772Z env:
+2026-09-30T19:17:26.6982567Z   CI: true
+2026-09-30T19:17:26.6983390Z   CARGO_INCREMENTAL: 0
+2026-09-30T19:17:26.6984518Z   CARGO_BUILD_JOBS: 2
+2026-09-30T19:17:26.6985450Z   RUST_TEST_THREADS: 1
+2026-09-30T19:17:26.6986378Z   CARGO_TERM_COLOR: never
+2026-09-30T19:17:26.6987357Z   PYTHONDONTWRITEBYTECODE: 1
+2026-09-30T19:17:26.6988682Z   TRNM_EXPECTED_SOURCE_SHA: 190d952c2f1d0e8364c958d1060ace2b560eb4a6
+2026-09-30T19:17:26.6990079Z ##[endgroup]
+2026-09-30T19:17:26.7123361Z ##[group]Run python3 -m venv "$RUNNER_TEMP/pon-evidence-env"
+2026-09-30T19:17:26.7125084Z [36;1mpython3 -m venv "$RUNNER_TEMP/pon-evidence-env"[0m
+2026-09-30T19:17:26.7127871Z [36;1m"$RUNNER_TEMP/pon-evidence-env/bin/python" -m pip install --disable-pip-version-check --only-binary=:all: -r formal/pon-nakamoto-v1/requirements.txt[0m
+2026-09-30T19:17:26.7130740Z [36;1mecho "$RUNNER_TEMP/pon-evidence-env/bin" >> "$GITHUB_PATH"[0m
+2026-09-30T19:17:26.7160090Z shell: /usr/bin/bash -e {0}
+2026-09-30T19:17:26.7161053Z env:
+2026-09-30T19:17:26.7161843Z   CI: true
+2026-09-30T19:17:26.7162641Z   CARGO_INCREMENTAL: 0
+2026-09-30T19:17:26.7163564Z   CARGO_BUILD_JOBS: 2
+2026-09-30T19:17:26.7164591Z   RUST_TEST_THREADS: 1
+2026-09-30T19:17:26.7165681Z   CARGO_TERM_COLOR: never
+2026-09-30T19:17:26.7166655Z   PYTHONDONTWRITEBYTECODE: 1
+2026-09-30T19:17:26.7168008Z   TRNM_EXPECTED_SOURCE_SHA: 190d952c2f1d0e8364c958d1060ace2b560eb4a6
+2026-09-30T19:17:26.7169954Z   CARGO_HOME: /home/runner/work/_temp/cargo-external-evidence-contract
+2026-09-30T19:17:26.7171880Z   CARGO_TARGET_DIR: /home/runner/work/_temp/target-external-evidence-contract
+2026-09-30T19:17:26.7173390Z ##[endgroup]
+2026-09-30T19:17:30.3653670Z Collecting numpy==1.26.4 (from -r formal/pon-nakamoto-v1/requirements.txt (line 2))
+2026-09-30T19:17:30.4228991Z   Downloading numpy-1.26.4-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (61 kB)
+2026-09-30T19:17:30.4376320Z      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 61.0/61.0 kB 4.0 MB/s eta 0:00:00
+2026-09-30T19:17:30.6372739Z Collecting cryptography==41.0.7 (from -r formal/pon-nakamoto-v1/requirements.txt (line 3))
+2026-09-30T19:17:30.6488858Z   Downloading cryptography-41.0.7-cp37-abi3-manylinux_2_28_x86_64.whl.metadata (5.2 kB)
+2026-09-30T19:17:30.7653530Z Collecting cffi>=1.12 (from cryptography==41.0.7->-r formal/pon-nakamoto-v1/requirements.txt (line 3))
+2026-09-30T19:17:30.7757189Z   Downloading cffi-2.1.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (2.5 kB)
+2026-09-30T19:17:30.8070972Z Collecting pycparser (from cffi>=1.12->cryptography==41.0.7->-r formal/pon-nakamoto-v1/requirements.txt (line 3))
+2026-09-30T19:17:30.8178325Z   Downloading pycparser-3.0-py3-none-any.whl.metadata (8.2 kB)
+2026-09-30T19:17:30.8368792Z Downloading numpy-1.26.4-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (18.0 MB)
+2026-09-30T19:17:32.4132425Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 18.0/18.0 MB 12.9 MB/s eta 0:00:00
+2026-09-30T19:17:32.4468476Z Downloading cryptography-41.0.7-cp37-abi3-manylinux_2_28_x86_64.whl (4.4 MB)
+2026-09-30T19:17:32.6989930Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 4.4/4.4 MB 17.4 MB/s eta 0:00:00
+2026-09-30T19:17:32.7139370Z Downloading cffi-2.1.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (221 kB)
+2026-09-30T19:17:32.7386996Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 221.8/221.8 kB 9.1 MB/s eta 0:00:00
+2026-09-30T19:17:32.7492271Z Downloading pycparser-3.0-py3-none-any.whl (48 kB)
+2026-09-30T19:17:32.7526001Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 48.2/48.2 kB 19.3 MB/s eta 0:00:00
+2026-09-30T19:17:32.7971121Z Installing collected packages: pycparser, numpy, cffi, cryptography
+2026-09-30T19:17:34.3889673Z Successfully installed cffi-2.1.1 cryptography-41.0.7 numpy-1.26.4 pycparser-3.0
+2026-09-30T19:17:34.5040683Z ##[group]Run bash scripts/ci/ci_job.sh external-evidence-contract
+2026-09-30T19:17:34.5041204Z [36;1mbash scripts/ci/ci_job.sh external-evidence-contract[0m
+2026-09-30T19:17:34.5081794Z shell: /usr/bin/bash -e {0}
+2026-09-30T19:17:34.5082181Z env:
+2026-09-30T19:17:34.5082450Z   CI: true
+2026-09-30T19:17:34.5082747Z   CARGO_INCREMENTAL: 0
+2026-09-30T19:17:34.5083023Z   CARGO_BUILD_JOBS: 2
+2026-09-30T19:17:34.5083370Z   RUST_TEST_THREADS: 1
+2026-09-30T19:17:34.5083650Z   CARGO_TERM_COLOR: never
+2026-09-30T19:17:34.5084187Z   PYTHONDONTWRITEBYTECODE: 1
+2026-09-30T19:17:34.5084614Z   TRNM_EXPECTED_SOURCE_SHA: 190d952c2f1d0e8364c958d1060ace2b560eb4a6
+2026-09-30T19:17:34.5085103Z   CARGO_HOME: /home/runner/work/_temp/cargo-external-evidence-contract
+2026-09-30T19:17:34.5085590Z   CARGO_TARGET_DIR: /home/runner/work/_temp/target-external-evidence-contract
+2026-09-30T19:17:34.5086004Z ##[endgroup]
+2026-09-30T19:17:37.8264182Z {"acceptance_granted": false, "branch_refs_changed": false, "fetched": ["242906bae4f281c738c60adbd2c053d2ded1eae5", "30b85c34d1be404dcccd9f415286bb43b00f64ea", "50e158640d8278ca94dbecb6539dab96c6a9fb84"], "verified_object_trees": {"1a512c613951af5640dac06cc663392d08927e00": "be23902744141ca769d1b11b3a0f50d8b62a4ed3", "242906bae4f281c738c60adbd2c053d2ded1eae5": "160cc493ab4cfb7f3f8c26b2d1621691a0c49502", "30b85c34d1be404dcccd9f415286bb43b00f64ea": "4ee1a9d265f09871b0f167d2a5be77ca4b9839c0", "50e158640d8278ca94dbecb6539dab96c6a9fb84": "d61a69d3433db127019924d269bf25ded3aecf60", "5d59b9540268914794a62e8fa237caf999499314": "30ee65c0752693f4eecc90f924972279f00c0c73", "6cdbf9551aae1754e489773bac29bc0598e20a9b": "521ea862cd063904aaf3acb949208ac87dc0d762", "9fedf7ecbbe07177069c030592b4e03dcffebb81": "af52e79d69de2224fa709309704ba6a971453579", "b34561d1ade376512a34fed3fd78938ed2431ecd": "5a91b1ecc696b8a0c468ee8ba2a3dd0fe9e8d3d8", "dbb1c989342639c4c04366a0d12bc3ecb4760e04": "a38495fe234c4ae71aeae3c570d5d91acf847fee", "ed4d95c3e558ad28b5f3132152704bdf77df5f49": "a19ecaa4745236753d89b7e6be8de4a9f2156954", "faf144086067f9b0a301a2b46760164d80fec04e": "cd3643aec9b12dab647f07b8c561e81eeae1493c", "fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb": "31b4df1df65ef70d92936091271d21e1d90c1142"}}
+2026-09-30T19:17:38.0069132Z test_client_receipt_cannot_rebind_source_or_fetch_a_branch (__main__.EvidenceSourceTests.test_client_receipt_cannot_rebind_source_or_fetch_a_branch) ... ok
+2026-09-30T19:17:38.0085477Z test_client_receipt_retains_exact_source_after_squash (__main__.EvidenceSourceTests.test_client_receipt_retains_exact_source_after_squash) ... ok
+2026-09-30T19:17:38.0166715Z test_corpus_cannot_rebind_implementation_or_another_corpus (__main__.EvidenceSourceTests.test_corpus_cannot_rebind_implementation_or_another_corpus) ... ok
+2026-09-30T19:17:39.1269179Z test_corpus_commit_and_tree_each_require_strict_lowercase_sha (__main__.EvidenceSourceTests.test_corpus_commit_and_tree_each_require_strict_lowercase_sha) ... ok
+2026-09-30T19:17:39.1277883Z test_corpus_fetch_does_not_accept_mismatched_tree (__main__.EvidenceSourceTests.test_corpus_fetch_does_not_accept_mismatched_tree) ... ok
+2026-09-30T19:17:39.1287105Z test_corpus_fetch_uses_only_declared_exact_object_and_tree (__main__.EvidenceSourceTests.test_corpus_fetch_uses_only_declared_exact_object_and_tree) ... ok
+2026-09-30T19:17:39.1297161Z test_corpus_matching_implementation_pair_deduplicates (__main__.EvidenceSourceTests.test_corpus_matching_implementation_pair_deduplicates) ... ok
+2026-09-30T19:17:39.2804783Z test_corpus_requires_complete_pair_before_any_command (__main__.EvidenceSourceTests.test_corpus_requires_complete_pair_before_any_command) ... ok
+2026-09-30T19:17:39.2983208Z test_cost_collection_cannot_fetch_branch_or_conflicting_tree (__main__.EvidenceSourceTests.test_cost_collection_cannot_fetch_branch_or_conflicting_tree) ... ok
+2026-09-30T19:17:39.2994776Z test_existing_corpus_is_checked_without_fetch (__main__.EvidenceSourceTests.test_existing_corpus_is_checked_without_fetch) ... ok
+2026-09-30T19:17:39.3004140Z test_existing_objects_do_not_fetch (__main__.EvidenceSourceTests.test_existing_objects_do_not_fetch) ... ok
+2026-09-30T19:17:39.3015228Z test_failed_fetch_does_not_succeed (__main__.EvidenceSourceTests.test_failed_fetch_does_not_succeed) ... ok
+2026-09-30T19:17:39.3026696Z test_invalid_declared_identity_rejects_before_any_command (__main__.EvidenceSourceTests.test_invalid_declared_identity_rejects_before_any_command) ... ok
+2026-09-30T19:17:39.3037027Z test_missing_sources_fetch_only_exact_repo_and_commit (__main__.EvidenceSourceTests.test_missing_sources_fetch_only_exact_repo_and_commit) ... ok
+2026-09-30T19:17:39.3048946Z test_nested_cost_collection_has_its_own_exact_source (__main__.EvidenceSourceTests.test_nested_cost_collection_has_its_own_exact_source) ... ok
+2026-09-30T19:17:39.3058398Z test_new_cost_package_cannot_rebind_existing_source_tree (__main__.EvidenceSourceTests.test_new_cost_package_cannot_rebind_existing_source_tree) ... ok
+2026-09-30T19:17:39.3068747Z test_new_cost_package_rejects_branch_as_measurement (__main__.EvidenceSourceTests.test_new_cost_package_rejects_branch_as_measurement) ... ok
+2026-09-30T19:17:39.3080048Z test_new_cost_package_retains_exact_original_source (__main__.EvidenceSourceTests.test_new_cost_package_retains_exact_original_source) ... ok
+2026-09-30T19:17:39.3093175Z test_no_pair_or_nested_failure_does_not_invent_source (__main__.EvidenceSourceTests.test_no_pair_or_nested_failure_does_not_invent_source) ... ok
+2026-09-30T19:17:39.3100677Z test_non_sha_cannot_be_a_fetch_argument (__main__.EvidenceSourceTests.test_non_sha_cannot_be_a_fetch_argument) ... ok
+2026-09-30T19:17:39.3111360Z test_tree_mismatch_is_not_evidence (__main__.EvidenceSourceTests.test_tree_mismatch_is_not_evidence) ... ok
+2026-09-30T19:17:39.3112050Z 
+2026-09-30T19:17:39.3112423Z ----------------------------------------------------------------------
+2026-09-30T19:17:39.3112804Z Ran 21 tests in 1.313s
+2026-09-30T19:17:39.3112984Z 
+2026-09-30T19:17:39.3113084Z OK
+2026-09-30T19:17:42.3182074Z {"activation": false, "head": "190d952c2f1d0e8364c958d1060ace2b560eb4a6", "local_links": 399, "normal_dependency_edges": 16, "result": "PASS", "runtime_implemented": false, "rust_files": 626, "source_state": "committed-clean", "tree": "3217cbff3e10f0ddd0d9e1f9eec1a3ac939d6971", "workspace_packages": 25}
+2026-09-30T19:17:42.3722472Z test_current_claims_are_unactivated (__main__.EvidenceBoundaryTests.test_current_claims_are_unactivated) ... ok
+2026-09-30T19:17:42.3723747Z test_duplicate_json_claims (__main__.EvidenceBoundaryTests.test_duplicate_json_claims) ... ok
+2026-09-30T19:17:42.3725353Z test_explicit_missing_native_core (__main__.EvidenceBoundaryTests.test_explicit_missing_native_core) ... ok
+2026-09-30T19:17:42.3726522Z test_false_is_not_integer_zero (__main__.EvidenceBoundaryTests.test_false_is_not_integer_zero) ... ok
+2026-09-30T19:17:42.3727508Z test_no_release_from_nested_report (__main__.EvidenceBoundaryTests.test_no_release_from_nested_report) ... ok
+2026-09-30T19:17:42.3728450Z test_no_runtime_claim (__main__.EvidenceBoundaryTests.test_no_runtime_claim) ... ok
+2026-09-30T19:17:42.3729404Z test_no_work_qualification_from_reference (__main__.EvidenceBoundaryTests.test_no_work_qualification_from_reference) ... ok
+2026-09-30T19:17:42.3730286Z test_old_protocol_is_not_supported (__main__.EvidenceBoundaryTests.test_old_protocol_is_not_supported) ... ok
+2026-09-30T19:17:42.3730689Z 
+2026-09-30T19:17:42.3731231Z ----------------------------------------------------------------------
+2026-09-30T19:17:42.3731705Z Ran 8 tests in 0.001s
+2026-09-30T19:17:42.3731861Z 
+2026-09-30T19:17:42.3732075Z OK
+2026-09-30T19:17:43.2935698Z {"archive_commit": "5d59b9540268914794a62e8fa237caf999499314", "consistency": "verified-historical", "evidence_files": 43, "implementation_commit": "8b87fee77ddee6a9778e8bebe880ba2627b05d5d", "independent_accepted": false, "matches_current_source": false, "production_activation": false, "source_bindings": 704, "tracked_artifacts_verified": true}
+2026-09-30T19:17:44.2469508Z test_best_expert_control_cannot_be_hidden (__main__.EvidenceRejectionTests.test_best_expert_control_cannot_be_hidden) ... ok
+2026-09-30T19:17:45.1176786Z test_current_local_evidence (__main__.EvidenceRejectionTests.test_current_local_evidence) ... ok
+2026-09-30T19:17:45.1616488Z test_evidence_path_cannot_escape (__main__.EvidenceRejectionTests.test_evidence_path_cannot_escape) ... ok
+2026-09-30T19:17:45.2880741Z test_failed_experiment_cannot_be_omitted (__main__.EvidenceRejectionTests.test_failed_experiment_cannot_be_omitted) ... ok
+2026-09-30T19:17:46.2730136Z test_future_window_claim_rejected_even_after_rehash (__main__.EvidenceRejectionTests.test_future_window_claim_rejected_even_after_rehash) ... ok
+2026-09-30T19:17:46.2764233Z test_independent_acceptance_cannot_be_fabricated (__main__.EvidenceRejectionTests.test_independent_acceptance_cannot_be_fabricated) ... ok
+2026-09-30T19:17:46.2792329Z test_raw_artifact_cannot_be_swapped (__main__.EvidenceRejectionTests.test_raw_artifact_cannot_be_swapped) ... ok
+2026-09-30T19:17:47.1522282Z test_skipped_campaign_cannot_be_a_pass (__main__.EvidenceRejectionTests.test_skipped_campaign_cannot_be_a_pass) ... ok
+2026-09-30T19:17:47.1750186Z test_source_digest_cannot_be_stale (__main__.EvidenceRejectionTests.test_source_digest_cannot_be_stale) ... ok
+2026-09-30T19:17:47.1750626Z 
+2026-09-30T19:17:47.1750783Z ----------------------------------------------------------------------
+2026-09-30T19:17:47.1751262Z Ran 9 tests in 3.836s
+2026-09-30T19:17:47.1751405Z 
+2026-09-30T19:17:47.1751517Z OK
+2026-09-30T19:17:47.3213049Z {"artifact_files": 76, "executed_invariant_selectors": 61, "implementation_commit": "242906bae4f281c738c60adbd2c053d2ded1eae5", "independent_accepted": false, "native_tests": 1801, "physical_hosts": 3, "production_activation": false, "python_suites": 17, "runtime_matches_measured_source": false}
+2026-09-30T19:17:47.4782096Z test_busy_and_recomputed_counts_must_conserve (__main__.InvariantEvidenceTests.test_busy_and_recomputed_counts_must_conserve) ... ok
+2026-09-30T19:17:47.4879487Z test_dirty_source_is_not_exact_head (__main__.InvariantEvidenceTests.test_dirty_source_is_not_exact_head) ... ok
+2026-09-30T19:17:47.5913132Z test_executor_sample_cannot_be_chain_tps (__main__.InvariantEvidenceTests.test_executor_sample_cannot_be_chain_tps) ... ok
+2026-09-30T19:17:47.7036849Z test_failed_learning_cannot_be_paid (__main__.InvariantEvidenceTests.test_failed_learning_cannot_be_paid) ... ok
+2026-09-30T19:17:47.8031672Z test_fixture_history_cannot_be_real_work (__main__.InvariantEvidenceTests.test_fixture_history_cannot_be_real_work) ... ok
+2026-09-30T19:17:47.9033698Z test_initial_harness_failure_cannot_be_hidden (__main__.InvariantEvidenceTests.test_initial_harness_failure_cannot_be_hidden) ... ok
+2026-09-30T19:17:48.0050766Z test_multihost_is_not_independent_operation (__main__.InvariantEvidenceTests.test_multihost_is_not_independent_operation) ... ok
+2026-09-30T19:17:48.0896603Z test_native_count_cannot_be_inflated (__main__.InvariantEvidenceTests.test_native_count_cannot_be_inflated) ... ok
+2026-09-30T19:17:48.1890383Z test_no_cost_theorem_from_timing (__main__.InvariantEvidenceTests.test_no_cost_theorem_from_timing) ... ok
+2026-09-30T19:17:48.2940819Z test_no_implicit_public_fairness (__main__.InvariantEvidenceTests.test_no_implicit_public_fairness) ... ok
+2026-09-30T19:17:48.3954304Z test_page_limit_is_not_a_physical_disk_outage (__main__.InvariantEvidenceTests.test_page_limit_is_not_a_physical_disk_outage) ... ok
+2026-09-30T19:17:48.5008477Z test_parallel_different_roots_reject (__main__.InvariantEvidenceTests.test_parallel_different_roots_reject) ... ok
+2026-09-30T19:17:48.6768072Z test_prior_execution_cannot_be_promoted_to_current_runtime (__main__.InvariantEvidenceTests.test_prior_execution_cannot_be_promoted_to_current_runtime) ... ok
+2026-09-30T19:17:48.7795722Z test_process_crash_is_not_power_loss (__main__.InvariantEvidenceTests.test_process_crash_is_not_power_loss) ... ok
+2026-09-30T19:17:48.8804453Z test_public_owner_path_cannot_be_fabricated (__main__.InvariantEvidenceTests.test_public_owner_path_cannot_be_fabricated) ... ok
+2026-09-30T19:17:48.8860263Z test_raw_log_tampering_is_rejected (__main__.InvariantEvidenceTests.test_raw_log_tampering_is_rejected) ... ok
+2026-09-30T19:17:48.9843650Z test_recorded_source_and_results (__main__.InvariantEvidenceTests.test_recorded_source_and_results) ... ok
+2026-09-30T19:17:49.0623150Z test_runtime_failure_is_not_success (__main__.InvariantEvidenceTests.test_runtime_failure_is_not_success) ... ok
+2026-09-30T19:17:49.1705865Z test_training_attempts_cannot_be_improving_generations (__main__.InvariantEvidenceTests.test_training_attempts_cannot_be_improving_generations) ... ok
+2026-09-30T19:17:49.1791160Z test_wrong_source_commit_is_rejected (__main__.InvariantEvidenceTests.test_wrong_source_commit_is_rejected) ... ok
+2026-09-30T19:17:49.1815205Z 
+2026-09-30T19:17:49.1815809Z ----------------------------------------------------------------------
+2026-09-30T19:17:49.1816676Z Ran 20 tests in 1.814s
+2026-09-30T19:17:49.1817003Z 
+2026-09-30T19:17:49.1817227Z OK
+2026-09-30T19:17:49.3411983Z {"comparison_samples": 216, "executed_invariant_selectors": 66, "historical_only": true, "independent_accepted": false, "measured_commit": "30b85c34d1be404dcccd9f415286bb43b00f64ea", "native_tests": 1801, "ordinary_hepta_entry": false, "physical_hosts": 3, "production_activation": false, "runtime_matches": null}
+2026-09-30T19:17:49.4659258Z test_bad_exit_is_not_a_pass (__main__.CompletionEvidenceTests.test_bad_exit_is_not_a_pass) ... ok
+2026-09-30T19:17:49.5841643Z test_changed_root_rejects_even_after_rehash (__main__.CompletionEvidenceTests.test_changed_root_rejects_even_after_rehash) ... ok
+2026-09-30T19:17:49.6866172Z test_different_host_binary_is_not_qualified (__main__.CompletionEvidenceTests.test_different_host_binary_is_not_qualified) ... ok
+2026-09-30T19:17:49.7922951Z test_different_inputs_not_comparable (__main__.CompletionEvidenceTests.test_different_inputs_not_comparable) ... ok
+2026-09-30T19:17:49.7998207Z test_dirty_execution_not_qualified (__main__.CompletionEvidenceTests.test_dirty_execution_not_qualified) ... ok
+2026-09-30T19:17:49.9012390Z test_failed_temporary_cleanup_is_not_hidden (__main__.CompletionEvidenceTests.test_failed_temporary_cleanup_is_not_hidden) ... ok
+2026-09-30T19:17:49.9021582Z test_hepta_owner_cannot_be_invented (__main__.CompletionEvidenceTests.test_hepta_owner_cannot_be_invented) ... ok
+2026-09-30T19:17:50.0020569Z test_historical_receipt_does_not_claim_current_runtime (__main__.CompletionEvidenceTests.test_historical_receipt_does_not_claim_current_runtime) ... ok
+2026-09-30T19:17:50.1030294Z test_host_result_cannot_be_independent_consensus (__main__.CompletionEvidenceTests.test_host_result_cannot_be_independent_consensus) ... ok
+2026-09-30T19:17:50.2043509Z test_host_wrong_root_rejects (__main__.CompletionEvidenceTests.test_host_wrong_root_rejects) ... ok
+2026-09-30T19:17:50.3075303Z test_included_count_cannot_be_inferred (__main__.CompletionEvidenceTests.test_included_count_cannot_be_inferred) ... ok
+2026-09-30T19:17:50.4105595Z test_missing_binary_samples_reject (__main__.CompletionEvidenceTests.test_missing_binary_samples_reject) ... ok
+2026-09-30T19:17:50.4116456Z test_model_generations_cannot_be_invented (__main__.CompletionEvidenceTests.test_model_generations_cannot_be_invented) ... ok
+2026-09-30T19:17:50.4125697Z test_no_independent_operator_from_same_owner (__main__.CompletionEvidenceTests.test_no_independent_operator_from_same_owner) ... ok
+2026-09-30T19:17:50.5123768Z test_old_campaign_cannot_be_promoted (__main__.CompletionEvidenceTests.test_old_campaign_cannot_be_promoted) ... ok
+2026-09-30T19:17:50.5747918Z test_old_receipt_refuses_current_runtime_without_explicit_historical_scope (__main__.CompletionEvidenceTests.test_old_receipt_refuses_current_runtime_without_explicit_historical_scope) ... ok
+2026-09-30T19:17:50.6755993Z test_omitted_host_case_rejects (__main__.CompletionEvidenceTests.test_omitted_host_case_rejects) ... ok
+2026-09-30T19:17:50.6772109Z test_raw_log_cannot_be_replaced (__main__.CompletionEvidenceTests.test_raw_log_cannot_be_replaced) ... ok
+2026-09-30T19:17:50.7850676Z test_signature_count_does_not_disappear (__main__.CompletionEvidenceTests.test_signature_count_does_not_disappear) ... ok
+2026-09-30T19:17:50.8859570Z test_summary_cannot_claim_future_learning (__main__.CompletionEvidenceTests.test_summary_cannot_claim_future_learning) ... ok
+2026-09-30T19:17:50.9946527Z test_summary_cannot_hide_regression (__main__.CompletionEvidenceTests.test_summary_cannot_hide_regression) ... ok
+2026-09-30T19:17:51.1193903Z test_summary_cannot_inflate_test_results (__main__.CompletionEvidenceTests.test_summary_cannot_inflate_test_results) ... ok
+2026-09-30T19:17:51.2205747Z test_summary_cannot_relabel_old_history_as_current (__main__.CompletionEvidenceTests.test_summary_cannot_relabel_old_history_as_current) ... ok
+2026-09-30T19:17:51.3310968Z test_worker_creation_bound_is_real (__main__.CompletionEvidenceTests.test_worker_creation_bound_is_real) ... ok
+2026-09-30T19:17:51.3326252Z 
+2026-09-30T19:17:51.3326883Z ----------------------------------------------------------------------
+2026-09-30T19:17:51.3327455Z Ran 24 tests in 1.942s
+2026-09-30T19:17:51.3327607Z 
+2026-09-30T19:17:51.3327770Z OK
+2026-09-30T19:17:54.0128989Z {"current_source_qualified_by_this_check": false, "historical_semantics_verified": true, "independent_accepted": false, "measured_commit": "50e158640d8278ca94dbecb6539dab96c6a9fb84", "production_activation": false, "runtime_matches": false, "tests_reexecuted": false, "verification_checkout": "original-measured-tree"}
+2026-09-30T19:17:54.4122114Z {"current_source_qualified_by_this_check": false, "historical_semantics_verified": true, "independent_accepted": false, "measured_commit": "ed4d95c3e558ad28b5f3132152704bdf77df5f49", "production_activation": false, "runtime_matches": false, "tests_reexecuted": false, "verification_checkout": "original-measured-tree"}
+2026-09-30T19:18:04.3058707Z {"current_source_qualified_by_this_check": false, "historical_semantics_verified": true, "independent_accepted": false, "measured_commit": "fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb", "production_activation": false, "runtime_matches": false, "tests_reexecuted": false, "verification_checkout": "original-measured-tree"}
+2026-09-30T19:18:14.2600293Z {"current_source_qualified_by_this_check": false, "historical_semantics_verified": true, "independent_accepted": false, "measured_commit": "b34561d1ade376512a34fed3fd78938ed2431ecd", "production_activation": false, "runtime_matches": false, "tests_reexecuted": false, "verification_checkout": "original-measured-tree"}
+2026-09-30T19:18:14.3410209Z usage: check_client_confirmation_evidence.py [-h] [--evidence EVIDENCE]
+2026-09-30T19:18:14.3410703Z                                              [--root ROOT] [--historical]
+2026-09-30T19:18:14.3411157Z                                              [--session] [--native-node]
+2026-09-30T19:18:14.3411683Z check_client_confirmation_evidence.py: error: --native-node selects current native-node qualification
+2026-09-30T19:18:14.3533636Z ##[error]Process completed with exit code 2.
+2026-09-30T19:18:14.3656118Z Post job cleanup.
+2026-09-30T19:18:14.4374316Z [command]/usr/bin/git version
+2026-09-30T19:18:14.4407522Z git version 2.55.0
+2026-09-30T19:18:14.4437142Z Temporarily overriding HOME='/home/runner/work/_temp/a1cd67d7-15d3-4cf0-a046-6f7fec28db8d' before making global git config changes
+2026-09-30T19:18:14.4438574Z Adding repository directory to the temporary git global config as a safe directory
+2026-09-30T19:18:14.4442306Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Trillionnium-Chain/Trillionnium-Chain
+2026-09-30T19:18:14.4472363Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-09-30T19:18:14.4499772Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-09-30T19:18:14.4686407Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-09-30T19:18:14.4713117Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-09-30T19:18:14.4908356Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-09-30T19:18:14.4940722Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-09-30T19:18:14.5265709Z Cleaning up orphan processes
+2026-09-30T19:18:14.5490103Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11d5960a326750d5838078e36cf38b85af677262. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
