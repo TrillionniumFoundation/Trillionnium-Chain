@@ -50,11 +50,25 @@ jobs:
           bash scripts/project-preflight.sh --audit
           tar -C "$KIT" -czf "$RUNNER_TEMP/offline-native-kit.tar.gz" toolchain vendor vendor-config.toml chain.bundle hepta.bundle receipts
           sha256sum "$RUNNER_TEMP/offline-native-kit.tar.gz" > "$RUNNER_TEMP/offline-native-kit.sha256"
+          split -b 240M -d -a 2 "$RUNNER_TEMP/offline-native-kit.tar.gz" "$RUNNER_TEMP/offline-native-kit.part-"
+          test ! -e "$RUNNER_TEMP/offline-native-kit.part-03"
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: pon-offline-native-kit-fecfcf93-e518fcdb
+          name: pon-offline-native-kit-part-00
           compression-level: 0
           retention-days: 3
           path: |
-            ${{ runner.temp }}/offline-native-kit.tar.gz
+            ${{ runner.temp }}/offline-native-kit.part-00
             ${{ runner.temp }}/offline-native-kit.sha256
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: pon-offline-native-kit-part-01
+          compression-level: 0
+          retention-days: 3
+          path: ${{ runner.temp }}/offline-native-kit.part-01
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: pon-offline-native-kit-part-02
+          compression-level: 0
+          retention-days: 3
+          path: ${{ runner.temp }}/offline-native-kit.part-02
