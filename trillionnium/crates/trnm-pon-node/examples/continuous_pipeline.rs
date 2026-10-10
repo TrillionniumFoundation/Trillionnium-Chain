@@ -409,8 +409,10 @@ fn run() -> Result<()> {
     summary["stage_count_scope"] = json!("completed local and remote-observation boundaries only; ACK is not membership or confirmation; execution/work are jointly observed, standalone executor completion is unmeasured");
     summary["application_executed_transactions"] = Value::Null;
     summary["pending_confirmation_scope"] = json!("membership-checked batches; earlier uncertain delivery remains a stage gap, not proof of non-execution");
-    summary["pending_confirmation_record_indices"] =
-        json!(pending.iter().map(|(index, _, _)| *index).collect::<Vec<_>>());
+    summary["pending_confirmation_record_indices"] = json!(pending
+        .iter()
+        .map(|(index, _, _)| *index)
+        .collect::<Vec<_>>());
     fs::write(
         directory.join("summary.json"),
         serde_json::to_vec_pretty(&summary)?,
