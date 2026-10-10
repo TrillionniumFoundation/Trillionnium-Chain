@@ -1,0 +1,47 @@
+name: PoN read-only exact source bundles
+on:
+  push:
+    branches: [tools/pon-exact-bundles-20261011]
+permissions:
+  contents: read
+jobs:
+  export:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: 563e461656feed66a0b9ddcf99b22f2f1d39d627
+          fetch-depth: 0
+          persist-credentials: false
+          path: Trillionnium-Chain
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: TrillionniumFoundation/hepta-private-ci
+          ref: e518fcdb6b25e2d6ef1320f80842d3bb8a606230
+          fetch-depth: 0
+          persist-credentials: false
+          path: hepta-private-ci
+      - name: Original preflight and committed objects only
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/exact-sources"
+          mkdir -p "$out"
+          test "$(git -C Trillionnium-Chain rev-parse HEAD)" = 563e461656feed66a0b9ddcf99b22f2f1d39d627
+          test "$(git -C hepta-private-ci rev-parse HEAD)" = e518fcdb6b25e2d6ef1320f80842d3bb8a606230
+          (cd Trillionnium-Chain && bash scripts/project-preflight.sh --audit) > "$out/preflight.log" 2>&1
+          for repo in Trillionnium-Chain hepta-private-ci; do
+            test -z "$(git -C "$repo" status --porcelain)"
+            git -C "$repo" rev-parse HEAD HEAD^{tree} refs/remotes/origin/main > "$out/$repo-source.txt"
+            git -C "$repo" bundle create "$out/$repo.bundle" HEAD refs/remotes/origin/main
+            git -C "$repo" bundle verify "$out/$repo.bundle" > "$out/$repo-verify.log" 2>&1
+          done
+          (cd "$out" && sha256sum *.bundle > SHA256SUMS)
+          printf '%s\n' 'Committed source transport only. No credentials, runtime authorization, native results or independent acceptance.' > "$out/SCOPE.txt"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: pon-exact-source-bundles
+          path: ${{ runner.temp }}/exact-sources
+          if-no-files-found: error
+          retention-days: 3
