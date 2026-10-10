@@ -54,7 +54,7 @@ jobs:
           git commit -m 'test(pon): reproduce successful read callback committing native state'
           git show -s --format='%H%n%T%n%P' HEAD > "$RUNNER_TEMP/five-axis/original-with-controls.txt"
           set +e
-          cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib native_account_query_ -- --show-output --test-threads=1 > "$RUNNER_TEMP/five-axis/original-negative.log" 2>&1
+          cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib store::native_account_query_tests:: -- --show-output --test-threads=1 > "$RUNNER_TEMP/five-axis/original-negative.log" 2>&1
           code=$?
           set -e
           cat "$RUNNER_TEMP/five-axis/original-negative.log"
@@ -69,6 +69,83 @@ jobs:
           set -euo pipefail
           bash scripts/project-preflight.sh --audit
           python3 ../authoring/scripts/ci/stage_five_axis_native.py repair
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('trillionnium/crates/trnm-pon-node/src/native_account_query_tests.rs')
+          extra=r'''
+
+          #[test]
+          fn native_nonce_batch_tracks_signed_execution_heavier_reorg_and_cold_reopen() {
+              use trnm_crypto_primitives::{sign_hex, signing_key_from_hex};
+              use trnm_protocol::pon_wire::Envelope;
+              for authenticated in [false, true] {
+                  let directory = tempfile::tempdir().unwrap();
+                  let settings = Settings::development(Some(1)).unwrap();
+                  let mut node = open(directory.path(), settings.clone(), authenticated);
+                  let sender = development_public(0).unwrap();
+                  let owners = [sender, development_public(3).unwrap(), development_public(777).unwrap()];
+                  assert_eq!(node.next_nonces(&owners).unwrap(), vec![1, 1, 1]);
+                  let mut payload = development_public(7).unwrap().to_vec();
+                  payload.extend(1u64.to_le_bytes());
+                  let mut tx = Envelope { network: settings.network(), sender, nonce: 1, expiry: 10000, fee_limit: 1_000_000, tag: 1, payload, signature: [0; 64] };
+                  let seed = hash(b"DEV-ONLY-KEY", &[&0u64.to_le_bytes()]);
+                  let key = signing_key_from_hex(&hex::encode(seed)).unwrap();
+                  tx.signature = hex::decode(sign_hex(&key, &tx.signing_digest().unwrap())).unwrap().try_into().unwrap();
+                  let packet = node.make(settings.genesis(), vec![tx.encode().unwrap()], development_public(7).unwrap(), 11, 4096).unwrap();
+                  let old = node.admit(&packet, 100_000).unwrap();
+                  node.activate(old).unwrap();
+                  assert_eq!(node.next_nonces(&owners).unwrap(), vec![2, 1, 1]);
+                  let mut parent = settings.genesis();
+                  for height in 1..=2 {
+                      let packet = node.make(parent, vec![], development_public(2).unwrap(), 2 + height * 10, 4096).unwrap();
+                      parent = node.admit(&packet, 100_000).unwrap();
+                  }
+                  node.activate(parent).unwrap();
+                  let expected: Vec<_> = owners.iter().map(|owner| node.next_nonce(*owner).unwrap()).collect();
+                  assert_eq!(expected, vec![1, 1, 1]);
+                  assert_eq!(node.next_nonces(&owners).unwrap(), expected);
+                  assert_ne!(node.active().unwrap().0, old);
+                  let rows = logical_rows(&node.db);
+                  drop(node);
+                  let node = open(directory.path(), settings, authenticated);
+                  assert_eq!(node.next_nonces(&owners).unwrap(), expected);
+                  assert_eq!(logical_rows(&node.db), rows);
+              }
+          }
+
+          #[test]
+          fn native_nonce_batch_complete_call_observation_preserves_reference_results() {
+              use std::time::Instant;
+              for authenticated in [false, true] {
+                  let directory = tempfile::tempdir().unwrap();
+                  let settings = Settings::development(Some(1)).unwrap();
+                  let node = open(directory.path(), settings, authenticated);
+                  let senders: Vec<_> = (0..4).map(|i| development_public(i).unwrap()).collect();
+                  let expected: Vec<_> = senders.iter().map(|sender| node.next_nonce(*sender).unwrap()).collect();
+                  assert_eq!(node.next_nonces(&senders).unwrap(), expected);
+                  let before = logical_rows(&node.db);
+                  for (round, batch) in [false, true, true, false].into_iter().enumerate() {
+                      let started = Instant::now();
+                      for _ in 0..16 {
+                          let actual = if batch {
+                              node.next_nonces(&senders).unwrap()
+                          } else {
+                              senders.iter().map(|sender| node.next_nonce(*sender).unwrap()).collect::<Vec<_>>()
+                          };
+                          assert_eq!(std::hint::black_box(actual), expected);
+                      }
+                      let elapsed = started.elapsed().as_nanos();
+                      println!("native_nonce_batch_observation_v1 {}", serde_json::json!({"authenticated":authenticated,"round":round,"batched":batch,"senders":4,"repetitions":16,"elapsed_ns":elapsed,"nonces":expected,"full_state_checks_preserved":true,"saturated_tps_measured":false,"independent_operator":false}));
+                      assert!(node.db.is_autocommit());
+                      assert_eq!(logical_rows(&node.db), before);
+                  }
+              }
+          }
+          '''
+          p.write_text(p.read_text()+extra)
+          d=Path('docs/protocol/pon-nakamoto-v1/details/NATIVE_AUTHENTICATED_STORAGE_V1.md')
+          d.write_text(d.read_text()+'\nThe native comparison runs 16 complete four-sender calls in singleton/batch/batch/\nsingle order on each backend, with exact result and durable-state equality. It\nreports observed timings without a speed threshold. A signed transfer followed\nby a genuinely heavier fork and cold reopen separately verifies nonce rollback.\nThese finite controls are not sustained TPS, independent operation or efficacy.\n')
+          PY
           cargo +1.95.0 fmt --all --manifest-path trillionnium/Cargo.toml
           python3 - <<'PY'
           import subprocess
@@ -88,10 +165,10 @@ jobs:
           TRNM_RETAINED_DELTA_COST_PATH: ${{ runner.temp }}/five-axis/retained-delta.jsonl
         run: |
           set -euo pipefail
-          cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib native_account_query_ -- --show-output --test-threads=1 2>&1 | tee "$RUNNER_TEMP/five-axis/read-owner.log"
-          grep -E '^test result: ok\. 6 passed; 0 failed; 0 ignored;' "$RUNNER_TEMP/five-axis/read-owner.log"
+          cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib store::native_account_query_tests:: -- --show-output --test-threads=1 2>&1 | tee "$RUNNER_TEMP/five-axis/read-owner.log"
+          grep -E '^test result: ok\. 11 passed; 0 failed; 0 ignored;' "$RUNNER_TEMP/five-axis/read-owner.log"
           cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib native_nonce_batch_ -- --show-output --test-threads=1 2>&1 | tee "$RUNNER_TEMP/five-axis/nonce-batch.log"
-          grep -E '^test result: ok\. 3 passed; 0 failed; 0 ignored;' "$RUNNER_TEMP/five-axis/nonce-batch.log"
+          grep -E '^test result: ok\. 5 passed; 0 failed; 0 ignored;' "$RUNNER_TEMP/five-axis/nonce-batch.log"
           cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib store::native_authenticated:: -- --include-ignored --show-output --test-threads=1 2>&1 | tee "$RUNNER_TEMP/five-axis/native.log"
           grep -E '^test result: ok\. 37 passed; 0 failed; 0 ignored;' "$RUNNER_TEMP/five-axis/native.log"
           cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib authenticated_migration -- --show-output --test-threads=1 2>&1 | tee "$RUNNER_TEMP/five-axis/migration.log"
@@ -104,13 +181,75 @@ jobs:
           set -euo pipefail
           cargo +1.95.0 build --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --example continuous_pipeline
           for pattern in hot disjoint4 growth; do
-            target/release/continuous_pipeline --help 2>/dev/null && exit 1 || true
             trillionnium/target/release/examples/continuous_pipeline "$RUNNER_TEMP/five-axis/pipeline-$pattern" 2 4 0 "$pattern" protected > "$RUNNER_TEMP/five-axis/pipeline-$pattern.log" 2>&1
           done
+          python3 - <<'PY'
+          import json,os
+          from pathlib import Path
+          for pattern in ('hot','disjoint4','growth'):
+              report=json.loads((Path(os.environ['RUNNER_TEMP'])/'five-axis'/f'pipeline-{pattern}'/'summary.json').read_text())
+              assert report['campaign_passed'] is True
+              assert report['accepted_transactions']==report['confirmed_transactions']==8
+              assert report['pending_confirmation_blocks']==0
+              assert report['pending_confirmation_record_indices']==[]
+              assert report['application_executed_transactions'] is None
+              assert all(type(v) is int and v==8 for v in report['stage_counts'].values())
+              assert report['producer_validator_heads_agree'] is True
+              assert report['server_error'] is None and report['producer_final_error'] is None
+              print(pattern,report['stage_counts'])
+          PY
           git show -s --format='%H%n%T%n%P' HEAD > "$RUNNER_TEMP/five-axis/candidate-after.txt"
           cmp "$RUNNER_TEMP/five-axis/candidate-before.txt" "$RUNNER_TEMP/five-axis/candidate-after.txt"
           test -z "$(git status --porcelain)"
           bash scripts/project-preflight.sh --audit
+      - name: Prepare additive original acceptance workflow object
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json,os,subprocess
+          from pathlib import Path
+          out=Path(os.environ['RUNNER_TEMP'])/'five-axis'
+          p=Path('.github/workflows/pon-recent-batch-acceptance.yml')
+          old=p.read_text()
+          store=subprocess.check_output(['git','hash-object','trillionnium/crates/trnm-pon-node/src/store.rs'],text=True).strip()
+          tests=subprocess.check_output(['git','hash-object','trillionnium/crates/trnm-pon-node/src/native_account_query_tests.rs'],text=True).strip()
+          assert old.count('13164f58b2f625c6ece012012f9ce8b6e5ec7be7')==1
+          new=old.replace('13164f58b2f625c6ece012012f9ce8b6e5ec7be7',store)
+          anchor='      - trillionnium/crates/trnm-pon-node/src/store.rs\n'
+          assert new.count(anchor)==1
+          new=new.replace(anchor,anchor+'      - trillionnium/crates/trnm-pon-node/src/native_account_query_tests.rs\n')
+          anchor='          bash scripts/project-preflight.sh --audit\n'
+          assert new.count(anchor)==1
+          new=new.replace(anchor,f'          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/native_account_query_tests.rs)" = {tests}\n'+anchor)
+          step='''      - name: Require non-committing proof reads and actual nonce snapshot callers
+                  shell: bash
+                  run: |
+                    set -euo pipefail
+                    cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib store::native_account_query_tests:: -- --show-output --test-threads=1 2>&1 | tee "$OUT/native-read-snapshot.log"
+                    grep -E '^test result: ok\\. 11 passed; 0 failed; 0 ignored;' "$OUT/native-read-snapshot.log"
+                    for test in native_account_query_final_callback_write_is_rejected_and_rolled_back native_account_query_write_then_restore_still_has_no_commit_authority native_account_query_cancel_after_write_keeps_original_error_and_rollback native_nonce_batch_dimensions_precede_database_and_preserve_single_reads native_nonce_batch_rechecks_actual_state_and_reopens_without_a_verdict_cache native_nonce_batch_arithmetic_retains_absence_bad_nonce_and_overflow_rules native_nonce_batch_tracks_signed_execution_heavier_reorg_and_cold_reopen native_nonce_batch_complete_call_observation_preserves_reference_results; do
+                      selector="store::native_account_query_tests::$test"
+                      cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib "$selector" -- --exact --show-output --test-threads=1 2>&1 | tee "$OUT/$test.log"
+                      python3 scripts/ci/check_required_native_test.py "$OUT/$test.log" --test "$selector"
+                    done
+          '''
+          # The first line already has the target indentation; normalize the rest.
+          lines=step.splitlines()
+          step=lines[0]+'\n'+'\n'.join(line[10:] if line.startswith('          ') else line for line in lines[1:])+'\n'
+          anchor='      - name: Check complete native target lint\n'
+          assert new.count(anchor)==1
+          new=new.replace(anchor,step+anchor)
+          import yaml
+          data=yaml.safe_load(new)
+          assert data['jobs']['recent']['timeout-minutes']==25
+          assert len(data['jobs']['recent']['steps'])==len(yaml.safe_load(old)['jobs']['recent']['steps'])+1
+          (out/'acceptance-workflow.yml').write_text(new)
+          (out/'acceptance-blob-request.json').write_text(json.dumps({'content':new,'encoding':'utf-8'}))
+          print('runtime store blob',store,'tests blob',tests)
+          PY
+          gh api --method POST repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs --input "$RUNNER_TEMP/five-axis/acceptance-blob-request.json" | tee "$RUNNER_TEMP/five-axis/acceptance-blob.json"
       - name: Publish only the exact tested product branch without force
         env:
           GH_TOKEN: ${{ github.token }}
