@@ -1,0 +1,82 @@
+name: chain-readonly-build-export
+on:
+  push:
+    branches: [dev/pon-five-axis-source-export-20261011]
+permissions:
+  contents: read
+jobs:
+  export:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Checkout exact Chain source without persisted credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: fecfcf93a51ad987262fa1752c344933ca786611
+          fetch-depth: 0
+          persist-credentials: false
+          path: chain
+      - name: Verify and export exact Chain Git objects
+        shell: bash
+        working-directory: chain
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = fecfcf93a51ad987262fa1752c344933ca786611
+          test -z "$(git status --porcelain)"
+          bash scripts/project-preflight.sh --audit
+          mkdir -p "$RUNNER_TEMP/source-export"
+          git bundle create "$RUNNER_TEMP/source-export/chain.bundle" HEAD
+          git bundle verify "$RUNNER_TEMP/source-export/chain.bundle"
+          git show -s --format='%H%n%T%n%P' HEAD > "$RUNNER_TEMP/source-export/chain.txt"
+      - name: Checkout exact Hepta source without persisted credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: TrillionniumFoundation/hepta-private-ci
+          ref: 7941d7050c3432214c7af996ede65b6ed027a3bf
+          fetch-depth: 0
+          persist-credentials: false
+          path: hepta
+      - name: Verify and export both concurrent Hepta histories
+        shell: bash
+        working-directory: hepta
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = 7941d7050c3432214c7af996ede65b6ed027a3bf
+          test -z "$(git status --porcelain)"
+          git fetch origin 779d0c744d75c5b04404f3492a11d9e269afaf8e
+          test "$(git rev-parse FETCH_HEAD)" = 779d0c744d75c5b04404f3492a11d9e269afaf8e
+          git update-ref refs/export/migration FETCH_HEAD
+          git bundle create "$RUNNER_TEMP/source-export/hepta.bundle" HEAD refs/export/migration
+          git bundle verify "$RUNNER_TEMP/source-export/hepta.bundle"
+          git show -s --format='%H%n%T%n%P' HEAD > "$RUNNER_TEMP/source-export/hepta.txt"
+          git show -s --format='%H%n%T%n%P' refs/export/migration > "$RUNNER_TEMP/source-export/hepta-migration.txt"
+          sha256sum "$RUNNER_TEMP/source-export/"*.bundle > "$RUNNER_TEMP/source-export/bundles.sha256"
+      - name: Retain exact source transport
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: pon-five-axis-exact-sources
+          path: ${{ runner.temp }}/source-export/
+          if-no-files-found: error
+          retention-days: 7
+          compression-level: 0
+      - name: Fetch current locked Chain dependencies for offline native work
+        shell: bash
+        working-directory: chain
+        run: |
+          set -euo pipefail
+          export CARGO_HOME="$RUNNER_TEMP/offline-cargo"
+          mkdir -p "$CARGO_HOME" "$RUNNER_TEMP/dependency-export"
+          rustup toolchain install 1.95.0 --profile minimal
+          rustup run 1.95.0 cargo fetch --locked --manifest-path trillionnium/Cargo.toml
+          test "$(git rev-parse HEAD)" = fecfcf93a51ad987262fa1752c344933ca786611
+          test -z "$(git status --porcelain)"
+          tar -C "$CARGO_HOME" -czf "$RUNNER_TEMP/dependency-export/cargo-registry.tar.gz" registry
+          sha256sum "$RUNNER_TEMP/dependency-export/cargo-registry.tar.gz" > "$RUNNER_TEMP/dependency-export/archives.sha256"
+      - name: Retain current locked dependency transport
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: pon-five-axis-offline-dependencies
+          path: ${{ runner.temp }}/dependency-export/
+          if-no-files-found: error
+          retention-days: 7
+          compression-level: 0
