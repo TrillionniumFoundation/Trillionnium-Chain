@@ -1,0 +1,60 @@
+name: PoN explicit offline native authoring kit
+on:
+  pull_request:
+    paths:
+      - .github/workflows/pon-offline-native-kit.yml
+permissions:
+  contents: read
+jobs:
+  kit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          ref: fecfcf93a51ad987262fa1752c344933ca786611
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Check unchanged source and prepare pinned compiler
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = fecfcf93a51ad987262fa1752c344933ca786611
+          bash scripts/project-preflight.sh --audit
+          rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+          kit="$RUNNER_TEMP/offline-kit"
+          mkdir -p "$kit/toolchain" "$kit/receipts"
+          echo "KIT=$kit" >> "$GITHUB_ENV"
+          cargo +1.95.0 vendor --locked --manifest-path trillionnium/Cargo.toml "$kit/vendor" > "$kit/vendor-config.toml"
+          sysroot="$(rustc +1.95.0 --print sysroot)"
+          cp -a "$sysroot/bin" "$sysroot/lib" "$kit/toolchain/"
+          rustc +1.95.0 -Vv > "$kit/receipts/compiler.txt"
+          git rev-parse HEAD HEAD^{tree} > "$kit/receipts/chain-source.txt"
+          git bundle create "$kit/chain.bundle" HEAD
+          printf '%s\n' 'Explicit offline compiler and public source transfer only. No runtime, hardness, independent operator, future-task, physical-power-loss or throughput acceptance. Contains only sysroot bin/lib, vendored public dependencies, public Git bundles and source receipts; no runner HOME, credentials, environment dump or Cargo config.' > "$kit/receipts/SCOPE.txt"
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          repository: TrillionniumFoundation/hepta-private-ci
+          ref: 236f048768a786ff2831eb69b743750145634251
+          fetch-depth: 0
+          persist-credentials: false
+          path: hepta-source
+      - name: Retain exact consumer source without credentials
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C hepta-source rev-parse HEAD)" = 236f048768a786ff2831eb69b743750145634251
+          git -C hepta-source rev-parse HEAD HEAD^{tree} > "$KIT/receipts/hepta-source.txt"
+          git -C hepta-source bundle create "$KIT/hepta.bundle" HEAD
+          test -z "$(git status --porcelain --untracked-files=no)"
+          bash scripts/project-preflight.sh --audit
+          tar -C "$KIT" -czf "$RUNNER_TEMP/offline-native-kit.tar.gz" toolchain vendor vendor-config.toml chain.bundle hepta.bundle receipts
+          sha256sum "$RUNNER_TEMP/offline-native-kit.tar.gz" > "$RUNNER_TEMP/offline-native-kit.sha256"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: pon-offline-native-kit-fecfcf93-236f0487
+          compression-level: 0
+          retention-days: 3
+          path: |
+            ${{ runner.temp }}/offline-native-kit.tar.gz
+            ${{ runner.temp }}/offline-native-kit.sha256
