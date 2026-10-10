@@ -1,0 +1,87 @@
+name: PoN fixed blob inventory staging
+on:
+  push:
+    branches: [ci/pon-fixed-blob-inventory-stage-20261010]
+permissions:
+  contents: write
+jobs:
+  source:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+      - name: Refresh only the existing source-owned embedded inventory
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/fixed-blob-inventory"
+          mkdir -p "$out"
+          echo "OUT=$out" >> "$GITHUB_ENV"
+          git rev-parse HEAD > "$out/staging-source.txt"
+          git checkout --detach f9b6e978ea2c4b906dcf6e862b4261720d5b9cbc
+          test "$(git rev-parse HEAD^{tree})" = 745103e1efdd0d5f2bddead4721d86d9d74e1927
+          python3 scripts/refresh_distributed_source_inventory.py 2>&1 | tee "$out/refresh.log"
+          path=trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs
+          test "$(git diff --name-only)" = "$path"
+          git diff --check
+          git diff > "$out/candidate.patch"
+          python3 - <<'PY'
+          import re, subprocess
+          from pathlib import Path
+          path = 'trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs'
+          before = subprocess.check_output(['git','show','HEAD:'+path], text=True)
+          after = Path(path).read_text()
+          pattern = r'^        "([^"\n]+)",$'
+          old = re.findall(pattern, before, re.M)
+          new = re.findall(pattern, after, re.M)
+          added = 'trillionnium/crates/trnm-pon-node/src/store/native_fixed_blob_tests.rs'
+          assert added not in old and new == sorted(old + [added])
+          assert len(new) == len(old) + 1
+          print('Original embedded source inventory retained with exactly the new native test module added.')
+          PY
+          git add "$path"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'fix(pon): include fixed-field native regressions in distributed source inventory' -m 'Run the unchanged source-owned generator. Exactly one new source entry; preserve every prior source, all runtime/test blobs and all baseline rules. Prior failed repository-truth remains failure.'
+          git rev-parse HEAD > "$out/candidate.txt"
+          git rev-parse HEAD^{tree} > "$out/tree.txt"
+          git hash-object "$path" > "$out/inventory-blob.txt"
+          cp "$path" "$out/distributed_source_inventory.rs"
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$(cat "$out/candidate.txt")" --output "$out/source.json"
+      - name: Execute the complete unchanged repository-truth baseline
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash scripts/ci/ci_job.sh repository-truth 2>&1 | tee "$OUT/repository-truth.log"
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$(cat "$OUT/candidate.txt")" --output "$OUT/source-after.json"
+          git diff --exit-code
+          test -z "$(git status --porcelain --untracked-files=all)"
+      - name: Publish only the exact checked inventory successor
+        shell: bash
+        run: |
+          set -euo pipefail
+          candidate="$(cat "$OUT/candidate.txt")"
+          branch=fix/pon-native-fixed-blob-delivery-20261010
+          if git ls-remote --exit-code --heads origin "$branch" > "$OUT/existing-ref.txt"; then
+            test "$(cut -f1 "$OUT/existing-ref.txt")" = "$candidate"
+          else
+            status=$?
+            test "$status" = 2
+            git push origin "$candidate:refs/heads/$branch" 2>&1 | tee "$OUT/push.log"
+          fi
+          git ls-remote --exit-code --heads origin "$branch" | tee "$OUT/published-ref.txt"
+          test "$(cut -f1 "$OUT/published-ref.txt")" = "$candidate"
+          sha256sum "$OUT"/*.log > "$OUT/logs.sha256"
+          printf '%s\n' 'Repository-truth source staging only. Final head and actual-main-merge source must rerun original full baseline, four exact-source lanes, full capacity/history and fresh Hepta pair. Earlier source results do not transfer. No readiness, scientific acceptance or operator independence promotion.' > "$OUT/SCOPE.txt"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: fixed-blob-inventory-${{ github.sha }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/fixed-blob-inventory
+          if-no-files-found: error
+          retention-days: 30
