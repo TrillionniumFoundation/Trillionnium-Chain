@@ -1,0 +1,49 @@
+name: PoN read-only authoring source export
+on:
+  push:
+    branches: [tools/pon-source-export-20261011]
+permissions:
+  contents: read
+jobs:
+  export:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: d4e2b1b0df12e3d87ce88eae58ce6b488f750920
+          fetch-depth: 0
+          persist-credentials: false
+          path: chain
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: TrillionniumFoundation/hepta-private-ci
+          ref: a994d1d4658893e3b944cfa1ac1b9dd199bdc0ce
+          fetch-depth: 0
+          persist-credentials: false
+          path: hepta
+      - name: Verify original preflight and export only committed Git objects
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/pon-authoring-sources"
+          mkdir -p "$out"
+          test "$(git -C chain rev-parse HEAD)" = d4e2b1b0df12e3d87ce88eae58ce6b488f750920
+          test "$(git -C hepta rev-parse HEAD)" = a994d1d4658893e3b944cfa1ac1b9dd199bdc0ce
+          (cd chain && bash scripts/project-preflight.sh --audit) > "$out/chain-preflight.log" 2>&1
+          for repo in chain hepta; do
+            git -C "$repo" diff --exit-code
+            git -C "$repo" diff --cached --exit-code
+            test -z "$(git -C "$repo" status --porcelain)"
+            git -C "$repo" rev-parse HEAD HEAD^{tree} refs/remotes/origin/main > "$out/$repo-source.txt"
+            git -C "$repo" bundle create "$out/$repo.bundle" HEAD refs/remotes/origin/main
+            git -C "$repo" bundle verify "$out/$repo.bundle" > "$out/$repo-bundle.log" 2>&1
+          done
+          printf '%s\n' 'Read-only committed source transport; no credentials, tool installation, deployment, native test or external acceptance evidence.' > "$out/SCOPE.txt"
+          (cd "$out" && sha256sum chain.bundle hepta.bundle > SHA256SUMS)
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: pon-authoring-exact-sources
+          path: ${{ runner.temp }}/pon-authoring-sources
+          if-no-files-found: error
+          retention-days: 3
