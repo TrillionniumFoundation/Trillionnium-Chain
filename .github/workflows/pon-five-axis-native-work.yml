@@ -8,60 +8,132 @@ jobs:
   native:
     runs-on: ubuntu-24.04
     timeout-minutes: 25
+    permissions:
+      contents: write
     env:
       SOURCE_SHA: 228b156dc14ea938300b9503092e1ddd55014e4a
+      DELIVERY_BRANCH: feat/pon-snapshot-read-owner-20261010
       CARGO_BUILD_JOBS: "2"
       CARGO_INCREMENTAL: "0"
       RUST_TEST_THREADS: "1"
+    defaults:
+      run:
+        working-directory: product
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           ref: ${{ env.SOURCE_SHA }}
+          path: product
           fetch-depth: 0
           persist-credentials: false
-      - name: Inspect exact existing storage ownership and run original preflight
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          path: authoring
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Original preflight and exact source
         run: |
           set -euo pipefail
           test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
           test -z "$(git status --porcelain)"
           bash scripts/project-preflight.sh --audit
           mkdir -p "$RUNNER_TEMP/five-axis"
-          git show -s --format='%H%n%T%n%P' HEAD > "$RUNNER_TEMP/five-axis/source.txt"
-          python3 - <<'PY' | tee "$RUNNER_TEMP/five-axis/owner-inspection.txt"
-          import re
-          from pathlib import Path
-          p=Path('trillionnium/crates/trnm-pon-node/src/store.rs')
-          lines=p.read_text().splitlines()
-          names=['state_at','state_at_with_progress','read_active','read_active_with_progress','ready','read_snapshot','confirmations_with_progress','authenticated_account_multiproof_with_progress']
-          for name in names:
-              for start,line in enumerate(lines):
-                  if re.search(r'\bfn '+name+r'\b',line):
-                      indent=len(line)-len(line.lstrip())
-                      end=start+1
-                      while end<len(lines):
-                          other=lines[end]
-                          if end>start+1 and re.search(r'\bfn \w+',other) and len(other)-len(other.lstrip())==indent:
-                              break
-                          end+=1
-                      print('\n###',str(p),name,start+1,end)
-                      for i in range(start,min(end,start+360)):
-                          print(f'{i+1}: {lines[i]}')
-          for p in [Path('trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs'),Path('trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs')]:
-              print('\n### symbols',p)
-              for i,line in enumerate(p.read_text().splitlines(),1):
-                  if re.search(r'\bfn \w+',line):print(f'{i}: {line}')
-          PY
+          git show -s --format='%H%n%T%n%P' HEAD > "$RUNNER_TEMP/five-axis/base.txt"
+          git config user.name OpenAI
+          git config user.email noreply@openai.com
+          git switch -c "$DELIVERY_BRANCH"
       - name: Install original compiler
         run: rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
-      - name: Compile and execute the current authenticated owner
+      - name: Freeze additive counterexamples against the original owner
+        run: |
+          set -euo pipefail
+          python3 ../authoring/scripts/ci/stage_five_axis_native.py negative
+          cargo +1.95.0 fmt --all --manifest-path trillionnium/Cargo.toml
+          git add trillionnium/crates/trnm-pon-node/src/native_account_query_tests.rs
+          git commit -m 'test(pon): reproduce successful read callback committing native state'
+          git show -s --format='%H%n%T%n%P' HEAD > "$RUNNER_TEMP/five-axis/original-with-controls.txt"
+          set +e
+          cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib native_account_query_ -- --show-output --test-threads=1 > "$RUNNER_TEMP/five-axis/original-negative.log" 2>&1
+          code=$?
+          set -e
+          cat "$RUNNER_TEMP/five-axis/original-negative.log"
+          printf '%s\n' "$code" > "$RUNNER_TEMP/five-axis/original-negative.exit"
+          test "$code" -eq 101
+          grep -E '^test .*native_account_query_final_callback_write_is_rejected_and_rolled_back \.\.\. FAILED$' "$RUNNER_TEMP/five-axis/original-negative.log"
+          grep -E '^test .*native_account_query_write_then_restore_still_has_no_commit_authority \.\.\. FAILED$' "$RUNNER_TEMP/five-axis/original-negative.log"
+          grep -E '^test result: FAILED\. 4 passed; 2 failed;' "$RUNNER_TEMP/five-axis/original-negative.log"
+          test -z "$(git status --porcelain)"
+      - name: Freeze repaired native owner, actual batch caller and contract before tests
+        run: |
+          set -euo pipefail
+          bash scripts/project-preflight.sh --audit
+          python3 ../authoring/scripts/ci/stage_five_axis_native.py repair
+          cargo +1.95.0 fmt --all --manifest-path trillionnium/Cargo.toml
+          python3 - <<'PY'
+          import subprocess
+          expected={'trillionnium/crates/trnm-pon-node/src/store.rs','trillionnium/crates/trnm-pon-node/src/native_account_query_tests.rs','trillionnium/crates/trnm-pon-node/examples/continuous_pipeline.rs','docs/protocol/pon-nakamoto-v1/details/NATIVE_AUTHENTICATED_STORAGE_V1.md'}
+          actual=set(subprocess.check_output(['git','diff','--name-only'],text=True).splitlines())
+          assert actual == expected, (actual, expected)
+          PY
+          git add trillionnium/crates/trnm-pon-node/src/store.rs trillionnium/crates/trnm-pon-node/src/native_account_query_tests.rs trillionnium/crates/trnm-pon-node/examples/continuous_pipeline.rs docs/protocol/pon-nakamoto-v1/details/NATIVE_AUTHENTICATED_STORAGE_V1.md
+          git diff --cached --check
+          git commit -m 'feat(pon): keep proof reads non-committing and batch nonces in one checked snapshot'
+          git show -s --format='%H%n%T%n%P' HEAD > "$RUNNER_TEMP/five-axis/candidate-before.txt"
+          git diff "$SOURCE_SHA" HEAD > "$RUNNER_TEMP/five-axis/product.patch"
+          git rev-parse HEAD > "$RUNNER_TEMP/five-axis/candidate.sha"
+          rustup run 1.95.0 rustc -Vv > "$RUNNER_TEMP/five-axis/compiler.txt"
+      - name: Actual native controls, whole owner regression and strict lint
         env:
           TRNM_RETAINED_DELTA_COST_PATH: ${{ runner.temp }}/five-axis/retained-delta.jsonl
         run: |
           set -euo pipefail
-          rustup run 1.95.0 rustc -Vv > "$RUNNER_TEMP/five-axis/compiler.txt"
+          cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib native_account_query_ -- --show-output --test-threads=1 2>&1 | tee "$RUNNER_TEMP/five-axis/read-owner.log"
+          grep -E '^test result: ok\. 6 passed; 0 failed; 0 ignored;' "$RUNNER_TEMP/five-axis/read-owner.log"
+          cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib native_nonce_batch_ -- --show-output --test-threads=1 2>&1 | tee "$RUNNER_TEMP/five-axis/nonce-batch.log"
+          grep -E '^test result: ok\. 3 passed; 0 failed; 0 ignored;' "$RUNNER_TEMP/five-axis/nonce-batch.log"
           cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib store::native_authenticated:: -- --include-ignored --show-output --test-threads=1 2>&1 | tee "$RUNNER_TEMP/five-axis/native.log"
-          test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
+          grep -E '^test result: ok\. 37 passed; 0 failed; 0 ignored;' "$RUNNER_TEMP/five-axis/native.log"
+          cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib authenticated_migration -- --show-output --test-threads=1 2>&1 | tee "$RUNNER_TEMP/five-axis/migration.log"
+          cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test authenticated_storage_cli --test continuity_authenticated -- --show-output --test-threads=1 2>&1 | tee "$RUNNER_TEMP/five-axis/public-owner.log"
+          cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --example continuous_pipeline -- --show-output --test-threads=1 2>&1 | tee "$RUNNER_TEMP/five-axis/pipeline-controls.log"
+          cargo +1.95.0 clippy --locked --all-targets --all-features --manifest-path trillionnium/Cargo.toml -p trnm-pon-node -- -D warnings 2>&1 | tee "$RUNNER_TEMP/five-axis/clippy.log"
+          cargo +1.95.0 fmt --all --manifest-path trillionnium/Cargo.toml -- --check
+      - name: Real native TCP pipeline using the one-snapshot batch caller
+        run: |
+          set -euo pipefail
+          cargo +1.95.0 build --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --example continuous_pipeline
+          for pattern in hot disjoint4 growth; do
+            target/release/continuous_pipeline --help 2>/dev/null && exit 1 || true
+            trillionnium/target/release/examples/continuous_pipeline "$RUNNER_TEMP/five-axis/pipeline-$pattern" 2 4 0 "$pattern" protected > "$RUNNER_TEMP/five-axis/pipeline-$pattern.log" 2>&1
+          done
+          git show -s --format='%H%n%T%n%P' HEAD > "$RUNNER_TEMP/five-axis/candidate-after.txt"
+          cmp "$RUNNER_TEMP/five-axis/candidate-before.txt" "$RUNNER_TEMP/five-axis/candidate-after.txt"
           test -z "$(git status --porcelain)"
+          bash scripts/project-preflight.sh --audit
+      - name: Publish only the exact tested product branch without force
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          test "$DELIVERY_BRANCH" = feat/pon-snapshot-read-owner-20261010
+          test "$(git rev-parse HEAD)" = "$(cat "$RUNNER_TEMP/five-axis/candidate.sha")"
+          test -z "$(git status --porcelain)"
+          gh auth setup-git
+          git push origin "HEAD:refs/heads/$DELIVERY_BRANCH"
+          git ls-remote --heads origin "$DELIVERY_BRANCH" | tee "$RUNNER_TEMP/five-axis/published.txt"
+          test "$(cut -f1 "$RUNNER_TEMP/five-axis/published.txt")" = "$(git rev-parse HEAD)"
+      - name: Hash retained commands and results
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          root=Path(os.environ['RUNNER_TEMP'])/'five-axis'
+          if root.exists():
+              hashes={str(p.relative_to(root)):hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(root.rglob('*')) if p.is_file() and p.name!='hashes.json'}
+              (root/'hashes.json').write_text(json.dumps(hashes,sort_keys=True,indent=2)+'\n')
+          PY
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:
