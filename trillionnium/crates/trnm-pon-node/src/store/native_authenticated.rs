@@ -63,6 +63,10 @@ struct NativeBlock {
 }
 type StoredBlockRow = (Option<Vec<u8>>, u64, Vec<u8>, Option<Vec<u8>>, Vec<u8>);
 
+// Reuse only SQLite statement bytecode in the connection's existing bounded
+// cache. Every invocation rebinds parameters and rereads the current rows;
+// none of the record, packet, delta, ancestry or state verdicts is cached.
+
 fn local<T>(result: Result<T>) -> Result<T> {
     result.map_err(Error::local_integrity)
 }
@@ -74,10 +78,11 @@ fn complete(settings: &Settings, state: &State) -> Result<StateCommitment> {
 
 fn native_block(db: &Connection, settings: &Settings, id: Hash) -> Result<NativeBlock> {
     local((|| {
-        let (parent, height, work, packet, state): StoredBlockRow = db.query_row(
-            "SELECT parent,height,chainwork,CASE WHEN typeof(packet)='blob' THEN substr(packet,1,1048577) ELSE packet END AS packet,state_root FROM blocks WHERE id=?",
-            [id.as_slice()],
-            |row| {
+        let (parent, height, work, packet, state): StoredBlockRow = db
+            .prepare_cached(
+                "SELECT parent,height,chainwork,CASE WHEN typeof(packet)='blob' THEN substr(packet,1,1048577) ELSE packet END AS packet,state_root FROM blocks WHERE id=?",
+            )?
+            .query_row([id.as_slice()], |row| {
                 Ok((
                     row.get(0)?,
                     row.get(1)?,
@@ -85,8 +90,7 @@ fn native_block(db: &Connection, settings: &Settings, id: Hash) -> Result<Native
                     row.get(3)?,
                     row.get(4)?,
                 ))
-            },
-        )?;
+            })?;
         let parent = parent.map(bytes32).transpose()?;
         let state = bytes32(state)?;
         let work = consensus::Work::from_bytes(bytes64(work)?);
@@ -119,11 +123,9 @@ fn native_block(db: &Connection, settings: &Settings, id: Hash) -> Result<Native
                 && h.transactions == sequence_root("transactions", &packet.transactions),
             "NATIVE_STATE_PACKET",
         )?;
-        let (parent_height, parent_work): (u64, Vec<u8>) = db.query_row(
-            "SELECT height,chainwork FROM blocks WHERE id=?",
-            [h.parent.as_slice()],
-            |row| Ok((row.get(0)?, row.get(1)?)),
-        )?;
+        let (parent_height, parent_work): (u64, Vec<u8>) = db
+            .prepare_cached("SELECT height,chainwork FROM blocks WHERE id=?")?
+            .query_row([h.parent.as_slice()], |row| Ok((row.get(0)?, row.get(1)?)))?;
         ensure(
             parent_height.checked_add(1) == Some(height)
                 && consensus::Work::from_bytes(bytes64(parent_work)?)
@@ -160,7 +162,7 @@ fn visit_deltas(
     mut visit: impl FnMut(Delta) -> Result<()>,
 ) -> Result<usize> {
     progress()?;
-    let mut statement = local(db.prepare(DELTA_ROWS_SQL).map_err(Error::from))?;
+    let mut statement = local(db.prepare_cached(DELTA_ROWS_SQL).map_err(Error::from))?;
     let mut rows = local(statement.query([id.as_slice()]).map_err(Error::from))?;
     let mut previous: Option<String> = None;
     let mut count = 0usize;
@@ -421,11 +423,8 @@ fn save(db: &Connection, record: &mut Record) -> Result<()> {
 pub(crate) fn load(db: &Connection, id: Hash) -> Result<Record> {
     local((|| {
         let bytes: Vec<u8> = db
-            .query_row(
-                "SELECT substr(data,1,?) FROM native_state_commitments WHERE block=?",
-                params![MAX_RECORD_BYTES + 1, id.as_slice()],
-                |row| row.get(0),
-            )
+            .prepare_cached("SELECT substr(data,1,?) FROM native_state_commitments WHERE block=?")?
+            .query_row(params![MAX_RECORD_BYTES + 1, id.as_slice()], |row| row.get(0))
             .optional()?
             .ok_or("NATIVE_STATE_MISSING")?;
         ensure(bytes.len() <= MAX_RECORD_BYTES, "NATIVE_STATE_RECORD_LIMIT")?;
@@ -525,11 +524,9 @@ pub(crate) fn verify_history(
             }
             None => {
                 let bytes: Vec<u8> = db
-                    .query_row(
-                        "SELECT state FROM snapshots WHERE block=?",
-                        [current.as_slice()],
-                        |row| row.get(0),
-                    )
+                    .prepare_cached("SELECT state FROM snapshots WHERE block=?")
+                    .map_err(|error| Error::from(error).local_integrity())?
+                    .query_row([current.as_slice()], |row| row.get(0))
                     .map_err(|error| Error::from(error).local_integrity())?;
                 let state: State = serde_json::from_slice(&bytes)
                     .map_err(|error| Error::from(error).local_integrity())?;
@@ -1052,6 +1049,101 @@ mod stored_delta_stream_tests {
         db
     }
 
+    #[test]
+    fn cached_delta_reads_rebind_and_observe_committed_mutations() {
+        let db = database(3, 0);
+        let original = reference(&db).unwrap();
+        assert_eq!(
+            stored_delta_root(&db, [7; 32], &mut || Ok(())).unwrap(),
+            original
+        );
+        assert_eq!(
+            stored_delta_root(&db, [8; 32], &mut || Ok(())).unwrap(),
+            (0, delta_root(&[]).unwrap())
+        );
+        db.execute(
+            "UPDATE deltas SET after=? WHERE key='key-000000'",
+            [b"null".as_slice()],
+        )
+        .unwrap();
+        let changed = stored_delta_root(&db, [7; 32], &mut || Ok(())).unwrap();
+        assert_ne!(changed, original);
+        assert_eq!(changed, reference(&db).unwrap());
+        assert_eq!(stored_delta_root(&db, [8; 32], &mut || Ok(())).unwrap().0, 0);
+    }
+
+    #[test]
+    fn cached_delta_failure_then_rollback_does_not_reuse_a_verdict() {
+        let db = database(1, 0);
+        let original = stored_delta_root(&db, [7; 32], &mut || Ok(())).unwrap();
+        db.execute_batch("SAVEPOINT corrupt; UPDATE deltas SET before='null'")
+            .unwrap();
+        let error = stored_delta_root(&db, [7; 32], &mut || Ok(())).unwrap_err();
+        assert!(error.requires_owner_stop());
+        db.execute_batch("ROLLBACK TO corrupt; RELEASE corrupt")
+            .unwrap();
+        assert_eq!(
+            stored_delta_root(&db, [7; 32], &mut || Ok(())).unwrap(),
+            original
+        );
+        db.execute("UPDATE deltas SET after=?", [vec![b'x'; 4097]])
+            .unwrap();
+        let error = stored_delta_root(&db, [7; 32], &mut || Ok(())).unwrap_err();
+        assert_eq!(error.to_string(), "NATIVE_STATE_DELTA_LIMIT");
+        assert!(error.requires_owner_stop());
+    }
+
+    #[test]
+    fn cached_delta_cursor_is_released_after_cancellation() {
+        let db = database(513, 0);
+        let expected = reference(&db).unwrap();
+        let mut calls = 0;
+        let error = stored_delta_root(&db, [7; 32], &mut || {
+            calls += 1;
+            if calls == 2 {
+                Err("CACHED_DELTA_CANCELLED".into())
+            } else {
+                Ok(())
+            }
+        })
+        .unwrap_err();
+        assert_eq!(error.to_string(), "CACHED_DELTA_CANCELLED");
+        assert!(!error.requires_owner_stop());
+        assert_eq!(
+            stored_delta_root(&db, [7; 32], &mut || Ok(())).unwrap(),
+            expected
+        );
+        db.execute(
+            "UPDATE deltas SET after=? WHERE key='key-000000'",
+            [b"0".as_slice()],
+        )
+        .unwrap();
+        assert_eq!(
+            stored_delta_root(&db, [7; 32], &mut || Ok(())).unwrap(),
+            reference(&db).unwrap()
+        );
+    }
+
+    #[test]
+    fn cached_delta_eviction_or_disabled_cache_keeps_original_results() {
+        let db = database(257, 0);
+        let expected = reference(&db).unwrap();
+        for capacity in [0, 1, 16] {
+            db.set_prepared_statement_cache_capacity(capacity);
+            for _ in 0..3 {
+                assert_eq!(
+                    stored_delta_root(&db, [7; 32], &mut || Ok(())).unwrap(),
+                    expected
+                );
+                db.prepare_cached("SELECT 1")
+                    .unwrap()
+                    .query_row([], |row| row.get::<_, i64>(0))
+                    .unwrap();
+                assert_eq!(stored_delta_root(&db, [8; 32], &mut || Ok(())).unwrap().0, 0);
+            }
+        }
+    }
+
     // Original full-list reader and original all-leaves root algorithm remain
     // independent of the streamed reader/builder, including invalid-data order.
     fn reference(db: &Connection) -> Result<(usize, Hash)> {
@@ -1422,5 +1514,165 @@ mod stored_delta_stream_tests {
         )
         .unwrap();
         output.sync_all().unwrap();
+    }
+}
+
+#[cfg(test)]
+mod cached_owner_read_tests {
+    use super::*;
+    use crate::Node;
+
+    fn open(path: &std::path::Path) -> Node {
+        let settings = Settings::development_with_profiles(
+            Some(1),
+            "native-public-evaluation-dev-v1",
+            trnm_mvcc_fee::continuity_v1::PROFILE,
+        )
+        .unwrap();
+        Node::open_with_authenticated_state(path, settings, 1).unwrap()
+    }
+
+    #[test]
+    fn cached_block_reads_do_not_hide_genesis_damage_or_rollback() {
+        let directory = tempfile::tempdir().unwrap();
+        let node = open(directory.path());
+        let id = node.settings.genesis();
+        for capacity in [0, 1, 16] {
+            node.db.set_prepared_statement_cache_capacity(capacity);
+            let original = native_block(&node.db, &node.settings, id).unwrap();
+            node.db.execute_batch("SAVEPOINT damaged_block").unwrap();
+            node.db
+                .execute("UPDATE blocks SET height=1 WHERE id=?", [id.as_slice()])
+                .unwrap();
+            let error = native_block(&node.db, &node.settings, id).err().unwrap();
+            assert_eq!(error.to_string(), "NATIVE_STATE_GENESIS");
+            assert!(error.requires_owner_stop());
+            node.db
+                .execute_batch("ROLLBACK TO damaged_block; RELEASE damaged_block")
+                .unwrap();
+            let recovered = native_block(&node.db, &node.settings, id).unwrap();
+            assert_eq!(
+                (
+                    recovered.parent,
+                    recovered.height,
+                    recovered.root,
+                    recovered.packet_digest,
+                ),
+                (
+                    original.parent,
+                    original.height,
+                    original.root,
+                    original.packet_digest,
+                )
+            );
+        }
+    }
+
+    #[test]
+    fn cached_parent_reads_observe_changed_work_then_exact_restore() {
+        let directory = tempfile::tempdir().unwrap();
+        let mut node = open(directory.path());
+        let genesis = node.settings.genesis();
+        let miner = crate::development_public(0).unwrap();
+        let packet = node
+            .make_consensus_maintenance(genesis, vec![], miner, 11, 4096)
+            .unwrap();
+        let id = node.admit(&packet, 100_000).unwrap();
+        let expected = native_block(&node.db, &node.settings, id).unwrap();
+        node.db.execute_batch("SAVEPOINT damaged_parent").unwrap();
+        node.db
+            .execute(
+                "UPDATE blocks SET chainwork=? WHERE id=?",
+                params![vec![255u8; 64], genesis.as_slice()],
+            )
+            .unwrap();
+        assert!(native_block(&node.db, &node.settings, id)
+            .err()
+            .unwrap()
+            .requires_owner_stop());
+        node.db
+            .execute_batch("ROLLBACK TO damaged_parent; RELEASE damaged_parent")
+            .unwrap();
+        let actual = native_block(&node.db, &node.settings, id).unwrap();
+        assert_eq!(
+            (
+                actual.parent,
+                actual.height,
+                actual.root,
+                actual.packet_digest,
+            ),
+            (
+                expected.parent,
+                expected.height,
+                expected.root,
+                expected.packet_digest,
+            )
+        );
+    }
+
+    #[test]
+    fn cached_commitment_reads_preserve_limits_missing_and_rollback() {
+        let directory = tempfile::tempdir().unwrap();
+        let node = open(directory.path());
+        let id = node.settings.genesis();
+        let expected = load(&node.db, id).unwrap();
+        for length in [MAX_RECORD_BYTES + 1, MAX_RECORD_BYTES * 8] {
+            node.db.execute_batch("SAVEPOINT damaged_record").unwrap();
+            node.db
+                .execute(
+                    "UPDATE native_state_commitments SET data=? WHERE block=?",
+                    params![vec![b'x'; length], id.as_slice()],
+                )
+                .unwrap();
+            let error = load(&node.db, id).unwrap_err();
+            assert_eq!(error.to_string(), "NATIVE_STATE_RECORD_LIMIT");
+            assert!(error.requires_owner_stop());
+            node.db
+                .execute_batch("ROLLBACK TO damaged_record; RELEASE damaged_record")
+                .unwrap();
+            assert_eq!(load(&node.db, id).unwrap(), expected);
+        }
+        node.db.execute_batch("SAVEPOINT removed_record").unwrap();
+        node.db
+            .execute(
+                "DELETE FROM native_state_commitments WHERE block=?",
+                [id.as_slice()],
+            )
+            .unwrap();
+        assert_eq!(
+            load(&node.db, id).unwrap_err().to_string(),
+            "NATIVE_STATE_MISSING"
+        );
+        node.db
+            .execute_batch("ROLLBACK TO removed_record; RELEASE removed_record")
+            .unwrap();
+        assert_eq!(load(&node.db, id).unwrap(), expected);
+    }
+
+    #[test]
+    fn cached_genesis_snapshot_is_reread_and_survives_cold_reopen() {
+        let directory = tempfile::tempdir().unwrap();
+        let node = open(directory.path());
+        let id = node.settings.genesis();
+        let expected = node.read_active().unwrap();
+        verify_history(&node.db, &node.settings, id, &mut || Ok(())).unwrap();
+        node.db.execute_batch("SAVEPOINT damaged_snapshot").unwrap();
+        node.db
+            .execute(
+                "UPDATE snapshots SET state=? WHERE block=?",
+                params![b"{}".as_slice(), id.as_slice()],
+            )
+            .unwrap();
+        let error = verify_history(&node.db, &node.settings, id, &mut || Ok(())).unwrap_err();
+        assert_eq!(error.to_string(), "NATIVE_STATE_GENESIS");
+        assert!(error.requires_owner_stop());
+        node.db
+            .execute_batch("ROLLBACK TO damaged_snapshot; RELEASE damaged_snapshot")
+            .unwrap();
+        verify_history(&node.db, &node.settings, id, &mut || Ok(())).unwrap();
+        drop(node);
+        let reopened = open(directory.path());
+        assert_eq!(reopened.read_active().unwrap(), expected);
+        verify_history(&reopened.db, &reopened.settings, id, &mut || Ok(())).unwrap();
     }
 }
