@@ -1,0 +1,100 @@
+name: PoN fixed blob source staging
+on:
+  push:
+    branches: [ci/pon-fixed-blob-bounds-stage-20261010]
+permissions:
+  contents: write
+jobs:
+  native:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    env:
+      CARGO_INCREMENTAL: "0"
+      CARGO_BUILD_JOBS: "2"
+      RUST_TEST_THREADS: "1"
+      PYTHONDONTWRITEBYTECODE: "1"
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+      - name: Freeze authoring inputs and restore the exact current source
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/fixed-blob-stage"
+          mkdir -p "$out"
+          echo "OUT=$out" >> "$GITHUB_ENV"
+          echo "CARGO_TARGET_DIR=$RUNNER_TEMP/fixed-blob-target" >> "$GITHUB_ENV"
+          git rev-parse HEAD > "$out/staging-source.txt"
+          cp .github/staging/apply_fixed_blob_bounds.py "$out/"
+          cp .github/staging/native_fixed_blob_tests.rs "$out/"
+          sha256sum "$out"/*.py "$out"/*.rs > "$out/authoring.sha256"
+          git checkout --detach 22073a37e1e33c79de6695e47d97c3fea485c189
+          test "$(git rev-parse HEAD^{tree})" = 6d2c804f6e3444bf63caa1b69b37c1083ae18f0a
+          python3 "$out/apply_fixed_blob_bounds.py" "$out/native_fixed_blob_tests.rs"
+      - name: Install the existing pinned native toolchain
+        run: rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+      - name: Format only this candidate and freeze its commit before execution
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all
+          git add trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs trillionnium/crates/trnm-pon-node/src/store/native_fixed_blob_tests.rs
+          test "$(git diff --cached --name-only | wc -l)" = 2
+          git diff --exit-code
+          git diff --cached --check
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'fix(pon): bound fixed block payloads before owned decoding' -m 'Preserve all original checks, field/error order and SQL types. Four native tests retain the independent original verifier, oversized and mistyped records, warm cache, rollback, genesis and cold reopen. Source staging is not complete final-source or external acceptance.'
+          git rev-parse HEAD > "$OUT/candidate.txt"
+          git rev-parse HEAD^{tree} > "$OUT/tree.txt"
+          git show --stat HEAD > "$OUT/commit-stat.txt"
+          git diff HEAD^ HEAD > "$OUT/candidate.patch"
+          git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs > "$OUT/native-blob.txt"
+          git hash-object trillionnium/crates/trnm-pon-node/src/store/native_fixed_blob_tests.rs > "$OUT/tests-blob.txt"
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$(cat "$OUT/candidate.txt")" --output "$OUT/source.json"
+          bash scripts/project-preflight.sh --audit 2>&1 | tee "$OUT/preflight.log"
+          cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check 2>&1 | tee "$OUT/format.log"
+      - name: Run all retained storage controls including all four new regressions
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib store::native_authenticated:: -- --include-ignored --show-output --test-threads=1 2>&1 | tee "$OUT/native-storage.log"
+          grep -E '^test result: ok\. 32 passed; 0 failed; 0 ignored;' "$OUT/native-storage.log"
+          for test in fixed_blob_projection_bounds_owned_bytes_and_preserves_sql_types fixed_block_fields_match_original_errors_after_warm_cache_and_rollback fixed_parent_work_matches_original_and_rereads_after_restore fixed_fields_genesis_failure_order_and_cold_reopen_keep_state; do
+            selector="store::native_authenticated::native_fixed_blob_tests::$test"
+            cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib "$selector" -- --exact --show-output --test-threads=1 2>&1 | tee "$OUT/$test.log"
+            python3 scripts/ci/check_required_native_test.py "$OUT/$test.log" --test "$selector"
+          done
+      - name: Retain the complete native strict lint gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --all-targets --all-features -- -D warnings 2>&1 | tee "$OUT/clippy.log"
+      - name: Recheck frozen source and publish only the tested two-file candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          candidate="$(cat "$OUT/candidate.txt")"
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$candidate" --output "$OUT/source-after.json"
+          git diff --exit-code
+          test -z "$(git status --porcelain --untracked-files=all)"
+          branch=fix/pon-native-fixed-blob-bounds-20261010
+          if git ls-remote --exit-code --heads origin "$branch" > "$OUT/existing-ref.txt"; then
+            test "$(cut -f1 "$OUT/existing-ref.txt")" = "$candidate"
+          else
+            status=$?
+            test "$status" = 2
+            git push origin "$candidate:refs/heads/$branch" 2>&1 | tee "$OUT/push.log"
+          fi
+          git ls-remote --exit-code --heads origin "$branch" | tee "$OUT/published-ref.txt"
+          test "$(cut -f1 "$OUT/published-ref.txt")" = "$candidate"
+          printf '%s\n' 'Staged x64 native source only. The existing exact-source workflow must be repinned before a final PR runs all head/actual-main-merge lanes, full baseline, original capacity/history and Hepta pairing. No public attack cost, independent evolution, physical power loss, DA or WAN/TPS qualification.' > "$OUT/SCOPE.txt"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: fixed-blob-stage-${{ github.sha }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/fixed-blob-stage
+          if-no-files-found: error
+          retention-days: 30
