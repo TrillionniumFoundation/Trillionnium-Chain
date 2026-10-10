@@ -154,3 +154,124 @@ These experiments are not three improving public releases. The separate native l
 regression exercises three signed controlled release generations for exact accounting.
 Neither may be relabelled as three ordinary Hepta learning generations. A composition
 losing to a stronger deployable single/merged control is not forced into adoption.
+
+## Claim classes: no promotion from arithmetic to future benefit or optimality
+
+These distinguish statement meaning inside the existing evaluation contract; they do
+not add transaction tags, a new evaluator authority or an active revision3 wire field.
+
+| Claim | Exact subject and verification obligation | Current acceptance boundary |
+|---|---|---|
+| Challenged arithmetic | Committed task/matrices, exact header challenge, canonical transcript/product and target; replay the W1 relation | Implemented experimental relation. Neither effort hardness nor useful model improvement follows. |
+| Fixed-dataset marginal gain | Exact parent/candidate/control bytes, compatibility/composition recipe, dataset/groups, metric, budget and threshold; recompute predictions and the existing statistical gate | E3 controlled retrospective evaluation. It is not independent prospective benefit. |
+| Prospective benefit | The fixed-dataset statement plus authenticated chronological collection, independently controlled untouched task windows, consent/withdrawal and preregistered stopping/multiplicity policy | Required but unaccepted; a caller timestamp, future flag or disjoint file names cannot supply it. |
+| Bounded optimality | Exact feasible circuit/weight family, numeric domain, objective, resource budget, epsilon, candidate and checkable lower-bound certificate | The exact committed-dataset accuracy upper-bound certificate below is implemented. Arbitrary circuit/resource-constrained lower-bound certificates remain unimplemented; first place cannot fill them. |
+
+For loss minimization, a valid feasible candidate with loss l and independently checked
+lower bound L proves only the declared family's epsilon-optimality when l-L<=epsilon.
+An arbitrary returned L, solver success string, training trace or signed score is not a
+lower-bound certificate. The circuit family and objective must be fixed before search;
+finite precision, allowed topology and resource limits are part of the statement.
+No such statement certifies optimality over every possible future task or neural model.
+
+Marginal evaluation must specify whether removing an expert freezes or retrains its
+router; any retraining/composition budget is charged equally in compared cases. The
+current bounded ablation recipe is not an exact Shapley or unrestricted optimality
+algorithm. For a low-rank delta BA, BA=(BQ)(Q^-1 A) for invertible Q: different bytes
+can represent the same update. Content hashes therefore establish exact identity,
+not functional novelty, economic independence or immunity to attribution splitting.
+
+### Executed empirical value and objective-bound statement
+
+The existing evaluator now emits `pon-fixed-dataset-value-claim-v1`, binding the frozen
+bundle, candidate, parent, strongest control and task digest. It recomputes reduced
+rational candidate/control/marginal equal-source-group accuracy. The certificate
+`zero-one-accuracy-upper-bound-v1` uses the universal upper bound 1 on this fixed labelled
+dataset: gap=1-candidate_accuracy; exact empirical optimality is true only at gap zero.
+A feasible model attaining this bound is optimal for that empirical objective. It is
+NOT a minimum-size/minimum-cost circuit, a future distribution guarantee, a general
+neural optimization certificate, original training provenance or fresh consensus work.
+A nonzero gap is a valid bound, not a claim that the submitted model reaches the optimum.
+
+Normal worker output carries this statement; settlement recomputes it and requires
+canonical byte equality in both the worker and summary records. Relabelled future or
+general-optimality claims, changed bounds and integer/Boolean aliases reject even when
+both mutable reports are changed together. The prediction-row accounting names only
+this evaluator (candidate, four controls, three fixed-router ablations, and four
+calibration controls), not training, auxiliary worker metrics, wall time or GPU cost.
+No revision3 transaction, signed parameter context or reward authority is changed.
+
+## Explicit closed-round successor: all eligible attestations, not first arrivals
+
+`config/pon/evaluation-round-v1.json` defines `closed-round-all-eligible-min-v1`.
+The installed default remains revision3, including its retained first-two counterexample.
+The successor is selected explicitly by the native CLI `--evaluation-policy` option,
+`Settings::development_with_evaluation_policy` or, in a separately started Python oracle,
+`TRNM_PON_EVALUATION_POLICY=closed-round-all-eligible-min-v1`. Unknown profiles reject.
+Its revision4 network label, complete policy hash, parameter commitment and evaluation
+plan differ. Existing databases and old signed transactions are not upgraded or relabelled.
+
+For each candidate the roster is the genesis evaluator set minus the exact author, with
+at least two eligible identities. Only those identities may attest once, to the fixed
+plan/evidence/score. No prefix quorum can freeze a score. After ALL eligible identities
+are present, the minimum of the complete set is the accepted score; before then status
+remains submitted and no release can consume it. A complete round containing zero cannot
+unlock model reward. Existing signed intake windows, expiry and retirement remain in
+force: a missing evaluator can withhold this candidate's adoption, but cannot suspend
+mining, fabricate a timeout vote or create an indefinite payout liability.
+
+This deliberately trades evaluator availability for a complete, order-independent set.
+Scores 10/100/100 yield 10 in all six orders. Scores 0/100/100 yield zero. An author in
+the three-member roster is excluded, so both remaining members are required. Distinct
+keys still do not establish independent administration. Signed false scores remain an
+attested-trust risk; minimum aggregation is NOT objective model verification or arbitration.
+A same-signer replacement rejects rather than silently replacing the first statement.
+No slashing, appeal authority, retroactive block invalidation or consensus voting is added.
+General nonlinear functional-copy/split attribution and independently governed objective
+dispute resolution remain open. The exact integer-linear profile and signed bounded
+policy below now execute narrower obligations.
+
+The M11 `trnm-verification-profiles::closed_round::complete_score` procedure is consumed
+by the existing M06 twelve-command executor. The Python `evaluation_round.complete_score`
+is separately coded. `test_evaluation_round.py::ClosedRoundTests` runs signed transitions
+at 1/2/4/8 workers, zero/missing/duplicate/wrong-context rejection, complete-budget
+publication/maturity/claim, and the ordinary native CLI with real work, disk reopen and
+heavier-fork replay. Positive scores in these tests are controlled fixtures, not a new
+learned improvement or an independently authorized reward. Historical model observations
+remain unchanged; fixed-data, prospective and optimum-certificate claims remain distinct.
+
+## Executable integer-linear copy, complementarity and finite-set profile
+
+[MODEL_ATTRIBUTION](MODEL_ATTRIBUTION.md) specifies fresh sidecar schemas for exact
+BA normalization, parent/slot/numeric binding, admitted same-source caps, declared
+bounded perturbations and all finite subset replays. Copying under another factorization
+or identity cannot multiply the same effective update or its cap. Distinct components
+may retain joint value even with zero standalone gain. Group-level Shapley and an
+exhaustive finite-set optimum are replayed, never inferred from probe hashes or a
+reported solver bound. This leaves general nonlinear equivalence, optimal circuit cost,
+real independent source admission and target LLM prospective quality unqualified.
+
+The same detail defines UniqueUsefulOutputAccounting: A/B relabelling, stale attempts,
+reorg and output replay cannot erase incurred verifier costs or count one adopted
+content output twice. Positive verification alone is not downstream adoption. The
+real campaign uses existing training/inference owners and records actual versions;
+retrospective source tasks remain exploratory, with no public reward authority.
+
+[PUBLIC_EVALUATION_LIFECYCLE](PUBLIC_EVALUATION_LIFECYCLE.md) separates the bounded
+off-chain policy from the explicitly selected `native-public-evaluation-dev-v1`
+successor. The native successor freezes the candidate/context/roster, checks strict
+commit/reveal and height phases, aborts missing reveals, records signature conflicts and
+next-round key exclusions, and retains bounded record-only appeals. The historical
+revision4 closed-round profile remains unchanged. Neither successor supplies public
+roster governance, prospective independence, objective ML truth or funded appeal
+adjudication; minimum scores cannot establish those facts.
+
+## Joined reported model/operations acceptance
+
+[MODEL_OPERATIONS_ACCEPTANCE_V1](MODEL_OPERATIONS_ACCEPTANCE_V1.md) joins the existing
+target-decoder run replay to one externally pinned preregistration and receipt for
+strong controls, poison/backdoor/forgetting probes, consumer observations and bounded
+retention costs/material. It rejects contradictory or substituted records while
+preserving failed gates and unknown GPU cost. This offline contract cannot certify
+prospective independence, licensed provenance, authenticated consumer use or fulfilled
+DA; all independent/public acceptance flags remain false even for a complete fixture.
