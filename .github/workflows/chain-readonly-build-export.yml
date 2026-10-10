@@ -1,7 +1,7 @@
 name: chain-readonly-build-export
 on:
   push:
-    branches: [dev/chain-readonly-build-export-20261006]
+    branches: [dev/pon-five-axis-offline-export-20261010]
 permissions:
   contents: read
 jobs:
@@ -9,29 +9,45 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     env:
-      SOURCE_SHA: e87f92fd66d9025944c57ed04c9e85653cfef864
+      SOURCE_SHA: 228b156dc14ea938300b9503092e1ddd55014e4a
+      HEPTA_SHA: 201bdbe4c3e1d4860c8a4a07e8435b58b4811c6f
     steps:
       - name: Checkout exact public source without persisted credentials
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           ref: ${{ env.SOURCE_SHA }}
+          path: chain
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Checkout exact public Hepta source without persisted credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: TrillionniumFoundation/hepta-private-ci
+          ref: ${{ env.HEPTA_SHA }}
+          path: hepta
           fetch-depth: 0
           persist-credentials: false
       - name: Retain exact source objects and identity
         shell: bash
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
-          test -z "$(git status --porcelain)"
+          test "$(git -C chain rev-parse HEAD)" = "$SOURCE_SHA"
+          test "$(git -C hepta rev-parse HEAD)" = "$HEPTA_SHA"
+          test -z "$(git -C chain status --porcelain)"
+          test -z "$(git -C hepta status --porcelain)"
+          (cd chain && bash scripts/project-preflight.sh --audit)
           mkdir -p "$RUNNER_TEMP/source-export"
-          git bundle create "$RUNNER_TEMP/source-export/source.bundle" HEAD
-          git bundle verify "$RUNNER_TEMP/source-export/source.bundle"
-          git show -s --format='%H%n%T%n%P' HEAD > "$RUNNER_TEMP/source-export/source.txt"
-          sha256sum "$RUNNER_TEMP/source-export/source.bundle" > "$RUNNER_TEMP/source-export/source.sha256"
+          git -C chain bundle create "$RUNNER_TEMP/source-export/chain.bundle" HEAD
+          git -C hepta bundle create "$RUNNER_TEMP/source-export/hepta.bundle" HEAD
+          git -C chain bundle verify "$RUNNER_TEMP/source-export/chain.bundle"
+          git -C hepta bundle verify "$RUNNER_TEMP/source-export/hepta.bundle"
+          git -C chain show -s --format='%H%n%T%n%P' HEAD > "$RUNNER_TEMP/source-export/chain.txt"
+          git -C hepta show -s --format='%H%n%T%n%P' HEAD > "$RUNNER_TEMP/source-export/hepta.txt"
+          sha256sum "$RUNNER_TEMP/source-export/"*.bundle > "$RUNNER_TEMP/source-export/source.sha256"
       - name: Upload exact source transport
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: chain-source-e87f92f
+          name: chain-hepta-five-axis-source-228b156-201bdbe
           path: ${{ runner.temp }}/source-export/
           if-no-files-found: error
           retention-days: 7
@@ -44,9 +60,11 @@ jobs:
           mkdir -p "$CARGO_HOME" "$RUNNER_TEMP/toolchain-export"
           rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
           rustup run 1.95.0 rustc -Vv > "$RUNNER_TEMP/toolchain-export/rustc.txt"
-          rustup run 1.95.0 cargo fetch --locked --manifest-path trillionnium/Cargo.toml
-          test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
-          test -z "$(git status --porcelain)"
+          rustup run 1.95.0 cargo fetch --locked --manifest-path chain/trillionnium/Cargo.toml
+          test "$(git -C chain rev-parse HEAD)" = "$SOURCE_SHA"
+          test -z "$(git -C chain status --porcelain)"
+          test "$(git -C hepta rev-parse HEAD)" = "$HEPTA_SHA"
+          test -z "$(git -C hepta status --porcelain)"
           sysroot="$(rustup run 1.95.0 rustc --print sysroot)"
           tar -C "$sysroot" -czf "$RUNNER_TEMP/toolchain-export/rust-1.95.0-x64.tar.gz" .
           tar -C "$CARGO_HOME" -czf "$RUNNER_TEMP/toolchain-export/cargo-registry.tar.gz" registry
@@ -54,7 +72,7 @@ jobs:
       - name: Upload public offline build inputs
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: chain-offline-toolchain-1.95.0
+          name: chain-five-axis-offline-toolchain-1.95.0
           path: ${{ runner.temp }}/toolchain-export/
           if-no-files-found: error
           retention-days: 7
