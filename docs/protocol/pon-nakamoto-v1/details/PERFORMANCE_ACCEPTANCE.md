@@ -315,3 +315,31 @@ transactions. The tiny logical-clock runs check scope and count consistency only
 are not saturated throughput, live-paced latency, public V3 fairness, independent WAN,
 physical power-loss or long-term data-availability measurements. All original full
 baseline, capacity/history, native owner and cross-repository gates remain required.
+
+
+### Bounded cross-block confirmation polling
+
+The existing continuous pipeline now groups whole pending block-query sets into
+at most256 queries per ConfirmMany RPC. One native response still performs the
+original complete State, ancestry, inclusion-body, clock and generation checks.
+Only the caller's repeated acquisitions are coalesced; no backend history walk,
+wire rule, confirmation threshold or state check is removed or cached across calls.
+
+Each response is validated in full before any item in that batch is completed.
+Incorrect cardinality, reordered identities, foreign chain context, mixed observed
+tip/generation/time or malformed/authority-bearing flags preserve the whole failed
+batch and unread tail. Successfully completed earlier batches remain completed;
+deferred items keep original order. Empty/oversized query sets reject before any
+RPC. No block's queries are split across responses. This is a read caller and
+in-memory campaign owner, never a durable journal or redispatch authority.
+
+`confirmation_poll_counts` counts actual started and fully validated RPCs, query
+cardinalities and block-query sets, including failed starts. Initial membership
+reads are outside this scope. Per-block confirmation records retain only their
+own observations; scan counters and wall time are explicitly marked as shared
+RPC measurements and must not be summed as independent per-block costs. The
+source-bound two-block native smoke checks eight confirmation RPCs instead of
+fourteen separate block polls, with all28 repeated transaction queries retained.
+This is a deterministic call-count check, not a measured time speedup, saturated
+TPS, independent WAN or a change to full-history asymptotic cost. All original
+failure, native, capacity/history and two-repository baseline gates remain.

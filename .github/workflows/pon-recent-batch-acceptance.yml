@@ -181,8 +181,8 @@ jobs:
         run: |
           set -euo pipefail
           cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --example continuous_pipeline -- --show-output --test-threads=1 2>&1 | tee "$OUT/pipeline-failure-controls.log"
-          grep -E '^test result: ok\. 5 passed; 0 failed; 0 ignored;' "$OUT/pipeline-failure-controls.log"
-          for test in failed_poll_retains_deferred_failed_and_unread_obligations original_drain_loses_obligations_on_the_same_failure every_failure_cut_preserves_exact_remaining_order shutdown_joins_before_returning_server_failure shutdown_preserves_success_and_reports_panicked_server; do
+          grep -E '^test result: ok\. 11 passed; 0 failed; 0 ignored;' "$OUT/pipeline-failure-controls.log"
+          for test in failed_poll_retains_deferred_failed_and_unread_obligations original_drain_loses_obligations_on_the_same_failure every_failure_cut_preserves_exact_remaining_order shutdown_joins_before_returning_server_failure shutdown_preserves_success_and_reports_panicked_server batched_poll_uses_complete_blocks_with_exact_wire_limit batched_poll_every_rpc_failure_preserves_retry_ownership batched_poll_rejects_dimensions_before_any_rpc batched_poll_rejects_partial_or_extra_decisions_without_removal batched_poll_matches_single_queries_without_reordering_deferred_work batched_confirmation_validates_late_context_before_claiming_any_success; do
             cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --example continuous_pipeline "tests::$test" -- --exact --show-output --test-threads=1 2>&1 | tee "$OUT/$test.log"
             python3 scripts/ci/check_required_native_test.py "$OUT/$test.log" --test "tests::$test"
           done
@@ -212,6 +212,16 @@ jobs:
               assert report['server_error'] is None and report['producer_final_error'] is None
               assert len(report['records']) == 8
               assert report['whole_campaign_seconds'] > 0
+              polls = report['confirmation_poll_counts']
+              assert polls['rpc_started'] == polls['rpc_validated'] == 8
+              assert polls['block_batches_started'] == polls['block_batches_validated'] == 14
+              assert polls['queries_started'] == polls['queries_validated'] == 28
+              assert polls['maximum_queries_per_rpc'] == 4
+              assert polls['rpc_validated'] < polls['block_batches_validated']
+              for row in report['records'][:2]:
+                  assert row['confirmation']['counter_scope'] == 'complete shared RPC'
+                  assert row['confirmation']['shared_query_count'] <= 256
+                  assert len(row['confirmation']['observations']) == 2
           print('PASS: two local pipelines, exact stage counts, no WAN or saturation claim')
           PYTHON
       - name: Require non-committing proof reads and actual nonce snapshot callers

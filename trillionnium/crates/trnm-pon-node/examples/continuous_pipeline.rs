@@ -51,21 +51,120 @@ struct StageCounts {
     policy_confirmed: usize,
 }
 
-// Remove an obligation only after a complete successful observation. In particular,
-// an error must retain earlier deferred work, the failing item and the unread tail.
+// A successful RPC owns one complete response. Never remove a partial response's
+// obligations, and never split a block's queries across the 256-query wire bound.
+fn poll_pending_batches<T>(
+    pending: &mut Vec<T>,
+    limit: usize,
+    weight: impl Fn(&T) -> usize,
+    mut observe: impl FnMut(&[T]) -> Result<Vec<bool>>,
+) -> Result<()> {
+    if !(1..=256).contains(&limit)
+        || pending
+            .iter()
+            .any(|item| !(1..=limit).contains(&weight(item)))
+    {
+        return Err("CONFIRMATION_BATCH_LIMIT".into());
+    }
+    let mut index = 0;
+    while index < pending.len() {
+        let mut end = index;
+        let mut queries = 0;
+        while end < pending.len() && weight(&pending[end]) <= limit - queries {
+            queries += weight(&pending[end]);
+            end += 1;
+        }
+        let completed = observe(&pending[index..end])?;
+        if completed.len() != end - index {
+            return Err("CONFIRMATION_BATCH_RESULT".into());
+        }
+        let retained = completed.iter().filter(|complete| !**complete).count();
+        for (offset, complete) in completed.into_iter().enumerate().rev() {
+            if complete {
+                drop(pending.remove(index + offset));
+            }
+        }
+        index += retained;
+    }
+    Ok(())
+}
+
+// Preserve the original single-obligation regression interface, using the same
+// production batch owner at limit one rather than maintaining a second algorithm.
+#[cfg(test)]
 fn poll_pending<T>(
     pending: &mut Vec<T>,
     mut observe: impl FnMut(&T) -> Result<bool>,
 ) -> Result<()> {
-    let mut index = 0;
-    while index < pending.len() {
-        if observe(&pending[index])? {
-            drop(pending.remove(index));
-        } else {
-            index += 1;
-        }
+    poll_pending_batches(pending, 1, |_| 1, |items| Ok(vec![observe(&items[0])?]))
+}
+
+#[derive(Default, Serialize)]
+struct ConfirmationPollCounts {
+    rpc_started: usize,
+    rpc_validated: usize,
+    queries_started: usize,
+    queries_validated: usize,
+    maximum_queries_per_rpc: usize,
+    block_batches_started: usize,
+    block_batches_validated: usize,
+}
+
+// This validates the current response, not remote truth independently of the
+// existing native verifier. All rows must agree on the one observed snapshot.
+fn confirmation_outcomes(
+    result: &Value,
+    queries: &[ConfirmationQuery],
+    settings: &Settings,
+) -> Result<Vec<bool>> {
+    if queries.is_empty() || queries.len() > 256 {
+        return Err("CONFIRMATION_BATCH_LIMIT".into());
     }
-    Ok(())
+    let observations = result["observations"]
+        .as_array()
+        .ok_or("CONFIRMATION_FORMAT")?;
+    if observations.len() != queries.len() {
+        return Err("CONFIRMATION_CONTEXT".into());
+    }
+    let first = &observations[0];
+    let network = hex::encode(settings.network());
+    let parameters = hex::encode(settings.parameters());
+    let genesis = hex::encode(settings.genesis());
+    let mut completed = Vec::with_capacity(queries.len());
+    for (observation, query) in observations.iter().zip(queries) {
+        if observation["transaction"] != query.transaction
+            || observation["included_block"] != query.block
+            || observation["network"] != network
+            || observation["parameters"] != parameters
+            || observation["genesis"] != genesis
+            || observation["reorged"] != false
+            || observation["finalized"] != false
+            || observation["execution_authority"] != false
+            || observation["policy"] != "installed-depth-and-required-work"
+            || observation["observed_tip"].as_str().is_none_or(|tip| {
+                tip.len() != 64 || !tip.bytes().all(|byte| byte.is_ascii_hexdigit())
+            })
+            || ["observed_height", "active_generation", "observed_now"]
+                .iter()
+                .any(|key| observation[*key].as_u64().is_none())
+            || [
+                "observed_tip",
+                "observed_height",
+                "active_generation",
+                "observed_now",
+            ]
+            .iter()
+            .any(|key| observation[*key] != first[*key])
+        {
+            return Err("CONFIRMATION_CONTEXT".into());
+        }
+        completed.push(
+            observation["confirmed"]
+                .as_bool()
+                .ok_or("CONFIRMATION_FORMAT")?,
+        );
+    }
+    Ok(completed)
 }
 
 fn stop_and_join<T>(stop: &AtomicBool, server: thread::JoinHandle<Result<T>>) -> Result<T> {
@@ -140,6 +239,7 @@ fn run() -> Result<()> {
     let started = Instant::now();
     let mut records = Vec::new();
     let mut stages = StageCounts::default();
+    let mut confirmation_polls = ConfirmationPollCounts::default();
     let mut pending: Vec<(usize, Instant, Vec<ConfirmationQuery>)> = Vec::new();
     let mut inclusion_latencies = Vec::new();
     let mut confirmation_latencies = Vec::new();
@@ -307,44 +407,68 @@ fn run() -> Result<()> {
                 bytes_on_disk(&directory.join("producer"))?
                     + bytes_on_disk(&directory.join("validator"))?
             );
-            poll_pending(&mut pending, |(record_index, intake, queries)| {
-                let confirmation_started = Instant::now();
-                let result = call(&Request::ConfirmMany {
-                    queries: queries.clone(),
-                })?;
-                let observed = Instant::now();
-                let observations = result["observations"]
-                    .as_array()
-                    .ok_or("CONFIRMATION_FORMAT")?;
-                if observations.len() != queries.len()
-                    || observations.iter().zip(queries).any(|(o, q)| {
-                        o["transaction"] != q.transaction
-                            || o["included_block"] != q.block
-                            || o["network"] != hex::encode(settings.network())
-                            || o["parameters"] != hex::encode(settings.parameters())
-                            || o["genesis"] != hex::encode(settings.genesis())
-                            || o["reorged"] != false
-                    })
-                {
-                    return Err("CONFIRMATION_CONTEXT".into());
-                }
-                if observations.iter().all(|o| {
-                    o["confirmed"] == true
-                        && o["finalized"] == false
-                        && o["execution_authority"] == false
-                }) {
-                    let latency = observed.duration_since(*intake).as_nanos();
-                    confirmation_latencies.push(latency);
-                    records[*record_index]["intake_to_confirmation_ns"] = json!(latency);
-                    records[*record_index]["confirmation_query_ns"] =
-                        json!(observed.duration_since(confirmation_started).as_nanos());
-                    records[*record_index]["confirmation"] = result;
-                    stages.policy_confirmed += queries.len();
-                    Ok(true)
-                } else {
-                    Ok(false)
-                }
-            })?;
+            poll_pending_batches(
+                &mut pending,
+                256,
+                |(_, _, queries)| queries.len(),
+                |items| {
+                    let queries: Vec<_> = items
+                        .iter()
+                        .flat_map(|(_, _, queries)| queries.iter().cloned())
+                        .collect();
+                    confirmation_polls.rpc_started += 1;
+                    confirmation_polls.queries_started += queries.len();
+                    confirmation_polls.block_batches_started += items.len();
+                    confirmation_polls.maximum_queries_per_rpc = confirmation_polls
+                        .maximum_queries_per_rpc
+                        .max(queries.len());
+                    let confirmation_started = Instant::now();
+                    let result = call(&Request::ConfirmMany {
+                        queries: queries.clone(),
+                    })?;
+                    let observed = Instant::now();
+                    // Validate every row before any counter, record or obligation
+                    // can claim success from this response, including its late rows.
+                    let outcomes = confirmation_outcomes(&result, &queries, &settings)?;
+                    confirmation_polls.rpc_validated += 1;
+                    confirmation_polls.queries_validated += queries.len();
+                    confirmation_polls.block_batches_validated += items.len();
+                    let observations = result["observations"]
+                        .as_array()
+                        .ok_or("CONFIRMATION_FORMAT")?;
+                    let mut offset = 0;
+                    let mut completed = Vec::with_capacity(items.len());
+                    for (record_index, intake, block_queries) in items {
+                        let end = offset + block_queries.len();
+                        let complete = outcomes[offset..end].iter().all(|complete| *complete);
+                        if complete {
+                            let latency = observed.duration_since(*intake).as_nanos();
+                            confirmation_latencies.push(latency);
+                            records[*record_index]["intake_to_confirmation_ns"] = json!(latency);
+                            records[*record_index]["confirmation_query_ns"] =
+                                json!(observed.duration_since(confirmation_started).as_nanos());
+                            records[*record_index]["confirmation_query_scope"] =
+                                json!("shared RPC wall time; do not sum repeated per-block values");
+                            records[*record_index]["confirmation_rpc_sequence"] =
+                                json!(confirmation_polls.rpc_started);
+                            // Retain only this block's rows. Full-RPC scan counters
+                            // stay explicitly scoped rather than relabelled per block.
+                            let block_result = json!({
+                                "observations":&observations[offset..end],
+                                "ancestry_checked":result["ancestry_checked"],
+                                "distinct_bodies_checked":result["distinct_bodies_checked"],
+                                "counter_scope":"complete shared RPC",
+                                "shared_query_count":queries.len(),
+                            });
+                            records[*record_index]["confirmation"] = block_result;
+                            stages.policy_confirmed += block_queries.len();
+                        }
+                        completed.push(complete);
+                        offset = end;
+                    }
+                    Ok(completed)
+                },
+            )?;
             fs::write(
                 directory.join("progress.json"),
                 serde_json::to_vec(
@@ -409,6 +533,8 @@ fn run() -> Result<()> {
     summary["server_error"] = json!(server_result.as_ref().err().map(ToString::to_string));
     summary["producer_final_error"] = json!(producer_final.as_ref().err().map(ToString::to_string));
     summary["stage_counts"] = serde_json::to_value(&stages)?;
+    summary["confirmation_poll_counts"] = serde_json::to_value(&confirmation_polls)?;
+    summary["confirmation_poll_scope"] = json!("pending confirmation RPCs only; membership reads excluded; no cross-call verdict cache or backend history-complexity change");
     summary["stage_count_scope"] = json!("completed local and remote-observation boundaries only; ACK is not membership or confirmation; execution/work are jointly observed, standalone executor completion is unmeasured");
     summary["application_executed_transactions"] = Value::Null;
     summary["pending_confirmation_scope"] = json!("membership-checked batches; earlier uncertain delivery remains a stage gap, not proof of non-execution");
@@ -551,5 +677,219 @@ mod tests {
             stop_and_join(&stop, server).unwrap_err().to_string(),
             "SERVER_THREAD"
         );
+    }
+    #[test]
+    fn batched_poll_uses_complete_blocks_with_exact_wire_limit() {
+        let mut pending = vec![64, 64, 128, 1, 255, 17];
+        let mut calls = Vec::new();
+        poll_pending_batches(
+            &mut pending,
+            256,
+            |weight| *weight,
+            |items| {
+                calls.push(items.to_vec());
+                Ok(vec![true; items.len()])
+            },
+        )
+        .unwrap();
+        assert_eq!(calls, [vec![64, 64, 128], vec![1, 255], vec![17]]);
+        assert!(pending.is_empty());
+        let mut units: Vec<_> = (0..257).collect();
+        let mut sizes = Vec::new();
+        poll_pending_batches(
+            &mut units,
+            256,
+            |_| 1,
+            |items| {
+                sizes.push(items.len());
+                Ok(vec![false; items.len()])
+            },
+        )
+        .unwrap();
+        assert_eq!(sizes, [256, 1]);
+        assert_eq!(units, (0..257).collect::<Vec<_>>());
+    }
+
+    #[test]
+    fn batched_poll_every_rpc_failure_preserves_retry_ownership() {
+        for cut in 0..=4 {
+            let mut pending: Vec<usize> = (0..8).collect();
+            let mut calls = 0;
+            let mut successes = Vec::new();
+            let result = poll_pending_batches(
+                &mut pending,
+                256,
+                |_| 128,
+                |items| {
+                    let call = calls;
+                    calls += 1;
+                    if call == cut {
+                        return Err("BATCH_RPC_FAILURE".into());
+                    }
+                    successes.extend(items.iter().copied().filter(|item| item % 2 == 0));
+                    Ok(items.iter().map(|item| item % 2 == 0).collect())
+                },
+            );
+            assert_eq!(result.is_err(), cut < 4);
+            assert_eq!(
+                pending,
+                (0..8)
+                    .filter(|item| *item >= 2 * cut || item % 2 == 1)
+                    .collect::<Vec<_>>()
+            );
+            let retained = pending.clone();
+            let mut retry = Vec::new();
+            poll_pending_batches(
+                &mut pending,
+                256,
+                |_| 128,
+                |items| {
+                    retry.extend_from_slice(items);
+                    Ok(vec![true; items.len()])
+                },
+            )
+            .unwrap();
+            assert_eq!(retry, retained);
+            assert!(retry.iter().all(|item| !successes.contains(item)));
+            assert!(pending.is_empty());
+        }
+    }
+
+    #[test]
+    fn batched_poll_rejects_dimensions_before_any_rpc() {
+        for weights in [vec![0], vec![257], vec![1, usize::MAX]] {
+            let mut pending = weights.clone();
+            let mut calls = 0;
+            let result = poll_pending_batches(
+                &mut pending,
+                256,
+                |weight| *weight,
+                |_| {
+                    calls += 1;
+                    Ok(Vec::new())
+                },
+            );
+            assert_eq!(result.unwrap_err().to_string(), "CONFIRMATION_BATCH_LIMIT");
+            assert_eq!(calls, 0);
+            assert_eq!(pending, weights);
+        }
+        for limit in [0, 257, usize::MAX] {
+            assert!(poll_pending_batches(&mut vec![1], limit, |_| 1, |_| Ok(vec![true])).is_err());
+        }
+        let mut empty: Vec<usize> = Vec::new();
+        poll_pending_batches(&mut empty, 256, |_| 1, |_| Err("EMPTY_RPC".into())).unwrap();
+    }
+
+    #[test]
+    fn batched_poll_rejects_partial_or_extra_decisions_without_removal() {
+        for decisions in [vec![], vec![true], vec![true, true, true]] {
+            let mut pending = vec![0, 1, 2, 3];
+            let mut call = 0;
+            let result = poll_pending_batches(
+                &mut pending,
+                2,
+                |_| 1,
+                |_| {
+                    call += 1;
+                    if call == 1 {
+                        Ok(vec![false, true])
+                    } else {
+                        Ok(decisions.clone())
+                    }
+                },
+            );
+            assert_eq!(result.unwrap_err().to_string(), "CONFIRMATION_BATCH_RESULT");
+            assert_eq!(pending, [0, 2, 3]);
+        }
+    }
+
+    #[test]
+    fn batched_poll_matches_single_queries_without_reordering_deferred_work() {
+        for count in 0..=33 {
+            for limit in [1, 2, 7, 16, 256] {
+                let mut pending: Vec<_> = (0..count).collect();
+                let original = pending.clone();
+                let mut visited = Vec::new();
+                poll_pending_batches(
+                    &mut pending,
+                    limit,
+                    |_| 1,
+                    |items| {
+                        visited.extend_from_slice(items);
+                        Ok(items.iter().map(|item| item % 3 == 0).collect())
+                    },
+                )
+                .unwrap();
+                assert_eq!(visited, original);
+                assert_eq!(
+                    pending,
+                    original
+                        .into_iter()
+                        .filter(|item| item % 3 != 0)
+                        .collect::<Vec<_>>()
+                );
+            }
+        }
+    }
+
+    #[test]
+    fn batched_confirmation_validates_late_context_before_claiming_any_success() {
+        let settings = Settings::development_with_evaluation_policy(
+            Some(1_700_000_000),
+            "closed-round-all-eligible-min-v1",
+        )
+        .unwrap();
+        let queries: Vec<_> = (0..2)
+            .map(|index| ConfirmationQuery {
+                transaction: format!("{index:064x}"),
+                block: format!("{:064x}", index + 10),
+            })
+            .collect();
+        let rows: Vec<_> = queries.iter().enumerate().map(|(index, query)| json!({
+            "transaction":query.transaction,"included_block":query.block,
+            "network":hex::encode(settings.network()),"parameters":hex::encode(settings.parameters()),
+            "genesis":hex::encode(settings.genesis()),"reorged":false,"finalized":false,
+            "execution_authority":false,"policy":"installed-depth-and-required-work",
+            "observed_tip":format!("{:064x}", 99),"observed_height":9,
+            "active_generation":9,"observed_now":1_700_000_100,"confirmed":index==0,
+        })).collect();
+        let valid = json!({"observations":rows});
+        assert_eq!(
+            confirmation_outcomes(&valid, &queries, &settings).unwrap(),
+            [true, false]
+        );
+        for (key, value) in [
+            ("transaction", json!("wrong")),
+            ("included_block", json!("wrong")),
+            ("network", json!("wrong")),
+            ("parameters", json!("wrong")),
+            ("genesis", json!("wrong")),
+            ("reorged", json!(true)),
+            ("finalized", json!(true)),
+            ("execution_authority", json!(true)),
+            ("policy", json!("other")),
+            ("confirmed", Value::Null),
+            ("observed_tip", json!(format!("{:064x}", 100))),
+            ("observed_height", json!(10)),
+            ("active_generation", json!(10)),
+            ("observed_now", json!(1_700_000_101)),
+        ] {
+            let mut corrupt = valid.clone();
+            corrupt["observations"][1][key] = value;
+            let mut pending = vec![0, 1];
+            let result = poll_pending_batches(
+                &mut pending,
+                256,
+                |_| 1,
+                |_| confirmation_outcomes(&corrupt, &queries, &settings),
+            );
+            assert!(result.is_err(), "accepted changed {key}");
+            assert_eq!(pending, [0, 1]);
+        }
+        let mut swapped = valid.clone();
+        swapped["observations"].as_array_mut().unwrap().swap(0, 1);
+        assert!(confirmation_outcomes(&swapped, &queries, &settings).is_err());
+        assert!(confirmation_outcomes(&json!({"observations":[]}), &queries, &settings).is_err());
+        assert!(confirmation_outcomes(&valid, &[], &settings).is_err());
     }
 }
