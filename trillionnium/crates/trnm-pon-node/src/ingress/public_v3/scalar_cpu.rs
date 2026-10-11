@@ -131,8 +131,10 @@ impl PaidMutationCpuBudget {
     /// nonnegative free credit again on its first live sample makes that paid
     /// quantum unusable near depletion: start, abort, refund, repeat forever.
     /// Keep every debit and the original final refund; permit only this request's
-    /// first purchased quantum. Beyond it the original conservative shared-credit
-    /// gate applies. No request can borrow another request's quantum, reset its
+    /// purchased quantum, including after its cumulative CPU crosses that size.
+    /// Beyond it only its own deducted reserve is added back for continuation;
+    /// other owners' full reserves remain protected. No request can borrow another
+    /// request's quantum, reset its
     /// cumulative counter, admit another start in debt, or forgive unknown CPU.
     /// Raw stored credit can be negative while reservations remain outstanding,
     /// but adding back those reservations must still leave a nonnegative shared
@@ -152,11 +154,21 @@ impl PaidMutationCpuBudget {
             return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
         }
         let reserved_ns = (self.in_flight as i128) * i128::from(MUTATION_CPU_START_RESERVE_NS);
+        // credit_ns already excludes every complete start reservation while
+        // live samples separately debit actual CPU. Once this request has spent
+        // its first quantum, requiring credit_ns >= 0 would reserve its own
+        // quantum a second time. Add back only that already purchased reserve.
+        // For n live owners, C >= -R implies C + n*R >= (n-1)*R >= 0:
+        // the real shared balance and every other full reserve stay protected.
+        let continuation_credit_ns = if request_total_ns <= MUTATION_CPU_START_RESERVE_NS {
+            reserved_ns
+        } else {
+            i128::from(MUTATION_CPU_START_RESERVE_NS)
+        };
         match self.charge_live(now, measured) {
             Err(error)
                 if error.is(crate::ErrorCode::PublicMutationCpuBudget)
-                    && request_total_ns <= MUTATION_CPU_START_RESERVE_NS
-                    && self.credit_ns >= -reserved_ns =>
+                    && self.credit_ns >= -continuation_credit_ns =>
             {
                 Ok(())
             }
@@ -712,6 +724,109 @@ mod request_owned_reserve_tests {
         budget.credit_ns = i128::from(credit);
         let now = budget.updated;
         (budget, now)
+    }
+
+    #[test]
+    fn owned_quantum_remains_credited_when_request_crosses_its_first_quantum() {
+        let reserve = MUTATION_CPU_START_RESERVE_NS;
+        let initial = reserve + reserve / 2;
+        let (mut budget, now) = budget_with_credit(initial);
+        budget.reserve(now).unwrap();
+        for total in [reserve / 2, reserve, reserve + reserve / 4, initial] {
+            let paid = initial as i128 - reserve as i128 - budget.credit_ns;
+            budget
+                .charge_request_live(now, total - paid as u64, total)
+                .unwrap();
+            assert_eq!(
+                budget.credit_ns + i128::from(reserve),
+                i128::from(initial - total)
+            );
+            assert_eq!(budget.in_flight, 1);
+        }
+        let error = budget.charge_request_live(now, 1, initial + 1).unwrap_err();
+        assert!(error.is(crate::ErrorCode::PublicMutationCpuBudget));
+        assert!(budget.settle(now, Some(0)));
+        assert_eq!(budget.credit_ns, -1);
+        assert_eq!(budget.in_flight, 0);
+        assert!(budget.reserve(now).is_err());
+    }
+
+    #[test]
+    fn extended_request_cannot_spend_the_other_owned_quantum() {
+        let reserve = MUTATION_CPU_START_RESERVE_NS;
+        let initial = 2 * reserve + reserve / 2;
+        let (mut budget, now) = budget_with_credit(initial);
+        budget.reserve(now).unwrap();
+        budget.reserve(now).unwrap();
+        let first = reserve + reserve / 2;
+        budget.charge_request_live(now, first, first).unwrap();
+        assert_eq!(budget.credit_ns, -i128::from(reserve));
+        // The first owner spent its own quantum plus the free half. It cannot
+        // continue using the second owner's reservation, even by one ns.
+        let error = budget.charge_request_live(now, 1, first + 1).unwrap_err();
+        assert!(error.is(crate::ErrorCode::PublicMutationCpuBudget));
+        assert!(budget.settle(now, Some(0)));
+        assert_eq!(budget.credit_ns, -1);
+        assert_eq!(budget.in_flight, 1);
+        // The measured refused ns remains charged. The second owner can use
+        // only what the shared physical ledger still has, not erase that debt.
+        budget
+            .charge_request_live(now, reserve - 1, reserve - 1)
+            .unwrap();
+        assert_eq!(budget.credit_ns, -i128::from(reserve));
+        let error = budget.charge_request_live(now, 1, reserve).unwrap_err();
+        assert!(error.is(crate::ErrorCode::PublicMutationCpuBudget));
+        assert!(budget.settle(now, Some(0)));
+        assert_eq!(budget.credit_ns, -1);
+        assert_eq!(budget.in_flight, 0);
+        assert!(budget.reserve(now).is_err());
+    }
+
+    #[cfg(target_os = "linux")]
+    #[test]
+    fn actual_cpu_extension_uses_its_own_reserve_and_settles_exact_total() {
+        let reserve = MUTATION_CPU_START_RESERVE_NS;
+        let domain = ServiceMutationCpuDomain::standalone();
+        let operation = domain.begin().unwrap();
+        {
+            let mut budget = domain.budget.lock().unwrap();
+            // This test freezes refill; it does not grant an extra quantum.
+            budget.credit_ns = i128::from(reserve / 2);
+            budget.updated = Instant::now() + std::time::Duration::from_secs(30);
+        }
+        let deadline = Instant::now() + std::time::Duration::from_secs(2);
+        let mut value = std::hint::black_box(0x93ac_746bu64);
+        loop {
+            for _ in 0..128 {
+                value =
+                    std::hint::black_box(value.wrapping_mul(6364136223846793005).wrapping_add(1));
+            }
+            operation.checkpoint().unwrap();
+            let paid = operation.live.state.lock().unwrap().charged_ns;
+            if paid >= reserve + reserve / 10 {
+                break;
+            }
+            assert!(
+                Instant::now() < deadline,
+                "actual CPU probe exceeded original two-second bound"
+            );
+        }
+        std::hint::black_box(value);
+        let receipt = operation.finish();
+        let total = receipt.total_cpu_ns.unwrap();
+        assert!(total > reserve && total < reserve + reserve / 2);
+        assert_eq!(receipt.owner_cpu_ns, Some(total));
+        assert_eq!(receipt.scoped_worker_cpu_ns, Some(0));
+        assert_eq!(
+            receipt.live_paid_cpu_ns.unwrap() + receipt.residual_cpu_ns.unwrap(),
+            total
+        );
+        assert!(!receipt.live_refused);
+        assert!(!receipt.accounting_unavailable);
+        let budget = domain.budget.lock().unwrap();
+        assert_eq!(budget.credit_ns, i128::from(reserve + reserve / 2 - total));
+        assert_eq!(budget.in_flight, 0);
+        assert!(!budget.unavailable);
     }
 
     #[test]

@@ -119,3 +119,42 @@ then consumes an opaque exact-packet verification result through the same Node o
 Context/clock/state checks are repeated before commit; lock waiting and post-work
 cancellation are bounded. The exact remaining public-service limits and executed
 counterexamples are in [A2](../protocol/pon-nakamoto-v1/details/ADMISSION_SECURITY.md).
+
+
+## Owned CPU continuation past the purchased start quantum
+
+The current public r9 receiver and local service operation share the existing
+volatile scalar CPU owner. A start still deducts exactly 100,000,000ns and opens
+one of at most two reservations. Burst, refill, deadlines, connection/lane caps,
+work verification, source authority and final settlement remain unchanged.
+
+Let `C` be stored free credit, `n` the active reservation count and `R` the fixed
+start reserve. All live samples debit actual owner-plus-worker CPU immediately;
+the complete start reserves are returned only at settlement. Thus the shared
+balance before those returns is represented by `C + n*R`. The existing first
+quantum rule still requires this balance to be nonnegative. After the request
+crosses `R`, continuation now requires `C >= -R`, not `C >= 0`. It adds back only
+that request's already purchased reserve; all other complete reserves remain
+protected because `C + n*R >= (n-1)*R >= 0`. This eliminates a repeated own-reserve
+constraint, not a second CPU charge or an increase in actual resource supply.
+
+A request that exhausts its own quantum and all unreserved credit still refuses.
+Known CPU from the refusing sample and final residual remains charged. Unknown
+clocks, lost reservations, counter overflow, stopped requests and genuine shared
+deficits retain their original refusal/fencing behavior. New starts cannot spend
+negative stored credit. No accounting lock spans native work and no completed
+native result is revoked by final metering. Final credit is still initial credit
+plus bounded refill minus actual measured CPU, subject to the original ceiling.
+
+The original four owned-quantum controls remain. Added native controls are:
+
+- `ingress::public_v3::scalar_cpu::request_owned_reserve_tests::owned_quantum_remains_credited_when_request_crosses_its_first_quantum`
+- `ingress::public_v3::scalar_cpu::request_owned_reserve_tests::extended_request_cannot_spend_the_other_owned_quantum`
+- `ingress::public_v3::scalar_cpu::request_owned_reserve_tests::actual_cpu_extension_uses_its_own_reserve_and_settles_exact_total`
+
+The Linux thread-CPU control actually crosses the first quantum with frozen
+refill; exact balance checks retain one-nanosecond debt and the other owner's
+reserve. These controls are required alongside the unchanged native public
+service/hostile-business tests and complete baseline. A finite loopback pass
+is not independent WAN operation, minimum physical attack cost, general Sybil
+fairness or saturated confirmed TPS. No readiness flag is promoted.
