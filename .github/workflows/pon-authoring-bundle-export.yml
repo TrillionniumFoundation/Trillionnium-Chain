@@ -11,14 +11,14 @@ jobs:
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
-          ref: 563e461656feed66a0b9ddcf99b22f2f1d39d627
+          ref: 1b63ead7184df854ff6fb2047f33b8e876963aca
           fetch-depth: 0
           persist-credentials: false
           path: Trillionnium-Chain
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
           repository: TrillionniumFoundation/hepta-private-ci
-          ref: e518fcdb6b25e2d6ef1320f80842d3bb8a606230
+          ref: d8717cd0f5ef84b0488ac3d0c589278274e09730
           fetch-depth: 0
           persist-credentials: false
           path: hepta-private-ci
@@ -28,8 +28,8 @@ jobs:
           set -euo pipefail
           out="$RUNNER_TEMP/exact-sources"
           mkdir -p "$out"
-          test "$(git -C Trillionnium-Chain rev-parse HEAD)" = 563e461656feed66a0b9ddcf99b22f2f1d39d627
-          test "$(git -C hepta-private-ci rev-parse HEAD)" = e518fcdb6b25e2d6ef1320f80842d3bb8a606230
+          test "$(git -C Trillionnium-Chain rev-parse HEAD)" = 1b63ead7184df854ff6fb2047f33b8e876963aca
+          test "$(git -C hepta-private-ci rev-parse HEAD)" = d8717cd0f5ef84b0488ac3d0c589278274e09730
           (cd Trillionnium-Chain && bash scripts/project-preflight.sh --audit) > "$out/preflight.log" 2>&1
           for repo in Trillionnium-Chain hepta-private-ci; do
             test -z "$(git -C "$repo" status --porcelain)"
