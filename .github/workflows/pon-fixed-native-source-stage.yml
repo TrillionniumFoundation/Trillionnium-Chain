@@ -13,12 +13,26 @@ jobs:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
           fetch-depth: 0
+      - name: Select an installed Python supporting the original preflight
+        shell: bash
+        run: |
+          set -euo pipefail
+          for directory in "$RUNNER_TOOL_CACHE"/Python/*/x64/bin; do
+            if test -x "$directory/python3" && "$directory/python3" -c 'import tomllib' 2>/dev/null; then
+              "$directory/python3" --version
+              printf '%s\n' "$directory" >> "$GITHUB_PATH"
+              exit 0
+            fi
+          done
+          echo 'Original preflight requires an installed Python with tomllib' >&2
+          exit 1
       - name: Apply only the byte-pinned native source change on the fixed current parent
         shell: bash
         run: |
           set -euo pipefail
           out="$RUNNER_TEMP/pon-fixed-native-source"
           mkdir "$out"
+          python3 --version > "$out/python.txt"
           cp .ci/pon-fixed-native-reads.patch.gz "$out/patch.gz"
           echo "682a49f3046fd6327419af894e74ee530aec7171defe66c6600ebf69bb742e22  $out/patch.gz" | sha256sum -c -
           gzip -dc "$out/patch.gz" > "$out/runtime.patch"
@@ -54,7 +68,7 @@ jobs:
           git ls-remote origin refs/heads/fix/pon-bounded-history-fields-20261011 > "$out/published.txt"
           test "$(cut -f1 "$out/published.txt")" = "$(git rev-parse HEAD)"
           printf '%s\n' 'Exact source transport only. Local native controls and hosted final-source qualification have separate evidence. No compiler/test result, minimum work cost, Sybil fairness, independent adoption, physical power loss, long-term DA or WAN/TPS is created by this job. The tooling patch/workflow are absent from the published product tree.' > "$out/SCOPE.txt"
-          (cd "$out" && sha256sum runtime.patch source.txt commit.txt published.txt SCOPE.txt > SHA256SUMS)
+          (cd "$out" && sha256sum runtime.patch source.txt commit.txt published.txt python.txt SCOPE.txt > SHA256SUMS)
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:
