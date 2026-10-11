@@ -1,0 +1,64 @@
+name: PoN fixed native reader source stage
+on:
+  push:
+    branches: [tooling/pon-fixed-native-source-stage-20261011]
+    paths: [.github/workflows/pon-fixed-native-source-stage.yml, .ci/pon-fixed-native-reads.patch.gz]
+permissions:
+  contents: write
+jobs:
+  publish:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          fetch-depth: 0
+      - name: Apply only the byte-pinned native source change on the fixed current parent
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/pon-fixed-native-source"
+          mkdir "$out"
+          cp .ci/pon-fixed-native-reads.patch.gz "$out/patch.gz"
+          echo "682a49f3046fd6327419af894e74ee530aec7171defe66c6600ebf69bb742e22  $out/patch.gz" | sha256sum -c -
+          gzip -dc "$out/patch.gz" > "$out/runtime.patch"
+          echo "aef8c0cec1a294b3268499e865b01a2f67f8b35bae3388eb9f9a85032032b0a3  $out/runtime.patch" | sha256sum -c -
+          git switch --detach 25d806087a74778262edddee5fcb48ef651e9265
+          test "$(git rev-parse HEAD^{tree})" = 74357ca9bc6b930a899ebafe2253de4b5eed9dda
+          bash scripts/project-preflight.sh --audit
+          git apply --check "$out/runtime.patch"
+          git apply "$out/runtime.patch"
+          git diff --check
+          python3 - <<'PY'
+          import subprocess
+          expected = {
+            'trillionnium/crates/trnm-pon-node/src/store.rs': 'b97c7862ca6da794b4f7e1c72b25d0bb9e6f89c5',
+            'trillionnium/crates/trnm-pon-node/src/store/history_page.rs': 'c2bb275a22dedc7b4c8745f32e9471cb9903380c',
+            'docs/modules/M07_STATE_STORAGE_TECHNICAL_SPEC_V1.md': '37395fe845efa657fc735e75fb7174ce93295c16',
+          }
+          changed = subprocess.check_output(['git','diff','--name-only'],text=True).splitlines()
+          assert set(changed) == set(expected), changed
+          for path, digest in expected.items():
+              actual = subprocess.check_output(['git','hash-object',path],text=True).strip()
+              assert actual == digest, (path, actual)
+          PY
+          bash scripts/project-preflight.sh --audit
+          git add docs/modules/M07_STATE_STORAGE_TECHNICAL_SPEC_V1.md trillionnium/crates/trnm-pon-node/src/store.rs trillionnium/crates/trnm-pon-node/src/store/history_page.rs
+          git -c user.name=OpenAI -c user.email=noreply@openai.com commit -m 'fix(pon): bound ordinary retained-field copies without changing verification' -m 'Continue exact PR292. One existing storage owner bounds fixed identity/work copies across ordinary records, history projections, active tip and context. Preserve SQL types, NULL/empty distinction, original conversion and shape-error order, complete State/history checks, schemas, budgets and final-use authority. Five additive native controls retain actual SQL and both-backend node recovery. Source publication is not native or independent acceptance; original exact-source four lanes, full baseline, capacity/history and new Hepta pair remain required.' -m 'Signed-off-by: OpenAI <noreply@openai.com>'
+          git rev-parse HEAD HEAD^{tree} > "$out/source.txt"
+          git show --format=fuller --stat HEAD > "$out/commit.txt"
+          test "$(git show -s --format=%P HEAD)" = 25d806087a74778262edddee5fcb48ef651e9265
+          test -z "$(git status --porcelain)"
+          bash scripts/project-preflight.sh --audit
+          git push origin HEAD:refs/heads/fix/pon-bounded-history-fields-20261011
+          git ls-remote origin refs/heads/fix/pon-bounded-history-fields-20261011 > "$out/published.txt"
+          test "$(cut -f1 "$out/published.txt")" = "$(git rev-parse HEAD)"
+          printf '%s\n' 'Exact source transport only. Local native controls and hosted final-source qualification have separate evidence. No compiler/test result, minimum work cost, Sybil fairness, independent adoption, physical power loss, long-term DA or WAN/TPS is created by this job. The tooling patch/workflow are absent from the published product tree.' > "$out/SCOPE.txt"
+          (cd "$out" && sha256sum runtime.patch source.txt commit.txt published.txt SCOPE.txt > SHA256SUMS)
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: pon-fixed-native-source-${{ github.run_id }}
+          path: ${{ runner.temp }}/pon-fixed-native-source
+          if-no-files-found: error
+          retention-days: 7
