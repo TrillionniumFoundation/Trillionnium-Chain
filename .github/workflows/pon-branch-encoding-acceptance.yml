@@ -2,6 +2,7 @@ name: PoN branch encoding exact-source acceptance
 on:
   pull_request:
     paths:
+      - trillionnium/crates/trnm-protocol/src/pon_wire.rs
       - trillionnium/crates/trnm-pon-node/src/consensus.rs
       - trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs
       - trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs
@@ -58,6 +59,22 @@ jobs:
         run: |
           set -euo pipefail
           cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check 2>&1 | tee "$OUT/format.log"
+      - name: Require exact state-root grammar and unchanged complete-state errors
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object trillionnium/crates/trnm-protocol/src/pon_wire.rs)" = 1a51dea27dd3fa66689dbbb0e845b5ec26da21a4
+          cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-protocol --lib pon_wire:: -- --show-output --test-threads=1 2>&1 | tee "$OUT/state-wire.log"
+          grep -E '^test result: ok\. 11 passed; 0 failed; 1 ignored;' "$OUT/state-wire.log"
+          for name in state_node_single_buffer_matches_original_wire state_empty_constants_match_all_depths_and_parallel_callers state_root_constants_do_not_cache_values_or_failures; do
+            selector="pon_wire::streamed_state_root_tests::$name"
+            cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-protocol --lib "$selector" -- --exact --show-output --test-threads=1 2>&1 | tee "$OUT/$name.log"
+            python3 scripts/ci/check_required_native_test.py "$OUT/$name.log" --test "$selector"
+          done
+          selector=pon_wire::streamed_state_root_tests::state_node_and_complete_root_paired_cost_observation
+          cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-protocol --lib "$selector" -- --exact --ignored --show-output --test-threads=1 2>&1 | tee "$OUT/state-root-cost.log"
+          python3 scripts/ci/check_required_native_test.py "$OUT/state-root-cost.log" --test "$selector"
+          cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-protocol --all-targets --all-features -- -D warnings 2>&1 | tee "$OUT/state-wire-clippy.log"
       - name: Execute entire retained primitive suite and exact new controls
         shell: bash
         run: |

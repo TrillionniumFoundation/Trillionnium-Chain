@@ -310,16 +310,39 @@ where
     state_root_from_hashes(leaves).map_err(StateRootInputError::Wire)
 }
 
+// Exact H("state-node", left, right) grammar in one 94-byte buffer. The
+// generic domain hash remains the reference for all other protocol objects.
+// No stored state, root verdict, clock, profile or permission enters this cache.
+fn state_node_hash(left: &Hash, right: &Hash) -> Hash {
+    let mut encoded = [0; 94];
+    encoded[..26].copy_from_slice(b"TRNM-PON1\0\x0a\0state-node\x20\0\0\0");
+    encoded[26..58].copy_from_slice(left);
+    encoded[58..62].copy_from_slice(&32u32.to_le_bytes());
+    encoded[62..].copy_from_slice(right);
+    Sha256::digest(encoded).into()
+}
+
+// One immutable 8,224-byte value table per process (plus OnceLock metadata).
+// Borrow it: rebuilding or copying 257 constants on every complete root is not
+// input validation. Every actual key/value and duplicate/limit check stays live.
+fn state_empty_hashes() -> &'static [Hash; 257] {
+    static EMPTY: std::sync::OnceLock<[Hash; 257]> = std::sync::OnceLock::new();
+    EMPTY.get_or_init(|| {
+        let mut empty = [[0; 32]; 257];
+        empty[256] = hash(b"state-empty", &[]);
+        for depth in (0..256).rev() {
+            empty[depth] = state_node_hash(&empty[depth + 1], &empty[depth + 1]);
+        }
+        empty
+    })
+}
+
 fn state_root_from_hashes(mut leaves: Vec<(Hash, Hash)>) -> Result<Hash, WireError> {
     leaves.sort_unstable_by_key(|x| x.0);
     if leaves.windows(2).any(|p| p[0].0 == p[1].0) {
         return Err(WireError::KeyCollision);
     }
-    let mut empty = [[0; 32]; 257];
-    empty[256] = hash(b"state-empty", &[]);
-    for d in (0..256).rev() {
-        empty[d] = hash(b"state-node", &[&empty[d + 1], &empty[d + 1]])
-    }
+    let empty = state_empty_hashes();
     fn root(xs: &[(Hash, Hash)], depth: usize, empty: &[Hash; 257]) -> Hash {
         if xs.is_empty() {
             return empty[depth];
@@ -328,15 +351,12 @@ fn state_root_from_hashes(mut leaves: Vec<(Hash, Hash)>) -> Result<Hash, WireErr
             return xs[0].1;
         }
         let split = xs.partition_point(|x| (x.0[depth / 8] & (128 >> (depth % 8))) == 0);
-        hash(
-            b"state-node",
-            &[
-                &root(&xs[..split], depth + 1, empty),
-                &root(&xs[split..], depth + 1, empty),
-            ],
+        state_node_hash(
+            &root(&xs[..split], depth + 1, empty),
+            &root(&xs[split..], depth + 1, empty),
         )
     }
-    Ok(root(&leaves, 0, &empty))
+    Ok(root(&leaves, 0, empty))
 }
 #[cfg(test)]
 mod tests {
@@ -590,5 +610,137 @@ mod streamed_state_root_tests {
             original_state_root(&values).unwrap()
         );
         assert_eq!(live.get(), 0);
+    }
+
+    #[test]
+    fn state_node_single_buffer_matches_original_wire() {
+        for bit in 0..512 {
+            let mut left = [0; 32];
+            let mut right = [0; 32];
+            if bit < 256 {
+                left[bit / 8] = 1 << (bit % 8);
+            } else {
+                right[(bit - 256) / 8] = 1 << (bit % 8);
+            }
+            assert_eq!(
+                state_node_hash(&left, &right),
+                hash(b"state-node", &[&left, &right])
+            );
+            assert_eq!(
+                state_node_hash(&right, &left),
+                hash(b"state-node", &[&right, &left])
+            );
+        }
+        for seed in 0..1024u64 {
+            let left = hash(b"state-node-test-left", &[&seed.to_le_bytes()]);
+            let right = hash(b"state-node-test-right", &[&seed.to_le_bytes()]);
+            assert_eq!(
+                state_node_hash(&left, &right),
+                hash(b"state-node", &[&left, &right])
+            );
+        }
+        for left in [[0; 32], [255; 32], [85; 32], [170; 32]] {
+            for right in [[0; 32], [255; 32], [85; 32], [170; 32]] {
+                assert_eq!(
+                    state_node_hash(&left, &right),
+                    hash(b"state-node", &[&left, &right])
+                );
+            }
+        }
+    }
+
+    #[test]
+    fn state_empty_constants_match_all_depths_and_parallel_callers() {
+        let mut expected = [[0; 32]; 257];
+        expected[256] = hash(b"state-empty", &[]);
+        for depth in (0..256).rev() {
+            expected[depth] = hash(
+                b"state-node",
+                &[&expected[depth + 1], &expected[depth + 1]],
+            );
+        }
+        assert_eq!(state_empty_hashes(), &expected);
+        std::thread::scope(|scope| {
+            for _ in 0..8 {
+                scope.spawn(|| {
+                    for _ in 0..16 {
+                        assert_eq!(state_empty_hashes(), &expected);
+                    }
+                });
+            }
+        });
+        assert_eq!(state_root(&BTreeMap::new()).unwrap(), expected[0]);
+    }
+
+    #[test]
+    fn state_root_constants_do_not_cache_values_or_failures() {
+        let mut values = fixture(3);
+        let initial = state_root(&values).unwrap();
+        let key = b"key-00000".to_vec();
+        let original = values.get(&key).unwrap().clone();
+        values.insert(key.clone(), Vec::new());
+        let present_empty = state_root(&values).unwrap();
+        assert_ne!(present_empty, initial);
+        assert_eq!(present_empty, original_state_root(&values).unwrap());
+        values.remove(&key);
+        assert_ne!(state_root(&values).unwrap(), present_empty);
+        values.insert(key.clone(), vec![0; 4097]);
+        assert_eq!(state_root(&values), Err(WireError::Limit));
+        values.insert(key, original);
+        assert_eq!(state_root(&values).unwrap(), initial);
+        let rows = [Ok((b"k".as_slice(), b"v".as_slice())), Err("cancelled")];
+        assert_eq!(
+            state_root_from_entries(rows),
+            Err(StateRootInputError::Input("cancelled"))
+        );
+        let rows = [Ok::<_, ()>((b"k", b"v")), Ok((b"k", b"w"))];
+        assert_eq!(
+            state_root_from_entries(rows),
+            Err(StateRootInputError::Wire(WireError::KeyCollision))
+        );
+        assert_eq!(state_root(&values).unwrap(), initial);
+    }
+
+    #[test]
+    #[ignore = "explicit complete-root paired observation; not Node or WAN throughput"]
+    fn state_node_and_complete_root_paired_cost_observation() {
+        use std::hint::black_box;
+        use std::time::Instant;
+
+        if cfg!(debug_assertions) {
+            panic!("run this observation in release mode");
+        }
+        let values = fixture(33);
+        let expected = original_state_root(&values).unwrap();
+        assert_eq!(state_root(&values).unwrap(), expected);
+        for pair in 0..8 {
+            let order = if pair % 2 == 0 {
+                [false, true]
+            } else {
+                [true, false]
+            };
+            for optimized in order {
+                let started = Instant::now();
+                let mut observed = [0; 32];
+                for _ in 0..16 {
+                    observed = if optimized {
+                        state_root(black_box(&values)).unwrap()
+                    } else {
+                        original_state_root(black_box(&values)).unwrap()
+                    };
+                    black_box(observed);
+                }
+                let elapsed_ns = started.elapsed().as_nanos();
+                assert_eq!(observed, expected);
+                let arm = if optimized {
+                    "single-buffer-constants"
+                } else {
+                    "original"
+                };
+                println!(
+                    "pon_complete_state_root_cost_v1 {{\"pair\":{pair},\"arm\":\"{arm}\",\"roots\":16,\"keys\":33,\"elapsed_ns\":{elapsed_ns},\"root\":{observed:?},\"warm_constants\":true,\"whole_node_performance_qualified\":false}}"
+                );
+            }
+        }
     }
 }

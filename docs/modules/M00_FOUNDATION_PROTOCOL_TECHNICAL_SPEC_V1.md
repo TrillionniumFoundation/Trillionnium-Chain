@@ -79,3 +79,50 @@ The exact continuation is specified in [native execution](../protocol/pon-nakamo
 
 - `trillionnium/crates/trnm-protocol/src/pon_state.rs::mixed_batches_match_full_builder_and_inverse_restores_predecessor`.
 - `trillionnium/crates/trnm-protocol/src/pon_state.rs::all_deletions_return_empty_and_values_remain_bounded`.
+
+## Complete state-root constants and exact node encoding
+
+M00 retains the full canonical root operation and its existing M06/M07 consumers.
+The private node encoder writes the exact94-byte preimage of
+`H("state-node", left, right)` into one fixed buffer: the original domain,
+LE16 tag length, ten-byte tag, LE32 child lengths and ordered32-byte children.
+The generic domain hash and all header, transaction, work and leaf encodings are
+unchanged. The full root borrows one immutable257-entry empty-subtree table,
+derived once from the same compiled grammar. Its value payload is8,224 bytes;
+OnceLock metadata, stack, allocator and RSS are separate accounting domains.
+
+No State, SQL row, block identifier, clock, currentness verdict or successful
+validation is cached. Every input row, limit, duplicate hash path, canonical
+value check and complete root reconstruction remains required. Empty values
+remain distinct from absent leaves. Failures and iterator cancellation return no
+partial root. Single-writer transactions, actual stored-byte rereads, pre-COMMIT
+fences and cold recovery are unchanged. This is not incremental full-history
+validation, a larger protocol state limit or a new authenticated storage schema.
+
+All original codec and streamed-root tests and the complete original root
+algorithm remain unchanged. The existing module adds exact single-bit/order and
+deterministic-pair encoding checks, all257 empty depths with concurrent readers,
+and warmed-root value/absence/overflow/cancellation/duplicate controls:
+
+- `pon_wire::streamed_state_root_tests::state_node_single_buffer_matches_original_wire`.
+- `pon_wire::streamed_state_root_tests::state_empty_constants_match_all_depths_and_parallel_callers`.
+- `pon_wire::streamed_state_root_tests::state_root_constants_do_not_cache_values_or_failures`.
+
+The explicit release-only
+`pon_wire::streamed_state_root_tests::state_node_and_complete_root_paired_cost_observation`
+compares16 complete33-key roots per arm in eight alternating-order pairs. Both
+arms read the same unchanged map and must match the independently reconstructed
+root. The new arm is warmed before timing; the old arm rebuilds its own constants
+on every call as originally implemented. Raw time is descriptive, not a speed
+threshold, public-service result, saturated TPS or a claim of physical minimum
+work cost. No result is inferred before the named native test actually executes.
+
+The existing four-lane branch-encoding workflow binds the exact protocol source,
+runs all retained wire tests, each new nonempty selector, the explicit paired
+observation and strict all-target/all-feature Clippy. Original public-service
+workloads, deadlines, CPU reserves, capacity/history campaigns and complete
+baselines remain mandatory on each final source and actual main merge. The
+Hepta consumer must pin that exact tuple and rerun its own retained checks.
+Prior failures and cancellations remain separate; no independent model adoption,
+future-task custody, physical power loss, DA or WAN acceptance follows from this
+encoding change.
