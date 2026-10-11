@@ -48,8 +48,8 @@ jobs:
             args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_MERGE")
           fi
           python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$out/source.json"
-          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs)" = e8f455d2b31daf753928d566240c26a881baa99a
-          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_primitive_tests.rs)" = 4b9264432fcbd2d727a10ec9a60072f06dbe51ba
+          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs)" = 9c91cd34673d1eae45acc9d0fcc28d506ff031c6
+          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_primitive_tests.rs)" = 360c85035291a3e012830fa89ed1a3eafb0626ee
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs)" = 2288fa37f6b0d42b83f9fa47c095785aed0a1369
           bash scripts/project-preflight.sh --audit
       - name: Install pinned native compiler and lint tools
@@ -63,7 +63,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          test "$(git hash-object trillionnium/crates/trnm-protocol/src/pon_wire.rs)" = b0134c9b958019915e62a2188a8c90177ff01435
+          test "$(git hash-object trillionnium/crates/trnm-protocol/src/pon_wire.rs)" = 63a5c159e22fb778fc340fb889a956956415ce15
           cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-protocol --lib pon_wire:: -- --show-output --test-threads=1 2>&1 | tee "$OUT/state-wire.log"
           grep -E '^test result: ok\. 11 passed; 0 failed; 1 ignored;' "$OUT/state-wire.log"
           for name in state_node_single_buffer_matches_original_wire state_empty_constants_match_all_depths_and_parallel_callers state_root_constants_do_not_cache_values_or_failures; do
@@ -80,7 +80,7 @@ jobs:
         run: |
           set -euo pipefail
           cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib account_archive_prototype::native_primitive_tests -- --show-output --test-threads=1 2>&1 | tee "$OUT/primitive.log"
-          grep -E '^test result: ok\. 6 passed; 0 failed; 2 ignored;' "$OUT/primitive.log"
+          grep -E '^test result: ok\. 8 passed; 0 failed; 3 ignored;' "$OUT/primitive.log"
           for name in native_branch_single_buffer_matches_original_wire native_branch_single_buffer_preserves_every_lift_depth; do
             selector="account_archive_prototype::native_primitive_tests::$name"
             cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib "$selector" -- --exact --show-output --test-threads=1 2>&1 | tee "$OUT/$name.log"
@@ -89,6 +89,19 @@ jobs:
           selector=account_archive_prototype::native_primitive_tests::native_branch_single_buffer_cost_observation
           cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib "$selector" -- --exact --ignored --show-output --test-threads=1 2>&1 | tee "$OUT/cost.log"
           python3 scripts/ci/check_required_native_test.py "$OUT/cost.log" --test "$selector"
+      - name: Require shared account crypto and retain both build-profile observations
+        shell: bash
+        run: |
+          set -euo pipefail
+          for profile in test release; do
+            mode=()
+            if test "$profile" = release; then mode=(--release); fi
+            for name in shared_branch_kernel_matches_storage_local_vectors shared_branch_kernel_preserves_complete_account_roots shared_branch_kernel_complete_call_cost; do
+              selector="account_archive_prototype::native_primitive_tests::$name"
+              cargo +1.95.0 test "${mode[@]}" --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib "$selector" -- --exact --include-ignored --show-output --test-threads=1 2>&1 | tee "$OUT/$profile-$name.log"
+              python3 scripts/ci/check_required_native_test.py "$OUT/$profile-$name.log" --test "$selector"
+            done
+          done
       - name: Verify immutable constants without caching stored-state verdicts
         shell: bash
         run: |
