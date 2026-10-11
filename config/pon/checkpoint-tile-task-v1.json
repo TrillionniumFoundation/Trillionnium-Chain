@@ -1,0 +1,21 @@
+{
+  "schema": "checkpoint-tile-task-registry-v1",
+  "profile": "signed-checkpoint-tile-maintenance-dev-v1",
+  "consensus_revision": 10,
+  "production_eligible": false,
+  "hardness_accepted": false,
+  "genuine_demand_verified": false,
+  "full_forward_verified": false,
+  "marginal_contribution_accepted": false,
+  "public_network_ready": false,
+  "maintenance_only": true,
+  "useful_output_limit": 0,
+  "full_original_replay_on_open": true,
+  "standalone_renew_disabled": true,
+  "atomic_overlap_window": true,
+  "material_policy_bytes_max": 32768,
+  "checkpoint_bytes_max": 536870912,
+  "activation_bytes_max": 1048576,
+  "wire_commands_reused": [18, 20, 21, 22],
+  "source_record_semantics_changed": false
+}
