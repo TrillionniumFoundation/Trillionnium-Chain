@@ -1,0 +1,40 @@
+name: PoN exact source bundle export
+on:
+  push:
+    branches: [ci/pon-source-bundle-20261011]
+    paths: [.github/workflows/pon-source-bundle-export.yml]
+permissions:
+  contents: read
+jobs:
+  export:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: 7837d7d65acb80a67f900f7b0bad050420e0d722
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify and export the unchanged source without credentials or runtime data
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = 7837d7d65acb80a67f900f7b0bad050420e0d722
+          test "$(git rev-parse HEAD^{tree})" = 9e3e7af079904230e36cb336da7e9cd2849e1905
+          bash scripts/project-preflight.sh --audit
+          out="$RUNNER_TEMP/pon-source-bundle"
+          mkdir "$out"
+          git rev-parse HEAD HEAD^{tree} > "$out/source.txt"
+          git ls-tree -r HEAD > "$out/tree.txt"
+          git bundle create "$out/source.bundle" HEAD
+          git bundle verify "$out/source.bundle"
+          test "$(wc -c < "$out/source.bundle")" -lt 1073741824
+          test -z "$(git status --porcelain)"
+          (cd "$out" && sha256sum source.bundle source.txt tree.txt > SHA256SUMS)
+          printf 'Read-only exact-source export. No native execution or new qualification is supplied by this bundle. Product source remains unchanged; this maintenance workflow is not part of PR290.\n' > "$out/SCOPE.txt"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: pon-source-bundle-7837d7d65acb80a67f900f7b0bad050420e0d722
+          path: ${{ runner.temp }}/pon-source-bundle
+          if-no-files-found: error
+          retention-days: 3
