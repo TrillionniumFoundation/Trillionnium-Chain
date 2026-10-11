@@ -595,3 +595,44 @@ The shared-dispatch regression
 `context_cancellation_precedes_work_verifier_and_preserves_public_retry`
 checks that an interrupted parent context calls no full-work verifier, writes no
 block and permits a later complete ordinary retry.
+
+
+## Consumed start reservations and the single shared CPU balance
+
+The original 2,000,000,000ns burst, 250,000,000ns/second refill,
+100,000,000ns start reservation and two-worker limit are unchanged. This is a
+correction inside the existing volatile r9 scalar owner, not a new work profile,
+caller identity lane, durable ledger, CPU grant or admission difficulty.
+
+Let C be the original stored credit (which excludes every complete outstanding
+start reservation), n the active request count, R the start quantum, and t_i the
+actual cumulative owner-plus-scoped-worker CPU sampled for request i. The owner
+now retains the bounded scalar S = sum_i min(R,t_i). The actual budget balance is
+C+nR. Credit not promised to unfinished work is C+S; the still-unused promises
+sum to nR-S. A new start requires C+S >= R and an available original worker slot.
+A continuation requires C+S >= 0 after retaining its complete newly observed debit.
+A consumed promise is not frozen a second time merely because t_i crossed R.
+An unused promise of another request never becomes spendable by this request.
+
+Each actual LiveRequestCpu owner supplies its checked monotonic cumulative sample;
+remote payloads and observer JSON cannot supply t_i. A live or final sample m
+increments S by min(R,t_i)-min(R,t_i-m), and subtracts all m from C. Refill still
+caps C at burst-nR. Settlement joins the exact already-sampled total and original
+residual O+C CPU, removes min(R,t_i) from S, returns R-residual to C and releases
+one slot. It neither refunds sampled CPU nor counts nested Work twice. Missing
+samples, impossible consumed-reserve sums, duplicate/unowned settlement, lost
+owner count, poisoned locks and overflow remain unavailable; no such failure
+can mint a start. Late known CPU still remains a debit, never a retroactive change
+to an already committed Native outcome. The old observed stored_credit_ns is
+still raw C, not a spend permission or a standalone proof of global exhaustion.
+
+The existing scalar CPU regression inventory retains its original assertions and
+adds the concrete post-quantum refusal counterexample, two-request isolation,
+refill clipping, exact final/residual return, impossible sample joins and a
+200,000-step independently represented remaining-promise comparison. The reference
+tracks actual balance and per-request unused promises rather than reproducing the
+C/S implementation. These are finite arithmetic/native owner controls; neither
+physical minimum attack cost, public Sybil fairness, sustained independently
+operated exhaustion, future-model efficacy, power-loss nor saturated WAN TPS follows.
+The full existing network-only business, actual-depletion/recovery, source/head
+and prospective-main-merge, capacity/history and paired Hepta gates remain required.

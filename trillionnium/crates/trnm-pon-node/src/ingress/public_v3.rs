@@ -284,7 +284,7 @@ impl PaidMutationCpuPermit {
             .and_then(|(total, paid)| total.checked_sub(paid));
         let live_refused = self.live.was_refused();
         let budget_settled = if let Ok(mut budget) = self.budget.lock() {
-            budget.settle(Instant::now(), residual)
+            budget.settle(Instant::now(), residual, already_charged)
         } else {
             false
         };
@@ -327,7 +327,7 @@ impl Drop for PaidMutationCpuPermit {
         if !self.settled {
             self.live.finish_thread();
             if let Ok(mut budget) = self.budget.lock() {
-                budget.settle(Instant::now(), None);
+                budget.settle(Instant::now(), None, None);
             }
         }
     }
@@ -3724,13 +3724,13 @@ mod tests {
             "PUBLIC_MUTATION_CPU_BUDGET"
         );
         // Nonpreemptive execution can exceed its start reservation; debit actual CPU.
-        b.settle(now, Some(MUTATION_CPU_BURST_NS + 1_000_000_000));
-        b.settle(now, Some(1_000_000_000));
+        b.settle(now, Some(MUTATION_CPU_BURST_NS + 1_000_000_000), Some(0));
+        b.settle(now, Some(1_000_000_000), Some(0));
         assert_eq!(b.in_flight, 0);
         assert_eq!(b.credit_ns, -2_000_000_000);
         assert!(b.reserve(now + Duration::from_secs(8)).is_err());
         b.reserve(now + Duration::from_secs(9)).unwrap();
-        b.settle(now + Duration::from_secs(9), Some(0));
+        b.settle(now + Duration::from_secs(9), Some(0), Some(0));
         assert_eq!(b.credit_ns, 250_000_000);
         b.refill(now + Duration::from_secs(100));
         assert_eq!(b.credit_ns, i128::from(MUTATION_CPU_BURST_NS));
@@ -3755,7 +3755,7 @@ mod tests {
             i128::from(MUTATION_CPU_BURST_NS - MUTATION_CPU_START_RESERVE_NS - 55_000_000)
         );
         // The complete O+C is 80ms: only its unpaid 25ms goes to settle.
-        budget.settle(now, Some(80_000_000 - 55_000_000));
+        budget.settle(now, Some(80_000_000 - 55_000_000), Some(0));
         assert_eq!(
             budget.credit_ns,
             i128::from(MUTATION_CPU_BURST_NS - 80_000_000)
@@ -4572,7 +4572,7 @@ mod tests {
         let mut budget = PaidMutationCpuBudget::new();
         let now = budget.updated;
         budget.reserve(now).unwrap();
-        budget.settle(now, None);
+        budget.settle(now, None, Some(0));
         assert_eq!(budget.in_flight, 0);
         assert_eq!(
             budget

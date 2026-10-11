@@ -24,6 +24,10 @@ pub(super) struct PaidMutationCpuBudget {
     pub(super) credit_ns: i128,
     pub(super) updated: Instant,
     pub(super) in_flight: usize,
+    // Sum min(start reserve, already sampled CPU) over outstanding requests.
+    // Raw credit still excludes every full reserve until its final settlement;
+    // sampled portions are no longer promises to protect from another start.
+    spent_start_reserves_ns: u64,
     pub(super) unavailable: bool,
 }
 impl PaidMutationCpuBudget {
@@ -32,6 +36,7 @@ impl PaidMutationCpuBudget {
             credit_ns: i128::from(MUTATION_CPU_BURST_NS),
             updated: Instant::now(),
             in_flight: 0,
+            spent_start_reserves_ns: 0,
             unavailable: false,
         }
     }
@@ -60,19 +65,42 @@ impl PaidMutationCpuBudget {
         i128::from(MUTATION_CPU_BURST_NS)
             - (self.in_flight as i128) * i128::from(MUTATION_CPU_START_RESERVE_NS)
     }
+    fn spendable_credit(&mut self) -> Result<i128> {
+        if self.in_flight > MUTATION_CPU_WORKERS
+            || self.spent_start_reserves_ns > self.in_flight as u64 * MUTATION_CPU_START_RESERVE_NS
+        {
+            self.unavailable = true;
+            return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+        }
+        match self
+            .credit_ns
+            .checked_add(i128::from(self.spent_start_reserves_ns))
+        {
+            Some(credit) => Ok(credit),
+            None => {
+                self.unavailable = true;
+                Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into())
+            }
+        }
+    }
     pub(super) fn reserve(&mut self, now: Instant) -> Result<()> {
         self.refill(now);
         ensure(!self.unavailable, "PUBLIC_MUTATION_CPU_UNAVAILABLE")?;
         ensure(
             self.in_flight < MUTATION_CPU_WORKERS
-                && self.credit_ns >= i128::from(MUTATION_CPU_START_RESERVE_NS),
+                && self.spendable_credit()? >= i128::from(MUTATION_CPU_START_RESERVE_NS),
             "PUBLIC_MUTATION_CPU_BUDGET",
         )?;
         self.credit_ns -= i128::from(MUTATION_CPU_START_RESERVE_NS);
         self.in_flight += 1;
         Ok(())
     }
-    pub(super) fn settle(&mut self, now: Instant, measured: Option<u64>) -> bool {
+    pub(super) fn settle(
+        &mut self,
+        now: Instant,
+        measured: Option<u64>,
+        request_live_ns: Option<u64>,
+    ) -> bool {
         // Only an outstanding start reservation can be returned. An extra
         // settlement is accounting uncertainty, not another free reserve.
         if self.in_flight == 0 || self.in_flight > MUTATION_CPU_WORKERS {
@@ -81,7 +109,17 @@ impl PaidMutationCpuBudget {
         }
         self.refill(now);
         self.in_flight -= 1;
-        if let Some(measured) = measured {
+        if let Some((measured, live)) = measured.zip(request_live_ns) {
+            let used = live.min(MUTATION_CPU_START_RESERVE_NS);
+            let Some(remaining) = self.spent_start_reserves_ns.checked_sub(used) else {
+                self.unavailable = true;
+                return false;
+            };
+            self.spent_start_reserves_ns = remaining;
+            if remaining > self.in_flight as u64 * MUTATION_CPU_START_RESERVE_NS {
+                self.unavailable = true;
+                return false;
+            }
             match self
                 .credit_ns
                 .checked_add(i128::from(MUTATION_CPU_START_RESERVE_NS) - i128::from(measured))
@@ -105,7 +143,7 @@ impl PaidMutationCpuBudget {
         };
         self.credit_ns = credit;
         ensure(!self.unavailable, "PUBLIC_MUTATION_CPU_UNAVAILABLE")?;
-        ensure(self.credit_ns >= 0, "PUBLIC_MUTATION_CPU_BUDGET")
+        ensure(self.spendable_credit()? >= 0, "PUBLIC_MUTATION_CPU_BUDGET")
     }
 
     /// A final thread sample grants no permission to continue work. If the
@@ -113,7 +151,12 @@ impl PaidMutationCpuBudget {
     /// starts under this same lock. Do not refill, repair the count or refund a
     /// missing reservation. The final settlement still reports unavailable.
     /// Unknown measurements/accounting and arithmetic overflow remain unknown.
-    fn record_final_live(&mut self, now: Instant, measured: u64) -> Result<()> {
+    fn record_final_live(
+        &mut self,
+        now: Instant,
+        measured: u64,
+        request_total_ns: u64,
+    ) -> Result<()> {
         if !self.unavailable && (self.in_flight == 0 || self.in_flight > MUTATION_CPU_WORKERS) {
             self.unavailable = true;
             let credit = self
@@ -123,21 +166,19 @@ impl PaidMutationCpuBudget {
             self.credit_ns = credit;
             return Ok(());
         }
-        self.charge_live(now, measured)
+        self.charge_request_live(now, measured, request_total_ns)
     }
 
-    /// Only LiveRequestCpu supplies this checked cumulative owner + worker CPU.
-    /// reserve() already deducted this request's entire start quantum. Requiring
-    /// nonnegative free credit again on its first live sample makes that paid
-    /// quantum unusable near depletion: start, abort, refund, repeat forever.
-    /// Keep every debit and the original final refund; permit only this request's
-    /// first purchased quantum. Beyond it the original conservative shared-credit
-    /// gate applies. No request can borrow another request's quantum, reset its
-    /// cumulative counter, admit another start in debt, or forgive unknown CPU.
-    /// Raw stored credit can be negative while reservations remain outstanding,
-    /// but adding back those reservations must still leave a nonnegative shared
-    /// balance. A real global deficit cannot be waived by an unused local quantum.
-    /// Settlement still yields initial credit + refill - actual measured CPU.
+    /// The request's checked cumulative owner + worker sample consumes its
+    /// prepaid quantum once. Requiring raw credit >= 0 after that quantum has
+    /// already been charged would freeze the same reserve twice. Add back only
+    /// sampled portions, never another request's still-unused promise.
+    ///
+    /// With raw C, n active reservations, R=start reserve and
+    /// S=sum(min(R, request sampled CPU)), the actual balance is C+nR and
+    /// spendable unpromised credit is C+S. Refill caps C at burst-nR; settlement
+    /// removes this request's contribution to S and returns R-residual once.
+    /// No new burst, identity privilege, cross-request quantum or debt waiver.
     fn charge_request_live(
         &mut self,
         now: Instant,
@@ -151,17 +192,19 @@ impl PaidMutationCpuBudget {
             self.unavailable = true;
             return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
         }
-        let reserved_ns = (self.in_flight as i128) * i128::from(MUTATION_CPU_START_RESERVE_NS);
-        match self.charge_live(now, measured) {
-            Err(error)
-                if error.is(crate::ErrorCode::PublicMutationCpuBudget)
-                    && request_total_ns <= MUTATION_CPU_START_RESERVE_NS
-                    && self.credit_ns >= -reserved_ns =>
-            {
-                Ok(())
-            }
-            result => result,
-        }
+        let previous = request_total_ns - measured;
+        let consumed = request_total_ns.min(MUTATION_CPU_START_RESERVE_NS)
+            - previous.min(MUTATION_CPU_START_RESERVE_NS);
+        let Some(spent) = self
+            .spent_start_reserves_ns
+            .checked_add(consumed)
+            .filter(|spent| *spent <= self.in_flight as u64 * MUTATION_CPU_START_RESERVE_NS)
+        else {
+            self.unavailable = true;
+            return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+        };
+        self.spent_start_reserves_ns = spent;
+        self.charge_live(now, measured)
     }
 }
 /// Only this request's live thread baselines. No State, packet, identity or
@@ -267,7 +310,7 @@ impl LiveRequestCpu {
             if enforce {
                 budget.charge_request_live(Instant::now(), measured, total)
             } else {
-                budget.record_final_live(Instant::now(), measured)
+                budget.record_final_live(Instant::now(), measured, total)
             }
         })();
         if let Err(error) = &result {
@@ -532,7 +575,7 @@ impl ServiceMutationCpuOperation {
         let budget_settled = if let Ok(mut budget) = self.budget.lock() {
             // Share the same result as public dispatch, including a failed
             // reservation return with otherwise known thread samples.
-            budget.settle(Instant::now(), residual)
+            budget.settle(Instant::now(), residual, already_charged)
         } else {
             false
         };
@@ -558,7 +601,7 @@ impl Drop for ServiceMutationCpuOperation {
         if !self.settled {
             self.live.finish_thread();
             if let Ok(mut budget) = self.budget.lock() {
-                budget.settle(Instant::now(), None);
+                budget.settle(Instant::now(), None, None);
             }
         }
     }
@@ -724,7 +767,7 @@ mod request_owned_reserve_tests {
             .unwrap();
         assert_eq!(budget.credit_ns, -1_000_000);
         assert!(budget.reserve(now).is_err());
-        assert!(budget.settle(now, Some(250_000)));
+        assert!(budget.settle(now, Some(250_000), Some(1_000_000)));
         assert_eq!(budget.credit_ns, 98_750_000);
         assert_eq!(budget.in_flight, 0);
     }
@@ -739,8 +782,8 @@ mod request_owned_reserve_tests {
         budget.charge_request_live(now, reserve, reserve).unwrap();
         let error = budget.charge_request_live(now, 1, reserve + 1).unwrap_err();
         assert!(error.is(crate::ErrorCode::PublicMutationCpuBudget));
-        assert!(budget.settle(now, Some(0)));
-        assert!(budget.settle(now, Some(0)));
+        assert!(budget.settle(now, Some(0), Some(reserve + 1)));
+        assert!(budget.settle(now, Some(0), Some(reserve)));
         assert_eq!(budget.credit_ns, -1);
         assert_eq!(budget.in_flight, 0);
         assert!(budget.reserve(now).is_err());
@@ -767,8 +810,8 @@ mod request_owned_reserve_tests {
                             .charge_request_live(now, total - prefix, total)
                             .unwrap();
                     }
-                    assert!(budget.settle(now, Some(7)));
-                    assert!(budget.settle(now, Some(11)));
+                    assert!(budget.settle(now, Some(7), Some(first)));
+                    assert!(budget.settle(now, Some(11), Some(second)));
                     assert_eq!(
                         budget.credit_ns,
                         i128::from(2 * reserve) - i128::from(first) - i128::from(second) - 18
@@ -788,7 +831,7 @@ mod request_owned_reserve_tests {
         budget.unavailable = true;
         let error = budget.charge_request_live(now, 1, 1).unwrap_err();
         assert!(error.is(crate::ErrorCode::PublicMutationCpuUnavailable));
-        assert!(!budget.settle(now, None));
+        assert!(!budget.settle(now, None, None));
         assert!(budget.reserve(now).is_err());
         let (mut budget, now) = budget_with_credit(MUTATION_CPU_START_RESERVE_NS);
         budget.reserve(now).unwrap();
@@ -806,8 +849,8 @@ mod request_owned_reserve_tests {
                 budget.credit_ns = -i128::from(owners * reserve) - debt;
                 let error = budget.charge_request_live(now, 1, 1).unwrap_err();
                 assert!(error.is(crate::ErrorCode::PublicMutationCpuBudget));
-                for _ in 0..owners {
-                    assert!(budget.settle(now, Some(0)));
+                for index in 0..owners {
+                    assert!(budget.settle(now, Some(0), Some(u64::from(index == 0))));
                 }
                 assert_eq!(budget.credit_ns, -debt - 1);
                 assert!(budget.reserve(now).is_err());
@@ -831,13 +874,13 @@ mod final_samples_tests {
             budget.in_flight = count;
             budget.credit_ns = 123_456;
             budget
-                .record_final_live(now + Duration::from_secs(1), 17)
+                .record_final_live(now + Duration::from_secs(1), 17, 17)
                 .unwrap();
             assert_eq!(budget.credit_ns, 123_439);
             assert_eq!(budget.updated, now);
             assert_eq!(budget.in_flight, count);
             assert!(budget.unavailable);
-            assert!(!budget.settle(now, Some(3)));
+            assert!(!budget.settle(now, Some(3), Some(17)));
             assert_eq!(budget.credit_ns, 123_439);
             assert_eq!(budget.in_flight, count);
             assert!(budget
@@ -854,7 +897,7 @@ mod final_samples_tests {
         budget.reserve(now).unwrap();
         budget.unavailable = true;
         assert!(budget
-            .record_final_live(now, 7)
+            .record_final_live(now, 7, 7)
             .unwrap_err()
             .is(crate::ErrorCode::PublicMutationCpuUnavailable));
         assert!(budget.unavailable);
@@ -862,7 +905,7 @@ mod final_samples_tests {
         let now = budget.updated;
         budget.credit_ns = i128::MIN;
         assert!(budget
-            .record_final_live(now, 1)
+            .record_final_live(now, 1, 1)
             .unwrap_err()
             .is(crate::ErrorCode::PublicMutationCpuUnavailable));
         assert_eq!(budget.credit_ns, i128::MIN);
@@ -923,5 +966,26 @@ mod final_samples_tests {
         assert!(receipt.accounting_unavailable);
         assert!(receipt.total_cpu_ns.is_some());
         assert!(receipt.residual_cpu_ns.is_none());
+    }
+}
+
+#[cfg(test)]
+mod consumed_reserve_regressions {
+    use super::*;
+
+    #[test]
+    fn consumed_reserve_does_not_freeze_spendable_credit_after_quantum() {
+        let mut budget = PaidMutationCpuBudget::new();
+        let now = budget.updated;
+        let reserve = MUTATION_CPU_START_RESERVE_NS;
+        budget.credit_ns = i128::from(2 * reserve);
+        budget.reserve(now).unwrap();
+        // One quantum was prepaid. Spending one ns beyond it still leaves
+        // reserve-1 actual ns and must not require purchasing it a second time.
+        budget
+            .charge_request_live(now, reserve + 1, reserve + 1)
+            .unwrap();
+        assert_eq!(budget.credit_ns, -1);
+        assert!(!budget.unavailable);
     }
 }
