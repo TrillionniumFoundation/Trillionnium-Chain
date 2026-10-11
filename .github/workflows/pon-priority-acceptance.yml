@@ -54,7 +54,9 @@ jobs:
   native-priorities:
     name: native priorities (${{ matrix.runner }}, ${{ matrix.source }}, ${{ matrix.campaign }})
     runs-on: ${{ matrix.runner }}
-    timeout-minutes: 100
+    # ARM full-capacity advances about 215 seconds per height; 100 minutes expired during height 20.
+    # Use the repository's existing 180-minute rust-baseline budget without changing any gate.
+    timeout-minutes: 180
     strategy:
       fail-fast: false
       matrix:
