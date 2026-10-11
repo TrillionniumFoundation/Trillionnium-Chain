@@ -6,7 +6,6 @@ import json
 import os
 import platform
 from pathlib import Path
-import signal
 import subprocess
 import sys
 import time
@@ -15,6 +14,12 @@ ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/'scripts/ci'))
 from check_public_readiness_evidence import git, sha, source_inventory
 from check_public_v3_service_campaign import TEST, FLAGS, validate_bundle
+sys.path.insert(0,str(ROOT/'formal/pon-nakamoto-v1'))
+from bounded_process import ProcessFailure, run_bounded
+
+# Match the existing bundle's 16 MiB per-file limit. Keep the original stage
+# deadlines and source-selected environment; no command, gate or retry changes.
+STAGE_STREAM_LIMIT = 8 * 1024 * 1024
 
 def run(out):
     out=Path(out).resolve()
@@ -36,12 +41,40 @@ def run(out):
                PYTHONDONTWRITEBYTECODE='1',TRNM_PUBLIC_V3_CAMPAIGN_DIR=str(out/'native'))
     def execute(name,command,timeout):
         start=time.monotonic_ns()
-        with (out/(name+'.log')).open('wb') as log:
-            process=subprocess.Popen(command,cwd=ROOT,env=env,stdout=log,stderr=subprocess.STDOUT,start_new_session=True)
-            try: result=process.wait(timeout=timeout)
-            except subprocess.TimeoutExpired:
-                manifest['timed_out']=True;os.killpg(process.pid,signal.SIGKILL);result=process.wait()
-        manifest['commands'].append(dict(name=name,command=command,returncode=result,elapsed_ns=time.monotonic_ns()-start))
+        stdout=stderr=b'';result=None;failure=None
+        stdout_truncated=stderr_truncated=False
+        # Reserve create-new logs before child contact. Compatibility .log is
+        # stdout followed by stderr, not a fabricated interleaving; the exact
+        # two observed streams are separately retained and hashed by the bundle.
+        with (out/(name+'.log')).open('xb') as log, \
+             (out/(name+'.stdout.log')).open('xb') as stdout_log, \
+             (out/(name+'.stderr.log')).open('xb') as stderr_log:
+            try:
+                captured=run_bounded(command,b'',timeout=timeout,
+                    stdout_limit=STAGE_STREAM_LIMIT,stderr_limit=STAGE_STREAM_LIMIT,
+                    cwd=ROOT,env=env)
+                result,stdout,stderr=captured.returncode,captured.stdout,captured.stderr
+            except ProcessFailure as error:
+                result,stdout,stderr=error.returncode,error.stdout,error.stderr
+                stdout_truncated,stderr_truncated=error.stdout_truncated,error.stderr_truncated
+                failure=error
+            except (ValueError,OSError) as error:
+                failure=error
+            expired=failure is not None and str(failure)=='NATIVE_EXECUTOR_TIMEOUT'
+            manifest['timed_out']=manifest['timed_out'] or expired
+            record=dict(name=name,command=command,returncode=result,
+                elapsed_ns=time.monotonic_ns()-start,error=None if failure is None else str(failure),
+                timed_out=expired,stdout_truncated=stdout_truncated,stderr_truncated=stderr_truncated,
+                log_order='stdout-then-stderr; exact streams retained separately',
+                stdout_bytes=len(stdout),stderr_bytes=len(stderr))
+            manifest['commands'].append(record)
+            try:
+                stdout_log.write(stdout);stderr_log.write(stderr)
+                log.write(stdout);log.write(stderr)
+            except OSError as error:
+                record['capture_error']=str(error)
+                if failure is None:raise
+            if failure is not None:raise failure
         return result
     try:
         command=['cargo','test','--offline','--locked','--manifest-path','trillionnium/Cargo.toml','-p','trnm-pon-node',
