@@ -1,0 +1,57 @@
+name: PoN fixed native offline inputs
+on:
+  push:
+    branches: [ci/pon-five-track-native-export-20261011]
+    paths: [.github/workflows/pon-native-offline-export.yml]
+permissions:
+  contents: read
+jobs:
+  export:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: 25d806087a74778262edddee5fcb48ef651e9265
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify exact source before preparing public build inputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = 25d806087a74778262edddee5fcb48ef651e9265
+          test "$(git rev-parse HEAD^{tree})" = 74357ca9bc6b930a899ebafe2253de4b5eed9dda
+          bash scripts/project-preflight.sh --audit
+          mkdir "$RUNNER_TEMP/pon-native-inputs"
+          out="$RUNNER_TEMP/pon-native-inputs"
+          git rev-parse HEAD HEAD^{tree} > "$out/source.txt"
+          git ls-tree -r HEAD > "$out/tree.txt"
+          git bundle create "$out/source.bundle" HEAD
+          git bundle verify "$out/source.bundle"
+      - name: Export the existing pinned compiler and locked public dependency sources only
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/pon-native-inputs"
+          rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+          rustc +1.95.0 --version --verbose > "$out/rustc.txt"
+          cargo +1.95.0 --version --verbose > "$out/cargo.txt"
+          rustc_path="$(rustup which --toolchain 1.95.0 rustc)"
+          toolchain="$(dirname "$(dirname "$rustc_path")")"
+          tar -C "$toolchain" -czf "$out/toolchain.tar.gz" bin lib libexec
+          cargo +1.95.0 vendor --locked --versioned-dirs --manifest-path trillionnium/Cargo.toml "$RUNNER_TEMP/pon-vendor" > "$out/vendor-config.txt"
+          tar -C "$RUNNER_TEMP/pon-vendor" -czf "$out/vendor.tar.gz" .
+          test "$(wc -c < "$out/source.bundle")" -lt 1073741824
+          test "$(wc -c < "$out/toolchain.tar.gz")" -lt 1073741824
+          test "$(wc -c < "$out/vendor.tar.gz")" -lt 1073741824
+          test -z "$(git status --porcelain)"
+          bash scripts/project-preflight.sh --audit
+          (cd "$out" && sha256sum source.bundle source.txt tree.txt rustc.txt cargo.txt toolchain.tar.gz vendor.tar.gz vendor-config.txt > SHA256SUMS)
+          printf '%s\n' 'Fixed public source/build-input export only. No tests, scientific acceptance, operator independence, physical power-loss or deployment is certified. Cargo home, credentials, environment dumps and runtime data are excluded. This tooling workflow is not part of the product tree.' > "$out/SCOPE.txt"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: pon-native-inputs-25d806087a74778262edddee5fcb48ef651e9265
+          path: ${{ runner.temp }}/pon-native-inputs
+          if-no-files-found: error
+          retention-days: 3
+          compression-level: 0
