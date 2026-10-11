@@ -97,8 +97,10 @@ jobs:
           cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib store::history_page:: -- --show-output --test-threads=1 2>&1 | tee "$OUT/history-read-suite.log"
           grep -E '^test result: ok\. 3 passed; 0 failed; 1 ignored;' "$OUT/history-read-suite.log"
           for selector in store::fixed_blob_read_tests::fixed_blob_copy_preserves_null_types_and_exact_boundaries store::fixed_blob_read_tests::fixed_header_projection_bounds_all_six_fields_without_type_coercion store::fixed_blob_read_tests::fixed_record_rereads_original_errors_and_restores_both_native_backends store::fixed_blob_read_tests::fixed_context_and_active_tip_reject_oversize_prefix_aliases store::history_page::bounded_record_tests::history_record_copy_bounds_keep_original_conversion_and_shape_order; do
-            cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib "$selector" -- --exact --show-output --test-threads=1 2>&1 | tee "$OUT/$selector.log"
-            python3 scripts/ci/check_required_native_test.py "$OUT/$selector.log" --test "$selector"
+            log_file="$OUT/${selector//:/__}.log"
+            printf '%s\t%s\n' "${log_file##*/}" "$selector" >> "$OUT/log-paths.tsv"
+            cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib "$selector" -- --exact --show-output --test-threads=1 2>&1 | tee "$log_file"
+            python3 scripts/ci/check_required_native_test.py "$log_file" --test "$selector"
           done
       - name: Execute complete original error-boundary suite and all new controls
         shell: bash
