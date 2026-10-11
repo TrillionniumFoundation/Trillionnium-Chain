@@ -220,7 +220,32 @@ def evaluate_bundle(raw, expected_digest, rows, partition, *, calibration_rows, 
         reduced = copy.deepcopy(bundle['candidate'])
         reduced['deltas'][index] = [[0] * 257 for _ in range(3)]
         marginal.append(assess(rows, predicted, predict_rows(reduced, rows)))
+    accuracy = macro_accuracy(rows, predicted)
+    reference_accuracy = macro_accuracy(rows, controls[bundle['selected']])
+    def fraction(value):
+        return [str(value.numerator), str(value.denominator)]
+    # Accuracy is bounded by one for EVERY classifier on these same labelled rows.
+    # Reaching this bound proves only this empirical objective, never general quality,
+    # minimal circuit size, paid resource use, future value or fresh consensus work.
+    claim = {'schema': 'pon-fixed-dataset-value-claim-v1',
+             'kind': 'fixed-dataset-comparison', 'bundle': expected_digest,
+             'candidate': bundle['candidate_artifact'], 'parent': bundle['parent_artifact'],
+             'reference': bundle['control_artifacts'][bundle['selected']],
+             'tasks': bundle['partitions'][partition]['tasks_digest'],
+             'metric': 'equal-source-group-accuracy',
+             'candidate_value': fraction(accuracy), 'reference_value': fraction(reference_accuracy),
+             'marginal_value': fraction(accuracy-reference_accuracy),
+             'optimality_bound': {'certificate': 'zero-one-accuracy-upper-bound-v1',
+                 'upper_bound': ['1','1'], 'gap': fraction(1-accuracy),
+                 'exact_on_committed_dataset': accuracy == 1,
+                 'scope': 'this empirical accuracy objective only; not minimum circuit cost'},
+             'verification': {'method': 'replay-frozen-integer-inference-and-metric-bound',
+                 'evaluation_prediction_rows': len(rows)*(1+len(CONTROL_ORDER)+len(marginal)),
+                 'calibration_prediction_rows': len(calibration_rows)*len(CONTROL_ORDER)},
+             'excluded_claims': ['prospective-generalization','general-circuit-optimality',
+                                 'fresh-consensus-work','training-provenance','public-reward-authority']}
     return {'schema': 'pon-frozen-evaluation-result-v3', 'bundle': expected_digest,
+            'value_claim': claim,
             'candidate': bundle['candidate_artifact'], 'parent': bundle['parent_artifact'],
             'partition': partition, 'tasks_digest': bundle['partitions'][partition]['tasks_digest'],
             'selected_reference': bundle['selected'], 'reference_artifact': bundle['control_artifacts'][bundle['selected']],

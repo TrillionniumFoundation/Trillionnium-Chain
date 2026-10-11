@@ -151,6 +151,34 @@ fn payload_len(tag: u8, p: &[u8]) -> Result<(), WireError> {
         10 => 112,
         11 => 136,
         12 => 32,
+        // Decoding this candidate payload does not activate it in historical contexts.
+        13 => crate::qualified_work_task::SIGNED_TASK_BYTES,
+        14 => 96,
+        15 => 168,
+        16 => {
+            if p.len() < 36 {
+                return Err(WireError::Length);
+            }
+            let first = u16::from_le_bytes([p[32], p[33]]) as usize;
+            if !(159..=512).contains(&first) || p.len() < 36 + first {
+                return Err(WireError::Length);
+            }
+            let offset = 34 + first;
+            let second = u16::from_le_bytes([p[offset], p[offset + 1]]) as usize;
+            if !(159..=512).contains(&second) {
+                return Err(WireError::Length);
+            }
+            36 + first + second
+        }
+        17 => 128,
+        18 | 19 => crate::qualified_work_task::lifecycle_v2::DEMAND_LEASE_BYTES,
+        20 => crate::qualified_work_task::lifecycle_v2::DEMAND_REVOCATION_BYTES,
+        21 => crate::qualified_work_task::lifecycle_v2::LIFECYCLE_TASK_BYTES,
+        22 => crate::qualified_work_task::lifecycle_v3::ATOMIC_RENEW_BYTES,
+        23 => {
+            crate::integer_factor_v2::FactorWitnessV2::decode(p)?;
+            p.len()
+        }
         9 => {
             if p.len() < 73 {
                 return Err(WireError::Length);
@@ -238,22 +266,83 @@ pub fn state_root(values: &BTreeMap<Vec<u8>, Vec<u8>>) -> Result<Hash, WireError
     if values.len() > 65_536 {
         return Err(WireError::Limit);
     }
-    let mut leaves = Vec::with_capacity(values.len());
-    for (k, v) in values {
-        if k.len() > 160 || v.len() > 4096 {
-            return Err(WireError::Limit);
-        }
-        leaves.push((hash(b"state-key", &[k]), hash(b"state-leaf", &[k, v])));
+    match state_root_from_entries(values.iter().map(Ok::<_, std::convert::Infallible>)) {
+        Ok(root) => Ok(root),
+        Err(StateRootInputError::Wire(error)) => Err(error),
+        Err(StateRootInputError::Input(impossible)) => match impossible {},
     }
+}
+
+/// Input failures remain distinct from the fixed wire bounds. No partial root
+/// escapes a failed iterator, and a supplied root is never an admission token.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum StateRootInputError<E> {
+    Input(E),
+    Wire(WireError),
+}
+
+/// Consume each borrowed key/owned-or-borrowed encoding once. Retain only the
+/// fixed-size path and leaf hashes needed for hash-path sorting, not a second
+/// ordered map of all key/value bytes. This remains O(N) hash storage and full
+/// sparse-tree work; it neither removes the state cap nor skips any leaf.
+///
+/// Callers requiring canonical-value errors to precede wire limits must validate
+/// their complete value grammar before entering this wire-level operation.
+pub fn state_root_from_entries<K, V, E>(
+    entries: impl IntoIterator<Item = Result<(K, V), E>>,
+) -> Result<Hash, StateRootInputError<E>>
+where
+    K: AsRef<[u8]>,
+    V: AsRef<[u8]>,
+{
+    let mut leaves = Vec::new();
+    for row in entries {
+        let (key, value) = row.map_err(StateRootInputError::Input)?;
+        let (key, value) = (key.as_ref(), value.as_ref());
+        if leaves.len() == 65_536 || key.len() > 160 || value.len() > 4096 {
+            return Err(StateRootInputError::Wire(WireError::Limit));
+        }
+        leaves.push((
+            hash(b"state-key", &[key]),
+            hash(b"state-leaf", &[key, value]),
+        ));
+    }
+    state_root_from_hashes(leaves).map_err(StateRootInputError::Wire)
+}
+
+// Exact H("state-node", left, right) grammar in one 94-byte buffer. The
+// generic domain hash remains the reference for all other protocol objects.
+// No stored state, root verdict, clock, profile or permission enters this cache.
+fn state_node_hash(left: &Hash, right: &Hash) -> Hash {
+    let mut encoded = [0; 94];
+    encoded[..26].copy_from_slice(b"TRNM-PON1\0\x0a\0state-node\x20\0\0\0");
+    encoded[26..58].copy_from_slice(left);
+    encoded[58..62].copy_from_slice(&32u32.to_le_bytes());
+    encoded[62..].copy_from_slice(right);
+    Sha256::digest(encoded).into()
+}
+
+// One immutable 8,224-byte value table per process (plus OnceLock metadata).
+// Borrow it: rebuilding or copying 257 constants on every complete root is not
+// input validation. Every actual key/value and duplicate/limit check stays live.
+fn state_empty_hashes() -> &'static [Hash; 257] {
+    static EMPTY: std::sync::OnceLock<[Hash; 257]> = std::sync::OnceLock::new();
+    EMPTY.get_or_init(|| {
+        let mut empty = [[0; 32]; 257];
+        empty[256] = hash(b"state-empty", &[]);
+        for depth in (0..256).rev() {
+            empty[depth] = state_node_hash(&empty[depth + 1], &empty[depth + 1]);
+        }
+        empty
+    })
+}
+
+fn state_root_from_hashes(mut leaves: Vec<(Hash, Hash)>) -> Result<Hash, WireError> {
     leaves.sort_unstable_by_key(|x| x.0);
     if leaves.windows(2).any(|p| p[0].0 == p[1].0) {
         return Err(WireError::KeyCollision);
     }
-    let mut empty = [[0; 32]; 257];
-    empty[256] = hash(b"state-empty", &[]);
-    for d in (0..256).rev() {
-        empty[d] = hash(b"state-node", &[&empty[d + 1], &empty[d + 1]])
-    }
+    let empty = state_empty_hashes();
     fn root(xs: &[(Hash, Hash)], depth: usize, empty: &[Hash; 257]) -> Hash {
         if xs.is_empty() {
             return empty[depth];
@@ -262,15 +351,12 @@ pub fn state_root(values: &BTreeMap<Vec<u8>, Vec<u8>>) -> Result<Hash, WireError
             return xs[0].1;
         }
         let split = xs.partition_point(|x| (x.0[depth / 8] & (128 >> (depth % 8))) == 0);
-        hash(
-            b"state-node",
-            &[
-                &root(&xs[..split], depth + 1, empty),
-                &root(&xs[split..], depth + 1, empty),
-            ],
+        state_node_hash(
+            &root(&xs[..split], depth + 1, empty),
+            &root(&xs[split..], depth + 1, empty),
         )
     }
-    Ok(root(&leaves, 0, &empty))
+    Ok(root(&leaves, 0, empty))
 }
 #[cfg(test)]
 mod tests {
@@ -364,5 +450,294 @@ mod tests {
         a.insert(b"b".to_vec(), b"3".to_vec());
         assert_ne!(r, state_root(&a).unwrap());
         assert_ne!(r, state_root(&BTreeMap::new()).unwrap());
+    }
+}
+
+#[cfg(test)]
+mod streamed_state_root_tests {
+    use super::*;
+    use std::cell::Cell;
+    use std::rc::Rc;
+
+    // Exact pre-refactor complete-map algorithm, including its independent
+    // sparse recursion. It does not call the streamed hash-root implementation.
+    fn original_state_root(values: &BTreeMap<Vec<u8>, Vec<u8>>) -> Result<Hash, WireError> {
+        if values.len() > 65_536 {
+            return Err(WireError::Limit);
+        }
+        let mut leaves = Vec::with_capacity(values.len());
+        for (k, v) in values {
+            if k.len() > 160 || v.len() > 4096 {
+                return Err(WireError::Limit);
+            }
+            leaves.push((hash(b"state-key", &[k]), hash(b"state-leaf", &[k, v])));
+        }
+        leaves.sort_unstable_by_key(|x| x.0);
+        if leaves.windows(2).any(|p| p[0].0 == p[1].0) {
+            return Err(WireError::KeyCollision);
+        }
+        let mut empty = [[0; 32]; 257];
+        empty[256] = hash(b"state-empty", &[]);
+        for d in (0..256).rev() {
+            empty[d] = hash(b"state-node", &[&empty[d + 1], &empty[d + 1]])
+        }
+        fn root(xs: &[(Hash, Hash)], depth: usize, empty: &[Hash; 257]) -> Hash {
+            if xs.is_empty() {
+                return empty[depth];
+            }
+            if depth == 256 {
+                return xs[0].1;
+            }
+            let split = xs.partition_point(|x| (x.0[depth / 8] & (128 >> (depth % 8))) == 0);
+            hash(
+                b"state-node",
+                &[
+                    &root(&xs[..split], depth + 1, empty),
+                    &root(&xs[split..], depth + 1, empty),
+                ],
+            )
+        }
+        Ok(root(&leaves, 0, &empty))
+    }
+
+    fn fixture(count: usize) -> BTreeMap<Vec<u8>, Vec<u8>> {
+        (0..count)
+            .map(|i| {
+                (
+                    format!("key-{i:05}").into_bytes(),
+                    (i as u64).to_le_bytes().to_vec(),
+                )
+            })
+            .collect()
+    }
+
+    #[test]
+    fn streamed_state_root_preserves_original_sparse_tree_for_all_input_orders() {
+        for count in [0, 1, 2, 3, 7, 16, 31, 32, 33, 128, 257, 1025] {
+            let values = fixture(count);
+            let expected = original_state_root(&values).unwrap();
+            assert_eq!(state_root(&values).unwrap(), expected);
+            for reverse in [false, true] {
+                let mut rows: Vec<_> = values.iter().collect();
+                if reverse {
+                    rows.reverse();
+                }
+                assert_eq!(
+                    state_root_from_entries(rows.into_iter().map(Ok::<_, ()>)).unwrap(),
+                    expected
+                );
+            }
+        }
+        let absent = BTreeMap::new();
+        let empty = BTreeMap::from([(Vec::new(), Vec::new())]);
+        assert_ne!(state_root(&absent).unwrap(), state_root(&empty).unwrap());
+        assert_eq!(
+            state_root(&empty).unwrap(),
+            original_state_root(&empty).unwrap()
+        );
+    }
+
+    #[test]
+    fn streamed_state_root_refuses_duplicate_limit_and_truncated_producer_errors() {
+        let duplicate = [(b"key", b"one"), (b"key", b"two")];
+        assert_eq!(
+            state_root_from_entries(duplicate.into_iter().map(Ok::<_, ()>)),
+            Err(StateRootInputError::Wire(WireError::KeyCollision))
+        );
+        for (key, value) in [(vec![0; 161], vec![0]), (vec![0], vec![0; 4097])] {
+            assert_eq!(
+                state_root_from_entries([Ok::<_, ()>((key, value))]),
+                Err(StateRootInputError::Wire(WireError::Limit))
+            );
+        }
+        let over = (0..65_537u64).map(|i| Ok::<_, ()>((i.to_le_bytes(), [0u8])));
+        assert_eq!(
+            state_root_from_entries(over),
+            Err(StateRootInputError::Wire(WireError::Limit))
+        );
+        for cut in [0, 1, 255, 256, 257] {
+            let rows = (0..258u64).map(|i| {
+                if i == cut {
+                    Err("source-cancelled")
+                } else {
+                    Ok((i.to_le_bytes(), [0u8]))
+                }
+            });
+            assert_eq!(
+                state_root_from_entries(rows),
+                Err(StateRootInputError::Input("source-cancelled"))
+            );
+        }
+        let boundary = BTreeMap::from([(vec![255; 160], vec![255; 4096])]);
+        assert_eq!(state_root(&boundary), original_state_root(&boundary));
+    }
+
+    #[test]
+    fn streamed_state_root_drops_each_owned_encoding_before_requesting_the_next() {
+        struct Encoded {
+            bytes: Vec<u8>,
+            live: Rc<Cell<usize>>,
+        }
+        impl AsRef<[u8]> for Encoded {
+            fn as_ref(&self) -> &[u8] {
+                &self.bytes
+            }
+        }
+        impl Drop for Encoded {
+            fn drop(&mut self) {
+                self.live.set(self.live.get() - 1);
+            }
+        }
+        let live = Rc::new(Cell::new(0));
+        let values = fixture(257);
+        let rows = values.iter().map(|(key, bytes)| {
+            assert_eq!(
+                live.get(),
+                0,
+                "the previous encoded payload must be released"
+            );
+            live.set(1);
+            Ok::<_, ()>((
+                key,
+                Encoded {
+                    bytes: bytes.clone(),
+                    live: live.clone(),
+                },
+            ))
+        });
+        assert_eq!(
+            state_root_from_entries(rows).unwrap(),
+            original_state_root(&values).unwrap()
+        );
+        assert_eq!(live.get(), 0);
+    }
+
+    #[test]
+    fn state_node_single_buffer_matches_original_wire() {
+        for bit in 0..512 {
+            let mut left = [0; 32];
+            let mut right = [0; 32];
+            if bit < 256 {
+                left[bit / 8] = 1 << (bit % 8);
+            } else {
+                right[(bit - 256) / 8] = 1 << (bit % 8);
+            }
+            assert_eq!(
+                state_node_hash(&left, &right),
+                hash(b"state-node", &[&left, &right])
+            );
+            assert_eq!(
+                state_node_hash(&right, &left),
+                hash(b"state-node", &[&right, &left])
+            );
+        }
+        for seed in 0..1024u64 {
+            let left = hash(b"state-node-test-left", &[&seed.to_le_bytes()]);
+            let right = hash(b"state-node-test-right", &[&seed.to_le_bytes()]);
+            assert_eq!(
+                state_node_hash(&left, &right),
+                hash(b"state-node", &[&left, &right])
+            );
+        }
+        for left in [[0; 32], [255; 32], [85; 32], [170; 32]] {
+            for right in [[0; 32], [255; 32], [85; 32], [170; 32]] {
+                assert_eq!(
+                    state_node_hash(&left, &right),
+                    hash(b"state-node", &[&left, &right])
+                );
+            }
+        }
+    }
+
+    #[test]
+    fn state_empty_constants_match_all_depths_and_parallel_callers() {
+        let mut expected = [[0; 32]; 257];
+        expected[256] = hash(b"state-empty", &[]);
+        for depth in (0..256).rev() {
+            expected[depth] = hash(b"state-node", &[&expected[depth + 1], &expected[depth + 1]]);
+        }
+        assert_eq!(state_empty_hashes(), &expected);
+        std::thread::scope(|scope| {
+            for _ in 0..8 {
+                scope.spawn(|| {
+                    for _ in 0..16 {
+                        assert_eq!(state_empty_hashes(), &expected);
+                    }
+                });
+            }
+        });
+        assert_eq!(state_root(&BTreeMap::new()).unwrap(), expected[0]);
+    }
+
+    #[test]
+    fn state_root_constants_do_not_cache_values_or_failures() {
+        let mut values = fixture(3);
+        let initial = state_root(&values).unwrap();
+        let key = b"key-00000".to_vec();
+        let original = values.get(&key).unwrap().clone();
+        values.insert(key.clone(), Vec::new());
+        let present_empty = state_root(&values).unwrap();
+        assert_ne!(present_empty, initial);
+        assert_eq!(present_empty, original_state_root(&values).unwrap());
+        values.remove(&key);
+        assert_ne!(state_root(&values).unwrap(), present_empty);
+        values.insert(key.clone(), vec![0; 4097]);
+        assert_eq!(state_root(&values), Err(WireError::Limit));
+        values.insert(key, original);
+        assert_eq!(state_root(&values).unwrap(), initial);
+        let rows = [Ok((b"k".as_slice(), b"v".as_slice())), Err("cancelled")];
+        assert_eq!(
+            state_root_from_entries(rows),
+            Err(StateRootInputError::Input("cancelled"))
+        );
+        let rows = [Ok::<_, ()>((b"k", b"v")), Ok((b"k", b"w"))];
+        assert_eq!(
+            state_root_from_entries(rows),
+            Err(StateRootInputError::Wire(WireError::KeyCollision))
+        );
+        assert_eq!(state_root(&values).unwrap(), initial);
+    }
+
+    #[test]
+    #[ignore = "explicit complete-root paired observation; not Node or WAN throughput"]
+    fn state_node_and_complete_root_paired_cost_observation() {
+        use std::hint::black_box;
+        use std::time::Instant;
+
+        if cfg!(debug_assertions) {
+            panic!("run this observation in release mode");
+        }
+        let values = fixture(33);
+        let expected = original_state_root(&values).unwrap();
+        assert_eq!(state_root(&values).unwrap(), expected);
+        for pair in 0..8 {
+            let order = if pair % 2 == 0 {
+                [false, true]
+            } else {
+                [true, false]
+            };
+            for optimized in order {
+                let started = Instant::now();
+                let mut observed = [0; 32];
+                for _ in 0..16 {
+                    observed = if optimized {
+                        state_root(black_box(&values)).unwrap()
+                    } else {
+                        original_state_root(black_box(&values)).unwrap()
+                    };
+                    black_box(observed);
+                }
+                let elapsed_ns = started.elapsed().as_nanos();
+                assert_eq!(observed, expected);
+                let arm = if optimized {
+                    "single-buffer-constants"
+                } else {
+                    "original"
+                };
+                println!(
+                    "pon_complete_state_root_cost_v1 {{\"pair\":{pair},\"arm\":\"{arm}\",\"roots\":16,\"keys\":33,\"elapsed_ns\":{elapsed_ns},\"root\":{observed:?},\"warm_constants\":true,\"whole_node_performance_qualified\":false}}"
+                );
+            }
+        }
     }
 }

@@ -12,3 +12,22 @@ evidence/pon-v4/**/*.log -whitespace
 
 # Preserve exact captured process output, including partial progress lines and trailing blank lines.
 evidence/pon-evaluation-bundle-v1/logs/*.log -whitespace
+
+# Byte-exact new contract/cost observations, including the failed fixture preparation.
+evidence/pon-contract-authority-v1/**/*.log -text -whitespace
+
+# Client qualification preserves exact successful and failed process output.
+evidence/pon-client-confirmation-v1/**/*.log -text -whitespace
+/evidence/pon-native-session-v1/logs/*.log -text -whitespace
+/evidence/pon-native-session-v1/failures/initial-candidate/*.log -text -whitespace
+/evidence/pon-native-session-v1/failures/initial-candidate/selected-matrix/logs/*.log -text -whitespace
+
+/evidence/pon-native-session-v1/publication-failures/*.log -text -whitespace
+/evidence/pon-native-session-v1/work-cost/*.log -text -whitespace
+
+# Native-node receipts retain exact raw command output; source formatting stays enforced.
+/evidence/pon-native-node-v1/**/*.log -text -whitespace
+/evidence/pon-native-node-v1/owned-host-smoke/*.packet -text -diff
+
+# New successor qualification retains raw successful and failed output unchanged.
+/evidence/pon-closed-round-v1/**/*.log -text -whitespace

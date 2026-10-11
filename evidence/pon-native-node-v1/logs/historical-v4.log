@@ -1,0 +1,1 @@
+{"comparison_samples": 216, "executed_invariant_selectors": 66, "historical_only": true, "independent_accepted": false, "measured_commit": "30b85c34d1be404dcccd9f415286bb43b00f64ea", "native_tests": 1801, "ordinary_hepta_entry": false, "physical_hosts": 3, "production_activation": false, "runtime_matches": null}

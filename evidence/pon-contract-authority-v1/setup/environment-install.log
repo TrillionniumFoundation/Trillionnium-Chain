@@ -1,0 +1,10 @@
+Collecting numpy==1.26.4 (from -r /home/qian-qi/Documents/chain-pon-contract-authority-20260929/formal/pon-nakamoto-v1/requirements.txt (line 2))
+  Downloading numpy-1.26.4-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (61 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 61.0/61.0 kB 214.5 kB/s eta 0:00:00
+Collecting cryptography==41.0.7 (from -r /home/qian-qi/Documents/chain-pon-contract-authority-20260929/formal/pon-nakamoto-v1/requirements.txt (line 3))
+  Downloading cryptography-41.0.7-cp37-abi3-manylinux_2_28_x86_64.whl.metadata (5.2 kB)
+Collecting cffi>=1.12 (from cryptography==41.0.7->-r /home/qian-qi/Documents/chain-pon-contract-authority-20260929/formal/pon-nakamoto-v1/requirements.txt (line 3))
+  Using cached cffi-2.1.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (2.5 kB)
+Collecting pycparser (from cffi>=1.12->cryptography==41.0.7->-r /home/qian-qi/Documents/chain-pon-contract-authority-20260929/formal/pon-nakamoto-v1/requirements.txt (line 3))
+  Using cached pycparser-3.0-py3-none-any.whl.metadata (8.2 kB)
+Downloading numpy-1.26.4-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (18.0 MB)

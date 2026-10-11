@@ -1,0 +1,171 @@
+{
+  "schema": "pon-current-model-producer-execution-v1",
+  "source_commit": "b34561d1ade376512a34fed3fd78938ed2431ecd",
+  "source_tree": "5a91b1ecc696b8a0c468ee8ba2a3dd0fe9e8d3d8",
+  "input_source_commit": "9fedf7ecbbe07177069c030592b4e03dcffebb81",
+  "source_clean": true,
+  "platform": "Linux-7.0.0-34-generic-x86_64-with-glibc2.39",
+  "results": [
+    {
+      "name": "model-learning",
+      "command": [
+        "python3",
+        "formal/pon-nakamoto-v1/experiments/model_loop.py",
+        "--source",
+        "9fedf7ecbbe07177069c030592b4e03dcffebb81",
+        "--out",
+        "/home/qian-qi/Documents/chain-pr204-finish-20260930-jKKNVx/model-portable-b34561d1a/model"
+      ],
+      "returncode": 0,
+      "elapsed_ns": 8788340689
+    },
+    {
+      "name": "model-settlement",
+      "command": [
+        "python3",
+        "formal/pon-nakamoto-v1/experiments/settle_model.py",
+        "--input",
+        "/home/qian-qi/Documents/chain-pr204-finish-20260930-jKKNVx/model-portable-b34561d1a/model",
+        "--out",
+        "/home/qian-qi/Documents/chain-pr204-finish-20260930-jKKNVx/model-portable-b34561d1a/settlement",
+        "--bundle-hash",
+        "485d1ddac3f10b859599297ede15c5703517952d3f507cdc3efea7f14214429e"
+      ],
+      "returncode": 0,
+      "elapsed_ns": 1569227731
+    },
+    {
+      "name": "learning-cycles",
+      "command": [
+        "python3",
+        "formal/pon-nakamoto-v1/experiments/learning_cycles.py",
+        "--source",
+        "9fedf7ecbbe07177069c030592b4e03dcffebb81",
+        "--out",
+        "/home/qian-qi/Documents/chain-pr204-finish-20260930-jKKNVx/model-portable-b34561d1a/cycles"
+      ],
+      "returncode": 0,
+      "elapsed_ns": 5577170094
+    }
+  ],
+  "all_passed": true,
+  "ordinary_hepta_entry": false,
+  "independent_operators": false,
+  "future_window_accepted": false,
+  "funded_public_serving": false,
+  "production_activation": false,
+  "paid_provider_calls": 0,
+  "evaluation_bundle": "485d1ddac3f10b859599297ede15c5703517952d3f507cdc3efea7f14214429e",
+  "model_outcome": {
+    "schema": "pon-observed-artifact-settlement-v1",
+    "source_model": "d6ac3f24a43045dda6af862344918688b5fbb047599d423e27c567cf670ccfc2",
+    "evaluation_bundle": "485d1ddac3f10b859599297ede15c5703517952d3f507cdc3efea7f14214429e",
+    "observed_evaluation_recomputed": true,
+    "ordinary_hepta_entry": false,
+    "independent_evaluators": false,
+    "future_window_accepted": false,
+    "asset": "test-unit-no-market-value",
+    "chain_clock": "fixed logical timestamps; no live-clock acceptance",
+    "production_activation": false,
+    "outcome": "not_adopted",
+    "model_reward": 0,
+    "reason": "preregistered statistical gate not met"
+  },
+  "value_claims": {
+    "evaluation_a": {
+      "schema": "pon-fixed-dataset-value-claim-v1",
+      "kind": "fixed-dataset-comparison",
+      "bundle": "485d1ddac3f10b859599297ede15c5703517952d3f507cdc3efea7f14214429e",
+      "candidate": "d6ac3f24a43045dda6af862344918688b5fbb047599d423e27c567cf670ccfc2",
+      "parent": "1b3c3cdc542d03ed98f5046202e2cfcef270c9fd808f73817c1532d78978b2ca",
+      "reference": "1ebcaef518406a5678a0a2b503897798188f2f91e25296d882e29e24d0d6d804",
+      "tasks": "0b5d623e73be473f6a31ddef2d28f7f7f7537bb827459f371e79b49463e52672",
+      "metric": "equal-source-group-accuracy",
+      "candidate_value": [
+        "62011",
+        "83875"
+      ],
+      "reference_value": [
+        "1243213",
+        "1677500"
+      ],
+      "marginal_value": [
+        "-2993",
+        "1677500"
+      ],
+      "optimality_bound": {
+        "certificate": "zero-one-accuracy-upper-bound-v1",
+        "upper_bound": [
+          "1",
+          "1"
+        ],
+        "gap": [
+          "21864",
+          "83875"
+        ],
+        "exact_on_committed_dataset": false,
+        "scope": "this empirical accuracy objective only; not minimum circuit cost"
+      },
+      "verification": {
+        "method": "replay-frozen-integer-inference-and-metric-bound",
+        "evaluation_prediction_rows": 1360,
+        "calibration_prediction_rows": 1284
+      },
+      "excluded_claims": [
+        "prospective-generalization",
+        "general-circuit-optimality",
+        "fresh-consensus-work",
+        "training-provenance",
+        "public-reward-authority"
+      ]
+    },
+    "evaluation_b": {
+      "schema": "pon-fixed-dataset-value-claim-v1",
+      "kind": "fixed-dataset-comparison",
+      "bundle": "485d1ddac3f10b859599297ede15c5703517952d3f507cdc3efea7f14214429e",
+      "candidate": "d6ac3f24a43045dda6af862344918688b5fbb047599d423e27c567cf670ccfc2",
+      "parent": "1b3c3cdc542d03ed98f5046202e2cfcef270c9fd808f73817c1532d78978b2ca",
+      "reference": "1ebcaef518406a5678a0a2b503897798188f2f91e25296d882e29e24d0d6d804",
+      "tasks": "5a525c6025e9f09324e601edb9170de1895e56fcaf2d5bfa1c0ac3370e4a2a6f",
+      "metric": "equal-source-group-accuracy",
+      "candidate_value": [
+        "19663576",
+        "25478145"
+      ],
+      "reference_value": [
+        "211943",
+        "268191"
+      ],
+      "marginal_value": [
+        "-2039",
+        "110295"
+      ],
+      "optimality_bound": {
+        "certificate": "zero-one-accuracy-upper-bound-v1",
+        "upper_bound": [
+          "1",
+          "1"
+        ],
+        "gap": [
+          "5814569",
+          "25478145"
+        ],
+        "exact_on_committed_dataset": false,
+        "scope": "this empirical accuracy objective only; not minimum circuit cost"
+      },
+      "verification": {
+        "method": "replay-frozen-integer-inference-and-metric-bound",
+        "evaluation_prediction_rows": 1472,
+        "calibration_prediction_rows": 1284
+      },
+      "excluded_claims": [
+        "prospective-generalization",
+        "general-circuit-optimality",
+        "fresh-consensus-work",
+        "training-provenance",
+        "public-reward-authority"
+      ]
+    }
+  },
+  "source_clean_after": true
+}
