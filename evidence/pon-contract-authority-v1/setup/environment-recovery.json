@@ -1,0 +1,6 @@
+{
+  "reason": "stalled pip download; initial package copy missed compiled cffi backend",
+  "method": "copy preinstalled numpy1.26.4/cryptography41.0.7 and compiled cffi backend to private venv",
+  "backend_source": "/usr/lib/python3/dist-packages/_cffi_backend.cpython-312-x86_64-linux-gnu.so",
+  "system_packages_modified": false
+}
