@@ -1,0 +1,26 @@
+test_full_history_window_reopens_without_old_signed_replay (__main__.CandidateWindowTests.test_full_history_window_reopens_without_old_signed_replay) ... ok
+test_positive_evaluation_expires_and_cannot_be_adopted_late (__main__.CandidateWindowTests.test_positive_evaluation_expires_and_cannot_be_adopted_late) ... ok
+test_round_is_part_of_contribution_and_signature_identity (__main__.CandidateWindowTests.test_round_is_part_of_contribution_and_signature_identity) ... ok
+test_expiry_releases_capacity_without_dropping_current_parent_nullifier (__main__.CapacityTests.test_expiry_releases_capacity_without_dropping_current_parent_nullifier) ... ok
+test_generation_retirement_keeps_claim_authority_in_release_root (__main__.CapacityTests.test_generation_retirement_keeps_claim_authority_in_release_root) ... ok
+test_zero_score_history_does_not_consume_pending_capacity (__main__.CapacityTests.test_zero_score_history_does_not_consume_pending_capacity) ... ok
+test_short_envelope_rejects_before_proof (__main__.CheapAdmissionTests.test_short_envelope_rejects_before_proof) ... ok
+test_transaction_count_rejects_before_root_or_work_replay (__main__.CheapAdmissionTests.test_transaction_count_rejects_before_root_or_work_replay) ... ok
+test_exact_verified_duplicate_does_not_repeat_expensive_work (__main__.DuplicateAdmissionTests.test_exact_verified_duplicate_does_not_repeat_expensive_work) ... ok
+test_same_block_id_with_changed_certificate_never_uses_valid_cache (__main__.DuplicateAdmissionTests.test_same_block_id_with_changed_certificate_never_uses_valid_cache) ... ok
+test_crash_after_entry_commit_rejects_replay (__main__.EffectLinearizationTests.test_crash_after_entry_commit_rejects_replay) ... ok
+test_revoke_committed_first_prevents_entry (__main__.EffectLinearizationTests.test_revoke_committed_first_prevents_entry) ... ok
+test_revoker_cannot_commit_inside_entry_transaction (__main__.EffectLinearizationTests.test_revoker_cannot_commit_inside_entry_transaction) ... ok
+test_every_initialization_cut_recovers_only_our_exact_intent (__main__.InitializationTests.test_every_initialization_cut_recovers_only_our_exact_intent) ... ok
+test_injected_trigger_rejects_before_writable_open (__main__.InitializationTests.test_injected_trigger_rejects_before_writable_open) ... ok
+test_unmarked_empty_database_is_not_reinitialized (__main__.InitializationTests.test_unmarked_empty_database_is_not_reinitialized) ... ok
+test_wrong_initialization_context_is_rejected (__main__.InitializationTests.test_wrong_initialization_context_is_rejected) ... ok
+test_admitted_before_activation_is_selected_on_restart (__main__.RestartForkTests.test_admitted_before_activation_is_selected_on_restart) ... ok
+test_append_retains_one_physical_state_slot (__main__.RestartForkTests.test_append_retains_one_physical_state_slot) ... ok
+test_storage_replay_beyond_4096_does_not_invent_finality (__main__.RestartForkTests.test_storage_replay_beyond_4096_does_not_invent_finality) ... ok
+test_missing_checkpoints_spill_and_cancel_without_height_veto (__main__.StreamingReplayTests.test_missing_checkpoints_spill_and_cancel_without_height_veto) ... ok
+
+----------------------------------------------------------------------
+Ran 21 tests in 31.671s
+
+OK

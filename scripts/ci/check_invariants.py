@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Exact invariant-to-test/source binding. Does not run tests or grant readiness."""
 from pathlib import Path
-import ast,json,re
+import ast,json
+from report_module_evidence import check_test_selector
 FIELDS={'module','id','claim','scope','atomic','cuts','tests','source','limit','threat','remaining'}
 def require(ok,message):
     if not ok:raise ValueError(message)
@@ -39,7 +40,11 @@ def validate(root):
             require(file.is_relative_to(root)and file.is_file(),'missing test file')
             text=file.read_text()
             if file.suffix=='.py':require(symbol in functions(text)and symbol.split('.')[-1].startswith('test_'),'missing exact Python test '+selector)
-            elif file.suffix=='.rs':require(re.search(r'#\[test\]\s*fn\s+'+re.escape(symbol)+r'\s*\(',text)is not None,'missing exact native test '+selector)
+            elif file.suffix=='.rs':
+                # Source binding includes ignored tests; their execution must still
+                # be established separately by an observed exact test result.
+                try:check_test_selector(root,selector)
+                except ValueError as error:raise ValueError('missing exact native test '+selector)from error
             else:raise ValueError('unsupported test selector')
             require(selector in doc,'module omits exact regression '+selector);tests.add(selector)
     require(owners==set(specs),'module invariant coverage incomplete')
