@@ -1,0 +1,58 @@
+name: PoN paired source readback
+on:
+  push:
+    branches: [tooling/pon-fixed-native-source-stage-20261011]
+    paths: [.github/workflows/pon-paired-source-readback.yml]
+permissions:
+  contents: read
+jobs:
+  export:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: dd920ddf81cb2ea9bc99e2bc1f402b4f07e85022
+          path: chain
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: TrillionniumFoundation/hepta-private-ci
+          ref: e4c25726283815eb3453fc6b3f965c75a254ba2d
+          path: hepta
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Export exact public source without changing either repository
+        shell: bash
+        run: |
+          set -euo pipefail
+          selected=''
+          for directory in "$RUNNER_TOOL_CACHE"/Python/*/x64/bin; do
+            if test -x "$directory/python3" && "$directory/python3" -c 'import tomllib' 2>/dev/null; then selected="$directory"; break; fi
+          done
+          test -n "$selected"
+          export PATH="$selected:$PATH"
+          test "$(git -C chain rev-parse HEAD)" = dd920ddf81cb2ea9bc99e2bc1f402b4f07e85022
+          test "$(git -C chain rev-parse HEAD^{tree})" = cc51c1d503c8bd62136303f07d2ec38c7bc5b788
+          test "$(git -C hepta rev-parse HEAD)" = e4c25726283815eb3453fc6b3f965c75a254ba2d
+          test "$(git -C hepta rev-parse HEAD^{tree})" = 8bea2e24c949222db081f2a30219b8dedae34e8f
+          test "$(git -C hepta hash-object .github/workflows/hepta-pon-native-pair.yml)" = 61a3a90756d18ca34bd9d40c034e7f9abe3ce5a7
+          (cd chain && bash scripts/project-preflight.sh --audit)
+          out="$RUNNER_TEMP/paired-source"
+          mkdir "$out"
+          git -C chain bundle create "$out/chain.bundle" HEAD
+          git -C chain bundle verify "$out/chain.bundle"
+          git -C chain rev-parse HEAD HEAD^{tree} > "$out/chain-source.txt"
+          git -C hepta rev-parse HEAD HEAD^{tree} > "$out/hepta-source.txt"
+          cp hepta/.github/workflows/hepta-pon-native-pair.yml "$out/hepta-pair-original.yml"
+          test -z "$(git -C chain status --porcelain)"
+          test -z "$(git -C hepta status --porcelain)"
+          printf '%s\n' 'Read-only exact source transport. No tests or qualification implied. No credentials, mutable runtime data, operator identities or deployment inputs exported.' > "$out/SCOPE.txt"
+          (cd "$out" && sha256sum chain.bundle chain-source.txt hepta-source.txt hepta-pair-original.yml SCOPE.txt > SHA256SUMS)
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: pon-paired-source-dd920ddf
+          path: ${{ runner.temp }}/paired-source
+          if-no-files-found: error
+          retention-days: 7
