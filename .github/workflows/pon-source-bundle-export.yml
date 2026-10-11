@@ -38,3 +38,39 @@ jobs:
           path: ${{ runner.temp }}/pon-source-bundle
           if-no-files-found: error
           retention-days: 3
+      - name: Retain exact native tools and an isolated public dependency cache
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = 1b63ead7184df854ff6fb2047f33b8e876963aca
+          test -z "$(git status --porcelain)"
+          bash scripts/project-preflight.sh --audit
+          tools="$RUNNER_TEMP/pon-offline-tools"
+          cache="$RUNNER_TEMP/pon-export-cargo"
+          mkdir "$tools" "$cache"
+          export CARGO_HOME="$cache"
+          python3 - <<'PY'
+          import pathlib, tomllib
+          lock = tomllib.loads(pathlib.Path('trillionnium/Cargo.lock').read_text())
+          assert all(row.get('source') in (None, 'registry+https://github.com/rust-lang/crates.io-index') for row in lock['package'])
+          PY
+          rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+          cargo +1.95.0 fetch --locked --manifest-path trillionnium/Cargo.toml
+          rustup run 1.95.0 rustc --version --verbose > "$tools/rustc.txt"
+          rustup run 1.95.0 cargo --version --verbose > "$tools/cargo.txt"
+          toolchain="$(dirname "$(dirname "$(rustup which --toolchain 1.95.0 rustc)")")"
+          tar -C "$toolchain" -czf "$tools/rust-1.95.0-x86_64.tar.gz" .
+          tar -C "$cache" -czf "$tools/public-cargo-registry.tar.gz" registry
+          cp trillionnium/Cargo.lock "$tools/Cargo.lock"
+          cp "$RUNNER_TEMP/pon-source-bundle/source.txt" "$tools/source.txt"
+          for archive in "$tools"/*.tar.gz; do test "$(wc -c < "$archive")" -lt 1073741824; done
+          printf 'Tool and public crates.io cache transport only. Fresh isolated Cargo home; no credentials, runtime stores or prior user caches. No product execution or qualification result.\n' > "$tools/SCOPE.txt"
+          (cd "$tools" && sha256sum *.tar.gz Cargo.lock source.txt rustc.txt cargo.txt > SHA256SUMS)
+          test -z "$(git status --porcelain)"
+          bash scripts/project-preflight.sh --audit
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: pon-offline-native-tools-1b63ead7184df854ff6fb2047f33b8e876963aca
+          path: ${{ runner.temp }}/pon-offline-tools
+          if-no-files-found: error
+          retention-days: 3
