@@ -12,15 +12,15 @@ jobs:
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
-          ref: 7837d7d65acb80a67f900f7b0bad050420e0d722
+          ref: 1b63ead7184df854ff6fb2047f33b8e876963aca
           fetch-depth: 0
           persist-credentials: false
       - name: Verify and export the unchanged source without credentials or runtime data
         shell: bash
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD)" = 7837d7d65acb80a67f900f7b0bad050420e0d722
-          test "$(git rev-parse HEAD^{tree})" = 9e3e7af079904230e36cb336da7e9cd2849e1905
+          test "$(git rev-parse HEAD)" = 1b63ead7184df854ff6fb2047f33b8e876963aca
+          test "$(git rev-parse HEAD^{tree})" = 5ffbf99fd2060c3f191e2572a66920d48a55da1d
           bash scripts/project-preflight.sh --audit
           out="$RUNNER_TEMP/pon-source-bundle"
           mkdir "$out"
@@ -31,10 +31,10 @@ jobs:
           test "$(wc -c < "$out/source.bundle")" -lt 1073741824
           test -z "$(git status --porcelain)"
           (cd "$out" && sha256sum source.bundle source.txt tree.txt > SHA256SUMS)
-          printf 'Read-only exact-source export. No native execution or new qualification is supplied by this bundle. Product source remains unchanged; this maintenance workflow is not part of PR290.\n' > "$out/SCOPE.txt"
+          printf 'Read-only exact-source export. No native execution or new qualification is supplied by this bundle. Product source remains unchanged; this maintenance workflow is not part of PR296.\n' > "$out/SCOPE.txt"
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: pon-source-bundle-7837d7d65acb80a67f900f7b0bad050420e0d722
+          name: pon-source-bundle-1b63ead7184df854ff6fb2047f33b8e876963aca
           path: ${{ runner.temp }}/pon-source-bundle
           if-no-files-found: error
           retention-days: 3
