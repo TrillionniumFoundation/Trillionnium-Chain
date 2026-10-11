@@ -1,0 +1,241 @@
+diff --git a/docs/modules/M00_FOUNDATION_PROTOCOL_TECHNICAL_SPEC_V1.md b/docs/modules/M00_FOUNDATION_PROTOCOL_TECHNICAL_SPEC_V1.md
+index 8e789a187..eb477672b 100644
+--- a/docs/modules/M00_FOUNDATION_PROTOCOL_TECHNICAL_SPEC_V1.md
++++ b/docs/modules/M00_FOUNDATION_PROTOCOL_TECHNICAL_SPEC_V1.md
+@@ -126,3 +126,26 @@ Hepta consumer must pin that exact tuple and rerun its own retained checks.
+ Prior failures and cancellations remain separate; no independent model adoption,
+ future-task custody, physical power loss, DA or WAN acceptance follows from this
+ encoding change.
++
++
++## Shared account-branch hash ownership
++
++`pon_wire::account_archive_branch_hash` owns the exact109-byte preimage already
++used by M07: the original domain, LE16 tag length, `account-archive-branch-v1`,
++LE32 child lengths and ordered32-byte children. M07's existing `branch` delegates
++to this non-generic protocol function. The storage layer no longer instantiates
++the SHA implementation at each caller's compilation boundary. All existing Cargo
++profiles, checks, crypto dependencies and wire/state semantics remain unchanged.
++This is code-generation ownership, not a new validation or authority layer.
++
++The independent storage-local implementation is retained in the existing native
++primitive tests. Added `shared_branch_kernel_matches_storage_local_vectors` and
++`shared_branch_kernel_preserves_complete_account_roots` compare512 bit positions,
++1,024 deterministic pairs, full sparse roots, changed/restored nonces and absent
++accounts. The explicit `shared_branch_kernel_complete_call_cost` compares4,096
++complete dependent branch calls per arm in eight alternating-order pairs. Retain
++both default-test and release observations: mixed package optimization can affect
++code generation, so a test-profile ratio is not a release or whole-Node speedup.
++Original state-root, primitive, stored-corruption, migration, CPU-budget and
++network-only confirmed-business controls remain mandatory on the final source.
++No State, SQL verdict, work certificate or model permission is cached.
+diff --git a/docs/modules/M07_STATE_STORAGE_TECHNICAL_SPEC_V1.md b/docs/modules/M07_STATE_STORAGE_TECHNICAL_SPEC_V1.md
+index 728f71bf3..828c6d2ca 100644
+--- a/docs/modules/M07_STATE_STORAGE_TECHNICAL_SPEC_V1.md
++++ b/docs/modules/M07_STATE_STORAGE_TECHNICAL_SPEC_V1.md
+@@ -170,3 +170,24 @@ SQLite 物理页／WAL 大小或累计历史上界。取消和 SQL 拒绝可能
+ - `formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py::NativeAuthenticatedStorageOracle.test_resealed_wrong_ancestor_height_and_component_seals_are_recomputed`.
+ - `formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py::NativeAuthenticatedStorageOracle.test_ancestry_rows_require_exact_types_and_unique_keys`.
+ - `formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py::MigrationPreservationOracle.test_identically_corrupt_migration_ancestry_is_not_qualified_by_cell_equality`.
++
++
++## Shared primitive, unchanged durable authority
++
++The existing account-archive `branch` now calls M00's exact
++`pon_wire::account_archive_branch_hash`. Its109-byte preimage and every resulting
++node, sparse path, root and stored record retain their original meaning. Both
++the native Patricia owner and complete-state reference use this primitive; the
++prior storage-local implementation and an independently rebuilt full sparse tree
++remain test controls. No record read, complete-state comparison, history walk,
++parent binding, pre-COMMIT fence, progress callback or cold-recovery check is
++removed. No new cache, store, schema, owner or conditional validity fallback is
++introduced. The65,536-key state boundary and cumulative traversal remain.
++
++Native cost observations must name their build profile. The exact default-profile
++public-service test retains its original workload, deadline and global CPU budget;
++passing a branch microbenchmark does not qualify that network path. The full
++capacity/migration/reorganization and4,105-block history campaigns, independent
++long-term DA, physical power-loss evidence and independently operated WAN remain
++separate acceptance requirements. Hepta pairing must name this final source and
++its actual main-merge rather than borrow a parent result.
+diff --git a/trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs b/trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs
+index e8f455d2b..9c91cd346 100644
+--- a/trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs
++++ b/trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs
+@@ -225,16 +225,9 @@ fn leaf(owner: Hash, account: Account) -> Hash {
+     )
+ }
+ fn branch(left: Hash, right: Hash) -> Hash {
+-    use sha2::Digest;
+-    // Exactly the existing pon_wire::hash preimage: domain, u16 tag length,
+-    // tag, u32 left length, left, u32 right length, right. Only the fixed-width
+-    // encoding is combined; no hash, ancestor or persisted-byte check is cached.
+-    let mut encoded = [0u8; 109];
+-    encoded[..41].copy_from_slice(b"TRNM-PON1\0\x19\0account-archive-branch-v1\x20\0\0\0");
+-    encoded[41..73].copy_from_slice(&left);
+-    encoded[73..77].copy_from_slice(&32u32.to_le_bytes());
+-    encoded[77..].copy_from_slice(&right);
+-    sha2::Sha256::digest(encoded).into()
++    // One exact hash primitive, shared with the complete reference root. This
++    // moves no stored-node, current-state, cancellation or authority decision.
++    trnm_protocol::pon_wire::account_archive_branch_hash(left, right)
+ }
+ fn empty_hashes() -> [Hash; 257] {
+     let mut out = [[0; 32]; 257];
+diff --git a/trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_primitive_tests.rs b/trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_primitive_tests.rs
+index 4b9264432..360c85035 100644
+--- a/trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_primitive_tests.rs
++++ b/trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_primitive_tests.rs
+@@ -691,3 +691,129 @@ fn native_branch_single_buffer_cost_observation() {
+         assert_eq!(checksums[0], checksums[1]);
+     }
+ }
++
++// Retain the exact previous storage-local kernel as the independent codegen arm.
++fn prior_storage_branch(left: Hash, right: Hash) -> Hash {
++    use sha2::Digest;
++    // Exactly the existing pon_wire::hash preimage: domain, u16 tag length,
++    // tag, u32 left length, left, u32 right length, right. Only the fixed-width
++    // encoding is combined; no hash, ancestor or persisted-byte check is cached.
++    let mut encoded = [0u8; 109];
++    encoded[..41].copy_from_slice(b"TRNM-PON1\0\x19\0account-archive-branch-v1\x20\0\0\0");
++    encoded[41..73].copy_from_slice(&left);
++    encoded[73..77].copy_from_slice(&32u32.to_le_bytes());
++    encoded[77..].copy_from_slice(&right);
++    sha2::Sha256::digest(encoded).into()
++}
++
++#[test]
++fn shared_branch_kernel_matches_storage_local_vectors() {
++    for bit in 0..512 {
++        let mut left = [0; 32];
++        let mut right = [0; 32];
++        if bit < 256 {
++            left[bit / 8] = 1 << (bit % 8);
++        } else {
++            right[(bit - 256) / 8] = 1 << (bit % 8);
++        }
++        assert_eq!(branch(left, right), prior_storage_branch(left, right));
++        assert_eq!(branch(right, left), prior_storage_branch(right, left));
++    }
++    for seed in 0..1024u64 {
++        let left = hash(b"shared-branch-left", &[&seed.to_le_bytes()]);
++        let right = hash(b"shared-branch-right", &[&seed.to_le_bytes()]);
++        assert_eq!(branch(left, right), prior_storage_branch(left, right));
++    }
++}
++
++#[test]
++fn shared_branch_kernel_preserves_complete_account_roots() {
++    fn reference(xs: &[(Hash, Hash)], depth: usize, empty: &[Hash; 257]) -> Hash {
++        if xs.is_empty() {
++            return empty[depth];
++        }
++        if depth == 256 {
++            return xs[0].1;
++        }
++        let split = xs.partition_point(|x| !bit(&x.0, depth));
++        prior_storage_branch(
++            reference(&xs[..split], depth + 1, empty),
++            reference(&xs[split..], depth + 1, empty),
++        )
++    }
++    let mut empty = [[0; 32]; 257];
++    empty[256] = hash(b"account-archive-empty-v1", &[]);
++    for depth in (0..256).rev() {
++        empty[depth] = prior_storage_branch(empty[depth + 1], empty[depth + 1]);
++    }
++    let mut values = BTreeMap::new();
++    for count in 0..=16u64 {
++        let mut leaves = values
++            .iter()
++            .map(|(owner, value)| (path(*owner), leaf(*owner, *value)))
++            .collect::<Vec<_>>();
++        leaves.sort_unstable_by_key(|entry| entry.0);
++        assert_eq!(
++            account_root(&values).unwrap(),
++            reference(&leaves, 0, &empty)
++        );
++        let owner = hash(b"shared-root-owner", &[&count.to_le_bytes()]);
++        values.insert(
++            owner,
++            Account {
++                balance: count * 7,
++                nonce: count,
++            },
++        );
++    }
++    let owner = *values.first_key_value().unwrap().0;
++    let before = account_root(&values).unwrap();
++    let old = values
++        .insert(
++            owner,
++            Account {
++                balance: 0,
++                nonce: u64::MAX,
++            },
++        )
++        .unwrap();
++    assert_ne!(before, account_root(&values).unwrap());
++    values.insert(owner, old);
++    assert_eq!(before, account_root(&values).unwrap());
++    values.remove(&owner);
++    assert_ne!(before, account_root(&values).unwrap());
++}
++
++#[test]
++#[ignore = "explicit same-binary codegen observation; not Node or network throughput"]
++fn shared_branch_kernel_complete_call_cost() {
++    use std::hint::black_box;
++    const CALLS: usize = 4096;
++    let mut outputs = Vec::new();
++    for pair in 0..8 {
++        let mut checksums = Vec::new();
++        for arm in if pair % 2 == 0 {
++            ["storage-local", "protocol-owned"]
++        } else {
++            ["protocol-owned", "storage-local"]
++        } {
++            let mut value = [17; 32];
++            let start = Instant::now();
++            for _ in 0..CALLS {
++                value = if arm == "storage-local" {
++                    prior_storage_branch(black_box(value), black_box([29; 32]))
++                } else {
++                    branch(black_box(value), black_box([29; 32]))
++                };
++            }
++            let elapsed_ns = start.elapsed().as_nanos();
++            checksums.push(value);
++            outputs.push(json!({"pair":pair,"arm":arm,"calls":CALLS,"elapsed_ns":elapsed_ns,"checksum":hex::encode(value)}));
++        }
++        assert_eq!(checksums[0], checksums[1]);
++    }
++    println!(
++        "{}",
++        json!({"schema":"pon-shared-account-branch-kernel-v1","observations":outputs,"scope":"complete branch hash calls, same binary and build profile; not whole Node, physical cost lower bound or WAN TPS"})
++    );
++}
+diff --git a/trillionnium/crates/trnm-protocol/src/pon_wire.rs b/trillionnium/crates/trnm-protocol/src/pon_wire.rs
+index b0134c9b9..63a5c159e 100644
+--- a/trillionnium/crates/trnm-protocol/src/pon_wire.rs
++++ b/trillionnium/crates/trnm-protocol/src/pon_wire.rs
+@@ -23,6 +23,18 @@ pub fn hash(tag: &[u8], parts: &[&[u8]]) -> Hash {
+     }
+     h.finalize().into()
+ }
++/// Exact account-archive branch grammar shared by the native storage and full
++/// reference root builders. This is a hash primitive, never a verified account,
++/// stored-node verdict or authority cache. Keep crypto code generation with the
++/// existing protocol owner rather than instantiating it in each storage caller.
++pub fn account_archive_branch_hash(left: Hash, right: Hash) -> Hash {
++    let mut encoded = [0u8; 109];
++    encoded[..41].copy_from_slice(b"TRNM-PON1\0\x19\0account-archive-branch-v1\x20\0\0\0");
++    encoded[41..73].copy_from_slice(&left);
++    encoded[73..77].copy_from_slice(&32u32.to_le_bytes());
++    encoded[77..].copy_from_slice(&right);
++    Sha256::digest(encoded).into()
++}
+ #[derive(Debug, Clone, PartialEq, Eq)]
+ pub struct Header {
+     pub network: Hash,

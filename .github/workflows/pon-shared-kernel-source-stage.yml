@@ -1,0 +1,102 @@
+name: PoN exact shared-kernel source stage
+on:
+  push:
+    branches: [tooling/pon-canonical-kernel-stage-20261011]
+permissions:
+  contents: read
+jobs:
+  stage:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    permissions:
+      contents: write
+    env:
+      BASE: 7837d7d65acb80a67f900f7b0bad050420e0d722
+      CANDIDATE: 8dccebf9de41f282a591c44910495132b0fb5e8a
+      EXPECTED_TREE: 4f0b1732dde7c45c415c1f1d228b831b538a8998
+      CARGO_BUILD_JOBS: '2'
+      CARGO_INCREMENTAL: '0'
+      RUST_TEST_THREADS: '1'
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          fetch-depth: 0
+      - name: Reconstruct only the frozen reviewed runtime and documentation tree
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/shared-kernel-stage"
+          mkdir -p "$out"
+          echo "OUT=$out" >> "$GITHUB_ENV"
+          echo "CARGO_TARGET_DIR=$RUNNER_TEMP/shared-kernel-target" >> "$GITHUB_ENV"
+          cp scripts/ci/pon-shared-kernel-source.patch "$out/runtime.patch"
+          test "$(sha256sum "$out/runtime.patch" | cut -d' ' -f1)" = 151b761df1a6a3f360bf99b9cf24cd1253072ff3c3e73c9431d8e878c62057f1
+          git checkout --detach "$BASE"
+          bash scripts/project-preflight.sh --audit
+          test -z "$(git status --porcelain)"
+          git apply --check "$out/runtime.patch"
+          git apply --index "$out/runtime.patch"
+          test "$(git write-tree)" = "$EXPECTED_TREE"
+          GIT_AUTHOR_NAME=OpenAI GIT_AUTHOR_EMAIL=noreply@openai.com GIT_AUTHOR_DATE=2026-10-11T10:18:18Z \
+          GIT_COMMITTER_NAME=OpenAI GIT_COMMITTER_EMAIL=noreply@openai.com GIT_COMMITTER_DATE=2026-10-11T10:18:18Z \
+          git commit -m 'perf(pon): share exact account branch crypto at the protocol boundary' \
+            -m 'Continue 7837d7d6 without changing hash grammar, Cargo profiles, work or CPU policy, native state/history validation, model/final-use authority or readiness. Retain the original storage-local kernel and complete sparse-root controls; require original whole-node and five-track acceptance on the final source.' \
+            -m 'Signed-off-by: OpenAI <noreply@openai.com>'
+          test "$(git rev-parse HEAD)" = "$CANDIDATE"
+          test "$(git rev-parse HEAD^{tree})" = "$EXPECTED_TREE"
+          test -z "$(git status --porcelain)"
+          git rev-parse HEAD HEAD^{tree} > "$out/source-before.txt"
+          bash scripts/project-preflight.sh --audit
+      - name: Install the original pinned compiler
+        run: rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+      - name: Run the original formatter and complete primitive controls
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check 2>&1 | tee "$OUT/format.log"
+          cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-protocol --all-targets --all-features 2>&1 | tee "$OUT/protocol.log"
+          cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib account_archive_prototype::native_primitive_tests -- --show-output --test-threads=1 2>&1 | tee "$OUT/primitive.log"
+          grep -E '^test result: ok\. 8 passed; 0 failed; 3 ignored;' "$OUT/primitive.log"
+          cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib shared_branch_kernel -- --include-ignored --show-output --test-threads=1 2>&1 | tee "$OUT/shared-kernel-test.log"
+          grep -E '^test result: ok\. 3 passed; 0 failed; 0 ignored;' "$OUT/shared-kernel-test.log"
+          cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib shared_branch_kernel -- --include-ignored --show-output --test-threads=1 2>&1 | tee "$OUT/shared-kernel-release.log"
+          grep -E '^test result: ok\. 3 passed; 0 failed; 0 ignored;' "$OUT/shared-kernel-release.log"
+      - name: Preserve the actual public business, owner and recovery boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir "$OUT/network-test-profile"
+          TRNM_CI_RECEIPT_DIR="$OUT/network-test-profile" cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test public_v3_service_campaign -- --show-output --test-threads=1 2>&1 | tee "$OUT/public-service.log"
+          grep -E '^test result: ok\. 2 passed; 0 failed; 0 ignored;' "$OUT/public-service.log"
+          cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib ingress::public_v3:: -- --show-output --test-threads=1 2>&1 | tee "$OUT/public-cpu.log"
+          cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test authenticated_storage_cli --test continuity_authenticated -- --show-output --test-threads=1 2>&1 | tee "$OUT/recovery.log"
+          cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node -p trnm-protocol --all-targets --all-features -- -D warnings 2>&1 | tee "$OUT/clippy.log"
+      - name: Publish only the exact tested runtime commit to its new branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$CANDIDATE"
+          test "$(git rev-parse HEAD^{tree})" = "$EXPECTED_TREE"
+          test -z "$(git status --porcelain)"
+          bash scripts/project-preflight.sh --audit
+          git rev-parse HEAD HEAD^{tree} > "$OUT/source-after.txt"
+          cmp "$OUT/source-before.txt" "$OUT/source-after.txt"
+          git push origin "$CANDIDATE:refs/heads/perf/pon-canonical-branch-kernel-20261011"
+          git ls-remote --exit-code origin refs/heads/perf/pon-canonical-branch-kernel-20261011 > "$OUT/published-ref.txt"
+          test "$(cut -f1 "$OUT/published-ref.txt")" = "$CANDIDATE"
+      - name: Retain source and all outcomes without promoting qualification
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          git rev-parse HEAD HEAD^{tree} > "$OUT/final-source.txt"
+          find "$OUT" -name '*.log' -type f -print0 | sort -z | xargs -0 sha256sum > "$OUT/logs.sha256"
+          printf 'Temporary source transport and actual native stage only. Product tree excludes this workflow and patch. All original final-source x64/ARM64 head/main-merge, full baselines, capacity/history and Hepta pairing remain required. No independent operators, minimum physical work cost, future-task efficacy, power loss, long-term DA, WAN TPS or readiness promotion.\n' > "$OUT/SCOPE.txt"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: pon-shared-kernel-stage-${{ github.run_id }}
+          path: ${{ runner.temp }}/shared-kernel-stage
+          if-no-files-found: error
+          retention-days: 7
