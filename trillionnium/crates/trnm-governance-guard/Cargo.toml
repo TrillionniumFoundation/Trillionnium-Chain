@@ -12,4 +12,4 @@ consensus_authority = false
 production_activation = false
 
 [dependencies]
-trnm-audit-events = { path = "../trnm-audit-events" }
+trnm-audit-events = { version = "=0.1.0", path = "../trnm-audit-events" }

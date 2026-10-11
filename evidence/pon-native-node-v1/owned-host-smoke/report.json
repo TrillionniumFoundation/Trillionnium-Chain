@@ -1,0 +1,468 @@
+{
+  "schema": "pon-owned-native-smoke-v1",
+  "source_commit": "b34561d1ade376512a34fed3fd78938ed2431ecd",
+  "source_tree": "5a91b1ecc696b8a0c468ee8ba2a3dd0fe9e8d3d8",
+  "source_clean": true,
+  "binary_sha256": "903ce1cabb510fbde70ca21cd15a49be88f012ae021f5ef7f8d99bfe5691d7ff",
+  "packet_sha256": "c30c44a060d95244dea8e07fc32003bae146073fe1a705fe4276b6c8fb4ceeac",
+  "hosts": [
+    {
+      "host_alias": "rog",
+      "directory": "/tmp/trnm-owned-native-b34561d1a-LPEqEl",
+      "environment": "qian-qi-ROG-Flow-Z13-GZ302EA-GZ302EA\nx86_64\nglibc 2.39\n2026-09-30T03:10:39Z\n",
+      "admissions": 1,
+      "reopens": 1,
+      "all_passed": true,
+      "exact_duplicate_no_change": true,
+      "observed_root": "5f2505aadface40ad3d8b6d28ae7b9bd6e2842f37311ae4a990fcba6ff99415f",
+      "inclusion_checked": true,
+      "confirmed": false
+    },
+    {
+      "host_alias": "pocket4",
+      "directory": "/tmp/trnm-owned-native-b34561d1a-A0sABe",
+      "environment": "alex-G1628-04\nx86_64\nglibc 2.39\n2026-09-30T03:11:30Z\n",
+      "admissions": 1,
+      "reopens": 1,
+      "all_passed": true,
+      "exact_duplicate_no_change": true,
+      "observed_root": "5f2505aadface40ad3d8b6d28ae7b9bd6e2842f37311ae4a990fcba6ff99415f",
+      "inclusion_checked": true,
+      "confirmed": false
+    },
+    {
+      "host_alias": "x230-ts",
+      "directory": "/tmp/trnm-owned-native-b34561d1a-8UXwap",
+      "environment": "qian-ThinkPad-X230\nx86_64\nglibc 2.39\n2026-09-30T03:11:39Z\n",
+      "admissions": 1,
+      "reopens": 1,
+      "all_passed": true,
+      "exact_duplicate_no_change": true,
+      "observed_root": "5f2505aadface40ad3d8b6d28ae7b9bd6e2842f37311ae4a990fcba6ff99415f",
+      "inclusion_checked": true,
+      "confirmed": false
+    }
+  ],
+  "commands": [
+    {
+      "command": [
+        "ssh",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ConnectTimeout=8",
+        "rog",
+        "mktemp -d /tmp/trnm-owned-native-b34561d1a-XXXXXX"
+      ],
+      "returncode": 0,
+      "stdout": "/tmp/trnm-owned-native-b34561d1a-LPEqEl\n",
+      "stderr": "",
+      "elapsed_ns": 3210442786
+    },
+    {
+      "command": [
+        "ssh",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ConnectTimeout=8",
+        "rog",
+        "hostname; uname -m; getconf GNU_LIBC_VERSION; date -u +%FT%TZ"
+      ],
+      "returncode": 0,
+      "stdout": "qian-qi-ROG-Flow-Z13-GZ302EA-GZ302EA\nx86_64\nglibc 2.39\n2026-09-30T03:10:39Z\n",
+      "stderr": "",
+      "elapsed_ns": 3968536470
+    },
+    {
+      "command": [
+        "scp",
+        "-q",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ConnectTimeout=8",
+        "/home/qian-qi/Documents/chain-pr204-finish-20260930-jKKNVx/target/release/trnm-pon-node",
+        "rog:/tmp/trnm-owned-native-b34561d1a-LPEqEl/trnm-pon-node"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": "",
+      "elapsed_ns": 17274502266
+    },
+    {
+      "command": [
+        "scp",
+        "-q",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ConnectTimeout=8",
+        "/home/qian-qi/Documents/chain-pr204-finish-20260930-jKKNVx/owned-native-b34561d1a/accepted.packet",
+        "rog:/tmp/trnm-owned-native-b34561d1a-LPEqEl/accepted.packet"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": "",
+      "elapsed_ns": 10978153731
+    },
+    {
+      "command": [
+        "ssh",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ConnectTimeout=8",
+        "rog",
+        "sha256sum /tmp/trnm-owned-native-b34561d1a-LPEqEl/trnm-pon-node /tmp/trnm-owned-native-b34561d1a-LPEqEl/accepted.packet"
+      ],
+      "returncode": 0,
+      "stdout": "903ce1cabb510fbde70ca21cd15a49be88f012ae021f5ef7f8d99bfe5691d7ff  /tmp/trnm-owned-native-b34561d1a-LPEqEl/trnm-pon-node\nc30c44a060d95244dea8e07fc32003bae146073fe1a705fe4276b6c8fb4ceeac  /tmp/trnm-owned-native-b34561d1a-LPEqEl/accepted.packet\n",
+      "stderr": "",
+      "elapsed_ns": 5943562305
+    },
+    {
+      "command": [
+        "ssh",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ConnectTimeout=8",
+        "rog",
+        "/tmp/trnm-owned-native-b34561d1a-LPEqEl/trnm-pon-node submit --development --store /tmp/trnm-owned-native-b34561d1a-LPEqEl/store --logical-now 1800010000 --packet /tmp/trnm-owned-native-b34561d1a-LPEqEl/accepted.packet"
+      ],
+      "returncode": 0,
+      "stdout": "{\"clock_scope\":\"logical-test\",\"production_activation\":false,\"result\":{\"block\":\"703e4606d73d385a3a85bda2d43d386c7e009555a275f80e31e631d04cf8f332\",\"state\":{\"chainwork_hex\":\"00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002\",\"events\":1,\"generation\":1,\"genesis\":\"4f85a14cb3f2754e38cc9989f2897b667f0ff0efef8f54c858750254fb92b0ff\",\"height\":1,\"network\":\"ee0509d0a67d347034b5ae3947ca4510e23655fa4eff8b22834039513810e051\",\"parameters\":\"1ea05002c108f05fbf8860838b77c76cc8978a7e5853d3bfaf1d97b7a85fd81a\",\"production_activation\":false,\"state_keys\":8,\"state_root\":\"5f2505aadface40ad3d8b6d28ae7b9bd6e2842f37311ae4a990fcba6ff99415f\",\"stored_blocks\":2,\"tip\":\"703e4606d73d385a3a85bda2d43d386c7e009555a275f80e31e631d04cf8f332\"}}}\n",
+      "stderr": "",
+      "elapsed_ns": 3650849492
+    },
+    {
+      "command": [
+        "ssh",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ConnectTimeout=8",
+        "rog",
+        "/tmp/trnm-owned-native-b34561d1a-LPEqEl/trnm-pon-node status --development --store /tmp/trnm-owned-native-b34561d1a-LPEqEl/store --logical-now 1800010000"
+      ],
+      "returncode": 0,
+      "stdout": "{\"clock_scope\":\"logical-test\",\"production_activation\":false,\"result\":{\"chainwork_hex\":\"00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002\",\"events\":1,\"generation\":1,\"genesis\":\"4f85a14cb3f2754e38cc9989f2897b667f0ff0efef8f54c858750254fb92b0ff\",\"height\":1,\"network\":\"ee0509d0a67d347034b5ae3947ca4510e23655fa4eff8b22834039513810e051\",\"parameters\":\"1ea05002c108f05fbf8860838b77c76cc8978a7e5853d3bfaf1d97b7a85fd81a\",\"production_activation\":false,\"state_keys\":8,\"state_root\":\"5f2505aadface40ad3d8b6d28ae7b9bd6e2842f37311ae4a990fcba6ff99415f\",\"stored_blocks\":2,\"tip\":\"703e4606d73d385a3a85bda2d43d386c7e009555a275f80e31e631d04cf8f332\"}}\n",
+      "stderr": "",
+      "elapsed_ns": 3621723932
+    },
+    {
+      "command": [
+        "ssh",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ConnectTimeout=8",
+        "rog",
+        "/tmp/trnm-owned-native-b34561d1a-LPEqEl/trnm-pon-node submit --development --store /tmp/trnm-owned-native-b34561d1a-LPEqEl/store --logical-now 1800010000 --packet /tmp/trnm-owned-native-b34561d1a-LPEqEl/accepted.packet"
+      ],
+      "returncode": 0,
+      "stdout": "{\"clock_scope\":\"logical-test\",\"production_activation\":false,\"result\":{\"block\":\"703e4606d73d385a3a85bda2d43d386c7e009555a275f80e31e631d04cf8f332\",\"state\":{\"chainwork_hex\":\"00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002\",\"events\":1,\"generation\":1,\"genesis\":\"4f85a14cb3f2754e38cc9989f2897b667f0ff0efef8f54c858750254fb92b0ff\",\"height\":1,\"network\":\"ee0509d0a67d347034b5ae3947ca4510e23655fa4eff8b22834039513810e051\",\"parameters\":\"1ea05002c108f05fbf8860838b77c76cc8978a7e5853d3bfaf1d97b7a85fd81a\",\"production_activation\":false,\"state_keys\":8,\"state_root\":\"5f2505aadface40ad3d8b6d28ae7b9bd6e2842f37311ae4a990fcba6ff99415f\",\"stored_blocks\":2,\"tip\":\"703e4606d73d385a3a85bda2d43d386c7e009555a275f80e31e631d04cf8f332\"}}}\n",
+      "stderr": "",
+      "elapsed_ns": 4893260565
+    },
+    {
+      "command": [
+        "ssh",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ConnectTimeout=8",
+        "rog",
+        "/tmp/trnm-owned-native-b34561d1a-LPEqEl/trnm-pon-node confirm --development --store /tmp/trnm-owned-native-b34561d1a-LPEqEl/store --logical-now 1800010000 --transaction 16a6bf68484bcd0dd1226f1a1656f341b5a1607630fa192d1d9eb5ab7a2573ef --block 703e4606d73d385a3a85bda2d43d386c7e009555a275f80e31e631d04cf8f332"
+      ],
+      "returncode": 0,
+      "stdout": "{\"clock_scope\":\"logical-test\",\"production_activation\":false,\"result\":{\"active_generation\":1,\"confirmed\":false,\"depth\":0,\"execution_authority\":false,\"finalized\":false,\"genesis\":\"4f85a14cb3f2754e38cc9989f2897b667f0ff0efef8f54c858750254fb92b0ff\",\"included_block\":\"703e4606d73d385a3a85bda2d43d386c7e009555a275f80e31e631d04cf8f332\",\"included_height\":1,\"network\":\"ee0509d0a67d347034b5ae3947ca4510e23655fa4eff8b22834039513810e051\",\"observed_height\":1,\"observed_now\":1800010000,\"observed_tip\":\"703e4606d73d385a3a85bda2d43d386c7e009555a275f80e31e631d04cf8f332\",\"parameters\":\"1ea05002c108f05fbf8860838b77c76cc8978a7e5853d3bfaf1d97b7a85fd81a\",\"policy\":\"installed-depth-and-required-work\",\"reorged\":false,\"required_work_delta\":\"0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c\",\"transaction\":\"16a6bf68484bcd0dd1226f1a1656f341b5a1607630fa192d1d9eb5ab7a2573ef\",\"work_delta\":\"00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\"}}\n",
+      "stderr": "",
+      "elapsed_ns": 3008623996
+    },
+    {
+      "command": [
+        "ssh",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ConnectTimeout=8",
+        "pocket4",
+        "mktemp -d /tmp/trnm-owned-native-b34561d1a-XXXXXX"
+      ],
+      "returncode": 0,
+      "stdout": "/tmp/trnm-owned-native-b34561d1a-A0sABe\n",
+      "stderr": "",
+      "elapsed_ns": 795052052
+    },
+    {
+      "command": [
+        "ssh",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ConnectTimeout=8",
+        "pocket4",
+        "hostname; uname -m; getconf GNU_LIBC_VERSION; date -u +%FT%TZ"
+      ],
+      "returncode": 0,
+      "stdout": "alex-G1628-04\nx86_64\nglibc 2.39\n2026-09-30T03:11:30Z\n",
+      "stderr": "",
+      "elapsed_ns": 1264767796
+    },
+    {
+      "command": [
+        "scp",
+        "-q",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ConnectTimeout=8",
+        "/home/qian-qi/Documents/chain-pr204-finish-20260930-jKKNVx/target/release/trnm-pon-node",
+        "pocket4:/tmp/trnm-owned-native-b34561d1a-A0sABe/trnm-pon-node"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": "",
+      "elapsed_ns": 2297203863
+    },
+    {
+      "command": [
+        "scp",
+        "-q",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ConnectTimeout=8",
+        "/home/qian-qi/Documents/chain-pr204-finish-20260930-jKKNVx/owned-native-b34561d1a/accepted.packet",
+        "pocket4:/tmp/trnm-owned-native-b34561d1a-A0sABe/accepted.packet"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": "",
+      "elapsed_ns": 786624856
+    },
+    {
+      "command": [
+        "ssh",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ConnectTimeout=8",
+        "pocket4",
+        "sha256sum /tmp/trnm-owned-native-b34561d1a-A0sABe/trnm-pon-node /tmp/trnm-owned-native-b34561d1a-A0sABe/accepted.packet"
+      ],
+      "returncode": 0,
+      "stdout": "903ce1cabb510fbde70ca21cd15a49be88f012ae021f5ef7f8d99bfe5691d7ff  /tmp/trnm-owned-native-b34561d1a-A0sABe/trnm-pon-node\nc30c44a060d95244dea8e07fc32003bae146073fe1a705fe4276b6c8fb4ceeac  /tmp/trnm-owned-native-b34561d1a-A0sABe/accepted.packet\n",
+      "stderr": "",
+      "elapsed_ns": 588563398
+    },
+    {
+      "command": [
+        "ssh",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ConnectTimeout=8",
+        "pocket4",
+        "/tmp/trnm-owned-native-b34561d1a-A0sABe/trnm-pon-node submit --development --store /tmp/trnm-owned-native-b34561d1a-A0sABe/store --logical-now 1800010000 --packet /tmp/trnm-owned-native-b34561d1a-A0sABe/accepted.packet"
+      ],
+      "returncode": 0,
+      "stdout": "{\"clock_scope\":\"logical-test\",\"production_activation\":false,\"result\":{\"block\":\"703e4606d73d385a3a85bda2d43d386c7e009555a275f80e31e631d04cf8f332\",\"state\":{\"chainwork_hex\":\"00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002\",\"events\":1,\"generation\":1,\"genesis\":\"4f85a14cb3f2754e38cc9989f2897b667f0ff0efef8f54c858750254fb92b0ff\",\"height\":1,\"network\":\"ee0509d0a67d347034b5ae3947ca4510e23655fa4eff8b22834039513810e051\",\"parameters\":\"1ea05002c108f05fbf8860838b77c76cc8978a7e5853d3bfaf1d97b7a85fd81a\",\"production_activation\":false,\"state_keys\":8,\"state_root\":\"5f2505aadface40ad3d8b6d28ae7b9bd6e2842f37311ae4a990fcba6ff99415f\",\"stored_blocks\":2,\"tip\":\"703e4606d73d385a3a85bda2d43d386c7e009555a275f80e31e631d04cf8f332\"}}}\n",
+      "stderr": "",
+      "elapsed_ns": 752257628
+    },
+    {
+      "command": [
+        "ssh",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ConnectTimeout=8",
+        "pocket4",
+        "/tmp/trnm-owned-native-b34561d1a-A0sABe/trnm-pon-node status --development --store /tmp/trnm-owned-native-b34561d1a-A0sABe/store --logical-now 1800010000"
+      ],
+      "returncode": 0,
+      "stdout": "{\"clock_scope\":\"logical-test\",\"production_activation\":false,\"result\":{\"chainwork_hex\":\"00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002\",\"events\":1,\"generation\":1,\"genesis\":\"4f85a14cb3f2754e38cc9989f2897b667f0ff0efef8f54c858750254fb92b0ff\",\"height\":1,\"network\":\"ee0509d0a67d347034b5ae3947ca4510e23655fa4eff8b22834039513810e051\",\"parameters\":\"1ea05002c108f05fbf8860838b77c76cc8978a7e5853d3bfaf1d97b7a85fd81a\",\"production_activation\":false,\"state_keys\":8,\"state_root\":\"5f2505aadface40ad3d8b6d28ae7b9bd6e2842f37311ae4a990fcba6ff99415f\",\"stored_blocks\":2,\"tip\":\"703e4606d73d385a3a85bda2d43d386c7e009555a275f80e31e631d04cf8f332\"}}\n",
+      "stderr": "",
+      "elapsed_ns": 577635696
+    },
+    {
+      "command": [
+        "ssh",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ConnectTimeout=8",
+        "pocket4",
+        "/tmp/trnm-owned-native-b34561d1a-A0sABe/trnm-pon-node submit --development --store /tmp/trnm-owned-native-b34561d1a-A0sABe/store --logical-now 1800010000 --packet /tmp/trnm-owned-native-b34561d1a-A0sABe/accepted.packet"
+      ],
+      "returncode": 0,
+      "stdout": "{\"clock_scope\":\"logical-test\",\"production_activation\":false,\"result\":{\"block\":\"703e4606d73d385a3a85bda2d43d386c7e009555a275f80e31e631d04cf8f332\",\"state\":{\"chainwork_hex\":\"00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002\",\"events\":1,\"generation\":1,\"genesis\":\"4f85a14cb3f2754e38cc9989f2897b667f0ff0efef8f54c858750254fb92b0ff\",\"height\":1,\"network\":\"ee0509d0a67d347034b5ae3947ca4510e23655fa4eff8b22834039513810e051\",\"parameters\":\"1ea05002c108f05fbf8860838b77c76cc8978a7e5853d3bfaf1d97b7a85fd81a\",\"production_activation\":false,\"state_keys\":8,\"state_root\":\"5f2505aadface40ad3d8b6d28ae7b9bd6e2842f37311ae4a990fcba6ff99415f\",\"stored_blocks\":2,\"tip\":\"703e4606d73d385a3a85bda2d43d386c7e009555a275f80e31e631d04cf8f332\"}}}\n",
+      "stderr": "",
+      "elapsed_ns": 526618109
+    },
+    {
+      "command": [
+        "ssh",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ConnectTimeout=8",
+        "pocket4",
+        "/tmp/trnm-owned-native-b34561d1a-A0sABe/trnm-pon-node confirm --development --store /tmp/trnm-owned-native-b34561d1a-A0sABe/store --logical-now 1800010000 --transaction 16a6bf68484bcd0dd1226f1a1656f341b5a1607630fa192d1d9eb5ab7a2573ef --block 703e4606d73d385a3a85bda2d43d386c7e009555a275f80e31e631d04cf8f332"
+      ],
+      "returncode": 0,
+      "stdout": "{\"clock_scope\":\"logical-test\",\"production_activation\":false,\"result\":{\"active_generation\":1,\"confirmed\":false,\"depth\":0,\"execution_authority\":false,\"finalized\":false,\"genesis\":\"4f85a14cb3f2754e38cc9989f2897b667f0ff0efef8f54c858750254fb92b0ff\",\"included_block\":\"703e4606d73d385a3a85bda2d43d386c7e009555a275f80e31e631d04cf8f332\",\"included_height\":1,\"network\":\"ee0509d0a67d347034b5ae3947ca4510e23655fa4eff8b22834039513810e051\",\"observed_height\":1,\"observed_now\":1800010000,\"observed_tip\":\"703e4606d73d385a3a85bda2d43d386c7e009555a275f80e31e631d04cf8f332\",\"parameters\":\"1ea05002c108f05fbf8860838b77c76cc8978a7e5853d3bfaf1d97b7a85fd81a\",\"policy\":\"installed-depth-and-required-work\",\"reorged\":false,\"required_work_delta\":\"0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c\",\"transaction\":\"16a6bf68484bcd0dd1226f1a1656f341b5a1607630fa192d1d9eb5ab7a2573ef\",\"work_delta\":\"00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\"}}\n",
+      "stderr": "",
+      "elapsed_ns": 1244411204
+    },
+    {
+      "command": [
+        "ssh",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ConnectTimeout=8",
+        "x230-ts",
+        "mktemp -d /tmp/trnm-owned-native-b34561d1a-XXXXXX"
+      ],
+      "returncode": 0,
+      "stdout": "/tmp/trnm-owned-native-b34561d1a-8UXwap\n",
+      "stderr": "",
+      "elapsed_ns": 962584855
+    },
+    {
+      "command": [
+        "ssh",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ConnectTimeout=8",
+        "x230-ts",
+        "hostname; uname -m; getconf GNU_LIBC_VERSION; date -u +%FT%TZ"
+      ],
+      "returncode": 0,
+      "stdout": "qian-ThinkPad-X230\nx86_64\nglibc 2.39\n2026-09-30T03:11:39Z\n",
+      "stderr": "",
+      "elapsed_ns": 564978421
+    },
+    {
+      "command": [
+        "scp",
+        "-q",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ConnectTimeout=8",
+        "/home/qian-qi/Documents/chain-pr204-finish-20260930-jKKNVx/target/release/trnm-pon-node",
+        "x230-ts:/tmp/trnm-owned-native-b34561d1a-8UXwap/trnm-pon-node"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": "",
+      "elapsed_ns": 4160574933
+    },
+    {
+      "command": [
+        "scp",
+        "-q",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ConnectTimeout=8",
+        "/home/qian-qi/Documents/chain-pr204-finish-20260930-jKKNVx/owned-native-b34561d1a/accepted.packet",
+        "x230-ts:/tmp/trnm-owned-native-b34561d1a-8UXwap/accepted.packet"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": "",
+      "elapsed_ns": 1326273833
+    },
+    {
+      "command": [
+        "ssh",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ConnectTimeout=8",
+        "x230-ts",
+        "sha256sum /tmp/trnm-owned-native-b34561d1a-8UXwap/trnm-pon-node /tmp/trnm-owned-native-b34561d1a-8UXwap/accepted.packet"
+      ],
+      "returncode": 0,
+      "stdout": "903ce1cabb510fbde70ca21cd15a49be88f012ae021f5ef7f8d99bfe5691d7ff  /tmp/trnm-owned-native-b34561d1a-8UXwap/trnm-pon-node\nc30c44a060d95244dea8e07fc32003bae146073fe1a705fe4276b6c8fb4ceeac  /tmp/trnm-owned-native-b34561d1a-8UXwap/accepted.packet\n",
+      "stderr": "",
+      "elapsed_ns": 578078561
+    },
+    {
+      "command": [
+        "ssh",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ConnectTimeout=8",
+        "x230-ts",
+        "/tmp/trnm-owned-native-b34561d1a-8UXwap/trnm-pon-node submit --development --store /tmp/trnm-owned-native-b34561d1a-8UXwap/store --logical-now 1800010000 --packet /tmp/trnm-owned-native-b34561d1a-8UXwap/accepted.packet"
+      ],
+      "returncode": 0,
+      "stdout": "{\"clock_scope\":\"logical-test\",\"production_activation\":false,\"result\":{\"block\":\"703e4606d73d385a3a85bda2d43d386c7e009555a275f80e31e631d04cf8f332\",\"state\":{\"chainwork_hex\":\"00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002\",\"events\":1,\"generation\":1,\"genesis\":\"4f85a14cb3f2754e38cc9989f2897b667f0ff0efef8f54c858750254fb92b0ff\",\"height\":1,\"network\":\"ee0509d0a67d347034b5ae3947ca4510e23655fa4eff8b22834039513810e051\",\"parameters\":\"1ea05002c108f05fbf8860838b77c76cc8978a7e5853d3bfaf1d97b7a85fd81a\",\"production_activation\":false,\"state_keys\":8,\"state_root\":\"5f2505aadface40ad3d8b6d28ae7b9bd6e2842f37311ae4a990fcba6ff99415f\",\"stored_blocks\":2,\"tip\":\"703e4606d73d385a3a85bda2d43d386c7e009555a275f80e31e631d04cf8f332\"}}}\n",
+      "stderr": "",
+      "elapsed_ns": 813254963
+    },
+    {
+      "command": [
+        "ssh",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ConnectTimeout=8",
+        "x230-ts",
+        "/tmp/trnm-owned-native-b34561d1a-8UXwap/trnm-pon-node status --development --store /tmp/trnm-owned-native-b34561d1a-8UXwap/store --logical-now 1800010000"
+      ],
+      "returncode": 0,
+      "stdout": "{\"clock_scope\":\"logical-test\",\"production_activation\":false,\"result\":{\"chainwork_hex\":\"00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002\",\"events\":1,\"generation\":1,\"genesis\":\"4f85a14cb3f2754e38cc9989f2897b667f0ff0efef8f54c858750254fb92b0ff\",\"height\":1,\"network\":\"ee0509d0a67d347034b5ae3947ca4510e23655fa4eff8b22834039513810e051\",\"parameters\":\"1ea05002c108f05fbf8860838b77c76cc8978a7e5853d3bfaf1d97b7a85fd81a\",\"production_activation\":false,\"state_keys\":8,\"state_root\":\"5f2505aadface40ad3d8b6d28ae7b9bd6e2842f37311ae4a990fcba6ff99415f\",\"stored_blocks\":2,\"tip\":\"703e4606d73d385a3a85bda2d43d386c7e009555a275f80e31e631d04cf8f332\"}}\n",
+      "stderr": "",
+      "elapsed_ns": 660661716
+    },
+    {
+      "command": [
+        "ssh",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ConnectTimeout=8",
+        "x230-ts",
+        "/tmp/trnm-owned-native-b34561d1a-8UXwap/trnm-pon-node submit --development --store /tmp/trnm-owned-native-b34561d1a-8UXwap/store --logical-now 1800010000 --packet /tmp/trnm-owned-native-b34561d1a-8UXwap/accepted.packet"
+      ],
+      "returncode": 0,
+      "stdout": "{\"clock_scope\":\"logical-test\",\"production_activation\":false,\"result\":{\"block\":\"703e4606d73d385a3a85bda2d43d386c7e009555a275f80e31e631d04cf8f332\",\"state\":{\"chainwork_hex\":\"00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002\",\"events\":1,\"generation\":1,\"genesis\":\"4f85a14cb3f2754e38cc9989f2897b667f0ff0efef8f54c858750254fb92b0ff\",\"height\":1,\"network\":\"ee0509d0a67d347034b5ae3947ca4510e23655fa4eff8b22834039513810e051\",\"parameters\":\"1ea05002c108f05fbf8860838b77c76cc8978a7e5853d3bfaf1d97b7a85fd81a\",\"production_activation\":false,\"state_keys\":8,\"state_root\":\"5f2505aadface40ad3d8b6d28ae7b9bd6e2842f37311ae4a990fcba6ff99415f\",\"stored_blocks\":2,\"tip\":\"703e4606d73d385a3a85bda2d43d386c7e009555a275f80e31e631d04cf8f332\"}}}\n",
+      "stderr": "",
+      "elapsed_ns": 734222679
+    },
+    {
+      "command": [
+        "ssh",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ConnectTimeout=8",
+        "x230-ts",
+        "/tmp/trnm-owned-native-b34561d1a-8UXwap/trnm-pon-node confirm --development --store /tmp/trnm-owned-native-b34561d1a-8UXwap/store --logical-now 1800010000 --transaction 16a6bf68484bcd0dd1226f1a1656f341b5a1607630fa192d1d9eb5ab7a2573ef --block 703e4606d73d385a3a85bda2d43d386c7e009555a275f80e31e631d04cf8f332"
+      ],
+      "returncode": 0,
+      "stdout": "{\"clock_scope\":\"logical-test\",\"production_activation\":false,\"result\":{\"active_generation\":1,\"confirmed\":false,\"depth\":0,\"execution_authority\":false,\"finalized\":false,\"genesis\":\"4f85a14cb3f2754e38cc9989f2897b667f0ff0efef8f54c858750254fb92b0ff\",\"included_block\":\"703e4606d73d385a3a85bda2d43d386c7e009555a275f80e31e631d04cf8f332\",\"included_height\":1,\"network\":\"ee0509d0a67d347034b5ae3947ca4510e23655fa4eff8b22834039513810e051\",\"observed_height\":1,\"observed_now\":1800010000,\"observed_tip\":\"703e4606d73d385a3a85bda2d43d386c7e009555a275f80e31e631d04cf8f332\",\"parameters\":\"1ea05002c108f05fbf8860838b77c76cc8978a7e5853d3bfaf1d97b7a85fd81a\",\"policy\":\"installed-depth-and-required-work\",\"reorged\":false,\"required_work_delta\":\"0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c\",\"transaction\":\"16a6bf68484bcd0dd1226f1a1656f341b5a1607630fa192d1d9eb5ab7a2573ef\",\"work_delta\":\"00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\"}}\n",
+      "stderr": "",
+      "elapsed_ns": 737354163
+    }
+  ],
+  "all_passed": true,
+  "clock_scope": "explicit-logical-test",
+  "same_operator": true,
+  "independent_accepted": false,
+  "public_network_ready": false,
+  "physical_power_loss": false,
+  "production_activation": false,
+  "installed_services": false,
+  "source_clean_after": true
+}

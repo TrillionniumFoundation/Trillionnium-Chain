@@ -5,7 +5,7 @@ import hashlib,json,re,subprocess,sys
 from pathlib import Path
 from check_invariant_evidence import ROOT,load,require,safe,source_bytes
 
-PARAMETERS={'config/pon/devnet-v1.json','config/pon/ledger-v1.json','config/pon/model-family-v1.json','config/pon/work-profile-v1.json'}
+PARAMETERS={'config/pon/devnet-v1.json','config/pon/ledger-v1.json','config/pon/model-family-v1.json','config/pon/work-profile-v1.json','config/pon/evaluation-round-v1.json'}
 FALSE_FLAGS=['ordinary_hepta_entry','independent_accepted','three_improving_generations',
              'physical_power_loss','public_network_ready','production_activation']
 REQUIRED_RUNS={'preflight','source-contract','source-rejections','invariant-registry','native-build',
@@ -21,7 +21,7 @@ def runtime(path):
 
 def json_bytes(value):return json.dumps(value,sort_keys=True,separators=(',',':')).encode()
 
-def validate(root=ROOT,evidence=None):
+def validate(root=ROOT,evidence=None,*,exact_inventory=True):
  root=Path(root).resolve();folder=Path(evidence or root/'evidence/pon-evaluation-bundle-v1').resolve()
  manifest=load(folder/'manifest.json');require(manifest['schema']=='pon-evaluation-evidence-v1','schema')
  for flag in FALSE_FLAGS:require(manifest[flag]is False,'unsupported acceptance '+flag)
@@ -38,12 +38,23 @@ def validate(root=ROOT,evidence=None):
  require(q['source_clean']is True and q['source_clean_after']is True and q['all_commands_passed']is True,'dirty or failed run')
  for flag in ['ordinary_hepta_entry','independent_accepted','future_window_accepted','production_activation']:
   require(q[flag]is False,'qualification overclaim '+flag)
+ # Historical component mode may admit NEW current files, never omit files that
+ # existed in the measured tree. Derive that original inventory from Git, not the
+ # mutable receipt; otherwise deleting a source binding can hide it as 'unmeasured'.
+ measured_paths=subprocess.check_output(['git','ls-tree','-r','--name-only',commit],cwd=root,text=True).splitlines()
+ measured_runtime={p for p in measured_paths if runtime(p)}
+ require({p for p in q['source_files_sha256'] if runtime(p)}==measured_runtime,'measured runtime inventory mismatch')
  original=source_bytes(root,commit,list(q['source_files_sha256']))
  for relative,raw in original.items():
   require(hashlib.sha256(raw).hexdigest()==q['source_files_sha256'][relative],'source fingerprint '+relative)
   require(safe(root,relative).read_bytes()==raw,'runtime/invariant differs from measured source '+relative)
  tracked=set(subprocess.check_output(['git','ls-files'],cwd=root,text=True).splitlines())
- require({p for p in tracked if runtime(p)}=={p for p in original if runtime(p)},'runtime inventory mismatch')
+ untracked=set(subprocess.check_output(['git','ls-files','--others','--exclude-standard'],cwd=root,text=True).splitlines())
+ current_runtime={p for p in tracked|untracked if runtime(p)}
+ recorded_runtime={p for p in original if runtime(p)}
+ require(recorded_runtime<=current_runtime,'recorded runtime inventory missing')
+ inventory_matches=current_runtime==recorded_runtime
+ if exact_inventory:require(inventory_matches,'runtime inventory mismatch')
  require('config/pon/invariants-v2.json'in original,'missing invariant source')
  require(subprocess.check_output(['git','rev-parse',q['input_source_commit']+'^{tree}'],cwd=root,text=True).strip()==q['input_source_tree'],'corpus source')
  records=list(q['results'])
@@ -140,7 +151,8 @@ def validate(root=ROOT,evidence=None):
  for part in expected:
   result=evaluate_bundle((folder/'model/evaluation-bundle.json').read_bytes(),q['evaluation_bundle'],load_list(folder/'model'/(part+'.json')),part,calibration_rows=calibration)
   require(hashlib.sha256(json_bytes(result)).hexdigest()==expected[part],'remote expected outcome')
- return {'measured_commit':commit,'runtime_matches':True,'executed_invariant_selectors':len(selectors),
+ return {'measured_commit':commit,'runtime_matches':inventory_matches,'recorded_runtime_matches':True,
+         'unmeasured_added_runtime':sorted(current_runtime-recorded_runtime),'executed_invariant_selectors':len(selectors),
          'native_tests':native,'doc_tests':doc,'python_test_executions':python_count,'physical_hosts':3,
          'model_reward':0,'three_improving_generations':False,'ordinary_hepta_entry':False,'independent_accepted':False,'production_activation':False}
 
@@ -149,7 +161,18 @@ def load_list(path):
  value=json.loads(path.read_text(),object_pairs_hook=unique);require(isinstance(value,list),'expected array');return value
 
 if __name__=='__main__':
- result=validate();manifest=load(ROOT/'evidence/pon-evaluation-bundle-v1/manifest.json')
- tracked=set(subprocess.check_output(['git','ls-files'],cwd=ROOT,text=True).splitlines())
- require({'evidence/pon-evaluation-bundle-v1/'+p for p in manifest['files']}<=tracked,'untracked evidence')
+ import argparse
+ parser=argparse.ArgumentParser();parser.add_argument('--component-scope',action='store_true',help='Check all original runtime bytes; report additional runtime as unmeasured, never as covered')
+ parser.add_argument('--root',type=Path,default=ROOT);parser.add_argument('--evidence',type=Path)
+ parser.add_argument('--historical',action='store_true')
+ args=parser.parse_args()
+ folder=args.evidence or args.root/'evidence/pon-evaluation-bundle-v1'
+ if args.historical:
+  from historical_evidence import validate_historical_cli
+  result=validate_historical_cli(__file__,args.root,folder)
+ else:result=validate(root=args.root,evidence=folder,exact_inventory=not args.component_scope)
+ if args.evidence is None:
+  manifest=load(folder/'manifest.json')
+  tracked=set(subprocess.check_output(['git','ls-files'],cwd=args.root,text=True).splitlines())
+  require({'evidence/pon-evaluation-bundle-v1/'+p for p in manifest['files']}<=tracked,'untracked evidence')
  print(json.dumps(result,sort_keys=True))
