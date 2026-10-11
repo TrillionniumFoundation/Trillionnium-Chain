@@ -277,3 +277,34 @@ EVERY class/horizon. These conservative screening thresholds are proposed local 
 preregistered scientific acceptance, deployment criteria or a qualified security bound. Failure is retained;
 passing cannot discharge algebraic, task-choice, accelerator, preprocessing, pooling or
 lottery assumptions. No output can set work hardness or production acceptance true.
+
+
+### One bounded process owner for rejection-cost collection
+
+The current `pon_work_rejection_report.capture` delegates all five original
+identity/build/native commands to `bounded_process.run_bounded`, also used by the
+public-service campaign. It no longer supervises a second Popen/file-poll loop.
+Both create-new output files are reserved before child contact; the child receives
+separate bounded pipes and empty stdin. The existing source cwd/environment,
+command arguments, stage timeouts, 256 MiB native-stdout limit and 8 MiB other-stream
+limits are retained. Completed streams are written without inventing interleaving.
+An output burst is rejected after the shared owner's one-byte overflow probe and
+only the bounded prefix is retained. Truncation is explicit, not complete output.
+
+A zero-exit leader with an inherited output pipe is not complete collection.
+Timeout or failed exchange uses the shared owner's existing POSIX group kill/reap,
+not the removed collector's TERM-grace loop. The original workflow budget and its
+conservative cleanup allowance remain unchanged. Failure observations preserve
+actual cleanup returncode separately from the exchange error, timeout and output
+truncation; `checked_capture` refuses even a zero returncode with an exchange error.
+The successful receipt field set is unchanged. Both shared process source and its
+controls are included in the measured source inventory. Historical observations
+retain their original collector/source and are not relabelled as this execution.
+
+The complete original accounting, receipt and cross-architecture tests remain.
+Additive real-process controls cover separate binary streams, nonzero exits,
+stdout/stderr floods, zero-byte caps, invalid timeouts, missing executables,
+create-new refusal, source cwd and inherited-pipe timeout. This bounds observed
+stream retention, not total child RSS, arbitrary output files, kernel scheduling,
+physical cleanup time or independent adversarial cost. It supplies no new work
+hardness, model adoption, long-term DA, WAN goodput or production authority.

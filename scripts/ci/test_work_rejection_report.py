@@ -528,5 +528,149 @@ class RejectionCrossArchitectureTests(unittest.TestCase):
         self.assertEqual(cost.rejection_job_budget_seconds(), 3 * 30 + 900 + 180 + 5 * 5)
 
 
+class RejectionProcessOwnerTests(unittest.TestCase):
+    """Real local process/pipe controls, never native work-security measurements."""
+
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory(prefix='pon-rejection-process-')
+        self.addCleanup(self.temp.cleanup)
+        self.root = Path(self.temp.name)
+
+    def command(self, body):
+        return [sys.executable, '-c', body]
+
+    def capture(self, body, stem='child', timeout=5, **kwargs):
+        return cost.capture(self.command(body), self.root, stem, timeout, **kwargs)
+
+    def test_complete_binary_streams_and_nonzero_exit_are_retained(self):
+        for code in (0, 7):
+            with self.subTest(code=code):
+                stem = 'exit-' + str(code)
+                result = self.capture(
+                    'import os; os.write(1,b"out\\x00\\xff"); '
+                    'os.write(2,b"err\\x00\\xfe"); raise SystemExit(' + str(code) + ')', stem)
+                self.assertEqual(result['exit_code'], code)
+                self.assertEqual((self.root / result['stdout']).read_bytes(), b'out\x00\xff')
+                self.assertEqual((self.root / result['stderr']).read_bytes(), b'err\x00\xfe')
+                self.assertEqual(result['stdout_bytes'], 5)
+                self.assertEqual(result['stderr_bytes'], 5)
+                self.assertFalse(result['timed_out'])
+                self.assertFalse(result['output_limit_exceeded'])
+
+    def test_stdout_burst_never_becomes_an_oversized_retained_file(self):
+        result = self.capture('import os; os.write(1,b"x"*1048576)', stdout_limit=1024)
+        self.assertTrue(result['output_limit_exceeded'])
+        self.assertLessEqual(result['stdout_bytes'], 1024)
+        self.assertEqual((self.root / result['stdout']).read_bytes(), b'x' * 1024)
+        self.assertTrue(result['stdout_truncated'])
+        self.assertEqual(result['exchange_error'], 'NATIVE_STDOUT_LIMIT')
+
+    def test_stderr_burst_uses_its_original_independent_eight_mib_limit(self):
+        limit = 8 * 1024 * 1024
+        result = self.capture('import os; os.write(2,b"e"*(12*1024*1024))', stdout_limit=16)
+        self.assertTrue(result['output_limit_exceeded'])
+        self.assertEqual(result['stderr_limit_bytes'], limit)
+        self.assertEqual(result['stderr_bytes'], limit)
+        self.assertEqual((self.root / result['stderr']).stat().st_size, limit)
+        self.assertTrue(result['stderr_truncated'])
+        self.assertEqual(result['exchange_error'], 'NATIVE_STDERR_LIMIT')
+
+    def test_zero_stdout_limit_accepts_empty_but_not_one_byte(self):
+        empty = self.capture('pass', 'empty', stdout_limit=0)
+        self.assertEqual(empty['exit_code'], 0)
+        self.assertFalse(empty['output_limit_exceeded'])
+        written = self.capture('import os; os.write(1,b"x")', 'one', stdout_limit=0)
+        self.assertTrue(written['output_limit_exceeded'])
+        self.assertEqual(written['stdout_bytes'], 0)
+        self.assertEqual((self.root / written['stdout']).read_bytes(), b'')
+
+    def test_timeout_retains_diagnostics_and_actual_cleanup_exit(self):
+        result = self.capture('import os,time; os.write(2,b"before-timeout"); time.sleep(30)', timeout=2)
+        self.assertTrue(result['timed_out'])
+        self.assertEqual(result['exchange_error'], 'NATIVE_EXECUTOR_TIMEOUT')
+        self.assertIs(type(result['exit_code']), int)
+        self.assertNotEqual(result['exit_code'], 0)
+        self.assertIn(b'before-timeout', (self.root / result['stderr']).read_bytes())
+        self.assertFalse(result['output_limit_exceeded'])
+
+    def test_zero_exit_parent_with_inherited_pipe_does_not_report_success(self):
+        import os
+        import signal
+        group = self.root / 'group'
+        child = self.root / 'child'
+        body = (
+            'import os,time\n'
+            f'open({str(group)!r},"w").write(str(os.getpid()))\n'
+            'pid=os.fork()\n'
+            'if pid==0:\n'
+            f' open({str(child)!r},"w").write(str(os.getpid()))\n'
+            ' os.write(1,b"descendant-open")\n'
+            ' time.sleep(30)\n'
+            'else:\n'
+            ' os._exit(0)\n')
+        try:
+            result = self.capture(body, timeout=2)
+            self.assertEqual(result['exit_code'], 0)
+            self.assertTrue(result['timed_out'])
+            self.assertEqual(result['exchange_error'], 'NATIVE_EXECUTOR_TIMEOUT')
+            self.assertIn(b'descendant-open', (self.root / result['stdout']).read_bytes())
+        finally:
+            # Also reap the original-implementation counterexample; never leave
+            # a fixture descendant executing after a failed assertion.
+            if group.exists():
+                try: os.killpg(int(group.read_text()), signal.SIGKILL)
+                except ProcessLookupError: pass
+
+    def test_existing_either_log_refuses_before_any_child_contact(self):
+        for suffix in ('stdout', 'stderr'):
+            stem = 'existing-' + suffix
+            original = self.root / (stem + '.' + suffix)
+            original.write_bytes(b'original')
+            marker = self.root / ('spawn-' + suffix)
+            with self.subTest(suffix=suffix), self.assertRaises(FileExistsError):
+                self.capture(f'open({str(marker)!r},"w").write("contacted")', stem)
+            self.assertEqual(original.read_bytes(), b'original')
+            self.assertFalse(marker.exists())
+
+    def test_invalid_timeout_refuses_without_spawning(self):
+        for index, timeout in enumerate((0, -1, True, False, float('nan'), float('inf'), 10**400)):
+            marker = self.root / ('invalid-' + str(index))
+            result = self.capture(f'open({str(marker)!r},"w").write("contacted")',
+                                  'invalid-' + str(index), timeout=timeout)
+            with self.subTest(timeout=timeout):
+                self.assertIsNone(result['exit_code'])
+                self.assertIn('launch_error', result)
+                self.assertFalse(marker.exists())
+
+    def test_spawn_failure_retains_empty_create_new_logs(self):
+        result = cost.capture([str(self.root / 'absent-executable')], self.root, 'absent', 5)
+        self.assertIsNone(result['exit_code'])
+        self.assertIn('launch_error', result)
+        self.assertEqual((self.root / result['stdout']).read_bytes(), b'')
+        self.assertEqual((self.root / result['stderr']).read_bytes(), b'')
+
+    def test_checked_capture_keeps_failed_observation_and_refuses(self):
+        observations = []
+        with self.assertRaisesRegex(ValueError, 'failed; original stdout/stderr'):
+            cost.checked_capture(self.command('import os; os.write(2,b"rejected"); raise SystemExit(9)'),
+                                 self.root, 'rejected', 5, observations)
+        self.assertEqual(len(observations), 1)
+        self.assertEqual(observations[0]['exit_code'], 9)
+        self.assertEqual((self.root / 'rejected.stderr').read_bytes(), b'rejected')
+
+    def test_capture_preserves_source_cwd_without_changing_parent(self):
+        import os
+        before = Path.cwd()
+        result = self.capture('import os; os.write(1,os.fsencode(os.getcwd()))')
+        self.assertEqual(result['exit_code'], 0)
+        self.assertEqual((self.root / result['stdout']).read_bytes(), os.fsencode(cost.ROOT))
+        self.assertEqual(Path.cwd(), before)
+
+    def test_shared_process_source_is_in_the_measured_input_inventory(self):
+        for path in ('formal/pon-nakamoto-v1/bounded_process.py',
+                     'formal/pon-nakamoto-v1/test_bounded_process.py'):
+            self.assertIn(path, cost.SOURCE_PATHS)
+
+
 if __name__ == '__main__':
     unittest.main()

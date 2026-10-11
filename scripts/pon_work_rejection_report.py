@@ -19,7 +19,6 @@ from pathlib import Path
 import platform
 import re
 import shutil
-import signal
 import struct
 import subprocess
 import sys
@@ -29,6 +28,7 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'scripts/ci'))
 sys.path.insert(0, str(ROOT / 'formal/pon-nakamoto-v1'))
+from bounded_process import ProcessFailure, run_bounded
 from ci_observation import digest as file_digest, source
 from check_cross_arch_cost import (ARCHITECTURES, elf_machine,
     REJECTION_IDENTITY_TIMEOUT_SECONDS, REJECTION_BUILD_TIMEOUT_SECONDS,
@@ -54,6 +54,7 @@ SOURCE_PATHS = {
     'scripts/ci/ci_observation.py', 'scripts/ci/verify_ci_source.py',
     'scripts/ci/check_cross_arch_cost.py', 'scripts/ci/check_invariant_evidence.py',
     'formal/pon-nakamoto-v1/work_oracle.py', 'formal/pon-nakamoto-v1/contract_wire.py',
+    'formal/pon-nakamoto-v1/bounded_process.py', 'formal/pon-nakamoto-v1/test_bounded_process.py',
     'config/pon/devnet-v1.json', 'config/pon/work-profile-v1.json', 'rust-toolchain.toml',
 }
 RUNNER_FIELDS = ('GITHUB_ACTIONS', 'GITHUB_RUN_ID', 'GITHUB_RUN_ATTEMPT', 'GITHUB_JOB',
@@ -470,36 +471,46 @@ def build_command(architecture: str) -> list[str]:
 
 
 def capture(command: list[str], output: Path, stem: str, timeout: int, *, stdout_limit: int = 8 * 1024 * 1024) -> dict:
+    """Use the existing native pipe owner, not a second file-polling supervisor.
+
+    These commands require no stdin. Preserve separate exact output streams,
+    original limits and successful receipt fields. A failed exchange retains
+    bounded prefixes and its actual cleanup exit; exit zero alone is not success.
+    The shared owner's failure cleanup uses its existing POSIX group kill/reap.
+    This bounds retained output, not child RSS, arbitrary files or physical time.
+    """
     started = time.monotonic_ns()
     result = {'command': command, 'cwd': str(ROOT), 'exit_code': None, 'timed_out': False,
         'output_limit_exceeded': False, 'timeout_seconds': timeout, 'stdout_limit_bytes': stdout_limit,
         'stderr_limit_bytes': 8 * 1024 * 1024, 'stdout': stem + '.stdout', 'stderr': stem + '.stderr'}
+    # Reserve BOTH create-new destinations before starting the original command.
+    # The child receives pipes, never these files, so a burst cannot overshoot
+    # their byte limits between polls or keep writing after a successful return.
     with (output / result['stdout']).open('xb') as stdout, (output / result['stderr']).open('xb') as stderr:
+        out, err = b'', b''
         try:
-            process = subprocess.Popen(command, cwd=ROOT, stdout=stdout, stderr=stderr, start_new_session=True)
-        except OSError as error:
+            observed = run_bounded(command, b'', timeout=timeout, stdout_limit=stdout_limit,
+                                   stderr_limit=result['stderr_limit_bytes'], cwd=ROOT)
+        except ProcessFailure as error:
+            out, err = error.stdout, error.stderr
+            result.update(exit_code=error.returncode,
+                timed_out=str(error) == 'NATIVE_EXECUTOR_TIMEOUT',
+                output_limit_exceeded=error.stdout_truncated or error.stderr_truncated,
+                exchange_error=str(error), stdin_written_bytes=error.stdin_written,
+                stdout_truncated=error.stdout_truncated, stderr_truncated=error.stderr_truncated)
+        except ValueError as error:
+            # The shared owner validates before spawn and reports unavailable
+            # executables without claiming that a child ever ran.
             result['launch_error'] = str(error)
         else:
-            deadline = time.monotonic() + timeout
-            while process.poll() is None:
-                result['timed_out'] = time.monotonic() >= deadline
-                result['output_limit_exceeded'] = (os.fstat(stdout.fileno()).st_size > stdout_limit or
-                                                  os.fstat(stderr.fileno()).st_size > result['stderr_limit_bytes'])
-                if result['timed_out'] or result['output_limit_exceeded']:
-                    try: os.killpg(process.pid, signal.SIGTERM)
-                    except ProcessLookupError: pass
-                    try: process.wait(timeout=REJECTION_TERMINATION_GRACE_SECONDS)
-                    except subprocess.TimeoutExpired:
-                        try: os.killpg(process.pid, signal.SIGKILL)
-                        except ProcessLookupError: pass
-                        process.wait()
-                    break
-                try: process.wait(timeout=min(.05, max(.001, deadline - time.monotonic())))
-                except subprocess.TimeoutExpired: pass
-            result['exit_code'] = process.wait()
+            result['exit_code'] = observed.returncode
+            out, err = observed.stdout, observed.stderr
+        stdout.write(out)
+        stderr.write(err)
+        stdout.flush()
+        stderr.flush()
         result['stdout_bytes'] = os.fstat(stdout.fileno()).st_size
         result['stderr_bytes'] = os.fstat(stderr.fileno()).st_size
-    result['output_limit_exceeded'] |= result['stdout_bytes'] > stdout_limit or result['stderr_bytes'] > result['stderr_limit_bytes']
     result['elapsed_ns'] = time.monotonic_ns() - started
     return result
 
@@ -508,7 +519,7 @@ def checked_capture(command: list[str], output: Path, stem: str, timeout: int, o
     observed = capture(command, output, stem, timeout, **kwargs)
     observations.append(observed)
     require(type(observed['exit_code']) is int and observed['exit_code'] == 0 and
-            observed['timed_out'] is False and observed['output_limit_exceeded'] is False and 'launch_error' not in observed,
+            observed['timed_out'] is False and observed['output_limit_exceeded'] is False and 'launch_error' not in observed and 'exchange_error' not in observed,
             stem + ' failed; original stdout/stderr and failure status retained')
     return observed
 
