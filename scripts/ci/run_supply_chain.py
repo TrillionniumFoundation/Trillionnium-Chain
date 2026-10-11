@@ -7,7 +7,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-from ci_observation import ROOT, checked, digest, finish, receipt_root, run, tool_root, tool_versions
+from ci_observation import ROOT, checked, digest, finish, pin_source, receipt_root, run, tool_root, tool_versions
 
 MANIFESTS = ['trillionnium/Cargo.toml', 'tests/fuzz/Cargo.toml']
 
@@ -20,15 +20,17 @@ def main() -> int:
               'observations': observations, 'advisory_databases': [], 'acceptance_granted': False}
     binary = tool_root() / ('deny-' + versions['TRNM_CARGO_DENY_VERSION']) / 'bin/cargo-deny'
     try:
-        checked([str(binary), '--version'], output / 'tool-version.log', observations)
+        expected_source = pin_source()
+        report['source_expected'] = expected_source
+        checked([str(binary), '--version'], output / 'tool-version.log', observations, expected_source=expected_source)
         if (output / 'tool-version.log').read_text().strip() != 'cargo-deny ' + versions['TRNM_CARGO_DENY_VERSION']:
             raise ValueError('supply-chain tool version mismatch')
         report['cargo_deny_sha256'] = digest(binary)
         for index, manifest in enumerate(MANIFESTS):
             checked(['cargo', 'fetch', '--locked', '--manifest-path', manifest],
-                    output / f'fetch-crates-{index}.log', observations)
+                    output / f'fetch-crates-{index}.log', observations, expected_source=expected_source)
         checked([str(binary), '--manifest-path', MANIFESTS[0], '--config', 'deny.toml',
-                 '--locked', 'fetch', 'db'], output / 'fetch-advisories.log', observations)
+                 '--locked', 'fetch', 'db'], output / 'fetch-advisories.log', observations, expected_source=expected_source)
         cargo_home = Path(os.environ['CARGO_HOME'])
         databases = sorted(p.parent for p in (cargo_home / 'advisory-dbs').glob('*/.git'))
         if len(databases) != 1:
@@ -43,7 +45,7 @@ def main() -> int:
                 raise ValueError('advisory database has uncommitted modifications')
             archive = output / f'advisories-{index}-{commit}.tar.gz'
             checked(['git', '-C', str(database), 'archive', '--format=tar.gz',
-                     '--output=' + str(archive), commit], output / f'archive-{index}.log', observations)
+                     '--output=' + str(archive), commit], output / f'archive-{index}.log', observations, expected_source=expected_source)
             report['advisory_databases'].append({'origin': origin, 'commit': commit, 'tree': tree,
                                                 'commit_time': git('show', '-s', '--format=%cI', 'HEAD'),
                                                 'archive': archive.name})
@@ -54,7 +56,7 @@ def main() -> int:
             result = run([str(binary), '--manifest-path', manifest, '--config', 'deny.toml',
                           '--all-features', '--frozen', '--format', 'json',
                           'check', 'advisories', 'licenses', 'bans', 'sources'],
-                         output / f'check-{index}.jsonl', timeout=900)
+                         output / f'check-{index}.jsonl', timeout=900, expected_source=expected_source)
             observations.append(result)
             failed |= result['exit_code'] != 0
         if failed:

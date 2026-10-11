@@ -9,7 +9,7 @@ import shutil
 import sys
 from pathlib import Path
 
-from ci_observation import ROOT, checked, digest, finish, receipt_root, tool_root, tool_versions
+from ci_observation import ROOT, checked, digest, finish, pin_source, receipt_root, tool_root, tool_versions
 
 TARGETS = {'canonical_wire': 2049, 'work_certificate': 49189, 'authenticated_state': 512}
 STATE_SEEDS = 'tests/fuzz/seeds/authenticated_state'
@@ -49,17 +49,19 @@ def main() -> int:
     lock = ROOT / 'tests/fuzz/Cargo.lock'
     original_lock = digest(lock)
     try:
-        checked(['cargo', 'fuzz', '--version'], output / 'cargo-fuzz-version.log', observations, env=environment)
+        expected_source = pin_source()
+        report['source_expected'] = expected_source
+        checked(['cargo', 'fuzz', '--version'], output / 'cargo-fuzz-version.log', observations, env=environment, expected_source=expected_source)
         version_text = (output / 'cargo-fuzz-version.log').read_text().strip()
         if version_text != 'cargo-fuzz ' + versions['TRNM_CARGO_FUZZ_VERSION']:
             raise ValueError('fuzz tool version mismatch')
         report['cargo_fuzz_sha256'] = digest(binary_dir / 'cargo-fuzz')
-        checked(['rustc', '--version', '--verbose'], output / 'compiler.log', observations, env=environment)
+        checked(['rustc', '--version', '--verbose'], output / 'compiler.log', observations, env=environment, expected_source=expected_source)
         host = re.search(r'^host: (\S+)$', (output / 'compiler.log').read_text(), re.M)
         if host is None:
             raise ValueError('compiler host missing')
         checked(['cargo', 'fetch', '--locked', '--manifest-path', manifest],
-                output / 'fetch.log', observations, env=environment)
+                output / 'fetch.log', observations, env=environment, expected_source=expected_source)
         environment['CARGO_NET_OFFLINE'] = 'true'
         for target in args.target or TARGETS:
             corpus = output / 'corpus' / target
@@ -86,7 +88,7 @@ def main() -> int:
                        f'-max_total_time={args.seconds}', '-timeout=10', '-rss_limit_mb=2048',
                        f'-max_len={TARGETS[target]}', '-seed=20261004', '-print_final_stats=1',
                        '-artifact_prefix=' + str(artifacts) + '/']
-            checked(command, log, observations, timeout=1200, env=environment)
+            checked(command, log, observations, timeout=1200, env=environment, expected_source=expected_source)
             report['targets'][target].update(counters(log.read_text(errors='replace'), len(seeds)))
             binary = Path(environment['CARGO_TARGET_DIR']) / host[1] / 'release' / target
             report['targets'][target]['binary_sha256'] = digest(binary)

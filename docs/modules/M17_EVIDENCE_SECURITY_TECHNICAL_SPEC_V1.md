@@ -199,3 +199,35 @@ selector 存在不能替代执行。下列仅为 source-binding，不授予独�
 - `formal/pon-nakamoto-v1/test_obligation_range_oracle.py::MonetaryRangeOracle.test_authentic_subset_cannot_omit_any_due_future_or_zero_obligation`.
 - `formal/pon-nakamoto-v1/test_obligation_range_oracle.py::MonetaryRangeOracle.test_authentic_subset_cannot_omit_immediate_boundary`.
 - `formal/pon-nakamoto-v1/test_obligation_range_oracle.py::MonetaryRangeOracle.test_serde_struct_bytes_are_canonical_independent_of_json_map_input_order`.
+
+
+## Command and receipt source fence
+
+The existing `ci_observation` owner pins one clean tested commit before the
+original fuzz and supply-chain command sequences. Every command reuses
+`verify_ci_source` before dispatch and after child termination, including the
+raw tracked-file/mode/symlink checks. A dirty or different source before dispatch
+returns125 without starting the child. A zero child exit followed by a failed
+source check is125 rather than success. Original nonzero exits and timeout124
+remain primary; `process_exit_code`, execution state and source-failure phase
+retain the separate observations. Original command arguments, timeout and group
+cleanup boundaries remain unchanged.
+
+`finish` requires the same initial pin and a currently clean verified tree. A
+missing pin, dirty tree or clean different commit makes the result FAIL, preserves
+any original failure and diagnostic hashes, and does not hash changed source as
+accepted input. Matching source never promotes an already failed campaign. These
+are command-boundary checks, not continuous attestation against a privileged
+writer that changes and restores bytes between observations. The workflow still
+owns source-head versus ordered actual-main-merge policy; the local pin does not
+replace it.
+
+All controls remain in the existing `TrackedSourceTests`, imported by the original
+`test_ci_execution.py` entrypoint. Real temporary Git repositories and actual
+children exercise pre-dispatch refusal, dirty and clean-commit drift, index-hidden
+mutation, original error/timeout retention and final manifest refusal. The separate
+AST control checks only that every original fuzz/supply command supplies its pin;
+it does not claim those external tools ran. No second ledger or acceptance flag
+is added. Full two-repository baselines, native capacity/history, minimum physical
+work cost, independent future-task adoption, physical power loss, long-term DA
+and independent WAN confirmed throughput retain their distinct acceptance duties.

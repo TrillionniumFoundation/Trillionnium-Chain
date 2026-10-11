@@ -176,5 +176,195 @@ class TrackedSourceTests(unittest.TestCase):
                 self.check()
 
 
+    def _fenced_child(self, body, *, checked_call=False, timeout=5):
+        import ci_observation
+        import sys
+        log = self.root / '.git' / 'fenced-command.log'
+        marker = self.root / '.git' / 'entered'
+        program = ('from pathlib import Path\nimport subprocess, sys, time\n'
+                   'Path(sys.argv[1]).write_text("entered")\n'
+                   'print("actual-child-output", flush=True)\n' + body)
+        command = [sys.executable, '-S', '-c', program, str(marker)]
+        observations = []
+        with patch.object(ci_observation, 'ROOT', self.root):
+            if checked_call:
+                with self.assertRaisesRegex(RuntimeError, 'command exited 125'):
+                    ci_observation.checked(command, log, observations, cwd=self.root,
+                                           timeout=timeout, expected_source=self.head)
+                result = observations[0]
+            else:
+                result = ci_observation.run(command, log, cwd=self.root,
+                                            timeout=timeout, expected_source=self.head)
+        return result, log, marker
+
+    def _finish_report(self, report, directory='receipt'):
+        import ci_observation
+        import json
+        output = self.root / '.git' / directory
+        output.mkdir()
+        (output / 'failure.log').write_text('original diagnostic\n')
+        with patch.object(ci_observation, 'ROOT', self.root):
+            ci_observation.finish(output, report, ['nested/source.rs'])
+        return json.loads((output / 'manifest.json').read_text())
+
+    def test_source_fence_clean_child_keeps_actual_success_and_bytes(self):
+        result, log, marker = self._fenced_child('')
+        self.assertEqual(result['exit_code'], 0)
+        self.assertEqual(result['process_exit_code'], 0)
+        self.assertTrue(marker.is_file())
+        self.assertTrue(result['executed'])
+        self.assertTrue(result['source_before_verified'])
+        self.assertTrue(result['source_after_verified'])
+        self.assertEqual(result['expected_source'], self.head)
+        self.assertEqual(log.read_text(), 'actual-child-output\n')
+        self.assertEqual(self.git('rev-parse', 'HEAD'), self.head)
+
+    def test_source_fence_dirty_before_command_cannot_start_child(self):
+        (self.root / 'nested/source.rs').write_text('uncommitted')
+        result, log, marker = self._fenced_child('raise SystemExit(0)')
+        self.assertEqual(result['exit_code'], 125)
+        self.assertIsNone(result['process_exit_code'])
+        self.assertFalse(result['executed'])
+        self.assertFalse(result['source_before_verified'])
+        self.assertFalse(result['source_after_verified'])
+        self.assertEqual(result['source_failure_phase'], 'before')
+        self.assertFalse(marker.exists())
+        self.assertEqual(log.read_bytes(), b'')
+
+    def test_source_fence_clean_wrong_head_cannot_start_child(self):
+        (self.root / 'empty').write_text('other commit')
+        self.git('add', '.'); self.git('commit', '-qm', 'other')
+        self.assertEqual(self.git('status', '--porcelain'), '')
+        result, _, marker = self._fenced_child('')
+        self.assertEqual(result['exit_code'], 125)
+        self.assertEqual(result['source_failure_phase'], 'before')
+        self.assertFalse(marker.exists())
+
+    def test_source_fence_zero_exit_with_real_dirty_source_is_not_success(self):
+        result, log, marker = self._fenced_child(
+            'Path("nested/source.rs").write_text("changed by actual child")\n')
+        self.assertTrue(marker.is_file())
+        self.assertEqual(result['process_exit_code'], 0)
+        self.assertEqual(result['exit_code'], 125)
+        self.assertTrue(result['source_before_verified'])
+        self.assertFalse(result['source_after_verified'])
+        self.assertEqual(result['source_failure_phase'], 'after')
+        self.assertEqual(log.read_text(), 'actual-child-output\n')
+
+    def test_source_fence_keeps_nonzero_primary_error_and_drift(self):
+        result, log, _ = self._fenced_child(
+            'Path("nested/source.rs").write_text("changed")\nraise SystemExit(7)\n')
+        self.assertEqual(result['process_exit_code'], 7)
+        self.assertEqual(result['exit_code'], 7)
+        self.assertEqual(result['source_failure_phase'], 'after')
+        self.assertIn('actual-child-output', log.read_text())
+
+    def test_source_fence_checked_retains_actual_failed_observation(self):
+        result, _, marker = self._fenced_child(
+            'Path("nested/source.rs").write_text("changed")\n', checked_call=True)
+        self.assertTrue(marker.is_file())
+        self.assertEqual(result['exit_code'], 125)
+        self.assertEqual(result['process_exit_code'], 0)
+
+    def test_source_fence_clean_commit_switch_during_command_is_rejected(self):
+        result, _, _ = self._fenced_child(
+            'Path("empty").write_text("new commit")\n'
+            'subprocess.run(["git", "add", "."], check=True)\n'
+            'subprocess.run(["git", "commit", "-qm", "new source"], check=True)\n')
+        self.assertEqual(self.git('status', '--porcelain'), '')
+        self.assertNotEqual(self.git('rev-parse', 'HEAD'), self.head)
+        self.assertEqual(result['process_exit_code'], 0)
+        self.assertEqual(result['exit_code'], 125)
+        self.assertEqual(result['expected_source'], self.head)
+
+    def test_source_fence_index_hidden_child_mutation_still_refuses(self):
+        result, _, _ = self._fenced_child(
+            'subprocess.run(["git", "update-index", "--assume-unchanged", '
+            '"nested/source.rs"], check=True)\n'
+            'Path("nested/source.rs").write_text("hidden mutation")\n')
+        self.assertEqual(self.git('status', '--porcelain'), '')
+        self.assertEqual(result['exit_code'], 125)
+        self.assertFalse(result['source_verified'])
+
+    def test_source_fence_timeout_and_source_failure_preserve_both(self):
+        result, _, marker = self._fenced_child(
+            'Path("nested/source.rs").write_text("before timeout")\ntime.sleep(30)\n',
+            timeout=1)
+        self.assertTrue(marker.is_file())
+        self.assertEqual(result['exit_code'], 124)
+        self.assertTrue(result['timed_out'])
+        self.assertEqual(result['source_failure_phase'], 'after')
+        self.assertIsNotNone(result['process_exit_code'])
+
+    def test_source_fence_pin_is_clean_and_does_not_follow_later_changes(self):
+        import ci_observation
+        with patch.object(ci_observation, 'ROOT', self.root):
+            pinned = ci_observation.pin_source()
+            self.assertEqual(pinned, self.head)
+            (self.root / 'empty').write_text('dirty')
+            with self.assertRaisesRegex(ValueError, 'CI_SOURCE_NOT_COMMITTED_CLEAN'):
+                ci_observation.pin_source()
+        self.assertEqual(pinned, self.head)
+
+    def test_source_fence_finish_dirty_source_cannot_write_pass(self):
+        (self.root / 'nested/source.rs').write_text('different bytes')
+        result = self._finish_report(dict(result='PASS', source_expected=self.head,
+                                         acceptance_granted=False))
+        self.assertEqual(result['result'], 'FAIL')
+        self.assertFalse(result['source_consistent'])
+        self.assertEqual(result['input_sha256'], {})
+        self.assertIn('failure.log', result['artifact_sha256'])
+        self.assertFalse(result['acceptance_granted'])
+
+    def test_source_fence_finish_clean_other_commit_cannot_borrow_pass(self):
+        (self.root / 'empty').write_text('new source')
+        self.git('add', '.'); self.git('commit', '-qm', 'other')
+        result = self._finish_report(dict(result='PASS', source_expected=self.head))
+        self.assertEqual(result['source']['source_state'], 'committed-clean')
+        self.assertEqual(result['result'], 'FAIL')
+        self.assertFalse(result['source_consistent'])
+        self.assertEqual(result['source_expected'], self.head)
+
+    def test_source_fence_finish_requires_initial_pin(self):
+        result = self._finish_report(dict(result='PASS'))
+        self.assertEqual(result['result'], 'FAIL')
+        self.assertFalse(result['source_consistent'])
+
+    def test_source_fence_finish_valid_source_never_upgrades_existing_failure(self):
+        for status in ('PASS', 'FAIL'):
+            result = self._finish_report(dict(result=status, source_expected=self.head,
+                                             error='original failure', acceptance_granted=False),
+                                         'receipt-' + status)
+            self.assertEqual(result['result'], status)
+            self.assertEqual(result['error'], 'original failure')
+            self.assertTrue(result['source_consistent'])
+            self.assertIn('nested/source.rs', result['input_sha256'])
+            self.assertFalse(result['acceptance_granted'])
+
+    def test_source_fence_dirty_source_preserves_primary_failure(self):
+        (self.root / 'empty').write_text('changed')
+        result = self._finish_report(dict(result='FAIL', source_expected=self.head,
+                                         error='dependency policy refused'))
+        self.assertEqual(result['error'], 'dependency policy refused')
+        self.assertEqual(result['result'], 'FAIL')
+        self.assertIn('source_error', result)
+
+    def test_source_fence_existing_fuzz_and_supply_callers_pin_every_command(self):
+        # Wiring inventory only; this does not claim libFuzzer/cargo-deny ran.
+        import ast
+        root = Path(__file__).resolve().parents[2]
+        for filename in ('run_fuzz_smoke.py', 'run_supply_chain.py'):
+            tree = ast.parse((root / 'scripts/ci' / filename).read_text())
+            calls = [node for node in ast.walk(tree) if isinstance(node, ast.Call)
+                     and isinstance(node.func, ast.Name) and node.func.id in ('run', 'checked')]
+            self.assertGreaterEqual(len(calls), 4)
+            for call in calls:
+                source_args = [arg.value for arg in call.keywords if arg.arg == 'expected_source']
+                self.assertEqual(len(source_args), 1)
+                self.assertIsInstance(source_args[0], ast.Name)
+                self.assertEqual(source_args[0].id, 'expected_source')
+
+
+
 if __name__ == '__main__':
     unittest.main(verbosity=2)
