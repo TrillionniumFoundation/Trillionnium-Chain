@@ -153,7 +153,7 @@ jobs:
           set -euo pipefail
           cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib 'ingress::public_v3::' -- --show-output 2>&1 | tee "$TRNM_CI_RECEIPT_DIR/resource-controls.log"
           grep -E '^test ingress::public_v3::scalar_cpu::request_owned_reserve_tests::.* \.\.\. ok$' "$TRNM_CI_RECEIPT_DIR/resource-controls.log" > "$TRNM_CI_RECEIPT_DIR/reserve-selectors.log"
-          test "$(wc -l < "$TRNM_CI_RECEIPT_DIR/reserve-selectors.log")" -eq 4
+          test "$(wc -l < "$TRNM_CI_RECEIPT_DIR/reserve-selectors.log")" -eq 7
           grep -E '^test ingress::public_v3::scalar_cpu::final_samples_tests::.* \.\.\. ok$' "$TRNM_CI_RECEIPT_DIR/resource-controls.log" > "$TRNM_CI_RECEIPT_DIR/final-sample-selectors.log"
           test "$(wc -l < "$TRNM_CI_RECEIPT_DIR/final-sample-selectors.log")" -eq 4
           grep -E '^test result: ok\. [1-9][0-9]* passed; 0 failed;' "$TRNM_CI_RECEIPT_DIR/resource-controls.log"
