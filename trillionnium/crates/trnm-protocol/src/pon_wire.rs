@@ -654,10 +654,7 @@ mod streamed_state_root_tests {
         let mut expected = [[0; 32]; 257];
         expected[256] = hash(b"state-empty", &[]);
         for depth in (0..256).rev() {
-            expected[depth] = hash(
-                b"state-node",
-                &[&expected[depth + 1], &expected[depth + 1]],
-            );
+            expected[depth] = hash(b"state-node", &[&expected[depth + 1], &expected[depth + 1]]);
         }
         assert_eq!(state_empty_hashes(), &expected);
         std::thread::scope(|scope| {

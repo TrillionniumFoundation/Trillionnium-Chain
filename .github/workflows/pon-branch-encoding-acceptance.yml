@@ -63,7 +63,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          test "$(git hash-object trillionnium/crates/trnm-protocol/src/pon_wire.rs)" = 1a51dea27dd3fa66689dbbb0e845b5ec26da21a4
+          test "$(git hash-object trillionnium/crates/trnm-protocol/src/pon_wire.rs)" = b0134c9b958019915e62a2188a8c90177ff01435
           cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-protocol --lib pon_wire:: -- --show-output --test-threads=1 2>&1 | tee "$OUT/state-wire.log"
           grep -E '^test result: ok\. 11 passed; 0 failed; 1 ignored;' "$OUT/state-wire.log"
           for name in state_node_single_buffer_matches_original_wire state_empty_constants_match_all_depths_and_parallel_callers state_root_constants_do_not_cache_values_or_failures; do
