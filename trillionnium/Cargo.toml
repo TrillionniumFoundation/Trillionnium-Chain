@@ -61,3 +61,11 @@ overflow-checks = true
 opt-level = 1
 debug-assertions = true
 overflow-checks = true
+
+# Keep the full debug/test inventory and all checks, but compile the costly
+# public-work primitive with the same optimizing compiler used for native work.
+# This is a test-build choice, not a resource-policy or security qualification.
+[profile.test.package.trnm-crypto-primitives]
+opt-level = 3
+debug-assertions = true
+overflow-checks = true
