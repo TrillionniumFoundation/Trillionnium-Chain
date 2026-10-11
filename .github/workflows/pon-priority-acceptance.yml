@@ -1,0 +1,293 @@
+name: PoN priority acceptance
+on:
+  pull_request:
+permissions:
+  contents: read
+concurrency:
+  group: pon-priority-${{ github.ref }}
+  cancel-in-progress: true
+env:
+  CI: "true"
+  CARGO_INCREMENTAL: "0"
+  CARGO_BUILD_JOBS: "2"
+  RUST_TEST_THREADS: "1"
+  PYTHONDONTWRITEBYTECODE: "1"
+jobs:
+  retained-pressure-failure:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - name: Retrieve exact historical failed artifact without reclassifying it
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
+        with:
+          artifact-ids: "11531476198"
+          run-id: "37730166589"
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/historical-pressure
+      - name: Expose bounded original honest-submit and state diagnostics
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          root = Path(os.environ['RUNNER_TEMP']) / 'historical-pressure'
+          source = json.loads((root / 'source.json').read_text())
+          assert source['tested_commit'] == '560d44ac28fee7b073d1740e372839ab52f057b6'
+          path = root / 'public-v3-from-zero-suite/sustained/report.json'
+          assert path.stat().st_size <= 64 * 1024 * 1024
+          report = json.loads(path.read_text())
+          assert report['schema'] == 'public-v3-sustained-local-from-zero-v1'
+          print(json.dumps({'scope': 'immutable historical failure, not current acceptance', 'source': source}))
+          for phase in report['phases']:
+              result = {key: phase.get(key) for key in (
+                  'phase', 'service_target_met', 'invariant_target_met',
+                  'full_native_state_equal', 'honest_submissions',
+                  'post_pressure_head', 'initial_meter', 'meter_at_traffic_end',
+                  'budget_depletion_observed', 'service')}
+              text = json.dumps(result, sort_keys=True)
+              assert len(text.encode()) <= 256 * 1024
+              print(text)
+          PY
+  native-priorities:
+    name: native priorities (${{ matrix.runner }}, ${{ matrix.source }}, ${{ matrix.campaign }})
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 100
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ubuntu-24.04, ubuntu-24.04-arm]
+        source: [head, prospective-merge]
+        # Keep the original full-capacity work separate from short service/model
+        # regressions and the original long-history experiment. All three run
+        # separately for each architecture/source; none replaces another gate.
+        campaign: [service-model, state, history]
+    env:
+      EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
+      EXPECTED_BASE: ${{ github.event.pull_request.base.sha }}
+      EXPECTED_MERGE: ${{ github.sha }}
+      SOURCE_KIND: ${{ matrix.source }}
+    steps:
+      - name: Checkout the exact candidate or the actual PR target merge
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ matrix.source == 'head' && github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify source and original project boundary
+        id: source
+        shell: bash
+        run: |
+          set -euo pipefail
+          export TRNM_CI_RECEIPT_DIR="$RUNNER_TEMP/priority-observations"
+          mkdir -p "$TRNM_CI_RECEIPT_DIR"
+          printf 'TRNM_CI_RECEIPT_DIR=%s\n' "$TRNM_CI_RECEIPT_DIR" >> "$GITHUB_ENV"
+          printf 'CARGO_HOME=%s/cargo-priority\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
+          printf 'CARGO_TARGET_DIR=%s/target-priority\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
+          args=(--kind "$SOURCE_KIND" --expected-head "$EXPECTED_HEAD")
+          if [ "$SOURCE_KIND" = prospective-merge ]; then
+            args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_MERGE")
+          fi
+          python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$TRNM_CI_RECEIPT_DIR/source.json"
+          bash scripts/project-preflight.sh --audit
+      - name: Install the source-pinned native toolchain
+        id: toolchain
+        run: rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+      - name: Execute original window owner and context-bound consumer controls
+        if: ${{ !cancelled() && steps.source.outcome == 'success' && steps.toolchain.outcome == 'success' && matrix.campaign == 'service-model' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m venv "$RUNNER_TEMP/model-context-env"
+          "$RUNNER_TEMP/model-context-env/bin/python" -m pip install --disable-pip-version-check --only-binary=:all: -r formal/pon-nakamoto-v1/requirements.txt
+          "$RUNNER_TEMP/model-context-env/bin/python" formal/pon-nakamoto-v1/test_model_window_history.py -v 2>&1 | tee "$TRNM_CI_RECEIPT_DIR/model-window-original.log"
+          "$RUNNER_TEMP/model-context-env/bin/python" formal/pon-nakamoto-v1/test_model_consumer_context.py -v 2>&1 | tee "$TRNM_CI_RECEIPT_DIR/model-consumer-context.log"
+          "$RUNNER_TEMP/model-context-env/bin/python" formal/pon-nakamoto-v1/test_model_generation_sequence.py -v 2>&1 | tee "$TRNM_CI_RECEIPT_DIR/model-generation-sequence.log"
+          grep -E '^Ran 7 tests in ' "$TRNM_CI_RECEIPT_DIR/model-generation-sequence.log"
+          "$RUNNER_TEMP/model-context-env/bin/python" formal/pon-nakamoto-v1/test_model_generation_sequence_context.py -v 2>&1 | tee "$TRNM_CI_RECEIPT_DIR/model-generation-context.log"
+          grep -E '^Ran 8 tests in ' "$TRNM_CI_RECEIPT_DIR/model-generation-context.log"
+      - name: Execute original release from-zero controls
+        if: ${{ !cancelled() && steps.source.outcome == 'success' && steps.toolchain.outcome == 'success' && matrix.campaign == 'service-model' }}
+        run: python3 scripts/ci/run_from_zero_native.py --out "$TRNM_CI_RECEIPT_DIR/from-zero-native"
+      - name: Execute actual CLI observation boundaries and retain every child result
+        if: ${{ !cancelled() && steps.source.outcome == 'success' && steps.toolchain.outcome == 'success' && matrix.campaign == 'service-model' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          export PUBLIC_REQUEST_OBSERVATION_CLI_EVIDENCE_DIR="$TRNM_CI_RECEIPT_DIR/observation-cli"
+          mkdir -p "$PUBLIC_REQUEST_OBSERVATION_CLI_EVIDENCE_DIR"
+          for selector in \
+            actual_opt_in_capture_and_default_output_keep_the_same_public_context \
+            retention_loss_is_explicit_and_pre_join_kill_does_not_publish_completion \
+            option_and_create_new_nofollow_refusals_precede_node_open \
+            configured_capacity_crosses_previous_limit_and_keeps_exact_current_maximum \
+            post_join_output_failure_preserves_service_facts_and_native_store \
+            joined_miner_failure_still_exports_facts_before_error_propagation; do
+            log="$TRNM_CI_RECEIPT_DIR/observation-$selector.log"
+            cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test public_v3_observation_cli "$selector" -- --exact --show-output 2>&1 | tee "$log"
+            python3 scripts/ci/check_required_native_test.py "$log" --test "$selector"
+          done
+      - name: Execute isolated original debug pressure regression
+        if: ${{ !cancelled() && steps.source.outcome == 'success' && steps.toolchain.outcome == 'success' && matrix.campaign == 'service-model' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          export TRNM_PUBLIC_V3_FROM_ZERO_DIR="$TRNM_CI_RECEIPT_DIR/debug-from-zero"
+          cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test public_v3_from_zero from_zero_service_shares_cpu_with_honest_work_and_reopened_owner -- --exact --show-output 2>&1 | tee "$TRNM_CI_RECEIPT_DIR/debug-pressure.log"
+          python3 scripts/ci/check_required_native_test.py "$TRNM_CI_RECEIPT_DIR/debug-pressure.log" --test from_zero_service_shares_cpu_with_honest_work_and_reopened_owner
+          python3 - "$TRNM_PUBLIC_V3_FROM_ZERO_DIR" <<'PY'
+          import json, sys
+          from pathlib import Path
+          sys.path.insert(0, 'scripts/ci')
+          from run_from_zero_native import validate_service_report, validate_sustained_report
+          root = Path(sys.argv[1])
+          print(json.dumps({'finite': validate_service_report(root / 'report.json'),
+                            'sustained': validate_sustained_report(root / 'sustained/report.json')}))
+          PY
+      - name: Execute original public service cancellation and actual CPU accounting controls
+        if: ${{ !cancelled() && steps.source.outcome == 'success' && steps.toolchain.outcome == 'success' && matrix.campaign == 'service-model' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib 'ingress::public_v3::' -- --show-output 2>&1 | tee "$TRNM_CI_RECEIPT_DIR/resource-controls.log"
+          grep -E '^test ingress::public_v3::scalar_cpu::request_owned_reserve_tests::.* \.\.\. ok$' "$TRNM_CI_RECEIPT_DIR/resource-controls.log" > "$TRNM_CI_RECEIPT_DIR/reserve-selectors.log"
+          test "$(wc -l < "$TRNM_CI_RECEIPT_DIR/reserve-selectors.log")" -eq 4
+          grep -E '^test ingress::public_v3::scalar_cpu::final_samples_tests::.* \.\.\. ok$' "$TRNM_CI_RECEIPT_DIR/resource-controls.log" > "$TRNM_CI_RECEIPT_DIR/final-sample-selectors.log"
+          test "$(wc -l < "$TRNM_CI_RECEIPT_DIR/final-sample-selectors.log")" -eq 4
+          grep -E '^test result: ok\. [1-9][0-9]* passed; 0 failed;' "$TRNM_CI_RECEIPT_DIR/resource-controls.log"
+      - name: Require actual shared CPU depletion and native public recovery
+        if: ${{ !cancelled() && steps.source.outcome == 'success' && steps.toolchain.outcome == 'success' && matrix.campaign == 'service-model' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          export TRNM_PUBLIC_V3_DEPLETION_DIR="$TRNM_CI_RECEIPT_DIR/actual-cpu-depletion"
+          selector=actual_depletion::actual_replay_depletion_public_recovery_and_same_epoch_reopen
+          cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test public_v3_request_accounting "$selector" -- --exact --show-output 2>&1 | tee "$TRNM_CI_RECEIPT_DIR/actual-cpu-depletion.log"
+          python3 scripts/ci/check_required_native_test.py "$TRNM_CI_RECEIPT_DIR/actual-cpu-depletion.log" --test "$selector"
+          python3 - <<'PYDEPLETION'
+          import json, os
+          from pathlib import Path
+          path = Path(os.environ['TRNM_PUBLIC_V3_DEPLETION_DIR']) / 'report.json'
+          assert path.stat().st_size <= 4 * 1024 * 1024
+          report = json.loads(path.read_text())
+          assert report['schema'] == 'public-v3-actual-local-replay-depletion-v1'
+          assert report['passed'] is True and len(report['rounds']) == 3
+          for row in report['rounds']:
+              assert row['local_pressure']['depletion_observed'] is True
+              assert row['local_pressure']['cap_reached'] is False
+              for key in ('honest_acknowledged', 'submit_on_time', 'head_on_time', 'active_packet_equal'):
+                  assert row[key] is True
+          for key in ('full_native_state_equal', 'reopen_state_equal', 'same_cpu_epoch_across_reopen'):
+              assert report[key] is True
+          for key in ('public_hostile_saturation_qualified', 'work_profile_qualified',
+                      'resource_fairness_qualified', 'independent_accepted',
+                      'physical_power_loss', 'production_activation'):
+              assert report[key] is False
+          print(json.dumps({'scope': report['scope'], 'rounds': 3, 'passed': True}))
+          PYDEPLETION
+      - name: Execute real native model lifecycle and adverse decisions
+        if: ${{ !cancelled() && steps.source.outcome == 'success' && steps.toolchain.outcome == 'success' && matrix.campaign == 'service-model' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test model_evidence_v3 --test model_composition_v4 -- --nocapture 2>&1 | tee "$TRNM_CI_RECEIPT_DIR/model-regressions.log"
+          test "$(grep -Ec '^test result: ok\. [1-9][0-9]* passed; 0 failed;' "$TRNM_CI_RECEIPT_DIR/model-regressions.log")" -eq 2
+      - name: Execute original native full-capacity test
+        if: ${{ !cancelled() && steps.source.outcome == 'success' && steps.toolchain.outcome == 'success' && matrix.campaign == 'state' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib native_authenticated_full_capacity_refund_entry_and_pending_reorganization_recover -- --ignored --nocapture 2>&1 | tee "$TRNM_CI_RECEIPT_DIR/capacity.log"
+          python3 scripts/ci/check_required_native_test.py "$TRNM_CI_RECEIPT_DIR/capacity.log" --test account_archive_prototype::native_store::batch_tests::native_authenticated_full_capacity_refund_entry_and_pending_reorganization_recover
+      - name: Execute original source-preserving migration tests
+        if: ${{ !cancelled() && steps.source.outcome == 'success' && steps.toolchain.outcome == 'success' && matrix.campaign == 'state' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib authenticated_migration -- --nocapture 2>&1 | tee "$TRNM_CI_RECEIPT_DIR/migration.log"
+          grep -E '^test result: ok\. [1-9][0-9]* passed; 0 failed;' "$TRNM_CI_RECEIPT_DIR/migration.log"
+      - name: Execute actual obligation ranges and native reorganization regressions
+        if: ${{ !cancelled() && steps.source.outcome == 'success' && steps.toolchain.outcome == 'success' && matrix.campaign == 'state' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          for entry in \
+            account_obligation_ranges:monetary_ranges_preserve_nonmonetary_cleanup_and_refuse_raw_m06_projection_omission \
+            native_node:test_every_reorg_process_cut_and_admission_gap_recovers_once \
+            native_node:test_packet_status_non_tip_height_and_512_bit_work_match_one_active_ancestry; do
+            IFS=: read -r target selector <<< "$entry"
+            log="$TRNM_CI_RECEIPT_DIR/state-$selector.log"
+            cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test "$target" "$selector" -- --exact --show-output 2>&1 | tee "$log"
+            python3 scripts/ci/check_required_native_test.py "$log" --test "$selector"
+          done
+      - name: Build the original long-history test separately from measurement
+        id: history_build
+        if: ${{ !cancelled() && steps.source.outcome == 'success' && steps.toolchain.outcome == 'success' && matrix.campaign == 'history' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test ancestry_long_sync --no-run --message-format=json > "$TRNM_CI_RECEIPT_DIR/history-build.jsonl" 2> "$TRNM_CI_RECEIPT_DIR/history-build.stderr"
+          python3 - <<'PYBUILD'
+          import json, os
+          from pathlib import Path
+          root = Path(os.environ['TRNM_CI_RECEIPT_DIR'])
+          rows = [json.loads(line) for line in (root / 'history-build.jsonl').read_text().splitlines()]
+          paths = [row['executable'] for row in rows
+                   if row.get('reason') == 'compiler-artifact'
+                   and row.get('target', {}).get('name') == 'ancestry_long_sync'
+                   and row.get('profile', {}).get('test') is True and row.get('executable')]
+          assert len(paths) == 1 and Path(paths[0]).is_absolute() and Path(paths[0]).is_file()
+          (root / 'history-executable.txt').write_text(paths[0] + '\n')
+          PYBUILD
+      - name: Execute 4105 real work blocks and paid public full sync
+        if: ${{ !cancelled() && steps.history_build.outcome == 'success' && matrix.campaign == 'history' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          export TRNM_INDEX_EVIDENCE_DIRECTORY="$TRNM_CI_RECEIPT_DIR/long-history"
+          binary="$(cat "$TRNM_CI_RECEIPT_DIR/history-executable.txt")"
+          sha256sum "$binary" > "$TRNM_CI_RECEIPT_DIR/history-binary.sha256"
+          selector=actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal
+          set +e
+          /usr/bin/time -v -o "$TRNM_CI_RECEIPT_DIR/history-resources.txt" "$binary" "$selector" --exact --ignored --show-output 2>&1 | tee "$TRNM_CI_RECEIPT_DIR/history.log"
+          codes=("${PIPESTATUS[@]}")
+          set -e
+          printf 'native_exit=%s\nlog_exit=%s\n' "${codes[0]}" "${codes[1]}" > "$TRNM_CI_RECEIPT_DIR/history-exit.txt"
+          test "${codes[0]}" -eq 0 && test "${codes[1]}" -eq 0
+          sha256sum -c "$TRNM_CI_RECEIPT_DIR/history-binary.sha256"
+          python3 scripts/ci/check_required_native_test.py "$TRNM_CI_RECEIPT_DIR/history.log" --test "$selector"
+          python3 - <<'PYHISTORY'
+          import json, os
+          from pathlib import Path
+          root = Path(os.environ['TRNM_CI_RECEIPT_DIR'])
+          report = json.loads((root / 'long-history/summary.json').read_text())
+          assert report['schema'] == 'native-ancestry-long-sync-observation-v1'
+          assert report['passed'] is True and report['blocks'] == report['confirmed_packets'] == 4105
+          assert report['renewals'] == 4 and report['corrupt_active_index_reopen_refused'] is True
+          for key in ('public_network_ready', 'hardness_accepted', 'independent_accepted', 'production_activation'):
+              assert report[key] is False
+          assert (root / 'history-resources.txt').stat().st_size > 0
+          print(json.dumps({'scope': 'native logical-time loopback history; compilation excluded from process time/RSS',
+                            'summary': report, 'wan_tps': None, 'confirmation_latency_slo': None,
+                            'physical_power_loss_accepted': False, 'independent_operators_accepted': False}))
+          PYHISTORY
+      - name: Reverify exact unchanged source
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          args=(--kind "$SOURCE_KIND" --expected-head "$EXPECTED_HEAD")
+          if [ "$SOURCE_KIND" = prospective-merge ]; then
+            args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_MERGE")
+          fi
+          python3 scripts/ci/verify_ci_source.py "${args[@]}"
+      - name: Retain successes, failures and unqualified external boundaries
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: priority-${{ matrix.runner }}-${{ matrix.source }}-${{ matrix.campaign }}-${{ github.event.pull_request.head.sha }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/priority-observations/
+          if-no-files-found: error
+          retention-days: 30

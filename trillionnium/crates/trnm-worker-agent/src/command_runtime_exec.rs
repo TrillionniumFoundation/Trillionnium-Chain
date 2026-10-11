@@ -42,6 +42,294 @@ mod unix {
     };
     use wait_timeout::ChildExt;
 
+    #[cfg(target_os = "linux")]
+    mod descendant_owner {
+        use anyhow::{Context, Result};
+        use rustix::process::{
+            child_subreaper, getpid, pidfd_open, set_child_subreaper, waitid, Pid, PidfdFlags,
+            WaitId, WaitIdOptions,
+        };
+        use std::{
+            collections::BTreeSet,
+            fs::{self, File},
+            io::{ErrorKind, Read},
+            path::Path,
+            sync::OnceLock,
+            thread,
+            time::{Duration, Instant},
+        };
+
+        const MAX_PROC_BYTES: u64 = 1024 * 1024;
+        static INSTALLED: OnceLock<std::result::Result<(), String>> = OnceLock::new();
+
+        #[derive(Clone, Copy, Debug, PartialEq, Eq)]
+        struct Identity {
+            pid: u32,
+            parent: u32,
+            group: u32,
+            starttime: u64,
+        }
+
+        fn read_bounded(path: &Path) -> Result<Vec<u8>> {
+            let mut bytes = Vec::new();
+            File::open(path)?
+                .take(MAX_PROC_BYTES + 1)
+                .read_to_end(&mut bytes)?;
+            anyhow::ensure!(
+                bytes.len() as u64 <= MAX_PROC_BYTES,
+                "worker proc input limit"
+            );
+            Ok(bytes)
+        }
+
+        fn parse_identity(bytes: &[u8]) -> Result<Identity> {
+            let value = std::str::from_utf8(bytes)?;
+            // comm may contain whitespace and ')'; the final ')' precedes state.
+            let (prefix, fields) = value.rsplit_once(')').context("worker proc stat shape")?;
+            let pid = prefix
+                .split_once(' ')
+                .context("worker proc pid")?
+                .0
+                .parse()?;
+            let fields: Vec<_> = fields.split_whitespace().collect();
+            anyhow::ensure!(fields.len() >= 20, "worker proc stat fields");
+            Ok(Identity {
+                pid,
+                parent: fields[1].parse()?,
+                group: fields[2].parse()?,
+                starttime: fields[19].parse()?,
+            })
+        }
+
+        fn identity(pid: u32) -> Result<Option<Identity>> {
+            match read_bounded(Path::new(&format!("/proc/{pid}/stat"))) {
+                Ok(bytes) => Ok(Some(parse_identity(&bytes)?)),
+                Err(error)
+                    if error
+                        .downcast_ref::<std::io::Error>()
+                        .is_some_and(|e| e.kind() == ErrorKind::NotFound) =>
+                {
+                    Ok(None)
+                }
+                Err(error) => Err(error),
+            }
+        }
+
+        // Linux adoption is process-wide. Install once, never temporarily toggle
+        // it around a threaded call, and never consume another owner's wait.
+        pub(super) fn install() -> Result<()> {
+            let result = INSTALLED.get_or_init(|| {
+                set_child_subreaper(Some(getpid())).map_err(|error| error.to_string())
+            });
+            anyhow::ensure!(result.is_ok(), "worker subreaper install: {result:?}");
+            anyhow::ensure!(
+                child_subreaper()?.is_some(),
+                "worker subreaper was disabled"
+            );
+            let own = getpid();
+            identity(own.as_raw_nonzero().get() as u32)?.context("worker proc unavailable")?;
+            fs::read_dir("/proc/self/task")?;
+            // Refuse unsupported pidfd-wait kernels before spawning an adapter.
+            let descriptor = pidfd_open(own, PidfdFlags::empty())?;
+            match waitid(
+                WaitId::PidFd(descriptor.as_fd()),
+                WaitIdOptions::EXITED | WaitIdOptions::NOHANG | WaitIdOptions::NOWAIT,
+            ) {
+                Err(rustix::io::Errno::CHILD) => Ok(()),
+                other => anyhow::bail!("worker pidfd wait availability: {other:?}"),
+            }
+        }
+
+        use std::os::fd::AsFd;
+
+        fn child_ids(deadline: Instant) -> Result<(BTreeSet<u32>, bool)> {
+            let mut children = BTreeSet::new();
+            let mut changed_tasks = false;
+            for task in fs::read_dir("/proc/self/task")? {
+                anyhow::ensure!(
+                    Instant::now() < deadline,
+                    "worker descendant cleanup deadline"
+                );
+                let task = task?;
+                let name = task.file_name();
+                let name = name.to_str().context("worker task id")?;
+                anyhow::ensure!(name.parse::<u32>().is_ok(), "worker task id shape");
+                let path = task.path().join("children");
+                let bytes = match read_bounded(&path) {
+                    Ok(bytes) => bytes,
+                    Err(error)
+                        if error
+                            .downcast_ref::<std::io::Error>()
+                            .is_some_and(|e| e.kind() == ErrorKind::NotFound) =>
+                    {
+                        // Never declare closure from a partial task snapshot.
+                        changed_tasks = true;
+                        continue;
+                    }
+                    Err(error) => return Err(error),
+                };
+                for value in std::str::from_utf8(&bytes)?.split_whitespace() {
+                    children.insert(value.parse()?);
+                }
+            }
+            Ok((children, changed_tasks))
+        }
+
+        pub(super) fn reap(group: Pid, deadline: Instant) -> Result<()> {
+            let owner = getpid().as_raw_nonzero().get() as u32;
+            let group_number = group.as_raw_nonzero().get() as u32;
+            let leader = identity(group_number)?.context("worker leader identity missing")?;
+            anyhow::ensure!(
+                leader.pid == group_number
+                    && leader.parent == owner
+                    && leader.group == group_number,
+                "worker leader ownership changed"
+            );
+            loop {
+                anyhow::ensure!(
+                    Instant::now() < deadline,
+                    "worker descendant cleanup deadline"
+                );
+                let current = identity(group_number)?.context("worker leader pin missing")?;
+                anyhow::ensure!(current == leader, "worker leader identity changed");
+                let leader_exited = match waitid(
+                    WaitId::Pid(group),
+                    WaitIdOptions::EXITED | WaitIdOptions::NOHANG | WaitIdOptions::NOWAIT,
+                ) {
+                    Ok(status) => status.is_some(),
+                    Err(rustix::io::Errno::INTR) => continue,
+                    Err(error) => return Err(error.into()),
+                };
+                let (children, changed_tasks) = child_ids(deadline)?;
+                let mut found = changed_tasks;
+                for pid in children {
+                    anyhow::ensure!(
+                        Instant::now() < deadline,
+                        "worker descendant cleanup deadline"
+                    );
+                    if pid == group_number {
+                        continue;
+                    }
+                    let Some(before) = identity(pid)? else {
+                        continue;
+                    };
+                    if before.pid != pid || before.parent != owner || before.group != group_number {
+                        continue;
+                    }
+                    found = true;
+                    let pid = Pid::from_raw(i32::try_from(pid)?).context("worker child pid")?;
+                    let descriptor = pidfd_open(pid, PidfdFlags::empty())?;
+                    anyhow::ensure!(
+                        identity(before.pid)? == Some(before),
+                        "worker adopted child identity changed"
+                    );
+                    // This descriptor identifies the actual adopted child. The
+                    // unreaped leader still pins the group; no wait(-1), no wait
+                    // on a foreign group, no signal to an unclassified process.
+                    match waitid(
+                        WaitId::PidFd(descriptor.as_fd()),
+                        WaitIdOptions::EXITED | WaitIdOptions::NOHANG,
+                    ) {
+                        Ok(_) | Err(rustix::io::Errno::INTR) => {}
+                        Err(error) => return Err(error.into()),
+                    }
+                }
+                anyhow::ensure!(
+                    Instant::now() < deadline,
+                    "worker descendant cleanup deadline"
+                );
+                // An exit can reparent another generation after our snapshot.
+                // Repeat after any found child, even when it was just reaped.
+                if leader_exited && !found {
+                    return Ok(());
+                }
+                thread::sleep(
+                    Duration::from_millis(1)
+                        .min(deadline.saturating_duration_since(Instant::now())),
+                );
+            }
+        }
+
+        #[cfg(test)]
+        mod tests {
+            use super::*;
+            #[test]
+            fn proc_identity_uses_last_comm_parenthesis_and_exact_starttime() {
+                let mut fields = vec!["Z", "17", "29"];
+                fields.extend(std::iter::repeat_n("0", 16));
+                fields.push("987654321");
+                let raw = format!("29 (command with ) spaces) {}", fields.join(" "));
+                assert_eq!(
+                    parse_identity(raw.as_bytes()).unwrap(),
+                    Identity {
+                        pid: 29,
+                        parent: 17,
+                        group: 29,
+                        starttime: 987654321
+                    }
+                );
+                assert!(parse_identity(b"29 (broken) Z 17 29").is_err());
+            }
+
+            fn run_nested_family() {
+                let code = r#"import os,time,json
+r,w=os.pipe()
+child=os.fork()
+if child==0:
+ os.close(r)
+ grand=os.fork()
+ if grand==0:
+  os.close(w);os.close(1);os.close(2);time.sleep(30)
+ else:
+  def token(p): return [p,int(open('/proc/%d/stat'%p).read().rsplit(')',1)[1].split()[19])]
+  os.write(w,json.dumps([token(os.getpid()),token(grand)]).encode())
+  os.close(w);os.close(1);os.close(2);time.sleep(30)
+else:
+ os.close(w)
+ print(os.read(r,4096).decode(),flush=True)
+ os.close(r)
+"#;
+                let output = crate::command_runtime_exec::run_command_with_timeout(
+                    "python3",
+                    &["-c".into(), code.into()],
+                    &[],
+                    Duration::from_secs(3),
+                )
+                .unwrap();
+                assert!(output.status.success());
+                let tokens: Vec<(u32, u64)> = serde_json::from_slice(&output.stdout).unwrap();
+                assert_eq!(tokens.len(), 2);
+                for (pid, starttime) in tokens {
+                    assert!(
+                        identity(pid)
+                            .unwrap()
+                            .is_none_or(|actual| actual.starttime != starttime),
+                        "an owned ordinary descendant is still live or unreaped after return"
+                    );
+                }
+            }
+
+            #[test]
+            fn successful_leader_reaps_two_ordinary_descendant_generations() {
+                run_nested_family();
+            }
+
+            #[test]
+            fn concurrent_groups_do_not_reap_an_unrelated_direct_child() {
+                use std::process::Command;
+                let mut unrelated = Command::new("python3")
+                    .args(["-c", "import time;time.sleep(.25);raise SystemExit(7)"])
+                    .spawn()
+                    .unwrap();
+                let first = thread::spawn(run_nested_family);
+                let second = thread::spawn(run_nested_family);
+                first.join().unwrap();
+                second.join().unwrap();
+                assert_eq!(unrelated.wait().unwrap().code(), Some(7));
+            }
+        }
+    }
+
     fn nonblocking(pipe: &impl AsFd) -> Result<()> {
         fcntl_setfl(pipe, fcntl_getfl(pipe)? | OFlags::NONBLOCK)?;
         Ok(())
@@ -113,6 +401,14 @@ mod unix {
             "worker adapter timeout must be positive"
         );
         let started = Instant::now();
+        #[cfg(target_os = "linux")]
+        descendant_owner::install()?;
+        // Ownership setup is part of the caller's original command deadline.
+        anyhow::ensure!(
+            started.elapsed() < timeout,
+            "llm adapter timeout before spawn after {}ms",
+            timeout.as_millis()
+        );
         let mut child = Command::new(program)
             .args(base_args)
             .args(extra_args)
@@ -160,10 +456,18 @@ mod unix {
         // Always clean the owned group before reaping, including successful
         // leaders that left descendants running. This is not a sandbox against
         // a hostile child that deliberately escapes its process group.
+        let cleanup_deadline = Instant::now() + CLEANUP_BUDGET;
         let group_cleanup = kill_process_group(group, Signal::KILL);
+        #[cfg(target_os = "linux")]
+        let descendant_cleanup = descendant_owner::reap(group, cleanup_deadline);
         let reaped = child
-            .wait_timeout(CLEANUP_BUDGET)
-            .context("worker adapter reap failed")?;
+            .wait_timeout(cleanup_deadline.saturating_duration_since(Instant::now()))
+            .with_context(|| {
+                format!(
+                    "worker adapter reap failed; collection={:?}",
+                    collected.as_ref().err()
+                )
+            })?;
         if let Err(e) = group_cleanup {
             anyhow::ensure!(
                 cleanup_already_terminal(e, collected.is_ok()),
@@ -171,8 +475,24 @@ mod unix {
                 collected.as_ref().err()
             );
         }
-        let status = reaped
-            .context("worker adapter cleanup deadline exceeded; process reaping incomplete")?;
+        let status = reaped.with_context(|| {
+            format!(
+                "worker adapter cleanup deadline exceeded; process reaping incomplete; collection={:?}",
+                collected.as_ref().err()
+            )
+        })?;
+        #[cfg(target_os = "linux")]
+        descendant_cleanup.with_context(|| {
+            format!(
+                "worker adapter descendant reaping incomplete; collection={:?}",
+                collected.as_ref().err()
+            )
+        })?;
+        anyhow::ensure!(
+            Instant::now() <= cleanup_deadline,
+            "worker adapter cleanup deadline exceeded; collection={:?}",
+            collected.as_ref().err()
+        );
         let (stdout, stderr) = collected?;
         Ok(Output {
             status,

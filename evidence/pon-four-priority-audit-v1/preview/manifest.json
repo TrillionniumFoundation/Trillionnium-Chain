@@ -1,0 +1,73 @@
+{
+  "schema": "immutable-parent-preview-clean-run-v1",
+  "completed_utc": "2026-10-02T02:14:28.371767+00:00",
+  "result": "PASS",
+  "source": {
+    "commit": "3c63c8368187de895e1dc0df8bbc105c6f39f842",
+    "tree": "54d2f12c0d783f827d43bc626489f58ab75d7c31",
+    "clean_before": true,
+    "clean_after": true,
+    "before": [
+      "3c63c8368187de895e1dc0df8bbc105c6f39f842",
+      "54d2f12c0d783f827d43bc626489f58ab75d7c31"
+    ],
+    "after": [
+      "3c63c8368187de895e1dc0df8bbc105c6f39f842",
+      "54d2f12c0d783f827d43bc626489f58ab75d7c31"
+    ],
+    "sha256": {
+      "trillionnium/Cargo.lock": "4a5e9cf53d48bfd419346dcf2b19716f35e2470154c75e5b560d8da7872a461f",
+      "trillionnium/Cargo.toml": "4ad9688a01784da7809fd7c8cb6ad4d762136e5f496edd604a4974520e439efc",
+      "rust-toolchain.toml": "24ef3b9d3edbd850aa386cb0a98e10450b0030991a4537cb359f54d49dbbb33a",
+      "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs": "d68c2b5858d13760e850323964040cefc9ac4750a001f6a39184d63e70dcdfa4",
+      "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs": "d9a4762dfe8126646272cd1ad2cc0a366502de1eff86245d5fcbad8543c30175",
+      "trillionnium/crates/trnm-pon-node/src/store/mempool.rs": "24e5a6d03b11ac4528c5166cca4801e921af6730fc2a46b73985970dc79cbd72",
+      "trillionnium/crates/trnm-pon-node/tests/local_mempool.rs": "a3f6a0ab52cca4588e401e26de789777a754173449dbabd31a31c7cd375973ec"
+    }
+  },
+  "binary": {
+    "path": "trillionnium/target/release/deps/trnm_mvcc_fee-8067cdff91cb0d54",
+    "sha256": "8197375babb774d96aac75e95aecdfa124b0949e73e98ed095fce38b381c0f37"
+  },
+  "command": "cargo test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-mvcc-fee immutable_parent_preview_component_timing -- --ignored --nocapture",
+  "environment": {
+    "activation_script": "/workspace/scratch/aebafee84981/validation/activate.sh",
+    "activation_sha256": "780edc5842faaa1ad332df9fa5b4f4f93f40c97152c0b38f04edf564863e3e80",
+    "rustc_verbose": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: x86_64-unknown-linux-gnu\nrelease: 1.95.0\nLLVM version: 22.1.2",
+    "cargo_version": "cargo 1.95.0 (f2d3ce0bd 2026-03-21)",
+    "platform": "Linux-6.18.44-x86_64-with-glibc2.41",
+    "cpu_model": "AMD EPYC 9V74 80-Core Processor",
+    "variables": {
+      "CARGO_HOME": "/workspace/scratch/aebafee84981/toolchain/cargo",
+      "RUSTUP_HOME": "/workspace/scratch/aebafee84981/toolchain/rustup",
+      "CARGO_TARGET_DIR": "/workspace/scratch/aebafee84981/Trillionnium-Chain/trillionnium/target",
+      "CARGO_BUILD_JOBS": "2",
+      "RUST_TEST_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "OMP_NUM_THREADS": "1",
+      "PYTHONDONTWRITEBYTECODE": "1"
+    }
+  },
+  "raw_samples_file": "samples.json",
+  "raw_log_file": "benchmark.log",
+  "raw_samples_sha256": "8a825d92df2d18f17d8652f90490b87c44362be9dccad429d671b11867b55609",
+  "raw_log_sha256": "0679e1a7a23a163d55d1a3a8dfc03183f4a5ec6a981471289eac2a4fe01c2979",
+  "summary": {
+    "cold": {
+      "fresh_median_ms": 3334.341356,
+      "bound_median_ms": 247.253623,
+      "ratio_of_medians": 13.48551060867569,
+      "component_elapsed_reduction_percent": 92.5846337671733
+    },
+    "warm": {
+      "fresh_median_ms": 82.383287,
+      "bound_median_ms": 45.0237365,
+      "ratio_of_medians": 1.829774545699911,
+      "component_elapsed_reduction_percent": 45.34845823765201
+    }
+  },
+  "scope": "complete signed M06 prefixes and commitments; excludes M05, SQLite, Node lock wait and concurrency",
+  "state_shape": "4096 inert synthetic padding entries plus issued/current-model/funded-account keys;16 real signed transfer prefixes; not native-transaction-generated large-state evidence",
+  "public_network_ready": false,
+  "physical_memory_bound": false
+}

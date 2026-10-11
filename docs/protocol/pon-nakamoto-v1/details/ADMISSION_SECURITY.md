@@ -49,3 +49,295 @@ fairness or a Sybil cost theorem. `pon_adversarial_cost` uses the actual half-ra
 target with dense, zero, rank-one and sparse matrices, separating honest winning cost,
 forgery hash trials, verification and rejection. Honest structured runs are not the
 fastest adversarial implementation; measured cost does not supply a hardness theorem.
+
+## Same-target resource model and public service obligations
+
+A useful admission budget names the target, profile, task class, attacker preprocessing,
+forged-ticket trials, honest work attempts, encoded bytes, verifier CPU time, queue delay,
+cache state and actual hardware. Construction/rejection ratios use the same target and
+units; ratios of process wall times must not be presented as cryptographic operation
+lower bounds. Separately report cold and warm caches, invalid field/length/task checks,
+failed ticket checks, ticket-passing false transcripts and duplicate valid retransmits.
+
+For m public verifier slots, a measured isolated service approximation is
+m / C_invalid requests per second when C_invalid is in seconds per request, not a safety theorem. Under an explicit
+arrival model lambda_invalid*C_invalid + lambda_valid*C_valid must remain below the
+usable public CPU budget for a stable queue; burst tails and honest waiting time still
+need measurement. A recovery reservation protects only the locally authorized lane. It
+does not prove that a new honest public miner can obtain service during identity churn.
+
+The public qualification campaign must run the actual M04/M02 ordinary ingress path,
+not acquire local permits by directly calling a library. Bind miner and attacker source,
+identity churn policy, bounded queues, CPU scheduling, network loss/delay and independent
+operator roles. Measure admitted, Busy, rejected-before-work, rejected-after-work, valid
+accepted and honest wait-tail counters. Missing ordinary ingress is an integration gap,
+not a passing fairness result. State whether the attack is controller-delivery withholding,
+real network loss or genuine hostile peers; these observations are not interchangeable.
+
+The controlled cost collector in `scripts/pon_work_cost_report.py` can re-run the existing
+native cost binary and preserve raw output plus exact-source identities. It rejects
+mixed targets, duplicate samples, Boolean counters and invented security flags, but
+creates no public-admission qualification. It does not send traffic to any peer or host.
+
+[The historical contract/tooling cost record](../../../../evidence/pon-contract-authority-v1/README.md)
+binds its actual execution, raw samples, target, binary and original source, including
+its retained failed environment setup. It is checked as historical after native-session
+source changes. The newer collection below has its own current-input check; neither
+record grants public admission or work-hardness acceptance.
+
+## Early rejection before branch-state reconstruction
+
+`work_oracle.precheck` is now reused by the existing Ledger admission path after bounded
+header/transaction context checks and before potentially expensive `state_at(parent)`.
+It checks certificate width/magic, field ranges, TaskId and ticket threshold. Malformed
+fields, substituted task and bad ticket cannot force state replay or full transcript work.
+
+A passing precheck is explicitly NOT `VerifiedWork`. A forged digest passing the ticket
+still reaches the unchanged complete transcript verifier and rejects there. Parent-state
+work eligibility, signatures, deterministic execution and roots remain mandatory before
+persistence. This saves malformed-input replay cost; it does not solve a cheaply fabricated
+passing ticket, structured-input shortcuts, fastest-adversary cost or public Sybil fairness.
+
+## Current same-target measurements after native-session integration
+
+[The new retained collection](../../../../evidence/pon-native-session-v1/work-cost/README.md)
+binds the current native source inventory and exact binary to dense, zero, rank-one
+and sparse tasks at one target. The old contract-authority collection is verified only
+as historical observations. The current CI path still requires a matching current-cost
+collection; it does not silence a stale-source failure by changing the old result.
+These CPU timings do not bound the fastest adversary or guarantee honest public service.
+
+## Native development ingress mixed-load boundary
+
+The ordinary native entry now accepts closed socket confirmation batches while actual
+false-transcript requests pass the ticket prefilter and fail full work verification.
+The bounded regression verifies every honest result and exact rejected-request counts;
+it neither bypasses the durable owner nor directly acquires fake library permits.
+Loopback-only access, IP grouping, three socket workers and serialized proof/state work
+remain explicit limitations. Read-only traversal checks stop/deadline cooperatively;
+this does not solve fastest valid producer shortcuts, identity churn, slow-connection
+starvation or sustained honest public admission. No public listener is enabled by tests.
+
+## Native admission lock boundary
+
+The existing native `serve` path performs context/duplicate checks under the one Node
+owner, then drops that lock before full transcript replay. `WorkCheckedPacket` owns the
+exact verified packet behind private fields; it cannot be a caller-supplied Boolean or
+be rebound to another packet. Admission reacquires the same owner and reruns current
+namespace, duplicate, parent, target and clock checks before application/state/receipt
+validation and atomic persistence. Cancellation after verification leaves no new block.
+Owner-lock waiting checks the request deadline rather than blocking indefinitely.
+
+Deterministic scheduling regressions execute a status read while work is outstanding,
+change the best branch during that interval, and exercise cancellation, wrong destination
+context, stale clock and exact retransmission. The real socket regression continues to
+reject 32 ticket-passing false transcripts while serving 16 four-query batches. These
+are controlled loopback observations, not a Sybil/public fairness bound. Full valid
+application execution, recovery and noninterruptible SQLite calls still use the owner.
+
+## Alternative valid producer versus unchanged invalid rejection
+
+The same-relation PreparedTask kernel in W1 is an implemented lower-cost candidate,
+not a changed proof system or a separate admission ticket. Its transposed arithmetic,
+exact bounded reduction and tile-batched hashing must be compared at the same tasks and
+targets as the unchanged full verifier. Keep setup, successful and unsuccessful attempts,
+full rejection and network arrival budgets separate. A better valid producer can reduce
+the security cost per credited unit even while every existing invalid-proof test passes.
+
+The ordinary native node remains a bounded development loopback endpoint. Its local
+read/verification concurrency is not authenticated permissionless public fairness.
+No filter, queue budget or measured median may set work_profile_qualified or public
+activation. Sustained identity-churn delivery through the future authenticated public
+owner, fastest implemented structural attacks, clock/target changes and honest service
+under saturation remain explicit acceptance work.
+
+## Explicit transport admission challenge v1
+
+`ingress::serve_protected` and `serve_authenticated_protected` are distinct opt-in
+development listeners. Historical `serve` and `serve_authenticated` retain their
+named development scope. A protected Submit connection must complete the new
+`trnm-pon-admission-challenge-v1` / `trnm-pon-admission-solution-v1` exchange before
+obtaining a public proof permit or calling the PoN verifier. Read-only requests do
+not perform this search. Ordinary protected client helpers require a challenge for
+Submit and refuse a legacy terminal response as `ADMISSION_REQUIRED`. A protected
+client first sends the closed `trnm-pon-admission-hello-v1` frame and verifies the
+matching `trnm-pon-admission-ready-v1` response before transmitting the original
+Submit bytes. The subsequent challenge must name the exact profile announced by
+Ready before the client performs any search. The hello commits to those exact bytes. A legacy listener rejects the
+hello without receiving a mutating request. A protected listener rejects an
+unnegotiated Submit before work; signed durable request bytes are never rewritten.
+
+The challenge binds the admission profile, network, parameters, genesis, a fresh
+32-byte OS-entropy nonce, the hash of the EXACT received request frame, the selected
+leading-zero bit count, lifetime and Unix-millisecond expiration. The admission
+profile commits to both cost parameters and the connection-local SHA-256 protocol.
+An authenticated listener additionally signs the challenge in the independent
+`native-transport-admission-server-sign-v1` domain; the client checks the expected
+server key before searching. Existing authenticated request/outbox bytes and their
+ledger meaning do not change. There is no bearer authorization or alternate work
+statement in these messages.
+
+The solution names the complete canonical challenge digest and a u64 search nonce.
+The server checks the corresponding SHA-256 leading-zero predicate once. It accepts
+exactly one solution on that same connection and then discards that challenge;
+reconnecting, retrying after restart or changing any request needs fresh entropy and
+a fresh solution. Cross-connection replay cannot select a previous nonce. A solution
+frame is at most 512 bytes and must use the exact closed serialization. Challenge
+write and solution read share one monotonic absolute deadline; partial bytes cannot
+extend it. Unix expiry is checked by the client as a bounded search aid, while the
+server's monotonic deadline decides acceptance. Entropy failure refuses intake.
+
+`AdmissionPolicy::new` accepts 8..20 leading-zero bits and 100..2000 milliseconds.
+The explicit development default is 16 bits and 2000 milliseconds; these are measured
+experimental resource parameters, not approved public deployment values. Clients
+refuse out-of-cap policies, wrong context/request/server, expired challenges and
+searches exceeding 1,048,576 trials. Protected listeners retain three fixed socket
+workers, the existing frame/connection limits and local recovery permit isolation.
+Two workers may process negotiated proof requests; the third remains eligible for
+read-only frames. Each proof worker first waits at most 2 ms for a connection on
+its own zero-capacity rendezvous channel, then tries the existing listener. After
+the read-only worker reads a canonical, request-digest-bound Hello, it tries to transfer
+that exact socket and already-read frame to either proof worker. The first
+`try_send` remains immediate. If neither receiver is ready, the same worker sleeps
+for at most100 microseconds between opportunities for up to2 ms, bounded by the
+original request and preface deadlines. Actual scheduling can overshoot the
+requested sleep; the next opportunity first checks the original absolute expiry.
+The zero-capacity channels retain no pending sockets. A successful
+transfer reuses the original 10-second request deadline and 100 ms preface deadline;
+it neither repeats accept/frame reading nor increments socket accepts again. The
+three workers still own at most three sockets in total. The read-only worker does
+not receive a proof body, solve/verify the puzzle or acquire a proof permit. This
+bounded transfer opportunity still holds its original accepted socket. If no proof
+worker takes ownership within that original budget, the existing
+`ADMISSION_BUSY_READ_ONLY_RESERVED` refusal and bounded 2 ms yield remain. This
+reduces repeated wrong-lane acceptance without guaranteeing anonymous scheduling,
+an operating-system wakeup bound or public fairness.
+
+The profile hash explicitly commits to `hello-rendezvous0`,
+`handoff-opportunity2ms`, `poll100us`, `proof-recv-before-accept2ms`,
+`original-deadlines` and `socket-ceiling3`, alongside
+`reserved-hello-yield2ms`. This changes the protected transport profile digest;
+same-profile peers and fresh transport contexts must use the new digest. Old
+protected peers cannot silently negotiate a fallback. It changes no PoN work,
+chain weight, ledger schema or signed transaction domain. Protected read-only
+requests do not consume proof permits. Every protected initial frame and Hello/body exchange shares a 100 ms
+absolute preface deadline. Slow fragments cannot renew that budget. The profile
+hash commits to this allocation and deadline as well as the puzzle parameters.
+Frame helpers recheck the absolute deadline after the final successful syscall;
+late final bytes cannot turn an expired read/write into a completed frame. Protected
+untrusted preface, request-decoding and authentication errors return at most 128 Unicode
+characters under a separate 100 ms write budget. Both limits are profile committed.
+A huge malformed operation therefore cannot select a huge echoed error response.
+Clients may reconnect to the identical destination after the nonterminal reserved
+lane refusal, at most512 total Hello attempts, with10 ms backoff and one five-second absolute
+negotiation deadline. Retries transmit only the nonmutating Hello before acceptance;
+they never replace the durable signed request, advance its nonce or downgrade the
+protocol. The larger finite retry ceiling can cover the original five-second budget;
+it never renews that budget. Both the retry ceiling and handoff opportunity are
+committed by the new profile digest; an old profile rejects with `ADMISSION_PROFILE`.
+Raw Busy negotiation responses convey no authentication authority.
+No puzzle holds a proof or recovery permit. Slow initial frames can still occupy
+all three workers for the short preface budget, and repeated anonymous connections
+can still compete for socket acceptance. Slow links may fail the experimental
+100 ms budget. This separation does not guarantee anonymous honest scheduling.
+
+The admission predicate is independent of a parent block's PoN target. Historical
+easy-target or low-work side-branch submissions must also pass it, without declaring
+those branches consensus-invalid. Paying the transport puzzle never bypasses full
+transcript, parent eligibility, application, root, replay or clock verification.
+An attacker that pays this budget can still send a ticket-passing false transcript;
+the original verifier must reject it. The hash search neither adds chainwork nor
+proves useful computation, task hardness, public Sybil resistance or model utility.
+
+The returned `Metrics` separates issued challenges, accepted solutions, rejections
+before work, unnegotiated submissions, work-verifier invocation counts and measured
+check/replay durations. Malformed hellos remain separate malformed-frame counters.
+Socket accepts, protected preface refusals and reserved read-only worker refusals
+are counted separately from solved or rejected admission challenges. A retry can
+create multiple socket accepts for one ultimately submitted request.
+`admission_hello_handoffs` counts successful zero-capacity ownership transfers;
+it is a subset of accepted connections, not a new request or another socket accept.
+The controlled real-socket rendezvous regression forces the reserved-side first
+accept and runs actual native work/admission. A separate production-listener test
+replays serial 250-member read-only bursts before subsequent protected submissions;
+its repeated observations are not new independent confirmations. The existing
+occupied-proof-worker Head, expiry, replay and authentication controls remain
+required. These finite regressions do not accept a public availability gate.
+Nanosecond durations use the monotonic elapsed clock and include actual scheduling;
+they are not CPU-cycle lower bounds or sustained request-rate estimates. Reporting
+must include bits, TTL, hash trials, request bytes, hardware, operator identities,
+valid/invalid arrival schedules, expired/slow connections, Busy and honest wait
+samples. Under identity rotation, any fairness assumption must name the scheduler,
+connection budget and anonymous admission model; changing keys does not magically
+add resource cost beyond the actual performed search. Sustained independent public
+attack/service and hardware-asymmetry acceptance remain separate work.
+
+`tests/protected_ingress.rs` uses real sockets, original ticket-passing false
+transcripts, real valid work blocks, expiry, exact-wire context/replay substitution,
+authenticated durable retransmission and a bounded mixed load. Its raw sample
+output is new execution evidence only when actually run on the identified source;
+test existence and local passes do not promote public activation or work hardness.
+The explicitly ignored `sustained_protected_socket_cost_campaign` is a release
+measurement with separate baseline, unpaid false-transcript and paid false-transcript
+phases. The false-transcript phases have two sequential anonymous loopback streams
+for a requested ten seconds each. It changes false transcript digests for each request, uses a
+known easy genesis parent, and records actual elapsed duration, performed hash trials,
+Busy responses, server checks, honest Submit/Head attempts, successes and failures.
+The `slow_hello_occupancy` phase adds three rotating TCP streams for ten seconds.
+Each alternates between a half-written initial Hello and a complete Hello with
+its promised request body withheld, holds that socket for 150 ms and then opens
+a fresh one. Partial initial Hellos can occupy all three socket workers until the
+preface deadline; complete Hellos test the two proof slots and reserved read-only
+worker. Honest Submit and Head calls continue throughout the phase. Slow connections
+and failed attack negotiation attempts retain their own denominators.
+Its `transport-admission-sustained-cost-v2` report names the fixed encoded body
+length `request_template_bytes`. `attacker_body_bytes_successfully_written` sums
+only complete attack request-body writes confirmed by the actual protected client
+helper, before reading a challenge or terminal response. It excludes frame prefixes,
+Hello, solutions, responses and unknown partial writes; it is not total network
+traffic. `attacker_body_write_success_count` counts these completions.
+`attacker_body_write_outcome_unknown_count` counts helper failures, including failures
+before a body starts or after a partial write; `attacker_body_not_started_count`
+counts connection/setup failures before calling the helper. The three counts sum
+to false-transcript attack attempts. Baseline and slow-Hello phases have zero body
+counts because those streams do not send attack request bodies. A later response
+failure retains the already completed body bytes and its transport-error observation.
+The observed honest sample denominator must survive any failed or starved requests.
+These local streams do not establish fairness under independent or rotating
+public identities, and elapsed hash rate is not an adversarial cost lower bound.
+
+## Explicit public development transport successor
+
+The [public-v2 contract](PUBLIC_INTAKE_V2.md) replaces the connection-work-v1
+shared short Hello/body deadline only when explicitly selected. It assigns fixed
+phase deadlines and connection/body/output/queue budgets, resource tickets to
+all public operations, bounded metadata/one-packet history reads, and no durable
+guest identity table. These are transport changes. The full experimental PNW1
+verifier, source admission, deterministic execution, branch rules and chainwork
+remain authoritative. Native calls already in execution are not preempted by a
+connection deadline. Saturation and serialized persistence can still deny honest
+service; physical deployment and a predeclared attack/service budget remain
+required. Local conformance does not remove the experimental work-profile gate.
+
+Public V2 r2 and [V3 r3](PUBLIC_POOL_INTAKE_V3.md) resource policies partition their
+existing body/output totals, retain per-lane grants through socket/task completion
+and cancel disconnected requests between native stages. Each uses its own new
+pinned resource digest while preserving its separate wire and signing domains.
+The signed socket controls fill paid mutation budgets with different callers,
+preserve Head service, cancel two owner-waiting and one queued request, and then
+fully verify the original valid packet. A changed product with the original trace
+is still rejected by the complete verifier. These component controls neither
+certify sustained attacker budgets nor repair the separate connection-work-v1
+26/27 short unpaid-phase observation. Shared pre-ticket/connection resources and
+the single native owner remain relevant to public availability.
+
+V3 r3 additionally retains a paid canonical request in the original bounded
+connection's Enqueue stage when its unchanged two-entry worker channel is Full.
+Connection-ID polling preserves original work/total deadlines and paid permits;
+EOF/expiry/shutdown cancels before dispatch. The64 connection cap,8/8 grants,
+2 proof/1 read workers,2+2 queues and body/output totals do not increase.
+New policy digests reject r1/r2 cookies. Full polls are scheduling observations,
+not request refusal counts. The finite localhost three-phase control accepted all
+180 honest Submit/Head/History requests while cached and distinct-fork Product
+mutations were refused; it does not establish unknown-caller Sybil fairness or
+restore the separately unexecuted remote mixed-hostile qualification.
