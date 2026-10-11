@@ -84,6 +84,34 @@ fn bytes32(bytes: Vec<u8>) -> Result<Hash> {
 fn bytes64(bytes: Vec<u8>) -> Result<[u8; 64]> {
     bytes.try_into().map_err(|_| "STORAGE_WORK".into())
 }
+// Retain at most one byte beyond a fixed field's expected width. This is a
+// copy bound, not validation authority: the original shape check still runs in
+// its original order after all SQL conversions. Empty BLOB and SQL NULL remain
+// distinct, and non-BLOB values keep rusqlite's original InvalidColumnType.
+// SQLite may already have materialized the cell; no page/RSS bound is claimed.
+struct FixedSqlBlob<const WIDTH: usize>(Vec<u8>);
+impl<const WIDTH: usize> rusqlite::types::FromSql for FixedSqlBlob<WIDTH> {
+    fn column_result(value: rusqlite::types::ValueRef<'_>) -> rusqlite::types::FromSqlResult<Self> {
+        let bytes = value.as_blob()?;
+        let retained = bytes.len().min(WIDTH.saturating_add(1));
+        Ok(Self(bytes[..retained].to_vec()))
+    }
+}
+fn fixed_blob<const WIDTH: usize>(
+    row: &rusqlite::Row<'_>,
+    column: usize,
+) -> rusqlite::Result<Vec<u8>> {
+    row.get::<_, FixedSqlBlob<WIDTH>>(column)
+        .map(|value| value.0)
+}
+fn optional_fixed_blob<const WIDTH: usize>(
+    row: &rusqlite::Row<'_>,
+    column: usize,
+) -> rusqlite::Result<Option<Vec<u8>>> {
+    row.get::<_, Option<FixedSqlBlob<WIDTH>>>(column)
+        .map(|value| value.map(|value| value.0))
+}
+
 fn canonical<T: Serialize>(value: &T) -> Result<Vec<u8>> {
     Ok(serde_json::to_vec(value)?)
 }
@@ -329,17 +357,17 @@ struct HeaderProjection {
 impl HeaderProjection {
     fn read(row: &rusqlite::Row<'_>) -> rusqlite::Result<Self> {
         Ok(Self {
-            parent: row.get(0)?,
+            parent: optional_fixed_blob::<32>(row, 0)?,
             height: row.get(1)?,
-            work: row.get(2)?,
-            root: row.get(3)?,
+            work: fixed_blob::<64>(row, 2)?,
+            root: fixed_blob::<32>(row, 3)?,
             prefix: row.get(4)?,
             trace: row.get(5)?,
             length: row.get(6)?,
             parent_height: row.get(7)?,
-            parent_work: row.get(8)?,
-            parent_parent: row.get(9)?,
-            parent_root: row.get(10)?,
+            parent_work: optional_fixed_blob::<64>(row, 8)?,
+            parent_parent: optional_fixed_blob::<32>(row, 9)?,
+            parent_root: optional_fixed_blob::<32>(row, 10)?,
         })
     }
 }
@@ -1715,7 +1743,7 @@ impl Node {
             let actual: Option<Vec<u8>> = self
                 .db
                 .query_row("SELECT value FROM metadata WHERE key=?", [key], |row| {
-                    row.get(0)
+                    fixed_blob::<32>(row, 0)
                 })
                 .optional()?;
             ensure(
@@ -1780,10 +1808,10 @@ impl Node {
                 [id.as_slice()],
                 |r| {
                     Ok((
-                        r.get::<_, Option<Vec<u8>>>(0)?,
+                        optional_fixed_blob::<32>(r, 0)?,
                         r.get::<_, u64>(1)?,
-                        r.get::<_, Vec<u8>>(2)?,
-                        r.get::<_, Vec<u8>>(3)?,
+                        fixed_blob::<64>(r, 2)?,
+                        fixed_blob::<32>(r, 3)?,
                     ))
                 },
             )
@@ -1800,7 +1828,7 @@ impl Node {
         let (tip, g) = self.db.query_row(
             "SELECT tip,generation FROM active WHERE singleton=1",
             [],
-            |r| Ok((r.get::<_, Vec<u8>>(0)?, r.get::<_, u64>(1)?)),
+            |r| Ok((fixed_blob::<32>(r, 0)?, r.get::<_, u64>(1)?)),
         )?;
         Ok((bytes32(tip)?, g))
     }
@@ -6146,5 +6174,262 @@ mod bounded_active_state_tests {
             .execute_batch("ROLLBACK TO count_cells; RELEASE count_cells")
             .unwrap();
         assert_eq!(node.read_active().unwrap(), original);
+    }
+}
+
+#[cfg(test)]
+mod fixed_blob_read_tests {
+    use super::*;
+    use rusqlite::types::Value as SqlValue;
+
+    fn outcome(
+        result: Result<Record>,
+    ) -> std::result::Result<(Option<Hash>, u64, Work, Hash), String> {
+        result
+            .map(|r| (r.parent, r.height, r.work, r.root))
+            .map_err(|e| e.to_string())
+    }
+
+    type OriginalRow = (Option<Vec<u8>>, u64, Vec<u8>, Vec<u8>);
+
+    // Original complete decoder is an independent test arm, not a live fallback.
+    fn original_record(db: &Connection, id: Hash) -> Result<Record> {
+        let row: Option<OriginalRow> = db
+            .query_row(
+                "SELECT parent,height,chainwork,state_root FROM blocks WHERE id=?",
+                [id.as_slice()],
+                |row| Ok((row.get(0)?, row.get(1)?, row.get(2)?, row.get(3)?)),
+            )
+            .optional()?;
+        let (parent, height, work, state) = row.ok_or("UNKNOWN_PARENT")?;
+        Ok(Record {
+            parent: parent.map(bytes32).transpose()?,
+            height,
+            work: Work::from_bytes(bytes64(work)?),
+            root: bytes32(state)?,
+        })
+    }
+
+    #[test]
+    fn fixed_blob_copy_preserves_null_types_and_exact_boundaries() {
+        let db = Connection::open_in_memory().unwrap();
+        for width in [32, 64] {
+            for value in [
+                SqlValue::Null,
+                SqlValue::Integer(1),
+                SqlValue::Real(1.5),
+                SqlValue::Text("not a blob".into()),
+            ]
+            .into_iter()
+            .chain(
+                [0, 1, 31, 32, 33, 63, 64, 65, 4096, 4 * 1024 * 1024]
+                    .into_iter()
+                    .map(|n| SqlValue::Blob(vec![7; n])),
+            ) {
+                let original = db.query_row("SELECT ?1 AS field", [&value], |r| {
+                    r.get::<_, Option<Vec<u8>>>(0)
+                });
+                let bounded = db.query_row("SELECT ?1 AS field", [&value], |r| {
+                    if width == 32 {
+                        optional_fixed_blob::<32>(r, 0)
+                    } else {
+                        optional_fixed_blob::<64>(r, 0)
+                    }
+                });
+                match (original, bounded) {
+                    (Ok(Some(old)), Ok(Some(new))) => {
+                        assert_eq!(new, old[..old.len().min(width + 1)]);
+                        assert!(new.len() <= width + 1);
+                        assert_eq!(old.len() == width, new.len() == width);
+                    }
+                    (Ok(None), Ok(None)) => assert_eq!(value, SqlValue::Null),
+                    (Err(old), Err(new)) => assert_eq!(old.to_string(), new.to_string()),
+                    _ => panic!("nullable conversion changed"),
+                }
+                let original =
+                    db.query_row("SELECT ?1 AS field", [&value], |r| r.get::<_, Vec<u8>>(0));
+                let bounded = db.query_row("SELECT ?1 AS field", [&value], |r| {
+                    if width == 32 {
+                        fixed_blob::<32>(r, 0)
+                    } else {
+                        fixed_blob::<64>(r, 0)
+                    }
+                });
+                match (original, bounded) {
+                    (Ok(old), Ok(new)) => assert_eq!(new, old[..old.len().min(width + 1)]),
+                    (Err(old), Err(new)) => assert_eq!(old.to_string(), new.to_string()),
+                    _ => panic!("required conversion changed"),
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn fixed_header_projection_bounds_all_six_fields_without_type_coercion() {
+        let db = Connection::open_in_memory().unwrap();
+        let sql = "SELECT ?1,1,?1,?1,NULL,NULL,NULL,0,?1,?1,?1";
+        let large = vec![8_u8; 4 * 1024 * 1024];
+        let row = db.query_row(sql, [&large], HeaderProjection::read).unwrap();
+        assert_eq!(row.parent.unwrap().len(), 33);
+        assert_eq!(row.work.len(), 65);
+        assert_eq!(row.root.len(), 33);
+        assert_eq!(row.parent_work.unwrap().len(), 65);
+        assert_eq!(row.parent_parent.unwrap().len(), 33);
+        assert_eq!(row.parent_root.unwrap().len(), 33);
+        let empty = Vec::<u8>::new();
+        let row = db.query_row(sql, [&empty], HeaderProjection::read).unwrap();
+        assert_eq!(row.parent, Some(vec![]));
+        assert_eq!(row.parent_root, Some(vec![]));
+        assert!(row.work.is_empty());
+        for column in [0, 2, 3, 8, 9, 10] {
+            let mut fields = [
+                "NULL",
+                "1",
+                "zeroblob(64)",
+                "zeroblob(32)",
+                "NULL",
+                "NULL",
+                "NULL",
+                "0",
+                "zeroblob(64)",
+                "NULL",
+                "zeroblob(32)",
+            ];
+            fields[column] = "'wrong-type'";
+            let error = db
+                .query_row(
+                    &format!("SELECT {}", fields.join(",")),
+                    [],
+                    HeaderProjection::read,
+                )
+                .err()
+                .unwrap();
+            assert!(
+                matches!(error, rusqlite::Error::InvalidColumnType(index, _, _) if index == column)
+            );
+        }
+    }
+
+    #[test]
+    fn fixed_record_rereads_original_errors_and_restores_both_native_backends() {
+        for authenticated in [false, true] {
+            let directory = tempfile::tempdir().unwrap();
+            let settings = Settings::development(Some(1)).unwrap();
+            let mut node = if authenticated {
+                Node::open_with_authenticated_state(directory.path(), settings.clone(), 1).unwrap()
+            } else {
+                Node::open(directory.path(), settings.clone(), 1).unwrap()
+            };
+            let genesis = settings.genesis();
+            let packet = node
+                .make(genesis, vec![], development_public(0).unwrap(), 11, 4096)
+                .unwrap();
+            let block = node.admit(&packet, 1000).unwrap();
+            node.activate(block).unwrap();
+            let initial = node.read_active().unwrap();
+            for cache in [0, 1, 16] {
+                node.db.set_prepared_statement_cache_capacity(cache);
+                assert_eq!(
+                    outcome(node.record(block)),
+                    outcome(original_record(&node.db, block))
+                );
+                for (field, value) in [
+                    ("parent", SqlValue::Blob(vec![])),
+                    ("parent", SqlValue::Blob(vec![1; 4 * 1024 * 1024])),
+                    ("chainwork", SqlValue::Blob(vec![2; 4 * 1024 * 1024])),
+                    ("state_root", SqlValue::Blob(vec![3; 4 * 1024 * 1024])),
+                    ("chainwork", SqlValue::Text("bad-work".into())),
+                    ("state_root", SqlValue::Integer(1)),
+                ] {
+                    node.db.execute_batch("SAVEPOINT damage").unwrap();
+                    node.db
+                        .execute(
+                            &format!("UPDATE blocks SET {field}=? WHERE id=?"),
+                            params![value, block.as_slice()],
+                        )
+                        .unwrap();
+                    let actual = outcome(node.record(block));
+                    assert!(actual.is_err());
+                    assert_eq!(actual, outcome(original_record(&node.db, block)));
+                    let error = node.stored_header_link(block).err().unwrap();
+                    assert!(error.requires_owner_stop());
+                    node.db
+                        .execute_batch("ROLLBACK TO damage; RELEASE damage")
+                        .unwrap();
+                    assert_eq!(node.read_active().unwrap(), initial);
+                    assert_eq!(
+                        node.history(block, genesis, 16).unwrap()[0]
+                            .encode()
+                            .unwrap(),
+                        packet.encode().unwrap()
+                    );
+                }
+                // All SQL conversions precede shape validation, even with several corrupt cells.
+                node.db.execute_batch("SAVEPOINT mixed").unwrap();
+                node.db.execute("UPDATE blocks SET parent=zeroblob(33),chainwork='wrong-type',state_root=zeroblob(33) WHERE id=?", [block.as_slice()]).unwrap();
+                let expected = outcome(original_record(&node.db, block));
+                assert!(expected.as_ref().err().unwrap().contains("chainwork"));
+                assert_eq!(outcome(node.record(block)), expected);
+                node.db
+                    .execute_batch("ROLLBACK TO mixed; RELEASE mixed")
+                    .unwrap();
+            }
+            drop(node);
+            let reopened = if authenticated {
+                Node::open_with_authenticated_state(directory.path(), settings, 1).unwrap()
+            } else {
+                Node::open(directory.path(), settings, 1).unwrap()
+            };
+            assert_eq!(reopened.read_active().unwrap(), initial);
+        }
+    }
+
+    #[test]
+    fn fixed_context_and_active_tip_reject_oversize_prefix_aliases() {
+        let directory = tempfile::tempdir().unwrap();
+        let settings = Settings::development(Some(1)).unwrap();
+        let node = Node::open(directory.path(), settings.clone(), 1).unwrap();
+        let original = node.read_active().unwrap();
+        for key in ["schema", "parameters", "genesis"] {
+            let bytes: Vec<u8> = node
+                .db
+                .query_row("SELECT value FROM metadata WHERE key=?", [key], |r| {
+                    r.get(0)
+                })
+                .unwrap();
+            let mut large = bytes.clone();
+            large.resize(4 * 1024 * 1024, 0);
+            node.db.execute_batch("SAVEPOINT context_damage").unwrap();
+            node.db
+                .execute(
+                    "UPDATE metadata SET value=? WHERE key=?",
+                    params![large, key],
+                )
+                .unwrap();
+            let error = node.storage_context().unwrap_err();
+            assert_eq!(error.to_string(), "STORAGE_CONTEXT");
+            assert!(error.requires_owner_stop());
+            node.db
+                .execute_batch("ROLLBACK TO context_damage; RELEASE context_damage")
+                .unwrap();
+            node.storage_context().unwrap();
+        }
+        node.db.execute_batch("SAVEPOINT tip_damage").unwrap();
+        let mut tip = original.0.to_vec();
+        tip.resize(4 * 1024 * 1024, 0);
+        node.db.execute("UPDATE active SET tip=?", [tip]).unwrap();
+        assert_eq!(node.active().unwrap_err().to_string(), "STORAGE_HASH");
+        node.db
+            .execute_batch("ROLLBACK TO tip_damage; RELEASE tip_damage")
+            .unwrap();
+        assert_eq!(node.read_active().unwrap(), original);
+        drop(node);
+        assert_eq!(
+            Node::open(directory.path(), settings, 1)
+                .unwrap()
+                .read_active()
+                .unwrap(),
+            original
+        );
     }
 }

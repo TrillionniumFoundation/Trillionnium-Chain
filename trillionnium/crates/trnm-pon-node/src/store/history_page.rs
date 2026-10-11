@@ -1,7 +1,7 @@
 //! Ordinary native history pages: complete actual ancestry checks with a bounded
 //! operation-local page window. This does not use the derived ancestry index,
 //! cache a validity result, read active State, or change any durable boundary.
-use super::{bytes32, bytes64, Node, Record};
+use super::{bytes32, bytes64, fixed_blob, optional_fixed_blob, Node, Record};
 use crate::{consensus::Work, ensure, Error, Packet, Result};
 use rusqlite::params;
 use std::collections::VecDeque;
@@ -26,10 +26,10 @@ type RawRecord = (Option<Vec<u8>>, u64, Vec<u8>, Vec<u8>);
 
 fn raw_record(row: &rusqlite::Row<'_>, first: usize) -> rusqlite::Result<RawRecord> {
     Ok((
-        row.get(first)?,
+        optional_fixed_blob::<32>(row, first)?,
         row.get(first + 1)?,
-        row.get(first + 2)?,
-        row.get(first + 3)?,
+        fixed_blob::<64>(row, first + 2)?,
+        fixed_blob::<32>(row, first + 3)?,
     ))
 }
 
@@ -84,7 +84,7 @@ impl Node {
         let mut current = start;
         let mut checked = 0_u64;
         while let Some(row) = rows.next()? {
-            let id = bytes32(row.get(8)?)?;
+            let id = bytes32(fixed_blob::<32>(row, 8)?)?;
             ensure(
                 checked < ANCESTOR_BATCH && row.get::<_, u64>(9)? == checked && id == current,
                 "ANCESTRY_HEIGHT",
@@ -97,7 +97,7 @@ impl Node {
                 .parent
                 .ok_or_else(|| Error::from("UNKNOWN_PARENT").local_integrity())?;
             let actual_parent = (|| {
-                let present: Option<Vec<u8>> = row.get(10)?;
+                let present: Option<Vec<u8>> = optional_fixed_blob::<32>(row, 10)?;
                 ensure(present.is_some(), "UNKNOWN_PARENT")?;
                 decode_record(raw_record(row, 4)?)
             })()
@@ -833,5 +833,53 @@ mod tests {
                 "public_network_ready":false,"independent_accepted":false,"production_activation":false
             }),
         );
+    }
+}
+
+#[cfg(test)]
+mod bounded_record_tests {
+    use super::*;
+    use rusqlite::{types::Value, Connection};
+
+    #[test]
+    fn history_record_copy_bounds_keep_original_conversion_and_shape_order() {
+        let db = Connection::open_in_memory().unwrap();
+        let large = vec![1_u8; 4 * 1024 * 1024];
+        let raw = db
+            .query_row("SELECT ?1,1,?1,?1", [&large], |row| raw_record(row, 0))
+            .unwrap();
+        assert_eq!(raw.0.as_ref().unwrap().len(), 33);
+        assert_eq!(raw.2.len(), 65);
+        assert_eq!(raw.3.len(), 33);
+        assert_eq!(
+            decode_record(raw).err().unwrap().to_string(),
+            "STORAGE_HASH"
+        );
+        for value in [
+            Value::Null,
+            Value::Blob(vec![]),
+            Value::Blob(vec![0; 32]),
+            Value::Integer(1),
+            Value::Real(1.5),
+            Value::Text("bad".into()),
+        ] {
+            let sql = "SELECT ?1,1,zeroblob(64),zeroblob(32)";
+            let original: rusqlite::Result<RawRecord> = db.query_row(sql, [&value], |row| {
+                Ok((row.get(0)?, row.get(1)?, row.get(2)?, row.get(3)?))
+            });
+            let actual = db.query_row(sql, [&value], |row| raw_record(row, 0));
+            assert_eq!(
+                actual.map_err(|e| e.to_string()),
+                original.map_err(|e| e.to_string())
+            );
+        }
+        // Bad SQL type wins over an earlier parent-width defect, as before.
+        let error = db
+            .query_row("SELECT zeroblob(33),1,'bad-work',zeroblob(33)", [], |row| {
+                raw_record(row, 0)
+            })
+            .err()
+            .unwrap();
+        assert!(matches!(error, rusqlite::Error::InvalidColumnType(2, _, _)));
     }
 }

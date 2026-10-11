@@ -191,3 +191,33 @@ capacity/migration/reorganization and4,105-block history campaigns, independent
 long-term DA, physical power-loss evidence and independently operated WAN remain
 separate acceptance requirements. Hepta pairing must name this final source and
 its actual main-merge rather than borrow a parent result.
+
+## Bounded fixed-field SQL copies in ordinary readers
+
+The existing native storage owner uses one private `FixedSqlBlob` decoder for
+32-byte identities and 64-byte cumulative work in ordinary block records,
+joined confirmation/header projections, history-page child/parent records,
+active-tip reads and storage-context checks. It borrows SQLite's cell, preserves
+its original SQL type, and copies at most width+1 bytes before the original exact
+shape validation. A one-byte sentinel is never accepted as a valid field.
+Empty BLOB remains present; SQL NULL remains absence only for originally nullable
+fields. All SQL conversions retain their order before parent/work/root shape
+checks, including when several fields are corrupt. Missing-row and owner-stop
+provenance are unchanged. No mutable row or successful validation is cached.
+
+This bounds the owned Rust payload of the named fixed fields, not SQLite's
+internal allocation, cell materialization, page reads, index comparisons, process
+RSS, wall time or total state/history growth. Full packet/work/state/ancestry
+validation, snapshot and transaction fences, cancellation positions, migration,
+reorganization, chainwork, schemas, service budgets and the 65,536-key protocol
+boundary are unchanged. No claim of constant-time history or confirmed TPS follows.
+
+Five additive native controls reside in the existing source files under
+`store::fixed_blob_read_tests` and `store::history_page::bounded_record_tests`.
+They exercise real SQLite values up to 4 MiB, all SQL types, NULL/empty/exact/short
+widths, multiple-damage error precedence, statement-cache sizes 0/1/16, actual
+mined/admitted/activated packets in both backends, rollback, complete state and
+packet equality, and cold reopen. Original controls remain mandatory. This is
+not remote Sybil qualification, independent model adoption, physical power loss
+or long-term DA evidence. Final-source head/actual-main-merge and paired Hepta
+acceptance must execute separately on both x64 and ARM64.
