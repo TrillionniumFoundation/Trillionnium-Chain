@@ -2,6 +2,7 @@ name: PoN branch encoding exact-source acceptance
 on:
   pull_request:
     paths:
+      - trillionnium/crates/trnm-pon-node/src/consensus.rs
       - trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs
       - trillionnium/crates/trnm-pon-node/src/account_archive_prototype/**
       - .github/workflows/pon-branch-encoding-acceptance.yml
@@ -92,6 +93,20 @@ jobs:
           grep -E '^test result: ok\. [1-9][0-9]* passed; 0 failed;' "$OUT/batch.log"
           cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib authenticated_migration -- --show-output --test-threads=1 2>&1 | tee "$OUT/migration.log"
           grep -E '^test result: ok\. 14 passed; 0 failed; 0 ignored;' "$OUT/migration.log"
+      - name: Require exact work arithmetic and unchanged full-profile public service
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib consensus::tests:: -- --show-output --test-threads=1 2>&1 | tee "$OUT/work-arithmetic.log"
+          grep -E '^test result: ok\. 6 passed; 0 failed; 0 ignored;' "$OUT/work-arithmetic.log"
+          for test in aligned_division_preserves_all_512_shift_and_limb_boundaries aligned_division_matches_original_for_wide_arbitrary_operands aligned_required_work_and_retarget_match_original_arithmetic; do
+            selector="consensus::tests::$test"
+            cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib "$selector" -- --exact --show-output --test-threads=1 2>&1 | tee "$OUT/$test.log"
+            python3 scripts/ci/check_required_native_test.py "$OUT/$test.log" --test "$selector"
+          done
+          mkdir "$OUT/network-test-profile"
+          TRNM_CI_RECEIPT_DIR="$OUT/network-test-profile" cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test public_v3_service_campaign -- --show-output --test-threads=1 2>&1 | tee "$OUT/network-test-profile.log"
+          grep -E '^test result: ok\. 2 passed; 0 failed; 0 ignored;' "$OUT/network-test-profile.log"
       - name: Check complete native target lint without allowances
         shell: bash
         run: |

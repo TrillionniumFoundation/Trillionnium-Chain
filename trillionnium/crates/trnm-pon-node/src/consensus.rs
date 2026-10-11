@@ -74,6 +74,7 @@ impl Work {
         }
         Self(out)
     }
+    #[cfg(test)]
     fn shifted(self, bit: u64) -> (Self, bool) {
         let mut out = [0; 8];
         let mut carry = bit;
@@ -85,14 +86,41 @@ impl Work {
     }
     fn divided(self, divisor: Self) -> Result<Self> {
         ensure(divisor != Self::default(), "DIVISION_BY_ZERO")?;
-        let mut remainder = Self::default();
+        if self < divisor {
+            return Ok(Self::default());
+        }
+        // Align the actual divisor to the numerator's most significant bit.
+        // No target/work/context verdict is cached. The remainder and aligned
+        // divisor fit 512 bits: their top bit never exceeds self's top bit.
+        let bits = |value: Self| {
+            value
+                .0
+                .iter()
+                .rposition(|word| *word != 0)
+                .map_or(0, |i| i * 64 + (64 - value.0[i].leading_zeros() as usize))
+        };
+        let shift = bits(self) - bits(divisor);
+        let mut aligned = [0; 8];
+        let words = shift / 64;
+        let offset = shift % 64;
+        for (i, value) in divisor.0.iter().copied().enumerate().take(8 - words) {
+            aligned[i + words] |= value << offset;
+            if offset != 0 && i + words + 1 < 8 {
+                aligned[i + words + 1] |= value >> (64 - offset);
+            }
+        }
+        let mut aligned = Self(aligned);
+        let mut remainder = self;
         let mut quotient = Self::default();
-        for bit in (0..512).rev() {
-            let (shifted, overflow) = remainder.shifted((self.0[bit / 64] >> (bit % 64)) & 1);
-            remainder = shifted;
-            if overflow || remainder >= divisor {
-                remainder = remainder.wrapping_sub(divisor);
+        for bit in (0..=shift).rev() {
+            if remainder >= aligned {
+                remainder = remainder.wrapping_sub(aligned);
                 quotient.0[bit / 64] |= 1u64 << (bit % 64);
+            }
+            // All right shifts use the next still-unmodified higher limb.
+            for i in 0..8 {
+                aligned.0[i] =
+                    (aligned.0[i] >> 1) | if i + 1 < 8 { aligned.0[i + 1] << 63 } else { 0 };
             }
         }
         Ok(quotient)
@@ -160,6 +188,127 @@ pub fn check_time(candidate: u64, ancestors: &[u64], now: u64, skew: u64) -> Res
 #[cfg(test)]
 mod tests {
     use super::*;
+    // Independent original fixed-width restoring division. Keep its full
+    // 512-round loop and overflow handling; do not call the aligned kernel.
+    fn original_division(numerator: Work, divisor: Work) -> Result<Work> {
+        ensure(divisor != Work::default(), "DIVISION_BY_ZERO")?;
+        let mut remainder = Work::default();
+        let mut quotient = Work::default();
+        for bit in (0..512).rev() {
+            let (shifted, overflow) = remainder.shifted((numerator.0[bit / 64] >> (bit % 64)) & 1);
+            remainder = shifted;
+            if overflow || remainder >= divisor {
+                remainder = remainder.wrapping_sub(divisor);
+                quotient.0[bit / 64] |= 1u64 << (bit % 64);
+            }
+        }
+        Ok(quotient)
+    }
+
+    fn compare_division(numerator: Work, divisor: Work) {
+        let original = original_division(numerator, divisor)
+            .map(Work::bytes)
+            .map_err(|error| error.to_string());
+        let candidate = numerator
+            .divided(divisor)
+            .map(Work::bytes)
+            .map_err(|error| error.to_string());
+        assert_eq!(candidate, original, "n={numerator:?} d={divisor:?}");
+    }
+
+    #[test]
+    fn aligned_division_preserves_all_512_shift_and_limb_boundaries() {
+        let max = Work::from_bytes([255; 64]);
+        compare_division(Work::default(), Work::default());
+        compare_division(max, Work::default());
+        for bit in 0..512 {
+            let mut power = Work::default();
+            power.0[bit / 64] = 1u64 << (bit % 64);
+            let previous = power.wrapping_sub(Work::small(1));
+            for numerator in [Work::default(), Work::small(1), previous, power, max] {
+                compare_division(numerator, power);
+            }
+            compare_division(power, max);
+            if bit != 0 {
+                compare_division(max, previous);
+                compare_division(power, previous);
+            }
+            let next = power.checked_add(Work::small(1)).unwrap();
+            compare_division(max, next);
+            compare_division(power, next);
+        }
+    }
+
+    #[test]
+    fn aligned_division_matches_original_for_wide_arbitrary_operands() {
+        let mut seed = 0x62b7_f30a_c985_1d4eu64;
+        let mut word = || {
+            seed ^= seed << 13;
+            seed ^= seed >> 7;
+            seed ^= seed << 17;
+            seed
+        };
+        for case in 0..1024 {
+            let mut numerator = Work(std::array::from_fn(|_| word()));
+            let mut divisor = Work(std::array::from_fn(|_| word()));
+            // Exercise all effective widths, not just uniformly full-width
+            // inputs whose quotient is usually zero or one.
+            for i in (case % 8 + 1)..8 {
+                numerator.0[i] = 0;
+            }
+            for i in ((case / 8) % 8 + 1)..8 {
+                divisor.0[i] = 0;
+            }
+            compare_division(numerator, divisor);
+            compare_division(divisor, numerator);
+            compare_division(numerator, numerator);
+        }
+    }
+
+    #[test]
+    fn aligned_required_work_and_retarget_match_original_arithmetic() {
+        let mut numerator = Work::default();
+        numerator.0[4] = 1;
+        for bit in 0..256 {
+            let mut power = Work::default();
+            power.0[bit / 64] = 1u64 << (bit % 64);
+            let mut targets = vec![power, power.checked_add(Work::small(1)).unwrap()];
+            if bit != 0 {
+                targets.push(power.wrapping_sub(Work::small(1)));
+            }
+            for target in targets {
+                let bytes = target.target().unwrap();
+                assert_eq!(
+                    required_work(bytes).unwrap(),
+                    original_division(numerator, target.checked_add(Work::small(1)).unwrap())
+                        .unwrap()
+                );
+                for (first, last) in [
+                    (100, 0),
+                    (100, 100),
+                    (100, 101),
+                    (100, 249),
+                    (100, 250),
+                    (100, 251),
+                    (0, u64::MAX),
+                ] {
+                    let observed = last.saturating_sub(first).max(1).clamp(38, 600);
+                    let original =
+                        original_division(target.mul_small(observed).unwrap(), Work::small(150))
+                            .unwrap()
+                            .max(Work::small(1))
+                            .min(Work::from_target([255; 32]))
+                            .target()
+                            .unwrap();
+                    assert_eq!(
+                        retarget(bytes, first, last, 16, 10, [255; 32]).unwrap(),
+                        original
+                    );
+                }
+            }
+        }
+    }
+
     #[test]
     fn exact_extreme_work_and_overflow() {
         assert!(required_work([0; 32]).is_err());

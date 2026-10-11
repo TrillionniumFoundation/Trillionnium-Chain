@@ -84,3 +84,41 @@ The current callable mappings remain in `config/pon/module-maturity-v1.json`.
 Exact native entry, storage and work behavior is specified by N3 in NETWORK_CLIENT,
 the native continuation in STATE_RECOVERY and the prepared-producer section in WORK_PROFILE.
 No historical receipt is relabelled as executing this source.
+
+
+## Exact aligned work arithmetic
+
+The existing `Work::divided` now aligns the divisor to the numerator's most
+significant bit instead of always executing 512 restoring-division rounds.
+Every input is still read on every call. This caches no target, chainwork,
+parent, timestamp, storage validity or admission result. The zero-divisor error,
+512-bit result, target conversion and checked overflow rules are unchanged.
+All M02 callers, including required-work and retarget, use the same function.
+
+For integers `a >= b > 0`, set `k = bit_length(a) - bit_length(b)` and
+`d = b * 2^k`. Its highest bit does not exceed that of `a`, so alignment fits
+the existing width. At iteration `i`, the invariant is `a = q*b + r` and
+`0 <= r < 2*d`, with `d = b*2^i`. Subtracting `d` exactly when `r >= d`
+sets quotient bit `i` and leaves `r < d`. Shifting `d` right preserves the
+invariant for the next bit. After bit zero, `0 <= r < b`; hence the returned
+quotient is exactly `floor(a/b)`. For `a < b` it is zero. This is an arithmetic
+equivalence argument, not a neural-work hardness or public-fairness proof.
+
+The independent original 512-round kernel remains test-only. Three additional
+selectors compare every bit/limb boundary, arbitrary wide operands and the
+actual required-work/retarget callers:
+
+- `consensus::tests::aligned_division_preserves_all_512_shift_and_limb_boundaries`
+- `consensus::tests::aligned_division_matches_original_for_wide_arbitrary_operands`
+- `consensus::tests::aligned_required_work_and_retarget_match_original_arithmetic`
+
+The existing branch-encoding four-lane workflow requires the complete six-test
+M02 suite and each new selector, plus the original public-business campaign in
+the unchanged workspace test profile. The existing recent-batch workflow retains
+its separate release-profile campaign. A finite native pass
+does not establish saturated confirmed TPS, independent WAN service, the
+cheapest physical attack, or generalized Sybil fairness. All original state,
+model, recovery, 65,536-key and 4,105-block campaigns remain separate required
+executions on the exact delivered source and actual main-merge tuple. Historical
+full-profile CPU-budget failures remain failures; neither this document nor an
+older or differently compiled successful run reclassifies them.
