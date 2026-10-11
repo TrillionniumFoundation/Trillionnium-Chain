@@ -277,5 +277,225 @@ class QualificationRuntimeTests(unittest.TestCase):
                     "import time; print('ordinary-child-started'); time.sleep(30)", 0.5, -signal.SIGKILL, True)
 
 
+class QualificationIoBoundaryTests(unittest.TestCase):
+    """Real bounded files/pipes; fixtures are not independent runtime evidence."""
+    def setUp(self):
+        import qualification_runtime as runtime
+        from unittest import mock
+        self.runtime = runtime
+        self.mock = mock
+        self.temporary = tempfile.TemporaryDirectory(prefix='trnm-qualification-io-')
+        self.addCleanup(self.temporary.cleanup)
+        self.directory = Path(self.temporary.name)
+        self.interpreter = sys.executable
+        self.usage_limit = 16 * 1024
+        self.probe_limit = 16 * 1024
+        self.observation = dict(executable=self.interpreter, python='test-python',
+                                numpy='test-numpy', cryptography='test-cryptography')
+
+    def probe(self, body, environment=None):
+        # Keep the executable path inside the fixture venv, including its parent
+        # PATH selection. Only this setup is substituted; pipe I/O is real.
+        bin_path = self.directory / 'venv' / 'bin'
+        bin_path.mkdir(parents=True, exist_ok=True)
+        entry = bin_path / 'python3'
+        entry.write_text('#!' + self.interpreter + '\n' + body + '\n')
+        entry.chmod(0o700)
+        supplied = dict(os.environ if environment is None else environment)
+        with self.mock.patch.object(self.runtime.sys, 'executable', str(bin_path / 'python')):
+            return self.runtime.bind_python_runtime(supplied)
+
+    def valid_body(self):
+        return 'import json; print(json.dumps(' + repr(self.observation) + '))'
+
+    def test_usage_fifo_without_writer_never_blocks(self):
+        fifo = self.directory / 'usage'
+        os.mkfifo(fifo)
+        code = ('import sys; sys.path.insert(0, ' + repr(str(ROOT / 'scripts')) + '); '
+                'from qualification_runtime import read_gnu_time_peak_rss; '
+                'assert read_gnu_time_peak_rss(' + repr(str(fifo)) + ') is None')
+        # The outer deadline guards the original blocking implementation.
+        result = subprocess.run([self.interpreter, '-c', code], capture_output=True, timeout=2)
+        self.assertEqual(result.returncode, 0, result.stderr)
+
+    def test_usage_symlink_cannot_supply_a_measurement(self):
+        target = self.directory / 'target'
+        target.write_bytes(b'123 0.01 0.02\n')
+        link = self.directory / 'usage'
+        link.symlink_to(target)
+        self.assertIsNone(self.runtime.read_gnu_time_peak_rss(link))
+
+    def test_usage_oversized_valid_tail_is_unavailable(self):
+        usage = self.directory / 'usage'
+        usage.write_bytes(b'x' * self.usage_limit + b'\n123 0.01 0.02\n')
+        self.assertIsNone(self.runtime.read_gnu_time_peak_rss(usage))
+
+    def test_usage_exact_bound_and_zero_remain_real_values(self):
+        usage = self.directory / 'usage'
+        for tail, expected in ((b'123 0.01 0.02\n', 123), (b'0 0.00 0.00\n', 0)):
+            usage.write_bytes(b'x' * (self.usage_limit - len(tail) - 1) + b'\n' + tail)
+            self.assertEqual(usage.stat().st_size, self.usage_limit)
+            self.assertEqual(self.runtime.read_gnu_time_peak_rss(usage), expected)
+
+    def test_usage_growth_during_read_is_unavailable(self):
+        from ci import read_native_cache_observation as reader
+        usage = self.directory / 'usage'
+        usage.write_bytes(b'123 0.01 0.02\n')
+        original = reader.os.read
+        changed = []
+        def grow(descriptor, size):
+            chunk = original(descriptor, size)
+            if chunk and not changed:
+                changed.append(True)
+                with usage.open('ab') as stream:
+                    stream.write(b'x' * self.usage_limit)
+            return chunk
+        with self.mock.patch.object(reader.os, 'read', grow):
+            self.assertIsNone(self.runtime.read_gnu_time_peak_rss(usage))
+        self.assertEqual(changed, [True])
+
+    def test_usage_path_replacement_during_read_is_unavailable(self):
+        from ci import read_native_cache_observation as reader
+        usage = self.directory / 'usage'
+        replacement = self.directory / 'replacement'
+        usage.write_bytes(b'123 0.01 0.02\n')
+        replacement.write_bytes(b'456 0.01 0.02\n')
+        original = reader.os.read
+        changed = []
+        def replace(descriptor, size):
+            chunk = original(descriptor, size)
+            if chunk and not changed:
+                changed.append(True)
+                os.replace(replacement, usage)
+            return chunk
+        with self.mock.patch.object(reader.os, 'read', replace):
+            self.assertIsNone(self.runtime.read_gnu_time_peak_rss(usage))
+        self.assertEqual(changed, [True])
+        self.assertEqual(self.runtime.read_gnu_time_peak_rss(usage), 456)
+
+    def test_usage_repeated_success_and_failure_close_descriptors(self):
+        from ci import read_native_cache_observation as reader
+        usage = self.directory / 'usage'
+        usage.write_bytes(b'123 0.01 0.02\n')
+        original_open, original_close = reader.os.open, reader.os.close
+        opened, closed = [], []
+        def observe_open(*args, **kwargs):
+            descriptor = original_open(*args, **kwargs)
+            opened.append(descriptor)
+            return descriptor
+        def observe_close(descriptor):
+            closed.append(descriptor)
+            return original_close(descriptor)
+        with self.mock.patch.object(reader.os, 'open', observe_open), \
+                self.mock.patch.object(reader.os, 'close', observe_close):
+            for _ in range(16):
+                self.assertEqual(self.runtime.read_gnu_time_peak_rss(usage), 123)
+                with self.mock.patch.object(reader.os, 'read', side_effect=OSError('read fault')):
+                    self.assertIsNone(self.runtime.read_gnu_time_peak_rss(usage))
+        self.assertEqual(len(opened), 32)
+        self.assertEqual(opened, closed)
+
+    def test_probe_keeps_environment_and_venv_path(self):
+        supplied = dict(os.environ, TRNM_TEST_PROBE='preserved', PATH='/unused-original-path')
+        original = dict(supplied)
+        body = ('import os; assert os.environ["TRNM_TEST_PROBE"] == "preserved"\n'
+                + self.valid_body())
+        environment, observation = self.probe(body, supplied)
+        self.assertEqual(supplied, original)
+        self.assertEqual(environment['PATH'], str(self.directory / 'venv/bin')
+                         + os.pathsep + '/unused-original-path')
+        self.assertEqual(observation, self.observation)
+
+    def test_probe_stdout_flood_is_bounded(self):
+        body = ('import sys; sys.stdout.write(" " * 65536)\n' + self.valid_body())
+        with self.assertRaisesRegex(ValueError, 'NATIVE_STDOUT_LIMIT') as error:
+            self.probe(body)
+        self.assertLessEqual(len(error.exception.stdout), self.probe_limit)
+        self.assertTrue(error.exception.stdout_truncated)
+
+    def test_probe_stderr_flood_is_bounded(self):
+        body = ('import sys; sys.stderr.write("x" * 65536)\n' + self.valid_body())
+        with self.assertRaisesRegex(ValueError, 'NATIVE_STDERR_LIMIT') as error:
+            self.probe(body)
+        self.assertLessEqual(len(error.exception.stderr), self.probe_limit)
+        self.assertTrue(error.exception.stderr_truncated)
+
+    def test_probe_nonzero_exit_preserves_bounded_diagnostics(self):
+        with self.assertRaises(subprocess.CalledProcessError) as error:
+            self.probe('import sys; print("partial"); print("refused", file=sys.stderr); sys.exit(7)')
+        self.assertEqual(error.exception.returncode, 7)
+        self.assertIn(b'partial', error.exception.output)
+        self.assertIn(b'refused', error.exception.stderr)
+
+    def test_probe_duplicate_json_keys_rejected(self):
+        raw = json.dumps(self.observation)
+        raw = raw[:-1] + ', "python": "substitution"}'
+        with self.assertRaisesRegex(ValueError, 'duplicate JSON key'):
+            self.probe('print(' + repr(raw) + ')')
+
+    def test_probe_nonfinite_json_rejected(self):
+        raw = json.dumps(dict(self.observation, python=float('nan')))
+        with self.assertRaisesRegex(ValueError, 'nonfinite JSON number'):
+            self.probe('print(' + repr(raw) + ')')
+
+    def test_probe_closed_identity_shape_required(self):
+        for value in ([], None, dict(self.observation, extra='unowned'),
+                      {key: value for key, value in self.observation.items() if key != 'numpy'},
+                      dict(self.observation, python=''), dict(self.observation, numpy=True)):
+            with self.subTest(value=value):
+                with self.assertRaisesRegex(ValueError, 'PYTHON_RUNTIME_IDENTITY_REQUIRED'):
+                    self.probe('print(' + repr(json.dumps(value)) + ')')
+
+    def test_probe_timeout_uses_existing_owner_and_original_budget(self):
+        original = self.runtime.run_bounded
+        seen = []
+        def finite_control(argv, data, **kwargs):
+            seen.append((data, dict(kwargs)))
+            self.assertEqual(kwargs['timeout'], 30)
+            kwargs['timeout'] = 0.25
+            return original(argv, data, **kwargs)
+        with self.mock.patch.object(self.runtime, 'run_bounded', finite_control):
+            with self.assertRaisesRegex(ValueError, 'NATIVE_EXECUTOR_TIMEOUT'):
+                self.probe('import time; time.sleep(1)\n' + self.valid_body())
+        self.assertEqual(len(seen), 1)
+        self.assertEqual(seen[0][0], b'')
+        self.assertEqual(seen[0][1]['stdout_limit'], self.probe_limit)
+        self.assertEqual(seen[0][1]['stderr_limit'], self.probe_limit)
+
+    def test_probe_inherited_pipe_is_not_zero_exit_success(self):
+        original = self.runtime.run_bounded
+        def finite_control(argv, data, **kwargs):
+            self.assertEqual(kwargs['timeout'], 30)
+            kwargs['timeout'] = 0.3
+            return original(argv, data, **kwargs)
+        body = ('import os,time\n'
+                'if os.fork() == 0:\n'
+                '    time.sleep(1)\n'
+                '    os._exit(0)\n' + self.valid_body())
+        with self.mock.patch.object(self.runtime, 'run_bounded', finite_control):
+            with self.assertRaisesRegex(ValueError, 'NATIVE_EXECUTOR_TIMEOUT'):
+                self.probe(body)
+
+    def test_probe_receives_empty_closed_stdin(self):
+        body = ('import sys; assert sys.stdin.buffer.read() == b""\n' + self.valid_body())
+        _, observation = self.probe(body)
+        self.assertEqual(observation, self.observation)
+
+    def test_probe_invalid_utf8_is_not_a_measurement(self):
+        with self.assertRaises(UnicodeError):
+            self.probe('import os; os.write(1,b"\\xff")')
+
+    def test_probe_trailing_json_is_rejected(self):
+        with self.assertRaises(ValueError):
+            self.probe(self.valid_body() + '\nprint("{}")')
+
+    def test_probe_exact_output_cap_is_accepted(self):
+        raw = json.dumps(self.observation)
+        body = ('import sys; sys.stdout.write(" " * '
+                + str(self.probe_limit - len(raw.encode('utf-8'))) + ' + ' + repr(raw) + ')')
+        _, observation = self.probe(body)
+        self.assertEqual(observation, self.observation)
+
+
 if __name__ == '__main__':
     unittest.main()
