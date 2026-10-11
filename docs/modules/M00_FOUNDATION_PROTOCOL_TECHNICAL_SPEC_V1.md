@@ -126,3 +126,26 @@ Hepta consumer must pin that exact tuple and rerun its own retained checks.
 Prior failures and cancellations remain separate; no independent model adoption,
 future-task custody, physical power loss, DA or WAN acceptance follows from this
 encoding change.
+
+
+## Shared account-branch hash ownership
+
+`pon_wire::account_archive_branch_hash` owns the exact109-byte preimage already
+used by M07: the original domain, LE16 tag length, `account-archive-branch-v1`,
+LE32 child lengths and ordered32-byte children. M07's existing `branch` delegates
+to this non-generic protocol function. The storage layer no longer instantiates
+the SHA implementation at each caller's compilation boundary. All existing Cargo
+profiles, checks, crypto dependencies and wire/state semantics remain unchanged.
+This is code-generation ownership, not a new validation or authority layer.
+
+The independent storage-local implementation is retained in the existing native
+primitive tests. Added `shared_branch_kernel_matches_storage_local_vectors` and
+`shared_branch_kernel_preserves_complete_account_roots` compare512 bit positions,
+1,024 deterministic pairs, full sparse roots, changed/restored nonces and absent
+accounts. The explicit `shared_branch_kernel_complete_call_cost` compares4,096
+complete dependent branch calls per arm in eight alternating-order pairs. Retain
+both default-test and release observations: mixed package optimization can affect
+code generation, so a test-profile ratio is not a release or whole-Node speedup.
+Original state-root, primitive, stored-corruption, migration, CPU-budget and
+network-only confirmed-business controls remain mandatory on the final source.
+No State, SQL verdict, work certificate or model permission is cached.

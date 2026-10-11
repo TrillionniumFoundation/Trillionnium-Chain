@@ -23,6 +23,18 @@ pub fn hash(tag: &[u8], parts: &[&[u8]]) -> Hash {
     }
     h.finalize().into()
 }
+/// Exact account-archive branch grammar shared by the native storage and full
+/// reference root builders. This is a hash primitive, never a verified account,
+/// stored-node verdict or authority cache. Keep crypto code generation with the
+/// existing protocol owner rather than instantiating it in each storage caller.
+pub fn account_archive_branch_hash(left: Hash, right: Hash) -> Hash {
+    let mut encoded = [0u8; 109];
+    encoded[..41].copy_from_slice(b"TRNM-PON1\0\x19\0account-archive-branch-v1\x20\0\0\0");
+    encoded[41..73].copy_from_slice(&left);
+    encoded[73..77].copy_from_slice(&32u32.to_le_bytes());
+    encoded[77..].copy_from_slice(&right);
+    Sha256::digest(encoded).into()
+}
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Header {
     pub network: Hash,

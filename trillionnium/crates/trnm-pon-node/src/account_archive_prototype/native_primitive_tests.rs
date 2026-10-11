@@ -691,3 +691,129 @@ fn native_branch_single_buffer_cost_observation() {
         assert_eq!(checksums[0], checksums[1]);
     }
 }
+
+// Retain the exact previous storage-local kernel as the independent codegen arm.
+fn prior_storage_branch(left: Hash, right: Hash) -> Hash {
+    use sha2::Digest;
+    // Exactly the existing pon_wire::hash preimage: domain, u16 tag length,
+    // tag, u32 left length, left, u32 right length, right. Only the fixed-width
+    // encoding is combined; no hash, ancestor or persisted-byte check is cached.
+    let mut encoded = [0u8; 109];
+    encoded[..41].copy_from_slice(b"TRNM-PON1\0\x19\0account-archive-branch-v1\x20\0\0\0");
+    encoded[41..73].copy_from_slice(&left);
+    encoded[73..77].copy_from_slice(&32u32.to_le_bytes());
+    encoded[77..].copy_from_slice(&right);
+    sha2::Sha256::digest(encoded).into()
+}
+
+#[test]
+fn shared_branch_kernel_matches_storage_local_vectors() {
+    for bit in 0..512 {
+        let mut left = [0; 32];
+        let mut right = [0; 32];
+        if bit < 256 {
+            left[bit / 8] = 1 << (bit % 8);
+        } else {
+            right[(bit - 256) / 8] = 1 << (bit % 8);
+        }
+        assert_eq!(branch(left, right), prior_storage_branch(left, right));
+        assert_eq!(branch(right, left), prior_storage_branch(right, left));
+    }
+    for seed in 0..1024u64 {
+        let left = hash(b"shared-branch-left", &[&seed.to_le_bytes()]);
+        let right = hash(b"shared-branch-right", &[&seed.to_le_bytes()]);
+        assert_eq!(branch(left, right), prior_storage_branch(left, right));
+    }
+}
+
+#[test]
+fn shared_branch_kernel_preserves_complete_account_roots() {
+    fn reference(xs: &[(Hash, Hash)], depth: usize, empty: &[Hash; 257]) -> Hash {
+        if xs.is_empty() {
+            return empty[depth];
+        }
+        if depth == 256 {
+            return xs[0].1;
+        }
+        let split = xs.partition_point(|x| !bit(&x.0, depth));
+        prior_storage_branch(
+            reference(&xs[..split], depth + 1, empty),
+            reference(&xs[split..], depth + 1, empty),
+        )
+    }
+    let mut empty = [[0; 32]; 257];
+    empty[256] = hash(b"account-archive-empty-v1", &[]);
+    for depth in (0..256).rev() {
+        empty[depth] = prior_storage_branch(empty[depth + 1], empty[depth + 1]);
+    }
+    let mut values = BTreeMap::new();
+    for count in 0..=16u64 {
+        let mut leaves = values
+            .iter()
+            .map(|(owner, value)| (path(*owner), leaf(*owner, *value)))
+            .collect::<Vec<_>>();
+        leaves.sort_unstable_by_key(|entry| entry.0);
+        assert_eq!(
+            account_root(&values).unwrap(),
+            reference(&leaves, 0, &empty)
+        );
+        let owner = hash(b"shared-root-owner", &[&count.to_le_bytes()]);
+        values.insert(
+            owner,
+            Account {
+                balance: count * 7,
+                nonce: count,
+            },
+        );
+    }
+    let owner = *values.first_key_value().unwrap().0;
+    let before = account_root(&values).unwrap();
+    let old = values
+        .insert(
+            owner,
+            Account {
+                balance: 0,
+                nonce: u64::MAX,
+            },
+        )
+        .unwrap();
+    assert_ne!(before, account_root(&values).unwrap());
+    values.insert(owner, old);
+    assert_eq!(before, account_root(&values).unwrap());
+    values.remove(&owner);
+    assert_ne!(before, account_root(&values).unwrap());
+}
+
+#[test]
+#[ignore = "explicit same-binary codegen observation; not Node or network throughput"]
+fn shared_branch_kernel_complete_call_cost() {
+    use std::hint::black_box;
+    const CALLS: usize = 4096;
+    let mut outputs = Vec::new();
+    for pair in 0..8 {
+        let mut checksums = Vec::new();
+        for arm in if pair % 2 == 0 {
+            ["storage-local", "protocol-owned"]
+        } else {
+            ["protocol-owned", "storage-local"]
+        } {
+            let mut value = [17; 32];
+            let start = Instant::now();
+            for _ in 0..CALLS {
+                value = if arm == "storage-local" {
+                    prior_storage_branch(black_box(value), black_box([29; 32]))
+                } else {
+                    branch(black_box(value), black_box([29; 32]))
+                };
+            }
+            let elapsed_ns = start.elapsed().as_nanos();
+            checksums.push(value);
+            outputs.push(json!({"pair":pair,"arm":arm,"calls":CALLS,"elapsed_ns":elapsed_ns,"checksum":hex::encode(value)}));
+        }
+        assert_eq!(checksums[0], checksums[1]);
+    }
+    println!(
+        "{}",
+        json!({"schema":"pon-shared-account-branch-kernel-v1","observations":outputs,"scope":"complete branch hash calls, same binary and build profile; not whole Node, physical cost lower bound or WAN TPS"})
+    );
+}

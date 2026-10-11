@@ -170,3 +170,24 @@ SQLite 物理页／WAL 大小或累计历史上界。取消和 SQL 拒绝可能�
 - `formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py::NativeAuthenticatedStorageOracle.test_resealed_wrong_ancestor_height_and_component_seals_are_recomputed`.
 - `formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py::NativeAuthenticatedStorageOracle.test_ancestry_rows_require_exact_types_and_unique_keys`.
 - `formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py::MigrationPreservationOracle.test_identically_corrupt_migration_ancestry_is_not_qualified_by_cell_equality`.
+
+
+## Shared primitive, unchanged durable authority
+
+The existing account-archive `branch` now calls M00's exact
+`pon_wire::account_archive_branch_hash`. Its109-byte preimage and every resulting
+node, sparse path, root and stored record retain their original meaning. Both
+the native Patricia owner and complete-state reference use this primitive; the
+prior storage-local implementation and an independently rebuilt full sparse tree
+remain test controls. No record read, complete-state comparison, history walk,
+parent binding, pre-COMMIT fence, progress callback or cold-recovery check is
+removed. No new cache, store, schema, owner or conditional validity fallback is
+introduced. The65,536-key state boundary and cumulative traversal remain.
+
+Native cost observations must name their build profile. The exact default-profile
+public-service test retains its original workload, deadline and global CPU budget;
+passing a branch microbenchmark does not qualify that network path. The full
+capacity/migration/reorganization and4,105-block history campaigns, independent
+long-term DA, physical power-loss evidence and independently operated WAN remain
+separate acceptance requirements. Hepta pairing must name this final source and
+its actual main-merge rather than borrow a parent result.

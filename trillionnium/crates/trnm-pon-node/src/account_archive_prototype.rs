@@ -225,16 +225,9 @@ fn leaf(owner: Hash, account: Account) -> Hash {
     )
 }
 fn branch(left: Hash, right: Hash) -> Hash {
-    use sha2::Digest;
-    // Exactly the existing pon_wire::hash preimage: domain, u16 tag length,
-    // tag, u32 left length, left, u32 right length, right. Only the fixed-width
-    // encoding is combined; no hash, ancestor or persisted-byte check is cached.
-    let mut encoded = [0u8; 109];
-    encoded[..41].copy_from_slice(b"TRNM-PON1\0\x19\0account-archive-branch-v1\x20\0\0\0");
-    encoded[41..73].copy_from_slice(&left);
-    encoded[73..77].copy_from_slice(&32u32.to_le_bytes());
-    encoded[77..].copy_from_slice(&right);
-    sha2::Sha256::digest(encoded).into()
+    // One exact hash primitive, shared with the complete reference root. This
+    // moves no stored-node, current-state, cancellation or authority decision.
+    trnm_protocol::pon_wire::account_archive_branch_hash(left, right)
 }
 fn empty_hashes() -> [Hash; 257] {
     let mut out = [[0; 32]; 257];
