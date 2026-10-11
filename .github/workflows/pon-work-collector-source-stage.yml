@@ -1,0 +1,98 @@
+name: PoN work collector exact-source stage
+on:
+  push:
+    branches: [chore/chain-work-collector-stage-20261011]
+permissions:
+  contents: write
+jobs:
+  source:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
+      SOURCE_PARENT: ce7a96769218ffec142b4fa70c2eb83eda10918f
+      PRODUCT_BRANCH: fix/chain-work-collector-owner-20261011
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          fetch-depth: 0
+      - name: Reconstruct only the three pinned product changes
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/work-owner-source"
+          mkdir -m 700 "$out"
+          cp scripts/ci/work-collector-source.patch.gz "$out/patch.gz"
+          echo "cd79184e16c7a37ab03b1826ace052fd1a3cbd67a8568ed5d8fb98f68a5832c6  $out/patch.gz" | sha256sum -c -
+          gzip -dc "$out/patch.gz" > "$out/source.patch"
+          echo "1fe3e3deeb5f169e6400f7e14f815a6401135181e402a83326ef2cba3e0993d9  $out/source.patch" | sha256sum -c -
+          git switch --create "$PRODUCT_BRANCH" "$SOURCE_PARENT"
+          test "$(git rev-parse HEAD)" = "$SOURCE_PARENT"
+          test "$(git rev-parse HEAD^{tree})" = 1d1ddc26dceef168e1e5cc40d745d9af7cab4413
+          test "$(git rev-parse HEAD:scripts/pon_work_rejection_report.py)" = d0f068581f4a09544bc26a55e26e2e65726c0758
+          test "$(git rev-parse HEAD:scripts/ci/test_work_rejection_report.py)" = 343790569b847db1fef097e133fc1552996c501d
+          test "$(git rev-parse HEAD:docs/protocol/pon-nakamoto-v1/details/WORK_PROFILE.md)" = d901b40d9d2330f6037d9de5a14349218889b6ca
+          test "$(git rev-parse HEAD:formal/pon-nakamoto-v1/bounded_process.py)" = 04d1a5b4a1e4bc487e37c6e40e24d86a16896ba5
+          bash scripts/project-preflight.sh | tee "$out/preflight-before.log"
+          git apply --check "$out/source.patch"
+          git apply "$out/source.patch"
+          printf '%s\n' docs/protocol/pon-nakamoto-v1/details/WORK_PROFILE.md scripts/ci/test_work_rejection_report.py scripts/pon_work_rejection_report.py > "$out/expected-paths.txt"
+          git diff --name-only | sort > "$out/actual-paths.txt"
+          cmp "$out/expected-paths.txt" "$out/actual-paths.txt"
+          test "$(git hash-object scripts/pon_work_rejection_report.py)" = 276cc15d8c20a8fbcce06eb63459a49590c8c4b8
+          test "$(git hash-object scripts/ci/test_work_rejection_report.py)" = 8d405e43612ce95368cfa4ff9f983b12c1bf69ea
+          test "$(git hash-object docs/protocol/pon-nakamoto-v1/details/WORK_PROFILE.md)" = 4c9fb2d423f2fa25b9db7f2cefdccefd9749f585
+          git diff --check
+          git add docs/protocol/pon-nakamoto-v1/details/WORK_PROFILE.md scripts/ci/test_work_rejection_report.py scripts/pon_work_rejection_report.py
+          bash scripts/project-preflight.sh --staged | tee "$out/preflight-staged.log"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'refactor(pon): share bounded W1 cost collection owner and preserve failure evidence' -m 'Continue exact ce7a9676. Keep all 75 existing cost tests; add 12 actual process controls. Reuse existing bounded_process for exact streams, output bursts, inherited pipes and original deadlines. Preserve all consensus, work, state, model, final-use and five-track acceptance boundaries. Source frozen before this staging execution; full native head/main-merge and paired baselines remain separate.'
+          test -z "$(git status --porcelain)"
+          git rev-parse HEAD HEAD^{tree} > "$out/source-before.txt"
+          git show --format=fuller --stat HEAD > "$out/commit.txt"
+          git diff "$SOURCE_PARENT" HEAD > "$out/delivered.patch"
+      - name: Run complete original and additive scoped controls on frozen source
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/work-owner-source"
+          python3 --version | tee "$out/python-version.txt"
+          failed=0
+          for spec in 'scripts/ci/test_work_rejection_report.py:87:cost' 'scripts/ci/test_cross_arch_cost.py:47:cross' 'formal/pon-nakamoto-v1/test_bounded_process.py:26:process' 'scripts/ci/test_ci_execution.py:51:source'; do
+            IFS=: read -r path count label <<< "$spec"
+            set +e
+            python3 "$path" -v > "$out/$label.log" 2>&1
+            result=$?
+            set -e
+            cat "$out/$label.log"
+            printf '%s\n' "$result" > "$out/$label.exit"
+            if test "$result" != 0 || ! grep -Eq "^Ran $count tests? in " "$out/$label.log"; then failed=1; fi
+          done
+          bash scripts/project-preflight.sh | tee "$out/preflight-after.log"
+          python3 scripts/ci/check_repository.py | tee "$out/repository-check.log"
+          test -z "$(git status --porcelain)"
+          git rev-parse HEAD HEAD^{tree} > "$out/source-after.txt"
+          cmp "$out/source-before.txt" "$out/source-after.txt"
+          test "$failed" = 0
+      - name: Publish exact tested source to one new non-force branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/work-owner-source"
+          head="$(git rev-parse HEAD)"
+          test "$head" = "$(head -n1 "$out/source-before.txt")"
+          test -z "$(git status --porcelain)"
+          test -z "$(git ls-remote --heads origin "refs/heads/$PRODUCT_BRANCH")"
+          printf 'HEAD %s refs/heads/%s %040d\n' "$head" "$PRODUCT_BRANCH" 0 | bash scripts/project-preflight.sh --push origin "$(git remote get-url origin)" | tee "$out/preflight-push.log"
+          git push origin "HEAD:refs/heads/$PRODUCT_BRANCH"
+          git ls-remote --heads origin "refs/heads/$PRODUCT_BRANCH" > "$out/published-ref.txt"
+          test "$(cut -f1 "$out/published-ref.txt")" = "$head"
+      - name: Retain all source, command and failure observations
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: work-collector-source-${{ github.run_id }}
+          path: ${{ runner.temp }}/work-owner-source
+          if-no-files-found: error
+          retention-days: 14
