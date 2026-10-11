@@ -1,0 +1,12 @@
+test_child_failure_is_not_success_or_reference_fallback (__main__.BoundedProcessTests.test_child_failure_is_not_success_or_reference_fallback) ... ok
+test_concurrent_pipe_drain_before_large_input (__main__.BoundedProcessTests.test_concurrent_pipe_drain_before_large_input) ... ok
+test_exact_output_boundary (__main__.BoundedProcessTests.test_exact_output_boundary) ... ok
+test_missing_binary_is_explicit (__main__.BoundedProcessTests.test_missing_binary_is_explicit) ... ok
+test_stderr_flood_rejected (__main__.BoundedProcessTests.test_stderr_flood_rejected) ... ok
+test_stdout_flood_is_killed_and_reaped (__main__.BoundedProcessTests.test_stdout_flood_is_killed_and_reaped) ... ok
+test_timeout_reaps_own_child (__main__.BoundedProcessTests.test_timeout_reaps_own_child) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.300s
+
+OK

@@ -1,0 +1,83 @@
+{
+  "schema": "pon-qualified-task-lifecycle-v3",
+  "id": "signed-task-lifecycle-dev-v3",
+  "consensus_revision": 8,
+  "demand_slots": 32,
+  "maximum_validity_blocks": 1000,
+  "retention_blocks": 100,
+  "tags": {
+    "18": "open-demand",
+    "20": "revoke-demand",
+    "21": "register-lease-bound-task",
+    "22": "atomic-renew-and-register"
+  },
+  "bootstrap": "source account0/requester account1; public maintenance fixture; lease and separate source statement bound to fresh genesis",
+  "reuse": "atomic renewal authenticates requester and source against one successor lease; all validation precedes one record write; material, source sequence and output meter persist",
+  "hardness_accepted": false,
+  "production_eligible": false,
+  "independent_source_governance_accepted": false,
+  "remote_retention_certified": false,
+  "global_output_novelty_certified": false,
+  "exact_contract": {
+    "schema": "pon-qualified-work-task-lifecycle-v3",
+    "profile": "signed-task-lifecycle-dev-v3",
+    "consensus_revision": 8,
+    "production_eligible": false,
+    "hardness_accepted": false,
+    "cost_class_qualified": false,
+    "activated_in_existing_context": false,
+    "demand_lease_magic": "QDL2",
+    "demand_lease_version": 2,
+    "demand_lease_bytes": 344,
+    "revocation_magic": "QDR2",
+    "revocation_bytes": 144,
+    "task_statement_magic": "QWA2",
+    "task_statement_bytes": 684,
+    "matrix_manifest": "QWT1 exact584 bytes; unchanged experimental field-matrix relation",
+    "signature_domain": "qualified-task-source-sign-v2",
+    "statement_id_domain": "qualified-task-manifest-v2",
+    "commands": {
+      "18": "open-demand",
+      "20": "revoke-demand",
+      "21": "register-current-lease-task",
+      "22": "atomic-renew-and-register"
+    },
+    "base_fee_units": {
+      "18": 100,
+      "20": 100,
+      "21": 100,
+      "22": 200
+    },
+    "maximum_slots": 32,
+    "maximum_slot_record_bytes": 4096,
+    "maximum_validity_blocks": 1000,
+    "required_retention_blocks": 100,
+    "available_until": "exactly expires+100 with checked arithmetic",
+    "namespace": "V2 bounded slot codecs and keys inside a fresh revision8 network/parameters/genesis store; no migration or reinterpretation of V2",
+    "bootstrap": "slot0/requester-public-dev1/source-public-dev0/maintenance/height0..1000/retention1100/source-sequence1/registered-height0/zero-output-credit",
+    "requester_source_relation": "different strictly authenticated ledger/source public keys; not independent administration, genuine demand or Sybil resistance",
+    "open": "fresh global branch generation previous+1, revision1; slot replacement only after old available_until<height",
+    "renew": "tag22 only: exact344B successor lease plus exact684B source-signed QWA2; requester main signature binds both; validate successor and source sequence/material/signature before one record update",
+    "revoke": "authenticated current requester and expected current revision; terminal within this demand; original finite retention deadline preserved",
+    "registration": "standalone21 remains for initial/additional statements; atomic22 authenticates inner source signature without consuming source main-ledger nonce; source sequence advances previous+1",
+    "duplicates": "one branch-relative arithmetic output per demand; source re-signature, fresh challenge, new producer or renewal cannot reset it; no infinite global content duplicate filter",
+    "cost_classes": {
+      "1": "fixed transcript64 experimental only; zero/identity/low-rank and reusable/prepared inputs are legal, no expensive-attempt lower bound established"
+    },
+    "state_scope": "only lifecycle metadata bounded to32 records plus one counter; chain archive, local receipts/revocation history and other owner namespaces are separate storage obligations",
+    "remaining_assumptions": [
+      "Demand, legal/local permission and promised retention remain source/requester attestations; task signatures do not prove truthful demand.",
+      "Actual model/input matrix bytes still require material verification by the existing work/Node owner before expensive replay; registration alone is not material availability.",
+      "A whole classifier/LLM, learning marginal contribution and circuit optimality are not proved.",
+      "Lease renewal is explicit and must precede expiry. Missing source statements or all expired/revoked tasks stop eligibility; there is no legacy/random fallback.",
+      "On-chain lease changes roll back with branch state. Independent local withdrawal/effect history must remain monotonic under its original owners and is not erased by this namespace.",
+      "Transport admission remains separate resource protection. This lifecycle does not establish hardness, cheap-invalid-proof safety, public fairness, DA reliability or production readiness.",
+      "Only atomic lease/source state activation is added. Missing actual materials, lapse of all leases, revocation or uncooperative signers still stop eligibility. Source and requester must prepare the current exact successor before expiry."
+    ],
+    "atomic_renew_bytes": 1028,
+    "atomic_renew_tag": 22,
+    "standalone_renew_disabled": true
+  },
+  "standalone_renew_disabled": true,
+  "v2_liveness_risk": "V2 tag19 can invalidate the sole registered statement before tag21 is included; a local transaction bundle cannot prevent block producers separating those commands. V2 semantics and historical pair-command observations are unchanged."
+}

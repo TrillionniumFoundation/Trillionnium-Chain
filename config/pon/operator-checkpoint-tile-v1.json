@@ -1,0 +1,16 @@
+{
+  "schema": "operator-checkpoint-tile-policy-v1",
+  "profile": "native-operator-checkpoint-tile-dev-v1",
+  "task_profile": "signed-checkpoint-tile-maintenance-dev-v1",
+  "base_actor_roster_profile": "native-operator-actors-dev-v1",
+  "spec_max_bytes": 32768,
+  "bootstrap_max_bytes": 8192,
+  "full_original_replay_on_open": true,
+  "known_fixture_key_count": 16,
+  "production_activation": false,
+  "public_network_ready": false,
+  "hardness_accepted": false,
+  "genuine_demand_verified": false,
+  "full_forward_verified": false,
+  "marginal_contribution_accepted": false
+}
