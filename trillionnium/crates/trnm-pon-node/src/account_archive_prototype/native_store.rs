@@ -64,7 +64,7 @@ pub(crate) fn seed(
 ) -> Result<Root> {
     let accounts = super::accounts(state).map_err(storage)?;
     let ordered = super::ordered_accounts(&accounts).map_err(storage)?;
-    let empty = super::empty_hashes();
+    let empty = empty_hashes();
     let node = controlled(progress, |checkpoint| {
         super::build(Some(db), &ordered, &empty, checkpoint)
     })?;
@@ -199,7 +199,7 @@ pub(crate) fn apply(
     deltas: &[crate::store::Delta],
     progress: &mut dyn FnMut() -> Result<()>,
 ) -> Result<Root> {
-    let empty = super::empty_hashes();
+    let empty = empty_hashes();
     let original = load_root(db, parent, &empty)?;
     let mut updates = Vec::new();
     let mut count = parent.count;
@@ -257,6 +257,14 @@ pub(crate) fn apply(
 #[path = "native_store_batch_tests.rs"]
 mod batch_tests;
 
+// Only the compiled account-archive hash grammar determines these 8,224 bytes.
+// No database, block, clock, network context or successful validation is cached.
+// Return an owned copy so callers cannot modify the shared mathematical constants.
+fn empty_hashes() -> [Hash; 257] {
+    static EMPTY: std::sync::OnceLock<[Hash; 257]> = std::sync::OnceLock::new();
+    *EMPTY.get_or_init(super::empty_hashes)
+}
+
 /// Read every required node and leaf, including unchanged subtrees, and compare
 /// their real bytes with the independently checked complete native State.
 /// This explicit reference check remains linear in account count.
@@ -266,7 +274,7 @@ pub(crate) fn verify(
     state: &State,
     progress: &mut dyn FnMut() -> Result<()>,
 ) -> Result<()> {
-    let empty = super::empty_hashes();
+    let empty = empty_hashes();
     let actual = super::accounts(state).map_err(storage)?;
     let mut stack = load_root(db, root, &empty)?.into_iter().collect::<Vec<_>>();
     let mut seen = BTreeSet::new();
@@ -313,7 +321,7 @@ pub(crate) fn query_checkpoint(
     state_root: Hash,
     root: &Root,
 ) -> Result<super::Checkpoint> {
-    let empty = super::empty_hashes();
+    let empty = empty_hashes();
     let node = load_root(db, root, &empty)?;
     Ok(super::make_checkpoint(
         context,
@@ -330,6 +338,7 @@ pub(crate) fn query_checkpoint(
 mod tests {
     use super::*;
     use serde_json::json;
+    use trnm_protocol::pon_wire::hash;
 
     #[test]
     fn native_account_delta_credit_before_debit_preserves_maximum_aggregate() {
@@ -364,5 +373,86 @@ mod tests {
         assert_eq!(next.count, 2);
         verify(&db, &parent, &before, &mut || Ok(())).unwrap();
         verify(&db, &next, &after, &mut || Ok(())).unwrap();
+    }
+
+    #[test]
+    fn native_empty_constants_match_wire_and_keep_owned_copy_isolation() {
+        let mut reference = [[0; 32]; 257];
+        reference[256] = hash(b"account-archive-empty-v1", &[]);
+        for depth in (0..256).rev() {
+            reference[depth] = hash(
+                b"account-archive-branch-v1",
+                &[&reference[depth + 1], &reference[depth + 1]],
+            );
+        }
+        assert_eq!(empty_hashes(), reference);
+        for depth in 0..=256 {
+            let mut owned = empty_hashes();
+            owned[depth][depth % 32] ^= 0xff;
+            assert_ne!(owned, reference);
+            assert_eq!(empty_hashes(), reference);
+        }
+    }
+
+    #[test]
+    fn native_empty_constants_parallel_callers_keep_independent_values() {
+        let reference = super::super::empty_hashes();
+        let barrier = std::sync::Barrier::new(8);
+        std::thread::scope(|scope| {
+            let mut workers = Vec::new();
+            for worker in 0..8 {
+                let barrier = &barrier;
+                let reference = &reference;
+                workers.push(scope.spawn(move || {
+                    barrier.wait();
+                    for iteration in 0..32 {
+                        let mut owned = empty_hashes();
+                        assert_eq!(&owned, reference);
+                        owned[worker * 32 + iteration] = [worker as u8; 32];
+                        std::hint::black_box(owned);
+                    }
+                    assert_eq!(&empty_hashes(), reference);
+                }));
+            }
+            for worker in workers {
+                worker.join().unwrap();
+            }
+        });
+    }
+
+    #[test]
+    #[ignore = "explicit constant-table observation; not full-node performance"]
+    fn native_empty_constants_paired_cost_observation() {
+        if cfg!(debug_assertions) {
+            panic!("release comparison required");
+        }
+        assert_eq!(empty_hashes(), super::super::empty_hashes());
+        let implementations: [fn() -> [Hash; 257]; 2] = [super::super::empty_hashes, empty_hashes];
+        for pair in 0..8 {
+            let mut checksums = [[0u8; 32]; 2];
+            for arm in if pair % 2 == 0 { [0, 1] } else { [1, 0] } {
+                let mut checksum = [0u8; 32];
+                let start = std::time::Instant::now();
+                for iteration in 0..1024 {
+                    let table = std::hint::black_box(implementations[arm])();
+                    let value = std::hint::black_box(table)[iteration % 257];
+                    for (out, byte) in checksum.iter_mut().zip(value) {
+                        *out ^= byte;
+                    }
+                }
+                let elapsed_ns = start.elapsed().as_nanos();
+                checksums[arm] = checksum;
+                eprintln!(
+                    "pon_native_empty_table_cost_v1 {}",
+                    json!({
+                        "pair":pair,"arm":if arm == 0 {"original"} else {"immutable-copy"},
+                        "calls":1024,"elapsed_ns":elapsed_ns,"checksum":hex::encode(checksum),
+                        "retained_constant_bytes":257*32,"warm_constant":true,
+                        "whole_node_performance_qualified":false
+                    })
+                );
+            }
+            assert_eq!(checksums[0], checksums[1]);
+        }
     }
 }

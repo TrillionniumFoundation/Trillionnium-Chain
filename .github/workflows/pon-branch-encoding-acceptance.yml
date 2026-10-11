@@ -47,6 +47,7 @@ jobs:
           python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$out/source.json"
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs)" = e8f455d2b31daf753928d566240c26a881baa99a
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_primitive_tests.rs)" = 4b9264432fcbd2d727a10ec9a60072f06dbe51ba
+          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs)" = 2288fa37f6b0d42b83f9fa47c095785aed0a1369
           bash scripts/project-preflight.sh --audit
       - name: Install pinned native compiler and lint tools
         run: rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
@@ -69,6 +70,20 @@ jobs:
           selector=account_archive_prototype::native_primitive_tests::native_branch_single_buffer_cost_observation
           cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib "$selector" -- --exact --ignored --show-output --test-threads=1 2>&1 | tee "$OUT/cost.log"
           python3 scripts/ci/check_required_native_test.py "$OUT/cost.log" --test "$selector"
+      - name: Verify immutable constants without caching stored-state verdicts
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib account_archive_prototype::native_store::tests -- --show-output --test-threads=1 2>&1 | tee "$OUT/native-constants.log"
+          grep -E '^test result: ok\. 3 passed; 0 failed; 1 ignored;' "$OUT/native-constants.log"
+          for name in native_empty_constants_match_wire_and_keep_owned_copy_isolation native_empty_constants_parallel_callers_keep_independent_values; do
+            selector="account_archive_prototype::native_store::tests::$name"
+            cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib "$selector" -- --exact --show-output --test-threads=1 2>&1 | tee "$OUT/$name.log"
+            python3 scripts/ci/check_required_native_test.py "$OUT/$name.log" --test "$selector"
+          done
+          selector=account_archive_prototype::native_store::tests::native_empty_constants_paired_cost_observation
+          cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib "$selector" -- --exact --ignored --show-output --test-threads=1 2>&1 | tee "$OUT/native-constant-cost.log"
+          python3 scripts/ci/check_required_native_test.py "$OUT/native-constant-cost.log" --test "$selector"
       - name: Preserve complete existing native batch and migration controls
         shell: bash
         run: |
