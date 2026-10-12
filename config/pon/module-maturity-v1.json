@@ -2490,7 +2490,19 @@
             "trillionnium/crates/trnm-pon-node/src/native_ancestry_commit_tests.rs::activation_final_events_cannot_commit_missing_or_extra_active_ancestry",
             "trillionnium/crates/trnm-pon-node/src/native_account_query_tests.rs::native_account_query_dimensions_precede_any_snapshot_or_state_read",
             "trillionnium/crates/trnm-pon-node/src/native_account_query_tests.rs::native_account_query_cancellation_preserves_error_snapshot_and_exact_retry_bytes",
-            "trillionnium/crates/trnm-pon-node/src/native_account_query_tests.rs::native_account_query_reads_real_nodes_and_rolls_back_callback_mutations"
+            "trillionnium/crates/trnm-pon-node/src/native_account_query_tests.rs::native_account_query_reads_real_nodes_and_rolls_back_callback_mutations",
+            "scripts/ci/test_work_rejection_report.py::RejectionProcessOwnerTests.test_complete_binary_streams_and_nonzero_exit_are_retained",
+            "scripts/ci/test_work_rejection_report.py::RejectionProcessOwnerTests.test_stdout_burst_never_becomes_an_oversized_retained_file",
+            "scripts/ci/test_work_rejection_report.py::RejectionProcessOwnerTests.test_stderr_burst_uses_its_original_independent_eight_mib_limit",
+            "scripts/ci/test_work_rejection_report.py::RejectionProcessOwnerTests.test_zero_stdout_limit_accepts_empty_but_not_one_byte",
+            "scripts/ci/test_work_rejection_report.py::RejectionProcessOwnerTests.test_timeout_retains_diagnostics_and_actual_cleanup_exit",
+            "scripts/ci/test_work_rejection_report.py::RejectionProcessOwnerTests.test_zero_exit_parent_with_inherited_pipe_does_not_report_success",
+            "scripts/ci/test_work_rejection_report.py::RejectionProcessOwnerTests.test_existing_either_log_refuses_before_any_child_contact",
+            "scripts/ci/test_work_rejection_report.py::RejectionProcessOwnerTests.test_invalid_timeout_refuses_without_spawning",
+            "scripts/ci/test_work_rejection_report.py::RejectionProcessOwnerTests.test_spawn_failure_retains_empty_create_new_logs",
+            "scripts/ci/test_work_rejection_report.py::RejectionProcessOwnerTests.test_checked_capture_keeps_failed_observation_and_refuses",
+            "scripts/ci/test_work_rejection_report.py::RejectionProcessOwnerTests.test_capture_preserves_source_cwd_without_changing_parent",
+            "scripts/ci/test_work_rejection_report.py::RejectionProcessOwnerTests.test_shared_process_source_is_in_the_measured_input_inventory"
           ],
           "remaining": "Does not execute old tests again, confer scientific independence or grant deployment authority."
         }
