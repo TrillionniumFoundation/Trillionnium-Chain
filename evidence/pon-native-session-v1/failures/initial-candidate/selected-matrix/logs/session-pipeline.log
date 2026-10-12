@@ -1,0 +1,1 @@
+{"summary": [{"scenario": "independent", "confirmed_transactions": 48, "median_submission_through_confirmation_ns": 4628116080}, {"scenario": "hot-sender", "confirmed_transactions": 48, "median_submission_through_confirmation_ns": 3115831423}], "work_verified_blocks": 44, "public_confirmed_tps": null, "full_native_node": false}
