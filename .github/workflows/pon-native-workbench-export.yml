@@ -1,0 +1,52 @@
+name: Isolated PoN native offline workbench
+on:
+  push:
+    branches: [ci/pon-native-workbench-20261012-r1]
+  pull_request:
+    paths: [.github/workflows/pon-native-workbench-export.yml]
+permissions:
+  contents: read
+jobs:
+  export:
+    if: github.event_name == 'push' || github.head_ref == 'ci/pon-native-workbench-20261012-r1'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          ref: 64e25442fb4f7fb4151ebbea9f8293b702c3d06e
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify exact original source and acquire original pinned native toolchain
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = 64e25442fb4f7fb4151ebbea9f8293b702c3d06e
+          test "$(git rev-parse HEAD^{tree})" = 08f53d4fdfed2aa40b7405513f37f5c9910f8c24
+          bash scripts/project-preflight.sh --audit
+          rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+          cargo +1.95.0 fetch --locked --manifest-path trillionnium/Cargo.toml
+      - name: Export compiler and registry bytes without credentials or execution claims
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/pon-offline-native"
+          mkdir -p "$out"
+          toolchain="$(rustup run 1.95.0 rustc --print sysroot)"
+          tar -C "$toolchain" -czf "$out/rust-native.tar.gz" bin lib libexec share
+          tar -C "$HOME/.cargo" -czf "$out/cargo-registry.tar.gz" registry
+          rustup run 1.95.0 rustc -Vv > "$out/compiler.txt"
+          git rev-parse HEAD HEAD^{tree} > "$out/source.txt"
+          git status --porcelain > "$out/worktree.txt"
+          test ! -s "$out/worktree.txt"
+          cp trillionnium/Cargo.lock "$out/Cargo.lock"
+          (cd "$out" && sha256sum rust-native.tar.gz cargo-registry.tar.gz compiler.txt source.txt worktree.txt Cargo.lock > SHA256SUMS)
+          printf '%s\n' 'Tooling only: original locked compiler/dependency bytes. No runtime test, security, model, capacity, WAN or release acceptance. No credentials, worktree mutation or persistent runner.' > "$out/SCOPE.txt"
+          echo "OUT=$out" >> "$GITHUB_ENV"
+          bash scripts/project-preflight.sh --audit
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: pon-offline-native-64e25442-${{ github.run_id }}
+          path: ${{ env.OUT }}
+          retention-days: 2
+          if-no-files-found: error
