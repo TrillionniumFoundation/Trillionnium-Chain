@@ -1,0 +1,5 @@
+   Compiling trnm-crypto-primitives v0.1.0 (/home/qian-qi/Documents/chain-pr204-continuation-20260929-w2v1wt_g/source/trillionnium/crates/trnm-crypto-primitives)
+   Compiling trnm-verification-profiles v0.1.0 (/home/qian-qi/Documents/chain-pr204-continuation-20260929-w2v1wt_g/source/trillionnium/crates/trnm-verification-profiles)
+   Compiling trnm-mvcc-fee v0.1.0 (/home/qian-qi/Documents/chain-pr204-continuation-20260929-w2v1wt_g/source/trillionnium/crates/trnm-mvcc-fee)
+   Compiling trnm-transport v0.1.0 (/home/qian-qi/Documents/chain-pr204-continuation-20260929-w2v1wt_g/source/trillionnium/crates/trnm-transport)
+    Finished `release` profile [optimized] target(s) in 15.60s
