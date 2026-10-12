@@ -7,10 +7,17 @@ import json
 import os
 import signal
 import subprocess
+import sys
 import time
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
+
+# Reuse the existing POSIX exit observation and Darwin zombie-only check.
+# This owner keeps file-backed logs and its original TERM grace, not the
+# native pipe owner's output limits. Neither owner is a process sandbox.
+sys.path.insert(0, str(ROOT / 'formal/pon-nakamoto-v1'))
+from bounded_process import _darwin_only_exited_leader, _wait_without_reaping
 
 
 def tool_versions() -> dict[str, str]:
@@ -48,6 +55,10 @@ def _source_error(expected_commit: str) -> str | None:
 def run(command: list[str], log: Path, *, timeout: int = 900,
         env: dict[str, str] | None = None, cwd: Path = ROOT,
         expected_source: str | None = None) -> dict:
+    if not all(hasattr(os, name) for name in (
+            'waitid', 'P_PID', 'WEXITED', 'WNOHANG', 'WNOWAIT',
+            'CLD_EXITED', 'CLD_KILLED', 'CLD_DUMPED', 'killpg')):
+        raise ValueError('CI_PROCESS_PLATFORM')
     started = time.monotonic_ns()
     timed_out = False
     executed = False
@@ -65,29 +76,41 @@ def run(command: list[str], log: Path, *, timeout: int = 900,
                                        stderr=subprocess.STDOUT, start_new_session=True)
             executed = True
             try:
-                code = process.wait(timeout=timeout)
-            except subprocess.TimeoutExpired:
-                timed_out = True
                 try:
+                    code = _wait_without_reaping(process, time.monotonic() + timeout)
+                except ValueError as error:
+                    if str(error) != 'NATIVE_EXECUTOR_TIMEOUT':
+                        raise
+                    timed_out = True
                     try:
                         os.killpg(process.pid, signal.SIGTERM)
                     except ProcessLookupError:
                         pass
+                    except PermissionError:
+                        if not _darwin_only_exited_leader(process):
+                            raise
                     try:
-                        process.wait(timeout=10)
-                    except subprocess.TimeoutExpired:
-                        pass
-                finally:
-                    # Waiting for the leader does not wait for its process group.
-                    # Even a TERM handler that exits zero can leave descendants
-                    # holding this log open. Always signal the timed-out group;
-                    # never turn the leader's graceful exit into a successful run.
+                        _wait_without_reaping(process, time.monotonic() + 10)
+                    except ValueError as error:
+                        if str(error) != 'NATIVE_EXECUTOR_TIMEOUT':
+                            raise
+                    code = 124
+            finally:
+                # Keep the leader unreaped through the LAST group signal. A
+                # successful or nonzero leader exit can still leave log writers.
+                # Only this created group is signalled, never discovered PIDs.
+                # The caller must remain the sole reaper; escaped sessions and
+                # kernel cleanup latency remain outside this owner contract.
+                try:
                     try:
                         os.killpg(process.pid, signal.SIGKILL)
                     except ProcessLookupError:
                         pass
+                    except PermissionError:
+                        if not _darwin_only_exited_leader(process):
+                            raise
+                finally:
                     process.wait()
-                code = 124
             process_code = process.returncode
     if executed and expected_source is not None:
         source_error = _source_error(expected_source)

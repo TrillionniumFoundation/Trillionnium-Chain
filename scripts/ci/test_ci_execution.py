@@ -14,6 +14,7 @@ from run_fuzz_smoke import counters
 from verify_ci_source import verify
 # Include the raw-worktree negatives in both existing repository-truth lanes.
 from test_ci_source_integrity import TrackedSourceTests
+from test_ci_observation_process import ObserverProcessOwnershipTests
 
 
 class SourceIdentityTests(unittest.TestCase):
