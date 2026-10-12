@@ -1,0 +1,97 @@
+{
+  "schema": "pon-five-track-execution-readback-v1",
+  "recorded_date": "2026-10-12",
+  "scope": "execution/readback of one frozen candidate pair; not a runtime release or a new authority",
+  "chain": {
+    "head": "715a21282dbdc491e70c2c9abd9c1056cef739a5",
+    "tree": "d1fd9899a95bb41ddfddda32993bfaf84641bd81",
+    "base": "9fedf7ecbbe07177069c030592b4e03dcffebb81",
+    "prospective_merge": "591d2249d8ff3a7bd0b252b3dd33488fcdf6d69f",
+    "pr": 303
+  },
+  "hepta": {
+    "head": "106400a5ffc7ef969dbe0812c1cda869323b59e1",
+    "tree": "a3be02b0321423cdd247aa88d2c6d6f3390a0fa9",
+    "base": "78fdb0cf8537e3a84fc6e0a849707559c80881e8",
+    "prospective_merge": "6ee085eee3939d558bcedd42243a30990caec535",
+    "pr": 1611
+  },
+  "hosted_cost": {
+    "run": 38228429324,
+    "architectures": ["x64", "arm64"],
+    "original_producer_suites_replayed_per_architecture": 4,
+    "fixed_campaigns_per_suite": 2,
+    "indexed_artifact_hashes_checked_per_architecture": 99,
+    "rejection_cohorts_per_architecture": 72,
+    "timed_verifications_per_architecture": 648,
+    "winning_scalar_replays_per_architecture": 72,
+    "deterministic_rejection_projection": "eede484ac069cb9f7a27bcdb486ca7b7981696ca819e50fa2f3c68c3539cd253",
+    "clock": "monotonic wall time, not CPU or energy",
+    "cheapest_scope": "minimum over actually implemented finite grid, setup/search failures retained; no physical global lower bound"
+  },
+  "hepta_arm_head_readback": {
+    "run": 38233508156,
+    "job": 114758434834,
+    "artifact": 11740757765,
+    "source_bound_command_receipts_and_log_hashes": 84,
+    "business_confirmed_transactions": 24,
+    "overlapping_false_calls": 123,
+    "complete_state_and_cold_reopen_equal": true,
+    "scope": "hosted original paired finite TCP/native campaign; not a new local WAN run"
+  },
+  "local_native_execution": {
+    "source_recompiled_for_cost_service": false,
+    "cost_source_binary_sha256": "ee1107dce1feb936af3b8010c4123d1930442d325218b22908b6c1af5c4e21bc",
+    "rejection_cohorts": 72,
+    "timed_verifications": 648,
+    "winning_scalar_replays": 72,
+    "deterministic_projection_matches_both_architectures": true,
+    "original_public_service_tests_passed": 3,
+    "original_public_service_tests_ignored": 0,
+    "sustained_phase_seconds": 4,
+    "phase_attack_requests": [426, 420],
+    "phase_on_time_honest_reads": [77, 73],
+    "phase_honest_submissions": [1, 1],
+    "minimum_observed_cpu_credits_ns": [1775674328, 1728374686],
+    "cpu_saturation_established": false,
+    "client_confirmed_transactions": null
+  },
+  "history_readback": {
+    "run": 38228429313,
+    "x64_head_job": 114741602048,
+    "artifact": 11741817652,
+    "hosted_native_blocks": 4105,
+    "hosted_confirmed_packets": 4105,
+    "new_local_native_work_reverifications": 4105,
+    "new_local_negative_controls": 3,
+    "complete_final_kv_rows": 28,
+    "stored_block_rows_and_final_kv_equal": true,
+    "stored_final_root_independently_rebuilt": true,
+    "local_full_checkout": "1b63ead7184df854ff6fb2047f33b8e876963aca",
+    "locally_compiled_original_bridge": "pon_work_io",
+    "native_current_input_files_sha256_matched": 841,
+    "full_candidate_rebuilt": false,
+    "transaction_execution_independently_replayed": false,
+    "hosted_history_clock": "logical 10-second headers; not live WAN",
+    "database_reads": "read-only immutable; before/after hashes match"
+  },
+  "acceptance": {
+    "exact_pair_full_baselines_complete": false,
+    "all_full_capacity_migration_recovery_lanes_complete": false,
+    "cheapest_physical_attacker_qualified": false,
+    "independent_remote_sybil_service_qualified": false,
+    "actual_independent_future_generation_adoption_qualified": false,
+    "physical_power_loss_qualified": false,
+    "long_term_independent_da_qualified": false,
+    "independent_saturated_wan_tps": null,
+    "production_activation": false
+  },
+  "retained_failures": [{
+    "scope": "local observer preparation",
+    "result": "failed before execution",
+    "detail": "first readback script required a service-reader input absent from that campaign manifest; original failed log retained, then full source Git blob b9180e519dced9f098cbedd08b90e48b6be6d441 checked explicitly before rerun"
+  }],
+  "published_support_commit": "32f8355f904a5e70ababaf74e70386a6d9f033ac",
+  "support_run": 38238459033,
+  "support_scope": "existing read-only exporter only; not a new tested product source"
+}

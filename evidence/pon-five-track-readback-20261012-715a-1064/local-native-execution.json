@@ -1,0 +1,40 @@
+{
+  "platform": "Linux-6.18.44-x86_64-with-glibc2.41",
+  "python": "3.13.5 (main, Jul 15 2026, 20:25:40) [GCC 14.2.0]",
+  "records": [
+    {
+      "suite": "rejection",
+      "command": ["/mnt/data/qualification_readback/cost-x64/work-rejection/pon_rejection_cost"],
+      "source_commit": "715a21282dbdc491e70c2c9abd9c1056cef739a5",
+      "source_tree": "d1fd9899a95bb41ddfddda32993bfaf84641bd81",
+      "binary_sha256": "ee1107dce1feb936af3b8010c4123d1930442d325218b22908b6c1af5c4e21bc",
+      "binary_after_matches": true,
+      "elapsed_ns": 1579034532,
+      "exit_code": 0,
+      "exchange_error": null,
+      "stdout_sha256": "52c6bd03b3f9c5a21780cfcf586162e4ac549d85e9da574d17141c68d34469eb",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_recompiled": false,
+      "execution_context": "local-container",
+      "independent_accepted": false,
+      "production_activation": false
+    },
+    {
+      "suite": "service",
+      "command": ["/mnt/data/qualification_readback/cost-x64/from-zero-native/public_v3_from_zero", "--nocapture", "--test-threads=1"],
+      "source_commit": "715a21282dbdc491e70c2c9abd9c1056cef739a5",
+      "source_tree": "d1fd9899a95bb41ddfddda32993bfaf84641bd81",
+      "binary_sha256": "65547fc46e8d1704992bbc64aa6397cbf3decb0f19231e37f4fc561206a53567",
+      "binary_after_matches": true,
+      "elapsed_ns": 8826501487,
+      "exit_code": 0,
+      "exchange_error": null,
+      "stdout_sha256": "efe3afcd891e9101410c0671e3a22ecad38f3eb568b2cc56dc0fd6d2d48a7bb9",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_recompiled": false,
+      "execution_context": "local-container",
+      "independent_accepted": false,
+      "production_activation": false
+    }
+  ]
+}
