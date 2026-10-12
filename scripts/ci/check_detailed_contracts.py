@@ -55,6 +55,14 @@ def validate(root):
     for r in vectors['transactions']+vectors['negative']:file('formal/pon-nakamoto-v1/vectors/'+r['file'])
     fail(file('formal/pon-nakamoto-v1/vectors/work.bin').stat().st_size==w['proof_bytes'],'work vector size')
     fail(file('formal/pon-nakamoto-v1/vectors/header.bin').stat().st_size==318,'header vector size')
+    v4=load('config/pon/qualified-task-lifecycle-v4.json');v4c=v4['exact_contract']
+    fail(v4['id']=='signed-task-lifecycle-dev-v4' and v4['consensus_revision']==9,'V4 identity')
+    fail(v4['atomic_overlap_window'] is True and v4['standalone_renew_disabled'] is True,'V4 overlap/standalone gate')
+    fail(v4c['atomic_renew_tag']==22 and v4c['atomic_renew_bytes']==1028 and v4c['atomic_overlap_window'] is True,'V4 exact command')
+    fail(v4c['commands']=={'18':'open-demand','20':'revoke-demand','21':'register-current-lease-task','22':'atomic-renew-and-register'},'V4 extension tag set')
+    for name in ('production_eligible','hardness_accepted','cost_class_qualified','activated_in_existing_context'):
+        fail(v4c[name] is False,'V4 unearned acceptance '+name)
+    file('docs/protocol/pon-nakamoto-v1/details/QUALIFIED_TASK_LIFECYCLE_V4.md')
     plan=file('docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md').read_text()
     fail('existing evidence-contract symlink'not in plan,'removed symlink requirement')
     m00=normalized(file(rows[0]['specification']).read_text())
@@ -62,6 +70,8 @@ def validate(root):
     boundary=load('PROJECT_BOUNDARY.json')['repository']
     fail(boundary['required_pull_request_reviews']==0 and boundary['require_code_owner_review']is False and boundary['require_last_push_approval']is False,'review policy contradicts owner-approved remote settings')
     fail(file('README.md').read_bytes()==b'\n','owner-cleared root README changed')
+    from report_module_evidence import validate_contract
+    validate_contract(root)
     return {'modules':18,'typed_operations':sum(len(r['operations'])for r in rows),'wire_tags':12,'native_product_accepted':False,'independent_accepted':False}
 if __name__=='__main__':
     root=Path(__file__).resolve().parents[2]

@@ -1,0 +1,85 @@
+name: PoN owned process cleanup
+on:
+  pull_request:
+    paths:
+      - formal/pon-nakamoto-v1/**
+      - scripts/**
+      - .github/workflows/pon-owned-process-cleanup.yml
+permissions:
+  contents: read
+jobs:
+  cleanup:
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ubuntu-24.04, ubuntu-24.04-arm, macos-15]
+        lane: [head, prospective-merge]
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 10
+    env:
+      SOURCE_SHA: ${{ github.event.pull_request.head.sha }}
+      BASE_SHA: ${{ github.event.pull_request.base.sha }}
+      TESTED_SHA: ${{ matrix.lane == 'head' && github.event.pull_request.head.sha || github.sha }}
+      TEST_LANE: ${{ matrix.lane }}
+      PYTHONDONTWRITEBYTECODE: "1"
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ env.TESTED_SHA }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify actual source and ordered main merge
+        id: identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/owned-cleanup"
+          test "$(git rev-parse HEAD)" = "$TESTED_SHA"
+          if test "$TEST_LANE" = head; then
+            test "$TESTED_SHA" = "$SOURCE_SHA"
+          else
+            test "$(git show -s --format=%P HEAD)" = "$BASE_SHA $SOURCE_SHA"
+            test "$(git rev-parse HEAD^{tree})" = "$(git merge-tree --write-tree "$BASE_SHA" "$SOURCE_SHA")"
+          fi
+          git rev-parse HEAD HEAD^{tree} > "$RUNNER_TEMP/owned-cleanup/source-before.txt"
+          bash scripts/project-preflight.sh --audit
+      - name: Run complete original owners and every cleanup regression
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY' 2>&1 | tee "$RUNNER_TEMP/owned-cleanup/tests.log"
+          import importlib, json, sys, unittest
+          sys.path[:0] = ['formal/pon-nakamoto-v1', 'scripts']
+          failed = False
+          rows = []
+          for name, expected in [('test_bounded_process', 26), ('test_bounded_process_cleanup', 12), ('test_qualification_runtime', 32)]:
+              module = importlib.import_module(name)
+              suite = unittest.defaultTestLoader.loadTestsFromModule(module)
+              count = suite.countTestCases()
+              if count != expected:
+                  raise RuntimeError(f'{name}: expected {expected} tests, found {count}')
+              result = unittest.TextTestRunner(verbosity=2).run(suite)
+              passed = result.wasSuccessful() and result.testsRun == expected and not result.skipped
+              failed |= not passed
+              rows.append(dict(module=name, executed=result.testsRun, skipped=len(result.skipped), passed=passed))
+          print(json.dumps(dict(scope='local POSIX owner only; no work-hardness, independent model, power-loss or WAN acceptance', results=rows)))
+          raise SystemExit(1 if failed else 0)
+          PY
+      - name: Preserve unchanged source and precise scope
+        if: always() && steps.identity.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git rev-parse HEAD HEAD^{tree} > "$RUNNER_TEMP/owned-cleanup/source-after.txt"
+          cmp "$RUNNER_TEMP/owned-cleanup/source-before.txt" "$RUNNER_TEMP/owned-cleanup/source-after.txt"
+          git diff --exit-code
+          git diff --cached --exit-code
+          test -z "$(git status --porcelain --untracked-files=normal)"
+          bash scripts/project-preflight.sh --audit
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: owned-cleanup-${{ matrix.runner }}-${{ matrix.lane }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/owned-cleanup/
+          if-no-files-found: error
+          retention-days: 14

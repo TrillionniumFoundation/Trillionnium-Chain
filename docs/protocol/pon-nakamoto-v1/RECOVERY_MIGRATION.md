@@ -90,9 +90,11 @@ Future tests must cover shorter-higher-work chains, deep reorg across maturity/m
 adoption/nonce reuse, every crash cut, orphaned external effects, wrong-genesis import,
 omitted escrow/retention and rejection of historical proof substitution.
 
-## Executed reference storage protocol
+## Current storage applicability
 
-[S1](details/STATE_RECOVERY.md) now gives exact tables, owner locks, before/after values,
-shadow generations, publication transaction and eight actual child-process crash cuts.
-The Python ledger is an executable design oracle; existing native local task stores are
-not claimed to have become a qualified native chain/reorganization implementation.
+[S2 and the native branch-owner continuation](details/STATE_RECOVERY.md) define the
+current layouts, owner locks, before/after deltas, physical state slots and atomic
+publication. S1 is a retired layout; there is no in-place reinterpretation of its files.
+The Python ledger remains a separate executable oracle. The native `trnm-pon-node`
+owns its fresh `native.sqlite` branch/reorganization namespace; neither its presence nor
+its process-crash tests establish physical power-loss safety or public qualification.
