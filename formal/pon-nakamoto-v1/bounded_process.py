@@ -1,7 +1,10 @@
-"""Bounded offline native child I/O; only the process group created here is reaped.
+"""Bounded offline native child I/O; only the process group created here is signalled.
 
 Not a sandbox: the installed executable is a trusted local input. Output and elapsed
 budgets protect the calling owner from accidental/malicious pipe overproduction.
+The owner must be the sole reaper of its direct child. POSIX waitid/WNOWAIT keeps
+the group leader reserved until group cleanup on success as well as failure.
+Descendants that create another session are outside this owner, not sandboxed.
 """
 from __future__ import annotations
 import math,os,selectors,signal,subprocess,time
@@ -31,6 +34,22 @@ class ProcessFailure(ValueError):
         self.stderr_truncated=stderr_truncated
 
 
+def _wait_without_reaping(child, deadline):
+    """Observe exit under the original deadline without releasing the group ID."""
+    while True:
+        remaining=deadline-time.monotonic()
+        if remaining<=0:raise ValueError('NATIVE_EXECUTOR_TIMEOUT')
+        try:
+            status=os.waitid(os.P_PID,child.pid,os.WEXITED|os.WNOHANG|os.WNOWAIT)
+        except InterruptedError:
+            continue
+        if status is not None:
+            if status.si_code==os.CLD_EXITED:return status.si_status
+            if status.si_code in (os.CLD_KILLED,os.CLD_DUMPED):return -status.si_status
+            raise ValueError('NATIVE_EXECUTOR_WAIT_STATUS')
+        time.sleep(min(remaining,.005))
+
+
 def run_bounded(argv, data, *, timeout=30.0, stdout_limit=32*1024*1024,
                 stderr_limit=65536, cwd=None, env=None):
     if not argv or not isinstance(data,bytes) or type(timeout) not in (int,float):
@@ -41,6 +60,8 @@ def run_bounded(argv, data, *, timeout=30.0, stdout_limit=32*1024*1024,
         raise ValueError('NATIVE_PROCESS_ARGUMENT')
     if any(type(n)is not int or n<0 for n in [stdout_limit,stderr_limit]):
         raise ValueError('NATIVE_PROCESS_LIMIT')
+    if not all(hasattr(os,name) for name in ('waitid','P_PID','WEXITED','WNOHANG','WNOWAIT','CLD_EXITED','CLD_KILLED','CLD_DUMPED','killpg')):
+        raise ValueError('NATIVE_PROCESS_PLATFORM')
     deadline=time.monotonic()+timeout
     try:
         child=subprocess.Popen(argv,stdin=subprocess.PIPE,stdout=subprocess.PIPE,
@@ -49,7 +70,7 @@ def run_bounded(argv, data, *, timeout=30.0, stdout_limit=32*1024*1024,
         raise ValueError('NATIVE_EXECUTOR_UNAVAILABLE')from error
     buffers={'stdout':bytearray(),'stderr':bytearray()}
     limits={'stdout':stdout_limit,'stderr':stderr_limit}
-    position=0;completed=False;failure=None
+    position=0;failure=None
     selector=None
     streams=[child.stdin,child.stdout,child.stderr]
     try:
@@ -83,23 +104,27 @@ def run_bounded(argv, data, *, timeout=30.0, stdout_limit=32*1024*1024,
                     if len(buffers[name])>limits[name]:raise ValueError('NATIVE_'+name.upper()+'_LIMIT')
         remaining=deadline-time.monotonic()
         if remaining<=0:raise ValueError('NATIVE_EXECUTOR_TIMEOUT')
-        try:returncode=child.wait(timeout=remaining)
-        except subprocess.TimeoutExpired as error:raise ValueError('NATIVE_EXECUTOR_TIMEOUT')from error
+        returncode=_wait_without_reaping(child,deadline)
         if returncode==0 and position!=len(data):
             raise ValueError('NATIVE_STDIN_INCOMPLETE')
-        completed=True
         return Result(returncode,bytes(buffers['stdout']),bytes(buffers['stderr']))
     except (ValueError,OSError) as error:
         failure=error
     finally:
-        if selector is not None:selector.close()
-        # Reap our session only, including an inherited-pipe child on timeout/failure.
-        if not completed:
-            try:os.killpg(child.pid,signal.SIGKILL)
-            except ProcessLookupError:pass
-        for stream in streams:
-            if not stream.closed:stream.close()
-        child.wait()
+        # No wait/poll may reap the leader before the last group signal: an
+        # exited leader still reserves its PID/PGID. A successful exit does not
+        # prove that descendants which closed all three pipes have stopped.
+        try:
+            if selector is not None:selector.close()
+        finally:
+            try:
+                try:os.killpg(child.pid,signal.SIGKILL)
+                except ProcessLookupError:pass
+            finally:
+                try:
+                    for stream in streams:
+                        if not stream.closed:stream.close()
+                finally:child.wait()
     # Observe cleanup's actual exit while preserving the primary exchange
     # failure. Spawn/kill/wait and filesystem operations are not hard real-time
     # guarantees; this owner retains its existing POSIX cleanup boundary.
