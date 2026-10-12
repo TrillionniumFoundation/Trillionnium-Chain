@@ -7,7 +7,7 @@ the group leader reserved until group cleanup on success as well as failure.
 Descendants that create another session are outside this owner, not sandboxed.
 """
 from __future__ import annotations
-import math,os,selectors,signal,subprocess,time
+import math,os,selectors,signal,subprocess,sys,time
 from dataclasses import dataclass
 
 @dataclass(frozen=True)
@@ -48,6 +48,38 @@ def _wait_without_reaping(child, deadline):
             if status.si_code in (os.CLD_KILLED,os.CLD_DUMPED):return -status.si_status
             raise ValueError('NATIVE_EXECUTOR_WAIT_STATUS')
         time.sleep(min(remaining,.005))
+
+
+def _darwin_only_exited_leader(child):
+    """Disambiguate Darwin's zombie-only EPERM without waiving live denial.
+
+    XNU killpg1 excludes zombies and can return EPERM for our unreaped leader.
+    Its proc_listpids(PROC_PGRP_ONLY=2) walks both live and zombie lists under
+    proc_list_lock. An eight-byte buffer returning exactly our single PID is
+    therefore a complete singleton census, not a truncated list or size hint.
+    Require WNOWAIT exit evidence first; zero/error/extra/foreign entries refuse.
+    This trusts the system libproc/kernel and exclusive reaping, as the owner
+    already trusts POSIX process isolation. It neither signals discovered PIDs
+    nor manages descendants which left this session.
+    """
+    if sys.platform!='darwin' or child.returncode is not None:return False
+    try:
+        status=os.waitid(os.P_PID,child.pid,os.WEXITED|os.WNOHANG|os.WNOWAIT)
+        if (status is None or status.si_pid!=child.pid or
+                status.si_code not in (os.CLD_EXITED,os.CLD_KILLED,os.CLD_DUMPED)):
+            return False
+        import ctypes
+        library=ctypes.CDLL('/usr/lib/libproc.dylib',use_errno=True)
+        census=library.proc_listpids
+        census.argtypes=[ctypes.c_uint32,ctypes.c_uint32,ctypes.c_void_p,ctypes.c_int]
+        census.restype=ctypes.c_int
+        pids=(ctypes.c_int*2)()
+        ctypes.set_errno(0)
+        size=census(2,child.pid,pids,ctypes.sizeof(pids))
+        return (size==ctypes.sizeof(ctypes.c_int) and pids[0]==child.pid
+                and ctypes.get_errno()==0)
+    except (OSError,AttributeError,ValueError):
+        return False
 
 
 def run_bounded(argv, data, *, timeout=30.0, stdout_limit=32*1024*1024,
@@ -120,6 +152,8 @@ def run_bounded(argv, data, *, timeout=30.0, stdout_limit=32*1024*1024,
             try:
                 try:os.killpg(child.pid,signal.SIGKILL)
                 except ProcessLookupError:pass
+                except PermissionError:
+                    if not _darwin_only_exited_leader(child):raise
             finally:
                 try:
                     for stream in streams:

@@ -43,6 +43,18 @@ jobs:
           fi
           git rev-parse HEAD HEAD^{tree} > "$RUNNER_TEMP/owned-cleanup/source-before.txt"
           bash scripts/project-preflight.sh --audit
+      - name: Select the real GNU time observer on macOS
+        if: runner.os == 'macOS'
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! brew list --versions gnu-time; then
+            HOMEBREW_NO_AUTO_UPDATE=1 brew install gnu-time
+          fi
+          observer="$(brew --prefix gnu-time)/bin/gtime"
+          test -x "$observer"
+          printf 'TRNM_GNU_TIME=%s\n' "$observer" >> "$GITHUB_ENV"
+          "$observer" --version > "$RUNNER_TEMP/owned-cleanup/gnu-time-version.txt"
       - name: Run complete original owners and every cleanup regression
         shell: bash
         run: |
@@ -52,7 +64,7 @@ jobs:
           sys.path[:0] = ['formal/pon-nakamoto-v1', 'scripts']
           failed = False
           rows = []
-          for name, expected in [('test_bounded_process', 26), ('test_bounded_process_cleanup', 12), ('test_qualification_runtime', 32)]:
+          for name, expected in [('test_bounded_process', 26), ('test_bounded_process_cleanup', 12), ('test_bounded_process_darwin', 14), ('test_qualification_runtime', 32)]:
               module = importlib.import_module(name)
               suite = unittest.defaultTestLoader.loadTestsFromModule(module)
               count = suite.countTestCases()
