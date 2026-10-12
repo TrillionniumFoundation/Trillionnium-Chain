@@ -1,0 +1,101 @@
+name: PoN five-track source repair r2
+on:
+  push:
+    branches: [ci/pon-five-track-source-repair-20261012-r2]
+permissions:
+  contents: read
+jobs:
+  author:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      contents: write
+    outputs:
+      source: ${{ steps.source.outputs.sha }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          ref: 88c77a35d0841aa4ea53b474714d1030156184f5
+          fetch-depth: 0
+      - name: Repair only private observer mutation fixture and freeze source
+        id: source
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = 88c77a35d0841aa4ea53b474714d1030156184f5
+          bash scripts/project-preflight.sh --audit
+          mkdir -p "$RUNNER_TEMP/repair"
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('scripts/test_qualification_runtime.py')
+          original = p.read_text()
+          old = "                shutil.copy2(actual['executable'], executable)\n                _, observer = bind_gnu_time(dict(os.environ, TRNM_GNU_TIME=str(executable)))\n                executable.write_bytes(b'replaced')"
+          new = "                shutil.copy2(actual['executable'], executable)\n                # copy2 retains a read-only installed tool's mode. Mutate only this\n                # private fixture, and establish its mode before identity binding.\n                executable.chmod(0o700)\n                _, observer = bind_gnu_time(dict(os.environ, TRNM_GNU_TIME=str(executable)))\n                executable.write_bytes(b'replaced')"
+          assert original.count(old) == 1, 'exact predecessor fixture not found'
+          p.write_text(original.replace(old, new))
+          PY
+          test "$(git diff --name-only)" = scripts/test_qualification_runtime.py
+          git diff --check
+          git diff > "$RUNNER_TEMP/repair/change.patch"
+          git config user.name 'OpenAI Codex'
+          git config user.email 'codex@openai.com'
+          git switch -c fix/pon-five-track-observer-fixture-20261012-r2
+          git add scripts/test_qualification_runtime.py
+          git commit -m "test(pon): retain observer mutation control for read-only installed tools" -m "Continue exact 88c77a35. chmod only the newly copied private test executable before binding its identity. Preserve installed GNU time, all original observer checks, runtime source, tests, deadlines and five-track acceptance. The source-authoring workflow is not included in this candidate."
+          git rev-parse HEAD HEAD^{tree} > "$RUNNER_TEMP/repair/source.txt"
+          git status --porcelain > "$RUNNER_TEMP/repair/worktree-before.txt"
+          test ! -s "$RUNNER_TEMP/repair/worktree-before.txt"
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          python3 -m unittest discover -s scripts -p test_qualification_runtime.py -v 2>&1 | tee "$RUNNER_TEMP/repair/qualification.log"
+          python3 formal/pon-nakamoto-v1/test_bounded_process.py -v 2>&1 | tee "$RUNNER_TEMP/repair/bounded-process.log"
+          python3 scripts/ci/test_ci_execution.py -v 2>&1 | tee "$RUNNER_TEMP/repair/ci-execution.log"
+          bash scripts/project-preflight.sh --audit
+          test "$(git rev-parse HEAD)" = "$(head -n 1 "$RUNNER_TEMP/repair/source.txt")"
+          test -z "$(git status --porcelain)"
+          git push origin HEAD:refs/heads/fix/pon-five-track-observer-fixture-20261012-r2
+          test "$(git ls-remote origin refs/heads/fix/pon-five-track-observer-fixture-20261012-r2 | cut -f1)" = "$(git rev-parse HEAD)"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: pon-source-repair-r2
+          path: ${{ runner.temp }}/repair
+  native-hosts:
+    needs: author
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, macos-15]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          ref: ${{ needs.author.outputs.source }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Install actual GNU time on Darwin
+        if: runner.os == 'macOS'
+        run: |
+          brew install gnu-time
+          echo "TRNM_GNU_TIME=$(brew --prefix gnu-time)/bin/gtime" >> "$GITHUB_ENV"
+      - name: Execute unchanged suites against frozen candidate
+        shell: bash
+        env:
+          SOURCE_SHA: ${{ needs.author.outputs.source }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
+          bash scripts/project-preflight.sh --audit
+          mkdir -p "$RUNNER_TEMP/repair-host"
+          git rev-parse HEAD HEAD^{tree} > "$RUNNER_TEMP/repair-host/source.txt"
+          python3 -m unittest discover -s scripts -p test_qualification_runtime.py -v 2>&1 | tee "$RUNNER_TEMP/repair-host/qualification.log"
+          python3 formal/pon-nakamoto-v1/test_bounded_process.py -v 2>&1 | tee "$RUNNER_TEMP/repair-host/bounded-process.log"
+          python3 scripts/ci/test_ci_execution.py -v 2>&1 | tee "$RUNNER_TEMP/repair-host/ci-execution.log"
+          bash scripts/project-preflight.sh --audit
+          test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
+          test -z "$(git status --porcelain)"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: pon-repair-r2-${{ matrix.os }}
+          path: ${{ runner.temp }}/repair-host
