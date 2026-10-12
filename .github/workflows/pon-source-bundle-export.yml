@@ -12,15 +12,15 @@ jobs:
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
-          ref: 1b63ead7184df854ff6fb2047f33b8e876963aca
+          ref: 715a21282dbdc491e70c2c9abd9c1056cef739a5
           fetch-depth: 0
           persist-credentials: false
       - name: Verify and export the unchanged source without credentials or runtime data
         shell: bash
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD)" = 1b63ead7184df854ff6fb2047f33b8e876963aca
-          test "$(git rev-parse HEAD^{tree})" = 5ffbf99fd2060c3f191e2572a66920d48a55da1d
+          test "$(git rev-parse HEAD)" = 715a21282dbdc491e70c2c9abd9c1056cef739a5
+          test "$(git rev-parse HEAD^{tree})" = d1fd9899a95bb41ddfddda32993bfaf84641bd81
           bash scripts/project-preflight.sh --audit
           out="$RUNNER_TEMP/pon-source-bundle"
           mkdir "$out"
@@ -31,10 +31,10 @@ jobs:
           test "$(wc -c < "$out/source.bundle")" -lt 1073741824
           test -z "$(git status --porcelain)"
           (cd "$out" && sha256sum source.bundle source.txt tree.txt > SHA256SUMS)
-          printf 'Read-only exact-source export. No native execution or new qualification is supplied by this bundle. Product source remains unchanged; this maintenance workflow is not part of PR296.\n' > "$out/SCOPE.txt"
+          printf 'Read-only exact-source export. No native execution or new qualification is supplied by this bundle. Product source remains unchanged; this maintenance workflow is not part of PR303.\n' > "$out/SCOPE.txt"
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: pon-source-bundle-1b63ead7184df854ff6fb2047f33b8e876963aca
+          name: pon-source-bundle-715a21282dbdc491e70c2c9abd9c1056cef739a5
           path: ${{ runner.temp }}/pon-source-bundle
           if-no-files-found: error
           retention-days: 3
@@ -42,7 +42,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD)" = 1b63ead7184df854ff6fb2047f33b8e876963aca
+          test "$(git rev-parse HEAD)" = 715a21282dbdc491e70c2c9abd9c1056cef739a5
           test -z "$(git status --porcelain)"
           bash scripts/project-preflight.sh --audit
           tools="$RUNNER_TEMP/pon-offline-tools"
@@ -70,7 +70,7 @@ jobs:
           bash scripts/project-preflight.sh --audit
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: pon-offline-native-tools-1b63ead7184df854ff6fb2047f33b8e876963aca
+          name: pon-offline-native-tools-715a21282dbdc491e70c2c9abd9c1056cef739a5
           path: ${{ runner.temp }}/pon-offline-tools
           if-no-files-found: error
           retention-days: 3
