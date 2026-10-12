@@ -217,6 +217,9 @@ class QualificationRuntimeTests(unittest.TestCase):
                 (out / 'logs').mkdir()
                 executable = out / 'time'
                 shutil.copy2(actual['executable'], executable)
+                # copy2 retains a read-only installed tool's mode. Mutate only this
+                # private fixture, and establish its mode before identity binding.
+                executable.chmod(0o700)
                 _, observer = bind_gnu_time(dict(os.environ, TRNM_GNU_TIME=str(executable)))
                 executable.write_bytes(b'replaced')
                 records = []
