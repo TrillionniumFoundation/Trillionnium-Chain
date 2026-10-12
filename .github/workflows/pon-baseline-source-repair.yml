@@ -1,0 +1,98 @@
+name: Exact PoN baseline source repair
+on:
+  push:
+    branches: [ci/pon-baseline-source-repair-20261012]
+permissions:
+  contents: read
+jobs:
+  repair:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      contents: write
+    env:
+      SOURCE: 1b63ead7184df854ff6fb2047f33b8e876963aca
+      DESTINATION: fix/pon-five-track-baseline-20261012
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: 1b63ead7184df854ff6fb2047f33b8e876963aca
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Apply only the reviewed exact source patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/repair"
+          test "$(git rev-parse HEAD)" = "$SOURCE"
+          test "$(git rev-parse HEAD^{tree})" = 5ffbf99fd2060c3f191e2572a66920d48a55da1d
+          bash scripts/project-preflight.sh --audit
+          python3 - <<'PY'
+          import ast, json, subprocess
+          from pathlib import Path
+          test = Path('scripts/ci/test_applicability.py')
+          before = test.read_text()
+          needle = "('scripts/ci/test_work_rejection_report.py', 75)"
+          assert before.count(needle) == 1
+          test.write_text(before.replace(needle, "('scripts/ci/test_work_rejection_report.py', 87)"))
+          path = Path('config/pon/module-maturity-v1.json')
+          original = path.read_text()
+          data = json.loads(original)
+          assert json.dumps(data, indent=2) + '\n' == original
+          row = next(r for m in data['modules'] for r in m['responsibilities'] if r['operation'] == 'M17.QualifyExecutedCampaign')
+          source = 'scripts/ci/test_work_rejection_report.py'
+          tree = ast.parse(Path(source).read_text())
+          cls = next(c for c in tree.body if isinstance(c, ast.ClassDef) and c.name == 'RejectionProcessOwnerTests')
+          selectors = [source + '::' + cls.name + '.' + f.name for f in cls.body if isinstance(f, ast.FunctionDef) and f.name.startswith('test_')]
+          assert len(selectors) == 12 and not set(selectors).intersection(row['evidence_selectors'])
+          row['evidence_selectors'].extend(selectors)
+          path.write_text(json.dumps(data, indent=2) + '\n')
+          expected = {'scripts/ci/test_applicability.py': '9434ad4556a740af9ef8c51938de111413060fbe', 'config/pon/module-maturity-v1.json': '930d70ffce7b78f646ee58d6f76db941d3ff399e'}
+          assert set(subprocess.check_output(['git','diff','--name-only'], text=True).splitlines()) == set(expected)
+          for name, sha in expected.items():
+              assert subprocess.check_output(['git','hash-object',name], text=True).strip() == sha
+          PY
+          git diff --check
+          git diff --binary > "$RUNNER_TEMP/repair/reviewed.patch"
+          test "$(sha256sum "$RUNNER_TEMP/repair/reviewed.patch" | cut -d' ' -f1)" = 5f7ec0880d5bbc0d7922faa6633bd9856e8d4aa9ec63601a71df63d183fd48cf
+          git config user.name 'OpenAI'
+          git config user.email 'noreply@openai.com'
+          git add scripts/ci/test_applicability.py config/pon/module-maturity-v1.json
+          git commit -m 'fix(M17): bind all 87 work rejection controls to current qualification' -m 'Continue exact PR296 source. Add the twelve existing RejectionProcessOwnerTests to M17 evidence selectors and advance the original exact-count assertion from75 to87. Preserve all original selectors, runtime, workflow budgets, capacity/history tests, and false acceptance flags. This source repair grants no independent work, model, power-loss, DA, or WAN acceptance.'
+          git rev-parse HEAD HEAD^{tree} > "$RUNNER_TEMP/repair/source.txt"
+          git show -s --format=%P HEAD > "$RUNNER_TEMP/repair/parents.txt"
+          test "$(git show -s --format=%P HEAD)" = "$SOURCE"
+          test -z "$(git status --porcelain)"
+      - name: Execute the unchanged complete repository truth lane
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m pip install --disable-pip-version-check --only-binary=:all: -r formal/pon-nakamoto-v1/requirements.txt
+          bash scripts/ci/ci_job.sh repository-truth 2>&1 | tee "$RUNNER_TEMP/repair/repository-truth.log"
+          test -z "$(git status --porcelain)"
+          git rev-parse HEAD HEAD^{tree} > "$RUNNER_TEMP/repair/source-after.txt"
+          cmp "$RUNNER_TEMP/repair/source.txt" "$RUNNER_TEMP/repair/source-after.txt"
+      - name: Publish only the new source branch after source checks
+        env:
+          WRITE_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash scripts/project-preflight.sh --audit
+          basic="$(printf 'x-access-token:%s' "$WRITE_TOKEN" | base64 -w0)"
+          echo "::add-mask::$basic"
+          export GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=http.https://github.com/.extraheader GIT_CONFIG_VALUE_0="AUTHORIZATION: basic $basic"
+          existing="$(git ls-remote --heads origin "refs/heads/$DESTINATION")"
+          test -z "$existing"
+          git push origin "HEAD:refs/heads/$DESTINATION"
+          git ls-remote --heads origin "refs/heads/$DESTINATION" > "$RUNNER_TEMP/repair/published.txt"
+          test "$(cut -f1 "$RUNNER_TEMP/repair/published.txt")" = "$(git rev-parse HEAD)"
+      - name: Retain exact source, failures and original command results
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: pon-baseline-source-repair
+          path: ${{ runner.temp }}/repair/
+          if-no-files-found: error
+          retention-days: 30
