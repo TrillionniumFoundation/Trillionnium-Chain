@@ -1,0 +1,120 @@
+{"acceptance_granted": false, "branch_refs_changed": false, "fetched": [], "verified_object_trees": {"1a512c613951af5640dac06cc663392d08927e00": "be23902744141ca769d1b11b3a0f50d8b62a4ed3", "242906bae4f281c738c60adbd2c053d2ded1eae5": "160cc493ab4cfb7f3f8c26b2d1621691a0c49502", "30b85c34d1be404dcccd9f415286bb43b00f64ea": "4ee1a9d265f09871b0f167d2a5be77ca4b9839c0", "50e158640d8278ca94dbecb6539dab96c6a9fb84": "d61a69d3433db127019924d269bf25ded3aecf60", "5d59b9540268914794a62e8fa237caf999499314": "30ee65c0752693f4eecc90f924972279f00c0c73", "6cdbf9551aae1754e489773bac29bc0598e20a9b": "521ea862cd063904aaf3acb949208ac87dc0d762", "9fedf7ecbbe07177069c030592b4e03dcffebb81": "af52e79d69de2224fa709309704ba6a971453579", "b34561d1ade376512a34fed3fd78938ed2431ecd": "5a91b1ecc696b8a0c468ee8ba2a3dd0fe9e8d3d8", "dbb1c989342639c4c04366a0d12bc3ecb4760e04": "a38495fe234c4ae71aeae3c570d5d91acf847fee", "ed4d95c3e558ad28b5f3132152704bdf77df5f49": "a19ecaa4745236753d89b7e6be8de4a9f2156954", "faf144086067f9b0a301a2b46760164d80fec04e": "cd3643aec9b12dab647f07b8c561e81eeae1493c", "fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb": "31b4df1df65ef70d92936091271d21e1d90c1142"}}
+test_client_receipt_cannot_rebind_source_or_fetch_a_branch (__main__.EvidenceSourceTests.test_client_receipt_cannot_rebind_source_or_fetch_a_branch) ... ok
+test_client_receipt_retains_exact_source_after_squash (__main__.EvidenceSourceTests.test_client_receipt_retains_exact_source_after_squash) ... ok
+test_corpus_cannot_rebind_implementation_or_another_corpus (__main__.EvidenceSourceTests.test_corpus_cannot_rebind_implementation_or_another_corpus) ... ok
+test_corpus_commit_and_tree_each_require_strict_lowercase_sha (__main__.EvidenceSourceTests.test_corpus_commit_and_tree_each_require_strict_lowercase_sha) ... ok
+test_corpus_fetch_does_not_accept_mismatched_tree (__main__.EvidenceSourceTests.test_corpus_fetch_does_not_accept_mismatched_tree) ... ok
+test_corpus_fetch_uses_only_declared_exact_object_and_tree (__main__.EvidenceSourceTests.test_corpus_fetch_uses_only_declared_exact_object_and_tree) ... ok
+test_corpus_matching_implementation_pair_deduplicates (__main__.EvidenceSourceTests.test_corpus_matching_implementation_pair_deduplicates) ... ok
+test_corpus_requires_complete_pair_before_any_command (__main__.EvidenceSourceTests.test_corpus_requires_complete_pair_before_any_command) ... ok
+test_cost_collection_cannot_fetch_branch_or_conflicting_tree (__main__.EvidenceSourceTests.test_cost_collection_cannot_fetch_branch_or_conflicting_tree) ... ok
+test_existing_corpus_is_checked_without_fetch (__main__.EvidenceSourceTests.test_existing_corpus_is_checked_without_fetch) ... ok
+test_existing_objects_do_not_fetch (__main__.EvidenceSourceTests.test_existing_objects_do_not_fetch) ... ok
+test_failed_fetch_does_not_succeed (__main__.EvidenceSourceTests.test_failed_fetch_does_not_succeed) ... ok
+test_invalid_declared_identity_rejects_before_any_command (__main__.EvidenceSourceTests.test_invalid_declared_identity_rejects_before_any_command) ... ok
+test_missing_sources_fetch_only_exact_repo_and_commit (__main__.EvidenceSourceTests.test_missing_sources_fetch_only_exact_repo_and_commit) ... ok
+test_nested_cost_collection_has_its_own_exact_source (__main__.EvidenceSourceTests.test_nested_cost_collection_has_its_own_exact_source) ... ok
+test_new_cost_package_cannot_rebind_existing_source_tree (__main__.EvidenceSourceTests.test_new_cost_package_cannot_rebind_existing_source_tree) ... ok
+test_new_cost_package_rejects_branch_as_measurement (__main__.EvidenceSourceTests.test_new_cost_package_rejects_branch_as_measurement) ... ok
+test_new_cost_package_retains_exact_original_source (__main__.EvidenceSourceTests.test_new_cost_package_retains_exact_original_source) ... ok
+test_no_pair_or_nested_failure_does_not_invent_source (__main__.EvidenceSourceTests.test_no_pair_or_nested_failure_does_not_invent_source) ... ok
+test_non_sha_cannot_be_a_fetch_argument (__main__.EvidenceSourceTests.test_non_sha_cannot_be_a_fetch_argument) ... ok
+test_tree_mismatch_is_not_evidence (__main__.EvidenceSourceTests.test_tree_mismatch_is_not_evidence) ... ok
+
+----------------------------------------------------------------------
+Ran 21 tests in 0.013s
+
+OK
+{"activation": false, "head": "190d952c2f1d0e8364c958d1060ace2b560eb4a6", "local_links": 399, "normal_dependency_edges": 16, "result": "PASS", "runtime_implemented": false, "rust_files": 626, "source_state": "committed-clean", "tree": "3217cbff3e10f0ddd0d9e1f9eec1a3ac939d6971", "workspace_packages": 25}
+test_current_claims_are_unactivated (__main__.EvidenceBoundaryTests.test_current_claims_are_unactivated) ... ok
+test_duplicate_json_claims (__main__.EvidenceBoundaryTests.test_duplicate_json_claims) ... ok
+test_explicit_missing_native_core (__main__.EvidenceBoundaryTests.test_explicit_missing_native_core) ... ok
+test_false_is_not_integer_zero (__main__.EvidenceBoundaryTests.test_false_is_not_integer_zero) ... ok
+test_no_release_from_nested_report (__main__.EvidenceBoundaryTests.test_no_release_from_nested_report) ... ok
+test_no_runtime_claim (__main__.EvidenceBoundaryTests.test_no_runtime_claim) ... ok
+test_no_work_qualification_from_reference (__main__.EvidenceBoundaryTests.test_no_work_qualification_from_reference) ... ok
+test_old_protocol_is_not_supported (__main__.EvidenceBoundaryTests.test_old_protocol_is_not_supported) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.000s
+
+OK
+{"archive_commit": "5d59b9540268914794a62e8fa237caf999499314", "consistency": "verified-historical", "evidence_files": 43, "implementation_commit": "8b87fee77ddee6a9778e8bebe880ba2627b05d5d", "independent_accepted": false, "matches_current_source": false, "production_activation": false, "source_bindings": 704, "tracked_artifacts_verified": true}
+test_best_expert_control_cannot_be_hidden (__main__.EvidenceRejectionTests.test_best_expert_control_cannot_be_hidden) ... ok
+test_current_local_evidence (__main__.EvidenceRejectionTests.test_current_local_evidence) ... ok
+test_evidence_path_cannot_escape (__main__.EvidenceRejectionTests.test_evidence_path_cannot_escape) ... ok
+test_failed_experiment_cannot_be_omitted (__main__.EvidenceRejectionTests.test_failed_experiment_cannot_be_omitted) ... ok
+test_future_window_claim_rejected_even_after_rehash (__main__.EvidenceRejectionTests.test_future_window_claim_rejected_even_after_rehash) ... ok
+test_independent_acceptance_cannot_be_fabricated (__main__.EvidenceRejectionTests.test_independent_acceptance_cannot_be_fabricated) ... ok
+test_raw_artifact_cannot_be_swapped (__main__.EvidenceRejectionTests.test_raw_artifact_cannot_be_swapped) ... ok
+test_skipped_campaign_cannot_be_a_pass (__main__.EvidenceRejectionTests.test_skipped_campaign_cannot_be_a_pass) ... ok
+test_source_digest_cannot_be_stale (__main__.EvidenceRejectionTests.test_source_digest_cannot_be_stale) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 4.476s
+
+OK
+{"artifact_files": 76, "executed_invariant_selectors": 61, "implementation_commit": "242906bae4f281c738c60adbd2c053d2ded1eae5", "independent_accepted": false, "native_tests": 1801, "physical_hosts": 3, "production_activation": false, "python_suites": 17, "runtime_matches_measured_source": false}
+test_busy_and_recomputed_counts_must_conserve (__main__.InvariantEvidenceTests.test_busy_and_recomputed_counts_must_conserve) ... ok
+test_dirty_source_is_not_exact_head (__main__.InvariantEvidenceTests.test_dirty_source_is_not_exact_head) ... ok
+test_executor_sample_cannot_be_chain_tps (__main__.InvariantEvidenceTests.test_executor_sample_cannot_be_chain_tps) ... ok
+test_failed_learning_cannot_be_paid (__main__.InvariantEvidenceTests.test_failed_learning_cannot_be_paid) ... ok
+test_fixture_history_cannot_be_real_work (__main__.InvariantEvidenceTests.test_fixture_history_cannot_be_real_work) ... ok
+test_initial_harness_failure_cannot_be_hidden (__main__.InvariantEvidenceTests.test_initial_harness_failure_cannot_be_hidden) ... ok
+test_multihost_is_not_independent_operation (__main__.InvariantEvidenceTests.test_multihost_is_not_independent_operation) ... ok
+test_native_count_cannot_be_inflated (__main__.InvariantEvidenceTests.test_native_count_cannot_be_inflated) ... ok
+test_no_cost_theorem_from_timing (__main__.InvariantEvidenceTests.test_no_cost_theorem_from_timing) ... ok
+test_no_implicit_public_fairness (__main__.InvariantEvidenceTests.test_no_implicit_public_fairness) ... ok
+test_page_limit_is_not_a_physical_disk_outage (__main__.InvariantEvidenceTests.test_page_limit_is_not_a_physical_disk_outage) ... ok
+test_parallel_different_roots_reject (__main__.InvariantEvidenceTests.test_parallel_different_roots_reject) ... ok
+test_prior_execution_cannot_be_promoted_to_current_runtime (__main__.InvariantEvidenceTests.test_prior_execution_cannot_be_promoted_to_current_runtime) ... ok
+test_process_crash_is_not_power_loss (__main__.InvariantEvidenceTests.test_process_crash_is_not_power_loss) ... ok
+test_public_owner_path_cannot_be_fabricated (__main__.InvariantEvidenceTests.test_public_owner_path_cannot_be_fabricated) ... ok
+test_raw_log_tampering_is_rejected (__main__.InvariantEvidenceTests.test_raw_log_tampering_is_rejected) ... ok
+test_recorded_source_and_results (__main__.InvariantEvidenceTests.test_recorded_source_and_results) ... ok
+test_runtime_failure_is_not_success (__main__.InvariantEvidenceTests.test_runtime_failure_is_not_success) ... ok
+test_training_attempts_cannot_be_improving_generations (__main__.InvariantEvidenceTests.test_training_attempts_cannot_be_improving_generations) ... ok
+test_wrong_source_commit_is_rejected (__main__.InvariantEvidenceTests.test_wrong_source_commit_is_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 20 tests in 1.749s
+
+OK
+{"comparison_samples": 216, "executed_invariant_selectors": 66, "historical_only": true, "independent_accepted": false, "measured_commit": "30b85c34d1be404dcccd9f415286bb43b00f64ea", "native_tests": 1801, "ordinary_hepta_entry": false, "physical_hosts": 3, "production_activation": false, "runtime_matches": null}
+test_bad_exit_is_not_a_pass (__main__.CompletionEvidenceTests.test_bad_exit_is_not_a_pass) ... ok
+test_changed_root_rejects_even_after_rehash (__main__.CompletionEvidenceTests.test_changed_root_rejects_even_after_rehash) ... ok
+test_different_host_binary_is_not_qualified (__main__.CompletionEvidenceTests.test_different_host_binary_is_not_qualified) ... ok
+test_different_inputs_not_comparable (__main__.CompletionEvidenceTests.test_different_inputs_not_comparable) ... ok
+test_dirty_execution_not_qualified (__main__.CompletionEvidenceTests.test_dirty_execution_not_qualified) ... ok
+test_failed_temporary_cleanup_is_not_hidden (__main__.CompletionEvidenceTests.test_failed_temporary_cleanup_is_not_hidden) ... ok
+test_hepta_owner_cannot_be_invented (__main__.CompletionEvidenceTests.test_hepta_owner_cannot_be_invented) ... ok
+test_historical_receipt_does_not_claim_current_runtime (__main__.CompletionEvidenceTests.test_historical_receipt_does_not_claim_current_runtime) ... ok
+test_host_result_cannot_be_independent_consensus (__main__.CompletionEvidenceTests.test_host_result_cannot_be_independent_consensus) ... ok
+test_host_wrong_root_rejects (__main__.CompletionEvidenceTests.test_host_wrong_root_rejects) ... ok
+test_included_count_cannot_be_inferred (__main__.CompletionEvidenceTests.test_included_count_cannot_be_inferred) ... ok
+test_missing_binary_samples_reject (__main__.CompletionEvidenceTests.test_missing_binary_samples_reject) ... ok
+test_model_generations_cannot_be_invented (__main__.CompletionEvidenceTests.test_model_generations_cannot_be_invented) ... ok
+test_no_independent_operator_from_same_owner (__main__.CompletionEvidenceTests.test_no_independent_operator_from_same_owner) ... ok
+test_old_campaign_cannot_be_promoted (__main__.CompletionEvidenceTests.test_old_campaign_cannot_be_promoted) ... ok
+test_old_receipt_refuses_current_runtime_without_explicit_historical_scope (__main__.CompletionEvidenceTests.test_old_receipt_refuses_current_runtime_without_explicit_historical_scope) ... ok
+test_omitted_host_case_rejects (__main__.CompletionEvidenceTests.test_omitted_host_case_rejects) ... ok
+test_raw_log_cannot_be_replaced (__main__.CompletionEvidenceTests.test_raw_log_cannot_be_replaced) ... ok
+test_signature_count_does_not_disappear (__main__.CompletionEvidenceTests.test_signature_count_does_not_disappear) ... ok
+test_summary_cannot_claim_future_learning (__main__.CompletionEvidenceTests.test_summary_cannot_claim_future_learning) ... ok
+test_summary_cannot_hide_regression (__main__.CompletionEvidenceTests.test_summary_cannot_hide_regression) ... ok
+test_summary_cannot_inflate_test_results (__main__.CompletionEvidenceTests.test_summary_cannot_inflate_test_results) ... ok
+test_summary_cannot_relabel_old_history_as_current (__main__.CompletionEvidenceTests.test_summary_cannot_relabel_old_history_as_current) ... ok
+test_worker_creation_bound_is_real (__main__.CompletionEvidenceTests.test_worker_creation_bound_is_real) ... ok
+
+----------------------------------------------------------------------
+Ran 24 tests in 1.558s
+
+OK
+{"current_source_qualified_by_this_check": false, "historical_semantics_verified": true, "independent_accepted": false, "measured_commit": "50e158640d8278ca94dbecb6539dab96c6a9fb84", "production_activation": false, "runtime_matches": false, "tests_reexecuted": false, "verification_checkout": "original-measured-tree"}
+{"current_source_qualified_by_this_check": false, "historical_semantics_verified": true, "independent_accepted": false, "measured_commit": "ed4d95c3e558ad28b5f3132152704bdf77df5f49", "production_activation": false, "runtime_matches": false, "tests_reexecuted": false, "verification_checkout": "original-measured-tree"}
+{"current_source_qualified_by_this_check": false, "historical_semantics_verified": true, "independent_accepted": false, "measured_commit": "fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb", "production_activation": false, "runtime_matches": false, "tests_reexecuted": false, "verification_checkout": "original-measured-tree"}
+{"current_source_qualified_by_this_check": false, "historical_semantics_verified": true, "independent_accepted": false, "measured_commit": "b34561d1ade376512a34fed3fd78938ed2431ecd", "production_activation": false, "runtime_matches": false, "tests_reexecuted": false, "verification_checkout": "original-measured-tree"}
+usage: check_client_confirmation_evidence.py [-h] [--evidence EVIDENCE]
+                                             [--root ROOT] [--historical]
+                                             [--session] [--native-node]
+check_client_confirmation_evidence.py: error: --native-node selects current native-node qualification
