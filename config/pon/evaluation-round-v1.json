@@ -1,0 +1,17 @@
+{
+  "schema": "pon-evaluation-round-v1",
+  "id": "closed-round-all-eligible-min-v1",
+  "genesis_overrides": {
+    "chain_label": "trnm-pon-closed-round-devnet-4",
+    "consensus_revision": 4,
+    "evaluation_profile": "closed-round-all-eligible-min-v1"
+  },
+  "roster": "all genesis evaluators except the exact contribution author; at least two",
+  "closure": "all eligible identities, never first arrival quorum",
+  "aggregation": "minimum of all canonical bounded unsigned scores",
+  "deadline": "existing signed submission round and candidate lifetime; no timeout vote",
+  "zero_or_missing": "no model release or contribution reward",
+  "equivocation": "same signer replacement is rejected; no objective guilt or slashing inferred",
+  "dispute": "score disagreement is conservatively aggregated, not objective adjudication; no appeal authority added",
+  "production_activation": false
+}
