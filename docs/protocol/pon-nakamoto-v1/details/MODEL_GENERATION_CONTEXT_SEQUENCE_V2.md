@@ -63,3 +63,41 @@ Local Git transport and the attempted original preflight returned exit 128 in th
 editing environment; no complete local checkout, native build or preflight pass
 is claimed. Hosted checks on the actual committed source remain mandatory. No
 main merge, force push, protection bypass or production activation is requested.
+
+## Explicit parent-control successor V3
+
+`verify_parent_bound_generation_sequence` in the same existing source owner
+executes all V2 checks and additionally binds each plan's `current-backbone`
+control artifact to that generation's `predecessor_model`. V2 permits a correctly
+rehashed and re-signed plan with a different control; its historical contract and
+results remain unchanged. V3 does not credit such a plan as a parent comparison.
+The result has schema `pon-model-parent-bound-generation-sequence-v3` and hash
+domain `model-parent-bound-generation-sequence-v3`; no chain revision changes.
+
+For this stricter gate, current-backbone means the already adopted snapshot run
+without additional control training. It is not a cast of the immutable family
+backbone root into a model-release identity. Initial selection remains externally
+pinned; later predecessors follow actual reported adoption or no-update decisions.
+An equal artifact in another control slot is insufficient. No silent fallback to
+V2 is permitted when a caller expressly requests V3.
+
+The ten tests in `test_model_generation_sequence_parent.py` use the existing
+actual Ed25519, context and exposure owners. They retain all eight possible
+adopt/no-update sequences, five no-gain/owner-hold reasons, and negatives for each
+substituted or stale parent, the wrong control slot, changed plan contexts, every
+receipt/context role signature, chronology and hidden exposure. V2-positive,
+V3-negative controls distinguish the new semantic check from signature failure.
+
+`.github/workflows/pon-model-parent-acceptance.yml` adds bounded x64/ARM64 head and
+actual-main-merge runs of the original window/context/sequence suites and all ten
+new tests. It retains failures, rechecks source, and exports the exact reference
+sources and logs. It replaces no original workflow, selector, budget or capacity
+campaign. Hepta's exact native pair must execute the same new tests on the same
+pinned Chain tuple, in addition to its existing signed-model/native boundaries.
+
+This closes a supplied-evidence parent-comparison binding, not an end-to-end
+learning experiment. It cannot authenticate actual execution, install models,
+withdraw consent, infer independent operation, price physical work, or establish
+WAN TPS, permanent state growth or physical power-loss recovery. Existing false
+acceptance flags remain inherited without promotion. Local syntax/source-prefix
+checks are separate from the required committed-source executions.

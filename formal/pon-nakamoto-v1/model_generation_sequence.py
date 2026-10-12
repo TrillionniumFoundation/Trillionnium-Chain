@@ -124,3 +124,57 @@ def verify_context_bound_generation_sequence(
         exposure_bindings=exposure_bindings, hidden_windows_excluded=False,
         physical_custody_verified=False)
     return dict(value, id=H(CONTEXT_SEQUENCE_DOMAIN, canonical(value)).hex())
+
+
+PARENT_SEQUENCE_DOMAIN = 'model-parent-bound-generation-sequence-v3'
+
+
+def verify_parent_bound_generation_sequence(
+        history_raw, expected_history, generations, receipts, attestations,
+        run_plans, expected_initial_model, contexts):
+    """Bind the evaluated parent control to the already selected predecessor.
+
+    V2 establishes signatures, exposure, plans and reported use chronology. It
+    deliberately does not assert that a plan's current-backbone control is the
+    adopted predecessor named in the consumer receipt. This explicit V3 entry
+    additionally requires that exact artifact identity in every supplied plan.
+    Re-signing a plan containing a weaker or stale parent cannot satisfy V3.
+
+    Here current-backbone denotes the current adopted snapshot evaluated without
+    additional control training, not necessarily the immutable family backbone.
+    The plan's separate backbone/tokenizer/contract identities are not recast as
+    installed model identities. A no_update decision keeps the previous model.
+
+    This is still an offline supplied-evidence relation. No install, current
+    authorization, independent custody, run execution, score truth or consensus
+    weight follows. All V1/V2 output bytes and existing acceptance flags remain
+    unchanged. Supplied Python objects must remain immutable during the call.
+    """
+    verified = verify_context_bound_generation_sequence(
+        history_raw, expected_history, generations, receipts, attestations,
+        run_plans, expected_initial_model, contexts)
+    bindings = []
+    for generation, plan, boundary in zip(
+            generations, run_plans, verified['boundaries']):
+        # validate_run_plan already checked exact control count, labels, order,
+        # uniqueness and digest shape. Never accept another control's artifact
+        # merely because it happens to equal the claimed predecessor.
+        control = plan['controls'][0]
+        require(control['id'] == 'current-backbone'
+                and control['artifact'] == generation['predecessor_model'],
+                'GENERATION_SEQUENCE_PARENT_CONTROL_BINDING')
+        bindings.append(dict(
+            ordinal=boundary['ordinal'], run_plan=generation['run_plan'],
+            predecessor_model=generation['predecessor_model'],
+            evaluated_parent_control=control['artifact'],
+            adopted_model=generation['adopted_model'],
+            decision=generation['decision']))
+    value = dict(verified)
+    value.pop('id')
+    value.update(
+        schema='pon-model-parent-bound-generation-sequence-v3',
+        scope='signed-plan-parent-exposure-context-not-physical-evolution',
+        verified_context_sequence=verified['id'],
+        parent_control_bindings=bindings,
+        supplied_parent_control_identities_verified=True)
+    return dict(value, id=H(PARENT_SEQUENCE_DOMAIN, canonical(value)).hex())
