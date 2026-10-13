@@ -50,6 +50,29 @@ security, public-model efficacy and activation unaccepted. This does not deny th
 development code and controlled entrypoints below. Source work and documentation may proceed now;
 release requires their own real evidence, not completion of the retired PoCO roadmap.
 
+### Six-track continuation and completion order
+
+The architecture continuation keeps one candidate and the original acceptance owners.
+Completion is determined in the order below. Passing a later component test cannot
+compensate for an incomplete earlier gate; rows are obligations, not acceptance claims.
+
+| Order | Work | Evidence required to close the track |
+| --- | --- | --- |
+| P0.1 | Exact two-repository source convergence | One final Chain/Hepta head, tree, actual base and actual prospective-merge tuple; complete original baselines and every native x64/ARM64 source/merge pair on that tuple. Missing, queued, cancelled, stale or partial runs remain incomplete. A predecessor's result never transfers to a successor. |
+| P0.2 | Work economics and hostile public service | Compare legal producers and best observed attacks for the same task, target and charged setup/search; preserve rejected and unsuccessful attempts. Independently driven hostile clients must overlap honest signed business inclusion and client confirmation. Same-host evidence is distinct from independent operators, WAN, physical energy and cheapest-adversary qualification. |
+| P0.3 | Actual adoption loop | Existing CURRENT, independent evaluator selection and the actual inference caller remain connected to current withdrawal and FinalUse checks. Exercise revocation, restart, late results, concurrency and durable Unknown. Chain confirmation alone grants no installation or execution authority. |
+| P1.1 | Read/write work, conflicts and retained storage | Preserve the single durable writer and final on-disk revalidation. Measure complete requests or blocks, including allocation, SQL, serialization, confirmation and cold recovery; retain errors and tails. State explicitly which costs remain linear in retained history/state and which disk records remain permanent. |
+| P1.2 | Model custody and three real generations | Independent material custody and untouched future tasks; each control is the predecessor actually installed at inference. Keep actual installation/cost receipts, lawful no-update, revocation and the unchanged local irreversible history. Controlled fixtures are not independent learning evidence. |
+| P2 | Architecture comparison | Freeze business workload, offered load, hardware/network/resources, data-availability assumptions, adversary model and confirmation risk before comparing Nakamoto, DAG or committee BFT. Report confirmed goodput and latency together with failures, recovery and resource cost. Implement a protocol successor only after observed benefit and separate safety review. |
+
+A DAG candidate must account for total ordering, execution conflicts, withheld data,
+equivocation, admission economics and reorganization/confirmation semantics. A BFT
+candidate must separately define committee admission, rotation, Byzantine bound and
+finality. Neither may inherit this profile's work/fork-choice/confirmation claims.
+A serialization improvement, a faster query, or a simulated block schedule is not a
+DAG/BFT throughput result. No new protocol profile or readiness flag follows from this
+continuation alone.
+
 ### Current native development contracts
 
 The [checked applicability registry](../../config/pon/applicability-v1.json) and

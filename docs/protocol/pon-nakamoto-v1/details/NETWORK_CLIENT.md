@@ -281,6 +281,36 @@ advances `highest_ack` and clears the pending fields. This is request-level exac
 it is not target-side physical exactly-once execution, a wallet/HSM, TLS/Noise transport
 or production peer custody.
 
+#### Operation-local recovery reuse
+
+The existing native replay owner retains one fully recovered
+`CandidateP2pAdmissionV0` within each `begin_authenticated_request` and
+`finish_authenticated_request` call. The former duplicate recovery inside each
+call reread the same immutable SQL facts without an intervening write or dispatch.
+Reusing only this operation-local value reduces four full recovery checks to two
+for a new complete request. The admission is never retained by Node or carried
+across dispatch. Completion separately reads and recovers the actual SQL state;
+startup, pending retries and cached/retired replay retain their original checks,
+typed errors, exact payload/response digests, transactions and response retention.
+
+The recovery `COUNT` still examines the completed history. No identity row is
+deleted or trusted through a persistent cache. Per-request recovery therefore
+remains linear in retained requests, cumulative sequential work can remain
+quadratic, and retained identity storage remains unbounded in request count.
+This optimization does not qualify anonymous service, bounded history, WAN TPS
+or protection from an allowed peer's long-lived resource exhaustion.
+
+`store::authenticated_replay_tests` covers exact recovery-call counts, a lost-ACK
+pending cold reopen, old gaps and changed pending bytes between reservation and
+acknowledgment, a changed retired payload digest, and rejection of a cold missing
+historical identity. Its separate signed socket observation executes 256 actual
+loopback `Head` requests through the existing client/server, real signatures,
+native dispatch and durable reserve/ACK transactions. It reports whole client
+request timings and actual directory-entry bytes at 16, 64 and 256 requests,
+then verifies retained responses and full cold reopen. Those finite observations
+include failures and grant no timing improvement or lifetime bound; paired
+performance comparisons require matched source, hardware and competing load.
+
 The closed `pon-native-history-v1` page binds network, parameters, genesis, requested
 branch/cursor, full packets and terminal identity. The receiver checks all cheap page
 links before admission, recomputes work/execution itself and preserves only fully valid

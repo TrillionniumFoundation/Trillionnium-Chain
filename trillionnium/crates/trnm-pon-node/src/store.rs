@@ -131,6 +131,8 @@ type ReplayRow = (
     Option<u64>,
 );
 const AUTH_RESPONSE_RETENTION: u64 = 16;
+#[cfg(test)]
+mod authenticated_replay_tests;
 
 /// Parent authority for one owner operation only. Never retained by Node or proof
 /// search; the successor is separately checked by M06 and consume_output.
@@ -185,10 +187,18 @@ pub(crate) enum AuthenticatedReplayDecision {
 struct ReplayRecovery<'a> {
     db: &'a Connection,
 }
+#[cfg(test)]
+thread_local! {
+    // Counts real full recovery calls on this test's thread, never retained by
+    // the Node and never used as a validity verdict or across a request boundary.
+    static REPLAY_RECOVERY_CHECKS: Cell<u64> = const { Cell::new(0) };
+}
 impl PeerReplayRecoverySourceV0 for ReplayRecovery<'_> {
     type Error = Error;
 
     fn verify_recovery(&mut self, state: &PeerReplayStateV0) -> Result<()> {
+        #[cfg(test)]
+        REPLAY_RECOVERY_CHECKS.with(|checks| checks.set(checks.get() + 1));
         let session = state.session().session_id().bytes();
         let completed: u64 = self.db.query_row(
             "SELECT COUNT(*) FROM peer_request_audit WHERE session_id=? AND nonce<=? AND status IN (1,2)",
@@ -1532,8 +1542,12 @@ impl Node {
             PeerReplayStateV0::new(session, 0, None)
                 .map_err(|e| Error::peer_admission_source("AUTH_REPLAY", e))?,
         );
-        CandidateP2pAdmissionV0::recover_verified(state, &mut ReplayRecovery { db: &self.db })
-            .map_err(|e| Error::local_replay_source("AUTH_RECOVERY", e))?;
+        // Keep this checked admission only within this &mut Node operation.
+        // No intervening write or dispatch changes its recovered SQL facts.
+        // finish_authenticated_request independently recovers after dispatch.
+        let mut admission =
+            CandidateP2pAdmissionV0::recover_verified(state, &mut ReplayRecovery { db: &self.db })
+                .map_err(|e| Error::local_replay_source("AUTH_RECOVERY", e))?;
         let session_id = session.session_id().bytes();
         if frame.replay_nonce() <= state.highest_acknowledged_nonce() {
             let audit: Option<(Vec<u8>, u64, Option<Vec<u8>>)> = self
@@ -1556,9 +1570,6 @@ impl Node {
                 _ => Err(Error::from("AUTH_REPLAY_AUDIT").local_integrity()),
             };
         }
-        let mut admission =
-            CandidateP2pAdmissionV0::recover_verified(state, &mut ReplayRecovery { db: &self.db })
-                .map_err(|e| Error::local_replay_source("AUTH_RECOVERY", e))?;
         let verified = admission
             .verify_frame(frame, &mut ExactFrameSource { payload })
             .map_err(|e| Error::peer_frame_source("AUTH_FRAME", e))?;
@@ -1613,8 +1624,12 @@ impl Node {
         let state = self
             .authenticated_replay_state(frame.session())?
             .ok_or("AUTH_REPLAY_STATE")?;
-        CandidateP2pAdmissionV0::recover_verified(state, &mut ReplayRecovery { db: &self.db })
-            .map_err(|e| Error::local_replay_source("AUTH_RECOVERY", e))?;
+        // Re-read and fully recover here even if begin succeeded: dispatch and
+        // lost-ACK/restart recovery are separate mutable-owner operations.
+        // Only the second identical recovery inside this call is redundant.
+        let mut admission =
+            CandidateP2pAdmissionV0::recover_verified(state, &mut ReplayRecovery { db: &self.db })
+                .map_err(|e| Error::local_replay_source("AUTH_RECOVERY", e))?;
         let session = frame.session().session_id().bytes();
         let response_digest = hash(b"native-authenticated-response-v1", &[response]);
         if state.highest_acknowledged_nonce() >= frame.replay_nonce() {
@@ -1639,9 +1654,6 @@ impl Node {
             )?;
             return Ok(());
         }
-        let mut admission =
-            CandidateP2pAdmissionV0::recover_verified(state, &mut ReplayRecovery { db: &self.db })
-                .map_err(|e| Error::local_replay_source("AUTH_RECOVERY", e))?;
         let next = admission
             .acknowledge(frame)
             .map_err(|e| Error::peer_admission_source("AUTH_REPLAY", e))?;

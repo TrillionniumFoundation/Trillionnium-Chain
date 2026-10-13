@@ -13,27 +13,36 @@ import os
 from pathlib import Path
 import re
 import shutil
+import struct
 import subprocess
 import sys
 
 from check_required_native_test import validate
 from replay_pinned_native import digest, json_load, require, run_child
+from verify_ci_source import verify as verify_source
 
 ROOT = Path(__file__).resolve().parents[2]
+# Reuse the existing wire owner for bounded metadata consistency. This reader
+# does not verify work, signatures, state transitions or operator independence.
+sys.path.insert(0, str(ROOT / 'formal/pon-nakamoto-v1'))
+from contract_wire import H, header_decode, tx_decode
 TARGET = 'public_v3_from_zero'
 SOURCE = 'trillionnium/crates/trnm-pon-node/tests/' + TARGET + '.rs'
 TESTS = (
     'caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct',
     'from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection',
     'from_zero_service_shares_cpu_with_honest_work_and_reopened_owner',
+    'from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline',
 )
 
 
 def source_identity() -> dict:
     def git(*args: str) -> str:
         return subprocess.check_output(['git', '-C', str(ROOT), *args], text=True).strip()
-    require(not git('status', '--porcelain'), 'CLEAN_COMMITTED_SOURCE_REQUIRED')
-    return {'commit': git('rev-parse', 'HEAD'), 'tree': git('rev-parse', 'HEAD^{tree}'),
+    head = git('rev-parse', 'HEAD')
+    tracked = verify_source('head', head, root=ROOT)
+    return {'commit': head, 'tree': git('rev-parse', 'HEAD^{tree}'),
+            'tracked_source_identity': tracked,
             'test_sha256': digest((ROOT / SOURCE).read_bytes())}
 
 
@@ -332,6 +341,319 @@ def validate_sustained_report(path: Path) -> dict:
             'scope': 'retained local report consistency; no independent work/state oracle, saturation or fairness qualification'}
 
 
+def validate_confirmation_report(path: Path) -> dict:
+    """Recompute bounded report consistency; native owners retain all authority."""
+    require(path.is_file() and not path.is_symlink(), 'CONFIRMATION_REPORT_REQUIRED')
+    with path.open('rb') as stream:
+        raw = stream.read(REPORT_LIMIT + 1)
+    require(len(raw) <= REPORT_LIMIT, 'CONFIRMATION_REPORT_LIMIT')
+    doc = json_load(raw)
+    require(isinstance(doc, dict) and doc.get('schema') == 'public-v3-signed-confirmation-pressure-v1',
+            'CONFIRMATION_SCHEMA')
+
+    def number(value):
+        require(type(value) is int and 0 <= value < 1 << 64, 'CONFIRMATION_NUMBER')
+        return value
+
+    def flags(value, yes=(), no=()):
+        require(isinstance(value, dict), 'CONFIRMATION_OBJECT')
+        require(all(value.get(key) is True for key in yes), 'CONFIRMATION_TARGET')
+        require(all(value.get(key) is False for key in no), 'CONFIRMATION_SCOPE_PROMOTION')
+
+    def hexadecimal(value, width=None):
+        require(isinstance(value, str) and len(value) % 2 == 0
+                and (width is None or len(value) == width * 2)
+                and re.fullmatch('[0-9a-f]+', value) is not None, 'CONFIRMATION_HEX')
+        return bytes.fromhex(value)
+
+    def packet_metadata(value):
+        data = hexadecimal(value)
+        require(318 + 2 + 49188 <= len(data) <= 1048576, 'CONFIRMATION_PACKET_LIMIT')
+        header = header_decode(data[:318])
+        count = struct.unpack_from('<H', data, 318)[0]
+        require(count <= 256, 'CONFIRMATION_PACKET_LIMIT')
+        position, transactions = 320, []
+        for _ in range(count):
+            require(position + 2 <= len(data), 'CONFIRMATION_PACKET_LIMIT')
+            size = struct.unpack_from('<H', data, position)[0]
+            position += 2
+            require(159 <= size <= 2048 and position + size <= len(data), 'CONFIRMATION_PACKET_LIMIT')
+            transaction = data[position:position + size]
+            tx_decode(transaction)  # canonical grammar only, never signature authority
+            transactions.append(transaction)
+            position += size
+        require(len(data) - position == 49188 and data[position:position + 4] == b'PNW1',
+                'CONFIRMATION_PACKET_LIMIT')
+        proof = data[position:]
+        require(H('task', proof[4:16388], proof[16388:32772]) == header['work_task'],
+                'CONFIRMATION_TASK_BINDING')
+        return header, transactions, H('block', data[:318], proof[-32:])
+
+    def call(value, window):
+        require(isinstance(value, dict) and value.get('status') in ('ok', 'refused', 'error'),
+                'CONFIRMATION_CALL')
+        start, end = number(value.get('started_ns')), number(value.get('ended_ns'))
+        elapsed = number(value.get('elapsed_wall_ns'))
+        number(value.get('client_thread_cpu_ns'))
+        require(start <= end and elapsed >= end - start and number(value.get('deadline_ms')) == 2000
+                and value.get('returned_after_deadline') is (elapsed > 2_000_000_000)
+                and type(value.get('returned_after_window')) is bool, 'CONFIRMATION_CALL')
+        # The recorded flag uses the calling thread after its end stamp. A stamp
+        # beyond the window can never be represented as an in-window success.
+        require(end < window or value['returned_after_window'] is True, 'CONFIRMATION_LATE_CALL')
+        if value['status'] == 'ok':
+            require(value.get('error') is None, 'CONFIRMATION_CALL')
+        return value['status'] == 'ok' and value['returned_after_deadline'] is False \
+            and value['returned_after_window'] is False and end < window
+
+    def compact_request(value, request, packet_index):
+        # compact_pressure_call serializes the request after converting it to a
+        # serde_json Value, whose default object map sorts keys. This is the
+        # recorded-request domain, not the transport response body digest.
+        encoded = json.dumps(request, sort_keys=True, separators=(',', ':')).encode()
+        if packet_index is None:
+            require(value.get('packet_index', 'missing') is None, 'CONFIRMATION_REQUEST_BINDING')
+        else:
+            require(number(value.get('packet_index')) == packet_index, 'CONFIRMATION_REQUEST_BINDING')
+        require(number(value.get('recorded_request_bytes')) == len(encoded)
+                and hexadecimal(value.get('recorded_request_digest'), 32)
+                == H('pressure-recorded-request-v1', encoded), 'CONFIRMATION_REQUEST_BINDING')
+
+    flags(doc, yes=('finite_target_met', 'invariant_target_met', 'same_packet_sequence_in_both_runs'),
+          no=('public_network_ready', 'work_profile_qualified', 'production_activation',
+              'strongest_honest_producer_used'))
+    context = {key: hexadecimal(doc.get(key), 32) for key in (
+        'network', 'parameters', 'genesis', 'target', 'task', 'policy_id')}
+    require(context['target'] != bytes(32), 'CONFIRMATION_CONTEXT')
+    require(doc.get('honest_chain_aggregate_cpu_ns', 'missing') is None, 'CONFIRMATION_SCOPE_PROMOTION')
+    number(doc.get('honest_chain_acquisition_wall_ns'))
+    number(doc.get('attacker_construction_cpu_ns'))
+    number(doc.get('attacker_construction_wall_ns'))
+    # Optional successor reports separately measure whole-process acquisition.
+    if 'honest_chain_process_cpu_ns' in doc:
+        if doc['honest_chain_process_cpu_ns'] is not None:
+            number(doc['honest_chain_process_cpu_ns'])
+        require(isinstance(doc.get('honest_chain_process_cpu_scope'), str)
+                and 0 < len(doc['honest_chain_process_cpu_scope']) <= 2048, 'CONFIRMATION_CPU_SCOPE')
+    packets = doc.get('signed_honest_packets')
+    require(isinstance(packets, list) and len(packets) == 7, 'CONFIRMATION_PACKET_SEQUENCE')
+    metadata = [packet_metadata(packet) for packet in packets]
+    parent = context['genesis']
+    for height, (header, transactions, block_id) in enumerate(metadata, 1):
+        require(header['network'] == context['network'] and header['parameters'] == context['parameters']
+                and header['target'] == context['target'] and header['work_task'] == context['task'],
+                'CONFIRMATION_CONTEXT')
+        require(header['height'] == height and header['parent'] == parent
+                and len(transactions) == (1 if height == 1 else 0), 'CONFIRMATION_PACKET_SEQUENCE')
+        parent = block_id
+    transaction_id = H('tx-id', metadata[0][1][0]).hex()
+    constructions = doc.get('from_zero_construction')
+    require(isinstance(constructions, list) and len(constructions) == 16, 'CONFIRMATION_CONSTRUCTIONS')
+    for construction in constructions:
+        require(isinstance(construction, dict) and construction.get('status') in (
+            'target_hit_unverified', 'exhausted'), 'CONFIRMATION_CONSTRUCTIONS')
+        header_bytes = hexadecimal(construction.get('header'), 318)
+        header = header_decode(header_bytes)
+        require(header['target'] == context['target'] and header['work_task'] == context['task']
+                and header['network'] == context['network'] and header['parameters'] == context['parameters'],
+                'CONFIRMATION_CONTEXT')
+        require(header['height'] == 1 and header['parent'] == context['genesis'],
+                'CONFIRMATION_CONSTRUCTIONS')
+        challenge = H('challenge', header_bytes)
+        require(hexadecimal(construction.get('challenge'), 32) == challenge
+                and number(construction.get('attempt_budget')) == 4096
+                and number(construction.get('setup_calls')) == 1, 'CONFIRMATION_CONSTRUCTIONS')
+        attempts = construction.get('attempts')
+        require(isinstance(attempts, list) and 0 < len(attempts) <= 4096,
+                'CONFIRMATION_CONSTRUCTIONS')
+        for ordinal, attempt in enumerate(attempts):
+            require(isinstance(attempt, dict) and number(attempt.get('nonce')) == ordinal,
+                    'CONFIRMATION_CONSTRUCTIONS')
+            trace = H('public-v3-from-zero-v1', challenge, struct.pack('<Q', ordinal))
+            ticket = H('ticket', challenge, trace)
+            require(hexadecimal(attempt.get('trace'), 32) == trace
+                    and hexadecimal(attempt.get('ticket'), 32) == ticket
+                    and attempt.get('target_hit') is (ticket <= context['target']),
+                    'CONFIRMATION_CONSTRUCTIONS')
+        hit = construction['status'] == 'target_hit_unverified'
+        require(not any(attempt['target_hit'] for attempt in attempts[:-1])
+                and attempts[-1]['target_hit'] is hit, 'CONFIRMATION_CONSTRUCTIONS')
+        if hit:
+            require(number(construction.get('winner_nonce')) == len(attempts) - 1,
+                    'CONFIRMATION_CONSTRUCTIONS')
+            packet_header, transactions, _ = packet_metadata(construction.get('packet'))
+            require(packet_header == header and not transactions
+                    and hexadecimal(construction['packet'])[-32:]
+                    == hexadecimal(attempts[-1]['trace'], 32), 'CONFIRMATION_CONSTRUCTION_PACKET')
+        else:
+            require(construction.get('packet', 'missing') is None
+                    and construction.get('winner_nonce', 'missing') is None
+                    and len(attempts) == 4096, 'CONFIRMATION_CONSTRUCTIONS')
+    phases = doc.get('phases')
+    require(isinstance(phases, list) and len(phases) == 2, 'CONFIRMATION_PHASES')
+    observations = []
+    for index, phase in enumerate(phases):
+        require(isinstance(phase, dict)
+                and phase.get('mode') == ('attack-free-baseline' if index == 0 else 'from-zero-pressure')
+                and number(phase.get('workers')) == (0 if index == 0 else 16), 'CONFIRMATION_PHASES')
+        require(phase.get('target') == doc['target'] and phase.get('task') == doc['task']
+                and phase.get('initial_tip') == doc['genesis'], 'CONFIRMATION_CONTEXT')
+        flags(phase, yes=('invariant_target_met', 'finite_business_target_met', 'no_attack_accepted',
+              'accounting_closed', 'full_native_state_equal', 'receiver_matches_valid_honest_prefix',
+              'client_confirmed_before_original_window_end', 'overlap_demonstrated'),
+              no=('public_network_ready', 'independent_operator_accepted', 'work_profile_qualified',
+                  'resource_fairness_qualified', 'production_activation'))
+        window = number(phase.get('requested_window_ns'))
+        start, end = number(phase.get('business_started_ns')), number(phase.get('confirmation_ended_ns'))
+        require(window == 4_000_000_000 and start < end < window
+                and number(phase.get('client_confirmation_latency_ns')) == end - start,
+                'CONFIRMATION_OUTSIDE_ORIGINAL_WINDOW')
+        require(number(phase.get('client_confirmed_transactions')) == 1, 'CONFIRMATION_BUSINESS_COUNT')
+        number(phase.get('independent_replay_and_confirmation_cpu_ns'))
+        number(phase.get('independent_replay_and_confirmation_wall_ns'))
+        require(phase.get('verification_errors') == [], 'CONFIRMATION_VERIFICATION_ERRORS')
+        confirmed = phase.get('independent_client_confirmation')
+        flags(confirmed, yes=('confirmed',), no=('reorged', 'finalized', 'execution_authority'))
+        require(all(confirmed.get(key) == doc[key] for key in ('network', 'parameters', 'genesis'))
+                and confirmed.get('transaction') == transaction_id
+                and confirmed.get('included_block') == metadata[0][2].hex()
+                and confirmed.get('observed_tip') == metadata[-1][2].hex()
+                and number(confirmed.get('included_height')) == 1
+                and number(confirmed.get('observed_height')) == 7
+                and number(confirmed.get('depth')) == 6, 'CONFIRMATION_NATIVE_OBSERVATION')
+        required = (6 * ((1 << 256) // (int.from_bytes(context['target'], 'big') + 1))).to_bytes(64, 'big')
+        require(hexadecimal(confirmed.get('required_work_delta'), 64) == required
+                and hexadecimal(confirmed.get('work_delta'), 64) == required,
+                'CONFIRMATION_NATIVE_OBSERVATION')
+        submissions = phase.get('honest_submissions')
+        histories = phase.get('honest_history')
+        require(isinstance(submissions, list) and 7 <= len(submissions) <= 64
+                and isinstance(histories, list) and 1 <= len(histories) <= 16, 'CONFIRMATION_CALLS_REQUIRED')
+        successful, previous_end, next_packet = [], start, 0
+        for row in submissions:
+            on_time = call(row, window)
+            require(previous_end <= row['started_ns'] <= row['ended_ns'] <= end,
+                    'CONFIRMATION_BUSINESS_CHRONOLOGY')
+            require(next_packet < len(packets) and number(row.get('height')) == next_packet + 1,
+                    'CONFIRMATION_SIGNED_SUBMISSIONS')
+            compact_request(row, {'op': 'submit', 'packet': packets[next_packet]}, next_packet)
+            previous_end = row['ended_ns']
+            if on_time:
+                successful.append(row)
+                next_packet += 1
+        require([row.get('height') for row in successful] == list(range(1, 8)), 'CONFIRMATION_SIGNED_SUBMISSIONS')
+        imported, after = [], doc['genesis']
+        for row in histories:
+            on_time = call(row, window)
+            require(previous_end <= row['started_ns'] <= row['ended_ns'] <= end,
+                    'CONFIRMATION_BUSINESS_CHRONOLOGY')
+            require(row.get('request') == {'op': 'history', 'tip': parent.hex(), 'after': after},
+                    'CONFIRMATION_REQUEST_BINDING')
+            previous_end = row['ended_ns']
+            if not on_time:
+                continue
+            response = row.get('response')
+            require(isinstance(response, dict), 'CONFIRMATION_HISTORY_CONTEXT')
+            page = response.get('value')
+            require(isinstance(page, dict) and page.get('schema') == 'pon-native-history-v1'
+                    and page.get('after') == after and page.get('tip') == parent.hex()
+                    and all(page.get(key) == doc[key] for key in ('network', 'parameters', 'genesis')),
+                    'CONFIRMATION_HISTORY_CONTEXT')
+            chunk = page.get('packets')
+            require(isinstance(chunk, list) and chunk and len(chunk) <= 16, 'CONFIRMATION_HISTORY_PACKETS')
+            imported.extend(chunk)
+            after = packet_metadata(chunk[-1])[2].hex()
+            require(page.get('next') == after and page.get('complete') is (after == parent.hex()),
+                    'CONFIRMATION_HISTORY_CONTEXT')
+        require(imported == packets and after == parent.hex(), 'CONFIRMATION_HISTORY_PACKETS')
+        workers = phase.get('attacks')
+        require(isinstance(workers, list) and len(workers) == phase['workers'], 'CONFIRMATION_ATTACKS')
+        attack_calls, worker_cpu = [], 0
+        for worker_index, worker in enumerate(workers):
+            require(isinstance(worker, dict) and number(worker.get('worker')) == worker_index
+                    and worker.get('attempt_cap_reached') is False,
+                    'CONFIRMATION_ATTACKS')
+            worker_cpu += number(worker.get('calling_thread_cpu_ns'))
+            rows = worker.get('calls')
+            require(isinstance(rows, list) and len(rows) < 1024, 'CONFIRMATION_ATTACKS')
+            previous_end = 0
+            for row in rows:
+                require(isinstance(row, dict), 'CONFIRMATION_ATTACKS')
+                packet_index = number(row.get('packet_index'))
+                require(packet_index == worker_index, 'CONFIRMATION_REQUEST_BINDING')
+                construction = constructions[packet_index]
+                if row.get('status') == 'not_submitted_exhausted':
+                    require(construction['status'] == 'exhausted', 'CONFIRMATION_CONSTRUCTIONS')
+                    continue
+                call(row, window)
+                require(construction['status'] == 'target_hit_unverified', 'CONFIRMATION_CONSTRUCTIONS')
+                compact_request(row, {'op': 'submit', 'packet': construction['packet']}, packet_index)
+                require(previous_end <= row['started_ns'], 'CONFIRMATION_ATTACK_CHRONOLOGY')
+                previous_end = row['ended_ns']
+                require(row['status'] != 'ok', 'CONFIRMATION_ATTACK_ACCEPTED')
+                attack_calls.append(row)
+        require(number(phase.get('attacker_workers_cpu_ns')) == worker_cpu, 'CONFIRMATION_CPU_SUM')
+        overlapping = sum(row['started_ns'] < end and row['ended_ns'] > start for row in attack_calls)
+        require(number(phase.get('overlapping_false_calls')) == overlapping, 'CONFIRMATION_NO_OVERLAP')
+        before = number(phase.get('completed_false_calls_before_business'))
+        during = number(phase.get('completed_false_calls_at_confirmation'))
+        require((not index and before == during == overlapping == 0) or
+                (index and overlapping > 0 and 0 < before < during <= len(attack_calls)),
+                'CONFIRMATION_NO_OVERLAP')
+        heads = phase.get('honest_heads')
+        require(isinstance(heads, list) and 0 < len(heads) <= 256, 'CONFIRMATION_HEADS')
+        successful_heads, previous_end = [], 0
+        for row in heads:
+            on_time = call(row, window)
+            compact_request(row, {'op': 'head'}, None)
+            require(previous_end <= row['started_ns'], 'CONFIRMATION_HEAD_CHRONOLOGY')
+            previous_end = row['ended_ns']
+            if on_time:
+                successful_heads.append(row)
+        require(number(phase.get('honest_head_successes_in_window')) == len(successful_heads),
+                'CONFIRMATION_HEADS')
+        previous, maximum = 0, 0
+        for row in heads:
+            if row['status'] == 'ok' and row['returned_after_window'] is False:
+                maximum = max(maximum, row['ended_ns'] - previous)
+                previous = row['ended_ns']
+        maximum = max(maximum, window - min(previous, window))
+        require(number(phase.get('maximum_honest_head_gap_ns')) == maximum, 'CONFIRMATION_HEAD_GAP')
+        service = phase.get('service')
+        require(isinstance(service, dict) and service.get('error', 'missing') is None
+                and isinstance(service.get('metrics'), dict), 'CONFIRMATION_SERVICE_ERRORS')
+        metrics = service['metrics']
+        require(number(metrics.get('mutation_cpu_charged_ns')) == number(metrics.get('mutation_full_work_cpu_ns'))
+                + number(metrics.get('mutation_dispatch_excluding_work_cpu_ns'))
+                and number(metrics.get('mutation_cpu_clock_failures')) == 0, 'CONFIRMATION_CPU_SUM')
+        started_work = number(metrics.get('work_started'))
+        finished_work = number(metrics.get('work_finished'))
+        failed_work = number(metrics.get('work_failed'))
+        require(started_work == finished_work and failed_work <= finished_work
+                and finished_work - failed_work >= 7
+                and (not index or failed_work > 0), 'CONFIRMATION_WORK_CLOSURE')
+        captured = phase.get('observations')
+        flags(captured, yes=('cpu_intervals_are_nested_not_additive',),
+              no=('counter_overflow', 'observation_has_consensus_authority',
+                  'cpu_includes_reactor_authentication_or_response_signing', 'stream_bytes_are_physical_network_bytes'))
+        records = captured.get('records')
+        require(isinstance(records, list) and len(records) <= number(captured.get('capacity')) == 16384
+                and number(captured.get('accepted_connections_seen')) == len(records)
+                and number(captured.get('records_not_retained')) == 0
+                and number(captured.get('measurement_failures')) == 0
+                and all(isinstance(row, dict) and row.get('complete') is True
+                        and row.get('observation_failed') is False for row in records),
+                'CONFIRMATION_OBSERVATION_COMPLETENESS')
+        observations.append({'mode': phase['mode'], 'latency_ns': end - start,
+                             'attacks': len(attack_calls), 'overlapping_false_calls': overlapping})
+    result = {'sha256': digest(raw), 'schema': doc['schema'], 'phases': observations,
+              'finite_target_met': True, 'scope': 'bounded native report consistency; no independent work/state oracle, WAN, fairness or scientific acceptance'}
+    if 'honest_chain_process_cpu_ns' in doc:
+        result['honest_chain_process_cpu_ns'] = doc['honest_chain_process_cpu_ns']
+        result['honest_chain_process_cpu_scope'] = doc['honest_chain_process_cpu_scope']
+    return result
+
+
 def save_manifest(out: Path, result: dict) -> None:
     temporary = out / 'manifest.json.next'
     with temporary.open('x', encoding='utf-8') as stream:
@@ -346,18 +668,20 @@ def run(out: Path) -> dict:
     require(not out.is_relative_to(ROOT), 'OUTPUT_MUST_BE_OUTSIDE_CHECKOUT')
     identity = source_identity()
     out.mkdir(parents=True, exist_ok=False)
-    result = {'schema': 'trnm-from-zero-native-execution-v2', 'source_before': identity,
+    result = {'schema': 'trnm-from-zero-native-execution-v3', 'source_before': identity,
               'source_after': None, 'source_recompiled': False, 'all_named_tests_passed': False,
               'format_passed': False, 'runs': [], 'failures': [],
               'independent_wan_accepted': False, 'work_hardness_accepted': False,
               'production_activation': False, 'passed': False, 'execution_finished': False,
-              'service_report': None, 'sustained_report': None}
+              'service_report': None, 'sustained_report': None, 'confirmation_report': None}
     previous_output = os.environ.get('TRNM_PUBLIC_V3_FROM_ZERO_DIR')
+    previous_confirmation_output = os.environ.get('TRNM_PUBLIC_V3_CONFIRMATION_DIR')
     previous_cwd = Path.cwd()
     save_manifest(out, result)  # An interrupted launch retains an incomplete, non-passing receipt.
     try:
         os.chdir(ROOT)
         os.environ['TRNM_PUBLIC_V3_FROM_ZERO_DIR'] = str(out / 'native')
+        os.environ['TRNM_PUBLIC_V3_CONFIRMATION_DIR'] = str(out / 'confirmation')
         result['rustc'] = subprocess.check_output(['rustc', '-Vv'], text=True, timeout=30)
         result['cargo'] = subprocess.check_output(['cargo', '-V'], text=True, timeout=30).strip()
         result['build_env'] = {key: os.environ.get(key) for key in (
@@ -404,6 +728,7 @@ def run(out: Path) -> dict:
         result['all_named_tests_passed'] = len(result['runs']) == len(TESTS) and all(r['passed'] for r in result['runs'])
         result['service_report'] = validate_service_report(out / 'native/report.json')
         result['sustained_report'] = validate_sustained_report(out / 'native/sustained/report.json')
+        result['confirmation_report'] = validate_confirmation_report(out / 'confirmation/report.json')
         result['execution_finished'] = True
     except (OSError, ValueError, TypeError, KeyError, subprocess.SubprocessError) as error:
         result['failures'].append(str(error))
@@ -412,6 +737,10 @@ def run(out: Path) -> dict:
             os.environ.pop('TRNM_PUBLIC_V3_FROM_ZERO_DIR', None)
         else:
             os.environ['TRNM_PUBLIC_V3_FROM_ZERO_DIR'] = previous_output
+        if previous_confirmation_output is None:
+            os.environ.pop('TRNM_PUBLIC_V3_CONFIRMATION_DIR', None)
+        else:
+            os.environ['TRNM_PUBLIC_V3_CONFIRMATION_DIR'] = previous_confirmation_output
         try:
             result['source_after'] = source_identity()
         except (OSError, ValueError, TypeError, KeyError, subprocess.SubprocessError) as error:
@@ -427,6 +756,9 @@ def run(out: Path) -> dict:
             if result['sustained_report'] is not None:
                 require(digest((out / 'native/sustained/report.json').read_bytes()) == result['sustained_report']['sha256'],
                         'SUSTAINED_REPORT_CHANGED')
+            if result['confirmation_report'] is not None:
+                require(digest((out / 'confirmation/report.json').read_bytes()) == result['confirmation_report']['sha256'],
+                        'CONFIRMATION_REPORT_CHANGED')
             result['files'] = {p.relative_to(out).as_posix(): digest(p.read_bytes())
                                for p in sorted(out.rglob('*'))
                                if p.is_file() and p != out / 'manifest.json'}
@@ -442,6 +774,7 @@ def run(out: Path) -> dict:
                             and result['source_recompiled'] and result['format_passed']
                             and result['all_named_tests_passed'] and result['execution_finished']
                             and result['service_report'] is not None and result['sustained_report'] is not None
+                            and result['confirmation_report'] is not None
                             and not result['failures'])
         save_manifest(out, result)
     return result

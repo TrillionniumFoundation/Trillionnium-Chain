@@ -196,6 +196,38 @@ jobs:
           set -euo pipefail
           cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test model_evidence_v3 --test model_composition_v4 -- --nocapture 2>&1 | tee "$TRNM_CI_RECEIPT_DIR/model-regressions.log"
           test "$(grep -Ec '^test result: ok\. [1-9][0-9]* passed; 0 failed;' "$TRNM_CI_RECEIPT_DIR/model-regressions.log")" -eq 2
+      - name: Require native replay, packet encoding and admissible DAA controls
+        if: ${{ !cancelled() && steps.source.outcome == 'success' && steps.toolchain.outcome == 'success' && matrix.campaign == 'service-model' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          for selector in \
+            packet_encoding_tests::bounded_packet_reservation_preserves_bytes_and_first_error \
+            store::history_page::tests::packet_reservation_history_keeps_cancel_errors_and_reopen \
+            store::authenticated_replay_tests::authenticated_replay_checks_are_operation_local_and_reopen_recovers_full_history \
+            store::authenticated_replay_tests::authenticated_replay_ack_rechecks_old_gap_and_pending_bytes_after_reservation \
+            store::authenticated_replay_tests::authenticated_replay_retired_digest_and_cold_gap_still_refuse \
+            store::authenticated_replay_tests::authenticated_replay_signed_socket_whole_request_history_cost_observation; do
+            log="$TRNM_CI_RECEIPT_DIR/${selector//:/_}.log"
+            cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib "$selector" -- --exact --show-output --test-threads=1 2>&1 | tee "$log"
+            python3 scripts/ci/check_required_native_test.py "$log" --test "$selector"
+          done
+          selector=native_admissible_endpoint_schedule_changes_daa_without_changing_required_work_rules
+          log="$TRNM_CI_RECEIPT_DIR/daa-adversarial-schedule.log"
+          cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test daa_adversarial_schedule "$selector" -- --exact --show-output --test-threads=1 2>&1 | tee "$log"
+          python3 scripts/ci/check_required_native_test.py "$log" --test "$selector"
+      - name: Observe complete native history and packet response cost
+        if: ${{ !cancelled() && steps.source.outcome == 'success' && steps.toolchain.outcome == 'success' && matrix.campaign == 'service-model' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          export TRNM_PACKET_COST_DIRECTORY="$TRNM_CI_RECEIPT_DIR/packet-history-cost"
+          test ! -e "$TRNM_PACKET_COST_DIRECTORY"
+          test ! -L "$TRNM_PACKET_COST_DIRECTORY"
+          selector=store::history_page::tests::packet_reservation_history_complete_call_cost
+          log="$TRNM_CI_RECEIPT_DIR/packet-history-cost.log"
+          cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib "$selector" -- --exact --ignored --show-output --test-threads=1 2>&1 | tee "$log"
+          python3 scripts/ci/check_required_native_test.py "$log" --test "$selector"
       - name: Execute original native full-capacity test
         if: ${{ !cancelled() && steps.source.outcome == 'success' && steps.toolchain.outcome == 'success' && matrix.campaign == 'state' }}
         shell: bash

@@ -196,6 +196,57 @@ SQL semantics reference: [SQLite recursive CTE algorithm and explicit LIMIT](htt
 
 ## Paired ordinary-page observation
 
+### Bounded packet allocation within the existing owner
+
+The private native `Packet::checked_wire_length` validates count, proof length and
+each exact envelope in the original order and returns the complete wire length.
+Ordinary History uses this check for its byte cutoff without constructing a full
+wire copy merely to obtain its length. The native `Packet::encode` uses the same
+check before reserving the remaining wire capacity once. It still
+copies every transaction and proof into owned output, checks the same wire limit,
+and grants no decoding, work or state authority. Invalid early envelopes cannot
+trigger a reservation derived from later unvalidated lengths. A second bounded
+transaction traversal fills the output; the change does not remove packet checks.
+
+`packet_encoding_tests::bounded_packet_reservation_preserves_bytes_and_first_error`
+compares the complete original grow-and-append codec with the new allocator for
+empty, single and full-count packets, short/oversize inputs, malformed envelope/count
+and multiple-damage precedence. The normal
+`store::history_page::tests::packet_reservation_history_keeps_cancel_errors_and_reopen`
+checks complete real history responses, cancellation, no read-side writes and cold
+reopen using the same traversal and both codecs.
+
+The separately ignored
+`store::history_page::tests::packet_reservation_history_complete_call_cost`
+compares 128 alternating pairs for each of three actual-chain read/response cases.
+The 32-block fixture has eight actual full 256-signed-transfer blocks followed by
+24 empty blocks; every packet is mined, admitted and activated by the existing Node.
+Both clocks include the same complete history read, every returned Packet's encoding
+to owned response bytes and release of Packet values. Complete byte comparisons,
+response hashing/export and release of encoded bytes are outside both clocks.
+The original full-copy length calculation and codec are test-only controls in the
+same current binary; this is not
+a comparison against a separately built historical release. All sample durations,
+including regressions, remain in the JSONL report. The final row checks unchanged
+database file size, no read-side SQL writes, complete state/root and cold reopen.
+The report separates checked packet bytes (including the first cutoff packet),
+constructed length-check wire bytes and returned response Vec capacities. Those
+are logical owned payload facts, not allocation/RSS or physical-copy counters.
+It does not measure WAL/page traffic, process RSS, concurrent lock waiting,
+sustained TPS or global history/disk retention. Run from the exact committed source:
+
+    TRNM_PACKET_COST_DIRECTORY=NEW_DIRECTORY cargo test --offline --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib store::history_page::tests::packet_reservation_history_complete_call_cost -- --exact --ignored --nocapture
+
+This allocation change does not complete reader/writer separation. Current public
+Head, History and pool reads still hold the same Node mutex. Existing point proofs
+and batched nonce reads use a read transaction on that Node's own connection and
+retain full-State checks; they are not independent service reader handles. A future
+read-side integration must preserve owner-controlled path/namespace fencing, one
+consistent SQLite snapshot through complete checks, fixed historical-tip semantics,
+required active-generation re-entry and exactly one durable writer. No mutable
+`Node` or authority cache may simply be cloned to remove the mutex. Complete State
+cost remains O(N), ordinary history O(H), and pre-COMMIT state readbacks remain.
+
 The regular `history_page_native_pages_keep_complete_bytes_cursor_cancellation_and_reopen`
 control constructs 257 actual mined, admitted and activated development blocks.
 Its first 17 blocks contain 16 signed transfers each. It compares every returned

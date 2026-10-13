@@ -9,12 +9,14 @@ from contextlib import redirect_stdout
 import io
 import json
 import os
+import struct
 from pathlib import Path
 import tempfile
 import unittest
 from unittest.mock import patch
 
 import run_from_zero_native as driver
+from contract_wire import header_decode, header_encode, tx_unsigned
 
 
 def artifact(path: Path, **fields: object) -> str:
@@ -104,6 +106,122 @@ def simulated_sustained_report():
         resource_fairness_qualified=False, work_profile_qualified=False, production_activation=False)
 
 
+def simulated_confirmation_report():
+    """Synthetic codec/report consistency only; unsigned fixtures are NOT evidence."""
+    context = dict(network='aa'*32, parameters='bb'*32, genesis='cc'*32,
+                   target='7f'+'ff'*31, task=driver.H('task', bytes(16384), bytes(16384)).hex(),
+                   policy_id='dd'*32)
+    proof = b'PNW1' + bytes(3*16384+32)
+    tx = tx_unsigned(bytes.fromhex(context['network']), bytes([1])*32, 1, 1000, 1000000,
+                     1, {'recipient': bytes([2])*32, 'amount': 1}) + bytes(64)
+    packets, identifiers, headers = [], [], []
+    parent = context['genesis']
+    for height in range(1, 8):
+        header = dict(network=context['network'], parameters=context['parameters'], parent=parent,
+                      height=height, timestamp=1_750_000_000+height*10, target=context['target'],
+                      miner='ee'*32, transactions='ab'*32, state='af'*32, receipts='ef'*32,
+                      work_task=context['task'], nonce=height)
+        encoded = header_encode(header)
+        wire = encoded + struct.pack('<H', height == 1)
+        if height == 1:
+            wire += struct.pack('<H', len(tx)) + tx
+        wire += proof
+        parent = driver.H('block', encoded, proof[-32:]).hex()
+        packets.append(wire.hex()); identifiers.append(parent); headers.append(encoded.hex())
+    constructions = []
+    for index in range(16):
+        attack_header = header_decode(bytes.fromhex(headers[0]))
+        attack_header['nonce'] = 100000 + index
+        encoded = header_encode(attack_header)
+        challenge = driver.H('challenge', encoded)
+        attempts = []
+        for nonce in range(4096):
+            trace = driver.H('public-v3-from-zero-v1', challenge, struct.pack('<Q', nonce))
+            ticket = driver.H('ticket', challenge, trace)
+            hit = ticket <= bytes.fromhex(context['target'])
+            attempts.append(dict(nonce=nonce, trace=trace.hex(), ticket=ticket.hex(), target_hit=hit))
+            if hit:
+                break
+        assert attempts[-1]['target_hit']  # deterministic tiny synthetic fixture, not real Work
+        wire = encoded + bytes(2) + proof[:-32] + trace
+        constructions.append(dict(header=encoded.hex(), challenge=challenge.hex(), setup_calls=1,
+            attempt_budget=4096, attempts=attempts, winner_nonce=len(attempts)-1,
+            packet=wire.hex(), status='target_hit_unverified'))
+
+    def compact(row, request, packet_index):
+        encoded = json.dumps(request, sort_keys=True, separators=(',', ':')).encode()
+        return dict(row, packet_index=packet_index, recorded_request_bytes=len(encoded),
+                    recorded_request_digest=driver.H('pressure-recorded-request-v1', encoded).hex())
+
+    phases = []
+    for index in range(2):
+        def call(start=20, end=30, **fields):
+            return dict(status='ok', started_ns=start, ended_ns=end, elapsed_wall_ns=end-start,
+                        client_thread_cpu_ns=1, deadline_ms=2000, returned_after_deadline=False,
+                        returned_after_window=False, error=None, **fields)
+        workers = []
+        if index:
+            for worker in range(16):
+                request = dict(op='submit', packet=constructions[worker]['packet'])
+                calls = [compact(call(15, 200), request, worker)]
+                calls[0]['status'] = 'refused'
+                if worker == 0:
+                    early = compact(call(0, 5), request, 0); early['status'] = 'refused'
+                    calls.insert(0, early)
+                workers.append(dict(worker=worker, calling_thread_cpu_ns=2,
+                                    attempt_cap_reached=False, calls=calls))
+        pages, after = [], context['genesis']
+        for number, packet in enumerate(packets):
+            value = dict(schema='pon-native-history-v1', network=context['network'],
+                         parameters=context['parameters'], genesis=context['genesis'],
+                         tip=identifiers[-1], after=after, packets=[packet], next=identifiers[number],
+                         complete=number == 6)
+            pages.append(call(100+number*10, 105+number*10, response={'value': value},
+                              request=dict(op='history', tip=identifiers[-1], after=after)))
+            after = identifiers[number]
+        records = [dict(complete=True, observation_failed=False) for _ in range(15+17*index)]
+        phases.append(dict(mode='attack-free-baseline' if index == 0 else 'from-zero-pressure',
+            workers=16*index, target=context['target'], task=context['task'], initial_tip=context['genesis'],
+            invariant_target_met=True, finite_business_target_met=True, no_attack_accepted=True,
+            accounting_closed=True, full_native_state_equal=True, receiver_matches_valid_honest_prefix=True,
+            client_confirmed_before_original_window_end=True, overlap_demonstrated=True,
+            public_network_ready=False, independent_operator_accepted=False, work_profile_qualified=False,
+            resource_fairness_qualified=False, production_activation=False,
+            requested_window_ns=4_000_000_000, business_started_ns=10, confirmation_ended_ns=1000,
+            client_confirmation_latency_ns=990, client_confirmed_transactions=1,
+            independent_replay_and_confirmation_cpu_ns=1, independent_replay_and_confirmation_wall_ns=1,
+            verification_errors=[], independent_client_confirmation=dict(
+                confirmed=True, reorged=False, finalized=False, execution_authority=False,
+                network=context['network'], parameters=context['parameters'], genesis=context['genesis'],
+                transaction=driver.H('tx-id', tx).hex(), included_block=identifiers[0],
+                observed_tip=identifiers[-1], included_height=1, observed_height=7, depth=6,
+                required_work_delta=(12).to_bytes(64, 'big').hex(), work_delta=(12).to_bytes(64, 'big').hex()),
+            honest_submissions=[compact(call(20+height*10, 25+height*10, height=height),
+                dict(op='submit', packet=packets[height-1]), height-1) for height in range(1, 8)],
+            honest_history=pages, attacks=workers, attacker_workers_cpu_ns=32*index,
+            overlapping_false_calls=16*index, completed_false_calls_before_business=index,
+            completed_false_calls_at_confirmation=17*index,
+            honest_heads=[compact(call(), dict(op='head'), None)],
+            honest_head_successes_in_window=1, maximum_honest_head_gap_ns=4_000_000_000-30,
+            service=dict(error=None, metrics=dict(mutation_cpu_charged_ns=20,
+                mutation_full_work_cpu_ns=10, mutation_dispatch_excluding_work_cpu_ns=10,
+                mutation_cpu_clock_failures=0, work_started=7+17*index,
+                work_finished=7+17*index, work_failed=17*index)),
+            observations=dict(cpu_intervals_are_nested_not_additive=True, counter_overflow=False,
+                observation_has_consensus_authority=False, cpu_includes_reactor_authentication_or_response_signing=False,
+                stream_bytes_are_physical_network_bytes=False, capacity=16384,
+                accepted_connections_seen=len(records), records_not_retained=0,
+                measurement_failures=0, records=records)))
+    return dict(schema='public-v3-signed-confirmation-pressure-v1', simulated_control=True, **context,
+        finite_target_met=True, invariant_target_met=True, same_packet_sequence_in_both_runs=True,
+        public_network_ready=False, work_profile_qualified=False, production_activation=False,
+        strongest_honest_producer_used=False, honest_chain_aggregate_cpu_ns=None,
+        honest_chain_acquisition_wall_ns=1, attacker_construction_cpu_ns=1,
+        attacker_construction_wall_ns=1, signed_honest_packets=packets,
+        from_zero_construction=constructions,
+        phases=phases)
+
+
 class BinarySelectionTests(unittest.TestCase):
     def test_exact_artifact_selected(self):
         p = Path('/tmp/exact-build-test')
@@ -170,7 +288,8 @@ class ExecutionBoundaryTests(unittest.TestCase):
     def exercise(self, *, fail=None, zero=None, ignored=None, timeout=None,
                  format_exit=0, build_exit=0, source_drift=False, binary_drift=False,
                  missing_report=False, report_edit=None, log_drift=False, report_drift=False,
-                 missing_sustained=False, sustained_edit=None, sustained_drift=False):
+                 missing_sustained=False, sustained_edit=None, sustained_drift=False,
+                 missing_confirmation=False, confirmation_edit=None, confirmation_drift=False):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory) / 'source'; root.mkdir()
             test_source = root / driver.SOURCE
@@ -217,6 +336,12 @@ class ExecutionBoundaryTests(unittest.TestCase):
                         if sustained_edit is not None:
                             sustained_edit(report)
                         (sustained / 'report.json').write_text(json.dumps(report))
+                    if not missing_confirmation:
+                        confirmation = out / 'confirmation'; confirmation.mkdir()
+                        report = simulated_confirmation_report()
+                        if confirmation_edit is not None:
+                            confirmation_edit(report)
+                        (confirmation / 'report.json').write_text(json.dumps(report))
                     if log_drift:
                         (out / driver.TESTS[0] / 'stdout').write_text('changed after validation')
                 (folder / 'stdout').write_text(text)
@@ -232,6 +357,9 @@ class ExecutionBoundaryTests(unittest.TestCase):
                     report_path.write_bytes(report_path.read_bytes() + b' ')
                 if current is after and sustained_drift:
                     path = out / 'native/sustained/report.json'
+                    path.write_bytes(path.read_bytes() + b' ')
+                if current is after and confirmation_drift:
+                    path = out / 'confirmation/report.json'
                     path.write_bytes(path.read_bytes() + b' ')
                 return current
             try:
@@ -250,7 +378,7 @@ class ExecutionBoundaryTests(unittest.TestCase):
             finally:
                 os.chdir(previous_cwd)
 
-    def test_driver_success_requires_all_three_named_results(self):
+    def test_driver_success_requires_all_original_and_confirmation_results(self):
         result, _ = self.exercise()
         self.assertTrue(result['passed'])
         self.assertEqual([r['name'] for r in result['runs']], list(driver.TESTS))
@@ -267,17 +395,17 @@ class ExecutionBoundaryTests(unittest.TestCase):
     def test_zero_match_exit_zero_is_still_failure(self):
         result, _ = self.exercise(zero=driver.TESTS[0])
         self.assertFalse(result['passed'])
-        self.assertEqual([r['passed'] for r in result['runs']], [False, True, True])
+        self.assertEqual([r['passed'] for r in result['runs']], [False, True, True, True])
 
     def test_ignored_exit_zero_is_still_failure(self):
         result, _ = self.exercise(ignored=driver.TESTS[1])
         self.assertFalse(result['passed'])
-        self.assertEqual([r['passed'] for r in result['runs']], [True, False, True])
+        self.assertEqual([r['passed'] for r in result['runs']], [True, False, True, True])
 
     def test_nonzero_exit_cannot_be_overridden_by_success_text(self):
         result, _ = self.exercise(fail=driver.TESTS[0])
         self.assertFalse(result['passed'])
-        self.assertEqual(len(result['runs']), 3)
+        self.assertEqual(len(result['runs']), 4)
         self.assertFalse(result['runs'][0]['passed'])
 
     def test_timeout_cannot_be_overridden_by_success_text(self):
@@ -301,6 +429,37 @@ class ExecutionBoundaryTests(unittest.TestCase):
         result, _ = self.exercise(binary_drift=True)
         self.assertFalse(result['passed'])
         self.assertIn('NATIVE_BINARY_CHANGED', result['failures'])
+
+    def test_missing_confirmation_report_cannot_pass_named_stdout(self):
+        result, _ = self.exercise(missing_confirmation=True)
+        self.assertTrue(result['all_named_tests_passed'])
+        self.assertFalse(result['passed'])
+        self.assertIn('CONFIRMATION_REPORT_REQUIRED', result['failures'])
+
+    def test_confirmation_report_is_required_even_when_component_exit_is_zero(self):
+        result, _ = self.exercise(confirmation_edit=lambda doc: doc.update(finite_target_met=False))
+        self.assertTrue(result['all_named_tests_passed'])
+        self.assertFalse(result['passed'])
+        self.assertIn('CONFIRMATION_TARGET', result['failures'])
+
+    def test_confirmation_report_mutation_after_validation_cannot_pass(self):
+        result, _ = self.exercise(confirmation_drift=True)
+        self.assertFalse(result['passed'])
+        self.assertIn('CONFIRMATION_REPORT_CHANGED', result['failures'])
+
+    def test_confirmation_output_environment_is_restored(self):
+        name = 'TRNM_PUBLIC_V3_CONFIRMATION_DIR'
+        with patch.dict(os.environ, {name: 'parent-confirmation-path'}):
+            result, _ = self.exercise()
+            self.assertTrue(result['passed'])
+            self.assertEqual(os.environ[name], 'parent-confirmation-path')
+
+    def test_malformed_confirmation_retains_structured_failure_and_raw_report_hash(self):
+        result, _ = self.exercise(confirmation_edit=lambda doc: doc['phases'].__setitem__(0, []))
+        self.assertTrue(result['all_named_tests_passed'])
+        self.assertFalse(result['passed'])
+        self.assertIn('CONFIRMATION_PHASES', result['failures'])
+        self.assertIn('confirmation/report.json', result['files'])
 
     def test_caller_environment_is_restored(self):
         name = 'TRNM_PUBLIC_V3_FROM_ZERO_DIR'
@@ -552,6 +711,162 @@ class ExecutionBoundaryTests(unittest.TestCase):
             deadline_ms=3000), 'SUSTAINED_CALL_TIME')
         self.sustained_refusal(lambda d: d['phases'][0]['honest_reads'][0].update(
             elapsed_wall_ns=0), 'SUSTAINED_CALL_TIME')
+
+
+class ConfirmationReportTests(unittest.TestCase):
+    def validate(self, edit=lambda doc: None):
+        document = simulated_confirmation_report()
+        edit(document)
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'report.json'
+            path.write_text(json.dumps(document))
+            return driver.validate_confirmation_report(path)
+
+    def test_synthetic_metadata_is_consistent_without_claiming_native_execution(self):
+        result = self.validate()
+        self.assertTrue(result['finite_target_met'])
+        self.assertEqual([phase['attacks'] for phase in result['phases']], [0, 17])
+        self.assertIn('no independent work/state oracle', result['scope'])
+
+    def test_summary_flags_cannot_promote_scope_or_replace_success(self):
+        for field, value in [('finite_target_met', False), ('finite_target_met', 1),
+                             ('invariant_target_met', False), ('production_activation', True),
+                             ('strongest_honest_producer_used', True), ('work_profile_qualified', True)]:
+            with self.subTest(field=field, value=value), self.assertRaises(ValueError):
+                self.validate(lambda doc: doc.update({field: value}))
+
+    def test_same_task_target_and_original_window_are_required(self):
+        for field, value in [('task', '00'*32), ('target', '01'*32),
+                             ('requested_window_ns', 8_000_000_000),
+                             ('confirmation_ended_ns', 4_000_000_000),
+                             ('client_confirmed_transactions', 0)]:
+            with self.subTest(field=field), self.assertRaises(ValueError):
+                self.validate(lambda doc: doc['phases'][1].update({field: value}))
+
+    def test_independent_confirmation_cannot_change_identity_or_authority(self):
+        for field, value in [('transaction', '00'*32), ('included_block', '00'*32),
+                             ('depth', 5), ('work_delta', '00'*64),
+                             ('execution_authority', True), ('finalized', True), ('confirmed', False)]:
+            with self.subTest(field=field), self.assertRaises(ValueError):
+                self.validate(lambda doc: doc['phases'][1]['independent_client_confirmation'].update({field: value}))
+
+    def test_history_bytes_and_cursor_must_match_submitted_sequence(self):
+        for field, value in [('after', '00'*32), ('next', '00'*32), ('packets', []), ('complete', True)]:
+            with self.subTest(field=field), self.assertRaises(ValueError):
+                self.validate(lambda doc: doc['phases'][1]['honest_history'][0]['response']['value'].update({field: value}))
+
+    def test_overlap_cannot_be_inferred_from_only_a_positive_summary(self):
+        for field in ['overlapping_false_calls', 'completed_false_calls_before_business',
+                      'completed_false_calls_at_confirmation']:
+            with self.subTest(field=field), self.assertRaises(ValueError):
+                self.validate(lambda doc: doc['phases'][1].update({field: 0}))
+
+    def test_late_call_and_accepted_invalid_input_are_preserved_failures(self):
+        with self.assertRaises(ValueError):
+            self.validate(lambda doc: doc['phases'][1]['honest_submissions'][0].update(returned_after_window=True))
+        with self.assertRaises(ValueError):
+            self.validate(lambda doc: doc['phases'][1]['attacks'][0]['calls'][0].update(status='ok'))
+
+    def test_cost_unknown_and_unfinished_work_cannot_be_relabeled_complete(self):
+        for field, value in [('mutation_cpu_charged_ns', 21), ('work_finished', 7),
+                             ('mutation_cpu_clock_failures', 1)]:
+            with self.subTest(field=field), self.assertRaises(ValueError):
+                self.validate(lambda doc: doc['phases'][1]['service']['metrics'].update({field: value}))
+        with self.assertRaises(ValueError):
+            self.validate(lambda doc: doc['phases'][1].update(attacker_workers_cpu_ns=None))
+
+    def test_dropped_observations_and_native_verification_errors_cannot_pass(self):
+        with self.assertRaises(ValueError):
+            self.validate(lambda doc: doc['phases'][1]['observations'].update(records_not_retained=1))
+        with self.assertRaises(ValueError):
+            self.validate(lambda doc: doc['phases'][1].update(verification_errors=['retained error']))
+
+    def test_call_duration_cannot_hide_a_late_timestamp_interval(self):
+        with self.assertRaisesRegex(ValueError, 'CONFIRMATION_CALL'):
+            self.validate(lambda doc: doc['phases'][1]['honest_submissions'][0].update(
+                started_ns=0, ended_ns=3_000_000_000, elapsed_wall_ns=10,
+                returned_after_deadline=False))
+
+    def test_submission_and_history_chronology_cannot_follow_confirmation(self):
+        def late_submissions(doc):
+            for row in doc['phases'][1]['honest_submissions']:
+                row.update(started_ns=row['started_ns']+2000, ended_ns=row['ended_ns']+2000)
+        for edit in [late_submissions,
+                     lambda doc: doc['phases'][1]['honest_submissions'][0].update(
+                         started_ns=0, ended_ns=5, elapsed_wall_ns=5),
+                     lambda doc: doc['phases'][1]['honest_submissions'][1].update(
+                         started_ns=31, ended_ns=41, elapsed_wall_ns=10),
+                     lambda doc: doc['phases'][1]['honest_history'][0].update(
+                         started_ns=2000, ended_ns=2005),
+                     lambda doc: doc['phases'][1]['honest_history'][0].update(
+                         started_ns=30, ended_ns=35)]:
+            with self.subTest(edit=edit), self.assertRaisesRegex(ValueError, 'CONFIRMATION_BUSINESS_CHRONOLOGY'):
+                self.validate(edit)
+
+    def test_compact_request_indices_hashes_and_lengths_bind_exact_retained_packets(self):
+        for lane in ['honest_submissions', 'honest_heads', 'attacks']:
+            for field, value in [('packet_index', 99), ('recorded_request_bytes', 1),
+                                 ('recorded_request_digest', '00'*32)]:
+                def edit(doc):
+                    row = (doc['phases'][1]['attacks'][0]['calls'][0] if lane == 'attacks'
+                           else doc['phases'][1][lane][0])
+                    row.update({field: value})
+                with self.subTest(lane=lane, field=field), self.assertRaisesRegex(
+                        ValueError, 'CONFIRMATION_REQUEST_BINDING'):
+                    self.validate(edit)
+        with self.assertRaisesRegex(ValueError, 'CONFIRMATION_REQUEST_BINDING'):
+            self.validate(lambda doc: doc['phases'][1]['honest_history'][0]['request'].update(after='00'*32))
+
+    def test_actual_construction_packet_and_trial_metadata_cannot_change_under_same_header(self):
+        edits = [
+            lambda doc: doc['from_zero_construction'][0].update(
+                packet=doc['from_zero_construction'][1]['packet']),
+            lambda doc: doc['from_zero_construction'][0].update(status='exhausted'),
+            lambda doc: doc['from_zero_construction'][0].update(packet=None),
+            lambda doc: doc['from_zero_construction'][0].update(challenge='00'*32),
+            lambda doc: doc['from_zero_construction'][0].update(winner_nonce=99),
+            lambda doc: doc['from_zero_construction'][0]['attempts'][0].update(ticket='00'*32),
+            lambda doc: doc['from_zero_construction'][0]['attempts'][0].update(target_hit=1),
+            lambda doc: doc['phases'][1]['attacks'][0]['calls'][0].update(status='not_submitted_exhausted'),
+        ]
+        for edit in edits:
+            with self.subTest(edit=edit), self.assertRaises(ValueError):
+                self.validate(edit)
+
+    def test_failed_work_count_cannot_exceed_finished_work_or_erase_honest_verifications(self):
+        for failed in [10000, 18]:
+            with self.subTest(failed=failed), self.assertRaisesRegex(ValueError, 'CONFIRMATION_WORK_CLOSURE'):
+                self.validate(lambda doc: doc['phases'][1]['service']['metrics'].update(work_failed=failed))
+
+    def test_malformed_nested_objects_fail_with_structured_value_error(self):
+        edits = [
+            lambda doc: doc['phases'].__setitem__(0, []),
+            lambda doc: doc['phases'][1]['attacks'].__setitem__(0, None),
+            lambda doc: doc['phases'][1]['attacks'][0]['calls'].__setitem__(0, None),
+            lambda doc: doc['phases'][1]['honest_submissions'].__setitem__(0, []),
+            lambda doc: doc['phases'][1]['honest_history'][0].update(response=[]),
+            lambda doc: doc['phases'][1]['honest_heads'].__setitem__(0, None),
+            lambda doc: doc['phases'][1]['observations']['records'].__setitem__(0, []),
+            lambda doc: doc['from_zero_construction'][0]['attempts'].__setitem__(0, []),
+        ]
+        for edit in edits:
+            with self.subTest(edit=edit), self.assertRaises(ValueError):
+                self.validate(edit)
+
+    def test_process_acquisition_cpu_preserves_unknown_and_original_scope(self):
+        self.assertNotIn('honest_chain_process_cpu_ns', self.validate())
+        scope = 'synthetic process-clock field; not measured native CPU or per-actor attribution'
+        for cpu in [None, 42]:
+            with self.subTest(cpu=cpu):
+                result = self.validate(lambda doc: doc.update(
+                    honest_chain_process_cpu_ns=cpu, honest_chain_process_cpu_scope=scope))
+                self.assertEqual(result['honest_chain_process_cpu_ns'], cpu)
+                self.assertEqual(result['honest_chain_process_cpu_scope'], scope)
+        for fields in [dict(honest_chain_process_cpu_ns=True, honest_chain_process_cpu_scope=scope),
+                       dict(honest_chain_process_cpu_ns=42),
+                       dict(honest_chain_process_cpu_ns=42, honest_chain_process_cpu_scope='')]:
+            with self.subTest(fields=fields), self.assertRaises(ValueError):
+                self.validate(lambda doc: doc.update(fields))
 
 
 if __name__ == '__main__':

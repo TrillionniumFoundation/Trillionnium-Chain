@@ -133,16 +133,34 @@ pub struct Packet {
     pub proof: Vec<u8>,
 }
 impl Packet {
-    pub fn encode(&self) -> Result<Vec<u8>> {
+    /// Exact length after the complete original count/proof/envelope grammar.
+    /// This is computation only, never packet, work or durable-state authority.
+    pub(crate) fn checked_wire_length(&self) -> Result<usize> {
         ensure(
             self.transactions.len() <= 256 && self.proof.len() == pon_work::PROOF_BYTES,
             "PACKET_LIMIT",
         )?;
-        let mut out = self.header.encode();
-        out.extend((self.transactions.len() as u16).to_le_bytes());
+        // Validate in the original order before reserving transaction payloads.
+        // In particular, a bad first envelope must not cause a large allocation
+        // merely because later caller-supplied transactions have large lengths.
+        let mut length = HEADER_BYTES + 2 + self.proof.len();
         for tx in &self.transactions {
             ensure((159..=2048).contains(&tx.len()), "TRANSACTION_LIMIT")?;
             Envelope::decode(tx).map_err(|_| Error::from("TRANSACTION_CODEC"))?;
+            length += 2 + tx.len();
+        }
+        ensure(length <= 1_048_576, "PACKET_LIMIT")?;
+        Ok(length)
+    }
+    pub fn encode(&self) -> Result<Vec<u8>> {
+        let length = self.checked_wire_length()?;
+        let mut out = self.header.encode();
+        // One bounded reservation removes intermediate payload growth/copies.
+        // The validated transactions and proof are still copied into owned wire
+        // bytes, and neither decoding nor final native validation is skipped.
+        out.reserve_exact(length - out.len());
+        out.extend((self.transactions.len() as u16).to_le_bytes());
+        for tx in &self.transactions {
             out.extend((tx.len() as u16).to_le_bytes());
             out.extend(tx);
         }
@@ -573,3 +591,109 @@ pub fn development_public(i: u64) -> Result<Hash> {
 
 #[cfg(all(test, target_os = "linux"))]
 mod operator_continuous_test_support;
+
+#[cfg(test)]
+pub(crate) mod packet_encoding_tests {
+    use super::*;
+
+    /// Original grow-as-you-append codec, retained only as an independent control.
+    pub(crate) fn reference(packet: &Packet) -> Result<Vec<u8>> {
+        ensure(
+            packet.transactions.len() <= 256 && packet.proof.len() == pon_work::PROOF_BYTES,
+            "PACKET_LIMIT",
+        )?;
+        let mut out = packet.header.encode();
+        out.extend((packet.transactions.len() as u16).to_le_bytes());
+        for tx in &packet.transactions {
+            ensure((159..=2048).contains(&tx.len()), "TRANSACTION_LIMIT")?;
+            Envelope::decode(tx).map_err(|_| Error::from("TRANSACTION_CODEC"))?;
+            out.extend((tx.len() as u16).to_le_bytes());
+            out.extend(tx);
+        }
+        out.extend(&packet.proof);
+        ensure(out.len() <= 1_048_576, "PACKET_LIMIT")?;
+        Ok(out)
+    }
+
+    pub(crate) fn reference_length(packet: &Packet) -> Result<usize> {
+        reference(packet).map(|bytes| bytes.len())
+    }
+
+    fn packet(count: usize, tag: u8) -> Packet {
+        let settings = Settings::development(Some(1)).unwrap();
+        let node_dir = tempfile::tempdir().unwrap();
+        let node = Node::open(node_dir.path(), settings.clone(), 1).unwrap();
+        let mut packet = node
+            .make(
+                settings.genesis(),
+                Vec::new(),
+                development_public(2).unwrap(),
+                11,
+                4096,
+            )
+            .unwrap();
+        packet.transactions = (0..count)
+            .map(|index| {
+                Envelope {
+                    network: settings.network(),
+                    sender: development_public(0).unwrap(),
+                    nonce: index as u64 + 1,
+                    expiry: 1000,
+                    fee_limit: 10_000,
+                    tag,
+                    payload: vec![
+                        0;
+                        if tag == 13 {
+                            trnm_protocol::qualified_work_task::SIGNED_TASK_BYTES
+                        } else {
+                            40
+                        }
+                    ],
+                    signature: [0; 64],
+                }
+                .encode()
+                .unwrap()
+            })
+            .collect();
+        packet
+    }
+
+    fn same(packet: &Packet) {
+        match (packet.checked_wire_length(), reference_length(packet)) {
+            (Ok(actual), Ok(expected)) => assert_eq!(actual, expected),
+            (Err(actual), Err(expected)) => assert_eq!(actual.to_string(), expected.to_string()),
+            (actual, expected) => panic!("length disagreement: {actual:?} {expected:?}"),
+        }
+        match (packet.encode(), reference(packet)) {
+            (Ok(actual), Ok(expected)) => assert_eq!(actual, expected),
+            (Err(actual), Err(expected)) => assert_eq!(actual.to_string(), expected.to_string()),
+            (actual, expected) => panic!("codec disagreement: {actual:?} {expected:?}"),
+        }
+    }
+
+    #[test]
+    fn bounded_packet_reservation_preserves_bytes_and_first_error() {
+        for (count, tag) in [(0, 1), (1, 1), (16, 1), (256, 1), (256, 13)] {
+            let packet = packet(count, tag);
+            same(&packet);
+            let encoded = packet.encode().unwrap();
+            assert_eq!(Packet::decode(&encoded).unwrap().encode().unwrap(), encoded);
+        }
+        let original = packet(2, 1);
+        for transactions in [
+            vec![Vec::new()],
+            vec![vec![0; 159]],
+            vec![vec![0; 2049]],
+            vec![vec![0; 159], vec![0; 2049]],
+            vec![vec![0; 2049], vec![0; 159]],
+            vec![original.transactions[0].clone(); 257],
+        ] {
+            let mut changed = original.clone();
+            changed.transactions = transactions;
+            same(&changed);
+            changed.proof.pop();
+            assert_eq!(changed.encode().unwrap_err().to_string(), "PACKET_LIMIT");
+            same(&changed);
+        }
+    }
+}

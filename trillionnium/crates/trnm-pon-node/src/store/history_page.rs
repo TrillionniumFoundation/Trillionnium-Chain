@@ -146,6 +146,21 @@ impl Node {
         limit: usize,
         progress: &mut dyn FnMut(u64) -> Result<()>,
     ) -> Result<Vec<Packet>> {
+        self.history_with_packet_length(tip, after, limit, progress, Packet::checked_wire_length)
+    }
+
+    // The production caller selects only the complete native grammar/length
+    // check. The private seam lets a test compare reads with the earlier
+    // full-packet-copy length calculation,
+    // keeping traversal, body decoding, cutoff and cancellation identical.
+    fn history_with_packet_length(
+        &self,
+        tip: Hash,
+        after: Hash,
+        limit: usize,
+        progress: &mut dyn FnMut(u64) -> Result<()>,
+        packet_length: impl Fn(&Packet) -> Result<usize>,
+    ) -> Result<Vec<Packet>> {
         progress(0)?;
         self.ready()?;
         ensure((1..=16).contains(&limit), "PAGE_LIMIT")?;
@@ -170,7 +185,7 @@ impl Node {
         let mut bytes = 0_usize;
         for id in window.into_iter().rev() {
             let packet = self.packet(id)?;
-            let n = packet.encode()?.len();
+            let n = packet_length(&packet)?;
             if bytes + n > 800_000 && !packets.is_empty() {
                 break;
             }
@@ -652,6 +667,230 @@ mod tests {
         writeln!(log, "{row}").unwrap();
         log.flush().unwrap();
         println!("{row}");
+    }
+
+    #[test]
+    fn packet_reservation_history_keeps_cancel_errors_and_reopen() {
+        let directory = tempfile::tempdir().unwrap();
+        let (node, ids) = chain(directory.path(), 17);
+        let writes = node.db.total_changes();
+        let state = node.read_active().unwrap();
+        let mut expected = Vec::new();
+        for reference in [true, false] {
+            let encode = if reference {
+                crate::packet_encoding_tests::reference
+            } else {
+                Packet::encode
+            };
+            let packet_length = if reference {
+                crate::packet_encoding_tests::reference_length
+            } else {
+                Packet::checked_wire_length
+            };
+            let mut visits = Vec::new();
+            let packets = node
+                .history_with_packet_length(
+                    ids[17],
+                    ids[0],
+                    16,
+                    &mut |n| {
+                        visits.push(n);
+                        Ok(())
+                    },
+                    packet_length,
+                )
+                .unwrap();
+            let bytes: Vec<_> = packets
+                .iter()
+                .map(|packet| encode(packet).unwrap())
+                .collect();
+            if expected.is_empty() {
+                expected = bytes;
+            } else {
+                assert_eq!(bytes, expected);
+            }
+            assert_eq!(visits, vec![0, 0, 17]);
+            let cancelled = node
+                .history_with_packet_length(
+                    ids[17],
+                    ids[0],
+                    16,
+                    &mut |n| ensure(n != 17, "PUBLIC_REQUEST_CANCELLED"),
+                    packet_length,
+                )
+                .unwrap_err();
+            assert!(cancelled.is(ErrorCode::PublicRequestCancelled));
+        }
+        assert_eq!(node.db.total_changes(), writes);
+        assert_eq!(node.read_active().unwrap(), state);
+        let settings = node.settings().clone();
+        drop(node);
+        let reopened = Node::open(directory.path(), settings, 1).unwrap();
+        assert_eq!(reopened.read_active().unwrap(), state);
+        assert_eq!(
+            encoded(&reopened.history(ids[17], ids[0], 16).unwrap()),
+            expected
+        );
+    }
+
+    /// Compare two codecs over the same complete actual native history call.
+    /// The reference is the original allocator in this exact source/binary,
+    /// not a different history algorithm or an independently compiled old node.
+    #[test]
+    #[ignore = "paired complete native read/response cost; needs a new output directory"]
+    fn packet_reservation_history_complete_call_cost() {
+        let directory = std::env::var_os("TRNM_PACKET_COST_DIRECTORY")
+            .expect("TRNM_PACKET_COST_DIRECTORY must name a new output directory");
+        let directory = Path::new(&directory);
+        fs::create_dir(directory).unwrap();
+        fs::create_dir(directory.join("pages")).unwrap();
+        let mut log = File::create(directory.join("packet-history-cost.jsonl")).unwrap();
+        emit(
+            &mut log,
+            json!({
+                "schema":"native-packet-history-cost-source-v2",
+                "source_files":compiled_source::FILES.iter().map(|(path, bytes)| json!({"path":path,"sha256":hex::encode(Sha256::digest(bytes))})).collect::<Vec<_>>(),
+                "binary_sha256":hex::encode(Sha256::digest(fs::read(std::env::current_exe().unwrap()).unwrap())),
+                "architecture":std::env::consts::ARCH,"os":std::env::consts::OS,
+                "build_profile":if cfg!(debug_assertions) { "debug" } else { "release" },
+                "builder_commit_claim":option_env!("TRNM_DISTRIBUTED_SOURCE_COMMIT"),
+                "builder_tree_claim":option_env!("TRNM_DISTRIBUTED_SOURCE_TREE"),
+                "reference_scope":"original complete packet copy for length and grow-and-append response codec in same current binary; same history traversal and actual SQLite owner",
+                "timed_scope":"complete actual history call, every returned Packet encoded to owned response bytes, and Packet release; encoded response release/comparison/export outside timer",
+                "cases":3,"pairs_per_case":128,"one_owner":true,"reader_writer_split":false,
+                "first_full_blocks":8,"signed_transactions_per_full_block":256,
+                "page_cache_cleared":false,"rss_measured":false,
+                "public_network_ready":false,"independent_accepted":false,"production_activation":false
+            }),
+        );
+        let settings = Settings::development(Some(1)).unwrap();
+        let mut node = Node::open(&directory.join("owner"), settings.clone(), 1).unwrap();
+        let mut ids = vec![settings.genesis()];
+        for height in 1..=32_u64 {
+            let transactions = if height <= 8 {
+                (1..=256)
+                    .map(|n| transfer(&settings, (height - 1) * 256 + n))
+                    .collect()
+            } else {
+                Vec::new()
+            };
+            let packet = node
+                .make(
+                    *ids.last().unwrap(),
+                    transactions,
+                    development_public(2).unwrap(),
+                    1 + height * 10,
+                    4096,
+                )
+                .unwrap();
+            let id = node.admit(&packet, CLOCK).unwrap();
+            node.activate(id).unwrap();
+            ids.push(id);
+        }
+        let state = node.read_active().unwrap();
+        let writes = node.db.total_changes();
+        let disk_before = fs::metadata(directory.join("owner/native.sqlite"))
+            .unwrap()
+            .len();
+        let cases = [(8, 0, 16), (32, 16, 16), (32, 32, 16)];
+        let mut samples = 0;
+        for (case, (height, cursor, limit)) in cases.into_iter().enumerate() {
+            let tip = ids[height];
+            let after = ids[cursor];
+            let expected = encoded(&node.history(tip, after, limit).unwrap());
+            let frame = framed(&expected);
+            fs::write(directory.join(format!("pages/case-{case}.packets")), &frame).unwrap();
+            let digest = hex::encode(Sha256::digest(&frame));
+            for pair in 0..128 {
+                for arm in if pair % 2 == 0 {
+                    ["reference", "reserved"]
+                } else {
+                    ["reserved", "reference"]
+                } {
+                    let encode = if arm == "reference" {
+                        crate::packet_encoding_tests::reference
+                    } else {
+                        Packet::encode
+                    };
+                    let packet_length = if arm == "reference" {
+                        crate::packet_encoding_tests::reference_length
+                    } else {
+                        Packet::checked_wire_length
+                    };
+                    let before = node.history_page_read_counters();
+                    let checked_packet_bytes = std::cell::Cell::new(0_usize);
+                    let start = Instant::now();
+                    let packets = node
+                        .history_with_packet_length(tip, after, limit, &mut |_| Ok(()), |packet| {
+                            let length = packet_length(packet)?;
+                            checked_packet_bytes.set(checked_packet_bytes.get() + length);
+                            Ok(length)
+                        })
+                        .unwrap();
+                    let actual: Vec<_> = packets
+                        .iter()
+                        .map(|packet| encode(packet).unwrap())
+                        .collect();
+                    drop(packets);
+                    let elapsed_ns = start.elapsed().as_nanos();
+                    let counters = node.history_page_read_counters();
+                    assert_eq!(actual, expected);
+                    assert_eq!(
+                        counters.ancestor_selects - before.ancestor_selects,
+                        (height - cursor).div_ceil(64) as u64
+                    );
+                    assert_eq!(
+                        counters.ancestor_links - before.ancestor_links,
+                        (height - cursor) as u64
+                    );
+                    emit(
+                        &mut log,
+                        json!({
+                            "schema":"native-packet-history-cost-sample-v2","case":case,"pair":pair,"arm":arm,
+                            "first_arm":if pair % 2 == 0 { "reference" } else { "reserved" },
+                            "elapsed_ns":elapsed_ns,"height":height,"cursor":cursor,
+                            "returned_packets":actual.len(),"response_bytes":actual.iter().map(Vec::len).sum::<usize>(),
+                            "response_vec_capacity_bytes":actual.iter().map(Vec::capacity).sum::<usize>(),
+                            "response_capacity_scope":"owned Vec capacity only; excludes SQLite/allocator/RSS and temporary Packet bytes",
+                            "length_check_packet_bytes_checked":checked_packet_bytes.get(),
+                            "length_check_wire_bytes_constructed":if arm == "reference" { checked_packet_bytes.get() } else { 0 },
+                            "length_check_scope":"successful complete grammar/length calls, including the cutoff packet; constructed wire bytes are not allocator/physical-copy traffic",
+                            "response_sha256":digest,"full_bytes_equal":true,
+                            "ancestor_selects":counters.ancestor_selects - before.ancestor_selects,
+                            "ancestor_links":counters.ancestor_links - before.ancestor_links,
+                            "retained_page_ids_lifetime_high_water":counters.retained_ids_high_water
+                        }),
+                    );
+                    samples += 1;
+                }
+            }
+        }
+        let disk_after = fs::metadata(directory.join("owner/native.sqlite"))
+            .unwrap()
+            .len();
+        assert_eq!(disk_after, disk_before);
+        assert_eq!(node.db.total_changes(), writes);
+        assert_eq!(node.read_active().unwrap(), state);
+        let settings = node.settings().clone();
+        drop(node);
+        let start = Instant::now();
+        let reopened = Node::open(&directory.join("owner"), settings, 1).unwrap();
+        let reopened_state = reopened.read_active().unwrap();
+        let reopen_complete_state_ns = start.elapsed().as_nanos();
+        assert_eq!(reopened_state, state);
+        emit(
+            &mut log,
+            json!({
+                "schema":"native-packet-history-cost-result-v2","complete":true,"samples":samples,"actual_blocks":32,
+                "actual_full_blocks":8,"actual_signed_transactions":2048,
+                "actual_state_keys":state.2.len(),"no_read_operation_sql_writes":true,
+                "database_file_bytes_before":disk_before,"database_file_bytes_after":disk_after,
+                "database_file_scope":"native.sqlite scalar file bytes during read arms; excludes WAL/pages/RSS/global retention",
+                "reopen_and_complete_actual_state_ns":reopen_complete_state_ns,"reopened_actual_state_equal":true,
+                "reader_writer_split":false,"history_asymptotic":"O(H)","full_state_asymptotic":"O(N)",
+                "wan_tps":null,"confirmed_tps":null,"public_network_ready":false,"independent_accepted":false,"production_activation":false
+            }),
+        );
     }
 
     /// A finite actual-chain observation, explicitly selected outside routine CI.

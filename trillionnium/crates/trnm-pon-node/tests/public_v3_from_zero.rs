@@ -7,13 +7,13 @@ use std::{
     fs,
     net::{SocketAddr, TcpListener},
     sync::{
-        atomic::{AtomicBool, Ordering},
+        atomic::{AtomicBool, AtomicU64, Ordering},
         Arc, Barrier, Mutex,
     },
     thread::{self, JoinHandle},
     time::{Duration, Instant},
 };
-use trnm_crypto_primitives::pon_work;
+use trnm_crypto_primitives::{pon_work, sign_hex, signing_key_from_hex};
 use trnm_pon_node::{
     development_public,
     ingress::{
@@ -23,7 +23,7 @@ use trnm_pon_node::{
     },
     maintenance, sequence_root, Node, Packet, PoolLimits, Settings,
 };
-use trnm_protocol::pon_wire::{hash, Hash, Header};
+use trnm_protocol::pon_wire::{hash, Envelope, Hash, Header};
 
 const SEARCH_BUDGET: u64 = 4096;
 const ATTACKS: usize = 8;
@@ -75,6 +75,19 @@ fn thread_cpu_ns() -> Option<u64> {
 }
 #[cfg(not(target_os = "linux"))]
 fn thread_cpu_ns() -> Option<u64> {
+    None
+}
+// Process CPU includes every native mining worker. This is a direct clock
+// observation of the complete acquisition interval, not a kernel-only or
+// per-actor allocation; unrelated concurrent tests would also be included.
+#[cfg(target_os = "linux")]
+fn process_cpu_ns() -> Option<u64> {
+    use rustix::time::{clock_gettime_dynamic, ClockId, DynamicClockId};
+    let value = clock_gettime_dynamic(DynamicClockId::Known(ClockId::ProcessCPUTime)).ok()?;
+    checked_cpu_ns(value.tv_sec, value.tv_nsec)
+}
+#[cfg(not(target_os = "linux"))]
+fn process_cpu_ns() -> Option<u64> {
     None
 }
 fn policy() -> PublicPolicy {
@@ -190,6 +203,15 @@ struct Client {
 }
 impl Client {
     fn call(&self, lane: &str, who: u8, request: Request) -> Value {
+        self.call_before(lane, who, request, None)
+    }
+    fn call_before(
+        &self,
+        lane: &str,
+        who: u8,
+        request: Request,
+        window_end: Option<Instant>,
+    ) -> Value {
         let start = Instant::now();
         let client_cpu = ThreadCpuStamp::start();
         let started_ns = ns(self.epoch);
@@ -200,7 +222,11 @@ impl Client {
             identity(71).public_key(),
             &identity(who),
             policy(),
-            Some(start + Duration::from_millis(CALL_MS)),
+            Some(
+                window_end.map_or(start + Duration::from_millis(CALL_MS), |end| {
+                    end.min(start + Duration::from_millis(CALL_MS))
+                }),
+            ),
         );
         let client_thread_cpu_ns = cpu_elapsed(client_cpu);
         let ended_ns = ns(self.epoch);
@@ -221,6 +247,7 @@ impl Client {
             "client_thread_cpu_ns": client_thread_cpu_ns,
             "client_cpu_scope": "identity creation, negotiation, ticket search, request encoding, I/O and reply validation on this calling thread; excludes receiver and final diagnostic JSON",
             "returned_after_deadline": late,
+            "returned_after_window": window_end.is_some_and(|end| Instant::now() >= end),
             "status": status, "response": response, "error": error,
             // Retain the real transport challenge/search and failure metrics.
             "metrics": metrics,
@@ -1059,4 +1086,473 @@ fn sustained_observation(path: &std::path::Path) {
         passed,
         "see sustained/report.json; failed attempts and non-depletion are retained"
     );
+}
+
+// This successor compares identical signed business packets under two real
+// service runs. The independent client owns its own validating ledger; the
+// server's Head/History response alone cannot manufacture confirmation.
+fn confirmation_transfer(settings: &Settings, nonce: u64) -> Vec<u8> {
+    let mut payload = development_public(1).unwrap().to_vec();
+    payload.extend(1u64.to_le_bytes());
+    let mut tx = Envelope {
+        network: settings.network(),
+        sender: development_public(0).unwrap(),
+        nonce,
+        expiry: 1000,
+        fee_limit: 1_000_000,
+        tag: 1,
+        payload,
+        signature: [0; 64],
+    };
+    let key =
+        signing_key_from_hex(&hex::encode(hash(b"DEV-ONLY-KEY", &[&0u64.to_le_bytes()]))).unwrap();
+    tx.signature = hex::decode(sign_hex(&key, &tx.signing_digest().unwrap()))
+        .unwrap()
+        .try_into()
+        .unwrap();
+    tx.encode().unwrap()
+}
+
+fn signed_confirmation_phase(
+    path: &std::path::Path,
+    settings: &Settings,
+    packets: &[Packet],
+    false_wires: Arc<Vec<Option<String>>>,
+    pressured: bool,
+) -> Value {
+    fs::create_dir(path).unwrap();
+    let mut verifier = Node::open(&path.join("independent-client"), settings.clone(), 1).unwrap();
+    let mut receiver = Node::open(&path.join("receiver"), settings.clone(), 1).unwrap();
+    receiver
+        .enable_local_mempool(PoolLimits {
+            max_records: 16,
+            max_bytes: 32768,
+            max_group_members: 4,
+            critical_reserve: 0,
+            max_removals: 64,
+            preview_miner: development_public(0).unwrap(),
+        })
+        .unwrap();
+    let initial = receiver.read_active().unwrap();
+    let target = receiver.expected_target(settings.genesis()).unwrap();
+    let owner = Arc::new(Mutex::new(receiver));
+    let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+    let address = listener.local_addr().unwrap();
+    let stop = Arc::new(AtomicBool::new(false));
+    let metrics = Arc::new(Mutex::new(public_v3::PublicMetrics::default()));
+    let observer = public_v3::PublicRequestObserver::new(16_384).unwrap();
+    let server = PublicServer::new(identity(71), policy()).unwrap();
+    let domain = server.mutation_cpu_domain();
+    let initial_meter = domain.observe().unwrap();
+    let (shared, signal, measurement, capture) =
+        (owner.clone(), stop.clone(), metrics, observer.clone());
+    let service = RunningService {
+        stop,
+        worker: Some(thread::spawn(move || {
+            match public_v3::serve_public_protected_v3_with_request_observer(
+                listener,
+                shared,
+                Duration::from_secs(30),
+                signal,
+                server,
+                measurement,
+                capture,
+            ) {
+                Ok(metrics) => json!({"metrics": metrics, "error": null}),
+                Err(error) => json!({"metrics": null, "error": error.to_string()}),
+            }
+        })),
+    };
+    let epoch = Instant::now();
+    let client = Client {
+        address,
+        settings: settings.clone(),
+        epoch,
+    };
+    let workers = if pressured { PRESSURE_WORKERS } else { 0 };
+    let barrier = Arc::new(Barrier::new(workers + 2));
+    let completed = Arc::new(AtomicU64::new(0));
+    let end = epoch + Duration::from_millis(PRESSURE_MS);
+    let mut attacks = Vec::new();
+    for worker in 0..workers {
+        let (client, barrier, wires, completed) = (
+            client.clone(),
+            barrier.clone(),
+            false_wires.clone(),
+            completed.clone(),
+        );
+        attacks.push(thread::spawn(move || {
+            barrier.wait();
+            let cpu = ThreadCpuStamp::start();
+            let mut rows = Vec::new();
+            for attempt in 0..PRESSURE_CALLS_PER_WORKER {
+                if Instant::now() >= end {
+                    break;
+                }
+                let index = (attempt * workers + worker) % wires.len();
+                if let Some(packet) = &wires[index] {
+                    rows.push(compact_pressure_call(
+                        client.call_before(
+                            "confirmation_from_zero",
+                            80 + ((attempt + worker * 37) % 150) as u8,
+                            Request::Submit {
+                                packet: packet.clone(),
+                            },
+                            Some(end),
+                        ),
+                        Some(index),
+                    ));
+                    completed.fetch_add(1, Ordering::AcqRel);
+                } else {
+                    rows.push(json!({"status": "not_submitted_exhausted", "packet_index": index}));
+                }
+            }
+            json!({"worker": worker, "calling_thread_cpu_ns": cpu_elapsed(cpu),
+                "attempt_cap_reached": rows.len() == PRESSURE_CALLS_PER_WORKER, "calls": rows})
+        }));
+    }
+    let (reader, read_barrier) = (client.clone(), barrier.clone());
+    let reads = thread::spawn(move || {
+        read_barrier.wait();
+        let cpu = ThreadCpuStamp::start();
+        let mut rows = Vec::new();
+        while Instant::now() < end && rows.len() < 256 {
+            rows.push(compact_pressure_call(
+                reader.call_before("confirmation_honest_head", 72, Request::Head, Some(end)),
+                None,
+            ));
+            thread::sleep(
+                Duration::from_millis(40).min(end.saturating_duration_since(Instant::now())),
+            );
+        }
+        (rows, cpu_elapsed(cpu))
+    });
+    barrier.wait();
+    while pressured && completed.load(Ordering::Acquire) == 0 && Instant::now() < end {
+        thread::sleep(Duration::from_millis(1));
+    }
+    let completed_before_business = completed.load(Ordering::Acquire);
+    let business_started_ns = ns(epoch);
+    let mut submissions = Vec::new();
+    let mut next_packet = 0;
+    while next_packet < packets.len() && Instant::now() < end && submissions.len() < 64 {
+        let mut row = compact_pressure_call(
+            client.call_before(
+                "confirmation_honest_submit",
+                73,
+                Request::Submit {
+                    packet: hex::encode(packets[next_packet].encode().unwrap()),
+                },
+                Some(end),
+            ),
+            Some(next_packet),
+        );
+        row["height"] = json!(packets[next_packet].header.height);
+        if row["status"] == "ok" && row["returned_after_window"] == false {
+            next_packet += 1;
+        }
+        submissions.push(row);
+    }
+    let tip = packets.last().unwrap().id().unwrap();
+    let included = packets[0].id().unwrap();
+    let transaction = hash(b"tx-id", &[&packets[0].transactions[0]]);
+    let mut history_calls = Vec::new();
+    let mut confirmation = None;
+    let mut verification_errors = Vec::new();
+    let replay_started = Instant::now();
+    let replay_cpu = ThreadCpuStamp::start();
+    let mut after = settings.genesis();
+    let mut confirmation_ended_ns = None;
+    while next_packet == packets.len() && Instant::now() < end && history_calls.len() < 16 {
+        let row = client.call_before(
+            "confirmation_honest_history",
+            74,
+            Request::History {
+                tip: hex::encode(tip),
+                after: hex::encode(after),
+            },
+            Some(end),
+        );
+        if row["status"] == "ok" && row["returned_after_window"] == false {
+            let imported =
+                serde_json::from_value::<ingress::Page>(row["response"]["value"].clone())
+                    .map_err(|error| error.to_string())
+                    .and_then(|page| {
+                        ingress::receive_page(
+                            &mut verifier,
+                            page,
+                            tip,
+                            after,
+                            ingress::now().unwrap(),
+                        )
+                        .map_err(|error| error.to_string())
+                    });
+            match imported {
+                Ok(next) => {
+                    after = next;
+                    if after == tip {
+                        match verifier.confirmation(transaction, included, ingress::now().unwrap())
+                        {
+                            Ok(observation) => {
+                                confirmation = Some(observation);
+                                confirmation_ended_ns = Some(ns(epoch));
+                            }
+                            Err(error) => verification_errors.push(error.to_string()),
+                        }
+                    }
+                }
+                Err(error) => verification_errors.push(error),
+            }
+        }
+        history_calls.push(row);
+        if confirmation.is_some() {
+            break;
+        }
+    }
+    let independent_replay_cpu_ns = cpu_elapsed(replay_cpu);
+    let independent_replay_wall_ns = ns(replay_started);
+    let completed_at_confirmation = completed.load(Ordering::Acquire);
+    let client_confirmed_in_window = confirmation.as_ref().is_some_and(|observation| {
+        observation.confirmed
+            && !observation.finalized
+            && !observation.execution_authority
+            && observation.depth == Some(6)
+    }) && Instant::now() < end;
+    let attack_rows: Vec<_> = attacks
+        .into_iter()
+        .map(|worker| worker.join().unwrap())
+        .collect();
+    let (read_rows, reader_cpu_ns) = reads.join().unwrap();
+    // Shutdown follows the original window. No post-attack replay, retry or drain
+    // can turn an unconfirmed business request into a successful observation.
+    let service_outcome = service.finish();
+    let captured = observer.snapshot();
+    let receiver = Arc::try_unwrap(owner).ok().unwrap().into_inner().unwrap();
+    let actual = receiver.read_active().unwrap();
+    let checked = verifier.read_active().unwrap();
+    // Active generations count local publication events; page replay can publish
+    // seven complete blocks in one activation and need not share that counter.
+    let full_state_equal = actual.0 == checked.0 && actual.2 == checked.2;
+    let actual_root = trnm_mvcc_fee::pon_executor::root(&actual.2).unwrap();
+    let receiver_matches_valid_honest_prefix = if actual.0 == initial.0 {
+        actual.2 == initial.2
+    } else {
+        packets
+            .iter()
+            .any(|packet| packet.id().unwrap() == actual.0 && packet.header.state == actual_root)
+    };
+    let call_rows: Vec<_> = attack_rows
+        .iter()
+        .flat_map(|worker| worker["calls"].as_array().unwrap())
+        .collect();
+    let overlapping_false_calls = confirmation_ended_ns.map_or(0, |ended| {
+        call_rows
+            .iter()
+            .filter(|row| {
+                row["started_ns"]
+                    .as_u64()
+                    .is_some_and(|started| started < ended)
+                    && row["ended_ns"]
+                        .as_u64()
+                        .is_some_and(|finished| finished > business_started_ns)
+            })
+            .count()
+    });
+    let no_attack_accepted = call_rows.iter().all(|row| row["status"] != "ok");
+    let attacker_workers_cpu_ns = attack_rows.iter().try_fold(0u64, |sum, worker| {
+        sum.checked_add(worker["calling_thread_cpu_ns"].as_u64()?)
+    });
+    let read_successes = read_rows
+        .iter()
+        .filter(|row| {
+            row["status"] == "ok"
+                && row["returned_after_deadline"] == false
+                && row["returned_after_window"] == false
+        })
+        .count();
+    let mut prior_success = 0;
+    let mut maximum_honest_head_gap_ns = 0;
+    for row in &read_rows {
+        if row["status"] == "ok" && row["returned_after_window"] == false {
+            let ended = row["ended_ns"].as_u64().unwrap();
+            maximum_honest_head_gap_ns = maximum_honest_head_gap_ns.max(ended - prior_success);
+            prior_success = ended;
+        }
+    }
+    maximum_honest_head_gap_ns = maximum_honest_head_gap_ns
+        .max(PRESSURE_MS * 1_000_000 - prior_success.min(PRESSURE_MS * 1_000_000));
+    let m = &service_outcome["metrics"];
+    let accounting_closed = m["mutation_cpu_charged_ns"]
+        .as_u64()
+        .zip(
+            m["mutation_full_work_cpu_ns"]
+                .as_u64()
+                .zip(m["mutation_dispatch_excluding_work_cpu_ns"].as_u64()),
+        )
+        .is_some_and(|(all, (work, rest))| work.checked_add(rest) == Some(all))
+        && m["work_started"] == m["work_finished"]
+        && m["mutation_cpu_clock_failures"] == 0;
+    let observations_complete = captured.records_not_retained == 0
+        && captured.measurement_failures == 0
+        && !captured.counter_overflow
+        && captured.records.iter().all(|record| record.complete);
+    let invariant_target_met = no_attack_accepted
+        && observations_complete
+        && accounting_closed
+        && service_outcome["error"].is_null()
+        && receiver_matches_valid_honest_prefix;
+    let overlap_demonstrated = !pressured
+        || (completed_before_business > 0
+            && overlapping_false_calls > 0
+            && completed_at_confirmation > completed_before_business);
+    let finite_business_target_met =
+        client_confirmed_in_window && overlap_demonstrated && verification_errors.is_empty();
+    let mut report = json!({"mode": if pressured { "from-zero-pressure" } else { "attack-free-baseline" },
+        "target": hex::encode(target), "task": hex::encode(packets[0].header.work_task),
+        "initial_tip": hex::encode(initial.0),
+        "initial_state_root": hex::encode(trnm_mvcc_fee::pon_executor::root(&initial.2).unwrap()),
+        "requested_window_ns": PRESSURE_MS * 1_000_000, "workers": workers,
+        "initial_meter": initial_meter, "final_meter": domain.observe().unwrap(),
+        "attacks": attack_rows, "completed_false_calls_before_business": completed_before_business,
+        "attacker_workers_cpu_ns": attacker_workers_cpu_ns,
+        "attacker_workers_cpu_scope": "disjoint joined client threads; includes every failed negotiation, resource-ticket search, encoding and output record; excludes receiver and separately recorded from-zero setup",
+        "completed_false_calls_at_confirmation": completed_at_confirmation,
+        "overlapping_false_calls": overlapping_false_calls, "overlap_demonstrated": overlap_demonstrated});
+    report.as_object_mut().unwrap().extend(json!({
+        "honest_submissions": submissions, "honest_history": history_calls,
+        "business_started_ns": business_started_ns, "confirmation_ended_ns": confirmation_ended_ns,
+        "client_confirmation_latency_ns": confirmation_ended_ns.map(|ended| ended - business_started_ns),
+        "independent_client_confirmation": confirmation, "client_confirmed_transactions": usize::from(client_confirmed_in_window),
+        "client_confirmed_before_original_window_end": client_confirmed_in_window,
+        "independent_replay_and_confirmation_cpu_ns": independent_replay_cpu_ns,
+        "independent_replay_and_confirmation_wall_ns": independent_replay_wall_ns,
+        "verification_errors": verification_errors, "honest_heads": read_rows,
+        "honest_head_successes_in_window": read_successes, "maximum_honest_head_gap_ns": maximum_honest_head_gap_ns,
+        "reader_cpu_ns": reader_cpu_ns, "service": service_outcome, "observations": captured,
+        "no_attack_accepted": no_attack_accepted, "accounting_closed": accounting_closed,
+        "full_native_state_equal": full_state_equal, "invariant_target_met": invariant_target_met,
+        "receiver_matches_valid_honest_prefix": receiver_matches_valid_honest_prefix,
+        "finite_business_target_met": finite_business_target_met,
+        "scope": "one host, same operator; separate native verifying client; six depth/work confirmations during unchanged four-second traffic window; no post-pressure drain credit",
+        "public_network_ready": false, "independent_operator_accepted": false,
+        "work_profile_qualified": false, "resource_fairness_qualified": false, "production_activation": false})
+        .as_object().unwrap().clone());
+    report
+}
+
+#[test]
+fn from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline(
+) {
+    let temporary = tempfile::tempdir().unwrap();
+    let output = std::env::var_os("TRNM_PUBLIC_V3_CONFIRMATION_DIR")
+        .map(std::path::PathBuf::from)
+        .or_else(|| {
+            std::env::var_os("TRNM_CI_RECEIPT_DIR")
+                .map(|root| std::path::PathBuf::from(root).join("public-v3-confirmation-pressure"))
+        });
+    let path = output.unwrap_or_else(|| temporary.path().join("confirmation-pressure"));
+    fs::create_dir(&path).unwrap();
+    let settings = Settings::development(Some(1_750_000_000)).unwrap();
+    let mut producer = Node::open(&path.join("producer"), settings.clone(), 1).unwrap();
+    let target = producer.expected_target(settings.genesis()).unwrap();
+    let (a, b) = maintenance();
+    let task = pon_work::task_id(&a, &b).unwrap();
+    // False proof acquisition precedes all honest production and never consumes
+    // an honest trace, product, prepared object or verifier result.
+    let construction_cpu = ThreadCpuStamp::start();
+    let construction_started = Instant::now();
+    let searches: Vec<_> = (0..16)
+        .map(|i| {
+            search_from_zero(
+                genesis_header(&settings, target, 100_000 + i, task),
+                &a,
+                &b,
+                SEARCH_BUDGET,
+            )
+        })
+        .collect();
+    let attacker_construction_cpu_ns = cpu_elapsed(construction_cpu);
+    let attacker_construction_wall_ns = ns(construction_started);
+    let false_wires = Arc::new(
+        searches
+            .iter()
+            .map(|search| search.observation["packet"].as_str().map(str::to_owned))
+            .collect::<Vec<_>>(),
+    );
+    let construction = searches
+        .iter()
+        .map(|search| search.observation.clone())
+        .collect::<Vec<_>>();
+    let tx = confirmation_transfer(
+        &settings,
+        producer.next_nonce(development_public(0).unwrap()).unwrap(),
+    );
+    let honest_started = Instant::now();
+    let honest_process_cpu_started = process_cpu_ns();
+    let mut packets = Vec::new();
+    for height in 1..=7 {
+        let packet = producer
+            .mine(
+                if height == 1 {
+                    vec![tx.clone()]
+                } else {
+                    vec![]
+                },
+                settings.genesis_time() + height * 10,
+                ingress::now().unwrap(),
+            )
+            .unwrap();
+        assert_eq!(packet.header.target, target);
+        assert_eq!(packet.header.work_task, task);
+        packets.push(packet);
+    }
+    let honest_chain_acquisition_wall_ns = ns(honest_started);
+    let honest_chain_process_cpu_ns = honest_process_cpu_started
+        .zip(process_cpu_ns())
+        .and_then(|(start, end)| end.checked_sub(start));
+    let baseline = signed_confirmation_phase(
+        &path.join("baseline"),
+        &settings,
+        &packets,
+        false_wires.clone(),
+        false,
+    );
+    let pressure = signed_confirmation_phase(
+        &path.join("pressure"),
+        &settings,
+        &packets,
+        false_wires,
+        true,
+    );
+    let passed = baseline["invariant_target_met"] == true
+        && baseline["finite_business_target_met"] == true
+        && pressure["invariant_target_met"] == true
+        && pressure["finite_business_target_met"] == true;
+    let invariants_passed =
+        baseline["invariant_target_met"] == true && pressure["invariant_target_met"] == true;
+    let report = json!({"schema": "public-v3-signed-confirmation-pressure-v1",
+        "network": hex::encode(settings.network()), "parameters": hex::encode(settings.parameters()),
+        "genesis": hex::encode(settings.genesis()), "target": hex::encode(target), "task": hex::encode(task),
+        "policy_id": hex::encode(policy().id()), "same_packet_sequence_in_both_runs": true,
+        "signed_honest_packets": packets.iter().map(|packet| hex::encode(packet.encode().unwrap())).collect::<Vec<_>>(),
+        "from_zero_construction": construction, "attacker_construction_cpu_ns": attacker_construction_cpu_ns,
+        "attacker_construction_wall_ns": attacker_construction_wall_ns,
+        "honest_chain_acquisition_wall_ns": honest_chain_acquisition_wall_ns,
+        "honest_chain_process_cpu_ns": honest_chain_process_cpu_ns,
+        "honest_chain_process_cpu_scope": "all threads of this test process during seven-block mining and durable acquisition, before service/traffic start; includes search/setup/execution/storage, not pure W1 cost or exclusive actor attribution",
+        "honest_chain_aggregate_cpu_ns": null, "strongest_honest_producer_used": false,
+        "phases": [baseline, pressure], "finite_target_met": passed, "invariant_target_met": invariants_passed,
+        "test_success_scope": "native protocol/accounting invariants; finite business target is a separately retained actual outcome and cannot be inferred from cargo exit zero",
+        "scope": "same-source, task, target and signed business; attack-free versus independently driven loopback attack clients; shared controller, not independent operators or a saturated WAN benchmark",
+        "public_network_ready": false, "work_profile_qualified": false, "production_activation": false});
+    fs::write(
+        path.join("report.json"),
+        serde_json::to_vec_pretty(&report).unwrap(),
+    )
+    .unwrap();
+    println!(
+        "{}",
+        json!({"schema": report["schema"], "finite_target_met": passed, "report_path": path.join("report.json")})
+    );
+    assert!(invariants_passed, "retain signed-confirmation report; native safety/accounting failed; finite service outcomes are recorded separately");
 }
