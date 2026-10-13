@@ -64,11 +64,29 @@ machines or timestamps do not establish independent future tasks.
 
 ## Measurement and retained limitations
 
-Each phase has a fresh process, 50ms sampled RSS, actual POSIX waited-child CPU,
-observer CPU and end-to-end phase wall time. Completed child receipts retain Linux
-process high-water RSS and per-stage CPU/wall/Linux IO. RSS maxima are not added.
-The sampled cap can miss a transient between samples; completed-process high-water
-RSS is retained separately. Killed children may lack a complete stage event/CPU
+Each phase has a fresh process, 50ms sampled RSS, exact owned-child Linux `wait4`
+CPU, observer CPU and end-to-end phase wall time. A held `pidfd` binds termination
+to that child. RSS reads use the kernel's own fdinfo PID namespace mapping and
+verify the child PID, parent and namespace before and after observation; a local
+numeric PID is not assumed to name the same process in the mounted `/proc` view.
+Missing RSS while an exact wait observes a live child is a sticky failure.
+
+`sampled_peak_rss_bytes` remains the direct-child sampling result.
+`waited_child_peak_rss_bytes` separately records that exact child's Linux `wait4`
+`ru_maxrss` in KiB times 1024. A quick exit can succeed without a sample only when
+its exact terminal status and positive resource receipt are available. Wall and
+RSS budgets are checked again at termination, including an exit-zero child that
+exceeded RSS between samples. These high-water figures can include inherited
+waited-descendant accounting; they are neither simultaneous process-tree RSS nor
+a kernel hard memory limit. RSS maxima are not added. Child CPU is not obtained
+by subtracting the caller's aggregate `RUSAGE_CHILDREN` observations.
+
+Exit observation and resolved reaping are separate receipt fields. Only a valid
+exact terminal wait, or held-pidfd exit readiness plus genuine `ECHILD`, resolves
+cleanup. Cleanup-only `waitpid` cannot provide RSS or CPU success credit. Other
+unresolved wait/signal faults retain a failed receipt and the owned handle in a
+cleanup exception. A caller that exits instead of resolving this exception cannot
+claim successful cleanup. Killed children may lack a complete stage event/CPU
 receipt; this is an incomplete failure, never a fabricated zero-cost success.
 Linux `read_bytes`/`write_bytes` are kernel IO accounting, not logical input sizes,
 network bytes or total economic resource cost. Profiler FLOPs cover supported
@@ -76,7 +94,13 @@ operators only, not all training work. Bootstrap downloads/install and SSH/contr
 work remain separate observations. No energy price or hardware-cost lower bound is
 inferred from timings. Stage/phase walls overlap and must not be double counted.
 
-The current bounded supervisor is qualified only by Linux process tests. CUDA and
+The bounded supervisor requires Linux `wait4`, `pidfd_open`, `pidfd_send_signal`,
+default `SIGCHLD` handling and exclusive ownership of this child's reaping.
+Unsupported capabilities reject the run before spawn; concurrent external reapers
+are outside this contract. A pidfd acquisition fault after spawn fails closed and
+can leave explicitly unresolved cleanup. Process controls exercise the supported
+owner and fault paths. Historical pilot receipts retain their original observation
+scope and do not inherit this revised resource qualification. CUDA and
 ROCm branches require the actual respective Torch runtime and actual GPU availability;
 they reject silent CPU fallback. Their GPU-time/resource and numeric qualification
 remain separate work. MPS additionally needs a macOS RSS/budget owner and actual

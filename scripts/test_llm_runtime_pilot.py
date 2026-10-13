@@ -164,4 +164,7 @@ class RuntimePilotTests(unittest.TestCase):
             self.assertGreaterEqual(success['child_cpu_ns'],0)
 
 
+from test_llm_runtime_rss_owner import RssIdentityTests, RssSupervisionTests
+
+
 if __name__=='__main__':unittest.main()

@@ -8,13 +8,16 @@ Torch/Transformers/PEFT are isolated optional runtime dependencies, not node dep
 """
 from __future__ import annotations
 import argparse
+import errno
 import gc
 import hashlib
 import importlib.metadata
 import json
+import math
 import os
 from pathlib import Path
 import resource
+import select
 import signal
 import subprocess
 import sys
@@ -236,10 +239,66 @@ def read_io():
 
 
 def current_rss(pid=None):
+    """Observe only self or a uniquely identified child in this procfs PID view."""
     try:
-        lines = Path(f'/proc/{pid or os.getpid()}/status').read_text().splitlines()
-        return next(int(row.split()[1]) * 1024 for row in lines if row.startswith('VmRSS:'))
-    except (OSError, StopIteration):
+        def read(path):
+            with path.open() as source:
+                value = source.read(65537)
+            if len(value) > 65536:
+                raise ValueError('proc observation bound')
+            return value
+
+        def status(path):
+            fields = {}
+            for row in read(path).splitlines():
+                key, separator, value = row.partition(':')
+                if separator and key in ('Pid', 'PPid', 'NSpid', 'VmRSS'):
+                    if key in fields:
+                        raise ValueError('duplicate proc identity')
+                    fields[key] = value.split()
+            return fields
+
+        def rss(fields):
+            value, unit = fields['VmRSS']
+            value = int(value)
+            if unit != 'kB' or value <= 0:
+                raise ValueError('invalid proc RSS')
+            return value * 1024
+
+        parent = status(Path('/proc/self/status'))
+        parent_pid, = map(int, parent['Pid'])
+        parent_namespace = list(map(int, parent['NSpid']))
+        if (not parent_namespace or parent_namespace[0] != parent_pid or
+                parent_namespace[-1] != os.getpid()):
+            return None
+        if pid is None or pid == os.getpid():
+            return rss(parent)
+        if type(pid) is not int or pid <= 0:
+            return None
+        # The procfs mount may show an outer PID namespace. A pidfd opened for
+        # the known Popen child gives an owned, kernel-bound mapping; never scan
+        # arbitrary /proc PIDs or signal the mapped procfs identifier.
+        descriptor = os.pidfd_open(pid, 0)
+        try:
+            identity_path = Path(f'/proc/self/fdinfo/{descriptor}')
+            identity = status(identity_path)
+            visible_pid, = map(int, identity['Pid'])
+            namespace = list(map(int, identity['NSpid']))
+            coordinate = len(parent_namespace) - 1
+            if (visible_pid <= 0 or len(namespace) <= coordinate or
+                    namespace[0] != visible_pid or namespace[coordinate] != pid):
+                return None
+            fields = status(Path(f'/proc/{visible_pid}/status'))
+            child_pid, = map(int, fields['Pid'])
+            child_parent, = map(int, fields['PPid'])
+            if (child_pid != visible_pid or child_parent != parent_pid or
+                    list(map(int, fields['NSpid'])) != namespace or
+                    status(identity_path) != identity):
+                return None
+            return rss(fields)
+        finally:
+            os.close(descriptor)
+    except (OSError, AttributeError, KeyError, ValueError):
         return None
 
 
@@ -622,40 +681,261 @@ def child(args):
         save(directory/'actual-receipt.json', report)
 
 
+class _Wait4Unsupported(RuntimeError):
+    pass
+
+
+class _OwnedChildCleanupRequired(RuntimeError):
+    def __init__(self, child, receipt):
+        super().__init__('owned child cleanup is unresolved; owned handle retained')
+        self.child, self.receipt = child, receipt
+
+
+class _Wait4Child(subprocess.Popen):
+    """One Linux Popen spawn, exclusively reaped by the calls below.
+
+    Requires default SIGCHLD handling and no competing wait/reap thread. A
+    detected lost receipt permits cleanup only; this is not a general guarantee
+    against concurrent external reapers or PID reuse outside that contract.
+    """
+
+    def __init__(self, *args, **kwargs):
+        self.reaped = False
+        self.reap_resolved = False
+        self.no_waitable_child_observed = False
+        self.owned_exit_observed = False
+        self.cleanup_method = 'wait4'
+        self.waited_peak_rss_bytes = None
+        self.waited_cpu_ns = None
+        self.observation_error = None
+        self.termination_fd = None
+        probe = None
+        try:
+            if (sys.platform != 'linux' or not callable(getattr(os, 'wait4', None)) or
+                    not callable(getattr(os, 'pidfd_open', None)) or
+                    not callable(getattr(signal, 'pidfd_send_signal', None)) or
+                    signal.getsignal(signal.SIGCHLD) != signal.SIG_DFL):
+                raise _Wait4Unsupported('Linux exclusive wait4/pidfd owner required')
+            probe = os.pidfd_open(os.getpid(), 0)
+            signal.pidfd_send_signal(probe, 0)
+        except (AttributeError, OSError) as error:
+            raise _Wait4Unsupported(f'pidfd capability unavailable:{type(error).__name__}') from error
+        finally:
+            if probe is not None:
+                try:
+                    os.close(probe)
+                except OSError as error:
+                    raise _Wait4Unsupported('pidfd capability cleanup unavailable') from error
+        super().__init__(*args, **kwargs)
+        try:
+            self.termination_fd = os.pidfd_open(self.pid, 0)
+        except (AttributeError, OSError) as error:
+            self.fail(f'pidfd-open-after-spawn:{type(error).__name__}')
+
+    def __del__(self):
+        # Popen's destructor performs waitpid and can steal the rusage receipt.
+        # supervise's finally block exclusively terminates/reaps this child.
+        pass
+
+    def fail(self, message):
+        if self.observation_error is None:
+            self.observation_error = message
+
+    def reap(self, options=os.WNOHANG):
+        if self.reaped:
+            return 'terminal'
+        if self.no_waitable_child_observed:
+            return 'unknown'
+        try:
+            pid, status, usage = os.wait4(self.pid, options)
+        except (OSError, AttributeError, TypeError, ValueError) as error:
+            if isinstance(error, OSError) and error.errno == errno.ECHILD:
+                self.no_waitable_child_observed = True
+            self.fail(f'wait4:{type(error).__name__}:{getattr(error, "errno", None)}')
+            return 'unknown'
+        if type(pid) is not int or (pid == 0 and options != os.WNOHANG):
+            self.fail('wait4:invalid-pid')
+            return 'unknown'
+        if pid == 0:
+            return 'live'
+        if pid != self.pid:
+            self.fail('wait4:wrong-pid')
+            return 'unknown'
+        # A traced child can produce a stopped status even without WUNTRACED.
+        # Such a receipt does not prove termination or permit dropping its fd.
+        if (type(status) is not int or not 0 <= status <= 65535 or
+                not (os.WIFEXITED(status) or os.WIFSIGNALED(status))):
+            self.fail('wait4:nonterminal-or-invalid-status')
+            return 'unknown'
+        self.reaped = True
+        self.reap_resolved = True
+        self.owned_exit_observed = True
+        self.returncode = os.waitstatus_to_exitcode(status)
+        try:
+            peak = usage.ru_maxrss
+            user, system = usage.ru_utime, usage.ru_stime
+            if (type(peak) is not int or not 0 < peak <= sys.maxsize or
+                    any(type(value) not in (int, float) or not math.isfinite(value) or
+                        value < 0 for value in (user, system))):
+                raise ValueError('invalid waited rusage')
+            self.waited_peak_rss_bytes = peak * 1024
+            self.waited_cpu_ns = round((user + system) * 10**9)
+        except (AttributeError, TypeError, ValueError, OverflowError):
+            self.fail('wait4:invalid-terminal-receipt')
+        return 'terminal'
+
+    def cleanup_reap(self):
+        """A wait4 failure may use exact waitpid for cleanup, never RSS credit."""
+        if self.reaped or self.no_waitable_child_observed:
+            return
+        self.cleanup_method = 'waitpid-after-wait4-fault'
+        try:
+            pid, status = os.waitpid(self.pid, os.WNOHANG)
+            if type(pid) is not int:
+                self.fail('cleanup-waitpid:invalid-pid')
+                return
+            if pid == 0:
+                return
+            if (pid != self.pid or type(status) is not int or not 0 <= status <= 65535 or
+                    not (os.WIFEXITED(status) or os.WIFSIGNALED(status))):
+                self.fail('cleanup-waitpid:invalid-receipt')
+                return
+            self.reaped = True
+            self.reap_resolved = True
+            self.owned_exit_observed = True
+            self.returncode = os.waitstatus_to_exitcode(status)
+        except (OSError, AttributeError, TypeError, ValueError) as error:
+            if isinstance(error, OSError) and error.errno == errno.ECHILD:
+                self.no_waitable_child_observed = True
+            self.fail(f'cleanup-waitpid:{type(error).__name__}')
+
+    def observe_owned_exit(self):
+        if not self.owned_exit_observed and self.termination_fd is not None:
+            try:
+                readable, _, _ = select.select([self.termination_fd], [], [], 0)
+                if readable:
+                    # Exit may have occurred between the preceding WNOHANG poll
+                    # and fd readiness. Reap this healthy child before closing
+                    # its handle; fd readiness alone must not strand a zombie.
+                    if self.reap() == 'unknown':
+                        self.cleanup_reap()
+                    if self.reaped:
+                        return
+                    self.owned_exit_observed = True
+                    self.reap_resolved = self.no_waitable_child_observed
+                    self.cleanup_method = 'pidfd-terminal-without-waited-status'
+                    self.fail('pidfd-terminal:waited-receipt-unavailable')
+            except (OSError, TypeError, ValueError) as error:
+                self.fail(f'pidfd-terminal:{type(error).__name__}')
+
+    def signal_owned(self, signum):
+        if self.owned_exit_observed:
+            return
+        try:
+            if self.termination_fd is not None:
+                signal.pidfd_send_signal(self.termination_fd, signum)
+            else:
+                self.fail('signal:owned-pidfd-unavailable')
+        except ProcessLookupError:
+            self.reap()
+        except (OSError, AttributeError, TypeError, ValueError) as error:
+            self.fail(f'signal:{type(error).__name__}:{getattr(error, "errno", None)}')
+
+    def finish(self):
+        try:
+            if self.owned_exit_observed and not self.reap_resolved:
+                if self.reap() == 'unknown':
+                    self.cleanup_reap()
+                self.reap_resolved = self.reaped or self.no_waitable_child_observed
+            # Keep the original five-second TERM grace. A failed KILL/observer
+            # receives one further bounded second, then retains the owned fd.
+            for signum, seconds in ((signal.SIGTERM, 5), (signal.SIGKILL, 1)):
+                if self.owned_exit_observed:
+                    break
+                self.signal_owned(signum)
+                deadline = time.monotonic() + seconds
+                while not self.owned_exit_observed and time.monotonic() < deadline:
+                    if self.reap() == 'unknown':
+                        self.cleanup_reap()
+                    self.observe_owned_exit()
+                    if not self.owned_exit_observed:
+                        time.sleep(min(0.01, max(0, deadline - time.monotonic())))
+        finally:
+            if self.termination_fd is not None and self.reap_resolved:
+                try:
+                    os.close(self.termination_fd)
+                except OSError as error:
+                    self.fail(f'close-pidfd:{error.errno}')
+                self.termination_fd = None
+
+
 def supervise(command, directory, budget):
     """Kill only this fresh child when its measured wall/RSS budget is exceeded."""
     directory = Path(directory); directory.mkdir(mode=0o700)
     start, high, reason = time.monotonic_ns(), 0, None
-    child_usage = resource.getrusage(resource.RUSAGE_CHILDREN)
     observer_cpu_start = time.process_time_ns()
     with (directory/'process.log').open('w') as log:
-        process = subprocess.Popen(command, stdout=log, stderr=subprocess.STDOUT)
-        while process.poll() is None:
-            rss = current_rss(process.pid)
-            high = max(high, rss or 0)
-            if (time.monotonic_ns()-start) / 10**9 > budget['wall_seconds']:
-                reason = 'wall-budget-exceeded'
-            elif rss is None:
-                # Linux target cannot claim an enforced RSS budget without samples.
-                if not Path('/proc').is_dir(): reason = 'rss-observation-unavailable'
-            elif rss > budget['rss_bytes']:
-                reason = 'rss-budget-exceeded'
-            if reason:
-                process.send_signal(signal.SIGTERM)
-                try: process.wait(timeout=5)
-                except subprocess.TimeoutExpired: process.kill(); process.wait()
-                break
-            time.sleep(0.05)
-        code = process.wait()
-    end_usage = resource.getrusage(resource.RUSAGE_CHILDREN)
-    result = dict(exit_code=code, stop_reason=reason, observed_wall_ns=time.monotonic_ns()-start,
+        try:
+            process = _Wait4Child(command, stdout=log, stderr=subprocess.STDOUT)
+        except _Wait4Unsupported as error:
+            result = dict(exit_code=None, stop_reason='rss-owner-unsupported',
+                          observed_wall_ns=time.monotonic_ns()-start,
+                          sampled_peak_rss_bytes=0, budget=budget, sample_interval_ms=50,
+                          waited_child_peak_rss_bytes=None, waited_child_reaped=False,
+                          owned_child_reap_resolved=False,
+                          owned_child_echild_observed=False,
+                          owned_child_exit_observed=False, child_spawned=False,
+                          cleanup_method='no-child-spawned',
+                          waited_child_observation_error=str(error), child_cpu_ns=None,
+                          observer_cpu_ns=time.process_time_ns()-observer_cpu_start,
+                          cpu_scope='No child spawned; no waited-child CPU observation',
+                          memory_scope='No child spawned; no RSS observation', outcome='failed')
+            save(directory/'supervisor.json', result)
+            return result
+        try:
+            while process.observation_error is None and process.reap() == 'live':
+                rss = current_rss(process.pid)
+                high = max(high, rss or 0)
+                if (time.monotonic_ns()-start) / 10**9 > budget['wall_seconds']:
+                    reason = 'wall-budget-exceeded'
+                elif rss is None:
+                    # Only an exact terminal wait4 receipt can distinguish an
+                    # exit race from observation loss while the child is live.
+                    if process.reap() != 'terminal':
+                        reason = 'rss-observation-unavailable'
+                elif rss > budget['rss_bytes']:
+                    reason = 'rss-budget-exceeded'
+                if reason or process.reaped:
+                    break
+                time.sleep(0.05)
+        finally:
+            process.finish()
+    if reason is None:
+        if process.observation_error or not process.reaped or process.waited_peak_rss_bytes is None:
+            reason = 'waited-child-observation-unavailable'
+        elif (time.monotonic_ns()-start) / 10**9 > budget['wall_seconds']:
+            reason = 'wall-budget-exceeded'
+        elif process.waited_peak_rss_bytes > budget['rss_bytes']:
+            reason = 'rss-budget-exceeded'
+    result = dict(exit_code=process.returncode, stop_reason=reason, observed_wall_ns=time.monotonic_ns()-start,
                   sampled_peak_rss_bytes=high, budget=budget, sample_interval_ms=50,
-                  child_cpu_ns=round(((end_usage.ru_utime-child_usage.ru_utime)+
-                                      (end_usage.ru_stime-child_usage.ru_stime))*10**9),
+                  waited_child_peak_rss_bytes=process.waited_peak_rss_bytes,
+                  waited_child_reaped=process.reaped,
+                  owned_child_reap_resolved=process.reap_resolved,
+                  owned_child_echild_observed=process.no_waitable_child_observed,
+                  owned_child_exit_observed=process.owned_exit_observed,
+                  child_spawned=True, cleanup_method=process.cleanup_method,
+                  waited_child_observation_error=process.observation_error,
+                  child_cpu_ns=process.waited_cpu_ns,
                   observer_cpu_ns=time.process_time_ns()-observer_cpu_start,
-                  cpu_scope='POSIX waited-child user-plus-system CPU; sequential children only',
-                  outcome='success' if code == 0 and reason is None else 'failed')
+                  cpu_scope='Exact owned-child Linux wait4 user-plus-system CPU; includes inherited waited-descendant accounting',
+                  memory_scope='sampled_peak_rss_bytes is direct-child 50ms RSS; waited_child_peak_rss_bytes is exact owned-child Linux wait4 ru_maxrss in KiB times 1024, a maximum single-process high-water with inherited waited-descendant accounting; neither is simultaneous process-tree RSS',
+                  outcome='success' if process.returncode == 0 and reason is None else 'failed')
     save(directory/'supervisor.json', result)
+    if not process.reap_resolved:
+        # Preserve a failed receipt and the handle. The CLI cannot claim general
+        # cleanup if its kernel will not resolve cleanup of its owned child.
+        raise _OwnedChildCleanupRequired(process, result)
     return result
 
 
