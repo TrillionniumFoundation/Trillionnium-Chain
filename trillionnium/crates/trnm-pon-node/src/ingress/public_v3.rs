@@ -284,7 +284,7 @@ impl PaidMutationCpuPermit {
             .and_then(|(total, paid)| total.checked_sub(paid));
         let live_refused = self.live.was_refused();
         let budget_settled = if let Ok(mut budget) = self.budget.lock() {
-            budget.settle(Instant::now(), residual)
+            budget.settle_observed(Instant::now(), residual, charged, already_charged)
         } else {
             false
         };
@@ -1394,6 +1394,21 @@ fn public_dispatch(
             let owner = lock_owner(node, &mut progress)?;
             let tip_id = digest(&tip)?;
             let after_id = digest(&after)?;
+            // The slower two-phase reader is an explicit per-owner research
+            // control only. Production keeps the prior complete held-owner path.
+            #[cfg(test)]
+            if owner.public_history_test_snapshot && tip_id != after_id {
+                let snapshot = owner.prepare_public_history_snapshot(
+                    tip_id,
+                    after_id,
+                    MAX_HISTORY_STEPS,
+                    &mut progress,
+                )?;
+                drop(owner);
+                let read = snapshot.read(&mut progress)?;
+                let owner = lock_owner(node, &mut progress)?;
+                return owner.finish_public_history_snapshot(read, &mut progress);
+            }
             let packets =
                 owner.public_history_packet(tip_id, after_id, MAX_HISTORY_STEPS, &mut progress)?;
             let next = packets

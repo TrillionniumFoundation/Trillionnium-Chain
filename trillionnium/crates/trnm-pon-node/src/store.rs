@@ -4,11 +4,16 @@ pub(crate) mod authenticated_state;
 pub mod capacity_observation;
 pub mod evaluation_observation;
 pub mod evaluation_round_observation;
+mod historical_commitment;
+#[cfg(test)]
+mod historical_commitment_tests;
 mod history_page;
 pub mod mempool;
 pub(crate) mod native_authenticated;
 mod operator_continuous_owner;
 mod operator_mining_owner;
+#[cfg(test)]
+pub(crate) mod public_reader;
 use crate::{
     consensus::{self, Work},
     development_public, ensure, maintenance, sequence_root, Error, Packet, Result, Settings,
@@ -507,8 +512,19 @@ pub struct Node {
     settings: Settings,
     workers: usize,
     state_backend: StateBackend,
+    #[cfg(test)]
+    // Research reader's immutable source DDL, never a cached on-disk verdict.
+    expected_schema: BTreeMap<String, String>,
+    #[cfg(test)]
+    // Fault injection only; the production public endpoint always uses1024.
+    public_history_test_sql_limit: Option<u64>,
+    #[cfg(test)]
+    // Explicit per-owner research selection; never a production option.
+    pub(crate) public_history_test_snapshot: bool,
     // One derived snapshot only; State always comes from actual KV/snapshot/deltas.
     commitment_cache: RefCell<Option<ActiveCommitment>>,
+    // Bounded tree material only. Historical State still comes from all original SQL reads.
+    historical_commitment_cache: RefCell<historical_commitment::HistoricalCommitments>,
     commitment_observation: RefCell<Option<CommitmentObservation>>,
     history_read_counters: Cell<HistoryReadCounters>,
     history_page_read_counters: Cell<HistoryPageReadCounters>,
@@ -1083,7 +1099,14 @@ impl Node {
             settings,
             workers,
             state_backend,
+            #[cfg(test)]
+            expected_schema,
+            #[cfg(test)]
+            public_history_test_sql_limit: None,
+            #[cfg(test)]
+            public_history_test_snapshot: false,
             commitment_cache: RefCell::new(None),
+            historical_commitment_cache: RefCell::default(),
             commitment_observation: RefCell::new(None),
             history_read_counters: Cell::new(HistoryReadCounters::default()),
             history_page_read_counters: Cell::new(HistoryPageReadCounters::default()),
@@ -1923,6 +1946,7 @@ impl Node {
     }
     fn invalidate_commitment(&self) {
         *self.commitment_cache.borrow_mut() = None;
+        self.historical_commitment_cache.borrow_mut().clear();
     }
     /// Local calculation observation only, never a state/confirmation authority.
     pub fn derived_commitment_status(&self) -> DerivedCommitmentStatus {
@@ -2420,7 +2444,9 @@ impl Node {
                     .map_err(Error::local_integrity)?;
                 continuity_v1::check_state(&state, row.height, &self.settings.app)
                     .map_err(|error| Error::from(error).local_integrity())?;
-                let commitment = self.checked_commitment(&state, row.root, None)?.snapshot;
+                let commitment = self
+                    .checked_historical_commitment(cur, &state, row.root, None)?
+                    .snapshot;
                 if self.state_backend == StateBackend::AuthenticatedV1 {
                     native_authenticated::verify_state(
                         &self.db,
@@ -2465,7 +2491,12 @@ impl Node {
                 }
             }
             commitment = self
-                .checked_commitment(&state, self.record(id)?.root, commitment.as_ref())?
+                .checked_historical_commitment(
+                    id,
+                    &state,
+                    self.record(id)?.root,
+                    commitment.as_ref(),
+                )?
                 .snapshot;
             continuity_v1::check_state(&state, self.record(id)?.height, &self.settings.app)
                 .map_err(|error| Error::from(error).local_integrity())?;
@@ -4395,7 +4426,11 @@ impl Node {
     ) -> Result<Vec<Packet>> {
         progress(0)?;
         self.ready()?;
-        let lookup = crate::ancestry_index::next(
+        #[cfg(test)]
+        let maximum_steps = self
+            .public_history_test_sql_limit
+            .map_or(maximum_steps, |limit| maximum_steps.min(limit));
+        let lookup = crate::ancestry_index::next_public_request(
             &self.db,
             self.ancestry_context(),
             tip,

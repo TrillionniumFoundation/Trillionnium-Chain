@@ -140,10 +140,200 @@ number of distinct queried inclusion blocks. The current costs remain:
 | Reorganization/recovery | Verified deltas, snapshots and exact roots | No fixed global branch/history/disk-size bound or constant-time recovery claim. |
 | Pool prefix checks | One actual parent and mandatory prologue per operation; M06 applies each newly accepted transaction once | [Pool lifecycle](LOCAL_MEMPOOL_LIFECYCLE.md#same-block-incremental-m06-prefix) preserves complete M05 checks, full roots/output state and independent batch validation; no end-to-end linear-time claim. |
 
-Snapshot ownership and lock splitting need a separate design that preserves the
-single durable writer, operation-local parent validity, cancellation and
-post-verification re-entry checks. A cache that skips those checks would change
-the trust boundary. These changes do not close that remaining engineering work.
+Production public V3 History retains the complete held-owner algorithm. The
+operation-local reader described below is private cfg(test) research: its
+complete-operation regression prevents enabling it as a production optimization.
+State, Head, pool and History still need separately justified read-side
+integration. A cache that skips actual checks would change the trust boundary;
+no cross-request successful verdict is retained.
+
+## Operation-local readonly public History
+
+Production public V3 retains its original complete held-owner History path.
+The two-phase reader below is explicit cfg(test) research only: its module,
+operation-local ReadSet and per-owner network-test selector are absent from
+production. There is no public opt-in flag, API or failed-read fallback.
+For an explicitly selected research V3 `tip != after`, the actual Node owner
+prepares a private path/source pin under its mutex. The pin retains the existing writer-lock file descriptor,
+directory/database/WAL/SHM identities, immutable source-derived DDL identity,
+network/parameters/genesis, actual active tip/generation, physical state slot,
+active record and that same writer connection's SQLite `data_version`. It does
+not clone a mutable Node or create a second durable writer.
+
+Outside the Node mutex, one fresh SQLite READ_ONLY/NOFOLLOW connection with
+`query_only` opens a read transaction. It checks source metadata/schema and the
+pinned epoch, runs the original checked binary-lifting lookup in its original
+query/validation order, loads the capped complete body, verifies the same packet
+identifier/parent/height and constructs the complete original Page. Every used
+raw shape/header/jump query fact is recorded once in first-read order; repeated
+reads must match. Those facts are private to this operation and never authorize
+a future request. The full body and Page remain private.
+
+The actual owner then reenters under the mutex and checks namespace/source,
+the current epoch/slot/record, every used raw query fact and complete body again
+in one current transaction. The final checks compare `data_version` on the same
+original writer connection, including after the ending epoch check. Foreign SQL
+write-and-restore is refused even if active generation is unchanged. This does
+not claim protection against an owner that can rewrite arbitrary state and its
+source; the existing derived-index trust limit still applies. A legitimate same-
+owner admission that leaves the pinned active epoch and all used facts unchanged
+can complete while the reader's real SQLite snapshot is open.
+
+One cumulative1024 application-statement allowance covers owner preparation,
+readonly PRAGMA/BEGIN and context/epoch reads, all repeated ancestry queries,
+body reads, final current fact/body/source/epoch/version checks and both mandatory
+transaction rollbacks. Cleanup slots are reserved before work starts, including
+RAII rollback after error/cancellation. SQLite's internal page work, connection
+setup and filesystem checks are not SQL-slot counts or hard deadlines. There is
+no renewed second1024 allowance and no held-owner fallback on a failed snapshot.
+Final revalidation can make a request exceed the allowance earlier than the
+prior held-owner lookup; this conservative availability limit is retained.
+
+Genuine request-budget exhaustion keeps `ANCESTRY_INDEX_BUDGET` and Capacity,
+using a private request-budget origin that keeps a healthy owner running. The
+production held-owner lookup selects this origin only at its original charged
+statement boundary; its single index/body allowance is unchanged. The research
+snapshot shares its allowance with the extra fences. Invalid trusted maximums
+and callback errors do not acquire this origin. Invalid
+trusted limit configuration and original unrecorded ancestry-owner budgets keep
+their prior stop policy. Corrupt metadata/schema/read facts are never downgraded;
+`local_integrity` overrides even the request origin. A parsed peer error cannot
+select that origin. In the research snapshot, an intervening activation of an actual append or
+heavier reorganization returns existing `STALE_VIEW` before Page publication; a fresh operation may still
+read the explicit old historical tip. Callback cancellation retains its error,
+releases the readonly transaction/lease and returns no partial Page.
+An unchanged generation with a changed active tip, physical slot or active record
+is instead a local-integrity failure with the same `STALE_VIEW` diagnostic; it
+cannot downgrade corrupt stored invariants to a routine concurrent-generation
+change. Cancellation during those record/slot queries remains outside that
+integrity conversion.
+
+For `tip == after`, both default and research V3 keep the original fresh
+zero-payload held-owner lookup.
+It avoids connection/pin/fence overhead on this case, including the empty-page
+tail regression observed in the earlier allocation comparison. No cached empty
+answer or new response field is introduced. V2 and ordinary APIs are unchanged.
+Readonly SQL still uses SQLite WAL/SHM bookkeeping; no SQL mutation is not a claim
+of zero filesystem writes. Selected packet/root/source checks remain
+nonpreemptive between callbacks and no process RSS or global disk cap follows.
+
+`store::public_reader::tests::readonly_history_*` controls actual signed packet
+admission during a held read snapshot, unchanged single-writer authority, full
+Page equality, actual append/heavier reorg refusal, same-generation foreign
+write-and-restore and used-fact/body damage, namespace replacement, cancellation,
+cold reopen and exact N/N−1 cumulative limits without SQL writes. A real signed
+loopback control deliberately lowers only a cfg(test) operation limit, observes
+three refusals in each of the default held-owner and explicit research snapshot
+paths, then proves both normal History paths and actual Submit still succeed.
+The production endpoint always uses1024; this test is not an extreme-height
+production exhaustion or public-service availability qualification.
+
+The ignored `readonly_history_whole_operation_and_retained_growth_cost` builds512
+real admitted/activated blocks, including256 signed transactions, and records
+growth at powers of two, logical database/WAL/SHM bytes and complete cold-reopen
+state. It compares64 alternating whole-operation pairs for first-body, short-tail
+and empty-page cases against the prior held-owner algorithm in the same binary.
+Complete Page JSON encoding/release is included; equality/hashing/export are
+outside both clocks. It separately reports time actually holding the owner
+mutex, used read facts and the completed cumulative statement count. Full source
+and executable hashes and competing-load context are emitted. All regressions
+remain evidence; no sustained TPS, WAN gain, permanent retention cap or conflict-
+scheduling benefit follows from this read-only comparison.
+Diagnostic JSON allocation/hex encoding, equality checks and report export are
+outside both sample clocks. The actual512-block deep request also compares the
+old full Page, exact complete SQL allowance and one-less refusal, preserving no
+Page/SQL-write on that refusal. That deliberately reduced-limit control does not
+claim default1024 exhaustion on a realistically retained production height.
+
+    TRNM_PUBLIC_READER_EVIDENCE_DIRECTORY=NEW_DIRECTORY TRNM_READER_CONCURRENT_CONTEXT=RECORDED_CONTEXT cargo test --offline --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib store::public_reader::tests::readonly_history_whole_operation_and_retained_growth_cost -- --exact --ignored --nocapture
+
+### Retained negative complete-operation observation
+
+The finite source-qualified experiment retained four separate M06 Node cost
+processes and one512-block reader process, with all competing team builds,
+runtimes and scans held during its19.25-second same-host window. A bounded parent
+PIPE retained each entire reaped process stream, then atomically saved and fsynced
+it, checked all sample identities/source and executable hashes, and compared its
+JSONL bytes exactly with the original incremental child file. It accepted256
+Node samples and384 reader samples. An earlier window's last baseline had only63
+retained sample rows and no terminal result despite an earlier driver completion
+claim. That observation remains incomplete and unmodified; the loss cause is
+unknown and its missing sample is not reconstructed or combined with this run.
+
+Both reader arms in the complete experiment used the same three `prepare_cached`
+SQL helpers. All raw query facts, foreign-write/restore detection, full body,
+current owner fencing and the single1024 budget remained. It still found:
+
+|512-block case;64 pairs|Held-owner median / p95|Snapshot median / p95|Whole-call result|
+|---|---|---|---|
+|First complete packet|1.514 /1.942ms|2.723 /4.338ms|Median +79.88%;64/64 snapshot calls slower|
+|Late empty packet|0.630 /0.708ms|1.388 /1.464ms|Median +120.32%;63/64 snapshot calls slower|
+|Empty Page;same original path|38.012 /57.946µs|37.957 /42.624µs|Labels execute the same algorithm; no attributable gain|
+
+For the first packet, owner-held median fell from1.391 to0.588ms; that reduction
+is not a whole-call throughput gain. The late-packet owner-held median fell from
+0.548 to0.353ms. Their complete cumulative SQL counts were232 and58. The exact232
+cap succeeded and231 returned no Page/SQL write with a healthy owner. The actual
+512-block directory retained31,379,488 logical bytes before and after reads;
+complete cold reopen and exact State equality took6.523ms. These are finite
+logical-file/recovery observations, not storage-media, RSS, permanent retention
+or sustained goodput bounds.
+
+The snapshot also changes availability: a formerly held-lock request could finish
+while delaying the writer; a concurrent public Submit/activate can now advance
+the pinned generation and refuse the research History call. Actual inactive
+admission concurrency and append/reorg refusal are tested, but high-write mixed
+successful-History goodput, refusal cost and write latency are not measured.
+No claim about that workload follows from the shorter held-lock interval.
+
+The experiment therefore does **not** enable the snapshot as a production
+performance path. Production keeps the prior held-owner algorithm. The cached
+SQL helper itself has only cross-window supporting timings, without a matched
+whole-operation attribution; it is also withdrawn and production uses original
+`query_row`. Exact experimental source archives and executables retain the cached
+cut so its negative comparison can be reproduced. The only production change
+from this reader work is the narrow request-budget origin repair; the cfg(test)
+research reader keeps all correctness controls for future measured work.
+
+### Retained disk and recovery model
+
+Let B count all admitted blocks on every retained branch, H a requested ancestry,
+D the total retained delta rows/bytes and K the complete active State size. Current
+logical storage contains every block packet, every branch delta, at most63 jump
+rows per non-genesis block, actual live KV slots and at most64 non-genesis complete
+canonical snapshots plus genesis. Legacy snapshots occur at128-height cadence;
+the explicitly authenticated backend snapshots each admitted block but keeps
+that same64-row policy. Authenticated retained tree/record bytes are an additional
+backend-specific term. Neither snapshot pruning nor the fixed scalar accounting
+files prune admitted packets, all branch deltas or retained authenticated records.
+
+Ignoring SQLite/index/file overhead, the model is packet bytes plus D plus the
+sum of `floor(log2(height))+1` jump-row payloads plus bounded snapshot-count times
+actual snapshot payload and live State. The protocol's65,536 keys and160/4096-byte
+key/value limits bound a single valid State, not B or permanent admitted-account
+growth. The8MiB derived-cache limit chooses a cache/fallback and is not a ledger
+disk cap. SQLite pages, freelists, WAL/SHM and filesystem allocation make actual
+physical bytes differ from these logical terms. The finite observer reports all
+directory files, page counts, block/delta/snapshot/jump/KV rows and actual State
+keys rather than treating a small SQLite main file as total disk consumption.
+
+Cold open still selects the heaviest retained candidate, resumes any recorded
+intent, checks actual active State/root and active-tip index, and preserves the
+selected backend's retained-history verification. The current heaviest selection
+orders retained blocks without a dedicated chainwork-order index. A historical
+State without a retained snapshot can walk back to genesis and apply/check every
+needed delta/root; an old side branch has no promised snapshot distance. Reorg
+and authenticated verification can still traverse the actual required ancestry.
+There is no constant-time recovery or global H/B bound derived from this reader.
+
+At current limits, State/protocol failures reject complete execution and leave
+the admitted transaction/nonce/root unchanged. New History quota exhaustion is
+the narrow nonfatal whole-request refusal above; it does not repair a store or
+mint another allowance. SQL/storage integrity and durability failures keep their
+existing failure policy. No implicit disk-full retry, branch eviction or pruning
+is added. Retention/archive policy and a proven old-History/recovery contract
+require a separate design and fresh namespace if stored layout changes.512
+small-State blocks and one cold reopen establish only their measured scope.
 
 ## Reproducible actual growth observation
 
@@ -237,10 +427,12 @@ sustained TPS or global history/disk retention. Run from the exact committed sou
 
     TRNM_PACKET_COST_DIRECTORY=NEW_DIRECTORY cargo test --offline --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib store::history_page::tests::packet_reservation_history_complete_call_cost -- --exact --ignored --nocapture
 
-This allocation change does not complete reader/writer separation. Current public
-Head, History and pool reads still hold the same Node mutex. Existing point proofs
+This allocation change alone did not complete reader/writer separation. Production
+public Head, History and pool reads still hold the same Node mutex. The fenced
+reader above remains private research after its complete-operation regression.
+Existing point proofs
 and batched nonce reads use a read transaction on that Node's own connection and
-retain full-State checks; they are not independent service reader handles. A future
+retain full-State checks; they are not independent service reader handles. A further
 read-side integration must preserve owner-controlled path/namespace fencing, one
 consistent SQLite snapshot through complete checks, fixed historical-tip semantics,
 required active-generation re-entry and exactly one durable writer. No mutable

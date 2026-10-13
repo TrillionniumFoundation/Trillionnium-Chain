@@ -79,6 +79,20 @@ The existing authenticated session constructor derives terminal/retryable
 identity from the already verified terminal flag, independently of error text.
 Its `REMOTE_TERMINAL:` and `REMOTE_RETRYABLE:` display strings remain unchanged.
 
+The production held-owner public History budget and explicit cfg(test) cumulative
+readonly research budget have one private local request origin. Only actual
+pre-SQL resource exhaustion selects it; invalid trusted maxima and callback
+errors retain their own origins. `public_history_budget` constructs only the existing
+`ANCESTRY_INDEX_BUDGET` code and Capacity category. Exhausting that whole-request
+SQL allowance yields no Page and keeps a healthy owner available. Parsing a
+string, including that exact string, cannot select this origin; authenticated
+remote-reply construction remains separate. Invalid trusted configuration and
+the original unrecorded ancestry-owner budget keep their old stop policy.
+`local_integrity` still overrides even the request-budget origin. This narrow
+distinction grants no generic retry and downgrades no schema, packet or stored
+read-fact failure. The [readonly History contract](HISTORY_STATE_RESOURCE_BOUNDS_V1.md#operation-local-readonly-public-history)
+defines the cumulative cap and actual signed refusal/retry control.
+
 ## Recovery decisions
 
 | Path | Typed condition | Recovery behavior |

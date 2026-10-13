@@ -200,11 +200,41 @@ each actual delta application. Mining derives a successor for its header; admiss
 independently executes and compares that header's root and ordered receipts. Direct
 activation stages inside the existing SQLite transaction and publishes the cache
 after successful COMMIT. Reorganization and recovery invalidate it. There is one
-optional retained active cache, not a cache per admitted block or pending prefix.
+optional retained active cache, bound to the actual active tip/generation/slot and
+published after the original durable commit; historical arithmetic material does
+not change that owner's binding or publish a pending prefix as active state.
+
+Historical replay additionally retains at most eight opaque `CheckedCommitment`
+arithmetic entries in
+[`store/historical_commitment.rs`](../../../../trillionnium/crates/trnm-pon-node/src/store/historical_commitment.rs).
+Their aggregate logical payload is at most 2 MiB and aggregate conservative
+retained software charge is at most 16 MiB. Structurally shared entries are charged
+in full individually. This is extra bounded material retention, separate from the
+original 512 MiB per-call commitment workspace charge; neither ceiling bounds
+total Node allocations or process RSS. An oversized entry, missing entry or
+different root read from current SQL selects the original predecessor/`None`
+computation. Original root/reorganization/recovery invalidation drops historical
+material as well, and can therefore empty a previously warm working set.
+
+A historical block id and current recorded root only select potential tree
+material. Each original `checked_snapshot` still performs the complete canonical
+actual-State encoding and key/value differences, checked tree application, actual
+root comparison and original internal full-root fallback. Every original
+genesis/snapshot, record, delta before/after, continuity, progress/cancellation,
+eligibility and final writer-held readback remains in its original order. No old
+State, record, authorization or successful verdict can satisfy those checks.
+Legacy snapshot cadence and all signed domains and stored schemas are unchanged.
+The last calculation's `changed_keys` is relative to the selected arithmetic
+material; zero does not establish that SQL or complete-State work was skipped.
+Original same-condition workload measurements must establish any whole-operation
+benefit and its additional retained-memory tradeoff; this mechanism alone makes
+no throughput or honest-confirmation deadline claim.
 
 `derived_commitment_status` reports optional cached root/key count/software charge
 and the last calculation observation. A last observation can describe an abandoned
 preview; it is not evidence that its state was activated or its transaction confirmed.
+Its public type and `cache-status` JSON retain the existing active-only shape;
+the historical cache has no new public authority or status schema.
 The complete actual-state encoding and borrowed difference count occur before the
 optional cache budget decision; complete change cloning follows it. The 512 MiB
 software charge therefore does not establish a hard allocation limit or bound the

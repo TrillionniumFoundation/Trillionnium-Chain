@@ -65,6 +65,18 @@ compensate for an incomplete earlier gate; rows are obligations, not acceptance 
 | P1.2 | Model custody and three real generations | Independent material custody and untouched future tasks; each control is the predecessor actually installed at inference. Keep actual installation/cost receipts, lawful no-update, revocation and the unchanged local irreversible history. Controlled fixtures are not independent learning evidence. |
 | P2 | Architecture comparison | Freeze business workload, offered load, hardware/network/resources, data-availability assumptions, adversary model and confirmation risk before comparing Nakamoto, DAG or committee BFT. Report confirmed goodput and latency together with failures, recovery and resource cost. Implement a protocol successor only after observed benefit and separate safety review. |
 
+The current cloud continuation retains this order. Its
+[native architecture comparison contract](../protocol/pon-nakamoto-v1/details/ARCHITECTURE_COMPARISON_V1.md)
+compares serial, concurrent and signed-reference-DAG dissemination through the
+same unchanged PoN application and independent depth/work confirmation owners.
+The separate consensus-assumption matrix identifies the additional Conflux,
+Narwhal/Bullshark, Mysticeti and Prism implementation obligations. A native
+dissemination result is not an implementation or security qualification of those
+consensus protocols. Failed runs, cold acquisition, disk synchronization, client
+verification and recovery remain part of the evidence; no faster phase alone
+selects a successor protocol. Final source and result receipts are required
+after all six tracks converge.
+
 A DAG candidate must account for total ordering, execution conflicts, withheld data,
 equivocation, admission economics and reorganization/confirmation semantics. A BFT
 candidate must separately define committee admission, rotation, Byzantine bound and
@@ -1112,3 +1124,112 @@ with no observed budget depletion cannot be promoted to saturation acceptance.
 WAN partition/heal, full disk, unavailable materials, cold recovery, physical loss
 and long-run client-confirmed tail latency require actual scoped observations.
 No new document, reader pass or signature changes any production/release flag.
+
+## Cloud implementation and adversarial observations — 2026-10-13
+
+This source continuation implements the six-track interfaces above. Its component
+observations do not close the final-source or independent-operator requirements.
+The active consensus remains PoN Nakamoto. No BFT committee, finality certificate,
+GHAST rule, DAG fork choice or consensus activation is introduced.
+
+The paired Hepta source now requires the original ProductEvaluationRunner and its
+sealed qualification, an actually synchronized immutable qualification file, the
+same evaluator's signature over the exact candidate and predecessor bytes, and
+the independent selector before published model installation. The ordinary CLI
+reconstructs that path from independently pinned raw materials. It cannot decode
+a caller-supplied opaque qualification or substitute a signed arbitrary metric.
+Restart replay requires the already recorded holdout plan, original writer fence
+and exact retained CAS anchor; it cannot consume a new holdout or take over its
+writer. CURRENT readers use the original named owner's observation fence and
+settled durable ACK. Unknown, revocation and failed currentness checks deny use.
+Launch generations remain separate from model generations. A signed recovery
+decision can explicitly abandon a Prepared intent whose effect remains Unknown;
+it preserves that uncertainty and does not manufacture a release result.
+
+The bounded three-generation study performed actual fits, product qualification,
+installation and inference on fresh arithmetic instruction-selection tasks.
+Independent child processes held seven role keys and future task materials.
+An independent reader verified 53,432 distinct instances and eleven observed
+windows. Each new candidate improved the declared task distribution against its
+actually installed predecessor; a fourth fit with equal behavior was lawfully
+rejected, and durable withdrawal closed cached consumption. The original IPS
+bound uses the final sealed window, measured uniform four-action logging and the
+unchanged acceptance thresholds. The measured whole native run used 74.06 seconds
+wall time, 75.70 seconds waited-child CPU and 231.50 MB retained storage. Its
+270.75 MB memory observation is the maximum single waited-process high-water
+mark, not simultaneous process-tree RSS. The actual binary uses the unoptimized
+test profile; whole-run cost includes the adversarial controls and excludes
+compilation, the external reader, energy and financial charges. These are controlled tabular learning
+observations under one administrator, not three neural-network generations,
+multi-host governance, long-horizon distribution drift or general model efficacy.
+Two raw configuration reconstructions do not qualify two full daemon restarts.
+The original Agentd socket test still fails because this cloud host denies
+AF_UNIX bind; its assertion and failure are retained.
+
+The second independent-process hostile campaign retained the original two
+attack modes, 24 clients per mode, target, eight-bit admission policy, two workers,
+2 CPU-second burst, 0.25 CPU-second/second refill and 100 ms start reservation.
+All hostile actors completed and services closed normally. Baseline business
+completed all three rounds at depth six with required verified work. Both hostile
+phases actually depleted the metered CPU flow around 3.4 seconds; neither
+completed the honest confirmation round. The supported caller-local two-second
+deadline expired during solution-body response/dispatch and retries, before any
+History confirmation request. Some accepted packets were only acknowledged on a
+later duplicate retry. This is a retained bounded-liveness failure, not a passing
+saturation result. The ordinary client's thirty-second overall profile was not
+measured by that experiment. Passive CPU-flow diagnostics do not change credit,
+reservation, continuation, settlement, signing or consensus rules. No deadline,
+work target or gate is relaxed to convert the failure into acceptance.
+
+Source review located repeated historical-parent State reconstruction before W1
+verification as an actionable cost candidate. The bounded successor reuses only
+the original opaque CheckedCommitment tree arithmetic material, indexed by block
+and the root freshly read from SQL. It retains at most eight entries, 2 MiB of
+canonical payload and 16 MiB of conservative additional material charge. The
+original 512 MiB per-call arithmetic workspace bound is separate; these charges
+are not a whole-process RSS bound. Each use still reads and reconstructs the
+actual snapshot/deltas, checks canonical values, all before/after transitions,
+current records/roots and continuity, and performs the original final writer
+validation. It never returns a cached State or eligibility verdict. Misses and
+over-budget material use the original calculation; uncertain/root failures clear
+the material. The existing active-cache observation schema is unchanged. Its
+benefit and the original two-second hostile confirmation requirement must be
+measured on the new exact source, rather than inferred from reduced tree work.
+
+The read-side experiment preserves the single writer and final revalidation of
+every used on-disk fact, including committed foreign writes followed by restore.
+Initial measured owner-lock time improved while complete first-body and short-tail
+requests regressed by about 79% and 138%. One retained cost run has an incomplete
+final baseline tail and is not a complete acceptance receipt. A subsequent complete
+ABBA experiment retained all 256 nonce samples and 384 paired reader observations,
+matching the native stream to the parent's bounded pipe capture and verifying
+the final synchronized files and source hashes. Both reader arms used the same
+prepared-statement optimization. Whole first-body median still regressed from
+1.514 to 2.723 ms; p95 rose from 1.942 to 4.338 ms. Its owner-lock median fell from
+1.391 to 0.588 ms. Whole short-tail median regressed from 0.630 to 1.388 ms.
+Lock duration alone is therefore not a throughput result.
+
+Skipping speculative work for repeated senders preserved full canonical ordered
+execution, state, receipts, errors and cancellation controls, but did not establish
+a stable whole-operation improvement: the complete mixed workload median changed
+from 16.067 to 16.181 ms, p95 from 21.454 to 19.479 ms and maximum from 24.792 to
+77.109 ms. The unchanged same-sender control also shifted by about nine percent,
+so a faster percentile alone cannot be attributed to the new scheduler. Neither
+the snapshot reader nor the repeated-sender scheduler is selected as a production
+default. Their explicit test research and source-bound negative results remain
+available. The ordinary held-owner read path, canonical execution and original
+integrity checks are preserved; a request capacity refusal remains distinct from
+local corruption. Storage observations include all retained branches, jump
+indexes, deltas and cold recovery: at 512 blocks the measured directory retained
+31,379,488 bytes and cold recovery took 6.523 ms. No pruning or permanent
+bounded-disk claim follows from that finite experiment.
+
+The fixed native dissemination comparison exercises serial delivery, concurrent
+delivery and a signed-reference DAG through unchanged full Work/State validation
+and depth/work confirmation. The DAG did not consistently outperform ordinary
+concurrent delivery across disjoint and conflicting business. This supplies no
+reason to replace consensus. Conflux, DAG-BFT and parallel-chain designs retain
+the distinct safety, data availability, admission and recovery obligations in
+the architecture comparison contract. Complete baselines and actual native
+source/merge pairs must still bind the final combined source; missing native
+ARM64 execution cannot be replaced by cross-compilation or an x64 observation.

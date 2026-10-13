@@ -57,6 +57,26 @@ number of indexed row lookups is `O(log(height))`, rather than a repeated linear
 suffix scan. Each SQLite indexed point query has its own database-size cost; this
 statement budget is not an exact CPU, filesystem-read or RSS bound.
 
+Production public V3 retains the original complete held-owner Page lookup.
+Only genuine charged public-request exhaustion selects the private
+`ANCESTRY_INDEX_BUDGET`/Capacity request origin and keeps a healthy owner running.
+Invalid trusted maxima, progress callback errors, corrupt read facts and ordinary
+owner admission/recovery budgets retain their original stopping policy. The
+statement allowance and query/error order are unchanged; no cached result or SQL
+prepared-statement optimization is enabled by this continuation.
+
+An explicit cfg(test) research reader records that same lookup's exact raw facts
+outside the writer mutex and publishes only after current owner/source/epoch,
+used facts and full-body revalidation. Its single1024 cumulative allowance includes
+both phases and both rollback reservations. It can conservatively refuse a deep
+request earlier, or retry after concurrent active-generation change. Complete
+operation measurements regressed despite shorter owner-held intervals, so it is
+absent from the production module graph and has no public runtime option.
+The [readonly History contract](HISTORY_STATE_RESOURCE_BOUNDS_V1.md#operation-local-readonly-public-history)
+records its full fence/cancel contracts, exact cap controls, default-versus-research
+signed network controls and the retained negative costs. V3 empty pages, V2 and
+ordinary wire contracts remain unchanged.
+
 Before packet projection/body allocation, scalar lengths reject null, undersized
 or larger-than1MiB packet records. Hash/parent/root projections are fixed32 bytes;
 header projection is the fixed native header length. The native packet decoder

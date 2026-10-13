@@ -59,6 +59,9 @@ struct StateInputs<'a> {
     accounts: Option<&'a AccountPointAccess<'a>>,
     mandatory: Option<&'a MandatoryStateInput<'a>>,
     monetary: Option<&'a MonetaryObligationInput<'a>>,
+    #[cfg(test)]
+    // Private per-call research only; default false and absent from production.
+    experimental_skip_repeated_senders: bool,
 }
 /// Caller-local observation only; no ledger byte or execution authority.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -1975,6 +1978,8 @@ pub fn execute_with_authenticated_state_input<E: Send>(
             accounts: Some(account_access),
             mandatory: Some(mandatory_input),
             monetary: None,
+            #[cfg(test)]
+            experimental_skip_repeated_senders: false,
         },
     )
 }
@@ -2002,6 +2007,8 @@ pub fn execute_with_authenticated_obligation_input<E: Send>(
             accounts: Some(account_access),
             mandatory: Some(mandatory_input),
             monetary: Some(monetary_input),
+            #[cfg(test)]
+            experimental_skip_repeated_senders: false,
         },
     )
 }
@@ -2070,6 +2077,8 @@ fn execute_with_state_inputs<E: Send>(
         accounts: account_access,
         mandatory: mandatory_input,
         monetary: monetary_input,
+        #[cfg(test)]
+        experimental_skip_repeated_senders,
     } = inputs;
     let progress = control.progress;
     let BlockExecution {
@@ -2109,6 +2118,22 @@ fn execute_with_state_inputs<E: Send>(
             && transactions
                 .iter()
                 .all(|raw| raw.get(36..68) == transactions[0].get(36..68)));
+    #[cfg(test)]
+    let repeated_senders = if !serial_state && experimental_skip_repeated_senders {
+        let mut seen = BTreeSet::new();
+        transactions
+            .iter()
+            .map(|raw| {
+                // This is only a conservative work hint. Every envelope is still
+                // decoded/context/profile/expiry/signature checked below. A valid
+                // earlier transaction always advances this same account's nonce;
+                // an invalid earlier transaction ends canonical execution first.
+                raw.get(36..68).is_some_and(|sender| !seen.insert(sender))
+            })
+            .collect::<Vec<_>>()
+    } else {
+        Vec::new()
+    };
     struct Predicted {
         prepared: Result<Prepared>,
         patch: Option<Result<Patch>>,
@@ -2122,7 +2147,12 @@ fn execute_with_state_inputs<E: Send>(
             .is_ok_and(|p| matches!(p.envelope.tag, 2 | 6 | 8 | 10 | 23));
         // Prefix-capacity operations remain canonical: do not retain one full
         // prefix snapshot per transaction merely to parallelize shared budgets.
-        let patch = if serial_state || range_command {
+        #[cfg(test)]
+        let skip_state_prediction =
+            serial_state || repeated_senders.get(index).copied().unwrap_or(false);
+        #[cfg(not(test))]
+        let skip_state_prediction = serial_state;
+        let patch = if skip_state_prediction || range_command {
             None
         } else {
             Some(prepared.as_ref().map_err(|e| *e).and_then(|tx| {
@@ -2211,7 +2241,11 @@ fn execute_with_state_inputs<E: Send>(
     } else {
         count
     };
-    if serial_state && workers > 1 && !transactions.is_empty() {
+    #[cfg(test)]
+    let serial_conflict = serial_state || repeated_senders.iter().any(|repeated| *repeated);
+    #[cfg(not(test))]
+    let serial_conflict = serial_state;
+    if serial_conflict && workers > 1 && !transactions.is_empty() {
         metrics.serial_conflict_batches = 1;
     }
     for (index, result) in predicted.into_iter().enumerate() {
@@ -2266,6 +2300,10 @@ fn execute_with_state_inputs<E: Send>(
         metrics,
     })
 }
+
+#[cfg(test)]
+#[path = "repeated_sender_tests.rs"]
+mod repeated_sender_tests;
 
 /// One original block prologue. Prefix previews retain its pre-reward successor,
 /// never a completed block with a second maturity, expiry or subsidy transition.

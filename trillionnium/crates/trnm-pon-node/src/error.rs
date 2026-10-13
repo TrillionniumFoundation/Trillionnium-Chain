@@ -158,6 +158,9 @@ pub struct Error {
     kind: ErrorKind,
     message: String,
     source: Option<Box<dyn error::Error + Send + Sync>>,
+    /// Only the controlled public-history operation can select this origin.
+    /// Parsing a string or an authenticated remote reply never selects it.
+    request_history_budget: bool,
 }
 impl Error {
     pub fn new(code: ErrorCode) -> Self {
@@ -166,6 +169,7 @@ impl Error {
             kind: code.kind(),
             message: code.as_str().into(),
             source: None,
+            request_history_budget: false,
         }
     }
     pub fn code(&self) -> Option<ErrorCode> {
@@ -179,9 +183,14 @@ impl Error {
     }
     /// Only local owner/DB/history failures stop pinned polling. A peer's signed
     /// refusal is still a remote observation, even if it names a structural code.
-    /// Ancestry budget exhaustion retains its existing fatal policy without being
-    /// mislabeled as corrupt storage. Capacity alone never authorizes a retry.
+    /// Original owner ancestry budgets retain their fatal policy. The specific
+    /// cumulative public History request budget has a private nonfatal origin;
+    /// a later local-integrity classification still overrides that origin.
+    /// Capacity alone never authorizes a retry.
     pub fn requires_owner_stop(&self) -> bool {
+        if self.request_history_budget && self.kind == ErrorKind::Capacity {
+            return false;
+        }
         if self.kind == ErrorKind::RemoteRefusal {
             return false;
         }
@@ -195,6 +204,15 @@ impl Error {
                         | ErrorCode::AncestryIndexBudget
                 )
             )
+    }
+    /// A local request's cumulative SQL allowance ended, without any completed
+    /// integrity verdict. Retain the existing wire code/category while keeping
+    /// a healthy owner available. This is neither remote parsing nor permission
+    /// to downgrade a corrupt ancestry/schema failure.
+    pub(crate) fn public_history_budget() -> Self {
+        let mut error = Self::new(ErrorCode::AncestryIndexBudget);
+        error.request_history_budget = true;
+        error
     }
     /// Use only for a failed invariant of bytes/links already held by the local
     /// store. The same diagnostic from a new packet or an unknown caller locator
@@ -261,6 +279,7 @@ impl Error {
             kind,
             message: format!("{prefix}:{source}"),
             source: Some(Box::new(source)),
+            request_history_budget: false,
         }
     }
     /// Parse only after the caller has established its required reply authentication.
@@ -290,6 +309,7 @@ impl Error {
             kind,
             message: format!("{prefix}: {source}"),
             source: Some(Box::new(source)),
+            request_history_budget: false,
         }
     }
 }
@@ -318,6 +338,7 @@ impl From<String> for Error {
             kind: code.map_or(ErrorKind::Unclassified, ErrorCode::kind),
             message,
             source: None,
+            request_history_budget: false,
         }
     }
 }

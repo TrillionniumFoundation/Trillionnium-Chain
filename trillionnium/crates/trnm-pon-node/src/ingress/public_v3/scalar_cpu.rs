@@ -19,12 +19,98 @@ pub(super) const MUTATION_CPU_REFILL_NS_PER_SECOND: u64 = 250_000_000;
 pub(super) const MUTATION_CPU_START_RESERVE_NS: u64 = 100_000_000;
 pub(super) const MUTATION_CPU_WORKERS: usize = 2;
 
+/// Diagnostic shadow of actual arithmetic events. Unknown telemetry never
+/// changes the original credit, cancellation, refill or reservation semantics.
+#[derive(Clone, Default)]
+struct CpuFlow {
+    initial_credit_ns: i128,
+    credited_refill_ns: u64,
+    discarded_refill_ns: u64,
+    booked_reservation_ns: u64,
+    live_debited_cpu_ns: u64,
+    settlement_residual_cpu_ns: u64,
+    settled_full_cpu_ns: u64,
+    settlement_discard_ns: u64,
+}
+#[cfg(test)]
+#[path = "scalar_cpu_flow_tests.rs"]
+mod flow_tests;
+impl CpuFlow {
+    fn new(initial_credit_ns: i128) -> Self {
+        Self {
+            initial_credit_ns,
+            ..Self::default()
+        }
+    }
+    fn paid(&self) -> Option<u64> {
+        self.live_debited_cpu_ns
+            .checked_add(self.settlement_residual_cpu_ns)
+    }
+    fn snapshot(
+        &self,
+        credit: i128,
+        in_flight: usize,
+    ) -> Option<ServiceMutationCpuFlowObservation> {
+        let paid = self.paid()?;
+        let remaining = self
+            .initial_credit_ns
+            .checked_add(i128::from(self.credited_refill_ns))?
+            .checked_sub(i128::from(paid))?
+            .checked_sub(i128::from(self.settlement_discard_ns))?;
+        let expected = remaining.checked_sub(i128::from(self.booked_reservation_ns))?;
+        // Booked principal is independently recorded from actual events. The
+        // count comparison detects lost/duplicate returns; it never supplies it.
+        let expected_booked = u64::try_from(in_flight)
+            .ok()?
+            .checked_mul(MUTATION_CPU_START_RESERVE_NS)?;
+        if expected != credit || expected_booked != self.booked_reservation_ns {
+            return None;
+        }
+        Some(ServiceMutationCpuFlowObservation {
+            schema: "public-v3-local-actual-cpu-flow-v1",
+            initial_credit_ns: self.initial_credit_ns,
+            credited_refill_ns: self.credited_refill_ns,
+            discarded_refill_ns: self.discarded_refill_ns,
+            booked_reservation_ns: self.booked_reservation_ns,
+            live_debited_cpu_ns: self.live_debited_cpu_ns,
+            settlement_residual_cpu_ns: self.settlement_residual_cpu_ns,
+            settled_full_cpu_ns: self.settled_full_cpu_ns,
+            unsettled_known_live_cpu_ns: paid.checked_sub(self.settled_full_cpu_ns)?,
+            paid_cpu_debit_ns: paid,
+            settlement_discard_ns: self.settlement_discard_ns,
+            remaining_paid_credit_ns: remaining,
+            balance_identity_verified: true,
+            stored_credit_ns: credit,
+            live_owners: in_flight,
+        })
+    }
+}
+#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize)]
+pub struct ServiceMutationCpuFlowObservation {
+    pub schema: &'static str,
+    pub initial_credit_ns: i128,
+    pub credited_refill_ns: u64,
+    pub discarded_refill_ns: u64,
+    pub booked_reservation_ns: u64,
+    pub live_debited_cpu_ns: u64,
+    pub settlement_residual_cpu_ns: u64,
+    pub settled_full_cpu_ns: u64,
+    pub unsettled_known_live_cpu_ns: u64,
+    pub paid_cpu_debit_ns: u64,
+    pub settlement_discard_ns: u64,
+    pub remaining_paid_credit_ns: i128,
+    pub balance_identity_verified: bool,
+    pub stored_credit_ns: i128,
+    pub live_owners: usize,
+}
+
 /// Volatile service-epoch accounting, never ledger or caller identity authority.
 pub(super) struct PaidMutationCpuBudget {
     pub(super) credit_ns: i128,
     pub(super) updated: Instant,
     pub(super) in_flight: usize,
     pub(super) unavailable: bool,
+    flow: Option<CpuFlow>,
 }
 impl PaidMutationCpuBudget {
     pub(super) fn new() -> Self {
@@ -33,6 +119,7 @@ impl PaidMutationCpuBudget {
             updated: Instant::now(),
             in_flight: 0,
             unavailable: false,
+            flow: Some(CpuFlow::new(i128::from(MUTATION_CPU_BURST_NS))),
         }
     }
     pub(super) fn refill(&mut self, now: Instant) {
@@ -54,7 +141,20 @@ impl PaidMutationCpuBudget {
             return;
         };
         // Refill cannot mint a second burst on top of outstanding start reserves.
+        let before = self.credit_ns;
         self.credit_ns = credit.min(self.credit_ceiling());
+        let actual = self
+            .credit_ns
+            .checked_sub(before)
+            .and_then(|n| u64::try_from(n).ok());
+        let discarded = credit
+            .checked_sub(self.credit_ns)
+            .and_then(|n| u64::try_from(n).ok());
+        self.flow_update(|flow| {
+            flow.credited_refill_ns = flow.credited_refill_ns.checked_add(actual?)?;
+            flow.discarded_refill_ns = flow.discarded_refill_ns.checked_add(discarded?)?;
+            Some(())
+        });
     }
     pub(super) fn credit_ceiling(&self) -> i128 {
         i128::from(MUTATION_CPU_BURST_NS)
@@ -70,9 +170,39 @@ impl PaidMutationCpuBudget {
         )?;
         self.credit_ns -= i128::from(MUTATION_CPU_START_RESERVE_NS);
         self.in_flight += 1;
+        self.flow_update(|flow| {
+            flow.booked_reservation_ns = flow
+                .booked_reservation_ns
+                .checked_add(MUTATION_CPU_START_RESERVE_NS)?;
+            Some(())
+        });
         Ok(())
     }
     pub(super) fn settle(&mut self, now: Instant, measured: Option<u64>) -> bool {
+        self.settle_with_attribution(now, measured, None)
+    }
+    pub(super) fn settle_observed(
+        &mut self,
+        now: Instant,
+        residual: Option<u64>,
+        full: Option<u64>,
+        already_live: Option<u64>,
+    ) -> bool {
+        self.settle_with_attribution(now, residual, full.zip(already_live))
+    }
+    fn flow_update(&mut self, update: impl FnOnce(&mut CpuFlow) -> Option<()>) {
+        if let Some(flow) = self.flow.as_mut() {
+            if update(flow).is_none() {
+                self.flow = None;
+            }
+        }
+    }
+    fn settle_with_attribution(
+        &mut self,
+        now: Instant,
+        measured: Option<u64>,
+        attribution: Option<(u64, u64)>,
+    ) -> bool {
         // Only an outstanding start reservation can be returned. An extra
         // settlement is accounting uncertainty, not another free reserve.
         if self.in_flight == 0 || self.in_flight > MUTATION_CPU_WORKERS {
@@ -86,7 +216,27 @@ impl PaidMutationCpuBudget {
                 .credit_ns
                 .checked_add(i128::from(MUTATION_CPU_START_RESERVE_NS) - i128::from(measured))
             {
-                Some(credit) => self.credit_ns = credit.min(self.credit_ceiling()),
+                Some(credit) => {
+                    self.credit_ns = credit.min(self.credit_ceiling());
+                    let discarded = credit
+                        .checked_sub(self.credit_ns)
+                        .and_then(|n| u64::try_from(n).ok());
+                    self.flow_update(|flow| {
+                        let (full, already) = attribution?;
+                        if full.checked_sub(already) != Some(measured) {
+                            return None;
+                        }
+                        flow.booked_reservation_ns = flow
+                            .booked_reservation_ns
+                            .checked_sub(MUTATION_CPU_START_RESERVE_NS)?;
+                        flow.settlement_residual_cpu_ns =
+                            flow.settlement_residual_cpu_ns.checked_add(measured)?;
+                        flow.settled_full_cpu_ns = flow.settled_full_cpu_ns.checked_add(full)?;
+                        flow.settlement_discard_ns =
+                            flow.settlement_discard_ns.checked_add(discarded?)?;
+                        Some(())
+                    });
+                }
                 None => self.unavailable = true,
             }
         } else {
@@ -104,6 +254,10 @@ impl PaidMutationCpuBudget {
             return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
         };
         self.credit_ns = credit;
+        self.flow_update(|flow| {
+            flow.live_debited_cpu_ns = flow.live_debited_cpu_ns.checked_add(measured)?;
+            Some(())
+        });
         ensure(!self.unavailable, "PUBLIC_MUTATION_CPU_UNAVAILABLE")?;
         ensure(self.credit_ns >= 0, "PUBLIC_MUTATION_CPU_BUDGET")
     }
@@ -121,6 +275,7 @@ impl PaidMutationCpuBudget {
                 .checked_sub(i128::from(measured))
                 .ok_or("PUBLIC_MUTATION_CPU_UNAVAILABLE")?;
             self.credit_ns = credit;
+            self.flow = None;
             return Ok(());
         }
         self.charge_live(now, measured)
@@ -544,7 +699,7 @@ impl ServiceMutationCpuOperation {
         let budget_settled = if let Ok(mut budget) = self.budget.lock() {
             // Share the same result as public dispatch, including a failed
             // reservation return with otherwise known thread samples.
-            budget.settle(Instant::now(), residual)
+            budget.settle_observed(Instant::now(), residual, charged, already_charged)
         } else {
             false
         };
@@ -614,6 +769,7 @@ impl ServiceMutationCpuDomain {
     ) -> Self {
         let mut budget = PaidMutationCpuBudget::new();
         budget.credit_ns = 0;
+        budget.flow = Some(CpuFlow::new(0));
         Self {
             budget: Arc::new(Mutex::new(budget)),
         }
@@ -623,6 +779,7 @@ impl ServiceMutationCpuDomain {
     ) -> Self {
         let mut budget = PaidMutationCpuBudget::new();
         budget.credit_ns = 0;
+        budget.flow = Some(CpuFlow::new(0));
         Self {
             budget: Arc::new(Mutex::new(budget)),
         }
@@ -712,6 +869,24 @@ impl ServiceMutationCpuDomain {
             start_reserve_ns: MUTATION_CPU_START_RESERVE_NS,
             worker_limit: MUTATION_CPU_WORKERS,
         })
+    }
+    /// Independent optional diagnostic object. The original observe() struct,
+    /// JSON/schema and old evidence readers remain unchanged. No refill occurs.
+    /// None retains unknown overflow, unaccounted CPU or a failed exact identity;
+    /// it grants no reservation and never disables the original service policy.
+    pub fn observe_actual_flow(&self) -> Result<Option<ServiceMutationCpuFlowObservation>> {
+        let budget = self
+            .budget
+            .lock()
+            .map_err(|_| "PUBLIC_MUTATION_CPU_UNAVAILABLE")?;
+        Ok((!budget.unavailable)
+            .then(|| {
+                budget
+                    .flow
+                    .as_ref()
+                    .and_then(|flow| flow.snapshot(budget.credit_ns, budget.in_flight))
+            })
+            .flatten())
     }
 }
 

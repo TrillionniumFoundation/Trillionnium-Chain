@@ -2,6 +2,8 @@
 //! not a malicious owner who can rewrite the database and recompute hashes.
 use crate::{ensure, Error, Result};
 use rusqlite::{params, Connection, OptionalExtension};
+#[cfg(test)]
+use std::collections::BTreeMap;
 use trnm_crypto_primitives::pon_work;
 use trnm_protocol::pon_wire::{hash, Hash, Header, HEADER_BYTES};
 
@@ -44,12 +46,156 @@ struct Budget<'a> {
     used: u64,
     maximum: u64,
     progress: &'a mut dyn FnMut(u64) -> Result<()>,
+    origin: BudgetOrigin,
+    #[cfg(test)]
+    reads: Option<&'a mut ReadSet>,
+}
+#[derive(Clone, Copy)]
+enum BudgetOrigin {
+    Owner,
+    PublicHistoryRequest,
+}
+struct ReadMode<'a> {
+    origin: BudgetOrigin,
+    #[cfg(test)]
+    reads: Option<&'a mut ReadSet>,
+    _scope: std::marker::PhantomData<&'a ()>,
 }
 impl Budget<'_> {
     fn charge(&mut self) -> Result<()> {
-        ensure(self.used < self.maximum, "ANCESTRY_INDEX_BUDGET")?;
+        if self.used == self.maximum {
+            // Only exhaustion here selects a request origin. Trusted maximum
+            // validation, stored corruption and progress callback errors do not.
+            return Err(match self.origin {
+                BudgetOrigin::PublicHistoryRequest => Error::public_history_budget(),
+                BudgetOrigin::Owner => Error::from("ANCESTRY_INDEX_BUDGET"),
+            });
+        }
         self.used += 1;
         (self.progress)(self.used)
+    }
+    #[cfg(test)]
+    fn observe(&mut self, key: ReadKey, digest: impl FnOnce() -> Hash) -> Result<()> {
+        if let Some(reads) = self.reads.as_deref_mut() {
+            reads.observe(key, digest())?;
+        }
+        Ok(())
+    }
+}
+
+#[cfg(test)]
+#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+enum ReadKey {
+    Shape(Hash),
+    Header(Hash),
+    Jump(Hash, u8),
+}
+
+/// Exact query facts for one readonly snapshot. No successful ancestry verdict
+/// is stored or retained across operations. First-read order is preserved.
+#[cfg(test)]
+#[derive(Default)]
+pub(crate) struct ReadSet {
+    positions: BTreeMap<ReadKey, usize>,
+    entries: Vec<(ReadKey, Hash)>,
+}
+#[cfg(test)]
+impl ReadSet {
+    fn observe(&mut self, key: ReadKey, digest: Hash) -> Result<()> {
+        if let Some(index) = self.positions.get(&key) {
+            return ensure(self.entries[*index].1 == digest, "ANCESTRY_INDEX_STRUCTURE");
+        }
+        ensure(
+            self.entries.len() < READ_SQL_BUDGET as usize,
+            "ANCESTRY_INDEX_BUDGET",
+        )?;
+        self.positions.insert(key, self.entries.len());
+        self.entries.push((key, digest));
+        Ok(())
+    }
+    pub(crate) fn len(&self) -> usize {
+        self.entries.len()
+    }
+    pub(crate) fn revalidate(
+        &self,
+        db: &Connection,
+        progress: &mut dyn FnMut(u64) -> Result<()>,
+    ) -> Result<()> {
+        for (index, (key, expected)) in self.entries.iter().enumerate() {
+            progress(index as u64)?;
+            let actual = (|| -> Result<Hash> {
+                Ok(match *key {
+                    ReadKey::Shape(id) => shape_digest(&read_shape(db, id)?),
+                    ReadKey::Header(id) => header_digest(&read_header(db, id)?),
+                    ReadKey::Jump(id, level) => jump_digest(&read_jump(db, id, level)?),
+                })
+            })()
+            .map_err(Error::local_integrity)?;
+            ensure(actual == *expected, "ANCESTRY_INDEX_STRUCTURE")
+                .map_err(Error::local_integrity)?;
+        }
+        progress(self.entries.len() as u64)
+    }
+}
+
+fn read_shape(db: &Connection, id: Hash) -> rusqlite::Result<Option<StoredShape>> {
+    db.query_row(
+        "SELECT height,length(parent),length(state_root),length(packet) FROM blocks WHERE id=?",
+        [id.as_slice()],
+        |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?, r.get(3)?)),
+    )
+    .optional()
+}
+fn read_header(db: &Connection, id: Hash) -> rusqlite::Result<Option<HeaderProjection>> {
+    db.query_row("SELECT parent,state_root,substr(packet,1,?),substr(packet,-32) FROM blocks WHERE id=? AND length(parent)=32 AND length(state_root)=32 AND length(packet)<=?",
+        params![HEADER_BYTES,id.as_slice(),MAX_PACKET], |r| Ok((r.get(0)?,r.get(1)?,r.get(2)?,r.get(3)?))).optional()
+}
+fn read_jump(db: &Connection, id: Hash, level: u8) -> rusqlite::Result<Option<JumpProjection>> {
+    db.query_row("SELECT ancestor,ancestor_height,left_seal,right_seal,seal FROM ancestry_jump WHERE block=? AND level=? AND length(ancestor)=32 AND length(left_seal)=32 AND length(right_seal)=32 AND length(seal)=32",
+        params![id.as_slice(),level], |r| Ok((r.get(0)?,r.get(1)?,r.get(2)?,r.get(3)?,r.get(4)?))).optional()
+}
+#[cfg(test)]
+fn shape_digest(value: &Option<StoredShape>) -> Hash {
+    match value {
+        None => hash(b"native-history-read-shape-v1", &[&[0]]),
+        Some((height, parent, root, packet)) => {
+            let optional = |v: Option<usize>| {
+                let mut bytes = [0; 9];
+                bytes[0] = u8::from(v.is_some());
+                bytes[1..].copy_from_slice(&(v.unwrap_or(0) as u64).to_le_bytes());
+                bytes
+            };
+            hash(
+                b"native-history-read-shape-v1",
+                &[
+                    &[1],
+                    &height.to_le_bytes(),
+                    &optional(*parent),
+                    &(*root as u64).to_le_bytes(),
+                    &optional(*packet),
+                ],
+            )
+        }
+    }
+}
+#[cfg(test)]
+fn header_digest(value: &Option<HeaderProjection>) -> Hash {
+    match value {
+        None => hash(b"native-history-read-header-v1", &[&[0]]),
+        Some((parent, root, prefix, trace)) => hash(
+            b"native-history-read-header-v1",
+            &[&[1], parent, root, prefix, trace],
+        ),
+    }
+}
+#[cfg(test)]
+fn jump_digest(value: &Option<JumpProjection>) -> Hash {
+    match value {
+        None => hash(b"native-history-read-jump-v1", &[&[0]]),
+        Some((ancestor, height, left, right, seal)) => hash(
+            b"native-history-read-jump-v1",
+            &[&[1], ancestor, &height.to_le_bytes(), left, right, seal],
+        ),
     }
 }
 fn bytes32(bytes: Vec<u8>) -> Result<Hash> {
@@ -75,13 +221,9 @@ fn seal(ctx: Context, row: &Row, metadata: Metadata) -> Hash {
 }
 fn metadata(db: &Connection, ctx: Context, id: Hash, budget: &mut Budget<'_>) -> Result<Metadata> {
     budget.charge()?;
-    let shape: Option<StoredShape> = db
-        .query_row(
-            "SELECT height,length(parent),length(state_root),length(packet) FROM blocks WHERE id=?",
-            [id.as_slice()],
-            |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?, r.get(3)?)),
-        )
-        .optional()?;
+    let shape = read_shape(db, id)?;
+    #[cfg(test)]
+    budget.observe(ReadKey::Shape(id), || shape_digest(&shape))?;
     let (height, parent_len, root_len, packet_len) = shape.ok_or("ANCESTRY_INDEX_UNKNOWN_BLOCK")?;
     ensure(
         root_len == 32 && height <= i64::MAX as u64,
@@ -108,9 +250,9 @@ fn metadata(db: &Connection, ctx: Context, id: Hash, budget: &mut Budget<'_>) ->
     budget.charge()?;
     // Predicates precede prefix/trace extraction: even corrupt oversized BLOBs
     // never enter the projection or Rust Vec allocation.
-    let row:Option<HeaderProjection>=db.query_row(
-        "SELECT parent,state_root,substr(packet,1,?),substr(packet,-32) FROM blocks WHERE id=? AND length(parent)=32 AND length(state_root)=32 AND length(packet)<=?",
-        params![HEADER_BYTES,id.as_slice(),MAX_PACKET],|r|Ok((r.get(0)?,r.get(1)?,r.get(2)?,r.get(3)?))).optional()?;
+    let row = read_header(db, id)?;
+    #[cfg(test)]
+    budget.observe(ReadKey::Header(id), || header_digest(&row))?;
     let (parent, root, prefix, trace) = row.ok_or("ANCESTRY_INDEX_METADATA")?;
     let parent = bytes32(parent)?;
     let root = bytes32(root)?;
@@ -139,9 +281,9 @@ fn basic(
 ) -> Result<Row> {
     ensure(level < LEVELS, "ANCESTRY_INDEX_LEVEL")?;
     budget.charge()?;
-    let values:Option<JumpProjection>=db.query_row(
-        "SELECT ancestor,ancestor_height,left_seal,right_seal,seal FROM ancestry_jump WHERE block=? AND level=? AND length(ancestor)=32 AND length(left_seal)=32 AND length(right_seal)=32 AND length(seal)=32",
-        params![block.as_slice(),level],|r|Ok((r.get(0)?,r.get(1)?,r.get(2)?,r.get(3)?,r.get(4)?))).optional()?;
+    let values = read_jump(db, block, level)?;
+    #[cfg(test)]
+    budget.observe(ReadKey::Jump(block, level), || jump_digest(&values))?;
     let (ancestor, ancestor_height, left_seal, right_seal, row_seal) =
         values.ok_or("ANCESTRY_INDEX_MISSING")?;
     let row = Row {
@@ -200,6 +342,9 @@ pub(crate) fn insert(db: &Connection, ctx: Context, block: Hash) -> Result<Inser
         used: 0,
         maximum: WRITE_SQL_BUDGET,
         progress: &mut progress,
+        origin: BudgetOrigin::Owner,
+        #[cfg(test)]
+        reads: None,
     };
     let origin = metadata(db, ctx, block, &mut budget)?;
     ensure(block != ctx.genesis, "ANCESTRY_INDEX_GENESIS")?;
@@ -264,6 +409,9 @@ pub(crate) fn verify_inserted(db: &Connection, ctx: Context, inserted: &Inserted
         used: 0,
         maximum: READ_SQL_BUDGET,
         progress: &mut progress,
+        origin: BudgetOrigin::Owner,
+        #[cfg(test)]
+        reads: None,
     };
     exact_row_count(db, inserted.block, inserted.rows.len(), &mut budget)?;
     for expected in &inserted.rows {
@@ -328,6 +476,9 @@ pub(crate) fn contains(
         used: 0,
         maximum: maximum_sql,
         progress,
+        origin: BudgetOrigin::Owner,
+        #[cfg(test)]
+        reads: None,
     };
     let tip_metadata = metadata(db, ctx, tip, &mut budget)?;
     let candidate_metadata = metadata(db, ctx, candidate, &mut budget)?;
@@ -350,6 +501,77 @@ pub(crate) fn next(
     maximum_sql: u64,
     progress: &mut dyn FnMut(u64) -> Result<()>,
 ) -> Result<Lookup> {
+    next_with_mode(
+        db,
+        ctx,
+        tip,
+        after,
+        maximum_sql,
+        progress,
+        ReadMode {
+            origin: BudgetOrigin::Owner,
+            #[cfg(test)]
+            reads: None,
+            _scope: std::marker::PhantomData,
+        },
+    )
+}
+pub(crate) fn next_public_request(
+    db: &Connection,
+    ctx: Context,
+    tip: Hash,
+    after: Hash,
+    maximum_sql: u64,
+    progress: &mut dyn FnMut(u64) -> Result<()>,
+) -> Result<Lookup> {
+    next_with_mode(
+        db,
+        ctx,
+        tip,
+        after,
+        maximum_sql,
+        progress,
+        ReadMode {
+            origin: BudgetOrigin::PublicHistoryRequest,
+            #[cfg(test)]
+            reads: None,
+            _scope: std::marker::PhantomData,
+        },
+    )
+}
+#[cfg(test)]
+pub(crate) fn next_recording(
+    db: &Connection,
+    ctx: Context,
+    tip: Hash,
+    after: Hash,
+    maximum_sql: u64,
+    progress: &mut dyn FnMut(u64) -> Result<()>,
+    reads: &mut ReadSet,
+) -> Result<Lookup> {
+    next_with_mode(
+        db,
+        ctx,
+        tip,
+        after,
+        maximum_sql,
+        progress,
+        ReadMode {
+            origin: BudgetOrigin::PublicHistoryRequest,
+            reads: Some(reads),
+            _scope: std::marker::PhantomData,
+        },
+    )
+}
+fn next_with_mode(
+    db: &Connection,
+    ctx: Context,
+    tip: Hash,
+    after: Hash,
+    maximum_sql: u64,
+    progress: &mut dyn FnMut(u64) -> Result<()>,
+    mode: ReadMode<'_>,
+) -> Result<Lookup> {
     ensure(
         (3..=READ_SQL_BUDGET).contains(&maximum_sql),
         "ANCESTRY_INDEX_BUDGET",
@@ -358,6 +580,9 @@ pub(crate) fn next(
         used: 0,
         maximum: maximum_sql - 2,
         progress,
+        origin: mode.origin,
+        #[cfg(test)]
+        reads: mode.reads,
     };
     let target = metadata(db, ctx, tip, &mut budget)?;
     let cursor = metadata(db, ctx, after, &mut budget)?;
@@ -393,6 +618,9 @@ pub(crate) fn validate_tip(db: &Connection, ctx: Context, tip: Hash) -> Result<(
         used: 0,
         maximum: READ_SQL_BUDGET,
         progress: &mut progress,
+        origin: BudgetOrigin::Owner,
+        #[cfg(test)]
+        reads: None,
     };
     let origin = metadata(db, ctx, tip, &mut budget)?;
     for level in 0..LEVELS {
@@ -522,6 +750,38 @@ mod tests {
         validate_tip(&db, ctx, ids[65]).unwrap();
     }
     #[test]
+    fn public_request_budget_origin_preserves_invalid_limit_corruption_and_callback() {
+        let (db, ctx) = fixture();
+        let ids = chain(&db, ctx, 9);
+        let request =
+            next_public_request(&db, ctx, ids[9], ctx.genesis, 3, &mut |_| Ok(())).unwrap_err();
+        assert_eq!(request.to_string(), "ANCESTRY_INDEX_BUDGET");
+        assert!(!request.requires_owner_stop());
+        let owner = next(&db, ctx, ids[9], ctx.genesis, 3, &mut |_| Ok(())).unwrap_err();
+        assert!(owner.requires_owner_stop());
+        let invalid =
+            next_public_request(&db, ctx, ids[9], ctx.genesis, 2, &mut |_| Ok(())).unwrap_err();
+        assert!(invalid.requires_owner_stop());
+        let callback =
+            next_public_request(&db, ctx, ids[9], ctx.genesis, READ_SQL_BUDGET, &mut |_| {
+                Err("ANCESTRY_INDEX_BUDGET".into())
+            })
+            .unwrap_err();
+        assert!(callback.requires_owner_stop());
+        db.execute(
+            "UPDATE ancestry_jump SET seal=? WHERE block=? AND level=3",
+            params![[0_u8; 32].as_slice(), ids[9].as_slice()],
+        )
+        .unwrap();
+        let corrupt =
+            next_public_request(&db, ctx, ids[9], ctx.genesis, READ_SQL_BUDGET, &mut |_| {
+                Ok(())
+            })
+            .unwrap_err();
+        assert_eq!(corrupt.to_string(), "ANCESTRY_INDEX_SEAL");
+        assert!(corrupt.requires_owner_stop());
+    }
+    #[test]
     fn random_row_corruption_and_visible_resealed_structure_are_refused() {
         for mode in ["seal", "missing", "structure", "parent"] {
             let (db, ctx) = fixture();
@@ -547,6 +807,8 @@ mod tests {
                         used: 0,
                         maximum: READ_SQL_BUDGET,
                         progress: &mut progress,
+                        origin: BudgetOrigin::Owner,
+                        reads: None,
                     };
                     let mut row = basic(&db, ctx, ids[9], 3, &mut b).unwrap();
                     row.left_seal = [0; 32];
