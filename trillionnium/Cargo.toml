@@ -25,6 +25,7 @@ members = [
   "crates/trnm-crypto-primitives",
   "crates/trnm-verification-profiles",
   "crates/trnm-transport",
+  "crates/trnm-pon-node",
 ]
 
 [workspace.package]
@@ -35,7 +36,7 @@ authors = ["Trillionnium Contributors"]
 [workspace.metadata.trnm]
 lane = "chain-protocol"
 development_target = "pon-nakamoto-v1"
-implementation_status = "portable-foundation-only"
+implementation_status = "native-development-profiles-not-publicly-qualified"
 production_consensus_activation = false
 
 [profile.test.package.curve25519-dalek]
@@ -43,3 +44,28 @@ opt-level = 3
 
 [profile.test.package.ed25519-dalek]
 opt-level = 3
+
+[profile.test.package.sha2]
+opt-level = 3
+debug-assertions = true
+overflow-checks = true
+
+# Preserve test checks while compiling repeated full-state traversal efficiently.
+# These overrides do not change development or release build profiles.
+[profile.test.package.trnm-protocol]
+opt-level = 3
+debug-assertions = true
+overflow-checks = true
+
+[profile.test.package.trnm-mvcc-fee]
+opt-level = 1
+debug-assertions = true
+overflow-checks = true
+
+# Keep the full debug/test inventory and all checks, but compile the costly
+# public-work primitive with the same optimizing compiler used for native work.
+# This is a test-build choice, not a resource-policy or security qualification.
+[profile.test.package.trnm-crypto-primitives]
+opt-level = 3
+debug-assertions = true
+overflow-checks = true

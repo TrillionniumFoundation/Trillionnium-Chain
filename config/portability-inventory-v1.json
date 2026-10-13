@@ -66,7 +66,7 @@
       "package": "trnm-protocol",
       "module": "M00",
       "path": "trillionnium/crates/trnm-protocol",
-      "role": "Canonical transaction and fee contracts; fresh portable task schema.",
+      "role": "Canonical transaction/fee contracts and profile-gated bounded ILF2 witness codec; ILM2 full-model decoding and parent loading belong to M06; no admission authority.",
       "consensus_authority": false,
       "production_activation": false
     },
@@ -98,7 +98,7 @@
       "package": "trnm-mvcc-fee",
       "module": "M06",
       "path": "trillionnium/crates/trnm-mvcc-fee",
-      "role": "Deterministic serial/parallel execution, fee deltas and incremental storage.",
+      "role": "Deterministic ordered execution, fee deltas, checked derived commitments, explicit revision12 mandatory-capacity continuity and revision13 full native integer model evidence/source budgets; State publication remains with the Node owner.",
       "consensus_authority": false,
       "production_activation": false
     },
@@ -154,7 +154,7 @@
       "package": "trnm-crypto-primitives",
       "module": "M01",
       "path": "trillionnium/crates/trnm-crypto-primitives",
-      "role": "Extract domain hash, strict Ed25519 and canonical fixed-width decoding.",
+      "role": "Strict identity and exact experimental W1 verification, optimized production kernel plus scalar reference and structural producer comparisons; no work-hardness qualification.",
       "consensus_authority": false,
       "production_activation": false
     },
@@ -162,7 +162,7 @@
       "package": "trnm-verification-profiles",
       "module": "M11",
       "path": "trillionnium/crates/trnm-verification-profiles",
-      "role": "Extract profile/challenge lifecycle; delete stake-quorum backend and weight permission.",
+      "role": "Reusable evaluation/profile contracts and exact bounded integer BA normal form; no stake-quorum backend, model-parent authentication or general functional-equivalence authority.",
       "consensus_authority": false,
       "production_activation": false
     },
@@ -195,6 +195,14 @@
       "module": "M12",
       "path": "trillionnium/crates/trnm-escrow-vault",
       "role": "Pure in-memory escrow conservation reference; no second production ledger or durability claim.",
+      "consensus_authority": false,
+      "production_activation": false
+    },
+    {
+      "package": "trnm-pon-node",
+      "module": "M15",
+      "path": "trillionnium/crates/trnm-pon-node",
+      "role": "Native development composition with a single branch/replay/outbox SQLite owner, explicit maintenance choice, bounded public entrypoints, typed local error identity and checked history projections; not a publicly qualified deployment.",
       "consensus_authority": false,
       "production_activation": false
     }

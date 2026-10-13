@@ -1,0 +1,10 @@
+{
+  "path": "/tmp/pon-contract-authority-20260929/tmp",
+  "before_octal": "0o775",
+  "after_octal": "0o700",
+  "reason": "private test fixture directory inherited group-write umask; unchanged product ancestry guard correctly rejected it",
+  "source_modified": false,
+  "product_guard_relaxed": false,
+  "observed_at_utc": "2026-09-29T09:28:45.532416+00:00",
+  "original_failed_qualification_log_retained": true
+}
