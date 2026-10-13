@@ -597,6 +597,13 @@ def validate_confirmation_report(path: Path) -> dict:
         require(number(phase.get('overlapping_false_calls')) == overlapping, 'CONFIRMATION_NO_OVERLAP')
         before = number(phase.get('completed_false_calls_before_business'))
         during = number(phase.get('completed_false_calls_at_confirmation'))
+        # The pre-business atomic counter is sampled before the business stamp,
+        # and a call's end stamp precedes its counter increment. Its value can
+        # lag the retained end stamps but cannot count a later call. The other
+        # counter is sampled after the confirmation stamp: no equality to that
+        # timestamp is inferred here.
+        require(before <= sum(row['ended_ns'] <= start for row in attack_calls),
+                'CONFIRMATION_COMPLETION_COUNTER')
         require((not index and before == during == overlapping == 0) or
                 (index and overlapping > 0 and 0 < before < during <= len(attack_calls)),
                 'CONFIRMATION_NO_OVERLAP')

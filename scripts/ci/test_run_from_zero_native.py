@@ -787,6 +787,14 @@ class ConfirmationReportTests(unittest.TestCase):
                 started_ns=0, ended_ns=3_000_000_000, elapsed_wall_ns=10,
                 returned_after_deadline=False))
 
+    def test_pre_business_counter_cannot_count_only_later_completed_calls(self):
+        def edit(doc):
+            phase = doc['phases'][1]
+            phase['attacks'][0]['calls'][0].update(ended_ns=15, elapsed_wall_ns=15)
+            phase['overlapping_false_calls'] = 17
+        with self.assertRaisesRegex(ValueError, 'CONFIRMATION_COMPLETION_COUNTER'):
+            self.validate(edit)
+
     def test_submission_and_history_chronology_cannot_follow_confirmation(self):
         def late_submissions(doc):
             for row in doc['phases'][1]['honest_submissions']:
