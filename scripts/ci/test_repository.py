@@ -8,6 +8,8 @@ class EvidenceBoundaryTests(unittest.TestCase):
     def test_current_claims_are_unactivated(self):
         no_promotion(json.loads((ROOT/'config/consensus-mainline.json').read_text()))
         no_promotion(json.loads((ROOT/'config/pon-nakamoto-v1.json').read_text()))
+        no_promotion(json.loads((ROOT/'config/pon/deterministic-finality-v1.json').read_text()))
+        no_promotion(json.loads((ROOT/'config/pon/hepta-adapter-contract-v1.json').read_text()))
     def test_no_runtime_claim(self):
         with self.assertRaises(Invalid):no_promotion({'runtime_implemented':True})
     def test_no_release_from_nested_report(self):
@@ -102,6 +104,14 @@ class RepositoryMutants(unittest.TestCase):
         self.reject_json('config/pon-nakamoto-v1.json',lambda d:d.update(validator_voting=True))
     def test_no_automatic_fallback(self):
         self.reject_json('config/pon-nakamoto-v1.json',lambda d:d.update(automatic_bft_fallback=True))
+    def test_deterministic_finality_cannot_activate(self):
+        self.reject_json('config/pon/deterministic-finality-v1.json',lambda d:d.update(enabled=True))
+    def test_deterministic_finality_cannot_restore_retired_fallback(self):
+        self.reject_json('config/pon/deterministic-finality-v1.json',lambda d:d.update(retired_consensus_fallback=True))
+    def test_hepta_adapter_cannot_activate(self):
+        self.reject_json('config/pon/hepta-adapter-contract-v1.json',lambda d:d.update(enabled=True))
+    def test_hepta_adapter_cannot_own_final_use(self):
+        self.reject_json('config/pon/hepta-adapter-contract-v1.json',lambda d:d.update(final_use_authority='chain'))
     def test_unknown_concrete_work_profile_rejected(self):
         self.reject_json('config/pon-nakamoto-v1.json',lambda d:d['work_profile'].update(concrete_profile_id='unregistered-profile'))
     def test_fake_qualified_primitive(self):
