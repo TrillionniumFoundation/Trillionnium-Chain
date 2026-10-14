@@ -200,11 +200,14 @@ mod tests {
 
     #[test]
     fn fixed_width_chainwork_compares_as_big_endian_number() {
-        let mut low = [0; 64];
-        low[62] = 1;
-        let mut high = [0; 64];
-        high[63] = 1;
-        assert!(ChainWork::from_be_bytes(low) > ChainWork::ZERO);
-        assert!(ChainWork::from_be_bytes(high) > ChainWork::from_be_bytes(low));
+        let mut one = [0; 64];
+        one[63] = 1;
+        let mut two_fifty_six = [0; 64];
+        two_fifty_six[62] = 1;
+        let one = ChainWork::from_be_bytes(one);
+        let two_fifty_six = ChainWork::from_be_bytes(two_fifty_six);
+        assert!(one > ChainWork::ZERO);
+        assert!(two_fifty_six > one);
+        assert_eq!(two_fifty_six.to_be_bytes()[62], 1);
     }
 }
