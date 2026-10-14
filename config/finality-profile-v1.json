@@ -1,0 +1,40 @@
+{
+  "schema": "trnm-versioned-finality-profile-v1",
+  "profile_id": "trnm-committee-finality-v1",
+  "status": "specified-disabled",
+  "activation": false,
+  "legacy_profile_bridge": false,
+  "automatic_fallback": false,
+  "committee": {
+    "minimum_members": 4,
+    "maximum_members": 4,
+    "actual_members": 4,
+    "fault_bound_f": 1,
+    "quorum_members": 3,
+    "membership_source": "explicit-epoch-manifest",
+    "epoch_rotation": "explicit-governance-transition",
+    "equivocation_policy": "reject-and-record",
+    "manifest_count_must_equal_actual_members": true
+  },
+  "certificate": {
+    "domain": "trnm.committee-finality.v1",
+    "binds": ["genesis", "epoch", "height", "parent", "state_root", "availability_root", "profile_id"],
+    "quorum_rule": "exact-n=3f+1; q=2f+1; also 2q-n>f and q<=n-f",
+    "replay_rule": "exact-epoch-height-parent"
+  },
+  "effect_gate": {
+    "chain_confirmation_grants_final_use": false,
+    "candidate_release_requires_certificate": true,
+    "external_effect_requires_hepta_owner_receipt": true,
+    "reorg_compensation_is_new_intent": true
+  },
+  "migration": {
+    "new_namespace_required": true,
+    "fresh_genesis_required": true,
+    "replay_legacy_history": false,
+    "dual_acceptance": false
+  },
+  "required_evidence": ["independent_certificate_verifier", "epoch_rotation_and_replay_tests", "availability_certificate_and_retrieval_tests", "wan_partition_power_loss_deep_reorg_tests", "independent_operator_acceptance"],
+  "executable_successor": "config/release-finality-v2.json",
+  "successor_is_not_v1_activation": true
+}

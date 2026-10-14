@@ -34,8 +34,9 @@ The pool lifetime is one call, not the lifetime of a chain or a local authorizat
 
 Metrics separate worker creation, main-signature verifications, state speculation,
 canonical replays, transition time and root time. `workers_spawned<=workers`; valid input
-has one main-signature verification per envelope, even on conflict. Root computation
-still walks the complete resulting state and is not incremental native persistence.
+has one main-signature verification per envelope, even on conflict. The original single-shot root computation
+walks the complete resulting state. The optional session continuation below updates its
+native commitment incrementally; neither path is incremental native persistence.
 The retained full-state bridge and its memory/byte bounds remain explicit limitations.
 
 ## Actual read/write and range conflicts
@@ -79,12 +80,79 @@ rejection after old-candidate removal; it does not claim three successful ML gen
 Report execution-only duration separately from process startup, work verification,
 block inclusion and confirmation. A local executor speedup is never public-chain TPS.
 
-`serial_conflict_batches=1` now identifies a whole same-sender block handled by the
-serial state path; it no longer counts retired per-worker-size scheduling batches.
+`serial_conflict_batches=1` in production identifies a whole same-sender block.
+The private cfg(test) experiment additionally marks mixed repeated-sender blocks;
+that experiment does not change the production scheduling metric. The metric
+no longer counts retired per-worker-size scheduling batches.
 A sixteen-transaction common-recipient block needs fifteen canonical state replays under
 the whole-block snapshot schedule, rather than fourteen under eight-item batches. Its
 main-signature checks remain sixteen, not thirty-one. This changed scheduling metric is
 not a consensus byte, fee, root, or success/rejection rule change.
+
+### Private mixed-sender speculation experiment; not enabled in production
+
+Production keeps its existing whole-block same-sender/range-command decision and
+original speculative mixed-sender execution. A private cfg(test), per-call
+StateInputs selector, default false and absent from production, records earlier exact32-byte sender
+prefixes only as bounded work hints. It skips the initial-parent speculative
+State application of a later repeated sender. A successful earlier transaction
+necessarily advances that account's nonce; an invalid earlier transaction ends
+canonical execution before the later transaction can publish anything. Thus the
+initial-parent prediction cannot be committed unchanged at that later position.
+Each envelope still receives its complete canonical context/profile/expiry and
+strict main-signature check in the same bounded worker group. Canonical ordered
+State application, exact read validation, funding dependencies, range-command
+handling, fees, receipts, capacity, reward and complete successor root remain.
+
+The hint is not a decoded envelope, nonce verdict, authority cache or new task
+scheduler. Truncated/malformed prefixes cannot bypass preparation; earlier errors
+retain their canonical position. Independent first occurrences still use the
+original speculative path. Whole same-sender blocks keep the prior serial-State
+shortcut without allocating a new hint vector. The mixed path retains at most
+the already allowed transaction count of32-byte borrowed prefixes and flags,
+with no per-worker full State clone.
+
+The private experiment selector is absent from production; no process environment,
+global flag, authority cache or new public executor API selects it.
+`repeated_sender_tests` compares the production algorithm and experiment across complete signed256-transaction executions with
+1/2/4/64/256 senders and1/2/4/8 workers, including every signature, complete State,
+receipts/root and untouched parent. Earlier fee/nonce/encoding failures still
+precede later invalid signatures. Cancellation and partial worker-spawn controls
+verify that every actually started worker is joined on the same accounting path.
+
+`nonce_speculation_cost::complete_native_repeated_sender_operation_cost` is an
+explicitly ignored actual Node observer. It uses separate exact pre/post binaries,
+not a production legacy selector. Each process initializes32 new owners for each
+of two cases:256 signed transfers interleaved between two senders, and256 from
+one sender as the already serial control. The clock includes complete make,
+packet encoding, native proof/ledger admission, activation and Packet release.
+Initialization/signing/input copy, complete packet/State/root comparisons and
+cold reopen are outside that clock and reported separately. Every sample is an
+actual admitted/activated block with complete deterministic bytes and State.
+Compiled source/executable bindings, all regressions, actual logical file sizes
+and competing-load context must be retained. A complete Node cost comparison is
+still not signed public/WAN goodput or a finality/consensus change.
+
+    TRNM_NONCE_SPECULATION_COST_DIRECTORY=NEW_DIRECTORY TRNM_NONCE_CONCURRENT_CONTEXT=RECORDED_CONTEXT SAVED_EXACT_BINARY --exact complete_native_repeated_sender_operation_cost --ignored --nocapture --test-threads=1
+
+The retained complete source comparison does not establish a production benefit.
+A same-host ABBA window used64 actual samples per arm/case, with exact full signed
+inputs, complete packet/State/root and cold-reopen equality. Its two archived
+source cuts differ only in the M06 executor and share the same ancestry SQL helpers.
+Mixed two-sender median changed16.067→16.181ms (+0.71%), p9521.454→19.479ms
+(−9.21%), and maximum24.792→77.109ms;35 paired samples were faster and29 slower.
+The already-serial same-sender control, whose timed algorithm is unchanged, changed
+17.177→15.636ms (−8.97%) and p9525.802→19.424ms. This control variation cannot be
+attributed to skipping mixed-sender work. CPU and RSS were not measured; all
+namespaces retained329,416 logical bytes. No TPS or WAN result follows.
+
+The mixed-sender production switch was therefore withdrawn. The private research
+algorithm and signed state/receipt/error/cancellation differentials remain, and
+the generic native Node cost observer can compare exact saved source binaries.
+Running that observer on the final source does not reenable the experiment.
+The bounded parent-PIPE capture preserved all256 new samples and terminal records
+with byte-exact child JSONL/source/hash checks; an earlier missing baseline tail
+remains an incomplete observation and is not filled or pooled into these numbers.
 
 The native bridge checks Network and full Parameters on every request and returns both identities. The caller rejects mismatches even when the transaction list is empty; stale binaries cannot silently supply old empty-block rules.
 
@@ -115,3 +183,50 @@ hashes, request hashes, roots, receipt digests, process-inclusive and executor-o
 RSS and missing VRAM/inclusion/confirmation fields. Regressions remain in the report; no
 speedup threshold can mask a wrong result. Old `evidence/pon-v3` costs remain bound to their
 measured source and are not relabelled as this continuation's performance.
+
+## Private native session and incremental commitment continuation
+
+The existing M06 `ExecutionSession` reuses the same twelve-command implementation;
+`pon_execute_session` is its private BE32-framed stdin/stdout adapter, not another node,
+consensus engine, listener or database writer. `TRNM_NATIVE_SESSION` selects it through
+`Ledger.execute_application`. Selecting it together with `TRNM_NATIVE_EXECUTOR` rejects
+`NATIVE_BACKEND_CONFLICT`; changing the selected executable discards the previous cache.
+An unavailable selected binary cannot fall back to reference execution.
+
+Opening binds the complete installed Network/Parameters, initial map and independently
+computed root. Each execute request binds predecessor root, monotonic sequence, exact
+transactions, height, miner, parent and worker count. The native side publishes its
+in-memory next map/tree/sequence only after the whole existing transition succeeds.
+The host validates closed reply fields, strict integer counters, ordered distinct deltas,
+canonical before-value bytes and the independently recomputed result root. Mandatory
+expiry receipts precede transaction receipts: their exact bounded count, identities and
+order are derived from due funded predecessor objects. Empty blocks may have expiry
+receipts. A reply cannot omit, reorder or substitute that prefix.
+Python Boolean/integer equality cannot authenticate predecessor or delta identity.
+
+`trnm-protocol::pon_state::StateTree` shares immutable compressed nodes. Empty padding
+is hashed without allocating 256 nodes per key; an N-key tree has at most 2N-1 nodes.
+Changed-key batches check every before value and expected root, then stage a complete
+new tree. Insert, overwrite, delete, empty values, inverse deltas and frozen snapshots
+match the existing independent full builder. This is an in-memory authenticated cache,
+NOT a disk format or completed M07 native persistence. State-map copies, delta discovery
+scans, canonical input comparison and the receiver's full root recomputation remain costs.
+
+The private frame limit remains 16 MiB in each direction, cumulative stderr 64 KiB,
+request deadline 30 seconds and owned-child reap deadline 5 seconds. These are adapter
+bounds, not proof that every protocol-permitted state fits this experimental bridge.
+Timeout, partial/lost/malformed reply, invalid result or changed parent discards the
+cache; SQLite state is never inferred from a cached sequence. Exact repeated pure work
+may reuse its prior output, but reports `request_cache_hit=true` and zero transmitted
+bytes and zero new native execution/signature counters. It is not another execution, signed action, included block or benchmark sample.
+
+`experiments/session_cost.py` compares same-source full-state and delta-session paths
+on actually advancing signed transactions, with separately recorded bootstrap and full
+Python result-root checks. `experiments/session_pipeline.py` additionally mines/verifies
+real work, commits actual source and receiver stores, and queries bounded client
+confirmation after genuine fill blocks. Its logical unpaced clock, one controller and
+local transport remain explicit. Neither campaign supplies public-network TPS.
+
+A maximum-budget benchmark regression uses actual signed transfers and registered fees
+to fund the hot sender for every declared sample plus warmup. This fixes a generator
+funding defect without changing genesis, balances by fiat, fee rules or accepted output.
