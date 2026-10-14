@@ -5,6 +5,7 @@ case "${1:?required job}" in
   repository-truth)
     bash scripts/project-preflight.sh --audit
     python3 scripts/ci/check_repository.py
+    python3 scripts/ci/test_activation_boundary.py
     python3 scripts/ci/test_repository.py
     python3 scripts/ci/test_invariants_registry.py
     ;;
