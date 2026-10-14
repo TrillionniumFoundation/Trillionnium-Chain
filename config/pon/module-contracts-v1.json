@@ -109,13 +109,16 @@
       ],
       "source_refs": [
         "formal/pon-nakamoto-v1/ledger.py",
-        "formal/pon-nakamoto-v1/reference.py"
+        "formal/pon-nakamoto-v1/reference.py",
+        "trillionnium/crates/trnm-fork-choice/src/lib.rs"
       ],
       "test_classes": [
         "DiskReorgTests",
         "WorkExamples"
       ],
-      "native_packages": [],
+      "native_packages": [
+        "trnm-fork-choice"
+      ],
       "implementation_scope": "executable-spec-and-reusable-components",
       "native_product_integrated": false,
       "independent_accepted": false
