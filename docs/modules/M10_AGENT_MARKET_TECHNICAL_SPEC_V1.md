@@ -119,6 +119,35 @@ contract remains; it does not assert Linux descendant adoption/reaping. Delibera
 credential/group escapes and process/host failure are outside this ordinary
 same-group cleanup guarantee. This is not sandboxing or public service qualification.
 
+## Development worker commit/reveal salt ownership (isolated M10 candidate)
+
+The local `trnm-worker-agent` development CLI previously derived its commitment salt
+from the public task ID. A low-entropy result could therefore have its committed
+preimage guessed before reveal. The proposed owner-only repair selects a new 256-bit
+OS CSPRNG salt for every automatic task, with no clock/PID/task-ID fallback. It
+changes neither the ledger commit/reveal hash formula nor any settled historical
+submission, network profile, signed consensus domain or Hepta execution permission.
+
+For an automatic `--submit`, the worker first acquires a same-process and
+cross-process lock over a single owner-only submission journal; the exact private
+record is synced before the transaction adapter may consume it. Reopening the
+same task/result/worker returns the original salt, not a fresh commitment.
+Conflicting identity, corrupt/truncated rows, symlinks, hard links, non-owner
+or group/world-readable files, and missing entropy fail closed; they never
+create a second task commitment. A crash during the append may leave an
+incomplete row that requires explicit owner reconciliation rather than a
+silent truncation or new salt. The journal and CLI output remain local secrets
+until reveal. Operators must not publish the pre-reveal output or journal.
+
+The explicit manual `commit-reveal` command accepts caller-provided material;
+its secrecy and local log custody remain the caller's responsibility. Previously
+submitted deterministic salts remain historical: migration cannot retroactively
+restore a commitment's hiding property. On non-Unix hosts automatic submission
+refuses instead of silently reverting to a deterministic salt. No standalone
+reference test proves a deployed adversarial client, an independent mining
+participant, or model utility. The unchanged original mainline and paired Hepta
+branch are not promoted by this separate M10 candidate.
+
 ## Module-specific threat and residual work
 
 Lifetime counters, generation-stale scores, duplicate rewards and unbounded same-parent spam.
