@@ -65,6 +65,24 @@ A signed object is `{signer, body, signature}`. Quorum signatures are sorted by
 signer and unique. An untrusted sender cannot supply its own trusted roster.
 The stand-alone reader requires separately supplied committee and context pins.
 
+### Strict signed-byte binding
+
+Every nested vote body receives its own exact field/type validation. Context,
+phase, view and value bind through canonical byte equality, never Python numeric
+or dictionary equality: true/false and floating aliases cannot replace integers.
+The separate reader verifies each signature over that vote's actual body bytes,
+not reconstructed enclosing-certificate bytes. The protocol reader follows the
+same contract through its own implementation. New-view reports, bundled/stored
+contexts, retained outbox retries and epoch acknowledgements preserve exact byte
+identity as well. Valid V2 bytes, domain, signatures and quorum rules are unchanged;
+this enforces the existing grammar rather than introducing a protocol successor.
+
+`test_strict_bindings.py` adds signed and unsigned numeric-alias controls, all four
+vote phases, each signer position, context/manifest types, changed fields, duplicate
+signers, new-view reports and retained outbox retries. The original protocol and
+campaign suites remain unchanged. A passing local differential suite supplies no
+independent-operator, native, model-quality, physical-storage or activation claim.
+
 ### Manifest
 
 `{schema, genesis, epoch, members, fault_bound, quorum}` with schema

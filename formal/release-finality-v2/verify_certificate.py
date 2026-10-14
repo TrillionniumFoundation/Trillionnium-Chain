@@ -66,9 +66,12 @@ def verify(bundle_bytes, committee_bytes, context_bytes):
     shape(c, "profile genesis epoch committee height parent parent_model")
     fail(c["profile"] == "trnm-release-finality-v2" and c["genesis"] == m["genesis"] and
          c["epoch"] == m["epoch"] and c["committee"] == sha(m), "context")
-    number(c["height"], 1); hex32(c["parent"]); hex32(c["parent_model"])
+    number(c["epoch"]); number(c["height"], 1)
+    hex32(c["parent"]); hex32(c["parent_model"])
     shape(b, "context statement availability commit")
-    fail(b["context"] == c, "trusted-context")
+    # The caller's typed pin and the bundled context must have identical bytes,
+    # not merely Python-equal numbers in otherwise matching dictionaries.
+    fail(encode(b["context"]) == encode(c), "trusted-context")
     s = b["statement"]
     shape(s, "context model evaluation availability retention_height state_root next_committee")
     fail(s["context"] == sha(c), "statement-context")
@@ -91,10 +94,14 @@ def verify(bundle_bytes, committee_bytes, context_bytes):
         seen = []
         for vote in votes:
             shape(vote, "body signer signature")
-            fail(vote["body"] == body and vote["signer"] in ids, "vote-binding")
+            actual = vote["body"]
+            shape(actual, "context view phase value")
+            number(actual["view"], 0 if phase == "availability" else 1)
+            hex32(actual["context"]); hex32(actual["value"])
+            fail(encode(actual) == encode(body) and vote["signer"] in ids, "vote-binding")
             sig = vote["signature"]
             fail(type(sig) is str and len(sig) == 128 and all(x in "0123456789abcdef" for x in sig), "signature-format")
-            verify_ed25519(bytes.fromhex(vote["signer"]), bytes.fromhex(sig), PREFIX + encode(body))
+            verify_ed25519(bytes.fromhex(vote["signer"]), bytes.fromhex(sig), PREFIX + encode(actual))
             seen.append(vote["signer"])
         fail(seen == sorted(set(seen)), "duplicate-or-unsorted-votes")
     return dict(value=value, finality_certificate_valid=True, model_quality_accepted=False,

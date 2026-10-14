@@ -79,6 +79,7 @@ def signature(key, body):
 
 def verify_signature(signed, members):
     fields(signed, "signer body signature")
+    digest(signed["signer"])
     require(signed["signer"] in members, "NONMEMBER")
     value = signed["signature"]
     require(type(value) is str and len(value) == 128 and
@@ -120,7 +121,10 @@ def context(members, height, parent, parent_model):
 
 def check_context(ctx, members):
     fields(ctx, "profile genesis epoch committee height parent parent_model")
-    require(ctx == context(members, ctx["height"], ctx["parent"], ctx["parent_model"]), "CONTEXT")
+    integer(ctx["epoch"])
+    digest(ctx["genesis"]); digest(ctx["committee"])
+    expected = context(members, ctx["height"], ctx["parent"], ctx["parent_model"])
+    require(canonical(ctx) == canonical(expected), "CONTEXT")
 
 def check_statement(value, ctx):
     fields(value, "context model evaluation availability retention_height state_root next_committee")
@@ -144,7 +148,16 @@ def certificate(ctx, view, phase, value, votes, members):
     require(type(votes) is list and members["quorum"] <= len(votes) <= len(members["members"]), "VOTE_COUNT")
     ids = []
     for signed in votes:
-        require(verify_signature(signed, members["members"]) == body, "VOTE_BINDING")
+        fields(signed, "signer body signature")
+        actual = signed["body"]
+        fields(actual, "context view phase value")
+        integer(actual["view"])
+        digest(actual["context"]); digest(actual["value"])
+        # Numeric Python equality is not signed-byte identity (True == 1 == 1.0).
+        # Validate EACH nested body, bind its exact encoding, then verify its
+        # own signature. No reconstructed outer body substitutes for the vote.
+        require(canonical(actual) == canonical(body), "VOTE_BINDING")
+        verify_signature(signed, members["members"])
         ids.append(signed["signer"])
     require(ids == sorted(set(ids)), "VOTE_ORDER_OR_DUPLICATE")
     return dict(body=body, votes=copy.deepcopy(votes))
@@ -154,7 +167,7 @@ def check_qc(qc, ctx, members, phase=None):
     body = qc["body"]
     fields(body, "context view phase value")
     expected = certificate(ctx, body["view"], body["phase"], body["value"], qc["votes"], members)
-    require(qc == expected, "QC_BINDING")
+    require(canonical(qc) == canonical(expected), "QC_BINDING")
     if phase is not None:
         require(body["phase"] == phase, "QC_PHASE")
     return body
@@ -166,6 +179,7 @@ def high_qc(reports, ctx, members, view):
     for report in reports:
         body = verify_signature(report, members["members"])
         fields(body, "context view phase high")
+        integer(body["view"], 1)
         require(body["context"] == identity(ctx) and body["view"] == view and body["phase"] == "new_view", "NEW_VIEW_BINDING")
         ids.append(report["signer"])
         if body["high"] is not None:
@@ -223,7 +237,9 @@ class Replica:
             if stored is None:
                 self.db.execute("INSERT INTO state VALUES (1,?)", (canonical(self.initial()),))
             else:
-                require(decode(stored[0])["context"] == ctx, "STORE_CONTEXT")
+                stored_context = decode(stored[0])["context"]
+                check_context(stored_context, members)
+                require(canonical(stored_context) == canonical(ctx), "STORE_CONTEXT")
             self.fault = None
         except BaseException:
             if hasattr(self, "db"):
@@ -252,7 +268,7 @@ class Replica:
                 existing = self.db.execute("SELECT value FROM outbox WHERE slot=?", (slot,)).fetchone()
                 if existing:
                     signed = decode(existing[0])
-                    require(signed["body"] == body, "DOUBLE_SIGN")
+                    require(canonical(signed["body"]) == canonical(body), "DOUBLE_SIGN")
                 else:
                     signed = signature(self.key, body)
                     self.db.execute("INSERT INTO outbox VALUES (?,?)", (slot, canonical(signed)))
@@ -357,7 +373,7 @@ class Replica:
         body = handoff_body(bundle, old_ctx, old_members, self.members)
         expected = context(self.members, old_ctx["height"]+1,
                            identity(bundle["statement"]), bundle["statement"]["model"])
-        require(self.ctx == expected and self.state()["view"] == 0, "EPOCH_ENTRY")
+        require(canonical(self.ctx) == canonical(expected) and self.state()["view"] == 0, "EPOCH_ENTRY")
         require(type(artifact) is bytes and len(artifact) <= MAX_WIRE and
                 hashlib.sha256(artifact).hexdigest() == bundle["statement"]["model"], "HANDOFF_ARTIFACT")
         require(bundle["statement"]["retention_height"] >= self.ctx["height"], "HANDOFF_RETENTION")
@@ -366,7 +382,7 @@ class Replica:
 
     def activate_epoch(self, bundle, old_ctx, old_members, acks):
         expected = verify_handoff(bundle, old_ctx, old_members, self.members, acks)
-        require(expected == self.ctx and self.state()["view"] == 0, "EPOCH_ENTRY")
+        require(canonical(expected) == canonical(self.ctx) and self.state()["view"] == 0, "EPOCH_ENTRY")
         state = self.state(); state["epoch_ready"] = True
         self._write(state)
 
@@ -388,7 +404,8 @@ class Replica:
 def verify_decision(bundle, trusted_ctx, trusted_members):
     fields(bundle, "context statement availability commit")
     check_context(trusted_ctx, trusted_members)
-    require(bundle["context"] == trusted_ctx, "TRUSTED_CONTEXT")
+    check_context(bundle["context"], trusted_members)
+    require(canonical(bundle["context"]) == canonical(trusted_ctx), "TRUSTED_CONTEXT")
     value = check_statement(bundle["statement"], trusted_ctx)
     require(check_qc(bundle["availability"], trusted_ctx, trusted_members, "availability")["value"] == value, "AVAILABILITY_BINDING")
     require(check_qc(bundle["commit"], trusted_ctx, trusted_members, "commit")["value"] == value, "COMMIT_BINDING")
@@ -410,7 +427,8 @@ def verify_handoff(bundle, old_ctx, old_members, new_members, acks):
     require(type(acks) is list and new_members["quorum"] <= len(acks) <= len(new_members["members"]), "HANDOFF_QUORUM")
     ids = []
     for ack in acks:
-        require(verify_signature(ack, new_members["members"]) == body, "HANDOFF_BINDING")
+        actual = verify_signature(ack, new_members["members"])
+        require(canonical(actual) == canonical(body), "HANDOFF_BINDING")
         ids.append(ack["signer"])
     require(ids == sorted(set(ids)), "HANDOFF_DUPLICATE")
     return context(new_members, old_ctx["height"]+1, identity(bundle["statement"]), bundle["statement"]["model"])

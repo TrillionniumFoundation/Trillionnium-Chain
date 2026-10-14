@@ -341,6 +341,35 @@ It cannot mint a local final-use token, share private memories by default, becom
 second trainer/store or override revocation. The four existing NDU subject levels are
 unchanged; a mandatory fifth global optimizer is not introduced.
 
+### 2.5 Four-layer boundary convergence
+
+This is an implementation boundary within the existing plan, not a fifth optimizer,
+a replacement learning journal, a protocol activation or a new module registry.
+The current PoN and disabled release-finality candidate keep distinct contexts.
+
+| Layer | Existing owners and accepted input | Output and forbidden authority transfer |
+| --- | --- | --- |
+| Compute and contribution | Hepta learning.operator / learning.plasticity; Chain M01/M02 checked work and M10 contribution lifecycle | Exact work statements and proposed parameter bytes. Correct execution is not efficacy, ownership, permission or additional evaluator-weighted chainwork. |
+| Artifacts and evaluation | Hepta learning.artifacts / learning.eval; Chain M09 availability and M11 bounded evidence | Pinned artifacts, compatible lineage and scoped evaluation. A hash is not custody; a signature is not independent control or future utility. Bulk model bytes stay outside the hot ordering path unless the explicit proof relation requires them. |
+| Public coordination and release | Chain M02/M05-M08/M10-M12, with separately selected release-finality reference | Inclusion/confirmation, release commitments and settlement. No receipt changes Hepta CURRENT, mints FinalUse, silently adopts a committee, or reinterprets PoN history as deterministic finality. |
+| Local use and effects | Existing Hepta artifact CURRENT, independent selection, kernel.operations and outer FinalUse owner | A locally admitted generation and scoped effect. Local resources, compatibility, withdrawal or authority may refuse a globally recorded candidate. Irreversible effects are reconciled, not erased by chain reorganization. |
+
+First close strict signed-byte agreement in the existing certificate readers and
+bind the actual two-repository source/merge matrix. Then use the unchanged W1 cost
+collectors at equal targets, charging structured preparation, maintenance, lost
+attempts and false-ticket rejection separately. This work creates no public-service
+or cheapest-adversary qualification. Controlled/offline learning may proceed while
+PoN security remains open, but every generation uses its actually installed parent,
+untouched evaluation materials, genuine control separation and lawful no-update.
+
+State and artifact expansion retain complete checks, the single durable writer,
+branch-local rollback and irreversible local facts. Measure state/history growth,
+full disk/WAL allocation, cold recovery and missing artifacts before selecting a
+storage successor. Compare serial, concurrent and DAG candidates only on the same
+business workload and explicit security assumptions, including confirmed goodput,
+tail latency, failures and recovery. A propagation microbenchmark cannot select a
+new consensus or authorize a model. The existing six-track acceptance order remains.
+
 ## 3. Eighteen long-lived modules, reused ownership
 
 There remain 18 long-lived modules. Current crate ownership is preserved; changed

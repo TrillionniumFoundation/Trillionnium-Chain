@@ -10,7 +10,7 @@ import sys
 import time
 import unittest
 import cryptography
-from protocol import canonical, verify_decision
+from protocol import canonical, verify_decision, key_id, signature
 from verify_certificate import verify
 from test_protocol import Fixture
 
@@ -20,7 +20,7 @@ start=time.monotonic()
 suite=unittest.defaultTestLoader.discover(str(Path(__file__).parent),pattern="test_*.py")
 with (out/"tests.log").open("w") as log:
     result=unittest.TextTestRunner(stream=log,verbosity=2).run(suite)
-passed=result.wasSuccessful() and result.testsRun>=54 and not result.skipped
+passed=result.wasSuccessful() and result.testsRun>=68 and not result.skipped
 vectors=[]
 if passed:
     for n in (4,5):
@@ -40,6 +40,28 @@ if passed:
                 try:reader()
                 except ValueError:pass
                 else:raise AssertionError("negative vector accepted")
+            # Export both sides of the original signed-byte counterexample.
+            # These are PUBLIC test keys; neither reader may accept any alias.
+            keys = {key_id(key): key for key in fixture.keys}
+            for phase, aliases in (("commit", (("bool", True), ("float", 1.0))),
+                                   ("availability", (("bool", False), ("float", 0.0)))):
+                for label, alias in aliases:
+                    for resigned in (False, True):
+                        bad = copy.deepcopy(bundle)
+                        vote = bad[phase]["votes"][0]
+                        vote["body"]["view"] = alias
+                        if resigned:
+                            bad[phase]["votes"][0] = signature(keys[vote["signer"]], vote["body"])
+                        stem = f"bad-{phase}-{label}-{'resigned' if resigned else 'mutated'}"
+                        (dirname/f"{stem}.json").write_bytes(canonical(bad))
+                        for reader in (lambda: verify_decision(bad, fixture.ctx, fixture.m),
+                                       lambda: verify(canonical(bad), canonical(fixture.m), canonical(fixture.ctx))):
+                            try:
+                                reader()
+                            except ValueError:
+                                pass
+                            else:
+                                raise AssertionError("signed-byte alias accepted")
         finally:fixture.close()
 root=Path(__file__).resolve().parents[2]
 files=sorted(Path(__file__).parent.glob("*.py"))+[root/"formal/pon-nakamoto-v1/strict_signature.py"]
