@@ -158,6 +158,7 @@ case "${1:?required job}" in
     python3 scripts/ci/prepare_evidence_sources.py
     python3 scripts/ci/test_evidence_sources.py
     python3 scripts/ci/check_repository.py
+    python3 scripts/ci/test_activation_boundary.py
     python3 scripts/ci/test_repository.py EvidenceBoundaryTests
     python3 scripts/ci/check_pon_evidence.py
     python3 scripts/ci/test_pon_evidence.py

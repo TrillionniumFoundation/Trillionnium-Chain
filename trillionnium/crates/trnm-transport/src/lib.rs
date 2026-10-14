@@ -7,7 +7,8 @@
 
 use std::{error::Error, fmt};
 
-pub const MAX_CANDIDATE_PEER_FRAME_BYTES_V0: usize = 4 * 1024 * 1024;
+// Genesis/network-client bound: frame admission and wire decoding share 2 MiB.
+pub const MAX_CANDIDATE_PEER_FRAME_BYTES_V0: usize = 2 * 1024 * 1024;
 
 #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
 pub struct IoDigest32V0([u8; 32]);
