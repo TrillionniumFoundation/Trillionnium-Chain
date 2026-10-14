@@ -4,6 +4,55 @@ This development change preserves PNH1/PNW1, transaction bytes, all profile rule
 and the existing native SQLite schema. It changes bounded SQL reads, statement
 preparation and cancellation. No stored validity or clock verdict is introduced.
 
+## Exact parallel sparse-root computation at large State sizes (candidate)
+
+Only the calculation of the existing `state_root_from_hashes` is changed. All
+supplied keys and values are individually hashed first, every original bound and
+key-path collision is checked, and all hashed leaves are sorted. For at least
+8,192 leaves on a host reporting at least four available CPU workers, the
+exact original 256-level sparse tree is split at the first two bits into the
+four contiguous canonical quadrants 00, 01, 10 and 11. Three independent
+scoped workers plus the caller compute the unchanged original subtree
+relation at depth two; the caller combines those four digests using exactly
+the original two levels of `H("state-node", left, right)`. Small States,
+limited-CPU hosts and failed thread spawns follow the original serial relation.
+There is no stored, trusted or cached result and no new source of randomness.
+
+The independent original unoptimized sparse-root oracle is retained in
+`trnm-protocol/src/pon_wire.rs` tests. Actual parity runs cover empty,
+singleton, first parallel cutover (8,191/8,192/8,193), 16,384 and the exact
+65,536-key limit, both original and changed values, with reverse iterator
+ordering for the smaller cases. All original wire and malformed-input tests
+remain. Hashes, branch ordering, namespace, genesis, confirmed State, Work
+and signature authorities are unmodified. Failure of worker construction is
+**not** a new consensus rejection: the affected subtree is computed locally.
+A worker panic remains fatal; it is not converted into an admitted digest.
+
+A same-host, sequential, five-block **Debug-mode** paired observation used
+the identical 65,536-key continuity/reorganization test and identical
+instrumentation on the baseline parent and this implementation. Both runs
+were intentionally ended after the first five complete blocks for bounded
+cost attribution; **neither is an entire test-pass receipt**. Timings are
+wall-clock and do not isolate CPU scheduling or benchmark a WAN:
+
+| Phase | Serial median, ms | Four-quadrant median, ms | Elapsed reduction |
+| --- | ---: | ---: | ---: |
+| Make | 2,106 | 2,095 | 0.5% |
+| Full admit | 50,966 | 40,298 | 20.9% |
+| Durable activate | 16,279 | 5,924 | 63.6% |
+| Complete local block | 69,333 | 48,353 | 30.3% |
+| Preallocated genesis root-inclusive construction | 15,176 | 4,642 | 69.4% |
+
+The 65,536-key admission remains dominated by complete State reconstruction,
+root checking and durable readback. This four-quadrant CPU work can use more
+cores, but it cannot reduce State size or turn 48-second Debug business cycles
+into a public throughput qualification. Do not infer release-profile capacity,
+energy efficiency, sustained block throughput, latency tails or a valid
+Hepta CURRENT/FinalUse transition from these observations. Run the unchanged
+full native capacity/reorganization and whole workspace baselines before
+accepting a new implementation, and repeat Chain/Hepta paired-source CI if
+any proposed root implementation is consumed outside this isolated candidate.
+
 ## Joined header projection
 
 Full-history clock and batch-confirmation scans use a prepared recursive SELECT

@@ -368,7 +368,50 @@ fn state_root_from_hashes(mut leaves: Vec<(Hash, Hash)>) -> Result<Hash, WireErr
             &root(&xs[split..], depth + 1, empty),
         )
     }
-    Ok(root(&leaves, 0, empty))
+    // Four fixed independent prefixes preserve the exact sparse-tree hashing
+    // order. Only *after* checking every input bound, path and collision, use
+    // scoped CPU workers for sufficiently large trees. For small trees, a
+    // single CPU, or a worker-spawn failure, keep the old exact local path.
+    const PARALLEL_MIN_LEAVES: usize = 8_192;
+    if leaves.len() < PARALLEL_MIN_LEAVES
+        || std::thread::available_parallelism().map_or(true, |cores| cores.get() < 4)
+    {
+        return Ok(root(&leaves, 0, empty));
+    }
+    let left_end = leaves.partition_point(|x| x.0[0] & 0x80 == 0);
+    let first_end = leaves[..left_end].partition_point(|x| x.0[0] & 0x40 == 0);
+    let third_end = left_end + leaves[left_end..].partition_point(|x| x.0[0] & 0x40 == 0);
+    let branches = [
+        &leaves[..first_end],
+        &leaves[first_end..left_end],
+        &leaves[left_end..third_end],
+        &leaves[third_end..],
+    ];
+    let roots = std::thread::scope(|scope| {
+        // OS resource exhaustion is not a new consensus failure. A failed
+        // spawn falls back to the same serial subtree relation.
+        let workers = branches[..3]
+            .iter()
+            .map(|branch| {
+                std::thread::Builder::new()
+                    .spawn_scoped(scope, move || root(branch, 2, empty))
+                    .ok()
+            })
+            .collect::<Vec<_>>();
+        let mut result = [[0; 32]; 4];
+        result[3] = root(branches[3], 2, empty);
+        for (index, worker) in workers.into_iter().enumerate() {
+            result[index] = match worker {
+                Some(handle) => handle.join().expect("state root subtree panic"),
+                None => root(branches[index], 2, empty),
+            };
+        }
+        result
+    });
+    Ok(state_node_hash(
+        &state_node_hash(&roots[0], &roots[1]),
+        &state_node_hash(&roots[2], &roots[3]),
+    ))
 }
 #[cfg(test)]
 mod tests {
@@ -547,6 +590,27 @@ mod streamed_state_root_tests {
             state_root(&empty).unwrap(),
             original_state_root(&empty).unwrap()
         );
+    }
+
+    #[test]
+    fn four_quadrant_root_matches_original_exact_65k_and_selection_boundaries() {
+        // A completely independent old sparse tree implementation above
+        // verifies the same state-root bytes without worker threads.
+        for count in [4_095, 4_096, 8_191, 8_192, 8_193, 16_384, 65_536] {
+            let values = fixture(count);
+            let expected = original_state_root(&values).unwrap();
+            assert_eq!(state_root(&values).unwrap(), expected, "count={count}");
+            if count <= 16_384 {
+                let reverse = values.iter().rev().map(Ok::<_, ()>);
+                assert_eq!(state_root_from_entries(reverse).unwrap(), expected);
+            }
+            let mut changed = values.clone();
+            let key = format!("key-{:05}", count - 1).into_bytes();
+            changed.insert(key, b"changed-byte".to_vec());
+            let expected_changed = original_state_root(&changed).unwrap();
+            assert_eq!(state_root(&changed).unwrap(), expected_changed);
+            assert_ne!(expected_changed, expected);
+        }
     }
 
     #[test]
