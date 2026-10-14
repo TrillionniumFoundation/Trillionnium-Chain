@@ -10,6 +10,9 @@
 /trillionnium/fuzz/artifacts/
 /trillionnium/fuzz/coverage/
 /trillionnium/fuzz/target/
+/tests/fuzz/artifacts/
+/tests/fuzz/coverage/
+/tests/fuzz/target/
 /trillionnium/run/
 /trillionnium/release/
 /formal/quint/poco-bft-v0/node_modules/
