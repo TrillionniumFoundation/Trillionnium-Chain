@@ -8,6 +8,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "config/finality-profile-v1.json",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../config/finality-profile-v1.json"
+        )),
+    ),
+    (
         "config/pon-nakamoto-v1.json",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -187,6 +194,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../config/portability-inventory-v1.json"
+        )),
+    ),
+    (
+        "config/release-finality-v2.json",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../config/release-finality-v2.json"
         )),
     ),
     (
@@ -5020,6 +5034,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-worker-agent/src/commit_salt.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-worker-agent/src/commit_salt.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-worker-agent/src/dispatch.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -5990,6 +6011,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-worker-agent/src/tests_audit_query_task.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-worker-agent/src/tests_commit_salt_security.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-worker-agent/src/tests_commit_salt_security.rs"
         )),
     ),
     (
