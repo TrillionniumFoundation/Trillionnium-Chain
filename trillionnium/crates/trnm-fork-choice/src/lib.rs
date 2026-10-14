@@ -29,6 +29,22 @@ impl ChainWork {
     }
 }
 
+/// Private evidence carried by a tip that has passed both M01 validation and M09
+/// availability checks.  These marker fields have no public constructors: a future
+/// integration adapter must be added alongside the owning admission/availability
+/// paths rather than accepting caller-provided booleans.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub(crate) struct FullyValidated;
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub(crate) struct Available;
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub(crate) struct TipEvidence {
+    _fully_validated: FullyValidated,
+    _available: Available,
+}
+
 /// Validation facts required before a tip can participate in fork choice.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct BranchTip {
@@ -36,30 +52,29 @@ pub struct BranchTip {
     parent: Hash32,
     height: u64,
     chainwork: ChainWork,
-    fully_validated: bool,
-    available: bool,
+    evidence: Option<TipEvidence>,
 }
 
 impl BranchTip {
-    /// Construct a tip summary from persisted branch facts.
+    /// Construct a tip summary from an internal evidence adapter.
     ///
-    /// This constructor does not validate any bytes or perform I/O; the two boolean
-    /// premises must come from the owning admission/availability components.
-    pub const fn new(
+    /// This is intentionally crate-private.  M01 must establish work/signature and
+    /// header validity, while M09 must establish artifact availability before a
+    /// future integration path can pass `TipEvidence` here.  No public constructor
+    /// can manufacture an eligible branch from booleans or unsigned data.
+    pub(crate) const fn from_persisted(
         id: Hash32,
         parent: Hash32,
         height: u64,
         chainwork: ChainWork,
-        fully_validated: bool,
-        available: bool,
+        evidence: Option<TipEvidence>,
     ) -> Self {
         Self {
             id,
             parent,
             height,
             chainwork,
-            fully_validated,
-            available,
+            evidence,
         }
     }
 
@@ -79,16 +94,8 @@ impl BranchTip {
         self.chainwork
     }
 
-    pub const fn is_fully_validated(&self) -> bool {
-        self.fully_validated
-    }
-
-    pub const fn is_available(&self) -> bool {
-        self.available
-    }
-
     const fn eligible(&self) -> bool {
-        self.fully_validated && self.available
+        self.evidence.is_some()
     }
 }
 
@@ -137,7 +144,11 @@ mod tests {
     fn tip(byte: u8, work: u8, valid: bool, available: bool) -> BranchTip {
         let mut id = [0; 32];
         id[0] = byte;
-        BranchTip::new(
+        let evidence = (valid && available).then_some(TipEvidence {
+            _fully_validated: FullyValidated,
+            _available: Available,
+        });
+        BranchTip::from_persisted(
             id,
             [0; 32],
             u64::from(byte),
@@ -146,8 +157,7 @@ mod tests {
                 bytes[63] = work;
                 bytes
             }),
-            valid,
-            available,
+            evidence,
         )
     }
 
