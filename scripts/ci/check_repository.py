@@ -103,8 +103,13 @@ def check(root=ROOT):
     require(adapter['schema']=='trnm-hepta-typed-adapter-contract-v1' and adapter['version']==1,'Hepta adapter identity drift')
     require(adapter['enabled'] is False and adapter['production_eligible'] is False,'Hepta adapter activated')
     require(adapter['authority_owner']=='hepta-private-ci' and adapter['chain_role']=='typed-idempotent-observer-and-submitter','Hepta adapter authority drift')
-    require(set(adapter['required_behaviors'])=={'durable_intent_outbox','lost_ack_reconciliation','withdrawal_frontier_revalidation','revocation_frontier_survives_reorg','idempotent_inclusion_observation'},'Hepta adapter behavior contract incomplete')
-    require(adapter['final_use_authority']=='hepta-owner-only' and 'final_use_token' in adapter['forbidden_authorities'],'Hepta adapter FinalUse boundary drift')
+    required_inputs={'artifact_manifest_digest','withdrawal_frontier_digest','operation_id','attempt_id','owner_generation','model_family_digest','evaluation_bundle_digest','chain_profile_digest'}
+    require(isinstance(adapter['required_inputs'],list) and len(adapter['required_inputs'])==len(set(adapter['required_inputs'])) and all(isinstance(value,str) and bool(value) for value in adapter['required_inputs']) and set(adapter['required_inputs'])==required_inputs,'Hepta adapter input contract incomplete')
+    required_behaviors={'durable_intent_outbox','lost_ack_reconciliation','withdrawal_frontier_revalidation','revocation_frontier_survives_reorg','idempotent_inclusion_observation'}
+    require(isinstance(adapter['required_behaviors'],list) and len(adapter['required_behaviors'])==len(set(adapter['required_behaviors'])) and all(isinstance(value,str) and bool(value) for value in adapter['required_behaviors']) and set(adapter['required_behaviors'])==required_behaviors,'Hepta adapter behavior contract incomplete')
+    forbidden_authorities={'artifact_registry','trainer','final_use_token','revocation_owner','local_effect_log'}
+    require(isinstance(adapter['forbidden_authorities'],list) and len(adapter['forbidden_authorities'])==len(set(adapter['forbidden_authorities'])) and all(isinstance(value,str) and bool(value) for value in adapter['forbidden_authorities']) and set(adapter['forbidden_authorities'])==forbidden_authorities,'Hepta adapter authority boundary incomplete')
+    require(adapter['final_use_authority']=='hepta-owner-only' and 'final_use_token' in forbidden_authorities,'Hepta adapter FinalUse boundary drift')
     specs=pon['module_targets'];require({r['id'] for r in specs}==MODULES and len(specs)==18,'module contract coverage')
     for row in specs:
         text=contained(root,row['technical_spec']).read_text()
