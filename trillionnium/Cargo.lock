@@ -874,6 +874,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "trnm-fork-choice"
+version = "0.1.0"
+
+[[package]]
 name = "trnm-governance-guard"
 version = "0.1.0"
 dependencies = [
