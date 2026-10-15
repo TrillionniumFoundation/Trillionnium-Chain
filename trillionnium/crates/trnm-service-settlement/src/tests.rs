@@ -423,6 +423,53 @@ fn settlement_operation(
 }
 
 #[test]
+fn settlement_destination_overflow_preserves_all_durable_value_and_retry_state() {
+    for destination in 0..3 {
+        let mut harness = Harness::new();
+        match destination {
+            0 => harness.trust.provider_opening_balance = u128::MAX,
+            1 => harness.trust.consumer_opening_balance = u128::MAX,
+            _ => harness.trust.protocol_opening_balance = u128::MAX,
+        }
+        let store = harness.open();
+        let (parent, rolled_up) = execute_rollup(&harness, &store);
+        let parent = advance_empty_blocks_through(&harness, &store, 12, parent, 14);
+        let before = store.state().expect("state before rejected settlement");
+        let head_before = store
+            .fresh_readback()
+            .expect("authenticated head before refusal");
+        let command = ConsumptionSettlementCommandV1::Settle {
+            operation: settlement_operation(&harness, &rolled_up),
+        };
+        for _ in 0..2 {
+            let error = store
+                .execute_committed_execution(&harness.execution(14, parent, 15), &command)
+                .expect_err("overflow must reject without consuming escrow");
+            assert_eq!(
+                error.code(),
+                ConsumptionSettlementErrorCodeV1::ArithmeticOverflow
+            );
+            assert_eq!(store.state().expect("state after refusal"), before);
+            assert_eq!(
+                store.fresh_readback().expect("head after refusal"),
+                head_before
+            );
+        }
+        drop(store);
+        let reopened = ConsumptionSettlementStoreV1::open_existing(harness.config())
+            .expect("reopen after rejected settlement");
+        assert_eq!(reopened.state().expect("reopened state"), before);
+        assert_eq!(
+            reopened.fresh_readback().expect("reopened head"),
+            head_before
+        );
+        assert_eq!(before.escrow.balance, 1_000);
+        assert!(!before.escrow.closed);
+        assert!(before.settlement.is_none());
+    }
+}
+
+#[test]
 fn receipt_rollup_and_settlement_are_bilateral_gap_free_and_conserved() {
     let harness = Harness::new();
     let store = harness.open();

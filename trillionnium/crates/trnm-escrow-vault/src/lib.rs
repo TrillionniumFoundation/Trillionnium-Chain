@@ -465,6 +465,59 @@ mod tests {
     use super::*;
 
     #[test]
+    fn mixed_operations_conserve_credited_value_and_rejections_are_atomic() {
+        let mut vault = SettlementVault::new("owner");
+        let accounts = ["alice", "bob", "treasury"];
+        let mut credited = 0u128;
+        let mut seed = 0x4d595df4d0f33173u64;
+        for step in 0..2_000 {
+            // Fixed seed and bounded amounts make this exercise reproducible.
+            seed = seed.wrapping_mul(6364136223846793005).wrapping_add(1);
+            let from = accounts[(seed >> 8) as usize % accounts.len()];
+            let to = accounts[(seed >> 16) as usize % accounts.len()];
+            let amount = u128::from((seed >> 24) % 31);
+            let request = format!("request-{}", (seed >> 32) % 32);
+            let caller = if step % 11 == 0 { "mallory" } else { "owner" };
+            let before = vault.clone();
+            let operation = (seed >> 48) % 7;
+            let result = match operation {
+                0 => vault.deposit(caller, from, amount),
+                1 => vault.lock(caller, &request, from, amount),
+                2 => vault.release(caller, &request),
+                3 => vault.slash(caller, &request, to),
+                4 => vault.transfer(caller, from, to, amount),
+                5 => vault.pause(caller),
+                _ => vault.unpause(caller),
+            };
+            if result.is_err() {
+                assert_eq!(vault.balances, before.balances, "step {step}");
+                assert_eq!(vault.locks, before.locks, "step {step}");
+                assert_eq!(vault.paused, before.paused, "step {step}");
+                assert_eq!(vault.audit_log, before.audit_log, "step {step}");
+            } else if operation == 0 {
+                credited += amount;
+            }
+            let available: u128 = vault.balances.values().sum();
+            let locked: u128 = vault
+                .locks
+                .values()
+                .filter(|lock| lock.status == LockStatus::Locked)
+                .map(|lock| lock.amount)
+                .sum();
+            assert_eq!(available + locked, credited, "step {step}");
+        }
+        assert!(credited > 0);
+        assert!(vault
+            .locks
+            .values()
+            .any(|lock| lock.status == LockStatus::Released));
+        assert!(vault
+            .locks
+            .values()
+            .any(|lock| lock.status == LockStatus::Slashed));
+    }
+
+    #[test]
     fn deposit_lock_release_happy_path() {
         let mut vault = SettlementVault::new("owner");
 
