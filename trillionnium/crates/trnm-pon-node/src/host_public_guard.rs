@@ -209,6 +209,14 @@ mod kernel_parent {
     type Result<T> = trnm_pon_node::Result<T>;
     const CGROUP_ROOT: &str = "/sys/fs/cgroup";
     const PARENT_DIRECTORY: &str = "/sys/fs/cgroup/system.slice";
+    // This is ONE administrator-provisioned parent for all public V3
+    // processes. Allowing caller-chosen trnmpon*.slice names would let
+    // multiple independent 25%-CPU parents multiply the physical budget.
+    const PARENT_NAME: &str = "trnmponpublic.slice";
+    fn approved_parent_path(path: &Path) -> bool {
+        path.parent() == Some(Path::new(PARENT_DIRECTORY))
+            && path.file_name().and_then(|part| part.to_str()) == Some(PARENT_NAME)
+    }
     const MAX_MEMORY_BYTES: u64 = 2 * 1024 * 1024 * 1024;
     const MAX_TASKS: u64 = 256;
     #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -338,23 +346,7 @@ mod kernel_parent {
                 .map_err(|_| trnm_pon_node::Error::from("PUBLIC_HOST_KERNEL_PARENT"))?;
             // A strict systemd-owned *single parent*, not the common cgroup
             // root, any child/service, or a caller-created user.slice.
-            if parent.parent() != Some(Path::new(PARENT_DIRECTORY))
-                || parent != user_path
-                || !parent
-                    .file_name()
-                    .and_then(|n| n.to_str())
-                    .is_some_and(|n| {
-                        n.starts_with("trnmpon")
-                            && n.ends_with(".slice")
-                            && n.len() <= 64
-                            && n.bytes().all(|b| {
-                                b.is_ascii_lowercase()
-                                    || b.is_ascii_digit()
-                                    || b == b'-'
-                                    || b == b'.'
-                            })
-                    })
-            {
+            if !approved_parent_path(&parent) || parent != user_path {
                 return Err("PUBLIC_HOST_KERNEL_PARENT".into());
             }
             if !Path::new("/sys/fs/cgroup/cgroup.controllers").is_file() {
@@ -458,6 +450,21 @@ mod kernel_parent {
                 assert!(validate_limits("25000 100000", burst, mem, swap, pids).is_err());
             }
             assert!(validate_limits("1000 10000", "0", "33554432", "0", "4").is_ok());
+        }
+        #[test]
+        fn exactly_one_fixed_system_parent_name_is_eligible() {
+            assert!(approved_parent_path(Path::new(
+                "/sys/fs/cgroup/system.slice/trnmponpublic.slice"
+            )));
+            for bad in [
+                "/sys/fs/cgroup/system.slice/trnmponextra.slice",
+                "/sys/fs/cgroup/system.slice/trnmponother.slice",
+                "/sys/fs/cgroup/system.slice/trnmponpublic.service",
+                "/sys/fs/cgroup/user.slice/trnmponpublic.slice",
+                "/sys/fs/cgroup/system.slice/trnmponpublic.slice/child.service",
+            ] {
+                assert!(!approved_parent_path(Path::new(bad)), "{bad}");
+            }
         }
         #[test]
         fn fake_root_or_wrong_parent_never_counts_as_root_kernel_budget() {

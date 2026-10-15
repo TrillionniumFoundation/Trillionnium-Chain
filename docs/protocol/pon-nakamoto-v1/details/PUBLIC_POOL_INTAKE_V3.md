@@ -774,7 +774,7 @@ socket table. The slot guard is not a host CPU quota or persistent debt log.
 The V3 CLI serve path now refuses non-loopback binding unless the trusted
 operator supplies --host-kernel-parent pointing to an ALREADY provisioned
 root-owned cgroup-v2 slice under
-/sys/fs/cgroup/system.slice/trnmpon*.slice. This is an unprivileged read-only
+/sys/fs/cgroup/system.slice/trnmponpublic.slice. This is an unprivileged read-only
 eligibility check, not a cgroup creator, migrator, quota editor or daemon.
 The process must already be a member of the approved parent or its children.
 
@@ -811,3 +811,10 @@ accounting authority.
 All original PoN W1 mathematics, signed wire domains and PublicPolicy id,
 M05/M06/state roots, reward accounting, model qualification and FinalUse
 are untouched.
+
+The permitted parent basename is exactly trnmponpublic.slice, not an
+operator-chosen trnmpon*.slice. Accepting several different root-owned slices
+would allow four more independently quota-bound processes under each slice.
+This rule excludes that accidental/intentional per-parent multiplier for the
+trusted CLI; root's ability to move processes outside the approved parent
+is still outside the unprivileged service's authority.
