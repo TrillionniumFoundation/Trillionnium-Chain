@@ -12,7 +12,10 @@ pub(crate) struct RunOnceOutput {
     pub(crate) template_reveal: String,
 }
 
-pub(crate) fn compute_result_and_salt(task_id: u64, payload: &str) -> (String, String) {
+pub(crate) fn compute_result_and_salt(
+    task_id: u64,
+    payload: &str,
+) -> anyhow::Result<(String, String)> {
     use crate::execute_payload;
     execute_payload(payload, task_id)
 }
@@ -96,11 +99,10 @@ mod tests {
 
     #[test]
     fn compute_result_and_salt_matches_core_payload_hashing() {
-        let (result_hash, salt_hex) = compute_result_and_salt(7, "hello");
-        assert_eq!(
-            salt_hex,
-            "0000000000000000000000000000000000000000000000000000000000000007"
-        );
+        let (result_hash, salt_hex) = compute_result_and_salt(7, "hello").unwrap();
+        assert_eq!(salt_hex.len(), 64);
+        assert!(salt_hex.bytes().all(|c| c.is_ascii_hexdigit()));
+        assert_ne!(salt_hex, format!("{:064x}", 7u64));
         assert_eq!(result_hash.len(), 64);
     }
 

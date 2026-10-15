@@ -17,12 +17,31 @@ use std::{
 mod assigned;
 mod audit;
 mod cli;
+#[cfg(unix)]
+mod commit_salt;
 mod dispatch;
 mod flush;
 mod flush_submission;
 mod proof_adapter;
 mod workflow;
 mod workflow_ops;
+#[cfg(not(unix))]
+mod commit_salt {
+    use anyhow::{bail, Result};
+    use std::path::Path;
+    pub(crate) fn journal_automatic_submission(
+        _: &Path,
+        _: u64,
+        _: &str,
+        _: &str,
+        _: &str,
+    ) -> Result<String> {
+        bail!("secure commit journaling requires a Unix local owner; no fallback")
+    }
+}
+#[cfg(test)]
+#[path = "tests_commit_salt_security.rs"]
+mod tests_commit_salt_security;
 
 #[cfg(test)]
 pub(crate) use audit::{
@@ -214,12 +233,16 @@ pub(crate) fn next_task_id(state: &PathBuf) -> Result<u64> {
     Ok(s.last_task_id)
 }
 
-pub(crate) fn execute_payload(payload: &str, task_id: u64) -> (String, String) {
+pub(crate) fn execute_payload(payload: &str, _task_id: u64) -> Result<(String, String)> {
     let mut h = Sha256::new();
     h.update(payload.as_bytes());
     let result_hash = hex::encode(h.finalize());
-    let salt_hex = format!("{:064x}", task_id);
-    (result_hash, salt_hex)
+    // The old salt was the public task ID. Use OS CSPRNG; never fall back to
+    // timestamps, public identities or predictable process counters on failure.
+    let mut salt = [0_u8; 32];
+    getrandom::fill(&mut salt)
+        .map_err(|error| anyhow!("commit salt entropy unavailable: {error}"))?;
+    Ok((result_hash, hex::encode(salt)))
 }
 
 pub(crate) fn now_ms() -> u128 {
