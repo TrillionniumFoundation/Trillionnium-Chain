@@ -10,7 +10,7 @@ use std::{
     fs::{self, OpenOptions},
     io::Write,
     path::{Path, PathBuf},
-    process::{Command as ProcCommand, Output},
+    process::Output,
     thread,
     time::{Duration, SystemTime, UNIX_EPOCH},
 };
@@ -44,12 +44,17 @@ use command_runtime_exec::run_command_with_timeout;
 
 const DEFAULT_TX_ADAPTER_MAX_RETRIES: u32 = 3;
 const DEFAULT_TX_ADAPTER_BACKOFF_MS: u64 = 200;
+// Transaction adapters are operator-supplied executables. Keep each attempt
+// bounded just like the LLM adapter path so a hung adapter cannot stall a
+// flush forever or grow an unbounded stdout/stderr buffer.
+const DEFAULT_TX_ADAPTER_TIMEOUT_MS: u64 = 30_000;
 const DEFAULT_LLM_ADAPTER_MAX_RETRIES: u32 = 2;
 const DEFAULT_LLM_ADAPTER_BACKOFF_MS: u64 = 200;
 const DEFAULT_LLM_ADAPTER_TIMEOUT_MS: u64 = 10_000;
 
 const TX_ADAPTER_MAX_RETRIES_ENV: &str = "TRNM_TX_ADAPTER_MAX_RETRIES";
 const TX_ADAPTER_BACKOFF_MS_ENV: &str = "TRNM_TX_ADAPTER_BACKOFF_MS";
+const TX_ADAPTER_TIMEOUT_ENV: &str = "TRNM_TX_ADAPTER_TIMEOUT_MS";
 const LLM_ADAPTER_MAX_RETRIES_ENV: &str = "TRNM_LLM_ADAPTER_MAX_RETRIES";
 const LLM_ADAPTER_BACKOFF_MS_ENV: &str = "TRNM_LLM_ADAPTER_BACKOFF_MS";
 const LLM_ADAPTER_TIMEOUT_ENV: &str = "TRNM_LLM_ADAPTER_TIMEOUT_MS";
@@ -951,16 +956,39 @@ pub(crate) fn run_adapter_with_retry(
     max_retries: u32,
     backoff_ms: u64,
 ) -> Result<AdapterExecResult> {
+    let timeout_ms = resolve_u64(
+        None,
+        env::var(TX_ADAPTER_TIMEOUT_ENV).ok().as_deref(),
+        DEFAULT_TX_ADAPTER_TIMEOUT_MS,
+        1,
+    );
+    run_adapter_with_retry_timeout(
+        adapter_cmd,
+        action_args,
+        max_retries,
+        backoff_ms,
+        Duration::from_millis(timeout_ms),
+    )
+}
+
+/// Execute an operator-supplied transaction adapter with bounded I/O and
+/// process lifetime.  `run_command_with_timeout` drains both pipes fairly,
+/// caps aggregate output, kills the complete process group on timeout, and
+/// reaps the child before returning.  Keeping this boundary shared by commit
+/// and reveal prevents a malicious adapter from turning a flush into an
+/// unbounded-memory or indefinitely-running operation.
+fn run_adapter_with_retry_timeout(
+    adapter_cmd: &str,
+    action_args: &[String],
+    max_retries: u32,
+    backoff_ms: u64,
+    timeout: Duration,
+) -> Result<AdapterExecResult> {
     let (program, base_args) = parse_command_spec(adapter_cmd)?;
     run_adapter_with_retry_inner(
         max_retries,
         backoff_ms,
-        || {
-            Ok(ProcCommand::new(&program)
-                .args(&base_args)
-                .args(action_args)
-                .output()?)
-        },
+        || run_command_with_timeout(&program, &base_args, action_args, timeout),
         thread::sleep,
     )
 }
