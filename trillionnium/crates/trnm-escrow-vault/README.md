@@ -24,3 +24,8 @@ locks, pause state and audit events. Existing overflow tests cover deposits,
 release, slash and transfer; a fixed-seed mixed-operation test checks conservation
 and complete rejection atomicity after each transition. These checks do not claim
 external funding, durable storage, crash atomicity or a global `u128` supply cap.
+
+Deposit accounts, like transfer and slash recipients, must not be empty or
+whitespace-only; rejected deposits return `InvalidBeneficiary` without changing
+state or audit events. Nonblank account strings remain opaque, exact keys; the
+integrating owner remains responsible for account identity validation.

@@ -212,6 +212,10 @@ impl SettlementVault {
             return Err(VaultError::InvalidAmount);
         }
 
+        if account.trim().is_empty() {
+            return Err(VaultError::InvalidBeneficiary);
+        }
+
         self.credit_balance(account, amount)?;
         self.audit_log.push(VaultEvent::Deposited {
             caller: caller.to_string(),
@@ -515,6 +519,48 @@ mod tests {
             .locks
             .values()
             .any(|lock| lock.status == LockStatus::Slashed));
+    }
+
+    #[test]
+    fn blank_deposit_accounts_are_rejected_without_state_or_audit_mutation() {
+        let mut vault = SettlementVault::new("owner");
+        vault.deposit("owner", "alice", 50).unwrap();
+        vault.lock("owner", "existing-lock", "alice", 10).unwrap();
+        let before = vault.clone();
+
+        for account in ["", "   ", "\t\n", "\u{2003}"] {
+            assert_eq!(
+                vault.deposit("owner", account, 5),
+                Err(VaultError::InvalidBeneficiary)
+            );
+            assert_eq!(vault.balances, before.balances);
+            assert_eq!(vault.locks, before.locks);
+            assert_eq!(vault.paused, before.paused);
+            assert_eq!(vault.audit_log, before.audit_log);
+        }
+
+        // Authentication, pause and amount checks retain their existing precedence.
+        assert_eq!(vault.deposit("other", "", 5), Err(VaultError::Unauthorized));
+        assert_eq!(
+            vault.deposit("owner", "", 0),
+            Err(VaultError::InvalidAmount)
+        );
+        vault.pause("owner").unwrap();
+        assert_eq!(vault.deposit("owner", "", 5), Err(VaultError::Paused));
+    }
+
+    #[test]
+    fn nonblank_deposit_accounts_remain_distinct_opaque_keys() {
+        let mut vault = SettlementVault::new("owner");
+        vault.deposit("owner", "alice", 10).unwrap();
+        vault.deposit("owner", " alice ", 20).unwrap();
+        assert_eq!(vault.balance_of("alice"), 10);
+        assert_eq!(vault.balance_of(" alice "), 20);
+        assert_eq!(vault.balances.len(), 2);
+        assert!(matches!(
+            vault.audit_log().last(),
+            Some(VaultEvent::Deposited { account, amount: 20, .. }) if account == " alice "
+        ));
     }
 
     #[test]
