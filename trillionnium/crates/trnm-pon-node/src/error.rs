@@ -101,6 +101,8 @@ error_codes! {
     // Local service/Node budget binding, never invalid consensus Work.
     OwnerPublicServiceCpuDomain => ("OWNER_PUBLIC_SERVICE_CPU_DOMAIN", PolicyRefusal),
     OwnerPublicServiceDomainUnbound => ("OWNER_PUBLIC_SERVICE_DOMAIN_UNBOUND", DependencyUnavailable),
+    OwnerPublicServiceUncleanEpoch => ("OWNER_PUBLIC_SERVICE_UNCLEAN_EPOCH", DependencyUnavailable),
+    OwnerPublicServiceEpochCorrupt => ("OWNER_PUBLIC_SERVICE_EPOCH_CORRUPT", LocalStructure),
     PublicListenerDomainCapacity => ("PUBLIC_LISTENER_DOMAIN_CAPACITY", Capacity),
     PublicHostProcessCapacity => ("PUBLIC_HOST_PROCESS_CAPACITY", Capacity),
     PublicHostProcessUnavailable => ("PUBLIC_HOST_PROCESS_UNAVAILABLE", DependencyUnavailable),

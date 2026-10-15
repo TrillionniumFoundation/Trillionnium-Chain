@@ -218,3 +218,129 @@ fn mode5_unknown_pool_bundle_is_refused_before_native_state_and_claim_without_bo
     assert!(node.pool_reconcile().is_err());
     assert!(node.continuous_pool_snapshot().is_err());
 }
+
+// Only an existing SQLite metadata key is used; this fixture is a normal
+// Node and does not synthesize an authenticated continuous-operation ledger.
+fn ordinary_v3_epoch_node() -> (tempfile::TempDir, Settings, Node) {
+    let dir = tempfile::tempdir().unwrap();
+    let settings = Settings::development(Some(crate::ingress::now().unwrap() - 100)).unwrap();
+    let node = Node::open(dir.path(), settings.clone(), 1).unwrap();
+    (dir, settings, node)
+}
+
+#[test]
+fn ordinary_public_v3_unclean_open_retains_one_durable_unknown_cpu_epoch() {
+    let (dir, settings, mut node) = ordinary_v3_epoch_node();
+    let before = node.stats().unwrap();
+    assert!(node.begin_ordinary_public_service_epoch().unwrap());
+    // This drop models a missing normal close receipt only. No kill, host
+    // reboot or claim of exact historical CPU consumption is invented here.
+    drop(node);
+    let mut reopened = Node::open(dir.path(), settings, 1).unwrap();
+    assert_eq!(reopened.stats().unwrap(), before);
+    assert_eq!(
+        reopened
+            .begin_ordinary_public_service_epoch()
+            .unwrap_err()
+            .to_string(),
+        "OWNER_PUBLIC_SERVICE_UNCLEAN_EPOCH"
+    );
+    assert!(reopened.public_service_epoch_listeners == 0);
+}
+
+#[test]
+fn ordinary_public_v3_clean_sole_or_last_listener_removes_original_sqlite_marker() {
+    let (dir, settings, mut node) = ordinary_v3_epoch_node();
+    assert!(node.begin_ordinary_public_service_epoch().unwrap());
+    assert!(node.begin_ordinary_public_service_epoch().unwrap());
+    assert_eq!(node.public_service_epoch_listeners, 2);
+    node.finish_ordinary_public_service_epoch(true).unwrap();
+    assert_eq!(node.public_service_epoch_listeners, 1);
+    // A crash with one other real listener still open cannot invent clean.
+    drop(node);
+    let mut reopened = Node::open(dir.path(), settings.clone(), 1).unwrap();
+    assert_eq!(
+        reopened
+            .begin_ordinary_public_service_epoch()
+            .unwrap_err()
+            .to_string(),
+        "OWNER_PUBLIC_SERVICE_UNCLEAN_EPOCH"
+    );
+    drop(reopened);
+    // A fresh separate store that ends ALL listeners can reopen normally.
+    let (new_dir, new_settings, mut complete) = ordinary_v3_epoch_node();
+    complete.begin_ordinary_public_service_epoch().unwrap();
+    complete.begin_ordinary_public_service_epoch().unwrap();
+    complete.finish_ordinary_public_service_epoch(true).unwrap();
+    complete.finish_ordinary_public_service_epoch(true).unwrap();
+    assert_eq!(complete.public_service_epoch_listeners, 0);
+    drop(complete);
+    let mut clean = Node::open(new_dir.path(), new_settings, 1).unwrap();
+    assert!(clean.begin_ordinary_public_service_epoch().unwrap());
+    clean.finish_ordinary_public_service_epoch(true).unwrap();
+}
+
+#[test]
+fn ordinary_public_v3_one_listener_close_while_other_cpu_is_in_flight_does_not_poison_epoch() {
+    let (dir, settings, mut node) = ordinary_v3_epoch_node();
+    node.begin_ordinary_public_service_epoch().unwrap();
+    node.begin_ordinary_public_service_epoch().unwrap();
+    // When listener A finishes but B is still spending its original CPU
+    // reservation, global available credit/in-flight need not be clean.
+    // A has joined its own workers; only B can settle the FINAL epoch.
+    node.finish_ordinary_public_service_epoch(false).unwrap();
+    assert!(!node.public_service_epoch_unknown);
+    assert_eq!(node.public_service_epoch_listeners, 1);
+    node.finish_ordinary_public_service_epoch(true).unwrap();
+    drop(node);
+    let mut reopened = Node::open(dir.path(), settings, 1).unwrap();
+    assert!(reopened.begin_ordinary_public_service_epoch().unwrap());
+    reopened.finish_ordinary_public_service_epoch(true).unwrap();
+}
+
+#[test]
+fn ordinary_public_v3_unknown_clock_and_corrupt_marker_never_clear_on_restart() {
+    let (dir, settings, mut node) = ordinary_v3_epoch_node();
+    node.begin_ordinary_public_service_epoch().unwrap();
+    node.mark_ordinary_public_service_epoch_unknown();
+    // Final service result remains the original business result; only
+    // future cold service admission is refused by its durable marker.
+    node.finish_ordinary_public_service_epoch(true).unwrap();
+    assert!(node.public_service_epoch_unknown);
+    assert_eq!(node.public_service_epoch_listeners, 0);
+    drop(node);
+    let mut reopened = Node::open(dir.path(), settings.clone(), 1).unwrap();
+    assert_eq!(
+        reopened
+            .begin_ordinary_public_service_epoch()
+            .unwrap_err()
+            .to_string(),
+        "OWNER_PUBLIC_SERVICE_UNCLEAN_EPOCH"
+    );
+    // A malformed existing metadata value is never treated as a clean
+    // absence, even though it is not a valid native operation receipt.
+    drop(reopened);
+    let db = rusqlite::Connection::open(dir.path().join("native.sqlite")).unwrap();
+    db.execute(
+        "UPDATE metadata SET value=X'00' WHERE key='ordinary-public-v3-epoch-v1'",
+        [],
+    )
+    .unwrap();
+    drop(db);
+    let mut malformed = Node::open(dir.path(), settings, 1).unwrap();
+    assert_eq!(
+        malformed
+            .begin_ordinary_public_service_epoch()
+            .unwrap_err()
+            .to_string(),
+        "OWNER_PUBLIC_SERVICE_UNCLEAN_EPOCH"
+    );
+}
+
+#[test]
+fn continuous_owner_keeps_original_authenticated_journal_not_ordinary_marker() {
+    let (_root, _history, mut node) = node();
+    assert!(!node.begin_ordinary_public_service_epoch().unwrap());
+    node.finish_ordinary_public_service_epoch(true).unwrap();
+    assert_eq!(node.public_service_epoch_listeners, 0);
+}

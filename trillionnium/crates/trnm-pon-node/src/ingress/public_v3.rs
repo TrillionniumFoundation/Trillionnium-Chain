@@ -1617,6 +1617,42 @@ pub fn serve_public_protected_v3_with_request_observer(
     )
 }
 
+// One ordinary Node's existing durable SQLite metadata owns the crash
+// fence. Unlike a service result, Drop also runs on a local error/unwind.
+// The already-active row is never cleared unless *all* original workers
+// joined, settlement is complete and the last listener closes normally.
+// Continuous mode retains its original authenticated owner/journal instead.
+struct OrdinaryPublicServiceCrashFence {
+    node: Arc<Mutex<Node>>,
+    ordinary: bool,
+    finished: bool,
+}
+impl OrdinaryPublicServiceCrashFence {
+    fn complete(&mut self, clean: bool) -> Result<()> {
+        if self.ordinary {
+            self.node
+                .lock()
+                .map_err(|_| "PUBLIC_OWNER")?
+                .finish_ordinary_public_service_epoch(clean)?;
+        }
+        self.finished = true;
+        Ok(())
+    }
+}
+impl Drop for OrdinaryPublicServiceCrashFence {
+    fn drop(&mut self) {
+        if self.ordinary && !self.finished {
+            // A poisoned owner cannot silently revoke an unknown active
+            // service. The durable active marker was committed BEFORE workers.
+            let mut owner = self
+                .node
+                .lock()
+                .unwrap_or_else(std::sync::PoisonError::into_inner);
+            owner.mark_ordinary_public_service_epoch_unknown();
+        }
+    }
+}
+
 fn serve_public_protected_v3_inner(
     listener: TcpListener,
     node: Arc<Mutex<Node>>,
@@ -1672,6 +1708,19 @@ fn serve_public_protected_v3_inner(
     let output_pool = intake.output_pool.clone();
     let mutating_grants = intake.mutating_grants.clone();
     let read_grants = intake.read_grants.clone();
+    // Persistent local crash fence before the first V3 worker starts. This
+    // is a single metadata row in the original Node store, not a parallel
+    // per-request or reward journal. A previously unclean plain-Node process
+    // cannot reset CPU debt by opening a new PublicServer/process.
+    let mut epoch_fence = {
+        let mut owner = node.lock().map_err(|_| "PUBLIC_OWNER")?;
+        let ordinary = owner.begin_ordinary_public_service_epoch()?;
+        OrdinaryPublicServiceCrashFence {
+            node: node.clone(),
+            ordinary,
+            finished: false,
+        }
+    };
     let mut next_pending_order = 0u64;
     let mut last_cleanup = Instant::now();
     let mut last_kernel_check = Instant::now();
@@ -2427,6 +2476,18 @@ fn serve_public_protected_v3_inner(
     if let Some(budget) = host_kernel.as_ref() {
         budget.verify()?;
     }
+    // If the last listener has unsettled live CPU, unknown sampling, a
+    // mathematically inconsistent original flow, or known NEGATIVE credit,
+    // retaining the durable active marker is safer than a zero-credit cold
+    // process restart that silently forgives historical CPU debt.
+    // Earlier listeners of the SAME Node only drop their volatile reference
+    // count; they cannot clear the shared on-disk marker.
+    let domain = server.mutation_cpu_domain();
+    let cpu = domain.observe()?;
+    let balanced = domain.observe_actual_flow()?.is_some();
+    epoch_fence.complete(
+        cpu.in_flight == 0 && !cpu.accounting_unavailable && cpu.stored_credit_ns >= 0 && balanced,
+    )?;
     let final_metrics = metrics.lock().map_err(|_| "PUBLIC_METRICS")?.clone();
     Ok(final_metrics)
 }
@@ -4372,6 +4433,21 @@ mod tests {
                         .unwrap()
                         .collect::<rusqlite::Result<SqlRows>>()
                         .unwrap();
+                    // The persistent ordinary-service crash fence is a
+                    // LOCAL owner metadata row, not a packet/state/business
+                    // mutation. Retain the original byte-exact comparison of
+                    // every other metadata row and every Native business
+                    // table, even for the injected missing child CPU clock.
+                    let mut rows = rows;
+                    if name == "metadata" {
+                        rows.retain(|row| {
+                            !matches!(
+                                row.first(),
+                                Some(rusqlite::types::Value::Text(key))
+                                    if key == "ordinary-public-v3-epoch-v1"
+                            )
+                        });
+                    }
                     (name, (schema, rows))
                 })
                 .collect()
@@ -4527,8 +4603,18 @@ mod tests {
                 assert_eq!(sql_snapshot(&dir.path().join("native.sqlite")), sql_before);
             }
             drop(owner);
-            let reopened = Node::open(dir.path(), settings, 4).unwrap();
+            let mut reopened = Node::open(dir.path(), settings, 4).unwrap();
             if fail_child_clock {
+                // The original Native State/packet remains unchanged. The
+                // only additional durable effect is a sticky local crash
+                // fence: unknown scoped CPU cannot buy a clean new epoch.
+                assert_eq!(
+                    reopened
+                        .begin_ordinary_public_service_epoch()
+                        .unwrap_err()
+                        .to_string(),
+                    "OWNER_PUBLIC_SERVICE_UNCLEAN_EPOCH"
+                );
                 assert_eq!(reopened.read_active().unwrap(), before);
                 assert!(reopened.packet(packet_id).is_err());
                 assert_eq!(

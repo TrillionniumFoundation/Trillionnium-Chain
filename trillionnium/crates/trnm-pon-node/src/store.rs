@@ -562,6 +562,11 @@ pub struct Node {
     // already persistent owner CPU). A listener or local work caller may bind
     // exactly once; a different domain cannot replace or reset that binding.
     public_service_cpu: Option<crate::ingress::public_v3::ServiceMutationCpuDomain>,
+    // One local active-scope marker in the EXISTING SQLite metadata table.
+    // The volatile refcount only tracks concurrently open listeners of this
+    // already owner-locked Node; the durable marker survives process exit.
+    public_service_epoch_listeners: usize,
+    public_service_epoch_unknown: bool,
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 enum StateBackend {
@@ -1145,6 +1150,8 @@ impl Node {
             mining_owner,
             continuous_owner,
             public_service_cpu: None,
+            public_service_epoch_listeners: 0,
+            public_service_epoch_unknown: false,
         };
         node.read_active()?;
         if node.state_backend == StateBackend::AuthenticatedV1 {

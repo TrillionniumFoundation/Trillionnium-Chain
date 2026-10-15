@@ -279,6 +279,110 @@ fn check_actual_task_fields(
         "OWNER_CONTINUOUS_NATIVE_BINDING",
     )
 }
+// A conservative crash fence, NOT a second operation/CPU ledger. The owner
+// already serializes SQLite metadata with its exclusive owner.lock. Missing
+// means no active ordinary V3 service; 'active-v1' is written with synchronous
+// FULL before the first worker starts, deleted only after every listener has
+// joined and its live CPU debt is known nonnegative. Any previously active,
+// malformed or uncertain epoch refuses a NEW ordinary public service; neither
+// a process relaunch nor a new signing key silently repairs unknown CPU debt.
+// Continuous mode already has an authenticated durable owner journal.
+const ORDINARY_PUBLIC_EPOCH_KEY: &str = "ordinary-public-v3-epoch-v1";
+const ORDINARY_PUBLIC_EPOCH_ACTIVE: &[u8] = b"active-v1";
+impl Node {
+    pub(crate) fn begin_ordinary_public_service_epoch(&mut self) -> Result<bool> {
+        if self.is_continuous() {
+            return Ok(false);
+        }
+        ensure(
+            !self.public_service_epoch_unknown,
+            "OWNER_PUBLIC_SERVICE_UNCLEAN_EPOCH",
+        )?;
+        let existing: Option<Vec<u8>> = self
+            .db
+            .query_row(
+                "SELECT value FROM metadata WHERE key=?1",
+                [ORDINARY_PUBLIC_EPOCH_KEY],
+                |row| row.get(0),
+            )
+            .optional()?;
+        if self.public_service_epoch_listeners != 0 {
+            ensure(
+                existing.as_deref() == Some(ORDINARY_PUBLIC_EPOCH_ACTIVE),
+                "OWNER_PUBLIC_SERVICE_EPOCH_CORRUPT",
+            )?;
+            self.public_service_epoch_listeners = self
+                .public_service_epoch_listeners
+                .checked_add(1)
+                .ok_or("OWNER_PUBLIC_SERVICE_EPOCH_CORRUPT")?;
+            return Ok(true);
+        }
+        // A saved active epoch after reopening means the previous process
+        // did NOT publish a completely settled, clean shutdown. No time-based
+        // budget refill can authenticate this unknown historical CPU debt.
+        ensure(existing.is_none(), "OWNER_PUBLIC_SERVICE_UNCLEAN_EPOCH")?;
+        let rows = self.db.execute(
+            "INSERT INTO metadata(key,value) VALUES(?1,?2)",
+            params![ORDINARY_PUBLIC_EPOCH_KEY, ORDINARY_PUBLIC_EPOCH_ACTIVE],
+        )?;
+        ensure(rows == 1, "OWNER_PUBLIC_SERVICE_EPOCH_CORRUPT")?;
+        self.public_service_epoch_listeners = 1;
+        Ok(true)
+    }
+
+    /// Called by the last cleanly joined listener. Known *negative* credit
+    /// must not be forgiven by process restart; unknown clock or in-flight
+    /// work never supplies a clean receipt. When several listeners share this
+    /// Node, only the final one can remove the persistent marker.
+    pub(crate) fn finish_ordinary_public_service_epoch(&mut self, clean: bool) -> Result<()> {
+        if self.is_continuous() {
+            return Ok(());
+        }
+        ensure(
+            self.public_service_epoch_listeners != 0,
+            "OWNER_PUBLIC_SERVICE_EPOCH_CORRUPT",
+        )?;
+        if self.public_service_epoch_unknown {
+            // A prior listener errored or unwound. No later clean listener
+            // can make this persisted unknown epoch clean again.
+            self.public_service_epoch_listeners -= 1;
+            return Ok(());
+        }
+        if self.public_service_epoch_listeners > 1 {
+            // Other listeners can still have outstanding shared CPU. This
+            // listener has already JOINED all of its own workers, so remove
+            // only its volatile reference. Do not infer UNKNOWN historical
+            // debt from the other still-live listener's in-flight reserve.
+            self.public_service_epoch_listeners -= 1;
+            return Ok(());
+        }
+        if !clean {
+            // Preserve the ORIGINAL already-completed Native service result:
+            // local unknown CPU never retroactively invalidates committed
+            // work. Retain the SQLite marker and deny only a FUTURE cold
+            // public service epoch (which would forgive the unknown debt).
+            self.public_service_epoch_unknown = true;
+            self.public_service_epoch_listeners -= 1;
+            return Ok(());
+        }
+        let rows = self.db.execute(
+            "DELETE FROM metadata WHERE key=?1 AND value=?2",
+            params![ORDINARY_PUBLIC_EPOCH_KEY, ORDINARY_PUBLIC_EPOCH_ACTIVE],
+        )?;
+        ensure(rows == 1, "OWNER_PUBLIC_SERVICE_EPOCH_CORRUPT")?;
+        self.public_service_epoch_listeners = 0;
+        Ok(())
+    }
+
+    /// The on-disk active marker is retained even when an unwind or local
+    /// worker failure prevents a trustworthy clean-shutdown receipt.
+    pub(crate) fn mark_ordinary_public_service_epoch_unknown(&mut self) {
+        if !self.is_continuous() {
+            self.public_service_epoch_unknown = true;
+        }
+    }
+}
+
 impl Node {
     pub fn continuous_cpu_domain(&self) -> Result<ServiceMutationCpuDomain> {
         Ok(self

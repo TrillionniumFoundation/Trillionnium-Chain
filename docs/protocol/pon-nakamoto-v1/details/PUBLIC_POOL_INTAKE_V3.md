@@ -993,3 +993,49 @@ absent fixed 25% parent. A privileged runtime/root can still move threads
 during nonpreemptible work; cgroup kernel enforcement and trusted supervision
 remain necessary. No signed policy, task/work relation, host quota,
 admission constant, operation ledger, state namespace or FinalUse changed.
+
+## R16: Ordinary V3 restart crash fence in the existing Node store
+
+Ordinary V3 CPU credit is volatile; unlike Continuous mode it has no
+authenticated durable operation journal. Reopening with zero initial credit
+prevents a fresh 2-second burst, but does not distinguish clean exit from
+unknown CPU cost or negative debt left by an abruptly terminated service.
+
+Before its first V3 worker starts, the existing exclusively locked Node writes
+one local SQLite metadata row `ordinary-public-v3-epoch-v1=active-v1` using
+the existing `synchronous=FULL` persistence policy. This is NOT another
+per-operation CPU journal, signed claim, fee balance or consensus artifact.
+Concurrent listeners on the SAME Node share an in-memory reference count
+and one durable row; one listener cannot clear another's active scope.
+
+After all worker threads join, only the final listener may remove the row,
+and only when original scalar CPU accounting is available, no paid work is
+in-flight, checked actual-flow arithmetic is consistent and remaining credit
+is nonnegative. Negative debt, unmeasured worker CPU, panic, and incomplete
+shutdown retain the persistent row. Existing Native replies, State changes
+and original clock-failure semantics remain unchanged; a later ordinary
+V3 listener instead receives typed `OWNER_PUBLIC_SERVICE_UNCLEAN_EPOCH`.
+Malformed or retained rows do not authorize automatic resets, key rotation,
+or a new process budget. Original local State inspection still works.
+
+This is a conservative fail-closed RESTART BARRIER, not accurate CPU-debt
+reconstruction or a self-healing ledger. An unclean ordinary Node may be
+unable to reopen its public V3 service without a future authenticated owner
+reconciliation design. Continuous mode retains its ORIGINAL durable
+operator journal, with no new parallel owner or schema migration.
+
+Exact-source regression: the original successful normal CLI cold reopen
+and signed miner/follower tests remain required. An original clock-failure
+test still compares all Native business SQL tables and every preexisting
+metadata key byte-for-byte; only this exact new local lifecycle metadata
+row is excluded, and the test now additionally checks that reopening
+after unknown CPU cannot silently mint a clean epoch. Dedicated tests
+verify clean two-listener teardown, conservatively modeled missing close
+receipt across real SQLite Node reopen, malformed metadata and preservation
+of the Continuous owner boundary. These are NOT host kill, physical power
+loss, trusted anti-rollback, real root cgroup deployment or WAN stress tests.
+
+Same-UID SQLite file replacement, privileged host manipulation, host
+power-loss durability, independent Node directories, cross-host operation
+entitlement, exact lost CPU nanoseconds, model efficacy and FinalUse remain
+unqualified. The required `trnmponpublic.slice` is still not deployed.
