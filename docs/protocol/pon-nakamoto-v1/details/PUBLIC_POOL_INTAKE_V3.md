@@ -950,3 +950,24 @@ counter-rewind fixtures now run in native tests, but the currently inactive
 fixed parent has not been quota-tested. No root cgroup, network namespace,
 production service or Desktop Commander setting was modified by this
 increment.
+
+### Concurrent native CLI processes: actual inherited cgroup accounting
+
+The retained native peer-polling fixture now measures genuine Linux
+cgroup-v2 membership of TWO simultaneously live independently signed V3
+CLI services. Each has its own native Node directory and public key;
+the original peer receives three verified native blocks. Before either
+process exits, the fixture reads both live PIDs' /proc/<pid>/cgroup
+and requires precisely the same v2 path. It retains the parent cgroup
+directory inode and reads original cpu.stat usage_usec; after BOTH original
+processes finish and exact native packet/state equality was checked,
+the parent inode must remain unchanged and cumulative CPU must not rewind.
+No resource group is created, migrated, modified or stopped.
+
+This is a read-only check of the inherited developer-service cgroup,
+NOT the as-yet inactive /sys/fs/cgroup/trnmponpublic.slice. CPU delta
+includes other processes in that inherited group, and is NOT a PoN
+workload charge, a guest CPU receipt, nor a finite host-quota certificate.
+No power-loss, unclean CPU-debt persistence, cross-network namespace,
+WAN/Sybil saturation or actual 25% parent throttling is qualified.
+Original signature, work, storage and governance semantics are unchanged.

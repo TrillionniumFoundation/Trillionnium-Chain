@@ -684,6 +684,41 @@ fn actual_pinned_peer_cli_follows_native_blocks_and_closes_shared_owner() {
     );
     assert_eq!(received_ready["mining_enabled"], false);
     assert_eq!(received_ready["peer_polling_enabled"], true);
+
+    // Two independent, simultaneously live signed-business CLI processes
+    // inherit ONE genuine kernel resource group, even when their Node
+    // directories, application signing keys and TCP service sockets differ.
+    // Only read the existing cgroup; do not create, change or stop a slice.
+    // This is an inherited developer-service cgroup, NOT the unprovisioned
+    // fixed trnmponpublic.slice, nor a proof of its 25% CPU quota.
+    #[cfg(target_os = "linux")]
+    let inherited_kernel_group = {
+        use std::os::unix::fs::MetadataExt;
+        let original = |pid: u32| {
+            let text = fs::read_to_string(format!("/proc/{pid}/cgroup")).unwrap();
+            assert_eq!(text.lines().count(), 1, "expected original cgroup-v2 line");
+            text.trim().strip_prefix("0::/").unwrap().to_owned()
+        };
+        let first = original(source.0.id());
+        let second = original(receiver.0.id());
+        assert_eq!(
+            first, second,
+            "two live CLI processes must share the inherited cgroup"
+        );
+        let path = Path::new("/sys/fs/cgroup").join(first);
+        let inode = fs::metadata(&path).unwrap().ino();
+        let usage = |path: &Path| -> u64 {
+            let text = fs::read_to_string(path.join("cpu.stat")).unwrap();
+            let mut values = text
+                .lines()
+                .filter_map(|line| line.strip_prefix("usage_usec "))
+                .map(|raw| raw.parse::<u64>().unwrap());
+            let value = values.next().expect("genuine kernel CPU usage");
+            assert!(values.next().is_none(), "duplicate kernel usage counter");
+            value
+        };
+        (path.clone(), inode, usage(&path))
+    };
     assert!(receiver.0.wait().unwrap().success());
     let receiver_lines = receiver_reader.join().unwrap();
     let report: Value = serde_json::from_str(receiver_lines.last().unwrap()).unwrap();
@@ -712,6 +747,31 @@ fn actual_pinned_peer_cli_follows_native_blocks_and_closes_shared_owner() {
             .encode()
             .unwrap()
     );
+    #[cfg(target_os = "linux")]
+    {
+        use std::os::unix::fs::MetadataExt;
+        let (path, inode, earlier_usage) = inherited_kernel_group;
+        assert_eq!(
+            fs::metadata(&path).unwrap().ino(),
+            inode,
+            "the inherited parent must survive both normal child exits"
+        );
+        let stat = fs::read_to_string(path.join("cpu.stat")).unwrap();
+        let mut usage = stat
+            .lines()
+            .filter_map(|line| line.strip_prefix("usage_usec "))
+            .map(|raw| raw.parse::<u64>().unwrap());
+        let after_usage = usage.next().unwrap();
+        assert!(usage.next().is_none());
+        assert!(
+            after_usage >= earlier_usage,
+            "actual kernel parent CPU counter must not reset when children exit"
+        );
+        println!(
+            "REAL_INHERITED_CGROUP_TWO_CLI simultaneous_signed_v3_processes=2 original_native_confirmed_blocks=3 shared_inode=true cpu_before_usec={} cpu_after_usec={} fixed_parent_25pct_qualified=false",
+            earlier_usage, after_usage
+        );
+    }
 }
 
 #[test]
