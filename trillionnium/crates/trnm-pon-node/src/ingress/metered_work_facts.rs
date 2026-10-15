@@ -1,0 +1,64 @@
+//! Mandatory shared-domain metering for the explicit local W1 fact path.
+//! Reuses the existing owner/M06 worker accounting and never allocates a budget.
+use super::public_v3::{ServiceMutationCpuDomain, ServiceMutationCpuSettlement};
+use super::{dispatch_shared_with_execution_control, Request};
+use crate::{ensure, Node, Result};
+use serde_json::Value;
+use std::sync::Mutex;
+use trnm_crypto_primitives::pon_work::facts::WorkFactCache;
+use trnm_mvcc_fee::pon_executor::ExecutionControl;
+
+/// A native outcome and its separate resource settlement. An accounting failure
+/// after commit cannot erase that commit or authorize blind redispatch. The shared
+/// domain fences future mutation starts when its accounting is unavailable.
+#[must_use]
+pub struct MeteredWorkFactOutcome {
+    pub native: Result<Value>,
+    pub cpu: ServiceMutationCpuSettlement,
+}
+
+/// Explicit Submit-only native embedding. The caller supplies the SAME domain as
+/// its existing public/continuous owner, not a new standalone domain per request.
+/// Refusal before a reservation returns Err with no W1/M06/durable work entered.
+/// Once reserved, native success/rejection/cancellation always receives a separate
+/// complete settlement; all actual scoped M06 workers are joined before settling.
+/// Panics retain the existing operation-drop behavior (unknown account, no refund).
+/// V2/V3 transport policy and default listeners are unchanged. This function is
+/// cooperative CPU accounting, not a kernel limit or a host-global budget owner.
+pub fn dispatch_shared_with_metered_work_facts(
+    node: &Mutex<Node>,
+    request: Request,
+    facts: &WorkFactCache,
+    domain: &ServiceMutationCpuDomain,
+    checkpoint: &(impl Fn() -> Result<()> + Sync),
+) -> Result<MeteredWorkFactOutcome> {
+    ensure(
+        matches!(&request, Request::Submit { .. }),
+        "WORK_FACT_SUBMIT_ONLY",
+    )?;
+    checkpoint()?;
+    let operation = domain.begin()?;
+    let live = operation.checkpoint_handle();
+    let checked = || {
+        checkpoint()?;
+        live.checkpoint()
+    };
+    let native = (|| {
+        let owner = super::lock_owner(node, &mut |_| checked())?;
+        ensure(
+            owner.continuous_domain_matches(domain),
+            "OWNER_CONTINUOUS_SERVICE_CPU_DOMAIN",
+        )?;
+        drop(owner);
+        dispatch_shared_with_execution_control(
+            node,
+            request,
+            &mut |_| checked(),
+            |packet| super::WorkCheckedPacket::verify_with_facts(packet, facts, &mut |_| checked()),
+            &ExecutionControl::new(&|_| checked(), operation.worker_accounting()),
+        )
+    })();
+    // No `?` on native: even a failed/cancelled call owes its actual CPU tail.
+    let cpu = operation.finish();
+    Ok(MeteredWorkFactOutcome { native, cpu })
+}

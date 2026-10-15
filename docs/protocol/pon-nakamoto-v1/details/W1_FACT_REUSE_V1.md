@@ -51,15 +51,32 @@ owned copies, not mutable aliases of cached facts.
 
 ## Existing native M05 integration
 
-`ingress::dispatch_shared_with_work_facts` is an explicit local embedding API. It
-calls the existing shared dispatcher and the existing `WorkCheckedPacket` boundary.
+The current exported entry is `ingress::dispatch_shared_with_metered_work_facts`.
+The first unmetered embedding wrapper is now crate-private and cfg(test) only;
+it retains the original seven owner controls, not an alternate production path.
+The current Submit-only entry requires the existing ServiceMutationCpuDomain.
+It never constructs a new budget, reserves before W1/M06 work, and checks an
+installed continuous owner's domain before dispatch. The caller's deadline and
+cancellation are checked alongside that same live CPU operation at native and
+W1 checkpoints. Actual M06 scoped workers register with the same operation and
+are joined before settlement. A callback alone is insufficient: the original
+unmetered wrapper plus an external CPU checkpoint was reproduced rejecting a
+valid parallel M06 execution with unknown/unregistered worker accounting.
+
+The complete native success/rejection/cancellation result is retained separately
+from the CPU settlement. Known CPU, including failed request tails, remains paid.
+Unknown accounting fences subsequent shared-domain starts, but cannot rewrite
+an already committed native success as an unexecuted operation. Panic uses the
+existing operation Drop rule: unknown accounting, no fabricated refund. Pool
+and read requests are not routed through this mutation-only entry. The trusted
+caller must not nest it inside an already reserved V3 request (which would buy a
+second reservation); V3's existing dispatcher continues owning its own permit.
+
 Current context and owner permits are checked before verification, the expensive
 verification runs outside the only durable writer mutex, and the original owner,
-state/root/nonce/current-clock and commit checks still run afterward. Original
-cancellation is forwarded into W1 waits/replay, M06 and durable admission. Existing
-V2/V3 public listeners and CLI continue using the original full-replay verifier;
-no resource-policy digest is silently reinterpreted. Public integration requires
-its own explicit resource-profile selection and complete hostile-service tests.
+state/root/nonce/current-clock and commit checks still run afterward. Public
+V2/V3 listeners and CLI still use their original verifier and pinned resource
+policies. No automatic public-cache profile selection is added.
 
 No additional Node, database, operation journal, trainer or authority owner exists.
 The original scalar/transposed/limb verifiers and original callback ordering remain
@@ -96,3 +113,28 @@ These tests establish finite implementation behavior, not elapsed-time speedup,
 independent public qualification, compact-proof soundness, physical durability,
 future learning quality or production activation. Hosted results must refer to the
 actual new source, not the predecessor's Chain/Hepta paired green.
+
+## Shared CPU continuation observations
+
+Nine additional Linux tests exercise actual metered signed native admission,
+owner-plus-scoped CPU accounting, exact paid-tail conservation with refill frozen
+only in test controls, cold/warm refusal before replay under exhaustion, positive
+facts after failed C, cancellation/retry, two real occupied reservations, eight
+server reconstructions sharing one retained debt, and unwind fencing.
+A separate test within those nine opens two actual framed V3 TCP listeners sharing
+the same CPU domain. While one deliberately held invalid cached request remains
+in flight outside the writer lock, a valid public submission and six additional
+native blocks complete. An independent local Node obtains seven real History
+pages over the other listener, fully verifies them, confirms all eight signed
+transfers under the installed depth/work policy, and cold-reopens equal state.
+The held invalid request is then rejected and charged; no resource remains live.
+
+This is one bounded controlled overlap, not a saturation/flooding campaign or a
+WAN throughput estimate. Holding a request is test scheduling, not measured
+attacker CPU. Eight reconstructed PublicServer objects do not simulate an OS
+process or host reboot. Same-domain pointers do not enforce a host-global cap
+across independent processes, unrelated Nodes or deliberately created standalone
+budgets. Cross-process kernel enforcement, unclean-restart debt qualification,
+pre-cookie connection costs and public-cache profile integration remain open.
+Mining generation and independent client work in the test are outside the
+receiver mutation accounting. Signed wire and consensus bytes are unchanged.

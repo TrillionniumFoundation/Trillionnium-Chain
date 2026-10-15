@@ -1215,3 +1215,11 @@ mod final_samples_tests {
         assert!(receipt.residual_cpu_ns.is_none());
     }
 }
+
+#[cfg(all(test, target_os = "linux"))]
+#[path = "scalar_cpu_metered_fact_tests.rs"]
+mod metered_fact_tests;
+
+#[cfg(all(test, target_os = "linux"))]
+#[path = "scalar_cpu_metered_fact_network_tests.rs"]
+mod metered_fact_network_tests;

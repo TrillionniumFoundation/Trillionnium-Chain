@@ -313,7 +313,8 @@ hardness, model adoption, long-term DA, WAN goodput or production authority.
 
 [Native fact reuse](W1_FACT_REUSE_V1.md) provides bounded positive mathematical
 facts and single-flight computation through an explicit existing M05/M06 embedding
-API. Every call rechecks its current target/task/bytes, and every native dispatch
+API. Its exported native path now requires the existing shared CPU domain and
+accounts actual M06 workers. Every call rechecks its current target/task/bytes, and every native dispatch
 rechecks current owner/state admission. The ordinary W1 verifiers and public V2/V3
 profiles retain full replay; no listener or readiness flag is changed. This local
 path does not qualify public admission economics or a succinct proof successor.

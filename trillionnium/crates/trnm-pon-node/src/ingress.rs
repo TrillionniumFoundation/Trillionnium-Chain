@@ -1070,13 +1070,18 @@ fn submit_result(node: &mut Node, id: Hash, clock: u64) -> Result<Value> {
         "generation":node.active()?.1,"physical_execution":false}))
 }
 
+#[path = "ingress/metered_work_facts.rs"]
+mod metered_work_facts;
+pub use metered_work_facts::{dispatch_shared_with_metered_work_facts, MeteredWorkFactOutcome};
+
 /// Explicit local-development W1 fact-reuse entrypoint on the existing M05/M06
 /// and durable owner path. This is NOT selected by V2/V3 network listeners or CLI.
 /// Their pinned resource policies and ordinary full-replay behavior are unchanged.
 /// The caller bounds concurrent requests and supplies one original cancellation /
 /// deadline check. Current context, task/owner permit, state and commit checks run
 /// on every dispatch, including cache hits; no second Node or journal is created.
-pub fn dispatch_shared_with_work_facts(
+#[cfg(test)]
+pub(crate) fn dispatch_shared_with_work_facts(
     node: &Mutex<Node>,
     request: Request,
     facts: &trnm_crypto_primitives::pon_work::facts::WorkFactCache,
