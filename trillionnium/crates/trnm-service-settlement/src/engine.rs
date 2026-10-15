@@ -113,18 +113,30 @@ pub(crate) fn validate_trust_bundle(
             "provider and consumer authorities must be distinct",
         ));
     }
-    VerifyingKey::from_bytes(&trust.provider.public_key).map_err(|_| {
+    let provider_key = VerifyingKey::from_bytes(&trust.provider.public_key).map_err(|_| {
         error(
             ConsumptionSettlementErrorCodeV1::InvalidContext,
             "provider public key is invalid",
         )
     })?;
-    VerifyingKey::from_bytes(&trust.consumer.public_key).map_err(|_| {
+    if provider_key.is_weak() {
+        return Err(error(
+            ConsumptionSettlementErrorCodeV1::InvalidContext,
+            "provider public key is weak",
+        ));
+    }
+    let consumer_key = VerifyingKey::from_bytes(&trust.consumer.public_key).map_err(|_| {
         error(
             ConsumptionSettlementErrorCodeV1::InvalidContext,
             "consumer public key is invalid",
         )
     })?;
+    if consumer_key.is_weak() {
+        return Err(error(
+            ConsumptionSettlementErrorCodeV1::InvalidContext,
+            "consumer public key is weak",
+        ));
+    }
     let accounts = [
         trust.provider_account_id,
         trust.consumer_account_id,
@@ -1020,6 +1032,12 @@ fn verify_signature_entry(
             "registered Ed25519 key is invalid",
         )
     })?;
+    if key.is_weak() {
+        return Err(error(
+            ConsumptionSettlementErrorCodeV1::InvalidSignature,
+            "registered Ed25519 key is weak",
+        ));
+    }
     let signature = Signature::from_slice(&entry.signature).map_err(|_| {
         error(
             ConsumptionSettlementErrorCodeV1::InvalidSignature,
