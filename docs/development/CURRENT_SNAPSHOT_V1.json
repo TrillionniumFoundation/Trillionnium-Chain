@@ -3,9 +3,10 @@
   "source_identity": "derive-from-git-at-verification",
   "development_target": "pon-nakamoto-v1",
   "stage": "invariant-driven-native-application-candidate",
-  "workspace_packages": 24,
+  "workspace_packages": 25,
   "runtime_implemented": false,
   "production_consensus_activation": false,
   "module_maturity": "config/pon/module-maturity-v1.json",
-  "invariant_contract": "config/pon/invariants-v2.json"
+  "invariant_contract": "config/pon/invariants-v2.json",
+  "applicability_registry": "config/pon/applicability-v1.json"
 }

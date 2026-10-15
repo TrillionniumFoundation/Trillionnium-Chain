@@ -16,7 +16,7 @@ pub(crate) fn handle_pull_task(state: PathBuf) -> Result<()> {
 }
 
 pub(crate) fn handle_execute(task_id: u64, worker: String, payload: String) -> Result<()> {
-    let (result_hash, salt_hex) = compute_result_and_salt(task_id, &payload);
+    let (result_hash, salt_hex) = compute_result_and_salt(task_id, &payload)?;
     println!("[agent] executed task_id={} worker={}", task_id, worker);
     println!("result_hash={}", result_hash);
     println!("salt_hex={}", salt_hex);
@@ -57,18 +57,22 @@ pub(crate) fn handle_run_once(
     submit_log: PathBuf,
 ) -> Result<()> {
     let task_id = next_task_id(&state)?;
-    let (result_hash, salt_hex) = compute_result_and_salt(task_id, &payload);
-    let commit_hash = compute_commit_hash(task_id, &result_hash, &salt_hex, &worker);
-    if submit {
-        append_submission(
+    let (result_hash, salt_hex) = compute_result_and_salt(task_id, &payload)?;
+    // The durable local submission record is the only source of an already
+    // committed salt. On restart, a different proposed salt must not create a
+    // second commitment under the same public task identity.
+    let salt_hex = if submit {
+        crate::commit_salt::journal_automatic_submission(
             &submit_log,
             task_id,
             &worker,
-            &commit_hash,
             &result_hash,
             &salt_hex,
-        )?;
-    }
+        )?
+    } else {
+        salt_hex
+    };
+    let commit_hash = compute_commit_hash(task_id, &result_hash, &salt_hex, &worker);
     let out = build_run_once_output(task_id, &worker, &result_hash, &salt_hex, &commit_hash);
     println!("{}", serde_json::to_string_pretty(&out)?);
     if submit {
