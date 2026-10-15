@@ -157,7 +157,20 @@ pub(crate) fn validate_trust_bundle(
         ));
     }
     require_strictly_sorted(&trust.prices, "price table")?;
+    let mut resource_keys = BTreeSet::new();
     for price in &trust.prices {
+        if !resource_keys.insert((
+            price.resource_class,
+            &price.resource_id,
+            &price.meter_id,
+            price.meter_version,
+            price.unit,
+        )) {
+            return Err(error(
+                ConsumptionSettlementErrorCodeV1::NonCanonical,
+                "price table resource keys must be unique",
+            ));
+        }
         if price.resource_id.is_empty()
             || price.resource_id.len() > MAX_ID_BYTES_V1
             || price.meter_id.is_empty()
@@ -839,7 +852,20 @@ fn validate_usage(usage: &[ResourceUsageV1]) -> ConsumptionSettlementResultV1<()
         ));
     }
     require_strictly_sorted(usage, "resource usage")?;
+    let mut resource_keys = BTreeSet::new();
     for entry in usage {
+        if !resource_keys.insert((
+            entry.resource_class,
+            &entry.resource_id,
+            &entry.meter_id,
+            entry.meter_version,
+            entry.unit,
+        )) {
+            return Err(error(
+                ConsumptionSettlementErrorCodeV1::NonCanonical,
+                "resource usage keys must be unique",
+            ));
+        }
         if entry.resource_id.is_empty()
             || entry.resource_id.len() > MAX_ID_BYTES_V1
             || entry.meter_id.is_empty()

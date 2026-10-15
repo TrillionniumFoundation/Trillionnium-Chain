@@ -16,3 +16,12 @@ cargo test --locked -p trnm-service-settlement --all-targets --all-features
 
 Run from `trillionnium`. See [modules](../../../docs/modules/README.md) and
 [ownership](../../../config/portability-inventory-v1.json).
+
+Price tables and receipt usage require unique resource keys
+`(resource_class, resource_id, meter_id, meter_version, unit)` as well as the
+existing full-record canonical ordering. Different prices, amounts, or measurement
+commitments do not make duplicate resource keys distinct. This validation changes
+no serialized fields, canonical bytes, signed domains, or stored schema; valid
+unique-key inputs retain their existing encodings. Previously accepted ambiguous
+configurations or receipt histories fail validation on open/replay and are not
+silently migrated.

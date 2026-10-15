@@ -1130,3 +1130,118 @@ fn open_existing_requires_precreated_regular_nonsymlink_store() {
         );
     }
 }
+
+#[test]
+fn duplicate_price_resource_keys_are_rejected_before_store_creation() {
+    let mut harness = Harness::new();
+    let mut duplicate = harness.trust.prices[0].clone();
+    duplicate.unit_price += 1;
+    harness.trust.prices.push(duplicate);
+    let error = ConsumptionSettlementStoreV1::open(harness.config())
+        .expect_err("duplicate price resource key must be rejected");
+    assert_eq!(error.code(), ConsumptionSettlementErrorCodeV1::NonCanonical);
+    assert!(!harness.path.exists());
+}
+
+#[test]
+fn duplicate_usage_resource_keys_preserve_state_and_allow_valid_retry() {
+    for change_amount in [false, true] {
+        let harness = Harness::new();
+        let store = harness.open();
+        let before = store.state().expect("initial state");
+        let head_before = store.fresh_readback().expect("initial head");
+        let execution = harness.execution(9, h(900), 10);
+        let mut body = harness.receipt(None, 10, 100).body;
+        let mut duplicate = body.usage[0].clone();
+        if change_amount {
+            duplicate.amount += 1;
+        } else {
+            duplicate.measurement_commitment = h(9_999);
+        }
+        body.usage.push(duplicate);
+        body.usage.sort();
+        body.cumulative_usage = cumulative_usage_for_test(None, &body.usage)
+            .expect("construct duplicate-input fixture");
+        body.cumulative_usage_root =
+            cumulative_root_for_test(&body.cumulative_usage).expect("fixture cumulative root");
+        body.cumulative_charge = body.usage.iter().map(|entry| entry.amount * 3).sum();
+        let command = ConsumptionSettlementCommandV1::AdmitReceipt {
+            receipt: harness.sign_receipt(body),
+        };
+        for _ in 0..2 {
+            let error = store
+                .execute_committed_execution(&execution, &command)
+                .expect_err("duplicate usage resource key must be rejected");
+            assert_eq!(error.code(), ConsumptionSettlementErrorCodeV1::NonCanonical);
+            assert_eq!(store.state().expect("state after rejection"), before);
+            assert_eq!(
+                store.fresh_readback().expect("head after rejection"),
+                head_before
+            );
+        }
+        drop(store);
+        let reopened = ConsumptionSettlementStoreV1::open_existing(harness.config())
+            .expect("reopen after invalid input");
+        assert_eq!(reopened.state().expect("reopened state"), before);
+        assert_eq!(
+            reopened.fresh_readback().expect("reopened head"),
+            head_before
+        );
+        reopened
+            .execute_committed_execution(
+                &execution,
+                &ConsumptionSettlementCommandV1::AdmitReceipt {
+                    receipt: harness.receipt(None, 10, 100),
+                },
+            )
+            .expect("valid receipt remains admissible");
+    }
+}
+
+#[test]
+fn usage_key_uniqueness_distinguishes_units_and_checks_nonadjacent_entries() {
+    let mut harness = Harness::new();
+    let mut other_price = harness.trust.prices[0].clone();
+    other_price.unit = 4;
+    harness.trust.prices.push(other_price);
+    let store = harness.open();
+    let execution = harness.execution(9, h(900), 10);
+    let before = store.fresh_readback().expect("initial head");
+    let mut body = harness.receipt(None, 10, 100).body;
+    let mut other_unit = body.usage[0].clone();
+    other_unit.amount = 101;
+    other_unit.unit = 4;
+    body.usage.push(other_unit);
+    let mut malformed = body.clone();
+    let mut duplicate = body.usage[0].clone();
+    duplicate.amount = 102;
+    malformed.usage.push(duplicate);
+    assert!(malformed.usage.windows(2).all(|pair| pair[0] < pair[1]));
+    malformed.cumulative_usage = cumulative_usage_for_test(None, &malformed.usage)
+        .expect("construct nonadjacent duplicate fixture");
+    malformed.cumulative_usage_root =
+        cumulative_root_for_test(&malformed.cumulative_usage).expect("fixture root");
+    malformed.cumulative_charge = 909;
+    let error = store
+        .execute_committed_execution(
+            &execution,
+            &ConsumptionSettlementCommandV1::AdmitReceipt {
+                receipt: harness.sign_receipt(malformed),
+            },
+        )
+        .expect_err("nonadjacent duplicate resource key");
+    assert_eq!(error.code(), ConsumptionSettlementErrorCodeV1::NonCanonical);
+    assert_eq!(store.fresh_readback().expect("unchanged head"), before);
+    body.cumulative_usage = cumulative_usage_for_test(None, &body.usage).expect("distinct units");
+    body.cumulative_usage_root =
+        cumulative_root_for_test(&body.cumulative_usage).expect("valid root");
+    body.cumulative_charge = 603;
+    store
+        .execute_committed_execution(
+            &execution,
+            &ConsumptionSettlementCommandV1::AdmitReceipt {
+                receipt: harness.sign_receipt(body),
+            },
+        )
+        .expect("distinct unit keys remain valid");
+}
