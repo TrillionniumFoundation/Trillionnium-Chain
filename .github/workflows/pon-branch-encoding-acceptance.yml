@@ -143,7 +143,12 @@ jobs:
             python3 scripts/ci/check_required_native_test.py "$OUT/$test.log" --test "$selector"
           done
           mkdir "$OUT/network-test-profile"
-          TRNM_CI_RECEIPT_DIR="$OUT/network-test-profile" cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test public_v3_service_campaign -- --show-output --test-threads=1 2>&1 | tee "$OUT/network-test-profile.log"
+          # The mixed-service test writes its complete report before asserting its
+          # honest-service target. Preserve failed phase/attempt evidence in the
+          # same always-uploaded artifact without relaxing the original test.
+          TRNM_PUBLIC_V3_CAMPAIGN_DIR="$OUT/mixed-service-campaign" \
+          TRNM_CI_RECEIPT_DIR="$OUT/network-test-profile" \
+          cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test public_v3_service_campaign -- --show-output --test-threads=1 2>&1 | tee "$OUT/network-test-profile.log"
           grep -E '^test result: ok\. 2 passed; 0 failed; 0 ignored;' "$OUT/network-test-profile.log"
       - name: Check complete native target lint without allowances
         shell: bash
