@@ -126,6 +126,17 @@ impl PaidMutationCpuBudget {
             flow: Some(CpuFlow::new(i128::from(MUTATION_CPU_BURST_NS))),
         }
     }
+    // Process-local cold starts carry NO new burst or free challenge tokens.
+    // Both verified continuous reopens and ordinary CLI process starts
+    // share this exact initial arithmetic. The continuous owner separately
+    // carries durable operation debt; ordinary CLI does NOT gain that proof.
+    pub(super) fn cold_start() -> Self {
+        let mut budget = Self::new();
+        budget.credit_ns = 0;
+        budget.flow = Some(CpuFlow::new(0));
+        budget.intake = Arc::new(super::intake::ListenerIntake::after_process_restart());
+        budget
+    }
     pub(super) fn refill(&mut self, now: Instant) {
         // A timestamp sampled before another holder acquired this shared
         // budget may be stale. Do not move the refill watermark backwards:
@@ -771,23 +782,15 @@ impl ServiceMutationCpuDomain {
     pub(crate) fn from_clean_continuous_restart(
         _checkpoint: crate::operator_continuous_history::VerifiedCleanRestart,
     ) -> Self {
-        let mut budget = PaidMutationCpuBudget::new();
-        budget.credit_ns = 0;
-        budget.flow = Some(CpuFlow::new(0));
-        budget.intake = Arc::new(super::intake::ListenerIntake::after_process_restart());
         Self {
-            budget: Arc::new(Mutex::new(budget)),
+            budget: Arc::new(Mutex::new(PaidMutationCpuBudget::cold_start())),
         }
     }
     pub(crate) fn from_known_unclean_continuous_restart(
         _checkpoint: crate::operator_continuous_history::VerifiedKnownUncleanRestart,
     ) -> Self {
-        let mut budget = PaidMutationCpuBudget::new();
-        budget.credit_ns = 0;
-        budget.flow = Some(CpuFlow::new(0));
-        budget.intake = Arc::new(super::intake::ListenerIntake::after_process_restart());
         Self {
-            budget: Arc::new(Mutex::new(budget)),
+            budget: Arc::new(Mutex::new(PaidMutationCpuBudget::cold_start())),
         }
     }
 }

@@ -555,3 +555,41 @@ fn one_node_cannot_spawn_a_fifth_worker_queue_service_from_the_same_domain() {
         MAX_LISTENERS_PER_CPU_DOMAIN,MAX_LISTENERS_PER_CPU_DOMAIN*3,
         MAX_LISTENERS_PER_CPU_DOMAIN*2,MAX_LISTENERS_PER_CPU_DOMAIN*2);
 }
+
+#[test]
+fn public_cli_process_cold_start_never_receives_an_instant_fresh_cpu_or_cookie_burst() {
+    for key in 90..96 {
+        let identity = DevelopmentIdentity::from_secret_hex(&hex::encode([key; 32])).unwrap();
+        let policy = PublicPolicy::new(8, Duration::from_millis(2000)).unwrap();
+        let server = PublicServer::new_process_cold(identity, policy).unwrap();
+        let domain = server.mutation_cpu_domain();
+        let state = domain.observe().unwrap();
+        assert_eq!(state.stored_credit_ns, 0);
+        assert_eq!(state.in_flight, 0);
+        assert!(!state.accounting_unavailable);
+        let intake = server.listener_intake().unwrap();
+        let clock = Instant::now();
+        assert!(!intake.try_challenge(2, clock).unwrap());
+        assert!(intake
+            .try_challenge(2, clock + Duration::from_millis(8))
+            .unwrap());
+        assert!(!intake
+            .try_challenge(2, clock + Duration::from_millis(8))
+            .unwrap());
+    }
+    // Historical pre-fix constructor granted this at every new Process.
+    let historical = PublicServer::new(
+        DevelopmentIdentity::from_secret_hex(&hex::encode([95u8; 32])).unwrap(),
+        PublicPolicy::new(8, Duration::from_millis(2000)).unwrap(),
+    )
+    .unwrap();
+    assert_eq!(
+        historical
+            .mutation_cpu_domain()
+            .observe()
+            .unwrap()
+            .stored_credit_ns,
+        i128::from(super::scalar_cpu::MUTATION_CPU_BURST_NS)
+    );
+    println!("PROCESS_COLD_BUDGET cold_creations=6 each_initial_cpu_ns=0 each_initial_challenges=0 old_constructor_cpu_ns=2000000000");
+}

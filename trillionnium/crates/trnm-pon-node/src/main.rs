@@ -1,4 +1,5 @@
 //! Ordinary native development entrypoint. Signed transactions remain external inputs.
+mod host_public_guard;
 use serde_json::{json, Value};
 use std::{
     collections::{BTreeMap, BTreeSet},
@@ -1850,7 +1851,15 @@ fn run() -> Result<Value> {
                         .map(PeerPollingConfig::context)
                         .transpose()?
                         .map(hex::encode);
-                    let server = ingress::public_v3::PublicServer::new(identity, policy)?;
+                    // This CLI acquires one of four Linux netns-scoped service
+                    // slots for its whole lifetime, including miner/peer workers.
+                    // Legitimate multiple local peers retain independent Nodes;
+                    // a fifth same-namespace CLI cannot mint another budget.
+                    let _host_guard = host_public_guard::Guard::acquire()?;
+                    // A new process starts with zero CPU/challenge credit. A
+                    // kill-and-relaunch cannot reclaim the historical 2s burst.
+                    let server =
+                        ingress::public_v3::PublicServer::new_process_cold(identity, policy)?;
                     let pool_context = node.enable_local_mempool(pool)?;
                     let listener = std::net::TcpListener::bind(
                         args.get("--listen")
@@ -1861,6 +1870,9 @@ fn run() -> Result<Value> {
                         "{}",
                         json!({"event":"listening","address":listener.local_addr()?.to_string(),
                         "state":node.stats()?,"server_public":server_public,"scope":"public-development-unqualified",
+                        "host_process_slot":_host_guard.slot,
+                        "host_process_budget_scope":"cooperative-local-service-processes-4",
+                        "initial_paid_cpu_credit_ns":server.mutation_cpu_domain().observe()?.stored_credit_ns,
                         "admission_profile":ingress::public_v3::PROFILE,"admission_profile_digest":hex::encode(policy.id()),
                         "pool_context":hex::encode(pool_context),"mining_enabled":mining.is_some(),
                         "peer_polling_enabled":polling.is_some(),"peer_polling_context":polling_context,

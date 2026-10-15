@@ -670,6 +670,15 @@ impl PublicServer {
             fail_next_live_cpu_finish: AtomicBool::new(false),
         })
     }
+    /// Actual fresh native CLI process: zero initial CPU and challenge credit.
+    /// It remains a development-unqualified service, not a host CPU proof.
+    /// PublicPolicy signature bytes are unchanged; the local cost policy is
+    /// strictly less permissive at startup.
+    pub fn new_process_cold(identity: DevelopmentIdentity, policy: PublicPolicy) -> Result<Self> {
+        let mut server = Self::new(identity, policy)?;
+        server.mutation_cpu = Arc::new(Mutex::new(PaidMutationCpuBudget::cold_start()));
+        Ok(server)
+    }
     /// The returned handle shares this exact service CPU epoch with a trusted
     /// local owner. It is a meter, not task or packet admission authority.
     pub fn mutation_cpu_domain(&self) -> ServiceMutationCpuDomain {

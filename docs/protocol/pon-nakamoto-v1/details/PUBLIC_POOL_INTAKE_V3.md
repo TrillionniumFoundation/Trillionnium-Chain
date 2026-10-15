@@ -706,3 +706,61 @@ retains its separate existing durable CPU usage journal; a new ordinary Node
 does not gain durable CPU-debt migration. WAN saturation, fairness and the
 cost-hardness of W1 remain separate gates. Wire bytes, signature checks,
 PoN mathematics and the signed PublicPolicy identity remain unchanged.
+
+## R6: Bounded native CLI process epochs (not host-wide proof)
+
+The actual public V3 development CLI previously constructed a fresh
+PublicServer::new on every process start. This granted a new initial 2-second
+mutation CPU bucket and 32 challenge tokens even after the same trusted
+operator restarted a plain Node, while Node's R5 domain identity survived
+only for one open process. A process restart must not be represented as
+durable usage recovery.
+
+On Linux, the CLI now holds one of FOUR fixed abstract Unix-domain-socket
+slots for the lifetime of its public development service. The kernel
+prevents a second process in the SAME NETWORK NAMESPACE from occupying an
+already-held slot; changing server key, Node directory, PID or TCP port
+does not add a fifth local CLI capacity slot. There is no additional
+database, operation journal, privileged service, filesystem lock or wire
+command. This four-slot upper bound retains ordinary concurrent
+development peers, native miner/follower synchronization and real V3
+client History. The first one-slot prototype incorrectly blocked normal
+multi-node test peers: that failure was retained and the design changed,
+not interpreted as successful protection.
+
+The actual CLI now uses PublicServer::new_process_cold: a fresh process
+has zero scalar mutation CPU credit and zero challenge tokens, refilling
+only by the EXISTING rate and ceiling. Earlier uninterrupted in-process
+PublicServer::new remains the unchanged library-development constructor.
+Existing verified continuous clean and known-unclean restarts use the same
+zero-credit primitive but retain their separate durable owner proof.
+A CLI restart discards remaining available credit; it does not mint a
+fresh 2-second initial burst. The normal listening JSON reports the
+selected local process slot and zero initial credit as unsigned diagnostics.
+All signed admission policy, transaction/proof formats, target, work
+relation, native state and operation identity checks remain unchanged.
+
+On macOS, the same development CLI uses four cooperative same-UID file
+locks under the canonical root-owned sticky temporary directory. Files
+are empty, owned mode0600, regular, single-link and opened O_NOFOLLOW.
+This preserves macOS developer CLI support without claiming Linux socket
+semantics; a same-UID administrator can replace its own advisory lock,
+and no macOS machine was tested in this increment. Other platforms
+explicitly refuse unsupported public host-guard operations.
+
+The strongest supported Linux claim is FOUR cooperating public CLI
+processes within one network namespace plus no startup-credit bonus.
+It is NOT a host cgroup-v2 CPU/memory hard limit, global scheduling
+fairness or unlimited Sybil defense. Different network namespaces,
+direct library-embedded services, parent OS/kernel overhead, unresolved
+CPU costs after abrupt termination, and independently operated machines
+remain outside this limit. Physical reboot and ordinary Node's missing
+durable historical debt are not qualified. Production/consensus activation
+remains false.
+
+Actual bounded controls: real second process refused when all four
+kernel names were occupied by the test process; release permitted a
+subsequent process to acquire; six cold constructors began with exactly
+zero credit. The pre-existing multi-process V3 CLI, mining, public
+client and local resource-observation tests were rerun separately.
+These are neither WAN saturation trials nor host reboot experiments.
