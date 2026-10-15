@@ -876,3 +876,44 @@ processes actually running beneath it, enforce a 25% kernel quota in vivo,
 prove durable ordinary-node CPU debt after reboot or qualify WAN fairness.
 An empty temporary systemd topology test slice from R8 remains a separate
 operator cleanup issue; this code does not touch that host unit.
+
+### Reproducible fixed parent unit and actual ordinary-process cold reopen
+
+The retained *candidate-only* systemd slice template is
+[trnmponpublic.slice](../../../../config/systemd/trnmponpublic.slice).
+It specifies the SINGLE fixed public parent with CPUQuota=25%,
+CPUQuotaPeriodSec=100ms, MemoryMax=2G, MemorySwapMax=0,
+TasksMax=256, all three resource-accounting controllers, and
+StopWhenUnneeded=no. The last setting is deliberate: a completed or
+crashed child must not cause the parent to disappear and reset kernel
+usage counters before the next child. The administrator must still
+provision it root-owned, verify the canonical /sys/fs/cgroup/trnmponpublic.slice
+path and read back cpu.max, cpu.max.burst, memory.max,
+memory.swap.max and pids.max before any externally reachable service
+may use it. The existing Rust library guard remains the actual enforcing
+admission decision; this static template is not an authority token.
+
+The command systemd-analyze verify config/systemd/trnmponpublic.slice passes
+on the observed Linux test host. The template is NOT installed, enabled,
+started or used to migrate a process by this change. The current host's
+fixed parent is still inactive, and the previous unrelated, empty
+temporary path-probe slice remains an operator cleanup issue. No
+privileged cleanup command was bypassed.
+
+An added original public_pool_cli native Rust integration test ran two
+SEPARATE actual binary processes, one after the other, reusing one
+ordinary Node's same on-disk namespace after the first process exited
+normally. Each printed initial_paid_cpu_credit_ns=0 at startup, served
+a genuinely signed and verified V3 Head request over real loopback TCP,
+returned the same head and completed with a real final service result.
+The corresponding raw COLD_CLI_PROCESS_EXIT observations are retained.
+The test does not mint a new kernel parent or claim cross-process
+scarcity, persistent negative CPU debt, attacker load fairness,
+abnormal host termination or a physical reboot. Normal close/reopen
+with zero initial credit is narrower than unclean-crash debt recovery.
+
+An additional attempted simultaneous-writer probe was NOT executed
+because its test invocation was blocked by the tool safety check. That
+unverified extra test code was discarded; the completed two-process
+normal-reopen regression remains independently valid. Do not rerun
+the blocked probe using a different execution mechanism.

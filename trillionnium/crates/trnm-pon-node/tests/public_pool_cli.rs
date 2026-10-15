@@ -750,3 +750,126 @@ fn peer_cli_rejects_unused_options_and_wrong_context_before_store_creation() {
     assert_eq!(out.status.code(), Some(2));
     assert!(!store.exists());
 }
+
+#[test]
+fn real_two_cli_process_cold_reopens_one_node_without_fresh_cpu_burst() {
+    // Real OS process exit/reopen, not PublicServer constructor cloning or
+    // a physical host reboot. Ordinary mode has no durable per-operation debt.
+    // This exercises the exact loopback development binary; no root/sysctl,
+    // extra namespace or host cgroup is created by the test.
+    let root = tempfile::tempdir().unwrap();
+    let store = root.path().join("unchanged-store");
+    let secret = root.path().join("server.key");
+    let guest_key = root.path().join("guest.key");
+    let public = key(&secret, 41);
+    key(&guest_key, 42);
+    let pool = root.path().join("pool.json");
+    let limits = PoolLimits {
+        max_records: 16,
+        max_bytes: 32_768,
+        max_group_members: 8,
+        critical_reserve: 0,
+        max_removals: 32,
+        preview_miner: development_public(0).unwrap(),
+    };
+    fs::write(&pool, serde_json::to_vec(&limits).unwrap()).unwrap();
+    fs::set_permissions(&pool, fs::Permissions::from_mode(0o600)).unwrap();
+    let genesis = ingress::now().unwrap() - 100;
+    let mut first_tip = None;
+    for process_number in 0..2 {
+        let mut service = command("serve", &store, genesis)
+            .args([
+                "--admission-profile",
+                ingress::public_v3::PROFILE,
+                "--public-development-network",
+                "--seconds",
+                "6",
+                "--listen",
+                "127.0.0.1:0",
+                "--admission-bits",
+                "8",
+            ])
+            .arg("--pool-policy")
+            .arg(&pool)
+            .arg("--auth-secret")
+            .arg(&secret)
+            .stdout(Stdio::piped())
+            .stderr(Stdio::inherit())
+            .spawn()
+            .unwrap();
+        let stdout = service.stdout.take().unwrap();
+        let mut guarded = Running(service);
+        let (ready_tx, ready_rx) = mpsc::channel();
+        let reader = thread::spawn(move || {
+            let mut lines = BufReader::new(stdout).lines();
+            let first = lines
+                .next()
+                .expect("service must report readiness")
+                .unwrap();
+            let _ = ready_tx.send(first);
+            lines.collect::<std::io::Result<Vec<_>>>().unwrap()
+        });
+        let ready: Value =
+            serde_json::from_str(&ready_rx.recv_timeout(Duration::from_secs(4)).unwrap()).unwrap();
+        assert_eq!(ready["event"], "listening");
+        assert_eq!(ready["root_kernel_parent_checked"], false);
+        assert_eq!(ready["initial_paid_cpu_credit_ns"], 0);
+        assert_eq!(
+            ready["host_process_budget_scope"],
+            "cooperative-local-service-processes-4"
+        );
+        assert_eq!(ready["production_activation"], false);
+        let address = ready["address"].as_str().unwrap();
+        let mut head_client = command("head", &root.path().join("client"), genesis);
+        head_client
+            .args([
+                "--admission-profile",
+                ingress::public_v3::PROFILE,
+                "--peer",
+                address,
+                "--server-public",
+                &public,
+                "--admission-bits",
+                "8",
+            ])
+            .arg("--auth-secret")
+            .arg(&guest_key);
+        let response = successful_while_serving(
+            &mut head_client,
+            &mut guarded,
+            "independent-process-signed-head",
+            Instant::now() + Duration::from_secs(4),
+        );
+        assert_eq!(response["ok"], true);
+        // The chain/state identity is not reset by restarting the service.
+        let tip = response["response"]["tip"].clone();
+        if let Some(first_tip) = &first_tip {
+            assert_eq!(
+                &tip, first_tip,
+                "cold reopen changed the signed native head"
+            );
+        } else {
+            first_tip = Some(tip);
+        }
+        let stop = Instant::now() + Duration::from_secs(9);
+        while guarded.0.try_wait().unwrap().is_none() && Instant::now() < stop {
+            thread::sleep(Duration::from_millis(20));
+        }
+        assert!(
+            guarded.0.try_wait().unwrap().is_some(),
+            "bounded V3 service did not exit"
+        );
+        assert!(guarded.0.wait().unwrap().success());
+        let final_events = reader.join().unwrap();
+        assert!(
+            !final_events.is_empty(),
+            "native CLI must emit a final service result"
+        );
+        println!(
+            "COLD_CLI_PROCESS_EXIT process={} parent_reused=false initial_credit_ns=0 signed_head=true finished_normal=true",
+            process_number + 1
+        );
+    }
+    // No claim of persisted ordinary-operation CPU debt or hard cgroup usage:
+    // the fixed parent remains unprovisioned on this test host.
+}

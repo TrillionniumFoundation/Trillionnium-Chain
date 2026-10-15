@@ -215,6 +215,65 @@ mod kernel_parent {
     mod tests {
         use super::*;
         #[test]
+        fn shipped_systemd_slice_is_the_one_fixed_finite_kernel_parent() {
+            // This validates the shipped operator package, not live kernel
+            // enforcement. A live systemd service still needs independent
+            // membership, controller and real CPU/quota observations.
+            let unit = include_str!("../../../../config/systemd/trnmponpublic.slice");
+            let mut section = "";
+            let mut entries = std::collections::BTreeMap::new();
+            for original in unit.lines() {
+                let line = original.trim();
+                if line.is_empty() || line.starts_with('#') {
+                    continue;
+                }
+                if line.starts_with('[') {
+                    assert!(line.ends_with(']'));
+                    section = &line[1..line.len() - 1];
+                    assert!(matches!(section, "Unit" | "Slice"));
+                    continue;
+                }
+                let (name, value) = line.split_once('=').expect("unit property");
+                assert!(
+                    entries.insert((section, name), value).is_none(),
+                    "duplicate systemd directive would override the audited parent"
+                );
+            }
+            let expected = [
+                (("Unit", "StopWhenUnneeded"), "no"),
+                (("Slice", "CPUAccounting"), "yes"),
+                (("Slice", "CPUQuota"), "25%"),
+                (("Slice", "CPUQuotaPeriodSec"), "100ms"),
+                (("Slice", "MemoryAccounting"), "yes"),
+                (("Slice", "MemoryMax"), "2G"),
+                (("Slice", "MemorySwapMax"), "0"),
+                (("Slice", "TasksAccounting"), "yes"),
+                (("Slice", "TasksMax"), "256"),
+            ];
+            for (name, expected_value) in expected {
+                assert_eq!(
+                    entries.get(&name).copied(),
+                    Some(expected_value),
+                    "{name:?}"
+                );
+            }
+            assert_eq!(
+                entries.len(),
+                expected.len() + 2,
+                "unexpected unit property"
+            );
+            assert_eq!(
+                validate_limits("25000 100000", "0", "2147483648", "0", "256").unwrap(),
+                Limits {
+                    cpu_quota_us: 25_000,
+                    cpu_period_us: 100_000,
+                    memory_bytes: 2 * 1024 * 1024 * 1024,
+                    tasks: 256,
+                }
+            );
+        }
+
+        #[test]
         fn fixed_parent_constant_is_exactly_the_canonical_directory_and_name() {
             assert_eq!(
                 Path::new(super::super::FIXED_PUBLIC_KERNEL_PARENT),
