@@ -272,14 +272,8 @@ pub(crate) fn append_submission(
     salt_hex: &str,
 ) -> Result<()> {
     let nonce = task_id;
-    let commit_cmd = format!(
-        "trnm-node tx commit-result {} {} {} {}",
-        task_id, worker, commit_hash, nonce
-    );
-    let reveal_cmd = format!(
-        "trnm-node tx reveal-result {} {} {}",
-        task_id, result_hash, salt_hex
-    );
+    let commit_cmd = workflow_ops::commit_template(task_id, worker, commit_hash, nonce);
+    let reveal_cmd = workflow_ops::reveal_template(task_id, result_hash, salt_hex);
     let rec = SubmissionRecord {
         ts_unix_ms: now_ms(),
         task_id,

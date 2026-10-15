@@ -58,6 +58,46 @@ mod durable {
     }
 
     #[test]
+    fn private_replay_quotes_untrusted_worker_without_changing_commit_identity() {
+        let root = tempfile::tempdir().unwrap();
+        let path = root.path().join("submissions.jsonl");
+        let worker = "w';$(echo injected)";
+        let output = digest(b"known-output");
+        let (_, first_salt) = crate::execute_payload("known-output", 71).unwrap();
+        let (_, unused_second_salt) = crate::execute_payload("known-output", 71).unwrap();
+        assert_eq!(
+            journal_automatic_submission(&path, 71, worker, &output, &first_salt).unwrap(),
+            first_salt
+        );
+        let original = fs::read(&path).unwrap();
+        let row: crate::SubmissionRecord =
+            serde_json::from_slice(&original[..original.len() - 1]).unwrap();
+        assert_eq!(row.worker, worker);
+        assert_eq!(
+            row.commit_hash,
+            crate::commitment(71, &output, &first_salt, worker),
+            "command rendering must not change the original worker or commitment"
+        );
+        assert_eq!(
+            row.commit_cmd,
+            format!(
+                "trnm-node tx commit-result 71 'w'\\'';$(echo injected)' {} 71",
+                row.commit_hash
+            ),
+            "all worker metacharacters must remain inside one POSIX shell argument"
+        );
+        assert_eq!(
+            journal_automatic_submission(&path, 71, worker, &output, &unused_second_salt).unwrap(),
+            first_salt
+        );
+        assert_eq!(
+            fs::read(path).unwrap(),
+            original,
+            "replay may not rewrite the first command"
+        );
+    }
+
+    #[test]
     fn conflicting_result_or_worker_cannot_invent_second_commitment() {
         let root = tempfile::tempdir().unwrap();
         let path = root.path().join("submissions.jsonl");
