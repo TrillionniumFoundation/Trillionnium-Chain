@@ -343,6 +343,9 @@ fn actual_opt_in_capture_and_default_output_keep_the_same_public_context() {
             .cloned()
             .collect::<Vec<_>>(),
         [
+            "host_kernel_cpu_delta",
+            "host_kernel_qualification",
+            "host_kernel_resources_after",
             "mining",
             "peer_polling",
             "production_activation",
