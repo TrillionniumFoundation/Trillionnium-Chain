@@ -595,3 +595,59 @@ The shared-dispatch regression
 `context_cancellation_precedes_work_verifier_and_preserves_public_retry`
 checks that an interrupted parent context calls no full-work verifier, writes no
 block and permits a later complete ordinary retry.
+
+## Shared-domain ownership of existing receiver limits
+
+The actual V3 listener now obtains its connection-state, challenge, paid-body,
+output and read/mutation-grant pools from the SAME retained
+`ServiceMutationCpuDomain` as its CPU account. Reconstructing a listener, changing
+its service key or cloning the domain does not mint another set of those resources.
+The existing numerical ceilings and read/control reserves are unchanged: 64 live
+connection states, 32 challenge tokens with 128/second refill and 8 reserved for
+reads, 8 MiB body accounting, 32 MiB output accounting, and 8 grants per lane.
+Those maxima apply in aggregate to listeners using that domain, not once each.
+
+Admission acquires a shared connection-state permit before allocating Hello state;
+TCP accept and optional bounded observation precede it and are not made free by
+this change. Every connection exit releases that permit through the original RAII
+owner. Existing body/output/grant permits retain their complete original lifetimes,
+including tasks which outlive a disconnected socket. Challenge credit is debited
+atomically before entropy/signing, with one nondecreasing refill watermark. No
+cancellation or new key refunds a challenge already generated. FIFO order remains
+per listener; this does not claim a globally fair scheduler.
+
+The existing clean and known-unclean process-restart CPU constructors initialize
+new intake challenge credit to zero rather than a fresh burst. Warm listener
+reconstruction instead retains the original pools and outstanding reservations.
+These constructor and clock controls are not a physical reboot or persistent
+CPU-debt migration test. The existing CPU credit formula is unchanged.
+
+This is a receiver-side resource-ownership correction, not a change to PoN
+validity or a guest entitlement. Cookie/proof/transaction bytes, signed policy
+identity, original numerical limits, signature checks, source/task checks, native
+work, state transitions, confirmations, and per-request deadlines remain unchanged.
+A local capacity refusal is still not an invalid-work verdict. Default V3 listener
+code uses the shared pools; no opt-in helper or second operation ledger is added.
+Default W1 cache selection and the optional kernel helper remain unchanged.
+
+The negative observation used an explicitly retained semantics-preserving
+extraction of the original four listener-local pool allocations. With the same
+real BufferPermit type and two servers sharing one CPU domain, reserving the first
+8 MiB body pool still permitted another byte on the second server. The expected
+refusal assertion failed (exit101). This is a reservation-accounting counterexample,
+not an 8-MiB allocation or a live flooding test; the exact extraction and failure
+remain private evidence. The repaired native path refuses that second reservation.
+
+Ten additional tests cover shared pools, reconstruction, lane/control reserves,
+parallel challenge consumption, stale clocks, zero-credit restart construction,
+lock failure and two actual V3 TCP listeners. The socket fixture uses a controlled
+in-memory reservation for 64 slots, not 64 live connections: two ordinary reads
+are refused at capacity, both succeed after release, and all five pools are zero
+after shutdown. Existing shared-CPU/native business regressions remain applicable.
+
+This scope does NOT aggregate independently created CPU domains, separate host
+processes or arbitrary administrator-created listeners. Worker/queue counts,
+spent-cookie tables and accepted-socket churn are still listener-local. It does
+not establish Sybil fairness, bounded system-manager/kernel attack costs, complete
+pre-accept protection, restart debt recovery or WAN goodput under saturation.
+Previously blocked kernel/fault experiments have not been rerun by this change.

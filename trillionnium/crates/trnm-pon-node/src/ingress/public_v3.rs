@@ -7,6 +7,8 @@ use super::{
     digest, elapsed_ns, ensure, hash, lock_owner, DevelopmentIdentity, Node,
     Request as NativeRequest, Result, Settings, WorkCheckedPacket,
 };
+mod intake;
+use intake::ListenerIntake;
 mod request_observation;
 pub mod scalar_cpu;
 pub use request_observation::{
@@ -1121,6 +1123,9 @@ struct Connection {
     permit: Option<BufferPermit>,
     lane_permit: Option<Arc<BufferPermit>>,
     cancelled: Arc<AtomicBool>,
+    // Drop last, after the socket, stage buffers and lane/body references.
+    // New listeners cannot reuse this slot while those resources still live.
+    _connection_permit: Option<BufferPermit>,
 }
 impl Drop for Connection {
     fn drop(&mut self) {
@@ -1642,13 +1647,12 @@ fn serve_public_protected_v3_inner(
     let mut connections = BTreeMap::<u64, Connection>::new();
     let mut next_id = 0u64;
     let mut spent = Spent::new();
-    let body_pool = Arc::new(Mutex::new(0usize));
-    let output_pool = Arc::new(Mutex::new(0usize));
-    let mutating_grants = Arc::new(Mutex::new(0usize));
-    let read_grants = Arc::new(Mutex::new(0usize));
-    let mut challenge_tokens = CHALLENGE_BURST;
+    let intake = server.listener_intake()?;
+    let body_pool = intake.body_pool.clone();
+    let output_pool = intake.output_pool.clone();
+    let mutating_grants = intake.mutating_grants.clone();
+    let read_grants = intake.read_grants.clone();
     let mut next_pending_order = 0u64;
-    let mut refill = Instant::now();
     let mut last_cleanup = Instant::now();
     thread::scope(|scope| -> Result<()> {
         let mut workers = Vec::new();
@@ -1825,12 +1829,6 @@ fn serve_public_protected_v3_inner(
         }
         let outcome = (|| -> Result<()> {
             while !stop.load(Ordering::Acquire) && Instant::now() < end {
-                let elapsed = refill.elapsed().as_millis() as u64;
-                let credit = elapsed.saturating_mul(CHALLENGES_PER_SECOND) / 1000;
-                if credit > 0 {
-                    challenge_tokens = (challenge_tokens + credit).min(CHALLENGE_BURST);
-                    refill = Instant::now();
-                }
                 if last_cleanup.elapsed() >= Duration::from_millis(20) {
                     spent.cleanup(server.tick()?);
                     metrics.lock().map_err(|_| "PUBLIC_METRICS")?.cleanup_scans += 1;
@@ -1844,13 +1842,18 @@ fn serve_public_protected_v3_inner(
                                 .and_then(PublicRequestObserver::connection);
                             let mut m = metrics.lock().map_err(|_| "PUBLIC_METRICS")?;
                             m.accepted_connections += 1;
-                            if connections.len() >= MAX_CONNECTIONS {
+                            let Some(connection_permit) = BufferPermit::try_acquire(
+                                intake.connections.clone(),
+                                1,
+                                MAX_CONNECTIONS,
+                            )?
+                            else {
                                 m.capacity_refusals += 1;
                                 if let Some(record) = &observation {
                                     record.terminal("capacity");
                                 }
                                 continue;
-                            }
+                            };
                             socket.set_nonblocking(true)?;
                             socket.set_nodelay(true)?;
                             next_id = next_id.checked_add(1).ok_or("PUBLIC_CONNECTION_ID")?;
@@ -1860,6 +1863,7 @@ fn serve_public_protected_v3_inner(
                             connections.insert(
                                 next_id,
                                 Connection {
+                                    _connection_permit: Some(connection_permit),
                                     observation,
                                     id: next_id,
                                     socket,
@@ -1962,13 +1966,10 @@ fn serve_public_protected_v3_inner(
                             Stage::WaitChallenge { hello, pending } => {
                                 pending_alive(conn, &stop)?;
                                 if !heads.is_head(PendingKind::Challenge, hello.op, *id)
-                                    || challenge_tokens == 0
-                                    || (mutating_operation(hello.op)
-                                        && challenge_tokens <= READ_CHALLENGE_RESERVE)
+                                    || !intake.try_challenge(hello.op, Instant::now())?
                                 {
                                     return Ok(Stage::WaitChallenge { hello, pending });
                                 }
-                                challenge_tokens -= 1;
                                 let cookie = server.cookie(&settings, hello, conn.peer)?;
                                 let frame = framed(serde_json::to_vec(&cookie)?, 2048)?;
                                 metrics
@@ -4993,6 +4994,7 @@ mod tests {
             connections.insert(
                 id,
                 Connection {
+                    _connection_permit: None, // Pure FIFO-order fixture, no served socket.
                     observation: None,
                     id,
                     socket,
@@ -6222,3 +6224,17 @@ mod cpu_start_wait_tests {
         assert_eq!(metrics.lock().unwrap().mutation_cpu_reservations, 0);
     }
 }
+
+impl PublicServer {
+    fn listener_intake(&self) -> Result<Arc<ListenerIntake>> {
+        Ok(self
+            .mutation_cpu
+            .lock()
+            .map_err(|_| "PUBLIC_MUTATION_CPU_UNAVAILABLE")?
+            .intake
+            .clone())
+    }
+}
+#[cfg(test)]
+#[path = "public_v3/intake_domain_tests.rs"]
+mod intake_domain_tests;

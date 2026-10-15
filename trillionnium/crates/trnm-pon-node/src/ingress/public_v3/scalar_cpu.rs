@@ -106,6 +106,9 @@ pub struct ServiceMutationCpuFlowObservation {
 
 /// Volatile service-epoch accounting, never ledger or caller identity authority.
 pub(super) struct PaidMutationCpuBudget {
+    // Same ownership/lifetime as CPU accounting; listener reconstruction clones,
+    // rather than remints, the original pre-admission and byte/grant pools.
+    pub(super) intake: Arc<super::intake::ListenerIntake>,
     pub(super) credit_ns: i128,
     pub(super) updated: Instant,
     pub(super) in_flight: usize,
@@ -115,6 +118,7 @@ pub(super) struct PaidMutationCpuBudget {
 impl PaidMutationCpuBudget {
     pub(super) fn new() -> Self {
         Self {
+            intake: Arc::new(super::intake::ListenerIntake::new()),
             credit_ns: i128::from(MUTATION_CPU_BURST_NS),
             updated: Instant::now(),
             in_flight: 0,
@@ -770,6 +774,7 @@ impl ServiceMutationCpuDomain {
         let mut budget = PaidMutationCpuBudget::new();
         budget.credit_ns = 0;
         budget.flow = Some(CpuFlow::new(0));
+        budget.intake = Arc::new(super::intake::ListenerIntake::after_process_restart());
         Self {
             budget: Arc::new(Mutex::new(budget)),
         }
@@ -780,6 +785,7 @@ impl ServiceMutationCpuDomain {
         let mut budget = PaidMutationCpuBudget::new();
         budget.credit_ns = 0;
         budget.flow = Some(CpuFlow::new(0));
+        budget.intake = Arc::new(super::intake::ListenerIntake::after_process_restart());
         Self {
             budget: Arc::new(Mutex::new(budget)),
         }
