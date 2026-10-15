@@ -286,6 +286,42 @@ fn run_adapter_with_retry_stops_after_slo_violation_terminal_receipt() {
 }
 
 #[test]
+fn run_adapter_with_retry_rejects_unbounded_output() {
+    let script = "import sys; sys.stdout.write('x' * (8 * 1024 * 1024 + 1)); sys.stdout.flush()";
+    let adapter_cmd = format!("python3 -c {script:?}");
+    let err =
+        run_adapter_with_retry_timeout(&adapter_cmd, &[], 0, 0, std::time::Duration::from_secs(5))
+            .expect_err("adapter output above the aggregate cap must fail closed");
+    assert!(
+        err.to_string().contains("output limit exceeded"),
+        "unexpected bounded-runner error: {err}"
+    );
+}
+
+#[test]
+fn run_adapter_with_retry_kills_timed_out_process_group() {
+    let script = "import time; time.sleep(30)";
+    let adapter_cmd = format!("python3 -c {script:?}");
+    let started = std::time::Instant::now();
+    let err = run_adapter_with_retry_timeout(
+        &adapter_cmd,
+        &[],
+        0,
+        0,
+        std::time::Duration::from_millis(100),
+    )
+    .expect_err("a hung adapter must be terminated at its deadline");
+    assert!(
+        err.to_string().contains("timeout"),
+        "unexpected error: {err}"
+    );
+    assert!(
+        started.elapsed() < std::time::Duration::from_secs(2),
+        "timed-out adapter was not reaped promptly"
+    );
+}
+
+#[test]
 fn run_adapter_with_retry_keeps_last_seen_tx_hash_after_retriable_exhaustion() {
     let counter = std::env::temp_dir().join(format!(
         "trnm-worker-agent-run-adapter-last-tx-hash-counter-{}-{}.txt",
