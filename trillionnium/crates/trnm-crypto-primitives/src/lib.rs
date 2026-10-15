@@ -98,8 +98,10 @@ pub fn verifying_key_from_hex(value: &str) -> Result<VerifyingKey> {
         canonical_ed25519_point(&bytes),
         "public key is not canonical"
     );
-    VerifyingKey::from_bytes(&bytes)
-        .map_err(|_| anyhow!("public_key_hex is not a valid Ed25519 key"))
+    let key = VerifyingKey::from_bytes(&bytes)
+        .map_err(|_| anyhow!("public_key_hex is not a valid Ed25519 key"))?;
+    ensure!(!key.is_weak(), "public_key_hex is a weak Ed25519 key");
+    Ok(key)
 }
 
 pub fn signing_key_from_hex(value: &str) -> Result<SigningKey> {
@@ -204,6 +206,8 @@ mod tests {
         p[31] = 127;
         assert!(verifying_key_from_hex(&hex::encode(p)).is_err());
         identity[31] = 128;
+        assert!(verifying_key_from_hex(&hex::encode(identity)).is_err());
+        identity[31] = 0;
         assert!(verifying_key_from_hex(&hex::encode(identity)).is_err());
     }
 
