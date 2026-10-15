@@ -17,12 +17,34 @@ use std::{
 mod assigned;
 mod audit;
 mod cli;
+#[cfg(unix)]
+mod commit_salt;
 mod dispatch;
 mod flush;
 mod flush_submission;
 mod proof_adapter;
 mod workflow;
 mod workflow_ops;
+#[cfg(not(unix))]
+mod commit_salt {
+    use anyhow::{bail, Result};
+    use std::path::Path;
+    pub(crate) fn journal_automatic_submission(
+        _: &Path,
+        _: u64,
+        _: &str,
+        _: &str,
+        _: &str,
+    ) -> Result<String> {
+        bail!("secure commit journaling requires a Unix local owner; no fallback")
+    }
+    pub(crate) fn append_private_manual_submission(_: &Path, _: &str) -> Result<()> {
+        bail!("private manual salt journaling requires a Unix local owner; no fallback")
+    }
+}
+#[cfg(test)]
+#[path = "tests_commit_salt_security.rs"]
+mod tests_commit_salt_security;
 
 #[cfg(test)]
 pub(crate) use audit::{
@@ -214,12 +236,16 @@ pub(crate) fn next_task_id(state: &PathBuf) -> Result<u64> {
     Ok(s.last_task_id)
 }
 
-pub(crate) fn execute_payload(payload: &str, task_id: u64) -> (String, String) {
+pub(crate) fn execute_payload(payload: &str, _task_id: u64) -> Result<(String, String)> {
     let mut h = Sha256::new();
     h.update(payload.as_bytes());
     let result_hash = hex::encode(h.finalize());
-    let salt_hex = format!("{:064x}", task_id);
-    (result_hash, salt_hex)
+    // The old salt was the public task ID. Use OS CSPRNG; never fall back to
+    // timestamps, public identities or predictable process counters on failure.
+    let mut salt = [0_u8; 32];
+    getrandom::fill(&mut salt)
+        .map_err(|error| anyhow!("commit salt entropy unavailable: {error}"))?;
+    Ok((result_hash, hex::encode(salt)))
 }
 
 pub(crate) fn now_ms() -> u128 {
@@ -249,14 +275,8 @@ pub(crate) fn append_submission(
     salt_hex: &str,
 ) -> Result<()> {
     let nonce = task_id;
-    let commit_cmd = format!(
-        "trnm-node tx commit-result {} {} {} {}",
-        task_id, worker, commit_hash, nonce
-    );
-    let reveal_cmd = format!(
-        "trnm-node tx reveal-result {} {} {}",
-        task_id, result_hash, salt_hex
-    );
+    let commit_cmd = workflow_ops::commit_template(task_id, worker, commit_hash, nonce);
+    let reveal_cmd = workflow_ops::reveal_template(task_id, result_hash, salt_hex);
     let rec = SubmissionRecord {
         ts_unix_ms: now_ms(),
         task_id,
@@ -269,7 +289,7 @@ pub(crate) fn append_submission(
         reveal_cmd,
     };
     let line = serde_json::to_string(&rec)?;
-    append_json_line(submit_log, &line)
+    commit_salt::append_private_manual_submission(submit_log, &line)
 }
 
 fn load_ack_records(ack_log: &Path) -> Vec<AckRecord> {
