@@ -561,6 +561,45 @@ fn admit_rollup(
     Ok(())
 }
 
+/// Exact floor(amount * numerator / denominator) for a fee in [0, amount].
+/// Keep the common single-word product fast; the fallback consumes exactly 128
+/// amount bits, tracking quotient and remainder instead of a 256-bit product.
+pub(crate) fn proportional_fee(amount: u128, numerator: u128, denominator: u128) -> Option<u128> {
+    if denominator == 0 || numerator > denominator {
+        return None;
+    }
+    if let Some(product) = amount.checked_mul(numerator) {
+        return Some(product / denominator);
+    }
+    let mut quotient = 0_u128;
+    let mut remainder = 0_u128;
+    for bit in (0..128).rev() {
+        // Invariant: processed_prefix * numerator = quotient * denominator
+        // + remainder, with remainder < denominator and quotient <= prefix.
+        // Double the remainder using subtraction before addition when needed.
+        quotient = quotient.checked_mul(2)?;
+        let complement = denominator - remainder;
+        if remainder >= complement {
+            remainder -= complement;
+            quotient = quotient.checked_add(1)?;
+        } else {
+            remainder += remainder;
+        }
+        if (amount >> bit) & 1 != 0 {
+            let complement = denominator - numerator;
+            if remainder >= complement {
+                remainder -= complement;
+                quotient = quotient.checked_add(1)?;
+            } else {
+                remainder += numerator;
+            }
+        }
+        // Both additions above are strictly below denominator in their branch.
+        // The new quotient cannot exceed the new amount prefix, so it fits u128.
+    }
+    Some(quotient)
+}
+
 fn settle(
     trust: &ConsumptionSettlementFreshGenesisTrustBundleV1,
     state: &mut ConsumptionSettlementKernelStateV1,
@@ -618,15 +657,17 @@ fn settle(
             "rollup charge exceeds durable escrow",
         ));
     }
-    let fee_product = total_charge
-        .checked_mul(trust.settlement_policy.protocol_fee_numerator)
-        .ok_or_else(|| {
-            error(
-                ConsumptionSettlementErrorCodeV1::ArithmeticOverflow,
-                "protocol fee product overflow",
-            )
-        })?;
-    let protocol_fee = fee_product / trust.settlement_policy.protocol_fee_denominator;
+    let protocol_fee = proportional_fee(
+        total_charge,
+        trust.settlement_policy.protocol_fee_numerator,
+        trust.settlement_policy.protocol_fee_denominator,
+    )
+    .ok_or_else(|| {
+        error(
+            ConsumptionSettlementErrorCodeV1::ArithmeticOverflow,
+            "protocol fee ratio is invalid or unrepresentable",
+        )
+    })?;
     let provider_payment = total_charge.checked_sub(protocol_fee).ok_or_else(|| {
         error(
             ConsumptionSettlementErrorCodeV1::ArithmeticOverflow,

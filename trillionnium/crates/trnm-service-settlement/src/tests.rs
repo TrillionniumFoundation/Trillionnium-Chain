@@ -1245,3 +1245,193 @@ fn usage_key_uniqueness_distinguishes_units_and_checks_nonadjacent_entries() {
         )
         .expect("distinct unit keys remain valid");
 }
+
+#[test]
+fn full_width_equivalent_fee_ratios_conserve_and_reopen() {
+    for (numerator, denominator, expected_fee) in [
+        (1, 1, 450),
+        (u128::MAX, u128::MAX, 450),
+        (u128::MAX - 1, u128::MAX, 449),
+        (0, u128::MAX, 0),
+    ] {
+        let mut harness = Harness::new();
+        harness.trust.settlement_policy.protocol_fee_numerator = numerator;
+        harness.trust.settlement_policy.protocol_fee_denominator = denominator;
+        let store = harness.open();
+        let (parent, rolled_up) = execute_rollup(&harness, &store);
+        let parent = advance_empty_blocks_through(&harness, &store, 12, parent, 14);
+        store
+            .execute_committed_execution(
+                &harness.execution(14, parent, 15),
+                &ConsumptionSettlementCommandV1::Settle {
+                    operation: settlement_operation(&harness, &rolled_up),
+                },
+            )
+            .expect("representable full-width fee settles");
+        let state = store.state().expect("settled state");
+        assert!(state.escrow.closed);
+        assert_eq!(state.escrow.balance, 0);
+        let settlement = state.settlement.as_ref().expect("settlement");
+        assert_eq!(settlement.intent.inputs[0].amount, 1_000);
+        assert_eq!(
+            settlement
+                .intent
+                .planned_deltas
+                .iter()
+                .map(|d| d.amount)
+                .sum::<u128>(),
+            1_000
+        );
+        assert_eq!(
+            settlement.receipt.applied_deltas,
+            settlement.intent.planned_deltas
+        );
+        for (id, expected) in [
+            (harness.trust.provider_account_id, 100 + 450 - expected_fee),
+            (harness.trust.consumer_account_id, 750),
+            (harness.trust.protocol_account_id, 300 + expected_fee),
+        ] {
+            assert_eq!(
+                state
+                    .accounts
+                    .iter()
+                    .find(|a| a.account_id == id)
+                    .expect("account")
+                    .balance,
+                expected
+            );
+        }
+        let head = store.fresh_readback().expect("settled head");
+        drop(store);
+        let reopened = ConsumptionSettlementStoreV1::open_existing(harness.config())
+            .expect("reopen full-width settlement");
+        assert_eq!(reopened.state().expect("reopened state"), state);
+        assert_eq!(reopened.fresh_readback().expect("reopened head"), head);
+    }
+}
+
+#[test]
+fn proportional_fee_matches_independent_big_integer_vectors() {
+    let vectors: Vec<[String; 4]> =
+        serde_json::from_str(include_str!("../test-vectors/protocol_fee_u128.json"))
+            .expect("Python bigint vectors");
+    let mut overflowing_products = 0;
+    for row in vectors {
+        let [amount, numerator, denominator, expected] =
+            row.map(|s| s.parse::<u128>().expect("u128"));
+        overflowing_products += usize::from(amount.checked_mul(numerator).is_none());
+        assert_eq!(
+            crate::engine::proportional_fee(amount, numerator, denominator),
+            Some(expected),
+            "amount={amount}, numerator={numerator}, denominator={denominator}"
+        );
+    }
+    assert!(overflowing_products > 500);
+    for amount in 0..=64_u128 {
+        for denominator in 1..=64_u128 {
+            for numerator in 0..=denominator {
+                assert_eq!(
+                    crate::engine::proportional_fee(amount, numerator, denominator),
+                    Some(amount * numerator / denominator)
+                );
+            }
+        }
+    }
+    assert_eq!(crate::engine::proportional_fee(0, 0, 0), None);
+    assert_eq!(crate::engine::proportional_fee(u128::MAX, 1, 0), None);
+    assert_eq!(crate::engine::proportional_fee(0, 2, 1), None);
+    assert_eq!(
+        crate::engine::proportional_fee(1, u128::MAX, u128::MAX - 1),
+        None
+    );
+}
+
+#[test]
+fn maximum_charge_fee_conserves_full_u128_escrow_and_reopens() {
+    for (numerator, denominator, expected_fee) in [
+        (u128::MAX, u128::MAX, u128::MAX),
+        (u128::MAX - 1, u128::MAX, u128::MAX - 1),
+        (1, 2, u128::MAX / 2),
+        (0, 1, 0),
+    ] {
+        let mut harness = Harness::new();
+        harness.trust.escrow_funding = u128::MAX;
+        harness.trust.provider_opening_balance = 0;
+        harness.trust.consumer_opening_balance = 0;
+        harness.trust.protocol_opening_balance = 0;
+        harness.trust.settlement_policy.protocol_fee_numerator = numerator;
+        harness.trust.settlement_policy.protocol_fee_denominator = denominator;
+        let store = harness.open();
+        let receipt = harness.receipt(None, 10, u128::MAX / 3);
+        store
+            .execute_committed_execution(
+                &harness.execution(9, h(900), 10),
+                &ConsumptionSettlementCommandV1::AdmitReceipt { receipt },
+            )
+            .expect("maximum charge receipt");
+        let receipted = store.state().expect("receipt state");
+        let rollup = harness.rollup(&receipted, 11);
+        store
+            .execute_committed_execution(
+                &harness.execution(10, h(1_010), 11),
+                &ConsumptionSettlementCommandV1::AdmitRollup {
+                    rollup,
+                    receipts: receipted
+                        .receipts
+                        .iter()
+                        .map(|r| r.receipt.clone())
+                        .collect(),
+                },
+            )
+            .expect("maximum charge rollup");
+        let rolled_up = store.state().expect("rollup state");
+        let parent = advance_empty_blocks_through(&harness, &store, 11, h(1_011), 13);
+        store
+            .execute_committed_execution(
+                &harness.execution(13, parent, 14),
+                &ConsumptionSettlementCommandV1::Settle {
+                    operation: settlement_operation(&harness, &rolled_up),
+                },
+            )
+            .expect("maximum charge settlement");
+        let state = store.state().expect("settled state");
+        let settlement = state.settlement.as_ref().expect("settlement");
+        assert!(state.escrow.closed);
+        assert_eq!(state.escrow.balance, 0);
+        assert_eq!(settlement.intent.inputs[0].amount, u128::MAX);
+        assert_eq!(
+            settlement
+                .intent
+                .planned_deltas
+                .iter()
+                .map(|d| d.amount)
+                .sum::<u128>(),
+            u128::MAX
+        );
+        assert_eq!(
+            settlement.receipt.applied_deltas,
+            settlement.intent.planned_deltas
+        );
+        for (id, balance) in [
+            (harness.trust.provider_account_id, u128::MAX - expected_fee),
+            (harness.trust.consumer_account_id, 0),
+            (harness.trust.protocol_account_id, expected_fee),
+        ] {
+            assert_eq!(
+                state
+                    .accounts
+                    .iter()
+                    .find(|a| a.account_id == id)
+                    .expect("account")
+                    .balance,
+                balance
+            );
+        }
+        let head = store.fresh_readback().expect("settled head");
+        drop(store);
+        let reopened = ConsumptionSettlementStoreV1::open_existing(harness.config())
+            .expect("reopen maximum charge settlement");
+        assert_eq!(reopened.state().expect("reopened state"), state);
+        assert_eq!(reopened.fresh_readback().expect("reopened head"), head);
+    }
+}
