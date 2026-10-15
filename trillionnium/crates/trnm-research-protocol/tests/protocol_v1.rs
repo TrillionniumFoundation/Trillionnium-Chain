@@ -175,6 +175,18 @@ fn test_state() -> ResearchProtocolState {
 }
 
 #[test]
+fn authority_set_rejects_weak_ed25519_trust_anchor() {
+    // Identity is a valid Ed25519 encoding but a small-order point. Such a
+    // key must not be admitted as a genesis authority trust anchor.
+    let mut weak_key = [0u8; 32];
+    weak_key[0] = 1;
+    assert!(matches!(
+        AuthorityIdentityV1::new("did:trnm:weak".into(), weak_key),
+        Err(ProtocolStateError::InvalidAuthoritySet)
+    ));
+}
+
+#[test]
 fn every_typed_command_strictly_round_trips() {
     for command in fixture_commands() {
         command.validate().unwrap();
