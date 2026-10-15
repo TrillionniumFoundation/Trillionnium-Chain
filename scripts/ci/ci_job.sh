@@ -39,6 +39,15 @@ case "${1:?required job}" in
     cargo test --locked --manifest-path trillionnium/Cargo.toml --workspace --doc --all-features
     cargo clippy --locked --manifest-path trillionnium/Cargo.toml --workspace --all-targets --all-features -- -D warnings
     ;;
+  supply-chain)
+    # Validate the reviewed lockfile and manifest inputs before invoking the
+    # advisory/license tools.  Neither tool is run with an ignore list: a
+    # RustSec advisory or deny.toml violation must fail this required check.
+    PYTHONPATH=scripts/ci python3 scripts/ci/check_supply_chain.py
+    PYTHONPATH=scripts/ci python3 scripts/ci/test_supply_chain.py
+    (cd trillionnium && cargo deny check --config ../deny.toml)
+    cargo audit --file trillionnium/Cargo.lock --deny warnings
+    ;;
   external-evidence-contract)
     python3 scripts/ci/prepare_evidence_sources.py
     python3 scripts/ci/test_evidence_sources.py
