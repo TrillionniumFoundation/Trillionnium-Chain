@@ -650,6 +650,12 @@ impl ConsumptionSettlementStoreV1 {
         let connection = open_ro(&self.config.path)?;
         verify_schema(&connection)?;
         audit(&connection, &self.config)?;
+        if load_metadata(&connection, &self.config)?.5 {
+            return Err(error(
+                ConsumptionSettlementErrorCodeV1::ThirdStateFenced,
+                "store is permanently fenced",
+            ));
+        }
         let (_, _, actual) =
             load_operation(&connection, expected.operation_id)?.ok_or_else(|| {
                 error(
@@ -1206,6 +1212,20 @@ fn advance_committed_block_marker(
             return Err(error(
                 ConsumptionSettlementErrorCodeV1::StaleVersion,
                 "same-block marker extension does not expect the exact block",
+            ));
+        }
+        // An empty successor marker already records a block with no commands.
+        // Its first operation would need to expect the marker's parent during
+        // replay, but a same-block call expects the current block. Reject that
+        // inconsistent history inside the transaction, before it can commit.
+        // The genesis anchor is different: its parent is itself.
+        if tail.source_operation_sequence == tail.target_operation_sequence
+            && (tail.parent_order_height, tail.parent_order_block_id)
+                != (tail.order_height, tail.order_block_id)
+        {
+            return Err(error(
+                ConsumptionSettlementErrorCodeV1::InvalidContext,
+                "cannot append the first command to an already committed empty block",
             ));
         }
         let mut updated = tail;

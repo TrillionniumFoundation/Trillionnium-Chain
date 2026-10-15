@@ -1435,3 +1435,101 @@ fn maximum_charge_fee_conserves_full_u128_escrow_and_reopens() {
         assert_eq!(reopened.fresh_readback().expect("reopened head"), head);
     }
 }
+
+#[test]
+fn command_after_empty_block_is_rejected_without_changing_recoverable_head() {
+    let harness = Harness::new();
+    let store = harness.open();
+    let before = store
+        .advance_empty_committed_execution_v1(&harness.execution(9, h(900), 10))
+        .expect("empty block");
+    let command = ConsumptionSettlementCommandV1::AdmitReceipt {
+        receipt: harness.receipt(None, 10, 100),
+    };
+    let error = store
+        .execute_committed_execution(&harness.execution(10, h(1_010), 10), &command)
+        .expect_err("empty block cannot acquire a first command after commitment");
+    assert_eq!(
+        error.code(),
+        ConsumptionSettlementErrorCodeV1::InvalidContext
+    );
+    assert_eq!(store.fresh_readback().expect("unchanged head"), before);
+    drop(store);
+    let reopened = ConsumptionSettlementStoreV1::open_existing(harness.config())
+        .expect("rejected command leaves recoverable store");
+    assert_eq!(reopened.fresh_readback().expect("reopened head"), before);
+    reopened
+        .execute_committed_execution(
+            &harness.execution(10, h(1_010), 11),
+            &ConsumptionSettlementCommandV1::AdmitReceipt {
+                receipt: harness.receipt(None, 11, 100),
+            },
+        )
+        .expect("valid next-block receipt after rejected input");
+    drop(reopened);
+    harness.open().fresh_readback().expect("retry reopens");
+}
+
+#[test]
+fn permanent_fence_blocks_confirmation_from_preexisting_handle() {
+    let harness = Harness::new();
+    let store = harness.open();
+    let receipt = store
+        .execute_committed_execution(
+            &harness.execution(9, h(900), 10),
+            &ConsumptionSettlementCommandV1::AdmitReceipt {
+                receipt: harness.receipt(None, 10, 100),
+            },
+        )
+        .expect("first receipt")
+        .receipt()
+        .clone();
+    let state = store.state().expect("first state");
+    let command = ConsumptionSettlementCommandV1::AdmitRollup {
+        rollup: harness.rollup(&state, 10),
+        receipts: state
+            .receipts
+            .iter()
+            .map(|item| item.receipt.clone())
+            .collect(),
+    };
+    assert_eq!(
+        store
+            .execute_with_fault(
+                &harness.execution(10, h(1_010), 10),
+                &command,
+                ConsumptionCommitFaultV1::ThirdState,
+            )
+            .expect_err("permanent fence")
+            .code(),
+        ConsumptionSettlementErrorCodeV1::ThirdStateFenced
+    );
+    assert_eq!(
+        store
+            .confirm_receipt(&receipt)
+            .expect_err("fenced confirmation")
+            .code(),
+        ConsumptionSettlementErrorCodeV1::ThirdStateFenced
+    );
+}
+
+#[test]
+fn first_command_at_genesis_anchor_remains_recoverable() {
+    let harness = Harness::new();
+    let store = harness.open();
+    let mut execution = harness.execution(9, h(900), 9);
+    execution.order_block_id = h(900);
+    store
+        .execute_committed_execution(
+            &execution,
+            &ConsumptionSettlementCommandV1::AdmitReceipt {
+                receipt: harness.receipt(None, 9, 100),
+            },
+        )
+        .expect("first command at self-parent genesis anchor");
+    drop(store);
+    harness
+        .open()
+        .fresh_readback()
+        .expect("genesis command reopens");
+}
