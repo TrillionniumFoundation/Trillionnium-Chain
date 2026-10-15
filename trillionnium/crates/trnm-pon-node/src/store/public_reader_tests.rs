@@ -657,7 +657,9 @@ fn readonly_history_signed_repeated_request_budget_refusal_keeps_writer_and_norm
         preview_miner: development_public(0).unwrap(),
     })
     .unwrap();
-    let changes = node.db.total_changes();
+    // The service must commit its ordinary V3 crash-fence row at startup.
+    // Do not charge that required durable write to a later rejected History.
+    let pre_service_changes = node.db.total_changes();
     let owner = Arc::new(Mutex::new(node));
     let identity = |n| DevelopmentIdentity::from_secret_hex(&hex::encode([n; 32])).unwrap();
     let policy = PublicPolicy::new(8, Duration::from_secs(2)).unwrap();
@@ -694,6 +696,18 @@ fn readonly_history_signed_repeated_request_budget_refusal_keeps_writer_and_norm
         )
         .unwrap()
     };
+    // A real authenticated Head reply is the service-ready barrier: the
+    // persistent ordinary V3 epoch marker must already exist before sampling
+    // the database baseline for the read-only History refusal assertions.
+    let startup = call(&Request::Head, 79);
+    assert!(startup.ok, "{}", startup.value);
+    assert_eq!(owner.lock().unwrap().read_active().unwrap(), state);
+    let changes = owner.lock().unwrap().db.total_changes();
+    assert_eq!(
+        changes,
+        pre_service_changes + 1,
+        "exactly one durable ordinary V3 crash-fence row must be committed"
+    );
     // Both default held-owner and explicitly selected research snapshot refusals
     // leave the real service writer available. Selection is per owner and cfg(test).
     for snapshot in [false, true] {
