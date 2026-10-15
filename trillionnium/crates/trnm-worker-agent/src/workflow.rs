@@ -4,8 +4,8 @@ use std::path::PathBuf;
 use crate::{
     append_submission, next_task_id,
     workflow_ops::{
-        build_run_once_output, compute_commit_hash, compute_result_and_salt,
-        submit_log_contract_line,
+        build_run_once_output, commit_template, compute_commit_hash, compute_result_and_salt,
+        reveal_template, submit_log_contract_line,
     },
 };
 
@@ -34,13 +34,10 @@ pub(crate) fn handle_commit_reveal(
     let c = compute_commit_hash(task_id, &result_hash, &salt_hex, &worker);
     println!("[agent] task_id={} worker={}", task_id, worker);
     println!("commit_hash={}", c);
+    println!("template_commit={}", commit_template(task_id, &worker, &c, task_id));
     println!(
-        "template_commit=trnm-node tx commit-result {} {} {} {}",
-        task_id, worker, c, task_id
-    );
-    println!(
-        "template_reveal=trnm-node tx reveal-result {} {} {}",
-        task_id, result_hash, salt_hex
+        "template_reveal={}",
+        reveal_template(task_id, &result_hash, &salt_hex)
     );
     if submit {
         append_submission(&submit_log, task_id, &worker, &c, &result_hash, &salt_hex)?;
