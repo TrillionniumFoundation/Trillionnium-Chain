@@ -34,7 +34,10 @@ pub(crate) fn handle_commit_reveal(
     let c = compute_commit_hash(task_id, &result_hash, &salt_hex, &worker);
     println!("[agent] task_id={} worker={}", task_id, worker);
     println!("commit_hash={}", c);
-    println!("template_commit={}", commit_template(task_id, &worker, &c, task_id));
+    println!(
+        "template_commit={}",
+        commit_template(task_id, &worker, &c, task_id)
+    );
     println!(
         "template_reveal={}",
         reveal_template(task_id, &result_hash, &salt_hex)
