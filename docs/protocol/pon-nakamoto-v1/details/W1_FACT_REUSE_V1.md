@@ -138,3 +138,93 @@ budgets. Cross-process kernel enforcement, unclean-restart debt qualification,
 pre-cookie connection costs and public-cache profile integration remain open.
 Mining generation and independent client work in the test are outside the
 receiver mutation accounting. Signed wire and consensus bytes are unchanged.
+
+## Optional kernel execution envelope
+
+`formal/pon-nakamoto-v1/kernel_process.py` adds an explicit administrator-only
+Linux/cgroup-v2/systemd adapter around the retained `bounded_process.run_bounded`.
+The trusted operator provisions one parent slice and supplies its original boot,
+device and inode identity plus exact CPU, memory, swap and task ceilings. The
+adapter never creates, refills or silently replaces that parent. A reconnect must
+present the same retained identity; missing/replaced parents and changed limits
+are unavailable. This identity is not a new ledger or a disk rollback proof.
+
+Every native process is assigned a distinct transient child unit under that SAME
+parent. Child units do not have independent CPU quotas which could add another
+allowance per identity or restart. The existing systemd manager applies cgroup
+membership before exec; native code runs as a dynamic unprivileged user with no
+capabilities, no privilege escalation, a private network, protected home/control
+files, bounded private temporary filesystems, and no cgroup delegation. The
+runtime ceiling and whole-cgroup stop are configured before exec. Ordinary POSIX
+process-group cleanup remains responsible only for the local pipe broker; it is
+not misrepresented as covering a descendant which changes sessions.
+
+Input/output retain the original bounded pipe exchange. Executable bytes and all
+ancestors must be root-owned/non-writable by other users; the original executable
+hash is checked before launch. No guest can choose an executable, argv, slice,
+properties, UID or environment through this adapter. This module is not exposed
+as a privileged request service. It requires an authorized existing supervisor;
+a normal unprivileged Node cannot invoke administrator operations by itself.
+
+An observed native result and kernel cleanup are distinct. If cleanup fails, the
+error retains any already observed native outcome, never converts it to an
+unexecuted operation, and fences that handle. A short successful unit may already
+be collected: this is resolved using actual manager `not-found` AND absent cgroup,
+not by ignoring arbitrary stop/permission errors. A pipe-broker failure can lose a
+manager launch acknowledgement; a momentarily absent unit then does not prove
+no delayed launch exists. The adapter preserves that bounded exchange failure,
+returns `KERNEL_EXCHANGE_UNCERTAIN` and fences the handle instead of declaring a
+clean failure or authorizing blind retry. It does not mint a
+`VerifiedWork`, state admission or succinct proof from its process receipt. The
+existing operation owner still owns exactly-once reconciliation after lost replies.
+
+The optional smoke runner `scripts/run_kernel_native_smoke.py` uses one temporary
+parent with `cpu.max=25000 100000` (25% of one fair-scheduled CPU), 256 MiB memory,
+zero swap and 24 tasks. It stages exact native executable copies under a temporary
+root-owned `/opt` directory (not `/run`, which may be noexec), uses only new test
+units, and removes its test units/assets afterward. Those local conservative test
+limits are not PoN consensus parameters and are not a proven production sizing.
+They are not the existing 2-second-burst scalar credit formula either: the kernel
+ceiling is a separate, stricter aggregate protection, with kernel granularity.
+
+The ordinary runner exercises four original W1 byte cases (valid, false product,
+wrong task, zero target), two concurrent correct native verifier processes, a
+same-identity handle reattach, and the retained real two-listener M05/M06 test
+with eight signed transfers and seven independently verified History pages inside
+the kernel envelope. All outcomes must equal the original native path. Twelve
+portable logic controls cover caller bounds, identity/limit failures, bounded
+outputs and native-result preservation; mock controls are not kernel measurements.
+
+This optional supervisor path does not replace the public V2/V3/CLI default or
+wire the external verifier into `WorkCheckedPacket`. Host-wide coverage requires
+all relevant entry processes to be assigned to the approved parent. Manager,
+launch-broker and out-of-envelope client CPU are not in that parent's accounting.
+Root compromise, administrator-created alternate parents, physical host reboot,
+unclean persistent CPU-debt migration, kernel OOM/task-exhaustion behavior under
+attack, supervisor-death cleanup, saturation fairness and WAN confirmed goodput
+remain separate unqualified cases. A full pressure/fault-injection script was
+blocked by the execution tool safety check during this increment and did not run;
+its unexecuted cases must not be replaced by ordinary smoke success.
+
+Relevant mechanism reference: the Linux kernel's cgroup-v2 documentation describes
+hierarchical enforcement, `cpu.max`, `memory.max`, `pids.max` and `cgroup.events`.
+The parent CPU counter is aggregate usage across child units, not per-request cost;
+its throttle time is not a wall-time latency estimate.
+
+Observed in this increment: the earlier ordinary native run matched all four W1
+cases and passed the retained two-listener/eight-transfer Node fixture under the
+25%-CPU/256-MiB/24-task parent. The parent counter was continuous, the kernel
+reported throttling, and no tasks remained afterward. A later final native rerun
+was itself blocked before execution. Consequently the final adapter's tightened
+unknown-broker handling has portable logic coverage but NOT final-source real-
+process qualification. The added two-request concurrent smoke step was not run. The earlier raw
+results remain historical within this increment, not silently reassigned to the
+final source. No actual kernel OOM, task-exhaustion, forced controller death or
+physical reboot result is reported. The public receiver still uses its original
+implementation and the previous Hepta pair remains pinned to its unchanged Rust.
+
+Final child launches request systemd `--collect`, so failed native input should
+not leave one retained manager unit per rejection. The original raw stderr/exit
+and generated unit identity remain available to the owner. This final collection
+option has command-construction coverage only; it is included in the outstanding
+final-source kernel run, not claimed tested by the earlier smoke observation.
