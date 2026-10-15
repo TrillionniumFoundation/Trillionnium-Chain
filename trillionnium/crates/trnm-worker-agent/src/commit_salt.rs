@@ -93,14 +93,17 @@ pub(crate) fn journal_automatic_submission(
         );
         ensure!(
             existing.commit_cmd
-                == format!(
-                    "trnm-node tx commit-result {task_id} {worker} {} {task_id}",
-                    existing.commit_hash
+                == crate::workflow_ops::commit_template(
+                    task_id,
+                    worker,
+                    &existing.commit_hash,
+                    task_id,
                 )
                 && existing.reveal_cmd
-                    == format!(
-                        "trnm-node tx reveal-result {task_id} {result_hash} {}",
-                        existing.salt_hex
+                    == crate::workflow_ops::reveal_template(
+                        task_id,
+                        result_hash,
+                        &existing.salt_hex,
                     )
                 && existing.nonce == Some(task_id)
                 && existing.salt_hex.len() == 64
@@ -136,10 +139,13 @@ pub(crate) fn journal_automatic_submission(
         commit_hash: commit_hash.clone(),
         result_hash: result_hash.into(),
         salt_hex: proposed_salt.into(),
-        commit_cmd: format!(
-            "trnm-node tx commit-result {task_id} {worker} {commit_hash} {task_id}"
+        commit_cmd: crate::workflow_ops::commit_template(
+            task_id,
+            worker,
+            &commit_hash,
+            task_id,
         ),
-        reveal_cmd: format!("trnm-node tx reveal-result {task_id} {result_hash} {proposed_salt}"),
+        reveal_cmd: crate::workflow_ops::reveal_template(task_id, result_hash, proposed_salt),
     };
     let encoded = serde_json::to_vec(&record)?;
     ensure!(
