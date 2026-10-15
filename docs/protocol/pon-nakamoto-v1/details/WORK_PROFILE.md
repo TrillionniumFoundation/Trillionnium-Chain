@@ -308,3 +308,12 @@ create-new refusal, source cwd and inherited-pipe timeout. This bounds observed
 stream retention, not total child RSS, arbitrary output files, kernel scheduling,
 physical cleanup time or independent adversarial cost. It supplies no new work
 hardness, model adoption, long-term DA, WAN goodput or production authority.
+
+## Explicit local W1 mathematical-fact reuse
+
+[Native fact reuse](W1_FACT_REUSE_V1.md) provides bounded positive mathematical
+facts and single-flight computation through an explicit existing M05/M06 embedding
+API. Every call rechecks its current target/task/bytes, and every native dispatch
+rechecks current owner/state admission. The ordinary W1 verifiers and public V2/V3
+profiles retain full replay; no listener or readiness flag is changed. This local
+path does not qualify public admission economics or a succinct proof successor.

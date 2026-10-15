@@ -5,6 +5,7 @@ use sha2::{Digest, Sha256};
 pub mod blocked_one_zero;
 pub mod blocked_zero;
 pub mod blocked_zero_paired;
+pub mod facts;
 mod integer_paired;
 pub mod maintenance_limb;
 pub mod maintenance_periodic;
@@ -435,22 +436,28 @@ enum VerificationKernel {
     LimbTranscript,
 }
 
-fn verify_with_kernel<E>(
+struct CheckedProofInputs {
+    matrices: Vec<u32>,
+    actual_task: Hash,
+    ticket: Hash,
+}
+
+// Shared original cheap-check order. A successful result is not verified work.
+fn checked_proof_inputs(
     challenge: Hash,
     expected_task: Hash,
     target: Hash,
     bytes: &[u8],
-    progress: &mut impl FnMut(VerificationProgress) -> Result<(), E>,
     kernel: VerificationKernel,
-) -> Result<VerifiedWork, VerificationError<E>> {
+) -> Result<CheckedProofInputs, WorkError> {
     if bytes.len() != PROOF_BYTES {
-        return Err(WorkError::Length.into());
+        return Err(WorkError::Length);
     }
     if &bytes[..4] != b"PNW1" {
-        return Err(WorkError::Version.into());
+        return Err(WorkError::Version);
     }
     if target == [0; 32] {
-        return Err(WorkError::Target.into());
+        return Err(WorkError::Target);
     }
     // Only A and B are arithmetic inputs. Keep the scalar reference's original
     // three-matrix decoding; production and limb compare C directly with its
@@ -475,7 +482,7 @@ fn verify_with_kernel<E>(
                 .chunks_exact(4)
                 .any(|p| u128::from(u32::from_le_bytes([p[0], p[1], p[2], p[3]])) >= Q)
             {
-                return Err(WorkError::Field.into());
+                return Err(WorkError::Field);
             }
         }
     }
@@ -499,15 +506,39 @@ fn verify_with_kernel<E>(
         }
     };
     if actual_task != expected_task {
-        return Err(WorkError::Task.into());
+        return Err(WorkError::Task);
     }
     let trace_claim: &[u8] = &bytes[4 + 3 * CELLS * 4..];
     // Cheap ticket rejection before expensive transcript verification is only an admission filter.
     // A passing filter alone never constructs VerifiedWork.
     let ticket = hash(b"ticket", &[&challenge, trace_claim]);
     if ticket > target {
-        return Err(WorkError::Target.into());
+        return Err(WorkError::Target);
     }
+    Ok(CheckedProofInputs {
+        matrices,
+        actual_task,
+        ticket,
+    })
+}
+
+fn verify_with_kernel<E>(
+    challenge: Hash,
+    expected_task: Hash,
+    target: Hash,
+    bytes: &[u8],
+    progress: &mut impl FnMut(VerificationProgress) -> Result<(), E>,
+    kernel: VerificationKernel,
+) -> Result<VerifiedWork, VerificationError<E>> {
+    let CheckedProofInputs {
+        matrices,
+        actual_task,
+        ticket,
+    } = checked_proof_inputs(challenge, expected_task, target, bytes, kernel)?;
+    let (a, tail) = matrices.split_at(CELLS);
+    let (b, claimed) = tail.split_at(CELLS);
+    let claimed_bytes = &bytes[4 + 2 * CELLS * 4..4 + 3 * CELLS * 4];
+    let trace_claim = &bytes[4 + 3 * CELLS * 4..];
     progress(VerificationProgress::BeforeReplay).map_err(VerificationError::Cancelled)?;
     let evaluated = match kernel {
         VerificationKernel::ScalarReference => {

@@ -1070,6 +1070,31 @@ fn submit_result(node: &mut Node, id: Hash, clock: u64) -> Result<Value> {
         "generation":node.active()?.1,"physical_execution":false}))
 }
 
+/// Explicit local-development W1 fact-reuse entrypoint on the existing M05/M06
+/// and durable owner path. This is NOT selected by V2/V3 network listeners or CLI.
+/// Their pinned resource policies and ordinary full-replay behavior are unchanged.
+/// The caller bounds concurrent requests and supplies one original cancellation /
+/// deadline check. Current context, task/owner permit, state and commit checks run
+/// on every dispatch, including cache hits; no second Node or journal is created.
+pub fn dispatch_shared_with_work_facts(
+    node: &Mutex<Node>,
+    request: Request,
+    facts: &trnm_crypto_primitives::pon_work::facts::WorkFactCache,
+    checkpoint: &(impl Fn() -> Result<()> + Sync),
+) -> Result<Value> {
+    dispatch_shared_with_execution_progress(
+        node,
+        request,
+        &mut |_| checkpoint(),
+        |packet| WorkCheckedPacket::verify_with_facts(packet, facts, &mut |_| checkpoint()),
+        &|_| checkpoint(),
+    )
+}
+
+#[cfg(test)]
+#[path = "ingress/work_fact_tests.rs"]
+mod work_fact_tests;
+
 /// The verifier runs outside the only durable owner's lock. It cannot commit a block.
 /// The injected verifier is private and used only to schedule deterministic unit tests.
 fn dispatch_shared_with(

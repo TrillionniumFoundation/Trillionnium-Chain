@@ -403,6 +403,33 @@ pub(crate) struct WorkCheckedPacket {
     owner_permit: Option<OwnerPacketPermit>,
 }
 impl WorkCheckedPacket {
+    pub(crate) fn verify_with_facts(
+        packet: Packet,
+        facts: &pon_work::facts::WorkFactCache,
+        progress: &mut impl FnMut(pon_work::VerificationProgress) -> Result<()>,
+    ) -> Result<Self> {
+        let h = &packet.header;
+        let work = facts
+            .verify_with_progress(
+                h.challenge(),
+                h.work_task,
+                h.target,
+                &packet.proof,
+                progress,
+            )
+            .map_err(|error| match error {
+                pon_work::facts::FactError::Relation(error) => {
+                    Error::from(format!("WORK:{error:?}"))
+                }
+                pon_work::facts::FactError::Cancelled(error) => error,
+                pon_work::facts::FactError::Unavailable => Error::from("WORK_FACTS_UNAVAILABLE"),
+            })?;
+        Ok(Self {
+            packet,
+            work,
+            owner_permit: None,
+        })
+    }
     pub(crate) fn verify(packet: Packet) -> Result<Self> {
         let h = &packet.header;
         let work = pon_work::verify(h.challenge(), h.work_task, h.target, &packet.proof)
