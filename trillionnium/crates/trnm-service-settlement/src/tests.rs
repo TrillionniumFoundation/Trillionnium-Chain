@@ -56,7 +56,7 @@ pub(super) struct Harness {
     _temporary: TempDir,
     path: PathBuf,
     store_id: Hash32V1,
-    trust: ConsumptionSettlementFreshGenesisTrustBundleV1,
+    pub(super) trust: ConsumptionSettlementFreshGenesisTrustBundleV1,
     provider_key: SigningKey,
     consumer_key: SigningKey,
 }
@@ -150,7 +150,7 @@ impl Harness {
         ConsumptionSettlementStoreV1::open(self.config()).expect("open candidate store")
     }
 
-    fn execution(
+    pub(super) fn execution(
         &self,
         expected_height: u64,
         expected_block: Hash32V1,
@@ -197,7 +197,7 @@ impl Harness {
         }
     }
 
-    fn receipt(
+    pub(super) fn receipt(
         &self,
         prior: Option<&ConsumptionReceiptStateV1>,
         height: u64,
@@ -268,7 +268,7 @@ impl Harness {
         }
     }
 
-    fn rollup(
+    pub(super) fn rollup(
         &self,
         state: &ConsumptionSettlementKernelStateV1,
         height: u64,

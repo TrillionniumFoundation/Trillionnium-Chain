@@ -1688,6 +1688,152 @@ mod snapshot_tests {
     use super::*;
 
     #[test]
+    fn legacy_unfinishable_rollup_journal_reopens_and_replays_without_repair() {
+        for close_height in [i64::MAX as u64, i64::MAX as u64 + 1, u64::MAX] {
+            let mut harness = crate::tests::Harness::new();
+            harness
+                .trust
+                .settlement_policy
+                .minimum_rollup_challenge_blocks = close_height - 11;
+            let config = harness.config();
+            let store = ConsumptionSettlementStoreV1::open(config.clone()).expect("fresh fixture");
+            let first_execution =
+                harness.execution(9, config.trust_bundle.initial_order_block_id, 10);
+            store
+                .execute_committed_execution(
+                    &first_execution,
+                    &ConsumptionSettlementCommandV1::AdmitReceipt {
+                        receipt: harness.receipt(None, 10, 100),
+                    },
+                )
+                .expect("ordinary receipt");
+            let source = store.state().expect("source state");
+            let before = store.fresh_readback().expect("source head");
+            let execution = harness.execution(10, first_execution.order_block_id, 11);
+            let command = ConsumptionSettlementCommandV1::AdmitRollup {
+                rollup: harness.rollup(&source, 11),
+                receipts: source
+                    .receipts
+                    .iter()
+                    .map(|item| item.receipt.clone())
+                    .collect(),
+            };
+            assert_eq!(
+                store
+                    .execute_committed_execution(&execution, &command)
+                    .expect_err("new unfinishable rollup is rejected")
+                    .code(),
+                ConsumptionSettlementErrorCodeV1::ArithmeticOverflow
+            );
+            assert_eq!(
+                store.fresh_readback().expect("rejection preserves head"),
+                before
+            );
+            drop(store);
+
+            // Reproduce the preceding implementation's durable bytes, using its
+            // generic transition and unchanged canonical/checksum/journal writers.
+            // This fixture path exists only in cfg(test), never in admission.
+            let (legacy_state, settlement_id) =
+                apply_transition(&config.trust_bundle, &source, 11, &command)
+                    .expect("legacy generic transition");
+            assert_eq!(
+                legacy_state
+                    .rollup
+                    .as_ref()
+                    .expect("legacy rollup")
+                    .challenge_close_height,
+                close_height
+            );
+            let id = operation_id(&command).expect("legacy operation ID");
+            let receipt = ConsumptionTransitionReceiptV1 {
+                schema_version: SCHEMA_VERSION_V1,
+                store_id: config.store_id,
+                sequence: before.sequence() + 1,
+                operation_id: id,
+                operation_kind: command.operation_kind(),
+                order_height: execution.order_height,
+                order_block_id: execution.order_block_id,
+                post_state_root: state_root(&legacy_state).expect("legacy state root"),
+                settlement_id,
+            };
+            let mut connection = open_rw(&config.path, false).expect("fixture writer");
+            let transaction = connection
+                .transaction_with_behavior(TransactionBehavior::Immediate)
+                .expect("fixture transaction");
+            insert_operation(
+                &transaction,
+                receipt.sequence,
+                id,
+                &canonical_bytes(&execution).expect("execution bytes"),
+                &canonical_bytes(&command).expect("command bytes"),
+                &receipt,
+            )
+            .expect("legacy journal row");
+            let target_journal = operation_journal_root(&transaction).expect("legacy journal root");
+            advance_committed_block_marker(
+                &transaction,
+                &config,
+                &execution,
+                before.sequence(),
+                receipt.sequence,
+                before.durable_state_root(),
+                receipt.post_state_root,
+                before.durable_journal_root(),
+                target_journal,
+            )
+            .expect("legacy block marker");
+            write_metadata(
+                &transaction,
+                &config,
+                receipt.sequence,
+                execution.order_height,
+                execution.order_block_id,
+                &legacy_state,
+                target_journal,
+                false,
+            )
+            .expect("legacy metadata");
+            transaction.commit().expect("persist legacy fixture");
+            drop(connection);
+            let original_bytes = fs::read(&config.path).expect("persisted legacy bytes");
+
+            let reopened = ConsumptionSettlementStoreV1::open_existing(config.clone())
+                .expect("legacy journal passes cold schema and replay audit");
+            let legacy_head = reopened.fresh_readback().expect("legacy head");
+            assert_eq!(legacy_head.sequence(), receipt.sequence);
+            assert_eq!(legacy_head.durable_state_root(), receipt.post_state_root);
+            assert_eq!(legacy_head.durable_journal_root(), target_journal);
+            assert_eq!(reopened.state().expect("legacy state"), legacy_state);
+            let replay = reopened
+                .execute_committed_execution(&execution, &command)
+                .expect("exact historical retry bypasses new-admission guard");
+            assert!(replay.is_replay());
+            assert_eq!(replay.receipt(), &receipt);
+            assert_eq!(
+                reopened.fresh_readback().expect("replay preserves head"),
+                legacy_head
+            );
+            assert_eq!(
+                reopened.state().expect("replay preserves state"),
+                legacy_state
+            );
+            // Readability is not repair: maturity still cannot fit this backend.
+            assert!(
+                legacy_state.rollup.as_ref().unwrap().challenge_close_height >= i64::MAX as u64
+            );
+            assert!(legacy_state.settlement.is_none());
+            drop(reopened);
+            assert_eq!(
+                fs::read(&config.path).expect("unchanged legacy bytes"),
+                original_bytes
+            );
+            reject_sidecars(&config.path).expect("no leftover sidecars");
+            ConsumptionSettlementStoreV1::open_existing(config).expect("repeat cold reopen");
+        }
+    }
+
+    #[test]
     fn preview_sqlite_sequence_bounds_cover_empty_and_multi_command_batches() {
         let maximum = i64::MAX as u64;
         for (source, count) in [(maximum, 0), (maximum - 1, 1), (maximum - 2, 2)] {

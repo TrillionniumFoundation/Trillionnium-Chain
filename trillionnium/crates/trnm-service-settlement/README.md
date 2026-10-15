@@ -77,3 +77,8 @@ previously accepted unfinishable rollups remain readable and are not repaired.
 There is no rollback, migration, stored-byte rewrite, schema/domain change, or
 change to the configured challenge duration. This admission guard only prevents
 new rollups whose earliest settlement height exceeds backend capacity.
+A test-only persisted legacy journal covers challenge-close heights `i64::MAX`,
+`i64::MAX + 1`, and `u64::MAX`: cold audit/readback and exact operation retry
+preserve the original receipt, state, head and database bytes. The same inputs
+are rejected as new rollups. Historical readability does not make those rollups
+settleable or repair their maturity bounds.
