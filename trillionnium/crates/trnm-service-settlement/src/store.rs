@@ -2,6 +2,7 @@ use std::{
     collections::{BTreeMap, BTreeSet},
     ffi::OsString,
     fs,
+    io::Read,
     path::{Path, PathBuf},
     time::Duration,
 };
@@ -173,7 +174,7 @@ impl ConsumptionSettlementStoreV1 {
         validate_trust_bundle(&config.trust_bundle)?;
         reject_sidecars(&config.path)?;
         if config.path.exists() {
-            let connection = open_ro(&config.path)?;
+            let connection = open_read_snapshot(&config.path)?;
             verify_schema(&connection)?;
             audit(&connection, &config)?;
             if load_metadata(&connection, &config)?.5 {
@@ -217,7 +218,7 @@ impl ConsumptionSettlementStoreV1 {
             )?;
             transaction.commit()?;
             drop(connection);
-            let connection = open_ro(&config.path)?;
+            let connection = open_read_snapshot(&config.path)?;
             verify_schema(&connection)?;
             audit(&connection, &config)?;
         }
@@ -237,7 +238,7 @@ impl ConsumptionSettlementStoreV1 {
         validate_trust_bundle(&config.trust_bundle)?;
         require_existing_regular_store(&config.path)?;
         reject_sidecars(&config.path)?;
-        let connection = open_ro(&config.path)?;
+        let connection = open_read_snapshot(&config.path)?;
         verify_schema(&connection)?;
         audit(&connection, &config)?;
         if load_metadata(&connection, &config)?.5 {
@@ -294,9 +295,9 @@ impl ConsumptionSettlementStoreV1 {
         }
 
         let mut connection = open_rw(&self.config.path, false)?;
-        verify_schema(&connection)?;
-        audit(&connection, &self.config)?;
         let transaction = connection.transaction_with_behavior(TransactionBehavior::Immediate)?;
+        verify_schema(&transaction)?;
+        audit(&transaction, &self.config)?;
         let (sequence, height, block_id, state, journal_root, fenced) =
             load_metadata(&transaction, &self.config)?;
         if fenced {
@@ -357,7 +358,8 @@ impl ConsumptionSettlementStoreV1 {
         candidate_block_id: Hash32V1,
         commands: &[ConsumptionSettlementCommandV1],
     ) -> ConsumptionSettlementResultV1<ConsumptionSettlementExecutionPreviewV1> {
-        let before = self.fresh_readback()?;
+        let connection = open_read_snapshot(&self.config.path)?;
+        let before = self.readback_from_snapshot(&connection)?;
         if &before != expected_parent
             || candidate_height
                 != before.order_height.checked_add(1).ok_or_else(|| {
@@ -374,12 +376,9 @@ impl ConsumptionSettlementStoreV1 {
                 "pre-commit candidate does not extend the exact fresh parent",
             ));
         }
-        let mut state = self.state()?;
+        let mut state = load_metadata(&connection, &self.config)?.3;
         let mut operation_ids = BTreeSet::new();
         let mut receipts = Vec::with_capacity(commands.len());
-        let connection = open_ro(&self.config.path)?;
-        verify_schema(&connection)?;
-        audit(&connection, &self.config)?;
         for (offset, command) in commands.iter().enumerate() {
             let id = operation_id(command)?;
             if !operation_ids.insert(id) || load_operation(&connection, id)?.is_some() {
@@ -459,16 +458,17 @@ impl ConsumptionSettlementStoreV1 {
         let execution_bytes = canonical_bytes(execution)?;
         let id = operation_id(command)?;
 
-        let read_only = open_ro(&self.config.path)?;
+        let read_only = open_read_snapshot(&self.config.path)?;
         verify_schema(&read_only)?;
         audit(&read_only, &self.config)?;
         drop(read_only);
 
         let mut connection = open_rw(&self.config.path, false)?;
-        verify_schema(&connection)?;
-        audit(&connection, &self.config)?;
+        let transaction = connection.transaction_with_behavior(TransactionBehavior::Immediate)?;
+        verify_schema(&transaction)?;
+        audit(&transaction, &self.config)?;
         let (sequence, height, block_id, state, journal_root, fenced) =
-            load_metadata(&connection, &self.config)?;
+            load_metadata(&transaction, &self.config)?;
         if fenced {
             return Err(error(
                 ConsumptionSettlementErrorCodeV1::ThirdStateFenced,
@@ -476,7 +476,7 @@ impl ConsumptionSettlementStoreV1 {
             ));
         }
         if let Some((stored_execution, stored_command, stored_receipt)) =
-            load_operation(&connection, id)?
+            load_operation(&transaction, id)?
         {
             if stored_execution != *execution || stored_command != *command {
                 return Err(error(
@@ -484,6 +484,7 @@ impl ConsumptionSettlementStoreV1 {
                     "operation ID replay differs from durable bytes",
                 ));
             }
+            drop(transaction);
             drop(connection);
             return Ok(ConsumptionSettlementOutcomeV1 {
                 confirmed: self.fresh_confirm(&stored_receipt)?,
@@ -522,23 +523,6 @@ impl ConsumptionSettlementStoreV1 {
             settlement_id,
         };
 
-        let transaction = connection.transaction_with_behavior(TransactionBehavior::Immediate)?;
-        let (tx_sequence, tx_height, tx_block, tx_state, tx_journal_root, tx_fenced) =
-            load_metadata(&transaction, &self.config)?;
-        if (
-            tx_sequence,
-            tx_height,
-            tx_block,
-            &tx_state,
-            tx_journal_root,
-            tx_fenced,
-        ) != (sequence, height, block_id, &state, journal_root, false)
-        {
-            return Err(error(
-                ConsumptionSettlementErrorCodeV1::StaleVersion,
-                "store changed before atomic transition",
-            ));
-        }
         if matches!(fault, Some(ConsumptionCommitFaultV1::ThirdState)) {
             write_metadata(
                 &transaction,
@@ -612,11 +596,18 @@ impl ConsumptionSettlementStoreV1 {
         &self,
     ) -> ConsumptionSettlementResultV1<ConsumptionSettlementFreshReadbackV1> {
         reject_sidecars(&self.config.path)?;
-        let connection = open_ro(&self.config.path)?;
-        verify_schema(&connection)?;
-        audit(&connection, &self.config)?;
+        let connection = open_read_snapshot(&self.config.path)?;
+        self.readback_from_snapshot(&connection)
+    }
+
+    fn readback_from_snapshot(
+        &self,
+        connection: &Connection,
+    ) -> ConsumptionSettlementResultV1<ConsumptionSettlementFreshReadbackV1> {
+        verify_schema(connection)?;
+        audit(connection, &self.config)?;
         let (sequence, order_height, order_block_id, state, journal_root, fenced) =
-            load_metadata(&connection, &self.config)?;
+            load_metadata(connection, &self.config)?;
         if fenced {
             return Err(error(
                 ConsumptionSettlementErrorCodeV1::ThirdStateFenced,
@@ -632,7 +623,7 @@ impl ConsumptionSettlementStoreV1 {
             order_block_id,
             durable_state_root: state_root(&state)?,
             durable_journal_root: journal_root,
-            durable_committed_block_root: committed_block_journal_root(&connection, &self.config)?,
+            durable_committed_block_root: committed_block_journal_root(connection, &self.config)?,
         })
     }
 
@@ -647,7 +638,7 @@ impl ConsumptionSettlementStoreV1 {
             ));
         }
         reject_sidecars(&self.config.path)?;
-        let connection = open_ro(&self.config.path)?;
+        let connection = open_read_snapshot(&self.config.path)?;
         verify_schema(&connection)?;
         audit(&connection, &self.config)?;
         if load_metadata(&connection, &self.config)?.5 {
@@ -674,7 +665,7 @@ impl ConsumptionSettlementStoreV1 {
 
     pub fn state(&self) -> ConsumptionSettlementResultV1<ConsumptionSettlementKernelStateV1> {
         reject_sidecars(&self.config.path)?;
-        let connection = open_ro(&self.config.path)?;
+        let connection = open_read_snapshot(&self.config.path)?;
         verify_schema(&connection)?;
         audit(&connection, &self.config)?;
         Ok(load_metadata(&connection, &self.config)?.3)
@@ -691,7 +682,25 @@ fn open_rw(path: &Path, allow_create: bool) -> ConsumptionSettlementResultV1<Con
     Ok(connection)
 }
 
-fn open_ro(path: &Path) -> ConsumptionSettlementResultV1<Connection> {
+fn open_read_snapshot(path: &Path) -> ConsumptionSettlementResultV1<Connection> {
+    // WAL-mode read-only opens can create sidecars. Reject that format before
+    // SQLite opens the file; never change its journal mode or recover it here.
+    reject_sidecars(path)?;
+    let mut header = [0_u8; 20];
+    fs::File::open(path)
+        .and_then(|mut file| file.read_exact(&mut header))
+        .map_err(|cause| {
+            error(
+                ConsumptionSettlementErrorCodeV1::StoreFailure,
+                cause.to_string(),
+            )
+        })?;
+    if header[18] == 2 || header[19] == 2 {
+        return Err(error(
+            ConsumptionSettlementErrorCodeV1::SchemaMismatch,
+            "WAL database format is not supported by read-only store snapshots",
+        ));
+    }
     let bytes = path.as_os_str().as_encoded_bytes();
     let mut uri = String::from("file:");
     for byte in bytes {
@@ -701,7 +710,7 @@ fn open_ro(path: &Path) -> ConsumptionSettlementResultV1<Connection> {
             uri.push_str(&format!("%{byte:02X}"));
         }
     }
-    uri.push_str("?mode=ro&immutable=1");
+    uri.push_str("?mode=ro");
     let connection = Connection::open_with_flags(
         uri,
         OpenFlags::SQLITE_OPEN_READ_ONLY
@@ -709,6 +718,9 @@ fn open_ro(path: &Path) -> ConsumptionSettlementResultV1<Connection> {
             | OpenFlags::SQLITE_OPEN_URI,
     )?;
     connection.busy_timeout(Duration::from_secs(2))?;
+    // Keep schema checks, replay audit, fencing and returned facts in one
+    // locking snapshot. Dropping the connection releases this read transaction.
+    connection.execute_batch("BEGIN DEFERRED")?;
     Ok(connection)
 }
 
@@ -1609,4 +1621,98 @@ fn array32(value: Vec<u8>, label: &str) -> ConsumptionSettlementResultV1<[u8; 32
             format!("{label} length is invalid"),
         )
     })
+}
+
+#[cfg(test)]
+mod snapshot_tests {
+    use super::*;
+
+    #[test]
+    fn wal_header_is_rejected_without_creating_sidecars() {
+        let harness = crate::tests::Harness::new();
+        let config = harness.config();
+        drop(ConsumptionSettlementStoreV1::open(config.clone()).expect("create store"));
+        let connection = open_rw(&config.path, false).expect("fixture writer");
+        let mode: String = connection
+            .query_row("PRAGMA journal_mode=WAL", [], |row| row.get(0))
+            .expect("create WAL-mode fixture");
+        assert_eq!(mode, "wal");
+        connection
+            .execute_batch("PRAGMA wal_checkpoint(TRUNCATE)")
+            .expect("checkpoint fixture");
+        drop(connection);
+        reject_sidecars(&config.path).expect("closed WAL fixture has no sidecars");
+        let before = fs::read(&config.path).expect("fixture bytes");
+        assert_eq!((before[18], before[19]), (2, 2));
+        assert_eq!(
+            ConsumptionSettlementStoreV1::open_existing(config.clone())
+                .expect_err("WAL format unsupported")
+                .code(),
+            ConsumptionSettlementErrorCodeV1::SchemaMismatch
+        );
+        assert_eq!(
+            ConsumptionSettlementStoreV1::open(config.clone())
+                .expect_err("ordinary reopen also rejects WAL")
+                .code(),
+            ConsumptionSettlementErrorCodeV1::SchemaMismatch
+        );
+        assert_eq!(fs::read(&config.path).expect("unchanged fixture"), before);
+        reject_sidecars(&config.path).expect("rejected reads did not create sidecars");
+    }
+
+    #[test]
+    fn read_snapshot_blocks_fence_commit_until_release() {
+        let harness = crate::tests::Harness::new();
+        let config = harness.config();
+        let store = ConsumptionSettlementStoreV1::open(config.clone()).expect("create store");
+        let reader = open_read_snapshot(&config.path).expect("read snapshot");
+        verify_schema(&reader).expect("snapshot schema");
+        audit(&reader, &config).expect("snapshot audit");
+        let (sequence, height, block, state, journal, fenced) =
+            load_metadata(&reader, &config).expect("snapshot metadata");
+        assert!(!fenced);
+
+        let writer = open_rw(&config.path, false).expect("second connection");
+        writer
+            .busy_timeout(Duration::ZERO)
+            .expect("nonblocking commit");
+        writer
+            .execute_batch("BEGIN IMMEDIATE")
+            .expect("writer transaction");
+        write_metadata(
+            &writer, &config, sequence, height, block, &state, journal, true,
+        )
+        .expect("stage valid permanent fence");
+        let error = writer
+            .execute_batch("COMMIT")
+            .expect_err("reader must block commit");
+        assert_eq!(
+            error.sqlite_error_code(),
+            Some(rusqlite::ErrorCode::DatabaseBusy)
+        );
+        audit(&reader, &config).expect("old snapshot remains coherent");
+        assert_eq!(
+            load_metadata(&reader, &config).expect("same snapshot"),
+            (sequence, height, block, state, journal, false)
+        );
+        drop(reader);
+        writer
+            .execute_batch("COMMIT")
+            .expect("commit after reader release");
+        drop(writer);
+        reject_sidecars(&config.path).expect("no sidecars after commit");
+        assert_eq!(
+            store
+                .fresh_readback()
+                .expect_err("fresh read sees fence")
+                .code(),
+            ConsumptionSettlementErrorCodeV1::ThirdStateFenced
+        );
+        assert_eq!(
+            ConsumptionSettlementStoreV1::open_existing(config)
+                .expect_err("cold reopen sees fence")
+                .code(),
+            ConsumptionSettlementErrorCodeV1::ThirdStateFenced
+        );
+    }
 }

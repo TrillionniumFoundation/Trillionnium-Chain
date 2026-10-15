@@ -47,3 +47,16 @@ in a nonempty current block remain supported. An existing store handle also
 cannot issue a fresh confirmation carrier after the store is permanently fenced.
 Previously malformed journals remain rejected on audit/reopen; there is no
 migration, journal repair, or change to stored schemas or signed domains.
+
+Read-only opens use SQLite locking and a deferred transaction rather than claiming
+that this mutable file is immutable. Each audit and its returned head, state or
+receipt use one read snapshot; preview state and duplicate checks share that
+snapshot. Write-side audits run inside the immediate write transaction. A proof
+carrier records a historical observation, not revocable current authority.
+
+Only rollback-journal database format is supported. Existing sidecars and WAL
+header format are rejected before SQLite read-only open, so a closed WAL database
+is not opened merely to create new WAL/shared-memory files. No journal-mode
+setting is changed or automatic recovery attempted. Concurrent external pathname
+replacement or journal-mode mutation is outside this ownership contract; header
+admission is not an atomic exclusion mechanism for such external changes.

@@ -52,7 +52,7 @@ fn certificate(value: u64) -> AvailabilityCertificateIdV1 {
     AvailabilityCertificateIdV1(h(value).0)
 }
 
-struct Harness {
+pub(super) struct Harness {
     _temporary: TempDir,
     path: PathBuf,
     store_id: Hash32V1,
@@ -62,7 +62,7 @@ struct Harness {
 }
 
 impl Harness {
-    fn new() -> Self {
+    pub(super) fn new() -> Self {
         let temporary = TempDir::new().expect("temporary directory");
         let path = temporary.path().join("consumption-settlement.sqlite");
         let provider_key = SigningKey::from_bytes(&[7; 32]);
@@ -138,7 +138,7 @@ impl Harness {
         }
     }
 
-    fn config(&self) -> ConsumptionSettlementStoreConfigV1 {
+    pub(super) fn config(&self) -> ConsumptionSettlementStoreConfigV1 {
         ConsumptionSettlementStoreConfigV1 {
             path: self.path.clone(),
             store_id: self.store_id,
