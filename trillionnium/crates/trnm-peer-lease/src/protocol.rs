@@ -407,13 +407,19 @@ fn encode_token(output: &mut Vec<u8>, token: PeerLeaseTokenV1) {
 }
 
 fn decode_token(cursor: &mut Cursor<'_>) -> Result<PeerLeaseTokenV1, PeerLeaseErrorV1> {
-    Ok(PeerLeaseTokenV1::new(
+    // Never deserialize a token by bypassing the constructor invariants.  A
+    // response is received from a separate authority process, so treating
+    // arbitrary bytes as a capability would let a malformed/forged response
+    // create a token with a zero session, generation or record hash.  Those
+    // fields are the fencing identity used by every subsequent operation.
+    PeerLeaseTokenV1::from_parts(
         decode_scope(cursor)?,
         cursor.take_array()?,
         cursor.take_u64()?,
         cursor.take_u64()?,
         cursor.take_array()?,
-    ))
+    )
+    .map_err(|_| PeerLeaseErrorV1::Protocol("invalid peer-lease token"))
 }
 
 fn encode_scope(output: &mut Vec<u8>, scope: PeerLeaseScopeV1) {
@@ -563,5 +569,24 @@ mod tests {
             decode_response(&response).unwrap(),
             LeaseResponseV1::Rejected(LeaseRejectCodeV1::UnauthorizedPeer)
         );
+    }
+
+    #[test]
+    fn malformed_token_fields_are_rejected_on_decode() {
+        // `encode_response` is intentionally used here to construct bytes
+        // that a compromised or buggy authority could send.  Decoding must
+        // re-run the token invariants instead of trusting the wire values.
+        for (session_id, generation, record_hash) in [
+            ([0; 32], 8, [5; 32]),
+            ([4; 32], 0, [5; 32]),
+            ([4; 32], 8, [0; 32]),
+        ] {
+            let token = PeerLeaseTokenV1::new(scope(), session_id, generation, 10_007, record_hash);
+            let encoded = encode_response(LeaseResponseV1::Token(token));
+            assert!(matches!(
+                decode_response(&encoded),
+                Err(PeerLeaseErrorV1::Protocol("invalid peer-lease token"))
+            ));
+        }
     }
 }
