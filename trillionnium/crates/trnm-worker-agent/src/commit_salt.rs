@@ -139,12 +139,7 @@ pub(crate) fn journal_automatic_submission(
         commit_hash: commit_hash.clone(),
         result_hash: result_hash.into(),
         salt_hex: proposed_salt.into(),
-        commit_cmd: crate::workflow_ops::commit_template(
-            task_id,
-            worker,
-            &commit_hash,
-            task_id,
-        ),
+        commit_cmd: crate::workflow_ops::commit_template(task_id, worker, &commit_hash, task_id),
         reveal_cmd: crate::workflow_ops::reveal_template(task_id, result_hash, proposed_salt),
     };
     let encoded = serde_json::to_vec(&record)?;
