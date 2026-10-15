@@ -8,6 +8,7 @@ use crate::types::{
     ExternalKey, IssueWorkloadReceiptV1, MatchEvidenceCommitmentV1, ObjectRefV1, ResearchCommandV1,
     ResearchObjectKind, PROTOCOL_VERSION,
 };
+use ed25519_dalek::VerifyingKey;
 use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, BTreeSet};
 use thiserror::Error;
@@ -35,6 +36,14 @@ impl AuthorityIdentityV1 {
             || !self.signer_did.bytes().all(|byte| byte.is_ascii_graphic())
             || self.public_key == [0; 32]
         {
+            return Err(ProtocolStateError::InvalidAuthoritySet);
+        }
+        // Authority keys are consensus trust anchors. Reject malformed or
+        // small-order Ed25519 points at genesis/configuration time rather than
+        // admitting an unusable identity that can never authenticate commands.
+        let key = VerifyingKey::from_bytes(&self.public_key)
+            .map_err(|_| ProtocolStateError::InvalidAuthoritySet)?;
+        if key.is_weak() {
             return Err(ProtocolStateError::InvalidAuthoritySet);
         }
         Ok(())
