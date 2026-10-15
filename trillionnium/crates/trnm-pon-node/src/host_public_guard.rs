@@ -208,7 +208,10 @@ mod kernel_parent {
 
     type Result<T> = trnm_pon_node::Result<T>;
     const CGROUP_ROOT: &str = "/sys/fs/cgroup";
-    const PARENT_DIRECTORY: &str = "/sys/fs/cgroup/system.slice";
+    // systemd.slice(5): a no-dash slice name belongs directly to -.slice.
+    // system.slice children must instead be named system-<child>.slice.
+    // Keep the one original fixed name; do NOT admit caller-selectable slices.
+    const PARENT_DIRECTORY: &str = "/sys/fs/cgroup";
     // This is ONE administrator-provisioned parent for all public V3
     // processes. Allowing caller-chosen trnmpon*.slice names would let
     // multiple independent 25%-CPU parents multiply the physical budget.
@@ -452,11 +455,27 @@ mod kernel_parent {
             assert!(validate_limits("1000 10000", "0", "33554432", "0", "4").is_ok());
         }
         #[test]
-        fn exactly_one_fixed_system_parent_name_is_eligible() {
-            assert!(approved_parent_path(Path::new(
+        fn canonical_systemd_slice_name_maps_to_the_actual_root_cgroup() {
+            // systemd.slice(5): "foo-bar.slice" means /foo.slice/foo-bar.slice.
+            // A name with no dash is a CHILD OF -.slice, not system.slice.
+            // Existing PARENT_NAME must match the only actual systemd path.
+            assert!(
+                approved_parent_path(Path::new("/sys/fs/cgroup/trnmponpublic.slice")),
+                "actual top-level systemd slice is otherwise impossible to select"
+            );
+            assert!(!approved_parent_path(Path::new(
                 "/sys/fs/cgroup/system.slice/trnmponpublic.slice"
             )));
+        }
+        #[test]
+        fn exactly_one_fixed_system_parent_name_is_eligible() {
+            assert!(approved_parent_path(Path::new(
+                "/sys/fs/cgroup/trnmponpublic.slice"
+            )));
             for bad in [
+                "/sys/fs/cgroup/system.slice/trnmponpublic.slice",
+                "/sys/fs/cgroup/system-trnmponpublic.slice",
+                "/sys/fs/cgroup/trnmponextra.slice",
                 "/sys/fs/cgroup/system.slice/trnmponextra.slice",
                 "/sys/fs/cgroup/system.slice/trnmponother.slice",
                 "/sys/fs/cgroup/system.slice/trnmponpublic.service",

@@ -774,7 +774,7 @@ socket table. The slot guard is not a host CPU quota or persistent debt log.
 The V3 CLI serve path now refuses non-loopback binding unless the trusted
 operator supplies --host-kernel-parent pointing to an ALREADY provisioned
 root-owned cgroup-v2 slice under
-/sys/fs/cgroup/system.slice/trnmponpublic.slice. This is an unprivileged read-only
+/sys/fs/cgroup/trnmponpublic.slice. This is an unprivileged read-only
 eligibility check, not a cgroup creator, migrator, quota editor or daemon.
 The process must already be a member of the approved parent or its children.
 
@@ -818,3 +818,22 @@ would allow four more independently quota-bound processes under each slice.
 This rule excludes that accidental/intentional per-parent multiplier for the
 trusted CLI; root's ability to move processes outside the approved parent
 is still outside the unprivileged service's authority.
+
+
+### Fixed systemd slice hierarchy correction
+
+The previously proposed fixed name `trnmponpublic.slice` was incorrectly
+located in `system.slice/trnmponpublic.slice`. Under systemd.slice(5), a slice
+with no dash is directly beneath `-.slice` and thus maps to
+`/sys/fs/cgroup/trnmponpublic.slice`, not to a subdirectory of `system.slice`.
+An actual sub-slice of `system.slice` must instead be named
+`system-trnmponpublic.slice`. This candidate keeps the original fixed name
+and accepts exactly its canonical root-level path; neither another sibling
+nor a caller-provided sublayer becomes eligible. This is a path correction,
+not a changed CPU limit, W1 relation, state authority or signed wire format.
+
+A negative regression on prior candidate code with one additive actual-path
+assertion failed as expected. The test did not provision a privileged host
+resource group. The final native guard and exposed CLI regressions need to
+run on the exact committed code; physical kernel parenting, host reboot,
+CPU-debt carryover and WAN saturation are not qualified by a string test.
