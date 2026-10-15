@@ -549,6 +549,95 @@ fn execution_preview_checks_bilateral_receipt_and_preserves_durable_rows() {
 }
 
 #[test]
+fn execution_preview_rejects_unrepresentable_height_without_changing_cold_state() {
+    let mut harness = Harness::new();
+    harness.trust.initial_order_height = i64::MAX as u64;
+    let store = harness.open();
+    let before = store.fresh_readback().expect("boundary parent");
+    let before_state = store.state().expect("boundary state");
+    let before_bytes = fs::read(&harness.path).expect("boundary database");
+    let height = before.order_height() + 1;
+    let command = ConsumptionSettlementCommandV1::AdmitReceipt {
+        receipt: harness.receipt(None, height, 25),
+    };
+    for commands in [Vec::new(), vec![command]] {
+        let error = store
+            .preview_before_vote_v1(&before, height, h(1_010), &commands)
+            .expect_err("preview height must fit durable SQLite range");
+        assert_eq!(
+            error.code(),
+            ConsumptionSettlementErrorCodeV1::ArithmeticOverflow
+        );
+        assert_eq!(store.fresh_readback().expect("unchanged parent"), before);
+        assert_eq!(store.state().expect("unchanged state"), before_state);
+        assert_eq!(
+            fs::read(&harness.path).expect("unchanged bytes"),
+            before_bytes
+        );
+        let reopened = ConsumptionSettlementStoreV1::open_existing(harness.config())
+            .expect("cold reopen after rejection");
+        assert_eq!(reopened.fresh_readback().expect("cold parent"), before);
+        assert_eq!(reopened.state().expect("cold state"), before_state);
+    }
+}
+
+#[test]
+fn execution_preview_accepts_last_sqlite_height_and_matches_commit() {
+    for with_receipt in [false, true] {
+        let mut harness = Harness::new();
+        harness.trust.initial_order_height = (i64::MAX as u64) - 1;
+        let store = harness.open();
+        let before = store.fresh_readback().expect("last extensible parent");
+        let before_state = store.state().expect("parent state");
+        let before_bytes = fs::read(&harness.path).expect("parent bytes");
+        let height = i64::MAX as u64;
+        let commands = if with_receipt {
+            vec![ConsumptionSettlementCommandV1::AdmitReceipt {
+                receipt: harness.receipt(None, height, 25),
+            }]
+        } else {
+            Vec::new()
+        };
+        let execution = harness.execution(before.order_height(), before.order_block_id(), height);
+        let preview = store
+            .preview_before_vote_v1(&before, height, execution.order_block_id, &commands)
+            .expect("last representable preview");
+        assert_eq!(store.fresh_readback().expect("unchanged parent"), before);
+        assert_eq!(store.state().expect("unchanged state"), before_state);
+        assert_eq!(
+            fs::read(&harness.path).expect("unchanged bytes"),
+            before_bytes
+        );
+        if let Some(command) = commands.first() {
+            store
+                .execute_committed_execution(&execution, command)
+                .expect("last representable commit");
+        } else {
+            store
+                .advance_empty_committed_execution_v1(&execution)
+                .expect("last representable empty commit");
+        }
+        let committed = store.fresh_readback().expect("committed boundary");
+        assert_eq!(committed.order_height(), height);
+        assert_eq!(
+            committed.durable_state_root(),
+            preview.candidate_post_state_root()
+        );
+        assert_eq!(committed.sequence(), u64::from(with_receipt));
+        let reopened = ConsumptionSettlementStoreV1::open_existing(harness.config())
+            .expect("cold boundary reopen");
+        assert_eq!(
+            reopened.fresh_readback().expect("cold committed parent"),
+            committed
+        );
+        assert_eq!(
+            reopened.state().expect("cold committed state"),
+            store.state().expect("committed state")
+        );
+    }
+}
+
+#[test]
 fn receipt_signatures_sequence_prices_and_cumulative_roots_fail_closed() {
     let harness = Harness::new();
     let store = harness.open();

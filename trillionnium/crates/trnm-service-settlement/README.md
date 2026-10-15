@@ -60,3 +60,11 @@ is not opened merely to create new WAL/shared-memory files. No journal-mode
 setting is changed or automatic recovery attempted. Concurrent external pathname
 replacement or journal-mode mutation is outside this ownership contract; header
 admission is not an atomic exclusion mechanism for such external changes.
+
+Read-only execution previews enforce the durable SQLite signed-integer range for
+both candidate height and projected final operation sequence, including empty
+batches. A preview rejects an unrepresentable target before processing commands;
+this changes no persisted schema or signed domain. Boundary tests exercise real
+stores at the last representable height, rejection with unchanged database bytes
+and cold-reopen state, and preview/commit parity. Sequence exhaustion is checked
+with synthetic helper inputs, not a practically constructed maximum-length history.

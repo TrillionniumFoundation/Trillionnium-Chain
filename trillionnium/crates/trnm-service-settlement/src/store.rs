@@ -376,6 +376,7 @@ impl ConsumptionSettlementStoreV1 {
                 "pre-commit candidate does not extend the exact fresh parent",
             ));
         }
+        validate_preview_sqlite_bounds(candidate_height, before.sequence, commands.len())?;
         let mut state = load_metadata(&connection, &self.config)?.3;
         let mut operation_ids = BTreeSet::new();
         let mut receipts = Vec::with_capacity(commands.len());
@@ -1596,6 +1597,30 @@ fn validate_execution_cas(
     Ok(())
 }
 
+// Preview must stay within the same integer domain as the durable backend,
+// including empty batches and the final sequence of a multi-command batch.
+fn validate_preview_sqlite_bounds(
+    candidate_height: u64,
+    source_sequence: u64,
+    command_count: usize,
+) -> ConsumptionSettlementResultV1<()> {
+    to_sqlite(candidate_height, "pre-commit candidate height")?;
+    let command_count = u64::try_from(command_count).map_err(|_| {
+        error(
+            ConsumptionSettlementErrorCodeV1::ArithmeticOverflow,
+            "pre-commit command count exceeds u64",
+        )
+    })?;
+    let target_sequence = source_sequence.checked_add(command_count).ok_or_else(|| {
+        error(
+            ConsumptionSettlementErrorCodeV1::ArithmeticOverflow,
+            "pre-commit target sequence overflows",
+        )
+    })?;
+    to_sqlite(target_sequence, "pre-commit target sequence")?;
+    Ok(())
+}
+
 fn to_sqlite(value: u64, label: &str) -> ConsumptionSettlementResultV1<i64> {
     i64::try_from(value).map_err(|_| {
         error(
@@ -1626,6 +1651,23 @@ fn array32(value: Vec<u8>, label: &str) -> ConsumptionSettlementResultV1<[u8; 32
 #[cfg(test)]
 mod snapshot_tests {
     use super::*;
+
+    #[test]
+    fn preview_sqlite_sequence_bounds_cover_empty_and_multi_command_batches() {
+        let maximum = i64::MAX as u64;
+        for (source, count) in [(maximum, 0), (maximum - 1, 1), (maximum - 2, 2)] {
+            validate_preview_sqlite_bounds(maximum, source, count)
+                .expect("last representable target sequence");
+        }
+        for (source, count) in [(maximum, 1), (maximum - 1, 2), (u64::MAX, 1)] {
+            assert_eq!(
+                validate_preview_sqlite_bounds(maximum, source, count)
+                    .expect_err("unrepresentable target sequence")
+                    .code(),
+                ConsumptionSettlementErrorCodeV1::ArithmeticOverflow
+            );
+        }
+    }
 
     #[test]
     fn wal_header_is_rejected_without_creating_sidecars() {
