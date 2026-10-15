@@ -80,6 +80,9 @@ const MAX_POOL_BODY: usize = MAX_POOL_BUNDLE_BYTES * 2 + 512;
 const MAX_SERVICE_SECONDS: u64 = 72 * 3600;
 const MAX_RESPONSE: usize = 2 * MAX_PACKET + 4096;
 const MAX_CONNECTIONS: usize = 64;
+// Each active V3 listener starts three worker threads and bounded proof/read
+// channels; cap aggregate count per already-pinned Node service domain.
+const MAX_LISTENERS_PER_CPU_DOMAIN: usize = 4;
 const MAX_PAID_BODY_BYTES: usize = 8 * 1024 * 1024;
 // Reservations partition the existing totals; they add no socket/worker/queue.
 const READ_BODY_RESERVE: usize = 128 * 1024;
@@ -1627,15 +1630,14 @@ fn serve_public_protected_v3_inner(
                 "PUBLIC_STARTUP_DEADLINE",
             )
         };
-        let owner = lock_owner(&node, &mut progress)?;
-        ensure(
-            owner.continuous_domain_matches(&server.mutation_cpu_domain()),
-            "OWNER_CONTINUOUS_SERVICE_CPU_DOMAIN",
-        )?;
+        let mut owner = lock_owner(&node, &mut progress)?;
         if !owner.is_continuous() {
             owner.pool_status_snapshot()?;
         } // Never enable a pool from the guest listener.
         progress(0)?;
+        // The first trusted service binds this actual Node owner. A second
+        // independent PublicServer cannot mint new CPU or intake budgets.
+        owner.bind_public_service_cpu_domain(&server.mutation_cpu_domain())?;
         owner.settings().clone()
     };
     let end = Instant::now() + lifetime;
@@ -1648,6 +1650,11 @@ fn serve_public_protected_v3_inner(
     let mut next_id = 0u64;
     let mut spent = Spent::new();
     let intake = server.listener_intake()?;
+    // One slot for the entire scoped service, not one per connection/request.
+    // A fifth distinct listener must not allocate another worker/queue/spent set.
+    let _listener_permit =
+        BufferPermit::try_acquire(intake.listeners.clone(), 1, MAX_LISTENERS_PER_CPU_DOMAIN)?
+            .ok_or_else(|| crate::Error::from("PUBLIC_LISTENER_DOMAIN_CAPACITY"))?;
     let body_pool = intake.body_pool.clone();
     let output_pool = intake.output_pool.clone();
     let mutating_grants = intake.mutating_grants.clone();

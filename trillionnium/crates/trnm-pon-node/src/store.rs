@@ -558,6 +558,10 @@ pub struct Node {
     owner_policy: Option<OwnerPolicy>,
     mining_owner: Option<operator_mining_owner::MiningOwner>,
     continuous_owner: Option<operator_continuous_owner::ContinuousOwner>,
+    // One volatile budget domain per actual open Node owner (continuous uses its
+    // already persistent owner CPU). A listener or local work caller may bind
+    // exactly once; a different domain cannot replace or reset that binding.
+    public_service_cpu: Option<crate::ingress::public_v3::ServiceMutationCpuDomain>,
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 enum StateBackend {
@@ -1140,6 +1144,7 @@ impl Node {
             owner_policy,
             mining_owner,
             continuous_owner,
+            public_service_cpu: None,
         };
         node.read_active()?;
         if node.state_backend == StateBackend::AuthenticatedV1 {

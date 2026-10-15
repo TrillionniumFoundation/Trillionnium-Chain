@@ -651,3 +651,58 @@ spent-cookie tables and accepted-socket churn are still listener-local. It does
 not establish Sybil fairness, bounded system-manager/kernel attack costs, complete
 pre-accept protection, restart debt recovery or WAN goodput under saturation.
 Previously blocked kernel/fault experiments have not been rerun by this change.
+
+## One budget identity for one actually opened Node
+
+An unrestricted development Node previously had no CPU-domain owner binding:
+continuous_domain_matches returned true for any budget whenever the continuous
+owner was absent. Two distinct PublicServer::new objects could therefore serve
+the SAME actual Node with independent CPU and admission pools. A
+two-real-TCP-listener negative control confirmed both were accepted, while the
+second was expected to be refused (exit101). The first negative control stalled
+due to a test-only double Mutex lock; its timeout124 was kept and the corrected
+negative control reproduced the resource bypass.
+
+The existing Node owner now holds an in-memory exact ServiceMutationCpuDomain
+handle once the first trusted local service passes normal pool/startup checks.
+Every subsequent listener must supply precisely that retained handle;
+another CPU domain is a typed local policy refusal
+OWNER_PUBLIC_SERVICE_CPU_DOMAIN, before service workers start. Existing
+continuous-mode Nodes also check their previously installed CPU owner. The
+separate W1/M05/M06 metered native interface checks this same Node binding
+before reserving CPU or doing any work, so a foreign domain never buys another
+W1 search/verification allowance. A failed domain check is not invalid Work.
+
+The original Node exposes its currently retained service domain to a trusted
+local caller, and does not mint one when unbound. A trusted supervisor may
+stop a listener, change its service key and reuse the retained domain through
+PublicServer::with_continuous_domain, preserving the in-memory budget. Actual
+signed reads continue after that rebind. Node state/operation identities are
+unchanged; no new durable guest ledger, payout authority or consensus version.
+
+The same intake budget now enforces FOUR simultaneously active V3 listener
+services per CPU domain. Every listener holds one scoped RAII reservation
+before spawning its original three worker threads, two proof queue slots,
+two read queue slots and one 1024-item spent-cookie table. A fifth is refused
+with typed local Capacity error PUBLIC_LISTENER_DOMAIN_CAPACITY. After normal
+shutdown that slot is released, even if the service key changes. Therefore
+aggregate in-domain ceilings are 12 listener workers, eight proof queue slots,
+eight read queue slots and four finite spent tables. These are not fairness
+guarantees. The stricter original shared CPU/body/connection/grant limits
+remain independent.
+
+Observed native regression: independent CPU domains trying to serve the same
+ordinary Node (only the original served), same-budget key rotation after real
+listener shutdown, fifth-listener refusal via controlled memory reservations
+and subsequent ordinary signed Head, foreign-domain M05 refusal before replay
+and reservation, and existing continuous-owner compatibility. The fifth-listener
+capacity fixture is memory-only, not four live listener processes. New error
+types classify policy/capacity refusal without asserting corrupt local state.
+
+The identity lasts for the lifetime of the OPEN Node process. A physical host
+reboot, a new Node open, separate Node directories, independent processes,
+external CPU and pre-accept/kernel costs are not yet covered. Continuous mode
+retains its separate existing durable CPU usage journal; a new ordinary Node
+does not gain durable CPU-debt migration. WAN saturation, fairness and the
+cost-hardness of W1 remain separate gates. Wire bytes, signature checks,
+PoN mathematics and the signed PublicPolicy identity remain unchanged.

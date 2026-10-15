@@ -257,3 +257,301 @@ fn actual_two_listeners_use_shared_connection_slots_and_release_on_stop() {
     }
     println!("SHARED_INTAKE_SOCKET listeners=2 controlled_reservations=64 over_capacity_reads_refused=2 reads_after_release=2 final_pools_zero=true network_saturation_test=false");
 }
+
+#[test]
+fn one_plain_node_must_not_accept_independent_cpu_domains_through_two_real_listeners() {
+    let dir = tempfile::tempdir().unwrap();
+    let clock = super::super::now().unwrap();
+    let settings = Settings::development(Some(clock - 100)).unwrap();
+    let mut node = Node::open(dir.path(), settings.clone(), 2).unwrap();
+    node.enable_local_mempool(crate::PoolLimits {
+        max_records: 16,
+        max_bytes: 32768,
+        max_group_members: 16,
+        critical_reserve: 0,
+        max_removals: 64,
+        preview_miner: crate::development_public(0).unwrap(),
+    })
+    .unwrap();
+    let node = Arc::new(Mutex::new(node));
+    let a = PublicServer::new(
+        DevelopmentIdentity::from_secret_hex(&hex::encode([71; 32])).unwrap(),
+        PublicPolicy::new(8, Duration::from_secs(2)).unwrap(),
+    )
+    .unwrap();
+    let b = PublicServer::new(
+        DevelopmentIdentity::from_secret_hex(&hex::encode([72; 32])).unwrap(),
+        PublicPolicy::new(8, Duration::from_secs(2)).unwrap(),
+    )
+    .unwrap();
+    assert!(!a
+        .mutation_cpu_domain()
+        .shares_domain_with(&b.mutation_cpu_domain()));
+    let a_domain = a.mutation_cpu_domain();
+    let b_domain = b.mutation_cpu_domain();
+    let first_listener = TcpListener::bind("127.0.0.1:0").unwrap();
+    let first_address = first_listener.local_addr().unwrap();
+    let stopped = Arc::new(AtomicBool::new(false));
+    let first_stop = stopped.clone();
+    let first_node = node.clone();
+    let first = std::thread::spawn(move || {
+        serve_public_protected_v3(
+            first_listener,
+            first_node,
+            Duration::from_secs(5),
+            first_stop,
+            a,
+        )
+    });
+    let caller = DevelopmentIdentity::from_secret_hex(&hex::encode([80; 32])).unwrap();
+    let expected = DevelopmentIdentity::from_secret_hex(&hex::encode([71; 32])).unwrap();
+    let mut ready = false;
+    let until = Instant::now() + Duration::from_secs(3);
+    while Instant::now() < until {
+        if call_public_protected_v3(
+            first_address,
+            &Request::Head,
+            &settings,
+            expected.public_key(),
+            &caller,
+            PublicPolicy::new(8, Duration::from_secs(2)).unwrap(),
+        )
+        .is_ok_and(|reply| reply.ok)
+        {
+            ready = true;
+            break;
+        }
+        std::thread::sleep(Duration::from_millis(15));
+    }
+    assert!(
+        ready,
+        "first local V3 server must serve a signed Head before checking a second"
+    );
+    let second_listener = TcpListener::bind("127.0.0.1:0").unwrap();
+    let result = serve_public_protected_v3(
+        second_listener,
+        node.clone(),
+        Duration::from_secs(1),
+        Arc::new(AtomicBool::new(false)),
+        b,
+    );
+    stopped.store(true, Ordering::Release);
+    let first_result = first.join().unwrap();
+    assert!(
+        first_result.is_ok(),
+        "original server remains healthy: {first_result:?}"
+    );
+    let (original_binding, second_binding) = {
+        let owner = node.lock().unwrap();
+        (
+            owner.continuous_domain_matches(&a_domain),
+            owner.continuous_domain_matches(&b_domain),
+        )
+    };
+    println!(
+        "NODE_DOMAIN_NEGATIVE second_result={:?} original_binding={} second_binding={}",
+        result.as_ref().map(|_| "ACCEPTED"),
+        original_binding,
+        second_binding
+    );
+    let error = result.unwrap_err();
+    assert!(error.is(crate::error::ErrorCode::OwnerPublicServiceCpuDomain));
+    assert!(!error.requires_owner_stop());
+    assert_eq!(
+        error.to_string(),
+        "OWNER_PUBLIC_SERVICE_CPU_DOMAIN",
+        "a second independent budget must never attach to the same actual Node"
+    );
+}
+
+#[test]
+fn pinned_normal_node_recovers_same_budget_after_listener_stop_and_key_rotation() {
+    let dir = tempfile::tempdir().unwrap();
+    let clock = super::super::now().unwrap();
+    let settings = Settings::development(Some(clock - 100)).unwrap();
+    let mut plain = Node::open(dir.path(), settings.clone(), 2).unwrap();
+    assert!(
+        plain.public_service_cpu_domain().is_err(),
+        "unbound owner must not manufacture a CPU budget"
+    );
+    plain
+        .enable_local_mempool(crate::PoolLimits {
+            max_records: 16,
+            max_bytes: 32768,
+            max_group_members: 16,
+            critical_reserve: 0,
+            max_removals: 64,
+            preview_miner: crate::development_public(0).unwrap(),
+        })
+        .unwrap();
+    let shared = Arc::new(Mutex::new(plain));
+    let first = PublicServer::new(
+        DevelopmentIdentity::from_secret_hex(&hex::encode([71; 32])).unwrap(),
+        PublicPolicy::new(8, Duration::from_secs(2)).unwrap(),
+    )
+    .unwrap();
+    let first_domain = first.mutation_cpu_domain();
+    let stop = Arc::new(AtomicBool::new(false));
+    let s = stop.clone();
+    let node = shared.clone();
+    let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+    let address = listener.local_addr().unwrap();
+    let job = std::thread::spawn(move || {
+        serve_public_protected_v3(listener, node, Duration::from_secs(4), s, first)
+    });
+    let until = Instant::now() + Duration::from_secs(3);
+    let expected = DevelopmentIdentity::from_secret_hex(&hex::encode([71; 32])).unwrap();
+    let caller = DevelopmentIdentity::from_secret_hex(&hex::encode([88; 32])).unwrap();
+    let mut observed = false;
+    while Instant::now() < until {
+        if call_public_protected_v3(
+            address,
+            &Request::Head,
+            &settings,
+            expected.public_key(),
+            &caller,
+            PublicPolicy::new(8, Duration::from_secs(2)).unwrap(),
+        )
+        .is_ok_and(|r| r.ok)
+        {
+            observed = true;
+            break;
+        }
+        std::thread::sleep(Duration::from_millis(15));
+    }
+    stop.store(true, Ordering::Release);
+    assert!(job.join().unwrap().is_ok());
+    assert!(observed);
+    let retained = shared.lock().unwrap().public_service_cpu_domain().unwrap();
+    assert!(retained.shares_domain_with(&first_domain));
+    let _operation = retained.begin().unwrap().finish();
+    let previous = retained.observe().unwrap().stored_credit_ns;
+    let second = PublicServer::with_continuous_domain(
+        DevelopmentIdentity::from_secret_hex(&hex::encode([72; 32])).unwrap(),
+        PublicPolicy::new(8, Duration::from_secs(2)).unwrap(),
+        &retained,
+    )
+    .unwrap();
+    let listen = TcpListener::bind("127.0.0.1:0").unwrap();
+    let addr = listen.local_addr().unwrap();
+    let stop2 = Arc::new(AtomicBool::new(false));
+    let s2 = stop2.clone();
+    let node = shared.clone();
+    let job2 = std::thread::spawn(move || {
+        serve_public_protected_v3(listen, node, Duration::from_secs(4), s2, second)
+    });
+    let expected = DevelopmentIdentity::from_secret_hex(&hex::encode([72; 32])).unwrap();
+    let until = Instant::now() + Duration::from_secs(3);
+    let mut reconnected = false;
+    while Instant::now() < until {
+        if call_public_protected_v3(
+            addr,
+            &Request::Head,
+            &settings,
+            expected.public_key(),
+            &caller,
+            PublicPolicy::new(8, Duration::from_secs(2)).unwrap(),
+        )
+        .is_ok_and(|r| r.ok)
+        {
+            reconnected = true;
+            break;
+        }
+        std::thread::sleep(Duration::from_millis(15));
+    }
+    stop2.store(true, Ordering::Release);
+    assert!(job2.join().unwrap().is_ok());
+    assert!(reconnected);
+    let now = retained.observe().unwrap().stored_credit_ns;
+    assert!(
+        now <= previous + i128::from(super::scalar_cpu::MUTATION_CPU_REFILL_NS_PER_SECOND) * 5,
+        "a key-rotated listener cannot mint a fresh budget burst"
+    );
+    println!("NODE_DOMAIN_REUSE ordinary_services=2 exact_same_domain=true key_rotation=true");
+}
+
+#[test]
+fn one_node_cannot_spawn_a_fifth_worker_queue_service_from_the_same_domain() {
+    let dir = tempfile::tempdir().unwrap();
+    let clock = super::super::now().unwrap();
+    let settings = Settings::development(Some(clock - 100)).unwrap();
+    let mut node = Node::open(dir.path(), settings.clone(), 2).unwrap();
+    node.enable_local_mempool(crate::PoolLimits {
+        max_records: 16,
+        max_bytes: 32768,
+        max_group_members: 16,
+        critical_reserve: 0,
+        max_removals: 64,
+        preview_miner: crate::development_public(0).unwrap(),
+    })
+    .unwrap();
+    let domain = ServiceMutationCpuDomain::standalone();
+    node.bind_public_service_cpu_domain(&domain).unwrap();
+    let owner = Arc::new(Mutex::new(node));
+    let intake = server(&domain, 71).listener_intake().unwrap();
+    let held = BufferPermit::acquire(
+        intake.listeners.clone(),
+        MAX_LISTENERS_PER_CPU_DOMAIN,
+        MAX_LISTENERS_PER_CPU_DOMAIN,
+    )
+    .unwrap();
+    let listen = TcpListener::bind("127.0.0.1:0").unwrap();
+    let result = serve_public_protected_v3(
+        listen,
+        owner.clone(),
+        Duration::from_secs(2),
+        Arc::new(AtomicBool::new(false)),
+        server(&domain, 72),
+    );
+    let error = result.unwrap_err();
+    assert!(error.is(crate::error::ErrorCode::PublicListenerDomainCapacity));
+    assert!(!error.requires_owner_stop());
+    assert_eq!(error.to_string(), "PUBLIC_LISTENER_DOMAIN_CAPACITY");
+    assert_eq!(
+        *intake.listeners.lock().unwrap(),
+        MAX_LISTENERS_PER_CPU_DOMAIN
+    );
+    drop(held);
+    assert_eq!(*intake.listeners.lock().unwrap(), 0);
+    let s = Arc::new(AtomicBool::new(false));
+    let stop = s.clone();
+    let node = owner.clone();
+    let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+    let address = listener.local_addr().unwrap();
+    let job = std::thread::spawn(move || {
+        serve_public_protected_v3(
+            listener,
+            node,
+            Duration::from_secs(4),
+            stop,
+            server(&domain, 72),
+        )
+    });
+    let caller = DevelopmentIdentity::from_secret_hex(&hex::encode([90; 32])).unwrap();
+    let expected = DevelopmentIdentity::from_secret_hex(&hex::encode([72; 32])).unwrap();
+    let until = Instant::now() + Duration::from_secs(3);
+    let mut allowed = false;
+    while Instant::now() < until {
+        if call_public_protected_v3(
+            address,
+            &Request::Head,
+            &settings,
+            expected.public_key(),
+            &caller,
+            PublicPolicy::new(8, Duration::from_secs(2)).unwrap(),
+        )
+        .is_ok_and(|r| r.ok)
+        {
+            allowed = true;
+            break;
+        }
+        std::thread::sleep(Duration::from_millis(15));
+    }
+    s.store(true, Ordering::Release);
+    assert!(job.join().unwrap().is_ok());
+    assert!(allowed);
+    assert_eq!(*intake.listeners.lock().unwrap(), 0);
+    println!("NODE_DOMAIN_WORKER_CAP max_listeners={} max_workers={} max_proof_queued={} max_read_queued={} fifth_refused=true recovered=true",
+        MAX_LISTENERS_PER_CPU_DOMAIN,MAX_LISTENERS_PER_CPU_DOMAIN*3,
+        MAX_LISTENERS_PER_CPU_DOMAIN*2,MAX_LISTENERS_PER_CPU_DOMAIN*2);
+}

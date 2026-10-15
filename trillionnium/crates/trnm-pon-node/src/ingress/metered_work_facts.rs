@@ -37,27 +37,26 @@ pub fn dispatch_shared_with_metered_work_facts(
         "WORK_FACT_SUBMIT_ONLY",
     )?;
     checkpoint()?;
+    // Reject a foreign domain at the original Node owner BEFORE reserving or
+    // carrying out any W1/M06 work. This is one checked in-memory identity,
+    // not another operation journal or permission granted by the CPU meter.
+    {
+        let mut owner = super::lock_owner(node, &mut |_| checkpoint())?;
+        owner.bind_public_service_cpu_domain(domain)?;
+    }
     let operation = domain.begin()?;
     let live = operation.checkpoint_handle();
     let checked = || {
         checkpoint()?;
         live.checkpoint()
     };
-    let native = (|| {
-        let owner = super::lock_owner(node, &mut |_| checked())?;
-        ensure(
-            owner.continuous_domain_matches(domain),
-            "OWNER_CONTINUOUS_SERVICE_CPU_DOMAIN",
-        )?;
-        drop(owner);
-        dispatch_shared_with_execution_control(
-            node,
-            request,
-            &mut |_| checked(),
-            |packet| super::WorkCheckedPacket::verify_with_facts(packet, facts, &mut |_| checked()),
-            &ExecutionControl::new(&|_| checked(), operation.worker_accounting()),
-        )
-    })();
+    let native = dispatch_shared_with_execution_control(
+        node,
+        request,
+        &mut |_| checked(),
+        |packet| super::WorkCheckedPacket::verify_with_facts(packet, facts, &mut |_| checked()),
+        &ExecutionControl::new(&|_| checked(), operation.worker_accounting()),
+    );
     // No `?` on native: even a failed/cancelled call owes its actual CPU tail.
     let cpu = operation.finish();
     Ok(MeteredWorkFactOutcome { native, cpu })

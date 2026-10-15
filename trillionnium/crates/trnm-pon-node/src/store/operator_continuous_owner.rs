@@ -288,10 +288,51 @@ impl Node {
             .cpu
             .clone())
     }
+    /// The existing durable/volatile Node owner is the sole right to assign a
+    /// public service budget. A fresh non-continuous Node may bind its first
+    /// trusted service once; new listeners, restarts of a listener and local W1
+    /// helpers must reuse the EXACT domain for the remainder of this Node's
+    /// lifetime. Continuous mode additionally enforces its existing owner.
+    /// This does not create an account, disk journal or cross-host entitlement.
+    pub(crate) fn bind_public_service_cpu_domain(
+        &mut self,
+        cpu: &ServiceMutationCpuDomain,
+    ) -> Result<()> {
+        ensure(
+            self.continuous_owner
+                .as_ref()
+                .is_none_or(|owner| owner.cpu.shares_domain_with(cpu)),
+            "OWNER_CONTINUOUS_SERVICE_CPU_DOMAIN",
+        )?;
+        match &self.public_service_cpu {
+            Some(existing) => ensure(
+                existing.shares_domain_with(cpu),
+                "OWNER_PUBLIC_SERVICE_CPU_DOMAIN",
+            ),
+            None => {
+                self.public_service_cpu = Some(cpu.clone());
+                Ok(())
+            }
+        }
+    }
+    /// An existing trusted local supervisor may reconstruct a listener from the
+    /// Node's already bound budget; it cannot request another fresh burst.
+    pub fn public_service_cpu_domain(&self) -> Result<ServiceMutationCpuDomain> {
+        self.public_service_cpu
+            .as_ref()
+            .or_else(|| self.continuous_owner.as_ref().map(|owner| &owner.cpu))
+            .cloned()
+            .ok_or_else(|| "OWNER_PUBLIC_SERVICE_DOMAIN_UNBOUND".into())
+    }
+    #[cfg(test)]
     pub(crate) fn continuous_domain_matches(&self, cpu: &ServiceMutationCpuDomain) -> bool {
         self.continuous_owner
             .as_ref()
             .is_none_or(|o| o.cpu.shares_domain_with(cpu))
+            && self
+                .public_service_cpu
+                .as_ref()
+                .is_none_or(|original| original.shares_domain_with(cpu))
     }
     pub(crate) fn is_continuous(&self) -> bool {
         self.continuous_owner.is_some()

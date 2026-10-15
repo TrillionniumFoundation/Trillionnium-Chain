@@ -72,6 +72,18 @@ fn mode4_receiver_uses_exact_owner_cpu_domain_and_epoch_cancel_stays_installed()
     let (_root, _journal, node) = node();
     let original = node.continuous_cpu_domain().unwrap();
     assert!(node.continuous_domain_matches(&original));
+    let mut node = node;
+    node.bind_public_service_cpu_domain(&original).unwrap();
+    assert!(node
+        .public_service_cpu_domain()
+        .unwrap()
+        .shares_domain_with(&original));
+    assert_eq!(
+        node.bind_public_service_cpu_domain(&ServiceMutationCpuDomain::standalone())
+            .unwrap_err()
+            .to_string(),
+        "OWNER_CONTINUOUS_SERVICE_CPU_DOMAIN"
+    );
     assert!(!node.continuous_domain_matches(&ServiceMutationCpuDomain::standalone()));
     assert!(node.cancel_continuous_epoch().unwrap());
     assert!(!node.cancel_continuous_epoch().unwrap());

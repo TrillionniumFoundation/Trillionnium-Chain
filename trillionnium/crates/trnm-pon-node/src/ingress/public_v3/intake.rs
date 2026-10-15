@@ -10,6 +10,10 @@ use std::sync::{Arc, Mutex};
 use std::time::Instant;
 
 pub(super) struct ListenerIntake {
+    // Controls aggregate spawned 3-worker listener services, their queue and
+    // live spent-cookie tables under this CPU domain. Separate listener
+    // rebuilds cannot exceed a finite worker/queue envelope.
+    pub(super) listeners: Arc<Mutex<usize>>,
     pub(super) connections: Arc<Mutex<usize>>,
     pub(super) body_pool: Arc<Mutex<usize>>,
     pub(super) output_pool: Arc<Mutex<usize>>,
@@ -30,6 +34,7 @@ impl ListenerIntake {
     }
     fn with_challenge_credit(tokens: u64) -> Self {
         Self {
+            listeners: Arc::new(Mutex::new(0)),
             connections: Arc::new(Mutex::new(0)),
             body_pool: Arc::new(Mutex::new(0)),
             output_pool: Arc::new(Mutex::new(0)),

@@ -364,3 +364,47 @@ fn panic_fences_shared_budget_without_rewriting_native_history() {
         "PUBLIC_MUTATION_CPU_UNAVAILABLE"
     );
 }
+
+#[test]
+fn a_foreign_cpu_domain_is_refused_before_m05_work_and_any_reservation() {
+    let (_dir, node, packet) = fixture(2);
+    let facts = WorkFactCache::new(1).unwrap();
+    let owner_domain = ServiceMutationCpuDomain::standalone();
+    let foreign = ServiceMutationCpuDomain::standalone();
+    node.lock()
+        .unwrap()
+        .bind_public_service_cpu_domain(&owner_domain)
+        .unwrap();
+    let before = node.lock().unwrap().read_active().unwrap();
+    let foreign_before = foreign.observe().unwrap();
+    let reject = ingress::dispatch_shared_with_metered_work_facts(
+        &node,
+        request(&packet),
+        &facts,
+        &foreign,
+        &|| Ok(()),
+    )
+    .err()
+    .unwrap();
+    assert!(reject.is(crate::error::ErrorCode::OwnerPublicServiceCpuDomain));
+    assert!(!reject.requires_owner_stop());
+    assert_eq!(reject.to_string(), "OWNER_PUBLIC_SERVICE_CPU_DOMAIN");
+    assert_eq!(
+        foreign.observe().unwrap().stored_credit_ns,
+        foreign_before.stored_credit_ns
+    );
+    assert_eq!(foreign.observe().unwrap().in_flight, 0);
+    assert_eq!(facts.counters().full_replays, 0);
+    assert_eq!(node.lock().unwrap().read_active().unwrap(), before);
+    let real = ingress::dispatch_shared_with_metered_work_facts(
+        &node,
+        request(&packet),
+        &facts,
+        &owner_domain,
+        &|| Ok(()),
+    )
+    .unwrap();
+    assert!(real.native.is_ok());
+    assert_paid(&owner_domain, &real.cpu);
+    println!("METERED_NODE_BIND rejected_foreign=true foreign_cpu_reservations=0 valid_paid=true");
+}

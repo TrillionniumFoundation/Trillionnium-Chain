@@ -228,3 +228,14 @@ not leave one retained manager unit per rejection. The original raw stderr/exit
 and generated unit identity remain available to the owner. This final collection
 option has command-construction coverage only; it is included in the outstanding
 final-source kernel run, not claimed tested by the earlier smoke observation.
+
+## Exact Node owner binding for local metered W1 facts
+
+The existing metered W1 path now checks/binds the original Node's exact
+public-service domain BEFORE acquiring CPU reservation or starting M05/M06.
+A first trusted local caller can bind an ordinary Node; later callers must
+reuse it. Continuous owner identity remains mandatory. A foreign domain
+cannot pay from a fresh allowance, enter a W1 replay, start M06 workers
+or mutate native state. Native business result and CPU settlement remain
+separate. This does not activate the cache in default public V3 and does not
+establish host-wide enforcement across independent processes.

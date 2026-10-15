@@ -98,6 +98,10 @@ error_codes! {
     PublicSpentCapacity => ("PUBLIC_SPENT_CAPACITY", Capacity),
     PublicBufferCapacity => ("PUBLIC_BUFFER_CAPACITY", Capacity),
     PublicQueueBusy => ("PUBLIC_QUEUE_BUSY", Capacity),
+    // Local service/Node budget binding, never invalid consensus Work.
+    OwnerPublicServiceCpuDomain => ("OWNER_PUBLIC_SERVICE_CPU_DOMAIN", PolicyRefusal),
+    OwnerPublicServiceDomainUnbound => ("OWNER_PUBLIC_SERVICE_DOMAIN_UNBOUND", DependencyUnavailable),
+    PublicListenerDomainCapacity => ("PUBLIC_LISTENER_DOMAIN_CAPACITY", Capacity),
     ReservedReadOnlyBusy => ("ADMISSION_BUSY_READ_ONLY_RESERVED", Capacity),
     PublicTicketReplay => ("PUBLIC_TICKET_REPLAY", IdentityConflict),
     PublicCookieExpired => ("PUBLIC_COOKIE_EXPIRED", StaleContext),
