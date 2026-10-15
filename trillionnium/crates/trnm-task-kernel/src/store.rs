@@ -921,30 +921,28 @@ fn validate_trust_bundle(bundle: &AgentMarketFreshGenesisTrustBundleV1) -> Agent
             "fresh-genesis trust bundle identities/economic objects are inconsistent",
         ));
     }
-    VerifyingKey::from_bytes(&bundle.requester.controller_public_key).map_err(|_| {
-        error(
-            AgentMarketErrorCodeV1::InvalidSignature,
-            "invalid requester controller public key",
-        )
-    })?;
-    VerifyingKey::from_bytes(&bundle.requester.session_public_key).map_err(|_| {
-        error(
-            AgentMarketErrorCodeV1::InvalidSignature,
-            "invalid requester session public key",
-        )
-    })?;
-    VerifyingKey::from_bytes(&bundle.provider.controller_public_key).map_err(|_| {
-        error(
-            AgentMarketErrorCodeV1::InvalidSignature,
-            "invalid provider controller public key",
-        )
-    })?;
-    VerifyingKey::from_bytes(&bundle.provider.session_public_key).map_err(|_| {
-        error(
-            AgentMarketErrorCodeV1::InvalidSignature,
-            "invalid provider session public key",
-        )
-    })?;
+    for (label, public_key) in [
+        (
+            "requester controller",
+            bundle.requester.controller_public_key,
+        ),
+        ("requester session", bundle.requester.session_public_key),
+        ("provider controller", bundle.provider.controller_public_key),
+        ("provider session", bundle.provider.session_public_key),
+    ] {
+        let key = VerifyingKey::from_bytes(&public_key).map_err(|_| {
+            error(
+                AgentMarketErrorCodeV1::InvalidSignature,
+                format!("invalid {label} public key"),
+            )
+        })?;
+        if key.is_weak() {
+            return Err(error(
+                AgentMarketErrorCodeV1::InvalidSignature,
+                format!("weak {label} public key"),
+            ));
+        }
+    }
     Ok(())
 }
 
@@ -1065,6 +1063,12 @@ fn verify_authorization_signature(
             "invalid committed Ed25519 public key",
         )
     })?;
+    if key.is_weak() {
+        return Err(error(
+            AgentMarketErrorCodeV1::InvalidSignature,
+            "weak committed Ed25519 public key",
+        ));
+    }
     let signature = Signature::from_slice(&authorization.signature).map_err(|_| {
         error(
             AgentMarketErrorCodeV1::InvalidSignature,
