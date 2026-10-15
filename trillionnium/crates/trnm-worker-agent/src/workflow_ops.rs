@@ -30,17 +30,37 @@ pub(crate) fn compute_commit_hash(
     commitment(task_id, result_hash, salt_hex, worker)
 }
 
+// These strings are human-facing POSIX-shell templates, not executable
+// authority. Worker identities and caller-supplied digests must occupy exactly
+// one argument even when an upstream task contains shell metacharacters.
+// Preserve ordinary safe tokens byte-for-byte for existing receipts.
+fn command_shell_token(value: &str) -> String {
+    if !value.is_empty()
+        && value
+            .bytes()
+            .all(|byte| byte.is_ascii_alphanumeric() || b"_-./:@+=".contains(&byte))
+    {
+        return value.to_string();
+    }
+    format!("'{}'", value.replace('\'', "'\\''"))
+}
+
 pub(crate) fn commit_template(task_id: u64, worker: &str, commit_hash: &str, nonce: u64) -> String {
     format!(
         "trnm-node tx commit-result {} {} {} {}",
-        task_id, worker, commit_hash, nonce
+        task_id,
+        command_shell_token(worker),
+        command_shell_token(commit_hash),
+        nonce
     )
 }
 
 pub(crate) fn reveal_template(task_id: u64, result_hash: &str, salt_hex: &str) -> String {
     format!(
         "trnm-node tx reveal-result {} {} {}",
-        task_id, result_hash, salt_hex
+        task_id,
+        command_shell_token(result_hash),
+        command_shell_token(salt_hex)
     )
 }
 
@@ -72,6 +92,24 @@ mod tests {
         build_run_once_output, commit_template, compute_commit_hash, compute_result_and_salt,
         reveal_template, submit_log_contract_line,
     };
+
+    #[test]
+    fn command_templates_quote_entire_untrusted_shell_arguments() {
+        let worker = "evil';$(echo injected)";
+        let actual = commit_template(9, worker, "digest;whoami", 9);
+        assert_eq!(
+            actual,
+            "trnm-node tx commit-result 9 'evil'\\'';$(echo injected)' 'digest;whoami' 9"
+        );
+        assert_eq!(
+            reveal_template(9, "result;whoami", "salt with space"),
+            "trnm-node tx reveal-result 9 'result;whoami' 'salt with space'"
+        );
+        assert_eq!(
+            commit_template(9, "worker/name:1", "deadbeef", 9),
+            "trnm-node tx commit-result 9 worker/name:1 deadbeef 9"
+        );
+    }
 
     #[test]
     fn build_commit_and_reveal_templates_are_stable() {

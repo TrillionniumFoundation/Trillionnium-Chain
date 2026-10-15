@@ -58,6 +58,127 @@ mod durable {
     }
 
     #[test]
+    fn manual_submit_keeps_explicit_salt_and_creates_an_owner_only_synced_log() {
+        let root = tempfile::tempdir().unwrap();
+        let path = root.path().join("manual.jsonl");
+        let worker = "worker-a";
+        let result = digest(b"manual-result");
+        let salt = "manually-chosen-salt";
+        let commit_hash = crate::commitment(73, &result, salt, worker);
+        crate::append_submission(&path, 73, worker, &commit_hash, &result, salt).unwrap();
+        let meta = fs::metadata(&path).unwrap();
+        assert_eq!(meta.mode() & 0o777, 0o600);
+        assert_eq!(meta.nlink(), 1);
+        let before = fs::read(&path).unwrap();
+        assert!(before.ends_with(b"\n"));
+        let rec: crate::SubmissionRecord =
+            serde_json::from_slice(&before[..before.len() - 1]).unwrap();
+        assert_eq!(
+            rec.salt_hex, salt,
+            "manual salt must not be silently regenerated"
+        );
+        assert_eq!(rec.worker, worker);
+        assert_eq!(rec.commit_hash, commit_hash);
+        assert_eq!(
+            rec.commit_cmd,
+            crate::workflow_ops::commit_template(73, worker, &commit_hash, 73)
+        );
+        // Manual submission retains its explicit append semantics.
+        crate::append_submission(&path, 73, worker, &commit_hash, &result, salt).unwrap();
+        assert_eq!(fs::read_to_string(&path).unwrap().lines().count(), 2);
+    }
+
+    #[test]
+    fn manual_submit_rejects_public_symlink_hardlink_and_incomplete_logs() {
+        let root = tempfile::tempdir().unwrap();
+        let path = root.path().join("manual.jsonl");
+        let target = root.path().join("target.jsonl");
+        let alias = root.path().join("hardlink.jsonl");
+        let result = digest(b"manual");
+        let salt = "manual-salt";
+        let commit_hash = crate::commitment(74, &result, salt, "operator");
+        let submit = |path: &std::path::Path| {
+            crate::append_submission(path, 74, "operator", &commit_hash, &result, salt)
+        };
+
+        fs::write(&target, b"must-not-touch").unwrap();
+        fs::set_permissions(&target, fs::Permissions::from_mode(0o600)).unwrap();
+        symlink(&target, &path).unwrap();
+        assert!(
+            submit(&path).is_err(),
+            "manual salt must reject symlink targets"
+        );
+        assert_eq!(fs::read(&target).unwrap(), b"must-not-touch");
+        fs::remove_file(&path).unwrap();
+
+        fs::write(&path, b"prior\n").unwrap();
+        fs::set_permissions(&path, fs::Permissions::from_mode(0o644)).unwrap();
+        let old = fs::read(&path).unwrap();
+        assert!(
+            submit(&path).is_err(),
+            "legacy public salt log must fail closed"
+        );
+        assert_eq!(fs::read(&path).unwrap(), old);
+        fs::set_permissions(&path, fs::Permissions::from_mode(0o600)).unwrap();
+
+        fs::hard_link(&path, &alias).unwrap();
+        assert!(
+            submit(&path).is_err(),
+            "hard linked salt log must fail closed"
+        );
+        assert_eq!(fs::read(&path).unwrap(), old);
+        fs::remove_file(&alias).unwrap();
+
+        fs::write(&path, b"partial-json{").unwrap();
+        let truncated = fs::read(&path).unwrap();
+        assert!(
+            submit(&path).is_err(),
+            "partial JSON line must not be extended"
+        );
+        assert_eq!(fs::read(path).unwrap(), truncated);
+    }
+
+    #[test]
+    fn private_replay_quotes_untrusted_worker_without_changing_commit_identity() {
+        let root = tempfile::tempdir().unwrap();
+        let path = root.path().join("submissions.jsonl");
+        let worker = "w';$(echo injected)";
+        let output = digest(b"known-output");
+        let (_, first_salt) = crate::execute_payload("known-output", 71).unwrap();
+        let (_, unused_second_salt) = crate::execute_payload("known-output", 71).unwrap();
+        assert_eq!(
+            journal_automatic_submission(&path, 71, worker, &output, &first_salt).unwrap(),
+            first_salt
+        );
+        let original = fs::read(&path).unwrap();
+        let row: crate::SubmissionRecord =
+            serde_json::from_slice(&original[..original.len() - 1]).unwrap();
+        assert_eq!(row.worker, worker);
+        assert_eq!(
+            row.commit_hash,
+            crate::commitment(71, &output, &first_salt, worker),
+            "command rendering must not change the original worker or commitment"
+        );
+        assert_eq!(
+            row.commit_cmd,
+            format!(
+                "trnm-node tx commit-result 71 'w'\\'';$(echo injected)' {} 71",
+                row.commit_hash
+            ),
+            "all worker metacharacters must remain inside one POSIX shell argument"
+        );
+        assert_eq!(
+            journal_automatic_submission(&path, 71, worker, &output, &unused_second_salt).unwrap(),
+            first_salt
+        );
+        assert_eq!(
+            fs::read(path).unwrap(),
+            original,
+            "replay may not rewrite the first command"
+        );
+    }
+
+    #[test]
     fn conflicting_result_or_worker_cannot_invent_second_commitment() {
         let root = tempfile::tempdir().unwrap();
         let path = root.path().join("submissions.jsonl");

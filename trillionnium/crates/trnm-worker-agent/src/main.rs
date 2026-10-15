@@ -38,6 +38,9 @@ mod commit_salt {
     ) -> Result<String> {
         bail!("secure commit journaling requires a Unix local owner; no fallback")
     }
+    pub(crate) fn append_private_manual_submission(_: &Path, _: &str) -> Result<()> {
+        bail!("private manual salt journaling requires a Unix local owner; no fallback")
+    }
 }
 #[cfg(test)]
 #[path = "tests_commit_salt_security.rs"]
@@ -272,14 +275,8 @@ pub(crate) fn append_submission(
     salt_hex: &str,
 ) -> Result<()> {
     let nonce = task_id;
-    let commit_cmd = format!(
-        "trnm-node tx commit-result {} {} {} {}",
-        task_id, worker, commit_hash, nonce
-    );
-    let reveal_cmd = format!(
-        "trnm-node tx reveal-result {} {} {}",
-        task_id, result_hash, salt_hex
-    );
+    let commit_cmd = workflow_ops::commit_template(task_id, worker, commit_hash, nonce);
+    let reveal_cmd = workflow_ops::reveal_template(task_id, result_hash, salt_hex);
     let rec = SubmissionRecord {
         ts_unix_ms: now_ms(),
         task_id,
@@ -292,7 +289,7 @@ pub(crate) fn append_submission(
         reveal_cmd,
     };
     let line = serde_json::to_string(&rec)?;
-    append_json_line(submit_log, &line)
+    commit_salt::append_private_manual_submission(submit_log, &line)
 }
 
 fn load_ack_records(ack_log: &Path) -> Vec<AckRecord> {

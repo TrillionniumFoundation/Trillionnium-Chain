@@ -140,13 +140,48 @@ silent truncation or new salt. The journal and CLI output remain local secrets
 until reveal. Operators must not publish the pre-reveal output or journal.
 
 The explicit manual `commit-reveal` command accepts caller-provided material;
-its secrecy and local log custody remain the caller's responsibility. Previously
+its secrecy and local log custody remain the caller's responsibility.
+Its former `--submit` path, however, used a normal create/append open and
+could create a world-readable log of the **unrevealed manual salt** under a
+standard umask, or follow a final-component symlink. Manual submissions now
+write through the same private journal inode lock as the automatic owner,
+with `0600` new-file permissions, regular-file/owner/single-link checks,
+`NOFOLLOW`, a finite log-size bound, newline-completeness check, synced
+file and parent directory, and exact inode recheck. It preserves the
+caller's chosen salt, hash and explicit manual append behavior, never
+silently regenerating a salt. A preexisting public or linked manual log
+fails closed rather than being automatically chmod'd or rewritten; prior
+exposure of a salt cannot be repaired by changing permissions afterward.
+On non-Unix hosts manual `--submit` now refuses instead of writing an
+insecure fallback. Terminal output and manual command disclosure remain
+the operator's responsibility; these controls do not guarantee secrecy
+against the same UID, physical compromise or shell history. Previously
 submitted deterministic salts remain historical: migration cannot retroactively
 restore a commitment's hiding property. On non-Unix hosts automatic submission
 refuses instead of silently reverting to a deterministic salt. No standalone
 reference test proves a deployed adversarial client, an independent mining
 participant, or model utility. The unchanged original mainline and paired Hepta
 branch are not promoted by this separate M10 candidate.
+
+### Shell-template argument boundary (isolated worker hardening)
+
+The human-facing `trnm-node tx commit-result` and `reveal-result`
+POSIX-shell command templates now render each caller-derived string as one
+argument. Only the existing conservative plain-token alphabet is emitted
+without quotes; other UTF-8 strings are single-quoted with embedded quotes
+escaped. The original worker identity bytes, commitment input, nonce, salt
+generation, result hash, signed Chain bytes and journal persistence are not
+rewritten. Ordinary safe worker names keep their existing command bytes.
+The durable journal now uses that same renderer when writing and checking
+the original record, so a restart cannot switch to a second command.
+
+This is command-template hardening, not proof that a Worker executes the
+template safely, that arbitrary Windows shells interpret POSIX quoting, or
+that raw diagnostic lines containing untrusted identity are terminal-safe.
+The Worker does not dispatch these displayed commands. The existing
+first-salt durable replay and tamper refusal remain required, as do
+independent release and work-admission checks. No production authority
+is granted by this development-only change.
 
 ## Module-specific threat and residual work
 
