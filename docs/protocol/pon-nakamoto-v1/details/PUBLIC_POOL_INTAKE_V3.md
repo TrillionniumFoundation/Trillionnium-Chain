@@ -971,3 +971,25 @@ workload charge, a guest CPU receipt, nor a finite host-quota certificate.
 No power-loss, unclean CPU-debt persistence, cross-network namespace,
 WAN/Sybil saturation or actual 25% parent throttling is qualified.
 Original signature, work, storage and governance semantics are unchanged.
+
+### Calling-thread cgroup identity at the native worker boundary (R13)
+
+Linux cgroup-v2 also has a **threaded** controller mode. Reading the
+thread-group leader's `/proc/self/cgroup` in the socket reactor does not
+establish that a separately executing native worker has the same current
+thread-level CPU-controller membership. The read-only parent checker now
+uses `/proc/thread-self/cgroup` for its own calling TID, keeping the exact
+existing boot, parent inode, quota and ancestor rules. Each existing V3
+worker verifies its own membership after any original CPU-credit wait and
+immediately before native dispatch. A refusal follows the original worker
+error/CPU settlement path, before packet state mutation; it is never
+relabeled as invalid PoN work. Original per-50ms reactor and final checks
+remain. The Linux thread-self regression reads real procfs in an ordinary
+spawned Rust thread, and does not move any cgroup or start a privileged service.
+
+This is a source-level fail-closed defense against *misplaced worker-thread*
+execution, NOT proof of an exploit on the present host or enforcement of the
+absent fixed 25% parent. A privileged runtime/root can still move threads
+during nonpreemptible work; cgroup kernel enforcement and trusted supervision
+remain necessary. No signed policy, task/work relation, host quota,
+admission constant, operation ledger, state namespace or FinalUse changed.

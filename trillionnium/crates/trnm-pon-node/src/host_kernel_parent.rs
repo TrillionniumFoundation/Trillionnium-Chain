@@ -126,7 +126,11 @@ mod kernel_parent {
     }
 
     fn own_cgroup() -> Result<String> {
-        let text = fs::read_to_string("/proc/self/cgroup")
+        // A process may have independently placed native worker threads in a
+        // cgroup-v2 threaded subtree. /proc/self identifies the thread-group
+        // leader and cannot attest the actual calling worker's CPU cgroup.
+        // The kernel's /proc/thread-self resolves to the current TID.
+        let text = fs::read_to_string("/proc/thread-self/cgroup")
             .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_CONTEXT"))?;
         let mut entries = text.lines();
         let only = entries.next().ok_or("PUBLIC_HOST_KERNEL_CONTEXT")?;
@@ -360,6 +364,21 @@ mod kernel_parent {
             assert!(resource_sample(&"z".repeat(2049), "1", "1").is_err());
         }
 
+        #[test]
+        fn read_kernel_membership_from_current_os_thread_not_process_leader() {
+            // No cgroup mutation: compare the two genuine procfs views for a
+            // distinct Rust worker thread and the same kernel TID.
+            let join = std::thread::spawn(|| {
+                let path = fs::read_link("/proc/thread-self").unwrap();
+                let by_tid =
+                    fs::read_to_string(Path::new("/proc").join(path).join("cgroup")).unwrap();
+                let by_thread_self = fs::read_to_string("/proc/thread-self/cgroup").unwrap();
+                assert_eq!(by_thread_self, by_tid);
+                assert!(by_tid.starts_with("0::/"), "unified v2 thread entry");
+                assert_eq!(by_tid.lines().count(), 1);
+            });
+            join.join().unwrap();
+        }
         #[test]
         fn real_linux_cgroup_v2_cpu_stat_is_parsed_without_claiming_a_quota() {
             let real = fs::read_to_string("/sys/fs/cgroup/cpu.stat").unwrap();

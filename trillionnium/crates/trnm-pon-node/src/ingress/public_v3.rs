@@ -1690,6 +1690,7 @@ fn serve_public_protected_v3_inner(
             let output_pool = output_pool.clone();
             let server = &server;
             let settings = &settings;
+            let kernel_for_worker = host_kernel.as_ref();
             workers.push(scope.spawn(move || -> Result<()> {
                 loop {
                     // Retain FIFO admission order while an already-dequeued
@@ -1756,18 +1757,31 @@ fn serve_public_protected_v3_inner(
                                                     .swap(false, Ordering::AcqRel),
                                                 Ordering::Release,
                                             );
-                                            let outcome = public_dispatch(
-                                                &node,
-                                                task.request,
-                                                task.deadline,
-                                                &stop,
-                                                &task.cancelled,
-                                                &metrics,
-                                                (
-                                                    task.observation.as_ref(),
-                                                    cpu_permit.as_ref().map(|_| &measurement),
-                                                ),
-                                            );
+                                            // Admission and the 50ms reactor
+                                            // watch attest only THEIR calling
+                                            // threads. Recheck this worker's own
+                                            // kernel cgroup after any CPU-credit
+                                            // wait but before native dispatch.
+                                            // A rejected check still settles the
+                                            // original paid reservation below.
+                                            let outcome = kernel_for_worker
+                                                .map_or(Ok(()), |kernel| kernel.verify())
+                                                .and_then(|()| {
+                                                    public_dispatch(
+                                                        &node,
+                                                        task.request,
+                                                        task.deadline,
+                                                        &stop,
+                                                        &task.cancelled,
+                                                        &metrics,
+                                                        (
+                                                            task.observation.as_ref(),
+                                                            cpu_permit
+                                                                .as_ref()
+                                                                .map(|_| &measurement),
+                                                        ),
+                                                    )
+                                                });
                                             let cpu = match cpu_permit {
                                                 Some(permit) => {
                                                     permit.finish(&measurement, server, &metrics)
