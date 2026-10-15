@@ -1,0 +1,23 @@
+test_allocation_proof_root_and_payee_are_bound (__main__.CodecTests.test_allocation_proof_root_and_payee_are_bound) ... ok
+test_fixed_vectors_without_native_dependency (__main__.CodecTests.test_fixed_vectors_without_native_dependency) ... ok
+test_header_mutations_bind_all_fields (__main__.CodecTests.test_header_mutations_bind_all_fields) ... ok
+test_json_float_and_duplicate_rejected (__main__.CodecTests.test_json_float_and_duplicate_rejected) ... ok
+test_sparse_root_absence_empty_and_order (__main__.CodecTests.test_sparse_root_absence_empty_and_order) ... ok
+test_every_reorg_process_crash_cut_recovers_exactly (__main__.DiskReorgTests.test_every_reorg_process_crash_cut_recovers_exactly) ... ok
+test_false_parameter_context_rejects_and_releases_owner (__main__.DiskReorgTests.test_false_parameter_context_rejects_and_releases_owner) ... ok
+test_foreign_database_rejected_without_schema_writes (__main__.DiskReorgTests.test_foreign_database_rejected_without_schema_writes) ... ok
+test_root_substitution_rejects_before_persistence (__main__.DiskReorgTests.test_root_substitution_rejects_before_persistence) ... ok
+test_same_work_keeps_existing_tip (__main__.DiskReorgTests.test_same_work_keeps_existing_tip) ... ok
+test_two_writer_admission_is_rejected (__main__.DiskReorgTests.test_two_writer_admission_is_rejected) ... ok
+test_cancel_and_late_receipt_are_monotonic (__main__.ExecutionTests.test_cancel_and_late_receipt_are_monotonic) ... ok
+test_contribution_cannot_swap_parent_family_or_claim_self_eval (__main__.ExecutionTests.test_contribution_cannot_swap_parent_family_or_claim_self_eval) ... ok
+test_expiry_fee_balance_rejections (__main__.ExecutionTests.test_expiry_fee_balance_rejections) ... ok
+test_free_consumer_is_not_charged_or_implicitly_authorized (__main__.ExecutionTests.test_free_consumer_is_not_charged_or_implicitly_authorized) ... ok
+test_mandatory_expiry_returns_reserved_funds (__main__.ExecutionTests.test_mandatory_expiry_returns_reserved_funds) ... ok
+test_signature_nonce_and_no_write_on_reject (__main__.ExecutionTests.test_signature_nonce_and_no_write_on_reject) ... ok
+test_task_receipt_does_not_self_settle (__main__.ExecutionTests.test_task_receipt_does_not_self_settle) ... ok
+
+----------------------------------------------------------------------
+Ran 18 tests in 2.065s
+
+OK
