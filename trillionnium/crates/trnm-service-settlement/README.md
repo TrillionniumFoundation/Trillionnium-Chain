@@ -68,3 +68,12 @@ this changes no persisted schema or signed domain. Boundary tests exercise real
 stores at the last representable height, rejection with unchanged database bytes
 and cold-reopen state, and preview/commit parity. Sequence exhaustion is checked
 with synthetic helper inputs, not a practically constructed maximum-length history.
+
+New rollup admission, in both preview and execution, also requires a strictly
+later settlement height that fits SQLite's signed-integer range. The check runs
+after ordinary transition validation, preserving signature and input errors.
+Historical audit and exact operation replay retain their existing semantics:
+previously accepted unfinishable rollups remain readable and are not repaired.
+There is no rollback, migration, stored-byte rewrite, schema/domain change, or
+change to the configured challenge duration. This admission guard only prevents
+new rollups whose earliest settlement height exceeds backend capacity.

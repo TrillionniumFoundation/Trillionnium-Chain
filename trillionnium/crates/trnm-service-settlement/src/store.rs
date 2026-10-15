@@ -388,8 +388,12 @@ impl ConsumptionSettlementStoreV1 {
                     "pre-commit batch repeats a Consumption/Settlement operation",
                 ));
             }
-            let (next_state, settlement_id) =
-                apply_transition(&self.config.trust_bundle, &state, candidate_height, command)?;
+            let (next_state, settlement_id) = apply_new_store_transition(
+                &self.config.trust_bundle,
+                &state,
+                candidate_height,
+                command,
+            )?;
             state = next_state;
             let offset = u64::try_from(offset).map_err(|_| {
                 error(
@@ -506,7 +510,7 @@ impl ConsumptionSettlementStoreV1 {
                 "operation sequence overflow",
             )
         })?;
-        let (next_state, settlement_id) = apply_transition(
+        let (next_state, settlement_id) = apply_new_store_transition(
             &self.config.trust_bundle,
             &state,
             execution.order_height,
@@ -1595,6 +1599,37 @@ fn validate_execution_cas(
         ));
     }
     Ok(())
+}
+
+// Admission-only backend check. Historical audit/replay keeps using the generic
+// transition, and exact durable operation retries return before this path.
+fn apply_new_store_transition(
+    trust: &ConsumptionSettlementFreshGenesisTrustBundleV1,
+    state: &ConsumptionSettlementKernelStateV1,
+    order_height: u64,
+    command: &ConsumptionSettlementCommandV1,
+) -> ConsumptionSettlementResultV1<(ConsumptionSettlementKernelStateV1, Option<SettlementIdV1>)> {
+    let (next, settlement_id) = apply_transition(trust, state, order_height, command)?;
+    if matches!(command, ConsumptionSettlementCommandV1::AdmitRollup { .. }) {
+        let rollup = next.rollup.as_ref().ok_or_else(|| {
+            error(
+                ConsumptionSettlementErrorCodeV1::NotFound,
+                "new rollup is absent after admission",
+            )
+        })?;
+        let earliest_settlement =
+            rollup
+                .challenge_close_height
+                .checked_add(1)
+                .ok_or_else(|| {
+                    error(
+                        ConsumptionSettlementErrorCodeV1::ArithmeticOverflow,
+                        "rollup settlement successor height overflows",
+                    )
+                })?;
+        to_sqlite(earliest_settlement, "rollup settlement successor height")?;
+    }
+    Ok((next, settlement_id))
 }
 
 // Preview must stay within the same integer domain as the durable backend,

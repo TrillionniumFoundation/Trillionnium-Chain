@@ -638,6 +638,180 @@ fn execution_preview_accepts_last_sqlite_height_and_matches_commit() {
 }
 
 #[test]
+fn new_rollup_requires_representable_settlement_successor() {
+    for close_height in [i64::MAX as u64, (i64::MAX as u64) + 1] {
+        let mut harness = Harness::new();
+        harness
+            .trust
+            .settlement_policy
+            .minimum_rollup_challenge_blocks = close_height - 12;
+        let store = harness.open();
+        let (parent_block, state) = execute_receipt_chain(&harness, &store);
+        let command = ConsumptionSettlementCommandV1::AdmitRollup {
+            rollup: harness.rollup(&state, 12),
+            receipts: state
+                .receipts
+                .iter()
+                .map(|entry| entry.receipt.clone())
+                .collect(),
+        };
+        let before = store.fresh_readback().expect("receipt parent");
+        let before_bytes = fs::read(&harness.path).expect("receipt database");
+        let execution = harness.execution(11, parent_block, 12);
+        let mut invalid = command.clone();
+        if let ConsumptionSettlementCommandV1::AdmitRollup { rollup, .. } = &mut invalid {
+            rollup.provider_signature.signature[0] ^= 1;
+        }
+        assert_eq!(
+            store
+                .preview_before_vote_v1(
+                    &before,
+                    12,
+                    execution.order_block_id,
+                    std::slice::from_ref(&invalid)
+                )
+                .expect_err("signature validation precedes backend bound")
+                .code(),
+            ConsumptionSettlementErrorCodeV1::InvalidSignature
+        );
+        assert_eq!(
+            store
+                .execute_committed_execution(&execution, &invalid)
+                .expect_err("commit preserves signature error precedence")
+                .code(),
+            ConsumptionSettlementErrorCodeV1::InvalidSignature
+        );
+        let preview = store.preview_before_vote_v1(
+            &before,
+            12,
+            execution.order_block_id,
+            std::slice::from_ref(&command),
+        );
+        let commit = store.execute_committed_execution(&execution, &command);
+        assert!(
+            preview.is_err() && commit.is_err(),
+            "unfinishable rollup must reject: preview={preview:?}, commit={commit:?}"
+        );
+        assert_eq!(
+            preview.expect_err("preview rejection").code(),
+            ConsumptionSettlementErrorCodeV1::ArithmeticOverflow
+        );
+        assert_eq!(
+            commit.expect_err("commit rejection").code(),
+            ConsumptionSettlementErrorCodeV1::ArithmeticOverflow
+        );
+        assert_eq!(store.fresh_readback().expect("unchanged parent"), before);
+        assert_eq!(store.state().expect("unchanged state"), state);
+        assert_eq!(
+            fs::read(&harness.path).expect("unchanged bytes"),
+            before_bytes
+        );
+        let reopened =
+            ConsumptionSettlementStoreV1::open_existing(harness.config()).expect("cold reopen");
+        assert_eq!(reopened.fresh_readback().expect("cold parent"), before);
+        assert_eq!(reopened.state().expect("cold state"), state);
+    }
+}
+
+#[test]
+fn last_representable_rollup_successor_settles_and_reopens() {
+    let maximum = i64::MAX as u64;
+    let mut harness = Harness::new();
+    harness.trust.initial_order_height = maximum - 5;
+    let store = harness.open();
+    let receipt_height = maximum - 4;
+    let receipt_execution = harness.execution(
+        maximum - 5,
+        harness.trust.initial_order_block_id,
+        receipt_height,
+    );
+    store
+        .execute_committed_execution(
+            &receipt_execution,
+            &ConsumptionSettlementCommandV1::AdmitReceipt {
+                receipt: harness.receipt(None, receipt_height, 25),
+            },
+        )
+        .expect("boundary receipt");
+    let state = store.state().expect("receipt state");
+    let rollup_height = maximum - 3;
+    let command = ConsumptionSettlementCommandV1::AdmitRollup {
+        rollup: harness.rollup(&state, rollup_height),
+        receipts: state
+            .receipts
+            .iter()
+            .map(|entry| entry.receipt.clone())
+            .collect(),
+    };
+    let before = store.fresh_readback().expect("rollup parent");
+    let execution = harness.execution(
+        receipt_height,
+        receipt_execution.order_block_id,
+        rollup_height,
+    );
+    let preview = store
+        .preview_before_vote_v1(
+            &before,
+            rollup_height,
+            execution.order_block_id,
+            std::slice::from_ref(&command),
+        )
+        .expect("last finishable rollup preview");
+    store
+        .execute_committed_execution(&execution, &command)
+        .expect("last finishable rollup commit");
+    let state = store.state().expect("rollup state");
+    assert_eq!(
+        state
+            .rollup
+            .as_ref()
+            .expect("rollup")
+            .challenge_close_height,
+        maximum - 1
+    );
+    assert_eq!(
+        store
+            .fresh_readback()
+            .expect("rollup head")
+            .durable_state_root(),
+        preview.candidate_post_state_root()
+    );
+    let parent = advance_empty_blocks_through(
+        &harness,
+        &store,
+        rollup_height,
+        execution.order_block_id,
+        maximum - 1,
+    );
+    store
+        .execute_committed_execution(
+            &harness.execution(maximum - 1, parent, maximum),
+            &ConsumptionSettlementCommandV1::Settle {
+                operation: settlement_operation(&harness, &state),
+            },
+        )
+        .expect("settle at maximum SQLite height");
+    let final_state = store.state().expect("settled state");
+    assert!(final_state.escrow.closed);
+    assert_eq!(final_state.escrow.balance, 0);
+    assert_eq!(
+        final_state
+            .settlement
+            .as_ref()
+            .expect("settlement")
+            .applied_height,
+        maximum
+    );
+    let reopened =
+        ConsumptionSettlementStoreV1::open_existing(harness.config()).expect("cold settled reopen");
+    assert_eq!(reopened.state().expect("cold state"), final_state);
+    assert_eq!(
+        reopened.fresh_readback().expect("cold head"),
+        store.fresh_readback().expect("settled head")
+    );
+}
+
+#[test]
 fn receipt_signatures_sequence_prices_and_cumulative_roots_fail_closed() {
     let harness = Harness::new();
     let store = harness.open();
