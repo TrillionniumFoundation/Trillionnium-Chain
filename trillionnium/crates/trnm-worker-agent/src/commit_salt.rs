@@ -15,6 +15,70 @@ use std::sync::{Mutex, OnceLock};
 
 const MAX_LOG_BYTES: u64 = 64 * 1024 * 1024;
 
+// One process-local owner for BOTH manual and automatic submissions. The
+// inode flock separately coordinates independent processes using this path.
+static LOCAL_OWNER: OnceLock<Mutex<()>> = OnceLock::new();
+
+pub(crate) fn append_private_manual_submission(path: &Path, line: &str) -> Result<()> {
+    ensure!(
+        !line.contains('\n') && !line.contains('\r'),
+        "manual submission requires one complete JSON line"
+    );
+    if let Some(parent) = path.parent() {
+        fs::create_dir_all(parent)?;
+    }
+    let _local_lock = LOCAL_OWNER
+        .get_or_init(|| Mutex::new(()))
+        .lock()
+        .map_err(|_| anyhow::anyhow!("submission owner lock poisoned"))?;
+    let descriptor = openat(
+        CWD,
+        path,
+        OFlags::RDWR | OFlags::APPEND | OFlags::CREATE | OFlags::CLOEXEC | OFlags::NOFOLLOW,
+        Mode::RUSR | Mode::WUSR,
+    )?;
+    let mut file = File::from(descriptor);
+    flock(&file, FlockOperation::LockExclusive)?;
+    let metadata = file.metadata()?;
+    ensure!(
+        metadata.is_file()
+            && metadata.nlink() == 1
+            && metadata.uid() == rustix::process::geteuid().as_raw()
+            && metadata.mode() & 0o077 == 0
+            && metadata.mode() & 0o200 != 0,
+        "private manual submission journal required"
+    );
+    let appended = u64::try_from(line.len())?
+        .checked_add(1)
+        .ok_or_else(|| anyhow::anyhow!("manual submission length overflow"))?;
+    ensure!(
+        metadata
+            .len()
+            .checked_add(appended)
+            .is_some_and(|total| total <= MAX_LOG_BYTES),
+        "manual submission journal capacity"
+    );
+    if metadata.len() != 0 {
+        file.seek(SeekFrom::End(-1))?;
+        let mut last = [0_u8; 1];
+        file.read_exact(&mut last)?;
+        ensure!(last[0] == b'\n', "incomplete manual submission log");
+    }
+    file.seek(SeekFrom::End(0))?;
+    file.write_all(line.as_bytes())?;
+    file.write_all(b"\n")?;
+    file.sync_all()?;
+    let named = fs::symlink_metadata(path)?;
+    ensure!(
+        named.dev() == metadata.dev() && named.ino() == metadata.ino(),
+        "manual submission journal replaced during append"
+    );
+    if let Some(parent) = path.parent() {
+        File::open(parent)?.sync_all()?;
+    }
+    Ok(())
+}
+
 pub(crate) fn journal_automatic_submission(
     path: &Path,
     task_id: u64,
@@ -39,7 +103,6 @@ pub(crate) fn journal_automatic_submission(
     }
     // POSIX record locks may be owned by the process rather than the FD.
     // Serialize same-process threads as well as independent processes.
-    static LOCAL_OWNER: OnceLock<Mutex<()>> = OnceLock::new();
     let _local_lock = LOCAL_OWNER
         .get_or_init(|| Mutex::new(()))
         .lock()

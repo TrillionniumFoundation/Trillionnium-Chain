@@ -140,7 +140,22 @@ silent truncation or new salt. The journal and CLI output remain local secrets
 until reveal. Operators must not publish the pre-reveal output or journal.
 
 The explicit manual `commit-reveal` command accepts caller-provided material;
-its secrecy and local log custody remain the caller's responsibility. Previously
+its secrecy and local log custody remain the caller's responsibility.
+Its former `--submit` path, however, used a normal create/append open and
+could create a world-readable log of the **unrevealed manual salt** under a
+standard umask, or follow a final-component symlink. Manual submissions now
+write through the same private journal inode lock as the automatic owner,
+with `0600` new-file permissions, regular-file/owner/single-link checks,
+`NOFOLLOW`, a finite log-size bound, newline-completeness check, synced
+file and parent directory, and exact inode recheck. It preserves the
+caller's chosen salt, hash and explicit manual append behavior, never
+silently regenerating a salt. A preexisting public or linked manual log
+fails closed rather than being automatically chmod'd or rewritten; prior
+exposure of a salt cannot be repaired by changing permissions afterward.
+On non-Unix hosts manual `--submit` now refuses instead of writing an
+insecure fallback. Terminal output and manual command disclosure remain
+the operator's responsibility; these controls do not guarantee secrecy
+against the same UID, physical compromise or shell history. Previously
 submitted deterministic salts remain historical: migration cannot retroactively
 restore a commitment's hiding property. On non-Unix hosts automatic submission
 refuses instead of silently reverting to a deterministic salt. No standalone
