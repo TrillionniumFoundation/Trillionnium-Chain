@@ -73,7 +73,10 @@ mod durable {
         assert!(before.ends_with(b"\n"));
         let rec: crate::SubmissionRecord =
             serde_json::from_slice(&before[..before.len() - 1]).unwrap();
-        assert_eq!(rec.salt_hex, salt, "manual salt must not be silently regenerated");
+        assert_eq!(
+            rec.salt_hex, salt,
+            "manual salt must not be silently regenerated"
+        );
         assert_eq!(rec.worker, worker);
         assert_eq!(rec.commit_hash, commit_hash);
         assert_eq!(
@@ -101,25 +104,37 @@ mod durable {
         fs::write(&target, b"must-not-touch").unwrap();
         fs::set_permissions(&target, fs::Permissions::from_mode(0o600)).unwrap();
         symlink(&target, &path).unwrap();
-        assert!(submit(&path).is_err(), "manual salt must reject symlink targets");
+        assert!(
+            submit(&path).is_err(),
+            "manual salt must reject symlink targets"
+        );
         assert_eq!(fs::read(&target).unwrap(), b"must-not-touch");
         fs::remove_file(&path).unwrap();
 
         fs::write(&path, b"prior\n").unwrap();
         fs::set_permissions(&path, fs::Permissions::from_mode(0o644)).unwrap();
         let old = fs::read(&path).unwrap();
-        assert!(submit(&path).is_err(), "legacy public salt log must fail closed");
+        assert!(
+            submit(&path).is_err(),
+            "legacy public salt log must fail closed"
+        );
         assert_eq!(fs::read(&path).unwrap(), old);
         fs::set_permissions(&path, fs::Permissions::from_mode(0o600)).unwrap();
 
         fs::hard_link(&path, &alias).unwrap();
-        assert!(submit(&path).is_err(), "hard linked salt log must fail closed");
+        assert!(
+            submit(&path).is_err(),
+            "hard linked salt log must fail closed"
+        );
         assert_eq!(fs::read(&path).unwrap(), old);
         fs::remove_file(&alias).unwrap();
 
         fs::write(&path, b"partial-json{").unwrap();
         let truncated = fs::read(&path).unwrap();
-        assert!(submit(&path).is_err(), "partial JSON line must not be extended");
+        assert!(
+            submit(&path).is_err(),
+            "partial JSON line must not be extended"
+        );
         assert_eq!(fs::read(path).unwrap(), truncated);
     }
 
