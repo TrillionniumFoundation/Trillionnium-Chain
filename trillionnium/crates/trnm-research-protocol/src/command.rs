@@ -161,6 +161,9 @@ impl SignedResearchCommandV1 {
             .map_err(|_| SignedResearchCommandValidationError::InvalidSignature)?;
         let verifying_key = VerifyingKey::from_bytes(&self.public_key)
             .map_err(|_| SignedResearchCommandValidationError::InvalidPublicKey)?;
+        if verifying_key.is_weak() {
+            return Err(SignedResearchCommandValidationError::InvalidPublicKey);
+        }
         verifying_key
             .verify_strict(
                 &self.signing_bytes(),
