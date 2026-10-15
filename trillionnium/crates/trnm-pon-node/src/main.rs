@@ -1886,6 +1886,12 @@ fn run() -> Result<Value> {
                         listener.local_addr()?,
                         args.get("--host-kernel-parent").map(String::as_str),
                     )?;
+                    // Host counters aggregate ALL child processes of this same
+                    // parent; never interpret them as one client's paid CPU.
+                    let host_resources_before = host_kernel
+                        .as_ref()
+                        .map(|budget| budget.resource_sample())
+                        .transpose()?;
                     let pool_context = node.enable_local_mempool(pool)?;
                     println!(
                         "{}",
@@ -1894,6 +1900,7 @@ fn run() -> Result<Value> {
                         "host_process_slot":_host_guard.slot,
                         "host_process_budget_scope":"cooperative-local-service-processes-4",
                         "root_kernel_parent_checked":host_kernel.is_some(),
+                        "root_kernel_resources_before":host_resources_before,
                         "initial_paid_cpu_credit_ns":server.mutation_cpu_domain().observe()?.stored_credit_ns,
                         "admission_profile":ingress::public_v3::PROFILE,"admission_profile_digest":hex::encode(policy.id()),
                         "pool_context":hex::encode(pool_context),"mining_enabled":mining.is_some(),
@@ -2030,8 +2037,26 @@ fn run() -> Result<Value> {
                     kernel_result.transpose()?;
                     let mining_report = mining_result.transpose()?;
                     let polling_report = polling_result.transpose()?;
+                    // Read after ALL owned workers joined; this remains
+                    // aggregate across any other processes under the parent.
+                    // Counter rewind is an error, not a falsely qualified CPU
+                    // receipt or a reason to roll back committed Native work.
+                    let host_resources_after = host_kernel
+                        .as_ref()
+                        .map(|budget| budget.resource_sample())
+                        .transpose()?;
+                    let host_kernel_cpu_delta = match (host_resources_before, host_resources_after)
+                    {
+                        (Some(before), Some(after)) => Some(after.cpu_delta_since(before)?),
+                        (None, None) => None,
+                        _ => return Err("PUBLIC_HOST_KERNEL_COUNTERS".into()),
+                    };
                     return Ok(
-                        json!({"result":metrics,"mining":mining_report,"peer_polling":polling_report,"public_network_ready":false,"production_activation":false}),
+                        json!({"result":metrics,"mining":mining_report,"peer_polling":polling_report,
+                        "host_kernel_resources_after":host_resources_after,
+                        "host_kernel_cpu_delta":host_kernel_cpu_delta,
+                        "host_kernel_qualification":false,
+                        "public_network_ready":false,"production_activation":false}),
                     );
                 }
                 let listener = std::net::TcpListener::bind(

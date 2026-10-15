@@ -8,8 +8,56 @@
 // delegate, remount or migrate an OS resource group. Only an administrator can
 // provision/start the fixed parent and place the process inside it. The
 // original continuous ledger still owns durable operation reconciliation.
+/// Actual kernel counters for the *whole original parent*, not a guest,
+/// a given V3 listener or the volatile CPU-credit epoch. Resource samples
+/// must never grant W1/transaction/model authority.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, serde::Serialize)]
+pub struct KernelResourceSample {
+    pub cpu_usage_usec: u64,
+    pub cpu_nr_periods: u64,
+    pub cpu_nr_throttled: u64,
+    pub cpu_throttled_usec: u64,
+    pub memory_current_bytes: u64,
+    pub pids_current: u64,
+}
+
+/// These are cumulative kernel CPU deltas; the current memory/task values
+/// belong to independent point-in-time samples, not to a delta.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, serde::Serialize)]
+pub struct KernelCpuDelta {
+    pub usage_usec: u64,
+    pub nr_periods: u64,
+    pub nr_throttled: u64,
+    pub throttled_usec: u64,
+}
+
+impl KernelResourceSample {
+    pub fn cpu_delta_since(self, before: Self) -> crate::Result<KernelCpuDelta> {
+        let changed = || crate::Error::from("PUBLIC_HOST_KERNEL_COUNTER_REWIND");
+        Ok(KernelCpuDelta {
+            usage_usec: self
+                .cpu_usage_usec
+                .checked_sub(before.cpu_usage_usec)
+                .ok_or_else(changed)?,
+            nr_periods: self
+                .cpu_nr_periods
+                .checked_sub(before.cpu_nr_periods)
+                .ok_or_else(changed)?,
+            nr_throttled: self
+                .cpu_nr_throttled
+                .checked_sub(before.cpu_nr_throttled)
+                .ok_or_else(changed)?,
+            throttled_usec: self
+                .cpu_throttled_usec
+                .checked_sub(before.cpu_throttled_usec)
+                .ok_or_else(changed)?,
+        })
+    }
+}
+
 #[cfg(target_os = "linux")]
 mod kernel_parent {
+    use super::KernelResourceSample;
     use std::{
         fs,
         net::SocketAddr,
@@ -96,6 +144,57 @@ mod kernel_parent {
             return Err("PUBLIC_HOST_KERNEL_CONTEXT".into());
         }
         Ok(relative.to_owned())
+    }
+
+    /// Accept additional future kernel cpu.stat keys, but never fabricate the
+    /// four required counters, accept duplicates or accept malformed/huge input.
+    /// The actual sysfs files are read only after the fixed parent was checked.
+    fn resource_sample(cpu: &str, memory: &str, tasks: &str) -> Result<KernelResourceSample> {
+        const INVALID: &str = "PUBLIC_HOST_KERNEL_COUNTERS";
+        if cpu.len() > 2048 || memory.len() > 64 || tasks.len() > 64 {
+            return Err(INVALID.into());
+        }
+        let mut fields = std::collections::BTreeMap::<&str, u64>::new();
+        for line in cpu.lines() {
+            let mut words = line.split_ascii_whitespace();
+            let key = words.next().ok_or(INVALID)?;
+            let raw = words.next().ok_or(INVALID)?;
+            if words.next().is_some() {
+                return Err(INVALID.into());
+            }
+            let value = raw
+                .parse::<u64>()
+                .map_err(|_| crate::Error::from(INVALID))?;
+            if fields.insert(key, value).is_some() {
+                return Err(INVALID.into());
+            }
+        }
+        let required = |key| {
+            fields
+                .get(key)
+                .copied()
+                .ok_or_else(|| crate::Error::from(INVALID))
+        };
+        let current = |raw: &str| -> Result<u64> {
+            let mut parts = raw.split_ascii_whitespace();
+            let value = parts
+                .next()
+                .ok_or(INVALID)?
+                .parse::<u64>()
+                .map_err(|_| crate::Error::from(INVALID))?;
+            if parts.next().is_some() {
+                return Err(INVALID.into());
+            }
+            Ok(value)
+        };
+        Ok(KernelResourceSample {
+            cpu_usage_usec: required("usage_usec")?,
+            cpu_nr_periods: required("nr_periods")?,
+            cpu_nr_throttled: required("nr_throttled")?,
+            cpu_throttled_usec: required("throttled_usec")?,
+            memory_current_bytes: current(memory)?,
+            pids_current: current(tasks)?,
+        })
     }
 
     pub struct KernelBudget {
@@ -201,6 +300,24 @@ mod kernel_parent {
         pub fn verify(&self) -> Result<()> {
             self.check()
         }
+
+        /// Read-only aggregate kernel accounting. Verify the same fixed
+        /// boot/inode/quotas/membership both before and after sampling; if any
+        /// counter is unavailable or malformed, never issue a qualified receipt.
+        pub fn resource_sample(&self) -> Result<KernelResourceSample> {
+            self.check()?;
+            let read = |name| -> Result<String> {
+                fs::read_to_string(self.parent.join(name))
+                    .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_COUNTERS"))
+            };
+            let sample = resource_sample(
+                &read("cpu.stat")?,
+                &read("memory.current")?,
+                &read("pids.current")?,
+            )?;
+            self.check()?;
+            Ok(sample)
+        }
     }
 
     pub fn require(address: SocketAddr, parent: Option<&str>) -> Result<Option<KernelBudget>> {
@@ -214,6 +331,79 @@ mod kernel_parent {
     #[cfg(test)]
     mod tests {
         use super::*;
+
+        const CPU_SAMPLE: &str = "usage_usec 600\nuser_usec 400\nsystem_usec 200\nnr_periods 16\nnr_throttled 4\nthrottled_usec 150\nnr_bursts 0\n";
+        #[test]
+        fn kernel_resource_counters_require_complete_bounded_real_format() {
+            let normal = resource_sample(CPU_SAMPLE, "1000\n", "7\n").unwrap();
+            assert_eq!(
+                (
+                    normal.cpu_usage_usec,
+                    normal.cpu_nr_throttled,
+                    normal.memory_current_bytes,
+                    normal.pids_current
+                ),
+                (600, 4, 1000, 7)
+            );
+            for malformed in [
+                "usage_usec 600\nnr_periods 16\nnr_throttled 4\n", // missing throttled_usec
+                "usage_usec 600\nusage_usec 700\nnr_periods 16\nnr_throttled 4\nthrottled_usec 150\n",
+                "usage_usec -1\nnr_periods 16\nnr_throttled 4\nthrottled_usec 150\n",
+                "usage_usec 1 2\nnr_periods 16\nnr_throttled 4\nthrottled_usec 150\n",
+                "usage_usec max\nnr_periods 16\nnr_throttled 4\nthrottled_usec 150\n",
+            ] {
+                assert!(resource_sample(malformed, "0", "0").is_err(), "{malformed}");
+            }
+            assert!(resource_sample(CPU_SAMPLE, "max", "7").is_err());
+            assert!(resource_sample(CPU_SAMPLE, "7", "-1").is_err());
+            assert!(resource_sample(CPU_SAMPLE, "8 9", "7").is_err());
+            assert!(resource_sample(&"z".repeat(2049), "1", "1").is_err());
+        }
+
+        #[test]
+        fn real_linux_cgroup_v2_cpu_stat_is_parsed_without_claiming_a_quota() {
+            let real = fs::read_to_string("/sys/fs/cgroup/cpu.stat").unwrap();
+            // Root cgroup has no required memory.current or pids.current on
+            // Linux; the test uses only the real cumulative cpu.stat input.
+            let parsed = resource_sample(&real, "0", "0").unwrap();
+            assert!(parsed.cpu_usage_usec > 0);
+            // Zero nr_periods is expected if the root has no CPU bandwidth cap.
+            // Never infer quota enforcement from a successfully parsed sample.
+            println!("ACTUAL_KERNEL_CPU_STAT_PARSE_OK real_cpu_usage_positive=true quota_qualified=false");
+        }
+
+        #[test]
+        fn two_aggregate_samples_never_accept_cpu_counter_rewind_or_mem_task_delta() {
+            let first = resource_sample(CPU_SAMPLE, "100", "2").unwrap();
+            let second = resource_sample(
+                "usage_usec 900\nnr_periods 20\nnr_throttled 5\nthrottled_usec 180\n",
+                "20",
+                "4",
+            )
+            .unwrap();
+            let delta = second.cpu_delta_since(first).unwrap();
+            assert_eq!(
+                (
+                    delta.usage_usec,
+                    delta.nr_periods,
+                    delta.nr_throttled,
+                    delta.throttled_usec
+                ),
+                (300, 4, 1, 30)
+            );
+            assert_eq!(second.memory_current_bytes, 20);
+            assert_eq!(second.pids_current, 4);
+            let rewind = resource_sample(
+                "usage_usec 1000\nnr_periods 20\nnr_throttled 4\nthrottled_usec 180\n",
+                "20",
+                "4",
+            )
+            .unwrap();
+            assert_eq!(
+                rewind.cpu_delta_since(second).unwrap_err().to_string(),
+                "PUBLIC_HOST_KERNEL_COUNTER_REWIND"
+            );
+        }
         #[test]
         fn shipped_systemd_slice_is_the_one_fixed_finite_kernel_parent() {
             // This validates the shipped operator package, not live kernel
@@ -381,6 +571,9 @@ pub struct HostKernelBudget;
 #[cfg(not(target_os = "linux"))]
 impl HostKernelBudget {
     pub fn verify(&self) -> crate::Result<()> {
+        Err("PUBLIC_HOST_KERNEL_UNSUPPORTED".into())
+    }
+    pub fn resource_sample(&self) -> crate::Result<KernelResourceSample> {
         Err("PUBLIC_HOST_KERNEL_UNSUPPORTED".into())
     }
 }

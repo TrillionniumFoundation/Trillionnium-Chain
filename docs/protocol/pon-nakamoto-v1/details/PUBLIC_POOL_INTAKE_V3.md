@@ -917,3 +917,36 @@ because its test invocation was blocked by the tool safety check. That
 unverified extra test code was discarded; the completed two-process
 normal-reopen regression remains independently valid. Do not rerun
 the blocked probe using a different execution mechanism.
+
+### Original fixed-parent kernel-counter observations (read only)
+
+When an administrator actually provisions the *single* allowed
+`trnmponpublic.slice` parent and runs an approved V3 process underneath it,
+the existing CLI now samples the parent's cumulative `cpu.stat`,
+`memory.current` and `pids.current` counters once before service startup
+and once after all native service/miner/poller workers join. It reports
+`root_kernel_resources_before`, `host_kernel_resources_after`, and the
+checked CPU **delta** (usage microseconds, periods, throttled periods and
+throttled microseconds). Missing, duplicated, malformed or rewinding CPU
+counters refuse a fabricated success; the service's actual Native business
+outcome is never undone by the diagnostic. The fixed parent identity, boot,
+membership, quota and capacity constraints are verified around each sample.
+
+**These are cumulative counters for the original parent, which necessarily
+include other concurrently running children**. They are not per-request CPU
+costs, a separate money/CPU debit ledger, a throughput or fairness score, or
+an authorization for public mining. The memory and pids fields are instantaneous
+readings, not additive deltas. An increment in `nr_throttled` with actual
+observed concurrent service confirms the kernel applied a bandwidth ceiling;
+it alone does not prove equitable scheduling or an SLA. Subsequent child
+processes in the same live parent must see monotonic total CPU usage. Parent
+replacement, a new boot or persistent ordinary-node debt are distinct checks.
+
+Loopback-only development without an admin-provisioned parent retains normal
+V3 behavior: both readings and delta are `null`,
+`host_kernel_qualification=false`; no synthetic zero-usage receipt is
+fabricated. A real Linux cgroup-v2 `cpu.stat` parse and strict malformed/
+counter-rewind fixtures now run in native tests, but the currently inactive
+fixed parent has not been quota-tested. No root cgroup, network namespace,
+production service or Desktop Commander setting was modified by this
+increment.

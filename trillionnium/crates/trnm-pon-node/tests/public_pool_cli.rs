@@ -813,6 +813,7 @@ fn real_two_cli_process_cold_reopens_one_node_without_fresh_cpu_burst() {
             serde_json::from_str(&ready_rx.recv_timeout(Duration::from_secs(4)).unwrap()).unwrap();
         assert_eq!(ready["event"], "listening");
         assert_eq!(ready["root_kernel_parent_checked"], false);
+        assert_eq!(ready["root_kernel_resources_before"], Value::Null);
         assert_eq!(ready["initial_paid_cpu_credit_ns"], 0);
         assert_eq!(
             ready["host_process_budget_scope"],
@@ -865,6 +866,10 @@ fn real_two_cli_process_cold_reopens_one_node_without_fresh_cpu_burst() {
             !final_events.is_empty(),
             "native CLI must emit a final service result"
         );
+        let final_report: Value = serde_json::from_str(final_events.last().unwrap()).unwrap();
+        assert_eq!(final_report["host_kernel_resources_after"], Value::Null);
+        assert_eq!(final_report["host_kernel_cpu_delta"], Value::Null);
+        assert_eq!(final_report["host_kernel_qualification"], false);
         println!(
             "COLD_CLI_PROCESS_EXIT process={} parent_reused=false initial_credit_ns=0 signed_head=true finished_normal=true",
             process_number + 1
