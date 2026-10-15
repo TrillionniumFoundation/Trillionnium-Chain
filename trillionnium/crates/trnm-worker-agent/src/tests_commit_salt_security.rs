@@ -90,7 +90,11 @@ mod durable {
             journal_automatic_submission(&path, 71, worker, &output, &unused_second_salt).unwrap(),
             first_salt
         );
-        assert_eq!(fs::read(path).unwrap(), original, "replay may not rewrite the first command");
+        assert_eq!(
+            fs::read(path).unwrap(),
+            original,
+            "replay may not rewrite the first command"
+        );
     }
 
     #[test]
