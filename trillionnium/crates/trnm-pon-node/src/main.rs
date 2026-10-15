@@ -474,6 +474,19 @@ fn public_pool_profile(args: &BTreeMap<String, String>) -> bool {
     args.get("--admission-profile").map(String::as_str) == Some(ingress::public_v3::PROFILE)
 }
 
+// Refuse an option/profile mismatch BEFORE opening a Node or service
+// ledger, rather than silently accepting a kernel-cap claim on another lane.
+fn validate_host_kernel_profile(command: &str, args: &BTreeMap<String, String>) -> Result<()> {
+    if args.contains_key("--host-kernel-parent")
+        && (command != "serve"
+            || !public_pool_profile(args)
+            || args.get("--public-development-network").map(String::as_str) != Some("true"))
+    {
+        return Err("PUBLIC_HOST_KERNEL_PROFILE".into());
+    }
+    Ok(())
+}
+
 fn reliable_submit_plan(
     command: &str,
     args: &BTreeMap<String, String>,
@@ -1025,7 +1038,7 @@ fn run() -> Result<Value> {
         "sync" => "--peer --tip --after --pages --evaluation-candidate --evaluation-round-blocks",
         "head" => "--peer",
         "history" => "--peer --tip --after",
-        "serve" => "--listen --seconds --mining-seconds --pool-policy --mine --miner --blocks --pace-ms --search-attempts --max-transactions --max-transaction-bytes --task-bootstrap --task-model --task-input --consensus-maintenance --peers --peer-poll-ms --peer-pages --request-observation-output --request-observation-capacity",
+        "serve" => "--listen --seconds --mining-seconds --pool-policy --mine --miner --blocks --pace-ms --search-attempts --max-transactions --max-transaction-bytes --task-bootstrap --task-model --task-input --consensus-maintenance --peers --peer-poll-ms --peer-pages --request-observation-output --request-observation-capacity --host-kernel-parent",
         _ => return Err("UNKNOWN_COMMAND".into()),
     };
     let authentication_options = match command.as_str() {
@@ -1051,6 +1064,7 @@ fn run() -> Result<Value> {
             return Err(format!("UNKNOWN_OPTION:{key}").into());
         }
     }
+    validate_host_kernel_profile(&command, &args)?;
     let authenticated_state = authenticated_state_backend(&command, &args)?;
     // Fixed outside authority is authenticated before any model/material loader.
     let owner_task_config = operator_task_inputs(&args)?;
@@ -1860,18 +1874,26 @@ fn run() -> Result<Value> {
                     // kill-and-relaunch cannot reclaim the historical 2s burst.
                     let server =
                         ingress::public_v3::PublicServer::new_process_cold(identity, policy)?;
-                    let pool_context = node.enable_local_mempool(pool)?;
                     let listener = std::net::TcpListener::bind(
                         args.get("--listen")
                             .map(String::as_str)
                             .unwrap_or("127.0.0.1:0"),
                     )?;
+                    // Existing root-provisioned cgroup v2 parent: the actual
+                    // kernel, not another local counter, enforces aggregate
+                    // CPU/memory/task ceilings across independent processes.
+                    let host_kernel = host_public_guard::require_host_kernel_budget(
+                        listener.local_addr()?,
+                        args.get("--host-kernel-parent").map(String::as_str),
+                    )?;
+                    let pool_context = node.enable_local_mempool(pool)?;
                     println!(
                         "{}",
                         json!({"event":"listening","address":listener.local_addr()?.to_string(),
                         "state":node.stats()?,"server_public":server_public,"scope":"public-development-unqualified",
                         "host_process_slot":_host_guard.slot,
                         "host_process_budget_scope":"cooperative-local-service-processes-4",
+                        "root_kernel_parent_checked":host_kernel.is_some(),
                         "initial_paid_cpu_credit_ns":server.mutation_cpu_domain().observe()?.stored_credit_ns,
                         "admission_profile":ingress::public_v3::PROFILE,"admission_profile_digest":hex::encode(policy.id()),
                         "pool_context":hex::encode(pool_context),"mining_enabled":mining.is_some(),
@@ -1893,81 +1915,106 @@ fn run() -> Result<Value> {
                     } else {
                         None
                     };
-                    let (service, mining_result, polling_result) = std::thread::scope(|scope| {
-                        let miner = mining.map(|config| {
-                            let owner = owner.clone();
-                            let stop = stop.clone();
-                            scope.spawn(move || {
-                                let result =
-                                    run_pool_mining(owner, config, stop.clone(), |event| {
-                                        println!("{}", serde_json::to_string(event)?);
-                                        std::io::stdout().flush()?;
-                                        Ok(())
-                                    });
-                                // A finite successful miner limit leaves ingress
-                                // serving retained blocks for peer catch-up. An
-                                // operational failure stops the shared runtime.
-                                if result.is_err() {
-                                    stop.store(true, Ordering::Release);
-                                }
-                                result
-                            })
-                        });
-                        let poller = polling.map(|config| {
-                            let owner = owner.clone();
-                            let stop = stop.clone();
-                            scope.spawn(move || {
-                                let result = run_pinned_peer_polling(
+                    let (service, mining_result, polling_result, kernel_result) =
+                        std::thread::scope(|scope| {
+                            // The trusted parent must remain the same and its
+                            // aggregate limits must not be widened while serving.
+                            let kernel_observer = host_kernel.as_ref().map(|budget| {
+                                let stop = stop.clone();
+                                scope.spawn(move || -> Result<()> {
+                                    while !stop.load(Ordering::Acquire) {
+                                        if let Err(error) = budget.verify() {
+                                            stop.store(true, Ordering::Release);
+                                            eprintln!("PUBLIC_HOST_KERNEL_LIMIT_VIOLATION:{error}");
+                                            return Err(error);
+                                        }
+                                        std::thread::sleep(Duration::from_millis(50));
+                                    }
+                                    budget.verify()
+                                })
+                            });
+                            let miner = mining.map(|config| {
+                                let owner = owner.clone();
+                                let stop = stop.clone();
+                                scope.spawn(move || {
+                                    let result =
+                                        run_pool_mining(owner, config, stop.clone(), |event| {
+                                            println!("{}", serde_json::to_string(event)?);
+                                            std::io::stdout().flush()?;
+                                            Ok(())
+                                        });
+                                    // A finite successful miner limit leaves ingress
+                                    // serving retained blocks for peer catch-up. An
+                                    // operational failure stops the shared runtime.
+                                    if result.is_err() {
+                                        stop.store(true, Ordering::Release);
+                                    }
+                                    result
+                                })
+                            });
+                            let poller = polling.map(|config| {
+                                let owner = owner.clone();
+                                let stop = stop.clone();
+                                scope.spawn(move || {
+                                    let result = run_pinned_peer_polling(
+                                        owner,
+                                        config,
+                                        polling_identity,
+                                        stop.clone(),
+                                        |event| {
+                                            println!("{}", serde_json::to_string(event)?);
+                                            std::io::stdout().flush()?;
+                                            Ok(())
+                                        },
+                                    );
+                                    if result.is_err() {
+                                        stop.store(true, Ordering::Release);
+                                    }
+                                    result
+                                })
+                            });
+                            let service = if let Some(output) = request_observation.as_ref() {
+                                ingress::public_v3::serve_public_protected_v3_with_request_observer(
+                                    listener,
                                     owner,
-                                    config,
-                                    polling_identity,
+                                    lifetime,
                                     stop.clone(),
-                                    |event| {
-                                        println!("{}", serde_json::to_string(event)?);
-                                        std::io::stdout().flush()?;
-                                        Ok(())
-                                    },
-                                );
-                                if result.is_err() {
-                                    stop.store(true, Ordering::Release);
-                                }
-                                result
-                            })
+                                    server,
+                                    Arc::new(Mutex::new(
+                                        ingress::public_v3::PublicMetrics::default(),
+                                    )),
+                                    output.observer.clone(),
+                                )
+                            } else {
+                                ingress::public_v3::serve_public_protected_v3(
+                                    listener,
+                                    owner,
+                                    lifetime,
+                                    stop.clone(),
+                                    server,
+                                )
+                            };
+                            stop.store(true, Ordering::Release);
+                            let mining_result = miner.map(|handle| {
+                                handle
+                                    .join()
+                                    .map_err(|_| Error::from("MINING_THREAD"))
+                                    .and_then(|result| result)
+                            });
+                            let polling_result = poller.map(|handle| {
+                                handle
+                                    .join()
+                                    .map_err(|_| Error::from("PEER_POLL_THREAD"))
+                                    .and_then(|result| result)
+                            });
+                            let kernel_result = kernel_observer.map(|handle| {
+                                handle
+                                    .join()
+                                    .map_err(|_| Error::from("PUBLIC_HOST_KERNEL_THREAD"))
+                                    .and_then(|result| result)
+                            });
+                            (service, mining_result, polling_result, kernel_result)
                         });
-                        let service = if let Some(output) = request_observation.as_ref() {
-                            ingress::public_v3::serve_public_protected_v3_with_request_observer(
-                                listener,
-                                owner,
-                                lifetime,
-                                stop.clone(),
-                                server,
-                                Arc::new(Mutex::new(ingress::public_v3::PublicMetrics::default())),
-                                output.observer.clone(),
-                            )
-                        } else {
-                            ingress::public_v3::serve_public_protected_v3(
-                                listener,
-                                owner,
-                                lifetime,
-                                stop.clone(),
-                                server,
-                            )
-                        };
-                        stop.store(true, Ordering::Release);
-                        let mining_result = miner.map(|handle| {
-                            handle
-                                .join()
-                                .map_err(|_| Error::from("MINING_THREAD"))
-                                .and_then(|result| result)
-                        });
-                        let polling_result = poller.map(|handle| {
-                            handle
-                                .join()
-                                .map_err(|_| Error::from("PEER_POLL_THREAD"))
-                                .and_then(|result| result)
-                        });
-                        (service, mining_result, polling_result)
-                    });
                     // All scoped workers have stopped before returning any error.
                     // Capture diagnostics before propagating service/miner/poller
                     // failures, without changing their native effects or authority.
@@ -1980,6 +2027,7 @@ fn run() -> Result<Value> {
                         )?;
                     }
                     let metrics = service?;
+                    kernel_result.transpose()?;
                     let mining_report = mining_result.transpose()?;
                     let polling_report = polling_result.transpose()?;
                     return Ok(
@@ -1991,6 +2039,12 @@ fn run() -> Result<Value> {
                         .map(String::as_str)
                         .unwrap_or("127.0.0.1:0"),
                 )?;
+                if !listener.local_addr()?.ip().is_loopback() {
+                    return Err("PUBLIC_V2_NONLOOPBACK_DISABLED".into());
+                }
+                if args.contains_key("--host-kernel-parent") {
+                    return Err("PUBLIC_V2_HOST_KERNEL_UNSUPPORTED".into());
+                }
                 let policy = public_policy(&args)?;
                 println!(
                     "{}",
@@ -2104,6 +2158,43 @@ fn main() {
 mod tests {
     use super::*;
     use std::os::unix::fs::{symlink, PermissionsExt};
+
+    #[test]
+    fn host_kernel_parent_is_not_silently_accepted_for_other_profiles() {
+        let mut opts = BTreeMap::new();
+        opts.insert(
+            "--host-kernel-parent".into(),
+            "/sys/fs/cgroup/system.slice/trnmpondev.slice".into(),
+        );
+        assert_eq!(
+            validate_host_kernel_profile("serve", &opts)
+                .unwrap_err()
+                .to_string(),
+            "PUBLIC_HOST_KERNEL_PROFILE"
+        );
+        opts.insert("--public-development-network".into(), "true".into());
+        opts.insert(
+            "--admission-profile".into(),
+            ingress::public_v2::PROFILE.into(),
+        );
+        assert_eq!(
+            validate_host_kernel_profile("serve", &opts)
+                .unwrap_err()
+                .to_string(),
+            "PUBLIC_HOST_KERNEL_PROFILE"
+        );
+        opts.insert(
+            "--admission-profile".into(),
+            ingress::public_v3::PROFILE.into(),
+        );
+        assert!(validate_host_kernel_profile("serve", &opts).is_ok());
+        assert_eq!(
+            validate_host_kernel_profile("head", &opts)
+                .unwrap_err()
+                .to_string(),
+            "PUBLIC_HOST_KERNEL_PROFILE"
+        );
+    }
 
     #[test]
     fn request_observation_output_has_a_closed_byte_limit() {

@@ -764,3 +764,50 @@ subsequent process to acquire; six cold constructors began with exactly
 zero credit. The pre-existing multi-process V3 CLI, mining, public
 client and local resource-observation tests were rerun separately.
 These are neither WAN saturation trials nor host reboot experiments.
+
+## Optional fixed host cgroup-v2 aggregate CPU/memory/task envelope
+
+Four Linux abstract Unix socket slots only bound public CLI processes in the
+SAME network namespace. A different network namespace has a distinct abstract
+socket table. The slot guard is not a host CPU quota or persistent debt log.
+
+The V3 CLI serve path now refuses non-loopback binding unless the trusted
+operator supplies --host-kernel-parent pointing to an ALREADY provisioned
+root-owned cgroup-v2 slice under
+/sys/fs/cgroup/system.slice/trnmpon*.slice. This is an unprivileged read-only
+eligibility check, not a cgroup creator, migrator, quota editor or daemon.
+The process must already be a member of the approved parent or its children.
+
+Required: canonical root-owned non-writable directory; unchanged boot,
+device and inode identity; current Linux /proc/self/cgroup membership;
+a finite cpu.max of at most 25% of one core (4 * quota <= period),
+cpu.max.burst=0, memory.max at most 2 GiB, memory.swap.max=0,
+and pids.max at most 256. An unlimited max, inconsistent stored
+limits, parent replacement, malformed data or missing controller is refused.
+An optional scoped read-only watcher checks every 50 ms and sets the existing
+service stop signal if limits or identity change. Unprivileged developers
+can still run loopback V3 with the previous four slots and no startup burst,
+without creating/managing an OS resource group. Public V2 is loopback only;
+the host-parent option is rejected for unrelated profiles before Node opens.
+
+For one retained, correctly root-provisioned cgroup parent, the kernel's
+hierarchical enforcement applies to all descendants, including processes
+from different network namespaces. Different process-local token-credit
+accounts do not become a single durable ledger merely because their physical
+CPU shares this hard cap. Host work outside that cgroup, kernel networking,
+privileged operators, a compromised root or modified kernel, and scheduling
+granularity remain outside the local proof. The 50ms watchdog is not an
+instantaneous guarantee.
+
+This change does NOT provision a host cgroup, configure systemd, change
+production services, bypass existing safety checks or activate public network
+readiness. The final source's strict path must still be tested under a real
+root-approved parent with multiple independent processes and actual restart.
+Physical reboot and ordinary Node CPU debt migration are not closed. The
+continuous owner retains its separate durable operation history, exactly-once
+reconciliation and stop behavior; the kernel parent cannot replace that
+accounting authority.
+
+All original PoN W1 mathematics, signed wire domains and PublicPolicy id,
+M05/M06/state roots, reward accounting, model qualification and FinalUse
+are untouched.
