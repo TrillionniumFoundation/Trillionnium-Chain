@@ -593,3 +593,105 @@ fn public_cli_process_cold_start_never_receives_an_instant_fresh_cpu_or_cookie_b
     );
     println!("PROCESS_COLD_BUDGET cold_creations=6 each_initial_cpu_ns=0 each_initial_challenges=0 old_constructor_cpu_ns=2000000000");
 }
+
+#[cfg(target_os = "linux")]
+#[test]
+fn public_library_external_listener_cannot_bypass_the_fixed_host_kernel_parent() {
+    // A wildcard-bound socket with a finite 80ms lifetime: no guest request is
+    // accepted and no service is advertised. The old library entry nonetheless
+    // returned a normal successful service without any fixed kernel parent.
+    let dir = tempfile::tempdir().unwrap();
+    let now = super::super::now().unwrap();
+    let settings = Settings::development(Some(now - 100)).unwrap();
+    let mut node = Node::open(dir.path(), settings, 2).unwrap();
+    node.enable_local_mempool(crate::PoolLimits {
+        max_records: 16,
+        max_bytes: 32768,
+        max_group_members: 16,
+        critical_reserve: 0,
+        max_removals: 64,
+        preview_miner: crate::development_public(0).unwrap(),
+    })
+    .unwrap();
+    let domain = ServiceMutationCpuDomain::standalone();
+    let svc = server(&domain, 71);
+    let owner = Arc::new(Mutex::new(node));
+    let listener = TcpListener::bind("0.0.0.0:0").unwrap();
+    assert!(!listener.local_addr().unwrap().ip().is_loopback());
+    let stopped = Arc::new(AtomicBool::new(false));
+    let result =
+        serve_public_protected_v3(listener, owner, Duration::from_millis(80), stopped, svc);
+    println!(
+        "LIBRARY_EXTERNAL_BOUNDARY original_return={:?}",
+        result.as_ref().map(|_| "ACCEPTED")
+    );
+    let error = result.unwrap_err().to_string();
+    assert!(
+        error.starts_with("PUBLIC_HOST_KERNEL_"),
+        "direct library V3 was able to sidestep CLI-only host admission: {error}"
+    );
+}
+
+#[cfg(target_os = "linux")]
+#[test]
+fn all_public_v3_library_wrappers_reject_external_socket_before_binding_owner_or_workers() {
+    let dir = tempfile::tempdir().unwrap();
+    let now = super::super::now().unwrap();
+    let settings = Settings::development(Some(now - 100)).unwrap();
+    let mut node = Node::open(dir.path(), settings, 2).unwrap();
+    node.enable_local_mempool(crate::PoolLimits {
+        max_records: 16,
+        max_bytes: 32768,
+        max_group_members: 16,
+        critical_reserve: 0,
+        max_removals: 64,
+        preview_miner: crate::development_public(0).unwrap(),
+    })
+    .unwrap();
+    let owner = Arc::new(Mutex::new(node));
+    let domain = ServiceMutationCpuDomain::standalone();
+    let intake = server(&domain, 71).listener_intake().unwrap();
+    for variant in 0..3 {
+        let listener = TcpListener::bind("0.0.0.0:0").unwrap();
+        let stop = Arc::new(AtomicBool::new(false));
+        let srv = server(&domain, 71);
+        let metrics = Arc::new(Mutex::new(PublicMetrics::default()));
+        let result = match variant {
+            0 => serve_public_protected_v3(
+                listener,
+                owner.clone(),
+                Duration::from_millis(80),
+                stop,
+                srv,
+            ),
+            1 => serve_public_protected_v3_with_metrics(
+                listener,
+                owner.clone(),
+                Duration::from_millis(80),
+                stop,
+                srv,
+                metrics.clone(),
+            ),
+            _ => serve_public_protected_v3_with_request_observer(
+                listener,
+                owner.clone(),
+                Duration::from_millis(80),
+                stop,
+                srv,
+                metrics.clone(),
+                PublicRequestObserver::new(4).unwrap(),
+            ),
+        };
+        let error = result.unwrap_err().to_string();
+        assert!(
+            error.starts_with("PUBLIC_HOST_KERNEL_"),
+            "wrapper {variant}: {error}"
+        );
+        assert!(owner.lock().unwrap().public_service_cpu_domain().is_err());
+        assert_eq!(*intake.listeners.lock().unwrap(), 0);
+        assert_eq!(*intake.connections.lock().unwrap(), 0);
+        assert_eq!(metrics.lock().unwrap().accepted_connections, 0);
+    }
+    assert_eq!(domain.observe().unwrap().in_flight, 0);
+    println!("EXPORTED_V3_KERNEL_PARENT wrappers=3 rejected=3 early_owner_binding=0 worker_reservations=0 guest_requests=0");
+}

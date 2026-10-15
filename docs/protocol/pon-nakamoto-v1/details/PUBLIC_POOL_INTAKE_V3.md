@@ -837,3 +837,42 @@ assertion failed as expected. The test did not provision a privileged host
 resource group. The final native guard and exposed CLI regressions need to
 run on the exact committed code; physical kernel parenting, host reboot,
 CPU-debt carryover and WAN saturation are not qualified by a string test.
+
+### Single host-parent checker for both CLI and exported V3 library
+
+The previous kernel-parent requirement lived ONLY in the public V3 development
+CLI. A trusted Rust embedding could call the exported
+`serve_public_protected_v3`, `_with_metrics` or `_with_request_observer`
+using a non-loopback `TcpListener` and skip that CLI guard entirely. A finite
+80ms stopped-by-deadline test with an actual wildcard TCP listener, no client
+connections and no guest work showed the original exported library returned
+ordinary success without any kernel parent (expected-refusal exit101). An
+initial pre-stopped harness attempt instead triggered startup deadline before
+service admission; its log is retained as an inconclusive test rather than
+false evidence of an accepted V3 request.
+
+The ORIGINAL kernel-parent checker is now compiled from one library-owned
+module and reused directly by the development CLI, not duplicated in two
+separately maintained implementations. Every exported V3 serve variant
+checks its actual bound address before even allocating a proof/read worker
+or binding the Node CPU identity. Loopback remains supported without root.
+A wildcard or non-loopback socket requires the exact same root-owned fixed
+`/sys/fs/cgroup/trnmponpublic.slice`, current cgroup membership and all
+original finite CPU/memory/swap/tasks limits. The V3 socket reactor performs
+a 50ms read-only parent check and a final check after all workers join.
+Failures stop admission, preserve native state effects and cannot masquerade
+as invalid PoN work. The CLI's preflight/watchdog is retained but now uses
+the same library code, rather than an independent parent policy.
+
+The original five kernel-parser/parent tests have moved from the binary
+module into the native library test suite. The original two actual host-slot
+process controls remain in the CLI. Exact-source cross-architecture CI should
+run both relocated library kernel tests and the remaining native CLI tests,
+so that the total test coverage is not quietly reduced by the source move.
+
+This closes the **alternate Rust V3 entrypoint** to the single-parent
+precondition; it does NOT provision the host slice, attest independent
+processes actually running beneath it, enforce a 25% kernel quota in vivo,
+prove durable ordinary-node CPU debt after reboot or qualify WAN fairness.
+An empty temporary systemd topology test slice from R8 remains a separate
+operator cleanup issue; this code does not touch that host unit.

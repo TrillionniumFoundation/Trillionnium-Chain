@@ -1630,6 +1630,10 @@ fn serve_public_protected_v3_inner(
         lifetime > Duration::ZERO && lifetime <= Duration::from_secs(MAX_SERVICE_SECONDS),
         "PUBLIC_LIFETIME",
     )?;
+    // This guard must be in the exported library service itself, not only the
+    // CLI. Direct embedders with a wildcard/nonloopback listener cannot bypass
+    // the one fixed kernel parent by avoiding binary argument parsing.
+    let host_kernel = crate::host_kernel_parent::require_for_listener(listener.local_addr()?)?;
     listener.set_nonblocking(true)?;
     let startup_deadline = Instant::now() + Duration::from_millis(WORK_MS);
     let settings = {
@@ -1670,6 +1674,7 @@ fn serve_public_protected_v3_inner(
     let read_grants = intake.read_grants.clone();
     let mut next_pending_order = 0u64;
     let mut last_cleanup = Instant::now();
+    let mut last_kernel_check = Instant::now();
     thread::scope(|scope| -> Result<()> {
         let mut workers = Vec::new();
         for index in 0..3 {
@@ -1845,6 +1850,12 @@ fn serve_public_protected_v3_inner(
         }
         let outcome = (|| -> Result<()> {
             while !stop.load(Ordering::Acquire) && Instant::now() < end {
+                if let Some(budget) = host_kernel.as_ref() {
+                    if last_kernel_check.elapsed() >= Duration::from_millis(50) {
+                        budget.verify()?;
+                        last_kernel_check = Instant::now();
+                    }
+                }
                 if last_cleanup.elapsed() >= Duration::from_millis(20) {
                     spent.cleanup(server.tick()?);
                     metrics.lock().map_err(|_| "PUBLIC_METRICS")?.cleanup_scans += 1;
@@ -2396,6 +2407,12 @@ fn serve_public_protected_v3_inner(
         }
         outcome
     })?;
+    // A late OS-parent change cannot turn completed native work into a success
+    // claim. All scoped workers have already joined; the ledger result remains
+    // factual on any late kernel-envelope failure.
+    if let Some(budget) = host_kernel.as_ref() {
+        budget.verify()?;
+    }
     let final_metrics = metrics.lock().map_err(|_| "PUBLIC_METRICS")?.clone();
     Ok(final_metrics)
 }

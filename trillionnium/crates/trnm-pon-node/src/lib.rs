@@ -3,6 +3,8 @@
 mod ancestry_index;
 pub mod consensus;
 mod error;
+/// One fixed Linux cgroup-v2 parent checker, shared by CLI and public V3 library.
+pub mod host_kernel_parent;
 pub mod ingress;
 pub mod mining;
 pub mod operator_checkpoint_tile;
