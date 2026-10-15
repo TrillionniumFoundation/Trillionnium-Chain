@@ -1,3 +1,7 @@
 # Scientific/conformance environment only; not a runtime dependency or dynamic install hook.
-numpy==1.26.4
-cryptography==41.0.7
+# Hashes are the PyPI release wheels used by the ubuntu-24.04 CPython 3.12 runner.
+numpy==1.26.4 \
+    --hash=sha256:675d61ffbfa78604709862923189bad94014bef562cc35cf61d3a07bba02a7ed
+cryptography==41.0.7 \
+    --hash=sha256:43f2552a2378b44869fe8827aa19e69512e3245a219104438692385b0ee119d1 \
+    --hash=sha256:841df4caa01008bad253bce2a6f7b47f86dc9f08df4b433c404def869f590a15
