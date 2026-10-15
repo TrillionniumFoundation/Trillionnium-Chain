@@ -78,6 +78,10 @@ def check(root=ROOT):
     graph_acyclic(normal_graph)
     locks=tomllib.loads((root/'trillionnium/Cargo.lock').read_text())
     for package in locks['package']:require(not FORBIDDEN_NAME.search(package['name']),'retired lock package')
+    # Keep the lockfile and CI action inputs fail-closed even when the
+    # dedicated supply-chain job is not selected locally.
+    from check_supply_chain import check as supply_chain_check
+    supply_chain_check(root)
     truth=load(root/'config/consensus-mainline.json')
     require(set(CLAIMS) <= set(truth), 'missing explicit runtime/readiness claim')
     no_promotion(truth)
@@ -117,8 +121,8 @@ def check(root=ROOT):
     require('self-hosted' not in text and 'contents: write' not in text,'privileged PR execution')
     require('persist-credentials: false' in text,'checkout credentials retained')
     require(not re.search(r'(?ms)^    env:\n(?:(?:^      [^\n]*\n)|(?:^\s*\n))*?^      [^\n]*\$\{\{\s*runner\.', text), 'runner context is unavailable in job-level env')
-    require(text.count('name: Set isolated Cargo paths after runner allocation') == 5, 'missing per-job runner-stage Cargo isolation')
-    require(text.count('\"$RUNNER_TEMP\" \"$GITHUB_JOB\" >> \"$GITHUB_ENV\"') == 10, 'Cargo paths must use allocated runner and job identity')
+    require(text.count('name: Set isolated Cargo paths after runner allocation') == 6, 'missing per-job runner-stage Cargo isolation')
+    require(text.count('\"$RUNNER_TEMP\" \"$GITHUB_JOB\" >> \"$GITHUB_ENV\"') == 12, 'Cargo paths must use allocated runner and job identity')
     require('RUST_TEST_THREADS: "1"' in text,'fault-test harness isolation missing')
     for row in specs:
         prose=contained(root,row['technical_spec']).read_text()
