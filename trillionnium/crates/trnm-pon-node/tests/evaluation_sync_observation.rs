@@ -158,6 +158,22 @@ impl Server {
         let identity = DevelopmentIdentity::from_secret_hex(&hex::encode([91; 32])).unwrap();
         let public = identity.public_key().to_owned();
         let policy = public_v3::PublicPolicy::new(8, Duration::from_secs(2)).unwrap();
+        // Subsequent listeners belong to the SAME Node owner: reuse its already
+        // bound CPU epoch, never mint a fresh public mutation budget per query.
+        // The first service alone binds the new domain on its original start.
+        let native_server = match node.lock().unwrap().public_service_cpu_domain() {
+            Ok(bound) => {
+                let server =
+                    public_v3::PublicServer::with_continuous_domain(identity, policy, &bound)
+                        .unwrap();
+                assert!(server.mutation_cpu_domain().shares_domain_with(&bound));
+                server
+            }
+            Err(error) if error.to_string() == "OWNER_PUBLIC_SERVICE_DOMAIN_UNBOUND" => {
+                public_v3::PublicServer::new(identity, policy).unwrap()
+            }
+            Err(error) => panic!("unexpected existing CPU owner state: {error}"),
+        };
         let stop = Arc::new(AtomicBool::new(false));
         let signal = stop.clone();
         let worker = thread::spawn(move || {
@@ -166,7 +182,7 @@ impl Server {
                 node,
                 Duration::from_secs(120),
                 signal,
-                public_v3::PublicServer::new(identity, policy).unwrap(),
+                native_server,
             )
         });
         Self {
