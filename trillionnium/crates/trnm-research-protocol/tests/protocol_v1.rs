@@ -217,6 +217,27 @@ fn every_signed_envelope_strictly_round_trips() {
 }
 
 #[test]
+fn signed_decoder_rejects_oversized_signature_before_copying() {
+    let signed = sign(0, fixture_commands()[0].clone()).unwrap();
+    let mut encoded = signed.canonical_bytes();
+    // The final field is the 64-byte Ed25519 signature encoded as a
+    // one-byte-length CBOR byte string (0x58, 0x40).
+    let header = encoded.len() - 64 - 2;
+    assert_eq!(&encoded[header..header + 2], &[0x58, 0x40]);
+    encoded[header + 1] = 128;
+    encoded.extend_from_slice(&[0_u8; 64]);
+    assert!(matches!(
+        SignedResearchCommandV1::from_canonical_bytes(&encoded),
+        Err(SignedResearchCommandValidationError::CanonicalDecode(
+            CanonicalDecodeError::ByteLengthMismatch {
+                expected: 64,
+                got: 128
+            }
+        ))
+    ));
+}
+
+#[test]
 fn strict_decoder_rejects_noncanonical_unknown_and_trailing_forms() {
     let encoded = fixture_commands()[0].canonical_bytes();
 
