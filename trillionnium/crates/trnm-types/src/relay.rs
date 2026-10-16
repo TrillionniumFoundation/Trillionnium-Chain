@@ -320,6 +320,16 @@ impl RelayAuthVerifier {
         env: &RelayAuthEnvelope,
         verify_signature: impl Fn(&RelayAuthEnvelope) -> bool,
     ) -> Result<(), RelayAuthError> {
+        // Bound attacker-controlled strings before constructing error values or
+        // invoking any caller-provided verification callback. Serde callers may
+        // otherwise supply multi-megabyte version/type fields that are cloned
+        // into diagnostics before the generic field checks below.
+        for (field, value) in [("version", env.version.as_str()), ("msg_type", env.msg_type.as_str())] {
+            if value.len() > MAX_RELAY_AUTH_FIELD_BYTES {
+                return Err(RelayAuthError::MissingRequiredField { field });
+            }
+        }
+
         let is_current = env.version == RelayAuthEnvelope::SPEC_VERSION;
         // Never admit v0 here. Its signing domain predates chain binding and
         // cannot distinguish an envelope for this chain from a replay on a
