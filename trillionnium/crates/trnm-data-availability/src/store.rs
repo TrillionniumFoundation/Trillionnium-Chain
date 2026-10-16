@@ -419,6 +419,9 @@ impl DataAvailabilityStoreV1 {
         reject_sidecars(&config.path)?;
         let existed = config.path.exists();
         if existed {
+            // The normal open path must enforce the same direct-regular-file
+            // boundary as open_existing before SQLite follows the path.
+            require_existing_regular_store(&config.path)?;
             let read_only = Connection::open_with_flags(
                 &config.path,
                 OpenFlags::SQLITE_OPEN_READ_ONLY | OpenFlags::SQLITE_OPEN_NO_MUTEX,
