@@ -227,6 +227,10 @@ impl TaskKernelStoreV1 {
         validate_trust_bundle(&config.trust_bundle)?;
         reject_sidecars(&config.path)?;
         if config.path.exists() {
+            // The normal open path must enforce the same direct-regular-file
+            // boundary as open_existing; otherwise SQLite follows a symlink
+            // and writable opens can mutate an unrelated database.
+            require_existing_regular_store(&config.path)?;
             let read_only = open_ro_raw(&config.path)?;
             verify_schema(&read_only)?;
             verify_metadata(&read_only, &config)?;
