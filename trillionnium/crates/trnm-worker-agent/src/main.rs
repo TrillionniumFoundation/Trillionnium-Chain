@@ -217,7 +217,10 @@ pub(crate) fn commitment(
 
 pub(crate) fn next_task_id(state: &PathBuf) -> Result<u64> {
     let mut s = if state.exists() {
-        serde_json::from_str::<WorkerState>(&fs::read_to_string(state)?)?
+        // State is operator-controlled input.  Bound the read before JSON
+        // parsing so a replaced/sparse state file cannot consume unbounded
+        // memory while the worker starts a new task.
+        serde_json::from_str::<WorkerState>(&read_bounded_worker_log(state)?)?
     } else {
         WorkerState { last_task_id: 1000 }
     };
