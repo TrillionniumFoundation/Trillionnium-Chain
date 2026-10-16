@@ -173,6 +173,10 @@ impl ConsumptionSettlementStoreV1 {
         validate_trust_bundle(&config.trust_bundle)?;
         reject_sidecars(&config.path)?;
         if config.path.exists() {
+            // The normal open path must enforce the same direct-regular-file
+            // boundary as open_existing; otherwise SQLite follows a symlink
+            // and later writable opens can mutate an unrelated database.
+            require_existing_regular_store(&config.path)?;
             let connection = open_ro(&config.path)?;
             verify_schema(&connection)?;
             audit(&connection, &config)?;
