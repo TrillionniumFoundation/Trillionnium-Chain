@@ -62,9 +62,12 @@ pub(crate) fn process_submission_record(
             "[dry-run] adapter={} commit {} {} {}",
             adapter_cmd, rec.task_id, rec.worker, rec.commit_hash
         );
+        // This is only a preview. Even a previously committed salt remains
+        // private until the actual reveal operation. Captured CLI/job output
+        // must never become an alternative copy of the owner-only journal.
         println!(
-            "[dry-run] adapter={} reveal {} {} {}",
-            adapter_cmd, rec.task_id, rec.result_hash, rec.salt_hex
+            "[dry-run] adapter={} reveal {} {} [unrevealed-salt-redacted]",
+            adapter_cmd, rec.task_id, rec.result_hash
         );
         return Ok(FlushRecordOutcome::Processed);
     }
