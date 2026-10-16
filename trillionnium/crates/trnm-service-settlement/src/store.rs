@@ -400,6 +400,17 @@ impl ConsumptionSettlementStoreV1 {
             ));
         }
         validate_preview_sqlite_bounds(candidate_height, before.sequence, commands.len())?;
+        let recorded_block_id: bool = connection.query_row(
+            "SELECT EXISTS(SELECT 1 FROM committed_blocks WHERE order_block_id=?1)",
+            params![candidate_block_id.0.to_vec()],
+            |row| row.get(0),
+        )?;
+        if recorded_block_id {
+            return Err(error(
+                ConsumptionSettlementErrorCodeV1::InvalidContext,
+                "pre-commit candidate block ID is already recorded",
+            ));
+        }
         let mut state = load_metadata(&connection, &self.config)?.3;
         let mut operation_ids = BTreeSet::new();
         let mut receipts = Vec::with_capacity(commands.len());
@@ -1709,6 +1720,96 @@ fn array32(value: Vec<u8>, label: &str) -> ConsumptionSettlementResultV1<[u8; 32
 #[cfg(test)]
 mod snapshot_tests {
     use super::*;
+
+    #[test]
+    fn preview_rejects_historical_block_id_reuse_without_mutation() {
+        for (with_command, nonempty_history) in [(false, false), (true, false), (false, true)] {
+            let harness = crate::tests::Harness::new();
+            let config = harness.config();
+            let store = ConsumptionSettlementStoreV1::open(config.clone()).unwrap();
+            let anchor = store.fresh_readback().unwrap();
+            let first = harness.execution(anchor.order_height(), anchor.order_block_id(), 10);
+            let first_head = if nonempty_history {
+                store
+                    .execute_committed_execution(
+                        &first,
+                        &ConsumptionSettlementCommandV1::AdmitReceipt {
+                            receipt: harness.receipt(None, 10, 100),
+                        },
+                    )
+                    .unwrap();
+                store.fresh_readback().unwrap()
+            } else {
+                store.advance_empty_committed_execution_v1(&first).unwrap()
+            };
+            let second =
+                harness.execution(first_head.order_height(), first_head.order_block_id(), 11);
+            let before = store.advance_empty_committed_execution_v1(&second).unwrap();
+            let state = store.state().unwrap();
+            let bytes = fs::read(&config.path).unwrap();
+            let commands = if with_command {
+                vec![ConsumptionSettlementCommandV1::AdmitReceipt {
+                    receipt: harness.receipt(None, 12, 100),
+                }]
+            } else {
+                Vec::new()
+            };
+            for reused_id in [anchor.order_block_id(), first_head.order_block_id()] {
+                let preview = store.preview_before_vote_v1(&before, 12, reused_id, &commands);
+                let mut execution = harness.execution(11, before.order_block_id(), 12);
+                execution.order_block_id = reused_id;
+                if with_command {
+                    assert!(store
+                        .execute_committed_execution(&execution, &commands[0])
+                        .is_err());
+                } else {
+                    assert!(store
+                        .advance_empty_committed_execution_v1(&execution)
+                        .is_err());
+                }
+                assert_eq!(store.fresh_readback().unwrap(), before);
+                assert_eq!(store.state().unwrap(), state);
+                assert_eq!(fs::read(&config.path).unwrap(), bytes);
+                let reopened = ConsumptionSettlementStoreV1::open_existing(config.clone()).unwrap();
+                assert_eq!(reopened.fresh_readback().unwrap(), before);
+                assert_eq!(reopened.state().unwrap(), state);
+                assert_eq!(
+                    preview
+                        .expect_err("preview cannot propose an already recorded block ID")
+                        .code(),
+                    ConsumptionSettlementErrorCodeV1::InvalidContext
+                );
+                assert_eq!(
+                    reopened
+                        .preview_before_vote_v1(&before, 12, reused_id, &commands)
+                        .unwrap_err()
+                        .code(),
+                    ConsumptionSettlementErrorCodeV1::InvalidContext
+                );
+                assert_eq!(fs::read(&config.path).unwrap(), bytes);
+            }
+            let valid = harness.execution(11, before.order_block_id(), 12);
+            let preview = store
+                .preview_before_vote_v1(&before, 12, valid.order_block_id, &commands)
+                .unwrap();
+            if with_command {
+                let committed = store
+                    .execute_committed_execution(&valid, &commands[0])
+                    .unwrap();
+                assert_eq!(
+                    committed.receipt().post_state_root,
+                    preview.candidate_post_state_root()
+                );
+            } else {
+                let committed = store.advance_empty_committed_execution_v1(&valid).unwrap();
+                assert_eq!(
+                    committed.durable_state_root(),
+                    preview.candidate_post_state_root()
+                );
+            }
+            ConsumptionSettlementStoreV1::open_existing(config).unwrap();
+        }
+    }
 
     #[test]
     fn invalid_fresh_height_preserves_missing_path_and_corrected_retry() {

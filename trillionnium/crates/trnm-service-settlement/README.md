@@ -95,3 +95,9 @@ target alone does not acknowledge a changed parent, a nonempty block, or the
 self-parent genesis anchor. These conflicting retries return `Conflict` without
 changing durable bytes. Exact empty retries remain supported, including after
 cold reopen; stored schemas and signed domains are unchanged.
+
+Read-only previews reject candidate block IDs already recorded anywhere in the
+committed-block journal, including the genesis anchor. The check shares the
+audited source snapshot and applies to empty and nonempty candidates, matching
+the durable backend's existing uniqueness constraint. Historical audit, exact
+operation retries, stored schemas and signed domains are unchanged.
