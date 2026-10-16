@@ -69,3 +69,9 @@ overflow-checks = true
 opt-level = 3
 debug-assertions = true
 overflow-checks = true
+
+# LOCAL DEBUG EXPERIMENT ONLY: do not merge this artifact without independent full CI.
+[profile.test.package.trnm-pon-node]
+opt-level = 3
+debug-assertions = true
+overflow-checks = true

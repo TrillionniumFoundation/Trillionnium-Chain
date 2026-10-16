@@ -1,9 +1,10 @@
 # Test compilation and measurement boundary
 
 The workspace [Cargo manifest](../../../../trillionnium/Cargo.toml) selects
-test-only package optimization for `trnm-protocol` (level3) and `trnm-mvcc-fee`
-(level1). Both explicitly retain `debug-assertions = true` and
-`overflow-checks = true`. Existing SHA2 test settings remain unchanged.
+test-only package optimization for `trnm-protocol`, `trnm-crypto-primitives`
+and `trnm-pon-node` (level3), and `trnm-mvcc-fee` (level1). Each explicitly
+retains `debug-assertions = true` and `overflow-checks = true`. Existing SHA2
+test settings remain unchanged.
 [Cargo's profile specification](https://doc.rust-lang.org/cargo/reference/profiles.html)
 defines these separate compiler settings and package overrides.
 
@@ -37,3 +38,24 @@ fastest-miner lower bound, attack availability, neural contribution, independent
 operator acceptance or public-network readiness. Those remain separate
 [performance acceptance](PERFORMANCE_ACCEPTANCE.md) and
 [work qualification](WORK_PROFILE.md) requirements.
+
+## Security and finite-service candidate convergence
+
+The Node test-profile setting is combined with the current Worker private-salt
+stdout/dry-run and owned-child reaping repairs. This is the exact Cargo profile
+previously proposed by PR318, not a change to the public V3 resource policy.
+The original CPU burst/refill, deadlines, work targets and both mixed-service
+assertions are unchanged. Baseline and optimized executions must keep separate
+source, binary, build-profile and output identities. A failed unoptimized run
+remains a failure; a passing combined build does not erase it.
+
+Run both original `public_v3_service_campaign` tests, the original Node library
+and Worker unit/real-CLI regressions on the combined source. Save the existing
+`TRNM_PUBLIC_V3_CAMPAIGN_DIR` and `TRNM_CI_RECEIPT_DIR` outputs outside the
+checkout before any pass/fail summary. Retain repeated-run failures and the
+complete attempt denominator. No original test is waived or resized.
+
+These are controlled local tests, not a public permissionless service guarantee.
+The final paired Hepta source and actual merge must be verified separately;
+previous-commit CI cannot qualify the new tuple. Existing queued/running
+candidate jobs must not be cancelled to publish this combined candidate.
