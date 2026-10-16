@@ -266,7 +266,6 @@ impl std::error::Error for RelayAuthError {}
 #[derive(Debug, Clone)]
 pub struct RelayAuthVerifier {
     max_skew_ms: u128,
-    allow_legacy_v0: bool,
     last_seq: HashMap<(String, String, String, String), u64>,
     seen_nonce: HashSet<(String, String, String, String, String)>,
 }
@@ -275,19 +274,19 @@ impl RelayAuthVerifier {
     pub fn new(max_skew_ms: u128) -> Self {
         Self {
             max_skew_ms,
-            allow_legacy_v0: true,
             last_seq: HashMap::new(),
             seen_nonce: HashSet::new(),
         }
     }
 
+    /// Construct a verifier with the same fail-closed policy as [`Self::new`].
+    ///
+    /// The v0 envelope signing domain does not include `chain_id`, so accepting
+    /// it would allow a valid signature from one chain to be replayed on every
+    /// other chain.  Keep this constructor as an explicit compatibility alias
+    /// for callers that previously selected strict mode.
     pub fn strict(max_skew_ms: u128) -> Self {
-        Self {
-            max_skew_ms,
-            allow_legacy_v0: false,
-            last_seq: HashMap::new(),
-            seen_nonce: HashSet::new(),
-        }
+        Self::new(max_skew_ms)
     }
 
     fn verify_envelope_fields(
@@ -296,18 +295,13 @@ impl RelayAuthVerifier {
         verify_signature: impl Fn(&RelayAuthEnvelope) -> bool,
     ) -> Result<(), RelayAuthError> {
         let is_current = env.version == RelayAuthEnvelope::SPEC_VERSION;
-        let is_legacy = env.version == RelayAuthEnvelope::LEGACY_SPEC_VERSION;
-        if !(is_current || (self.allow_legacy_v0 && is_legacy)) {
+        // Never admit v0 here. Its signing domain predates chain binding and
+        // cannot distinguish an envelope for this chain from a replay on a
+        // different chain. The verifier must reject it before invoking a
+        // caller-provided signature callback.
+        if !is_current {
             return Err(RelayAuthError::BadVersion {
-                expected: if self.allow_legacy_v0 {
-                    format!(
-                        "{}|{}",
-                        RelayAuthEnvelope::SPEC_VERSION,
-                        RelayAuthEnvelope::LEGACY_SPEC_VERSION
-                    )
-                } else {
-                    RelayAuthEnvelope::SPEC_VERSION.to_string()
-                },
+                expected: RelayAuthEnvelope::SPEC_VERSION.to_string(),
                 got: env.version.clone(),
             });
         }
@@ -319,10 +313,10 @@ impl RelayAuthVerifier {
         }
 
         if env.requires_routing_fields() {
-            if env.chain_id.trim().is_empty() && is_current {
+            if env.chain_id.trim().is_empty() {
                 return Err(RelayAuthError::MissingRequiredField { field: "chain_id" });
             }
-            if is_current && env.chain_id.trim() != env.chain_id {
+            if env.chain_id.trim() != env.chain_id {
                 return Err(RelayAuthError::MissingRequiredField { field: "chain_id" });
             }
             if env.session_id.trim().is_empty() {
@@ -355,7 +349,7 @@ impl RelayAuthVerifier {
                 return Err(RelayAuthError::MissingRequiredField { field });
             }
         }
-        if is_current && env.chain_id.contains('|') {
+        if env.chain_id.contains('|') {
             return Err(RelayAuthError::MissingRequiredField { field: "chain_id" });
         }
 
@@ -760,7 +754,7 @@ mod tests {
     }
 
     #[test]
-    fn relay_auth_legacy_v0_compat_allowed_by_default() {
+    fn relay_auth_legacy_v0_rejected_by_default_to_prevent_cross_chain_replay() {
         let key = "sender-key";
         let mut verifier = RelayAuthVerifier::new(120_000);
         let mut env = sample_env(1, "nonce-legacy-1", 1_730_000_000_000, key);
@@ -768,8 +762,10 @@ mod tests {
         env.chain_id.clear();
         env.sig = env.sign_for_test_legacy_v0(key);
 
-        let ok = verifier.verify(&env, 1_730_000_000_050, |e| e.verify_test_sig_compat(key));
-        assert!(ok.is_ok());
+        let err = verifier
+            .verify(&env, 1_730_000_000_050, |e| e.verify_test_sig_compat(key))
+            .unwrap_err();
+        assert_eq!(err.stable_code(), "BadVersion");
     }
 
     #[test]
