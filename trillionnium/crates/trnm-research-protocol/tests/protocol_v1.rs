@@ -238,6 +238,34 @@ fn signed_decoder_rejects_oversized_signature_before_copying() {
 }
 
 #[test]
+fn signed_decoder_rejects_oversized_text_before_copying() {
+    let signed = sign(0, fixture_commands()[0].clone()).unwrap();
+    let mut encoded = signed.canonical_bytes();
+    // The chain ID is the canonical one-byte-length text field immediately
+    // following the encoding marker. Replace it with a 256-byte text header;
+    // the bounded decoder must reject before allocating/copying the text.
+    let marker = [
+        0x6e, b't', b'r', b'n', b'm', b'-', b'd', b'e', b'v', b'n', b'e', b't', b'-', b'v', b'1',
+    ];
+    let start = encoded
+        .windows(marker.len())
+        .position(|window| window == marker)
+        .expect("chain ID marker");
+    let mut replacement = vec![0x79, 0x01, 0x00];
+    replacement.extend(vec![0_u8; 256]);
+    encoded.splice(start..start + marker.len(), replacement);
+    assert!(matches!(
+        SignedResearchCommandV1::from_canonical_bytes(&encoded),
+        Err(SignedResearchCommandValidationError::CanonicalDecode(
+            CanonicalDecodeError::ByteLengthMismatch {
+                expected: 64,
+                got: 256
+            }
+        ))
+    ));
+}
+
+#[test]
 fn strict_decoder_rejects_noncanonical_unknown_and_trailing_forms() {
     let encoded = fixture_commands()[0].canonical_bytes();
 
