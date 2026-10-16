@@ -1350,7 +1350,7 @@ fn checkpoint_path_identity_from_file_v2(
 fn read_anchor_v2(
     path: &Path,
 ) -> Result<(Vec<u8>, CheckpointPathIdentityV2), ExternalCheckpointAuthorityErrorV2> {
-    let file = OpenOptions::new()
+    let mut file = OpenOptions::new()
         .read(true)
         .custom_flags(libc::O_CLOEXEC | libc::O_NOFOLLOW)
         .open(path)
@@ -1366,14 +1366,43 @@ fn read_anchor_v2(
     })?;
     let identity = checkpoint_path_identity_from_file_v2(&file)?;
     verify_checkpoint_path_identity_v2(path, identity, false)?;
-    let mut bytes = Vec::new();
-    let mut reader = file;
-    reader
-        .read_to_end(&mut bytes)
+    // The anchor has a fixed wire size.  Reject an oversized or truncated
+    // endpoint before reading it so a same-UID writer cannot turn startup
+    // reconciliation into an unbounded allocation.  The post-read metadata
+    // check closes the simple growth race while the descriptor/path identity
+    // check below detects pathname replacement.
+    if file
+        .metadata()
+        .map_err(|source| ExternalCheckpointAuthorityErrorV2::Io {
+            stage: "stat checkpoint head",
+            source,
+        })?
+        .len()
+        != ANCHOR_BYTES_V2 as u64
+    {
+        return Err(ExternalCheckpointAuthorityErrorV2::InvalidLog(
+            "checkpoint head",
+        ));
+    }
+    let mut bytes = vec![0_u8; ANCHOR_BYTES_V2];
+    file.read_exact(&mut bytes)
         .map_err(|source| ExternalCheckpointAuthorityErrorV2::Io {
             stage: "read checkpoint head",
             source,
         })?;
+    if file
+        .metadata()
+        .map_err(|source| ExternalCheckpointAuthorityErrorV2::Io {
+            stage: "restat checkpoint head",
+            source,
+        })?
+        .len()
+        != ANCHOR_BYTES_V2 as u64
+    {
+        return Err(ExternalCheckpointAuthorityErrorV2::InvalidLog(
+            "checkpoint head",
+        ));
+    }
     verify_checkpoint_path_identity_v2(path, identity, false)?;
     Ok((bytes, identity))
 }
@@ -1712,6 +1741,27 @@ mod tests {
         assert!(matches!(
             authority.load_checked([1; 32]),
             Err(ExternalCheckpointAuthorityErrorV2::InvalidLog(_))
+        ));
+    }
+
+    #[test]
+    fn oversized_anchor_is_rejected_before_decode_allocation() {
+        let directory = private_tempdir();
+        let log = directory.path().join("checkpoint.log");
+        let anchor = directory.path().join(".checkpoint.log.head-v2");
+        let first = checkpoint(0, [0; 32]);
+        let mut authority = ExternalCheckpointAuthorityV2::open(&log).unwrap();
+        authority.compare_and_advance_checked(None, first).unwrap();
+        drop(authority);
+        let mut bytes = fs::read(&anchor).unwrap();
+        bytes.extend_from_slice(&[0_u8; 1]);
+        fs::write(&anchor, bytes).unwrap();
+        fs::set_permissions(&anchor, fs::Permissions::from_mode(0o600)).unwrap();
+        assert!(matches!(
+            read_anchor_v2(&anchor),
+            Err(ExternalCheckpointAuthorityErrorV2::InvalidLog(
+                "checkpoint head"
+            ))
         ));
     }
 
