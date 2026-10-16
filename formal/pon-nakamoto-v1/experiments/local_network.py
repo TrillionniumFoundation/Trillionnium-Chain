@@ -10,23 +10,27 @@ sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
 from ledger import *
 MAX_FRAME=PARAMS['max_p2p_frame_bytes']
 
-def exact(sock,n):
+def exact(sock,n,deadline=None):
     out=bytearray()
     while len(out)<n:
+        if deadline is not None:
+            remaining=deadline-time.monotonic()
+            if remaining<=0:raise ValueError('FRAME_TIMEOUT')
+            sock.settimeout(remaining)
         b=sock.recv(n-len(out))
         if not b:raise ValueError('SHORT_FRAME')
         out.extend(b)
     return bytes(out)
-def recv(sock):
-    n=struct.unpack('>I',exact(sock,4))[0]
+def recv(sock,deadline=None):
+    n=struct.unpack('>I',exact(sock,4,deadline))[0]
     if not 0<n<=MAX_FRAME:raise ValueError('FRAME_LIMIT')
-    return json.loads(exact(sock,n),object_pairs_hook=unique)
+    return json.loads(exact(sock,n,deadline),object_pairs_hook=unique)
 def send(sock,obj):
     data=json.dumps(obj,separators=(',',':')).encode();require(len(data)<=MAX_FRAME,'FRAME_LIMIT');sock.sendall(struct.pack('>I',len(data))+data)
 def request(port,obj):
     start=time.perf_counter()
     with socket.create_connection(('127.0.0.1',port),timeout=10)as sock:
-        sock.settimeout(10);send(sock,obj);result=recv(sock)
+        deadline=time.monotonic()+10; sock.settimeout(10);send(sock,obj);result=recv(sock,deadline)
     return result,time.perf_counter()-start
 
 def serve(directory):
@@ -39,9 +43,12 @@ def serve(directory):
             while running:
                 conn,_=server.accept()
                 with conn:
+                    deadline=time.monotonic()+10
                     conn.settimeout(10)
                     try:
-                        obj=recv(conn);op=obj.get('op')
+                        obj=recv(conn,deadline)
+                        if not isinstance(obj,dict):raise ValueError('OBJECT_REQUIRED')
+                        op=obj.get('op')
                         if op=='submit':
                             require(set(obj)=={'op','header','transactions','proof'},'FIELDS')
                             hb=bytes.fromhex(obj['header']);txs=[bytes.fromhex(x)for x in obj['transactions']];proof=base64.b64decode(obj['proof'],validate=True)
@@ -52,7 +59,10 @@ def serve(directory):
                         elif op=='stop':result={'ok':True};running=False
                         else:raise ValueError('OPERATION')
                     except (ValueError,KeyError,TypeError,OverflowError)as e:result={'ok':False,'error':str(e)}
-                    send(conn,result)
+                    try:
+                        send(conn,result)
+                    except OSError:
+                        pass
         finally:ledger.close()
 
 def percentiles(xs):
