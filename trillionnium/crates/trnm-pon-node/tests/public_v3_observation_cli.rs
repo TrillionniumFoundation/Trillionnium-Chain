@@ -353,6 +353,13 @@ fn actual_opt_in_capture_and_default_output_keep_the_same_public_context() {
             "result"
         ]
     );
+    // The loopback development CLI has no configured host kernel parent.
+    // Reporting new optional fields must not manufacture a qualification.
+    assert_eq!(final_value["host_kernel_cpu_delta"], Value::Null);
+    assert_eq!(final_value["host_kernel_resources_after"], Value::Null);
+    assert_eq!(final_value["host_kernel_qualification"], false);
+    assert_eq!(final_value["public_network_ready"], false);
+    assert_eq!(final_value["production_activation"], false);
 }
 
 #[test]
