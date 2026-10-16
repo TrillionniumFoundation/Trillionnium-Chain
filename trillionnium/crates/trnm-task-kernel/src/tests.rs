@@ -879,6 +879,30 @@ fn execution_preview_reuses_authority_and_leaves_every_logical_row_unchanged() {
 }
 
 #[test]
+fn execution_preview_rejects_oversized_command_batches_before_allocation() {
+    let fixture = Fixture::new();
+    let store = fixture.store(0);
+    let (requester_cap, requester_session, _, _) = fixture.setup_agents(&store);
+    let mut task = fixture.task_operation(1, 0);
+    task.task_offer_body.requester_capability_id = Some(requester_cap.capability_id().unwrap());
+    let command = fixture.session_command(
+        false,
+        1,
+        0,
+        0,
+        &requester_cap,
+        &requester_session,
+        SessionBody::Task(task, task_charge()),
+    );
+    let commands = vec![command; 1_025];
+    let before = store.fresh_readback().expect("fresh parent");
+    let error = store
+        .preview_before_vote_v1(&before, 101, hash(91), &commands)
+        .expect_err("oversized pre-commit command batch");
+    assert_eq!(error.code(), AgentMarketErrorCodeV1::InvalidBounds);
+}
+
+#[test]
 fn authorization_signature_context_nonce_scope_and_budget_fail_closed() {
     let fixture = Fixture::new();
     let store = fixture.store(0);
