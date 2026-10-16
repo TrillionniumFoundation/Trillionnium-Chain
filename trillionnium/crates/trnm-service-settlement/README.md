@@ -82,3 +82,9 @@ A test-only persisted legacy journal covers challenge-close heights `i64::MAX`,
 preserve the original receipt, state, head and database bytes. The same inputs
 are rejected as new rollups. Historical readability does not make those rollups
 settleable or repair their maturity bounds.
+
+Fresh store creation checks that the initial Order height fits SQLite's signed
+integer range before creating a directory or database. An out-of-range height
+leaves a missing path untouched, allowing a corrected configuration to retry.
+The maximum representable height remains supported. Existing-store audit,
+stored schemas and signed domains are unchanged; no caller files are removed.

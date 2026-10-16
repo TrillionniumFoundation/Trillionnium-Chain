@@ -1796,3 +1796,269 @@ fn first_command_at_genesis_anchor_remains_recoverable() {
         .fresh_readback()
         .expect("genesis command reopens");
 }
+
+// Exercise the public preview and commit paths against the same authenticated
+// parent. A refusal must leave both logical state and the actual database intact.
+fn assert_admission_rejected_without_mutation(
+    harness: &Harness,
+    store: &ConsumptionSettlementStoreV1,
+    command: &ConsumptionSettlementCommandV1,
+    expected: ConsumptionSettlementErrorCodeV1,
+    label: &str,
+) {
+    let before = store.fresh_readback().expect("admission parent");
+    let state = store.state().expect("admission state");
+    let bytes = fs::read(&harness.path).expect("admission database");
+    let height = before.order_height() + 1;
+    let execution = harness.execution(before.order_height(), before.order_block_id(), height);
+    let preview_error = store
+        .preview_before_vote_v1(
+            &before,
+            height,
+            execution.order_block_id,
+            std::slice::from_ref(command),
+        )
+        .expect_err(label);
+    assert_eq!(preview_error.code(), expected, "preview: {label}");
+    let commit_error = store
+        .execute_committed_execution(&execution, command)
+        .expect_err(label);
+    assert_eq!(commit_error.code(), expected, "commit: {label}");
+    assert_eq!(store.fresh_readback().expect("unchanged parent"), before);
+    assert_eq!(store.state().expect("unchanged state"), state);
+    assert_eq!(fs::read(&harness.path).expect("unchanged bytes"), bytes);
+    let reopened = ConsumptionSettlementStoreV1::open_existing(harness.config())
+        .expect("reopen after rejected admission");
+    assert_eq!(reopened.fresh_readback().expect("cold parent"), before);
+    assert_eq!(reopened.state().expect("cold state"), state);
+    assert_eq!(fs::read(&harness.path).expect("cold bytes"), bytes);
+}
+
+#[test]
+fn bilateral_authority_fields_and_signature_domains_reject_atomically() {
+    for is_rollup in [false, true] {
+        let harness = Harness::new();
+        let store = harness.open();
+        let (valid, body_id, height) = if is_rollup {
+            let (_, state) = execute_receipt_chain(&harness, &store);
+            let rollup = harness.rollup(&state, 12);
+            let id = consumption_rollup_id_v1(&rollup.body).expect("rollup ID");
+            (
+                ConsumptionSettlementCommandV1::AdmitRollup {
+                    rollup,
+                    receipts: state
+                        .receipts
+                        .iter()
+                        .map(|row| row.receipt.clone())
+                        .collect(),
+                },
+                Hash32V1::from(id),
+                12,
+            )
+        } else {
+            let receipt = harness.receipt(None, 10, 100);
+            let id = consumption_receipt_id_v1(&receipt.body).expect("receipt ID");
+            (
+                ConsumptionSettlementCommandV1::AdmitReceipt { receipt },
+                Hash32V1::from(id),
+                10,
+            )
+        };
+        for provider in [false, true] {
+            for case in 0..14 {
+                let mut command = valid.clone();
+                let (provider_entry, consumer_entry) = match &mut command {
+                    ConsumptionSettlementCommandV1::AdmitReceipt { receipt } => (
+                        &mut receipt.provider_signature,
+                        &mut receipt.consumer_signature,
+                    ),
+                    ConsumptionSettlementCommandV1::AdmitRollup { rollup, .. } => (
+                        &mut rollup.provider_signature,
+                        &mut rollup.consumer_signature,
+                    ),
+                    ConsumptionSettlementCommandV1::Settle { .. } => unreachable!(),
+                };
+                let entry = if provider {
+                    provider_entry
+                } else {
+                    consumer_entry
+                };
+                let expected = if case < 8 {
+                    ConsumptionSettlementErrorCodeV1::Unauthorized
+                } else {
+                    ConsumptionSettlementErrorCodeV1::InvalidSignature
+                };
+                match case {
+                    0 => entry.agent_id = agent(999),
+                    1 => entry.key_id = key_id(999),
+                    2 => entry.key_role ^= 1,
+                    3 => entry.policy_revision += 1,
+                    4 => entry.key_generation += 1,
+                    5 => entry.authority_height -= 1,
+                    6 => entry.authority_height += 1,
+                    7 => entry.signature_scheme += 1,
+                    8 => entry.signature.clear(),
+                    9 => {
+                        entry.signature.pop();
+                    }
+                    10 => entry.signature.push(0),
+                    11 => entry.signature[0] ^= 1,
+                    12 | 13 => {
+                        // A genuine signature by the correct key is insufficient
+                        // when its statement uses the other role or object domain.
+                        let object = if is_rollup ^ (case == 13) {
+                            "rollup"
+                        } else {
+                            "receipt"
+                        };
+                        let role = if provider ^ (case == 12) {
+                            "provider"
+                        } else {
+                            "consumer"
+                        };
+                        let domain =
+                            format!("trnm.portable.v2.consumption-{object}-{role}-signature.v1");
+                        let (registered, key) = if provider {
+                            (&harness.trust.provider, &harness.provider_key)
+                        } else {
+                            (&harness.trust.consumer, &harness.consumer_key)
+                        };
+                        *entry = harness.sign_entry(registered, key, body_id, height, &domain);
+                    }
+                    _ => unreachable!(),
+                }
+                assert_admission_rejected_without_mutation(
+                    &harness,
+                    &store,
+                    &command,
+                    expected,
+                    &format!("rollup={is_rollup}, provider={provider}, case={case}"),
+                );
+            }
+        }
+        let before = store.fresh_readback().expect("parent after all refusals");
+        let execution = harness.execution(before.order_height(), before.order_block_id(), height);
+        let preview = store
+            .preview_before_vote_v1(
+                &before,
+                height,
+                execution.order_block_id,
+                std::slice::from_ref(&valid),
+            )
+            .expect("valid preview after signature refusals");
+        let committed = store
+            .execute_committed_execution(&execution, &valid)
+            .expect("valid admission after signature refusals");
+        assert!(!committed.replay);
+        assert_eq!(
+            store
+                .fresh_readback()
+                .expect("admitted state")
+                .durable_state_root(),
+            preview.candidate_post_state_root()
+        );
+        assert!(
+            store
+                .execute_committed_execution(&execution, &valid)
+                .expect("exact valid retry")
+                .replay
+        );
+        let reopened = ConsumptionSettlementStoreV1::open_existing(harness.config())
+            .expect("reopen valid admission");
+        assert_eq!(
+            reopened.fresh_readback().expect("cold valid parent"),
+            store.fresh_readback().expect("valid parent")
+        );
+    }
+}
+
+#[test]
+fn genuinely_signed_foreign_context_and_identity_bodies_reject_atomically() {
+    // Re-sign each altered body so these cases reach the trust-context check,
+    // rather than merely demonstrating that changing signed bytes is rejected.
+    macro_rules! alter_binding {
+        ($body:expr, $case:expr) => {
+            match $case {
+                0 => $body.schema_version += 1,
+                1 => $body.context.genesis_hash = h(999),
+                2 => $body.context.chain_id.push_str("-other"),
+                3 => $body.context.protocol_version += 1,
+                4 => $body.context.stack_profile_hash = h(999),
+                5 => $body.provider_id = agent(999),
+                6 => $body.consumer_id = agent(999),
+                7 => $body.task_id = task(999),
+                8 => $body.lease_id = lease(999),
+                9 => $body.attempt += 1,
+                10 => $body.result_id = result(999),
+                11 => $body.related_party_policy_hash = h(999),
+                _ => unreachable!(),
+            }
+        };
+    }
+    for is_rollup in [false, true] {
+        let harness = Harness::new();
+        let store = harness.open();
+        if is_rollup {
+            execute_receipt_chain(&harness, &store);
+        }
+        let state = store.state().expect("parent state");
+        for case in 0..12 {
+            let command = if is_rollup {
+                let mut body = harness.rollup(&state, 12).body;
+                alter_binding!(body, case);
+                ConsumptionSettlementCommandV1::AdmitRollup {
+                    rollup: harness.sign_rollup(body, 12),
+                    receipts: state
+                        .receipts
+                        .iter()
+                        .map(|row| row.receipt.clone())
+                        .collect(),
+                }
+            } else {
+                let mut body = harness.receipt(None, 10, 100).body;
+                alter_binding!(body, case);
+                ConsumptionSettlementCommandV1::AdmitReceipt {
+                    receipt: harness.sign_receipt(body),
+                }
+            };
+            assert_admission_rejected_without_mutation(
+                &harness,
+                &store,
+                &command,
+                ConsumptionSettlementErrorCodeV1::InvalidContext,
+                &format!("foreign binding: rollup={is_rollup}, case={case}"),
+            );
+        }
+        let valid = if is_rollup {
+            ConsumptionSettlementCommandV1::AdmitRollup {
+                rollup: harness.rollup(&state, 12),
+                receipts: state
+                    .receipts
+                    .iter()
+                    .map(|row| row.receipt.clone())
+                    .collect(),
+            }
+        } else {
+            ConsumptionSettlementCommandV1::AdmitReceipt {
+                receipt: harness.receipt(None, 10, 100),
+            }
+        };
+        let before = store
+            .fresh_readback()
+            .expect("parent after context refusals");
+        let execution = harness.execution(
+            before.order_height(),
+            before.order_block_id(),
+            before.order_height() + 1,
+        );
+        store
+            .execute_committed_execution(&execution, &valid)
+            .expect("valid admission after context refusals");
+        let reopened = ConsumptionSettlementStoreV1::open_existing(harness.config())
+            .expect("reopen after valid admission");
+        assert_eq!(
+            reopened.fresh_readback().expect("cold valid parent"),
+            store.fresh_readback().expect("valid parent")
+        );
+    }
+}

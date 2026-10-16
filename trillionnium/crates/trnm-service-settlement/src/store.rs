@@ -184,6 +184,12 @@ impl ConsumptionSettlementStoreV1 {
                 ));
             }
         } else {
+            // Reject unsupported fresh configuration before creating any path.
+            // Existing stores retain their ordinary audit/compatibility checks.
+            to_sqlite(
+                config.trust_bundle.initial_order_height,
+                "initial Order height",
+            )?;
             if let Some(parent) = config.path.parent() {
                 fs::create_dir_all(parent).map_err(|cause| {
                     error(
@@ -1686,6 +1692,55 @@ fn array32(value: Vec<u8>, label: &str) -> ConsumptionSettlementResultV1<[u8; 32
 #[cfg(test)]
 mod snapshot_tests {
     use super::*;
+
+    #[test]
+    fn invalid_fresh_height_preserves_missing_path_and_corrected_retry() {
+        let harness = crate::tests::Harness::new();
+        let mut config = harness.config();
+        config.path = config
+            .path
+            .parent()
+            .unwrap()
+            .join("missing/nested/store.sqlite");
+        let missing_parent = config.path.parent().unwrap().to_path_buf();
+        config.trust_bundle.initial_order_height = i64::MAX as u64 + 1;
+        assert_eq!(
+            ConsumptionSettlementStoreV1::open(config.clone())
+                .expect_err("unrepresentable initial height")
+                .code(),
+            ConsumptionSettlementErrorCodeV1::ArithmeticOverflow
+        );
+        let path_created = config.path.exists();
+        let parent_created = missing_parent.exists();
+        config.trust_bundle.initial_order_height = i64::MAX as u64;
+        let corrected = ConsumptionSettlementStoreV1::open(config.clone());
+        assert!(
+            !path_created && !parent_created && corrected.is_ok(),
+            "invalid initialization created file={path_created}, parent={parent_created}; corrected retry={corrected:?}"
+        );
+        let store = corrected.expect("corrected retry");
+        assert_eq!(
+            store.fresh_readback().unwrap().order_height(),
+            i64::MAX as u64
+        );
+        drop(store);
+        ConsumptionSettlementStoreV1::open_existing(config).expect("cold reopen at maximum height");
+    }
+
+    #[test]
+    fn maximum_fresh_height_is_representable() {
+        let harness = crate::tests::Harness::new();
+        let mut config = harness.config();
+        config.trust_bundle.initial_order_height = i64::MAX as u64;
+        let store =
+            ConsumptionSettlementStoreV1::open(config.clone()).expect("maximum initial height");
+        assert_eq!(
+            store.fresh_readback().unwrap().order_height(),
+            i64::MAX as u64
+        );
+        drop(store);
+        ConsumptionSettlementStoreV1::open_existing(config).expect("cold reopen maximum height");
+    }
 
     #[test]
     fn legacy_unfinishable_rollup_journal_reopens_and_replays_without_repair() {
