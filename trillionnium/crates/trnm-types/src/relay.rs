@@ -7,6 +7,10 @@ use std::fmt;
 /// the timestamp gate. Bound the retained state so an unauthenticated peer
 /// cannot grow the verifier indefinitely by rotating task/session identifiers.
 pub const MAX_RELAY_AUTH_CONTEXTS: usize = 65_536;
+/// Replay keys retain several envelope identifiers. Reject oversized values
+/// before signature work or key insertion so a single authenticated-looking
+/// envelope cannot amplify memory through cloned map keys.
+pub const MAX_RELAY_AUTH_FIELD_BYTES: usize = 256;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum RelaySessionStatus {
@@ -350,6 +354,9 @@ impl RelayAuthVerifier {
 
         // BFT auth hardening: signing_message is delimiter encoded; reject
         // delimiter-injection and non-canonical actor identifiers up-front.
+        if env.chain_id.len() > MAX_RELAY_AUTH_FIELD_BYTES {
+            return Err(RelayAuthError::MissingRequiredField { field: "chain_id" });
+        }
         for (field, value) in [
             ("task_id", env.task_id.as_str()),
             ("session_id", env.session_id.as_str()),
@@ -359,7 +366,11 @@ impl RelayAuthVerifier {
             ("nonce", env.nonce.as_str()),
             ("payload_hash", env.payload_hash.as_str()),
         ] {
-            if value.trim().is_empty() || value.trim() != value || value.contains('|') {
+            if value.len() > MAX_RELAY_AUTH_FIELD_BYTES
+                || value.trim().is_empty()
+                || value.trim() != value
+                || value.contains('|')
+            {
                 return Err(RelayAuthError::MissingRequiredField { field });
             }
         }
@@ -671,6 +682,22 @@ mod tests {
             .verify(&env, 1_730_000_000_050, |e| e.sign_for_test(key) == e.sig)
             .unwrap_err();
         assert_eq!(err.stable_code(), "BadVersion");
+    }
+
+    #[test]
+    fn relay_auth_verify_rejects_oversized_replay_key_fields() {
+        let key = "sender-key";
+        let mut verifier = RelayAuthVerifier::new(120_000);
+        let mut env = sample_env(1, "nonce-oversized", 1_730_000_000_000, key);
+        env.task_id = "t".repeat(MAX_RELAY_AUTH_FIELD_BYTES + 1);
+        env.sig = env.sign_for_test(key);
+
+        let err = verifier
+            .verify(&env, 1_730_000_000_050, |_| false)
+            .unwrap_err();
+        assert_eq!(err.stable_code(), "MissingRequiredField");
+        assert!(verifier.last_seq.is_empty());
+        assert!(verifier.seen_nonce.is_empty());
     }
 
     #[test]
