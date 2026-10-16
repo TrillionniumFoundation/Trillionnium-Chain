@@ -8,7 +8,7 @@ use crate::{
     *,
 };
 
-const MAX_RECEIPTS_V1: usize = 1_024;
+pub(crate) const MAX_RECEIPTS_V1: usize = 1_024;
 const MAX_USAGE_ENTRIES_V1: usize = 32;
 const MAX_ID_BYTES_V1: usize = 128;
 
