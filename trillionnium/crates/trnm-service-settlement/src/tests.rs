@@ -502,6 +502,24 @@ fn execution_preview_checks_bilateral_receipt_and_preserves_durable_rows() {
 }
 
 #[test]
+fn execution_preview_rejects_oversized_command_batches_before_allocation() {
+    let harness = Harness::new();
+    let store = harness.open();
+    let command = ConsumptionSettlementCommandV1::AdmitReceipt {
+        receipt: harness.receipt(None, 10, 25),
+    };
+    let commands = vec![command; 1_025];
+    let before = store.fresh_readback().expect("fresh parent");
+    let error = store
+        .preview_before_vote_v1(&before, 10, h(1_010), &commands)
+        .expect_err("oversized pre-commit command batch");
+    assert_eq!(
+        error.code(),
+        ConsumptionSettlementErrorCodeV1::InvalidBounds
+    );
+}
+
+#[test]
 fn receipt_signatures_sequence_prices_and_cumulative_roots_fail_closed() {
     let harness = Harness::new();
     let store = harness.open();
