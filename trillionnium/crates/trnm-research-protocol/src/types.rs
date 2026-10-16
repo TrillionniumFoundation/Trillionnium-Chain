@@ -1221,7 +1221,7 @@ fn decode_license(decoder: &mut Decoder<'_>) -> Result<DeclareLicenseV1, Canonic
         claim_ref: decode_object_ref(decoder)?,
         licensor: decode_external_key(decoder)?,
         scope: decode_license_scope(decoder)?,
-        spdx_expression: decoder.text()?,
+        spdx_expression: decoder.text_bounded::<128>()?,
         additional_terms_hash: decoder.option_digest()?,
         effective_at_unix_s: decoder.uint()?,
     })
