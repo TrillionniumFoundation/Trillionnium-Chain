@@ -357,6 +357,12 @@ impl ConsumptionSettlementStoreV1 {
         candidate_block_id: Hash32V1,
         commands: &[ConsumptionSettlementCommandV1],
     ) -> ConsumptionSettlementResultV1<ConsumptionSettlementExecutionPreviewV1> {
+        if commands.len() > crate::engine::MAX_RECEIPTS_V1 {
+            return Err(error(
+                ConsumptionSettlementErrorCodeV1::InvalidBounds,
+                "pre-commit command batch exceeds receipt bound",
+            ));
+        }
         let before = self.fresh_readback()?;
         if &before != expected_parent
             || candidate_height
