@@ -400,6 +400,21 @@ impl ResearchProtocolState {
             });
         }
 
+        // A protocol state is chain-scoped.  The chain id is intentionally
+        // retained in each applied-command journal record (rather than added
+        // as a new snapshot field), so enforce that all commands in a state
+        // agree with the first journaled chain.  Without this guard, a valid
+        // command from another chain could be appended to an otherwise valid
+        // state and mutate objects under the wrong replay domain.
+        if let Some(existing) = self.applied_commands.values().next() {
+            if existing.chain_id != signed.chain_id {
+                return Err(ProtocolStateError::ChainIdMismatch {
+                    expected: existing.chain_id.clone(),
+                    actual: signed.chain_id.clone(),
+                });
+            }
+        }
+
         let signer_key = signer_nonce_key(signed);
         if let Some(last_nonce) = self.signer_nonce_floors.get(&signer_key) {
             if signed.nonce <= *last_nonce {
@@ -1179,11 +1194,22 @@ fn collect_command_records(
     records: Vec<AppliedCommandRecordV1>,
 ) -> Result<BTreeMap<ExternalKey, AppliedCommandRecordV1>, ProtocolStateError> {
     let mut map = BTreeMap::new();
+    let mut chain_id: Option<String> = None;
     for record in records {
         if record.command_id.as_bytes() == &[0; 32]
             || map.insert(record.command_id, record.clone()).is_some()
         {
             return Err(ProtocolStateError::InvalidSnapshotGraph);
+        }
+        if let Some(expected) = &chain_id {
+            if expected != &record.chain_id {
+                return Err(ProtocolStateError::ChainIdMismatch {
+                    expected: expected.clone(),
+                    actual: record.chain_id.clone(),
+                });
+            }
+        } else {
+            chain_id = Some(record.chain_id.clone());
         }
     }
     Ok(map)
@@ -1245,6 +1271,8 @@ pub enum ProtocolStateError {
     InvalidPayload(#[from] crate::types::ResearchPayloadValidationError),
     #[error("command id {command_id} was replayed with altered signed bytes")]
     AlteredReplay { command_id: ExternalKey },
+    #[error("research protocol state is bound to chain {expected}, not {actual}")]
+    ChainIdMismatch { expected: String, actual: String },
     #[error(
         "signer {signer_did} nonce {nonce} was replayed after {last_nonce} on chain {chain_id}"
     )]
