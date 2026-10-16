@@ -163,6 +163,24 @@ reference test proves a deployed adversarial client, an independent mining
 participant, or model utility. The unchanged original mainline and paired Hepta
 branch are not promoted by this separate M10 candidate.
 
+### Unrevealed salt and captured CLI streams
+
+A private journal does not protect an unrevealed salt if the same automatic
+`run-once --submit` invocation also prints it into systemd, CI, or agent
+stdout/stderr. For submitted run-once output, the existing JSON field names
+`salt_hex` and `template_reveal` are retained but their values are
+`null`; the public commitment hash and template remain intact. Explicit
+manual `commit-reveal --submit` suppresses only the reveal command from its
+ordinary output and retains the caller-selected salt in the original private
+journal. Non-submit manual display remains unchanged, as does the explicit
+`execute` result-plus-salt developer operation.
+
+The existing transaction adapter reads the complete owner-only journal, never
+a redacted stdout rendering. This is not proof against same-UID attackers,
+host-level telemetry/memory inspection, or exposure through a manually supplied
+`--salt-hex` process argument, shell history or separately captured raw
+journal. No PoN work, signed packet, model or FinalUse authority changes.
+
 ### Shell-template argument boundary (isolated worker hardening)
 
 The human-facing `trnm-node tx commit-result` and `reveal-result`
