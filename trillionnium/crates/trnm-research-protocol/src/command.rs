@@ -95,15 +95,15 @@ impl SignedResearchCommandV1 {
         if version != PROTOCOL_VERSION as u64 {
             return Err(CanonicalDecodeError::UnsupportedVersion(version).into());
         }
-        let encoding = decoder.text()?;
+        let encoding = decoder.text_bounded::<64>()?;
         if encoding != CANONICAL_ENCODING {
             return Err(SignedResearchCommandValidationError::EncodingMismatch(
                 encoding,
             ));
         }
-        let chain_id = decoder.text()?;
+        let chain_id = decoder.text_bounded::<64>()?;
         let command_id = ExternalKey::from_bytes(decoder.bytes_exact()?);
-        let signer_did = decoder.text()?;
+        let signer_did = decoder.text_bounded::<192>()?;
         let role_raw = decoder.uint()?;
         let signer_role = match role_raw {
             1 => AuthorityRole::NakamaAuthority,
