@@ -3,9 +3,9 @@ use std::collections::HashSet;
 use anyhow::Result;
 
 use crate::{
-    append_ack, append_event, append_progress, is_idempotent_duplicate_ok, is_task_acked,
-    load_ingress_records, persisted_ack_hashes_for_task, run_adapter_with_retry,
-    save_ingress_records, should_execute_reveal, transition_request_status,
+    acquire_path_lock, append_ack, append_event, append_progress, is_idempotent_duplicate_ok,
+    is_task_acked, load_ingress_records, persisted_ack_hashes_for_task, run_adapter_with_retry,
+    save_ingress_records_locked, should_execute_reveal, transition_request_status,
     trim_boundary_audit_fillers, try_acquire_task_lock, AdapterExecResult, ProgressRecord,
     SubmissionRecord, WorkerEvent, RC_SKIPPED,
 };
@@ -176,6 +176,7 @@ pub(crate) fn process_submission_record(
     )?;
 
     if update_ingress {
+        let _ingress_lock = acquire_path_lock(ingress_file)?;
         let mut ingress = load_ingress_records(ingress_file)?;
         let mut changed = false;
         for ir in ingress.iter_mut() {
@@ -201,7 +202,7 @@ pub(crate) fn process_submission_record(
             }
         }
         if changed {
-            save_ingress_records(ingress_file, &ingress)?;
+            save_ingress_records_locked(ingress_file, &ingress)?;
         }
     }
 
