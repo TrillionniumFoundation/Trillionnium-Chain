@@ -343,16 +343,13 @@ else:
             #[test]
             fn malformed_proc_numeric_snapshot_retries_without_accepting_partial_ownership() {
                 let mut scans = 0;
-                retry_malformed_proc_numbers(
-                    Instant::now() + Duration::from_millis(150),
-                    || {
-                        scans += 1;
-                        if scans == 1 {
-                            let _: u32 = "broken-pid".parse()?;
-                        }
-                        Ok(())
-                    },
-                )
+                retry_malformed_proc_numbers(Instant::now() + Duration::from_millis(150), || {
+                    scans += 1;
+                    if scans == 1 {
+                        let _: u32 = "broken-pid".parse()?;
+                    }
+                    Ok(())
+                })
                 .unwrap();
                 assert_eq!(scans, 2, "success requires a fresh complete scan");
 
@@ -373,7 +370,10 @@ else:
                     let _: u32 = "still-broken".parse()?;
                     Ok(())
                 });
-                assert!(result.is_err(), "expired malformed snapshot must fail closed");
+                assert!(
+                    result.is_err(),
+                    "expired malformed snapshot must fail closed"
+                );
                 assert_eq!(expired_scans, 1, "deadline must not be extended");
             }
 
