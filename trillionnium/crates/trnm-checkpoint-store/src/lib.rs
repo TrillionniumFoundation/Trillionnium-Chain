@@ -50,6 +50,12 @@ const CHECKPOINT_BYTES_V2: usize = EXTERNAL_CHECKPOINT_RECORD_BYTES_V2;
 // + expected slot + target + predecessor hash + record hash
 const LOG_RECORD_BYTES_V2: usize =
     8 + 1 + 1 + 2 + 8 + 32 + 1 + CHECKPOINT_BYTES_V2 + CHECKPOINT_BYTES_V2 + 32 + 32;
+// Keep journal replay and append bounded even when a same-UID process can
+// write the private log path. The byte limit is intentionally generous for
+// compatibility with long-lived authorities; the record limit makes the
+// corresponding in-memory BTreeMap bound explicit.
+const MAX_JOURNAL_BYTES_V2: u64 = 256 * 1024 * 1024;
+const MAX_JOURNAL_RECORDS_V2: u64 = MAX_JOURNAL_BYTES_V2 / LOG_RECORD_BYTES_V2 as u64;
 const ANCHOR_BODY_BYTES_V2: usize = 8 + 1 + 3 + 8 + 32;
 const ANCHOR_BYTES_V2: usize = ANCHOR_BODY_BYTES_V2 + 32;
 
@@ -350,6 +356,36 @@ impl ExternalCheckpointAuthorityV2 {
         let sequence = self.record_count.checked_add(1).ok_or(
             ExternalCheckpointAuthorityErrorV2::InvalidLog("record count exhausted"),
         )?;
+        let record_bytes = LOG_RECORD_BYTES_V2 as u64;
+        let journal_bytes = self
+            .log
+            .metadata()
+            .map_err(|source| ExternalCheckpointAuthorityErrorV2::Io {
+                stage: "stat checkpoint journal before append",
+                source,
+            })?
+            .len();
+        let expected_journal_bytes = self
+            .record_count
+            .checked_mul(record_bytes)
+            .ok_or(ExternalCheckpointAuthorityErrorV2::InvalidLog(
+                "checkpoint journal byte count exhausted",
+            ))?;
+        if journal_bytes != expected_journal_bytes {
+            return Err(ExternalCheckpointAuthorityErrorV2::InvalidLog(
+                "checkpoint journal length changed before append",
+            ));
+        }
+        let next_journal_bytes = journal_bytes.checked_add(record_bytes).ok_or(
+            ExternalCheckpointAuthorityErrorV2::InvalidLog(
+                "checkpoint journal byte count exhausted",
+            ),
+        )?;
+        if sequence > MAX_JOURNAL_RECORDS_V2 || next_journal_bytes > MAX_JOURNAL_BYTES_V2 {
+            return Err(ExternalCheckpointAuthorityErrorV2::InvalidLog(
+                "checkpoint journal exceeds configured bound",
+            ));
+        }
         let previous_hash = self.head_hash;
         let record_hash = digest_record_v2(sequence, scope, expected, target, previous_hash);
         let record = LogRecordV2 {
@@ -487,6 +523,13 @@ impl ExternalCheckpointAuthorityV2 {
             })?
             .len();
         let record_bytes = LOG_RECORD_BYTES_V2 as u64;
+        if journal_bytes > MAX_JOURNAL_BYTES_V2
+            || journal_bytes / record_bytes > MAX_JOURNAL_RECORDS_V2
+        {
+            return Err(ExternalCheckpointAuthorityErrorV2::InvalidLog(
+                "checkpoint journal exceeds configured bound",
+            ));
+        }
         if journal_bytes % record_bytes != 0 {
             return Err(ExternalCheckpointAuthorityErrorV2::InvalidLog(
                 "trailing partial checkpoint record",
@@ -1664,6 +1707,48 @@ mod tests {
         assert!(matches!(
             ExternalCheckpointAuthorityV2::open(&log),
             Err(ExternalCheckpointAuthorityErrorV2::InvalidLog(_))
+        ));
+    }
+
+    #[test]
+    fn oversized_journal_is_rejected_before_replay() {
+        let directory = private_tempdir();
+        let log = directory.path().join("checkpoint.log");
+        let file = OpenOptions::new()
+            .write(true)
+            .create_new(true)
+            .mode(0o600)
+            .open(&log)
+            .unwrap();
+        file.set_len(MAX_JOURNAL_BYTES_V2 + 1).unwrap();
+        drop(file);
+        assert!(matches!(
+            ExternalCheckpointAuthorityV2::open(&log),
+            Err(ExternalCheckpointAuthorityErrorV2::InvalidLog(
+                "checkpoint journal exceeds configured bound"
+            ))
+        ));
+    }
+
+    #[test]
+    fn journal_growth_is_rejected_before_append() {
+        let directory = private_tempdir();
+        let log = directory.path().join("checkpoint.log");
+        let first = checkpoint(0, [0; 32]);
+        let second = checkpoint(1, first.checkpoint_checksum());
+        let mut authority = ExternalCheckpointAuthorityV2::open(&log).unwrap();
+        authority.compare_and_advance_checked(None, first).unwrap();
+        OpenOptions::new()
+            .append(true)
+            .open(&log)
+            .unwrap()
+            .write_all(&[0_u8])
+            .unwrap();
+        assert!(matches!(
+            authority.compare_and_advance_checked(Some(first), second),
+            Err(ExternalCheckpointAuthorityErrorV2::InvalidLog(
+                "checkpoint journal length changed before append"
+            ))
         ));
     }
 
