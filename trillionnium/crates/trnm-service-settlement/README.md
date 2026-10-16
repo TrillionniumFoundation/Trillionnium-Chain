@@ -101,3 +101,11 @@ committed-block journal, including the genesis anchor. The check shares the
 audited source snapshot and applies to empty and nonempty candidates, matching
 the durable backend's existing uniqueness constraint. Historical audit, exact
 operation retries, stored schemas and signed domains are unchanged.
+
+A controlled two-handle concurrency test releases both writers only after their
+read-only preflight snapshots close. Exact duplicate operations serialize to one
+commit and one replay; distinct operations proposing incompatible successors
+serialize to one commit and one stale-parent rejection. Cold audit, exact retries,
+and the single durable operation are checked. The rendezvous is test-only and
+time-bounded. This qualifies that schedule, not arbitrary concurrent entry,
+process death, power loss, or an authoritative chain integration.

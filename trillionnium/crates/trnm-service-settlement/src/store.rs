@@ -501,6 +501,8 @@ impl ConsumptionSettlementStoreV1 {
         verify_schema(&read_only)?;
         audit(&read_only, &self.config)?;
         drop(read_only);
+        #[cfg(test)]
+        snapshot_tests::wait_before_writer();
 
         let mut connection = open_rw(&self.config.path, false)?;
         let transaction = connection.transaction_with_behavior(TransactionBehavior::Immediate)?;
@@ -1720,6 +1722,188 @@ fn array32(value: Vec<u8>, label: &str) -> ConsumptionSettlementResultV1<[u8; 32
 #[cfg(test)]
 mod snapshot_tests {
     use super::*;
+
+    thread_local! {
+        static WRITER_RENDEZVOUS: std::cell::RefCell<Option<(
+            std::sync::mpsc::Sender<()>, std::sync::mpsc::Receiver<()>
+        )>> = const { std::cell::RefCell::new(None) };
+    }
+
+    pub(super) fn wait_before_writer() {
+        if let Some((ready, release)) = WRITER_RENDEZVOUS.with(|slot| slot.borrow_mut().take()) {
+            ready.send(()).expect("notify writer preflight complete");
+            release
+                .recv_timeout(Duration::from_secs(10))
+                .expect("release writer after both preflights");
+        }
+    }
+
+    #[test]
+    fn concurrent_writers_serialize_exact_retry_and_stale_parent() {
+        for same_operation in [true, false] {
+            let harness = crate::tests::Harness::new();
+            let config = harness.config();
+            let store = ConsumptionSettlementStoreV1::open(config.clone()).unwrap();
+            let before = store.fresh_readback().unwrap();
+            let first_execution =
+                harness.execution(before.order_height(), before.order_block_id(), 10);
+            let mut second_execution = first_execution.clone();
+            if !same_operation {
+                second_execution.order_block_id = Hash32V1([61; 32]);
+            }
+            let first_command = ConsumptionSettlementCommandV1::AdmitReceipt {
+                receipt: harness.receipt(None, 10, 100),
+            };
+            let second_command = if same_operation {
+                first_command.clone()
+            } else {
+                ConsumptionSettlementCommandV1::AdmitReceipt {
+                    receipt: harness.receipt(None, 10, 101),
+                }
+            };
+            let executions = [first_execution, second_execution];
+            let commands = [first_command, second_command];
+            let previews: Vec<_> = (0..2)
+                .map(|index| {
+                    store
+                        .preview_before_vote_v1(
+                            &before,
+                            10,
+                            executions[index].order_block_id,
+                            std::slice::from_ref(&commands[index]),
+                        )
+                        .unwrap()
+                })
+                .collect();
+            let handles = [
+                ConsumptionSettlementStoreV1::open_existing(config.clone()).unwrap(),
+                ConsumptionSettlementStoreV1::open_existing(config.clone()).unwrap(),
+            ];
+            let (ready_tx, ready_rx) = std::sync::mpsc::channel();
+            let outcomes = std::thread::scope(|scope| {
+                let mut workers = Vec::new();
+                let mut releases = Vec::new();
+                for (index, handle) in handles.into_iter().enumerate() {
+                    let (release_tx, release_rx) = std::sync::mpsc::channel();
+                    releases.push(release_tx);
+                    let ready = ready_tx.clone();
+                    let execution = &executions[index];
+                    let command = &commands[index];
+                    workers.push(scope.spawn(move || {
+                        WRITER_RENDEZVOUS
+                            .with(|slot| *slot.borrow_mut() = Some((ready, release_rx)));
+                        handle.execute_committed_execution(execution, command)
+                    }));
+                }
+                // Both preflight snapshots are dropped before either writer starts.
+                for _ in 0..2 {
+                    ready_rx
+                        .recv_timeout(Duration::from_secs(10))
+                        .expect("both writer preflights");
+                }
+                for release in releases {
+                    release.send(()).unwrap();
+                }
+                workers
+                    .into_iter()
+                    .map(|worker| worker.join().unwrap())
+                    .collect::<Vec<_>>()
+            });
+            let initial_statuses: Vec<_> = outcomes
+                .iter()
+                .map(|outcome| {
+                    outcome
+                        .as_ref()
+                        .map(|outcome| outcome.is_replay())
+                        .map_err(|error| error.code())
+                })
+                .collect();
+            eprintln!(
+                "same_operation={same_operation}, initial replay statuses={initial_statuses:?}"
+            );
+            if same_operation {
+                assert!(outcomes.iter().all(Result::is_ok), "{outcomes:?}");
+                assert_eq!(
+                    outcomes
+                        .iter()
+                        .filter(|outcome| outcome.as_ref().unwrap().is_replay())
+                        .count(),
+                    1
+                );
+                assert_eq!(
+                    outcomes[0].as_ref().unwrap().receipt(),
+                    outcomes[1].as_ref().unwrap().receipt()
+                );
+            } else {
+                assert_eq!(
+                    outcomes.iter().filter(|outcome| outcome.is_ok()).count(),
+                    1,
+                    "{outcomes:?}"
+                );
+                assert_eq!(
+                    outcomes
+                        .iter()
+                        .filter(|outcome| outcome
+                            .as_ref()
+                            .is_err_and(|error| error.code()
+                                == ConsumptionSettlementErrorCodeV1::StaleVersion))
+                        .count(),
+                    1,
+                    "{outcomes:?}"
+                );
+            }
+            let head = store.fresh_readback().unwrap();
+            let winner = executions
+                .iter()
+                .position(|execution| execution.order_block_id == head.order_block_id())
+                .unwrap();
+            if !same_operation {
+                assert!(!outcomes[winner].as_ref().unwrap().is_replay());
+            }
+            let snapshot = open_read_snapshot(&config.path).unwrap();
+            let (_, _, receipt) =
+                load_operation(&snapshot, operation_id(&commands[winner]).unwrap())
+                    .unwrap()
+                    .unwrap();
+            for outcome in outcomes.iter().filter_map(|outcome| outcome.as_ref().ok()) {
+                assert_eq!(outcome.receipt(), &receipt);
+            }
+            assert_eq!(
+                receipt.post_state_root,
+                previews[winner].candidate_post_state_root()
+            );
+            assert_eq!(head.sequence(), 1);
+            assert_eq!(head.order_block_id(), executions[winner].order_block_id);
+            assert_eq!(head.durable_state_root(), receipt.post_state_root);
+            let state = store.state().unwrap();
+            let rows: u64 = snapshot
+                .query_row("SELECT COUNT(*) FROM operations", [], |row| row.get(0))
+                .unwrap();
+            assert_eq!(rows, 1);
+            drop(snapshot);
+            let bytes = fs::read(&config.path).unwrap();
+            drop(store);
+            let cold = ConsumptionSettlementStoreV1::open_existing(config.clone()).unwrap();
+            assert_eq!(cold.fresh_readback().unwrap(), head);
+            assert_eq!(cold.state().unwrap(), state);
+            for index in 0..2 {
+                let retry = cold.execute_committed_execution(&executions[index], &commands[index]);
+                if same_operation || index == winner {
+                    let retry = retry.unwrap();
+                    assert!(retry.is_replay());
+                    assert_eq!(retry.receipt(), &receipt);
+                } else {
+                    assert_eq!(
+                        retry.unwrap_err().code(),
+                        ConsumptionSettlementErrorCodeV1::StaleVersion
+                    );
+                }
+            }
+            assert_eq!(cold.fresh_readback().unwrap(), head);
+            assert_eq!(cold.state().unwrap(), state);
+            assert_eq!(fs::read(&config.path).unwrap(), bytes);
+        }
+    }
 
     #[test]
     fn preview_rejects_historical_block_id_reuse_without_mutation() {
