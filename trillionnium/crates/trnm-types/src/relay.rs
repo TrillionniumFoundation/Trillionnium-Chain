@@ -19,6 +19,11 @@ pub const MAX_RELAY_AUTH_PAYLOAD_BYTES: usize = 2 * 1024 * 1024;
 /// encodings while preventing an untrusted envelope from forcing a large
 /// allocation or expensive signature-parser work.
 pub const MAX_RELAY_AUTH_SIGNATURE_BYTES: usize = 512;
+/// Full replay-state expiry sweeps are amortized across valid envelopes. A
+/// targeted key is still checked on every request, while unrelated stale
+/// entries are reclaimed at this bounded interval or when the interval's
+/// capacity check runs.
+const RELAY_AUTH_GC_INTERVAL_CALLS: u64 = 256;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum RelaySessionStatus {
@@ -294,6 +299,8 @@ pub struct RelayAuthVerifier {
     max_skew_ms: u128,
     last_seq: HashMap<(String, String, String, String), (u64, u128)>,
     seen_nonce: HashMap<(String, String, String, String, String), u128>,
+    gc_tick: u64,
+    last_gc_tick: u64,
 }
 
 impl RelayAuthVerifier {
@@ -302,6 +309,8 @@ impl RelayAuthVerifier {
             max_skew_ms,
             last_seq: HashMap::new(),
             seen_nonce: HashMap::new(),
+            gc_tick: 0,
+            last_gc_tick: 0,
         }
     }
 
@@ -313,6 +322,18 @@ impl RelayAuthVerifier {
     /// for callers that previously selected strict mode.
     pub fn strict(max_skew_ms: u128) -> Self {
         Self::new(max_skew_ms)
+    }
+
+    fn maybe_reap_expired(&mut self, cutoff: u128) {
+        self.gc_tick = self.gc_tick.wrapping_add(1);
+        let due = self.last_gc_tick == 0
+            || self.gc_tick.wrapping_sub(self.last_gc_tick) >= RELAY_AUTH_GC_INTERVAL_CALLS;
+        if !due {
+            return;
+        }
+        self.last_seq.retain(|_, (_, seen_at)| *seen_at >= cutoff);
+        self.seen_nonce.retain(|_, seen_at| *seen_at >= cutoff);
+        self.last_gc_tick = self.gc_tick;
     }
 
     fn verify_envelope_fields(
@@ -444,11 +465,12 @@ impl RelayAuthVerifier {
         }
 
         // Entries older than the admissible timestamp window can no longer be
-        // used for a successful replay, so discard them before enforcing the
-        // bounded-memory guard. Future timestamps remain until they age out.
+        // used for a successful replay. Full-map expiry sweeps are amortized;
+        // the current sequence/nonce keys are checked below on every request,
+        // and unrelated entries are reclaimed at the bounded interval before
+        // enforcing the memory guard.
         let cutoff = now_ms.saturating_sub(self.max_skew_ms);
-        self.last_seq.retain(|_, (_, seen_at)| *seen_at >= cutoff);
-        self.seen_nonce.retain(|_, seen_at| *seen_at >= cutoff);
+        self.maybe_reap_expired(cutoff);
 
         let seq_key = (
             env.chain_id.clone(),
@@ -456,6 +478,13 @@ impl RelayAuthVerifier {
             env.session_id.clone(),
             env.from.clone(),
         );
+        if self
+            .last_seq
+            .get(&seq_key)
+            .is_some_and(|(_, seen_at)| *seen_at < cutoff)
+        {
+            self.last_seq.remove(&seq_key);
+        }
         if let Some((last_seq, _)) = self.last_seq.get(&seq_key) {
             if env.seq <= *last_seq {
                 return Err(RelayAuthError::SeqRegression {
@@ -479,6 +508,13 @@ impl RelayAuthVerifier {
             env.from.clone(),
             env.nonce.clone(),
         );
+        if self
+            .seen_nonce
+            .get(&nonce_key)
+            .is_some_and(|seen_at| *seen_at < cutoff)
+        {
+            self.seen_nonce.remove(&nonce_key);
+        }
         if self.seen_nonce.contains_key(&nonce_key) {
             return Err(RelayAuthError::Replay {
                 nonce: env.nonce.clone(),
@@ -674,6 +710,40 @@ mod tests {
         verifier
             .verify(&next, base + 120_001, |e| e.sign_for_test(key) == e.sig)
             .expect("expired replay state reclaimed");
+    }
+
+    #[test]
+    fn relay_auth_replay_gc_is_amortized_and_reclaims_expired_state() {
+        let key = "sender-key";
+        let base = 1_730_000_000_000;
+        let mut verifier = RelayAuthVerifier::new(120_000);
+        let first = sample_env(1, "nonce-gc-initial", base, key);
+        verifier
+            .verify(&first, base, |e| e.sign_for_test(key) == e.sig)
+            .expect("first message accepted");
+
+        let stale_key = (
+            "trnm-mainnet".to_string(),
+            "task-gc-stale".to_string(),
+            "sess-1".to_string(),
+            "trnm1from".to_string(),
+        );
+        verifier.last_seq.insert(stale_key.clone(), (1, base));
+        let initial_gc_tick = verifier.last_gc_tick;
+
+        for index in 0..RELAY_AUTH_GC_INTERVAL_CALLS {
+            let task_id = format!("task-gc-{index}");
+            let nonce = format!("nonce-gc-{index}");
+            let mut env = sample_env(1, &nonce, base + 120_001, key);
+            env.task_id = task_id;
+            env.sig = env.sign_for_test(key);
+            verifier
+                .verify(&env, base + 120_001, |e| e.sign_for_test(key) == e.sig)
+                .expect("valid envelope accepted during amortized sweep");
+        }
+
+        assert!(verifier.last_gc_tick > initial_gc_tick);
+        assert!(!verifier.last_seq.contains_key(&stale_key));
     }
 
     #[test]
