@@ -511,6 +511,37 @@ fn signer_nonce_replay_is_rejected_for_a_distinct_command_id() {
 }
 
 #[test]
+fn state_rejects_commands_from_a_different_chain() {
+    let first = sign(0, fixture_commands()[0].clone()).unwrap();
+    let mut state = test_state();
+    state.apply(&first).unwrap();
+
+    let ResearchCommandV1::MatchEvidenceCommitment(mut payload) = fixture_commands()[0].clone()
+    else {
+        unreachable!()
+    };
+    payload.event_count += 1;
+    let other_chain = SignedResearchCommandV1::sign(
+        "trnm-othernet-v1".into(),
+        key("trnm.command", "command-other-chain"),
+        first.signer_did.clone(),
+        first.signer_role,
+        2,
+        ResearchCommandV1::MatchEvidenceCommitment(payload),
+        &SigningKey::from_bytes(&NAKAMA_SEED),
+    )
+    .unwrap();
+
+    assert_eq!(
+        state.apply(&other_chain).unwrap_err(),
+        ProtocolStateError::ChainIdMismatch {
+            expected: "trnm-devnet-v1".into(),
+            actual: "trnm-othernet-v1".into(),
+        }
+    );
+}
+
+#[test]
 fn signer_nonce_floor_survives_snapshot_restore() {
     let original = fixture_commands()[0].clone();
     let first = sign(0, original.clone()).unwrap();
