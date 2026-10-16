@@ -17,6 +17,7 @@ use thiserror::Error;
 /// so signer nonce floors survive persistence and restart. This is deliberately
 /// a fresh schema namespace; v1 snapshots must not be treated as complete state.
 pub const SNAPSHOT_VERSION_V2: u8 = 2;
+type SignerNonceKey = (String, String, u8, [u8; 32]);
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 pub struct AuthorityIdentityV1 {
@@ -357,7 +358,7 @@ pub struct ResearchProtocolState {
     challenges: BTreeMap<ExternalKey, ClaimChallengeObjectV1>,
     resolutions: BTreeMap<ExternalKey, ClaimResolutionObjectV1>,
     applied_commands: BTreeMap<ExternalKey, AppliedCommandRecordV1>,
-    signer_nonce_floors: BTreeMap<(String, String, u8, [u8; 32]), u64>,
+    signer_nonce_floors: BTreeMap<SignerNonceKey, u64>,
 }
 
 impl ResearchProtocolState {
@@ -1188,7 +1189,7 @@ fn collect_command_records(
     Ok(map)
 }
 
-fn signer_nonce_key(signed: &SignedResearchCommandV1) -> (String, String, u8, [u8; 32]) {
+fn signer_nonce_key(signed: &SignedResearchCommandV1) -> SignerNonceKey {
     (
         signed.chain_id.clone(),
         signed.signer_did.clone(),
@@ -1199,8 +1200,8 @@ fn signer_nonce_key(signed: &SignedResearchCommandV1) -> (String, String, u8, [u
 
 fn collect_signer_nonce_floors(
     records: &BTreeMap<ExternalKey, AppliedCommandRecordV1>,
-) -> Result<BTreeMap<(String, String, u8, [u8; 32]), u64>, ProtocolStateError> {
-    let mut floors: BTreeMap<(String, String, u8, [u8; 32]), u64> = BTreeMap::new();
+) -> Result<BTreeMap<SignerNonceKey, u64>, ProtocolStateError> {
+    let mut floors: BTreeMap<SignerNonceKey, u64> = BTreeMap::new();
     let mut seen = BTreeSet::new();
     for record in records.values() {
         if record.nonce == 0
