@@ -1141,6 +1141,12 @@ fn decode_workload(
     let receipt_id = decode_external_key(decoder)?;
     let evaluation_ref = decode_object_ref(decoder)?;
     let len = decoder.array_len()?;
+    if len > 128 {
+        return Err(CanonicalDecodeError::ArrayLengthMismatch {
+            expected: 128,
+            got: len,
+        });
+    }
     let mut contributors = Vec::with_capacity(len.min(128));
     for _ in 0..len {
         contributors.push(decode_contribution(decoder)?);
@@ -1177,6 +1183,12 @@ fn decode_claim(decoder: &mut Decoder<'_>) -> Result<CreateResearchClaimV1, Cano
     let claim_id = decode_external_key(decoder)?;
     let workload_receipt_ref = decode_object_ref(decoder)?;
     let evidence_len = decoder.array_len()?;
+    if evidence_len > 64 {
+        return Err(CanonicalDecodeError::ArrayLengthMismatch {
+            expected: 64,
+            got: evidence_len,
+        });
+    }
     let mut evidence_refs = Vec::with_capacity(evidence_len.min(64));
     for _ in 0..evidence_len {
         evidence_refs.push(decode_object_ref(decoder)?);
@@ -1184,6 +1196,12 @@ fn decode_claim(decoder: &mut Decoder<'_>) -> Result<CreateResearchClaimV1, Cano
     let artifact_hash = decoder.bytes_exact()?;
     let claim_scope_hash = decoder.bytes_exact()?;
     let claimant_len = decoder.array_len()?;
+    if claimant_len > 128 {
+        return Err(CanonicalDecodeError::ArrayLengthMismatch {
+            expected: 128,
+            got: claimant_len,
+        });
+    }
     let mut claimants = Vec::with_capacity(claimant_len.min(128));
     for _ in 0..claimant_len {
         claimants.push(decode_claim_share(decoder)?);
@@ -1283,6 +1301,12 @@ fn decode_resolution(decoder: &mut Decoder<'_>) -> Result<ClaimResolutionV1, Can
     let decision = decode_resolution_decision(decoder)?;
     let resolution_hash = decoder.bytes_exact()?;
     let len = decoder.array_len()?;
+    if len > 128 {
+        return Err(CanonicalDecodeError::ArrayLengthMismatch {
+            expected: 128,
+            got: len,
+        });
+    }
     let mut amended_claimants = Vec::with_capacity(len.min(128));
     for _ in 0..len {
         amended_claimants.push(decode_claim_share(decoder)?);
@@ -1300,6 +1324,39 @@ fn decode_resolution(decoder: &mut Decoder<'_>) -> Result<ClaimResolutionV1, Can
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    fn encode_key(encoder: &mut Encoder) {
+        encoder.bytes(&[1_u8; 32]);
+    }
+
+    fn encode_object_ref(encoder: &mut Encoder, kind: u64) {
+        encoder.array(4);
+        encoder.uint(PROTOCOL_VERSION as u64);
+        encoder.uint(kind);
+        encode_key(encoder);
+        encoder.uint(1);
+    }
+
+    fn encode_command(tag: u64, payload: impl FnOnce(&mut Encoder)) -> Vec<u8> {
+        let mut encoder = Encoder::default();
+        encoder.array(3);
+        encoder.uint(PROTOCOL_VERSION as u64);
+        encoder.uint(tag);
+        payload(&mut encoder);
+        encoder.finish()
+    }
+
+    fn assert_oversized_array_rejected(bytes: &[u8], expected: usize, got: usize) {
+        assert!(matches!(
+            ResearchCommandV1::from_canonical_bytes(bytes),
+            Err(ResearchCommandDecodeError::Canonical(
+                CanonicalDecodeError::ArrayLengthMismatch {
+                    expected: actual_expected,
+                    got: actual_got,
+                }
+            )) if actual_expected == expected && actual_got == got
+        ));
+    }
 
     #[test]
     fn uuid_mapping_is_strict_and_domain_separated() {
@@ -1324,5 +1381,55 @@ mod tests {
             ExternalKey::from_external_id("nakama.match", " match-001").unwrap_err(),
             ExternalKeyError::InvalidExternalId
         );
+    }
+
+    #[test]
+    fn oversized_workload_contributors_are_rejected_before_iteration() {
+        let bytes = encode_command(3, |encoder| {
+            encoder.array(7);
+            encoder.uint(PROTOCOL_VERSION as u64);
+            encode_key(encoder);
+            encode_object_ref(encoder, ResearchObjectKind::EvaluationCommitment as u64);
+            encoder.array(129);
+        });
+        assert_oversized_array_rejected(&bytes, 128, 129);
+    }
+
+    #[test]
+    fn oversized_claim_arrays_are_rejected_before_iteration() {
+        let evidence_bytes = encode_command(4, |encoder| {
+            encoder.array(8);
+            encoder.uint(PROTOCOL_VERSION as u64);
+            encode_key(encoder);
+            encode_object_ref(encoder, ResearchObjectKind::WorkloadReceipt as u64);
+            encoder.array(65);
+        });
+        assert_oversized_array_rejected(&evidence_bytes, 64, 65);
+
+        let claimant_bytes = encode_command(4, |encoder| {
+            encoder.array(8);
+            encoder.uint(PROTOCOL_VERSION as u64);
+            encode_key(encoder);
+            encode_object_ref(encoder, ResearchObjectKind::WorkloadReceipt as u64);
+            encoder.array(0);
+            encoder.bytes(&[1_u8; 32]);
+            encoder.bytes(&[2_u8; 32]);
+            encoder.array(129);
+        });
+        assert_oversized_array_rejected(&claimant_bytes, 128, 129);
+    }
+
+    #[test]
+    fn oversized_resolution_claimants_are_rejected_before_iteration() {
+        let bytes = encode_command(7, |encoder| {
+            encoder.array(7);
+            encoder.uint(PROTOCOL_VERSION as u64);
+            encode_key(encoder);
+            encode_object_ref(encoder, ResearchObjectKind::ClaimChallenge as u64);
+            encoder.uint(1);
+            encoder.bytes(&[1_u8; 32]);
+            encoder.array(129);
+        });
+        assert_oversized_array_rejected(&bytes, 128, 129);
     }
 }
