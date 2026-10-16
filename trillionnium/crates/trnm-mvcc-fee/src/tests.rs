@@ -576,6 +576,13 @@ fn open_existing_requires_precreated_regular_nonsymlink_store() {
                 .code(),
             MvccFeeErrorCodeV1::StoreFailure
         );
+        let symlink_path = temporary.path().join("store-link.sqlite");
+        assert_eq!(
+            MvccFeeStoreV1::open(&symlink_path, genesis(216))
+                .expect_err("normal open must reject symlink store path")
+                .code(),
+            MvccFeeErrorCodeV1::StoreFailure
+        );
     }
 }
 
