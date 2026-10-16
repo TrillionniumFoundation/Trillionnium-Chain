@@ -1,10 +1,10 @@
 use anyhow::Result;
-use std::{fs, path::PathBuf};
+use std::path::PathBuf;
 
 use crate::{
     flush_submission::{process_submission_record, FlushRecordOutcome},
-    load_acked, now_ms, resolve_path_arg_from_env, resolve_tx_retry_policy, SubmissionRecord,
-    WORKER_EVENT_LOG_ENV, WORKER_PROGRESS_LOG_ENV,
+    load_acked, now_ms, read_bounded_worker_log, resolve_path_arg_from_env,
+    resolve_tx_retry_policy, SubmissionRecord, WORKER_EVENT_LOG_ENV, WORKER_PROGRESS_LOG_ENV,
 };
 
 #[allow(clippy::too_many_arguments)]
@@ -35,10 +35,10 @@ pub(crate) fn handle_flush_submissions(
         println!("[agent] no submit log found: {}", submit_log.display());
         return Ok(());
     }
-    let raw = fs::read_to_string(&submit_log)?;
+    let raw = read_bounded_worker_log(&submit_log)?;
     let mut n = 0usize;
     let mut skipped = 0usize;
-    let mut acked = load_acked(&ack_log);
+    let mut acked = load_acked(&ack_log)?;
     let run_id = format!("flush-{}-{}", now_ms(), std::process::id());
     for line in raw.lines().filter(|l| !l.trim().is_empty()) {
         let rec: SubmissionRecord = serde_json::from_str(line)?;
