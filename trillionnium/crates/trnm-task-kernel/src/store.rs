@@ -19,6 +19,7 @@ use crate::{
 };
 
 const STORE_SCHEMA_VERSION_V1: u16 = 3;
+const MAX_PREVIEW_COMMANDS_V1: usize = 1_024;
 
 const META_SQL: &str = "CREATE TABLE agent_market_metadata_v1 (singleton INTEGER PRIMARY KEY CHECK (singleton = 1), schema_version INTEGER NOT NULL, store_id BLOB NOT NULL CHECK (length(store_id) = 32), config_hash BLOB NOT NULL CHECK (length(config_hash) = 32), sequence BLOB NOT NULL CHECK (length(sequence) = 8), order_height BLOB NOT NULL CHECK (length(order_height) = 8), order_block_id BLOB NOT NULL CHECK (length(order_block_id) = 32), durable_state_root BLOB NOT NULL CHECK (length(durable_state_root) = 32), durable_journal_root BLOB NOT NULL CHECK (length(durable_journal_root) = 32), fenced INTEGER NOT NULL CHECK (fenced IN (0,1)), row_checksum BLOB NOT NULL CHECK (length(row_checksum) = 32))";
 const OBJECTS_SQL: &str = "CREATE TABLE agent_market_objects_v1 (object_kind INTEGER NOT NULL, object_id BLOB NOT NULL CHECK (length(object_id) = 32), object_version BLOB NOT NULL CHECK (length(object_version) = 8), immutable_body BLOB NOT NULL, mutable_state BLOB NOT NULL, row_checksum BLOB NOT NULL CHECK (length(row_checksum) = 32), PRIMARY KEY (object_kind, object_id)) WITHOUT ROWID";
@@ -370,6 +371,12 @@ impl TaskKernelStoreV1 {
         candidate_block_id: Hash32V1,
         commands: &[KernelCommandV1],
     ) -> AgentMarketResultV1<AgentMarketExecutionPreviewV1> {
+        if commands.len() > MAX_PREVIEW_COMMANDS_V1 {
+            return Err(error(
+                AgentMarketErrorCodeV1::InvalidBounds,
+                "pre-commit command batch exceeds preview bound",
+            ));
+        }
         reject_sidecars(&self.config.path)?;
         let before = self.fresh_readback()?;
         if &before != expected_parent
