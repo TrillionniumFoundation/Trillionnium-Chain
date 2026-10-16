@@ -11,8 +11,8 @@ use std::{
 use crate::{
     load_ingress_records, normalized_agent_protocol, normalized_compliance_profile,
     normalized_optional_field, normalized_provenance_label, normalized_provider_request_id,
-    reputation_gap_bps_from_best, reputation_signal_from_delta, reputation_surface,
-    trim_boundary_audit_fillers, MessageIngressRecord,
+    read_bounded_worker_log, reputation_gap_bps_from_best, reputation_signal_from_delta,
+    reputation_surface, trim_boundary_audit_fillers, MessageIngressRecord,
 };
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -532,13 +532,13 @@ pub(crate) fn handle_query_audit(
     }
 
     let mut exports = Vec::new();
-    for line in fs::read_to_string(&output_file)?.lines() {
+    for line in read_bounded_worker_log(&output_file)?.lines() {
         if line.trim().is_empty() {
             continue;
         }
         exports.push(serde_json::from_str::<EnterpriseAuditExportRecord>(line)?);
     }
-    let index: AuditExportIndex = serde_json::from_str(&fs::read_to_string(&index_file)?)?;
+    let index: AuditExportIndex = serde_json::from_str(&read_bounded_worker_log(&index_file)?)?;
     validate_audit_export_index(&index, exports.len())?;
 
     let (hit_indexes, records, normalized_fp) = if let Some(task_id) = task_id {
