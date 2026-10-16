@@ -231,12 +231,20 @@ impl<'a> Decoder<'a> {
             })
     }
 
-    pub(crate) fn text(&mut self) -> Result<String, CanonicalDecodeError> {
+    pub(crate) fn text_bounded<const MAX: usize>(
+        &mut self,
+    ) -> Result<String, CanonicalDecodeError> {
         let (major, value) = self.head()?;
         if major != 3 {
             return Err(CanonicalDecodeError::UnexpectedType);
         }
         let len = usize::try_from(value).map_err(|_| CanonicalDecodeError::UnexpectedType)?;
+        if len > MAX {
+            return Err(CanonicalDecodeError::ByteLengthMismatch {
+                expected: MAX,
+                got: len,
+            });
+        }
         let text =
             std::str::from_utf8(self.take(len)?).map_err(|_| CanonicalDecodeError::InvalidUtf8)?;
         Ok(text.to_string())
