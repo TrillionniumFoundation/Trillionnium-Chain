@@ -175,7 +175,38 @@ mod unix {
             Ok((children, changed_tasks))
         }
 
+        // The kernel's procfs child list and stat records are read while
+        // independently owned groups are exiting and being reparented. A torn
+        // numeric token is not an empty child list: restart a COMPLETE scan,
+        // without accepting a partial ownership snapshot or extending the
+        // original cleanup deadline. All nonnumeric-failure classes remain
+        // immediate errors, including changed identities and missing owners.
+        fn retry_malformed_proc_numbers(
+            deadline: Instant,
+            mut scan: impl FnMut() -> Result<()>,
+        ) -> Result<()> {
+            loop {
+                match scan() {
+                    Ok(()) => return Ok(()),
+                    Err(error)
+                        if error.downcast_ref::<std::num::ParseIntError>().is_some()
+                            && Instant::now() < deadline =>
+                    {
+                        thread::sleep(
+                            Duration::from_millis(1)
+                                .min(deadline.saturating_duration_since(Instant::now())),
+                        );
+                    }
+                    Err(error) => return Err(error),
+                }
+            }
+        }
+
         pub(super) fn reap(group: Pid, deadline: Instant) -> Result<()> {
+            retry_malformed_proc_numbers(deadline, || reap_one_complete_scan(group, deadline))
+        }
+
+        fn reap_one_complete_scan(group: Pid, deadline: Instant) -> Result<()> {
             let owner = getpid().as_raw_nonzero().get() as u32;
             let group_number = group.as_raw_nonzero().get() as u32;
             let leader = identity(group_number)?.context("worker leader identity missing")?;
@@ -307,6 +338,43 @@ else:
                         "an owned ordinary descendant is still live or unreaped after return"
                     );
                 }
+            }
+
+            #[test]
+            fn malformed_proc_numeric_snapshot_retries_without_accepting_partial_ownership() {
+                let mut scans = 0;
+                retry_malformed_proc_numbers(
+                    Instant::now() + Duration::from_millis(150),
+                    || {
+                        scans += 1;
+                        if scans == 1 {
+                            let _: u32 = "broken-pid".parse()?;
+                        }
+                        Ok(())
+                    },
+                )
+                .unwrap();
+                assert_eq!(scans, 2, "success requires a fresh complete scan");
+
+                let mut foreign_error_scans = 0;
+                let result = retry_malformed_proc_numbers(
+                    Instant::now() + Duration::from_millis(150),
+                    || {
+                        foreign_error_scans += 1;
+                        anyhow::bail!("worker leader ownership changed")
+                    },
+                );
+                assert!(result.is_err());
+                assert_eq!(foreign_error_scans, 1, "identity failure never retries");
+
+                let mut expired_scans = 0;
+                let result = retry_malformed_proc_numbers(Instant::now(), || {
+                    expired_scans += 1;
+                    let _: u32 = "still-broken".parse()?;
+                    Ok(())
+                });
+                assert!(result.is_err(), "expired malformed snapshot must fail closed");
+                assert_eq!(expired_scans, 1, "deadline must not be extended");
             }
 
             #[test]
