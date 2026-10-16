@@ -11,6 +11,14 @@ pub const MAX_RELAY_AUTH_CONTEXTS: usize = 65_536;
 /// before signature work or key insertion so a single authenticated-looking
 /// envelope cannot amplify memory through cloned map keys.
 pub const MAX_RELAY_AUTH_FIELD_BYTES: usize = 256;
+/// Keep relay authentication work proportional to the bounded P2P frame
+/// contract. This check runs before hashing the payload or invoking the
+/// caller-provided signature verifier.
+pub const MAX_RELAY_AUTH_PAYLOAD_BYTES: usize = 2 * 1024 * 1024;
+/// Signatures are currently represented as text. Leave room for future
+/// encodings while preventing an untrusted envelope from forcing a large
+/// allocation or expensive signature-parser work.
+pub const MAX_RELAY_AUTH_SIGNATURE_BYTES: usize = 512;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum RelaySessionStatus {
@@ -378,6 +386,17 @@ impl RelayAuthVerifier {
             return Err(RelayAuthError::MissingRequiredField { field: "chain_id" });
         }
 
+        // Enforce wire-size bounds before hashing or signature work. The
+        // transport frame has a finite budget, but callers may construct an
+        // envelope directly (or decode it before reaching this verifier), so
+        // keep the admission check here as the final fail-closed boundary.
+        if env.payload.len() > MAX_RELAY_AUTH_PAYLOAD_BYTES {
+            return Err(RelayAuthError::MissingRequiredField { field: "payload" });
+        }
+        if env.sig.len() > MAX_RELAY_AUTH_SIGNATURE_BYTES {
+            return Err(RelayAuthError::MissingRequiredField { field: "sig" });
+        }
+
         let computed_payload_hash = RelayAuthEnvelope::payload_hash_hex(&env.payload);
         if computed_payload_hash != env.payload_hash {
             return Err(RelayAuthError::PayloadHashMismatch);
@@ -696,6 +715,44 @@ mod tests {
             .verify(&env, 1_730_000_000_050, |_| false)
             .unwrap_err();
         assert_eq!(err.stable_code(), "MissingRequiredField");
+        assert!(verifier.last_seq.is_empty());
+        assert!(verifier.seen_nonce.is_empty());
+    }
+
+    #[test]
+    fn relay_auth_verify_rejects_oversized_payload_before_hash_or_signature() {
+        let key = "sender-key";
+        let mut verifier = RelayAuthVerifier::new(120_000);
+        let mut env = sample_env(1, "nonce-payload-oversized", 1_730_000_000_000, key);
+        env.payload = vec![0_u8; MAX_RELAY_AUTH_PAYLOAD_BYTES + 1];
+        let signature_called = std::cell::Cell::new(false);
+        let err = verifier
+            .verify(&env, 1_730_000_000_050, |_| {
+                signature_called.set(true);
+                false
+            })
+            .unwrap_err();
+        assert_eq!(err.stable_code(), "MissingRequiredField");
+        assert!(!signature_called.get());
+        assert!(verifier.last_seq.is_empty());
+        assert!(verifier.seen_nonce.is_empty());
+    }
+
+    #[test]
+    fn relay_auth_verify_rejects_oversized_signature_before_signature_callback() {
+        let key = "sender-key";
+        let mut verifier = RelayAuthVerifier::new(120_000);
+        let mut env = sample_env(1, "nonce-signature-oversized", 1_730_000_000_000, key);
+        env.sig = "s".repeat(MAX_RELAY_AUTH_SIGNATURE_BYTES + 1);
+        let signature_called = std::cell::Cell::new(false);
+        let err = verifier
+            .verify(&env, 1_730_000_000_050, |_| {
+                signature_called.set(true);
+                false
+            })
+            .unwrap_err();
+        assert_eq!(err.stable_code(), "MissingRequiredField");
+        assert!(!signature_called.get());
         assert!(verifier.last_seq.is_empty());
         assert!(verifier.seen_nonce.is_empty());
     }
