@@ -6265,4 +6265,11 @@ pub const FILES: &[(&str, &[u8])] = &[
             "/../../../trillionnium/crates/trnm-worker-agent/src/workflow_ops.rs"
         )),
     ),
+    (
+        "trillionnium/crates/trnm-worker-agent/tests/private_submit_stdio.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-worker-agent/tests/private_submit_stdio.rs"
+        )),
+    ),
 ];
