@@ -285,12 +285,29 @@ impl ConsumptionSettlementStoreV1 {
             ));
         }
 
-        let before = self.fresh_readback()?;
+        let snapshot = open_read_snapshot(&self.config.path)?;
+        let before = self.readback_from_snapshot(&snapshot)?;
         if before.order_height == execution.order_height
             && before.order_block_id == execution.order_block_id
         {
+            let markers = load_committed_block_markers(&snapshot, &self.config)?;
+            let tail = markers.last().expect("audited marker journal is nonempty");
+            if tail.marker_sequence == 0
+                || (tail.parent_order_height, tail.parent_order_block_id)
+                    != (
+                        execution.expected_order_height,
+                        execution.expected_order_block_id,
+                    )
+                || tail.source_operation_sequence != tail.target_operation_sequence
+            {
+                return Err(error(
+                    ConsumptionSettlementErrorCodeV1::Conflict,
+                    "empty committed batch retry differs from durable marker",
+                ));
+            }
             return Ok(before);
         }
+        drop(snapshot);
         if before.order_height != execution.expected_order_height
             || before.order_block_id != execution.expected_order_block_id
         {

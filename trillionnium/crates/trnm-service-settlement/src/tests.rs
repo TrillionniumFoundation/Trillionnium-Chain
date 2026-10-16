@@ -1209,6 +1209,81 @@ fn committed_block_journal_covers_empty_same_block_and_tamper_boundaries() {
 }
 
 #[test]
+fn empty_retry_requires_exact_parent_and_empty_successor_marker() {
+    let mut results = Vec::new();
+    for case in ["changed-parent", "nonempty-target", "genesis-anchor"] {
+        let harness = Harness::new();
+        let store = harness.open();
+        let mut execution = harness.execution(9, h(900), 10);
+        match case {
+            "changed-parent" => {
+                let committed = store
+                    .advance_empty_committed_execution_v1(&execution)
+                    .expect("genuine empty successor");
+                assert_eq!(
+                    store
+                        .advance_empty_committed_execution_v1(&execution)
+                        .unwrap(),
+                    committed
+                );
+                execution.expected_order_block_id = h(999);
+            }
+            "nonempty-target" => {
+                store
+                    .execute_committed_execution(
+                        &execution,
+                        &ConsumptionSettlementCommandV1::AdmitReceipt {
+                            receipt: harness.receipt(None, 10, 100),
+                        },
+                    )
+                    .expect("nonempty successor");
+            }
+            "genesis-anchor" => {
+                execution = harness.execution(8, h(800), 9);
+                execution.order_block_id = h(900);
+            }
+            _ => unreachable!(),
+        }
+        let before = store.fresh_readback().unwrap();
+        let state = store.state().unwrap();
+        let bytes = fs::read(&harness.path).unwrap();
+        let result = store.advance_empty_committed_execution_v1(&execution);
+        assert_eq!(store.fresh_readback().unwrap(), before, "{case}");
+        assert_eq!(store.state().unwrap(), state, "{case}");
+        assert_eq!(fs::read(&harness.path).unwrap(), bytes, "{case}");
+        drop(store);
+        let reopened = ConsumptionSettlementStoreV1::open_existing(harness.config()).unwrap();
+        assert_eq!(reopened.fresh_readback().unwrap(), before, "{case}");
+        assert_eq!(reopened.state().unwrap(), state, "{case}");
+        let cold_result = reopened.advance_empty_committed_execution_v1(&execution);
+        assert_eq!(reopened.fresh_readback().unwrap(), before, "{case}");
+        assert_eq!(reopened.state().unwrap(), state, "{case}");
+        assert_eq!(fs::read(&harness.path).unwrap(), bytes, "{case}");
+        results.push((
+            case,
+            result.err().map(|error| error.code()),
+            cold_result.err().map(|error| error.code()),
+        ));
+        if case == "changed-parent" {
+            execution.expected_order_block_id = h(900);
+            assert_eq!(
+                reopened
+                    .advance_empty_committed_execution_v1(&execution)
+                    .unwrap(),
+                before
+            );
+            assert_eq!(fs::read(&harness.path).unwrap(), bytes);
+        }
+    }
+    assert!(
+        results.iter().all(|(_, warm, cold)| *warm
+            == Some(ConsumptionSettlementErrorCodeV1::Conflict)
+            && *cold == Some(ConsumptionSettlementErrorCodeV1::Conflict)),
+        "retry outcomes (None means accepted): {results:?}"
+    );
+}
+
+#[test]
 fn schema_sidecar_row_and_self_consistent_state_substitution_fail_closed() {
     let schema = Harness::new();
     drop(schema.open());

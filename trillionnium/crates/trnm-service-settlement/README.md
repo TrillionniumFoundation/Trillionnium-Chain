@@ -88,3 +88,10 @@ integer range before creating a directory or database. An out-of-range height
 leaves a missing path untouched, allowing a corrected configuration to retry.
 The maximum representable height remains supported. Existing-store audit,
 stored schemas and signed domains are unchanged; no caller files are removed.
+
+Empty-block retries authenticate the recorded parent and require an empty
+successor marker in the same read snapshot as the returned head. A matching
+target alone does not acknowledge a changed parent, a nonempty block, or the
+self-parent genesis anchor. These conflicting retries return `Conflict` without
+changing durable bytes. Exact empty retries remain supported, including after
+cold reopen; stored schemas and signed domains are unchanged.
