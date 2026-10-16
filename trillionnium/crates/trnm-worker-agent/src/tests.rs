@@ -2807,7 +2807,7 @@ fn persisted_ack_hashes_for_task_merges_hashes_across_failed_resume_attempts() {
     )
     .expect("write second ack");
 
-    let hashes = persisted_ack_hashes_for_task(&ack_log, 77);
+    let hashes = persisted_ack_hashes_for_task(&ack_log, 77).expect("load persisted ack hashes");
     assert_eq!(hashes.commit_tx_hash.as_deref(), Some("commit-old"));
     assert_eq!(hashes.reveal_tx_hash.as_deref(), Some("reveal-new"));
 
@@ -2844,7 +2844,7 @@ fn persisted_ack_hashes_for_task_ignores_blank_wrapped_hash_entries() {
     )
     .expect("write recovery ack");
 
-    let hashes = persisted_ack_hashes_for_task(&ack_log, 78);
+    let hashes = persisted_ack_hashes_for_task(&ack_log, 78).expect("load persisted ack hashes");
     assert_eq!(hashes.commit_tx_hash.as_deref(), Some("commit-new"));
     assert_eq!(hashes.reveal_tx_hash.as_deref(), Some("reveal-new"));
 
@@ -2891,7 +2891,7 @@ fn persisted_ack_hashes_for_task_ignores_newer_other_task_records() {
     )
     .expect("write target reveal ack");
 
-    let hashes = persisted_ack_hashes_for_task(&ack_log, 80);
+    let hashes = persisted_ack_hashes_for_task(&ack_log, 80).expect("load persisted ack hashes");
     assert_eq!(hashes.commit_tx_hash.as_deref(), Some("commit-target"));
     assert_eq!(hashes.reveal_tx_hash.as_deref(), Some("reveal-target"));
 
@@ -2918,7 +2918,7 @@ fn persisted_ack_hashes_for_task_canonicalizes_legacy_wrapped_hex_receipts() {
     )
     .expect("write wrapped legacy ack");
 
-    let hashes = persisted_ack_hashes_for_task(&ack_log, 79);
+    let hashes = persisted_ack_hashes_for_task(&ack_log, 79).expect("load persisted ack hashes");
     assert_eq!(hashes.commit_tx_hash.as_deref(), Some("abcd1234"));
     assert_eq!(hashes.reveal_tx_hash.as_deref(), Some("facebeef"));
 
@@ -2945,7 +2945,7 @@ fn persisted_ack_hashes_for_task_canonicalizes_shell_escaped_quote_wrapped_hex_r
     )
     .expect("write shell-escaped wrapped legacy ack");
 
-    let hashes = persisted_ack_hashes_for_task(&ack_log, 791);
+    let hashes = persisted_ack_hashes_for_task(&ack_log, 791).expect("load persisted ack hashes");
     assert_eq!(hashes.commit_tx_hash.as_deref(), Some("abcd1234"));
     assert_eq!(hashes.reveal_tx_hash.as_deref(), Some("facebeef"));
 
@@ -2972,7 +2972,7 @@ fn persisted_ack_hashes_for_task_extracts_tx_hash_from_receipt_blob_entries() {
     )
     .expect("write receipt-blob ack");
 
-    let hashes = persisted_ack_hashes_for_task(&ack_log, 792);
+    let hashes = persisted_ack_hashes_for_task(&ack_log, 792).expect("load persisted ack hashes");
     assert_eq!(hashes.commit_tx_hash.as_deref(), Some("abcd1234"));
     assert_eq!(hashes.reveal_tx_hash.as_deref(), Some("facebeef"));
 
@@ -3014,13 +3014,37 @@ fn is_task_acked_only_true_for_accepted_records() {
     ));
     fs::write(
             &ack_log,
-            "{\"ts_unix_ms\":1,\"task_id\":1,\"status\":\"rejected\"}\n{\"ts_unix_ms\":2,\"task_id\":2,\"status\":\"accepted\"}\n",
+            "{\"ts_unix_ms\":1,\"task_id\":1,\"status\":\"rejected\",\"commit_tx_hash\":null,\"reveal_tx_hash\":null}\n{\"ts_unix_ms\":2,\"task_id\":2,\"status\":\"accepted\",\"commit_tx_hash\":null,\"reveal_tx_hash\":null}\n",
         )
         .expect("write ack log");
 
-    assert!(!is_task_acked(&ack_log, 1));
-    assert!(is_task_acked(&ack_log, 2));
+    assert!(!is_task_acked(&ack_log, 1).expect("load ack log"));
+    assert!(is_task_acked(&ack_log, 2).expect("load ack log"));
     let _ = fs::remove_file(&ack_log);
+}
+
+#[test]
+fn worker_ack_log_rejects_oversized_or_malformed_input_fail_closed() {
+    let oversized = std::env::temp_dir().join(format!(
+        "trnm-worker-agent-oversized-ack-{}-{}.jsonl",
+        std::process::id(),
+        now_ms()
+    ));
+    let file = fs::File::create(&oversized).expect("create sparse oversized ack log");
+    file.set_len(MAX_WORKER_LOG_BYTES + 1)
+        .expect("size oversized ack log");
+    assert!(load_acked(&oversized).is_err());
+    let _ = fs::remove_file(&oversized);
+
+    let malformed = std::env::temp_dir().join(format!(
+        "trnm-worker-agent-malformed-ack-{}-{}.jsonl",
+        std::process::id(),
+        now_ms()
+    ));
+    fs::write(&malformed, b"{not-json}\n").expect("write malformed ack log");
+    assert!(load_acked(&malformed).is_err());
+    assert!(is_task_acked(&malformed, 1).is_err());
+    let _ = fs::remove_file(&malformed);
 }
 
 #[test]
