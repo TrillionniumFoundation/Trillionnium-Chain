@@ -20,6 +20,26 @@ LOCK = WORKSPACE / "Cargo.lock"
 REGISTRY = "registry+https://github.com/rust-lang/crates.io-index"
 CHECKSUM = re.compile(r"[0-9a-f]{64}\Z")
 ACTION_SHA = re.compile(r"[0-9a-f]{40}\Z", re.IGNORECASE)
+EXPECTED_TOOLCHAIN = "1.95.0"
+ALLOWED_ACTIONS = {
+    "actions/checkout": "11d5960a326750d5838078e36cf38b85af677262",
+}
+PERMISSION_KEYS = (
+    "actions",
+    "attestations",
+    "checks",
+    "contents",
+    "deployments",
+    "discussions",
+    "id-token",
+    "issues",
+    "models",
+    "packages",
+    "pages",
+    "pull-requests",
+    "security-events",
+    "statuses",
+)
 
 
 class Invalid(ValueError):
@@ -44,6 +64,8 @@ def dependency_tables(manifest: dict):
 def check_manifest(manifest_path: pathlib.Path) -> None:
     data = tomllib.loads(manifest_path.read_text())
     package = data.get("package", {})
+    if package:
+        require(package.get("publish") is False, f"publishable workspace crate {manifest_path.relative_to(ROOT)}")
     # Build scripts are a particularly easy way for a transitive dependency
     # to turn a compile into arbitrary code execution.  The portable workspace
     # has no first-party build script or build dependency; keep that boundary
@@ -69,6 +91,45 @@ def check_manifest(manifest_path: pathlib.Path) -> None:
             # silently bypass the allow-registry policy in deny.toml.
             registry = declaration.get("registry")
             require(registry in (None, "crates-io"), f"unknown registry for {alias} in {manifest_path.relative_to(ROOT)}")
+
+
+def check_toolchain() -> None:
+    path = ROOT / "rust-toolchain.toml"
+    require(path.is_file(), "rust-toolchain.toml is missing")
+    data = tomllib.loads(path.read_text())
+    toolchain = data.get("toolchain")
+    require(isinstance(toolchain, dict), "rust-toolchain.toml has no toolchain table")
+    require(toolchain.get("channel") == EXPECTED_TOOLCHAIN, "Rust toolchain channel is not pinned")
+    require(toolchain.get("profile") == "minimal", "Rust toolchain profile is not minimal")
+    require(set(toolchain.get("components", [])) >= {"clippy", "rustfmt"}, "Rust toolchain components are incomplete")
+
+
+def check_local_cargo_overrides() -> None:
+    # Cargo reads repository-local configuration before the isolated CARGO_HOME.
+    # An unreviewed config can replace the registry or install a compiler wrapper,
+    # and cargo-audit also supports a repository-local audit.toml.
+    for directory in (ROOT / ".cargo", WORKSPACE / ".cargo"):
+        require(not directory.exists(), f"unreviewed Cargo configuration directory {directory.relative_to(ROOT)}")
+    for path in ROOT.rglob("audit.toml"):
+        require(False, f"unreviewed cargo-audit configuration {path.relative_to(ROOT)}")
+
+
+def check_deny_policy() -> None:
+    path = ROOT / "deny.toml"
+    require(path.is_file(), "deny.toml is missing")
+    data = tomllib.loads(path.read_text())
+    graph = data.get("graph", {})
+    require("x86_64-unknown-linux-gnu" in graph.get("targets", []), "deny.toml omits the CI target")
+    advisories = data.get("advisories", {})
+    require(advisories.get("version") == 2, "deny.toml advisory schema is not pinned")
+    require(advisories.get("yanked") == "deny", "deny.toml does not deny yanked crates")
+    require(not advisories.get("ignore", []), "deny.toml advisory ignore list is not empty")
+    bans = data.get("bans", {})
+    require(bans.get("wildcards") == "deny", "deny.toml does not deny wildcard dependencies")
+    sources = data.get("sources", {})
+    require(sources.get("unknown-registry") == "deny", "deny.toml allows unknown registries")
+    require(sources.get("unknown-git") == "deny", "deny.toml allows unknown git sources")
+    require(sources.get("allow-registry") == ["https://github.com/rust-lang/crates.io-index"], "deny.toml registry allowlist drift")
 
 
 def check_lock() -> dict:
@@ -115,15 +176,19 @@ def check_workflow_policy() -> None:
     workflow.  A future release pipeline must be reviewed as a separate,
     explicitly attested change instead of silently inheriting the PR runner.
     """
-    workflows = ROOT / ".github"
+    workflows = ROOT / ".github" / "workflows"
+    require(workflows.is_dir(), ".github/workflows directory is missing")
     for path in [*workflows.rglob("*.yml"), *workflows.rglob("*.yaml")]:
         text = path.read_text()
         rel = path.relative_to(ROOT)
+        require(re.search(r"(?mi)^\s*permissions\s*:", text), f"workflow has no explicit permissions policy in {rel}")
         require("pull_request_target" not in text, f"privileged pull-request event in {rel}")
         require("workflow_run" not in text, f"privileged workflow event in {rel}")
         require("self-hosted" not in text, f"persistent runner in {rel}")
-        require(not re.search(r"(?i)\b(?:contents|actions|packages|id-token)\s*:\s*write\b", text), f"write token permission in {rel}")
-        require("secrets." not in text, f"secret interpolation in untrusted workflow {rel}")
+        write_keys = "|".join(re.escape(key) for key in PERMISSION_KEYS)
+        require(not re.search(rf"(?mi)^\s*(?:{write_keys})\s*:\s*write\b", text), f"write token permission in {rel}")
+        require(not re.search(r"(?mi)^\s*permissions\s*:\s*(?:write|write-all)\b", text), f"broad write token permission in {rel}")
+        require(not re.search(r"\bsecrets(?:\.|\[)", text), f"secret interpolation in untrusted workflow {rel}")
         require("upload-artifact" not in text, f"unattested artifact publishing in {rel}")
         require("attest-build-provenance" not in text, f"artifact attestation without reviewed release gate in {rel}")
         require(not re.search(r"(?mi)^\s*environment:\s*", text), f"deployment environment in {rel}")
@@ -132,14 +197,18 @@ def check_workflow_policy() -> None:
 
 def check_actions() -> int:
     count = 0
-    workflows = ROOT / ".github"
+    workflows = ROOT / ".github" / "workflows"
+    require(workflows.is_dir(), ".github/workflows directory is missing")
     for path in [*workflows.rglob("*.yml"), *workflows.rglob("*.yaml")]:
         for line_number, line in enumerate(path.read_text().splitlines(), 1):
-            match = re.search(r"\buses:\s*([^\s#]+)", line)
+            if re.search(r"\buses\s*:\s*$", line):
+                raise Invalid(f"multiline GitHub Action reference at {path.relative_to(ROOT)}:{line_number}")
+            match = re.search(r"\buses\s*:\s*([^\s#]+)", line)
             if not match:
                 continue
             reference = match.group(1).rsplit("@", 1)
             require(len(reference) == 2 and ACTION_SHA.fullmatch(reference[1]) is not None, f"unpinned GitHub Action at {path.relative_to(ROOT)}:{line_number}")
+            require(reference[0] in ALLOWED_ACTIONS and reference[1].lower() == ALLOWED_ACTIONS[reference[0]].lower(), f"unreviewed GitHub Action at {path.relative_to(ROOT)}:{line_number}")
             count += 1
     require(count > 0, "no GitHub Actions references found to audit")
     return count
@@ -155,6 +224,9 @@ def check(root: pathlib.Path = ROOT) -> dict:
     LOCK = WORKSPACE / "Cargo.lock"
     try:
         report = check_lock()
+        check_toolchain()
+        check_local_cargo_overrides()
+        check_deny_policy()
         check_workflow_policy()
         report["pinned_actions"] = check_actions()
         return report
