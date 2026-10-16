@@ -1,7 +1,12 @@
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
-use std::collections::{HashMap, HashSet};
+use std::collections::HashMap;
 use std::fmt;
+
+/// A relay verifier only needs replay state for envelopes that can still pass
+/// the timestamp gate. Bound the retained state so an unauthenticated peer
+/// cannot grow the verifier indefinitely by rotating task/session identifiers.
+pub const MAX_RELAY_AUTH_CONTEXTS: usize = 65_536;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum RelaySessionStatus {
@@ -177,6 +182,7 @@ pub enum RelayAuthError {
     MissingRequiredField {
         field: &'static str,
     },
+    ResourceLimit,
 }
 
 impl RelayAuthError {
@@ -191,6 +197,7 @@ impl RelayAuthError {
             RelayAuthError::BadVersion { .. } => "BadVersion",
             RelayAuthError::UnsupportedType { .. } => "UnsupportedType",
             RelayAuthError::MissingRequiredField { .. } => "MissingRequiredField",
+            RelayAuthError::ResourceLimit => "ResourceLimit",
         }
     }
 }
@@ -257,6 +264,13 @@ impl fmt::Display for RelayAuthError {
                 field,
                 self.stable_code()
             ),
+            RelayAuthError::ResourceLimit => {
+                write!(
+                    f,
+                    "relay auth replay state limit reached (code={})",
+                    self.stable_code()
+                )
+            }
         }
     }
 }
@@ -266,8 +280,8 @@ impl std::error::Error for RelayAuthError {}
 #[derive(Debug, Clone)]
 pub struct RelayAuthVerifier {
     max_skew_ms: u128,
-    last_seq: HashMap<(String, String, String, String), u64>,
-    seen_nonce: HashSet<(String, String, String, String, String)>,
+    last_seq: HashMap<(String, String, String, String), (u64, u128)>,
+    seen_nonce: HashMap<(String, String, String, String, String), u128>,
 }
 
 impl RelayAuthVerifier {
@@ -275,7 +289,7 @@ impl RelayAuthVerifier {
         Self {
             max_skew_ms,
             last_seq: HashMap::new(),
-            seen_nonce: HashSet::new(),
+            seen_nonce: HashMap::new(),
         }
     }
 
@@ -389,13 +403,20 @@ impl RelayAuthVerifier {
             });
         }
 
+        // Entries older than the admissible timestamp window can no longer be
+        // used for a successful replay, so discard them before enforcing the
+        // bounded-memory guard. Future timestamps remain until they age out.
+        let cutoff = now_ms.saturating_sub(self.max_skew_ms);
+        self.last_seq.retain(|_, (_, seen_at)| *seen_at >= cutoff);
+        self.seen_nonce.retain(|_, seen_at| *seen_at >= cutoff);
+
         let seq_key = (
             env.chain_id.clone(),
             env.task_id.clone(),
             env.session_id.clone(),
             env.from.clone(),
         );
-        if let Some(last_seq) = self.last_seq.get(&seq_key) {
+        if let Some((last_seq, _)) = self.last_seq.get(&seq_key) {
             if env.seq <= *last_seq {
                 return Err(RelayAuthError::SeqRegression {
                     last_seq: *last_seq,
@@ -418,14 +439,21 @@ impl RelayAuthVerifier {
             env.from.clone(),
             env.nonce.clone(),
         );
-        if self.seen_nonce.contains(&nonce_key) {
+        if self.seen_nonce.contains_key(&nonce_key) {
             return Err(RelayAuthError::Replay {
                 nonce: env.nonce.clone(),
             });
         }
 
-        self.last_seq.insert(seq_key, env.seq);
-        self.seen_nonce.insert(nonce_key);
+        if !self.last_seq.contains_key(&seq_key) && self.last_seq.len() >= MAX_RELAY_AUTH_CONTEXTS {
+            return Err(RelayAuthError::ResourceLimit);
+        }
+        if self.seen_nonce.len() >= MAX_RELAY_AUTH_CONTEXTS {
+            return Err(RelayAuthError::ResourceLimit);
+        }
+
+        self.last_seq.insert(seq_key, (env.seq, env.timestamp_ms));
+        self.seen_nonce.insert(nonce_key, env.timestamp_ms);
         Ok(())
     }
 }
@@ -587,6 +615,48 @@ mod tests {
             .verify(&env, 1_730_000_200_001, |e| e.sign_for_test(key) == e.sig)
             .unwrap_err();
         assert_eq!(err.stable_code(), "TimeSkew");
+    }
+
+    #[test]
+    fn relay_auth_replay_state_expires_after_timestamp_window() {
+        let key = "sender-key";
+        let base = 1_730_000_000_000;
+        let mut verifier = RelayAuthVerifier::new(120_000);
+        let first = sample_env(1, "nonce-window-1", base, key);
+        verifier
+            .verify(&first, base + 50, |e| e.sign_for_test(key) == e.sig)
+            .expect("first message accepted");
+
+        // Once the original timestamp is outside the admissible window, its
+        // sequence/nonce state can no longer authorize a successful replay and
+        // is reclaimed. A new active relay session may then start at seq=1.
+        let next = sample_env(1, "nonce-window-2", base + 120_001, key);
+        verifier
+            .verify(&next, base + 120_001, |e| e.sign_for_test(key) == e.sig)
+            .expect("expired replay state reclaimed");
+    }
+
+    #[test]
+    fn relay_auth_replay_state_limit_fails_closed() {
+        let key = "sender-key";
+        let base = 1_730_000_000_000;
+        let mut verifier = RelayAuthVerifier::new(120_000);
+        for index in 0..MAX_RELAY_AUTH_CONTEXTS {
+            verifier.last_seq.insert(
+                (
+                    format!("chain-{index}"),
+                    "task".to_string(),
+                    "session".to_string(),
+                    "from".to_string(),
+                ),
+                (1, base),
+            );
+        }
+        let env = sample_env(1, "nonce-cap", base + 1, key);
+        let err = verifier
+            .verify(&env, base + 1, |e| e.sign_for_test(key) == e.sig)
+            .unwrap_err();
+        assert_eq!(err.stable_code(), "ResourceLimit");
     }
 
     #[test]
