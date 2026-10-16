@@ -254,9 +254,8 @@ pub(crate) fn now_ms() -> u128 {
 }
 
 fn append_json_line(path: &Path, line: &str) -> Result<()> {
-    if let Some(parent) = path.parent() {
-        fs::create_dir_all(parent)?;
-    }
+    ensure_parent_directory(path)?;
+    ensure_regular_or_missing(path)?;
     let mut file = OpenOptions::new().create(true).append(true).open(path)?;
     file.write_all(line.as_bytes())?;
     file.write_all(b"\n")?;
@@ -297,6 +296,7 @@ pub(crate) fn append_submission(
 }
 
 pub(crate) fn read_bounded_worker_log(path: &Path) -> Result<String> {
+    ensure_regular_or_missing(path)?;
     let mut file = fs::File::open(path)?;
     let expected_len = file.metadata()?.len();
     if expected_len > MAX_WORKER_LOG_BYTES {
@@ -327,6 +327,7 @@ pub(crate) fn read_bounded_worker_log(path: &Path) -> Result<String> {
 }
 
 pub(crate) fn load_ack_records(ack_log: &Path) -> Result<Vec<AckRecord>> {
+    ensure_regular_or_missing(ack_log)?;
     if !ack_log.exists() {
         return Ok(vec![]);
     }
@@ -480,9 +481,7 @@ pub(crate) fn try_acquire_task_lock(
     task_id: u64,
 ) -> Result<Option<TaskExecutionLock>> {
     let path = task_lock_path(ack_log, task_id);
-    if let Some(parent) = path.parent() {
-        fs::create_dir_all(parent)?;
-    }
+    ensure_parent_directory(&path)?;
     match OpenOptions::new().write(true).create_new(true).open(&path) {
         Ok(_) => Ok(Some(TaskExecutionLock { path })),
         Err(e) if e.kind() == std::io::ErrorKind::AlreadyExists => Ok(None),
@@ -495,6 +494,7 @@ pub(crate) fn is_task_acked(ack_log: &Path, task_id: u64) -> Result<bool> {
 }
 
 pub(crate) fn load_ingress_records(path: &PathBuf) -> Result<Vec<MessageIngressRecord>> {
+    ensure_regular_or_missing(path)?;
     if !path.exists() {
         return Ok(vec![]);
     }
