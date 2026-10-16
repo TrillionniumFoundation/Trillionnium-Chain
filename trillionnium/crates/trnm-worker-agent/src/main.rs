@@ -8,7 +8,7 @@ use std::{
     collections::HashSet,
     env,
     fs::{self, OpenOptions},
-    io::Write,
+    io::{Read, Write},
     path::{Path, PathBuf},
     process::Output,
     thread,
@@ -51,6 +51,13 @@ const DEFAULT_TX_ADAPTER_TIMEOUT_MS: u64 = 30_000;
 const DEFAULT_LLM_ADAPTER_MAX_RETRIES: u32 = 2;
 const DEFAULT_LLM_ADAPTER_BACKOFF_MS: u64 = 200;
 const DEFAULT_LLM_ADAPTER_TIMEOUT_MS: u64 = 10_000;
+
+// Worker JSONL state is local operator input, but a corrupted or replaced log
+// must not cause an unbounded allocation or silently look empty.  Keep the
+// whole-file bound and a per-record bound below the normal adapter payload
+// limits while still allowing long-lived worker histories.
+pub(crate) const MAX_WORKER_LOG_BYTES: u64 = 64 * 1024 * 1024;
+pub(crate) const MAX_WORKER_LOG_LINE_BYTES: usize = 1 * 1024 * 1024;
 
 const TX_ADAPTER_MAX_RETRIES_ENV: &str = "TRNM_TX_ADAPTER_MAX_RETRIES";
 const TX_ADAPTER_BACKOFF_MS_ENV: &str = "TRNM_TX_ADAPTER_BACKOFF_MS";
@@ -277,27 +284,54 @@ pub(crate) fn append_submission(
     append_json_line(submit_log, &line)
 }
 
-fn load_ack_records(ack_log: &Path) -> Vec<AckRecord> {
-    if !ack_log.exists() {
-        return vec![];
+pub(crate) fn read_bounded_worker_log(path: &Path) -> Result<String> {
+    let mut file = fs::File::open(path)?;
+    let expected_len = file.metadata()?.len();
+    if expected_len > MAX_WORKER_LOG_BYTES {
+        return Err(anyhow!(
+            "worker log {} exceeds {} bytes",
+            path.display(),
+            MAX_WORKER_LOG_BYTES
+        ));
     }
-    fs::read_to_string(ack_log)
-        .ok()
-        .map(|raw| {
-            raw.lines()
-                .filter(|l| !l.trim().is_empty())
-                .filter_map(|line| serde_json::from_str::<AckRecord>(line).ok())
-                .collect()
-        })
-        .unwrap_or_default()
+    let mut raw = String::with_capacity(expected_len as usize);
+    file.read_to_string(&mut raw)?;
+    if file.metadata()?.len() != expected_len {
+        return Err(anyhow!(
+            "worker log {} changed while reading",
+            path.display()
+        ));
+    }
+    if raw
+        .lines()
+        .any(|line| line.len() > MAX_WORKER_LOG_LINE_BYTES)
+    {
+        return Err(anyhow!(
+            "worker log {} contains an oversized record",
+            path.display()
+        ));
+    }
+    Ok(raw)
 }
 
-pub(crate) fn load_acked(ack_log: &Path) -> HashSet<u64> {
-    load_ack_records(ack_log)
+pub(crate) fn load_ack_records(ack_log: &Path) -> Result<Vec<AckRecord>> {
+    if !ack_log.exists() {
+        return Ok(vec![]);
+    }
+    let raw = read_bounded_worker_log(ack_log)?;
+    raw.lines()
+        .filter(|line| !line.trim().is_empty())
+        .map(serde_json::from_str::<AckRecord>)
+        .collect::<std::result::Result<Vec<_>, _>>()
+        .map_err(|error| anyhow!("invalid worker acknowledgement record: {error}"))
+}
+
+pub(crate) fn load_acked(ack_log: &Path) -> Result<HashSet<u64>> {
+    Ok(load_ack_records(ack_log)?
         .into_iter()
         .filter(|rec| rec.status == "accepted")
         .map(|rec| rec.task_id)
-        .collect()
+        .collect())
 }
 
 pub(crate) struct TaskExecutionLock {
@@ -337,20 +371,20 @@ pub(crate) fn try_acquire_task_lock(
     }
 }
 
-pub(crate) fn is_task_acked(ack_log: &Path, task_id: u64) -> bool {
-    load_acked(ack_log).contains(&task_id)
+pub(crate) fn is_task_acked(ack_log: &Path, task_id: u64) -> Result<bool> {
+    Ok(load_acked(ack_log)?.contains(&task_id))
 }
 
 pub(crate) fn load_ingress_records(path: &PathBuf) -> Result<Vec<MessageIngressRecord>> {
     if !path.exists() {
         return Ok(vec![]);
     }
-    let raw = fs::read_to_string(path)?;
+    let raw = read_bounded_worker_log(path)?;
     Ok(raw
         .lines()
         .filter(|l| !l.trim().is_empty())
-        .filter_map(|l| serde_json::from_str::<MessageIngressRecord>(l).ok())
-        .collect())
+        .map(serde_json::from_str::<MessageIngressRecord>)
+        .collect::<std::result::Result<Vec<_>, _>>()?)
 }
 
 pub(crate) fn save_ingress_records(path: &PathBuf, records: &[MessageIngressRecord]) -> Result<()> {
@@ -822,13 +856,16 @@ fn normalize_persisted_tx_hash(hash: Option<String>) -> Option<String> {
     })
 }
 
-pub(crate) fn persisted_ack_hashes_for_task(ack_log: &Path, task_id: u64) -> PersistedAckHashes {
+pub(crate) fn persisted_ack_hashes_for_task(
+    ack_log: &Path,
+    task_id: u64,
+) -> Result<PersistedAckHashes> {
     let mut hashes = PersistedAckHashes {
         commit_tx_hash: None,
         reveal_tx_hash: None,
     };
 
-    for ack in load_ack_records(ack_log).into_iter().rev() {
+    for ack in load_ack_records(ack_log)?.into_iter().rev() {
         if ack.task_id != task_id {
             continue;
         }
@@ -843,7 +880,7 @@ pub(crate) fn persisted_ack_hashes_for_task(ack_log: &Path, task_id: u64) -> Per
         }
     }
 
-    hashes
+    Ok(hashes)
 }
 
 fn backoff_delay_ms(base_ms: u64, attempt: u32) -> u64 {
