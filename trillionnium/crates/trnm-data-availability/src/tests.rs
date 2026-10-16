@@ -1403,5 +1403,12 @@ fn open_existing_requires_precreated_regular_nonsymlink_store() {
                 .code(),
             DaErrorCodeV1::StoreFailure
         );
+        let symlink_path = fixture.directory.path().join("store-link.sqlite");
+        assert_eq!(
+            DataAvailabilityStoreV1::open(config_at(symlink_path))
+                .expect_err("normal open must reject symlink store path")
+                .code(),
+            DaErrorCodeV1::StoreFailure
+        );
     }
 }
