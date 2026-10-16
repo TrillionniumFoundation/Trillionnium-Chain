@@ -479,20 +479,29 @@ impl ExternalCheckpointAuthorityV2 {
                     stage: "clone checkpoint journal",
                     source,
                 })?;
-        let mut bytes = Vec::new();
-        reader.read_to_end(&mut bytes).map_err(|source| {
-            ExternalCheckpointAuthorityErrorV2::Io {
-                stage: "read checkpoint journal",
+        let journal_bytes = reader
+            .metadata()
+            .map_err(|source| ExternalCheckpointAuthorityErrorV2::Io {
+                stage: "stat checkpoint journal",
                 source,
-            }
-        })?;
-        if bytes.len() % LOG_RECORD_BYTES_V2 != 0 {
+            })?
+            .len();
+        let record_bytes = LOG_RECORD_BYTES_V2 as u64;
+        if journal_bytes % record_bytes != 0 {
             return Err(ExternalCheckpointAuthorityErrorV2::InvalidLog(
                 "trailing partial checkpoint record",
             ));
         }
-        for chunk in bytes.chunks_exact(LOG_RECORD_BYTES_V2) {
-            let record = decode_log_record_v2(chunk)?;
+        let mut remaining = journal_bytes;
+        let mut chunk = [0u8; LOG_RECORD_BYTES_V2];
+        while remaining != 0 {
+            reader.read_exact(&mut chunk).map_err(|source| {
+                ExternalCheckpointAuthorityErrorV2::Io {
+                    stage: "read checkpoint journal",
+                    source,
+                }
+            })?;
+            let record = decode_log_record_v2(&chunk)?;
             if record.sequence != self.record_count.saturating_add(1)
                 || record.previous_hash != self.head_hash
                 || record.record_hash
@@ -514,6 +523,20 @@ impl ExternalCheckpointAuthorityV2 {
             self.current.insert(record.scope, record.target);
             self.record_count = record.sequence;
             self.head_hash = record.record_hash;
+            remaining -= record_bytes;
+        }
+        if reader
+            .metadata()
+            .map_err(|source| ExternalCheckpointAuthorityErrorV2::Io {
+                stage: "restat checkpoint journal",
+                source,
+            })?
+            .len()
+            != journal_bytes
+        {
+            return Err(ExternalCheckpointAuthorityErrorV2::InvalidLog(
+                "checkpoint journal changed during replay",
+            ));
         }
         Ok(())
     }
@@ -1568,6 +1591,27 @@ mod tests {
         drop(authority);
         let reopened = ExternalCheckpointAuthorityV2::open(&log).unwrap();
         assert_eq!(reopened.load_checked([1; 32]).unwrap(), Some(second));
+    }
+
+    #[test]
+    fn large_journal_replays_with_bounded_memory() {
+        let directory = private_tempdir();
+        let log = directory.path().join("checkpoint.log");
+        let mut authority = ExternalCheckpointAuthorityV2::open(&log).unwrap();
+        let mut previous = checkpoint(0, [0; 32]);
+        authority
+            .compare_and_advance_checked(None, previous)
+            .unwrap();
+        for generation in 1..=128 {
+            let target = checkpoint(generation, previous.checkpoint_checksum());
+            authority
+                .compare_and_advance_checked(Some(previous), target)
+                .unwrap();
+            previous = target;
+        }
+        drop(authority);
+        let reopened = ExternalCheckpointAuthorityV2::open(&log).unwrap();
+        assert_eq!(reopened.load_checked([1; 32]).unwrap(), Some(previous));
     }
 
     #[test]
