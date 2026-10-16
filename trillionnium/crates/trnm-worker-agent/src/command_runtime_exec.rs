@@ -259,9 +259,7 @@ mod unix {
                     let pid = Pid::from_raw(i32::try_from(pid)?).context("worker child pid")?;
                     let descriptor = match pidfd_open(pid, PidfdFlags::empty()) {
                         Ok(descriptor) => descriptor,
-                        Err(rustix::io::Errno::SRCH)
-                            if vanished_after_pidfd_srch(before)? =>
-                        {
+                        Err(rustix::io::Errno::SRCH) if vanished_after_pidfd_srch(before)? => {
                             // Already-disappeared owned child: never report
                             // completion from this partial observation.
                             // 'found' remains true, forcing a fresh scan.
