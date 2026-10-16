@@ -115,6 +115,14 @@ mod unix {
             }
         }
 
+        // An adopted child can finish and be reaped between its owned /proc
+        // identity read and pidfd_open. ESRCH is NOT an ownership proof: only
+        // a second kernel procfs read confirming the old PID is absent lets
+        // the caller repeat the COMPLETE scan; a live or recycled PID fails.
+        fn vanished_after_pidfd_srch(expected: Identity) -> Result<bool> {
+            Ok(identity(expected.pid)?.is_none())
+        }
+
         // Linux adoption is process-wide. Install once, never temporarily toggle
         // it around a threaded call, and never consume another owner's wait.
         pub(super) fn install() -> Result<()> {
@@ -175,7 +183,38 @@ mod unix {
             Ok((children, changed_tasks))
         }
 
+        // The kernel's procfs child list and stat records are read while
+        // independently owned groups are exiting and being reparented. A torn
+        // numeric token is not an empty child list: restart a COMPLETE scan,
+        // without accepting a partial ownership snapshot or extending the
+        // original cleanup deadline. All nonnumeric-failure classes remain
+        // immediate errors, including changed identities and missing owners.
+        fn retry_malformed_proc_numbers(
+            deadline: Instant,
+            mut scan: impl FnMut() -> Result<()>,
+        ) -> Result<()> {
+            loop {
+                match scan() {
+                    Ok(()) => return Ok(()),
+                    Err(error)
+                        if error.downcast_ref::<std::num::ParseIntError>().is_some()
+                            && Instant::now() < deadline =>
+                    {
+                        thread::sleep(
+                            Duration::from_millis(1)
+                                .min(deadline.saturating_duration_since(Instant::now())),
+                        );
+                    }
+                    Err(error) => return Err(error),
+                }
+            }
+        }
+
         pub(super) fn reap(group: Pid, deadline: Instant) -> Result<()> {
+            retry_malformed_proc_numbers(deadline, || reap_one_complete_scan(group, deadline))
+        }
+
+        fn reap_one_complete_scan(group: Pid, deadline: Instant) -> Result<()> {
             let owner = getpid().as_raw_nonzero().get() as u32;
             let group_number = group.as_raw_nonzero().get() as u32;
             let leader = identity(group_number)?.context("worker leader identity missing")?;
@@ -218,7 +257,16 @@ mod unix {
                     }
                     found = true;
                     let pid = Pid::from_raw(i32::try_from(pid)?).context("worker child pid")?;
-                    let descriptor = pidfd_open(pid, PidfdFlags::empty())?;
+                    let descriptor = match pidfd_open(pid, PidfdFlags::empty()) {
+                        Ok(descriptor) => descriptor,
+                        Err(rustix::io::Errno::SRCH) if vanished_after_pidfd_srch(before)? => {
+                            // Already-disappeared owned child: never report
+                            // completion from this partial observation.
+                            // 'found' remains true, forcing a fresh scan.
+                            continue;
+                        }
+                        Err(error) => return Err(error.into()),
+                    };
                     anyhow::ensure!(
                         identity(before.pid)? == Some(before),
                         "worker adopted child identity changed"
@@ -307,6 +355,58 @@ else:
                         "an owned ordinary descendant is still live or unreaped after return"
                     );
                 }
+            }
+
+            #[test]
+            fn malformed_proc_numeric_snapshot_retries_without_accepting_partial_ownership() {
+                let mut scans = 0;
+                retry_malformed_proc_numbers(Instant::now() + Duration::from_millis(150), || {
+                    scans += 1;
+                    if scans == 1 {
+                        let _: u32 = "broken-pid".parse()?;
+                    }
+                    Ok(())
+                })
+                .unwrap();
+                assert_eq!(scans, 2, "success requires a fresh complete scan");
+
+                let mut foreign_error_scans = 0;
+                let result = retry_malformed_proc_numbers(
+                    Instant::now() + Duration::from_millis(150),
+                    || {
+                        foreign_error_scans += 1;
+                        anyhow::bail!("worker leader ownership changed")
+                    },
+                );
+                assert!(result.is_err());
+                assert_eq!(foreign_error_scans, 1, "identity failure never retries");
+
+                let mut expired_scans = 0;
+                let result = retry_malformed_proc_numbers(Instant::now(), || {
+                    expired_scans += 1;
+                    let _: u32 = "still-broken".parse()?;
+                    Ok(())
+                });
+                assert!(
+                    result.is_err(),
+                    "expired malformed snapshot must fail closed"
+                );
+                assert_eq!(expired_scans, 1, "deadline must not be extended");
+            }
+
+            #[test]
+            fn vanished_pidfd_race_refuses_live_or_reused_process_identity() {
+                let current_pid = getpid().as_raw_nonzero().get() as u32;
+                let current = identity(current_pid).unwrap().unwrap();
+                assert!(!vanished_after_pidfd_srch(current).unwrap());
+                // Linux pid_max is below i32::MAX. The synthetic old owner
+                // identity does not authorize signaling or accepting any
+                // unrelated process; absence only allows a complete retry.
+                let vanished = Identity {
+                    pid: i32::MAX as u32,
+                    ..current
+                };
+                assert!(vanished_after_pidfd_srch(vanished).unwrap());
             }
 
             #[test]
