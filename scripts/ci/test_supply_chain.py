@@ -76,6 +76,12 @@ class SupplyChainTests(unittest.TestCase):
 
         self.reject("trillionnium/crates/trnm-types/Cargo.toml", mutate)
 
+    def test_publishable_workspace_crate_is_rejected(self):
+        def mutate(path):
+            path.write_text(path.read_text().replace("publish = false", "publish = true", 1))
+
+        self.reject("trillionnium/crates/trnm-types/Cargo.toml", mutate)
+
     def test_dependency_patch_override_is_rejected(self):
         def mutate(path):
             path.write_text(path.read_text() + '\n[patch.crates-io]\nsha2 = { git = "https://example.invalid/evil" }\n')
@@ -94,6 +100,18 @@ class SupplyChainTests(unittest.TestCase):
 
         self.reject(".github/workflows/trnm-required-baseline.yml", mutate)
 
+    def test_unreviewed_action_owner_is_rejected(self):
+        def mutate(path):
+            path.write_text(path.read_text().replace("actions/checkout@11d5960a326750d5838078e36cf38b85af677262", "evil/checkout@11d5960a326750d5838078e36cf38b85af677262", 1))
+
+        self.reject(".github/workflows/trnm-required-baseline.yml", mutate)
+
+    def test_write_permission_is_rejected(self):
+        def mutate(path):
+            path.write_text(path.read_text() + "\npermissions:\n  pull-requests: write\n")
+
+        self.reject(".github/workflows/trnm-required-baseline.yml", mutate)
+
     def test_release_surface_is_rejected(self):
         def mutate(path):
             path.write_text(path.read_text() + "\n      - uses: actions/upload-artifact@0123456789012345678901234567890123456789\n")
@@ -105,6 +123,23 @@ class SupplyChainTests(unittest.TestCase):
             path.write_text(path.read_text().replace("  pull_request:\n", "  pull_request_target:\n", 1))
 
         self.reject(".github/workflows/trnm-required-baseline.yml", mutate)
+
+    def test_deny_advisory_ignore_is_rejected(self):
+        def mutate(path):
+            path.write_text(path.read_text().replace("ignore = [\n]", 'ignore = ["RUSTSEC-0000-0000"]', 1))
+
+        self.reject("deny.toml", mutate)
+
+    def test_local_cargo_configuration_is_rejected(self):
+        path = self.root / ".cargo" / "config.toml"
+        path.parent.mkdir()
+        try:
+            path.write_text("[source.crates-io]\nreplace-with = \"evil\"\n")
+            with self.assertRaises(check_supply_chain.Invalid):
+                check_supply_chain.check(self.root)
+        finally:
+            path.unlink()
+            path.parent.rmdir()
 
 
 if __name__ == "__main__":
