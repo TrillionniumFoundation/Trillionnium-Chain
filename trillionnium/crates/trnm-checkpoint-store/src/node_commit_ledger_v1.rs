@@ -987,12 +987,28 @@ fn u64_at_v1(raw: &[u8], offset: usize) -> ResultV1<u64> {
 
 pub(crate) fn read_checkpoint_file_v1(path: &Path) -> ResultV1<ExternalCheckpointV2> {
     let mut file = File::open(path).map_err(|source| io_v1("open checkpoint input", source))?;
-    let mut bytes = Vec::new();
-    file.read_to_end(&mut bytes)
-        .map_err(|source| io_v1("read checkpoint input", source))?;
-    if bytes.len() != EXTERNAL_CHECKPOINT_RECORD_BYTES_V2 {
+    let expected = EXTERNAL_CHECKPOINT_RECORD_BYTES_V2 as u64;
+    if file
+        .metadata()
+        .map_err(|source| io_v1("stat checkpoint input", source))?
+        .len()
+        != expected
+    {
         return Err(NodeCommitLedgerErrorV1::InvalidState(
             "checkpoint input length differs",
+        ));
+    }
+    let mut bytes = vec![0_u8; EXTERNAL_CHECKPOINT_RECORD_BYTES_V2];
+    file.read_exact(&mut bytes)
+        .map_err(|source| io_v1("read checkpoint input", source))?;
+    if file
+        .metadata()
+        .map_err(|source| io_v1("restat checkpoint input", source))?
+        .len()
+        != expected
+    {
+        return Err(NodeCommitLedgerErrorV1::InvalidState(
+            "checkpoint input length changed",
         ));
     }
     ExternalCheckpointV2::decode_canonical_exact(&bytes)
@@ -1067,6 +1083,22 @@ mod tests {
         drop(ledger);
         let reopened = NodeCommitLedgerV1::open_existing(&root).expect("reopen ledger");
         assert_eq!(reopened.head().checkpoint, target);
+    }
+
+    #[test]
+    fn checkpoint_input_rejects_oversized_file_before_decode() {
+        let temp = TempDir::new().expect("temporary checkpoint parent");
+        let path = temp.path().join("checkpoint.bin");
+        let checkpoint = checkpoint_v1(0, [0; 32], 21);
+        let mut bytes = checkpoint.encode_canonical().to_vec();
+        bytes.push(0);
+        fs::write(&path, bytes).expect("write oversized checkpoint");
+        assert!(matches!(
+            read_checkpoint_file_v1(&path),
+            Err(NodeCommitLedgerErrorV1::InvalidState(
+                "checkpoint input length differs"
+            ))
+        ));
     }
 
     #[test]
