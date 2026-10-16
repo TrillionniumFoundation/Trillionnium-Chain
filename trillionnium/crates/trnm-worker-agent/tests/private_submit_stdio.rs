@@ -75,13 +75,19 @@ fn automatic_commit_flush_dry_run_redacts_private_salt_in_real_cli_output() {
     assert!(output.contains("[dry-run] adapter="));
     assert!(output.contains("[unrevealed-salt-redacted]"));
     assert!(output.contains(record["result_hash"].as_str().unwrap()));
-    assert!(!output.contains(secret), "private automatic salt leaked to dry-run output");
+    assert!(
+        !output.contains(secret),
+        "private automatic salt leaked to dry-run output"
+    );
     assert!(
         !output.contains("reveal-result"),
         "pre-reveal command must not appear in dry-run output"
     );
     assert_eq!(fs::read(&journal).unwrap(), original);
-    assert!(!root.path().join("acks.jsonl").exists(), "dry-run must not submit transactions");
+    assert!(
+        !root.path().join("acks.jsonl").exists(),
+        "dry-run must not submit transactions"
+    );
 }
 
 #[test]
@@ -128,9 +134,15 @@ fn manual_commit_flush_dry_run_redacts_chosen_salt_in_real_cli_output() {
     assert!(output.contains("[dry-run] adapter="));
     assert!(output.contains("[unrevealed-salt-redacted]"));
     assert!(output.contains(&result_hash));
-    assert!(!output.contains(chosen_salt), "private manual salt leaked to dry-run output");
+    assert!(
+        !output.contains(chosen_salt),
+        "private manual salt leaked to dry-run output"
+    );
     assert_eq!(fs::read(&journal).unwrap(), original);
-    assert!(!root.path().join("acks.jsonl").exists(), "dry-run must not submit transactions");
+    assert!(
+        !root.path().join("acks.jsonl").exists(),
+        "dry-run must not submit transactions"
+    );
 }
 
 #[test]
