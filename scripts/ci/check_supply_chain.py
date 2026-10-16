@@ -87,6 +87,9 @@ def check_manifest(manifest_path: pathlib.Path) -> None:
             require("git" not in declaration, f"git dependency {alias} in {manifest_path.relative_to(ROOT)}")
             version = declaration.get("version")
             require(version != "*", f"wildcard dependency {alias} in {manifest_path.relative_to(ROOT)}")
+            if "path" in declaration:
+                path = (manifest_path.parent / declaration["path"]).resolve()
+                require(path.is_relative_to(ROOT / "trillionnium" / "crates") and path.is_dir(), f"external path dependency {alias} in {manifest_path.relative_to(ROOT)}")
             # A registry URL in a manifest is not needed for crates.io and can
             # silently bypass the allow-registry policy in deny.toml.
             registry = declaration.get("registry")
