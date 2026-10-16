@@ -70,12 +70,7 @@ opt-level = 3
 debug-assertions = true
 overflow-checks = true
 
-# The real V3 development-service CPU budget measures actual worker-thread
-# CPU. Unoptimized Node test dispatch can exhaust that same fixed budget
-# before the seventh honest Submit even when the original Release path passes.
-# Optimize only Node's test build; keep original debug and overflow checks,
-# public quotas, signed packet execution and all test assertions unchanged.
-# This is NOT independent public fairness or production work qualification.
+# LOCAL DEBUG EXPERIMENT ONLY: do not merge this artifact without independent full CI.
 [profile.test.package.trnm-pon-node]
 opt-level = 3
 debug-assertions = true
