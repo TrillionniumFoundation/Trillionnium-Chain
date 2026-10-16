@@ -11,6 +11,7 @@ use std::{
     io::{Read, Write},
     path::{Path, PathBuf},
     process::Output,
+    sync::atomic::{AtomicU64, Ordering},
     thread,
     time::{Duration, SystemTime, UNIX_EPOCH},
 };
@@ -70,6 +71,8 @@ pub(crate) const WORKER_EVENT_LOG_ENV: &str = "TRNM_WORKER_EVENT_LOG";
 pub(crate) const WORKER_PROGRESS_LOG_ENV: &str = "TRNM_WORKER_PROGRESS_LOG";
 
 const RC_OK: i32 = 0;
+
+static FILE_REPLACE_NONCE: AtomicU64 = AtomicU64::new(0);
 const RC_DUPLICATE: i32 = 9;
 const RC_NONCE_REJECTED: i32 = 10;
 const RC_SLO_VIOLATION: i32 = 11;
@@ -216,6 +219,8 @@ pub(crate) fn commitment(
 }
 
 pub(crate) fn next_task_id(state: &PathBuf) -> Result<u64> {
+    let _lock = acquire_path_lock(state)?;
+    ensure_regular_or_missing(state)?;
     let mut s = if state.exists() {
         // State is operator-controlled input.  Bound the read before JSON
         // parsing so a replaced/sparse state file cannot consume unbounded
@@ -224,8 +229,12 @@ pub(crate) fn next_task_id(state: &PathBuf) -> Result<u64> {
     } else {
         WorkerState { last_task_id: 1000 }
     };
-    s.last_task_id += 1;
-    fs::write(state, serde_json::to_string_pretty(&s)?)?;
+    s.last_task_id = s
+        .last_task_id
+        .checked_add(1)
+        .ok_or_else(|| anyhow!("worker task id exhausted"))?;
+    let encoded = serde_json::to_vec_pretty(&s)?;
+    atomic_replace_file(state, &encoded)?;
     Ok(s.last_task_id)
 }
 
@@ -347,6 +356,113 @@ impl Drop for TaskExecutionLock {
     }
 }
 
+/// A short-lived sidecar lock used to serialize read/modify/replace updates
+/// across worker processes.  The sidecar is created exclusively and is never
+/// followed if an attacker pre-places a symlink at that pathname.
+pub(crate) struct PathLock {
+    path: PathBuf,
+}
+
+impl Drop for PathLock {
+    fn drop(&mut self) {
+        let _ = fs::remove_file(&self.path);
+    }
+}
+
+fn lock_path(path: &Path) -> PathBuf {
+    let parent = path
+        .parent()
+        .filter(|p| !p.as_os_str().is_empty())
+        .unwrap_or(Path::new("."));
+    let base = path
+        .file_name()
+        .and_then(|name| name.to_str())
+        .unwrap_or("worker-state");
+    parent.join(format!(".{base}.lock"))
+}
+
+pub(crate) fn acquire_path_lock(path: &Path) -> Result<PathLock> {
+    ensure_parent_directory(path)?;
+    let lock = lock_path(path);
+    let mut file = match OpenOptions::new().write(true).create_new(true).open(&lock) {
+        Ok(file) => file,
+        Err(error) if error.kind() == std::io::ErrorKind::AlreadyExists => {
+            return Err(anyhow!("worker state path is busy: {}", path.display()));
+        }
+        Err(error) => return Err(error.into()),
+    };
+    if let Err(error) = file
+        .write_all(std::process::id().to_string().as_bytes())
+        .and_then(|_| file.sync_all())
+    {
+        let _ = fs::remove_file(&lock);
+        return Err(error.into());
+    }
+    Ok(PathLock { path: lock })
+}
+
+fn ensure_parent_directory(path: &Path) -> Result<()> {
+    let parent = path
+        .parent()
+        .filter(|p| !p.as_os_str().is_empty())
+        .unwrap_or(Path::new("."));
+    fs::create_dir_all(parent)?;
+    let mut current = Some(parent);
+    while let Some(directory) = current {
+        let metadata = fs::symlink_metadata(directory)?;
+        if metadata.file_type().is_symlink() || !metadata.is_dir() {
+            return Err(anyhow!("worker state parent is not a real directory: {}", directory.display()));
+        }
+        current = directory.parent().filter(|p| !p.as_os_str().is_empty());
+    }
+    Ok(())
+}
+
+fn ensure_regular_or_missing(path: &Path) -> Result<()> {
+    match fs::symlink_metadata(path) {
+        Ok(metadata) if metadata.file_type().is_symlink() => {
+            Err(anyhow!("worker state path must not be a symlink: {}", path.display()))
+        }
+        Ok(metadata) if !metadata.is_file() => {
+            Err(anyhow!("worker state path is not a regular file: {}", path.display()))
+        }
+        Ok(_) => Ok(()),
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => Ok(()),
+        Err(error) => Err(error.into()),
+    }
+}
+
+fn atomic_replace_file(path: &Path, bytes: &[u8]) -> Result<()> {
+    ensure_parent_directory(path)?;
+    ensure_regular_or_missing(path)?;
+    let parent = path
+        .parent()
+        .filter(|p| !p.as_os_str().is_empty())
+        .unwrap_or(Path::new("."));
+    let nonce = FILE_REPLACE_NONCE.fetch_add(1, Ordering::Relaxed);
+    let temporary = parent.join(format!(".trnm-worker-{}-{}-tmp", std::process::id(), nonce));
+    let mut file = match OpenOptions::new()
+        .write(true)
+        .create_new(true)
+        .open(&temporary)
+    {
+        Ok(file) => file,
+        Err(error) => return Err(error.into()),
+    };
+    if let Err(error) = file.write_all(bytes).and_then(|_| file.sync_all()) {
+        let _ = fs::remove_file(&temporary);
+        return Err(error.into());
+    }
+    drop(file);
+    if let Err(error) = fs::rename(&temporary, path) {
+        let _ = fs::remove_file(&temporary);
+        return Err(error.into());
+    }
+    #[cfg(unix)]
+    fs::File::open(parent)?.sync_all()?;
+    Ok(())
+}
+
 fn task_lock_path(ack_log: &Path, task_id: u64) -> PathBuf {
     let parent = ack_log
         .parent()
@@ -391,16 +507,23 @@ pub(crate) fn load_ingress_records(path: &PathBuf) -> Result<Vec<MessageIngressR
 }
 
 pub(crate) fn save_ingress_records(path: &PathBuf, records: &[MessageIngressRecord]) -> Result<()> {
-    if let Some(parent) = path.parent() {
-        fs::create_dir_all(parent)?;
-    }
+    let _lock = acquire_path_lock(path)?;
+    save_ingress_records_locked(path, records)
+}
+
+pub(crate) fn save_ingress_records_locked(
+    path: &Path,
+    records: &[MessageIngressRecord],
+) -> Result<()> {
     let mut out = String::new();
     for rec in records {
         out.push_str(&serde_json::to_string(rec)?);
         out.push('\n');
     }
-    fs::write(path, out)?;
-    Ok(())
+    if out.len() > MAX_WORKER_LOG_BYTES as usize {
+        return Err(anyhow!("worker ingress file exceeds {} bytes", MAX_WORKER_LOG_BYTES));
+    }
+    atomic_replace_file(path, out.as_bytes())
 }
 
 pub(crate) fn transition_request_status(current: &str, to: RequestStatus) -> Result<String> {
