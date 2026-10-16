@@ -63,6 +63,12 @@ class SupplyChainTests(unittest.TestCase):
 
         self.reject("trillionnium/crates/trnm-types/Cargo.toml", mutate)
 
+    def test_external_path_dependency_is_rejected(self):
+        def mutate(path):
+            path.write_text(path.read_text() + '\n[dependencies.bad]\npath = "../../../../outside"\n')
+
+        self.reject("trillionnium/crates/trnm-types/Cargo.toml", mutate)
+
     def test_wildcard_manifest_dependency_is_rejected(self):
         def mutate(path):
             text = path.read_text().replace('sha2 = "0.10"', 'sha2 = "*"', 1)
