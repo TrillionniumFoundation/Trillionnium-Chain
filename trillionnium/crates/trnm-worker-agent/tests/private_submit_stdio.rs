@@ -25,7 +25,10 @@ fn cli(args: &[&str]) -> Output {
 
 fn one_record(path: &Path) -> Value {
     let bytes = fs::read(path).expect("private journal");
-    assert_eq!(fs::metadata(path).unwrap().permissions().mode() & 0o777, 0o600);
+    assert_eq!(
+        fs::metadata(path).unwrap().permissions().mode() & 0o777,
+        0o600
+    );
     assert!(bytes.ends_with(b"\n"));
     assert_eq!(bytes.iter().filter(|byte| **byte == b'\n').count(), 1);
     serde_json::from_slice(&bytes[..bytes.len() - 1]).unwrap()
@@ -61,7 +64,10 @@ fn automatic_submit_keeps_reveal_secret_only_in_private_journal() {
     assert_eq!(stdout["template_commit"], record["commit_cmd"]);
     for stream in [&output.stdout[..], &output.stderr[..]] {
         let rendered = String::from_utf8_lossy(stream);
-        assert!(!rendered.contains(salt), "committed salt leaked to job stream");
+        assert!(
+            !rendered.contains(salt),
+            "committed salt leaked to job stream"
+        );
         assert!(
             !rendered.contains("reveal-result"),
             "pre-reveal command leaked to job stream"
