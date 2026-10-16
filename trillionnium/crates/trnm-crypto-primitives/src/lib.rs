@@ -6,6 +6,11 @@ use sha2::{Digest, Sha256};
 
 pub type Hash32 = [u8; 32];
 
+// Preserve the historical malformed-input error precedence for small values,
+// but never let an untrusted hex string force an arbitrarily large temporary
+// allocation inside `hex::decode`.
+const MAX_HEX_DECODE_INPUT_BYTES: usize = 64 * 1024;
+
 pub fn hash_domain(domain: &str, parts: &[&[u8]]) -> Hash32 {
     let mut hasher = Sha256::new();
     hasher.update(b"trnm.domain.hash.v1");
@@ -47,6 +52,9 @@ pub fn decode_hash32(label: &str, value: &str) -> Result<Hash32> {
         );
         return Ok(out);
     }
+    if value.len() > MAX_HEX_DECODE_INPUT_BYTES {
+        return Err(anyhow!("{label} must encode exactly 32 bytes"));
+    }
     // Retain historical malformed-input versus wrong-length error precedence.
     let bytes = hex::decode(value).map_err(|_| anyhow!("{label} must be lowercase hex"))?;
     ensure!(bytes.len() == 32, "{label} must encode exactly 32 bytes");
@@ -79,6 +87,9 @@ fn canonical_ed25519_point(bytes: &[u8; 32]) -> bool {
 }
 
 pub fn decode_signature(label: &str, value: &str) -> Result<Signature> {
+    if value.len() > MAX_HEX_DECODE_INPUT_BYTES {
+        return Err(anyhow!("{label} must encode exactly 64 bytes"));
+    }
     let bytes = hex::decode(value).map_err(|_| anyhow!("{label} must be lowercase hex"))?;
     ensure!(bytes.len() == 64, "{label} must encode exactly 64 bytes");
     ensure!(
@@ -184,6 +195,21 @@ mod tests {
             assert_eq!(decode_hash32("test", &encoded).unwrap(), value);
             assert_same_hash_decode(&encoded.to_ascii_uppercase());
         }
+    }
+
+    #[test]
+    fn oversized_hex_inputs_fail_before_decode_allocation() {
+        let oversized_hash = "0".repeat(MAX_HEX_DECODE_INPUT_BYTES + 1);
+        let hash_error = decode_hash32("test", &oversized_hash)
+            .expect_err("oversized hash input must be rejected")
+            .to_string();
+        assert!(hash_error.contains("exactly 32 bytes"));
+
+        let oversized_signature = "0".repeat(MAX_HEX_DECODE_INPUT_BYTES + 1);
+        let signature_error = decode_signature("test", &oversized_signature)
+            .expect_err("oversized signature input must be rejected")
+            .to_string();
+        assert!(signature_error.contains("exactly 64 bytes"));
     }
 
     #[test]
