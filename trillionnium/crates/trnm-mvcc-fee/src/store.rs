@@ -146,6 +146,10 @@ impl MvccFeeStoreV1 {
         let path = path.into();
         reject_sidecars(&path)?;
         if path.exists() {
+            // The normal open path must enforce the same direct-regular-file
+            // boundary as open_existing; otherwise SQLite follows a symlink
+            // and later writable opens can mutate an unrelated database.
+            require_existing_regular_store(&path)?;
             let connection = open_ro(&path)?;
             verify_schema(&connection)?;
             audit(&connection, &genesis)?;
