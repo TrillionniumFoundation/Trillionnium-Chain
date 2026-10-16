@@ -115,6 +115,14 @@ mod unix {
             }
         }
 
+        // An adopted child can finish and be reaped between its owned /proc
+        // identity read and pidfd_open. ESRCH is NOT an ownership proof: only
+        // a second kernel procfs read confirming the old PID is absent lets
+        // the caller repeat the COMPLETE scan; a live or recycled PID fails.
+        fn vanished_after_pidfd_srch(expected: Identity) -> Result<bool> {
+            Ok(identity(expected.pid)?.is_none())
+        }
+
         // Linux adoption is process-wide. Install once, never temporarily toggle
         // it around a threaded call, and never consume another owner's wait.
         pub(super) fn install() -> Result<()> {
@@ -249,7 +257,18 @@ mod unix {
                     }
                     found = true;
                     let pid = Pid::from_raw(i32::try_from(pid)?).context("worker child pid")?;
-                    let descriptor = pidfd_open(pid, PidfdFlags::empty())?;
+                    let descriptor = match pidfd_open(pid, PidfdFlags::empty()) {
+                        Ok(descriptor) => descriptor,
+                        Err(rustix::io::Errno::SRCH)
+                            if vanished_after_pidfd_srch(before)? =>
+                        {
+                            // Already-disappeared owned child: never report
+                            // completion from this partial observation.
+                            // 'found' remains true, forcing a fresh scan.
+                            continue;
+                        }
+                        Err(error) => return Err(error.into()),
+                    };
                     anyhow::ensure!(
                         identity(before.pid)? == Some(before),
                         "worker adopted child identity changed"
@@ -375,6 +394,21 @@ else:
                     "expired malformed snapshot must fail closed"
                 );
                 assert_eq!(expired_scans, 1, "deadline must not be extended");
+            }
+
+            #[test]
+            fn vanished_pidfd_race_refuses_live_or_reused_process_identity() {
+                let current_pid = getpid().as_raw_nonzero().get() as u32;
+                let current = identity(current_pid).unwrap().unwrap();
+                assert!(!vanished_after_pidfd_srch(current).unwrap());
+                // Linux pid_max is below i32::MAX. The synthetic old owner
+                // identity does not authorize signaling or accepting any
+                // unrelated process; absence only allows a complete retry.
+                let vanished = Identity {
+                    pid: i32::MAX as u32,
+                    ..current
+                };
+                assert!(vanished_after_pidfd_srch(vanished).unwrap());
             }
 
             #[test]
