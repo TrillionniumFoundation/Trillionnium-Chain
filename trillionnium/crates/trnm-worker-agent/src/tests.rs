@@ -3048,6 +3048,20 @@ fn worker_ack_log_rejects_oversized_or_malformed_input_fail_closed() {
 }
 
 #[test]
+fn worker_state_rejects_oversized_input_before_json_parse() {
+    let state = std::env::temp_dir().join(format!(
+        "trnm-worker-agent-oversized-state-{}-{}.json",
+        std::process::id(),
+        now_ms()
+    ));
+    let file = fs::File::create(&state).expect("create sparse oversized state");
+    file.set_len(MAX_WORKER_LOG_BYTES + 1)
+        .expect("size oversized state");
+    assert!(next_task_id(&state).is_err());
+    let _ = fs::remove_file(&state);
+}
+
+#[test]
 fn message_ingress_backward_compat_defaults_provider_request_id() {
     let raw = r#"{"request_id":"r1","task_id":7,"channel":"telegram","user_id":"u1","session_id":"s1","text":"hello","idempotency_key":"ik1","status":"assigned","created_at_unix_ms":1}"#;
     let rec: MessageIngressRecord = serde_json::from_str(raw).expect("parse ingress record");
