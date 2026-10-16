@@ -35,6 +35,105 @@ fn one_record(path: &Path) -> Value {
 }
 
 #[test]
+fn automatic_commit_flush_dry_run_redacts_private_salt_in_real_cli_output() {
+    let root = tempfile::tempdir().unwrap();
+    let state = root.path().join("state.json");
+    let journal = root.path().join("automatic.jsonl");
+    cli(&[
+        "run-once",
+        "--state",
+        state.to_str().unwrap(),
+        "--worker",
+        "bounded-dry-run-worker",
+        "--payload",
+        "synthetic-not-yet-revealed",
+        "--submit",
+        "--submit-log",
+        journal.to_str().unwrap(),
+    ]);
+    let record = one_record(&journal);
+    let secret = record["salt_hex"].as_str().unwrap();
+    let original = fs::read(&journal).unwrap();
+    let flush = cli(&[
+        "flush-submissions",
+        "--submit-log",
+        journal.to_str().unwrap(),
+        "--ingress-file",
+        root.path().join("ingress.jsonl").to_str().unwrap(),
+        "--ack-log",
+        root.path().join("acks.jsonl").to_str().unwrap(),
+        "--event-log",
+        root.path().join("events.jsonl").to_str().unwrap(),
+        "--progress-log",
+        root.path().join("progress.jsonl").to_str().unwrap(),
+    ]);
+    let output = format!(
+        "{}{}",
+        String::from_utf8_lossy(&flush.stdout),
+        String::from_utf8_lossy(&flush.stderr)
+    );
+    assert!(output.contains("[dry-run] adapter="));
+    assert!(output.contains("[unrevealed-salt-redacted]"));
+    assert!(output.contains(record["result_hash"].as_str().unwrap()));
+    assert!(!output.contains(secret), "private automatic salt leaked to dry-run output");
+    assert!(
+        !output.contains("reveal-result"),
+        "pre-reveal command must not appear in dry-run output"
+    );
+    assert_eq!(fs::read(&journal).unwrap(), original);
+    assert!(!root.path().join("acks.jsonl").exists(), "dry-run must not submit transactions");
+}
+
+#[test]
+fn manual_commit_flush_dry_run_redacts_chosen_salt_in_real_cli_output() {
+    let root = tempfile::tempdir().unwrap();
+    let journal = root.path().join("manual.jsonl");
+    let chosen_salt = "manual-dry-run-unrevealed-private-salt";
+    let result_hash = "ab".repeat(32);
+    cli(&[
+        "commit-reveal",
+        "--task-id",
+        "811",
+        "--worker",
+        "manual-dry-run-worker",
+        "--result-hash",
+        &result_hash,
+        "--salt-hex",
+        chosen_salt,
+        "--submit",
+        "--submit-log",
+        journal.to_str().unwrap(),
+    ]);
+    let record = one_record(&journal);
+    assert_eq!(record["salt_hex"], chosen_salt);
+    let original = fs::read(&journal).unwrap();
+    let flush = cli(&[
+        "flush-submissions",
+        "--submit-log",
+        journal.to_str().unwrap(),
+        "--ingress-file",
+        root.path().join("ingress.jsonl").to_str().unwrap(),
+        "--ack-log",
+        root.path().join("acks.jsonl").to_str().unwrap(),
+        "--event-log",
+        root.path().join("events.jsonl").to_str().unwrap(),
+        "--progress-log",
+        root.path().join("progress.jsonl").to_str().unwrap(),
+    ]);
+    let output = format!(
+        "{}{}",
+        String::from_utf8_lossy(&flush.stdout),
+        String::from_utf8_lossy(&flush.stderr)
+    );
+    assert!(output.contains("[dry-run] adapter="));
+    assert!(output.contains("[unrevealed-salt-redacted]"));
+    assert!(output.contains(&result_hash));
+    assert!(!output.contains(chosen_salt), "private manual salt leaked to dry-run output");
+    assert_eq!(fs::read(&journal).unwrap(), original);
+    assert!(!root.path().join("acks.jsonl").exists(), "dry-run must not submit transactions");
+}
+
+#[test]
 fn automatic_submit_keeps_reveal_secret_only_in_private_journal() {
     let root = tempfile::tempdir().unwrap();
     let state = root.path().join("state.json");

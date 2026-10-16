@@ -175,6 +175,17 @@ ordinary output and retains the caller-selected salt in the original private
 journal. Non-submit manual display remains unchanged, as does the explicit
 `execute` result-plus-salt developer operation.
 
+The default `flush-submissions` **dry-run** previously printed the saved
+`salt_hex` in a reveal preview, even when that salt had never been revealed
+on-chain. Preview output now retains the adapter, task identity and public
+result hash but uses the literal `[unrevealed-salt-redacted]` placeholder.
+Both an automatic CSPRNG salt and a caller-selected manual salt are kept
+only in the original private journal. Two real CLI subprocess regressions
+require zero salt bytes in stdout/stderr, unchanged journal bytes and no
+transaction ACK during a dry-run. The explicit `--execute` transaction
+adapter still receives the original exact reveal arguments when permitted;
+this change does not silently submit or alter their bytes.
+
 The existing transaction adapter reads the complete owner-only journal, never
 a redacted stdout rendering. This is not proof against same-UID attackers,
 host-level telemetry/memory inspection, or exposure through a manually supplied
