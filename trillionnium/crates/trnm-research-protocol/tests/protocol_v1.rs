@@ -430,6 +430,71 @@ fn altered_replay_is_rejected_even_when_new_payload_is_validly_signed() {
 }
 
 #[test]
+fn signer_nonce_replay_is_rejected_for_a_distinct_command_id() {
+    let original = fixture_commands()[0].clone();
+    let first = sign(0, original.clone()).unwrap();
+    let mut state = test_state();
+    state.apply(&first).unwrap();
+
+    let ResearchCommandV1::MatchEvidenceCommitment(mut altered) = original else {
+        unreachable!()
+    };
+    altered.event_count += 1;
+    let replay = SignedResearchCommandV1::sign(
+        first.chain_id.clone(),
+        key("trnm.command", "distinct-command-same-nonce"),
+        first.signer_did.clone(),
+        first.signer_role,
+        first.nonce,
+        ResearchCommandV1::MatchEvidenceCommitment(altered),
+        &SigningKey::from_bytes(&NAKAMA_SEED),
+    )
+    .unwrap();
+
+    assert!(matches!(
+        state.apply(&replay),
+        Err(ProtocolStateError::SignerNonceReplay {
+            nonce: 1,
+            last_nonce: 1,
+            ..
+        })
+    ));
+}
+
+#[test]
+fn signer_nonce_floor_survives_snapshot_restore() {
+    let original = fixture_commands()[0].clone();
+    let first = sign(0, original.clone()).unwrap();
+    let mut state = test_state();
+    state.apply(&first).unwrap();
+    let mut restored = ResearchProtocolState::from_snapshot(state.export_snapshot()).unwrap();
+
+    let ResearchCommandV1::MatchEvidenceCommitment(mut altered) = original else {
+        unreachable!()
+    };
+    altered.event_count += 1;
+    let replay = SignedResearchCommandV1::sign(
+        first.chain_id.clone(),
+        key("trnm.command", "distinct-command-after-restore"),
+        first.signer_did.clone(),
+        first.signer_role,
+        first.nonce,
+        ResearchCommandV1::MatchEvidenceCommitment(altered),
+        &SigningKey::from_bytes(&NAKAMA_SEED),
+    )
+    .unwrap();
+
+    assert!(matches!(
+        restored.apply(&replay),
+        Err(ProtocolStateError::SignerNonceReplay {
+            nonce: 1,
+            last_nonce: 1,
+            ..
+        })
+    ));
+}
+
+#[test]
 fn state_machine_rejects_missing_and_stale_references() {
     let commands = fixture_commands();
     let mut state = test_state();
