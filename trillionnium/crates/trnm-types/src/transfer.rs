@@ -56,6 +56,11 @@ impl TransferTx {
         &self,
         private_key_hex: &str,
     ) -> Result<String, TransferTxValidationError> {
+        // Reject attacker-controlled oversized strings before `hex::decode`
+        // allocates a temporary buffer. A signing key is exactly 32 bytes.
+        if private_key_hex.len() != 64 {
+            return Err(TransferTxValidationError::InvalidSignature);
+        }
         let secret = hex::decode(private_key_hex)
             .map_err(|_| TransferTxValidationError::InvalidSignature)?;
         let secret_bytes: [u8; 32] = secret
@@ -104,6 +109,11 @@ impl TransferTx {
             return Err(TransferTxValidationError::InvalidSignature);
         }
 
+        // Both fields have fixed wire widths; validate the textual widths
+        // before decoding to avoid allocating for unbounded JSON input.
+        if pubkey_hex.len() != 64 || sig_hex.len() != 128 {
+            return Err(TransferTxValidationError::InvalidSignature);
+        }
         let pubkey =
             hex::decode(pubkey_hex).map_err(|_| TransferTxValidationError::InvalidSignature)?;
         let pubkey_bytes: [u8; 32] = pubkey
@@ -181,6 +191,31 @@ mod tests {
         tx.signature.push('0');
         assert_eq!(
             tx.validate_basic().unwrap_err(),
+            TransferTxValidationError::InvalidSignature
+        );
+    }
+
+    #[test]
+    fn oversized_hex_fields_fail_before_decode_allocation() {
+        let tx = valid_tx();
+        let mut oversized_pubkey = tx.clone();
+        oversized_pubkey.signature = format!("ed25519:{}:{}", "0".repeat(65), "0".repeat(128));
+        assert_eq!(
+            oversized_pubkey.validate_basic().unwrap_err(),
+            TransferTxValidationError::InvalidSignature
+        );
+
+        let mut oversized_signature = tx;
+        oversized_signature.signature = format!("ed25519:{}:{}", "0".repeat(64), "0".repeat(129));
+        assert_eq!(
+            oversized_signature.validate_basic().unwrap_err(),
+            TransferTxValidationError::InvalidSignature
+        );
+
+        assert_eq!(
+            oversized_signature
+                .sign_with_private_key_hex(&"0".repeat(65))
+                .unwrap_err(),
             TransferTxValidationError::InvalidSignature
         );
     }
