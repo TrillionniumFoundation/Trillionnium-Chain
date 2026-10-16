@@ -611,8 +611,12 @@ impl ConsumptionSettlementStoreV1 {
             target_journal_root,
             false,
         )?;
+        #[cfg(test)]
+        snapshot_tests::pause_for_process_death("before-commit");
         transaction.commit()?;
         drop(connection);
+        #[cfg(test)]
+        snapshot_tests::pause_for_process_death("after-commit");
         if matches!(fault, Some(ConsumptionCommitFaultV1::AppliedAckLost)) {
             return Err(error(
                 ConsumptionSettlementErrorCodeV1::CommitUncertain,
@@ -1722,6 +1726,214 @@ fn array32(value: Vec<u8>, label: &str) -> ConsumptionSettlementResultV1<[u8; 32
 #[cfg(test)]
 mod snapshot_tests {
     use super::*;
+
+    thread_local! {
+        static PROCESS_DEATH_STAGE: std::cell::RefCell<Option<(String, PathBuf)>> = const { std::cell::RefCell::new(None) };
+    }
+
+    pub(super) fn pause_for_process_death(stage: &str) {
+        let marker = PROCESS_DEATH_STAGE.with(|slot| {
+            let mut slot = slot.borrow_mut();
+            if slot.as_ref().is_some_and(|(expected, _)| expected == stage) {
+                slot.take().map(|(_, marker)| marker)
+            } else {
+                None
+            }
+        });
+        if let Some(marker) = marker {
+            fs::write(marker, stage).expect("signal reached process-death stage");
+            // The parent kills this owned child. Bound its lifetime if the parent dies.
+            std::thread::sleep(Duration::from_secs(30));
+            panic!("parent did not terminate process-death fixture");
+        }
+    }
+
+    struct OwnedTestChild(std::process::Child);
+
+    type ProcessDeathRequest = (
+        Hash32V1,
+        ConsumptionSettlementFreshGenesisTrustBundleV1,
+        ConsumptionCommittedExecutionContextV1,
+        ConsumptionSettlementCommandV1,
+    );
+
+    impl Drop for OwnedTestChild {
+        fn drop(&mut self) {
+            // Also runs when readiness checks or assertions panic.
+            let _ = self.0.kill();
+            let _ = self.0.wait();
+        }
+    }
+
+    #[test]
+    #[ignore = "child fixture explicitly executed by process_death_preserves_fail_closed_and_exact_retry"]
+    fn process_death_child_fixture() {
+        let path =
+            std::env::var_os("TRNM_SETTLEMENT_DEATH_DB").expect("parent-owned database path");
+        let marker =
+            std::env::var_os("TRNM_SETTLEMENT_DEATH_MARKER").expect("parent-owned stage marker");
+        let stage = std::env::var("TRNM_SETTLEMENT_DEATH_STAGE").expect("parent-selected stage");
+        assert!(matches!(stage.as_str(), "before-commit" | "after-commit"));
+        let path = PathBuf::from(path);
+        let (store_id, trust_bundle, execution, command): ProcessDeathRequest =
+            strict_decode(&fs::read(path.with_extension("request")).unwrap()).unwrap();
+        let config = ConsumptionSettlementStoreConfigV1 {
+            path,
+            store_id,
+            trust_bundle,
+        };
+        let store = ConsumptionSettlementStoreV1::open_existing(config).unwrap();
+        PROCESS_DEATH_STAGE.with(|slot| *slot.borrow_mut() = Some((stage, PathBuf::from(marker))));
+        store
+            .execute_committed_execution(&execution, &command)
+            .unwrap();
+        panic!("child unexpectedly returned an acknowledgment");
+    }
+
+    #[test]
+    fn process_death_preserves_fail_closed_and_exact_retry() {
+        for stage in ["before-commit", "after-commit"] {
+            let harness = crate::tests::Harness::new();
+            let config = harness.config();
+            let store = ConsumptionSettlementStoreV1::open(config.clone()).unwrap();
+            let before = store.fresh_readback().unwrap();
+            let execution = harness.execution(9, before.order_block_id(), 10);
+            let command = ConsumptionSettlementCommandV1::AdmitReceipt {
+                receipt: harness.receipt(None, 10, 100),
+            };
+            let preview = store
+                .preview_before_vote_v1(
+                    &before,
+                    10,
+                    execution.order_block_id,
+                    std::slice::from_ref(&command),
+                )
+                .unwrap();
+            let expected_receipt = &preview.candidate_receipts()[0];
+            let marker = config.path.with_extension("stage");
+            fs::write(
+                config.path.with_extension("request"),
+                canonical_bytes(&(config.store_id, &config.trust_bundle, &execution, &command))
+                    .unwrap(),
+            )
+            .unwrap();
+            let mut child = OwnedTestChild(
+                std::process::Command::new(std::env::current_exe().unwrap())
+                    .args([
+                        "--ignored",
+                        "--exact",
+                        "store::snapshot_tests::process_death_child_fixture",
+                        "--nocapture",
+                    ])
+                    .env("TRNM_SETTLEMENT_DEATH_DB", &config.path)
+                    .env("TRNM_SETTLEMENT_DEATH_MARKER", &marker)
+                    .env("TRNM_SETTLEMENT_DEATH_STAGE", stage)
+                    .spawn()
+                    .expect("spawn owned process-death fixture"),
+            );
+            let deadline = std::time::Instant::now() + Duration::from_secs(10);
+            loop {
+                if fs::read(&marker).ok().as_deref() == Some(stage.as_bytes()) {
+                    break;
+                }
+                assert!(
+                    child.0.try_wait().unwrap().is_none(),
+                    "child exited before {stage}"
+                );
+                assert!(
+                    std::time::Instant::now() < deadline,
+                    "child did not reach {stage}"
+                );
+                std::thread::sleep(Duration::from_millis(10));
+            }
+            let mut journal_path = config.path.as_os_str().to_os_string();
+            journal_path.push("-journal");
+            let journal_path = PathBuf::from(journal_path);
+            let paused_database = fs::read(&config.path).unwrap();
+            let paused_journal = if stage == "before-commit" {
+                let bytes = fs::read(&journal_path)
+                    .expect("real rollback journal after transactional writes");
+                assert!(!bytes.is_empty());
+                Some(bytes)
+            } else {
+                reject_sidecars(&config.path).expect("commit removed rollback journal");
+                None
+            };
+            child.0.kill().expect("terminate only owned child");
+            assert!(!child.0.wait().unwrap().success());
+            assert_eq!(fs::read(&config.path).unwrap(), paused_database);
+            if let Some(journal_bytes) = paused_journal {
+                assert_eq!(fs::read(&journal_path).unwrap(), journal_bytes);
+                let codes = [
+                    ConsumptionSettlementStoreV1::open(config.clone())
+                        .unwrap_err()
+                        .code(),
+                    ConsumptionSettlementStoreV1::open_existing(config.clone())
+                        .unwrap_err()
+                        .code(),
+                    store.fresh_readback().unwrap_err().code(),
+                    store.state().unwrap_err().code(),
+                    store.confirm_receipt(expected_receipt).unwrap_err().code(),
+                    store
+                        .preview_before_vote_v1(
+                            &before,
+                            10,
+                            execution.order_block_id,
+                            std::slice::from_ref(&command),
+                        )
+                        .unwrap_err()
+                        .code(),
+                    store
+                        .execute_committed_execution(&execution, &command)
+                        .unwrap_err()
+                        .code(),
+                    store
+                        .advance_empty_committed_execution_v1(&execution)
+                        .unwrap_err()
+                        .code(),
+                ];
+                assert!(
+                    codes
+                        .iter()
+                        .all(|code| *code == ConsumptionSettlementErrorCodeV1::SidecarPresent),
+                    "{codes:?}"
+                );
+                assert_eq!(fs::read(&config.path).unwrap(), paused_database);
+                assert_eq!(fs::read(&journal_path).unwrap(), journal_bytes);
+                // No writable reopen, journal removal, or recovery attempt occurs.
+            } else {
+                let cold = ConsumptionSettlementStoreV1::open_existing(config.clone()).unwrap();
+                let head = cold.fresh_readback().unwrap();
+                let state = cold.state().unwrap();
+                assert_eq!(head.sequence(), 1);
+                assert_eq!(head.order_block_id(), execution.order_block_id);
+                assert_eq!(
+                    head.durable_state_root(),
+                    preview.candidate_post_state_root()
+                );
+                let snapshot = open_read_snapshot(&config.path).unwrap();
+                let rows: u64 = snapshot
+                    .query_row("SELECT COUNT(*) FROM operations", [], |row| row.get(0))
+                    .unwrap();
+                assert_eq!(rows, 1);
+                drop(snapshot);
+                let retry = cold
+                    .execute_committed_execution(&execution, &command)
+                    .unwrap();
+                assert!(retry.is_replay());
+                assert_eq!(retry.receipt(), expected_receipt);
+                assert_eq!(
+                    cold.confirm_receipt(expected_receipt).unwrap().receipt(),
+                    expected_receipt
+                );
+                assert_eq!(cold.fresh_readback().unwrap(), head);
+                assert_eq!(cold.state().unwrap(), state);
+                assert_eq!(fs::read(&config.path).unwrap(), paused_database);
+                reject_sidecars(&config.path).unwrap();
+            }
+            eprintln!("process-death stage {stage}: supported contract verified");
+        }
+    }
 
     thread_local! {
         static WRITER_RENDEZVOUS: std::cell::RefCell<Option<(

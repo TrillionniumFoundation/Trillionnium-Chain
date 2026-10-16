@@ -102,6 +102,15 @@ audited source snapshot and applies to empty and nonempty candidates, matching
 the durable backend's existing uniqueness constraint. Historical audit, exact
 operation retries, stored schemas and signed domains are unchanged.
 
+Local process-death tests explicitly launch an ignored child-test fixture and
+terminate only that owned child at two signaled stages. Death after transactional
+writes but before COMMIT preserves the database and rollback journal while public
+store operations fail closed with `SidecarPresent`; no recovery is attempted.
+Death after COMMIT and connection close, before acknowledgment, permits cold audit
+and exact retry of the single durable operation. This does not add automatic
+recovery or qualify power loss, torn writes, or arbitrary crash points. The ignored
+fixture is exercised by the ordinary parent test rather than run independently.
+
 A controlled two-handle concurrency test releases both writers only after their
 read-only preflight snapshots close. Exact duplicate operations serialize to one
 commit and one replay; distinct operations proposing incompatible successors
