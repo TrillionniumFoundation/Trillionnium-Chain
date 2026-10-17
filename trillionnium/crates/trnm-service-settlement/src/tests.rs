@@ -1062,6 +1062,36 @@ fn oversized_operation_field_fails_before_replay_decode() {
 }
 
 #[test]
+fn oversized_operation_identity_fails_before_replay_decode() {
+    let harness = Harness::new();
+    let store = harness.open();
+    store
+        .execute_committed_execution(
+            &harness.execution(9, h(900), 10),
+            &ConsumptionSettlementCommandV1::AdmitReceipt {
+                receipt: harness.receipt(None, 10, 100),
+            },
+        )
+        .expect("seed operation");
+    drop(store);
+    let connection = Connection::open(&harness.path).expect("open store");
+    let oversized = i64::try_from(4_u64 * 1024 * 1024 + 1).expect("SQLite length");
+    connection
+        .execute(
+            "UPDATE operations SET operation_id=zeroblob(?1) WHERE sequence=1",
+            [oversized],
+        )
+        .expect("write oversized operation ID");
+    drop(connection);
+    let error = ConsumptionSettlementStoreV1::open(harness.config())
+        .expect_err("oversized operation ID must fail closed");
+    assert_eq!(
+        error.code(),
+        ConsumptionSettlementErrorCodeV1::TamperDetected
+    );
+}
+
+#[test]
 fn vector_inventory_matches_candidate_assertions() {
     let vectors: Value = serde_json::from_str(include_str!(concat!(
         env!("CARGO_MANIFEST_DIR"),
