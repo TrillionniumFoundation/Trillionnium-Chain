@@ -21,6 +21,18 @@ REGISTRY = "registry+https://github.com/rust-lang/crates.io-index"
 CHECKSUM = re.compile(r"[0-9a-f]{64}\Z")
 ACTION_SHA = re.compile(r"[0-9a-f]{40}\Z", re.IGNORECASE)
 EXPECTED_TOOLCHAIN = "1.95.0"
+ALLOWED_LICENSES = [
+    "Apache-2.0",
+    "BSD-2-Clause",
+    "BSD-3-Clause",
+    "CC0-1.0",
+    "ISC",
+    "MIT",
+    "MPL-2.0",
+    "NCSA",
+    "Unicode-3.0",
+    "Zlib",
+]
 ALLOWED_ACTIONS = {
     "actions/checkout": "11d5960a326750d5838078e36cf38b85af677262",
 }
@@ -37,8 +49,10 @@ PERMISSION_KEYS = (
     "packages",
     "pages",
     "pull-requests",
+    "repository-projects",
     "security-events",
     "statuses",
+    "workflows",
 )
 
 
@@ -71,6 +85,15 @@ def check_manifest(manifest_path: pathlib.Path) -> None:
     # has no first-party build script or build dependency; keep that boundary
     # explicit and let upstream build scripts remain covered by cargo-deny.
     require("build" not in package, f"first-party build script declared in {manifest_path.relative_to(ROOT)}")
+    # Cargo implicitly executes a crate-root build.rs even when the manifest
+    # omits the `build` key.  Check the file itself so a newly added script
+    # cannot bypass the manifest-only guard and execute during every build.
+    require(not (manifest_path.parent / "build.rs").is_file(), f"first-party build script declared in {manifest_path.relative_to(ROOT)}")
+    # First-party procedural macros execute during dependent compilation just
+    # like build scripts.  Keep this portable workspace free of that hidden
+    # compile-time execution surface.
+    lib = data.get("lib", {})
+    require(not (isinstance(lib, dict) and lib.get("proc-macro") is True), f"first-party procedural macro declared in {manifest_path.relative_to(ROOT)}")
     # Patch/replace tables can redirect an apparently normal crates.io
     # dependency to an unreviewed fork.  The workspace has no such override;
     # require any future one to go through an explicit policy review first.
@@ -129,6 +152,14 @@ def check_deny_policy() -> None:
     require(not advisories.get("ignore", []), "deny.toml advisory ignore list is not empty")
     bans = data.get("bans", {})
     require(bans.get("wildcards") == "deny", "deny.toml does not deny wildcard dependencies")
+    licenses = data.get("licenses", {})
+    require(licenses.get("version") == 2, "deny.toml license schema is not pinned")
+    require(licenses.get("unlicensed") == "deny", "deny.toml allows unlicensed crates")
+    require(licenses.get("copyleft") == "deny", "deny.toml allows copyleft crates")
+    require(licenses.get("confidence-threshold") == 0.93, "deny.toml license confidence threshold drift")
+    require(licenses.get("allow") == ALLOWED_LICENSES, "deny.toml license allowlist drift")
+    require(not licenses.get("exceptions", []), "deny.toml license exceptions are not empty")
+    require(not licenses.get("clarify", []), "deny.toml license clarifications are not empty")
     sources = data.get("sources", {})
     require(sources.get("unknown-registry") == "deny", "deny.toml allows unknown registries")
     require(sources.get("unknown-git") == "deny", "deny.toml allows unknown git sources")
@@ -184,18 +215,64 @@ def check_workflow_policy() -> None:
     for path in [*workflows.rglob("*.yml"), *workflows.rglob("*.yaml")]:
         text = path.read_text()
         rel = path.relative_to(ROOT)
-        require(re.search(r"(?mi)^\s*permissions\s*:", text), f"workflow has no explicit permissions policy in {rel}")
+        # A job-level read mapping does not constrain jobs added later: GitHub
+        # otherwise inherits the repository's default token permissions.  Keep
+        # the workflow-level default explicitly empty and grant only the
+        # per-job read scope used by the checked-out source.
+        require(re.search(r"(?mi)^\s*[\"']?permissions[\"']?\s*:\s*\{\s*\}(?:\s*#.*)?$", text), f"workflow root permissions are not empty in {rel}")
+        require(re.search(r"(?mi)^\s*[\"']?permissions[\"']?\s*:", text), f"workflow has no explicit permissions policy in {rel}")
         require("pull_request_target" not in text, f"privileged pull-request event in {rel}")
         require("workflow_run" not in text, f"privileged workflow event in {rel}")
         require("self-hosted" not in text, f"persistent runner in {rel}")
+        # Required checks must always execute on the pinned hosted image.  A
+        # conditional or continue-on-error step could make a failing check
+        # appear successful, while a container/service introduces an
+        # unreviewed executable image into the trust boundary.
+        require(not re.search(r"(?mi)^\s*(?:-\s*)?[\"']?if[\"']?\s*:", text), f"conditional workflow step in {rel}")
+        require(not re.search(r"(?mi)(?:\{|,)\s*[\"']?if[\"']?\s*:", text), f"conditional workflow step in {rel}")
+        require(not re.search(r"(?mi)^\s*(?:-\s*)?[\"']?continue-on-error[\"']?\s*:", text), f"non-failing workflow step in {rel}")
+        require(not re.search(r"(?mi)(?:\{|,)\s*[\"']?continue-on-error[\"']?\s*:", text), f"non-failing workflow step in {rel}")
+        require(not re.search(r"\|\|\s*(?:true|:|exit\s+0)\b", text), f"workflow suppresses command failure in {rel}")
+        require(not re.search(r"(?mi)^\s*[\"']?(?:container|services)[\"']?\s*:", text), f"unreviewed workflow image/service in {rel}")
+        require(not re.search(r"(?mi)(?:\{|,)\s*[\"']?(?:container|services)[\"']?\s*:", text), f"unreviewed workflow image/service in {rel}")
+        # Keep the hosted runner image deterministic; dynamic labels can
+        # select a persistent or otherwise unreviewed runner at dispatch time.
+        runners = re.findall(r"(?mi)^\s*[\"']?runs-on[\"']?\s*:\s*[\"']?([^\s#\"']+)", text)
+        runners.extend(re.findall(r"(?mi)(?:\{|,)\s*[\"']?runs-on[\"']?\s*:\s*[\"']?([^,}\s#\"']+)", text))
+        require(runners and all(runner == "ubuntu-24.04" for runner in runners), f"workflow runner is not pinned in {rel}")
         write_keys = "|".join(re.escape(key) for key in PERMISSION_KEYS)
-        require(not re.search(rf"(?mi)^\s*(?:{write_keys})\s*:\s*write\b", text), f"write token permission in {rel}")
-        require(not re.search(r"(?mi)^\s*permissions\s*:\s*(?:write|write-all)\b", text), f"broad write token permission in {rel}")
-        require(not re.search(r"\bsecrets(?:\.|\[)", text), f"secret interpolation in untrusted workflow {rel}")
+        quoted_write_key = rf"[\"']?(?:{write_keys})[\"']?"
+        require(not re.search(rf"(?mi)^\s*{quoted_write_key}\s*:\s*[\"']?write(?:-all)?\b", text), f"write token permission in {rel}")
+        # GitHub accepts flow-style permission maps (for example,
+        # ``permissions: { contents: write }``).  A line-oriented check that
+        # only recognizes block mappings would silently allow a write token.
+        # Reject both broad scalar permissions and any inline ``write`` value;
+        # the block-mapping check above still gives a precise error for the
+        # common multiline form.
+        require(not re.search(r"(?mi)^\s*(?:-\s*)?[\"']?permissions[\"']?\s*:[^\n]*\bwrite(?:-all)?\b", text), f"write token permission in {rel}")
+        # A flow-style job map may use the broad scalar form
+        # ``permissions: write-all`` rather than an individual key.
+        require(not re.search(r"(?mi)(?:\{|,)\s*[\"']?permissions[\"']?\s*:\s*[\"']?write(?:-all)?\b", text), f"write token permission in {rel}")
+        # Flow-style job maps can put the permission key after another key
+        # (``job: { permissions: { contents: write } }``), so also inspect
+        # mapping entries that begin after ``{`` or ``,``.
+        require(not re.search(rf"(?mi)(?:\{{|,)\s*{quoted_write_key}\s*:\s*[\"']?write(?:-all)?\b", text), f"write token permission in {rel}")
+        # Secret contexts are forbidden for these untrusted PR jobs.  Match
+        # the whole identifier so whitespace or alternate expression forms
+        # (``secrets ["TOKEN"]``, ``toJSON(secrets)``) cannot evade this gate.
+        require(not re.search(r"\bsecrets\b", text), f"secret interpolation in untrusted workflow {rel}")
         require("upload-artifact" not in text, f"unattested artifact publishing in {rel}")
         require("attest-build-provenance" not in text, f"artifact attestation without reviewed release gate in {rel}")
-        require(not re.search(r"(?mi)^\s*environment:\s*", text), f"deployment environment in {rel}")
-        require(not re.search(r"(?mi)^\s*(?:deploy|deployment|release):\s*", text), f"deployment step in {rel}")
+        require(not re.search(r"(?mi)^\s*[\"']?environment[\"']?\s*:", text), f"deployment environment in {rel}")
+        require(not re.search(r"(?mi)^\s*[\"']?(?:deploy|deployment|release)[\"']?\s*:", text), f"deployment step in {rel}")
+        require(not re.search(r"(?mi)(?:\{|,)\s*[\"']?(?:environment|deploy|deployment|release)[\"']?\s*:", text), f"deployment surface in {rel}")
+        # Checkout persists its token by default.  Every checkout in these
+        # untrusted jobs must opt out; otherwise source code can read the
+        # credential file even though the workflow declares read-only scopes.
+        checkout_count = len(re.findall(r"(?mi)^\s*[\"']?uses[\"']?\s*:\s*actions/checkout@", text))
+        no_credential_count = len(re.findall(r"(?mi)^\s*[\"']?persist-credentials[\"']?\s*:\s*false\b", text))
+        require(checkout_count > 0 and no_credential_count == checkout_count, f"checkout credentials are not disabled in {rel}")
+        require(not re.search(r"(?mi)^\s*[\"']?persist-credentials[\"']?\s*:\s*true\b", text), f"checkout credentials retained in {rel}")
 
 
 def check_actions() -> int:
@@ -204,9 +281,9 @@ def check_actions() -> int:
     require(workflows.is_dir(), ".github/workflows directory is missing")
     for path in [*workflows.rglob("*.yml"), *workflows.rglob("*.yaml")]:
         for line_number, line in enumerate(path.read_text().splitlines(), 1):
-            if re.search(r"\buses\s*:\s*$", line):
+            if re.search(r"[\"']?\buses[\"']?\s*:\s*$", line):
                 raise Invalid(f"multiline GitHub Action reference at {path.relative_to(ROOT)}:{line_number}")
-            match = re.search(r"\buses\s*:\s*([^\s#]+)", line)
+            match = re.search(r"[\"']?\buses[\"']?\s*:\s*([^\s#]+)", line)
             if not match:
                 continue
             reference = match.group(1).rsplit("@", 1)
