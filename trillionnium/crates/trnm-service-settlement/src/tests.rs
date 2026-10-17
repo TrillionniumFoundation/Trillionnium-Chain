@@ -1014,6 +1014,53 @@ fn schema_sidecar_row_and_self_consistent_state_substitution_fail_closed() {
     );
 }
 
+#[cfg(unix)]
+#[test]
+fn dangling_sqlite_sidecar_symlink_is_rejected() {
+    use std::os::unix::fs::symlink;
+
+    let harness = Harness::new();
+    drop(harness.open());
+    let sidecar = format!("{}-shm", harness.path.display());
+    symlink("missing-shm-target", &sidecar).expect("create dangling sidecar symlink");
+    let error = ConsumptionSettlementStoreV1::open(harness.config())
+        .expect_err("dangling sidecar symlink must be rejected");
+    assert_eq!(
+        error.code(),
+        ConsumptionSettlementErrorCodeV1::SidecarPresent
+    );
+}
+
+#[test]
+fn oversized_operation_field_fails_before_replay_decode() {
+    let harness = Harness::new();
+    let store = harness.open();
+    store
+        .execute_committed_execution(
+            &harness.execution(9, h(900), 10),
+            &ConsumptionSettlementCommandV1::AdmitReceipt {
+                receipt: harness.receipt(None, 10, 100),
+            },
+        )
+        .expect("seed operation");
+    drop(store);
+    let connection = Connection::open(&harness.path).expect("open store");
+    let oversized = i64::try_from(4_u64 * 1024 * 1024 + 1).expect("SQLite length");
+    connection
+        .execute(
+            "UPDATE operations SET command=zeroblob(?1) WHERE sequence=1",
+            [oversized],
+        )
+        .expect("write oversized command");
+    drop(connection);
+    let error = ConsumptionSettlementStoreV1::open(harness.config())
+        .expect_err("oversized persisted operation must fail closed");
+    assert_eq!(
+        error.code(),
+        ConsumptionSettlementErrorCodeV1::TamperDetected
+    );
+}
+
 #[test]
 fn vector_inventory_matches_candidate_assertions() {
     let vectors: Value = serde_json::from_str(include_str!(concat!(
@@ -1100,4 +1147,24 @@ fn open_existing_requires_precreated_regular_nonsymlink_store() {
             ConsumptionSettlementErrorCodeV1::StoreFailure
         );
     }
+}
+
+#[cfg(unix)]
+#[test]
+fn create_open_rejects_dangling_store_symlink() {
+    use std::os::unix::fs::symlink;
+
+    let harness = Harness::new();
+    let target = harness.path.with_extension("target.sqlite");
+    symlink(&target, &harness.path).expect("create dangling store symlink");
+    let error = ConsumptionSettlementStoreV1::open(harness.config())
+        .expect_err("create open must reject a symlink");
+    assert_eq!(
+        error.code(),
+        ConsumptionSettlementErrorCodeV1::StoreFailure
+    );
+    assert!(
+        !target.exists(),
+        "SQLite must not create the symlink target"
+    );
 }
