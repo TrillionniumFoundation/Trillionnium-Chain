@@ -370,8 +370,10 @@ impl UnixPeerLeaseDaemonV1 {
     }
 
     /// Bind and serve until the process is terminated.  Existing socket paths
-    /// are removed only after the journal has been opened and verified, so a
-    /// tampered journal never gets hidden by socket cleanup.
+    /// are rejected rather than removed: unlinking a live endpoint could
+    /// disconnect another authority or let this process seize its pathname.
+    /// An operator must explicitly remove a stale socket after verifying that
+    /// its owner has exited.
     pub fn run(&self) -> Result<(), PeerLeaseErrorV1> {
         if self.operation_timeout.is_zero() {
             return Err(PeerLeaseErrorV1::InvalidRequest(
@@ -382,21 +384,21 @@ impl UnixPeerLeaseDaemonV1 {
         // journal or creating a socket parent.  Otherwise a bad Unix path
         // could leave authority state behind even though bind never starts.
         validate_daemon_paths_v1(&self.socket_path, &self.journal_path)?;
-        let mut store = PeerLeaseStoreV1::open(&self.journal_path)?;
+        // Refuse an occupied endpoint before opening (or creating) the
+        // durable journal.  Besides avoiding needless journal side effects,
+        // this keeps a failed takeover attempt from touching authority state
+        // owned by the process currently serving that socket.
+        if fs::symlink_metadata(&self.socket_path).is_ok() {
+            return Err(PeerLeaseErrorV1::InvalidRequest(
+                "peer-lease socket path already exists",
+            ));
+        }
         let socket_parent = self
             .socket_path
             .parent()
             .ok_or(PeerLeaseErrorV1::InvalidRequest("peer-lease socket parent"))?;
         prepare_private_directory(socket_parent)?;
-        if self.socket_path.exists() {
-            let metadata = fs::symlink_metadata(&self.socket_path)?;
-            if !metadata.file_type().is_socket() {
-                return Err(PeerLeaseErrorV1::InvalidRequest(
-                    "peer-lease socket path is not a socket",
-                ));
-            }
-            fs::remove_file(&self.socket_path)?;
-        }
+        let mut store = PeerLeaseStoreV1::open(&self.journal_path)?;
         let mut socket_cleanup = UnixSocketCleanupGuardV1::new(self.socket_path.clone());
         let listener = UnixListener::bind(&self.socket_path)?;
         socket_cleanup.arm(&listener)?;
