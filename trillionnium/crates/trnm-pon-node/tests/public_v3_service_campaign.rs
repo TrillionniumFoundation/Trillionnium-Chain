@@ -99,9 +99,39 @@ fn false_transcript(producer: &mut Node, phase: u64) -> (String, Value) {
     let ticket_search_ns = ns(start);
     let ticket_trials = found.expect("bounded false-trace ticket search");
     let forged_packet = hex::encode(forged.encode().unwrap());
-    let fixture = json!({"reference_packet":hex::encode(reference_bytes),"forged_packet":forged_packet,"construction_ns":construction_ns,"reference_verification_ns":reference_verification_ns,"ticket_search_ns":ticket_search_ns,"ticket_trials":ticket_trials,"scope":"real reference construction and verification followed by hash-only false-trace search; not a fastest-attacker bound"});
+    let fixture = json!({"reference_packet":hex::encode(reference_bytes),"forged_packet":forged_packet,"construction_ns":construction_ns,"reference_verification_ns":reference_verification_ns,"ticket_search_ns":ticket_search_ns,"ticket_trials":ticket_trials,"scope":"real reference construction and verification followed by hash-only false-trace search; not a fastest-attacker bound","invalid_work_kind":"TRANSCRIPT"});
     (forged_packet, fixture)
 }
+// TEST-ONLY: hold the genuine ticket and exact transcript constant while
+// corrupting one canonical claimed product field word. A fresh W1 verifier
+// must recompute the full transcript PLUS product before rejecting this packet.
+fn false_product(producer: &mut Node, phase: u64) -> (String, Value) {
+    let (_, mut original_fixture) = false_transcript(producer, phase);
+    let good = hex::decode(original_fixture["reference_packet"].as_str().unwrap()).unwrap();
+    let mut packet = trnm_pon_node::Packet::decode(&good).unwrap();
+    let offset = 4 + 2 * pon_work::CELLS * 4;
+    let old = u32::from_le_bytes(packet.proof[offset..offset + 4].try_into().unwrap());
+    let changed = if old == (pon_work::Q - 1) as u32 {
+        0
+    } else {
+        old + 1
+    };
+    packet.proof[offset..offset + 4].copy_from_slice(&changed.to_le_bytes());
+    let h = &packet.header;
+    assert_eq!(
+        pon_work::verify(h.challenge(), h.work_task, h.target, &packet.proof).unwrap_err(),
+        pon_work::WorkError::Product
+    );
+    let bad = hex::encode(packet.encode().unwrap());
+    original_fixture["forged_packet"] = json!(bad);
+    original_fixture["invalid_work_kind"] = json!("PRODUCT");
+    original_fixture["full_original_W1_replay_verified"] = json!(true);
+    original_fixture["unchanged_ticket_and_trace"] = json!(true);
+    original_fixture["original_claimed_product_word"] = json!(old);
+    original_fixture["altered_claimed_product_word"] = json!(changed);
+    (bad, original_fixture)
+}
+
 #[derive(Clone)]
 struct Client {
     address: SocketAddr,
@@ -522,8 +552,17 @@ mod network_only_business {
         let mut producer = Node::open(&path.join("producer"), settings.clone(), 1).unwrap();
         // Keep full acquisition and bounded trace-search costs rather than
         // presenting the supplied strategy as a physical lower bound.
+        // Half of the hostile TCP callers present a ticket-winning wrong
+        // transcript; the other half preserve the exact ticket + transcript
+        // but alter only C, reaching the original Product verifier branch.
         let attacks: Vec<_> = (0..WORKERS)
-            .map(|i| false_transcript(&mut producer, i as u64))
+            .map(|i| {
+                if i % 2 == 0 {
+                    false_transcript(&mut producer, i as u64)
+                } else {
+                    false_product(&mut producer, i as u64)
+                }
+            })
             .collect();
         let mut queries = Vec::new();
         let packets: Vec<_> = (0..BLOCKS)
@@ -555,8 +594,14 @@ mod network_only_business {
             .collect();
         let expected = producer.read_active().unwrap();
         let owner = Arc::new(Mutex::new(receiver));
-        let server =
-            PublicServer::new(identity(71), PublicPolicy::new(8, CALL_LIMIT).unwrap()).unwrap();
+        // Research-only environment lane; preserves every signed wire and CPU
+        // arithmetic rule, varies only the original real process-cold start.
+        let server = if std::env::var_os("TRNM_PRODUCT_LAB_COLD").is_some() {
+            PublicServer::new_process_cold(identity(71), PublicPolicy::new(8, CALL_LIMIT).unwrap())
+                .unwrap()
+        } else {
+            PublicServer::new(identity(71), PublicPolicy::new(8, CALL_LIMIT).unwrap()).unwrap()
+        };
         let domain = server.mutation_cpu_domain();
         let initial_meter = domain.observe().unwrap();
         let listener = TcpListener::bind("127.0.0.1:0").unwrap();
@@ -709,6 +754,34 @@ mod network_only_business {
             .iter()
             .flat_map(|r| r["calls"].as_array().unwrap())
             .collect::<Vec<_>>();
+        // This classification is based on the public receiver's actual
+        // response, not the supplied test fixture or a local proof oracle.
+        // Preserve all refusals, including timeouts, in the ordinary trace.
+        let mut received_transcript_rejections = 0usize;
+        let mut received_product_rejections = 0usize;
+        let mut wrong_full_work_rejections = 0usize;
+        for (index, worker) in attack_rows.iter().enumerate() {
+            let expected = if index % 2 == 0 {
+                "WORK:Transcript"
+            } else {
+                "WORK:Product"
+            };
+            for call in worker["calls"].as_array().unwrap() {
+                let actual = call["response"]["error"].as_str();
+                if actual == Some(expected) {
+                    if index % 2 == 0 {
+                        received_transcript_rejections += 1;
+                    } else {
+                        received_product_rejections += 1;
+                    }
+                } else if matches!(actual, Some("WORK:Transcript" | "WORK:Product")) {
+                    wrong_full_work_rejections += 1;
+                }
+            }
+        }
+        let both_original_work_error_paths_verified = received_transcript_rejections > 0
+            && received_product_rejections > 0
+            && wrong_full_work_rejections == 0;
         let honest_start = honest_rows.first().unwrap()["started_ns"].as_u64().unwrap();
         let honest_end = honest_rows.last().unwrap()["ended_ns"].as_u64().unwrap();
         let overlap = calls
@@ -733,6 +806,7 @@ mod network_only_business {
                     && m.read_grants_after_shutdown == 0
             })
             && overlap > 0
+            && both_original_work_error_paths_verified
             && !calls.is_empty()
             && calls.iter().all(|r| r["ok"] == false)
             && honest_rows
@@ -753,6 +827,10 @@ mod network_only_business {
             "window_ns":WINDOW.as_nanos(),"workers":WORKERS,"calls_per_worker":CALLS_PER_WORKER,
             "supplied_attack_fixtures":attacks.iter().map(|(_,r)|r).collect::<Vec<_>>(),
             "attack_workers":attack_rows,"honest_calls":honest_rows,"overlapping_false_calls":overlap,
+            "actual_transcript_rejections":received_transcript_rejections,
+            "actual_product_rejections":received_product_rejections,
+            "wrong_full_work_rejection_classification":wrong_full_work_rejections,
+            "both_original_work_error_paths_verified":both_original_work_error_paths_verified,
             "initial_meter":initial_meter,"final_meter":final_meter,"observations":observations,
             "full_state_equal":full_state_equal,"reopen_equal":reopen_equal,
             "business_transactions":queries.len(),"native_verified_confirmed_transactions":confirmed,
