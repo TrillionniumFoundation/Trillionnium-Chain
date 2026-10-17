@@ -5937,6 +5937,26 @@ mod native_ancestry_tests {
         let settings = Settings::development(Some(1)).unwrap();
         let node = Node::open(dir.path(), settings.clone(), 2).unwrap();
         let before = node.read_active().unwrap();
+        let counts = |owner: &Node| {
+            [
+                "blocks",
+                "deltas",
+                "ancestry_jump",
+                "snapshots",
+                "kv",
+                "events",
+                "steps",
+                "reorg",
+            ]
+            .map(|table| {
+                owner
+                    .db
+                    .query_row(&format!("SELECT COUNT(*) FROM {table}"), [], |row| {
+                        row.get::<_, u64>(0)
+                    })
+                    .unwrap()
+            })
+        };
         let original_counts = counts(&node);
         for cancel_at in [1, 2] {
             let calls = std::sync::atomic::AtomicUsize::new(0);
