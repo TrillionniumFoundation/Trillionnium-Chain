@@ -15,6 +15,8 @@ use std::{
     thread,
     time::{Duration, SystemTime, UNIX_EPOCH},
 };
+#[cfg(unix)]
+use std::os::unix::fs::{MetadataExt, OpenOptionsExt};
 mod assigned;
 mod audit;
 mod cli;
@@ -256,7 +258,29 @@ pub(crate) fn now_ms() -> u128 {
 fn append_json_line(path: &Path, line: &str) -> Result<()> {
     ensure_parent_directory(path)?;
     ensure_regular_or_missing(path)?;
-    let mut file = OpenOptions::new().create(true).append(true).open(path)?;
+    let before = fs::symlink_metadata(path).ok();
+    let mut options = OpenOptions::new();
+    options.create(true).append(true);
+    apply_worker_open_flags(&mut options);
+    let mut file = options.open(path)?;
+    let opened = file.metadata()?;
+    if !opened.is_file()
+        || before
+            .as_ref()
+            .is_some_and(|metadata| !same_worker_file(metadata, &opened))
+    {
+        return Err(anyhow!(
+            "worker log identity changed while opening {}",
+            path.display()
+        ));
+    }
+    let named = fs::symlink_metadata(path)?;
+    if named.file_type().is_symlink() || !named.is_file() || !same_worker_file(&named, &opened) {
+        return Err(anyhow!(
+            "worker log identity changed while opening {}",
+            path.display()
+        ));
+    }
     file.write_all(line.as_bytes())?;
     file.write_all(b"\n")?;
     file.flush()?;
@@ -297,7 +321,24 @@ pub(crate) fn append_submission(
 
 pub(crate) fn read_bounded_worker_log(path: &Path) -> Result<String> {
     ensure_regular_or_missing(path)?;
-    let mut file = fs::File::open(path)?;
+    let named_before = fs::symlink_metadata(path)?;
+    if named_before.file_type().is_symlink() || !named_before.is_file() {
+        return Err(anyhow!(
+            "worker log path must be a regular non-symlink file: {}",
+            path.display()
+        ));
+    }
+    let mut options = OpenOptions::new();
+    options.read(true);
+    apply_worker_open_flags(&mut options);
+    let mut file = options.open(path)?;
+    let opened = file.metadata()?;
+    if !opened.is_file() || !same_worker_file(&named_before, &opened) {
+        return Err(anyhow!(
+            "worker log identity changed while opening {}",
+            path.display()
+        ));
+    }
     let expected_len = file.metadata()?.len();
     if expected_len > MAX_WORKER_LOG_BYTES {
         return Err(anyhow!(
@@ -308,7 +349,12 @@ pub(crate) fn read_bounded_worker_log(path: &Path) -> Result<String> {
     }
     let mut raw = String::with_capacity(expected_len as usize);
     file.read_to_string(&mut raw)?;
-    if file.metadata()?.len() != expected_len {
+    let named_after = fs::symlink_metadata(path)?;
+    if file.metadata()?.len() != expected_len
+        || named_after.file_type().is_symlink()
+        || !named_after.is_file()
+        || !same_worker_file(&named_after, &opened)
+    {
         return Err(anyhow!(
             "worker log {} changed while reading",
             path.display()
@@ -431,6 +477,32 @@ fn ensure_regular_or_missing(path: &Path) -> Result<()> {
         Err(error) if error.kind() == std::io::ErrorKind::NotFound => Ok(()),
         Err(error) => Err(error.into()),
     }
+}
+
+fn apply_worker_open_flags(options: &mut OpenOptions) {
+    #[cfg(unix)]
+    options.custom_flags(
+        (rustix::fs::OFlags::CLOEXEC | rustix::fs::OFlags::NOFOLLOW).bits() as i32,
+    );
+}
+
+#[cfg(unix)]
+fn same_worker_file(left: &fs::Metadata, right: &fs::Metadata) -> bool {
+    left.is_file()
+        && right.is_file()
+        && left.dev() == right.dev()
+        && left.ino() == right.ino()
+}
+
+#[cfg(not(unix))]
+fn same_worker_file(left: &fs::Metadata, right: &fs::Metadata) -> bool {
+    // Windows has no portable inode pair in std::fs::Metadata.  The
+    // non-following open and type checks still reject final symlinks; retain
+    // a conservative size/mtime check for the descriptor/path fence.
+    left.is_file()
+        && right.is_file()
+        && left.len() == right.len()
+        && left.modified().ok() == right.modified().ok()
 }
 
 fn atomic_replace_file(path: &Path, bytes: &[u8]) -> Result<()> {
