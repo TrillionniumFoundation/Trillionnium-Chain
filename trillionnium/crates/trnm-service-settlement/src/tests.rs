@@ -1198,3 +1198,22 @@ fn create_open_rejects_dangling_store_symlink() {
         "SQLite must not create the symlink target"
     );
 }
+
+#[cfg(unix)]
+#[test]
+fn readback_rejects_store_path_replaced_by_symlink() {
+    use std::os::unix::fs::symlink;
+
+    let harness = Harness::new();
+    let store = harness.open();
+    let target = harness.path.with_extension("target.sqlite");
+    fs::rename(&harness.path, &target).expect("move store behind endpoint");
+    symlink(&target, &harness.path).expect("replace store endpoint with symlink");
+    let error = store
+        .state()
+        .expect_err("readback must reject a symlinked store endpoint");
+    assert_eq!(
+        error.code(),
+        ConsumptionSettlementErrorCodeV1::StoreFailure
+    );
+}
