@@ -187,6 +187,26 @@ fn authority_set_rejects_weak_ed25519_trust_anchor() {
 }
 
 #[test]
+fn authority_identity_serde_rejects_weak_trust_anchor() {
+    let value = serde_json::json!({
+        "signer_did": "did:trnm:weak",
+        "public_key": [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    });
+    assert!(serde_json::from_value::<AuthorityIdentityV1>(value).is_err());
+}
+
+#[test]
+fn authority_set_serde_rejects_duplicate_identity_entries() {
+    let identity = test_authorities().nakama_authorities[0].clone();
+    let value = serde_json::json!({
+        "nakama_authorities": [identity.clone(), identity],
+        "hepta_authorities": []
+    });
+    assert!(serde_json::from_value::<AuthoritySetV1>(value).is_err());
+}
+
+#[test]
 fn every_typed_command_strictly_round_trips() {
     for command in fixture_commands() {
         command.validate().unwrap();
@@ -214,6 +234,26 @@ fn every_signed_envelope_strictly_round_trips() {
             ))
         ));
     }
+}
+
+#[test]
+fn signed_command_serde_revalidates_signature_and_identity() {
+    let signed = sign(0, fixture_commands()[0].clone()).unwrap();
+    let encoded = serde_json::to_vec(&signed).unwrap();
+    let decoded: SignedResearchCommandV1 = serde_json::from_slice(&encoded).unwrap();
+    assert_eq!(decoded, signed);
+
+    let mut forged = serde_json::to_value(&signed).unwrap();
+    forged["signer_did"] = serde_json::json!("did:trnm:other-authority");
+    assert!(serde_json::from_value::<SignedResearchCommandV1>(forged).is_err());
+
+    let mut oversized = serde_json::to_value(&signed).unwrap();
+    oversized["signature"] = serde_json::json!(vec![0_u8; 65]);
+    assert!(serde_json::from_value::<SignedResearchCommandV1>(oversized).is_err());
+
+    let mut oversized_chain = serde_json::to_value(&signed).unwrap();
+    oversized_chain["chain_id"] = serde_json::json!("x".repeat(65));
+    assert!(serde_json::from_value::<SignedResearchCommandV1>(oversized_chain).is_err());
 }
 
 #[test]
