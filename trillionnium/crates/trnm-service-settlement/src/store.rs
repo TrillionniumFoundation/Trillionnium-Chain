@@ -19,6 +19,13 @@ use crate::{
 };
 
 const JOURNAL_SCHEMA_VERSION_V1: u16 = 2;
+// The store is intentionally append-only, but replay must remain bounded even
+// when an operator hands us a forged SQLite file.  These limits are generous
+// relative to the bounded settlement command/evidence types and are checked
+// before collecting rows or decoding Borsh payloads.
+const MAX_OPERATION_ROWS_V1: u64 = 1_000_000;
+const MAX_OPERATION_FIELD_BYTES_V1: u64 = 4 * 1024 * 1024;
+const MAX_OPERATION_JOURNAL_BYTES_V1: u64 = 256 * 1024 * 1024;
 const META_SQL: &str = "CREATE TABLE metadata(singleton INTEGER PRIMARY KEY CHECK(singleton=1),schema_version INTEGER NOT NULL,config BLOB NOT NULL,sequence INTEGER NOT NULL,height INTEGER NOT NULL,block_id BLOB NOT NULL,state BLOB NOT NULL,state_root BLOB NOT NULL,journal_root BLOB NOT NULL,fenced INTEGER NOT NULL CHECK(fenced IN(0,1)),checksum BLOB NOT NULL) STRICT";
 const OP_SQL: &str = "CREATE TABLE operations(sequence INTEGER PRIMARY KEY,operation_id BLOB NOT NULL UNIQUE,execution BLOB NOT NULL,command BLOB NOT NULL,receipt BLOB NOT NULL,checksum BLOB NOT NULL) STRICT";
 const COMMITTED_BLOCKS_SQL: &str = "CREATE TABLE committed_blocks(marker_sequence INTEGER PRIMARY KEY,order_height INTEGER NOT NULL,order_block_id BLOB NOT NULL UNIQUE CHECK(length(order_block_id)=32),parent_order_height INTEGER NOT NULL,parent_order_block_id BLOB NOT NULL CHECK(length(parent_order_block_id)=32),source_operation_sequence INTEGER NOT NULL,target_operation_sequence INTEGER NOT NULL,source_state_root BLOB NOT NULL CHECK(length(source_state_root)=32),target_state_root BLOB NOT NULL CHECK(length(target_state_root)=32),source_operation_root BLOB NOT NULL CHECK(length(source_operation_root)=32),target_operation_root BLOB NOT NULL CHECK(length(target_operation_root)=32),previous_marker_checksum BLOB NOT NULL CHECK(length(previous_marker_checksum)=32),checksum BLOB NOT NULL CHECK(length(checksum)=32)) STRICT";
@@ -686,11 +693,40 @@ impl ConsumptionSettlementStoreV1 {
 }
 
 fn open_rw(path: &Path, allow_create: bool) -> ConsumptionSettlementResultV1<Connection> {
+    if allow_create {
+        // SQLite follows a final symlink when CREATE is requested.  Refuse
+        // anything that appeared between the caller's absence check and this
+        // open, including a dangling symlink.
+        match fs::symlink_metadata(path) {
+            Ok(_) => {
+                return Err(error(
+                    ConsumptionSettlementErrorCodeV1::StoreFailure,
+                    "new Consumption/Settlement store path appeared before creation",
+                ));
+            }
+            Err(cause) if cause.kind() == std::io::ErrorKind::NotFound => {}
+            Err(cause) => {
+                return Err(error(
+                    ConsumptionSettlementErrorCodeV1::StoreFailure,
+                    format!("cannot inspect new Consumption/Settlement store path: {cause}"),
+                ));
+            }
+        }
+    } else {
+        // Existing writable operations must apply the same direct-file
+        // boundary as strict reopen.  This closes the common rename-to-
+        // symlink window between reject_sidecars and SQLite open.
+        require_existing_regular_store(path)?;
+    }
     let mut flags = OpenFlags::SQLITE_OPEN_READ_WRITE | OpenFlags::SQLITE_OPEN_NO_MUTEX;
     if allow_create {
         flags |= OpenFlags::SQLITE_OPEN_CREATE;
     }
     let connection = Connection::open_with_flags(path, flags)?;
+    // Recheck after SQLite has resolved the path.  No schema or transaction
+    // work occurs until this confirms that the final pathname is still a
+    // direct regular file.
+    require_existing_regular_store(path)?;
     connection.busy_timeout(Duration::from_secs(2))?;
     Ok(connection)
 }
@@ -720,11 +756,24 @@ fn reject_sidecars(path: &Path) -> ConsumptionSettlementResultV1<()> {
     for suffix in ["-wal", "-shm", "-journal"] {
         let mut sidecar: OsString = path.as_os_str().to_os_string();
         sidecar.push(suffix);
-        if Path::new(&sidecar).exists() {
-            return Err(error(
-                ConsumptionSettlementErrorCodeV1::SidecarPresent,
-                "SQLite sidecar is present",
-            ));
+        match fs::symlink_metadata(Path::new(&sidecar)) {
+            // `Path::exists` follows symlinks and reports false for a
+            // dangling one.  Treat every directory entry as present so a
+            // pre-placed sidecar symlink cannot be followed by SQLite during
+            // a subsequent writable open.
+            Ok(_) => {
+                return Err(error(
+                    ConsumptionSettlementErrorCodeV1::SidecarPresent,
+                    "SQLite sidecar is present",
+                ));
+            }
+            Err(cause) if cause.kind() == std::io::ErrorKind::NotFound => {}
+            Err(cause) => {
+                return Err(error(
+                    ConsumptionSettlementErrorCodeV1::StoreFailure,
+                    format!("cannot inspect SQLite sidecar: {cause}"),
+                ));
+            }
         }
     }
     Ok(())
@@ -1008,6 +1057,75 @@ fn operation_checksum(
     checksum(&[&sequence.to_le_bytes(), &id.0, execution, command, receipt])
 }
 
+fn checked_operation_field_len_v1(
+    encoded_len: i64,
+    label: &'static str,
+) -> ConsumptionSettlementResultV1<usize> {
+    let encoded_len = u64::try_from(encoded_len).map_err(|_| {
+        error(
+            ConsumptionSettlementErrorCodeV1::TamperDetected,
+            format!("{label} length is negative"),
+        )
+    })?;
+    if encoded_len > MAX_OPERATION_FIELD_BYTES_V1 {
+        return Err(error(
+            ConsumptionSettlementErrorCodeV1::TamperDetected,
+            format!("{label} exceeds the persisted field bound"),
+        ));
+    }
+    usize::try_from(encoded_len).map_err(|_| {
+        error(
+            ConsumptionSettlementErrorCodeV1::ArithmeticOverflow,
+            format!("{label} length does not fit usize"),
+        )
+    })
+}
+
+fn checked_operation_fixed_field_len_v1(
+    encoded_len: i64,
+    label: &'static str,
+) -> ConsumptionSettlementResultV1<usize> {
+    let encoded_len = checked_operation_field_len_v1(encoded_len, label)?;
+    if encoded_len != 32 {
+        return Err(error(
+            ConsumptionSettlementErrorCodeV1::TamperDetected,
+            format!("{label} must be exactly 32 bytes"),
+        ));
+    }
+    Ok(encoded_len)
+}
+
+fn account_operation_bytes_v1(
+    total: &mut u64,
+    encoded_len: usize,
+    label: &'static str,
+) -> ConsumptionSettlementResultV1<()> {
+    // Four bytes are included for each Borsh byte-vector length prefix in the
+    // journal-root preimage.  Account them before collecting the blob.
+    let contribution = u64::try_from(encoded_len)
+        .map_err(|_| error(ConsumptionSettlementErrorCodeV1::ArithmeticOverflow, label))?
+        .checked_add(4)
+        .ok_or_else(|| {
+            error(
+                ConsumptionSettlementErrorCodeV1::ArithmeticOverflow,
+                format!("{label} byte count overflow"),
+            )
+        })?;
+    *total = total.checked_add(contribution).ok_or_else(|| {
+        error(
+            ConsumptionSettlementErrorCodeV1::ArithmeticOverflow,
+            format!("{label} byte count overflow"),
+        )
+    })?;
+    if *total > MAX_OPERATION_JOURNAL_BYTES_V1 {
+        return Err(error(
+            ConsumptionSettlementErrorCodeV1::TamperDetected,
+            "operation journal exceeds the replay byte bound",
+        ));
+    }
+    Ok(())
+}
+
 fn operation_journal_root(connection: &Connection) -> ConsumptionSettlementResultV1<Hash32V1> {
     operation_journal_root_through(connection, u64::MAX)
 }
@@ -1018,10 +1136,37 @@ fn operation_journal_root_through(
 ) -> ConsumptionSettlementResultV1<Hash32V1> {
     let maximum_sequence = to_sqlite(maximum_sequence.min(i64::MAX as u64), "maximum sequence")?;
     let mut statement = connection
-        .prepare("SELECT receipt FROM operations WHERE sequence<=?1 ORDER BY sequence")?;
-    let receipts = statement
-        .query_map([maximum_sequence], |row| row.get::<_, Vec<u8>>(0))?
-        .collect::<Result<Vec<_>, _>>()?;
+        .prepare("SELECT length(receipt),receipt FROM operations WHERE sequence<=?1 ORDER BY sequence")?;
+    let mut rows = statement.query([maximum_sequence])?;
+    let mut receipts = Vec::new();
+    let mut operation_count = 0_u64;
+    let mut total_bytes = 4_u64; // Borsh Vec length prefix.
+    while let Some(row) = rows.next()? {
+        operation_count = operation_count.checked_add(1).ok_or_else(|| {
+            error(
+                ConsumptionSettlementErrorCodeV1::ArithmeticOverflow,
+                "operation journal row count overflow",
+            )
+        })?;
+        if operation_count > MAX_OPERATION_ROWS_V1 {
+            return Err(error(
+                ConsumptionSettlementErrorCodeV1::TamperDetected,
+                "operation journal exceeds the replay row bound",
+            ));
+        }
+        let receipt_len = checked_operation_field_len_v1(
+            row.get::<_, i64>(0)?,
+            "operation receipt",
+        )?;
+        account_operation_bytes_v1(&mut total_bytes, receipt_len, "operation receipt")?;
+        receipts.push(row.get::<_, Vec<u8>>(1)?);
+    }
+    if total_bytes > MAX_OPERATION_JOURNAL_BYTES_V1 {
+        return Err(error(
+            ConsumptionSettlementErrorCodeV1::TamperDetected,
+            "operation journal exceeds the replay byte bound",
+        ));
+    }
     digest_value(
         "trnm.portable.v2.consumption-settlement-journal-root.candidate.v1",
         &receipts,
@@ -1293,29 +1438,50 @@ fn audit(
         ));
     }
     let mut statement = connection.prepare(
-        "SELECT sequence,operation_id,execution,command,receipt,checksum FROM operations ORDER BY sequence",
+        "SELECT sequence,length(operation_id),operation_id,length(execution),execution,length(command),command,length(receipt),receipt,length(checksum),checksum FROM operations ORDER BY sequence",
     )?;
-    let rows = statement
-        .query_map([], |row| {
-            Ok((
-                row.get::<_, i64>(0)?,
-                row.get::<_, Vec<u8>>(1)?,
-                row.get::<_, Vec<u8>>(2)?,
-                row.get::<_, Vec<u8>>(3)?,
-                row.get::<_, Vec<u8>>(4)?,
-                row.get::<_, Vec<u8>>(5)?,
-            ))
-        })?
-        .collect::<Result<Vec<_>, _>>()?;
+    let mut rows = statement.query([])?;
     let mut replay_state = initial_state(&config.trust_bundle);
     let mut replay_sequence = 0_u64;
-    for (row_sequence, id_bytes, execution_bytes, command_bytes, receipt_bytes, sum) in rows {
+    let mut total_bytes = 4_u64; // Borsh Vec length prefix in the journal root.
+    while let Some(row) = rows.next()? {
         replay_sequence = replay_sequence.checked_add(1).ok_or_else(|| {
             error(
                 ConsumptionSettlementErrorCodeV1::ArithmeticOverflow,
                 "audit sequence overflow",
             )
         })?;
+        if replay_sequence > MAX_OPERATION_ROWS_V1 {
+            return Err(error(
+                ConsumptionSettlementErrorCodeV1::TamperDetected,
+                "operation journal exceeds the replay row bound",
+            ));
+        }
+        let row_sequence = row.get::<_, i64>(0)?;
+        let operation_id_len = checked_operation_fixed_field_len_v1(
+            row.get::<_, i64>(1)?,
+            "operation ID",
+        )?;
+        let id_bytes = row.get::<_, Vec<u8>>(2)?;
+        let execution_len =
+            checked_operation_field_len_v1(row.get::<_, i64>(3)?, "journal execution")?;
+        let command_len =
+            checked_operation_field_len_v1(row.get::<_, i64>(5)?, "journal command")?;
+        let receipt_len =
+            checked_operation_field_len_v1(row.get::<_, i64>(7)?, "journal receipt")?;
+        let checksum_len = checked_operation_fixed_field_len_v1(
+            row.get::<_, i64>(9)?,
+            "operation checksum",
+        )?;
+        account_operation_bytes_v1(&mut total_bytes, operation_id_len, "operation ID")?;
+        account_operation_bytes_v1(&mut total_bytes, execution_len, "journal execution")?;
+        account_operation_bytes_v1(&mut total_bytes, command_len, "journal command")?;
+        account_operation_bytes_v1(&mut total_bytes, receipt_len, "journal receipt")?;
+        account_operation_bytes_v1(&mut total_bytes, checksum_len, "operation checksum")?;
+        let execution_bytes = row.get::<_, Vec<u8>>(4)?;
+        let command_bytes = row.get::<_, Vec<u8>>(6)?;
+        let receipt_bytes = row.get::<_, Vec<u8>>(8)?;
+        let sum = row.get::<_, Vec<u8>>(10)?;
         if from_sqlite(row_sequence, "sequence")? != replay_sequence {
             return Err(error(
                 ConsumptionSettlementErrorCodeV1::TamperDetected,
