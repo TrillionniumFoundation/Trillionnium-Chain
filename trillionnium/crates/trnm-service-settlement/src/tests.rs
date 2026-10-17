@@ -917,6 +917,32 @@ fn committed_block_journal_covers_empty_same_block_and_tamper_boundaries() {
 }
 
 #[test]
+fn committed_block_marker_replay_fails_closed_at_row_bound() {
+    let harness = Harness::new();
+    let store = harness.open();
+    let genesis = store.fresh_readback().expect("genesis readback");
+    store
+        .advance_empty_committed_execution_v1(&harness.execution(
+            genesis.order_height(),
+            genesis.order_block_id(),
+            genesis.order_height() + 1,
+        ))
+        .expect("append marker");
+    drop(store);
+    let connection = Connection::open(&harness.path).expect("open marker database");
+    let error = crate::store::test_load_committed_block_markers_with_limit(
+        &connection,
+        &harness.config(),
+        1,
+    )
+    .expect_err("marker replay must fail closed above its row bound");
+    assert_eq!(
+        error.code(),
+        ConsumptionSettlementErrorCodeV1::TamperDetected
+    );
+}
+
+#[test]
 fn schema_sidecar_row_and_self_consistent_state_substitution_fail_closed() {
     let schema = Harness::new();
     drop(schema.open());
