@@ -239,7 +239,9 @@ fn actual_v3_cli_unknown_guest_funding_and_atomic_renewal_reach_native_receiver(
         serde_json::to_vec(&raws.iter().map(hex::encode).collect::<Vec<_>>()).unwrap(),
     )
     .unwrap();
-    let service_started = Instant::now();
+    // The CLI's --seconds lifetime starts after listener startup, not when
+    // the test spawns its child. ready_budget independently bounds startup;
+    // keep the original service/shutdown intervals measured from listening.
     let mut child = command("serve", &store, genesis)
         .args([
             "--admission-profile",
@@ -284,6 +286,9 @@ fn actual_v3_cli_unknown_guest_funding_and_atomic_renewal_reach_native_receiver(
         captured
     });
     let ready: Value = serde_json::from_str(&rx.recv_timeout(ready_budget).unwrap()).unwrap();
+    // Do not charge the bounded initialization to the service's shutdown
+    // interval: the native service timer begins only after this ready event.
+    let service_started = Instant::now();
     assert_eq!(ready["mining_enabled"], true);
     assert_eq!(ready["server_public"], public);
     let address = ready["address"].as_str().unwrap();
