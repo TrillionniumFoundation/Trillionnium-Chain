@@ -141,6 +141,11 @@ impl PayloadReplayRecoveryDaemonV1 {
     /// removed implicitly; an operator must clean a stale endpoint after a
     /// hard kill, which prevents deleting another process's listener.
     pub fn run(&self) -> Result<(), PayloadReplayRecoveryErrorV1> {
+        if self.operation_timeout.is_zero() {
+            return Err(PayloadReplayRecoveryErrorV1::InvalidRequest(
+                "recovery socket timeout must be positive",
+            ));
+        }
         validate_socket_configuration(
             &self.socket_path,
             &self.payload_path,
@@ -1335,6 +1340,40 @@ mod socket_tests {
             RecoverySocketConnectionErrorV1::Client(
                 PayloadReplayRecoveryErrorV1::Io(ref error)
             ) if error.kind() == io::ErrorKind::TimedOut
+        ));
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn zero_timeout_rejects_before_opening_recovery_owner() {
+        let namespace = PayloadReplayNamespaceV1::new([1; 32], 1, [2; 32], [3; 32], [4; 32])
+            .expect("valid namespace");
+        let target = PayloadReplayRecoveryTargetV1::new(
+            1,
+            [5; 32],
+            [6; 32],
+            PeerLeaseDirectionV1::Outbound,
+            [7; 32],
+            1,
+            0,
+            1,
+            0,
+            [8; 32],
+        )
+        .expect("valid recovery target");
+        let daemon = PayloadReplayRecoveryDaemonV1::new(
+            "/tmp/trnm-recovery-timeout.sock",
+            "/tmp/trnm-recovery-timeout.payload",
+            "/tmp/trnm-recovery-timeout-acks",
+            namespace,
+            target,
+        )
+        .with_timeout(Duration::ZERO);
+        assert!(matches!(
+            daemon.run(),
+            Err(PayloadReplayRecoveryErrorV1::InvalidRequest(
+                "recovery socket timeout must be positive"
+            ))
         ));
     }
 
