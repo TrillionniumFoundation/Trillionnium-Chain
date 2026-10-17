@@ -232,7 +232,11 @@ def check_workflow_policy() -> None:
         require(not re.search(r"(?mi)(?:\{|,)\s*[\"']?if[\"']?\s*:", text), f"conditional workflow step in {rel}")
         require(not re.search(r"(?mi)^\s*(?:-\s*)?[\"']?continue-on-error[\"']?\s*:", text), f"non-failing workflow step in {rel}")
         require(not re.search(r"(?mi)(?:\{|,)\s*[\"']?continue-on-error[\"']?\s*:", text), f"non-failing workflow step in {rel}")
-        require(not re.search(r"\|\|\s*(?:true|:|exit\s+0)\b", text), f"workflow suppresses command failure in {rel}")
+        # ``||`` is valid in GitHub expressions (the source SHA selector uses
+        # it), but shell fallbacks can turn a failed required check green.
+        shell_text = re.sub(r"\$\{\{.*?\}\}", "", text, flags=re.S)
+        require("||" not in shell_text, f"workflow suppresses command failure in {rel}")
+        require(not re.search(r"(?mi)\bset\s+\+e\b", shell_text), f"workflow disables fail-fast mode in {rel}")
         require(not re.search(r"(?mi)^\s*[\"']?(?:container|services)[\"']?\s*:", text), f"unreviewed workflow image/service in {rel}")
         require(not re.search(r"(?mi)(?:\{|,)\s*[\"']?(?:container|services)[\"']?\s*:", text), f"unreviewed workflow image/service in {rel}")
         # Keep the hosted runner image deterministic; dynamic labels can
