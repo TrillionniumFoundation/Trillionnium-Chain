@@ -354,7 +354,7 @@ fn real_w1_verification_cpu_debt_blocks_then_recovers_paid_tcp_and_confirmations
                     packet: wire.clone(),
                 },
             );
-            if retry_count < 4 || retry_count % 8 == 0 {
+            if retry_count < 4 || retry_count.is_multiple_of(8) {
                 println!(
                     "HONEST_ATTEMPT block={} retry={} reply={} credit={}",
                     position,
