@@ -31,7 +31,7 @@ pub enum ProtocolError {
     OutOfRange(&'static str),
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 #[serde(deny_unknown_fields)]
 pub struct CanonicalTxV1 {
     pub schema: String,
@@ -41,6 +41,37 @@ pub struct CanonicalTxV1 {
     #[serde(with = "u128_decimal")]
     pub fee_limit: u128,
     pub command: CanonicalCommandV1,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct CanonicalTxWireV1 {
+    schema: String,
+    sender: String,
+    nonce: u64,
+    max_gas: u64,
+    #[serde(with = "u128_decimal")]
+    fee_limit: u128,
+    command: CanonicalCommandV1,
+}
+
+impl<'de> Deserialize<'de> for CanonicalTxV1 {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        let wire = CanonicalTxWireV1::deserialize(deserializer)?;
+        let transaction = Self {
+            schema: wire.schema,
+            sender: wire.sender,
+            nonce: wire.nonce,
+            max_gas: wire.max_gas,
+            fee_limit: wire.fee_limit,
+            command: wire.command,
+        };
+        transaction.validate().map_err(serde::de::Error::custom)?;
+        Ok(transaction)
+    }
 }
 
 impl CanonicalTxV1 {
@@ -487,6 +518,29 @@ mod tests {
             "command":{"type":"transfer","to":"bob","amount":"1"}
         }"#;
         assert!(serde_json::from_slice::<CanonicalTxV1>(leading_zero).is_err());
+    }
+
+    #[test]
+    fn serde_deserialization_rejects_unvalidated_transaction_state() {
+        let invalid = br#"{
+            "schema":"trnm_canonical_tx_v1",
+            "sender":"alice",
+            "nonce":0,
+            "max_gas":1000,
+            "fee_limit":"1",
+            "command":{"type":"transfer","to":"bob","amount":"1"}
+        }"#;
+        assert!(serde_json::from_slice::<CanonicalTxV1>(invalid).is_err());
+
+        let invalid_command = br#"{
+            "schema":"trnm_canonical_tx_v1",
+            "sender":"alice",
+            "nonce":1,
+            "max_gas":1000,
+            "fee_limit":"1",
+            "command":{"type":"transfer","to":"bob","amount":"0"}
+        }"#;
+        assert!(serde_json::from_slice::<CanonicalTxV1>(invalid_command).is_err());
     }
 }
 
