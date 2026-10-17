@@ -309,4 +309,24 @@ mod tests {
         assert!(matches!(error, PeerLeaseErrorV1::InvalidRequest(_)));
         assert!(!root.exists());
     }
+
+    #[test]
+    fn occupied_socket_rejects_before_opening_journal() {
+        let dir = tempfile::tempdir().unwrap();
+        fs::set_permissions(dir.path(), fs::Permissions::from_mode(0o700)).unwrap();
+        let socket = dir.path().join("authority.sock");
+        // A regular file is sufficient: the daemon must reject any occupied
+        // pathname before touching the journal, regardless of endpoint type.
+        fs::write(&socket, b"occupied").unwrap();
+        let journal = dir.path().join("authority.log");
+
+        let error = UnixPeerLeaseDaemonV1::new(&socket, &journal).run().unwrap_err();
+        assert!(matches!(error, PeerLeaseErrorV1::InvalidRequest(_)));
+        assert!(
+            !journal.exists(),
+            "an occupied endpoint must not create or mutate its journal"
+        );
+
+        fs::remove_file(socket).unwrap();
+    }
 }
