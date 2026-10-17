@@ -1019,7 +1019,13 @@ fn decode_request_v2(body: &[u8]) -> Result<RequestV2, ExternalCheckpointAuthori
         OP_LOAD_V2 if body.len() == 41 && body[6..9] == [0, 0, 0] => Ok(RequestV2::Load {
             scope: body[9..41].try_into().expect("fixed load scope"),
         }),
-        OP_COMPARE_AND_ADVANCE_V2 if body[6] <= 1 && body[7..9] == [0, 0] => {
+        // The scope is fixed-width and is decoded below, so reject short
+        // compare bodies before slicing it.  Without this lower bound a
+        // nine-byte frame with a valid compare header reached `body[9..41]`
+        // and panicked the daemon instead of isolating the malformed client.
+        OP_COMPARE_AND_ADVANCE_V2
+            if body.len() >= 41 && body[6] <= 1 && body[7..9] == [0, 0] =>
+        {
             let scope: [u8; 32] = body[9..41].try_into().expect("fixed compare scope");
             let expected_start = 41;
             let target_start = expected_start + if body[6] == 1 { CHECKPOINT_BYTES_V2 } else { 0 };
@@ -1870,6 +1876,28 @@ mod tests {
         ));
         fs::remove_dir(&root).unwrap();
         fs::rename(&displaced, &root).unwrap();
+    }
+
+    #[test]
+    fn malformed_short_compare_frame_is_rejected_without_panic() {
+        // This is a complete-looking header with a compare operation but no
+        // fixed-width scope/target.  Decoding must return a protocol error;
+        // the daemon must never panic on a client-controlled frame.
+        let body = [
+            REQUEST_MAGIC_V2[0],
+            REQUEST_MAGIC_V2[1],
+            REQUEST_MAGIC_V2[2],
+            REQUEST_MAGIC_V2[3],
+            PROTOCOL_VERSION_V2,
+            OP_COMPARE_AND_ADVANCE_V2,
+            0,
+            0,
+            0,
+        ];
+        assert!(matches!(
+            decode_request_v2(&body),
+            Err(ExternalCheckpointAuthorityErrorV2::Protocol(_))
+        ));
     }
 
     #[test]
