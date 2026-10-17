@@ -366,7 +366,7 @@ pub struct AuditEvent {
     pub note: Option<String>,
 }
 
-#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[derive(Debug, Clone, Default, Serialize)]
 pub struct IdentityRegistry {
     dids: BTreeMap<String, DidRecord>,
     capabilities: BTreeMap<u64, CapabilityToken>,
@@ -374,9 +374,52 @@ pub struct IdentityRegistry {
     next_capability_id: u64,
 }
 
+/// Wire representation used when restoring an identity registry.  The
+/// registry's mutation methods enforce controller, lifecycle, and nonce
+/// invariants, so accepting the derive-generated `Deserialize` here would let
+/// an untrusted snapshot inject arbitrary maps and then use them as authority.
+/// Keep the wire form private and validate the complete graph before exposing
+/// the value to callers.
+#[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct IdentityRegistryWire {
+    #[serde(default)]
+    dids: BTreeMap<String, DidRecord>,
+    #[serde(default)]
+    capabilities: BTreeMap<u64, CapabilityToken>,
+    #[serde(default)]
+    audit_trail: Vec<AuditEvent>,
+    #[serde(default)]
+    next_capability_id: u64,
+}
+
+impl<'de> Deserialize<'de> for IdentityRegistry {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        let wire = IdentityRegistryWire::deserialize(deserializer)?;
+        let registry = Self {
+            dids: wire.dids,
+            capabilities: wire.capabilities,
+            audit_trail: wire.audit_trail,
+            next_capability_id: wire.next_capability_id,
+        };
+        registry
+            .validate_restored_state()
+            .map_err(serde::de::Error::custom)?;
+        Ok(registry)
+    }
+}
+
 impl IdentityRegistry {
     const DID_MIN_LEN: usize = 7;
     const DID_MAX_LEN: usize = 128;
+    /// Bounds apply to serde-restored values as well as live API inputs.  They
+    /// prevent a persisted snapshot from becoming an allocation amplifier on
+    /// the next startup and keep identity comparisons deterministic.
+    const IDENTITY_FIELD_MAX_LEN: usize = 256;
+    const MAX_AUDIT_EVENTS: usize = 1_000_000;
 
     fn contains_disallowed_invisible_chars(value: &str) -> bool {
         value.chars().any(is_disallowed_invisible_char)
@@ -417,7 +460,9 @@ impl IdentityRegistry {
     ) -> Result<(), InteropIdentityError> {
         let did_field = matches!(field, "did" | "subject_did");
 
-        if value.trim().is_empty()
+        if value.is_empty()
+            || value.len() > Self::IDENTITY_FIELD_MAX_LEN
+            || value.trim().is_empty()
             || value.trim() != value
             || value.chars().any(char::is_control)
             || Self::contains_disallowed_invisible_chars(value)
@@ -427,6 +472,70 @@ impl IdentityRegistry {
                 field,
                 value: value.to_string(),
             });
+        }
+        Ok(())
+    }
+
+    /// Validate all invariants that mutation methods maintain before accepting
+    /// a persisted snapshot.  In particular, `next_capability_id` must not
+    /// move backwards: doing so would make the next issuance overwrite an
+    /// existing capability and could transfer authority to attacker-controlled
+    /// state.
+    fn validate_restored_state(&self) -> Result<(), InteropIdentityError> {
+        if self.audit_trail.len() > Self::MAX_AUDIT_EVENTS {
+            return Err(InteropIdentityError::InvalidRestoredState);
+        }
+
+        for (key, did) in &self.dids {
+            if key != &did.did {
+                return Err(InteropIdentityError::InvalidRestoredState);
+            }
+            Self::validate_identity_field("did", &did.did)?;
+            Self::validate_identity_field("controller", &did.controller)?;
+            if did.revoked_at.is_some_and(|height| height < did.created_at) {
+                return Err(InteropIdentityError::InvalidRestoredState);
+            }
+        }
+
+        let max_capability_id = self.capabilities.keys().next_back().copied().unwrap_or(0);
+        if self.next_capability_id != max_capability_id {
+            return Err(InteropIdentityError::InvalidRestoredState);
+        }
+        for (key, token) in &self.capabilities {
+            if *key == 0 || token.token_id != *key {
+                return Err(InteropIdentityError::InvalidRestoredState);
+            }
+            let did = self
+                .dids
+                .get(&token.subject_did)
+                .ok_or(InteropIdentityError::InvalidRestoredState)?;
+            Self::validate_identity_field("subject_did", &token.subject_did)?;
+            if token.issued_at < did.created_at
+                || token.expires_at.is_some_and(|height| height < token.issued_at)
+                || token.revoked_at.is_some_and(|height| height < token.issued_at)
+                || (did.revoked_at.is_some() && token.revoked_at.is_none())
+            {
+                return Err(InteropIdentityError::InvalidRestoredState);
+            }
+        }
+
+        for (index, event) in self.audit_trail.iter().enumerate() {
+            let expected_seq = u64::try_from(index + 1)
+                .map_err(|_| InteropIdentityError::InvalidRestoredState)?;
+            if event.seq != expected_seq {
+                return Err(InteropIdentityError::InvalidRestoredState);
+            }
+            Self::validate_identity_field("actor", &event.actor)?;
+            Self::validate_identity_field("subject", &event.subject)?;
+            if event.note.as_deref().is_some_and(|note| {
+                note.is_empty()
+                    || note.len() > Self::IDENTITY_FIELD_MAX_LEN
+                    || note.trim() != note
+                    || note.chars().any(char::is_control)
+                    || Self::contains_disallowed_invisible_chars(note)
+            }) {
+                return Err(InteropIdentityError::InvalidRestoredState);
+            }
         }
         Ok(())
     }
@@ -1009,6 +1118,7 @@ pub enum InteropIdentityError {
     },
     MissingSettlementTx,
     MissingRevertReason,
+    InvalidRestoredState,
 }
 
 impl fmt::Display for InteropIdentityError {
@@ -1158,6 +1268,9 @@ impl fmt::Display for InteropIdentityError {
             }
             InteropIdentityError::MissingRevertReason => {
                 write!(f, "reverted settlement requires non-empty revert_reason")
+            }
+            InteropIdentityError::InvalidRestoredState => {
+                write!(f, "identity registry snapshot violates state invariants")
             }
         }
     }
