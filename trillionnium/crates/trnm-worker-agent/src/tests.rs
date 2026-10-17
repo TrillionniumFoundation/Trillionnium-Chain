@@ -3061,6 +3061,40 @@ fn worker_state_rejects_oversized_input_before_json_parse() {
     let _ = fs::remove_file(&state);
 }
 
+#[cfg(unix)]
+#[test]
+fn worker_persistence_rejects_symlinked_log_endpoints() {
+    use std::os::unix::fs::symlink;
+
+    let directory = std::env::temp_dir().join(format!(
+        "trnm-worker-agent-symlink-{}-{}",
+        std::process::id(),
+        now_ms()
+    ));
+    fs::create_dir(&directory).expect("temporary worker persistence directory");
+    let target = directory.join("target.log");
+    fs::write(&target, b"sentinel\n").expect("write target");
+    let link = directory.join("link.log");
+    symlink(&target, &link).expect("create log symlink");
+    assert!(read_bounded_worker_log(&link).is_err());
+    assert!(append_event(
+        &link,
+        &WorkerEvent {
+            ts_unix_ms: 1,
+            run_id: "run".to_string(),
+            event_type: "test".to_string(),
+            task_id: 1,
+            status: "ok".to_string(),
+            reason_code: "none".to_string(),
+            commit_rc: 0,
+            reveal_rc: 0,
+        },
+    )
+    .is_err());
+    assert_eq!(fs::read(&target).expect("read target"), b"sentinel\n");
+    let _ = fs::remove_dir_all(&directory);
+}
+
 #[test]
 fn message_ingress_backward_compat_defaults_provider_request_id() {
     let raw = r#"{"request_id":"r1","task_id":7,"channel":"telegram","user_id":"u1","session_id":"s1","text":"hello","idempotency_key":"ik1","status":"assigned","created_at_unix_ms":1}"#;
