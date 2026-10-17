@@ -26,6 +26,7 @@ const JOURNAL_SCHEMA_VERSION_V1: u16 = 2;
 const MAX_OPERATION_ROWS_V1: u64 = 1_000_000;
 const MAX_OPERATION_FIELD_BYTES_V1: u64 = 4 * 1024 * 1024;
 const MAX_OPERATION_JOURNAL_BYTES_V1: u64 = 256 * 1024 * 1024;
+const MAX_COMMITTED_BLOCK_ROWS_V1: u64 = MAX_OPERATION_ROWS_V1 + 1;
 const META_SQL: &str = "CREATE TABLE metadata(singleton INTEGER PRIMARY KEY CHECK(singleton=1),schema_version INTEGER NOT NULL,config BLOB NOT NULL,sequence INTEGER NOT NULL,height INTEGER NOT NULL,block_id BLOB NOT NULL,state BLOB NOT NULL,state_root BLOB NOT NULL,journal_root BLOB NOT NULL,fenced INTEGER NOT NULL CHECK(fenced IN(0,1)),checksum BLOB NOT NULL) STRICT";
 const OP_SQL: &str = "CREATE TABLE operations(sequence INTEGER PRIMARY KEY,operation_id BLOB NOT NULL UNIQUE,execution BLOB NOT NULL,command BLOB NOT NULL,receipt BLOB NOT NULL,checksum BLOB NOT NULL) STRICT";
 const COMMITTED_BLOCKS_SQL: &str = "CREATE TABLE committed_blocks(marker_sequence INTEGER PRIMARY KEY,order_height INTEGER NOT NULL,order_block_id BLOB NOT NULL UNIQUE CHECK(length(order_block_id)=32),parent_order_height INTEGER NOT NULL,parent_order_block_id BLOB NOT NULL CHECK(length(parent_order_block_id)=32),source_operation_sequence INTEGER NOT NULL,target_operation_sequence INTEGER NOT NULL,source_state_root BLOB NOT NULL CHECK(length(source_state_root)=32),target_state_root BLOB NOT NULL CHECK(length(target_state_root)=32),source_operation_root BLOB NOT NULL CHECK(length(source_operation_root)=32),target_operation_root BLOB NOT NULL CHECK(length(target_operation_root)=32),previous_marker_checksum BLOB NOT NULL CHECK(length(previous_marker_checksum)=32),checksum BLOB NOT NULL CHECK(length(checksum)=32)) STRICT";
@@ -1276,42 +1277,54 @@ fn load_committed_block_markers(
     connection: &Connection,
     config: &ConsumptionSettlementStoreConfigV1,
 ) -> ConsumptionSettlementResultV1<Vec<CommittedBlockMarkerV1>> {
+    load_committed_block_markers_with_limit(connection, config, MAX_COMMITTED_BLOCK_ROWS_V1)
+}
+
+#[cfg(test)]
+pub(crate) fn test_load_committed_block_markers_with_limit(
+    connection: &Connection,
+    config: &ConsumptionSettlementStoreConfigV1,
+    maximum_rows: u64,
+) -> ConsumptionSettlementResultV1<()> {
+    load_committed_block_markers_with_limit(connection, config, maximum_rows).map(|_| ())
+}
+
+fn load_committed_block_markers_with_limit(
+    connection: &Connection,
+    config: &ConsumptionSettlementStoreConfigV1,
+    maximum_rows: u64,
+) -> ConsumptionSettlementResultV1<Vec<CommittedBlockMarkerV1>> {
     let mut statement = connection.prepare("SELECT marker_sequence,order_height,order_block_id,parent_order_height,parent_order_block_id,source_operation_sequence,target_operation_sequence,source_state_root,target_state_root,source_operation_root,target_operation_root,previous_marker_checksum,checksum FROM committed_blocks")?;
-    let rows = statement
-        .query_map([], |row| {
-            Ok((
-                row.get::<_, i64>(0)?,
-                row.get::<_, i64>(1)?,
-                row.get::<_, Vec<u8>>(2)?,
-                row.get::<_, i64>(3)?,
-                row.get::<_, Vec<u8>>(4)?,
-                row.get::<_, i64>(5)?,
-                row.get::<_, i64>(6)?,
-                row.get::<_, Vec<u8>>(7)?,
-                row.get::<_, Vec<u8>>(8)?,
-                row.get::<_, Vec<u8>>(9)?,
-                row.get::<_, Vec<u8>>(10)?,
-                row.get::<_, Vec<u8>>(11)?,
-                row.get::<_, Vec<u8>>(12)?,
-            ))
-        })?
-        .collect::<Result<Vec<_>, _>>()?;
-    let mut markers = Vec::with_capacity(rows.len());
-    for row in rows {
+    let mut rows = statement.query([])?;
+    let mut markers = Vec::new();
+    let mut marker_count = 0_u64;
+    while let Some(row) = rows.next()? {
+        marker_count = marker_count.checked_add(1).ok_or_else(|| {
+            error(
+                ConsumptionSettlementErrorCodeV1::ArithmeticOverflow,
+                "committed-block marker row count overflow",
+            )
+        })?;
+        if marker_count > maximum_rows {
+            return Err(error(
+                ConsumptionSettlementErrorCodeV1::TamperDetected,
+                "committed-block journal exceeds the replay row bound",
+            ));
+        }
         let marker = CommittedBlockMarkerV1 {
-            marker_sequence: from_sqlite(row.0, "marker sequence")?,
-            order_height: from_sqlite(row.1, "marker Order height")?,
-            order_block_id: Hash32V1(array32(row.2, "marker Order block ID")?),
-            parent_order_height: from_sqlite(row.3, "marker parent Order height")?,
-            parent_order_block_id: Hash32V1(array32(row.4, "marker parent Order block ID")?),
-            source_operation_sequence: from_sqlite(row.5, "marker source sequence")?,
-            target_operation_sequence: from_sqlite(row.6, "marker target sequence")?,
-            source_state_root: Hash32V1(array32(row.7, "marker source state root")?),
-            target_state_root: Hash32V1(array32(row.8, "marker target state root")?),
-            source_operation_root: Hash32V1(array32(row.9, "marker source operation root")?),
-            target_operation_root: Hash32V1(array32(row.10, "marker target operation root")?),
-            previous_marker_checksum: Hash32V1(array32(row.11, "previous marker checksum")?),
-            checksum: Hash32V1(array32(row.12, "marker checksum")?),
+            marker_sequence: from_sqlite(row.get(0)?, "marker sequence")?,
+            order_height: from_sqlite(row.get(1)?, "marker Order height")?,
+            order_block_id: Hash32V1(array32(row.get(2)?, "marker Order block ID")?),
+            parent_order_height: from_sqlite(row.get(3)?, "marker parent Order height")?,
+            parent_order_block_id: Hash32V1(array32(row.get(4)?, "marker parent Order block ID")?),
+            source_operation_sequence: from_sqlite(row.get(5)?, "marker source sequence")?,
+            target_operation_sequence: from_sqlite(row.get(6)?, "marker target sequence")?,
+            source_state_root: Hash32V1(array32(row.get(7)?, "marker source state root")?),
+            target_state_root: Hash32V1(array32(row.get(8)?, "marker target state root")?),
+            source_operation_root: Hash32V1(array32(row.get(9)?, "marker source operation root")?),
+            target_operation_root: Hash32V1(array32(row.get(10)?, "marker target operation root")?),
+            previous_marker_checksum: Hash32V1(array32(row.get(11)?, "previous marker checksum")?),
+            checksum: Hash32V1(array32(row.get(12)?, "marker checksum")?),
         };
         if marker.checksum != committed_block_marker_checksum(config, &marker)? {
             return Err(error(
