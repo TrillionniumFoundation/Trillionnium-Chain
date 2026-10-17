@@ -2124,7 +2124,21 @@ impl Node {
         let prior = self.cached_parent(parent)?;
         // Always encode/compare the actual supplied parent with its admitted root.
         // This also explicitly reseeds unknown/inactive/fork contexts.
-        let checked = self.checked_commitment(actual, self.record(parent)?.root, prior.as_ref())?;
+        let (bound, observation) = pon_commitment::CheckedExecutionParent::check_and_bind(
+            actual,
+            self.record(parent)?.root,
+            prior.as_ref(),
+            CacheLimits::default(),
+        )
+        .map_err(|error| {
+            if error == "COMMITMENT_ROOT" {
+                self.invalidate_commitment();
+                Error::from("ROOT").local_integrity()
+            } else {
+                Error::from(error).local_integrity()
+            }
+        })?;
+        *self.commitment_observation.borrow_mut() = Some(observation);
         let request = || ExecutionRequest {
             transactions: block.transactions,
             height: block.height,
@@ -2132,15 +2146,11 @@ impl Node {
             parent_id: parent,
             workers: block.workers,
         };
-        let result = pon_commitment::execute_checked_with_control(
-            actual,
-            checked.root,
-            checked.snapshot.as_ref(),
-            request(),
-            &self.settings.app,
-            CacheLimits::default(),
-            control,
-        );
+        // Preserve the second original cancellation boundary without rebinding
+        // and rehashing the same immutable, already-checked parent state.
+        let result = progress(ExecutionProgress::BeforeParentBinding)
+            .map_err(ExecutionError::Cancelled)
+            .and_then(|()| bound.execute_with_control(request(), &self.settings.app, control));
         match result {
             Ok(output) => {
                 *self.commitment_observation.borrow_mut() =
@@ -5919,6 +5929,87 @@ mod native_ancestry_tests {
             assert_eq!(reopened.next_nonce(sender).unwrap(), nonce);
             assert!(reopened.record(id).is_err());
         }
+    }
+
+    #[test]
+    fn checked_parent_binding_preserves_both_cancellation_boundaries_and_state() {
+        let dir = tempfile::tempdir().unwrap();
+        let settings = Settings::development(Some(1)).unwrap();
+        let node = Node::open(dir.path(), settings.clone(), 2).unwrap();
+        let before = node.read_active().unwrap();
+        let counts = |owner: &Node| {
+            [
+                "blocks",
+                "deltas",
+                "ancestry_jump",
+                "snapshots",
+                "kv",
+                "events",
+                "steps",
+                "reorg",
+            ]
+            .map(|table| {
+                owner
+                    .db
+                    .query_row(&format!("SELECT COUNT(*) FROM {table}"), [], |row| {
+                        row.get::<_, u64>(0)
+                    })
+                    .unwrap()
+            })
+        };
+        let original_counts = counts(&node);
+        for cancel_at in [1, 2] {
+            let calls = std::sync::atomic::AtomicUsize::new(0);
+            let error = node
+                .execute_derived_with_progress(
+                    &before.2,
+                    ExecutionRequest {
+                        transactions: &[],
+                        height: 1,
+                        miner: development_public(0).unwrap(),
+                        parent_id: settings.genesis(),
+                        workers: 2,
+                    },
+                    &|point| {
+                        if point == ExecutionProgress::BeforeParentBinding
+                            && calls.fetch_add(1, std::sync::atomic::Ordering::Relaxed) + 1
+                                == cancel_at
+                        {
+                            Err("COMMITMENT_ROOT".into())
+                        } else {
+                            Ok(())
+                        }
+                    },
+                )
+                .unwrap_err();
+            assert_eq!(error.to_string(), "COMMITMENT_ROOT");
+            assert_eq!(calls.load(std::sync::atomic::Ordering::Relaxed), cancel_at);
+            assert_eq!(counts(&node), original_counts);
+            assert_eq!(node.read_active().unwrap(), before);
+        }
+        let calls = std::sync::atomic::AtomicUsize::new(0);
+        let output = node
+            .execute_derived_with_progress(
+                &before.2,
+                ExecutionRequest {
+                    transactions: &[],
+                    height: 1,
+                    miner: development_public(0).unwrap(),
+                    parent_id: settings.genesis(),
+                    workers: 2,
+                },
+                &|point| {
+                    if point == ExecutionProgress::BeforeParentBinding {
+                        calls.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+                    }
+                    Ok(())
+                },
+            )
+            .unwrap();
+        assert_eq!(calls.load(std::sync::atomic::Ordering::Relaxed), 2);
+        assert_eq!(output.output.root, root(&output.output.state).unwrap());
+        assert_eq!(counts(&node), original_counts);
+        assert_eq!(node.read_active().unwrap(), before);
     }
 
     #[test]

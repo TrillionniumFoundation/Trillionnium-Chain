@@ -76,22 +76,59 @@ impl StateTree {
             return Err(StateError::Limit);
         }
         let mut tree = Self::default();
+        let mut leaves = Vec::with_capacity(values.len());
+        let mut first_invalid = None;
         for (key, value) in values {
-            Self::bounds(key, Some(value))?;
-            let path = hash(b"state-key", &[key]);
-            let leaf = Arc::new(Node {
-                path,
+            if let Err(error) = Self::bounds(key, Some(value)) {
+                first_invalid = Some(error);
+                break;
+            }
+            leaves.push(Arc::new(Node {
+                path: hash(b"state-key", &[key]),
                 depth: 256,
                 digest: hash(b"state-leaf", &[key, value]),
                 kind: Kind::Leaf {
                     key: key.clone(),
                     value: value.clone(),
                 },
-            });
-            tree.root = Some(tree.insert(tree.root.as_ref(), leaf)?);
-            tree.count += 1;
+            }));
+        }
+        let leaves = Self::checked_leaf_prefix(leaves, first_invalid)?;
+        tree.count = leaves.len();
+        if !leaves.is_empty() {
+            tree.root = Some(tree.sorted_subtree(&leaves));
         }
         Ok(tree)
+    }
+    fn checked_leaf_prefix(
+        mut leaves: Vec<Arc<Node>>,
+        first_invalid: Option<StateError>,
+    ) -> Result<Vec<Arc<Node>>, StateError> {
+        // Detect a collision in the valid prefix before reporting a later
+        // malformed value, preserving the original insertion error precedence.
+        leaves.sort_unstable_by_key(|leaf| leaf.path);
+        if leaves.windows(2).any(|pair| pair[0].path == pair[1].path) {
+            return Err(StateError::KeyCollision);
+        }
+        if let Some(error) = first_invalid {
+            return Err(error);
+        }
+        Ok(leaves)
+    }
+    // Nonempty, sorted and distinct paths, checked above. Each compressed fork
+    // is formed once; lift/fork retain the original complete sparse hash grammar.
+    // Work stays on the calling thread, including the existing request CPU meter.
+    fn sorted_subtree(&self, leaves: &[Arc<Node>]) -> Arc<Node> {
+        if leaves.len() == 1 {
+            return Arc::clone(&leaves[0]);
+        }
+        let depth = common(&leaves[0].path, &leaves[leaves.len() - 1].path);
+        let split = leaves.partition_point(|leaf| !bit(&leaf.path, depth));
+        self.fork(
+            depth,
+            self.sorted_subtree(&leaves[..split]),
+            self.sorted_subtree(&leaves[split..]),
+        )
     }
     pub fn len(&self) -> usize {
         self.count
@@ -518,3 +555,7 @@ mod tests {
         assert_eq!(original.root(), state_root(&values).unwrap());
     }
 }
+
+#[cfg(test)]
+#[path = "pon_state_bulk_tests.rs"]
+mod bulk_tests;

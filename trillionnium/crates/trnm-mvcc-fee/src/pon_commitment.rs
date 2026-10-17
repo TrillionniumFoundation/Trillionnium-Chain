@@ -673,6 +673,37 @@ pub struct CheckedExecutionParent<'a> {
     limits: CacheLimits,
 }
 impl<'a> CheckedExecutionParent<'a> {
+    /// Check complete actual state against its admitted root and bind that same
+    /// immutable borrow for this operation. Unlike a public PreparedCommitment,
+    /// this value cannot be forged by supplying a root or a success observation.
+    /// The original canonical checks, limits, prior repair and full-root fallback
+    /// run inside this constructor. Their result need not be hashed a second time
+    /// by bind(). No binding is shared across Node operations or owner generations.
+    pub fn check_and_bind(
+        actual_parent: &'a State,
+        expected_parent_root: Hash,
+        prior: Option<&CheckedCommitment>,
+        limits: CacheLimits,
+    ) -> Result<(Self, CommitmentObservation)> {
+        let prepared = checked_snapshot(actual_parent, expected_parent_root, prior, limits)?;
+        let actual = match &prepared.snapshot {
+            Some(snapshot) => Arc::clone(&snapshot.values),
+            // Execution's delta calculation still needs the canonical parent.
+            // Re-encode it, but do not repeat the complete sparse root already
+            // checked above while the identical State remains immutably borrowed.
+            None => Arc::new(encode(actual_parent)?),
+        };
+        Ok((
+            Self {
+                state: actual_parent,
+                actual,
+                predecessor: prepared.snapshot,
+                limits,
+            },
+            prepared.observation,
+        ))
+    }
+
     pub fn bind(
         actual_parent: &'a State,
         expected_parent_root: Hash,
@@ -873,6 +904,89 @@ mod tests {
             })
             .collect();
         (state, cfg, raws)
+    }
+
+    #[test]
+    fn checked_binding_signed_execution_errors_and_cancellation_match_two_steps() {
+        let (state, cfg, raws) = preview_fixture();
+        let root = pon_executor::root(&state).unwrap();
+        let seed = checked_snapshot(&state, root, None, CacheLimits::default()).unwrap();
+        for limits in [
+            CacheLimits::default(),
+            CacheLimits {
+                max_keys: 0,
+                ..CacheLimits::default()
+            },
+        ] {
+            for prior in [None, seed.snapshot.as_ref()] {
+                let (fused, _) =
+                    CheckedExecutionParent::check_and_bind(&state, root, prior, limits).unwrap();
+                let checked = checked_snapshot(&state, root, prior, limits).unwrap();
+                let old =
+                    CheckedExecutionParent::bind(&state, root, checked.snapshot.as_ref(), limits)
+                        .unwrap();
+                let mut invalid = raws[0].clone();
+                *invalid.last_mut().unwrap() ^= 1;
+                for txs in [raws[..4].to_vec(), vec![raws[1].clone()], vec![invalid]] {
+                    for workers in [1, 4] {
+                        let request = || ExecutionRequest {
+                            transactions: &txs,
+                            height: 1,
+                            miner: [3; 32],
+                            parent_id: [4; 32],
+                            workers,
+                        };
+                        match (fused.execute(request(), &cfg), old.execute(request(), &cfg)) {
+                            (Ok(a), Ok(b)) => {
+                                assert_eq!(a.output.state, b.output.state);
+                                assert_eq!(a.output.root, b.output.root);
+                                assert_eq!(a.output.receipts, b.output.receipts);
+                                assert_eq!(a.commitment.observation, b.commitment.observation);
+                                let changes = |p: &PreparedCommitment| {
+                                    p.changes
+                                        .iter()
+                                        .map(|x| (x.key.clone(), x.before.clone(), x.after.clone()))
+                                        .collect::<Vec<_>>()
+                                };
+                                assert_eq!(changes(&a.commitment), changes(&b.commitment));
+                            }
+                            (Err(a), Err(b)) => assert_eq!(a, b),
+                            _ => panic!("checked binding changed signed execution"),
+                        }
+                        for stop in [
+                            ExecutionProgress::BeforeStateClone,
+                            ExecutionProgress::AfterMandatory,
+                            ExecutionProgress::BeforeCommitment,
+                            ExecutionProgress::AfterCommitment,
+                            ExecutionProgress::BeforeOutput,
+                        ] {
+                            let run = |parent: &CheckedExecutionParent<'_>| {
+                                let trace = std::sync::Mutex::new(Vec::new());
+                                let result =
+                                    parent.execute_with_progress(request(), &cfg, &|point| {
+                                        trace.lock().unwrap().push(point);
+                                        if point == stop {
+                                            Err("COMMITMENT_ROOT")
+                                        } else {
+                                            Ok(())
+                                        }
+                                    });
+                                (result.err(), trace.into_inner().unwrap())
+                            };
+                            let a = run(&fused);
+                            let b = run(&old);
+                            assert_eq!(a.0, b.0);
+                            // Parallel worker callback interleaving is not a
+                            // protocol ordering promise. The serial trace is.
+                            if workers == 1 {
+                                assert_eq!(a.1, b.1);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        assert_eq!(seed.snapshot.as_ref().unwrap().root(), root);
     }
 
     // The previous warm-binding algorithm is an allocation/timing control only.
@@ -2139,3 +2253,7 @@ mod bounded_encoding_tests {
         );
     }
 }
+
+#[cfg(test)]
+#[path = "pon_commitment_binding_tests.rs"]
+mod checked_binding_tests;

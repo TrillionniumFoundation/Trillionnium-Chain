@@ -620,3 +620,40 @@ storage modes and reopen, preserve exact byte/type edges, and check the65,536
 row decoder boundary. They do not admit extra accounts or simulate a network
 attack. In particular, a successful internal row decoder is not a committed
 state: a well-formed but uncommitted extra row still fails the actual root check.
+
+## Sequential bulk construction of the compressed State tree
+
+`StateTree::from_values` hashes all actual keys and values in original input order,
+then sorts the valid leaf paths and constructs each compressed fork once. The
+existing sparse `lift`, fork hashes, empty table, node structure and update/delete
+algorithms are unchanged. A collision in the valid prefix still precedes a later
+malformed key/value. No cache can admit changed values and no public caller can
+supply a precomputed key hash. The original insertion algorithm remains an
+independent test control, including real 65,536-key input and all divergence depths.
+
+This constructor starts no threads and stays under the caller's existing CPU
+accounting. Temporary sorting retains at most `MAX_KEYS` Arc handles (512 KiB
+of logical pointer payload on a 64-bit target), not another copy of key/value
+bytes. That is not an RSS bound. Final compressed storage remains 2N-1 nodes
+for nonempty unique input. Sort/construction/drop cost must be compared with
+the original constructor, not only the hash kernel. Public service, full Node
+capacity and paired Hepta qualification remain separate; a component speedup
+does not override prior timeouts, source checks or activation requirements.
+
+## One operation-local checked parent binding
+
+`CheckedExecutionParent::check_and_bind` performs the original complete actual-State
+validation and admitted-root comparison, then retains the same immutable borrow for
+execution. It does not accept a caller-constructed `PreparedCommitment` as proof.
+A valid newly checked snapshot supplies its canonical bytes; a cache refusal still
+encodes the complete parent for delta calculation but does not hash that unchanged
+parent again. Unknown, changed and damaged prior material keeps the original checks
+and full-root repair. Stored KV reads, owner/branch generation checks, cancellation
+points, execution-worker accounting and durable publication remain live.
+
+The ordinary Node execution path uses this binding only inside its existing owner
+operation. It preserves both original `BeforeParentBinding` callbacks and the typed
+cancellation-versus-relation distinction. No cross-operation validation token, new
+thread, relaxed cache bound or skipped successor root is introduced. Constructor
+comparisons include true default 8 MiB payload refusal as well as warm/cold paths;
+component binding timing is not an end-to-end Node or network throughput claim.
