@@ -19,10 +19,27 @@ use thiserror::Error;
 pub const SNAPSHOT_VERSION_V2: u8 = 2;
 type SignerNonceKey = (String, String, u8, [u8; 32]);
 
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Serialize)]
 pub struct AuthorityIdentityV1 {
     pub signer_did: String,
     pub public_key: [u8; 32],
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct AuthorityIdentityWireV1 {
+    signer_did: String,
+    public_key: [u8; 32],
+}
+
+impl<'de> Deserialize<'de> for AuthorityIdentityV1 {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        let wire = AuthorityIdentityWireV1::deserialize(deserializer)?;
+        Self::new(wire.signer_did, wire.public_key).map_err(serde::de::Error::custom)
+    }
 }
 
 impl AuthorityIdentityV1 {
@@ -68,10 +85,36 @@ impl CanonicalCbor for AuthorityIdentityV1 {
 /// Genesis-derived in-protocol trust anchor. Ingress should still enforce its
 /// own capability policy; this second layer prevents an untrusted caller from
 /// self-asserting an authority role directly against the state machine.
-#[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Default, PartialEq, Eq, Serialize)]
 pub struct AuthoritySetV1 {
     pub nakama_authorities: Vec<AuthorityIdentityV1>,
     pub hepta_authorities: Vec<AuthorityIdentityV1>,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct AuthoritySetWireV1 {
+    #[serde(default)]
+    nakama_authorities: Vec<AuthorityIdentityV1>,
+    #[serde(default)]
+    hepta_authorities: Vec<AuthorityIdentityV1>,
+}
+
+impl<'de> Deserialize<'de> for AuthoritySetV1 {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        let wire = AuthoritySetWireV1::deserialize(deserializer)?;
+        let authorities = Self {
+            nakama_authorities: wire.nakama_authorities,
+            hepta_authorities: wire.hepta_authorities,
+        };
+        authorities
+            .validate()
+            .map_err(serde::de::Error::custom)?;
+        Ok(authorities)
+    }
 }
 
 impl AuthoritySetV1 {
