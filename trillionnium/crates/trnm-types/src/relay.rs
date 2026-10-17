@@ -32,19 +32,27 @@ pub enum RelaySessionStatus {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct RelayEnvelope {
     pub envelope_id: u64,
+    #[serde(deserialize_with = "deserialize_bounded_relay_field")]
     pub session_id: String,
     pub sequence: u64,
+    #[serde(deserialize_with = "deserialize_bounded_relay_field")]
     pub route: String,
+    #[serde(deserialize_with = "deserialize_bounded_relay_field")]
     pub from: String,
+    #[serde(deserialize_with = "deserialize_bounded_relay_optional_field")]
     pub to: Option<String>,
+    #[serde(deserialize_with = "deserialize_bounded_relay_payload")]
     pub payload: Vec<u8>,
     pub created_at_unix_ms: u128,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct RelaySession {
+    #[serde(deserialize_with = "deserialize_bounded_relay_field")]
     pub session_id: String,
     pub status: RelaySessionStatus,
     pub created_at_unix_ms: u128,
@@ -53,21 +61,84 @@ pub struct RelaySession {
 
 /// Phase A envelope auth schema aligned with `agent-user-p2p-communication-min-spec-v0.1`.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct RelayAuthEnvelope {
+    #[serde(deserialize_with = "deserialize_bounded_relay_field")]
     pub version: String,
-    #[serde(default)]
+    #[serde(default, deserialize_with = "deserialize_bounded_relay_field")]
     pub chain_id: String,
+    #[serde(deserialize_with = "deserialize_bounded_relay_field")]
     pub task_id: String,
+    #[serde(deserialize_with = "deserialize_bounded_relay_field")]
     pub session_id: String,
     pub seq: u64,
     pub timestamp_ms: u128,
+    #[serde(deserialize_with = "deserialize_bounded_relay_field")]
     pub msg_type: String,
+    #[serde(deserialize_with = "deserialize_bounded_relay_field")]
     pub from: String,
+    #[serde(deserialize_with = "deserialize_bounded_relay_field")]
     pub to: String,
+    #[serde(deserialize_with = "deserialize_bounded_relay_field")]
     pub nonce: String,
+    #[serde(deserialize_with = "deserialize_bounded_relay_payload")]
     pub payload: Vec<u8>,
+    #[serde(deserialize_with = "deserialize_bounded_relay_field")]
     pub payload_hash: String,
+    #[serde(deserialize_with = "deserialize_bounded_relay_signature")]
     pub sig: String,
+}
+
+fn deserialize_bounded_relay_field<'de, D>(deserializer: D) -> Result<String, D::Error>
+where
+    D: serde::Deserializer<'de>,
+{
+    let value = String::deserialize(deserializer)?;
+    if value.len() > MAX_RELAY_AUTH_FIELD_BYTES {
+        return Err(serde::de::Error::custom("relay auth field exceeds bound"));
+    }
+    Ok(value)
+}
+
+fn deserialize_bounded_relay_signature<'de, D>(deserializer: D) -> Result<String, D::Error>
+where
+    D: serde::Deserializer<'de>,
+{
+    let value = String::deserialize(deserializer)?;
+    if value.len() > MAX_RELAY_AUTH_SIGNATURE_BYTES {
+        return Err(serde::de::Error::custom(
+            "relay auth signature exceeds bound",
+        ));
+    }
+    Ok(value)
+}
+
+fn deserialize_bounded_relay_optional_field<'de, D>(
+    deserializer: D,
+) -> Result<Option<String>, D::Error>
+where
+    D: serde::Deserializer<'de>,
+{
+    Option::<String>::deserialize(deserializer)?.map_or(Ok(None), |value| {
+        if value.len() > MAX_RELAY_AUTH_FIELD_BYTES {
+            Err(serde::de::Error::custom(
+                "relay auth field exceeds bound",
+            ))
+        } else {
+            Ok(Some(value))
+        }
+    })
+}
+
+fn deserialize_bounded_relay_payload<'de, D>(deserializer: D) -> Result<Vec<u8>, D::Error>
+where
+    D: serde::Deserializer<'de>,
+{
+    let value = Vec::<u8>::deserialize(deserializer)?;
+    if value.len() > MAX_RELAY_AUTH_PAYLOAD_BYTES {
+        return Err(serde::de::Error::custom("relay auth payload exceeds bound"));
+    }
+    Ok(value)
 }
 
 impl RelayAuthEnvelope {
@@ -200,6 +271,10 @@ pub enum RelayAuthError {
         field: &'static str,
     },
     ResourceLimit,
+    ChainIdMismatch {
+        expected: String,
+        got: String,
+    },
 }
 
 impl RelayAuthError {
@@ -215,6 +290,7 @@ impl RelayAuthError {
             RelayAuthError::UnsupportedType { .. } => "UnsupportedType",
             RelayAuthError::MissingRequiredField { .. } => "MissingRequiredField",
             RelayAuthError::ResourceLimit => "ResourceLimit",
+            RelayAuthError::ChainIdMismatch { .. } => "ChainIdMismatch",
         }
     }
 }
@@ -288,6 +364,13 @@ impl fmt::Display for RelayAuthError {
                     self.stable_code()
                 )
             }
+            RelayAuthError::ChainIdMismatch { expected, got } => write!(
+                f,
+                "relay auth chain mismatch: expected={} got={} (code={})",
+                expected,
+                got,
+                self.stable_code()
+            ),
         }
     }
 }
@@ -297,6 +380,12 @@ impl std::error::Error for RelayAuthError {}
 #[derive(Debug, Clone)]
 pub struct RelayAuthVerifier {
     max_skew_ms: u128,
+    /// Optional chain binding for deployments that serve one network.  The
+    /// original constructors remain source-compatible and leave this unset;
+    /// callers should use [`Self::with_chain_id`] or
+    /// [`Self::strict_for_chain`] at a network boundary so a signed envelope
+    /// from another chain cannot be replayed unchanged.
+    expected_chain_id: Option<String>,
     last_seq: HashMap<(String, String, String, String), (u64, u128)>,
     seen_nonce: HashMap<(String, String, String, String, String), u128>,
     gc_tick: u64,
@@ -307,6 +396,7 @@ impl RelayAuthVerifier {
     pub fn new(max_skew_ms: u128) -> Self {
         Self {
             max_skew_ms,
+            expected_chain_id: None,
             last_seq: HashMap::new(),
             seen_nonce: HashMap::new(),
             gc_tick: 0,
@@ -322,6 +412,25 @@ impl RelayAuthVerifier {
     /// for callers that previously selected strict mode.
     pub fn strict(max_skew_ms: u128) -> Self {
         Self::new(max_skew_ms)
+    }
+
+    /// Bind this verifier to one chain while preserving the builder-style
+    /// constructor used by existing callers.  The expected value is checked
+    /// before payload hashing or signature verification.
+    pub fn with_chain_id(mut self, chain_id: impl Into<String>) -> Self {
+        self.expected_chain_id = Some(chain_id.into());
+        self
+    }
+
+    /// Construct a strict verifier that rejects legacy envelopes and binds
+    /// every accepted envelope to the supplied chain identifier.
+    pub fn strict_for_chain(max_skew_ms: u128, chain_id: impl Into<String>) -> Self {
+        Self::strict(max_skew_ms).with_chain_id(chain_id)
+    }
+
+    /// Return the configured chain binding, if one was supplied.
+    pub fn expected_chain_id(&self) -> Option<&str> {
+        self.expected_chain_id.as_deref()
     }
 
     fn maybe_reap_expired(&mut self, cutoff: u128) {
@@ -361,6 +470,19 @@ impl RelayAuthVerifier {
                 expected: RelayAuthEnvelope::SPEC_VERSION.to_string(),
                 got: env.version.clone(),
             });
+        }
+
+        // Chain binding is an endpoint policy, not something inferred from
+        // the first packet. Without it, a valid signed envelope for chain A
+        // can be replayed unchanged to a verifier serving chain B because the
+        // signature callback authenticates the envelope's own chain_id.
+        if let Some(expected) = &self.expected_chain_id {
+            if env.chain_id != *expected {
+                return Err(RelayAuthError::ChainIdMismatch {
+                    expected: expected.clone(),
+                    got: env.chain_id.clone(),
+                });
+            }
         }
 
         if !env.is_supported_type() {
@@ -584,6 +706,47 @@ mod tests {
         };
         env.sig = env.sign_for_test(key);
         env
+    }
+
+    #[test]
+    fn relay_auth_chain_binding_rejects_unchanged_cross_chain_replay() {
+        let key = "sender-key";
+        let env = sample_env(1, "nonce-chain-bound", 1_730_000_000_000, key);
+
+        let mut matching = RelayAuthVerifier::new(120_000).with_chain_id("trnm-mainnet");
+        matching
+            .verify(&env, 1_730_000_000_050, |e| e.sign_for_test(key) == e.sig)
+            .expect("bound chain accepts matching envelope");
+
+        // The exact bytes signed for mainnet must not be accepted by a
+        // verifier serving another chain. No mutation or re-signing occurs.
+        let mut other = RelayAuthVerifier::new(120_000).with_chain_id("trnm-otherchain");
+        let signature_called = std::cell::Cell::new(false);
+        let err = other
+            .verify(&env, 1_730_000_000_050, |_| {
+                signature_called.set(true);
+                true
+            })
+            .unwrap_err();
+        assert_eq!(err.stable_code(), "ChainIdMismatch");
+        assert!(!signature_called.get());
+    }
+
+    #[test]
+    fn strict_for_chain_rejects_legacy_and_exposes_binding() {
+        let key = "sender-key";
+        let mut verifier = RelayAuthVerifier::strict_for_chain(120_000, "trnm-mainnet");
+        assert_eq!(verifier.expected_chain_id(), Some("trnm-mainnet"));
+        let mut legacy = sample_env(1, "nonce-chain-legacy", 1_730_000_000_000, key);
+        legacy.version = RelayAuthEnvelope::LEGACY_SPEC_VERSION.to_string();
+        legacy.chain_id.clear();
+        legacy.sig = legacy.sign_for_test_legacy_v0(key);
+        let err = verifier
+            .verify(&legacy, 1_730_000_000_050, |e| e.verify_test_sig_compat(key))
+            .unwrap_err();
+        // Schema validation remains first: legacy signatures are rejected
+        // before any endpoint-specific chain policy is considered.
+        assert_eq!(err.stable_code(), "BadVersion");
     }
 
     #[test]
