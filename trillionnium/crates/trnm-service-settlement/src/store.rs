@@ -732,6 +732,10 @@ fn open_rw(path: &Path, allow_create: bool) -> ConsumptionSettlementResultV1<Con
 }
 
 fn open_ro(path: &Path) -> ConsumptionSettlementResultV1<Connection> {
+    // SQLite URI opens follow a final symlink.  Keep read-only reopens on the
+    // same direct regular-file boundary as writable opens; callers perform
+    // their own sidecar checks before reaching this helper.
+    require_existing_regular_store(path)?;
     let bytes = path.as_os_str().as_encoded_bytes();
     let mut uri = String::from("file:");
     for byte in bytes {
@@ -748,6 +752,7 @@ fn open_ro(path: &Path) -> ConsumptionSettlementResultV1<Connection> {
             | OpenFlags::SQLITE_OPEN_NO_MUTEX
             | OpenFlags::SQLITE_OPEN_URI,
     )?;
+    require_existing_regular_store(path)?;
     connection.busy_timeout(Duration::from_secs(2))?;
     Ok(connection)
 }
