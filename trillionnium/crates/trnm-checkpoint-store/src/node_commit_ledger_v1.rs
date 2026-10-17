@@ -986,14 +986,31 @@ fn u64_at_v1(raw: &[u8], offset: usize) -> ResultV1<u64> {
 }
 
 pub(crate) fn read_checkpoint_file_v1(path: &Path) -> ResultV1<ExternalCheckpointV2> {
-    let mut file = File::open(path).map_err(|source| io_v1("open checkpoint input", source))?;
-    let expected = EXTERNAL_CHECKPOINT_RECORD_BYTES_V2 as u64;
-    if file
+    // Checkpoint inputs are operator-supplied paths.  Refuse a symlink (and
+    // any non-regular endpoint) before opening, then bind the descriptor to
+    // the observed inode so a rename-and-replace race cannot make us decode a
+    // different file than the one we checked.
+    let named = fs::symlink_metadata(path).map_err(|source| io_v1("inspect checkpoint input", source))?;
+    if named.file_type().is_symlink() || !named.is_file() {
+        return Err(NodeCommitLedgerErrorV1::InvalidState(
+            "checkpoint input must be a regular non-symlink file",
+        ));
+    }
+    let mut file = OpenOptions::new()
+        .read(true)
+        .custom_flags(libc::O_CLOEXEC | libc::O_NOFOLLOW)
+        .open(path)
+        .map_err(|source| io_v1("open checkpoint input", source))?;
+    let opened = file
         .metadata()
-        .map_err(|source| io_v1("stat checkpoint input", source))?
-        .len()
-        != expected
-    {
+        .map_err(|source| io_v1("stat checkpoint input", source))?;
+    if !opened.is_file() || opened.dev() != named.dev() || opened.ino() != named.ino() {
+        return Err(NodeCommitLedgerErrorV1::InvalidState(
+            "checkpoint input identity changed",
+        ));
+    }
+    let expected = EXTERNAL_CHECKPOINT_RECORD_BYTES_V2 as u64;
+    if opened.len() != expected {
         return Err(NodeCommitLedgerErrorV1::InvalidState(
             "checkpoint input length differs",
         ));
@@ -1001,14 +1018,19 @@ pub(crate) fn read_checkpoint_file_v1(path: &Path) -> ResultV1<ExternalCheckpoin
     let mut bytes = vec![0_u8; EXTERNAL_CHECKPOINT_RECORD_BYTES_V2];
     file.read_exact(&mut bytes)
         .map_err(|source| io_v1("read checkpoint input", source))?;
-    if file
+    let after = file
         .metadata()
-        .map_err(|source| io_v1("restat checkpoint input", source))?
-        .len()
-        != expected
+        .map_err(|source| io_v1("restat checkpoint input", source))?;
+    let named_after = fs::symlink_metadata(path)
+        .map_err(|source| io_v1("restat checkpoint input path", source))?;
+    if after.len() != expected
+        || !after.is_file()
+        || after.dev() != named_after.dev()
+        || after.ino() != named_after.ino()
+        || named_after.file_type().is_symlink()
     {
         return Err(NodeCommitLedgerErrorV1::InvalidState(
-            "checkpoint input length changed",
+            "checkpoint input changed",
         ));
     }
     ExternalCheckpointV2::decode_canonical_exact(&bytes)
