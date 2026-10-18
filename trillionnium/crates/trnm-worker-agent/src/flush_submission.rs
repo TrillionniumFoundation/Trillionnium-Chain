@@ -4,7 +4,7 @@ use anyhow::Result;
 
 use crate::{
     append_ack, append_event, append_progress, is_idempotent_duplicate_ok, is_task_acked,
-    load_ingress_records, persisted_ack_hashes_for_task, run_adapter_with_retry,
+    load_ingress_records, persisted_ack_hashes_for_task, run_adapter_with_retry_bounded,
     save_ingress_records, should_execute_reveal, transition_request_status,
     trim_boundary_audit_fillers, try_acquire_task_lock, AdapterExecResult, ProgressRecord,
     SubmissionRecord, WorkerEvent, RC_SKIPPED,
@@ -119,7 +119,7 @@ pub(crate) fn process_submission_record(
     )?;
 
     let (commit_args, reveal_args) = submission_args(rec);
-    let commit_res = run_adapter_with_retry(
+    let commit_res = run_adapter_with_retry_bounded(
         adapter_cmd,
         &commit_args,
         tx_max_retries,
