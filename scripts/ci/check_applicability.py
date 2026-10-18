@@ -144,7 +144,7 @@ def validate(root: Path = ROOT) -> dict:
     require(len(profiles) == len({p['id'] for p in profiles}), 'duplicate applicability profile')
     require({p['id'] for p in profiles} == {'evaluation-v1', 'lifecycle-v2', 'lifecycle-v3',
             'lifecycle-v4', 'checkpoint-tile-v1', 'local-pool-reconciliation',
-            'protected-hello-handoff', 'integer-factor-v2', 'public-intake-v3-r9',
+            'protected-hello-handoff', 'integer-factor-v2', 'public-intake-v3-r10',
             'continuity-v1', 'model-evidence-v3', 'w1-verifier-equivalence',
             'history-state-resource-bounds', 'internal-error-identity', 'model-composition-v4',
             'account-archive-research-v1', 'model-window-history-v1', NATIVE_STORAGE_PROFILE,
