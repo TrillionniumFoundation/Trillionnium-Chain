@@ -1141,7 +1141,10 @@ fn decode_workload(
     let receipt_id = decode_external_key(decoder)?;
     let evaluation_ref = decode_object_ref(decoder)?;
     let len = decoder.array_len()?;
-    let mut contributors = Vec::with_capacity(len.min(128));
+    if len > 128 {
+        return Err(CanonicalDecodeError::ArrayLengthMismatch { expected: 128, got: len });
+    }
+    let mut contributors = Vec::with_capacity(len);
     for _ in 0..len {
         contributors.push(decode_contribution(decoder)?);
     }
@@ -1177,14 +1180,20 @@ fn decode_claim(decoder: &mut Decoder<'_>) -> Result<CreateResearchClaimV1, Cano
     let claim_id = decode_external_key(decoder)?;
     let workload_receipt_ref = decode_object_ref(decoder)?;
     let evidence_len = decoder.array_len()?;
-    let mut evidence_refs = Vec::with_capacity(evidence_len.min(64));
+    if evidence_len > 64 {
+        return Err(CanonicalDecodeError::ArrayLengthMismatch { expected: 64, got: evidence_len });
+    }
+    let mut evidence_refs = Vec::with_capacity(evidence_len);
     for _ in 0..evidence_len {
         evidence_refs.push(decode_object_ref(decoder)?);
     }
     let artifact_hash = decoder.bytes_exact()?;
     let claim_scope_hash = decoder.bytes_exact()?;
     let claimant_len = decoder.array_len()?;
-    let mut claimants = Vec::with_capacity(claimant_len.min(128));
+    if claimant_len > 128 {
+        return Err(CanonicalDecodeError::ArrayLengthMismatch { expected: 128, got: claimant_len });
+    }
+    let mut claimants = Vec::with_capacity(claimant_len);
     for _ in 0..claimant_len {
         claimants.push(decode_claim_share(decoder)?);
     }
@@ -1283,7 +1292,10 @@ fn decode_resolution(decoder: &mut Decoder<'_>) -> Result<ClaimResolutionV1, Can
     let decision = decode_resolution_decision(decoder)?;
     let resolution_hash = decoder.bytes_exact()?;
     let len = decoder.array_len()?;
-    let mut amended_claimants = Vec::with_capacity(len.min(128));
+    if len > 128 {
+        return Err(CanonicalDecodeError::ArrayLengthMismatch { expected: 128, got: len });
+    }
+    let mut amended_claimants = Vec::with_capacity(len);
     for _ in 0..len {
         amended_claimants.push(decode_claim_share(decoder)?);
     }
