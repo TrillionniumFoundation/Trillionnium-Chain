@@ -1093,6 +1093,37 @@ fn commit_uncertainty_reopens_to_exact_source_target_or_permanent_fence() {
 }
 
 #[test]
+fn state_reads_reject_a_durable_fence_on_all_existing_handles() {
+    let harness = Harness::new();
+    let store = harness.open();
+    let other_handle = harness.open();
+    assert_eq!(store.state().unwrap(), other_handle.state().unwrap());
+    let command = ConsumptionSettlementCommandV1::AdmitReceipt {
+        receipt: harness.receipt(None, 10, 100),
+    };
+    let execution = harness.execution(9, h(900), 10);
+    assert_eq!(
+        store
+            .execute_with_fault(&execution, &command, ConsumptionCommitFaultV1::ThirdState)
+            .expect_err("durable fence")
+            .code(),
+        ConsumptionSettlementErrorCodeV1::ThirdStateFenced
+    );
+    let fenced_bytes = std::fs::read(&harness.config().path).unwrap();
+    for handle in [&store, &other_handle] {
+        assert_eq!(
+            handle.state().expect_err("fenced state read").code(),
+            ConsumptionSettlementErrorCodeV1::ThirdStateFenced
+        );
+        assert_eq!(
+            handle.fresh_readback().expect_err("fenced readback").code(),
+            ConsumptionSettlementErrorCodeV1::ThirdStateFenced
+        );
+        assert_eq!(std::fs::read(&harness.config().path).unwrap(), fenced_bytes);
+    }
+}
+
+#[test]
 fn committed_block_journal_covers_empty_same_block_and_tamper_boundaries() {
     let harness = Harness::new();
     let store = harness.open();

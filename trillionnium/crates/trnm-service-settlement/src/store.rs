@@ -713,7 +713,14 @@ impl ConsumptionSettlementStoreV1 {
         let connection = open_read_snapshot(&self.config.path)?;
         verify_schema(&connection)?;
         audit(&connection, &self.config)?;
-        Ok(load_metadata(&connection, &self.config)?.3)
+        let (_, _, _, state, _, fenced) = load_metadata(&connection, &self.config)?;
+        if fenced {
+            return Err(error(
+                ConsumptionSettlementErrorCodeV1::ThirdStateFenced,
+                "store is permanently fenced",
+            ));
+        }
+        Ok(state)
     }
 }
 
