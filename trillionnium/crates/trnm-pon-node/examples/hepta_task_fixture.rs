@@ -48,7 +48,13 @@ fn plan(settings: &Settings) -> Result<Value> {
     }))
 }
 
-fn signed(settings: &Settings, sender: u64, nonce: u64, tag: u8, payload: Vec<u8>) -> Result<Vec<u8>> {
+fn signed(
+    settings: &Settings,
+    sender: u64,
+    nonce: u64,
+    tag: u8,
+    payload: Vec<u8>,
+) -> Result<Vec<u8>> {
     let mut tx = Envelope {
         network: settings.network(),
         sender: development_public(sender)?,
@@ -75,7 +81,12 @@ fn signed(settings: &Settings, sender: u64, nonce: u64, tag: u8, payload: Vec<u8
 
 fn prepare(directory: &Path, settings: Settings, backend: &str, output: Hash) -> Result<Value> {
     let now = ingress::now()?;
-    if settings.genesis_time().checked_add(100).ok_or("TIME_OVERFLOW")? >= now {
+    if settings
+        .genesis_time()
+        .checked_add(100)
+        .ok_or("TIME_OVERFLOW")?
+        >= now
+    {
         return Err("GENESIS_MUST_PRECEDE_ACTUAL_WALL_CLOCK_BY_100_SECONDS".into());
     }
     if !matches!(backend, "legacy-v2" | "authenticated-v1") {
@@ -124,7 +135,8 @@ fn prepare(directory: &Path, settings: Settings, backend: &str, output: Hash) ->
         node.activate_observed(packet_id, now)?;
         let path = directory.join(format!("prefix-{height}.packet"));
         fs::write(&path, packet.encode()?)?;
-        prefix_packets.push(json!({"height": height, "block": hex::encode(packet_id), "path": path}));
+        prefix_packets
+            .push(json!({"height": height, "block": hex::encode(packet_id), "path": path}));
     }
     let accept = signed(&settings, 0, 2, 5, receipt)?;
     let accept_tx_id = hash(b"tx-id", &[&accept]);
@@ -154,7 +166,10 @@ fn prepare(directory: &Path, settings: Settings, backend: &str, output: Hash) ->
     report["acceptance_submitted"] = json!(false);
     report["prefix_packets"] = json!(prefix_packets);
     report["prepared_state"] = node.stats()?;
-    fs::write(directory.join("fixture.json"), serde_json::to_vec_pretty(&report)?)?;
+    fs::write(
+        directory.join("fixture.json"),
+        serde_json::to_vec_pretty(&report)?,
+    )?;
     Ok(report)
 }
 

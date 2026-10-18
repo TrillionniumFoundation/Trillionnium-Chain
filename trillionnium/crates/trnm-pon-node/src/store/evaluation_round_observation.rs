@@ -1,6 +1,9 @@
 //! Bounded native evaluation round observations under one active branch generation.
 //! No caller-supplied height, score or confirmation Boolean becomes authority.
-use super::{evaluation_observation::{candidate_membership, EvaluationPhase}, Node};
+use super::{
+    evaluation_observation::{candidate_membership, EvaluationPhase},
+    Node,
+};
 use crate::ancestry_index;
 use crate::{consensus, digest, ensure, sequence_root, Error, Result};
 use serde::Serialize;
@@ -332,7 +335,10 @@ impl Node {
             "ROOT",
         )?;
         let transaction = Some(candidate_membership(
-            cfg, candidate, contribution, &packet.transactions,
+            cfg,
+            candidate,
+            contribution,
+            &packet.transactions,
         )?);
         let submitted_state = historical
             .get(&submitted)
