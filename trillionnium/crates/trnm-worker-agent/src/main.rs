@@ -10,7 +10,7 @@ use std::{
     fs::{self, OpenOptions},
     io::Write,
     path::{Path, PathBuf},
-    process::{Command as ProcCommand, Output},
+    process::Output,
     thread,
     time::{Duration, SystemTime, UNIX_EPOCH},
 };
@@ -947,6 +947,7 @@ where
     })
 }
 
+#[allow(dead_code)]
 pub(crate) fn run_adapter_with_retry(
     adapter_cmd: &str,
     action_args: &[String],
