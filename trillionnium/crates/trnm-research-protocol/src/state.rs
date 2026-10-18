@@ -1021,7 +1021,14 @@ impl ResearchProtocolState {
                 ResearchObjectKind::ClaimChallenge,
                 object.challenge.challenge_id,
             )?;
-            if !self.claims.contains_key(&object.challenge.claim_ref.key) {
+            let Some(claim) = self.claims.get(&object.challenge.claim_ref.key) else {
+                return Err(ProtocolStateError::InvalidSnapshotGraph);
+            };
+            if object.status == ClaimChallengeStatus::Open
+                && (claim.status != ClaimStatus::Challenged
+                    || claim.active_challenge != Some(object.object_ref.key)
+                    || object.challenge.claim_ref.object_version + 1 != claim.object_ref.object_version)
+            {
                 return Err(ProtocolStateError::InvalidSnapshotGraph);
             }
             let status_consistent = match object.status {
