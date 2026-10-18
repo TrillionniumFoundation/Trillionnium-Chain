@@ -45,9 +45,9 @@ impl StateBackendChoice {
             Ok(choice) => match choice.as_str() {
                 "legacy-v2" => Self::LegacyV2,
                 "authenticated-v1" => Self::AuthenticatedV1,
-                _ => panic!(
-                    "TRNM_MULTIPROCESS_STATE_BACKEND must be legacy-v2 or authenticated-v1"
-                ),
+                _ => {
+                    panic!("TRNM_MULTIPROCESS_STATE_BACKEND must be legacy-v2 or authenticated-v1")
+                }
             },
             Err(std::env::VarError::NotPresent) => Self::LegacyV2,
             Err(std::env::VarError::NotUnicode(_)) => {
