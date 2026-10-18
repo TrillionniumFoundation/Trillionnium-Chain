@@ -144,6 +144,26 @@ profile or by registering a test selector.
 
 [Model evidence v3](../protocol/pon-nakamoto-v1/details/NATIVE_MODEL_EVIDENCE_V3.md) installs actual frozen tasks and four complete retained controls, recomputes candidate/parent/control scores in M06, and requires every signed reveal to match native score and digest. This finite statement is executable. Source attestations, hidden common control, general LLM behavior, prospective gain and public dispute adjudication remain distinct obligations.
 
+## Explicit revision15 evaluation liveness
+
+[Native evaluation quorum V2](../protocol/pon-nakamoto-v1/details/NATIVE_EVALUATION_QUORUM_V2.md)
+adds a fresh selector for the fully replayed native V3/V4 models. Four controlled
+development keys freeze the non-author roster and `ceil(2*n/3)` real matching
+reveals; a disqualified key remains in the denominator and cannot count. One
+missing key therefore does not automatically abort an otherwise sufficient
+evaluation. The original complete-roster and hash-appeal-hold rules remain under
+their old selector.
+
+Signed equivocation affects the actual key, and the same native adoption
+transaction rechecks global disqualifications for bundle and components. An
+opaque tag17 appeal remains an audit record without an automatic veto. New
+round/reveal/closure/storage domains and an actual-parent/dataset/round generation
+commitment prevent replay across contexts. Neither this threshold nor the fixed
+four keys establish BFT finality or independently governed evaluators. The25
+public retrospective tasks remain finite; future-window custody and activation
+are not supplied by this liveness increment. Insufficient evidence and zero gain
+remain bounded no-update outcomes.
+
 ## Native composition evaluation in revision14
 
 [Model composition V4](../protocol/pon-nakamoto-v1/details/NATIVE_MODEL_COMPOSITION_V4.md)

@@ -138,7 +138,7 @@ struct Count {
     matching: usize,
     revealed: usize,
     missing: usize,
-    disqualified: usize,
+    disqualified: BTreeSet<String>,
 }
 
 fn count(evaluation: &Value, current_disqualified: &BTreeSet<String>) -> Result<Count> {
@@ -172,7 +172,7 @@ fn count(evaluation: &Value, current_disqualified: &BTreeSet<String>) -> Result<
         matching,
         revealed,
         missing: roster.iter().filter(|key| !reveals.contains_key(*key)).count(),
-        disqualified: excluded.len(),
+        disqualified: excluded,
     })
 }
 
@@ -187,7 +187,8 @@ pub(super) fn close(evaluation: &mut Value, height: u64, current_disqualified: &
         "score":counted.score,"evidence":counted.evidence.map(hex::encode),
         "quorum":evaluation["plan"]["quorum"],
         "eligible_reveal_count":counted.revealed,"matching_reveal_count":counted.matching,
-        "missing_reveal_count":counted.missing,"disqualified_count_before_close":counted.disqualified,
+        "missing_reveal_count":counted.missing,"disqualified_count_before_close":counted.disqualified.len(),
+        "disqualified_signers_before_close":counted.disqualified,
         "conflict_count_before_close":conflicts,
         "records_digest":hex::encode(records_digest(evaluation)?),"closed_height":height,
         "objective_model_quality":false,"independent_governance_accepted":false,
