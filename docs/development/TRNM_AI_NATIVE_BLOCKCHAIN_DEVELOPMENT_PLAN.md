@@ -1,7 +1,7 @@
 # Trillionnium Chain Development Plan — PoN / Hepta-PoH revision
 
-Plan ID: `trnm-chain-development-plan-v2` (stable registry identity; content revision 13).
-Effective: 2026-09-28; priority implementation revision: 2026-10-05 (Asia/Shanghai). Status: selected development direction; no runtime activation.
+Plan ID: `trnm-chain-development-plan-v2` (stable registry identity; content revision 14).
+Effective: 2026-09-28; priority implementation revision: 2026-10-18. Status: selected development direction; no runtime activation.
 Canonical destination: `refs/heads/main`; continuation uses the current main lineage, not retired PR #194.
 Current source/head/tree/base and prospective merge are derived at verification time.
 Assessed legacy baseline: `c552c31c6d3c5ac47522a124e02c6b8bca4e23f2`, tree
@@ -50,20 +50,39 @@ security, public-model efficacy and activation unaccepted. This does not deny th
 development code and controlled entrypoints below. Source work and documentation may proceed now;
 release requires their own real evidence, not completion of the retired PoCO roadmap.
 
-### Six-track continuation and completion order
+### Reconstruction and upgrade order
 
-The architecture continuation keeps one candidate and the original acceptance owners.
-Completion is determined in the order below. Passing a later component test cannot
-compensate for an incomplete earlier gate; rows are obligations, not acceptance claims.
+The 2026-10-18 continuation preserves the current module owners, exact consensus
+arithmetic and signature domains, persistent reorg, and Hepta's evaluation,
+artifact, CURRENT and FinalUse responsibilities. It redesigns the work-cost/public
+admission profile, evaluation liveness and inter-generation policy, the ordinary
+upgrade coordinator, and state/history costs. The P0 tracks proceed in parallel;
+their success criteria name observable results rather than document completion.
 
-| Order | Work | Evidence required to close the track |
+| Priority | Work | Observable result |
 | --- | --- | --- |
-| P0.1 | Exact two-repository source convergence | One final Chain/Hepta head, tree, actual base and actual prospective-merge tuple; complete original baselines and every native x64/ARM64 source/merge pair on that tuple. Missing, queued, cancelled, stale or partial runs remain incomplete. A predecessor's result never transfers to a successor. |
-| P0.2 | Work economics and hostile public service | Compare legal producers and best observed attacks for the same task, target and charged setup/search; preserve rejected and unsuccessful attempts. Independently driven hostile clients must overlap honest signed business inclusion and client confirmation. Same-host evidence is distinct from independent operators, WAN, physical energy and cheapest-adversary qualification. |
-| P0.3 | Actual adoption loop | Existing CURRENT, independent evaluator selection and the actual inference caller remain connected to current withdrawal and FinalUse checks. Exercise revocation, restart, late results, concurrency and durable Unknown. Chain confirmation alone grants no installation or execution authority. |
-| P1.1 | Read/write work, conflicts and retained storage | Preserve the single durable writer and final on-disk revalidation. Measure complete requests or blocks, including allocation, SQL, serialization, confirmation and cold recovery; retain errors and tails. State explicitly which costs remain linear in retained history/state and which disk records remain permanent. |
-| P1.2 | Model custody and three real generations | Independent material custody and untouched future tasks; each control is the predecessor actually installed at inference. Keep actual installation/cost receipts, lawful no-update, revocation and the unchanged local irreversible history. Controlled fixtures are not independent learning evidence. |
-| P2 | Architecture comparison | Freeze business workload, offered load, hardware/network/resources, data-availability assumptions, adversary model and confirmation risk before comparing Nakamoto, DAG or committee BFT. Report confirmed goodput and latency together with failures, recovery and resource cost. Implement a protocol successor only after observed benefit and separate safety review. |
+| P0: evaluation liveness | An explicit successor profile for missing reveals, finite dispute handling, objective conflict exclusion and frozen quorum. Existing profile bytes and outcomes stay unchanged. | One unavailable or malicious evaluator cannot impose a permanent veto when the profile's honest quorum and timing assumptions hold. Native execution, restart and heavier-fork replay agree with the independent byte oracle. |
+| P0: W1 resource profile | Same-target comparison of structured work, preprocessing, best implemented producers, target-passing false transcripts and actual receiver verification; shared public intake and paid-request protection. | Reproducible costs include setup and unsuccessful attempts. Actual hostile sockets overlap honest signed business. The report explicitly names unmeasured hardware advantages and does not infer a cheapest-adversary theorem. |
+| P0: real iteration protocol | Preserve and reuse window history; admit genuinely future tasks, independent custody, actual predecessor models, cost/safety metrics and legitimate no-update decisions. | Multiple real neurons/candidates can be produced, evaluated, installed and subsequently observed with recoverable failures and revocations. Reusing the fixed public 25-row benchmark does not qualify as a fresh task window. |
+| P0: ordinary Hepta loop | Compose the existing selector, artifact owner, Agentd TaskFlow/FinalUse, CURRENT and signed Supervisor release owner through a narrow coordinator. | The ordinary entry handles exact effect bytes, lost ACK, duplicate calls, stale/reorged acceptance, data loss, withdrawal, installation and actual next-generation model readback. No new operation journal or issuer appears. |
+| P1: current candidate convergence | Integrate the latest PR326 on the existing Chain candidate; repair Hepta's actual failing tests and source mapping. | Real native results bind the same source pair, without changing original permission, timeout or semantic checks. Historical failures and non-applicable receipts remain visible. |
+| P1: measured state/history performance | Reduce redundant encoding, copies and repeated acquisitions; use batching, pre-propagation and validation pipelines under the existing durable writer. | Effective confirmation throughput and p95/p99 improve under a frozen workload while integrity, recovery and resource bounds hold. O(state) and O(history) paths are named when they remain. |
+| P1: independent network and DA | Independent operators, WAN delivery, replicas/repair, sustained attack, partition and restart/new-node recovery. | Honest completion, confirmation latency, memory/disk growth, synchronization and recovery costs are measured continuously. Multiple machines under one administrator do not establish operator independence. |
+| Later: consensus topology | Compare the existing chain, GHAST and GHOSTDAG under the same work relation, execution, availability and security budget. | Evidence first identifies propagation/forks as the limiting cost, then establishes complete-path benefit sufficient to justify the new ordering and recovery complexity. |
+
+Every performance/iteration report must retain the following distinct quantities.
+Unknown or unexecuted stages are null with a reason, never copied from an earlier
+stage. Timed-out, rejected, reorged and withdrawn attempts remain in their original
+cohort; repeated polls and duplicate deliveries do not create additional successes.
+
+| Quantity | Required denominator or identity |
+| --- | --- |
+| Unique valid transaction confirmation TPS | Distinct transaction identities on the observed active chain under the stated confirmation policy, divided by real campaign wall time including the stated drain. Logical block spacing and internal queue counts are separate. |
+| Proof verification and state-commit rates | Actual proofs, valid/invalid/cancelled outcomes, and completed state commits, with elapsed time, shared CPU ownership and durable write costs. |
+| Candidate-to-install p50/p95/p99 | Original candidate submission to verified actual model installation, with sample count, unresolved/failed fraction, clock source and observation window. Do not report only surviving fast candidates. |
+| Installed and subsequently qualified updates | Distinct neuron lineage transitions with real installation and the predeclared follow-up task/cost/safety result. Replica installations and repeated readbacks cannot multiply one learned update. |
+| Honest-user completion during attack | Completed authorized honest requests divided by all offered honest requests in the same attack interval, preserving Busy, timeout, revocation and unknown outcomes. |
+| Loss/reorg/restart/new-node cost | Actual bytes, wall/CPU time, peak memory, disk growth and recovered tip/model/operation identities for each named failure. A process restart does not stand for physical power loss. |
 
 The current cloud continuation retains this order. Its
 [native architecture comparison contract](../protocol/pon-nakamoto-v1/details/ARCHITECTURE_COMPARISON_V1.md)
@@ -75,7 +94,7 @@ dissemination result is not an implementation or security qualification of those
 consensus protocols. Failed runs, cold acquisition, disk synchronization, client
 verification and recovery remain part of the evidence; no faster phase alone
 selects a successor protocol. Final source and result receipts are required
-after all six tracks converge.
+after the applicable implementation tracks converge.
 
 A DAG candidate must account for total ordering, execution conflicts, withheld data,
 equivocation, admission economics and reorganization/confirmation semantics. A BFT
@@ -368,7 +387,7 @@ full disk/WAL allocation, cold recovery and missing artifacts before selecting a
 storage successor. Compare serial, concurrent and DAG candidates only on the same
 business workload and explicit security assumptions, including confirmed goodput,
 tail latency, failures and recovery. A propagation microbenchmark cannot select a
-new consensus or authorize a model. The existing six-track acceptance order remains.
+new consensus or authorize a model. The reconstruction and upgrade order above remains.
 
 ## 3. Eighteen long-lived modules, reused ownership
 
@@ -1156,7 +1175,7 @@ No new document, reader pass or signature changes any production/release flag.
 
 ## Cloud implementation and adversarial observations — 2026-10-13
 
-This source continuation implements the six-track interfaces above. Its component
+This historical source continuation implements the retained interfaces below. Its component
 observations do not close the final-source or independent-operator requirements.
 The active consensus remains PoN Nakamoto. No BFT committee, finality certificate,
 GHAST rule, DAG fork choice or consensus activation is introduced.
