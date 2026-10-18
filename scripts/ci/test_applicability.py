@@ -142,7 +142,7 @@ class ApplicabilityTests(unittest.TestCase):
 
     def test_native_authenticated_profile_is_explicit_local_source_navigation(self):
         result = validate(self.root)
-        self.assertEqual(len(result['profiles']), 18)
+        self.assertEqual(len(result['profiles']), 19)
         profile = next(p for p in result['profiles'] if p['id'] == NATIVE_STORAGE_PROFILE)
         self.assertEqual(profile['entrypoint'], NATIVE_STORAGE_ENTRY)
         for field in ('configuration', 'revision_pointer', 'consensus_revision', 'receipt'):
