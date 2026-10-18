@@ -8,7 +8,10 @@ use super::{
     MAX_CONNECTIONS, READ_CHALLENGE_RESERVE,
 };
 use std::collections::BTreeMap;
-use std::sync::{atomic::{AtomicBool, Ordering}, Arc, Mutex};
+use std::sync::{
+    atomic::{AtomicBool, Ordering},
+    Arc, Mutex,
+};
 use std::time::{Duration, Instant};
 
 // A local overload rule, not a renewable timeout or an identity entitlement.
@@ -56,11 +59,20 @@ impl ConnectionLease {
         self.update(Some(now))
     }
     fn update(&self, waiting_since: Option<Instant>) -> Result<()> {
-        let mut leases = self.registry.lock().map_err(|_| "PUBLIC_INTAKE_UNAVAILABLE")?;
-        let entry = leases.entries.get_mut(&self.id).ok_or("PUBLIC_INTAKE_UNAVAILABLE")?;
+        let mut leases = self
+            .registry
+            .lock()
+            .map_err(|_| "PUBLIC_INTAKE_UNAVAILABLE")?;
+        let entry = leases
+            .entries
+            .get_mut(&self.id)
+            .ok_or("PUBLIC_INTAKE_UNAVAILABLE")?;
         // Linearizes input progress / paid transition with cross-listener
         // cancellation. Once selected, a connection cannot become paid later.
-        ensure(!entry.cancelled.load(Ordering::Acquire), "PUBLIC_REQUEST_CANCELLED")?;
+        ensure(
+            !entry.cancelled.load(Ordering::Acquire),
+            "PUBLIC_REQUEST_CANCELLED",
+        )?;
         entry.waiting_since = waiting_since;
         Ok(())
     }
@@ -106,16 +118,37 @@ impl ListenerIntake {
         cancelled: Arc<AtomicBool>,
         now: Instant,
     ) -> Result<ConnectionLease> {
-        ensure(permit.bytes == 1 && Arc::ptr_eq(&permit.pool, &self.connections), "PUBLIC_INTAKE_UNAVAILABLE")?;
-        let mut leases = self.leases.lock().map_err(|_| "PUBLIC_INTAKE_UNAVAILABLE")?;
-        ensure(leases.entries.len() < MAX_CONNECTIONS, "PUBLIC_INTAKE_UNAVAILABLE")?;
-        let id = leases.next_id.checked_add(1).ok_or("PUBLIC_CONNECTION_ID")?;
+        ensure(
+            permit.bytes == 1 && Arc::ptr_eq(&permit.pool, &self.connections),
+            "PUBLIC_INTAKE_UNAVAILABLE",
+        )?;
+        let mut leases = self
+            .leases
+            .lock()
+            .map_err(|_| "PUBLIC_INTAKE_UNAVAILABLE")?;
+        ensure(
+            leases.entries.len() < MAX_CONNECTIONS,
+            "PUBLIC_INTAKE_UNAVAILABLE",
+        )?;
+        let id = leases
+            .next_id
+            .checked_add(1)
+            .ok_or("PUBLIC_CONNECTION_ID")?;
         leases.next_id = id;
         let pressure_cancelled = Arc::new(AtomicBool::new(false));
-        leases.entries.insert(id, LeaseEntry {
-            waiting_since: Some(now), cancelled, pressure_cancelled: pressure_cancelled.clone(),
-        });
-        Ok(ConnectionLease { registry: self.leases.clone(), id, pressure_cancelled })
+        leases.entries.insert(
+            id,
+            LeaseEntry {
+                waiting_since: Some(now),
+                cancelled,
+                pressure_cancelled: pressure_cancelled.clone(),
+            },
+        );
+        Ok(ConnectionLease {
+            registry: self.leases.clone(),
+            id,
+            pressure_cancelled,
+        })
     }
     pub(super) fn cancel_idle_unpaid_under_pressure(&self, now: Instant) -> Result<bool> {
         // Recheck the same original pool under lock: a stale full observation
@@ -124,17 +157,27 @@ impl ListenerIntake {
         if *used < MAX_CONNECTIONS {
             return Ok(false);
         }
-        let leases = self.leases.lock().map_err(|_| "PUBLIC_INTAKE_UNAVAILABLE")?;
-        let candidate = leases.entries.iter().filter_map(|(id, entry)| {
-            if entry.cancelled.load(Ordering::Acquire) {
-                return None;
-            }
-            let since = entry.waiting_since?;
-            (now.checked_duration_since(since)? >= Duration::from_millis(UNPAID_PRESSURE_IDLE_MS))
+        let leases = self
+            .leases
+            .lock()
+            .map_err(|_| "PUBLIC_INTAKE_UNAVAILABLE")?;
+        let candidate = leases
+            .entries
+            .iter()
+            .filter_map(|(id, entry)| {
+                if entry.cancelled.load(Ordering::Acquire) {
+                    return None;
+                }
+                let since = entry.waiting_since?;
+                (now.checked_duration_since(since)?
+                    >= Duration::from_millis(UNPAID_PRESSURE_IDLE_MS))
                 .then_some((since, *id))
-        }).min();
+            })
+            .min();
         if let Some((_, id)) = candidate {
-            leases.entries[&id].pressure_cancelled.store(true, Ordering::Release);
+            leases.entries[&id]
+                .pressure_cancelled
+                .store(true, Ordering::Release);
             leases.entries[&id].cancelled.store(true, Ordering::Release);
             // Keep both metadata and the original slot until its reactor drops
             // the actual Connection. The pressure caller itself stays refused.
@@ -182,26 +225,42 @@ mod tests {
         let now = Instant::now();
         let mut held = Vec::new();
         for _ in 0..MAX_CONNECTIONS {
-            let permit = BufferPermit::acquire(intake.connections.clone(), 1, MAX_CONNECTIONS).unwrap();
+            let permit =
+                BufferPermit::acquire(intake.connections.clone(), 1, MAX_CONNECTIONS).unwrap();
             let cancelled = Arc::new(AtomicBool::new(false));
-            let lease = intake.connection_lease(&permit, cancelled.clone(), now).unwrap();
+            let lease = intake
+                .connection_lease(&permit, cancelled.clone(), now)
+                .unwrap();
             held.push((lease, permit, cancelled));
         }
         assert_eq!(intake.leases.lock().unwrap().entries.len(), MAX_CONNECTIONS);
-        assert!(!intake.cancel_idle_unpaid_under_pressure(now + Duration::from_millis(249)).unwrap());
-        assert!(intake.cancel_idle_unpaid_under_pressure(now + Duration::from_millis(250)).unwrap());
+        assert!(!intake
+            .cancel_idle_unpaid_under_pressure(now + Duration::from_millis(249))
+            .unwrap());
+        assert!(intake
+            .cancel_idle_unpaid_under_pressure(now + Duration::from_millis(250))
+            .unwrap());
         assert!(held[0].0.pressure_cancelled());
         assert!(held[0].2.load(Ordering::Acquire));
-        assert_eq!(held[0].0.protect().unwrap_err().to_string(), "PUBLIC_REQUEST_CANCELLED");
+        assert_eq!(
+            held[0].0.protect().unwrap_err().to_string(),
+            "PUBLIC_REQUEST_CANCELLED"
+        );
         assert_eq!(*intake.connections.lock().unwrap(), MAX_CONNECTIONS);
-        assert!(BufferPermit::try_acquire(intake.connections.clone(), 1, MAX_CONNECTIONS).unwrap().is_none());
+        assert!(
+            BufferPermit::try_acquire(intake.connections.clone(), 1, MAX_CONNECTIONS)
+                .unwrap()
+                .is_none()
+        );
         // Metadata drop alone cannot return its owner's original permit.
         let (lease, permit, _) = held.remove(0);
         drop(lease);
         assert_eq!(*intake.connections.lock().unwrap(), MAX_CONNECTIONS);
         drop(permit);
         assert_eq!(*intake.connections.lock().unwrap(), MAX_CONNECTIONS - 1);
-        assert!(!intake.cancel_idle_unpaid_under_pressure(now + Duration::from_secs(1)).unwrap());
+        assert!(!intake
+            .cancel_idle_unpaid_under_pressure(now + Duration::from_secs(1))
+            .unwrap());
         drop(held);
         assert_eq!(*intake.connections.lock().unwrap(), 0);
         assert!(intake.leases.lock().unwrap().entries.is_empty());
@@ -212,34 +271,67 @@ mod tests {
         let now = Instant::now();
         let mut held = Vec::new();
         for _ in 0..MAX_CONNECTIONS {
-            let permit = BufferPermit::acquire(intake.connections.clone(), 1, MAX_CONNECTIONS).unwrap();
-            let lease = intake.connection_lease(&permit, Arc::new(AtomicBool::new(false)), now).unwrap();
+            let permit =
+                BufferPermit::acquire(intake.connections.clone(), 1, MAX_CONNECTIONS).unwrap();
+            let lease = intake
+                .connection_lease(&permit, Arc::new(AtomicBool::new(false)), now)
+                .unwrap();
             lease.protect().unwrap();
             held.push((lease, permit));
         }
-        assert!(!intake.cancel_idle_unpaid_under_pressure(now + Duration::from_secs(1)).unwrap());
+        assert!(!intake
+            .cancel_idle_unpaid_under_pressure(now + Duration::from_secs(1))
+            .unwrap());
         // Completing Challenge re-enters input wait. Actual new input moves the
         // idle watermark; polling without bytes makes no call and no renewal.
-        held[17].0.waiting_for_input(now + Duration::from_secs(1)).unwrap();
-        held[17].0.waiting_for_input(now + Duration::from_millis(1200)).unwrap();
-        assert!(!intake.cancel_idle_unpaid_under_pressure(now + Duration::from_millis(1449)).unwrap());
-        assert!(intake.cancel_idle_unpaid_under_pressure(now + Duration::from_millis(1450)).unwrap());
-        assert_eq!(held.iter().filter(|(l, _)| l.pressure_cancelled()).count(), 1);
+        held[17]
+            .0
+            .waiting_for_input(now + Duration::from_secs(1))
+            .unwrap();
+        held[17]
+            .0
+            .waiting_for_input(now + Duration::from_millis(1200))
+            .unwrap();
+        assert!(!intake
+            .cancel_idle_unpaid_under_pressure(now + Duration::from_millis(1449))
+            .unwrap());
+        assert!(intake
+            .cancel_idle_unpaid_under_pressure(now + Duration::from_millis(1450))
+            .unwrap());
+        assert_eq!(
+            held.iter().filter(|(l, _)| l.pressure_cancelled()).count(),
+            1
+        );
         assert!(held[17].0.pressure_cancelled());
-        assert!(held[17].0.waiting_for_input(now + Duration::from_secs(2)).is_err());
+        assert!(held[17]
+            .0
+            .waiting_for_input(now + Duration::from_secs(2))
+            .is_err());
     }
     #[test]
     fn pressure_registry_poison_and_wrong_original_pool_fail_closed() {
         let intake = ListenerIntake::new();
         let wrong = BufferPermit::acquire(Arc::new(Mutex::new(0)), 1, MAX_CONNECTIONS).unwrap();
-        assert!(intake.connection_lease(&wrong, Arc::new(AtomicBool::new(false)), Instant::now()).is_err());
-        let held = BufferPermit::acquire(intake.connections.clone(), MAX_CONNECTIONS, MAX_CONNECTIONS).unwrap();
+        assert!(intake
+            .connection_lease(&wrong, Arc::new(AtomicBool::new(false)), Instant::now())
+            .is_err());
+        let held =
+            BufferPermit::acquire(intake.connections.clone(), MAX_CONNECTIONS, MAX_CONNECTIONS)
+                .unwrap();
         let registry = intake.leases.clone();
         assert!(std::thread::spawn(move || {
             let _guard = registry.lock().unwrap();
             panic!("test-only lease poison");
-        }).join().is_err());
-        assert_eq!(intake.cancel_idle_unpaid_under_pressure(Instant::now()).unwrap_err().to_string(), "PUBLIC_INTAKE_UNAVAILABLE");
+        })
+        .join()
+        .is_err());
+        assert_eq!(
+            intake
+                .cancel_idle_unpaid_under_pressure(Instant::now())
+                .unwrap_err()
+                .to_string(),
+            "PUBLIC_INTAKE_UNAVAILABLE"
+        );
         assert_eq!(*intake.connections.lock().unwrap(), MAX_CONNECTIONS);
         drop(held);
     }

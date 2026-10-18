@@ -61,7 +61,10 @@ pub fn quorum_enabled(cfg: &Config) -> bool {
 pub fn is_quorum(evaluation: &Value) -> Result<bool> {
     match n(evaluation, "storage_revision")? {
         STORAGE_REVISION => {
-            check(evaluation["plan"]["schema"] == "pon-native-frozen-evaluation-v1", "PUBLIC_EVAL_PROFILE")?;
+            check(
+                evaluation["plan"]["schema"] == "pon-native-frozen-evaluation-v1",
+                "PUBLIC_EVAL_PROFILE",
+            )?;
             Ok(false)
         }
         QUORUM_STORAGE_REVISION => {
@@ -95,9 +98,7 @@ pub fn freeze(
     let roster: BTreeSet<_> = cfg
         .evaluators
         .iter()
-        .filter(|key| {
-            key.as_str() != author && (quorum_enabled(cfg) || !excluded.contains(*key))
-        })
+        .filter(|key| key.as_str() != author && (quorum_enabled(cfg) || !excluded.contains(*key)))
         .cloned()
         .collect();
     check((2..=16).contains(&roster.len()), "PUBLIC_EVAL_ROSTER")?;
@@ -322,10 +323,7 @@ pub fn closed_digest(evaluation: &Value) -> Result<Hash> {
     } else {
         b"native-public-evaluation-closed-v2"
     };
-    Ok(hash(
-        domain,
-        &[&bytes(&evaluation["closed"])?],
-    ))
+    Ok(hash(domain, &[&bytes(&evaluation["closed"])?]))
 }
 pub fn appeal(
     evaluation: &mut Value,
@@ -442,7 +440,10 @@ pub fn record_prefix(candidate: Hash) -> String {
 }
 pub fn record_prefix_for(candidate: Hash, evaluation: &Value) -> Result<String> {
     if is_quorum(evaluation)? {
-        Ok(format!("{QUORUM_RECORD_NAMESPACE}:{}:", hex::encode(candidate)))
+        Ok(format!(
+            "{QUORUM_RECORD_NAMESPACE}:{}:",
+            hex::encode(candidate)
+        ))
     } else {
         Ok(record_prefix(candidate))
     }
@@ -575,8 +576,5 @@ fn records_digest(evaluation: &Value) -> Result<Hash> {
     } else {
         b"native-public-evaluation-closure-records-v2"
     };
-    Ok(hash(
-        domain,
-        &[&bytes(&snapshot)?],
-    ))
+    Ok(hash(domain, &[&bytes(&snapshot)?]))
 }

@@ -137,9 +137,18 @@ pub fn evidence(state: &State, cid: Hash) -> Result<Value> {
 }
 /// A component is not individually promoted. A complete zero empirical score may
 /// enter a bundle only if exact ablation later establishes a positive marginal.
-pub(crate) fn component_allowed(evaluation: &Value, height: u64, current_disqualified: &std::collections::BTreeSet<String>) -> Result<()> {
+pub(crate) fn component_allowed(
+    evaluation: &Value,
+    height: u64,
+    current_disqualified: &std::collections::BTreeSet<String>,
+) -> Result<()> {
     if crate::public_evaluation::is_quorum(evaluation)? {
-        return crate::public_evaluation::quorum_v2::adoption_allowed(evaluation, height, true, current_disqualified);
+        return crate::public_evaluation::quorum_v2::adoption_allowed(
+            evaluation,
+            height,
+            true,
+            current_disqualified,
+        );
     }
     check(
         height >= number(&evaluation["plan"], "adoption_start")?

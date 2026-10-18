@@ -1962,7 +1962,9 @@ fn serve_public_protected_v3_inner(
                             let accepted_at = Instant::now();
                             let cancelled = Arc::new(AtomicBool::new(false));
                             let intake_lease = intake.connection_lease(
-                                &connection_permit, cancelled.clone(), accepted_at,
+                                &connection_permit,
+                                cancelled.clone(),
+                                accepted_at,
                             )?;
                             connections.insert(
                                 next_id,
@@ -2028,7 +2030,11 @@ fn serve_public_protected_v3_inner(
                 let heads = PendingHeads::collect(&connections, Instant::now());
                 let mut remove = Vec::new();
                 for (id, conn) in &mut connections {
-                    if conn.intake_lease.as_ref().is_some_and(ConnectionLease::pressure_cancelled) {
+                    if conn
+                        .intake_lease
+                        .as_ref()
+                        .is_some_and(ConnectionLease::pressure_cancelled)
+                    {
                         remove.push(*id);
                         continue;
                     }
@@ -2059,7 +2065,10 @@ fn serve_public_protected_v3_inner(
                                     conn.observation.as_ref(),
                                     0,
                                 )?;
-                                let lease = conn.intake_lease.as_ref().ok_or("PUBLIC_INTAKE_UNAVAILABLE")?;
+                                let lease = conn
+                                    .intake_lease
+                                    .as_ref()
+                                    .ok_or("PUBLIC_INTAKE_UNAVAILABLE")?;
                                 if complete {
                                     lease.protect()?;
                                 } else {
@@ -2124,7 +2133,9 @@ fn serve_public_protected_v3_inner(
                                         server.started
                                             + Duration::from_millis(cookie.expires_tick_ms),
                                     );
-                                    conn.intake_lease.as_ref().ok_or("PUBLIC_INTAKE_UNAVAILABLE")?
+                                    conn.intake_lease
+                                        .as_ref()
+                                        .ok_or("PUBLIC_INTAKE_UNAVAILABLE")?
                                         .waiting_for_input(Instant::now())?;
                                     Ok(Stage::Solution {
                                         cookie,
@@ -2147,7 +2158,10 @@ fn serve_public_protected_v3_inner(
                                     conn.observation.as_ref(),
                                     2,
                                 )?;
-                                let lease = conn.intake_lease.as_ref().ok_or("PUBLIC_INTAKE_UNAVAILABLE")?;
+                                let lease = conn
+                                    .intake_lease
+                                    .as_ref()
+                                    .ok_or("PUBLIC_INTAKE_UNAVAILABLE")?;
                                 if complete {
                                     // Protect before validation; failures are still closed
                                     // by this reactor and never gain a paid lane or body.
@@ -2442,7 +2456,9 @@ fn serve_public_protected_v3_inner(
                 remove.dedup();
                 for id in remove {
                     if let Some(conn) = connections.remove(&id) {
-                        let pressure = conn.intake_lease.as_ref()
+                        let pressure = conn
+                            .intake_lease
+                            .as_ref()
                             .is_some_and(ConnectionLease::pressure_cancelled);
                         if pressure {
                             if let Some(record) = &conn.observation {
@@ -2453,7 +2469,9 @@ fn serve_public_protected_v3_inner(
                         // slot release and the completed-close observation.
                         drop(conn);
                         if pressure {
-                            metrics.lock().map_err(|_| "PUBLIC_METRICS")?
+                            metrics
+                                .lock()
+                                .map_err(|_| "PUBLIC_METRICS")?
                                 .unpaid_pressure_connections_closed += 1;
                         }
                     }
@@ -4415,7 +4433,11 @@ mod tests {
         }
     }
 
-    pub(super) fn accounting_transactions(settings: &Settings, first: u64, count: u64) -> Vec<Vec<u8>> {
+    pub(super) fn accounting_transactions(
+        settings: &Settings,
+        first: u64,
+        count: u64,
+    ) -> Vec<Vec<u8>> {
         use trnm_crypto_primitives::{sign_hex, signing_key_from_hex};
         use trnm_protocol::pon_wire::Envelope;
         let key = signing_key_from_hex(&hex::encode(hash(b"DEV-ONLY-KEY", &[&0u64.to_le_bytes()])))

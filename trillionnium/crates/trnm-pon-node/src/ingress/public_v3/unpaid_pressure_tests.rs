@@ -8,7 +8,10 @@ fn identity(key: u8) -> DevelopmentIdentity {
 fn until(predicate: impl Fn() -> bool) {
     let deadline = Instant::now() + Duration::from_secs(2);
     while !predicate() {
-        assert!(Instant::now() < deadline, "original reactor did not expose bounded progress");
+        assert!(
+            Instant::now() < deadline,
+            "original reactor did not expose bounded progress"
+        );
         thread::sleep(Duration::from_millis(2));
     }
 }
@@ -23,11 +26,19 @@ fn real_shared64_unpaid_pressure_releases_slots_protects_paid_body_and_confirms_
     let transaction_id = hash(b"tx-id", &[&transaction]);
     let mut packets = Vec::new();
     for index in 0..=settings.limit("confirmation_depth").unwrap() {
-        let packet = producer.make(
-            producer.active().unwrap().0,
-            if index == 0 { vec![transaction.clone()] } else { vec![] },
-            crate::development_public(0).unwrap(), clock - 50 + index, 4096,
-        ).unwrap();
+        let packet = producer
+            .make(
+                producer.active().unwrap().0,
+                if index == 0 {
+                    vec![transaction.clone()]
+                } else {
+                    vec![]
+                },
+                crate::development_public(0).unwrap(),
+                clock - 50 + index,
+                4096,
+            )
+            .unwrap();
         producer.admit(&packet, clock).unwrap();
         packets.push(packet);
     }
@@ -38,84 +49,189 @@ fn real_shared64_unpaid_pressure_releases_slots_protects_paid_body_and_confirms_
     let first = PublicServer::with_continuous_domain(identity(71), policy, &domain).unwrap();
     let intake = first.listener_intake().unwrap();
     let second = PublicServer::with_continuous_domain(identity(72), policy, &domain).unwrap();
-    let listeners = [TcpListener::bind("127.0.0.1:0").unwrap(), TcpListener::bind("127.0.0.1:0").unwrap()];
+    let listeners = [
+        TcpListener::bind("127.0.0.1:0").unwrap(),
+        TcpListener::bind("127.0.0.1:0").unwrap(),
+    ];
     let addresses = listeners.each_ref().map(|l| l.local_addr().unwrap());
-    let metrics = [Arc::new(Mutex::new(PublicMetrics::default())), Arc::new(Mutex::new(PublicMetrics::default()))];
+    let metrics = [
+        Arc::new(Mutex::new(PublicMetrics::default())),
+        Arc::new(Mutex::new(PublicMetrics::default())),
+    ];
     let stop = Arc::new(AtomicBool::new(false));
     struct Stop(Arc<AtomicBool>);
     impl Drop for Stop {
-        fn drop(&mut self) { self.0.store(true, Ordering::Release); }
+        fn drop(&mut self) {
+            self.0.store(true, Ordering::Release);
+        }
     }
     let mut evidence = Value::Null;
     thread::scope(|scope| {
-        let workers: Vec<_> = listeners.into_iter().zip([first, second]).enumerate().map(|(i, (listener, service))| {
-            let (node, stopping, counters) = (owner.clone(), stop.clone(), metrics[i].clone());
-            scope.spawn(move || serve_public_protected_v3_with_metrics(
-                listener, node, Duration::from_secs(30), stopping, service, counters,
-            ))
-        }).collect();
+        let workers: Vec<_> = listeners
+            .into_iter()
+            .zip([first, second])
+            .enumerate()
+            .map(|(i, (listener, service))| {
+                let (node, stopping, counters) = (owner.clone(), stop.clone(), metrics[i].clone());
+                scope.spawn(move || {
+                    serve_public_protected_v3_with_metrics(
+                        listener,
+                        node,
+                        Duration::from_secs(30),
+                        stopping,
+                        service,
+                        counters,
+                    )
+                })
+            })
+            .collect();
         let guard = Stop(stop.clone());
         until(|| *intake.listeners.lock().unwrap() == 2);
-        let call = |index: usize, request: &Request| call_public_protected_v3(
-            addresses[index], request, &settings, identity(71 + index as u8).public_key(), &identity(80), policy,
-        );
+        let call = |index: usize, request: &Request| {
+            call_public_protected_v3(
+                addresses[index],
+                request,
+                &settings,
+                identity(71 + index as u8).public_key(),
+                &identity(80),
+                policy,
+            )
+        };
         let started = Instant::now();
-        let silent: Vec<_> = (0..MAX_CONNECTIONS).map(|i| TcpStream::connect(addresses[i % 2]).unwrap()).collect();
+        let silent: Vec<_> = (0..MAX_CONNECTIONS)
+            .map(|i| TcpStream::connect(addresses[i % 2]).unwrap())
+            .collect();
         until(|| *intake.connections.lock().unwrap() == MAX_CONNECTIONS);
         thread::sleep(Duration::from_millis(intake::UNPAID_PRESSURE_IDLE_MS + 30));
-        assert!(call(1, &Request::Head).is_err(), "pressure request itself cannot reuse an undropped socket slot");
-        until(|| metrics.iter().map(|m| m.lock().unwrap().unpaid_pressure_connections_closed).sum::<u64>() >= 1);
+        assert!(
+            call(1, &Request::Head).is_err(),
+            "pressure request itself cannot reuse an undropped socket slot"
+        );
+        until(|| {
+            metrics
+                .iter()
+                .map(|m| m.lock().unwrap().unpaid_pressure_connections_closed)
+                .sum::<u64>()
+                >= 1
+        });
         let released_ns = elapsed_ns(started);
-        assert!(released_ns < PREFIX_MS * 1_000_000, "pressure release must precede original Hello timeout");
+        assert!(
+            released_ns < PREFIX_MS * 1_000_000,
+            "pressure release must precede original Hello timeout"
+        );
         assert!(call(1, &Request::Head).unwrap().ok);
-        let pressure_only_work = metrics.iter().map(|m| m.lock().unwrap().work_started).sum::<u64>();
+        let pressure_only_work = metrics
+            .iter()
+            .map(|m| m.lock().unwrap().work_started)
+            .sum::<u64>();
         assert_eq!(pressure_only_work, 0);
         drop(silent);
         until(|| *intake.connections.lock().unwrap() == 0);
 
         // The original paid body remains live while a second listener is full
         // of incomplete unpaid Hellos. No fake verifier or budget injection.
-        let raw = serde_json::to_vec(&Request::Submit { packet: hex::encode(packets[0].encode().unwrap()) }).unwrap();
-        let hello = Hello { op: 1, len: raw.len(), caller: digest(identity(80).public_key()).unwrap(),
-            digest: hash(b"public-request-body-v3", &[&raw]), client_nonce: [11; 32] };
-        let (mut paid, cookie, _, deadline) = super::tests::paid_solution_only(addresses[0], hello, &identity(80), policy).unwrap();
-        let ready: Value = serde_json::from_slice(&client_frame(&mut paid, 256, deadline).unwrap()).unwrap();
+        let raw = serde_json::to_vec(&Request::Submit {
+            packet: hex::encode(packets[0].encode().unwrap()),
+        })
+        .unwrap();
+        let hello = Hello {
+            op: 1,
+            len: raw.len(),
+            caller: digest(identity(80).public_key()).unwrap(),
+            digest: hash(b"public-request-body-v3", &[&raw]),
+            client_nonce: [11; 32],
+        };
+        let (mut paid, cookie, _, deadline) =
+            super::tests::paid_solution_only(addresses[0], hello, &identity(80), policy).unwrap();
+        let ready: Value =
+            serde_json::from_slice(&client_frame(&mut paid, 256, deadline).unwrap()).unwrap();
         assert_eq!(ready["cookie_digest"], hex::encode(cookie.id().unwrap()));
         until(|| *intake.mutating_grants.lock().unwrap() == 1);
-        let silent: Vec<_> = (0..MAX_CONNECTIONS - 1).map(|_| TcpStream::connect(addresses[1]).unwrap()).collect();
+        let silent: Vec<_> = (0..MAX_CONNECTIONS - 1)
+            .map(|_| TcpStream::connect(addresses[1]).unwrap())
+            .collect();
         until(|| *intake.connections.lock().unwrap() == MAX_CONNECTIONS);
-        let before_closed = metrics.iter().map(|m| m.lock().unwrap().unpaid_pressure_connections_closed).sum::<u64>();
+        let before_closed = metrics
+            .iter()
+            .map(|m| m.lock().unwrap().unpaid_pressure_connections_closed)
+            .sum::<u64>();
         thread::sleep(Duration::from_millis(intake::UNPAID_PRESSURE_IDLE_MS + 30));
         assert!(call(0, &Request::Head).is_err());
-        until(|| metrics.iter().map(|m| m.lock().unwrap().unpaid_pressure_connections_closed).sum::<u64>() > before_closed);
-        assert_eq!(*intake.mutating_grants.lock().unwrap(), 1, "pressure must not remove paid Body");
+        until(|| {
+            metrics
+                .iter()
+                .map(|m| m.lock().unwrap().unpaid_pressure_connections_closed)
+                .sum::<u64>()
+                > before_closed
+        });
+        assert_eq!(
+            *intake.mutating_grants.lock().unwrap(),
+            1,
+            "pressure must not remove paid Body"
+        );
         client_write(&mut paid, &raw, Instant::now() + Duration::from_secs(2)).unwrap();
-        let bytes = client_frame(&mut paid, response_maximum(1), Instant::now() + Duration::from_secs(10)).unwrap();
+        let bytes = client_frame(
+            &mut paid,
+            response_maximum(1),
+            Instant::now() + Duration::from_secs(10),
+        )
+        .unwrap();
         let response: Response = serde_json::from_slice(&bytes).unwrap();
         assert!(response.ok, "{}", response.value);
         assert_eq!(response.cookie_digest, hex::encode(cookie.id().unwrap()));
         assert_eq!(response.request_digest, hex::encode(hello.digest));
-        verify_hex_strict(identity(71).public_key(), &response.message().unwrap(), &response.signature).unwrap();
-        assert_eq!(response.value["block"], hex::encode(packets[0].id().unwrap()));
+        verify_hex_strict(
+            identity(71).public_key(),
+            &response.message().unwrap(),
+            &response.signature,
+        )
+        .unwrap();
+        assert_eq!(
+            response.value["block"],
+            hex::encode(packets[0].id().unwrap())
+        );
         drop(paid);
         for packet in &packets[1..] {
-            assert!(call(1, &Request::Submit { packet: hex::encode(packet.encode().unwrap()) }).unwrap().ok);
+            assert!(
+                call(
+                    1,
+                    &Request::Submit {
+                        packet: hex::encode(packet.encode().unwrap())
+                    }
+                )
+                .unwrap()
+                .ok
+            );
         }
         // Retain the finite unpaid sockets through signed submissions/history;
         // their original two-second deadlines are allowed to expire unchanged.
-        let mut verifier = Node::open(&directory.path().join("validating-client"), settings.clone(), 1).unwrap();
+        let mut verifier = Node::open(
+            &directory.path().join("validating-client"),
+            settings.clone(),
+            1,
+        )
+        .unwrap();
         let tip = packets.last().unwrap().id().unwrap();
         let mut after = settings.genesis();
         let mut history_calls = 0;
         while after != tip {
-            let reply = call(1, &Request::History { tip: hex::encode(tip), after: hex::encode(after) }).unwrap();
+            let reply = call(
+                1,
+                &Request::History {
+                    tip: hex::encode(tip),
+                    after: hex::encode(after),
+                },
+            )
+            .unwrap();
             assert!(reply.ok);
             let page: super::super::Page = serde_json::from_value(reply.value).unwrap();
             after = super::super::receive_page(&mut verifier, page, tip, after, clock).unwrap();
             history_calls += 1;
             assert!(history_calls <= packets.len());
         }
-        let confirmation = verifier.confirmation(transaction_id, packets[0].id().unwrap(), clock).unwrap();
+        let confirmation = verifier
+            .confirmation(transaction_id, packets[0].id().unwrap(), clock)
+            .unwrap();
         assert!(confirmation.confirmed);
         assert!(!confirmation.finalized && !confirmation.execution_authority);
         assert_eq!(owner.lock().unwrap().active().unwrap().0, tip);
@@ -134,21 +250,52 @@ fn real_shared64_unpaid_pressure_releases_slots_protects_paid_body_and_confirms_
             "scope": "finite loopback silent-input pressure; no WAN or host-wide resource isolation claim",
         });
         drop(guard);
-        for worker in workers { worker.join().unwrap().unwrap(); }
+        for worker in workers {
+            worker.join().unwrap().unwrap();
+        }
     });
-    for pool in [&intake.connections, &intake.body_pool, &intake.output_pool, &intake.mutating_grants, &intake.read_grants, &intake.listeners] {
+    for pool in [
+        &intake.connections,
+        &intake.body_pool,
+        &intake.output_pool,
+        &intake.mutating_grants,
+        &intake.read_grants,
+        &intake.listeners,
+    ] {
         assert_eq!(*pool.lock().unwrap(), 0);
     }
     let snapshots: Vec<_> = metrics.iter().map(|m| m.lock().unwrap().clone()).collect();
-    assert_eq!(snapshots.iter().map(|m| m.completed_submit).sum::<u64>(), packets.len() as u64);
-    assert!(snapshots.iter().map(|m| m.unpaid_pressure_cancel_requests).sum::<u64>() >= 2);
-    assert!(snapshots.iter().map(|m| m.unpaid_pressure_connections_closed).sum::<u64>() >= 2);
-    assert!(snapshots.iter().all(|m| m.peak_connections <= MAX_CONNECTIONS));
+    assert_eq!(
+        snapshots.iter().map(|m| m.completed_submit).sum::<u64>(),
+        packets.len() as u64
+    );
+    assert!(
+        snapshots
+            .iter()
+            .map(|m| m.unpaid_pressure_cancel_requests)
+            .sum::<u64>()
+            >= 2
+    );
+    assert!(
+        snapshots
+            .iter()
+            .map(|m| m.unpaid_pressure_connections_closed)
+            .sum::<u64>()
+            >= 2
+    );
+    assert!(snapshots
+        .iter()
+        .all(|m| m.peak_connections <= MAX_CONNECTIONS));
     evidence["listener_metrics"] = json!(snapshots);
     evidence["original_pools_zero_after_join"] = json!(true);
-    evidence["cpu_domain_actual_flow"] = serde_json::to_value(domain.observe_actual_flow().unwrap()).unwrap();
+    evidence["cpu_domain_actual_flow"] =
+        serde_json::to_value(domain.observe_actual_flow().unwrap()).unwrap();
     if let Some(path) = std::env::var_os("TRNM_UNPAID_PRESSURE_REPORT") {
-        let output = std::fs::OpenOptions::new().write(true).create_new(true).open(path).unwrap();
+        let output = std::fs::OpenOptions::new()
+            .write(true)
+            .create_new(true)
+            .open(path)
+            .unwrap();
         serde_json::to_writer_pretty(output, &evidence).unwrap();
     }
     println!("UNPAID_PRESSURE_NATIVE {}", evidence);

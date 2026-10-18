@@ -271,7 +271,11 @@ impl Settings {
             } else {
                 format!("trnm-pon-native-wall-devnet-4-{policy}-{time}")
             };
-            let label = if matches!(policy, trnm_mvcc_fee::public_evaluation::PROFILE | trnm_mvcc_fee::public_evaluation::QUORUM_PROFILE) {
+            let label = if matches!(
+                policy,
+                trnm_mvcc_fee::public_evaluation::PROFILE
+                    | trnm_mvcc_fee::public_evaluation::QUORUM_PROFILE
+            ) {
                 format!(
                     "{label}-evaluation-storage{}",
                     if policy == trnm_mvcc_fee::public_evaluation::QUORUM_PROFILE {

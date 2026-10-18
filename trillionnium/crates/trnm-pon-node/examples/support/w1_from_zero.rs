@@ -19,7 +19,10 @@ pub fn proof_prefix(a: &[u32], b: &[u32]) -> Result<Vec<u8>, pon_work::WorkError
 }
 
 pub fn trial(challenge: Hash, nonce: u64) -> (Hash, Hash) {
-    let trace = hash(b"public-v3-from-zero-v1", &[&challenge, &nonce.to_le_bytes()]);
+    let trace = hash(
+        b"public-v3-from-zero-v1",
+        &[&challenge, &nonce.to_le_bytes()],
+    );
     let ticket = hash(b"ticket", &[&challenge, &trace]);
     (trace, ticket)
 }
