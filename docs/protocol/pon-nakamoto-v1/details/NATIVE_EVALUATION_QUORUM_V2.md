@@ -165,7 +165,10 @@ dispatches to the explicitly versioned
 [V2 count and generation implementation](../../../../trillionnium/crates/trnm-mvcc-fee/src/public_evaluation/quorum_v2.rs).
 Actual candidate, commit/reveal, closure, composition and release paths use it;
 the CLI selector and both durable evaluation observation APIs select the same
-domains.
+domains. Closure and adoption recompute the complete frozen round commitment;
+adoption also checks the retained closure's candidate and quorum against the
+frozen plan. A well-formed replacement roster cannot reuse an earlier round
+commitment even when its generation subcontext is unchanged.
 
 The independent
 [Python oracle](../../../../formal/pon-nakamoto-v1/native_evaluation_quorum_oracle.py)
@@ -186,8 +189,10 @@ scores, same-block conflict-before-release MVCC ordering and old-round replay.
 The
 [V4 native executor regression](../../../../trillionnium/crates/trnm-pon-node/tests/model_composition_v4.rs)
 uses two actual release parents and complete empirical/composition replay,
-including zero standalone component scores and a hash appeal. Its sparse M06
-height fixtures are not described as PNW1 histories. The
+including zero standalone component scores, a hash appeal and actual matured
+claims in both generations. It executes all M06 heights1–204 consecutively,
+retains the original reward-queue capacity invariant and checks every maturity
+height and total issued subsidy; these are not PNW1 packet histories. The
 [CLI regression](../../../../trillionnium/crates/trnm-pon-node/tests/evaluation_quorum_cli.rs)
 checks real selector startup, incompatible models, new/old store separation and
 reopen.
