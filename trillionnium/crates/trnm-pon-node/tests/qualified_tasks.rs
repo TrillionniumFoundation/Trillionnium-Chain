@@ -223,7 +223,7 @@ fn validator_rejects_signed_false_recipe_even_with_manually_constructed_valid_wo
             bad_magic.header.nonce += 1;
             assert_eq!(
                 node.admit(&bad_magic, CLOCK).unwrap_err().to_string(),
-                "TASK_PROOF_MATERIAL"
+                "WORK:Version"
             );
         } else {
             let expected = if mismatch == "model" {
@@ -476,7 +476,10 @@ fn expiry_precedes_expensive_proof_and_a_heavier_branch_removes_registration_and
     let work_id = activate(&mut node, &work);
     let mut expired = make(&node, work_id, vec![], &bootstrap, &base, 0);
     expired.header.work_task = signed.manifest.matrix_task;
-    expired.proof.fill(0);
+    // Encoding rejects first; expiry must still precede full Work verification.
+    // Reuse the task's canonical proof from the previous challenge, not bad magic.
+    expired.proof = work.proof.clone();
+    pon_work::precheck_proof_encoding(&expired.proof).unwrap();
     let error = node.admit(&expired, CLOCK).unwrap_err().to_string();
     assert!(error.starts_with("TASK_STATEMENT:Height"), "{error}");
     let mut fork = genesis;

@@ -2688,6 +2688,10 @@ impl Node {
             h.transactions == sequence_root("transactions", &packet.transactions),
             "ROOT",
         )?;
+        // Reject malformed fixed-wire work before materializing the parent State.
+        // This is only an encoding check; admission still requires full work replay.
+        pon_work::precheck_proof_encoding(&packet.proof)
+            .map_err(|error| Error::from(format!("WORK:{error:?}")))?;
         // Signed task context/expiry/parent registration reject before full work replay.
         if let Some(manifest) =
             self.eligible_work_task_with_progress(h.parent, h.work_task, h.height, progress)?

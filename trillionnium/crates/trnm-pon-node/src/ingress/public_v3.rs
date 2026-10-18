@@ -6365,6 +6365,80 @@ mod paid_settlement_consistency_tests {
         assert_eq!(server.mutation_cpu.lock().unwrap().in_flight, 0);
         assert!(server.mutation_cpu_domain().accounting_available());
     }
+
+    #[test]
+    fn paid_malformed_work_encoding_settles_without_starting_full_verification() {
+        use trnm_crypto_primitives::pon_work::{CELLS, Q};
+
+        let directory = tempfile::tempdir().unwrap();
+        let clock = super::super::now().unwrap();
+        let settings = Settings::development(Some(clock - 100)).unwrap();
+        let node = Node::open(directory.path(), settings.clone(), 2).unwrap();
+        let packet = node
+            .make(
+                settings.genesis(),
+                vec![],
+                crate::development_public(0).unwrap(),
+                clock - 90,
+                4096,
+            )
+            .unwrap();
+        let owner = Mutex::new(node);
+        let before = owner.lock().unwrap().read_active().unwrap();
+        for (offset, expected) in [
+            (0, "WORK:Version"),
+            (4, "WORK:Field"),
+            (4 + CELLS * 4, "WORK:Field"),
+            (4 + 2 * CELLS * 4, "WORK:Field"),
+        ] {
+            let mut malformed = packet.clone();
+            if offset == 0 {
+                malformed.proof[0] ^= 1;
+            } else {
+                malformed.proof[offset..offset + 4].copy_from_slice(&(Q as u32).to_le_bytes());
+            }
+            let request = Request::Submit {
+                packet: hex::encode(malformed.encode().unwrap()),
+            };
+            let server = server();
+            let metrics = Mutex::new(PublicMetrics::default());
+            // Use the actual paid dispatcher and its original settlement without
+            // a socket, artificial CPU debt or replacement work verifier.
+            let permit = PaidMutationCpuPermit::acquire(&server, &metrics).unwrap();
+            let measurement = MutationCpuMeasurement::for_permit(Some(&permit));
+            assert_eq!(server.mutation_cpu.lock().unwrap().in_flight, 1);
+            let error = public_dispatch(
+                &owner,
+                request,
+                Instant::now() + Duration::from_secs(10),
+                &AtomicBool::new(false),
+                &AtomicBool::new(false),
+                &metrics,
+                (None, Some(&measurement)),
+            )
+            .unwrap_err();
+            assert_eq!(error.to_string(), expected);
+            assert!(!error.requires_owner_stop());
+            assert_eq!(measurement.full_work_ns.get(), None);
+            assert!(!measurement.unavailable.get());
+            let charged = permit.finish(&measurement, &server, &metrics).unwrap();
+            let observed = metrics.lock().unwrap();
+            assert_eq!(observed.work_started, 0);
+            assert_eq!(observed.work_finished, 0);
+            assert_eq!(observed.work_failed, 0);
+            assert_eq!(observed.mutation_cpu_reservations, 1);
+            assert_eq!(observed.mutation_cpu_refusals, 0);
+            assert_eq!(observed.mutation_cpu_clock_failures, 0);
+            assert_eq!(observed.mutation_full_work_cpu_ns, 0);
+            assert_eq!(observed.mutation_dispatch_excluding_work_cpu_ns, charged);
+            assert_eq!(observed.mutation_cpu_charged_ns, charged);
+            assert!(charged > 0);
+            drop(observed);
+            assert_eq!(server.mutation_cpu.lock().unwrap().in_flight, 0);
+            assert!(server.mutation_cpu_domain().accounting_available());
+            assert_eq!(owner.lock().unwrap().read_active().unwrap(), before);
+        }
+    }
 }
 
 #[cfg(test)]

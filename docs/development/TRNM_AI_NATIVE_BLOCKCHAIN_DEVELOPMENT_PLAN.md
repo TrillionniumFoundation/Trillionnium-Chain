@@ -1262,3 +1262,17 @@ the distinct safety, data availability, admission and recovery obligations in
 the architecture comparison contract. Complete baselines and actual native
 source/merge pairs must still bind the final combined source; missing native
 ARM64 execution cannot be replaced by cross-compilation or an x64 observation.
+
+Native malformed-input ordering now uses one allocation-free PNW1 encoding
+precheck in common packet admission and the continuous owner's earlier actual
+task-binding path. Both reject malformed magic or noncanonical A/B/C fields
+before task lookup reconstructs the parent State. Owner authorization, exact
+duplicate handling and bounded header/ancestry checks retain their original
+order. Original full Work verification, cancellation, paid CPU settlement,
+durable recovery and final writer validation remain required. The standalone
+verifier's target/task/error order is unchanged. The new regression selectors
+and precise native-versus-Ledger scope are in the existing
+[admission security contract](../protocol/pon-nakamoto-v1/details/ADMISSION_SECURITY.md).
+Exact-source and prospective-merge CI must validate this change; source fixes
+do not replace a measured hostile public-service campaign or the unresolved
+work-hardness and independently governed model-evolution qualifications.

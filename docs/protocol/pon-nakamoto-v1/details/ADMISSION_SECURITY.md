@@ -98,6 +98,37 @@ work eligibility, signatures, deterministic execution and roots remain mandatory
 persistence. This saves malformed-input replay cost; it does not solve a cheaply fabricated
 passing ticket, structured-input shortcuts, fastest-adversary cost or public Sybil fairness.
 
+## Native fixed-wire rejection before task State
+
+The native Node also calls `pon_work::precheck_proof_encoding` before
+`eligible_work_task_with_progress` can reconstruct the parent State. This bounded,
+allocation-free check accepts only the exact PNW1 width and magic and canonical
+little-endian A/B/C fields. The transcript digest remains opaque. Unlike the
+Ledger precheck above, this helper has no task, target or parent inputs; success
+returns only `()`. Original task binding, ticket filtering, complete transcript
+replay, product verification and final commit validation remain mandatory.
+
+Common admission retains its existing owner, exact-duplicate, header, parent,
+target, clock and transaction-root checks before the new encoding check. The
+continuous public owner additionally checks encoding after its declared packet
+parent/task binding and before its earlier task-State lookup. Existing bounded
+header/ancestry reads can still occur; this is not a zero-database-read claim.
+The helper distinguishes length, version and field errors; native malformed
+magic/fields report `WORK:Version` or `WORK:Field` before task-State errors.
+Existing packet-grammar length errors still reject earlier where applicable.
+The standalone full verifier's original error order, including zero target
+before field rejection, is unchanged.
+
+Regression selectors `proof_encoding_precheck_`,
+`mode4_packet_encoding_precheck_precedes_actual_parent_task_lookup` and
+`paid_malformed_work_encoding_settles_without_starting_full_verification`
+cover encoding boundaries, no parent-State entry or work replay on malformed
+input, valid retry and exact duplicate behavior, and the original paid CPU
+settlement when work never starts. The private continuous-owner fixture checks
+only ordering and grants no execution authority. These source regressions do
+not measure hostile network saturation or qualify work hardness; canonical
+ticket-passing false transcripts can still reach expensive rejection.
+
 ## Current same-target measurements after native-session integration
 
 [The new retained collection](../../../../evidence/pon-native-session-v1/work-cost/README.md)

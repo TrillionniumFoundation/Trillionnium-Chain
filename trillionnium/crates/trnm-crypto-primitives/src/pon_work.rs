@@ -33,6 +33,28 @@ pub enum WorkError {
     NoiseBudget,
 }
 
+/// Allocation-free rejection of malformed PNW1 bytes before task or State lookup.
+/// Success checks only the fixed encoding, never the task, target or relation.
+/// The original full verifier still performs its checks in their original order
+/// and is the only path here that can construct VerifiedWork.
+pub fn precheck_proof_encoding(bytes: &[u8]) -> Result<(), WorkError> {
+    if bytes.len() != PROOF_BYTES {
+        return Err(WorkError::Length);
+    }
+    if &bytes[..4] != b"PNW1" {
+        return Err(WorkError::Version);
+    }
+    // Every A/B/C word must already be canonical; never reduce caller bytes.
+    // The final transcript digest is opaque bytes, not another field element.
+    if bytes[4..4 + 3 * CELLS * 4]
+        .chunks_exact(4)
+        .any(|p| u128::from(u32::from_le_bytes([p[0], p[1], p[2], p[3]])) >= Q)
+    {
+        return Err(WorkError::Field);
+    }
+    Ok(())
+}
+
 /// Local observation boundaries; these are neither proof bytes nor consensus input.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum VerificationProgress {
@@ -1574,6 +1596,133 @@ mod tests {
         a[0] = u32::MAX;
         assert_eq!(prove([0; 32], &a, &a).unwrap_err(), WorkError::Field);
     }
+
+    #[test]
+    fn proof_encoding_precheck_enforces_exact_wire_and_all_matrix_boundaries() {
+        let mut proof = vec![0; PROOF_BYTES];
+        proof[..4].copy_from_slice(b"PNW1");
+        assert_eq!(precheck_proof_encoding(&proof), Ok(()));
+        for word in proof[4..PROOF_BYTES - 32].chunks_exact_mut(4) {
+            word.copy_from_slice(&((Q - 1) as u32).to_le_bytes());
+        }
+        // The same all-ones words would be invalid fields, but a digest is opaque.
+        proof[PROOF_BYTES - 32..].fill(255);
+        assert_eq!(precheck_proof_encoding(&proof), Ok(()));
+        for length in [0, 3, 4, PROOF_BYTES - 1] {
+            assert_eq!(
+                precheck_proof_encoding(&proof[..length]),
+                Err(WorkError::Length)
+            );
+        }
+        let mut longer = proof.clone();
+        longer.push(0);
+        assert_eq!(precheck_proof_encoding(&longer), Err(WorkError::Length));
+        let mut version = proof.clone();
+        version[0] ^= 1;
+        assert_eq!(precheck_proof_encoding(&version), Err(WorkError::Version));
+        for matrix in 0..3 {
+            for cell in [0, CELLS / 2, CELLS - 1] {
+                for invalid in [Q as u32, u32::MAX] {
+                    let mut changed = proof.clone();
+                    let at = 4 + (matrix * CELLS + cell) * 4;
+                    changed[at..at + 4].copy_from_slice(&invalid.to_le_bytes());
+                    assert_eq!(precheck_proof_encoding(&changed), Err(WorkError::Field));
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn proof_encoding_precheck_never_substitutes_for_full_work_or_cancellation() {
+        let (a, b) = matrices();
+        let challenge = [57; 32];
+        let task = task_id(&a, &b).unwrap();
+        let proof = prove(challenge, &a, &b).unwrap();
+        assert_eq!(precheck_proof_encoding(&proof), Ok(()));
+        let verified = verify(challenge, task, [255; 32], &proof).unwrap();
+        assert_eq!(verified.challenge(), challenge);
+        assert_eq!(verified.task(), task);
+        assert_eq!(
+            field_bytes(verified.product()),
+            proof[4 + 2 * CELLS * 4..PROOF_BYTES - 32]
+        );
+
+        let mut wrong_task = task;
+        wrong_task[0] ^= 1;
+        let mut below_ticket = [0; 32];
+        below_ticket[31] = 1;
+        assert!(verified.ticket() > below_ticket);
+        let mut bad_trace = proof.clone();
+        bad_trace[PROOF_BYTES - 1] ^= 1;
+        let mut bad_product = proof.clone();
+        let at = 4 + 2 * CELLS * 4;
+        let original = u32::from_le_bytes(bad_product[at..at + 4].try_into().unwrap());
+        let changed = ((u128::from(original) + 1) % Q) as u32;
+        bad_product[at..at + 4].copy_from_slice(&changed.to_le_bytes());
+        for (expected_task, target, bytes, expected_error) in [
+            (wrong_task, [255; 32], proof.as_slice(), WorkError::Task),
+            (task, below_ticket, proof.as_slice(), WorkError::Target),
+            (task, [255; 32], bad_trace.as_slice(), WorkError::Transcript),
+            (task, [255; 32], bad_product.as_slice(), WorkError::Product),
+        ] {
+            assert_eq!(precheck_proof_encoding(bytes), Ok(()));
+            assert_eq!(
+                verify(challenge, expected_task, target, bytes).unwrap_err(),
+                expected_error
+            );
+        }
+
+        let mut reached_final_boundary = false;
+        let cancelled = verify_with_progress(challenge, task, [255; 32], &proof, &mut |point| {
+            if point == VerificationProgress::BeforeVerifiedWork {
+                reached_final_boundary = true;
+                Err("cancelled after complete replay")
+            } else {
+                Ok(())
+            }
+        });
+        assert!(reached_final_boundary);
+        assert_eq!(
+            cancelled.unwrap_err(),
+            VerificationError::Cancelled("cancelled after complete replay")
+        );
+    }
+
+    #[test]
+    fn proof_encoding_precheck_preserves_full_verifier_zero_target_precedence() {
+        let mut proof = vec![0; PROOF_BYTES];
+        proof[..4].copy_from_slice(b"PNW1");
+        proof[4..8].copy_from_slice(&(Q as u32).to_le_bytes());
+        assert_eq!(precheck_proof_encoding(&proof), Err(WorkError::Field));
+        for kernel in [
+            VerificationKernel::ScalarReference,
+            VerificationKernel::Transposed,
+            VerificationKernel::LimbTranscript,
+        ] {
+            for (target, expected_error) in
+                [([0; 32], WorkError::Target), ([255; 32], WorkError::Field)]
+            {
+                let mut calls = 0;
+                let result = verify_with_kernel(
+                    [0; 32],
+                    [0; 32],
+                    target,
+                    &proof,
+                    &mut |_| {
+                        calls += 1;
+                        Ok::<(), ()>(())
+                    },
+                    kernel,
+                );
+                assert_eq!(
+                    result.unwrap_err(),
+                    VerificationError::Relation(expected_error)
+                );
+                assert_eq!(calls, 0);
+            }
+        }
+    }
+
     #[test]
     fn controlled_verification_preserves_full_success_and_late_relation_errors() {
         let (a, b) = matrices();

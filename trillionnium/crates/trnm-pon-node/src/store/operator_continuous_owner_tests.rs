@@ -59,6 +59,78 @@ fn mode4_unknown_packet_is_rejected_before_missing_parent_state_or_work() {
     assert!(node.admit(&packet, crate::ingress::now().unwrap()).is_err());
 }
 #[test]
+fn mode4_packet_encoding_precheck_precedes_actual_parent_task_lookup() {
+    let (_root, _journal, node) = node();
+    let before = node.active().unwrap();
+    let view = Arc::new(policy::tests::mechanism_view());
+    let allocation = view
+        .permission("parent-reconcile", &"11".repeat(32))
+        .unwrap();
+    let permit = Permit {
+        view,
+        allocation,
+        epoch: Arc::new(AtomicU64::new(1)),
+        expected_epoch: 1,
+        unavailable: Arc::new(AtomicBool::new(false)),
+    };
+    // Isolate the existing private binding boundary with authenticated mechanism
+    // fixtures. This expired test view grants no public execution authority.
+    let mut packet = Packet {
+        header: trnm_protocol::pon_wire::Header {
+            network: node.settings.network(),
+            parameters: node.settings.parameters(),
+            parent: [0x12; 32],
+            height: 1,
+            timestamp: crate::ingress::now().unwrap(),
+            target: [0xff; 32],
+            miner: [1; 32],
+            transactions: [0; 32],
+            state: [0; 32],
+            receipts: [0; 32],
+            work_task: [0x10; 32],
+            nonce: 1,
+        },
+        transactions: Vec::new(),
+        proof: vec![0; pon_work::PROOF_BYTES],
+    };
+    assert_eq!(
+        node.continuous_actual_packet_binding(&permit, &packet)
+            .unwrap_err()
+            .to_string(),
+        "WORK:Version"
+    );
+    packet.proof[..4].copy_from_slice(b"PNW1");
+    for matrix in 0..3 {
+        let offset = 4 + matrix * pon_work::CELLS * 4;
+        packet.proof[offset..offset + 4].copy_from_slice(&(pon_work::Q as u32).to_le_bytes());
+        assert_eq!(
+            node.continuous_actual_packet_binding(&permit, &packet)
+                .unwrap_err()
+                .to_string(),
+            "WORK:Field"
+        );
+        packet.proof[offset..offset + 4].fill(0);
+    }
+    // Canonical encoding alone reaches the original lookup and still rejects:
+    // there is no such parent and this zero relation is not accepted Work.
+    assert_eq!(
+        node.continuous_actual_packet_binding(&permit, &packet)
+            .unwrap_err()
+            .to_string(),
+        "UNKNOWN_PARENT"
+    );
+    packet.header.parent = [0xee; 32];
+    packet.proof[0] ^= 1;
+    assert_eq!(
+        node.continuous_actual_packet_binding(&permit, &packet)
+            .unwrap_err()
+            .to_string(),
+        "OWNER_CONTINUOUS_PACKET_TASK"
+    );
+    assert_eq!(node.active().unwrap(), before);
+}
+
+#[test]
 fn mode4_original_pool_and_unscoped_activation_recovery_remain_hold() {
     let (_root, _journal, mut node) = node();
     let before = node.active().unwrap();

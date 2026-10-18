@@ -2500,6 +2500,80 @@ mod tests {
     }
 
     #[test]
+    fn proof_encoding_precheck_rejects_before_parent_state_or_work_and_preserves_retry() {
+        use trnm_crypto_primitives::pon_work;
+        use trnm_mvcc_fee::pon_executor::ExecutionProgress;
+        let (dir, node, packet) = pending_packet();
+        let before = node.lock().unwrap().read_active().unwrap();
+        let mut bad_version = packet.clone();
+        bad_version.proof[0] ^= 1;
+        let mut cases = vec![(bad_version, "WORK:Version")];
+        for matrix in 0..3 {
+            let mut bad_field = packet.clone();
+            let offset = 4 + matrix * pon_work::CELLS * 4;
+            bad_field.proof[offset..offset + 4]
+                .copy_from_slice(&(pon_work::Q as u32).to_le_bytes());
+            cases.push((bad_field, "WORK:Field"));
+        }
+        let sql = rusqlite::Connection::open(dir.path().join("native.sqlite")).unwrap();
+        for (malformed, expected) in cases {
+            let state_reads = std::sync::atomic::AtomicUsize::new(0);
+            let work_calls = std::sync::atomic::AtomicUsize::new(0);
+            let error = dispatch_shared_with_execution_progress(
+                &node,
+                Request::Submit {
+                    packet: hex::encode(malformed.encode().unwrap()),
+                },
+                &mut |_| Ok(()),
+                |packet| {
+                    work_calls.fetch_add(1, Ordering::SeqCst);
+                    WorkCheckedPacket::verify(packet)
+                },
+                &|point| {
+                    if point == ExecutionProgress::BeforeParentBinding {
+                        state_reads.fetch_add(1, Ordering::SeqCst);
+                    }
+                    Ok(())
+                },
+            )
+            .unwrap_err();
+            assert_eq!(error.to_string(), expected);
+            assert!(!error.requires_owner_stop());
+            assert_eq!(state_reads.load(Ordering::SeqCst), 0);
+            assert_eq!(work_calls.load(Ordering::SeqCst), 0);
+            assert_eq!(node.lock().unwrap().read_active().unwrap(), before);
+            let count: u64 = sql
+                .query_row(
+                    "SELECT COUNT(*) FROM blocks WHERE id=?",
+                    [malformed.id().unwrap().as_slice()],
+                    |row| row.get(0),
+                )
+                .unwrap();
+            assert_eq!(count, 0);
+            assert_eq!(
+                node.lock()
+                    .unwrap()
+                    .admit(&malformed, now().unwrap())
+                    .unwrap_err()
+                    .to_string(),
+                expected
+            );
+        }
+        let request = || Request::Submit {
+            packet: hex::encode(packet.encode().unwrap()),
+        };
+        let reply =
+            dispatch_shared_with(&node, request(), &mut |_| Ok(()), WorkCheckedPacket::verify)
+                .unwrap();
+        assert_eq!(reply["block"], hex::encode(packet.id().unwrap()));
+        let duplicate = dispatch_shared_with(&node, request(), &mut |_| Ok(()), |_| {
+            panic!("an exact durable duplicate must not replay work")
+        })
+        .unwrap();
+        assert_eq!(duplicate["block"], reply["block"]);
+    }
+
+    #[test]
     fn context_cancellation_precedes_work_verifier_and_preserves_public_retry() {
         use trnm_mvcc_fee::pon_executor::ExecutionProgress;
         let (dir, node, packet) = pending_packet();
