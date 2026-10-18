@@ -55,6 +55,8 @@ case "${1:?required job}" in
     python3 formal/pon-nakamoto-v1/test_llm_adapter_contract.py
     python3 formal/pon-nakamoto-v1/test_model_acceptance.py
     python3 formal/pon-nakamoto-v1/test_model_window_history.py -v
+    python3 formal/pon-nakamoto-v1/test_native_evaluation_quorum_oracle.py -v
+    python3 formal/pon-nakamoto-v1/native_evaluation_quorum_oracle.py
     "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/continuous_pipeline" "${RUNNER_TEMP:-/tmp}/trnm-pipeline-smoke-$$" 2 4 0 growth protected
     python3 formal/pon-nakamoto-v1/test_evaluation_round.py
     python3 formal/pon-nakamoto-v1/test_evaluation.py

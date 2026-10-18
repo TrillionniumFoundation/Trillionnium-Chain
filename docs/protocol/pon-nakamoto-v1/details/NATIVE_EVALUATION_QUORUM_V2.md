@@ -192,8 +192,16 @@ height fixtures are not described as PNW1 histories. The
 checks real selector startup, incompatible models, new/old store separation and
 reopen.
 
+The required `protocol-contract` CI lane executes the independent oracle tests
+and separately recomputes the retained vectors in read-only mode. The CI
+contract checker rejects omission, duplication, relocation or replacement of
+either command, including fixture regeneration through `--write`. The existing
+`rust-baseline` workspace/all-targets invocation executes the native parity,
+model, Node and CLI targets; their presence does not grant a hosted-CI result.
+
 ```sh
 python3 -m unittest discover -s formal/pon-nakamoto-v1 -p test_native_evaluation_quorum_oracle.py -v
+python3 formal/pon-nakamoto-v1/native_evaluation_quorum_oracle.py
 cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-mvcc-fee --test evaluation_quorum_v2
 cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test model_evidence_v3
 cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test model_composition_v4

@@ -15,11 +15,44 @@ from check_ci_contract import (ROOT, validate, CONTINUITY_BUILD, CONTINUITY_TRAN
                                ONE_ZERO_COMPARE_STEP, MAINTENANCE_RUN_STEP,
                                MAINTENANCE_COMPARE_STEP, REJECTION_RUN_STEP, REJECTION_COMPARE_STEP,
                                PAIRED_WORK_ORACLE, ZERO_WORK_ORACLE, MODEL_WINDOW_ORACLE,
+                               EVALUATION_QUORUM_ORACLE, check_independent_conformance,
                                NATIVE_RELEASE_BLOCK,
                                NODE_EXAMPLE_BUILD, ACCOUNT_ARCHIVE_ORACLE, ACCOUNT_EXECUTION_ORACLE)
 from check_cross_arch_cost import (COST_JOB_OVERHEAD_SECONDS, COST_JOB_TIMEOUT_MINUTES,
                                    cost_job_budget_seconds, rejection_job_budget_seconds)
 from report_current_implementation import DESTINATION, markdown, projection, validate as current_validate
+
+
+class EvaluationQuorumLaneTests(unittest.TestCase):
+    """Check the real lane without copying unrelated retained evidence."""
+
+    def setUp(self):
+        self.script = (ROOT / 'scripts/ci/ci_job.sh').read_text()
+        self.lanes = {'repository-truth', 'protocol-contract', 'fuzz-smoke',
+                      'rust-baseline', 'external-evidence-contract'}
+
+    def test_actual_lane_preserves_quorum_reference_and_retained_vector_checks(self):
+        check_independent_conformance(self.script, self.lanes)
+
+    def test_quorum_checks_cannot_be_removed_duplicated_skipped_or_rewrite_vectors(self):
+        for command in EVALUATION_QUORUM_ORACLE.splitlines(keepends=True):
+            for replacement in ['', '    true # omitted quorum reference\n', command * 2,
+                                command.replace('python3', 'true # python3'),
+                                command.rstrip('\n') + ' --write\n']:
+                with self.subTest(command=command, replacement=replacement):
+                    with self.assertRaisesRegex(ValueError, 'evaluation quorum oracle'):
+                        check_independent_conformance(self.script.replace(command, replacement), self.lanes)
+
+    def test_quorum_checks_cannot_move_to_another_lane_or_reverse_verification(self):
+        commands = EVALUATION_QUORUM_ORACLE.splitlines(keepends=True)
+        changed = [self.script.replace(EVALUATION_QUORUM_ORACLE, ''.join(reversed(commands)))]
+        for command in [*commands, EVALUATION_QUORUM_ORACLE]:
+            changed.append(self.script.replace(command, '').replace(
+                '  fuzz-smoke)\n', '  fuzz-smoke)\n' + command))
+        for script in changed:
+            with self.subTest(script=script):
+                with self.assertRaisesRegex(ValueError, 'evaluation quorum oracle'):
+                    check_independent_conformance(script, self.lanes)
 
 
 class CiContractTests(unittest.TestCase):
