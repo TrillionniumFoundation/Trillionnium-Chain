@@ -173,3 +173,23 @@ pub(crate) fn run_llm_adapter_with_retry(
         thread::sleep,
     )
 }
+
+
+#[cfg(test)]
+mod security_tests {
+    use super::run_adapter_with_retry_bounded;
+    use std::time::Duration;
+
+    #[test]
+    fn transaction_adapter_timeout_kills_hung_process() {
+        let err = run_adapter_with_retry_bounded(
+            "python3 -c 'import time; time.sleep(30)'",
+            &[],
+            0,
+            0,
+            Duration::from_millis(50),
+        )
+        .expect_err("hung transaction adapters must be bounded");
+        assert!(err.to_string().contains("timeout"), "{err}");
+    }
+}
