@@ -1,13 +1,13 @@
 //! Bounded native evaluation round observations under one active branch generation.
 //! No caller-supplied height, score or confirmation Boolean becomes authority.
-use super::{evaluation_observation::EvaluationPhase, Node};
+use super::{evaluation_observation::{candidate_membership, EvaluationPhase}, Node};
 use crate::ancestry_index;
 use crate::{consensus, digest, ensure, sequence_root, Error, Result};
 use serde::Serialize;
 use serde_json::Value;
 use std::collections::BTreeMap;
 use trnm_mvcc_fee::{pon_executor::State, public_evaluation as evaluation};
-use trnm_protocol::pon_wire::{hash, Envelope, Hash};
+use trnm_protocol::pon_wire::Hash;
 
 pub const MAX_EVALUATION_ROUND_BLOCKS: u64 = 4096;
 
@@ -331,19 +331,9 @@ impl Node {
             packet.header.transactions == sequence_root("transactions", &packet.transactions),
             "ROOT",
         )?;
-        let owner = digest(contribution["owner"].as_str().ok_or("PUBLIC_EVAL_STATE")?)?;
-        let mut transaction = None;
-        for raw in &packet.transactions {
-            let tx = Envelope::decode(raw).map_err(|_| Error::from("TRANSACTION_CODEC"))?;
-            if tx.tag == 6 && tx.payload.get(..32) == Some(candidate.as_slice()) {
-                ensure(
-                    tx.sender == owner && transaction.is_none(),
-                    "EVALUATION_OBSERVATION_CANDIDATE",
-                )?;
-                transaction = Some(hex::encode(hash(b"tx-id", &[raw])));
-            }
-        }
-        ensure(transaction.is_some(), "MEMBERSHIP")?;
+        let transaction = Some(candidate_membership(
+            cfg, candidate, contribution, &packet.transactions,
+        )?);
         let submitted_state = historical
             .get(&submitted)
             .ok_or("EVALUATION_OBSERVATION_CANDIDATE")?;
@@ -540,6 +530,7 @@ mod tests {
     use super::*;
     use crate::{development_public, Settings};
     use trnm_crypto_primitives::{sign_hex, signing_key_from_hex};
+    use trnm_protocol::pon_wire::{hash, Envelope};
 
     #[test]
     fn candidate_cannot_skip_an_unconfirmed_round_predecessor() {

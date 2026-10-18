@@ -170,6 +170,18 @@ adoption also checks the retained closure's candidate and quorum against the
 frozen plan. A well-formed replacement roster cannot reuse an earlier round
 commitment even when its generation subcontext is unchanged.
 
+Both durable observation APIs bind the candidate to one exact transaction in
+the root-checked intake packet. Historical tag6 retains its existing membership
+rule under the original model selector. Factor profiles use the existing
+canonical tag23 `FactorWitnessV2` decoder and recompute the contribution identity
+from the installed network/parameters and actual sender. The decoded family,
+parent release and artifact, candidate artifact, update identity, components
+root, submission round and slot must match the retained native contribution.
+A different candidate, wrong owner, duplicate membership, another transaction
+tag or noncanonical ILF2 bytes cannot supply that anchor. These checks preserve
+the complete ancestry, historical state roots, closure and active-generation
+validation; they do not replace native model execution with payload parsing.
+
 The independent
 [Python oracle](../../../../formal/pon-nakamoto-v1/native_evaluation_quorum_oracle.py)
 recomputes17 retained cases and genuine Ed25519 conflicting envelopes without
@@ -186,6 +198,11 @@ The actual
 uses signed model/commit/reveal/appeal/conflict/release transactions,56 real PNW1
 blocks, SQLite reopen and a heavier57-block branch. It also checks false native
 scores, same-block conflict-before-release MVCC ordering and old-round replay.
+Both views assert the exact admitted tag23 transaction, remain reusable after
+reopen, and reject their prior generation after that reorg. A narrow native
+observer regression admits two different factor candidates in one real packet
+for each V3/V4 model profile and checks both views plus malformed, mismatched
+and duplicate intake refusal cases.
 The
 [V4 native executor regression](../../../../trillionnium/crates/trnm-pon-node/tests/model_composition_v4.rs)
 uses two actual release parents and complete empirical/composition replay,
@@ -208,6 +225,7 @@ model, Node and CLI targets; their presence does not grant a hosted-CI result.
 python3 -m unittest discover -s formal/pon-nakamoto-v1 -p test_native_evaluation_quorum_oracle.py -v
 python3 formal/pon-nakamoto-v1/native_evaluation_quorum_oracle.py
 cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-mvcc-fee --test evaluation_quorum_v2
+cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib factor_candidate_membership_is_exact_for_evidence_and_composition
 cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test model_evidence_v3
 cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test model_composition_v4
 cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test evaluation_quorum_cli
