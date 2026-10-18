@@ -1816,6 +1816,41 @@
       "path": "chain-390-measured-followup/results.json",
       "bytes": 1864,
       "sha256": "edca5d2b02d6285d29463dca4f2219c2af50c99b6db005e376ddcd1bc0c06db4"
+    },
+    {
+      "path": "chain-494-final-native/observations.tar.gz",
+      "bytes": 8861501,
+      "sha256": "aa5869a304be8dd4e3bb873df4e88a785642e65526160d7ef130b652e9524925"
+    },
+    {
+      "path": "chain-494-final-native/MANIFEST.json",
+      "bytes": 65127,
+      "sha256": "127d457b947d7463be1a236d2f70199a1756e36c761f3e31b6bfeb0c87033009"
+    },
+    {
+      "path": "chain-494-final-native/expanded-results/chain-494-authenticated-multiprocess/comparison-context.json",
+      "bytes": 457,
+      "sha256": "76e4a95c9c12e4976582007d5e217b8ca87190c9b2b1e345dab7ed0831c91ef4"
+    },
+    {
+      "path": "chain-494-final-native/expanded-results/chain-494-authenticated-multiprocess/results.json",
+      "bytes": 2467,
+      "sha256": "6fc55cab5155db7ef4abcaa3d829d90e390c623df6aeb2aed4a1390671c54b50"
+    },
+    {
+      "path": "chain-494-final-native/expanded-results/chain-494-correct-source-observers/results.json",
+      "bytes": 1207,
+      "sha256": "36d44998db2002e867017f2d71e17a9d81374be95d9fac29a710c71aa981b8e5"
+    },
+    {
+      "path": "chain-494-final-native/expanded-results/chain-494-final-static/results.json",
+      "bytes": 2505,
+      "sha256": "0fdd70ed315ac2d9ba42cca0c98587e7c6265f54b7e61bd1f5ce189188aeec4c"
+    },
+    {
+      "path": "chain-494-final-native/expanded-results/chain-a51-auth-comparison-v2/results.json",
+      "bytes": 980,
+      "sha256": "202cab4621e465d96bdec750aa24093ec00626d098b3427c3be47c968cf02d9f"
     }
   ],
   "additional_transfers": [
@@ -1830,6 +1865,26 @@
       "selected_files": 333,
       "selected_bytes": 29758583,
       "scope": "Only the selected Chain source390 raw files; source transport archives/chunks, publish authentication logs and Hepta directories excluded. Earlier file entries remain unchanged."
+    },
+    {
+      "kind": "compressed-original-native-archive",
+      "archive_path": "chain-494-final-native/observations.tar.gz",
+      "archive_bytes": 8861501,
+      "archive_sha256": "aa5869a304be8dd4e3bb873df4e88a785642e65526160d7ef130b652e9524925",
+      "member_manifest_path": "chain-494-final-native/MANIFEST.json",
+      "member_manifest_sha256": "127d457b947d7463be1a236d2f70199a1756e36c761f3e31b6bfeb0c87033009",
+      "regular_members": 310,
+      "uncompressed_member_bytes": 33198520,
+      "fully_expanded": false,
+      "expanded_small_json_members": [
+        "chain-494-authenticated-multiprocess/comparison-context.json",
+        "chain-494-authenticated-multiprocess/results.json",
+        "chain-494-correct-source-observers/results.json",
+        "chain-494-final-static/results.json",
+        "chain-a51-auth-comparison-v2/results.json"
+      ],
+      "expanded_copies_do_not_add_unique_native_observations": true,
+      "scope": "All original members retained, including failures, SQLite and the a51 candidate bundle. In-memory size/SHA validation; authorized cross-device streaming move with destination and source verification before unlink. No complete extraction or retained duplicate transport copy."
     }
   ]
 }

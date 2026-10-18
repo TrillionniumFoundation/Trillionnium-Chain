@@ -67,3 +67,14 @@ transactions, and the original public V3 baseline/attack failures. Its separate
 transaction IDs and preserves all six development metrics, including the three
 unmeasured model/future-utility/recovery-cost entries as null. The historical
 component report's null metrics remain unchanged.
+
+The subsequent [source494 final native archive](native-rounds/chain-494-final-native/SCOPE.md)
+records the executed authenticated-v1 comparison as a failure, including its
+no-attacker baseline. Actual honest Submit completion was 0/25, 0/15 and 0/15;
+all three phases confirmed 0/3 planned signed rounds. The separate format/lint
+and corrected source checks passed. Earlier source failures and both root
+harness invocation errors remain retained. Its compressed original files,
+member manifest and [derived observations](native-rounds/chain-494-final-native/derived-observations.json)
+have exact source identities; all 310 members are preserved, with only five small
+JSON members expanded. No production, independent-operator or WAN qualification
+follows from these development observations.
