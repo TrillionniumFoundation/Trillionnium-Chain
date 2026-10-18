@@ -1,5 +1,5 @@
 use anyhow::Result;
-use std::{process::Command as ProcCommand, thread, time::Duration};
+use std::{thread, time::Duration};
 
 use crate::{
     adapter_parse::parse_tx_hash,
@@ -16,16 +16,14 @@ pub(crate) fn run_adapter_with_retry(
     action_args: &[String],
     max_retries: u32,
     backoff_ms: u64,
+    timeout: Duration,
 ) -> Result<AdapterExecResult> {
     let (program, base_args) = parse_command_spec(adapter_cmd)?;
     let mut last_rc = 1;
     let mut last_tx_hash: Option<String> = None;
 
     for attempt in 0..=max_retries {
-        let out = ProcCommand::new(&program)
-            .args(&base_args)
-            .args(action_args)
-            .output()?;
+        let out = run_command_with_timeout(&program, &base_args, action_args, timeout)?;
         let rc = out.status.code().unwrap_or(1);
         let stdout = String::from_utf8_lossy(&out.stdout);
         let stderr = String::from_utf8_lossy(&out.stderr);
