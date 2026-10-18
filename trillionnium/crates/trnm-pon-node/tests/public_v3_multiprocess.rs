@@ -34,6 +34,45 @@ const ATTACKERS: usize = 24;
 const CALL_CAP: usize = 480;
 const ROUNDS: usize = 3;
 
+#[derive(Clone, Copy)]
+enum StateBackendChoice {
+    LegacyV2,
+    AuthenticatedV1,
+}
+impl StateBackendChoice {
+    fn from_environment() -> Self {
+        match std::env::var("TRNM_MULTIPROCESS_STATE_BACKEND") {
+            Ok(choice) => match choice.as_str() {
+                "legacy-v2" => Self::LegacyV2,
+                "authenticated-v1" => Self::AuthenticatedV1,
+                _ => panic!(
+                    "TRNM_MULTIPROCESS_STATE_BACKEND must be legacy-v2 or authenticated-v1"
+                ),
+            },
+            Err(std::env::VarError::NotPresent) => Self::LegacyV2,
+            Err(std::env::VarError::NotUnicode(_)) => {
+                panic!("TRNM_MULTIPROCESS_STATE_BACKEND must be Unicode")
+            }
+        }
+    }
+    fn label(self) -> &'static str {
+        match self {
+            Self::LegacyV2 => "legacy-v2",
+            Self::AuthenticatedV1 => "authenticated-v1",
+        }
+    }
+    fn open(self, path: &Path, settings: Settings) -> Node {
+        // The outer campaign and phase directories are create-only. Select the
+        // original opener once for every fresh Node; do not migrate or retry a
+        // failed authenticated namespace through the legacy implementation.
+        match self {
+            Self::LegacyV2 => Node::open(path, settings, 1),
+            Self::AuthenticatedV1 => Node::open_with_authenticated_state(path, settings, 1),
+        }
+        .unwrap()
+    }
+}
+
 struct Service {
     stop: Arc<AtomicBool>,
     worker: Option<thread::JoinHandle<Result<public_v3::PublicMetrics, String>>>,
@@ -534,13 +573,14 @@ fn phase(
     business: &[Packet],
     mode: Option<&str>,
     method: usize,
+    state_backend: StateBackendChoice,
 ) -> Value {
     fs::create_dir(path).unwrap();
     let whole_started = Instant::now();
     let whole_cpu = support::cpu();
     let setup_started = Instant::now();
     let setup_cpu = support::cpu();
-    let mut receiver = Node::open(&path.join("receiver"), settings.clone(), 1).unwrap();
+    let mut receiver = state_backend.open(&path.join("receiver"), settings.clone());
     replay(&mut receiver, seed);
     receiver
         .enable_local_mempool(PoolLimits {
@@ -552,7 +592,7 @@ fn phase(
             preview_miner: development_public(0).unwrap(),
         })
         .unwrap();
-    let mut verifier = Node::open(&path.join("independent-client"), settings.clone(), 1).unwrap();
+    let mut verifier = state_backend.open(&path.join("independent-client"), settings.clone());
     replay(&mut verifier, seed);
     let initial = receiver.read_active().unwrap();
     let owner = Arc::new(Mutex::new(receiver));
@@ -861,7 +901,7 @@ fn phase(
                     .iter()
                     .all(|row| row["receiver_hostile_work_rejected_during_round"] == true)
                 && attack_calls.iter().all(|row| row["status"] != "ok")));
-    json!({"mode":mode.unwrap_or("baseline"),"address":address.to_string(),"duration_seconds":WINDOW_SECONDS,
+    json!({"mode":mode.unwrap_or("baseline"),"state_backend":state_backend.label(),"address":address.to_string(),"duration_seconds":WINDOW_SECONDS,
         "attacker_processes_requested":if mode.is_some(){ATTACKERS}else{0},"attacker_processes_ready":ready_count,
         "depletion_at_ns":depletion_at,"depletion_meter":depletion_meter,"genuine_budget_depletion_observed":depletion_at.is_some(),"business_started_ns":business_started,
         "receiver_and_verifier_setup_cpu_ns":receiver_and_verifier_setup_cpu_ns,"receiver_and_verifier_setup_wall_ns":receiver_and_verifier_setup_wall_ns,
@@ -881,11 +921,12 @@ fn phase(
 #[test]
 #[ignore = "explicit finite 3x30 second separate-process local campaign and producer cost; see retained report"]
 fn separate_process_work_and_signed_confirmation_campaign() {
+    let state_backend = StateBackendChoice::from_environment();
     let output = PathBuf::from(
         std::env::var_os("TRNM_MULTIPROCESS_REPORT_DIR").expect("explicit new report directory"),
     );
     fs::create_dir(&output).unwrap();
-    let outcome = std::panic::catch_unwind(|| campaign(&output));
+    let outcome = std::panic::catch_unwind(|| campaign(&output, state_backend));
     if let Err(error) = outcome {
         let message = error
             .downcast_ref::<String>()
@@ -894,18 +935,18 @@ fn separate_process_work_and_signed_confirmation_campaign() {
             .unwrap_or_else(|| "non-string panic".to_owned());
         support::write_new(
             &output.join("campaign-failure.json"),
-            &json!({"error":message,"production_candidate":false,"release_ready":false,
+            &json!({"error":message,"state_backend":state_backend.label(),"production_candidate":false,"release_ready":false,
             "scope":"actual finite experiment failure; independently retained stage and child files remain evidence"}),
         );
         panic!("campaign failed; retained {}", output.display());
     }
 }
-fn campaign(output: &Path) {
+fn campaign(output: &Path, state_backend: StateBackendChoice) {
     eprintln!("P0 native campaign: honest 1024 signed transfers and 21 business blocks");
     let settings = support::settings();
     let preparation_started = Instant::now();
     let preparation_cpu = support::cpu();
-    let mut miner = Node::open(&output.join("honest-miner"), settings.clone(), 1).unwrap();
+    let mut miner = state_backend.open(&output.join("honest-miner"), settings.clone());
     let mut seed = Vec::new();
     // Real funded accounts and full signed execution, not injected SQL/state or
     // a cheap verifier fixture. All processes still use the original CPU budget.
@@ -955,7 +996,7 @@ fn campaign(output: &Path) {
         replay(&mut miner, std::slice::from_ref(&packet));
         business.push(packet);
     }
-    let preparation = json!({"cpu_ns":support::elapsed_cpu(preparation_cpu),"wall_ns":preparation_started.elapsed().as_nanos(),
+    let preparation = json!({"state_backend":state_backend.label(),"cpu_ns":support::elapsed_cpu(preparation_cpu),"wall_ns":preparation_started.elapsed().as_nanos(),
         "actual_signed_seed_transfers":1024,"seed_blocks":4,"business_blocks":business.len(),"rss":support::rss(),
         "seed":seed.iter().map(|p|json!({"id":hex::encode(p.id().unwrap()),"header":hex::encode(p.header.encode()),"transactions":p.transactions.len()})).collect::<Vec<_>>(),
         "business":business.iter().map(|p|json!({"id":hex::encode(p.id().unwrap()),"header":hex::encode(p.header.encode()),"transactions":p.transactions.iter().map(hex::encode).collect::<Vec<_>>()})).collect::<Vec<_>>()});
@@ -1072,9 +1113,9 @@ fn campaign(output: &Path) {
             mode.unwrap_or("baseline"),
             if mode.is_some() { ATTACKERS } else { 0 }
         );
-        let result=std::panic::catch_unwind(||phase(&output.join(mode.unwrap_or("baseline")),&settings,&seed,&business,mode,best))
+        let result=std::panic::catch_unwind(||phase(&output.join(mode.unwrap_or("baseline")),&settings,&seed,&business,mode,best,state_backend))
             .unwrap_or_else(|error|{let message=error.downcast_ref::<String>().cloned().or_else(||error.downcast_ref::<&str>().map(|s|s.to_string())).unwrap_or_else(||"non-string panic".to_owned());
-                json!({"mode":mode.unwrap_or("baseline"),"startup_or_campaign_error":message,"all_signed_rounds_confirmed_in_window":false,"genuine_budget_depletion_observed":false})});
+                json!({"mode":mode.unwrap_or("baseline"),"state_backend":state_backend.label(),"startup_or_campaign_error":message,"all_signed_rounds_confirmed_in_window":false,"genuine_budget_depletion_observed":false})});
         support::write_new(
             &output.join(format!("{}.json", mode.unwrap_or("baseline"))),
             &result,
@@ -1086,6 +1127,7 @@ fn campaign(output: &Path) {
             .iter()
             .all(|p| p["finite_phase_criteria_met"] == true);
     let report = json!({"schema":"native-public-v3-separate-process-campaign-v2","scope":"finite controlled TCP loopback; separate attacker OS processes, one host and controller; original two input modes/caps and service/client policy; fixed honest schedule; actual optional paid-credit flow, no WAN/independent operator claim",
+        "state_backend":state_backend.label(),
         "settings_profile":"native-public-evaluation-dev-v1 + continuity_v1 explicit maintenance","preparation":preparation,
         "economics":economics,"best_observed_cold_legal_method":work::METHODS[best],"selection_candidates_cpu_ns":candidates,
         "economics_complete":economics_complete,
