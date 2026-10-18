@@ -174,3 +174,46 @@ release/selection/final-use owner must independently recheck the current
 artifact/withdrawal/generation authority and an explicit confirmation policy before adopting
 a model.  That remaining owner decision must not be encoded by changing the provider-effect
 receipt or by treating a raw work delta as a final-use capability.
+
+## Exact task settlement binding for the ordinary upgrade coordinator
+
+The v3 packet observation additionally returns `accepted_task`, either null or this
+strictly local observation (all hashes are lowercase 32-byte hex):
+
+```json
+{
+  "schema_version": 1,
+  "task_id": "<task-instance-v3 identifier>",
+  "owner": "<task owner public key>",
+  "provider": "<task provider public key>",
+  "output_sha256": "<exact Hepta upgrade binding digest>",
+  "accept_tx_id": "<tx-id of the tag-5 transaction>",
+  "accepted_in_exact_packet": true,
+  "current_status": "settled"
+}
+```
+
+The existing tag-2 reservation, tag-4 provider receipt and tag-5 owner acceptance
+remain the execution contract. The coordinator binds its evaluated artifact, actual
+parent generation, selector/withdrawal context and intended release to the provider
+receipt's output bytes. It separately retains the exact packet SHA-256 in the
+existing TaskFlow effect intent. A transfer or another task's accepted block cannot
+satisfy that comparison merely because it has enough chainwork.
+
+The Node supplies this object only when the exact packet is retained, is on the
+current active ancestry, and contains exactly one tag-5 transaction. It verifies
+transaction-root membership and reads the actual active state through the existing
+KV/root/continuity owner. The acceptance sender, task and output must match the
+currently settled task; the provider comes from that same state. A final tip and
+generation check rejects a mixed view. Multi-accept blocks remain valid blocks and
+return null here because they do not identify one unambiguous upgrade. Missing or
+locally pruned task state also supplies no current proof.
+
+A heavier reorg removes this optional binding without deleting the original
+TaskFlow effect receipt. Acceptance of the same task in a different packet never
+restores the old packet's binding. Existing authority fields remain false: the
+observation grants neither confirmation, model quality, export permission nor
+FinalUse. The ordinary coordinator must still apply its explicit confirmation
+policy, original signed installation authority and actual next-generation model
+readback. The extra state verification is paid only for a single-accept packet;
+this increment makes no claim that confirmation/state scans have become sublinear.

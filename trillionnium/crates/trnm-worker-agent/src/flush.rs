@@ -1,5 +1,9 @@
 use anyhow::Result;
-use std::{fs, io::Read, path::{Path, PathBuf}};
+use std::{
+    fs,
+    io::Read,
+    path::{Path, PathBuf},
+};
 
 const MAX_SUBMIT_LOG_BYTES: u64 = 64 * 1024 * 1024;
 const MAX_SUBMISSION_RECORDS: usize = 100_000;
@@ -16,14 +20,28 @@ fn read_submission_log(path: &Path) -> Result<String> {
     }
     let file = options.open(path)?;
     let metadata = file.metadata()?;
-    anyhow::ensure!(metadata.is_file(), "submission replay requires a regular file");
-    anyhow::ensure!(metadata.len() <= MAX_SUBMIT_LOG_BYTES, "submission log exceeds bounded replay size");
+    anyhow::ensure!(
+        metadata.is_file(),
+        "submission replay requires a regular file"
+    );
+    anyhow::ensure!(
+        metadata.len() <= MAX_SUBMIT_LOG_BYTES,
+        "submission log exceeds bounded replay size"
+    );
     let mut bytes = Vec::new();
-    file.take(MAX_SUBMIT_LOG_BYTES + 1).read_to_end(&mut bytes)?;
-    anyhow::ensure!(bytes.len() as u64 <= MAX_SUBMIT_LOG_BYTES, "submission log exceeds bounded replay size");
+    file.take(MAX_SUBMIT_LOG_BYTES + 1)
+        .read_to_end(&mut bytes)?;
+    anyhow::ensure!(
+        bytes.len() as u64 <= MAX_SUBMIT_LOG_BYTES,
+        "submission log exceeds bounded replay size"
+    );
     let raw = String::from_utf8(bytes)?;
     anyhow::ensure!(
-        raw.lines().filter(|line| !line.trim().is_empty()).take(MAX_SUBMISSION_RECORDS + 1).count() <= MAX_SUBMISSION_RECORDS,
+        raw.lines()
+            .filter(|line| !line.trim().is_empty())
+            .take(MAX_SUBMISSION_RECORDS + 1)
+            .count()
+            <= MAX_SUBMISSION_RECORDS,
         "submission log exceeds bounded record count"
     );
     Ok(raw)
@@ -32,8 +50,7 @@ fn read_submission_log(path: &Path) -> Result<String> {
 use crate::{
     flush_submission::{process_submission_record, FlushRecordOutcome},
     load_acked, now_ms, resolve_path_arg_from_env, resolve_tx_adapter_timeout_ms,
-    resolve_tx_retry_policy, SubmissionRecord,
-    WORKER_EVENT_LOG_ENV, WORKER_PROGRESS_LOG_ENV,
+    resolve_tx_retry_policy, SubmissionRecord, WORKER_EVENT_LOG_ENV, WORKER_PROGRESS_LOG_ENV,
 };
 
 #[allow(clippy::too_many_arguments)]

@@ -4,7 +4,6 @@ pub(crate) mod authenticated_state;
 pub mod capacity_observation;
 pub mod evaluation_observation;
 pub mod evaluation_round_observation;
-mod task_observation;
 mod historical_commitment;
 #[cfg(test)]
 mod historical_commitment_tests;
@@ -15,6 +14,7 @@ mod operator_continuous_owner;
 mod operator_mining_owner;
 #[cfg(test)]
 pub(crate) mod public_reader;
+mod task_observation;
 use crate::{
     consensus::{self, Work},
     development_public, ensure, maintenance, sequence_root, Error, Packet, Result, Settings,

@@ -96,7 +96,7 @@ These exact functions contain executable assertions. The registry only checks bi
 
 ## Worker command termination and wait ownership
 
-The real Worker LLM command collector in
+The real Worker LLM and transaction command collector in
 [`command_runtime_exec.rs`](../../trillionnium/crates/trnm-worker-agent/src/command_runtime_exec.rs)
 retains its requested command deadline, fair nonblocking stdout/stderr drains and
 8 MiB aggregate output bound. Cleanup has one additional absolute 1-second budget,
@@ -112,9 +112,28 @@ task requires another complete scan. The direct leader is reaped last, preservin
 its actual exit status. Missing proc/pidfd support, changed identity or incomplete
 cleanup refuses; expected descendant SIGKILL never changes a command refusal into success.
 
-Permanent adoption affects the Worker process. The separate transaction adapter's
-`ProcCommand::output` path retains its existing contract and is not certified by this
-bounded LLM collector. On Darwin the existing group-termination/direct-leader-wait
+Permanent adoption affects the Worker process. The compiled `FlushSubmissions`
+commit and reveal calls now use the same bounded collector. Each transaction
+attempt receives `TRNM_TX_ADAPTER_TIMEOUT_MS` (default 10,000 ms, minimum 1 ms),
+resolved once for the flush. A timeout or output-collection error stops the current
+flush with an uncertain result; it cannot authorize another attempt, a reveal after
+an uncertain commit, or an accepted acknowledgement. Deterministic adapter exit
+codes retain their existing retry and terminal-receipt meanings. The original
+private journal remains available for owner reconciliation.
+
+The replay reader opens a regular file without waiting for a FIFO writer, checks
+the opened descriptor, and reads at most 64 MiB plus one detection byte. It verifies
+the 100,000 nonblank-record ceiling before any adapter effect. Growth after the
+metadata read cannot turn this into an unbounded read. These are local replay
+resource limits, not a chain transaction validity or permission change.
+
+Integration of PR326 also corrects its source wiring: its initial retry-helper edits
+were in files not included by the compiled `main.rs` module graph. The effective
+bounded runner is now in that existing compiled owner, and
+[`flush_bounded_runtime.rs`](../../trillionnium/crates/trnm-worker-agent/tests/flush_bounded_runtime.rs)
+invokes the actual worker binary for both transaction phases, aggregate output
+overflow, replay limits and FIFO rejection. Uncompiled helper tests are not evidence
+for this call path. On Darwin the existing group-termination/direct-leader-wait
 contract remains; it does not assert Linux descendant adoption/reaping. Deliberate
 credential/group escapes and process/host failure are outside this ordinary
 same-group cleanup guarantee. This is not sandboxing or public service qualification.
