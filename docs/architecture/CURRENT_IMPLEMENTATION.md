@@ -55,6 +55,7 @@ Local transport, research and offline rows do not alter the consensus revision.
 | continuity-v1 | 12 | [CONTINUITY_V1](../../docs/protocol/pon-nakamoto-v1/details/CONTINUITY_V1.md) | [run](../../trillionnium/crates/trnm-pon-node/src/main.rs) |
 | model-evidence-v3 | 13 | [NATIVE_MODEL_EVIDENCE_V3](../../docs/protocol/pon-nakamoto-v1/details/NATIVE_MODEL_EVIDENCE_V3.md) | [run](../../trillionnium/crates/trnm-pon-node/src/main.rs) |
 | model-composition-v4 | 14 | [NATIVE_MODEL_COMPOSITION_V4](../../docs/protocol/pon-nakamoto-v1/details/NATIVE_MODEL_COMPOSITION_V4.md) | [run](../../trillionnium/crates/trnm-pon-node/src/main.rs) |
+| native-evaluation-quorum-v2 | 15 | [NATIVE_EVALUATION_QUORUM_V2](../../docs/protocol/pon-nakamoto-v1/details/NATIVE_EVALUATION_QUORUM_V2.md) | [run](../../trillionnium/crates/trnm-pon-node/src/main.rs) |
 | w1-verifier-equivalence | local/research | [W1_IMPLEMENTATION_COMPARISON](../../docs/protocol/pon-nakamoto-v1/details/W1_IMPLEMENTATION_COMPARISON.md) | [verify](../../trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs) |
 | history-state-resource-bounds | local/research | [HISTORY_STATE_RESOURCE_BOUNDS_V1](../../docs/protocol/pon-nakamoto-v1/details/HISTORY_STATE_RESOURCE_BOUNDS_V1.md) | [Node::confirmations_with_progress](../../trillionnium/crates/trnm-pon-node/src/store.rs) |
 | internal-error-identity | local/research | [INTERNAL_ERROR_IDENTITY](../../docs/protocol/pon-nakamoto-v1/details/INTERNAL_ERROR_IDENTITY.md) | [Error::requires_owner_stop](../../trillionnium/crates/trnm-pon-node/src/error.rs) |

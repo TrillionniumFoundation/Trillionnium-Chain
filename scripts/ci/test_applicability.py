@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Counterexamples to stale profiles and promoted navigation/CI evidence."""
 import ast
+from copy import deepcopy
 import json
 import shutil
 import tempfile
@@ -8,9 +9,49 @@ import unittest
 from pathlib import Path
 from check_applicability import (
     ROOT, REGISTRY, NATIVE_STORAGE_ENTRY, NATIVE_STORAGE_PROFILE, NATIVE_STORAGE_TESTS,
+    EVALUATION_QUORUM_PROFILE, EVALUATION_QUORUM_TESTS, validate_evaluation_quorum_profile,
     validate, markdown, profile_table,
 )
 from report_module_evidence import check_test_selector
+
+
+class EvaluationQuorumApplicabilityTests(unittest.TestCase):
+    """Exercise new profile identity without copying historical receipt trees."""
+
+    def setUp(self):
+        profiles = json.loads((ROOT / REGISTRY).read_text())['profiles']
+        self.profile = next(row for row in profiles if row['id'] == EVALUATION_QUORUM_PROFILE)
+
+    def test_current_quorum_profile_binds_real_native_and_independent_tests(self):
+        validate_evaluation_quorum_profile(self.profile)
+        self.assertEqual(self.profile['evidence_class'], 'source-binding')
+        self.assertIsNone(self.profile['receipt'])
+        for path, names in EVALUATION_QUORUM_TESTS.items():
+            for name in names:
+                check_test_selector(ROOT, path + '::' + name)
+
+    def test_quorum_profile_cannot_reuse_legacy_configuration_or_claim_another_owner(self):
+        for field, value in [
+            ('configuration', 'config/pon/public-evaluation-native-v1.json'),
+            ('consensus_revision', 6), ('revision_pointer', 'consensus_revision'),
+            ('entrypoint', {'path': 'trillionnium/crates/trnm-mvcc-fee/src/public_evaluation.rs',
+                            'symbol': 'freeze'}),
+            ('document', 'docs/protocol/pon-nakamoto-v1/details/PUBLIC_EVALUATION_LIFECYCLE.md'),
+            ('modules', ['M11']),
+        ]:
+            with self.subTest(field=field):
+                profile = deepcopy(self.profile)
+                profile[field] = value
+                with self.assertRaises(ValueError):
+                    validate_evaluation_quorum_profile(profile)
+
+    def test_quorum_profile_cannot_drop_any_native_or_reference_control(self):
+        for selector in self.profile['tests']:
+            with self.subTest(selector=selector):
+                profile = deepcopy(self.profile)
+                profile['tests'].remove(selector)
+                with self.assertRaisesRegex(ValueError, 'independent oracle controls required'):
+                    validate_evaluation_quorum_profile(profile)
 
 
 class ApplicabilityTests(unittest.TestCase):
