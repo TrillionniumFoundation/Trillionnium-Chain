@@ -1276,3 +1276,12 @@ and precise native-versus-Ledger scope are in the existing
 Exact-source and prospective-merge CI must validate this change; source fixes
 do not replace a measured hostile public-service campaign or the unresolved
 work-hardness and independently governed model-evolution qualifications.
+
+The first CI run for this encoding-precheck source stopped before native recent-
+batch tests because its reviewed store blob guard still named the preceding
+implementation. The successor pins the actual reviewed `store.rs` blob
+`663f57cd025637cbbaa50200d7179448a94d6ba6`; all nine file guards, ordered source/
+merge checks and native test requirements remain enforced. The original
+[failed run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/39102102704)
+is retained. Its missing native logs cannot qualify this successor; the new
+exact-source and actual-merge runs must execute the original acceptance suite.
