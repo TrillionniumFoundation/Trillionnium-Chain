@@ -23,12 +23,19 @@ fn real_shared64_unpaid_pressure_releases_slots_protects_paid_body_and_confirms_
     let transaction_id = hash(b"tx-id", &[&transaction]);
     let mut packets = Vec::new();
     for index in 0..=settings.limit("confirmation_depth").unwrap() {
+        let parent = producer.active().unwrap().0;
         let packet = producer.make(
-            producer.active().unwrap().0,
+            parent,
             if index == 0 { vec![transaction.clone()] } else { vec![] },
             crate::development_public(0).unwrap(), clock - 50 + index, 4096,
         ).unwrap();
-        producer.admit(&packet, clock).unwrap();
+        assert_eq!(packet.header.parent, parent);
+        assert_eq!(packet.header.height, index + 1);
+        let admitted = producer.admit(&packet, clock).unwrap();
+        // Admission retains a valid block without selecting the active chain.
+        // Advance through the real fork-choice owner so every next packet is a
+        // descendant of the business block, rather than another genesis child.
+        assert_eq!(producer.activate_observed(admitted, clock).unwrap(), admitted);
         packets.push(packet);
     }
     let receiver = Node::open(&directory.path().join("receiver"), settings.clone(), 1).unwrap();
@@ -125,6 +132,11 @@ fn real_shared64_unpaid_pressure_releases_slots_protects_paid_body_and_confirms_
             history_calls += 1;
             assert!(history_calls <= packets.len());
         }
+        assert_eq!(verifier.active().unwrap().0, tip);
+        assert_eq!(
+            verifier.packet(packets[0].id().unwrap()).unwrap().encode().unwrap(),
+            packets[0].encode().unwrap(),
+        );
         let confirmation = verifier.confirmation(transaction_id, packets[0].id().unwrap(), clock).unwrap();
         assert!(confirmation.confirmed);
         assert!(!confirmation.finalized && !confirmation.execution_authority);
