@@ -385,7 +385,11 @@ fn claim(
 }
 fn attestations(state: &State, c: &Config, ids: &[Hash], tag: u8) -> Vec<Vec<u8>> {
     let mut txs = Vec::new();
-    let evaluators = if evaluation::quorum_enabled(c) { [0, 1, 3] } else { [0, 1, 2] };
+    let evaluators = if evaluation::quorum_enabled(c) {
+        [0, 1, 3]
+    } else {
+        [0, 1, 2]
+    };
     for who in evaluators {
         let mut next = nonce(state, who);
         for &cid in ids {
@@ -400,11 +404,21 @@ fn attestations(state: &State, c: &Config, ids: &[Hash], tag: u8) -> Vec<Vec<u8>
             let mut payload = cid.to_vec();
             payload.extend(round);
             if tag == 14 {
-                payload.extend(evaluation::reveal_commitment_for(
-                    &object(state, cid)["public_evaluation"],
-                    &evaluation::Reveal { round, candidate:cid, evaluator:development_public(who).unwrap(),
-                        plan:c.plan, evidence:digest, score, salt },
-                ).unwrap());
+                payload.extend(
+                    evaluation::reveal_commitment_for(
+                        &object(state, cid)["public_evaluation"],
+                        &evaluation::Reveal {
+                            round,
+                            candidate: cid,
+                            evaluator: development_public(who).unwrap(),
+                            plan: c.plan,
+                            evidence: digest,
+                            score,
+                            salt,
+                        },
+                    )
+                    .unwrap(),
+                );
             } else {
                 assert_eq!(tag, 15);
                 payload.extend(c.plan);
@@ -468,13 +482,7 @@ fn step(state: &State, c: &Config, height: u64, txs: &[Vec<u8>]) -> State {
 
 /// Continuity requires every intervening maturity/reward transition. Execute
 /// them through M06; no artificial reward rows or sparse-height parent states.
-fn advance_continuity(
-    state: &State,
-    c: &Config,
-    from: u64,
-    to: u64,
-    txs: &[Vec<u8>],
-) -> State {
+fn advance_continuity(state: &State, c: &Config, from: u64, to: u64, txs: &[Vec<u8>]) -> State {
     assert!(continuity_v1::enabled(c) && from < to);
     assert!(to < c.params["subsidy_halving_interval"].as_u64().unwrap());
     let expected_issued = state["meta:issued"].as_u64().unwrap()
@@ -483,12 +491,15 @@ fn advance_continuity(
     let mut next = state.clone();
     for height in from + 1..=to {
         next = step(&next, c, height, if height == to { txs } else { &[] });
-        let mut actual = next.range("reward:".to_owned()..)
+        let mut actual = next
+            .range("reward:".to_owned()..)
             .take_while(|(key, _)| key.starts_with("reward:"))
-            .map(|(_, value)| value["maturity"].as_u64().unwrap()).collect::<Vec<_>>();
+            .map(|(_, value)| value["maturity"].as_u64().unwrap())
+            .collect::<Vec<_>>();
         actual.sort_unstable();
         let expected = (height.saturating_sub(maturity) + 1..=height)
-            .map(|mined| mined + maturity).collect::<Vec<_>>();
+            .map(|mined| mined + maturity)
+            .collect::<Vec<_>>();
         assert_eq!(actual, expected, "complete native reward queue at {height}");
     }
     assert_eq!(next["meta:issued"], expected_issued);
@@ -497,10 +508,19 @@ fn advance_continuity(
 
 #[test]
 fn quorum_profile_replays_two_composition_generations_and_zero_score_components() {
-    let c = Config::installed_with_model_profiles(evaluation::QUORUM_PROFILE,
-        continuity_v1::PROFILE, composition::PROFILE).unwrap();
-    let settings = Settings::development_with_model_profiles(None, evaluation::QUORUM_PROFILE,
-        continuity_v1::PROFILE, composition::PROFILE).unwrap();
+    let c = Config::installed_with_model_profiles(
+        evaluation::QUORUM_PROFILE,
+        continuity_v1::PROFILE,
+        composition::PROFILE,
+    )
+    .unwrap();
+    let settings = Settings::development_with_model_profiles(
+        None,
+        evaluation::QUORUM_PROFILE,
+        continuity_v1::PROFILE,
+        composition::PROFILE,
+    )
+    .unwrap();
     let directory = tempfile::tempdir().unwrap();
     let node = Node::open(directory.path(), settings, 4).unwrap();
     let initial = node.read_active().unwrap().2;
@@ -508,11 +528,20 @@ fn quorum_profile_replays_two_composition_generations_and_zero_score_components(
     let b = trained(16, 10);
     let parent = add(&a, &b);
     let target = add(&trained(0, 25), &trained(1, 25));
-    assert_eq!([correct(&a), correct(&b), correct(&parent), correct(&target)], [21, 21, 24, 25]);
+    assert_eq!(
+        [correct(&a), correct(&b), correct(&parent), correct(&target)],
+        [21, 21, 24, 25]
+    );
     let first = Fixture::new(&initial, &c, 0, &[a, b], &parent, &[120_000, 120_000]);
     let mut state = step(&initial, &c, 1, &first.submissions(&initial, &c));
     for (from, height, tag) in [(1, 16, 14), (16, 32, 15)] {
-        state = advance_continuity(&state, &c, from, height, &attestations(&state, &c, &first.ids(), tag));
+        state = advance_continuity(
+            &state,
+            &c,
+            from,
+            height,
+            &attestations(&state, &c, &first.ids(), tag),
+        );
     }
     state = advance_continuity(&state, &c, 32, 48, &[]);
     for cid in first.ids() {
@@ -536,15 +565,34 @@ fn quorum_profile_replays_two_composition_generations_and_zero_score_components(
     z[FEATURES - 1] = -32;
     let absolute = [add(&parent, &z), subtract(&target, &z)];
     assert_eq!([correct(&absolute[0]), correct(&absolute[1])], [23, 23]);
-    let deltas = absolute.iter().map(|model| subtract(model, &parent)).collect::<Vec<_>>();
-    let second = Fixture::new(&state, &c, 1, &deltas, &subtract(&target, &parent), &[80_000, 80_000]);
+    let deltas = absolute
+        .iter()
+        .map(|model| subtract(model, &parent))
+        .collect::<Vec<_>>();
+    let second = Fixture::new(
+        &state,
+        &c,
+        1,
+        &deltas,
+        &subtract(&target, &parent),
+        &[80_000, 80_000],
+    );
     assert_eq!(second.bundle.parent_ref, first_release);
     state = step(&state, &c, 129, &second.submissions(&state, &c));
     for component in &second.components {
-        assert_eq!(composition::evidence(&state, component.contribution_id).unwrap()["score"], 0);
+        assert_eq!(
+            composition::evidence(&state, component.contribution_id).unwrap()["score"],
+            0
+        );
     }
     for (from, height, tag) in [(129, 144, 14), (144, 160, 15)] {
-        state = advance_continuity(&state, &c, from, height, &attestations(&state, &c, &second.ids(), tag));
+        state = advance_continuity(
+            &state,
+            &c,
+            from,
+            height,
+            &attestations(&state, &c, &second.ids(), tag),
+        );
     }
     state = advance_continuity(&state, &c, 160, 176, &[]);
     let cid = second.components[0].contribution_id;
@@ -557,14 +605,31 @@ fn quorum_profile_replays_two_composition_generations_and_zero_score_components(
     payload.extend(evaluation::closed_digest(&e).unwrap());
     payload.extend([1; 32]);
     payload.extend([2; 32]);
-    state = step(&state, &c, 177, &[signed(&c, 0, nonce(&state, 0), 17, payload)]);
+    state = step(
+        &state,
+        &c,
+        177,
+        &[signed(&c, 0, nonce(&state, 0), 17, payload)],
+    );
     let (second_release, tx) = second.release(&state, &c, 1000);
     state = advance_continuity(&state, &c, 177, 184, &[tx]);
     assert_eq!(state["model:current"], hex::encode(second_release));
     assert_ne!(first_release, second_release);
-    assert_eq!(stored_model(&state, &c, second.bundle.candidate_artifact), full_model(&c, &target));
-    assert_eq!(composition::evidence(&state, second.bundle.contribution_id).unwrap()["candidate_correct"], 25);
-    state = advance_continuity(&state, &c, 184, 204, &second.claims(&state, &c, second_release));
+    assert_eq!(
+        stored_model(&state, &c, second.bundle.candidate_artifact),
+        full_model(&c, &target)
+    );
+    assert_eq!(
+        composition::evidence(&state, second.bundle.contribution_id).unwrap()["candidate_correct"],
+        25
+    );
+    state = advance_continuity(
+        &state,
+        &c,
+        184,
+        204,
+        &second.claims(&state, &c, second_release),
+    );
     let paid = &state[&format!("release:{}", hex::encode(second_release))];
     assert_eq!(paid["remaining"], 0);
     for allocation in &second.allocations {
