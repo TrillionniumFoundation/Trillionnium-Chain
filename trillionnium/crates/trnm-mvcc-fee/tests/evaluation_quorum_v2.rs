@@ -115,6 +115,14 @@ fn independent_reference_vectors_match_native_domains_counts_and_records() {
         if evaluation::quorum_enabled(&cfg) {
             assert_eq!(evaluation::quorum_v2::adoption_allowed(&e, start + 56, true, &current).is_ok(),
                 row["expected_component_adoption"].as_bool().unwrap(), "{name}: component");
+            if row["expected_adoption"] == true {
+                for field in ["quorum", "candidate"] {
+                    let mut substituted = e.clone();
+                    substituted["closed"][field] = if field == "quorum" { json!(1) } else { json!(hex::encode([91; 32])) };
+                    assert_eq!(evaluation::adoption_allowed_with_disqualified(&substituted, start + 56, &current),
+                        Err("PUBLIC_EVAL_ADOPTION"), "{name}: changed closure {field}");
+                }
+            }
         }
         let rows = evaluation::record_rows(candidate, &e).unwrap();
         assert_eq!(hex::encode(hash(b"native-evaluation-test-rows-v2", &[&serde_json::to_vec(&rows).unwrap()])),
@@ -167,6 +175,17 @@ fn fresh_profile_refuses_attested_models_and_cross_version_replay() {
     let mut unknown = compact.clone();
     unknown["storage_revision"] = json!(4);
     assert!(evaluation::hydrate(&unknown, candidate, &BTreeMap::new()).is_err());
+    let mut rerostered = evaluation::hydrate(&compact, candidate, &BTreeMap::new()).unwrap();
+    let mut roster: BTreeSet<_> = rerostered["plan"]["roster"].as_array().unwrap().iter()
+        .map(|key| key.as_str().unwrap().to_owned()).collect();
+    roster.insert(hex::encode(public(4)));
+    rerostered["plan"]["roster"] = json!(roster);
+    rerostered["plan"]["quorum"] = json!(3);
+    // The separately committed generation remains valid; the full frozen
+    // round must still reject a well-formed replacement roster/threshold.
+    evaluation::quorum_v2::validate_plan(&rerostered["plan"]).unwrap();
+    assert_eq!(evaluation::close(&mut rerostered, 48), Err("PUBLIC_EVAL_ROUND"));
+    assert!(rerostered["closed"].is_null());
     let mut reparented = compact;
     reparented["plan"]["parent"] = json!(hex::encode([19; 32]));
     assert_eq!(evaluation::round(&reparented), Err("PUBLIC_EVAL_GENERATION"));

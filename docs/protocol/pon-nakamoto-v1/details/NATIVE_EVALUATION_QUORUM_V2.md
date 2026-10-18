@@ -165,7 +165,10 @@ dispatches to the explicitly versioned
 [V2 count and generation implementation](../../../../trillionnium/crates/trnm-mvcc-fee/src/public_evaluation/quorum_v2.rs).
 Actual candidate, commit/reveal, closure, composition and release paths use it;
 the CLI selector and both durable evaluation observation APIs select the same
-domains.
+domains. Closure and adoption recompute the complete frozen round commitment;
+adoption also checks the retained closure's candidate and quorum against the
+frozen plan. A well-formed replacement roster cannot reuse an earlier round
+commitment even when its generation subcontext is unchanged.
 
 The independent
 [Python oracle](../../../../formal/pon-nakamoto-v1/native_evaluation_quorum_oracle.py)

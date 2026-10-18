@@ -142,7 +142,9 @@ struct Count {
 }
 
 fn count(evaluation: &Value, current_disqualified: &BTreeSet<String>) -> Result<Count> {
-    validate_plan(&evaluation["plan"])?;
+    // Bind the complete frozen roster and threshold as well as the generation
+    // context before closing or consuming a retained evaluation.
+    super::round(evaluation)?;
     let roster = keys(&evaluation["plan"]["roster"])?;
     let mut excluded = disqualified(evaluation)?;
     excluded.extend(roster.intersection(current_disqualified).cloned());
@@ -206,6 +208,8 @@ pub fn adoption_allowed(evaluation: &Value, height: u64, allow_zero: bool, curre
             && evaluation["closed"]["schema"] == "pon-native-closed-evaluation-v3"
             && evaluation["closed"]["status"] == "complete-scored"
             && evaluation["closed"]["round"] == evaluation["round"]
+            && evaluation["closed"]["candidate"] == evaluation["plan"]["candidate"]
+            && evaluation["closed"]["quorum"] == evaluation["plan"]["quorum"]
             && evaluation["closed"]["generation_context"] == evaluation["plan"]["generation_context"],
         "PUBLIC_EVAL_ADOPTION",
     )?;
