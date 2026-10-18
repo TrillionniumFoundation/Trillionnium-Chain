@@ -1,6 +1,9 @@
 use anyhow::Result;
 use std::{fs, path::PathBuf};
 
+const MAX_SUBMIT_LOG_BYTES: u64 = 64 * 1024 * 1024;
+const MAX_SUBMISSION_RECORDS: usize = 100_000;
+
 use crate::{
     flush_submission::{process_submission_record, FlushRecordOutcome},
     load_acked, now_ms, resolve_path_arg_from_env, resolve_tx_adapter_timeout_ms,
@@ -37,12 +40,24 @@ pub(crate) fn handle_flush_submissions(
         println!("[agent] no submit log found: {}", submit_log.display());
         return Ok(());
     }
+    let size = fs::metadata(&submit_log)?.len();
+    anyhow::ensure!(
+        size <= MAX_SUBMIT_LOG_BYTES,
+        "submission log exceeds bounded replay size: {} bytes > {}",
+        size,
+        MAX_SUBMIT_LOG_BYTES
+    );
     let raw = fs::read_to_string(&submit_log)?;
     let mut n = 0usize;
     let mut skipped = 0usize;
     let mut acked = load_acked(&ack_log);
     let run_id = format!("flush-{}-{}", now_ms(), std::process::id());
     for line in raw.lines().filter(|l| !l.trim().is_empty()) {
+        anyhow::ensure!(
+            n < MAX_SUBMISSION_RECORDS,
+            "submission log exceeds bounded record count: {}",
+            MAX_SUBMISSION_RECORDS
+        );
         let rec: SubmissionRecord = serde_json::from_str(line)?;
         n += 1;
 
