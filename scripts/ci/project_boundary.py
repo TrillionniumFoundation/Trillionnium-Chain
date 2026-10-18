@@ -16,7 +16,7 @@ def check(mode):
     require(source('PROJECT_ID',mode).strip()=='trillionnium-chain','project id mismatch')
     require(p['canonical_repository']=='TrillionniumFoundation/Trillionnium-Chain','repository mismatch')
     origin=git('remote','get-url','origin')
-    require(origin in {'https://github.com/TrillionniumFoundation/Trillionnium-Chain.git','git@github.com:TrillionniumFoundation/Trillionnium-Chain.git'},'origin mismatch')
+    require(origin in {'https://github.com/TrillionniumFoundation/Trillionnium-Chain','https://github.com/TrillionniumFoundation/Trillionnium-Chain.git','git@github.com:TrillionniumFoundation/Trillionnium-Chain.git'},'origin mismatch')
     require(p['lane']=='chain-consensus','lane mismatch')
     require(p['consensus']['production_consensus_activation'] is False,'activation changed')
     require(p['consensus']['development_target']=='pon-nakamoto-v1','target mismatch')
