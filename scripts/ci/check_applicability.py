@@ -13,6 +13,28 @@ REGISTRY = 'config/pon/applicability-v1.json'
 CLASSES = {'source-binding', 'local-execution', 'historical-receipt',
            'hosted-head-check', 'prospective-merge-check', 'external-acceptance'}
 NATIVE_STORAGE_PROFILE = 'native-authenticated-storage-v1'
+EVALUATION_QUORUM_PROFILE = 'native-evaluation-quorum-v2'
+EVALUATION_QUORUM_TESTS = {
+    'trillionnium/crates/trnm-mvcc-fee/tests/evaluation_quorum_v2.rs': {
+        'independent_reference_vectors_match_native_domains_counts_and_records',
+        'fresh_profile_refuses_attested_models_and_cross_version_replay',
+    },
+    'trillionnium/crates/trnm-pon-node/tests/model_evidence_v3.rs': {
+        'explicit_quorum_native_release_survives_one_absence_and_hash_appeal_with_durable_reorg',
+    },
+    'trillionnium/crates/trnm-pon-node/tests/model_composition_v4.rs': {
+        'quorum_profile_replays_two_composition_generations_and_zero_score_components',
+    },
+    'trillionnium/crates/trnm-pon-node/tests/evaluation_quorum_cli.rs': {
+        'explicit_cli_profile_has_distinct_context_and_cannot_reopen_a_legacy_store',
+    },
+    'formal/pon-nakamoto-v1/test_native_evaluation_quorum_oracle.py': {
+        'NativeEvaluationQuorumReferenceTests.test_exact_retained_vectors_recompute_without_native_output',
+        'NativeEvaluationQuorumReferenceTests.test_one_missing_is_tolerated_but_never_becomes_a_vote',
+        'NativeEvaluationQuorumReferenceTests.test_plan_commits_disqualification_without_shrinking_threshold',
+        'NativeEvaluationQuorumReferenceTests.test_actual_conflicts_recount_and_hash_appeal_is_record_only',
+    },
+}
 NATIVE_STORAGE_ENTRY = {
     'path': 'trillionnium/crates/trnm-pon-node/src/store.rs',
     'symbol': 'Node::open_with_authenticated_state',
@@ -44,6 +66,25 @@ NATIVE_STORAGE_TESTS = {
         'SignedApplicationControls.test_native_compact_query_is_independently_checked_when_present',
     },
 }
+
+
+def validate_evaluation_quorum_profile(profile: dict) -> None:
+    """Preserve explicit native-profile selection and exact executable bindings."""
+    require(profile['configuration'] == 'config/pon/public-evaluation-quorum-v2.json' and
+            profile['revision_pointer'] == 'genesis_overrides.consensus_revision' and
+            profile['consensus_revision'] == 15,
+            'evaluation quorum requires its explicit revision15 configuration')
+    require(profile['entrypoint'] == {
+        'path': 'trillionnium/crates/trnm-pon-node/src/main.rs', 'symbol': 'run'},
+        'evaluation quorum requires the actual profile-selecting Node CLI')
+    require(profile['document'] ==
+            'docs/protocol/pon-nakamoto-v1/details/NATIVE_EVALUATION_QUORUM_V2.md' and
+            set(profile['modules']) == {'M06', 'M10', 'M11', 'M15'},
+            'evaluation quorum native replay and release contract identity')
+    required = {path + '::' + symbol for path, symbols in EVALUATION_QUORUM_TESTS.items()
+                for symbol in symbols}
+    require(required <= set(profile['tests']),
+            'evaluation quorum native, legacy, Node, CLI and independent oracle controls required')
 
 
 def validate_native_storage_profile(profile: dict) -> None:
@@ -106,13 +147,16 @@ def validate(root: Path = ROOT) -> dict:
             'protected-hello-handoff', 'integer-factor-v2', 'public-intake-v3-r9',
             'continuity-v1', 'model-evidence-v3', 'w1-verifier-equivalence',
             'history-state-resource-bounds', 'internal-error-identity', 'model-composition-v4',
-            'account-archive-research-v1', 'model-window-history-v1', NATIVE_STORAGE_PROFILE},
+            'account-archive-research-v1', 'model-window-history-v1', NATIVE_STORAGE_PROFILE,
+            EVALUATION_QUORUM_PROFILE},
             'applicability profile coverage')
     for profile in profiles:
         require(profile['modules'] and set(profile['modules']) <= set(maturity), 'profile modules')
         require(len(profile['modules']) == len(set(profile['modules'])), 'duplicate profile module')
         if profile['id'] == NATIVE_STORAGE_PROFILE:
             validate_native_storage_profile(profile)
+        if profile['id'] == EVALUATION_QUORUM_PROFILE:
+            validate_evaluation_quorum_profile(profile)
         safe(root, profile['document'])
         check_symbol(root, profile['entrypoint'])
         require(profile['tests'], 'missing profile tests')

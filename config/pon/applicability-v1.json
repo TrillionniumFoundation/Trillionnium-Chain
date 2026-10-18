@@ -333,6 +333,36 @@
       "receipt": null
     },
     {
+      "id": "native-evaluation-quorum-v2",
+      "modules": [
+        "M06",
+        "M10",
+        "M11",
+        "M15"
+      ],
+      "configuration": "config/pon/public-evaluation-quorum-v2.json",
+      "revision_pointer": "genesis_overrides.consensus_revision",
+      "consensus_revision": 15,
+      "document": "docs/protocol/pon-nakamoto-v1/details/NATIVE_EVALUATION_QUORUM_V2.md",
+      "entrypoint": {
+        "path": "trillionnium/crates/trnm-pon-node/src/main.rs",
+        "symbol": "run"
+      },
+      "tests": [
+        "trillionnium/crates/trnm-mvcc-fee/tests/evaluation_quorum_v2.rs::independent_reference_vectors_match_native_domains_counts_and_records",
+        "trillionnium/crates/trnm-mvcc-fee/tests/evaluation_quorum_v2.rs::fresh_profile_refuses_attested_models_and_cross_version_replay",
+        "trillionnium/crates/trnm-pon-node/tests/model_evidence_v3.rs::explicit_quorum_native_release_survives_one_absence_and_hash_appeal_with_durable_reorg",
+        "trillionnium/crates/trnm-pon-node/tests/model_composition_v4.rs::quorum_profile_replays_two_composition_generations_and_zero_score_components",
+        "trillionnium/crates/trnm-pon-node/tests/evaluation_quorum_cli.rs::explicit_cli_profile_has_distinct_context_and_cannot_reopen_a_legacy_store",
+        "formal/pon-nakamoto-v1/test_native_evaluation_quorum_oracle.py::NativeEvaluationQuorumReferenceTests.test_exact_retained_vectors_recompute_without_native_output",
+        "formal/pon-nakamoto-v1/test_native_evaluation_quorum_oracle.py::NativeEvaluationQuorumReferenceTests.test_one_missing_is_tolerated_but_never_becomes_a_vote",
+        "formal/pon-nakamoto-v1/test_native_evaluation_quorum_oracle.py::NativeEvaluationQuorumReferenceTests.test_plan_commits_disqualification_without_shrinking_threshold",
+        "formal/pon-nakamoto-v1/test_native_evaluation_quorum_oracle.py::NativeEvaluationQuorumReferenceTests.test_actual_conflicts_recount_and_hash_appeal_is_record_only"
+      ],
+      "evidence_class": "source-binding",
+      "receipt": null
+    },
+    {
       "id": "w1-verifier-equivalence",
       "modules": [
         "M01",
