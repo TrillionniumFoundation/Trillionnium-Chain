@@ -3,7 +3,8 @@ use std::{fs, path::PathBuf};
 
 use crate::{
     flush_submission::{process_submission_record, FlushRecordOutcome},
-    load_acked, now_ms, resolve_path_arg_from_env, resolve_tx_retry_policy, SubmissionRecord,
+    load_acked, now_ms, resolve_path_arg_from_env, resolve_tx_adapter_timeout_ms,
+    resolve_tx_retry_policy, SubmissionRecord,
     WORKER_EVENT_LOG_ENV, WORKER_PROGRESS_LOG_ENV,
 };
 
@@ -21,6 +22,7 @@ pub(crate) fn handle_flush_submissions(
     progress_log: PathBuf,
 ) -> Result<()> {
     let tx_retry = resolve_tx_retry_policy(max_retries, backoff_ms);
+    let tx_timeout_ms = resolve_tx_adapter_timeout_ms();
     let event_log = resolve_path_arg_from_env(
         event_log,
         WORKER_EVENT_LOG_ENV,
@@ -52,6 +54,7 @@ pub(crate) fn handle_flush_submissions(
             &adapter_cmd,
             tx_retry.max_retries,
             tx_retry.backoff_ms,
+            tx_timeout_ms,
             &ack_log,
             &event_log,
             &progress_log,
