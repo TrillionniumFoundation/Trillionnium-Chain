@@ -81,7 +81,7 @@ def counted(evaluation, external):
     accepted = [(pair, count) for pair, count in groups.items() if count >= evaluation["plan"]["quorum"]]
     assert len(accepted) <= 1
     pair, count = accepted[0] if accepted else ((None, None), 0)
-    return pair, count, sum(groups.values()), len(excluded)
+    return pair, count, sum(groups.values()), excluded
 
 
 def close(evaluation, external):
@@ -105,7 +105,8 @@ def close(evaluation, external):
     if quorum:
         closed.update(generation_context=evaluation["plan"]["generation_context"], evidence=evidence,
                       quorum=evaluation["plan"]["quorum"], eligible_reveal_count=revealed,
-                      matching_reveal_count=matching, disqualified_count_before_close=excluded,
+                      matching_reveal_count=matching, disqualified_count_before_close=len(excluded),
+                      disqualified_signers_before_close=sorted(excluded),
                       execution_authority=False, consensus_finality=False)
     evaluation["closed"] = closed
     return closed

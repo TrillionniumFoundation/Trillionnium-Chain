@@ -20,6 +20,14 @@ binds this admission profile. Network label, family, parameters, plan, complete
 genesis models and state root differ from revision11. This is not a hot upgrade.
 Historical profile bytes and meanings remain unchanged.
 
+The explicitly selected
+[evaluation quorum V2](NATIVE_EVALUATION_QUORUM_V2.md) composition uses revision15,
+fresh evaluation and storage domains, real matching-reveal thresholds and
+record-only hash appeals. It preserves this profile's complete empirical replay,
+fixed rows/controls and source budgets. The ordinary V1 evaluation selection and
+its review-hold behavior below remain unchanged. This optional composition does
+not activate new datasets or establish independent evaluator governance.
+
 M06 [model evidence](../../../../trillionnium/crates/trnm-mvcc-fee/src/model_evidence_v3.rs)
 uses the existing integer factor model/state owner and public evaluation owner.
 There is no new transaction tag, Cargo package, dependency, SQL table, trainer,

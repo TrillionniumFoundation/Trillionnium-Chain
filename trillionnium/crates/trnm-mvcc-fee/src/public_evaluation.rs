@@ -425,10 +425,12 @@ pub fn conflict(
 }
 
 pub fn excluded(state: &BTreeMap<String, Value>) -> BTreeSet<String> {
+    let prefix = "evaluation-disqualified:";
     state
-        .keys()
-        .filter_map(|key| {
-            key.strip_prefix("evaluation-disqualified:")
+        .range(prefix.to_owned()..)
+        .take_while(|(key, _)| key.starts_with(prefix))
+        .filter_map(|(key, _)| {
+            key.strip_prefix(prefix)
                 .map(str::to_owned)
         })
         .collect()
