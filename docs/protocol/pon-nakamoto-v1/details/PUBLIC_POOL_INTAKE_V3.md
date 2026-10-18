@@ -6,7 +6,7 @@ readiness, independence, fair access under saturation, exact transaction inclusi
 confirmation, model efficacy, or economic work. V2 retains its separate signed domains
 and one-hour service bound. Both modules bind the current derived ancestry index
 with at most1024 SQL lookups in a fresh resource-policy digest; see
-[NATIVE_ANCESTRY_INDEX](NATIVE_ANCESTRY_INDEX.md). V3 resource revision r9 retains
+[NATIVE_ANCESTRY_INDEX](NATIVE_ANCESTRY_INDEX.md). V3 resource revision r10 retains
 the r5 paid body/output partitions, disconnect fences, paid enqueue waits and local
 measured mutation CPU reservation/accounting. Bounded pre-Challenge/pre-Ready waits
 remain inside the same connections while original resource capacity is unavailable.
@@ -18,7 +18,7 @@ fixes still require review of both modules.
 An operator can select the bounded local
 [request resource observer](PUBLIC_REQUEST_RESOURCE_OBSERVATION.md) to capture
 actual worker-thread CPU intervals and application-frame byte progress. This
-optional API preserves the selected signed r9 policy and native request rules; its nested
+optional API preserves the selected signed r10 policy and native request rules; its nested
 CPU intervals and stream bytes are not energy or physical network measurements.
 
 ## Exact boundary
@@ -41,7 +41,7 @@ same deadline cooperatively; this does not interrupt an individual signature,
 deep State operation, root/history computation or SQLite call. A
 successful durable pool reservation can outlive the requesting socket or response.
 
-Resource revision r9 binds these limits and finite readiness/enqueue behavior in `PublicPolicy::id()`. It reserves
+Resource revision r10 binds these limits and finite readiness/enqueue behavior in `PublicPolicy::id()`. It reserves
 131,072 bytes of the existing 8 MiB body pool and 524,288 bytes of the existing
 32 MiB output pool for Head/PoolStatus control responses. Mutation body permits
 and non-control output permits cannot exhaust these reserves.
@@ -52,7 +52,7 @@ keys cannot increase these global lane limits. Eight challenge tokens are reserv
 from the existing global bucket for reads. These reservations introduce no extra
 worker, queue, Node owner, ledger authorization or retained guest identity.
 
-The r9 receiver retains pre-Challenge and pre-Ready waiters in the same at-most64
+The r10 receiver retains pre-Challenge and pre-Ready waiters in the same at-most64
 Connections. `WaitChallenge` holds a complete validated fixed Hello;
 `WaitGrant` holds its immutable Cookie after the original complete Solution
 context/expiry, ticket, strict caller signature and **single** spent reservation.
@@ -95,7 +95,7 @@ polling does not count as a new failed request. Pending terminal phases remain
 Hello/Solution, never Body/Work. A pending request has no Task or full-work CPU;
 CPU remains absent rather than a fabricated zero. Wait elapsed is not CPU. Closed
 shutdown requires zero original lane/body/output reservations and actual worker
-joins. The legacy r3 refusal counters are retained fields; r9 resource fullness
+joins. The legacy r3 refusal counters are retained fields; r10 resource fullness
 waits and can expire instead of immediately incrementing a refusal counter.
 
 A full worker channel retains its canonical Task in `Stage::Enqueue` on the same
@@ -237,7 +237,7 @@ and receiver cost without changing the proof relation.
 
 ## Local paid mutation CPU reserve
 
-Resource revision r5 introduced the volatile account retained by r9 in each PublicServer epoch, shared
+Resource revision r5 introduced the volatile account retained by r9 and r10 in each PublicServer epoch, shared
 by its two mutation workers and all caller identities. It starts with two CPU
 seconds of credit, refills at250 million CPU nanoseconds per wall second up to
 a ceiling reduced by outstanding start reservations, and reserves100 million CPU nanoseconds before each actual mutation
@@ -564,8 +564,9 @@ impossible reservation marks accounting unavailable, cannot mint credit, and is
 reported by the public-dispatch clock-failure counter even when measured CPU is
 known. Known CPU remains charged; an already completed native result or signed
 reply is not rewritten. Known negative credit and unknown accounting remain
-separate states. Resource r9, wire/profile identity and every resource constant
-are unchanged.
+separate states. This settlement-only change retained the then-current r9
+wire/profile identity and resource constants. R10 separately changes the resource
+commitment for the idle unpaid input rule described above.
 
 `ServiceMutationCpuDomain::observe` is a read-only local API. It returns stored
 credit, outstanding reservations, accounting availability and the existing

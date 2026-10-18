@@ -64,7 +64,8 @@ fn real_shared64_unpaid_pressure_releases_slots_protects_paid_body_and_confirms_
             honest_calls.borrow_mut().push(json!({
                 "purpose": purpose, "operation": request_op(request).unwrap(), "listener": index,
                 "offered": true, "completed": result.as_ref().is_ok_and(|reply| reply.ok),
-                "error": result.as_ref().err().map(ToString::to_string), "client_metrics": client_metrics,
+                "error": result.as_ref().err().map(ToString::to_string),
+                "response": result.as_ref().ok(), "client_metrics": client_metrics,
             }));
             result
         };
