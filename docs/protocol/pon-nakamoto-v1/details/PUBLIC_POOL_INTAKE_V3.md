@@ -156,7 +156,8 @@ the returned local cancellation error retains the actual reason. CPU spent befor
 cancellation remains included in measured full-work and outer mutation accounting.
 The V3 magic, cookie/caller signature domains and canonical request/response wires
 remain unchanged. The initial shared connection cap and pre-ticket processing can
-still be exhausted; lane isolation does not establish anonymous honest fairness.
+still be exhausted; lane isolation and the r10 local pressure rule below do not
+establish anonymous honest fairness.
 
 The retained r4 client contract keeps both TCP halves open until receiving the response.
 An EOF while awaiting native work cancels the task; TCP does not distinguish a
@@ -175,6 +176,64 @@ transport identity confers no ledger key, source authorization, model ownership,
 chain work, voting power, or reward claim. Guest identities/replay operations are
 not stored durably; **valid signed transaction facts** are stored in the operator's
 actual pool.
+
+
+## R10: idle unpaid connections under shared pressure
+
+The original same-domain 64-connection pool now carries at most 64 volatile
+lease records. A record is created only after acquiring one original connection
+permit; it creates no extra socket, queue, worker, CPU balance or durable caller
+row. The record follows its original `Connection` across listeners in that same
+CPU domain. Changing a key, listener or request cannot mint another pool.
+
+When an accepted socket finds that original pool full, the current request is
+still refused. Under the same pool lock, the intake may request cancellation of
+the oldest eligible original connection: a partial `Hello` or partial `Solution`
+that has received no new input bytes for at least 250 ms. Idle age is measured
+from actual input progress, not from reactor polling. `WaitChallenge` and
+`Challenge` are protected while the server owes a response. A complete input is
+protected under the same lease lock before parsing or Solution validation; a
+validation failure still closes promptly without gaining a body or lane grant.
+All validated paid stages remain protected, including `WaitGrant`, `Ready`,
+`Body`, enqueue, work and output. Once cancellation is selected, a concurrent
+input/protection update cannot revive that connection or obtain paid resources.
+
+Cancellation only sets the connection's existing cancellation flag and a local
+observation flag. Its original reactor removes the actual connection and drops
+its socket, buffers and lease before releasing the original connection permit.
+The pressure requester cannot pre-refund that permit or reuse a still-live slot.
+A later connection may use capacity after the original owner has actually
+released it. `unpaid_pressure_cancel_requests` is recorded at the listener that
+observes pressure; `unpaid_pressure_connections_closed` is recorded after the
+owning listener drops its selected connection. They are separate observations,
+not interchangeable success counts. The original two-second Hello/cookie
+limits and 30-second overall deadline are unchanged and never renewed.
+
+The native `real_shared64_unpaid_pressure_releases_slots_protects_paid_body_and_confirms_one_business`
+regression uses two real loopback listeners with the same original CPU domain.
+It first fills the actual pool with 64 unpaid sockets, preserves the failed
+full-capacity Head request and observes release before the original Hello
+expiry. A second cohort holds a real authenticated paid business Body alongside
+63 unpaid sockets on the other listener, then checks that pressure cancels an
+unpaid connection and the paid business succeeds. The receiver admits the real
+signed business and its descendants. A separate local validating client imports
+signed History responses and independently reexecutes the native ledger checks
+before observing installed depth/work confirmation. Both intentional capacity
+probe failures remain in the honest offered/completed denominator. Exactly one
+business transaction is counted once; its descendant blocks, probes and History
+requests are reported separately. All pools must be zero after both services
+join. The optional `TRNM_UNPAID_PRESSURE_REPORT` path is create-only and retains
+full listener metrics and the actual confirmation observation.
+
+These test identities belong to one controlled administrator. Their different
+keys and separate client database do not establish independent operators. The
+finite silent-input cohort demonstrates bounded recovery and paid-stage
+protection, not sustainable capacity or honest fairness under an arbitrary
+anonymous flood. Active input, timely valid Hellos, fresh connection churn and
+host/network saturation still require the original host boundaries and service
+campaign evidence. The accompanying
+[W1 same-target report](W1_SAME_TARGET_BUDGET_REPORT.md) measures producer/false-trace
+and receiver cost without changing the proof relation.
 
 ## Local paid mutation CPU reserve
 

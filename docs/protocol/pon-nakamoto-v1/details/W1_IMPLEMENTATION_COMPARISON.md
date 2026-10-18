@@ -1,5 +1,9 @@
 # W1 implementation equivalence and cost comparison
 
+The [same-target producer and receiver budget report](W1_SAME_TARGET_BUDGET_REPORT.md)
+provides a bounded native interface for complete legal/false-trace searches, all
+misses, full verifier outcomes and one original shared CPU domain.
+
 This work preserves the admitted `pon-matmul-transcript-64-v1` relation, proof grammar,
 task identity, challenge, ticket, target and fork weight. It changes local algorithms
 and adds an executable comparison. It does not activate a profile or establish mining

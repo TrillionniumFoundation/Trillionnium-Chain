@@ -23,7 +23,7 @@ impl Options {
         let mut args = std::env::args().skip(1);
         while let Some(arg) = args.next() {
             if arg == "--help" {
-                println!("pon_w1_budget_report [--samples 1..16] [--attempts 1..4096] [--receiver-replays 1..64] [--target 64hex] [--seed u64]\nJSONL retains every attempt, unsupported arms, exhaustion, raw relation outcomes and separate shared receiver-budget outcomes.");
+                println!("pon_w1_budget_report [--samples 1..16] [--attempts 1..4096] [--receiver-replays 1..1024] [--target 64hex] [--seed u64]\nJSONL retains every attempt, unsupported arms, exhaustion, raw relation outcomes and separate shared receiver-budget outcomes.");
                 std::process::exit(0);
             }
             let value = args.next().ok_or_else(|| format!("missing value for {arg}"))?;
@@ -37,7 +37,7 @@ impl Options {
             }
         }
         if !(1..=16).contains(&options.samples) || !(1..=4096).contains(&options.attempts)
-            || !(1..=64).contains(&options.receiver_replays) {
+            || !(1..=1024).contains(&options.receiver_replays) {
             return Err("samples/attempts/receiver-replays outside bounded range".into());
         }
         Ok(options)
@@ -139,7 +139,7 @@ fn generate(options: &Options, class: &str, sample: u64, arm: &str, a: &[u32], b
     let method = match &prepared {
         Producer::Structured(task) => task.method(),
         Producer::FalseTrace(_) => "claimed-zero-C-and-hash-only-trace-search",
-        Producer::BlockedZero(_) => "blocked-zero-full-transcript",
+        Producer::BlockedZero(task) => task.method(),
         Producer::Generic(_) => "generic-prepared-full-transcript",
     };
     let mut trials = Vec::new();

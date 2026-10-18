@@ -56,18 +56,27 @@ fn real_shared64_unpaid_pressure_releases_slots_protects_paid_body_and_confirms_
         }).collect();
         let guard = Stop(stop.clone());
         until(|| *intake.listeners.lock().unwrap() == 2);
-        let call = |index: usize, request: &Request| call_public_protected_v3(
-            addresses[index], request, &settings, identity(71 + index as u8).public_key(), &identity(80), policy,
-        );
+        let honest_calls = RefCell::new(Vec::new());
+        let call = |purpose: &str, index: usize, request: &Request| {
+            let (result, client_metrics) = call_public_protected_v3_with_metrics(
+                addresses[index], request, &settings, identity(71 + index as u8).public_key(), &identity(80), policy,
+            );
+            honest_calls.borrow_mut().push(json!({
+                "purpose": purpose, "operation": request_op(request).unwrap(), "listener": index,
+                "offered": true, "completed": result.as_ref().is_ok_and(|reply| reply.ok),
+                "error": result.as_ref().err().map(ToString::to_string), "client_metrics": client_metrics,
+            }));
+            result
+        };
         let started = Instant::now();
         let silent: Vec<_> = (0..MAX_CONNECTIONS).map(|i| TcpStream::connect(addresses[i % 2]).unwrap()).collect();
         until(|| *intake.connections.lock().unwrap() == MAX_CONNECTIONS);
         thread::sleep(Duration::from_millis(intake::UNPAID_PRESSURE_IDLE_MS + 30));
-        assert!(call(1, &Request::Head).is_err(), "pressure request itself cannot reuse an undropped socket slot");
+        assert!(call("phase1-capacity-probe", 1, &Request::Head).is_err(), "pressure request itself cannot reuse an undropped socket slot");
         until(|| metrics.iter().map(|m| m.lock().unwrap().unpaid_pressure_connections_closed).sum::<u64>() >= 1);
         let released_ns = elapsed_ns(started);
         assert!(released_ns < PREFIX_MS * 1_000_000, "pressure release must precede original Hello timeout");
-        assert!(call(1, &Request::Head).unwrap().ok);
+        assert!(call("phase1-after-actual-release", 1, &Request::Head).unwrap().ok);
         let pressure_only_work = metrics.iter().map(|m| m.lock().unwrap().work_started).sum::<u64>();
         assert_eq!(pressure_only_work, 0);
         drop(silent);
@@ -86,7 +95,7 @@ fn real_shared64_unpaid_pressure_releases_slots_protects_paid_body_and_confirms_
         until(|| *intake.connections.lock().unwrap() == MAX_CONNECTIONS);
         let before_closed = metrics.iter().map(|m| m.lock().unwrap().unpaid_pressure_connections_closed).sum::<u64>();
         thread::sleep(Duration::from_millis(intake::UNPAID_PRESSURE_IDLE_MS + 30));
-        assert!(call(0, &Request::Head).is_err());
+        assert!(call("phase2-capacity-probe", 0, &Request::Head).is_err());
         until(|| metrics.iter().map(|m| m.lock().unwrap().unpaid_pressure_connections_closed).sum::<u64>() > before_closed);
         assert_eq!(*intake.mutating_grants.lock().unwrap(), 1, "pressure must not remove paid Body");
         client_write(&mut paid, &raw, Instant::now() + Duration::from_secs(2)).unwrap();
@@ -99,7 +108,7 @@ fn real_shared64_unpaid_pressure_releases_slots_protects_paid_body_and_confirms_
         assert_eq!(response.value["block"], hex::encode(packets[0].id().unwrap()));
         drop(paid);
         for packet in &packets[1..] {
-            assert!(call(1, &Request::Submit { packet: hex::encode(packet.encode().unwrap()) }).unwrap().ok);
+            assert!(call("confirmation-descendant-submit", 1, &Request::Submit { packet: hex::encode(packet.encode().unwrap()) }).unwrap().ok);
         }
         // Retain the finite unpaid sockets through signed submissions/history;
         // their original two-second deadlines are allowed to expire unchanged.
@@ -108,7 +117,7 @@ fn real_shared64_unpaid_pressure_releases_slots_protects_paid_body_and_confirms_
         let mut after = settings.genesis();
         let mut history_calls = 0;
         while after != tip {
-            let reply = call(1, &Request::History { tip: hex::encode(tip), after: hex::encode(after) }).unwrap();
+            let reply = call("confirmation-history", 1, &Request::History { tip: hex::encode(tip), after: hex::encode(after) }).unwrap();
             assert!(reply.ok);
             let page: super::super::Page = serde_json::from_value(reply.value).unwrap();
             after = super::super::receive_page(&mut verifier, page, tip, after, clock).unwrap();
@@ -121,6 +130,8 @@ fn real_shared64_unpaid_pressure_releases_slots_protects_paid_body_and_confirms_
         assert_eq!(owner.lock().unwrap().active().unwrap().0, tip);
         drop(silent);
         until(|| *intake.connections.lock().unwrap() == 0);
+        let calls = honest_calls.into_inner();
+        let ordinary_completed = calls.iter().filter(|row| row["completed"] == true).count();
         evidence = json!({
             "schema": "public-v3-unpaid-pressure-observation-v1",
             "controlled_administrator_count": 1, "independent_operators": false,
@@ -128,6 +139,12 @@ fn real_shared64_unpaid_pressure_releases_slots_protects_paid_body_and_confirms_
             "phase1_actual_unpaid_sockets": MAX_CONNECTIONS,
             "phase1_release_ns": released_ns, "original_hello_deadline_ms": PREFIX_MS,
             "phase2_paid_body_protected": true, "phase2_actual_unpaid_sockets": MAX_CONNECTIONS - 1,
+            "honest_calls_offered": calls.len() + 1, "honest_calls_completed": ordinary_completed + 1,
+            "honest_calls_failed": calls.len() - ordinary_completed,
+            "ordinary_honest_call_observations": calls,
+            "paid_body_business_call": {"offered": true, "completed": true, "server_signature_verified": true},
+            "offered_cohort": "includes both intentionally full-capacity Head probes, the pre-paid business submission, all descendant submissions and all History requests",
+            "unpaid_sockets_offered": MAX_CONNECTIONS * 2 - 1,
             "unique_signed_business_transactions": 1, "submitted_distinct_blocks": packets.len(),
             "history_calls": history_calls, "validated_confirmation": confirmation,
             "elapsed_wall_ns": elapsed_ns(started), "arbitrary_anonymous_flood_fairness": false,
