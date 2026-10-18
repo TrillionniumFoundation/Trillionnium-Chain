@@ -143,14 +143,14 @@ already committed reconciliation remains committed, and an uncommitted new
 bundle rolls back at the original persistence boundaries. All observations reuse
 the original immutable stop/cancellation flags and absolute task deadline; no
 new TTL, CPU-second limit or resource allowance is introduced.
-A fresh profile digest is mandatory: correctly signed r1/r2/r3/r4/r5/r6/r7/r8 cookies and
-old client pins refuse r9, without fallback. For bits8/lifetime2000ms the
+A fresh profile digest is mandatory: correctly signed r1/r2/r3/r4/r5/r6/r7/r8/r9 cookies and
+old client pins refuse r10, without fallback. For bits8/lifetime2000ms the
 source-derived digest is
-`947e9272b16ca79e339bda28b9c0c26e31d898ead9828bb5f1ca9e2e7c382bbd`;
-for bits12 it is `ada335c79bef025337d8b551ce1365fde15637ba28b15c063880e923d63d7177`;
-for default bits16 it is `31dd4c31841a1416a2ad7e0d8026e7acaa234cddd8f89e9b1bca3f2ad2a1f6bc`.
+`099c63fdd9a5feedd83dea1e681bcf35fa4ce219338df81a46c621ee5f5c028a`;
+for bits12 it is `a589532b416e0d35273235ec692cf47040edf182df2121702c1b237c8cff52e7`;
+for default bits16 it is `fbd012278826496785fbd166d2d920ffa70a3491e52ddf2c9211d782357f9c35`.
 Actual CLI capture and qualification on the committed successor remain necessary;
-these source-derived values do not relabel any historical r5/r6/r7/r8 result. Existing
+these source-derived values do not relabel any historical r5/r6/r7/r8/r9 result. Existing
 `work_failed` observations include an abandoned replay as well as invalid relations;
 the returned local cancellation error retains the actual reason. CPU spent before
 cancellation remains included in measured full-work and outer mutation accounting.
