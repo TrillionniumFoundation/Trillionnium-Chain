@@ -987,7 +987,13 @@ impl ResearchProtocolState {
             validate_claim_shares(&object.current_claimants, false)?;
             self.require_ref(object.claim.workload_receipt_ref)?;
             let challenge_consistent = match object.status {
-                ClaimStatus::Challenged => object.active_challenge.is_some(),
+                ClaimStatus::Challenged => object.active_challenge.is_some_and(|challenge_key| {
+                    self.challenges.get(&challenge_key).is_some_and(|challenge| {
+                        challenge.status == ClaimChallengeStatus::Open
+                            && challenge.challenge.claim_ref.key == object.object_ref.key
+                            && challenge.challenge.claim_ref.object_version == object.object_ref.object_version - 1
+                    })
+                }),
                 _ => object.active_challenge.is_none(),
             };
             if !challenge_consistent {
