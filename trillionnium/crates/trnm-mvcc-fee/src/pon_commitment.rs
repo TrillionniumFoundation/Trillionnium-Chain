@@ -2076,17 +2076,35 @@ mod bounded_encoding_tests {
         before.insert("b".into(), json!("y".repeat(4094)));
         before.remove("c");
         before.insert("f".into(), json!([]));
-        for limits in [CacheLimits::default(), CacheLimits {
-            max_payload_bytes: 0, ..CacheLimits::default()
-        }] {
+        for limits in [
+            CacheLimits::default(),
+            CacheLimits {
+                max_payload_bytes: 0,
+                ..CacheLimits::default()
+            },
+        ] {
             equal(
-                &prepare_state(&before, seed.snapshot.as_ref(), Some(&encoded_before), limits).unwrap(),
-                &full_map_reference(&before, seed.snapshot.as_ref(), Some(&encoded_before), limits),
+                &prepare_state(
+                    &before,
+                    seed.snapshot.as_ref(),
+                    Some(&encoded_before),
+                    limits,
+                )
+                .unwrap(),
+                &full_map_reference(
+                    &before,
+                    seed.snapshot.as_ref(),
+                    Some(&encoded_before),
+                    limits,
+                ),
             );
         }
         assert!(!matches_encoded(&before, &encoded_before).unwrap());
         before.insert("zz".into(), json!("non-ASCII: λ"));
-        assert_eq!(matches_encoded(&before, &encoded_before), Err("NONCANONICAL"));
+        assert_eq!(
+            matches_encoded(&before, &encoded_before),
+            Err("NONCANONICAL")
+        );
         assert_eq!(seed.snapshot.unwrap().values.as_ref(), &encoded_before);
     }
 
@@ -2101,37 +2119,51 @@ mod bounded_encoding_tests {
             for (key, value) in state {
                 let actual = pon_executor::canonical(value)?;
                 within_limits &= key.len() <= 160 && actual.len() <= 4096;
-                matches &= previous.next().is_some_and(|(k, v)| key.as_bytes() == k && actual == *v);
+                matches &= previous
+                    .next()
+                    .is_some_and(|(k, v)| key.as_bytes() == k && actual == *v);
             }
-            if !within_limits { return Err("LIMIT"); }
+            if !within_limits {
+                return Err("LIMIT");
+            }
             Ok(matches)
         }
         for keys in [64_usize, 512, 4096] {
             let state: State = (0..keys).map(|i| (format!("row:{i:06}"),
                 json!({"text": "x".repeat([4094_usize / 2, 0, 128, 16][i % 4]), "nonce": i}))).collect();
             let expected = encode(&state).unwrap();
-            assert_eq!(allocating_reference(&state, &expected).unwrap(), matches_encoded(&state, &expected).unwrap());
+            assert_eq!(
+                allocating_reference(&state, &expected).unwrap(),
+                matches_encoded(&state, &expected).unwrap()
+            );
             let mut samples: [Vec<u128>; 2] = Default::default();
             for sample in 0..16 {
                 for offset in 0..2 {
                     let arm = (sample + offset) % 2;
                     let start = Instant::now();
                     for _ in 0..16 {
-                        let matched = if arm == 0 { allocating_reference(&state, &expected) }
-                            else { matches_encoded(&state, &expected) }.unwrap();
+                        let matched = if arm == 0 {
+                            allocating_reference(&state, &expected)
+                        } else {
+                            matches_encoded(&state, &expected)
+                        }
+                        .unwrap();
                         assert!(std::hint::black_box(matched));
                     }
                     samples[arm].push(start.elapsed().as_nanos());
                 }
             }
-            println!("{}", json!({
-                "schema":"canonical-buffer-reuse-component-v1", "state_keys":keys,
-                "comparisons_per_sample":16, "samples_per_arm":16,
-                "original_allocating_ns":samples[0], "reused_encoder_ns":samples[1],
-                "order":"alternating paired arms", "exact_comparison_equal":true,
-                "scope":"canonical byte comparison only; no state, history, root or authority checks omitted",
-                "public_tps_measured":false, "physical_memory_bound":false
-            }));
+            println!(
+                "{}",
+                json!({
+                    "schema":"canonical-buffer-reuse-component-v1", "state_keys":keys,
+                    "comparisons_per_sample":16, "samples_per_arm":16,
+                    "original_allocating_ns":samples[0], "reused_encoder_ns":samples[1],
+                    "order":"alternating paired arms", "exact_comparison_equal":true,
+                    "scope":"canonical byte comparison only; no state, history, root or authority checks omitted",
+                    "public_tps_measured":false, "physical_memory_bound":false
+                })
+            );
         }
     }
     fn equal(actual: &PreparedCommitment, expected: &PreparedCommitment) {

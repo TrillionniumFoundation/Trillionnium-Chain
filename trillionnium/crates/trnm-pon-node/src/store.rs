@@ -1979,12 +1979,16 @@ impl Node {
             .map_err(Error::local_integrity)?;
             // The bounded SQL BLOB remains borrowed until this row advances.
             // Decoded State owns its data; no SQLite borrow escapes this scope.
-            let cell = row.get_ref(1)
+            let cell = row
+                .get_ref(1)
                 .map_err(|error| Error::from(error).local_integrity())?;
             let bytes = cell.as_blob().map_err(|_| {
                 Error::from(rusqlite::Error::InvalidColumnType(
-                    1, "value".into(), cell.data_type(),
-                )).local_integrity()
+                    1,
+                    "value".into(),
+                    cell.data_type(),
+                ))
+                .local_integrity()
             })?;
             let value: Value = serde_json::from_slice(bytes)
                 .map_err(|error| Error::from(error).local_integrity())?;
