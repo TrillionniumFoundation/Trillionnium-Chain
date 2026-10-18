@@ -2808,6 +2808,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-pon-node/examples/hepta_task_fixture.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/examples/hepta_task_fixture.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-pon-node/examples/history_state_cost.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
