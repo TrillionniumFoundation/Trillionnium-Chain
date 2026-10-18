@@ -764,7 +764,7 @@ mod network_only_business {
         report["honest_error"] = json!(honest_result.as_ref().err().map(ToString::to_string));
         report["confirmation"] = json!(confirmation.as_ref().ok());
         report["confirmation_error"] = json!(confirmation.as_ref().err().map(ToString::to_string));
-        report["scope"]=json!("bounded same-process loopback public TCP load; original r9 resource policy; reference-acquired false traces and rotating keys; distinct native consumer reexecutes downloaded history; prebuilt blocks/logical timestamps; not independent operators, physical cost lower bound, remote exhaustion guarantee, saturated TPS or WAN");
+        report["scope"]=json!("bounded same-process loopback public TCP load; original r10 resource policy; reference-acquired false traces and rotating keys; distinct native consumer reexecutes downloaded history; prebuilt blocks/logical timestamps; not independent operators, physical cost lower bound, remote exhaustion guarantee, saturated TPS or WAN");
         fs::write(
             path.join("report.json"),
             serde_json::to_vec_pretty(&report).unwrap(),
