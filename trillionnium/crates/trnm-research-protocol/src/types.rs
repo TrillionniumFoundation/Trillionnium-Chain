@@ -1302,7 +1302,10 @@ fn decode_resolution(decoder: &mut Decoder<'_>) -> Result<ClaimResolutionV1, Can
     let resolution_hash = decoder.bytes_exact()?;
     let len = decoder.array_len()?;
     if len > 128 {
-        return Err(CanonicalDecodeError::ArrayLengthMismatch { expected: 128, got: len });
+        return Err(CanonicalDecodeError::ArrayLengthMismatch {
+            expected: 128,
+            got: len,
+        });
     }
     let mut amended_claimants = Vec::with_capacity(len);
     for _ in 0..len {
