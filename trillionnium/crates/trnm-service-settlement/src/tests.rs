@@ -470,6 +470,142 @@ fn settlement_destination_overflow_preserves_all_durable_value_and_retry_state()
 }
 
 #[test]
+fn exhausted_settlement_counters_preserve_preview_retry_and_cold_state() {
+    for exhausted_escrow in [true, false] {
+        let mut harness = Harness::new();
+        if exhausted_escrow {
+            harness.trust.escrow_version = u64::MAX;
+        } else {
+            harness.trust.result_revision = u64::MAX;
+        }
+        let store = harness.open();
+        let (parent, rolled_up) = execute_rollup(&harness, &store);
+        let parent = advance_empty_blocks_through(&harness, &store, 12, parent, 14);
+        let before = store.state().expect("state before counter exhaustion");
+        let head = store
+            .fresh_readback()
+            .expect("head before counter exhaustion");
+        let bytes = fs::read(&harness.path).unwrap();
+        let execution = harness.execution(14, parent, 15);
+        let command = ConsumptionSettlementCommandV1::Settle {
+            operation: settlement_operation(&harness, &rolled_up),
+        };
+        assert_eq!(
+            store
+                .preview_before_vote_v1(
+                    &head,
+                    15,
+                    execution.order_block_id,
+                    std::slice::from_ref(&command)
+                )
+                .expect_err("preview counter overflow")
+                .code(),
+            ConsumptionSettlementErrorCodeV1::ArithmeticOverflow
+        );
+        assert_eq!(store.state().unwrap(), before);
+        assert_eq!(store.fresh_readback().unwrap(), head);
+        assert_eq!(fs::read(&harness.path).unwrap(), bytes);
+        for _ in 0..2 {
+            assert_eq!(
+                store
+                    .execute_committed_execution(&execution, &command)
+                    .expect_err("settlement counter overflow")
+                    .code(),
+                ConsumptionSettlementErrorCodeV1::ArithmeticOverflow
+            );
+            assert_eq!(store.state().unwrap(), before);
+            assert_eq!(store.fresh_readback().unwrap(), head);
+            assert_eq!(fs::read(&harness.path).unwrap(), bytes);
+        }
+        drop(store);
+        let reopened = ConsumptionSettlementStoreV1::open_existing(harness.config()).unwrap();
+        assert_eq!(
+            reopened
+                .execute_committed_execution(&execution, &command)
+                .expect_err("cold retry counter overflow")
+                .code(),
+            ConsumptionSettlementErrorCodeV1::ArithmeticOverflow
+        );
+        assert_eq!(reopened.state().unwrap(), before);
+        assert_eq!(reopened.fresh_readback().unwrap(), head);
+        assert_eq!(fs::read(&harness.path).unwrap(), bytes);
+        assert_eq!(before.escrow.balance, harness.trust.escrow_funding);
+        assert!(!before.escrow.closed);
+        assert!(before.settlement.is_none());
+    }
+}
+
+#[test]
+fn last_settlement_counter_successor_settles_replays_and_reopens() {
+    let mut harness = Harness::new();
+    harness.trust.escrow_version = u64::MAX - 1;
+    harness.trust.result_revision = u64::MAX - 1;
+    let store = harness.open();
+    let (parent, rolled_up) = execute_rollup(&harness, &store);
+    let parent = advance_empty_blocks_through(&harness, &store, 12, parent, 14);
+    let execution = harness.execution(14, parent, 15);
+    let command = ConsumptionSettlementCommandV1::Settle {
+        operation: settlement_operation(&harness, &rolled_up),
+    };
+    let preview = store
+        .preview_before_vote_v1(
+            &store.fresh_readback().unwrap(),
+            15,
+            execution.order_block_id,
+            std::slice::from_ref(&command),
+        )
+        .expect("last counter successor preview");
+    let outcome = store
+        .execute_committed_execution(&execution, &command)
+        .unwrap();
+    assert!(!outcome.is_replay());
+    let state = store.state().unwrap();
+    let head = store.fresh_readback().unwrap();
+    assert_eq!(
+        head.durable_state_root(),
+        preview.candidate_post_state_root()
+    );
+    assert_eq!(state.escrow.version, u64::MAX);
+    assert_eq!(state.result.revision, u64::MAX);
+    assert!(state.escrow.closed);
+    assert_eq!(state.escrow.balance, 0);
+    assert_eq!(
+        state.result.settlement_maturity,
+        SETTLEMENT_MATURITY_FINAL_V1
+    );
+    assert!(state.settlement.is_some());
+    for (id, balance) in [
+        (harness.trust.provider_account_id, 505),
+        (harness.trust.consumer_account_id, 750),
+        (harness.trust.protocol_account_id, 345),
+    ] {
+        let account = state
+            .accounts
+            .iter()
+            .find(|account| account.account_id == id)
+            .unwrap();
+        assert_eq!(account.balance, balance);
+        assert_eq!(account.version, 1);
+    }
+    let bytes = fs::read(&harness.path).unwrap();
+    let replay = store
+        .execute_committed_execution(&execution, &command)
+        .unwrap();
+    assert!(replay.is_replay());
+    assert_eq!(replay.receipt(), outcome.receipt());
+    drop(store);
+    let reopened = ConsumptionSettlementStoreV1::open_existing(harness.config()).unwrap();
+    let cold_replay = reopened
+        .execute_committed_execution(&execution, &command)
+        .unwrap();
+    assert!(cold_replay.is_replay());
+    assert_eq!(cold_replay.receipt(), outcome.receipt());
+    assert_eq!(reopened.state().unwrap(), state);
+    assert_eq!(reopened.fresh_readback().unwrap(), head);
+    assert_eq!(fs::read(&harness.path).unwrap(), bytes);
+}
+
+#[test]
 fn receipt_rollup_and_settlement_are_bilateral_gap_free_and_conserved() {
     let harness = Harness::new();
     let store = harness.open();
