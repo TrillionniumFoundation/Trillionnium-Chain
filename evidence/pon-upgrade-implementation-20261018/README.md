@@ -51,3 +51,10 @@ a canonical encoder benchmark does not count confirmed transactions; accepted
 Chain task bytes do not count installed or subsequently qualified Hepta updates.
 Actual end-to-end campaigns must retain their own cohorts, wall clocks, source
 pair, unresolved outcomes and original owner observations.
+
+## Later source-specific rounds
+
+The [native rerun archive](native-rounds/README.md) preserves the later P0 failures,
+the separately corrected Clippy invocation, and all four raw W1 campaigns.
+Its results retain their actual source identities and do not replace the earlier
+component observations above.
