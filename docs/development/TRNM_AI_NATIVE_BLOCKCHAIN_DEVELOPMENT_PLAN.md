@@ -121,6 +121,11 @@ remains 25 packages and 39 responsibilities; explicit native development ownersh
 includes W1 verification, operation-local M05 signature facts and incremental M06
 prefixes, bounded history projection, and the explicit revision13 empirical scorer /
 revision14 composition successor with an independent arithmetic/state comparison.
+The explicit [revision15 evaluation quorum](../protocol/pon-nakamoto-v1/details/NATIVE_EVALUATION_QUORUM_V2.md)
+composes with those model profiles: it freezes the controlled non-author roster
+and threshold, counts matching actual reveals, and rechecks objective conflicts
+at adoption. It grants no work weight, consensus finality, operator independence
+or Hepta installation authority.
 Package and procedure counts do not measure scientific acceptance.
 
 This revision preserves full header/challenge binding, parent-derived difficulty,
@@ -859,7 +864,7 @@ Individual signatures, State clone/mandatory/apply internals, encoding/root,
 history and SQLite remain nonpreemptive; the Pool bundle path retains its original
 stage fences. No request CPU-second cap, anonymous fairness or physical preemption
 is claimed. The [V3 contract](../protocol/pon-nakamoto-v1/details/PUBLIC_POOL_INTAKE_V3.md)
-records the original r7 cooperative scope and the current r9 digest separately;
+records the original r7 cooperative scope and the current r10 digest separately;
 historical r5/r6 results keep their original policy and scope.
 
 The isolated V3 resource r8 candidate additionally debits every actual scoped
