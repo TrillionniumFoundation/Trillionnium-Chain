@@ -229,10 +229,7 @@ impl Node {
         )?;
         let round = evaluation::round(&current)?;
         ensure(
-            hash(
-                b"native-public-evaluation-round-v1",
-                &[&serde_json::to_vec(plan)?],
-            ) == round,
+            evaluation::expected_round(&current)? == round,
             "PUBLIC_EVAL_ROUND",
         )?;
         let depth_required = self.settings.limit("confirmation_depth")?;

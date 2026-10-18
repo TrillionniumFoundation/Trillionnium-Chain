@@ -266,13 +266,19 @@ impl Settings {
                 format!("trnm-pon-native-wall-devnet-3-{time}")
             } else if policy == "native-public-evaluation-dev-v1" {
                 format!("trnm-pon-native-evaluation-wall-devnet-6-{policy}-{time}")
+            } else if policy == trnm_mvcc_fee::public_evaluation::QUORUM_PROFILE {
+                format!("trnm-pon-native-evaluation-quorum-wall-devnet-15-{policy}-{time}")
             } else {
                 format!("trnm-pon-native-wall-devnet-4-{policy}-{time}")
             };
-            let label = if policy == trnm_mvcc_fee::public_evaluation::PROFILE {
+            let label = if matches!(policy, trnm_mvcc_fee::public_evaluation::PROFILE | trnm_mvcc_fee::public_evaluation::QUORUM_PROFILE) {
                 format!(
                     "{label}-evaluation-storage{}",
-                    trnm_mvcc_fee::public_evaluation::STORAGE_REVISION
+                    if policy == trnm_mvcc_fee::public_evaluation::QUORUM_PROFILE {
+                        trnm_mvcc_fee::public_evaluation::QUORUM_STORAGE_REVISION
+                    } else {
+                        trnm_mvcc_fee::public_evaluation::STORAGE_REVISION
+                    }
                 )
             } else {
                 label
