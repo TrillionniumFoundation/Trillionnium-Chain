@@ -5,9 +5,8 @@ use crate::state::{LlmAdapterPolicy, RetryPolicy};
 use crate::{
     DEFAULT_LLM_ADAPTER_BACKOFF_MS, DEFAULT_LLM_ADAPTER_MAX_RETRIES,
     DEFAULT_LLM_ADAPTER_TIMEOUT_MS, DEFAULT_TX_ADAPTER_BACKOFF_MS, DEFAULT_TX_ADAPTER_MAX_RETRIES,
-    DEFAULT_TX_ADAPTER_TIMEOUT_MS, LLM_ADAPTER_BACKOFF_MS_ENV, LLM_ADAPTER_MAX_RETRIES_ENV,
-    LLM_ADAPTER_TIMEOUT_ENV, TX_ADAPTER_BACKOFF_MS_ENV, TX_ADAPTER_MAX_RETRIES_ENV,
-    TX_ADAPTER_TIMEOUT_ENV,
+    LLM_ADAPTER_BACKOFF_MS_ENV, LLM_ADAPTER_MAX_RETRIES_ENV, LLM_ADAPTER_TIMEOUT_ENV,
+    TX_ADAPTER_BACKOFF_MS_ENV, TX_ADAPTER_MAX_RETRIES_ENV,
 };
 
 pub(crate) fn backoff_delay_ms(base_ms: u64, attempt: u32) -> u64 {
@@ -100,15 +99,6 @@ pub(crate) fn resolve_tx_retry_policy(
             0,
         ),
     }
-}
-
-pub(crate) fn resolve_tx_adapter_timeout_ms() -> u64 {
-    resolve_u64(
-        None,
-        env::var(TX_ADAPTER_TIMEOUT_ENV).ok().as_deref(),
-        DEFAULT_TX_ADAPTER_TIMEOUT_MS,
-        1,
-    )
 }
 
 pub(crate) fn resolve_llm_adapter_policy(
