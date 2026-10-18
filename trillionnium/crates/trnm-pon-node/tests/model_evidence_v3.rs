@@ -242,15 +242,11 @@ fn attestation(
     let mut payload = cid.to_vec();
     payload.extend(round);
     if tag == 14 {
-        payload.extend(evaluation::reveal_commitment(
-            round,
-            cid,
-            development_public(who).unwrap(),
-            c.plan,
-            evidence,
-            score,
-            salt,
-        ));
+        payload.extend(evaluation::reveal_commitment_for(
+            &object(state, cid)["public_evaluation"],
+            &evaluation::Reveal { round, candidate:cid, evaluator:development_public(who).unwrap(),
+                plan:c.plan, evidence, score, salt },
+        ).unwrap());
     } else {
         assert_eq!(tag, 15);
         payload.extend(c.plan);
@@ -350,6 +346,145 @@ fn appeal(c: &Config, state: &State, cid: Hash, who: u64) -> Vec<u8> {
     payload.extend([1; 32]);
     payload.extend([2; 32]);
     signed(c, who, next_nonce(state, who), 17, payload)
+}
+fn quorum_attestations(c: &Config, state: &State, candidates: &[Hash], tag: u8) -> Vec<Vec<u8>> {
+    let mut transactions = Vec::new();
+    for who in [0, 2, 3] {
+        let mut nonce = next_nonce(state, who);
+        for &cid in candidates {
+            if object(state, cid)["owner"] == hex::encode(development_public(who).unwrap()) {
+                continue;
+            }
+            let evidence = model_evidence::evidence(state, cid).unwrap();
+            transactions.push(attestation(c, state, cid, who, nonce, tag,
+                (evidence["score"].as_u64().unwrap(), read_hash(&evidence["digest"]))));
+            nonce += 1;
+        }
+    }
+    transactions
+}
+fn quorum_conflict(c: &Config, state: &State, cid: Hash, offender: u64, submitter: u64) -> Vec<u8> {
+    let e = evaluation::read_evaluation(state, cid).unwrap();
+    let mut prefix = cid.to_vec();
+    prefix.extend(evaluation::round(&e).unwrap());
+    let mut payload = cid.to_vec();
+    for value in [41, 42] {
+        let mut disputed = prefix.clone();
+        disputed.extend([value; 32]);
+        let raw = signed(c, offender, u64::from(value), 14, disputed);
+        payload.extend(u16::try_from(raw.len()).unwrap().to_le_bytes());
+        payload.extend(raw);
+    }
+    signed(c, submitter, next_nonce(state, submitter), 16, payload)
+}
+
+#[test]
+fn explicit_quorum_native_release_survives_one_absence_and_hash_appeal_with_durable_reorg() {
+    let directory = tempfile::tempdir().unwrap();
+    let c = Config::installed_with_model_profiles(evaluation::QUORUM_PROFILE,
+        "legacy-task-v1", model_evidence::PROFILE).unwrap();
+    let selected = Settings::development_with_model_profiles(None, evaluation::QUORUM_PROFILE,
+        "legacy-task-v1", model_evidence::PROFILE).unwrap();
+    let mut node = Node::open(directory.path(), selected.clone(), 4).unwrap();
+    let initial = node.read_active().unwrap().2;
+    let component = build(&initial, &c, 0, memorizing_factors(1), [8; 32]);
+    let root = leaf(component.contribution_id, 0, POSITIVE_SCORE);
+    let bundle = build(&initial, &c, 3, memorizing_factors(2), root);
+    let candidates = [component.contribution_id, bundle.contribution_id];
+    let allocations = [(component.contribution_id, POSITIVE_SCORE)];
+    let mut tip = selected.genesis();
+    let mut closed_tip = tip;
+    let mut closed = Value::Null;
+    let mut release_id = [0; 32];
+    for height in 1..=56 {
+        let state = node.read_active().unwrap().2;
+        let transactions = match height {
+            1 => vec![signed(&c, 0, 1, 23, component.encode().unwrap()),
+                signed(&c, 3, 1, 23, bundle.encode().unwrap())],
+            16 => {
+                let record = model_evidence::evidence(&state, bundle.contribution_id).unwrap();
+                false_attestation_refused(&c, &state, bundle.contribution_id,
+                    (POSITIVE_SCORE + 1, read_hash(&record["digest"])));
+                quorum_attestations(&c, &state, &candidates, 14)
+            }
+            32 => quorum_attestations(&c, &state, &candidates, 15),
+            49 => vec![appeal(&c, &state, bundle.contribution_id, 3)],
+            50 => vec![quorum_conflict(&c, &state, bundle.contribution_id, 1, 3)],
+            56 => {
+                let (_, valid_release) = release(&c, &state, &bundle, 1000, root, &allocations);
+                // Same block, distinct senders: global conflict before release
+                // must invalidate speculative adoption even with four workers.
+                let conflicting = quorum_conflict(&c, &state, bundle.contribution_id, 2, 0);
+                assert_eq!(pon_executor::execute(&state, &[conflicting, valid_release.clone()],
+                    height, development_public(3).unwrap(), [4; 32], 4, &c).err(),
+                    Some("PUBLIC_EVAL_ADOPTION"));
+                let (id, _) = release(&c, &state, &bundle, 1000, root, &allocations);
+                release_id = id;
+                vec![valid_release]
+            }
+            _ => vec![],
+        };
+        tip = append(&mut node, tip, height, transactions, "quorum-v2");
+        if height == 48 {
+            closed_tip = tip;
+            for cid in candidates {
+                let e = evaluation::read_evaluation(&node.read_active().unwrap().2, cid).unwrap();
+                assert_eq!(e["closed"]["status"], "complete-scored");
+                assert_eq!(e["closed"]["score"], POSITIVE_SCORE);
+                assert_eq!(e["closed"]["quorum"], 2);
+                assert_eq!(e["closed"]["matching_reveal_count"], 2);
+                assert_eq!(e["closed"]["missing_reveal_count"], 1);
+                assert_eq!(e["reveals"].as_object().unwrap().len(), 2);
+            }
+            closed = evaluation::read_evaluation(&node.read_active().unwrap().2, bundle.contribution_id).unwrap()["closed"].clone();
+        }
+    }
+    let adopted = node.read_active().unwrap().2;
+    assert_eq!(adopted["model:current"], hex::encode(release_id));
+    let e = evaluation::read_evaluation(&adopted, bundle.contribution_id).unwrap();
+    assert_eq!(e["closed"], closed);
+    assert_eq!(e["appeals"].as_object().unwrap().len(), 1);
+    assert_eq!(e["conflicts"].as_object().unwrap().len(), 1);
+    assert_eq!(node.evaluation_observation(bundle.contribution_id, CLOCK, 128).unwrap().closed_result(), Some(&closed));
+    assert_eq!(node.evaluation_round_observation(bundle.contribution_id, CLOCK, 128).unwrap().closed_result(), Some(&closed));
+    drop(node);
+    assert!(Node::open(directory.path(), settings(), 1).is_err());
+    let mut node = Node::open(directory.path(), selected.clone(), 2).unwrap();
+    assert_eq!(node.read_active().unwrap().2, adopted);
+
+    // Exact native executor transitions exercise the next round, not sparse
+    // PNW1 headers. A saturated public corpus remains zero gain after adoption.
+    let next = factor::build_witness(&adopted, &c, development_public(0).unwrap(), 1,
+        factor::FactorInputV2 { slot:0, rank:2, coefficients:memorizing_factors(3) }, [8; 32]).unwrap();
+    let next_state = step(&adopted, &c, 129, &[signed(&c, 0, next_nonce(&adopted, 0), 23, next.encode().unwrap())]);
+    let next_eval = &object(&next_state, next.contribution_id)["public_evaluation"];
+    assert_eq!(next_eval["plan"]["parent"], hex::encode(release_id));
+    assert_eq!(next_eval["plan"]["generation"], 1);
+    assert_eq!(next_eval["plan"]["quorum"], 2);
+    assert_eq!(next_eval["plan"]["roster"].as_array().unwrap().len(), 3);
+    assert_eq!(next_eval["plan"]["disqualified_at_freeze"], json!([hex::encode(development_public(1).unwrap())]));
+    assert_ne!(next_eval["plan"]["generation_context"], e["plan"]["generation_context"]);
+    assert_eq!(model_evidence::evidence(&next_state, next.contribution_id).unwrap()["score"], 0);
+    let mut stale = next.contribution_id.to_vec();
+    stale.extend(evaluation::round(&e).unwrap());
+    stale.extend([9; 32]);
+    assert_eq!(pon_executor::execute(&next_state, &[signed(&c, 2, next_nonce(&next_state, 2), 14, stale)],
+        144, development_public(3).unwrap(), [4; 32], 4, &c).err(), Some("PUBLIC_EVAL_ROUND"));
+
+    // A heavier actual branch removes the old adoption and its local branch
+    // records. It does not rewrite the shared historical closure or invent finality.
+    let mut fork = closed_tip;
+    for height in 49..=57 {
+        fork = append(&mut node, fork, height, vec![], "quorum-v2-reorg");
+    }
+    let rolled_back = node.read_active().unwrap().2;
+    assert_eq!(node.active().unwrap().0, fork);
+    assert_eq!(rolled_back["model:current"], initial["model:current"]);
+    assert!(!rolled_back.contains_key(&format!("release:{}", hex::encode(release_id))));
+    assert!(!rolled_back.contains_key(&format!("evaluation-disqualified:{}", hex::encode(development_public(1).unwrap()))));
+    assert_eq!(evaluation::read_evaluation(&rolled_back, bundle.contribution_id).unwrap()["closed"], closed);
+    drop(node);
+    assert_eq!(Node::open(directory.path(), selected, 1).unwrap().read_active().unwrap().2, rolled_back);
 }
 fn false_attestation_refused(c: &Config, state: &State, cid: Hash, claimed: (u64, Hash)) {
     // This is direct native executor branching from an actual admitted packet.

@@ -6,6 +6,12 @@ use std::collections::{BTreeMap, BTreeSet};
 use trnm_crypto_primitives::verify_hex_strict;
 use trnm_protocol::pon_wire::{hash, Envelope, Hash};
 
+pub mod quorum_v2;
+pub use quorum_v2::{
+    PROFILE as QUORUM_PROFILE, RECORD_NAMESPACE as QUORUM_RECORD_NAMESPACE,
+    REVISION as QUORUM_REVISION, STORAGE_REVISION as QUORUM_STORAGE_REVISION,
+};
+
 pub const RECORD_NAMESPACE: &str = "evaluation-record-v2";
 pub const STORAGE_REVISION: u64 = 2;
 const MAPS: [(&str, &str, usize); 4] = [
@@ -47,7 +53,30 @@ fn digest(v: &Value, field: &str) -> Result<Hash> {
     Ok(out)
 }
 pub fn enabled(cfg: &Config) -> bool {
-    cfg.params["evaluation_profile"] == PROFILE
+    cfg.params["evaluation_profile"] == PROFILE || quorum_enabled(cfg)
+}
+pub fn quorum_enabled(cfg: &Config) -> bool {
+    cfg.params["evaluation_profile"] == QUORUM_PROFILE
+}
+pub fn is_quorum(evaluation: &Value) -> Result<bool> {
+    match n(evaluation, "storage_revision")? {
+        STORAGE_REVISION => {
+            check(evaluation["plan"]["schema"] == "pon-native-frozen-evaluation-v1", "PUBLIC_EVAL_PROFILE")?;
+            Ok(false)
+        }
+        QUORUM_STORAGE_REVISION => {
+            quorum_v2::validate_plan(&evaluation["plan"])?;
+            Ok(true)
+        }
+        _ => Err("PUBLIC_EVAL_STORAGE_REVISION"),
+    }
+}
+pub fn record_namespace(cfg: &Config) -> &'static str {
+    if quorum_enabled(cfg) {
+        QUORUM_RECORD_NAMESPACE
+    } else {
+        RECORD_NAMESPACE
+    }
 }
 pub fn freeze(
     cfg: &Config,
@@ -66,19 +95,39 @@ pub fn freeze(
     let roster: BTreeSet<_> = cfg
         .evaluators
         .iter()
-        .filter(|key| key.as_str() != author && !excluded.contains(*key))
+        .filter(|key| {
+            key.as_str() != author && (quorum_enabled(cfg) || !excluded.contains(*key))
+        })
         .cloned()
         .collect();
     check((2..=16).contains(&roster.len()), "PUBLIC_EVAL_ROSTER")?;
     let start = height / width * width;
-    let plan = json!({"schema":"pon-native-frozen-evaluation-v1","network":hex::encode(cfg.network),"parameters":hex::encode(cfg.parameters),"candidate":hex::encode(cid),"artifact":contribution["artifact"],"components_root":contribution["components_root"],"parent":contribution["parent"],"family":hex::encode(cfg.family),"model_and_task_contract":hex::encode(cfg.plan),"roster":roster,"start":start,"candidate_end":start+CANDIDATE_END,"commit_end":start+COMMIT_END,"reveal_end":start+REVEAL_END,"adoption_start":start+ADOPTION_START,"max_score":cfg.params["max_evidence_score"],"independent_governance_accepted":false,"objective_model_quality":false});
-    let round = hash(b"native-public-evaluation-round-v1", &[&bytes(&plan)?]);
-    Ok(
-        json!({"storage_revision":STORAGE_REVISION,"plan":plan,"round":hex::encode(round),"record_counts":{"commits":0,"reveals":0,"conflicts":0,"appeals":0},"closed":null}),
-    )
+    let mut plan = json!({"schema":"pon-native-frozen-evaluation-v1","network":hex::encode(cfg.network),"parameters":hex::encode(cfg.parameters),"candidate":hex::encode(cid),"artifact":contribution["artifact"],"components_root":contribution["components_root"],"parent":contribution["parent"],"family":hex::encode(cfg.family),"model_and_task_contract":hex::encode(cfg.plan),"roster":roster,"start":start,"candidate_end":start+CANDIDATE_END,"commit_end":start+COMMIT_END,"reveal_end":start+REVEAL_END,"adoption_start":start+ADOPTION_START,"max_score":cfg.params["max_evidence_score"],"independent_governance_accepted":false,"objective_model_quality":false});
+    let storage_revision = if quorum_enabled(cfg) {
+        quorum_v2::configure_plan(&mut plan, cfg, author, excluded, height / width)?;
+        QUORUM_STORAGE_REVISION
+    } else {
+        STORAGE_REVISION
+    };
+    let mut evaluation = json!({"storage_revision":storage_revision,"plan":plan,"round":null,"record_counts":{"commits":0,"reveals":0,"conflicts":0,"appeals":0},"closed":null});
+    evaluation["round"] = json!(hex::encode(expected_round(&evaluation)?));
+    Ok(evaluation)
 }
 pub fn round(evaluation: &Value) -> Result<Hash> {
-    digest(evaluation, "round")
+    let result = digest(evaluation, "round")?;
+    if is_quorum(evaluation)? {
+        check(result == expected_round(evaluation)?, "PUBLIC_EVAL_ROUND")?;
+    }
+    Ok(result)
+}
+/// Recompute the profile-specific frozen-plan commitment for native observations.
+pub fn expected_round(evaluation: &Value) -> Result<Hash> {
+    let domain: &[u8] = if is_quorum(evaluation)? {
+        b"native-public-evaluation-round-v2"
+    } else {
+        b"native-public-evaluation-round-v1"
+    };
+    Ok(hash(domain, &[&bytes(&evaluation["plan"])?]))
 }
 pub fn reveal_commitment(
     round: Hash,
@@ -120,6 +169,9 @@ pub fn commit(
     height: u64,
 ) -> Result<()> {
     evaluator(evaluation, sender, round_id)?;
+    if is_quorum(evaluation)? {
+        quorum_v2::eligible(evaluation, sender)?;
+    }
     let plan = &evaluation["plan"];
     check(
         height > n(plan, "candidate_end")?
@@ -141,9 +193,35 @@ pub struct Reveal {
     pub score: u64,
     pub salt: Hash,
 }
+/// Producers select a domain from the frozen record, never from a local default.
+/// The historical `reveal_commitment` function remains the exact v1 operation.
+pub fn reveal_commitment_for(evaluation: &Value, value: &Reveal) -> Result<Hash> {
+    if is_quorum(evaluation)? {
+        check(
+            round(evaluation)? == value.round
+                && value.candidate == digest(&evaluation["plan"], "candidate")?
+                && value.plan == digest(&evaluation["plan"], "model_and_task_contract")?,
+            "PUBLIC_EVAL_REVEAL_CONTEXT",
+        )?;
+        Ok(quorum_v2::reveal_commitment(value))
+    } else {
+        Ok(reveal_commitment(
+            value.round,
+            value.candidate,
+            value.evaluator,
+            value.plan,
+            value.evidence,
+            value.score,
+            value.salt,
+        ))
+    }
+}
 pub fn reveal(evaluation: &mut Value, value: Reveal, height: u64) -> Result<()> {
     let sender = hex::encode(value.evaluator);
     evaluator(evaluation, &sender, value.round)?;
+    if is_quorum(evaluation)? {
+        quorum_v2::eligible(evaluation, &sender)?;
+    }
     let plan = &evaluation["plan"];
     check(
         height > n(plan, "commit_end")?
@@ -158,15 +236,7 @@ pub fn reveal(evaluation: &mut Value, value: Reveal, height: u64) -> Result<()> 
         "PUBLIC_EVAL_REVEAL_CONTEXT",
     )?;
     check(evaluation["reveals"].get(&sender).is_none(), "DUPLICATE")?;
-    let commitment = reveal_commitment(
-        value.round,
-        value.candidate,
-        value.evaluator,
-        value.plan,
-        value.evidence,
-        value.score,
-        value.salt,
-    );
+    let commitment = reveal_commitment_for(evaluation, &value)?;
     check(
         evaluation["commits"][&sender] == hex::encode(commitment),
         "PUBLIC_EVAL_COMMITMENT_BINDING",
@@ -175,10 +245,21 @@ pub fn reveal(evaluation: &mut Value, value: Reveal, height: u64) -> Result<()> 
     Ok(())
 }
 /// Closure is a mandatory block transition after the admitted chain height deadline.
-/// Missing signatures are an abort, never synthetic votes or a reduced quorum.
+/// Legacy missing signatures abort. The explicit v2 profile counts real matching
+/// reveals against its frozen threshold, never synthetic votes or a reduced quorum.
 pub fn close(evaluation: &mut Value, height: u64) -> Result<Option<u64>> {
+    close_with_disqualified(evaluation, height, &BTreeSet::new())
+}
+pub fn close_with_disqualified(
+    evaluation: &mut Value,
+    height: u64,
+    current_disqualified: &BTreeSet<String>,
+) -> Result<Option<u64>> {
     if height <= n(&evaluation["plan"], "reveal_end")? || !evaluation["closed"].is_null() {
         return Ok(None);
+    }
+    if is_quorum(evaluation)? {
+        return quorum_v2::close(evaluation, height, current_disqualified);
     }
     let roster = evaluation["plan"]["roster"]
         .as_array()
@@ -213,6 +294,16 @@ pub fn close(evaluation: &mut Value, height: u64) -> Result<Option<u64>> {
     Ok(score)
 }
 pub fn adoption_allowed(evaluation: &Value, height: u64) -> Result<()> {
+    adoption_allowed_with_disqualified(evaluation, height, &BTreeSet::new())
+}
+pub fn adoption_allowed_with_disqualified(
+    evaluation: &Value,
+    height: u64,
+    current_disqualified: &BTreeSet<String>,
+) -> Result<()> {
+    if is_quorum(evaluation)? {
+        return quorum_v2::adoption_allowed(evaluation, height, false, current_disqualified);
+    }
     check(
         height >= n(&evaluation["plan"], "adoption_start")?
             && evaluation["closed"]["status"] == "complete-scored"
@@ -226,8 +317,13 @@ pub fn adoption_allowed(evaluation: &Value, height: u64) -> Result<()> {
 }
 pub fn closed_digest(evaluation: &Value) -> Result<Hash> {
     check(!evaluation["closed"].is_null(), "PUBLIC_EVAL_NOT_CLOSED")?;
+    let domain: &[u8] = if is_quorum(evaluation)? {
+        b"native-public-evaluation-closed-v3"
+    } else {
+        b"native-public-evaluation-closed-v2"
+    };
     Ok(hash(
-        b"native-public-evaluation-closed-v2",
+        domain,
         &[&bytes(&evaluation["closed"])?],
     ))
 }
@@ -251,8 +347,13 @@ pub fn appeal(
         result == closed_digest(evaluation)? && claim != [0; 32] && evidence != [0; 32],
         "PUBLIC_EVAL_APPEAL_RESULT",
     )?;
+    let domain: &[u8] = if is_quorum(evaluation)? {
+        b"native-public-evaluation-appeal-v2"
+    } else {
+        b"native-public-evaluation-appeal-v1"
+    };
     let id = hex::encode(hash(
-        b"native-public-evaluation-appeal-v1",
+        domain,
         &[sender.as_bytes(), &result, &claim, &evidence],
     ));
     let appeals = evaluation["appeals"]
@@ -316,7 +417,12 @@ pub fn conflict(
     check(evaluation["conflicts"].get(&key).is_none(), "DUPLICATE")?;
     let mut records = [hex::encode(first), hex::encode(second)];
     records.sort();
-    evaluation["conflicts"][key] = json!({"records":records,"signer":sender,"effect":"current adoption blocked; next-round identity excluded; historical closure unchanged"});
+    let effect = if is_quorum(evaluation)? {
+        "signer excluded from current and future counts; frozen quorum and historical closure unchanged"
+    } else {
+        "current adoption blocked; next-round identity excluded; historical closure unchanged"
+    };
+    evaluation["conflicts"][key] = json!({"records":records,"signer":sender,"effect":effect});
     Ok(sender)
 }
 
@@ -333,6 +439,20 @@ pub fn excluded(state: &BTreeMap<String, Value>) -> BTreeSet<String> {
 /// Exact per-candidate prefix participates in MVCC scan validation.
 pub fn record_prefix(candidate: Hash) -> String {
     format!("{RECORD_NAMESPACE}:{}:", hex::encode(candidate))
+}
+pub fn record_prefix_for(candidate: Hash, evaluation: &Value) -> Result<String> {
+    if is_quorum(evaluation)? {
+        Ok(format!("{QUORUM_RECORD_NAMESPACE}:{}:", hex::encode(candidate)))
+    } else {
+        Ok(record_prefix(candidate))
+    }
+}
+fn record_schema(evaluation: &Value) -> Result<&'static str> {
+    Ok(if is_quorum(evaluation)? {
+        "pon-native-evaluation-record-v3"
+    } else {
+        "pon-native-evaluation-record-v2"
+    })
 }
 fn identity(kind: &str, id: &str) -> Result<()> {
     let valid_hex = |s: &str| {
@@ -355,7 +475,8 @@ pub fn record_rows(candidate: Hash, evaluation: &Value) -> Result<BTreeMap<Strin
         evaluation["plan"]["candidate"] == hex::encode(candidate),
         "PUBLIC_EVAL_RECORD_CONTEXT",
     )?;
-    let prefix = record_prefix(candidate);
+    let prefix = record_prefix_for(candidate, evaluation)?;
+    let schema = record_schema(evaluation)?;
     let mut rows = BTreeMap::new();
     for (kind, name, maximum) in MAPS {
         let map = evaluation[name].as_object().ok_or("PUBLIC_EVAL_STATE")?;
@@ -363,7 +484,7 @@ pub fn record_rows(candidate: Hash, evaluation: &Value) -> Result<BTreeMap<Strin
         for (id, value) in map {
             identity(kind, id)?;
             let key = format!("{prefix}{kind}:{id}");
-            let row = json!({"schema":"pon-native-evaluation-record-v2","candidate":hex::encode(candidate),"kind":kind,"id":id,"value":value});
+            let row = json!({"schema":schema,"candidate":hex::encode(candidate),"kind":kind,"id":id,"value":value});
             check(
                 key.len() <= 160 && bytes(&row)?.len() <= 4096,
                 "PUBLIC_EVAL_RECORD_LIMIT",
@@ -374,10 +495,7 @@ pub fn record_rows(candidate: Hash, evaluation: &Value) -> Result<BTreeMap<Strin
     Ok(rows)
 }
 pub fn compact(evaluation: &Value) -> Result<Value> {
-    check(
-        evaluation["storage_revision"] == STORAGE_REVISION,
-        "PUBLIC_EVAL_STORAGE_REVISION",
-    )?;
+    is_quorum(evaluation)?;
     let mut value = evaluation.clone();
     for (_, name, maximum) in MAPS {
         let map = value[name].as_object().ok_or("PUBLIC_EVAL_STATE")?;
@@ -393,9 +511,9 @@ pub fn compact(evaluation: &Value) -> Result<Value> {
     Ok(value)
 }
 pub fn hydrate(compact: &Value, candidate: Hash, rows: &BTreeMap<String, Value>) -> Result<Value> {
+    is_quorum(compact)?;
     check(
-        compact["storage_revision"] == STORAGE_REVISION
-            && compact["plan"]["candidate"] == hex::encode(candidate),
+        compact["plan"]["candidate"] == hex::encode(candidate),
         "PUBLIC_EVAL_STORAGE_REVISION",
     )?;
     let mut value = compact.clone();
@@ -403,7 +521,8 @@ pub fn hydrate(compact: &Value, candidate: Hash, rows: &BTreeMap<String, Value>)
         check(value.get(name).is_none(), "PUBLIC_EVAL_STORAGE_SHAPE")?;
         value[name] = json!({});
     }
-    let prefix = record_prefix(candidate);
+    let prefix = record_prefix_for(candidate, compact)?;
+    let schema = record_schema(compact)?;
     for (key, row) in rows {
         let suffix = key
             .strip_prefix(&prefix)
@@ -416,7 +535,7 @@ pub fn hydrate(compact: &Value, candidate: Hash, rows: &BTreeMap<String, Value>)
             .ok_or("PUBLIC_EVAL_RECORD_KEY")?;
         check(
             row.as_object().is_some_and(|m| m.len() == 5)
-                && row["schema"] == "pon-native-evaluation-record-v2"
+                && row["schema"] == schema
                 && row["candidate"] == hex::encode(candidate)
                 && row["kind"] == kind
                 && row["id"] == id,
@@ -441,7 +560,7 @@ pub fn read_evaluation(state: &BTreeMap<String, Value>, candidate: Hash) -> Resu
         .get(&format!("contribution:{hex}"))
         .or_else(|| state.get(&format!("evaluation-archive:{hex}")))
         .ok_or("STATE")?;
-    let prefix = record_prefix(candidate);
+    let prefix = record_prefix_for(candidate, &contribution["public_evaluation"])?;
     let rows = state
         .range(prefix.clone()..)
         .take_while(|(key, _)| key.starts_with(&prefix))
@@ -451,8 +570,13 @@ pub fn read_evaluation(state: &BTreeMap<String, Value>, candidate: Hash) -> Resu
 }
 fn records_digest(evaluation: &Value) -> Result<Hash> {
     let snapshot = json!({"commits":evaluation["commits"],"reveals":evaluation["reveals"],"conflicts":evaluation["conflicts"]});
+    let domain: &[u8] = if is_quorum(evaluation)? {
+        b"native-public-evaluation-closure-records-v3"
+    } else {
+        b"native-public-evaluation-closure-records-v2"
+    };
     Ok(hash(
-        b"native-public-evaluation-closure-records-v2",
+        domain,
         &[&bytes(&snapshot)?],
     ))
 }

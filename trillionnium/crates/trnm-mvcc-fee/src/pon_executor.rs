@@ -269,10 +269,13 @@ impl Config {
                     &[&canonical(&policy)?]
                 )));
             }
-            public_evaluation::PROFILE => {
-                let policy: Value = serde_json::from_str(include_str!(
-                    "../../../../config/pon/public-evaluation-native-v1.json"
-                ))
+            public_evaluation::PROFILE | public_evaluation::QUORUM_PROFILE => {
+                let quorum_profile = policy == public_evaluation::QUORUM_PROFILE;
+                let policy: Value = serde_json::from_str(if quorum_profile {
+                    include_str!("../../../../config/pon/public-evaluation-quorum-v2.json")
+                } else {
+                    include_str!("../../../../config/pon/public-evaluation-native-v1.json")
+                })
                 .map_err(|_| "CONFIG")?;
                 require(
                     policy["production_activation"] == false
@@ -281,10 +284,37 @@ impl Config {
                     "CONFIG",
                 )?;
                 require(
-                    policy["storage_revision"] == public_evaluation::STORAGE_REVISION
+                    policy["storage_revision"] == if quorum_profile {
+                        public_evaluation::QUORUM_STORAGE_REVISION
+                    } else {
+                        public_evaluation::STORAGE_REVISION
+                    }
                         && policy["maximum_record_bytes"] == 4096,
                     "CONFIG",
                 )?;
+                if quorum_profile {
+                    require(
+                        policy["schema"] == "pon-native-public-evaluation-quorum-v2"
+                            && policy["id"] == public_evaluation::QUORUM_PROFILE
+                            && policy["record_namespace"] == public_evaluation::QUORUM_RECORD_NAMESPACE
+                            && policy["development_evaluators"] == 4
+                            && policy["native_model_profiles"] == json!([
+                                crate::model_evidence_v3::PROFILE,
+                                crate::model_composition_v4::PROFILE
+                            ])
+                            && policy["native_evidence_review_policy_override"]
+                                == public_evaluation::quorum_v2::REVIEW_POLICY
+                            && policy["fresh_dataset_activation"] == false
+                            && policy["consensus_finality"] == false
+                            && policy["execution_authority"] == false,
+                        "CONFIG",
+                    )?;
+                    require(
+                        matches!(model_profile,
+                            crate::model_evidence_v3::PROFILE | crate::model_composition_v4::PROFILE),
+                        "PUBLIC_EVAL_NATIVE_REPLAY_REQUIRED",
+                    )?;
+                }
                 for (name, expected) in [
                     ("candidate_end_offset", public_evaluation::CANDIDATE_END),
                     ("commit_end_offset", public_evaluation::COMMIT_END),
@@ -411,11 +441,15 @@ impl Config {
             CHECKPOINT_TASK_PROFILE => return Err("CHECKPOINT_POLICY_REQUIRED"),
             _ => return Err("WORK_TASK_PROFILE"),
         }
-        if policy == public_evaluation::PROFILE {
+        if matches!(policy, public_evaluation::PROFILE | public_evaluation::QUORUM_PROFILE) {
             params["chain_label"] = json!(format!(
                 "{}-evaluation-storage{}",
                 text(&params, "chain_label")?,
-                public_evaluation::STORAGE_REVISION
+                if policy == public_evaluation::QUORUM_PROFILE {
+                    public_evaluation::QUORUM_STORAGE_REVISION
+                } else {
+                    public_evaluation::STORAGE_REVISION
+                }
             ));
         }
         let model: Value = match model_profile {
@@ -426,7 +460,10 @@ impl Config {
             crate::integer_factor_candidate_v2::PROFILE
             | crate::model_evidence_v3::PROFILE
             | crate::model_composition_v4::PROFILE => {
-                require(policy == public_evaluation::PROFILE, "MODEL_PROFILE_POLICY")?;
+                require(
+                    matches!(policy, public_evaluation::PROFILE | public_evaluation::QUORUM_PROFILE),
+                    "MODEL_PROFILE_POLICY",
+                )?;
                 require(
                     task_profile == LEGACY_TASK_PROFILE
                         || (matches!(
@@ -514,6 +551,9 @@ impl Config {
             }
             _ => return Err("MODEL_PROFILE"),
         };
+        if policy == public_evaluation::QUORUM_PROFILE {
+            params["consensus_revision"] = json!(public_evaluation::QUORUM_REVISION);
+        }
         if model_profile != "linear-expert-dev-v1" {
             let maximum = field(&model, "artifact_max_bytes")?;
             require(
@@ -651,7 +691,8 @@ impl Config {
         fees[22] = 200;
         fees[23] = 200;
         let mut evaluators = BTreeSet::new();
-        for i in 0_u64..3 {
+        let evaluator_count = if policy == public_evaluation::QUORUM_PROFILE { 4 } else { 3 };
+        for i in 0_u64..evaluator_count {
             let seed = hash(b"DEV-ONLY-KEY", &[&i.to_le_bytes()]);
             let key = trnm_crypto_primitives::signing_key_from_hex(&hex::encode(seed))
                 .map_err(|_| "CONFIG")?;
@@ -1344,11 +1385,16 @@ fn apply_prepared_with_account_access(
             let current = s.get("model:current").ok_or("STATE")?;
             require(current == json!(hex::encode(parent)), "STATE")?;
             let (bk, mut bundle) = s.object("contribution:", bundle_id)?;
+            let disqualified = if public_evaluation::quorum_enabled(cfg) {
+                public_evaluation::excluded(&s.scan("evaluation-disqualified:"))
+            } else {
+                BTreeSet::new()
+            };
             if public_evaluation::enabled(cfg) {
-                let records = s.scan(&public_evaluation::record_prefix(bundle_id));
+                let records = s.scan(&public_evaluation::record_prefix_for(bundle_id, &bundle["public_evaluation"])?);
                 let evaluation =
                     public_evaluation::hydrate(&bundle["public_evaluation"], bundle_id, &records)?;
-                public_evaluation::adoption_allowed(&evaluation, height)?;
+                public_evaluation::adoption_allowed_with_disqualified(&evaluation, height, &disqualified)?;
             }
             require(
                 text(&bundle, "status")? == "evaluated"
@@ -1369,13 +1415,13 @@ fn apply_prepared_with_account_access(
                 let score = p.n()?;
                 let (k, mut o) = s.object("contribution:", cid)?;
                 if public_evaluation::enabled(cfg) {
-                    let records = s.scan(&public_evaluation::record_prefix(cid));
+                    let records = s.scan(&public_evaluation::record_prefix_for(cid, &o["public_evaluation"])?);
                     let evaluation =
                         public_evaluation::hydrate(&o["public_evaluation"], cid, &records)?;
                     if crate::model_composition_v4::enabled(cfg) {
-                        crate::model_composition_v4::component_allowed(&evaluation, height)?;
+                        crate::model_composition_v4::component_allowed(&evaluation, height, &disqualified)?;
                     } else {
-                        public_evaluation::adoption_allowed(&evaluation, height)?;
+                        public_evaluation::adoption_allowed_with_disqualified(&evaluation, height, &disqualified)?;
                     }
                 }
                 require(
@@ -1596,6 +1642,12 @@ fn apply_prepared_with_account_access(
         }
         14..=17 => {
             let cid = p.h()?;
+            if public_evaluation::quorum_enabled(cfg) && matches!(tx.tag, 14 | 15) {
+                require(
+                    s.get(&format!("evaluation-disqualified:{sender}")).is_none(),
+                    "PUBLIC_EVAL_DISQUALIFIED",
+                )?;
+            }
             let active_key = format!("contribution:{}", hex::encode(cid));
             let archive_key = format!("evaluation-archive:{}", hex::encode(cid));
             let (key, mut contribution) = if let Some(value) = s.get(&active_key) {
@@ -1604,7 +1656,7 @@ fn apply_prepared_with_account_access(
                 require(matches!(tx.tag, 16 | 17), "STATE")?;
                 (archive_key.clone(), s.get(&archive_key).ok_or("STATE")?)
             };
-            let records = s.scan(&public_evaluation::record_prefix(cid));
+            let records = s.scan(&public_evaluation::record_prefix_for(cid, &contribution["public_evaluation"])?);
             contribution["public_evaluation"] =
                 public_evaluation::hydrate(&contribution["public_evaluation"], cid, &records)?;
             let evaluation = &mut contribution["public_evaluation"];
@@ -1734,6 +1786,11 @@ fn mandatory(
         .to_owned();
     let keys: Vec<_> = state.keys().cloned().collect();
     if public_evaluation::enabled(cfg) {
+        let disqualified = if public_evaluation::quorum_enabled(cfg) {
+            public_evaluation::excluded(state)
+        } else {
+            BTreeSet::new()
+        };
         let candidates: Vec<_> = keys
             .iter()
             .filter(|key| key.starts_with("contribution:"))
@@ -1742,7 +1799,7 @@ fn mandatory(
         for key in candidates {
             let cid = hash32(key.strip_prefix("contribution:").ok_or("STATE")?)?;
             let mut evaluation = public_evaluation::read_evaluation(state, cid)?;
-            let closed = public_evaluation::close(&mut evaluation, height)?;
+            let closed = public_evaluation::close_with_disqualified(&mut evaluation, height, &disqualified)?;
             let value = state.get_mut(&key).ok_or("STATE")?;
             value["public_evaluation"] = public_evaluation::compact(&evaluation)?;
             if let Some(score) = closed {
@@ -1808,11 +1865,12 @@ fn mandatory(
     if public_evaluation::enabled(cfg) {
         // Remove records only after both active candidate and retained archive vanish.
         // Branch state cleanup never touches physical/local operation journals.
+        let namespace = format!("{}:", public_evaluation::record_namespace(cfg));
         let orphaned: Vec<_> = state
             .keys()
-            .filter(|key| key.starts_with(&format!("{}:", public_evaluation::RECORD_NAMESPACE)))
+            .filter(|key| key.starts_with(&namespace))
             .filter(|key| {
-                key.strip_prefix(&format!("{}:", public_evaluation::RECORD_NAMESPACE))
+                key.strip_prefix(&namespace)
                     .and_then(|suffix| suffix.split_once(':'))
                     .is_some_and(|(candidate, _)| {
                         !state.contains_key(&format!("contribution:{candidate}"))

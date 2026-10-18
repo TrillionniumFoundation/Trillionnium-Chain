@@ -1182,6 +1182,7 @@ fn run() -> Result<Value> {
         "legacy-first-two-v3"
             | "closed-round-all-eligible-min-v1"
             | "native-public-evaluation-dev-v1"
+            | "native-public-evaluation-quorum-dev-v2"
     ) {
         return Err("EVALUATION_POLICY".into());
     }

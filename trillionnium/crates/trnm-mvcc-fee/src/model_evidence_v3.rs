@@ -426,14 +426,20 @@ fn adoption(
     if require_gain {
         check(n(&actual, "score")? > 0, "MODEL_EVIDENCE_GAIN")?;
     }
-    let rows = s.scan(&public_evaluation::record_prefix(cid));
+    let rows = s.scan(&public_evaluation::record_prefix_for(cid, &contribution["public_evaluation"])?);
     let evaluation = public_evaluation::hydrate(&contribution["public_evaluation"], cid, &rows)?;
     let start = n(&evaluation["plan"], "adoption_start")?;
     let appeals = evaluation["appeals"]
         .as_object()
         .ok_or("MODEL_EVIDENCE_STATE")?;
-    for appeal in appeals.values() {
-        check(n(appeal, "height")? >= start, "MODEL_EVIDENCE_REVIEW_HOLD")?;
+    if !public_evaluation::quorum_enabled(cfg) {
+        for appeal in appeals.values() {
+            check(n(appeal, "height")? >= start, "MODEL_EVIDENCE_REVIEW_HOLD")?;
+        }
+    } else {
+        // The explicit v2 evaluation registry supersedes only the old hash-only
+        // review hold. Native score replay above and real conflict quorum remain.
+        check(public_evaluation::is_quorum(&evaluation)?, "PUBLIC_EVAL_PROFILE")?;
     }
     Ok(actual)
 }
