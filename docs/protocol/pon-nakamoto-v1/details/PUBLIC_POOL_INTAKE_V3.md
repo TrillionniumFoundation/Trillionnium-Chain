@@ -226,9 +226,9 @@ join. The optional `TRNM_UNPAID_PRESSURE_REPORT` path is create-only and retains
 full listener metrics and the actual confirmation observation.
 
 These test identities belong to one controlled administrator. Their different
-keys and separate client database do not establish independent operators. The
-finite silent-input cohort demonstrates bounded recovery and paid-stage
-protection, not sustainable capacity or honest fairness under an arbitrary
+keys and separate client database do not establish independent operators. A
+passing run of this finite silent-input cohort establishes its bounded recovery
+and paid-stage assertions, not sustainable capacity or honest fairness under an arbitrary
 anonymous flood. Active input, timely valid Hellos, fresh connection churn and
 host/network saturation still require the original host boundaries and service
 campaign evidence. The accompanying
@@ -237,9 +237,12 @@ and receiver cost without changing the proof relation.
 
 ## Local paid mutation CPU reserve
 
-Resource revision r5 introduced the volatile account retained by r9 and r10 in each PublicServer epoch, shared
-by its two mutation workers and all caller identities. It starts with two CPU
-seconds of credit, refills at250 million CPU nanoseconds per wall second up to
+Resource revision r5 introduced the volatile account retained by r9 and r10,
+shared by a service domain's mutation workers, listeners and caller identities.
+Trusted standalone diagnostics and warm constructors start with two CPU seconds
+of credit. The ordinary CLI uses `new_process_cold`, with zero initial CPU credit
+and challenge tokens, as detailed below. The account refills at250 million CPU
+nanoseconds per wall second up to
 a ceiling reduced by outstanding start reservations, and reserves100 million CPU nanoseconds before each actual mutation
 dispatch. These are explicit local service parameters, committed as numeric
 fields in the policy digest. They are not a ticket difficulty, attacker cost
@@ -256,8 +259,12 @@ paid protocol and canonical body/queue checks but before native dispatch or full
 proof verification. Revision r9 also
 observes exhaustion during the request at the existing cooperative checkpoints. No new queue, worker, Node owner, State
 cache or durable caller row is added. Key rotation cannot reset the account.
-Restart begins a new explicit volatile service epoch; this is not a host-global
-CPU quota across listeners, private ingress, miner threads or service restarts.
+Cloned/rebuilt listeners inside one domain retain the same budget. An ordinary
+CLI restart begins a new zero-credit volatile epoch; it cannot mint the warm
+two-second burst. This account is not a host-global quota across independent
+processes or namespaces, and alone does not retain unclean-crash operation debt.
+The [measured W1 security profile](W1_LOCAL_SECURITY_PROFILE.md) distinguishes the
+standalone burst, actual start-reserve exhaustion and same-domain refill recovery.
 
 Historical revision r8 introduced the measured outer worker interval O plus the
 checked sum C of every actual scoped M06 worker interval, exactly once. Guards

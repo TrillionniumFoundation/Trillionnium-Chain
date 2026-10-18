@@ -7,6 +7,11 @@ retained winning candidates through one original `ServiceMutationCpuDomain`.
 It does not change W1, PNW1 bytes, ticket construction, required work, cumulative
 work selection, block admission or the installed verifier.
 
+The [local security profile](W1_LOCAL_SECURITY_PROFILE.md) records the exact
+2026-10-18 source observation, retained raw hashes, complete measured ratios,
+distinct proof counts and actual original-budget depletion/refill. It also gives
+the read-only reader/derivation commands and preserves that batch's other failures.
+
 The source is
 [`pon_w1_budget_report.rs`](../../../../trillionnium/crates/trnm-pon-node/examples/pon_w1_budget_report.rs).
 The direct false-trace primitive is shared with the existing
