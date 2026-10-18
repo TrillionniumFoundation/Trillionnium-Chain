@@ -600,6 +600,19 @@ fn actual_pinned_peer_cli_follows_native_blocks_and_closes_shared_owner() {
     )
     .unwrap();
     fs::set_permissions(&policy, fs::Permissions::from_mode(0o600)).unwrap();
+    // Both live services retain their original finite windows below. Create
+    // and close their real empty stores before the source starts serving, so
+    // the receiver's first schema/genesis construction cannot consume the
+    // source's one-second catch-up margin. The receiver still imports every
+    // block through its actual pinned public peer and ordinary reopened Node.
+    let preparation_started = Instant::now();
+    for store in [&source_store, &receiver_store] {
+        let empty = Node::open(store, settings.clone(), 1).unwrap();
+        assert_eq!(empty.active().unwrap().0, settings.genesis());
+        assert_eq!(empty.stats().unwrap()["height"], 0);
+    }
+    let preparation_ns = preparation_started.elapsed().as_nanos();
+    let source_spawned = Instant::now();
     let source_child = command("serve", &source_store, genesis)
         .args([
             "--admission-profile",
@@ -629,6 +642,7 @@ fn actual_pinned_peer_cli_follows_native_blocks_and_closes_shared_owner() {
     let (mut source, source_rx, source_reader) = reading_service(source_child);
     let ready: Value =
         serde_json::from_str(&source_rx.recv_timeout(Duration::from_secs(5)).unwrap()).unwrap();
+    let source_ready_ns = source_spawned.elapsed().as_nanos();
     let config = PeerPollingConfig {
         schema: PEER_POLLING_SCHEMA.into(),
         network: hex::encode(settings.network()),
@@ -680,6 +694,7 @@ fn actual_pinned_peer_cli_follows_native_blocks_and_closes_shared_owner() {
     let (mut receiver, receiver_rx, receiver_reader) = reading_service(receiver_child);
     let received_ready: Value =
         serde_json::from_str(&receiver_rx.recv_timeout(Duration::from_secs(5)).unwrap()).unwrap();
+    let receiver_ready_ns = source_spawned.elapsed().as_nanos();
     let mut actual_config = config.clone();
     actual_config.runtime_ms = 5000;
     actual_config.max_pages_per_cycle = 1;
@@ -725,8 +740,26 @@ fn actual_pinned_peer_cli_follows_native_blocks_and_closes_shared_owner() {
         (path.clone(), inode, usage(&path))
     };
     assert!(receiver.0.wait().unwrap().success());
+    let receiver_exit_ns = source_spawned.elapsed().as_nanos();
+    let source_status_at_receiver_exit = source.0.try_wait().unwrap();
     let receiver_lines = receiver_reader.join().unwrap();
     let report: Value = serde_json::from_str(receiver_lines.last().unwrap()).unwrap();
+    println!(
+        "PINNED_PEER_CLI_OBSERVATION {}",
+        json!({
+            "preparation_ns": preparation_ns,
+            "since_source_spawn_ns": {
+                "source_ready": source_ready_ns,
+                "receiver_ready": receiver_ready_ns,
+                "receiver_exit": receiver_exit_ns,
+            },
+            "source_service_seconds": 6,
+            "receiver_service_seconds": 5,
+            "source_running_at_receiver_exit": source_status_at_receiver_exit.is_none(),
+            "receiver_stdout": receiver_lines,
+            "scope": "two native loopback CLI processes with separately prepared empty stores; one controlled administrator",
+        })
+    );
     assert_eq!(report["peer_polling"]["verified_new_packets"], 3);
     assert_eq!(report["peer_polling"]["transport_errors"], 0);
     assert_eq!(report["public_network_ready"], false);
