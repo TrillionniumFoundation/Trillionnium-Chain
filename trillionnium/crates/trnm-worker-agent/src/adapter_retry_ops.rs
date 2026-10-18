@@ -16,6 +16,21 @@ pub(crate) fn run_adapter_with_retry(
     action_args: &[String],
     max_retries: u32,
     backoff_ms: u64,
+) -> Result<AdapterExecResult> {
+    run_adapter_with_retry_bounded(
+        adapter_cmd,
+        action_args,
+        max_retries,
+        backoff_ms,
+        Duration::from_millis(crate::DEFAULT_TX_ADAPTER_TIMEOUT_MS),
+    )
+}
+
+pub(crate) fn run_adapter_with_retry_bounded(
+    adapter_cmd: &str,
+    action_args: &[String],
+    max_retries: u32,
+    backoff_ms: u64,
     timeout: Duration,
 ) -> Result<AdapterExecResult> {
     let (program, base_args) = parse_command_spec(adapter_cmd)?;
