@@ -25,6 +25,9 @@ use trnm_pon_node::{
 };
 use trnm_protocol::pon_wire::{hash, Envelope, Hash, Header};
 
+#[path = "../examples/support/w1_from_zero.rs"]
+mod w1_from_zero;
+
 const SEARCH_BUDGET: u64 = 4096;
 const ATTACKS: usize = 8;
 const PROBES: usize = 8;
@@ -109,14 +112,7 @@ fn search_from_zero(header: Header, a: &[u32], b: &[u32], budget: u64) -> Search
     let setup = Instant::now();
     let setup_cpu = ThreadCpuStamp::start();
     assert_eq!(pon_work::task_id(a, b).unwrap(), header.work_task);
-    let mut proof = Vec::with_capacity(pon_work::PROOF_BYTES);
-    proof.extend_from_slice(b"PNW1");
-    for matrix in [a, b] {
-        for value in matrix {
-            proof.extend_from_slice(&value.to_le_bytes());
-        }
-    }
-    proof.resize(pon_work::PROOF_BYTES, 0);
+    let mut proof = w1_from_zero::proof_prefix(a, b).unwrap();
     let challenge = header.challenge();
     let setup_cpu_ns = cpu_elapsed(setup_cpu);
     let setup_ns = ns(setup);
@@ -125,11 +121,7 @@ fn search_from_zero(header: Header, a: &[u32], b: &[u32], budget: u64) -> Search
     let search = Instant::now();
     let search_cpu = ThreadCpuStamp::start();
     for nonce in 0..budget {
-        let trace = hash(
-            b"public-v3-from-zero-v1",
-            &[&challenge, &nonce.to_le_bytes()],
-        );
-        let ticket = hash(b"ticket", &[&challenge, &trace]);
+        let (trace, ticket) = w1_from_zero::trial(challenge, nonce);
         let hit = header.target != [0; 32] && ticket <= header.target;
         attempts.push(json!({
             "nonce": nonce, "trace": hex::encode(trace),

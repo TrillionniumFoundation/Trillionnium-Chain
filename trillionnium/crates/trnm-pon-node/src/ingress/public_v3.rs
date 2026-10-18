@@ -8,7 +8,7 @@ use super::{
     Request as NativeRequest, Result, Settings, WorkCheckedPacket,
 };
 mod intake;
-use intake::ListenerIntake;
+use intake::{ConnectionLease, ListenerIntake};
 mod request_observation;
 pub mod scalar_cpu;
 pub use request_observation::{
@@ -360,7 +360,7 @@ impl PublicPolicy {
         }
     }
     pub fn id(self) -> Hash {
-        hash(b"public-protected-profile-v3",&[PROFILE.as_bytes(),b"resource-revision-r9/connection-local-ready-fifo-challenge-and-grant-split-read-mutation/pending64-no-extra-queue-or-worker/hello-wait-original-accept2s/paid-grant-wait-original-cookie-expiry-no-renewal/spent-reserve-once/lane-and-body-together-rollback-on-full/bounded-paid-enqueue-fifo-by-connection-with-unchanged-absolute-work-and-total-deadlines/hello108/solution108/conn64/paid-raw-json-canonical8MiB-factor3/read-body-reserve131072/output-conservative32MiB/control-output-reserve524288/grants-mutation8-read8-held-until-connection-and-task-release/queueproof2-read2/workers2-read1/spent1024-no-live-eviction/packet1048576/body2097216/read512/response2101248/history1/error2KiB/hello2s/challenge2s/solution-policy/body5s/work10s/output5s/overall30s/quantum64KiB/derived-jump-v1-levels63-sql1024-local-integrity-only/challenge128-burst32-read-reserve8/await-write-half-close-cancels-request-operation-stage-fences/ops1-block-2-head-3-history-4-poolbundle-5-poolsnapshot/poolraw159..2048-members1..16-sum32768-body66048-contextpin64hex/scalarstatus16KiB-no-reconcile-cachegc4scalars-localdiagnostic/no-guest-policy-prune-reset/shared-node-miner-operatorenabled/service72h-m05-cooperative-noise-row-tile-final-m06-envelope-prepare-canonical-apply-precommit-deadline-cancel-deep-state-root-history-sqlite-nonpreemptive/no-durable-guest-rows/global-paid-mutation-thread-cpu-bucket-reserve-before-dispatch-charge-outer-plus-all-scoped-worker-thread-intervals-once-work-nested-no-double-debit/scoped-start-end-same-thread-all-started-joined-exact-counts-panic-cancel-partial-spawn/unknown-scoped-clock-disables-future-mutations/sequential-pool-preview-no-scoped-workers/read-not-charged/clock-unavailable-disables-future-mutations/native-success-preserved/two-inflight-m05-m06-boundary-cooperative-deep-stages-nonpreemptive-debt-no-caller-reset/available-plus-outstanding-start-reserves-ceiling/live-same-thread-owner-and-scoped-progress-increments/global-immediate-debit/original-full-outer-plus-children-minus-paid-residual-once/sticky-request-budget-cancel/unknown-live-clock-denies-future/deep-root-and-sql-no-preemption/native-durable-outcome-preserved/controlled-pool-full-prefix-cancel-propagation-reconcile-relation-only-blocking/precommit-only-fences",&[self.bits],&self.lifetime_ms.to_le_bytes(),&MUTATION_CPU_BURST_NS.to_le_bytes(),&MUTATION_CPU_REFILL_NS_PER_SECOND.to_le_bytes(),&MUTATION_CPU_START_RESERVE_NS.to_le_bytes(),&(MUTATION_CPU_WORKERS as u32).to_le_bytes()])
+        hash(b"public-protected-profile-v3",&[PROFILE.as_bytes(),b"resource-revision-r10/shared64-unpaid-input-idle250ms-pressure-cancel-no-slot-refund/hello-and-incomplete-solution-only/server-owed-and-paid-protected/no-deadline-renewal/connection-local-ready-fifo-challenge-and-grant-split-read-mutation/pending64-no-extra-queue-or-worker/hello-wait-original-accept2s/paid-grant-wait-original-cookie-expiry-no-renewal/spent-reserve-once/lane-and-body-together-rollback-on-full/bounded-paid-enqueue-fifo-by-connection-with-unchanged-absolute-work-and-total-deadlines/hello108/solution108/conn64/paid-raw-json-canonical8MiB-factor3/read-body-reserve131072/output-conservative32MiB/control-output-reserve524288/grants-mutation8-read8-held-until-connection-and-task-release/queueproof2-read2/workers2-read1/spent1024-no-live-eviction/packet1048576/body2097216/read512/response2101248/history1/error2KiB/hello2s/challenge2s/solution-policy/body5s/work10s/output5s/overall30s/quantum64KiB/derived-jump-v1-levels63-sql1024-local-integrity-only/challenge128-burst32-read-reserve8/await-write-half-close-cancels-request-operation-stage-fences/ops1-block-2-head-3-history-4-poolbundle-5-poolsnapshot/poolraw159..2048-members1..16-sum32768-body66048-contextpin64hex/scalarstatus16KiB-no-reconcile-cachegc4scalars-localdiagnostic/no-guest-policy-prune-reset/shared-node-miner-operatorenabled/service72h-m05-cooperative-noise-row-tile-final-m06-envelope-prepare-canonical-apply-precommit-deadline-cancel-deep-state-root-history-sqlite-nonpreemptive/no-durable-guest-rows/global-paid-mutation-thread-cpu-bucket-reserve-before-dispatch-charge-outer-plus-all-scoped-worker-thread-intervals-once-work-nested-no-double-debit/scoped-start-end-same-thread-all-started-joined-exact-counts-panic-cancel-partial-spawn/unknown-scoped-clock-disables-future-mutations/sequential-pool-preview-no-scoped-workers/read-not-charged/clock-unavailable-disables-future-mutations/native-success-preserved/two-inflight-m05-m06-boundary-cooperative-deep-stages-nonpreemptive-debt-no-caller-reset/available-plus-outstanding-start-reserves-ceiling/live-same-thread-owner-and-scoped-progress-increments/global-immediate-debit/original-full-outer-plus-children-minus-paid-residual-once/sticky-request-budget-cancel/unknown-live-clock-denies-future/deep-root-and-sql-no-preemption/native-durable-outcome-preserved/controlled-pool-full-prefix-cancel-propagation-reconcile-relation-only-blocking/precommit-only-fences",&[self.bits],&self.lifetime_ms.to_le_bytes(),&MUTATION_CPU_BURST_NS.to_le_bytes(),&MUTATION_CPU_REFILL_NS_PER_SECOND.to_le_bytes(),&MUTATION_CPU_START_RESERVE_NS.to_le_bytes(),&(MUTATION_CPU_WORKERS as u32).to_le_bytes()])
     }
 }
 #[derive(Default, Clone, Debug, Serialize)]
@@ -377,6 +377,9 @@ pub struct PublicMetrics {
     pub mutation_cpu_unavailable_after_shutdown: bool,
     pub accepted_connections: u64,
     pub capacity_refusals: u64,
+    // Request is counted at the pressured listener; actual close at the owner.
+    pub unpaid_pressure_cancel_requests: u64,
+    pub unpaid_pressure_connections_closed: u64,
     pub preface_refusals: u64,
     pub challenge_budget_refusals: u64,
     pub pending_challenge_entered: u64,
@@ -1135,6 +1138,9 @@ struct Connection {
     permit: Option<BufferPermit>,
     lane_permit: Option<Arc<BufferPermit>>,
     cancelled: Arc<AtomicBool>,
+    // Metadata is retired before its original connection permit. It does not
+    // release capacity when another listener requests pressure cancellation.
+    intake_lease: Option<ConnectionLease>,
     // Drop last, after the socket, stage buffers and lane/body references.
     // New listeners cannot reuse this slot while those resources still live.
     _connection_permit: Option<BufferPermit>,
@@ -1939,6 +1945,9 @@ fn serve_public_protected_v3_inner(
                             )?
                             else {
                                 m.capacity_refusals += 1;
+                                if intake.cancel_idle_unpaid_under_pressure(Instant::now())? {
+                                    m.unpaid_pressure_cancel_requests += 1;
+                                }
                                 if let Some(record) = &observation {
                                     record.terminal("capacity");
                                 }
@@ -1950,6 +1959,11 @@ fn serve_public_protected_v3_inner(
                             if let Some(record) = &observation {
                                 record.identity(next_id);
                             }
+                            let accepted_at = Instant::now();
+                            let cancelled = Arc::new(AtomicBool::new(false));
+                            let intake_lease = intake.connection_lease(
+                                &connection_permit, cancelled.clone(), accepted_at,
+                            )?;
                             connections.insert(
                                 next_id,
                                 Connection {
@@ -1958,13 +1972,13 @@ fn serve_public_protected_v3_inner(
                                     id: next_id,
                                     socket,
                                     peer,
-                                    deadline: Instant::now() + Duration::from_millis(PREFIX_MS),
+                                    deadline: accepted_at + Duration::from_millis(PREFIX_MS),
                                     stage: Stage::Hello(Vec::with_capacity(HELLO_BYTES)),
-                                    total_deadline: Instant::now()
-                                        + Duration::from_millis(OVERALL_MS),
+                                    total_deadline: accepted_at + Duration::from_millis(OVERALL_MS),
                                     permit: None,
                                     lane_permit: None,
-                                    cancelled: Arc::new(AtomicBool::new(false)),
+                                    cancelled,
+                                    intake_lease: Some(intake_lease),
                                 },
                             );
                             m.peak_connections = m.peak_connections.max(connections.len());
@@ -2014,6 +2028,10 @@ fn serve_public_protected_v3_inner(
                 let heads = PendingHeads::collect(&connections, Instant::now());
                 let mut remove = Vec::new();
                 for (id, conn) in &mut connections {
+                    if conn.intake_lease.as_ref().is_some_and(ConnectionLease::pressure_cancelled) {
+                        remove.push(*id);
+                        continue;
+                    }
                     if Instant::now() >= conn.deadline {
                         let mut m = metrics.lock().map_err(|_| "PUBLIC_METRICS")?;
                         m.expired_connections += 1;
@@ -2033,13 +2051,21 @@ fn serve_public_protected_v3_inner(
                     let advanced = (|| -> Result<Stage> {
                         match current {
                             Stage::Hello(mut bytes) => {
-                                if !read_available_observed(
+                                let before = bytes.len();
+                                let complete = read_available_observed(
                                     &mut conn.socket,
                                     &mut bytes,
                                     HELLO_BYTES,
                                     conn.observation.as_ref(),
                                     0,
-                                )? {
+                                )?;
+                                let lease = conn.intake_lease.as_ref().ok_or("PUBLIC_INTAKE_UNAVAILABLE")?;
+                                if complete {
+                                    lease.protect()?;
+                                } else {
+                                    if bytes.len() > before {
+                                        lease.waiting_for_input(Instant::now())?;
+                                    }
                                     return Ok(Stage::Hello(bytes));
                                 }
                                 let hello = Hello::parse(&bytes)?;
@@ -2098,6 +2124,8 @@ fn serve_public_protected_v3_inner(
                                         server.started
                                             + Duration::from_millis(cookie.expires_tick_ms),
                                     );
+                                    conn.intake_lease.as_ref().ok_or("PUBLIC_INTAKE_UNAVAILABLE")?
+                                        .waiting_for_input(Instant::now())?;
                                     Ok(Stage::Solution {
                                         cookie,
                                         bytes: Vec::with_capacity(SOLUTION_BYTES),
@@ -2111,13 +2139,23 @@ fn serve_public_protected_v3_inner(
                                 }
                             }
                             Stage::Solution { cookie, mut bytes } => {
-                                if !read_available_observed(
+                                let before = bytes.len();
+                                let complete = read_available_observed(
                                     &mut conn.socket,
                                     &mut bytes,
                                     SOLUTION_BYTES,
                                     conn.observation.as_ref(),
                                     2,
-                                )? {
+                                )?;
+                                let lease = conn.intake_lease.as_ref().ok_or("PUBLIC_INTAKE_UNAVAILABLE")?;
+                                if complete {
+                                    // Protect before validation; failures are still closed
+                                    // by this reactor and never gain a paid lane or body.
+                                    lease.protect()?;
+                                } else {
+                                    if bytes.len() > before {
+                                        lease.waiting_for_input(Instant::now())?;
+                                    }
                                     return Ok(Stage::Solution { cookie, bytes });
                                 }
                                 server.validate(&cookie, &settings, true)?;
@@ -2403,7 +2441,22 @@ fn serve_public_protected_v3_inner(
                 remove.sort_unstable();
                 remove.dedup();
                 for id in remove {
-                    connections.remove(&id);
+                    if let Some(conn) = connections.remove(&id) {
+                        let pressure = conn.intake_lease.as_ref()
+                            .is_some_and(ConnectionLease::pressure_cancelled);
+                        if pressure {
+                            if let Some(record) = &conn.observation {
+                                record.terminal("unpaid-pressure");
+                            }
+                        }
+                        // Actual socket/buffer/lease drop precedes the original
+                        // slot release and the completed-close observation.
+                        drop(conn);
+                        if pressure {
+                            metrics.lock().map_err(|_| "PUBLIC_METRICS")?
+                                .unpaid_pressure_connections_closed += 1;
+                        }
+                    }
                 }
                 let pending = connections
                     .values()
@@ -3159,7 +3212,7 @@ mod tests {
         )
         .unwrap()
     }
-    fn shared(mut node: Node) -> Arc<Mutex<Node>> {
+    pub(super) fn shared(mut node: Node) -> Arc<Mutex<Node>> {
         node.enable_local_mempool(crate::PoolLimits {
             max_records: 16,
             max_bytes: 32768,
@@ -3207,7 +3260,7 @@ mod tests {
         )?;
         Ok((socket, [challenge_bytes, 4 + ready_raw.len()]))
     }
-    fn paid_solution_only(
+    pub(super) fn paid_solution_only(
         address: SocketAddr,
         hello: Hello,
         caller: &DevelopmentIdentity,
@@ -4362,7 +4415,7 @@ mod tests {
         }
     }
 
-    fn accounting_transactions(settings: &Settings, first: u64, count: u64) -> Vec<Vec<u8>> {
+    pub(super) fn accounting_transactions(settings: &Settings, first: u64, count: u64) -> Vec<Vec<u8>> {
         use trnm_crypto_primitives::{sign_hex, signing_key_from_hex};
         use trnm_protocol::pon_wire::Envelope;
         let key = signing_key_from_hex(&hex::encode(hash(b"DEV-ONLY-KEY", &[&0u64.to_le_bytes()])))
@@ -5102,7 +5155,7 @@ mod tests {
         assert!(m.mutation_cpu_unavailable_after_shutdown);
     }
     #[test]
-    fn resource_revision_r9_rejects_signed_old_cookies_and_preserves_control_output_reserve() {
+    fn resource_revision_r10_rejects_signed_old_cookies_and_preserves_control_output_reserve() {
         let s = Settings::development(Some(1)).unwrap();
         let server = server();
         assert_eq!(
@@ -5112,20 +5165,21 @@ mod tests {
         assert_eq!((server.policy.bits, server.policy.lifetime_ms), (8, 2000));
         assert_eq!(
             hex::encode(server.policy.id()),
-            "947e9272b16ca79e339bda28b9c0c26e31d898ead9828bb5f1ca9e2e7c382bbd"
+            "099c63fdd9a5feedd83dea1e681bcf35fa4ce219338df81a46c621ee5f5c028a"
         );
         assert_eq!(
             hex::encode(PublicPolicy::development().id()),
-            "31dd4c31841a1416a2ad7e0d8026e7acaa234cddd8f89e9b1bca3f2ad2a1f6bc"
+            "fbd012278826496785fbd166d2d920ffa70a3491e52ddf2c9211d782357f9c35"
         );
         assert_eq!(
             hex::encode(PublicPolicy::new(12, Duration::from_secs(2)).unwrap().id()),
-            "ada335c79bef025337d8b551ce1365fde15637ba28b15c063880e923d63d7177"
+            "a589532b416e0d35273235ec692cf47040edf182df2121702c1b237c8cff52e7"
         );
         let mut c = server
             .cookie(&s, hello(2, 1), "127.0.0.1:1".parse().unwrap())
             .unwrap();
         for old_profile in [
+            "947e9272b16ca79e339bda28b9c0c26e31d898ead9828bb5f1ca9e2e7c382bbd",
             "55f555756953a4c4ba713686909c6e0554238af4048864befc6ea54aaff35b67",
             "d6cf554e06987a2f2d271e9deca10c2332a15185aec3b9fb056e8c224ba71128",
             "788393e580ec629f29bda7976c93b25f5df09cf327cfca139b8f239e6aee53e6",
@@ -5156,6 +5210,7 @@ mod tests {
             .cookie(&s, h, "127.0.0.1:1".parse().unwrap())
             .unwrap();
         for old_profile in [
+            "31dd4c31841a1416a2ad7e0d8026e7acaa234cddd8f89e9b1bca3f2ad2a1f6bc",
             "8f3026d7ba045e5c473b1655c8062e67e9334601d4d159f42c15ca28f30049f3",
             "896ca15c2035acfd2f2c7e229b847e531e3c21a03eab8f466ca910f6c3213386",
             "88d586d82a8708bf8b6718848bae990421b4efdec26da0c911a743f9d5750b8c",
@@ -5332,6 +5387,7 @@ mod tests {
                 id,
                 Connection {
                     _connection_permit: None, // Pure FIFO-order fixture, no served socket.
+                    intake_lease: None,
                     observation: None,
                     id,
                     socket,
@@ -6649,3 +6705,7 @@ impl PublicServer {
 #[cfg(test)]
 #[path = "public_v3/intake_domain_tests.rs"]
 mod intake_domain_tests;
+
+#[cfg(test)]
+#[path = "public_v3/unpaid_pressure_tests.rs"]
+mod unpaid_pressure_tests;
