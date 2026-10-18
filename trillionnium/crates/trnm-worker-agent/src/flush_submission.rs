@@ -128,7 +128,7 @@ pub(crate) fn process_submission_record(
     )?;
     let reveal_executed = should_execute_reveal(&commit_res);
     let reveal_res = if reveal_executed {
-        run_adapter_with_retry(
+        run_adapter_with_retry_bounded(
             adapter_cmd,
             &reveal_args,
             tx_max_retries,
