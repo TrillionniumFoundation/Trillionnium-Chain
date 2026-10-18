@@ -10,7 +10,7 @@ use std::{
     fs::{self, OpenOptions},
     io::Write,
     path::{Path, PathBuf},
-    process::{Command as ProcCommand, Output},
+    process::Output,
     thread,
     time::{Duration, SystemTime, UNIX_EPOCH},
 };
@@ -66,12 +66,14 @@ use command_runtime_exec::run_command_with_timeout;
 
 const DEFAULT_TX_ADAPTER_MAX_RETRIES: u32 = 3;
 const DEFAULT_TX_ADAPTER_BACKOFF_MS: u64 = 200;
+const DEFAULT_TX_ADAPTER_TIMEOUT_MS: u64 = 10_000;
 const DEFAULT_LLM_ADAPTER_MAX_RETRIES: u32 = 2;
 const DEFAULT_LLM_ADAPTER_BACKOFF_MS: u64 = 200;
 const DEFAULT_LLM_ADAPTER_TIMEOUT_MS: u64 = 10_000;
 
 const TX_ADAPTER_MAX_RETRIES_ENV: &str = "TRNM_TX_ADAPTER_MAX_RETRIES";
 const TX_ADAPTER_BACKOFF_MS_ENV: &str = "TRNM_TX_ADAPTER_BACKOFF_MS";
+const TX_ADAPTER_TIMEOUT_ENV: &str = "TRNM_TX_ADAPTER_TIMEOUT_MS";
 const LLM_ADAPTER_MAX_RETRIES_ENV: &str = "TRNM_LLM_ADAPTER_MAX_RETRIES";
 const LLM_ADAPTER_BACKOFF_MS_ENV: &str = "TRNM_LLM_ADAPTER_BACKOFF_MS";
 const LLM_ADAPTER_TIMEOUT_ENV: &str = "TRNM_LLM_ADAPTER_TIMEOUT_MS";
@@ -965,22 +967,34 @@ where
     })
 }
 
-pub(crate) fn run_adapter_with_retry(
+#[cfg(test)]
+fn run_adapter_with_retry(
     adapter_cmd: &str,
     action_args: &[String],
     max_retries: u32,
     backoff_ms: u64,
 ) -> Result<AdapterExecResult> {
+    run_adapter_with_retry_bounded(
+        adapter_cmd,
+        action_args,
+        max_retries,
+        backoff_ms,
+        Duration::from_millis(resolve_tx_adapter_timeout_ms()),
+    )
+}
+
+pub(crate) fn run_adapter_with_retry_bounded(
+    adapter_cmd: &str,
+    action_args: &[String],
+    max_retries: u32,
+    backoff_ms: u64,
+    timeout: Duration,
+) -> Result<AdapterExecResult> {
     let (program, base_args) = parse_command_spec(adapter_cmd)?;
     run_adapter_with_retry_inner(
         max_retries,
         backoff_ms,
-        || {
-            Ok(ProcCommand::new(&program)
-                .args(&base_args)
-                .args(action_args)
-                .output()?)
-        },
+        || run_command_with_timeout(&program, &base_args, action_args, timeout),
         thread::sleep,
     )
 }
@@ -1083,6 +1097,15 @@ pub(crate) fn resolve_tx_retry_policy(
         backoff_ms_cli,
         env::var(TX_ADAPTER_MAX_RETRIES_ENV).ok().as_deref(),
         env::var(TX_ADAPTER_BACKOFF_MS_ENV).ok().as_deref(),
+    )
+}
+
+pub(crate) fn resolve_tx_adapter_timeout_ms() -> u64 {
+    resolve_u64(
+        None,
+        env::var(TX_ADAPTER_TIMEOUT_ENV).ok().as_deref(),
+        DEFAULT_TX_ADAPTER_TIMEOUT_MS,
+        1,
     )
 }
 

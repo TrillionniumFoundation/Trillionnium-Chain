@@ -45,6 +45,7 @@ error_codes! {
     Hash => ("HASH", ProtocolInvalid),
     HeaderCodec => ("HEADER_CODEC", ProtocolInvalid),
     TransactionCodec => ("TRANSACTION_CODEC", ProtocolInvalid),
+    TaskObservationState => ("TASK_OBSERVATION_STATE", LocalStructure),
     PacketLimit => ("PACKET_LIMIT", ProtocolInvalid),
     TransactionLimit => ("TRANSACTION_LIMIT", ProtocolInvalid),
     DuplicateContent => ("DUPLICATE_CONTENT", IdentityConflict),

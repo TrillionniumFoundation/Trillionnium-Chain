@@ -4,6 +4,7 @@ pub(crate) mod authenticated_state;
 pub mod capacity_observation;
 pub mod evaluation_observation;
 pub mod evaluation_round_observation;
+mod task_observation;
 mod historical_commitment;
 #[cfg(test)]
 mod historical_commitment_tests;
@@ -4594,6 +4595,13 @@ impl Node {
                 )
             }
         };
+        let accepted_task = if stored_exact && active_chain_member {
+            self.accepted_task_observation(packet, tip, generation)?
+        } else {
+            None
+        };
+        self.ready()?;
+        ensure(self.active()? == (tip, generation), "STALE_VIEW")?;
         Ok(serde_json::json!({
             "schema":"pon-native-exact-packet-observation-v3",
             "block":hex::encode(id),
@@ -4609,6 +4617,7 @@ impl Node {
             "active_membership_sql_lookups":active_membership_sql_lookups,
             "active_membership_sql_budget":crate::ancestry_index::READ_SQL_BUDGET,
             "generation":generation,
+            "accepted_task":accepted_task,
             "local_target_only":true,
             "global_absence_authority":false,
             "confirmation_authority":false,
