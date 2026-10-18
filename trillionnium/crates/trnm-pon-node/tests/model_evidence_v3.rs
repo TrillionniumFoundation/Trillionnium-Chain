@@ -390,6 +390,7 @@ fn explicit_quorum_native_release_survives_one_absence_and_hash_appeal_with_dura
     let component = build(&initial, &c, 0, memorizing_factors(1), [8; 32]);
     let root = leaf(component.contribution_id, 0, POSITIVE_SCORE);
     let bundle = build(&initial, &c, 3, memorizing_factors(2), root);
+    let bundle_transaction = signed(&c, 3, 1, 23, bundle.encode().unwrap());
     let candidates = [component.contribution_id, bundle.contribution_id];
     let allocations = [(component.contribution_id, POSITIVE_SCORE)];
     let mut tip = selected.genesis();
@@ -400,7 +401,7 @@ fn explicit_quorum_native_release_survives_one_absence_and_hash_appeal_with_dura
         let state = node.read_active().unwrap().2;
         let transactions = match height {
             1 => vec![signed(&c, 0, 1, 23, component.encode().unwrap()),
-                signed(&c, 3, 1, 23, bundle.encode().unwrap())],
+                bundle_transaction.clone()],
             16 => {
                 let record = model_evidence::evidence(&state, bundle.contribution_id).unwrap();
                 false_attestation_refused(&c, &state, bundle.contribution_id,
@@ -445,12 +446,22 @@ fn explicit_quorum_native_release_survives_one_absence_and_hash_appeal_with_dura
     assert_eq!(e["closed"], closed);
     assert_eq!(e["appeals"].as_object().unwrap().len(), 1);
     assert_eq!(e["conflicts"].as_object().unwrap().len(), 1);
-    assert_eq!(node.evaluation_observation(bundle.contribution_id, CLOCK, 128).unwrap().closed_result(), Some(&closed));
-    assert_eq!(node.evaluation_round_observation(bundle.contribution_id, CLOCK, 128).unwrap().closed_result(), Some(&closed));
+    let observation = node.evaluation_observation(bundle.contribution_id, CLOCK, 128).unwrap();
+    let round_observation = node.evaluation_round_observation(bundle.contribution_id, CLOCK, 128).unwrap();
+    assert_eq!(observation.closed_result(), Some(&closed));
+    assert_eq!(round_observation.closed_result(), Some(&closed));
+    for anchor in [serde_json::to_value(observation.candidate_anchor()).unwrap(),
+        serde_json::to_value(round_observation.candidate_anchor()).unwrap()] {
+        assert_eq!(anchor["transaction"], hex::encode(hash(b"tx-id", &[&bundle_transaction])));
+        assert_eq!(anchor["transaction_membership_verified"], true);
+        assert_eq!(anchor["height"], 1);
+    }
     drop(node);
     assert!(Node::open(directory.path(), settings(), 1).is_err());
     let mut node = Node::open(directory.path(), selected.clone(), 2).unwrap();
     assert_eq!(node.read_active().unwrap().2, adopted);
+    node.check_evaluation_observation(&observation, CLOCK, 128).unwrap();
+    node.check_evaluation_round_observation(&round_observation, CLOCK, 128).unwrap();
 
     // Exact native executor transitions exercise the next round, not sparse
     // PNW1 headers. A saturated public corpus remains zero gain after adoption.
@@ -483,6 +494,14 @@ fn explicit_quorum_native_release_survives_one_absence_and_hash_appeal_with_dura
     assert!(!rolled_back.contains_key(&format!("release:{}", hex::encode(release_id))));
     assert!(!rolled_back.contains_key(&format!("evaluation-disqualified:{}", hex::encode(development_public(1).unwrap()))));
     assert_eq!(evaluation::read_evaluation(&rolled_back, bundle.contribution_id).unwrap()["closed"], closed);
+    assert_eq!(node.check_evaluation_observation(&observation, CLOCK, 128)
+        .unwrap_err().to_string(), "STALE_VIEW");
+    assert_eq!(node.check_evaluation_round_observation(&round_observation, CLOCK, 128)
+        .unwrap_err().to_string(), "STALE_VIEW");
+    assert_eq!(node.evaluation_observation(bundle.contribution_id, CLOCK, 128)
+        .unwrap().closed_result(), Some(&closed));
+    assert_eq!(node.evaluation_round_observation(bundle.contribution_id, CLOCK, 128)
+        .unwrap().closed_result(), Some(&closed));
     drop(node);
     assert_eq!(Node::open(directory.path(), selected, 1).unwrap().read_active().unwrap().2, rolled_back);
 }
