@@ -25,6 +25,7 @@ pub(crate) fn process_submission_record(
     adapter_cmd: &str,
     tx_max_retries: u32,
     tx_backoff_ms: u64,
+    tx_timeout_ms: u64,
     ack_log: &std::path::Path,
     event_log: &std::path::Path,
     progress_log: &std::path::Path,
@@ -118,11 +119,22 @@ pub(crate) fn process_submission_record(
     )?;
 
     let (commit_args, reveal_args) = submission_args(rec);
-    let commit_res =
-        run_adapter_with_retry(adapter_cmd, &commit_args, tx_max_retries, tx_backoff_ms)?;
+    let commit_res = run_adapter_with_retry(
+        adapter_cmd,
+        &commit_args,
+        tx_max_retries,
+        tx_backoff_ms,
+        std::time::Duration::from_millis(tx_timeout_ms),
+    )?;
     let reveal_executed = should_execute_reveal(&commit_res);
     let reveal_res = if reveal_executed {
-        run_adapter_with_retry(adapter_cmd, &reveal_args, tx_max_retries, tx_backoff_ms)?
+        run_adapter_with_retry(
+            adapter_cmd,
+            &reveal_args,
+            tx_max_retries,
+            tx_backoff_ms,
+            std::time::Duration::from_millis(tx_timeout_ms),
+        )?
     } else {
         AdapterExecResult {
             ok: false,
