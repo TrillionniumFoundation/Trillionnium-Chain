@@ -1957,6 +1957,7 @@ impl Node {
             .query([slot])
             .map_err(|error| Error::from(error).local_integrity())?;
         let mut state = State::new();
+        let mut canonical_bytes = Vec::new();
         while let Some(row) = rows
             .next()
             .map_err(|error| Error::from(error).local_integrity())?
@@ -1964,7 +1965,7 @@ impl Node {
             if state.len().is_multiple_of(256) {
                 progress()?;
             }
-            let (key, bytes): (String, Vec<u8>) = (|| -> Result<_> {
+            let key: String = (|| -> Result<_> {
                 let key_len: i64 = row.get(2)?;
                 let value_len: i64 = row.get(3)?;
                 ensure(
@@ -1973,12 +1974,24 @@ impl Node {
                         && (0..=4096).contains(&value_len),
                     "STATE_BYTES",
                 )?;
-                Ok((row.get(0)?, row.get(1)?))
+                Ok(row.get(0)?)
             })()
             .map_err(Error::local_integrity)?;
-            let value: Value = serde_json::from_slice(&bytes)
+            // The bounded SQL BLOB remains borrowed until this row advances.
+            // Decoded State owns its data; no SQLite borrow escapes this scope.
+            let cell = row.get_ref(1)
                 .map_err(|error| Error::from(error).local_integrity())?;
-            ensure(canonical(&value)? == bytes, "STATE_BYTES").map_err(Error::local_integrity)?;
+            let bytes = cell.as_blob().map_err(|_| {
+                Error::from(rusqlite::Error::InvalidColumnType(
+                    1, "value".into(), cell.data_type(),
+                )).local_integrity()
+            })?;
+            let value: Value = serde_json::from_slice(bytes)
+                .map_err(|error| Error::from(error).local_integrity())?;
+            canonical_bytes.clear();
+            serde_json::to_writer(&mut canonical_bytes, &value)
+                .map_err(|error| Error::from(error).local_integrity())?;
+            ensure(canonical_bytes == bytes, "STATE_BYTES").map_err(Error::local_integrity)?;
             state.insert(key, value);
         }
         progress()?;

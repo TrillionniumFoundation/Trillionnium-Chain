@@ -195,6 +195,14 @@ pub(crate) fn canonical(v: &Value) -> Result<Vec<u8>> {
     serde_json::to_vec(v).map_err(|_| "NONCANONICAL")
 }
 
+/// Reuse one operation-local encoder for comparisons which retain no value bytes.
+/// Grammar validation still precedes serialization and wire-limit decisions.
+pub(crate) fn canonical_into(v: &Value, bytes: &mut Vec<u8>) -> Result<()> {
+    validate_canonical(v)?;
+    bytes.clear();
+    serde_json::to_writer(bytes, v).map_err(|_| "NONCANONICAL")
+}
+
 pub fn root(state: &State) -> Result<Hash> {
     // Preserve the original complete grammar/error pass before wire limits.
     // A late noncanonical value must not be hidden by an earlier oversized key

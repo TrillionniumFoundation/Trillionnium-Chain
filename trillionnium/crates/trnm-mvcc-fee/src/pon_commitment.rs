@@ -230,6 +230,7 @@ fn visit_state_differences(
     mut visit: impl FnMut(&[u8], Option<&Vec<u8>>, Option<&Vec<u8>>) -> Result<()>,
 ) -> Result<()> {
     let mut old = before.iter().peekable();
+    let mut encoded = Vec::new();
     for (key, value) in after {
         let key = key.as_bytes();
         while old
@@ -239,7 +240,7 @@ fn visit_state_differences(
             let (previous, value) = old.next().ok_or("COMMITMENT_CHARGE")?;
             visit(previous, Some(value), None)?;
         }
-        let encoded = pon_executor::canonical(value)?;
+        pon_executor::canonical_into(value, &mut encoded)?;
         if old
             .peek()
             .is_some_and(|(previous, _)| previous.as_slice() == key)
@@ -371,8 +372,9 @@ fn matches_encoded(state: &State, expected: &CanonicalValues) -> Result<bool> {
     let mut matches = state.len() == expected.len();
     let mut within_limits = state.len() <= 65_536;
     let mut previous = expected.iter();
+    let mut actual = Vec::new();
     for (key, value) in state {
-        let actual = pon_executor::canonical(value)?;
+        pon_executor::canonical_into(value, &mut actual)?;
         within_limits &= key.len() <= 160 && actual.len() <= 4096;
         matches &= previous
             .next()
@@ -2056,6 +2058,81 @@ mod bounded_encoding_tests {
         limits: CacheLimits,
     ) -> PreparedCommitment {
         prepare_values(encode(state).unwrap(), prior, before, limits).unwrap()
+    }
+
+    #[test]
+    fn reused_encoders_preserve_shrinking_values_deletions_and_late_errors() {
+        let mut before = State::from([
+            ("a".into(), json!("x".repeat(4094))),
+            ("b".into(), json!("")),
+            ("c".into(), json!([true, false, null])),
+            ("d".into(), json!({"escaped": "\n\t\\\""})),
+            ("e".into(), json!(17)),
+        ]);
+        let seed = derive_snapshot(&before, None, CacheLimits::default()).unwrap();
+        let encoded_before = encode(&before).unwrap();
+        assert!(matches_encoded(&before, &encoded_before).unwrap());
+        before.insert("a".into(), json!(""));
+        before.insert("b".into(), json!("y".repeat(4094)));
+        before.remove("c");
+        before.insert("f".into(), json!([]));
+        for limits in [CacheLimits::default(), CacheLimits {
+            max_payload_bytes: 0, ..CacheLimits::default()
+        }] {
+            equal(
+                &prepare_state(&before, seed.snapshot.as_ref(), Some(&encoded_before), limits).unwrap(),
+                &full_map_reference(&before, seed.snapshot.as_ref(), Some(&encoded_before), limits),
+            );
+        }
+        assert!(!matches_encoded(&before, &encoded_before).unwrap());
+        before.insert("zz".into(), json!("non-ASCII: λ"));
+        assert_eq!(matches_encoded(&before, &encoded_before), Err("NONCANONICAL"));
+        assert_eq!(seed.snapshot.unwrap().values.as_ref(), &encoded_before);
+    }
+
+    #[test]
+    #[ignore = "explicit encoder allocation A/B; excludes SQLite, roots, execution and networking"]
+    fn canonical_buffer_reuse_component_timing() {
+        use std::time::Instant;
+        fn allocating_reference(state: &State, expected: &CanonicalValues) -> Result<bool> {
+            let mut matches = state.len() == expected.len();
+            let mut within_limits = state.len() <= 65_536;
+            let mut previous = expected.iter();
+            for (key, value) in state {
+                let actual = pon_executor::canonical(value)?;
+                within_limits &= key.len() <= 160 && actual.len() <= 4096;
+                matches &= previous.next().is_some_and(|(k, v)| key.as_bytes() == k && actual == *v);
+            }
+            if !within_limits { return Err("LIMIT"); }
+            Ok(matches)
+        }
+        for keys in [64_usize, 512, 4096] {
+            let state: State = (0..keys).map(|i| (format!("row:{i:06}"),
+                json!({"text": "x".repeat([4094_usize / 2, 0, 128, 16][i % 4]), "nonce": i}))).collect();
+            let expected = encode(&state).unwrap();
+            assert_eq!(allocating_reference(&state, &expected).unwrap(), matches_encoded(&state, &expected).unwrap());
+            let mut samples: [Vec<u128>; 2] = Default::default();
+            for sample in 0..16 {
+                for offset in 0..2 {
+                    let arm = (sample + offset) % 2;
+                    let start = Instant::now();
+                    for _ in 0..16 {
+                        let matched = if arm == 0 { allocating_reference(&state, &expected) }
+                            else { matches_encoded(&state, &expected) }.unwrap();
+                        assert!(std::hint::black_box(matched));
+                    }
+                    samples[arm].push(start.elapsed().as_nanos());
+                }
+            }
+            println!("{}", json!({
+                "schema":"canonical-buffer-reuse-component-v1", "state_keys":keys,
+                "comparisons_per_sample":16, "samples_per_arm":16,
+                "original_allocating_ns":samples[0], "reused_encoder_ns":samples[1],
+                "order":"alternating paired arms", "exact_comparison_equal":true,
+                "scope":"canonical byte comparison only; no state, history, root or authority checks omitted",
+                "public_tps_measured":false, "physical_memory_bound":false
+            }));
+        }
     }
     fn equal(actual: &PreparedCommitment, expected: &PreparedCommitment) {
         assert_eq!(actual.root, expected.root);

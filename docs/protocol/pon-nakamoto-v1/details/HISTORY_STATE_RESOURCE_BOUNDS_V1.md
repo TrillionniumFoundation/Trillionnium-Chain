@@ -657,3 +657,22 @@ cancellation-versus-relation distinction. No cross-operation validation token, n
 thread, relaxed cache bound or skipped successor root is introduced. Constructor
 comparisons include true default 8 MiB payload refusal as well as warm/cold paths;
 component binding timing is not an end-to-end Node or network throughput claim.
+
+## Reuse temporary encoders inside one state read
+
+The live slot reader now borrows each bounded SQLite BLOB until that row advances,
+deserializes it into the same owned State, and reuses one temporary serialization
+buffer for the exact canonical-byte comparison. It no longer first clones every
+bounded BLOB into a Rust Vec. SQLite types, dimensions, every canonical comparison,
+256-row cancellation points, continuity liabilities, committed roots and final
+slot/generation checks are unchanged. No SQLite borrow or checked state verdict
+survives its existing owner operation.
+
+The warm commitment comparison and successor-difference passes likewise reuse an
+operation-local encoder. They still visit and compare every actual value. Retained
+canonical maps, exact cache charges, full-root fallback selection, missing-versus-
+empty changes, late grammar-error order and all public state bounds remain as before.
+This reduces repeated temporary allocations; it does not make the O(state) read or
+O(history) clock/confirmation scan sublinear. The explicit paired encoder timing
+retains both arms and every sample, and excludes roots, SQLite, execution, networking
+and installation. Whole-request improvement must be established separately.

@@ -3473,6 +3473,20 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-pon-node/src/store/task_observation.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/store/task_observation.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/tests/accepted_task_observation.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/tests/accepted_task_observation.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-pon-node/tests/account_archive_execution.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -6277,6 +6291,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-worker-agent/src/workflow_ops.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-worker-agent/tests/flush_bounded_runtime.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-worker-agent/tests/flush_bounded_runtime.rs"
         )),
     ),
     (
