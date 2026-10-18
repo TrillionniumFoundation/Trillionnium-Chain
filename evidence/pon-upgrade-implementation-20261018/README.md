@@ -55,6 +55,15 @@ pair, unresolved outcomes and original owner observations.
 ## Later source-specific rounds
 
 The [native rerun archive](native-rounds/README.md) preserves the later P0 failures,
-the separately corrected Clippy invocation, and all four raw W1 campaigns.
+the separately corrected Clippy invocation, all four raw W1 campaigns, and the
+source390 native, operational and measured followup files.
 Its results retain their actual source identities and do not replace the earlier
 component observations above.
+
+The [source390 metric scope](native-rounds/CHAIN_390_SCOPE.md) records the finite
+800-transaction successful run, the failed faster run with 640 unique confirmed
+transactions, and the original public V3 baseline/attack failures. Its separate
+[derived report](native-rounds/chain-390-observations.json) checks the full raw
+transaction IDs and preserves all six development metrics, including the three
+unmeasured model/future-utility/recovery-cost entries as null. The historical
+component report's null metrics remain unchanged.

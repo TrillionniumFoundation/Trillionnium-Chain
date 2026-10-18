@@ -1,0 +1,31 @@
+{
+  "auth_secret": "/home/qian-qi/work/pon-upgrade-implementation-20261018/chain-390-operational/public-roles/public-restart/producer.key",
+  "data_blocks": 2,
+  "drain_blocks": 6,
+  "evaluation_policy": "closed-round-all-eligible-min-v1",
+  "genesis_time": 1792333997,
+  "listen": null,
+  "pace_ms": 350,
+  "pattern": "disjoint4",
+  "peer": "127.0.0.1:37975",
+  "peer_roster": null,
+  "poll_ms": 40,
+  "role": "producer",
+  "run_id": "three-process-conformance",
+  "run_root": "/home/qian-qi/work/pon-upgrade-implementation-20261018/chain-390-operational/public-roles/public-restart/producer",
+  "schema": "pon-distributed-public-role-config-v2",
+  "scope": "local-process-test",
+  "server_public": "8a88e3dd7409f195fd52db2d3cba5d72ca6709bf1d94121bf3748801b40f6f5c",
+  "server_seconds": 20,
+  "session_generation": 0,
+  "source_pin": {
+    "binary_digest": "4858496e5b029889288f1b574b1067487925a0151ee65abb430da90dbb1c50e3",
+    "commit": "390617cbe7b169843f60c5622ec26d2531f385d3",
+    "inventory_digest": "385d060d39fb4938f5378e640625688300d4670c7437d1a0fd8d92e0f7c2cbb6",
+    "tree": "f2817209ce22b41fdffda284d37c9381edcd6dae"
+  },
+  "task_profile": "signed-task-dev-v1",
+  "timeout_seconds": 16,
+  "transactions_per_block": 4,
+  "workers": 1
+}
