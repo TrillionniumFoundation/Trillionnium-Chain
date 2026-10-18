@@ -21,7 +21,9 @@ fn keys(value: &Value) -> Result<BTreeSet<String>> {
         check(result.insert(key.to_owned()), "PUBLIC_EVAL_ROSTER")?;
     }
     check(
-        rows.iter().filter_map(Value::as_str).eq(result.iter().map(String::as_str)),
+        rows.iter()
+            .filter_map(Value::as_str)
+            .eq(result.iter().map(String::as_str)),
         "PUBLIC_EVAL_ROSTER",
     )?;
     Ok(result)
@@ -49,7 +51,10 @@ pub(super) fn configure_plan(
     excluded: &BTreeSet<String>,
     generation: u64,
 ) -> Result<()> {
-    check(crate::model_evidence_v3::enabled(cfg), "PUBLIC_EVAL_NATIVE_REPLAY_REQUIRED")?;
+    check(
+        crate::model_evidence_v3::enabled(cfg),
+        "PUBLIC_EVAL_NATIVE_REPLAY_REQUIRED",
+    )?;
     let roster = keys(&plan["roster"])?;
     let disqualified: BTreeSet<_> = roster.intersection(excluded).cloned().collect();
     let quorum = (2 * roster.len()).div_ceil(3);
@@ -95,7 +100,10 @@ pub fn validate_plan(plan: &Value) -> Result<()> {
         "PUBLIC_EVAL_ROSTER",
     )?;
     check(
-        n(plan, "start")? == n(plan, "generation")?.checked_mul(128).ok_or("PUBLIC_EVAL_STATE")?
+        n(plan, "start")?
+            == n(plan, "generation")?
+                .checked_mul(128)
+                .ok_or("PUBLIC_EVAL_STATE")?
             && digest(plan, "generation_context")? == generation_context(plan)?,
         "PUBLIC_EVAL_GENERATION",
     )
@@ -119,7 +127,11 @@ pub(super) fn reveal_commitment(value: &Reveal) -> Hash {
 fn disqualified(evaluation: &Value) -> Result<BTreeSet<String>> {
     let roster = keys(&evaluation["plan"]["roster"])?;
     let mut result = keys(&evaluation["plan"]["disqualified_at_freeze"])?;
-    for conflict in evaluation["conflicts"].as_object().ok_or("PUBLIC_EVAL_STATE")?.values() {
+    for conflict in evaluation["conflicts"]
+        .as_object()
+        .ok_or("PUBLIC_EVAL_STATE")?
+        .values()
+    {
         let signer = conflict["signer"].as_str().ok_or("PUBLIC_EVAL_STATE")?;
         check(roster.contains(signer), "PUBLIC_EVAL_AUTHORITY")?;
         result.insert(signer.to_owned());
@@ -129,7 +141,10 @@ fn disqualified(evaluation: &Value) -> Result<BTreeSet<String>> {
 
 /// A genuine signed conflict affects this key only. Absence creates no vote.
 pub(super) fn eligible(evaluation: &Value, sender: &str) -> Result<()> {
-    check(!disqualified(evaluation)?.contains(sender), "PUBLIC_EVAL_DISQUALIFIED")
+    check(
+        !disqualified(evaluation)?.contains(sender),
+        "PUBLIC_EVAL_DISQUALIFIED",
+    )
 }
 
 struct Count {
@@ -146,39 +161,64 @@ fn count(evaluation: &Value, current_disqualified: &BTreeSet<String>) -> Result<
     let roster = keys(&evaluation["plan"]["roster"])?;
     let mut excluded = disqualified(evaluation)?;
     excluded.extend(roster.intersection(current_disqualified).cloned());
-    let reveals = evaluation["reveals"].as_object().ok_or("PUBLIC_EVAL_STATE")?;
-    let commits = evaluation["commits"].as_object().ok_or("PUBLIC_EVAL_STATE")?;
+    let reveals = evaluation["reveals"]
+        .as_object()
+        .ok_or("PUBLIC_EVAL_STATE")?;
+    let commits = evaluation["commits"]
+        .as_object()
+        .ok_or("PUBLIC_EVAL_STATE")?;
     let mut groups = BTreeMap::<(u64, Hash), usize>::new();
     let mut revealed = 0;
     for (signer, value) in reveals {
-        check(roster.contains(signer) && commits.contains_key(signer), "PUBLIC_EVAL_STATE")?;
+        check(
+            roster.contains(signer) && commits.contains_key(signer),
+            "PUBLIC_EVAL_STATE",
+        )?;
         let score = n(value, "score")?;
         let evidence = digest(value, "evidence")?;
-        check(score <= n(&evaluation["plan"], "max_score")? && evidence != [0; 32], "PUBLIC_EVAL_STATE")?;
+        check(
+            score <= n(&evaluation["plan"], "max_score")? && evidence != [0; 32],
+            "PUBLIC_EVAL_STATE",
+        )?;
         if !excluded.contains(signer) {
             *groups.entry((score, evidence)).or_default() += 1;
             revealed += 1;
         }
     }
     let quorum = n(&evaluation["plan"], "quorum")? as usize;
-    let accepted: Vec<_> = groups.iter().filter(|(_, count)| **count >= quorum).collect();
+    let accepted: Vec<_> = groups
+        .iter()
+        .filter(|(_, count)| **count >= quorum)
+        .collect();
     check(accepted.len() <= 1, "PUBLIC_EVAL_STATE")?;
-    let (score, evidence, matching) = accepted.first().map_or((None, None, 0), |((score, evidence), count)| {
-        (Some(*score), Some(*evidence), **count)
-    });
+    let (score, evidence, matching) = accepted
+        .first()
+        .map_or((None, None, 0), |((score, evidence), count)| {
+            (Some(*score), Some(*evidence), **count)
+        });
     Ok(Count {
         score,
         evidence,
         matching,
         revealed,
-        missing: roster.iter().filter(|key| !reveals.contains_key(*key)).count(),
+        missing: roster
+            .iter()
+            .filter(|key| !reveals.contains_key(*key))
+            .count(),
         disqualified: excluded,
     })
 }
 
-pub(super) fn close(evaluation: &mut Value, height: u64, current_disqualified: &BTreeSet<String>) -> Result<Option<u64>> {
+pub(super) fn close(
+    evaluation: &mut Value,
+    height: u64,
+    current_disqualified: &BTreeSet<String>,
+) -> Result<Option<u64>> {
     let counted = count(evaluation, current_disqualified)?;
-    let conflicts = evaluation["conflicts"].as_object().ok_or("PUBLIC_EVAL_STATE")?.len();
+    let conflicts = evaluation["conflicts"]
+        .as_object()
+        .ok_or("PUBLIC_EVAL_STATE")?
+        .len();
     evaluation["closed"] = json!({
         "schema":"pon-native-closed-evaluation-v3",
         "round":evaluation["round"],"candidate":evaluation["plan"]["candidate"],
@@ -199,14 +239,20 @@ pub(super) fn close(evaluation: &mut Value, height: u64, current_disqualified: &
 
 /// Recount inside the native tag8 state transaction, including late conflicts.
 /// The immutable closure and already executed effects are never rewritten here.
-pub fn adoption_allowed(evaluation: &Value, height: u64, allow_zero: bool, current_disqualified: &BTreeSet<String>) -> Result<()> {
+pub fn adoption_allowed(
+    evaluation: &Value,
+    height: u64,
+    allow_zero: bool,
+    current_disqualified: &BTreeSet<String>,
+) -> Result<()> {
     validate_plan(&evaluation["plan"])?;
     check(
         height >= n(&evaluation["plan"], "adoption_start")?
             && evaluation["closed"]["schema"] == "pon-native-closed-evaluation-v3"
             && evaluation["closed"]["status"] == "complete-scored"
             && evaluation["closed"]["round"] == evaluation["round"]
-            && evaluation["closed"]["generation_context"] == evaluation["plan"]["generation_context"],
+            && evaluation["closed"]["generation_context"]
+                == evaluation["plan"]["generation_context"],
         "PUBLIC_EVAL_ADOPTION",
     )?;
     let score = n(&evaluation["closed"], "score")?;

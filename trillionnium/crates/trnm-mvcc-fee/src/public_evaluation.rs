@@ -429,10 +429,7 @@ pub fn excluded(state: &BTreeMap<String, Value>) -> BTreeSet<String> {
     state
         .range(prefix.to_owned()..)
         .take_while(|(key, _)| key.starts_with(prefix))
-        .filter_map(|(key, _)| {
-            key.strip_prefix(prefix)
-                .map(str::to_owned)
-        })
+        .filter_map(|(key, _)| key.strip_prefix(prefix).map(str::to_owned))
         .collect()
 }
 
