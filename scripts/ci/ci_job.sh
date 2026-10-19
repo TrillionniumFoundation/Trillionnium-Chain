@@ -22,6 +22,8 @@ case "${1:?required job}" in
     python3 scripts/ci/test_work_rejection_report.py
     python3 scripts/ci/test_pon_w1_budget_readers.py
     python3 scripts/ci/test_pon_daa_schedule_reader.py
+    python3 scripts/ci/test_pon_public_v3_phase_read.py
+    python3 scripts/ci/test_run_pon_w1_native_campaign.py
     python3 scripts/ci/test_account_archive_conformance.py
     python3 scripts/ci/test_run_account_execution_conformance.py
     python3 scripts/ci/report_current_implementation.py --check

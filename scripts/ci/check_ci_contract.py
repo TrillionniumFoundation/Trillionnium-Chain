@@ -64,7 +64,9 @@ EVALUATION_QUORUM_ORACLE = ('    python3 formal/pon-nakamoto-v1/test_native_eval
 MODEL_EVOLUTION_ORACLES = ('    python3 formal/pon-nakamoto-v1/test_model_evolution_oracle.py -v\n'
                           '    python3 formal/pon-nakamoto-v1/test_model_task_windows_oracle.py -v\n')
 COST_BOUNDARY_READERS = ('    python3 scripts/ci/test_pon_w1_budget_readers.py\n'
-                         '    python3 scripts/ci/test_pon_daa_schedule_reader.py\n')
+                         '    python3 scripts/ci/test_pon_daa_schedule_reader.py\n'
+                         '    python3 scripts/ci/test_pon_public_v3_phase_read.py\n'
+                         '    python3 scripts/ci/test_run_pon_w1_native_campaign.py\n')
 NODE_EXAMPLE_BUILD = '    cargo build --offline --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --bins --examples\n'
 ACCOUNT_ARCHIVE_ORACLE = ('    python3 formal/pon-nakamoto-v1/test_account_archive_oracle.py -v\n'
                           '    python3 scripts/ci/run_account_archive_conformance.py\n')
