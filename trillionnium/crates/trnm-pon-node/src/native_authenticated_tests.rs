@@ -639,6 +639,61 @@ fn parent_with_full_transaction_block(node: &mut Node) -> Hash {
 }
 
 #[test]
+fn native_successor_material_avoids_cold_readback_but_checks_all_actual_state() {
+    use trnm_mvcc_fee::pon_commitment::CommitmentMethod;
+    let directory = tempfile::tempdir().unwrap();
+    let mut node = open(directory.path(), StateBackend::AuthenticatedV1);
+    let parent = parent_with_full_transaction_block(&mut node);
+    let packet = make(&node, parent, vec![transfer(&node.settings, 257, 900)]);
+    node.historical_commitment_cache.borrow_mut().clear();
+    let id = node.admit(&packet, 100_000).unwrap();
+    let readback = node.derived_commitment_status().last.unwrap();
+    assert_eq!(readback.method, CommitmentMethod::CheckedApply);
+    assert_eq!(readback.changed_keys, 0);
+    let expected = node.state_at(id).unwrap();
+    assert!(expected.len() > 256);
+    node.historical_commitment_cache.borrow_mut().clear();
+    assert_eq!(node.state_at(id).unwrap(), expected);
+    let cold = node.derived_commitment_status().last.unwrap();
+    assert_eq!(cold.method, CommitmentMethod::RebuiltTree);
+    // With no predecessor, the rebuilt tree has no relative change-set count.
+    // Its actual input count still proves that the complete State was checked.
+    assert_eq!(cold.actual_keys, expected.len());
+    assert_eq!(readback.actual_keys, expected.len());
+    assert_eq!(root(&expected).unwrap(), packet.header.state);
+
+    let external = Connection::open(directory.path().join("native.sqlite")).unwrap();
+    let raw = canonical(&expected).unwrap();
+    let mut damaged = expected.clone();
+    damaged.insert("actual-post-execution-state".into(), json!(1));
+    external
+        .execute(
+            "UPDATE snapshots SET state=? WHERE block=?",
+            params![canonical(&damaged).unwrap(), id.as_slice()],
+        )
+        .unwrap();
+    let warm = node.state_at(id).unwrap_err();
+    node.historical_commitment_cache.borrow_mut().clear();
+    let cold = node.state_at(id).unwrap_err();
+    assert_eq!(warm.to_string(), "ROOT");
+    assert_eq!(warm.to_string(), cold.to_string());
+    assert_eq!(warm.kind(), cold.kind());
+    assert!(warm.requires_owner_stop());
+    external
+        .execute(
+            "UPDATE snapshots SET state=? WHERE block=?",
+            params![raw, id.as_slice()],
+        )
+        .unwrap();
+    assert_eq!(node.state_at(id).unwrap(), expected);
+    node.activate(id).unwrap();
+    let active = node.read_active().unwrap();
+    drop(node);
+    let node = open(directory.path(), StateBackend::AuthenticatedV1);
+    assert_eq!(node.read_active().unwrap(), active);
+}
+
+#[test]
 fn controlled_parent_reconstruction_preserves_cancellation_and_complete_retry() {
     for backend in [StateBackend::Legacy, StateBackend::AuthenticatedV1] {
         let dir = tempfile::tempdir().unwrap();

@@ -239,7 +239,36 @@ fn original_context_parent_header_and_work_checks_keep_their_positions() {
             4096,
         )
         .unwrap();
-    packet.proof[8] ^= 1;
+    // Keep the real task matrices and a target-valid claimed ticket. Corrupt
+    // only the transcript so the cheap statement filter can pass, leaving the
+    // original parent/header/history checks before the full work verifier.
+    let trace_offset = 4 + 3 * pon_work::CELLS * 4;
+    let false_trace = (0_u64..4096)
+        .map(|nonce| pon_work::hash(b"historical-context-false-trace", &[&nonce.to_le_bytes()]))
+        .find(|trace| {
+            trace.as_slice() != &packet.proof[trace_offset..]
+                && pon_work::hash(b"ticket", &[&packet.header.challenge(), trace])
+                    <= packet.header.target
+        })
+        .unwrap();
+    packet.proof[trace_offset..].copy_from_slice(&false_trace);
+    pon_work::precheck_proof_statement(
+        packet.header.challenge(),
+        packet.header.work_task,
+        packet.header.target,
+        &packet.proof,
+    )
+    .unwrap();
+    assert_eq!(
+        pon_work::verify(
+            packet.header.challenge(),
+            packet.header.work_task,
+            packet.header.target,
+            &packet.proof,
+        )
+        .err(),
+        Some(pon_work::WorkError::Transcript)
+    );
     assert!(node
         .check_admission_context(&packet, NOW)
         .unwrap()

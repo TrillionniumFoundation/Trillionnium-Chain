@@ -60,6 +60,26 @@ def digest(value):
     return value
 
 
+def refusal_error(row):
+    """Project the native reply envelope, keeping retained legacy flat errors.
+
+    Unknown is retained when neither shape recorded an error. Conflicting
+    shapes cannot be silently attributed to either error or called successful.
+    """
+    response = row.get('response')
+    if response is None:
+        return None
+    require(isinstance(response, dict), 'response object required')
+    value = response.get('value')
+    require(value is None or isinstance(value, dict), 'response value object required')
+    flat, nested = response.get('error'), (value or {}).get('error')
+    for error in (flat, nested):
+        require(error is None or isinstance(error, str), 'observed refusal error string required')
+    require(flat is None or nested is None or flat == nested,
+            'conflicting flat and nested refusal errors')
+    return nested if nested is not None else flat
+
+
 def call_summary(rows):
     on_time = [row for row in rows if row['status'] == 'ok'
                and row['returned_after_window'] is False]
@@ -71,7 +91,7 @@ def call_summary(rows):
             'on_time_unique_packet_indices': sorted({integer(row['packet_index']) for row in on_time
                                                      if 'packet_index' in row}),
             'errors': dict(Counter(str(row['error']) for row in rows if row.get('error') is not None)),
-            'refusals': dict(Counter(str(row.get('response', {}).get('error')) for row in rows
+            'refusals': dict(Counter(str(refusal_error(row)) for row in rows
                                     if row['status'] == 'refused')),
             'elapsed_wall_ns': stats([row.get('elapsed_wall_ns') for row in rows]),
             'calling_process_cpu_ns': stats([row.get('calling_process_cpu_ns') for row in rows])}
@@ -151,10 +171,14 @@ def phase_summary(phase):
     roles = defaultdict(set)
     for role, calls in (('honest_submit', submissions), ('client_history', history), ('attack_submit', attacks)):
         for row in calls:
-            roles[digest(row['public_request_body_digest'])].add(role)
+            body = digest(row['public_request_body_digest'])
+            # Unknown observations do not share an identity with one another.
+            if body is not None:
+                roles[body].add(role)
     grouped = defaultdict(list)
     for row in observer['records']:
-        candidates = roles.get(digest(row.get('body_digest')), set())
+        body = digest(row.get('body_digest'))
+        candidates = roles.get(body, set()) if body is not None else set()
         role = next(iter(candidates)) if len(candidates) == 1 else 'unattributed_or_ambiguous'
         grouped[role].append(row)
     base.update({

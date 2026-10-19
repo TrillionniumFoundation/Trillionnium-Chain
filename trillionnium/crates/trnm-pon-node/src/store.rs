@@ -1843,7 +1843,17 @@ impl Node {
         let record = self.record(id).map_err(Error::local_integrity)?;
         continuity_v1::check_state(state, record.height, &self.settings.app)
             .map_err(|error| Error::from(error).local_integrity())?;
-        ensure(root(state)? == record.root, "ROOT").map_err(Error::local_integrity)?;
+        // The native complete-state commitment may already contain this exact
+        // full root. Compare all current State bytes before arithmetic reuse;
+        // a miss retains the original root calculation and error order. Actual
+        // SQL State, record, account graph and history checks still follow.
+        let actual_root = if self.state_backend == StateBackend::AuthenticatedV1 {
+            self.authenticated_arithmetic
+                .state_root(&self.settings, state)?
+        } else {
+            root(state)?
+        };
+        ensure(actual_root == record.root, "ROOT").map_err(Error::local_integrity)?;
         if self.state_backend == StateBackend::AuthenticatedV1 {
             native_authenticated::verify_state_with_cache(
                 &self.db,
@@ -2664,12 +2674,36 @@ impl Node {
     ) -> Result<Option<Hash>> {
         self.check_admission_context_for_permit(packet, observed_now, None, progress)
     }
+    /// The ordinary public V3 service verifies bounded W1 before reconstructing
+    /// all parent State. Local owner policies still bind their complete task
+    /// before any work. Final admission always repeats the full current context.
+    pub(crate) fn precheck_public_admission_context_with_progress(
+        &self,
+        packet: &Packet,
+        observed_now: u64,
+        progress: &mut dyn FnMut() -> Result<()>,
+    ) -> Result<Option<Hash>> {
+        let task_before_work = self.owner_policy.is_some()
+            || self.continuous_owner.is_some()
+            || self.mining_owner.is_some();
+        self.check_admission_context_inner(packet, observed_now, None, progress, task_before_work)
+    }
     fn check_admission_context_for_permit(
         &self,
         packet: &Packet,
         observed_now: u64,
         reserved: Option<&OwnerPacketPermit>,
         progress: &mut dyn FnMut() -> Result<()>,
+    ) -> Result<Option<Hash>> {
+        self.check_admission_context_inner(packet, observed_now, reserved, progress, true)
+    }
+    fn check_admission_context_inner(
+        &self,
+        packet: &Packet,
+        observed_now: u64,
+        reserved: Option<&OwnerPacketPermit>,
+        progress: &mut dyn FnMut() -> Result<()>,
+        task_before_work: bool,
     ) -> Result<Option<Hash>> {
         // Bounded full-packet identity precedes State/lease/context/Work work.
         self.precheck_owner_packet(packet)?;
@@ -2743,6 +2777,11 @@ impl Node {
         // them before task lookup; a passing filter still requires full replay.
         pon_work::precheck_proof_statement(h.challenge(), h.work_task, h.target, &packet.proof)
             .map_err(|error| Error::from(format!("WORK:{error:?}")))?;
+        if !task_before_work {
+            // Only the unowned public preflight can defer this expensive stage.
+            // A verified proof is still not a task/State/commit authorization.
+            return Ok(None);
+        }
         // Signed task context/expiry/parent registration reject before full work replay.
         if let Some(manifest) =
             self.eligible_work_task_with_progress(h.parent, h.work_task, h.height, progress)?
@@ -3323,7 +3362,7 @@ impl Node {
             owner_permit.as_ref(),
         )?;
         let mut output = executed.output;
-        let commitment = executed.commitment;
+        let mut commitment = executed.commitment;
         if registered_task.manifest().is_some() {
             let product: Vec<u8> = verified_work
                 .product()
@@ -3331,15 +3370,24 @@ impl Node {
                 .flat_map(|value| value.to_le_bytes())
                 .collect();
             if self.record_task_output(h.height, &mut output.state, &registered_task, &product)? {
-                output.root = self
-                    .derive_successor(&output.state, commitment.snapshot.as_ref())?
-                    .root;
+                commitment = self.derive_successor(&output.state, commitment.snapshot.as_ref())?;
+                output.root = commitment.root;
             }
         }
         ensure(
             h.state == output.root && h.receipts == sequence_root("receipts", &output.receipts),
             "ROOT",
         )?;
+        if self.state_backend == StateBackend::AuthenticatedV1 {
+            // Pure successor tree material is already available from M06. Offer
+            // it to the existing bounded historical cache before SQL readback;
+            // state_at still reads, canonically encodes and compares ALL actual
+            // stored State, then checks the resulting root and account graph.
+            // Rollback may leave optional arithmetic, never an admitted fact.
+            self.historical_commitment_cache
+                .borrow_mut()
+                .retain(id, commitment.snapshot.as_ref());
+        }
         let work = parent
             .work
             .checked_add(consensus::required_work(h.target)?)?;

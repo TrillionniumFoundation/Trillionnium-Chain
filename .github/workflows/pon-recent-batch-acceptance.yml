@@ -57,10 +57,10 @@ jobs:
             args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_MERGE")
           fi
           python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$out/source.json"
-          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store.rs)" = c45cf34bdc263e975f8b16ae1f05bfad6f344839
+          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store.rs)" = b009ecc3e98a8bb34c1b6fa07b0959995c38c0dc
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/history_page.rs)" = c8569bd62a9c374b03a8ffc0ad02c64b0365eee4
-          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/native_authenticated_tests.rs)" = 7fc4ccd61438d069d5ac4d27775c5c61860c28c2
-          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs)" = adc4cc402ef8050a6ae2fd5d193c5353950c8d8a
+          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/native_authenticated_tests.rs)" = 42516cf9ca0dbe7874744bcf790a5b6f9f5120a9
+          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs)" = 52ff5564b1964a38848fd4463f86575ecb8643ee
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_fixed_blob_tests.rs)" = cecb8a984c02ffca7590e69c4392223ea748b40f
           test "$(git hash-object trillionnium/crates/trnm-pon-node/tests/authenticated_storage_cli.rs)" = 7301aeb3033913f080b23767bfca52a2bf76d45b
           test "$(git hash-object formal/pon-nakamoto-v1/work_query_bound.py)" = 2d568879899da290c7bec8add6eb2746554897d6
@@ -118,7 +118,7 @@ jobs:
         run: |
           set -euo pipefail
           cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib store::native_authenticated_tests:: -- --show-output --test-threads=1 2>&1 | tee "$OUT/native-snapshots.log"
-          grep -E '^test result: ok\. 16 passed; 0 failed; 0 ignored;' "$OUT/native-snapshots.log"
+          grep -E '^test result: ok\. 18 passed; 0 failed; 0 ignored;' "$OUT/native-snapshots.log"
           for test in native_dense_snapshots_retain_64_and_reconstruct_pruned_history native_dense_snapshot_insert_corruption_and_delta_omission_roll_back native_dense_snapshot_pruning_suppression_preserves_atomic_limit native_dense_snapshot_cannot_hide_old_delta_damage_from_admission native_dense_snapshot_readback_cost_keeps_full_state_and_unaccelerated_reference; do
             selector="store::native_authenticated_tests::$test"
             cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib "$selector" -- --exact --show-output --test-threads=1 2>&1 | tee "$OUT/$test.log"
@@ -137,7 +137,7 @@ jobs:
             cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib "$suite" -- "${options[@]}" --show-output --test-threads=1 2>&1 | tee "$OUT/$name.log"
             grep -E '^test result: ok\. [1-9][0-9]* passed; 0 failed;' "$OUT/$name.log"
             if test "$suite" = store::native_authenticated::; then
-              grep -E '^test result: ok\. 37 passed; 0 failed; 0 ignored;' "$OUT/$name.log"
+              grep -E '^test result: ok\. 42 passed; 0 failed; 0 ignored;' "$OUT/$name.log"
             fi
           done
           cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test continuity_authenticated --test authenticated_storage_cli -- --show-output --test-threads=1 2>&1 | tee "$OUT/recovery.log"

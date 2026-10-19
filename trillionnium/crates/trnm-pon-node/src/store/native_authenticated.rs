@@ -95,7 +95,17 @@ fn complete(settings: &Settings, state: &State) -> Result<StateCommitment> {
     })
 }
 
+#[cfg(test)]
 fn native_block(db: &Connection, settings: &Settings, id: Hash) -> Result<NativeBlock> {
+    native_block_with_cache(db, settings, id, None)
+}
+
+fn native_block_with_cache(
+    db: &Connection,
+    settings: &Settings,
+    id: Hash,
+    cache: Option<&ArithmeticCache>,
+) -> Result<NativeBlock> {
     local((|| {
         let (parent, height, work, packet, state): StoredBlockRow = db
             .prepare_cached(NATIVE_BLOCK_SQL)?
@@ -117,7 +127,11 @@ fn native_block(db: &Connection, settings: &Settings, id: Hash) -> Result<Native
                     && height == 0
                     && packet.is_none()
                     && work == consensus::Work::from_bytes([0; 64])
-                    && state == root(&settings.initial)?,
+                    && state
+                        == match cache {
+                            Some(cache) => cache.state_root(settings, &settings.initial)?,
+                            None => root(&settings.initial)?,
+                        },
                 "NATIVE_STATE_GENESIS",
             )?;
             return Ok(NativeBlock {
@@ -469,8 +483,9 @@ fn verify_record(
     settings: &Settings,
     record: &Record,
     progress: &mut dyn FnMut() -> Result<()>,
+    cache: Option<&ArithmeticCache>,
 ) -> Result<()> {
-    let native = native_block(db, settings, record.block)?;
+    let native = native_block_with_cache(db, settings, record.block, cache)?;
     let (delta_count, delta_root) = stored_delta_root(db, record.block, progress)?;
     local(ensure(
         record.parent == native.parent
@@ -522,7 +537,7 @@ pub(crate) fn verify_state_with_cache(
 ) -> Result<()> {
     progress()?;
     let record = load(db, block)?;
-    verify_record(db, settings, &record, progress)?;
+    verify_record(db, settings, &record, progress, cache)?;
     local(ensure(
         record.state
             == match cache {
@@ -565,7 +580,7 @@ pub(crate) fn verify_history_with_cache(
     loop {
         progress()?;
         let record = load(db, current)?;
-        verify_record(db, settings, &record, progress)?;
+        verify_record(db, settings, &record, progress, cache)?;
         local(ensure(
             expected_height.is_none_or(|height| record.height == height),
             "NATIVE_STATE_HISTORY",
@@ -645,7 +660,7 @@ pub(crate) fn publish_with_cache(
 ) -> Result<()> {
     verify_state_with_cache(db, settings, parent, before, progress, cache)?;
     let parent_record = load(db, parent)?;
-    let native = native_block(db, settings, block)?;
+    let native = native_block_with_cache(db, settings, block, cache)?;
     local(ensure(
         native.parent == Some(parent) && parent_record.height.checked_add(1) == Some(native.height),
         "NATIVE_STATE_PARENT",
@@ -1665,6 +1680,14 @@ mod cached_owner_read_tests {
         for capacity in [0, 1, 16] {
             node.db.set_prepared_statement_cache_capacity(capacity);
             let original = native_block(&node.db, &node.settings, id).unwrap();
+            let warmed = native_block_with_cache(
+                &node.db,
+                &node.settings,
+                id,
+                Some(&node.authenticated_arithmetic),
+            )
+            .unwrap();
+            assert_eq!(warmed.root, original.root);
             node.db.execute_batch("SAVEPOINT damaged_block").unwrap();
             node.db
                 .execute("UPDATE blocks SET height=1 WHERE id=?", [id.as_slice()])
@@ -1672,10 +1695,31 @@ mod cached_owner_read_tests {
             let error = native_block(&node.db, &node.settings, id).err().unwrap();
             assert_eq!(error.to_string(), "NATIVE_STATE_GENESIS");
             assert!(error.requires_owner_stop());
+            let warm_error = native_block_with_cache(
+                &node.db,
+                &node.settings,
+                id,
+                Some(&node.authenticated_arithmetic),
+            )
+            .err()
+            .unwrap();
+            assert_eq!(warm_error.to_string(), error.to_string());
+            assert_eq!(warm_error.kind(), error.kind());
             node.db
                 .execute_batch("ROLLBACK TO damaged_block; RELEASE damaged_block")
                 .unwrap();
             let recovered = native_block(&node.db, &node.settings, id).unwrap();
+            assert_eq!(
+                native_block_with_cache(
+                    &node.db,
+                    &node.settings,
+                    id,
+                    Some(&node.authenticated_arithmetic),
+                )
+                .unwrap()
+                .root,
+                recovered.root
+            );
             assert_eq!(
                 (
                     recovered.parent,
@@ -1732,6 +1776,59 @@ mod cached_owner_read_tests {
                 expected.root,
                 expected.packet_digest
             )
+        );
+    }
+
+    #[test]
+    fn warm_genesis_arithmetic_still_compares_current_sql_root_and_initial_bytes() {
+        let directory = tempfile::tempdir().unwrap();
+        let node = open(directory.path());
+        let id = node.settings.genesis();
+        let check =
+            |settings: &Settings, cache| native_block_with_cache(&node.db, settings, id, cache);
+        let original = check(&node.settings, Some(&node.authenticated_arithmetic)).unwrap();
+        let external = Connection::open(directory.path().join("native.sqlite")).unwrap();
+        external
+            .execute(
+                "UPDATE blocks SET state_root=zeroblob(32) WHERE id=?",
+                [id.as_slice()],
+            )
+            .unwrap();
+        let warm = check(&node.settings, Some(&node.authenticated_arithmetic))
+            .err()
+            .unwrap();
+        let cold = check(&node.settings, None).err().unwrap();
+        assert_eq!(warm.to_string(), "NATIVE_STATE_GENESIS");
+        assert_eq!(warm.to_string(), cold.to_string());
+        assert_eq!(warm.kind(), cold.kind());
+        assert!(warm.requires_owner_stop());
+        external
+            .execute(
+                "UPDATE blocks SET state_root=? WHERE id=?",
+                params![original.root.as_slice(), id.as_slice()],
+            )
+            .unwrap();
+        assert_eq!(
+            check(&node.settings, Some(&node.authenticated_arithmetic))
+                .unwrap()
+                .root,
+            original.root
+        );
+        let mut changed = node.settings.clone();
+        changed
+            .initial
+            .insert("changed-initial-root-input".into(), serde_json::json!(1));
+        let warm = check(&changed, Some(&node.authenticated_arithmetic))
+            .err()
+            .unwrap();
+        let cold = check(&changed, None).err().unwrap();
+        assert_eq!(warm.to_string(), cold.to_string());
+        assert_eq!(warm.kind(), cold.kind());
+        assert_eq!(
+            check(&node.settings, Some(&node.authenticated_arithmetic))
+                .unwrap()
+                .root,
+            original.root
         );
     }
 

@@ -1132,7 +1132,9 @@ fn dispatch_shared_with_execution_control(
     verify: impl FnOnce(Packet) -> Result<WorkCheckedPacket>,
     control: &trnm_mvcc_fee::pon_executor::ExecutionControl<'_, Error>,
 ) -> Result<Value> {
-    dispatch_shared_with_execution_observation(node, request, progress, verify, control, None)
+    dispatch_shared_with_execution_observation(
+        node, request, progress, verify, control, None, false,
+    )
 }
 
 fn observe_submit_phase<T>(
@@ -1157,6 +1159,7 @@ fn dispatch_shared_with_execution_observation(
     verify: impl FnOnce(Packet) -> Result<WorkCheckedPacket>,
     control: &trnm_mvcc_fee::pon_executor::ExecutionControl<'_, Error>,
     observation: Option<&public_v3::request_observation::TaskObservation>,
+    public_proof_before_unowned_task: bool,
 ) -> Result<Value> {
     use public_v3::SubmitPhase;
     match request {
@@ -1168,24 +1171,33 @@ fn dispatch_shared_with_execution_observation(
                     observe_submit_phase(observation, SubmitPhase::ContextOwnerWait, || {
                         lock_owner(node, progress)
                     })?;
-                let (existing, permit) = observe_submit_phase(
-                    observation,
-                    SubmitPhase::Context,
-                    || {
+                let (existing, permit) =
+                    observe_submit_phase(observation, SubmitPhase::Context, || {
                         let clock = now()?;
-                        if let Some(id) = owner.check_admission_context_with_progress(
-                            &packet,
-                            clock,
-                            &mut || {
-                                progress(0)?;
-                                (control.progress)(trnm_mvcc_fee::pon_executor::ExecutionProgress::BeforeParentBinding)
-                            },
-                        )? {
+                        let mut checkpoint = || {
+                            progress(0)?;
+                            (control.progress)(
+                                trnm_mvcc_fee::pon_executor::ExecutionProgress::BeforeParentBinding,
+                            )
+                        };
+                        let existing = if public_proof_before_unowned_task {
+                            owner.precheck_public_admission_context_with_progress(
+                                &packet,
+                                clock,
+                                &mut checkpoint,
+                            )?
+                        } else {
+                            owner.check_admission_context_with_progress(
+                                &packet,
+                                clock,
+                                &mut checkpoint,
+                            )?
+                        };
+                        if let Some(id) = existing {
                             return Ok((Some((id, clock)), None));
                         }
                         Ok((None, owner.begin_owner_work(&packet)?))
-                    },
-                )?;
+                    })?;
                 if let Some((id, clock)) = existing {
                     return observe_submit_phase(observation, SubmitPhase::SubmitResult, || {
                         submit_result(&mut owner, id, clock)
@@ -2534,10 +2546,20 @@ mod tests {
     }
 
     fn pending_packet() -> (tempfile::TempDir, Mutex<Node>, Packet) {
+        pending_packet_with_backend(false)
+    }
+
+    fn pending_packet_with_backend(
+        authenticated: bool,
+    ) -> (tempfile::TempDir, Mutex<Node>, Packet) {
         let dir = tempfile::tempdir().unwrap();
         let clock = now().unwrap();
         let settings = crate::Settings::development(Some(clock - 100)).unwrap();
-        let node = Node::open(dir.path(), settings.clone(), 2).unwrap();
+        let node = if authenticated {
+            Node::open_with_authenticated_state(dir.path(), settings.clone(), 2).unwrap()
+        } else {
+            Node::open(dir.path(), settings.clone(), 2).unwrap()
+        };
         let packet = node
             .make(
                 settings.genesis(),
@@ -2638,6 +2660,133 @@ mod tests {
         })
         .unwrap();
         assert_eq!(duplicate["block"], reply["block"]);
+    }
+
+    #[test]
+    fn public_v3_false_work_precedes_unowned_state_and_keeps_valid_retry() {
+        use trnm_crypto_primitives::pon_work;
+        use trnm_mvcc_fee::pon_executor::{ExecutionControl, ExecutionProgress};
+        let (_dir, node, packet) = pending_packet_with_backend(true);
+        let before = node.lock().unwrap().read_active().unwrap();
+        let mut malformed = packet.clone();
+        let trace_offset = 4 + 3 * pon_work::CELLS * 4;
+        let trace = (0u64..4096)
+            .map(|nonce| pon_work::hash(b"public-false-trace-preflight", &[&nonce.to_le_bytes()]))
+            .find(|trace| {
+                trace.as_slice() != &packet.proof[trace_offset..]
+                    && pon_work::hash(b"ticket", &[&packet.header.challenge(), trace])
+                        <= packet.header.target
+            })
+            .unwrap();
+        malformed.proof[trace_offset..].copy_from_slice(&trace);
+        pon_work::precheck_proof_statement(
+            malformed.header.challenge(),
+            malformed.header.work_task,
+            malformed.header.target,
+            &malformed.proof,
+        )
+        .unwrap();
+        for public_order in [false, true] {
+            let reads = std::sync::atomic::AtomicUsize::new(0);
+            let error = dispatch_shared_with_execution_observation(
+                &node,
+                Request::Submit {
+                    packet: hex::encode(malformed.encode().unwrap()),
+                },
+                &mut |_| Ok(()),
+                |packet| {
+                    assert!(node.try_lock().is_ok());
+                    WorkCheckedPacket::verify(packet)
+                },
+                &ExecutionControl::new(
+                    &|point| {
+                        if point == ExecutionProgress::BeforeParentBinding {
+                            reads.fetch_add(1, Ordering::SeqCst);
+                        }
+                        Ok(())
+                    },
+                    &(),
+                ),
+                None,
+                public_order,
+            )
+            .unwrap_err();
+            assert_eq!(error.to_string(), "WORK:Transcript");
+            assert_eq!(reads.load(Ordering::SeqCst) == 0, public_order);
+            assert_eq!(node.lock().unwrap().read_active().unwrap(), before);
+        }
+        let reads = std::sync::atomic::AtomicUsize::new(0);
+        let reply = dispatch_shared_with_execution_observation(
+            &node,
+            Request::Submit {
+                packet: hex::encode(packet.encode().unwrap()),
+            },
+            &mut |_| Ok(()),
+            WorkCheckedPacket::verify,
+            &ExecutionControl::new(
+                &|point| {
+                    if point == ExecutionProgress::BeforeParentBinding {
+                        reads.fetch_add(1, Ordering::SeqCst);
+                    }
+                    Ok(())
+                },
+                &(),
+            ),
+            None,
+            true,
+        )
+        .unwrap();
+        assert!(reads.load(Ordering::SeqCst) > 0);
+        assert_eq!(reply["block"], hex::encode(packet.id().unwrap()));
+    }
+
+    #[test]
+    fn public_v3_valid_work_cannot_reuse_parent_state_across_actual_sql_tampering() {
+        use trnm_mvcc_fee::pon_executor::ExecutionControl;
+        let (dir, node, packet) = pending_packet_with_backend(true);
+        let before = node.lock().unwrap().read_active().unwrap();
+        let sql = rusqlite::Connection::open(dir.path().join("native.sqlite")).unwrap();
+        let slot: u64 = sql
+            .query_row(
+                "SELECT state_slot FROM active WHERE singleton=1",
+                [],
+                |row| row.get(0),
+            )
+            .unwrap();
+        let error = dispatch_shared_with_execution_observation(
+            &node,
+            Request::Submit {
+                packet: hex::encode(packet.encode().unwrap()),
+            },
+            &mut |_| Ok(()),
+            |packet| {
+                let checked = WorkCheckedPacket::verify(packet)?;
+                sql.execute(
+                    "INSERT INTO kv VALUES(?,?,?)",
+                    rusqlite::params![slot, "public-work-gap-test", b"1".as_slice()],
+                )
+                .unwrap();
+                Ok(checked)
+            },
+            &ExecutionControl::new(&|_| Ok(()), &()),
+            None,
+            true,
+        )
+        .unwrap_err();
+        assert_eq!(error.to_string(), "ROOT");
+        assert!(error.requires_owner_stop());
+        assert_eq!(
+            sql.query_row(
+                "SELECT COUNT(*) FROM blocks WHERE id=?",
+                [packet.id().unwrap().as_slice()],
+                |row| row.get::<_, u64>(0)
+            )
+            .unwrap(),
+            0
+        );
+        sql.execute("DELETE FROM kv WHERE key=?", ["public-work-gap-test"])
+            .unwrap();
+        assert_eq!(node.lock().unwrap().read_active().unwrap(), before);
     }
 
     #[test]

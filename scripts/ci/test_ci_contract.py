@@ -49,7 +49,7 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
     def test_native_daa_reader_requires_fresh_full_work_export_and_actual_digest(self):
         lines = [line + '\n' for line in self.script.splitlines()
                  if 'TRNM_DAA_EVIDENCE_DIR' in line]
-        self.assertEqual(len(lines), 5)
+        self.assertEqual(len(lines), 6)
         for command in lines:
             with self.subTest(command=command):
                 with self.assertRaises(ValueError):
@@ -58,6 +58,15 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
                                       'printf stale-prior-report')
         with self.assertRaises(ValueError):
             check_independent_conformance(changed, self.lanes)
+
+    def test_cost_counterexamples_require_their_real_input_arguments(self):
+        for command in [COST_BOUNDARY_READERS.splitlines(keepends=True)[0],
+                        '      python3 scripts/ci/test_pon_daa_schedule_reader.py --raw-dir "$TRNM_DAA_EVIDENCE_DIR"\n']:
+            for replacement in [command.split(' --raw-dir')[0] + '\n',
+                                command.split(' --raw-dir')[0] + ' --raw-dir /tmp/stale-other-run\n']:
+                with self.subTest(command=command, replacement=replacement):
+                    with self.assertRaises(ValueError):
+                        check_independent_conformance(self.script.replace(command, replacement), self.lanes)
 
     def test_quorum_checks_cannot_be_removed_duplicated_skipped_or_rewrite_vectors(self):
         for command in EVALUATION_QUORUM_ORACLE.splitlines(keepends=True):

@@ -36,7 +36,7 @@ BUILD_SECONDS = 600
 RUN_SECONDS = 120
 STDOUT_LIMIT = 16 * 1024 * 1024
 STDERR_LIMIT = 4 * 1024 * 1024
-BUILD_ENV = ('RUSTFLAGS', 'CARGO_ENCODED_RUSTFLAGS', 'RUSTC_WRAPPER',
+BUILD_ENV = ('RUSTC', 'CARGO_BUILD_RUSTC', 'RUSTFLAGS', 'CARGO_ENCODED_RUSTFLAGS', 'RUSTC_WRAPPER',
              'RUSTC_WORKSPACE_WRAPPER', 'CARGO_BUILD_TARGET',
              'CARGO_BUILD_RUSTFLAGS', 'CARGO_BUILD_RUSTC_WRAPPER',
              'CARGO_PROFILE_RELEASE_OPT_LEVEL', 'CARGO_PROFILE_RELEASE_LTO',
@@ -48,6 +48,10 @@ BUILD_ENV = ('RUSTFLAGS', 'CARGO_ENCODED_RUSTFLAGS', 'RUSTC_WRAPPER',
 def require(value, message):
     if not value:
         raise ValueError(message)
+
+
+def validate_build_environment(env):
+    require(all(not env.get(name) for name in BUILD_ENV), 'UNDECLARED_BUILD_OVERRIDE')
 
 
 def sha(path):
@@ -176,7 +180,7 @@ def run(args):
     # Validate source before recording this as an attempted native campaign.
     before = source_snapshot()
     validate_source(before, args.expected_head, args.expected_tree)
-    require(all(not os.environ.get(name) for name in BUILD_ENV), 'UNDECLARED_BUILD_OVERRIDE')
+    validate_build_environment(os.environ)
     out.mkdir(parents=True, exist_ok=False)
     env = {key: value for key, value in os.environ.items() if not key.startswith('TRNM_')}
     env.update(CARGO_TARGET_DIR=str(target), CARGO_BUILD_JOBS='2', CARGO_NET_OFFLINE='true',

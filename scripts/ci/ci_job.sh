@@ -20,8 +20,8 @@ case "${1:?required job}" in
     python3 scripts/ci/test_one_zero_locality_cost.py
     python3 scripts/ci/test_maintenance_cost.py
     python3 scripts/ci/test_work_rejection_report.py
-    python3 scripts/ci/test_pon_w1_budget_readers.py
-    python3 scripts/ci/test_pon_daa_schedule_reader.py
+    # These in-memory counterexamples use unchanged retained inputs, not a new hardware observation.
+    python3 scripts/ci/test_pon_w1_budget_readers.py --raw-dir evidence/pon-upgrade-implementation-20261018/native-rounds/chain-p0-native-54
     python3 scripts/ci/test_pon_public_v3_phase_read.py
     python3 scripts/ci/test_run_pon_w1_native_campaign.py
     python3 scripts/ci/test_account_archive_conformance.py
@@ -137,6 +137,7 @@ case "${1:?required job}" in
       cargo test --locked --manifest-path trillionnium/Cargo.toml --workspace --all-targets --all-features 2>&1 | tee "$trnm_model_receipt_root/workspace-tests.log"
       unset TRNM_ZERO_PAIRED_PREFIX_OUTPUT
       python3 scripts/pon_daa_schedule_reader.py --raw-dir "$TRNM_DAA_EVIDENCE_DIR" --expected-report-sha256 "$(sha256sum "$TRNM_DAA_EVIDENCE_DIR/daa-bounds.json" | cut -d ' ' -f 1)" > "$trnm_model_receipt_root/daa-bounds-python.json"
+      python3 scripts/ci/test_pon_daa_schedule_reader.py --raw-dir "$TRNM_DAA_EVIDENCE_DIR"
       unset TRNM_DAA_EVIDENCE_DIR
       python3 formal/pon-nakamoto-v1/test_zero_work.py --verify-prefix-export "$trnm_model_receipt_root/zero-paired-prefix" --output "$trnm_model_receipt_root/zero-paired-prefix-python"
       python3 formal/pon-nakamoto-v1/test_model_composition_oracle.py -v

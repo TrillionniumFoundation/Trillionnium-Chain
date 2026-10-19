@@ -12,6 +12,12 @@ import run_pon_w1_native_campaign as runner
 
 
 class RunnerTests(unittest.TestCase):
+    def test_compiler_environment_override_rejects_before_native_execution(self):
+        runner.validate_build_environment({})
+        for key in ('RUSTC', 'CARGO_BUILD_RUSTC', 'RUSTFLAGS', 'RUSTC_WRAPPER'):
+            with self.assertRaisesRegex(ValueError, 'UNDECLARED_BUILD_OVERRIDE'):
+                runner.validate_build_environment({key: '/not/the/pinned/compiler'})
+
     def test_source_status_and_tree_cannot_be_substituted(self):
         source = {'head': 'a' * 40, 'tree': 'b' * 40, 'status_porcelain': ''}
         runner.validate_source(source, 'a' * 40, 'b' * 40)

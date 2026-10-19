@@ -107,7 +107,7 @@ jobs:
         run: |
           set -euo pipefail
           cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib account_archive_prototype::native_store::tests -- --show-output --test-threads=1 2>&1 | tee "$OUT/native-constants.log"
-          grep -E '^test result: ok\. 3 passed; 0 failed; 1 ignored;' "$OUT/native-constants.log"
+          grep -E '^test result: ok\. 5 passed; 0 failed; 1 ignored;' "$OUT/native-constants.log"
           for name in native_empty_constants_match_wire_and_keep_owned_copy_isolation native_empty_constants_parallel_callers_keep_independent_values; do
             selector="account_archive_prototype::native_store::tests::$name"
             cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib "$selector" -- --exact --show-output --test-threads=1 2>&1 | tee "$OUT/$name.log"

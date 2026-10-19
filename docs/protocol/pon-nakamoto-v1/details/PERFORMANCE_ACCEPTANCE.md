@@ -146,6 +146,51 @@ SQLite, or execution; they do not by themselves establish a restored baseline or
 improved throughput. Historical Source494 records retain their original schema,
 source and failed outcomes.
 
+The ordinary unowned public V3 Submit preflight now checks bounded packet
+identity, namespace, parent/header/target/time constraints and the cheap PNW1
+task/ticket statement before full W1 replay. It defers complete parent-State
+task lookup until the verified packet reacquires the durable owner. That final
+admission still rechecks the current full task/State/clock and all persistence
+fences. Local owner, continuous-owner and mining-owner policies keep their
+task binding before work; private/generic dispatch keeps its earlier order.
+Tests retain a ticket-valid false transcript, a valid retry, and a real external
+SQLite mutation between full work and final admission. A passing W1 proof is
+not a retained State or task authorization.
+
+Native final-state and genesis-root comparisons reuse only arithmetic over
+the exact complete State bytes and network/parameter/genesis context. The
+existing three complete-commitment entries retain at most 4 MiB of encoded
+input each; one separate root entry has the same bound, so repeated genesis
+root calculations do not depend on parent/child entry eviction. Oversize
+inputs or unavailable entries use the original full calculation. Failed root
+calculations are never retained, and a root-only miss preserves the original
+root grammar and error order. Every current SQL row, stored record, delta,
+genesis snapshot and required account node is still read and checked. This
+does not cache a database validity verdict or remove the full history walk;
+history remains O(H) and complete State reads remain O(State). Actual original
+budget multiprocess confirmation results are required before crediting a
+baseline restoration or a throughput improvement.
+
+After native execution and the final header state/receipt comparison, the
+owner also offers the existing opaque successor tree to the existing historical
+arithmetic cache. A task output that changes the final State first derives the
+matching final tree. This cache keeps its original eight-entry, 2 MiB total
+canonical-payload and 16 MiB retained-software-charge bounds. The subsequent
+snapshot readback still reads all actual SQL State, encodes every key/value,
+applies any differences to the immutable material and compares the resulting
+root; it then checks the account graph and full history. A rollback can leave
+only optional arithmetic, not a stored or admitted block. Cold rebuilds and
+external snapshot mutations remain explicit test controls. No database version
+token or cached validity result replaces those observations.
+
+[`pon_public_v3_phase_read.py`](../../../../scripts/pon_public_v3_phase_read.py)
+projects exact retained report bytes and checks their supplied SHA256. Native
+refusals come from `response.value.error`, while earlier flat `response.error`
+records remain readable; conflicting shapes are rejected and a missing cause
+stays unknown. ACKs, late ACKs and the three scheduled confirmation rounds
+remain separate. The reader never infers a successful confirmation from an
+accepted socket reply or changes the original 30-second windows.
+
 No throughput improvement is inferred from worker count. Samples in which extra workers
 are slower stay in the report. No learning update is inferred from successful optimization:
 all three measured candidates may remain unapplied with zero reward. File-disjoint source

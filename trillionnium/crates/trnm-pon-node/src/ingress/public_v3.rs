@@ -1409,6 +1409,7 @@ fn public_dispatch(
                     mutation_cpu.map_or(&() as &dyn ExecutionWorkerAccounting, |cpu| &cpu.workers),
                 ),
                 observation,
+                true,
             )
         }
         Request::Head => {

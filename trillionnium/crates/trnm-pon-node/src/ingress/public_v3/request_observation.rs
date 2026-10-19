@@ -648,6 +648,7 @@ mod tests {
             |_| panic!("invalid encoding cannot start work"),
             &control,
             Some(&task),
+            true,
         )
         .unwrap_err();
         assert!(!error.requires_owner_stop());
@@ -665,6 +666,7 @@ mod tests {
             WorkCheckedPacket::verify,
             &control,
             Some(&task),
+            true,
         )
         .unwrap();
         drop(task);
@@ -678,6 +680,7 @@ mod tests {
             |_| panic!("durable duplicate must not replay work"),
             &control,
             Some(&task),
+            true,
         )
         .unwrap();
         assert_eq!(reply["block"], repeated["block"]);

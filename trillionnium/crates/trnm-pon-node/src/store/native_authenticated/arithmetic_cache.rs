@@ -22,15 +22,67 @@ struct CompleteEntry {
     value: StateCommitment,
 }
 
+// One independent root arithmetic entry keeps the repeated genesis root from
+// depending on parent/child complete-commitment eviction. It owns at most the
+// same 4 MiB exact-input bound and contains no database identity or verdict.
+struct RootEntry {
+    context: [Hash; 3],
+    bytes: Vec<u8>,
+    value: Hash,
+}
+
 #[derive(Default)]
 pub(crate) struct ArithmeticCache {
     complete: RefCell<VecDeque<CompleteEntry>>,
+    root: RefCell<Option<RootEntry>>,
     pub(crate) lifts: LiftCache,
     #[cfg(test)]
     hits: std::cell::Cell<usize>,
+    #[cfg(test)]
+    root_hits: std::cell::Cell<usize>,
 }
 
 impl ArithmeticCache {
+    /// Reuse only the full root already computed from these exact complete
+    /// actual bytes. Unlike `complete`, a miss does not run account/conservation
+    /// checks before the original state-root grammar or change its error order.
+    /// Caller-owned State is serialized anew; no SQL observation is reused.
+    pub(crate) fn state_root(&self, settings: &Settings, state: &State) -> Result<Hash> {
+        let context = [
+            settings.network(),
+            settings.parameters(),
+            settings.genesis(),
+        ];
+        let bytes = bounded_bytes(state);
+        if let (Some(bytes), Ok(entries)) = (bytes.as_ref(), self.complete.try_borrow()) {
+            if let Some(entry) = entries.iter().find(|entry| {
+                entry.context == context && entry.bytes.as_slice() == bytes.as_slice()
+            }) {
+                #[cfg(test)]
+                self.root_hits.set(self.root_hits.get() + 1);
+                return Ok(entry.value.state_root);
+            }
+        }
+        if let (Some(bytes), Ok(root)) = (bytes.as_ref(), self.root.try_borrow()) {
+            if let Some(entry) = root.as_ref().filter(|entry| {
+                entry.context == context && entry.bytes.as_slice() == bytes.as_slice()
+            }) {
+                #[cfg(test)]
+                self.root_hits.set(self.root_hits.get() + 1);
+                return Ok(entry.value);
+            }
+        }
+        let value = trnm_mvcc_fee::pon_executor::root(state).map_err(crate::Error::from)?;
+        if let (Some(bytes), Ok(mut entry)) = (bytes, self.root.try_borrow_mut()) {
+            *entry = Some(RootEntry {
+                context,
+                bytes,
+                value,
+            });
+        }
+        Ok(value)
+    }
+
     pub(crate) fn complete(&self, settings: &Settings, state: &State) -> Result<StateCommitment> {
         let context = [
             settings.network(),
@@ -161,5 +213,88 @@ mod tests {
         );
         let oversized = State::from([("large".into(), json!("x".repeat(MAX_COMPLETE_BYTES)))]);
         assert!(bounded_bytes(&oversized).is_none());
+    }
+
+    #[test]
+    fn full_root_reuse_compares_actual_bytes_and_keeps_original_error_order() {
+        let settings = Settings::development(Some(1000)).unwrap();
+        let cache = ArithmeticCache::default();
+        let first = cache.complete(&settings, &settings.initial).unwrap();
+        assert_eq!(
+            cache.state_root(&settings, &settings.initial).unwrap(),
+            first.state_root
+        );
+        assert_eq!(cache.root_hits.get(), 1);
+        let other = Settings::development(Some(1001)).unwrap();
+        assert_eq!(
+            cache.state_root(&other, &settings.initial).unwrap(),
+            first.state_root
+        );
+        assert_eq!(cache.root_hits.get(), 1);
+        for value in [
+            json!(0),
+            json!(0.0),
+            json!(-0.0),
+            json!({"balance": 1, "nonce": 0}),
+        ] {
+            let mut changed = settings.initial.clone();
+            changed.insert("account:malformed".into(), value);
+            let observed = cache.state_root(&settings, &changed);
+            let reference = trnm_mvcc_fee::pon_executor::root(&changed).map_err(crate::Error::from);
+            match (observed, reference) {
+                (Ok(left), Ok(right)) => assert_eq!(left, right),
+                (Err(left), Err(right)) => {
+                    assert_eq!(left.to_string(), right.to_string());
+                    assert_eq!(left.kind(), right.kind());
+                }
+                _ => panic!("exact-input root reuse changed the original acceptance"),
+            }
+        }
+        assert_eq!(cache.root_hits.get(), 1);
+        assert_eq!(
+            cache.state_root(&settings, &settings.initial).unwrap(),
+            first.state_root
+        );
+        assert_eq!(cache.root_hits.get(), 2);
+    }
+
+    #[test]
+    fn separate_root_arithmetic_entry_survives_complete_eviction_and_is_bounded() {
+        let settings = Settings::development(Some(1000)).unwrap();
+        let cache = ArithmeticCache::default();
+        let genesis_root = cache.state_root(&settings, &settings.initial).unwrap();
+        for marker in 0..5 {
+            let mut changed = settings.initial.clone();
+            changed.insert("arithmetic-cache-test".into(), json!(marker));
+            cache.complete(&settings, &changed).unwrap();
+        }
+        assert_eq!(
+            cache.state_root(&settings, &settings.initial).unwrap(),
+            genesis_root
+        );
+        assert_eq!(cache.root_hits.get(), 1);
+        assert_eq!(cache.complete.borrow().len(), MAX_COMPLETE_ENTRIES);
+        assert!(cache.root.borrow().as_ref().unwrap().bytes.len() <= MAX_COMPLETE_BYTES);
+        let mut changed = settings.clone();
+        changed.initial.insert("root-only-input".into(), json!(1));
+        let expected = trnm_mvcc_fee::pon_executor::root(&changed.initial).unwrap();
+        assert_ne!(expected, genesis_root);
+        assert_eq!(
+            cache.state_root(&changed, &changed.initial).unwrap(),
+            expected
+        );
+        assert_eq!(cache.root_hits.get(), 1);
+        assert_eq!(
+            cache.state_root(&changed, &changed.initial).unwrap(),
+            expected
+        );
+        assert_eq!(cache.root_hits.get(), 2);
+        // Invalid inputs cannot replace an exact successful entry.
+        let retained = cache.root.borrow().as_ref().unwrap().bytes.clone();
+        changed
+            .initial
+            .insert("root-only-input".into(), json!(-0.0));
+        assert!(cache.state_root(&changed, &changed.initial).is_err());
+        assert_eq!(cache.root.borrow().as_ref().unwrap().bytes, retained);
     }
 }

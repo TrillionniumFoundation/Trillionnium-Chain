@@ -47,6 +47,30 @@ production or unique business confirmations. These profiles preserve the
 existing cost campaign; they do not alter the separate chain-494 authenticated
 multiprocess workload.
 
+The fixed runner
+[`run_pon_w1_native_campaign.py`](../../../../scripts/run_pon_w1_native_campaign.py)
+requires a clean exact source commit/tree, Rust 1.95.0, offline locked release
+compilation and fresh output outside the source and build directories. It
+checks the inherited actual CPU quota, memory limit, ancestor restrictions and
+nice value before execution. Compiler overrides, including `RUSTC`, Rust flags
+and wrappers, are refused. The runner preserves source and hardware observations,
+every child command/exit/stdout/stderr, all four raw JSONL files, and a hashed
+copy of the binary it actually executes. A compile-only result, missing native
+child, output truncation or nonzero exit cannot become successful W1 evidence.
+The 600-second build and 120-second per-cost-process caps are outer collection
+limits; they do not alter chain service deadlines or grant mutation CPU credit.
+
+```sh
+python3 scripts/run_pon_w1_native_campaign.py \
+  --out /absolute/new-main-cost-report --target-dir /absolute/build-target \
+  --cargo /absolute/cargo/bin/cargo --host-label main --expected-nice 10 \
+  --expected-head FULL_SOURCE_COMMIT --expected-tree FULL_SOURCE_TREE
+```
+
+Run the same command on `rog` with that host label and its own new output path,
+under the same observed 400% CPU quota and 16 GiB memory ceiling. A successful
+wrapper does not itself attest host independence or public-network readiness.
+
 [`pon_w1_budget_derive.py`](../../../../scripts/pon_w1_budget_derive.py)
 first uses the existing strict raw reader, checks the same raw bytes again,
 and binds `results.json` to explicitly supplied source head/tree. Version

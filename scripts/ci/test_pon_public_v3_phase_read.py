@@ -19,7 +19,99 @@ def record():
                               for phase in reader.PHASES]}
 
 
+def attribution_phase(submissions, history, attacks, records):
+    """Only role-matching fields vary; this is not a measured native campaign."""
+    return {
+        'mode': 'baseline', 'state_backend': 'authenticated-v1', 'duration_seconds': 30,
+        'confirmations': [], 'all_signed_rounds_confirmed_in_window': False,
+        'finite_phase_criteria_met': False,
+        'submissions': submissions, 'history': history,
+        'children': [{'report': {'result': {'calls': attacks}}}],
+        'receiver_observation': {
+            'schema': 'public-v3-local-request-resource-observation-v2',
+            'cpu_intervals_are_nested_not_additive': True,
+            'submit_phase_cpu_excludes_scoped_workers': True, 'records': records,
+        },
+        'observer_complete': True, 'service_outcome': {}, 'final_meter': {},
+        'verifier_errors': [], 'receiver_client_state_equal': False,
+        'genuine_budget_depletion_observed': False,
+        'attacker_processes_requested': 0, 'attacker_processes_ready': 0,
+        'actor_reports_successful_without_cap_or_kill': False,
+        'whole_parent_phase_cpu_ns': None, 'whole_parent_phase_wall_ns': None,
+        'receiver_and_verifier_setup_cpu_ns': None,
+        'receiver_and_verifier_setup_wall_ns': None,
+    }
+
+
+def attribution_call(body_digest):
+    return {'status': 'refused', 'returned_after_window': False,
+            'public_request_body_digest': body_digest,
+            'response': {'value': {'error': 'SYNTHETIC_CONTROL'}}, 'error': None}
+
+
 class ReaderTests(unittest.TestCase):
+    def test_unknown_body_digest_never_becomes_a_role_identity(self):
+        for caller_role in range(3):
+            for retained_null in (False, True):
+                with self.subTest(caller_role=caller_role, retained_null=retained_null):
+                    calls = [[], [], []]
+                    calls[caller_role] = [attribution_call(None)]
+                    observed = record()
+                    if retained_null:
+                        observed['body_digest'] = None
+                    value = reader.phase_summary(attribution_phase(*calls, [observed]))
+                    groups = value['receiver']['by_observed_body_role']
+                    self.assertEqual(set(groups), {'unattributed_or_ambiguous'})
+                    self.assertEqual(groups['unattributed_or_ambiguous']['records'], 1)
+
+    def test_known_body_role_does_not_absorb_unknown_receiver_records(self):
+        body = '01' * 32
+        observed = [{**record(), 'body_digest': [1] * 32}, record()]
+        value = reader.phase_summary(attribution_phase(
+            [attribution_call(body)], [], [attribution_call(None)], observed))
+        groups = value['receiver']['by_observed_body_role']
+        self.assertEqual(set(groups), {'honest_submit', 'unattributed_or_ambiguous'})
+        self.assertEqual(groups['honest_submit']['records'], 1)
+        self.assertEqual(groups['unattributed_or_ambiguous']['records'], 1)
+
+    def test_same_known_body_across_roles_stays_ambiguous(self):
+        body = '02' * 32
+        value = reader.phase_summary(attribution_phase(
+            [attribution_call(body)], [], [attribution_call([2] * 32)],
+            [{**record(), 'body_digest': body}]))
+        groups = value['receiver']['by_observed_body_role']
+        self.assertEqual(set(groups), {'unattributed_or_ambiguous'})
+        self.assertEqual(groups['unattributed_or_ambiguous']['records'], 1)
+
+    def test_zero_body_digest_is_known_but_malformed_digest_rejects(self):
+        value = reader.phase_summary(attribution_phase(
+            [], [attribution_call('00' * 32)], [],
+            [{**record(), 'body_digest': [0] * 32}]))
+        self.assertEqual(set(value['receiver']['by_observed_body_role']), {'client_history'})
+        for invalid in ('unknown', [0] * 31):
+            with self.subTest(invalid=invalid), self.assertRaisesRegex(ValueError, 'digest'):
+                reader.phase_summary(attribution_phase(
+                    [attribution_call(invalid)], [], [], [record()]))
+
+    def test_nested_native_refusal_and_legacy_error_preserve_real_cause(self):
+        def row(response):
+            return {'status': 'refused', 'returned_after_window': False,
+                    'response': response, 'error': None}
+        errors = reader.call_summary([
+            row({'ok': False, 'value': {'error': 'PUBLIC_MUTATION_CPU_BUDGET'}}),
+            row({'error': 'LEGACY_REJECTION'}), row(None),
+            row({'error': 'SAME', 'value': {'error': 'SAME'}}),
+        ])['refusals']
+        self.assertEqual(errors, {'PUBLIC_MUTATION_CPU_BUDGET': 1,
+                                  'LEGACY_REJECTION': 1, 'None': 1, 'SAME': 1})
+        for malformed in [
+            {'error': 'FLAT', 'value': {'error': 'NESTED'}},
+            {'value': {'error': {'invented': 'classification'}}},
+            {'value': 'not an envelope'},
+        ]:
+            with self.assertRaises(ValueError):
+                reader.call_summary([row(malformed)])
+
     def test_late_ack_is_separate_from_on_time_and_confirmation(self):
         rows = [{'status': 'ok', 'returned_after_window': late, 'packet_index': 0,
                  'elapsed_wall_ns': 12, 'calling_process_cpu_ns': None} for late in (False, True)]
