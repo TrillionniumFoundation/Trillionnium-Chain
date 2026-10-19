@@ -18,6 +18,8 @@ use trnm_protocol::pon_wire::{hash, Hash};
 
 mod arithmetic_cache;
 pub(crate) use arithmetic_cache::ArithmeticCache;
+mod history_arithmetic;
+pub(crate) use history_arithmetic::HistoryStage;
 
 pub(crate) const DDL: &str = "CREATE TABLE archive_nodes(id BLOB PRIMARY KEY,data BLOB NOT NULL);\nCREATE TABLE native_state_commitments(block BLOB PRIMARY KEY,data BLOB NOT NULL);";
 pub(crate) const RECORD_SCHEMA: &str = "pon-native-authenticated-state-record-v1";
@@ -82,9 +84,9 @@ struct NativeBlock {
 }
 type StoredBlockRow = (Option<Vec<u8>>, u64, Vec<u8>, Option<Vec<u8>>, Vec<u8>);
 
-// Reuse only SQLite statement bytecode in the connection's existing bounded
-// cache. Every invocation rebinds parameters and rereads the current rows;
-// none of the record, packet, delta, ancestry or state verdicts is cached.
+// Every invocation rebinds parameters and rereads the current typed rows. The
+// optional history material reuses pure codec/hash results only after complete
+// actual-input equality; ancestry, state, work and validity are never supplied.
 
 fn local<T>(result: Result<T>) -> Result<T> {
     result.map_err(Error::local_integrity)
@@ -106,6 +108,7 @@ fn native_block_with_cache(
     id: Hash,
     cache: Option<&ArithmeticCache>,
 ) -> Result<NativeBlock> {
+    let _measurement = cache.map(|cache| cache.history.observe(HistoryStage::Packet));
     local((|| {
         let (parent, height, work, packet, state): StoredBlockRow = db
             .prepare_cached(NATIVE_BLOCK_SQL)?
@@ -142,16 +145,38 @@ fn native_block_with_cache(
             });
         }
         let raw = packet.ok_or("NATIVE_STATE_PACKET")?;
-        let packet = Packet::decode(&raw)?;
-        let h = &packet.header;
+        let cached = cache.and_then(|cache| cache.history.packet(settings, id, &raw));
+        let (header, packet_id, transactions, cached_digest) = match cached {
+            Some(math) => (math.header, math.id, math.transactions, Some(math.digest)),
+            None => {
+                let packet = Packet::decode(&raw)?;
+                let h = &packet.header;
+                let packet_id = packet.id()?;
+                // Keep the original short-circuit field order. In particular,
+                // invalid context must not move the transaction-root work first.
+                ensure(
+                    packet_id == id
+                        && h.network == settings.network()
+                        && h.parameters == settings.parameters()
+                        && Some(h.parent) == parent
+                        && h.height == height
+                        && h.state == state,
+                    "NATIVE_STATE_PACKET",
+                )?;
+                let transactions = sequence_root("transactions", &packet.transactions);
+                ensure(h.transactions == transactions, "NATIVE_STATE_PACKET")?;
+                (packet.header, packet_id, transactions, None)
+            }
+        };
+        let h = &header;
         ensure(
-            packet.id()? == id
+            packet_id == id
                 && h.network == settings.network()
                 && h.parameters == settings.parameters()
                 && Some(h.parent) == parent
                 && h.height == height
                 && h.state == state
-                && h.transactions == sequence_root("transactions", &packet.transactions),
+                && h.transactions == transactions,
             "NATIVE_STATE_PACKET",
         )?;
         let (parent_height, parent_work): (u64, Vec<u8>) = db
@@ -164,11 +189,26 @@ fn native_block_with_cache(
                     == work,
             "NATIVE_STATE_PARENT",
         )?;
+        let digest =
+            cached_digest.unwrap_or_else(|| hash(b"native-authenticated-packet-v1", &[&raw]));
+        if let Some(cache) = cache {
+            cache.history.retain_packet(
+                settings,
+                id,
+                raw,
+                history_arithmetic::PacketMath {
+                    header,
+                    id: packet_id,
+                    transactions,
+                    digest,
+                },
+            );
+        }
         Ok(NativeBlock {
             parent,
             height,
             root: state,
-            packet_digest: Some(hash(b"native-authenticated-packet-v1", &[&raw])),
+            packet_digest: Some(digest),
         })
     })())
 }
@@ -251,15 +291,43 @@ pub(super) fn deltas_with_progress(
 
 // Verification needs the commitment and count, not a second complete payload
 // list. Account updates still use the actual full deltas through the owner API.
+#[cfg(test)]
 fn stored_delta_root(
     db: &Connection,
     id: Hash,
     progress: &mut dyn FnMut() -> Result<()>,
 ) -> Result<(usize, Hash)> {
+    stored_delta_root_observed(db, id, progress, None)
+}
+fn stored_delta_root_observed(
+    db: &Connection,
+    id: Hash,
+    progress: &mut dyn FnMut() -> Result<()>,
+    cache: Option<(&Settings, &ArithmeticCache)>,
+) -> Result<(usize, Hash)> {
+    let _measurement = cache.map(|(_, cache)| cache.history.observe(HistoryStage::Delta));
+    let mut material = cache.map(|(settings, cache)| cache.history.delta_pass(settings, id));
     let mut tree = DeltaRootBuilder::default();
-    let count = visit_deltas(db, id, progress, |row| tree.push(&row))?;
+    let count = visit_deltas(db, id, progress, |row| {
+        if let Some(material) = material.as_mut() {
+            // visit_deltas has just performed ALL original typed SQL, length,
+            // order, NULL/empty and canonical JSON checks on this actual row.
+            let leaf = match material.leaf(&row) {
+                Some(leaf) => leaf,
+                None => tree.leaf(&row)?,
+            };
+            tree.push_leaf(leaf);
+            material.retain(row, leaf);
+            Ok(())
+        } else {
+            tree.push(&row)
+        }
+    })?;
     let root = tree.finish();
     progress()?;
+    if let Some(material) = material {
+        material.finish();
+    }
     Ok((count, root))
 }
 
@@ -294,14 +362,19 @@ struct DeltaRootBuilder {
     count: usize,
 }
 impl DeltaRootBuilder {
-    fn push(&mut self, row: &Delta) -> Result<()> {
+    fn leaf(&self, row: &Delta) -> Result<Hash> {
         let encoded = canonical(row)?;
-        let mut node = hash(
+        Ok(hash(
             b"native-authenticated-deltas-v1-leaf",
             &[&(self.count as u64).to_le_bytes(), &encoded],
-        );
-        // Do not retain every canonical row while constructing the Merkle tree.
-        drop(encoded);
+        ))
+    }
+    fn push(&mut self, row: &Delta) -> Result<()> {
+        let node = self.leaf(row)?;
+        self.push_leaf(node);
+        Ok(())
+    }
+    fn push_leaf(&mut self, mut node: Hash) {
         let mut level = 0;
         loop {
             if level == self.frontier.len() {
@@ -320,7 +393,6 @@ impl DeltaRootBuilder {
             }
         }
         self.count += 1;
-        Ok(())
     }
     fn finish(self) -> Hash {
         // Fold the suffix from low to high. Only the rightmost partial subtree is
@@ -454,6 +526,14 @@ fn save(db: &Connection, record: &mut Record) -> Result<()> {
 }
 
 pub(crate) fn load(db: &Connection, id: Hash) -> Result<Record> {
+    load_observed(db, id, None)
+}
+fn load_observed(
+    db: &Connection,
+    id: Hash,
+    cache: Option<(&Settings, &ArithmeticCache)>,
+) -> Result<Record> {
+    let _measurement = cache.map(|(_, cache)| cache.history.observe(HistoryStage::Record));
     local((|| {
         let bytes: Vec<u8> = db
             .prepare_cached("SELECT substr(data,1,?) FROM native_state_commitments WHERE block=?")?
@@ -463,6 +543,14 @@ pub(crate) fn load(db: &Connection, id: Hash) -> Result<Record> {
             .optional()?
             .ok_or("NATIVE_STATE_MISSING")?;
         ensure(bytes.len() <= MAX_RECORD_BYTES, "NATIVE_STATE_RECORD_LIMIT")?;
+        if let Some((settings, cache)) = cache {
+            if let Some(record) = cache.history.record(settings, id, &bytes) {
+                // This is only the codec/digest result for the complete current
+                // BLOB. verify_record still reads the actual block, deltas and
+                // parent record and performs every original binding afterwards.
+                return Ok(record);
+            }
+        }
         let record: Record = serde_json::from_slice(&bytes)?;
         ensure(
             canonical(&record)? == bytes
@@ -474,6 +562,9 @@ pub(crate) fn load(db: &Connection, id: Hash) -> Result<Record> {
                 && record.state.account_balance == record.accounts.balance,
             "NATIVE_STATE_RECORD",
         )?;
+        if let Some((settings, cache)) = cache {
+            cache.history.retain_record(settings, id, bytes, &record);
+        }
         Ok(record)
     })())
 }
@@ -486,7 +577,12 @@ fn verify_record(
     cache: Option<&ArithmeticCache>,
 ) -> Result<()> {
     let native = native_block_with_cache(db, settings, record.block, cache)?;
-    let (delta_count, delta_root) = stored_delta_root(db, record.block, progress)?;
+    let (delta_count, delta_root) = stored_delta_root_observed(
+        db,
+        record.block,
+        progress,
+        cache.map(|cache| (settings, cache)),
+    )?;
     local(ensure(
         record.parent == native.parent
             && record.height == native.height
@@ -507,7 +603,7 @@ fn verify_record(
             "NATIVE_STATE_GENESIS",
         )),
         Some(parent) => {
-            let parent = load(db, parent)?;
+            let parent = load_observed(db, parent, cache.map(|cache| (settings, cache)))?;
             local(ensure(
                 record.parent_commitment == Some(parent.id)
                     && parent.height.checked_add(1) == Some(record.height),
@@ -535,8 +631,9 @@ pub(crate) fn verify_state_with_cache(
     progress: &mut dyn FnMut() -> Result<()>,
     cache: Option<&ArithmeticCache>,
 ) -> Result<()> {
+    let _measurement = cache.map(|cache| cache.history.observe(HistoryStage::VerifyState));
     progress()?;
-    let record = load(db, block)?;
+    let record = load_observed(db, block, cache.map(|cache| (settings, cache)))?;
     verify_record(db, settings, &record, progress, cache)?;
     local(ensure(
         record.state
@@ -575,11 +672,12 @@ pub(crate) fn verify_history_with_cache(
     progress: &mut dyn FnMut() -> Result<()>,
     cache: Option<&ArithmeticCache>,
 ) -> Result<()> {
+    let _measurement = cache.map(|cache| cache.history.observe(HistoryStage::VerifyHistory));
     let mut current = block;
     let mut expected_height = None;
     loop {
         progress()?;
-        let record = load(db, current)?;
+        let record = load_observed(db, current, cache.map(|cache| (settings, cache)))?;
         verify_record(db, settings, &record, progress, cache)?;
         local(ensure(
             expected_height.is_none_or(|height| record.height == height),
@@ -658,8 +756,9 @@ pub(crate) fn publish_with_cache(
     progress: &mut dyn FnMut() -> Result<()>,
     cache: Option<&ArithmeticCache>,
 ) -> Result<()> {
+    let _measurement = cache.map(|cache| cache.history.observe(HistoryStage::Publish));
     verify_state_with_cache(db, settings, parent, before, progress, cache)?;
-    let parent_record = load(db, parent)?;
+    let parent_record = load_observed(db, parent, cache.map(|cache| (settings, cache)))?;
     let native = native_block_with_cache(db, settings, block, cache)?;
     local(ensure(
         native.parent == Some(parent) && parent_record.height.checked_add(1) == Some(native.height),

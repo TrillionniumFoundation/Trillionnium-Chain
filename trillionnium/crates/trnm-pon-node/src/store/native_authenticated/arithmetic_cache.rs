@@ -1,5 +1,6 @@
 //! Optional arithmetic memoization owned by one native Node. No database read,
-//! parsed record, validity verdict, block selection or history is cached here.
+//! validity verdict, block selection or ancestry is cached here. The separate
+//! history material binds codec/hash results to complete current SQL bytes.
 #[cfg(test)]
 use super::complete;
 use super::StateCommitment;
@@ -36,6 +37,7 @@ pub(crate) struct ArithmeticCache {
     complete: RefCell<VecDeque<CompleteEntry>>,
     root: RefCell<Option<RootEntry>>,
     pub(crate) lifts: LiftCache,
+    pub(crate) history: super::history_arithmetic::HistoryArithmetic,
     #[cfg(test)]
     hits: std::cell::Cell<usize>,
     #[cfg(test)]

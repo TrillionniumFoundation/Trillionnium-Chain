@@ -1022,6 +1022,7 @@ fn native_dense_snapshot_readback_cost_keeps_full_state_and_unaccelerated_refere
     }
     eprintln!(
         "pon_native_snapshot_readback_cost_v1 {}",
-        json!({"scope":"same unmodified state_at implementation with/without optional snapshots; synthetic1024 zero-balance accounts, not full capacity or TPS","observations":observations})
+        json!({"scope":"same unmodified state_at implementation with/without optional snapshots; synthetic1024 zero-balance accounts, not full capacity or TPS","observations":observations,
+            "native_history_arithmetic":node.native_history_arithmetic_observation()})
     );
 }

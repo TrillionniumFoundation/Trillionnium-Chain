@@ -2140,6 +2140,11 @@ impl Node {
         control: &ExecutionControl<'_, Error>,
         owner_permit: Option<&OwnerPacketPermit>,
     ) -> Result<trnm_mvcc_fee::pon_commitment::StagedOutput> {
+        let _measurement = (self.state_backend == StateBackend::AuthenticatedV1).then(|| {
+            self.authenticated_arithmetic
+                .history
+                .observe(native_authenticated::HistoryStage::Execute)
+        });
         ensure(
             self.owner_policy.is_some() == owner_permit.is_some(),
             "OWNER_TASK_PERMIT_REQUIRED",
@@ -2239,6 +2244,11 @@ impl Node {
         &self,
         progress: &mut dyn FnMut() -> Result<()>,
     ) -> Result<(Hash, u64, State)> {
+        let _measurement = (self.state_backend == StateBackend::AuthenticatedV1).then(|| {
+            self.authenticated_arithmetic
+                .history
+                .observe(native_authenticated::HistoryStage::ReadActive)
+        });
         progress()?;
         self.namespace()?;
         let (tip, generation) = self.active()?;
@@ -2467,6 +2477,11 @@ impl Node {
     pub fn history_read_counters(&self) -> HistoryReadCounters {
         self.history_read_counters.get()
     }
+    /// Local cumulative diagnostics only. No SQL, native validation, CPU credit,
+    /// clock verdict or durable fact is supplied by these nested observations.
+    pub fn native_history_arithmetic_observation(&self) -> Value {
+        self.authenticated_arithmetic.history.observation()
+    }
 
     fn parent(&self, id: Hash) -> Result<Hash> {
         let row = self.record(id)?;
@@ -2521,6 +2536,11 @@ impl Node {
         tip: Hash,
         progress: &mut dyn FnMut() -> Result<()>,
     ) -> Result<State> {
+        let _measurement = (self.state_backend == StateBackend::AuthenticatedV1).then(|| {
+            self.authenticated_arithmetic
+                .history
+                .observe(native_authenticated::HistoryStage::StateAt)
+        });
         progress()?;
         if tip == self.active()?.0 {
             return Ok(self.read_active_with_progress(progress)?.2);
@@ -3283,6 +3303,11 @@ impl Node {
         observed_now: u64,
         control: &ExecutionControl<'_, Error>,
     ) -> Result<Hash> {
+        let _measurement = (self.state_backend == StateBackend::AuthenticatedV1).then(|| {
+            self.authenticated_arithmetic
+                .history
+                .observe(native_authenticated::HistoryStage::Admission)
+        });
         let WorkCheckedPacket {
             packet,
             work: verified_work,
@@ -4433,6 +4458,11 @@ impl Node {
         Ok(())
     }
     pub fn activate_observed(&mut self, tip: Hash, observed_now: u64) -> Result<Hash> {
+        let _measurement = (self.state_backend == StateBackend::AuthenticatedV1).then(|| {
+            self.authenticated_arithmetic
+                .history
+                .observe(native_authenticated::HistoryStage::Activation)
+        });
         self.continuous_activation_gate(tip)?;
         self.mining_activation_gate(tip)?;
         self.check_observed_history(tip, observed_now)?;

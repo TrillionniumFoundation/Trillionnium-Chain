@@ -595,6 +595,7 @@ fn phase(
     let mut verifier = state_backend.open(&path.join("independent-client"), settings.clone());
     replay(&mut verifier, seed);
     let initial = receiver.read_active().unwrap();
+    let native_history_before = receiver.native_history_arithmetic_observation();
     let owner = Arc::new(Mutex::new(receiver));
     let listener = TcpListener::bind("127.0.0.1:0").unwrap();
     let address = listener.local_addr().unwrap();
@@ -808,6 +809,12 @@ fn phase(
     let children_usage_after = support::children_usage();
     sampler.join().unwrap();
     let service_outcome = service.finish();
+    // Diagnostic snapshots after the original service window. They do not
+    // change any workload, deadline, budget, confirmation or success criterion.
+    let native_history_after = owner
+        .lock()
+        .ok()
+        .map(|node| node.native_history_arithmetic_observation());
     let captured = observer.snapshot();
     let budget_samples = samples.lock().unwrap().clone();
     let depletion_meter = budget_samples
@@ -907,6 +914,7 @@ fn phase(
         "receiver_and_verifier_setup_cpu_ns":receiver_and_verifier_setup_cpu_ns,"receiver_and_verifier_setup_wall_ns":receiver_and_verifier_setup_wall_ns,
         "submissions":submissions,"history":history,"confirmations":confirmations,"all_signed_rounds_confirmed_in_window":all_confirmed,
         "verifier_errors":errors,"children":children,"service_outcome":service_outcome,"receiver_observation":captured,
+        "native_history_arithmetic_before":native_history_before,"native_history_arithmetic_after":native_history_after,
         "observer_complete":observer_complete,"full_work_failed":relation_failed,"full_work_accepted":relation_accepted,
         "actor_reports_successful_without_cap_or_kill":successful_actors,"attack_calls_overlapping_each_signed_round":overlaps,
         "children_os_usage_before":children_usage_before,"children_os_usage_after":children_usage_after,

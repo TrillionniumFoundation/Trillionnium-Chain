@@ -410,3 +410,64 @@ fourteen separate block polls, with all28 repeated transaction queries retained.
 This is a deterministic call-count check, not a measured time speedup, saturated
 TPS, independent WAN or a change to full-history asymptotic cost. All original
 failure, native, capacity/history and two-repository baseline gates remain.
+
+## Exact-input native history arithmetic and unchanged business gate
+
+The 2026-10-19 native campaign on source
+`d633cb17dedd45f1346968a764d92caaab466750` still failed the original business gate:
+baseline acknowledged five unique packets (indices 0 through 4) in 54 calls, with
+48 `PUBLIC_MUTATION_CPU_BUDGET` refusals, and confirmed zero of three rounds.
+Both hostile phases acknowledged two packets and confirmed zero of three rounds.
+The complete native test exited 101 after 129.24 seconds; it was not terminated
+by its outer job deadline. Its raw `report.json` is 9,553,037 bytes with SHA-256
+`0e17d701d2e11fc8e9c0a081469dd56e2e78c00f642f5b85ec8863d25996adcc`.
+These observations remain failures and do not qualify the successor source.
+
+The baseline's 54 entered admission intervals consumed 8,472,464,608 ns of
+execution-thread CPU; the five entered submit-result intervals consumed
+180,218,204 ns. Context consumed 94,504,438 ns. These intervals exclude scoped
+worker CPU and must not be added again to their containing dispatch intervals.
+The receiver's actual charged mutation CPU was 9,185,360,744 ns. An ACK is not
+a confirmed signed round, and this offered load is not a saturated TPS result.
+
+The next implementation keeps `verify_history_with_cache`'s complete original
+tip-to-genesis traversal. It rereads every actual typed block, parent,
+commitment-record and delta row. It may reuse a record's successful codec/hash
+calculation only after the complete current BLOB and network/parameters/genesis/
+block identity match. Packet codec/hash material additionally remains subject to
+fresh actual block-column, parent-height and parent-chainwork checks. Delta leaf
+material requires the current exact tuple at the same index, after all original
+SQL type, length, order, NULL-versus-empty, before/after and canonical-JSON checks.
+The original Merkle merge/padding, genesis snapshot/account-graph checks, error
+order and progress/cancellation positions remain. No metadata root, generation,
+mtime, data-version value or previously admitted fact supplies authority.
+
+The three independent record/packet/delta pools each retain at most 64 entries
+and 4 MiB of conservative software charge, including their owned input/result
+capacities. Thus retained charge is at most 12 MiB per Node. An operation may
+temporarily collect at most one additional 4 MiB delta-material capture. These
+are software retention/workspace bounds, not process RSS or SQLite page-cache
+bounds. Retained entries are immutable and are not evicted by a historical scan;
+full pools or oversized input use the original calculation without retaining the
+new material. This avoids self-eviction during long scans without claiming an
+unbounded cache, an always-resident genesis prefix or constant-time validation.
+SQL traversal and current-byte comparison remain O(H plus actual delta bytes).
+
+`native_history_arithmetic_observation()` returns local cumulative diagnostics
+with schema `pon-native-history-arithmetic-observation-v1`: current observed
+bytes/rows, arithmetic hits/computations, pool charges, and eleven fixed nested
+native stages. Stage times are wall time and current-thread CPU, include error
+and cancelled calls, exclude scoped worker CPU, and expose unavailable CPU
+separately. They grant no work credit, eligibility, currentness or consensus
+authority. The original multiprocess campaign adds before/after snapshots to
+its raw report; its three 30-second windows, 0.25 CPU-second/second refill,
+2 CPU-second burst, 21 business blocks, hostile load and confirmation/state
+criteria are unchanged. The new source must rerun that gate at the original
+resource limits; arithmetic regressions alone cannot close it.
+
+Run the exact-input, mutation, cancellation, retention, rollback and reopen
+regressions together with the original native suites:
+
+    cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib store::native_authenticated::history_arithmetic:: -- --test-threads=1
+    cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib store::native_authenticated:: -- --test-threads=1
+    cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib store::native_authenticated_tests:: -- --test-threads=1

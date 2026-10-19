@@ -7,6 +7,10 @@ on:
       - trillionnium/crates/trnm-pon-node/src/native_account_query_tests.rs
       - trillionnium/crates/trnm-pon-node/src/native_authenticated_tests.rs
       - trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs
+      - trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic.rs
+      - trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic/tests.rs
+      - trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache.rs
+      - trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs
       - trillionnium/crates/trnm-pon-node/src/store/native_fixed_blob_tests.rs
       - trillionnium/crates/trnm-pon-node/tests/authenticated_storage_cli.rs
       - trillionnium/crates/trnm-pon-node/examples/continuous_pipeline.rs
@@ -57,15 +61,19 @@ jobs:
             args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_MERGE")
           fi
           python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$out/source.json"
-          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store.rs)" = b009ecc3e98a8bb34c1b6fa07b0959995c38c0dc
+          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store.rs)" = 2f8422edab1cb304cb0e28796abe857600f9a4ce
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/history_page.rs)" = c8569bd62a9c374b03a8ffc0ad02c64b0365eee4
-          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/native_authenticated_tests.rs)" = 42516cf9ca0dbe7874744bcf790a5b6f9f5120a9
-          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs)" = 52ff5564b1964a38848fd4463f86575ecb8643ee
+          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/native_authenticated_tests.rs)" = 5639e7cd0eb31e592a2b01f8cd788ef04cc74fc5
+          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs)" = ed4ba5b5da1f8f39944fb5b85507d2c112b60dc7
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_fixed_blob_tests.rs)" = cecb8a984c02ffca7590e69c4392223ea748b40f
           test "$(git hash-object trillionnium/crates/trnm-pon-node/tests/authenticated_storage_cli.rs)" = 7301aeb3033913f080b23767bfca52a2bf76d45b
           test "$(git hash-object formal/pon-nakamoto-v1/work_query_bound.py)" = 2d568879899da290c7bec8add6eb2746554897d6
           test "$(git hash-object formal/pon-nakamoto-v1/test_work_query_bound.py)" = 2161dd7d25b605b9e67f05bee5aa20038cf4469d
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/native_account_query_tests.rs)" = c8567475a36cf449d9fd2b33363a545fbd4704ab
+          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache.rs)" = bcb2e9c07ed2083c287d2803e45faef1ff125600
+          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic.rs)" = a081ce3669eee4ccf54ff5f98ef76c4602643ed1
+          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic/tests.rs)" = fa0ead2ad0fb52bf73cc8150e150d636244e3f58
+          test "$(git hash-object trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs)" = 95b77d2e49077cfdb4c8a8f8525a3befe60ad273
           bash scripts/project-preflight.sh --audit
       - name: Execute conditional query accounting and anytime-bound counterexamples
         shell: bash
@@ -137,7 +145,7 @@ jobs:
             cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib "$suite" -- "${options[@]}" --show-output --test-threads=1 2>&1 | tee "$OUT/$name.log"
             grep -E '^test result: ok\. [1-9][0-9]* passed; 0 failed;' "$OUT/$name.log"
             if test "$suite" = store::native_authenticated::; then
-              grep -E '^test result: ok\. 42 passed; 0 failed; 0 ignored;' "$OUT/$name.log"
+              grep -E '^test result: ok\. 50 passed; 0 failed; 0 ignored;' "$OUT/$name.log"
             fi
           done
           cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test continuity_authenticated --test authenticated_storage_cli -- --show-output --test-threads=1 2>&1 | tee "$OUT/recovery.log"
