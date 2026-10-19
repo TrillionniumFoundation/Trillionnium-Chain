@@ -16,6 +16,9 @@ use serde_json::Value;
 use trnm_mvcc_fee::pon_executor::{root, State};
 use trnm_protocol::pon_wire::{hash, Hash};
 
+mod arithmetic_cache;
+pub(crate) use arithmetic_cache::ArithmeticCache;
+
 pub(crate) const DDL: &str = "CREATE TABLE archive_nodes(id BLOB PRIMARY KEY,data BLOB NOT NULL);\nCREATE TABLE native_state_commitments(block BLOB PRIMARY KEY,data BLOB NOT NULL);";
 pub(crate) const RECORD_SCHEMA: &str = "pon-native-authenticated-state-record-v1";
 const MAX_RECORD_BYTES: usize = 16 * 1024;
@@ -506,24 +509,56 @@ pub(crate) fn verify_state(
     state: &State,
     progress: &mut dyn FnMut() -> Result<()>,
 ) -> Result<()> {
+    verify_state_with_cache(db, settings, block, state, progress, None)
+}
+
+pub(crate) fn verify_state_with_cache(
+    db: &Connection,
+    settings: &Settings,
+    block: Hash,
+    state: &State,
+    progress: &mut dyn FnMut() -> Result<()>,
+    cache: Option<&ArithmeticCache>,
+) -> Result<()> {
     progress()?;
     let record = load(db, block)?;
     verify_record(db, settings, &record, progress)?;
     local(ensure(
-        record.state == complete(settings, state)?,
+        record.state
+            == match cache {
+                Some(cache) => cache.complete(settings, state)?,
+                None => complete(settings, state)?,
+            },
         "NATIVE_STATE_ROOT",
     ))?;
-    native_store::verify(db, &record.accounts, state, progress)?;
+    native_store::verify_with_lifts(
+        db,
+        &record.accounts,
+        state,
+        progress,
+        cache.map(|c| &c.lifts),
+    )?;
     progress()
 }
 
 /// Seal and verify every delta record needed to reconstruct a retained branch.
 /// Non-genesis snapshots remain optional accelerators; genesis is the anchor.
+#[cfg(test)]
 pub(crate) fn verify_history(
     db: &Connection,
     settings: &Settings,
     block: Hash,
     progress: &mut dyn FnMut() -> Result<()>,
+) -> Result<()> {
+    verify_history_with_cache(db, settings, block, progress, None)
+}
+
+pub(crate) fn verify_history_with_cache(
+    db: &Connection,
+    settings: &Settings,
+    block: Hash,
+    progress: &mut dyn FnMut() -> Result<()>,
+    cache: Option<&ArithmeticCache>,
 ) -> Result<()> {
     let mut current = block;
     let mut expected_height = None;
@@ -552,7 +587,7 @@ pub(crate) fn verify_history(
                     canonical(&state)? == bytes && state == settings.initial,
                     "NATIVE_STATE_GENESIS",
                 ))?;
-                return verify_state(db, settings, current, &state, progress);
+                return verify_state_with_cache(db, settings, current, &state, progress, cache);
             }
         }
     }
@@ -594,7 +629,21 @@ pub(crate) fn publish(
     after: &State,
     progress: &mut dyn FnMut() -> Result<()>,
 ) -> Result<()> {
-    verify_state(db, settings, parent, before, progress)?;
+    publish_with_cache(db, settings, parent, block, before, after, progress, None)
+}
+
+#[allow(clippy::too_many_arguments)]
+pub(crate) fn publish_with_cache(
+    db: &Connection,
+    settings: &Settings,
+    parent: Hash,
+    block: Hash,
+    before: &State,
+    after: &State,
+    progress: &mut dyn FnMut() -> Result<()>,
+    cache: Option<&ArithmeticCache>,
+) -> Result<()> {
+    verify_state_with_cache(db, settings, parent, before, progress, cache)?;
     let parent_record = load(db, parent)?;
     let native = native_block(db, settings, block)?;
     local(ensure(
@@ -605,7 +654,10 @@ pub(crate) fn publish(
     let matches = matches_difference(before, after, &rows, progress)?;
     local(ensure(matches, "NATIVE_STATE_DELTA"))?;
     let accounts = native_store::apply(db, &parent_record.accounts, &rows, progress)?;
-    let state = complete(settings, after)?;
+    let state = match cache {
+        Some(cache) => cache.complete(settings, after)?,
+        None => complete(settings, after)?,
+    };
     local(ensure(
         accounts.digest == state.account_root
             && accounts.count == state.account_count
@@ -626,8 +678,8 @@ pub(crate) fn publish(
         delta_root: delta_root_with_progress(&rows, progress)?,
     };
     save(db, &mut record)?;
-    verify_state(db, settings, block, after, progress)?;
-    verify_history(db, settings, block, progress)
+    verify_state_with_cache(db, settings, block, after, progress, cache)?;
+    verify_history_with_cache(db, settings, block, progress, cache)
 }
 
 #[cfg(test)]

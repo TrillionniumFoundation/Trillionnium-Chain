@@ -7,9 +7,38 @@ use super::{Account, ArchiveError, Kind, Node};
 use crate::{Error, Result};
 use rusqlite::Connection;
 use serde::{Deserialize, Serialize};
+use std::cell::RefCell;
 use std::collections::{BTreeMap, BTreeSet};
 use trnm_mvcc_fee::pon_executor::State;
 use trnm_protocol::pon_wire::Hash;
+
+/// Exact mathematical inputs only. Every stored node is still read and decoded
+/// before this helper can reuse a compressed-path hash. No SQL/Node verdict is
+/// retained, so rollback, external writes and triggers need no invalidation.
+type LiftInput = (Hash, Hash, usize, usize);
+#[derive(Default)]
+pub(crate) struct LiftCache(RefCell<BTreeMap<LiftInput, Hash>>);
+impl LiftCache {
+    const MAX_ENTRIES: usize = 8192;
+    pub(super) fn lift(&self, node: &Node, depth: usize) -> Hash {
+        let key = (node.path, node.digest, node.depth, depth);
+        if let Ok(entries) = self.0.try_borrow() {
+            if let Some(value) = entries.get(&key) {
+                return *value;
+            }
+        }
+        // The omitted empty table is the immutable compiled grammar, never an
+        // input supplied by a caller, database, record or selected block.
+        let value = node.lift(depth, &empty_hashes());
+        if let Ok(mut entries) = self.0.try_borrow_mut() {
+            if entries.len() == Self::MAX_ENTRIES {
+                entries.clear();
+            }
+            entries.insert(key, value);
+        }
+        value
+    }
+}
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -274,9 +303,33 @@ pub(crate) fn verify(
     state: &State,
     progress: &mut dyn FnMut() -> Result<()>,
 ) -> Result<()> {
+    verify_with_lifts(db, root, state, progress, None)
+}
+
+pub(crate) fn verify_with_lifts(
+    db: &Connection,
+    root: &Root,
+    state: &State,
+    progress: &mut dyn FnMut() -> Result<()>,
+    lifts: Option<&LiftCache>,
+) -> Result<()> {
     let empty = empty_hashes();
     let actual = super::accounts(state).map_err(storage)?;
-    let mut stack = load_root(db, root, &empty)?.into_iter().collect::<Vec<_>>();
+    let node = root
+        .node
+        .map(|id| super::load_node(db, id))
+        .transpose()
+        .map_err(storage)?;
+    crate::ensure(
+        root.count <= 65_536
+            && root.node.is_none() == (root.count == 0)
+            && node.as_ref().map_or(empty[0], |node| {
+                lifts.map_or_else(|| node.lift(0, &empty), |cache| cache.lift(node, 0))
+            }) == root.digest,
+        "NATIVE_ACCOUNT_ROOT",
+    )
+    .map_err(Error::local_integrity)?;
+    let mut stack = node.into_iter().collect::<Vec<_>>();
     let mut seen = BTreeSet::new();
     let mut retained = BTreeMap::new();
     let mut balance = 0u64;
@@ -299,8 +352,8 @@ pub(crate) fn verify(
                     .ok_or("NATIVE_ACCOUNT_BALANCE")?;
             }
             Kind::Fork { .. } => {
-                stack.push(super::child(db, &node, true, &empty).map_err(storage)?);
-                stack.push(super::child(db, &node, false, &empty).map_err(storage)?);
+                stack.push(child_with_lifts(db, &node, true, &empty, lifts).map_err(storage)?);
+                stack.push(child_with_lifts(db, &node, false, &empty, lifts).map_err(storage)?);
             }
         }
     }
@@ -309,6 +362,38 @@ pub(crate) fn verify(
         "NATIVE_ACCOUNT_STATE",
     )
     .map_err(Error::local_integrity)
+}
+
+fn child_with_lifts(
+    db: &Connection,
+    parent: &Node,
+    right_side: bool,
+    empty: &[Hash; 257],
+    lifts: Option<&LiftCache>,
+) -> super::Result<Node> {
+    let Some(lifts) = lifts else {
+        return super::child(db, parent, right_side, empty);
+    };
+    let Kind::Fork {
+        left,
+        right,
+        left_hash,
+        right_hash,
+    } = parent.kind
+    else {
+        return Err(ArchiveError::CorruptRecord);
+    };
+    // Preserve the actual SQL read, identity decode, path/depth and parent hash
+    // comparisons. Only lift arithmetic on the just-read node can be reused.
+    let out = super::load_node(db, if right_side { right } else { left })?;
+    if out.depth <= parent.depth
+        || super::common(&out.path, &parent.path) < parent.depth
+        || super::bit(&out.path, parent.depth) != right_side
+        || lifts.lift(&out, parent.depth + 1) != if right_side { right_hash } else { left_hash }
+    {
+        return Err(ArchiveError::CorruptRecord);
+    }
+    Ok(out)
 }
 
 /// An opaque point-query binding to one actual native block. It makes no claim
@@ -339,6 +424,79 @@ mod tests {
     use super::*;
     use serde_json::json;
     use trnm_protocol::pon_wire::hash;
+
+    #[test]
+    fn native_lift_arithmetic_cache_binds_every_input_and_keeps_fixed_capacity() {
+        let cache = LiftCache::default();
+        let mut node = Node::account(
+            [7; 32],
+            Account {
+                balance: 19,
+                nonce: 3,
+            },
+        );
+        let empty = empty_hashes();
+        for depth in [0, 1, 7, 63, 128, 255, 256] {
+            assert_eq!(cache.lift(&node, depth), node.lift(depth, &empty));
+            assert_eq!(cache.lift(&node, depth), node.lift(depth, &empty));
+        }
+        for mutation in 0..3 {
+            match mutation {
+                0 => node.path[0] ^= 1,
+                1 => node.digest[0] ^= 1,
+                _ => node.depth -= 1,
+            }
+            assert_eq!(cache.lift(&node, 0), node.lift(0, &empty));
+        }
+        for index in 0..=LiftCache::MAX_ENTRIES {
+            node.digest[..8].copy_from_slice(&(index as u64).to_le_bytes());
+            assert_eq!(cache.lift(&node, node.depth), node.digest);
+            assert!(cache.0.borrow().len() <= LiftCache::MAX_ENTRIES);
+        }
+    }
+
+    #[test]
+    fn native_complete_account_root_arithmetic_cache_matches_uncached_growth_and_removal() {
+        let cache = LiftCache::default();
+        let mut values = BTreeMap::new();
+        for count in [0, 1, 2, 3, 17, 65] {
+            while values.len() < count {
+                let index = values.len() as u64;
+                let owner = hash(b"native-arithmetic-account", &[&index.to_le_bytes()]);
+                values.insert(
+                    owner,
+                    Account {
+                        balance: index * 13,
+                        nonce: index,
+                    },
+                );
+            }
+            let expected = super::super::account_root(&values).unwrap();
+            assert_eq!(
+                super::super::account_root_with_lifts(&values, &cache).unwrap(),
+                expected
+            );
+            assert_eq!(
+                super::super::account_root_with_lifts(&values, &cache).unwrap(),
+                expected
+            );
+        }
+        for value in values.values_mut().step_by(3) {
+            value.balance += 1;
+            value.nonce += 1;
+        }
+        assert_eq!(
+            super::super::account_root_with_lifts(&values, &cache).unwrap(),
+            super::super::account_root(&values).unwrap()
+        );
+        while !values.is_empty() {
+            values.pop_first();
+            assert_eq!(
+                super::super::account_root_with_lifts(&values, &cache).unwrap(),
+                super::super::account_root(&values).unwrap()
+            );
+        }
+    }
 
     #[test]
     fn native_account_delta_credit_before_debit_preserves_maximum_aggregate() {

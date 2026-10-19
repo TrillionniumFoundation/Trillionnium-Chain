@@ -9,11 +9,12 @@ use super::{
 };
 mod intake;
 use intake::{ConnectionLease, ListenerIntake};
-mod request_observation;
+pub(super) mod request_observation;
 pub mod scalar_cpu;
 pub use request_observation::{
     ApplicationFrameBytes, ApplicationFramePhase, PublicRequestObservation,
-    PublicRequestObservationSnapshot, PublicRequestObserver, MAX_REQUEST_OBSERVATION_RECORDS,
+    PublicRequestObservationSnapshot, PublicRequestObserver, SubmitPhase, SubmitPhaseObservation,
+    MAX_REQUEST_OBSERVATION_RECORDS,
 };
 use request_observation::{ConnectionObservation, TaskObservation, ThreadCpuStamp};
 #[cfg(test)]
@@ -1342,7 +1343,7 @@ fn public_dispatch(
                     None
                 }
             };
-            super::dispatch_shared_with_execution_control(
+            super::dispatch_shared_with_execution_observation(
                 node,
                 NativeRequest::Submit { packet },
                 &mut progress,
@@ -1407,6 +1408,7 @@ fn public_dispatch(
                     },
                     mutation_cpu.map_or(&() as &dyn ExecutionWorkerAccounting, |cpu| &cpu.workers),
                 ),
+                observation,
             )
         }
         Request::Head => {

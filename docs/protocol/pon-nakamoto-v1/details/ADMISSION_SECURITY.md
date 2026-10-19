@@ -100,30 +100,34 @@ passing ticket, structured-input shortcuts, fastest-adversary cost or public Syb
 
 ## Native fixed-wire rejection before task State
 
-The native Node also calls `pon_work::precheck_proof_encoding` before
+The native Node calls `pon_work::precheck_proof_statement` before
 `eligible_work_task_with_progress` can reconstruct the parent State. This bounded,
 allocation-free check accepts only the exact PNW1 width and magic and canonical
-little-endian A/B/C fields. The transcript digest remains opaque. Unlike the
-Ledger precheck above, this helper has no task, target or parent inputs; success
-returns only `()`. Original task binding, ticket filtering, complete transcript
-replay, product verification and final commit validation remain mandatory.
+little-endian A/B/C fields, derives TaskId from the exact A/B bytes, and rejects a
+claimed transcript digest whose challenge-bound ticket exceeds the header target.
+The transcript digest remains unverified. Success returns only `()` and cannot
+construct `VerifiedWork`. Parent-state task eligibility, complete transcript
+replay, product verification and final commit validation remain mandatory. The
+encoding-only helper remains available; the statement filter composes it without
+changing the standalone full verifier's original validation order.
 
 Common admission retains its existing owner, exact-duplicate, header, parent,
-target, clock and transaction-root checks before the new encoding check. The
-continuous public owner additionally checks encoding after its declared packet
+target, clock and transaction-root checks before the statement check. The
+continuous public owner additionally checks the statement after its declared packet
 parent/task binding and before its earlier task-State lookup. Existing bounded
 header/ancestry reads can still occur; this is not a zero-database-read claim.
-The helper distinguishes length, version and field errors; native malformed
-magic/fields report `WORK:Version` or `WORK:Field` before task-State errors.
+The helper distinguishes length, version, field, task and target errors; native
+malformed magic/fields and mismatched task/bad ticket report their `WORK:` error
+before task-State errors.
 Existing packet-grammar length errors still reject earlier where applicable.
 The standalone full verifier's original error order, including zero target
 before field rejection, is unchanged.
 
-Regression selectors `proof_encoding_precheck_`,
+Regression selectors `proof_encoding_precheck_`, `proof_statement_precheck_`,
 `mode4_packet_encoding_precheck_precedes_actual_parent_task_lookup` and
 `paid_malformed_work_encoding_settles_without_starting_full_verification`
-cover encoding boundaries, no parent-State entry or work replay on malformed
-input, valid retry and exact duplicate behavior, and the original paid CPU
+cover encoding/statement boundaries, no parent-State entry or work replay on
+malformed input, substituted task or bad ticket, valid retry and exact duplicate behavior, and the original paid CPU
 settlement when work never starts. The private continuous-owner fixture checks
 only ordering and grants no execution authority. These source regressions do
 not measure hostile network saturation or qualify work hardness; canonical

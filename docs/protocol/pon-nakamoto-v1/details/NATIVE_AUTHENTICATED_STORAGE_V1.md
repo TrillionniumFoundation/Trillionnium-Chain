@@ -135,6 +135,40 @@ delta record and parent relation back to genesis. Account nodes needed for an
 individual state are checked when that state is read; this does not constitute
 a perpetual audit of every inactive branch's physical storage.
 
+### Bounded reuse of exact arithmetic inputs
+
+The native Node owns one volatile arithmetic cache. It retains at most three
+complete canonical State encodings, each limited to 4 MiB, together with the
+network, parameters and genesis inputs to their complete commitment calculation.
+Every lookup serializes the actual complete State again and compares those exact
+bytes. It does not use `Value` equality, an asserted state root, a block identifier
+or the active generation as proof of unchanged State. Oversized inputs and local
+cache contention use the original complete calculation without retaining an entry.
+An integer and a floating representation cannot alias; the original range error
+for a disallowed floating value remains an error after a successful integer read.
+
+The same owner also retains at most 8,192 compressed-path hash results. A key
+contains every variable mathematical input: node path, node digest, source depth
+and target depth. The omitted empty-tree table is the immutable compiled hash
+grammar. Capacity exhaustion clears these optional entries. Complete account-root
+construction still parses, orders and rebuilds every supplied account; it can
+reuse only the lift arithmetic for unchanged inputs. Stored-tree verification
+still reads and decodes each actual SQL node, checks its content identity and
+parent path/depth/hash relation, and compares every leaf, count and balance with
+the complete State. The complete-root calculation takes accounts from actual
+State and never substitutes account values retained from the stored tree.
+
+Neither cache retains a database validity verdict, a parsed stored record, a
+history prefix, a selected block or execution authority. Current KV, records,
+deltas, packet bytes, required archive nodes and all historical links are read
+and checked as before, including after transaction triggers and during recovery.
+Consequently a cache hit requires no claim that SQLite `data_version` detects
+same-connection writes: no read is skipped on that basis. Warm-cache tests damage
+actual rows through a second connection and require the same local-integrity
+error as a cold cache. Existing late-trigger, old-delta, cancellation, branch and
+reopen regressions remain required. This change reduces repeated hash arithmetic;
+the State and history scans remain linear in their respective sizes.
+
 There is one native `active` selection and one existing reorganization journal.
 The backend does not introduce a second active account pointer that would need
 a separate cross-database commit. Required-work selection retains its original

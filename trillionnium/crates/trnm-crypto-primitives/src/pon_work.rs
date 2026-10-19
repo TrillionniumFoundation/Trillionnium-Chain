@@ -55,6 +55,37 @@ pub fn precheck_proof_encoding(bytes: &[u8]) -> Result<(), WorkError> {
     Ok(())
 }
 
+/// Allocation-free statement filter before a receiver restores parent State.
+/// It binds the canonical A/B bytes and claimed ticket to this exact header;
+/// passing does not check the transcript/product or construct VerifiedWork.
+/// The full verifier's original validation and error order remain unchanged.
+pub fn precheck_proof_statement(
+    challenge: Hash,
+    expected_task: Hash,
+    target: Hash,
+    bytes: &[u8],
+) -> Result<(), WorkError> {
+    precheck_proof_encoding(bytes)?;
+    if target == [0; 32] {
+        return Err(WorkError::Target);
+    }
+    let actual_task = hash(
+        b"task",
+        &[
+            &bytes[4..4 + CELLS * 4],
+            &bytes[4 + CELLS * 4..4 + CELLS * 8],
+        ],
+    );
+    if actual_task != expected_task {
+        return Err(WorkError::Task);
+    }
+    let trace_claim = &bytes[4 + 3 * CELLS * 4..];
+    if hash(b"ticket", &[&challenge, trace_claim]) > target {
+        return Err(WorkError::Target);
+    }
+    Ok(())
+}
+
 /// Local observation boundaries; these are neither proof bytes nor consensus input.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum VerificationProgress {
@@ -926,6 +957,69 @@ impl PreparedTask {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn proof_statement_precheck_rejects_task_and_ticket_without_replay() {
+        let (a, b) = matrices();
+        let challenge = [71; 32];
+        let task = task_id(&a, &b).unwrap();
+        let proof = prove(challenge, &a, &b).unwrap();
+        assert_eq!(
+            precheck_proof_statement(challenge, task, [255; 32], &proof),
+            Ok(())
+        );
+        let mut wrong_task = task;
+        wrong_task[0] ^= 1;
+        let mut tiny_target = [0; 32];
+        tiny_target[31] = 1;
+        for (expected_task, target, expected) in [
+            (wrong_task, [255; 32], WorkError::Task),
+            (task, tiny_target, WorkError::Target),
+        ] {
+            assert_eq!(
+                precheck_proof_statement(challenge, expected_task, target, &proof),
+                Err(expected),
+            );
+            let mut replay_started = false;
+            let result =
+                verify_with_progress(challenge, expected_task, target, &proof, &mut |_| {
+                    replay_started = true;
+                    Ok::<(), ()>(())
+                });
+            assert_eq!(result.unwrap_err(), VerificationError::Relation(expected));
+            assert!(!replay_started);
+        }
+    }
+
+    #[test]
+    fn proof_statement_precheck_never_promotes_a_passing_forgery() {
+        let (a, b) = matrices();
+        let challenge = [72; 32];
+        let task = task_id(&a, &b).unwrap();
+        let proof = prove(challenge, &a, &b).unwrap();
+        let mut false_trace = proof.clone();
+        false_trace[PROOF_BYTES - 1] ^= 1;
+        let mut false_product = proof;
+        let at = 4 + 2 * CELLS * 4;
+        let old = u32::from_le_bytes(false_product[at..at + 4].try_into().unwrap());
+        false_product[at..at + 4].copy_from_slice(&(((old as u128 + 1) % Q) as u32).to_le_bytes());
+        for (bytes, expected) in [
+            (false_trace, WorkError::Transcript),
+            (false_product, WorkError::Product),
+        ] {
+            assert_eq!(
+                precheck_proof_statement(challenge, task, [255; 32], &bytes),
+                Ok(())
+            );
+            let mut replay_started = false;
+            let result = verify_with_progress(challenge, task, [255; 32], &bytes, &mut |_| {
+                replay_started = true;
+                Ok::<(), ()>(())
+            });
+            assert!(replay_started);
+            assert_eq!(result.unwrap_err(), VerificationError::Relation(expected));
+        }
+    }
 
     fn checked_value(
         result: Result<VerifiedWork, WorkError>,

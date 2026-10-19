@@ -1132,33 +1132,84 @@ fn dispatch_shared_with_execution_control(
     verify: impl FnOnce(Packet) -> Result<WorkCheckedPacket>,
     control: &trnm_mvcc_fee::pon_executor::ExecutionControl<'_, Error>,
 ) -> Result<Value> {
+    dispatch_shared_with_execution_observation(node, request, progress, verify, control, None)
+}
+
+fn observe_submit_phase<T>(
+    observation: Option<&public_v3::request_observation::TaskObservation>,
+    phase: public_v3::SubmitPhase,
+    action: impl FnOnce() -> Result<T>,
+) -> Result<T> {
+    let measurement = observation.map(|record| record.phase(phase));
+    let result = action();
+    if let Some(measurement) = measurement {
+        measurement.finish(result.is_ok());
+    }
+    result
+}
+
+/// Optional seven-slot phase observations use the existing request owner. They
+/// never change a native result or mint credit; all old callers pass None.
+fn dispatch_shared_with_execution_observation(
+    node: &Mutex<Node>,
+    request: Request,
+    progress: &mut dyn FnMut(u64) -> Result<()>,
+    verify: impl FnOnce(Packet) -> Result<WorkCheckedPacket>,
+    control: &trnm_mvcc_fee::pon_executor::ExecutionControl<'_, Error>,
+    observation: Option<&public_v3::request_observation::TaskObservation>,
+) -> Result<Value> {
+    use public_v3::SubmitPhase;
     match request {
         Request::Submit { packet } => {
-            let packet = hex_packet(&packet)?;
+            let packet =
+                observe_submit_phase(observation, SubmitPhase::Decode, || hex_packet(&packet))?;
             let owner_permit = {
-                let mut owner = lock_owner(node, progress)?;
-                let clock = now()?;
-                if let Some(id) =
-                    owner.check_admission_context_with_progress(&packet, clock, &mut || {
-                        progress(0)?;
-                        (control.progress)(
-                            trnm_mvcc_fee::pon_executor::ExecutionProgress::BeforeParentBinding,
-                        )
-                    })?
-                {
-                    return submit_result(&mut owner, id, clock);
+                let mut owner =
+                    observe_submit_phase(observation, SubmitPhase::ContextOwnerWait, || {
+                        lock_owner(node, progress)
+                    })?;
+                let (existing, permit) = observe_submit_phase(
+                    observation,
+                    SubmitPhase::Context,
+                    || {
+                        let clock = now()?;
+                        if let Some(id) = owner.check_admission_context_with_progress(
+                            &packet,
+                            clock,
+                            &mut || {
+                                progress(0)?;
+                                (control.progress)(trnm_mvcc_fee::pon_executor::ExecutionProgress::BeforeParentBinding)
+                            },
+                        )? {
+                            return Ok((Some((id, clock)), None));
+                        }
+                        Ok((None, owner.begin_owner_work(&packet)?))
+                    },
+                )?;
+                if let Some((id, clock)) = existing {
+                    return observe_submit_phase(observation, SubmitPhase::SubmitResult, || {
+                        submit_result(&mut owner, id, clock)
+                    });
                 }
-                owner.begin_owner_work(&packet)?
+                permit
             };
             progress(0)?;
-            let checked = verify(packet)?;
+            let checked = observe_submit_phase(observation, SubmitPhase::Work, || verify(packet))?;
             // Cancellation after work must not turn into a durable admission.
             progress(0)?;
-            let mut owner = lock_owner(node, progress)?;
-            let clock = now()?;
-            let checked = owner.attach_owner_work(checked, owner_permit)?;
-            let id = owner.admit_work_checked_with_control(checked, clock, control)?;
-            submit_result(&mut owner, id, clock)
+            let mut owner =
+                observe_submit_phase(observation, SubmitPhase::AdmissionOwnerWait, || {
+                    lock_owner(node, progress)
+                })?;
+            let (id, clock) = observe_submit_phase(observation, SubmitPhase::Admission, || {
+                let clock = now()?;
+                let checked = owner.attach_owner_work(checked, owner_permit)?;
+                let id = owner.admit_work_checked_with_control(checked, clock, control)?;
+                Ok((id, clock))
+            })?;
+            observe_submit_phase(observation, SubmitPhase::SubmitResult, || {
+                submit_result(&mut owner, id, clock)
+            })
         }
         other => {
             let mut owner = lock_owner(node, progress)?;
@@ -2500,7 +2551,7 @@ mod tests {
     }
 
     #[test]
-    fn proof_encoding_precheck_rejects_before_parent_state_or_work_and_preserves_retry() {
+    fn proof_statement_precheck_rejects_before_parent_state_or_work_and_preserves_retry() {
         use trnm_crypto_primitives::pon_work;
         use trnm_mvcc_fee::pon_executor::ExecutionProgress;
         let (dir, node, packet) = pending_packet();
@@ -2515,6 +2566,22 @@ mod tests {
                 .copy_from_slice(&(pon_work::Q as u32).to_le_bytes());
             cases.push((bad_field, "WORK:Field"));
         }
+        let mut bad_task = packet.clone();
+        let value = u32::from_le_bytes(bad_task.proof[4..8].try_into().unwrap());
+        let value = ((u128::from(value) + 1) % pon_work::Q) as u32;
+        bad_task.proof[4..8].copy_from_slice(&value.to_le_bytes());
+        cases.push((bad_task, "WORK:Task"));
+        let mut bad_ticket = packet.clone();
+        let trace_offset = 4 + 3 * pon_work::CELLS * 4;
+        let trace = (0u64..4096)
+            .map(|nonce| pon_work::hash(b"test-bad-ticket", &[&nonce.to_le_bytes()]))
+            .find(|trace| {
+                pon_work::hash(b"ticket", &[&packet.header.challenge(), trace])
+                    > packet.header.target
+            })
+            .expect("development target has rejecting tickets");
+        bad_ticket.proof[trace_offset..].copy_from_slice(&trace);
+        cases.push((bad_ticket, "WORK:Target"));
         let sql = rusqlite::Connection::open(dir.path().join("native.sqlite")).unwrap();
         for (malformed, expected) in cases {
             let state_reads = std::sync::atomic::AtomicUsize::new(0);

@@ -1147,9 +1147,15 @@ impl Node {
             "OWNER_CONTINUOUS_PACKET_TASK",
         )?;
         // The continuous public path binds its task before common admission.
-        // Reject malformed work here too, before either task lookup restores State.
-        pon_work::precheck_proof_encoding(&packet.proof)
-            .map_err(|error| Error::from(format!("WORK:{error:?}")))?;
+        // Reject malformed/wrong-statement work before either lookup restores
+        // State. This filter does not replace the original complete verifier.
+        pon_work::precheck_proof_statement(
+            packet.header.challenge(),
+            packet.header.work_task,
+            packet.header.target,
+            &packet.proof,
+        )
+        .map_err(|error| Error::from(format!("WORK:{error:?}")))?;
         let manifest = self
             .eligible_work_task(
                 packet.header.parent,

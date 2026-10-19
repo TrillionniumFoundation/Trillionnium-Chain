@@ -553,6 +553,9 @@ pub struct Node {
     commitment_cache: RefCell<Option<ActiveCommitment>>,
     // Bounded tree material only. Historical State still comes from all original SQL reads.
     historical_commitment_cache: RefCell<historical_commitment::HistoricalCommitments>,
+    // Exact-input arithmetic only; never replaces an actual State/node/history
+    // read or its comparison. Volatile and bounded within this existing owner.
+    authenticated_arithmetic: native_authenticated::ArithmeticCache,
     commitment_observation: RefCell<Option<CommitmentObservation>>,
     history_read_counters: Cell<HistoryReadCounters>,
     history_page_read_counters: Cell<HistoryPageReadCounters>,
@@ -1144,6 +1147,7 @@ impl Node {
             public_history_test_snapshot: false,
             commitment_cache: RefCell::new(None),
             historical_commitment_cache: RefCell::default(),
+            authenticated_arithmetic: native_authenticated::ArithmeticCache::default(),
             commitment_observation: RefCell::new(None),
             history_read_counters: Cell::new(HistoryReadCounters::default()),
             history_page_read_counters: Cell::new(HistoryPageReadCounters::default()),
@@ -1156,11 +1160,12 @@ impl Node {
         };
         node.read_active()?;
         if node.state_backend == StateBackend::AuthenticatedV1 {
-            native_authenticated::verify_history(
+            native_authenticated::verify_history_with_cache(
                 &node.db,
                 &node.settings,
                 node.active()?.0,
                 &mut || Ok(()),
+                Some(&node.authenticated_arithmetic),
             )?;
         }
         node.validate_authenticated_replay()?;
@@ -1840,7 +1845,14 @@ impl Node {
             .map_err(|error| Error::from(error).local_integrity())?;
         ensure(root(state)? == record.root, "ROOT").map_err(Error::local_integrity)?;
         if self.state_backend == StateBackend::AuthenticatedV1 {
-            native_authenticated::verify_state(&self.db, &self.settings, id, state, progress)?;
+            native_authenticated::verify_state_with_cache(
+                &self.db,
+                &self.settings,
+                id,
+                state,
+                progress,
+                Some(&self.authenticated_arithmetic),
+            )?;
         }
         Ok(())
     }
@@ -1867,7 +1879,13 @@ impl Node {
         crate::ancestry_index::validate_tip(&self.db, self.ancestry_context(), selected.0)
             .map_err(Error::local_integrity)?;
         if self.state_backend == StateBackend::AuthenticatedV1 {
-            native_authenticated::verify_history(&self.db, &self.settings, selected.0, progress)?;
+            native_authenticated::verify_history_with_cache(
+                &self.db,
+                &self.settings,
+                selected.0,
+                progress,
+                Some(&self.authenticated_arithmetic),
+            )?;
         }
         ensure(
             self.active()? == selected && self.slot()? == slot,
@@ -2230,7 +2248,14 @@ impl Node {
             prior.as_ref(),
         )?;
         if self.state_backend == StateBackend::AuthenticatedV1 {
-            native_authenticated::verify_state(&self.db, &self.settings, tip, &state, progress)?;
+            native_authenticated::verify_state_with_cache(
+                &self.db,
+                &self.settings,
+                tip,
+                &state,
+                progress,
+                Some(&self.authenticated_arithmetic),
+            )?;
         }
         progress()?;
         ensure(
@@ -2515,12 +2540,13 @@ impl Node {
                     .checked_historical_commitment(cur, &state, row.root, None)?
                     .snapshot;
                 if self.state_backend == StateBackend::AuthenticatedV1 {
-                    native_authenticated::verify_state(
+                    native_authenticated::verify_state_with_cache(
                         &self.db,
                         &self.settings,
                         cur,
                         &state,
                         progress,
+                        Some(&self.authenticated_arithmetic),
                     )?;
                 }
                 break (state, commitment);
@@ -2568,7 +2594,14 @@ impl Node {
             continuity_v1::check_state(&state, self.record(id)?.height, &self.settings.app)
                 .map_err(|error| Error::from(error).local_integrity())?;
             if self.state_backend == StateBackend::AuthenticatedV1 {
-                native_authenticated::verify_state(&self.db, &self.settings, id, &state, progress)?;
+                native_authenticated::verify_state_with_cache(
+                    &self.db,
+                    &self.settings,
+                    id,
+                    &state,
+                    progress,
+                    Some(&self.authenticated_arithmetic),
+                )?;
             }
         }
         progress()?;
@@ -2706,9 +2739,9 @@ impl Node {
             h.transactions == sequence_root("transactions", &packet.transactions),
             "ROOT",
         )?;
-        // Reject malformed fixed-wire work before materializing the parent State.
-        // This is only an encoding check; admission still requires full work replay.
-        pon_work::precheck_proof_encoding(&packet.proof)
+        // Encoding, TaskId and a claimed ticket need no parent State. Reject
+        // them before task lookup; a passing filter still requires full replay.
+        pon_work::precheck_proof_statement(h.challenge(), h.work_task, h.target, &packet.proof)
             .map_err(|error| Error::from(format!("WORK:{error:?}")))?;
         // Signed task context/expiry/parent registration reject before full work replay.
         if let Some(manifest) =
@@ -3375,7 +3408,7 @@ impl Node {
             ensure(retained <= 64, "SNAPSHOT_LIMIT").map_err(Error::local_integrity)?;
         }
         if self.state_backend == StateBackend::AuthenticatedV1 {
-            native_authenticated::publish(
+            native_authenticated::publish_with_cache(
                 &tx,
                 &self.settings,
                 h.parent,
@@ -3383,6 +3416,7 @@ impl Node {
                 &prior,
                 &output.state,
                 &mut || progress(ExecutionProgress::BeforeDurableCommit),
+                Some(&self.authenticated_arithmetic),
             )?;
         }
         // Re-read after every write/trigger, while rollback can still remove the

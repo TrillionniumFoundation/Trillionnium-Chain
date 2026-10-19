@@ -133,6 +133,29 @@ fn mode4_catalog_permission_is_not_material_or_classification_evidence() {
 pub(crate) fn mechanism_view() -> VerifiedView {
     authenticate(&inputs(), 1).unwrap()
 }
+
+/// The same expired mechanism-only view with a chosen mathematical TaskId.
+/// Resign both fixtures through their original authenticators; never mutate an
+/// already verified view to manufacture binding or execution authority.
+pub(crate) fn mechanism_view_with_task(task: &str) -> VerifiedView {
+    let mut body = allocation("parent-reconcile");
+    body.declared_binding.task.native_task = task.into();
+    body.claim.native_task = task.into();
+    body.claim.task_binding = recipient::declared_binding_digest(&body.declared_binding).unwrap();
+    body.claim.operation = recipient::operation_id(&body.identity, &body.claim).unwrap();
+    let (raw, authority) = signed_allocation(&body);
+    let mut input = inputs();
+    let mut view = input.view_authority.expected.clone();
+    view.declared_binding = body.declared_binding;
+    view.allocation_envelopes = vec![sha(&raw)];
+    let (raw_view, digest) = signed(VIEW_DOMAIN, &view);
+    input.allocations = vec![SignedAllocationInput { raw, authority }];
+    input.raw_view = raw_view;
+    input.view_authority.expected = view;
+    input.view_authority.envelope_sha256 = sha(&input.raw_view);
+    input.view_authority.latest_digest = digest;
+    authenticate(&input, 1).unwrap()
+}
 pub(crate) fn mechanism_catalog() -> HeldCatalog {
     HeldCatalog {
         rows: Vec::new(),

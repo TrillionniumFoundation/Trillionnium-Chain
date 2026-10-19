@@ -566,6 +566,14 @@ pub(crate) fn commitment_from_complete_state(
     settings: &Settings,
     state: &State,
 ) -> Result<StateCommitment> {
+    commitment_from_complete_state_with_lifts(settings, state, None)
+}
+
+pub(crate) fn commitment_from_complete_state_with_lifts(
+    settings: &Settings,
+    state: &State,
+    lifts: Option<&crate::account_archive_prototype::native_store::LiftCache>,
+) -> Result<StateCommitment> {
     let account_values = accounts(state)?;
     commitment(
         Context {
@@ -574,7 +582,12 @@ pub(crate) fn commitment_from_complete_state(
             genesis: settings.genesis(),
         },
         relation(pon_executor::root(state))?,
-        crate::account_archive_prototype::account_root(&account_values)?,
+        match lifts {
+            Some(lifts) => {
+                crate::account_archive_prototype::account_root_with_lifts(&account_values, lifts)?
+            }
+            None => crate::account_archive_prototype::account_root(&account_values)?,
+        },
         account_values.len() as u64,
         total(account_values.values().map(|value| value.balance))?,
         &non_accounts(state),

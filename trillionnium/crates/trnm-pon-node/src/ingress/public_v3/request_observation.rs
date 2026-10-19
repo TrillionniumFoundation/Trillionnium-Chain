@@ -5,9 +5,63 @@ use std::sync::{
     Arc, Mutex,
 };
 use std::thread::{self, ThreadId};
+use std::time::Instant;
 use trnm_protocol::pon_wire::Hash;
 
 pub const MAX_REQUEST_OBSERVATION_RECORDS: usize = 16_384;
+
+/// Fixed local Submit phases. Waiting for the Node is separate from work while
+/// holding it. These observations are nested within dispatch, never CPU credit.
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Serialize)]
+#[serde(rename_all = "snake_case")]
+pub enum SubmitPhase {
+    Decode,
+    ContextOwnerWait,
+    Context,
+    Work,
+    AdmissionOwnerWait,
+    Admission,
+    SubmitResult,
+}
+impl SubmitPhase {
+    const ALL: [Self; 7] = [
+        Self::Decode,
+        Self::ContextOwnerWait,
+        Self::Context,
+        Self::Work,
+        Self::AdmissionOwnerWait,
+        Self::Admission,
+        Self::SubmitResult,
+    ];
+}
+
+#[derive(Clone, Copy, Debug, Serialize)]
+pub struct SubmitPhaseObservation {
+    pub phase: SubmitPhase,
+    pub started: bool,
+    pub completed: bool,
+    pub accepted: Option<bool>,
+    pub wall_ns: Option<u64>,
+    /// Only the actual dispatch thread. M06 child CPU, reactor and response
+    /// signing are outside this interval, not measured as zero.
+    pub thread_cpu_ns: Option<u64>,
+}
+impl SubmitPhaseObservation {
+    fn new(phase: SubmitPhase) -> Self {
+        Self {
+            phase,
+            started: false,
+            completed: false,
+            accepted: None,
+            wall_ns: None,
+            thread_cpu_ns: None,
+        }
+    }
+}
+
+fn submit_phases() -> [SubmitPhaseObservation; 7] {
+    SubmitPhase::ALL.map(SubmitPhaseObservation::new)
+}
 
 #[derive(Clone, Copy, Debug, Serialize)]
 #[serde(rename_all = "snake_case")]
@@ -43,6 +97,7 @@ pub struct PublicRequestObservation {
     pub dispatch_started: bool,
     pub dispatch_accepted: Option<bool>,
     pub dispatch_thread_cpu_ns: Option<u64>,
+    pub submit_phases: [SubmitPhaseObservation; 7],
     pub terminal_phase: Option<&'static str>,
     pub response_frame_complete: bool,
     pub connection_closed: bool,
@@ -81,6 +136,7 @@ impl PublicRequestObservation {
             dispatch_started: false,
             dispatch_accepted: None,
             dispatch_thread_cpu_ns: None,
+            submit_phases: submit_phases(),
             terminal_phase: None,
             response_frame_complete: false,
             connection_closed: false,
@@ -95,7 +151,7 @@ impl PublicRequestObservation {
 // The socket reactor and the execution worker write disjoint observations.
 // Sharing one try_lock made a normal frame/worker overlap look like lost data.
 // Neither side may block the other to produce optional diagnostic evidence.
-#[derive(Clone, Copy, Default)]
+#[derive(Clone, Copy)]
 struct TaskProgress {
     full_work_started: bool,
     full_work_accepted: Option<bool>,
@@ -103,6 +159,20 @@ struct TaskProgress {
     dispatch_started: bool,
     dispatch_accepted: Option<bool>,
     dispatch_thread_cpu_ns: Option<u64>,
+    submit_phases: [SubmitPhaseObservation; 7],
+}
+impl Default for TaskProgress {
+    fn default() -> Self {
+        Self {
+            full_work_started: false,
+            full_work_accepted: None,
+            full_work_thread_cpu_ns: None,
+            dispatch_started: false,
+            dispatch_accepted: None,
+            dispatch_thread_cpu_ns: None,
+            submit_phases: submit_phases(),
+        }
+    }
 }
 
 struct Cell {
@@ -151,6 +221,7 @@ pub struct PublicRequestObservationSnapshot {
     pub observation_has_consensus_authority: bool,
     pub cpu_intervals_are_nested_not_additive: bool,
     pub cpu_includes_reactor_authentication_or_response_signing: bool,
+    pub submit_phase_cpu_excludes_scoped_workers: bool,
     pub stream_bytes_are_physical_network_bytes: bool,
 }
 
@@ -185,6 +256,7 @@ impl PublicRequestObserver {
                             value.dispatch_started = task.dispatch_started;
                             value.dispatch_accepted = task.dispatch_accepted;
                             value.dispatch_thread_cpu_ns = task.dispatch_thread_cpu_ns;
+                            value.submit_phases = task.submit_phases;
                         }
                         Err(_) => {
                             cell.failed.store(true, Ordering::Release);
@@ -217,7 +289,7 @@ impl PublicRequestObserver {
             self.0.count(&self.0.failures);
         }
         PublicRequestObservationSnapshot {
-            schema: "public-v3-local-request-resource-observation-v1",
+            schema: "public-v3-local-request-resource-observation-v2",
             capacity: self.0.capacity,
             accepted_connections_seen: self.0.seen.load(Ordering::Acquire),
             records_not_retained: self.0.omitted.load(Ordering::Acquire),
@@ -227,6 +299,7 @@ impl PublicRequestObserver {
             observation_has_consensus_authority: false,
             cpu_intervals_are_nested_not_additive: true,
             cpu_includes_reactor_authentication_or_response_signing: false,
+            submit_phase_cpu_excludes_scoped_workers: true,
             stream_bytes_are_physical_network_bytes: false,
         }
     }
@@ -344,8 +417,20 @@ impl Drop for ConnectionObservation {
     }
 }
 
-pub(super) struct TaskObservation(Handle);
+pub(in crate::ingress) struct TaskObservation(Handle);
 impl TaskObservation {
+    pub(in crate::ingress) fn phase(&self, phase: SubmitPhase) -> SubmitPhaseGuard<'_> {
+        self.0.update_task(|r| {
+            r.submit_phases[phase as usize].started = true;
+        });
+        SubmitPhaseGuard {
+            observation: self,
+            phase,
+            started: Instant::now(),
+            cpu: ThreadCpuStamp::start(),
+            accepted: None,
+        }
+    }
     pub(super) fn dispatch_started(&self) {
         self.0.update_task(|r| {
             r.dispatch_started = true;
@@ -366,6 +451,34 @@ impl TaskObservation {
         self.0.update_task(|r| {
             r.full_work_thread_cpu_ns = cpu;
             r.full_work_accepted = Some(accepted);
+        });
+    }
+}
+
+/// Drop retains an unfinished/panicked phase with unknown outcome. Measurement
+/// failure never changes the request result, cancellation or resource account.
+pub(in crate::ingress) struct SubmitPhaseGuard<'a> {
+    observation: &'a TaskObservation,
+    phase: SubmitPhase,
+    started: Instant,
+    cpu: Option<ThreadCpuStamp>,
+    accepted: Option<bool>,
+}
+impl SubmitPhaseGuard<'_> {
+    pub(in crate::ingress) fn finish(mut self, accepted: bool) {
+        self.accepted = Some(accepted);
+    }
+}
+impl Drop for SubmitPhaseGuard<'_> {
+    fn drop(&mut self) {
+        let wall = u64::try_from(self.started.elapsed().as_nanos()).ok();
+        let cpu = self.cpu.take().and_then(ThreadCpuStamp::finish);
+        self.observation.0.update_task(|r| {
+            let phase = &mut r.submit_phases[self.phase as usize];
+            phase.completed = self.accepted.is_some();
+            phase.accepted = self.accepted;
+            phase.wall_ns = wall;
+            phase.thread_cpu_ns = cpu;
         });
     }
 }
@@ -426,6 +539,174 @@ fn thread_cpu_ns() -> Option<u64> {
 mod tests {
     use super::*;
     use std::sync::Barrier;
+
+    #[test]
+    fn submit_phase_outcomes_are_bounded_and_keep_abandoned_measurements_unknown() {
+        let observer = PublicRequestObserver::new(1).unwrap();
+        let connection = observer.connection().unwrap();
+        let task = connection.task();
+        task.phase(SubmitPhase::Decode).finish(true);
+        task.phase(SubmitPhase::Context).finish(false);
+        let abandoned = task.phase(SubmitPhase::Work);
+        drop(abandoned);
+        let panicked = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+            let _phase = task.phase(SubmitPhase::Admission);
+            panic!("observation must retain unfinished admission");
+        }));
+        assert!(panicked.is_err());
+        drop(task);
+        drop(connection);
+        let snapshot = observer.snapshot();
+        assert_eq!(
+            snapshot.schema,
+            "public-v3-local-request-resource-observation-v2"
+        );
+        assert!(snapshot.submit_phase_cpu_excludes_scoped_workers);
+        assert!(snapshot.cpu_intervals_are_nested_not_additive);
+        assert!(!snapshot.observation_has_consensus_authority);
+        assert_eq!(snapshot.measurement_failures, 0);
+        let row = &snapshot.records[0];
+        assert!(row.complete);
+        assert_eq!(row.submit_phases.len(), 7);
+        for (index, phase) in row.submit_phases.iter().enumerate() {
+            assert_eq!(phase.phase, SubmitPhase::ALL[index]);
+            match phase.phase {
+                SubmitPhase::Decode | SubmitPhase::Context => {
+                    assert!(phase.started && phase.completed);
+                    assert_eq!(phase.accepted, Some(phase.phase == SubmitPhase::Decode));
+                    assert!(phase.wall_ns.is_some());
+                }
+                SubmitPhase::Work | SubmitPhase::Admission => {
+                    assert!(phase.started && !phase.completed);
+                    assert_eq!(phase.accepted, None);
+                    assert!(phase.wall_ns.is_some());
+                }
+                _ => {
+                    assert!(!phase.started && !phase.completed);
+                    assert_eq!(phase.accepted, None);
+                    assert_eq!(phase.wall_ns, None);
+                    assert_eq!(phase.thread_cpu_ns, None);
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn submit_phase_capture_contention_is_optional_and_does_not_block_dispatch() {
+        let observer = PublicRequestObserver::new(1).unwrap();
+        let connection = observer.connection().unwrap();
+        let task = connection.task();
+        let guard = connection.cell.task.lock().unwrap();
+        let result = crate::ingress::observe_submit_phase(Some(&task), SubmitPhase::Work, || {
+            Err::<(), _>(crate::Error::from("FRAME_DEADLINE"))
+        });
+        assert_eq!(result.unwrap_err().to_string(), "FRAME_DEADLINE");
+        drop(guard);
+        drop(task);
+        drop(connection);
+        let snapshot = observer.snapshot();
+        assert_eq!(snapshot.measurement_failures, 2);
+        assert!(snapshot.records[0].observation_failed);
+        assert!(!snapshot.records[0].complete);
+        assert!(snapshot.records[0].connection_closed && snapshot.records[0].task_closed);
+        assert_eq!(
+            snapshot.records[0].submit_phases[SubmitPhase::Work as usize].accepted,
+            None
+        );
+    }
+
+    #[test]
+    fn observed_native_submit_keeps_rejection_success_and_duplicate_phase_boundaries() {
+        use crate::ingress::{dispatch_shared_with_execution_observation, Request};
+        use crate::store::WorkCheckedPacket;
+        use crate::{Node, Settings};
+        use trnm_mvcc_fee::pon_executor::ExecutionControl;
+        let dir = tempfile::tempdir().unwrap();
+        let clock = crate::ingress::now().unwrap();
+        let settings = Settings::development(Some(clock - 100)).unwrap();
+        let node = Node::open(dir.path(), settings.clone(), 2).unwrap();
+        let packet = node
+            .make(
+                settings.genesis(),
+                vec![],
+                crate::development_public(0).unwrap(),
+                clock - 90,
+                4096,
+            )
+            .unwrap();
+        let node = Mutex::new(node);
+        let observer = PublicRequestObserver::new(3).unwrap();
+        let control = ExecutionControl::new(&|_| Ok::<(), crate::Error>(()), &());
+        let invalid = observer.connection().unwrap();
+        let task = invalid.task();
+        let error = dispatch_shared_with_execution_observation(
+            &node,
+            Request::Submit {
+                packet: "invalid hex".into(),
+            },
+            &mut |_| Ok(()),
+            |_| panic!("invalid encoding cannot start work"),
+            &control,
+            Some(&task),
+        )
+        .unwrap_err();
+        assert!(!error.requires_owner_stop());
+        drop(task);
+        drop(invalid);
+        let request = || Request::Submit {
+            packet: hex::encode(packet.encode().unwrap()),
+        };
+        let accepted = observer.connection().unwrap();
+        let task = accepted.task();
+        let reply = dispatch_shared_with_execution_observation(
+            &node,
+            request(),
+            &mut |_| Ok(()),
+            WorkCheckedPacket::verify,
+            &control,
+            Some(&task),
+        )
+        .unwrap();
+        drop(task);
+        drop(accepted);
+        let duplicate = observer.connection().unwrap();
+        let task = duplicate.task();
+        let repeated = dispatch_shared_with_execution_observation(
+            &node,
+            request(),
+            &mut |_| Ok(()),
+            |_| panic!("durable duplicate must not replay work"),
+            &control,
+            Some(&task),
+        )
+        .unwrap();
+        assert_eq!(reply["block"], repeated["block"]);
+        drop(task);
+        drop(duplicate);
+        let snapshot = observer.snapshot();
+        assert_eq!(snapshot.measurement_failures, 0);
+        assert!(snapshot.records.iter().all(|row| row.complete));
+        let invalid = &snapshot.records[0].submit_phases;
+        assert_eq!(invalid[0].accepted, Some(false));
+        assert!(invalid[1..].iter().all(|phase| !phase.started));
+        assert!(snapshot.records[1].submit_phases.iter().all(|phase| {
+            phase.started
+                && phase.completed
+                && phase.accepted == Some(true)
+                && phase.wall_ns.is_some()
+        }));
+        for phase in &snapshot.records[2].submit_phases {
+            let expected = matches!(
+                phase.phase,
+                SubmitPhase::Decode
+                    | SubmitPhase::ContextOwnerWait
+                    | SubmitPhase::Context
+                    | SubmitPhase::SubmitResult
+            );
+            assert_eq!(phase.started, expected);
+            assert_eq!(phase.accepted, expected.then_some(true));
+        }
+    }
 
     #[test]
     fn connection_observation_does_not_wait_for_independent_task_progress() {

@@ -124,6 +124,28 @@ or estimated from another stage. Report encoded bytes, key conflicts, proof gene
 verification, root/persistence cost, peak RSS, actual GPU/VRAM use or explicit nonuse,
 queue/Busy outcomes, state growth, active physical slots and recovery duration.
 
+The optional public request observer uses
+`public-v3-local-request-resource-observation-v2`. Each retained request has exactly
+seven Submit slots: decode, context-owner wait, context, full work, admission-owner
+wait, admission, and submit-result generation. Every entered slot records monotonic
+wall time and, where available, the actual dispatcher thread's CPU time. Slots not
+entered remain null; an abandoned or panicked slot retains its measured interval
+with unknown outcome and `completed=false`. A completed error is `accepted=false`.
+An exact durable duplicate does not manufacture work or admission measurements.
+The existing first-record retention bound and nonblocking optional writes still
+apply; capture contention marks the observation failed without changing admission,
+cancellation, durable results, or CPU settlement.
+
+These slots separate waiting from owner-held context/admission work. They are
+nested within dispatch and must not be added to dispatch or full-work CPU a second
+time. Their thread CPU excludes scoped M06 workers, reactor authentication and
+response signing; missing clocks are unknown rather than zero. These diagnostic
+fields add no service credit and do not extend any deadline. They locate the
+remaining cost before attributing it to root reconstruction, history verification,
+SQLite, or execution; they do not by themselves establish a restored baseline or
+improved throughput. Historical Source494 records retain their original schema,
+source and failed outcomes.
+
 No throughput improvement is inferred from worker count. Samples in which extra workers
 are slower stay in the report. No learning update is inferred from successful optimization:
 all three measured candidates may remain unapplied with zero reward. File-disjoint source

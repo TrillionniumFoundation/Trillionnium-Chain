@@ -285,6 +285,41 @@ fn native_authenticated_namespaces_missing_nodes_and_corrupt_records_fail_closed
 }
 
 #[test]
+fn native_arithmetic_warm_cache_still_reads_external_tampering_and_matches_cold_errors() {
+    for action in [
+        "DELETE FROM archive_nodes",
+        "UPDATE archive_nodes SET data=X'00'",
+        "UPDATE native_state_commitments SET data=X'7b7d'",
+        "DELETE FROM kv WHERE slot=(SELECT state_slot FROM active WHERE singleton=1)",
+    ] {
+        let dir = tempfile::tempdir().unwrap();
+        let mut node = open(dir.path(), StateBackend::AuthenticatedV1);
+        let packet = make(
+            &node,
+            node.settings.genesis(),
+            vec![transfer(&node.settings, 1, 77)],
+        );
+        let id = node.admit(&packet, 100_000).unwrap();
+        node.activate(id).unwrap();
+        let expected = node.read_active().unwrap();
+        assert_eq!(node.read_active().unwrap(), expected);
+        let external = Connection::open(dir.path().join("native.sqlite")).unwrap();
+        external.execute_batch(action).unwrap();
+        let warm = node.read_active().unwrap_err();
+        node.authenticated_arithmetic = native_authenticated::ArithmeticCache::default();
+        let cold = node.read_active().unwrap_err();
+        assert_eq!(warm.kind(), ErrorKind::LocalStructure, "{action}");
+        assert_eq!(warm.kind(), cold.kind(), "{action}");
+        assert_eq!(warm.to_string(), cold.to_string(), "{action}");
+        assert_eq!(
+            warm.requires_owner_stop(),
+            cold.requires_owner_stop(),
+            "{action}"
+        );
+    }
+}
+
+#[test]
 fn native_commit_admission_suppression_rolls_back_all_rows_in_both_backends() {
     for backend in [StateBackend::Legacy, StateBackend::AuthenticatedV1] {
         for table in [

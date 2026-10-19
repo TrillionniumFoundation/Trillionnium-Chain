@@ -62,7 +62,9 @@ fn mode4_unknown_packet_is_rejected_before_missing_parent_state_or_work() {
 fn mode4_packet_encoding_precheck_precedes_actual_parent_task_lookup() {
     let (_root, _journal, node) = node();
     let before = node.active().unwrap();
-    let view = Arc::new(policy::tests::mechanism_view());
+    let zeros = vec![0; pon_work::CELLS];
+    let task = pon_work::task_id(&zeros, &zeros).unwrap();
+    let view = Arc::new(policy::tests::mechanism_view_with_task(&hex::encode(task)));
     let allocation = view
         .permission("parent-reconcile", &"11".repeat(32))
         .unwrap();
@@ -87,7 +89,7 @@ fn mode4_packet_encoding_precheck_precedes_actual_parent_task_lookup() {
             transactions: [0; 32],
             state: [0; 32],
             receipts: [0; 32],
-            work_task: [0x10; 32],
+            work_task: task,
             nonce: 1,
         },
         transactions: Vec::new(),
@@ -111,8 +113,16 @@ fn mode4_packet_encoding_precheck_precedes_actual_parent_task_lookup() {
         );
         packet.proof[offset..offset + 4].fill(0);
     }
-    // Canonical encoding alone reaches the original lookup and still rejects:
-    // there is no such parent and this zero relation is not accepted Work.
+    packet.proof[4] = 1;
+    assert_eq!(
+        node.continuous_actual_packet_binding(&permit, &packet)
+            .unwrap_err()
+            .to_string(),
+        "WORK:Task"
+    );
+    packet.proof[4] = 0;
+    // Canonical A/B and a passing claimed ticket reach the original lookup and
+    // still reject: there is no such parent and no full Work authority exists.
     assert_eq!(
         node.continuous_actual_packet_binding(&permit, &packet)
             .unwrap_err()

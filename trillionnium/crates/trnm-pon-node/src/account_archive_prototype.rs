@@ -269,6 +269,14 @@ impl Node {
         result
     }
     fn fork(depth: usize, left: &Self, right: &Self, empty: &[Hash; 257]) -> Result<Self> {
+        Self::fork_with_lift(depth, left, right, &|node, level| node.lift(level, empty))
+    }
+    fn fork_with_lift(
+        depth: usize,
+        left: &Self,
+        right: &Self,
+        lift: &impl Fn(&Self, usize) -> Hash,
+    ) -> Result<Self> {
         if depth >= left.depth
             || depth >= right.depth
             || common(&left.path, &right.path) != depth
@@ -277,8 +285,8 @@ impl Node {
         {
             return Err(ArchiveError::CorruptRecord);
         }
-        let left_hash = left.lift(depth + 1, empty);
-        let right_hash = right.lift(depth + 1, empty);
+        let left_hash = lift(left, depth + 1);
+        let right_hash = lift(right, depth + 1);
         let mut result = Self {
             id: [0; 32],
             path: left.path,
@@ -980,6 +988,19 @@ pub fn account_root(values: &BTreeMap<Hash, Account>) -> Result<Hash> {
             .map_or(empty[0], |n| n.lift(0, &empty)),
     )
 }
+
+/// The same complete, storage-independent rebuild with optional exact-input
+/// path-hash arithmetic. Every actual account is parsed, ordered and rebuilt.
+pub(crate) fn account_root_with_lifts(
+    values: &BTreeMap<Hash, Account>,
+    lifts: &native_store::LiftCache,
+) -> Result<Hash> {
+    let lift = |node: &Node, depth| lifts.lift(node, depth);
+    Ok(
+        build_with_lift(None, &ordered_accounts(values)?, &mut || Ok(()), &lift)?
+            .map_or_else(|| empty_hashes()[0], |node| lift(&node, 0)),
+    )
+}
 fn make_checkpoint(
     context: Context,
     branch: Hash,
@@ -1115,6 +1136,15 @@ fn build(
     empty: &[Hash; 257],
     progress: &mut dyn FnMut() -> Result<()>,
 ) -> Result<Option<Node>> {
+    build_with_lift(db, rows, progress, &|node, depth| node.lift(depth, empty))
+}
+
+fn build_with_lift(
+    db: Option<&Connection>,
+    rows: &[(Hash, Hash, Account)],
+    progress: &mut dyn FnMut() -> Result<()>,
+    lift: &impl Fn(&Node, usize) -> Hash,
+) -> Result<Option<Node>> {
     if rows.is_empty() {
         return Ok(None);
     }
@@ -1130,11 +1160,11 @@ fn build(
         if split == 0 || split == rows.len() {
             return Err(ArchiveError::CorruptRecord);
         }
-        let left =
-            build(db, &rows[..split], empty, progress)?.ok_or(ArchiveError::CorruptRecord)?;
-        let right =
-            build(db, &rows[split..], empty, progress)?.ok_or(ArchiveError::CorruptRecord)?;
-        Node::fork(depth, &left, &right, empty)?
+        let left = build_with_lift(db, &rows[..split], progress, lift)?
+            .ok_or(ArchiveError::CorruptRecord)?;
+        let right = build_with_lift(db, &rows[split..], progress, lift)?
+            .ok_or(ArchiveError::CorruptRecord)?;
+        Node::fork_with_lift(depth, &left, &right, lift)?
     };
     if let Some(db) = db {
         save_node(db, &node)?;
