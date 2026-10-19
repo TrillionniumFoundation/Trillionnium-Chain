@@ -36,9 +36,14 @@ Read 95-byte prefix, match exact tag-specific payload length and bounded proof/l
 **Expected result:** Replacing any header field changes its challenge; malformed transaction bytes reject without nonce or balance authority. Incremental compressed commitments equal the full state-root builder; failed batches preserve immutable predecessor snapshots.
 
 **Resource and retention rule:** 318-byte header, 2048-byte envelope; original twelve tags plus explicit context-gated native
-extensions13..23. V3 tag22 is exact1028B; standalone19 is refused in V3 execution.
+extensions13..24. V3 tag22 is exact1028B; standalone19 is refused in V3 execution.
 Tag23 is the explicit revision11 [integer factor witness](../protocol/pon-nakamoto-v1/details/NATIVE_INTEGER_FACTOR_CANDIDATE_V2.md),
 with921/1441B signed envelopes; ILF2 decoding alone grants no model or parent authority.
+The separate [revision16 model evolution](../development/specs/pon/MODEL_EVOLUTION_V5.md)
+uses ILF3/tag24: at most three sorted distinct target operations, rank sum at most
+three and a nonempty three-bit expert mask. Its maximum payload is 1808 bytes
+and signed envelope 1967 bytes. ILF2 bytes and old dispatch retain their meaning;
+complete ILM3 parent authentication and positive-gain adoption belong to M06.
 See [V3 codec/activation](../protocol/pon-nakamoto-v1/details/QUALIFIED_TASK_LIFECYCLE_V3.md).
 
 ## Concrete regression selectors

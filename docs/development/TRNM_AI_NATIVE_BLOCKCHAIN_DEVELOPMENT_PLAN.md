@@ -1,7 +1,7 @@
 # Trillionnium Chain Development Plan — PoN / Hepta-PoH revision
 
 Plan ID: `trnm-chain-development-plan-v2` (stable registry identity; content revision 14).
-Effective: 2026-09-28; priority implementation revision: 2026-10-18. Status: selected development direction; no runtime activation.
+Effective: 2026-09-28; priority implementation revision: 2026-10-19. Status: selected development direction; no runtime activation.
 Canonical destination: `refs/heads/main`; continuation uses the current main lineage, not retired PR #194.
 Current source/head/tree/base and prospective merge are derived at verification time.
 Assessed legacy baseline: `c552c31c6d3c5ac47522a124e02c6b8bca4e23f2`, tree
@@ -128,6 +128,44 @@ at adoption. It grants no work weight, consensus finality, operator independence
 or Hepta installation authority.
 Package and procedure counts do not measure scientific acceptance.
 
+The 2026-10-19 increment adds the explicitly selected
+[model evolution V5 / revision16](specs/pon/MODEL_EVOLUTION_V5.md) to those same
+owners. Its signed ILF3/tag24 transaction loads the actual complete current ILM3
+parent and can jointly change base, router and expert matrices, plus a nonempty
+three-slot enable mask. This removes the zero-router reachability restriction
+for the new family. It is a bounded graph, not arbitrary Hepta topology. Native
+candidate/evaluation/tag8 adoption tests reach a successor parent and refuse a
+neutral next update; model scores still confer no chainwork. Historical ILF2,
+ILM2 and revision15 vectors, domains and stores keep their exact identities.
+
+V5 optionally accepts [owner-pinned task windows](specs/pon/MODEL_TASK_WINDOWS_V1.md)
+through the ordinary Node CLI and Config/Settings constructors. The full input
+file digest, separately pinned signer, canonical source snapshot/content hashes,
+complete task roots and ordered activation schedule bind the pre-genesis context.
+The submission round selects the same fixed window for the actual parent,
+candidate and every retained control; an author cannot substitute a preferred
+root. Two six-text controlled fixtures exercise real new payloads, activation,
+native adoption and independent feature/score computation. These are source and
+protocol controls, not an independent prospective data campaign. Changing the
+manifest after genesis requires a new context; live data governance and custody
+are still separate work. The original no-window V5 context remains distinct.
+
+The separate M09 [cell byte pilot](../protocol/pon-nakamoto-v1/details/CELL_P2P_V1.md)
+provides an actual `trnm-cell` pack/serve/fetch/verify route. A caller-pinned TCM1
+manifest binds the family, dependencies, complete payload and ordered chunks.
+Finite configured TCP peers, a separate disposable SQLite cache, hash-checked
+repair and complete no-replace materialization are exercised with real loopback
+connections, origin removal, two suppliers, corruption, partial downloads,
+exhausted connection budgets and a byte-dripping peer. This grants neither model
+loading/installation nor CURRENT/FinalUse authority. Independent storage owners,
+WAN delivery, discovery, private transport and long-term replica renewal require
+their own implementations and observations.
+
+All three new applicability rows are source bindings with no invented execution
+receipt. Package ownership remains 25 packages and 39 procedures. Controlled
+native regression results do not promote runtime, scientific, product or
+production acceptance, and old evidence receipts are not repinned to this source.
+
 This revision preserves full header/challenge binding, parent-derived difficulty,
 required-work fork choice, complete proof verification before the private verified
 work type, ordered application execution, the single durable writer and the separation
@@ -174,7 +212,7 @@ maturity and parent capacity responsibility. Other rules and successor capacity 
 complete-State checks, so this is not a partial-State or constant-cost execution claim.
 
 All incompatible consensus rules require fresh explicit profile/context selection.
-The old revision3/6/7/8/9/10/11/12/13 vectors and namespaces retain their meaning. The
+The old revision3/6/7/8/9/10/11/12/13/14/15 vectors and namespaces retain their meaning. The
 combined continuity-task12/model13 context has a separate native regression through
 306 actually mined/admitted heights, archive reservation conversion, native rewards,
 source/retention cleanup and cold reopens. Its source-bound execution remains a

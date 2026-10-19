@@ -53,6 +53,15 @@ The latter loads the complete actual ILM2 parent from State, recomputes771 BA
 coordinates and the complete candidate model, and persists context-bound duplicate
 rows through the existing staged State/deltas. It neither reinterprets old tag6
 nor proves general model-function equivalence or useful quality.
+The explicitly selected [revision16 successor](../development/specs/pon/MODEL_EVOLUTION_V5.md)
+uses tag24/ILF3 and authenticates the actual full ILM3 parent before bounded
+base/router/expert and enabled-mask changes. Native evaluation and tag8 adoption
+use the complete candidate, self-allocation and existing frozen quorum; zero
+gain cannot publish. Optional [owner-pinned task windows](../development/specs/pon/MODEL_TASK_WINDOWS_V1.md)
+are installed through Config/Settings before genesis and select parent, candidate
+and all controls by the same submission round. Old factor profiles remain
+unchanged; these paths do not prove arbitrary graph evolution or independent
+prospective model utility.
 Lifecycle18 OPEN/20 REVOKE/21 REGISTER retain their selected contract; standalone19
 RENEW is V2-only, and atomic22 is V3/V4-only. V3/V4 refuse19; V4 selects revision9.
 Native selectors `trnm-pon-node --test task_lifecycle --test task_lifecycle_v3 --test task_lifecycle_v4 --test public_evaluation` exercise
@@ -73,7 +82,7 @@ For sorted union of keys compare canonical values; emit only changed entries, en
 **Invariant:** The historical twelve core commands produce identical state, receipts, fees and root at one, two, four and eight workers.
 
 **Scope:** Historical default-context native/Python parity. Signed task13, native
-evaluation14..17, selected lifecycle18..22 and revision11 factor23 have separate native contracts and tests;
+evaluation14..17, selected lifecycle18..22, revision11 factor23 and revision16 evolution24 have separate native contracts and tests;
 this invariant does not claim full Python transition parity for those extensions.
 
 **Atomic boundary:** Mandatory transitions first, parallel local proposals, canonical read-set validation, one re-execution on conflict, then final conservation and subsidy.

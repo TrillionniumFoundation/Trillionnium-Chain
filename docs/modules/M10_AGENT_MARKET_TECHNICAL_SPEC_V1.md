@@ -62,6 +62,26 @@ actually ran them; a source binding is not a component receipt or a new whole-so
 qualification. Source-group budgets, general functional attribution,
 independent evaluator governance, positive ML gain and public acceptance remain open.
 
+#### Explicit revision16 contribution and release
+
+The separate [model evolution V5 contract](../development/specs/pon/MODEL_EVOLUTION_V5.md)
+routes signed tag24 through `model_evolution_v5::admit`, the same M06 executor
+and the existing Node state/delta owner. It loads the actual complete current
+ILM3 parent and admits at most three rank-bounded operations over base, router
+or experts plus a nonempty three-slot enable mask. Equivalent factor bases are
+normalized to the full resulting model for duplicate detection. The existing
+tag8 path requires exactly one self-allocation matching the native evidence,
+positive gain and source budget before adopting the complete candidate.
+
+The [optional task-window contract](../development/specs/pon/MODEL_TASK_WINDOWS_V1.md)
+fixes owner, exact source bytes, manifest identity and activation schedule in
+the context before genesis. An author cannot select evaluation roots per
+candidate. Native tests cover joint router/expert then base/mask adoption from
+the actual successor parent, neutral non-publication, cross-profile refusal and
+two controlled new-text windows. Separate Python vectors and Node CLI/reopen
+checks name these new sources; they do not extend the historical four-test
+factor receipt or grant Hepta installation authority.
+
 ## M10.PendingNotHistory
 
 **Invariant:** Inactive contributions cannot exhaust pending capacity forever; signed intake windows bound same-parent history, reject expired-window replay, and preserve independently rooted release claims. Published release metadata retains the exact model artifact/family/parent after candidate reclamation.

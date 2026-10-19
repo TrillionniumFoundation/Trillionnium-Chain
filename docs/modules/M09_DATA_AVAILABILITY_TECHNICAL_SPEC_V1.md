@@ -5,7 +5,10 @@ Revision: invariant-driven revision3. Selected target: `pon-nakamoto-v1`.
 
 ## Scope and ownership
 
-Current bounded integer model family, not arbitrary neural model hosting.
+The existing model loader remains scoped to its bounded integer family. The
+separate [configured-peer cell byte pilot](../protocol/pon-nakamoto-v1/details/CELL_P2P_V1.md)
+can retrieve opaque, content-addressed cells for the existing loader owners;
+transport success does not qualify arbitrary neural model hosting.
 
 The claims below apply to their named component and tests, not to an independently accepted full native node.
 
@@ -15,11 +18,25 @@ The claims below apply to their named component and tests, not to an independent
 
 Read at most65537 bytes; require <=65536 and canonical JSON byte identity, exact fields/shapes/ranges/feature/family. Hash bytes, never mutable path names. No executable object format.
 
+That remains the bounded integer-model loader contract. The separate native
+`CellManifestV1::decode` / `CellStoreV1::verify_complete` route validates opaque
+cell bytes against the caller-pinned TCM1 manifest, all five dependency digests,
+ordered chunk lengths/hashes and the complete payload length/hash. It does not
+interpret a model format or enlarge the integer loader's acceptance boundary.
+
 **Atomic/commit boundary:** Content-addressed artifact and manifest owned by the artifact provider.
 
 ### M09.FetchWithoutAuthor
 
 Verify each copy hash; remove original author path during controlled test; load from a custodian and bind actual model hash to result. Remote diversified storage and long-term repair are not implied by local copies.
+
+The native configured-peer successor uses `fetch_cell` / `serve_cells` and the
+ordinary `trnm-cell` CLI. Actual TCP tests remove the origin, fetch from two
+retained replicas, repair a corrupt disposable cache and resume only verified
+chunks. Absolute connection deadlines and a shared total connection budget
+bound corrupt, absent and byte-dripping peers. Complete materialization uses
+an owner-controlled destination and no-replace publication; byte retrieval
+does not select CURRENT, execute a model or establish independent custodians.
 
 **Atomic/commit boundary:** Retention obligations separate from self-contained historical work certificates.
 
@@ -59,6 +76,11 @@ Physical-host copies and source-path loss are tested by a scoped campaign; geogr
 
 - [`formal/pon-nakamoto-v1/model_contract.py`](../../formal/pon-nakamoto-v1/model_contract.py).
 - [`formal/pon-nakamoto-v1/experiments/model_loop.py`](../../formal/pon-nakamoto-v1/experiments/model_loop.py).
+- [`trnm-data-availability::cell`](../../trillionnium/crates/trnm-data-availability/src/cell.rs)
+  owns a separate manifest/chunk cache, bounded TCP retrieval, no-replace
+  materialization and ordinary corrupt-cache repair. Its
+  [`trnm-cell` CLI](../../trillionnium/crates/trnm-data-availability/src/bin/trnm-cell.rs)
+  has no release, CURRENT, consensus or FinalUse authority.
 
 No test binding or local campaign grants independent acceptance, ordinary Hepta execution or production activation. Preserve the exact source, profile and environment of every outcome.
 

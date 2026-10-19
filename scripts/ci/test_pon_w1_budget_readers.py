@@ -5,6 +5,7 @@ All mutations remain in memory. The actual retained files must still have their
 original bytes after the tests. No modified record is written as native evidence.
 """
 import argparse
+import copy
 import hashlib
 import json
 from pathlib import Path
@@ -14,6 +15,7 @@ import unittest
 sys.dont_write_bytecode = True
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import pon_w1_budget_reader as reader
+import pon_w1_budget_derive as derive
 
 RAW_DIR = None
 
@@ -61,6 +63,113 @@ class ActualLogCounterexamples(unittest.TestCase):
             self.assertEqual(counts['started_replays'], counts['verified_work'] + counts['relation_errors'] + counts['local_cancellations'])
             self.assertIs(result['unique_confirmed_business_transactions_measured'], False)
             self.assertIs(result['native_verification_performed_by_reader'], False)
+
+    def legal_rows(self):
+        return {name: [json.loads(line) for line in self.original[name].splitlines()]
+                for name in ('w1-seed1.jsonl', 'w1-seed2.jsonl')}
+
+    def test_legal_cost_minimum_keeps_full_setup_all_attempts_and_exact_case(self):
+        rows = self.legal_rows()
+        costs = derive.legal_winner_costs(rows)
+        original = {(name, row['case']): row for name, values in rows.items()
+                    for row in values if row['kind'] == 'producer'}
+        self.assertEqual({row['class'] for row in costs['samples']}, set(reader.CLASSES))
+        for row in costs['samples']:
+            raw = original[(row['file'], f"{row['class']}/{row['sample']}/{row['arm']}")]
+            self.assertEqual(row['full_cpu_ns'], raw['total']['cpu_ns'])
+            self.assertEqual(row['setup_cpu_ns'], raw['setup']['cpu_ns'])
+            self.assertEqual(row['attempts'], len(raw['attempts']))
+            self.assertGreaterEqual(row['full_cpu_ns'], row['setup_cpu_ns'] + row['search_cpu_ns'])
+        for selected in costs['minimum_per_same_case']:
+            candidates = [row for row in costs['samples']
+                          if all(row[key] == selected[key] for key in ('seed', 'class', 'sample'))]
+            self.assertEqual(selected['minimum_full_cpu_ns'], min(row['full_cpu_ns'] for row in candidates))
+        self.assertIs(costs['fastest_adversary_lower_bound'], False)
+
+    def test_unknown_attempt_cpu_is_retained_as_unknown_not_zero(self):
+        rows = self.legal_rows()
+        producer = next(row for row in rows['w1-seed1.jsonl']
+                        if row['kind'] == 'producer' and row['status'] == 'target-hit-unverified'
+                        and row['valid_proof_acquisition_used'])
+        producer['attempts'][0]['timing']['cpu_ns'] = None
+        costs = derive.legal_winner_costs(rows)
+        case = next(row for row in costs['samples'] if row['file'] == 'w1-seed1.jsonl'
+                    and f"{row['class']}/{row['sample']}/{row['arm']}" == producer['case'])
+        self.assertEqual(case['per_attempt_cpu_ns']['unknown_count'], 1)
+        self.assertEqual(case['per_attempt_cpu_ns']['known']['n'], len(producer['attempts']) - 1)
+        self.assertEqual(case['full_cpu_ns'], producer['total']['cpu_ns'])
+
+    def test_fixed_arm_cost_keeps_every_case_and_does_not_mix_hindsight_winners(self):
+        rows = self.legal_rows()
+        fixed = derive.fixed_legal_arm_costs(rows)
+        for group in fixed['aggregates']:
+            self.assertEqual(group['full_setup_plus_all_search_cpu_ns'], sum(row['full_cpu_ns'] for row in group['cases']))
+            self.assertEqual(group['case_count'], len(group['cases']))
+            self.assertEqual(group['attempts'], sum(row['attempts'] for row in group['cases']))
+            if group['status_counts'].get('unsupported', 0):
+                self.assertIs(group['eligible_for_fixed_arm_comparison'], False)
+        for minimum in fixed['minimum_observed_fixed_arm_per_class']:
+            actual = next(row for row in fixed['aggregates'] if row['class'] == minimum['class'] and row['arm'] == minimum['arm'])
+            self.assertEqual(actual['full_setup_plus_all_search_cpu_ns'], minimum['full_setup_plus_all_search_cpu_ns'])
+        self.assertIs(fixed['per_sample_hindsight_mixture_is_implemented_strategy'], False)
+        producer = next(row for row in rows['w1-seed1.jsonl'] if row['kind'] == 'producer')
+        rows['w1-seed1.jsonl'].remove(producer)
+        with self.assertRaises(ValueError):
+            derive.fixed_legal_arm_costs(rows)
+
+    def test_fixed_arm_forced_exhaustion_retains_full_cost_and_null_per_winner(self):
+        rows = {'w1-exhausted.jsonl': [json.loads(line) for line in self.original['w1-exhausted.jsonl'].splitlines()]}
+        fixed = derive.fixed_legal_arm_costs(rows)
+        self.assertEqual(fixed['minimum_observed_fixed_arm_per_class'], [])
+        for arm in fixed['aggregates']:
+            self.assertEqual(arm['winners'], 0)
+            self.assertIsNone(arm['full_cpu_per_winner']['ratio_ns'])
+            self.assertGreater(arm['full_setup_plus_all_search_cpu_ns'], 0)
+
+    def test_false_trace_cannot_enter_legal_winner_minimum(self):
+        rows = self.legal_rows()
+        false = next(row for row in rows['w1-seed1.jsonl']
+                     if row['kind'] == 'producer' and row['status'] == 'target-hit-unverified'
+                     and row['case'].endswith('/from-zero-false-trace'))
+        false['valid_proof_acquisition_used'] = True
+        with self.assertRaises(ValueError):
+            derive.legal_winner_costs(rows)
+
+    def test_host_pair_requires_identical_source_complete_cases_and_mathematical_bytes(self):
+        # In-memory reader counterexamples only; no second native execution is asserted.
+        report = {'source_head': 'a' * 40, 'source_tree': 'b' * 40,
+                  'strict_reader_sha256': 'c' * 64,
+                  'campaigns': [{'file': name, 'campaign': rows[0]} for name, rows in self.legal_rows().items()],
+                  'implemented_legal_winner_costs': derive.legal_winner_costs(self.legal_rows()),
+                  'false_trace_costs': []}
+        peer = copy.deepcopy(report)
+        for row in peer['implemented_legal_winner_costs']['samples']:
+            row['full_cpu_ns'] *= 2
+            row['setup_cpu_ns'] *= 2
+            row['search_cpu_ns'] *= 2
+        comparison = derive.compare_hosts(report, peer, ['counterexample-left', 'counterexample-right'])
+        self.assertTrue(all(row['left_cpu_over_right_cpu'] == 0.5 for row in comparison['paired_legal_costs']))
+        self.assertIs(comparison['gpu_or_asic_lower_bound'], False)
+        with self.assertRaises(ValueError):
+            derive.compare_hosts(report, peer, ['same', 'same'])
+        for field in ('source_head', 'source_tree'):
+            bad = copy.deepcopy(peer)
+            bad[field] = 'd' * 40
+            with self.assertRaises(ValueError):
+                derive.compare_hosts(report, bad, ['left', 'right'])
+        for field in ('target', 'task', 'proof_digest', 'winning_challenge'):
+            bad = copy.deepcopy(peer)
+            bad['implemented_legal_winner_costs']['samples'][0][field] = 'd' * 64
+            with self.assertRaises(ValueError):
+                derive.compare_hosts(report, bad, ['left', 'right'])
+        bad = copy.deepcopy(peer)
+        bad['implemented_legal_winner_costs']['samples'].pop()
+        with self.assertRaises(ValueError):
+            derive.compare_hosts(report, bad, ['left', 'right'])
+        bad = copy.deepcopy(peer)
+        bad['campaigns'][0]['campaign']['attempt_budget_per_arm'] += 1
+        with self.assertRaises(ValueError):
+            derive.compare_hosts(report, bad, ['left', 'right'])
 
     def test_missing_unsupported_case_cannot_improve_completion_fraction(self):
         self.reject('w1-seed1.jsonl', lambda rows: rows.pop(next(i for i, row in enumerate(rows) if row.get('status') == 'unsupported')))

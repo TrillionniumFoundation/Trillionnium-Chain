@@ -1057,7 +1057,7 @@ fn run() -> Result<Value> {
         _ => "",
     };
     let allowed = format!(
-        "--development --store --state-backend --genesis-time --workers --logical-now --evaluation-policy --task-profile --model-profile --actor-profile --deployment-spec --deployment-bootstrap --deployment-model --deployment-input --deployment-checkpoint --deployment-activation --operator-task-mode --operator-task-config --operator-task-config-sha256 --operator-task-source-commit --operator-task-policy-source-sha256 --operator-task-registry2-package {authentication_options} {admission_options} {extra}"
+        "--development --store --state-backend --genesis-time --workers --logical-now --evaluation-policy --task-profile --model-profile --model-task-windows --model-task-windows-sha256 --model-data-owner --actor-profile --deployment-spec --deployment-bootstrap --deployment-model --deployment-input --deployment-checkpoint --deployment-activation --operator-task-mode --operator-task-config --operator-task-config-sha256 --operator-task-source-commit --operator-task-policy-source-sha256 --operator-task-registry2-package {authentication_options} {admission_options} {extra}"
     );
     for key in args.keys() {
         if !allowed.split_whitespace().any(|k| k == key) {
@@ -1146,6 +1146,9 @@ fn run() -> Result<Value> {
                     | "--evaluation-policy"
                     | "--task-profile"
                     | "--model-profile"
+                    | "--model-task-windows"
+                    | "--model-task-windows-sha256"
+                    | "--model-data-owner"
                     | "--deployment-bootstrap"
             )
         }) {
@@ -1201,6 +1204,9 @@ fn run() -> Result<Value> {
                 "--evaluation-policy",
                 "--task-profile",
                 "--model-profile",
+                "--model-task-windows",
+                "--model-task-windows-sha256",
+                "--model-data-owner",
             ]
             .iter()
             .any(|key| args.contains_key(*key))
@@ -1250,7 +1256,40 @@ fn run() -> Result<Value> {
         {
             return Err("CHECKPOINT_ACTOR_PROFILE".into());
         }
-        Settings::development_with_model_profiles(
+        let window_flags = [
+            "--model-task-windows",
+            "--model-task-windows-sha256",
+            "--model-data-owner",
+        ];
+        let present = window_flags
+            .iter()
+            .filter(|flag| args.contains_key(**flag))
+            .count();
+        if present != 0 && present != window_flags.len() {
+            return Err("TASK_WINDOW_COMPLETE_CONFIG_REQUIRED".into());
+        }
+        let raw = if present != 0 {
+            Some(read_owned_configuration(
+                need(&args, "--model-task-windows")?,
+                trnm_mvcc_fee::model_task_windows_v1::MAX_MANIFEST_BYTES as u64,
+                false,
+                "TASK_WINDOW_FILE",
+                "TASK_WINDOW_LENGTH",
+            )?)
+        } else {
+            None
+        };
+        let windows = raw
+            .as_ref()
+            .map(|raw| -> Result<_> {
+                Ok(trnm_mvcc_fee::model_task_windows_v1::PinnedTaskWindows {
+                    raw,
+                    sha256: digest(need(&args, "--model-task-windows-sha256")?)?,
+                    owner: digest(need(&args, "--model-data-owner")?)?,
+                })
+            })
+            .transpose()?;
+        Settings::development_with_model_profiles_and_task_windows(
             args.get("--genesis-time")
                 .map(|s| s.parse().map_err(|_| Error::from("GENESIS_TIME")))
                 .transpose()?,
@@ -1261,6 +1300,7 @@ fn run() -> Result<Value> {
             args.get("--model-profile")
                 .map(String::as_str)
                 .unwrap_or("linear-expert-dev-v1"),
+            windows,
         )?
     };
     // This local observation has no peer request or signed response counterpart.

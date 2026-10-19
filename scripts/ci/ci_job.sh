@@ -20,6 +20,8 @@ case "${1:?required job}" in
     python3 scripts/ci/test_one_zero_locality_cost.py
     python3 scripts/ci/test_maintenance_cost.py
     python3 scripts/ci/test_work_rejection_report.py
+    python3 scripts/ci/test_pon_w1_budget_readers.py
+    python3 scripts/ci/test_pon_daa_schedule_reader.py
     python3 scripts/ci/test_account_archive_conformance.py
     python3 scripts/ci/test_run_account_execution_conformance.py
     python3 scripts/ci/report_current_implementation.py --check
@@ -50,6 +52,8 @@ case "${1:?required job}" in
     python3 scripts/run_public_v3_service_campaign.py --out "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/public-v3-service"
     python3 scripts/test_llm_runtime_pilot.py
     python3 formal/pon-nakamoto-v1/test_model_attribution.py
+    python3 formal/pon-nakamoto-v1/test_model_evolution_oracle.py -v
+    python3 formal/pon-nakamoto-v1/test_model_task_windows_oracle.py -v
     python3 formal/pon-nakamoto-v1/test_work_utility.py
     python3 formal/pon-nakamoto-v1/test_public_evaluation_lifecycle.py
     python3 formal/pon-nakamoto-v1/test_llm_adapter_contract.py
@@ -123,10 +127,15 @@ case "${1:?required job}" in
       export TRNM_ZERO_PAIRED_PREFIX_OUTPUT="$trnm_model_receipt_root/zero-paired-prefix"
       test ! -e "$TRNM_ZERO_PAIRED_PREFIX_OUTPUT"
       test ! -L "$TRNM_ZERO_PAIRED_PREFIX_OUTPUT"
+      export TRNM_DAA_EVIDENCE_DIR="$trnm_model_receipt_root/daa-bounds"
+      test ! -e "$TRNM_DAA_EVIDENCE_DIR"
+      test ! -L "$TRNM_DAA_EVIDENCE_DIR"
       test ! -e "$trnm_model_receipt_root/workspace-tests.log"
       test ! -L "$trnm_model_receipt_root/workspace-tests.log"
       cargo test --locked --manifest-path trillionnium/Cargo.toml --workspace --all-targets --all-features 2>&1 | tee "$trnm_model_receipt_root/workspace-tests.log"
       unset TRNM_ZERO_PAIRED_PREFIX_OUTPUT
+      python3 scripts/pon_daa_schedule_reader.py --raw-dir "$TRNM_DAA_EVIDENCE_DIR" --expected-report-sha256 "$(sha256sum "$TRNM_DAA_EVIDENCE_DIR/daa-bounds.json" | cut -d ' ' -f 1)" > "$trnm_model_receipt_root/daa-bounds-python.json"
+      unset TRNM_DAA_EVIDENCE_DIR
       python3 formal/pon-nakamoto-v1/test_zero_work.py --verify-prefix-export "$trnm_model_receipt_root/zero-paired-prefix" --output "$trnm_model_receipt_root/zero-paired-prefix-python"
       python3 formal/pon-nakamoto-v1/test_model_composition_oracle.py -v
       python3 formal/pon-nakamoto-v1/test_model_composition.py -v

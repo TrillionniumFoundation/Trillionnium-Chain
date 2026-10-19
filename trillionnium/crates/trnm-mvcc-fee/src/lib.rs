@@ -60,3 +60,7 @@ pub mod integer_factor_candidate_v2;
 pub mod model_composition_v4;
 /// Native fixed-dataset evidence, known-source caps and bounded pre-adoption review.
 pub mod model_evidence_v3;
+/// Explicit complete-model evolution with typed base/router/expert updates and bounded routing.
+pub mod model_evolution_v5;
+/// Owner-pinned external data snapshots and precommitted evaluation task windows.
+pub mod model_task_windows_v1;

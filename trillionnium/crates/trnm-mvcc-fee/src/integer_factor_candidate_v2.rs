@@ -11,6 +11,7 @@ use trnm_verification_profiles::exact_integer_linear_v1::{
 
 pub const PROFILE: &str = "linear-factor-witness-dev-v2";
 pub const MODEL_BYTES: usize = 46 + 2 * (ROWS * COLUMNS * 5);
+pub const EVOLUTION_MODEL_BYTES: usize = MODEL_BYTES + 2;
 pub const CHUNK_BYTES: usize = 1024;
 pub const MAX_MODEL_BYTES: usize = 65536;
 pub const NUMERIC: &[u8] = b"exact-i16-BA-add-delta-scale1024-v2";
@@ -42,6 +43,8 @@ pub fn enabled(cfg: &Config) -> bool {
 pub struct IntegerModelV2 {
     family: Hash,
     coefficients: Vec<i16>,
+    // None is exactly historical ILM2. Some is the explicit fresh ILM3 profile.
+    active_experts: Option<u8>,
 }
 impl IntegerModelV2 {
     pub fn from_coefficients(family: Hash, coefficients: Vec<i16>) -> Result<Self> {
@@ -53,21 +56,52 @@ impl IntegerModelV2 {
         Ok(Self {
             family,
             coefficients,
+            active_experts: None,
         })
+    }
+    pub fn from_evolution_coefficients(
+        family: Hash,
+        coefficients: Vec<i16>,
+        active_experts: u8,
+    ) -> Result<Self> {
+        ensure((1..=7).contains(&active_experts), "EVOLUTION_GRAPH")?;
+        let mut model = Self::from_coefficients(family, coefficients)?;
+        model.active_experts = Some(active_experts);
+        Ok(model)
     }
     pub fn genesis(family: Hash) -> Self {
         Self {
             family,
             coefficients: vec![0; ROWS * COLUMNS * 5],
+            active_experts: None,
         }
     }
+    pub fn evolution_genesis(family: Hash) -> Self {
+        let mut model = Self::genesis(family);
+        model.active_experts = Some(7);
+        model
+    }
+    pub fn active_experts(&self) -> u8 {
+        self.active_experts.unwrap_or(7)
+    }
+    pub fn is_evolution(&self) -> bool {
+        self.active_experts.is_some()
+    }
     pub fn encode(&self) -> Vec<u8> {
-        let mut out = Vec::with_capacity(MODEL_BYTES);
-        out.extend(b"ILM2");
-        out.extend(2_u16.to_le_bytes());
+        let mut out = Vec::with_capacity(EVOLUTION_MODEL_BYTES);
+        if self.is_evolution() {
+            out.extend(b"ILM3");
+            out.extend(3_u16.to_le_bytes());
+        } else {
+            out.extend(b"ILM2");
+            out.extend(2_u16.to_le_bytes());
+        }
         out.extend(self.family);
         for n in [1024_u16, 3, 257, 3] {
             out.extend(n.to_le_bytes());
+        }
+        if let Some(active) = self.active_experts {
+            out.extend([active, 0]);
         }
         for c in &self.coefficients {
             out.extend(c.to_le_bytes());
@@ -95,12 +129,39 @@ impl IntegerModelV2 {
         let model = Self {
             family,
             coefficients,
+            active_experts: None,
         };
         ensure(model.encode() == raw, "FACTOR_MODEL_CANONICAL")?;
         Ok(model)
     }
+    pub fn decode_evolution(raw: &[u8], family: Hash) -> Result<Self> {
+        ensure(raw.len() == EVOLUTION_MODEL_BYTES, "FACTOR_MODEL_LENGTH")?;
+        ensure(
+            raw[..4] == *b"ILM3" && raw[4..6] == 3_u16.to_le_bytes(),
+            "FACTOR_MODEL_VERSION",
+        )?;
+        ensure(
+            raw[6..38] == family && raw[38..46] == [0, 4, 3, 0, 1, 1, 3, 0] && raw[47] == 0,
+            "FACTOR_MODEL_CONTEXT",
+        )?;
+        let model = Self::from_evolution_coefficients(
+            family,
+            raw[48..]
+                .chunks_exact(2)
+                .map(|c| i16::from_le_bytes([c[0], c[1]]))
+                .collect(),
+            raw[46],
+        )?;
+        ensure(model.encode() == raw, "FACTOR_MODEL_CANONICAL")?;
+        Ok(model)
+    }
     pub fn id(&self) -> Hash {
-        hash(b"integer-linear-model-artifact-v2", &[&self.encode()])
+        let domain: &[u8] = if self.is_evolution() {
+            b"integer-linear-model-artifact-v3"
+        } else {
+            b"integer-linear-model-artifact-v2"
+        };
+        hash(domain, &[&self.encode()])
     }
     pub fn coefficients(&self) -> &[i16] {
         &self.coefficients
@@ -128,13 +189,17 @@ impl FactorState for ReadState<'_> {
             .collect()
     }
 }
-fn prefix(id: Hash) -> String {
-    format!("linear-model-v2:{}:", hex::encode(id))
+fn prefix(id: Hash, evolution: bool) -> String {
+    format!(
+        "linear-model-v{}:{}:",
+        if evolution { 3 } else { 2 },
+        hex::encode(id)
+    )
 }
-fn store_model(s: &mut impl FactorState, model: &IntegerModelV2) -> Result<()> {
+pub(crate) fn store_model(s: &mut impl FactorState, model: &IntegerModelV2) -> Result<()> {
     let id = model.id();
     let raw = model.encode();
-    let p = prefix(id);
+    let p = prefix(id, model.is_evolution());
     let old = s.scan(&p);
     if !old.is_empty() {
         ensure(
@@ -148,7 +213,12 @@ fn store_model(s: &mut impl FactorState, model: &IntegerModelV2) -> Result<()> {
         chunks <= 64 && raw.len() <= MAX_MODEL_BYTES,
         "FACTOR_MODEL_LIMIT",
     )?;
-    s.put(format!("{p}meta"),json!({"schema":"integer-model-chunks-v2","bytes":raw.len(),"chunks":chunks,"family":hex::encode(model.family)}));
+    let schema = if model.is_evolution() {
+        "integer-model-chunks-v3"
+    } else {
+        "integer-model-chunks-v2"
+    };
+    s.put(format!("{p}meta"),json!({"schema":schema,"bytes":raw.len(),"chunks":chunks,"family":hex::encode(model.family)}));
     for (i, c) in raw.chunks(CHUNK_BYTES).enumerate() {
         s.put(format!("{p}{i:02}"), json!(hex::encode(c)));
     }
@@ -159,23 +229,35 @@ pub(crate) fn load_model(
     id: Hash,
     family: Hash,
 ) -> Result<IntegerModelV2> {
-    let p = prefix(id);
-    let entries = s.scan(&p);
+    let old = s.scan(&prefix(id, false));
+    let newer = s.scan(&prefix(id, true));
+    ensure(old.is_empty() || newer.is_empty(), "FACTOR_MODEL_COLLISION")?;
+    let evolution = !newer.is_empty();
+    let p = prefix(id, evolution);
+    let entries = if evolution { newer } else { old };
     let meta = entries
         .get(&format!("{p}meta"))
         .ok_or("FACTOR_MODEL_MISSING")?;
     let size = meta["bytes"].as_u64().ok_or("FACTOR_MODEL_METADATA")? as usize;
     let chunks = meta["chunks"].as_u64().ok_or("FACTOR_MODEL_METADATA")? as usize;
     ensure(
-        size == MODEL_BYTES
-            && size <= MAX_MODEL_BYTES
+        size == (if evolution {
+            EVOLUTION_MODEL_BYTES
+        } else {
+            MODEL_BYTES
+        }) && size <= MAX_MODEL_BYTES
             && chunks == size.div_ceil(CHUNK_BYTES)
             && chunks <= 64
             && entries.len() == chunks + 1,
         "FACTOR_MODEL_METADATA",
     )?;
+    let schema = if evolution {
+        "integer-model-chunks-v3"
+    } else {
+        "integer-model-chunks-v2"
+    };
     ensure(
-        meta == &json!({"schema":"integer-model-chunks-v2","bytes":size,"chunks":chunks,"family":hex::encode(family)}),
+        meta == &json!({"schema":schema,"bytes":size,"chunks":chunks,"family":hex::encode(family)}),
         "FACTOR_MODEL_METADATA",
     )?;
     let mut raw = Vec::with_capacity(size);
@@ -193,7 +275,11 @@ pub(crate) fn load_model(
         )?;
         raw.extend(hex::decode(c).map_err(|_| "FACTOR_MODEL_CHUNK")?);
     }
-    let model = IntegerModelV2::decode(&raw, family)?;
+    let model = if evolution {
+        IntegerModelV2::decode_evolution(&raw, family)?
+    } else {
+        IntegerModelV2::decode(&raw, family)?
+    };
     ensure(model.id() == id, "FACTOR_MODEL_HASH")?;
     Ok(model)
 }
@@ -221,11 +307,20 @@ pub(crate) fn parent(s: &mut impl FactorState, cfg: &Config) -> Result<(Hash, In
             .as_str()
             .ok_or("FACTOR_PARENT_RELEASE")?)?
     };
-    Ok((reference, load_model(s, id, cfg.family)?))
+    let model = load_model(s, id, cfg.family)?;
+    ensure(
+        model.is_evolution() == crate::model_evolution_v5::enabled(cfg),
+        "FACTOR_MODEL_CONTEXT",
+    )?;
+    Ok((reference, model))
 }
 pub fn bootstrap_state(cfg: &Config) -> Result<State> {
     ensure(enabled(cfg), "FACTOR_PROFILE")?;
-    let model = IntegerModelV2::genesis(cfg.family);
+    let model = if crate::model_evolution_v5::enabled(cfg) {
+        IntegerModelV2::evolution_genesis(cfg.family)
+    } else {
+        IntegerModelV2::genesis(cfg.family)
+    };
     ensure(
         cfg.params["factor_genesis_artifact"] == hex::encode(model.id()),
         "FACTOR_GENESIS",
@@ -265,7 +360,10 @@ struct Derived {
     parent_artifact: Hash,
 }
 fn derive(s: &mut impl FactorState, cfg: &Config, w: &FactorWitnessV2) -> Result<Derived> {
-    ensure(enabled(cfg) && w.family == cfg.family, "FACTOR_FAMILY")?;
+    ensure(
+        enabled(cfg) && !crate::model_evolution_v5::enabled(cfg) && w.family == cfg.family,
+        "FACTOR_FAMILY",
+    )?;
     w.encode().map_err(|_| "FACTOR_ENCODING")?;
     let (reference, mut model) = parent(s, cfg)?;
     let parent_artifact = model.id();
@@ -503,7 +601,8 @@ pub fn cleanup(state: &mut State, height: u64, cfg: &Config) -> Result<()> {
     for (k, v) in state.iter() {
         if (k.starts_with("contribution:")
             || k.starts_with("evaluation-archive:")
-            || k.starts_with("release:"))
+            || k.starts_with("release:")
+            || k.starts_with("linear-update-v3:"))
             && v["family"] == hex::encode(cfg.family)
         {
             for name in ["artifact", "factor_parent_artifact"] {
@@ -514,7 +613,7 @@ pub fn cleanup(state: &mut State, height: u64, cfg: &Config) -> Result<()> {
         }
     }
     state.retain(|k, _| {
-        !k.starts_with("linear-model-v2:")
+        !(k.starts_with("linear-model-v2:") || k.starts_with("linear-model-v3:"))
             || k.split(':').nth(1).is_some_and(|id| needed.contains(id))
     });
     Ok(())

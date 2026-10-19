@@ -16,6 +16,7 @@ from check_ci_contract import (ROOT, validate, CONTINUITY_BUILD, CONTINUITY_TRAN
                                MAINTENANCE_COMPARE_STEP, REJECTION_RUN_STEP, REJECTION_COMPARE_STEP,
                                PAIRED_WORK_ORACLE, ZERO_WORK_ORACLE, MODEL_WINDOW_ORACLE,
                                EVALUATION_QUORUM_ORACLE, check_independent_conformance,
+                               MODEL_EVOLUTION_ORACLES, COST_BOUNDARY_READERS,
                                NATIVE_RELEASE_BLOCK,
                                NODE_EXAMPLE_BUILD, ACCOUNT_ARCHIVE_ORACLE, ACCOUNT_EXECUTION_ORACLE)
 from check_cross_arch_cost import (COST_JOB_OVERHEAD_SECONDS, COST_JOB_TIMEOUT_MINUTES,
@@ -33,6 +34,30 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
 
     def test_actual_lane_preserves_quorum_reference_and_retained_vector_checks(self):
         check_independent_conformance(self.script, self.lanes)
+
+    def test_new_evolution_and_cost_checks_cannot_be_removed_skipped_duplicated_or_moved(self):
+        for block in [MODEL_EVOLUTION_ORACLES, COST_BOUNDARY_READERS]:
+            for command in block.splitlines(keepends=True):
+                for replacement in ['', command * 2, command.replace('python3', 'true # python3')]:
+                    with self.subTest(command=command, replacement=replacement):
+                        with self.assertRaises(ValueError):
+                            check_independent_conformance(self.script.replace(command, replacement), self.lanes)
+                moved = self.script.replace(command, '').replace('  fuzz-smoke)\n', '  fuzz-smoke)\n' + command)
+                with self.assertRaises(ValueError):
+                    check_independent_conformance(moved, self.lanes)
+
+    def test_native_daa_reader_requires_fresh_full_work_export_and_actual_digest(self):
+        lines = [line + '\n' for line in self.script.splitlines()
+                 if 'TRNM_DAA_EVIDENCE_DIR' in line]
+        self.assertEqual(len(lines), 5)
+        for command in lines:
+            with self.subTest(command=command):
+                with self.assertRaises(ValueError):
+                    check_independent_conformance(self.script.replace(command, ''), self.lanes)
+        changed = self.script.replace('sha256sum "$TRNM_DAA_EVIDENCE_DIR/daa-bounds.json"',
+                                      'printf stale-prior-report')
+        with self.assertRaises(ValueError):
+            check_independent_conformance(changed, self.lanes)
 
     def test_quorum_checks_cannot_be_removed_duplicated_skipped_or_rewrite_vectors(self):
         for command in EVALUATION_QUORUM_ORACLE.splitlines(keepends=True):

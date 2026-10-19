@@ -6,8 +6,10 @@ use serde::Serialize;
 use serde_json::Value;
 use std::collections::BTreeMap;
 use trnm_mvcc_fee::{
-    integer_factor_candidate_v2 as factor, pon_executor::Config, public_evaluation as evaluation,
+    integer_factor_candidate_v2 as factor, model_evolution_v5 as evolution, pon_executor::Config,
+    public_evaluation as evaluation,
 };
+use trnm_protocol::integer_evolution_v3::{EvolutionWitnessV3, TAG as EVOLUTION_TAG};
 use trnm_protocol::integer_factor_v2::{FactorWitnessV2, TAG as FACTOR_TAG};
 use trnm_protocol::pon_wire::{hash, Envelope, Hash};
 
@@ -177,7 +179,7 @@ pub(super) fn candidate_membership(
             // Preserve the historical tag6 payload and membership rule under
             // the historical model selector. Factor profiles prohibit tag6.
             6 if !factor::enabled(cfg) => tx.payload.get(..32) == Some(candidate.as_slice()),
-            FACTOR_TAG if factor::enabled(cfg) => {
+            FACTOR_TAG if factor::enabled(cfg) && !evolution::enabled(cfg) => {
                 let witness = FactorWitnessV2::decode(&tx.payload)
                     .map_err(|_| Error::from("TRANSACTION_CODEC"))?;
                 if witness.contribution_id != candidate {
@@ -198,6 +200,32 @@ pub(super) fn candidate_membership(
                             && contribution["submission_round"] == witness.round
                             && contribution["slot"] == witness.slot
                             && factor::contribution_id(cfg, tx.sender, &witness) == candidate,
+                        "EVALUATION_OBSERVATION_CANDIDATE",
+                    )?;
+                    true
+                }
+            }
+            EVOLUTION_TAG if evolution::enabled(cfg) => {
+                let witness = EvolutionWitnessV3::decode(&tx.payload)
+                    .map_err(|_| Error::from("TRANSACTION_CODEC"))?;
+                if witness.contribution_id != candidate {
+                    false
+                } else {
+                    ensure(
+                        tx.network == cfg.network
+                            && witness.family == cfg.family
+                            && contribution["evolution_profile"] == evolution::PROFILE
+                            && contribution["family"] == hex::encode(witness.family)
+                            && contribution["parent"] == hex::encode(witness.parent_ref)
+                            && contribution["factor_parent_artifact"]
+                                == hex::encode(witness.parent_artifact)
+                            && contribution["artifact"] == hex::encode(witness.candidate_artifact)
+                            && contribution["function_update_id"] == hex::encode(witness.update_id)
+                            && contribution["components_root"]
+                                == hex::encode(witness.components_root)
+                            && contribution["submission_round"] == witness.round
+                            && contribution["active_experts"] == witness.active_experts
+                            && evolution::contribution_id(cfg, tx.sender, &witness) == candidate,
                         "EVALUATION_OBSERVATION_CANDIDATE",
                     )?;
                     true

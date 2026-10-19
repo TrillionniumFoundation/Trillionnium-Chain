@@ -61,6 +61,10 @@ ZERO_WORK_ORACLE = '    TRNM_ZERO_WORK="$(realpath -e "${CARGO_TARGET_DIR:-trill
 MODEL_WINDOW_ORACLE = '    python3 formal/pon-nakamoto-v1/test_model_window_history.py -v\n'
 EVALUATION_QUORUM_ORACLE = ('    python3 formal/pon-nakamoto-v1/test_native_evaluation_quorum_oracle.py -v\n'
                           '    python3 formal/pon-nakamoto-v1/native_evaluation_quorum_oracle.py\n')
+MODEL_EVOLUTION_ORACLES = ('    python3 formal/pon-nakamoto-v1/test_model_evolution_oracle.py -v\n'
+                          '    python3 formal/pon-nakamoto-v1/test_model_task_windows_oracle.py -v\n')
+COST_BOUNDARY_READERS = ('    python3 scripts/ci/test_pon_w1_budget_readers.py\n'
+                         '    python3 scripts/ci/test_pon_daa_schedule_reader.py\n')
 NODE_EXAMPLE_BUILD = '    cargo build --offline --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --bins --examples\n'
 ACCOUNT_ARCHIVE_ORACLE = ('    python3 formal/pon-nakamoto-v1/test_account_archive_oracle.py -v\n'
                           '    python3 scripts/ci/run_account_archive_conformance.py\n')
@@ -101,10 +105,15 @@ MODEL_OBSERVATION_BLOCK = '''    (
       export TRNM_ZERO_PAIRED_PREFIX_OUTPUT="$trnm_model_receipt_root/zero-paired-prefix"
       test ! -e "$TRNM_ZERO_PAIRED_PREFIX_OUTPUT"
       test ! -L "$TRNM_ZERO_PAIRED_PREFIX_OUTPUT"
+      export TRNM_DAA_EVIDENCE_DIR="$trnm_model_receipt_root/daa-bounds"
+      test ! -e "$TRNM_DAA_EVIDENCE_DIR"
+      test ! -L "$TRNM_DAA_EVIDENCE_DIR"
       test ! -e "$trnm_model_receipt_root/workspace-tests.log"
       test ! -L "$trnm_model_receipt_root/workspace-tests.log"
       cargo test --locked --manifest-path trillionnium/Cargo.toml --workspace --all-targets --all-features 2>&1 | tee "$trnm_model_receipt_root/workspace-tests.log"
       unset TRNM_ZERO_PAIRED_PREFIX_OUTPUT
+      python3 scripts/pon_daa_schedule_reader.py --raw-dir "$TRNM_DAA_EVIDENCE_DIR" --expected-report-sha256 "$(sha256sum "$TRNM_DAA_EVIDENCE_DIR/daa-bounds.json" | cut -d ' ' -f 1)" > "$trnm_model_receipt_root/daa-bounds-python.json"
+      unset TRNM_DAA_EVIDENCE_DIR
       python3 formal/pon-nakamoto-v1/test_zero_work.py --verify-prefix-export "$trnm_model_receipt_root/zero-paired-prefix" --output "$trnm_model_receipt_root/zero-paired-prefix-python"
       python3 formal/pon-nakamoto-v1/test_model_composition_oracle.py -v
       python3 formal/pon-nakamoto-v1/test_model_composition.py -v
@@ -160,6 +169,10 @@ def check_independent_conformance(script: str, required: set[str]) -> None:
     require(MODEL_WINDOW_ORACLE + EVALUATION_QUORUM_ORACLE in lanes['protocol-contract'] and
             all(script.count(command) == 1 for command in EVALUATION_QUORUM_ORACLE.splitlines(keepends=True)),
             'evaluation quorum oracle and exact retained vectors must execute once in protocol-contract without rewriting fixtures')
+    for block, lane, label in [(MODEL_EVOLUTION_ORACLES, 'protocol-contract', 'model evolution and task-window oracles'),
+                               (COST_BOUNDARY_READERS, 'repository-truth', 'work-cost and DAA reader controls')]:
+        require(block in lanes[lane] and all(script.count(command) == 1 for command in block.splitlines(keepends=True)),
+                label + ' must execute once in their original lane')
     require(NODE_EXAMPLE_BUILD + ACCOUNT_ARCHIVE_ORACLE in lanes['protocol-contract'] and
             script.count(ACCOUNT_ARCHIVE_ORACLE) == 1,
             'native archive vectors and the independent read-only oracle must execute after their actual release build')
@@ -173,7 +186,8 @@ def check_independent_conformance(script: str, required: set[str]) -> None:
             'one actual workspace test must collect fresh native observations, check every independent reader, explicitly execute both release controls, then run docs/Clippy outside exports')
     require(script.count(RUST_ALL_TARGETS) == 1, 'the full workspace observation suite must execute exactly once')
     for selector in ['TRNM_MODEL_COMPOSITION_VECTORS', 'TRNM_MODEL_COMPOSITION_RUN_ID',
-                     'TRNM_OBLIGATION_RANGE_VECTORS', 'TRNM_ZERO_PAIRED_PREFIX_OUTPUT']:
+                     'TRNM_OBLIGATION_RANGE_VECTORS', 'TRNM_ZERO_PAIRED_PREFIX_OUTPUT',
+                     'TRNM_DAA_EVIDENCE_DIR']:
         require(script.count(selector) == MODEL_OBSERVATION_BLOCK.count(selector),
                 'native observation selectors must remain inside the single test/oracle subshell')
     require(script.count(NATIVE_RELEASE_BLOCK) == 1,

@@ -14,6 +14,57 @@ CLASSES = {'source-binding', 'local-execution', 'historical-receipt',
            'hosted-head-check', 'prospective-merge-check', 'external-acceptance'}
 NATIVE_STORAGE_PROFILE = 'native-authenticated-storage-v1'
 EVALUATION_QUORUM_PROFILE = 'native-evaluation-quorum-v2'
+MODEL_EVOLUTION_PROFILE = 'model-evolution-v5'
+MODEL_TASK_WINDOWS_PROFILE = 'model-task-windows-v1'
+CELL_P2P_PROFILE = 'cell-p2p-v1'
+MODEL_AND_CELL_TESTS = {
+    MODEL_EVOLUTION_PROFILE: {
+        'trillionnium/crates/trnm-protocol/tests/integer_evolution_v3.rs': {
+            'exact_maximum_payload_and_envelope_roundtrip_preserve_old_codec',
+            'aliases_empty_graph_overbudget_and_noncanonical_bytes_are_refused',
+        },
+        'trillionnium/crates/trnm-mvcc-fee/tests/model_evolution_v5.rs': {
+            'actual_joint_router_expert_then_base_and_mask_adopt_from_real_successor_parent',
+            'native_refuses_forged_parent_hash_basis_alias_noop_and_cross_profile',
+        },
+        'trillionnium/crates/trnm-pon-node/tests/evolution_cli.rs': {
+            'explicit_revision16_cli_is_distinct_reopens_and_refuses_revision15_store',
+            'signed_joint_update_has_native_packet_membership_and_survives_store_reopen',
+        },
+        'formal/pon-nakamoto-v1/test_model_evolution_oracle.py': {
+            'ModelEvolutionOracleTests.test_committed_context_wire_model_and_successor_vectors',
+            'ModelEvolutionOracleTests.test_enabled_graph_ties_and_disabled_router_maximum',
+            'ModelEvolutionOracleTests.test_checked_normalization_noop_range_and_basis_equivalence',
+            'ModelEvolutionOracleTests.test_complete_model_canonical_reserved_byte_and_old_magic',
+        },
+    },
+    MODEL_TASK_WINDOWS_PROFILE: {
+        'trillionnium/crates/trnm-mvcc-fee/tests/model_evolution_v5.rs': {
+            'pinned_new_text_windows_select_frozen_roots_and_replay_actual_parent_controls_at_activation',
+            'external_data_owner_signature_roots_order_and_repeated_content_fail_closed',
+        },
+        'trillionnium/crates/trnm-pon-node/tests/evolution_cli.rs': {
+            'external_window_has_real_pnw1_membership_and_pinned_store_reopen',
+            'window_cli_requires_every_pin_and_refuses_substitution_wrong_owner_or_reopen',
+        },
+        'formal/pon-nakamoto-v1/test_model_task_windows_oracle.py': {
+            'ModelTaskWindowsOracleTests.test_signed_manifest_and_native_differential_fixture_are_reproducible',
+            'ModelTaskWindowsOracleTests.test_full_content_hash_and_snapshot_root_detect_replacement',
+            'ModelTaskWindowsOracleTests.test_token_filter_clipping_and_bias_are_explicit',
+        },
+    },
+    CELL_P2P_PROFILE: {
+        'trillionnium/crates/trnm-data-availability/src/cell/tests.rs': {
+            'origin_offline_independent_replicas_multisource_and_corrupt_cache_repair',
+            'missing_chunk_never_publishes_partial_payload_and_verified_cache_resumes',
+            'wrong_pins_context_chunks_and_noncanonical_manifests_fail_closed',
+            'foreign_database_is_not_repurposed',
+            'corrupt_network_supplier_is_rejected_and_honest_peer_completes_same_pin',
+            'exhausted_transport_budget_keeps_verified_chunks_for_retry',
+            'slow_response_cannot_extend_absolute_deadline_and_honest_peer_keeps_pin',
+        },
+    },
+}
 EVALUATION_QUORUM_TESTS = {
     'trillionnium/crates/trnm-mvcc-fee/tests/evaluation_quorum_v2.rs': {
         'independent_reference_vectors_match_native_domains_counts_and_records',
@@ -105,6 +156,38 @@ def validate_native_storage_profile(profile: dict) -> None:
             'native authenticated storage control selector coverage')
 
 
+def validate_model_and_cell_profile(profile: dict) -> None:
+    """Byte transport and optional task sources cannot inherit another authority."""
+    identifier = profile['id']
+    require(identifier in MODEL_AND_CELL_TESTS, 'unknown model/cell boundary')
+    if identifier == CELL_P2P_PROFILE:
+        require(all(profile[field] is None for field in (
+            'configuration', 'revision_pointer', 'consensus_revision')),
+            'cell transport is local byte distribution, not a consensus revision')
+        entry = {'path': 'trillionnium/crates/trnm-data-availability/src/bin/trnm-cell.rs',
+                 'symbol': 'run'}
+        document = 'docs/protocol/pon-nakamoto-v1/details/CELL_P2P_V1.md'
+        modules = {'M09'}
+    else:
+        require(profile['configuration'] == 'config/pon/model-evolution-v5.json' and
+                profile['revision_pointer'] == 'consensus_revision' and
+                type(profile['consensus_revision']) is int and profile['consensus_revision'] == 16,
+                'model evolution and pinned task windows require explicit revision16')
+        entry = {'path': 'trillionnium/crates/trnm-pon-node/src/main.rs', 'symbol': 'run'}
+        if identifier == MODEL_EVOLUTION_PROFILE:
+            document = 'docs/development/specs/pon/MODEL_EVOLUTION_V5.md'
+            modules = {'M00', 'M06', 'M10', 'M11', 'M15'}
+        else:
+            document = 'docs/development/specs/pon/MODEL_TASK_WINDOWS_V1.md'
+            modules = {'M06', 'M11', 'M15'}
+    require(profile['entrypoint'] == entry, 'model/cell boundary requires its actual explicit CLI')
+    require(profile['document'] == document and set(profile['modules']) == modules,
+            'model/cell contract and responsibility identity')
+    required = {path + '::' + symbol for path, symbols in MODEL_AND_CELL_TESTS[identifier].items()
+                for symbol in symbols}
+    require(required <= set(profile['tests']), 'model/cell negative and native control coverage')
+
+
 def profile_table(profiles: list[dict]) -> str:
     lines = ['| Boundary / modules | Configuration / revision | Contract | Entrypoint | Exact test selector |',
              '|---|---|---|---|---|']
@@ -148,7 +231,8 @@ def validate(root: Path = ROOT) -> dict:
             'continuity-v1', 'model-evidence-v3', 'w1-verifier-equivalence',
             'history-state-resource-bounds', 'internal-error-identity', 'model-composition-v4',
             'account-archive-research-v1', 'model-window-history-v1', NATIVE_STORAGE_PROFILE,
-            EVALUATION_QUORUM_PROFILE},
+            EVALUATION_QUORUM_PROFILE, MODEL_EVOLUTION_PROFILE, MODEL_TASK_WINDOWS_PROFILE,
+            CELL_P2P_PROFILE},
             'applicability profile coverage')
     for profile in profiles:
         require(profile['modules'] and set(profile['modules']) <= set(maturity), 'profile modules')
@@ -157,6 +241,8 @@ def validate(root: Path = ROOT) -> dict:
             validate_native_storage_profile(profile)
         if profile['id'] == EVALUATION_QUORUM_PROFILE:
             validate_evaluation_quorum_profile(profile)
+        if profile['id'] in MODEL_AND_CELL_TESTS:
+            validate_model_and_cell_profile(profile)
         safe(root, profile['document'])
         check_symbol(root, profile['entrypoint'])
         require(profile['tests'], 'missing profile tests')

@@ -3,9 +3,10 @@
 //! benefit nor source independence, training provenance, demand, or mining hardness.
 use crate::integer_factor_candidate_v2::{self as factor, FactorState, IntegerModelV2};
 use crate::model_composition_v4 as composition;
+use crate::model_evolution_v5 as evolution;
 use crate::pon_executor::{canonical, Config, Result, State};
 use crate::public_evaluation;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use sha2::{Digest, Sha256};
 use std::collections::{BTreeMap, BTreeSet};
@@ -44,15 +45,15 @@ fn h(s: &str) -> Result<Hash> {
 fn vh(v: &Value, key: &str) -> Result<Hash> {
     h(v[key].as_str().ok_or("MODEL_EVIDENCE_STATE")?)
 }
-#[derive(Deserialize)]
+#[derive(Clone, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
-struct Task {
-    id: String,
-    source_group: String,
-    source_path: String,
-    source_content_sha256: String,
-    label: usize,
-    features: Vec<i16>,
+pub(crate) struct Task {
+    pub(crate) id: String,
+    pub(crate) source_group: String,
+    pub(crate) source_path: String,
+    pub(crate) source_content_sha256: String,
+    pub(crate) label: usize,
+    pub(crate) features: Vec<i16>,
 }
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -194,7 +195,7 @@ fn control_model(control: &Control, family: Hash) -> Result<IntegerModelV2> {
     IntegerModelV2::from_coefficients(family, coefficients)
 }
 pub fn enabled(cfg: &Config) -> bool {
-    cfg.params["model_profile"] == PROFILE || composition::enabled(cfg)
+    cfg.params["model_profile"] == PROFILE || composition::enabled(cfg) || evolution::enabled(cfg)
 }
 pub(crate) fn install(params: &mut Value) -> Result<()> {
     let policy = installed()?;
@@ -215,13 +216,24 @@ fn check_context(cfg: &Config) -> Result<&'static Installed> {
     if composition::enabled(cfg) {
         composition::check_context(cfg)?;
     }
+    if evolution::enabled(cfg) {
+        evolution::check_context(cfg)?;
+    }
     Ok(p)
+}
+fn context_control(cfg: &Config, control: &Control) -> Result<IntegerModelV2> {
+    let model = control_model(control, cfg.family)?;
+    if evolution::enabled(cfg) {
+        IntegerModelV2::from_evolution_coefficients(cfg.family, model.coefficients().to_vec(), 7)
+    } else {
+        Ok(model)
+    }
 }
 pub(crate) fn controls(cfg: &Config) -> Result<Vec<IntegerModelV2>> {
     check_context(cfg)?
         .controls
         .iter()
-        .map(|c| control_model(c, cfg.family))
+        .map(|c| context_control(cfg, c))
         .collect()
 }
 fn source(cfg: &Config, author: Hash) -> Result<Hash> {
@@ -240,21 +252,27 @@ fn evidence_key(cid: Hash) -> String {
     format!("model-evidence-v3:{}", hex::encode(cid))
 }
 fn context_evidence_key(cfg: &Config, cid: Hash) -> String {
-    if composition::enabled(cfg) {
+    if evolution::enabled(cfg) {
+        evolution::evidence_key(cid)
+    } else if composition::enabled(cfg) {
         composition::evidence_key(cid)
     } else {
         evidence_key(cid)
     }
 }
 fn context_source_key(cfg: &Config, round: u64, source: Hash) -> String {
-    if composition::enabled(cfg) {
+    if evolution::enabled(cfg) {
+        evolution::source_key(round, source)
+    } else if composition::enabled(cfg) {
         composition::source_key(round, source)
     } else {
         source_key(round, source)
     }
 }
 fn metadata_key(cfg: &Config) -> &'static str {
-    if composition::enabled(cfg) {
+    if evolution::enabled(cfg) {
+        "model_evidence_v5"
+    } else if composition::enabled(cfg) {
         "model_evidence_v4"
     } else {
         "model_evidence_v3"
@@ -286,7 +304,13 @@ fn correct(model: &IntegerModelV2, tasks: &[Task]) -> Result<u64> {
                 &task.features,
             )?;
         }
-        let slot = argmax(router);
+        let slot = argmax(std::array::from_fn(|i| {
+            if model.active_experts() & (1 << i) != 0 {
+                router[i]
+            } else {
+                i64::MIN
+            }
+        }));
         let mut logits = [0; 3];
         for (i, score) in logits.iter_mut().enumerate() {
             let start = (2 + slot) * 771 + i * 257;
@@ -299,7 +323,30 @@ fn correct(model: &IntegerModelV2, tasks: &[Task]) -> Result<u64> {
     Ok(count)
 }
 pub(crate) fn model_correct(cfg: &Config, model: &IntegerModelV2) -> Result<u64> {
+    check(
+        cfg.task_windows.is_none(),
+        "TASK_WINDOW_GENERATION_REQUIRED",
+    )?;
     correct(model, &check_context(cfg)?.tasks)
+}
+pub(crate) fn dataset_root(cfg: &Config, generation: u64) -> Result<Hash> {
+    match crate::model_task_windows_v1::selected(cfg, generation)? {
+        Some((_, window)) => Ok(window.root()),
+        None => vh(&cfg.params, "model_evidence_tasks_hash"),
+    }
+}
+/// Reproducible producer input only. Native admission always selects its own
+/// submission round and repeats complete parent/candidate/control inference.
+pub fn evaluation_material(cfg: &Config, generation: u64) -> Result<Value> {
+    let policy = check_context(cfg)?;
+    match crate::model_task_windows_v1::selected(cfg, generation)? {
+        Some((owner, window)) => Ok(json!({"tasks_root":hex::encode(window.root()),
+            "task_window":window.metadata(owner),"tasks":window.tasks()})),
+        None => Ok(
+            json!({"tasks_root":hex::encode(policy.tasks_hash),"task_window":null,
+            "tasks":policy.tasks}),
+        ),
+    }
 }
 fn record(
     s: &mut impl FactorState,
@@ -308,29 +355,43 @@ fn record(
     contribution: &Value,
 ) -> Result<Value> {
     let policy = check_context(cfg)?;
+    let selected =
+        crate::model_task_windows_v1::selected(cfg, n(contribution, "submission_round")?)?;
+    let tasks = selected.map_or(policy.tasks.as_slice(), |(_, window)| window.tasks());
+    let tasks_hash = selected.map_or(policy.tasks_hash, |(_, window)| window.root());
     let artifact = vh(contribution, "artifact")?;
     let parent = vh(contribution, "factor_parent_artifact")?;
     let candidate_model = factor::load_model(s, artifact, cfg.family)?;
     let parent_model = factor::load_model(s, parent, cfg.family)?;
-    let candidate_correct = correct(&candidate_model, &policy.tasks)?;
-    let parent_correct = correct(&parent_model, &policy.tasks)?;
+    let candidate_correct = correct(&candidate_model, tasks)?;
+    let parent_correct = correct(&parent_model, tasks)?;
     let mut strongest = parent_correct;
     let mut control_records = Vec::new();
     for control in &policy.controls {
-        let expected = control_model(control, cfg.family)?;
+        let expected = context_control(cfg, control)?;
         let actual = factor::load_model(s, expected.id(), cfg.family)?;
-        let control_correct = correct(&actual, &policy.tasks)?;
+        let control_correct = correct(&actual, tasks)?;
         strongest = strongest.max(control_correct);
         control_records.push(json!({"role":control.role,"artifact":hex::encode(actual.id()),"correct":control_correct}));
     }
-    let count = policy.tasks.len() as u64;
+    let count = tasks.len() as u64;
     let score = candidate_correct
         .saturating_sub(strongest)
         .checked_mul(SCALE)
         .ok_or("MODEL_EVIDENCE_ARITHMETIC")?
         / count;
-    let mut result = json!({"schema":"native-integer-model-evidence-record-v3","network":hex::encode(cfg.network),"parameters":hex::encode(cfg.parameters),"family":hex::encode(cfg.family),"plan":hex::encode(cfg.plan),"policy":hex::encode(policy.policy_hash),"tasks":hex::encode(policy.tasks_hash),"contribution":hex::encode(cid),"candidate":hex::encode(artifact),"parent":hex::encode(parent),"rows":count,"candidate_correct":candidate_correct,"parent_correct":parent_correct,"controls":control_records,"strongest_correct":strongest,"score":score,"scope":"exact-public-retrospective-integer-dataset-only","prospective_accepted":false,"independent_accepted":false,"public_reward_eligible":false});
-    let domain: &[u8] = if composition::enabled(cfg) {
+    let mut result = json!({"schema":"native-integer-model-evidence-record-v3","network":hex::encode(cfg.network),"parameters":hex::encode(cfg.parameters),"family":hex::encode(cfg.family),"plan":hex::encode(cfg.plan),"policy":hex::encode(policy.policy_hash),"tasks":hex::encode(tasks_hash),"contribution":hex::encode(cid),"candidate":hex::encode(artifact),"parent":hex::encode(parent),"rows":count,"candidate_correct":candidate_correct,"parent_correct":parent_correct,"controls":control_records,"strongest_correct":strongest,"score":score,"scope":"exact-public-retrospective-integer-dataset-only","prospective_accepted":false,"independent_accepted":false,"public_reward_eligible":false});
+    let domain: &[u8] = if evolution::enabled(cfg) {
+        result["schema"] = json!("native-integer-model-evidence-record-v5");
+        result["evolution_policy"] = cfg.params["model_evolution_policy_hash"].clone();
+        result["active_experts"] = json!(candidate_model.active_experts());
+        result["fresh_dataset_activation"] = json!(false);
+        if let Some((owner, window)) = selected {
+            result["task_window"] = window.metadata(owner);
+            result["scope"] = json!("exact-owner-pinned-external-task-window-only");
+        }
+        b"native-model-empirical-record-v5"
+    } else if composition::enabled(cfg) {
         result["schema"] = json!("native-integer-model-evidence-record-v4");
         result["composition_policy"] = cfg.params["model_composition_policy_hash"].clone();
         b"native-model-empirical-record-v4"
@@ -360,7 +421,9 @@ pub(crate) fn admit(
     let admitted_source = source(cfg, vh(contribution, "owner")?)?;
     let round = n(contribution, "submission_round")?;
     let key = context_source_key(cfg, round, admitted_source);
-    let schema = if composition::enabled(cfg) {
+    let schema = if evolution::enabled(cfg) {
+        "native-model-source-budget-v5"
+    } else if composition::enabled(cfg) {
         "native-model-source-budget-v4"
     } else {
         "native-model-source-budget-v3"
@@ -371,7 +434,9 @@ pub(crate) fn admit(
         "MODEL_EVIDENCE_SOURCE_LIMIT",
     )?;
     let result = record(s, cfg, cid, contribution)?;
-    let domain: &[u8] = if composition::enabled(cfg) {
+    let domain: &[u8] = if evolution::enabled(cfg) {
+        b"native-model-source-root-work-v5"
+    } else if composition::enabled(cfg) {
         b"native-model-source-root-work-v4"
     } else {
         b"native-model-source-root-work-v3"
@@ -532,7 +597,9 @@ pub(crate) fn cleanup(state: &mut State, cfg: &Config, height: u64) -> Result<()
         return Ok(());
     }
     let round = height / n(&cfg.params, "candidate_round_blocks")?;
-    let (source_prefix, evidence_prefix) = if composition::enabled(cfg) {
+    let (source_prefix, evidence_prefix) = if evolution::enabled(cfg) {
+        ("model-source-v5:", "model-evidence-v5:")
+    } else if composition::enabled(cfg) {
         ("model-source-v4:", "model-evidence-v4:")
     } else {
         ("model-source-v3:", "model-evidence-v3:")

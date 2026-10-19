@@ -10,6 +10,8 @@ from pathlib import Path
 from check_applicability import (
     ROOT, REGISTRY, NATIVE_STORAGE_ENTRY, NATIVE_STORAGE_PROFILE, NATIVE_STORAGE_TESTS,
     EVALUATION_QUORUM_PROFILE, EVALUATION_QUORUM_TESTS, validate_evaluation_quorum_profile,
+    MODEL_EVOLUTION_PROFILE, MODEL_TASK_WINDOWS_PROFILE, CELL_P2P_PROFILE,
+    MODEL_AND_CELL_TESTS, validate_model_and_cell_profile,
     validate, markdown, profile_table,
 )
 from report_module_evidence import check_test_selector
@@ -52,6 +54,62 @@ class EvaluationQuorumApplicabilityTests(unittest.TestCase):
                 profile['tests'].remove(selector)
                 with self.assertRaisesRegex(ValueError, 'independent oracle controls required'):
                     validate_evaluation_quorum_profile(profile)
+
+
+class ModelAndCellApplicabilityTests(unittest.TestCase):
+    """Preserve actual new owners without relabelling old profiles or receipts."""
+
+    def setUp(self):
+        profiles = json.loads((ROOT / REGISTRY).read_text())['profiles']
+        self.profiles = {row['id']: row for row in profiles if row['id'] in MODEL_AND_CELL_TESTS}
+
+    def test_explicit_profiles_name_actual_native_and_independent_controls(self):
+        for profile in self.profiles.values():
+            validate_model_and_cell_profile(profile)
+            self.assertEqual(profile['evidence_class'], 'source-binding')
+            self.assertIsNone(profile['receipt'])
+            for selector in profile['tests']:
+                check_test_selector(ROOT, selector)
+
+    def test_evolution_and_task_windows_cannot_inherit_revision15_or_offline_history(self):
+        for identifier in (MODEL_EVOLUTION_PROFILE, MODEL_TASK_WINDOWS_PROFILE):
+            for field, value in [
+                ('configuration', 'config/pon/public-evaluation-quorum-v2.json'),
+                ('consensus_revision', 15), ('consensus_revision', None),
+                ('revision_pointer', 'genesis_overrides.consensus_revision'),
+                ('document', 'docs/protocol/pon-nakamoto-v1/details/MODEL_OPERATIONS_ACCEPTANCE_V1.md'),
+                ('entrypoint', {'path': 'formal/pon-nakamoto-v1/model_window_history.py',
+                                'symbol': 'verify_window'}),
+                ('modules', ['M11']),
+            ]:
+                with self.subTest(identifier=identifier, field=field):
+                    profile = deepcopy(self.profiles[identifier])
+                    profile[field] = value
+                    with self.assertRaises(ValueError):
+                        validate_model_and_cell_profile(profile)
+
+    def test_cell_bytes_cannot_claim_consensus_or_model_installation_owner(self):
+        for field, value in [
+            ('configuration', 'config/pon/model-evolution-v5.json'),
+            ('consensus_revision', 16), ('revision_pointer', 'consensus_revision'),
+            ('entrypoint', {'path': 'trillionnium/crates/trnm-pon-node/src/main.rs', 'symbol': 'run'}),
+            ('document', 'docs/development/specs/pon/MODEL_EVOLUTION_V5.md'),
+            ('modules', ['M09', 'M15']),
+        ]:
+            with self.subTest(field=field):
+                profile = deepcopy(self.profiles[CELL_P2P_PROFILE])
+                profile[field] = value
+                with self.assertRaises(ValueError):
+                    validate_model_and_cell_profile(profile)
+
+    def test_no_parent_no_gain_owner_pin_or_slow_peer_control_can_be_dropped(self):
+        for identifier, original in self.profiles.items():
+            for selector in original['tests']:
+                with self.subTest(identifier=identifier, selector=selector):
+                    profile = deepcopy(original)
+                    profile['tests'].remove(selector)
+                    with self.assertRaisesRegex(ValueError, 'negative and native control coverage'):
+                        validate_model_and_cell_profile(profile)
 
 
 class ApplicabilityTests(unittest.TestCase):
@@ -142,7 +200,7 @@ class ApplicabilityTests(unittest.TestCase):
 
     def test_native_authenticated_profile_is_explicit_local_source_navigation(self):
         result = validate(self.root)
-        self.assertEqual(len(result['profiles']), 19)
+        self.assertEqual(len(result['profiles']), 22)
         profile = next(p for p in result['profiles'] if p['id'] == NATIVE_STORAGE_PROFILE)
         self.assertEqual(profile['entrypoint'], NATIVE_STORAGE_ENTRY)
         for field in ('configuration', 'revision_pointer', 'consensus_revision', 'receipt'):
@@ -220,7 +278,11 @@ class ApplicabilityTests(unittest.TestCase):
         self.assertIsNone(profiles['public-intake-v3-r10']['consensus_revision'])
         row = next(r for r in result['procedures']
                    if r['operation'] == 'M10.SubmitFactorContribution')
-        self.assertEqual(len(row['evidence_selectors']), 4)
+        self.assertEqual(len([s for s in row['evidence_selectors'] if s.startswith(
+            'trillionnium/crates/trnm-pon-node/tests/integer_factor_candidate_v2.rs::')]), 4)
+        native = {s for s in profiles[MODEL_EVOLUTION_PROFILE]['tests'] if s.startswith((
+            'trillionnium/crates/trnm-mvcc-fee/', 'trillionnium/crates/trnm-pon-node/'))}
+        self.assertTrue(native <= set(row['evidence_selectors']))
         self.assertEqual(row['evidence_class'], 'source-binding')
         self.assertFalse(result['tests_executed_by_this_checker'])
         self.assertFalse(result['acceptance_granted'])

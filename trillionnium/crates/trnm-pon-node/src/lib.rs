@@ -244,7 +244,27 @@ impl Settings {
         task_profile: &str,
         model_profile: &str,
     ) -> Result<Self> {
-        let mut app = Config::installed_with_model_profiles(policy, task_profile, model_profile)?;
+        Self::development_with_model_profiles_and_task_windows(
+            genesis_timestamp,
+            policy,
+            task_profile,
+            model_profile,
+            None,
+        )
+    }
+    pub fn development_with_model_profiles_and_task_windows(
+        genesis_timestamp: Option<u64>,
+        policy: &str,
+        task_profile: &str,
+        model_profile: &str,
+        windows: Option<trnm_mvcc_fee::model_task_windows_v1::PinnedTaskWindows<'_>>,
+    ) -> Result<Self> {
+        let mut app = Config::installed_with_model_profiles_and_task_windows(
+            policy,
+            task_profile,
+            model_profile,
+            windows,
+        )?;
         if let Some(time) = genesis_timestamp {
             ensure(time > 0 && time <= i64::MAX as u64, "GENESIS_TIME")?;
             app.params["genesis_timestamp"] = json!(time);
@@ -267,7 +287,8 @@ impl Settings {
             } else if policy == "native-public-evaluation-dev-v1" {
                 format!("trnm-pon-native-evaluation-wall-devnet-6-{policy}-{time}")
             } else if policy == trnm_mvcc_fee::public_evaluation::QUORUM_PROFILE {
-                format!("trnm-pon-native-evaluation-quorum-wall-devnet-15-{policy}-{time}")
+                let revision = app.params["consensus_revision"].as_u64().ok_or("CONFIG")?;
+                format!("trnm-pon-native-evaluation-quorum-wall-devnet-{revision}-{policy}-{time}")
             } else {
                 format!("trnm-pon-native-wall-devnet-4-{policy}-{time}")
             };
@@ -292,6 +313,12 @@ impl Settings {
             } else {
                 format!("{label}-{model_profile}")
             };
+            let label =
+                if let Some(window_hash) = app.params["model_task_windows"]["sha256"].as_str() {
+                    format!("{label}-task-windows-{window_hash}")
+                } else {
+                    label
+                };
             app.params["chain_label"] = json!(label);
             app.network = hash(b"network", &[label.as_bytes()]);
             let wire: Value =

@@ -232,9 +232,10 @@ pub struct Config {
     pub family: Hash,
     pub plan: Hash,
     pub evaluators: BTreeSet<String>,
-    pub fees: [u64; 24],
+    pub fees: [u64; 25],
     pub params: Value,
     pub model_registry: Value,
+    pub task_windows: Option<std::sync::Arc<crate::model_task_windows_v1::TaskWindows>>,
 }
 impl Config {
     /// Installed experimental genesis context, not caller-supplied authority booleans.
@@ -279,7 +280,10 @@ impl Config {
             }
             public_evaluation::PROFILE | public_evaluation::QUORUM_PROFILE => {
                 let quorum_profile = policy == public_evaluation::QUORUM_PROFILE;
-                let policy: Value = serde_json::from_str(if quorum_profile {
+                let evolution_profile = model_profile == crate::model_evolution_v5::PROFILE;
+                let policy: Value = serde_json::from_str(if quorum_profile && evolution_profile {
+                    include_str!("../../../../config/pon/public-evaluation-model-evolution-v5.json")
+                } else if quorum_profile {
                     include_str!("../../../../config/pon/public-evaluation-quorum-v2.json")
                 } else {
                     include_str!("../../../../config/pon/public-evaluation-native-v1.json")
@@ -309,10 +313,14 @@ impl Config {
                                 == public_evaluation::QUORUM_RECORD_NAMESPACE
                             && policy["development_evaluators"] == 4
                             && policy["native_model_profiles"]
-                                == json!([
-                                    crate::model_evidence_v3::PROFILE,
-                                    crate::model_composition_v4::PROFILE
-                                ])
+                                == if evolution_profile {
+                                    json!([crate::model_evolution_v5::PROFILE])
+                                } else {
+                                    json!([
+                                        crate::model_evidence_v3::PROFILE,
+                                        crate::model_composition_v4::PROFILE
+                                    ])
+                                }
                             && policy["native_evidence_review_policy_override"]
                                 == public_evaluation::quorum_v2::REVIEW_POLICY
                             && policy["fresh_dataset_activation"] == false
@@ -325,6 +333,7 @@ impl Config {
                             model_profile,
                             crate::model_evidence_v3::PROFILE
                                 | crate::model_composition_v4::PROFILE
+                                | crate::model_evolution_v5::PROFILE
                         ),
                         "PUBLIC_EVAL_NATIVE_REPLAY_REQUIRED",
                     )?;
@@ -474,6 +483,25 @@ impl Config {
                 serde_json::from_str(include_str!("../../../../config/pon/model-family-v1.json"))
                     .map_err(|_| "CONFIG")?
             }
+            crate::model_evolution_v5::PROFILE => {
+                require(
+                    policy == public_evaluation::QUORUM_PROFILE,
+                    "MODEL_PROFILE_POLICY",
+                )?;
+                require(
+                    matches!(task_profile, LEGACY_TASK_PROFILE | CONTINUITY_TASK_PROFILE),
+                    "MODEL_PROFILE_TASK",
+                )?;
+                params["consensus_revision"] = json!(crate::model_evolution_v5::REVISION);
+                params["model_profile"] = json!(model_profile);
+                params["chain_label"] =
+                    json!(format!("{}-{model_profile}", text(&params, "chain_label")?));
+                crate::model_evolution_v5::install(&mut params)?;
+                serde_json::from_str(include_str!(
+                    "../../../../config/pon/model-family-evolution-v3.json"
+                ))
+                .map_err(|_| "CONFIG")?
+            }
             crate::integer_factor_candidate_v2::PROFILE
             | crate::model_evidence_v3::PROFILE
             | crate::model_composition_v4::PROFILE => {
@@ -572,7 +600,9 @@ impl Config {
             _ => return Err("MODEL_PROFILE"),
         };
         if policy == public_evaluation::QUORUM_PROFILE {
-            params["consensus_revision"] = json!(public_evaluation::QUORUM_REVISION);
+            params["consensus_revision"] = json!(
+                public_evaluation::QUORUM_REVISION.max(field(&params, "consensus_revision")?)
+            );
         }
         if model_profile != "linear-expert-dev-v1" {
             let maximum = field(&model, "artifact_max_bytes")?;
@@ -587,22 +617,49 @@ impl Config {
             crate::integer_factor_candidate_v2::PROFILE
                 | crate::model_evidence_v3::PROFILE
                 | crate::model_composition_v4::PROFILE
+                | crate::model_evolution_v5::PROFILE
         ) {
+            let evolution = model_profile == crate::model_evolution_v5::PROFILE;
             for (key, expected) in [
-                ("schema", json!("integer-linear-factor-family-v2")),
-                ("version", json!(2)),
+                (
+                    "schema",
+                    json!(if evolution {
+                        "integer-linear-evolution-family-v3"
+                    } else {
+                        "integer-linear-factor-family-v2"
+                    }),
+                ),
+                ("version", json!(if evolution { 3 } else { 2 })),
                 ("dimensions", json!(257)),
                 ("experts", json!(3)),
                 ("logit_outputs", json!(3)),
                 ("weight_scale", json!(1024)),
                 ("weight_min", json!(-32767)),
                 ("weight_max", json!(32767)),
-                ("artifact_encoding", json!("ILM2-le-i16-complete-model-v2")),
+                (
+                    "artifact_encoding",
+                    json!(if evolution {
+                        "ILM3-le-i16-complete-model-mask-v3"
+                    } else {
+                        "ILM2-le-i16-complete-model-v2"
+                    }),
+                ),
                 (
                     "artifact_exact_bytes",
-                    json!(crate::integer_factor_candidate_v2::MODEL_BYTES),
+                    json!(if evolution {
+                        crate::integer_factor_candidate_v2::EVOLUTION_MODEL_BYTES
+                    } else {
+                        crate::integer_factor_candidate_v2::MODEL_BYTES
+                    }),
                 ),
-                ("genesis_model", json!("canonical-full-zero-model-v2")),
+                (
+                    "genesis_model",
+                    json!(if evolution {
+                        "canonical-full-zero-model-enabled-mask7-v3"
+                    } else {
+                        "canonical-full-zero-model-v2"
+                    }),
+                ),
                 ("native_factor_rank_min", json!(1)),
                 ("native_factor_rank_max", json!(2)),
                 (
@@ -615,8 +672,20 @@ impl Config {
             ] {
                 require(model[key] == expected, "CONFIG")?;
             }
+            if evolution {
+                require(
+                    model["graph"] == "nonempty-three-bit-enabled-experts-mask"
+                        && model["arbitrary_topology"] == false
+                        && model["native_admission_profile"] == crate::model_evolution_v5::PROFILE,
+                    "CONFIG",
+                )?;
+            }
             let family = hash(b"family", &[&canonical(&model)?]);
-            let artifact = crate::integer_factor_candidate_v2::IntegerModelV2::genesis(family);
+            let artifact = if evolution {
+                crate::integer_factor_candidate_v2::IntegerModelV2::evolution_genesis(family)
+            } else {
+                crate::integer_factor_candidate_v2::IntegerModelV2::genesis(family)
+            };
             params["factor_genesis_artifact"] = json!(hex::encode(artifact.id()));
         }
         let wire: Value =
@@ -636,7 +705,19 @@ impl Config {
             ],
         );
         let family = hash(b"family", &[&canonical(&model)?]);
-        let plan = if model_profile == crate::model_composition_v4::PROFILE {
+        let plan = if model_profile == crate::model_evolution_v5::PROFILE {
+            hash(
+                b"plan",
+                &[
+                    b"native-integer-model-evolution-plan-v5",
+                    &family,
+                    &hash32(text(&params, "evaluation_policy_hash")?)?,
+                    &hash32(text(&params, "model_evidence_policy_hash")?)?,
+                    &hash32(text(&params, "model_evidence_tasks_hash")?)?,
+                    &hash32(text(&params, "model_evolution_policy_hash")?)?,
+                ],
+            )
+        } else if model_profile == crate::model_composition_v4::PROFILE {
             hash(
                 b"plan",
                 &[
@@ -691,7 +772,7 @@ impl Config {
                 ],
             )
         };
-        let mut fees = [0; 24];
+        let mut fees = [0; 25];
         let mut tags = BTreeSet::new();
         for c in wire["commands"].as_array().ok_or("CONFIG")? {
             let tag = field(c, "tag")? as usize;
@@ -710,6 +791,7 @@ impl Config {
         }
         fees[22] = 200;
         fees[23] = 200;
+        fees[24] = 240;
         let mut evaluators = BTreeSet::new();
         let evaluator_count = if policy == public_evaluation::QUORUM_PROFILE {
             4
@@ -731,7 +813,22 @@ impl Config {
             fees,
             params,
             model_registry: model,
+            task_windows: None,
         })
+    }
+    /// Optional complete owner-pinned data is installed before genesis. A different
+    /// manifest selects a different chain context; candidate authors cannot change it.
+    pub fn installed_with_model_profiles_and_task_windows(
+        policy: &str,
+        task_profile: &str,
+        model_profile: &str,
+        windows: Option<crate::model_task_windows_v1::PinnedTaskWindows<'_>>,
+    ) -> Result<Self> {
+        let mut cfg = Self::installed_with_model_profiles(policy, task_profile, model_profile)?;
+        if let Some(pinned) = windows {
+            crate::model_task_windows_v1::install(&mut cfg, pinned)?;
+        }
+        Ok(cfg)
     }
     fn limit(&self, name: &str) -> Result<u64> {
         field(&self.params, name)
@@ -1093,8 +1190,14 @@ fn prepare(raw: &[u8], height: u64, cfg: &Config, signatures: &AtomicUsize) -> R
         "WORK_TASK_PROFILE",
     )?;
     require(
-        tx.tag != 23 || crate::integer_factor_candidate_v2::enabled(cfg),
+        tx.tag != 23
+            || (crate::integer_factor_candidate_v2::enabled(cfg)
+                && !crate::model_evolution_v5::enabled(cfg)),
         "FACTOR_PROFILE",
+    )?;
+    require(
+        tx.tag != 24 || crate::model_evolution_v5::enabled(cfg),
+        "EVOLUTION_PROFILE",
     )?;
     require(
         tx.tag != 6 || !crate::integer_factor_candidate_v2::enabled(cfg),
@@ -1262,6 +1365,51 @@ fn apply_prepared_with_account_access(
             s.put(key, contribution);
             p.pos = p.bytes.len();
         }
+        24 => {
+            let witness =
+                trnm_protocol::integer_evolution_v3::EvolutionWitnessV3::decode(&tx.payload)
+                    .map_err(|_| "EVOLUTION_ENCODING")?;
+            let current = s
+                .get("model:current")
+                .and_then(|v| v.as_str().map(str::to_owned))
+                .ok_or("STATE")?;
+            let history = s.scan("contribution:");
+            require(
+                (history.len() as u64) < cfg.limit("max_candidate_history_per_round")?,
+                "CANDIDATE_WINDOW_FULL",
+            )?;
+            let active = history
+                .values()
+                .map(|v| active_candidate(v, &current, height, cfg))
+                .collect::<Result<Vec<_>>>()?
+                .into_iter()
+                .filter(|b| *b)
+                .count();
+            require(
+                (active as u64) < cfg.limit("max_model_candidates")?,
+                "LIMIT",
+            )?;
+            let key = format!("contribution:{}", hex::encode(witness.contribution_id));
+            require(s.get(&key).is_none(), "DUPLICATE")?;
+            let mut contribution =
+                crate::model_evolution_v5::admit(&mut s, cfg, tx.sender, height, &witness)?;
+            crate::model_evidence_v3::admit(
+                &mut s,
+                cfg,
+                witness.contribution_id,
+                &mut contribution,
+            )?;
+            let excluded = public_evaluation::excluded(&s.scan("evaluation-disqualified:"));
+            contribution["public_evaluation"] = public_evaluation::freeze(
+                cfg,
+                witness.contribution_id,
+                &contribution,
+                height,
+                &excluded,
+            )?;
+            s.put(key, contribution);
+            p.pos = p.bytes.len();
+        }
         6 => {
             let cid = p.h()?;
             let family = p.h()?;
@@ -1406,6 +1554,9 @@ fn apply_prepared_with_account_access(
                     "MODEL_COMPOSITION_COUNT",
                 )?;
             }
+            if crate::model_evolution_v5::enabled(cfg) {
+                require(count == 1, "EVOLUTION_SELF_ALLOCATION")?;
+            }
             let current = s.get("model:current").ok_or("STATE")?;
             require(current == json!(hex::encode(parent)), "STATE")?;
             let (bk, mut bundle) = s.object("contribution:", bundle_id)?;
@@ -1444,6 +1595,9 @@ fn apply_prepared_with_account_access(
             for _ in 0..count {
                 let cid = p.h()?;
                 let score = p.n()?;
+                if crate::model_evolution_v5::enabled(cfg) {
+                    require(cid == bundle_id, "EVOLUTION_SELF_ALLOCATION")?;
+                }
                 let (k, mut o) = s.object("contribution:", cid)?;
                 if public_evaluation::enabled(cfg) {
                     let records = s.scan(&public_evaluation::record_prefix_for(
@@ -1990,6 +2144,7 @@ fn mandatory(
             )?;
         }
     }
+    crate::model_evolution_v5::cleanup(state, height, cfg)?;
     crate::integer_factor_candidate_v2::cleanup(state, height, cfg)?;
     crate::model_evidence_v3::cleanup(state, cfg, height)?;
     Ok(receipts)

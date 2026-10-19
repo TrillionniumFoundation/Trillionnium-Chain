@@ -26,7 +26,7 @@ A zero product-entrypoint count does not mean that the native development CLI is
 | M06 | native-development-owner: 2 | `trnm-executor`, `trnm-mvcc-fee` | 0 | false | false |
 | M07 | native-development-owner: 2 | responsibility owned by composition | 0 | false | false |
 | M08 | native-development-owner: 2 | responsibility owned by composition | 0 | false | false |
-| M09 | controlled-experiment: 1; pure-component: 1 | `trnm-data-availability` | 0 | false | false |
+| M09 | native-development-owner: 2 | `trnm-data-availability` | 0 | false | false |
 | M10 | native-component-with-reference-caller: 2; native-development-owner: 1 | `trnm-research-protocol`, `trnm-task-kernel`, `trnm-worker-agent` | 0 | false | false |
 | M11 | native-component-with-reference-caller: 1; native-development-owner: 1 | `trnm-oracle`, `trnm-verification-profiles` | 0 | false | false |
 | M12 | native-component-with-reference-caller: 2 | `trnm-escrow-vault`, `trnm-service-settlement` | 0 | false | false |
@@ -62,6 +62,9 @@ Local transport, research and offline rows do not alter the consensus revision.
 | account-archive-research-v1 | local/research | [ACCOUNT_ARCHIVE_PROTOTYPE_V1](../../docs/protocol/pon-nakamoto-v1/details/ACCOUNT_ARCHIVE_PROTOTYPE_V1.md) | [AccountArchive::project_successor](../../trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs) |
 | model-window-history-v1 | local/research | [MODEL_OPERATIONS_ACCEPTANCE_V1](../../docs/protocol/pon-nakamoto-v1/details/MODEL_OPERATIONS_ACCEPTANCE_V1.md) | [verify_window](../../formal/pon-nakamoto-v1/model_window_history.py) |
 | native-authenticated-storage-v1 | local/research | [NATIVE_AUTHENTICATED_STORAGE_V1](../../docs/protocol/pon-nakamoto-v1/details/NATIVE_AUTHENTICATED_STORAGE_V1.md) | [Node::open_with_authenticated_state](../../trillionnium/crates/trnm-pon-node/src/store.rs) |
+| model-evolution-v5 | 16 | [MODEL_EVOLUTION_V5](../../docs/development/specs/pon/MODEL_EVOLUTION_V5.md) | [run](../../trillionnium/crates/trnm-pon-node/src/main.rs) |
+| model-task-windows-v1 | 16 | [MODEL_TASK_WINDOWS_V1](../../docs/development/specs/pon/MODEL_TASK_WINDOWS_V1.md) | [run](../../trillionnium/crates/trnm-pon-node/src/main.rs) |
+| cell-p2p-v1 | local/research | [CELL_P2P_V1](../../docs/protocol/pon-nakamoto-v1/details/CELL_P2P_V1.md) | [run](../../trillionnium/crates/trnm-data-availability/src/bin/trnm-cell.rs) |
 
 ## Registered acceptance boundaries
 

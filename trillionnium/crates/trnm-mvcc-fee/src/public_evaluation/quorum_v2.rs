@@ -68,7 +68,9 @@ pub(super) fn configure_plan(
     plan["quorum"] = json!(quorum);
     plan["disqualified_at_freeze"] = json!(disqualified);
     plan["generation"] = json!(generation);
-    plan["dataset"] = cfg.params["model_evidence_tasks_hash"].clone();
+    plan["dataset"] = json!(hex::encode(crate::model_evidence_v3::dataset_root(
+        cfg, generation
+    )?));
     plan["review_policy"] = json!(REVIEW_POLICY);
     plan["identity_scope"] = json!("controlled-development-keys; common administration possible");
     plan["generation_context"] = json!(hex::encode(generation_context(plan)?));

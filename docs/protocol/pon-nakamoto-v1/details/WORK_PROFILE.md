@@ -153,6 +153,12 @@ Neither a wide-target amplification ratio nor a local queue cap proves an attack
 public fairness, or adequate safety at another target. Target increase/decrease, timestamp
 choices, task choices, proof preprocessing and shared hardware must all be explicit.
 
+[WORK_COST_DAA_BOUNDARIES.md](WORK_COST_DAA_BOUNDARIES.md) specifies the executable
+same-source CPU comparison, complete fixed-implementation cost cohorts, and
+actual authenticated-node PNW1 timestamp/chainwork boundary replay. Its full
+Python proof replay and retained negative cases do not establish work hardness
+or change this admitted profile.
+
 For fixed A and B the decoded useful output remains AB across header/nonce challenges.
 Fresh consensus work therefore need not be a new useful result or a model improvement.
 Count unique task/output identities, actual downstream adoption, stale/lost attempts,

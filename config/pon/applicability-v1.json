@@ -699,6 +699,90 @@
       ],
       "evidence_class": "source-binding",
       "receipt": null
+    },
+    {
+      "id": "model-evolution-v5",
+      "modules": [
+        "M00",
+        "M06",
+        "M10",
+        "M11",
+        "M15"
+      ],
+      "configuration": "config/pon/model-evolution-v5.json",
+      "revision_pointer": "consensus_revision",
+      "consensus_revision": 16,
+      "document": "docs/development/specs/pon/MODEL_EVOLUTION_V5.md",
+      "entrypoint": {
+        "path": "trillionnium/crates/trnm-pon-node/src/main.rs",
+        "symbol": "run"
+      },
+      "tests": [
+        "trillionnium/crates/trnm-protocol/tests/integer_evolution_v3.rs::exact_maximum_payload_and_envelope_roundtrip_preserve_old_codec",
+        "trillionnium/crates/trnm-protocol/tests/integer_evolution_v3.rs::aliases_empty_graph_overbudget_and_noncanonical_bytes_are_refused",
+        "trillionnium/crates/trnm-mvcc-fee/tests/model_evolution_v5.rs::actual_joint_router_expert_then_base_and_mask_adopt_from_real_successor_parent",
+        "trillionnium/crates/trnm-mvcc-fee/tests/model_evolution_v5.rs::native_refuses_forged_parent_hash_basis_alias_noop_and_cross_profile",
+        "trillionnium/crates/trnm-pon-node/tests/evolution_cli.rs::explicit_revision16_cli_is_distinct_reopens_and_refuses_revision15_store",
+        "trillionnium/crates/trnm-pon-node/tests/evolution_cli.rs::signed_joint_update_has_native_packet_membership_and_survives_store_reopen",
+        "formal/pon-nakamoto-v1/test_model_evolution_oracle.py::ModelEvolutionOracleTests.test_committed_context_wire_model_and_successor_vectors",
+        "formal/pon-nakamoto-v1/test_model_evolution_oracle.py::ModelEvolutionOracleTests.test_enabled_graph_ties_and_disabled_router_maximum",
+        "formal/pon-nakamoto-v1/test_model_evolution_oracle.py::ModelEvolutionOracleTests.test_checked_normalization_noop_range_and_basis_equivalence",
+        "formal/pon-nakamoto-v1/test_model_evolution_oracle.py::ModelEvolutionOracleTests.test_complete_model_canonical_reserved_byte_and_old_magic"
+      ],
+      "evidence_class": "source-binding",
+      "receipt": null
+    },
+    {
+      "id": "model-task-windows-v1",
+      "modules": [
+        "M06",
+        "M11",
+        "M15"
+      ],
+      "configuration": "config/pon/model-evolution-v5.json",
+      "revision_pointer": "consensus_revision",
+      "consensus_revision": 16,
+      "document": "docs/development/specs/pon/MODEL_TASK_WINDOWS_V1.md",
+      "entrypoint": {
+        "path": "trillionnium/crates/trnm-pon-node/src/main.rs",
+        "symbol": "run"
+      },
+      "tests": [
+        "trillionnium/crates/trnm-mvcc-fee/tests/model_evolution_v5.rs::pinned_new_text_windows_select_frozen_roots_and_replay_actual_parent_controls_at_activation",
+        "trillionnium/crates/trnm-mvcc-fee/tests/model_evolution_v5.rs::external_data_owner_signature_roots_order_and_repeated_content_fail_closed",
+        "trillionnium/crates/trnm-pon-node/tests/evolution_cli.rs::external_window_has_real_pnw1_membership_and_pinned_store_reopen",
+        "trillionnium/crates/trnm-pon-node/tests/evolution_cli.rs::window_cli_requires_every_pin_and_refuses_substitution_wrong_owner_or_reopen",
+        "formal/pon-nakamoto-v1/test_model_task_windows_oracle.py::ModelTaskWindowsOracleTests.test_signed_manifest_and_native_differential_fixture_are_reproducible",
+        "formal/pon-nakamoto-v1/test_model_task_windows_oracle.py::ModelTaskWindowsOracleTests.test_full_content_hash_and_snapshot_root_detect_replacement",
+        "formal/pon-nakamoto-v1/test_model_task_windows_oracle.py::ModelTaskWindowsOracleTests.test_token_filter_clipping_and_bias_are_explicit"
+      ],
+      "evidence_class": "source-binding",
+      "receipt": null
+    },
+    {
+      "id": "cell-p2p-v1",
+      "modules": [
+        "M09"
+      ],
+      "configuration": null,
+      "revision_pointer": null,
+      "consensus_revision": null,
+      "document": "docs/protocol/pon-nakamoto-v1/details/CELL_P2P_V1.md",
+      "entrypoint": {
+        "path": "trillionnium/crates/trnm-data-availability/src/bin/trnm-cell.rs",
+        "symbol": "run"
+      },
+      "tests": [
+        "trillionnium/crates/trnm-data-availability/src/cell/tests.rs::origin_offline_independent_replicas_multisource_and_corrupt_cache_repair",
+        "trillionnium/crates/trnm-data-availability/src/cell/tests.rs::missing_chunk_never_publishes_partial_payload_and_verified_cache_resumes",
+        "trillionnium/crates/trnm-data-availability/src/cell/tests.rs::wrong_pins_context_chunks_and_noncanonical_manifests_fail_closed",
+        "trillionnium/crates/trnm-data-availability/src/cell/tests.rs::foreign_database_is_not_repurposed",
+        "trillionnium/crates/trnm-data-availability/src/cell/tests.rs::corrupt_network_supplier_is_rejected_and_honest_peer_completes_same_pin",
+        "trillionnium/crates/trnm-data-availability/src/cell/tests.rs::exhausted_transport_budget_keeps_verified_chunks_for_retry",
+        "trillionnium/crates/trnm-data-availability/src/cell/tests.rs::slow_response_cannot_extend_absolute_deadline_and_honest_peer_keeps_pin"
+      ],
+      "evidence_class": "source-binding",
+      "receipt": null
     }
   ]
 }

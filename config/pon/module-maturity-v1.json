@@ -47,6 +47,10 @@
             {
               "path": "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
               "symbol": "Envelope::decode"
+            },
+            {
+              "path": "trillionnium/crates/trnm-protocol/src/integer_evolution_v3.rs",
+              "symbol": "EvolutionWitnessV3::decode"
             }
           ],
           "controlled_entrypoint": {
@@ -54,10 +58,12 @@
             "symbol": "tx_decode"
           },
           "ordinary_product_entrypoint": null,
-          "backend": "Python codec and native Rust codec",
+          "backend": "Python codec and native Rust codec; the explicit revision16 ILF3 codec enforces canonical bounded operations and nonempty three-slot masks, while actual parent/model admission belongs to M06",
           "persistence_owner": null,
           "evidence_selectors": [
-            "formal/pon-nakamoto-v1/test_interop.py::InteropTests.test_rejection_vectors"
+            "formal/pon-nakamoto-v1/test_interop.py::InteropTests.test_rejection_vectors",
+            "trillionnium/crates/trnm-protocol/tests/integer_evolution_v3.rs::exact_maximum_payload_and_envelope_roundtrip_preserve_old_codec",
+            "trillionnium/crates/trnm-protocol/tests/integer_evolution_v3.rs::aliases_empty_graph_overbudget_and_noncanonical_bytes_are_refused"
           ],
           "remaining": "No nonce reservation or balance authority from decoded bytes."
         }
@@ -751,6 +757,22 @@
             {
               "path": "trillionnium/crates/trnm-mvcc-fee/src/continuity_v1.rs",
               "symbol": "check_state_with_account_access_and_monetary"
+            },
+            {
+              "path": "trillionnium/crates/trnm-mvcc-fee/src/model_evolution_v5.rs",
+              "symbol": "admit"
+            },
+            {
+              "path": "trillionnium/crates/trnm-mvcc-fee/src/integer_factor_candidate_v2.rs",
+              "symbol": "parent"
+            },
+            {
+              "path": "trillionnium/crates/trnm-mvcc-fee/src/model_task_windows_v1.rs",
+              "symbol": "install"
+            },
+            {
+              "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+              "symbol": "Config::installed_with_model_profiles_and_task_windows"
             }
           ],
           "controlled_entrypoint": {
@@ -758,7 +780,7 @@
             "symbol": "Node::admit"
           },
           "ordinary_product_entrypoint": null,
-          "backend": "Native Node executes actual parent state through M06 and owns durable admission; separate Python comparisons retain their signature, roster and supported-application premises. Warm immutable-parent caches require complete ordered canonical comparison and grant no authority. Explicit archive research execution binds immutable Settings, complete parent roots/accounts and exact proof coverage at actual semantic point access. The AAW1 and AAM1 paths share obligation discovery and execution ordering; AAM1 compact multiproofs derive mandatory and final account roots from original-parent authenticated paths and independently compare complete rebuilt State. Whole-block witness budgets cover actual mandatory recipients beyond the separate 32-owner public point-query limit. Complete non-account input, funds/count checks, full successor State and linear scans remain required. Separately selected native authenticated-v1 admission persists its actual StateCommitment and changed account paths in the same block/delta transaction; research execution observations alone authorize no Node admission. A separately selected monetary-range input proves all four monetary namespaces with canonical boundaries/frontier, including future and zero obligations, against a private complete-parent anchor. Actual M06 monetary discovery and parent capacity consume verified rows after exact parent-projection checking; all other non-account rules and default admission retain full State.",
+          "backend": "Native Node executes actual parent state through M06 and owns durable admission; separate Python comparisons retain their signature, roster and supported-application premises. Warm immutable-parent caches require complete ordered canonical comparison and grant no authority. Explicit archive research execution binds immutable Settings, complete parent roots/accounts and exact proof coverage at actual semantic point access. The AAW1 and AAM1 paths share obligation discovery and execution ordering; AAM1 compact multiproofs derive mandatory and final account roots from original-parent authenticated paths and independently compare complete rebuilt State. Whole-block witness budgets cover actual mandatory recipients beyond the separate 32-owner public point-query limit. Complete non-account input, funds/count checks, full successor State and linear scans remain required. Separately selected native authenticated-v1 admission persists its actual StateCommitment and changed account paths in the same block/delta transaction; research execution observations alone authorize no Node admission. A separately selected monetary-range input proves all four monetary namespaces with canonical boundaries/frontier, including future and zero obligations, against a private complete-parent anchor. Actual M06 monetary discovery and parent capacity consume verified rows after exact parent-projection checking; all other non-account rules and default admission retain full State. Explicit revision16 executes signed tag24 against the actual complete ILM3 current parent, changes bounded base/router/expert matrices and the three-slot enable mask, records native same-window parent/candidate/control evidence and adopts only positive-gain self allocations. Optional owner-signed task-window bytes, full external file hash, source snapshot roots and activation schedule enter the immutable Node context before genesis; earlier profiles and no-window V5 contexts retain their exact identities.",
           "persistence_owner": {
             "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
             "symbol": "Node::open"
@@ -839,9 +861,17 @@
             "formal/pon-nakamoto-v1/test_obligation_range_oracle.py::MonetaryRangeOracle.test_order_duplicates_rank_and_value_types_are_not_coerced",
             "formal/pon-nakamoto-v1/test_obligation_range_oracle.py::MonetaryRangeOracle.test_frontier_zero_overlap_duplicate_reorder_and_digest_changes_fail",
             "formal/pon-nakamoto-v1/test_obligation_range_oracle.py::MonetaryRangeOracle.test_exact_json_shape_dimensions_and_byte_bounds",
-            "formal/pon-nakamoto-v1/test_obligation_range_oracle.py::MonetaryRangeOracle.test_serde_struct_bytes_are_canonical_independent_of_json_map_input_order"
+            "formal/pon-nakamoto-v1/test_obligation_range_oracle.py::MonetaryRangeOracle.test_serde_struct_bytes_are_canonical_independent_of_json_map_input_order",
+            "trillionnium/crates/trnm-mvcc-fee/tests/model_evolution_v5.rs::actual_joint_router_expert_then_base_and_mask_adopt_from_real_successor_parent",
+            "trillionnium/crates/trnm-mvcc-fee/tests/model_evolution_v5.rs::native_refuses_forged_parent_hash_basis_alias_noop_and_cross_profile",
+            "trillionnium/crates/trnm-mvcc-fee/tests/model_evolution_v5.rs::pinned_new_text_windows_select_frozen_roots_and_replay_actual_parent_controls_at_activation",
+            "trillionnium/crates/trnm-mvcc-fee/tests/model_evolution_v5.rs::external_data_owner_signature_roots_order_and_repeated_content_fail_closed",
+            "trillionnium/crates/trnm-pon-node/tests/evolution_cli.rs::explicit_revision16_cli_is_distinct_reopens_and_refuses_revision15_store",
+            "trillionnium/crates/trnm-pon-node/tests/evolution_cli.rs::signed_joint_update_has_native_packet_membership_and_survives_store_reopen",
+            "trillionnium/crates/trnm-pon-node/tests/evolution_cli.rs::external_window_has_real_pnw1_membership_and_pinned_store_reopen",
+            "trillionnium/crates/trnm-pon-node/tests/evolution_cli.rs::window_cli_requires_every_pin_and_refuses_substitution_wrong_owner_or_reopen"
           ],
-          "remaining": "Derived execution caches remain disposable; explicitly selected native authenticated commitments have their own checked persistent authority. Full-State execution and non-account scans remain, without a partial-State verifier or global incremental cost guarantee. Default Node storage is unchanged; ordinary product integration, public service and physical power-loss acceptance remain open."
+          "remaining": "Derived execution caches remain disposable; explicitly selected native authenticated commitments have their own checked persistent authority. Full-State execution and non-account scans remain, without a partial-State verifier or global incremental cost guarantee. Default Node storage is unchanged; ordinary product integration, public service and physical power-loss acceptance remain open. Revision16 is a bounded three-expert development family, not arbitrary Hepta topology; controlled new-text windows do not establish independent prospective utility or data governance."
         },
         {
           "operation": "M06.DeriveBranchDelta",
@@ -1271,44 +1301,86 @@
       "responsibilities": [
         {
           "operation": "M09.ValidateArtifact",
-          "implementation_kind": "pure-component",
+          "implementation_kind": "native-development-owner",
           "runtime_symbols": [
             {
               "path": "formal/pon-nakamoto-v1/model_contract.py",
               "symbol": "load_model_bytes"
+            },
+            {
+              "path": "trillionnium/crates/trnm-data-availability/src/cell/manifest.rs",
+              "symbol": "CellManifestV1::decode"
+            },
+            {
+              "path": "trillionnium/crates/trnm-data-availability/src/cell/store.rs",
+              "symbol": "CellStoreV1::verify_complete"
+            },
+            {
+              "path": "trillionnium/crates/trnm-data-availability/src/cell/store.rs",
+              "symbol": "CellStoreV1::materialize"
             }
           ],
           "controlled_entrypoint": {
-            "path": "formal/pon-nakamoto-v1/model_contract.py",
-            "symbol": "load_model"
+            "path": "trillionnium/crates/trnm-data-availability/src/bin/trnm-cell.rs",
+            "symbol": "verify"
           },
           "ordinary_product_entrypoint": null,
-          "backend": "Bounded non-executable 64KiB integer-model loader",
-          "persistence_owner": null,
+          "backend": "The original bounded non-executable 64KiB integer-model loader remains separate. Native M09 decodes a canonical TCM1 manifest binding family and five dependency hashes, verifies exact ordered chunk/whole-payload bytes in a distinct SQLite cache, and materializes only complete content with no-replace publication. The bytes remain opaque to the actual model loader.",
+          "persistence_owner": {
+            "path": "trillionnium/crates/trnm-data-availability/src/cell/store.rs",
+            "symbol": "CellStoreV1::open"
+          },
           "evidence_selectors": [
             "formal/pon-nakamoto-v1/test_artifacts.py::ArtifactBindingTests.test_exact_expected_artifact_not_mutable_path",
-            "formal/pon-nakamoto-v1/test_artifacts.py::ArtifactBindingTests.test_loader_size_is_bounded_before_json_decode"
+            "formal/pon-nakamoto-v1/test_artifacts.py::ArtifactBindingTests.test_loader_size_is_bounded_before_json_decode",
+            "trillionnium/crates/trnm-data-availability/src/cell/tests.rs::origin_offline_independent_replicas_multisource_and_corrupt_cache_repair",
+            "trillionnium/crates/trnm-data-availability/src/cell/tests.rs::missing_chunk_never_publishes_partial_payload_and_verified_cache_resumes",
+            "trillionnium/crates/trnm-data-availability/src/cell/tests.rs::wrong_pins_context_chunks_and_noncanonical_manifests_fail_closed",
+            "trillionnium/crates/trnm-data-availability/src/cell/tests.rs::foreign_database_is_not_repurposed"
           ],
-          "remaining": "Not arbitrary large-model loading, model provenance or a public export grant."
+          "remaining": "Pinned byte integrity is not arbitrary large-model loading, model quality/provenance or a grant to publish, change CURRENT, defeat withdrawal or execute. Materialization assumes an owner-controlled destination directory; no protection from an equally privileged hostile filesystem process is claimed."
         },
         {
           "operation": "M09.FetchWithoutAuthor",
-          "implementation_kind": "controlled-experiment",
+          "implementation_kind": "native-development-owner",
           "runtime_symbols": [
             {
               "path": "formal/pon-nakamoto-v1/experiments/settle_model.py",
               "symbol": "run"
+            },
+            {
+              "path": "trillionnium/crates/trnm-data-availability/src/cell/network.rs",
+              "symbol": "fetch_cell"
+            },
+            {
+              "path": "trillionnium/crates/trnm-data-availability/src/cell/network.rs",
+              "symbol": "serve_cells"
+            },
+            {
+              "path": "trillionnium/crates/trnm-data-availability/src/cell/store.rs",
+              "symbol": "CellStoreV1::chunk"
             }
           ],
           "controlled_entrypoint": {
-            "path": "formal/pon-nakamoto-v1/experiments/settle_model.py",
-            "symbol": "run"
+            "path": "trillionnium/crates/trnm-data-availability/src/bin/trnm-cell.rs",
+            "symbol": "fetch"
           },
           "ordinary_product_entrypoint": null,
-          "backend": "Controlled verified-copy experiment only",
-          "persistence_owner": null,
-          "evidence_selectors": [],
-          "remaining": "Current zero-adoption E3 run is not a new author-loss/DA campaign; use historical artifacts for their actual scope. Independent long-term custodians and repair remain open."
+          "backend": "Native configured TCP peers retrieve an externally pinned manifest and hash-checked chunks through finite worker/response queues, absolute request/operation deadlines, byte bounds and a shared connection-attempt budget. Cache reads rehash bytes; corrupt disposable chunks become missing and can be repaired. Real loopback tests remove the origin, retrieve from two retained replicas, reject corrupt/oversized/slow peers and resume verified partial caches.",
+          "persistence_owner": {
+            "path": "trillionnium/crates/trnm-data-availability/src/cell/store.rs",
+            "symbol": "CellStoreV1::open"
+          },
+          "evidence_selectors": [
+            "trillionnium/crates/trnm-data-availability/src/cell/tests.rs::origin_offline_independent_replicas_multisource_and_corrupt_cache_repair",
+            "trillionnium/crates/trnm-data-availability/src/cell/tests.rs::missing_chunk_never_publishes_partial_payload_and_verified_cache_resumes",
+            "trillionnium/crates/trnm-data-availability/src/cell/tests.rs::wrong_pins_context_chunks_and_noncanonical_manifests_fail_closed",
+            "trillionnium/crates/trnm-data-availability/src/cell/tests.rs::foreign_database_is_not_repurposed",
+            "trillionnium/crates/trnm-data-availability/src/cell/tests.rs::corrupt_network_supplier_is_rejected_and_honest_peer_completes_same_pin",
+            "trillionnium/crates/trnm-data-availability/src/cell/tests.rs::exhausted_transport_budget_keeps_verified_chunks_for_retry",
+            "trillionnium/crates/trnm-data-availability/src/cell/tests.rs::slow_response_cannot_extend_absolute_deadline_and_honest_peer_keeps_pin"
+          ],
+          "remaining": "Local byte and failure tests do not establish independent custodians, WAN service, DHT discovery/eclipse resistance, encrypted private-model distribution, long-term storage economics, complete loader integration or public acceptance. The original controlled copy experiments and zero-adoption E3 receipts retain their historical scopes."
         }
       ]
     },
@@ -1366,6 +1438,10 @@
             {
               "path": "trillionnium/crates/trnm-mvcc-fee/src/model_composition_v4.rs",
               "symbol": "validate"
+            },
+            {
+              "path": "trillionnium/crates/trnm-mvcc-fee/src/model_evolution_v5.rs",
+              "symbol": "current_model"
             }
           ],
           "controlled_entrypoint": {
@@ -1373,8 +1449,11 @@
             "symbol": "execute_native"
           },
           "ordinary_product_entrypoint": null,
-          "backend": "Native publication command with scored roots and reference oracle; explicit revision14 additionally verifies exact current-parent model composition and native leave-one-out allocation through the existing M06/Node owner. Independent Python compares actual complete composition/release/claim observations and the adopted two-generation parent lineage.",
-          "persistence_owner": null,
+          "backend": "Native publication command with scored roots and reference oracle; explicit revision14 additionally verifies exact current-parent model composition and native leave-one-out allocation through the existing M06/Node owner. Independent Python compares actual complete composition/release/claim observations and the adopted two-generation parent lineage. Revision16 uses the actual native tag8 path with one self allocation, full candidate/evidence/source bindings and the reused frozen quorum; a saturated or neutral candidate cannot publish. Both default and owner-pinned task-window tests advance real predecessor models.",
+          "persistence_owner": {
+            "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+            "symbol": "Node::open"
+          },
           "evidence_selectors": [
             "formal/pon-nakamoto-v1/test_native_execution.py::NativeExecutionTests.test_three_signed_release_generations_preserve_payout_and_retirement",
             "trillionnium/crates/trnm-pon-node/tests/model_evidence_v3.rs::objective_release_shared_source_reward_reopen_and_review_fork_are_native",
@@ -1382,7 +1461,9 @@
             "trillionnium/crates/trnm-pon-node/tests/model_composition_v4.rs::two_native_generations_use_the_actual_nonzero_parent_once",
             "trillionnium/crates/trnm-pon-node/tests/model_composition_v4.rs::signed_executor_rejects_unrelated_weak_zero_marginal_and_precommitted_false_weights",
             "formal/pon-nakamoto-v1/test_model_composition.py::NativeModelCompositionTests.test_full_signed_native_release_results_match_independent_computation",
-            "formal/pon-nakamoto-v1/test_model_composition.py::NativeModelCompositionTests.test_nonzero_parent_and_floored_source_limit_are_observed"
+            "formal/pon-nakamoto-v1/test_model_composition.py::NativeModelCompositionTests.test_nonzero_parent_and_floored_source_limit_are_observed",
+            "trillionnium/crates/trnm-mvcc-fee/tests/model_evolution_v5.rs::actual_joint_router_expert_then_base_and_mask_adopt_from_real_successor_parent",
+            "trillionnium/crates/trnm-mvcc-fee/tests/model_evolution_v5.rs::pinned_new_text_windows_select_frozen_roots_and_replay_actual_parent_controls_at_activation"
           ],
           "remaining": "Synthetic signed release transitions and public retrospective integer-model generations do not certify improving public models, training causality, hidden-source independence or fair coalition allocation."
         },
@@ -1401,6 +1482,14 @@
             {
               "path": "trillionnium/crates/trnm-verification-profiles/src/exact_integer_linear_v1.rs",
               "symbol": "verify_integer_linear_v1"
+            },
+            {
+              "path": "trillionnium/crates/trnm-mvcc-fee/src/model_evolution_v5.rs",
+              "symbol": "build_witness"
+            },
+            {
+              "path": "trillionnium/crates/trnm-mvcc-fee/src/model_evolution_v5.rs",
+              "symbol": "admit"
             }
           ],
           "controlled_entrypoint": {
@@ -1408,15 +1497,26 @@
             "symbol": "execute"
           },
           "ordinary_product_entrypoint": null,
-          "backend": "Explicit revision11 native signed tag23: M00 ILF2 codec, M06 actual ILM2 parent loading/complete BA and model checks, reused pure M11 integer kernel; existing Node persists staged State/deltas.",
-          "persistence_owner": null,
+          "backend": "Explicit revision11 native signed tag23: M00 ILF2 codec, M06 actual ILM2 parent loading/complete BA and model checks, reused pure M11 integer kernel; existing Node persists staged State/deltas. The separate revision16/tag24 path uses ILF3 and complete ILM3 parent/artifact identity for joint base/router/expert updates plus a nonempty three-slot enable mask. Normalized full-result update identity rejects equivalent factor bases in the same context; old tag23 is not reinterpreted.",
+          "persistence_owner": {
+            "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+            "symbol": "Node::open"
+          },
           "evidence_selectors": [
             "trillionnium/crates/trnm-pon-node/tests/integer_factor_candidate_v2.rs::exact_variants_refuse_and_real_fork_restores_duplicate_window",
             "trillionnium/crates/trnm-pon-node/tests/integer_factor_candidate_v2.rs::missing_score_abort_keeps_same_round_marker_and_new_round_allows_update",
             "trillionnium/crates/trnm-pon-node/tests/integer_factor_candidate_v2.rs::loaded_release_parent_full_range_and_new_round_are_native",
-            "trillionnium/crates/trnm-pon-node/tests/integer_factor_candidate_v2.rs::cli_selects_fresh_profile_and_genesis_before_any_candidate"
+            "trillionnium/crates/trnm-pon-node/tests/integer_factor_candidate_v2.rs::cli_selects_fresh_profile_and_genesis_before_any_candidate",
+            "trillionnium/crates/trnm-mvcc-fee/tests/model_evolution_v5.rs::actual_joint_router_expert_then_base_and_mask_adopt_from_real_successor_parent",
+            "trillionnium/crates/trnm-mvcc-fee/tests/model_evolution_v5.rs::native_refuses_forged_parent_hash_basis_alias_noop_and_cross_profile",
+            "trillionnium/crates/trnm-pon-node/tests/evolution_cli.rs::explicit_revision16_cli_is_distinct_reopens_and_refuses_revision15_store",
+            "trillionnium/crates/trnm-pon-node/tests/evolution_cli.rs::signed_joint_update_has_native_packet_membership_and_survives_store_reopen",
+            "trillionnium/crates/trnm-mvcc-fee/tests/model_evolution_v5.rs::pinned_new_text_windows_select_frozen_roots_and_replay_actual_parent_controls_at_activation",
+            "trillionnium/crates/trnm-mvcc-fee/tests/model_evolution_v5.rs::external_data_owner_signature_roots_order_and_repeated_content_fail_closed",
+            "trillionnium/crates/trnm-pon-node/tests/evolution_cli.rs::external_window_has_real_pnw1_membership_and_pinned_store_reopen",
+            "trillionnium/crates/trnm-pon-node/tests/evolution_cli.rs::window_cli_requires_every_pin_and_refuses_substitution_wrong_owner_or_reopen"
           ],
-          "remaining": "The four real attributed Rust test selectors are source bindings; exact component execution remains in its retained receipts and is not whole-source qualification. General functional equivalence, source budgets, independent evaluation, positive utility and public acceptance remain unqualified."
+          "remaining": "Exact source selectors name controlled native regression obligations; historical receipts retain their original coverage. Bounded graph reachability and normalized-byte equality do not qualify arbitrary topology, general functional equivalence, independent future utility, public fairness or Hepta installation."
         }
       ]
     },
@@ -1452,6 +1552,26 @@
             {
               "path": "formal/pon-nakamoto-v1/model_window_history.py",
               "symbol": "verify_window"
+            },
+            {
+              "path": "trillionnium/crates/trnm-mvcc-fee/src/model_evidence_v3.rs",
+              "symbol": "evaluation_material"
+            },
+            {
+              "path": "trillionnium/crates/trnm-mvcc-fee/src/model_task_windows_v1.rs",
+              "symbol": "TaskWindows::decode"
+            },
+            {
+              "path": "trillionnium/crates/trnm-mvcc-fee/src/model_task_windows_v1.rs",
+              "symbol": "selected"
+            },
+            {
+              "path": "formal/pon-nakamoto-v1/model_evolution_oracle.py",
+              "symbol": "predictions"
+            },
+            {
+              "path": "formal/pon-nakamoto-v1/model_task_windows_oracle.py",
+              "symbol": "rows"
             }
           ],
           "controlled_entrypoint": {
@@ -1459,7 +1579,7 @@
             "symbol": "Node::admit"
           },
           "ordinary_product_entrypoint": null,
-          "backend": "Explicit model-evidence-v3 performs native integer inference on frozen historical source groups and all four retained controls; revision14 reuses that exact kernel for full components and each leave-one-out model. General model evaluation remains a separate controlled experiment. A separate integer Python implementation recomputes inference, exact derivation, omission weights and complete records from actual native observations. Optional externally pinned offline window history rebuilds prior task/probe/group exposure, preserves false reported gates and reserves append bytes; historical execution, custody and future efficacy stay unverified.",
+          "backend": "Explicit model-evidence-v3 performs native integer inference on frozen historical source groups and all four retained controls; revision14 reuses that exact kernel for full components and each leave-one-out model. General model evaluation remains a separate controlled experiment. A separate integer Python implementation recomputes inference, exact derivation, omission weights and complete records from actual native observations. Optional externally pinned offline window history rebuilds prior task/probe/group exposure, preserves false reported gates and reserves append bytes; historical execution, custody and future efficacy stay unverified. Revision16 inference respects the enabled expert mask. Its optional bounded owner-pinned manifest verifies complete new source bytes and the declared canonical source snapshot, precommits activation rounds and selects the parent/candidate/four controls from the same window. Candidate authors cannot choose a replacement root. Independent Python derives the controlled source features, full model/witness/context bytes and scores without native output.",
           "persistence_owner": null,
           "evidence_selectors": [
             "formal/pon-nakamoto-v1/test_evaluation_bundle.py::FrozenEvaluationTests.test_self_consistent_rehashed_calibration_score_still_requires_actual_replay",
@@ -1474,9 +1594,20 @@
             "formal/pon-nakamoto-v1/test_model_composition.py::NativeModelCompositionTests.test_stale_incomplete_or_noninteger_observations_are_rejected",
             "formal/pon-nakamoto-v1/test_model_window_history.py::ModelWindowHistoryTests.test_three_windows_link_all_entries_and_keep_external_flags_false",
             "formal/pon-nakamoto-v1/test_model_window_history.py::ModelWindowHistoryTests.test_zero_gain_consumes_window_and_cannot_retry_same_future_prompts",
-            "formal/pon-nakamoto-v1/test_model_window_history.py::ModelWindowHistoryTests.test_preregistration_reserves_bytes_for_the_completed_window"
+            "formal/pon-nakamoto-v1/test_model_window_history.py::ModelWindowHistoryTests.test_preregistration_reserves_bytes_for_the_completed_window",
+            "trillionnium/crates/trnm-mvcc-fee/tests/model_evolution_v5.rs::actual_joint_router_expert_then_base_and_mask_adopt_from_real_successor_parent",
+            "trillionnium/crates/trnm-mvcc-fee/tests/model_evolution_v5.rs::native_refuses_forged_parent_hash_basis_alias_noop_and_cross_profile",
+            "trillionnium/crates/trnm-mvcc-fee/tests/model_evolution_v5.rs::pinned_new_text_windows_select_frozen_roots_and_replay_actual_parent_controls_at_activation",
+            "trillionnium/crates/trnm-mvcc-fee/tests/model_evolution_v5.rs::external_data_owner_signature_roots_order_and_repeated_content_fail_closed",
+            "formal/pon-nakamoto-v1/test_model_evolution_oracle.py::ModelEvolutionOracleTests.test_committed_context_wire_model_and_successor_vectors",
+            "formal/pon-nakamoto-v1/test_model_evolution_oracle.py::ModelEvolutionOracleTests.test_enabled_graph_ties_and_disabled_router_maximum",
+            "formal/pon-nakamoto-v1/test_model_evolution_oracle.py::ModelEvolutionOracleTests.test_checked_normalization_noop_range_and_basis_equivalence",
+            "formal/pon-nakamoto-v1/test_model_evolution_oracle.py::ModelEvolutionOracleTests.test_complete_model_canonical_reserved_byte_and_old_magic",
+            "formal/pon-nakamoto-v1/test_model_task_windows_oracle.py::ModelTaskWindowsOracleTests.test_signed_manifest_and_native_differential_fixture_are_reproducible",
+            "formal/pon-nakamoto-v1/test_model_task_windows_oracle.py::ModelTaskWindowsOracleTests.test_full_content_hash_and_snapshot_root_detect_replacement",
+            "formal/pon-nakamoto-v1/test_model_task_windows_oracle.py::ModelTaskWindowsOracleTests.test_token_filter_clipping_and_bias_are_explicit"
           ],
-          "remaining": "Independent prospective model utility, undisclosed common control, general-model proof and public evaluation governance are unaccepted. Public-corpus memorizer tests establish routing and rewards only."
+          "remaining": "Independent prospective model utility, undisclosed common control, general-model proof and public evaluation governance are unaccepted. Public-corpus memorizer tests establish routing and rewards only. The tested 12 new texts are explicitly controlled-source fixtures. Pre-genesis owner pinning is not live permissionless governance, label truth, hidden-task custody or a production generalization result."
         },
         {
           "operation": "M11.AdmitEvaluation",
@@ -1501,6 +1632,14 @@
             {
               "path": "trillionnium/crates/trnm-mvcc-fee/src/model_evidence_v3.rs",
               "symbol": "check_reveal"
+            },
+            {
+              "path": "trillionnium/crates/trnm-mvcc-fee/src/public_evaluation/quorum_v2.rs",
+              "symbol": "configure_plan"
+            },
+            {
+              "path": "trillionnium/crates/trnm-mvcc-fee/src/public_evaluation/quorum_v2.rs",
+              "symbol": "adoption_allowed"
             }
           ],
           "controlled_entrypoint": {
@@ -1508,13 +1647,15 @@
             "symbol": "execute_native"
           },
           "ordinary_product_entrypoint": null,
-          "backend": "Legacy revision3 first-two default, or explicitly selected fresh revision4 all-eligible minimum in existing M11/M06 native and independent Python owners",
+          "backend": "Legacy revision3 first-two default, or explicitly selected fresh revision4 all-eligible minimum in existing M11/M06 native and independent Python owners Explicit revision15 freezes a controlled non-author quorum and recounts objective conflicts at adoption; revision16 reuses those rules and binds the actual selected task-window root into the frozen generation context. The old consensus profiles keep their own record bytes and semantics.",
           "persistence_owner": null,
           "evidence_selectors": [
             "formal/pon-nakamoto-v1/test_native_execution.py::NativeExecutionTests.test_all_twelve_tags_match_for_1_2_4_8_workers",
             "formal/pon-nakamoto-v1/test_contracts.py::ExecutionTests.test_contribution_cannot_swap_parent_family_or_claim_self_eval",
             "formal/pon-nakamoto-v1/test_evaluation_round.py::ClosedRoundTests.test_all_six_arrival_orders_close_to_the_same_state_with_all_workers",
-            "formal/pon-nakamoto-v1/test_evaluation_round.py::ClosedRoundTests.test_two_fast_high_scores_do_not_unlock_and_missing_vote_expires"
+            "formal/pon-nakamoto-v1/test_evaluation_round.py::ClosedRoundTests.test_two_fast_high_scores_do_not_unlock_and_missing_vote_expires",
+            "trillionnium/crates/trnm-mvcc-fee/tests/model_evolution_v5.rs::actual_joint_router_expert_then_base_and_mask_adopt_from_real_successor_parent",
+            "trillionnium/crates/trnm-mvcc-fee/tests/model_evolution_v5.rs::pinned_new_text_windows_select_frozen_roots_and_replay_actual_parent_controls_at_activation"
           ],
           "remaining": "Complete-roster aggregation is order-independent for a fixed set; availability, objective disputes, functional-copy attribution and independent evaluator/model authority remain unaccepted."
         }

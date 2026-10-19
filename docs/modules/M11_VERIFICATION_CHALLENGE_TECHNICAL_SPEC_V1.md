@@ -144,6 +144,19 @@ profile or by registering a test selector.
 
 [Model evidence v3](../protocol/pon-nakamoto-v1/details/NATIVE_MODEL_EVIDENCE_V3.md) installs actual frozen tasks and four complete retained controls, recomputes candidate/parent/control scores in M06, and requires every signed reveal to match native score and digest. This finite statement is executable. Source attestations, hidden common control, general LLM behavior, prospective gain and public dispute adjudication remain distinct obligations.
 
+## Explicit revision16 task binding
+
+The separate [revision16 model evolution](../development/specs/pon/MODEL_EVOLUTION_V5.md)
+reuses this quorum algorithm while native inference observes the enabled expert
+mask and full changed model. Its optional [owner-pinned task windows](../development/specs/pon/MODEL_TASK_WINDOWS_V1.md)
+bind source snapshot/content hashes, complete task roots and ordered activation
+rounds before genesis. The submission round selects the same window for the
+parent, candidate and four controls; the selected root enters the frozen quorum
+generation context. Two six-text controlled windows test actual source loading,
+activation and no cross-window evidence reuse. Fixed owner signatures and new
+fixture bytes do not prove independent evaluators, truthful labels, private
+future-task custody, live governance or production generalization.
+
 ## Explicit revision15 evaluation liveness
 
 [Native evaluation quorum V2](../protocol/pon-nakamoto-v1/details/NATIVE_EVALUATION_QUORUM_V2.md)

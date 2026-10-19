@@ -191,6 +191,10 @@ fn payload_len(tag: u8, p: &[u8]) -> Result<(), WireError> {
             crate::integer_factor_v2::FactorWitnessV2::decode(p)?;
             p.len()
         }
+        24 => {
+            crate::integer_evolution_v3::EvolutionWitnessV3::decode(p)?;
+            p.len()
+        }
         9 => {
             if p.len() < 73 {
                 return Err(WireError::Length);

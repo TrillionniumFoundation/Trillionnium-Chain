@@ -93,6 +93,11 @@ Work(T)=floor(2^256/(T+1)); sum uses checked 512-bit storage. Credit expected ta
 the lucky actual digest. A fully verified strictly heavier branch wins; ties keep the
 active branch. Headers alone cannot become executable active state.
 
+The current median/future and DAA endpoint limits have an actual PNW1 native
+schedule with authenticated-store reopen and independent Python proof/work
+replay; see [WORK_COST_DAA_BOUNDARIES.md](WORK_COST_DAA_BOUNDARIES.md). It records
+the original rules and keeps their default parameters unchanged.
+
 ## L1.3 Signed transaction envelope
 
 `PNX1 || network32 || sender32 || nonceLE64 || expiryHeightLE64 || feeLimitLE64 || tagU8
