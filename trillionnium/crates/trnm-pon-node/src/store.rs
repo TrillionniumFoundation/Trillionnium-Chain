@@ -2055,6 +2055,10 @@ impl Node {
             pon_commitment::checked_snapshot(actual, expected, prior, CacheLimits::default());
         match result {
             Ok(prepared) => {
+                if self.state_backend == StateBackend::AuthenticatedV1 {
+                    self.authenticated_arithmetic
+                        .offer_root_material(&self.settings, prepared.snapshot.as_ref());
+                }
                 *self.commitment_observation.borrow_mut() = Some(prepared.observation.clone());
                 Ok(prepared)
             }
@@ -2480,7 +2484,7 @@ impl Node {
     /// Local cumulative diagnostics only. No SQL, native validation, CPU credit,
     /// clock verdict or durable fact is supplied by these nested observations.
     pub fn native_history_arithmetic_observation(&self) -> Value {
-        self.authenticated_arithmetic.history.observation()
+        self.authenticated_arithmetic.observation()
     }
 
     fn parent(&self, id: Hash) -> Result<Hash> {
@@ -3412,6 +3416,8 @@ impl Node {
             self.historical_commitment_cache
                 .borrow_mut()
                 .retain(id, commitment.snapshot.as_ref());
+            self.authenticated_arithmetic
+                .offer_root_material(&self.settings, commitment.snapshot.as_ref());
         }
         let work = parent
             .work

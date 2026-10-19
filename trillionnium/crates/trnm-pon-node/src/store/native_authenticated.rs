@@ -643,13 +643,16 @@ pub(crate) fn verify_state_with_cache(
             },
         "NATIVE_STATE_ROOT",
     ))?;
-    native_store::verify_with_lifts(
-        db,
-        &record.accounts,
-        state,
-        progress,
-        cache.map(|c| &c.lifts),
-    )?;
+    {
+        let _measurement = cache.map(|cache| cache.history.observe(HistoryStage::AccountGraph));
+        native_store::verify_with_lifts(
+            db,
+            &record.accounts,
+            state,
+            progress,
+            cache.map(|c| &c.lifts),
+        )?;
+    }
     progress()
 }
 

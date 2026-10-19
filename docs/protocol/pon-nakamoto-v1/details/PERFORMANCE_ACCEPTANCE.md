@@ -455,7 +455,7 @@ SQL traversal and current-byte comparison remain O(H plus actual delta bytes).
 
 `native_history_arithmetic_observation()` returns local cumulative diagnostics
 with schema `pon-native-history-arithmetic-observation-v1`: current observed
-bytes/rows, arithmetic hits/computations, pool charges, and eleven fixed nested
+bytes/rows, arithmetic hits/computations, pool charges, and fixed nested
 native stages. Stage times are wall time and current-thread CPU, include error
 and cancelled calls, exclude scoped worker CPU, and expose unavailable CPU
 separately. They grant no work credit, eligibility, currentness or consensus
@@ -471,3 +471,65 @@ regressions together with the original native suites:
     cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib store::native_authenticated::history_arithmetic:: -- --test-threads=1
     cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib store::native_authenticated:: -- --test-threads=1
     cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib store::native_authenticated_tests:: -- --test-threads=1
+
+## Complete-state root arithmetic after the failed 6bc campaign
+
+The next original-budget campaign, on source
+`6bc6f40a7d93602303cf7bb4724e4fee52ea9c48` / tree
+`e76d41a2a3226e86e5dbee4ac1deb84f5a8ad216`, also exited 101 without an outer
+timeout. Its 9,526,402-byte raw report has SHA-256
+`a12cbc9cb516181bcb30f90ed0e5f5aa8efa1fe4b2f9af7e4f972a5f7d074b1c`.
+The baseline acknowledged five packets in 55 calls, with 49 CPU-budget refusals
+and one shutdown-interrupted call. From-zero and late-product acknowledged two
+packets in 23 and 21 calls. Each phase still confirmed zero of three signed rounds.
+Preparation consumed 13,112,593,855 ns of CPU; this is not a business-gate pass.
+
+The new before/after owner observations show effective, unfilled history pools:
+the baseline reused 1,339 record calculations, 673 packet calculations and
+43,703 delta-leaf calculations, with only 6, 6 and 14 corresponding computations.
+The largest pool had eleven entries; packet retained charge was 716,865 bytes.
+No sequential-scan cache overflow was observed in this campaign. Complete
+history verification consumed 165,757,213 ns, while complete-state verification
+consumed 5,175,279,647 ns over 266 entered calls. Admission consumed
+8,488,149,094 ns over 54 entered calls. These are nested current-thread intervals,
+including rejected or cancelled work, and must not be summed. The snapshots
+exclude setup and the final post-service verification reads.
+
+The following source change targets a separate duplicate calculation: a new
+native StateCommitment previously rebuilt the full sparse State root even when
+M06 had just produced an opaque canonical map and derived StateTree for those
+values. The native owner may now offer that opaque material from its existing
+checked parent or derived successor. At the original root-calculation position,
+the existing M06 algorithm re-encodes every actual State key/value, compares the
+complete key set and applies every actual addition, change or removal. A stored
+record, header digest, block identity or caller-supplied root is never an answer.
+Network, parameter and genesis context must match before material can be used.
+Missing, foreign or refused material uses the original full-root path; an error
+from optional arithmetic re-enters the original grammar for its exact error.
+
+The optional material retains at most one tree, 2 MiB of canonical payload and
+16 MiB of conservative software charge, charging shared Arc material in full.
+These are additional retention bounds, not process RSS bounds. M06's existing
+temporary workspace and the other independent caches remain separate. The root
+material has no row-set, freshness, admission, cancellation or consensus authority.
+Rollback may leave mathematical material but cannot leave a successful verdict.
+
+Account parsing still precedes State-root calculation. Every actual SQL account
+node is still read and decoded, and its parent edge, path, digest, complete leaf
+set, count and balance are checked. Actual complete KV reads, state/metadata
+bindings, old-history checks, transaction fences and all original progress/error
+positions remain. There is no new node-decoding cache or reduced history scan.
+
+Three additional nested stages, `complete_commitment`, `complete_state_root` and
+`account_graph`, separate actual commitment/cache work from the unchanged graph
+checks. The additive `complete_root_arithmetic` object records offered/refused
+material, exact-root hits, complete-cache hits, actual tree calculations and
+changes, cold/error fallbacks and retention charge. Missing measurements remain
+unknown. Its counters grant no CPU credit or success classification.
+
+The same original three 30-second windows, 0.25 CPU-second/second refill,
+2 CPU-second burst, 1,024 actual signed seed transfers and 21 business blocks
+must be rerun on this successor source. Local exact-byte and mutation regressions
+cannot predict or replace that original-budget result.
+
+    cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib store::native_authenticated::arithmetic_cache::root_arithmetic:: -- --test-threads=1

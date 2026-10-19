@@ -4,7 +4,7 @@
 #[cfg(test)]
 use super::complete;
 use super::StateCommitment;
-use crate::account_archive_execution::state_witness::commitment_from_complete_state_with_lifts;
+use crate::account_archive_execution::state_witness::commitment_from_complete_state_with_root;
 use crate::account_archive_prototype::native_store::LiftCache;
 use crate::{Result, Settings};
 use std::cell::RefCell;
@@ -12,6 +12,9 @@ use std::collections::VecDeque;
 use std::io::{self, Write};
 use trnm_mvcc_fee::pon_executor::State;
 use trnm_protocol::pon_wire::Hash;
+
+mod root_arithmetic;
+use root_arithmetic::RootArithmetic;
 
 // The normal parent, child and genesis may all be revisited during one commit.
 const MAX_COMPLETE_ENTRIES: usize = 3;
@@ -38,6 +41,7 @@ pub(crate) struct ArithmeticCache {
     root: RefCell<Option<RootEntry>>,
     pub(crate) lifts: LiftCache,
     pub(crate) history: super::history_arithmetic::HistoryArithmetic,
+    root_arithmetic: RootArithmetic,
     #[cfg(test)]
     hits: std::cell::Cell<usize>,
     #[cfg(test)]
@@ -45,6 +49,47 @@ pub(crate) struct ArithmeticCache {
 }
 
 impl ArithmeticCache {
+    /// Opaque M06 tree material only. Its private canonical map is re-compared
+    /// with the complete actual State at the original root-calculation point.
+    pub(crate) fn offer_root_material(
+        &self,
+        settings: &Settings,
+        snapshot: Option<&trnm_mvcc_fee::pon_commitment::CheckedCommitment>,
+    ) {
+        self.root_arithmetic.offer(settings, snapshot);
+    }
+
+    pub(crate) fn observation(&self) -> serde_json::Value {
+        let mut value = self.history.observation();
+        value["complete_root_arithmetic"] = self.root_arithmetic.observation();
+        value
+    }
+
+    fn complete_root(
+        &self,
+        settings: &Settings,
+        state: &State,
+    ) -> trnm_mvcc_fee::pon_executor::Result<Hash> {
+        let _measurement = self.history.observe(super::HistoryStage::CompleteStateRoot);
+        // The separate root entry is usually genesis. It must not evict the
+        // offered successor tree or force a large child->genesis->child rebuild.
+        // Exact current bytes and namespace, never a caller's digest, select it.
+        let context = [
+            settings.network(),
+            settings.parameters(),
+            settings.genesis(),
+        ];
+        if let (Some(bytes), Ok(entry)) = (bounded_bytes(state), self.root.try_borrow()) {
+            if let Some(entry) = entry.as_ref().filter(|entry| {
+                entry.context == context && entry.bytes.as_slice() == bytes.as_slice()
+            }) {
+                self.root_arithmetic.exact_root_hit();
+                return Ok(entry.value);
+            }
+        }
+        self.root_arithmetic.calculate(settings, state)
+    }
+
     /// Reuse only the full root already computed from these exact complete
     /// actual bytes. Unlike `complete`, a miss does not run account/conservation
     /// checks before the original state-root grammar or change its error order.
@@ -86,6 +131,9 @@ impl ArithmeticCache {
     }
 
     pub(crate) fn complete(&self, settings: &Settings, state: &State) -> Result<StateCommitment> {
+        let _measurement = self
+            .history
+            .observe(super::HistoryStage::CompleteCommitment);
         let context = [
             settings.network(),
             settings.parameters(),
@@ -99,15 +147,20 @@ impl ArithmeticCache {
             if let Some(entry) = entries.iter().find(|entry| {
                 entry.context == context && entry.bytes.as_slice() == bytes.as_slice()
             }) {
+                self.root_arithmetic.complete_hit();
                 #[cfg(test)]
                 self.hits.set(self.hits.get() + 1);
                 return Ok(entry.value.clone());
             }
         }
-        let value = commitment_from_complete_state_with_lifts(settings, state, Some(&self.lifts))
+        self.root_arithmetic.complete_computation();
+        let value =
+            commitment_from_complete_state_with_root(settings, state, Some(&self.lifts), || {
+                self.complete_root(settings, state)
+            })
             .map_err(|error| {
-            crate::Error::from(format!("NATIVE_STATE_COMMITMENT:{error:?}")).local_integrity()
-        })?;
+                crate::Error::from(format!("NATIVE_STATE_COMMITMENT:{error:?}")).local_integrity()
+            })?;
         if let (Some(bytes), Ok(mut entries)) = (bytes, self.complete.try_borrow_mut()) {
             if entries.len() == MAX_COMPLETE_ENTRIES {
                 entries.pop_front();

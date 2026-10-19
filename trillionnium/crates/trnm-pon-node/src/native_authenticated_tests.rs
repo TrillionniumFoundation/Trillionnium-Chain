@@ -291,6 +291,9 @@ fn native_arithmetic_warm_cache_still_reads_external_tampering_and_matches_cold_
         "UPDATE archive_nodes SET data=X'00'",
         "UPDATE native_state_commitments SET data=X'7b7d'",
         "DELETE FROM kv WHERE slot=(SELECT state_slot FROM active WHERE singleton=1)",
+        "INSERT INTO kv(slot,key,value) SELECT state_slot,'account:0101010101010101010101010101010101010101010101010101010101010101',X'7b2262616c616e6365223a302c226e6f6e6365223a377d' FROM active WHERE singleton=1",
+        "UPDATE kv SET value=CAST(value AS TEXT) WHERE slot=(SELECT state_slot FROM active WHERE singleton=1)",
+        "UPDATE blocks SET state_root=zeroblob(32) WHERE id=(SELECT tip FROM active WHERE singleton=1)",
     ] {
         let dir = tempfile::tempdir().unwrap();
         let mut node = open(dir.path(), StateBackend::AuthenticatedV1);
@@ -1020,9 +1023,24 @@ fn native_dense_snapshot_readback_cost_keeps_full_state_and_unaccelerated_refere
             assert_eq!(logical_rows(&node.db), logical_before);
         }
     }
+    let native_arithmetic = node.native_history_arithmetic_observation();
+    let root_arithmetic = &native_arithmetic["complete_root_arithmetic"];
+    assert!(
+        root_arithmetic["counters"]["material_uses"]
+            .as_u64()
+            .unwrap()
+            > 0
+    );
+    assert!(
+        root_arithmetic["counters"]["derived_checked_apply"]
+            .as_u64()
+            .unwrap()
+            > 0
+    );
+    assert_eq!(root_arithmetic["has_consensus_authority"], false);
     eprintln!(
         "pon_native_snapshot_readback_cost_v1 {}",
         json!({"scope":"same unmodified state_at implementation with/without optional snapshots; synthetic1024 zero-balance accounts, not full capacity or TPS","observations":observations,
-            "native_history_arithmetic":node.native_history_arithmetic_observation()})
+            "native_history_arithmetic":native_arithmetic})
     );
 }

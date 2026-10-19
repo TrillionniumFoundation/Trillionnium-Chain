@@ -361,7 +361,7 @@ impl DeltaPass<'_> {
     }
 }
 
-const STAGES: usize = 11;
+const STAGES: usize = 14;
 const STAGE_NAMES: [&str; STAGES] = [
     "record",
     "packet",
@@ -374,6 +374,9 @@ const STAGE_NAMES: [&str; STAGES] = [
     "execute",
     "admission",
     "activation",
+    "complete_commitment",
+    "complete_state_root",
+    "account_graph",
 ];
 #[derive(Clone, Copy)]
 pub(crate) enum HistoryStage {
@@ -388,6 +391,9 @@ pub(crate) enum HistoryStage {
     Execute,
     Admission,
     Activation,
+    CompleteCommitment,
+    CompleteStateRoot,
+    AccountGraph,
 }
 #[derive(Clone, Copy, Default, Serialize)]
 struct StageTotals {

@@ -574,6 +574,19 @@ pub(crate) fn commitment_from_complete_state_with_lifts(
     state: &State,
     lifts: Option<&crate::account_archive_prototype::native_store::LiftCache>,
 ) -> Result<StateCommitment> {
+    commitment_from_complete_state_with_root(settings, state, lifts, || pon_executor::root(state))
+}
+
+/// Internal root arithmetic at the original grammar position. The caller must
+/// calculate from the complete immutable State, never from a claimed stored
+/// root. Account parsing still precedes root calculation; all remaining
+/// account, partition and conservation calculations retain their original order.
+pub(crate) fn commitment_from_complete_state_with_root(
+    settings: &Settings,
+    state: &State,
+    lifts: Option<&crate::account_archive_prototype::native_store::LiftCache>,
+    calculate_root: impl FnOnce() -> pon_executor::Result<Hash>,
+) -> Result<StateCommitment> {
     let account_values = accounts(state)?;
     commitment(
         Context {
@@ -581,7 +594,7 @@ pub(crate) fn commitment_from_complete_state_with_lifts(
             parameters: settings.parameters(),
             genesis: settings.genesis(),
         },
-        relation(pon_executor::root(state))?,
+        relation(calculate_root())?,
         match lifts {
             Some(lifts) => {
                 crate::account_archive_prototype::account_root_with_lifts(&account_values, lifts)?
