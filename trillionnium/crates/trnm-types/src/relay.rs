@@ -185,6 +185,7 @@ impl RelayAuthError {
             RelayAuthError::BadSig => "BadSig",
             RelayAuthError::ChainMismatch { .. } => "ChainMismatch",
             RelayAuthError::ReplayStateCapacityExceeded => "ReplayStateCapacityExceeded",
+            RelayAuthError::OversizedField { .. } => "OversizedField",
             RelayAuthError::Replay { .. } => "Replay",
             RelayAuthError::SeqRegression { .. } => "SeqRegression",
             RelayAuthError::SeqGap { .. } => "SeqGap",
@@ -216,6 +217,12 @@ impl fmt::Display for RelayAuthError {
             RelayAuthError::ReplayStateCapacityExceeded => write!(
                 f,
                 "relay replay state capacity exceeded (code={})",
+                self.stable_code()
+            ),
+            RelayAuthError::OversizedField { field } => write!(
+                f,
+                "relay field too large: {} (code={})",
+                field,
                 self.stable_code()
             ),
             RelayAuthError::SeqRegression { last_seq, got_seq } => write!(
@@ -279,6 +286,8 @@ impl std::error::Error for RelayAuthError {}
 
 #[derive(Debug, Clone)]
 const MAX_RELAY_REPLAY_ENTRIES: usize = 100_000;
+const MAX_RELAY_TEXT_FIELD_BYTES: usize = 256;
+const MAX_RELAY_PAYLOAD_BYTES: usize = 1024 * 1024;
 
 pub struct RelayAuthVerifier {
     max_skew_ms: u128,
@@ -415,6 +424,15 @@ impl RelayAuthVerifier {
             if value.trim().is_empty() || value.trim() != value || value.contains('|') {
                 return Err(RelayAuthError::MissingRequiredField { field });
             }
+            if value.len() > MAX_RELAY_TEXT_FIELD_BYTES {
+                return Err(RelayAuthError::OversizedField { field });
+            }
+        }
+        if env.payload.len() > MAX_RELAY_PAYLOAD_BYTES {
+            return Err(RelayAuthError::OversizedField { field: "payload" });
+        }
+        if env.sig.len() > MAX_RELAY_TEXT_FIELD_BYTES {
+            return Err(RelayAuthError::OversizedField { field: "sig" });
         }
         if is_current && env.chain_id.contains('|') {
             return Err(RelayAuthError::MissingRequiredField { field: "chain_id" });
@@ -855,6 +873,26 @@ mod tests {
             .verify(&env, now_ms + 50, |e| e.verify_test_sig_compat(key))
             .unwrap_err();
         assert_eq!(err.stable_code(), "BadVersion");
+    }
+
+    #[test]
+    fn relay_auth_rejects_oversized_replay_fields() {
+        let key = "sender-key";
+        let mut verifier = RelayAuthVerifier::for_chain(120_000, "trnm-mainnet");
+        let mut env = sample_env(1, "nonce-oversized", 1_730_000_000_000, key);
+        env.nonce = "n".repeat(MAX_RELAY_TEXT_FIELD_BYTES + 1);
+        env.sig = env.sign_for_test(key);
+        let err = verifier
+            .verify(&env, 1_730_000_000_050, |e| e.sign_for_test(key) == e.sig)
+            .unwrap_err();
+        assert_eq!(err.stable_code(), "OversizedField");
+
+        let mut env = sample_env(1, "nonce-large-payload", 1_730_000_000_000, key);
+        env.payload = vec![b'x'; MAX_RELAY_PAYLOAD_BYTES + 1];
+        let err = verifier
+            .verify(&env, 1_730_000_000_050, |e| e.sign_for_test(key) == e.sig)
+            .unwrap_err();
+        assert_eq!(err.stable_code(), "OversizedField");
     }
 
     #[test]
