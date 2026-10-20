@@ -241,8 +241,13 @@ fn append_json_line(path: &Path, line: &str) -> Result<()> {
         fs::create_dir_all(parent)?;
     }
     let mut file = OpenOptions::new().create(true).append(true).open(path)?;
-    file.write_all(line.as_bytes())?;
-    file.write_all(b"\n")?;
+    // Write the complete JSONL record in one append operation. Splitting the
+    // payload and newline lets concurrent workers interleave records and
+    // corrupt replay state, causing fail-closed recovery/DoS on restart.
+    let mut record = String::with_capacity(line.len() + 1);
+    record.push_str(line);
+    record.push('\n');
+    file.write_all(record.as_bytes())?;
     file.flush()?;
     Ok(())
 }
