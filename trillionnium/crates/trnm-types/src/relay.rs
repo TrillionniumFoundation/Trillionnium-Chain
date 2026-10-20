@@ -183,6 +183,7 @@ impl RelayAuthError {
     pub fn stable_code(&self) -> &'static str {
         match self {
             RelayAuthError::BadSig => "BadSig",
+            RelayAuthError::ChainMismatch { .. } => "ChainMismatch",
             RelayAuthError::Replay { .. } => "Replay",
             RelayAuthError::SeqRegression { .. } => "SeqRegression",
             RelayAuthError::SeqGap { .. } => "SeqGap",
@@ -204,6 +205,13 @@ impl fmt::Display for RelayAuthError {
             RelayAuthError::BadSig => {
                 write!(f, "signature verify failed (code={})", self.stable_code())
             }
+            RelayAuthError::ChainMismatch { expected, got } => write!(
+                f,
+                "chain mismatch: expected={} got={} (code={})",
+                expected,
+                got,
+                self.stable_code()
+            ),
             RelayAuthError::SeqRegression { last_seq, got_seq } => write!(
                 f,
                 "seq regression: last_seq={} got_seq={} (code={})",
@@ -292,6 +300,17 @@ impl RelayAuthVerifier {
         }
     }
 
+    /// Creates a verifier bound to one explicit chain identity.
+    pub fn for_chain(max_skew_ms: u128, expected_chain_id: impl Into<String>) -> Self {
+        Self {
+            max_skew_ms,
+            allow_legacy_v0: false,
+            expected_chain_id: Some(expected_chain_id.into()),
+            last_seq: HashMap::new(),
+            seen_nonce: HashSet::new(),
+        }
+    }
+
     /// Explicit compatibility mode for isolated migration tooling only.
     /// Callers must provide an out-of-band chain binding before accepting the
     /// result; the legacy signature itself does not contain `chain_id`.
@@ -339,6 +358,17 @@ impl RelayAuthVerifier {
             }
             if is_current && env.chain_id.trim() != env.chain_id {
                 return Err(RelayAuthError::MissingRequiredField { field: "chain_id" });
+            }
+            if is_current {
+                let Some(expected_chain_id) = self.expected_chain_id.as_deref() else {
+                    return Err(RelayAuthError::MissingRequiredField { field: "chain_id" });
+                };
+                if env.chain_id != expected_chain_id {
+                    return Err(RelayAuthError::ChainMismatch {
+                        expected: expected_chain_id.to_string(),
+                        got: env.chain_id.clone(),
+                    });
+                }
             }
             if is_legacy {
                 let Some(expected_chain_id) = self.expected_chain_id.as_deref() else {
@@ -514,7 +544,7 @@ mod tests {
     #[test]
     fn relay_auth_verify_pass() {
         let key = "sender-key";
-        let mut verifier = RelayAuthVerifier::new(120_000);
+        let mut verifier = RelayAuthVerifier::for_chain(120_000, "trnm-mainnet");
         let env = sample_env(1, "nonce-1", 1_730_000_000_000, key);
 
         let ok = verifier.verify(&env, 1_730_000_000_050, |e| e.sign_for_test(key) == e.sig);
@@ -524,7 +554,7 @@ mod tests {
     #[test]
     fn relay_auth_verify_fail_bad_signature() {
         let key = "sender-key";
-        let mut verifier = RelayAuthVerifier::new(120_000);
+        let mut verifier = RelayAuthVerifier::for_chain(120_000, "trnm-mainnet");
         let mut env = sample_env(1, "nonce-1", 1_730_000_000_000, key);
         env.sig = "bad-signature".to_string();
 
@@ -537,7 +567,7 @@ mod tests {
     #[test]
     fn relay_auth_verify_replay_nonce_rejected() {
         let key = "sender-key";
-        let mut verifier = RelayAuthVerifier::new(120_000);
+        let mut verifier = RelayAuthVerifier::for_chain(120_000, "trnm-mainnet");
         let env1 = sample_env(1, "nonce-dup", 1_730_000_000_000, key);
         let env2 = sample_env(2, "nonce-dup", 1_730_000_000_100, key);
 
@@ -554,7 +584,7 @@ mod tests {
     #[test]
     fn relay_auth_allows_same_nonce_for_different_senders() {
         let key = "sender-key";
-        let mut verifier = RelayAuthVerifier::new(120_000);
+        let mut verifier = RelayAuthVerifier::for_chain(120_000, "trnm-mainnet");
 
         let env1 = sample_env(1, "nonce-shared", 1_730_000_000_000, key);
 
@@ -573,7 +603,7 @@ mod tests {
     #[test]
     fn relay_auth_allows_same_nonce_for_different_task_ids() {
         let key = "sender-key";
-        let mut verifier = RelayAuthVerifier::new(120_000);
+        let mut verifier = RelayAuthVerifier::for_chain(120_000, "trnm-mainnet");
 
         let env1 = sample_env(1, "nonce-shared", 1_730_000_000_000, key);
 
@@ -592,7 +622,7 @@ mod tests {
     #[test]
     fn relay_auth_verify_seq_regression_rejected() {
         let key = "sender-key";
-        let mut verifier = RelayAuthVerifier::new(120_000);
+        let mut verifier = RelayAuthVerifier::for_chain(120_000, "trnm-mainnet");
         let env1 = sample_env(3, "nonce-1", 1_730_000_000_000, key);
         let env2 = sample_env(2, "nonce-2", 1_730_000_000_100, key);
 
@@ -609,7 +639,7 @@ mod tests {
     #[test]
     fn relay_auth_verify_time_skew_rejected() {
         let key = "sender-key";
-        let mut verifier = RelayAuthVerifier::new(120_000);
+        let mut verifier = RelayAuthVerifier::for_chain(120_000, "trnm-mainnet");
         let env = sample_env(1, "nonce-1", 1_730_000_000_000, key);
 
         let err = verifier
@@ -621,7 +651,7 @@ mod tests {
     #[test]
     fn relay_auth_verify_bad_version_rejected() {
         let key = "sender-key";
-        let mut verifier = RelayAuthVerifier::new(120_000);
+        let mut verifier = RelayAuthVerifier::for_chain(120_000, "trnm-mainnet");
         let mut env = sample_env(1, "nonce-1", 1_730_000_000_000, key);
         env.version = "p2p-v9.9".to_string();
         env.sig = env.sign_for_test(key);
@@ -635,7 +665,7 @@ mod tests {
     #[test]
     fn relay_auth_verify_unsupported_type_rejected() {
         let key = "sender-key";
-        let mut verifier = RelayAuthVerifier::new(120_000);
+        let mut verifier = RelayAuthVerifier::for_chain(120_000, "trnm-mainnet");
         let mut env = sample_env(1, "nonce-1", 1_730_000_000_000, key);
         env.msg_type = "WEIRD_TYPE".to_string();
         env.sig = env.sign_for_test(key);
@@ -649,7 +679,7 @@ mod tests {
     #[test]
     fn relay_auth_verify_rejects_noncanonical_chain_id_whitespace() {
         let key = "sender-key";
-        let mut verifier = RelayAuthVerifier::new(120_000);
+        let mut verifier = RelayAuthVerifier::for_chain(120_000, "trnm-mainnet");
         let mut env = sample_env(1, "nonce-1", 1_730_000_000_000, key);
         env.chain_id = " trnm-mainnet".to_string();
         env.sig = env.sign_for_test(key);
@@ -663,7 +693,7 @@ mod tests {
     #[test]
     fn relay_auth_verify_rejects_noncanonical_session_id_whitespace() {
         let key = "sender-key";
-        let mut verifier = RelayAuthVerifier::new(120_000);
+        let mut verifier = RelayAuthVerifier::for_chain(120_000, "trnm-mainnet");
         let mut env = sample_env(1, "nonce-1", 1_730_000_000_000, key);
         env.session_id = "sess-1 ".to_string();
         env.sig = env.sign_for_test(key);
@@ -761,7 +791,7 @@ mod tests {
         assert_eq!(cases.len(), 12);
 
         for (name, env, now_ms, want_code) in cases {
-            let mut verifier = RelayAuthVerifier::new(120_000);
+            let mut verifier = RelayAuthVerifier::for_chain(120_000, "trnm-mainnet");
             let baseline1 = sample_env(1, "nonce-base-1", 1_730_000_000_000, key);
             let baseline2 = sample_env(2, "nonce-base-2", 1_730_000_000_100, key);
             verifier
@@ -798,7 +828,7 @@ mod tests {
     #[test]
     fn relay_auth_legacy_v0_rejected_by_default() {
         let key = "sender-key";
-        let mut verifier = RelayAuthVerifier::new(120_000);
+        let mut verifier = RelayAuthVerifier::for_chain(120_000, "trnm-mainnet");
         let now_ms = std::time::SystemTime::now()
             .duration_since(std::time::UNIX_EPOCH)
             .expect("system clock must be after unix epoch")
@@ -812,6 +842,17 @@ mod tests {
             .verify(&env, now_ms + 50, |e| e.verify_test_sig_compat(key))
             .unwrap_err();
         assert_eq!(err.stable_code(), "BadVersion");
+    }
+
+    #[test]
+    fn relay_auth_new_without_chain_binding_rejects_current_envelopes() {
+        let key = "sender-key";
+        let mut verifier = RelayAuthVerifier::new(120_000);
+        let env = sample_env(1, "nonce-unbound", 1_730_000_000_000, key);
+        let err = verifier
+            .verify(&env, 1_730_000_000_050, |e| e.sign_for_test(key) == e.sig)
+            .unwrap_err();
+        assert_eq!(err.stable_code(), "MissingRequiredField");
     }
 
     #[test]
@@ -832,20 +873,20 @@ mod tests {
     #[test]
     fn relay_auth_cross_chain_replay_rejected_by_domain_signature() {
         let key = "sender-key";
-        let mut verifier = RelayAuthVerifier::new(120_000);
+        let mut verifier = RelayAuthVerifier::for_chain(120_000, "trnm-mainnet");
         let mut env = sample_env(1, "nonce-cross-chain", 1_730_000_000_000, key);
         env.chain_id = "trnm-otherchain".to_string();
 
         let err = verifier
             .verify(&env, 1_730_000_000_050, |e| e.sign_for_test(key) == e.sig)
             .unwrap_err();
-        assert_eq!(err.stable_code(), "BadSig");
+        assert_eq!(err.stable_code(), "ChainMismatch");
     }
 
     #[test]
     fn relay_auth_missing_required_fields_rejected() {
         let key = "sender-key";
-        let mut verifier = RelayAuthVerifier::new(120_000);
+        let mut verifier = RelayAuthVerifier::for_chain(120_000, "trnm-mainnet");
 
         let mut missing_chain = sample_env(1, "nonce-miss-1", 1_730_000_000_000, key);
         missing_chain.chain_id.clear();
@@ -870,7 +911,7 @@ mod tests {
     #[test]
     fn relay_auth_rejects_delimiter_injection_in_signed_fields() {
         let key = "sender-key";
-        let mut verifier = RelayAuthVerifier::new(120_000);
+        let mut verifier = RelayAuthVerifier::for_chain(120_000, "trnm-mainnet");
         let mut env = sample_env(1, "nonce|poison", 1_730_000_000_000, key);
         env.sig = env.sign_for_test(key);
 
@@ -883,7 +924,7 @@ mod tests {
     #[test]
     fn relay_auth_wrong_domain_signature_rejected() {
         let key = "sender-key";
-        let mut verifier = RelayAuthVerifier::new(120_000);
+        let mut verifier = RelayAuthVerifier::for_chain(120_000, "trnm-mainnet");
         let mut env = sample_env(1, "nonce-domain-1", 1_730_000_000_000, key);
         env.sig = env.sign_for_test_legacy_v0(key);
 
