@@ -238,6 +238,46 @@ pub(crate) fn now_ms() -> u128 {
         .unwrap_or(0)
 }
 
+struct AppendLock {
+    path: PathBuf,
+}
+
+impl Drop for AppendLock {
+    fn drop(&mut self) {
+        let _ = fs::remove_file(&self.path);
+    }
+}
+
+fn append_lock_path(path: &Path) -> PathBuf {
+    let parent = path
+        .parent()
+        .map(Path::to_path_buf)
+        .unwrap_or_else(|| PathBuf::from("."));
+    let base = path
+        .file_name()
+        .and_then(|name| name.to_str())
+        .unwrap_or("trnm-worker-agent.jsonl");
+    parent.join(format!(".{base}.append.lock"))
+}
+
+fn acquire_append_lock(path: &Path) -> Result<AppendLock> {
+    let lock_path = append_lock_path(path);
+    if let Some(parent) = lock_path.parent() {
+        fs::create_dir_all(parent)?;
+    }
+    match OpenOptions::new()
+        .write(true)
+        .create_new(true)
+        .open(&lock_path)
+    {
+        Ok(_) => Ok(AppendLock { path: lock_path }),
+        Err(error) if error.kind() == std::io::ErrorKind::AlreadyExists => {
+            anyhow::bail!("concurrent JSONL append is already in progress")
+        }
+        Err(error) => Err(error.into()),
+    }
+}
+
 fn append_json_line(path: &Path, line: &str) -> Result<()> {
     append_json_line_bounded(path, line, None, None)
 }
@@ -248,6 +288,10 @@ fn append_json_line_bounded(
     max_bytes: Option<u64>,
     max_records: Option<usize>,
 ) -> Result<()> {
+    // Serialize the limit check and append across worker processes. Without
+    // this lock, concurrent writers can all pass the preflight checks and
+    // collectively exceed the replay bound, turning recovery into a DoS.
+    let _append_lock = acquire_append_lock(path)?;
     if let Some(parent) = path.parent() {
         fs::create_dir_all(parent)?;
     }
