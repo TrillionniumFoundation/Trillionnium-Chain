@@ -61,6 +61,8 @@ pub(crate) const WORKER_PROGRESS_LOG_ENV: &str = "TRNM_WORKER_PROGRESS_LOG";
 
 const MAX_ACK_LOG_BYTES: u64 = 64 * 1024 * 1024;
 const MAX_ACK_RECORDS: usize = 100_000;
+const MAX_SUBMIT_LOG_BYTES: u64 = 64 * 1024 * 1024;
+const MAX_SUBMISSION_RECORDS: usize = 100_000;
 const MAX_INGRESS_LOG_BYTES: u64 = 64 * 1024 * 1024;
 const MAX_INGRESS_RECORDS: usize = 100_000;
 
@@ -237,13 +239,43 @@ pub(crate) fn now_ms() -> u128 {
 }
 
 fn append_json_line(path: &Path, line: &str) -> Result<()> {
+    append_json_line_bounded(path, line, None, None)
+}
+
+fn append_json_line_bounded(
+    path: &Path,
+    line: &str,
+    max_bytes: Option<u64>,
+    max_records: Option<usize>,
+) -> Result<()> {
     if let Some(parent) = path.parent() {
         fs::create_dir_all(parent)?;
     }
-    let mut file = OpenOptions::new().create(true).append(true).open(path)?;
+    let record_len = line.len().saturating_add(1) as u64;
+    let existing_size = path.metadata().map(|metadata| metadata.len()).unwrap_or(0);
+    if let Some(limit) = max_bytes {
+        anyhow::ensure!(
+            existing_size.saturating_add(record_len) <= limit,
+            "JSONL log exceeds bounded size: {} bytes > {}",
+            existing_size.saturating_add(record_len),
+            limit
+        );
+    }
+    if let Some(limit) = max_records {
+        if existing_size > 0 {
+            let raw = fs::read(path)?;
+            let records = raw.iter().filter(|byte| **byte == b'\n').count();
+            anyhow::ensure!(
+                records < limit,
+                "JSONL log exceeds bounded record count: {}",
+                limit
+            );
+        }
+    }
     // Write the complete JSONL record in one append operation. Splitting the
     // payload and newline lets concurrent workers interleave records and
     // corrupt replay state, causing fail-closed recovery/DoS on restart.
+    let mut file = OpenOptions::new().create(true).append(true).open(path)?;
     let mut record = String::with_capacity(line.len() + 1);
     record.push_str(line);
     record.push('\n');
@@ -281,7 +313,12 @@ pub(crate) fn append_submission(
         reveal_cmd,
     };
     let line = serde_json::to_string(&rec)?;
-    append_json_line(submit_log, &line)
+    append_json_line_bounded(
+        submit_log,
+        &line,
+        Some(MAX_SUBMIT_LOG_BYTES),
+        Some(MAX_SUBMISSION_RECORDS),
+    )
 }
 
 fn load_ack_records(ack_log: &Path) -> Result<Vec<AckRecord>> {
@@ -430,7 +467,12 @@ pub(crate) fn append_ack(
         run_id,
     };
     let line = serde_json::to_string(&rec)?;
-    append_json_line(ack_log, &line)
+    append_json_line_bounded(
+        ack_log,
+        &line,
+        Some(MAX_ACK_LOG_BYTES),
+        Some(MAX_ACK_RECORDS),
+    )
 }
 
 pub(crate) fn append_event(event_log: &Path, event: &WorkerEvent) -> Result<()> {
