@@ -184,6 +184,7 @@ impl RelayAuthError {
         match self {
             RelayAuthError::BadSig => "BadSig",
             RelayAuthError::ChainMismatch { .. } => "ChainMismatch",
+            RelayAuthError::ReplayStateCapacityExceeded => "ReplayStateCapacityExceeded",
             RelayAuthError::Replay { .. } => "Replay",
             RelayAuthError::SeqRegression { .. } => "SeqRegression",
             RelayAuthError::SeqGap { .. } => "SeqGap",
@@ -210,6 +211,11 @@ impl fmt::Display for RelayAuthError {
                 "chain mismatch: expected={} got={} (code={})",
                 expected,
                 got,
+                self.stable_code()
+            ),
+            RelayAuthError::ReplayStateCapacityExceeded => write!(
+                f,
+                "relay replay state capacity exceeded (code={})",
                 self.stable_code()
             ),
             RelayAuthError::SeqRegression { last_seq, got_seq } => write!(
@@ -272,6 +278,8 @@ impl fmt::Display for RelayAuthError {
 impl std::error::Error for RelayAuthError {}
 
 #[derive(Debug, Clone)]
+const MAX_RELAY_REPLAY_ENTRIES: usize = 100_000;
+
 pub struct RelayAuthVerifier {
     max_skew_ms: u128,
     allow_legacy_v0: bool,
@@ -481,6 +489,11 @@ impl RelayAuthVerifier {
             return Err(RelayAuthError::Replay {
                 nonce: env.nonce.clone(),
             });
+        }
+        if self.last_seq.len() >= MAX_RELAY_REPLAY_ENTRIES
+            || self.seen_nonce.len() >= MAX_RELAY_REPLAY_ENTRIES
+        {
+            return Err(RelayAuthError::ReplayStateCapacityExceeded);
         }
 
         self.last_seq.insert(seq_key, env.seq);
@@ -842,6 +855,35 @@ mod tests {
             .verify(&env, now_ms + 50, |e| e.verify_test_sig_compat(key))
             .unwrap_err();
         assert_eq!(err.stable_code(), "BadVersion");
+    }
+
+    #[test]
+    fn relay_auth_replay_state_fails_closed_at_capacity() {
+        let key = "sender-key";
+        let mut verifier = RelayAuthVerifier::for_chain(120_000, "trnm-mainnet");
+        for seq in 1..=MAX_RELAY_REPLAY_ENTRIES {
+            let env = sample_env(
+                seq as u64,
+                &format!("nonce-capacity-{seq}"),
+                1_730_000_000_000 + seq as u128,
+                key,
+            );
+            verifier
+                .verify(&env, 1_730_000_000_050 + seq as u128, |e| {
+                    e.sign_for_test(key) == e.sig
+                })
+                .expect("entry below replay capacity should verify");
+        }
+        let env = sample_env(
+            (MAX_RELAY_REPLAY_ENTRIES + 1) as u64,
+            "nonce-capacity-overflow",
+            1_730_100_000_000,
+            key,
+        );
+        let err = verifier
+            .verify(&env, 1_730_100_000_050, |e| e.sign_for_test(key) == e.sig)
+            .unwrap_err();
+        assert_eq!(err.stable_code(), "ReplayStateCapacityExceeded");
     }
 
     #[test]
