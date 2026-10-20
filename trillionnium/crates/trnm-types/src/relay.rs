@@ -287,7 +287,7 @@ impl std::error::Error for RelayAuthError {}
 #[derive(Debug, Clone)]
 const MAX_RELAY_REPLAY_ENTRIES: usize = 100_000;
 const MAX_RELAY_TEXT_FIELD_BYTES: usize = 256;
-const MAX_RELAY_PAYLOAD_BYTES: usize = 1024 * 1024;
+const MAX_RELAY_PAYLOAD_BYTES: usize = 2 * 1024 * 1024;
 
 pub struct RelayAuthVerifier {
     max_skew_ms: u128,
