@@ -85,7 +85,7 @@ pub(crate) fn process_submission_record(
         return Ok(FlushRecordOutcome::Skipped);
     };
 
-    if is_task_acked(ack_log, rec.task_id) {
+    if is_task_acked(ack_log, rec.task_id)? {
         acked.insert(rec.task_id);
         append_progress(
             progress_log,
@@ -160,9 +160,9 @@ pub(crate) fn process_submission_record(
     );
 
     let (ack_status, reason_code, ack_reason) =
-        classify_flush_ack(&commit_res, &reveal_res, ack_log, rec.task_id);
+        classify_flush_ack(&commit_res, &reveal_res, ack_log, rec.task_id)?;
 
-    let previous_ack_hashes = persisted_ack_hashes_for_task(ack_log, rec.task_id);
+    let previous_ack_hashes = persisted_ack_hashes_for_task(ack_log, rec.task_id)?;
     let previous_commit_tx_hash = previous_ack_hashes.commit_tx_hash;
     let previous_reveal_tx_hash = previous_ack_hashes.reveal_tx_hash;
 
@@ -330,8 +330,8 @@ fn classify_flush_ack(
     reveal_res: &AdapterExecResult,
     ack_log: &std::path::Path,
     task_id: u64,
-) -> (&'static str, &'static str, String) {
-    let previous_ack_hashes = persisted_ack_hashes_for_task(ack_log, task_id);
+) -> Result<(&'static str, &'static str, String)> {
+    let previous_ack_hashes = persisted_ack_hashes_for_task(ack_log, task_id)?;
     let previous_commit_tx_hash = previous_ack_hashes.commit_tx_hash;
     let previous_reveal_tx_hash = previous_ack_hashes.reveal_tx_hash;
     let observed_commit_tx_hash = normalize_adapter_tx_hash(commit_res.tx_hash.as_deref());
@@ -351,7 +351,7 @@ fn classify_flush_ack(
         reveal_res.rc,
     );
 
-    if commit_idempotent_ok && reveal_idempotent_ok && commit_hash_observed && reveal_hash_observed
+    Ok(if commit_idempotent_ok && reveal_idempotent_ok && commit_hash_observed && reveal_hash_observed
     {
         (
             "accepted",
@@ -403,7 +403,7 @@ fn classify_flush_ack(
                 commit_res.rc, reveal_res.rc
             ),
         )
-    }
+    })
 }
 
 #[cfg(test)]
@@ -426,7 +426,7 @@ mod tests {
             terminal: false,
         };
         let (status, reason, _) =
-            classify_flush_ack(&commit, &reveal, &std::path::PathBuf::from("/tmp"), 1);
+            classify_flush_ack(&commit, &reveal, &std::path::PathBuf::from("/tmp"), 1).expect("valid ack log");
         assert_eq!(status, "rejected");
         assert_eq!(reason, "commit_rejected_skip_reveal");
     }
@@ -446,7 +446,7 @@ mod tests {
             terminal: true,
         };
         let (status, reason, _) =
-            classify_flush_ack(&commit, &reveal, &std::path::PathBuf::from("/tmp"), 1);
+            classify_flush_ack(&commit, &reveal, &std::path::PathBuf::from("/tmp"), 1).expect("valid ack log");
         assert_eq!(status, "accepted");
         assert_eq!(reason, "idempotent_ok");
     }
@@ -467,7 +467,7 @@ mod tests {
         };
 
         let (status, reason, _) =
-            classify_flush_ack(&commit, &reveal, &std::path::PathBuf::from("/tmp"), 81);
+            classify_flush_ack(&commit, &reveal, &std::path::PathBuf::from("/tmp"), 81).expect("valid ack log");
         assert_eq!(status, "failed");
         assert_eq!(reason, "missing_tx_hash_receipt");
     }
@@ -506,7 +506,7 @@ mod tests {
             terminal: true,
         };
 
-        let (status, reason, _) = classify_flush_ack(&commit, &reveal, &ack_log, 82);
+        let (status, reason, _) = classify_flush_ack(&commit, &reveal, &ack_log, 82).expect("valid ack log");
         assert_eq!(status, "failed");
         assert_eq!(reason, "missing_tx_hash_receipt");
 
@@ -547,7 +547,7 @@ mod tests {
             terminal: true,
         };
 
-        let (status, reason, _) = classify_flush_ack(&commit, &reveal, &ack_log, 83);
+        let (status, reason, _) = classify_flush_ack(&commit, &reveal, &ack_log, 83).expect("valid ack log");
         assert_eq!(status, "failed");
         assert_eq!(reason, "missing_tx_hash_receipt");
 
@@ -587,7 +587,7 @@ mod tests {
             terminal: true,
         };
 
-        let (status, reason, detail) = classify_flush_ack(&commit, &reveal, &ack_log, 84);
+        let (status, reason, detail) = classify_flush_ack(&commit, &reveal, &ack_log, 84).expect("valid ack log");
         assert_eq!(status, "accepted");
         assert_eq!(reason, "idempotent_ok");
         assert!(detail.contains("commit_rc="));
@@ -707,7 +707,7 @@ mod tests {
             terminal: true,
         };
 
-        let (status, reason, _) = classify_flush_ack(&commit, &reveal, &ack_log, 84);
+        let (status, reason, _) = classify_flush_ack(&commit, &reveal, &ack_log, 84).expect("valid ack log");
         assert_eq!(status, "failed");
         assert_eq!(reason, "missing_tx_hash_receipt");
 

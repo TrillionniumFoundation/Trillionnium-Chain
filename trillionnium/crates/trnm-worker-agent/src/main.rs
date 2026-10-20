@@ -59,6 +59,11 @@ pub(crate) const PROOF_ADAPTER_ENV: &str = "TRNM_PROOF_ADAPTER";
 pub(crate) const WORKER_EVENT_LOG_ENV: &str = "TRNM_WORKER_EVENT_LOG";
 pub(crate) const WORKER_PROGRESS_LOG_ENV: &str = "TRNM_WORKER_PROGRESS_LOG";
 
+const MAX_ACK_LOG_BYTES: u64 = 64 * 1024 * 1024;
+const MAX_ACK_RECORDS: usize = 100_000;
+const MAX_INGRESS_LOG_BYTES: u64 = 64 * 1024 * 1024;
+const MAX_INGRESS_RECORDS: usize = 100_000;
+
 const RC_OK: i32 = 0;
 const RC_DUPLICATE: i32 = 9;
 const RC_NONCE_REJECTED: i32 = 10;
@@ -274,27 +279,36 @@ pub(crate) fn append_submission(
     append_json_line(submit_log, &line)
 }
 
-fn load_ack_records(ack_log: &Path) -> Vec<AckRecord> {
+fn load_ack_records(ack_log: &Path) -> Result<Vec<AckRecord>> {
     if !ack_log.exists() {
-        return vec![];
+        return Ok(vec![]);
     }
-    fs::read_to_string(ack_log)
-        .ok()
-        .map(|raw| {
-            raw.lines()
-                .filter(|l| !l.trim().is_empty())
-                .filter_map(|line| serde_json::from_str::<AckRecord>(line).ok())
-                .collect()
-        })
-        .unwrap_or_default()
+    let size = fs::metadata(ack_log)?.len();
+    anyhow::ensure!(
+        size <= MAX_ACK_LOG_BYTES,
+        "ack log exceeds bounded replay size: {} bytes > {}",
+        size,
+        MAX_ACK_LOG_BYTES
+    );
+    let raw = fs::read_to_string(ack_log)?;
+    let mut records = Vec::new();
+    for line in raw.lines().filter(|l| !l.trim().is_empty()) {
+        anyhow::ensure!(
+            records.len() < MAX_ACK_RECORDS,
+            "ack log exceeds bounded record count: {}",
+            MAX_ACK_RECORDS
+        );
+        records.push(serde_json::from_str::<AckRecord>(line)?);
+    }
+    Ok(records)
 }
 
-pub(crate) fn load_acked(ack_log: &Path) -> HashSet<u64> {
-    load_ack_records(ack_log)
+pub(crate) fn load_acked(ack_log: &Path) -> Result<HashSet<u64>> {
+    Ok(load_ack_records(ack_log)?
         .into_iter()
         .filter(|rec| rec.status == "accepted")
         .map(|rec| rec.task_id)
-        .collect()
+        .collect())
 }
 
 pub(crate) struct TaskExecutionLock {
@@ -334,30 +348,53 @@ pub(crate) fn try_acquire_task_lock(
     }
 }
 
-pub(crate) fn is_task_acked(ack_log: &Path, task_id: u64) -> bool {
-    load_acked(ack_log).contains(&task_id)
+pub(crate) fn is_task_acked(ack_log: &Path, task_id: u64) -> Result<bool> {
+    Ok(load_acked(ack_log)?.contains(&task_id))
 }
 
 pub(crate) fn load_ingress_records(path: &PathBuf) -> Result<Vec<MessageIngressRecord>> {
     if !path.exists() {
         return Ok(vec![]);
     }
+    let size = fs::metadata(path)?.len();
+    anyhow::ensure!(
+        size <= MAX_INGRESS_LOG_BYTES,
+        "ingress log exceeds bounded replay size: {} bytes > {}",
+        size,
+        MAX_INGRESS_LOG_BYTES
+    );
     let raw = fs::read_to_string(path)?;
-    Ok(raw
-        .lines()
-        .filter(|l| !l.trim().is_empty())
-        .filter_map(|l| serde_json::from_str::<MessageIngressRecord>(l).ok())
-        .collect())
+    let mut records = Vec::new();
+    for line in raw.lines().filter(|l| !l.trim().is_empty()) {
+        anyhow::ensure!(
+            records.len() < MAX_INGRESS_RECORDS,
+            "ingress log exceeds bounded record count: {}",
+            MAX_INGRESS_RECORDS
+        );
+        records.push(serde_json::from_str::<MessageIngressRecord>(line)?);
+    }
+    Ok(records)
 }
 
 pub(crate) fn save_ingress_records(path: &PathBuf, records: &[MessageIngressRecord]) -> Result<()> {
-    if let Some(parent) = path.parent() {
-        fs::create_dir_all(parent)?;
-    }
+    anyhow::ensure!(
+        records.len() <= MAX_INGRESS_RECORDS,
+        "ingress log exceeds bounded record count: {}",
+        MAX_INGRESS_RECORDS
+    );
     let mut out = String::new();
     for rec in records {
         out.push_str(&serde_json::to_string(rec)?);
         out.push('\n');
+        anyhow::ensure!(
+            out.len() as u64 <= MAX_INGRESS_LOG_BYTES,
+            "ingress log exceeds bounded replay size: {} bytes > {}",
+            out.len(),
+            MAX_INGRESS_LOG_BYTES
+        );
+    }
+    if let Some(parent) = path.parent() {
+        fs::create_dir_all(parent)?;
     }
     fs::write(path, out)?;
     Ok(())
@@ -819,13 +856,16 @@ fn normalize_persisted_tx_hash(hash: Option<String>) -> Option<String> {
     })
 }
 
-pub(crate) fn persisted_ack_hashes_for_task(ack_log: &Path, task_id: u64) -> PersistedAckHashes {
+pub(crate) fn persisted_ack_hashes_for_task(
+    ack_log: &Path,
+    task_id: u64,
+) -> Result<PersistedAckHashes> {
     let mut hashes = PersistedAckHashes {
         commit_tx_hash: None,
         reveal_tx_hash: None,
     };
 
-    for ack in load_ack_records(ack_log).into_iter().rev() {
+    for ack in load_ack_records(ack_log)?.into_iter().rev() {
         if ack.task_id != task_id {
             continue;
         }
@@ -840,7 +880,7 @@ pub(crate) fn persisted_ack_hashes_for_task(ack_log: &Path, task_id: u64) -> Per
         }
     }
 
-    hashes
+    Ok(hashes)
 }
 
 fn backoff_delay_ms(base_ms: u64, attempt: u32) -> u64 {

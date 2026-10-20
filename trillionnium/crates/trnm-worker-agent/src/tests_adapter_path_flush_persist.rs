@@ -30,7 +30,7 @@ fn persisted_ack_hashes_for_task_merges_hashes_across_failed_resume_attempts() {
     )
     .expect("write second ack");
 
-    let hashes = persisted_ack_hashes_for_task(&ack_log, 77);
+    let hashes = persisted_ack_hashes_for_task(&ack_log, 77).expect("valid ack log");
     assert_eq!(hashes.commit_tx_hash.as_deref(), Some("commit-old"));
     assert_eq!(hashes.reveal_tx_hash.as_deref(), Some("reveal-new"));
 
@@ -67,7 +67,7 @@ fn persisted_ack_hashes_for_task_ignores_blank_wrapped_hash_entries() {
     )
     .expect("write recovery ack");
 
-    let hashes = persisted_ack_hashes_for_task(&ack_log, 78);
+    let hashes = persisted_ack_hashes_for_task(&ack_log, 78).expect("valid ack log");
     assert_eq!(hashes.commit_tx_hash.as_deref(), Some("commit-new"));
     assert_eq!(hashes.reveal_tx_hash.as_deref(), Some("reveal-new"));
 
