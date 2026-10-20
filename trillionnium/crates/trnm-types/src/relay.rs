@@ -177,6 +177,14 @@ pub enum RelayAuthError {
     MissingRequiredField {
         field: &'static str,
     },
+    ChainMismatch {
+        expected: String,
+        got: String,
+    },
+    ReplayStateCapacityExceeded,
+    OversizedField {
+        field: &'static str,
+    },
 }
 
 impl RelayAuthError {
@@ -284,7 +292,6 @@ impl fmt::Display for RelayAuthError {
 
 impl std::error::Error for RelayAuthError {}
 
-#[derive(Debug, Clone)]
 const MAX_RELAY_REPLAY_ENTRIES: usize = 100_000;
 const MAX_RELAY_TEXT_FIELD_BYTES: usize = 256;
 const MAX_RELAY_PAYLOAD_BYTES: usize = 2 * 1024 * 1024;
