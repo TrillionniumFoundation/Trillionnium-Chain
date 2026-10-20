@@ -684,6 +684,131 @@ fn execution_preview_checks_bilateral_receipt_and_preserves_durable_rows() {
     );
 }
 
+fn assert_zero_block_successor_is_rejected(empty: bool) {
+    let harness = Harness::new();
+    let store = harness.open();
+    let before = store.fresh_readback().unwrap();
+    let state = store.state().unwrap();
+    let bytes = fs::read(&harness.path).unwrap();
+    let mut execution = harness.execution(9, h(900), 10);
+    execution.order_block_id = Hash32V1([0; 32]);
+    let command = ConsumptionSettlementCommandV1::AdmitReceipt {
+        receipt: harness.receipt(None, 10, 100),
+    };
+    let commands = if empty {
+        &[][..]
+    } else {
+        std::slice::from_ref(&command)
+    };
+    assert_eq!(
+        store
+            .preview_before_vote_v1(&before, 10, execution.order_block_id, commands)
+            .unwrap_err()
+            .code(),
+        ConsumptionSettlementErrorCodeV1::InvalidContext
+    );
+    for _ in 0..2 {
+        let result = if empty {
+            store
+                .advance_empty_committed_execution_v1(&execution)
+                .map(|_| ())
+        } else {
+            store
+                .execute_committed_execution(&execution, &command)
+                .map(|_| ())
+        };
+        assert_eq!(
+            result
+                .expect_err("zero successor block ID must match preview refusal")
+                .code(),
+            ConsumptionSettlementErrorCodeV1::InvalidContext
+        );
+        assert_eq!(store.fresh_readback().unwrap(), before);
+        assert_eq!(store.state().unwrap(), state);
+        assert_eq!(fs::read(&harness.path).unwrap(), bytes);
+    }
+    drop(store);
+    let reopened = ConsumptionSettlementStoreV1::open_existing(harness.config()).unwrap();
+    assert_eq!(reopened.fresh_readback().unwrap(), before);
+    assert_eq!(reopened.state().unwrap(), state);
+    assert_eq!(fs::read(&harness.path).unwrap(), bytes);
+
+    let cold_result = if empty {
+        reopened
+            .advance_empty_committed_execution_v1(&execution)
+            .map(|_| ())
+    } else {
+        reopened
+            .execute_committed_execution(&execution, &command)
+            .map(|_| ())
+    };
+    assert_eq!(
+        cold_result.unwrap_err().code(),
+        ConsumptionSettlementErrorCodeV1::InvalidContext
+    );
+    assert_eq!(reopened.fresh_readback().unwrap(), before);
+    assert_eq!(reopened.state().unwrap(), state);
+    assert_eq!(fs::read(&harness.path).unwrap(), bytes);
+
+    // Refusing an invalid target must not prevent its corrected successor.
+    execution.order_block_id = h(1_010);
+    let preview = reopened
+        .preview_before_vote_v1(&before, 10, execution.order_block_id, commands)
+        .unwrap();
+    if empty {
+        reopened
+            .advance_empty_committed_execution_v1(&execution)
+            .unwrap();
+    } else {
+        reopened
+            .execute_committed_execution(&execution, &command)
+            .unwrap();
+    }
+    assert_eq!(
+        reopened.fresh_readback().unwrap().durable_state_root(),
+        preview.candidate_post_state_root()
+    );
+}
+
+#[test]
+fn zero_block_successor_command_rejects_atomically_like_preview() {
+    assert_zero_block_successor_is_rejected(false);
+}
+
+#[test]
+fn zero_block_successor_empty_rejects_atomically_like_preview() {
+    assert_zero_block_successor_is_rejected(true);
+}
+
+#[test]
+fn zero_genesis_block_retains_same_block_command_and_cold_replay() {
+    let mut harness = Harness::new();
+    harness.trust.initial_order_block_id = Hash32V1([0; 32]);
+    let store = harness.open();
+    let mut execution = harness.execution(9, Hash32V1([0; 32]), 9);
+    execution.order_block_id = Hash32V1([0; 32]);
+    let command = ConsumptionSettlementCommandV1::AdmitReceipt {
+        receipt: harness.receipt(None, 9, 100),
+    };
+    let outcome = store
+        .execute_committed_execution(&execution, &command)
+        .unwrap();
+    assert!(!outcome.is_replay());
+    let before = store.fresh_readback().unwrap();
+    let state = store.state().unwrap();
+    let bytes = fs::read(&harness.path).unwrap();
+    drop(store);
+    let reopened = ConsumptionSettlementStoreV1::open_existing(harness.config()).unwrap();
+    let replay = reopened
+        .execute_committed_execution(&execution, &command)
+        .unwrap();
+    assert!(replay.is_replay());
+    assert_eq!(replay.receipt(), outcome.receipt());
+    assert_eq!(reopened.fresh_readback().unwrap(), before);
+    assert_eq!(reopened.state().unwrap(), state);
+    assert_eq!(fs::read(&harness.path).unwrap(), bytes);
+}
+
 #[test]
 fn execution_preview_rejects_unrepresentable_height_without_changing_cold_state() {
     let mut harness = Harness::new();

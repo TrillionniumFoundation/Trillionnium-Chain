@@ -118,3 +118,11 @@ serialize to one commit and one stale-parent rejection. Cold audit, exact retrie
 and the single durable operation are checked. The rendezvous is test-only and
 time-bounded. This qualifies that schedule, not arbitrary concurrent entry,
 process death, power loss, or an authoritative chain integration.
+
+New successor-block admission rejects an all-zero block ID in both empty advances
+and command execution, matching the existing read-only preview rule. Rejection
+leaves the head, state and database bytes unchanged, so a corrected nonzero target
+can be retried. This admission-only check does not rewrite historical zero-ID
+markers or change cold audit, exact retry, or genesis/same-block semantics. Tests
+retain canonical historical empty and nonempty zero-ID successors and a zero-ID
+genesis anchor. Stored schemas and signed domains are unchanged.

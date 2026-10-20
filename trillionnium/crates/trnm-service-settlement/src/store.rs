@@ -1322,10 +1322,13 @@ fn advance_committed_block_marker(
     ) != (tail.order_height, tail.order_block_id)
         || tail.order_height.checked_add(1) != Some(execution.order_height)
         || execution.order_block_id == tail.order_block_id
+        // Match candidate preview admission without rewriting historical zero-ID
+        // markers or changing exact replay and same-block extension semantics.
+        || execution.order_block_id == Hash32V1([0; 32])
     {
         return Err(error(
             ConsumptionSettlementErrorCodeV1::InvalidContext,
-            "committed-block marker target is not the direct Order successor",
+            "committed-block marker target is not a valid direct Order successor",
         ));
     }
     insert_committed_block_marker(
@@ -2211,6 +2214,155 @@ mod snapshot_tests {
                 );
             }
             ConsumptionSettlementStoreV1::open_existing(config).unwrap();
+        }
+    }
+
+    #[test]
+    fn legacy_zero_block_successor_reopens_and_replays_without_repair() {
+        for empty in [true, false] {
+            let harness = crate::tests::Harness::new();
+            let config = harness.config();
+            let store = ConsumptionSettlementStoreV1::open(config.clone()).unwrap();
+            let before = store.fresh_readback().unwrap();
+            let source = store.state().unwrap();
+            let mut execution = harness.execution(9, before.order_block_id(), 10);
+            execution.order_block_id = Hash32V1([0; 32]);
+            let command = ConsumptionSettlementCommandV1::AdmitReceipt {
+                receipt: harness.receipt(None, 10, 100),
+            };
+            drop(store);
+
+            // Reproduce the prior implementation's canonical durable history
+            // with unchanged row/checksum writers, bypassing only new admission.
+            // No production API creates or repairs this historical fixture.
+            let mut connection = open_rw(&config.path, false).unwrap();
+            let transaction = connection
+                .transaction_with_behavior(TransactionBehavior::Immediate)
+                .unwrap();
+            let (state, receipt) = if empty {
+                (source, None)
+            } else {
+                let (state, settlement_id) =
+                    apply_transition(&config.trust_bundle, &source, 10, &command).unwrap();
+                let receipt = ConsumptionTransitionReceiptV1 {
+                    schema_version: SCHEMA_VERSION_V1,
+                    store_id: config.store_id,
+                    sequence: 1,
+                    operation_id: operation_id(&command).unwrap(),
+                    operation_kind: command.operation_kind(),
+                    order_height: execution.order_height,
+                    order_block_id: execution.order_block_id,
+                    post_state_root: state_root(&state).unwrap(),
+                    settlement_id,
+                };
+                insert_operation(
+                    &transaction,
+                    1,
+                    receipt.operation_id,
+                    &canonical_bytes(&execution).unwrap(),
+                    &canonical_bytes(&command).unwrap(),
+                    &receipt,
+                )
+                .unwrap();
+                (state, Some(receipt))
+            };
+            let sequence = u64::from(!empty);
+            let journal_root = operation_journal_root(&transaction).unwrap();
+            insert_committed_block_marker(
+                &transaction,
+                &config,
+                CommittedBlockMarkerV1 {
+                    marker_sequence: 1,
+                    order_height: 10,
+                    order_block_id: execution.order_block_id,
+                    parent_order_height: before.order_height(),
+                    parent_order_block_id: before.order_block_id(),
+                    source_operation_sequence: 0,
+                    target_operation_sequence: sequence,
+                    source_state_root: before.durable_state_root(),
+                    target_state_root: state_root(&state).unwrap(),
+                    source_operation_root: before.durable_journal_root(),
+                    target_operation_root: journal_root,
+                    previous_marker_checksum: before.durable_committed_block_root(),
+                    checksum: Hash32V1([0; 32]),
+                },
+            )
+            .unwrap();
+            write_metadata(
+                &transaction,
+                &config,
+                sequence,
+                10,
+                execution.order_block_id,
+                &state,
+                journal_root,
+                false,
+            )
+            .unwrap();
+            transaction.commit().unwrap();
+            drop(connection);
+
+            let bytes = fs::read(&config.path).unwrap();
+            let mut expected_head = None;
+            for _ in 0..2 {
+                let reopened = ConsumptionSettlementStoreV1::open_existing(config.clone()).unwrap();
+                let head = reopened.fresh_readback().unwrap();
+                assert_eq!(head.order_block_id(), Hash32V1([0; 32]));
+                assert_eq!(head.sequence(), sequence);
+                assert_eq!(reopened.state().unwrap(), state);
+                if let Some(expected) = &expected_head {
+                    assert_eq!(&head, expected);
+                }
+                if empty {
+                    assert_eq!(
+                        reopened
+                            .advance_empty_committed_execution_v1(&execution)
+                            .unwrap(),
+                        head
+                    );
+                } else {
+                    let replay = reopened
+                        .execute_committed_execution(&execution, &command)
+                        .unwrap();
+                    assert!(replay.is_replay());
+                    assert_eq!(Some(replay.receipt()), receipt.as_ref());
+                }
+                expected_head = Some(head);
+                assert_eq!(fs::read(&config.path).unwrap(), bytes);
+            }
+            if !empty {
+                // A historical nonempty block may still receive its ordinary
+                // same-block extension; only a new successor is newly refused.
+                let reopened = ConsumptionSettlementStoreV1::open_existing(config.clone()).unwrap();
+                let same_block = ConsumptionCommittedExecutionContextV1 {
+                    expected_order_height: execution.order_height,
+                    expected_order_block_id: execution.order_block_id,
+                    ..execution.clone()
+                };
+                let rollup = ConsumptionSettlementCommandV1::AdmitRollup {
+                    rollup: harness.rollup(&state, 10),
+                    receipts: state
+                        .receipts
+                        .iter()
+                        .map(|entry| entry.receipt.clone())
+                        .collect(),
+                };
+                let outcome = reopened
+                    .execute_committed_execution(&same_block, &rollup)
+                    .unwrap();
+                assert!(!outcome.is_replay());
+                let extended = reopened.fresh_readback().unwrap();
+                assert_eq!(extended.sequence(), 2);
+                assert_eq!(extended.order_block_id(), execution.order_block_id);
+                drop(reopened);
+                let cold = ConsumptionSettlementStoreV1::open_existing(config.clone()).unwrap();
+                assert_eq!(cold.fresh_readback().unwrap(), extended);
+                let retry = cold
+                    .execute_committed_execution(&same_block, &rollup)
+                    .unwrap();
+                assert!(retry.is_replay());
+                assert_eq!(retry.receipt(), outcome.receipt());
+            }
         }
     }
 
