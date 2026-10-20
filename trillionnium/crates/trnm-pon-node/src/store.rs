@@ -2176,13 +2176,34 @@ impl Node {
         let progress = control.progress;
         progress(ExecutionProgress::BeforeParentBinding)?;
         let parent = block.parent_id;
-        let prior = self.cached_parent(parent)?;
+        let parent_measurement = (self.state_backend == StateBackend::AuthenticatedV1).then(|| {
+            self.authenticated_arithmetic
+                .history
+                .observe(native_authenticated::HistoryStage::ExecutionParentBinding)
+        });
+        let active_prior = self.cached_parent(parent)?;
+        let current_root = self.record(parent)?.root;
+        // Ordinary history import may execute several admitted parents before
+        // activating the page tip. Full state_at already offered their bounded
+        // opaque arithmetic, but an inactive parent cannot use the active slot.
+        // The fresh SQL root above is only an index: check_and_bind still
+        // canonically compares every actual State key/value and verifies its
+        // computed root. An incoming header root or stored validity is no answer.
+        let historical_prior = (self.state_backend == StateBackend::AuthenticatedV1
+            && active_prior.is_none())
+        .then(|| {
+            self.historical_commitment_cache
+                .try_borrow()
+                .ok()
+                .and_then(|cache| cache.candidate(parent, current_root))
+        })
+        .flatten();
         // Always encode/compare the actual supplied parent with its admitted root.
-        // This also explicitly reseeds unknown/inactive/fork contexts.
+        // Missing/refused/wrong material retains the original complete fallback.
         let (bound, observation) = pon_commitment::CheckedExecutionParent::check_and_bind(
             actual,
-            self.record(parent)?.root,
-            prior.as_ref(),
+            current_root,
+            active_prior.as_ref().or(historical_prior.as_ref()),
             CacheLimits::default(),
         )
         .map_err(|error| {
@@ -2193,6 +2214,14 @@ impl Node {
                 Error::from(error).local_integrity()
             }
         })?;
+        if self.state_backend == StateBackend::AuthenticatedV1 {
+            self.authenticated_arithmetic.history.parent_binding(
+                active_prior.is_some(),
+                historical_prior.is_some(),
+                observation.method,
+            );
+        }
+        drop(parent_measurement);
         *self.commitment_observation.borrow_mut() = Some(observation);
         let request = || ExecutionRequest {
             transactions: block.transactions,

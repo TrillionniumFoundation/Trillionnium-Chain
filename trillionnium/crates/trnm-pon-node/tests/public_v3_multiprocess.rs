@@ -34,6 +34,35 @@ const ATTACKERS: usize = 24;
 const CALL_CAP: usize = 480;
 const ROUNDS: usize = 3;
 
+struct ClientOperationStamp {
+    started_ns: u64,
+    started: Instant,
+    thread: thread::ThreadId,
+    cpu_ns: Option<u64>,
+}
+impl ClientOperationStamp {
+    fn start(epoch: u64) -> Self {
+        Self {
+            started_ns: support::monotonic().saturating_sub(epoch),
+            started: Instant::now(),
+            thread: thread::current().id(),
+            cpu_ns: support::clock(rustix::time::ClockId::ThreadCPUTime),
+        }
+    }
+    fn finish(self, epoch: u64) -> Value {
+        let cpu_ns = (self.thread == thread::current().id())
+            .then(|| support::clock(rustix::time::ClockId::ThreadCPUTime))
+            .flatten()
+            .zip(self.cpu_ns)
+            .and_then(|(end, start)| end.checked_sub(start));
+        let ended_ns = support::monotonic().saturating_sub(epoch);
+        let wall_ns = u64::try_from(self.started.elapsed().as_nanos()).ok();
+        json!({"started_ns":self.started_ns,"ended_ns":ended_ns,"wall_ns":wall_ns,
+            "thread_cpu_ns":cpu_ns,"thread_cpu_observation_available":cpu_ns.is_some(),
+            "scope":"calling client thread only; excludes scoped execution worker CPU; unknown clock is null; no deadline or acceptance authority"})
+    }
+}
+
 #[derive(Clone, Copy)]
 enum StateBackendChoice {
     LegacyV2,
@@ -596,6 +625,7 @@ fn phase(
     replay(&mut verifier, seed);
     let initial = receiver.read_active().unwrap();
     let native_history_before = receiver.native_history_arithmetic_observation();
+    let client_native_history_before = verifier.native_history_arithmetic_observation();
     let owner = Arc::new(Mutex::new(receiver));
     let listener = TcpListener::bind("127.0.0.1:0").unwrap();
     let address = listener.local_addr().unwrap();
@@ -732,7 +762,7 @@ fn phase(
             let transaction = hash(b"tx-id", &[&business[round * 7].transactions[0]]);
             let mut observation = None;
             while next == final_index && support::monotonic() < end && history.len() < 64 {
-                let row = support::call(
+                let mut row = support::call(
                     address,
                     settings,
                     Request::History {
@@ -744,6 +774,7 @@ fn phase(
                     end,
                 );
                 if support::on_time(&row) {
+                    let import_stamp = ClientOperationStamp::start(epoch);
                     let imported =
                         serde_json::from_value::<ingress::Page>(row["response"]["value"].clone())
                             .map_err(|e| e.to_string())
@@ -757,12 +788,23 @@ fn phase(
                                 )
                                 .map_err(|e| e.to_string())
                             });
+                    row["client_import"] = import_stamp.finish(epoch);
+                    row["client_import"]["operation"] = json!(
+                        "deserialize Page and ordinary receive_page, including activation only on the original complete page"
+                    );
+                    row["client_import"]["succeeded"] = json!(imported.is_ok());
                     match imported {
                         Ok(next_after) => after = next_after,
                         Err(error) => errors.push(error),
                     }
                     if after == tip {
-                        match verifier.confirmation(transaction, included, support::now()) {
+                        let confirmation_stamp = ClientOperationStamp::start(epoch);
+                        let result = verifier.confirmation(transaction, included, support::now());
+                        row["client_confirmation"] = confirmation_stamp.finish(epoch);
+                        row["client_confirmation"]["operation"] =
+                            json!("ordinary verifier confirmation after the original complete-page activation");
+                        row["client_confirmation"]["succeeded"] = json!(result.is_ok());
+                        match result {
                             Ok(value) => observation = Some(value),
                             Err(e) => errors.push(e.to_string()),
                         }
@@ -815,6 +857,7 @@ fn phase(
         .lock()
         .ok()
         .map(|node| node.native_history_arithmetic_observation());
+    let client_native_history_after = verifier.native_history_arithmetic_observation();
     let captured = observer.snapshot();
     let budget_samples = samples.lock().unwrap().clone();
     let depletion_meter = budget_samples
@@ -908,7 +951,7 @@ fn phase(
                     .iter()
                     .all(|row| row["receiver_hostile_work_rejected_during_round"] == true)
                 && attack_calls.iter().all(|row| row["status"] != "ok")));
-    json!({"mode":mode.unwrap_or("baseline"),"state_backend":state_backend.label(),"address":address.to_string(),"duration_seconds":WINDOW_SECONDS,
+    let mut report = json!({"mode":mode.unwrap_or("baseline"),"state_backend":state_backend.label(),"address":address.to_string(),"duration_seconds":WINDOW_SECONDS,
         "attacker_processes_requested":if mode.is_some(){ATTACKERS}else{0},"attacker_processes_ready":ready_count,
         "depletion_at_ns":depletion_at,"depletion_meter":depletion_meter,"genuine_budget_depletion_observed":depletion_at.is_some(),"business_started_ns":business_started,
         "receiver_and_verifier_setup_cpu_ns":receiver_and_verifier_setup_cpu_ns,"receiver_and_verifier_setup_wall_ns":receiver_and_verifier_setup_wall_ns,
@@ -923,7 +966,11 @@ fn phase(
         "final_actual_flow":domain.observe_actual_flow().ok().flatten(),
         "receiver_client_state_equal":actual.0==checked.0&&actual.2==checked.2,
         "initial_tip":hex::encode(initial.0),"final_receiver_tip":hex::encode(actual.0),"final_client_tip":hex::encode(checked.0),
-        "whole_parent_phase_cpu_ns":support::elapsed_cpu(whole_cpu),"whole_parent_phase_wall_ns":whole_started.elapsed().as_nanos(),"rss":support::rss()})
+        "whole_parent_phase_cpu_ns":support::elapsed_cpu(whole_cpu),"whole_parent_phase_wall_ns":whole_started.elapsed().as_nanos(),"rss":support::rss()});
+    report["client_native_history_arithmetic_before"] = client_native_history_before;
+    report["client_native_history_arithmetic_after"] = client_native_history_after;
+    report["client_observation_scope"] = json!("bounded by the original 64 history calls; import includes complete-page activation, confirmation is separate; native snapshots exclude setup and final read_active; nested costs are not additive");
+    report
 }
 
 #[test]

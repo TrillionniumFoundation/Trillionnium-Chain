@@ -139,6 +139,11 @@ struct Counters {
     delta_payload_bytes_observed: u64,
     delta_leaf_hits: u64,
     delta_leaf_computations: u64,
+    execution_parent_active_candidates: u64,
+    execution_parent_historical_candidates: u64,
+    execution_parent_checked_apply: u64,
+    execution_parent_rebuilt_tree: u64,
+    execution_parent_full_root: u64,
 }
 
 #[derive(Default)]
@@ -154,6 +159,37 @@ impl HistoryArithmetic {
         let mut counters = self.counters.get();
         action(&mut counters);
         self.counters.set(counters);
+    }
+    pub(crate) fn parent_binding(
+        &self,
+        active: bool,
+        historical: bool,
+        method: trnm_mvcc_fee::pon_commitment::CommitmentMethod,
+    ) {
+        use trnm_mvcc_fee::pon_commitment::CommitmentMethod;
+        // Successful complete actual-state bindings only; a selected candidate
+        // is arithmetic, never an admission or retained SQL validity verdict.
+        self.count(|c| {
+            c.execution_parent_active_candidates = c
+                .execution_parent_active_candidates
+                .saturating_add(u64::from(active));
+            c.execution_parent_historical_candidates = c
+                .execution_parent_historical_candidates
+                .saturating_add(u64::from(historical));
+            match method {
+                CommitmentMethod::CheckedApply => {
+                    c.execution_parent_checked_apply =
+                        c.execution_parent_checked_apply.saturating_add(1);
+                }
+                CommitmentMethod::RebuiltTree => {
+                    c.execution_parent_rebuilt_tree =
+                        c.execution_parent_rebuilt_tree.saturating_add(1);
+                }
+                CommitmentMethod::FullRoot(_) => {
+                    c.execution_parent_full_root = c.execution_parent_full_root.saturating_add(1);
+                }
+            }
+        });
     }
     pub(super) fn record(&self, settings: &Settings, block: Hash, bytes: &[u8]) -> Option<Record> {
         self.count(|c| {
@@ -361,7 +397,7 @@ impl DeltaPass<'_> {
     }
 }
 
-const STAGES: usize = 14;
+const STAGES: usize = 16;
 const STAGE_NAMES: [&str; STAGES] = [
     "record",
     "packet",
@@ -377,6 +413,8 @@ const STAGE_NAMES: [&str; STAGES] = [
     "complete_commitment",
     "complete_state_root",
     "account_graph",
+    "persisted_state_root",
+    "execution_parent_binding",
 ];
 #[derive(Clone, Copy)]
 pub(crate) enum HistoryStage {
@@ -394,6 +432,8 @@ pub(crate) enum HistoryStage {
     CompleteCommitment,
     CompleteStateRoot,
     AccountGraph,
+    PersistedStateRoot,
+    ExecutionParentBinding,
 }
 #[derive(Clone, Copy, Default, Serialize)]
 struct StageTotals {

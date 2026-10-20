@@ -697,6 +697,250 @@ fn native_successor_material_avoids_cold_readback_but_checks_all_actual_state() 
 }
 
 #[test]
+fn native_inactive_page_parents_use_checked_material_without_early_activation() {
+    let directory = tempfile::tempdir().unwrap();
+    let mut source = open(
+        &directory.path().join("source"),
+        StateBackend::AuthenticatedV1,
+    );
+    let client_path = directory.path().join("client");
+    let mut client = open(&client_path, StateBackend::AuthenticatedV1);
+    let seed = parent_with_full_transaction_block(&mut source);
+    client
+        .admit(&source.packet(seed).unwrap(), 100_000)
+        .unwrap();
+    client.activate(seed).unwrap();
+    let mut packets = Vec::new();
+    let mut tip = seed;
+    for step in 0..7 {
+        let packet = make(
+            &source,
+            tip,
+            vec![transfer(&source.settings, 257 + step, 900 + step)],
+        );
+        tip = source.admit(&packet, 100_000).unwrap();
+        source.activate(tip).unwrap();
+        packets.push(packet);
+    }
+    let before = client.native_history_arithmetic_observation();
+    let mut after = seed;
+    for (index, packet) in packets.iter().enumerate() {
+        let next = packet.id().unwrap();
+        let page = crate::ingress::Page {
+            schema: "pon-native-history-v1".into(),
+            network: hex::encode(client.settings.network()),
+            parameters: hex::encode(client.settings.parameters()),
+            genesis: hex::encode(client.settings.genesis()),
+            tip: hex::encode(tip),
+            after: hex::encode(after),
+            packets: vec![hex::encode(packet.encode().unwrap())],
+            next: hex::encode(next),
+            complete: index == 6,
+        };
+        after = crate::ingress::receive_page(&mut client, page, tip, after, 100_000).unwrap();
+        assert_eq!(after, next);
+        assert_eq!(
+            client.active().unwrap().0,
+            if index == 6 { tip } else { seed }
+        );
+    }
+    let observed = client.native_history_arithmetic_observation();
+    let count = |value: &serde_json::Value, key: &str| value["counters"][key].as_u64().unwrap();
+    assert_eq!(
+        count(&observed, "execution_parent_historical_candidates")
+            - count(&before, "execution_parent_historical_candidates"),
+        6
+    );
+    assert_eq!(
+        count(&observed, "execution_parent_checked_apply")
+            - count(&before, "execution_parent_checked_apply"),
+        7
+    );
+    assert_eq!(
+        count(&observed, "execution_parent_rebuilt_tree"),
+        count(&before, "execution_parent_rebuilt_tree")
+    );
+    let confirmation = client
+        .confirmation(
+            hash(b"tx-id", &[&packets[0].transactions[0]]),
+            packets[0].id().unwrap(),
+            100_000,
+        )
+        .unwrap();
+    assert!(confirmation.confirmed);
+    assert_eq!(confirmation.depth, Some(6));
+    assert!(!confirmation.finalized && !confirmation.execution_authority);
+    let expected = client.read_active().unwrap();
+    let reference = source.read_active().unwrap();
+    assert_eq!(expected.0, reference.0);
+    assert_eq!(expected.2, reference.2);
+    // Generations count local activation operations: one final page activation
+    // intentionally differs from the producer's seven individual activations.
+    assert_eq!(expected.1, 2);
+    assert_eq!(reference.1, 8);
+    drop(client);
+    let client = open(&client_path, StateBackend::AuthenticatedV1);
+    assert_eq!(client.read_active().unwrap(), expected);
+}
+
+#[test]
+fn native_inactive_parent_material_keeps_fresh_sql_state_and_cancellation_checks() {
+    let directory = tempfile::tempdir().unwrap();
+    let mut node = open(directory.path(), StateBackend::AuthenticatedV1);
+    let packet = make(
+        &node,
+        node.settings.genesis(),
+        vec![transfer(&node.settings, 1, 77)],
+    );
+    let parent = node.admit(&packet, 100_000).unwrap();
+    assert_eq!(node.active().unwrap().0, node.settings.genesis());
+    let next = make(&node, parent, vec![transfer(&node.settings, 2, 78)]);
+    let actual = node.state_at(parent).unwrap();
+    let execute = |node: &Node, actual: &State| {
+        node.execute_derived(
+            actual,
+            parent,
+            &next.transactions,
+            next.header.height,
+            public(7),
+            1,
+        )
+    };
+    let expected = execute(&node, &actual).unwrap().output.root;
+    assert_eq!(expected, next.header.state);
+    // Unrelated opaque material is an index miss, not a reason to reject valid
+    // supplied bytes or return the unrelated state. Full binding still succeeds.
+    let unrelated =
+        pon_commitment::derive_snapshot(&node.settings.initial, None, CacheLimits::default())
+            .unwrap();
+    node.historical_commitment_cache
+        .borrow_mut()
+        .retain(parent, unrelated.snapshot.as_ref());
+    assert_eq!(execute(&node, &actual).unwrap().output.root, expected);
+    node.state_at(parent).unwrap();
+    let mut changed = actual.clone();
+    changed.insert("actual-inactive-parent-extra".into(), json!(1));
+    let warm = execute(&node, &changed).unwrap_err();
+    node.historical_commitment_cache.borrow_mut().clear();
+    let cold = execute(&node, &changed).unwrap_err();
+    assert_eq!(warm.to_string(), "ROOT");
+    assert_eq!(warm.to_string(), cold.to_string());
+    assert_eq!(warm.kind(), cold.kind());
+    assert!(warm.requires_owner_stop());
+
+    let external = Connection::open(directory.path().join("native.sqlite")).unwrap();
+    let original_root = node.record(parent).unwrap().root;
+    for storage_class in ["zeroblob(32)", "CAST(zeroblob(32) AS TEXT)"] {
+        node.state_at(parent).unwrap();
+        external
+            .execute(
+                &format!("UPDATE blocks SET state_root={storage_class} WHERE id=?"),
+                [parent.as_slice()],
+            )
+            .unwrap();
+        let warm = execute(&node, &actual).unwrap_err();
+        node.historical_commitment_cache.borrow_mut().clear();
+        let cold = execute(&node, &actual).unwrap_err();
+        assert_eq!(warm.to_string(), cold.to_string());
+        assert_eq!(warm.kind(), cold.kind());
+        assert!(warm.requires_owner_stop());
+        external
+            .execute(
+                "UPDATE blocks SET state_root=? WHERE id=?",
+                params![original_root.as_slice(), parent.as_slice()],
+            )
+            .unwrap();
+    }
+    let account_node = native_authenticated::load(&node.db, parent)
+        .unwrap()
+        .accounts
+        .node
+        .unwrap();
+    let mut damaged_state = actual.clone();
+    damaged_state.insert("externally-added-history-key".into(), json!(1));
+    for (table, column, key_column, key, damaged) in [
+        ("blocks", "parent", "id", parent, vec![99; 32]),
+        (
+            "native_state_commitments",
+            "data",
+            "block",
+            parent,
+            b"{}".to_vec(),
+        ),
+        (
+            "snapshots",
+            "state",
+            "block",
+            parent,
+            canonical(&damaged_state).unwrap(),
+        ),
+        ("archive_nodes", "data", "id", account_node, vec![0]),
+    ] {
+        // Ordinary admission must repeat the real historical SQL/graph checks
+        // before it can use an execution parent's optional arithmetic.
+        node.state_at(parent).unwrap();
+        let original: Vec<u8> = external
+            .query_row(
+                &format!("SELECT {column} FROM {table} WHERE {key_column}=?"),
+                [key.as_slice()],
+                |row| row.get(0),
+            )
+            .unwrap();
+        let update = format!("UPDATE {table} SET {column}=? WHERE {key_column}=?");
+        external
+            .execute(&update, params![damaged, key.as_slice()])
+            .unwrap();
+        let warm = node.admit(&next, 100_000).unwrap_err();
+        node.historical_commitment_cache.borrow_mut().clear();
+        node.authenticated_arithmetic = native_authenticated::ArithmeticCache::default();
+        let cold = node.admit(&next, 100_000).unwrap_err();
+        assert_eq!(warm.to_string(), cold.to_string(), "{table}/{column}");
+        assert_eq!(warm.kind(), cold.kind(), "{table}/{column}");
+        assert!(warm.requires_owner_stop(), "{table}/{column}");
+        external
+            .execute(&update, params![original, key.as_slice()])
+            .unwrap();
+        assert_eq!(node.state_at(parent).unwrap(), actual);
+    }
+    // Both original parent-binding progress points remain fail-closed while
+    // the actual historical material is warm. No durable rows are published.
+    let rows = logical_rows(&node.db);
+    for cut in [0, 1] {
+        node.state_at(parent).unwrap();
+        let calls = AtomicUsize::new(0);
+        let error = node
+            .admit_work_checked_with_progress(
+                WorkCheckedPacket::verify(next.clone()).unwrap(),
+                100_000,
+                &|point| {
+                    if point == ExecutionProgress::BeforeParentBinding
+                        && calls.fetch_add(1, Ordering::SeqCst) == cut
+                    {
+                        Err(Error::new(crate::ErrorCode::FrameDeadline))
+                    } else {
+                        Ok(())
+                    }
+                },
+            )
+            .unwrap_err();
+        assert!(error.is(crate::ErrorCode::FrameDeadline));
+        assert!(!error.requires_owner_stop());
+        assert_eq!(calls.load(Ordering::SeqCst), cut + 1);
+        assert_eq!(logical_rows(&node.db), rows);
+    }
+    let tip = node.admit(&next, 100_000).unwrap();
+    node.activate(tip).unwrap();
+    let active = node.read_active().unwrap();
+    drop(node);
+    assert_eq!(
+        open(directory.path(), StateBackend::AuthenticatedV1)
+            .read_active()
+            .unwrap(),
+        active
+    );
+}
+
+#[test]
 fn controlled_parent_reconstruction_preserves_cancellation_and_complete_retry() {
     for backend in [StateBackend::Legacy, StateBackend::AuthenticatedV1] {
         let dir = tempfile::tempdir().unwrap();

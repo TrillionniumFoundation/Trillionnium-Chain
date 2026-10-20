@@ -533,3 +533,73 @@ must be rerun on this successor source. Local exact-byte and mutation regression
 cannot predict or replace that original-budget result.
 
     cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib store::native_authenticated::arithmetic_cache::root_arithmetic:: -- --test-threads=1
+
+## Ordinary verifier material after the df6 two-of-three baseline
+
+The original-budget campaign on source
+`df6faa814f193c7c6645d53f140612bc3a156416` / tree
+`80fbb9fa4b06b3da9784572634d6e15767ba2e08` exited 101 without an outer
+timeout or cancellation. Its 11,997,334-byte raw report has SHA-256
+`d584d047983daeb5f5ed24489d046a394e3392e533cc0529fb41245dc21dd002`.
+The baseline acknowledged all 21 business blocks with no CPU-budget refusal,
+and the independently importing client reached the receiver's final state/tip.
+The first two depth-six confirmations completed at 11.859364293 and
+22.604274663 seconds, inside the original 30-second window. The third actual
+confirmation completed at 32.613441056 seconds and remains a failure of that
+unchanged window. Baseline therefore improved to two of three; it is not a
+complete passing campaign. Both hostile phases still confirmed zero of three,
+with five and four acknowledged packets respectively.
+
+The complete-root material was used in 21 baseline calculations, all through
+checked apply with no cold fallback. Receiver account-graph verification still
+consumed 2,997,489,777 ns out of 3,110,607,952 ns of complete-state verification.
+These are nested current-thread CPU intervals, not independent additive costs.
+The 21 History network calls consumed only 384,366,531 ns of aggregate wall time.
+The gaps from each final History reply to its round's confirmation completion
+were 4.297006385, 4.623609865 and 4.131588619 seconds. Each gap includes the last
+local import, its original complete-page activation, confirmation and controller
+overhead; the old raw report does not isolate confirmation alone.
+
+The successor removes two measured-path opportunities for duplicate pure tree
+calculation. Ordinary import may admit several inactive parents before activating
+the final page tip. After the original active/slot reads and a fresh parent record
+root read, execution may use the same Node's already bounded historical opaque
+material. The original `check_and_bind` still canonically encodes every actual
+State key/value and compares its calculated root. The block/root pair is only an
+index, and does not replace current SQL, namespace, ancestry, eligibility or
+actual-state checks. Missing, mismatched, unavailable or over-budget material
+uses the original complete calculation. Both original parent-binding progress
+points remain, and no activation is moved to an earlier page.
+
+The root-only persisted-state check also uses the existing bounded opaque
+arithmetic on an exact-byte-cache miss. It does not call complete account
+validation before the original root grammar or alter its error precedence.
+Actual KV and account graph reads, all parent edges, complete row/leaf sets,
+reorganization steps and final transaction checks remain. In particular,
+`resume_intent` retains its final independent full-root comparison before
+publishing the target. There is no new cache or larger retention allowance;
+the previous software charges still do not bound process RSS or remove O(H)
+history reads and O(K) complete-State encoding.
+
+Two appended native stages, `persisted_state_root` and
+`execution_parent_binding`, and successful binding method/candidate counters
+make the actual route observable. The original campaign additionally retains
+client native before/after counters and per-History-row `client_import` and
+`client_confirmation` timing. The import interval includes ordinary complete-page
+activation; confirmation is timed separately. Timing uses monotonic wall time
+and the calling thread's CPU, excludes scoped worker CPU, and records unavailable
+CPU as null. Retention is bounded by the unchanged 64 History-call cap. The
+before/after snapshots exclude setup and final post-service readback. None of
+these observations changes budget credit, paging, readiness or acceptance.
+The client calls remain synchronous at their original cancellation boundaries;
+timing does not introduce an interruption mechanism. A late return still fails
+the original final 30-second gate.
+
+The original 1,024 signed seed transfers, four seed blocks, 21 business blocks,
+three 30-second windows, 0/24/24 attackers, two workers, 2 CPU-second burst,
+0.25 CPU-second/second refill and 100 ms start reservation must run again on the
+exact successor. Local seven-page import, foreign SQL/root, cancellation,
+rollback, reorganization and reopen controls qualify the implementation path;
+they cannot supply the missing third timely confirmation or hostile liveness.
+
+    cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib native_inactive_ -- --test-threads=1

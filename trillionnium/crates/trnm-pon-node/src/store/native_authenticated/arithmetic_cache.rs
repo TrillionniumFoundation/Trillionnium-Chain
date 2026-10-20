@@ -90,11 +90,14 @@ impl ArithmeticCache {
         self.root_arithmetic.calculate(settings, state)
     }
 
-    /// Reuse only the full root already computed from these exact complete
-    /// actual bytes. Unlike `complete`, a miss does not run account/conservation
-    /// checks before the original state-root grammar or change its error order.
+    /// Reuse exact complete bytes or derive from the same bounded opaque M06
+    /// arithmetic used by complete_root. Unlike `complete`, a miss does not run
+    /// account/conservation checks before the original state-root grammar.
     /// Caller-owned State is serialized anew; no SQL observation is reused.
     pub(crate) fn state_root(&self, settings: &Settings, state: &State) -> Result<Hash> {
+        let _measurement = self
+            .history
+            .observe(super::HistoryStage::PersistedStateRoot);
         let context = [
             settings.network(),
             settings.parameters(),
@@ -119,7 +122,10 @@ impl ArithmeticCache {
                 return Ok(entry.value);
             }
         }
-        let value = trnm_mvcc_fee::pon_executor::root(state).map_err(crate::Error::from)?;
+        let value = self
+            .root_arithmetic
+            .calculate(settings, state)
+            .map_err(crate::Error::from)?;
         if let (Some(bytes), Ok(mut entry)) = (bytes, self.root.try_borrow_mut()) {
             *entry = Some(RootEntry {
                 context,
@@ -286,6 +292,17 @@ mod tests {
             first.state_root
         );
         assert_eq!(cache.root_hits.get(), 1);
+        let material = trnm_mvcc_fee::pon_commitment::derive_snapshot(
+            &settings.initial,
+            None,
+            trnm_mvcc_fee::pon_commitment::CacheLimits::default(),
+        )
+        .unwrap();
+        cache.offer_root_material(&settings, material.snapshot.as_ref());
+        let before_material = cache.observation()["complete_root_arithmetic"]["counters"]
+            ["material_uses"]
+            .as_u64()
+            .unwrap();
         for value in [
             json!(0),
             json!(0.0),
@@ -305,6 +322,11 @@ mod tests {
                 _ => panic!("exact-input root reuse changed the original acceptance"),
             }
         }
+        assert_eq!(
+            cache.observation()["complete_root_arithmetic"]["counters"]["material_uses"],
+            before_material + 4,
+            "root-only misses must reach actual-state opaque arithmetic, including original error fallback"
+        );
         assert_eq!(cache.root_hits.get(), 1);
         assert_eq!(
             cache.state_root(&settings, &settings.initial).unwrap(),
