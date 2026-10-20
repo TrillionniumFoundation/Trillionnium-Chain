@@ -6020,9 +6020,11 @@ fn bounded_state_log_loaders_reject_oversized_and_malformed_input() {
     let ingress_log = base.with_extension("ingress.jsonl");
 
     std::fs::write(&ack_log, b"{\"malformed\":true}\n").expect("write malformed ack");
-    assert!(load_acked(&ack_log).is_err(), "malformed ack must fail closed");
-    std::fs::write(&ingress_log, b"{\"malformed\":true}\n")
-        .expect("write malformed ingress");
+    assert!(
+        load_acked(&ack_log).is_err(),
+        "malformed ack must fail closed"
+    );
+    std::fs::write(&ingress_log, b"{\"malformed\":true}\n").expect("write malformed ingress");
     assert!(
         load_ingress_records(&ingress_log).is_err(),
         "malformed ingress must fail closed"
@@ -6032,7 +6034,10 @@ fn bounded_state_log_loaders_reject_oversized_and_malformed_input() {
     ack_file
         .set_len(MAX_ACK_LOG_BYTES + 1)
         .expect("size oversized ack");
-    assert!(load_acked(&ack_log).is_err(), "oversized ack must fail closed");
+    assert!(
+        load_acked(&ack_log).is_err(),
+        "oversized ack must fail closed"
+    );
     let ingress_file = std::fs::File::create(&ingress_log).expect("create oversized ingress");
     ingress_file
         .set_len(MAX_INGRESS_LOG_BYTES + 1)
