@@ -272,19 +272,31 @@ pub struct RelayAuthVerifier {
 }
 
 impl RelayAuthVerifier {
+    /// Creates a verifier with the current, chain-bound protocol only.
+    ///
+    /// Legacy v0 envelopes do not bind `chain_id` into their signature and
+    /// therefore must never be accepted by the production default: a captured
+    /// legacy envelope could otherwise be replayed on another chain.
     pub fn new(max_skew_ms: u128) -> Self {
-        Self {
-            max_skew_ms,
-            allow_legacy_v0: true,
-            last_seq: HashMap::new(),
-            seen_nonce: HashSet::new(),
-        }
+        Self::strict(max_skew_ms)
     }
 
     pub fn strict(max_skew_ms: u128) -> Self {
         Self {
             max_skew_ms,
             allow_legacy_v0: false,
+            last_seq: HashMap::new(),
+            seen_nonce: HashSet::new(),
+        }
+    }
+
+    /// Explicit compatibility mode for isolated migration tooling only.
+    /// Callers must provide an out-of-band chain binding before accepting the
+    /// result; the legacy signature itself does not contain `chain_id`.
+    pub fn legacy_compatible(max_skew_ms: u128) -> Self {
+        Self {
+            max_skew_ms,
+            allow_legacy_v0: true,
             last_seq: HashMap::new(),
             seen_nonce: HashSet::new(),
         }
@@ -760,9 +772,9 @@ mod tests {
     }
 
     #[test]
-    fn relay_auth_legacy_v0_compat_allowed_by_default() {
+    fn relay_auth_legacy_v0_compat_requires_explicit_mode() {
         let key = "sender-key";
-        let mut verifier = RelayAuthVerifier::new(120_000);
+        let mut verifier = RelayAuthVerifier::legacy_compatible(120_000);
         let mut env = sample_env(1, "nonce-legacy-1", 1_730_000_000_000, key);
         env.version = RelayAuthEnvelope::LEGACY_SPEC_VERSION.to_string();
         env.chain_id.clear();
@@ -770,6 +782,21 @@ mod tests {
 
         let ok = verifier.verify(&env, 1_730_000_000_050, |e| e.verify_test_sig_compat(key));
         assert!(ok.is_ok());
+    }
+
+    #[test]
+    fn relay_auth_legacy_v0_rejected_by_default() {
+        let key = "sender-key";
+        let mut verifier = RelayAuthVerifier::new(120_000);
+        let mut env = sample_env(1, "nonce-legacy-default", 1_730_000_000_000, key);
+        env.version = RelayAuthEnvelope::LEGACY_SPEC_VERSION.to_string();
+        env.chain_id.clear();
+        env.sig = env.sign_for_test_legacy_v0(key);
+
+        let err = verifier
+            .verify(&env, 1_730_000_000_050, |e| e.verify_test_sig_compat(key))
+            .unwrap_err();
+        assert_eq!(err.stable_code(), "BadVersion");
     }
 
     #[test]
