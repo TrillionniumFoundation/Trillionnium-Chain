@@ -753,18 +753,8 @@ fn open_read_snapshot(path: &Path) -> ConsumptionSettlementResultV1<Connection> 
             "WAL database format is not supported by read-only store snapshots",
         ));
     }
-    let bytes = path.as_os_str().as_encoded_bytes();
-    let mut uri = String::from("file:");
-    for byte in bytes {
-        if byte.is_ascii_alphanumeric() || matches!(*byte, b'/' | b'.' | b'_' | b'-') {
-            uri.push(char::from(*byte));
-        } else {
-            uri.push_str(&format!("%{byte:02X}"));
-        }
-    }
-    uri.push_str("?mode=ro");
     let connection = Connection::open_with_flags(
-        uri,
+        read_only_store_uri(path),
         OpenFlags::SQLITE_OPEN_READ_ONLY
             | OpenFlags::SQLITE_OPEN_NO_MUTEX
             | OpenFlags::SQLITE_OPEN_URI,
@@ -774,6 +764,26 @@ fn open_read_snapshot(path: &Path) -> ConsumptionSettlementResultV1<Connection> 
     // locking snapshot. Dropping the connection releases this read transaction.
     connection.execute_batch("BEGIN DEFERRED")?;
     Ok(connection)
+}
+
+fn read_only_store_uri(path: &Path) -> String {
+    let bytes = path.as_os_str().as_encoded_bytes();
+    let mut uri = String::from("file:");
+    for (index, byte) in bytes.iter().enumerate() {
+        // A literal leading // starts a URI authority. Escape its second slash
+        // so SQLite decodes the original pathname instead of treating a path
+        // component as a host. Do not normalize or lossily convert path bytes.
+        let starts_authority = index == 1 && bytes[0] == b'/' && *byte == b'/';
+        if !starts_authority
+            && (byte.is_ascii_alphanumeric() || matches!(*byte, b'/' | b'.' | b'_' | b'-'))
+        {
+            uri.push(char::from(*byte));
+        } else {
+            uri.push_str(&format!("%{byte:02X}"));
+        }
+    }
+    uri.push_str("?mode=ro");
+    uri
 }
 
 fn reject_sidecars(path: &Path) -> ConsumptionSettlementResultV1<()> {
@@ -2362,6 +2372,111 @@ mod snapshot_tests {
                     .unwrap();
                 assert!(retry.is_replay());
                 assert_eq!(retry.receipt(), outcome.receipt());
+            }
+        }
+    }
+
+    #[test]
+    fn read_only_uri_preserves_path_escapes_without_authority() {
+        for (path, expected) in [
+            ("relative.sqlite", "file:relative.sqlite?mode=ro"),
+            ("/tmp/store.sqlite", "file:/tmp/store.sqlite?mode=ro"),
+            ("//tmp/store.sqlite", "file:/%2Ftmp/store.sqlite?mode=ro"),
+            ("///tmp/store.sqlite", "file:/%2F/tmp/store.sqlite?mode=ro"),
+            (
+                "//tmp/store ?#%+:é.sqlite",
+                "file:/%2Ftmp/store%20%3F%23%25%2B%3A%C3%A9.sqlite?mode=ro",
+            ),
+        ] {
+            assert_eq!(read_only_store_uri(Path::new(path)), expected);
+        }
+    }
+
+    #[cfg(target_os = "linux")]
+    #[test]
+    fn leading_double_slash_path_remains_readable_after_create_and_commit() {
+        use std::os::unix::ffi::OsStringExt;
+
+        for leading_slashes in [1, 2, 3] {
+            for filename in [
+                b"store.sqlite".as_slice(),
+                "store ?#%+:é.sqlite".as_bytes(),
+                b"store ?#%+:\xff.sqlite".as_slice(),
+                b"store?mode=rwc&immutable=1#%2F.sqlite".as_slice(),
+            ] {
+                let harness = crate::tests::Harness::new();
+                let mut config = harness.config();
+                config
+                    .path
+                    .set_file_name(OsString::from_vec(filename.to_vec()));
+                let ordinary_config = config.clone();
+                // Linux resolves these spellings to the same regular file.
+                // Keep raw path bytes: lossy text conversion is not equivalent.
+                let mut spelling = OsString::from("/".repeat(leading_slashes - 1));
+                spelling.push(&config.path);
+                config.path = PathBuf::from(spelling);
+                let store = ConsumptionSettlementStoreV1::open(config.clone())
+                    .expect("create and read back a valid double-slash pathname");
+                assert_eq!(
+                    fs::canonicalize(&config.path).unwrap(),
+                    fs::canonicalize(&ordinary_config.path).unwrap()
+                );
+                let before = store.fresh_readback().unwrap();
+                let command = ConsumptionSettlementCommandV1::AdmitReceipt {
+                    receipt: harness.receipt(None, 10, 100),
+                };
+                let execution = harness.execution(9, before.order_block_id(), 10);
+                let preview = store
+                    .preview_before_vote_v1(
+                        &before,
+                        10,
+                        execution.order_block_id,
+                        std::slice::from_ref(&command),
+                    )
+                    .unwrap();
+                let outcome = store
+                    .execute_committed_execution(&execution, &command)
+                    .unwrap();
+                assert_eq!(
+                    outcome.receipt().post_state_root,
+                    preview.candidate_post_state_root()
+                );
+                let state = store.state().unwrap();
+                let head = store.fresh_readback().unwrap();
+                let bytes = fs::read(&ordinary_config.path).unwrap();
+                drop(store);
+                let cold = ConsumptionSettlementStoreV1::open_existing(config).unwrap();
+                assert_eq!(cold.state().unwrap(), state);
+                assert_eq!(cold.fresh_readback().unwrap(), head);
+                let replay = cold
+                    .execute_committed_execution(&execution, &command)
+                    .unwrap();
+                assert!(replay.is_replay());
+                assert_eq!(replay.receipt(), outcome.receipt());
+                assert_eq!(fs::read(&ordinary_config.path).unwrap(), bytes);
+                let snapshot = open_read_snapshot(&cold.config.path).unwrap();
+                for statement in [
+                    "CREATE TABLE must_stay_absent(value INTEGER)",
+                    "UPDATE metadata SET fenced = fenced",
+                ] {
+                    assert!(matches!(snapshot.execute_batch(statement),
+                        Err(rusqlite::Error::SqliteFailure(error, _))
+                            if error.code == rusqlite::ErrorCode::ReadOnly));
+                }
+                drop(snapshot);
+                assert_eq!(fs::read(&ordinary_config.path).unwrap(), bytes);
+                let entries: Vec<_> = fs::read_dir(ordinary_config.path.parent().unwrap())
+                    .unwrap()
+                    .map(|entry| entry.unwrap().file_name())
+                    .collect();
+                assert_eq!(
+                    entries,
+                    vec![ordinary_config.path.file_name().unwrap().to_os_string()]
+                );
+                let ordinary =
+                    ConsumptionSettlementStoreV1::open_existing(ordinary_config).unwrap();
+                assert_eq!(ordinary.fresh_readback().unwrap(), head);
+                assert_eq!(ordinary.state().unwrap(), state);
             }
         }
     }

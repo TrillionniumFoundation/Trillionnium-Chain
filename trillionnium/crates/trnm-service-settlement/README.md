@@ -126,3 +126,11 @@ can be retried. This admission-only check does not rewrite historical zero-ID
 markers or change cold audit, exact retry, or genesis/same-block semantics. Tests
 retain canonical historical empty and nonempty zero-ID successors and a zero-ID
 genesis anchor. Stored schemas and signed domains are unchanged.
+
+Read-only SQLite URI construction escapes the second slash of a leading `//`
+pathname instead of allowing it to be parsed as a URI authority. The decoded
+pathname bytes, read-only flags, locking, sidecar checks and schema are unchanged.
+Linux tests cover ordinary, double- and triple-leading-slash paths with reserved
+characters, UTF-8 and non-UTF-8 filename bytes through creation, preview, execution
+and cold exact replay. These pathname tests do not qualify Windows UNC semantics
+or external pathname replacement.
