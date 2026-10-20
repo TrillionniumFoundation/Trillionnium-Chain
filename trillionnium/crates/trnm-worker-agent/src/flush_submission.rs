@@ -430,11 +430,17 @@ mod tests {
             tx_hash: None,
             terminal: false,
         };
+        let ack_log = std::env::temp_dir().join(format!(
+            "trnm-worker-agent-flush-classify-reject-{}-{}.jsonl",
+            std::process::id(),
+            now_ms()
+        ));
+        let _ = std::fs::remove_file(&ack_log);
         let (status, reason, _) =
-            classify_flush_ack(&commit, &reveal, &std::path::PathBuf::from("/tmp"), 1)
-                .expect("valid ack log");
+            classify_flush_ack(&commit, &reveal, &ack_log, 1).expect("valid ack log");
         assert_eq!(status, "rejected");
         assert_eq!(reason, "commit_rejected_skip_reveal");
+        let _ = std::fs::remove_file(&ack_log);
     }
 
     #[test]
@@ -451,11 +457,17 @@ mod tests {
             tx_hash: Some("r1".to_string()),
             terminal: true,
         };
+        let ack_log = std::env::temp_dir().join(format!(
+            "trnm-worker-agent-flush-classify-accepted-{}-{}.jsonl",
+            std::process::id(),
+            now_ms()
+        ));
+        let _ = std::fs::remove_file(&ack_log);
         let (status, reason, _) =
-            classify_flush_ack(&commit, &reveal, &std::path::PathBuf::from("/tmp"), 1)
-                .expect("valid ack log");
+            classify_flush_ack(&commit, &reveal, &ack_log, 1).expect("valid ack log");
         assert_eq!(status, "accepted");
         assert_eq!(reason, "idempotent_ok");
+        let _ = std::fs::remove_file(&ack_log);
     }
 
     #[test]
@@ -473,11 +485,17 @@ mod tests {
             terminal: true,
         };
 
+        let ack_log = std::env::temp_dir().join(format!(
+            "trnm-worker-agent-flush-classify-missing-{}-{}.jsonl",
+            std::process::id(),
+            now_ms()
+        ));
+        let _ = std::fs::remove_file(&ack_log);
         let (status, reason, _) =
-            classify_flush_ack(&commit, &reveal, &std::path::PathBuf::from("/tmp"), 81)
-                .expect("valid ack log");
+            classify_flush_ack(&commit, &reveal, &ack_log, 81).expect("valid ack log");
         assert_eq!(status, "failed");
         assert_eq!(reason, "missing_tx_hash_receipt");
+        let _ = std::fs::remove_file(&ack_log);
     }
 
     #[test]
