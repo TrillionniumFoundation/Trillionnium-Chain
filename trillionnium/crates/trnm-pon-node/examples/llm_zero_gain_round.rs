@@ -5,7 +5,7 @@ use sha2::{Digest, Sha256};
 use std::{
     fs::{self, File, OpenOptions},
     io::{Read, Write},
-    os::unix::fs::{MetadataExt, OpenOptionsExt},
+    os::unix::fs::{DirBuilderExt, MetadataExt, OpenOptionsExt},
     path::Path,
 };
 use trnm_crypto_primitives::{
@@ -24,6 +24,8 @@ const CONTROLS: [&str; 4] = [
     "budget-matched-full-tune",
     "randomized-rank-matched-lora",
 ];
+#[path = "support/llm_public_report.rs"]
+mod public_report;
 #[path = "support/distributed_source_inventory.rs"]
 mod source_inventory;
 
@@ -61,7 +63,7 @@ fn read(path: &Path, maximum: u64) -> Result<Vec<u8>> {
 }
 fn json_file(path: &Path) -> Result<(Vec<u8>, Value)> {
     let raw = read(path, 2_097_152)?;
-    let value: Value = serde_json::from_slice(&raw)?;
+    let value: Value = serde_json::from_slice(&raw).map_err(|_| "INPUT_JSON")?;
     let canonical = serde_json::to_vec(&value)?;
     check(
         raw.strip_suffix(b"\n").unwrap_or(&raw) == canonical,
@@ -172,22 +174,24 @@ fn save(path: &Path, bytes: &[u8]) -> Result<()> {
 fn run(args: &[String]) -> Result<Value> {
     check(args.len()==5,"usage: llm_zero_gain_round NEW_DIRECTORY ASSESSMENT_JSON CONTROL_PLAN_JSON CANDIDATE_SAFETENSORS CANDIDATE_METADATA_JSON")?;
     let root = Path::new(&args[0]);
-    fs::create_dir(root)?;
     let (assessment_bytes, assessment) = json_file(Path::new(&args[1]))?;
     let (roster_bytes, roster) = json_file(Path::new(&args[2]))?;
     assess(&assessment, &roster)?;
     let candidate = read(Path::new(&args[3]), 2_097_152)?;
     check(!candidate.is_empty(), "CANDIDATE_MATERIAL")?;
     let (metadata_bytes, metadata) = json_file(Path::new(&args[4]))?;
+    let contract = public_report::bound_contract(&roster["contract"], &metadata["contract"])?;
     check(
         metadata["role"] == "candidate"
             && metadata["kind"] == "lora"
             && metadata["artifact"] == roster["artifacts"]["candidate"]
-            && metadata["contract"] == roster["contract"]
             && metadata["experiment"] == roster["experiment"]
             && metadata["file_sha256"] == hex::encode(Sha256::digest(&candidate)),
         "CANDIDATE_ASSESSMENT_BINDING",
     )?;
+    // No native owner or partial output is created for invalid input. Retained
+    // assessment/roster/metadata copies below are private evidence, not stdout.
+    fs::DirBuilder::new().mode(0o700).create(root)?;
     let artifact = hash(b"artifact", &[&candidate]);
     let control_root = hash(b"native-llm-control-plan-v1", &[&roster_bytes]);
     let evidence = hash(b"native-llm-pilot-assessment-v1", &[&assessment_bytes]);
@@ -202,8 +206,11 @@ fn run(args: &[String]) -> Result<Value> {
         PROFILE,
         "smollm2-135m-cpu-dev-v1",
     )?;
-    let binding = json!({"schema":"native-llm-external-pilot-binding-v1","network":hex::encode(settings.network()),"parameters":hex::encode(settings.parameters()),"genesis":hex::encode(settings.genesis()),"family":hex::encode(cfg.family),"plan":hex::encode(cfg.plan),"artifact":hex::encode(artifact),"artifact_bytes":candidate.len(),"control_plan":hex::encode(control_root),"assessment":hex::encode(evidence),"original_material_ports_contract":roster["contract"],"scope":"explicit cross-context external CPU observation; original material/ports contract not relabeled as native execution","score":0,"model_value_accepted":false,"independent_accepted":false,"public_network_ready":false});
-    save(&root.join("binding.json"), &serde_json::to_vec(&binding)?)?;
+    let binding = json!({"schema":"native-llm-external-pilot-binding-v1","network":hex::encode(settings.network()),"parameters":hex::encode(settings.parameters()),"genesis":hex::encode(settings.genesis()),"family":hex::encode(cfg.family),"plan":hex::encode(cfg.plan),"artifact":hex::encode(artifact),"artifact_bytes":candidate.len(),"control_plan":hex::encode(control_root),"assessment":hex::encode(evidence),"original_material_ports_contract":hex::encode(contract),"scope":"explicit cross-context external CPU observation; original material/ports contract not relabeled as native execution","score":0,"model_value_accepted":false,"independent_accepted":false,"public_network_ready":false});
+    save(
+        &root.join("binding.json"),
+        &public_report::binding_bytes(&binding)?,
+    )?;
     save(&root.join("assessment.json"), &assessment_bytes)?;
     save(&root.join("control-plan.json"), &roster_bytes)?;
     save(&root.join("candidate-metadata.json"), &metadata_bytes)?;
@@ -379,27 +386,158 @@ fn run(args: &[String]) -> Result<Value> {
         json!({"schema":"native-llm-zero-gain-round-v1","source":source_receipt()?,"binding":binding,"candidate":hex::encode(cid),"closed_result":result,"state":stats,"blocks":64,"mining_attempts":attempts,"actual_settlement_refusals":refusals,"clock_scope":"logical-test; actual native proofs/execution/store; no live WAN timing","score":0,"adopted":false,"model_contribution_reward":0,"mining_subsidy_separate":true,"native_ml_execution_claim":false,"public_network_ready":false,"independent_accepted":false,"work_profile_qualified":false}),
     )
 }
-fn main() {
-    match run(&std::env::args().skip(1).collect::<Vec<_>>()) {
-        Ok(v) => {
-            let bytes = serde_json::to_vec(&v).expect("JSON");
-            let path = std::env::args().nth(1).expect("root");
-            if let Err(e) = save(&Path::new(&path).join("summary.json"), &bytes) {
-                eprintln!("{e}");
-                std::process::exit(1);
-            }
-            println!("{v}");
-        }
+fn command(args: &[String], stdout: &mut impl Write) -> Result<()> {
+    let bytes = public_report::summary_bytes(run(args)?)?;
+    save(&Path::new(&args[0]).join("summary.json"), &bytes)?;
+    stdout.write_all(&bytes)?;
+    stdout.write_all(b"\n")?;
+    Ok(())
+}
+
+fn cli(args: &[String], stdout: &mut impl Write, stderr: &mut impl Write) -> i32 {
+    match command(args, stdout) {
+        Ok(()) => 0,
         Err(e) => {
-            eprintln!("{e}");
-            std::process::exit(1);
+            let _ = writeln!(stderr, "{e}");
+            1
         }
     }
+}
+
+fn main() {
+    let code = cli(
+        &std::env::args().skip(1).collect::<Vec<_>>(),
+        &mut std::io::stdout().lock(),
+        &mut std::io::stderr().lock(),
+    );
+    std::process::exit(code);
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    const CANARY: &str = "SYNTHETIC_PRIVATE_FIELD_NOT_A_SECRET";
+
+    fn inputs(root: &Path) -> Vec<String> {
+        // Attack fixtures only: these bytes and claimed phases are not ML evidence.
+        let candidate = b"synthetic non-model candidate";
+        let artifacts: serde_json::Map<String, Value> = std::iter::once("candidate")
+            .chain(CONTROLS)
+            .map(|role| {
+                (
+                    role.into(),
+                    json!(hex::encode(hash(b"test-artifact", &[role.as_bytes()]))),
+                )
+            })
+            .collect();
+        let scores: serde_json::Map<String, Value> = artifacts
+            .keys()
+            .map(|role| {
+                (
+                    role.clone(),
+                    json!({"calibration":[0,1],"evaluation":[0,1]}),
+                )
+            })
+            .collect();
+        let assessment = json!({"schema":"llm-runtime-actual-pilot-assessment-v1",
+            "experiment":"test-only","all_required_controls_executed":true,"positive_vs_all_controls":false,
+            "public_network_ready":false,"authenticated_inference_accepted":false,"independent_accepted":false,
+            "prospective_accepted":false,"public_reward_eligible":false,"scores":scores,
+            "phases":vec![json!({"exit_code":0,"outcome":"success","stop_reason":null});12],
+            "private_access_token":CANARY});
+        let contract = "ab".repeat(32);
+        let roster = json!({"experiment":"test-only","contract":contract,"artifacts":artifacts,
+            "frozen_before_evaluation":true,"private_access_token":CANARY});
+        let metadata = json!({"role":"candidate","kind":"lora","artifact":roster["artifacts"]["candidate"],
+            "contract":contract,"experiment":"test-only","file_sha256":hex::encode(Sha256::digest(candidate)),
+            "private_access_token":CANARY});
+        for (name, value) in [
+            ("assessment.json", assessment),
+            ("roster.json", roster),
+            ("metadata.json", metadata),
+        ] {
+            save(&root.join(name), &serde_json::to_vec(&value).unwrap()).unwrap();
+        }
+        save(&root.join("candidate.bin"), candidate).unwrap();
+        [
+            "output",
+            "assessment.json",
+            "roster.json",
+            "candidate.bin",
+            "metadata.json",
+        ]
+        .map(|name| root.join(name).to_str().unwrap().to_owned())
+        .to_vec()
+    }
+
+    fn rejects_without_echo(args: &[String], error: &str) {
+        let (mut stdout, mut stderr) = (Vec::new(), Vec::new());
+        assert_eq!(cli(args, &mut stdout, &mut stderr), 1);
+        assert!(stdout.is_empty());
+        assert_eq!(String::from_utf8(stderr).unwrap(), format!("{error}\n"));
+        assert!(
+            !Path::new(&args[0]).exists(),
+            "invalid input created output/native state"
+        );
+    }
+
+    #[test]
+    fn invalid_contracts_in_either_input_never_echo_or_create_native_state() {
+        for invalid in [
+            json!({"private_access_token":CANARY}),
+            json!([CANARY]),
+            Value::Null,
+            json!(true),
+            json!(7),
+            json!(CANARY),
+            json!("a".repeat(63)),
+            json!("a".repeat(65)),
+            json!("AB".repeat(32)),
+            json!("gg".repeat(32)),
+            json!(format!(" {}", "ab".repeat(32))),
+            json!(format!("{}\n", "ab".repeat(32))),
+        ] {
+            // Both equal invalid objects reproduce the original bypass; either
+            // side alone must also reject, without printing the mismatched data.
+            for positions in [vec![2], vec![4], vec![2, 4]] {
+                let d = tempfile::tempdir().unwrap();
+                let args = inputs(d.path());
+                for position in positions {
+                    let (_, mut value) = json_file(Path::new(&args[position])).unwrap();
+                    value["contract"] = invalid.clone();
+                    fs::write(&args[position], serde_json::to_vec(&value).unwrap()).unwrap();
+                }
+                rejects_without_echo(&args, "CONTRACT_ID");
+            }
+        }
+        for position in [2, 4] {
+            let d = tempfile::tempdir().unwrap();
+            let args = inputs(d.path());
+            let (_, mut value) = json_file(Path::new(&args[position])).unwrap();
+            value.as_object_mut().unwrap().remove("contract");
+            fs::write(&args[position], serde_json::to_vec(&value).unwrap()).unwrap();
+            rejects_without_echo(&args, "CONTRACT_ID");
+        }
+    }
+
+    #[test]
+    fn different_valid_contract_ids_fail_before_output_or_native_state() {
+        let d = tempfile::tempdir().unwrap();
+        let args = inputs(d.path());
+        let (_, mut metadata) = json_file(Path::new(&args[4])).unwrap();
+        metadata["contract"] = json!("cd".repeat(32));
+        fs::write(&args[4], serde_json::to_vec(&metadata).unwrap()).unwrap();
+        rejects_without_echo(&args, "CANDIDATE_ASSESSMENT_BINDING");
+    }
+
+    #[test]
+    fn malformed_json_has_a_fixed_error_without_input_echo() {
+        let d = tempfile::tempdir().unwrap();
+        let args = inputs(d.path());
+        fs::write(&args[4], format!("{{\"{CANARY}\":")).unwrap();
+        rejects_without_echo(&args, "INPUT_JSON");
+    }
+
     #[test]
     fn ratio_rejects_boolean_zero_denominator_and_out_of_range() {
         for v in [

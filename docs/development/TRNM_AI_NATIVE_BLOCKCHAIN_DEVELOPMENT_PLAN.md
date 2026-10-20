@@ -1060,6 +1060,10 @@ all four required controls in an isolated LAN runtime. The tiny public same-oper
 fixture gives zero gain against the strongest control. An explicit cross-context bridge
 binds the raw artifact and original observation to native revision7, completes the native
 commit/reveal round at score0 and refuses adoption/reward; it claims no native ML proof.
+The [bridge input/output boundary](../../scripts/llm_runtime_README.md#native-negative-bridge-input-and-public-output)
+requires matching canonical contract digests and projects public receipts through an
+explicit typed field allowlist. Raw external metadata stays private; canary rejection
+and non-echo regressions do not qualify model efficacy or the public security gate.
 The separate distributed caller assigns producer, authenticated validator and full-sync
 confirmer to three OS processes with three owners. Each verifies native work and state;
 matching signed receipts do not attest physical placement or independent operation.

@@ -2969,6 +2969,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-pon-node/examples/support/llm_public_report.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/examples/support/llm_public_report.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-pon-node/examples/support/state_witness_artifact.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),

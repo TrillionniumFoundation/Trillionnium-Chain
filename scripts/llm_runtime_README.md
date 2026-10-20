@@ -110,6 +110,37 @@ reward acceptance flags stay false; ordinary successful phase execution is recor
 separately. Native adoption/consumer/outbox and independent evaluation remain their
 existing owners' responsibility.
 
+## Native negative bridge input and public output
+
+The [zero-gain bridge](../trillionnium/crates/trnm-pon-node/examples/llm_zero_gain_round.rs)
+accepts `contract` only as the existing producer's 64-character lowercase hexadecimal
+digest in both the evaluation roster and candidate metadata. The two parsed IDs must
+match. Objects, arrays, missing/null values, numbers, booleans, non-hex text, uppercase,
+wrong lengths and whitespace are rejected before creating the output directory or a
+native owner. Input parsing and public projection failures report fixed error codes,
+without serializing the rejected value.
+
+The [public receipt allowlist](../trillionnium/crates/trnm-pon-node/examples/support/llm_public_report.rs)
+names the scalar, digest and compiled-source-inventory fields in the existing binding
+and summary schemas. Unknown members are omitted at every report level; objects in
+scalar fields reject. Both stdout and `summary.json` use the same projected canonical
+bytes, and `binding.json` passes through the same binding allowlist. Original roster,
+assessment and metadata copies remain local evidence in a fresh mode-0700 directory
+with mode-0600 files; these raw inputs are not public reports. The valid digest IDs,
+receipt field names, consensus domains and zero-gain rejection rules are unchanged.
+
+Run the fast input/output regressions with:
+
+```sh
+cargo test --locked --manifest-path trillionnium/Cargo.toml \
+  -p trnm-pon-node --example llm_zero_gain_round
+```
+
+The tests exercise both contract inputs, equal invalid objects, mismatched valid IDs,
+malformed JSON, nested sensitive extra fields and non-scalar public fields. Synthetic
+canaries and phase fixtures test the boundary; they do not establish real training,
+independent evaluation, model quality, production readiness or CodeQL gate acceptance.
+
 Primary materials: [frozen author repository](https://huggingface.co/HuggingFaceTB/SmolLM2-135M-Instruct/tree/12fd25f77366fa6b3b4b768ec3050bf629380bac),
 [PyTorch version installers](https://pytorch.org/get-started/previous-versions/),
 [PEFT LoRA](https://huggingface.co/docs/peft/main/package_reference/lora),
