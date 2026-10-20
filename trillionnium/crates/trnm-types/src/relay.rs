@@ -799,13 +799,17 @@ mod tests {
     fn relay_auth_legacy_v0_rejected_by_default() {
         let key = "sender-key";
         let mut verifier = RelayAuthVerifier::new(120_000);
-        let mut env = sample_env(1, "nonce-legacy-default", 1_730_000_000_000, key);
+        let now_ms = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .expect("system clock must be after unix epoch")
+            .as_millis();
+        let mut env = sample_env(1, "nonce-legacy-default", now_ms, key);
         env.version = RelayAuthEnvelope::LEGACY_SPEC_VERSION.to_string();
         env.chain_id.clear();
         env.sig = env.sign_for_test_legacy_v0(key);
 
         let err = verifier
-            .verify(&env, 1_730_000_000_050, |e| e.verify_test_sig_compat(key))
+            .verify(&env, now_ms + 50, |e| e.verify_test_sig_compat(key))
             .unwrap_err();
         assert_eq!(err.stable_code(), "BadVersion");
     }
