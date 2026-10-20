@@ -295,10 +295,7 @@ impl RelayAuthVerifier {
     /// Explicit compatibility mode for isolated migration tooling only.
     /// Callers must provide an out-of-band chain binding before accepting the
     /// result; the legacy signature itself does not contain `chain_id`.
-    pub fn legacy_compatible(
-        max_skew_ms: u128,
-        expected_chain_id: impl Into<String>,
-    ) -> Self {
+    pub fn legacy_compatible(max_skew_ms: u128, expected_chain_id: impl Into<String>) -> Self {
         Self {
             max_skew_ms,
             allow_legacy_v0: true,
