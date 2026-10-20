@@ -267,6 +267,7 @@ impl std::error::Error for RelayAuthError {}
 pub struct RelayAuthVerifier {
     max_skew_ms: u128,
     allow_legacy_v0: bool,
+    expected_chain_id: Option<String>,
     last_seq: HashMap<(String, String, String, String), u64>,
     seen_nonce: HashSet<(String, String, String, String, String)>,
 }
@@ -285,6 +286,7 @@ impl RelayAuthVerifier {
         Self {
             max_skew_ms,
             allow_legacy_v0: false,
+            expected_chain_id: None,
             last_seq: HashMap::new(),
             seen_nonce: HashSet::new(),
         }
@@ -293,10 +295,14 @@ impl RelayAuthVerifier {
     /// Explicit compatibility mode for isolated migration tooling only.
     /// Callers must provide an out-of-band chain binding before accepting the
     /// result; the legacy signature itself does not contain `chain_id`.
-    pub fn legacy_compatible(max_skew_ms: u128) -> Self {
+    pub fn legacy_compatible(
+        max_skew_ms: u128,
+        expected_chain_id: impl Into<String>,
+    ) -> Self {
         Self {
             max_skew_ms,
             allow_legacy_v0: true,
+            expected_chain_id: Some(expected_chain_id.into()),
             last_seq: HashMap::new(),
             seen_nonce: HashSet::new(),
         }
@@ -336,6 +342,14 @@ impl RelayAuthVerifier {
             }
             if is_current && env.chain_id.trim() != env.chain_id {
                 return Err(RelayAuthError::MissingRequiredField { field: "chain_id" });
+            }
+            if is_legacy {
+                let Some(expected_chain_id) = self.expected_chain_id.as_deref() else {
+                    return Err(RelayAuthError::MissingRequiredField { field: "chain_id" });
+                };
+                if env.chain_id != expected_chain_id {
+                    return Err(RelayAuthError::MissingRequiredField { field: "chain_id" });
+                }
             }
             if env.session_id.trim().is_empty() {
                 return Err(RelayAuthError::MissingRequiredField {
@@ -774,10 +788,10 @@ mod tests {
     #[test]
     fn relay_auth_legacy_v0_compat_requires_explicit_mode() {
         let key = "sender-key";
-        let mut verifier = RelayAuthVerifier::legacy_compatible(120_000);
+        let mut verifier = RelayAuthVerifier::legacy_compatible(120_000, "trnm-devnet-v1");
         let mut env = sample_env(1, "nonce-legacy-1", 1_730_000_000_000, key);
         env.version = RelayAuthEnvelope::LEGACY_SPEC_VERSION.to_string();
-        env.chain_id.clear();
+        env.chain_id = "trnm-devnet-v1".to_string();
         env.sig = env.sign_for_test_legacy_v0(key);
 
         let ok = verifier.verify(&env, 1_730_000_000_050, |e| e.verify_test_sig_compat(key));
