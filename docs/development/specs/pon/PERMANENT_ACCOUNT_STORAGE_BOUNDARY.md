@@ -204,3 +204,83 @@ install the new commitment in a separately versioned profile, migrate one actual
 Node into its own namespace, execute signed transactions across the old cap with complete
 mandatory witnesses/ranges, reserve real storage and demonstrate full-disk/provider-loss/
 process-loss/cold-recovery behavior.
+
+## PN2 implementation work order and interfaces
+
+This is the storage delivery for I03–I05 in the
+[sole plan](../../TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md), amended
+against PR #323 source `9bd8b20da68f0dc199aab78c27644ed004af7411`.
+The following contracts remain targets until implemented and source-bound.
+Neither the existing authenticated backend nor the research v2 relation has
+completed the native growth gate.
+
+| Step / owners | Deliverable | Acceptance before the next step |
+| --- | --- | --- |
+| 1 / M07/M15/M17 | Enclosing-operation timing and counters for full parent/state encoding, account graph, history, proof/range collection, execution, lock/SQL wait, commit, client import and recovery | Reproduce the original failure with nested costs charged once; missing worker CPU stays unknown. Keep the current source's actual root/SQL/final reorg fences. |
+| 2 / M00/M01/M06 | Explicit growth-profile dispatch, commitment encoding, finite limits, independent byte/arithmetic vectors and old/new rejection matrix | Parameter/genesis/namespace anti-aliasing and header/challenge binding; old profiles retain byte/root/error parity and the 65,536 total-key cap. |
+| 3 / M06/M07/M09 | Original-parent account multiproof plus complete bounded non-account/mandatory range input | Reject wrong parent/context, omitted/extra/noncanonical witnesses, counterfeit absence, stale aggregates, overflow and incomplete mandatory coverage; independent small-state execution agrees. |
+| 4 / M07/M08 | One atomic publication of block/deltas, COW roots/nodes, aggregate changes, root references, reservations and branch/active generation | Fault injection at every persistence cut leaves the complete old state or recoverable complete new intent; no orphan partial acknowledgement or local-effect rewind. |
+| 5 / M09/M13 | Reserved retention, authenticated retrieval/repair, source-preserving migration and cold recovery | Exact provider loss/full-disk/GC/deep-fork schedules preserve nonce history and acknowledged duties. Missing bytes stop availability, never synthesize a record. |
+| 6 / M05/M06/M07/M15/M17 | Real signed ordinary-Node workload beyond the old cap, plus scaling and fault reports | More than 65,536 permanent accounts actually admitted under the new context; fixed touched-account and working-state bounds, independent root/conservation readback, all failure cohorts retained. |
+
+I03's parent commitment contains profile/context, account root/count/balance,
+complete bounded non-account root/count, issued supply and every monetary
+liability aggregate required by the profile. I04's block witness identifies the
+exact original parent and canonical ordered account query/update set; mandatory
+actions are collected before optional transactions. The verified result contains
+child commitment, exact reversible delta, required retained roots and storage
+reservation changes. Construct it privately only after authentication,
+completeness and conservation, not from caller-supplied summary fields.
+
+The profile must freeze finite numeric ceilings for permanent accounts, working
+keys, all touched accounts, mandatory rows, account/range witness bytes, complete
+block bytes and sync-page bytes. These are proposed parameter responsibilities,
+not existing `Settings` field names. Validate at genesis and at every admission.
+The complete packet includes transactions, header, the 49,188-byte W1 proof and
+all required witnesses; a compact account proof does not excuse overflow of
+the complete packet budget. Expiry/maturity scheduling reserves the maximum
+future mandatory fanout and writes before accepting the originating obligation.
+Optional load cannot consume those reservations. If the maximum due set would
+exceed a block's execution/proof budget, reject the originating optional admission
+under an explicit rule rather than later omit refunds or postpone them silently.
+
+At fixed touched-account count W, target O(W log A + bounded non-account/range
+input) validation for A permanent accounts. Increasing retained history must not
+add a complete history walk to each new block, Head request or confirmation.
+Persist verified root/context/generation and authenticated branch indexes;
+check every accessed path/page against its pinned root and retain transactional
+publication/readback fences. Cold integrity audit and verified replay remain
+explicit operations. State the changed storage trust/detection model: a hot
+path proof checks accessed data, not immediate detection of every untouched
+corrupt disk byte. Do not claim the old backend's full-database check has merely
+become cheaper while deleting it. New-profile tests must cover corruption of
+accessed and untouched nodes, delayed detection, fail-stop recovery and repair;
+old-profile checks are unchanged.
+
+I05's reservation identifies required roots/obligations, reserved and actually
+used bytes, storage owner, retention/renewal endpoint, deadline, funding and
+release conditions. Keep the state archive and disposable Cell cache in distinct
+namespaces and eviction classes. Reserve disk/WAL/headroom before acknowledgement,
+backpressure optional intake, and settle failures without refunding resources
+already consumed. GC is an authenticated reachability operation across active
+and retained inactive branches, undo/recovery anchors, pending duties and holds.
+Recovery or verified backfill must support a valid deep fork outside local undo;
+retention or an operator checkpoint does not create consensus finality.
+
+Freeze a scaling matrix with the old boundary, actual signed admission of at
+least 65,537 permanent accounts, and a larger preregistered target. At each A,
+vary W, working keys, proof sizes and retained history separately; report actual
+CPU/wall/RSS, disk/WAL, read/write amplification, confirmation and cold-sync cost.
+Pass requires declared bounds and fixed-W growth behavior, not just a faster
+single sample. Include present-zero versus absent versus unavailable, stale
+nonces/re-entry, mandatory miner/refund/reward recipients, expiry/cleanup,
+reorg after pruning, reservation exhaustion, provider failure, process cuts and
+cold reopen. Keep physical power-loss qualification separate from process loss.
+
+Migration is explicit and source-preserving: verify all source accounts,
+balances/nonces, non-account records, retained branches and local obligation
+identities; create an isolated destination; independently recompute aggregates;
+read back roots and recovery references; then publish through the existing owner.
+Abort leaves the source usable and the incomplete destination unselected.
+Local revocation/effect history is carried as monotonic facts, not imported as
+rewindable branch state. Production migration still requires PN6 authorization.

@@ -1,7 +1,7 @@
 # Trillionnium Chain Development Plan — PoN / Hepta-PoH revision
 
-Plan ID: `trnm-chain-development-plan-v2` (stable registry identity; content revision 14).
-Effective: 2026-09-28; priority implementation revision: 2026-10-19. Status: selected development direction; no runtime activation.
+Plan ID: `trnm-chain-development-plan-v2` (stable registry identity; content revision 15).
+Effective: 2026-09-28; priority implementation revision: 2026-10-20. Status: selected development direction; no runtime activation.
 Canonical destination: `refs/heads/main`; continuation uses the current main lineage, not retired PR #194.
 Current source/head/tree/base and prospective merge are derived at verification time.
 Assessed legacy baseline: `c552c31c6d3c5ac47522a124e02c6b8bca4e23f2`, tree
@@ -52,23 +52,45 @@ release requires their own real evidence, not completion of the retired PoCO roa
 
 ### Reconstruction and upgrade order
 
-The 2026-10-18 continuation preserves the current module owners, exact consensus
-arithmetic and signature domains, persistent reorg, and Hepta's evaluation,
-artifact, CURRENT and FinalUse responsibilities. It redesigns the work-cost/public
-admission profile, evaluation liveness and inter-generation policy, the ordinary
-upgrade coordinator, and state/history costs. The P0 tracks proceed in parallel;
-their success criteria name observable results rather than document completion.
+The 2026-10-20 audit amendment uses Chain PR #323 commit
+`9bd8b20da68f0dc199aab78c27644ed004af7411` (tree
+`9a408fd7d9446dca3b319337f4a10078469df426`) against main
+`9fedf7ecbbe07177069c030592b4e03dcffebb81`. These are the inspected inputs,
+not a claim about a future live head or an execution receipt for these edits.
+The paired Hepta PR #2559 input is
+`443692c1c16a031fbde1ca3ddf5be99770667d81`; its workflow still pins Chain
+`4a79d1f5b538041ae9824ba3dfb2fe7aa051d88c`, so it does not qualify this
+Chain candidate. Hepta's V8 development amendment at PR #2930 commit
+`e5e98bda42a3236a93d67cf4804f72c1e461d141` is a separate design input,
+not integrated product evidence. Re-resolve all sources before execution.
 
-| Priority | Work | Observable result |
+Preserve the current work relation, branch/recovery engine, single durable
+writer and Hepta's existing owners. Reconstruct the interfaces where measured
+cost or missing authority prevents the product, rather than replace the whole
+system or add another supervisor. The native revision15 evaluation quorum,
+revision16 full-parent model update, pinned task windows and configured-peer
+Cell pilot already exist; their controlled regressions are prerequisites to
+extend, not missing features to implement again.
+
+| Order in the existing sequence | Implementation boundary | Exit decision and downstream dependency |
 | --- | --- | --- |
-| P0: evaluation liveness | An explicit successor profile for missing reveals, finite dispute handling, objective conflict exclusion and frozen quorum. Existing profile bytes and outcomes stay unchanged. | One unavailable or malicious evaluator cannot impose a permanent veto when the profile's honest quorum and timing assumptions hold. Native execution, restart and heavier-fork replay agree with the independent byte oracle. |
-| P0: W1 resource profile | Same-target comparison of structured work, preprocessing, best implemented producers, target-passing false transcripts and actual receiver verification; shared public intake and paid-request protection. | Reproducible costs include setup and unsuccessful attempts. Actual hostile sockets overlap honest signed business. The report explicitly names unmeasured hardware advantages and does not infer a cheapest-adversary theorem. |
-| P0: real iteration protocol | Preserve and reuse window history; admit genuinely future tasks, independent custody, actual predecessor models, cost/safety metrics and legitimate no-update decisions. | Multiple real neurons/candidates can be produced, evaluated, installed and subsequently observed with recoverable failures and revocations. Reusing the fixed public 25-row benchmark does not qualify as a fresh task window. |
-| P0: ordinary Hepta loop | Compose the existing selector, artifact owner, Agentd TaskFlow/FinalUse, CURRENT and signed Supervisor release owner through a narrow coordinator. | The ordinary entry handles exact effect bytes, lost ACK, duplicate calls, stale/reorged acceptance, data loss, withdrawal, installation and actual next-generation model readback. No new operation journal or issuer appears. |
-| P1: current candidate convergence | Integrate the latest PR326 on the existing Chain candidate; repair Hepta's actual failing tests and source mapping. | Real native results bind the same source pair, without changing original permission, timeout or semantic checks. Historical failures and non-applicable receipts remain visible. |
-| P1: measured state/history performance | Reduce redundant encoding, copies and repeated acquisitions; use batching, pre-propagation and validation pipelines under the existing durable writer. | Effective confirmation throughput and p95/p99 improve under a frozen workload while integrity, recovery and resource bounds hold. O(state) and O(history) paths are named when they remain. |
-| P1: independent network and DA | Independent operators, WAN delivery, replicas/repair, sustained attack, partition and restart/new-node recovery. | Honest completion, confirmation latency, memory/disk growth, synchronization and recovery costs are measured continuously. Multiple machines under one administrator do not establish operator independence. |
-| Later: consensus topology | Compare the existing chain, GHAST and GHOSTDAG under the same work relation, execution, availability and security budget. | Evidence first identifies propagation/forks as the limiting cost, then establishes complete-path benefit sufficient to justify the new ordering and recovery complexity. |
+| PN0 first | Freeze one exact Chain/Hepta source pair, source/merge checks, security findings and original failed campaigns. | Reproducible baseline and assigned unresolved findings; no old pair receipt promoted to a new pair. Required security findings block the applicable integration/release gate. |
+| PN1 | Separate W1 computational qualification from bounded public admission and paid honest completion. | Both work assumptions and original-budget service results must be explicit. Offline learning and storage prototypes may proceed while research is open; public PoN acceptance cannot. |
+| PN2 | Instrument full-state/history costs, then install an explicitly versioned witness-based growth profile and its recovery path. | Actual signed native admission beyond 65,536 permanent accounts, bounded working state/proofs, conserved liabilities and fault recovery; caches alone do not close this gate. |
+| PN3 | Wire one real Hepta parameter loop, release dependency closure and the existing Cell fetcher into actual next-generation use. | At least three real lineage cycles with installed-parent readback, independent future evaluation, allowed no-update outcomes and recoverable failures. Efficacy and mechanical loop completion have separate verdicts. |
+| PN4 | Fund mining, contribution, evaluation, storage/repair and serving through separate bounded budgets. | No double payment or repeated external effect across retry/reorg; storage obligations and the free tier have actual resource backing. |
+| PN5 | Qualify independent WAN operators, public peer discovery, storage renewal/repair and complete-path performance. | Declared honest completion and model/DA/recovery objectives pass under the frozen fault/attack envelope. Controlled TCP tests and multiple keys under one custodian do not qualify independence. |
+| PN6 last | Rehearse source-preserving migration and use existing governed release/activation owners. | All predecessor gates and explicit release decisions hold on the actual source; documentation or merge cannot activate a profile. |
+
+Section 6 is the executable work breakdown for these same PN0–PN6 stages;
+section 4 assigns their interface owners. Design and controlled experiments can
+overlap after PN0, but acceptance follows the dependencies above. Parameter
+learning, structural Cell changes, executable code releases and consensus
+upgrades have different admission owners; a parameter reward cannot authorize
+the latter three. Do not create an additional global optimizer, operation
+journal or parallel implementation plan.
+PN1 public-service repair and PN2 storage engineering may iterate together on
+one frozen workload; neither stage may declare the other's missing result passed.
 
 Every performance/iteration report must retain the following distinct quantities.
 Unknown or unexecuted stages are null with a reason, never copied from an earlier
@@ -483,6 +505,35 @@ API action again. Reconcile orphaned effects under explicit risk/compensation ru
 Model adoption uses fresh local generations and preserves which historical model made
 each recorded decision. Never reexecute history using current weights.
 
+### Required interface deliveries for PN1–PN5
+
+The following are target contracts inside the existing owners. Row labels are
+review references, not newly registered procedures or claims of exported Rust
+types. Reuse existing checked types where applicable; any new wire/schema/domain
+needs its own bounded codec, namespace, independent vectors and source binding
+before it becomes callable. Do not turn these rows into permissive JSON adapters.
+
+| Ref / phase | Producer -> consumer and owner | Required input -> checked result; failure boundary |
+| --- | --- | --- |
+| I01 / PN1 | M03 producer -> M01 verifier -> M02 fork choice | Exact profile/parameters, header/challenge, task and canonical W1 bytes -> private verified-work fact and required-work increment. Preliminary ticket success, evaluator score and claimed CPU never manufacture this fact. |
+| I02 / PN1 | M04 ingress + M15 host -> existing scoped resource owner | One operation identity, lane capability, absolute deadline and CPU/byte/worker reservations -> admitted work or Busy/Unavailable. Settle actual worker CPU once, including cancellation, late failure and Unknown; duplicate identities do not gain fresh budgets. Invalid is reserved for checked invalid content. |
+| I03 / PN2 | M00 context + M07 verified parent -> M06 execution | Versioned parent commitment with account root/count/balance, bounded non-account root/count/liabilities and supply -> private bound parent. A claimed aggregate or cached block id cannot replace authentication. |
+| I04 / PN2 | M09 archive/producer -> M06/M07 | Exact parent, canonical touched-account multiproof, complete mandatory/range inputs and proof-byte budget -> checked transition, child root and reversible delta. Missing data is Unavailable; authenticated absence is distinct; no partial transition may commit. |
+| I05 / PN2/PN4 | M07/M08/M13 -> M09 retention owner | Required roots, acknowledged obligations, byte reservation and retention/recovery endpoints -> durable storage responsibility. Provider receipt is not proof of possession forever, chain validity or finality; GC must preserve reachable roots and mandatory duties. |
+| I06 / PN3 | Hepta artifact/export owner -> M10/M11 | Actual installed parent, candidate manifest/bytes, consent/export and current withdrawal scope -> scoped publication/evaluation input. ArtifactOwnerService publication with DENY_ALL does not authorize redistribution. |
+| I07 / PN3 | M10 candidate + independent data custodian -> M11/Hepta evaluator and selector | Frozen parent/candidate/control identities, source/time/exposure windows, total budgets and decision rule -> gain/no-gain/invalid/unknown evidence. Evaluation quorum is an application policy, never ledger work or local installation authority. |
+| I08 / PN3 | M14 packet-status -> existing Hepta TaskFlow coordinator | Already durable exact packet/effect bytes -> schema-3 storage/active-ancestry/depth/work observation plus exact accepted-task binding when present. Match task, owner, provider, output and generation; local absence never proves global NotDispatched. |
+| I09 / PN3/PN5 | M10 release owner -> M09 fetch -> existing Hepta loader | Selected release dependency closure and pinned TCM1 identities, finite peers, original deadline and resource budget -> freshly verified complete bytes and provenance. Manifest ID, payload SHA256 and any external CID retain their distinct algorithms/domains. Download success grants no CURRENT/FinalUse authority. |
+| I10 / PN3 | Existing Hepta selection/artifact/resource/FinalUse owners -> neuron runtime | Current signed artifact/withdrawal head, compatible verified bytes, local generation, explicit chain confirmation policy and real resource admission -> fresh local installation and actual inference readback. Reorg or withdrawal fences further use; durable external effects are reconciled under their original identity. |
+
+Dependency details and negative schedules live in the existing
+[work](../protocol/pon-nakamoto-v1/NEURAL_WORK.md),
+[admission](../protocol/pon-nakamoto-v1/details/ADMISSION_SECURITY.md),
+[permanent storage](specs/pon/PERMANENT_ACCOUNT_STORAGE_BOUNDARY.md),
+[Hepta handoff](../protocol/pon-nakamoto-v1/details/HEPTA_HANDOFF.md) and
+[Cell distribution](../protocol/pon-nakamoto-v1/details/CELL_P2P_V1.md) contracts.
+They share this sequence and must not become separate roadmaps.
+
 ## 5. Reward and free-use rules
 
 Keep mining reward, model-contribution reward and serving/storage/evaluation compensation
@@ -503,56 +554,231 @@ parameters and independent economic review before activation; no invented launch
 
 ### PN0 — Contract and source alignment
 
-Update this plan, all module specifications, applicability and machine target together.
-Retain current source ownership and remove all old protocol/operation references from the active tree. Register new objects/errors/bounds and independent vectors. Documentation
-and reference-model tests prove only their stated scope. No parallel target or roadmap.
+Owners: M00/M15/M17, with the actual upstream Hepta owners. Entry: inspect the
+candidate and base without changing deployed services or another repository.
+
+1. Derive exact Chain and Hepta head/tree/base, prospective merges, binaries,
+   target/profile/genesis/namespace and hardware/configuration. Update the
+   owning paired workflow only when that upstream change is authorized; until
+   then record the stale pin as a blocked pair, not a passed test.
+2. Reproduce relevant source, dependency, signed-reader and negative-integrity
+   gates. Review current security alerts by rule, path, data flow, affected base,
+   exploit preconditions, owner and fix/disposition evidence. A successful scan,
+   changed-file truncation warning or historical alert count is not triage.
+3. Preserve original campaign inputs and all failed/censored observations.
+   The source494 public campaign failed 0/3 rounds in all three modes; source
+   df6 improved baseline to 2/3 while both hostile modes stayed 0/3. The 9bd
+   successor's original-budget campaign is pending, not inferred from its cache
+   and import regressions. See the existing performance acceptance contract.
+
+Exit: one reproducible source-pair/configuration inventory and per-gate results
+with unresolved items assigned. Block dependent acceptance on required failures;
+continue scoped repair and offline research. Do not rerun historical cleanup or
+restore retired code. Register actual new objects/errors/vectors only with their
+implementation; this documentation amendment adds no runtime maturity claim.
 
 ### PN1 — Qualify real neural work
 
-Select and implement the exact challenge-bound useful-work primitive. Freeze arithmetic,
-proof format, setup assumptions, task choice, cost class and no-workload behavior. Attack
-precomputation, trivial instances, stolen/old models, unused-input/proof randomness grinding
-and verification DoS. Quantify useful work vs proof overhead and independent reproduction.
-A falsified primitive is repaired or replaced by a reviewed new work profile, not silently
-substituted with old consensus. New model improvement is not needed for every block.
+Owners: M01/M02/M03/M04/M15/M17. Entry: PN0 inputs fixed. Deliver I01/I02
+as separate correctness, resource and public-service contracts.
+
+1. Keep W1's current arithmetic and full statement binding. Freeze task classes,
+   target, setup/amortization horizon, maintenance choice and attacker hardware
+   assumptions. Compare the best implemented general, zero, low-rank, sparse,
+   preprocessed and ticket-passing false-transcript producers at equal targets.
+   Include preparation, every unsuccessful attempt, winning work, full receiver
+   rejection and useful-output rate. Do not mix main's microbenchmark ratio with
+   the candidate's fuller-cost ratio or call either a lower-bound proof.
+2. Explain the security bound in effective qualified work, including the admitted
+   structured/hardware advantage and work concentration; machine or key count is
+   not adversarial work fraction. Independent review must state which hardness,
+   lottery and preprocessing assumptions remain. An unsupported assumption keeps
+   work qualification open even if the finite availability test passes.
+3. Join the actual paid and public ingress paths to the same scoped accounting.
+   Account for decode, state access, verification, all workers, commit and client
+   confirmation separately. Preserve recovery capability separation, finite
+   retries, original deadlines and first-error behavior. Unknown/cancelled jobs
+   retain consumed credit and require original-operation reconciliation.
+4. Rerun the unchanged public campaign: 1,024 signed seed transfers, four seed
+   blocks, 21 business blocks, three 30-second rounds in each baseline/from-zero/
+   late-product mode, 0/24/24 attackers, two workers, 2 CPU-second burst,
+   0.25 CPU-second/second refill and 100 ms start reservation. Require 3/3 timely
+   independently imported confirmations in each mode; repeat the complete frozen
+   campaign three times with all failures retained. This is a finite development
+   regression under that attack envelope, not universal public fairness.
+
+Exit: separate work-security and honest-service verdicts with raw denominators,
+assumptions and independent reproduction. Queue cleanup or ACK alone cannot pass.
+A failed work relation needs an explicitly versioned reviewed successor, fresh
+context and new vectors. No automatic hash-only, TEE, evaluator-vote or old BFT
+fallback; no new model improvement is required for every maintenance block.
 
 ### PN2 — Native PoN chain and recovery
 
-Implement M00/M01/M02 contracts, M03 attempts/publication, M04 ingress, M05 admission,
-M06/M07 reversible execution and M08 reorg. Verify required work rather than reported
-work, DAA boundaries, partitions and every crash cut. Port pure-core/durable-owner patterns,
-not retired Vote/Timeout/QC/TC logic. Keep actual runtime activation false until qualified.
+Owners: M00/M05/M06/M07/M08/M09/M13/M15. Entry: PN0, frozen I03–I05 and
+PN1 accounting; PN1/PN2 implementation may iterate before joint acceptance.
+Keep required-target/chainwork, DAA/time boundaries, fork eligibility and
+partition/reorg regressions in the existing consensus owner throughout this work.
+
+1. First measure complete-State encoding, actual SQL/graph reads, history seals,
+   proof collection, execution, lock wait, durable commit and client import.
+   Retain 9bd's exact-byte arithmetic reuse and final integrity fences. Batching
+   and pipeline improvements must preserve roots, errors, cancellation and
+   one-writer atomicity; O(state)/O(history) paths remain explicitly disclosed.
+2. Install a separately selected growth profile, using the existing research
+   `GrowthStateCommitmentV2` and `growth_profile_binding_v2` only after complete
+   parameter/header/challenge/namespace dispatch and independent vectors exist.
+   Authenticate permanent account root/count/balance and bounded non-account
+   liabilities. Verify original-parent touched-account proofs and complete
+   mandatory recipient/range coverage before optional transactions. Preserve
+   zero-balance existence, nonces, conservation and old-profile replay exactly.
+3. Target block validation of O(W log A + bounded non-account/range input),
+   where A is permanent accounts and W is all touched/mandatory accounts. Freeze
+   numeric ceilings and require transaction bytes + W1 + witnesses to fit the
+   selected packet budget. No per-request full-history walk in the new hot path.
+   Replace full-read trust with explicit verified persistent roots, transactional
+   generation fences, authenticated pages and cold integrity audit; never just
+   skip the old pre-COMMIT/final reorg checks under their old root meaning.
+4. Commit block, child roots, COW nodes, deltas, root references, reservations
+   and active-generation publication through the existing durable owner.
+   Retain roots for forks, pending reorg/recovery and acknowledged duties; GC
+   needs reachability. A pruned deep valid fork uses verified resync, not invented
+   finality. Export/migration verifies the complete source and publishes an
+   isolated destination only after readback; source remains recoverable.
+
+Exit: actual signed native transitions cross 65,536 permanent accounts with
+bounded W and working partition; small-state complete/reference differential
+execution agrees. Pass zero-balance/re-entry/nonce, wrong-parent/omitted/extra
+proof, mandatory maturity/refund/expiry, deep-fork/reopen, disk-full, provider-loss,
+process-cut and cold-recovery schedules. Measure increasing A and retained history
+at fixed W, including real proof/disk/RSS costs. A 65,537-leaf archive-only test,
+larger cache, deleted zero accounts or a raised old key cap cannot pass.
 
 ### PN3 — One real parameter-to-public-model product loop
 
-Connect Hepta's existing owners, real compatible small models and public parameter DA.
-A normal product task trains an update, independent peers evaluate it, a router/composition
-candidate improves the whole model, and a new independent consumer uses the release.
-Test author disappearance, poison/compatibility faults and consent/source substitutions.
-No manual fixture assembly substitutes for the ordinary startup/request path.
+Owners: M09/M10/M11/M14/M15 and existing Hepta learning, artifact, selector,
+TaskFlow, resource and FinalUse owners. Entry: PN0 source pair and I06–I10
+bound; public claims additionally require PN1/PN2. Controlled product work may
+proceed with those failures visible.
+
+1. Start with one real compatible pretrained Encoder and bounded Cell heads or
+   small adapter model through the ordinary neuron runtime. Record actual forward,
+   training and post-install inference calls and hashes. A trait, fixed head,
+   tabular scorer, declared Cell count or public 25-row ceiling is not this path.
+   Use Hepta's shared Encoder and scoped immutable feature snapshot owners;
+   feature reuse binds input, preprocessing, model, scope and local generation.
+   The current ILM3/ILF3 family cannot admit arbitrary neural weights. Deliver
+   an explicit M10/M11 artifact/release/evaluation profile with bounded codecs
+   and stated independent-custodian trust before claiming native model admission;
+   PoN orders commitments/settlement, not every validator's full LLM evaluation.
+   Freeze evaluator admission/roster/epoch, conflict and Sybil assumptions, quorum
+   fault bound, missing-reveal and appeal rules before outcomes. The controlled
+   revision15 native-score threshold is not a private-evaluation safety theorem.
+2. Freeze independent data custody, source/time/exposure partitions, consent,
+   sample-size/power justification, minimum useful gain, safety/retention limits
+   and equal total train/evaluate/serve budgets before opening outcomes. Evaluate
+   actual installed parent, frozen base, best single, simple/pooled merge and
+   applicable routed/composition controls. Adoption needs the preregistered
+   uncertainty-adjusted gain over the actual parent, the declared strong-control
+   criterion and retention/safety/cost limits; correct for repeated candidate
+   selection rather than reuse future outcomes as tuning data. V16 owner-pinned pre-genesis task
+   windows are an existing replay input, not live future-data governance.
+3. Run candidate -> authorized export -> independent evaluation/selection ->
+   exact durable TaskFlow submission -> current chain observation/confirmation ->
+   pinned release-closure download -> existing loader/resource/FinalUse admission
+   -> fresh CURRENT generation -> actual next-task readback. Keep schema-3
+   accepted-task binding and model-output/effect-packet digest domains distinct.
+   The coordinator composes owners and creates neither new authority nor journal.
+4. Integrate the existing configured-peer Cell pilot first. Release selection
+   freezes base/tokenizer/runtime/layout/router/required-Cell closure and versions.
+   Fetch missing chunks from finite peers with the original budget/deadline;
+   verify full payload and dependencies before loader entry. Public discovery,
+   independent replication/repair and private transport mature at PN5.
+
+Exit: at least three consecutive real lineage cycles, each using the actually
+installed predecessor (or retaining it on a valid no-update), plus an independent
+consumer's authorized next task. Bind each decision to exact bytes, evidence,
+installation/readback and subsequent untouched-window results. Test lost ACK,
+duplicate call, withheld Cell, bad shape/loader, author loss, stale/reorged task,
+withdrawal during download/install and restart at each owner boundary. Keep local
+effects/revocations monotonic. Mechanical completion and efficacy are separate:
+three no-update cycles can pass safe loop behavior, never a claim of three
+improvements. Sustained improvement needs at least three separately installed,
+prospectively qualified beneficial releases under the frozen statistical rule;
+no-gain yields zero adoption/reward, not a manufactured success.
 
 ### PN4 — Rewards, reorg liabilities and free service
 
-Implement bounded emission/maturity, escrow, contribution attribution and PublicInferenceBudget.
-Replay duplicate/reorged rewards, cancelled tasks, delayed observations and real external
-effects. Reconcile exact identities after crashes; never reset the local effect log when
-chain state moves backwards. Measure free-tier capacity, successful service and costs.
+Owners: M09/M10/M11/M12 with M07/M08 and existing local effect owners.
+Entry: PN2 conservation and PN3 exact operation/release identities.
+
+Deliver separate finite mining, contribution, evaluation, byte-retention/repair
+and inference budgets. Reserve storage capacity and mandatory successor duties
+before acknowledgement. Price actual byte-time, transfer, evaluation and service
+units; signatures and token issuance do not create disks or GPU supply. Contribution
+credit follows the frozen whole-model rule with uncertainty and duplicate/bundle
+controls, never chainwork. A failed or no-gain candidate consumes only its explicitly
+authorized evaluation resources and receives zero model-improvement payout.
+
+Exit: escrow and monetary invariants hold through split/replayed contributions,
+orphaned adoption, maturity/expiry/refund, interrupted repair, full storage and
+lost ACK after external success. Reconcile the original effect identity without
+rewinding the local log. A new consumer receives measured sponsored basic use
+within published quotas and real funding; exhausted funding returns a bounded
+service outcome. Retention expiry cannot erase account nonces or acknowledged
+duties. Economic/security review remains separate from unit conservation.
 
 ### PN5 — Independent system acceptance (the G5 release boundary)
 
-Execute real independently operated mining/validation hosts, forks, eclipse/partition,
-proof flood, workload starvation, restart/power loss and deep reorg. Separately measure
-whole-model future-window benefit, cheap/public serving, data availability, resource
-cost and adversarial economic incentives. Do not relabel old seven-validator epoch runs
-as PoN security. Exact-head and applicable prospective-merge evidence are distinct.
+Owners: M04/M09/M13/M14/M15/M17 with independent operators and data evaluators.
+Entry: joint PN1–PN4 acceptance on the current pair; explicit tested work/network/
+storage trust assumptions. Independent means separate administrators/custody and
+failure domains, not extra processes or keys controlled by one operator.
+
+Deliver bounded discovery and authenticated/confidential transport where required,
+provider expiry, chunk scheduling, replica repair and verified sync. The initial
+development DA objective is three complete replicas across three independent
+failure domains; loss of one must leave retrieval from the other two and repair
+to three within a preregistered repair deadline and byte/funding budget. This is
+a new test objective, not the current pilot's guarantee or a production SLA.
+Erasure coding is a later separately specified option with decode/repair costs.
+
+Exit: run at least a 72-hour frozen WAN campaign with at least three independent
+operators, reporting all load/fault cohorts, partitions/heal, eclipse attempts,
+proof floods, churn, origin loss, disk-full, restart, separately identified power
+loss, deep reorg and new-node sync. Freeze offered load, attack budget, confirmation
+policy, latency/completion objectives, storage/repair deadlines and tail sample
+requirements before the run. Report unique confirmed TPS, candidate-to-install
+tails/failures, subsequently qualified updates, honest completion and full
+recovery costs. Missing/undersampled tails remain unaccepted. Every threshold
+must pass in its named cohort; a strong aggregate cannot hide an attack failure.
+The duration/operator count are minimum development coverage, not sufficient
+production security. Exact-head and applicable merge evidence remain distinct.
+
+Only after measurement shows propagation/stale forks dominate, compare the current
+chain with Conflux/GHAST, GHOSTDAG or Prism under the same W1, execution, availability
+and total resource assumptions. A reference-DAG transport comparison is not those
+consensus implementations. Any successor must specify ordering before post-state
+roots, conflict/reward treatment, withheld data, reorg and client confirmation;
+it cannot inherit another chain's safety bound or add references to old headers
+silently. State I/O or verifier amplification is repaired in its owner first.
 
 ### PN6 — Migration and governed deployment
 
-Drain/reconcile legacy liabilities and export exact classified history. Use a fresh
-PoN genesis, identities, key/store namespace and explicit import reconciliation. Verify
-no old proof is promoted, no liability omitted and no false cross-network double-spend
-claim. Only accepted release/activation material can change production flags. Source
-merge, a green document checker and model registry publication are not activation.
+Owners: M00/M07/M08/M13/M15 and the existing release/activation authority.
+Entry: accepted PN0–PN5 evidence on the exact proposed binaries and contexts.
+
+Rehearse drain/reconciliation, full source verification, isolated destination
+publication, cold readback and abort/recovery with all obligations and old-profile
+history retained. Use fresh genesis, profile/domain and storage identities for
+changed relations. No old proof or work weight is silently promoted and no
+cross-network double-spend protection is invented. A rollback selects a newly
+authorized local generation; it does not restore an old revocation frontier or
+overwrite signed history. Document irreversible external outcomes explicitly.
+
+Exit: independent acceptance and the actual governed release decision authorize
+the specific migration/activation. Development selection, source merge, document
+checks and model publication keep all production/activation flags false.
 
 ## 7. Qualification and evidence commands
 

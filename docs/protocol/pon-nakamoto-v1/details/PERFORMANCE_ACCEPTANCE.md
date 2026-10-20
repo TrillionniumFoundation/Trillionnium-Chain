@@ -603,3 +603,51 @@ rollback, reorganization and reopen controls qualify the implementation path;
 they cannot supply the missing third timely confirmation or hostile liveness.
 
     cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib native_inactive_ -- --test-threads=1
+
+## PN1–PN5 frozen performance and product campaign
+
+This is the measurement contract for the 2026-10-20
+[sole-plan amendment](../../../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md),
+not a new run. PR #323 source `9bd8b20da68f0dc199aab78c27644ed004af7411`
+still needs the original-budget campaign described above. Source494's 0/3
+rounds and df6's 2/3 baseline and 0/3 hostile results remain failures of their
+original gates. Source390's finite successful pipeline and its faster censored
+work-budget failure are separate observations, not sustainable public capacity.
+
+Freeze the following before each campaign; changing a value creates a new
+experiment and cannot turn an old timeout into success:
+
+| Campaign | Required independent variables | Exit measurement |
+| --- | --- | --- |
+| PN1 work/service | Exact target/task/source/hardware, setup horizon, failed attempts, cache state, shared CPU/worker/byte budgets, attacker and honest offered load | Full producer/invalid-verifier costs and effective-work assumptions separately from client-confirmed honest completion; original three-mode gate in the plan remains unchanged. |
+| PN2 state/history | Permanent accounts A, all touched accounts W, working keys, mandatory/range/proof bytes, retained history, backend, disk/WAL budget | Signed admission beyond 65,536, declared packet/resource limits, fixed-W scaling, full-path confirmation and cold sync/recovery. Distinguish retained bytes from hot-path complexity. |
+| PN3 Hepta learning | Actual parent/candidate/control bytes, independent source/time/exposure, sample/power rule, minimum gain/safety/retention and equal total budgets | Actual installed-model readback and untouched follow-up outcomes, with no-update and failed cycles retained; mechanical loop and learned benefit are separate verdicts. |
+| PN3/PN5 Cell | Complete release closure, Cell/base sizes, active set, cold/warm cache, providers, bandwidth/loss, discovery/retry and loader budgets | Complete verified release-to-real-inference latency, peak SSD/RAM/device memory, all requested releases, unavailable/malformed outcomes and replica repair costs. Transfer rate alone is not loading capacity. |
+| PN4 serving/storage | Actual sponsored resources/funding, offered service, storage byte-time, retention/repair duties and depletion policy | Authorized completed service / all offered authorized service, conservation, repair backlog and actual billed units. Token count is not GPU or disk capacity. |
+| PN5 WAN/recovery | At least three independent operators, 72-hour minimum, frozen attack/fault schedule, load, confirmation and repair policy | Per-cohort thresholds including hostile completion, tails, stale/fork rate, state/model availability, restart/power loss and new-node/deep-reorg recovery. No aggregate masks a failed cohort. |
+
+Retain the six distinct plan metrics: unique confirmed transaction TPS;
+proof-verification/state-commit rates; candidate-to-install p50/p95/p99;
+installed and subsequently qualified updates; honest completion during attack;
+and loss/reorg/restart/new-node cost. Every report names its original attempt
+population, counts/fraction of timeout, Busy, invalid, unknown, withdrawn and
+reorged outcomes, observation interval, confirmation drain and tail sample
+requirements. Failed candidates and repeat polls cannot vanish from denominators
+or count as extra successful updates. A no-update decision may pass safe behavior
+while contributing zero to the improvement count.
+
+Measure an enclosing operation plus nested costs: decode/admission, work/task
+acquisition, state reconstruction, account/range proof, execution, root/history
+checks, lock/SQL wait, persistence, network, client import and confirmation.
+Nested timings are not additive totals. Actual scoped worker CPU must be joined
+or declared missing; thread CPU is not process CPU. Preserve mandatory cancellation
+and final-root fences. Report true wall/CPU/RSS/disk separately from software
+retention charges; a smaller arithmetic cache count is not a process-memory bound.
+
+Concurrency and DAG experiments follow joint work/storage repair. Use the same
+profile, state/history, workload, availability, hardware and total resource budget
+for serial/concurrent/reference-DAG paths. Measure the complete confirmation and
+recovery path, including unavailable data and stale work. The current reference
+transport DAG does not implement GHAST/GHOSTDAG/Prism ordering or inherit their
+security. Select a consensus successor only after a measured propagation/fork
+bottleneck and an explicit new ordering/state/reward/reorg contract justify it.

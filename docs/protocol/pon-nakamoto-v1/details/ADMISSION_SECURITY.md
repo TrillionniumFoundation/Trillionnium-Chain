@@ -4,6 +4,58 @@ The exact matrix transcript relation is unchanged. It has measured cheap-forgery
 full-recompute rejection asymmetry. No queue implementation resolves its cryptographic
 cost hardness, input-instance fairness or permissionless Sybil problem.
 
+## PN1 shared-operation admission target
+
+This amendment specifies I02 of the
+[sole plan](../../../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md).
+Later sections retain the existing and historical implementation boundaries;
+this target does not claim they already supply public fairness. Work hardness
+is qualified separately under [neural work](../NEURAL_WORK.md).
+
+The ordinary M15 host must bind every public/paid mutation and its actual scoped
+workers to one enclosing operation. Before expensive decoding, task acquisition
+or state reconstruction, reserve bounded ingress bytes, queue entries, worker
+capacity, start CPU credit and an absolute deadline. The operation identity,
+lane capability and original resource/deadline context survive duplicate calls,
+cancel requests and lost ACK. Only the existing local capability may choose the
+recovery lane. Caller identities or fees alone do not establish honest public
+fairness or exempt any path from shared resource accounting.
+
+| Boundary | Required behavior and measurement |
+| --- | --- |
+| Intake | Bounded framing/parser, duplicate detection and cheap canonical/ticket checks; measure rejected-before-work separately. No caller-supplied Boolean constructs verified work. |
+| Scheduled work | Charge actual decode, task/state acquisition, proof checking, execution, durable commit and all scoped worker CPU. Join or retain ownership of late workers before final settlement. Record CPU, wall wait and queue occupancy separately. |
+| Cancellation/Unknown | Stop at defined safe boundaries, retain spent credit and exact operation identity, and reconcile the original outcome. A timeout does not prove cancellation, non-dispatch or block invalidity. |
+| Confirmation | Client history import and depth/work checks retain their own measured budget and deadline. Receiver ACK is not a completed honest business round. |
+| Restart | Durable effects, revocations and acknowledged obligations remain fenced. A restart must not mint fresh resource credit for an unresolved operation or release capacity still owned by work. |
+
+Do not remove integrity fences, expand budgets or shorten the confirmation
+policy to pass the existing regression. Instrument nested stage costs first;
+charge each interval once to its enclosing operation. Separate a resource
+bound from a fairness objective: the public test must declare honest offered
+load, attacker bandwidth/CPU/identity churn, scheduling, network assumptions,
+maximum pending work and required honest completion/tails. Unbounded attacker
+arrivals have no implied service guarantee. Paid/public isolation is accepted
+only for the tested envelope and shared bottlenecks, including disk and State.
+
+The first exit test is the original native campaign with 1,024 signed seed
+transfers, four seed blocks, 21 business blocks, three 30-second rounds per
+baseline/from-zero/late-product mode, 0/24/24 attackers, two workers,
+2 CPU-second burst, 0.25 CPU-second/second refill and 100 ms start reserve.
+Require 3/3 timely, independently imported confirmations per mode in each of
+three complete runs. Keep all offered honest requests, Busy, timeout, invalid,
+unknown, cancelled and reorged outcomes. Missing a planned confirmation fails
+that run; extending its window creates a different experiment. Source494 and
+df6 failures remain retained; the latest 9bd optimization still needs this run.
+
+After that finite regression, PN5 independently operated WAN service additionally
+requires the preregistered attack/load and completion objectives. Record sustained
+credit depletion/debt, expensive rejection rate, paid and recovery lane progress,
+state/SQL time, actual worker CPU, memory/disk high water and p95/p99 with sample
+counts. If the no-attack baseline fails, repair and measure it before attributing
+the whole deficit to adversarial W1. A local passing test cannot close the
+independent or computational-security gates.
+
 ## Implemented local capacity boundary
 
 `trnm-transport::proof_admission` allocates three public permits and one recovery permit,

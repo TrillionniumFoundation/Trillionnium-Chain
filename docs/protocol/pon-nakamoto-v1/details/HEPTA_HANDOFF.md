@@ -7,6 +7,14 @@ WithdrawalBoundArtifactAdmissionV3, VerifiedCurrentArtifactHeadV1,
 LearningArtifactOwnerHost/Service and VerifiedArtifactSelectionV1. A chain adapter must
 consume these owners; it must not construct a second artifact registry or trainer.
 
+The dated inspections below retain their original scope. For the 2026-10-20
+amendment the inspected Chain #323 source is
+`9bd8b20da68f0dc199aab78c27644ed004af7411`, and the inspected Hepta #2559
+source is `443692c1c16a031fbde1ca3ddf5be99770667d81`. That Hepta workflow
+pins an older Chain source, so it is not a receipt for this pair. The latest
+V8 document amendment is a design input, not evidence of installation or
+learning. The PN3 target at the end of this file governs the remaining handoff.
+
 ## Required product sequence
 
 1. Normal task owner records actual task/input/output and authorized learning scope.
@@ -217,3 +225,93 @@ FinalUse. The ordinary coordinator must still apply its explicit confirmation
 policy, original signed installation authority and actual next-generation model
 readback. The extra state verification is paid only for a single-accept packet;
 this increment makes no claim that confirmation/state scans have become sublinear.
+
+## PN3 real-neuron integration contract
+
+Implement I06–I10 of the
+[sole plan](../../../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md)
+through existing owners. A narrow coordinator carries typed facts between them;
+it owns no second learning/artifact/effect store and cannot issue capabilities.
+Persist exact intent/attempt/output observations through the current TaskFlow /
+kernel.operations boundary, including the original effect key and wire bytes.
+
+The current revision16 ILM3/ILF3 family is a bounded tabular neural graph. Its
+zero-parent reachability and signed native adoption are real controls, not an
+arbitrary pretrained Encoder/LLM release format. The public historical 25-row
+tasks and owner-pinned pre-genesis external windows likewise do not qualify
+prospective efficacy. Do not serialize a real Neuron into ILM3 merely to reuse
+a passing scorer. Choose and implement an explicit compatible artifact/release
+and evaluation profile with bounded codecs, policy identities, independent
+vectors and source bindings before claiming native neural-model admission.
+
+The selected product split keeps bulk training/inference off the consensus hot
+path. PoN orders exact commitments, task acceptance, release policy and settlement.
+Real model evaluation uses the existing evaluator/selector owners with an
+explicit trust profile for source custody and independent attestations. A signed
+quality claim is not trustless computation or PoN chainwork. If on-chain adoption
+semantics change, select a fresh M10/M11 context; the schema-3 task observation
+alone only binds settled task facts. Private held-out outcomes cannot silently
+replace the current all-node deterministic scorer's public replay inputs.
+
+The new evaluation profile must freeze evaluator admission/custody assumptions,
+author conflicts, roster/epoch, Byzantine or collusion bound, quorum rule,
+commit/reveal deadlines, objective equivocation and finite appeal handling before
+candidate outcomes are known. Missing reveals cannot trigger retrospective roster
+or threshold shrinkage. Current revision15's controlled keys and matching native
+score checks do not prove independent private evaluation. For an attestation
+profile, justify quorum intersection under its own stated fault bound; do not
+inherit a threshold from the deterministic scorer. Replacement/rotation applies
+to an explicitly new epoch/context. Public entry needs an explicit Sybil/admission
+and conflict policy; self-declared independence or an extra key cannot supply it.
+If those assumptions are unavailable, keep the campaign controlled/unqualified.
+None of these application decisions contributes PoN fork weight or local use
+authority, and consumers still apply their own admitted release policy.
+
+| Order / existing owner | Required input and output | Recovery/admission rule |
+| --- | --- | --- |
+| 1 / task + learning.operator/plasticity | Authorized real task episode, scope and actual installed model -> immutable candidate and training/resource receipt | Preserve consent/source/forget frontiers; no training/export authority inferred from task completion or a memory projection. |
+| 2 / learning.artifacts + export/withdrawal owner | Actual candidate bytes, lineage and current signed head -> scoped authorized export | DENY_ALL publication is insufficient. Withdrawal/generation changes fence later use; publication cannot promise recall of distributed copies. |
+| 3 / learning.eval + independent selector | Frozen parent/candidate/controls, future-window custody, scoring and equal budgets -> selected/no-update/invalid/unknown result | Use actual parameter forward/training. Missing, leaked, biased or unsupported evaluation cannot become positive gain. Separate custody from multiple keys under one operator. |
+| 4 / TaskFlow + compiled adapter | Exact evaluated release/task binding -> durable original effect bytes, submission and read-only reconciliation | Lost ACK queries the same identity. Unknown does not authorize re-signing/re-dispatch. Keep provider SHA256, Chain ids and upgrade-binding domains explicit. |
+| 5 / M14 observation consumer | Exact packet and current schema-3 observation -> checked active acceptance plus explicit confirmation policy | Match task id, owner, provider, output, accept transaction, exact-packet ancestry and observed generation/tip. Not-found or reorg removes entitlement, never the local terminal fact. |
+| 6 / release owner + M09 fetch + existing loader | Selected release closure, pinned TCM1 ids and finite resource reservation -> verified compatible complete bytes | Withheld/corrupt dependencies, wrong base/tokenizer/dtype/shape and expired original budget stop installation. Byte retrieval itself grants no use. |
+| 7 / selection/artifact/resource/FinalUse owners | Current signed head/withdrawal, local generation, confirmation and compatible artifact -> fresh CURRENT generation | Recheck immediately before admission; chain generation is not a castable local generation. Code/structural/consensus changes require their own owners. |
+| 8 / neuron runtime + outcome/evaluation owner | Next ordinary task -> actual loaded weights/generation and inference/resource/outcome receipt | Record the model actually used, including cached Encoder features. Recheck feature input/model/preprocessing/scope/generation; no stale-feature reuse after install. |
+
+First use one real compatible small pretrained Encoder with bounded learned
+Cell heads or an explicit adapter family. Reuse the shared Encoder execution,
+sparse activation, immutable feature snapshot and existing worker caller from
+Hepta's V8 design; different requests cannot share an embedding just because
+the Encoder weights are shared. Freeze maximum active Cells and end-to-end
+CPU/RSS/VRAM, queue, training/evaluation and download budgets. A logical count
+of Cells or a deterministic head proves neither a real forward nor benefit.
+
+For each lineage cycle record parent/candidate/release/dependency hashes,
+training and evaluation source/time/exposure partitions, consent/withdrawal
+heads, independent owner roles, frozen decision thresholds and sample/power
+justification, baseline outcomes, total cost, exact TaskFlow/packet identities,
+active acceptance/confirmation, installation generation, loader readback and
+subsequent untouched-window results. Missing fields remain unknown with a
+reason. Predeclare the uncertainty-adjusted minimum gain over the installed
+parent, strong-control comparison, retention/safety/cost bounds and repeated-
+selection correction; do not tune on the supposedly future window. A losing
+or unsafe candidate retains the current model and gets zero
+model-improvement reward. Evaluation/transport resources still settle under
+their original scoped budget.
+
+PN3 mechanical acceptance requires three real consecutive cycles and an
+independent consumer task, including valid no-update behavior. Every cycle
+starts from the predecessor actually in use; replica installs cannot multiply
+the learned-update count. Sustained-improvement acceptance separately requires
+at least three installed beneficial releases with independently held future
+outcomes under a preregistered gain/retention/safety rule and strong equal-budget
+controls. Three no-update cycles, ceiling scores, exploratory retraining or
+three signed fixture generations do not meet that efficacy condition.
+
+Inject lost ACK, duplicate submission, expired authorization, wrong provider/
+output/packet, reorg before and after selection, withdrawal during fetch and
+before CURRENT, missing/corrupt Cell, author disappearance, disk-full and process
+cuts at each durable owner boundary. After restart, report the original operation
+and actual loaded generation; do not execute an external effect again to repair
+a missing observation. Reverting a model is a newly admitted local generation.
+Historical decisions and revocation/forget frontiers remain unchanged.

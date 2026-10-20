@@ -143,3 +143,110 @@ Loopback tests establish byte and failure semantics. Cross-host delivery and
 actual loader receipts must name their source, model, hosts and failures; neither
 case establishes independent operators, arbitrary large-model loading or a
 permissionless storage network by itself.
+
+## PN3 release closure and real loader interface
+
+This is I09 of the
+[sole plan](../../../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md).
+The TCM1 configured-peer pilot above is implemented; the release closure,
+ordinary loader integration and public storage duties below are target work.
+Reuse the existing chunk/store/fetch owner rather than add another weight store.
+
+M10 and the existing Hepta release/artifact owner must define a bounded,
+versioned release manifest before M09 can retrieve a whole compatible model.
+Its canonical commitment must bind:
+
+- Release/parent/family, artifact and evaluation-policy identities, and the
+  selection/withdrawal context checked by the existing installation owner.
+- Exact shared base/Encoder, tokenizer/preprocessing, runtime/loader ABI and
+  tensor layout, including dtype, quantization, dimensions and adapter ranks.
+- Router/graph identity, ordered required Cells and their pinned TCM1 IDs,
+  dependency edges and expected complete payload digests/lengths.
+- Mandatory/optional activation sets, maximum active Cells and any permitted
+  fallback behavior. A fallback changes no weights/version outside this closure.
+- Compatibility and resource ceilings sufficient for safe local loader admission.
+
+These are proposed schema responsibilities, not fields already encoded by TCM1.
+Freeze maximum manifest bytes, dependency depth/fanout, number of Cells and total
+required bytes. Reject cycles, duplicate/conflicting identities, missing mandatory
+dependencies and unsupported runtime/shape before installation. Deduplicate shared
+base bytes in storage and cost accounting. A new closure schema needs a new domain
+and exact independent vectors; do not reinterpret TCM1 payload hashes or headers.
+If a BitTorrent infohash or IPFS CID is exposed, bind its algorithm, codec and
+exact byte mapping explicitly. It is not interchangeable with the domain-prefixed
+TCM1 manifest ID or the raw full-payload SHA256.
+
+The loader-side request is a trusted selected closure, missing pinned Cells,
+finite peer candidates, absolute deadline, connection/byte/CPU/disk reservations
+and an owner operation identity. M09 returns only facts about complete verified
+bytes, observed suppliers, resource consumption and unresolved dependencies.
+The caller still verifies format/compatibility and current release/withdrawal/
+generation/resource authority before installing. A timeout keeps verified chunks
+for bounded explicit retry; it cannot choose another model or refresh its own
+authorization. A verified byte receipt never becomes a final-use token.
+
+Implement local SSD -> RAM -> device-memory staging and bounded prefetch through
+the actual neuron runtime. Bind cached tensors/features to exact content and local
+generation, and count download, full hash, disk, deserialization and transfer to
+device in cold-load latency. For illustration, 200 MB over 100 Mbit/s alone has
+a 16-second ideal transfer lower bound before protocol, hash or disk costs.
+Per-token WAN loading therefore needs locality, prediction or a declared cold
+miss outcome; content addressing cannot remove that delay. An unavailable
+required Cell returns Unavailable or a fallback explicitly selected in the same
+release, never an arbitrary peer's substitute.
+
+PN3 acceptance uses the ordinary selected release and actual loader: seed a
+complete closure across finite providers, remove the origin, retrieve missing
+Cells, validate dependencies, install via the existing owners and run a real
+next-generation task. Inject shared-base/version mismatch, bad quantization/
+shape, malicious loader bytes, partial/corrupt chunks, duplicate output paths,
+deadline/storage exhaustion and withdrawal before admission. Retained partial
+bytes must not become a selected release. Record cold/warm p50/p95/p99, failures,
+peak RSS/device memory and actual loaded hashes; the existing TCP tests alone
+do not supply this receipt.
+
+## PN5 swarm discovery, storage and repair target
+
+BitTorrent-style content addressing, multi-source pieces, resumable verified
+chunks and bounded rare-piece scheduling are suitable data-plane techniques.
+Consensus carries exact release commitments and scoped settlement, while model
+bytes stay off the ordering hot path unless the work relation explicitly needs
+them. A node may store a subset; a usable distributed model is the selected
+release's complete reachable dependency closure, not the union of all cached
+Cells in the network. Local inference still needs the active weights and KV/
+activation memory. Remote execution of missing layers is a separate compute,
+privacy and latency protocol, not implemented by P2P byte fetch.
+
+Deliver discovery after PN3 works with configured providers. Use a separately
+versioned peer/provider envelope with bounded TTL, candidate count, lookup hops,
+query rate and original operation budgets. Validate every response against the
+pinned content identity; DHT/provider advertisements never select releases or
+prove durable possession. Implement eclipse/Sybil controls with stated bootstrap/
+network assumptions, bounded parallel fetch and peer backoff. A provider
+signature alone does not prove independent administration. Keep repair/discovery
+traffic inside measured disk, CPU, bandwidth and connection quotas.
+
+For private artifacts, require existing export authorization and an explicitly
+specified authenticated encrypted transport or encrypted-artifact format with
+separate key/access ownership. Hashes, DHT lookups and public chunks can disclose
+content or interest; an authorized private query must not silently enter public
+discovery. The present unencrypted TCP pilot does not provide that profile.
+
+The initial PN5 development objective is three complete replicas in three
+independent failure domains, actual retrieval after losing the author and one
+provider, and repair back to three under frozen byte/time/funding limits. Measure
+possession by real byte retrieval and random integrity probes; report unresolved
+missing chunks and oldest repair debt. Reserve byte-time and repair resources
+before acknowledging storage duties; renewal and payment expiry are explicit.
+Do not promise deletion of already exported copies. Disposable cache eviction
+must not erase acknowledged storage duties or consensus account history.
+Erasure coding needs a versioned shard relation, k/n availability assumptions,
+decode/repair verification and resource measurements before selection.
+
+Exit is the PN5 independent WAN campaign, including churn, eclipse attempts,
+corrupt/slow providers, replica loss, hot-model flash crowds, budget exhaustion,
+restart and repair. Report complete-release availability and loader completion
+for every requested release, not just available popular chunks. The 72-hour
+minimum and replica objective are development coverage, not current production
+guarantees. Long-term durability and permissionless incentives need independent
+review and funded sustained observations.
