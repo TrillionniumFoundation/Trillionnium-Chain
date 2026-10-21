@@ -429,6 +429,7 @@ pub(crate) fn try_acquire_task_lock(
         .read(true)
         .write(true)
         .create(true)
+        .truncate(false)
         .open(&path)?;
     if !try_lock_file_nonblocking(&file)? {
         return Ok(None);
