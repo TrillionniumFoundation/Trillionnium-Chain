@@ -650,7 +650,7 @@ mod tests {
 
         let env1 = sample_env(1, "nonce-shared", 1_730_000_000_000, key);
 
-        let mut env2 = sample_env(2, "nonce-shared", 1_730_000_000_050, key);
+        let mut env2 = sample_env(1, "nonce-shared", 1_730_000_000_050, key);
         env2.task_id = "task-2".to_string();
         env2.sig = env2.sign_for_test(key);
 
