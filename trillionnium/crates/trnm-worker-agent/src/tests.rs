@@ -2943,6 +2943,7 @@ fn persisted_ack_hashes_for_task_extracts_tx_hash_from_receipt_blob_entries() {
     let _ = fs::remove_file(&ack_log);
 }
 
+#[cfg(unix)]
 #[test]
 fn task_lock_prevents_parallel_replay_for_same_task() {
     let ack_log = std::env::temp_dir().join(format!(
@@ -2960,12 +2961,11 @@ fn task_lock_prevents_parallel_replay_for_same_task() {
         "second lock should be blocked"
     );
     drop(guard);
-    assert!(
-        try_acquire_task_lock(&ack_log, 42)
-            .expect("third lock call")
-            .is_some(),
-        "lock should be released after drop"
-    );
+    let third = try_acquire_task_lock(&ack_log, 42)
+        .expect("third lock call")
+        .expect("lock should be released after drop");
+    drop(third);
+    let _ = fs::remove_file(task_lock_path(&ack_log, 42));
     let _ = fs::remove_file(&ack_log);
 }
 
