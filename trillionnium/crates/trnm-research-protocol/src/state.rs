@@ -109,6 +109,20 @@ impl CanonicalCbor for AuthoritySetV1 {
     }
 }
 
+fn validate_state_chain_id(chain_id: &str) -> Result<(), ProtocolStateError> {
+    if chain_id.is_empty()
+        || chain_id.len() > 64
+        || !chain_id.bytes().all(|byte| {
+            byte.is_ascii_lowercase()
+                || byte.is_ascii_digit()
+                || matches!(byte, b'-' | b'_' | b'.' | b':')
+        })
+    {
+        return Err(ProtocolStateError::InvalidChainBinding);
+    }
+    Ok(())
+}
+
 fn validate_authority_bucket(identities: &[AuthorityIdentityV1]) -> Result<(), ProtocolStateError> {
     if identities.len() > 128 {
         return Err(ProtocolStateError::InvalidAuthoritySet);
@@ -321,6 +335,9 @@ pub enum ApplyOutcome {
 
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub struct ResearchProtocolState {
+    /// Chain identity is an out-of-band genesis binding. It is deliberately
+    /// kept outside the command replay map so commands cannot select a chain.
+    chain_id: String,
     authorities: AuthoritySetV1,
     matches: BTreeMap<ExternalKey, MatchEvidenceObjectV1>,
     evaluations: BTreeMap<ExternalKey, EvaluationCommitmentObjectV1>,
@@ -336,9 +353,28 @@ impl ResearchProtocolState {
     pub fn with_authorities(authorities: AuthoritySetV1) -> Result<Self, ProtocolStateError> {
         authorities.validate()?;
         Ok(Self {
+            chain_id: String::new(),
             authorities,
             ..Self::default()
         })
+    }
+
+    pub fn with_chain_id(
+        chain_id: impl Into<String>,
+        authorities: AuthoritySetV1,
+    ) -> Result<Self, ProtocolStateError> {
+        let chain_id = chain_id.into();
+        validate_state_chain_id(&chain_id)?;
+        authorities.validate()?;
+        Ok(Self {
+            chain_id,
+            authorities,
+            ..Self::default()
+        })
+    }
+
+    pub fn chain_id(&self) -> &str {
+        &self.chain_id
     }
 
     pub fn authorities(&self) -> &AuthoritySetV1 {
@@ -350,6 +386,15 @@ impl ResearchProtocolState {
         signed: &SignedResearchCommandV1,
     ) -> Result<ApplyOutcome, ProtocolStateError> {
         signed.validate()?;
+        if self.chain_id.is_empty() {
+            return Err(ProtocolStateError::MissingChainBinding);
+        }
+        if signed.chain_id != self.chain_id {
+            return Err(ProtocolStateError::ChainMismatch {
+                expected: self.chain_id.clone(),
+                got: signed.chain_id.clone(),
+            });
+        }
         if !self.authorities.authorizes(signed) {
             return Err(ProtocolStateError::UnauthorizedAuthority {
                 signer_did: signed.signer_did.clone(),
@@ -535,6 +580,22 @@ impl ResearchProtocolState {
     }
 
     pub fn from_snapshot(snapshot: ResearchProtocolSnapshotV1) -> Result<Self, ProtocolStateError> {
+        Self::from_snapshot_inner(String::new(), snapshot)
+    }
+
+    pub fn from_snapshot_for_chain(
+        chain_id: impl Into<String>,
+        snapshot: ResearchProtocolSnapshotV1,
+    ) -> Result<Self, ProtocolStateError> {
+        let chain_id = chain_id.into();
+        validate_state_chain_id(&chain_id)?;
+        Self::from_snapshot_inner(chain_id, snapshot)
+    }
+
+    fn from_snapshot_inner(
+        chain_id: String,
+        snapshot: ResearchProtocolSnapshotV1,
+    ) -> Result<Self, ProtocolStateError> {
         if snapshot.protocol_version != PROTOCOL_VERSION {
             return Err(ProtocolStateError::UnsupportedSnapshotVersion(
                 snapshot.protocol_version,
@@ -542,6 +603,7 @@ impl ResearchProtocolState {
         }
         snapshot.authorities.validate()?;
         let state = Self {
+            chain_id,
             authorities: snapshot.authorities,
             matches: collect_objects(
                 snapshot.matches,
@@ -987,7 +1049,16 @@ impl ResearchProtocolState {
             validate_claim_shares(&object.current_claimants, false)?;
             self.require_ref(object.claim.workload_receipt_ref)?;
             let challenge_consistent = match object.status {
-                ClaimStatus::Challenged => object.active_challenge.is_some(),
+                ClaimStatus::Challenged => object.active_challenge.is_some_and(|challenge_key| {
+                    self.challenges
+                        .get(&challenge_key)
+                        .is_some_and(|challenge| {
+                            challenge.status == ClaimChallengeStatus::Open
+                                && challenge.challenge.claim_ref.key == object.object_ref.key
+                                && challenge.challenge.claim_ref.object_version
+                                    == object.object_ref.object_version - 1
+                        })
+                }),
                 _ => object.active_challenge.is_none(),
             };
             if !challenge_consistent {
@@ -1015,7 +1086,15 @@ impl ResearchProtocolState {
                 ResearchObjectKind::ClaimChallenge,
                 object.challenge.challenge_id,
             )?;
-            if !self.claims.contains_key(&object.challenge.claim_ref.key) {
+            let Some(claim) = self.claims.get(&object.challenge.claim_ref.key) else {
+                return Err(ProtocolStateError::InvalidSnapshotGraph);
+            };
+            if object.status == ClaimChallengeStatus::Open
+                && (claim.status != ClaimStatus::Challenged
+                    || claim.active_challenge != Some(object.object_ref.key)
+                    || object.challenge.claim_ref.object_version + 1
+                        != claim.object_ref.object_version)
+            {
                 return Err(ProtocolStateError::InvalidSnapshotGraph);
             }
             let status_consistent = match object.status {
@@ -1148,6 +1227,12 @@ pub enum ProtocolStateError {
     AlteredReplay { command_id: ExternalKey },
     #[error("invalid or non-canonically ordered research authority set")]
     InvalidAuthoritySet,
+    #[error("invalid research protocol chain binding")]
+    InvalidChainBinding,
+    #[error("research protocol state has no configured chain binding")]
+    MissingChainBinding,
+    #[error("signed command targets chain {got}, expected {expected}")]
+    ChainMismatch { expected: String, got: String },
     #[error("{role:?} signer {signer_did} is not in the genesis authority set")]
     UnauthorizedAuthority {
         signer_did: String,

@@ -171,7 +171,7 @@ fn test_authorities() -> AuthoritySetV1 {
 }
 
 fn test_state() -> ResearchProtocolState {
-    ResearchProtocolState::with_authorities(test_authorities()).unwrap()
+    ResearchProtocolState::with_chain_id("trnm-devnet-v1", test_authorities()).unwrap()
 }
 
 #[test]
@@ -474,7 +474,8 @@ fn snapshots_round_trip_and_fail_closed_on_corruption() {
     let snapshot = state.export_snapshot();
     let json = serde_json::to_vec(&snapshot).unwrap();
     let decoded: ResearchProtocolSnapshotV1 = serde_json::from_slice(&json).unwrap();
-    let restored = ResearchProtocolState::from_snapshot(decoded).unwrap();
+    let restored =
+        ResearchProtocolState::from_snapshot_for_chain("trnm-devnet-v1", decoded).unwrap();
     assert_eq!(restored, state);
     assert_eq!(
         restored.canonical_snapshot_bytes(),
@@ -594,5 +595,19 @@ fn print_golden_fixture_for_regeneration() {
     println!(
         "{}",
         serde_json::to_string_pretty(&generated_golden_fixture()).unwrap()
+    );
+}
+
+#[test]
+fn state_rejects_signed_commands_for_another_chain() {
+    let command = sign(0, fixture_commands()[0].clone()).unwrap();
+    let mut state =
+        ResearchProtocolState::with_chain_id("trnm-otherchain", test_authorities()).unwrap();
+    assert_eq!(
+        state.apply(&command).unwrap_err(),
+        ProtocolStateError::ChainMismatch {
+            expected: "trnm-otherchain".into(),
+            got: "trnm-devnet-v1".into(),
+        }
     );
 }

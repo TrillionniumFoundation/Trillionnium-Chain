@@ -12,7 +12,7 @@ fn is_task_acked_only_true_for_accepted_records() {
         )
         .expect("write ack log");
 
-    assert!(!is_task_acked(&ack_log, 1));
-    assert!(is_task_acked(&ack_log, 2));
+    assert!(!is_task_acked(&ack_log, 1).expect("valid ack log"));
+    assert!(is_task_acked(&ack_log, 2).expect("valid ack log"));
     let _ = fs::remove_file(&ack_log);
 }
