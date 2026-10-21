@@ -127,8 +127,7 @@ fn acquire(
         if s.global_failures.len() >= s.policy.max_global_rejections {
             return Err(Refusal::GlobalRateLimited);
         }
-        if s
-            .failures
+        if s.failures
             .get(&peer)
             .is_some_and(|failures| failures.events.len() >= s.policy.max_peer_rejections)
         {
@@ -197,7 +196,11 @@ impl Permit {
             let now = Instant::now();
             purge_failures(&mut s, now);
             s.global_failures.push_back(now);
-            s.failures.entry(self.peer).or_default().events.push_back(now);
+            s.failures
+                .entry(self.peer)
+                .or_default()
+                .events
+                .push_back(now);
         }
         Ok(())
     }

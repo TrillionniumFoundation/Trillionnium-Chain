@@ -180,15 +180,10 @@ impl CellStoreV1 {
     /// the local cache.  Arbitrary cached cells never imply a usable release:
     /// the caller must provide the canonical release manifest and all listed
     /// members must match its bound model context.
-    pub fn verify_release_complete(
-        &self,
-        release: &CellReleaseManifestV1,
-    ) -> CellResultV1<()> {
+    pub fn verify_release_complete(&self, release: &CellReleaseManifestV1) -> CellResultV1<()> {
         release.validate()?;
         for digest in release.cells() {
-            let manifest = self
-                .manifest(*digest)?
-                .ok_or(CellErrorV1::Unavailable)?;
+            let manifest = self.manifest(*digest)?.ok_or(CellErrorV1::Unavailable)?;
             require(
                 manifest.context() == release.context(),
                 "release cell context",

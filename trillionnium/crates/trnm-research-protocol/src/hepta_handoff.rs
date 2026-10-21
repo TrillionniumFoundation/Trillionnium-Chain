@@ -76,9 +76,7 @@ impl HeptaArtifactAdmissionV1 {
         match (self.generation, self.parent_artifact_digest) {
             (1, None) => {}
             (1, Some(_)) => {
-                return Err(HeptaHandoffError::InvalidAdmission(
-                    "generation_one_parent",
-                ))
+                return Err(HeptaHandoffError::InvalidAdmission("generation_one_parent"))
             }
             (_, None) => {
                 return Err(HeptaHandoffError::InvalidAdmission(
@@ -378,10 +376,7 @@ pub enum HeptaHandoffError {
     AdmissionExpired,
 }
 
-fn validate_digest(
-    field: &'static str,
-    digest: &Digest32,
-) -> Result<(), HeptaHandoffError> {
+fn validate_digest(field: &'static str, digest: &Digest32) -> Result<(), HeptaHandoffError> {
     if *digest == [0; 32] {
         return Err(HeptaHandoffError::InvalidAdmission(field));
     }

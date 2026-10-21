@@ -252,7 +252,7 @@ fn hepta_admission_requires_owner_facts_and_authority() {
         Err(HeptaHandoffError::InvalidSignature)
     ));
 
-    let mut wrong_authority = AuthoritySetV1::default();
+    let wrong_authority = AuthoritySetV1::default();
     wrong_authority
         .validate()
         .expect("empty authority set is a valid test fixture");
@@ -268,7 +268,9 @@ fn hepta_admission_rejects_missing_parent_and_unbounded_payload() {
     admission.generation = 2;
     assert!(matches!(
         admission.validate(),
-        Err(HeptaHandoffError::InvalidAdmission("missing_parent_artifact"))
+        Err(HeptaHandoffError::InvalidAdmission(
+            "missing_parent_artifact"
+        ))
     ));
 
     let mut admission = hepta_admission();

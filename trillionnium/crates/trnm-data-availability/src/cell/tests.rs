@@ -216,23 +216,25 @@ fn release_manifest_requires_complete_context_bound_closure() {
     fs::write(&first_input, vec![1_u8; 8192]).unwrap();
     fs::write(&second_input, vec![2_u8; 8192]).unwrap();
     let store = CellStoreV1::open(&directory.path().join("store")).unwrap();
-    let first = store
-        .pack_file(&first_input, context(), 16_384)
-        .unwrap();
-    let second = store
-        .pack_file(&second_input, context(), 16_384)
-        .unwrap();
+    let first = store.pack_file(&first_input, context(), 16_384).unwrap();
+    let second = store.pack_file(&second_input, context(), 16_384).unwrap();
     assert_ne!(first.id(), second.id());
     let release = CellReleaseManifestV1::new(context(), vec![second.id(), first.id()]).unwrap();
     assert_eq!(release.cells(), &[first.id(), second.id()]);
-    assert_eq!(CellReleaseManifestV1::decode(&release.encode()).unwrap(), release);
-    assert_eq!(CellReleaseManifestV1::decode(&release.encode()).unwrap().id(), release.id());
+    assert_eq!(
+        CellReleaseManifestV1::decode(&release.encode()).unwrap(),
+        release
+    );
+    assert_eq!(
+        CellReleaseManifestV1::decode(&release.encode())
+            .unwrap()
+            .id(),
+        release.id()
+    );
     store.verify_release_complete(&release).unwrap();
 
     let missing = CellStoreV1::open(&directory.path().join("missing")).unwrap();
-    missing
-        .put_manifest(first.id(), &first.encode())
-        .unwrap();
+    missing.put_manifest(first.id(), &first.encode()).unwrap();
     for chunk in first.chunks() {
         missing
             .put_chunk(chunk, &store.chunk(chunk.sha256).unwrap().unwrap())

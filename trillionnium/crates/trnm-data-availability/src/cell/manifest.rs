@@ -189,10 +189,7 @@ pub struct CellReleaseManifestV1 {
 }
 
 impl CellReleaseManifestV1 {
-    pub(crate) fn new(
-        context: CellContextV1,
-        mut cells: Vec<CellDigestV1>,
-    ) -> CellResultV1<Self> {
+    pub fn new(context: CellContextV1, mut cells: Vec<CellDigestV1>) -> CellResultV1<Self> {
         cells.sort_unstable();
         let value = Self { context, cells };
         value.validate()?;
@@ -217,7 +214,10 @@ impl CellReleaseManifestV1 {
             self.cells.windows(2).all(|pair| pair[0] < pair[1]),
             "release cell order/duplicates",
         )?;
-        require(self.encode().len() <= MAX_MANIFEST_BYTES, "release manifest length")
+        require(
+            self.encode().len() <= MAX_MANIFEST_BYTES,
+            "release manifest length",
+        )
     }
 
     pub fn encode(&self) -> Vec<u8> {
@@ -249,7 +249,10 @@ impl CellReleaseManifestV1 {
     }
 
     pub fn decode(bytes: &[u8]) -> CellResultV1<Self> {
-        require(bytes.len() >= 4 && &bytes[..4] == b"TCR1", "release version")?;
+        require(
+            bytes.len() >= 4 && &bytes[..4] == b"TCR1",
+            "release version",
+        )?;
         let mut input = Cursor::new(bytes);
         require(read_array::<4>(&mut input)? == *b"TCR1", "release version")?;
         let family_len = usize::from(read_array::<1>(&mut input)?[0]);
@@ -266,7 +269,10 @@ impl CellReleaseManifestV1 {
             runtime: read_array(&mut input)?,
         };
         let count = u32::from_be_bytes(read_array(&mut input)?) as usize;
-        require((1..=MAX_RELEASE_CELLS).contains(&count), "release cell count")?;
+        require(
+            (1..=MAX_RELEASE_CELLS).contains(&count),
+            "release cell count",
+        )?;
         require(
             bytes.len() as u64 - input.position() == count as u64 * 32,
             "release manifest coverage",
