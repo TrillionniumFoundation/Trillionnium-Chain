@@ -339,10 +339,21 @@ impl RelayAuthVerifier {
     /// Callers must provide an out-of-band chain binding before accepting the
     /// result; the legacy signature itself does not contain `chain_id`.
     pub fn legacy_compatible(max_skew_ms: u128, expected_chain_id: impl Into<String>) -> Self {
+        let expected_chain_id = expected_chain_id.into();
+        // Legacy signatures do not authenticate chain_id. Fail closed if the
+        // migration caller does not provide one canonical, bounded binding.
+        let valid_chain_binding = !expected_chain_id.is_empty()
+            && expected_chain_id.trim() == expected_chain_id
+            && !expected_chain_id.contains('|')
+            && expected_chain_id.len() <= MAX_RELAY_TEXT_FIELD_BYTES;
         Self {
             max_skew_ms,
-            allow_legacy_v0: true,
-            expected_chain_id: Some(expected_chain_id.into()),
+            allow_legacy_v0: valid_chain_binding,
+            expected_chain_id: if valid_chain_binding {
+                Some(expected_chain_id)
+            } else {
+                None
+            },
             last_seq: HashMap::new(),
             seen_nonce: HashSet::new(),
         }
@@ -861,6 +872,23 @@ mod tests {
 
         let ok = verifier.verify(&env, 1_730_000_000_050, |e| e.verify_test_sig_compat(key));
         assert!(ok.is_ok());
+    }
+
+    #[test]
+    fn relay_auth_legacy_v0_invalid_chain_binding_fails_closed() {
+        let key = "sender-key";
+        for invalid_chain_id in ["", " ", "trnm|mainnet"] {
+            let mut verifier = RelayAuthVerifier::legacy_compatible(120_000, invalid_chain_id);
+            let mut env = sample_env(1, "nonce-legacy-invalid-binding", 1_730_000_000_000, key);
+            env.version = RelayAuthEnvelope::LEGACY_SPEC_VERSION.to_string();
+            env.chain_id = invalid_chain_id.to_string();
+            env.sig = env.sign_for_test_legacy_v0(key);
+
+            let err = verifier
+                .verify(&env, 1_730_000_000_050, |e| e.verify_test_sig_compat(key))
+                .unwrap_err();
+            assert_eq!(err.stable_code(), "BadVersion", "chain_id={invalid_chain_id:?}");
+        }
     }
 
     #[test]
