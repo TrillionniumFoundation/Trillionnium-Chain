@@ -135,6 +135,14 @@
       "production_activation": false
     },
     {
+      "package": "trnm-pon-node",
+      "module": "M15",
+      "path": "trillionnium/crates/trnm-pon-node",
+      "role": "Experimental native M02/M07/M08/M14 composition with local durable reorg recovery; no network or production authority.",
+      "consensus_authority": false,
+      "production_activation": false
+    },
+    {
       "package": "trnm-checkpoint-store",
       "module": "M03",
       "path": "trillionnium/crates/trnm-checkpoint-store",

@@ -9,6 +9,27 @@ fn digest(byte: u8) -> Digest32 {
     [byte; 32]
 }
 
+fn hepta_admission() -> HeptaArtifactAdmissionV1 {
+    HeptaArtifactAdmissionV1 {
+        operation_id: key("hepta.operation", "publish-001"),
+        artifact_digest: digest(0x80),
+        family_digest: digest(0x81),
+        source_digest_profile_digest: digest(0x82),
+        parent_artifact_digest: None,
+        generation: 1,
+        withdrawal_scope_digest: digest(0x83),
+        withdrawal_head_digest: digest(0x84),
+        registry_head_digest: digest(0x85),
+        evaluation_plan_digest: digest(0x86),
+        task_scope_digest: digest(0x87),
+        export_permission_digest: digest(0x88),
+        payload_digest: digest(0x89),
+        payload_len: 4096,
+        created_at_unix_s: 1_753_451_000,
+        expires_at_unix_s: 1_753_451_600,
+    }
+}
+
 fn key(namespace: &str, id: &str) -> ExternalKey {
     ExternalKey::from_external_id(namespace, id).unwrap()
 }
@@ -171,7 +192,7 @@ fn test_authorities() -> AuthoritySetV1 {
 }
 
 fn test_state() -> ResearchProtocolState {
-    ResearchProtocolState::with_authorities(test_authorities()).unwrap()
+    ResearchProtocolState::with_chain_id("trnm-devnet-v1", test_authorities()).unwrap()
 }
 
 #[test]
@@ -202,6 +223,69 @@ fn every_signed_envelope_strictly_round_trips() {
             ))
         ));
     }
+}
+
+#[test]
+fn hepta_admission_requires_owner_facts_and_authority() {
+    let signing_key = SigningKey::from_bytes(&HEPTA_SEED);
+    let signed = SignedHeptaAdmissionV1::sign(
+        "trnm-devnet-v1".into(),
+        "did:trnm:hepta-authority".into(),
+        hepta_admission(),
+        &signing_key,
+    )
+    .unwrap();
+    signed.verify_with_authorities(&test_authorities()).unwrap();
+    signed
+        .verify_with_authorities_at(&test_authorities(), 1_753_451_300)
+        .unwrap();
+
+    let bytes = signed.canonical_bytes();
+    let decoded = SignedHeptaAdmissionV1::from_canonical_bytes(&bytes).unwrap();
+    assert_eq!(decoded, signed);
+
+    let mut changed = signed.clone();
+    changed.admission.withdrawal_head_digest = digest(0x99);
+    assert!(matches!(
+        changed.verify_signature(),
+        Err(HeptaHandoffError::InvalidSignature)
+    ));
+
+    let mut wrong_authority = AuthoritySetV1::default();
+    wrong_authority
+        .validate()
+        .expect("empty authority set is a valid test fixture");
+    assert!(matches!(
+        signed.verify_with_authorities(&wrong_authority),
+        Err(HeptaHandoffError::UnauthorizedAuthority)
+    ));
+}
+
+#[test]
+fn hepta_admission_rejects_missing_parent_and_unbounded_payload() {
+    let mut admission = hepta_admission();
+    admission.generation = 2;
+    assert!(matches!(
+        admission.validate(),
+        Err(HeptaHandoffError::InvalidAdmission("missing_parent_artifact"))
+    ));
+
+    let mut admission = hepta_admission();
+    admission.payload_len = MAX_HANDOFF_PAYLOAD_BYTES + 1;
+    assert!(matches!(
+        admission.validate(),
+        Err(HeptaHandoffError::InvalidAdmission("payload_len"))
+    ));
+
+    let admission = hepta_admission();
+    assert!(matches!(
+        admission.validate_at(admission.created_at_unix_s - 1),
+        Err(HeptaHandoffError::AdmissionNotYetValid)
+    ));
+    assert!(matches!(
+        admission.validate_at(admission.expires_at_unix_s + 1),
+        Err(HeptaHandoffError::AdmissionExpired)
+    ));
 }
 
 #[test]
@@ -474,7 +558,8 @@ fn snapshots_round_trip_and_fail_closed_on_corruption() {
     let snapshot = state.export_snapshot();
     let json = serde_json::to_vec(&snapshot).unwrap();
     let decoded: ResearchProtocolSnapshotV1 = serde_json::from_slice(&json).unwrap();
-    let restored = ResearchProtocolState::from_snapshot(decoded).unwrap();
+    let restored =
+        ResearchProtocolState::from_snapshot_for_chain("trnm-devnet-v1", decoded).unwrap();
     assert_eq!(restored, state);
     assert_eq!(
         restored.canonical_snapshot_bytes(),
@@ -594,5 +679,19 @@ fn print_golden_fixture_for_regeneration() {
     println!(
         "{}",
         serde_json::to_string_pretty(&generated_golden_fixture()).unwrap()
+    );
+}
+
+#[test]
+fn state_rejects_signed_commands_for_another_chain() {
+    let command = sign(0, fixture_commands()[0].clone()).unwrap();
+    let mut state =
+        ResearchProtocolState::with_chain_id("trnm-otherchain", test_authorities()).unwrap();
+    assert_eq!(
+        state.apply(&command).unwrap_err(),
+        ProtocolStateError::ChainMismatch {
+            expected: "trnm-otherchain".into(),
+            got: "trnm-devnet-v1".into(),
+        }
     );
 }

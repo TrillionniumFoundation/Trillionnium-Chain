@@ -10,6 +10,17 @@ historical database as an upgrade shortcut. Retained tests cover local behavior 
 Storage attestation thresholds are storage contracts, not ledger consensus votes.
 The current transaction-batch namespace does not yet implement public model artifacts.
 
+The candidate `cell` module and `trnm-cell` binary add a separate, local-only
+content-addressed model-cell cache. A caller must provide an authority-pinned
+manifest digest; the cache verifies the full payload and ordered chunk hashes,
+supports bounded multi-peer repair, and publishes files with create-only semantics.
+`CellReleaseManifestV1` additionally binds an ordered, complete cell closure and
+lets a local cache verify that every member is present and context-compatible;
+unrelated cached cells never count as a usable release.
+It does not discover peers, authenticate a public network, issue storage proofs,
+change `CURRENT`, bypass withdrawal, or grant model execution. Those boundaries
+remain explicit until a later public DA qualification.
+
 ```bash
 cargo test --locked -p trnm-data-availability --all-targets --all-features
 ```

@@ -35,6 +35,28 @@ boundary. The existing normal Hepta task pipeline has NOT been connected to this
 in this change. Its final-use authority, real resources, independent evaluator signatures
 and actual future tasks cannot be fabricated by assembling test objects.
 
+The portable `trnm-research-protocol` crate now also exposes
+`HeptaArtifactAdmissionV1` and `SignedHeptaAdmissionV1`. This is a digest-only,
+canonical-CBOR handoff envelope for an already-authorized Hepta owner result. It
+binds the operation, artifact/family/parent generation, withdrawal scope and head,
+registry head, source digest-profile mapping, evaluation plan, task scope, export
+permission, payload digest and length, plus an explicit validity window. The envelope
+verifies a strict Ed25519 owner signature and can be checked
+against the genesis Hepta authority set without constructing a second registry.
+Missing parent generations, zero owner facts, altered withdrawal heads, oversized
+payloads, non-canonical encodings, altered signatures and unknown authority keys
+are rejected. This closes the serialization and fail-closed contract boundary;
+it does not claim that the ordinary `Agentd` owner has been configured, that the
+chain has a live publication caller, or that a chain confirmation grants final use.
+
+The envelope is intentionally not a final-use token. A node must re-read the
+current Hepta withdrawal head and its local operation/outbox journal before any
+external effect. Reorganization may remove chain entitlement, but it cannot replay
+or delete a local effect receipt. The integration tests are
+`hepta_admission_requires_owner_facts_and_authority` and
+`hepta_admission_rejects_missing_parent_and_unbounded_payload` in the research
+protocol package.
+
 An earlier cross-machine probe was blocked; the subsequent owned-SSH campaign now
 executes on ROG, Pocket4 and X230 and records exact source manifests and live UTC.
 It tests delivery partition/catch-up, process exit/recovery, reorg, model-copy use and

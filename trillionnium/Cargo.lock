@@ -891,6 +891,7 @@ dependencies = [
  "borsh",
  "hex",
  "rusqlite",
+ "serde",
  "serde_json",
  "sha2",
  "tempfile",
@@ -918,6 +919,23 @@ dependencies = [
  "rustix",
  "sha2",
  "tempfile",
+]
+
+[[package]]
+name = "trnm-pon-node"
+version = "0.1.0"
+dependencies = [
+ "fs2",
+ "hex",
+ "libc",
+ "rusqlite",
+ "serde",
+ "serde_json",
+ "tempfile",
+ "trnm-crypto-primitives",
+ "trnm-mvcc-fee",
+ "trnm-protocol",
+ "trnm-transport",
 ]
 
 [[package]]

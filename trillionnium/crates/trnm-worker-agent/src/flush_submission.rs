@@ -4,7 +4,7 @@ use anyhow::Result;
 
 use crate::{
     append_ack, append_event, append_progress, is_idempotent_duplicate_ok, is_task_acked,
-    load_ingress_records, persisted_ack_hashes_for_task, run_adapter_with_retry,
+    load_ingress_records, persisted_ack_hashes_for_task, run_adapter_with_retry_bounded,
     save_ingress_records, should_execute_reveal, transition_request_status,
     trim_boundary_audit_fillers, try_acquire_task_lock, AdapterExecResult, ProgressRecord,
     SubmissionRecord, WorkerEvent, RC_SKIPPED,
@@ -25,6 +25,7 @@ pub(crate) fn process_submission_record(
     adapter_cmd: &str,
     tx_max_retries: u32,
     tx_backoff_ms: u64,
+    tx_timeout_ms: u64,
     ack_log: &std::path::Path,
     event_log: &std::path::Path,
     progress_log: &std::path::Path,
@@ -84,7 +85,7 @@ pub(crate) fn process_submission_record(
         return Ok(FlushRecordOutcome::Skipped);
     };
 
-    if is_task_acked(ack_log, rec.task_id) {
+    if is_task_acked(ack_log, rec.task_id)? {
         acked.insert(rec.task_id);
         append_progress(
             progress_log,
@@ -118,11 +119,22 @@ pub(crate) fn process_submission_record(
     )?;
 
     let (commit_args, reveal_args) = submission_args(rec);
-    let commit_res =
-        run_adapter_with_retry(adapter_cmd, &commit_args, tx_max_retries, tx_backoff_ms)?;
+    let commit_res = run_adapter_with_retry_bounded(
+        adapter_cmd,
+        &commit_args,
+        tx_max_retries,
+        tx_backoff_ms,
+        std::time::Duration::from_millis(tx_timeout_ms),
+    )?;
     let reveal_executed = should_execute_reveal(&commit_res);
     let reveal_res = if reveal_executed {
-        run_adapter_with_retry(adapter_cmd, &reveal_args, tx_max_retries, tx_backoff_ms)?
+        run_adapter_with_retry_bounded(
+            adapter_cmd,
+            &reveal_args,
+            tx_max_retries,
+            tx_backoff_ms,
+            std::time::Duration::from_millis(tx_timeout_ms),
+        )?
     } else {
         AdapterExecResult {
             ok: false,
@@ -148,9 +160,9 @@ pub(crate) fn process_submission_record(
     );
 
     let (ack_status, reason_code, ack_reason) =
-        classify_flush_ack(&commit_res, &reveal_res, ack_log, rec.task_id);
+        classify_flush_ack(&commit_res, &reveal_res, ack_log, rec.task_id)?;
 
-    let previous_ack_hashes = persisted_ack_hashes_for_task(ack_log, rec.task_id);
+    let previous_ack_hashes = persisted_ack_hashes_for_task(ack_log, rec.task_id)?;
     let previous_commit_tx_hash = previous_ack_hashes.commit_tx_hash;
     let previous_reveal_tx_hash = previous_ack_hashes.reveal_tx_hash;
 
@@ -318,8 +330,8 @@ fn classify_flush_ack(
     reveal_res: &AdapterExecResult,
     ack_log: &std::path::Path,
     task_id: u64,
-) -> (&'static str, &'static str, String) {
-    let previous_ack_hashes = persisted_ack_hashes_for_task(ack_log, task_id);
+) -> Result<(&'static str, &'static str, String)> {
+    let previous_ack_hashes = persisted_ack_hashes_for_task(ack_log, task_id)?;
     let previous_commit_tx_hash = previous_ack_hashes.commit_tx_hash;
     let previous_reveal_tx_hash = previous_ack_hashes.reveal_tx_hash;
     let observed_commit_tx_hash = normalize_adapter_tx_hash(commit_res.tx_hash.as_deref());
@@ -339,59 +351,64 @@ fn classify_flush_ack(
         reveal_res.rc,
     );
 
-    if commit_idempotent_ok && reveal_idempotent_ok && commit_hash_observed && reveal_hash_observed
-    {
-        (
-            "accepted",
-            "idempotent_ok",
-            format!(
-                "idempotent-ok commit_rc={} reveal_rc={}",
-                commit_res.rc, reveal_res.rc
-            ),
-        )
-    } else if commit_idempotent_ok
-        && reveal_idempotent_ok
-        && (!commit_hash_observed || !reveal_hash_observed)
-    {
-        (
-            "failed",
-            "missing_tx_hash_receipt",
-            format!(
-                "missing-tx-hash-receipt commit_tx_hash_present={} reveal_tx_hash_present={} commit_rc={} reveal_rc={}",
-                commit_hash_observed,
-                reveal_hash_observed,
-                commit_res.rc,
-                reveal_res.rc
-            ),
-        )
-    } else if !commit_idempotent_ok && commit_res.terminal {
-        (
-            "rejected",
-            "commit_rejected_skip_reveal",
-            format!(
-                "deterministic-commit-rejection-skip-reveal commit_rc={} reveal_rc={}",
-                commit_res.rc, reveal_res.rc
-            ),
-        )
-    } else if commit_res.terminal || reveal_res.terminal {
-        (
-            "rejected",
-            "deterministic_rejection",
-            format!(
-                "deterministic-rejection commit_rc={} reveal_rc={}",
-                commit_res.rc, reveal_res.rc
-            ),
-        )
-    } else {
-        (
-            "failed",
-            "retry_exhausted_or_transient",
-            format!(
-                "transient-or-exhausted-retries commit_rc={} reveal_rc={}",
-                commit_res.rc, reveal_res.rc
-            ),
-        )
-    }
+    Ok(
+        if commit_idempotent_ok
+            && reveal_idempotent_ok
+            && commit_hash_observed
+            && reveal_hash_observed
+        {
+            (
+                "accepted",
+                "idempotent_ok",
+                format!(
+                    "idempotent-ok commit_rc={} reveal_rc={}",
+                    commit_res.rc, reveal_res.rc
+                ),
+            )
+        } else if commit_idempotent_ok
+            && reveal_idempotent_ok
+            && (!commit_hash_observed || !reveal_hash_observed)
+        {
+            (
+                "failed",
+                "missing_tx_hash_receipt",
+                format!(
+                    "missing-tx-hash-receipt commit_tx_hash_present={} reveal_tx_hash_present={} commit_rc={} reveal_rc={}",
+                    commit_hash_observed,
+                    reveal_hash_observed,
+                    commit_res.rc,
+                    reveal_res.rc
+                ),
+            )
+        } else if !commit_idempotent_ok && commit_res.terminal {
+            (
+                "rejected",
+                "commit_rejected_skip_reveal",
+                format!(
+                    "deterministic-commit-rejection-skip-reveal commit_rc={} reveal_rc={}",
+                    commit_res.rc, reveal_res.rc
+                ),
+            )
+        } else if commit_res.terminal || reveal_res.terminal {
+            (
+                "rejected",
+                "deterministic_rejection",
+                format!(
+                    "deterministic-rejection commit_rc={} reveal_rc={}",
+                    commit_res.rc, reveal_res.rc
+                ),
+            )
+        } else {
+            (
+                "failed",
+                "retry_exhausted_or_transient",
+                format!(
+                    "transient-or-exhausted-retries commit_rc={} reveal_rc={}",
+                    commit_res.rc, reveal_res.rc
+                ),
+            )
+        },
+    )
 }
 
 #[cfg(test)]
@@ -413,10 +430,17 @@ mod tests {
             tx_hash: None,
             terminal: false,
         };
+        let ack_log = std::env::temp_dir().join(format!(
+            "trnm-worker-agent-flush-classify-reject-{}-{}.jsonl",
+            std::process::id(),
+            now_ms()
+        ));
+        let _ = std::fs::remove_file(&ack_log);
         let (status, reason, _) =
-            classify_flush_ack(&commit, &reveal, &std::path::PathBuf::from("/tmp"), 1);
+            classify_flush_ack(&commit, &reveal, &ack_log, 1).expect("valid ack log");
         assert_eq!(status, "rejected");
         assert_eq!(reason, "commit_rejected_skip_reveal");
+        let _ = std::fs::remove_file(&ack_log);
     }
 
     #[test]
@@ -433,10 +457,17 @@ mod tests {
             tx_hash: Some("r1".to_string()),
             terminal: true,
         };
+        let ack_log = std::env::temp_dir().join(format!(
+            "trnm-worker-agent-flush-classify-accepted-{}-{}.jsonl",
+            std::process::id(),
+            now_ms()
+        ));
+        let _ = std::fs::remove_file(&ack_log);
         let (status, reason, _) =
-            classify_flush_ack(&commit, &reveal, &std::path::PathBuf::from("/tmp"), 1);
+            classify_flush_ack(&commit, &reveal, &ack_log, 1).expect("valid ack log");
         assert_eq!(status, "accepted");
         assert_eq!(reason, "idempotent_ok");
+        let _ = std::fs::remove_file(&ack_log);
     }
 
     #[test]
@@ -454,10 +485,17 @@ mod tests {
             terminal: true,
         };
 
+        let ack_log = std::env::temp_dir().join(format!(
+            "trnm-worker-agent-flush-classify-missing-{}-{}.jsonl",
+            std::process::id(),
+            now_ms()
+        ));
+        let _ = std::fs::remove_file(&ack_log);
         let (status, reason, _) =
-            classify_flush_ack(&commit, &reveal, &std::path::PathBuf::from("/tmp"), 81);
+            classify_flush_ack(&commit, &reveal, &ack_log, 81).expect("valid ack log");
         assert_eq!(status, "failed");
         assert_eq!(reason, "missing_tx_hash_receipt");
+        let _ = std::fs::remove_file(&ack_log);
     }
 
     #[test]
@@ -494,7 +532,8 @@ mod tests {
             terminal: true,
         };
 
-        let (status, reason, _) = classify_flush_ack(&commit, &reveal, &ack_log, 82);
+        let (status, reason, _) =
+            classify_flush_ack(&commit, &reveal, &ack_log, 82).expect("valid ack log");
         assert_eq!(status, "failed");
         assert_eq!(reason, "missing_tx_hash_receipt");
 
@@ -535,7 +574,8 @@ mod tests {
             terminal: true,
         };
 
-        let (status, reason, _) = classify_flush_ack(&commit, &reveal, &ack_log, 83);
+        let (status, reason, _) =
+            classify_flush_ack(&commit, &reveal, &ack_log, 83).expect("valid ack log");
         assert_eq!(status, "failed");
         assert_eq!(reason, "missing_tx_hash_receipt");
 
@@ -575,7 +615,8 @@ mod tests {
             terminal: true,
         };
 
-        let (status, reason, detail) = classify_flush_ack(&commit, &reveal, &ack_log, 84);
+        let (status, reason, detail) =
+            classify_flush_ack(&commit, &reveal, &ack_log, 84).expect("valid ack log");
         assert_eq!(status, "accepted");
         assert_eq!(reason, "idempotent_ok");
         assert!(detail.contains("commit_rc="));
@@ -695,7 +736,8 @@ mod tests {
             terminal: true,
         };
 
-        let (status, reason, _) = classify_flush_ack(&commit, &reveal, &ack_log, 84);
+        let (status, reason, _) =
+            classify_flush_ack(&commit, &reveal, &ack_log, 84).expect("valid ack log");
         assert_eq!(status, "failed");
         assert_eq!(reason, "missing_tx_hash_receipt");
 

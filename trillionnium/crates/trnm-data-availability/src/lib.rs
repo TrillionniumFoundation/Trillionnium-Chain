@@ -68,6 +68,11 @@ mod retrieval;
 mod store;
 mod types;
 
+/// Candidate-only content-addressed model-cell cache and configured-peer
+/// retrieval. This module deliberately has no release, CURRENT, or consensus
+/// authority; callers must supply an authority-pinned manifest digest.
+pub mod cell;
+
 pub use error::{DaErrorCodeV1, DaErrorV1, DaResultV1};
 pub use retrieval::{
     DaChunkInclusionProofV1, MerkleStepV1, RetrievalProofV1, RetrievalReceiptBodyV1,

@@ -1,5 +1,5 @@
 use anyhow::Result;
-use std::{process::Command as ProcCommand, thread, time::Duration};
+use std::{thread, time::Duration};
 
 use crate::{
     adapter_parse::parse_tx_hash,
@@ -17,15 +17,28 @@ pub(crate) fn run_adapter_with_retry(
     max_retries: u32,
     backoff_ms: u64,
 ) -> Result<AdapterExecResult> {
+    run_adapter_with_retry_bounded(
+        adapter_cmd,
+        action_args,
+        max_retries,
+        backoff_ms,
+        Duration::from_millis(crate::DEFAULT_TX_ADAPTER_TIMEOUT_MS),
+    )
+}
+
+pub(crate) fn run_adapter_with_retry_bounded(
+    adapter_cmd: &str,
+    action_args: &[String],
+    max_retries: u32,
+    backoff_ms: u64,
+    timeout: Duration,
+) -> Result<AdapterExecResult> {
     let (program, base_args) = parse_command_spec(adapter_cmd)?;
     let mut last_rc = 1;
     let mut last_tx_hash: Option<String> = None;
 
     for attempt in 0..=max_retries {
-        let out = ProcCommand::new(&program)
-            .args(&base_args)
-            .args(action_args)
-            .output()?;
+        let out = run_command_with_timeout(&program, &base_args, action_args, timeout)?;
         let rc = out.status.code().unwrap_or(1);
         let stdout = String::from_utf8_lossy(&out.stdout);
         let stderr = String::from_utf8_lossy(&out.stderr);
@@ -159,4 +172,24 @@ pub(crate) fn run_llm_adapter_with_retry(
         || run_llm_adapter_once(adapter_cmd, prompt, timeout, proof_adapter),
         thread::sleep,
     )
+}
+
+
+#[cfg(test)]
+mod security_tests {
+    use super::run_adapter_with_retry_bounded;
+    use std::time::Duration;
+
+    #[test]
+    fn transaction_adapter_timeout_kills_hung_process() {
+        let err = run_adapter_with_retry_bounded(
+            "python3 -c 'import time; time.sleep(30)'",
+            &[],
+            0,
+            0,
+            Duration::from_millis(50),
+        )
+        .expect_err("hung transaction adapters must be bounded");
+        assert!(err.to_string().contains("timeout"), "{err}");
+    }
 }

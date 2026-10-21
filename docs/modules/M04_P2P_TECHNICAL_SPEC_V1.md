@@ -47,6 +47,10 @@ Send identical block to separate processes; each rechecks full work and state be
 
 `trillionnium/crates/trnm-transport/src/proof_admission.rs::public_duplicate_cannot_pin_a_locally_requested_recovery_digest`
 
+`trillionnium/crates/trnm-transport/src/proof_admission.rs::rejected_work_is_rate_limited_before_another_expensive_verification`
+
+`trillionnium/crates/trnm-transport/src/proof_admission.rs::global_rejection_budget_limits_sybil_like_peer_rotation_locally`
+
 These exact functions contain executable assertions. The registry only checks binding; actual outcomes and source/input identities belong to the separate qualification report.
 
 ## Module-specific threat and residual work
@@ -54,6 +58,14 @@ These exact functions contain executable assertions. The registry only checks bi
 Sybil connection churn, eclipse, validation starvation and forged recovery priority.
 
 Global public fairness and cheap-proof defense are unresolved; local recovery capability is never selected by packet fields.
+
+The portable admission component now exposes an explicit, ephemeral rejection-debt
+budget. Callers report `Accepted`, `Rejected` or `Cancelled` through the permit after
+verification; rejected work consumes per-peer and global budget for a short local window
+before another expensive verification may start. This is a bounded DoS brake, not a peer
+identity system, Sybil proof, work-hardness result or public-network admission guarantee.
+The production host must report every completed verification and retain the unresolved
+public fairness gate until an independently operated WAN campaign closes it.
 
 ## Current source and verification
 
