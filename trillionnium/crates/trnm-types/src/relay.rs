@@ -341,10 +341,7 @@ impl RelayAuthVerifier {
     /// unauthenticated envelope field with configuration cannot prevent a
     /// captured envelope from being rewritten and replayed on another chain.
     /// Keep this constructor for source compatibility, but fail closed.
-    pub fn legacy_compatible(
-        max_skew_ms: u128,
-        _expected_chain_id: impl Into<String>,
-    ) -> Self {
+    pub fn legacy_compatible(max_skew_ms: u128, _expected_chain_id: impl Into<String>) -> Self {
         Self::strict(max_skew_ms)
     }
 
