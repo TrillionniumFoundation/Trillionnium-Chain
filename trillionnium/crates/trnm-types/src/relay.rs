@@ -335,28 +335,17 @@ impl RelayAuthVerifier {
         }
     }
 
-    /// Explicit compatibility mode for isolated migration tooling only.
-    /// Callers must provide an out-of-band chain binding before accepting the
-    /// result; the legacy signature itself does not contain `chain_id`.
-    pub fn legacy_compatible(max_skew_ms: u128, expected_chain_id: impl Into<String>) -> Self {
-        let expected_chain_id = expected_chain_id.into();
-        // Legacy signatures do not authenticate chain_id. Fail closed if the
-        // migration caller does not provide one canonical, bounded binding.
-        let valid_chain_binding = !expected_chain_id.is_empty()
-            && expected_chain_id.trim() == expected_chain_id
-            && !expected_chain_id.contains('|')
-            && expected_chain_id.len() <= MAX_RELAY_TEXT_FIELD_BYTES;
-        Self {
-            max_skew_ms,
-            allow_legacy_v0: valid_chain_binding,
-            expected_chain_id: if valid_chain_binding {
-                Some(expected_chain_id)
-            } else {
-                None
-            },
-            last_seq: HashMap::new(),
-            seen_nonce: HashSet::new(),
-        }
+    /// Legacy v0 compatibility is intentionally disabled.
+    ///
+    /// v0 signatures do not authenticate `chain_id`, so comparing an
+    /// unauthenticated envelope field with configuration cannot prevent a
+    /// captured envelope from being rewritten and replayed on another chain.
+    /// Keep this constructor for source compatibility, but fail closed.
+    pub fn legacy_compatible(
+        max_skew_ms: u128,
+        _expected_chain_id: impl Into<String>,
+    ) -> Self {
+        Self::strict(max_skew_ms)
     }
 
     fn verify_envelope_fields(
@@ -862,7 +851,7 @@ mod tests {
     }
 
     #[test]
-    fn relay_auth_legacy_v0_compat_requires_explicit_mode() {
+    fn relay_auth_legacy_v0_compat_is_disabled_fail_closed() {
         let key = "sender-key";
         let mut verifier = RelayAuthVerifier::legacy_compatible(120_000, "trnm-devnet-v1");
         let mut env = sample_env(1, "nonce-legacy-1", 1_730_000_000_000, key);
@@ -870,8 +859,10 @@ mod tests {
         env.chain_id = "trnm-devnet-v1".to_string();
         env.sig = env.sign_for_test_legacy_v0(key);
 
-        let ok = verifier.verify(&env, 1_730_000_000_050, |e| e.verify_test_sig_compat(key));
-        assert!(ok.is_ok());
+        let err = verifier
+            .verify(&env, 1_730_000_000_050, |e| e.verify_test_sig_compat(key))
+            .unwrap_err();
+        assert_eq!(err.stable_code(), "BadVersion");
     }
 
     #[test]
