@@ -32,13 +32,13 @@ fn limits() -> PoolLimits {
         preview_miner: development_public(0).unwrap(),
     }
 }
-fn transfer(s: &Settings, who: u64, nonce: u64, to: u64, amount: u64) -> String {
+fn transfer(s: &Settings, who: u64, account_sequence: u64, to: u64, amount: u64) -> String {
     let mut payload = development_public(to).unwrap().to_vec();
     payload.extend(amount.to_le_bytes());
     let mut e = Envelope {
         network: s.network(),
         sender: development_public(who).unwrap(),
-        nonce,
+        nonce: account_sequence,
         expiry: 2000,
         fee_limit: 1_000_000,
         tag: 1,

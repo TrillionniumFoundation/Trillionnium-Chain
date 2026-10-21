@@ -41,11 +41,17 @@ fn signature(actor: u64, message: &[u8]) -> [u8; 64] {
         .try_into()
         .unwrap()
 }
-fn transaction(s: &Settings, actor: u64, nonce: u64, tag: u8, payload: Vec<u8>) -> Vec<u8> {
+fn transaction(
+    s: &Settings,
+    actor: u64,
+    account_sequence: u64,
+    tag: u8,
+    payload: Vec<u8>,
+) -> Vec<u8> {
     let mut tx = Envelope {
         network: s.network(),
         sender: development_public(actor).unwrap(),
-        nonce,
+        nonce: account_sequence,
         expiry: 1000,
         fee_limit: 1_000_000,
         tag,

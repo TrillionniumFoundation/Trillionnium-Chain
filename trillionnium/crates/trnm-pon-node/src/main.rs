@@ -332,11 +332,7 @@ impl RequestObservationExport {
         polling_succeeded: Option<bool>,
     ) -> Result<()> {
         let snapshot = self.observer.snapshot();
-        let coverage_complete = snapshot.records_not_retained == 0
-            && snapshot.measurement_failures == 0
-            && !snapshot.counter_overflow
-            && snapshot.accepted_connections_seen == snapshot.records.len() as u64
-            && snapshot.records.iter().all(|record| record.complete);
+        let coverage_complete = snapshot.coverage_complete();
         let value = json!({
             "schema":"public-v3-local-cli-request-observation-v1",
             "context":context,
@@ -2202,6 +2198,20 @@ fn run() -> Result<Value> {
         json!({"result":value,"clock_scope":if args.contains_key("--logical-now"){"logical-test"}else{"local-wall"},"production_activation":false}),
     )
 }
+/// Render untrusted diagnostics as one terminal line without changing the
+/// underlying error, its typed identity, or any authenticated protocol bytes.
+fn cli_error_line(error: &impl std::fmt::Display) -> String {
+    let mut line = String::new();
+    for character in error.to_string().chars() {
+        if character.is_control() {
+            line.extend(character.escape_default());
+        } else {
+            line.push(character);
+        }
+    }
+    line
+}
+
 fn main() {
     match run() {
         Ok(value) => {
@@ -2214,7 +2224,7 @@ fn main() {
             }
         }
         Err(error) => {
-            eprintln!("{error}");
+            eprintln!("{}", cli_error_line(&error));
             std::process::exit(2);
         }
     }
@@ -2224,6 +2234,46 @@ fn main() {
 mod tests {
     use super::*;
     use std::os::unix::fs::{symlink, PermissionsExt};
+
+    #[test]
+    fn cli_error_line_escapes_remote_log_and_terminal_controls() {
+        let message =
+            "REMOTE_TERMINAL:denied\nforged entry\r\t\u{1b}[2J\u{7f}\u{85}\u{9b}31m\u{9d}title";
+        let error = Error::from(message);
+        let original_kind = error.kind();
+        let original_code = error.code();
+        assert_eq!(
+            cli_error_line(&error),
+            r"REMOTE_TERMINAL:denied\nforged entry\r\t\u{1b}[2J\u{7f}\u{85}\u{9b}31m\u{9d}title"
+        );
+        assert_eq!(error.to_string(), message);
+        assert_eq!(error.kind(), original_kind);
+        assert_eq!(error.code(), original_code);
+    }
+
+    #[test]
+    fn cli_error_line_removes_every_c0_del_and_c1_control() {
+        let controls = (0..=0x1f).chain(0x7f..=0x9f);
+        for codepoint in controls {
+            let character = char::from_u32(codepoint).unwrap();
+            let message = format!("before{character}after");
+            let rendered = cli_error_line(&message);
+            assert!(!rendered.chars().any(char::is_control));
+            assert!(rendered.starts_with("before\\"));
+            assert!(rendered.ends_with("after"));
+            assert_ne!(rendered, message);
+        }
+    }
+
+    #[test]
+    fn cli_error_line_preserves_ordinary_unicode_quotes_and_backslashes() {
+        let message = r#"拒绝: café é 🦀 'quoted' "double" C:\keys\node.key literal\n"#;
+        assert_eq!(cli_error_line(&message), message);
+        let error = Error::new(trnm_pon_node::ErrorCode::PublicMutationCpuBudget);
+        assert_eq!(cli_error_line(&error), "PUBLIC_MUTATION_CPU_BUDGET");
+        assert_eq!(error.to_string(), "PUBLIC_MUTATION_CPU_BUDGET");
+        assert!(error.is(trnm_pon_node::ErrorCode::PublicMutationCpuBudget));
+    }
 
     #[test]
     fn host_kernel_parent_is_not_silently_accepted_for_other_profiles() {

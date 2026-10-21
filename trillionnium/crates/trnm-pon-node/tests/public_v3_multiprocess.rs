@@ -922,11 +922,7 @@ fn phase(
         .iter()
         .filter(|row| row.full_work_accepted == Some(true))
         .count();
-    let observer_complete = captured.records_not_retained == 0
-        && captured
-            .records
-            .iter()
-            .all(|row| row.complete && !row.observation_failed);
+    let observer_complete = captured.coverage_complete();
     let phase_criteria = all_confirmed
         && actual.0 == checked.0
         && actual.2 == checked.2

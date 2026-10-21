@@ -38,10 +38,24 @@ def analysis(ident=1, ref=HEAD_REF, commit=HEAD, category="language:rust"):
             "error": "", "results_count": 1}
 
 
-def check(status="completed", conclusion="failure", output=None):
-    return {"id": 501, "name": "CodeQL", "app": {"slug": "github-advanced-security"},
-            "head_sha": HEAD, "status": status, "conclusion": conclusion,
-            "output": output or {"title": "Security alerts", "summary": "Existing failing gate"}}
+def check(status="completed", conclusion="failure", output=None, ident=501, commit=HEAD):
+    return {"id": ident, "name": "CodeQL", "app": {"slug": "github-advanced-security"},
+            "head_sha": commit, "status": status, "conclusion": conclusion,
+            "pull_requests": [{"number": 323, "head": {"sha": HEAD, "repo": {"url": API_BASE}},
+                               "base": {"sha": BASE, "repo": {"url": API_BASE}}}],
+            "output": output or {"title": "Security alerts", "summary": "Existing failing gate",
+                                 "annotations_count": 0,
+                                 "annotations_url": f"{API_BASE}/check-runs/{ident}/annotations"}}
+
+
+API_BASE = "https://api.github.com/repos/" + REPO
+
+
+def annotation(line):
+    # Documented Checks API shape: no annotation ID or guaranteed alert number.
+    return {"path": "src/fixture.rs", "start_line": line, "end_line": line,
+            "annotation_level": "failure", "title": "Fixture rule",
+            "message": "Fixture source to sink", "raw_details": "Fixture detail"}
 
 
 class Clock:
@@ -69,12 +83,19 @@ class Server:
     def __init__(self, rows=None, checks=None):
         self.rows = rows if rows is not None else [analysis()]
         self.checks = checks or [check()]
+        self.merge_checks = []
         self.polls = 0
         self.requests = []
         self.pr = PR
         self.parents = [BASE, HEAD]
         self.forbidden = False
         self.rows_at_poll = lambda _: self.rows
+        self.annotations = {501: []}
+        self.annotation_forbidden_page = None
+        self.check_reads = {}
+        self.metadata_at_read = lambda ident, _: next(
+            row for row in [self.checks[min(self.polls - 1, len(self.checks) - 1)],
+                            *self.merge_checks] if row["id"] == ident)
 
     def open(self, request, timeout):
         assert request.method == "GET"
@@ -91,6 +112,21 @@ class Server:
             if HEAD in path:
                 self.polls += 1
                 value["check_runs"] = [self.checks[min(self.polls - 1, len(self.checks) - 1)]]
+            else:
+                value["check_runs"] = self.merge_checks
+        elif "/check-runs/" in path:
+            parts = path.rsplit("/check-runs/", 1)[1].split("/")
+            ident = int(parts[0])
+            if len(parts) == 2 and parts[1] == "annotations":
+                assert query["per_page"] == ["100"]
+                page = int(query["page"][0])
+                if page == self.annotation_forbidden_page:
+                    raise urllib.error.HTTPError(request.full_url, 403, TOKEN, {}, None)
+                value = self.annotations.get(ident, [])[(page - 1) * 100:page * 100]
+            else:
+                assert len(parts) == 1
+                self.check_reads[ident] = self.check_reads.get(ident, 0) + 1
+                value = self.metadata_at_read(ident, self.check_reads[ident])
         elif path.endswith("/code-scanning/analyses"):
             if self.forbidden:
                 raise urllib.error.HTTPError(request.full_url, 403, TOKEN, {}, None)
@@ -222,6 +258,91 @@ class ExportTests(unittest.TestCase):
                 code, result, _ = self.run_export(server)
                 self.assertEqual(code, 1)
                 self.assertIn(reason, result["error"])
+
+    def test_annotations_without_ids_keep_pages_duplicates_and_gate_subset_limit(self):
+        for count in (100, 103):
+            with self.subTest(count=count):
+                current = check()
+                current["output"].update({
+                    "annotations_count": count,
+                    "title": "142 new alerts including 121 critical severity security vulnerabilities",
+                    "summary": "Security Alerts: 121 critical, 21 high",
+                })
+                server = Server(checks=[current])
+                rows = [annotation(line) for line in range(1, count + 1)]
+                rows[-1] = rows[0].copy()  # Repeated annotations must not be deduplicated.
+                server.annotations[501] = rows
+                code, result, out = self.run_export(server)
+                self.assertEqual(code, 0)
+                evidence = result["check_annotations"][0]
+                self.assertEqual(evidence["reported_annotations_count"], count)
+                self.assertEqual(evidence["exported_annotations_count"], count)
+                self.assertEqual(evidence["gate_alert_count_from_title"], 142)
+                self.assertTrue(evidence["all_reported_check_annotations_exported"])
+                self.assertFalse(evidence["complete_pr_gate_alert_mapping"])
+                prefix = evidence["raw_pages_prefix"]
+                self.assertEqual(json.loads((out / (prefix + "1.json")).read_text()), rows[:100])
+                self.assertEqual(json.loads((out / (prefix + "2.json")).read_text()), rows[100:])
+                self.assertTrue((out / "analyses/1.sarif").is_file())
+
+    def test_annotation_metadata_cannot_change_source_pr_or_endpoint(self):
+        wrong_source = check(commit=STALE)
+        wrong_pr = check()
+        wrong_pr["pull_requests"][0]["base"]["sha"] = STALE
+        wrong_endpoint = check()
+        wrong_endpoint["output"]["annotations_url"] = "https://other.invalid/annotations"
+        wrong_app = check()
+        wrong_app["app"]["slug"] = "different-check-owner"
+        for metadata in (wrong_source, wrong_pr, wrong_endpoint, wrong_app):
+            with self.subTest(metadata=metadata):
+                server = Server()
+                server.metadata_at_read = lambda _, __: metadata
+                code, result, out = self.run_export(server)
+                self.assertEqual(code, 1)
+                self.assertEqual(result["check_annotations"], [])
+                self.assertFalse(any("/annotations?" in request for request in server.requests))
+                self.assertTrue((out / "poll-002-annotations/501/before.json").is_file())
+
+    def test_annotation_count_change_or_short_page_cannot_claim_completion(self):
+        current = check()
+        current["output"]["annotations_count"] = 1
+        for changed_after in (False, True):
+            with self.subTest(changed_after=changed_after):
+                server = Server(checks=[current])
+                if changed_after:
+                    server.annotations[501] = [annotation(1)]
+                    altered = {**current, "output": {**current["output"], "annotations_count": 2}}
+                    server.metadata_at_read = lambda _, read: current if read == 1 else altered
+                code, result, out = self.run_export(server)
+                self.assertEqual(code, 1)
+                self.assertFalse(result["complete"])
+                self.assertTrue((out / "poll-002-annotations/501/page-1.json").is_file())
+                self.assertTrue((out / "poll-002-annotations/501/after.json").is_file())
+                self.assertTrue((out / "analyses/1.sarif").is_file())
+
+    def test_annotation_later_page_permission_failure_preserves_partial_evidence(self):
+        current = check()
+        current["output"]["annotations_count"] = 101
+        server = Server(checks=[current])
+        server.annotations[501] = [annotation(line) for line in range(1, 102)]
+        server.annotation_forbidden_page = 2
+        code, result, out = self.run_export(server)
+        self.assertEqual(code, 1)
+        self.assertIn("HTTP 403", result["error"])
+        self.assertEqual(len(json.loads((out / "poll-002-annotations/501/page-1.json").read_text())), 100)
+        self.assertFalse((out / "poll-002-annotations/501/page-2.json").exists())
+        self.assertTrue((out / "analyses/1.sarif").is_file())
+
+    def test_annotation_checks_keep_head_and_verified_merge_provenance_separate(self):
+        server = Server([analysis(1), analysis(2, MERGE_REF, MERGE)])
+        server.merge_checks = [check(ident=502, commit=MERGE)]
+        code, result, _ = self.run_export(server)
+        self.assertEqual(code, 0)
+        self.assertEqual([(row["id"], row["head_sha"], row["source_kind"])
+                          for row in result["check_annotations"]],
+                         [(501, HEAD, "head"), (502, MERGE, "prospective-merge")])
+        self.assertTrue(all(row["gate_alert_count_from_title"] is None
+                            for row in result["check_annotations"]))
 
 
 if __name__ == "__main__":

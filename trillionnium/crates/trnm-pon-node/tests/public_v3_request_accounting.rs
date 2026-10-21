@@ -774,10 +774,7 @@ mod actual_depletion {
             })
             .count();
         let metrics = &service_outcome["metrics"];
-        let captured_complete = captured.records_not_retained == 0
-            && captured.measurement_failures == 0
-            && !captured.counter_overflow
-            && captured.records.iter().all(|record| record.complete);
+        let captured_complete = captured.coverage_complete();
         let passed = depletion["depletion_observed"] == true
             && depletion["cap_reached"] == false
             && honest_use["false_calls_completed_before"].as_u64().unwrap() > 0

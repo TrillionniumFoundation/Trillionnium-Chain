@@ -12,11 +12,17 @@ use trnm_protocol::{
 fn public(owner: u64) -> Hash {
     development_public(owner).unwrap()
 }
-fn signed(settings: &Settings, owner: u64, nonce: u64, tag: u8, payload: Vec<u8>) -> Vec<u8> {
+fn signed(
+    settings: &Settings,
+    owner: u64,
+    account_sequence: u64,
+    tag: u8,
+    payload: Vec<u8>,
+) -> Vec<u8> {
     let mut tx = Envelope {
         network: settings.network(),
         sender: public(owner),
-        nonce,
+        nonce: account_sequence,
         expiry: 2000,
         fee_limit: 1_000_000,
         tag,

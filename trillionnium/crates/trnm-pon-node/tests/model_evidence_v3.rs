@@ -35,13 +35,13 @@ fn settings() -> Settings {
     )
     .unwrap()
 }
-fn signed(c: &Config, who: u64, nonce: u64, tag: u8, payload: Vec<u8>) -> Vec<u8> {
+fn signed(c: &Config, who: u64, account_sequence: u64, tag: u8, payload: Vec<u8>) -> Vec<u8> {
     let key =
         signing_key_from_hex(&hex::encode(hash(b"DEV-ONLY-KEY", &[&who.to_le_bytes()]))).unwrap();
     let mut transaction = Envelope {
         network: c.network,
         sender: development_public(who).unwrap(),
-        nonce,
+        nonce: account_sequence,
         expiry: 2000,
         fee_limit: 1_000_000,
         tag,
@@ -232,7 +232,7 @@ fn attestation(
     state: &State,
     cid: Hash,
     who: u64,
-    nonce: u64,
+    account_sequence: u64,
     tag: u8,
     claimed: (u64, Hash),
 ) -> Vec<u8> {
@@ -264,7 +264,7 @@ fn attestation(
         payload.extend(score.to_le_bytes());
         payload.extend(salt);
     }
-    signed(c, who, nonce, tag, payload)
+    signed(c, who, account_sequence, tag, payload)
 }
 fn attestations(c: &Config, state: &State, candidates: &[Hash], tag: u8) -> Vec<Vec<u8>> {
     let mut transactions = Vec::new();

@@ -1462,7 +1462,7 @@ mod incremental_prefix_tests {
     use std::sync::Mutex;
     use trnm_crypto_primitives::{sign_hex, signing_key_from_hex};
 
-    fn transfer(node: &Node, nonce: u64, amount: u64) -> Vec<u8> {
+    fn transfer(node: &Node, account_sequence: u64, amount: u64) -> Vec<u8> {
         let key = signing_key_from_hex(&hex::encode(hash(b"DEV-ONLY-KEY", &[&0u64.to_le_bytes()])))
             .unwrap();
         let mut payload = crate::development_public(2).unwrap().to_vec();
@@ -1470,7 +1470,7 @@ mod incremental_prefix_tests {
         let mut tx = Envelope {
             network: node.settings.network(),
             sender: crate::development_public(0).unwrap(),
-            nonce,
+            nonce: account_sequence,
             expiry: 2000,
             fee_limit: 1_000_000,
             tag: 1,

@@ -22,13 +22,13 @@ fn public(index: u64) -> Hash {
     development_public(index).unwrap()
 }
 
-fn transfer(settings: &Settings, nonce: u64, recipient: u64, amount: u64) -> Vec<u8> {
+fn transfer(settings: &Settings, account_sequence: u64, recipient: u64, amount: u64) -> Vec<u8> {
     let mut payload = public(recipient).to_vec();
     payload.extend(amount.to_le_bytes());
     let mut tx = Envelope {
         network: settings.network(),
         sender: public(0),
-        nonce,
+        nonce: account_sequence,
         expiry: 2000,
         fee_limit: 1_000_000,
         tag: 1,

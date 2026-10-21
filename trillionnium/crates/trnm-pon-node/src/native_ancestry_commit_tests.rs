@@ -44,13 +44,13 @@ pub(super) fn logical_rows(db: &Connection) -> BTreeMap<String, Vec<Vec<String>>
         .collect()
 }
 
-fn transfer(settings: &Settings, nonce: u64) -> Vec<u8> {
+fn transfer(settings: &Settings, account_sequence: u64) -> Vec<u8> {
     let mut payload = development_public(1).unwrap().to_vec();
     payload.extend(1_u64.to_le_bytes());
     let mut transaction = Envelope {
         network: settings.network(),
         sender: development_public(0).unwrap(),
-        nonce,
+        nonce: account_sequence,
         expiry: 1000,
         fee_limit: 1_000_000,
         tag: 1,

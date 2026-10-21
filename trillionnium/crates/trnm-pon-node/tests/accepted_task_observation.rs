@@ -8,11 +8,17 @@ use trnm_protocol::pon_wire::{hash, Envelope, Hash};
 const START: u64 = 1_800_000_000;
 const CLOCK: u64 = START + 10_000;
 
-fn signed(settings: &Settings, sender: u64, nonce: u64, tag: u8, payload: Vec<u8>) -> Vec<u8> {
+fn signed(
+    settings: &Settings,
+    sender: u64,
+    account_sequence: u64,
+    tag: u8,
+    payload: Vec<u8>,
+) -> Vec<u8> {
     let mut tx = Envelope {
         network: settings.network(),
         sender: development_public(sender).unwrap(),
-        nonce,
+        nonce: account_sequence,
         expiry: 100,
         fee_limit: 1_000_000,
         tag,
@@ -31,7 +37,11 @@ fn signed(settings: &Settings, sender: u64, nonce: u64, tag: u8, payload: Vec<u8
     tx.encode().unwrap()
 }
 
-fn task(settings: &Settings, owner_nonce: u64, provider_nonce: u64) -> (Hash, Hash, Vec<Vec<u8>>) {
+fn task(
+    settings: &Settings,
+    owner_account_sequence: u64,
+    provider_account_sequence: u64,
+) -> (Hash, Hash, Vec<Vec<u8>>) {
     let owner = development_public(0).unwrap();
     let provider = development_public(2).unwrap();
     let budget = 1000_u64;
@@ -42,7 +52,7 @@ fn task(settings: &Settings, owner_nonce: u64, provider_nonce: u64) -> (Hash, Ha
             &settings.network(),
             &settings.parameters(),
             &owner,
-            &owner_nonce.to_le_bytes(),
+            &owner_account_sequence.to_le_bytes(),
             &provider,
             &budget.to_le_bytes(),
             &deadline.to_le_bytes(),
@@ -61,9 +71,9 @@ fn task(settings: &Settings, owner_nonce: u64, provider_nonce: u64) -> (Hash, Ha
         id,
         output,
         vec![
-            signed(settings, 0, owner_nonce, 2, reserve),
-            signed(settings, 2, provider_nonce, 4, receipt.clone()),
-            signed(settings, 0, owner_nonce + 1, 5, receipt),
+            signed(settings, 0, owner_account_sequence, 2, reserve),
+            signed(settings, 2, provider_account_sequence, 4, receipt.clone()),
+            signed(settings, 0, owner_account_sequence + 1, 5, receipt),
         ],
     )
 }

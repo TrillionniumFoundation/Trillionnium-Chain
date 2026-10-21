@@ -14,13 +14,19 @@ use trnm_pon_node::{
 };
 use trnm_protocol::pon_wire::{hash, Envelope, Hash};
 
-fn signed(settings: &Settings, sender: u64, nonce: u64, recipient: u64, amount: u64) -> Vec<u8> {
+fn signed(
+    settings: &Settings,
+    sender: u64,
+    account_sequence: u64,
+    recipient: u64,
+    amount: u64,
+) -> Vec<u8> {
     let mut payload = development_public(recipient).unwrap().to_vec();
     payload.extend(amount.to_le_bytes());
     let mut tx = Envelope {
         network: settings.network(),
         sender: development_public(sender).unwrap(),
-        nonce,
+        nonce: account_sequence,
         expiry: 2000,
         fee_limit: 1_000_000,
         tag: 1,

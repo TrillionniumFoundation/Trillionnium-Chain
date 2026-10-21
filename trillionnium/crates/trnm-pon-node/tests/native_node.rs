@@ -742,7 +742,7 @@ fn test_lower_height_higher_required_work_wins_after_native_retarget() {
     assert_eq!(node.activate(slow).unwrap(), fast);
 }
 
-fn signed_transfer(settings: &Settings, sender: u64, nonce: u64) -> Vec<u8> {
+fn signed_transfer(settings: &Settings, sender: u64, account_sequence: u64) -> Vec<u8> {
     use trnm_crypto_primitives::{sign_hex, signing_key_from_hex};
     use trnm_protocol::pon_wire::{hash, Envelope};
     let seed = hash(b"DEV-ONLY-KEY", &[&sender.to_le_bytes()]);
@@ -752,7 +752,7 @@ fn signed_transfer(settings: &Settings, sender: u64, nonce: u64) -> Vec<u8> {
     let mut tx = Envelope {
         network: settings.network(),
         sender: development_public(sender).unwrap(),
-        nonce,
+        nonce: account_sequence,
         expiry: 10000,
         fee_limit: 1_000_000,
         tag: 1,

@@ -741,10 +741,7 @@ mod network_only_business {
             && confirmed == BUSINESS_BLOCKS * TRANSACTIONS
             && full_state_equal
             && reopen_equal
-            && observations.records_not_retained == 0
-            && observations.measurement_failures == 0
-            && !observations.counter_overflow
-            && observations.records.iter().all(|r| r.complete)
+            && observations.coverage_complete()
             && final_meter.in_flight == 0
             && !final_meter.accounting_unavailable;
         let mut report = json!({"schema":"public-v3-network-only-business-v1","passed":pass,

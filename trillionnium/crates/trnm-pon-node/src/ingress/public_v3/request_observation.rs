@@ -2,7 +2,7 @@
 use serde::Serialize;
 use std::sync::{
     atomic::{AtomicBool, AtomicU64, Ordering},
-    Arc, Mutex,
+    Arc, Mutex, OnceLock,
 };
 use std::thread::{self, ThreadId};
 use std::time::Instant;
@@ -186,7 +186,7 @@ struct Cell {
 
 struct Inner {
     capacity: usize,
-    rows: Mutex<Vec<Arc<Cell>>>,
+    rows: Box<[OnceLock<Arc<Cell>>]>,
     seen: AtomicU64,
     omitted: AtomicU64,
     failures: AtomicU64,
@@ -225,6 +225,21 @@ pub struct PublicRequestObservationSnapshot {
     pub stream_bytes_are_physical_network_bytes: bool,
 }
 
+impl PublicRequestObservationSnapshot {
+    /// Check retained measurement coverage, not service success or consensus.
+    /// Use after service/worker joins: a live snapshot is not an atomic view.
+    pub fn coverage_complete(&self) -> bool {
+        self.records_not_retained == 0
+            && self.measurement_failures == 0
+            && !self.counter_overflow
+            && self.accepted_connections_seen == self.records.len() as u64
+            && self
+                .records
+                .iter()
+                .all(|row| row.complete && !row.observation_failed)
+    }
+}
+
 impl PublicRequestObserver {
     pub fn new(capacity: usize) -> super::Result<Self> {
         super::ensure(
@@ -233,7 +248,7 @@ impl PublicRequestObserver {
         )?;
         Ok(Self(Arc::new(Inner {
             capacity,
-            rows: Mutex::new(Vec::with_capacity(capacity)),
+            rows: (0..capacity).map(|_| OnceLock::new()).collect(),
             seen: AtomicU64::new(0),
             omitted: AtomicU64::new(0),
             failures: AtomicU64::new(0),
@@ -244,49 +259,47 @@ impl PublicRequestObserver {
     /// Prefer after actual service/worker joins. A live snapshot is explicitly incomplete.
     pub fn snapshot(&self) -> PublicRequestObservationSnapshot {
         let mut records = Vec::new();
-        if let Ok(rows) = self.0.rows.lock() {
-            for cell in rows.iter() {
-                if let Ok(row) = cell.row.lock() {
-                    let mut value = row.clone();
-                    match cell.task.lock() {
-                        Ok(task) => {
-                            value.full_work_started = task.full_work_started;
-                            value.full_work_accepted = task.full_work_accepted;
-                            value.full_work_thread_cpu_ns = task.full_work_thread_cpu_ns;
-                            value.dispatch_started = task.dispatch_started;
-                            value.dispatch_accepted = task.dispatch_accepted;
-                            value.dispatch_thread_cpu_ns = task.dispatch_thread_cpu_ns;
-                            value.submit_phases = task.submit_phases;
-                        }
-                        Err(_) => {
-                            cell.failed.store(true, Ordering::Release);
-                            self.0.count(&self.0.failures);
-                        }
+        // Registration publishes each slot once. Reading another record must
+        // never hold a registry lock that can make an accepted connection vanish.
+        for cell in self.0.rows.iter().filter_map(OnceLock::get) {
+            if let Ok(row) = cell.row.lock() {
+                let mut value = row.clone();
+                match cell.task.lock() {
+                    Ok(task) => {
+                        value.full_work_started = task.full_work_started;
+                        value.full_work_accepted = task.full_work_accepted;
+                        value.full_work_thread_cpu_ns = task.full_work_thread_cpu_ns;
+                        value.dispatch_started = task.dispatch_started;
+                        value.dispatch_accepted = task.dispatch_accepted;
+                        value.dispatch_thread_cpu_ns = task.dispatch_thread_cpu_ns;
+                        value.submit_phases = task.submit_phases;
                     }
-                    value.connection_closed = cell.connection_closed.load(Ordering::Acquire);
-                    value.task_created = cell.task_created.load(Ordering::Acquire);
-                    value.task_closed = cell.task_closed.load(Ordering::Acquire);
-                    value.observation_failed = cell.failed.load(Ordering::Acquire);
-                    value.complete = value.connection_closed
-                        && (!value.task_created || value.task_closed)
-                        && !value.observation_failed;
-                    if !value.observation_failed {
-                        value.application_bytes_read = value
-                            .frames
-                            .iter()
-                            .try_fold(0u64, |n, f| n.checked_add(f.bytes_read));
-                        value.application_bytes_written = value
-                            .frames
-                            .iter()
-                            .try_fold(0u64, |n, f| n.checked_add(f.bytes_written));
+                    Err(_) => {
+                        cell.failed.store(true, Ordering::Release);
+                        self.0.count(&self.0.failures);
                     }
-                    records.push(value);
-                } else {
-                    self.0.count(&self.0.failures);
                 }
+                value.connection_closed = cell.connection_closed.load(Ordering::Acquire);
+                value.task_created = cell.task_created.load(Ordering::Acquire);
+                value.task_closed = cell.task_closed.load(Ordering::Acquire);
+                value.observation_failed = cell.failed.load(Ordering::Acquire);
+                value.complete = value.connection_closed
+                    && (!value.task_created || value.task_closed)
+                    && !value.observation_failed;
+                if !value.observation_failed {
+                    value.application_bytes_read = value
+                        .frames
+                        .iter()
+                        .try_fold(0u64, |n, f| n.checked_add(f.bytes_read));
+                    value.application_bytes_written = value
+                        .frames
+                        .iter()
+                        .try_fold(0u64, |n, f| n.checked_add(f.bytes_written));
+                }
+                records.push(value);
+            } else {
+                self.0.count(&self.0.failures);
             }
-        } else {
-            self.0.count(&self.0.failures);
         }
         PublicRequestObservationSnapshot {
             schema: "public-v3-local-request-resource-observation-v2",
@@ -305,24 +318,37 @@ impl PublicRequestObserver {
     }
 
     pub(super) fn connection(&self) -> Option<ConnectionObservation> {
-        self.0.count(&self.0.seen);
-        if let Ok(mut rows) = self.0.rows.try_lock() {
-            if rows.len() < self.0.capacity {
-                let cell = Arc::new(Cell {
-                    row: Mutex::new(PublicRequestObservation::new()),
-                    task: Mutex::new(TaskProgress::default()),
-                    failed: AtomicBool::new(false),
-                    connection_closed: AtomicBool::new(false),
-                    task_created: AtomicBool::new(false),
-                    task_closed: AtomicBool::new(false),
-                });
-                rows.push(cell.clone());
+        // The checked counter reserves a unique slot before publication. It
+        // never wraps, reuses a record or waits for a concurrent snapshot.
+        let slot = match self
+            .0
+            .seen
+            .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |seen| {
+                seen.checked_add(1)
+            }) {
+            Ok(index) => usize::try_from(index)
+                .ok()
+                .and_then(|index| self.0.rows.get(index)),
+            Err(_) => {
+                self.0.counter_overflow.store(true, Ordering::Release);
+                None
+            }
+        };
+        if let Some(slot) = slot {
+            let cell = Arc::new(Cell {
+                row: Mutex::new(PublicRequestObservation::new()),
+                task: Mutex::new(TaskProgress::default()),
+                failed: AtomicBool::new(false),
+                connection_closed: AtomicBool::new(false),
+                task_created: AtomicBool::new(false),
+                task_closed: AtomicBool::new(false),
+            });
+            if slot.set(cell.clone()).is_ok() {
                 return Some(ConnectionObservation {
                     cell,
                     inner: self.0.clone(),
                 });
             }
-        } else {
             self.0.count(&self.0.failures);
         }
         self.0.count(&self.0.omitted);
@@ -820,13 +846,146 @@ mod tests {
     }
 
     #[test]
+    fn registry_snapshot_does_not_omit_unrelated_accepted_connections() {
+        let observer = PublicRequestObserver::new(2).unwrap();
+        let first = observer.connection().unwrap();
+        first.identity(1);
+        let cell = first.cell.clone();
+        drop(first);
+
+        // Stop the live reader inside the first record. Its row lock proves
+        // that it has entered the snapshot; scheduling a thread alone does not.
+        let task_guard = cell.task.lock().unwrap();
+        let reader = observer.clone();
+        let snapshot_thread = thread::spawn(move || reader.snapshot());
+        let deadline = Instant::now() + std::time::Duration::from_secs(5);
+        let reader_entered = loop {
+            match cell.row.try_lock() {
+                Err(std::sync::TryLockError::WouldBlock) => break true,
+                Err(std::sync::TryLockError::Poisoned(_)) => panic!("unexpected poisoned row"),
+                Ok(guard) => drop(guard),
+            }
+            if Instant::now() >= deadline {
+                break false;
+            }
+            thread::yield_now();
+        };
+        let second = observer.connection();
+        let second_retained = second.is_some();
+        if let Some(second) = second {
+            second.identity(2);
+            drop(second);
+        }
+        drop(task_guard);
+        snapshot_thread.join().unwrap();
+
+        assert!(
+            reader_entered,
+            "live snapshot did not enter the held record"
+        );
+        assert!(second_retained, "live snapshot omitted another connection");
+        let closed = observer.snapshot();
+        assert_eq!(closed.accepted_connections_seen, 2);
+        assert_eq!(closed.records_not_retained, 0);
+        assert_eq!(closed.measurement_failures, 0);
+        assert!(!closed.counter_overflow);
+        assert_eq!(closed.records.len(), 2);
+        assert!(closed.records.iter().all(|row| row.complete));
+        assert_eq!(closed.records[0].connection_id, Some(1));
+        assert_eq!(closed.records[1].connection_id, Some(2));
+        assert!(closed.coverage_complete());
+    }
+
+    #[test]
+    fn registry_concurrent_connections_are_retained_once_within_capacity() {
+        const THREADS: usize = 8;
+        const PER_THREAD: usize = 256;
+        const CAPACITY: usize = 512;
+        let observer = PublicRequestObserver::new(CAPACITY).unwrap();
+        let start = Arc::new(Barrier::new(THREADS));
+        let workers: Vec<_> = (0..THREADS)
+            .map(|worker| {
+                let observer = observer.clone();
+                let start = start.clone();
+                thread::spawn(move || {
+                    start.wait();
+                    let mut retained = 0;
+                    for offset in 0..PER_THREAD {
+                        if let Some(connection) = observer.connection() {
+                            connection.identity((worker * PER_THREAD + offset + 1) as u64);
+                            retained += 1;
+                        }
+                    }
+                    retained
+                })
+            })
+            .collect();
+        let retained: usize = workers
+            .into_iter()
+            .map(|worker| worker.join().unwrap())
+            .sum();
+        let closed = observer.snapshot();
+        assert_eq!(retained, CAPACITY);
+        assert_eq!(
+            closed.accepted_connections_seen,
+            (THREADS * PER_THREAD) as u64
+        );
+        assert_eq!(closed.records.len(), CAPACITY);
+        assert_eq!(
+            closed.records_not_retained,
+            (THREADS * PER_THREAD - CAPACITY) as u64
+        );
+        assert_eq!(closed.measurement_failures, 0);
+        assert!(!closed.counter_overflow);
+        assert!(closed.records.iter().all(|row| row.complete));
+        let identities: std::collections::BTreeSet<_> = closed
+            .records
+            .iter()
+            .map(|row| row.connection_id.unwrap())
+            .collect();
+        assert_eq!(identities.len(), CAPACITY);
+        assert!(!closed.coverage_complete());
+    }
+
+    #[test]
+    fn coverage_rejects_a_poisoned_record_even_when_retained_records_are_complete() {
+        let observer = PublicRequestObserver::new(2).unwrap();
+        let damaged = observer.connection().unwrap();
+        let healthy = observer.connection().unwrap();
+        healthy.identity(2);
+        drop(healthy);
+        let cell = damaged.cell.clone();
+        let failed_writer = thread::spawn(move || {
+            let _guard = cell.row.lock().unwrap();
+            panic!("injected observation writer failure");
+        });
+        assert!(failed_writer.join().is_err());
+        drop(damaged);
+
+        let captured = observer.snapshot();
+        assert_eq!(captured.accepted_connections_seen, 2);
+        assert_eq!(captured.records.len(), 1);
+        assert_eq!(captured.records_not_retained, 0);
+        assert_eq!(captured.measurement_failures, 1);
+        assert!(!captured.counter_overflow);
+        assert_eq!(captured.records[0].connection_id, Some(2));
+        assert!(captured.records[0].complete);
+        assert!(!captured.records[0].observation_failed);
+        assert!(!captured.coverage_complete());
+    }
+
+    #[test]
     fn bounded_records_and_saturating_counter_overflow_remain_explicit() {
         assert!(PublicRequestObserver::new(0).is_err());
         assert!(PublicRequestObserver::new(MAX_REQUEST_OBSERVATION_RECORDS).is_ok());
         assert!(PublicRequestObserver::new(MAX_REQUEST_OBSERVATION_RECORDS + 1).is_err());
         let observer = PublicRequestObserver::new(2).unwrap();
-        drop(observer.connection().unwrap());
-        drop(observer.connection().unwrap());
+        let first = observer.connection().unwrap();
+        first.identity(1);
+        drop(first);
+        let second = observer.connection().unwrap();
+        second.identity(2);
+        drop(second);
         assert!(observer.connection().is_none());
         let snapshot = observer.snapshot();
         assert_eq!(snapshot.records.len(), 2);
@@ -837,6 +996,10 @@ mod tests {
         let snapshot = observer.snapshot();
         assert_eq!(snapshot.accepted_connections_seen, u64::MAX);
         assert!(snapshot.counter_overflow);
+        assert_eq!(snapshot.records.len(), 2);
+        assert_eq!(snapshot.records[0].connection_id, Some(1));
+        assert_eq!(snapshot.records[1].connection_id, Some(2));
+        assert!(!snapshot.coverage_complete());
     }
 
     #[test]

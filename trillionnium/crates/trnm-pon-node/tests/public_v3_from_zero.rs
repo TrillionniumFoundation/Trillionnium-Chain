@@ -919,10 +919,7 @@ fn sustained_phase(
     let honest_ack_on_time = submissions
         .iter()
         .any(|r| r["status"] == "ok" && r["returned_after_deadline"] == false);
-    let observations_complete = captured.records_not_retained == 0
-        && captured.measurement_failures == 0
-        && !captured.counter_overflow
-        && captured.records.iter().all(|r| r.complete);
+    let observations_complete = captured.coverage_complete();
     let m = &service_outcome["metrics"];
     let charged = m["mutation_cpu_charged_ns"].as_u64();
     let work = m["mutation_full_work_cpu_ns"].as_u64();
@@ -1083,13 +1080,13 @@ fn sustained_observation(path: &std::path::Path) {
 // This successor compares identical signed business packets under two real
 // service runs. The independent client owns its own validating ledger; the
 // server's Head/History response alone cannot manufacture confirmation.
-fn confirmation_transfer(settings: &Settings, nonce: u64) -> Vec<u8> {
+fn confirmation_transfer(settings: &Settings, account_sequence: u64) -> Vec<u8> {
     let mut payload = development_public(1).unwrap().to_vec();
     payload.extend(1u64.to_le_bytes());
     let mut tx = Envelope {
         network: settings.network(),
         sender: development_public(0).unwrap(),
-        nonce,
+        nonce: account_sequence,
         expiry: 1000,
         fee_limit: 1_000_000,
         tag: 1,
@@ -1384,10 +1381,7 @@ fn signed_confirmation_phase(
         .is_some_and(|(all, (work, rest))| work.checked_add(rest) == Some(all))
         && m["work_started"] == m["work_finished"]
         && m["mutation_cpu_clock_failures"] == 0;
-    let observations_complete = captured.records_not_retained == 0
-        && captured.measurement_failures == 0
-        && !captured.counter_overflow
-        && captured.records.iter().all(|record| record.complete);
+    let observations_complete = captured.coverage_complete();
     let invariant_target_met = no_attack_accepted
         && observations_complete
         && accounting_closed

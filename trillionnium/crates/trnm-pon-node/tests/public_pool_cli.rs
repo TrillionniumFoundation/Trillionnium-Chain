@@ -42,11 +42,17 @@ fn signature(who: u64, message: &[u8]) -> [u8; 64] {
         .try_into()
         .unwrap()
 }
-fn envelope(settings: &Settings, who: u64, nonce: u64, tag: u8, payload: Vec<u8>) -> Vec<u8> {
+fn envelope(
+    settings: &Settings,
+    who: u64,
+    account_sequence: u64,
+    tag: u8,
+    payload: Vec<u8>,
+) -> Vec<u8> {
     let mut tx = Envelope {
         network: settings.network(),
         sender: development_public(who).unwrap(),
-        nonce,
+        nonce: account_sequence,
         expiry: 2000,
         fee_limit: 1_000_000,
         tag,

@@ -31,11 +31,17 @@ use trnm_protocol::pon_wire::{hash, Envelope, Hash};
 fn public(owner: u64) -> Hash {
     development_public(owner).unwrap()
 }
-fn signed(settings: &Settings, sender: u64, nonce: u64, tag: u8, payload: Vec<u8>) -> Vec<u8> {
+fn signed(
+    settings: &Settings,
+    sender: u64,
+    account_sequence: u64,
+    tag: u8,
+    payload: Vec<u8>,
+) -> Vec<u8> {
     let mut tx = Envelope {
         network: settings.network(),
         sender: public(sender),
-        nonce,
+        nonce: account_sequence,
         expiry: 2000,
         fee_limit: 1_000_000,
         tag,
@@ -53,10 +59,16 @@ fn signed(settings: &Settings, sender: u64, nonce: u64, tag: u8, payload: Vec<u8
         .unwrap();
     tx.encode().unwrap()
 }
-fn transfer(settings: &Settings, sender: u64, nonce: u64, recipient: u64, amount: u64) -> Vec<u8> {
+fn transfer(
+    settings: &Settings,
+    sender: u64,
+    account_sequence: u64,
+    recipient: u64,
+    amount: u64,
+) -> Vec<u8> {
     let mut payload = public(recipient).to_vec();
     payload.extend(amount.to_le_bytes());
-    signed(settings, sender, nonce, 1, payload)
+    signed(settings, sender, account_sequence, 1, payload)
 }
 fn transfer_fee(settings: &Settings) -> u64 {
     // The fixture only reads installed fee constants here; actual Settings,

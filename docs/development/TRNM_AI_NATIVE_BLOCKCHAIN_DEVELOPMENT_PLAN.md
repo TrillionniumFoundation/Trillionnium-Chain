@@ -1728,3 +1728,179 @@ Both lanes retained identical before/after tracked bytes and zero test/logging
 exit codes. The four original Windows lock-conflict fixtures exercised their
 real reopen and fault paths. This closes that Windows verification scope, not
 the independent model-evolution or WAN acceptance gates.
+
+### Authenticated remote diagnostic display
+
+Review of the retained logging findings also identified a separate concrete
+CLI display boundary: authenticated push/sync responses can carry an arbitrary
+peer-supplied error string. Signature verification authenticates that source;
+it does not make newline, carriage return or terminal escape bytes safe for
+direct stderr display. The final CLI error renderer now escapes Unicode Cc
+control characters before printing one diagnostic line. Ordinary Unicode,
+quotes, literal backslashes and fixed error codes are preserved. The underlying
+typed error, its raw diagnostic, protocol bytes, signature verification and
+exit code remain unchanged.
+
+Three actual native CLI unit tests passed, including all 65 C0/DEL/C1 control
+characters, a multiline/terminal-control canary and ordinary Unicode/type
+preservation. Independent source review confirmed both authenticated response
+paths reach the repaired sink. This is a log-integrity repair, not proof that
+the remaining CodeQL logging findings are private-key disclosures or resolved.
+Those findings still require their exact-source analysis and data-flow review.
+
+### Exact-source security evidence
+
+The reference correction was published as
+`9e29c21e62a76031851d58495fb39eeba346dc40`, tree
+`c62730226cc533da12ba08a1f278ad40faec9fcf`. Its
+[read-only export](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/39526601044)
+completed after all three actual CodeQL language analyses. The artifact retains
+the matching Python, Actions and Rust API-provided SARIF subsets, their metadata,
+all polling pages and both source observations. Every selected analysis binds
+`refs/pull/323/head` to that exact head. The separately verified actual merge
+`5276486e60e255b878bf877b74a37e0c5e4c1dd7` is recorded but has no independently
+selected merge-source analysis in this export. The artifact digest and both
+internal file manifests were verified on download.
+
+Python and Actions returned zero results. Rust returned 414 analysis results:
+392 hard-coded-cryptographic-value and 22 cleartext-logging findings. These
+API analysis results have a different scope from the completed PR security
+check's 142 findings, comprising 121 critical and 21 high. Neither the successful
+export nor the difference in these counts closes the security gate. Public
+account replay sequences, deterministic protocol/security vectors and actual
+secret-bearing flows require distinct source-level review; changing test values,
+disabling queries or dismissing findings is not part of this correction.
+
+The read-only exporter also retains the existing CodeQL check's API-exposed
+annotations, with raw pagination and before/after bindings to its exact check,
+source, application and same-repository PR head/base. Annotations have no stable
+API ID; repeated locations and messages remain distinct. All 14 offline export
+regressions passed, including a denied later page, changed source/endpoint,
+count drift and the distinction between 100 reported annotations and 142 gate
+alerts. The actual preceding check metadata has that limited shape. No complete
+gate-to-alert mapping, newly downloaded annotation body or resolved alert is
+claimed from those offline controls, and no workflow permission is expanded.
+
+The complete source review mapped 175 unique analysis findings to 32 public
+account-sequence functions in 25 source/test/example files. Those parameters now
+use `account_sequence`, including the owner/provider sequences committed into task
+IDs and the verified archive sequence-query argument. Inverse identifier mapping and independent diff review preserve the original
+code tokens, literal values, signed transaction fields, cryptographic domains
+and assertions; formatting only adds line breaks and optional trailing commas.
+Operation/transport replay nonces, PoW counters, commitment salts, actual keys
+and golden vectors retain their original semantics. This is the existing fixture
+naming contract, not a subtraction of 175 from the PR gate or a future scan result.
+
+Review of the 22 logging findings identified 14 ordinary vector mutations that
+the analysis treated as log sinks, seven public test/observation values and one
+runtime JSON stdout sink. The runtime finding is the `Ok(value)` branch, with
+paths from public account data and from `secret_identity` through result/control
+flow. Its recorded path does not establish serialization of the private key:
+`DevelopmentIdentity` exposes neither `Serialize` nor `Debug`, and the inspected
+key validation failures do not include the key bytes. This source classification
+does not dismiss an alert or resolve the security gate. The separate stderr
+control-character repair above must not be reported as closure of this stdout
+finding.
+
+### Completed native Hepta pair for the preceding source
+
+All four x64/ARM64 source-head and actual-base-merge Linux lanes in the
+[Hepta pair run](https://github.com/TrillionniumFoundation/hepta-private-ci/actions/runs/39524912633)
+completed successfully. Each retained 99 passing execution receipts, including
+six witness-recovery tests, nine evaluated-shadow tests and the explicitly
+ignored real Chain submit/reconcile/confirm/reorg test. The latter executed both
+`legacy-v2` and `authenticated-v1`, preserving lost-ACK reconciliation and the
+terminal acknowledgement across reorganization. Both before/after source checks
+were clean in every lane.
+
+These results bind Hepta `0ef0e9280e8caec3fdd63761462621848761e7df`, its actual
+integration-stack merge `69adeb54b9acc2e10c116df1ee17b365e0bb79a8`, Chain
+`00733fb34b0cd8007862de373176c3dca4534805` and the Chain merge
+`bb12346c5b53cb13526335b04078b1b8bc954a90`. They do not qualify a newer source,
+Hepta main, actual model installation, independent operators or public activation.
+
+### Observer registration and measurement coverage
+
+The [original campaign on the analysis-export source](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/39526601026)
+again completed three full attempts. All 189 honest submissions succeeded, all
+27 signed confirmation rounds completed inside their windows, and receiver/client
+states agreed. Every hostile phase still failed the unchanged credit-depletion
+requirement. In addition, the third late-product phase retained only 3,421 of
+3,422 accepted connection observations, with one omission and one measurement
+failure below the 16,384-record capacity. These are separate failed conditions.
+
+The retained flow identities reconcile paid debit, final settled CPU and service
+mutation CPU, with no remaining live owner, unsettled known CPU or clock failure.
+The depletion predicate uses paid credit including booked start reservations;
+stored admission credit is a separate quantity. Adjacent cumulative debit/discard
+observations also bound paid credit between samples, excluding missed depletion
+for these failed phases. The corresponding W1, CPU-accounting, challenge,
+dispatch, Node-admission and campaign sources did not change between `00733fb`
+and `9e29c21`; their different measured CPU costs cannot be attributed to a code
+change between those two sources. Both original attack classes reject inside W1,
+before full M06 execution. A valid-W1, false-state-root input would exercise a
+different, heavier admission path and requires its own measured experiment and
+producer/replay cost accounting. It cannot retrospectively satisfy the original
+fixed-input depletion requirement.
+
+The matching registration failure path held the complete registry mutex while a
+live snapshot read every record, while new connections used `try_lock` on that
+registry and permanently omitted a record on contention. The missing connection
+was between IDs 609 and 611 near the second round's live snapshot; the exact
+timestamp of the missing record was not captured. A deterministic native test
+held the first record's task lock until the snapshot had entered that record,
+then registered a second connection. It failed on the original implementation
+with `live snapshot omitted another connection`; the original source hash,
+executable hash and failed test log are retained.
+
+Registration now reserves an individual slot from a checked, non-wrapping
+accepted-connection counter and publishes that slot once. A snapshot does not
+hold a registry-wide lock. The existing capacity, omission and overflow semantics,
+per-record row/task locks and explicit capture failures are preserved. This
+eliminates the demonstrated registry contention path; it does not promise that
+all live per-record observation races disappear or give observations authority.
+
+The snapshot's shared coverage predicate also rejects nonzero omissions or
+measurement failures, counter overflow, an accepted/retained count mismatch,
+and incomplete or failed retained rows. The CLI and all five native qualification
+predicates use that same check after their existing joins. Previously a poisoned
+row could be omitted while every retained row remained complete, allowing the
+multiprocess predicate to miss the failure. The new real row-poison control
+retains one healthy record and rejects that incomplete coverage. Concurrent
+registration and saturation controls retain their exact denominators and verify
+that existing records are not overwritten.
+
+The recent-batch workflow retains its reviewed source guard with the actual
+updated `public_v3_multiprocess.rs` blob
+`5597af0007e175eaa1d732b57b0b173443236313`. This change strengthens measurement
+integrity only. The original campaign workload, CPU budget, deadline, depletion
+threshold and business requirements remain unchanged, and its old failures do
+not become successful observations.
+
+The repaired observation module passed all 13 actual native tests, with zero
+failures and zero ignored tests. The deterministic registration regression first
+failed on the preceding implementation and then passed with the slot registry.
+The real row-poison and concurrent-capacity controls passed in the same module
+run. Both raw logs and the corresponding source and executable digests are
+retained. These local results do not substitute for the original full campaign
+or final-source hosted qualification.
+
+All four native request-accounting integration tests also passed, with zero
+failures or ignored tests. They exercise real TCP requests, partial EOF, exact
+frame accounting, observation capacity loss and honest reads. Their two actual
+depletion controls use explicitly trusted local replay work before public
+service/recovery; they do not bypass or qualify the separate per-request public
+challenge saturation campaign.
+
+Both scoped CLI process regressions passed on the final Rust source. The normal
+service join exported complete coverage with the same public context; actual
+capacity loss remained explicitly incomplete, and a process killed before join
+left no completion report. Each selector executed one native test, with zero
+failures or ignored tests.
+
+The complete locked workspace passed strict Clippy with all targets and features
+and warnings denied. Final Rust formatting and diff whitespace checks also passed;
+all 20 reviewed workflow source-blob guards still match. Cargo graph, lockfile,
+consensus domains, serialized packet formats, service budgets and readiness flags
+remain unchanged. Hosted head/merge results still have to identify the published
+successor; this local verification does not promote the unresolved gates.

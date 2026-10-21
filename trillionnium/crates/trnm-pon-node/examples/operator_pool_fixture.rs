@@ -29,7 +29,7 @@ fn ensure(ok: bool, message: &str) -> Result<()> {
 fn tx(
     settings: &Settings,
     sender: Hash,
-    nonce: u64,
+    account_sequence: u64,
     tag: u8,
     payload: Vec<u8>,
     secret: &Path,
@@ -37,7 +37,7 @@ fn tx(
     let mut e = Envelope {
         network: settings.network(),
         sender,
-        nonce,
+        nonce: account_sequence,
         expiry: 2000,
         fee_limit: 1_000_000,
         tag,

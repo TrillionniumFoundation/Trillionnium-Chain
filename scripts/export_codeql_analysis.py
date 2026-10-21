@@ -3,7 +3,8 @@
 
 The REST SARIF response is an API-provided subset of an analysis upload. This
 exports all available exact-source analyses/categories observed after the
-repository's CodeQL check completes, not all historical branch alerts.
+repository's CodeQL check completes, not all historical branch alerts. Check
+annotations are retained separately and are not the complete PR gate alert set.
 """
 
 import argparse
@@ -89,7 +90,7 @@ class API:
         except (ValueError, UnicodeError):
             raise ExportError(f"GitHub GET {path}: invalid JSON") from None
 
-    def pages(self, path, prefix, key=None):
+    def pages(self, path, prefix, key=None, unique_ids=True):
         rows = []
         for page in range(1, 1001):
             query = "&" if "?" in path else "?"
@@ -98,8 +99,9 @@ class API:
             require(isinstance(batch, list), "Expected a paginated GitHub array")
             rows.extend(batch)
             if len(batch) < 100:
-                require(len({row["id"] for row in rows}) == len(rows),
-                        "Duplicate IDs across API pages; snapshot was not stable")
+                if unique_ids:
+                    require(len({row["id"] for row in rows}) == len(rows),
+                            "Duplicate IDs across API pages; snapshot was not stable")
                 return rows
         raise ExportError("API pagination exceeded bound; refusing an incomplete export")
 
@@ -222,6 +224,66 @@ def export_analyses(api, target, state):
     return exported
 
 
+def annotation_check_binding(api, target, row):
+    ident = row.get("id")
+    require(type(ident) is int and ident > 0, "Invalid annotation check ID")
+    require(row.get("name") == "CodeQL"
+            and row.get("app", {}).get("slug") == "github-advanced-security"
+            and row.get("head_sha") in {target["head"], target["merge"]},
+            "Annotation check source/app mismatch")
+    require(row.get("status") == "completed" and row.get("conclusion") in {"success", "failure"}
+            and not configurations_missing(row), "Annotation check is not complete")
+    require(any(pr.get("number") == target["pr"]
+                and all(pr.get(kind, {}).get("sha") == target[kind]
+                        and pr.get(kind, {}).get("repo", {}).get("url") == api.base
+                        for kind in ("head", "base"))
+                for pr in row.get("pull_requests", [])),
+            "Annotation check does not identify the frozen same-repository PR head/base")
+    output = row.get("output") or {}
+    count = output.get("annotations_count")
+    require(type(count) is int and count >= 0, "Invalid reported annotation count")
+    require(output.get("annotations_url") == f"{api.base}/check-runs/{ident}/annotations",
+            "Annotation URL does not identify the same repository/check")
+    return {"id": ident, "head_sha": row["head_sha"], "pr": target["pr"],
+            "source_kind": "head" if row["head_sha"] == target["head"] else "prospective-merge",
+            "status": row["status"], "conclusion": row["conclusion"], "output": output}
+
+
+def export_check_annotations(api, target, state, directory):
+    exported = []
+    for row in state["checks"]:
+        expected = annotation_check_binding(api, target, row)
+        ident = expected["id"]
+        path, prefix = f"/check-runs/{ident}", f"{directory}/{ident}"
+        before = api.get(path, prefix + "/before.json")
+        require(annotation_check_binding(api, target, before) == expected,
+                f"Annotation check {ident} changed before download")
+        # Unlike analyses/checks, this API returns annotations without IDs.
+        # Preserve duplicate locations/messages and the exact raw page bodies.
+        annotations = api.pages(path + "/annotations", prefix + "/page", unique_ids=False)
+        after = api.get(path, prefix + "/after.json")
+        require(annotation_check_binding(api, target, after) == expected,
+                f"Annotation check {ident} changed during download")
+        count = expected["output"]["annotations_count"]
+        require(len(annotations) == count and all(isinstance(item, dict) for item in annotations),
+                f"Annotation check {ident}: returned annotations do not match the reported count")
+        title_count = re.match(r"^([0-9]+) new alerts\b", expected["output"].get("title") or "")
+        coverage = {key: value for key, value in expected.items() if key != "output"}
+        coverage.update({
+            "reported_annotations_count": count, "exported_annotations_count": len(annotations),
+            "gate_alert_count_from_title": int(title_count[1]) if title_count else None,
+            "all_reported_check_annotations_exported": True,
+            "complete_pr_gate_alert_mapping": False,
+            "scope": "Only API-exposed check annotations; their count is not the PR gate alert total. "
+                     "No SARIF matches or fixed-alert judgments are inferred.",
+            "metadata_before": prefix + "/before.json", "metadata_after": prefix + "/after.json",
+            "raw_pages_prefix": prefix + "/page-",
+        })
+        api.save_json(prefix + "/coverage.json", coverage)
+        exported.append(coverage)
+    return exported
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--out", required=True, type=Path)
@@ -240,7 +302,7 @@ def main():
         "complete": False, "security_gate_changed": False,
         "scope": "All API-available exact PR source analyses/categories after the existing CodeQL check completes; SARIF is the API-provided subset.",
         "full_original_sarif_upload": False, "all_branch_historical_alerts": False,
-        "analyses": [], "error": None,
+        "analyses": [], "check_annotations": [], "error": None,
     }
     try:
         target = target_from_event(api)
@@ -255,6 +317,8 @@ def main():
                                      for row in state["checks"]]
             if ready and state == previous:
                 result["analyses"] = export_analyses(api, target, state)
+                result["check_annotations"] = export_check_annotations(
+                    api, target, state, f"poll-{attempt:03d}-annotations")
                 final_ready, final_state = snapshot(api, target, f"poll-{attempt:03d}-after-export")
                 if final_ready and final_state == state:
                     result["complete"] = True

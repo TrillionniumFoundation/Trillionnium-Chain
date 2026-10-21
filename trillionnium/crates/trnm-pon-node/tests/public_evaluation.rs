@@ -9,7 +9,7 @@ use trnm_mvcc_fee::{
 use trnm_pon_node::{development_public, Node, Settings};
 use trnm_protocol::pon_wire::{hash, Envelope, Hash};
 
-fn signed(cfg: &Config, who: u64, nonce: u64, tag: u8, payload: Vec<u8>) -> Vec<u8> {
+fn signed(cfg: &Config, who: u64, account_sequence: u64, tag: u8, payload: Vec<u8>) -> Vec<u8> {
     let key =
         signing_key_from_hex(&hex::encode(hash(b"DEV-ONLY-KEY", &[&who.to_le_bytes()]))).unwrap();
     let mut tx = Envelope {
@@ -18,7 +18,7 @@ fn signed(cfg: &Config, who: u64, nonce: u64, tag: u8, payload: Vec<u8>) -> Vec<
             .unwrap()
             .try_into()
             .unwrap(),
-        nonce,
+        nonce: account_sequence,
         expiry: 128,
         fee_limit: 1_000_000,
         tag,
@@ -46,7 +46,12 @@ fn initial(cfg: &Config) -> State {
     assert!(evaluation::enabled(cfg));
     state
 }
-fn contribute(cfg: &Config, nonce: u64, artifact: Hash, components: Hash) -> (Hash, Vec<u8>) {
+fn contribute(
+    cfg: &Config,
+    account_sequence: u64,
+    artifact: Hash,
+    components: Hash,
+) -> (Hash, Vec<u8>) {
     let who = development_public(3).unwrap();
     let cid = hash(
         b"contribution-v3",
@@ -66,7 +71,7 @@ fn contribute(cfg: &Config, nonce: u64, artifact: Hash, components: Hash) -> (Ha
     p.extend(1024_u64.to_le_bytes());
     p.extend(components);
     p.extend(0_u64.to_le_bytes());
-    (cid, signed(cfg, 3, nonce, 6, p))
+    (cid, signed(cfg, 3, account_sequence, 6, p))
 }
 fn object(state: &State, cid: Hash) -> &Value {
     &state[&format!("contribution:{}", hex::encode(cid))]
@@ -84,7 +89,14 @@ fn step(state: &State, txs: &[Vec<u8>], height: u64, cfg: &Config) -> State {
     .unwrap()
     .state
 }
-fn commit_tx(cfg: &Config, cid: Hash, eval: &Value, who: u64, score: u64, nonce: u64) -> Vec<u8> {
+fn commit_tx(
+    cfg: &Config,
+    cid: Hash,
+    eval: &Value,
+    who: u64,
+    score: u64,
+    account_sequence: u64,
+) -> Vec<u8> {
     let round = evaluation::round(eval).unwrap();
     let value = evaluation::reveal_commitment(
         round,
@@ -99,16 +111,23 @@ fn commit_tx(cfg: &Config, cid: Hash, eval: &Value, who: u64, score: u64, nonce:
     p.extend(cid);
     p.extend(round);
     p.extend(value);
-    signed(cfg, who, nonce, 14, p)
+    signed(cfg, who, account_sequence, 14, p)
 }
-fn reveal_tx(cfg: &Config, cid: Hash, eval: &Value, who: u64, score: u64, nonce: u64) -> Vec<u8> {
+fn reveal_tx(
+    cfg: &Config,
+    cid: Hash,
+    eval: &Value,
+    who: u64,
+    score: u64,
+    account_sequence: u64,
+) -> Vec<u8> {
     let mut p = Vec::new();
     for value in [cid, evaluation::round(eval).unwrap(), cfg.plan, [9; 32]] {
         p.extend(value);
     }
     p.extend(score.to_le_bytes());
     p.extend([who as u8 + 1; 32]);
-    signed(cfg, who, nonce, 15, p)
+    signed(cfg, who, account_sequence, 15, p)
 }
 fn prepared() -> (Config, State, Hash, Hash) {
     let cfg = Config::installed_with_evaluation_policy(evaluation::PROFILE).unwrap();

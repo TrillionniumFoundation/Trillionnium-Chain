@@ -524,9 +524,9 @@ impl CheckedAccounts {
             .ok_or(ArchiveError::MissingWitness)
     }
     /// A local query on verified bytes. No signature, funds or M06 authorization.
-    pub fn check_next_nonce(&self, owner: Hash, nonce: u64) -> Result<()> {
+    pub fn check_next_nonce(&self, owner: Hash, account_sequence: u64) -> Result<()> {
         let previous = self.account(owner)?.map_or(0, |a| a.nonce);
-        if previous.checked_add(1) == Some(nonce) {
+        if previous.checked_add(1) == Some(account_sequence) {
             Ok(())
         } else {
             Err(ArchiveError::Nonce)

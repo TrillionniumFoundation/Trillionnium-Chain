@@ -60,11 +60,17 @@ fn admission(
         .unwrap();
     verify_development_admission(&signed.encode().unwrap(), artifacts.material(), &ctx).unwrap()
 }
-fn transaction(settings: &Settings, tag: u8, payload: Vec<u8>, nonce: u64, sender: u64) -> Vec<u8> {
+fn transaction(
+    settings: &Settings,
+    tag: u8,
+    payload: Vec<u8>,
+    account_sequence: u64,
+    sender: u64,
+) -> Vec<u8> {
     let mut envelope = Envelope {
         network: settings.network(),
         sender: development_public(sender).unwrap(),
-        nonce,
+        nonce: account_sequence,
         expiry: 1000,
         fee_limit: 10_000_000,
         tag,

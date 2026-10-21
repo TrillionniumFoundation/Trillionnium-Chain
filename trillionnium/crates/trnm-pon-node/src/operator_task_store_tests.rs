@@ -137,7 +137,7 @@ fn exact_packet_gate_precedes_context_and_pool_hold_changes_no_active_or_pool_ro
 
 // Real signed PNX and whole M06 prefix tests. The private unit assembly deliberately
 // skips the external six-material opener and is not a positive operator qualification.
-fn pool_transfer(settings: &Settings, nonce: u64) -> Vec<u8> {
+fn pool_transfer(settings: &Settings, account_sequence: u64) -> Vec<u8> {
     use trnm_crypto_primitives::{sign_hex, signing_key_from_hex};
     use trnm_protocol::pon_wire::Envelope;
     let key =
@@ -147,7 +147,7 @@ fn pool_transfer(settings: &Settings, nonce: u64) -> Vec<u8> {
     let mut envelope = Envelope {
         network: settings.network(),
         sender: crate::development_public(0).unwrap(),
-        nonce,
+        nonce: account_sequence,
         expiry: 2000,
         fee_limit: 1_000_000,
         tag: 1,

@@ -7,7 +7,7 @@ use trnm_protocol::pon_wire::Envelope;
 
 const NOW: u64 = 1_000_000;
 
-fn transfer(settings: &Settings, nonce: u64) -> Vec<u8> {
+fn transfer(settings: &Settings, account_sequence: u64) -> Vec<u8> {
     let key =
         signing_key_from_hex(&hex::encode(hash(b"DEV-ONLY-KEY", &[&0_u64.to_le_bytes()]))).unwrap();
     let mut payload = development_public(1).unwrap().to_vec();
@@ -15,7 +15,7 @@ fn transfer(settings: &Settings, nonce: u64) -> Vec<u8> {
     let mut tx = Envelope {
         network: settings.network(),
         sender: development_public(0).unwrap(),
-        nonce,
+        nonce: account_sequence,
         expiry: 10_000,
         fee_limit: 1000,
         tag: 1,

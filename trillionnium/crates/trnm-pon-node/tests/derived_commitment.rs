@@ -18,13 +18,13 @@ fn public(who: u64) -> Hash {
     .unwrap();
     key.verifying_key().to_bytes()
 }
-fn transfer(settings: &Settings, nonce: u64, destination: Hash) -> Vec<u8> {
+fn transfer(settings: &Settings, account_sequence: u64, destination: Hash) -> Vec<u8> {
     let mut payload = destination.to_vec();
     payload.extend(1_u64.to_le_bytes());
     let mut tx = Envelope {
         network: settings.network(),
         sender: development_public(0).unwrap(),
-        nonce,
+        nonce: account_sequence,
         expiry: 900,
         fee_limit: 1000,
         tag: 1,

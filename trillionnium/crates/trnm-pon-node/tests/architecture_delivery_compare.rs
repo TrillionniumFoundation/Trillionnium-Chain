@@ -139,13 +139,13 @@ impl Cell {
     }
 }
 
-fn transfer(settings: &Settings, who: u64, nonce: u64, recipient: u64) -> String {
+fn transfer(settings: &Settings, who: u64, account_sequence: u64, recipient: u64) -> String {
     let mut payload = development_public(recipient).unwrap().to_vec();
     payload.extend(1u64.to_le_bytes());
     let mut tx = Envelope {
         network: settings.network(),
         sender: development_public(who).unwrap(),
-        nonce,
+        nonce: account_sequence,
         expiry: 1000,
         fee_limit: 1_000_000,
         tag: 1,

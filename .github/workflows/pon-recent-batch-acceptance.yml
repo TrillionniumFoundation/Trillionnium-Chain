@@ -79,7 +79,7 @@ jobs:
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs)" = 59daa5d549e84f43f75583040bc7c451bc7f375d
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic.rs)" = 4ab2d3dcc08314da77066ca1941faedd15f938c9
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic/tests.rs)" = fa0ead2ad0fb52bf73cc8150e150d636244e3f58
-          test "$(git hash-object trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs)" = b828e61a1737c2581f8b5fd6bc97c2094d991802
+          test "$(git hash-object trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs)" = 5597af0007e175eaa1d732b57b0b173443236313
           bash scripts/project-preflight.sh --audit
       - name: Execute conditional query accounting and anytime-bound counterexamples
         shell: bash
