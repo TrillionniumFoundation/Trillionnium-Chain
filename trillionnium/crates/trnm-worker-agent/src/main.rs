@@ -238,44 +238,29 @@ pub(crate) fn now_ms() -> u128 {
         .unwrap_or(0)
 }
 
-struct AppendLock {
-    path: PathBuf,
-}
+/// Acquire an OS-backed, non-blocking exclusive lock for the lifetime of a
+/// file descriptor. Unlike a create-new sentinel, the kernel releases this
+/// lock when the worker exits, including on SIGKILL or a panic, so a crashed
+/// worker cannot permanently block recovery.
+#[cfg(unix)]
+fn try_lock_file_nonblocking(file: &std::fs::File) -> Result<bool> {
+    use std::os::fd::AsFd;
 
-impl Drop for AppendLock {
-    fn drop(&mut self) {
-        let _ = fs::remove_file(&self.path);
+    match rustix::fs::flock(
+        file.as_fd(),
+        rustix::fs::FlockOperation::NonBlockingLockExclusive,
+    ) {
+        Ok(()) => Ok(true),
+        Err(error) if error == rustix::io::Errno::AGAIN => Ok(false),
+        Err(error) => Err(anyhow!("failed to acquire worker file lock: {error}")),
     }
 }
 
-fn append_lock_path(path: &Path) -> PathBuf {
-    let parent = path
-        .parent()
-        .map(Path::to_path_buf)
-        .unwrap_or_else(|| PathBuf::from("."));
-    let base = path
-        .file_name()
-        .and_then(|name| name.to_str())
-        .unwrap_or("trnm-worker-agent.jsonl");
-    parent.join(format!(".{base}.append.lock"))
-}
-
-fn acquire_append_lock(path: &Path) -> Result<AppendLock> {
-    let lock_path = append_lock_path(path);
-    if let Some(parent) = lock_path.parent() {
-        fs::create_dir_all(parent)?;
-    }
-    match OpenOptions::new()
-        .write(true)
-        .create_new(true)
-        .open(&lock_path)
-    {
-        Ok(_) => Ok(AppendLock { path: lock_path }),
-        Err(error) if error.kind() == std::io::ErrorKind::AlreadyExists => {
-            anyhow::bail!("concurrent JSONL append is already in progress")
-        }
-        Err(error) => Err(error.into()),
-    }
+// The worker's command runtime is Unix-only. Refuse to run rather than
+// silently dropping the cross-process lock guarantee on other platforms.
+#[cfg(not(unix))]
+fn try_lock_file_nonblocking(_file: &std::fs::File) -> Result<bool> {
+    anyhow::bail!("worker advisory file locks are unsupported on this platform")
 }
 
 fn append_json_line(path: &Path, line: &str) -> Result<()> {
@@ -288,15 +273,23 @@ fn append_json_line_bounded(
     max_bytes: Option<u64>,
     max_records: Option<usize>,
 ) -> Result<()> {
-    // Serialize the limit check and append across worker processes. Without
-    // this lock, concurrent writers can all pass the preflight checks and
-    // collectively exceed the replay bound, turning recovery into a DoS.
-    let _append_lock = acquire_append_lock(path)?;
     if let Some(parent) = path.parent() {
         fs::create_dir_all(parent)?;
     }
+    // Serialize the limit check and append across worker processes. The lock
+    // is attached to the target file itself and is released by the kernel on
+    // process exit, avoiding stale sentinel files after a crash.
+    let mut file = OpenOptions::new()
+        .create(true)
+        .read(true)
+        .append(true)
+        .open(path)?;
+    anyhow::ensure!(
+        try_lock_file_nonblocking(&file)?,
+        "concurrent JSONL append is already in progress"
+    );
     let record_len = line.len().saturating_add(1) as u64;
-    let existing_size = path.metadata().map(|metadata| metadata.len()).unwrap_or(0);
+    let existing_size = file.metadata()?.len();
     if let Some(limit) = max_bytes {
         anyhow::ensure!(
             existing_size.saturating_add(record_len) <= limit,
@@ -319,12 +312,15 @@ fn append_json_line_bounded(
     // Write the complete JSONL record in one append operation. Splitting the
     // payload and newline lets concurrent workers interleave records and
     // corrupt replay state, causing fail-closed recovery/DoS on restart.
-    let mut file = OpenOptions::new().create(true).append(true).open(path)?;
     let mut record = String::with_capacity(line.len() + 1);
     record.push_str(line);
     record.push('\n');
     file.write_all(record.as_bytes())?;
     file.flush()?;
+    // Make the append durable before releasing the lock. A flushed userspace
+    // buffer alone can disappear on power loss and leave a misleading replay
+    // state after restart.
+    file.sync_all()?;
     Ok(())
 }
 
@@ -398,13 +394,12 @@ pub(crate) fn load_acked(ack_log: &Path) -> Result<HashSet<u64>> {
 }
 
 pub(crate) struct TaskExecutionLock {
+    #[allow(dead_code)]
     path: PathBuf,
-}
-
-impl Drop for TaskExecutionLock {
-    fn drop(&mut self) {
-        let _ = fs::remove_file(&self.path);
-    }
+    // Keep the descriptor open for the complete task execution. Do not unlink
+    // the path on Drop: an unlink/recreate cycle can let another process lock a
+    // different inode while the original task still runs.
+    _file: std::fs::File,
 }
 
 fn task_lock_path(ack_log: &Path, task_id: u64) -> PathBuf {
@@ -427,11 +422,18 @@ pub(crate) fn try_acquire_task_lock(
     if let Some(parent) = path.parent() {
         fs::create_dir_all(parent)?;
     }
-    match OpenOptions::new().write(true).create_new(true).open(&path) {
-        Ok(_) => Ok(Some(TaskExecutionLock { path })),
-        Err(e) if e.kind() == std::io::ErrorKind::AlreadyExists => Ok(None),
-        Err(e) => Err(e.into()),
+    // Keep a stable lock-file inode and use an advisory lock on its descriptor.
+    // Existing files are expected after a clean or crashed run; only a live
+    // descriptor holding the kernel lock blocks a new task execution.
+    let file = OpenOptions::new()
+        .read(true)
+        .write(true)
+        .create(true)
+        .open(&path)?;
+    if !try_lock_file_nonblocking(&file)? {
+        return Ok(None);
     }
+    Ok(Some(TaskExecutionLock { path, _file: file }))
 }
 
 pub(crate) fn is_task_acked(ack_log: &Path, task_id: u64) -> Result<bool> {
