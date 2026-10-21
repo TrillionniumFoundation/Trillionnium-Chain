@@ -122,6 +122,8 @@ jobs:
           rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
       - name: Run pinned cargo-deny supply-chain checks
         uses: EmbarkStudios/cargo-deny-action@3c6349835b2b7b196a839186cb8b78e02f7b5f25
+        env:
+          CARGO_HOME: /github/home/cargo-deny
         with:
           manifest-path: trillionnium/Cargo.toml
           rust-version: "1.95.0"
