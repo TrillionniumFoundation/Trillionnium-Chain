@@ -501,7 +501,8 @@ impl RelayAuthVerifier {
         } else if env.seq != 1 {
             // A fresh verifier has no authenticated checkpoint. Do not let a
             // captured high-sequence envelope seed state and permanently block
-            // the legitimate beginning of a session.
+            // the legitimate beginning of a session. Persisted resume checkpoints
+            // must be restored before accepting any later sequence.
             return Err(RelayAuthError::SeqGap {
                 expected_seq: 1,
                 got_seq: env.seq,
