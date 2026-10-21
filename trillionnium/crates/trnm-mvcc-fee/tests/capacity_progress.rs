@@ -91,7 +91,7 @@ fn non_clone_cancellation_payload_keeps_its_identity() {
         Err(CapacityScanError::Cancelled(stop)) => {
             assert_eq!(&*stop.0 as *const u64, address);
         }
-        other => panic!("unexpected scan result: {other:?}"),
+        _ => panic!("unexpected capacity scan outcome (details redacted)"),
     }
 }
 

@@ -63,7 +63,6 @@ fn paid_cached_native_execution_registers_all_real_m06_workers() {
     )
     .unwrap();
     let (result, receipt) = (out.native, out.cpu);
-    println!("METERED_FACT_BOUNDARY native={result:?} cpu={receipt:?}");
     assert!(
         result.is_ok(),
         "a shared CPU checkpoint must include M06 worker registration"
@@ -71,6 +70,7 @@ fn paid_cached_native_execution_registers_all_real_m06_workers() {
     assert!(!receipt.accounting_unavailable);
     assert!(receipt.spawned_workers > 0);
     assert_eq!(receipt.spawned_workers, receipt.known_workers);
+    println!("METERED_FACT_BOUNDARY worker accounting assertions complete");
 }
 
 fn freeze(domain: &ServiceMutationCpuDomain, credit: i128) {
