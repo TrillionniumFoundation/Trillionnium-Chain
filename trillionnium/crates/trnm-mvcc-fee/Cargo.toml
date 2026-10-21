@@ -17,7 +17,7 @@ consensus_authority = false
 default = []
 
 [dependencies]
-trnm-protocol = { path = "../trnm-protocol" }
+trnm-protocol = { version = "0.1.0", path = "../trnm-protocol" }
 trnm-crypto-primitives = { path = "../trnm-crypto-primitives" }
 serde_json = "1"
 hex = "0.4"
