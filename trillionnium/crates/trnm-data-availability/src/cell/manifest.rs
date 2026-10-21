@@ -175,13 +175,13 @@ impl CellManifestV1 {
     }
 }
 
-/// A canonical, content-addressed closure for one model release.
+/// A canonical, content-addressed required-cell set supplied by the release owner.
 ///
 /// Cell caches are intentionally allowed to contain unrelated historical
-/// bytes.  A release is usable only when this manifest's complete ordered cell
-/// set is present and each member has the same model context.  The release
-/// manifest is a transport contract; it does not select `CURRENT`, grant
-/// execution, or replace the upstream artifact owner.
+/// bytes. This contract verifies the caller's declared set, its exact context
+/// and cached bytes. It cannot infer that the owner listed every model
+/// dependency or that the model is executable. The release manifest does not
+/// select `CURRENT`, grant execution, or replace the upstream artifact owner.
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct CellReleaseManifestV1 {
     context: CellContextV1,
@@ -190,6 +190,11 @@ pub struct CellReleaseManifestV1 {
 
 impl CellReleaseManifestV1 {
     pub fn new(context: CellContextV1, mut cells: Vec<CellDigestV1>) -> CellResultV1<Self> {
+        require(
+            !cells.is_empty() && cells.len() <= MAX_RELEASE_CELLS,
+            "release cell count",
+        )?;
+        validate_release_context(&context)?;
         cells.sort_unstable();
         let value = Self { context, cells };
         value.validate()?;
@@ -205,7 +210,7 @@ impl CellReleaseManifestV1 {
     }
 
     pub fn validate(&self) -> CellResultV1<()> {
-        self.context.validate()?;
+        validate_release_context(&self.context)?;
         require(
             !self.cells.is_empty() && self.cells.len() <= MAX_RELEASE_CELLS,
             "release cell count",
@@ -215,9 +220,16 @@ impl CellReleaseManifestV1 {
             "release cell order/duplicates",
         )?;
         require(
-            self.encode().len() <= MAX_MANIFEST_BYTES,
-            "release manifest length",
-        )
+            self.cells.iter().all(|digest| *digest != [0; 32]),
+            "release cell digest",
+        )?;
+        let encoded_len = self
+            .cells
+            .len()
+            .checked_mul(32)
+            .and_then(|size| size.checked_add(169 + self.context.family.len()))
+            .ok_or(CellErrorV1::Invalid("release manifest length"))?;
+        require(encoded_len <= MAX_MANIFEST_BYTES, "release manifest length")
     }
 
     pub fn encode(&self) -> Vec<u8> {
@@ -249,6 +261,7 @@ impl CellReleaseManifestV1 {
     }
 
     pub fn decode(bytes: &[u8]) -> CellResultV1<Self> {
+        require(bytes.len() <= MAX_MANIFEST_BYTES, "release manifest length")?;
         require(
             bytes.len() >= 4 && &bytes[..4] == b"TCR1",
             "release version",
@@ -268,13 +281,14 @@ impl CellReleaseManifestV1 {
             layout: read_array(&mut input)?,
             runtime: read_array(&mut input)?,
         };
+        validate_release_context(&context)?;
         let count = u32::from_be_bytes(read_array(&mut input)?) as usize;
         require(
             (1..=MAX_RELEASE_CELLS).contains(&count),
             "release cell count",
         )?;
         require(
-            bytes.len() as u64 - input.position() == count as u64 * 32,
+            (bytes.len() as u64).checked_sub(input.position()) == Some(count as u64 * 32),
             "release manifest coverage",
         )?;
         let mut cells = Vec::with_capacity(count);
@@ -285,6 +299,22 @@ impl CellReleaseManifestV1 {
         value.validate()?;
         Ok(value)
     }
+}
+
+fn validate_release_context(context: &CellContextV1) -> CellResultV1<()> {
+    context.validate()?;
+    require(
+        [
+            context.base,
+            context.parent,
+            context.tokenizer,
+            context.layout,
+            context.runtime,
+        ]
+        .iter()
+        .all(|digest| *digest != [0; 32]),
+        "release context digest",
+    )
 }
 
 fn read_array<const N: usize>(input: &mut Cursor<&[u8]>) -> CellResultV1<[u8; N]> {

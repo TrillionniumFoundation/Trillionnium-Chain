@@ -17,12 +17,34 @@ use std::{
 mod assigned;
 mod audit;
 mod cli;
+#[cfg(unix)]
+mod commit_salt;
 mod dispatch;
 mod flush;
 mod flush_submission;
 mod proof_adapter;
 mod workflow;
 mod workflow_ops;
+#[cfg(not(unix))]
+mod commit_salt {
+    use anyhow::{bail, Result};
+    use std::path::Path;
+    pub(crate) fn journal_automatic_submission(
+        _: &Path,
+        _: u64,
+        _: &str,
+        _: &str,
+        _: &str,
+    ) -> Result<String> {
+        bail!("secure commit journaling requires a Unix local owner; no fallback")
+    }
+    pub(crate) fn append_private_manual_submission(_: &Path, _: &str) -> Result<()> {
+        bail!("private manual salt journaling requires a Unix local owner; no fallback")
+    }
+}
+#[cfg(test)]
+#[path = "tests_commit_salt_security.rs"]
+mod tests_commit_salt_security;
 
 #[cfg(test)]
 pub(crate) use audit::{
@@ -58,13 +80,6 @@ const LLM_ADAPTER_TIMEOUT_ENV: &str = "TRNM_LLM_ADAPTER_TIMEOUT_MS";
 pub(crate) const PROOF_ADAPTER_ENV: &str = "TRNM_PROOF_ADAPTER";
 pub(crate) const WORKER_EVENT_LOG_ENV: &str = "TRNM_WORKER_EVENT_LOG";
 pub(crate) const WORKER_PROGRESS_LOG_ENV: &str = "TRNM_WORKER_PROGRESS_LOG";
-
-const MAX_ACK_LOG_BYTES: u64 = 64 * 1024 * 1024;
-const MAX_ACK_RECORDS: usize = 100_000;
-const MAX_SUBMIT_LOG_BYTES: u64 = 64 * 1024 * 1024;
-const MAX_SUBMISSION_RECORDS: usize = 100_000;
-const MAX_INGRESS_LOG_BYTES: u64 = 64 * 1024 * 1024;
-const MAX_INGRESS_RECORDS: usize = 100_000;
 
 const RC_OK: i32 = 0;
 const RC_DUPLICATE: i32 = 9;
@@ -223,12 +238,16 @@ pub(crate) fn next_task_id(state: &PathBuf) -> Result<u64> {
     Ok(s.last_task_id)
 }
 
-pub(crate) fn execute_payload(payload: &str, task_id: u64) -> (String, String) {
+pub(crate) fn execute_payload(payload: &str, _task_id: u64) -> Result<(String, String)> {
     let mut h = Sha256::new();
     h.update(payload.as_bytes());
     let result_hash = hex::encode(h.finalize());
-    let salt_hex = format!("{:064x}", task_id);
-    (result_hash, salt_hex)
+    // The old salt was the public task ID. Use OS CSPRNG; never fall back to
+    // timestamps, public identities or predictable process counters on failure.
+    let mut salt = [0_u8; 32];
+    getrandom::fill(&mut salt)
+        .map_err(|error| anyhow!("commit salt entropy unavailable: {error}"))?;
+    Ok((result_hash, hex::encode(salt)))
 }
 
 pub(crate) fn now_ms() -> u128 {
@@ -238,89 +257,14 @@ pub(crate) fn now_ms() -> u128 {
         .unwrap_or(0)
 }
 
-/// Acquire an OS-backed, non-blocking exclusive lock for the lifetime of a
-/// file descriptor. Unlike a create-new sentinel, the kernel releases this
-/// lock when the worker exits, including on SIGKILL or a panic, so a crashed
-/// worker cannot permanently block recovery.
-#[cfg(unix)]
-fn try_lock_file_nonblocking(file: &std::fs::File) -> Result<bool> {
-    use std::os::fd::AsFd;
-
-    match rustix::fs::flock(
-        file.as_fd(),
-        rustix::fs::FlockOperation::NonBlockingLockExclusive,
-    ) {
-        Ok(()) => Ok(true),
-        Err(error) if error == rustix::io::Errno::AGAIN => Ok(false),
-        Err(error) => Err(anyhow!("failed to acquire worker file lock: {error}")),
-    }
-}
-
-// The worker's command runtime is Unix-only. Refuse to run rather than
-// silently dropping the cross-process lock guarantee on other platforms.
-#[cfg(not(unix))]
-fn try_lock_file_nonblocking(_file: &std::fs::File) -> Result<bool> {
-    anyhow::bail!("worker advisory file locks are unsupported on this platform")
-}
-
 fn append_json_line(path: &Path, line: &str) -> Result<()> {
-    append_json_line_bounded(path, line, None, None)
-}
-
-fn append_json_line_bounded(
-    path: &Path,
-    line: &str,
-    max_bytes: Option<u64>,
-    max_records: Option<usize>,
-) -> Result<()> {
     if let Some(parent) = path.parent() {
         fs::create_dir_all(parent)?;
     }
-    // Serialize the limit check and append across worker processes. The lock
-    // is attached to the target file itself and is released by the kernel on
-    // process exit, avoiding stale sentinel files after a crash.
-    let mut file = OpenOptions::new()
-        .create(true)
-        .read(true)
-        .append(true)
-        .open(path)?;
-    anyhow::ensure!(
-        try_lock_file_nonblocking(&file)?,
-        "concurrent JSONL append is already in progress"
-    );
-    let record_len = line.len().saturating_add(1) as u64;
-    let existing_size = file.metadata()?.len();
-    if let Some(limit) = max_bytes {
-        anyhow::ensure!(
-            existing_size.saturating_add(record_len) <= limit,
-            "JSONL log exceeds bounded size: {} bytes > {}",
-            existing_size.saturating_add(record_len),
-            limit
-        );
-    }
-    if let Some(limit) = max_records {
-        if existing_size > 0 {
-            let raw = fs::read(path)?;
-            let records = raw.iter().filter(|byte| **byte == b'\n').count();
-            anyhow::ensure!(
-                records < limit,
-                "JSONL log exceeds bounded record count: {}",
-                limit
-            );
-        }
-    }
-    // Write the complete JSONL record in one append operation. Splitting the
-    // payload and newline lets concurrent workers interleave records and
-    // corrupt replay state, causing fail-closed recovery/DoS on restart.
-    let mut record = String::with_capacity(line.len() + 1);
-    record.push_str(line);
-    record.push('\n');
-    file.write_all(record.as_bytes())?;
+    let mut file = OpenOptions::new().create(true).append(true).open(path)?;
+    file.write_all(line.as_bytes())?;
+    file.write_all(b"\n")?;
     file.flush()?;
-    // Make the append durable before releasing the lock. A flushed userspace
-    // buffer alone can disappear on power loss and leave a misleading replay
-    // state after restart.
-    file.sync_all()?;
     Ok(())
 }
 
@@ -333,14 +277,8 @@ pub(crate) fn append_submission(
     salt_hex: &str,
 ) -> Result<()> {
     let nonce = task_id;
-    let commit_cmd = format!(
-        "trnm-node tx commit-result {} {} {} {}",
-        task_id, worker, commit_hash, nonce
-    );
-    let reveal_cmd = format!(
-        "trnm-node tx reveal-result {} {} {}",
-        task_id, result_hash, salt_hex
-    );
+    let commit_cmd = workflow_ops::commit_template(task_id, worker, commit_hash, nonce);
+    let reveal_cmd = workflow_ops::reveal_template(task_id, result_hash, salt_hex);
     let rec = SubmissionRecord {
         ts_unix_ms: now_ms(),
         task_id,
@@ -353,53 +291,40 @@ pub(crate) fn append_submission(
         reveal_cmd,
     };
     let line = serde_json::to_string(&rec)?;
-    append_json_line_bounded(
-        submit_log,
-        &line,
-        Some(MAX_SUBMIT_LOG_BYTES),
-        Some(MAX_SUBMISSION_RECORDS),
-    )
+    commit_salt::append_private_manual_submission(submit_log, &line)
 }
 
-fn load_ack_records(ack_log: &Path) -> Result<Vec<AckRecord>> {
+fn load_ack_records(ack_log: &Path) -> Vec<AckRecord> {
     if !ack_log.exists() {
-        return Ok(vec![]);
+        return vec![];
     }
-    let size = fs::metadata(ack_log)?.len();
-    anyhow::ensure!(
-        size <= MAX_ACK_LOG_BYTES,
-        "ack log exceeds bounded replay size: {} bytes > {}",
-        size,
-        MAX_ACK_LOG_BYTES
-    );
-    let raw = fs::read_to_string(ack_log)?;
-    let mut records = Vec::new();
-    for line in raw.lines().filter(|l| !l.trim().is_empty()) {
-        anyhow::ensure!(
-            records.len() < MAX_ACK_RECORDS,
-            "ack log exceeds bounded record count: {}",
-            MAX_ACK_RECORDS
-        );
-        records.push(serde_json::from_str::<AckRecord>(line)?);
-    }
-    Ok(records)
+    fs::read_to_string(ack_log)
+        .ok()
+        .map(|raw| {
+            raw.lines()
+                .filter(|l| !l.trim().is_empty())
+                .filter_map(|line| serde_json::from_str::<AckRecord>(line).ok())
+                .collect()
+        })
+        .unwrap_or_default()
 }
 
-pub(crate) fn load_acked(ack_log: &Path) -> Result<HashSet<u64>> {
-    Ok(load_ack_records(ack_log)?
+pub(crate) fn load_acked(ack_log: &Path) -> HashSet<u64> {
+    load_ack_records(ack_log)
         .into_iter()
         .filter(|rec| rec.status == "accepted")
         .map(|rec| rec.task_id)
-        .collect())
+        .collect()
 }
 
 pub(crate) struct TaskExecutionLock {
-    #[allow(dead_code)]
     path: PathBuf,
-    // Keep the descriptor open for the complete task execution. Do not unlink
-    // the path on Drop: an unlink/recreate cycle can let another process lock a
-    // different inode while the original task still runs.
-    _file: std::fs::File,
+}
+
+impl Drop for TaskExecutionLock {
+    fn drop(&mut self) {
+        let _ = fs::remove_file(&self.path);
+    }
 }
 
 fn task_lock_path(ack_log: &Path, task_id: u64) -> PathBuf {
@@ -422,68 +347,37 @@ pub(crate) fn try_acquire_task_lock(
     if let Some(parent) = path.parent() {
         fs::create_dir_all(parent)?;
     }
-    // Keep a stable lock-file inode and use an advisory lock on its descriptor.
-    // Existing files are expected after a clean or crashed run; only a live
-    // descriptor holding the kernel lock blocks a new task execution.
-    let file = OpenOptions::new()
-        .read(true)
-        .write(true)
-        .create(true)
-        .truncate(false)
-        .open(&path)?;
-    if !try_lock_file_nonblocking(&file)? {
-        return Ok(None);
+    match OpenOptions::new().write(true).create_new(true).open(&path) {
+        Ok(_) => Ok(Some(TaskExecutionLock { path })),
+        Err(e) if e.kind() == std::io::ErrorKind::AlreadyExists => Ok(None),
+        Err(e) => Err(e.into()),
     }
-    Ok(Some(TaskExecutionLock { path, _file: file }))
 }
 
-pub(crate) fn is_task_acked(ack_log: &Path, task_id: u64) -> Result<bool> {
-    Ok(load_acked(ack_log)?.contains(&task_id))
+pub(crate) fn is_task_acked(ack_log: &Path, task_id: u64) -> bool {
+    load_acked(ack_log).contains(&task_id)
 }
 
 pub(crate) fn load_ingress_records(path: &PathBuf) -> Result<Vec<MessageIngressRecord>> {
     if !path.exists() {
         return Ok(vec![]);
     }
-    let size = fs::metadata(path)?.len();
-    anyhow::ensure!(
-        size <= MAX_INGRESS_LOG_BYTES,
-        "ingress log exceeds bounded replay size: {} bytes > {}",
-        size,
-        MAX_INGRESS_LOG_BYTES
-    );
     let raw = fs::read_to_string(path)?;
-    let mut records = Vec::new();
-    for line in raw.lines().filter(|l| !l.trim().is_empty()) {
-        anyhow::ensure!(
-            records.len() < MAX_INGRESS_RECORDS,
-            "ingress log exceeds bounded record count: {}",
-            MAX_INGRESS_RECORDS
-        );
-        records.push(serde_json::from_str::<MessageIngressRecord>(line)?);
-    }
-    Ok(records)
+    Ok(raw
+        .lines()
+        .filter(|l| !l.trim().is_empty())
+        .filter_map(|l| serde_json::from_str::<MessageIngressRecord>(l).ok())
+        .collect())
 }
 
 pub(crate) fn save_ingress_records(path: &PathBuf, records: &[MessageIngressRecord]) -> Result<()> {
-    anyhow::ensure!(
-        records.len() <= MAX_INGRESS_RECORDS,
-        "ingress log exceeds bounded record count: {}",
-        MAX_INGRESS_RECORDS
-    );
+    if let Some(parent) = path.parent() {
+        fs::create_dir_all(parent)?;
+    }
     let mut out = String::new();
     for rec in records {
         out.push_str(&serde_json::to_string(rec)?);
         out.push('\n');
-        anyhow::ensure!(
-            out.len() as u64 <= MAX_INGRESS_LOG_BYTES,
-            "ingress log exceeds bounded replay size: {} bytes > {}",
-            out.len(),
-            MAX_INGRESS_LOG_BYTES
-        );
-    }
-    if let Some(parent) = path.parent() {
-        fs::create_dir_all(parent)?;
     }
     fs::write(path, out)?;
     Ok(())
@@ -514,12 +408,7 @@ pub(crate) fn append_ack(
         run_id,
     };
     let line = serde_json::to_string(&rec)?;
-    append_json_line_bounded(
-        ack_log,
-        &line,
-        Some(MAX_ACK_LOG_BYTES),
-        Some(MAX_ACK_RECORDS),
-    )
+    append_json_line(ack_log, &line)
 }
 
 pub(crate) fn append_event(event_log: &Path, event: &WorkerEvent) -> Result<()> {
@@ -950,16 +839,13 @@ fn normalize_persisted_tx_hash(hash: Option<String>) -> Option<String> {
     })
 }
 
-pub(crate) fn persisted_ack_hashes_for_task(
-    ack_log: &Path,
-    task_id: u64,
-) -> Result<PersistedAckHashes> {
+pub(crate) fn persisted_ack_hashes_for_task(ack_log: &Path, task_id: u64) -> PersistedAckHashes {
     let mut hashes = PersistedAckHashes {
         commit_tx_hash: None,
         reveal_tx_hash: None,
     };
 
-    for ack in load_ack_records(ack_log)?.into_iter().rev() {
+    for ack in load_ack_records(ack_log).into_iter().rev() {
         if ack.task_id != task_id {
             continue;
         }
@@ -974,7 +860,7 @@ pub(crate) fn persisted_ack_hashes_for_task(
         }
     }
 
-    Ok(hashes)
+    hashes
 }
 
 fn backoff_delay_ms(base_ms: u64, attempt: u32) -> u64 {
@@ -1081,8 +967,8 @@ where
     })
 }
 
-#[allow(dead_code)]
-pub(crate) fn run_adapter_with_retry(
+#[cfg(test)]
+fn run_adapter_with_retry(
     adapter_cmd: &str,
     action_args: &[String],
     max_retries: u32,
@@ -1093,7 +979,7 @@ pub(crate) fn run_adapter_with_retry(
         action_args,
         max_retries,
         backoff_ms,
-        Duration::from_millis(DEFAULT_TX_ADAPTER_TIMEOUT_MS),
+        Duration::from_millis(resolve_tx_adapter_timeout_ms()),
     )
 }
 

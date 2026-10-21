@@ -8,11 +8,11 @@ use std::{
 
 use crate::proof_adapter::{build_proof_adapter, DEFAULT_PROOF_ADAPTER};
 use crate::{
-    adapter_error_signal, append_submission, apply_reputation_signal, attach_llm_provenance,
-    classify_adapter_error, commitment, execute_payload, load_ingress_records,
-    reputation_gap_bps_from_best, reputation_gap_bps_from_worst, resolve_llm_adapter_policy,
-    run_llm_adapter_with_retry, save_ingress_records, transition_request_status, AdapterErrorKind,
-    LlmAdapterPolicy, ReputationSignal, PROOF_ADAPTER_ENV,
+    adapter_error_signal, apply_reputation_signal, attach_llm_provenance, classify_adapter_error,
+    execute_payload, load_ingress_records, reputation_gap_bps_from_best,
+    reputation_gap_bps_from_worst, resolve_llm_adapter_policy, run_llm_adapter_with_retry,
+    save_ingress_records, transition_request_status, AdapterErrorKind, LlmAdapterPolicy,
+    ReputationSignal, PROOF_ADAPTER_ENV,
 };
 use trnm_types::RequestStatus;
 
@@ -171,19 +171,19 @@ pub(crate) fn handle_run_assigned(
         }
 
         let payload = llm.output_text;
-        let (result_hash, salt_hex) = execute_payload(&payload, rec.task_id);
-        let commit_hash = commitment(rec.task_id, &result_hash, &salt_hex, &worker);
-        rec.result_hash = Some(result_hash.clone());
-        if submit {
-            append_submission(
+        let (result_hash, proposed_salt) = execute_payload(&payload, rec.task_id)?;
+        let _salt_hex = if submit {
+            crate::commit_salt::journal_automatic_submission(
                 &submit_log,
                 rec.task_id,
                 &worker,
-                &commit_hash,
                 &result_hash,
-                &salt_hex,
-            )?;
-        }
+                &proposed_salt,
+            )?
+        } else {
+            proposed_salt
+        };
+        rec.result_hash = Some(result_hash.clone());
         let reputation_signal = ReputationSignal::Accepted;
         let reputation_impact = apply_reputation_signal(rec, reputation_signal);
         rec.status = transition_request_status(&rec.status, RequestStatus::CommitQueued)?;

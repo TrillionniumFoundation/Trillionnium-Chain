@@ -5,7 +5,10 @@ Revision: invariant-driven revision3. Selected target: `pon-nakamoto-v1`.
 
 ## Scope and ownership
 
-Current bounded integer model family, not arbitrary neural model hosting.
+The existing model loader remains scoped to its bounded integer family. The
+separate [configured-peer cell byte pilot](../protocol/pon-nakamoto-v1/details/CELL_P2P_V1.md)
+can retrieve opaque, content-addressed cells for the existing loader owners;
+transport success does not qualify arbitrary neural model hosting.
 
 The claims below apply to their named component and tests, not to an independently accepted full native node.
 
@@ -15,11 +18,29 @@ The claims below apply to their named component and tests, not to an independent
 
 Read at most65537 bytes; require <=65536 and canonical JSON byte identity, exact fields/shapes/ranges/feature/family. Hash bytes, never mutable path names. No executable object format.
 
+That remains the bounded integer-model loader contract. The separate native
+`CellManifestV1::decode` / `CellStoreV1::verify_complete` route validates opaque
+cell bytes against the caller-pinned TCM1 manifest, all five dependency digests,
+ordered chunk lengths/hashes and the complete payload length/hash. It does not
+interpret a model format or enlarge the integer loader's acceptance boundary.
+
 **Atomic/commit boundary:** Content-addressed artifact and manifest owned by the artifact provider.
 
 ### M09.FetchWithoutAuthor
 
 Verify each copy hash; remove original author path during controlled test; load from a custodian and bind actual model hash to result. Remote diversified storage and long-term repair are not implied by local copies.
+
+The native configured-peer successor uses `fetch_cell` / `serve_cells` and the
+ordinary `trnm-cell` CLI. Actual TCP tests remove the origin, fetch from two
+retained replicas, repair a corrupt disposable cache and resume only verified
+chunks. Absolute connection deadlines, a shared total connection budget and a
+shared response-byte budget bound corrupt, absent and byte-dripping peers.
+Response accounting includes headers, manifests and rejected/truncated bytes;
+`downloaded_bytes` remains verified newly cached payload. Byte-budget exhaustion
+returns the actual received count and limit, and concurrent reads reserve bytes
+before receiving them. Complete materialization uses
+an owner-controlled destination and no-replace publication; byte retrieval
+does not select CURRENT, execute a model or establish independent custodians.
 
 **Atomic/commit boundary:** Retention obligations separate from self-contained historical work certificates.
 
@@ -59,13 +80,21 @@ Physical-host copies and source-path loss are tested by a scoped campaign; geogr
 
 - [`formal/pon-nakamoto-v1/model_contract.py`](../../formal/pon-nakamoto-v1/model_contract.py).
 - [`formal/pon-nakamoto-v1/experiments/model_loop.py`](../../formal/pon-nakamoto-v1/experiments/model_loop.py).
+- [`trnm-data-availability::cell`](../../trillionnium/crates/trnm-data-availability/src/cell.rs)
+  owns a separate manifest/chunk cache, bounded TCP retrieval, no-replace
+  materialization and ordinary corrupt-cache repair. Its
+  [`trnm-cell` CLI](../../trillionnium/crates/trnm-data-availability/src/bin/trnm-cell.rs)
+  has no release, CURRENT, consensus or FinalUse authority.
 
 No test binding or local campaign grants independent acceptance, ordinary Hepta execution or production activation. Preserve the exact source, profile and environment of every outcome.
 
 ## Executed evidence and scope
 
-The [current measured package](../../evidence/pon-v3/README.md) includes exact source,
-raw command exits and concrete invariant test results. Its verifier distinguishes
-runtime byte identity from documentation edits and cannot grant independent acceptance.
-Module-specific limitations above remain in force even when the referenced local test
-passes. The development plan, not this link or a count of procedures, selects next work.
+[Responsibility-level evidence navigation](README.md#responsibility-and-evidence) reads
+measured commits from immutable receipts. The module's entries in
+[module-maturity-v1.json](../../config/pon/module-maturity-v1.json) identify actual callable
+owners, controlled entrypoints, backends, persistence and exact observed test selectors.
+Run `python3 scripts/ci/report_module_evidence.py --module M09` from the repository
+root to see subject-byte and complete recorded-runtime matches separately, plus scenarios
+not observed in each package. A byte match is not a new test run or product acceptance.
+Historical v1/v3/v4 results are never repinned. The sole plan selects further work.

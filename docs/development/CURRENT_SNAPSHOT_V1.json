@@ -7,5 +7,6 @@
   "runtime_implemented": false,
   "production_consensus_activation": false,
   "module_maturity": "config/pon/module-maturity-v1.json",
-  "invariant_contract": "config/pon/invariants-v2.json"
+  "invariant_contract": "config/pon/invariants-v2.json",
+  "applicability_registry": "config/pon/applicability-v1.json"
 }

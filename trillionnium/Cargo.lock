@@ -843,6 +843,7 @@ dependencies = [
  "ed25519-dalek",
  "hex",
  "sha2",
+ "trnm-protocol",
 ]
 
 [[package]]
@@ -891,11 +892,13 @@ dependencies = [
  "borsh",
  "hex",
  "rusqlite",
+ "serde",
  "serde_json",
  "sha2",
  "tempfile",
  "trnm-crypto-primitives",
  "trnm-protocol",
+ "trnm-verification-profiles",
 ]
 
 [[package]]
@@ -928,10 +931,13 @@ dependencies = [
  "hex",
  "libc",
  "rusqlite",
+ "rustix",
  "serde",
  "serde_json",
+ "sha2",
  "tempfile",
  "trnm-crypto-primitives",
+ "trnm-mempool",
  "trnm-mvcc-fee",
  "trnm-protocol",
  "trnm-transport",
@@ -1032,6 +1038,7 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "clap",
+ "getrandom 0.4.2",
  "hex",
  "rustix",
  "serde",
@@ -1039,6 +1046,7 @@ dependencies = [
  "sha2",
  "shell-escape",
  "shlex",
+ "tempfile",
  "trnm-types",
  "wait-timeout",
 ]

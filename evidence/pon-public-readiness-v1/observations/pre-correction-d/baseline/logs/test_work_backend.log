@@ -1,0 +1,8 @@
+test_missing_native_path_does_not_use_oracle (__main__.NativeWorkBridgeTests.test_missing_native_path_does_not_use_oracle) ... ok
+test_proof_bytes_and_verified_product_equal_oracle (__main__.NativeWorkBridgeTests.test_proof_bytes_and_verified_product_equal_oracle) ... ok
+test_wrong_statement_and_bad_trace_reject_without_fallback (__main__.NativeWorkBridgeTests.test_wrong_statement_and_bad_trace_reject_without_fallback) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.199s
+
+OK

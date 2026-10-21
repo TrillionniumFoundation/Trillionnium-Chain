@@ -7,6 +7,14 @@ WithdrawalBoundArtifactAdmissionV3, VerifiedCurrentArtifactHeadV1,
 LearningArtifactOwnerHost/Service and VerifiedArtifactSelectionV1. A chain adapter must
 consume these owners; it must not construct a second artifact registry or trainer.
 
+The dated inspections below retain their original scope. For the 2026-10-20
+amendment the inspected Chain #323 source is
+`9bd8b20da68f0dc199aab78c27644ed004af7411`, and the inspected Hepta #2559
+source is `443692c1c16a031fbde1ca3ddf5be99770667d81`. That Hepta workflow
+pins an older Chain source, so it is not a receipt for this pair. The latest
+V8 document amendment is a design input, not evidence of installation or
+learning. The PN3 target at the end of this file governs the remaining handoff.
+
 ## Required product sequence
 
 1. Normal task owner records actual task/input/output and authorized learning scope.
@@ -15,7 +23,13 @@ consume these owners; it must not construct a second artifact registry or traine
    identities, real outcome scope, and independently validated role claims.
 3. kernel.operations owns durable submit intent/outbox, attempt identity and lost-ACK
    reconciliation. The chain adapter submits a contribution and observes current chain
-   inclusion/confirmation without turning it into a local final-use token.
+   inclusion/confirmation without turning it into a local final-use token. The native
+   `packet-status` command is a read-only reconciliation primitive over an already
+   existing Node namespace: it decodes the caller-retained exact packet, recomputes its
+   BlockId, and reports whether identical bytes are durably stored. It never submits,
+   replays work, activates a branch or creates a second operation ledger. A local
+   not-found observation is not proof of global non-execution and therefore cannot
+   authorize blind resubmission.
 4. Consumer checks exact release/family/bytes, current local selection and generation,
    reserves real inference resources, then records model/request/input/output receipt.
 5. Reorg withdraws branch entitlement, not already executed local history. Query original
@@ -50,13 +64,32 @@ are rejected. This closes the serialization and fail-closed contract boundary;
 it does not claim that the ordinary `Agentd` owner has been configured, that the
 chain has a live publication caller, or that a chain confirmation grants final use.
 
+The unshipped handoff profile signs the explicit
+`trnm-hepta-artifact-admission-signature-v1` domain with the chain and owner facts.
+Generation zero is rejected regardless of whether a parent is supplied. Canonical
+envelope decoding rejects inputs above 4,096 bytes before parsing strings or
+signature bytes. This wire bound is separate from the 64 MiB artifact payload bound.
+Existing research-command encodings and signatures are unchanged.
+
+The receiving adapter must call `verify_for_context` with the destination selected
+by its operation journal and the complete admission freshly obtained from its
+existing Hepta owner. It compares every admission field, including operation,
+task/export scope, digest profile, current withdrawal/registry heads and
+parent/generation, then checks the validity window and registered owner signature.
+Passing the peer's received admission as its own expected value defeats that
+comparison and is not an integration. `verify_signature` and
+`verify_with_authorities` are low-level authenticity checks; they do not establish
+destination, freshness or currentness. This API itself grants no final-use token.
+
 The envelope is intentionally not a final-use token. A node must re-read the
 current Hepta withdrawal head and its local operation/outbox journal before any
 external effect. Reorganization may remove chain entitlement, but it cannot replay
 or delete a local effect receipt. The integration tests are
 `hepta_admission_requires_owner_facts_and_authority` and
 `hepta_admission_rejects_missing_parent_and_unbounded_payload` in the research
-protocol package.
+protocol package. The additional adversarial selectors are
+`hepta_handoff_rechecks_the_destination_and_fresh_owner_snapshot` and
+`hepta_handoff_limits_wire_before_decode_and_requires_its_signature_domain`.
 
 An earlier cross-machine probe was blocked; the subsequent owned-SSH campaign now
 executes on ROG, Pocket4 and X230 and records exact source manifests and live UTC.
@@ -118,3 +151,209 @@ reference and task identities. This implements their boundary but does not insta
 Agentd PoN destination. The repository owner has authorized development, not fabricated
 past task records or independent evaluator identities. Normal integration must preserve
 these distinctions while mapping the existing typed publication and operation APIs.
+
+
+## Current compiled effect boundary and required recovery locator
+
+A later upstream inspection fixes the ordinary product path at Hepta main
+`78fdb0cf8537e3a84fc6e0a849707559c80881e8`, with the pending revocation-owner
+correction in `a48b99ec46995f70f50c173c9ab358d603c6d115` (PR1429).
+The compiled effect host is `AgentdAutomationEffectHost` in
+`codex-rs/hepta-agentd/src/automation_effect_host.rs`, not the historical
+unconnected `AgentdOperationsHost` file discussed above. This is a source
+inspection, not a successful Hepta build or ordinary PoN integration claim.
+
+The host currently selects a pinned HTTP provider contract, preserves TaskFlow's
+durable effect-attempt owner, and delegates final-use revocation/nonce authority
+to `FinalUseAuthority`. Its provider key is derived from provider scope/run/step;
+its payload digest is Hepta SHA-256 of the exact transmitted bytes. A chain block,
+transaction or authenticated-session identity uses a different domain. None may
+be obtained by casting one digest into another.
+
+The upstream boundary has since advanced through Hepta PR1430/PR1431. The existing
+TaskFlow effect-attempt owner now persists the exact provider-effect key and exact
+wire payload before provider contact, and the reconciliation adapter seam receives
+those durable bytes. That closes the earlier information-loss prerequisite without
+adding a PoN journal. Legacy attempt rows still carry no exact bytes and must remain
+Unknown/Indeterminate for any adapter that needs packet identity.
+
+On the chain side, `packet-status` accepts exactly one bounded packet source (file
+or stdin), so the Hepta owner can hand off its already durable bytes without creating
+another mutable packet file. The read-only observation reports exact durable storage
+separately from current active-chain membership and active depth. A packet retained
+after a heavier reorganization therefore remains `stored_exact=true` while
+`active_chain_member=false`. The same command works with the explicit authenticated
+local state backend. These are local observations only: absence is not global
+NotDispatched, active membership is not confirmation/finality, and neither creates
+local final-use authority.
+
+In particular, chain mempool acceptance, durable publication, current branch
+membership and probabilistic confirmation are distinct observations. A local
+TaskFlow terminal receipt cannot be erased after a chain reorganization, and a
+missing chain lookup cannot become proof of NotDispatched. Before local adoption,
+the existing selection/final-use owner must recheck its actual current generation
+and withdrawal head. Simply pointing the existing HTTP config at a native TCP
+port, accepting a claimed recovery digest, or replaying a new operation identity
+would not implement this boundary. No such fallback is installed here.
+
+## Current stacked Agentd PoN adapter and branch-state observation
+
+The cross-repository development stack has now advanced beyond the earlier prerequisite
+inspection.  Hepta PR1432 installs a concrete `trillionnium-pon-local-v1` adapter in the
+compiled `AgentdAutomationEffectHost`.  It keeps the existing TaskFlow attempt owner and
+`FinalUseAuthority`, hash-pins the selected local Chain binary, requires an existing
+canonical Node namespace, passes the already-durable exact effect bytes to `submit`, and
+uses those same bytes for `packet-status` reconciliation.  It does not add a second
+operation journal.
+
+The follow-on Hepta PR1433 carries the Chain packet observation separately from the
+terminal local effect fact.  This continuation advances that observation to v3 and adds the
+exact 512-bit cumulative chainwork of the retained block and active tip plus their checked
+difference when the retained block is on the active ancestry.  A previously completed effect
+may therefore be reported with `stored_exact=true` and `active_chain_member=false` after a
+heavier reorganization, while an active member carries both height depth and cumulative-work
+depth.  The terminal TaskFlow fact is not rewound and local absence still cannot authorize
+blind redispatch.  Chain unavailability removes only the optional current observation, not
+the already durable local receipt.
+
+This closes the ordinary local **submit + lost-ACK reconciliation + current branch
+observation** seam with a Nakamoto-relevant work-distance fact rather than height alone.  The
+work distance is still only a local current-chain observation: it is not a probabilistic
+confirmation/finality certificate and does not authorize model adoption.  A
+release/selection/final-use owner must independently recheck the current
+artifact/withdrawal/generation authority and an explicit confirmation policy before adopting
+a model.  That remaining owner decision must not be encoded by changing the provider-effect
+receipt or by treating a raw work delta as a final-use capability.
+
+## Exact task settlement binding for the ordinary upgrade coordinator
+
+The v3 packet observation additionally returns `accepted_task`, either null or this
+strictly local observation (all hashes are lowercase 32-byte hex):
+
+```json
+{
+  "schema_version": 1,
+  "task_id": "<task-instance-v3 identifier>",
+  "owner": "<task owner public key>",
+  "provider": "<task provider public key>",
+  "output_sha256": "<exact Hepta upgrade binding digest>",
+  "accept_tx_id": "<tx-id of the tag-5 transaction>",
+  "accepted_in_exact_packet": true,
+  "current_status": "settled"
+}
+```
+
+The existing tag-2 reservation, tag-4 provider receipt and tag-5 owner acceptance
+remain the execution contract. The coordinator binds its evaluated artifact, actual
+parent generation, selector/withdrawal context and intended release to the provider
+receipt's output bytes. It separately retains the exact packet SHA-256 in the
+existing TaskFlow effect intent. A transfer or another task's accepted block cannot
+satisfy that comparison merely because it has enough chainwork.
+
+The Node supplies this object only when the exact packet is retained, is on the
+current active ancestry, and contains exactly one tag-5 transaction. It verifies
+transaction-root membership and reads the actual active state through the existing
+KV/root/continuity owner. The acceptance sender, task and output must match the
+currently settled task; the provider comes from that same state. A final tip and
+generation check rejects a mixed view. Multi-accept blocks remain valid blocks and
+return null here because they do not identify one unambiguous upgrade. Missing or
+locally pruned task state also supplies no current proof.
+
+A heavier reorg removes this optional binding without deleting the original
+TaskFlow effect receipt. Acceptance of the same task in a different packet never
+restores the old packet's binding. Existing authority fields remain false: the
+observation grants neither confirmation, model quality, export permission nor
+FinalUse. The ordinary coordinator must still apply its explicit confirmation
+policy, original signed installation authority and actual next-generation model
+readback. The extra state verification is paid only for a single-accept packet;
+this increment makes no claim that confirmation/state scans have become sublinear.
+
+## PN3 real-neuron integration contract
+
+Implement I06–I10 of the
+[sole plan](../../../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md)
+through existing owners. A narrow coordinator carries typed facts between them;
+it owns no second learning/artifact/effect store and cannot issue capabilities.
+Persist exact intent/attempt/output observations through the current TaskFlow /
+kernel.operations boundary, including the original effect key and wire bytes.
+
+The current revision16 ILM3/ILF3 family is a bounded tabular neural graph. Its
+zero-parent reachability and signed native adoption are real controls, not an
+arbitrary pretrained Encoder/LLM release format. The public historical 25-row
+tasks and owner-pinned pre-genesis external windows likewise do not qualify
+prospective efficacy. Do not serialize a real Neuron into ILM3 merely to reuse
+a passing scorer. Choose and implement an explicit compatible artifact/release
+and evaluation profile with bounded codecs, policy identities, independent
+vectors and source bindings before claiming native neural-model admission.
+
+The selected product split keeps bulk training/inference off the consensus hot
+path. PoN orders exact commitments, task acceptance, release policy and settlement.
+Real model evaluation uses the existing evaluator/selector owners with an
+explicit trust profile for source custody and independent attestations. A signed
+quality claim is not trustless computation or PoN chainwork. If on-chain adoption
+semantics change, select a fresh M10/M11 context; the schema-3 task observation
+alone only binds settled task facts. Private held-out outcomes cannot silently
+replace the current all-node deterministic scorer's public replay inputs.
+
+The new evaluation profile must freeze evaluator admission/custody assumptions,
+author conflicts, roster/epoch, Byzantine or collusion bound, quorum rule,
+commit/reveal deadlines, objective equivocation and finite appeal handling before
+candidate outcomes are known. Missing reveals cannot trigger retrospective roster
+or threshold shrinkage. Current revision15's controlled keys and matching native
+score checks do not prove independent private evaluation. For an attestation
+profile, justify quorum intersection under its own stated fault bound; do not
+inherit a threshold from the deterministic scorer. Replacement/rotation applies
+to an explicitly new epoch/context. Public entry needs an explicit Sybil/admission
+and conflict policy; self-declared independence or an extra key cannot supply it.
+If those assumptions are unavailable, keep the campaign controlled/unqualified.
+None of these application decisions contributes PoN fork weight or local use
+authority, and consumers still apply their own admitted release policy.
+
+| Order / existing owner | Required input and output | Recovery/admission rule |
+| --- | --- | --- |
+| 1 / task + learning.operator/plasticity | Authorized real task episode, scope and actual installed model -> immutable candidate and training/resource receipt | Preserve consent/source/forget frontiers; no training/export authority inferred from task completion or a memory projection. |
+| 2 / learning.artifacts + export/withdrawal owner | Actual candidate bytes, lineage and current signed head -> scoped authorized export | DENY_ALL publication is insufficient. Withdrawal/generation changes fence later use; publication cannot promise recall of distributed copies. |
+| 3 / learning.eval + independent selector | Frozen parent/candidate/controls, future-window custody, scoring and equal budgets -> selected/no-update/invalid/unknown result | Use actual parameter forward/training. Missing, leaked, biased or unsupported evaluation cannot become positive gain. Separate custody from multiple keys under one operator. |
+| 4 / TaskFlow + compiled adapter | Exact evaluated release/task binding -> durable original effect bytes, submission and read-only reconciliation | Lost ACK queries the same identity. Unknown does not authorize re-signing/re-dispatch. Keep provider SHA256, Chain ids and upgrade-binding domains explicit. |
+| 5 / M14 observation consumer | Exact packet and current schema-3 observation -> checked active acceptance plus explicit confirmation policy | Match task id, owner, provider, output, accept transaction, exact-packet ancestry and observed generation/tip. Not-found or reorg removes entitlement, never the local terminal fact. |
+| 6 / release owner + M09 fetch + existing loader | Selected release closure, pinned TCM1 ids and finite resource reservation -> verified compatible complete bytes | Withheld/corrupt dependencies, wrong base/tokenizer/dtype/shape and expired original budget stop installation. Byte retrieval itself grants no use. |
+| 7 / selection/artifact/resource/FinalUse owners | Current signed head/withdrawal, local generation, confirmation and compatible artifact -> fresh CURRENT generation | Recheck immediately before admission; chain generation is not a castable local generation. Code/structural/consensus changes require their own owners. |
+| 8 / neuron runtime + outcome/evaluation owner | Next ordinary task -> actual loaded weights/generation and inference/resource/outcome receipt | Record the model actually used, including cached Encoder features. Recheck feature input/model/preprocessing/scope/generation; no stale-feature reuse after install. |
+
+First use one real compatible small pretrained Encoder with bounded learned
+Cell heads or an explicit adapter family. Reuse the shared Encoder execution,
+sparse activation, immutable feature snapshot and existing worker caller from
+Hepta's V8 design; different requests cannot share an embedding just because
+the Encoder weights are shared. Freeze maximum active Cells and end-to-end
+CPU/RSS/VRAM, queue, training/evaluation and download budgets. A logical count
+of Cells or a deterministic head proves neither a real forward nor benefit.
+
+For each lineage cycle record parent/candidate/release/dependency hashes,
+training and evaluation source/time/exposure partitions, consent/withdrawal
+heads, independent owner roles, frozen decision thresholds and sample/power
+justification, baseline outcomes, total cost, exact TaskFlow/packet identities,
+active acceptance/confirmation, installation generation, loader readback and
+subsequent untouched-window results. Missing fields remain unknown with a
+reason. Predeclare the uncertainty-adjusted minimum gain over the installed
+parent, strong-control comparison, retention/safety/cost bounds and repeated-
+selection correction; do not tune on the supposedly future window. A losing
+or unsafe candidate retains the current model and gets zero
+model-improvement reward. Evaluation/transport resources still settle under
+their original scoped budget.
+
+PN3 mechanical acceptance requires three real consecutive cycles and an
+independent consumer task, including valid no-update behavior. Every cycle
+starts from the predecessor actually in use; replica installs cannot multiply
+the learned-update count. Sustained-improvement acceptance separately requires
+at least three installed beneficial releases with independently held future
+outcomes under a preregistered gain/retention/safety rule and strong equal-budget
+controls. Three no-update cycles, ceiling scores, exploratory retraining or
+three signed fixture generations do not meet that efficacy condition.
+
+Inject lost ACK, duplicate submission, expired authorization, wrong provider/
+output/packet, reorg before and after selection, withdrawal during fetch and
+before CURRENT, missing/corrupt Cell, author disappearance, disk-full and process
+cuts at each durable owner boundary. After restart, report the original operation
+and actual loaded generation; do not execute an external effect again to repair
+a missing observation. Reverting a model is a newly admitted local generation.
+Historical decisions and revocation/forget frontiers remain unchanged.

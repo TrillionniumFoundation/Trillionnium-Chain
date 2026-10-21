@@ -18,8 +18,12 @@ use thiserror::Error;
 
 pub const HEPTA_HANDOFF_VERSION: u8 = 1;
 pub const MAX_HANDOFF_PAYLOAD_BYTES: u64 = 64 * 1024 * 1024;
+/// Includes all bounded identity strings, digests and a 64-byte signature.
+/// Check this before parsing peer-controlled CBOR or allocating its strings.
+pub const MAX_HANDOFF_ENVELOPE_BYTES: usize = 4096;
 
 const ADMISSION_DOMAIN: &str = "trnm-hepta-artifact-admission-v1";
+const SIGNATURE_DOMAIN: &str = "trnm-hepta-artifact-admission-signature-v1";
 
 /// The digest-only facts returned by the existing Hepta artifact owner.
 ///
@@ -74,6 +78,7 @@ impl HeptaArtifactAdmissionV1 {
             validate_digest(field, digest)?;
         }
         match (self.generation, self.parent_artifact_digest) {
+            (0, _) => return Err(HeptaHandoffError::InvalidAdmission("generation")),
             (1, None) => {}
             (1, Some(_)) => {
                 return Err(HeptaHandoffError::InvalidAdmission("generation_one_parent"))
@@ -228,7 +233,8 @@ impl SignedHeptaAdmissionV1 {
 
     pub fn signing_bytes(&self) -> Vec<u8> {
         let mut encoder = Encoder::default();
-        encoder.array(6);
+        encoder.array(7);
+        encoder.text(SIGNATURE_DOMAIN);
         encoder.uint(HEPTA_HANDOFF_VERSION as u64);
         encoder.text(CANONICAL_ENCODING);
         encoder.text(&self.chain_id);
@@ -270,6 +276,31 @@ impl SignedHeptaAdmissionV1 {
         Ok(())
     }
 
+    /// Validate a handoff against facts freshly supplied by the receiving
+    /// Hepta owner and the destination selected by its operation journal.
+    ///
+    /// `expected` must come from those owners, never from the received envelope.
+    /// Matching all fields binds task/export scope, parent/generation, current
+    /// withdrawal and registry heads, payload and owner admission identity as
+    /// one snapshot. Success is a comparison result and grants no final use or
+    /// permission to replay an operation after a chain reorganization.
+    pub fn verify_for_context(
+        &self,
+        authorities: &AuthoritySetV1,
+        expected_chain_id: &str,
+        expected: &HeptaArtifactAdmissionV1,
+        now_unix_s: u64,
+    ) -> Result<(), HeptaHandoffError> {
+        expected.validate_at(now_unix_s)?;
+        if self.chain_id != expected_chain_id {
+            return Err(HeptaHandoffError::ContextMismatch("chain_id"));
+        }
+        if &self.admission != expected {
+            return Err(HeptaHandoffError::ContextMismatch("owner_admission"));
+        }
+        self.verify_with_authorities_at(authorities, now_unix_s)
+    }
+
     pub fn verify_with_authorities_at(
         &self,
         authorities: &AuthoritySetV1,
@@ -284,6 +315,9 @@ impl SignedHeptaAdmissionV1 {
     }
 
     pub fn from_canonical_bytes(bytes: &[u8]) -> Result<Self, HeptaHandoffError> {
+        if bytes.len() > MAX_HANDOFF_ENVELOPE_BYTES {
+            return Err(HeptaHandoffError::EnvelopeTooLarge);
+        }
         let mut decoder = Decoder::new(bytes);
         decoder.array(7)?;
         let version = decoder.uint()?;
@@ -368,6 +402,10 @@ pub enum HeptaHandoffError {
     InvalidSignature,
     #[error("unauthorized Hepta authority")]
     UnauthorizedAuthority,
+    #[error("Hepta admission does not match current receiving context: {0}")]
+    ContextMismatch(&'static str),
+    #[error("Hepta admission envelope exceeds its byte limit")]
+    EnvelopeTooLarge,
     #[error("invalid Hepta admission field: {0}")]
     InvalidAdmission(&'static str),
     #[error("Hepta admission is not yet valid")]

@@ -176,10 +176,10 @@ impl CellStoreV1 {
         self.write_verified(manifest, &mut std::io::sink(), None)
     }
 
-    /// Verify every member of a release's complete dependency closure from
-    /// the local cache.  Arbitrary cached cells never imply a usable release:
-    /// the caller must provide the canonical release manifest and all listed
-    /// members must match its bound model context.
+    /// Verify every member of the release owner's declared required-cell set
+    /// from the local cache. The caller must pin the release manifest and its
+    /// completeness through its release owner; this cache cannot infer missing
+    /// dependencies, select a release, or authorize loading it.
     pub fn verify_release_complete(&self, release: &CellReleaseManifestV1) -> CellResultV1<()> {
         release.validate()?;
         for digest in release.cells() {

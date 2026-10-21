@@ -220,7 +220,9 @@ fn release_manifest_requires_complete_context_bound_closure() {
     let second = store.pack_file(&second_input, context(), 16_384).unwrap();
     assert_ne!(first.id(), second.id());
     let release = CellReleaseManifestV1::new(context(), vec![second.id(), first.id()]).unwrap();
-    assert_eq!(release.cells(), &[first.id(), second.id()]);
+    let mut expected = [first.id(), second.id()];
+    expected.sort_unstable();
+    assert_eq!(release.cells(), &expected);
     assert_eq!(
         CellReleaseManifestV1::decode(&release.encode()).unwrap(),
         release
@@ -255,6 +257,65 @@ fn release_manifest_requires_complete_context_bound_closure() {
     assert!(matches!(
         other.verify_release_complete(&foreign_release),
         Err(CellErrorV1::Invalid("release cell context"))
+    ));
+}
+
+#[test]
+fn release_manifest_rejects_unbound_identity_and_untrusted_wire_before_allocation() {
+    assert!(matches!(
+        CellReleaseManifestV1::new(context(), vec![[0; 32]]),
+        Err(CellErrorV1::Invalid("release cell digest"))
+    ));
+    assert!(matches!(
+        CellReleaseManifestV1::new(context(), vec![[7; 32], [7; 32]]),
+        Err(CellErrorV1::Invalid("release cell order/duplicates"))
+    ));
+    for field in 0..5 {
+        let mut missing = context();
+        match field {
+            0 => missing.base = [0; 32],
+            1 => missing.parent = [0; 32],
+            2 => missing.tokenizer = [0; 32],
+            3 => missing.layout = [0; 32],
+            _ => missing.runtime = [0; 32],
+        }
+        assert!(matches!(
+            CellReleaseManifestV1::new(missing, vec![[7; 32]]),
+            Err(CellErrorV1::Invalid("release context digest"))
+        ));
+    }
+
+    let release = CellReleaseManifestV1::new(context(), vec![[7; 32], [8; 32]]).unwrap();
+    let count_offset = 5 + context().family.len() + 5 * 32;
+    let mut wire = release.encode();
+    wire[count_offset..count_offset + 4].copy_from_slice(&u32::MAX.to_be_bytes());
+    assert!(matches!(
+        CellReleaseManifestV1::decode(&wire),
+        Err(CellErrorV1::Invalid("release cell count"))
+    ));
+
+    let wire = release.encode();
+    for end in 0..wire.len() {
+        assert!(CellReleaseManifestV1::decode(&wire[..end]).is_err());
+    }
+    let mut unsorted = wire.clone();
+    let members = count_offset + 4;
+    unsorted[members..members + 32].fill(9);
+    assert!(matches!(
+        CellReleaseManifestV1::decode(&unsorted),
+        Err(CellErrorV1::Invalid("release cell order/duplicates"))
+    ));
+    let mut trailing = wire;
+    trailing.push(0);
+    assert!(matches!(
+        CellReleaseManifestV1::decode(&trailing),
+        Err(CellErrorV1::Invalid("release manifest coverage"))
+    ));
+    let mut oversized = vec![0; 1_048_577];
+    oversized[..4].copy_from_slice(b"TCR1");
+    assert!(matches!(
+        CellReleaseManifestV1::decode(&oversized),
+        Err(CellErrorV1::Invalid("release manifest length"))
     ));
 }
 

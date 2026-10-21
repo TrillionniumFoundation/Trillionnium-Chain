@@ -17,7 +17,7 @@ pub use canonical::{
 pub use command::{AuthorityRole, SignedResearchCommandV1, SignedResearchCommandValidationError};
 pub use hepta_handoff::{
     HeptaArtifactAdmissionV1, HeptaHandoffError, SignedHeptaAdmissionV1, HEPTA_HANDOFF_VERSION,
-    MAX_HANDOFF_PAYLOAD_BYTES,
+    MAX_HANDOFF_ENVELOPE_BYTES, MAX_HANDOFF_PAYLOAD_BYTES,
 };
 pub use state::{
     AppliedCommandRecordV1, ApplyOutcome, AuthorityIdentityV1, AuthoritySetV1,

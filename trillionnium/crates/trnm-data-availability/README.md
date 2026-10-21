@@ -14,9 +14,12 @@ The candidate `cell` module and `trnm-cell` binary add a separate, local-only
 content-addressed model-cell cache. A caller must provide an authority-pinned
 manifest digest; the cache verifies the full payload and ordered chunk hashes,
 supports bounded multi-peer repair, and publishes files with create-only semantics.
-`CellReleaseManifestV1` additionally binds an ordered, complete cell closure and
-lets a local cache verify that every member is present and context-compatible;
-unrelated cached cells never count as a usable release.
+`CellReleaseManifestV1` additionally binds the release owner's declared
+required-cell set and lets a local cache verify that every listed member is
+present and context-compatible. It cannot infer omitted dependencies or model
+executability. All context and member digests must be nonzero; an initial release
+must name an explicit owner-defined parent/genesis digest. Unrelated cached cells
+never establish a complete release.
 It does not discover peers, authenticate a public network, issue storage proofs,
 change `CURRENT`, bypass withdrawal, or grant model execution. Those boundaries
 remain explicit until a later public DA qualification.
