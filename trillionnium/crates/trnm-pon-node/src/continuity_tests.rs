@@ -15,11 +15,17 @@ fn settings() -> Settings {
     )
     .unwrap()
 }
-fn signed(settings: &Settings, who: u64, nonce: u64, tag: u8, payload: Vec<u8>) -> Vec<u8> {
+fn signed(
+    settings: &Settings,
+    who: u64,
+    account_sequence: u64,
+    tag: u8,
+    payload: Vec<u8>,
+) -> Vec<u8> {
     let mut tx = trnm_protocol::pon_wire::Envelope {
         network: settings.network(),
         sender: development_public(who).unwrap(),
-        nonce,
+        nonce: account_sequence,
         expiry: 2000,
         fee_limit: 1_000_000,
         tag,

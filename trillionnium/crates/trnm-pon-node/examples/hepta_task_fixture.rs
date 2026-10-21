@@ -51,14 +51,14 @@ fn plan(settings: &Settings) -> Result<Value> {
 fn signed(
     settings: &Settings,
     sender: u64,
-    nonce: u64,
+    account_sequence: u64,
     tag: u8,
     payload: Vec<u8>,
 ) -> Result<Vec<u8>> {
     let mut tx = Envelope {
         network: settings.network(),
         sender: development_public(sender)?,
-        nonce,
+        nonce: account_sequence,
         expiry: DEADLINE,
         fee_limit: 1_000_000,
         tag,

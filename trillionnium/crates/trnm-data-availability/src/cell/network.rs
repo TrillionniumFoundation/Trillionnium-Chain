@@ -4,7 +4,7 @@ use std::{
     net::{SocketAddr, TcpListener, TcpStream},
     sync::{
         atomic::{AtomicBool, AtomicU64, AtomicUsize, Ordering},
-        mpsc,
+        mpsc, Condvar, Mutex,
     },
     thread,
     time::{Duration, Instant},
@@ -24,9 +24,37 @@ pub struct CellPeerLimitsV1 {
     pub max_cell_bytes: u64,
     pub parallelism: usize,
     pub max_connections: u64,
+    /// Application response bytes actually read across all peers and retries,
+    /// including headers and rejected bodies. Zero permits cache-only fetches.
+    pub max_response_bytes: u64,
 }
 
 impl CellPeerLimitsV1 {
+    /// Finite CLI default: two payloads, two maximum manifests and one response
+    /// header per permitted connection. Callers may select a different budget.
+    pub fn default_response_byte_budget(
+        max_cell_bytes: u64,
+        max_connections: u64,
+    ) -> CellResultV1<u64> {
+        require(
+            (1..=MAX_CELL_BYTES).contains(&max_cell_bytes),
+            "cell byte budget",
+        )?;
+        require(
+            (1..=100_000).contains(&max_connections),
+            "connection budget",
+        )?;
+        max_cell_bytes
+            .checked_mul(2)
+            .and_then(|bytes| bytes.checked_add(2 * MAX_MANIFEST_BYTES as u64))
+            .and_then(|bytes| {
+                max_connections
+                    .checked_mul(9)
+                    .and_then(|headers| bytes.checked_add(headers))
+            })
+            .ok_or(CellErrorV1::Invalid("response byte budget overflow"))
+    }
+
     fn validate(self) -> CellResultV1<()> {
         require(
             self.request_timeout >= Duration::from_millis(10)
@@ -46,6 +74,11 @@ impl CellPeerLimitsV1 {
         require(
             (1..=100_000).contains(&self.max_connections),
             "connection budget",
+        )?;
+        require(
+            self.max_response_bytes
+                <= 8 * MAX_CELL_BYTES + 8 * MAX_MANIFEST_BYTES as u64 + 9 * 100_000,
+            "response byte budget",
         )
     }
 }
@@ -58,6 +91,9 @@ pub struct CellFetchReportV1 {
     pub cached_chunks: usize,
     pub downloaded_chunks: usize,
     pub downloaded_bytes: u64,
+    /// Actual application response bytes read, even when subsequently rejected.
+    /// Excludes requests, TCP/IP overhead, retransmissions and unread socket data.
+    pub received_response_bytes: u64,
     pub connection_attempts: u64,
     pub rejected_responses: usize,
     pub supplying_peers: BTreeSet<SocketAddr>,
@@ -78,39 +114,40 @@ pub fn fetch_cell(
     )?;
     let deadline = Instant::now() + limits.overall_timeout;
     let requests_left = AtomicU64::new(limits.max_connections);
+    let responses = ResponseBudget::new(limits.max_response_bytes);
+    let transport = RequestContext {
+        timeout: limits.request_timeout,
+        overall: deadline,
+        requests_left: &requests_left,
+        responses: &responses,
+    };
     let mut rejected = 0;
     let manifest = match store.manifest(pinned)? {
         Some(manifest) => manifest,
         None => {
             let mut received = None;
             for peer in peers {
-                let candidate = request(
-                    *peer,
-                    1,
-                    pinned,
-                    MAX_MANIFEST_BYTES,
-                    limits.request_timeout,
-                    deadline,
-                    &requests_left,
-                )
-                .and_then(|wire| {
-                    let manifest = CellManifestV1::decode(&wire)?;
-                    require(manifest.id() == pinned, "manifest digest")?;
-                    require(
-                        manifest.size() <= limits.max_cell_bytes,
-                        "cell exceeds byte budget",
-                    )?;
-                    store.put_manifest(pinned, &wire)
-                });
+                let candidate =
+                    request(*peer, 1, pinned, MAX_MANIFEST_BYTES, &transport).and_then(|wire| {
+                        let manifest = CellManifestV1::decode(&wire)?;
+                        require(manifest.id() == pinned, "manifest digest")?;
+                        require(
+                            manifest.size() <= limits.max_cell_bytes,
+                            "cell exceeds byte budget",
+                        )?;
+                        Ok(wire)
+                    });
                 match candidate {
-                    Ok(value) => {
-                        received = Some(value);
+                    Ok(wire) => {
+                        // A valid response cannot turn a local persistence
+                        // failure into peer unavailability or budget exhaustion.
+                        received = Some(store.put_manifest(pinned, &wire)?);
                         break;
                     }
                     Err(_) => rejected += 1,
                 }
             }
-            received.ok_or(CellErrorV1::Unavailable)?
+            received.ok_or_else(|| responses.annotate_error(CellErrorV1::Unavailable))?
         }
     };
     require(
@@ -125,6 +162,7 @@ pub fn fetch_cell(
         cached_chunks: 0,
         downloaded_chunks: 0,
         downloaded_bytes: 0,
+        received_response_bytes: 0,
         connection_attempts: 0,
         rejected_responses: rejected,
         supplying_peers: BTreeSet::new(),
@@ -148,21 +186,14 @@ pub fn fetch_cell(
             let missing = &missing;
             let next = &next;
             let cancelled = &cancelled;
-            let requests_left = &requests_left;
+            let transport = &transport;
             scope.spawn(move || {
                 while !cancelled.load(Ordering::Relaxed) {
                     let index = next.fetch_add(1, Ordering::Relaxed);
                     let Some((order, chunk)) = missing.get(index) else {
                         break;
                     };
-                    let result = download_chunk(
-                        chunk,
-                        *order,
-                        peers,
-                        limits.request_timeout,
-                        deadline,
-                        requests_left,
-                    );
+                    let result = download_chunk(chunk, *order, peers, transport);
                     if sender.send((chunk, result)).is_err() {
                         break;
                     }
@@ -189,11 +220,13 @@ pub fn fetch_cell(
             return Err(error);
         }
         Ok(())
-    })?;
+    })
+    .map_err(|error| responses.annotate_error(error))?;
     require(Instant::now() <= deadline, "fetch deadline")?;
     store.verify_complete_until(&manifest, deadline)?;
     require(Instant::now() <= deadline, "fetch deadline")?;
     report.connection_attempts = limits.max_connections - requests_left.load(Ordering::Relaxed);
+    report.received_response_bytes = responses.received()?;
     Ok((manifest, report))
 }
 
@@ -201,25 +234,15 @@ fn download_chunk(
     chunk: &CellChunkV1,
     order: usize,
     peers: &[SocketAddr],
-    timeout: Duration,
-    deadline: Instant,
-    requests_left: &AtomicU64,
+    transport: &RequestContext<'_>,
 ) -> CellResultV1<(Vec<u8>, SocketAddr, usize)> {
     for offset in 0..peers.len() {
         let peer = peers[(order + offset) % peers.len()];
-        let candidate = request(
-            peer,
-            2,
-            chunk.sha256,
-            chunk.size as usize,
-            timeout,
-            deadline,
-            requests_left,
-        )
-        .and_then(|bytes| {
-            verify_chunk(chunk, &bytes)?;
-            Ok(bytes)
-        });
+        let candidate =
+            request(peer, 2, chunk.sha256, chunk.size as usize, transport).and_then(|bytes| {
+                verify_chunk(chunk, &bytes)?;
+                Ok(bytes)
+            });
         if let Ok(bytes) = candidate {
             return Ok((bytes, peer, offset));
         }
@@ -262,7 +285,7 @@ pub fn serve_cells(
 
 fn serve_one(stream: &mut TcpStream, store: &CellStoreV1, deadline: Instant) -> CellResultV1<()> {
     let mut query = [0; 37];
-    read_deadline(stream, &mut query, deadline)?;
+    read_deadline(stream, &mut query, deadline, None)?;
     require(&query[..4] == b"TCQ1", "request version")?;
     let digest = query[5..]
         .try_into()
@@ -285,21 +308,134 @@ fn serve_one(stream: &mut TcpStream, store: &CellStoreV1, deadline: Instant) -> 
     Ok(())
 }
 
+struct RequestContext<'a> {
+    timeout: Duration,
+    overall: Instant,
+    requests_left: &'a AtomicU64,
+    responses: &'a ResponseBudget,
+}
+
+struct ResponseBudget {
+    maximum: u64,
+    state: Mutex<ResponseBytes>,
+    returned: Condvar,
+}
+
+struct ResponseBytes {
+    available: u64,
+    reserved: u64,
+    received: u64,
+}
+
+impl ResponseBudget {
+    fn new(maximum: u64) -> Self {
+        Self {
+            maximum,
+            state: Mutex::new(ResponseBytes {
+                available: maximum,
+                reserved: 0,
+                received: 0,
+            }),
+            returned: Condvar::new(),
+        }
+    }
+
+    fn received(&self) -> io::Result<u64> {
+        self.state
+            .lock()
+            .map(|state| state.received)
+            .map_err(|_| io::Error::other("cell response budget poisoned"))
+    }
+
+    fn annotate_error(&self, error: CellErrorV1) -> CellErrorV1 {
+        if !matches!(error, CellErrorV1::Unavailable) {
+            return error;
+        }
+        match self.received() {
+            Ok(received_response_bytes) if received_response_bytes == self.maximum => {
+                CellErrorV1::ResponseByteBudgetExhausted {
+                    received_response_bytes,
+                    max_response_bytes: self.maximum,
+                }
+            }
+            _ => error,
+        }
+    }
+
+    fn reserve(&self, maximum: usize, deadline: Instant) -> io::Result<usize> {
+        let mut state = self
+            .state
+            .lock()
+            .map_err(|_| io::Error::other("cell response budget poisoned"))?;
+        loop {
+            let count = state.available.min(maximum as u64);
+            if count != 0 {
+                state.available -= count;
+                state.reserved += count;
+                return Ok(count as usize);
+            }
+            if state.reserved == 0 {
+                return Err(io::Error::other("CELL_RESPONSE_BYTE_BUDGET_EXHAUSTED"));
+            }
+            // Another read may return fewer bytes than it reserved. Wait for
+            // that refund within this request's original absolute deadline;
+            // temporary reservations are not proof of actual exhaustion.
+            state = self
+                .returned
+                .wait_timeout(state, remaining(deadline)?)
+                .map_err(|_| io::Error::other("cell response budget poisoned"))?
+                .0;
+        }
+    }
+
+    fn complete(&self, reserved: usize, received: usize) -> io::Result<()> {
+        let mut state = self
+            .state
+            .lock()
+            .map_err(|_| io::Error::other("cell response budget poisoned"))?;
+        state.reserved -= reserved as u64;
+        state.received += received as u64;
+        state.available += (reserved - received) as u64;
+        self.returned.notify_all();
+        Ok(())
+    }
+
+    fn read(
+        &self,
+        stream: &mut TcpStream,
+        bytes: &mut [u8],
+        deadline: Instant,
+    ) -> io::Result<usize> {
+        let reserved = self.reserve(bytes.len(), deadline)?;
+        // No mutex is held during blocking socket I/O. Limit the actual read
+        // buffer before receiving bytes, so concurrent workers cannot overshoot.
+        // Always refund unused capacity, including EOF, Interrupted and errors.
+        let result = (|| {
+            stream.set_read_timeout(Some(remaining(deadline)?))?;
+            stream.read(&mut bytes[..reserved])
+        })();
+        self.complete(reserved, result.as_ref().copied().unwrap_or(0))?;
+        result
+    }
+}
+
 fn request(
     peer: SocketAddr,
     kind: u8,
     digest: CellDigestV1,
     maximum: usize,
-    timeout: Duration,
-    overall: Instant,
-    requests_left: &AtomicU64,
+    transport: &RequestContext<'_>,
 ) -> CellResultV1<Vec<u8>> {
-    requests_left
+    if transport.responses.received()? == transport.responses.maximum {
+        return Err(io::Error::other("CELL_RESPONSE_BYTE_BUDGET_EXHAUSTED").into());
+    }
+    transport
+        .requests_left
         .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |left| {
             left.checked_sub(1)
         })
         .map_err(|_| CellErrorV1::Invalid("connection budget exhausted"))?;
-    let deadline = overall.min(Instant::now() + timeout);
+    let deadline = transport.overall.min(Instant::now() + transport.timeout);
     let mut stream = TcpStream::connect_timeout(&peer, remaining(deadline)?)?;
     let mut query = [0; 37];
     query[..4].copy_from_slice(b"TCQ1");
@@ -307,7 +443,12 @@ fn request(
     query[5..].copy_from_slice(&digest);
     write_deadline(&mut stream, &query, deadline)?;
     let mut header = [0; 9];
-    read_deadline(&mut stream, &mut header, deadline)?;
+    read_deadline(
+        &mut stream,
+        &mut header,
+        deadline,
+        Some(transport.responses),
+    )?;
     require(
         &header[..4] == b"TCS1" && header[4] == 0,
         "peer has no bytes or invalid response",
@@ -322,7 +463,7 @@ fn request(
         "response byte bound",
     )?;
     let mut bytes = vec![0; length];
-    read_deadline(&mut stream, &mut bytes, deadline)?;
+    read_deadline(&mut stream, &mut bytes, deadline, Some(transport.responses))?;
     Ok(bytes)
 }
 
@@ -337,10 +478,15 @@ fn read_deadline(
     stream: &mut TcpStream,
     mut bytes: &mut [u8],
     deadline: Instant,
+    budget: Option<&ResponseBudget>,
 ) -> io::Result<()> {
     while !bytes.is_empty() {
         stream.set_read_timeout(Some(remaining(deadline)?))?;
-        match stream.read(bytes) {
+        let read = match budget {
+            Some(budget) => budget.read(stream, bytes, deadline),
+            None => stream.read(bytes),
+        };
+        match read {
             Ok(0) => {
                 return Err(io::Error::new(
                     io::ErrorKind::UnexpectedEof,
@@ -371,4 +517,86 @@ fn write_deadline(stream: &mut TcpStream, mut bytes: &[u8], deadline: Instant) -
         }
     }
     Ok(())
+}
+
+#[cfg(test)]
+mod budget_tests {
+    use super::*;
+
+    #[test]
+    fn concurrent_socket_reads_never_exceed_shared_budget() {
+        for deficit in [0, 1] {
+            let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+            let address = listener.local_addr().unwrap();
+            let server = thread::spawn(move || {
+                thread::scope(|scope| {
+                    let (ready, arrivals) = mpsc::sync_channel(4);
+                    let mut releases = Vec::new();
+                    for _ in 0..4 {
+                        let (mut stream, _) = listener.accept().unwrap();
+                        let ready = ready.clone();
+                        let (release, start) = mpsc::sync_channel(0);
+                        releases.push(release);
+                        scope.spawn(move || {
+                            stream
+                                .set_read_timeout(Some(Duration::from_secs(2)))
+                                .unwrap();
+                            stream
+                                .set_write_timeout(Some(Duration::from_secs(2)))
+                                .unwrap();
+                            let mut query = [0; 37];
+                            stream.read_exact(&mut query).unwrap();
+                            ready.send(()).unwrap();
+                            start.recv_timeout(Duration::from_secs(2)).unwrap();
+                            let mut response = b"TCS1\0".to_vec();
+                            response.extend_from_slice(&64_u32.to_be_bytes());
+                            response.extend_from_slice(&[7; 64]);
+                            let _ = stream.write_all(&response);
+                        });
+                    }
+                    for _ in 0..4 {
+                        arrivals.recv_timeout(Duration::from_secs(2)).unwrap();
+                    }
+                    for release in releases {
+                        release.send(()).unwrap();
+                    }
+                });
+            });
+            let maximum = 4 * (64 + 9) - deficit;
+            let responses = ResponseBudget::new(maximum);
+            let requests_left = AtomicU64::new(4);
+            let transport = RequestContext {
+                timeout: Duration::from_secs(2),
+                overall: Instant::now() + Duration::from_secs(5),
+                requests_left: &requests_left,
+                responses: &responses,
+            };
+            let succeeded = thread::scope(|scope| {
+                let clients: Vec<_> = (0..4)
+                    .map(|_| {
+                        let transport = &transport;
+                        scope.spawn(move || request(address, 2, [0; 32], 64, transport))
+                    })
+                    .collect();
+                clients
+                    .into_iter()
+                    .map(|client| match client.join().unwrap() {
+                        Ok(bytes) => {
+                            assert_eq!(bytes, [7; 64]);
+                            true
+                        }
+                        Err(_) => false,
+                    })
+                    .filter(|succeeded| *succeeded)
+                    .count()
+            });
+            server.join().unwrap();
+            assert_eq!(responses.received().unwrap(), maximum);
+            if deficit == 0 {
+                assert_eq!(succeeded, 4);
+            } else {
+                assert!(succeeded < 4);
+            }
+        }
+    }
 }

@@ -33,6 +33,7 @@ fn limits() -> CellPeerLimitsV1 {
         max_cell_bytes: 1_048_576,
         parallelism: 2,
         max_connections: 1000,
+        max_response_bytes: 4 * 1_048_576,
     }
 }
 
@@ -99,6 +100,12 @@ fn origin_offline_independent_replicas_multisource_and_corrupt_cache_repair() {
             fetch_cell(&replica, manifest.id(), &[publisher.address], limits()).unwrap();
         assert_eq!(received, manifest);
         assert_eq!(report.downloaded_bytes, bytes.len() as u64);
+        assert_eq!(
+            report.received_response_bytes,
+            bytes.len() as u64
+                + manifest.encode().len() as u64
+                + 9 * (manifest.chunks().len() as u64 + 1)
+        );
         replica.verify_complete(&received).unwrap();
     }
     publisher.stop();
@@ -132,6 +139,7 @@ fn origin_offline_independent_replicas_multisource_and_corrupt_cache_repair() {
     assert_eq!(fs::read(&output).unwrap(), bytes);
     let (_, cached) = fetch_cell(&consumer, manifest.id(), &[], limits()).unwrap();
     assert_eq!(cached.downloaded_chunks, 0);
+    assert_eq!(cached.received_response_bytes, 0);
     a.stop();
     b.stop();
 }
@@ -253,6 +261,8 @@ fn corrupt_network_supplier_is_rejected_and_honest_peer_completes_same_pin() {
         fetch_cell(&receiver, manifest.id(), &[bad, honest.address], limits()).unwrap();
     assert_eq!(report.rejected_responses, 1);
     assert_eq!(report.connection_attempts, 2);
+    assert_eq!(report.downloaded_bytes, 8192);
+    assert_eq!(report.received_response_bytes, 2 * (8192 + 9));
     assert_eq!(report.supplying_peers, [honest.address].into());
     receiver.verify_complete(&manifest).unwrap();
     thread.join().unwrap();
@@ -291,6 +301,142 @@ fn exhausted_transport_budget_keeps_verified_chunks_for_retry() {
         report.downloaded_chunks + report.cached_chunks,
         manifest.chunks().len()
     );
+    publisher.stop();
+}
+
+#[test]
+fn parallel_fetch_uses_exact_response_budget_and_cache_needs_no_network_bytes() {
+    let directory = tempfile::tempdir().unwrap();
+    let input = directory.path().join("input");
+    let bytes = payload();
+    fs::write(&input, &bytes).unwrap();
+    let path = directory.path().join("origin");
+    let origin = CellStoreV1::open(&path).unwrap();
+    let manifest = origin.pack_file(&input, context(), 16_384).unwrap();
+    let publisher = Peer::start(&path);
+    let receiver = CellStoreV1::open(&directory.path().join("receiver")).unwrap();
+    let mut bounded = limits();
+    bounded.parallelism = 4;
+    bounded.max_response_bytes = bytes.len() as u64
+        + manifest.encode().len() as u64
+        + 9 * (manifest.chunks().len() as u64 + 1);
+    let (_, report) = fetch_cell(&receiver, manifest.id(), &[publisher.address], bounded).unwrap();
+    assert_eq!(report.received_response_bytes, bounded.max_response_bytes);
+    assert_eq!(report.downloaded_bytes, bytes.len() as u64);
+    bounded.max_response_bytes = 0;
+    let (_, cached) = fetch_cell(&receiver, manifest.id(), &[], bounded).unwrap();
+    assert_eq!(cached.received_response_bytes, 0);
+    assert_eq!(cached.connection_attempts, 0);
+    assert_eq!(cached.downloaded_bytes, 0);
+    assert_eq!(cached.cached_chunks, manifest.chunks().len());
+    publisher.stop();
+}
+
+#[test]
+fn corrupt_response_exhausts_bytes_before_honest_fallback_and_explicit_retry_recovers() {
+    let directory = tempfile::tempdir().unwrap();
+    let input = directory.path().join("model");
+    fs::write(&input, vec![7; 8192]).unwrap();
+    let path = directory.path().join("origin");
+    let origin = CellStoreV1::open(&path).unwrap();
+    let manifest = origin.pack_file(&input, context(), 16_384).unwrap();
+    let receiver = CellStoreV1::open(&directory.path().join("receiver")).unwrap();
+    receiver
+        .put_manifest(manifest.id(), &manifest.encode())
+        .unwrap();
+    let honest = Peer::start(&path);
+    let (bad, handle) = wrong_peer(vec![0; 8192], 8192);
+    let mut bounded = limits();
+    bounded.max_response_bytes = 8192 + 9;
+    let failure =
+        fetch_cell(&receiver, manifest.id(), &[bad, honest.address], bounded).unwrap_err();
+    assert!(matches!(
+        failure,
+        CellErrorV1::ResponseByteBudgetExhausted {
+            received_response_bytes: 8201,
+            max_response_bytes: 8201,
+        }
+    ));
+    handle.join().unwrap();
+    assert!(receiver
+        .chunk(manifest.chunks()[0].sha256)
+        .unwrap()
+        .is_none());
+    assert!(receiver.verify_complete(&manifest).is_err());
+    let output = directory.path().join("must-not-exist");
+    assert!(receiver.materialize(&manifest, &output).is_err());
+    assert!(!output.exists());
+    let (_, report) = fetch_cell(&receiver, manifest.id(), &[honest.address], bounded).unwrap();
+    assert_eq!(report.downloaded_bytes, 8192);
+    assert_eq!(report.received_response_bytes, bounded.max_response_bytes);
+    receiver.verify_complete(&manifest).unwrap();
+    honest.stop();
+}
+
+#[test]
+fn truncated_body_and_rejected_header_charge_only_received_bytes_before_fallback() {
+    let directory = tempfile::tempdir().unwrap();
+    let input = directory.path().join("model");
+    fs::write(&input, vec![7; 8192]).unwrap();
+    let path = directory.path().join("origin");
+    let origin = CellStoreV1::open(&path).unwrap();
+    let manifest = origin.pack_file(&input, context(), 16_384).unwrap();
+    let honest = Peer::start(&path);
+    for (body, declared) in [(vec![7; 137], 8192), (Vec::new(), u32::MAX)] {
+        let rejected_bytes = body.len() as u64 + 9;
+        let receiver =
+            CellStoreV1::open(&directory.path().join(format!("receiver-{declared}"))).unwrap();
+        receiver
+            .put_manifest(manifest.id(), &manifest.encode())
+            .unwrap();
+        let (bad, handle) = wrong_peer(body, declared);
+        let mut bounded = limits();
+        bounded.max_response_bytes = rejected_bytes + 8192 + 9;
+        let (_, report) =
+            fetch_cell(&receiver, manifest.id(), &[bad, honest.address], bounded).unwrap();
+        assert_eq!(report.received_response_bytes, bounded.max_response_bytes);
+        assert_eq!(report.downloaded_bytes, 8192);
+        assert_eq!(report.rejected_responses, 1);
+        assert_eq!(report.connection_attempts, 2);
+        receiver.verify_complete(&manifest).unwrap();
+        handle.join().unwrap();
+    }
+    honest.stop();
+}
+
+#[test]
+fn manifest_header_and_body_obey_response_budget_before_cache_publication() {
+    let directory = tempfile::tempdir().unwrap();
+    let input = directory.path().join("model");
+    fs::write(&input, vec![7; 8192]).unwrap();
+    let path = directory.path().join("origin");
+    let origin = CellStoreV1::open(&path).unwrap();
+    let manifest = origin.pack_file(&input, context(), 16_384).unwrap();
+    let publisher = Peer::start(&path);
+    for maximum in [5, manifest.encode().len() as u64 + 8] {
+        let receiver =
+            CellStoreV1::open(&directory.path().join(format!("receiver-{maximum}"))).unwrap();
+        let mut bounded = limits();
+        bounded.max_response_bytes = maximum;
+        let failure =
+            fetch_cell(&receiver, manifest.id(), &[publisher.address], bounded).unwrap_err();
+        match failure {
+            CellErrorV1::ResponseByteBudgetExhausted {
+                received_response_bytes,
+                max_response_bytes,
+            } => {
+                assert_eq!(received_response_bytes, maximum);
+                assert_eq!(max_response_bytes, maximum);
+            }
+            other => panic!("expected response budget failure, got {other}"),
+        }
+        assert!(receiver.manifest(manifest.id()).unwrap().is_none());
+    }
+    assert!(CellPeerLimitsV1::default_response_byte_budget(u64::MAX, 1).is_err());
+    assert!(CellPeerLimitsV1::default_response_byte_budget(1, u64::MAX).is_err());
+    let mut invalid = limits();
+    invalid.max_response_bytes = u64::MAX;
+    assert!(fetch_cell(&origin, manifest.id(), &[], invalid).is_err());
     publisher.stop();
 }
 

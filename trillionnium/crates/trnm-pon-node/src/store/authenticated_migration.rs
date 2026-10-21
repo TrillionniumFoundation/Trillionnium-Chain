@@ -28,8 +28,6 @@ use trnm_protocol::pon_wire::Hash;
 pub(crate) const PENDING: &str = "authenticated-migration.pending";
 const RECEIPT: &str = "authenticated-migration.json";
 const PROFILE: &str = "native-authenticated-local-migration-v1";
-const GROWTH_RESERVATION_FILE: &str = "growth-storage-reservation.bin";
-const GROWTH_RESERVATION_RECEIPT: &str = "growth-storage-reservation.json";
 const MIN_GROWTH_RESERVATION_BYTES: u64 = 1024 * 1024;
 const MAX_GROWTH_RESERVATION_BYTES: u64 = 8 * 1024 * 1024 * 1024;
 
@@ -192,27 +190,10 @@ impl Node {
         let expected = growth_profile_binding_v2(&self.settings, &commitment, storage_namespace)
             .map_err(|error| Error::from(format!("GROWTH_STORAGE_NAMESPACE:{error:?}")))?;
         ensure(&expected == binding, "GROWTH_STORAGE_BINDING")?;
-        ensure(
-            target.is_absolute() && !target.exists(),
-            "GROWTH_STORAGE_TARGET",
-        )?;
         let target_text = target.to_str().ok_or("GROWTH_STORAGE_TARGET")?.to_owned();
-        let parent = target.parent().ok_or("GROWTH_STORAGE_TARGET")?;
-        ensure(
-            parent.canonicalize()? == parent && parent.is_dir(),
-            "GROWTH_STORAGE_TARGET",
-        )?;
-
-        fs::create_dir(target)?;
+        let creation = growth_reservation_io::Creation::create(target)?;
         let result = (|| {
-            fs::set_permissions(target, fs::Permissions::from_mode(0o700))?;
-            let reservation_path = target.join(GROWTH_RESERVATION_FILE);
-            let reservation = OpenOptions::new()
-                .read(true)
-                .write(true)
-                .create_new(true)
-                .mode(0o600)
-                .open(&reservation_path)?;
+            let reservation = creation.create_reservation()?;
             fallocate(
                 reservation.as_fd(),
                 FallocateFlags::empty(),
@@ -247,12 +228,7 @@ impl Node {
                 migration_executed: false,
                 consensus_activation: false,
             };
-            let receipt_path = target.join(GROWTH_RESERVATION_RECEIPT);
-            let mut receipt_file = OpenOptions::new()
-                .write(true)
-                .create_new(true)
-                .mode(0o600)
-                .open(&receipt_path)?;
+            let mut receipt_file = creation.create_receipt()?;
             let receipt_bytes = serde_json::to_vec_pretty(&receipt)?;
             ensure(
                 receipt_bytes.len() as u64 <= growth_reservation_io::MAX_RECEIPT_BYTES,
@@ -260,9 +236,8 @@ impl Node {
             )?;
             receipt_file.write_all(&receipt_bytes)?;
             receipt_file.sync_all()?;
-            sync_dir(target)?;
-            sync_dir(parent)?;
-            let readback = growth_reservation_io::read(target)?;
+            creation.sync()?;
+            let readback = creation.readback(&reservation, &receipt_file)?;
             let retained: GrowthStorageReservationV2 = serde_json::from_slice(&readback.bytes)?;
             ensure(
                 readback.bytes == receipt_bytes
@@ -277,7 +252,7 @@ impl Node {
         if result.is_err() {
             // The operation may have allocated bytes or persisted its receipt.
             // Preserve that exact uncertainty and never delete by a mutable path.
-            let _ = sync_dir(parent);
+            let _ = creation.sync();
         }
         result
     }

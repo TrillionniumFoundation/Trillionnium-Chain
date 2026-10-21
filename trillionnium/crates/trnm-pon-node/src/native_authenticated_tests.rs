@@ -17,11 +17,17 @@ fn settings() -> Settings {
 fn public(who: u64) -> Hash {
     development_public(who).unwrap()
 }
-fn transaction(settings: &Settings, sender: u64, nonce: u64, tag: u8, payload: Vec<u8>) -> Vec<u8> {
+fn transaction(
+    settings: &Settings,
+    sender: u64,
+    account_sequence: u64,
+    tag: u8,
+    payload: Vec<u8>,
+) -> Vec<u8> {
     let mut tx = Envelope {
         network: settings.network(),
         sender: public(sender),
-        nonce,
+        nonce: account_sequence,
         expiry: 2000,
         fee_limit: 1_000_000,
         tag,
@@ -39,10 +45,10 @@ fn transaction(settings: &Settings, sender: u64, nonce: u64, tag: u8, payload: V
         .unwrap();
     tx.encode().unwrap()
 }
-fn transfer(settings: &Settings, nonce: u64, recipient: u64) -> Vec<u8> {
+fn transfer(settings: &Settings, account_sequence: u64, recipient: u64) -> Vec<u8> {
     let mut payload = public(recipient).to_vec();
     payload.extend((100 + recipient).to_le_bytes());
-    transaction(settings, 0, nonce, 1, payload)
+    transaction(settings, 0, account_sequence, 1, payload)
 }
 fn make(node: &Node, parent: Hash, transactions: Vec<Vec<u8>>) -> Packet {
     let height = node.parent_height(parent).unwrap() + 1;

@@ -1577,3 +1577,51 @@ merge checks and native test requirements remain enforced. The original
 [failed run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/39102102704)
 is retained. Its missing native logs cannot qualify this successor; the new
 exact-source and actual-merge runs must execute the original acceptance suite.
+
+## Bounded I/O corrections — 2026-10-20
+
+This continuation starts from PR #323 commit
+`f1bea3d31ab0d537957399a45cc4361e59e74e08`. It repairs the existing PN2
+reservation owner and PN3/PN5 Cell transport; it does not change the PN0–PN6
+acceptance sequence or create another integration candidate into main.
+
+Growth storage creation now resolves each ancestor through no-follow directory
+descriptors, creates the target relative to its held parent, and binds the first
+observed target inode and effective UID before changing permissions. Reservation
+and receipt creation, allocation and synchronization use those held objects.
+Final readback also binds the original opened files: replacing a file or directory
+with equal bytes cannot qualify the live reservation. Deterministic regressions
+exercise ancestor replacement, symlink and real-directory replacement before
+permission changes, and replacement after descriptors have been retained. They
+check that decoy contents and permissions are unchanged and uncertain targets
+remain available for reconciliation.
+
+The guarantee covers these pathname redirection windows. It is not isolation
+from another process with the same UID before the first observation after
+`mkdirat`, nor a promise that a pathname cannot change after return. The actual
+native reservation/reopen regression remains required in addition to the small
+filesystem fault fixtures. No new growth profile, native admission beyond
+65,536 accounts, storage sufficiency, model efficacy or public-service
+qualification follows from this repair. Exact-source test and cloud CI results
+must be attached to the successor commit rather than inherited from the parent.
+
+The existing [Cell fetcher](../protocol/pon-nakamoto-v1/details/CELL_P2P_V1.md)
+now reserves a shared response-byte allowance before each socket read. Actual
+headers, manifests and rejected or truncated bodies consume that allowance;
+unused reservations are returned within the original absolute deadline.
+Successful reports and budget-exhaustion errors retain the actual received
+response count. Verified newly cached payload remains `downloaded_bytes`, and
+a complete verified cache can serve a zero-response-budget fetch. The counter
+does not cover outgoing requests, TCP/IP overhead or retransmissions. This
+bounded configured-peer repair does not qualify discovery, independent custody,
+WAN availability, storage obligations or actual Hepta model installation.
+
+Seven additional test/example files now name their account sequence helper
+arguments `account_sequence`, following the existing
+[fixture naming contract](specs/pon/ACCOUNT_SEQUENCE_TEST_HELPERS.md).
+The eleven parameter renames preserve `Envelope.nonce`, fixture values,
+signatures and assertions. They address the observed parameter-name heuristic;
+other hard-coded-value and logging findings still need their own evidence.
+No CodeQL query, gate or alert disposition is changed. The parent security check
+reported 225 findings but exposed only 100 annotations, so neither this correction
+nor that partial classification certifies closure of the complete security gate.

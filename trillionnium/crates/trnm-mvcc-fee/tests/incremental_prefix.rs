@@ -38,13 +38,13 @@ fn initial(cfg: &Config) -> State {
     }
     state
 }
-fn transfer(cfg: &Config, who: u64, nonce: u64, to: u64, amount: u64) -> Vec<u8> {
+fn transfer(cfg: &Config, who: u64, account_sequence: u64, to: u64, amount: u64) -> Vec<u8> {
     let mut payload = public(to).to_vec();
     payload.extend(amount.to_le_bytes());
     let mut tx = Envelope {
         network: cfg.network,
         sender: public(who),
-        nonce,
+        nonce: account_sequence,
         expiry: 2000,
         fee_limit: 1_000_000,
         tag: 1,

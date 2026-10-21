@@ -21,7 +21,8 @@ type Result<T> = std::result::Result<T, Box<dyn Error>>;
 const USAGE: &str = "trnm-cell: finite configured-peer content cache (no model authority)
 pack --store DB --input FILE --family FAMILY --base HEX --parent HEX --tokenizer HEX --layout HEX --runtime HEX [--chunk-bytes 1048576]
 serve --store DB --bind IP:PORT --seconds N [--request-ms 2000] [--max-connections 8192]
-fetch --store DB --manifest HEX --peers IP:PORT,IP:PORT --output ABSENT_FILE --max-bytes N --seconds N [--parallelism 2] [--request-ms 2000] [--max-connections 32768]
+fetch --store DB --manifest HEX --peers IP:PORT,IP:PORT --output ABSENT_FILE --max-bytes N --seconds N [--parallelism 2] [--request-ms 2000] [--max-connections 32768] [--max-response-bytes N]
+  Response-byte default: 2 * max-bytes + 2097152 + 9 * max-connections; 0 is cache-only.
 verify --store DB --manifest HEX
 manifest --store DB --manifest HEX --output ABSENT_FILE";
 
@@ -99,6 +100,7 @@ fn serve(args: &mut Args) -> Result<()> {
             max_cell_bytes: MAX_CELL_BYTES,
             parallelism: 1,
             max_connections,
+            max_response_bytes: 0,
         },
     )?;
     println!("{{\"schema\":\"trnm.cell.serve.v1\",\"connections\":{accepted}}}");
@@ -120,6 +122,11 @@ fn fetch(args: &mut Args) -> Result<()> {
     let request_ms = args.optional("--request-ms", "2000").parse()?;
     let parallelism = args.optional("--parallelism", "2").parse()?;
     let max_connections = args.optional("--max-connections", "32768").parse()?;
+    let default_response_bytes =
+        CellPeerLimitsV1::default_response_byte_budget(max_cell_bytes, max_connections)?;
+    let max_response_bytes = args
+        .optional("--max-response-bytes", &default_response_bytes.to_string())
+        .parse()?;
     args.finish()?;
     let store = CellStoreV1::open(&store)?;
     let (manifest, report) = fetch_cell(
@@ -132,12 +139,14 @@ fn fetch(args: &mut Args) -> Result<()> {
             max_cell_bytes,
             parallelism,
             max_connections,
+            max_response_bytes,
         },
     )?;
     store.materialize(&manifest, &output)?;
-    println!("{{\"schema\":\"trnm.cell.fetch.v1\",\"manifest\":\"{}\",\"payload_sha256\":\"{}\",\"bytes\":{},\"cached_chunks\":{},\"downloaded_chunks\":{},\"downloaded_bytes\":{},\"connection_attempts\":{},\"rejected_responses\":{},\"suppliers\":{}}}",
+    println!("{{\"schema\":\"trnm.cell.fetch.v1\",\"manifest\":\"{}\",\"payload_sha256\":\"{}\",\"bytes\":{},\"cached_chunks\":{},\"downloaded_chunks\":{},\"downloaded_bytes\":{},\"received_response_bytes\":{},\"max_response_bytes\":{},\"connection_attempts\":{},\"rejected_responses\":{},\"suppliers\":{}}}",
         digest_hex(pinned), digest_hex(report.payload_sha256), report.payload_bytes, report.cached_chunks,
-        report.downloaded_chunks, report.downloaded_bytes, report.connection_attempts, report.rejected_responses, report.supplying_peers.len());
+        report.downloaded_chunks, report.downloaded_bytes, report.received_response_bytes,
+        max_response_bytes, report.connection_attempts, report.rejected_responses, report.supplying_peers.len());
     Ok(())
 }
 

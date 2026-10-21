@@ -6,6 +6,11 @@ operator fixtures call their account transaction sequence argument
 field. The fixtures deliberately use fixed consecutive sequences to exercise
 admission, replay rejection, atomic renewal, restart and fork behavior.
 
+The incremental signed-prefix, account execution vector, Hepta task,
+authenticated native-store batch, authenticated-state archive, continuity and
+native authenticated fixtures use the same argument name. Their helper calls
+retain the same sequence values, including sequences committed into task IDs.
+
 This argument is not a cryptographic random nonce. The fixtures sign the
 unchanged `Envelope::signing_digest()` with Ed25519. This naming correction
 does not change transaction fields, signed bytes, signature domains, fixture
@@ -24,3 +29,9 @@ The retained SARIF observation and the subsequent selected tests are separate
 evidence. Development fixture keys remain development fixture keys; changing
 the sequence argument name does not strengthen their key custody or establish
 public deployment readiness.
+
+This correction covers account transaction sequence arguments only. Operation
+nonce fixtures and budget challenge counters retain their separate semantics.
+The parameter-name heuristic can misclassify a public account sequence; that
+observation does not resolve other hard-coded-value or logging findings. An
+exact-source scan and the remaining alert review are still required.

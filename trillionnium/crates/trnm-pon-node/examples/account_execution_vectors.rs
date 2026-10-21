@@ -45,11 +45,17 @@ fn signature(number: u64, digest: &Hash) -> [u8; 64] {
         .unwrap()
 }
 
-fn envelope(settings: &Settings, sender: u64, nonce: u64, tag: u8, payload: Vec<u8>) -> Vec<u8> {
+fn envelope(
+    settings: &Settings,
+    sender: u64,
+    account_sequence: u64,
+    tag: u8,
+    payload: Vec<u8>,
+) -> Vec<u8> {
     let mut tx = Envelope {
         network: settings.network(),
         sender: key(sender),
-        nonce,
+        nonce: account_sequence,
         expiry: 2000,
         fee_limit: 1_000_000,
         tag,
@@ -60,16 +66,22 @@ fn envelope(settings: &Settings, sender: u64, nonce: u64, tag: u8, payload: Vec<
     tx.encode().unwrap()
 }
 
-fn transfer(settings: &Settings, sender: u64, nonce: u64, recipient: u64, amount: u64) -> Vec<u8> {
+fn transfer(
+    settings: &Settings,
+    sender: u64,
+    account_sequence: u64,
+    recipient: u64,
+    amount: u64,
+) -> Vec<u8> {
     let mut payload = key(recipient).to_vec();
     payload.extend(amount.to_le_bytes());
-    envelope(settings, sender, nonce, 1, payload)
+    envelope(settings, sender, account_sequence, 1, payload)
 }
 
 fn task(
     settings: &Settings,
     sender: u64,
-    nonce: u64,
+    account_sequence: u64,
     budget: u64,
     deadline: u64,
 ) -> (Hash, Vec<u8>) {
@@ -80,7 +92,7 @@ fn task(
             &settings.network(),
             &settings.parameters(),
             &key(sender),
-            &nonce.to_le_bytes(),
+            &account_sequence.to_le_bytes(),
             &provider,
             &budget.to_le_bytes(),
             &deadline.to_le_bytes(),
@@ -90,7 +102,7 @@ fn task(
     payload.extend(provider);
     payload.extend(budget.to_le_bytes());
     payload.extend(deadline.to_le_bytes());
-    (id, envelope(settings, sender, nonce, 2, payload))
+    (id, envelope(settings, sender, account_sequence, 2, payload))
 }
 
 fn fixture_config(settings: &Settings) -> Config {

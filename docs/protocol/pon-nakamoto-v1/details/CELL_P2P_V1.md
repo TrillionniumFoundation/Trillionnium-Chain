@@ -57,15 +57,34 @@ A client has at most eight distinct peers and four concurrent fetch workers.
 The response queue is bounded by the worker count. Each connection has an
 absolute deadline of 10 ms through 30 s, covering connect, request and response;
 slow byte-by-byte progress does not restart it. The complete operation has an
-explicit deadline up to 24 hours, a caller-specified payload-byte budget and at
-most 100,000 connection attempts. Failures consume the original budget. No
+explicit deadline up to 24 hours, a caller-specified payload-byte budget, a
+shared response-byte budget and at most 100,000 connection attempts. Failures
+consume the original budgets. No
 unbounded discovery, retry, pending-packet or repair queue exists.
+
+`max_response_bytes` limits actual application response bytes returned by socket
+reads across the entire fetch, including TCS1 headers, manifests, corrupt bodies
+and truncated responses. It is separate from accepted payload bytes. Workers
+reserve capacity before each read, limit the read buffer to that reservation,
+and refund unread capacity after partial reads, EOF or errors. Concurrent reads
+cannot overshoot the budget; workers wait for an in-flight reservation's refund
+within their original deadline. Unread socket-buffer data, outgoing requests,
+TCP/IP overhead and retransmissions are outside this application counter.
+The limit accepts zero for cache-only retrieval and has a hard maximum of
+`8 * 64 GiB + 8 * 1 MiB + 9 * 100000` bytes.
 
 Workers rotate the first supplier by chunk index and try the remaining explicit
 peers on absence, truncation or corruption. A corrupt supplier cannot alter the
 pinned version. Valid chunks already received remain available to a later
 explicit retry. The final report counts actual connection attempts, accepted
-downloaded bytes, cached/downloaded chunks, rejected responses and suppliers.
+downloaded bytes, all received response bytes, cached/downloaded chunks,
+rejected responses and suppliers. `downloaded_bytes` still counts only verified
+payload chunks newly accepted into the cache. `received_response_bytes` also
+counts rejected responses and manifests; a complete cache hit needs zero.
+When retrieval cannot complete after exhausting the byte budget, the typed
+`ResponseByteBudgetExhausted` error and CLI diagnostic
+`CELL_RESPONSE_BYTE_BUDGET_EXHAUSTED` retain the actual received count and limit.
+Storage errors remain storage errors even if the response budget is fully used.
 It reports successful complete retrieval only after a fresh ordered full-file
 hash check. Cache scans and full verification check the operation deadline
 between chunks and before successful return. Blocking local filesystem calls
@@ -114,7 +133,12 @@ cargo build --locked --release --manifest-path trillionnium/Cargo.toml \
 an explicit family and all five dependency digests, and emits the manifest ID.
 `serve` takes an explicit bind address, lifetime and connection budget. `fetch`
 takes the pinned ID, explicit peers, byte/time/connection budgets and an absent
-output path. `verify` rechecks a complete local version. `manifest` exports the
+output path. Its optional `--max-response-bytes N` sets the response budget;
+the bounded default is `2 * max-bytes + 2097152 + 9 * max-connections`.
+Its successful `trnm.cell.fetch.v1` JSON adds `received_response_bytes` and
+`max_response_bytes` without changing existing payload counters. These local
+report additions do not change TCM1, TCQ1, TCS1 or the cache schema.
+`verify` rechecks a complete local version. `manifest` exports the
 canonical pinned manifest for the existing release owner. No command implicitly
 discovers a model, changes its authority or activates a consensus profile.
 
@@ -133,6 +157,14 @@ trnm-data-availability --lib cell::` contains actual TCP and disk tests for:
 - A corrupt network supplier, honest fallback and oversized response rejection.
 - Exhausted total connection budget, retained verified chunks and a later
   bounded successful retry.
+- Exact response-byte limits across four concurrent socket reads, including a
+  limit one byte short; no aggregate overshoot or successful partial response.
+- Partial manifest headers/bodies and corrupt responses exhausting the byte
+  budget before publication, with exact received counts on the failure.
+- Truncated bodies and rejected headers consuming only bytes actually received,
+  followed by honest fallback inside an exact remaining byte budget.
+- An exact-budget multi-chunk fetch with four workers and a subsequent complete
+  cache hit with zero response-byte allowance.
 - A real peer dripping response bytes more frequently than the original
   request deadline; it cannot extend that absolute deadline, and an honest
   second peer supplies the same pinned complete bytes. The wide wall-time

@@ -355,12 +355,12 @@ fn batched_paths_keep_original_parent_nonce_and_no_deletion_checks() {
     }
 }
 
-fn signed(settings: &crate::Settings, nonce: u64, tag: u8, payload: Vec<u8>) -> Vec<u8> {
+fn signed(settings: &crate::Settings, account_sequence: u64, tag: u8, payload: Vec<u8>) -> Vec<u8> {
     use trnm_crypto_primitives::{sign_hex, signing_key_from_hex};
     let mut transaction = trnm_protocol::pon_wire::Envelope {
         network: settings.network(),
         sender: crate::development_public(0).unwrap(),
-        nonce,
+        nonce: account_sequence,
         expiry: 2_000,
         fee_limit: 1_000_000,
         tag,

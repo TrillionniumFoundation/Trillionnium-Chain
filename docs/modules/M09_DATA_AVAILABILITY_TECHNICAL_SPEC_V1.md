@@ -33,8 +33,12 @@ Verify each copy hash; remove original author path during controlled test; load 
 The native configured-peer successor uses `fetch_cell` / `serve_cells` and the
 ordinary `trnm-cell` CLI. Actual TCP tests remove the origin, fetch from two
 retained replicas, repair a corrupt disposable cache and resume only verified
-chunks. Absolute connection deadlines and a shared total connection budget
-bound corrupt, absent and byte-dripping peers. Complete materialization uses
+chunks. Absolute connection deadlines, a shared total connection budget and a
+shared response-byte budget bound corrupt, absent and byte-dripping peers.
+Response accounting includes headers, manifests and rejected/truncated bytes;
+`downloaded_bytes` remains verified newly cached payload. Byte-budget exhaustion
+returns the actual received count and limit, and concurrent reads reserve bytes
+before receiving them. Complete materialization uses
 an owner-controlled destination and no-replace publication; byte retrieval
 does not select CURRENT, execute a model or establish independent custodians.
 

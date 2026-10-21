@@ -22,6 +22,10 @@ pub enum CellErrorV1 {
     Io(io::Error),
     Sql(rusqlite::Error),
     Unavailable,
+    ResponseByteBudgetExhausted {
+        received_response_bytes: u64,
+        max_response_bytes: u64,
+    },
 }
 
 impl fmt::Display for CellErrorV1 {
@@ -31,6 +35,13 @@ impl fmt::Display for CellErrorV1 {
             Self::Io(error) => write!(f, "cell I/O: {error}"),
             Self::Sql(error) => write!(f, "cell storage: {error}"),
             Self::Unavailable => f.write_str("cell: no configured peer supplied the pinned bytes"),
+            Self::ResponseByteBudgetExhausted {
+                received_response_bytes,
+                max_response_bytes,
+            } => write!(
+                f,
+                "cell: CELL_RESPONSE_BYTE_BUDGET_EXHAUSTED received_response_bytes={received_response_bytes} max_response_bytes={max_response_bytes}"
+            ),
         }
     }
 }
