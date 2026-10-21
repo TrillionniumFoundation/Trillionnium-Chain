@@ -498,6 +498,14 @@ impl RelayAuthVerifier {
                     got_seq: env.seq,
                 });
             }
+        } else if env.seq != 1 {
+            // A fresh verifier has no authenticated checkpoint. Do not let a
+            // captured high-sequence envelope seed state and permanently block
+            // the legitimate beginning of a session.
+            return Err(RelayAuthError::SeqGap {
+                expected_seq: 1,
+                got_seq: env.seq,
+            });
         }
 
         let nonce_key = (
@@ -658,8 +666,8 @@ mod tests {
     fn relay_auth_verify_seq_regression_rejected() {
         let key = "sender-key";
         let mut verifier = RelayAuthVerifier::for_chain(120_000, "trnm-mainnet");
-        let env1 = sample_env(3, "nonce-1", 1_730_000_000_000, key);
-        let env2 = sample_env(2, "nonce-2", 1_730_000_000_100, key);
+        let env1 = sample_env(1, "nonce-1", 1_730_000_000_000, key);
+        let env2 = sample_env(1, "nonce-2", 1_730_000_000_100, key);
 
         verifier
             .verify(&env1, 1_730_000_000_200, |e| e.sign_for_test(key) == e.sig)
@@ -669,6 +677,18 @@ mod tests {
             .verify(&env2, 1_730_000_000_250, |e| e.sign_for_test(key) == e.sig)
             .unwrap_err();
         assert_eq!(err.stable_code(), "SeqRegression");
+    }
+
+    #[test]
+    fn relay_auth_first_sequence_must_start_at_one() {
+        let key = "sender-key";
+        let mut verifier = RelayAuthVerifier::for_chain(120_000, "trnm-mainnet");
+        let env = sample_env(3, "nonce-first-gap", 1_730_000_000_000, key);
+
+        let err = verifier
+            .verify(&env, 1_730_000_000_050, |e| e.sign_for_test(key) == e.sig)
+            .unwrap_err();
+        assert_eq!(err.stable_code(), "SeqGap");
     }
 
     #[test]
