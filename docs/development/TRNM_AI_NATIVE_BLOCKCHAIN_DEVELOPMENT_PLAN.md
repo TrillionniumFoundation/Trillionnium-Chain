@@ -1670,3 +1670,61 @@ raw reports, child logs and resource observations are retained. The workflow is
 an execution entry point, not a passing campaign receipt. It covers the source
 head only and does not substitute for ARM64, prospective-merge, WAN, independent
 custody, work-hardness or complete Hepta model-evolution qualification.
+
+### Observed cloud results and analysis-reference correction
+
+The follow-up source was published as
+`00733fb34b0cd8007862de373176c3dca4534805`, tree
+`7c8289f5efe1d1dc543b68d85305e08d9cfa9064`. Both the
+[recent-batch run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/39524527808)
+and the
+[branch-encoding run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/39524527849)
+passed all four x64/ARM64 source-head and actual-merge lanes. This closes the
+stale guards for that source; it does not qualify a later source or another gate.
+
+The [original campaign run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/39524527820)
+built the optimized release executable and completed all three planned attempts
+in 98.32, 99.28 and 98.50 seconds. All three attempts failed the original finite
+experiment assertion. Each retained a complete report with unchanged source,
+binary and actual resource ceilings, and none reached the outer timeout.
+In all nine measured phases, the receiver accepted the 21 honest blocks, the
+independent client completed all three depth-six confirmations inside the
+original window, and receiver/client states agreed. The latest confirmation
+was at 12.27 seconds. Hostile phases retained actual rejected full work during
+every honest round, all 24 actors completed, and observations were complete.
+
+The unmet condition was actual paid-credit depletion, not honest confirmation.
+All three from-zero phases and the first late-product phase failed that condition.
+The from-zero minimum observed remaining paid credit was approximately
+419, 439 and 411 ms, above the unchanged 100 ms start reservation. Their total
+metered mutation CPU was approximately 8.37, 8.39 and 8.44 seconds over the
+30-second windows. The existing challenge admission bound and cheaper early
+transcript rejection limited the pressure reaching the paid CPU domain. These
+observations support timely honest service under this exact fixed load, but
+cannot certify service under depleted credit. The failed original assertion,
+thresholds, attacker load and deadlines are retained; no artificial slowdown,
+smaller credit budget or promoted partial result substitutes for saturation.
+
+The same source's CodeQL check reported 143 findings, comprising 122 critical
+and 21 high. Its completed Rust upload identified `refs/pull/323/head`; the first
+read-only exporter queried only `refs/pull/323/merge`. The corrected exporter
+retrieves every analysis page for the PR and accepts only its two exact PR refs.
+A head-ref analysis must bind the frozen head SHA. A merge-ref analysis records
+whether its actual commit is that head or the separately verified prospective
+merge; these are never interchangeable source claims. Historical SHAs are
+retained in raw pages but cannot satisfy completion. Offline regressions cover
+both refs, pagination, wrong bindings, intermediate missing configurations,
+source drift, denied access and unstable exports. The original failed export
+and vulnerability gate remain distinct from this retrieval repair.
+
+The paired Hepta witness recovery correction is published on its existing
+PR #2559 as `0ef0e9280e8caec3fdd63761462621848761e7df`. Its
+[native Windows run](https://github.com/TrillionniumFoundation/hepta-private-ci/actions/runs/39524912633)
+passed six witness and nine evaluated-shadow tests in each of the source-head
+and actual-base-merge lanes. The actual merge parents were
+`75531105b27329abaeb955e77c2c04a6d14f3bcb` and that Hepta head; this is the
+existing integration-stack base, not a claim of qualification against Hepta main.
+Both lanes retained identical before/after tracked bytes and zero test/logging
+exit codes. The four original Windows lock-conflict fixtures exercised their
+real reopen and fault paths. This closes that Windows verification scope, not
+the independent model-evolution or WAN acceptance gates.

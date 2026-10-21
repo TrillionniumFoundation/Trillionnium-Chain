@@ -44,6 +44,7 @@ jobs:
           set -euo pipefail
           python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$EXPORTER_HEAD" --output "$OUT/exporter-source-before.json"
           bash scripts/project-preflight.sh --audit 2>&1 | tee "$OUT/preflight.log"
+          python3 scripts/test_export_codeql_analysis.py 2>&1 | tee "$OUT/exporter-offline-tests.log"
       - name: Export exact PR analyses with the existing read-only token
         env:
           GITHUB_TOKEN: ${{ github.token }}

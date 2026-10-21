@@ -127,6 +127,7 @@ def target_from_event(api):
         head, base = sha(pr["head"]["sha"]), sha(pr["base"]["sha"])
         merge = sha(pr["merge_commit_sha"])
     target = {"pr": number, "ref": f"refs/pull/{number}/merge",
+              "head_ref": f"refs/pull/{number}/head",
               "head": head, "base": base, "merge": merge, "event": name}
     check_pr(pr, target)
     commit = api.get(f"/git/commits/{merge}", "prospective-merge.json")
@@ -152,6 +153,19 @@ def configurations_missing(check):
     return bool(re.search(r"\b[1-9][0-9]*\s+configurations?\s+not\s+found\b", text, re.I))
 
 
+def analysis_binding(row, target):
+    require(row["tool"]["name"] == "CodeQL"
+            and row["ref"] in {target["head_ref"], target["ref"]},
+            "Analysis response does not match an allowed PR ref/tool")
+    if row["commit_sha"] not in {target["head"], target["merge"]}:
+        return None  # Preserve historical entries in the raw pages, never export them.
+    require(row["ref"] != target["head_ref"] or row["commit_sha"] == target["head"],
+            "PR head-ref analysis is not bound to the frozen head SHA")
+    # A head commit uploaded under the merge ref still proves only head source.
+    return {"ref_kind": "head" if row["ref"] == target["head_ref"] else "merge",
+            "source_kind": "head" if row["commit_sha"] == target["head"] else "prospective-merge"}
+
+
 def snapshot(api, target, directory):
     pr = api.get(f'/pulls/{target["pr"]}', f"{directory}/pr.json")
     check_pr(pr, target)
@@ -163,13 +177,13 @@ def snapshot(api, target, directory):
             if row["name"] == "CodeQL" and row.get("app", {}).get("slug") == "github-advanced-security":
                 require(row["head_sha"] == commit, "CodeQL check source mismatch")
                 checks.append(row)
-    query = urllib.parse.urlencode({"pr": target["pr"], "ref": target["ref"], "tool_name": "CodeQL"})
+    # Default setup uploads to refs/pull/N/head; other setups use the merge ref.
+    # The PR filter retrieves both, then analysis_binding enforces the exact pair.
+    query = urllib.parse.urlencode({"pr": target["pr"], "tool_name": "CodeQL"})
     rows = api.pages("/code-scanning/analyses?" + query, f"{directory}/analyses")
     exact = []
     for row in rows:
-        require(row["ref"] == target["ref"] and row["tool"]["name"] == "CodeQL",
-                "Analysis response does not match requested PR ref/tool")
-        if row["commit_sha"] in {target["head"], target["merge"]}:
+        if analysis_binding(row, target) is not None:
             require(not row.get("error"), f'CodeQL analysis {row["id"]} reports a processing error')
             exact.append(row)
     # The aggregate check can be completed/neutral while a language is pending,
@@ -197,11 +211,13 @@ def export_analyses(api, target, state):
         metadata = api.get(path, prefix + ".json")
         require(all(metadata.get(field) == row.get(field) for field in fields),
                 f"Analysis {analysis_id} changed between listing and download")
+        binding = analysis_binding(metadata, target)
+        require(binding is not None, f"Analysis {analysis_id} no longer has an exact source")
         sarif = api.get(path, prefix + ".sarif", "application/sarif+json")
         require(isinstance(sarif, dict) and sarif.get("version") == "2.1.0"
                 and isinstance(sarif.get("runs"), list), f"Analysis {analysis_id}: invalid SARIF")
         exported.append({**{field: metadata.get(field) for field in fields},
-                         "source_kind": "head" if row["commit_sha"] == target["head"] else "prospective-merge",
+                         **binding,
                          "metadata": prefix + ".json", "sarif_subset": prefix + ".sarif"})
     return exported
 
