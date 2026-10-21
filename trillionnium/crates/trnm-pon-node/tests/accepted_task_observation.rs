@@ -68,8 +68,37 @@ fn task(settings: &Settings, owner_nonce: u64, provider_nonce: u64) -> (Hash, Ha
     )
 }
 
-fn open(path: &Path) -> Node {
-    Node::open(path, Settings::development(None).unwrap(), 2).unwrap()
+#[derive(Clone, Copy)]
+enum Backend {
+    Legacy,
+    AuthenticatedV1,
+}
+
+impl Backend {
+    const ALL: [Self; 2] = [Self::Legacy, Self::AuthenticatedV1];
+
+    fn cli_name(self) -> &'static str {
+        match self {
+            Self::Legacy => "legacy-v2",
+            Self::AuthenticatedV1 => "authenticated-v1",
+        }
+    }
+
+    fn open(self, path: &Path) -> Node {
+        let settings = Settings::development(None).unwrap();
+        match self {
+            Self::Legacy => Node::open(path, settings, 2),
+            Self::AuthenticatedV1 => Node::open_with_authenticated_state(path, settings, 2),
+        }
+        .unwrap()
+    }
+}
+
+fn for_backends(scenario: impl Fn(Backend)) {
+    for backend in Backend::ALL {
+        eprintln!("accepted-task backend: {}", backend.cli_name());
+        scenario(backend);
+    }
 }
 
 fn make(node: &mut Node, parent: Hash, height: u64, txs: Vec<Vec<u8>>, miner: u64) -> Packet {
@@ -100,9 +129,13 @@ fn assert_no_authority(value: &Value) {
 
 #[test]
 fn exact_acceptance_survives_restart_and_cli_readback_without_mutation() {
+    for_backends(exact_acceptance_for_backend);
+}
+
+fn exact_acceptance_for_backend(backend: Backend) {
     let dir = tempfile::tempdir().unwrap();
     let store = dir.path().join("store");
-    let mut node = open(&store);
+    let mut node = backend.open(&store);
     let (id, output, transactions) = task(node.settings(), 1, 1);
     let accept_tx_id = hash(b"tx-id", &[&transactions[2]]);
     let genesis = node.settings().genesis();
@@ -132,7 +165,13 @@ fn exact_acceptance_survives_restart_and_cli_readback_without_mutation() {
     let packet_path = dir.path().join("accepted.packet");
     fs::write(&packet_path, packet.encode().unwrap()).unwrap();
     let result = Command::new(env!("CARGO_BIN_EXE_trnm-pon-node"))
-        .args(["packet-status", "--development", "--store"])
+        .args([
+            "packet-status",
+            "--development",
+            "--state-backend",
+            backend.cli_name(),
+            "--store",
+        ])
         .arg(&store)
         .arg("--packet")
         .arg(&packet_path)
@@ -146,13 +185,17 @@ fn exact_acceptance_survives_restart_and_cli_readback_without_mutation() {
     let cli: Value = serde_json::from_slice(&result.stdout).unwrap();
     assert_eq!(cli["result"]["accepted_task"], expected);
     assert_no_authority(&cli["result"]);
-    assert_eq!(open(&store).stats().unwrap(), before);
+    assert_eq!(backend.open(&store).stats().unwrap(), before);
 }
 
 #[test]
 fn settlement_in_another_packet_never_rescues_a_reorged_exact_packet() {
+    for_backends(reorged_exact_packet_for_backend);
+}
+
+fn reorged_exact_packet_for_backend(backend: Backend) {
     let dir = tempfile::tempdir().unwrap();
-    let mut node = open(dir.path());
+    let mut node = backend.open(dir.path());
     let (_, _, transactions) = task(node.settings(), 1, 1);
     let genesis = node.settings().genesis();
     let original = make(&mut node, genesis, 1, transactions.clone(), 0);
@@ -176,7 +219,8 @@ fn settlement_in_another_packet_never_rescues_a_reorged_exact_packet() {
     );
     drop(node);
     assert_eq!(
-        open(dir.path())
+        backend
+            .open(dir.path())
             .exact_packet_observation(&original)
             .unwrap()["accepted_task"],
         Value::Null
@@ -185,8 +229,12 @@ fn settlement_in_another_packet_never_rescues_a_reorged_exact_packet() {
 
 #[test]
 fn receipt_only_and_ambiguous_multi_accept_packets_have_no_upgrade_binding() {
+    for_backends(receipt_only_and_multi_accept_for_backend);
+}
+
+fn receipt_only_and_multi_accept_for_backend(backend: Backend) {
     let dir = tempfile::tempdir().unwrap();
-    let mut node = open(dir.path());
+    let mut node = backend.open(dir.path());
     let (_, _, first) = task(node.settings(), 1, 1);
     let (_, _, second) = task(node.settings(), 3, 2);
     let genesis = node.settings().genesis();
@@ -210,8 +258,12 @@ fn receipt_only_and_ambiguous_multi_accept_packets_have_no_upgrade_binding() {
 
 #[test]
 fn altered_current_task_bytes_cannot_become_a_settlement_observation() {
+    for_backends(altered_current_task_for_backend);
+}
+
+fn altered_current_task_for_backend(backend: Backend) {
     let dir = tempfile::tempdir().unwrap();
-    let mut node = open(dir.path());
+    let mut node = backend.open(dir.path());
     let (task_id, _, transactions) = task(node.settings(), 1, 1);
     let genesis = node.settings().genesis();
     let packet = make(&mut node, genesis, 1, transactions, 0);

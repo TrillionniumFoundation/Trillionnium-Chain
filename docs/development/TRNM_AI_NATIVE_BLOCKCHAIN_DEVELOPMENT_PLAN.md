@@ -1625,3 +1625,48 @@ other hard-coded-value and logging findings still need their own evidence.
 No CodeQL query, gate or alert disposition is changed. The parent security check
 reported 225 findings but exposed only 100 annotations, so neither this correction
 nor that partial classification certifies closure of the complete security gate.
+
+## Native cloud follow-up — 2026-10-21
+
+The bounded I/O correction was published to the existing PR #323 as
+`064cce1d4b5c27d843864536b9b157a11df2be66`, with tree
+`4e0948859584b17a14d99c8e5a195603b5d6d6eb`. Its
+[CodeQL run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/39521908005)
+reported 145 findings: 124 critical and 21 high, compared with the parent's
+204 critical and 21 high. The 80 fewer critical findings do not close the
+remaining security gate. No alert is dismissed and no query is disabled.
+The separate read-only analysis export waits for the existing CodeQL check
+on the exact PR source, retains every available matching analysis/category
+through complete API pagination, and records the API-provided SARIF subsets
+and metadata. Source drift, incomplete scans, processing errors and denied
+access fail the export. Export completion is not a security-gate pass, and
+the returned subsets are not the full original SARIF uploads or the complete
+history of branch alerts.
+
+Two existing acceptance workflows stopped on stale source/test-count guards.
+The recent-batch guard now binds the actual reviewed
+`native_authenticated_tests.rs` blob
+`6b304bc0fe5bb8b48e0cd2c377b120f4ceb2291d`. The branch-encoding guard now
+requires all 21 authenticated-migration tests, including the added reservation
+race controls. The preceding x64 and ARM64 executions already ran those 21
+tests successfully; their subsequent count-check failures remain failures.
+All source guards and exact-source/prospective-merge lanes are retained.
+
+The four accepted-task observation scenarios now each execute against both
+`legacy-v2` and `authenticated-v1`, through the real node/CLI, reopen, reorg,
+ambiguous-task and corrupt-store paths. The scoped native regression passed
+all four tests, covering eight backend executions. This expands backend
+coverage; it does not establish actual model installation or independent
+operator agreement.
+
+The new original-native-campaign workflow runs the existing release-profile
+`separate_process_work_and_signed_confirmation_campaign` on a fresh x64 cloud
+runner. It schedules three complete observations, retaining every failure and
+partial result, with the original seed workload, 30-second phases and 0/24/24
+attacker counts. The service must expose the declared cgroup CPU/memory ceilings
+and nice value; unavailable or weaker resource controls fail without an
+unrestricted fallback. Exact tracked source, compiler profile, executable hash,
+raw reports, child logs and resource observations are retained. The workflow is
+an execution entry point, not a passing campaign receipt. It covers the source
+head only and does not substitute for ARM64, prospective-merge, WAN, independent
+custody, work-hardness or complete Hepta model-evolution qualification.

@@ -123,7 +123,7 @@ jobs:
           cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib account_archive_prototype::native_store::batch_tests -- --show-output --test-threads=1 2>&1 | tee "$OUT/batch.log"
           grep -E '^test result: ok\. [1-9][0-9]* passed; 0 failed;' "$OUT/batch.log"
           cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib authenticated_migration -- --show-output --test-threads=1 2>&1 | tee "$OUT/migration.log"
-          grep -E '^test result: ok\. 14 passed; 0 failed; 0 ignored;' "$OUT/migration.log"
+          grep -E '^test result: ok\. 21 passed; 0 failed; 0 ignored;' "$OUT/migration.log"
       - name: Require exact work arithmetic and unchanged full-profile public service
         shell: bash
         run: |
