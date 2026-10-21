@@ -10,7 +10,9 @@ mod network;
 mod store;
 
 pub use manifest::{CellChunkV1, CellContextV1, CellManifestV1, MAX_CELL_BYTES, MAX_CHUNK_BYTES};
-pub use network::{fetch_cell, serve_cells, CellFetchReportV1, CellPeerLimitsV1};
+pub use network::{
+    fetch_cell, fetch_cell_to_file, serve_cells, CellFetchReportV1, CellPeerLimitsV1,
+};
 pub use store::CellStoreV1;
 
 pub type CellDigestV1 = [u8; 32];

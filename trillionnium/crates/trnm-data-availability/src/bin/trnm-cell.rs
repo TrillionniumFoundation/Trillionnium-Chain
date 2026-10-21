@@ -12,7 +12,7 @@ use std::{
 };
 
 use trnm_data_availability::cell::{
-    digest_hex, fetch_cell, parse_digest, serve_cells, CellContextV1, CellErrorV1,
+    digest_hex, fetch_cell_to_file, parse_digest, serve_cells, CellContextV1, CellErrorV1,
     CellPeerLimitsV1, CellStoreV1, MAX_CELL_BYTES,
 };
 
@@ -129,7 +129,7 @@ fn fetch(args: &mut Args) -> Result<()> {
         .parse()?;
     args.finish()?;
     let store = CellStoreV1::open(&store)?;
-    let (manifest, report) = fetch_cell(
+    let (_, report) = fetch_cell_to_file(
         &store,
         pinned,
         &peers,
@@ -141,8 +141,8 @@ fn fetch(args: &mut Args) -> Result<()> {
             max_connections,
             max_response_bytes,
         },
+        &output,
     )?;
-    store.materialize(&manifest, &output)?;
     println!("{{\"schema\":\"trnm.cell.fetch.v1\",\"manifest\":\"{}\",\"payload_sha256\":\"{}\",\"bytes\":{},\"cached_chunks\":{},\"downloaded_chunks\":{},\"downloaded_bytes\":{},\"received_response_bytes\":{},\"max_response_bytes\":{},\"connection_attempts\":{},\"rejected_responses\":{},\"suppliers\":{}}}",
         digest_hex(pinned), digest_hex(report.payload_sha256), report.payload_bytes, report.cached_chunks,
         report.downloaded_chunks, report.downloaded_bytes, report.received_response_bytes,

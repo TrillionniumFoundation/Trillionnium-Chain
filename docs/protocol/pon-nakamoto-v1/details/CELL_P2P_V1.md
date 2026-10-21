@@ -87,9 +87,14 @@ When retrieval cannot complete after exhausting the byte budget, the typed
 Storage errors remain storage errors even if the response budget is fully used.
 It reports successful complete retrieval only after a fresh ordered full-file
 hash check. Cache scans and full verification check the operation deadline
-between chunks and before successful return. Blocking local filesystem calls
-are not forcibly preempted; final local materialization is a separate owner
-operation. Reports of end-to-end loading must include these actual disk costs.
+between chunks and before successful return. The library's `fetch_cell` retrieves
+and verifies content into the cache without materializing an output file. The
+CLI uses `fetch_cell_to_file`, which passes that same original absolute deadline
+through complete verification and final local materialization; it does not start
+another time budget after the download.
+`CellStoreV1::materialize_until` also accepts an existing caller-owned deadline,
+while the original `materialize` API remains explicitly unbounded by time.
+Reports of end-to-end loading must include these actual disk costs.
 
 The finite server bounds connections and lifetime, reads one connection at a
 time and applies an absolute per-connection deadline. This gives bounded memory
@@ -117,6 +122,16 @@ An existing output is never replaced. A partial download never becomes the
 requested output. A crash after publication can leave a complete file whose
 caller did not receive success; the caller must inspect and verify that file,
 not interpret an error as permission to overwrite or select another version.
+The combined fetch checks its original deadline before materialization, while
+verifying chunks, after the complete write, and after file synchronization but
+before the no-replace hard link. Expiry at that last checkpoint refuses
+publication, removes the owned temporary file and retains verified cached chunks
+for a later explicit call. These are cooperative checks: blocking filesystem
+calls cannot be preempted, and the hard link, directory synchronization or
+cleanup can return after the deadline. Once publication begins, the operation
+does not remove a complete output merely because time has elapsed. A later
+durability or cleanup error can therefore coexist with a complete published
+file. This contract is not a hard real-time or model-loading latency guarantee.
 The containing directory is an owner-controlled local filesystem; protection
 from a hostile process with the same filesystem authority is not claimed.
 
@@ -170,6 +185,15 @@ trnm-data-availability --lib cell::` contains actual TCP and disk tests for:
   second peer supplies the same pinned complete bytes. The wide wall-time
   assertion is a liveness regression, not a performance improvement claim.
 - Refusal to repurpose an existing foreign database.
+- A genuinely expired materialization deadline leaves the output absent while
+  the original explicit no-deadline API can still publish the verified payload.
+- An actual network fetch, complete write and file synchronization followed by
+  a test-only scheduler pause until the original absolute deadline expires.
+  The publication checkpoint receives that same `Instant`, refuses the output
+  and cleans the temporary file; an explicit later cache-only call can succeed.
+- Fresh complete verification rejects corrupted cache bytes and a mismatched
+  complete-payload digest before publication, and never replaces an existing
+  output. The combined network-to-file success path returns the exact bytes.
 
 Loopback tests establish byte and failure semantics. Cross-host delivery and
 actual loader receipts must name their source, model, hosts and failures; neither

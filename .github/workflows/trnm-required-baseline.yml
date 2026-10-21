@@ -8,7 +8,8 @@ permissions:
   contents: read
 concurrency:
   group: portable-${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  # Preserve running head/merge evidence when a successor enters the queue.
+  cancel-in-progress: false
 env:
   CI: "true"
   CARGO_INCREMENTAL: "0"

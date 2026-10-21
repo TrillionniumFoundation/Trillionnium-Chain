@@ -5,7 +5,8 @@ permissions:
   contents: read
 concurrency:
   group: pon-priority-${{ github.ref }}
-  cancel-in-progress: true
+  # Retain an executing source's native evidence; the next candidate waits.
+  cancel-in-progress: false
 env:
   CI: "true"
   CARGO_INCREMENTAL: "0"
@@ -159,6 +160,15 @@ jobs:
           grep -E '^test ingress::public_v3::scalar_cpu::final_samples_tests::.* \.\.\. ok$' "$TRNM_CI_RECEIPT_DIR/resource-controls.log" > "$TRNM_CI_RECEIPT_DIR/final-sample-selectors.log"
           test "$(wc -l < "$TRNM_CI_RECEIPT_DIR/final-sample-selectors.log")" -eq 4
           grep -E '^test result: ok\. [1-9][0-9]* passed; 0 failed;' "$TRNM_CI_RECEIPT_DIR/resource-controls.log"
+      - name: Reject valid W1 state-root replay without durable admission
+        if: ${{ !cancelled() && steps.source.outcome == 'success' && steps.toolchain.outcome == 'success' && matrix.campaign == 'service-model' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          selector=valid_work_state_root_replays_are_paid_without_admission
+          log="$TRNM_CI_RECEIPT_DIR/valid-work-root-rejection.log"
+          cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test public_v3_multiprocess "$selector" -- --exact --show-output --test-threads=1 2>&1 | tee "$log"
+          python3 scripts/ci/check_required_native_test.py "$log" --test "$selector"
       - name: Require actual shared CPU depletion and native public recovery
         if: ${{ !cancelled() && steps.source.outcome == 'success' && steps.toolchain.outcome == 'success' && matrix.campaign == 'service-model' }}
         shell: bash

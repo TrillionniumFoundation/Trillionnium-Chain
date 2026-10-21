@@ -54,7 +54,12 @@ fn admit(node: &mut Node, parent: Hash, height: u64, miner: u64, txs: Vec<Vec<u8
     node.admit(&packet, 100_000).unwrap()
 }
 
-fn frame(node: &Node, session: u8, nonce: u64, payload: &[u8]) -> AuthenticatedPeerFrameV0 {
+fn frame(
+    node: &Node,
+    session: u8,
+    frame_sequence: u64,
+    payload: &[u8],
+) -> AuthenticatedPeerFrameV0 {
     let session = PeerSessionIdentityV0::new(
         IoDigest32V0::new(node.settings.genesis()).unwrap(),
         IoDigest32V0::new(node.settings.parameters()).unwrap(),
@@ -66,7 +71,7 @@ fn frame(node: &Node, session: u8, nonce: u64, payload: &[u8]) -> AuthenticatedP
     .unwrap();
     AuthenticatedPeerFrameV0::new(
         session,
-        nonce,
+        frame_sequence,
         IoDigest32V0::new(crate::authenticated_payload_digest(payload)).unwrap(),
         payload.len(),
     )

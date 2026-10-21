@@ -187,6 +187,35 @@ impl CellStoreV1 {
     /// Publish only after checking the complete ordered payload. The output must
     /// be absent; neither a partial download nor an existing path is published.
     pub fn materialize(&self, manifest: &CellManifestV1, output: &Path) -> CellResultV1<()> {
+        self.materialize_with_deadline(manifest, output, None)
+    }
+
+    /// Recheck bytes and publish against the caller's original absolute deadline.
+    /// Filesystem I/O is not preemptible. Expiry before the publication checkpoint
+    /// leaves no output; once the no-replace link begins, durability and cleanup
+    /// finish without treating a complete published file as a removable partial.
+    pub fn materialize_until(
+        &self,
+        manifest: &CellManifestV1,
+        output: &Path,
+        deadline: Instant,
+    ) -> CellResultV1<()> {
+        self.materialize_with_deadline(manifest, output, Some(deadline))
+    }
+
+    fn materialize_with_deadline(
+        &self,
+        manifest: &CellManifestV1,
+        output: &Path,
+        deadline: Option<Instant>,
+    ) -> CellResultV1<()> {
+        let check_deadline = || {
+            require(
+                deadline.is_none_or(|end| Instant::now() <= end),
+                "materialization deadline",
+            )
+        };
+        check_deadline()?;
         let parent = output
             .parent()
             .filter(|p| !p.as_os_str().is_empty())
@@ -201,8 +230,12 @@ impl CellStoreV1 {
             .create_new(true)
             .open(&temporary)?;
         let result: CellResultV1<()> = (|| {
-            self.write_verified(manifest, &mut file, None)?;
+            self.write_verified(manifest, &mut file, deadline)?;
+            check_deadline()?;
             file.sync_all()?;
+            #[cfg(test)]
+            super::tests::before_materialize_publication(deadline);
+            check_deadline()?;
             fs::hard_link(&temporary, output)?;
             File::open(parent)?.sync_all()?;
             Ok(())

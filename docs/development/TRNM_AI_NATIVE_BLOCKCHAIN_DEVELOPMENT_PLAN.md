@@ -1904,3 +1904,165 @@ all 20 reviewed workflow source-blob guards still match. Cargo graph, lockfile,
 consensus domains, serialized packet formats, service budgets and readiness flags
 remain unchanged. Hosted head/merge results still have to identify the published
 successor; this local verification does not promote the unresolved gates.
+
+### Hosted observer result and remaining exact security findings
+
+The observer correction was published as
+`594536f75038f5154829eee1bdff5701249e2eac`, tree
+`002a878e937155119c9eb83df2496f01bf22cc9d`. Its actual prospective merge
+`dee1a1aaf445b182ae2b8404efc07c46bb47340c` has the verified ordered base/head
+parents and that same tree. The
+[unchanged original campaign](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/39538607709)
+completed all three attempts in 97.15, 97.14 and 97.11 seconds. All nine phases
+retained every accepted connection exactly once, with no omission, measurement
+failure, incomplete record or unclosed observed task. The 189 honest submissions
+and 27 independent confirmation rounds succeeded within their original windows,
+and every receiver/client state comparison passed. This is hosted evidence for
+the repaired observation scope; it does not claim races are impossible in every
+future execution.
+
+All six hostile phases still failed the original paid-credit-depletion and
+depletion-overlap requirements. Their minimum observed paid credit was
+1.2075--1.2414 seconds for from-zero and 0.9214--0.9467 seconds for late-product,
+above the unchanged 100 ms threshold. The other original phase predicates passed.
+Final paid-debit identities reconciled, all live owners and reservations closed,
+and the actual four-CPU/16-GiB resource ceilings, priority and original input
+profile were retained. No CPU throttling or out-of-memory event was recorded.
+The original campaign therefore remains failed; timely honest service without
+depletion is not saturation qualification.
+
+The same candidate's
+[security evidence export](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/39538607567)
+completed with stable before/after source and check identities. All three
+selected analyses bind the exact PR head. Rust contains 239 full-analysis
+results, comprising 217 hard-coded-value and 22 logging findings; Python and
+Actions contain none. The actual PR gate independently reports 51 findings:
+30 critical and 21 high. This is a measured reduction from the preceding gate's
+142, not a deduction from the earlier 175-result source review.
+
+All 51 API-visible annotations were retained, matching their reported count.
+Forty-seven have exact exposed path/span/title/message matches to one SARIF
+result each. Four multiline logging annotations omit column information; each
+has one match on all exposed fields, while the unavailable columns remain
+explicitly unverified. Raw responses and both manifests are retained. The
+exporter's generic complete-gate-mapping flag remains false and its successful
+retrieval does not change the failed security gate.
+
+Fourteen critical annotations identify three test helpers for authenticated peer
+frames. Production replay admission requires each public frame sequence to be
+the checked successor of the last acknowledged sequence; it is not a random
+encryption nonce. Those helper parameters now say `frame_sequence`, preserving
+all literal values, actual protocol fields, signatures, replay checks and test
+assertions. The reviewed recent-batch source guard is updated to the resulting
+`store.rs` blob `2feb579d1907f688234fbee34874bb558a8956bf`. This clarifies the
+fixture interface; a later actual scan is required before claiming a changed
+gate count.
+
+The remaining critical findings concern fifteen fixed public operation-ID
+fixtures and one intentionally fixed W1 false-trace challenge. Their actual
+protocol fields and research inputs remain unchanged. The twenty-one PR logging
+annotations concern fourteen ordinary vector mutation/index sites and seven
+test diagnostic sites, which remain distinct from the runtime stdout finding
+present only in the full analysis. Source review and false-positive evidence do
+not dismiss findings, remove assertions or grant security-gate acceptance.
+
+The paired Hepta workflow published as
+`9d9b9a669c25ef4145b13642504c970389ca6e03` used this Chain head and its verified
+merge. Its [native pair run](https://github.com/TrillionniumFoundation/hepta-private-ci/actions/runs/39539710569)
+finished all six lanes. Both Windows lanes passed six witness and nine evaluated
+shadow tests. All four x64/ARM64 Linux head/merge lanes passed the ten study-reader
+controls and then failed the actual compile-only command: the wrapper injected
+`--no-fail-fast` into `--no-run`, a combination rejected by native nextest. The
+study did not execute; each Linux lane retained 90 successful execution receipts
+and the failed build receipt rather than a three-generation pass.
+
+Hepta successor `acbae58fd8ff380f78cae644c3a7d601b7654b28`, tree
+`0f87f3835af04267279e8c93285948fcc8efb488`, repairs that wrapper argument
+interaction and adds all twelve real native wrapper controls to each Linux
+lane. Its actual merge `d3e585ea7b9b4c04a98fe7d268ad1d96f372d1e9` preserves
+the existing integration base and has the same tree. The
+[successor run](https://github.com/TrillionniumFoundation/hepta-private-ci/actions/runs/39543970250)
+must establish its own source-specific results. The original study, role custody,
+data, thresholds and 600-second owner remain unchanged. Any eventual study pass
+is scoped to controlled local tabular learning, not actual neural generations,
+PoN/TaskFlow model installation, independent operation or public activation.
+
+### Valid-work state-root refusal and complete Cell deadline
+
+A new ordinary protected-v3 regression submits the same complete packet three
+times with a newly acquired, strictly verified W1 proof and an intentionally wrong
+state root. The eight transaction signatures remain valid. Each request reaches
+full Work acceptance and actual M06 admission refusal, returns signed `ROOT`,
+does not run SubmitResult and settles its owner plus scoped-worker CPU charge.
+The three measured debits in the local run were 20,209,865, 11,565,557 and
+27,392,977 ns; their sum exactly matched the service's 59,168,399 ns settled
+charge. These are observations from one execution, not throughput or attacker
+cost bounds. Complete request coverage, per-call settled identities, unchanged
+native stats/state and absence of the rejected packet are checked directly.
+
+The service is joined and its sole Node owner dropped before actual cold reopen.
+The first reopen retains the original mempool context and unchanged state. A
+second ordinary service epoch accepts the independently constructed correct
+packet, after which another cold reopen verifies the exact state and stored
+packet bytes. The first attempted regression failed because its test setup
+omitted the service's required mempool initialization; all four requests failed
+before dispatch. That failed observation is retained. The corrected setup uses
+the original campaign's existing PoolLimits before its baseline snapshots, and
+the two reopens only inspect persisted context rather than re-enabling it. The
+corrected native selector passed once with zero failed or ignored tests.
+
+All 1,194 original campaign lines and their inputs remain byte-identical. This
+additional case does not replace the original false-W1 hostile traffic or grant
+its missing depletion qualification. The recent-batch workflow binds the new
+integration-test blob `c94eea8c3498775f9a9cb1f861b3502669c1bae1`, and all four
+priority service-model lanes explicitly execute the new selector and retain
+its actual receipt. Work-hardness, original campaign, depletion and activation
+qualification remain false.
+
+The M09 Cell CLI previously finished the bounded fetch and then invoked a
+separate materialization without the original deadline. It now calls
+`fetch_cell_to_file`, passing one unchanged absolute deadline through network
+retrieval, complete verification, final write and the pre-publication checkpoint.
+The additive `materialize_until` API rechecks original cached payload bytes;
+the existing no-deadline materialization API remains available to explicit
+callers. Protocol bytes, manifest/cache schemas, limits and CLI report fields
+are unchanged. Checks are cooperative: filesystem calls cannot be preempted,
+and a complete file is not deleted after publication because subsequent I/O
+takes time. The exact boundary is documented in
+[CELL_P2P_V1](../protocol/pon-nakamoto-v1/details/CELL_P2P_V1.md).
+
+The twelve retained Cell tests and four additional deadline/publication controls
+passed as sixteen actual native tests, with zero failures or ignored tests. One
+negative control performs real network retrieval and file synchronization,
+compares the original and received `Instant`, then pauses at the test-only
+publication hook until that same deadline expires. It requires no final file
+and no leaked temporary file; a later explicit cache-only operation succeeds.
+The clock is not replaced. Corrupt-cache, wrong-complete-digest, existing-output
+and success controls retain exact byte comparisons. The first temporary result
+observer incorrectly expected seventeen tests and failed after native libtest
+had already passed sixteen; that observer error and original log are retained.
+The corrected observer reuses the unchanged-source native result without
+claiming another test execution.
+
+A separately built CLI packed and transferred 131,328 bytes in nine chunks over
+ten actual loopback connections, verified the complete SHA256, rejected an
+existing output without modifying it, and produced a second complete file from
+cache with zero response bytes and zero network attempts. The finite server
+exited normally. These local byte/resource results do not implement the absent
+neural loader, complete model-release closure, WAN discovery, independent
+custody or replica economics.
+
+The priority, baseline and Hepta pair workflow concurrency groups now retain
+an already running candidate while its successor waits. Their source checks
+continue to bind frozen event head/base/merge identities, never a mutable live
+PR head. Trigger, job, source checks, runtime owners and time limits are
+unchanged. GitHub's ordinary pending-slot behavior can replace an older pending
+candidate when another arrives; no result is claimed for an unexecuted version,
+and an earlier successful candidate cannot qualify a later source.
+
+The final Rust source passed locked, offline, complete-workspace strict Clippy
+with all targets and features and warnings denied in 98.47 seconds. Formatting,
+the three changed workflows' actionlint checks, all twenty source-blob guards
+and the exact twenty-five-package locked Cargo graph also passed. Source digests
+before and after the native tests and Clippy are retained. These checks do not
+grant production, model-efficacy, independent-security or release acceptance.

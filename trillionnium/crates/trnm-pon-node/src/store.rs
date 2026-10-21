@@ -4832,7 +4832,11 @@ mod error_boundary_tests {
         assert!(error.requires_owner_stop());
     }
 
-    fn replay_frame(settings: &Settings, nonce: u64, payload: &[u8]) -> AuthenticatedPeerFrameV0 {
+    fn replay_frame(
+        settings: &Settings,
+        frame_sequence: u64,
+        payload: &[u8],
+    ) -> AuthenticatedPeerFrameV0 {
         let session = PeerSessionIdentityV0::new(
             IoDigest32V0::new(settings.genesis()).unwrap(),
             IoDigest32V0::new(settings.parameters()).unwrap(),
@@ -4844,7 +4848,7 @@ mod error_boundary_tests {
         .unwrap();
         AuthenticatedPeerFrameV0::new(
             session,
-            nonce,
+            frame_sequence,
             IoDigest32V0::new(crate::authenticated_payload_digest(payload)).unwrap(),
             payload.len(),
         )

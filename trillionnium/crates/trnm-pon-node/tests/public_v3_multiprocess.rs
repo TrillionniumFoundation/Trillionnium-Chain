@@ -1192,3 +1192,306 @@ fn campaign(output: &Path, state_backend: StateBackendChoice) {
         output.display()
     );
 }
+
+#[test]
+fn valid_work_state_root_replays_are_paid_without_admission() {
+    let output = std::env::var_os("TRNM_CI_RECEIPT_DIR")
+        .map(PathBuf::from)
+        .unwrap_or_else(|| tempfile::tempdir().unwrap().keep())
+        .join("valid-work-root-rejection");
+    fs::create_dir(&output).unwrap();
+    let settings = support::settings();
+    let open =
+        |path: &Path| Node::open_with_authenticated_state(path, settings.clone(), 2).unwrap();
+    let mut producer = open(&output.join("producer"));
+    let reference_started = Instant::now();
+    let reference_cpu = support::cpu();
+    let reference = producer
+        .make_consensus_maintenance(
+            settings.genesis(),
+            (1..=8)
+                .map(|sequence| {
+                    support::signed_transfer(&settings, sequence, development_public(1).unwrap())
+                })
+                .collect(),
+            development_public(0).unwrap(),
+            settings.genesis_time() + 10,
+            4096,
+        )
+        .unwrap();
+    let reference_cost = json!({"cpu_ns":support::elapsed_cpu(reference_cpu),
+        "wall_ns":reference_started.elapsed().as_nanos(),"attempt_count":null,
+        "scope":"actual reference construction; Node does not expose its search denominator"});
+    replay(&mut producer, std::slice::from_ref(&reference));
+    let expected = producer.read_active().unwrap();
+    let expected_stats = producer.stats().unwrap();
+    drop(producer);
+    let mut wrong_header = reference.header.clone();
+    wrong_header.state[0] ^= 1;
+    let acquisition_started = Instant::now();
+    let acquisition_cpu = support::cpu();
+    let search = work::Producer::new(0)
+        .map_err(|error| format!("{error:?}"))
+        .and_then(|producer| work::legal_search(&producer, wrong_header));
+    let acquisition = json!({"method":work::METHODS[0],"cpu_ns":support::elapsed_cpu(acquisition_cpu),
+        "wall_ns":acquisition_started.elapsed().as_nanos(),
+        "all_attempts_or_error":search.as_ref().map(|(_, _, attempts)| attempts).map_err(String::as_str),
+        "scope":"actual prepared producer plus changed-header search; calling process CPU, not a fastest-attacker bound"});
+    support::write_new(&output.join("acquisition.json"), &acquisition);
+    let (header, proof, attempts) =
+        search.expect("actual search failure retained in acquisition.json");
+    let wrong = Packet {
+        header,
+        proof,
+        transactions: reference.transactions.clone(),
+    };
+    let reference_verified = check_winner(&reference.header, &reference.proof);
+    let wrong_verified = check_winner(&wrong.header, &wrong.proof);
+    support::write_new(
+        &output.join("fixture.json"),
+        &json!({
+        "reference_packet":hex::encode(reference.encode().unwrap()),
+        "wrong_root_packet":hex::encode(wrong.encode().unwrap()),
+        "reference_cost":reference_cost,"acquisition":acquisition,
+        "strict_reference_verification":reference_verified,"strict_changed_header_verification":wrong_verified,
+        "signed_transactions":reference.transactions.len(),"attempt_count":attempts.len()}),
+    );
+    assert!(reference_verified.is_ok() && wrong_verified.is_ok());
+    assert!(acquisition["cpu_ns"].as_u64().is_some_and(|ns| ns > 0));
+    assert_ne!(wrong.header.challenge(), reference.header.challenge());
+    let mut normalized = wrong.header.clone();
+    normalized.state = reference.header.state;
+    normalized.nonce = reference.header.nonce;
+    assert_eq!(normalized, reference.header);
+    assert!(!attempts.is_empty() && attempts.last().unwrap()["target_hit"] == true);
+    assert!(attempts[..attempts.len() - 1]
+        .iter()
+        .all(|row| row["target_hit"] == false));
+
+    let run = |node: Node, packet: &Packet, count: usize, accepted: bool, label: &str| {
+        let owner = Arc::new(Mutex::new(node));
+        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+        let address = listener.local_addr().unwrap();
+        let stop = Arc::new(AtomicBool::new(false));
+        let metrics = Arc::new(Mutex::new(public_v3::PublicMetrics::default()));
+        let observer = public_v3::PublicRequestObserver::new(16).unwrap();
+        let server = PublicServer::new(support::identity(71), support::policy()).unwrap();
+        let domain = server.mutation_cpu_domain();
+        let initial_flow = domain.observe_actual_flow().unwrap();
+        let (shared, signal, capture) = (owner.clone(), stop.clone(), observer.clone());
+        let service = Service {
+            stop,
+            worker: Some(thread::spawn(move || {
+                public_v3::serve_public_protected_v3_with_request_observer(
+                    listener,
+                    shared,
+                    Duration::from_secs(30),
+                    signal,
+                    server,
+                    metrics,
+                    capture,
+                )
+                .map_err(|error| error.to_string())
+            })),
+        };
+        let wire = hex::encode(packet.encode().unwrap());
+        let request = || Request::Submit {
+            packet: wire.clone(),
+        };
+        let body = serde_json::to_vec(&request()).unwrap();
+        let digest = hash(b"public-request-body-v3", &[&body]);
+        let epoch = support::monotonic();
+        let end = epoch + 30_000_000_000;
+        let mut calls = Vec::new();
+        for index in 0..count {
+            let before = domain.observe_actual_flow().unwrap();
+            let response = support::call(address, &settings, request(), 72, epoch, end);
+            // Native dispatch joins M06 workers and finishes the paid permit
+            // before response signing. No other mutation uses this domain.
+            let after = domain.observe_actual_flow().unwrap();
+            let paid_cpu_ns = before
+                .as_ref()
+                .zip(after.as_ref())
+                .and_then(|(a, b)| b.paid_cpu_debit_ns.checked_sub(a.paid_cpu_debit_ns));
+            let quiescent = [&before, &after].iter().all(|flow| {
+                flow.as_ref().is_some_and(|f| {
+                    f.balance_identity_verified
+                        && f.live_owners == 0
+                        && f.booked_reservation_ns == 0
+                        && f.unsettled_known_live_cpu_ns == 0
+                        && f.paid_cpu_debit_ns == f.settled_full_cpu_ns
+                })
+            });
+            calls.push(
+                json!({"ordinal":index,"reuse":if index == 0 {"first"} else {"warm"},
+                "call":response,"flow_before":before,"flow_after":after,
+                "quiescent":quiescent,"paid_owner_plus_scoped_worker_cpu_ns":paid_cpu_ns,
+                "native_stats_after":owner.lock().unwrap().stats().unwrap()}),
+            );
+        }
+        let service_outcome = service.finish();
+        let captured = observer.snapshot();
+        let final_flow = domain.observe_actual_flow().unwrap();
+        let final_meter = domain.observe().unwrap();
+        let mut stages_match = captured.coverage_complete() && captured.records.len() == count;
+        // Sequential calls and exact complete coverage bind each recorded body
+        // and its owner sample to that call's isolated settled CPU delta.
+        for (index, (call, row)) in calls.iter_mut().zip(&captured.records).enumerate() {
+            let scoped = call["paid_owner_plus_scoped_worker_cpu_ns"]
+                .as_u64()
+                .zip(row.dispatch_thread_cpu_ns)
+                .and_then(|(paid, owner)| paid.checked_sub(owner));
+            call["receiver_connection_id"] = json!(row.connection_id);
+            call["dispatch_owner_thread_cpu_ns"] = json!(row.dispatch_thread_cpu_ns);
+            call["scoped_worker_cpu_ns"] = json!(scoped);
+            stages_match &= row.operation == Some(1)
+                && row.connection_id == u64::try_from(index + 1).ok()
+                && row.body_digest == Some(digest)
+                && row.full_work_started
+                && row.full_work_accepted == Some(true)
+                && row.full_work_thread_cpu_ns.is_some_and(|ns| ns > 0)
+                && row.dispatch_accepted == Some(accepted)
+                && row.submit_phases.iter().any(|p| {
+                    p.phase == public_v3::SubmitPhase::Work
+                        && p.started
+                        && p.completed
+                        && p.accepted == Some(true)
+                })
+                && row.submit_phases.iter().any(|p| {
+                    p.phase == public_v3::SubmitPhase::Admission
+                        && p.started
+                        && p.completed
+                        && p.accepted == Some(accepted)
+                })
+                && row.submit_phases.iter().any(|p| {
+                    p.phase == public_v3::SubmitPhase::SubmitResult
+                        && p.started == accepted
+                        && p.completed == accepted
+                        && p.accepted == accepted.then_some(true)
+                })
+                && scoped.is_some_and(|ns| ns > 0);
+        }
+        let replies_match = calls.iter().all(|row| {
+            row["quiescent"] == true
+                && row["call"]["public_request_body_digest"] == hex::encode(digest)
+                && row["call"]["status"] == if accepted { "ok" } else { "refused" }
+                && row["call"]["response"]["ok"] == accepted
+                && row["call"]["response"]["identity_authority"] == false
+                && row["call"]["response"]["public_network_ready"] == false
+                && (accepted || row["call"]["response"]["value"]["error"] == "ROOT")
+        });
+        let total_paid = initial_flow
+            .as_ref()
+            .zip(final_flow.as_ref())
+            .and_then(|(a, b)| b.paid_cpu_debit_ns.checked_sub(a.paid_cpu_debit_ns));
+        let sum = calls.iter().try_fold(0_u64, |sum, call| {
+            sum.checked_add(call["paid_owner_plus_scoped_worker_cpu_ns"].as_u64()?)
+        });
+        let settled = final_meter.in_flight == 0
+            && !final_meter.accounting_unavailable
+            && total_paid.is_some_and(|ns| ns > 0)
+            && total_paid == sum
+            && service_outcome["Ok"]["mutation_cpu_charged_ns"].as_u64() == total_paid
+            && service_outcome["Ok"]["mutation_cpu_clock_failures"] == 0;
+        let result = json!({"calls":calls,"body_digest":hex::encode(digest),"observer":captured,
+            "initial_flow":initial_flow,"final_flow":final_flow,"final_meter":final_meter,
+            "total_paid_owner_plus_scoped_worker_cpu_ns":total_paid,"service":service_outcome,
+            "stages_match":stages_match,"replies_match":replies_match,"settled":settled});
+        support::write_new(&output.join(format!("{label}.json")), &result);
+        let node = Arc::try_unwrap(owner)
+            .ok()
+            .expect("joined service released the sole owner")
+            .into_inner()
+            .unwrap();
+        (node, result)
+    };
+    let receiver_path = output.join("receiver");
+    let mut receiver = open(&receiver_path);
+    // Match the original campaign's trusted owner setup before taking the
+    // no-admission baseline; cold reopen must retain this exact configuration.
+    let pool_context = receiver
+        .enable_local_mempool(PoolLimits {
+            max_records: 16,
+            max_bytes: 32768,
+            max_group_members: 4,
+            critical_reserve: 0,
+            max_removals: 64,
+            preview_miner: development_public(0).unwrap(),
+        })
+        .unwrap();
+    let initial = receiver.read_active().unwrap();
+    let initial_stats = receiver.stats().unwrap();
+    let (receiver, rejected) = run(receiver, &wrong, 3, false, "rejections");
+    let live_unchanged =
+        receiver.read_active().unwrap() == initial && receiver.stats().unwrap() == initial_stats;
+    drop(receiver);
+    let reopened = open(&receiver_path);
+    assert_eq!(
+        reopened.pool_status_snapshot().unwrap().context,
+        hex::encode(pool_context)
+    );
+    let cold_unchanged =
+        reopened.read_active().unwrap() == initial && reopened.stats().unwrap() == initial_stats;
+    let absent_error = |node: &Node| {
+        node.packet(wrong.id().unwrap())
+            .err()
+            .map(|e| e.to_string())
+    };
+    let wrong_absent = absent_error(&reopened);
+    // The clean, physically reopened owner starts a second ordinary service
+    // epoch solely for legal acceptance; it is not a debt/refill recovery claim.
+    let (receiver, legal) = run(reopened, &reference, 1, true, "legal-after-reopen");
+    let legal_equal =
+        receiver.read_active().unwrap() == expected && receiver.stats().unwrap() == expected_stats;
+    drop(receiver);
+    let reopened = open(&receiver_path);
+    assert_eq!(
+        reopened.pool_status_snapshot().unwrap().context,
+        hex::encode(pool_context)
+    );
+    let legal_cold_equal = reopened.read_active().unwrap() == expected
+        && reopened.stats().unwrap() == expected_stats
+        && reopened
+            .packet(reference.id().unwrap())
+            .unwrap()
+            .encode()
+            .unwrap()
+            == reference.encode().unwrap();
+    let still_absent = absent_error(&reopened);
+    drop(reopened);
+    let each_rejection_unchanged = rejected["calls"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .all(|call| call["native_stats_after"] == initial_stats);
+    let passed = [&rejected, &legal]
+        .iter()
+        .all(|r| r["stages_match"] == true && r["replies_match"] == true && r["settled"] == true)
+        && live_unchanged
+        && cold_unchanged
+        && each_rejection_unchanged
+        && wrong_absent.as_deref() == Some("UNKNOWN_PARENT")
+        && still_absent.as_deref() == Some("UNKNOWN_PARENT")
+        && legal_equal
+        && legal_cold_equal;
+    support::write_new(
+        &output.join("report.json"),
+        &json!({
+        "schema":"public-v3-valid-work-root-rejection-v1","passed":passed,
+        "pool_context":hex::encode(pool_context),
+        "scope":"three sequential identical valid-W1 false-root bodies; actual M06 refusal and native-state readback; ordinary service crash-fence metadata is outside no-admission claim",
+        "reference_packet_id":hex::encode(reference.id().unwrap()),"wrong_packet_id":hex::encode(wrong.id().unwrap()),
+        "initial_stats":initial_stats,"expected_stats":expected_stats,
+        "live_unchanged":live_unchanged,"cold_unchanged":cold_unchanged,
+        "each_rejection_unchanged":each_rejection_unchanged,"wrong_absence_error":wrong_absent,
+        "wrong_absence_after_legal_error":still_absent,"legal_equal":legal_equal,"legal_cold_equal":legal_cold_equal,
+        "rejections":rejected,"legal_after_cold_reopen":legal,
+        "depletion_qualified":false,"original_campaign_qualified":false,
+        "work_profile_qualified":false,"production_activation":false}),
+    );
+    assert!(
+        passed,
+        "valid-W1 ROOT regression failed; retained {}",
+        output.display()
+    );
+}

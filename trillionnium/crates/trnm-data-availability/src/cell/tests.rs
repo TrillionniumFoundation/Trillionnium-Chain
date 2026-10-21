@@ -526,3 +526,223 @@ fn slow_response_cannot_extend_absolute_deadline_and_honest_peer_keeps_pin() {
     assert_eq!(fs::read(output).unwrap(), bytes);
     honest.stop();
 }
+
+// These hooks exist only in this cfg(test) module. The production clock and
+// deadline are never replaced; one negative control holds the publication
+// checkpoint until the original real deadline has elapsed.
+type PublicationHook = Box<dyn FnOnce(Option<std::time::Instant>)>;
+thread_local! {
+    static FETCH_DEADLINE: std::cell::Cell<Option<std::time::Instant>> = const { std::cell::Cell::new(None) };
+    static PUBLICATION_HOOK: std::cell::RefCell<Option<PublicationHook>> = const { std::cell::RefCell::new(None) };
+}
+
+pub(super) fn observe_fetch_deadline(deadline: std::time::Instant) {
+    FETCH_DEADLINE.set(Some(deadline));
+}
+
+pub(super) fn before_materialize_publication(deadline: Option<std::time::Instant>) {
+    let hook = PUBLICATION_HOOK.with(|slot| slot.borrow_mut().take());
+    if let Some(hook) = hook {
+        hook(deadline);
+    }
+}
+
+fn with_publication_hook<T>(hook: PublicationHook, run: impl FnOnce() -> T) -> T {
+    struct Reset;
+    impl Drop for Reset {
+        fn drop(&mut self) {
+            let _ = PUBLICATION_HOOK.with(|slot| slot.borrow_mut().take());
+            FETCH_DEADLINE.set(None);
+        }
+    }
+    PUBLICATION_HOOK.with(|slot| assert!(slot.borrow_mut().replace(hook).is_none()));
+    FETCH_DEADLINE.set(None);
+    let _reset = Reset;
+    run()
+}
+
+fn assert_no_partial_files(directory: &Path) {
+    for entry in fs::read_dir(directory).unwrap() {
+        assert!(!entry
+            .unwrap()
+            .file_name()
+            .to_string_lossy()
+            .ends_with(".partial"));
+    }
+}
+
+#[test]
+fn expired_materialization_deadline_keeps_output_absent_and_legacy_api_works() {
+    let directory = tempfile::tempdir().unwrap();
+    let input = directory.path().join("input");
+    let bytes = payload();
+    fs::write(&input, &bytes).unwrap();
+    let store = CellStoreV1::open(&directory.path().join("store")).unwrap();
+    let manifest = store.pack_file(&input, context(), 16_384).unwrap();
+    let output = directory.path().join("output");
+    let expired = std::time::Instant::now() - Duration::from_secs(1);
+    assert!(matches!(
+        store.materialize_until(&manifest, &output, expired),
+        Err(CellErrorV1::Invalid("materialization deadline"))
+    ));
+    assert!(!output.exists());
+    assert_no_partial_files(directory.path());
+    store.materialize(&manifest, &output).unwrap();
+    assert_eq!(fs::read(&output).unwrap(), bytes);
+}
+
+#[test]
+fn fetch_to_file_reuses_original_deadline_after_sync_and_before_publication() {
+    use std::{cell::Cell, rc::Rc, sync::mpsc, time::Instant};
+
+    let directory = tempfile::tempdir().unwrap();
+    let input = directory.path().join("input");
+    let bytes = vec![7; 8192];
+    fs::write(&input, &bytes).unwrap();
+    let origin_path = directory.path().join("origin");
+    let origin = CellStoreV1::open(&origin_path).unwrap();
+    let manifest = origin.pack_file(&input, context(), 16_384).unwrap();
+    let publisher = Peer::start(&origin_path);
+    let receiver = CellStoreV1::open(&directory.path().join("receiver")).unwrap();
+    let output = directory.path().join("output");
+    let reached = Rc::new(Cell::new(false));
+    let observed = reached.clone();
+    let mut bounded = limits();
+    bounded.request_timeout = Duration::from_millis(500);
+    bounded.overall_timeout = Duration::from_secs(2);
+    let error = with_publication_hook(
+        Box::new(move |deadline| {
+            let original = FETCH_DEADLINE
+                .get()
+                .expect("original fetch deadline observed");
+            assert_eq!(
+                deadline,
+                Some(original),
+                "materialization refreshed deadline"
+            );
+            observed.set(true);
+            // The complete payload has actually been written and synced. A
+            // scheduler pause at this checkpoint must not permit late publication.
+            let (_hold, elapsed) = mpsc::channel::<()>();
+            while let Some(left) = original.checked_duration_since(Instant::now()) {
+                assert!(matches!(
+                    elapsed.recv_timeout(left),
+                    Err(mpsc::RecvTimeoutError::Timeout)
+                ));
+            }
+            assert!(Instant::now() > original);
+        }),
+        || {
+            fetch_cell_to_file(
+                &receiver,
+                manifest.id(),
+                &[publisher.address],
+                bounded,
+                &output,
+            )
+        },
+    )
+    .unwrap_err();
+    publisher.stop();
+    assert!(
+        reached.get(),
+        "post-sync publication checkpoint was not reached"
+    );
+    assert!(matches!(
+        error,
+        CellErrorV1::Invalid("materialization deadline")
+    ));
+    assert!(!output.exists());
+    assert_no_partial_files(directory.path());
+    receiver.verify_complete(&manifest).unwrap();
+    // An explicit new call may reuse verified chunks; it is not a hidden retry
+    // or a refreshed deadline inside the failed operation.
+    let (received, report) =
+        fetch_cell_to_file(&receiver, manifest.id(), &[], limits(), &output).unwrap();
+    assert_eq!(received, manifest);
+    assert_eq!(report.connection_attempts, 0);
+    assert_eq!(report.received_response_bytes, 0);
+    assert_eq!(fs::read(&output).unwrap(), bytes);
+}
+
+#[test]
+fn deadline_materialization_rechecks_cache_payload_and_never_overwrites() {
+    let directory = tempfile::tempdir().unwrap();
+    let input = directory.path().join("input");
+    let bytes = payload();
+    fs::write(&input, &bytes).unwrap();
+    let path = directory.path().join("store");
+    let store = CellStoreV1::open(&path).unwrap();
+    let manifest = store.pack_file(&input, context(), 16_384).unwrap();
+    let output = directory.path().join("output");
+    let deadline = std::time::Instant::now() + Duration::from_secs(30);
+    fs::write(&output, b"existing unrelated bytes").unwrap();
+    assert!(store
+        .materialize_until(&manifest, &output, deadline)
+        .is_err());
+    assert_eq!(fs::read(&output).unwrap(), b"existing unrelated bytes");
+    let absent = directory.path().join("absent");
+    let last = manifest.chunks().last().unwrap();
+    let original = store.chunk(last.sha256).unwrap().unwrap();
+    Connection::open(&path)
+        .unwrap()
+        .execute(
+            "UPDATE cell_chunks_v1 SET bytes = ?1 WHERE hash = ?2",
+            params![vec![0_u8; last.size as usize], last.sha256.as_slice()],
+        )
+        .unwrap();
+    assert!(store
+        .materialize_until(&manifest, &absent, deadline)
+        .is_err());
+    assert!(!absent.exists());
+    assert_no_partial_files(directory.path());
+    store.put_chunk(last, &original).unwrap();
+    let wrong_full_digest = CellManifestV1::new(
+        manifest.context().clone(),
+        manifest.size(),
+        [0; 32],
+        16_384,
+        manifest.chunks().to_vec(),
+    )
+    .unwrap();
+    assert!(matches!(
+        store.materialize_until(&wrong_full_digest, &absent, deadline),
+        Err(CellErrorV1::Invalid("complete payload digest"))
+    ));
+    assert!(!absent.exists());
+    assert_no_partial_files(directory.path());
+    store
+        .materialize_until(&manifest, &absent, deadline)
+        .unwrap();
+    assert_eq!(fs::read(&absent).unwrap(), bytes);
+}
+
+#[test]
+fn fetch_to_file_publishes_exact_network_bytes_without_replacing_existing_output() {
+    let directory = tempfile::tempdir().unwrap();
+    let input = directory.path().join("input");
+    let bytes = payload();
+    fs::write(&input, &bytes).unwrap();
+    let path = directory.path().join("origin");
+    let origin = CellStoreV1::open(&path).unwrap();
+    let manifest = origin.pack_file(&input, context(), 16_384).unwrap();
+    let publisher = Peer::start(&path);
+    let receiver = CellStoreV1::open(&directory.path().join("receiver")).unwrap();
+    let output = directory.path().join("output");
+    let (received, report) = fetch_cell_to_file(
+        &receiver,
+        manifest.id(),
+        &[publisher.address],
+        limits(),
+        &output,
+    )
+    .unwrap();
+    publisher.stop();
+    assert_eq!(received, manifest);
+    assert_eq!(report.downloaded_bytes, bytes.len() as u64);
+    assert_eq!(report.payload_sha256, manifest.payload_sha256());
+    assert_eq!(fs::read(&output).unwrap(), bytes);
+    assert!(fetch_cell_to_file(&receiver, manifest.id(), &[], limits(), &output).is_err());
+    assert_eq!(fs::read(&output).unwrap(), bytes);
+    assert_no_partial_files(directory.path());
+}

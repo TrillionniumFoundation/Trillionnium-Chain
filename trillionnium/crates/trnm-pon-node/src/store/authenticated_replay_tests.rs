@@ -15,7 +15,7 @@ use std::{
     time::Instant,
 };
 
-fn frame(settings: &Settings, nonce: u64, payload: &[u8]) -> AuthenticatedPeerFrameV0 {
+fn frame(settings: &Settings, frame_sequence: u64, payload: &[u8]) -> AuthenticatedPeerFrameV0 {
     let session = PeerSessionIdentityV0::new(
         IoDigest32V0::new(settings.genesis()).unwrap(),
         IoDigest32V0::new(settings.parameters()).unwrap(),
@@ -27,7 +27,7 @@ fn frame(settings: &Settings, nonce: u64, payload: &[u8]) -> AuthenticatedPeerFr
     .unwrap();
     AuthenticatedPeerFrameV0::new(
         session,
-        nonce,
+        frame_sequence,
         IoDigest32V0::new(crate::authenticated_payload_digest(payload)).unwrap(),
         payload.len(),
     )

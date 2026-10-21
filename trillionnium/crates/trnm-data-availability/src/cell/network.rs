@@ -2,6 +2,7 @@ use std::{
     collections::BTreeSet,
     io::{self, Read, Write},
     net::{SocketAddr, TcpListener, TcpStream},
+    path::Path,
     sync::{
         atomic::{AtomicBool, AtomicU64, AtomicUsize, Ordering},
         mpsc, Condvar, Mutex,
@@ -107,12 +108,38 @@ pub fn fetch_cell(
     peers: &[SocketAddr],
     limits: CellPeerLimitsV1,
 ) -> CellResultV1<(CellManifestV1, CellFetchReportV1)> {
+    fetch_cell_inner(store, pinned, peers, limits, None)
+}
+
+/// Fetch, verify and create-only publish using one original absolute deadline.
+/// Checks are cooperative: blocking filesystem calls cannot be preempted. The
+/// last deadline check precedes the no-replace hard link; directory durability
+/// and cleanup finish after publication without removing the complete output.
+pub fn fetch_cell_to_file(
+    store: &CellStoreV1,
+    pinned: CellDigestV1,
+    peers: &[SocketAddr],
+    limits: CellPeerLimitsV1,
+    output: &Path,
+) -> CellResultV1<(CellManifestV1, CellFetchReportV1)> {
+    fetch_cell_inner(store, pinned, peers, limits, Some(output))
+}
+
+fn fetch_cell_inner(
+    store: &CellStoreV1,
+    pinned: CellDigestV1,
+    peers: &[SocketAddr],
+    limits: CellPeerLimitsV1,
+    output: Option<&Path>,
+) -> CellResultV1<(CellManifestV1, CellFetchReportV1)> {
     limits.validate()?;
     require(
         peers.len() <= 8 && peers.iter().collect::<BTreeSet<_>>().len() == peers.len(),
         "configured peer count/duplicates",
     )?;
     let deadline = Instant::now() + limits.overall_timeout;
+    #[cfg(test)]
+    super::tests::observe_fetch_deadline(deadline);
     let requests_left = AtomicU64::new(limits.max_connections);
     let responses = ResponseBudget::new(limits.max_response_bytes);
     let transport = RequestContext {
@@ -227,6 +254,9 @@ pub fn fetch_cell(
     require(Instant::now() <= deadline, "fetch deadline")?;
     report.connection_attempts = limits.max_connections - requests_left.load(Ordering::Relaxed);
     report.received_response_bytes = responses.received()?;
+    if let Some(output) = output {
+        store.materialize_until(&manifest, output, deadline)?;
+    }
     Ok((manifest, report))
 }
 
