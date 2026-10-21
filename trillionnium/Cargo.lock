@@ -891,7 +891,6 @@ dependencies = [
  "borsh",
  "hex",
  "rusqlite",
- "serde",
  "serde_json",
  "sha2",
  "tempfile",
