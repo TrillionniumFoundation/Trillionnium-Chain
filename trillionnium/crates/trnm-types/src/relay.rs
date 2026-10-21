@@ -887,7 +887,11 @@ mod tests {
             let err = verifier
                 .verify(&env, 1_730_000_000_050, |e| e.verify_test_sig_compat(key))
                 .unwrap_err();
-            assert_eq!(err.stable_code(), "BadVersion", "chain_id={invalid_chain_id:?}");
+            assert_eq!(
+                err.stable_code(),
+                "BadVersion",
+                "chain_id={invalid_chain_id:?}"
+            );
         }
     }
 
