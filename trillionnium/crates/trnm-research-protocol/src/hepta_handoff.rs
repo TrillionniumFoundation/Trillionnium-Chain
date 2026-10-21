@@ -30,6 +30,8 @@ const ADMISSION_DOMAIN: &str = "trnm-hepta-artifact-admission-v1";
 pub struct HeptaArtifactAdmissionV1 {
     pub operation_id: ExternalKey,
     pub artifact_digest: Digest32,
+    /// Digest emitted by Hepta's WithdrawalBoundArtifactAdmissionV3.
+    pub owner_admission_digest: Digest32,
     pub family_digest: Digest32,
     /// Identifies the source digest algorithm/domain mapping. The adapter must
     /// not reinterpret a Hepta digest as a chain digest without this profile.
@@ -55,6 +57,7 @@ impl HeptaArtifactAdmissionV1 {
             .map_err(|_| HeptaHandoffError::InvalidAdmission("operation_id"))?;
         for (field, digest) in [
             ("artifact_digest", &self.artifact_digest),
+            ("owner_admission_digest", &self.owner_admission_digest),
             ("family_digest", &self.family_digest),
             (
                 "source_digest_profile_digest",
@@ -119,13 +122,14 @@ impl HeptaArtifactAdmissionV1 {
     }
 
     fn decode(decoder: &mut Decoder<'_>) -> Result<Self, CanonicalDecodeError> {
-        decoder.array(17)?;
+        decoder.array(18)?;
         let version = decoder.uint()?;
         if version != HEPTA_HANDOFF_VERSION as u64 {
             return Err(CanonicalDecodeError::UnsupportedVersion(version));
         }
         let operation_id = ExternalKey::from_bytes(decoder.bytes_exact()?);
         let artifact_digest = decoder.bytes_exact()?;
+        let owner_admission_digest = decoder.bytes_exact()?;
         let family_digest = decoder.bytes_exact()?;
         let source_digest_profile_digest = decoder.bytes_exact()?;
         let parent_artifact_digest = decoder.option_digest()?;
@@ -143,6 +147,7 @@ impl HeptaArtifactAdmissionV1 {
         Ok(Self {
             operation_id,
             artifact_digest,
+            owner_admission_digest,
             family_digest,
             source_digest_profile_digest,
             parent_artifact_digest,
@@ -163,10 +168,11 @@ impl HeptaArtifactAdmissionV1 {
 
 impl CanonicalCbor for HeptaArtifactAdmissionV1 {
     fn encode_canonical(&self, encoder: &mut Encoder) {
-        encoder.array(17);
+        encoder.array(18);
         encoder.uint(HEPTA_HANDOFF_VERSION as u64);
         self.operation_id.encode_canonical(encoder);
         encoder.bytes(&self.artifact_digest);
+        encoder.bytes(&self.owner_admission_digest);
         encoder.bytes(&self.family_digest);
         encoder.bytes(&self.source_digest_profile_digest);
         match self.parent_artifact_digest {

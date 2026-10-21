@@ -38,7 +38,8 @@ and actual future tasks cannot be fabricated by assembling test objects.
 The portable `trnm-research-protocol` crate now also exposes
 `HeptaArtifactAdmissionV1` and `SignedHeptaAdmissionV1`. This is a digest-only,
 canonical-CBOR handoff envelope for an already-authorized Hepta owner result. It
-binds the operation, artifact/family/parent generation, withdrawal scope and head,
+binds the operation, artifact and owner-admission digests, family/parent generation,
+withdrawal scope and head,
 registry head, source digest-profile mapping, evaluation plan, task scope, export
 permission, payload digest and length, plus an explicit validity window. The envelope
 verifies a strict Ed25519 owner signature and can be checked
