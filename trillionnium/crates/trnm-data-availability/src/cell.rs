@@ -16,7 +16,7 @@ pub use manifest::{
 pub use network::{
     fetch_cell, fetch_cell_to_file, serve_cells, CellFetchReportV1, CellPeerLimitsV1,
 };
-pub use store::CellStoreV1;
+pub use store::{CellReleaseLimitsV1, CellStoreV1};
 
 pub type CellDigestV1 = [u8; 32];
 pub type CellResultV1<T> = Result<T, CellErrorV1>;

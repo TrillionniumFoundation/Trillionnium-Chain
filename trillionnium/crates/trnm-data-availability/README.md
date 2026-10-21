@@ -20,6 +20,11 @@ present and context-compatible. It cannot infer omitted dependencies or model
 executability. All context and member digests must be nonzero; an initial release
 must name an explicit owner-defined parent/genesis digest. Unrelated cached cells
 never establish a complete release.
+Whole-release verification requires caller-supplied total payload-byte, total
+chunk-reference and absolute deadline limits. It checks every manifest and the
+aggregate limits before reading payloads, then verifies against the same deadline.
+Shared chunks count for each full-payload read. Blocking filesystem calls are
+cooperative; these limits do not reserve disk bandwidth or grant installation.
 It does not discover peers, authenticate a public network, issue storage proofs,
 change `CURRENT`, bypass withdrawal, or grant model execution. Those boundaries
 remain explicit until a later public DA qualification.

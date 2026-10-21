@@ -37,6 +37,14 @@ fn limits() -> CellPeerLimitsV1 {
     }
 }
 
+fn release_limits() -> CellReleaseLimitsV1 {
+    CellReleaseLimitsV1 {
+        max_payload_bytes: 1_048_576,
+        max_chunks: 64,
+        deadline: std::time::Instant::now() + Duration::from_secs(30),
+    }
+}
+
 struct Peer {
     address: SocketAddr,
     shutdown: Arc<AtomicBool>,
@@ -233,7 +241,9 @@ fn release_manifest_requires_complete_context_bound_closure() {
             .id(),
         release.id()
     );
-    store.verify_release_complete(&release).unwrap();
+    store
+        .verify_release_complete(&release, release_limits())
+        .unwrap();
 
     let missing = CellStoreV1::open(&directory.path().join("missing")).unwrap();
     missing.put_manifest(first.id(), &first.encode()).unwrap();
@@ -243,7 +253,7 @@ fn release_manifest_requires_complete_context_bound_closure() {
             .unwrap();
     }
     assert!(matches!(
-        missing.verify_release_complete(&release),
+        missing.verify_release_complete(&release, release_limits()),
         Err(CellErrorV1::Unavailable)
     ));
 
@@ -255,8 +265,56 @@ fn release_manifest_requires_complete_context_bound_closure() {
         .unwrap();
     let foreign_release = CellReleaseManifestV1::new(context(), vec![foreign.id()]).unwrap();
     assert!(matches!(
-        other.verify_release_complete(&foreign_release),
+        other.verify_release_complete(&foreign_release, release_limits()),
         Err(CellErrorV1::Invalid("release cell context"))
+    ));
+}
+
+#[test]
+fn release_verification_reserves_aggregate_work_before_reading_payloads() {
+    let directory = tempfile::tempdir().unwrap();
+    let input = directory.path().join("input");
+    fs::write(&input, vec![1_u8; 20_000]).unwrap();
+    let origin = CellStoreV1::open(&directory.path().join("origin")).unwrap();
+    let first = origin.pack_file(&input, context(), 16_384).unwrap();
+    fs::write(&input, vec![2_u8; 20_000]).unwrap();
+    let second = origin.pack_file(&input, context(), 16_384).unwrap();
+    let release = CellReleaseManifestV1::new(context(), vec![first.id(), second.id()]).unwrap();
+    let cache = CellStoreV1::open(&directory.path().join("cache")).unwrap();
+    for manifest in [&first, &second] {
+        cache
+            .put_manifest(manifest.id(), &manifest.encode())
+            .unwrap();
+    }
+    let mut budget = release_limits();
+    budget.max_payload_bytes = 39_999;
+    assert!(matches!(
+        cache.verify_release_complete(&release, budget),
+        Err(CellErrorV1::Invalid("release payload budget"))
+    ));
+    budget.max_payload_bytes = 40_000;
+    budget.max_chunks = 3;
+    assert!(matches!(
+        cache.verify_release_complete(&release, budget),
+        Err(CellErrorV1::Invalid("release chunk budget"))
+    ));
+    budget.max_chunks = 4;
+    assert!(matches!(
+        cache.verify_release_complete(&release, budget),
+        Err(CellErrorV1::Unavailable)
+    ));
+    for manifest in [&first, &second] {
+        for chunk in manifest.chunks() {
+            cache
+                .put_chunk(chunk, &origin.chunk(chunk.sha256).unwrap().unwrap())
+                .unwrap();
+        }
+    }
+    cache.verify_release_complete(&release, budget).unwrap();
+    budget.deadline = std::time::Instant::now() - Duration::from_millis(1);
+    assert!(matches!(
+        cache.verify_release_complete(&release, budget),
+        Err(CellErrorV1::Invalid("release verification deadline"))
     ));
 }
 

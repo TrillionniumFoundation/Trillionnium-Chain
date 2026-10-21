@@ -17,6 +17,16 @@ use super::{
 const APPLICATION_ID: i64 = 0x5443_4c31;
 static OUTPUT_SEQUENCE: AtomicU64 = AtomicU64::new(0);
 
+/// One release owner's finite verification reservation. Shared chunks count
+/// once per member reference because full payload verification reads them again.
+/// Filesystem calls are cooperative and cannot be interrupted by the deadline.
+#[derive(Clone, Copy, Debug)]
+pub struct CellReleaseLimitsV1 {
+    pub max_payload_bytes: u64,
+    pub max_chunks: u64,
+    pub deadline: Instant,
+}
+
 /// A separate, disposable byte cache; never a ledger or release authority.
 pub struct CellStoreV1 {
     connection: Connection,
@@ -180,16 +190,52 @@ impl CellStoreV1 {
     /// from the local cache. The caller must pin the release manifest and its
     /// completeness through its release owner; this cache cannot infer missing
     /// dependencies, select a release, or authorize loading it.
-    pub fn verify_release_complete(&self, release: &CellReleaseManifestV1) -> CellResultV1<()> {
+    pub fn verify_release_complete(
+        &self,
+        release: &CellReleaseManifestV1,
+        limits: CellReleaseLimitsV1,
+    ) -> CellResultV1<()> {
         release.validate()?;
+        require(limits.max_payload_bytes > 0, "release payload budget")?;
+        require(limits.max_chunks > 0, "release chunk budget")?;
+        let check_deadline = || {
+            require(
+                Instant::now() <= limits.deadline,
+                "release verification deadline",
+            )
+        };
+        check_deadline()?;
+        let mut payload_bytes = 0_u64;
+        let mut chunks = 0_u64;
+        // Inspect all pinned manifests before reading any payload. Do not retain
+        // an unbounded collection of decoded manifests or read a large first
+        // member before discovering an over-budget later member.
         for digest in release.cells() {
+            check_deadline()?;
             let manifest = self.manifest(*digest)?.ok_or(CellErrorV1::Unavailable)?;
             require(
                 manifest.context() == release.context(),
                 "release cell context",
             )?;
-            self.verify_complete(&manifest)?;
+            payload_bytes = payload_bytes
+                .checked_add(manifest.size())
+                .ok_or(CellErrorV1::Invalid("release payload budget"))?;
+            require(
+                payload_bytes <= limits.max_payload_bytes,
+                "release payload budget",
+            )?;
+            chunks = chunks
+                .checked_add(manifest.chunks().len() as u64)
+                .ok_or(CellErrorV1::Invalid("release chunk budget"))?;
+            require(chunks <= limits.max_chunks, "release chunk budget")?;
         }
+        for digest in release.cells() {
+            check_deadline()?;
+            // Content addressing binds this re-read to the preflight manifest.
+            let manifest = self.manifest(*digest)?.ok_or(CellErrorV1::Unavailable)?;
+            self.verify_complete_until(&manifest, limits.deadline)?;
+        }
+        check_deadline()?;
         Ok(())
     }
 
