@@ -354,6 +354,14 @@ reorg removes entitlement without rewinding TaskFlow receipts or local revocatio
 history. A previously Unknown effect remains Unknown until its original owner
 reconciles it; another signed intent cannot resolve the uncertainty.
 
+For no-update, unexecuted candidate publication, packet submission, download and
+installation steps are NOT_APPLICABLE with the decision reason in the versioned
+campaign record; do not fabricate or extend existing strict wire receipts.
+An already admitted or Unknown effect still requires reconciliation under its
+original identity. The unchanged parent/CURRENT and actual next-task readback
+remain mandatory. No-update does not waive the separate successful cross-node
+I09/I10 closure/loader integration cohort.
+
 First use one real compatible small pretrained Encoder with bounded learned
 Cell heads or an explicit adapter family. Reuse the shared Encoder execution,
 sparse activation, immutable feature snapshot and existing worker caller from
