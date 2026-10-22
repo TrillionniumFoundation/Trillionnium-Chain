@@ -156,6 +156,17 @@ operation or hash. The original complete checks and the cold-open replay remain;
 this change does not supply public PNP2 admission, global retention or PN2
 qualification.
 
+The same explicit admission callback also receives `ParentProof`,
+`CommitmentProof` and `FinalSuccessorProof` at the existing multiproof account,
+frontier, update, fork-hash and output boundaries. The last phase retains the
+independent successor recomputation before persistence. A private typed failure
+keeps archive/relation errors separate from the original callback error. The
+unchanged M06 string-returning commitment interface uses one local owned error
+slot to return the first original control error, including its typed source,
+without exposing the internal relation sentinel or retrying failed computation.
+No signature, hash relation, M06 public interface or persistent namespace changes.
+Single hash/lift operations and bounded partition scans remain cooperative stages.
+
 ## Existing authenticated-v1 cost boundary
 
 The separately selected growth backend does not change the original

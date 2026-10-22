@@ -3,7 +3,7 @@
 //! fully proved successor transactions cross it. It is not synthetic history.
 use super::*;
 use crate::{development_public, ErrorCode, Packet};
-use std::sync::atomic::{AtomicUsize, Ordering};
+use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
 use trnm_crypto_primitives::{sign_hex, signing_key_from_hex};
 use trnm_protocol::pon_wire::hash;
 
@@ -385,6 +385,139 @@ fn native_growth_v2_cancelled_writes_and_activation_are_atomic() {
     let node = Node::open_with_permanent_account_growth_v2(dir.path(), settings).unwrap();
     assert_eq!(node.active().unwrap().0, id);
     assert_eq!(node.next_nonce(public(0)).unwrap(), 2);
+}
+
+#[derive(Clone, Copy, Debug)]
+enum ProofTestPhase {
+    Parent,
+    Commitment,
+    FinalSuccessor,
+}
+impl ProofTestPhase {
+    fn point(self, progress: GrowthProgress) -> Option<multiproof::MultiproofProgress> {
+        match (self, progress) {
+            (Self::Parent, GrowthProgress::ParentProof(point))
+            | (Self::Commitment, GrowthProgress::CommitmentProof(point))
+            | (Self::FinalSuccessor, GrowthProgress::FinalSuccessorProof(point)) => Some(point),
+            _ => None,
+        }
+    }
+}
+#[derive(Clone, Copy, Debug)]
+enum ProofTestCut {
+    Early,
+    Hash,
+    Late,
+}
+impl ProofTestCut {
+    fn matches(self, point: multiproof::MultiproofProgress) -> bool {
+        use multiproof::MultiproofProgress as Point;
+        match self {
+            Self::Early => matches!(
+                point,
+                Point::Account { index: 0 } | Point::Update { index: 0 }
+            ),
+            Self::Hash => matches!(point, Point::Hash { .. }),
+            Self::Late => point == Point::BeforeOutput,
+        }
+    }
+}
+#[derive(Debug)]
+struct ProofControlSource(std::sync::Arc<()>);
+impl std::fmt::Display for ProofControlSource {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str("original growth proof control source")
+    }
+}
+impl std::error::Error for ProofControlSource {}
+
+fn cancel_growth_proof_at(phase: ProofTestPhase) {
+    let dir = tempfile::tempdir().unwrap();
+    let settings = settings();
+    let mut node =
+        Node::open_with_permanent_account_growth_v2(dir.path(), settings.clone()).unwrap();
+    let packet = make(
+        &node,
+        settings.genesis(),
+        vec![transfer(&settings, 0, 1, public(80), 1_000)],
+    );
+    let before = rows(&node.db);
+    let active_before = node.active().unwrap();
+    for cut in [ProofTestCut::Early, ProofTestCut::Hash, ProofTestCut::Late] {
+        for with_source in [false, true] {
+            let cut_seen = AtomicBool::new(false);
+            let identity = std::sync::Arc::new(());
+            let error = node
+                .admit_growth_with_progress(&packet, 100_000, &|point| {
+                    assert!(
+                        !cut_seen.load(Ordering::Relaxed),
+                        "progress after failed callback"
+                    );
+                    if phase.point(point).is_some_and(|point| cut.matches(point)) {
+                        cut_seen.store(true, Ordering::Relaxed);
+                        if with_source {
+                            Err(Error::from(std::io::Error::new(
+                                std::io::ErrorKind::Interrupted,
+                                ProofControlSource(identity.clone()),
+                            )))
+                        } else {
+                            Err(Error::new(ErrorCode::PublicRequestCancelled))
+                        }
+                    } else {
+                        Ok(())
+                    }
+                })
+                .unwrap_err();
+            assert!(cut_seen.load(Ordering::Relaxed), "{phase:?} {cut:?}");
+            if with_source {
+                assert_eq!(error.kind(), crate::ErrorKind::Transport);
+                let source = std::error::Error::source(&error)
+                    .unwrap()
+                    .downcast_ref::<std::io::Error>()
+                    .unwrap()
+                    .get_ref()
+                    .unwrap()
+                    .downcast_ref::<ProofControlSource>()
+                    .unwrap();
+                assert!(std::sync::Arc::ptr_eq(&identity, &source.0));
+            } else {
+                assert!(error.is(ErrorCode::PublicRequestCancelled), "{error:?}");
+                assert_eq!(error.kind(), crate::ErrorKind::Cancelled);
+            }
+            assert_eq!(node.active().unwrap(), active_before);
+            assert_eq!(rows(&node.db), before, "{phase:?} {cut:?}");
+            assert!(node.growth_packet(packet.id().unwrap()).is_err());
+        }
+    }
+    let id = admit(&mut node, &packet);
+    let active = node.active().unwrap();
+    let after = rows(&node.db);
+    drop(node);
+    let node = Node::open_with_permanent_account_growth_v2(dir.path(), settings).unwrap();
+    assert_eq!(node.active().unwrap(), active);
+    assert_eq!(
+        node.growth_account(id, public(80))
+            .unwrap()
+            .unwrap()
+            .balance,
+        1_000
+    );
+    assert_eq!(rows(&node.db), after);
+}
+
+#[test]
+fn native_growth_v2_parent_proof_cancellation_preserves_original_error() {
+    cancel_growth_proof_at(ProofTestPhase::Parent);
+}
+
+#[test]
+fn native_growth_v2_commitment_proof_cancellation_preserves_original_error() {
+    cancel_growth_proof_at(ProofTestPhase::Commitment);
+}
+
+#[test]
+fn native_growth_v2_final_successor_proof_cancellation_preserves_original_error() {
+    cancel_growth_proof_at(ProofTestPhase::FinalSuccessor);
 }
 
 fn cancel_reorg_at(cuts: &[GrowthProgress]) {

@@ -1143,6 +1143,16 @@ and permanent root retention still grow. No public PNP2 admission, global disk
 bound, source-preserving activation migration or final-source scaling acceptance
 is supplied by this increment.
 
+Its original-parent proof verification and both proof-derived successor root
+computations now propagate the same original control error through existing
+multiproof progress boundaries. M06's public interface and successful second
+successor recomputation remain unchanged; a private single-error owner bridges
+its string-only commitment result. Real signed small fixtures must reject early,
+hash-stage and final-output cancellation without publishing any child or changing
+any native table, then admit and cold-open normally with the same owner. These
+boundaries do not make a single hash operation preemptible or close the remaining
+PN2 qualification and retention items above.
+
 Exit: actual signed native transitions cross 65,536 permanent accounts with
 bounded W and working partition; small-state complete/reference differential
 execution agrees. Pass zero-balance/re-entry/nonce, wrong-parent/omitted/extra

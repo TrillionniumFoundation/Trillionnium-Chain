@@ -460,7 +460,7 @@ fn execute(
     settings: &Settings,
     parent: &Parent,
     packet: &GrowthPacket,
-    progress: &(impl Fn(pon_executor::ExecutionProgress) -> Result<()> + Sync),
+    progress: &(impl Fn(GrowthProgress) -> Result<()> + Sync),
 ) -> Result<Executed> {
     execute_observed(settings, parent, packet, None, progress)
 }
@@ -469,11 +469,21 @@ fn execute_observed(
     parent: &Parent,
     packet: &GrowthPacket,
     observer: Option<&dyn pon_executor::CanonicalTransitionObserver>,
-    progress: &(impl Fn(pon_executor::ExecutionProgress) -> Result<()> + Sync),
+    progress: &(impl Fn(GrowthProgress) -> Result<()> + Sync),
 ) -> Result<Executed> {
-    let checked =
-        CheckedMultiproof::verify(context(settings), &parent.checkpoint, &packet.accounts)
-            .map_err(archive_error)?;
+    let checked = CheckedMultiproof::verify_with_progress(
+        context(settings),
+        &parent.checkpoint,
+        &packet.accounts,
+        &|point| {
+            progress(GrowthProgress::ParentProof(point))
+                .map_err(super::NativeAccountProofFailure::Control)
+        },
+    )
+    .map_err(|error| match error {
+        super::NativeAccountProofFailure::Archive(error) => archive_error(error),
+        super::NativeAccountProofFailure::Control(error) => error,
+    })?;
     ensure(
         checked.len() <= limits::MAX_WITNESS_ACCOUNTS,
         "GROWTH_WITNESS_LIMIT",
@@ -504,6 +514,10 @@ fn execute_observed(
         parent_count: parent.verified.permanent_account_count,
         parent_balance: parent.verified.permanent_account_balance,
     };
+    // M06's existing commitment callback returns only relation strings. Keep
+    // one original control error locally and restore it before interpreting
+    // that legacy result; never retry or overwrite a failed control operation.
+    let mut commitment_control_error = None;
     let result = limits::execute_with_commitment_observed(
         &view,
         pon_executor::BlockExecution {
@@ -520,12 +534,30 @@ fn execute_observed(
             observer,
         },
         |_, next| {
-            native_growth::successor(&parent.verified, &checked, next)
-                .map(|s| s.id)
-                .map_err(|_| "GROWTH_SUCCESSOR_COMMITMENT")
+            if commitment_control_error.is_some() {
+                return Err("GROWTH_SUCCESSOR_COMMITMENT");
+            }
+            match native_growth::successor_with_progress(
+                &parent.verified,
+                &checked,
+                next,
+                &|point| progress(GrowthProgress::CommitmentProof(point)),
+            ) {
+                Ok(successor) => Ok(successor.id),
+                Err(native_growth::NativeGrowthFailure::Relation(_)) => {
+                    Err("GROWTH_SUCCESSOR_COMMITMENT")
+                }
+                Err(native_growth::NativeGrowthFailure::Control(error)) => {
+                    commitment_control_error = Some(error);
+                    Err("GROWTH_SUCCESSOR_COMMITMENT")
+                }
+            }
         },
-        progress,
+        &|point| progress(GrowthProgress::Execution(point)),
     );
+    if let Some(error) = commitment_control_error {
+        return Err(error);
+    }
     let output = match result {
         Ok(value) => value,
         Err(pon_executor::ExecutionError::Relation(error)) => return Err(error.into()),
@@ -539,8 +571,16 @@ fn execute_observed(
             == checked.len(),
         "GROWTH_UNUSED_ACCOUNT_WITNESS",
     )?;
-    let commitment = native_growth::successor(&parent.verified, &checked, &output.state)
-        .map_err(execution_error)?;
+    let commitment = native_growth::successor_with_progress(
+        &parent.verified,
+        &checked,
+        &output.state,
+        &|point| progress(GrowthProgress::FinalSuccessorProof(point)),
+    )
+    .map_err(|error| match error {
+        native_growth::NativeGrowthFailure::Relation(error) => execution_error(error),
+        native_growth::NativeGrowthFailure::Control(error) => error,
+    })?;
     let deltas = difference(&view, &output.state)?;
     let state = StoredState {
         commitment: commitment.observation().clone(),

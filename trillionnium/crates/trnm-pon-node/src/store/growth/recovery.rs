@@ -6,6 +6,12 @@ pub enum GrowthProgress {
     Execution(pon_executor::ExecutionProgress),
     BeforePersistence,
     AccountNode,
+    /// Existing original-parent multiproof verification boundaries.
+    ParentProof(multiproof::MultiproofProgress),
+    /// Proof-derived root computation inside the unchanged M06 callback.
+    CommitmentProof(multiproof::MultiproofProgress),
+    /// Independent final successor recomputation before persistence.
+    FinalSuccessorProof(multiproof::MultiproofProgress),
     /// Before each pair of ancestor reads, in the existing fork-walk order.
     ReorgAncestor {
         index: usize,
@@ -178,9 +184,7 @@ impl Node {
         self.growth_guard()?;
         let active_before = self.active()?;
         let parent = self.growth_parent(h.parent)?;
-        let mut executed = execute(&self.settings, &parent, packet, &|point| {
-            progress(GrowthProgress::Execution(point))
-        })?;
+        let mut executed = execute(&self.settings, &parent, packet, progress)?;
         ensure(
             h.state == executed.state.commitment.id
                 && h.receipts == sequence_root("receipts", &executed.receipts),
