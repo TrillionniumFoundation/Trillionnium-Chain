@@ -166,6 +166,7 @@ class RuntimePilotTests(unittest.TestCase):
 
 from test_llm_runtime_rss_owner import RssIdentityTests, RssSupervisionTests
 from test_llm_runtime_exit_observation import ExitObservationTests
+from test_llm_runtime_exit_subset_observation import TerminalSubsetTests
 
 
 if __name__=='__main__':unittest.main()

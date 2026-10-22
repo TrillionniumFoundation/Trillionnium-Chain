@@ -107,6 +107,34 @@ nor zero resource consumption. Historical failed observations retain their
 original strict-v1 outcome. The unit fixtures and live-user-thread refusal test
 qualify this boundary; they do not establish model efficacy.
 
+The separate opt-in
+`--exit-observation-profile linux-owned-exit-terminal-subset-v3` freezes
+`llm-runtime-public-pilot-plan-v3`, binding the new observer, reused V2 parser/FD
+owner and diagnostic source hashes. Strict-v1 remains the default; V2 retains
+its unchanged complete-task-set rule. Parent-step requires the exact schema and
+profile pairing and cannot infer V2 merely from an `exit_observation` member.
+
+V3 first requires the complete initial V2 double frontier. Only afterward may
+two complete stable frontiers show a strict subset of the previous task set.
+The leader must remain, counts must match, and every remaining task must retain
+its original FD identity/starttime, namespace, `PF_EXITING`, non-`PF_KTHREAD`,
+absent VmRSS, zero stat vsize/RSS and current zombie state. Additions, reappearing
+TIDs, running remaining tasks, inconsistent frontiers and unknown reads reject.
+Every failure is sticky; an initially unknown task cannot become acceptable by
+disappearing. All original task FDs, identities and reservations remain held.
+
+Missing tasks are recorded as pending retirement, without claiming that their
+memory was released or that they terminated. Only the same owned child's exact
+terminal wait4 and valid CPU/peak-RSS receipt close that pending state. The
+original 100ms deadline starts at the original missing sample, never at subset
+discovery; the original wall/RSS caps still govern. No zero-RSS sample, later
+diagnostic, cleanup-only wait or trace dictionary supplies acceptance authority.
+New same-call refusal context is diagnostic only. A valid normal exit can still
+fail if it cannot be observed within the unchanged deadline. Historical strict
+and V2 failures retain their original outcomes; source/unit checks do not prove
+a successful full model pilot, model improvement, native installation or the
+three-round Hepta loop.
+
 `sampled_peak_rss_bytes` remains the direct-child sampling result.
 `waited_child_peak_rss_bytes` separately records that exact child's Linux `wait4`
 `ru_maxrss` in KiB times 1024. A quick exit can succeed without a sample only when

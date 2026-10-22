@@ -195,6 +195,21 @@ retain component identities and the original failures.
 | PN4 | Combined local source `ebc0076c84b9a7c15b4cc4fb87ee1d3971846022` passed seven native budget tests, forty-four scalar CPU tests, three public-target tests and full workspace/all-target/all-feature strict release Clippy. The bounded read-only inventory exposes existing pending/receipted operations without dispatch or payment authority. Mature mining rewards have already been credited and their reward rows removed; a second payment cannot be funded by that historical row. Actual M06 locks/debits, meters and reconciliation remain necessary. |
 | PN5 | Three independent administrators, hosting providers and failure domains, preregistered WAN faults, repair and at least seventy-two hours of real operation are still missing. |
 
+Within PN3, the existing [runtime component](../../scripts/llm_runtime_README.md)
+adds the explicit `linux-owned-exit-terminal-subset-v3` observer and distinct
+`llm-runtime-public-pilot-plan-v3` domain. It retains the complete initial V2
+classification, all original FDs/identities and sticky refusal. Only a same-call
+stable double frontier may record a strictly smaller set of unchanged zombie
+tasks; removed tasks remain pending until the original owned-child terminal
+wait4 proves group completion. Unknown/additional/reappearing tasks, changed
+identity, running remaining tasks, malformed reads and unknown waits reject.
+The original missing-sample 100ms deadline and wall/RSS caps do not change.
+Strict-v1 remains the default and V2 behavior is retained. Schema/profile/source
+bindings, parent-step dispatch, adversarial units and the real live-user-thread
+refusal exercise this component boundary. They do not close PN3, convert prior
+failed observations, establish a completed full pilot or replace the actual
+cross-node three-round model/consumer/evaluation acceptance above.
+
 The optional scalar-credit freshness observation reads the original watermark
 and projects the original refill arithmetic without changing the clock, credit,
 owner or depletion predicate. Its added sampler contention and complete-path

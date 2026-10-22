@@ -217,26 +217,41 @@ class ParentStepTests(unittest.TestCase):
         self.assertEqual(result['outcome'], 'failed')
         self.assertIs(result['completion_verified'], False)
 
-    def test_explicit_v2_and_both_original_budgets_reach_the_same_supervisor(self):
-        plan = runtime.experiment_plan(self.manifest, exit_observation='linux-owned-exit-cleanup-v2')
-        runtime.save(self.root / 'plan.json', plan)
-        contract, raw, cid = runtime.contract_from_inventory(self.contract['backbone']['index'],
-            'explicit fixture template', self.config, self.manifest, plan)
-        self.fixture.contract_path.write_bytes(raw)
-        adapter = copy.deepcopy(self.fixture.adapter); adapter['contract'] = cid
-        raw, aid = runtime.contract_module().freeze_wrapped_adapter(adapter, contract, cid)
-        self.fixture.adapter_path.write_bytes(raw)
-        for operation, budget_name in (('train', 'training_budget'), ('readback', 'inference_budget')):
-            changed = copy.deepcopy(self.value)
-            changed.update(operation=operation, experiment=runtime.identity(plan),
-                output=str(self.root / operation / 'execution'))
-            changed['parent'].update(contract=cid, adapter=aid)
-            with self.subTest(operation=operation), patch.object(runtime, 'supervise', return_value=dict(
-                    outcome='failed', stop_reason='rss-observation-unavailable')) as supervise, \
-                    self.assertRaisesRegex(ValueError, 'PARENT_STEP_CHILD_FAILED'):
+    def test_explicit_profiles_and_both_original_budgets_reach_the_same_supervisor(self):
+        for profile in runtime.EXIT_PROFILES[1:]:
+            plan = runtime.experiment_plan(self.manifest, exit_observation=profile)
+            runtime.save(self.root / 'plan.json', plan)
+            contract, raw, cid = runtime.contract_from_inventory(self.contract['backbone']['index'],
+                'explicit fixture template', self.config, self.manifest, plan)
+            self.fixture.contract_path.write_bytes(raw)
+            adapter = copy.deepcopy(self.fixture.adapter); adapter['contract'] = cid
+            raw, aid = runtime.contract_module().freeze_wrapped_adapter(adapter, contract, cid)
+            self.fixture.adapter_path.write_bytes(raw)
+            for operation, budget_name in (('train', 'training_budget'), ('readback', 'inference_budget')):
+                changed = copy.deepcopy(self.value)
+                changed.update(operation=operation, experiment=runtime.identity(plan),
+                    output=str(self.root / (profile + '-' + operation) / 'execution'))
+                changed['parent'].update(contract=cid, adapter=aid)
+                with self.subTest(operation=operation), patch.object(runtime, 'supervise', return_value=dict(
+                        outcome='failed', stop_reason='rss-observation-unavailable')) as supervise, \
+                        self.assertRaisesRegex(ValueError, 'PARENT_STEP_CHILD_FAILED'):
+                    step.run(self.arguments(changed))
+                self.assertEqual(supervise.call_args.args[2], plan[budget_name])
+                self.assertEqual(supervise.call_args.kwargs['exit_observation'], plan['exit_observation'])
+
+    def test_parent_rejects_v2_v3_schema_profile_mix_before_output_or_dispatch(self):
+        for source_profile, wrong_schema in (
+                ('linux-owned-exit-terminal-subset-v3','llm-runtime-public-pilot-plan-v2'),
+                ('linux-owned-exit-cleanup-v2','llm-runtime-public-pilot-plan-v3')):
+            plan = runtime.experiment_plan(self.manifest, exit_observation=source_profile)
+            plan['schema'] = wrong_schema
+            runtime.save(self.root / 'plan.json', plan)
+            changed = copy.deepcopy(self.value); changed['experiment'] = runtime.identity(plan)
+            with self.subTest(profile=source_profile), \
+                    patch.object(runtime,'supervise',side_effect=AssertionError('must not dispatch')), \
+                    self.assertRaisesRegex(ValueError,'EXIT_OBSERVER_PROFILE'):
                 step.run(self.arguments(changed))
-            self.assertEqual(supervise.call_args.args[2], plan[budget_name])
-            self.assertEqual(supervise.call_args.kwargs['exit_observation'], plan['exit_observation'])
+            self.assertFalse(Path(changed['output']).parent.exists())
 
     def test_candidate_without_completed_training_and_bound_original_input_refuses(self):
         value, _, directory = self.candidate()

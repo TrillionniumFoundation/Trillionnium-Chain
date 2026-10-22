@@ -75,7 +75,7 @@ def preflight(value):
                     plan['runtime_source'] == value['source']['runtime'], 'PARENT_STEP_EXPERIMENT')
     runtime.require(plan['backend'] == 'cpu', 'PARENT_STEP_CPU_ONLY')
     manifest, config = runtime.verify_materials(value['files']['materials'])
-    profile = 'linux-owned-exit-cleanup-v2' if 'exit_observation' in plan else 'strict-v1'
+    profile = runtime.plan_exit_profile(plan)
     expected_plan = runtime.experiment_plan(manifest, backend='cpu', threads=plan['threads'],
         steps=plan['training_steps'], exit_observation=profile)
     runtime.require(plan == expected_plan, 'PARENT_STEP_EXACT_PLAN')

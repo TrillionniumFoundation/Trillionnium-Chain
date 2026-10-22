@@ -46,18 +46,51 @@ FAMILY_PATH = REPOSITORY/'config/pon/model-family-smollm2-135m-v1.json'
 _RSS_READ_TRACE = contextvars.ContextVar('llm-owned-rss-read-trace', default=None)
 _RSS_OWNER_CONTEXT = contextvars.ContextVar('llm-owned-rss-owner', default=None)
 _RSS_EXIT_OBSERVATION = contextvars.ContextVar('llm-owned-rss-exit-observation', default=None)
+_RSS_EXIT_CLASS = contextvars.ContextVar('llm-owned-rss-exit-class', default=None)
+EXIT_PROFILES = ('strict-v1', 'linux-owned-exit-cleanup-v2', 'linux-owned-exit-terminal-subset-v3')
 
 
-def exit_observation_profile():
+def exit_observation_profile(profile='linux-owned-exit-cleanup-v2'):
     from llm_runtime_exit_observation import PROFILE, MAX_DRAIN_NS
-    return dict(profile=PROFILE, maximum_drain_ns=MAX_DRAIN_NS,
+    require(profile in EXIT_PROFILES[1:], 'RUNTIME_EXIT_OBSERVER_BINDING')
+    result = dict(profile=PROFILE, maximum_drain_ns=MAX_DRAIN_NS,
                 observer_source_sha256=file_sha(REPOSITORY/'scripts/llm_runtime_exit_observation.py'),
                 diagnostic_source_sha256=file_sha(REPOSITORY/'scripts/llm_runtime_rss_diagnostics.py'))
+    if profile == EXIT_PROFILES[2]:
+        from llm_runtime_exit_subset_observation import PROFILE as SUBSET_PROFILE
+        result.update(profile=SUBSET_PROFILE,
+            base_observer_source_sha256=result['observer_source_sha256'],
+            observer_source_sha256=file_sha(REPOSITORY/'scripts/llm_runtime_exit_subset_observation.py'))
+    return result
 
 
 def validate_exit_observation_profile(profile):
-    require(type(profile) is dict and profile == exit_observation_profile(), 'RUNTIME_EXIT_OBSERVER_BINDING')
+    require(type(profile) is dict and profile.get('profile') in EXIT_PROFILES[1:] and
+            profile == exit_observation_profile(profile['profile']), 'RUNTIME_EXIT_OBSERVER_BINDING')
     return profile
+
+
+def exit_observation_class(profile):
+    validate_exit_observation_profile(profile)
+    if profile['profile'] == EXIT_PROFILES[1]:
+        from llm_runtime_exit_observation import ExitOnlyObservation
+        return ExitOnlyObservation
+    from llm_runtime_exit_subset_observation import TerminalSubsetObservation
+    return TerminalSubsetObservation
+
+
+def plan_exit_profile(plan):
+    profiles = dict(zip(('llm-runtime-public-pilot-plan-v1',
+                         'llm-runtime-public-pilot-plan-v2',
+                         'llm-runtime-public-pilot-plan-v3'), EXIT_PROFILES))
+    require(type(plan) is dict and plan.get('schema') in profiles, 'RUNTIME_EXIT_OBSERVER_PROFILE')
+    expected = profiles[plan['schema']]
+    if expected == 'strict-v1':
+        require('exit_observation' not in plan, 'RUNTIME_EXIT_OBSERVER_PROFILE')
+    else:
+        profile = validate_exit_observation_profile(plan.get('exit_observation'))
+        require(profile['profile'] == expected, 'RUNTIME_EXIT_OBSERVER_PROFILE')
+    return expected
 
 
 def canonical(value):
@@ -193,7 +226,7 @@ def experiment_plan(materials, *, backend='cpu', threads=4, steps=10, exit_obser
     require(backend in ('cpu', 'cuda', 'rocm', 'mps'), 'RUNTIME_BACKEND')
     require(type(threads) is int and 1 <= threads <= 8 and type(steps) is int and 1 <= steps <= 100,
             'RUNTIME_LIMIT')
-    require(exit_observation in ('strict-v1', 'linux-owned-exit-cleanup-v2'), 'RUNTIME_EXIT_OBSERVER_PROFILE')
+    require(exit_observation in EXIT_PROFILES, 'RUNTIME_EXIT_OBSERVER_PROFILE')
     plan = dict(schema='llm-runtime-public-pilot-plan-v1', model=MODEL, revision=REVISION,
                 model_family_profile='smollm2-135m-cpu-dev-v1',
                 model_family_configuration_sha256=file_sha(FAMILY_PATH),
@@ -212,16 +245,14 @@ def experiment_plan(materials, *, backend='cpu', threads=4, steps=10, exit_obser
                 source_scope='operator-controlled-public-fixtures-no-future-independent-custody',
                 **{name: False for name in QUALIFICATIONS})
     if exit_observation != 'strict-v1':
-        plan.update(schema='llm-runtime-public-pilot-plan-v2', exit_observation=exit_observation_profile())
+        plan.update(schema=('llm-runtime-public-pilot-plan-v2' if exit_observation == EXIT_PROFILES[1]
+                            else 'llm-runtime-public-pilot-plan-v3'),
+                    exit_observation=exit_observation_profile(exit_observation))
     return plan
 
 
 def validate_plan(plan):
-    if plan['schema'] == 'llm-runtime-public-pilot-plan-v2':
-        validate_exit_observation_profile(plan['exit_observation'])
-    else:
-        require(plan['schema'] == 'llm-runtime-public-pilot-plan-v1' and
-                'exit_observation' not in plan, 'RUNTIME_EXIT_OBSERVER_PROFILE')
+    plan_exit_profile(plan)
     require(
             plan['backend'] in ('cpu','cuda','rocm','mps') and
             type(plan['threads']) is int and 1 <= plan['threads'] <= 8 and
@@ -371,7 +402,8 @@ def current_rss(pid=None):
                     if classification_trace is not None:
                         classification_trace['attempted'] = True
                     from llm_runtime_exit_observation import ExitOnlyObservation
-                    observation = ExitOnlyObservation(pid, descriptor, owner[2], fields, missing_sample_ns)
+                    observation_type = _RSS_EXIT_CLASS.get() or ExitOnlyObservation
+                    observation = observation_type(pid, descriptor, owner[2], fields, missing_sample_ns)
                     _RSS_EXIT_OBSERVATION.set(observation)
                     if classification_trace is not None:
                         classification_trace['result'] = 'typed-observation-created'
@@ -981,6 +1013,8 @@ def _exit_recheck_refusal(error):
         'exit-owner-context', 'exit-leader-not-in-task-set', 'exit-leader', 'exit-task-set',
         'exit-task-fd-reused', 'exit-task-identity', 'exit-task-namespace',
         'exit-task-not-exit-only', 'exit-leader-state', 'exit-owner-changed', 'exit-task-starttime',
+        'exit-subset-task-set', 'exit-subset-frontier-change',
+        'exit-subset-remaining-not-zombie', 'exit-subset-sticky-failure',
     }
     code = (error.args[0] if type(error) is ExitObservationError and len(error.args) == 1 and
             type(error.args[0]) is str and error.args[0] in codes else None)
@@ -990,14 +1024,17 @@ def _exit_recheck_refusal(error):
                 diagnostic_only=True)
 
 
-def _drain_exit_cleanup(process, observation, owner_token, start, budget):
+def _drain_exit_cleanup(process, observation, owner_token, start, budget, *, exit_observation=None):
     """Retain the reservation while waiting for exact wait4, never report RSS=0."""
     from llm_runtime_exit_observation import ExitOnlyObservation, MAX_DRAIN_NS
     record = dict(outcome='failed', snapshots=[], missing_sample_ns=observation.sample_started_ns)
     deadline = min(start + budget['wall_seconds'] * 10**9,
                    observation.sample_started_ns + MAX_DRAIN_NS)
     try:
-        require(type(observation) is ExitOnlyObservation and
+        observation_type = (exit_observation_class(exit_observation)
+                            if exit_observation is not None else ExitOnlyObservation)
+        is_subset = observation_type is not ExitOnlyObservation
+        require(type(observation) is observation_type and
                 observation.belongs_to(process.pid, process.termination_fd, owner_token),
                 'RUNTIME_EXIT_OBSERVER_OWNER')
         record['snapshots'].append(observation.record)
@@ -1008,6 +1045,11 @@ def _drain_exit_cleanup(process, observation, owner_token, start, budget):
                 require(process.observation_error is None and process.waited_peak_rss_bytes is not None and
                         process.waited_cpu_ns is not None and observed_ns <= deadline,
                         'RUNTIME_EXIT_WAIT4_RECEIPT')
+                if is_subset:
+                    require(observation.belongs_to(process.pid, process.termination_fd, owner_token),
+                            'RUNTIME_EXIT_OBSERVER_OWNER')
+                    record['retirement_closed_by'] = 'exact-owned-child-terminal-wait4'
+                    record['terminal_retired_tasks'] = list(observation.pending_retired)
                 record.update(outcome='terminal-wait4', completed_ns=observed_ns)
                 return None, record
             require(state == 'live' and process.observation_error is None, 'RUNTIME_EXIT_WAIT4_UNKNOWN')
@@ -1015,6 +1057,8 @@ def _drain_exit_cleanup(process, observation, owner_token, start, budget):
                 record['snapshots'].append(observation.recheck())
             except (OSError, AttributeError, KeyError, ValueError, TypeError) as error:
                 record['recheck_refusal'] = _exit_recheck_refusal(error)
+                if is_subset and observation.failure_context is not None:
+                    record['same_call_subset_failure'] = observation.failure_context
                 raise
             if time.monotonic_ns() >= deadline:
                 break
@@ -1028,8 +1072,7 @@ def _drain_exit_cleanup(process, observation, owner_token, start, budget):
 
 def supervise(command, directory, budget, *, exit_observation=None):
     """Kill only this fresh child when its measured wall/RSS budget is exceeded."""
-    if exit_observation is not None:
-        validate_exit_observation_profile(exit_observation)
+    observation_type = exit_observation_class(exit_observation) if exit_observation is not None else None
     directory = Path(directory); directory.mkdir(mode=0o700)
     start, high, reason = time.monotonic_ns(), 0, None
     rss_gap_diagnostic = None
@@ -1064,6 +1107,7 @@ def supervise(command, directory, budget, *, exit_observation=None):
                                  if exit_observation is not None else None)
                 owner_context_token = _RSS_OWNER_CONTEXT.set(owner_context)
                 exit_context_token = _RSS_EXIT_OBSERVATION.set(None)
+                class_context_token = _RSS_EXIT_CLASS.set(observation_type)
                 try:
                     rss = current_rss(process.pid)
                     exit_sample = _RSS_EXIT_OBSERVATION.get()
@@ -1071,19 +1115,27 @@ def supervise(command, directory, budget, *, exit_observation=None):
                     _RSS_READ_TRACE.reset(trace_token)
                     _RSS_OWNER_CONTEXT.reset(owner_context_token)
                     _RSS_EXIT_OBSERVATION.reset(exit_context_token)
+                    _RSS_EXIT_CLASS.reset(class_context_token)
                 high = max(high, rss or 0)
                 try:
                     if (time.monotonic_ns()-start) / 10**9 > budget['wall_seconds']:
                         reason = 'wall-budget-exceeded'
                     elif rss is None:
                         from llm_runtime_exit_observation import ExitOnlyObservation
-                        if exit_observation is not None and type(exit_sample) is ExitOnlyObservation:
-                            # Once classified by V2, even an immediately ready
+                        if exit_observation is not None and type(exit_sample) is observation_type:
+                            # Once explicitly classified, even an immediately ready
                             # terminal receipt must obey its original 100ms cap.
                             # Owner loss is sticky inside drain, not a reason to
                             # fall back to the ordinary exact-exit race branch.
                             reason, exit_cleanup_observation = _drain_exit_cleanup(
-                                process, exit_sample, owner_token, start, budget)
+                                process, exit_sample, owner_token, start, budget,
+                                exit_observation=exit_observation)
+                        elif exit_sample is not None and (
+                                observation_type is not ExitOnlyObservation or
+                                isinstance(exit_sample, ExitOnlyObservation)):
+                            # A mismatched typed/profile result must never use
+                            # the ordinary exact-exit race as fallback authority.
+                            reason = 'rss-exit-cleanup-observation-unavailable'
                         elif process.reap() != 'terminal':
                             reason = 'rss-observation-unavailable'
                         if reason:
@@ -1252,7 +1304,7 @@ def main():
     runner.add_argument('--materials', required=True); runner.add_argument('--output', required=True)
     runner.add_argument('--backend', choices=['cpu','cuda','rocm','mps'], default='cpu')
     runner.add_argument('--threads', type=int, default=4); runner.add_argument('--steps', type=int, default=10)
-    runner.add_argument('--exit-observation-profile', choices=['strict-v1', 'linux-owned-exit-cleanup-v2'],
+    runner.add_argument('--exit-observation-profile', choices=EXIT_PROFILES,
                         default='strict-v1')
     worker = commands.add_parser('_child')
     for name in ('materials','output','plan','phase','role'): worker.add_argument('--'+name, required=True)
