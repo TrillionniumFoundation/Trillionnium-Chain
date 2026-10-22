@@ -4,7 +4,8 @@ This slice cannot settle its outer reservation, install a model or stop a unit.
 Same-administrator source/toolchain scope only; no hostile same-UID isolation.
 """
 import ctypes
-from contextlib import contextmanager
+import _thread
+import dis
 import fcntl
 import hashlib
 import os
@@ -13,9 +14,11 @@ import re
 import select
 import stat
 import subprocess
+import sys
 import tempfile
 import threading
 import time
+from types import BuiltinMethodType, MethodDescriptorType
 
 import llm_runtime_exit_observation as proc
 
@@ -40,6 +43,25 @@ class KernelOwnedCloseRequired(KernelBudgetError):
 def require(condition, code):
     if not condition:
         raise KernelBudgetError(code)
+
+
+def _native_rlock():
+    # CPython 3.14 splits native with-entry into a CALL with a pending-signal
+    # boundary. Only the reviewed 3.12.3 BEFORE_WITH path is supported here.
+    require(sys.implementation.name == 'cpython' and sys.version_info[:3] == (3, 12, 3)
+            and 'BEFORE_WITH' in dis.opmap,
+            'kernel-controlled-cpython-3123-required')
+    kind = getattr(_thread, 'RLock', None)
+    methods = ('__enter__', '__exit__', '_recursion_count')
+    require(type(kind) is type and kind.__module__ == '_thread' and kind.__name__ == 'RLock'
+        and all(type(getattr(kind, name, None)) is MethodDescriptorType
+            and getattr(kind, name).__objclass__ is kind for name in methods),
+        'kernel-native-rlock-required')
+    lock = kind()
+    require(type(lock) is kind and all(type(getattr(lock, name, None)) is BuiltinMethodType
+        for name in methods) and lock._recursion_count() == 0,
+        'kernel-native-rlock-required')
+    return lock
 
 
 def _bytes(path, maximum=4*1024**2):
@@ -69,7 +91,7 @@ class _Native:
         require(token is _TOKEN, 'kernel-native-constructor')
         self.sources, self.binary_sha256 = sources, _digest(raw)
         self._owner_pid, self._owner_thread = os.getpid(), threading.current_thread()
-        self._busy = threading.Lock()
+        self._busy = _native_rlock()
         self.operation = None  # One fixed strong slot, never an unbounded registry.
         self._fd_owner = (ctypes.c_int*4)(0, -1, -1, -1)
         self._fd_owner[1] = os.memfd_create('trnm-controlled-spawn-abi1', os.MFD_CLOEXEC | os.MFD_ALLOW_SEALING)
@@ -101,23 +123,17 @@ class _Native:
 
     def close(self):
         """Close only this sealed memfd, not dlclose an executing library."""
-        with self._exclusive():
+        with self._lock_for_owner():
+            require(self._busy._recursion_count() == 1, 'kernel-native-lifecycle-busy')
             self._close_locked()
 
-    @contextmanager
-    def _exclusive(self):
+    def _lock_for_owner(self):
         # A concrete Thread object also rejects recycled numeric thread IDs.
-        # Nonblocking acquisition refuses signal-handler reentry, not deadlock.
+        # Return the actual C lock without acquiring it. Every public caller
+        # installs native with-cleanup itself, before its first protected line.
         require(os.getpid() == self._owner_pid and threading.current_thread() is self._owner_thread,
                 'kernel-native-owner-thread')
-        acquired = False
-        try:
-            acquired = self._busy.acquire(blocking=False)
-            require(acquired, 'kernel-native-lifecycle-busy')
-            yield
-        finally:
-            if acquired:
-                self._busy.release()
+        return self._busy
 
     def _close_locked(self):
         require(self.operation is None, 'kernel-native-operation-retained')
@@ -132,6 +148,7 @@ class _Native:
 def build_controlled_native():
     """Explicit preparation, not automatic compilation or a caller-hash loader."""
     require(os.uname().sysname == 'Linux', 'kernel-linux-only')
+    _native_rlock()  # Refuse unsupported ABI before source IO/compiler/memfd.
     sources = _sources(); raw = _bytes(_C)
     require(_digest(raw) == sources[_C.name], 'kernel-source-changed')
     with tempfile.TemporaryDirectory(prefix='trnm-controlled-build-') as temporary:
@@ -156,7 +173,8 @@ class _ControlledOperation:
     def __init__(self, token, native, unit, invocation, operation, memory, owner):
         require(token is _TOKEN and type(native) is _Native and owner is not None,
                 'kernel-capability-constructor')
-        with native._exclusive():
+        with native._lock_for_owner():
+            require(native._busy._recursion_count() == 1, 'kernel-native-lifecycle-busy')
             self._initialize_locked(token, native, unit, invocation, operation, memory, owner)
 
     def _initialize_locked(self, token, native, unit, invocation, operation, memory, owner):
@@ -230,7 +248,8 @@ class _ControlledOperation:
         A consumed/unknown child or outer boundary deliberately has no close
         path. No caller receipt or boolean may grant permission to discard it.
         """
-        with self.native._exclusive():
+        with self.native._lock_for_owner():
+            require(self.native._busy._recursion_count() == 1, 'kernel-native-lifecycle-busy')
             self._close_locked(owner)
 
     def _close_locked(self, owner):
@@ -261,7 +280,8 @@ class _ControlledOperation:
         self.native.operation = None
 
     def verify(self):
-        with self.native._exclusive():
+        with self.native._lock_for_owner():
+            require(self.native._busy._recursion_count() == 1, 'kernel-native-lifecycle-busy')
             self._verify_locked()
 
     def _verify_locked(self):
@@ -292,7 +312,8 @@ class _ControlledOperation:
             raise
 
     def spawn(self, command, stdout, owner):
-        with self.native._exclusive():
+        with self.native._lock_for_owner():
+            require(self.native._busy._recursion_count() == 1, 'kernel-native-lifecycle-busy')
             self._spawn_locked(command, stdout, owner)
 
     def _spawn_locked(self, command, stdout, owner):
@@ -318,7 +339,8 @@ class _ControlledOperation:
             raise OSError(error, 'kernel-clone3-refused')
 
     def allow_exec(self, owner, deadline):
-        with self.native._exclusive():
+        with self.native._lock_for_owner():
+            require(self.native._busy._recursion_count() == 1, 'kernel-native-lifecycle-busy')
             self._allow_exec_locked(owner, deadline)
 
     def _allow_exec_locked(self, owner, deadline):
@@ -343,7 +365,8 @@ class _ControlledOperation:
             owner._close_kernel_handoff(12)
 
     def terminal_record(self, pid, pidfd):
-        with self.native._exclusive():
+        with self.native._lock_for_owner():
+            require(self.native._busy._recursion_count() == 1, 'kernel-native-lifecycle-busy')
             return self._terminal_record_locked(pid, pidfd)
 
     def _terminal_record_locked(self, pid, pidfd):

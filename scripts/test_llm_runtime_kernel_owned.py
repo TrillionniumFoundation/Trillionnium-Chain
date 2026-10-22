@@ -22,7 +22,8 @@ import llm_runtime_pilot as runtime
 import llm_runtime_kernel_owned as kernel
 
 
-@unittest.skipUnless(sys.platform == 'linux', 'Linux-only controlled native interface')
+@unittest.skipUnless(sys.platform == 'linux' and sys.implementation.name == 'cpython'
+    and sys.version_info[:3] == (3, 12, 3), 'controlled native requires CPython 3.12.3')
 class KernelOwnedTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):

@@ -184,7 +184,7 @@ from test_llm_runtime_exit_worker_observation import WorkerPidfdTests
 from test_llm_runtime_exit_worker_wait4 import WorkerWait4Tests
 from test_llm_runtime_exit_worker_frontier import WorkerFrontierTests
 from test_llm_runtime_kernel_owned import KernelOwnedTests
-from test_llm_runtime_kernel_close import KernelCloseTests
+from test_llm_runtime_kernel_close import KernelCloseTests, KernelAbiTests
 
 
 if __name__=='__main__':unittest.main()

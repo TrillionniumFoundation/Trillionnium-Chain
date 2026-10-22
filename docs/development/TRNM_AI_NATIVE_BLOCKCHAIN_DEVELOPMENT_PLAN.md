@@ -525,11 +525,18 @@ survive signals/allocation failures without closing reused FD numbers. This
 does not stop a unit, refund a grant, complete FinalUse or qualify a model.
 Independent review rejected initial close source `6e0e064b` for deterministic
 acquire/acquire and close/acquire races; retain both failures. A fixed creating
-process/Thread identity and shared nonblocking lifecycle guard now refuse
-foreign or signal-reentrant operations before IO/FD/slot mutation. Owner-thread
-lifetime is required; no recursive/blocking lock or arbitrary thread handoff is
-introduced. Constructor cleanup reuses its held guard. This closes the local
-slot race only and does not qualify the unit envelope or FinalUse.
+process/Thread identity refuses foreign operations before IO/FD/slot mutation.
+Review then rejected `445fdda6` for the native Lock.acquire-to-Python-local
+exception window; preserve that deterministic opcode fault injection. The new
+controlled helper explicitly requires CPython 3.12.3's
+[native BEFORE_WITH](https://github.com/python/cpython/blob/v3.12.3/Python/bytecodes.c#L2316)
+and exact C RLock. Public wrappers enter the native lock directly and reject
+recursion count above one inside the protected block; no generator acquisition
+wrapper or Python acquired flag remains. Unsupported ABI, including 3.14,
+refuses before source IO/compiler/memfd; ordinary default supervision is unchanged.
+Owner-thread lifetime remains required, and constructor cleanup reuses its held
+lock. These controls close only local ownership windows, not the unit envelope
+or FinalUse; prior 3.14 runs retain their old-source scope.
 
 The delegated-unit failure still blocks outer reconciliation. Upstream
 systemd255 [SERVICE_EXITED pruning](https://github.com/systemd/systemd/blob/db11bab38ccf1ed257f310d29070843d4c58ea01/src/core/service.c#L1263)

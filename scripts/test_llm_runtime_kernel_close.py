@@ -2,6 +2,7 @@
 import ctypes
 from concurrent.futures import ThreadPoolExecutor
 import errno
+import inspect
 import os
 from pathlib import Path
 import sys
@@ -12,9 +13,11 @@ import unittest
 from unittest.mock import Mock, patch
 
 import llm_runtime_kernel_owned as kernel
+import llm_runtime_pilot as runtime
 
 
-@unittest.skipUnless(sys.platform == 'linux', 'Linux native FD ownership')
+@unittest.skipUnless(sys.platform == 'linux' and sys.implementation.name == 'cpython'
+    and sys.version_info[:3] == (3, 12, 3), 'controlled native requires CPython 3.12.3')
 class KernelCloseTests(unittest.TestCase):
     def setUp(self):
         self.native = kernel.build_controlled_native()
@@ -301,6 +304,80 @@ class KernelCloseTests(unittest.TestCase):
         self.assertFalse(cap.consumed or cap.closed)
         self.assertIs(self.native.operation, cap)
         cap.close(cap.owner)
+
+    def interrupt_first_native_with_body(self, method, action):
+        lines, start = inspect.getsourcelines(method)
+        protected_line = start + next(i for i, line in enumerate(lines) if 'with ' in line) + 1
+        fired = False
+        def trace(frame, event, arg):
+            nonlocal fired
+            if frame.f_code is method.__code__ and event == 'line' and frame.f_lineno == protected_line:
+                self.assertEqual(self.native._busy._recursion_count(), 1)
+                fired = True
+                raise KeyboardInterrupt('first-protected-native-with-line')
+            return trace
+        previous = sys.gettrace(); sys.settrace(trace)
+        try:
+            with self.assertRaises(KeyboardInterrupt): action()
+        finally: sys.settrace(previous)
+        self.assertTrue(fired)
+        self.assertEqual(self.native._busy._recursion_count(), 0)
+
+    def test_native_with_interruption_releases_guard_and_normal_close_retries(self):
+        self.interrupt_first_native_with_body(kernel._Native.close, self.native.close)
+        os.fstat(self.native.fd); self.assertIsNone(self.native.operation)
+        self.native.close(); self.assertEqual(self.native.fd, -1)
+
+    def test_cap_with_interruption_keeps_original_fds_then_normal_close_retries(self):
+        cap = self.fixture()
+        self.interrupt_first_native_with_body(kernel._ControlledOperation.close, lambda: cap.close(cap.owner))
+        self.assertIs(self.native.operation, cap); self.assertFalse(cap.closed)
+        for _, fd, _, _ in cap.nodes: os.fstat(fd)
+        cap.close(cap.owner); self.native.close()
+
+    def test_constructor_with_interruption_keeps_free_slot_and_normal_close_works(self):
+        self.interrupt_first_native_with_body(kernel._ControlledOperation.__init__, self.acquisition)
+        self.assertIsNone(self.native.operation); os.fstat(self.native.fd)
+        self.native.close()
+
+
+@unittest.skipUnless(sys.platform == 'linux', 'Linux runtime control')
+class KernelAbiTests(unittest.TestCase):
+    def test_unsupported_version_refuses_before_source_compiler_or_memfd(self):
+        with patch.object(kernel.sys, 'version_info', (3, 14, 4)), \
+                patch.object(kernel, '_sources', side_effect=AssertionError('source IO')), \
+                patch.object(kernel.subprocess, 'run', side_effect=AssertionError('compiler')), \
+                patch.object(kernel.os, 'memfd_create', side_effect=AssertionError('memfd')), \
+                self.assertRaisesRegex(ValueError, 'controlled-cpython-3123-required'):
+            kernel.build_controlled_native()
+
+    @unittest.skipUnless(sys.version_info[:3] == (3, 12, 3), 'native ABI refusal control requires 3.12.3')
+    def test_python_rlock_fallback_refuses_before_controlled_preparation(self):
+        class PythonLock:
+            __module__ = '_thread'
+            def __enter__(self): return self
+            def __exit__(self, *args): pass
+            def _recursion_count(self): return 0
+        real = kernel._thread.RLock()
+        class RLock:
+            __module__ = '_thread'
+            __enter__ = real.__enter__
+            __exit__ = real.__exit__
+            _recursion_count = real._recursion_count
+        for kind in (PythonLock, RLock):
+            with self.subTest(kind=kind.__name__), patch.object(kernel._thread, 'RLock', kind), \
+                    patch.object(kernel, '_sources', side_effect=AssertionError('source IO')), \
+                    patch.object(kernel.os, 'memfd_create', side_effect=AssertionError('memfd')), \
+                    self.assertRaisesRegex(ValueError, 'native-rlock-required'):
+                kernel.build_controlled_native()
+
+    def test_default_runtime_does_not_query_controlled_abi(self):
+        with tempfile.TemporaryDirectory() as temporary, \
+                patch.object(kernel, '_native_rlock', side_effect=AssertionError('ordinary ABI dependency')):
+            result = runtime.supervise(['/bin/true'], Path(temporary)/'ordinary',
+                dict(wall_seconds=2, rss_bytes=128*1024**2))
+        self.assertEqual(result['outcome'], 'success')
+        self.assertNotIn('controlled_kernel_spawn', result)
 
 
 if __name__ == '__main__': unittest.main()

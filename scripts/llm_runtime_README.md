@@ -307,11 +307,27 @@ could close a newly retained capability's memfd. Preserve both synthetic reds.
 Native now belongs to its constructing process and concrete Python Thread
 object for its entire lifetime. Foreign-thread/process operations refuse before
 IO or slot/FD mutation; callers must keep that owner thread alive through close.
-One shared nonblocking guard covers acquisition and all public capability/Native
-lifecycle entry points. Same-thread signal reentry refuses as busy, never waits
-or reenters a recursive lock. Constructor failure cleanup uses the same already
-held guard. Private locked helpers are implementation details, not authority or
-cross-thread handoff APIs. These bounds do not establish outer reconciliation.
+Review then rejected source `445fdda6`: an exception after Lock.acquire but before
+its Python `acquired` assignment could permanently retain the busy lock. Preserve
+that opcode fault injection; it does not measure real OS-signal frequency.
+The controlled helper now requires CPython 3.12.3 and the exact C `_thread.RLock`
+with native enter/exit/recursion-count methods. Each public lifecycle wrapper
+directly enters that C lock with `with`, then requires recursion count one;
+same-thread signal reentry is refused inside its own protected native-with block.
+The owner check occurs before entry, so foreign callers never wait on the lock.
+There is no generator/contextmanager acquisition wrapper or Python acquired flag.
+Constructor failure cleanup uses the same already held lock. This uses the
+reviewed [3.12.3 BEFORE_WITH path](https://github.com/python/cpython/blob/v3.12.3/Python/bytecodes.c#L2316)
+and [native RLock implementation](https://github.com/python/cpython/blob/v3.12.3/Modules/_threadmodule.c#L356).
+Other interpreters/versions, including 3.14, refuse before controlled source IO,
+compiler invocation or memfd creation. The
+[3.14 CALL boundary](https://github.com/python/cpython/blob/v3.14.4/Python/bytecodes.c#L3534)
+does not supply this entry guarantee. Prior 3.14 test results retain their original
+source scope; new controlled tests use the actual `/usr/bin/python3.12` 3.12.3,
+not an assumed `python3` alias. Default supervision does not query this ABI.
+Private locked helpers are implementation details, not cross-thread handoff or
+outer reconciliation APIs. Arbitrary hostile tracing/monkeypatching, native
+memory corruption and repeated asynchronous interruption are not general claims.
 
 Two earlier, separately identified capability cohorts remain FAIL. The first
 clone3 returned EACCES from the outside SSH scope. The second's delegated-service
