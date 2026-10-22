@@ -89,6 +89,22 @@ present or `1` missing), a four-byte length, and that many bytes. Clients reject
 unknown status, excessive length and bad hashes before accepting content.
 Each connection handles one request.
 
+Serving remains serial by default. The explicit `serve_cells_bounded` API and
+`serve --bounded-workers 1..4 --max-served-bytes N` opt into a configured-peer
+pilot with at most four active workers and no application waiting queue. Full
+slots immediately close the accepted socket; those refusals consume the original
+connection limit. Independent read-only cache connections validate the existing
+namespace, never create a database or repair corrupt chunks, and hold no database
+lock across socket I/O. All workers share the original service deadline and actual
+application-write budget, including headers and partial failed responses; socket
+overhead and unread peer requests are outside that counter. A request reads at
+most 37 application bytes, so the aggregate input bound is 37 times the accepted
+connection limit. Shutdown stops intake and joins existing work within its
+original deadline; filesystem, SQLite and hashing remain cooperative. Reports
+expose accepted/refused connections, completed responses, peak active workers and
+actual bytes written. These local controls do not establish fair service when
+all slots are occupied, independent custody, discovery or PN5 acceptance.
+
 A client has at most eight distinct peers and four concurrent fetch workers.
 The response queue is bounded by the worker count. Each connection has an
 absolute deadline of 10 ms through 30 s, covering connect, request and response;
@@ -355,8 +371,8 @@ network assumptions, bounded parallel fetch and peer backoff. A provider
 signature alone does not prove independent administration. Keep repair/discovery
 traffic inside measured disk, CPU, bandwidth and connection quotas.
 
-The current serial server is not a public concurrent-serving contract. The P2
-M09/M14 target must freeze bounded active connections/workers, per-provider and
+The serial default and explicit bounded serving pilot do not qualify public
+fairness or discovery. The P2 M09/M14 target must freeze per-provider and
 aggregate ingress/egress, queue length, service deadlines and slow-peer admission;
 discovery and repair consume those same original reservations. A slowloris,
 provider-spam or eclipse cohort must meet the preregistered honest complete-release

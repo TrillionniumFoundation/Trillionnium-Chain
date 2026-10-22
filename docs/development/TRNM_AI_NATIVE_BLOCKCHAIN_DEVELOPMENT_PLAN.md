@@ -411,6 +411,13 @@ loading/installation nor CURRENT/FinalUse authority. Independent storage owners,
 WAN delivery, discovery, private transport and long-term replica renewal require
 their own implementations and observations.
 
+The explicit configured-peer bounded serving option now shares an actual-write
+budget across at most four read-only workers with no application waiting queue.
+Overload consumes the original connection limit; partial failed writes are
+charged, and shutdown/error paths join admitted workers. The default serial
+route is preserved. This is PN3/PN5 transport engineering, not public fairness,
+complete model loading or independent custody acceptance.
+
 The additive TCR1 whole-release route pins an owner-supplied release manifest and
 digest, checks all member manifests before payload download, and shares one
 deadline, connection count and actual response-byte budget across every cell.

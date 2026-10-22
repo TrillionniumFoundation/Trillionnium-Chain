@@ -16,6 +16,9 @@ use super::{
     CellErrorV1, CellManifestV1, CellResultV1, CellStoreV1, MAX_CELL_BYTES, MAX_CHUNK_BYTES,
 };
 
+mod serving;
+pub use serving::{serve_cells_bounded, CellServeLimitsV1, CellServeReportV1};
+
 /// Explicit finite limits for this configured-peer pilot. There is no peer
 /// discovery, authority from advertisements, or unbounded retry queue.
 #[derive(Clone, Copy, Debug)]
@@ -340,6 +343,15 @@ pub fn serve_cells(
 }
 
 fn serve_one(stream: &mut TcpStream, store: &CellStoreV1, deadline: Instant) -> CellResultV1<()> {
+    serve_one_budgeted(stream, store, deadline, None)
+}
+
+fn serve_one_budgeted(
+    stream: &mut TcpStream,
+    store: &CellStoreV1,
+    deadline: Instant,
+    responses: Option<&ResponseBudget>,
+) -> CellResultV1<()> {
     let mut query = [0; 37];
     read_deadline(stream, &mut query, deadline, None)?;
     require(&query[..4] == b"TCQ1", "request version")?;
@@ -357,9 +369,29 @@ fn serve_one(stream: &mut TcpStream, store: &CellStoreV1, deadline: Instant) -> 
     if let Some(bytes) = &bytes {
         header[5..].copy_from_slice(&(bytes.len() as u32).to_be_bytes());
     }
-    write_deadline(stream, &header, deadline)?;
+    let mut write = |mut bytes: &[u8]| -> io::Result<()> {
+        if let Some(responses) = responses {
+            while !bytes.is_empty() {
+                let reserved = responses.reserve(bytes.len(), deadline)?;
+                let result = (|| {
+                    stream.set_write_timeout(Some(remaining(deadline)?))?;
+                    stream.write(&bytes[..reserved])
+                })();
+                responses.complete(reserved, result.as_ref().copied().unwrap_or(0))?;
+                let count = result?;
+                if count == 0 {
+                    return Err(io::ErrorKind::WriteZero.into());
+                }
+                bytes = &bytes[count..];
+            }
+            Ok(())
+        } else {
+            write_deadline(stream, bytes, deadline)
+        }
+    };
+    write(&header)?;
     if let Some(bytes) = bytes {
-        write_deadline(stream, &bytes, deadline)?;
+        write(&bytes)?;
     }
     Ok(())
 }

@@ -631,6 +631,20 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-data-availability/src/cell/network/serving.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-data-availability/src/cell/network/serving.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-data-availability/src/cell/network/serving/tests.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-data-availability/src/cell/network/serving/tests.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-data-availability/src/cell/release.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),

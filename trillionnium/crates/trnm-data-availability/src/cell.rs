@@ -15,7 +15,8 @@ pub use manifest::{
     MAX_CHUNK_BYTES,
 };
 pub use network::{
-    fetch_cell, fetch_cell_to_file, serve_cells, CellFetchReportV1, CellPeerLimitsV1,
+    fetch_cell, fetch_cell_to_file, serve_cells, serve_cells_bounded, CellFetchReportV1,
+    CellPeerLimitsV1, CellServeLimitsV1, CellServeReportV1,
 };
 pub use release::{
     fetch_release_to_file, read_pinned_release, CellReleaseFetchLimitsV1, CellReleaseFetchReportV1,

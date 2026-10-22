@@ -42,6 +42,12 @@ before receiving them. Complete materialization uses
 an owner-controlled destination and no-replace publication; byte retrieval
 does not select CURRENT, execute a model or establish independent custodians.
 
+Explicit `serve_cells_bounded` adds at most four read-only workers with no
+application waiting queue. Overload counts toward the finite connection limit;
+the shared actual-write budget charges partial failed responses. Worker errors
+stop intake and all admitted threads are joined. The serial default remains;
+these controls do not qualify public fairness or independent custody.
+
 **Atomic/commit boundary:** Retention obligations separate from self-contained historical work certificates.
 
 ## M09.ArtifactIdentity

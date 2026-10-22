@@ -13,15 +13,15 @@ use std::{
 
 use trnm_data_availability::cell::{
     digest_hex, fetch_cell_to_file, fetch_release_to_file, parse_digest, read_pinned_release,
-    serve_cells, CellContextV1, CellErrorV1, CellPeerLimitsV1, CellReleaseFetchLimitsV1,
-    CellReleaseLimitsV1, CellStoreV1, MAX_CELL_BYTES,
+    serve_cells, serve_cells_bounded, CellContextV1, CellErrorV1, CellPeerLimitsV1,
+    CellReleaseFetchLimitsV1, CellReleaseLimitsV1, CellServeLimitsV1, CellStoreV1, MAX_CELL_BYTES,
 };
 
 type Result<T> = std::result::Result<T, Box<dyn Error>>;
 
 const USAGE: &str = "trnm-cell: finite configured-peer content cache (no model authority)
 pack --store DB --input FILE --family FAMILY --base HEX --parent HEX --tokenizer HEX --layout HEX --runtime HEX [--chunk-bytes 1048576]
-serve --store DB --bind IP:PORT --seconds N [--request-ms 2000] [--max-connections 8192]
+serve --store DB --bind IP:PORT --seconds N [--request-ms 2000] [--max-connections 8192] [--bounded-workers 1..4 --max-served-bytes N]
 fetch --store DB --manifest HEX --peers IP:PORT,IP:PORT --output ABSENT_FILE --max-bytes N --seconds N [--parallelism 2] [--request-ms 2000] [--max-connections 32768] [--max-response-bytes N]
   Response-byte default: 2 * max-bytes + 2097152 + 9 * max-connections; 0 is cache-only.
 verify --store DB --manifest HEX
@@ -88,7 +88,40 @@ fn serve(args: &mut Args) -> Result<()> {
     let seconds = args.take("--seconds")?.parse()?;
     let request_ms = args.optional("--request-ms", "2000").parse()?;
     let max_connections = args.optional("--max-connections", "8192").parse()?;
+    let explicit_workers = args.0.contains_key("--bounded-workers");
+    let workers = args.optional("--bounded-workers", "0").parse::<usize>()?;
+    if explicit_workers && !(1..=4).contains(&workers) {
+        return Err(CellErrorV1::Invalid("serving worker budget").into());
+    }
+    let served_bytes = if workers == 0 {
+        None
+    } else {
+        Some(args.take("--max-served-bytes")?.parse()?)
+    };
     args.finish()?;
+    if let Some(max_response_bytes) = served_bytes {
+        let listener = TcpListener::bind(bind)?;
+        println!(
+            "{{\"schema\":\"trnm.cell.listen.v1\",\"address\":\"{}\"}}",
+            listener.local_addr()?
+        );
+        std::io::stdout().flush()?;
+        let report = serve_cells_bounded(
+            &listener,
+            &store,
+            &AtomicBool::new(false),
+            CellServeLimitsV1 {
+                request_timeout: Duration::from_millis(request_ms),
+                overall_timeout: Duration::from_secs(seconds),
+                max_workers: workers,
+                max_connections,
+                max_response_bytes,
+            },
+        )?;
+        println!("{{\"schema\":\"trnm.cell.serve.bounded.v1\",\"connections\":{},\"overloaded\":{},\"completed\":{},\"peak_active_workers\":{},\"sent_response_bytes\":{}}}",
+            report.accepted_connections, report.overloaded_connections, report.completed_requests, report.peak_active_workers, report.sent_response_bytes);
+        return Ok(());
+    }
     let store = CellStoreV1::open(&store)?;
     let listener = TcpListener::bind(bind)?;
     println!(
