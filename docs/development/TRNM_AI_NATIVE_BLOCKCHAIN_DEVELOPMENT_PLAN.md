@@ -418,6 +418,23 @@ charged, and shutdown/error paths join admitted workers. The default serial
 route is preserved. This is PN3/PN5 transport engineering, not public fairness,
 complete model loading or independent custody acceptance.
 
+A2026-10-22 controlled three-host cohort transferred eight pinned public
+SmolLM2-135M-Instruct material files,271,178,816 payload bytes in266 chunks.
+The debug build failed the original120s verification deadline after all chunks
+were present; its exact failing verification stage and CPU cause remain unknown.
+A release-preparation attempt failed the binary SHA gate before network activity
+because a concurrent local test rebuild changed the distribution path. Both
+failures are retained. A fresh cold-cache attempt with the immutable release
+binary completed A-to-B fetch in36.691s and, after A stopped normally, B-to-C in
+37.966s, under the unchanged120s/512MiB payload/1GiB response budgets. Independent
+release verification took4.723s/5.391s. All eight materialized files matched their
+pins and passed the runtime material verifier. Each server completed275 requests
+and wrote271,192,859 application bytes including a nine-byte final control reply.
+This closes only the controlled public-material transport/source-loss byte
+subitem. The operators share administration; semantic release closure, I10
+installation, independent custody and PN5 remain open. The subsequent full model
+pilot failed its exit-observation gate and grants no model-loop acceptance.
+
 The additive TCR1 whole-release route pins an owner-supplied release manifest and
 digest, checks all member manifests before payload download, and shares one
 deadline, connection count and actual response-byte budget across every cell.
