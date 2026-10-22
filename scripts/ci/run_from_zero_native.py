@@ -66,6 +66,24 @@ def select_binary(lines: list[str]) -> Path:
 REPORT_LIMIT = 32 * 1024 * 1024
 
 
+def observer_cpu_scope(captured: dict) -> None:
+    """Keep historical dispatch scope distinct from the r11/r12 paid envelope.
+
+    The v3 observer scope alone does not identify a signed resource revision.
+    """
+    if captured.get('schema') == 'public-v3-local-request-resource-observation-v3':
+        require(captured.get('cpu_includes_reactor_authentication_or_response_signing') is True
+                and captured.get('cpu_includes_reactor_authentication') is False
+                and captured.get('dispatch_cpu_includes_paid_body_decode') is True
+                and captured.get('dispatch_cpu_includes_response_signing') is True,
+                'OBSERVER_PAID_ENVELOPE_SCOPE')
+    else:
+        require(captured.get('schema') in ('public-v3-local-request-resource-observation-v1',
+                                          'public-v3-local-request-resource-observation-v2')
+                and captured.get('cpu_includes_reactor_authentication_or_response_signing') is False,
+                'OBSERVER_HISTORICAL_CPU_SCOPE')
+
+
 def validate_service_report(path: Path) -> dict:
     require(path.is_file() and not path.is_symlink(), 'NATIVE_SERVICE_REPORT_REQUIRED')
     with path.open('rb') as stream:
@@ -312,8 +330,8 @@ def validate_sustained_report(path: Path) -> dict:
                 'SUSTAINED_UNJOINED_WORK')
         captured = phase.get('observations')
         flags(captured, ('cpu_intervals_are_nested_not_additive',),
-              ('counter_overflow', 'observation_has_consensus_authority',
-               'cpu_includes_reactor_authentication_or_response_signing'))
+              ('counter_overflow', 'observation_has_consensus_authority'))
+        observer_cpu_scope(captured)
         records = captured.get('records')
         require(isinstance(records, list) and len(records) <= number(captured.get('capacity')) == 16384
                 and number(captured.get('records_not_retained')) == 0
@@ -642,7 +660,8 @@ def validate_confirmation_report(path: Path) -> dict:
         captured = phase.get('observations')
         flags(captured, yes=('cpu_intervals_are_nested_not_additive',),
               no=('counter_overflow', 'observation_has_consensus_authority',
-                  'cpu_includes_reactor_authentication_or_response_signing', 'stream_bytes_are_physical_network_bytes'))
+                  'stream_bytes_are_physical_network_bytes'))
+        observer_cpu_scope(captured)
         records = captured.get('records')
         require(isinstance(records, list) and len(records) <= number(captured.get('capacity')) == 16384
                 and number(captured.get('accepted_connections_seen')) == len(records)

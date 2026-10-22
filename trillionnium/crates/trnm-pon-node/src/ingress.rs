@@ -1180,7 +1180,14 @@ fn dispatch_shared_with_execution_observation(
                                 trnm_mvcc_fee::pon_executor::ExecutionProgress::BeforeParentBinding,
                             )
                         };
-                        let existing = if public_proof_before_unowned_task {
+                        let pending_exact = owner.pending_exact_activation_replay(
+                            &packet,
+                            clock,
+                            &mut checkpoint,
+                        )?;
+                        let existing = if pending_exact.is_some() {
+                            pending_exact
+                        } else if public_proof_before_unowned_task {
                             owner.precheck_public_admission_context_with_progress(
                                 &packet,
                                 clock,
@@ -1200,7 +1207,11 @@ fn dispatch_shared_with_execution_observation(
                     })?;
                 if let Some((id, clock)) = existing {
                     return observe_submit_phase(observation, SubmitPhase::SubmitResult, || {
-                        submit_result(&mut owner, id, clock)
+                        let active =
+                            owner
+                                .activate_observed_with_progress(id, clock, &mut || progress(0))?;
+                        Ok(json!({"block":hex::encode(id),"active":hex::encode(active),
+                            "generation":owner.active()?.1,"physical_execution":false}))
                     });
                 }
                 permit
@@ -3057,6 +3068,239 @@ mod tests {
             "NETWORK"
         );
         assert_eq!(other.stats().unwrap(), before);
+    }
+
+    fn existing_replay_cancelled_after_owner_acquisition(already_active: bool) {
+        for authenticated in [false, true] {
+            let (_directory, node, packet) = pending_packet_with_backend(authenticated);
+            let id = packet.id().unwrap();
+            {
+                let mut owner = node.lock().unwrap();
+                owner.admit(&packet, now().unwrap()).unwrap();
+                if already_active {
+                    owner.activate_observed(id, now().unwrap()).unwrap();
+                }
+            }
+            let before = node.lock().unwrap().read_active().unwrap();
+            let cancelled = AtomicBool::new(false);
+            let visits = std::cell::Cell::new(0usize);
+            let outcome = dispatch_shared_with(
+                &node,
+                Request::Submit {
+                    packet: hex::encode(packet.encode().unwrap()),
+                },
+                &mut |_| {
+                    visits.set(visits.get() + 1);
+                    if visits.get() == 1 {
+                        // The original owner-acquisition observation succeeds;
+                        // the caller then cancels before existing-packet history
+                        // and activation. This is real stored packet/reorg work.
+                        cancelled.store(true, Ordering::Release);
+                        Ok(())
+                    } else {
+                        ensure(
+                            !cancelled.load(Ordering::Acquire),
+                            "PUBLIC_REQUEST_CANCELLED",
+                        )
+                    }
+                },
+                |_| panic!("an exact stored replay must not repeat full W1"),
+            );
+            assert!(
+                matches!(&outcome, Err(error) if error.is(ErrorCode::PublicRequestCancelled)
+                    && !error.requires_owner_stop()),
+                "existing replay ignored cancellation: active={already_active} authenticated={authenticated} visits={} outcome={outcome:?}",
+                visits.get(),
+            );
+            assert!(visits.get() >= 2);
+            assert_eq!(node.lock().unwrap().read_active().unwrap(), before);
+            assert_eq!(
+                node.lock().unwrap().packet(id).unwrap().encode().unwrap(),
+                packet.encode().unwrap()
+            );
+            // Cancellation creates no invalid-work verdict and cannot erase the
+            // previous admission. Ordinary exact retry still recovers activation.
+            let reply = dispatch_shared_with(
+                &node,
+                Request::Submit {
+                    packet: hex::encode(packet.encode().unwrap()),
+                },
+                &mut |_| Ok(()),
+                |_| panic!("stored recovery repeated W1"),
+            )
+            .unwrap();
+            assert_eq!(reply["block"], hex::encode(id));
+            assert_eq!(node.lock().unwrap().read_active().unwrap().0, id);
+        }
+    }
+
+    #[test]
+    fn existing_replay_cancel_stops_active_history_spam() {
+        existing_replay_cancelled_after_owner_acquisition(true);
+    }
+
+    #[test]
+    fn existing_replay_cancel_preserves_inactive_admission_for_recovery() {
+        existing_replay_cancelled_after_owner_acquisition(false);
+    }
+
+    #[test]
+    fn existing_replay_cancelled_reorg_recovers_signed_payments_once() {
+        use rusqlite::OptionalExtension;
+        use trnm_crypto_primitives::{sign_hex, signing_key_from_hex};
+        use trnm_protocol::pon_wire::Envelope;
+        fn transfer(settings: &Settings, nonce: u64, recipient: u64, amount: u64) -> Vec<u8> {
+            let mut payload = crate::development_public(recipient).unwrap().to_vec();
+            payload.extend(amount.to_le_bytes());
+            let mut tx = Envelope {
+                network: settings.network(),
+                sender: crate::development_public(0).unwrap(),
+                nonce,
+                expiry: 1000,
+                fee_limit: 1_000_000,
+                tag: 1,
+                payload,
+                signature: [0; 64],
+            };
+            let key =
+                signing_key_from_hex(&hex::encode(hash(b"DEV-ONLY-KEY", &[&0_u64.to_le_bytes()])))
+                    .unwrap();
+            tx.signature = hex::decode(sign_hex(&key, &tx.signing_digest().unwrap()))
+                .unwrap()
+                .try_into()
+                .unwrap();
+            tx.encode().unwrap()
+        }
+        for authenticated in [false, true] {
+            let directory = tempfile::tempdir().unwrap();
+            let clock = now().unwrap();
+            let settings = Settings::development(Some(clock - 1000)).unwrap();
+            let mut owner = if authenticated {
+                Node::open_with_authenticated_state(directory.path(), settings.clone(), 2).unwrap()
+            } else {
+                Node::open(directory.path(), settings.clone(), 2).unwrap()
+            };
+            let left = owner
+                .make(
+                    settings.genesis(),
+                    vec![transfer(&settings, 1, 1, 11)],
+                    crate::development_public(7).unwrap(),
+                    clock - 990,
+                    4096,
+                )
+                .unwrap();
+            let left_id = owner.admit(&left, clock).unwrap();
+            owner.activate_observed(left_id, clock).unwrap();
+            let before = owner.read_active().unwrap();
+            let right = owner
+                .make(
+                    settings.genesis(),
+                    vec![transfer(&settings, 1, 2, 7)],
+                    crate::development_public(8).unwrap(),
+                    clock - 989,
+                    4096,
+                )
+                .unwrap();
+            let right_id = owner.admit(&right, clock).unwrap();
+            let target = owner
+                .make(
+                    right_id,
+                    vec![transfer(&settings, 2, 3, 9)],
+                    crate::development_public(8).unwrap(),
+                    clock - 979,
+                    4096,
+                )
+                .unwrap();
+            let target_id = owner.admit(&target, clock).unwrap();
+            let expected = owner.state_at(target_id).unwrap();
+            let wire = hex::encode(target.encode().unwrap());
+            let node = Mutex::new(owner);
+            let observer =
+                rusqlite::Connection::open(directory.path().join("native.sqlite")).unwrap();
+            let mut stopped_at = None;
+            let error = dispatch_shared_with(
+                &node,
+                Request::Submit {
+                    packet: wire.clone(),
+                },
+                &mut |_| {
+                    // Observe only actually COMMITTED intent progress through a
+                    // separate SQLite connection. Cancel after detach and first
+                    // attach, before the remaining signed transfer is applied.
+                    let row: Option<(u64, u64)> = observer
+                        .query_row(
+                            "SELECT cursor,done FROM reorg WHERE singleton=1",
+                            [],
+                            |row| Ok((row.get(0)?, row.get(1)?)),
+                        )
+                        .optional()?;
+                    if row == Some((2, 0)) {
+                        stopped_at = row;
+                        Err(Error::new(ErrorCode::PublicRequestCancelled))
+                    } else {
+                        Ok(())
+                    }
+                },
+                |_| panic!("stored reorg recovery repeated W1"),
+            )
+            .unwrap_err();
+            assert!(error.is(ErrorCode::PublicRequestCancelled) && !error.requires_owner_stop());
+            assert_eq!(stopped_at, Some((2, 0)));
+            assert_eq!(node.lock().unwrap().active().unwrap(), (before.0, before.1));
+            assert_eq!(
+                node.lock()
+                    .unwrap()
+                    .packet(target_id)
+                    .unwrap()
+                    .encode()
+                    .unwrap(),
+                target.encode().unwrap()
+            );
+            let request = Request::Submit {
+                packet: wire.clone(),
+            };
+            let reply = dispatch_shared_with(&node, request, &mut |_| Ok(()), |_| {
+                panic!("exact pending target retry repeated W1")
+            })
+            .unwrap();
+            assert_eq!(reply["block"], hex::encode(target_id));
+            let final_state = node.lock().unwrap().read_active().unwrap();
+            assert_eq!(final_state.0, target_id);
+            assert_eq!(final_state.2, expected);
+            assert_eq!(
+                final_state.2[&format!(
+                    "account:{}",
+                    hex::encode(crate::development_public(0).unwrap())
+                )]["nonce"],
+                2
+            );
+            let event_count: u64 = observer
+                .query_row("SELECT COUNT(*) FROM events", [], |row| row.get(0))
+                .unwrap();
+            dispatch_shared_with(
+                &node,
+                Request::Submit { packet: wire },
+                &mut |_| Ok(()),
+                |_| panic!("completed exact retry repeated W1"),
+            )
+            .unwrap();
+            assert_eq!(node.lock().unwrap().read_active().unwrap(), final_state);
+            assert_eq!(
+                observer
+                    .query_row("SELECT COUNT(*) FROM events", [], |row| row
+                        .get::<_, u64>(0))
+                    .unwrap(),
+                event_count
+            );
+            drop(observer);
+            drop(node);
+            let reopened = if authenticated {
+                Node::open_with_authenticated_state(directory.path(), settings, 2).unwrap()
+            } else {
+                Node::open(directory.path(), settings, 2).unwrap()
+            };
+            assert_eq!(reopened.read_active().unwrap(), final_state);
+        }
     }
 
     #[test]

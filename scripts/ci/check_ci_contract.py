@@ -65,7 +65,19 @@ MODEL_EVOLUTION_ORACLES = ('    python3 formal/pon-nakamoto-v1/test_model_evolut
                           '    python3 formal/pon-nakamoto-v1/test_model_task_windows_oracle.py -v\n')
 COST_BOUNDARY_READERS = ('    python3 scripts/ci/test_pon_w1_budget_readers.py --raw-dir evidence/pon-upgrade-implementation-20261018/native-rounds/chain-p0-native-54\n'
                          '    python3 scripts/ci/test_pon_public_v3_phase_read.py\n'
+                         '    python3 scripts/ci/test_pon_public_v3_policy_read.py\n'
                          '    python3 scripts/ci/test_run_pon_w1_native_campaign.py\n')
+CURRENT_READER_COMMANDS = (
+    'python3 scripts/ci/test_pon_w1_cost_matrix_reader.py',
+    'python3 scripts/ci/test_pon_public_v3_policy_read.py',
+    'python3 scripts/ci/test_llm_cell_handoff_deadline.py',
+)
+LLM_RUNTIME_TESTS = (
+    '    python3 scripts/test_llm_runtime_rss_owner.py\n'
+    '    python3 scripts/test_llm_runtime_exit_observation.py\n'
+    '    python3 scripts/test_llm_inherited_runtime.py\n'
+    '    python3 scripts/test_llm_neural_read_worker.py\n'
+)
 ORIGINAL_CAMPAIGN_READER = r'''    python3 scripts/ci/test_read_original_native_campaign.py \
       --artifact-dir evidence/pon-upgrade-implementation-20261018/native-rounds/chain-pr327-original-campaign-39694587963 \
       --expected-manifest-sha256 12406cc156e57c130fa14af2b50b386031ec3640ce7f0234ed5bc9f0a700aac3 \
@@ -192,6 +204,10 @@ PROTOCOL_CONTRACT_BLOCK = '''    python3 scripts/ci/run_from_zero_native.py --ou
     python3 scripts/test_llm_runtime_pilot.py
     python3 scripts/test_llm_parent_material.py
     python3 scripts/test_llm_runtime_parent_step.py
+    python3 scripts/test_llm_runtime_rss_owner.py
+    python3 scripts/test_llm_runtime_exit_observation.py
+    python3 scripts/test_llm_inherited_runtime.py
+    python3 scripts/test_llm_neural_read_worker.py
     python3 formal/pon-nakamoto-v1/test_reward_budget_oracle.py
     python3 formal/pon-nakamoto-v1/test_model_attribution.py
     python3 formal/pon-nakamoto-v1/test_model_evolution_oracle.py -v
@@ -239,10 +255,20 @@ def check_independent_conformance(script: str, required: set[str]) -> None:
     pairs = re.findall(r'(?ms)^  ([a-z][a-z0-9-]*)\)\n(.*?)(?=^    ;;$)', script)
     lanes = dict(pairs)
     require(len(pairs) == len(lanes) and set(lanes) == required, 'exact five executable lane selectors')
-    for parent_material in ('    python3 scripts/test_llm_parent_material.py\n',
-                            '    python3 scripts/test_llm_runtime_parent_step.py\n'):
-        require(parent_material in lanes['protocol-contract'] and script.count(parent_material) == 1,
+    parent_material = '    python3 scripts/test_llm_parent_material.py\n'
+    parent_step = '    python3 scripts/test_llm_runtime_parent_step.py\n'
+    for command in (parent_material, parent_step):
+        require(command in lanes['protocol-contract'] and script.count(command) == 1,
                 'parent material and parent-step byte checks must execute exactly once in protocol-contract')
+    for command in CURRENT_READER_COMMANDS:
+        require(code_lines(lanes['repository-truth']).count(command) == 1
+                and code_lines(script).count(command) == 1,
+                'current cost, policy and cell deadline reader controls must execute exactly once in repository-truth')
+    runtime_pilot = '    python3 scripts/test_llm_runtime_pilot.py\n'
+    require(runtime_pilot + parent_material + parent_step + LLM_RUNTIME_TESTS in lanes['protocol-contract']
+            and all(code_lines(script).count(command) == 1
+                    for command in code_lines(LLM_RUNTIME_TESTS)),
+            'runtime owner, exit, inheritance and neural worker controls must retain their straight-line command sequence exactly once after pilot, parent material and parent step in protocol-contract')
     reward_budgets = '    python3 formal/pon-nakamoto-v1/test_reward_budget_oracle.py\n'
     require(reward_budgets in lanes['protocol-contract'] and script.count(reward_budgets) == 1,
             'five-lane reward budget controls must execute exactly once in protocol-contract')

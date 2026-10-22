@@ -10,6 +10,11 @@ historical database as an upgrade shortcut. Retained tests cover local behavior 
 This is a local monotonic commit/replay kernel, NOT a branch-reorganization backend.
 PoN authoritative integration requires a new branch/undo adapter and crash qualification.
 
+The separate [native owner budget adapter](../../../docs/development/specs/pon/NATIVE_BUDGET_ADAPTER_V1.md)
+adds six funded resource lanes and a local journal that is never rolled back
+with branch state. It reads existing monetary rows through the actual Node owner;
+it does not turn this portable rollup store into a native payment authority.
+
 ```bash
 cargo test --locked -p trnm-service-settlement --all-targets --all-features
 ```

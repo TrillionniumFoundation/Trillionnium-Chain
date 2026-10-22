@@ -852,8 +852,11 @@ version = "0.1.0"
 dependencies = [
  "borsh",
  "ed25519-dalek",
+ "fs2",
  "hex",
+ "libc",
  "rusqlite",
+ "rustix",
  "serde",
  "serde_json",
  "sha2",
@@ -937,9 +940,11 @@ dependencies = [
  "sha2",
  "tempfile",
  "trnm-crypto-primitives",
+ "trnm-data-availability",
  "trnm-mempool",
  "trnm-mvcc-fee",
  "trnm-protocol",
+ "trnm-service-settlement",
  "trnm-transport",
 ]
 

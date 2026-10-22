@@ -11,6 +11,7 @@ mod intake;
 use intake::{ConnectionLease, ListenerIntake};
 pub(super) mod request_observation;
 pub mod scalar_cpu;
+mod work_arithmetic;
 pub use request_observation::{
     ApplicationFrameBytes, ApplicationFramePhase, PublicRequestObservation,
     PublicRequestObservationSnapshot, PublicRequestObserver, SubmitPhase, SubmitPhaseObservation,
@@ -24,8 +25,8 @@ use scalar_cpu::{
     MUTATION_CPU_REFILL_NS_PER_SECOND, MUTATION_CPU_START_RESERVE_NS, MUTATION_CPU_WORKERS,
 };
 pub use scalar_cpu::{
-    ServiceMutationCpuCheckpoint, ServiceMutationCpuDomain, ServiceMutationCpuOperation,
-    ServiceMutationCpuSettlement,
+    ServiceCompletionWorkObservation, ServiceMutationCpuCheckpoint, ServiceMutationCpuDomain,
+    ServiceMutationCpuOperation, ServiceMutationCpuSettlement,
 };
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
@@ -48,6 +49,10 @@ use std::{
 use trnm_crypto_primitives::verify_hex_strict;
 use trnm_mvcc_fee::pon_executor::{ExecutionControl, ExecutionWorkerAccounting};
 use trnm_protocol::pon_wire::Hash;
+pub use work_arithmetic::{
+    call_public_protected_v3_with_arithmetic_facts, PublicArithmeticFactObservation,
+    PublicArithmeticWorkObservation,
+};
 
 /// Fresh signed/wire successor. V2 remains a separate unchanged byte contract.
 #[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize)]
@@ -106,6 +111,8 @@ const IO_QUANTUM: usize = 64 * 1024;
 #[derive(Default)]
 struct MutationCpuMeasurement {
     full_work_ns: Cell<Option<u64>>,
+    body_decode_ns: Cell<Option<u64>>,
+    response_ns: Cell<Option<u64>>,
     unavailable: Cell<bool>,
     workers: ScopedWorkerCpu,
     continuous_scope: RefCell<Option<crate::store::PublicContinuousScope>>,
@@ -119,6 +126,14 @@ impl MutationCpuMeasurement {
                 ..ScopedWorkerCpu::default()
             },
             ..Self::default()
+        }
+    }
+
+    fn record_phase(&self, phase: &Cell<Option<u64>>, cpu: Option<u64>) {
+        phase.set(cpu);
+        if cpu.is_none() {
+            self.unavailable.set(true);
+            self.workers.unknown();
         }
     }
 }
@@ -156,7 +171,8 @@ impl PaidMutationCpuPermit {
                 .saturating_mul(u128::from(MUTATION_CPU_REFILL_NS_PER_SECOND))
                 / 1_000_000_000;
             let retry = !budget.unavailable
-                && (budget.in_flight >= MUTATION_CPU_WORKERS || shortage > 0)
+                && (budget.completion_pending()
+                    || budget.in_flight >= MUTATION_CPU_WORKERS || shortage > 0)
                 // With no live reservation to return, an impossible refill
                 // should retain the original immediate budget refusal.
                 && (budget.in_flight > 0 || shortage as u128 <= possible_refill);
@@ -289,6 +305,7 @@ impl PaidMutationCpuPermit {
             .zip(already_charged)
             .and_then(|(total, paid)| total.checked_sub(paid));
         let live_refused = self.live.was_refused();
+        self.live.release_completion();
         let budget_settled = if let Ok(mut budget) = self.budget.lock() {
             budget.settle_observed(Instant::now(), residual, charged, already_charged)
         } else {
@@ -304,6 +321,14 @@ impl PaidMutationCpuPermit {
                 m.mutation_dispatch_excluding_work_cpu_ns = m
                     .mutation_dispatch_excluding_work_cpu_ns
                     .saturating_add(dispatch);
+                // These are nested subphases of the same outer owner sample,
+                // never additional debits or substitutes for actual CPU.
+                m.mutation_body_decode_cpu_ns = m
+                    .mutation_body_decode_cpu_ns
+                    .saturating_add(measurement.body_decode_ns.get().unwrap_or(0));
+                m.mutation_response_cpu_ns = m
+                    .mutation_response_cpu_ns
+                    .saturating_add(measurement.response_ns.get().unwrap_or(0));
             }
         }
         if let Some(scope) = measurement.continuous_scope.borrow_mut().take() {
@@ -332,6 +357,7 @@ impl Drop for PaidMutationCpuPermit {
     fn drop(&mut self) {
         if !self.settled {
             self.live.finish_thread();
+            self.live.release_completion();
             if let Ok(mut budget) = self.budget.lock() {
                 budget.settle(Instant::now(), None);
             }
@@ -361,7 +387,7 @@ impl PublicPolicy {
         }
     }
     pub fn id(self) -> Hash {
-        hash(b"public-protected-profile-v3",&[PROFILE.as_bytes(),b"resource-revision-r10/shared64-unpaid-input-idle250ms-pressure-cancel-no-slot-refund/hello-and-incomplete-solution-only/server-owed-and-paid-protected/no-deadline-renewal/connection-local-ready-fifo-challenge-and-grant-split-read-mutation/pending64-no-extra-queue-or-worker/hello-wait-original-accept2s/paid-grant-wait-original-cookie-expiry-no-renewal/spent-reserve-once/lane-and-body-together-rollback-on-full/bounded-paid-enqueue-fifo-by-connection-with-unchanged-absolute-work-and-total-deadlines/hello108/solution108/conn64/paid-raw-json-canonical8MiB-factor3/read-body-reserve131072/output-conservative32MiB/control-output-reserve524288/grants-mutation8-read8-held-until-connection-and-task-release/queueproof2-read2/workers2-read1/spent1024-no-live-eviction/packet1048576/body2097216/read512/response2101248/history1/error2KiB/hello2s/challenge2s/solution-policy/body5s/work10s/output5s/overall30s/quantum64KiB/derived-jump-v1-levels63-sql1024-local-integrity-only/challenge128-burst32-read-reserve8/await-write-half-close-cancels-request-operation-stage-fences/ops1-block-2-head-3-history-4-poolbundle-5-poolsnapshot/poolraw159..2048-members1..16-sum32768-body66048-contextpin64hex/scalarstatus16KiB-no-reconcile-cachegc4scalars-localdiagnostic/no-guest-policy-prune-reset/shared-node-miner-operatorenabled/service72h-m05-cooperative-noise-row-tile-final-m06-envelope-prepare-canonical-apply-precommit-deadline-cancel-deep-state-root-history-sqlite-nonpreemptive/no-durable-guest-rows/global-paid-mutation-thread-cpu-bucket-reserve-before-dispatch-charge-outer-plus-all-scoped-worker-thread-intervals-once-work-nested-no-double-debit/scoped-start-end-same-thread-all-started-joined-exact-counts-panic-cancel-partial-spawn/unknown-scoped-clock-disables-future-mutations/sequential-pool-preview-no-scoped-workers/read-not-charged/clock-unavailable-disables-future-mutations/native-success-preserved/two-inflight-m05-m06-boundary-cooperative-deep-stages-nonpreemptive-debt-no-caller-reset/available-plus-outstanding-start-reserves-ceiling/live-same-thread-owner-and-scoped-progress-increments/global-immediate-debit/original-full-outer-plus-children-minus-paid-residual-once/sticky-request-budget-cancel/unknown-live-clock-denies-future/deep-root-and-sql-no-preemption/native-durable-outcome-preserved/controlled-pool-full-prefix-cancel-propagation-reconcile-relation-only-blocking/precommit-only-fences",&[self.bits],&self.lifetime_ms.to_le_bytes(),&MUTATION_CPU_BURST_NS.to_le_bytes(),&MUTATION_CPU_REFILL_NS_PER_SECOND.to_le_bytes(),&MUTATION_CPU_START_RESERVE_NS.to_le_bytes(),&(MUTATION_CPU_WORKERS as u32).to_le_bytes()])
+        hash(b"public-protected-profile-v3",&[PROFILE.as_bytes(),b"resource-revision-r13/shared64-unpaid-input-idle250ms-pressure-cancel-no-slot-refund/hello-and-incomplete-solution-only/server-owed-and-paid-protected/no-deadline-renewal/connection-local-ready-fifo-challenge-and-grant-split-read-mutation/pending64-no-extra-queue-or-worker/hello-wait-original-accept2s/paid-grant-wait-original-cookie-expiry-no-renewal/spent-reserve-once/lane-and-body-together-rollback-on-full/bounded-paid-enqueue-fifo-by-connection-with-unchanged-absolute-work-and-total-deadlines/hello108/solution108/conn64/paid-raw-json-canonical8MiB-factor3/read-body-reserve131072/output-conservative32MiB/control-output-reserve524288/grants-mutation8-read8-held-until-connection-and-task-release/queueproof2-read2/workers2-read1/spent1024-no-live-eviction/packet1048576/body2097216/read512/response2101248/history1/error2KiB/hello2s/challenge2s/solution-policy/body5s/work10s/output5s/overall30s/quantum64KiB/derived-jump-v1-levels63-sql1024-local-integrity-only/challenge128-burst32-read-reserve8-exact-nanosecond-fraction-full-bucket-discards-surplus/await-write-half-close-cancels-request-operation-stage-fences/ops1-block-2-head-3-history-4-poolbundle-5-poolsnapshot/poolraw159..2048-members1..16-sum32768-body66048-contextpin64hex/scalarstatus16KiB-no-reconcile-cachegc4scalars-localdiagnostic/no-guest-policy-prune-reset/shared-node-miner-operatorenabled/service72h-m05-cooperative-noise-row-tile-final-m06-envelope-prepare-canonical-apply-precommit-deadline-cancel-deep-state-root-history-sqlite-nonpreemptive/no-durable-guest-rows/global-paid-mutation-thread-cpu-bucket-reserve-before-paid-body-digest-and-canonical-decode-through-signed-response-charge-outer-plus-all-scoped-worker-thread-intervals-once-work-body-response-nested-no-double-debit/scoped-start-end-same-thread-all-started-joined-exact-counts-panic-cancel-partial-spawn/unknown-scoped-clock-disables-future-mutations/sequential-pool-preview-no-scoped-workers/read-not-charged/clock-unavailable-disables-future-mutations/native-success-preserved/two-inflight-m05-m06-boundary-cooperative-deep-stages-nonpreemptive-debt-no-caller-reset/available-plus-outstanding-start-reserves-ceiling/live-same-thread-owner-and-scoped-progress-increments/global-immediate-debit/original-full-outer-plus-children-minus-paid-residual-once/unverified-sticky-request-budget-cancel/full-native-W1-completion-priority-within-original-shared-bucket/no-new-probe-starts-until-verified-request-settles/existing-probes-own-original-start-quantum-only/verified-owner-scoped-checkpoints-await-original-refill-original-absolute-task-deadline-stop-cancel/no-added-credit-or-worker-or-identity-preference/complete-work-key-domain-public-v3-complete-work-identity-v1-canonical-whole-packet-sha256/fixed4096-digests131072bytes-per-shared-live-cpu-owner-epoch/atomic-claim-and-promotion-paid-hash-max4096-exact-probes/monotone-no-ttl-no-eviction-unknown-cancel-failure-success-retain/listener-clones-share-epoch/process-restart-clears-keys-original-zero-credit-no-permanent-once/repeat-or-capacity-full-only-denies-extra-priority-ordinary-paid-validation-and-recovery-continue/no-general-distinct-valid-W1-fairness/existing-packet-no-promotion-cooperative-history-each-row-reorg-steps-delta-rows-precommit/exact-stored-pending-intent-target-can-resume-original-time-owner-state-checks/committed-partial-intent-retained-no-post-commit-cancel/unknown-live-clock-denies-future/deep-root-and-sql-no-preemption/native-durable-outcome-preserved/controlled-pool-full-prefix-cancel-propagation-reconcile-relation-only-blocking/precommit-only-fences",&[self.bits],&self.lifetime_ms.to_le_bytes(),&MUTATION_CPU_BURST_NS.to_le_bytes(),&MUTATION_CPU_REFILL_NS_PER_SECOND.to_le_bytes(),&MUTATION_CPU_START_RESERVE_NS.to_le_bytes(),&(MUTATION_CPU_WORKERS as u32).to_le_bytes()])
     }
 }
 #[derive(Default, Clone, Debug, Serialize)]
@@ -371,7 +397,11 @@ pub struct PublicMetrics {
     pub mutation_cpu_clock_failures: u64,
     pub mutation_cpu_charged_ns: u64,
     pub mutation_full_work_cpu_ns: u64,
+    // Includes body decoding and response construction within the owner sample.
+    // The two named subphase counters below are nested, not additional CPU.
     pub mutation_dispatch_excluding_work_cpu_ns: u64,
+    pub mutation_body_decode_cpu_ns: u64,
+    pub mutation_response_cpu_ns: u64,
     pub mutation_cpu_in_flight_after_shutdown: usize,
     pub mutation_cpu_credit_ns_after_shutdown: u64,
     pub mutation_cpu_debt_ns_after_shutdown: u64,
@@ -641,6 +671,8 @@ pub struct PublicServer {
     epoch: Hash,
     started: Instant,
     mutation_cpu: Arc<Mutex<PaidMutationCpuBudget>>,
+    arithmetic_facts:
+        Option<trnm_crypto_primitives::pon_work::arithmetic_facts::ArithmeticFactCache>,
     #[cfg(test)]
     fail_next_output: AtomicBool,
     #[cfg(test)]
@@ -662,6 +694,7 @@ impl PublicServer {
             epoch: entropy()?,
             started: Instant::now(),
             mutation_cpu: Arc::new(Mutex::new(PaidMutationCpuBudget::new())),
+            arithmetic_facts: None,
             #[cfg(test)]
             fail_next_output: AtomicBool::new(false),
             #[cfg(test)]
@@ -706,7 +739,7 @@ impl PublicServer {
         let tick = self.tick()?;
         let mut c = Cookie {
             schema: "public-resource-cookie-v3".into(),
-            profile: hex::encode(self.policy.id()),
+            profile: hex::encode(self.resource_profile()),
             network: hex::encode(s.network()),
             parameters: hex::encode(s.parameters()),
             genesis: hex::encode(s.genesis()),
@@ -738,7 +771,7 @@ impl PublicServer {
     fn validate(&self, c: &Cookie, s: &Settings, check_expiry: bool) -> Result<()> {
         ensure(
             c.schema == "public-resource-cookie-v3"
-                && c.profile == hex::encode(self.policy.id())
+                && c.profile == hex::encode(self.resource_profile())
                 && c.network == hex::encode(s.network())
                 && c.parameters == hex::encode(s.parameters())
                 && c.genesis == hex::encode(s.genesis())
@@ -841,7 +874,7 @@ fn response(
     };
     let mut r = Response {
         schema: "public-protected-response-v3".into(),
-        profile: hex::encode(server.policy.id()),
+        profile: hex::encode(server.resource_profile()),
         network: hex::encode(s.network()),
         parameters: hex::encode(s.parameters()),
         genesis: hex::encode(s.genesis()),
@@ -983,7 +1016,9 @@ struct Task {
     _lane_permit: Arc<BufferPermit>,
     id: u64,
     cookie: Cookie,
-    request: Request,
+    // Keep the already-reserved, bounded paid bytes until the worker owns the
+    // original CPU reservation. Hashing/JSON allocation do not run in reactor.
+    raw_body: Vec<u8>,
     ready_at: Instant,
     backpressure_seen: bool,
     deadline: Instant,
@@ -1297,6 +1332,45 @@ fn pending_alive(conn: &Connection, stop: &AtomicBool) -> Result<()> {
     }
     Ok(())
 }
+fn decode_task_body(
+    task: &Task,
+    server: &PublicServer,
+    settings: &Settings,
+    mutation_cpu: Option<&MutationCpuMeasurement>,
+) -> Result<Request> {
+    let stamp = mutation_cpu.and_then(|_| ThreadCpuStamp::start());
+    if let Some(cpu) = mutation_cpu {
+        if stamp.is_none() {
+            cpu.record_phase(&cpu.body_decode_ns, None);
+            return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+        }
+    }
+    let decoded = (|| {
+        ensure(
+            task.raw_body.len() == task.cookie.body_len as usize,
+            "PUBLIC_BODY_LIMIT",
+        )?;
+        ensure(
+            task.cookie.body_digest
+                == hex::encode(hash(b"public-request-body-v3", &[&task.raw_body])),
+            "PUBLIC_BODY_DIGEST",
+        )?;
+        let request = canonical_request(&task.raw_body, task.cookie.op)?;
+        server.validate(&task.cookie, settings, false)?;
+        Ok(request)
+    })();
+    if let Some(cpu) = mutation_cpu {
+        cpu.record_phase(&cpu.body_decode_ns, stamp.and_then(ThreadCpuStamp::finish));
+        ensure(!cpu.unavailable.get(), "PUBLIC_MUTATION_CPU_UNAVAILABLE")?;
+    }
+    decoded
+}
+struct PublicDispatchObservation<'a> {
+    observation: Option<&'a TaskObservation>,
+    mutation_cpu: Option<&'a MutationCpuMeasurement>,
+    arithmetic_facts:
+        Option<&'a trnm_crypto_primitives::pon_work::arithmetic_facts::ArithmeticFactCache>,
+}
 fn public_dispatch(
     node: &Mutex<Node>,
     request: Request,
@@ -1304,9 +1378,13 @@ fn public_dispatch(
     stop: &AtomicBool,
     cancelled: &AtomicBool,
     metrics: &Mutex<PublicMetrics>,
-    observation: (Option<&TaskObservation>, Option<&MutationCpuMeasurement>),
+    observation: PublicDispatchObservation<'_>,
 ) -> Result<Value> {
-    let (observation, mutation_cpu) = observation;
+    let PublicDispatchObservation {
+        observation,
+        mutation_cpu,
+        arithmetic_facts,
+    } = observation;
     let live_cpu = mutation_cpu.map(|cpu| &cpu.workers);
     let mut progress = |steps: u64| {
         task_alive(deadline, stop, cancelled)?;
@@ -1372,17 +1450,42 @@ fn public_dispatch(
                     if let Some(record) = observation {
                         record.work_started();
                     }
-                    let result = WorkCheckedPacket::verify_with_progress(packet, &mut |_| {
+                    let mut checkpoint = |_| {
                         task_alive(deadline, stop, cancelled)?;
                         if let Some(checkpoint) = &continuous_progress {
                             checkpoint.check()?;
                         }
                         live_cpu.map_or(Ok(()), ScopedWorkerCpu::checkpoint)
-                    });
+                    };
+                    let result = match arithmetic_facts {
+                        None => WorkCheckedPacket::verify_with_progress(packet, &mut checkpoint),
+                        Some(facts) => {
+                            if let Some(record) = observation {
+                                record.work_arithmetic(PublicArithmeticWorkObservation::started(
+                                    facts,
+                                ));
+                            }
+                            let mut actual = trnm_crypto_primitives::pon_work::arithmetic_facts::ArithmeticObservation::default();
+                            let result = WorkCheckedPacket::verify_with_arithmetic_facts(
+                                packet,
+                                facts,
+                                &mut checkpoint,
+                                &mut actual,
+                            );
+                            if let Some(record) = observation {
+                                record.work_arithmetic(PublicArithmeticWorkObservation::finished(
+                                    facts, actual,
+                                ));
+                            }
+                            result
+                        }
+                    };
                     let cpu = cpu.and_then(ThreadCpuStamp::finish);
                     if let Some(charge) = mutation_cpu {
                         charge.full_work_ns.set(cpu);
-                        charge.unavailable.set(cpu.is_none());
+                        charge
+                            .unavailable
+                            .set(charge.unavailable.get() || cpu.is_none());
                         if cpu.is_none() {
                             charge.workers.unknown();
                         }
@@ -1396,7 +1499,12 @@ fn public_dispatch(
                     if result.is_err() {
                         m.work_failed += 1;
                     }
-                    result
+                    drop(m);
+                    let checked = result?;
+                    if let Some(live) = live_cpu.and_then(|cpu| cpu.live.as_ref()) {
+                        live.work_verified(&checked)?;
+                    }
+                    Ok(checked)
                 },
                 &ExecutionControl::new(
                     &|_| {
@@ -1777,6 +1885,9 @@ fn serve_public_protected_v3_inner(
                                     MAX_OUTPUT_BYTES - CONTROL_OUTPUT_RESERVE
                                 },
                             );
+                            let mut accounting = None;
+                            let mut read_cpu = None;
+                            let mut dispatch_started = false;
                             let (permit, outcome) = match permit {
                                 Ok(permit) => {
                                     let cpu_permit = if mutating_operation(task.cookie.op) {
@@ -1798,13 +1909,13 @@ fn serve_public_protected_v3_inner(
                                             if let Some(record) = &task.observation {
                                                 record.dispatch_started();
                                             }
-                                            let cpu = if cpu_permit.is_none() {
-                                                task.observation
+                                            dispatch_started = true;
+                                            if cpu_permit.is_none() {
+                                                read_cpu = task
+                                                    .observation
                                                     .as_ref()
-                                                    .and_then(|_| ThreadCpuStamp::start())
-                                            } else {
-                                                None
-                                            };
+                                                    .and_then(|_| ThreadCpuStamp::start());
+                                            }
                                             let measurement = MutationCpuMeasurement::for_permit(
                                                 cpu_permit.as_ref(),
                                             );
@@ -1815,40 +1926,68 @@ fn serve_public_protected_v3_inner(
                                                     .swap(false, Ordering::AcqRel),
                                                 Ordering::Release,
                                             );
-                                            // Admission and the 50ms reactor
-                                            // watch attest only THEIR calling
-                                            // threads. Recheck this worker's own
-                                            // kernel cgroup after any CPU-credit
-                                            // wait but before native dispatch.
-                                            // A rejected check still settles the
-                                            // original paid reservation below.
-                                            let outcome = kernel_for_worker
-                                                .map_or(Ok(()), |kernel| kernel.verify())
-                                                .and_then(|()| {
-                                                    public_dispatch(
-                                                        &node,
-                                                        task.request,
-                                                        task.deadline,
-                                                        &stop,
-                                                        &task.cancelled,
-                                                        &metrics,
-                                                        (
-                                                            task.observation.as_ref(),
-                                                            cpu_permit
-                                                                .as_ref()
-                                                                .map(|_| &measurement),
-                                                        ),
-                                                    )
-                                                });
-                                            let cpu = match cpu_permit {
-                                                Some(permit) => {
-                                                    permit.finish(&measurement, server, &metrics)
+                                            // The same original CPU reservation covers
+                                            // bounded body authentication/decoding,
+                                            // native dispatch and response signing.
+                                            // Socket reads/writes and queue waits remain
+                                            // outside this worker-thread interval.
+                                            let mutation_cpu =
+                                                cpu_permit.as_ref().map(|_| &measurement);
+                                            let outcome = (|| {
+                                                if let Some(permit) = cpu_permit.as_ref() {
+                                                    permit.live.bind_public_request(
+                                                        task.deadline.min(end),
+                                                        stop.clone(),
+                                                        task.cancelled.clone(),
+                                                    )?;
                                                 }
-                                                None => cpu.and_then(ThreadCpuStamp::finish),
-                                            };
-                                            if let Some(record) = &task.observation {
-                                                record.dispatch_finished(cpu, outcome.is_ok());
-                                            }
+                                                // Recheck this worker's own kernel
+                                                // cgroup after its original FIFO wait.
+                                                kernel_for_worker
+                                                    .map_or(Ok(()), |kernel| kernel.verify())?;
+                                                task_alive(task.deadline, &stop, &task.cancelled)?;
+                                                if let Some(cpu) = mutation_cpu {
+                                                    cpu.workers.checkpoint()?;
+                                                }
+                                                let decoded = decode_task_body(
+                                                    &task,
+                                                    server,
+                                                    settings,
+                                                    mutation_cpu,
+                                                );
+                                                if decoded.is_err() {
+                                                    metrics
+                                                        .lock()
+                                                        .map_err(|_| "PUBLIC_METRICS")?
+                                                        .parse_refusals += 1;
+                                                }
+                                                let request = decoded?;
+                                                task_alive(task.deadline, &stop, &task.cancelled)?;
+                                                if let Some(cpu) = mutation_cpu {
+                                                    cpu.workers.checkpoint()?;
+                                                }
+                                                public_dispatch(
+                                                    &node,
+                                                    request,
+                                                    task.deadline,
+                                                    &stop,
+                                                    &task.cancelled,
+                                                    &metrics,
+                                                    PublicDispatchObservation {
+                                                        observation: task.observation.as_ref(),
+                                                        mutation_cpu,
+                                                        arithmetic_facts: server
+                                                            .arithmetic_facts
+                                                            .as_ref(),
+                                                    },
+                                                )
+                                            })(
+                                            );
+                                            // Releasing the bounded raw body also belongs
+                                            // to the same actual owner CPU interval.
+                                            drop(task.raw_body);
+                                            accounting =
+                                                cpu_permit.map(|permit| (permit, measurement));
                                             outcome
                                         }
                                     };
@@ -1879,23 +2018,51 @@ fn serve_public_protected_v3_inner(
                                 m.executor_refusals += 1;
                             }
                             drop(m);
-                            if task.cancelled.load(Ordering::Acquire) {
+                            let accepted = outcome.is_ok();
+                            let bytes = if task.cancelled.load(Ordering::Acquire) {
+                                None
+                            } else {
+                                // Output memory was reserved before admission. Keep
+                                // the CPU permit until this bounded signed response
+                                // has been built, including refusal/error responses.
+                                let response_cpu =
+                                    accounting.as_ref().and_then(|_| ThreadCpuStamp::start());
+                                let bytes = response(server, settings, &task.cookie, outcome);
+                                // Fault injection cannot skip the actual signing work.
+                                #[cfg(test)]
+                                let bytes = if server.fail_next_output.swap(false, Ordering::AcqRel)
+                                {
+                                    Err("TEST_OUTPUT_SERIALIZATION_FAILURE".into())
+                                } else {
+                                    bytes
+                                };
+                                if let Some((_, measurement)) = &accounting {
+                                    measurement.record_phase(
+                                        &measurement.response_ns,
+                                        response_cpu.and_then(ThreadCpuStamp::finish),
+                                    );
+                                }
+                                Some(bytes)
+                            };
+                            // Unknown accounting latches future mutation but never
+                            // rewrites a completed native outcome or signed ACK.
+                            let cpu = match accounting {
+                                Some((permit, measurement)) => {
+                                    permit.finish(&measurement, server, &metrics)
+                                }
+                                None => read_cpu.and_then(ThreadCpuStamp::finish),
+                            };
+                            if dispatch_started {
+                                if let Some(record) = &task.observation {
+                                    record.dispatch_finished(cpu, accepted);
+                                }
+                            }
+                            let Some(bytes) = bytes else {
                                 metrics
                                     .lock()
                                     .map_err(|_| "PUBLIC_METRICS")?
                                     .abandoned_tasks += 1;
                                 continue;
-                            }
-                            // Sign and serialize in the worker, after reserving output
-                            // capacity. The socket reactor only copies bounded chunks.
-                            let bytes = response(server, settings, &task.cookie, outcome);
-                            // Negative fault injection is compiled only for unit tests;
-                            // native dispatch and signing still execute first.
-                            #[cfg(test)]
-                            let bytes = if server.fail_next_output.swap(false, Ordering::AcqRel) {
-                                Err("TEST_OUTPUT_SERIALIZATION_FAILURE".into())
-                            } else {
-                                bytes
                             };
                             if finished
                                 .send(Finished {
@@ -2337,13 +2504,9 @@ fn serve_public_protected_v3_inner(
                                 if !complete {
                                     return Ok(Stage::Body { cookie, bytes });
                                 }
-                                ensure(
-                                    cookie.body_digest
-                                        == hex::encode(hash(b"public-request-body-v3", &[&bytes])),
-                                    "PUBLIC_BODY_DIGEST",
-                                )?;
-                                let request = canonical_request(&bytes, cookie.op)?;
-                                server.validate(&cookie, &settings, false)?;
+                                // Only bounded socket copying occurs here. A paid
+                                // mutation must own its original CPU reservation
+                                // before hashing or decoding these untrusted bytes.
                                 let ready_at = Instant::now();
                                 let task = Task {
                                     observation: conn
@@ -2358,7 +2521,7 @@ fn serve_public_protected_v3_inner(
                                         .clone(),
                                     id: conn.id,
                                     cookie,
-                                    request,
+                                    raw_body: bytes,
                                     ready_at,
                                     backpressure_seen: false,
                                     deadline: conn
@@ -2679,6 +2842,27 @@ pub fn call_public_protected_v3_with_deadline(
     policy: PublicPolicy,
     outer_deadline: Option<Instant>,
 ) -> (Result<PublicReply>, PublicClientMetrics) {
+    call_public_protected_v3_with_profile(
+        address,
+        request,
+        settings,
+        pinned_server,
+        caller,
+        (policy, false),
+        outer_deadline,
+    )
+}
+
+fn call_public_protected_v3_with_profile(
+    address: SocketAddr,
+    request: &Request,
+    settings: &Settings,
+    pinned_server: &str,
+    caller: &DevelopmentIdentity,
+    policy_and_arithmetic: (PublicPolicy, bool),
+    outer_deadline: Option<Instant>,
+) -> (Result<PublicReply>, PublicClientMetrics) {
+    let (policy, arithmetic_facts) = policy_and_arithmetic;
     let call_start = Instant::now();
     let mut phase_start = call_start;
     let mut phase = PublicClientStage::Construction;
@@ -2736,7 +2920,11 @@ pub fn call_public_protected_v3_with_deadline(
             settings,
             pinned_server,
             policy,
-            policy.id(),
+            if arithmetic_facts {
+                policy.arithmetic_facts_id()
+            } else {
+                policy.id()
+            },
         )?;
         metrics.challenge_ns = elapsed_ns(phase_start);
         phase = PublicClientStage::SolutionSearch;
@@ -2804,7 +2992,12 @@ pub fn call_public_protected_v3_with_deadline(
         ensure(
             serde_json::to_vec(&r)? == bytes
                 && r.schema == "public-protected-response-v3"
-                && r.profile == hex::encode(policy.id())
+                && r.profile
+                    == hex::encode(if arithmetic_facts {
+                        policy.arithmetic_facts_id()
+                    } else {
+                        policy.id()
+                    })
                 && r.network == hex::encode(settings.network())
                 && r.parameters == hex::encode(settings.parameters())
                 && r.genesis == hex::encode(settings.genesis())
@@ -3955,7 +4148,7 @@ mod tests {
             ),
             id,
             cookie: cookie.clone(),
-            request: Request::Head,
+            raw_body: serde_json::to_vec(&Request::Head).unwrap(),
             ready_at,
             backpressure_seen: false,
             deadline,
@@ -3992,6 +4185,88 @@ mod tests {
         assert_eq!(metrics.lock().unwrap().queue_backpressure_events, 4);
         assert_eq!(metrics.lock().unwrap().queue_refusals, 0);
     }
+    #[test]
+    fn paid_envelope_resource_profile_has_fresh_exact_signed_commitment() {
+        // Fixed independent SHA-256/length-framing vector for development
+        // bits=16 and lifetime=2000 ms; the policy numbers themselves did not change.
+        assert_eq!(
+            hex::encode(PublicPolicy::development().id()),
+            "0b32dc1c5cb3cd32f127792c2437a7e06afdee24dfd145e6c147ae9effc93973"
+        );
+        assert_ne!(
+            hex::encode(PublicPolicy::development().id()),
+            "fbd012278826496785fbd166d2d920ffa70a3491e52ddf2c9211d782357f9c35"
+        );
+    }
+
+    #[test]
+    fn paid_envelope_malformed_body_is_accounted_before_signed_refusal() {
+        let directory = tempfile::tempdir().unwrap();
+        let settings = Settings::development(Some(super::super::now().unwrap() - 100)).unwrap();
+        let owner = shared(Node::open(directory.path(), settings, 1).unwrap());
+        let original = owner.lock().unwrap().read_active().unwrap();
+        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+        let address = listener.local_addr().unwrap();
+        let stop = Arc::new(AtomicBool::new(false));
+        let signal = stop.clone();
+        let metrics = Arc::new(Mutex::new(PublicMetrics::default()));
+        let live = metrics.clone();
+        let receiver = owner.clone();
+        let policy = PublicPolicy::new(8, Duration::from_secs(2)).unwrap();
+        let worker = thread::spawn(move || {
+            serve_public_protected_v3_with_metrics(
+                listener,
+                receiver,
+                Duration::from_secs(8),
+                signal,
+                PublicServer::new(identity(71), policy).unwrap(),
+                live,
+            )
+            .unwrap()
+        });
+        // A full, paid, correctly hashed body with noncanonical uppercase hex
+        // must be charged even though it never reaches packet/W1 verification.
+        let raw = br#"{"op":"submit","packet":"Aa"}"#;
+        let mut h = hello(1, raw.len());
+        h.digest = hash(b"public-request-body-v3", &[raw]);
+        let mut socket = paid_grant(address, h, &identity(72), policy).unwrap();
+        client_write(&mut socket, raw, Instant::now() + Duration::from_secs(2)).unwrap();
+        let reply = client_frame(
+            &mut socket,
+            MAX_RESPONSE,
+            Instant::now() + Duration::from_secs(2),
+        );
+        stop.store(true, Ordering::Release);
+        let observed = worker.join().unwrap();
+        assert_eq!(owner.lock().unwrap().read_active().unwrap(), original);
+        assert_eq!(observed.work_started, 0);
+        assert_eq!(
+            observed.mutation_cpu_reservations, 1,
+            "paid canonical-body rejection must consume the original CPU reservation"
+        );
+        assert!(observed.mutation_cpu_charged_ns > 0);
+        assert!(observed.mutation_body_decode_cpu_ns > 0);
+        assert!(observed.mutation_response_cpu_ns > 0);
+        assert!(
+            observed.mutation_cpu_charged_ns
+                >= observed.mutation_body_decode_cpu_ns + observed.mutation_response_cpu_ns
+        );
+        assert_eq!(observed.parse_refusals, 1);
+        assert_eq!(observed.mutation_cpu_clock_failures, 0);
+        assert_eq!(observed.mutation_cpu_in_flight_after_shutdown, 0);
+        assert_eq!(observed.paid_body_reserved_bytes_after_shutdown, 0);
+        assert_eq!(observed.output_reserved_bytes_after_shutdown, 0);
+        let response: Response =
+            serde_json::from_slice(&reply.expect("signed paid-body refusal")).unwrap();
+        assert!(!response.ok);
+        verify_hex_strict(
+            identity(71).public_key(),
+            &response.message().unwrap(),
+            &response.signature,
+        )
+        .unwrap();
+    }
+
     #[test]
     fn paid_wrong_product_is_fully_rejected_and_the_preserved_valid_packet_is_activated() {
         let directory = tempfile::tempdir().unwrap();
@@ -4107,7 +4382,11 @@ mod tests {
                 &AtomicBool::new(stop_value),
                 &AtomicBool::new(cancelled_value),
                 &metrics,
-                (None, None),
+                PublicDispatchObservation {
+                    observation: None,
+                    mutation_cpu: None,
+                    arithmetic_facts: None,
+                },
             )
             .unwrap_err();
             assert_eq!(error.to_string(), expected);
@@ -5180,7 +5459,7 @@ mod tests {
         assert!(m.mutation_cpu_unavailable_after_shutdown);
     }
     #[test]
-    fn resource_revision_r10_rejects_signed_old_cookies_and_preserves_control_output_reserve() {
+    fn resource_revision_r13_rejects_signed_old_cookies_and_preserves_control_output_reserve() {
         let s = Settings::development(Some(1)).unwrap();
         let server = server();
         assert_eq!(
@@ -5188,18 +5467,86 @@ mod tests {
             PublicPolicy::new(8, Duration::from_secs(2)).unwrap()
         );
         assert_eq!((server.policy.bits, server.policy.lifetime_ms), (8, 2000));
-        assert_eq!(
-            hex::encode(server.policy.id()),
-            "099c63fdd9a5feedd83dea1e681bcf35fa4ce219338df81a46c621ee5f5c028a"
-        );
-        assert_eq!(
-            hex::encode(PublicPolicy::development().id()),
-            "fbd012278826496785fbd166d2d920ffa70a3491e52ddf2c9211d782357f9c35"
-        );
-        assert_eq!(
-            hex::encode(PublicPolicy::new(12, Duration::from_secs(2)).unwrap().id()),
-            "a589532b416e0d35273235ec692cf47040edf182df2121702c1b237c8cff52e7"
-        );
+        // Preserve exact r10, r11 AND r12 as validly signed predecessor inputs;
+        // r13 must reject them even with a correct current server MAC/signature.
+        assert_eq!(scalar_cpu::COMPLETION_WORK_CAPACITY, 4096);
+        for (bits, current_profile, predecessor_profiles) in [
+            (
+                8,
+                "c110c3ccb1e229c3a85f4819b1e087fa819c865b50f8bd3ab78d3b8f45206cb2",
+                [
+                    "98db0a0a3cf84367cc62b293ace125ecfed37798b45c74e1382c9e625d3955b0",
+                    "0d262ab290e74fa827b89bf11b581053eff9c347d54f511899315d4362febadc",
+                    "099c63fdd9a5feedd83dea1e681bcf35fa4ce219338df81a46c621ee5f5c028a",
+                ],
+            ),
+            (
+                16,
+                "e171d2942b8abfd95351036464b5451b4562f0854f4b43b2de59c4e486bda176",
+                [
+                    "0b32dc1c5cb3cd32f127792c2437a7e06afdee24dfd145e6c147ae9effc93973",
+                    "1141ff9f730ab723f9499215ae7396ef3c26020973c8ab345179bd78b31da9e7",
+                    "fbd012278826496785fbd166d2d920ffa70a3491e52ddf2c9211d782357f9c35",
+                ],
+            ),
+            (
+                12,
+                "af74a97fd543741369cf58b5e58a16f33ea74d71bb4d4641ab4700827bac1607",
+                [
+                    "56f683ca9a56a872747f58899c2734763303ad547cabf88d24a18c3994517d15",
+                    "dfdba7a8bfc98ff3019425222a7d66d1e7d75dd164fad5eda3d9a54d61e5e5ce",
+                    "a589532b416e0d35273235ec692cf47040edf182df2121702c1b237c8cff52e7",
+                ],
+            ),
+        ] {
+            let policy = PublicPolicy::new(bits, Duration::from_secs(2)).unwrap();
+            assert_eq!(hex::encode(policy.id()), current_profile);
+            let owner = PublicServer::new(identity(71), policy).unwrap();
+            let h = hello(2, 1);
+            let current = owner.cookie(&s, h, "127.0.0.1:1".parse().unwrap()).unwrap();
+            for predecessor_profile in predecessor_profiles {
+                let old = digest(predecessor_profile).unwrap();
+                let mut predecessor = current.clone();
+                predecessor.profile = predecessor_profile.into();
+                predecessor.mac =
+                    hex::encode(hmac(&owner.secret, &predecessor.unsigned().unwrap()));
+                predecessor.signature = owner
+                    .identity
+                    .sign(&predecessor.server_message().unwrap())
+                    .unwrap();
+                validate_challenge_context(
+                    &serde_json::to_vec(&predecessor).unwrap(),
+                    &predecessor,
+                    &h,
+                    &s,
+                    owner.identity.public_key(),
+                    policy,
+                    old,
+                )
+                .unwrap();
+                assert_eq!(
+                    owner
+                        .validate(&predecessor, &s, true)
+                        .unwrap_err()
+                        .to_string(),
+                    "PUBLIC_COOKIE_CONTEXT"
+                );
+                assert_eq!(
+                    validate_challenge_context(
+                        &serde_json::to_vec(&current).unwrap(),
+                        &current,
+                        &h,
+                        &s,
+                        owner.identity.public_key(),
+                        policy,
+                        old,
+                    )
+                    .unwrap_err()
+                    .to_string(),
+                    "PUBLIC_CHALLENGE_CONTEXT"
+                );
+            }
+        }
         let mut c = server
             .cookie(&s, hello(2, 1), "127.0.0.1:1".parse().unwrap())
             .unwrap();
@@ -6495,7 +6842,11 @@ mod paid_settlement_consistency_tests {
                 &AtomicBool::new(false),
                 &AtomicBool::new(false),
                 &metrics,
-                (None, Some(&measurement)),
+                PublicDispatchObservation {
+                    observation: None,
+                    mutation_cpu: Some(&measurement),
+                    arithmetic_facts: None,
+                },
             )
             .unwrap_err();
             assert_eq!(error.to_string(), expected);

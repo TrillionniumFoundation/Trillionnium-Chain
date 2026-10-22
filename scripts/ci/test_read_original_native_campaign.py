@@ -113,6 +113,22 @@ class ActualArtifactReaderTests(unittest.TestCase):
         self.assertFalse(self.valid['scope']['wan_qualified'])
         self.assertIsNone(self.valid['scope']['sustainable_business_tps'])
 
+    def test_retained_derivation_version_and_all_old_score_fields_remain_exact(self):
+        root = self.clone()
+        self.change_json(root, 'run-1-phase-readback.json',
+                         lambda value: value.update(schema='unknown-derivation'))
+        with self.assertRaisesRegex(ValueError, 'unknown retained phase derivation'):
+            self.read(root)
+        for change in (
+            lambda value: value['phases'][0].update(confirmed_rounds=2),
+            lambda value: value.update(native_finite_experiment_criteria_met=False),
+            lambda value: value['scope'].update(reader_runs_native_admission=True),
+        ):
+            root = self.clone()
+            self.change_json(root, 'run-1-phase-readback.json', change)
+            with self.assertRaisesRegex(ValueError, 'retained phase-reader derivation mismatch'):
+                self.read(root)
+
     def test_manifest_pin_paths_duplicates_and_limits_cannot_be_repaired_by_self_report(self):
         with self.assertRaisesRegex(ValueError, 'file-list SHA256'):
             reader.read_campaign(ARTIFACT, '0' * 64, HEAD, TREE, retained_subset=SUBSET)

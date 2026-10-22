@@ -59,9 +59,58 @@ pub fn rss() -> Value {
     json!({"rss_bytes":value("VmRSS:"),"lifetime_peak_rss_bytes":value("VmHWM:"),"kernel_rusage_self_peak_rss_bytes":peak,
         "scope":"Linux /proc/self magic self and kernel RUSAGE_SELF; peak is whole process lifetime, not an isolated allocation or incremental memory bound"})
 }
+const POLICY_BITS: u8 = 8;
+const POLICY_LIFETIME_MS: u64 = 2000;
 pub fn policy() -> PublicPolicy {
-    PublicPolicy::new(8, Duration::from_secs(2)).unwrap()
+    PublicPolicy::new(POLICY_BITS, Duration::from_millis(POLICY_LIFETIME_MS)).unwrap()
 }
+pub fn policy_observation() -> Value {
+    json!({"schema":"public-protected-resource-policy-observation-v1",
+        "transport_profile":public_v3::PROFILE,"policy_id":hex::encode(policy().id()),
+        "ticket_bits":POLICY_BITS,"lifetime_ms":POLICY_LIFETIME_MS})
+}
+
+/// Selected only by the named parent test, never by an ambient environment
+/// variable. The original selector and every original helper remain raw.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum WorkProfile {
+    RawR13,
+    ArithmeticFactsV1,
+}
+impl WorkProfile {
+    pub fn policy_observation(self) -> Value {
+        let mut value = policy_observation();
+        if self == Self::ArithmeticFactsV1 {
+            value["policy_id"] = json!(hex::encode(policy().arithmetic_facts_id()));
+        }
+        value
+    }
+
+    /// Raw jobs retain their original bytes. An opt-in job has both bindings;
+    /// missing, unknown, partial or contradictory bindings cannot fall back.
+    pub fn bind_actor_job(self, job: &mut Value) {
+        assert!(job.get("work_profile").is_none());
+        assert!(job.get("public_resource_policy").is_none());
+        if self == Self::ArithmeticFactsV1 {
+            job["work_profile"] = json!("arithmetic-facts-v1");
+            job["public_resource_policy"] = self.policy_observation();
+        }
+    }
+
+    pub fn from_actor_job(job: &Value) -> Result<Self, &'static str> {
+        match (job.get("work_profile"), job.get("public_resource_policy")) {
+            (None, None) => Ok(Self::RawR13),
+            (Some(profile), Some(policy))
+                if profile.as_str() == Some("arithmetic-facts-v1")
+                    && policy == &Self::ArithmeticFactsV1.policy_observation() =>
+            {
+                Ok(Self::ArithmeticFactsV1)
+            }
+            _ => Err("MULTIPROCESS_WORK_PROFILE"),
+        }
+    }
+}
+
 pub fn identity(seed: u8) -> DevelopmentIdentity {
     DevelopmentIdentity::from_secret_hex(&hex::encode([seed; 32])).unwrap()
 }
@@ -180,21 +229,54 @@ pub fn call(
     epoch: u64,
     window_end: u64,
 ) -> Value {
+    call_with_work_profile(
+        address,
+        settings,
+        request,
+        who,
+        epoch,
+        window_end,
+        WorkProfile::RawR13,
+    )
+}
+
+pub fn call_with_work_profile(
+    address: SocketAddr,
+    settings: &Settings,
+    request: Request,
+    who: u8,
+    epoch: u64,
+    window_end: u64,
+    work_profile: WorkProfile,
+) -> Value {
     let public_wire_body = serde_json::to_vec(&request).unwrap();
     let started = monotonic();
     let start_cpu = cpu();
     let wall = Instant::now();
     let remaining = window_end.saturating_sub(monotonic());
     let deadline = Instant::now() + Duration::from_nanos(remaining).min(Duration::from_secs(2));
-    let (reply, metrics) = public_v3::call_public_protected_v3_with_deadline(
-        address,
-        &request,
-        settings,
-        identity(71).public_key(),
-        &identity(who),
-        policy(),
-        Some(deadline),
-    );
+    let (reply, metrics) = match work_profile {
+        WorkProfile::RawR13 => public_v3::call_public_protected_v3_with_deadline(
+            address,
+            &request,
+            settings,
+            identity(71).public_key(),
+            &identity(who),
+            policy(),
+            Some(deadline),
+        ),
+        WorkProfile::ArithmeticFactsV1 => {
+            public_v3::call_public_protected_v3_with_arithmetic_facts(
+                address,
+                &request,
+                settings,
+                identity(71).public_key(),
+                &identity(who),
+                policy(),
+                Some(deadline),
+            )
+        }
+    };
     let used_cpu = elapsed_cpu(start_cpu);
     let ended = monotonic();
     let (status, response, error) = match reply {

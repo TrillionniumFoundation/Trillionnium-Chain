@@ -1,4 +1,4 @@
-//! Shared original r9 scalar CPU accounting. A clone is the same volatile epoch.
+//! Shared original scalar CPU accounting. A clone is the same volatile epoch.
 //! Metering is separate from task/packet authority; Native outcomes remain intact.
 use super::request_observation::ThreadCpuStamp;
 use crate::{ensure, Result};
@@ -9,7 +9,7 @@ use std::{
         Arc, Mutex,
     },
     thread,
-    time::Instant,
+    time::{Duration, Instant},
 };
 use trnm_mvcc_fee::pon_executor::{ExecutionWorkerAccounting, ExecutionWorkerInterval};
 
@@ -18,6 +18,10 @@ pub(super) const MUTATION_CPU_BURST_NS: u64 = 2_000_000_000;
 pub(super) const MUTATION_CPU_REFILL_NS_PER_SECOND: u64 = 250_000_000;
 pub(super) const MUTATION_CPU_START_RESERVE_NS: u64 = 100_000_000;
 pub(super) const MUTATION_CPU_WORKERS: usize = 2;
+// Exact local scheduling identities, bounded once at owner-epoch construction.
+// At capacity ordinary paid validation/recovery continues without promotion.
+// This is not a permanent work-spent ledger, a second CPU pool or a validity rule.
+pub(super) const COMPLETION_WORK_CAPACITY: usize = 4096;
 
 /// Diagnostic shadow of actual arithmetic events. Unknown telemetry never
 /// changes the original credit, cancellation, refill or reservation semantics.
@@ -129,6 +133,13 @@ pub(super) struct PaidMutationCpuBudget {
     pub(super) updated: Instant,
     pub(super) in_flight: usize,
     pub(super) unavailable: bool,
+    // A full W1 success can protect only its existing public request. This is
+    // scheduling state, not another bucket, start reserve or work authority.
+    verified_completions: usize,
+    completion_work: Box<[[u8; 32]; COMPLETION_WORK_CAPACITY]>,
+    completion_work_len: usize,
+    completion_replay_skips: u64,
+    completion_capacity_skips: u64,
     flow: Option<CpuFlow>,
 }
 impl PaidMutationCpuBudget {
@@ -139,6 +150,11 @@ impl PaidMutationCpuBudget {
             updated: Instant::now(),
             in_flight: 0,
             unavailable: false,
+            verified_completions: 0,
+            completion_work: Box::new([[0; 32]; COMPLETION_WORK_CAPACITY]),
+            completion_work_len: 0,
+            completion_replay_skips: 0,
+            completion_capacity_skips: 0,
             flow: Some(CpuFlow::new(i128::from(MUTATION_CPU_BURST_NS))),
         }
     }
@@ -237,7 +253,8 @@ impl PaidMutationCpuBudget {
         self.refill(now);
         ensure(!self.unavailable, "PUBLIC_MUTATION_CPU_UNAVAILABLE")?;
         ensure(
-            self.in_flight < MUTATION_CPU_WORKERS
+            self.verified_completions == 0
+                && self.in_flight < MUTATION_CPU_WORKERS
                 && self.credit_ns >= i128::from(MUTATION_CPU_START_RESERVE_NS),
             "PUBLIC_MUTATION_CPU_BUDGET",
         )?;
@@ -250,6 +267,9 @@ impl PaidMutationCpuBudget {
             Some(())
         });
         Ok(())
+    }
+    pub(super) fn completion_pending(&self) -> bool {
+        self.verified_completions != 0
     }
     pub(super) fn settle(&mut self, now: Instant, measured: Option<u64>) -> bool {
         self.settle_with_attribution(now, measured, None)
@@ -417,6 +437,19 @@ pub(super) struct LiveRequestCpuState {
     pub(super) charged_ns: u64,
     pub(super) refused: bool,
     pub(super) unavailable: bool,
+    public_request: Option<PublicRequestDeadline>,
+    verified_completion: bool,
+}
+#[derive(Clone)]
+struct PublicRequestDeadline {
+    deadline: Instant,
+    stop: Arc<AtomicBool>,
+    cancelled: Arc<AtomicBool>,
+}
+impl PublicRequestDeadline {
+    fn check(&self) -> Result<()> {
+        super::task_alive(self.deadline, &self.stop, &self.cancelled)
+    }
 }
 impl LiveRequestCpu {
     pub(super) fn new(budget: Arc<Mutex<PaidMutationCpuBudget>>, owner: ThreadCpuStamp) -> Self {
@@ -427,9 +460,121 @@ impl LiveRequestCpu {
                 charged_ns: 0,
                 refused: false,
                 unavailable: false,
+                public_request: None,
+                verified_completion: false,
             }),
             #[cfg(test)]
             fail_next_sample: AtomicBool::new(false),
+        }
+    }
+    /// The worker binds the original task deadline/cancellation once, before
+    /// body decoding. A caller cannot renew a waiting completion's lifetime.
+    pub(super) fn bind_public_request(
+        &self,
+        deadline: Instant,
+        stop: Arc<AtomicBool>,
+        cancelled: Arc<AtomicBool>,
+    ) -> Result<()> {
+        let mut state = self
+            .state
+            .lock()
+            .map_err(|_| "PUBLIC_MUTATION_CPU_UNAVAILABLE")?;
+        ensure(
+            state.public_request.is_none()
+                && !state.verified_completion
+                && state.threads.len() == 1
+                && state.threads.contains_key(&thread::current().id()),
+            "PUBLIC_MUTATION_CPU_UNAVAILABLE",
+        )?;
+        let request = PublicRequestDeadline {
+            deadline,
+            stop,
+            cancelled,
+        };
+        request.check()?;
+        state.public_request = Some(request);
+        Ok(())
+    }
+    /// Only the private packet owning an actually verified complete W1 relation
+    /// may enter this stage. It remains the very same charged request. Existing
+    /// ledger packets, claimed tickets and failed/partial W1 do not call this.
+    pub(super) fn work_verified(&self, checked: &crate::store::WorkCheckedPacket) -> Result<()> {
+        self.checkpoint()?;
+        // Hashing the canonical complete packet is paid by this same original
+        // thread interval; no caller-supplied identity can claim priority.
+        let identity = checked.completion_identity()?;
+        self.checkpoint()?;
+        let mut state = self
+            .state
+            .lock()
+            .map_err(|_| "PUBLIC_MUTATION_CPU_UNAVAILABLE")?;
+        // Non-public local meter clients keep their original policy.
+        let Some(request) = &state.public_request else {
+            return Ok(());
+        };
+        request.check()?;
+        ensure(
+            !state.unavailable && !state.refused,
+            "PUBLIC_MUTATION_CPU_UNAVAILABLE",
+        )?;
+        ensure(
+            !state.verified_completion,
+            "PUBLIC_MUTATION_CPU_UNAVAILABLE",
+        )?;
+        let mut budget = self
+            .budget
+            .lock()
+            .map_err(|_| "PUBLIC_MUTATION_CPU_UNAVAILABLE")?;
+        ensure(
+            !budget.unavailable
+                && budget.in_flight > budget.verified_completions
+                && budget.in_flight <= MUTATION_CPU_WORKERS,
+            "PUBLIC_MUTATION_CPU_UNAVAILABLE",
+        )?;
+        // Claim and promotion are one atomic operation in the shared CPU owner.
+        // Never remove entries on success, relation error, cancellation, Unknown
+        // or listener reconstruction. Full capacity only withholds this extra
+        // scheduling benefit; it is not an invalid-work or recovery verdict.
+        if budget.completion_work[..budget.completion_work_len].contains(&identity) {
+            budget.completion_replay_skips = budget.completion_replay_skips.saturating_add(1);
+            return Ok(());
+        }
+        if budget.completion_work_len == COMPLETION_WORK_CAPACITY {
+            budget.completion_capacity_skips = budget.completion_capacity_skips.saturating_add(1);
+            return Ok(());
+        }
+        let index = budget.completion_work_len;
+        budget.completion_work[index] = identity;
+        budget.completion_work_len += 1;
+        budget.verified_completions += 1;
+        state.verified_completion = true;
+        Ok(())
+    }
+    /// Release scheduling ownership once, after response construction and all
+    /// actual workers have joined. Outstanding principal is returned separately
+    /// by the unchanged exact settlement, including failures and unknown CPU.
+    pub(super) fn release_completion(&self) {
+        let mut state = match self.state.lock() {
+            Ok(state) => state,
+            Err(error) => {
+                drop(error);
+                self.unknown();
+                return;
+            }
+        };
+        if !state.verified_completion {
+            return;
+        }
+        state.verified_completion = false;
+        let Ok(mut budget) = self.budget.lock() else {
+            state.unavailable = true;
+            return;
+        };
+        if budget.verified_completions == 0 {
+            state.unavailable = true;
+            budget.unavailable = true;
+        } else {
+            budget.verified_completions -= 1;
         }
     }
     pub(super) fn unknown(&self) {
@@ -462,6 +607,24 @@ impl LiveRequestCpu {
         state.threads.insert(id, stamp);
     }
     pub(super) fn observe(&self, remove: bool, enforce: bool) -> Result<()> {
+        loop {
+            let Some(request) = self.observe_sample(remove, enforce)? else {
+                return Ok(());
+            };
+            // A complete W1 candidate keeps its original reservation and exact
+            // continuation, rather than throwing away paid native work and
+            // racing new invalid probes for every refill. No thread CPU is
+            // credited for sleeping; the next real sample also charges wait
+            // management overhead. Cancellation and the original absolute task
+            // deadline remain authoritative throughout this cooperative wait.
+            request.check()?;
+            thread::sleep(
+                Duration::from_millis(5)
+                    .min(request.deadline.saturating_duration_since(Instant::now())),
+            );
+        }
+    }
+    fn observe_sample(&self, remove: bool, enforce: bool) -> Result<Option<PublicRequestDeadline>> {
         // All two-lock paths use request -> global. Neither is held across a
         // Work replay, envelope, State/root calculation, join or SQL call.
         let mut state = match self.state.lock() {
@@ -474,6 +637,13 @@ impl LiveRequestCpu {
                 return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
             }
         };
+        if enforce && state.verified_completion {
+            state
+                .public_request
+                .as_ref()
+                .ok_or("PUBLIC_MUTATION_CPU_UNAVAILABLE")?
+                .check()?;
+        }
         let id = thread::current().id();
         let measured = state
             .threads
@@ -505,14 +675,31 @@ impl LiveRequestCpu {
                 .lock()
                 .map_err(|_| "PUBLIC_MUTATION_CPU_UNAVAILABLE")?;
             if enforce {
-                budget.charge_request_live(Instant::now(), measured, total)
+                budget.charge_request_live(Instant::now(), measured, total)?;
+                // A probe already running when another request finishes W1
+                // keeps only its already purchased original start quantum.
+                // It cannot consume successive future completion refills.
+                ensure(
+                    state.verified_completion
+                        || !budget.completion_pending()
+                        || total <= MUTATION_CPU_START_RESERVE_NS,
+                    "PUBLIC_MUTATION_CPU_BUDGET",
+                )
             } else {
                 budget.record_final_live(Instant::now(), measured)
             }
         })();
+        let mut wait = None;
         if let Err(error) = &result {
             if error.is(crate::ErrorCode::PublicMutationCpuBudget) {
-                state.refused |= enforce;
+                if enforce && state.verified_completion && !state.refused {
+                    wait = state.public_request.clone();
+                    if wait.is_none() {
+                        state.unavailable = true;
+                    }
+                } else {
+                    state.refused |= enforce;
+                }
             } else {
                 state.unavailable = true;
             }
@@ -529,7 +716,7 @@ impl LiveRequestCpu {
         if enforce {
             ensure(!refused, "PUBLIC_MUTATION_CPU_BUDGET")?;
         }
-        Ok(())
+        Ok(wait)
     }
     pub(super) fn checkpoint(&self) -> Result<()> {
         self.observe(false, true)
@@ -769,6 +956,7 @@ impl ServiceMutationCpuOperation {
         let residual = charged
             .zip(already_charged)
             .and_then(|(total, paid)| total.checked_sub(paid));
+        self.live.release_completion();
         let budget_settled = if let Ok(mut budget) = self.budget.lock() {
             // Share the same result as public dispatch, including a failed
             // reservation return with otherwise known thread samples.
@@ -797,6 +985,7 @@ impl Drop for ServiceMutationCpuOperation {
     fn drop(&mut self) {
         if !self.settled {
             self.live.finish_thread();
+            self.live.release_completion();
             if let Ok(mut budget) = self.budget.lock() {
                 budget.settle(Instant::now(), None);
             }
@@ -804,6 +993,9 @@ impl Drop for ServiceMutationCpuOperation {
     }
 }
 
+#[cfg(all(test, target_os = "linux"))]
+#[path = "scalar_cpu_completion_tests.rs"]
+mod completion_tests;
 #[cfg(all(test, target_os = "linux"))]
 #[path = "scalar_cpu_tests.rs"]
 mod tests;
@@ -1301,3 +1493,45 @@ mod metered_fact_tests;
 #[cfg(all(test, target_os = "linux"))]
 #[path = "scalar_cpu_metered_fact_network_tests.rs"]
 mod metered_fact_network_tests;
+
+/// Local scheduling observation only. No work validity, chain/funding authority
+/// or permanent replay guarantee follows from these volatile owner-epoch rows.
+#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize)]
+pub struct ServiceCompletionWorkObservation {
+    pub schema: &'static str,
+    pub identity_domain: &'static str,
+    pub identity_capacity: usize,
+    pub identity_storage_bytes: usize,
+    pub retained_identities: usize,
+    pub live_completions: usize,
+    pub repeated_identity_skips: u64,
+    pub full_capacity_skips: u64,
+    pub epoch_scope: &'static str,
+    pub evicts_live_epoch_identities: bool,
+    pub survives_process_restart: bool,
+    pub full_capacity_disables_ordinary_verification: bool,
+}
+impl ServiceMutationCpuDomain {
+    /// Reads the existing shared owner without refill or mutation. Counter
+    /// saturation is diagnostic only and never evicts an exact identity.
+    pub fn observe_completion_work(&self) -> Result<ServiceCompletionWorkObservation> {
+        let budget = self
+            .budget
+            .lock()
+            .map_err(|_| "PUBLIC_MUTATION_CPU_UNAVAILABLE")?;
+        Ok(ServiceCompletionWorkObservation {
+            schema: "public-v3-live-owner-completion-work-v1",
+            identity_domain: "public-v3-complete-work-identity-v1",
+            identity_capacity: COMPLETION_WORK_CAPACITY,
+            identity_storage_bytes: std::mem::size_of::<[[u8; 32]; COMPLETION_WORK_CAPACITY]>(),
+            retained_identities: budget.completion_work_len,
+            live_completions: budget.verified_completions,
+            repeated_identity_skips: budget.completion_replay_skips,
+            full_capacity_skips: budget.completion_capacity_skips,
+            epoch_scope: "same-shared-live-cpu-owner",
+            evicts_live_epoch_identities: false,
+            survives_process_restart: false,
+            full_capacity_disables_ordinary_verification: false,
+        })
+    }
+}

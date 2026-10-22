@@ -180,6 +180,177 @@ longitudinal efficacy is a separate claim, not inferred from this test.
   Compare new ordering architectures only if measured propagation/fork loss
   dominates after state, verifier and owner-conflict costs are addressed.
 
+
+### Subsequent audit integration readback
+
+At the subsequent GitHub readback, the original Chain integration branch had
+advanced normally from `8d56f2f173d3e870846cf1129d48647f2b84540a` to
+`cc9b599515eb5a9a895174c80220c32de12c6b4f`. Its ordered parents are the captured
+`da09b195d4c022aecfcc0cb2c8f0dc8fc9b5de3f` and that original integration head.
+PR #328 preserves those concurrent changes through an ordinary merge; the
+paired Hepta integration branch was still `c38e7727220f32c7410f59083c5ea7878bbae078`.
+Earlier uncommitted/UNKNOWN observations below retain their original cutoff;
+they are not the current published branch identity or a passing final-source CI
+result. Current head, target-base, prospective merge and cross-repository checks
+must bind the resulting new source pair. The controlled neural campaigns,
+arithmetic profile, growth, discovery, retention and funded-service components
+in this integration retain their own explicit profiles and qualification limits.
+No original failure or missing ordinary Hepta installation/readback is waived.
+
+### 2026-10-22 17:48 UTC component checkpoint — final-source gates pending
+
+This checkpoint freezes the results acquired by **2026-10-22 17:48:22 UTC**;
+it makes no claim about a later job or commit. At the **17:42 UTC** source
+observation, job `1a164b43c1b-1b6abb-3231` read Chain HEAD
+`da09b195d4c022aecfcc0cb2c8f0dc8fc9b5de3f` and MERGE_HEAD
+`8d56f2f173d3e870846cf1129d48647f2b84540a`. All **4,305 tracked file hashes**
+matched the completed Python controls' source-after snapshot, with no intervening
+change. The actual plan SHA-256 was
+`3e803b580120f31f6c3a306016b52d4fc830061af433f23598f950e740ae69c0`.
+Both integrations remained uncommitted. This document update is subsequent to
+that source observation; it does not invent the future commit or tree.
+
+| Acquired result at this checkpoint | Actual evidence | Scope that remains open |
+| --- | --- | --- |
+| Chain focused v2, job `1a163fcc788-1b6abb-30ed` | **35 PASS**: flow 10, completion 10, native-budget 7, work-arithmetic 5 and campaign-entry controls 3. The top-level **1 ignored worker** is `native_budget_abrupt_exit_worker`; a passing parent test explicitly invokes it with `--ignored --exact` in both reserved/intent phases and checks exit 86 and reopen. Scoped formatting changed only the two declared campaign files; the subsequent full fmt check and Node/Crypto all-target/all-feature strict Clippy passed. Source bytes were unchanged during the checks. | These are finite component controls. The worker's top-level ignored count is not a claim that it never executed. Original r13 diagnostic 4 remains **FAIL**; the complete new-profile pressure diagnostic has not run. |
+| Recovered Python request, job `1a1640fdabf-1b6abb-30f4` | The original key `pn-recovered-python-controls-v1-20261022` resolved to a completed native run: **63/63** CI/catalog, **111/111** runtime and **5/5** explicit CPU tensor controls passed; source bytes were unchanged. | The previous startup timeout and scratch socket EPERM failures remain historical evidence. Five tiny constructed tensor controls are not a pretrained-model run, new training campaign, independent evaluation or installation qualification. |
+| Hepta v1 failure and isolated tool repair | Job `1a163ff12c4-1b6abb-30ee` actually failed at fmt because `uv` was absent, without changing source; all three test groups were **NOT_RUN**. A separate local tool environment then installed the repository-pinned **uv 0.11.3**; workflow/project/lock inputs were unchanged and the existing frozen lock retained **ruff 0.15.13**. | Tool installation does not reclassify the failed v1 job or grant test/Windows acceptance. |
+| Hepta scoped v2, job `1a164b1c9d4-1b6abb-3220` | `just fmt` returned **0**, with no source changes; features **1/1** and the operator package **24/24** passed, with no detected early-return markers. Core-cwd was executing when last observed. | **Overall terminal result remains UNKNOWN** at this cutoff. The original retries-zero, case-count and source guards remain; no Windows run, complete owner suite or final cross-repository verdict is inferred. |
+| CodeQL evidence recovery | All **13/13** original check annotations have unique exact-content candidates in the captured same-HEAD Rust analysis. The complete ablation-v2 `run.json` was recovered and its SHA-256 verified as `1fa16b9a372199811eb2962d81568a23a2af06b8cfe1316005ac71f1efa213f7`; independent review of its full logs was still in progress. | The authoritative check-to-analysis/upload/result link remains unproved. Original check `119747556533` remains **FAILURE**; content candidates and causal model ablation do not close the security gate or change the official model. |
+
+The acquired records include `OUT/recovered-chain-focused-v2/result.json`
+(SHA-256 `61d7bdd38b8ccc8580866b7575a29f2dc8506a772e5c3b21d94d9408b24b6731`)
+and `OUT/recovered-python-controls-v1/result.json`
+(`927802e73b38df503ccc08c3e5faf6e28e75d00b227ecbdbaa884aabcbb3e083`).
+These local receipts retain their own pre-commit source scope. After normal
+commit, the actual clean head/tree must bind the pending diagnostic, original
+five CI lanes, GSC2/PGH2 and final cross-repository source-head/actual-merge lanes;
+none has a final-source passing result at this cutoff. Later outcomes belong in
+their source-bound execution evidence, without attributing them to this earlier
+checkpoint. The retained 32-task gen2/gen3 comparison is controlled synthetic
+evaluation, with independent/prospective acceptance false. No PN0–PN6 exit rule,
+original failure, deadline or qualification flag changes: **qualified = false**,
+and production, public readiness, independent installation, reward and activation
+remain unaccepted.
+
+
+### 2026-10-22 recovered integration readback — uncommitted candidates
+
+This subsection retains the **earlier recovery snapshot**, before the second
+acquired terminal readback. Its unknown 30ed/30ee/Python outcomes and interrupted
+connection describe that earlier observation; the 17:48 UTC checkpoint above
+supersedes current status without deleting any original failure or receipt.
+
+Connection recovery allowed the previously unknown merge and subsequent local
+integration steps to be read back. At the latest acquired Git state, **neither
+repository has a new merge commit**. Conflict resolution and patch application
+establish edited candidates, not a clean final source pair or completed acceptance.
+The last health request again timed out at the MCP boundary; do not infer current
+connectivity or a pending job's result from its successful submission.
+
+| Recovered operation | Actually acquired result | Remaining boundary |
+| --- | --- | --- |
+| Chain merge, job ending `30d5` | The actual Git merge returned **1**, with three conflicts: `scripts/ci/check_ci_contract.py`, `scripts/ci/ci_job.sh`, and `scripts/llm_runtime_pilot.py`. The wrapper's earlier successful exit did not mean the merge was conflict-free. Actual input HEAD was `da09b195d4c022aecfcc0cb2c8f0dc8fc9b5de3f`; MERGE_HEAD was `8d56f2f173d3e870846cf1129d48647f2b84540a`. | This resolves the old UNKNOWN merge observation. It does not create a commit or establish a final tree. |
+| CI resolution, job ending `30e0` | The five-file CI integration resolution was applied. | Native application is now established; the earlier scratch controls remain separate from original five-lane execution. |
+| Hepta merge, job ending `30e3` | The normal merge of the captured `c38e7727220f32c7410f59083c5ea7878bbae078` into the local fe3 lineage returned **0** without conflicts. | This is an uncommitted merge candidate. The earlier fe3 **305 PASS / 12 skipped** and Core **10 PASS / 2421 skipped** do not qualify the merged c38 source. |
+| Exact repairs, job ending `30e5` | Pilot resolution SHA-256 `bb9789a726a23ada00ae32d5ee34e97700c3a121ffe1130493a478136abf4035`, the SQLite-prefix repair, the `05` campaign-entry patch, and Hepta's test-fixture candidate SHA-256 `797f5abfe2e0ee83af0ce29d8fe570d5b644cd41c0f6881f69f0513f31c90e8a` were applied; `diff --check` passed. Chain had **zero unresolved conflicts** at that readback. | Neither repository was committed. Applying a source repair or test fixture is not executing its regression or granting a qualification. |
+| First Chain formatting check, job ending `30e8` | **FAILED** on formatting in the two Rust files touched by `05`; source bytes were unchanged and **no tests ran**. | Preserve this failed check. It neither establishes a semantic regression nor counts as passing focused tests. |
+| Chain follow-up, job ending `30ed` | Scoped formatting for those two files and focused v2 checks were started. | **Terminal result not acquired.** Do not count formatting or any test as passed until the actual logs and source guards are read back. |
+| Hepta follow-up, job ending `30ee` | `just fmt` and the selected features/operator/Core-cwd checks were started. | **Terminal result not acquired.** No Windows execution, complete owner suite or final cross-repository acceptance follows from this submission. |
+| Python controls | The start call timed out without returning a job ID. | **Submission effect and terminal result are unknown.** Reconcile the original idempotency key; do not start a new key and silently duplicate the work. |
+
+The next required readback is the existing focused jobs and Python submission,
+followed by actual Git status, source hashes and any failed logs. A clean final
+commit, normal PR head/base/actual-merge objects, all original five CI lanes,
+source-bound GSC2 and PGH2, full applicable Hepta regressions and both final
+cross-repository lanes remain unestablished. No deadline, retry rule, workload,
+failure, source check or PN0–PN6 exit criterion is relaxed by this recovery.
+The original r13 diagnostic 4 remains **FAIL** and the separate arithmetic
+profile has no completed campaign verdict here. All production, independent
+installation, reward, release and activation qualifications retain their
+existing false/unaccepted values.
+
+
+### 2026-10-22 local integration readback — da09 / fe3
+
+This subsection retains the **pre-recovery checkpoint**. Its UNKNOWN merge,
+not-started Hepta merge, prepared-only applications and unavailable route are
+historical observations. The recovered-integration readback above supersedes
+only their current execution status; prior failures and source-bound results remain.
+
+This local readback continues the same PN0–PN6 sequence and leaves every original
+exit criterion open. It supplements the retained published-source observations
+below; it does not rebind their results to later source. The last confirmed clean
+Chain commit is `da09b195d4c022aecfcc0cb2c8f0dc8fc9b5de3f`, tree
+`171022d13b3ed4059a28c567351bf20256c0f7a5`. The last confirmed clean Hepta commit is
+`fe3c92ce534d96bd4b1ab2b325f6cce21b162cac`, tree
+`e661cb41366ec0b0240396ac7087aae92a2b9e88`; its local branch was observed without an upstream.
+Neither identity is a claim about an unobserved later HEAD or final qualification.
+
+The normal Chain merge of captured `8d56f2f173d3e870846cf1129d48647f2b84540a`
+was submitted as job `1a163d5d679-1b6abb-30d5` with `--no-ff --no-commit`.
+Its terminal result and the current HEAD, index and working tree are **UNKNOWN**.
+The runtime subsequently returned `tunnel_client_not_connected`. Hepta's captured
+`c38e7727220f32c7410f59083c5ea7878bbae078` merge has not started. Recovery must first
+read the same job and actual Git state; do not repeat the merge with a new key,
+reset the checkout or infer a clean merge from these prepared document bytes.
+
+`OUT` denotes the local evidence root
+`/home/qian-qi/work/pon-upgrade-implementation-20261018/pn-closure-20261022`.
+The recovery bundle's `LOCAL_BLOCKERS_CHECKPOINT_ZH.md` and
+`actual-native-checkpoint.json` retain the acquired process results and source
+guards. Local locators are not newly published repository receipts.
+
+#### Source-bound observations and unexecuted successors
+
+| Scope | Actual result | Qualification boundary |
+| --- | --- | --- |
+| Hepta fe3 original owners | Job `1a163616e70-1b6abb-2fe8` completed **305 PASS / 12 skipped** for Agentd and infer-worker-host on the unchanged fe3 source. The separately resumed Core run, job ending `3029`, completed **10 PASS / 2421 skipped**, using the original offline, retries-zero transition selectors after a locked dependency fetch. | These are completed results, not still-running work. Core test time was 0.362 seconds, with 367.6596 seconds including compilation; its log SHA-256 is `2d1666ea967d82b2343e0cb04bac00e0c147d7b2359061cb4f76d0f79899ed84`. The original missing-`console v0.15.11` failure remains. Neither run covers later c38 cwd-feature/platform changes, all Core tests, Windows execution or the final cross-repository pair. |
+| PN1 original r13 service | Diagnostic 4 on clean `4bff85ff435cda64a66b3b25d0fa8a0715e3a604` **FAILS**: baseline **3/3**, from-zero **1/3**, late-product **2/3** honest confirmation rounds. Original report SHA-256 is `97561cf3ab3d13b97c75f30483cb23d0355fc95e76177f72febe49a8572055e4`. | The original 2-second client, 10-second work deadline, 24 attackers and CPU envelope remain. A complete W1 followed by an unfinished admission can lose same-epoch completion priority on ordinary replay; the first observed packet9 admission error is unknown, while its seven later budget refusals are directly observed. The committed packet5 replay recovers correctly. No marker, cancellation rule, SQL/graph check or original failed verdict is removed. |
+| da09 arithmetic profile | Actual native controls: **14** new arithmetic-cache tests, **13** retained facts tests, **10** retained completion tests, **5** explicit-entry/real-TCP tests, three separate retained raw/product/abandonment selectors with **1 PASS each**, and **2** churn controls. Formatting, the locked 25-member graph and Node + Crypto all-target/all-feature strict Clippy **PASS**. | This is an explicit new profile; default raw r13 remains unchanged. Its finite facts cache retains computed trace/product, not acceptance. The profile and client/cookie bindings remain separate; these component passes are not a full hostile-service campaign or a least-cost work bound. |
+| Arithmetic churn | With **64 slots**, **65** cyclic challenge keys and **130** calls, the actual control executes **66,560 tiles** with **0 hits**. | Passing this negative control proves the expected attack behavior, not resilience under arbitrary key churn. The 4 MiB retained-object limit includes actual Vec capacity but is not a process-RSS bound. Trace-only facts can evict another challenge's product; a fixed 24-packet benefit cannot replace this boundary. |
+| Prepared new-profile service entry | `05-arithmetic-campaign-entry.patch`, SHA-256 `56b6d6a55c5ceb04f006960add7d04acf04dee18101a072232580b9f783ee370`, adds a separate authenticated-v1 selector with matching server/client/attacker profile binding. | Its three finite Rust controls and complete campaign have **not run natively**. Original pressure, all time/CPU limits, confirmations and depletion conditions remain; the original r13 selector, reader and verdict are not replaced. |
+| Prepared CI and catalog readers | The five-file CI integration candidate passed **58** scratch controls. The independent SQLite-prefix repair passed **15** controls after eight real producer/validator catalog counterexamples ran red. Their combined candidate then passed **63/63** scratch tests (unittest time 97.351 seconds; complete command 97.577 seconds), with unchanged source bytes. | These overlapping suites are not 73 distinct tests. Combined log SHA-256 is `e36e936462f1c9411de696336234b658dd53b9dbc8f768d63ac8a04916ab3278`. No native application or original five-lane run is established. All local runtime controls and upstream parent-step/strict CI checks remain; three-backend source recognition does not grant PGH2 historical-evidence qualification. |
+| CodeQL causal experiment | Isolated ablation v2, job `1a163cec57f-1b6abb-30bf`, actually exited **0** in 396.211 seconds and reported `causal_model_reduction_observed=true`. It used a copied model with four identified rows removed; original models, query and baseline were integrity-checked. | The complete v2 run/CSV still awaits independent readback. Original check `119747556533` remains **FAILURE**; complete alert mapping and independent disposition remain open. This causal observation does not change the official model, dismiss alerts or pass the source security gate. |
+
+The new arithmetic profile is
+`14ada27ef062b1e510b7d7ab470e83157e58e7752b8f27a754f64dac614146e3`;
+retained raw r13 is
+`c110c3ccb1e229c3a85f4819b1e087fa819c865b50f8bd3ab78d3b8f45206cb2`.
+The cache bounds and charged fallback do not change native state, funding, nonce,
+target or completion checks. Cancellation cannot publish partial facts; bounded
+comparison/publication after the final cooperative check is not a hard-real-time
+zero-overrun guarantee. Entry/completion/churn evidence is retained under job
+`1a163c74b03-1b6abb-30b4`; strict checks under `1a163cecee9-1b6abb-30c0` preserve
+before/after source equality. Strict Clippy log SHA-256 is
+`661804f10d577e9dbd4361d9e10700b9a4c811ea61760536f62c80b27281b494`.
+Job `1a163d4ba2d-1b6abb-30d1` checked all eleven changed source files before
+committing da09 and observing a clean working tree. Later source needs its own checks.
+
+The CI candidate keeps pilot, parent-material, upstream parent-step and the four
+local runtime suites in the existing lane. The catalog fix uses the exact
+`sqlite_` prefix, preserving real SQLite internal objects while refusing actual
+`sqliteX...` user tables, indexes, triggers and views. Earlier red observations,
+schema/compilation failures and the original CI/security failures remain evidence.
+
+#### Stage exits still open
+
+| Stage | Retained progress and remaining original exit |
+| --- | --- |
+| PN0 | Recover the pending merge and establish the actual clean source pair, normal PR source/base/merge objects, original five CI lanes, applicable security disposition and fresh cross-repository head/merge executions. The prepared final runners have not run natively. c38's new cwd behavior and non-Unix refusal need their own regressions; functional Windows evidence requires real Windows. |
+| PN1 | Retain diagnostic 4's service failure, the conditional completion-replay defect and the independent late-product throughput deficit. The explicit arithmetic profile still needs its own complete unchanged-envelope campaign, least-cost measurements and adversarial churn/service assessment. A proposed cross-request continuation contract is not implemented or used to pass r13. |
+| PN2 | Retain the source-specific GSC2 complete-State readback and earlier PGH2 **65,520→65,552** signed growth/reopen/reorg result separately. Final-source GSC2 **65,537** and PGH2 export/bounded-I/O/recovery checks remain unexecuted; full-State roots do not become bounded witnesses. The local growth observation in section 6 remains unchanged. |
+| PN3 | Local campaign 5 completed three real 10-step SmolLM2-135M/LoRA training and three inference phases, loading the inherited parent. The single frozen 32-task gen2/gen3 comparison is **16/32 for each**, **0 changed decisions**, **Ineligible**. Actual delivered-material owner publication/reopen and controlled load/query/unload do not supply independent efficacy, qualified installation or ordinary next-task product use. Preserve failed predecessors and false independence/product flags; do not resample the holdout to obtain a gain. |
+| PN4 | Local accounting, funding/claim/effect and retry/reorg controls remain useful components. Six actual resource-supply chains, chain-backed future storage/service obligations and independent sustainable economics remain required. |
+| PN5 | The controlled dev-v1 rendezvous/Cell mechanics and **107** M09 native tests retain their original source scope. Signed advertisements confer no possession, payment or installation authority. No three independent administrators/failure domains or frozen 72-hour WAN/repair qualification has been established. |
+| PN6 | The six source-preserving rehearsal tests and inert exports remain component evidence. Final predecessor gates, actual migration/reconciliation and the independent governed release decision remain required; no activation occurred. |
+
+All readiness, production, installation-independence and activation qualifications
+retain their existing false/unaccepted values. This checkpoint changes no content
+revision, protocol acceptance threshold or original failure. The local execution
+route remains unavailable until its actual connection and pending state are read
+back; neither a prepared patch nor a presumed alternative environment closes a gate.
+
 ### 2026-10-22 fixed-source follow-up
 
 The following observations fix published Chain `42424a82ec605c35f3f1b91eb72e35b9debcc136`,
@@ -343,7 +514,7 @@ cohort; repeated polls and duplicate deliveries do not create additional success
 | Honest-user completion during attack | Completed authorized honest requests divided by all offered honest requests in the same attack interval, preserving Busy, timeout, revocation and unknown outcomes. |
 | Loss/reorg/restart/new-node cost | Actual bytes, wall/CPU time, peak memory, disk growth and recovered tip/model/operation identities for each named failure. A process restart does not stand for physical power loss. |
 
-The current cloud continuation retains this order. Its
+The local continuation retains this order. Its
 [native architecture comparison contract](../protocol/pon-nakamoto-v1/details/ARCHITECTURE_COMPARISON_V1.md)
 compares serial, concurrent and signed-reference-DAG dissemination through the
 same unchanged PoN application and independent depth/work confirmation owners.
@@ -886,6 +1057,36 @@ PN1 accounting; PN1/PN2 implementation may iterate before joint acceptance.
 Keep required-target/chainwork, DAA/time boundaries, fork eligibility and
 partition/reorg regressions in the existing consensus owner throughout this work.
 
+**Local implementation observation, 2026-10-22.** The explicitly selected
+[permanent-account growth v2](../protocol/pon-nakamoto-v1/details/NATIVE_ACCOUNT_GROWTH_V2.md)
+now connects the original-parent AAM1 proof, bounded complete working partition,
+shared signature/nonce/fee/mandatory M06 rules and actual SQLite COW/delta/branch
+publication through the existing Node. PGH2/PNP2, network, parameters, genesis
+and storage schema have separate identities. The old full-State profile and cap
+retain their meanings. Zero-balance leaves keep their nonces; cold open replays
+retained branches and audits the retained COW graph before publishing the new
+backend's explicit local storage epoch.
+
+The earlier release-mode native scale run passed in 216.25 seconds: 65,520
+explicit genesis accounts became 65,552 through actual signed transitions,
+with 34 transfers, two cold reopens and one heavier-fork reorganization. Its
+first growth block used 35 proof accounts, six working keys and 417 additional
+COW nodes. The separate four-owner query used 59 point reads and a 3,722-byte
+multiproof; those are not whole-block admission costs. This run predates the
+optional SQLite evidence export and final combined source. The original log
+remains evidence; the final create-only scale export and exact source/binary/merge
+qualification remain outstanding at this checkpoint. No million-account,
+public-ingress, unlimited-retention or throughput qualification follows.
+
+The original authenticated-v1 hot path still performs complete-State/account
+checks and tip-to-genesis history checks at admission and activation. Consecutive
+heights through H therefore incur O(H²) cumulative history reads despite
+exact-input arithmetic caches. Fixed-snapshot parent/header/record reuse may
+reduce constant costs only while preserving all current error, clock, owner,
+cancellation and final writeback semantics. This increment adds no cross-snapshot
+validity cache and removes no integrity check. Nested native stage CPU observations
+must be read separately from PN1's real total budget and honest-completion result.
+
 1. First measure complete-State encoding, actual SQL/graph reads, history seals,
    proof collection, execution, lock wait, durable commit and client import.
    Retain 9bd's exact-byte arithmetic reuse and final integrity fences. Batching
@@ -1058,6 +1259,31 @@ silently. State I/O or verifier amplification is repaired in its owner first.
 
 Owners: M00/M07/M08/M13/M15 and the existing release/activation authority.
 Entry: accepted PN0–PN5 evidence on the exact proposed binaries and contexts.
+
+**Materialized rehearsal observation, 2026-10-22.** The existing Node now exposes
+`rehearse_growth_migration_v2` and an independent READ_ONLY cold verifier for
+quiescent legacy/authenticated sources. Native job `1a16282a4b9-1b6abb-2da2`
+exited 0 with all six rehearsal tests passing and exported both actual source
+formats under `pn6-growth-rehearsal-candidates` in the local execution root.
+The exact log locator, test coverage and flags are recorded in the
+[growth profile observations](../protocol/pon-nakamoto-v1/details/NATIVE_ACCOUNT_GROWTH_V2.md#observed-development-runs--2026-10-22).
+This batch has no final combined-source manifest; later source changes still
+require their own applicable qualification.
+
+The archive preserves every retained original-schema branch, signed transaction,
+state/delta root, local replay/outbox/pool record and reorganization fact. The
+candidate checkpoint retains the original height, nonces and monetary duties,
+with actual COW nodes and complete unchanged working rows. Readback independently
+reexecutes the old history and audits the new checkpoint; failed pending stages
+remain visible, and publication never replaces an existing destination.
+
+This candidate schema cannot admit or activate blocks. `migration_executed`,
+`old_work_promoted`, `consensus_activation`, `production_enabled` and
+`external_journals_imported` remain false. External M09/M12 effects and revocation
+history are not copied or reset. Executable cross-context work/evaluation rules,
+external-owner drain/reconciliation, independent PN0–PN5 acceptance and the actual
+governed release decision are still required. Source preservation and six passing
+local tests do not close those requirements or grant activation authority.
 
 Rehearse drain/reconciliation, full source verification, isolated destination
 publication, cold readback and abort/recovery with all obligations and old-profile
