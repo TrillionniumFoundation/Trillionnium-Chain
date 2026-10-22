@@ -22,6 +22,8 @@ pub mod operator_mining_policy;
 pub mod operator_task_policy;
 pub mod peer_polling;
 pub mod public_submit;
+/// Isolated V2 certificate reader; never votes, installs models or activates consensus.
+pub mod release_finality;
 mod store;
 pub use error::{Error, ErrorCode, ErrorKind};
 use serde_json::{json, Value};

@@ -183,6 +183,13 @@ loading/installation nor CURRENT/FinalUse authority. Independent storage owners,
 WAN delivery, discovery, private transport and long-term replica renewal require
 their own implementations and observations.
 
+The additive TCR1 whole-release route pins an owner-supplied release manifest and
+digest, checks all member manifests before payload download, and shares one
+deadline, connection count and actual response-byte budget across every cell.
+Complete cache readback precedes create-only publication of the release marker.
+That marker records fetched bytes; it does not grant model installation,
+retention or finality authority. Local blocking filesystem I/O remains cooperative.
+
 All three new applicability rows are source bindings with no invented execution
 receipt. Package ownership remains 25 packages and 39 procedures. Controlled
 native regression results do not promote runtime, scientific, product or
@@ -438,8 +445,19 @@ The current PoN and disabled release-finality candidate keep distinct contexts.
 | Public coordination and release | Chain M02/M05-M08/M10-M12, with separately selected release-finality reference | Inclusion/confirmation, release commitments and settlement. No receipt changes Hepta CURRENT, mints FinalUse, silently adopts a committee, or reinterprets PoN history as deterministic finality. |
 | Local use and effects | Existing Hepta artifact CURRENT, independent selection, kernel.operations and outer FinalUse owner | A locally admitted generation and scoped effect. Local resources, compatibility, withdrawal or authority may refuse a globally recorded candidate. Irreversible effects are reconciled, not erased by chain reorganization. |
 
-First close strict signed-byte agreement in the existing certificate readers and
-bind the actual two-repository source/merge matrix. Then use the unchanged W1 cost
+The existing experimental native composition package now exposes a bounded, read-only
+[native V2 certificate reader](../../trillionnium/crates/trnm-pon-node/src/release_finality.rs).
+Its caller must independently pin canonical committee and context bytes. It
+verifies both actual signed quorum bodies, strict Ed25519 keys/signatures, the
+actual membership/quorum inequalities and the complete statement identity.
+Its artifact commitment retains the V2 domain; it is not a TCR1 release ID.
+This adds no voting, durable locks, pacemaker, storage lease, installation or
+FinalUse owner. The disabled finality configuration and native-runtime integration
+claims remain unchanged. Native corpus checks and explicit cross-language controls
+compare the unchanged Python reader without making Python a runtime dependency.
+
+Preserve strict signed-byte agreement and bind the actual two-repository
+source/merge matrix. Then use the unchanged W1 cost
 collectors at equal targets, charging structured preparation, maintenance, lost
 attempts and false-ticket rejection separately. This work creates no public-service
 or cheapest-adversary qualification. Controlled/offline learning may proceed while

@@ -3494,6 +3494,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-pon-node/src/release_finality.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/release_finality.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-pon-node/src/store.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -3823,6 +3830,34 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-pon-node/tests/fixtures/release-finality-v2/bundle.json",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/tests/fixtures/release-finality-v2/bundle.json"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/tests/fixtures/release-finality-v2/committee.json",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/tests/fixtures/release-finality-v2/committee.json"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/tests/fixtures/release-finality-v2/context.json",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/tests/fixtures/release-finality-v2/context.json"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/tests/fixtures/release-finality-v2/expected.json",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/tests/fixtures/release-finality-v2/expected.json"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-pon-node/tests/integer_factor_candidate_v2.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -4009,6 +4044,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-pon-node/tests/qualified_tasks.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/tests/release_finality_v2.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/tests/release_finality_v2.rs"
         )),
     ),
     (

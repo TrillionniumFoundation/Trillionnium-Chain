@@ -6,7 +6,12 @@ on:
       - config/finality-profile-v1.json
       - config/release-finality-v2.json
       - scripts/ci/test_finality_profile.py
+      - scripts/ci/check_required_native_test.py
       - docs/protocol/release-finality-v2/**
+      - trillionnium/crates/trnm-pon-node/**
+      - trillionnium/crates/trnm-crypto-primitives/**
+      - trillionnium/Cargo.toml
+      - trillionnium/Cargo.lock
       - .github/workflows/release-finality-reference.yml
 permissions:
   contents: read
@@ -73,6 +78,25 @@ jobs:
           sha256sum trillionnium/target/release/examples/continuous_pipeline > "$RUNNER_TEMP/release-finality/native-binary.sha256"
           rustc +1.95.0 --version > "$RUNNER_TEMP/release-finality/compiler.txt"
           uname -a > "$RUNNER_TEMP/release-finality/environment.txt"
+      - name: Require each native certificate and separate-reference selector to execute
+        run: |
+          set -euo pipefail
+          export TRNM_FINALITY_REFERENCE_PYTHON="$RUNNER_TEMP/finality-env/bin/python"
+          overall=0
+          for selector in \
+            original_reference_signed_fixture_preserves_facts_and_scope \
+            native_reader_enforces_adversarial_corpus_without_python \
+            unchanged_python_reference_regenerates_exact_fixture_bytes \
+            original_python_reader_and_native_reader_agree_on_adversarial_corpus; do
+            log="$RUNNER_TEMP/release-finality/$selector.log"
+            if ! cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml \
+              -p trnm-pon-node --test release_finality_v2 "$selector" -- \
+              --exact --include-ignored --format pretty --nocapture --test-threads=1 \
+              2>&1 | tee "$log"; then overall=1; fi
+            if ! python3 scripts/ci/check_required_native_test.py "$log" --test "$selector" \
+              > "$RUNNER_TEMP/release-finality/$selector.execution.json"; then overall=1; fi
+          done
+          exit "$overall"
       - name: Observe every original hot disjoint and growth baseline; preserve failures
         run: |
           # GitHub invokes bash with -e; collect all three outcomes explicitly.
