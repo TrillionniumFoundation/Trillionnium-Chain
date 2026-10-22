@@ -187,6 +187,7 @@ from test_llm_runtime_kernel_owned import KernelOwnedTests
 from test_llm_runtime_kernel_close import KernelCloseTests, KernelAbiTests
 from test_llm_runtime_kernel_aggregate import AggregateTests
 from test_llm_runtime_kernel_counters import CounterTests
+from test_llm_runtime_kernel_diagnostic import TerminalDiagnosticTests
 from test_llm_runtime_decode import DecodeRoutingTests, ActualDecoderTensorTests
 
 
