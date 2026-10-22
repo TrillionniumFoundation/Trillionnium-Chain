@@ -146,3 +146,13 @@ Linux tests cover ordinary, double- and triple-leading-slash paths with reserved
 characters, UTF-8 and non-UTF-8 filename bytes through creation, preview, execution
 and cold exact replay. These pathname tests do not qualify Windows UNC semantics
 or external pathname replacement.
+
+A preview whose source changes after its read snapshot closes returns
+`StaleVersion` after the fresh head passes audit, rather than reporting tampering.
+No stale preview carrier is returned. Callers must obtain a fresh parent and
+rebuild their candidate. Corrupt-store and permanent-fence errors still propagate
+from the fresh audit unchanged. Deterministic empty and nonempty writer schedules
+check cold audit, unchanged bytes after preview, no fence, and fresh-parent retry.
+Mixed empty/command writer tests additionally preserve marker kind, transactional
+rejection, and historical command confirmation after subsequent head advancement.
+These are bounded local schedules, not arbitrary concurrency qualification.

@@ -466,11 +466,13 @@ impl ConsumptionSettlementStoreV1 {
         }
         drop(connection);
         let candidate_post_state_root = state_root(&state)?;
+        #[cfg(test)]
+        snapshot_tests::wait_before_preview_readback();
         let after = self.fresh_readback()?;
         if after != before {
             return Err(error(
-                ConsumptionSettlementErrorCodeV1::TamperDetected,
-                "Consumption/Settlement source changed during read-only preview",
+                ConsumptionSettlementErrorCodeV1::StaleVersion,
+                "Consumption/Settlement source advanced during read-only preview; retry with a fresh parent",
             ));
         }
         Ok(ConsumptionSettlementExecutionPreviewV1 {
@@ -2106,6 +2108,280 @@ mod snapshot_tests {
             outcome.unwrap_err().code(),
             ConsumptionSettlementErrorCodeV1::CommitUncertain
         );
+    }
+
+    thread_local! {
+        static PREVIEW_RENDEZVOUS: std::cell::RefCell<Option<(
+            std::sync::mpsc::Sender<()>, std::sync::mpsc::Receiver<()>
+        )>> = const { std::cell::RefCell::new(None) };
+    }
+
+    pub(super) fn wait_before_preview_readback() {
+        if let Some((ready, release)) = PREVIEW_RENDEZVOUS.with(|slot| slot.borrow_mut().take()) {
+            ready.send(()).expect("notify preview snapshot released");
+            release
+                .recv_timeout(Duration::from_secs(10))
+                .expect("release preview readback");
+        }
+    }
+
+    #[test]
+    fn legal_writer_during_preview_is_stale_not_tampering() {
+        for with_command in [false, true] {
+            let harness = crate::tests::Harness::new();
+            let config = harness.config();
+            let store = ConsumptionSettlementStoreV1::open(config.clone()).unwrap();
+            let before = store.fresh_readback().unwrap();
+            let execution = harness.execution(before.order_height(), before.order_block_id(), 10);
+            let commands = if with_command {
+                vec![ConsumptionSettlementCommandV1::AdmitReceipt {
+                    receipt: harness.receipt(None, 10, 100),
+                }]
+            } else {
+                vec![]
+            };
+            let other = ConsumptionSettlementStoreV1::open_existing(config.clone()).unwrap();
+            let (ready_tx, ready_rx) = std::sync::mpsc::channel();
+            let (release_tx, release_rx) = std::sync::mpsc::channel();
+            let (outcome, head, bytes) = std::thread::scope(|scope| {
+                let worker = scope.spawn(|| {
+                    PREVIEW_RENDEZVOUS
+                        .with(|slot| *slot.borrow_mut() = Some((ready_tx, release_rx)));
+                    other.preview_before_vote_v1(&before, 10, execution.order_block_id, &commands)
+                });
+                ready_rx
+                    .recv_timeout(Duration::from_secs(10))
+                    .expect("preview read snapshot closed");
+                if let Some(command) = commands.first() {
+                    store
+                        .execute_committed_execution(&execution, command)
+                        .unwrap();
+                } else {
+                    store
+                        .advance_empty_committed_execution_v1(&execution)
+                        .unwrap();
+                }
+                let head = store.fresh_readback().unwrap();
+                let bytes = fs::read(&config.path).unwrap();
+                release_tx.send(()).unwrap();
+                (worker.join().unwrap(), head, bytes)
+            });
+            let cold = ConsumptionSettlementStoreV1::open_existing(config.clone()).unwrap();
+            assert_eq!(cold.fresh_readback().unwrap(), head);
+            assert_eq!(fs::read(&config.path).unwrap(), bytes);
+            let snapshot = open_read_snapshot(&config.path).unwrap();
+            assert!(!load_metadata(&snapshot, &config).unwrap().5);
+            assert_eq!(
+                load_committed_block_markers(&snapshot, &config)
+                    .unwrap()
+                    .len(),
+                2
+            );
+            drop(snapshot);
+            let next = harness.execution(10, execution.order_block_id, 11);
+            let preview = cold
+                .preview_before_vote_v1(&head, 11, next.order_block_id, &[])
+                .unwrap();
+            assert_eq!(
+                preview.candidate_post_state_root(),
+                head.durable_state_root()
+            );
+            assert_eq!(fs::read(&config.path).unwrap(), bytes);
+            assert_eq!(
+                outcome.unwrap_err().code(),
+                ConsumptionSettlementErrorCodeV1::StaleVersion
+            );
+        }
+    }
+
+    #[test]
+    fn preview_readback_preserves_tamper_and_fence_errors() {
+        for fence in [false, true] {
+            let harness = crate::tests::Harness::new();
+            let config = harness.config();
+            let store = ConsumptionSettlementStoreV1::open(config.clone()).unwrap();
+            let before = store.fresh_readback().unwrap();
+            let execution = harness.execution(before.order_height(), before.order_block_id(), 10);
+            let other = ConsumptionSettlementStoreV1::open_existing(config.clone()).unwrap();
+            let expected = if fence {
+                ConsumptionSettlementErrorCodeV1::ThirdStateFenced
+            } else {
+                ConsumptionSettlementErrorCodeV1::TamperDetected
+            };
+            let (ready_tx, ready_rx) = std::sync::mpsc::channel();
+            let (release_tx, release_rx) = std::sync::mpsc::channel();
+            let (outcome, bytes) = std::thread::scope(|scope| {
+                let worker = scope.spawn(|| {
+                    PREVIEW_RENDEZVOUS
+                        .with(|slot| *slot.borrow_mut() = Some((ready_tx, release_rx)));
+                    other.preview_before_vote_v1(&before, 10, execution.order_block_id, &[])
+                });
+                ready_rx
+                    .recv_timeout(Duration::from_secs(10))
+                    .expect("preview snapshot released");
+                if fence {
+                    let command = ConsumptionSettlementCommandV1::AdmitReceipt {
+                        receipt: harness.receipt(None, 10, 100),
+                    };
+                    assert_eq!(
+                        store
+                            .execute_with_fault(
+                                &execution,
+                                &command,
+                                ConsumptionCommitFaultV1::ThirdState
+                            )
+                            .unwrap_err()
+                            .code(),
+                        expected
+                    );
+                } else {
+                    let connection = open_rw(&config.path, false).unwrap();
+                    connection.execute("UPDATE committed_blocks SET checksum=zeroblob(32) WHERE marker_sequence=0", []).unwrap();
+                }
+                let bytes = fs::read(&config.path).unwrap();
+                release_tx.send(()).unwrap();
+                (worker.join().unwrap(), bytes)
+            });
+            assert_eq!(outcome.unwrap_err().code(), expected);
+            assert_eq!(store.fresh_readback().unwrap_err().code(), expected);
+            assert_eq!(
+                ConsumptionSettlementStoreV1::open_existing(config.clone())
+                    .unwrap_err()
+                    .code(),
+                expected
+            );
+            assert_eq!(fs::read(&config.path).unwrap(), bytes);
+        }
+    }
+
+    #[test]
+    fn mixed_empty_and_command_writers_preserve_marker_kind_and_history() {
+        for empty_wins in [true, false] {
+            let harness = crate::tests::Harness::new();
+            let config = harness.config();
+            let store = ConsumptionSettlementStoreV1::open(config.clone()).unwrap();
+            let before = store.fresh_readback().unwrap();
+            let initial_state = store.state().unwrap();
+            let execution = harness.execution(before.order_height(), before.order_block_id(), 10);
+            let command = ConsumptionSettlementCommandV1::AdmitReceipt {
+                receipt: harness.receipt(None, 10, 100),
+            };
+            let other = ConsumptionSettlementStoreV1::open_existing(config.clone()).unwrap();
+            let (ready_tx, ready_rx) = std::sync::mpsc::channel();
+            let (release_tx, release_rx) = std::sync::mpsc::channel();
+            let (loser, receipt, bytes) = std::thread::scope(|scope| {
+                let worker = scope.spawn(|| {
+                    WRITER_RENDEZVOUS
+                        .with(|slot| *slot.borrow_mut() = Some((ready_tx, release_rx)));
+                    if empty_wins {
+                        other
+                            .execute_committed_execution(&execution, &command)
+                            .map(|_| ())
+                    } else {
+                        other
+                            .advance_empty_committed_execution_v1(&execution)
+                            .map(|_| ())
+                    }
+                });
+                ready_rx
+                    .recv_timeout(Duration::from_secs(10))
+                    .expect("loser preflight finishes before winning commit");
+                let receipt = if empty_wins {
+                    store
+                        .advance_empty_committed_execution_v1(&execution)
+                        .unwrap();
+                    None
+                } else {
+                    Some(
+                        store
+                            .execute_committed_execution(&execution, &command)
+                            .unwrap()
+                            .receipt()
+                            .clone(),
+                    )
+                };
+                let bytes = fs::read(&config.path).unwrap();
+                release_tx.send(()).unwrap();
+                (worker.join().unwrap(), receipt, bytes)
+            });
+            assert_eq!(
+                loser.unwrap_err().code(),
+                ConsumptionSettlementErrorCodeV1::StaleVersion
+            );
+            assert_eq!(fs::read(&config.path).unwrap(), bytes);
+            let cold = ConsumptionSettlementStoreV1::open_existing(config.clone()).unwrap();
+            let head = cold.fresh_readback().unwrap();
+            let state = cold.state().unwrap();
+            assert_eq!(head.sequence(), u64::from(!empty_wins));
+            let snapshot = open_read_snapshot(&config.path).unwrap();
+            let markers = load_committed_block_markers(&snapshot, &config).unwrap();
+            assert_eq!(markers.len(), 2);
+            assert_eq!(markers[1].source_operation_sequence, 0);
+            assert_eq!(markers[1].target_operation_sequence, head.sequence());
+            assert!(!load_metadata(&snapshot, &config).unwrap().5);
+            drop(snapshot);
+            if empty_wins {
+                assert_eq!(state, initial_state);
+                assert_eq!(
+                    cold.advance_empty_committed_execution_v1(&execution)
+                        .unwrap(),
+                    head
+                );
+                assert_eq!(
+                    cold.execute_committed_execution(&execution, &command)
+                        .unwrap_err()
+                        .code(),
+                    ConsumptionSettlementErrorCodeV1::StaleVersion
+                );
+                let same_block = harness.execution(10, execution.order_block_id, 10);
+                assert_eq!(
+                    cold.execute_committed_execution(&same_block, &command)
+                        .unwrap_err()
+                        .code(),
+                    ConsumptionSettlementErrorCodeV1::InvalidContext
+                );
+            } else {
+                assert_eq!(
+                    cold.advance_empty_committed_execution_v1(&execution)
+                        .unwrap_err()
+                        .code(),
+                    ConsumptionSettlementErrorCodeV1::Conflict
+                );
+                let replay = cold
+                    .execute_committed_execution(&execution, &command)
+                    .unwrap();
+                assert!(replay.is_replay());
+                assert_eq!(Some(replay.receipt()), receipt.as_ref());
+            }
+            assert_eq!(cold.fresh_readback().unwrap(), head);
+            assert_eq!(cold.state().unwrap(), state);
+            assert_eq!(fs::read(&config.path).unwrap(), bytes);
+            let next = harness.execution(10, execution.order_block_id, 11);
+            let next_head = cold.advance_empty_committed_execution_v1(&next).unwrap();
+            let bytes = fs::read(&config.path).unwrap();
+            let reopened = ConsumptionSettlementStoreV1::open_existing(config.clone()).unwrap();
+            if let Some(receipt) = receipt {
+                assert_eq!(
+                    reopened.confirm_receipt(&receipt).unwrap().receipt(),
+                    &receipt
+                );
+                let replay = reopened
+                    .execute_committed_execution(&execution, &command)
+                    .unwrap();
+                assert!(replay.is_replay());
+                assert_eq!(replay.receipt(), &receipt);
+            }
+            assert_eq!(
+                reopened
+                    .advance_empty_committed_execution_v1(&execution)
+                    .unwrap_err()
+                    .code(),
+                ConsumptionSettlementErrorCodeV1::StaleVersion
+            );
+            assert_eq!(reopened.fresh_readback().unwrap(), next_head);
+            assert_eq!(reopened.state().unwrap(), state);
+            assert_eq!(fs::read(&config.path).unwrap(), bytes);
+        }
     }
 
     #[test]
