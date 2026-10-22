@@ -206,3 +206,57 @@ admission and queried transaction inclusion still check complete packets. No sto
 schema, genesis, reward, rollback or root rule changes. This removes repeated Rust-side
 packet materialization but does not turn the complete-state root into persistent
 incremental authenticated storage or qualify physical power loss.
+
+## PN2 / P1 bounded-state delivery at the existing owner
+
+This specifies the I03–I05 work order in the
+[sole plan](../../../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md#pn2--native-pon-chain-and-recovery),
+using the existing
+[permanent-account decision](../../../development/specs/pon/PERMANENT_ACCOUNT_STORAGE_BOUNDARY.md#pn2-implementation-work-order-and-interfaces).
+These are required changes and gates, not newly implemented APIs. The source424
+65,537-account signed complete-State reference succeeded; it did not establish
+bounded-parent validation, witness-only execution or complete PN2 acceptance.
+
+| Priority / owner | Interface change inside existing modules | Dependency and acceptance |
+| --- | --- | --- |
+| P1 / M00/M01 | Bind the separately selected growth profile, finite limits, account root/count/balance, complete bounded non-account root/count, issued supply and mandatory liabilities into the existing parameter/header/challenge context. | PN0 and explicit new profile/domain/namespace; independent vectors and anti-aliasing. Old-profile bytes, cap, validity and replay remain unchanged. |
+| P1 / M07 -> M06, I03 | Authenticate the exact parent and aggregates before constructing the private bounded parent; replace the full-parent prerequisite only under the new root relation. | Prior profile binding; a cached block ID, supplied total or current active State cannot bind another parent. |
+| P1 / M09 -> M06/M07, I04 | Supply canonical original-parent touched-account multiproofs plus complete mandatory/range inputs; return checked child commitment, reversible delta, retained roots and reservation changes. | I03 plus [complete monetary ranges](MONETARY_OBLIGATION_RANGES_V1.md#completeness-includes-future-and-zero-obligations); include due/future/zero obligations and mandatory recipients before optional transactions. |
+| P1 / M07/M08 | Commit block, COW nodes, roots, deltas, branch references, reservation and active generation through the existing single writer. | I04 parity; no partial publish/ACK. Root/generation/slot fences, pending reorg cursors, cold integrity audit and independent local-effect history remain authoritative. |
+| P1 / M09/M13, I05 | Reserve and retain reachable roots, undo/recovery anchors and acknowledged obligations; retrieve/repair with exact parent/query, byte bound and original deadline. | Prior durable reservation; GC cannot evict required roots or mandatory duties. Missing bytes are Unavailable, never authenticated absence or invented finality. |
+| P1 / M07/M08/M15/M17 | Extend the existing [source-preserving migration](NATIVE_AUTHENTICATED_STORAGE_V1.md#explicit-migration-into-a-fresh-destination) and ordinary Node qualification to the selected growth profile. | Validate every source branch/root/account/nonce/liability and local durable fact; publish only an isolated fresh destination after exact disk readback. Preserve the recoverable source and pending reorg position. |
+
+Freeze numeric parameters in the selected profile and the existing
+[PN2 campaign](PERFORMANCE_ACCEPTANCE.md#pn1pn5-frozen-performance-and-product-campaign)
+before implementation acceptance. The frozen record must contain finite
+integer ceilings for permanent accounts A, working keys, all touched accounts W
+(including mandatory recipients), mandatory/range rows, account/range witness
+bytes, complete packet/sync-page bytes, concurrent retrievals and disk/WAL
+headroom. It must also specify wall/CPU/RSS and recovery/confirmation limits,
+sample counts, p95/p99 objectives and tolerances for scaling. No unspecified
+limit, post-run increase or changed denominator can close the gate. Complete
+packet accounting includes header, transactions, the 49,188-byte W1 certificate
+and every witness. Reserve maximum future mandatory fanout before originating
+optional obligations; refuse that optional admission if its future due set
+cannot fit, rather than later omit maturity/refund work.
+
+Acceptance follows the existing dependency order: profile/context -> I03/I04
+differential verification -> atomic persistence/reorg -> I05 retention and
+migration -> signed scaling/fault campaign. Require actual ordinary native
+signed admission at 65,537 accounts and the frozen larger A points, holding W
+and non-account partition within the fixed ceilings. Measure the full path at
+increasing A and retained history; the target is O(W log A + bounded range/input)
+validation without a full-state or per-block full-history hot-path walk.
+Complete-State reference success is a differential oracle, not that cost result.
+
+Every cohort must pass wrong-parent, omitted/extra/noncanonical proof, present
+zero-balance versus absence, nonce re-entry, overflow/conservation, due/future/zero
+liability completeness, mandatory expiry/refund and optional-load backpressure.
+Retain all disk-full, cancellation, each persistence cut, reopen, provider loss,
+GC, migration-failure, deep-fork and verified-resync results; a failed cohort
+cannot disappear into aggregate throughput. Assert the old or complete new
+published state, exact once-only events and no local journal/revocation rewind.
+Explicitly test accessed and untouched corruption plus delayed detection/audit:
+replacing full scans changes the detection model and must not silently drop the
+existing pre-COMMIT/final publication protection. Process cuts remain distinct
+from physical power-loss qualification.

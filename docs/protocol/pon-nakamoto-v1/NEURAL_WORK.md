@@ -1,7 +1,8 @@
 # Neural work: concrete experimental relation and security boundary
 
-Owners M01/M02/M03; model input owners M10/M11 and Hepta. The selected architecture
-remains Nakamoto-style useful neural work. Production work qualification is false.
+Owners M01/M02/M03, with M04/M15 ingress and M17 qualification; model input owners
+M10/M11 and Hepta. The selected architecture remains Nakamoto-style useful neural
+work. Production work qualification is false.
 
 ## Defined and implemented profile
 
@@ -35,8 +36,8 @@ they do not replace it with a successful stub.
 
 ## PN1 work-safety delivery contract
 
-This is I01 in the [sole plan](../../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md),
-amended against PR #323 source `9bd8b20da68f0dc199aab78c27644ed004af7411`.
+This is I01/I02 in the [sole plan](../../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md).
+Audit baseline: PR #323 source `8d56f2f173d3e870846cf1129d48647f2b84540a`.
 It specifies remaining work, not an accepted security result. Preserve the
 existing W1 relation and all historical profile bytes while qualifying it.
 
@@ -85,3 +86,43 @@ Exit requires all three verdicts above and the PN1 original-budget campaign in
 [admission security](details/ADMISSION_SECURITY.md). A finite campaign can close
 its declared availability regression while computational qualification remains
 open. The current revision does not set either verdict to accepted.
+
+### P0 responsibilities and acceptance within PN1
+
+I01 correctness, computational qualification and I02 honest service are three
+separate P0 results. M01 owns private `VerifiedWork` construction; M02 consumes
+only that checked fact and the existing required-work increment. M03 supplies
+the exact producer statement and all search/setup attempts. M04/M15 own shared
+operation admission, sockets, workers, cancellation and final settlement; M17
+binds source/configuration, preserves failures and independently reproduces
+each verdict. No single verdict substitutes for another.
+
+An I02 admission permit authorizes bounded local work only. It cannot construct
+`VerifiedWork`, change block validity/chainwork, issue local installation or
+FinalUse authority, or treat overload as invalid content. I01 verification
+cannot grant a new queue/CPU budget or bypass M04/M15 admission. Duplicate,
+cancelled, late and unknown outcomes retain their original operation/deadline
+and consumed-resource identity under
+[the shared-operation contract](details/ADMISSION_SECURITY.md#pn1-shared-operation-admission-target).
+
+Dependency order is PN0 source/profile freeze -> I01 statement and negative
+vectors -> same-target adversarial cost and I02 complete-path measurements ->
+independent verdicts. Cost research and ingress repair may run concurrently;
+public acceptance needs both. Freeze numerical target, setup horizon, shared
+CPU/worker/byte limits, honest load, attack envelope, confirmation deadline and
+depletion requirement before running the existing original-budget campaign.
+Every planned honest round must complete and the hostile cohorts must actually
+reach the required depletion; absent pressure cannot qualify attack resilience.
+
+At this baseline the three complete campaign runs retained 27/27 honest
+confirmations with matching imported states, but all six hostile stages missed
+the required genuine CPU depletion. Thus the original attack-envelope gate
+remains failed. Do not inherit the older 6/18-depletion result or claim observed
+honest interruption from this failure. Correctness, work cost and public-service
+acceptance remain independently open as specified above.
+
+Any change to the work relation, accepted statement or lottery needs a fresh
+profile/domain, parameter/genesis and storage context, old/new independent
+vectors and explicit migration/replay review. Byte-equivalent P2 verifier
+optimization must retain the existing relation, error/cancellation order and
+full checks; throughput gains cannot replace P0 security qualification.

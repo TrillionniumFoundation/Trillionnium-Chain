@@ -1,7 +1,7 @@
 # Trillionnium Chain Development Plan — PoN / Hepta-PoH revision
 
-Plan ID: `trnm-chain-development-plan-v2` (stable registry identity; content revision 17).
-Effective: 2026-09-28; priority implementation revision: 2026-10-20. Status: selected development direction; no runtime activation.
+Plan ID: `trnm-chain-development-plan-v2` (stable registry identity; content revision 18).
+Effective: 2026-09-28; priority implementation revision: 2026-10-22. Status: selected development direction; no runtime activation.
 Canonical destination: `refs/heads/main`; continuation uses the current main lineage, not retired PR #194.
 Current source/head/tree/base and prospective merge are derived at verification time.
 Assessed legacy baseline: `c552c31c6d3c5ac47522a124e02c6b8bca4e23f2`, tree
@@ -52,7 +52,7 @@ release requires their own real evidence, not completion of the retired PoCO roa
 
 ### Reconstruction and upgrade order
 
-The 2026-10-20 audit amendment uses Chain PR #323 commit
+The initial 2026-10-20 audit amendment uses Chain PR #323 commit
 `9bd8b20da68f0dc199aab78c27644ed004af7411` (tree
 `9a408fd7d9446dca3b319337f4a10078469df426`) against main
 `9fedf7ecbbe07177069c030592b4e03dcffebb81`. These are the inspected inputs,
@@ -72,15 +72,22 @@ revision16 full-parent model update, pinned task windows and configured-peer
 Cell pilot already exist; their controlled regressions are prerequisites to
 extend, not missing features to implement again.
 
-| Order in the existing sequence | Implementation boundary | Exit decision and downstream dependency |
+The following P0/P1/P2 labels prioritize remediation INSIDE PN0–PN6; they
+create no second roadmap or module. P0 blocks the corresponding safety or real
+product-loop claim, P1 closes state/resource/integration obligations, and P2
+extends independently operated public service and measured capacity. A P2
+release prerequisite is still mandatory. Hepta's existing P0–P8 roadmap labels
+remain delivery phases, not these severity labels.
+
+| Priority / existing phase | Accountable owners and interface delivery | Dependencies and acceptance |
 | --- | --- | --- |
-| PN0 first | Freeze one exact Chain/Hepta source pair, source/merge checks, security findings and original failed campaigns. | Reproducible baseline and assigned unresolved findings; no old pair receipt promoted to a new pair. Required security findings block the applicable integration/release gate. |
-| PN1 | Separate W1 computational qualification from bounded public admission and paid honest completion. | Both work assumptions and original-budget service results must be explicit. Offline learning and storage prototypes may proceed while research is open; public PoN acceptance cannot. |
-| PN2 | Instrument full-state/history costs, then install an explicitly versioned witness-based growth profile and its recovery path. | Actual signed native admission beyond 65,536 permanent accounts, bounded working state/proofs, conserved liabilities and fault recovery; caches alone do not close this gate. |
-| PN3 | Wire one real Hepta parameter loop, release dependency closure and the existing Cell fetcher into actual next-generation use. | At least three real lineage cycles with installed-parent readback, independent future evaluation, allowed no-update outcomes and recoverable failures. Efficacy and mechanical loop completion have separate verdicts. |
-| PN4 | Fund mining, contribution, evaluation, storage/repair and serving through separate bounded budgets. | No double payment or repeated external effect across retry/reorg; storage obligations and the free tier have actual resource backing. |
-| PN5 | Qualify independent WAN operators, public peer discovery, storage renewal/repair and complete-path performance. | Declared honest completion and model/DA/recovery objectives pass under the frozen fault/attack envelope. Controlled TCP tests and multiple keys under one custodian do not qualify independence. |
-| PN6 last | Rehearse source-preserving migration and use existing governed release/activation owners. | All predecessor gates and explicit release decisions hold on the actual source; documentation or merge cannot activate a profile. |
+| P0 / PN0 first | M00/M15/M17 plus Hepta control.engineering/kernel.evidence: freeze source pair, applicable head/merge checks, security disposition and original failures. | Named unresolved finding owners and current source/config/binary identities; successful analysis or document checks do not clear failed security/native gates. |
+| P0 / PN1 | M01/M02 own W1 validity/effective work; M03/M04/M15 own attempts and bounded ingress; M17 owns qualification. Deliver I01/I02 in the existing verifier/resource owners. | After PN0, retain three separate verdicts: statement correctness, computational qualification and honest service under the original attack envelope. No minimum-cost or public-service claim from parity, queues or one finite pass. |
+| P1 / PN2 | M00/M06/M07/M08/M13 own versioned parent/witness execution, durable roots, undo/replay and migration; M05/M09 supply bounded transactions/data. Deliver I03–I05. | After PN0, iterate with PN1 accounting. Signed transitions beyond 65,536 accounts must use bounded W/proofs, conserve liabilities and recover from faults. Complete-State reference success alone cannot close PN2. |
+| P0 / PN3 real model loop; P1 closure integration | M10/M11/M14/M15 and Hepta learning.operator/eval/artifacts/plasticity, neuron.runtime, inference owners and kernel.operations compose I06–I10. M09 supplies bytes, never install authority. | Controlled work may start after PN0 while PN1/PN2 remain visibly open; public acceptance requires both. Three real lineage cycles use actual installed-parent readback and next-task execution; no-update mechanical success and beneficial-release efficacy have different verdicts. |
+| P1 / PN4 | M06/M07/M08/M09/M10/M11/M12 and Hepta kernel.operations own five funded budgets, byte-time duties and original-operation reconciliation through I05/I08/I10. | PN2 conservation and PN3 exact operation/release identities. Actual locks/debits/meters, Unknown resolution/refunds and reorg funding replacement prevent double payment or repeated effects; inventory is read-only evidence. |
+| P2 / PN5 | M04/M09/M13/M14/M15/M17 and independent operators: bounded discovery, custody renewal/repair, complete-path performance and recovery. Extend I09 only through reviewed versioned contracts. | Joint PN1–PN4 acceptance; at least three independent administrators/failure domains and a preregistered 72-hour WAN campaign. Meet each cohort's service, release retrieval, repair and recovery objectives, not only an aggregate. |
+| P2 / PN6 last | M00/M07/M08/M13/M15 and existing governed release/activation owners rehearse source-preserving migration. | All predecessor exits and explicit decisions hold on actual binaries/profiles. No automatic activation, replacement consensus or authority promotion follows from a document or merge. |
 
 Section 6 is the executable work breakdown for these same PN0–PN6 stages;
 section 4 assigns their interface owners. Design and controlled experiments can
@@ -91,6 +98,70 @@ the latter three. Do not create an additional global optimizer, operation
 journal or parallel implementation plan.
 PN1 public-service repair and PN2 storage engineering may iterate together on
 one frozen workload; neither stage may declare the other's missing result passed.
+
+The acceptance dependency is PN0 -> joint PN1/PN2 -> public PN3 -> PN4 ->
+PN5 -> PN6. Controlled PN3 and configured-peer storage development may proceed
+in parallel after PN0, with their scope explicit. Within PN3, I06 export and
+I07 evaluation precede I08 exact task observation; I09 complete release fetch
+precedes I10 local admission/install/readback. Reuse Hepta's existing
+[global plan](https://github.com/TrillionniumFoundation/hepta-private-ci/blob/c38e7727220f32c7410f59083c5ea7878bbae078/docs/DEVELOPMENT.md)
+and work-package owners; Agentd composes calls and creates no second store.
+
+### Audit remediation baseline and acceptance records
+
+The 2026-10-22 audit inspected Chain `8d56f2f173d3e870846cf1129d48647f2b84540a`
+and Hepta PoN `c38e7727220f32c7410f59083c5ea7878bbae078`. Hepta Cell
+`710ab6863054cbf2927d1b4caa4300e71dcea60e` is a separate design/source input;
+its code is not silently part of that PoN pair. These are audit provenance,
+not pins for executing future candidates or proof of integration.
+
+Current-source [original campaign 39776374954](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/39776374954)
+retains three failed trials: 189 block-submission observations and 27 confirmed
+rounds, with equal receiver/client state, but no genuine depletion in any of
+the six hostile phases. The original artifact `12424909281` has 914 ZIP members;
+all 913 listed files were length/hash-checked. Its prepared business bytes
+contain only three distinct transactions. This establishes neither continuous
+attack pressure nor public TPS; it is not an observed honest-confirmation
+failure. Earlier 6/18 overlap observations below belong to earlier sources.
+The same source's [CodeQL check 119818040273](https://github.com/TrillionniumFoundation/Trillionnium-Chain/runs/119818040273)
+reports failure with thirteen high annotations. Independent disposition is
+required; the alert count is not thirteen independently confirmed exploits.
+
+Each PN exit retains source pair/profile, accountable owner, actual caller and
+command, frozen workload/thresholds, raw outputs, missing observations and
+PASS/FAIL/UNKNOWN/NOT_RUN per claim. Documentation verification only verifies
+the amended contract. Use existing evidence owners and records; no new audit
+journal, status registry or successful receipt is created by these edits.
+
+- **P0 real-model acceptance:** actual pretrained encoder/model forward,
+  training and post-install inference are measured through ordinary Hepta
+  owners. Each of three cycles binds installed parent, candidate, independent
+  future window, controls, exact task/packet observation, required byte closure,
+  fresh generation and actual next use. Rejected/no-gain candidates keep the
+  installed parent and earn no improvement reward. Three genuinely beneficial
+  installed releases require their own prospective efficacy result.
+- **P0 work acceptance:** I01 correctness, effective-work assumptions and I02
+  original-budget honest completion are separately accepted. Valid-work,
+  invalid-work and setup/amortization costs, attempts, target and hardware are
+  comparable; all failed/saturation-insufficient trials remain visible.
+- **P1 state acceptance:** fixed touched/mandatory W and declared history
+  cohorts demonstrate bounded hot-path reads/proof bytes/RSS while permanent
+  accounts grow beyond 65,536. Include omitted/wrong-parent range proofs,
+  zero-balance nonce retention, liability conservation, deep reorg, disk-full,
+  process cut, cold readback and isolated source-preserving migration. The
+  source424 full-State 65,537-account result below is a reference observation.
+- **P1/P2 storage acceptance:** first fetch one real selected release through
+  existing TCM1/TCR1 into the safe loader and next task under origin loss.
+  Full base/tokenizer/layout/runtime/router/member dependency closure belongs
+  to the versioned release owner; a TCR1 member set alone does not prove it.
+  Then qualify three independent complete replicas, renewal and repair within
+  frozen byte/time/funding budgets, preserving every retained release's roots.
+- **P2 capacity acceptance:** preregister offered load, unique confirmed
+  goodput, p50/p95/p99, cold/warm load, CPU/RSS/VRAM, storage and recovery
+  thresholds. Cell counts, shape-valid metrics, nominal 25.6 slots/s and a
+  transport-only DAG comparison cannot satisfy whole-system performance.
+  Compare new ordering architectures only if measured propagation/fork loss
+  dominates after state, verifier and owner-conflict costs are addressed.
 
 ### 2026-10-22 fixed-source follow-up
 

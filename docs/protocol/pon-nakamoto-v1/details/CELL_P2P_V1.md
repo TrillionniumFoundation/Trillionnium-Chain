@@ -56,6 +56,13 @@ an explicitly named initial parent/genesis. Parsing is capped at 1 MiB and
 It checks only the declared set; omitted dependencies, safe tensor shapes and
 model executability remain the release and loader owners' decisions.
 
+TCM1 carries five opaque dependency digests; TCR1 adds a same-context member
+set. Neither format encodes dependency edges, router/activation sets, explicit
+quantization/shape/ABI constraints, authority, custody or retention duties. A
+dependency digest alone does not make the corresponding bytes retrievable.
+The versioned closure target below must enumerate those bytes and semantics;
+do not add unversioned fields or reinterpret the existing five digest slots.
+
 `fetch-release` takes the locally supplied TCR1 file and an independently pinned
 release ID. It first obtains all member manifests, verifies the exact common
 context and checks the aggregate payload bytes and chunk-reference limits before
@@ -245,6 +252,14 @@ This is I09 of the
 The TCM1 configured-peer pilot above is implemented; the release closure,
 ordinary loader integration and public storage duties below are target work.
 Reuse the existing chunk/store/fetch owner rather than add another weight store.
+P1 closure/loader integration is a required delivery for the P0 PN3 full-loop
+gate; completing only its P0 interface prerequisites cannot close that gate.
+
+| Priority / existing plan interface | Delivery owner and dependency | Required acceptance |
+| --- | --- | --- |
+| P0 / I06–I08, PN3 | M10/M11/M14 and Hepta artifact/evaluation/TaskFlow owners | Freeze the selected real-model profile, authorized export, exact task/release/parent bindings and local installation authority before network fetching can support an upgrade. Download success never closes this prerequisite. |
+| P1 / I09–I10, PN3 | M10 release owner -> M09 fetch/store -> existing Hepta safe loader | Deliver a versioned complete dependency closure and bounded request/result mapping, then demonstrate origin-loss retrieval, compatible safe installation and actual next-task readback for the three-cycle loop. |
+| P2 / I05/I09, PN4–PN5 | M09 retention/discovery with M12 funding, M14 service and M17 evidence | After the configured-peer real-loader path, qualify independently funded custody, renewal/repair and bounded discovery; storage acknowledgement requires reserved capacity rather than a cache marker. |
 
 M10 and the existing Hepta release/artifact owner must define a bounded,
 versioned release manifest before M09 can retrieve a whole compatible model.
@@ -260,12 +275,16 @@ Its canonical commitment must bind:
   fallback behavior. A fallback changes no weights/version outside this closure.
 - Compatibility and resource ceilings sufficient for safe local loader admission.
 
-These are proposed schema responsibilities, not fields already encoded by TCM1.
+These are proposed schema responsibilities, not fields already encoded by TCM1/TCR1.
 Freeze maximum manifest bytes, dependency depth/fanout, number of Cells and total
 required bytes. Reject cycles, duplicate/conflicting identities, missing mandatory
 dependencies and unsupported runtime/shape before installation. Deduplicate shared
 base bytes in storage and cost accounting. A new closure schema needs a new domain
 and exact independent vectors; do not reinterpret TCM1 payload hashes or headers.
+Preserve TCM1/TCR1 decoding unchanged and specify explicit old/new caller refusal;
+the new closure may reference existing TCM1 objects without claiming TCR1 proves
+closure completeness. Bounds cover shared-base and tokenizer bytes as well as
+Cells, and bound any parent/delta reconstruction depth and full-checkpoint cost.
 If a BitTorrent infohash or IPFS CID is exposed, bind its algorithm, codec and
 exact byte mapping explicitly. It is not interchangeable with the domain-prefixed
 TCM1 manifest ID or the raw full-payload SHA256.
@@ -278,6 +297,15 @@ The caller still verifies format/compatibility and current release/withdrawal/
 generation/resource authority before installing. A timeout keeps verified chunks
 for bounded explicit retry; it cannot choose another model or refresh its own
 authorization. A verified byte receipt never becomes a final-use token.
+
+Specify the versioned target request/result through the existing I09 seam:
+request pins the closure/profile, original operation, selected local generation
+and total reservations; result names the same identity, verified required-object
+set, materialized payload hashes, actual costs and typed incomplete/refused
+outcome. Those are target semantics, not claims about current CLI JSON fields.
+Missing dependencies never yield a complete result. The release owner validates
+closure completeness and the safe loader validates formats/shapes without remote
+code import before the existing FinalUse owner can admit the selected generation.
 
 Implement local SSD -> RAM -> device-memory staging and bounded prefetch through
 the actual neuron runtime. Bind cached tensors/features to exact content and local
@@ -298,6 +326,13 @@ deadline/storage exhaustion and withdrawal before admission. Retained partial
 bytes must not become a selected release. Record cold/warm p50/p95/p99, failures,
 peak RSS/device memory and actual loaded hashes; the existing TCP tests alone
 do not supply this receipt.
+Require zero successful completions with missing mandatory objects, zero wrong-
+version substitutions, unauthorized CURRENT changes and budget replenishments
+in every success/failure cohort. The
+original byte/connection/deadline counters must include corrupt providers and
+all closure members. Freeze cold/warm latency, memory, sample-count and completion
+targets before the run; undersampled p99 remains unknown. Weight MB/s, cache hit
+rate and model-load latency are separate from unique client-confirmed chain TPS.
 
 ## PN5 swarm discovery, storage and repair target
 
@@ -320,6 +355,15 @@ network assumptions, bounded parallel fetch and peer backoff. A provider
 signature alone does not prove independent administration. Keep repair/discovery
 traffic inside measured disk, CPU, bandwidth and connection quotas.
 
+The current serial server is not a public concurrent-serving contract. The P2
+M09/M14 target must freeze bounded active connections/workers, per-provider and
+aggregate ingress/egress, queue length, service deadlines and slow-peer admission;
+discovery and repair consume those same original reservations. A slowloris,
+provider-spam or eclipse cohort must meet the preregistered honest complete-release
+deadline without unbounded queues, TTL refresh or retries. Test expired/malformed
+advertisements, conflicting contacts and bootstrap loss; none may change a pinned
+release or advertise private bytes without the existing export owner's permission.
+
 For private artifacts, require existing export authorization and an explicitly
 specified authenticated encrypted transport or encrypted-artifact format with
 separate key/access ownership. Hashes, DHT lookups and public chunks can disclose
@@ -336,6 +380,26 @@ Do not promise deletion of already exported copies. Disposable cache eviction
 must not erase acknowledged storage duties or consensus account history.
 Erasure coding needs a versioned shard relation, k/n availability assumptions,
 decode/repair verification and resource measurements before selection.
+
+The I05 retention interface must bind acknowledged release roots and reachable
+object set, provider/failure-domain identity, reserved bytes, start/expiry,
+renewal owner, repair deadline/budget and original funding/settlement identity.
+This is a versioned target duty, not a cache-schema or TCR1 field. Keep its facts
+with the existing retention/funding owners; cache eviction cannot erase them.
+GC starts from every retained release and unexpired duty, traverses the complete
+closure, and rechecks those roots before deletion. A shared base stays reachable
+while any retained version requires it. An expired lease reports loss of the
+promise explicitly; it cannot silently claim all historical versions remain.
+
+For every promised version v, require its reachable bytes R(v) to be present,
+retrievable and covered by the declared replica threshold, not merely some
+network-wide union U of cached Cells. Test at least two retained versions sharing
+a base and one distinct dependency, including origin plus one provider loss,
+renewal failure, repair interruption and GC. No acknowledged reachable object
+may be deleted; repair must restore three independent complete replicas within
+the frozen budget/deadline or report a failed duty. Publish coverage per release,
+not average cached bytes. An all-versions promise needs explicit retention duration,
+growth/funding and archival owners; no infinite-storage guarantee follows here.
 
 Exit is the PN5 independent WAN campaign, including churn, eclipse attempts,
 corrupt/slow providers, replica loss, hot-model flash crowds, budget exhaustion,

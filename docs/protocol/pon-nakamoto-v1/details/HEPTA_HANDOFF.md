@@ -277,6 +277,21 @@ it owns no second learning/artifact/effect store and cannot issue capabilities.
 Persist exact intent/attempt/output observations through the current TaskFlow /
 kernel.operations boundary, including the original effect key and wire bytes.
 
+The 2026-10-22 audit amendment assigns delivery priorities inside PN3; these
+are I06–I10 acceptance obligations, not another roadmap. M15 owns the paired
+source/interface freeze and M17 retains raw receipts and negative outcomes.
+Controlled implementation may proceed before PN1/PN2 pass; public upgrade claims
+remain dependent on their work-security and bounded-state acceptance.
+The P0 PN3 loop gate covers all of I06–I10, including the P1 closure/loader
+engineering below. I06–I08 or adapter delivery alone cannot close that gate.
+
+| Priority / existing interface | Accountable delivery owner | Dependency and acceptance |
+| --- | --- | --- |
+| P0 / I06–I07 | Hepta learning/artifact/export/evaluation owners with M10/M11 | Freeze a real pretrained model family, actual installed parent, source permissions, independent future-data custody and versioned evaluation/decision profile before candidate disclosure. Actual training/forward receipts and strong equal-budget controls replace fixture scores. |
+| P0 / I08 | M14 with the compiled Hepta TaskFlow adapter/coordinator | Consume the same durable packet/effect identity and schema-4 exact task settlement; reconcile Unknown before further dispatch. Exercise wrong task/provider/output, stale view and reorg with zero unauthorized/repeated external effects. |
+| P1 / I09–I10 | M09 and M10 release owner with Hepta safe loader, selection/resource/FinalUse owners | After the frozen I06–I08 contract, fetch the complete pinned dependency closure and install only after fresh local authority checks. Three real cycles each end in actual next-task loaded-model readback; a valid no-update retains the actual parent. |
+| P2 / PN4–PN5 extension of I09 | M09/M12/M14/M17 with independent storage/evaluation operators | After the configured-peer loader loop, qualify funded replica renewal/repair, bounded public discovery and independent WAN operation under the Cell contract. Extra providers or evaluator keys do not close PN3 efficacy. |
+
 The current revision16 ILM3/ILF3 family is a bounded tabular neural graph. Its
 zero-parent reachability and signed native adoption are real controls, not an
 arbitrary pretrained Encoder/LLM release format. The public historical 25-row
@@ -320,6 +335,25 @@ authority, and consumers still apply their own admitted release policy.
 | 7 / selection/artifact/resource/FinalUse owners | Current signed head/withdrawal, local generation, confirmation and compatible artifact -> fresh CURRENT generation | Recheck immediately before admission; chain generation is not a castable local generation. Code/structural/consensus changes require their own owners. |
 | 8 / neuron runtime + outcome/evaluation owner | Next ordinary task -> actual loaded weights/generation and inference/resource/outcome receipt | Record the model actually used, including cached Encoder features. Recheck feature input/model/preprocessing/scope/generation; no stale-feature reuse after install. |
 
+The I06–I10 interface amendment must carry exact release-closure/profile identity
+alongside the existing artifact, task-output and packet facts; they have distinct
+digest domains. Its versioned target schema must bind both the proposed parent
+and the runtime's actual loaded parent/readback, evaluation decision identity,
+intended release and original owner generation. These semantic fields are not
+new fields already present in TCM1/TCR1 or schema-4 `packet-status`. Publish
+canonical vectors, missing/unknown-field refusal and paired-version compatibility
+tests before wiring consumers. An unsupported profile returns an explicit refusal;
+it cannot fall back to a tabular scorer, a fixture encoder or raw manifest trust.
+
+The adapter observation is a point-in-time local chain fact. The coordinator
+checks one coherent network/profile, task, exact packet, active tip/generation
+and confirmation-policy view, then rechecks local artifact/withdrawal/selection
+generation at the final-use boundary. A changed view requires reconciliation or
+fresh selection. Revocation during download or after selection fences later use;
+reorg removes entitlement without rewinding TaskFlow receipts or local revocation
+history. A previously Unknown effect remains Unknown until its original owner
+reconciles it; another signed intent cannot resolve the uncertainty.
+
 First use one real compatible small pretrained Encoder with bounded learned
 Cell heads or an explicit adapter family. Reuse the shared Encoder execution,
 sparse activation, immutable feature snapshot and existing worker caller from
@@ -344,7 +378,17 @@ their original scoped budget.
 PN3 mechanical acceptance requires three real consecutive cycles and an
 independent consumer task, including valid no-update behavior. Every cycle
 starts from the predecessor actually in use; replica installs cannot multiply
-the learned-update count. Sustained-improvement acceptance separately requires
+the learned-update count. At each cycle entry, record actual runtime parent
+payload/closure hashes and local CURRENT generation, then match them to the
+predecessor's exit receipt. At exit, execute an ordinary newly authorized task
+and read back loaded tensor/adapter/router identities, generation and output,
+including a process restart/cold-load case. A selected update advances CURRENT
+through its existing owner; no-update records an unchanged parent/CURRENT and
+still executes that next task. Zero completed installs with unresolved required
+dependencies, zero unauthorized installs and zero repeated external effects
+are mandatory across
+the three cycles and all injected failures. Sustained-improvement acceptance
+separately requires
 at least three installed beneficial releases with independently held future
 outcomes under a preregistered gain/retention/safety rule and strong equal-budget
 controls. Three no-update cycles, ceiling scores, exploratory retraining or
