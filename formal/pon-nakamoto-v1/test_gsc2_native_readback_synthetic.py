@@ -91,6 +91,137 @@ def kv(directory, owner, raw):
     sql_mutation(directory, 'UPDATE kv SET value=? WHERE key=?', (raw, 'account:' + owner * 32))
 
 
+def restoring_wal(database, source):
+    connection = sqlite3.connect(database)
+    assert connection.execute('PRAGMA journal_mode=WAL').fetchone() == ('wal',)
+    connection.execute('PRAGMA wal_autocheckpoint=0')
+    # The main DB alone has an invalid schema context. Only the committed
+    # WAL restores it, so an immutable reader that ignores WAL cannot pass.
+    connection.execute("UPDATE metadata SET value=? WHERE key='schema'", (bytes(32),))
+    connection.commit()
+    assert connection.execute('PRAGMA wal_checkpoint(TRUNCATE)').fetchone()[0] == 0
+    connection.execute("UPDATE metadata SET value=? WHERE key='schema'", (reader.schema_from_source(source),))
+    connection.commit()
+    return connection
+
+
+def wal_controls(base, source):
+    results = []
+    for initially_empty in (False, True):
+        directory = base / ('empty-wal' if initially_empty else 'absent-wal')
+        directory.mkdir()
+        fixture(directory, source)
+        database = directory / 'store/native.sqlite'
+        connection = sqlite3.connect(database)
+        assert connection.execute('PRAGMA journal_mode=WAL').fetchone() == ('wal',)
+        connection.close()
+        wal = Path(str(database) + '-wal')
+        assert not wal.exists()
+        if initially_empty:
+            wal.write_bytes(b'')
+        before = reader.file_identities(database)
+        result = reader.readback(directory, source, 2)
+        assert result['result'] == 'PASS' and set(result['database_files']) == {database.name}
+        assert reader.file_identities(database) == before
+        assert wal.exists() and wal.stat().st_size == 0
+        results.append({'case': directory.name, 'result': 'PASS'})
+
+    directory = base / 'committed-wal'
+    directory.mkdir()
+    fixture(directory, source)
+    database = directory / 'store/native.sqlite'
+    wal = Path(str(database) + '-wal')
+    connection = restoring_wal(database, source)
+    try:
+        assert wal.stat().st_size > 0
+        before = reader.file_identities(database)
+        result = reader.readback(directory, source, 2)
+        assert result['result'] == 'PASS' and wal.name in result['database_files']
+        assert reader.file_identities(database) == before
+        assert result['database_files'][wal.name]['sha256'] == reader.sha(wal)
+        results.append({'case': directory.name, 'result': 'PASS'})
+        connection.execute('UPDATE kv SET value=? WHERE key=?',
+                           (b'{"balance":0,"nonce":8}', 'account:' + '00' * 32))
+        connection.commit()
+        try:
+            reader.readback(directory, source, 2)
+        except ValueError as error:
+            assert str(error) == 'actual commitment hash field mismatch: account_root'
+        else:
+            raise AssertionError('reader ignored the committed WAL nonce mutation')
+        results.append({'case': 'wal-only-nonce-mutation-rejected', 'result': 'PASS'})
+    finally:
+        connection.close()
+
+    # Every positive length is data to pin, including malformed/header-only WAL.
+    baseline = reader.file_identities(database)
+    for payload in (b'x', b'W' * 32, b'W' * 64):
+        wal.write_bytes(payload)
+        changed = reader.file_identities(database)
+        assert changed != baseline and changed[wal.name]['bytes'] == len(payload)
+        wal.write_bytes(b'')
+        assert reader.file_identities(database) == baseline
+        wal.unlink()
+        assert reader.file_identities(database) == baseline
+    results.append({'case': 'nonempty-wal-pinned-at-every-length', 'result': 'PASS'})
+    empty_target = directory / 'empty-target'
+    empty_target.write_bytes(b'')
+    for target in (empty_target, directory / 'missing-target'):
+        wal.symlink_to(target.resolve())
+        try:
+            reader.file_identities(database)
+        except ValueError as error:
+            assert str(error) == 'regular database/WAL files required'
+        else:
+            raise AssertionError('reader accepted an empty or dangling WAL symlink')
+        wal.unlink()
+    results.append({'case': 'empty-and-dangling-wal-symlinks-rejected', 'result': 'PASS'})
+    for name in ('database', 'receipt', 'wal-appears', 'wal-byte', 'wal-unlink'):
+        directory = base / ('changed-' + name)
+        directory.mkdir()
+        fixture(directory, source)
+        target = {'database': directory / 'store/native.sqlite',
+                  'receipt': directory / 'native.json',
+                  'wal-appears': directory / 'store/native.sqlite-wal',
+                  'wal-byte': directory / 'store/native.sqlite-wal',
+                  'wal-unlink': directory / 'store/native.sqlite-wal'}[name]
+        writer = restoring_wal(directory / 'store/native.sqlite', source) if name in ('wal-byte', 'wal-unlink') else None
+        original = reader.sparse_root
+        mutated = False
+
+        def mutate_at_math(*args):
+            nonlocal mutated
+            if not mutated:
+                if name == 'wal-unlink':
+                    target.unlink()
+                elif name == 'wal-byte':
+                    with target.open('r+b') as stream:
+                        stream.seek(-1, 2)
+                        byte = stream.read(1)
+                        stream.seek(-1, 2)
+                        stream.write(bytes([byte[0] ^ 1]))
+                else:
+                    with target.open('ab') as stream:
+                        stream.write(b' ')
+                mutated = True
+            return original(*args)
+
+        reader.sparse_root = mutate_at_math
+        try:
+            try:
+                reader.readback(directory, source, 2)
+            except (ValueError, sqlite3.Error):
+                assert mutated
+            else:
+                raise AssertionError('reader accepted changed ' + name)
+        finally:
+            reader.sparse_root = original
+            if writer is not None:
+                writer.close()
+        results.append({'case': 'during-readback-' + name + '-rejected', 'result': 'PASS'})
+    return results
+
+
 def run(source):
     fixed = reader.load((source / 'tests/vectors/pon/native-growth-reference-v2.json').read_bytes())
     assert fixed == gsc2_independent_vectors.result, 'fixed GSC2 vectors differ from independent derivation'
@@ -128,6 +259,7 @@ def run(source):
         assert result['result'] == 'PASS'
         assert result['scope']['reader_executes_native_code'] is False
         assert result['scope']['actual_sqlite_schema_matches_source_ddl'] is True
+        wal_results = wal_controls(base, source)
         for index, (name, mutate) in enumerate(changes):
             directory = base / str(index)
             directory.mkdir()
@@ -141,6 +273,7 @@ def run(source):
                 raise AssertionError('reader accepted synthetic mutation: ' + name)
     return {'schema': 'independent-gsc2-reader-synthetic-negative-controls-v1', 'result': 'PASS',
             'baseline_inputs': 1, 'rejected_mutations': len(results), 'cases': results,
+            'wal_controls': wal_results,
             'scope': 'Synthetic SQLite/current-root/framing input only; no signed transactions, dummy PNW1, '
                      'no native execution, consensus validity, actual growth or durability qualification'}
 
