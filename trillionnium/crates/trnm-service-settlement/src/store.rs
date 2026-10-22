@@ -317,6 +317,8 @@ impl ConsumptionSettlementStoreV1 {
             ));
         }
 
+        #[cfg(test)]
+        snapshot_tests::wait_before_writer();
         let mut connection = open_rw(&self.config.path, false)?;
         let transaction = connection.transaction_with_behavior(TransactionBehavior::Immediate)?;
         verify_schema(&transaction)?;
@@ -355,6 +357,8 @@ impl ConsumptionSettlementStoreV1 {
         transaction.commit()?;
         drop(connection);
 
+        #[cfg(test)]
+        snapshot_tests::wait_after_empty_commit();
         let after = self.fresh_readback()?;
         if after.sequence != before.sequence
             || after.order_height != execution.order_height
@@ -363,9 +367,12 @@ impl ConsumptionSettlementStoreV1 {
             || after.durable_journal_root != before.durable_journal_root
             || after.durable_committed_block_root == before.durable_committed_block_root
         {
+            // Another writer may have legitimately advanced the audited head
+            // after this commit. No permanent fence was written here, and the
+            // current head cannot acknowledge this call's exact target.
             return Err(error(
-                ConsumptionSettlementErrorCodeV1::ThirdStateFenced,
-                "empty committed batch readback differs from its exact target",
+                ConsumptionSettlementErrorCodeV1::CommitUncertain,
+                "empty committed batch target is not the current readback; no permanent fence was set",
             ));
         }
         Ok(after)
@@ -1968,6 +1975,137 @@ mod snapshot_tests {
                 .recv_timeout(Duration::from_secs(10))
                 .expect("release writer after both preflights");
         }
+    }
+
+    thread_local! {
+        static EMPTY_COMMIT_RENDEZVOUS: std::cell::RefCell<Option<(
+            std::sync::mpsc::Sender<()>, std::sync::mpsc::Receiver<()>
+        )>> = const { std::cell::RefCell::new(None) };
+    }
+
+    pub(super) fn wait_after_empty_commit() {
+        if let Some((ready, release)) =
+            EMPTY_COMMIT_RENDEZVOUS.with(|slot| slot.borrow_mut().take())
+        {
+            ready.send(()).expect("notify empty commit complete");
+            release
+                .recv_timeout(Duration::from_secs(10))
+                .expect("release empty commit readback");
+        }
+    }
+
+    #[test]
+    fn overlapping_empty_retry_can_require_a_fresh_retry_after_cas() {
+        let harness = crate::tests::Harness::new();
+        let config = harness.config();
+        let store = ConsumptionSettlementStoreV1::open(config.clone()).unwrap();
+        let before = store.fresh_readback().unwrap();
+        let execution = harness.execution(before.order_height(), before.order_block_id(), 10);
+        let other = ConsumptionSettlementStoreV1::open_existing(config.clone()).unwrap();
+        let (ready_tx, ready_rx) = std::sync::mpsc::channel();
+        let (release_tx, release_rx) = std::sync::mpsc::channel();
+        let (outcome, head, bytes) = std::thread::scope(|scope| {
+            let worker = scope.spawn(|| {
+                WRITER_RENDEZVOUS.with(|slot| *slot.borrow_mut() = Some((ready_tx, release_rx)));
+                other.advance_empty_committed_execution_v1(&execution)
+            });
+            ready_rx
+                .recv_timeout(Duration::from_secs(10))
+                .expect("empty retry preflight before competing commit");
+            let head = store
+                .advance_empty_committed_execution_v1(&execution)
+                .unwrap();
+            let bytes = fs::read(&config.path).unwrap();
+            release_tx.send(()).unwrap();
+            (worker.join().unwrap(), head, bytes)
+        });
+        assert_eq!(
+            outcome.unwrap_err().code(),
+            ConsumptionSettlementErrorCodeV1::StaleVersion
+        );
+        let cold = ConsumptionSettlementStoreV1::open_existing(config.clone()).unwrap();
+        assert_eq!(
+            cold.advance_empty_committed_execution_v1(&execution)
+                .unwrap(),
+            head
+        );
+        assert_eq!(cold.fresh_readback().unwrap(), head);
+        assert_eq!(fs::read(&config.path).unwrap(), bytes);
+        let snapshot = open_read_snapshot(&config.path).unwrap();
+        assert!(!load_metadata(&snapshot, &config).unwrap().5);
+        assert_eq!(
+            load_committed_block_markers(&snapshot, &config)
+                .unwrap()
+                .len(),
+            2
+        );
+    }
+
+    #[test]
+    fn later_empty_successor_does_not_report_a_permanent_fence() {
+        let harness = crate::tests::Harness::new();
+        let config = harness.config();
+        let store = ConsumptionSettlementStoreV1::open(config.clone()).unwrap();
+        let before = store.fresh_readback().unwrap();
+        let state = store.state().unwrap();
+        let first = harness.execution(before.order_height(), before.order_block_id(), 10);
+        let second = harness.execution(10, first.order_block_id, 11);
+        let first_handle = ConsumptionSettlementStoreV1::open_existing(config.clone()).unwrap();
+        let (ready_tx, ready_rx) = std::sync::mpsc::channel();
+        let (release_tx, release_rx) = std::sync::mpsc::channel();
+        let (outcome, later_head) = std::thread::scope(|scope| {
+            let worker = scope.spawn(|| {
+                EMPTY_COMMIT_RENDEZVOUS
+                    .with(|slot| *slot.borrow_mut() = Some((ready_tx, release_rx)));
+                first_handle.advance_empty_committed_execution_v1(&first)
+            });
+            ready_rx
+                .recv_timeout(Duration::from_secs(10))
+                .expect("first empty block committed before its readback");
+            let first_head = store.fresh_readback().unwrap();
+            assert_eq!(first_head.order_height(), 10);
+            assert_eq!(first_head.order_block_id(), first.order_block_id);
+            let later_head = store.advance_empty_committed_execution_v1(&second).unwrap();
+            release_tx.send(()).unwrap();
+            (worker.join().unwrap(), later_head)
+        });
+        let bytes = fs::read(&config.path).unwrap();
+        let cold = ConsumptionSettlementStoreV1::open_existing(config.clone()).unwrap();
+        assert_eq!(cold.fresh_readback().unwrap(), later_head);
+        assert_eq!(cold.state().unwrap(), state);
+        assert_eq!(
+            cold.advance_empty_committed_execution_v1(&first)
+                .unwrap_err()
+                .code(),
+            ConsumptionSettlementErrorCodeV1::StaleVersion
+        );
+        assert_eq!(fs::read(&config.path).unwrap(), bytes);
+        let snapshot = open_read_snapshot(&config.path).unwrap();
+        assert!(!load_metadata(&snapshot, &config).unwrap().5);
+        assert_eq!(
+            load_committed_block_markers(&snapshot, &config)
+                .unwrap()
+                .len(),
+            3
+        );
+        drop(snapshot);
+        assert_eq!(
+            cold.advance_empty_committed_execution_v1(&second).unwrap(),
+            later_head
+        );
+        assert_eq!(fs::read(&config.path).unwrap(), bytes);
+        let third = harness.execution(11, second.order_block_id, 12);
+        assert_eq!(
+            cold.advance_empty_committed_execution_v1(&third)
+                .unwrap()
+                .order_height(),
+            12
+        );
+        assert_eq!(cold.state().unwrap(), state);
+        assert_eq!(
+            outcome.unwrap_err().code(),
+            ConsumptionSettlementErrorCodeV1::CommitUncertain
+        );
     }
 
     #[test]

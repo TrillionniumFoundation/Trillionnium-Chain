@@ -119,6 +119,18 @@ and the single durable operation are checked. The rendezvous is test-only and
 time-bounded. This qualifies that schedule, not arbitrary concurrent entry,
 process death, power loss, or an authoritative chain integration.
 
+Empty-block calls have a narrower concurrent acknowledgment contract. If a second
+identical call passes its read preflight before the first call commits, its writer
+CAS can return `StaleVersion`; a fresh exact retry acknowledges the durable empty
+marker while it remains the head. If a later legitimate successor commits before
+an empty call's post-commit readback, the earlier call returns `CommitUncertain`,
+not `ThirdStateFenced`: it cannot return the exact requested head and has not set
+a permanent fence. Callers must inspect the fresh head rather than assume failure
+means the block was not applied. A historical empty target is not acknowledged
+after the head has advanced. Deterministic two-handle tests cover both schedules,
+cold reopen, unchanged state, latest exact retry and continued legal advancement.
+Actual permanent-fence checks and fail-closed audit errors remain unchanged.
+
 New successor-block admission rejects an all-zero block ID in both empty advances
 and command execution, matching the existing read-only preview rule. Rejection
 leaves the head, state and database bytes unchanged, so a corrected nonzero target
