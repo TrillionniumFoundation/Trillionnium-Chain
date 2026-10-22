@@ -475,7 +475,12 @@ prelude now accepts exactly three ordered tiny records: u32 little-endian length
 1..64KiB encoded body, 256KiB total, 4KiB input per call, one bounded partial
 body and three fixed destinations. Duplicate JSON keys, nonfinite numbers,
 unframed stderr, malformed/truncated/extra frames and invalid record schemas
-fail sticky. Its CPython3.12.3 writer borrows nonblocking stdout1, validates
+fail sticky. Before serialization, a deterministic traversal also bounds the
+whole envelope to64KiB using JSON punctuation/key/Unicode escape costs, at most
+8192 nodes/16 levels and256-bit integers. Oversized string/key lengths refuse
+before character iteration; no large-string encoding is used to test the
+limit. A legal60KiB ASCII result remains supported. Its CPython3.12.3 writer
+borrows nonblocking stdout1, validates
 direction/FIFO identity, requires an absolute deadline at most8s ahead at
 construction and never resets it within that writer or closes the borrowed
 endpoint. Binding that deadline to the original outer owner remains pending;

@@ -616,7 +616,10 @@ two native-populated FIFO slots, with same-owner/nochild-or-actual-refusal gates
 native identities/errno, endpoint direction and actual source binding. Original
 C spawn text stays unchanged. The separate source-bound tiny framing prelude
 now bounds three ordered schema-checked records to 64KiB/frame, 256KiB total and
-4KiB/read, and a borrowed nonblocking stdout writer keeps one supplied absolute
+4KiB/read. Before serialization, a bounded complete-envelope traversal includes
+keys/punctuation/Unicode escape costs and256-bit integer limits; oversized
+65KiB leaf/key controls refuse before the serializer. The borrowed nonblocking
+stdout writer keeps one supplied absolute
 deadline at most8s ahead at construction; binding it to the original outer
 owner remains open and this interface grants no budget authority. Pure parsing
 and small ordinary-FIFO child controls cover

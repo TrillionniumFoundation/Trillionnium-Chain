@@ -10,6 +10,7 @@ import sys
 import tempfile
 import time
 import unittest
+from unittest.mock import patch
 
 import llm_runtime_evidence_frames as frames
 
@@ -136,7 +137,30 @@ class EvidenceFrameTests(unittest.TestCase):
         value = records()[0]; value['membership'] = '0::/'+'x'*3900+'\n'
         with self.assertRaisesRegex(ValueError, 'frame-bound'): frames.encode_frame(frames.KINDS[0], value)
         value = records()[1]; value['result']['padding'] = 'x'*65536
-        with self.assertRaisesRegex(ValueError, 'frame-bound'): frames.encode_frame(frames.KINDS[1], value)
+        with self.assertRaisesRegex(ValueError, 'json-byte-bound'): frames.encode_frame(frames.KINDS[1], value)
+
+    def test_oversized_string_key_and_integer_refuse_before_serializer(self):
+        for extra in ('x'*(frames.MAX_FRAME+1), {'x'*(frames.MAX_FRAME+1):0}, 1<<512):
+            value=records()[1];value['result']['extra']=extra
+            with patch.object(frames.json,'dumps',side_effect=AssertionError('serializer reached')) as serializer:
+                with self.assertRaisesRegex(ValueError,'json-(byte|integer)-bound'):
+                    frames.encode_frame(frames.KINDS[1],value)
+                serializer.assert_not_called()
+
+    def test_aggregate_key_and_unicode_escape_budgets_refuse_before_serializer(self):
+        for extra in (['x'*32768,'y'*32768], '\U0001f642'*5500, {'\u4e2d'*5500:'\u4e2d'*5500}):
+            value=records()[1];value['result']['extra']=extra
+            with patch.object(frames.json,'dumps',side_effect=AssertionError('serializer reached')) as serializer:
+                with self.assertRaisesRegex(ValueError,'json-byte-bound'):
+                    frames.encode_frame(frames.KINDS[1],value)
+                serializer.assert_not_called()
+
+    def test_small_escaped_and_maximum_width_numeric_input_has_bounded_encoding(self):
+        value=records()[1];value['result']['extra']={'quote"\\\n\0':'\U0001f642\u4e2d',
+            'integers':[0,-1,2**255-1,-(2**255-1)],'floats':[1e308,-0.0,1e-300]}
+        encoded=frames.encode_frame(frames.KINDS[1],value)
+        self.assertEqual(struct.unpack('<I',encoded[:4])[0],len(encoded)-4)
+        self.assertIn(b'\\ud83d\\ude42\\u4e2d',encoded)
 
 
 @unittest.skipUnless(sys.implementation.name == 'cpython' and sys.version_info[:3] == (3,12,3),

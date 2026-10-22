@@ -21,19 +21,45 @@ def require(value, code):
     if not value: raise EvidencePipeError(code)
 
 
-def _tree(value, depth=0, count=None):
-    if count is None: count = [0]
-    count[0] += 1
-    require(depth <= 16 and count[0] <= 8192, 'evidence-pipe-json-bound')
+def _add(state, size):
+    state[1] += size
+    require(state[1] <= MAX_FRAME, 'evidence-pipe-json-byte-bound')
+
+
+def _string(value, state):
+    # len first: never encode/copy an arbitrarily large string or key.
+    require(type(value) is str and len(value) <= MAX_FRAME, 'evidence-pipe-json-byte-bound')
+    _add(state, 2)
+    for character in value:  # At most64KiB total characters across this traversal.
+        number = ord(character)
+        _add(state, 2 if character in '"\\\b\f\n\r\t' else
+             1 if 32 <= number < 127 else 6 if number <= 65535 else 12)
+
+
+def _tree(value, depth=0, state=None):
+    if state is None: state = [0, 0]
+    state[0] += 1
+    require(depth <= 16 and state[0] <= 8192, 'evidence-pipe-json-bound')
     if type(value) is dict:
+        require(len(value) <= 8192, 'evidence-pipe-json-bound')
+        _add(state, 2+max(0,len(value)-1))  # Braces and commas, then keys/colons.
         for key, item in value.items():
             require(type(key) is str, 'evidence-pipe-json-key')
-            _tree(item, depth+1, count)
+            _string(key,state); _add(state,1); _tree(item,depth+1,state)
     elif type(value) is list:
-        for item in value: _tree(item, depth+1, count)
+        require(len(value) <= 8192, 'evidence-pipe-json-bound')
+        _add(state, 2+max(0,len(value)-1))
+        for item in value: _tree(item,depth+1,state)
+    elif type(value) is str:
+        _string(value,state)
     else:
-        require(type(value) in (str, int, float, bool, type(None)) and
+        require(type(value) in (int, float, bool, type(None)) and
             (type(value) is not float or math.isfinite(value)), 'evidence-pipe-json-value')
+        if type(value) is int:
+            require(value.bit_length() <= 256, 'evidence-pipe-json-integer-bound')
+            _add(state, (value.bit_length()*30103)//100000+1+(value < 0))
+        else:
+            _add(state, 32 if type(value) is float else 5 if value is False else 4)
 
 
 def _pid(value): return type(value) is int and 0 < value < 2**31
@@ -77,7 +103,9 @@ def _record(kind, data):
 
 def encode_frame(kind, data):
     _record(kind, data)
-    raw = json.dumps(dict(schema=SCHEMA, kind=kind, data=data), sort_keys=True,
+    envelope = dict(schema=SCHEMA, kind=kind, data=data)
+    _tree(envelope)  # Bound the complete escaped envelope before serialization.
+    raw = json.dumps(envelope, sort_keys=True,
         separators=(',', ':'), allow_nan=False).encode()
     require(1 <= len(raw) <= MAX_FRAME and (kind != KINDS[0] or len(raw)+4 <= 4096),
             'evidence-pipe-frame-bound')
