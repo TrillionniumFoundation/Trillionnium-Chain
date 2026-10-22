@@ -252,5 +252,29 @@ class EvidencePipeOwnershipTests(unittest.TestCase):
         raw.assert_not_called();self.assertIsNone(cap.fact);self.assertIs(cap.evidence_pipe,pipe)
         self.assertIs(self.native.operation,cap)
 
+    def test_same_pipe_endpoint_swap_rejects_direction_before_any_close(self):
+        cap=self.fixture();pipe=self.prepare(cap)
+        pipe.read_slot[1],pipe.write_slot[1]=pipe.write_slot[1],pipe.read_slot[1]
+        with self.assertRaisesRegex(ValueError,'pipe-fd-direction'):cap.close(cap.owner)
+        for slot in cap._fd_owners:
+            if slot[1]>=0:os.fstat(slot[1])
+        self.assertIs(self.native.operation,cap)
+
+    def test_full16_ancestors_keep_two_distinct_FIFO_slots_and_close_all18(self):
+        cap=self.fixture()
+        for index in range(1,16):
+            path=Path(self.temporary.name)/str(index);path.mkdir()
+            fd=os.open(path,os.O_RDONLY|os.O_DIRECTORY|os.O_CLOEXEC)
+            cap._fd_owners[index][1]=fd;cap.nodes.append((path,fd,kernel.proc._signature(fd),{}))
+        pipe=self.prepare(cap);self.assertEqual(len(cap.nodes),16)
+        self.assertTrue(all(stat.S_ISDIR(os.fstat(slot[1]).st_mode) for slot in cap._fd_owners[:16]))
+        self.assertTrue(all(stat.S_ISFIFO(os.fstat(slot[1]).st_mode) for slot in cap._fd_owners[16:]))
+        descriptors=[slot[1] for slot in cap._fd_owners]
+        with patch.object(aggregate.os,'open') as opened,self.assertRaisesRegex(ValueError,'ancestor-bound'):
+            cap._open(Path(self.temporary.name)/'extra',{})
+        opened.assert_not_called();cap.close(cap.owner)
+        for descriptor in descriptors:
+            with self.assertRaises(OSError):os.fstat(descriptor)
+
 
 if __name__=='__main__':unittest.main()

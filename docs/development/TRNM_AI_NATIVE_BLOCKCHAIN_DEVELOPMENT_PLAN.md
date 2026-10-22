@@ -613,9 +613,18 @@ evidence transport remains a separate source change and does not guarantee zero
 charge or authorize operation release, Store/FinalUse use or a model.
 The private pipe ownership prelude retains the original16 ancestor slots plus
 two native-populated FIFO slots, with same-owner/nochild-or-actual-refusal gates,
-native identities/errno and actual source binding. Original C spawn text stays
-unchanged. Frame parsing, bounded drain and original supervise IO integration
-remain open; a registered pipe cannot yet create a terminal fact. Ordinary FD
+native identities/errno, endpoint direction and actual source binding. Original
+C spawn text stays unchanged. The separate source-bound tiny framing prelude
+now bounds three ordered schema-checked records to 64KiB/frame, 256KiB total and
+4KiB/read, and a borrowed nonblocking stdout writer keeps one supplied absolute
+deadline at most8s ahead at construction; binding it to the original outer
+owner remains open and this interface grants no budget authority. Pure parsing
+and small ordinary-FIFO child controls cover
+malformed/truncated/extra frames, backpressure and deadline refusal. Bounded
+owner drain, every original supervise IO branch and exact-wait4-before-raw EOF/
+actual read-slot close remain open; a registered pipe cannot create a terminal
+fact. Post-native Python exception injection does not claim native-internal
+signal interruption; SIGUSR1 tests prove guard reentry refusal. Ordinary FD
 controls do not qualify a valid unit or prove that C-created pipe pages charge C.
 The next dependency remains the existing Hepta
 kernel.operations Store's CPU destination/independent FinalUse/terminal release

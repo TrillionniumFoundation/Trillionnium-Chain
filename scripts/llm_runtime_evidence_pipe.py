@@ -58,6 +58,8 @@ class _EvidencePipeOwner:
                 require(fcntl.fcntl(slot[1], fcntl.F_GETFL) & os.O_NONBLOCK and
                     fcntl.fcntl(slot[1], fcntl.F_GETFD) & fcntl.FD_CLOEXEC,
                     'evidence-pipe-fd-flags')
+                require(fcntl.fcntl(slot[1], fcntl.F_GETFL) & os.O_ACCMODE ==
+                    (os.O_RDONLY if index == 0 else os.O_WRONLY), 'evidence-pipe-fd-direction')
 
     def fileno(self):
         # Original spawn calls this under count1. Never reenter the guard here.

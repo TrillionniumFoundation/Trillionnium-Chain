@@ -84,7 +84,8 @@ def _digest(raw):
 def _sources():
     return {p.name: _digest(_bytes(p)) for p in
         (_C, Path(__file__), Path(proc.__file__), Path(__file__).with_name('llm_runtime_pilot.py'),
-         Path(__file__).with_name('llm_runtime_evidence_pipe.py'))}
+         Path(__file__).with_name('llm_runtime_evidence_pipe.py'),
+         Path(__file__).with_name('llm_runtime_evidence_frames.py'))}
 
 
 class _Native:

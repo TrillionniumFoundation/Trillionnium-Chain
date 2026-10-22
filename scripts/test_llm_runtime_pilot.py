@@ -189,6 +189,7 @@ from test_llm_runtime_kernel_aggregate import AggregateTests
 from test_llm_runtime_kernel_counters import CounterTests
 from test_llm_runtime_kernel_diagnostic import TerminalDiagnosticTests
 from test_llm_runtime_evidence_pipe import EvidencePipeOwnershipTests
+from test_llm_runtime_evidence_frames import EvidenceFrameTests, EvidenceWriterTests
 from test_llm_runtime_decode import DecodeRoutingTests, ActualDecoderTensorTests
 
 

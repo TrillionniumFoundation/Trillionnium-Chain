@@ -468,13 +468,26 @@ returning to Python; original C spawn/ACK/error functions are unchanged, while
 the full C/native binary identity changes. The new module enters actual native
 source binding and M14 inventory. Close first checks the original same-owner and
 no-child/actual-native-refusal gates, then all live signatures and sticky slot
-errno before mutation. Partial closure or reused FDs retain the original owner.
+errno and O_ACCMODE direction before mutation. Partial closure or reused FDs retain the original owner.
 `fileno()` checks the already-held count1 native guard without reentering it and
-requires the original concrete child binding. This prelude has no framing,
-bounded drain or stdout integration: a registered pipe explicitly refuses
-terminal fact creation until those reviewed paths exist. Ordinary FIFO tests
-include pending native-return faults, FD reuse, partial-close errno, real signal
-reentry and invalid-cgroup refusal. They create no valid group, prove no charge
+requires the original concrete child binding. A separate source-bound framing
+prelude now accepts exactly three ordered tiny records: u32 little-endian length,
+1..64KiB encoded body, 256KiB total, 4KiB input per call, one bounded partial
+body and three fixed destinations. Duplicate JSON keys, nonfinite numbers,
+unframed stderr, malformed/truncated/extra frames and invalid record schemas
+fail sticky. Its CPython3.12.3 writer borrows nonblocking stdout1, validates
+direction/FIFO identity, requires an absolute deadline at most8s ahead at
+construction and never resets it within that writer or closes the borrowed
+endpoint. Binding that deadline to the original outer owner remains pending;
+this writer interface supplies no budget authority or general model exporter.
+Original supervise IO, bounded owner drain and the exact-wait4-before-raw EOF/
+read-slot-close integration remain open: a registered pipe still explicitly
+refuses terminal fact creation. Ordinary FIFO tests include Python fault
+injection after native return, full16 ancestor plus2 FIFO slots, FD reuse,
+partial-close errno, real SIGUSR1 lock reentry and invalid-cgroup refusal;
+native-internal signal interruption is not established. Small ordinary child
+controls test frame writing/backpressure and expired-deadline refusal without
+any unit or valid group. These controls prove no charge
 attribution/zero, and do not qualify a model, Store/FinalUse or resource release.
 
 The ordinary merge with source `8caf5387` preserves its inherited runtime,
