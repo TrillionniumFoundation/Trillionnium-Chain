@@ -245,7 +245,7 @@ two new complete remaining frontiers in the same call, with matching names,
 counts and original starttimes, all original predicates, and remaining Z tasks.
 Each recapture consumes a newly proved original worker, at most the original
 worker count. Previously observed illegal/unknown fields stay sticky. Leader
-loss, count mismatch, additions/reappearance, wrong FD/event and missing proof
+loss, unproved count mismatch, additions/reappearance, wrong FD/event and missing proof
 refuse; no early-leader pidfd event or count-based inference supplies authority.
 Own tiny-child tests confirmed worker-event/proc-disappearance separation from
 group completion and the kernel's delayed early-leader event. Those observations
@@ -266,6 +266,30 @@ terminal wait4/resource receipt. A caller-supplied terminal flag cannot bypass
 the live checks. Real own-child wait4 success and wrong-owner/replaced-FD cases,
 plus synthetic unknown/wrong-wait refusal tests, cover this repair; no new full
 model pilot or three-round acceptance follows from it.
+
+The first full V4 `1cabbb1` real-model attempt is also FAIL. Its first loader
+completed actual pretrained loading and eight forward/decode requests, exited
+zero, and was genuinely reaped, but the supervisor refused
+`exit-worker-frontier-change`. Fourteen complete snapshots ended with two tasks
+at 77.997ms after the original gap. A newly observed original worker pidfd
+terminal event at 82.285ms coincided with Threads=2 and one enumerated task;
+strict refusal completed at 82.344ms. The later 87.258ms one-task/group-ready
+diagnostic does not supply a complete same-call double frontier or prove
+timely exact wait4; that terminal timestamp remains UNKNOWN. All 4,248 deployed
+tracked source blobs were reverified unchanged, all original run/control bytes
+and hashes remain retained, and later stages are NOT_RUN. No retry converts it.
+The same M17/M10 component repairs only capture across a newly proved original
+worker retirement: this `_names` call must add fresh bound terminal proof,
+retain the leader in a strict subset and read the old count equal to the
+complete committed active-set size at entry. That incomplete fragment may be
+discarded through the existing bounded recapture; two new complete count/name
+consistent remaining Z frontiers in the same call are still mandatory. Raw
+count/names/proof context is retained. Repeated/previously retired proof,
+intermediate or unexplained counts, new/reappeared tasks, leader loss and
+already seen illegal fields remain sticky refusals. The original maximum
+worker count, 100ms origin, resources, owned wait4 and post-reap capability
+checks do not change. No new profile/schema, successful pilot or PN3 acceptance
+is created by this repair; the retained `1cabbb1` outcome stays FAIL.
 
 The optional scalar-credit freshness observation reads the original watermark
 and projects the original refill arithmetic without changing the clock, credit,

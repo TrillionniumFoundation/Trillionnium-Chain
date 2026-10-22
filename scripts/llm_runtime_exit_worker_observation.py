@@ -147,14 +147,23 @@ class WorkerPidfdObservation(base.ExitOnlyObservation):
         self.failure_context['candidate_retirements'] = dict(candidate)
 
     def _names(self, candidate):
+        active, preceding = self.active_names, set(candidate)
         count = self._leader(base._status(base._read(self.group_fd, 'status')))
         names = base._task_names(self.tasks_fd)
         self.failure_context.update(reported_threads=count, observed_tasks=list(names))
-        base._require(str(self.visible) in names and set(names) <= set(self.active_names) and
+        base._require(str(self.visible) in names and set(names) <= set(active) and
             not set(names) & set(candidate), 'exit-worker-task-set')
-        for name in self.active_names:
+        for name in active:
             if name not in names and name not in candidate:
                 self._retire(name, candidate)
+        newly_proved = [name for name in active if name in candidate and name not in preceding]
+        if count != len(names) and count == len(active) and set(names) < set(active) and newly_proved:
+            # This read crossed newly proved retirement, not a complete frontier.
+            # The old count licenses one bounded recapture, never acceptance.
+            self.failure_context['count_interruption'] = dict(prior_active_tasks=list(active),
+                reported_threads=count, observed_tasks=list(names), newly_proved_retired_tasks=newly_proved,
+                scope='discarded incomplete frontier; not success or resource evidence')
+            raise _Recapture
         base._require(count == len(names), 'exit-worker-frontier-change')
         return names, count
 
@@ -217,6 +226,9 @@ class WorkerPidfdObservation(base.ExitOnlyObservation):
                         reading_task=self.failure_context.get('reading_task'),
                         reading_component=self.failure_context.get('reading_component'),
                         observed_tasks=self.failure_context.get('observed_tasks')))
+                    interruption = self.failure_context.pop('count_interruption', None)
+                    if interruption is not None:
+                        self.failure_context['interrupted_frontiers'][-1]['count_interruption'] = interruption
                     continue
                 self._owner()
                 self._deadline()

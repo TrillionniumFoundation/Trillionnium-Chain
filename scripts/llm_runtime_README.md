@@ -176,7 +176,7 @@ The complete frontiers must agree on task names/counts and original starttimes;
 this does not require every unrelated stat flag to remain identical.
 Already observed malformed, live-memory, wrong-identity or unqualified fields
 are sticky and cannot be erased by a later worker event. Additions, reappearance,
-count mismatches, missing terminal events and changed/closed FDs also refuse.
+unproved count mismatches, missing terminal events and changed/closed FDs refuse.
 
 The leader always needs its original proc observations and cannot disappear.
 The [Linux v7.0 UAPI](https://github.com/torvalds/linux/blob/v7.0/include/uapi/linux/pidfd.h)
@@ -211,6 +211,37 @@ pre-reap checks. Actual own-child wait4 tests cover that transition and reject
 wrong tokens and replaced FDs. Separate synthetic unknown/wrong-wait and missing
 receipt cases remain refused before the terminal helper. This review repair
 does not convert either model pilot failure or qualify a new full pilot.
+
+The first frozen `1cabbb1` V4 real-model attempt on 2026-10-22 is FAIL. All
+4,248 tracked Git blobs and the fixed environment/materials were verified before
+execution and unchanged afterward. The first loader loaded the pretrained
+model, completed eight forward/decode requests and exited zero, but its
+supervisor refused `exit-worker-frontier-change`. Fourteen complete snapshots
+preceded refusal; the last two-task snapshot completed at 77.997ms after the
+original RSS gap. The original held worker pidfd's `POLLIN|POLLHUP` event was
+observed at 82.285ms, while the same names capture reported Threads=2 and only
+the leader. Refusal completed at 82.344ms. A later one-task/group-ready
+diagnostic at 87.258ms supplies neither the missing same-call frontiers nor a
+timestamped timely exact wait4. Cleanup resolved with valid waited resources,
+but its exact wait4 time remains UNKNOWN. No pending shrink was accepted;
+training, five-participant controls/evaluation, assessment, installation and
+reward did not run.
+The original bytes/hashes and FAIL outcome remain retained without retry.
+
+The capture repair permits only discarding that incomplete count read: within
+one `_names` call a strict subset retaining the leader must add a new original
+worker's bound kernel terminal proof, and the stale count must exactly equal
+the complete committed active-set size at call entry. It then requests the
+existing bounded recapture, retaining the raw count/names and new proof as
+diagnostic context. Success still requires two new complete matching remaining
+frontiers in the same recheck call. A repeated proof, already retired worker,
+unexplained/intermediate count, new task, leader loss or already observed illegal
+status/stat remains a sticky refusal. For example, committed size=3, names=1,
+count=2 is not inferred to be a valid intermediate set. At most the original
+worker count can request recapture, and the original 100ms/wall/RSS and exact
+owned wait4/resource requirements do not reset or change. The repair adds no
+profile/schema and does not reinterpret `1cabbb1`; a new frozen real-model
+execution still needs separate review and authorization.
 
 `sampled_peak_rss_bytes` remains the direct-child sampling result.
 `waited_child_peak_rss_bytes` separately records that exact child's Linux `wait4`
