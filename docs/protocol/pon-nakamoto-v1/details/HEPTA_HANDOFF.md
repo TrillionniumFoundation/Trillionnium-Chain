@@ -416,3 +416,19 @@ cuts at each durable owner boundary. After restart, report the original operatio
 and actual loaded generation; do not execute an external effect again to repair
 a missing observation. Reverting a model is a newly admitted local generation.
 Historical decisions and revocation/forget frontiers remain unchanged.
+
+The controlled [Cell/native handoff script](../../../../scripts/run_llm_cell_native_handoff.py)
+currently supplies transport and verified file bytes only. The matching native
+Hepta consumer and owner-receipt contract are unshipped; current inspected Hepta
+`deaf3195`, primary `061f14c8` and PoN base `c38e7727` supply no such consumer.
+The script retains its original aggregate transfer deadline and readbacks,
+then drains the finite producer and fails closed with consumer UNAVAILABLE and
+receipt UNVERIFIED. It does not start an unknown native selector or accept an
+arbitrary JSON report as success. Original absolute-path arguments remain
+accepted for invocation compatibility and grant no consumer capability.
+Mocked exit0/failed-JSON controls reproduce the removed orchestration bug;
+they are neither real-model failures nor I10 execution evidence. A future
+implementation must use the existing selection, artifact, resource and FinalUse
+owners and actual load/next-task/release observations before a supported receipt
+can be validated. Provider completion, DTO/hash readback and successful Cell
+transport do not substitute for those owner facts or the three real cycles.

@@ -524,6 +524,23 @@ absolute phase wall budget and still requires exact wait4/resources. Campaign5
 and its 16/32 equal gen2/gen3/zero-changed-decision Ineligible result keep their
 original source scope. This merge adds no model, cgroup, FinalUse or I10 result.
 
+The existing [Cell/native handoff script](../../scripts/run_llm_cell_native_handoff.py)
+implements controlled dependency transport and byte readback, but its native
+Hepta consumer and owner-receipt contract are not shipped. Inspection of Hepta
+`deaf31954d53fa8eba543525221c34f9b1b3d1b6`, primary
+`061f14c8f4722506b38a39ff3921b6bd42b8c8aa` and PoN base
+`c38e7727220f32c7410f59083c5ea7878bbae078` finds no matching consumer.
+After the unchanged original transfer deadline, readbacks and finite producer
+drain, this script records consumer UNAVAILABLE and receipt UNVERIFIED, keeps
+the top-level result failed and invokes no unknown native command. The retained
+absolute-path arguments cannot enable that absent consumer. A missing report
+already failed closed; the removed arbitrary-JSON success branch could instead
+promote a mocked child exit0 with a failed or unrelated JSON report. The red/green
+controls use mocked orchestration and small real file hashes, not actual model
+execution or a real model failure. They preserve the original late-readback
+failure and do not close the real caller, load-attempt binding, resource,
+FinalUse, three-cycle next-task readback or I10 obligations.
+
 The optional scalar-credit freshness observation reads the original watermark
 and projects the original refill arithmetic without changing the clock, credit,
 owner or depletion predicate. Its added sampler contention and complete-path
