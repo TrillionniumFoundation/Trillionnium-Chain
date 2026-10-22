@@ -286,11 +286,40 @@ Only that owner's valid wait4 path may collect operation-empty/raw kernel
 counters. Tests of native invalid-FD refusal and real wait4 composition with a
 synthetic operation do not qualify actual native cgroup placement.
 
+The same internal capability now has an explicit descriptor-only `close(owner)`.
+It permits an unconsumed capability, or an actual nonzero native spawn return
+with all original child handoff slots untouched. A pending signal on native
+return establishes no no-child proof. Consumed capabilities with terminal or
+outer reconciliation UNKNOWN refuse close and retain the same strong child
+owner and descriptors, even if a caller supplies a successful receipt. One
+fixed slot in each Native retains its open capability; no unbounded registry
+is introduced. Native `close()` refuses an occupied slot. Closing an eligible
+capability closes its original ancestor FDs and clears that slot; only then may
+Native close its sealed memfd. This does not unload an executing shared library,
+stop/delete a unit/cgroup, settle a grant or release reserved resources. Native
+close-and-clear slots retain errno before returning to Python, so interruption
+cannot leave a stale FD number to close a later descriptor. Close failures keep
+the original owner reachable. Existing source preparation remains within the
+trusted same-administrator scope, not a general hostile FD-table contract.
+
 Two earlier, separately identified capability cohorts remain FAIL. The first
 clone3 returned EACCES from the outside SSH scope. The second's delegated-service
 primitive actually created a birth-bound child, verified pre-exec membership,
 collected exact owned wait4 and removed its empty operation, but outer closure
 failed because systemd's ControlGroup was already empty after its main exited.
+This is not fixed by holding a directory FD or `RemainAfterExit=yes`: upstream
+systemd255 [service.c](https://github.com/systemd/systemd/blob/db11bab38ccf1ed257f310d29070843d4c58ea01/src/core/service.c#L1263)
+prunes on SERVICE_EXITED, and [unit.c](https://github.com/systemd/systemd/blob/db11bab38ccf1ed257f310d29070843d4c58ea01/src/core/unit.c#L2757)
+prunes inactive units before resource logging. Its
+[accounting getters](https://github.com/systemd/systemd/blob/db11bab38ccf1ed257f310d29070843d4c58ea01/src/core/cgroup.c#L4065)
+can return cached memory/CPU values after raw files disappear. A finite manager
+property or last sample therefore supplies no final raw-counter receipt.
+The old cohort did not capture InvocationID, CPUUsageNSec, MemoryPeak or
+TasksCurrent in its post-main properties; its failure remains unchanged. A
+future external controller must bind the live original unit before main exit
+and obtain authoritative final identity/empty/limits/counters before release.
+Preheld FDs do not guarantee that observation beats manager pruning. No such
+outer controller/settlement protocol is implemented by this close slice.
 Those facts neither qualify this new in-process source nor supply whole-unit
 empty/inode reconciliation. `memory.peak/events` measure cgroup charge, not
 physical RSS; shared-page ownership, escaping same-UID code, ancestor expenses,

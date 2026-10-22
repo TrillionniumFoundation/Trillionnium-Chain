@@ -64,3 +64,10 @@ int trnm_kernel_close_v1(int result[4], unsigned int mask) {
     }
     return error;
 }
+
+/* Private FD owner slots: persist errno before Python can receive a signal.
+ * These are never child handoff slots, whose result[0] remains the owned PID. */
+int trnm_kernel_release_owned_v1(int owner[4]) {
+    owner[0] = trnm_kernel_close_v1(owner, 2U);
+    return owner[0];
+}

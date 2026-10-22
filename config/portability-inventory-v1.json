@@ -609,6 +609,7 @@
         "scripts/llm_runtime_pilot.py",
         "scripts/llm_runtime_exit_observation.py",
         "scripts/test_llm_runtime_kernel_owned.py",
+        "scripts/test_llm_runtime_kernel_close.py",
         "scripts/ci/verify_ci_source.py"
       ],
       "scope": "Optional same-administrator native child birth placement under the existing Python wait4 owner; no public-profile activation, RSS equivalence, FinalUse settlement or model acceptance."

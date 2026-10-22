@@ -515,6 +515,26 @@ The 21 real tiny-child fault cases use synthetic native outputs; persistent
 allocation and exact gate/pidfd-number reuse tests cover cleanup, not cgroup
 placement, whole-unit closure, model acceptance or I10.
 
+The same M14 capability now provides explicit descriptor closure only before
+spawn, or after an actual native refusal proves all child slots untouched.
+One fixed strong Native slot retains its open capability. Native memfd closure
+refuses while that slot is occupied; eligible cap closure resolves its original
+ancestor descriptors first. Consumed/unknown child or outer state always
+refuses close and retains the same owner. Native errno/close-and-clear slots
+survive signals/allocation failures without closing reused FD numbers. This
+does not stop a unit, refund a grant, complete FinalUse or qualify a model.
+
+The delegated-unit failure still blocks outer reconciliation. Upstream
+systemd255 [SERVICE_EXITED pruning](https://github.com/systemd/systemd/blob/db11bab38ccf1ed257f310d29070843d4c58ea01/src/core/service.c#L1263)
+and [inactive-unit pruning](https://github.com/systemd/systemd/blob/db11bab38ccf1ed257f310d29070843d4c58ea01/src/core/unit.c#L2757)
+can remove the cgroup before final property readback. Its
+[accounting getters](https://github.com/systemd/systemd/blob/db11bab38ccf1ed257f310d29070843d4c58ea01/src/core/cgroup.c#L4065)
+may return last cached values. Neither finite properties nor preheld directory
+FDs prove final raw accounting. The old cohort lacks the post-main InvocationID
+and accounting properties; preserve FAIL. An external controller with an
+explicit original-unit lifetime/final-data protocol remains required under
+the existing PN3/PN4 owners. No outer success path is supplied by this slice.
+
 The ordinary merge with source `8caf5387` retains the inherited runtime and
 persistent neural-read worker, its default held-pidfd/irreversible-exit helpers,
 all explicit V2–V4 source-bound paths and the controlled native owner. Explicit

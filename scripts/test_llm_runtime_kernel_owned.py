@@ -28,6 +28,10 @@ class KernelOwnedTests(unittest.TestCase):
     def setUpClass(cls):
         cls.native = kernel.build_controlled_native()
 
+    @classmethod
+    def tearDownClass(cls):
+        cls.native.close()
+
     def synthetic_cap(self):
         cap = object.__new__(kernel._ControlledOperation)
         cap.memory = 8*1024**3; cap.native = self.native; cap.spawn_owner = None
@@ -107,6 +111,7 @@ class KernelOwnedTests(unittest.TestCase):
     def fixture(self, directory):
         cap = object.__new__(kernel._ControlledOperation)
         cap.native = self.native; cap.memory = 8*1024**3
+        cap.closed = False
         cap.failed = cap.consumed = False; cap.child = None; cap.owner = object()
         cap.unit = 'fixture.service'; cap.invocation = '1'*32
         cap.membership = Path('/proc/self/cgroup').read_text()

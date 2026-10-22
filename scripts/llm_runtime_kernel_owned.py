@@ -28,6 +28,13 @@ class KernelBudgetError(ValueError):
     pass
 
 
+class KernelOwnedCloseRequired(KernelBudgetError):
+    """An acquisition cleanup fault retains the same capability and its slots."""
+    def __init__(self, capability):
+        super().__init__('kernel-owned-close-required')
+        self.capability = capability
+
+
 def require(condition, code):
     if not condition:
         raise KernelBudgetError(code)
@@ -59,8 +66,11 @@ class _Native:
     def __init__(self, token, raw, sources):
         require(token is _TOKEN, 'kernel-native-constructor')
         self.sources, self.binary_sha256 = sources, _digest(raw)
-        self.fd = os.memfd_create('trnm-controlled-spawn-abi1', os.MFD_CLOEXEC | os.MFD_ALLOW_SEALING)
+        self.operation = None  # One fixed strong slot, never an unbounded registry.
+        self._fd_owner = (ctypes.c_int*4)(0, -1, -1, -1)
+        self._fd_owner[1] = os.memfd_create('trnm-controlled-spawn-abi1', os.MFD_CLOEXEC | os.MFD_ALLOW_SEALING)
         try:
+            self._fd_signature = proc._signature(self.fd)
             with os.fdopen(os.dup(self.fd), 'wb') as stream: stream.write(raw)
             seals = fcntl.F_SEAL_WRITE | fcntl.F_SEAL_GROW | fcntl.F_SEAL_SHRINK | fcntl.F_SEAL_SEAL
             fcntl.fcntl(self.fd, fcntl.F_ADD_SEALS, seals)
@@ -74,9 +84,26 @@ class _Native:
             self.close_handoff = self.library.trnm_kernel_close_v1
             self.close_handoff.argtypes = [ctypes.POINTER(ctypes.c_int), ctypes.c_uint]
             self.close_handoff.restype = ctypes.c_int
+            self.release_owned = self.library.trnm_kernel_release_owned_v1
+            self.release_owned.argtypes = [ctypes.POINTER(ctypes.c_int)]
+            self.release_owned.restype = ctypes.c_int
         except BaseException:
             os.close(self.fd)
             raise
+
+    @property
+    def fd(self):
+        return self._fd_owner[1]
+
+    def close(self):
+        """Close only this sealed memfd, not dlclose an executing library."""
+        require(self.operation is None, 'kernel-native-operation-retained')
+        require(self._fd_owner[0] == 0, 'kernel-native-close-failed')
+        if self.fd < 0:
+            return
+        require(proc._signature(self.fd) == self._fd_signature, 'kernel-native-fd-replaced')
+        self.release_owned(self._fd_owner)
+        require(self._fd_owner[0] == 0, 'kernel-native-close-failed')
 
 
 def build_controlled_native():
@@ -106,6 +133,7 @@ class _ControlledOperation:
     def __init__(self, token, native, unit, invocation, operation, memory, owner):
         require(token is _TOKEN and type(native) is _Native and owner is not None,
                 'kernel-capability-constructor')
+        require(native.fd >= 0 and native.operation is None, 'kernel-native-operation-retained')
         require(type(memory) is int and memory in (8*1024**3, 16*1024**3), 'kernel-memory-ceiling')
         require(re.fullmatch(r'[A-Za-z0-9_-]+\.service', unit) and
                 re.fullmatch(r'[0-9a-f]{32}', invocation) and
@@ -123,11 +151,18 @@ class _ControlledOperation:
         self.failed = self.consumed = False
         self.child = None
         self.spawn_owner = None
+        self.closed = self.native_refused_without_child = False
+        # Every descriptor has an owner slot before close can be interrupted.
+        # Existing preparation/opening stays within the trusted local scope.
+        self._fd_owners = [(ctypes.c_int*4)(0, -1, -1, -1) for _ in range(16)]
+        self._close_required = KernelOwnedCloseRequired(self)
+        native.operation = self
         try:
             path = self.operation
             while path != _ROOT:
                 require(len(self.nodes) < 16 and path.resolve() == path, 'kernel-ancestor-bound')
                 fd = os.open(path, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC)
+                self._fd_owners[len(self.nodes)][1] = fd
                 self.nodes.append((path, fd, proc._signature(fd), None))
                 fields = {name: _text(fd, name) for name in (*_FIXED, 'memory.max')}
                 require(fields['cgroup.type'] == 'domain\n', 'kernel-threaded-domain')
@@ -154,10 +189,46 @@ class _ControlledOperation:
                     _text(self.nodes[0][1], 'cgroup.subtree_control') == '', 'kernel-operation-not-empty')
             self.verify()
         except BaseException:
-            for _, fd, _, _ in self.nodes: os.close(fd)
+            try:
+                self.close(owner)
+            except BaseException:
+                raise self._close_required
             raise
 
+    def close(self, owner):
+        """Descriptor closure only, never a grant refund or outer reconciliation.
+
+        A consumed/unknown child or outer boundary deliberately has no close
+        path. No caller receipt or boolean may grant permission to discard it.
+        """
+        require(owner is self.owner, 'kernel-close-owner')
+        if self.closed:
+            if self.native.operation is self:
+                self.spawn_owner = None
+                self.native.operation = None
+            return
+        require(self.native.operation is self, 'kernel-native-operation-owner')
+        no_spawn = not self.consumed and self.spawn_owner is None
+        refused = (self.native_refused_without_child and self.spawn_owner is not None and
+                   all(value == -1 for value in self.spawn_owner._kernel_handoff))
+        require(no_spawn or refused, 'kernel-outer-reconciliation-required')
+        for index, (_, fd, signature, _) in enumerate(self.nodes):
+            slot = self._fd_owners[index]
+            require(slot[0] == 0, 'kernel-owned-close-failed')
+            if slot[1] >= 0:
+                require(slot[1] == fd and proc._signature(fd) == signature, 'kernel-close-fd-replaced')
+        for slot in self._fd_owners:
+            require(slot[0] == 0, 'kernel-owned-close-failed')
+            if slot[1] >= 0:
+                self.native.release_owned(slot)
+                require(slot[0] == 0, 'kernel-owned-close-failed')
+        # Keep the strong slot until all original descriptors are resolved.
+        self.closed = True
+        self.spawn_owner = None
+        self.native.operation = None
+
     def verify(self):
+        require(not self.closed, 'kernel-capability-closed')
         require(not self.failed, 'kernel-sticky-failure')
         try:
             require(self.native.sources == _sources() and
@@ -199,7 +270,11 @@ class _ControlledOperation:
         array = lambda v: (ctypes.c_char_p*(len(v)+1))(*v, None)
         error = self.native.spawn(self.nodes[0][1], stdout.fileno(), values[0],
                                   array(values), array(environment), owner._kernel_handoff)
-        if error: raise OSError(error, 'kernel-clone3-refused')
+        if error:
+            # Only an actual nonzero native return plus untouched slots proves
+            # no child. A pending exception after clone never sets this proof.
+            self.native_refused_without_child = all(value == -1 for value in owner._kernel_handoff)
+            raise OSError(error, 'kernel-clone3-refused')
 
     def allow_exec(self, owner, deadline):
         require(self.spawn_owner is owner, 'kernel-owner-bound')
