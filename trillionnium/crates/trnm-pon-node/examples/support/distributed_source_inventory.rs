@@ -498,6 +498,34 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/churn_controls.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/churn_controls.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/controls.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/controls.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/tests.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/tests.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_one_zero.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -3400,6 +3428,20 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-pon-node/src/ingress/public_v3/unpaid_pressure_tests.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/work_arithmetic.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/ingress/public_v3/work_arithmetic.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/work_arithmetic/tests.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/ingress/public_v3/work_arithmetic/tests.rs"
         )),
     ),
     (
