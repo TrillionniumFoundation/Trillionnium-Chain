@@ -588,8 +588,22 @@ memory.peak/events/cpu.stat and requires two matching raw snapshots without
 retry; nonzero charge or any unknown retains the original
 owner and descriptors. No group deletion, cached-final substitute, grant refund
 or whole-unit equivalence is supplied, even after that fact. Original d50 FAIL,
-old profiles/100ms/default RSS/public 2GiB and outer UNKNOWN remain. Actual finite
-cgroup placement is NOT_RUN. The next dependency remains the existing Hepta
+old profiles/100ms/default RSS/public 2GiB and outer UNKNOWN remain. The one actual
+tiny `ea2434d5` attempt failed at initial aggregate acquisition with
+`aggregate-counter-format`, before runtime clone3/supervisor/payload. Its original
+offending filename/raw was not retained and the stopped group was collected;
+that exact input remains unknown. A separate later read of existing 4060 groups
+found the official Linux
+[`core_sched.force_idle_usec`](https://github.com/torvalds/linux/blob/v7.0/kernel/cgroup/rstat.c#L703)
+key, which the old underscore-only parser deterministically rejects. The parser
+now permits only that exact additional dotted key, retaining duplicate, u64,
+field/read bounds and every empty/zero-charge/identity predicate. Parse failures
+carry an immutable bounded original filename/raw/reason tuple, without an owner
+or authority; callers must retain it in their existing first-failure record,
+without another read. Non-ABI parser/ordinary-file controls run separately from
+the CPython 3.12.3 native owner tests. This repair does not identify the old exact
+input, retry the attempt or qualify aggregate birth placement or a model.
+The next dependency remains the existing Hepta
 kernel.operations Store's CPU destination/independent FinalUse/terminal release
 protocol; this module adds no second manager or journal and no I10/model result.
 

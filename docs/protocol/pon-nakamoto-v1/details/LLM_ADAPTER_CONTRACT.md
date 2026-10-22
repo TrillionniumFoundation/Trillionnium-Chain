@@ -136,6 +136,22 @@ false. No self-published registration root can change those values.
 
 ## Explicit parent consumption in the CPU pilot
 
+The optional controlled aggregate mechanics retains the original direct wait4
+owner and UNKNOWN/RETAINED boundary described in
+[the runtime adapter](../../../../scripts/llm_runtime_README.md).
+The single tiny `ea2434d5` attempt failed at initial counter parsing before
+runtime clone3/supervisor/payload; the original exact filename/raw was not
+retained and remains unknown after administrative collection. A separate later
+existing-group read found the official Linux
+[`core_sched.force_idle_usec`](https://github.com/torvalds/linux/blob/v7.0/kernel/cgroup/rstat.c#L703)
+field rejected by the old parser. The compatibility repair admits only this exact
+additional key and retains duplicate/u64/field/read bounds and all original
+resource/identity predicates. First parse failures expose only an immutable,
+bounded original filename/raw/reason diagnostic for the caller's existing
+failure record, without rereading counters or supplying acceptance authority.
+Pure parser/ordinary-file coverage is independent of the controlled native
+CPython 3.12.3 ABI tests. No repaired probe or model/three-round result is claimed.
+
 `scripts/llm_runtime_pilot.py parent-step` exposes one engineering operation through
 the existing owned-child supervisor. It does not run or change the five-participant
 comparison above. Its `train`, `evaluate` and `readback` operations grant no

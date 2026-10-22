@@ -423,6 +423,28 @@ and tiny own-child handoff faults do not qualify valid cgroup placement or model
 Acquisition remains trusted preparation; these tests do not prove every async
 exception boundary between `os.open` and Python owner-slot assignment leak-free.
 
+The single actual tiny attempt `ea2434d5` failed during initial aggregate
+acquisition with `aggregate-counter-format`, before runtime clone3, supervisor
+or payload. Its exact offending filename/raw was not exported before the group
+was stopped and collected, so that original input remains unknown. A later
+read-only observation of existing 4060 groups separately found the legitimate
+[`core_sched.force_idle_usec`](https://github.com/torvalds/linux/blob/v7.0/kernel/cgroup/rstat.c#L703)
+CPU counter. The old `[a-z_]+` parser rejects those captured bytes. Only that exact
+dotted key is added; duplicates, u64/field/read bounds and all original predicates
+remain enforced. `AggregateCounterError.counter_diagnostic` is a read-only
+property returning an immutable `(filename, raw, reason)` tuple from the first
+already-read parse input, bounded by the existing 65536-character read limit.
+Filenames distinguish `aggregate/` and `unit/`; the tuple contains no capability,
+grant or release authority. It performs no reread, observation retry or file write.
+Callers must serialize this tuple into their existing first-failure evidence;
+exception text alone contains only the unchanged reason. If constructor cleanup
+also fails, the existing `KernelOwnedCloseRequired` retains the same owner, with
+the original parse diagnostic reachable through its exception `__context__`
+chain; the cleanup exception and refusal must also remain recorded. Parser/ordinary-file
+tests run without the native ABI gate; controlled owner/FD tests still require
+actual CPython 3.12.3. This correction does not rerun the probe, identify its old
+exact input, qualify models or change UNKNOWN/RETAINED.
+
 The ordinary merge with source `8caf5387` preserves its inherited runtime,
 persistent neural-read worker and default reconciliation helpers, alongside the
 explicit V2–V4 paths and controlled native owner. Reconciliation metadata names

@@ -10,6 +10,7 @@ import re
 import stat
 import subprocess
 from types import MappingProxyType
+from typing import NamedTuple
 
 import llm_runtime_kernel_owned as kernel
 
@@ -24,39 +25,77 @@ def _source():
     return kernel._digest(kernel._bytes(Path(__file__)))
 
 
-def _numbers(raw):
+class _CounterDiagnostic(NamedTuple):
+    filename: str
+    raw: str
+    reason: str
+
+
+class AggregateCounterError(kernel.KernelBudgetError):
+    """Bounded original parse input only; no capability or release authority."""
+    def __init__(self, code, filename, raw):
+        _counter_input(raw, filename)
+        require(type(code) is str and code in ('aggregate-counter-format',
+            'aggregate-counter-overflow', 'aggregate-counter-fields', 'aggregate-counter-scalar'),
+            'aggregate-counter-reason')
+        super().__init__(code)
+        self._counter_diagnostic = _CounterDiagnostic(filename, raw, code)
+
+    @property
+    def counter_diagnostic(self):
+        return self._counter_diagnostic
+
+
+def _counter_input(raw, filename):
+    # Match the existing _text read bound before retaining diagnostic text.
+    require(type(raw) is str and len(raw) <= 65536, 'aggregate-counter-bound')
+    require(type(filename) is str and filename in
+            tuple('aggregate/'+name for name in _RAW) + ('unit/cgroup.stat',),
+            'aggregate-counter-filename')
+
+
+def _counter_require(condition, code, filename, raw):
+    if not condition:
+        raise AggregateCounterError(code, filename, raw)
+
+
+def _numbers(raw, filename):
+    _counter_input(raw, filename)
     fields = {}
     for line in raw.splitlines():
         values = line.split()
-        require(len(values) == 2 and values[0] not in fields and
-            re.fullmatch(r'[a-z_]+', values[0]) and re.fullmatch(r'[0-9]{1,20}', values[1]),
-            'aggregate-counter-format')
+        _counter_require(len(values) == 2 and values[0] not in fields and
+            (re.fullmatch(r'[a-z_]+', values[0]) or values[0] == 'core_sched.force_idle_usec')
+            and re.fullmatch(r'[0-9]{1,20}', values[1]), 'aggregate-counter-format', filename, raw)
         fields[values[0]] = int(values[1])
-        require(fields[values[0]] < 2**64, 'aggregate-counter-overflow')
-    require(0 < len(fields) <= 64, 'aggregate-counter-fields')
+        _counter_require(fields[values[0]] < 2**64, 'aggregate-counter-overflow', filename, raw)
+    _counter_require(0 < len(fields) <= 64, 'aggregate-counter-fields', filename, raw)
     return fields
 
 
-def _scalar(raw):
-    require(re.fullmatch(r'[0-9]{1,20}\n', raw), 'aggregate-counter-scalar')
+def _scalar(raw, filename):
+    _counter_input(raw, filename)
+    _counter_require(re.fullmatch(r'[0-9]{1,20}\n', raw), 'aggregate-counter-scalar', filename, raw)
     value = int(raw)
-    require(value < 2**64, 'aggregate-counter-overflow')
+    _counter_require(value < 2**64, 'aggregate-counter-overflow', filename, raw)
     return value
 
 
 def _raw(fd):
     raw = {name: kernel._text(fd, name) for name in _RAW}
-    require(raw['cgroup.procs'] == '' and _scalar(raw['pids.current']) == 0 and
-        _numbers(raw['cgroup.events']).get('populated') == 0, 'aggregate-not-empty')
-    tree = _numbers(raw['cgroup.stat'])
+    require(raw['cgroup.procs'] == '' and _scalar(raw['pids.current'], 'aggregate/pids.current') == 0 and
+        _numbers(raw['cgroup.events'], 'aggregate/cgroup.events').get('populated') == 0, 'aggregate-not-empty')
+    tree = _numbers(raw['cgroup.stat'], 'aggregate/cgroup.stat')
     require(tree.get('nr_descendants') == 0 and tree.get('nr_dying_descendants') == 0,
             'aggregate-descendants-or-dying')
     require(all(value == 0 for key, value in tree.items() if key.startswith('nr_dying_')),
             'aggregate-dying-charge')
-    require(_scalar(raw['memory.current']) == 0 and _scalar(raw['memory.swap.current']) == 0,
+    require(_scalar(raw['memory.current'], 'aggregate/memory.current') == 0 and
+            _scalar(raw['memory.swap.current'], 'aggregate/memory.swap.current') == 0,
             'aggregate-charge-retained')
-    _scalar(raw['memory.peak']); _numbers(raw['memory.events'])
-    require('usage_usec' in _numbers(raw['cpu.stat']), 'aggregate-cpu-counter-missing')
+    _scalar(raw['memory.peak'], 'aggregate/memory.peak')
+    _numbers(raw['memory.events'], 'aggregate/memory.events')
+    require('usage_usec' in _numbers(raw['cpu.stat'], 'aggregate/cpu.stat'), 'aggregate-cpu-counter-missing')
     return raw
 
 
@@ -144,9 +183,9 @@ class _AggregateOperation:
                 require(signature[0] == kernel._ROOT.stat().st_dev and
                     info['mnt_id'].strip() == mount[0], 'aggregate-shadow-mount')
             initial = _raw(self.nodes[0][1])
-            require(_scalar(initial['memory.peak']) == 0 and
+            require(_scalar(initial['memory.peak'], 'aggregate/memory.peak') == 0 and
                 all(value == 0 for name in ('cpu.stat', 'memory.events')
-                    for value in _numbers(initial[name]).values()), 'aggregate-not-fresh')
+                    for value in _numbers(initial[name], 'aggregate/'+name).values()), 'aggregate-not-fresh')
             self._verify_locked()
         except BaseException:
             try: self._close_locked(owner)
@@ -194,7 +233,7 @@ class _AggregateOperation:
                 require({name: kernel._text(fd, name) for name in expected} == expected,
                         'aggregate-limits-changed')
             unit_fd = self.nodes[2][1]
-            tree = _numbers(kernel._text(unit_fd, 'cgroup.stat'))
+            tree = _numbers(kernel._text(unit_fd, 'cgroup.stat'), 'unit/cgroup.stat')
             require(kernel._text(unit_fd, 'cgroup.procs') == '' and
                 tree.get('nr_descendants') == 2 and tree.get('nr_dying_descendants') == 0 and
                 all(value == 0 for key, value in tree.items() if key.startswith('nr_dying_')),

@@ -268,6 +268,23 @@ class AggregateTests(unittest.TestCase):
         self.assertIs(self.native.operation, cap)
         cap.close(self); self.assertIsNone(self.native.operation)
 
+    def test_parser_failure_keeps_first_diagnostic_through_original_nochild_cleanup(self):
+        for target, name in (('leaf', 'cpu.stat'), ('unit', 'cgroup.stat')):
+            with self.subTest(target=target):
+                leaf, unit, controller, observed, acquire = self.acquisition_fixture()
+                path = dict(leaf=leaf, unit=unit)[target]/name
+                raw = 'unreviewed.key 0\n'
+                path.write_text(raw)
+                before = set(os.listdir('/proc/self/fd'))
+                with self.assertRaises(aggregate.AggregateCounterError) as caught: acquire()
+                expected = 'aggregate' if target == 'leaf' else 'unit'
+                self.assertEqual(caught.exception.counter_diagnostic,
+                    (expected+'/'+name, raw, 'aggregate-counter-format'))
+                self.assertIsNone(self.native.operation)
+                self.assertEqual(set(os.listdir('/proc/self/fd')), before)
+                import shutil
+                shutil.rmtree(Path(self.temporary.name)/'mount')
+
     def test_declared_16g_aggregate_plus_controller_refuses_before_any_group_fd(self):
         leaf, unit, controller, observed, acquire = self.acquisition_fixture(memory_bytes=16*1024**3)
         descriptors_before = set(os.listdir('/proc/self/fd'))

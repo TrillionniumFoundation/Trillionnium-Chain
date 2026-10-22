@@ -186,6 +186,7 @@ from test_llm_runtime_exit_worker_frontier import WorkerFrontierTests
 from test_llm_runtime_kernel_owned import KernelOwnedTests
 from test_llm_runtime_kernel_close import KernelCloseTests, KernelAbiTests
 from test_llm_runtime_kernel_aggregate import AggregateTests
+from test_llm_runtime_kernel_counters import CounterTests
 from test_llm_runtime_decode import DecodeRoutingTests, ActualDecoderTensorTests
 
 
