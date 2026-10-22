@@ -10,7 +10,8 @@ use trnm_protocol::pon_wire::Hash;
 mod relation;
 use relation::{funding, head, source_key, validate_record, validate_totals, verify_payee, Record};
 pub use relation::{
-    NativeBudgetLaneV1, NativeBudgetObservationV1, NativeBudgetRequestV1, NativeContributionClaimV1,
+    NativeBudgetInventoryV1, NativeBudgetLaneV1, NativeBudgetLocalRecordV1,
+    NativeBudgetObservationV1, NativeBudgetRequestV1, NativeContributionClaimV1,
 };
 
 const SCHEMA: &str = "pon-native-budget-obligation-v1";
@@ -84,8 +85,12 @@ impl Node {
     }
 
     pub(super) fn validate_native_budget_records_v1(&self) -> Result<()> {
+        self.validate_native_budget_sources_v1(&self.native_budget_records_v1()?)
+    }
+
+    fn validate_native_budget_sources_v1(&self, records: &BTreeMap<String, Record>) -> Result<()> {
         (|| {
-            for record in self.native_budget_records_v1()?.values() {
+            for record in records.values() {
                 let original = self.state_at(record.source_tip)?;
                 let value = original
                     .get(&source_key(&record.request))
@@ -101,6 +106,50 @@ impl Node {
             Ok(())
         })()
         .map_err(Error::local_integrity)
+    }
+
+    /// Read exact retained intents for the existing effect owner's recovery.
+    /// No current-funding decision or target-side reconciliation is performed.
+    pub fn native_budget_inventory_v1(&self) -> Result<NativeBudgetInventoryV1> {
+        self.ready()?;
+        let records = self.native_budget_records_v1()?;
+        self.validate_native_budget_sources_v1(&records)?;
+        Ok(NativeBudgetInventoryV1 {
+            schema: "pon-native-budget-local-inventory-v1",
+            network: self.settings.network(),
+            parameters: self.settings.parameters(),
+            genesis: self.settings.genesis(),
+            records: records
+                .into_values()
+                .map(|record| NativeBudgetLocalRecordV1 {
+                    request: record.request,
+                    source_tip: record.source_tip,
+                    source_generation: record.source_generation,
+                    source_height: record.source_height,
+                    source_funding_digest: record.funding.digest,
+                    resources_consumed: record.consumed,
+                    effect: record.effect,
+                    receipt: record.receipt,
+                })
+                .collect(),
+            chain_funds_locked: false,
+            payment_executed: false,
+            execution_authority: false,
+            production_activation: false,
+        })
+    }
+
+    /// `None` means local absence only, never proof that a target did no work.
+    /// The entire bounded set is checked even when this operation is absent.
+    pub fn native_budget_operation_v1(
+        &self,
+        operation: Hash,
+    ) -> Result<Option<NativeBudgetLocalRecordV1>> {
+        Ok(self
+            .native_budget_inventory_v1()?
+            .records
+            .into_iter()
+            .find(|record| record.request.operation == operation))
     }
 
     fn native_budget_source_current_v1(

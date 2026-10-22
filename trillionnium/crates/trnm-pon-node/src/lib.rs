@@ -44,7 +44,8 @@ pub use store::mempool::{
     LOCAL_POOL_PROFILE,
 };
 pub use store::native_budget::{
-    NativeBudgetLaneV1, NativeBudgetObservationV1, NativeBudgetRequestV1, NativeContributionClaimV1,
+    NativeBudgetInventoryV1, NativeBudgetLaneV1, NativeBudgetLocalRecordV1,
+    NativeBudgetObservationV1, NativeBudgetRequestV1, NativeContributionClaimV1,
 };
 pub use store::storage_service::{
     native_cell_repair_subject_v1, NativeCellEffectReadbackV1, NativeCellRepairCpuObservationV1,

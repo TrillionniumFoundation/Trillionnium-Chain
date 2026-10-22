@@ -263,12 +263,14 @@ class ExitObservationTests(unittest.TestCase):
                 ('late-classification','failed','rss-exit-cleanup-observation-unavailable'),
                 ('owner-loss','failed','rss-exit-cleanup-observation-unavailable'),
                 ('closed-candidate','failed','rss-exit-cleanup-observation-unavailable'),
+                ('recheck-refusal','failed','rss-exit-cleanup-observation-unavailable'),
                 ('ordinary-gap','failed','rss-observation-unavailable')]:
             with self.subTest(mode=mode), self.proc() as (root, held, _):
                 child = helper.child_control(); child.termination_fd = held
                 usage = helper.usage(peak=256*1024 if mode == 'overcap' else 0 if mode == 'invalid' else 8192)
                 waits = [(0,0,None)]
                 if mode == 'ordinary-gap': waits += [(0,0,None)]
+                if mode == 'recheck-refusal': waits += [(0,0,None)]
                 if mode == 'unknown': waits += [OSError(errno.EIO, 'wait4 unknown')]
                 waits += [(501,0,usage)]
                 def observe(pid):
@@ -279,6 +281,10 @@ class ExitObservationTests(unittest.TestCase):
                             observed.sample_started_ns -= exits.MAX_DRAIN_NS+1
                         if mode == 'owner-loss': observed.owner_token = object()
                         if mode == 'closed-candidate': observed.close()
+                        if mode == 'recheck-refusal':
+                            def refused_recheck():
+                                raise exits.ExitObservationError('exit-task-set')
+                            observed.recheck = refused_recheck
                         runtime._RSS_EXIT_OBSERVATION.set(observed)
                     return None
                 with patch.object(runtime, '_Wait4Child', return_value=child), \
@@ -295,6 +301,12 @@ class ExitObservationTests(unittest.TestCase):
                 if mode != 'ordinary-gap':
                     self.assertEqual(result['exit_cleanup_observation']['outcome'],
                                      'terminal-wait4' if mode in ['valid','overcap'] else 'failed')
+                if mode == 'recheck-refusal':
+                    detail=result['exit_cleanup_observation']['recheck_refusal']
+                    self.assertEqual(detail['refusal_code'],'exit-task-set')
+                    self.assertTrue(detail['diagnostic_only'])
+                elif mode != 'ordinary-gap':
+                    self.assertNotIn('recheck_refusal',result['exit_cleanup_observation'])
 
     def test_bounded_drain_deadline_unknown_change_and_invalid_wait4_fail(self):
         for mode in ['deadline', 'wall', 'unknown', 'task-change', 'invalid-receipt', 'owner']:
@@ -315,7 +327,47 @@ class ExitObservationTests(unittest.TestCase):
                         object() if mode == 'owner' else token, start, dict(wall_seconds=2))
                     self.assertEqual(reason, 'rss-exit-cleanup-observation-unavailable')
                     self.assertEqual(record['outcome'], 'failed')
+                    if mode == 'task-change':
+                        self.assertEqual(record['recheck_refusal']['refusal_code'],'exit-task-set')
+                    else:
+                        self.assertNotIn('recheck_refusal',record)
                 finally: observed.close()
+
+    def test_recheck_refusal_redacts_unknown_forged_and_private_error_messages(self):
+        class UntrustedObserverError(exits.ExitObservationError): pass
+        cases=[(exits.ExitObservationError('exit-task-set'),'exit-task-set',None),
+               (exits.ExitObservationError('private-canary'),None,None),
+               (exits.ExitObservationError('exit-task-set:private-canary'),None,None),
+               (ValueError('exit-task-set'),None,None),
+               (UntrustedObserverError('exit-task-set'),None,None),
+               (FileNotFoundError(errno.ENOENT,'private-canary'),None,errno.ENOENT),
+               (OSError(True,'private-canary'),None,None),
+               (OSError(-1,'private-canary'),None,None)]
+        for fault,code,number in cases:
+            with self.subTest(fault=type(fault).__name__,code=code), self.proc() as (_,held,token):
+                observation=self.observation(held,token)
+                child=SimpleNamespace(pid=501,termination_fd=held,observation_error=None,
+                    waited_peak_rss_bytes=8192,waited_cpu_ns=1500,reap=lambda:'live')
+                try:
+                    with patch.object(observation,'recheck',side_effect=fault):
+                        reason,record=runtime._drain_exit_cleanup(child,observation,token,
+                            time.monotonic_ns(),dict(wall_seconds=2))
+                    self.assertEqual((reason,record['outcome']),
+                        ('rss-exit-cleanup-observation-unavailable','failed'))
+                    self.assertEqual(record['error'],type(fault).__name__)
+                    self.assertEqual(record['recheck_refusal'],dict(source='same-recheck-call-exception',
+                        refusal_code=code,error_errno=number,diagnostic_only=True))
+                    self.assertNotIn('private-canary',json.dumps(record))
+                finally: observation.close()
+
+    def test_recheck_diagnostic_does_not_read_a_later_process_snapshot(self):
+        fault=exits.ExitObservationError('exit-task-set')
+        with patch.object(exits,'_read',side_effect=AssertionError('no later read')), \
+                patch.object(exits,'_proc_fields',side_effect=AssertionError('no later read')), \
+                patch.object(exits,'_task_names',side_effect=AssertionError('no later read')):
+            self.assertEqual(runtime._exit_recheck_refusal(fault),dict(
+                source='same-recheck-call-exception',refusal_code='exit-task-set',
+                error_errno=None,diagnostic_only=True))
 
     def test_capture_frontier_changes_task_bound_and_original_owner_reuse_refuse(self):
         for mode in ['frontier-flags', 'frontier-start', 'task-bound', 'pidfd-identity', 'pidfd-reuse']:

@@ -411,6 +411,62 @@ class DurableStoreTests(unittest.TestCase):
             database.execute('CREATE TRIGGER injected AFTER INSERT ON metadata BEGIN SELECT 1; END')
         with self.assertRaises(ValueError): self.verify()
 
+    def assert_user_schema_object_rejected(self, kind, name, sql):
+        # Real catalog objects, not source-text assertions. The complete fixture
+        # still has valid metadata, state, packets and ancestry, and disk bytes
+        # are remeasured so the schema boundary is the intended refusal.
+        for owner in ('producer', 'validator'):
+            path = self.folder/owner/'native.sqlite'
+            with self.subTest(owner=owner,kind=kind,name=name):
+                with sqlite3.connect(path) as database:
+                    database.execute(sql)
+                    actual = database.execute(
+                        'SELECT type,name,sql FROM sqlite_master WHERE name=?', (name,)).fetchone()
+                    self.assertEqual(actual[:2], (kind,name))
+                    self.assertIsInstance(actual[2], str)
+                    self.assertEqual(database.execute('PRAGMA integrity_check').fetchall(), [('ok',)])
+                self.summary['ledger_disk_bytes'] = sum(path.stat().st_size for path in self.folder.rglob('*') if path.is_file())
+                try:
+                    with self.assertRaisesRegex(ValueError,'durable schema additions/omissions/changes'):
+                        self.verify()
+                finally:
+                    with sqlite3.connect(path) as database:
+                        database.execute('DROP '+kind.upper()+' "'+name+'"')
+                    self.summary['ledger_disk_bytes'] = sum(path.stat().st_size for path in self.folder.rglob('*') if path.is_file())
+                    self.verify()
+
+    def test_sqlite_like_prefix_user_table_is_not_internal(self):
+        self.assert_user_schema_object_rejected('table','sqliteXshadow',
+            'CREATE TABLE sqliteXshadow(value BLOB NOT NULL)')
+
+    def test_sqlite_like_prefix_user_index_is_not_internal(self):
+        self.assert_user_schema_object_rejected('index','SqliteXshadow',
+            'CREATE INDEX SqliteXshadow ON kv(key)')
+
+    def test_sqlite_like_prefix_user_trigger_is_not_internal(self):
+        self.assert_user_schema_object_rejected('trigger','SQLITEXshadow',
+            'CREATE TRIGGER SQLITEXshadow AFTER INSERT ON metadata BEGIN SELECT 1; END')
+
+    def test_sqlite_like_prefix_user_view_is_not_internal(self):
+        self.assert_user_schema_object_rejected('view','sqlite7shadow',
+            'CREATE VIEW sqlite7shadow AS SELECT key FROM metadata')
+
+    def test_real_sqlite_internal_autoindexes_and_statistics_remain_supported(self):
+        for owner in ('producer', 'validator'):
+            with sqlite3.connect(self.folder/owner/'native.sqlite') as database:
+                autoindexes = database.execute(
+                    'SELECT name,sql FROM sqlite_master WHERE type="index"').fetchall()
+                self.assertTrue(any(name.startswith('sqlite_autoindex_') and sql is None
+                                    for name,sql in autoindexes))
+                # ANALYZE creates the genuine reserved statistics table; callers
+                # cannot create an ordinary table with this reserved spelling.
+                database.execute('ANALYZE')
+                self.assertEqual(database.execute(
+                    'SELECT type,name FROM sqlite_master WHERE name="sqlite_stat1"').fetchone(),
+                    ('table','sqlite_stat1'))
+        self.summary['ledger_disk_bytes'] = sum(path.stat().st_size for path in self.folder.rglob('*') if path.is_file())
+        self.verify()
+
     def test_current_v2_schema_and_complete_index_positive_control(self):
         self.assertEqual(self.schema_domain,'native-branch-schema-v2')
         self.verify()
@@ -449,6 +505,42 @@ class DurableStoreTests(unittest.TestCase):
                 with sqlite3.connect(self.folder/'validator/native.sqlite') as database:
                     database.execute('DROP TABLE archive_nodes')
                     database.execute('DROP TABLE native_state_commitments')
+                    database.execute("UPDATE metadata SET value=? WHERE key='schema'",(original,))
+                self.summary['ledger_disk_bytes'] = sum(path.stat().st_size for path in self.folder.rglob('*') if path.is_file())
+                self.verify()
+
+    def test_growth_domains_cannot_relabel_legacy_tables(self):
+        ddl,domain = check.native_durable_schema(check.ROOT)
+        for foreign in ('native-growth-reference-branch-schema-v2',
+                        'native-permanent-account-growth-schema-v2'):
+            with self.subTest(domain=foreign):
+                with sqlite3.connect(self.folder/'validator/native.sqlite') as database:
+                    database.execute("UPDATE metadata SET value=? WHERE key='schema'",
+                                     (self.H(foreign,ddl.encode()),))
+                with self.assertRaisesRegex(ValueError,'durable metadata/context'): self.verify()
+        with sqlite3.connect(self.folder/'validator/native.sqlite') as database:
+            database.execute("UPDATE metadata SET value=? WHERE key='schema'",
+                             (self.H(domain,ddl.encode()),))
+        self.verify()
+
+    def test_permanent_growth_tables_remain_out_of_scope_after_metadata_resealing(self):
+        ddl,domain = check.native_durable_schema(check.ROOT)
+        extension = ('CREATE TABLE archive_nodes(id BLOB PRIMARY KEY,data BLOB NOT NULL);\n'
+                     'CREATE TABLE growth_states(block BLOB PRIMARY KEY,data BLOB NOT NULL);\n')
+        original = self.H(domain,ddl.encode())
+        for schema in (original,self.H(domain,(ddl+extension).encode()),
+                       self.H('native-permanent-account-growth-schema-v2',(ddl+extension).encode())):
+            with self.subTest(schema=schema.hex()):
+                with sqlite3.connect(self.folder/'validator/native.sqlite') as database:
+                    database.executescript(extension)
+                    database.execute('INSERT INTO archive_nodes VALUES(?,?)',(bytes(32),b'unverified node'))
+                    database.execute('INSERT INTO growth_states VALUES(?,?)',(bytes(32),b'unverified growth state'))
+                    database.execute("UPDATE metadata SET value=? WHERE key='schema'",(schema,))
+                self.summary['ledger_disk_bytes'] = sum(path.stat().st_size for path in self.folder.rglob('*') if path.is_file())
+                with self.assertRaisesRegex(ValueError,'durable schema additions/omissions/changes'): self.verify()
+                with sqlite3.connect(self.folder/'validator/native.sqlite') as database:
+                    database.execute('DROP TABLE archive_nodes')
+                    database.execute('DROP TABLE growth_states')
                     database.execute("UPDATE metadata SET value=? WHERE key='schema'",(original,))
                 self.summary['ledger_disk_bytes'] = sum(path.stat().st_size for path in self.folder.rglob('*') if path.is_file())
                 self.verify()
@@ -582,8 +674,46 @@ class NativeDurableSchemaTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,'durable source body StateBackend'):
             self.extract(self.current+'\n'+backend)
 
+    def test_permanent_growth_mapping_is_exact_without_qualifying_its_storage(self):
+        ddl,domain = self.extract(self.current)
+        self.assertEqual(domain,'native-branch-schema-v2')
+        self.assertNotRegex(ddl,r'archive_nodes|native_state_commitments|growth_states')
+        growth = 'b"native-permanent-account-growth-schema-v2"'
+        arm = 'Self::PermanentAccountGrowthV2 => format!("{}{}", ddl(), growth::DDL),'
+        mutations = [
+            ('domain-legacy',growth,'b"native-branch-schema-v2"'),
+            ('domain-authenticated',growth,'b"native-authenticated-branch-schema-v1"'),
+            ('domain-gsc2',growth,'b"native-growth-reference-branch-schema-v2"'),
+            ('domain-unknown',growth,'b"native-permanent-account-growth-schema-unknown"'),
+            ('domain-literal-space',growth,'b"native-permanent-account-growth- schema-v2"'),
+            ('growth-omitted',arm,'Self::PermanentAccountGrowthV2 => ddl(),'),
+            ('growth-authenticated',arm,'Self::PermanentAccountGrowthV2 => format!("{}{}", ddl(), native_authenticated::DDL),'),
+            ('growth-reversed',arm,'Self::PermanentAccountGrowthV2 => format!("{}{}", growth::DDL, ddl()),'),
+            ('growth-format',arm,'Self::PermanentAccountGrowthV2 => format!("{} {}", ddl(), growth::DDL),'),
+            ('growth-format-arity',arm,'Self::PermanentAccountGrowthV2 => format!("{}", ddl(), growth::DDL),'),
+            ('growth-wildcard',arm,'_ => format!("{}{}", ddl(), growth::DDL),'),
+            ('legacy-growth','Self::Legacy => ddl(),','Self::Legacy => format!("{}{}", ddl(), growth::DDL),'),
+        ]
+        for label,before,after in mutations:
+            with self.subTest(label=label),self.assertRaisesRegex(ValueError,'durable backend'):
+                self.extract(self.replace_once(self.current,before,after))
+
+    def test_permanent_growth_table_cannot_be_inserted_into_legacy_literals(self):
+        for name in ('growth_states','GrOwTh_StAtEs'):
+            extension = 'CREATE TABLE '+name+'(block BLOB PRIMARY KEY,data BLOB NOT NULL);'
+            literal = 'const DDL: &str = "'+extension+'";'
+            v1 = literal+'fn open() { hash(b"native-branch-schema-v1", &[DDL.as_bytes()]); }'
+            sources = [
+                (v1,None),
+                (self.replace_once(self.current,'CREATE TABLE metadata',extension+'CREATE TABLE metadata'),None),
+                (self.current,self.replace_once(self.current_index,'CREATE TABLE ancestry_jump',extension+'CREATE TABLE ancestry_jump')),
+            ]
+            for source,index in sources:
+                with self.subTest(name=name,index=index is not None),self.assertRaisesRegex(ValueError,'tables in legacy durable schema'):
+                    self.extract(source,index)
+
     def test_actual_opener_and_selected_schema_bindings_cannot_be_replaced(self):
-        pair = 'let ddl = state_backend.ddl();\n        let schema_id = state_backend.schema_id();'
+        pair = 'let ddl = state_backend.ddl();\n        let schema_id = state_backend.selected_schema_id(&settings);'
         mutations = [
             ('default-open','Self::open_with_fault(path, settings, workers, None)',
              'Self::open_with_authenticated_state_and_fault(path, settings, workers, None)'),
@@ -594,7 +724,7 @@ class NativeDurableSchemaTests(unittest.TestCase):
             ('auth-selected','StateBackend::AuthenticatedV1,\n        )\n    }\n    /// Explicit local operator policy',
              'StateBackend::Legacy,\n        )\n    }\n    /// Explicit local operator policy'),
             ('ddl-unselected','let ddl = state_backend.ddl();','let ddl = ddl();'),
-            ('schema-unselected','let schema_id = state_backend.schema_id();','let schema_id = StateBackend::Legacy.schema_id();'),
+            ('schema-unselected','let schema_id = state_backend.selected_schema_id(&settings);','let schema_id = StateBackend::Legacy.schema_id();'),
             ('nested-pair',pair,'if false { '+pair+' }'),
         ]
         for label,before,after in mutations:
@@ -602,6 +732,8 @@ class NativeDurableSchemaTests(unittest.TestCase):
                 self.extract(self.replace_once(self.current,before,after))
         rebound = [
             'let state_backend = StateBackend::AuthenticatedV1;',
+            'let settings = settings;',
+            'let (settings, _) = (settings, ());',
             'let ddl = StateBackend::AuthenticatedV1.ddl();',
             'let mut ddl = StateBackend::AuthenticatedV1.ddl();',
             'let ddl: String = StateBackend::AuthenticatedV1.ddl();',
@@ -616,6 +748,51 @@ class NativeDurableSchemaTests(unittest.TestCase):
         for statement in rebound:
             with self.subTest(statement=statement),self.assertRaisesRegex(ValueError,'durable backend selected schema rebound'):
                 self.extract(self.replace_once(self.current,pair,pair+'\n        '+statement))
+
+    def test_selected_settings_cannot_be_mutated_through_fields_or_borrowed(self):
+        header = 'fn open_selected(\n        path: &Path,\n        settings: Settings,'
+        pair = 'let ddl = state_backend.ddl();\n        let schema_id = state_backend.selected_schema_id(&settings);'
+        statements = [
+            'settings.app.params["work_task_profile"] = serde_json::json!("legacy-task-v1");',
+            'settings.app.params["work_task_profile"][0] = serde_json::json!(0);',
+            'settings.app = settings.app.clone();',
+            'let alias = &mut settings;',
+            'let alias = &mut settings.app;',
+            'let alias = &mut (settings.app);',
+        ]
+        for statement in statements:
+            with self.subTest(statement=statement),self.assertRaisesRegex(ValueError,'durable backend selected schema rebound'):
+                # A mutable parameter makes these mutations executable in Rust;
+                # body-only source inspection must refuse the mutation itself.
+                changed = self.replace_once(self.current,header,header.replace('settings:','mut settings:',1))
+                self.extract(self.replace_once(changed,pair,statement+'\n        '+pair))
+
+    def test_growth_selection_is_exact_without_widening_legacy_evidence(self):
+        # Recognizing the current selector must not permit a changed growth
+        # namespace, bypassed selector or an unapproved implementation body.
+        # Every negative still targets exactly one real current-source site.
+        selector = ('fn selected_schema_id(self, settings: &Settings) -> Hash {\n'
+                    '        if growth_profile_v2::enabled(&settings.app) {')
+        mutations = [
+            ('wrong-growth-domain', 'b"native-growth-reference-branch-schema-v2"',
+             'b"native-branch-schema-v2"'),
+            ('growth-literal-space', 'b"native-growth-reference-branch-schema-v2"',
+             'b"native-growth-reference-branch- schema-v2"'),
+            ('flipped-growth-selector', selector, selector.replace('if growth_', 'if !growth_', 1)),
+            ('bypassed-growth-selector', selector,
+             selector.replace('if growth_profile_v2::enabled(&settings.app) {', 'if false {', 1)),
+            ('default-instead-selected', 'let schema_id = state_backend.selected_schema_id(&settings);',
+             'let schema_id = state_backend.schema_id();'),
+            ('bypassed-backend', 'let schema_id = state_backend.selected_schema_id(&settings);',
+             'let schema_id = StateBackend::Legacy.selected_schema_id(&settings);'),
+            ('ignored-settings', 'let schema_id = state_backend.selected_schema_id(&settings);',
+             'let schema_id = state_backend.selected_schema_id(&settings.clone());'),
+            ('unapproved-method', 'impl StateBackend {',
+             'impl StateBackend { fn other(self) -> Hash { self.schema_id() }'),
+        ]
+        for label,before,after in mutations:
+            with self.subTest(label=label),self.assertRaisesRegex(ValueError,'durable (?:backend|growth schema domain)'):
+                self.extract(self.replace_once(self.current,before,after))
 
     def test_backend_decoys_and_historical_hash_cannot_authorize_bad_active_mapping(self):
         backend = self.current[self.current.index('impl StateBackend {'):self.current.index('\nstruct NativeOwners {')]

@@ -111,6 +111,101 @@ fn error<T>(result: Result<T>, expected: &str) {
 }
 
 #[test]
+fn exact_local_inventory_recovers_pending_and_receipted_intents_without_dispatch_authority() {
+    for authenticated in [false, true] {
+        let directory = tempfile::tempdir().unwrap();
+        let path = directory.path().join("node");
+        let mut node = open(&path, authenticated).unwrap();
+        assert!(node
+            .native_budget_inventory_v1()
+            .unwrap()
+            .records
+            .is_empty());
+        assert_eq!(node.native_budget_operation_v1([99; 32]).unwrap(), None);
+        let (quota, task) = fund(&mut node);
+        let source_view = node.active().unwrap();
+        let serving = request(NativeBudgetLaneV1::Serving, quota, 21);
+        let evaluation = request(NativeBudgetLaneV1::Evaluation, task, 31);
+        node.reserve_native_budget_v1(serving.clone()).unwrap();
+        node.reserve_native_budget_v1(evaluation.clone()).unwrap();
+        node.settle_native_budget_resources_v1(serving.operation, [20, 30])
+            .unwrap();
+        node.prepare_native_budget_effect_v1(serving.operation, [91; 32])
+            .unwrap();
+        let retained = node.native_budget_records_v1().unwrap();
+        let state_before = node.read_active().unwrap();
+        drop(node);
+        let mut node = open(&path, authenticated).unwrap();
+        let inventory = node.native_budget_inventory_v1().unwrap();
+        assert_eq!(inventory.schema, "pon-native-budget-local-inventory-v1");
+        assert_eq!(inventory.network, node.settings.network());
+        assert_eq!(inventory.parameters, node.settings.parameters());
+        assert_eq!(inventory.genesis, node.settings.genesis());
+        assert!(
+            !inventory.chain_funds_locked
+                && !inventory.payment_executed
+                && !inventory.execution_authority
+                && !inventory.production_activation
+        );
+        assert_eq!(inventory.records.len(), 2);
+        let pending = node
+            .native_budget_operation_v1(serving.operation)
+            .unwrap()
+            .unwrap();
+        assert_eq!(pending, inventory.records[0]);
+        assert_eq!(pending.request, serving);
+        assert_eq!(pending.source_tip, source_view.0);
+        assert_eq!(pending.source_generation, source_view.1);
+        assert_eq!(pending.source_height, 1);
+        assert_eq!(
+            pending.source_funding_digest,
+            hash(
+                b"native-budget-source-v1",
+                &[&canonical(&state_before.2[&format!("quota:{}", hex::encode(quota))]).unwrap()],
+            )
+        );
+        assert_eq!(pending.resources_consumed, Some([20, 30]));
+        assert_eq!(pending.effect, Some([91; 32]));
+        assert_eq!(pending.receipt, None);
+        assert_eq!(inventory.records[1].request, evaluation);
+        assert_eq!(inventory.records[1].resources_consumed, None);
+        assert_eq!(inventory.records[1].effect, None);
+        assert_eq!(inventory.records[1].receipt, None);
+        assert_eq!(node.native_budget_records_v1().unwrap(), retained);
+        assert_eq!(node.read_active().unwrap(), state_before);
+        // A caller receives detached local data, never mutable store authority.
+        let mut altered = inventory.clone();
+        altered.records[0].request.beneficiary = [98; 32];
+        altered.records[0].effect = Some([97; 32]);
+        assert_eq!(node.native_budget_inventory_v1().unwrap(), inventory);
+        // Resume with the exact recovered identity/effect; do not re-dispatch.
+        node.finish_native_budget_effect_v1(
+            pending.request.operation,
+            pending.effect.unwrap(),
+            [93; 32],
+        )
+        .unwrap();
+        let mut fork = node.settings.genesis();
+        for _ in 0..3 {
+            let next = packet(&node, fork, vec![], 2);
+            fork = node.admit(&next, 100_000).unwrap();
+        }
+        node.activate(fork).unwrap();
+        drop(node);
+        let node = open(&path, authenticated).unwrap();
+        let completed = node
+            .native_budget_operation_v1(serving.operation)
+            .unwrap()
+            .unwrap();
+        let mut expected = pending;
+        expected.receipt = Some([93; 32]);
+        assert_eq!(completed, expected);
+        assert_eq!(node.native_budget_operation_v1([99; 32]).unwrap(), None);
+        assert_eq!(node.native_budget_inventory_v1().unwrap().records.len(), 2);
+    }
+}
+
+#[test]
 fn native_signed_funding_and_exact_operations_survive_both_backends_reopen() {
     for authenticated in [false, true] {
         let directory = tempfile::tempdir().unwrap();
@@ -392,6 +487,11 @@ fn cold_open_refuses_deleted_oversized_and_forged_funding_records() {
             }
             _ => panic!("unknown corruption fixture"),
         }
+        let failure = node.native_budget_inventory_v1().err().unwrap();
+        assert!(failure.requires_owner_stop(), "{corruption}: {failure}");
+        // Even an absent local lookup may not bypass a damaged set/history.
+        let failure = node.native_budget_operation_v1([99; 32]).err().unwrap();
+        assert!(failure.requires_owner_stop(), "{corruption}: {failure}");
         drop(node);
         let failure = open(&path, false).err().unwrap();
         assert!(failure.requires_owner_stop(), "{corruption}: {failure}");
@@ -416,6 +516,46 @@ fn native_mining_funds_keep_maturity_and_do_not_create_payment_authority() {
         node.prepare_native_budget_effect_v1(req.operation, [91; 32]),
         "BUDGET_FUNDING_NOT_CURRENT",
     );
+    let maturity = node
+        .native_budget_records_v1()
+        .unwrap()
+        .values()
+        .next()
+        .unwrap()
+        .funding
+        .maturity;
+    while node.parent_height(node.active().unwrap().0).unwrap() < maturity {
+        mine(&mut node, vec![]);
+    }
+    // Mandatory maturity already credits the miner and removes this source.
+    assert!(!node
+        .read_active()
+        .unwrap()
+        .2
+        .contains_key(&format!("reward:{}", hex::encode(source))));
+    assert!(
+        !node
+            .reserve_native_budget_v1(req.clone())
+            .unwrap()
+            .funding_current
+    );
+    error(
+        node.prepare_native_budget_effect_v1(req.operation, [91; 32]),
+        "BUDGET_FUNDING_NOT_CURRENT",
+    );
+    let mut mature_reuse = request(NativeBudgetLaneV1::Mining, source, 41);
+    mature_reuse.beneficiary = public(3);
+    error(
+        node.reserve_native_budget_v1(mature_reuse),
+        "BUDGET_SOURCE_ABSENT",
+    );
+    let retained = node
+        .native_budget_operation_v1(req.operation)
+        .unwrap()
+        .unwrap();
+    assert_eq!(retained.resources_consumed, Some([20, 30]));
+    assert_eq!(retained.effect, None);
+    assert_eq!(retained.receipt, None);
 }
 
 #[test]

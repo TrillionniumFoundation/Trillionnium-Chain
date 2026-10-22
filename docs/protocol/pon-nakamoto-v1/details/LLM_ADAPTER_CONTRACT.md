@@ -134,6 +134,81 @@ it does not prove those outputs came from the declared LLM. Every assessment has
 runtime/authenticated-inference/prospective/independent/public-reward acceptance
 false. No self-published registration root can change those values.
 
+## Explicit parent consumption in the CPU pilot
+
+`scripts/llm_runtime_pilot.py parent-step` exposes one engineering operation through
+the existing owned-child supervisor. It does not run or change the five-participant
+comparison above. Its `train`, `evaluate` and `readback` operations grant no
+installation, selection, adoption or reward authority, and cannot establish PN3's
+three-round or independent future-evaluation exit condition.
+
+The caller supplies the exact original experiment-plan identity, a nonzero
+64-character lowercase hexadecimal attempt ID, and independently retained parent
+contract ID, wrapped-adapter ID and safetensors file SHA256. The plan must match
+this source's unchanged CPU experiment constructor. Before output creation or model
+imports, the command verifies the complete public material snapshot, all 120 factor
+byte ranges, and the exact contract reconstructed from the pinned inventory and
+current plan. An artifact from an older script/experiment does not inherit
+compatibility. Changed sources require fresh matching material evidence.
+
+```bash
+python3 scripts/llm_runtime_pilot.py parent-step --operation train \
+  --materials MATERIAL_DIRECTORY --plan ORIGINAL_PLAN_JSON --expected-plan PLAN_ID \
+  --parent-contract TARGET_CONTRACT_JSON --expected-contract CONTRACT_ID \
+  --parent-adapter WRAPPED_ADAPTER_JSON --expected-parent-adapter ADAPTER_ID \
+  --parent-artifact ARTIFACT_SAFETENSORS --expected-parent-file-sha256 FILE_SHA256 \
+  --attempt-id ATTEMPT_ID --output ABSENT_OUTPUT_DIRECTORY
+```
+
+`llm-runtime-parent-step-input-v1` binds operation, file roles, source hashes,
+experiment, parent pins and attempt. The same preflight repeats inside the bounded
+child. The implementation inserts one adapter, copies the verified absolute A/B
+factors, checks their actual byte readback and recomputed adapter ID, then trains
+with the original candidate recipe. It retains the unchanged backbone root and
+writes a `llm-runtime-parent-candidate-v1` record binding the produced bytes to that
+attempt and parent. This is a local production record, not an acceptance object.
+
+For `evaluate`, retain the same attempt ID and parent pins, add
+`--candidate-directory TRAIN_OUTPUT_DIRECTORY/execution`, and independently pin
+`--expected-candidate-adapter`, `--expected-candidate-file-sha256` and
+`--expected-candidate-record-sha256` and `--expected-candidate-result-sha256`.
+Evaluation also verifies the original frozen training input, successful controller
+result and exact actual receipt. A candidate left by a child with a later resource
+failure cannot satisfy this boundary. These are fixed-child local engineering
+receipts, not independently authenticated execution evidence. Evaluation refuses a
+candidate from another attempt, source or parent. The candidate contains absolute A/B factors: it replaces
+the loaded parent factors in the same adapter and is never added a second time.
+It evaluates only the plan's existing public calibration/evaluation rows and makes
+no gain or qualification decision.
+
+For `readback`, supply a separately retained attempt ID and the parent inputs,
+without candidate arguments. It loads and reads the parent on one existing public
+training task, writes no parent files and produces no new model version. Repeating
+this safely is a no-update operation, not evidence of model improvement or an
+untouched future task. Global attempt uniqueness, selected-parent authority,
+generation changes and durable installation still belong to their existing owners.
+
+The controller reads back the actual receipt and produced files before reporting
+operation completion; a zero exit without those exact materials remains failed.
+The original training/inference caps, explicit exit-observation profile and sticky
+unknown-resource failures apply to every child. Missing inputs and failed children
+remain failures. Lightweight fabricated-byte and dispatch regressions are not
+execution of the tensor copy, actual model, Cell installation or Hepta decoder;
+those require separate measured runs.
+
+The optional actual CPU tensor unit uses two tiny projections and the production
+copy/readback helper, without a pretrained model or training. It requires explicit
+opt-in and an already available Torch interpreter; absence of opt-in is reported as
+NOT_RUN rather than tensor execution:
+
+```bash
+TRNM_ACTUAL_PARENT_TENSOR_TESTS=1 python3 scripts/test_llm_runtime_parent_tensor.py
+```
+
+Its byte identity, absolute replacement, nonfinite/shape/dtype rejection and parent
+immutability checks are unit evidence only. They do not qualify the real SmolLM2
+backend, installation, full controls or a three-round loop.
+
 ## Invocation and remaining owner evidence
 
 ```bash
