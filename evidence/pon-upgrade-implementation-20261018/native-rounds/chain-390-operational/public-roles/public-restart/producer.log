@@ -1,0 +1,3 @@
+{"event":"producer-start","payload_summary":null,"receipt_digest":"2b81e831c0ab28340adb91913b0e64cfb42c14d15d4c807e064695ae4e30342a","sequence":0}
+{"event":"submit-attempt","payload_summary":null,"receipt_digest":"098129b6d429df416d0162789cc25c3fcaa8d6e430deec155f1dc264fd04aa8a","sequence":1}
+{"event":"producer-block","payload_summary":null,"receipt_digest":"fd2f2896661b2df41f9d6ef900e247c780397fa8b95eb10405ad1dc99967fdb3","sequence":2}

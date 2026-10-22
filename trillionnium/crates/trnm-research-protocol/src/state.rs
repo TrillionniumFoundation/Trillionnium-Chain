@@ -81,14 +81,29 @@ impl AuthoritySetV1 {
     }
 
     pub fn authorizes(&self, signed: &SignedResearchCommandV1) -> bool {
-        let bucket = match signed.signer_role {
+        self.authorizes_identity(signed.signer_role, &signed.signer_did, signed.public_key)
+    }
+
+    /// Check an authority identity without manufacturing a research command.
+    /// This is used by the Hepta handoff envelope, whose payload is deliberately
+    /// separate from the research-object command set.
+    pub fn authorizes_identity(
+        &self,
+        role: AuthorityRole,
+        signer_did: &str,
+        public_key: [u8; 32],
+    ) -> bool {
+        let bucket = match role {
             AuthorityRole::NakamaAuthority => &self.nakama_authorities,
             AuthorityRole::HeptaAuthority => &self.hepta_authorities,
         };
         bucket
             .binary_search_by(|identity| {
-                (&identity.signer_did, identity.public_key)
-                    .cmp(&(&signed.signer_did, signed.public_key))
+                identity
+                    .signer_did
+                    .as_str()
+                    .cmp(signer_did)
+                    .then_with(|| identity.public_key.cmp(&public_key))
             })
             .is_ok()
     }
@@ -107,6 +122,20 @@ impl CanonicalCbor for AuthoritySetV1 {
             identity.encode_canonical(encoder);
         }
     }
+}
+
+fn validate_state_chain_id(chain_id: &str) -> Result<(), ProtocolStateError> {
+    if chain_id.is_empty()
+        || chain_id.len() > 64
+        || !chain_id.bytes().all(|byte| {
+            byte.is_ascii_lowercase()
+                || byte.is_ascii_digit()
+                || matches!(byte, b'-' | b'_' | b'.' | b':')
+        })
+    {
+        return Err(ProtocolStateError::InvalidChainBinding);
+    }
+    Ok(())
 }
 
 fn validate_authority_bucket(identities: &[AuthorityIdentityV1]) -> Result<(), ProtocolStateError> {
@@ -321,6 +350,9 @@ pub enum ApplyOutcome {
 
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub struct ResearchProtocolState {
+    /// Chain identity is an out-of-band genesis binding. It is deliberately
+    /// kept outside the command replay map so commands cannot select a chain.
+    chain_id: String,
     authorities: AuthoritySetV1,
     matches: BTreeMap<ExternalKey, MatchEvidenceObjectV1>,
     evaluations: BTreeMap<ExternalKey, EvaluationCommitmentObjectV1>,
@@ -336,9 +368,28 @@ impl ResearchProtocolState {
     pub fn with_authorities(authorities: AuthoritySetV1) -> Result<Self, ProtocolStateError> {
         authorities.validate()?;
         Ok(Self {
+            chain_id: String::new(),
             authorities,
             ..Self::default()
         })
+    }
+
+    pub fn with_chain_id(
+        chain_id: impl Into<String>,
+        authorities: AuthoritySetV1,
+    ) -> Result<Self, ProtocolStateError> {
+        let chain_id = chain_id.into();
+        validate_state_chain_id(&chain_id)?;
+        authorities.validate()?;
+        Ok(Self {
+            chain_id,
+            authorities,
+            ..Self::default()
+        })
+    }
+
+    pub fn chain_id(&self) -> &str {
+        &self.chain_id
     }
 
     pub fn authorities(&self) -> &AuthoritySetV1 {
@@ -350,6 +401,15 @@ impl ResearchProtocolState {
         signed: &SignedResearchCommandV1,
     ) -> Result<ApplyOutcome, ProtocolStateError> {
         signed.validate()?;
+        if self.chain_id.is_empty() {
+            return Err(ProtocolStateError::MissingChainBinding);
+        }
+        if signed.chain_id != self.chain_id {
+            return Err(ProtocolStateError::ChainMismatch {
+                expected: self.chain_id.clone(),
+                got: signed.chain_id.clone(),
+            });
+        }
         if !self.authorities.authorizes(signed) {
             return Err(ProtocolStateError::UnauthorizedAuthority {
                 signer_did: signed.signer_did.clone(),
@@ -535,6 +595,22 @@ impl ResearchProtocolState {
     }
 
     pub fn from_snapshot(snapshot: ResearchProtocolSnapshotV1) -> Result<Self, ProtocolStateError> {
+        Self::from_snapshot_inner(String::new(), snapshot)
+    }
+
+    pub fn from_snapshot_for_chain(
+        chain_id: impl Into<String>,
+        snapshot: ResearchProtocolSnapshotV1,
+    ) -> Result<Self, ProtocolStateError> {
+        let chain_id = chain_id.into();
+        validate_state_chain_id(&chain_id)?;
+        Self::from_snapshot_inner(chain_id, snapshot)
+    }
+
+    fn from_snapshot_inner(
+        chain_id: String,
+        snapshot: ResearchProtocolSnapshotV1,
+    ) -> Result<Self, ProtocolStateError> {
         if snapshot.protocol_version != PROTOCOL_VERSION {
             return Err(ProtocolStateError::UnsupportedSnapshotVersion(
                 snapshot.protocol_version,
@@ -542,6 +618,7 @@ impl ResearchProtocolState {
         }
         snapshot.authorities.validate()?;
         let state = Self {
+            chain_id,
             authorities: snapshot.authorities,
             matches: collect_objects(
                 snapshot.matches,
@@ -786,6 +863,8 @@ impl ResearchProtocolState {
         }
         let object_ref = payload.object_ref();
         ensure_absent(&self.challenges, object_ref.kind, payload.challenge_id)?;
+        // Validate every fallible transition before mutating either object.
+        let next_claim_version = next_object_version(claim.object_ref)?;
 
         self.challenges.insert(
             payload.challenge_id,
@@ -800,7 +879,7 @@ impl ResearchProtocolState {
             .claims
             .get_mut(&payload.claim_ref.key)
             .expect("reference check guarantees claim object");
-        claim.object_ref.object_version += 1;
+        claim.object_ref.object_version = next_claim_version;
         claim.status = ClaimStatus::Challenged;
         claim.active_challenge = Some(payload.challenge_id);
         Ok(object_ref)
@@ -857,6 +936,8 @@ impl ResearchProtocolState {
 
         let object_ref = payload.object_ref();
         ensure_absent(&self.resolutions, object_ref.kind, payload.resolution_id)?;
+        let next_challenge_version = next_object_version(challenge.object_ref)?;
+        let next_claim_version = next_object_version(claim.object_ref)?;
         self.resolutions.insert(
             payload.resolution_id,
             ClaimResolutionObjectV1 {
@@ -869,7 +950,7 @@ impl ResearchProtocolState {
             .challenges
             .get_mut(&payload.challenge_ref.key)
             .expect("reference check guarantees challenge object");
-        challenge.object_ref.object_version += 1;
+        challenge.object_ref.object_version = next_challenge_version;
         challenge.status = ClaimChallengeStatus::Resolved;
         challenge.resolution_ref = Some(object_ref);
 
@@ -877,7 +958,7 @@ impl ResearchProtocolState {
             .claims
             .get_mut(&claim_key)
             .expect("challenge graph guarantees claim object");
-        claim.object_ref.object_version += 1;
+        claim.object_ref.object_version = next_claim_version;
         claim.active_challenge = None;
         match payload.decision {
             ClaimResolutionDecision::Uphold => claim.status = ClaimStatus::Active,
@@ -987,7 +1068,16 @@ impl ResearchProtocolState {
             validate_claim_shares(&object.current_claimants, false)?;
             self.require_ref(object.claim.workload_receipt_ref)?;
             let challenge_consistent = match object.status {
-                ClaimStatus::Challenged => object.active_challenge.is_some(),
+                ClaimStatus::Challenged => object.active_challenge.is_some_and(|challenge_key| {
+                    self.challenges
+                        .get(&challenge_key)
+                        .is_some_and(|challenge| {
+                            challenge.status == ClaimChallengeStatus::Open
+                                && challenge.challenge.claim_ref.key == object.object_ref.key
+                                && challenge.challenge.claim_ref.object_version.checked_add(1)
+                                    == Some(object.object_ref.object_version)
+                        })
+                }),
                 _ => object.active_challenge.is_none(),
             };
             if !challenge_consistent {
@@ -1004,9 +1094,7 @@ impl ResearchProtocolState {
             if object.object_ref.object_version != 1 {
                 return Err(ProtocolStateError::InvalidSnapshotGraph);
             }
-            if !self.claims.contains_key(&object.declaration.claim_ref.key) {
-                return Err(ProtocolStateError::InvalidSnapshotGraph);
-            }
+            self.require_ref_relaxed(object.declaration.claim_ref)?;
         }
         for object in self.challenges.values() {
             object.challenge.validate()?;
@@ -1015,7 +1103,16 @@ impl ResearchProtocolState {
                 ResearchObjectKind::ClaimChallenge,
                 object.challenge.challenge_id,
             )?;
-            if !self.claims.contains_key(&object.challenge.claim_ref.key) {
+            self.require_ref_relaxed(object.challenge.claim_ref)?;
+            let Some(claim) = self.claims.get(&object.challenge.claim_ref.key) else {
+                return Err(ProtocolStateError::InvalidSnapshotGraph);
+            };
+            if object.status == ClaimChallengeStatus::Open
+                && (claim.status != ClaimStatus::Challenged
+                    || claim.active_challenge != Some(object.object_ref.key)
+                    || object.challenge.claim_ref.object_version.checked_add(1)
+                        != Some(claim.object_ref.object_version))
+            {
                 return Err(ProtocolStateError::InvalidSnapshotGraph);
             }
             let status_consistent = match object.status {
@@ -1023,7 +1120,24 @@ impl ResearchProtocolState {
                     object.object_ref.object_version == 1 && object.resolution_ref.is_none()
                 }
                 ClaimChallengeStatus::Resolved => {
-                    object.object_ref.object_version == 2 && object.resolution_ref.is_some()
+                    object.object_ref.object_version == 2
+                        && object.resolution_ref.is_some_and(|reference| {
+                            self.resolutions
+                                .get(&reference.key)
+                                .is_some_and(|resolution| {
+                                    resolution.object_ref == reference
+                                        && resolution.resolution.challenge_ref.kind
+                                            == ResearchObjectKind::ClaimChallenge
+                                        && resolution.resolution.challenge_ref.key
+                                            == object.object_ref.key
+                                        && resolution
+                                            .resolution
+                                            .challenge_ref
+                                            .object_version
+                                            .checked_add(1)
+                                            == Some(object.object_ref.object_version)
+                                })
+                        })
                 }
             };
             if !status_consistent {
@@ -1040,9 +1154,17 @@ impl ResearchProtocolState {
             if object.object_ref.object_version != 1 {
                 return Err(ProtocolStateError::InvalidSnapshotGraph);
             }
-            if !self
-                .challenges
-                .contains_key(&object.resolution.challenge_ref.key)
+            let Some(challenge) = self.challenges.get(&object.resolution.challenge_ref.key) else {
+                return Err(ProtocolStateError::InvalidSnapshotGraph);
+            };
+            if challenge.status != ClaimChallengeStatus::Resolved
+                || challenge.resolution_ref != Some(object.object_ref)
+                || object
+                    .resolution
+                    .challenge_ref
+                    .object_version
+                    .checked_add(1)
+                    != Some(challenge.object_ref.object_version)
             {
                 return Err(ProtocolStateError::InvalidSnapshotGraph);
             }
@@ -1057,25 +1179,24 @@ impl ResearchProtocolState {
     }
 
     fn require_ref_relaxed(&self, object_ref: ObjectRefV1) -> Result<(), ProtocolStateError> {
-        let exists = match object_ref.kind {
-            ResearchObjectKind::MatchEvidence => self.matches.contains_key(&object_ref.key),
-            ResearchObjectKind::EvaluationCommitment => {
-                self.evaluations.contains_key(&object_ref.key)
+        // Historical references may name a previous version, never a future
+        // version or an object that did not exist.
+        match self.require_ref(object_ref) {
+            Err(ProtocolStateError::ObjectVersionMismatch { actual, .. })
+                if object_ref.object_version != 0 && object_ref.object_version < actual =>
+            {
+                Ok(())
             }
-            ResearchObjectKind::WorkloadReceipt => {
-                self.workload_receipts.contains_key(&object_ref.key)
-            }
-            ResearchObjectKind::ResearchClaim => self.claims.contains_key(&object_ref.key),
-            ResearchObjectKind::LicenseDeclaration => self.licenses.contains_key(&object_ref.key),
-            ResearchObjectKind::ClaimChallenge => self.challenges.contains_key(&object_ref.key),
-            ResearchObjectKind::ClaimResolution => self.resolutions.contains_key(&object_ref.key),
-        };
-        if exists {
-            Ok(())
-        } else {
-            Err(ProtocolStateError::MissingReferencedObject(object_ref))
+            result => result,
         }
     }
+}
+
+fn next_object_version(object_ref: ObjectRefV1) -> Result<u64, ProtocolStateError> {
+    object_ref
+        .object_version
+        .checked_add(1)
+        .ok_or(ProtocolStateError::ObjectVersionExhausted(object_ref))
 }
 
 fn validate_snapshot_object_ref(
@@ -1148,6 +1269,12 @@ pub enum ProtocolStateError {
     AlteredReplay { command_id: ExternalKey },
     #[error("invalid or non-canonically ordered research authority set")]
     InvalidAuthoritySet,
+    #[error("invalid research protocol chain binding")]
+    InvalidChainBinding,
+    #[error("research protocol state has no configured chain binding")]
+    MissingChainBinding,
+    #[error("signed command targets chain {got}, expected {expected}")]
+    ChainMismatch { expected: String, got: String },
     #[error("{role:?} signer {signer_did} is not in the genesis authority set")]
     UnauthorizedAuthority {
         signer_did: String,
@@ -1166,6 +1293,8 @@ pub enum ProtocolStateError {
         object_ref: ObjectRefV1,
         actual: u64,
     },
+    #[error("object version is exhausted for {0:?}")]
+    ObjectVersionExhausted(ObjectRefV1),
     #[error("rejected evaluations cannot issue accepted workload")]
     RejectedEvaluationCannotIssueWorkload,
     #[error("claimant has no accepted work in the referenced workload receipt")]
