@@ -94,15 +94,21 @@ one frozen workload; neither stage may declare the other's missing result passed
 
 ### 2026-10-22 six-stage execution checkpoint
 
-Fresh PR readback still identifies the published pair as Chain PR #323 head
-`1131d067f7ae4e6ccb1bf27e05df34818311daec`, actual main-target merge
-`64aa682996b36c3f1ee6bc4ed0f3cceecb8a086b`, and Hepta PR #2559 head
-`097d97137a43aee84fb96be12e44135278776748`, actual stacked-base merge
-`5a915bb6eb6704a789ced9976dd26acf706146ac`. Hepta's compiled observation is
-schema 4 and preserves `accepted_task`; legacy schema 3 remains readable but
-cannot satisfy the independently pinned task-acceptance comparison. These are
-published predecessors of the current local integration. Re-read the complete
-head/tree/base/merge tuples and checks before qualifying that integration.
+The latest independently read published source is Chain PR #323 head
+`87126992dd5634348cc1a788442126997b28c624`, tree
+`579771a4735f58c9d3391edc76e1d7552bb9a606`, base/main
+`9fedf7ecbbe07177069c030592b4e03dcffebb81`, and actual merge
+`b388ad9a4fc955d5584ea344c0081bec2204c571`. Hepta PR #2559 head is
+`cb481bb06d2e048d9cb4d6356cf78682ea620fb2`, tree
+`239f6b9fb0125ca7b376ee6b7eec8d5fce2456d4`, stacked base
+`75531105b27329abaeb955e77c2c04a6d14f3bcb`, and actual merge
+`ab4c32eae71f0d282c6980fdd033853d5311ea5c`. Actual merge parents were
+read in ordered base/head form and both merge trees equal their source trees.
+These are measured source identities, not mutable latest-head aliases.
+Hepta's schema 4 preserves `accepted_task`; legacy schema 3 remains readable
+but cannot satisfy the independently pinned task-acceptance comparison.
+Current full Rust run `39743869108`, paired run `39743737810` and Chain
+required run `39739585771` still need complete terminal acceptance.
 
 The [paired run](https://github.com/TrillionniumFoundation/hepta-private-ci/actions/runs/39727952205)
 completed successfully on four Linux lanes and both Windows ledger lanes.
@@ -134,7 +140,7 @@ failed artifact; no aggregate success, reduced refill or fabricated depletion
 may convert it into acceptance. A separate valid-W1/late-state-root depletion
 control retains its own inputs and cannot replace this campaign's verdict.
 
-The current [original-policy campaign `39727391523`](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/39727391523)
+The predecessor [original-policy campaign `39727391523`](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/39727391523)
 on published `1131d067` completed successfully and passed strict raw-artifact
 readback: 189 submissions and 27 confirmed rounds across nine phases. Only 10
 of the 18 hostile-phase honest rounds overlap observed genuine CPU depletion;
@@ -154,12 +160,44 @@ gates; fail-closed refusal does not qualify functional Windows isolation.
 
 | Gate | This increment's executable boundary | Full exit still required |
 | --- | --- | --- |
-| PN0 | Published pair readback above; current local native growth/budget source passes complete strict Clippy; the Hepta mechanical Core fix still needs native CI. | Applicable final head/merge CI, security disposition, functional Windows isolation and fresh cross-repository execution. |
-| PN1 | Original-policy reader and successful current campaign; genuine CPU-depletion coverage is 10/18 hostile honest rounds. | Cheapest-adversary assumptions and actual public service under a declared, sufficiently delivered attack envelope. |
-| PN2 | Isolated revision17 GSC2 native complete-State growth reference and required 65,537-account signed-transaction/recovery test are integrated locally; the final long test has not run. | Actual final-source signed boundary and recovery evidence, bounded working-state/proof validation and source-preserving migration. Complete-State reference roots are not bounded witnesses. |
-| PN3 | Real model materials are accessible. The opt-in frozen observer-v2 at `b90cde2354d7ba1968783cb87c146191905e5d15` preserves strict-v1 defaults and passes 56 observer tests. A real 135M CPU loader completed in 11.09 seconds without exercising the special exit-only branch. Both original strict 12-phase attempts stopped on unknown RSS before training and remain failures. | Actual training, three-round installed-parent lineage and next-task use, Hepta neuron loading, independent prospective evaluation and complete release integration. Loader success is not a trained update or exit-only-path qualification. |
+| PN0 | Predecessor pair readback above; published `8712699` passes full strict Clippy locally. Current head/merge CI and full Hepta Rust remain incomplete. Current CodeQL gate reports 13 high annotations; its Rust SARIF has 234 results. | Applicable final head/merge CI, independent security disposition, functional Windows isolation and fresh cross-repository execution. |
+| PN1 | Current original-policy campaign `39739585823` passed full original-artifact readback: 189 submissions, 27 confirmations and 6/18 hostile honest rounds overlapping genuine CPU depletion. | Cheapest-adversary assumptions and actual public service under a declared, sufficiently delivered attack envelope. |
+| PN2 | Published revision17 GSC2 native complete-State reference and required 65,537-account signed-transaction/recovery test; the unique published-source local long run stopped at its original shared-disk safety boundary, last logged 57,348 accounts at height 224. No final 65,537 export or successful libtest result exists. | Terminal signed-boundary/recovery/readback evidence, bounded working-state/proof validation and source-preserving migration. Complete-State reference roots are not bounded witnesses. |
+| PN3 | Published-source real SmolLM2-135M CPU pilot trained a ten-step candidate and saved a 933,544-byte adapter, then failed phase four on unknown RSS. Actual source-built Cell CLI downloaded that candidate in 15 chunks and rechecked bytes/material pins. Same-read exit diagnostics retain the original State/Threads and failed preconditions without changing classification, limits or strict-v1 defaults. | Complete five controls, three-round installed-parent lineage and next-task use, Hepta neuron loading, independent prospective evaluation and complete release integration. One local supplier and one candidate transfer cannot qualify these. |
 | PN4 | [Separate finite lane budgets](specs/pon/REWARD_BUDGETS_V1.md) now have native local obligation persistence; six component tests passed again on the integrated native source, including abrupt-exit recovery. | Native debit/escrow locks, actual resource-owner measurement and dispatch, funded storage/service obligations and independent economic review. Local records do not lock chain funds or pay rewards. |
 | PN5 | Preserve the preregistration and independent-custody requirements below. | Three independently administered operators, accessible existing nodes and a complete frozen 72-hour WAN campaign. |
+
+The [current original CI logs](../../evidence/pon-six-gate-closure-20261022/current-871269-ci/branch-encoding-original-failures.json)
+retain all four failures in branch-encoding run `39739585740`. Each lane
+successfully executed 12 protocol tests with zero failures and one ignored;
+the shell still required the predecessor count of 11. The successor changes
+only that exact count to 12. Rust source, selectors, ignored-test execution,
+resource/time budgets and source checks remain unchanged; the four original
+logs prove the corrected count matches, not that later workflow steps passed.
+
+The [current security export](../../evidence/pon-six-gate-closure-20261022/current-871269-ci/security-export-exact-source.json)
+retains check `119708392458`, all 13 API-exposed annotations and the exact-source
+exporter metadata. The 234 Rust SARIF results have a different scope; neither
+old findings disappearing from this check nor source review proves remediation.
+The [current complete campaign readback](../../evidence/pon-six-gate-closure-20261022/current-871269-ci/campaign-full-artifact-readback.json)
+verified all 910 original files (320,779,809 bytes), including retained native
+binary and databases. Its three controlled same-host runs meet the original
+finite policy, with only six of eighteen hostile honest rounds overlapping
+observed depletion. This is neither continuous saturation nor minimum attack
+cost, WAN availability or sustainable public-network throughput.
+
+The [long native growth failure](../../evidence/pon-six-gate-closure-20261022/current-871269-ci/native-growth-failure-summary.json)
+retains the original 3,821.7-second shared-disk interruption. Available space
+fell to 237,518,848 bytes below the unchanged 300MB protection; the wrapper
+stopped the group and then exited before native wait/result accounting. The
+pinned native process subsequently disappeared. Its direct terminal status is
+unknown, not inferred from the wrapper's exit 1. All partial DB/WAL/SHM bytes,
+original runner/observer logs and hashes remain; the partial database was not
+SQL seeded, reopened or converted into a successful replacement. The actual
+after-stop full raw source check passed on unchanged `8712699`; the original
+before-launch guard was metadata only and is not retroactively upgraded.
+No successful native checker, independent final export reader, physical-fault
+or whole-PN2 acceptance is claimed.
 
 The available hosted CI uses the existing `ubuntu-24.04` and `ubuntu-24.04-arm`
 labels. Queue metadata does not establish dedicated-cloud terminal access or
@@ -167,7 +205,7 @@ prove an organization-wide runner-capacity cause. Real public model materials
 and a working local CPU loader are now available. No three independently
 controlled operators or qualified 72-hour WAN campaign have been established;
 local processes and additional development keys cannot supply that evidence.
-The integrated native source passes full strict Clippy and four independent growth-root vector tests, three small signed growth/recovery tests, six local budget tests and the original native model-release integration test. The required long signed growth run and current-pair CI still need terminal evidence.
+The integrated native source passes full strict Clippy and four independent growth-root vector tests, three small signed growth/recovery tests, six local budget tests and the original native model-release integration test. The required long signed growth gate remains incomplete after the resource stop; current-pair CI still needs complete terminal evidence.
 No PN0–PN6 stage is closed by this checkpoint and no readiness flag changes.
 
 Every performance/iteration report must retain the following distinct quantities.

@@ -75,6 +75,10 @@ Such failures now retain the exact read-boundary reason and a bounded post-gap
 snapshot through the original held pidfd: leader state/RSS, group thread states
 and identity continuity. The snapshots occur after the missing sample and cannot
 replace it, establish memory bounds or turn a failed observation into success.
+New missing-sample traces also retain the original status read's state, thread
+count, timestamp and owned-observer precondition, plus whether classification was
+attempted and its fixed rejection code. This adds no procfs reads or acceptance
+authority. Historical samples without these fields retain an unknown initial state.
 
 Linux workers whose leader is already a zombie can still be running kernel exit
 cleanup before the group becomes waitable. The explicit

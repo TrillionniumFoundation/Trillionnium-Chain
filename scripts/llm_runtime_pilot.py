@@ -346,17 +346,43 @@ def current_rss(pid=None):
                     list(map(int, fields['NSpid'])) != namespace or
                     status(identity_path) != identity):
                 return unavailable('child-or-pidfd-identity-mismatch')
+            classification_trace = None
+            if missing_sample_ns is not None and trace is not None:
+                # Only fields from this original status read: no later procfs
+                # snapshot may supply the precondition that was observed here.
+                state_fields, thread_fields = fields.get('State', []), fields.get('Threads', [])
+                state = state_fields[0] if state_fields and len(state_fields[0]) == 1 else None
+                threads = (int(thread_fields[0]) if len(thread_fields) == 1 and
+                           len(thread_fields[0]) <= 10 and thread_fields[0].isascii() and
+                           thread_fields[0].isdecimal() and
+                           str(int(thread_fields[0])) == thread_fields[0] else None)
+                classification_trace = dict(source='original-child-status-read-before-return',
+                    missing_sample_ns=missing_sample_ns, borrowed_owner_present=borrowed,
+                    initial_state=state, initial_threads=threads, attempted=False,
+                    precondition=('no-matching-owner-context' if not borrowed else
+                                  'initial-leader-not-zombie' if state != 'Z' else
+                                  'owned-zombie-leader'), result='not-attempted', diagnostic_only=True)
+                trace['same_sample_exit_classification'] = classification_trace
             if missing_sample_ns is not None and borrowed and fields.get('State', [None])[0] == 'Z':
                 # Classification is completed within this missing sample, using
                 # the supervisor's original pidfd and held task-directory FDs.
                 # A later post-gap diagnostic can never grant this authority.
                 try:
+                    if classification_trace is not None:
+                        classification_trace['attempted'] = True
                     from llm_runtime_exit_observation import ExitOnlyObservation
                     observation = ExitOnlyObservation(pid, descriptor, owner[2], fields, missing_sample_ns)
                     _RSS_EXIT_OBSERVATION.set(observation)
+                    if classification_trace is not None:
+                        classification_trace['result'] = 'typed-observation-created'
                 except (OSError, AttributeError, KeyError, ValueError, TypeError) as error:
                     if trace is not None:
                         trace['exit_classification_error'] = type(error).__name__
+                    if classification_trace is not None:
+                        classification_trace.update(result='unavailable', error_type=type(error).__name__,
+                            error_errno=getattr(error, 'errno', None),
+                            rejection_code=str(error) if type(error).__module__ == 'llm_runtime_exit_observation'
+                            and type(error).__name__ == 'ExitObservationError' else None)
             return rss(fields)
         finally:
             try:
