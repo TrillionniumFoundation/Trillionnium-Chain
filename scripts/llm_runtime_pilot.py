@@ -47,7 +47,8 @@ _RSS_READ_TRACE = contextvars.ContextVar('llm-owned-rss-read-trace', default=Non
 _RSS_OWNER_CONTEXT = contextvars.ContextVar('llm-owned-rss-owner', default=None)
 _RSS_EXIT_OBSERVATION = contextvars.ContextVar('llm-owned-rss-exit-observation', default=None)
 _RSS_EXIT_CLASS = contextvars.ContextVar('llm-owned-rss-exit-class', default=None)
-EXIT_PROFILES = ('strict-v1', 'linux-owned-exit-cleanup-v2', 'linux-owned-exit-terminal-subset-v3')
+EXIT_PROFILES = ('strict-v1', 'linux-owned-exit-cleanup-v2', 'linux-owned-exit-terminal-subset-v3',
+                 'linux-owned-exit-worker-pidfd-v4')
 
 
 def exit_observation_profile(profile='linux-owned-exit-cleanup-v2'):
@@ -61,6 +62,11 @@ def exit_observation_profile(profile='linux-owned-exit-cleanup-v2'):
         result.update(profile=SUBSET_PROFILE,
             base_observer_source_sha256=result['observer_source_sha256'],
             observer_source_sha256=file_sha(REPOSITORY/'scripts/llm_runtime_exit_subset_observation.py'))
+    elif profile == EXIT_PROFILES[3]:
+        from llm_runtime_exit_worker_observation import PROFILE as WORKER_PROFILE
+        result.update(profile=WORKER_PROFILE,
+            base_observer_source_sha256=result['observer_source_sha256'],
+            observer_source_sha256=file_sha(REPOSITORY/'scripts/llm_runtime_exit_worker_observation.py'))
     return result
 
 
@@ -75,14 +81,18 @@ def exit_observation_class(profile):
     if profile['profile'] == EXIT_PROFILES[1]:
         from llm_runtime_exit_observation import ExitOnlyObservation
         return ExitOnlyObservation
-    from llm_runtime_exit_subset_observation import TerminalSubsetObservation
-    return TerminalSubsetObservation
+    if profile['profile'] == EXIT_PROFILES[2]:
+        from llm_runtime_exit_subset_observation import TerminalSubsetObservation
+        return TerminalSubsetObservation
+    from llm_runtime_exit_worker_observation import WorkerPidfdObservation
+    return WorkerPidfdObservation
 
 
 def plan_exit_profile(plan):
     profiles = dict(zip(('llm-runtime-public-pilot-plan-v1',
                          'llm-runtime-public-pilot-plan-v2',
-                         'llm-runtime-public-pilot-plan-v3'), EXIT_PROFILES))
+                         'llm-runtime-public-pilot-plan-v3',
+                         'llm-runtime-public-pilot-plan-v4'), EXIT_PROFILES))
     require(type(plan) is dict and plan.get('schema') in profiles, 'RUNTIME_EXIT_OBSERVER_PROFILE')
     expected = profiles[plan['schema']]
     if expected == 'strict-v1':
@@ -245,8 +255,7 @@ def experiment_plan(materials, *, backend='cpu', threads=4, steps=10, exit_obser
                 source_scope='operator-controlled-public-fixtures-no-future-independent-custody',
                 **{name: False for name in QUALIFICATIONS})
     if exit_observation != 'strict-v1':
-        plan.update(schema=('llm-runtime-public-pilot-plan-v2' if exit_observation == EXIT_PROFILES[1]
-                            else 'llm-runtime-public-pilot-plan-v3'),
+        plan.update(schema='llm-runtime-public-pilot-plan-v'+str(EXIT_PROFILES.index(exit_observation)+1),
                     exit_observation=exit_observation_profile(exit_observation))
     return plan
 
@@ -1015,6 +1024,11 @@ def _exit_recheck_refusal(error):
         'exit-task-not-exit-only', 'exit-leader-state', 'exit-owner-changed', 'exit-task-starttime',
         'exit-subset-task-set', 'exit-subset-frontier-change',
         'exit-subset-remaining-not-zombie', 'exit-subset-sticky-failure',
+        'exit-worker-pidfd-reused', 'exit-worker-pidfd-binding', 'exit-worker-pidfd-unavailable',
+        'exit-worker-retirement-ineligible', 'exit-worker-terminal-event-unavailable',
+        'exit-worker-task-set', 'exit-worker-frontier-change',
+        'exit-worker-remaining-not-zombie', 'exit-worker-recapture-bound',
+        'exit-worker-sticky-failure', 'exit-worker-deadline',
     }
     code = (error.args[0] if type(error) is ExitObservationError and len(error.args) == 1 and
             type(error.args[0]) is str and error.args[0] in codes else None)

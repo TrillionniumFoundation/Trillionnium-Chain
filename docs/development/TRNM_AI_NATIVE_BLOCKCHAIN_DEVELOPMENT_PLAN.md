@@ -226,6 +226,29 @@ ran. M17/M10 must close the incomplete-frontier observation through an explicit
 reviewed source/profile and a fresh frozen experiment; a later diagnostic,
 deadline extension or successful child exit cannot convert this failure.
 
+The same PN3 M17/M10 runtime component now has the explicit worker-only
+`linux-owned-exit-worker-pidfd-v4` / `llm-runtime-public-pilot-plan-v4` successor.
+It retains strict-v1 as default and the frozen V2/V3 observer bytes. Full V2
+initial qualification precedes binding every original nonleader's held kernel
+thread pidfd to its task FD, starttime and namespace; acquisition changes or an
+unavailable `PIDFD_THREAD` refuse. A later worker disappearance needs that
+same held descriptor's actual terminal event. Interrupted frontiers then need
+two new complete remaining frontiers in the same call, with matching names,
+counts and original starttimes, all original predicates, and remaining Z tasks.
+Each recapture consumes a newly proved original worker, at most the original
+worker count. Previously observed illegal/unknown fields stay sticky. Leader
+loss, count mismatch, additions/reappearance, wrong FD/event and missing proof
+refuse; no early-leader pidfd event or count-based inference supplies authority.
+Own tiny-child tests confirmed worker-event/proc-disappearance separation from
+group completion and the kernel's delayed early-leader event. Those observations
+and adversarial units establish only this component boundary. Original held
+FDs/reservations, missing-sample 100ms, wall/RSS caps and exact owned-child wait4
+with valid resource receipt remain mandatory, with no zero-RSS insertion.
+The V3 failure remains FAIL; a reviewed fresh-source full pilot and actual
+three-round installed-parent/consumer execution remain open. The engineering
+task set may be frozen public or previously seen data; report only that set's
+actual performance, without claiming future-task generalization.
+
 The optional scalar-credit freshness observation reads the original watermark
 and projects the original refill arithmetic without changing the clock, credit,
 owner or depletion predicate. Its added sampler contention and complete-path

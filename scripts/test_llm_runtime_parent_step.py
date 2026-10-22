@@ -239,17 +239,18 @@ class ParentStepTests(unittest.TestCase):
                 self.assertEqual(supervise.call_args.args[2], plan[budget_name])
                 self.assertEqual(supervise.call_args.kwargs['exit_observation'], plan['exit_observation'])
 
-    def test_parent_rejects_v2_v3_schema_profile_mix_before_output_or_dispatch(self):
-        for source_profile, wrong_schema in (
-                ('linux-owned-exit-terminal-subset-v3','llm-runtime-public-pilot-plan-v2'),
-                ('linux-owned-exit-cleanup-v2','llm-runtime-public-pilot-plan-v3')):
+    def test_parent_rejects_every_schema_profile_mix_before_output_or_dispatch(self):
+        pairs = [(profile, 'llm-runtime-public-pilot-plan-v'+str(index+1))
+            for own,profile in enumerate(runtime.EXIT_PROFILES)
+            for index in range(len(runtime.EXIT_PROFILES)) if own != index]
+        for source_profile, wrong_schema in pairs:
             plan = runtime.experiment_plan(self.manifest, exit_observation=source_profile)
             plan['schema'] = wrong_schema
             runtime.save(self.root / 'plan.json', plan)
             changed = copy.deepcopy(self.value); changed['experiment'] = runtime.identity(plan)
             with self.subTest(profile=source_profile), \
                     patch.object(runtime,'supervise',side_effect=AssertionError('must not dispatch')), \
-                    self.assertRaisesRegex(ValueError,'EXIT_OBSERVER_PROFILE'):
+                    self.assertRaisesRegex(ValueError,'EXIT_OBSERVER_'):
                 step.run(self.arguments(changed))
             self.assertFalse(Path(changed['output']).parent.exists())
 

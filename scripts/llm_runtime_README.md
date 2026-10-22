@@ -61,6 +61,10 @@ and a constant answer on a tiny balanced fixture, not improved general reasoning
 Gain over the strongest control was zero: no adoption or reward is supported.
 All fixture tasks are public and controlled by one operator. Different byte IDs,
 machines or timestamps do not establish independent future tasks.
+The three-round engineering loop may use these or other frozen reproducible
+public/previously seen tasks; training-side unfamiliarity is not a prerequisite.
+Report the actual dataset results, parent lineage, controls and next-task use.
+This scope does not claim future-task generalization or change reward admission.
 
 ## Measurement and retained limitations
 
@@ -145,6 +149,55 @@ stable subset or a timestamped timely terminal wait4. Raw evidence and the
 earlier V2 failure remain unchanged. Training and adoption did not run. This
 demonstrated blocker requires a reviewed observer change and a fresh frozen
 attempt; it cannot be passed by retrying inside the original record.
+
+The separate opt-in
+`--exit-observation-profile linux-owned-exit-worker-pidfd-v4` freezes the distinct
+`llm-runtime-public-pilot-plan-v4`. It binds the new worker observer and the
+unchanged V2 parser/FD owner and diagnostics; it does not import the V3 observer.
+CLI and parent-step dispatch require the exact schema/profile/source pairing.
+Strict-v1 remains the default and the frozen V2/V3 predicates do not change.
+
+V4 requires the full original V2 double frontier before acquiring a kernel
+`PIDFD_THREAD` for every original nonleader, using the task's validated parent
+PID-namespace coordinate. Each retained descriptor is bound to fdinfo Pid/NSpid,
+the original held task directory, parent/group identity and starttime across
+acquisition, then the complete V2 frontiers and bindings are checked again.
+Any acquisition disappearance, unsupported API/flag or changed binding refuses;
+there is no ordinary-pidfd fallback or later numeric-TID rebinding.
+
+Only that previously bound worker descriptor's actual `POLLIN` event, optionally
+with `POLLHUP`, can prove that original worker terminal. An absent directory or
+ENOENT/ESRCH alone cannot. A mid-frontier worker read failure with this proof may
+request two new complete remaining frontiers in the same call. Each recapture
+must consume a newly proved original worker retirement, at most the original
+worker count, within the unchanged deadline. Every remaining task must satisfy
+the original predicates and, after a shrink, be Z in both status and stat.
+The complete frontiers must agree on task names/counts and original starttimes;
+this does not require every unrelated stat flag to remain identical.
+Already observed malformed, live-memory, wrong-identity or unqualified fields
+are sticky and cannot be erased by a later worker event. Additions, reappearance,
+count mismatches, missing terminal events and changed/closed FDs also refuse.
+
+The leader always needs its original proc observations and cannot disappear.
+The [Linux v7.0 UAPI](https://github.com/torvalds/linux/blob/v7.0/include/uapi/linux/pidfd.h)
+defines `PIDFD_THREAD` as `O_EXCL`; its
+[poll implementation](https://github.com/torvalds/linux/blob/v7.0/fs/pidfs.c)
+delays an early zombie leader while other threads remain. Controlled own-child
+probes confirmed a worker event with held task-proc ENOENT while the group was
+still live, and separately confirmed that delayed-leader limitation. No early
+leader event is required or used. Probe harness failures and the failed general
+leader-event expectation remain retained alongside the explicit negative case.
+These are tiny-child capability observations, not full-model qualification.
+
+All original task/thread FDs and bindings remain held, including kernel-reaped
+workers whose fdinfo later reports `-1`; that marker never replaces their
+original identity. Worker events create only pending group retirement. The
+same owned child's exact terminal wait4 and valid CPU/peak-RSS receipt within
+the original missing-sample 100ms and wall/RSS caps remain mandatory. No event
+creates zero RSS or releases a resource reservation. Acquisition or recapture
+crossing 100ms refuses. The V3 full-pilot failure above remains FAIL; the V4
+component and its tests do not establish a successful new full model attempt,
+training gain, installation or a completed three-round engineering loop.
 
 `sampled_peak_rss_bytes` remains the direct-child sampling result.
 `waited_child_peak_rss_bytes` separately records that exact child's Linux `wait4`

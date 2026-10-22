@@ -159,7 +159,7 @@ class TerminalSubsetTests(unittest.TestCase):
         self.assertEqual(subset.MAX_DRAIN_NS, base.MAX_DRAIN_NS)
         plans = [runtime.experiment_plan({'fixture': True}, exit_observation=p) for p in runtime.EXIT_PROFILES]
         self.assertEqual([runtime.plan_exit_profile(p) for p in plans], list(runtime.EXIT_PROFILES))
-        self.assertEqual(len({runtime.identity(p) for p in plans}), 3)
+        self.assertEqual(len({runtime.identity(p) for p in plans}), len(runtime.EXIT_PROFILES))
         self.assertEqual(plans[2]['schema'], 'llm-runtime-public-pilot-plan-v3')
         for field in plans[2]['exit_observation']:
             changed = copy.deepcopy(plans[2]); changed['exit_observation'].pop(field)
