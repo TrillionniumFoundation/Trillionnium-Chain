@@ -4,7 +4,7 @@ use anyhow::Result;
 
 use crate::{
     append_ack, append_event, append_progress, is_idempotent_duplicate_ok, is_task_acked,
-    load_ingress_records, persisted_ack_hashes_for_task, run_adapter_with_retry,
+    load_ingress_records, persisted_ack_hashes_for_task, run_adapter_with_retry_bounded,
     save_ingress_records, should_execute_reveal, transition_request_status,
     trim_boundary_audit_fillers, try_acquire_task_lock, AdapterExecResult, ProgressRecord,
     SubmissionRecord, WorkerEvent, RC_SKIPPED,
@@ -25,6 +25,7 @@ pub(crate) fn process_submission_record(
     adapter_cmd: &str,
     tx_max_retries: u32,
     tx_backoff_ms: u64,
+    tx_timeout_ms: u64,
     ack_log: &std::path::Path,
     event_log: &std::path::Path,
     progress_log: &std::path::Path,
@@ -62,9 +63,12 @@ pub(crate) fn process_submission_record(
             "[dry-run] adapter={} commit {} {} {}",
             adapter_cmd, rec.task_id, rec.worker, rec.commit_hash
         );
+        // This is only a preview. Even a previously committed salt remains
+        // private until the actual reveal operation. Captured CLI/job output
+        // must never become an alternative copy of the owner-only journal.
         println!(
-            "[dry-run] adapter={} reveal {} {} {}",
-            adapter_cmd, rec.task_id, rec.result_hash, rec.salt_hex
+            "[dry-run] adapter={} reveal {} {} [unrevealed-salt-redacted]",
+            adapter_cmd, rec.task_id, rec.result_hash
         );
         return Ok(FlushRecordOutcome::Processed);
     }
@@ -118,11 +122,22 @@ pub(crate) fn process_submission_record(
     )?;
 
     let (commit_args, reveal_args) = submission_args(rec);
-    let commit_res =
-        run_adapter_with_retry(adapter_cmd, &commit_args, tx_max_retries, tx_backoff_ms)?;
+    let commit_res = run_adapter_with_retry_bounded(
+        adapter_cmd,
+        &commit_args,
+        tx_max_retries,
+        tx_backoff_ms,
+        std::time::Duration::from_millis(tx_timeout_ms),
+    )?;
     let reveal_executed = should_execute_reveal(&commit_res);
     let reveal_res = if reveal_executed {
-        run_adapter_with_retry(adapter_cmd, &reveal_args, tx_max_retries, tx_backoff_ms)?
+        run_adapter_with_retry_bounded(
+            adapter_cmd,
+            &reveal_args,
+            tx_max_retries,
+            tx_backoff_ms,
+            std::time::Duration::from_millis(tx_timeout_ms),
+        )?
     } else {
         AdapterExecResult {
             ok: false,

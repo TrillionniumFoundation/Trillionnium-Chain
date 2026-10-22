@@ -1,0 +1,36 @@
+   Compiling trnm-pon-node v0.1.0 (/home/qian-qi/work/pon-upgrade-implementation-20261018/chain/trillionnium/crates/trnm-pon-node)
+    Finished `test` profile [unoptimized] target(s) in 7.35s
+     Running tests/public_intake_v2.rs (/home/qian-qi/work/pon-upgrade-implementation-20261018/target-chain/debug/deps/public_intake_v2-9f6b7145d157a6bb)
+
+running 2 tests
+test one_packet_history_preserves_partial_progress_and_independent_validation ... ok
+test unknown_caller_cannot_override_ledger_and_full_sync_independently_verifies_actual_work ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.18s
+
+     Running tests/public_pool_cli.rs (/home/qian-qi/work/pon-upgrade-implementation-20261018/target-chain/debug/deps/public_pool_cli-0a71a68d19f6a044)
+
+running 5 tests
+test actual_pinned_peer_cli_follows_native_blocks_and_closes_shared_owner ... FAILED
+test peer_cli_rejects_unused_options_and_wrong_context_before_store_creation ... ok
+test real_two_cli_process_cold_reopens_one_node_without_fresh_cpu_burst ... ok
+test v3_mining_options_refuse_v2_and_unused_or_logical_clock_options ... ok
+test actual_v3_cli_unknown_guest_funding_and_atomic_renewal_reach_native_receiver ... ok
+
+failures:
+
+---- actual_pinned_peer_cli_follows_native_blocks_and_closes_shared_owner stdout ----
+
+thread 'actual_pinned_peer_cli_follows_native_blocks_and_closes_shared_owner' (219493) panicked at crates/trnm-pon-node/tests/public_pool_cli.rs:731:5:
+assertion `left == right` failed
+  left: Number(2)
+ right: 0
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    actual_pinned_peer_cli_follows_native_blocks_and_closes_shared_owner
+
+test result: FAILED. 4 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 39.89s
+
+error: test failed, to rerun pass `-p trnm-pon-node --test public_pool_cli`

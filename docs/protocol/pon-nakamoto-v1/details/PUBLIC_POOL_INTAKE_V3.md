@@ -1,0 +1,1108 @@
+# Public development intake V3 and the native local pool
+
+This is a fresh, explicitly selected development profile. It connects paid guest
+transport requests to the Node's actual persistent pool. It does not certify public
+readiness, independence, fair access under saturation, exact transaction inclusion,
+confirmation, model efficacy, or economic work. V2 retains its separate signed domains
+and one-hour service bound. Both modules bind the current derived ancestry index
+with at most1024 SQL lookups in a fresh resource-policy digest; see
+[NATIVE_ANCESTRY_INDEX](NATIVE_ANCESTRY_INDEX.md). V3 resource revision r10 retains
+the r5 paid body/output partitions, disconnect fences, paid enqueue waits and local
+measured mutation CPU reservation/accounting. Bounded pre-Challenge/pre-Ready waits
+remain inside the same connections while original resource capacity is unavailable.
+It observes cancellation within complete M05 Work replay and at bounded M06
+envelope preparation, canonical application and precommit boundaries. V2 retains its
+own resource digest; these changes do not silently alter its contract. Security
+fixes still require review of both modules.
+
+An operator can select the bounded local
+[request resource observer](PUBLIC_REQUEST_RESOURCE_OBSERVATION.md) to capture
+actual worker-thread CPU intervals and application-frame byte progress. This
+optional API preserves the selected signed r10 policy and native request rules; its nested
+CPU intervals and stream bytes are not energy or physical network measurements.
+
+## Exact boundary
+
+`ingress::public_v3::serve_public_protected_v3` accepts the **existing**
+`Arc<Mutex<Node>>` and `Arc<AtomicBool>`. The operator enables and fixes the local
+pool before serving. The continuous miner and the public worker share that owner
+and stop signal. The reactor does not create a second Node, a second database
+owner, another mempool, or a miner. Shutdown requests stop and joins workers; it
+cannot forcibly interrupt an already executing native stage.
+
+The explicit finite service lifetime is greater than zero and at most 72 hours.
+That is an operator-selected maximum, not evidence of a 72-hour run. Per-connection
+phase deadlines, 64 active connections, the 8 MiB paid-body budget, 32 MiB output
+budget, two native/proof workers with a two-entry queue, and one read worker with
+a two-entry queue remain bounded. Scalar responses reserve 16 KiB capacity before
+serialization; history retains its separate larger limit. The 10-second work deadline bounds admission/lock waiting and socket phases.
+M05 full transcript replay and M06 envelope/application boundaries observe that
+same deadline cooperatively; this does not interrupt an individual signature,
+deep State operation, root/history computation or SQLite call. A
+successful durable pool reservation can outlive the requesting socket or response.
+
+Resource revision r10 binds these limits and finite readiness/enqueue behavior in `PublicPolicy::id()`. It reserves
+131,072 bytes of the existing 8 MiB body pool and 524,288 bytes of the existing
+32 MiB output pool for Head/PoolStatus control responses. Mutation body permits
+and non-control output permits cannot exhaust these reserves.
+After a valid ticket and caller signature, before sending Ready, the server grants
+at most eight mutation requests and eight read requests. Each grant remains held
+through body collection, queue/work execution and output cleanup. Rotating caller
+keys cannot increase these global lane limits. Eight challenge tokens are reserved
+from the existing global bucket for reads. These reservations introduce no extra
+worker, queue, Node owner, ledger authorization or retained guest identity.
+
+The r10 receiver retains pre-Challenge and pre-Ready waiters in the same at-most64
+Connections. `WaitChallenge` holds a complete validated fixed Hello;
+`WaitGrant` holds its immutable Cookie after the original complete Solution
+context/expiry, ticket, strict caller signature and **single** spent reservation.
+Four logical FIFO heads split Challenge/read, Challenge/mutation, Grant/read and
+Grant/mutation. A checked readiness ordinal and four head IDs are obtained by
+scanning the existing bounded Connection map; no pending socket collection,
+canonical body queue, worker, channel capacity, Node owner or durable guest identity
+is added. Small stage/scalar metadata is bounded memory, not a zero-allocation or
+hard RSS assertion. Incomplete prefixes and unsolved earlier accepts have no FIFO
+order and cannot block an already validated waiter.
+
+`WaitChallenge` keeps the original accept-based2-second Hello and30-second total
+deadlines. No cookie or token is held before issuance. Only the eligible FIFO head
+uses the existing global challenge bucket; mutation cannot consume its last eight
+read tokens. One Cookie is then issued with the original signed lifetime interval.
+After Challenge output the Solution deadline remains the original absolute Cookie
+expiry. `WaitGrant` never renews that expiry or total deadline and never repeats
+Solution signature/ticket/spent checks on polling. The original expiry is checked
+again before granting Ready. Temporary fullness is a typed waiting result; a
+poisoned resource pool remains an error. A waiter takes both the original lane and
+body permits or rolls back a temporary lane immediately, with no body Vec or Task
+allocated before Ready. Strict within-lane FIFO can intentionally block a smaller
+body behind a larger head; read reservation remains separate.
+
+EOF, original expiry and stop close a waiter. Unissued Challenge consumes no token;
+a previously issued token is not refunded. A paid waiter's spent id remains
+single-use until original expiry cleanup and is never refunded or live-evicted.
+Ready2s, Body5s, body-complete Work10s, Output5s and accept-based Total30s are the
+existing limits. Client frame reads also keep their original absolute deadlines:
+`read_exact_deadline` sets each socket timeout from the same remaining duration,
+not a fresh5-second budget. M06 and SQLite stages can still cross
+an admission deadline. Eight slow granted bodies can outlive another Cookie2s;
+64 incomplete or unpaid Connections can still deny a new caller. This change is
+finite readiness scheduling, not a guarantee that any honest request completes.
+
+`pending_challenge_*` and `pending_grant_*` record entries, grants, closures,
+wait elapsed and peak pending counts. `spent_reservations` counts each successful
+original single-use reservation, including a request that later waits or expires. Each entry ends in one grant or closure;
+polling does not count as a new failed request. Pending terminal phases remain
+Hello/Solution, never Body/Work. A pending request has no Task or full-work CPU;
+CPU remains absent rather than a fabricated zero. Wait elapsed is not CPU. Closed
+shutdown requires zero original lane/body/output reservations and actual worker
+joins. The legacy r3 refusal counters are retained fields; r10 resource fullness
+waits and can expire instead of immediately incrementing a refusal counter.
+
+A full worker channel retains its canonical Task in `Stage::Enqueue` on the same
+bounded Connection, body and lane permit. The reactor attempts pending enqueue in
+connection-ID order without adding workers or channel entries. It preserves the
+original body-ready10-second work and accept-based30-second total deadlines;
+polling never renews either deadline. EOF is checked before dispatch, and dropping
+a pending connection releases its task/permits. This is finite local scheduling,
+not FIFO completion or a fairness guarantee under identity churn.
+
+The reactor cancels an Enqueue/Await task on disconnect, expiry or shutdown. Workers check
+its cancellation and original deadline when taking a queued task, while waiting
+for the owner, and between context checking, complete work verification and native
+admission. During full Work replay, `verify_with_progress` also checks before
+replay, every bounded noise hash, each matrix output row, each transcript tile,
+product reconstruction and the final verified result. The public callback uses
+the original task deadline, stop flag and connection cancellation flag; no new
+TTL or CPU allowance is created. An error returns local `Cancelled(error)`,
+separate from `WorkError`; it drops intermediates and cannot construct
+`VerifiedWork` or `WorkCheckedPacket`. The ordinary `verify` wrapper uses an
+infallible callback, retaining complete PNW1 bytes, arithmetic and cheap-error
+precedence. A matching transcript still requires the whole product relation.
+
+M06 uses a shared `Sync` observer before/after each envelope preparation and
+canonical apply, and around mandatory work, reward and staged root/output. A local
+`ExecutionError::Cancelled(error)` is distinct from a canonical relation error.
+All started scoped workers are actually joined, including partial spawn/failure
+paths, before returning; cancellation discards the preview State and staged
+commitment. `CheckedExecutionParent` never retries or falls back on cancellation.
+No-cancellation wrappers retain full State, ordered receipts, root, nonce rules
+and canonical error precedence. Node checks before opening the write transaction,
+at each delta boundary and immediately before durable commit. An error inside
+that transaction drops it and rolls back uncommitted block/index/delta/snapshot
+rows. No new fence runs after commit: original activation and native durable
+success remain true even if cancellation then becomes visible.
+
+These checkpoints bound work between observations, not CPU seconds or physical
+preemption. A single signature, State clone/mandatory/apply operation, canonical
+encoding/full root, task-output processing, history, lock wait and SQLite call
+remain indivisible. The explicit public Pool bundle path also passes the request callback through
+its original fixed-workers1 complete prefix execution. Ordinary pool callers
+keep the no-cancellation wrapper and canonical behavior. Local cancellation
+returns immediately instead of being classified as a Blocked relation error;
+already committed reconciliation remains committed, and an uncommitted new
+bundle rolls back at the original persistence boundaries. All observations reuse
+the original immutable stop/cancellation flags and absolute task deadline; no
+new TTL, CPU-second limit or resource allowance is introduced.
+A fresh profile digest is mandatory: correctly signed r1/r2/r3/r4/r5/r6/r7/r8/r9 cookies and
+old client pins refuse r10, without fallback. For bits8/lifetime2000ms the
+source-derived digest is
+`099c63fdd9a5feedd83dea1e681bcf35fa4ce219338df81a46c621ee5f5c028a`;
+for bits12 it is `a589532b416e0d35273235ec692cf47040edf182df2121702c1b237c8cff52e7`;
+for default bits16 it is `fbd012278826496785fbd166d2d920ffa70a3491e52ddf2c9211d782357f9c35`.
+Actual CLI capture and qualification on the committed successor remain necessary;
+these source-derived values do not relabel any historical r5/r6/r7/r8/r9 result. Existing
+`work_failed` observations include an abandoned replay as well as invalid relations;
+the returned local cancellation error retains the actual reason. CPU spent before
+cancellation remains included in measured full-work and outer mutation accounting.
+The V3 magic, cookie/caller signature domains and canonical request/response wires
+remain unchanged. The initial shared connection cap and pre-ticket processing can
+still be exhausted; lane isolation and the r10 local pressure rule below do not
+establish anonymous honest fairness.
+
+The retained r4 client contract keeps both TCP halves open until receiving the response.
+An EOF while awaiting native work cancels the task; TCP does not distinguish a
+peer's full close from `shutdown(Write)` at this point. A client that half-closes
+its write side after sending a body therefore forfeits the response. Ordinary V3
+clients already keep both halves open. The signed localhost control preserves a
+half-closed client's read side, observes cancellation without work/admission, then
+submits the identical valid packet normally through complete native verification.
+
+V3 uses `PPH3` and `PPS3`, `public-protected-development-v3`, and fresh signed cookie,
+caller, ticket, body, response, peer-binding and profile domains. There is no
+version negotiation or fallback. V2/V3 cross-version requests are rejected before
+paid request-body allocation. Every operation, including reads, must pay its own
+connection-local resource ticket and sign the exact cookie/nonce. The random guest
+transport identity confers no ledger key, source authorization, model ownership,
+chain work, voting power, or reward claim. Guest identities/replay operations are
+not stored durably; **valid signed transaction facts** are stored in the operator's
+actual pool.
+
+
+## R10: idle unpaid connections under shared pressure
+
+The original same-domain 64-connection pool now carries at most 64 volatile
+lease records. A record is created only after acquiring one original connection
+permit; it creates no extra socket, queue, worker, CPU balance or durable caller
+row. The record follows its original `Connection` across listeners in that same
+CPU domain. Changing a key, listener or request cannot mint another pool.
+
+When an accepted socket finds that original pool full, the current request is
+still refused. Under the same pool lock, the intake may request cancellation of
+the oldest eligible original connection: a partial `Hello` or partial `Solution`
+that has received no new input bytes for at least 250 ms. Idle age is measured
+from actual input progress, not from reactor polling. `WaitChallenge` and
+`Challenge` are protected while the server owes a response. A complete input is
+protected under the same lease lock before parsing or Solution validation; a
+validation failure still closes promptly without gaining a body or lane grant.
+All validated paid stages remain protected, including `WaitGrant`, `Ready`,
+`Body`, enqueue, work and output. Once cancellation is selected, a concurrent
+input/protection update cannot revive that connection or obtain paid resources.
+
+Cancellation only sets the connection's existing cancellation flag and a local
+observation flag. Its original reactor removes the actual connection and drops
+its socket, buffers and lease before releasing the original connection permit.
+The pressure requester cannot pre-refund that permit or reuse a still-live slot.
+A later connection may use capacity after the original owner has actually
+released it. `unpaid_pressure_cancel_requests` is recorded at the listener that
+observes pressure; `unpaid_pressure_connections_closed` is recorded after the
+owning listener drops its selected connection. They are separate observations,
+not interchangeable success counts. The original two-second Hello/cookie
+limits and 30-second overall deadline are unchanged and never renewed.
+
+The native `real_shared64_unpaid_pressure_releases_slots_protects_paid_body_and_confirms_one_business`
+regression uses two real loopback listeners with the same original CPU domain.
+It first fills the actual pool with 64 unpaid sockets, preserves the failed
+full-capacity Head request and observes release before the original Hello
+expiry. A second cohort holds a real authenticated paid business Body alongside
+63 unpaid sockets on the other listener, then checks that pressure cancels an
+unpaid connection and the paid business succeeds. The receiver admits the real
+signed business and its descendants. A separate local validating client imports
+signed History responses and independently reexecutes the native ledger checks
+before observing installed depth/work confirmation. Both intentional capacity
+probe failures remain in the honest offered/completed denominator. Exactly one
+business transaction is counted once; its descendant blocks, probes and History
+requests are reported separately. All pools must be zero after both services
+join. The optional `TRNM_UNPAID_PRESSURE_REPORT` path is create-only and retains
+full listener metrics and the actual confirmation observation.
+
+These test identities belong to one controlled administrator. Their different
+keys and separate client database do not establish independent operators. A
+passing run of this finite silent-input cohort establishes its bounded recovery
+and paid-stage assertions, not sustainable capacity or honest fairness under an arbitrary
+anonymous flood. Active input, timely valid Hellos, fresh connection churn and
+host/network saturation still require the original host boundaries and service
+campaign evidence. The accompanying
+[W1 same-target report](W1_SAME_TARGET_BUDGET_REPORT.md) measures producer/false-trace
+and receiver cost without changing the proof relation.
+
+## Local paid mutation CPU reserve
+
+Resource revision r5 introduced the volatile account retained by r9 and r10,
+shared by a service domain's mutation workers, listeners and caller identities.
+Trusted standalone diagnostics and warm constructors start with two CPU seconds
+of credit. The ordinary CLI uses `new_process_cold`, with zero initial CPU credit
+and challenge tokens, as detailed below. The account refills at250 million CPU
+nanoseconds per wall second up to
+a ceiling reduced by outstanding start reservations, and reserves100 million CPU nanoseconds before each actual mutation
+dispatch. These are explicit local service parameters, committed as numeric
+fields in the policy digest. They are not a ticket difficulty, attacker cost
+floor, hardware-independent price or hardness calibration. Reads use their
+existing separate worker and permits and do not debit this account.
+
+Linux uses the existing checked thread clock. Unsupported/unavailable clocks,
+invalid subtraction and poisoned accounting refuse future mutations with
+`PUBLIC_MUTATION_CPU_UNAVAILABLE`; insufficient credit or the two in-flight
+limit returns `PUBLIC_MUTATION_CPU_BUDGET` from the scalar reservation primitive.
+The public worker now retains the dequeued task's order while waiting for
+recoverable shortage, as specified below. Start refusal occurs after the original
+paid protocol and canonical body/queue checks but before native dispatch or full
+proof verification. Revision r9 also
+observes exhaustion during the request at the existing cooperative checkpoints. No new queue, worker, Node owner, State
+cache or durable caller row is added. Key rotation cannot reset the account.
+Cloned/rebuilt listeners inside one domain retain the same budget. An ordinary
+CLI restart begins a new zero-credit volatile epoch; it cannot mint the warm
+two-second burst. This account is not a host-global quota across independent
+processes or namespaces, and alone does not retain unclean-crash operation debt.
+The [measured W1 security profile](W1_LOCAL_SECURITY_PROFILE.md) distinguishes the
+standalone burst, actual start-reserve exhaustion and same-domain refill recovery.
+
+Historical revision r8 introduced the measured outer worker interval O plus the
+checked sum C of every actual scoped M06 worker interval, exactly once. Guards
+sample the existing thread clock on the same actual worker at entry and exit,
+including canonical rejection, cancellation and panic unwind. All successfully
+spawned workers join even after a partial spawn failure. Spawned, started,
+finished and known interval counts must agree before C is usable; no absent
+Output is mistaken for zero CPU. Every defensive preview retry shares this
+request-local collector. PoolBundle forwards it through every full prefix
+preview; its existing fixed workers1 path actually spawns no scoped workers.
+
+Revision r9 samples newly consumed CPU on the actual current owner or scoped
+worker at those existing progress callbacks. Each real worker retains a separate
+same-thread stamp; its RAII exit samples the final tail even on panic or cancel.
+One request-local collector spans sequential previews and every defensive retry.
+It keeps only live thread identities/stamps and scalar debit, never State, packet
+or admission authority. Entries are removed at actual scope exit, so sequential
+scopes may exceed eight lifetime starts without inventing parallel capacity.
+The available credit is debited immediately under a short global-account lock.
+The unchanged100ms start reserve stays outstanding until final settlement;
+available credit plus those reserves never gains another burst through refill.
+Negative credit makes request cancellation sticky at its next observed progress,
+while final tails still debit actual CPU. A missing/poisoned clock, registry or
+checked sum makes the account unavailable immediately; it does not report zero.
+Neither request-account nor budget locks span math, a worker join or SQLite.
+
+After all started workers join, original full intervals remain authoritative.
+Final settlement debits only `(O+C)-already_debited`, then returns the one original
+start reserve. A partial sum greater than the measured full total is an accounting
+failure. This subtraction prevents double charging W, scoped CPU and prior live
+increments. No new cancellation fence follows durable commit; a final-tail clock
+failure/debt disables future mutations while preserving the actual signed ACK.
+A missing scoped-worker end clock before persistence cancels that request and
+leaves active State, pool records and all typed SQLite table rows unchanged; it
+cannot produce an ACK. These precommit and postcommit faults are separate tests.
+The charged metrics remain the complete O+C total, not the residual alone. An
+in-progress request has only the global credit/debt observation until it closes;
+no per-request telemetry schema or physical hard CPU-second cap is added.
+
+When Submit executes M05 verification, its measured W remains nested in O.
+Charged CPU is O+C; the existing full-work and excluding-work counters report W
+and O-W+C without adding a metrics field or changing State/Output schemas.
+The optional observer's dispatch thread field still reports O, and its nested
+full-work and total fields must not be added. Failed proofs and native refusals
+consume their measured CPU. Unknown worker endpoints, mismatched closure counts
+or checked arithmetic immediately disable further mutation starts and settle
+without a fabricated zero or reserve refund. A completed native outcome and
+signed success remain unchanged. These are worker execution intervals, not exact
+OS thread lifetimes: startup, teardown and post-sample bookkeeping are excluded.
+Reactor parsing, caller/ticket authentication, response signing/output and
+unrelated service or miner threads remain outside this account. A completed mutation's accounting failure disables future starts
+without replacing its actual native outcome or signed success. No completed
+fact is undone, and no failed measurement is refunded as zero.
+
+A call may exceed its start reservation. Its actual CPU becomes debt, which
+blocks new starts until refill repays it. At most two existing calls may still
+be executing, because the original two mutation workers are unchanged. This
+bounds the number of nonpreemptive overshoots, not each call's CPU or duration.
+Deep M06 State/root operations, SQLite calls, lock occupancy and read latency
+remain nonpreemptive;
+the account does not promise a hard process CPU limit, honest Submit fairness,
+Head SLA or public readiness. A dropped running permit disables further starts
+rather than silently refunding an unknown charge. Budget exhaustion can deny
+honest mutation callers as well as expensive invalid work.
+
+`mutation_cpu_*` counters expose reservations, refusals, unavailable clocks,
+actual charged CPU and shutdown credit/debt/in-flight status.
+`mutation_full_work_cpu_ns` and `mutation_dispatch_excluding_work_cpu_ns` are
+disjoint aggregates. They do not identify individual remote attackers or
+establish physical host CPU attribution. The source control checks actual
+signed native admission, post-success clock failure, read availability under
+controlled debt, rotated callers, debt/refill arithmetic and missing clocks.
+Fresh runtime evidence is required for any new source or resource digest;
+historical r4 loopback and Tailnet results retain their original scope.
+
+## Recoverable CPU shortage at the existing dequeue boundary
+
+The public mutation worker holds its existing receiver/dequeue-order lock until
+it acquires the original CPU start reservation or the original task becomes
+ineligible. This prevents the other mutation worker from repeatedly taking later
+queued tasks while the head is waiting for refill. No new queue, waiter registry,
+worker, identity priority, CPU bucket or reservation is added. Already running
+workers can settle, and the reactor and the separate read queue remain independent.
+The dequeue lock is released **before** native dispatch and never covers a Node
+lock, proof execution, M06 preview, worker join or SQLite transaction.
+
+A short polling iteration checks the same cancellation/stop flags and the earlier
+of the task deadline and service end. It briefly locks the original scalar
+account, applies its original elapsed-time refill and releases the account before
+sleeping for at most one millisecond. Polling does not count another reservation
+or rejection. When a start is possible, the original acquire/stamp/reserve and
+single settlement path is used. Cancellation is rechecked before that acquire.
+There is no new TTL, fresh start credit or refund. Expiry while waiting cannot
+close another worker's outstanding reservation. Unknown accounting is not a
+recoverable shortage. With no live reservation and insufficient possible refill
+before the original deadline, the original immediate budget refusal is retained.
+A concurrent trusted non-public owner can still win the final reservation race;
+its real refusal is not hidden or converted into an unowned permit.
+
+Waiting is pre-dispatch scheduling. Its wall time remains in the client's original
+operation interval, but scheduling/poll CPU is outside the existing O+C mutation
+execution account, like reactor and response work. It must not be reported as
+zero CPU or silently added twice to nested worker observations. This change does
+not establish a complete process/energy cost, anonymous fairness before a task
+has obtained its queue position, or a bound on indivisible native operations.
+
+### Retained failure and regression scope
+
+On PR227 head `5a2549eef8e74f0dcfc2f88181e84a7aeab49a8f`, run
+`37562991474` / head Rust job `112604284070` failed the sustained service
+assertion. Artifact `11459232018` (ZIP SHA256
+`0b4e81e029cfbb04aa3ba7ff619be7b426d999a57cf898848de840ae91fd7fde`)
+retains the complete report: both phases closed their actual accounting and
+capture invariants, but all sixteen second-phase attempts of the honest block
+returned `PUBLIC_MUTATION_CPU_BUDGET`. The report records 235 and 327 CPU
+refusals in the two phases. This is an observed admission-budget starvation case,
+not evidence that a fake work proof was accepted. The new wait does not replace
+or weaken the original finite/sustained assertions, four attack workers, traffic
+windows, request deadlines, byte/queue/CPU limits or complete-state comparison.
+
+Six local reserve/wait regressions cover actual monotonic refill, impossible
+refill, cancellation, original expiry, shared unknown state and preservation of
+a different live reservation. Their controlled credit edits are mechanism tests,
+not attack-cost measurements. The existing actual TCP from-zero test is the
+separate traffic experiment; debug and release observations must retain their
+own binary/source/profile identities. Neither a finite successful pressure run
+nor an admission-budget shortfall changes production/public qualification flags.
+
+## Closed operations
+
+| Op | Canonical request | Owner action |
+| --- | --- | --- |
+| 1 | `submit` with the existing block packet hex | Existing real work verification and native block admission |
+| 2 | `head` | Existing bounded native head metadata |
+| 3 | `history` with tip/after | Existing bounded native history page |
+| 4 | `pool_submit_bundle` with `pool_context`, `transactions` | Exact signed PNX1 bytes through Node M05/M06 and durable reservation |
+| 5 | `pool_status` | Read-only native pool snapshot, scalar public projection |
+
+Op 4 requires an exact 64-character lowercase hex `pool_context` matching the
+operator's stored pool policy under the same Node mutex. This pins existing
+configuration; it does not let the guest select the miner or alter limits. The
+canonical body scanner checks **before** serde vector allocation: 1–16 members,
+each 159–2048 decoded bytes, no escapes or non-lowercase hex, at most 32,768 total
+decoded bytes, and a raw JSON body of at most 66,048 bytes. All fields/cardinality,
+wire op and canonical serialization must match. Operator limits can be stricter.
+
+Actual Node admission verifies canonical encoding/network/selected profile,
+strict main signature, expiry, fee/resource limits, nonce and full retained pending
+prefix through the real M05 typed gate and M06 preview. The preview and admission
+remain one bounded native stage under the existing Node owner. A malformed,
+conflicting, unfunded or otherwise invalid bundle gets no partial new reservation.
+The native receipt's typed-gate counts concern the **whole reconstructed pending
+prefix**, not only the newly submitted members. `duplicate` means the same local
+bundle facts were retained; it does not prove that the bundle was mined. Local
+bundle grouping does not make unrelated signed transactions consensus-atomic;
+atomic renewal uses the actual V3 renewal command.
+
+Op 5 calls only `Node::pool_status_snapshot()`. It cannot call `pool_reconcile()`,
+prune, reset, enable the pool, change configuration or select a miner. The native
+snapshot validates bounded retained metadata/bytes but does not run a new M06
+preview. The public response omits per-group digests/reasons/raw wires and returns
+bounded counts, the actual active parent/generation, the last checked
+parent/generation, `classification_current`, and four scalar native V2 cache-GC
+observations. GC counters/hash describe local cache eviction, not exact inclusion,
+finality or an operator deletion certificate; see
+[LOCAL_MEMPOOL_CACHE_V2](LOCAL_MEMPOOL_CACHE_V2.md). It exposes stale classification
+explicitly after an active-chain change until an **operator/miner** reconciles.
+Counts for queued/blocked/expired/sequence-consumed groups refer to that last
+classification. `SequenceConsumed` only says an active nonce is used; it does not
+prove that these exact bytes were included. Receipt and status explicitly set
+inclusion/adoption/reward/public-readiness authority to false. Normal chain
+observation and confirmation remain separate.
+
+## Cost, fairness and verification
+
+Block PoN work counters and pool preview counters are separate. V3 reports actual
+pool submit starts/finishes/failures and native elapsed time. Reads and transport
+solution costs are recorded separately. Queued transaction fees are checked in
+preview and charged by actual block execution; admission does not silently debit
+ledger funds or invent a new economic payment. Duplicate submissions still incur
+all transport and native verification costs.
+
+The finite worker/row/body/output bounds do not prove honest service under a
+saturated queue or a cheap adversarial hash farm. The shared mutex can delay reads
+while a bounded native preview runs. Persisted pool growth, source renewal,
+reorganization/finality recovery, cold restart and external WAN operation still
+need actual integrated campaigns. A resource ticket is not a Sybil theorem.
+
+## Ordinary CLI composition and executed acceptance
+
+`serve --admission-profile public-protected-development-v3
+--public-development-network --auth-secret FILE --pool-policy FILE` fixes the
+operator's bounded local pool before listening. Add `--mine` and explicit
+`--task-bootstrap` or model/input files to run the existing wall-clock miner on
+the same owner and stop signal. Service completion or either failure stops and joins both. A successful finite
+miner block limit leaves ingress serving the retained chain until the configured
+service budget expires. Mining-only options without `--mine`
+refuse; V2 refuses the pool/miner options. See
+[CONTINUOUS_MINING_V1](CONTINUOUS_MINING_V1.md) for finite limits and failure facts.
+
+`pool-push --transactions FILE --pool-context HEX --peer ADDRESS` and
+`pool-status-remote --peer ADDRESS` require the exact V3 profile, server public-key
+pin and caller identity file. They do not open a second local store. A signed
+business denial remains structured stdout with `ok=false` and CLI exit status2.
+Unknown profiles, private-session mixing and network logical clocks refuse without
+fallback. Head/History/block push/full sync accept explicitly selected V3 alongside
+their existing V2 contract.
+
+`tests/public_pool_cli.rs` executes the actual CLI composition: an unknown guest
+submits signed funding dependencies and a tag22 atomic renewal, a wall-clock miner
+includes the exact three raws, and a different native receiver validates the chain
+and new task statement. Its finite eight-block run and strict option refusals do
+not certify public service. The first stale task-window fixture failures are retained
+in work observations; task admission was not relaxed to make the run succeed.
+
+Three native socket integration tests exercise actual guest signed transfer bundles,
+funding/nonce dependency, same-bundle duplicates, wrong pool context and corrupted
+signature rejection, no partial rows/no ledger nonce consumption, operator mining,
+stale read-only snapshot, explicit operator reconcile and persistent reopen. Both
+actual cross-version socket clients reject V2/V3 mixing and later honest requests
+still succeed. Startup cannot enable an unconfigured pool; invalid lifetime bounds
+are rejected. Legacy V3 unit controls exercise body guards, closed ops, profile/magic/
+signature domains, cookie tampering/restart epochs, paid reservations, slow frames,
+fragmented honest traffic, expired connections and cleanup. Resource revision r3
+also exercises the actual signed Head under near-full mutation body occupancy,
+grant retention across queued tasks and replies, disconnect/half-close cancellation,
+and a ticket-passing Product rejection followed by valid native acceptance.
+Finite queue controls hold four paid tasks beyond two occupied queue entries,
+retain deadlines, accept eight actual submissions, and cancel four disconnected
+pending requests without allocating new queue capacity. Six r4 controls add
+real paid FIFO release followed by complete native admission, signed read service
+under a48-Hello burst, exact readiness/expiry boundary selection, lane/body
+reservation rollback with typed poison failure, correctly signed old/new profile
+incompatibility, and paid EOF/expiry/stop closure with absent Body/Task/full-work CPU.
+The original expiry and failure paths remain tested; waiting does not turn a
+previous failure into a successful native admission by assertion.
+
+These tests are local component evidence. The root integration must replay on the
+final committed Cargo graph with the actual pool and continuous miner, complete
+strict checks and resource campaigns, and preserve failures. No acceptance flag for
+public readiness, source independence, task/model efficacy or production activation
+is enabled by this document.
+
+## Local request observations
+
+`serve_public_protected_v3_with_metrics` accepts a trusted local shared metrics
+mutex. It uses the same worker/queue/Node owner and returns a final snapshot after
+shutdown; holding that observation mutex can delay this local process. These
+counters neither authenticate a guest nor prove an economic cost bound.
+
+`call_public_protected_v3_with_metrics` returns the ordinary result and separate
+construction, challenge, solution-search, solution/body/response and total elapsed
+nanoseconds. Failed calls retain their current stage, elapsed time and completed
+ticket trials. A signed business refusal still completes transport; its failure
+stage is null. Elapsed time includes scheduling/network waits and is not CPU time.
+The ordinary API retains its wire and return behavior.
+
+V3 client CLI commands can explicitly select `--client-observations` to emit this
+unsigned local diagnostic as one stderr JSON line, also on a failed transport call.
+The signed reply remains on stdout, and unsuccessful calls retain exit2. Parsing
+or identity-file errors before constructing the observed call have no stage receipt.
+V2 and other profiles refuse this option. Controller wall time includes process
+startup too and must remain separate from the client's stage observations.
+
+`queue_backpressure_events` counts repeated Full polls, not refusals or failed
+requests. `enqueued_after_backpressure` counts eventual task dispatches;
+`queue_wait_ns` measures body-ready to enqueue elapsed time, not CPU/owner-lock
+occupancy. `peak_pending_enqueue` counts bounded existing connection stages.
+Per-request transport, business refusal and complete native rejection denominators
+remain separate from these scheduling observations.
+
+The isolated r3 component observation preregistration
+`1eb224ab08985bc97b690e2b90e1c1f4a8c292c908649be3cbf158ba407001ac`
+used three10s localhost phases. All180 scheduled honest requests succeeded:
+20 Submit/20 Head/20 History in each phase. Cached invalid traffic recorded800
+attempts (8 Product,792 DUPLICATE_CONTENT); distinct-fork invalid traffic recorded800
+(799 Product,1 paid-grant client refusal). Queue refusals were0;71 Full polls were
+backpressure observations. Original independently coded scalar/State/ordered-
+receipt replay accepted22 distinct valid packets: the anchor,20 linear successor
+packets, and one independently constructed valid fork template. Each of the three
+closed service stores instead contains genesis plus the21 linear packets (66 total
+stored rows, including3 genesis rows). The valid fork was admitted only in its setup
+Node and independently replayed; the three service stores did not admit it. Its
+product-only mutation rejected as PRODUCT. This is same-operator loopback engineering evidence, not
+800 full verifications of cached duplicates, live mining, new combined-source
+qualification, WAN/SLA, task hardness or public acceptance. The prior1c mixed
+observation accepted9 of20 honest Submit opportunities and recorded7 queue
+refusals; these historical facts are not relabelled by this successor.
+
+The three-phase observer used the historical legacy task context and precomputed
+valid empty blocks, not revision10 checkpoint tasks or revision11 factor candidates.
+For each phase's20 honest Submit opportunities, observed maximum/p95 elapsed
+latencies in milliseconds were baseline47.16/36.27, cached139.07/41.06, and
+distinct-fork31.71/30.94. These include observer scheduling/waits, are not CPU
+measurements or TPS, and provide no p99 estimate (fewer than100 samples).
+
+## Shared settlement result and sustained local observation
+
+The existing paid-dispatch and continuous-operation owners now consume the same
+Boolean result from `PaidMutationCpuBudget::settle`. A successful mutex lock and
+a known final thread sample do not prove that an outstanding reservation was
+returned correctly or that the shared epoch remains available. A missing or
+impossible reservation marks accounting unavailable, cannot mint credit, and is
+reported by the public-dispatch clock-failure counter even when measured CPU is
+known. Known CPU remains charged; an already completed native result or signed
+reply is not rewritten. Known negative credit and unknown accounting remain
+separate states. This settlement-only change retained the then-current r9
+wire/profile identity and resource constants. R10 separately changes the resource
+commitment for the idle unpaid input rule described above.
+
+`ServiceMutationCpuDomain::observe` is a read-only local API. It returns stored
+credit, outstanding reservations, accounting availability and the existing
+policy constants. It neither refills credit nor advances the time watermark;
+reading it cannot return a reservation or authorize dispatch. Its result has no
+remote or consensus authority. A poisoned mutex returns an error instead of a
+fabricated zero balance. This volatile domain can be shared across same-process
+Node reopen; a process restart still requires the existing owner arrangements.
+
+The existing `public_v3_from_zero` service test retains its original two-phase
+finite report, all eight reads per phase, CPU-clock tests and complete-state
+checks. It additionally runs two four-second **arrival windows** on separate
+native receiver/producer stores. Four joined senders rotate sixteen independently
+constructed false-trace packets and transport identities. One honest reader
+runs concurrently; an actual ordinary native block is submitted with its
+original request deadline. Every failed attempt is retained. Outstanding calls
+are joined after each arrival window; `traffic_and_join_wall_ns` includes that
+drain, not just the requested four seconds. No request is restarted with a fresh
+campaign window. Finite attempt and observer caps remain explicit failure gates.
+
+The new `public-v3-sustained-local-from-zero-v1` report records every construction
+trial/exhaustion, separate diagnostic verifier time, client/receiver CPU scopes,
+raw requests or their retained packet reference, every observer connection and
+actual stored-credit samples. Complete native state is compared, the Node is
+closed/reopened, and the same shared CPU domain and its exact stored meter are
+retained. The original queue, public tickets, CPU burst/refill/reserve and all
+request deadlines are unchanged. The fixed genesis makes material context
+reproducible, but actual scheduling and request streams differ across runs.
+
+Sampled credit below the start reserve, sampled negative credit and CPU-budget
+refusal counts are distinct observations. A run that never depletes its budget
+remains a non-depletion result even when it records many late transcript
+rejections. Passing requires all attempted honest reads on time, one on-time
+honest submission per phase, complete accounting/capture and identical native
+state. It does not require or invent a saturation result. The report never
+qualifies public fairness, cheapest-adversary cost, strongest honest production,
+independent WAN, ordinary Hepta export, future model benefit, physical power loss
+or production activation. Honest build CPU is calling-thread only; total honest
+worker CPU and client-confirmed transaction throughput remain null.
+
+### Atomic FIFO CPU start reservation
+
+A dequeued mutating task now performs the final shared-account refill decision
+and acquisition of its existing `MUTATION_CPU_START_RESERVE_NS` under the same
+CPU-budget mutex. Previously the waiter could observe enough refilled credit,
+drop the account lock, and then lose that exact credit to another active
+mutation worker before `acquire` relocked the account. Under sustained invalid
+work this could repeatedly turn the oldest already-dequeued honest submission
+into `PUBLIC_MUTATION_CPU_BUDGET` even though the original refill interval
+made its start reserve available.
+
+The corrected linearization retains the existing dequeue-order lock until this
+single reservation is owned, and still releases both locks before native work.
+It adds no queue, worker, caller preference, refill, burst, reserve, retry
+budget, refreshed deadline or authority. Impossible refill, unavailable CPU
+accounting, cancellation and the original absolute deadline remain failures.
+Settlement and complete W1/M06 validation are unchanged. The exact-head and
+prospective-merge sustained campaigns must retain their actual results; this
+implementation change is not itself a saturation-fairness qualification.
+
+### Current parent and pre-commit cancellation coverage
+
+The existing shared Submit dispatcher now routes the same original request stop
+and execution/CPU callback into admission-context parent reconstruction, before
+starting W1 verification. Cancellation there cannot be interpreted as invalid
+work or stored corruption and returns no verified packet. After full verification,
+controlled native admission repeats all state-dependent checks under the original
+owner and observes the same callback during parent acquisition and complete
+pre-commit delta, parent/child-state and active-state readback. No separate
+service budget, queue, admission profile or grant is added.
+
+The final checks still execute in the existing single-writer transaction; a
+pre-commit cancellation rolls back uncommitted block/delta/account records. After
+successful COMMIT, the original activation/response path remains authoritative;
+there is no new cancellation that retroactively turns durable success into failure.
+Ordinary no-control callers retain no-op wrappers. Individual signatures, JSON
+encodings, complete roots and SQLite calls remain nonpreemptive, so this is more
+cooperative coverage, not a hard latency or CPU bound. External owner preparation,
+activation and whole-host scheduling retain their separately documented limits.
+
+The original exact three `public_v3_from_zero` tests, finite report, sustained
+arrival windows and all r9 resource numbers remain unchanged. A fresh campaign
+on changed source must retain its actual outcomes; the old non-depletion result
+cannot be promoted to saturation fairness merely because callbacks were added.
+The shared-dispatch regression
+`context_cancellation_precedes_work_verifier_and_preserves_public_retry`
+checks that an interrupted parent context calls no full-work verifier, writes no
+block and permits a later complete ordinary retry.
+
+## Shared-domain ownership of existing receiver limits
+
+The actual V3 listener now obtains its connection-state, challenge, paid-body,
+output and read/mutation-grant pools from the SAME retained
+`ServiceMutationCpuDomain` as its CPU account. Reconstructing a listener, changing
+its service key or cloning the domain does not mint another set of those resources.
+The existing numerical ceilings and read/control reserves are unchanged: 64 live
+connection states, 32 challenge tokens with 128/second refill and 8 reserved for
+reads, 8 MiB body accounting, 32 MiB output accounting, and 8 grants per lane.
+Those maxima apply in aggregate to listeners using that domain, not once each.
+
+Admission acquires a shared connection-state permit before allocating Hello state;
+TCP accept and optional bounded observation precede it and are not made free by
+this change. Every connection exit releases that permit through the original RAII
+owner. Existing body/output/grant permits retain their complete original lifetimes,
+including tasks which outlive a disconnected socket. Challenge credit is debited
+atomically before entropy/signing, with one nondecreasing refill watermark. No
+cancellation or new key refunds a challenge already generated. FIFO order remains
+per listener; this does not claim a globally fair scheduler.
+
+The existing clean and known-unclean process-restart CPU constructors initialize
+new intake challenge credit to zero rather than a fresh burst. Warm listener
+reconstruction instead retains the original pools and outstanding reservations.
+These constructor and clock controls are not a physical reboot or persistent
+CPU-debt migration test. The existing CPU credit formula is unchanged.
+
+This is a receiver-side resource-ownership correction, not a change to PoN
+validity or a guest entitlement. Cookie/proof/transaction bytes, signed policy
+identity, original numerical limits, signature checks, source/task checks, native
+work, state transitions, confirmations, and per-request deadlines remain unchanged.
+A local capacity refusal is still not an invalid-work verdict. Default V3 listener
+code uses the shared pools; no opt-in helper or second operation ledger is added.
+Default W1 cache selection and the optional kernel helper remain unchanged.
+
+The negative observation used an explicitly retained semantics-preserving
+extraction of the original four listener-local pool allocations. With the same
+real BufferPermit type and two servers sharing one CPU domain, reserving the first
+8 MiB body pool still permitted another byte on the second server. The expected
+refusal assertion failed (exit101). This is a reservation-accounting counterexample,
+not an 8-MiB allocation or a live flooding test; the exact extraction and failure
+remain private evidence. The repaired native path refuses that second reservation.
+
+Ten additional tests cover shared pools, reconstruction, lane/control reserves,
+parallel challenge consumption, stale clocks, zero-credit restart construction,
+lock failure and two actual V3 TCP listeners. The socket fixture uses a controlled
+in-memory reservation for 64 slots, not 64 live connections: two ordinary reads
+are refused at capacity, both succeed after release, and all five pools are zero
+after shutdown. Existing shared-CPU/native business regressions remain applicable.
+
+This scope does NOT aggregate independently created CPU domains, separate host
+processes or arbitrary administrator-created listeners. Worker/queue counts,
+spent-cookie tables and accepted-socket churn are still listener-local. It does
+not establish Sybil fairness, bounded system-manager/kernel attack costs, complete
+pre-accept protection, restart debt recovery or WAN goodput under saturation.
+Previously blocked kernel/fault experiments have not been rerun by this change.
+
+## One budget identity for one actually opened Node
+
+An unrestricted development Node previously had no CPU-domain owner binding:
+continuous_domain_matches returned true for any budget whenever the continuous
+owner was absent. Two distinct PublicServer::new objects could therefore serve
+the SAME actual Node with independent CPU and admission pools. A
+two-real-TCP-listener negative control confirmed both were accepted, while the
+second was expected to be refused (exit101). The first negative control stalled
+due to a test-only double Mutex lock; its timeout124 was kept and the corrected
+negative control reproduced the resource bypass.
+
+The existing Node owner now holds an in-memory exact ServiceMutationCpuDomain
+handle once the first trusted local service passes normal pool/startup checks.
+Every subsequent listener must supply precisely that retained handle;
+another CPU domain is a typed local policy refusal
+OWNER_PUBLIC_SERVICE_CPU_DOMAIN, before service workers start. Existing
+continuous-mode Nodes also check their previously installed CPU owner. The
+separate W1/M05/M06 metered native interface checks this same Node binding
+before reserving CPU or doing any work, so a foreign domain never buys another
+W1 search/verification allowance. A failed domain check is not invalid Work.
+
+The original Node exposes its currently retained service domain to a trusted
+local caller, and does not mint one when unbound. A trusted supervisor may
+stop a listener, change its service key and reuse the retained domain through
+PublicServer::with_continuous_domain, preserving the in-memory budget. Actual
+signed reads continue after that rebind. Node state/operation identities are
+unchanged; no new durable guest ledger, payout authority or consensus version.
+
+The same intake budget now enforces FOUR simultaneously active V3 listener
+services per CPU domain. Every listener holds one scoped RAII reservation
+before spawning its original three worker threads, two proof queue slots,
+two read queue slots and one 1024-item spent-cookie table. A fifth is refused
+with typed local Capacity error PUBLIC_LISTENER_DOMAIN_CAPACITY. After normal
+shutdown that slot is released, even if the service key changes. Therefore
+aggregate in-domain ceilings are 12 listener workers, eight proof queue slots,
+eight read queue slots and four finite spent tables. These are not fairness
+guarantees. The stricter original shared CPU/body/connection/grant limits
+remain independent.
+
+Observed native regression: independent CPU domains trying to serve the same
+ordinary Node (only the original served), same-budget key rotation after real
+listener shutdown, fifth-listener refusal via controlled memory reservations
+and subsequent ordinary signed Head, foreign-domain M05 refusal before replay
+and reservation, and existing continuous-owner compatibility. The fifth-listener
+capacity fixture is memory-only, not four live listener processes. New error
+types classify policy/capacity refusal without asserting corrupt local state.
+
+The identity lasts for the lifetime of the OPEN Node process. A physical host
+reboot, a new Node open, separate Node directories, independent processes,
+external CPU and pre-accept/kernel costs are not yet covered. Continuous mode
+retains its separate existing durable CPU usage journal; a new ordinary Node
+does not gain durable CPU-debt migration. WAN saturation, fairness and the
+cost-hardness of W1 remain separate gates. Wire bytes, signature checks,
+PoN mathematics and the signed PublicPolicy identity remain unchanged.
+
+## R6: Bounded native CLI process epochs (not host-wide proof)
+
+The actual public V3 development CLI previously constructed a fresh
+PublicServer::new on every process start. This granted a new initial 2-second
+mutation CPU bucket and 32 challenge tokens even after the same trusted
+operator restarted a plain Node, while Node's R5 domain identity survived
+only for one open process. A process restart must not be represented as
+durable usage recovery.
+
+On Linux, the CLI now holds one of FOUR fixed abstract Unix-domain-socket
+slots for the lifetime of its public development service. The kernel
+prevents a second process in the SAME NETWORK NAMESPACE from occupying an
+already-held slot; changing server key, Node directory, PID or TCP port
+does not add a fifth local CLI capacity slot. There is no additional
+database, operation journal, privileged service, filesystem lock or wire
+command. This four-slot upper bound retains ordinary concurrent
+development peers, native miner/follower synchronization and real V3
+client History. The first one-slot prototype incorrectly blocked normal
+multi-node test peers: that failure was retained and the design changed,
+not interpreted as successful protection.
+
+The actual CLI now uses PublicServer::new_process_cold: a fresh process
+has zero scalar mutation CPU credit and zero challenge tokens, refilling
+only by the EXISTING rate and ceiling. Earlier uninterrupted in-process
+PublicServer::new remains the unchanged library-development constructor.
+Existing verified continuous clean and known-unclean restarts use the same
+zero-credit primitive but retain their separate durable owner proof.
+A CLI restart discards remaining available credit; it does not mint a
+fresh 2-second initial burst. The normal listening JSON reports the
+selected local process slot and zero initial credit as unsigned diagnostics.
+All signed admission policy, transaction/proof formats, target, work
+relation, native state and operation identity checks remain unchanged.
+
+On macOS, the same development CLI uses four cooperative same-UID file
+locks under the canonical root-owned sticky temporary directory. Files
+are empty, owned mode0600, regular, single-link and opened O_NOFOLLOW.
+This preserves macOS developer CLI support without claiming Linux socket
+semantics; a same-UID administrator can replace its own advisory lock,
+and no macOS machine was tested in this increment. Other platforms
+explicitly refuse unsupported public host-guard operations.
+
+The strongest supported Linux claim is FOUR cooperating public CLI
+processes within one network namespace plus no startup-credit bonus.
+It is NOT a host cgroup-v2 CPU/memory hard limit, global scheduling
+fairness or unlimited Sybil defense. Different network namespaces,
+direct library-embedded services, parent OS/kernel overhead, unresolved
+CPU costs after abrupt termination, and independently operated machines
+remain outside this limit. Physical reboot and ordinary Node's missing
+durable historical debt are not qualified. Production/consensus activation
+remains false.
+
+Actual bounded controls: real second process refused when all four
+kernel names were occupied by the test process; release permitted a
+subsequent process to acquire; six cold constructors began with exactly
+zero credit. The pre-existing multi-process V3 CLI, mining, public
+client and local resource-observation tests were rerun separately.
+These are neither WAN saturation trials nor host reboot experiments.
+
+## Optional fixed host cgroup-v2 aggregate CPU/memory/task envelope
+
+Four Linux abstract Unix socket slots only bound public CLI processes in the
+SAME network namespace. A different network namespace has a distinct abstract
+socket table. The slot guard is not a host CPU quota or persistent debt log.
+
+The V3 CLI serve path now refuses non-loopback binding unless the trusted
+operator supplies --host-kernel-parent pointing to an ALREADY provisioned
+root-owned cgroup-v2 slice under
+/sys/fs/cgroup/trnmponpublic.slice. This is an unprivileged read-only
+eligibility check, not a cgroup creator, migrator, quota editor or daemon.
+The process must already be a member of the approved parent or its children.
+
+Required: canonical root-owned non-writable directory; unchanged boot,
+device and inode identity; current Linux /proc/self/cgroup membership;
+a finite cpu.max of at most 25% of one core (4 * quota <= period),
+cpu.max.burst=0, memory.max at most 2 GiB, memory.swap.max=0,
+and pids.max at most 256. An unlimited max, inconsistent stored
+limits, parent replacement, malformed data or missing controller is refused.
+An optional scoped read-only watcher checks every 50 ms and sets the existing
+service stop signal if limits or identity change. Unprivileged developers
+can still run loopback V3 with the previous four slots and no startup burst,
+without creating/managing an OS resource group. Public V2 is loopback only;
+the host-parent option is rejected for unrelated profiles before Node opens.
+
+For one retained, correctly root-provisioned cgroup parent, the kernel's
+hierarchical enforcement applies to all descendants, including processes
+from different network namespaces. Different process-local token-credit
+accounts do not become a single durable ledger merely because their physical
+CPU shares this hard cap. Host work outside that cgroup, kernel networking,
+privileged operators, a compromised root or modified kernel, and scheduling
+granularity remain outside the local proof. The 50ms watchdog is not an
+instantaneous guarantee.
+
+This change does NOT provision a host cgroup, configure systemd, change
+production services, bypass existing safety checks or activate public network
+readiness. The final source's strict path must still be tested under a real
+root-approved parent with multiple independent processes and actual restart.
+Physical reboot and ordinary Node CPU debt migration are not closed. The
+continuous owner retains its separate durable operation history, exactly-once
+reconciliation and stop behavior; the kernel parent cannot replace that
+accounting authority.
+
+All original PoN W1 mathematics, signed wire domains and PublicPolicy id,
+M05/M06/state roots, reward accounting, model qualification and FinalUse
+are untouched.
+
+The permitted parent basename is exactly trnmponpublic.slice, not an
+operator-chosen trnmpon*.slice. Accepting several different root-owned slices
+would allow four more independently quota-bound processes under each slice.
+This rule excludes that accidental/intentional per-parent multiplier for the
+trusted CLI; root's ability to move processes outside the approved parent
+is still outside the unprivileged service's authority.
+
+
+### Fixed systemd slice hierarchy correction
+
+The previously proposed fixed name `trnmponpublic.slice` was incorrectly
+located in `system.slice/trnmponpublic.slice`. Under systemd.slice(5), a slice
+with no dash is directly beneath `-.slice` and thus maps to
+`/sys/fs/cgroup/trnmponpublic.slice`, not to a subdirectory of `system.slice`.
+An actual sub-slice of `system.slice` must instead be named
+`system-trnmponpublic.slice`. This candidate keeps the original fixed name
+and accepts exactly its canonical root-level path; neither another sibling
+nor a caller-provided sublayer becomes eligible. This is a path correction,
+not a changed CPU limit, W1 relation, state authority or signed wire format.
+
+A negative regression on prior candidate code with one additive actual-path
+assertion failed as expected. The test did not provision a privileged host
+resource group. The final native guard and exposed CLI regressions need to
+run on the exact committed code; physical kernel parenting, host reboot,
+CPU-debt carryover and WAN saturation are not qualified by a string test.
+
+### Single host-parent checker for both CLI and exported V3 library
+
+The previous kernel-parent requirement lived ONLY in the public V3 development
+CLI. A trusted Rust embedding could call the exported
+`serve_public_protected_v3`, `_with_metrics` or `_with_request_observer`
+using a non-loopback `TcpListener` and skip that CLI guard entirely. A finite
+80ms stopped-by-deadline test with an actual wildcard TCP listener, no client
+connections and no guest work showed the original exported library returned
+ordinary success without any kernel parent (expected-refusal exit101). An
+initial pre-stopped harness attempt instead triggered startup deadline before
+service admission; its log is retained as an inconclusive test rather than
+false evidence of an accepted V3 request.
+
+The ORIGINAL kernel-parent checker is now compiled from one library-owned
+module and reused directly by the development CLI, not duplicated in two
+separately maintained implementations. Every exported V3 serve variant
+checks its actual bound address before even allocating a proof/read worker
+or binding the Node CPU identity. Loopback remains supported without root.
+A wildcard or non-loopback socket requires the exact same root-owned fixed
+`/sys/fs/cgroup/trnmponpublic.slice`, current cgroup membership and all
+original finite CPU/memory/swap/tasks limits. The V3 socket reactor performs
+a 50ms read-only parent check and a final check after all workers join.
+Failures stop admission, preserve native state effects and cannot masquerade
+as invalid PoN work. The CLI's preflight/watchdog is retained but now uses
+the same library code, rather than an independent parent policy.
+
+The original five kernel-parser/parent tests have moved from the binary
+module into the native library test suite. The original two actual host-slot
+process controls remain in the CLI. Exact-source cross-architecture CI should
+run both relocated library kernel tests and the remaining native CLI tests,
+so that the total test coverage is not quietly reduced by the source move.
+
+This closes the **alternate Rust V3 entrypoint** to the single-parent
+precondition; it does NOT provision the host slice, attest independent
+processes actually running beneath it, enforce a 25% kernel quota in vivo,
+prove durable ordinary-node CPU debt after reboot or qualify WAN fairness.
+An empty temporary systemd topology test slice from R8 remains a separate
+operator cleanup issue; this code does not touch that host unit.
+
+### Reproducible fixed parent unit and actual ordinary-process cold reopen
+
+The retained *candidate-only* systemd slice template is
+[trnmponpublic.slice](../../../../config/systemd/trnmponpublic.slice).
+It specifies the SINGLE fixed public parent with CPUQuota=25%,
+CPUQuotaPeriodSec=100ms, MemoryMax=2G, MemorySwapMax=0,
+TasksMax=256, all three resource-accounting controllers, and
+StopWhenUnneeded=no. The last setting is deliberate: a completed or
+crashed child must not cause the parent to disappear and reset kernel
+usage counters before the next child. The administrator must still
+provision it root-owned, verify the canonical /sys/fs/cgroup/trnmponpublic.slice
+path and read back cpu.max, cpu.max.burst, memory.max,
+memory.swap.max and pids.max before any externally reachable service
+may use it. The existing Rust library guard remains the actual enforcing
+admission decision; this static template is not an authority token.
+
+The command systemd-analyze verify config/systemd/trnmponpublic.slice passes
+on the observed Linux test host. The template is NOT installed, enabled,
+started or used to migrate a process by this change. The current host's
+fixed parent is still inactive, and the previous unrelated, empty
+temporary path-probe slice remains an operator cleanup issue. No
+privileged cleanup command was bypassed.
+
+An added original public_pool_cli native Rust integration test ran two
+SEPARATE actual binary processes, one after the other, reusing one
+ordinary Node's same on-disk namespace after the first process exited
+normally. Each printed initial_paid_cpu_credit_ns=0 at startup, served
+a genuinely signed and verified V3 Head request over real loopback TCP,
+returned the same head and completed with a real final service result.
+The corresponding raw COLD_CLI_PROCESS_EXIT observations are retained.
+The test does not mint a new kernel parent or claim cross-process
+scarcity, persistent negative CPU debt, attacker load fairness,
+abnormal host termination or a physical reboot. Normal close/reopen
+with zero initial credit is narrower than unclean-crash debt recovery.
+
+An additional attempted simultaneous-writer probe was NOT executed
+because its test invocation was blocked by the tool safety check. That
+unverified extra test code was discarded; the completed two-process
+normal-reopen regression remains independently valid. Do not rerun
+the blocked probe using a different execution mechanism.
+
+### Original fixed-parent kernel-counter observations (read only)
+
+When an administrator actually provisions the *single* allowed
+`trnmponpublic.slice` parent and runs an approved V3 process underneath it,
+the existing CLI now samples the parent's cumulative `cpu.stat`,
+`memory.current` and `pids.current` counters once before service startup
+and once after all native service/miner/poller workers join. It reports
+`root_kernel_resources_before`, `host_kernel_resources_after`, and the
+checked CPU **delta** (usage microseconds, periods, throttled periods and
+throttled microseconds). Missing, duplicated, malformed or rewinding CPU
+counters refuse a fabricated success; the service's actual Native business
+outcome is never undone by the diagnostic. The fixed parent identity, boot,
+membership, quota and capacity constraints are verified around each sample.
+
+**These are cumulative counters for the original parent, which necessarily
+include other concurrently running children**. They are not per-request CPU
+costs, a separate money/CPU debit ledger, a throughput or fairness score, or
+an authorization for public mining. The memory and pids fields are instantaneous
+readings, not additive deltas. An increment in `nr_throttled` with actual
+observed concurrent service confirms the kernel applied a bandwidth ceiling;
+it alone does not prove equitable scheduling or an SLA. Subsequent child
+processes in the same live parent must see monotonic total CPU usage. Parent
+replacement, a new boot or persistent ordinary-node debt are distinct checks.
+
+Loopback-only development without an admin-provisioned parent retains normal
+V3 behavior: both readings and delta are `null`,
+`host_kernel_qualification=false`; no synthetic zero-usage receipt is
+fabricated. A real Linux cgroup-v2 `cpu.stat` parse and strict malformed/
+counter-rewind fixtures now run in native tests, but the currently inactive
+fixed parent has not been quota-tested. No root cgroup, network namespace,
+production service or Desktop Commander setting was modified by this
+increment.
+
+### Concurrent native CLI processes: actual inherited cgroup accounting
+
+The retained native peer-polling fixture now measures genuine Linux
+cgroup-v2 membership of TWO simultaneously live independently signed V3
+CLI services. Each has its own native Node directory and public key;
+the original peer receives three verified native blocks. Before either
+process exits, the fixture reads both live PIDs' /proc/<pid>/cgroup
+and requires precisely the same v2 path. It retains the parent cgroup
+directory inode and reads original cpu.stat usage_usec; after BOTH original
+processes finish and exact native packet/state equality was checked,
+the parent inode must remain unchanged and cumulative CPU must not rewind.
+No resource group is created, migrated, modified or stopped.
+
+This is a read-only check of the inherited developer-service cgroup,
+NOT the as-yet inactive /sys/fs/cgroup/trnmponpublic.slice. CPU delta
+includes other processes in that inherited group, and is NOT a PoN
+workload charge, a guest CPU receipt, nor a finite host-quota certificate.
+No power-loss, unclean CPU-debt persistence, cross-network namespace,
+WAN/Sybil saturation or actual 25% parent throttling is qualified.
+Original signature, work, storage and governance semantics are unchanged.
+
+### Calling-thread cgroup identity at the native worker boundary (R13)
+
+Linux cgroup-v2 also has a **threaded** controller mode. Reading the
+thread-group leader's `/proc/self/cgroup` in the socket reactor does not
+establish that a separately executing native worker has the same current
+thread-level CPU-controller membership. The read-only parent checker now
+uses `/proc/thread-self/cgroup` for its own calling TID, keeping the exact
+existing boot, parent inode, quota and ancestor rules. Each existing V3
+worker verifies its own membership after any original CPU-credit wait and
+immediately before native dispatch. A refusal follows the original worker
+error/CPU settlement path, before packet state mutation; it is never
+relabeled as invalid PoN work. Original per-50ms reactor and final checks
+remain. The Linux thread-self regression reads real procfs in an ordinary
+spawned Rust thread, and does not move any cgroup or start a privileged service.
+
+This is a source-level fail-closed defense against *misplaced worker-thread*
+execution, NOT proof of an exploit on the present host or enforcement of the
+absent fixed 25% parent. A privileged runtime/root can still move threads
+during nonpreemptible work; cgroup kernel enforcement and trusted supervision
+remain necessary. No signed policy, task/work relation, host quota,
+admission constant, operation ledger, state namespace or FinalUse changed.
+
+## R16: Ordinary V3 restart crash fence in the existing Node store
+
+Ordinary V3 CPU credit is volatile; unlike Continuous mode it has no
+authenticated durable operation journal. Reopening with zero initial credit
+prevents a fresh 2-second burst, but does not distinguish clean exit from
+unknown CPU cost or negative debt left by an abruptly terminated service.
+
+Before its first V3 worker starts, the existing exclusively locked Node writes
+one local SQLite metadata row `ordinary-public-v3-epoch-v1=active-v1` using
+the existing `synchronous=FULL` persistence policy. This is NOT another
+per-operation CPU journal, signed claim, fee balance or consensus artifact.
+Concurrent listeners on the SAME Node share an in-memory reference count
+and one durable row; one listener cannot clear another's active scope.
+
+After all worker threads join, only the final listener may remove the row,
+and only when original scalar CPU accounting is available, no paid work is
+in-flight, checked actual-flow arithmetic is consistent and remaining credit
+is nonnegative. Negative debt, unmeasured worker CPU, panic, and incomplete
+shutdown retain the persistent row. Existing Native replies, State changes
+and original clock-failure semantics remain unchanged; a later ordinary
+V3 listener instead receives typed `OWNER_PUBLIC_SERVICE_UNCLEAN_EPOCH`.
+Malformed or retained rows do not authorize automatic resets, key rotation,
+or a new process budget. Original local State inspection still works.
+
+This is a conservative fail-closed RESTART BARRIER, not accurate CPU-debt
+reconstruction or a self-healing ledger. An unclean ordinary Node may be
+unable to reopen its public V3 service without a future authenticated owner
+reconciliation design. Continuous mode retains its ORIGINAL durable
+operator journal, with no new parallel owner or schema migration.
+
+Exact-source regression: the original successful normal CLI cold reopen
+and signed miner/follower tests remain required. An original clock-failure
+test still compares all Native business SQL tables and every preexisting
+metadata key byte-for-byte; only this exact new local lifecycle metadata
+row is excluded, and the test now additionally checks that reopening
+after unknown CPU cannot silently mint a clean epoch. Dedicated tests
+verify clean two-listener teardown, conservatively modeled missing close
+receipt across real SQLite Node reopen, malformed metadata and preservation
+of the Continuous owner boundary. These are NOT host kill, physical power
+loss, trusted anti-rollback, real root cgroup deployment or WAN stress tests.
+
+Same-UID SQLite file replacement, privileged host manipulation, host
+power-loss durability, independent Node directories, cross-host operation
+entitlement, exact lost CPU nanoseconds, model efficacy and FinalUse remain
+unqualified. The required `trnmponpublic.slice` is still not deployed.

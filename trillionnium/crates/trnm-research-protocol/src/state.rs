@@ -81,14 +81,29 @@ impl AuthoritySetV1 {
     }
 
     pub fn authorizes(&self, signed: &SignedResearchCommandV1) -> bool {
-        let bucket = match signed.signer_role {
+        self.authorizes_identity(signed.signer_role, &signed.signer_did, signed.public_key)
+    }
+
+    /// Check an authority identity without manufacturing a research command.
+    /// This is used by the Hepta handoff envelope, whose payload is deliberately
+    /// separate from the research-object command set.
+    pub fn authorizes_identity(
+        &self,
+        role: AuthorityRole,
+        signer_did: &str,
+        public_key: [u8; 32],
+    ) -> bool {
+        let bucket = match role {
             AuthorityRole::NakamaAuthority => &self.nakama_authorities,
             AuthorityRole::HeptaAuthority => &self.hepta_authorities,
         };
         bucket
             .binary_search_by(|identity| {
-                (&identity.signer_did, identity.public_key)
-                    .cmp(&(&signed.signer_did, signed.public_key))
+                identity
+                    .signer_did
+                    .as_str()
+                    .cmp(signer_did)
+                    .then_with(|| identity.public_key.cmp(&public_key))
             })
             .is_ok()
     }

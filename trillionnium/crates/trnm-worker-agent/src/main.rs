@@ -10,19 +10,41 @@ use std::{
     fs::{self, OpenOptions},
     io::Write,
     path::{Path, PathBuf},
-    process::{Command as ProcCommand, Output},
+    process::Output,
     thread,
     time::{Duration, SystemTime, UNIX_EPOCH},
 };
 mod assigned;
 mod audit;
 mod cli;
+#[cfg(unix)]
+mod commit_salt;
 mod dispatch;
 mod flush;
 mod flush_submission;
 mod proof_adapter;
 mod workflow;
 mod workflow_ops;
+#[cfg(not(unix))]
+mod commit_salt {
+    use anyhow::{bail, Result};
+    use std::path::Path;
+    pub(crate) fn journal_automatic_submission(
+        _: &Path,
+        _: u64,
+        _: &str,
+        _: &str,
+        _: &str,
+    ) -> Result<String> {
+        bail!("secure commit journaling requires a Unix local owner; no fallback")
+    }
+    pub(crate) fn append_private_manual_submission(_: &Path, _: &str) -> Result<()> {
+        bail!("private manual salt journaling requires a Unix local owner; no fallback")
+    }
+}
+#[cfg(test)]
+#[path = "tests_commit_salt_security.rs"]
+mod tests_commit_salt_security;
 
 #[cfg(test)]
 pub(crate) use audit::{
@@ -44,12 +66,14 @@ use command_runtime_exec::run_command_with_timeout;
 
 const DEFAULT_TX_ADAPTER_MAX_RETRIES: u32 = 3;
 const DEFAULT_TX_ADAPTER_BACKOFF_MS: u64 = 200;
+const DEFAULT_TX_ADAPTER_TIMEOUT_MS: u64 = 10_000;
 const DEFAULT_LLM_ADAPTER_MAX_RETRIES: u32 = 2;
 const DEFAULT_LLM_ADAPTER_BACKOFF_MS: u64 = 200;
 const DEFAULT_LLM_ADAPTER_TIMEOUT_MS: u64 = 10_000;
 
 const TX_ADAPTER_MAX_RETRIES_ENV: &str = "TRNM_TX_ADAPTER_MAX_RETRIES";
 const TX_ADAPTER_BACKOFF_MS_ENV: &str = "TRNM_TX_ADAPTER_BACKOFF_MS";
+const TX_ADAPTER_TIMEOUT_ENV: &str = "TRNM_TX_ADAPTER_TIMEOUT_MS";
 const LLM_ADAPTER_MAX_RETRIES_ENV: &str = "TRNM_LLM_ADAPTER_MAX_RETRIES";
 const LLM_ADAPTER_BACKOFF_MS_ENV: &str = "TRNM_LLM_ADAPTER_BACKOFF_MS";
 const LLM_ADAPTER_TIMEOUT_ENV: &str = "TRNM_LLM_ADAPTER_TIMEOUT_MS";
@@ -214,12 +238,16 @@ pub(crate) fn next_task_id(state: &PathBuf) -> Result<u64> {
     Ok(s.last_task_id)
 }
 
-pub(crate) fn execute_payload(payload: &str, task_id: u64) -> (String, String) {
+pub(crate) fn execute_payload(payload: &str, _task_id: u64) -> Result<(String, String)> {
     let mut h = Sha256::new();
     h.update(payload.as_bytes());
     let result_hash = hex::encode(h.finalize());
-    let salt_hex = format!("{:064x}", task_id);
-    (result_hash, salt_hex)
+    // The old salt was the public task ID. Use OS CSPRNG; never fall back to
+    // timestamps, public identities or predictable process counters on failure.
+    let mut salt = [0_u8; 32];
+    getrandom::fill(&mut salt)
+        .map_err(|error| anyhow!("commit salt entropy unavailable: {error}"))?;
+    Ok((result_hash, hex::encode(salt)))
 }
 
 pub(crate) fn now_ms() -> u128 {
@@ -249,14 +277,8 @@ pub(crate) fn append_submission(
     salt_hex: &str,
 ) -> Result<()> {
     let nonce = task_id;
-    let commit_cmd = format!(
-        "trnm-node tx commit-result {} {} {} {}",
-        task_id, worker, commit_hash, nonce
-    );
-    let reveal_cmd = format!(
-        "trnm-node tx reveal-result {} {} {}",
-        task_id, result_hash, salt_hex
-    );
+    let commit_cmd = workflow_ops::commit_template(task_id, worker, commit_hash, nonce);
+    let reveal_cmd = workflow_ops::reveal_template(task_id, result_hash, salt_hex);
     let rec = SubmissionRecord {
         ts_unix_ms: now_ms(),
         task_id,
@@ -269,7 +291,7 @@ pub(crate) fn append_submission(
         reveal_cmd,
     };
     let line = serde_json::to_string(&rec)?;
-    append_json_line(submit_log, &line)
+    commit_salt::append_private_manual_submission(submit_log, &line)
 }
 
 fn load_ack_records(ack_log: &Path) -> Vec<AckRecord> {
@@ -945,22 +967,34 @@ where
     })
 }
 
-pub(crate) fn run_adapter_with_retry(
+#[cfg(test)]
+fn run_adapter_with_retry(
     adapter_cmd: &str,
     action_args: &[String],
     max_retries: u32,
     backoff_ms: u64,
 ) -> Result<AdapterExecResult> {
+    run_adapter_with_retry_bounded(
+        adapter_cmd,
+        action_args,
+        max_retries,
+        backoff_ms,
+        Duration::from_millis(resolve_tx_adapter_timeout_ms()),
+    )
+}
+
+pub(crate) fn run_adapter_with_retry_bounded(
+    adapter_cmd: &str,
+    action_args: &[String],
+    max_retries: u32,
+    backoff_ms: u64,
+    timeout: Duration,
+) -> Result<AdapterExecResult> {
     let (program, base_args) = parse_command_spec(adapter_cmd)?;
     run_adapter_with_retry_inner(
         max_retries,
         backoff_ms,
-        || {
-            Ok(ProcCommand::new(&program)
-                .args(&base_args)
-                .args(action_args)
-                .output()?)
-        },
+        || run_command_with_timeout(&program, &base_args, action_args, timeout),
         thread::sleep,
     )
 }
@@ -1063,6 +1097,15 @@ pub(crate) fn resolve_tx_retry_policy(
         backoff_ms_cli,
         env::var(TX_ADAPTER_MAX_RETRIES_ENV).ok().as_deref(),
         env::var(TX_ADAPTER_BACKOFF_MS_ENV).ok().as_deref(),
+    )
+}
+
+pub(crate) fn resolve_tx_adapter_timeout_ms() -> u64 {
+    resolve_u64(
+        None,
+        env::var(TX_ADAPTER_TIMEOUT_ENV).ok().as_deref(),
+        DEFAULT_TX_ADAPTER_TIMEOUT_MS,
+        1,
     )
 }
 

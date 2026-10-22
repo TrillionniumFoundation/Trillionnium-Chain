@@ -1,4 +1,4 @@
-use ed25519_dalek::SigningKey;
+use ed25519_dalek::{Signer, SigningKey};
 use serde::{Deserialize, Serialize};
 use trnm_research_protocol::*;
 
@@ -7,6 +7,28 @@ const HEPTA_SEED: [u8; 32] = [0x22; 32];
 
 fn digest(byte: u8) -> Digest32 {
     [byte; 32]
+}
+
+fn hepta_admission() -> HeptaArtifactAdmissionV1 {
+    HeptaArtifactAdmissionV1 {
+        operation_id: key("hepta.operation", "publish-001"),
+        artifact_digest: digest(0x80),
+        owner_admission_digest: digest(0x81),
+        family_digest: digest(0x82),
+        source_digest_profile_digest: digest(0x83),
+        parent_artifact_digest: None,
+        generation: 1,
+        withdrawal_scope_digest: digest(0x84),
+        withdrawal_head_digest: digest(0x85),
+        registry_head_digest: digest(0x86),
+        evaluation_plan_digest: digest(0x87),
+        task_scope_digest: digest(0x88),
+        export_permission_digest: digest(0x89),
+        payload_digest: digest(0x8a),
+        payload_len: 4096,
+        created_at_unix_s: 1_753_451_000,
+        expires_at_unix_s: 1_753_451_600,
+    }
 }
 
 fn key(namespace: &str, id: &str) -> ExternalKey {
@@ -202,6 +224,194 @@ fn every_signed_envelope_strictly_round_trips() {
             ))
         ));
     }
+}
+
+#[test]
+fn hepta_admission_requires_owner_facts_and_authority() {
+    let signing_key = SigningKey::from_bytes(&HEPTA_SEED);
+    let signed = SignedHeptaAdmissionV1::sign(
+        "trnm-devnet-v1".into(),
+        "did:trnm:hepta-authority".into(),
+        hepta_admission(),
+        &signing_key,
+    )
+    .unwrap();
+    signed.verify_with_authorities(&test_authorities()).unwrap();
+    signed
+        .verify_with_authorities_at(&test_authorities(), 1_753_451_300)
+        .unwrap();
+
+    let bytes = signed.canonical_bytes();
+    let decoded = SignedHeptaAdmissionV1::from_canonical_bytes(&bytes).unwrap();
+    assert_eq!(decoded, signed);
+
+    let mut changed = signed.clone();
+    changed.admission.withdrawal_head_digest = digest(0x99);
+    assert!(matches!(
+        changed.verify_signature(),
+        Err(HeptaHandoffError::InvalidSignature)
+    ));
+
+    let wrong_authority = AuthoritySetV1::default();
+    wrong_authority
+        .validate()
+        .expect("empty authority set is a valid test fixture");
+    assert!(matches!(
+        signed.verify_with_authorities(&wrong_authority),
+        Err(HeptaHandoffError::UnauthorizedAuthority)
+    ));
+}
+
+#[test]
+fn hepta_admission_rejects_missing_parent_and_unbounded_payload() {
+    for parent_artifact_digest in [None, Some(digest(0x90))] {
+        let mut zero = hepta_admission();
+        zero.generation = 0;
+        zero.parent_artifact_digest = parent_artifact_digest;
+        assert!(matches!(
+            zero.validate(),
+            Err(HeptaHandoffError::InvalidAdmission("generation"))
+        ));
+    }
+    let mut admission = hepta_admission();
+    admission.generation = 2;
+    assert!(matches!(
+        admission.validate(),
+        Err(HeptaHandoffError::InvalidAdmission(
+            "missing_parent_artifact"
+        ))
+    ));
+
+    let mut admission = hepta_admission();
+    admission.payload_len = MAX_HANDOFF_PAYLOAD_BYTES + 1;
+    assert!(matches!(
+        admission.validate(),
+        Err(HeptaHandoffError::InvalidAdmission("payload_len"))
+    ));
+
+    let admission = hepta_admission();
+    assert!(matches!(
+        admission.validate_at(admission.created_at_unix_s - 1),
+        Err(HeptaHandoffError::AdmissionNotYetValid)
+    ));
+    assert!(matches!(
+        admission.validate_at(admission.expires_at_unix_s + 1),
+        Err(HeptaHandoffError::AdmissionExpired)
+    ));
+}
+
+#[test]
+fn hepta_handoff_rechecks_the_destination_and_fresh_owner_snapshot() {
+    let admission = hepta_admission();
+    let signed = SignedHeptaAdmissionV1::sign(
+        "trnm-devnet-v1".into(),
+        "did:trnm:hepta-authority".into(),
+        admission.clone(),
+        &SigningKey::from_bytes(&HEPTA_SEED),
+    )
+    .unwrap();
+    let now = admission.created_at_unix_s + 1;
+    signed
+        .verify_for_context(&test_authorities(), "trnm-devnet-v1", &admission, now)
+        .unwrap();
+    // The same authorized signer may sign for another destination. Signature
+    // validity is insufficient for this receiving chain.
+    let foreign = SignedHeptaAdmissionV1::sign(
+        "other-chain".into(),
+        signed.signer_did.clone(),
+        admission.clone(),
+        &SigningKey::from_bytes(&HEPTA_SEED),
+    )
+    .unwrap();
+    foreign.verify_signature().unwrap();
+    assert!(matches!(
+        foreign.verify_for_context(&test_authorities(), "trnm-devnet-v1", &admission, now),
+        Err(HeptaHandoffError::ContextMismatch("chain_id"))
+    ));
+
+    let mut current = Vec::new();
+    let mut withdrawal = admission.clone();
+    withdrawal.withdrawal_head_digest = digest(0x91);
+    current.push(withdrawal);
+    let mut registry = admission.clone();
+    registry.registry_head_digest = digest(0x92);
+    current.push(registry);
+    let mut generation = admission.clone();
+    generation.generation = 2;
+    generation.parent_artifact_digest = Some(admission.artifact_digest);
+    current.push(generation);
+    let mut operation = admission.clone();
+    operation.operation_id = key("hepta.operation", "publish-002");
+    current.push(operation);
+    let mut owner_receipt = admission.clone();
+    owner_receipt.owner_admission_digest = digest(0x93);
+    current.push(owner_receipt);
+    let mut task = admission.clone();
+    task.task_scope_digest = digest(0x94);
+    current.push(task);
+    let mut export = admission.clone();
+    export.export_permission_digest = digest(0x95);
+    current.push(export);
+    let mut source_profile = admission.clone();
+    source_profile.source_digest_profile_digest = digest(0x96);
+    current.push(source_profile);
+    for expected in current {
+        expected.validate_at(now).unwrap();
+        assert!(matches!(
+            signed.verify_for_context(&test_authorities(), "trnm-devnet-v1", &expected, now),
+            Err(HeptaHandoffError::ContextMismatch("owner_admission"))
+        ));
+    }
+    assert!(matches!(
+        signed.verify_for_context(
+            &test_authorities(),
+            "trnm-devnet-v1",
+            &admission,
+            admission.expires_at_unix_s + 1
+        ),
+        Err(HeptaHandoffError::AdmissionExpired)
+    ));
+}
+
+#[test]
+fn hepta_handoff_limits_wire_before_decode_and_requires_its_signature_domain() {
+    assert!(matches!(
+        SignedHeptaAdmissionV1::from_canonical_bytes(&vec![0; MAX_HANDOFF_ENVELOPE_BYTES + 1]),
+        Err(HeptaHandoffError::EnvelopeTooLarge)
+    ));
+    let key = SigningKey::from_bytes(&HEPTA_SEED);
+    let signed = SignedHeptaAdmissionV1::sign(
+        "trnm-devnet-v1".into(),
+        "did:trnm:hepta-authority".into(),
+        hepta_admission(),
+        &key,
+    )
+    .unwrap();
+    assert!(signed.canonical_bytes().len() < MAX_HANDOFF_ENVELOPE_BYTES);
+    let mut trailing = signed.canonical_bytes();
+    trailing.push(0);
+    assert!(matches!(
+        SignedHeptaAdmissionV1::from_canonical_bytes(&trailing),
+        Err(HeptaHandoffError::Canonical(
+            CanonicalDecodeError::TrailingBytes
+        ))
+    ));
+    // Before this unshipped profile acquired a domain tag, these six values
+    // constituted its signing tuple. Such a signature must not verify now.
+    let mut previous_tuple = Encoder::default();
+    previous_tuple.array(6);
+    previous_tuple.uint(HEPTA_HANDOFF_VERSION as u64);
+    previous_tuple.text(CANONICAL_ENCODING);
+    previous_tuple.text(&signed.chain_id);
+    previous_tuple.text(&signed.signer_did);
+    previous_tuple.bytes(&signed.public_key);
+    signed.admission.encode_canonical(&mut previous_tuple);
+    let mut missing_domain = signed;
+    missing_domain.signature = key.sign(&previous_tuple.finish()).to_bytes().to_vec();
+    assert!(matches!(
+        missing_domain.verify_signature(),
+        Err(HeptaHandoffError::InvalidSignature)
+    ));
 }
 
 #[test]
