@@ -835,7 +835,7 @@ class _OwnedChildCleanupRequired(RuntimeError):
 
 
 class _Wait4Child(subprocess.Popen):
-    """One Linux Popen spawn, exclusively reaped by the calls below.
+    """One direct Linux child, exclusively reaped by the calls below.
 
     Requires default SIGCHLD handling and no competing wait/reap thread. A
     detected lost receipt permits cleanup only; this is not a general guarantee
@@ -843,6 +843,9 @@ class _Wait4Child(subprocess.Popen):
     """
 
     def __init__(self, *args, **kwargs):
+        self.kernel_operation = kwargs.pop('_controlled_operation', None)
+        kernel_deadline = kwargs.pop('_kernel_deadline', None)
+        self.kernel_evidence = None
         self.reaped = False
         self.reap_resolved = False
         self.no_waitable_child_observed = False
@@ -869,6 +872,24 @@ class _Wait4Child(subprocess.Popen):
                     os.close(probe)
                 except OSError as error:
                     raise _Wait4Unsupported('pidfd capability cleanup unavailable') from error
+        if self.kernel_operation is not None:
+            from llm_runtime_kernel_owned import _ControlledOperation
+            require(type(self.kernel_operation) is _ControlledOperation and len(args) == 1 and
+                    set(kwargs) == {'stdout', 'stderr'} and kwargs['stderr'] is subprocess.STDOUT and
+                    type(kernel_deadline) is float, 'KERNEL_SPAWN_INTERFACE')
+            self.returncode = None
+            self.pid, self.termination_fd, ack, error = self.kernel_operation.spawn(args[0], kwargs['stdout'])
+            try:
+                self.kernel_operation.allow_exec(self.pid, self.termination_fd, ack, error, kernel_deadline)
+            except BaseException as failure:
+                self.fail(f'kernel-spawn:{type(failure).__name__}')
+                self.finish()
+                if not isinstance(failure, Exception):
+                    if not self.reap_resolved:
+                        raise _OwnedChildCleanupRequired(self, dict(outcome='failed',
+                            stop_reason='kernel-spawn-interrupted', reservation='RETAINED')) from failure
+                    raise
+            return
         super().__init__(*args, **kwargs)
         try:
             self.termination_fd = os.pidfd_open(self.pid, 0)
@@ -1004,6 +1025,13 @@ class _Wait4Child(subprocess.Popen):
                     if not self.owned_exit_observed:
                         time.sleep(min(0.01, max(0, deadline - time.monotonic())))
         finally:
+            if (getattr(self, 'kernel_operation', None) is not None and self.reaped and
+                    self.cleanup_method == 'wait4' and self.observation_error is None and
+                    self.kernel_evidence is None):
+                try:
+                    self.kernel_evidence = self.kernel_operation.terminal_record(self.pid, self.termination_fd)
+                except Exception as failure:
+                    self.fail(f'kernel-terminal:{type(failure).__name__}')
             if self.termination_fd is not None and self.reap_resolved:
                 try:
                     os.close(self.termination_fd)
@@ -1089,9 +1117,16 @@ def _drain_exit_cleanup(process, observation, owner_token, start, budget, *, exi
     return 'rss-exit-cleanup-observation-unavailable', record
 
 
-def supervise(command, directory, budget, *, exit_observation=None):
+def supervise(command, directory, budget, *, exit_observation=None, _controlled_operation=None):
     """Kill only this fresh child when its measured wall/RSS budget is exceeded."""
     observation_type = exit_observation_class(exit_observation) if exit_observation is not None else None
+    if _controlled_operation is not None:
+        from llm_runtime_kernel_owned import _ControlledOperation
+        require(type(_controlled_operation) is _ControlledOperation and
+                type(budget) is dict and set(budget) == {'rss_bytes', 'wall_seconds'} and
+                type(budget['rss_bytes']) is int and budget['rss_bytes'] == _controlled_operation.memory and
+                type(budget['wall_seconds']) is int and 0 < budget['wall_seconds'] <=
+                (600 if _controlled_operation.memory == 8*1024**3 else 1800), 'KERNEL_BUDGET_INTERFACE')
     directory = Path(directory); directory.mkdir(mode=0o700)
     start, high, reason = time.monotonic_ns(), 0, None
     rss_gap_diagnostic = None
@@ -1100,7 +1135,10 @@ def supervise(command, directory, budget, *, exit_observation=None):
     observer_cpu_start = time.process_time_ns()
     with (directory/'process.log').open('w') as log:
         try:
-            process = _Wait4Child(command, stdout=log, stderr=subprocess.STDOUT)
+            kernel = (dict(_controlled_operation=_controlled_operation,
+                _kernel_deadline=(start/10**9)+budget['wall_seconds'])
+                if _controlled_operation is not None else {})
+            process = _Wait4Child(command, stdout=log, stderr=subprocess.STDOUT, **kernel)
         except _Wait4Unsupported as error:
             result = dict(exit_code=None, stop_reason='rss-owner-unsupported',
                           observed_wall_ns=time.monotonic_ns()-start,
@@ -1181,6 +1219,9 @@ def supervise(command, directory, budget, *, exit_observation=None):
             reason = 'wall-budget-exceeded'
         elif process.waited_peak_rss_bytes > budget['rss_bytes']:
             reason = 'rss-budget-exceeded'
+    if _controlled_operation is not None:
+        # No outer FinalUse/reconciliation bridge exists in this spawn-only slice.
+        reason = reason or 'kernel-outer-reconciliation-required'
     result = dict(exit_code=process.returncode, stop_reason=reason, observed_wall_ns=time.monotonic_ns()-start,
                   sampled_peak_rss_bytes=high, budget=budget, sample_interval_ms=50,
                   waited_child_peak_rss_bytes=process.waited_peak_rss_bytes,
@@ -1197,6 +1238,10 @@ def supervise(command, directory, budget, *, exit_observation=None):
                   outcome='success' if process.returncode == 0 and reason is None else 'failed')
     if rss_gap_diagnostic is not None:
         result['rss_gap_diagnostic'] = rss_gap_diagnostic
+    if _controlled_operation is not None:
+        result['controlled_kernel_spawn'] = dict(evidence=process.kernel_evidence,
+            scope='spawn-only-controlled-kernel-charge-not-RSS', reservation='RETAINED',
+            outer_reconciliation='UNKNOWN', installation_accepted=False)
     if exit_cleanup_observation is not None:
         result['exit_cleanup_observation'] = exit_cleanup_observation
     if exit_observation is not None:

@@ -601,6 +601,19 @@
   ],
   "auxiliary_disposition": [
     {
+      "source": "scripts/llm_runtime_kernel_spawn.c",
+      "destination": "scripts/llm_runtime_kernel_owned.py",
+      "module": "M14",
+      "decision": "retain-controlled-linux-in-process-spawn-primitive",
+      "supporting_sources": [
+        "scripts/llm_runtime_pilot.py",
+        "scripts/llm_runtime_exit_observation.py",
+        "scripts/test_llm_runtime_kernel_owned.py",
+        "scripts/ci/verify_ci_source.py"
+      ],
+      "scope": "Optional same-administrator native child birth placement under the existing Python wait4 owner; no public-profile activation, RSS equivalence, FinalUse settlement or model acceptance."
+    },
+    {
       "source": "contracts/audit-events",
       "destination": "trnm-audit-events",
       "decision": "retain-portable-local-state-machine"

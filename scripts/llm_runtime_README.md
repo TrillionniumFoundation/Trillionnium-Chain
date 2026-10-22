@@ -243,6 +243,60 @@ owned wait4/resource requirements do not reset or change. The repair adds no
 profile/schema and does not reinterpret `1cabbb1`; a new frozen real-model
 execution still needs separate review and authorization.
 
+The separately frozen `9d9b2ac` full attempt remains FAIL. Both actual loaders
+passed; candidate training completed ten steps and saved the 933,544-byte LoRA
+artifact before exiting zero. Its supervisor refused `exit-worker-deadline`:
+the last complete frontier was at 97.655707ms and refusal at 100.772941ms from
+the original missing-RSS status sample. All 24 complete frontiers had a zombie
+leader and one running `PF_EXITING`, no-mm worker. That worker's thread pidfd
+was not polled while present; readiness is UNKNOWN. The failed call's complete
+frontier and cleanup's exact wait4 timestamp were not retained. Later four
+control-training and five evaluation stages did not run. No inference about
+timely wait4, installation or three-round completion follows from child exit0.
+
+The M14 controlled spawn slice is an internal optional keyword on this existing
+`supervise` owner, not a new CLI/profile or successful kernel-budget runtime.
+`build_controlled_native()` explicitly builds the tracked C source using the
+trusted local compiler; its actual output is copied to a write/grow/shrink/seal
+sealed memfd before dlopen. No caller hash/path DTO selects an arbitrary shared
+library. The capability binds the C, FFI, reused proc parser and runtime bytes;
+the repository source guard independently checks every tracked byte, including
+C. This is same-administrator toolchain/process scope, not hostile same-UID
+Python code or operating-system isolation. No runtime compilation/fallback is
+implicit in ordinary calls.
+
+Acquisition requires a live user-service InvocationID, that exact service's
+MainPID in its `supervisor` leaf, actual cgroup2 mount/held operation and ancestor
+FD identities, unchanged paths/inodes and limits. The empty direct-child
+operation has a finite 8GiB or 16GiB memory ceiling, 400% CPU, zero swap and
+256 tasks; the finite unit envelope is 16GiB. Tighter ancestors, reused FDs,
+same-name replacement, changed limits, changed sources and changed InvocationID
+refuse. The native function runs inside the original Python process and creates
+the actual child via `clone3(CLONE_INTO_CGROUP|CLONE_PIDFD)`. Its child executes
+only async-safe setup, waits for the owner's membership gate and execs; no
+Python child callback, external reaper or Popen fallback is permitted. Original
+wall ceilings, RSS checks, all 100ms profiles and exact owned wait4 remain.
+Only that owner's valid wait4 path may collect operation-empty/raw kernel
+counters. Tests of native invalid-FD refusal and real wait4 composition with a
+synthetic operation do not qualify actual native cgroup placement.
+
+Two earlier, separately identified capability cohorts remain FAIL. The first
+clone3 returned EACCES from the outside SSH scope. The second's delegated-service
+primitive actually created a birth-bound child, verified pre-exec membership,
+collected exact owned wait4 and removed its empty operation, but outer closure
+failed because systemd's ControlGroup was already empty after its main exited.
+Those facts neither qualify this new in-process source nor supply whole-unit
+empty/inode reconciliation. `memory.peak/events` measure cgroup charge, not
+physical RSS; shared-page ownership, escaping same-UID code, ancestor expenses,
+unit stop authorization and whole-envelope closure remain unqualified. Every
+explicit controlled spawn result therefore remains failed with outer
+reconciliation UNKNOWN and reservation RETAINED; no grant/refund, unit deletion,
+FinalUse, installation or I10 authority is supplied here. The root public 2GiB
+profile is unchanged. Ordinary inherited-runtime/neural-read callers observed
+at source `cc9b599` retain their existing supervise signature and do not supply
+this live capability. Their source-specific campaign outcomes do not qualify
+the new native path; this slice preserves the separate V2/V3/V4 dispatchers.
+
 `sampled_peak_rss_bytes` remains the direct-child sampling result.
 `waited_child_peak_rss_bytes` separately records that exact child's Linux `wait4`
 `ru_maxrss` in KiB times 1024. A quick exit can succeed without a sample only when

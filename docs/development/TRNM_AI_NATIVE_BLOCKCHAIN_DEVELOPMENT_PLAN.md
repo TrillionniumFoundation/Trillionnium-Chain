@@ -291,6 +291,47 @@ worker count, 100ms origin, resources, owned wait4 and post-reap capability
 checks do not change. No new profile/schema, successful pilot or PN3 acceptance
 is created by this repair; the retained `1cabbb1` outcome stays FAIL.
 
+The separately frozen `9d9b2ac` actual full attempt remains FAIL. Both loaders
+passed and the candidate completed ten training steps and saved a 933,544-byte
+LoRA, but supervision refused `exit-worker-deadline`. Twenty-four complete
+frontiers retained a zombie leader plus a running PF_EXITING/no-mm worker; the
+last completed at 97.655707ms and rejection at 100.772941ms from the original
+missing-RSS status sample. The present worker's thread-pidfd readiness, complete
+failed-call frontier and exact cleanup wait4 time are UNKNOWN. Later four
+control trains and five evaluations were NOT_RUN. This failure supplies no
+three-round, installation, I10 or beneficial-release acceptance.
+
+Within the same PN3/PN4 M14/M17 owner, the optional controlled kernel-spawn
+slice extends the original `_Wait4Child`, never an external parent DTO or a
+second supervisor. The tracked C helper makes the direct child with clone3
+INTO_CGROUP/PIDFD and an async-safe exec gate; the original Python owner alone
+does membership admission, signaling, exact wait4 and cleanup. M14's portability
+inventory now names its C/FFI sources. Internal explicit source compilation and
+sealed-memfd loading bind actual library bytes and all reused parsers; source
+guard checks C without extension exemptions. A typed live operation capability
+requires exact unit InvocationID/MainPID, supervisor membership, cgroup2 mount,
+operation/ancestor held-FD and name/inode identity, finite unchanged 8/16GiB,
+400%-CPU, zero-swap and 256-task limits and no tighter ancestor. There is no
+serialized grant, fallback, new CLI/profile, old-100ms relaxation or change to
+the public root 2GiB profile. Existing public/seen tasks remain usable for
+engineering, with only their observed dataset results reported.
+
+The first outside-subtree clone3 EACCES cohort and the later delegated-service
+cohort remain FAIL: the latter proved its own native birth-placement/pidfd/
+membership/wait4/operation-empty primitive, but lost the unit ControlGroup path
+before authoritative whole-unit reconciliation. Neither result qualifies this
+new source. Unit-stop InvocationID authority, escape/shared-page accounting,
+ancestor expenses, ordinary Hepta operation/FinalUse integration and complete
+outer closure remain open under existing PN3/PN4 owners. Raw cgroup charge is
+never RSS or released credit. Every new controlled result is deliberately
+failed pending outer reconciliation, with reservation RETAINED; no refund,
+installation or adoption authority is emitted. Local native refusal and
+synthetic-capability real wait4 tests are not model/cgroup qualification. The
+source `cc9b599` inherited-runtime and neural-read adapters use the unchanged
+ordinary supervise call and gain no kernel capability automatically; preserve
+their separate source-bound campaign evidence and V2/V3/V4 semantics when
+integrating this additive optional path.
+
 The optional scalar-credit freshness observation reads the original watermark
 and projects the original refill arithmetic without changing the clock, credit,
 owner or depletion predicate. Its added sampler contention and complete-path
