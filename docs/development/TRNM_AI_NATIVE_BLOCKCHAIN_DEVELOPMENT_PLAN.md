@@ -136,8 +136,9 @@ journal, status registry or successful receipt is created by these edits.
 - **P0 real-model acceptance:** actual pretrained encoder/model forward,
   training and post-install inference are measured through ordinary Hepta
   owners. Each of three cycles binds installed parent, candidate, independent
-  future window, controls, exact task/packet observation, required byte closure,
-  fresh generation and actual next use. Rejected/no-gain candidates keep the
+  future window, controls, exact task/packet observation, required byte closure
+  and actual next use. Adopted updates create a fresh generation; no-update
+  proves the unchanged generation/readback. Rejected/no-gain candidates keep the
   installed parent and earn no improvement reward. Three genuinely beneficial
   installed releases require their own prospective efficacy result.
 - **P0 work acceptance:** I01 correctness, effective-work assumptions and I02

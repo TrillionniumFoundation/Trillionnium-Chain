@@ -259,7 +259,7 @@ gate; completing only its P0 interface prerequisites cannot close that gate.
 | --- | --- | --- |
 | P0 / I06–I08, PN3 | M10/M11/M14 and Hepta artifact/evaluation/TaskFlow owners | Freeze the selected real-model profile, authorized export, exact task/release/parent bindings and local installation authority before network fetching can support an upgrade. Download success never closes this prerequisite. |
 | P1 / I09–I10, PN3 | M10 release owner -> M09 fetch/store -> existing Hepta safe loader | Deliver a versioned complete dependency closure and bounded request/result mapping, then demonstrate origin-loss retrieval, compatible safe installation and actual next-task readback for the three-cycle loop. |
-| P2 / I05/I09, PN4–PN5 | M09 retention/discovery with M12 funding, M14 service and M17 evidence | After the configured-peer real-loader path, qualify independently funded custody, renewal/repair and bounded discovery; storage acknowledgement requires reserved capacity rather than a cache marker. |
+| P1 / I05 PN4 funding; P2 / I09 PN5 public service | M09 retention/discovery with M12 funding, M14 service and M17 evidence | P1 establishes funded duties and reserved capacity before storage acknowledgement. After that and the configured-peer real-loader path, P2 qualifies independent custody, renewal/repair and bounded discovery; a cache marker cannot acknowledge a storage duty. |
 
 M10 and the existing Hepta release/artifact owner must define a bounded,
 versioned release manifest before M09 can retrieve a whole compatible model.
