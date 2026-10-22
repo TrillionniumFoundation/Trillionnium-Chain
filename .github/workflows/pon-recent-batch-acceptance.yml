@@ -64,7 +64,7 @@ jobs:
             args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_MERGE")
           fi
           python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$out/source.json"
-          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store.rs)" = 319c7a1c4764c048b123a02ce5e949171fc312a2
+          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store.rs)" = 73d205643eedf32893a118d56289c75c25743d68
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/history_page.rs)" = c8569bd62a9c374b03a8ffc0ad02c64b0365eee4
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/native_authenticated_tests.rs)" = fa9b0036b9f7092831ac6d73fc50fd8fe728865e
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs)" = b62f42051a0216eac5242f4c7141c4724f034634
@@ -79,7 +79,7 @@ jobs:
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs)" = 0b27b9fce9d77fed63f351c8a8e33b02a856ace1
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic.rs)" = 4ab2d3dcc08314da77066ca1941faedd15f938c9
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic/tests.rs)" = 13ecdb3e45ef78e5abcc34f4bf30af0312dd2f11
-          test "$(git hash-object trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs)" = e4467480872284b38101f9f2c7888ec9fafd0e4b
+          test "$(git hash-object trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs)" = 634ff4edb04694bb3de3807c1a859b2ed358a4ed
           bash scripts/project-preflight.sh --audit
       - name: Execute conditional query accounting and anytime-bound counterexamples
         shell: bash
