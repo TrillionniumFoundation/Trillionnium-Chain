@@ -14,6 +14,9 @@ use trnm_protocol::pon_wire::Hash;
 
 #[path = "native_node_decode.rs"]
 mod node_decode;
+#[path = "native_node_reader.rs"]
+mod node_reader;
+use node_reader::NodeReader;
 
 /// Exact mathematical inputs only. Every stored node is still read from SQL.
 /// Node decoding can reuse only the complete actual bytes and expected ID;
@@ -32,9 +35,6 @@ impl LiftCache {
         self.1.observation()
     }
 
-    fn load_node(&self, db: &Connection, id: Hash) -> super::Result<Node> {
-        super::load_node_decoded(db, id, |expected, bytes| self.1.decode(expected, bytes))
-    }
     pub(super) fn lift(&self, node: &Node, depth: usize) -> Hash {
         let key = (node.path, node.digest, node.depth, depth);
         if let Ok(entries) = self.0.try_borrow() {
@@ -363,9 +363,10 @@ pub(crate) fn verify_with_lifts(
 ) -> Result<()> {
     let empty = empty_hashes();
     let actual = super::accounts(state).map_err(storage)?;
+    let mut reader = NodeReader::new(db);
     let node = root
         .node
-        .map(|id| lifts.map_or_else(|| super::load_node(db, id), |cache| cache.load_node(db, id)))
+        .map(|id| reader.load(id, lifts))
         .transpose()
         .map_err(storage)?;
     crate::ensure(
@@ -400,8 +401,12 @@ pub(crate) fn verify_with_lifts(
                     .ok_or("NATIVE_ACCOUNT_BALANCE")?;
             }
             Kind::Fork { .. } => {
-                stack.push(child_with_lifts(db, &node, true, &empty, lifts).map_err(storage)?);
-                stack.push(child_with_lifts(db, &node, false, &empty, lifts).map_err(storage)?);
+                stack.push(
+                    child_with_lifts(&mut reader, &node, true, &empty, lifts).map_err(storage)?,
+                );
+                stack.push(
+                    child_with_lifts(&mut reader, &node, false, &empty, lifts).map_err(storage)?,
+                );
             }
         }
     }
@@ -413,15 +418,12 @@ pub(crate) fn verify_with_lifts(
 }
 
 fn child_with_lifts(
-    db: &Connection,
+    reader: &mut NodeReader<'_>,
     parent: &Node,
     right_side: bool,
     empty: &[Hash; 257],
     lifts: Option<&LiftCache>,
 ) -> super::Result<Node> {
-    let Some(lifts) = lifts else {
-        return super::child(db, parent, right_side, empty);
-    };
     let Kind::Fork {
         left,
         right,
@@ -433,11 +435,14 @@ fn child_with_lifts(
     };
     // Preserve the actual SQL read, exact-input decode, path/depth and parent
     // hash comparisons. Only arithmetic on the just-read bytes can be reused.
-    let out = lifts.load_node(db, if right_side { right } else { left })?;
+    let out = reader.load(if right_side { right } else { left }, lifts)?;
     if out.depth <= parent.depth
         || super::common(&out.path, &parent.path) < parent.depth
         || super::bit(&out.path, parent.depth) != right_side
-        || lifts.lift(&out, parent.depth + 1) != if right_side { right_hash } else { left_hash }
+        || lifts.map_or_else(
+            || out.lift(parent.depth + 1, empty),
+            |cache| cache.lift(&out, parent.depth + 1),
+        ) != if right_side { right_hash } else { left_hash }
     {
         return Err(ArchiveError::CorruptRecord);
     }

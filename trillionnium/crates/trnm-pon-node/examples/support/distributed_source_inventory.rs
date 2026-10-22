@@ -3207,6 +3207,20 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_node_reader.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_node_reader.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_node_reader_tests.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_node_reader_tests.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_primitive_tests.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
