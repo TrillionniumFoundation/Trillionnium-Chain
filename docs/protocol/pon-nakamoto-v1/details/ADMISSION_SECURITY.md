@@ -100,6 +100,52 @@ submission observations/27 confirmation rounds succeeded, but all six hostile
 phases lacked genuine paid depletion. A full supplemental saturation cohort
 and independent honest windows remain unexecuted by this test.
 
+### Fixed-seed ROOT supplemental cohort — code frozen, NOT_RUN
+
+The separate ignored selector
+`separate_process_root_rejection_and_signed_confirmation_supplement` reuses the
+same phase and actor owners for one 30-second baseline followed by one 30-second
+`valid-work-root` pressure phase. It retains the h4/1,024 signed seed and nonce
+1025 one-transaction body. Each of 24 actors independently prepares the selected
+generic producer, searches W1 on its own changed-root/header-nonce instance, checks
+the winner and replays its fixed body through fresh ordinary signed handshakes.
+All actual attempts and known positive acquisition/diagnostic costs are required.
+The original from-zero/late-product campaign, three runs and six hostile FAIL
+results remain separate and unchanged.
+
+The 480-call cap, t=1/5/9 signed business schedule, seven blocks per round,
+three independent-client confirmations at depth six, 2-second CPU burst,
+0.25-second/second refill and original strict credit <100 ms / paid debit >1.9 s
+depletion predicate remain. Each round needs exact-hostile-body receiver Work
+acceptance followed by Admission refusal with CPU progress, and at least one
+actual signature-verified client ROOT refusal wholly within that round. The
+observer has no error text; its Admission refusals are not all labeled ROOT.
+CPU-budget refusal, deadline/Unknown and overlapping-only calls cannot supply
+the ROOT response. Live observer snapshots are non-atomic; the ROOT evidence
+interval closes after the last snapshot and must remain inside the fixed phase.
+
+All 24 reports must complete without reaching the cap or forced kill. After
+service joins, reconcile the whole paid/settled/Submit-owner/service CPU domain;
+concurrent per-request paid deltas are not ownership evidence. One M06 worker
+requires known zero scoped CPU, not an invented zero for missing telemetry.
+All 24 distinct hostile packet IDs remain absent live and after cold reopen;
+the receiver/client must equal the producer's exact 21-business-block State and
+expected block/event counts. Cold reopen occurs after the window and contributes
+no timely confirmation.
+
+`scripts/run_pon_root_supplement.py prepare` freezes one clean source and a
+read-only release test binary without running that selector. `execute` requires
+the exact prepared-manifest SHA and binary, one new `trnm-pn1-root-*.service`
+systemd user service with aggregate CPUQuota=400%, CPUQuotaPeriodSec=100ms,
+MemoryMax=16G, Nice=10, KillMode=control-group and RuntimeMaxSec=600. Controller,
+verifier, actors and descendants share that service; actual limits and actor
+readiness membership are checked. An exclusive claim prevents rerunning the
+same prepared cohort after failure. Existing bounded-process/source/resource
+owners retain commands, streams, source/binary hashes and failed observations.
+Only component/guard tests and preparation are authorized for this increment:
+the supplemental pressure experiment is **NOT_RUN**, with no PN1, original
+campaign, hardness, independent-operator, WAN or production qualification.
+
 ## Implemented local capacity boundary
 
 `trnm-transport::proof_admission` allocates three public permits and one recovery permit,

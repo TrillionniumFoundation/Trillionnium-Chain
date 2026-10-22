@@ -148,6 +148,20 @@ real offered workload and independent honest window, retain the original
 front-door limits/budgets and account actual producer costs. Original three-run
 FAIL, work-profile qualification and activation flags remain unchanged.
 
+PN1 supplemental code now extends the same phase/actor owner with one separate
+valid-W1/false-root cohort: one 30-second baseline plus one 30-second pressure
+phase, 24 independent producer processes and the fixed h4/1,024 signed seed.
+Original caps, depletion arithmetic, t=1/5/9 schedule and three depth-six
+confirmations remain. Exact-body receiver Admission/CPU observations and wholly
+contained signature-verified client ROOT replies are separate requirements;
+global paid settlement, 24 complete actor reports and exact live/cold State
+readback are mandatory. The prepare/execute selector uses the existing source,
+resource and bounded-process owners and freezes a read-only binary before any
+single aggregate 400%/16-GiB user-service run. This slice is code/guard tests and
+preparation only: **NOT_RUN** for pressure, with original three-run/six-hostile
+FAIL, PN1/hardness and activation verdicts unchanged. See the existing
+[admission contract](../protocol/pon-nakamoto-v1/details/ADMISSION_SECURITY.md#fixed-seed-root-supplemental-cohort--code-frozen-not_run).
+
 The same source's [CodeQL check 119818040273](https://github.com/TrillionniumFoundation/Trillionnium-Chain/runs/119818040273)
 reports failure with thirteen high annotations. Independent disposition is
 required; the alert count is not thirteen independently confirmed exploits.
