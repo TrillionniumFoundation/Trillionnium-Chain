@@ -112,11 +112,9 @@ class _AggregateOperation:
     # Same native spawn, pre-exec membership gate, signal-safe owner handoff and
     # no-child-only descriptor closure. This is NOT a ControlledOperation subtype.
     spawn = kernel._ControlledOperation.spawn
-    _spawn_locked = kernel._ControlledOperation._spawn_locked
     allow_exec = kernel._ControlledOperation.allow_exec
     _allow_exec_locked = kernel._ControlledOperation._allow_exec_locked
     close = kernel._ControlledOperation.close
-    _close_locked = kernel._ControlledOperation._close_locked
     verify = kernel._ControlledOperation.verify
 
     def __init__(self, token, native, unit, invocation, operation, memory, controller, owner):
@@ -154,8 +152,9 @@ class _AggregateOperation:
         self.boot = Path('/proc/sys/kernel/random/boot_id').read_text()
         self.failed = self.consumed = self.closed = self.native_refused_without_child = False
         self.child = self.spawn_owner = self.fact = None
+        self.evidence_pipe = None  # One fixed strong IO owner, not a second manager.
         import ctypes
-        self._fd_owners = [(ctypes.c_int*4)(0, -1, -1, -1) for _ in range(16)]
+        self._fd_owners = [(ctypes.c_int*4)(0, -1, -1, -1) for _ in range(18)]
         self._close_required = kernel.KernelOwnedCloseRequired(self)
         native.operation = self  # Same fixed strong slot before any group FD opens.
         try:
@@ -191,6 +190,37 @@ class _AggregateOperation:
             try: self._close_locked(owner)
             except BaseException: raise self._close_required
             raise
+
+    def _close_locked(self, owner):
+        # The original gate precedes every IO check or descriptor mutation.
+        require(owner is self.owner, 'kernel-close-owner')
+        if not self.closed:
+            require(self.native.operation is self, 'kernel-native-operation-owner')
+            no_spawn = not self.consumed and self.spawn_owner is None
+            refused = (self.native_refused_without_child and self.spawn_owner is not None and
+                all(value == -1 for value in self.spawn_owner._kernel_handoff))
+            require(no_spawn or refused, 'kernel-outer-reconciliation-required')
+        pipe = getattr(self, 'evidence_pipe', None)
+        if pipe is not None:
+            from llm_runtime_evidence_pipe import _EvidencePipeOwner
+            require(type(pipe) is _EvidencePipeOwner and pipe.capability is self,
+                    'evidence-pipe-owner')
+            pipe._validate_slots_locked()
+        elif len(self._fd_owners) > 16:
+            require(len(self._fd_owners) == 18 and
+                tuple(self._fd_owners[16]) == tuple(self._fd_owners[17]) == (0,-1,-1,-1),
+                'evidence-pipe-unregistered-slots')
+        kernel._ControlledOperation._close_locked(self, owner)
+
+    def _spawn_locked(self, command, stdout, owner):
+        pipe = getattr(self, 'evidence_pipe', None)
+        if pipe is not None:
+            from llm_runtime_evidence_pipe import _EvidencePipeOwner
+            from llm_runtime_pilot import _Wait4Child
+            require(type(pipe) is _EvidencePipeOwner and stdout is pipe and
+                type(owner) is _Wait4Child and owner.kernel_operation is self, 'evidence-pipe-interface')
+            owner._evidence_pipe_owner = pipe  # Original child owner before native entry.
+        kernel._ControlledOperation._spawn_locked(self, command, stdout, owner)
 
     def _open(self, path, expected):
         require(len(self.nodes) < 16 and path.resolve() == path, 'aggregate-ancestor-bound')
@@ -257,6 +287,8 @@ class _AggregateOperation:
                     type(child.waited_cpu_ns) is int and child.waited_cpu_ns >= 0 and
                     type(child.returncode) is int,
                     'aggregate-exact-owned-wait4-required')
+                require(getattr(self, 'evidence_pipe', None) is None,
+                        'evidence-pipe-terminal-transport-not-integrated')
                 raw = _raw(self.nodes[0][1])
                 self._verify_locked()
                 require(raw == _raw(self.nodes[0][1]), 'aggregate-counter-snapshot-changed')

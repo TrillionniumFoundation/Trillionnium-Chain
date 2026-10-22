@@ -6,6 +6,7 @@
 #include <signal.h>
 #include <stdint.h>
 #include <sys/syscall.h>
+#include <sys/stat.h>
 #include <unistd.h>
 
 int trnm_kernel_spawn_v1(int group, int output, const char *exe,
@@ -70,4 +71,37 @@ int trnm_kernel_close_v1(int result[4], unsigned int mask) {
 int trnm_kernel_release_owned_v1(int owner[4]) {
     owner[0] = trnm_kernel_close_v1(owner, 2U);
     return owner[0];
+}
+
+/* Private evidence-pipe ABI1. Slots/identity/status belong to the original
+ * controller before entry; Python cannot lose output at a pending signal. */
+int trnm_kernel_evidence_pipe_v1(int read_owner[4], int write_owner[4],
+                               uint64_t identity[6], int *status) {
+    *status = 0;
+    if (read_owner == write_owner || read_owner[0] || write_owner[0] ||
+        read_owner[1] != -1 || write_owner[1] != -1) {
+        *status = EINVAL;
+        return *status;
+    }
+    int ends[2];
+    if (pipe2(ends, O_CLOEXEC | O_NONBLOCK) < 0) {
+        *status = errno;
+        return *status;
+    }
+    read_owner[1] = ends[0]; write_owner[1] = ends[1];
+    struct stat before[2];
+    if (ends[0] < 3 || ends[1] < 3) *status = EBADF;
+    else if (fstat(ends[0], &before[0]) || fstat(ends[1], &before[1])) *status = errno;
+    else if (!S_ISFIFO(before[0].st_mode) || !S_ISFIFO(before[1].st_mode)) *status = EINVAL;
+    if (*status) {
+        trnm_kernel_release_owned_v1(read_owner);
+        trnm_kernel_release_owned_v1(write_owner);
+        return *status;
+    }
+    for (int index = 0; index < 2; index++) {
+        identity[3*index] = (uint64_t)before[index].st_dev;
+        identity[3*index+1] = (uint64_t)before[index].st_ino;
+        identity[3*index+2] = (uint64_t)before[index].st_mode;
+    }
+    return 0;
 }

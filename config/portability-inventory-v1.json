@@ -614,6 +614,8 @@
         "scripts/llm_runtime_kernel_aggregate.py",
         "scripts/test_llm_runtime_kernel_aggregate.py",
         "scripts/test_llm_runtime_kernel_diagnostic.py",
+        "scripts/llm_runtime_evidence_pipe.py",
+        "scripts/test_llm_runtime_evidence_pipe.py",
         "scripts/ci/verify_ci_source.py"
       ],
       "scope": "Optional same-administrator CPython 3.12.3 native child birth placement under the existing Python wait4 owner; unsupported controlled ABI refuses before preparation. Explicit aggregate mechanics bind an external owner, finite controller leaf and unchanged 16GiB parent, but never authorize/delete/refund an operation. No public-profile activation, RSS equivalence, FinalUse settlement or model acceptance."

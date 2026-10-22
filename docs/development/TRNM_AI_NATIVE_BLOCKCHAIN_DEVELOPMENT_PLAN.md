@@ -611,6 +611,12 @@ cover MemoryError/KeyboardInterrupt. This is diagnostic evidence only. Prepared
 `7abd4172` stays NOT_RUN because A still writes log/JSON file pages; finite
 evidence transport remains a separate source change and does not guarantee zero
 charge or authorize operation release, Store/FinalUse use or a model.
+The private pipe ownership prelude retains the original16 ancestor slots plus
+two native-populated FIFO slots, with same-owner/nochild-or-actual-refusal gates,
+native identities/errno and actual source binding. Original C spawn text stays
+unchanged. Frame parsing, bounded drain and original supervise IO integration
+remain open; a registered pipe cannot yet create a terminal fact. Ordinary FD
+controls do not qualify a valid unit or prove that C-created pipe pages charge C.
 The next dependency remains the existing Hepta
 kernel.operations Store's CPU destination/independent FinalUse/terminal release
 protocol; this module adds no second manager or journal and no I10/model result.

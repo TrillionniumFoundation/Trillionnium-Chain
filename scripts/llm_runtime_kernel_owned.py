@@ -83,7 +83,8 @@ def _digest(raw):
 
 def _sources():
     return {p.name: _digest(_bytes(p)) for p in
-        (_C, Path(__file__), Path(proc.__file__), Path(__file__).with_name('llm_runtime_pilot.py'))}
+        (_C, Path(__file__), Path(proc.__file__), Path(__file__).with_name('llm_runtime_pilot.py'),
+         Path(__file__).with_name('llm_runtime_evidence_pipe.py'))}
 
 
 class _Native:
@@ -113,6 +114,10 @@ class _Native:
             self.release_owned = self.library.trnm_kernel_release_owned_v1
             self.release_owned.argtypes = [ctypes.POINTER(ctypes.c_int)]
             self.release_owned.restype = ctypes.c_int
+            self.prepare_pipe = self.library.trnm_kernel_evidence_pipe_v1
+            self.prepare_pipe.argtypes = [ctypes.POINTER(ctypes.c_int), ctypes.POINTER(ctypes.c_int),
+                ctypes.POINTER(ctypes.c_uint64), ctypes.POINTER(ctypes.c_int)]
+            self.prepare_pipe.restype = ctypes.c_int
         except BaseException:
             os.close(self.fd)
             raise

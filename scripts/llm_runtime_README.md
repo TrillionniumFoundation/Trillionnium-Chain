@@ -460,6 +460,23 @@ and JSON files, including `supervisor.json.partial`, which can retain page-cache
 charge. A finite evidence pipe is a separate pending source change; creating its
 FDs in C would not establish that A-written buffer pages are charged only to C.
 
+The private evidence-pipe ownership prelude adds two dedicated preallocated FD
+slots after the original sixteen ancestor slots and one fixed strong pipe owner
+on the same aggregate capability. The appended native pipe2 ABI writes both
+nonblocking/CLOEXEC endpoints, original FIFO identities and setup status before
+returning to Python; original C spawn/ACK/error functions are unchanged, while
+the full C/native binary identity changes. The new module enters actual native
+source binding and M14 inventory. Close first checks the original same-owner and
+no-child/actual-native-refusal gates, then all live signatures and sticky slot
+errno before mutation. Partial closure or reused FDs retain the original owner.
+`fileno()` checks the already-held count1 native guard without reentering it and
+requires the original concrete child binding. This prelude has no framing,
+bounded drain or stdout integration: a registered pipe explicitly refuses
+terminal fact creation until those reviewed paths exist. Ordinary FIFO tests
+include pending native-return faults, FD reuse, partial-close errno, real signal
+reentry and invalid-cgroup refusal. They create no valid group, prove no charge
+attribution/zero, and do not qualify a model, Store/FinalUse or resource release.
+
 The ordinary merge with source `8caf5387` preserves its inherited runtime,
 persistent neural-read worker and default reconciliation helpers, alongside the
 explicit V2–V4 paths and controlled native owner. Reconciliation metadata names
