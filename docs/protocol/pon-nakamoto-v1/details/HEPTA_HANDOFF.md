@@ -399,13 +399,15 @@ including a process restart/cold-load case. A selected update advances CURRENT
 through its existing owner; no-update records an unchanged parent/CURRENT and
 still executes that next task. Zero completed installs with unresolved required
 dependencies, zero unauthorized installs and zero repeated external effects
-are mandatory across
-the three cycles and all injected failures. Sustained-improvement acceptance
-separately requires
-at least three installed beneficial releases with independently held future
-outcomes under a preregistered gain/retention/safety rule and strong equal-budget
-controls. Three no-update cycles, ceiling scores, exploratory retraining or
-three signed fixture generations do not meet that efficacy condition.
+are mandatory across the three cycles and all injected failures. Three installed
+improvements on the declared tasks require three measured gains with actual
+installed-parent and next-task readbacks; public or previously seen tasks are
+valid inputs. No independent future-data custodian is required for that
+engineering result. A separate claim of sustained improvement on future tasks
+requires prospective outcomes under a preregistered gain/retention/safety rule
+and strong equal-budget controls. Three no-update cycles, ceiling scores,
+exploratory retraining or three signed fixture generations do not meet that
+future-task efficacy condition.
 
 Inject lost ACK, duplicate submission, expired authorization, wrong provider/
 output/packet, reorg before and after selection, withdrawal during fetch and
