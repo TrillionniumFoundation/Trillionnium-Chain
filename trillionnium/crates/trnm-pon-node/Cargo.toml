@@ -13,6 +13,8 @@ production_activation = false
 consensus_authority = false
 
 [dependencies]
+trnm-data-availability = { version = "=0.1.0", path = "../trnm-data-availability" }
+trnm-service-settlement = { version = "=0.1.0", path = "../trnm-service-settlement" }
 trnm-protocol = { version = "=0.1.0", path = "../trnm-protocol" }
 trnm-crypto-primitives = { version = "=0.1.0", path = "../trnm-crypto-primitives" }
 trnm-mvcc-fee = { version = "=0.1.0", path = "../trnm-mvcc-fee" }

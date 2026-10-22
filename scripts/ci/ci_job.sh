@@ -23,7 +23,10 @@ case "${1:?required job}" in
     # These in-memory counterexamples use unchanged retained inputs, not a new hardware observation.
     python3 scripts/ci/test_pon_w1_budget_readers.py --raw-dir evidence/pon-upgrade-implementation-20261018/native-rounds/chain-p0-native-54
     python3 scripts/ci/test_pon_public_v3_phase_read.py
+    python3 scripts/ci/test_pon_public_v3_policy_read.py
     python3 scripts/ci/test_run_pon_w1_native_campaign.py
+    python3 scripts/ci/test_pon_w1_cost_matrix_reader.py
+    python3 scripts/ci/test_llm_cell_handoff_deadline.py
     python3 scripts/ci/test_read_original_native_campaign.py \
       --artifact-dir evidence/pon-upgrade-implementation-20261018/native-rounds/chain-pr327-original-campaign-39694587963 \
       --expected-manifest-sha256 12406cc156e57c130fa14af2b50b386031ec3640ce7f0234ed5bc9f0a700aac3 \
@@ -61,6 +64,10 @@ case "${1:?required job}" in
     python3 scripts/test_llm_runtime_pilot.py
     python3 scripts/test_llm_parent_material.py
     python3 scripts/test_llm_runtime_parent_step.py
+    python3 scripts/test_llm_runtime_rss_owner.py
+    python3 scripts/test_llm_runtime_exit_observation.py
+    python3 scripts/test_llm_inherited_runtime.py
+    python3 scripts/test_llm_neural_read_worker.py
     python3 formal/pon-nakamoto-v1/test_reward_budget_oracle.py
     python3 formal/pon-nakamoto-v1/test_model_attribution.py
     python3 formal/pon-nakamoto-v1/test_model_evolution_oracle.py -v

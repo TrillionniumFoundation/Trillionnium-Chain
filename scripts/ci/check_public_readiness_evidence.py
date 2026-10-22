@@ -209,8 +209,9 @@ def native_durable_schema(root):
     """Extract the legacy evidence schema from one explicitly supported contract.
 
     Historical literal V1, inline composed V2 and the explicitly selected V2
-    backend are supported. Authenticated storage is a different evidence scope;
-    recognizing its selection must never append its tables to this legacy result.
+    backend are supported. Authenticated and permanent-account growth storage
+    are different evidence scopes; recognizing their exact backend mappings
+    must never append their tables or return their domains in this legacy result.
     This is not a Rust evaluator. Unknown bodies/literals fail closed. The shared
     Rust lexical mask excludes comment/string decoys without changing literals
     whose exact bytes are checked separately below.
@@ -261,7 +262,7 @@ def native_durable_schema(root):
     def legacy(ddl, domain):
         # Source binding does not authorize widening this evidence contract.
         # These tables have their own full-state/commitment/node verification.
-        require(not re.search(r'\b(?:archive_nodes|native_state_commitments)\b',ddl,re.I),
+        require(not re.search(r'\b(?:archive_nodes|native_state_commitments|growth_states)\b',ddl,re.I),
                 'authenticated tables in legacy durable schema')
         return ddl,domain
     code = rust_code(source)
@@ -274,13 +275,15 @@ def native_durable_schema(root):
         if re.search(r'\bStateBackend\b',code):
             # Select this branch first. A bad current mapping cannot fall back
             # to a historical inline hash elsewhere in the same source file.
-            layout(body(source,'enum','StateBackend'),'Legacy, AuthenticatedV1,', 'durable backend variants')
+            layout(body(source,'enum','StateBackend'),'Legacy, AuthenticatedV1, PermanentAccountGrowthV2,',
+                   'durable backend variants')
             implementation = body(source,'impl','StateBackend')
             layout(implementation, '''
                 fn ddl(self) -> String {
                     match self {
                         Self::Legacy => ddl(),
                         Self::AuthenticatedV1 => format!("{}{}", ddl(), native_authenticated::DDL),
+                        Self::PermanentAccountGrowthV2 => format!("{}{}", ddl(), growth::DDL),
                     }
                 }
                 fn selected_schema_id(self, settings: &Settings) -> Hash {
@@ -297,6 +300,7 @@ def native_durable_schema(root):
                     let domain: &[u8] = match self {
                         Self::Legacy => b"native-branch-schema-v2",
                         Self::AuthenticatedV1 => b"native-authenticated-branch-schema-v1",
+                        Self::PermanentAccountGrowthV2 => b"native-permanent-account-growth-schema-v2",
                     };
                     hash(domain, &[self.ddl().as_bytes()])
                 }
@@ -304,11 +308,14 @@ def native_durable_schema(root):
             backend_ddl = body(implementation,'fn','ddl')
             selected_domain = body(implementation,'fn','selected_schema_id')
             domain = body(implementation,'fn','schema_id')
-            require(value(backend_ddl,r'\bformat!\s*\(') == '{}{}', 'durable backend composition')
+            for variant in ('AuthenticatedV1', 'PermanentAccountGrowthV2'):
+                require(value(backend_ddl,r'\bSelf::'+variant+r'\s*=>\s*format!\s*\(') == '{}{}',
+                        'durable backend composition '+variant)
             require(value(selected_domain,r'\bhash\s*\(\s*b') == 'native-growth-reference-branch-schema-v2',
                     'durable growth schema domain')
             for variant, expected in [('Legacy','native-branch-schema-v2'),
-                                      ('AuthenticatedV1','native-authenticated-branch-schema-v1')]:
+                                      ('AuthenticatedV1','native-authenticated-branch-schema-v1'),
+                                      ('PermanentAccountGrowthV2','native-permanent-account-growth-schema-v2')]:
                 require(value(domain,r'\bSelf::'+variant+r'\s*=>\s*b') == expected,
                         'durable backend domain '+variant)
             node = body(source,'impl','Node')
@@ -418,7 +425,7 @@ def validate_durable_store(root, folder, summary, packets, roots, cumulative, st
         with sqlite3.connect(path.as_uri()+'?mode=ro&immutable=1',uri=True) as database:
             database.execute('PRAGMA trusted_schema=OFF')
             require(database.execute('PRAGMA integrity_check').fetchall() == [('ok',)], 'durable SQLite integrity')
-            schema = dict(database.execute("SELECT name,sql FROM sqlite_master WHERE name NOT LIKE 'sqlite_%'"))
+            schema = dict(database.execute("SELECT name,sql FROM sqlite_master WHERE name NOT GLOB 'sqlite_*'"))
             require(set(schema) == schema_names and {name:' '.join(sql.split()) for name,sql in schema.items()} == expected_sql, 'durable schema additions/omissions/changes')
             metadata = dict(database.execute('SELECT key,value FROM metadata'))
             require(metadata == {'schema':H(schema_domain,ddl.encode()),

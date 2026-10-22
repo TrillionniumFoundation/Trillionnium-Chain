@@ -4,6 +4,8 @@ pub(crate) mod authenticated_state;
 pub mod capacity_observation;
 pub mod evaluation_observation;
 pub mod evaluation_round_observation;
+mod funding;
+pub(crate) mod growth;
 pub mod growth_reference;
 mod historical_commitment;
 #[cfg(test)]
@@ -16,6 +18,7 @@ mod operator_continuous_owner;
 mod operator_mining_owner;
 #[cfg(test)]
 pub(crate) mod public_reader;
+pub mod storage_service;
 mod task_observation;
 use crate::{
     consensus::{self, Work},
@@ -434,6 +437,49 @@ impl WorkCheckedPacket {
             owner_permit: None,
         })
     }
+    /// The opt-in arithmetic owner supplies only exact mathematical facts.
+    /// Current proof claims are verified before this private packet is created.
+    /// No owner permit, task or execution authority is retained in that cache.
+    pub(crate) fn verify_with_arithmetic_facts(
+        packet: Packet,
+        facts: &pon_work::arithmetic_facts::ArithmeticFactCache,
+        progress: &mut impl FnMut(pon_work::VerificationProgress) -> Result<()>,
+        observation: &mut pon_work::arithmetic_facts::ArithmeticObservation,
+    ) -> Result<Self> {
+        let h = &packet.header;
+        let work = facts
+            .verify_with_observation(
+                h.challenge(),
+                h.work_task,
+                h.target,
+                &packet.proof,
+                progress,
+                observation,
+            )
+            .map_err(|error| match error {
+                pon_work::arithmetic_facts::FactError::Relation(error) => {
+                    Error::from(format!("WORK:{error:?}"))
+                }
+                pon_work::arithmetic_facts::FactError::Cancelled(error) => error,
+                pon_work::arithmetic_facts::FactError::Unavailable => {
+                    Error::from("WORK_ARITHMETIC_FACTS_UNAVAILABLE")
+                }
+            })?;
+        Ok(Self {
+            packet,
+            work,
+            owner_permit: None,
+        })
+    }
+    /// Exact, domain-separated identity of the private fully verified packet.
+    /// This is only a local scheduling key; it confers no admission, task or
+    /// payment authority. Canonical transaction/proof bytes are all committed.
+    pub(crate) fn completion_identity(&self) -> Result<Hash> {
+        Ok(hash(
+            b"public-v3-complete-work-identity-v1",
+            &[&self.packet.encode()?],
+        ))
+    }
     pub(crate) fn verify(packet: Packet) -> Result<Self> {
         let h = &packet.header;
         let work = pon_work::verify(h.challenge(), h.work_task, h.target, &packet.proof)
@@ -543,6 +589,7 @@ pub struct Node {
     settings: Settings,
     workers: usize,
     state_backend: StateBackend,
+    growth_epoch: Option<growth::Epoch>,
     #[cfg(test)]
     // Research reader's immutable source DDL, never a cached on-disk verdict.
     expected_schema: BTreeMap<String, String>,
@@ -579,12 +626,14 @@ pub struct Node {
 enum StateBackend {
     Legacy,
     AuthenticatedV1,
+    PermanentAccountGrowthV2,
 }
 impl StateBackend {
     fn ddl(self) -> String {
         match self {
             Self::Legacy => ddl(),
             Self::AuthenticatedV1 => format!("{}{}", ddl(), native_authenticated::DDL),
+            Self::PermanentAccountGrowthV2 => format!("{}{}", ddl(), growth::DDL),
         }
     }
     fn selected_schema_id(self, settings: &Settings) -> Hash {
@@ -601,6 +650,7 @@ impl StateBackend {
         let domain: &[u8] = match self {
             Self::Legacy => b"native-branch-schema-v2",
             Self::AuthenticatedV1 => b"native-authenticated-branch-schema-v1",
+            Self::PermanentAccountGrowthV2 => b"native-permanent-account-growth-schema-v2",
         };
         hash(domain, &[self.ddl().as_bytes()])
     }
@@ -945,6 +995,11 @@ impl Node {
             !authenticated_migration_pending(path)?,
             "NATIVE_STATE_MIGRATION_PENDING",
         )?;
+        ensure(
+            settings.is_permanent_account_growth_v2()
+                == (state_backend == StateBackend::PermanentAccountGrowthV2),
+            "GROWTH_PROFILE_BACKEND",
+        )?;
         let NativeOwners {
             policy: owner_policy,
             mining: mining_owner,
@@ -1126,23 +1181,32 @@ impl Node {
                 params![
                     settings.genesis.as_slice(),
                     [0u8; 64].as_slice(),
-                    settings.state_root(&settings.initial)?.as_slice()
+                    if state_backend == StateBackend::PermanentAccountGrowthV2 {
+                        growth::initial_root(&settings)?
+                    } else {
+                        settings.state_root(&settings.initial)?
+                    }
+                    .as_slice()
                 ],
             )?;
             tx.execute(
                 "INSERT INTO active VALUES(1,?,0,0)",
                 [settings.genesis.as_slice()],
             )?;
-            for (key, value) in &settings.initial {
+            if state_backend != StateBackend::PermanentAccountGrowthV2 {
+                for (key, value) in &settings.initial {
+                    tx.execute(
+                        "INSERT INTO kv VALUES(0,?,?)",
+                        params![key, canonical(value)?],
+                    )?;
+                }
                 tx.execute(
-                    "INSERT INTO kv VALUES(0,?,?)",
-                    params![key, canonical(value)?],
+                    "INSERT INTO snapshots VALUES(?,?)",
+                    params![settings.genesis.as_slice(), canonical(&settings.initial)?],
                 )?;
+            } else {
+                growth::seed(&tx, &settings)?;
             }
-            tx.execute(
-                "INSERT INTO snapshots VALUES(?,?)",
-                params![settings.genesis.as_slice(), canonical(&settings.initial)?],
-            )?;
             if state_backend == StateBackend::AuthenticatedV1 {
                 native_authenticated::seed(&tx, &settings)?;
             }
@@ -1163,6 +1227,7 @@ impl Node {
             settings,
             workers,
             state_backend,
+            growth_epoch: None,
             #[cfg(test)]
             expected_schema,
             #[cfg(test)]
@@ -1182,6 +1247,15 @@ impl Node {
             public_service_epoch_listeners: 0,
             public_service_epoch_unknown: false,
         };
+        if node.state_backend == StateBackend::PermanentAccountGrowthV2 {
+            // Complete-State reference budget records cannot be silently ignored
+            // by this backend. Validate/refuse them before any growth recovery.
+            node.validate_native_budget_records_v1()?;
+            node.growth_cold_open()?;
+            // Settings retain the immutable genesis input for exact reopen. Hot
+            // execution never clones this bootstrap State or the full account set.
+            return Ok(node);
+        }
         node.read_active()?;
         if node.state_backend == StateBackend::AuthenticatedV1 {
             native_authenticated::verify_history_with_cache(
@@ -1896,6 +1970,7 @@ impl Node {
     }
     /// Check actual data after the last transactional write. A post-COMMIT
     /// observation cannot repair a suppressed write or a trigger-corrupted slot.
+    #[cfg(test)]
     fn check_active_before_commit(&self) -> Result<()> {
         self.check_active_before_commit_with_progress(&mut || Ok(()))
     }
@@ -1964,6 +2039,13 @@ impl Node {
         Ok((bytes32(tip)?, g))
     }
     pub fn next_nonce(&self, sender: Hash) -> Result<u64> {
+        if self.state_backend == StateBackend::PermanentAccountGrowthV2 {
+            return self
+                .growth_account(self.active()?.0, sender)?
+                .map_or(0, |a| a.nonce)
+                .checked_add(1)
+                .ok_or_else(|| "NONCE_OVERFLOW".into());
+        }
         let state = self.state_at(self.active()?.0)?;
         next_nonce_from_state(&state, sender)
     }
@@ -2321,6 +2403,10 @@ impl Node {
         Ok(prepared)
     }
     pub fn read_active(&self) -> Result<(Hash, u64, State)> {
+        ensure(
+            self.state_backend != StateBackend::PermanentAccountGrowthV2,
+            "GROWTH_COMPLETE_STATE_UNAVAILABLE",
+        )?;
         self.read_active_with_progress(&mut || Ok(()))
     }
     /// Rechecks actual KV bytes and root, with cancellation at most 256 rows apart.
@@ -2329,6 +2415,10 @@ impl Node {
         &self,
         progress: &mut dyn FnMut() -> Result<()>,
     ) -> Result<(Hash, u64, State)> {
+        ensure(
+            self.state_backend != StateBackend::PermanentAccountGrowthV2,
+            "GROWTH_COMPLETE_STATE_UNAVAILABLE",
+        )?;
         let _measurement = (self.state_backend == StateBackend::AuthenticatedV1).then(|| {
             self.authenticated_arithmetic
                 .history
@@ -2621,6 +2711,10 @@ impl Node {
         tip: Hash,
         progress: &mut dyn FnMut() -> Result<()>,
     ) -> Result<State> {
+        ensure(
+            self.state_backend != StateBackend::PermanentAccountGrowthV2,
+            "GROWTH_COMPLETE_STATE_UNAVAILABLE",
+        )?;
         let _measurement = (self.state_backend == StateBackend::AuthenticatedV1).then(|| {
             self.authenticated_arithmetic
                 .history
@@ -2744,6 +2838,9 @@ impl Node {
         Ok(out)
     }
     pub fn expected_target(&self, parent: Hash) -> Result<Hash> {
+        if self.state_backend == StateBackend::PermanentAccountGrowthV2 {
+            return self.growth_expected_target(parent);
+        }
         let height = self.record(parent)?.height.checked_add(1).ok_or("HEIGHT")?;
         let recent = self.recent(parent)?;
         let interval = self.settings.limit("retarget_interval")?;
@@ -2763,6 +2860,52 @@ impl Node {
             self.settings.limit("target_spacing_seconds")?,
             self.settings.target("pow_limit_hex")?,
         )
+    }
+    /// A cancelled controlled activation may have committed only part of its
+    /// existing reorg intent. Permit only the exact already-admitted intent
+    /// target to reach the original controlled activation/recovery checks.
+    /// Every other request retains ready()'s REORG_IN_PROGRESS refusal.
+    pub(crate) fn pending_exact_activation_replay(
+        &self,
+        packet: &Packet,
+        observed_now: u64,
+        progress: &mut dyn FnMut() -> Result<()>,
+    ) -> Result<Option<Hash>> {
+        progress()?;
+        self.namespace()?;
+        let pending: Option<Vec<u8>> = self
+            .db
+            .query_row(
+                "SELECT new_tip FROM reorg WHERE singleton=1 AND done=0",
+                [],
+                |row| fixed_blob::<32>(row, 0),
+            )
+            .optional()
+            .map_err(|error| Error::from(error).local_integrity())?;
+        let Some(pending) = pending else {
+            return Ok(None);
+        };
+        let id = packet.id()?;
+        if pending.as_slice() != id.as_slice() {
+            return Ok(None);
+        }
+        self.precheck_owner_packet(packet)?;
+        let h = &packet.header;
+        ensure(
+            h.network == self.settings.network() && h.parameters == self.settings.parameters(),
+            "NETWORK",
+        )?;
+        ensure(
+            self.packet(id).map_err(Error::local_integrity)?.encode()? == packet.encode()?,
+            "DUPLICATE_CONTENT",
+        )?;
+        ensure(
+            h.timestamp as u128
+                <= observed_now as u128 + self.settings.limit("future_skew_seconds")? as u128,
+            "TIME_DEFERRED",
+        )?;
+        progress()?;
+        Ok(Some(id))
     }
     pub(crate) fn check_admission_context(
         &self,
@@ -2928,6 +3071,10 @@ impl Node {
         self.admit_work_checked(checked, observed_now)
     }
     fn precheck_owner_packet(&self, packet: &Packet) -> Result<()> {
+        ensure(
+            self.state_backend != StateBackend::PermanentAccountGrowthV2,
+            "GROWTH_PACKET_REQUIRED",
+        )?;
         self.continuous_packet_gate(packet)?;
         self.mining_packet_gate(packet)?;
         if let Some(owner) = &self.owner_policy {
@@ -4165,19 +4312,38 @@ impl Node {
         self.activate_observed(id, observed_now)?;
         Ok(packet)
     }
+    // Reference-budget and other local callers retain their no-cancellation
+    // contract; all original transactional validation remains shared.
     fn atomic<T>(&self, run: impl FnOnce() -> Result<T>) -> Result<T> {
+        self.atomic_with_progress(&mut || Ok(()), |_| run())
+    }
+    fn atomic_with_progress<T>(
+        &self,
+        progress: &mut dyn FnMut() -> Result<()>,
+        run: impl FnOnce(&mut dyn FnMut() -> Result<()>) -> Result<T>,
+    ) -> Result<T> {
+        progress()?;
         let tx = rusqlite::Transaction::new_unchecked(
             &self.db,
             rusqlite::TransactionBehavior::Immediate,
         )?;
-        let result = run()?;
-        self.check_active_before_commit()?;
+        let result = run(progress)?;
+        self.check_active_before_commit_with_progress(progress)?;
         self.continuous_scope_checkpoint()?;
         self.mining_scope_checkpoint()?;
+        progress()?;
         tx.commit()?;
+        // No cancellation after COMMIT: the durable result is already factual.
         Ok(result)
     }
-    fn apply_delta(&self, id: Hash, slot: u64, detach: bool) -> Result<()> {
+    fn apply_delta_with_progress(
+        &self,
+        id: Hash,
+        slot: u64,
+        detach: bool,
+        progress: &mut dyn FnMut() -> Result<()>,
+    ) -> Result<()> {
+        progress()?;
         let mut read = self
             .db
             .prepare_cached("SELECT value FROM kv WHERE slot=? AND key=?")?;
@@ -4187,7 +4353,8 @@ impl Node {
         let mut delete = self
             .db
             .prepare_cached("DELETE FROM kv WHERE slot=? AND key=?")?;
-        for (key, before, after) in self.delta_rows(id)? {
+        for (key, before, after) in self.delta_rows_with_progress(id, progress)? {
+            progress()?;
             let (expected, new) = if detach {
                 (after, before)
             } else {
@@ -4211,17 +4378,34 @@ impl Node {
         Ok(())
     }
     pub fn activate(&mut self, target: Hash) -> Result<Hash> {
+        if self.state_backend == StateBackend::PermanentAccountGrowthV2 {
+            return self.growth_activate(target);
+        }
         self.activate_with_fault(target, None)
     }
     pub fn activate_with_fault(
         &mut self,
         target: Hash,
-        mut hook: Option<&mut Hook<'_>>,
+        hook: Option<&mut Hook<'_>>,
     ) -> Result<Hash> {
+        self.activate_with_fault_and_progress(target, hook, &mut || Ok(()))
+    }
+    fn activate_with_fault_and_progress(
+        &mut self,
+        target: Hash,
+        mut hook: Option<&mut Hook<'_>>,
+        progress: &mut dyn FnMut() -> Result<()>,
+    ) -> Result<Hash> {
+        progress()?;
+        if self.state_backend == StateBackend::PermanentAccountGrowthV2 {
+            ensure(hook.is_none(), "GROWTH_USE_PROGRESS_HOOK")?;
+            let progress = RefCell::new(progress);
+            return self.growth_activate_with_progress(target, &|_| (progress.borrow_mut())());
+        }
         self.continuous_activation_gate(target)?;
         self.mining_activation_gate(target)?;
         self.namespace()?;
-        self.resume_intent(&mut hook)?;
+        self.resume_intent_with_progress(&mut hook, progress)?;
         let (old, g) = self.active()?;
         if self.record(target)?.work <= self.record(old)?.work {
             return Ok(old);
@@ -4232,18 +4416,22 @@ impl Node {
             .ok_or("GENERATION")?;
         if self.record(target)?.parent == Some(old) && hook.is_none() {
             let slot = self.slot()?;
+            progress()?;
             let prior = self.cached_parent(old)?;
+            progress()?;
             let mut staged = None;
-            self.atomic(|| {
-                self.apply_delta(target, slot, false)?;
-                let state = self.slot_state(slot)?;
+            self.atomic_with_progress(progress, |progress| {
+                self.apply_delta_with_progress(target, slot, false, progress)?;
+                let state = self.slot_state_with_progress(slot, progress)?;
                 continuity_v1::check_state(&state, self.record(target)?.height, &self.settings.app)
                     .map_err(|error| Error::from(error).local_integrity())?;
+                progress()?;
                 staged = Some(self.checked_commitment(
                     &state,
                     self.record(target)?.root,
                     prior.as_ref(),
                 )?);
+                progress()?;
                 ensure(
                     self.db.execute(
                         "UPDATE active SET tip=?,generation=? WHERE singleton=1",
@@ -4265,7 +4453,7 @@ impl Node {
                     "GENERATION",
                 )
                 .map_err(Error::local_integrity)?;
-                self.check_events(next, &[(0, 1, target)])?;
+                self.check_events_with_progress(next, &[(0, 1, target)], progress)?;
                 Ok(())
             })?;
             ensure(
@@ -4279,7 +4467,7 @@ impl Node {
         // Reorganizations retain the independent full-root path and reseed only
         // after actual durable publication/recovery, never from a stale preview.
         self.invalidate_commitment();
-        self.atomic(|| {
+        self.atomic_with_progress(progress, |progress| {
             self.db.execute("DELETE FROM kv WHERE slot=?", [next])?;
             self.db.execute(
                 "INSERT INTO kv SELECT ?,key,value FROM kv WHERE slot=?",
@@ -4291,6 +4479,7 @@ impl Node {
             let mut detached = 0i64;
             let mut attached = 0i64;
             while left != right {
+                progress()?;
                 if self.record(left)?.height >= self.record(right)?.height {
                     self.db.execute(
                         "INSERT INTO steps VALUES(?,0,?)",
@@ -4317,50 +4506,75 @@ impl Node {
                 params![old.as_slice(), target.as_slice(), next],
             )?;
             ensure(
-                self.active()? == (old, g) && self.check_steps(old, target, 0)? == count as u64,
+                self.active()? == (old, g)
+                    && self.check_steps_with_progress(old, target, 0, progress)? == count as u64,
                 "REORG_STEPS",
             )
             .map_err(Error::local_integrity)?;
             self.check_reorg_row(old, target, next, 0, 0)?;
-            self.check_persisted_state(old, &self.slot_state(next)?, &mut || Ok(()))?;
+            self.check_persisted_state(
+                old,
+                &self.slot_state_with_progress(next, progress)?,
+                progress,
+            )?;
             Ok(())
         })?;
         cut(&mut hook, "intent")?;
-        self.resume_intent(&mut hook)
+        self.resume_intent_with_progress(&mut hook, progress)
     }
     fn check_steps(&self, old: Hash, target: Hash, cursor: u64) -> Result<u64> {
+        self.check_steps_with_progress(old, target, cursor, &mut || Ok(()))
+    }
+    fn check_steps_with_progress(
+        &self,
+        old: Hash,
+        target: Hash,
+        cursor: u64,
+        progress: &mut dyn FnMut() -> Result<()>,
+    ) -> Result<u64> {
+        progress()?;
         let mut stmt = self
             .db
-            .prepare("SELECT ordinal,kind,block FROM steps ORDER BY ordinal")?;
-        let rows = stmt.query_map([], |r| {
-            Ok((
-                r.get::<_, u64>(0)?,
-                r.get::<_, u64>(1)?,
-                r.get::<_, Vec<u8>>(2)?,
-            ))
-        })?;
+            .prepare("SELECT ordinal,kind,block FROM steps ORDER BY ordinal")
+            .map_err(|error| Error::from(error).local_integrity())?;
+        let rows = stmt
+            .query_map([], |r| {
+                Ok((
+                    r.get::<_, u64>(0)?,
+                    r.get::<_, u64>(1)?,
+                    r.get::<_, Vec<u8>>(2)?,
+                ))
+            })
+            .map_err(|error| Error::from(error).local_integrity())?;
         let mut current = old;
         let mut count = 0u64;
         let mut attaching = false;
         for row in rows {
-            let (ordinal, kind, bytes) = row?;
-            let id = bytes32(bytes)?;
+            progress()?;
+            let (ordinal, kind, bytes) =
+                row.map_err(|error| Error::from(error).local_integrity())?;
+            let id = bytes32(bytes).map_err(Error::local_integrity)?;
             ensure(ordinal == count, "REORG_STEPS").map_err(Error::local_integrity)?;
             match kind {
                 0 => {
                     ensure(!attaching && id == current, "REORG_STEPS")
                         .map_err(Error::local_integrity)?;
-                    current = self.parent(id)?;
+                    current = self.parent(id).map_err(Error::local_integrity)?;
                 }
                 1 => {
                     attaching = true;
-                    ensure(self.parent(id)? == current, "REORG_STEPS")
-                        .map_err(Error::local_integrity)?;
+                    ensure(
+                        self.parent(id).map_err(Error::local_integrity)? == current,
+                        "REORG_STEPS",
+                    )
+                    .map_err(Error::local_integrity)?;
                     current = id;
                 }
                 _ => return Err(Error::from("REORG_STEPS").local_integrity()),
             }
-            count = count.checked_add(1).ok_or("ANCESTRY_LIMIT")?;
+            count = count
+                .checked_add(1)
+                .ok_or_else(|| Error::from("ANCESTRY_LIMIT").local_integrity())?;
         }
         ensure(current == target && cursor <= count, "REORG_STEPS")
             .map_err(Error::local_integrity)?;
@@ -4393,21 +4607,47 @@ impl Node {
         )
         .map_err(Error::local_integrity)
     }
-    fn check_events(&self, generation: u64, expected: &[(u64, u64, Hash)]) -> Result<()> {
-        let rows: Vec<(u64, u64, Vec<u8>)> = self
+    fn check_events_with_progress(
+        &self,
+        generation: u64,
+        expected: &[(u64, u64, Hash)],
+        progress: &mut dyn FnMut() -> Result<()>,
+    ) -> Result<()> {
+        progress()?;
+        let mut statement = self
             .db
-            .prepare("SELECT ordinal,kind,block FROM events WHERE generation=? ORDER BY ordinal")?
-            .query_map([generation], |row| {
-                Ok((row.get(0)?, row.get(1)?, row.get(2)?))
-            })?
-            .collect::<std::result::Result<_, _>>()?;
-        let expected: Vec<_> = expected
-            .iter()
-            .map(|(ordinal, kind, id)| (*ordinal, *kind, id.to_vec()))
-            .collect();
-        ensure(rows == expected, "REORG_EVENTS").map_err(Error::local_integrity)
+            .prepare("SELECT ordinal,kind,block FROM events WHERE generation=? ORDER BY ordinal")?;
+        let rows = statement.query_map([generation], |row| {
+            Ok((
+                row.get::<_, u64>(0)?,
+                row.get::<_, u64>(1)?,
+                row.get::<_, Vec<u8>>(2)?,
+            ))
+        })?;
+        let mut count = 0usize;
+        for row in rows {
+            progress()?;
+            let (ordinal, kind, id) = row?;
+            ensure(
+                expected.get(count).is_some_and(|want| {
+                    want.0 == ordinal && want.1 == kind && want.2.as_slice() == id.as_slice()
+                }),
+                "REORG_EVENTS",
+            )
+            .map_err(Error::local_integrity)?;
+            count += 1;
+        }
+        ensure(count == expected.len(), "REORG_EVENTS").map_err(Error::local_integrity)
     }
     fn resume_intent(&mut self, hook: &mut Option<&mut Hook<'_>>) -> Result<Hash> {
+        self.resume_intent_with_progress(hook, &mut || Ok(()))
+    }
+    fn resume_intent_with_progress(
+        &mut self,
+        hook: &mut Option<&mut Hook<'_>>,
+        progress: &mut dyn FnMut() -> Result<()>,
+    ) -> Result<Hash> {
+        progress()?;
         let row = self
             .db
             .query_row(
@@ -4436,18 +4676,19 @@ impl Node {
         let target = bytes32(target)?;
         ensure(g > 0 && self.active()? == (old, g - 1), "GENERATION")
             .map_err(Error::local_integrity)?;
-        let count = self
-            .check_steps(old, target, position)
-            .map_err(Error::local_integrity)?;
+        // Control errors are not local-integrity failures. Only malformed
+        // retained rows are classified by the checking functions themselves.
+        let count = self.check_steps_with_progress(old, target, position, progress)?;
         for index in position..count {
+            progress()?;
             let (kind, bytes) = self.db.query_row(
                 "SELECT kind,block FROM steps WHERE ordinal=?",
                 [index],
                 |r| Ok((r.get::<_, u64>(0)?, r.get::<_, Vec<u8>>(1)?)),
             )?;
             let id = bytes32(bytes)?;
-            self.atomic(|| {
-                self.apply_delta(id, g, kind == 0)?;
+            self.atomic_with_progress(progress, |progress| {
+                self.apply_delta_with_progress(id, g, kind == 0, progress)?;
                 ensure(
                     self.db
                         .execute("UPDATE reorg SET cursor=? WHERE singleton=1", [index + 1])?
@@ -4457,7 +4698,11 @@ impl Node {
                 .map_err(Error::local_integrity)?;
                 self.check_reorg_row(old, target, g, index + 1, 0)?;
                 let resulting = if kind == 0 { self.parent(id)? } else { id };
-                self.check_persisted_state(resulting, &self.slot_state(g)?, &mut || Ok(()))?;
+                self.check_persisted_state(
+                    resulting,
+                    &self.slot_state_with_progress(g, progress)?,
+                    progress,
+                )?;
                 Ok(())
             })?;
             cut(
@@ -4465,7 +4710,8 @@ impl Node {
                 &format!("{}:{index}", if kind == 0 { "detach" } else { "attach" }),
             )?;
         }
-        let state = self.slot_state(g)?;
+        let state = self.slot_state_with_progress(g, progress)?;
+        progress()?;
         continuity_v1::check_state(&state, self.record(target)?.height, &self.settings.app)
             .map_err(|error| Error::from(error).local_integrity())?;
         ensure(
@@ -4473,8 +4719,9 @@ impl Node {
             "ROOT",
         )
         .map_err(Error::local_integrity)?;
+        progress()?;
         cut(hook, "before-publish")?;
-        self.atomic(|| {
+        self.atomic_with_progress(progress, |progress| {
             let expected: Vec<(u64, u64, Hash)> = self
                 .db
                 .prepare("SELECT ordinal,kind,block FROM steps ORDER BY ordinal")?
@@ -4486,6 +4733,7 @@ impl Node {
                     ))
                 })?
                 .map(|row| {
+                    progress()?;
                     let (ordinal, kind, id) = row?;
                     Ok((ordinal, kind, bytes32(id)?))
                 })
@@ -4520,14 +4768,21 @@ impl Node {
             )
             .map_err(Error::local_integrity)?;
             self.check_reorg_row(old, target, g, count, 1)?;
-            self.check_events(g, &expected)?;
-            self.check_persisted_state(target, &self.slot_state(g)?, &mut || Ok(()))?;
+            self.check_events_with_progress(g, &expected, progress)?;
+            self.check_persisted_state(
+                target,
+                &self.slot_state_with_progress(g, progress)?,
+                progress,
+            )?;
             Ok(())
         })?;
         cut(hook, "published")?;
         Ok(target)
     }
     pub fn recover(&mut self) -> Result<Hash> {
+        if self.state_backend == StateBackend::PermanentAccountGrowthV2 {
+            return self.growth_recover();
+        }
         if let Some(tip) = self.continuous_recovery_unchanged()? {
             return Ok(tip);
         }
@@ -4545,16 +4800,39 @@ impl Node {
         self.activate(bytes32(best)?)
     }
     pub fn check_observed_history(&self, tip: Hash, observed_now: u64) -> Result<()> {
+        self.check_observed_history_with_progress(tip, observed_now, &mut || Ok(()))
+    }
+    fn check_observed_history_with_progress(
+        &self,
+        tip: Hash,
+        observed_now: u64,
+        progress: &mut dyn FnMut() -> Result<()>,
+    ) -> Result<()> {
+        progress()?;
         let bound = observed_now as u128 + self.settings.limit("future_skew_seconds")? as u128;
         let mut current = tip;
         while current != self.settings.genesis() {
+            progress()?;
             (current, _) = self.visit_header_batch(current, &mut |_, link| {
+                progress()?;
                 ensure(link.header.timestamp as u128 <= bound, "TIME_DEFERRED")
             })?;
         }
-        Ok(())
+        progress()
     }
     pub fn activate_observed(&mut self, tip: Hash, observed_now: u64) -> Result<Hash> {
+        self.activate_observed_with_progress(tip, observed_now, &mut || Ok(()))
+    }
+    /// Cooperative existing-packet recovery keeps all original time, owner,
+    /// State and journal validation. SQL/root primitives remain indivisible;
+    /// cancellation before a commit rolls back only that uncommitted step.
+    pub(crate) fn activate_observed_with_progress(
+        &mut self,
+        tip: Hash,
+        observed_now: u64,
+        progress: &mut dyn FnMut() -> Result<()>,
+    ) -> Result<Hash> {
+        progress()?;
         let _measurement = (self.state_backend == StateBackend::AuthenticatedV1).then(|| {
             self.authenticated_arithmetic
                 .history
@@ -4562,8 +4840,8 @@ impl Node {
         });
         self.continuous_activation_gate(tip)?;
         self.mining_activation_gate(tip)?;
-        self.check_observed_history(tip, observed_now)?;
-        self.activate(tip)
+        self.check_observed_history_with_progress(tip, observed_now, progress)?;
+        self.activate_with_fault_and_progress(tip, None, progress)
     }
     pub fn confirmation(
         &self,

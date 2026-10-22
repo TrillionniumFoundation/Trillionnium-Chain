@@ -58,6 +58,55 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
     def test_actual_lane_preserves_quorum_reference_and_retained_vector_checks(self):
         check_independent_conformance(self.script, self.lanes)
 
+    def test_current_readers_and_runtime_controls_cannot_be_missing_duplicated_stubbed_or_moved(self):
+        # Independent inventory: removing a required command from the checker
+        # must not silently remove that command's negative coverage as well.
+        paths = (
+            'scripts/ci/test_pon_w1_cost_matrix_reader.py',
+            'scripts/ci/test_pon_public_v3_policy_read.py',
+            'scripts/ci/test_llm_cell_handoff_deadline.py',
+            'scripts/test_llm_runtime_rss_owner.py',
+            'scripts/test_llm_runtime_exit_observation.py',
+            'scripts/test_llm_inherited_runtime.py',
+            'scripts/test_llm_neural_read_worker.py',
+        )
+        for path in paths:
+            command = '    python3 ' + path + '\n'
+            self.assertEqual(self.script.count(command), 1)
+            changes = {
+                'missing': self.script.replace(command, ''),
+                'duplicate': self.script.replace(command, command * 2),
+                'true stub': self.script.replace(command, command.replace('python3 ', 'true # python3 ')),
+                'comment': self.script.replace(command, '    # ' + command.lstrip()),
+                'wrong lane': self.script.replace(command, '').replace('  fuzz-smoke)\n', '  fuzz-smoke)\n' + command),
+                'other-lane duplicate': self.script.replace('  fuzz-smoke)\n', '  fuzz-smoke)\n  ' + command.lstrip()),
+            }
+            for label, changed in changes.items():
+                with self.subTest(path=path, change=label), self.assertRaises(ValueError):
+                    check_independent_conformance(changed, self.lanes)
+
+    def test_current_runtime_controls_must_follow_pilot_and_parent_material(self):
+        parent = '    python3 scripts/test_llm_parent_material.py\n'
+        for path in ('scripts/test_llm_runtime_rss_owner.py',
+                     'scripts/test_llm_runtime_exit_observation.py',
+                     'scripts/test_llm_inherited_runtime.py',
+                     'scripts/test_llm_neural_read_worker.py'):
+            command = '    python3 ' + path + '\n'
+            early = self.script.replace(command, '').replace(parent, command + parent)
+            with self.subTest(path=path), self.assertRaisesRegex(ValueError, 'runtime owner'):
+                check_independent_conformance(early, self.lanes)
+
+    def test_current_runtime_controls_cannot_split_parent_material_and_parent_step(self):
+        parent_step = '    python3 scripts/test_llm_runtime_parent_step.py\n'
+        for path in ('scripts/test_llm_runtime_rss_owner.py',
+                     'scripts/test_llm_runtime_exit_observation.py',
+                     'scripts/test_llm_inherited_runtime.py',
+                     'scripts/test_llm_neural_read_worker.py'):
+            command = '    python3 ' + path + '\n'
+            early = self.script.replace(command, '').replace(parent_step, command + parent_step)
+            with self.subTest(path=path), self.assertRaisesRegex(ValueError, 'runtime owner'):
+                check_independent_conformance(early, self.lanes)
+
     def test_gsc2_synthetic_reader_cannot_be_removed_duplicated_commented_or_moved(self):
         for replacement in ['', GSC2_SYNTHETIC_ORACLE * 2,
                             '    # ' + GSC2_SYNTHETIC_ORACLE.lstrip(),

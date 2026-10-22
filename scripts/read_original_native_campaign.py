@@ -477,12 +477,20 @@ def phase(value):
             'retained_phase_readback': summary}
 
 
-def read_campaign(root, expected_manifest_sha256, expected_head, expected_tree, *, retained_subset=False):
+def read_campaign(root, expected_manifest_sha256, expected_head, expected_tree, *,
+                  retained_subset=False, expected_public_policy_id=None):
     exact_digest(expected_head, 40)
     exact_digest(expected_tree, 40)
+    if expected_public_policy_id is not None:
+        exact_digest(expected_public_policy_id)
     bundle = (SubsetBundle if retained_subset else Bundle)(root, expected_manifest_sha256)
     try:
         result = bundle.json('results.json')
+        recorded_policy_pin = result.get('expected_public_policy_id')
+        if recorded_policy_pin is not None:
+            exact_digest(recorded_policy_pin)
+            require(expected_public_policy_id is None or recorded_policy_pin == expected_public_policy_id,
+                    'campaign public policy pin conflicts with requested pin')
         if retained_subset:
             retention = bundle.retention
             require(retention['source'] == {'head': expected_head, 'tree': expected_tree}
@@ -544,6 +552,7 @@ def read_campaign(root, expected_manifest_sha256, expected_head, expected_tree, 
         attempts = result['attempts']
         require([integer(row['number']) for row in attempts] == [1, 2, 3], 'three original complete runs required')
         runs = []
+        resource_policies = []
         for attempt in attempts:
             name = 'run-' + str(attempt['number'])
             require(attempt == bundle.json(name + '-result.json')
@@ -559,6 +568,15 @@ def read_campaign(root, expected_manifest_sha256, expected_head, expected_tree, 
             report_name = name + '-raw/report.json'
             require(attempt['report_sha256'] == bundle.files[report_name]['sha256'], 'report hash mismatch')
             report = bundle.json(report_name)
+            observed_policy = None
+            if 'public_resource_policy' in report:
+                observed_policy = phase_reader.identify_observation(report['public_resource_policy'])
+            policy_pin = expected_public_policy_id or recorded_policy_pin
+            if policy_pin is not None:
+                require(observed_policy is not None
+                        and observed_policy['policy_id'] == policy_pin,
+                        'explicit pinned public resource policy required')
+            resource_policies.append(observed_policy)
             prep = report['preparation']
             require(report['schema'] == 'native-public-v3-separate-process-campaign-v2'
                     and report['state_backend'] == prep['state_backend'] == 'authenticated-v1'
@@ -574,7 +592,7 @@ def read_campaign(root, expected_manifest_sha256, expected_head, expected_tree, 
             phases = [phase(row) for row in report['phases']]
             retained = bundle.json(name + '-phase-readback.json')
             readback_input = retained.pop('input')
-            require(retained == phase_reader.analyze(report)
+            require(retained == phase_reader.analyze_for_retained_schema(report, retained.get('schema'))
                     and readback_input['sha256'] == attempt['report_sha256']
                     and readback_input['bytes'] == bundle.files[report_name]['bytes']
                     and PurePosixPath(readback_input['report']).parts[-2:] == (name + '-raw', 'report.json'),
@@ -587,9 +605,11 @@ def read_campaign(root, expected_manifest_sha256, expected_head, expected_tree, 
             runs.append({'number': attempt['number'], 'elapsed_ns': attempt['step']['elapsed_ns'], 'phases': phases})
         require(result['complete_success'] is True and result['failure'] is None
                 and result['finalization_failures'] == [], 'failed campaign remains failed')
+        require(all(row == resource_policies[0] for row in resource_policies),
+                'signed public resource policy changed or missing across runs')
         hostile = [p for row in runs for p in row['phases'] if p['mode'] != 'baseline']
         overlap = sum(p['depletion_overlapping_rounds'] for p in hostile)
-        return {'schema': 'pon-original-native-campaign-readback-v1',
+        readback = {'schema': 'pon-original-native-campaign-readback-v1',
                 'measured_head': expected_head, 'measured_tree': expected_tree,
                 'artifact_manifest_sha256': bundle.manifest_sha256,
                 'coverage': bundle.coverage, 'original_manifest_file_count': len(bundle.files),
@@ -614,6 +634,9 @@ def read_campaign(root, expected_manifest_sha256, expected_head, expected_tree, 
                     'independent_operators_qualified': False, 'cryptographic_hardness_qualified': False,
                     'model_benefit_measured': False, 'production_activation': False,
                     'sustainable_business_tps': None, 'unknown_is_not_zero': True}}
+        if resource_policies[0] is not None:
+            readback['public_resource_policy'] = resource_policies[0]
+        return readback
     finally:
         bundle.close()
 
@@ -624,12 +647,15 @@ def main():
     parser.add_argument('--expected-manifest-sha256', required=True)
     parser.add_argument('--expected-head', required=True)
     parser.add_argument('--expected-tree', required=True)
+    parser.add_argument('--expected-public-policy-id',
+                        help='Require explicit matching policy metadata in all original runs')
     parser.add_argument('--retained-subset', action='store_true',
                         help='Require retention.json and verify only its explicitly retained original files')
     args = parser.parse_args()
     try:
         value = read_campaign(args.artifact_dir, args.expected_manifest_sha256,
-                              args.expected_head, args.expected_tree, retained_subset=args.retained_subset)
+                              args.expected_head, args.expected_tree, retained_subset=args.retained_subset,
+                              expected_public_policy_id=args.expected_public_policy_id)
     except (OSError, ValueError, KeyError, TypeError, IndexError) as error:
         parser.exit(1, 'campaign readback refused: ' + str(error) + '\n')
     print(json.dumps(value, indent=2, sort_keys=True, allow_nan=False))

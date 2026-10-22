@@ -16,6 +16,9 @@ use super::{
 
 const APPLICATION_ID: i64 = 0x5443_4c31;
 static OUTPUT_SEQUENCE: AtomicU64 = AtomicU64::new(0);
+// One short FULL transaction retains at most 32 MiB of already received bytes.
+// The caller must collect the batch before taking the SQLite writer lock.
+pub(super) const MAX_CHUNK_COMMIT_BATCH: usize = 8;
 
 /// One release owner's finite verification reservation. Shared chunks count
 /// once per member reference because full payload verification reads them again.
@@ -131,6 +134,38 @@ impl CellStoreV1 {
              ON CONFLICT(hash) DO UPDATE SET bytes = excluded.bytes",
             params![expected.sha256.as_slice(), bytes],
         )?;
+        Ok(())
+    }
+
+    pub(super) fn put_chunk_batch(&self, chunks: &[(&CellChunkV1, &[u8])]) -> CellResultV1<()> {
+        require(
+            !chunks.is_empty() && chunks.len() <= MAX_CHUNK_COMMIT_BATCH,
+            "chunk commit batch bound",
+        )?;
+        // Reject a malformed member before changing even the first cache row.
+        // Per-chunk lengths also bound this batch by 8 * MAX_CHUNK_BYTES.
+        for (expected, bytes) in chunks {
+            verify_chunk(expected, bytes)?;
+        }
+        let transaction = rusqlite::Transaction::new_unchecked(
+            &self.connection,
+            rusqlite::TransactionBehavior::Immediate,
+        )?;
+        {
+            let mut statement = transaction.prepare_cached(
+                "INSERT INTO cell_chunks_v1(hash, bytes) VALUES (?1, ?2)
+                 ON CONFLICT(hash) DO UPDATE SET bytes = excluded.bytes",
+            )?;
+            for (expected, bytes) in chunks {
+                require(
+                    statement.execute(params![expected.sha256.as_slice(), bytes])? == 1,
+                    "cache chunk write",
+                )?;
+            }
+        }
+        // synchronous=FULL is unchanged. No network operation or wait occurs
+        // inside this transaction; a failure rolls back this batch only.
+        transaction.commit()?;
         Ok(())
     }
 
@@ -351,7 +386,10 @@ impl CellStoreV1 {
             let bytes = self
                 .chunk(expected.sha256)?
                 .ok_or(CellErrorV1::Unavailable)?;
-            verify_chunk(expected, &bytes)?;
+            // chunk() just hashed these actual bytes against expected.sha256.
+            // Retain the manifest's length relation and the ordered payload
+            // hash without hashing the same immutable buffer a second time.
+            verify_chunk_length(expected, &bytes)?;
             full.update(&bytes);
             total += bytes.len() as u64;
             writer.write_all(&bytes)?;
@@ -365,14 +403,18 @@ impl CellStoreV1 {
 }
 
 pub(super) fn verify_chunk(expected: &CellChunkV1, bytes: &[u8]) -> CellResultV1<()> {
+    verify_chunk_length(expected, bytes)?;
+    require(
+        <[u8; 32]>::from(Sha256::digest(bytes)) == expected.sha256,
+        "chunk digest",
+    )
+}
+
+pub(super) fn verify_chunk_length(expected: &CellChunkV1, bytes: &[u8]) -> CellResultV1<()> {
     require(
         expected.size > 0
             && expected.size <= MAX_CHUNK_BYTES
             && bytes.len() == expected.size as usize,
         "chunk length",
-    )?;
-    require(
-        <[u8; 32]>::from(Sha256::digest(bytes)) == expected.sha256,
-        "chunk digest",
     )
 }

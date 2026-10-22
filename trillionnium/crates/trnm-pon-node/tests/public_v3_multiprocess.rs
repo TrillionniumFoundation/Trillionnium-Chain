@@ -34,6 +34,59 @@ const ATTACKERS: usize = 24;
 const CALL_CAP: usize = 480;
 const ROUNDS: usize = 3;
 
+#[derive(Clone, Copy)]
+struct CampaignConfiguration {
+    state_backend: StateBackendChoice,
+    work_profile: support::WorkProfile,
+}
+impl CampaignConfiguration {
+    fn new(
+        state_backend: StateBackendChoice,
+        work_profile: support::WorkProfile,
+    ) -> Result<Self, &'static str> {
+        if work_profile == support::WorkProfile::ArithmeticFactsV1
+            && !matches!(state_backend, StateBackendChoice::AuthenticatedV1)
+        {
+            return Err("ARITHMETIC_CAMPAIGN_REQUIRES_AUTHENTICATED_V1");
+        }
+        Ok(Self {
+            state_backend,
+            work_profile,
+        })
+    }
+}
+
+fn campaign_server(work_profile: support::WorkProfile) -> (PublicServer, Option<Value>) {
+    let server = PublicServer::new(support::identity(71), support::policy()).unwrap();
+    if work_profile == support::WorkProfile::RawR13 {
+        assert_eq!(server.resource_profile(), support::policy().id());
+        assert!(server.arithmetic_facts_software_bytes().is_none());
+        return (server, None);
+    }
+    let started = Instant::now();
+    let cpu = support::cpu();
+    // One new empty arithmetic owner per phase, before any service request.
+    // Setup is also included in the existing receiver/verifier setup interval.
+    let server = server.with_arithmetic_facts().unwrap();
+    let setup_cpu_ns = support::elapsed_cpu(cpu);
+    let setup_wall_ns = started.elapsed().as_nanos();
+    assert_eq!(
+        server.resource_profile(),
+        support::policy().arithmetic_facts_id()
+    );
+    let software_bytes = server.arithmetic_facts_software_bytes().unwrap();
+    let observation = json!({
+        "schema":"public-v3-campaign-arithmetic-owner-v1",
+        "initial_state":"fresh-empty-by-construction",
+        "slots":pon_work::arithmetic_facts::MAX_ARITHMETIC_FACT_SLOTS,
+        "retained_software_bytes":software_bytes,
+        "setup_cpu_ns":setup_cpu_ns,"setup_wall_ns":setup_wall_ns,
+        "scope":"one explicit server-local owner; setup nested in phase setup, not guest CPU; retained software objects, not RSS; every request's actual CPU remains paid",
+        "adversarial_key_churn_service_qualified":false,
+    });
+    (server, Some(observation))
+}
+
 struct ClientOperationStamp {
     started_ns: u64,
     started: Instant,
@@ -221,7 +274,7 @@ fn paid_depletion(
         "separately_observed_public_settled_cpu_ns":metrics.mutation_cpu_charged_ns,
         "observed_terminal_mutation_cpu_refusals":metrics.mutation_cpu_refusals,
         "meter":meter,"clock_failures":metrics.mutation_cpu_clock_failures,
-        "domain_cpu_scope":"original metered owner plus joined scoped-worker CPU; excludes reactor authentication/response, queue waiting and separate process clocks",
+        "domain_cpu_scope":"paid-envelope-v3 body digest/canonical decode, native dispatch and signed response owner CPU plus joined scoped-worker CPU; exact scheduling revision is bound by public_resource_policy; excludes reactor authentication/socket I/O, queue waiting and separate process clocks",
         "balance_identity_has_work_or_execution_authority":false,
         "scope":"optional exact actual paid-credit identity; old threshold unchanged; terminal refusals separate because original FIFO waits for refill; no physical cost lower bound"})
 }
@@ -453,6 +506,8 @@ fn cost_actor(job: &Value) -> Value {
 fn attack_actor(job: &Value, directory: &Path) -> Value {
     let process_cpu = support::cpu();
     let entire = Instant::now();
+    let work_profile = support::WorkProfile::from_actor_job(job)
+        .expect("exact explicit actor profile, or the original raw job");
     let template = header(job);
     let mode = job["mode"].as_str().unwrap();
     let acquisition_started = Instant::now();
@@ -537,7 +592,7 @@ fn attack_actor(job: &Value, directory: &Path) -> Value {
     let worker = job["worker"].as_u64().unwrap() as usize;
     while support::monotonic() < end && calls.len() < CALL_CAP {
         let who = 80 + ((worker * 37 + calls.len()) % 150) as u8;
-        calls.push(support::call(
+        calls.push(support::call_with_work_profile(
             address,
             &settings,
             Request::Submit {
@@ -546,13 +601,16 @@ fn attack_actor(job: &Value, directory: &Path) -> Value {
             who,
             epoch,
             end,
+            work_profile,
         ));
     }
-    json!({"pid":std::process::id(),"worker":worker,"mode":mode,"acquisition":acquisition,
+    let mut result = json!({"pid":std::process::id(),"worker":worker,"mode":mode,"acquisition":acquisition,
         "calls":calls,"attempt_cap_reached":calls.len()==CALL_CAP,
         "traffic_cpu_ns":support::elapsed_cpu(traffic_cpu),"traffic_wall_ns":traffic_started.elapsed().as_nanos(),
         "entire_actor_cpu_ns":support::elapsed_cpu(process_cpu),"entire_actor_wall_ns":entire.elapsed().as_nanos(),
-        "rss":support::rss(),"identity_scope":"development keys controlled by this experiment; rotating keys are not independent operators"})
+        "rss":support::rss(),"identity_scope":"development keys controlled by this experiment; rotating keys are not independent operators"});
+    work_profile.bind_actor_job(&mut result);
+    result
 }
 
 #[test]
@@ -602,8 +660,12 @@ fn phase(
     business: &[Packet],
     mode: Option<&str>,
     method: usize,
-    state_backend: StateBackendChoice,
+    configuration: CampaignConfiguration,
 ) -> Value {
+    let CampaignConfiguration {
+        state_backend,
+        work_profile,
+    } = configuration;
     fs::create_dir(path).unwrap();
     let whole_started = Instant::now();
     let whole_cpu = support::cpu();
@@ -633,7 +695,7 @@ fn phase(
     let metrics = Arc::new(Mutex::new(public_v3::PublicMetrics::default()));
     let live_metrics = metrics.clone();
     let observer = public_v3::PublicRequestObserver::new(16_384).unwrap();
-    let server = PublicServer::new(support::identity(71), support::policy()).unwrap();
+    let (server, arithmetic_owner) = campaign_server(work_profile);
     let domain = server.mutation_cpu_domain();
     let initial_meter = domain.observe().unwrap();
     let (shared, signal, capture) = (owner.clone(), stop.clone(), observer.clone());
@@ -661,9 +723,14 @@ fn phase(
         for worker in 0..ATTACKERS {
             let mut template = business[0].header.clone();
             template.nonce = 2_000_000 + worker as u64 * 10_000;
-            actors.push(Actor::spawn(&path.join(format!("attacker-{worker:02}")),json!({"kind":"attack","mode":mode,"method":method,
+            let mut job = json!({"kind":"attack","mode":mode,"method":method,
             "worker":worker,"address":address.to_string(),"header":hex::encode(template.encode()),
-            "transactions":business[0].transactions.iter().map(hex::encode).collect::<Vec<_>>(),"start_marker":marker})));
+            "transactions":business[0].transactions.iter().map(hex::encode).collect::<Vec<_>>(),"start_marker":marker});
+            work_profile.bind_actor_job(&mut job);
+            actors.push(Actor::spawn(
+                &path.join(format!("attacker-{worker:02}")),
+                job,
+            ));
         }
     }
     let readiness_end = Instant::now() + Duration::from_secs(180);
@@ -749,7 +816,7 @@ fn phase(
             let hostile_before = hostile_work(&observer, &hostile_digests);
             let final_index = (round + 1) * 7;
             while next < final_index && support::monotonic() < end && submissions.len() < 128 {
-                let mut row = support::call(
+                let mut row = support::call_with_work_profile(
                     address,
                     settings,
                     Request::Submit {
@@ -758,6 +825,7 @@ fn phase(
                     73,
                     epoch,
                     end,
+                    work_profile,
                 );
                 row["packet_index"] = json!(next);
                 row["height"] = json!(business[next].header.height);
@@ -771,7 +839,7 @@ fn phase(
             let transaction = hash(b"tx-id", &[&business[round * 7].transactions[0]]);
             let mut observation = None;
             while next == final_index && support::monotonic() < end && history.len() < 64 {
-                let mut row = support::call(
+                let mut row = support::call_with_work_profile(
                     address,
                     settings,
                     Request::History {
@@ -781,6 +849,7 @@ fn phase(
                     74,
                     epoch,
                     end,
+                    work_profile,
                 );
                 if support::on_time(&row) {
                     let import_stamp = ClientOperationStamp::start(epoch);
@@ -972,6 +1041,12 @@ fn phase(
         "receiver_client_state_equal":actual.0==checked.0&&actual.2==checked.2,
         "initial_tip":hex::encode(initial.0),"final_receiver_tip":hex::encode(actual.0),"final_client_tip":hex::encode(checked.0),
         "whole_parent_phase_cpu_ns":support::elapsed_cpu(whole_cpu),"whole_parent_phase_wall_ns":whole_started.elapsed().as_nanos(),"rss":support::rss()});
+    report["public_resource_policy"] = work_profile.policy_observation();
+    if let Some(arithmetic_owner) = arithmetic_owner {
+        report["work_profile"] = json!("arithmetic-facts-v1");
+        report["work_arithmetic_owner"] = arithmetic_owner;
+    }
+    report["completion_work_observation"] = json!(domain.observe_completion_work().ok());
     report["client_native_history_arithmetic_before"] = client_native_history_before;
     report["client_native_history_arithmetic_after"] = client_native_history_after;
     report["client_observation_scope"] = json!("bounded by the original 64 history calls; import includes complete-page activation, confirmation is separate; native snapshots exclude setup and final read_active; nested costs are not additive");
@@ -979,29 +1054,144 @@ fn phase(
 }
 
 #[test]
+fn arithmetic_campaign_profile_binding_preserves_raw_and_rejects_partial_actor_jobs() {
+    use support::WorkProfile::{ArithmeticFactsV1, RawR13};
+    let original = json!({"kind":"attack","mode":"from-zero","worker":0});
+    let original_bytes = serde_json::to_vec(&original).unwrap();
+    let mut raw = original.clone();
+    RawR13.bind_actor_job(&mut raw);
+    assert_eq!(serde_json::to_vec(&raw).unwrap(), original_bytes);
+    assert_eq!(support::WorkProfile::from_actor_job(&raw), Ok(RawR13));
+    assert_eq!(RawR13.policy_observation(), support::policy_observation());
+    assert_eq!(
+        RawR13.policy_observation()["policy_id"],
+        "c110c3ccb1e229c3a85f4819b1e087fa819c865b50f8bd3ab78d3b8f45206cb2"
+    );
+    let mut opt_in = original;
+    ArithmeticFactsV1.bind_actor_job(&mut opt_in);
+    assert_eq!(
+        support::WorkProfile::from_actor_job(&opt_in),
+        Ok(ArithmeticFactsV1)
+    );
+    assert_eq!(
+        opt_in["public_resource_policy"]["policy_id"],
+        "14ada27ef062b1e510b7d7ab470e83157e58e7752b8f27a754f64dac614146e3"
+    );
+    let mut malformed = Vec::new();
+    for key in ["work_profile", "public_resource_policy"] {
+        let mut missing = opt_in.clone();
+        missing.as_object_mut().unwrap().remove(key);
+        malformed.push(missing);
+        let mut null = opt_in.clone();
+        null[key] = Value::Null;
+        malformed.push(null);
+    }
+    let mut unknown = opt_in.clone();
+    unknown["work_profile"] = json!("raw-r13");
+    malformed.push(unknown);
+    let mut wrong_policy = opt_in.clone();
+    wrong_policy["public_resource_policy"] = RawR13.policy_observation();
+    malformed.push(wrong_policy);
+    let mut wrong_bits = opt_in.clone();
+    wrong_bits["public_resource_policy"]["ticket_bits"] = json!(7);
+    malformed.push(wrong_bits);
+    let mut extra_policy_field = opt_in;
+    extra_policy_field["public_resource_policy"]["ignore_profile"] = json!(true);
+    malformed.push(extra_policy_field);
+    for job in malformed {
+        assert_eq!(
+            support::WorkProfile::from_actor_job(&job),
+            Err("MULTIPROCESS_WORK_PROFILE")
+        );
+    }
+}
+
+#[test]
+fn arithmetic_campaign_configuration_requires_the_original_measured_backend() {
+    use support::WorkProfile::{ArithmeticFactsV1, RawR13};
+    for backend in [
+        StateBackendChoice::LegacyV2,
+        StateBackendChoice::AuthenticatedV1,
+    ] {
+        let raw = CampaignConfiguration::new(backend, RawR13).unwrap();
+        assert_eq!(raw.state_backend.label(), backend.label());
+        assert_eq!(raw.work_profile, RawR13);
+    }
+    assert!(matches!(
+        CampaignConfiguration::new(StateBackendChoice::LegacyV2, ArithmeticFactsV1),
+        Err("ARITHMETIC_CAMPAIGN_REQUIRES_AUTHENTICATED_V1")
+    ));
+    let opt_in =
+        CampaignConfiguration::new(StateBackendChoice::AuthenticatedV1, ArithmeticFactsV1).unwrap();
+    assert_eq!(opt_in.state_backend.label(), "authenticated-v1");
+    assert_eq!(opt_in.work_profile, ArithmeticFactsV1);
+}
+
+#[test]
+fn arithmetic_campaign_server_routing_does_not_change_cpu_capacity() {
+    let (raw, no_arithmetic) = campaign_server(support::WorkProfile::RawR13);
+    let (opt_in, arithmetic) = campaign_server(support::WorkProfile::ArithmeticFactsV1);
+    assert!(no_arithmetic.is_none());
+    assert!(raw.arithmetic_facts_software_bytes().is_none());
+    assert_ne!(raw.resource_profile(), opt_in.resource_profile());
+    let arithmetic = arithmetic.unwrap();
+    assert_eq!(arithmetic["slots"], 64);
+    assert_eq!(arithmetic["initial_state"], "fresh-empty-by-construction");
+    assert_eq!(arithmetic["adversarial_key_churn_service_qualified"], false);
+    let charged = opt_in.arithmetic_facts_software_bytes().unwrap();
+    assert_eq!(arithmetic["retained_software_bytes"], json!(charged));
+    assert!(
+        charged > 0 && charged <= pon_work::arithmetic_facts::MAX_ARITHMETIC_FACT_SOFTWARE_BYTES
+    );
+    for server in [&raw, &opt_in] {
+        let meter = server.mutation_cpu_domain().observe().unwrap();
+        assert_eq!(meter.burst_ns, 2_000_000_000);
+        assert_eq!(meter.refill_ns_per_second, 250_000_000);
+        assert_eq!(meter.start_reserve_ns, 100_000_000);
+        assert_eq!(meter.worker_limit, 2);
+        assert_eq!(meter.stored_credit_ns, 2_000_000_000);
+        assert_eq!(meter.in_flight, 0);
+    }
+}
+
+#[test]
 #[ignore = "explicit finite 3x30 second separate-process local campaign and producer cost; see retained report"]
 fn separate_process_work_and_signed_confirmation_campaign() {
+    run_campaign(support::WorkProfile::RawR13);
+}
+
+#[test]
+#[ignore = "explicit arithmetic-facts profile; same original finite 3x30 second workload, CPU and confirmation criteria; no r13 or arbitrary-key qualification"]
+fn separate_process_arithmetic_facts_and_signed_confirmation_campaign() {
+    run_campaign(support::WorkProfile::ArithmeticFactsV1);
+}
+
+fn run_campaign(work_profile: support::WorkProfile) {
     let state_backend = StateBackendChoice::from_environment();
+    let configuration = CampaignConfiguration::new(state_backend, work_profile).unwrap();
     let output = PathBuf::from(
         std::env::var_os("TRNM_MULTIPROCESS_REPORT_DIR").expect("explicit new report directory"),
     );
     fs::create_dir(&output).unwrap();
-    let outcome = std::panic::catch_unwind(|| campaign(&output, state_backend));
+    let outcome = std::panic::catch_unwind(|| campaign(&output, configuration));
     if let Err(error) = outcome {
         let message = error
             .downcast_ref::<String>()
             .cloned()
             .or_else(|| error.downcast_ref::<&str>().map(|s| s.to_string()))
             .unwrap_or_else(|| "non-string panic".to_owned());
-        support::write_new(
-            &output.join("campaign-failure.json"),
-            &json!({"error":message,"state_backend":state_backend.label(),"production_candidate":false,"release_ready":false,
-            "scope":"actual finite experiment failure; independently retained stage and child files remain evidence"}),
-        );
+        let mut failure = json!({"error":message,"state_backend":state_backend.label(),"production_candidate":false,"release_ready":false,
+            "scope":"actual finite experiment failure; independently retained stage and child files remain evidence"});
+        work_profile.bind_actor_job(&mut failure);
+        support::write_new(&output.join("campaign-failure.json"), &failure);
         panic!("campaign failed; retained {}", output.display());
     }
 }
-fn campaign(output: &Path, state_backend: StateBackendChoice) {
+fn campaign(output: &Path, configuration: CampaignConfiguration) {
+    let CampaignConfiguration {
+        state_backend,
+        work_profile,
+    } = configuration;
     eprintln!("P0 native campaign: honest 1024 signed transfers and 21 business blocks");
     let settings = support::settings();
     let preparation_started = Instant::now();
@@ -1173,9 +1363,14 @@ fn campaign(output: &Path, state_backend: StateBackendChoice) {
             mode.unwrap_or("baseline"),
             if mode.is_some() { ATTACKERS } else { 0 }
         );
-        let result=std::panic::catch_unwind(||phase(&output.join(mode.unwrap_or("baseline")),&settings,&seed,&business,mode,best,state_backend))
+        let mut result=std::panic::catch_unwind(||phase(&output.join(mode.unwrap_or("baseline")),&settings,&seed,&business,mode,best,configuration))
             .unwrap_or_else(|error|{let message=error.downcast_ref::<String>().cloned().or_else(||error.downcast_ref::<&str>().map(|s|s.to_string())).unwrap_or_else(||"non-string panic".to_owned());
                 json!({"mode":mode.unwrap_or("baseline"),"state_backend":state_backend.label(),"startup_or_campaign_error":message,"all_signed_rounds_confirmed_in_window":false,"genuine_budget_depletion_observed":false})});
+        if work_profile == support::WorkProfile::ArithmeticFactsV1
+            && result.get("public_resource_policy").is_none()
+        {
+            work_profile.bind_actor_job(&mut result);
+        }
         support::write_new(
             &output.join(format!("{}.json", mode.unwrap_or("baseline"))),
             &result,
@@ -1186,7 +1381,7 @@ fn campaign(output: &Path, state_backend: StateBackendChoice) {
         && phases
             .iter()
             .all(|p| p["finite_phase_criteria_met"] == true);
-    let report = json!({"schema":"native-public-v3-separate-process-campaign-v2","scope":"finite controlled TCP loopback; separate attacker OS processes, one host and controller; original two input modes/caps and service/client policy; fixed honest schedule; actual optional paid-credit flow, no WAN/independent operator claim",
+    let mut report = json!({"schema":"native-public-v3-separate-process-campaign-v2","scope":"finite controlled TCP loopback; separate attacker OS processes, one host and controller; original two input modes/caps and service/client policy; fixed honest schedule; actual optional paid-credit flow, no WAN/independent operator claim",
         "state_backend":state_backend.label(),
         "settings_profile":"native-public-evaluation-dev-v1 + continuity_v1 explicit maintenance","preparation":preparation,
         "economics":economics,"best_observed_cold_legal_method":work::METHODS[best],"selection_candidates_cpu_ns":candidates,
@@ -1194,6 +1389,14 @@ fn campaign(output: &Path, state_backend: StateBackendChoice) {
         "phases":phases,"finite_experiment_criteria_met":complete,
         "work_profile_qualified":false,"cryptographic_hardness_qualified":false,"independent_operators":false,"wan_qualified":false,
         "production_candidate":false,"release_ready":false});
+    report["public_resource_policy"] = work_profile.policy_observation();
+    if work_profile == support::WorkProfile::ArithmeticFactsV1 {
+        report["schema"] = json!("native-public-v3-arithmetic-facts-separate-process-campaign-v1");
+        report["work_profile"] = json!("arithmetic-facts-v1");
+        report["scope"] = json!("explicit arithmetic-facts profile; same original finite controlled TCP loopback workload, raw producer/attack construction, CPU/deadline/cap/confirmation/depletion criteria; fresh server-local owner per phase; work observations separate actual recomputation from reused mathematical facts; not original r13, arbitrary-key service, WAN or independent-operator qualification");
+        report["original_r13_campaign_qualified"] = json!(false);
+        report["adversarial_key_churn_service_qualified"] = json!(false);
+    }
     support::write_new(&output.join("report.json"), &report);
     assert!(
         complete,
@@ -1316,7 +1519,7 @@ fn valid_work_state_root_replays_are_paid_without_admission() {
             let before = domain.observe_actual_flow().unwrap();
             let response = support::call(address, &settings, request(), 72, epoch, end);
             // Native dispatch joins M06 workers and finishes the paid permit
-            // before response signing. No other mutation uses this domain.
+            // after response signing, before delivery. No other mutation uses this domain.
             let after = domain.observe_actual_flow().unwrap();
             let paid_cpu_ns = before
                 .as_ref()

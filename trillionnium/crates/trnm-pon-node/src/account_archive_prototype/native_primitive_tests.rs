@@ -12,6 +12,9 @@ use std::time::Instant;
 use trnm_crypto_primitives::{sign_hex, signing_key_from_hex};
 use trnm_protocol::pon_wire::Envelope;
 
+#[path = "native_decode_tests.rs"]
+mod decode_cache_tests;
+
 fn original_decode(id: Hash, bytes: &[u8]) -> Result<Node> {
     if bytes.len() > MAX_NODE_BYTES || id != hash(b"account-archive-node-record-v1", &[bytes]) {
         return Err(ArchiveError::CorruptRecord);
@@ -816,4 +819,58 @@ fn shared_branch_kernel_complete_call_cost() {
         "{}",
         json!({"schema":"pon-shared-account-branch-kernel-v1","observations":outputs,"scope":"complete branch hash calls, same binary and build profile; not whole Node, physical cost lower bound or WAN TPS"})
     );
+}
+
+#[test]
+fn native_hot_graph_reuses_only_decode_math_and_still_reads_every_node() {
+    let db = Connection::open_in_memory().unwrap();
+    db.execute_batch(crate::store::native_authenticated::DDL)
+        .unwrap();
+    let state: State = (0u64..64)
+        .map(|index| {
+            let owner = hash(b"native-node-decode-regression", &[&index.to_le_bytes()]);
+            (
+                format!("account:{}", hex::encode(owner)),
+                json!({"balance": index * 13, "nonce": index}),
+            )
+        })
+        .collect();
+    let root = native_store::seed(&db, &state, &mut || Ok(())).unwrap();
+    let nodes: usize = db
+        .query_row("SELECT count(*) FROM archive_nodes", [], |row| row.get(0))
+        .unwrap();
+    assert_eq!(nodes, 127);
+    let cache = native_store::LiftCache::default();
+    db.flush_prepared_statement_cache();
+    for pass in 0..4 {
+        let reads_before = selected_runs(&db);
+        let decodes_before = NODE_DECODE_CALLS.with(std::cell::Cell::get);
+        let mut visits = 0;
+        native_store::verify_with_lifts(
+            &db,
+            &root,
+            &state,
+            &mut || {
+                visits += 1;
+                Ok(())
+            },
+            Some(&cache),
+        )
+        .unwrap();
+        let actual_reads = selected_runs(&db) - reads_before;
+        let actual_decodes = NODE_DECODE_CALLS.with(std::cell::Cell::get) - decodes_before;
+        assert_eq!(
+            actual_reads as usize, nodes,
+            "pass {pass}: every actual SQL row is still read"
+        );
+        assert_eq!(
+            visits, nodes,
+            "pass {pass}: every original graph checkpoint remains"
+        );
+        assert_eq!(
+            actual_decodes as usize,
+            if pass == 0 { nodes } else { 0 },
+            "pass {pass}: unchanged actual row bytes must not redo pure node arithmetic"
+        );
+    }
 }

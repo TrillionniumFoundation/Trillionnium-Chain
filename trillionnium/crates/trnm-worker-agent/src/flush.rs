@@ -85,7 +85,7 @@ pub(crate) fn handle_flush_submissions(
     let raw = read_submission_log(&submit_log)?;
     let mut n = 0usize;
     let mut skipped = 0usize;
-    let mut acked = load_acked(&ack_log);
+    let mut acked = load_acked(&ack_log)?;
     let run_id = format!("flush-{}-{}", now_ms(), std::process::id());
     for line in raw.lines().filter(|l| !l.trim().is_empty()) {
         let rec: SubmissionRecord = serde_json::from_str(line)?;

@@ -22,7 +22,7 @@ type Result<T> = std::result::Result<T, Box<dyn Error>>;
 const USAGE: &str = "trnm-cell: finite configured-peer content cache (no model authority)
 pack --store DB --input FILE --family FAMILY --base HEX --parent HEX --tokenizer HEX --layout HEX --runtime HEX [--chunk-bytes 1048576]
 serve --store DB --bind IP:PORT --seconds N [--request-ms 2000] [--max-connections 8192] [--bounded-workers 1..4 --max-served-bytes N]
-fetch --store DB --manifest HEX --peers IP:PORT,IP:PORT --output ABSENT_FILE --max-bytes N --seconds N [--parallelism 2] [--request-ms 2000] [--max-connections 32768] [--max-response-bytes N]
+fetch --store DB --manifest HEX --peers IP:PORT,IP:PORT --output ABSENT_FILE --max-bytes N (--seconds N | --overall-ms N) [--parallelism 2] [--request-ms 2000] [--max-connections 32768] [--max-response-bytes N]
   Response-byte default: 2 * max-bytes + 2097152 + 9 * max-connections; 0 is cache-only.
 verify --store DB --manifest HEX
 manifest --store DB --manifest HEX --output ABSENT_FILE
@@ -157,7 +157,7 @@ fn fetch(args: &mut Args) -> Result<()> {
         .collect::<std::result::Result<Vec<SocketAddr>, _>>()?;
     let output = PathBuf::from(args.take("--output")?);
     let max_cell_bytes = args.take("--max-bytes")?.parse()?;
-    let seconds = args.take("--seconds")?.parse()?;
+    let overall_timeout = args.fetch_timeout()?;
     let request_ms = args.optional("--request-ms", "2000").parse()?;
     let parallelism = args.optional("--parallelism", "2").parse()?;
     let max_connections = args.optional("--max-connections", "32768").parse()?;
@@ -174,7 +174,7 @@ fn fetch(args: &mut Args) -> Result<()> {
         &peers,
         CellPeerLimitsV1 {
             request_timeout: Duration::from_millis(request_ms),
-            overall_timeout: Duration::from_secs(seconds),
+            overall_timeout,
             max_cell_bytes,
             parallelism,
             max_connections,
@@ -321,6 +321,16 @@ impl Args {
         self.0
             .remove(key)
             .ok_or_else(|| CellErrorV1::Invalid(key).into())
+    }
+    fn fetch_timeout(&mut self) -> Result<Duration> {
+        match (self.0.remove("--seconds"), self.0.remove("--overall-ms")) {
+            (Some(seconds), None) => Ok(Duration::from_secs(seconds.parse()?)),
+            (None, Some(milliseconds)) => Ok(Duration::from_millis(milliseconds.parse()?)),
+            _ => Err(CellErrorV1::Invalid(
+                "fetch requires exactly one of --seconds or --overall-ms",
+            )
+            .into()),
+        }
     }
     fn optional(&mut self, key: &str, default: &str) -> String {
         self.0.remove(key).unwrap_or_else(|| default.to_owned())
