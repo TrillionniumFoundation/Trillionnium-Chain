@@ -136,7 +136,7 @@ journal, status registry or successful receipt is created by these edits.
 - **P0 real-model acceptance:** actual pretrained encoder/model forward,
   training and post-install inference are measured through ordinary Hepta
   owners. Each of three cycles binds the actual installed parent, candidate,
-  independent future window, controls and actual next use. Task/packet, candidate
+  declared test dataset, controls and actual next use. Task/packet, candidate
   fetch and install receipts are required for steps actually executed. A valid
   no-update records its reason and marks unexecuted candidate publication,
   submission, fetch and installation steps NOT_APPLICABLE in the versioned
@@ -148,6 +148,14 @@ journal, status registry or successful receipt is created by these edits.
   Adopted updates create a fresh generation; rejected/no-gain candidates earn
   no improvement reward. Three genuinely beneficial installed releases require
   their own prospective efficacy result.
+
+Controlled engineering tests may use existing public or previously seen tasks.
+An unseen future dataset or independent data custodian is not a prerequisite
+for the three-round mechanism test. Record the exact task bytes, versions,
+exposure/reuse, controls and budgets, and report measured results on that named
+dataset. Actual training, cross-node loading, installed-parent lineage and
+next-task execution remain required. Evidence for future generalization or
+longitudinal efficacy is a separate claim, not inferred from this test.
 - **P0 work acceptance:** I01 correctness, effective-work assumptions and I02
   original-budget honest completion are separately accepted. Valid-work,
   invalid-work and setup/amortization costs, attempts, target and hardware are
@@ -275,7 +283,7 @@ gates; fail-closed refusal does not qualify functional Windows isolation.
 | PN0 | Predecessor pair readback above; published `8712699` passes full strict Clippy locally. Current head/merge CI and full Hepta Rust remain incomplete. Current CodeQL gate reports 13 high annotations; its Rust SARIF has 234 results. | Applicable final head/merge CI, independent security disposition, functional Windows isolation and fresh cross-repository execution. |
 | PN1 | Current original-policy campaign `39739585823` passed full original-artifact readback: 189 submissions, 27 confirmations and 6/18 hostile honest rounds overlapping genuine CPU depletion. | Cheapest-adversary assumptions and actual public service under a declared, sufficiently delivered attack envelope. |
 | PN2 | Published revision17 GSC2 native complete-State reference and required 65,537-account signed-transaction/recovery test; the unique published-source local long run stopped at its original shared-disk safety boundary, last logged 57,348 accounts at height 224. No final 65,537 export or successful libtest result exists. | Terminal signed-boundary/recovery/readback evidence, bounded working-state/proof validation and source-preserving migration. Complete-State reference roots are not bounded witnesses. |
-| PN3 | Published-source real SmolLM2-135M CPU pilot trained a ten-step candidate and saved a 933,544-byte adapter, then failed phase four on unknown RSS. Actual source-built Cell CLI downloaded that candidate in 15 chunks and rechecked bytes/material pins. Same-read exit diagnostics retain the original State/Threads and failed preconditions without changing classification, limits or strict-v1 defaults. | Complete five controls, three-round installed-parent lineage and next-task use, Hepta neuron loading, independent prospective evaluation and complete release integration. One local supplier and one candidate transfer cannot qualify these. |
+| PN3 | Published-source real SmolLM2-135M CPU pilot trained a ten-step candidate and saved a 933,544-byte adapter, then failed phase four on unknown RSS. Actual source-built Cell CLI downloaded that candidate in 15 chunks and rechecked bytes/material pins. Same-read exit diagnostics retain the original State/Threads and failed preconditions without changing classification, limits or strict-v1 defaults. | Complete five controls, three-round installed-parent lineage and next-task use, Hepta neuron loading, declared-task evaluation and complete release integration. Existing public/seen tasks are valid for engineering acceptance; prospective efficacy is a separate claim. One local supplier and one candidate transfer cannot qualify this loop. |
 | PN4 | [Separate finite lane budgets](specs/pon/REWARD_BUDGETS_V1.md) now have native local obligation persistence; six component tests passed again on the integrated native source, including abrupt-exit recovery. | Native debit/escrow locks, actual resource-owner measurement and dispatch, funded storage/service obligations and independent economic review. Local records do not lock chain funds or pay rewards. |
 | PN5 | Preserve the preregistration and independent-custody requirements below. | Three independently administered operators, accessible existing nodes and a complete frozen 72-hour WAN campaign. |
 
@@ -767,7 +775,7 @@ before it becomes callable. Do not turn these rows into permissive JSON adapters
 | I04 / PN2 | M09 archive/producer -> M06/M07 | Exact parent, canonical touched-account multiproof, complete mandatory/range inputs and proof-byte budget -> checked transition, child root and reversible delta. Missing data is Unavailable; authenticated absence is distinct; no partial transition may commit. |
 | I05 / PN2/PN4 | M07/M08/M13 -> M09 retention owner | Required roots, acknowledged obligations, byte reservation and retention/recovery endpoints -> durable storage responsibility. Provider receipt is not proof of possession forever, chain validity or finality; GC must preserve reachable roots and mandatory duties. |
 | I06 / PN3 | Hepta artifact/export owner -> M10/M11 | Actual installed parent, candidate manifest/bytes, consent/export and current withdrawal scope -> scoped publication/evaluation input. ArtifactOwnerService publication with DENY_ALL does not authorize redistribution. |
-| I07 / PN3 | M10 candidate + independent data custodian -> M11/Hepta evaluator and selector | Frozen parent/candidate/control identities, source/time/exposure windows, total budgets and decision rule -> gain/no-gain/invalid/unknown evidence. Evaluation quorum is an application policy, never ledger work or local installation authority. |
+| I07 / PN3 | M10 candidate + declared dataset -> M11/Hepta evaluator and selector | Frozen parent/candidate/control identities, test-data/exposure/reuse scope, total budgets and decision rule -> gain/no-gain/invalid/unknown evidence on those tasks. Existing public or previously seen data is valid for controlled engineering tests. Evaluation quorum is an application policy, never ledger work or local installation authority. |
 | I08 / PN3 | M14 packet-status -> existing Hepta TaskFlow coordinator | Already durable exact packet/effect bytes -> schema-4 storage/active-ancestry/depth/work observation plus exact accepted-task binding when present. Legacy schema 3 cannot satisfy task acceptance. Match task, owner, provider, output and generation; local absence never proves global NotDispatched. |
 | I09 / PN3/PN5 | M10 release owner -> M09 fetch -> existing Hepta loader | Selected release dependency closure and pinned TCM1 identities, finite peers, original deadline and resource budget -> freshly verified complete bytes and provenance. Manifest ID, payload SHA256 and any external CID retain their distinct algorithms/domains. Download success grants no CURRENT/FinalUse authority. |
 | I10 / PN3 | Existing Hepta selection/artifact/resource/FinalUse owners -> neuron runtime | Current signed artifact/withdrawal head, compatible verified bytes, local generation, explicit chain confirmation policy and real resource admission -> fresh local installation and actual inference readback. Reorg or withdrawal fences further use; durable external effects are reconciled under their original identity. |
@@ -930,14 +938,18 @@ proceed with those failures visible.
    Freeze evaluator admission/roster/epoch, conflict and Sybil assumptions, quorum
    fault bound, missing-reveal and appeal rules before outcomes. The controlled
    revision15 native-score threshold is not a private-evaluation safety theorem.
-2. Freeze independent data custody, source/time/exposure partitions, consent,
-   sample-size/power justification, minimum useful gain, safety/retention limits
-   and equal total train/evaluate/serve budgets before opening outcomes. Evaluate
+2. Freeze the named test dataset, source/time/exposure and reuse, consent,
+   scoring rule, minimum useful gain, safety/retention limits and equal total
+   train/evaluate/serve budgets. Existing public or previously seen tasks are
+   admissible for the controlled engineering loop; unseen data and independent
+   data custody are not entry conditions. Evaluate
    actual installed parent, frozen base, best single, simple/pooled merge and
    applicable routed/composition controls. Adoption needs the preregistered
    uncertainty-adjusted gain over the actual parent, the declared strong-control
    criterion and retention/safety/cost limits; correct for repeated candidate
-   selection rather than reuse future outcomes as tuning data. V16 owner-pinned pre-genesis task
+   selection when claiming statistical efficacy. Claims about unseen future
+   tasks separately require suitable prospective evidence and sample/power
+   justification. V16 owner-pinned pre-genesis task
    windows are an existing replay input, not live future-data governance.
 3. Run candidate -> authorized export -> independent evaluation/selection ->
    exact durable TaskFlow submission -> current chain observation/confirmation ->
@@ -954,7 +966,7 @@ proceed with those failures visible.
 Exit: at least three consecutive real lineage cycles, each using the actually
 installed predecessor (or retaining it on a valid no-update), plus an independent
 consumer's authorized next task. Bind each decision to exact bytes, evidence,
-installation/readback and subsequent untouched-window results. Test lost ACK,
+installation/readback and subsequent named-task results. Test lost ACK,
 duplicate call, withheld Cell, bad shape/loader, author loss, stale/reorged task,
 withdrawal during download/install and restart at each owner boundary. Keep local
 effects/revocations monotonic. Mechanical completion and efficacy are separate:
