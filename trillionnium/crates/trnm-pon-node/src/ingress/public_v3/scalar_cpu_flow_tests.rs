@@ -130,3 +130,137 @@ fn actual_cpu_flow_optional_read_preserves_old_observation_json_and_credit() {
     assert_eq!(one.schema, "public-v3-local-actual-cpu-flow-v1");
     assert!(one.balance_identity_verified);
 }
+
+#[test]
+fn freshness_separates_paid_stored_depletion_from_later_scalar_start_eligibility() {
+    let mut budget = PaidMutationCpuBudget::new();
+    let now = budget.updated;
+    budget.reserve(now).unwrap();
+    assert!(budget.settle_observed(now, Some(1_950_000_000), Some(1_950_000_000), Some(0)));
+    let original = snapshot(&budget).unwrap();
+    assert_eq!(original.remaining_paid_credit_ns, 50_000_000);
+    let fresh = budget.credit_freshness_at(now).unwrap();
+    assert!(!fresh.projected_scalar_start_eligible);
+    let later = now + Duration::from_secs(1);
+    let stale = budget.credit_freshness_at(later).unwrap();
+    assert_eq!(stale.watermark_age_ns, 1_000_000_000);
+    assert_eq!(stale.actual_flow, original);
+    assert_eq!(stale.projected_credited_refill_ns, 250_000_000);
+    assert_eq!(stale.projected_stored_credit_ns, 300_000_000);
+    assert!(stale.projected_scalar_start_eligible);
+    assert_eq!(budget.updated, now);
+    assert_eq!(snapshot(&budget).unwrap(), original);
+    // The original real reservation, not the observation, grants this start.
+    budget.reserve(later).unwrap();
+    assert_eq!(
+        budget.credit_ns,
+        stale.projected_stored_credit_ns - 100_000_000
+    );
+}
+
+#[test]
+fn freshness_matches_original_refill_with_debt_and_outstanding_reserves() {
+    for owners in 0..=MUTATION_CPU_WORKERS {
+        for paid in [0, 1_950_000_000, 3_000_000_000] {
+            let mut budget = PaidMutationCpuBudget::new();
+            let now = budget.updated;
+            budget.reserve(now).unwrap();
+            assert!(budget.settle_observed(now, Some(paid), Some(paid), Some(0)));
+            for _ in 0..owners {
+                // Use an original refill to fund actual outstanding starts;
+                // the zero-owner case retains any debt until observation.
+                budget.reserve(now + Duration::from_secs(20)).unwrap();
+            }
+            let watermark = budget.updated;
+            let before = snapshot(&budget).unwrap();
+            let observed_at = watermark + Duration::from_secs(1);
+            let projected = budget.credit_freshness_at(observed_at).unwrap();
+            assert_eq!(snapshot(&budget).unwrap(), before);
+            assert_eq!(budget.updated, watermark);
+            budget.refill(observed_at);
+            assert_eq!(projected.projected_stored_credit_ns, budget.credit_ns);
+            assert_eq!(
+                projected.projected_paid_credit_ns,
+                snapshot(&budget).unwrap().remaining_paid_credit_ns
+            );
+            assert_eq!(
+                projected.projected_scalar_start_eligible,
+                owners < MUTATION_CPU_WORKERS
+                    && budget.credit_ns >= i128::from(MUTATION_CPU_START_RESERVE_NS)
+            );
+        }
+    }
+}
+
+#[test]
+fn freshness_unknown_clock_or_flow_never_fabricates_refill_or_changes_budget() {
+    for mode in [
+        "unavailable",
+        "missing-flow",
+        "bad-flow",
+        "lost-owner",
+        "future-watermark",
+        "discard-counter-overflow",
+    ] {
+        let mut budget = PaidMutationCpuBudget::new();
+        let observed_at = budget.updated;
+        match mode {
+            "unavailable" => budget.unavailable = true,
+            "missing-flow" => budget.flow = None,
+            "bad-flow" => budget.flow.as_mut().unwrap().initial_credit_ns += 1,
+            "lost-owner" => budget.in_flight = MUTATION_CPU_WORKERS + 1,
+            "future-watermark" => budget.updated += Duration::from_secs(1),
+            "discard-counter-overflow" => {
+                budget.flow.as_mut().unwrap().discarded_refill_ns = u64::MAX
+            }
+            _ => unreachable!(),
+        };
+        let before = (
+            budget.credit_ns,
+            budget.updated,
+            budget.in_flight,
+            budget.unavailable,
+        );
+        let original_flow = snapshot(&budget);
+        let sampled_at = if mode == "discard-counter-overflow" {
+            observed_at + Duration::from_secs(1)
+        } else {
+            observed_at
+        };
+        assert!(budget.credit_freshness_at(sampled_at).is_none());
+        assert_eq!(snapshot(&budget), original_flow);
+        assert_eq!(
+            before,
+            (
+                budget.credit_ns,
+                budget.updated,
+                budget.in_flight,
+                budget.unavailable
+            )
+        );
+    }
+}
+
+#[test]
+fn public_freshness_read_is_optional_and_preserves_original_schema_and_flow() {
+    let domain = ServiceMutationCpuDomain::standalone();
+    let before = domain.observe().unwrap();
+    let flow = domain.observe_actual_flow().unwrap();
+    let freshness = domain.observe_credit_freshness().unwrap().unwrap();
+    assert_eq!(freshness.actual_flow, flow.clone().unwrap());
+    assert_eq!(domain.observe().unwrap(), before);
+    assert_eq!(domain.observe_actual_flow().unwrap(), flow);
+    assert_eq!(
+        serde_json::to_value(before)
+            .unwrap()
+            .as_object()
+            .unwrap()
+            .len(),
+        8
+    );
+    assert_eq!(freshness.projected_credited_refill_ns, 0);
+    assert_eq!(
+        freshness.projected_paid_credit_ns,
+        i128::from(MUTATION_CPU_BURST_NS)
+    );
+}

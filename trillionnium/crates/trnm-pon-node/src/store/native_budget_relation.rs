@@ -93,6 +93,34 @@ pub struct NativeBudgetObservationV1 {
     pub production_activation: bool,
 }
 
+/// Exact retained LOCAL obligation, including an unauthenticated receipt hash.
+/// The source observation is historical; this record grants no execution right.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+pub struct NativeBudgetLocalRecordV1 {
+    pub request: NativeBudgetRequestV1,
+    pub source_tip: Hash,
+    pub source_generation: u64,
+    pub source_height: u64,
+    pub source_funding_digest: Hash,
+    pub resources_consumed: Option<[u64; 2]>,
+    pub effect: Option<Hash>,
+    pub receipt: Option<Hash>,
+}
+
+/// Bounded local recovery inventory, not funding, delivery or payment authority.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+pub struct NativeBudgetInventoryV1 {
+    pub schema: &'static str,
+    pub network: Hash,
+    pub parameters: Hash,
+    pub genesis: Hash,
+    pub records: Vec<NativeBudgetLocalRecordV1>,
+    pub chain_funds_locked: bool,
+    pub payment_executed: bool,
+    pub execution_authority: bool,
+    pub production_activation: bool,
+}
+
 pub(super) fn source_key(request: &NativeBudgetRequestV1) -> String {
     format!("{}{}", request.lane.prefix(), hex::encode(request.source))
 }

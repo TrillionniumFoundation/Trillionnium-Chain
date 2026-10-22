@@ -92,9 +92,42 @@ journal or parallel implementation plan.
 PN1 public-service repair and PN2 storage engineering may iterate together on
 one frozen workload; neither stage may declare the other's missing result passed.
 
-### 2026-10-22 six-stage execution checkpoint
+### 2026-10-22 fixed-source follow-up
 
-The latest independently read published source is Chain PR #323 head
+The following observations fix published Chain `42424a82ec605c35f3f1b91eb72e35b9debcc136`,
+tree `145f0495eaa3f0ac32a39fcd18c54e65cae97c5e`, base
+`9fedf7ecbbe07177069c030592b4e03dcffebb81`, and actual merge
+`0f83ea57d6f3a5bd841c60129c7fbffd931dd77f`; paired Hepta is
+`83b20a0f43d265a15216904c01194e8939647c65`, tree
+`5adf37ed8686d0ea4c91ef3984283b8f4f04ee2c`, base
+`75531105b27329abaeb955e77c2c04a6d14f3bcb`, actual merge
+`44e863345e8f8438d6ec9f7550d794af4a6dffa4`. Both actual merges have
+ordered base/head parents and the source tree. Future heads require their own
+source and execution checks. The [fixed-source readback](../../evidence/pon-six-gate-closure-20261022/source-42424a-followup/readback.json)
+and [lossless original observations](../../evidence/pon-six-gate-closure-20261022/source-42424a-followup/raw-evidence.gzip.json)
+retain component identities and the original failures.
+
+| Gate | Observed result and remaining boundary |
+| --- | --- |
+| PN0 | Source424 branch run `39748857377` passed all four head/actual-merge lanes: each has twelve actual protocol passes and one original ignored test. CodeQL check `119747556533` fails with thirteen high annotations; the [terminal export](../../evidence/pon-six-gate-closure-20261022/source-42424a-followup/security-terminal.gzip.json) retains all thirteen and 234 Rust API SARIF results, with the raw-upload completeness and annotation-to-analysis association unproved. The check completed before this Rust analysis was created. Internal source-flow review found eight synthetic fuzz `Vec.remove` locations and five numeric log sites, without a confirmed secret sink; independent security disposition is still required. Successful analysis jobs do not clear the gate. Hepta83's Windows ARM archive producer succeeds, while GNU archive and Windows boundary failures remain. Required CI, functional Windows isolation and security disposition stay open. |
+| PN1 | Current campaign `39748857599`, job `119724041989`, artifact `12415988227` has all 911 ZIP members verified, including 910 manifest files/320,795,772 bytes. The original validation function via a complete read-only ZIP adapter and independent measurement audit pass: 189 submission observations, 27 confirmation rounds, three distinct transaction IDs, and only 6/18 hostile rounds with complete observed depletion overlap. Paid hostile CPU is 9.392823–9.399422 seconds per thirty-second phase. Minimum effective work cost, sustained saturation and public WAN service remain unproved. |
+| PN2 | The unique source424 real signed case exited zero: four-account genesis plus 65,533 signed transfers, 65,537 accounts at height/generation257, before-publish cooperative interruption and two cold opens. The original official independent reader recomputes root `50ced4ab479eb469ba71586fc1d60ba31ea07a2fc91707b188db157e851094e5`; four full-byte source guards, binary identity and stable export hashes match. This is engineering factual readback only. The resource pause keeps the original qualification UNKNOWN; the first reader identity-change failure remains. Twenty-five non-account working keys coexist with a required complete State. Bounded proofs, source-preserving migration, storage sufficiency and physical-fault acceptance remain open. |
+| PN3 | Source424 full real pilot still aborts its second loader phase on the original exit-observation recheck. The added controlled reason diagnostic changes no predicate. An explicit parent-step component now binds current source, the original plan, parent three pins, attempt, actual readback and completed candidate provenance. Its five actual tiny CPU tensor units cover absolute A/B replacement and refusal cases; no pretrained backbone, real training, Hepta installation or three-round loop ran on that new path. The original five-participant run and all resource criteria remain unchanged. |
+| PN4 | Combined local source `ebc0076c84b9a7c15b4cc4fb87ee1d3971846022` passed seven native budget tests, forty-four scalar CPU tests, three public-target tests and full workspace/all-target/all-feature strict release Clippy. The bounded read-only inventory exposes existing pending/receipted operations without dispatch or payment authority. Mature mining rewards have already been credited and their reward rows removed; a second payment cannot be funded by that historical row. Actual M06 locks/debits, meters and reconciliation remain necessary. |
+| PN5 | Three independent administrators, hosting providers and failure domains, preregistered WAN faults, repair and at least seventy-two hours of real operation are still missing. |
+
+The optional scalar-credit freshness observation reads the original watermark
+and projects the original refill arithmetic without changing the clock, credit,
+owner or depletion predicate. Its added sampler contention and complete-path
+cost still need an actual new-source campaign. No old campaign result is
+transferred to that sampler. Complete-State growth is still a reference oracle:
+the authenticated COW owner and compact executor retain their own 65,536 caps
+and require explicit bounded-parent, proof-overlay and recovery integration.
+No PN0–PN5 exit or production/readiness flag changes in this follow-up.
+
+### Earlier 2026-10-22 checkpoint: source871 / sourceCB
+
+This earlier independently read published source was Chain PR #323 head
 `87126992dd5634348cc1a788442126997b28c624`, tree
 `579771a4735f58c9d3391edc76e1d7552bb9a606`, base/main
 `9fedf7ecbbe07177069c030592b4e03dcffebb81`, and actual merge

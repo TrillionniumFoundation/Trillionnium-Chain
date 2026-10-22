@@ -521,8 +521,14 @@ def prompt_tokens(tokenizer, row, maximum):
 
 
 def make_contract(model, tokenizer, shapes, materials, manifest, plan):
-    c = contract_module()
     index = {name: tensor_descriptor(tensor) for name, tensor in backbone_tensors(model, shapes).items()}
+    return contract_from_inventory(index, tokenizer.chat_template,
+                                   read_json(materials/'config.json'), manifest, plan)
+
+
+def contract_from_inventory(index, chat_template, config, manifest, plan):
+    """The same contract constructor, also usable before optional model imports."""
+    c = contract_module()
     files = {name: dict(sha256=manifest['files'][name]['sha256'], byte_length=manifest['files'][name]['size'])
              for name in ('tokenizer.json', 'tokenizer_config.json', 'special_tokens_map.json')}
     targets = [dict(module=f'model.layers.{layer}.self_attn.{projection}', in_features=576,
@@ -533,13 +539,13 @@ def make_contract(model, tokenizer, shapes, materials, manifest, plan):
                           snapshot=identity(manifest)))
     contract = dict(schema='pon-target-decoder-adapter-contract-v1', network=c.NETWORK.hex(),
         parameters=c.PARAMETER_HASH.hex(), reference=MODEL+'@'+REVISION+':derived-cpu-float32',
-        architecture=architecture(read_json(materials/'config.json')),
+        architecture=architecture(config),
         backbone=dict(index=index, index_root=c.H('llm-tensor-index-v1', c.canonical(index)).hex(),
                       owner_reference=owner, license_reference=manifest['files']['README.md']['sha256']),
         tokenizer=dict(schema='pon-tokenizer-files-and-behavior-v1', files=files,
             files_root=c.H('llm-tokenizer-file-index-v1', c.canonical(files)).hex(), vocabulary=49152,
             bos_id=1, eos_id=2, pad_id=2, add_bos=False, add_eos=False,
-            chat_template=hashlib.sha256(tokenizer.chat_template.encode()).hexdigest(),
+            chat_template=hashlib.sha256(chat_template.encode()).hexdigest(),
             behavior_contract=identity(dict(source=plan['runtime_source'], special_token_decode='skip',
                                              cleanup=False, chat_template='apply-once-no-extra-bos'))),
         numeric=dict(storage_dtype='float32', accumulation_dtype='float32', quantization='none',
@@ -672,6 +678,9 @@ def decode(model, tokenizer, row, contract, cid, plan, torch, device, artifact=N
 
 
 def child(args):
+    if args.phase == 'parent-step':
+        from llm_runtime_parent_step import child as parent_step_child
+        return parent_step_child(args)
     directory, materials = Path(args.output), Path(args.materials)
     plan = validate_plan(read_json(args.plan))
     require(plan['runtime_source'] == file_sha(__file__), 'RUNTIME_SOURCE_CHANGED')
@@ -962,6 +971,25 @@ class _Wait4Child(subprocess.Popen):
                 self.termination_fd = None
 
 
+def _exit_recheck_refusal(error):
+    """Expose only fixed observer codes, never arbitrary exception messages."""
+    from llm_runtime_exit_observation import ExitObservationError
+    codes = {
+        'exit-integer', 'exit-namespace', 'exit-nonregular-proc', 'exit-proc-bound',
+        'exit-status-syntax', 'exit-duplicate-status', 'exit-stat-syntax', 'exit-stat-fields',
+        'exit-stat-number', 'exit-task-count', 'exit-parent', 'exit-held-pidfd',
+        'exit-owner-context', 'exit-leader-not-in-task-set', 'exit-leader', 'exit-task-set',
+        'exit-task-fd-reused', 'exit-task-identity', 'exit-task-namespace',
+        'exit-task-not-exit-only', 'exit-leader-state', 'exit-owner-changed', 'exit-task-starttime',
+    }
+    code = (error.args[0] if type(error) is ExitObservationError and len(error.args) == 1 and
+            type(error.args[0]) is str and error.args[0] in codes else None)
+    number = getattr(error, 'errno', None) if isinstance(error, OSError) else None
+    return dict(source='same-recheck-call-exception', refusal_code=code,
+                error_errno=number if type(number) is int and number in errno.errorcode else None,
+                diagnostic_only=True)
+
+
 def _drain_exit_cleanup(process, observation, owner_token, start, budget):
     """Retain the reservation while waiting for exact wait4, never report RSS=0."""
     from llm_runtime_exit_observation import ExitOnlyObservation, MAX_DRAIN_NS
@@ -983,7 +1011,11 @@ def _drain_exit_cleanup(process, observation, owner_token, start, budget):
                 record.update(outcome='terminal-wait4', completed_ns=observed_ns)
                 return None, record
             require(state == 'live' and process.observation_error is None, 'RUNTIME_EXIT_WAIT4_UNKNOWN')
-            record['snapshots'].append(observation.recheck())
+            try:
+                record['snapshots'].append(observation.recheck())
+            except (OSError, AttributeError, KeyError, ValueError, TypeError) as error:
+                record['recheck_refusal'] = _exit_recheck_refusal(error)
+                raise
             if time.monotonic_ns() >= deadline:
                 break
             time.sleep(min(0.001, max(0, (deadline-time.monotonic_ns())/10**9)))
@@ -1225,8 +1257,13 @@ def main():
     worker = commands.add_parser('_child')
     for name in ('materials','output','plan','phase','role'): worker.add_argument('--'+name, required=True)
     worker.add_argument('--artifact')
+    worker.add_argument('--parent-step-input')
+    worker.add_argument('--expected-parent-step-input')
+    from llm_runtime_parent_step import add_parser, run as run_parent_step
+    add_parser(commands)
     args = parser.parse_args()
     if args.command == 'run': run(args)
+    elif args.command == 'parent-step': run_parent_step(args)
     else: child(args)
 
 

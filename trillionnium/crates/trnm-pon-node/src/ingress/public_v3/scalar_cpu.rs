@@ -104,6 +104,22 @@ pub struct ServiceMutationCpuFlowObservation {
     pub live_owners: usize,
 }
 
+/// Counterfactual original scalar refill from one unchanged owner snapshot.
+/// This neither credits time nor accounts unobserved live CPU. Eligibility here
+/// excludes caller, queue and future clock checks and grants no operation.
+#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize)]
+pub struct ServiceMutationCpuFreshnessObservation {
+    pub schema: &'static str,
+    pub watermark_age_ns: u64,
+    pub actual_flow: ServiceMutationCpuFlowObservation,
+    pub projected_credited_refill_ns: u64,
+    pub projected_discarded_refill_ns: u64,
+    pub projected_stored_credit_ns: i128,
+    pub projected_paid_credit_ns: i128,
+    pub projected_scalar_start_eligible: bool,
+    pub scope: &'static str,
+}
+
 /// Volatile service-epoch accounting, never ledger or caller identity authority.
 pub(super) struct PaidMutationCpuBudget {
     // Same ownership/lifetime as CPU accounting; listener reconstruction clones,
@@ -125,6 +141,48 @@ impl PaidMutationCpuBudget {
             unavailable: false,
             flow: Some(CpuFlow::new(i128::from(MUTATION_CPU_BURST_NS))),
         }
+    }
+    // Deliberately does not call refill(): duplicating its checked projection
+    // is diagnostic only and leaves the original clock/credit/flow untouched.
+    fn credit_freshness_at(
+        &self,
+        observed_at: Instant,
+    ) -> Option<ServiceMutationCpuFreshnessObservation> {
+        if self.unavailable || self.in_flight > MUTATION_CPU_WORKERS {
+            return None;
+        }
+        let flow = self
+            .flow
+            .as_ref()?
+            .snapshot(self.credit_ns, self.in_flight)?;
+        let elapsed = observed_at.checked_duration_since(self.updated)?.as_nanos();
+        let watermark_age_ns = u64::try_from(elapsed).ok()?;
+        let offered =
+            elapsed.checked_mul(u128::from(MUTATION_CPU_REFILL_NS_PER_SECOND))? / 1_000_000_000;
+        let credit = self.credit_ns.checked_add(i128::try_from(offered).ok()?)?;
+        let ceiling = self.credit_ceiling();
+        if self.credit_ns > ceiling {
+            return None;
+        }
+        let projected_stored_credit_ns = credit.min(ceiling);
+        let credited =
+            u64::try_from(projected_stored_credit_ns.checked_sub(self.credit_ns)?).ok()?;
+        let discarded = u64::try_from(credit.checked_sub(projected_stored_credit_ns)?).ok()?;
+        flow.credited_refill_ns.checked_add(credited)?;
+        flow.discarded_refill_ns.checked_add(discarded)?;
+        Some(ServiceMutationCpuFreshnessObservation {
+            schema: "public-v3-local-cpu-credit-freshness-v1",
+            watermark_age_ns,
+            projected_credited_refill_ns: credited,
+            projected_discarded_refill_ns: discarded,
+            projected_stored_credit_ns,
+            projected_paid_credit_ns: projected_stored_credit_ns
+                .checked_add(i128::from(flow.booked_reservation_ns))?,
+            projected_scalar_start_eligible: self.in_flight < MUTATION_CPU_WORKERS
+                && projected_stored_credit_ns >= i128::from(MUTATION_CPU_START_RESERVE_NS),
+            actual_flow: flow,
+            scope: "same-lock original flow and Instant watermark age; hypothetical original scalar refill only; no clock/flow mutation, live CPU refresh, reservation, native or admission authority",
+        })
     }
     // Process-local cold starts carry NO new burst or free challenge tokens.
     // Both verified continuous reopens and ordinary CLI process starts
@@ -896,6 +954,17 @@ impl ServiceMutationCpuDomain {
                     .and_then(|flow| flow.snapshot(budget.credit_ns, budget.in_flight))
             })
             .flatten())
+    }
+    /// Read the original owner's watermark age and a non-authoritative refill
+    /// projection under the same lock. Unknown remains None; no epoch advances.
+    pub fn observe_credit_freshness(
+        &self,
+    ) -> Result<Option<ServiceMutationCpuFreshnessObservation>> {
+        let budget = self
+            .budget
+            .lock()
+            .map_err(|_| "PUBLIC_MUTATION_CPU_UNAVAILABLE")?;
+        Ok(budget.credit_freshness_at(Instant::now()))
     }
 }
 

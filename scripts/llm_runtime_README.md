@@ -79,6 +79,10 @@ New missing-sample traces also retain the original status read's state, thread
 count, timestamp and owned-observer precondition, plus whether classification was
 attempted and its fixed rejection code. This adds no procfs reads or acceptance
 authority. Historical samples without these fields retain an unknown initial state.
+Exit-drain recheck failures additionally record only a closed set of fixed observer
+refusal codes and valid OS error numbers from that exact exception. Unknown or
+arbitrary messages are omitted; all such failures remain sticky. Earlier records
+without the code retain an unknown specific recheck refusal.
 
 Linux workers whose leader is already a zombie can still be running kernel exit
 cleanup before the group becomes waitable. The explicit

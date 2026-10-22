@@ -110,6 +110,22 @@ operation journal or consensus transaction. Fresh records use the existing
 unchanged. Existing migration refuses these additional local facts rather than
 silently dropping them.
 
+`native_budget_inventory_v1` and `native_budget_operation_v1` expose a bounded,
+read-only recovery view of the same records to the existing local effect owner.
+The inventory has schema `pon-native-budget-local-inventory-v1`, exact original
+requests, source tip/generation/height and source-value digest, reported resource
+consumption, retained effect hashes and unauthenticated receipt hashes. Both APIs
+check the entire bounded set and replay its original historical funding/payee
+relations before returning any record, including an absent-operation query.
+No new stored schema, journal, peer/RPC endpoint or authority is introduced.
+The source observation is historical, not a current funding decision. An absent
+record proves only local absence; it cannot authorize re-dispatch or establish
+global `NotDispatched`. A pending intent requires the original target owner's
+reconciliation, and a retained receipt is not verified delivery. These getters
+do not create measured worker facts or complete that owner integration. They
+replay complete historical State and are protected local recovery APIs, not a
+public service or bounded-time hot path.
+
 Mining observes an actual retained `reward:` row, contribution a `release:` row,
 evaluation/storage a `task:` row, and serving a `quota:` row. The signed M06
 transaction history and complete State checks supply amounts, owner, maturity,
@@ -119,6 +135,16 @@ proof for the exact candidate/payee/score and amount. Evaluation/storage task
 purpose and local funding policy remain protected-owner inputs; this generic
 task escrow does not certify the real evaluation or storage service.
 
+The mining observation cannot currently become a spendable mining budget.
+Before maturity, its current-funding condition refuses. At maturity the existing
+[M06 mandatory transition](../../../../trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs)
+removes the reward row and credits its miner, so the original source no longer
+exists when its maturity condition becomes true. The retained local record is
+still historical evidence, with no new-effect eligibility. Ignoring that absence
+would reuse a reward already credited to an account. A real funded mining lane
+therefore needs the existing monetary owner's explicit debit/lock integration;
+this increment changes no maturity, reward or source-current rule.
+
 The complete operation/request, source tip/generation and funding observation
 persist before local work may be associated with them. One source cannot acquire
 different lanes, resource caps or original funding claims through another
@@ -126,6 +152,9 @@ operation. Summed monetary reservations are bounded by the observed native funds
 pending resource reservations and reported consumed units share the original
 source resource cap. A global operation is one metadata primary key, so changing
 its subject, lane, payee, source or declared allocation refuses.
+Here global means this one Node's retained context and database, across its
+lanes and forks. Separate nodes do not share that local deduplication set; the
+existing target/effect owner must supply cross-replica identity and reconciliation.
 
 **Caps, resource reservations, and consumption reports are local-owner inputs.**
 This increment does not connect them to the scoped resource-owner CPU meter,
@@ -156,6 +185,11 @@ ordinary input-capacity refusal is not promoted to that origin.
 These are optional new metadata records; an older binary may ignore that prefix.
 Software downgrade prevention and preservation of local facts therefore remain
 the existing release owner's responsibility, not a property of this record hash.
+Completed records still occupy the same finite 128-record capacity. The recovery
+view cannot delete or compact them: losing their operation identities would lose
+local replay protection. A safely retained/compacted lifetime history and real
+storage obligations remain the existing retention/effect owners' integration
+work, not an implicit eviction policy.
 
 These metadata facts do not participate in branch KV undo. Pending reservations,
 reported cost and pending/completed effect facts survive reorganization and
@@ -177,6 +211,7 @@ remain open. A successful source observation or local intent cannot close PN4.
 
 Executable native selectors:
 
+- `store::native_budget::tests::exact_local_inventory_recovers_pending_and_receipted_intents_without_dispatch_authority`.
 - `store::native_budget::tests::native_signed_funding_and_exact_operations_survive_both_backends_reopen`.
 - `store::native_budget::tests::fork_or_spent_source_denies_new_intent_but_preserves_resource_and_target_receipt`.
 - `store::native_budget::tests::transaction_failure_leaves_no_partial_record_head_or_double_resource_charge`.

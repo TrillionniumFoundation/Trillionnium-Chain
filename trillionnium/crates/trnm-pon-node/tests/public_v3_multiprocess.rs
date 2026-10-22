@@ -711,8 +711,17 @@ fn phase(
                 })
                 .map_err(|e| e.to_string());
             let observation_ended_ns = support::monotonic().saturating_sub(epoch);
+            // Separate optional diagnostic, after the original sample interval.
+            // It neither refills credit nor changes the original predicate.
+            let freshness_started_ns = support::monotonic().saturating_sub(epoch);
+            let credit_freshness = sample_domain
+                .observe_credit_freshness()
+                .map_err(|error| error.to_string());
+            let freshness_ended_ns = support::monotonic().saturating_sub(epoch);
             sampling.lock().unwrap().push(json!({"at_ns":observation_ended_ns,"observation_started_ns":observation_started_ns,
-                "observation_ended_ns":observation_ended_ns,"meter":observation,"attacker_process_rss":support::live_children_rss(&pids)}));
+                "observation_ended_ns":observation_ended_ns,"meter":observation,"attacker_process_rss":support::live_children_rss(&pids),
+                "credit_freshness_started_ns":freshness_started_ns,"credit_freshness_ended_ns":freshness_ended_ns,
+                "credit_freshness":credit_freshness}));
             thread::sleep(Duration::from_millis(50));
         }
     });

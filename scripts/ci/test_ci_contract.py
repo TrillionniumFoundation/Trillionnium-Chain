@@ -152,13 +152,65 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
                 check_independent_conformance(changed, self.lanes)
 
     def test_parent_material_checks_cannot_be_omitted_duplicated_or_moved(self):
-        command = '    python3 scripts/test_llm_parent_material.py\n'
-        for changed in [self.script.replace(command, ''),
-                        self.script.replace(command, '    true # omitted parent preflight\n'),
-                        self.script.replace(command, command * 2),
-                        self.script.replace(command, '').replace('  fuzz-smoke)\n',
-                            '  fuzz-smoke)\n' + command)]:
-            with self.subTest(changed=changed), self.assertRaisesRegex(ValueError, 'parent material'):
+        for command in ('    python3 scripts/test_llm_parent_material.py\n',
+                        '    python3 scripts/test_llm_runtime_parent_step.py\n'):
+            for changed in [self.script.replace(command, ''),
+                            self.script.replace(command, '    true # omitted parent preflight\n'),
+                            self.script.replace(command, command * 2),
+                            self.script.replace(command, '').replace('  fuzz-smoke)\n',
+                                '  fuzz-smoke)\n' + command)]:
+                with self.subTest(command=command, changed=changed), self.assertRaisesRegex(ValueError, 'parent material'):
+                    check_independent_conformance(changed, self.lanes)
+
+    def test_parent_commands_cannot_be_skipped_by_false_shell_branch(self):
+        # Only a synthetic failing shell function runs; no model/native command.
+        for command in ('    python3 scripts/test_llm_parent_material.py\n',
+                        '    python3 scripts/test_llm_runtime_parent_step.py\n'):
+            skipped = '    if false; then\n' + command + '    fi\n'
+            with self.subTest(command=command):
+                with self.assertRaisesRegex(ValueError, 'straight-line command sequence'):
+                    check_independent_conformance(self.script.replace(command, skipped), self.lanes)
+                prelude = ('set -euo pipefail\n'
+                           'python3() { printf "synthetic parent test called\\n"; return 19; }\n')
+                normal = subprocess.run(['bash', '-c', prelude + command +
+                    'printf "synthetic lane continued\\n"\n'],
+                    capture_output=True, text=True, timeout=5)
+                self.assertEqual(normal.returncode, 19, normal.stderr)
+                self.assertEqual(normal.stdout, 'synthetic parent test called\n')
+                bypass = subprocess.run(['bash', '-c', prelude + skipped +
+                    'printf "synthetic lane continued\\n"\n'],
+                    capture_output=True, text=True, timeout=5)
+                self.assertEqual(bypass.returncode, 0, bypass.stderr)
+                self.assertEqual(bypass.stdout, 'synthetic lane continued\n')
+
+    def test_parent_commands_cannot_have_failures_swallowed_by_shell_condition(self):
+        # Bash suppresses errexit in an if condition despite the original set -e.
+        for command in ('    python3 scripts/test_llm_parent_material.py\n',
+                        '    python3 scripts/test_llm_runtime_parent_step.py\n'):
+            conditional = '    if\n' + command + '    then\n      :\n    fi\n'
+            with self.subTest(command=command):
+                with self.assertRaisesRegex(ValueError, 'straight-line command sequence'):
+                    check_independent_conformance(self.script.replace(command, conditional), self.lanes)
+                prelude = ('set -euo pipefail\n'
+                           'python3() { printf "synthetic parent test called\\n"; return 19; }\n')
+                normal = subprocess.run(['bash', '-c', prelude + command +
+                    'printf "synthetic lane continued\\n"\n'],
+                    capture_output=True, text=True, timeout=5)
+                self.assertEqual(normal.returncode, 19, normal.stderr)
+                self.assertEqual(normal.stdout, 'synthetic parent test called\n')
+                bypass = subprocess.run(['bash', '-c', prelude + conditional +
+                    'printf "synthetic lane continued\\n"\n'],
+                    capture_output=True, text=True, timeout=5)
+                self.assertEqual(bypass.returncode, 0, bypass.stderr)
+                self.assertEqual(bypass.stdout,
+                                 'synthetic parent test called\nsynthetic lane continued\n')
+
+    def test_selected_lane_cannot_be_wrapped_in_an_outer_shell_condition(self):
+        start = self.script.index('case "${1:?required job}" in\n')
+        prefix, dispatch = self.script[:start], self.script[start:]
+        for changed in (prefix + 'if false; then\n' + dispatch + 'fi\n',
+                        prefix + 'if\n' + dispatch + 'then :; fi\n'):
+            with self.subTest(changed=changed), self.assertRaisesRegex(ValueError, 'lane dispatch'):
                 check_independent_conformance(changed, self.lanes)
 
     def test_original_campaign_reader_keeps_original_pins_and_lane(self):

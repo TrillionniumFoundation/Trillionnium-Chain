@@ -164,6 +164,69 @@ NATIVE_RELEASE_BLOCK = '''    (
     )
 '''
 
+# Freeze the complete straight-line lane independently of the file being checked.
+# Presence/count checks alone also match commands skipped or swallowed by shell
+# control flow. Keep their specific diagnostics before the full-lane comparison.
+PROTOCOL_CONTRACT_BLOCK = '''    python3 scripts/ci/run_from_zero_native.py --out "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/from-zero-native"
+    cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-crypto-primitives -p trnm-checkpoint-types -p trnm-verification-profiles --all-targets --all-features
+    cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-protocol --all-targets --all-features
+    cargo build --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-protocol -p trnm-crypto-primitives -p trnm-mvcc-fee --examples
+    TRNM_CONTINUITY_BINARY="$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/continuity_vectors")" python3 formal/pon-nakamoto-v1/test_continuity.py -v
+    TRNM_CONTINUITY_TRANSITIONS_BINARY="$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/continuity_transition_vectors")" python3 formal/pon-nakamoto-v1/test_continuity_transitions.py -v
+    TRNM_PAIRED_WORK="$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_paired_io")" TRNM_PAIRED_WORK_OUTPUT="${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/paired-work" python3 formal/pon-nakamoto-v1/test_paired_work.py -v
+    TRNM_ZERO_WORK="$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_zero_io")" TRNM_ZERO_WORK_OUTPUT="${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/zero-work" python3 formal/pon-nakamoto-v1/test_zero_work.py -v
+    cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-transport proof_admission --all-targets
+    python3 formal/pon-nakamoto-v1/test_contracts.py
+    python3 formal/pon-nakamoto-v1/test_invariants.py
+    cargo fetch --locked --manifest-path trillionnium/Cargo.toml
+    cargo build --offline --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --bins --examples
+    python3 formal/pon-nakamoto-v1/test_account_archive_oracle.py -v
+    python3 scripts/ci/run_account_archive_conformance.py
+    python3 formal/pon-nakamoto-v1/test_account_execution_oracle.py -v
+    python3 formal/pon-nakamoto-v1/test_state_witness_oracle.py -v
+    python3 scripts/ci/run_account_execution_conformance.py
+    python3 -B formal/pon-nakamoto-v1/test_gsc2_native_readback_synthetic.py --source-root "$(pwd -P)"
+    cargo test --offline --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test qualified_tasks --test protected_ingress --test task_lifecycle --test task_lifecycle_v3 --test task_lifecycle_v4 --test public_evaluation --test public_intake_v2 --test public_cli --test local_mempool --test pool_mining --test public_pool_v3 --test public_pool_cli --test public_v3_observer --test pinned_peer_polling --test ancestry_long_sync --test distributed_roles
+    TRNM_DISTRIBUTED_TEST_BINARY="${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/distributed_pipeline" TRNM_DISTRIBUTED_TEST_OUTPUT="${RUNNER_TEMP:-/tmp}/trnm-distributed-conformance-$$" cargo test --offline --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test distributed_roles -- --ignored --test-threads=1
+    python3 scripts/run_public_v3_service_campaign.py --out "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/public-v3-service"
+    python3 scripts/test_llm_runtime_pilot.py
+    python3 scripts/test_llm_parent_material.py
+    python3 scripts/test_llm_runtime_parent_step.py
+    python3 formal/pon-nakamoto-v1/test_reward_budget_oracle.py
+    python3 formal/pon-nakamoto-v1/test_model_attribution.py
+    python3 formal/pon-nakamoto-v1/test_model_evolution_oracle.py -v
+    python3 formal/pon-nakamoto-v1/test_model_task_windows_oracle.py -v
+    python3 formal/pon-nakamoto-v1/test_work_utility.py
+    python3 formal/pon-nakamoto-v1/test_public_evaluation_lifecycle.py
+    python3 formal/pon-nakamoto-v1/test_llm_adapter_contract.py
+    python3 formal/pon-nakamoto-v1/test_model_acceptance.py
+    python3 formal/pon-nakamoto-v1/test_model_window_history.py -v
+    python3 formal/pon-nakamoto-v1/test_native_evaluation_quorum_oracle.py -v
+    python3 formal/pon-nakamoto-v1/native_evaluation_quorum_oracle.py
+    "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/continuous_pipeline" "${RUNNER_TEMP:-/tmp}/trnm-pipeline-smoke-$$" 2 4 0 growth protected
+    python3 formal/pon-nakamoto-v1/test_evaluation_round.py
+    python3 formal/pon-nakamoto-v1/test_evaluation.py
+    python3 formal/pon-nakamoto-v1/test_evaluation_bundle.py
+    python3 formal/pon-nakamoto-v1/test_artifacts.py
+    python3 formal/pon-nakamoto-v1/test_inference_receipt.py
+    python3 formal/pon-nakamoto-v1/test_bounded_process.py
+    python3 formal/pon-nakamoto-v1/test_kernel_process.py
+    python3 formal/pon-nakamoto-v1/test_client_confirmation.py
+    python3 formal/pon-nakamoto-v1/test_native_session.py
+    python3 formal/pon-nakamoto-v1/test_work_precheck.py
+    TRNM_NATIVE_WORK="${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_work_io" TRNM_NATIVE_SESSION="${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_execute_session" TRNM_EXECUTION_WORKERS=8 python3 formal/pon-nakamoto-v1/test_client_confirmation.py
+    TRNM_NATIVE_WORK="${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_work_io" TRNM_NATIVE_SESSION="${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_execute_session" TRNM_EXECUTION_WORKERS=8 python3 formal/pon-nakamoto-v1/test_contracts.py
+    TRNM_NATIVE_WORK="${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_work_io" TRNM_NATIVE_SESSION="${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_execute_session" TRNM_EXECUTION_WORKERS=8 python3 formal/pon-nakamoto-v1/test_invariants.py
+    TRNM_NATIVE_WORK="${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_work_io" TRNM_NATIVE_EXECUTOR="${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_execute" TRNM_EXECUTION_WORKERS=8 python3 formal/pon-nakamoto-v1/test_client_confirmation.py
+    python3 formal/pon-nakamoto-v1/test_model_contract.py
+    python3 formal/pon-nakamoto-v1/test_work_backend.py
+    python3 formal/pon-nakamoto-v1/test_strict_signature.py
+    TRNM_NATIVE_MODE=release python3 formal/pon-nakamoto-v1/test_native_execution.py
+    TRNM_NATIVE_EXECUTOR="${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_execute" TRNM_EXECUTION_WORKERS=8 python3 formal/pon-nakamoto-v1/test_contracts.py
+    TRNM_NATIVE_MODE=release python3 formal/pon-nakamoto-v1/test_interop.py
+    TRNM_NATIVE_MODE=release python3 scripts/ci/test_pon_accepted_block.py
+'''
+
 
 def code_lines(text: str) -> list[str]:
     """The fixed lane permits whole-line comments, not alternate shell control flow."""
@@ -176,9 +239,10 @@ def check_independent_conformance(script: str, required: set[str]) -> None:
     pairs = re.findall(r'(?ms)^  ([a-z][a-z0-9-]*)\)\n(.*?)(?=^    ;;$)', script)
     lanes = dict(pairs)
     require(len(pairs) == len(lanes) and set(lanes) == required, 'exact five executable lane selectors')
-    parent_material = '    python3 scripts/test_llm_parent_material.py\n'
-    require(parent_material in lanes['protocol-contract'] and script.count(parent_material) == 1,
-            'parent material byte checks must execute exactly once in protocol-contract')
+    for parent_material in ('    python3 scripts/test_llm_parent_material.py\n',
+                            '    python3 scripts/test_llm_runtime_parent_step.py\n'):
+        require(parent_material in lanes['protocol-contract'] and script.count(parent_material) == 1,
+                'parent material and parent-step byte checks must execute exactly once in protocol-contract')
     reward_budgets = '    python3 formal/pon-nakamoto-v1/test_reward_budget_oracle.py\n'
     require(reward_budgets in lanes['protocol-contract'] and script.count(reward_budgets) == 1,
             'five-lane reward budget controls must execute exactly once in protocol-contract')
@@ -232,6 +296,16 @@ def check_independent_conformance(script: str, required: set[str]) -> None:
                 'native observation selectors must remain inside the single test/oracle subshell')
     require(script.count(NATIVE_RELEASE_BLOCK) == 1,
             'full-capacity, signed-growth and account-verification release controls must execute once sequentially')
+    require(code_lines(lanes['protocol-contract']) == code_lines(PROTOCOL_CONTRACT_BLOCK),
+            'protocol-contract must retain its complete straight-line command sequence without shell control flow that skips tests or swallows failures')
+    dispatch_prefix = ('#!/usr/bin/env bash\nset -euo pipefail\n'
+                       'export RUST_TEST_THREADS="${RUST_TEST_THREADS:-1}"\n'
+                       'case "${1:?required job}" in\n')
+    dispatch_suffix = "  *) printf '%s\\n' 'unknown CI job' >&2; exit 2 ;;\nesac\n"
+    reconstructed = dispatch_prefix + ''.join(
+        '  ' + name + ')\n' + block + '    ;;\n' for name, block in pairs) + dispatch_suffix
+    require(script == reconstructed,
+            'straight-line lane dispatch must not wrap or swallow the selected lane')
 
 
 def require(ok: bool, message: str) -> None:

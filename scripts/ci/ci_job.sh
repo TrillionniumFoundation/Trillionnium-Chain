@@ -60,6 +60,7 @@ case "${1:?required job}" in
     python3 scripts/run_public_v3_service_campaign.py --out "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/public-v3-service"
     python3 scripts/test_llm_runtime_pilot.py
     python3 scripts/test_llm_parent_material.py
+    python3 scripts/test_llm_runtime_parent_step.py
     python3 formal/pon-nakamoto-v1/test_reward_budget_oracle.py
     python3 formal/pon-nakamoto-v1/test_model_attribution.py
     python3 formal/pon-nakamoto-v1/test_model_evolution_oracle.py -v
