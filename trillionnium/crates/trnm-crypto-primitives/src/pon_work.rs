@@ -2,6 +2,7 @@
 //! Full-transcript work on challenge-encoded matrices; verification recomputes it.
 use sha2::{Digest, Sha256};
 
+pub mod arithmetic_facts;
 pub mod blocked_one_zero;
 pub mod blocked_zero;
 pub mod blocked_zero_paired;
@@ -332,6 +333,8 @@ fn evaluate_transcript_with_progress<E>(
 #[cfg(test)]
 thread_local! {
     static PRODUCT_RECONSTRUCTIONS: std::cell::Cell<usize> = const { std::cell::Cell::new(0) };
+    static ARITHMETIC_TRANSCRIPT_REPLAYS: std::cell::Cell<usize> = const { std::cell::Cell::new(0) };
+    static ARITHMETIC_TRANSCRIPT_COMPLETIONS: std::cell::Cell<usize> = const { std::cell::Cell::new(0) };
 }
 
 fn finish_product(a: &[u32], evaluated: TranscriptEvaluation) -> Vec<u32> {
@@ -692,6 +695,8 @@ fn evaluate_transposed_with_progress<const LIMB_TRANSCRIPT: bool, E>(
     b: &[u32],
     progress: &mut impl FnMut(VerificationProgress) -> Result<(), E>,
 ) -> Result<TranscriptEvaluation, VerificationError<E>> {
+    #[cfg(test)]
+    ARITHMETIC_TRANSCRIPT_REPLAYS.with(|count| count.set(count.get() + 1));
     validate(a)?;
     validate(b)?;
     let el = expand_with_progress(challenge, 0, N * R, progress)?;
@@ -763,6 +768,9 @@ fn evaluate_transposed_with_progress<const LIMB_TRANSCRIPT: bool, E>(
             }
         }
     }
+    let trace = transcript.finalize().into();
+    #[cfg(test)]
+    ARITHMETIC_TRANSCRIPT_COMPLETIONS.with(|count| count.set(count.get() + 1));
     Ok(TranscriptEvaluation {
         cp,
         el,
@@ -770,7 +778,7 @@ fn evaluate_transposed_with_progress<const LIMB_TRANSCRIPT: bool, E>(
         fl,
         fr,
         bp,
-        trace: transcript.finalize().into(),
+        trace,
     })
 }
 

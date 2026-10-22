@@ -1,4 +1,5 @@
 //! Optional bounded local measurements. Never ledger or transport authority.
+use super::work_arithmetic::PublicArithmeticWorkObservation;
 use serde::Serialize;
 use std::sync::{
     atomic::{AtomicBool, AtomicU64, Ordering},
@@ -94,6 +95,11 @@ pub struct PublicRequestObservation {
     pub full_work_started: bool,
     pub full_work_accepted: Option<bool>,
     pub full_work_thread_cpu_ns: Option<u64>,
+    /// Present only for the separately signed, explicit arithmetic-fact profile.
+    /// The legacy full_work interval still measures actual complete-relation
+    /// verification; it must not be interpreted as a fresh arithmetic replay.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub work_arithmetic: Option<PublicArithmeticWorkObservation>,
     pub dispatch_started: bool,
     pub dispatch_accepted: Option<bool>,
     pub dispatch_thread_cpu_ns: Option<u64>,
@@ -133,6 +139,7 @@ impl PublicRequestObservation {
             full_work_started: false,
             full_work_accepted: None,
             full_work_thread_cpu_ns: None,
+            work_arithmetic: None,
             dispatch_started: false,
             dispatch_accepted: None,
             dispatch_thread_cpu_ns: None,
@@ -156,6 +163,7 @@ struct TaskProgress {
     full_work_started: bool,
     full_work_accepted: Option<bool>,
     full_work_thread_cpu_ns: Option<u64>,
+    work_arithmetic: Option<PublicArithmeticWorkObservation>,
     dispatch_started: bool,
     dispatch_accepted: Option<bool>,
     dispatch_thread_cpu_ns: Option<u64>,
@@ -167,6 +175,7 @@ impl Default for TaskProgress {
             full_work_started: false,
             full_work_accepted: None,
             full_work_thread_cpu_ns: None,
+            work_arithmetic: None,
             dispatch_started: false,
             dispatch_accepted: None,
             dispatch_thread_cpu_ns: None,
@@ -274,6 +283,7 @@ impl PublicRequestObserver {
                         value.full_work_started = task.full_work_started;
                         value.full_work_accepted = task.full_work_accepted;
                         value.full_work_thread_cpu_ns = task.full_work_thread_cpu_ns;
+                        value.work_arithmetic = task.work_arithmetic;
                         value.dispatch_started = task.dispatch_started;
                         value.dispatch_accepted = task.dispatch_accepted;
                         value.dispatch_thread_cpu_ns = task.dispatch_thread_cpu_ns;
@@ -479,6 +489,11 @@ impl TaskObservation {
     pub(super) fn work_started(&self) {
         self.0.update_task(|r| {
             r.full_work_started = true;
+        });
+    }
+    pub(super) fn work_arithmetic(&self, observation: PublicArithmeticWorkObservation) {
+        self.0.update_task(|r| {
+            r.work_arithmetic = Some(observation);
         });
     }
     pub(super) fn work_finished(&self, cpu: Option<u64>, accepted: bool) {

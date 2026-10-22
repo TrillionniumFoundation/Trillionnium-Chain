@@ -1,5 +1,6 @@
 //! Real W1/thread-CPU controls for scheduling within the unchanged scalar account.
 //! The original multi-process campaign remains the native liveness acceptance.
+use super::super::PublicDispatchObservation;
 use super::*;
 use crate::{store::WorkCheckedPacket, Node, Packet, Settings};
 use std::sync::mpsc;
@@ -281,7 +282,11 @@ fn only_fresh_successful_native_w1_promotes_not_false_product_or_existing_packet
             &stop,
             &cancelled,
             &metrics,
-            (None, Some(&measurement)),
+            PublicDispatchObservation {
+                observation: None,
+                mutation_cpu: Some(&measurement),
+                arithmetic_facts: None,
+            },
         );
         if index == 0 {
             assert_eq!(outcome.unwrap_err().to_string(), "WORK:Product");
@@ -373,7 +378,11 @@ fn same_valid_w1_native_invalid_packet_cannot_reacquire_completion_priority() {
             &stop,
             &cancelled,
             &metrics,
-            (None, Some(&measurement)),
+            PublicDispatchObservation {
+                observation: None,
+                mutation_cpu: Some(&measurement),
+                arithmetic_facts: None,
+            },
         );
         promotions.push(server.mutation_cpu.lock().unwrap().verified_completions);
         permit.finish(&measurement, &server, &metrics).unwrap();
@@ -556,7 +565,11 @@ fn full_completion_registry_keeps_all_markers_and_allows_real_native_admission()
         &stop,
         &cancelled,
         &metrics,
-        (None, Some(&measurement)),
+        PublicDispatchObservation {
+            observation: None,
+            mutation_cpu: Some(&measurement),
+            arithmetic_facts: None,
+        },
     )
     .unwrap();
     assert_eq!(result["block"], hex::encode(packet.id().unwrap()));
@@ -651,7 +664,11 @@ fn same_verified_w1_with_changed_transaction_body_is_rejected_before_promotion()
             &stop,
             &cancelled,
             &metrics,
-            (None, Some(&measurement)),
+            PublicDispatchObservation {
+                observation: None,
+                mutation_cpu: Some(&measurement),
+                arithmetic_facts: None,
+            },
         );
         permit.finish(&measurement, &server, &metrics).unwrap();
         assert!(matches!(&outcome, Err(error) if error.to_string() == "ROOT"

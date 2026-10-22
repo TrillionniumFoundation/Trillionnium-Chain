@@ -437,6 +437,40 @@ impl WorkCheckedPacket {
             owner_permit: None,
         })
     }
+    /// The opt-in arithmetic owner supplies only exact mathematical facts.
+    /// Current proof claims are verified before this private packet is created.
+    /// No owner permit, task or execution authority is retained in that cache.
+    pub(crate) fn verify_with_arithmetic_facts(
+        packet: Packet,
+        facts: &pon_work::arithmetic_facts::ArithmeticFactCache,
+        progress: &mut impl FnMut(pon_work::VerificationProgress) -> Result<()>,
+        observation: &mut pon_work::arithmetic_facts::ArithmeticObservation,
+    ) -> Result<Self> {
+        let h = &packet.header;
+        let work = facts
+            .verify_with_observation(
+                h.challenge(),
+                h.work_task,
+                h.target,
+                &packet.proof,
+                progress,
+                observation,
+            )
+            .map_err(|error| match error {
+                pon_work::arithmetic_facts::FactError::Relation(error) => {
+                    Error::from(format!("WORK:{error:?}"))
+                }
+                pon_work::arithmetic_facts::FactError::Cancelled(error) => error,
+                pon_work::arithmetic_facts::FactError::Unavailable => {
+                    Error::from("WORK_ARITHMETIC_FACTS_UNAVAILABLE")
+                }
+            })?;
+        Ok(Self {
+            packet,
+            work,
+            owner_permit: None,
+        })
+    }
     /// Exact, domain-separated identity of the private fully verified packet.
     /// This is only a local scheduling key; it confers no admission, task or
     /// payment authority. Canonical transaction/proof bytes are all committed.

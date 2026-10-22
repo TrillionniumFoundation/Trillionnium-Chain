@@ -11,6 +11,7 @@ mod intake;
 use intake::{ConnectionLease, ListenerIntake};
 pub(super) mod request_observation;
 pub mod scalar_cpu;
+mod work_arithmetic;
 pub use request_observation::{
     ApplicationFrameBytes, ApplicationFramePhase, PublicRequestObservation,
     PublicRequestObservationSnapshot, PublicRequestObserver, SubmitPhase, SubmitPhaseObservation,
@@ -48,6 +49,10 @@ use std::{
 use trnm_crypto_primitives::verify_hex_strict;
 use trnm_mvcc_fee::pon_executor::{ExecutionControl, ExecutionWorkerAccounting};
 use trnm_protocol::pon_wire::Hash;
+pub use work_arithmetic::{
+    call_public_protected_v3_with_arithmetic_facts, PublicArithmeticFactObservation,
+    PublicArithmeticWorkObservation,
+};
 
 /// Fresh signed/wire successor. V2 remains a separate unchanged byte contract.
 #[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize)]
@@ -666,6 +671,8 @@ pub struct PublicServer {
     epoch: Hash,
     started: Instant,
     mutation_cpu: Arc<Mutex<PaidMutationCpuBudget>>,
+    arithmetic_facts:
+        Option<trnm_crypto_primitives::pon_work::arithmetic_facts::ArithmeticFactCache>,
     #[cfg(test)]
     fail_next_output: AtomicBool,
     #[cfg(test)]
@@ -687,6 +694,7 @@ impl PublicServer {
             epoch: entropy()?,
             started: Instant::now(),
             mutation_cpu: Arc::new(Mutex::new(PaidMutationCpuBudget::new())),
+            arithmetic_facts: None,
             #[cfg(test)]
             fail_next_output: AtomicBool::new(false),
             #[cfg(test)]
@@ -731,7 +739,7 @@ impl PublicServer {
         let tick = self.tick()?;
         let mut c = Cookie {
             schema: "public-resource-cookie-v3".into(),
-            profile: hex::encode(self.policy.id()),
+            profile: hex::encode(self.resource_profile()),
             network: hex::encode(s.network()),
             parameters: hex::encode(s.parameters()),
             genesis: hex::encode(s.genesis()),
@@ -763,7 +771,7 @@ impl PublicServer {
     fn validate(&self, c: &Cookie, s: &Settings, check_expiry: bool) -> Result<()> {
         ensure(
             c.schema == "public-resource-cookie-v3"
-                && c.profile == hex::encode(self.policy.id())
+                && c.profile == hex::encode(self.resource_profile())
                 && c.network == hex::encode(s.network())
                 && c.parameters == hex::encode(s.parameters())
                 && c.genesis == hex::encode(s.genesis())
@@ -866,7 +874,7 @@ fn response(
     };
     let mut r = Response {
         schema: "public-protected-response-v3".into(),
-        profile: hex::encode(server.policy.id()),
+        profile: hex::encode(server.resource_profile()),
         network: hex::encode(s.network()),
         parameters: hex::encode(s.parameters()),
         genesis: hex::encode(s.genesis()),
@@ -1357,6 +1365,12 @@ fn decode_task_body(
     }
     decoded
 }
+struct PublicDispatchObservation<'a> {
+    observation: Option<&'a TaskObservation>,
+    mutation_cpu: Option<&'a MutationCpuMeasurement>,
+    arithmetic_facts:
+        Option<&'a trnm_crypto_primitives::pon_work::arithmetic_facts::ArithmeticFactCache>,
+}
 fn public_dispatch(
     node: &Mutex<Node>,
     request: Request,
@@ -1364,9 +1378,13 @@ fn public_dispatch(
     stop: &AtomicBool,
     cancelled: &AtomicBool,
     metrics: &Mutex<PublicMetrics>,
-    observation: (Option<&TaskObservation>, Option<&MutationCpuMeasurement>),
+    observation: PublicDispatchObservation<'_>,
 ) -> Result<Value> {
-    let (observation, mutation_cpu) = observation;
+    let PublicDispatchObservation {
+        observation,
+        mutation_cpu,
+        arithmetic_facts,
+    } = observation;
     let live_cpu = mutation_cpu.map(|cpu| &cpu.workers);
     let mut progress = |steps: u64| {
         task_alive(deadline, stop, cancelled)?;
@@ -1432,13 +1450,36 @@ fn public_dispatch(
                     if let Some(record) = observation {
                         record.work_started();
                     }
-                    let result = WorkCheckedPacket::verify_with_progress(packet, &mut |_| {
+                    let mut checkpoint = |_| {
                         task_alive(deadline, stop, cancelled)?;
                         if let Some(checkpoint) = &continuous_progress {
                             checkpoint.check()?;
                         }
                         live_cpu.map_or(Ok(()), ScopedWorkerCpu::checkpoint)
-                    });
+                    };
+                    let result = match arithmetic_facts {
+                        None => WorkCheckedPacket::verify_with_progress(packet, &mut checkpoint),
+                        Some(facts) => {
+                            if let Some(record) = observation {
+                                record.work_arithmetic(PublicArithmeticWorkObservation::started(
+                                    facts,
+                                ));
+                            }
+                            let mut actual = trnm_crypto_primitives::pon_work::arithmetic_facts::ArithmeticObservation::default();
+                            let result = WorkCheckedPacket::verify_with_arithmetic_facts(
+                                packet,
+                                facts,
+                                &mut checkpoint,
+                                &mut actual,
+                            );
+                            if let Some(record) = observation {
+                                record.work_arithmetic(PublicArithmeticWorkObservation::finished(
+                                    facts, actual,
+                                ));
+                            }
+                            result
+                        }
+                    };
                     let cpu = cpu.and_then(ThreadCpuStamp::finish);
                     if let Some(charge) = mutation_cpu {
                         charge.full_work_ns.set(cpu);
@@ -1932,7 +1973,13 @@ fn serve_public_protected_v3_inner(
                                                     &stop,
                                                     &task.cancelled,
                                                     &metrics,
-                                                    (task.observation.as_ref(), mutation_cpu),
+                                                    PublicDispatchObservation {
+                                                        observation: task.observation.as_ref(),
+                                                        mutation_cpu,
+                                                        arithmetic_facts: server
+                                                            .arithmetic_facts
+                                                            .as_ref(),
+                                                    },
                                                 )
                                             })(
                                             );
@@ -2795,6 +2842,27 @@ pub fn call_public_protected_v3_with_deadline(
     policy: PublicPolicy,
     outer_deadline: Option<Instant>,
 ) -> (Result<PublicReply>, PublicClientMetrics) {
+    call_public_protected_v3_with_profile(
+        address,
+        request,
+        settings,
+        pinned_server,
+        caller,
+        (policy, false),
+        outer_deadline,
+    )
+}
+
+fn call_public_protected_v3_with_profile(
+    address: SocketAddr,
+    request: &Request,
+    settings: &Settings,
+    pinned_server: &str,
+    caller: &DevelopmentIdentity,
+    policy_and_arithmetic: (PublicPolicy, bool),
+    outer_deadline: Option<Instant>,
+) -> (Result<PublicReply>, PublicClientMetrics) {
+    let (policy, arithmetic_facts) = policy_and_arithmetic;
     let call_start = Instant::now();
     let mut phase_start = call_start;
     let mut phase = PublicClientStage::Construction;
@@ -2852,7 +2920,11 @@ pub fn call_public_protected_v3_with_deadline(
             settings,
             pinned_server,
             policy,
-            policy.id(),
+            if arithmetic_facts {
+                policy.arithmetic_facts_id()
+            } else {
+                policy.id()
+            },
         )?;
         metrics.challenge_ns = elapsed_ns(phase_start);
         phase = PublicClientStage::SolutionSearch;
@@ -2920,7 +2992,12 @@ pub fn call_public_protected_v3_with_deadline(
         ensure(
             serde_json::to_vec(&r)? == bytes
                 && r.schema == "public-protected-response-v3"
-                && r.profile == hex::encode(policy.id())
+                && r.profile
+                    == hex::encode(if arithmetic_facts {
+                        policy.arithmetic_facts_id()
+                    } else {
+                        policy.id()
+                    })
                 && r.network == hex::encode(settings.network())
                 && r.parameters == hex::encode(settings.parameters())
                 && r.genesis == hex::encode(settings.genesis())
@@ -4305,7 +4382,11 @@ mod tests {
                 &AtomicBool::new(stop_value),
                 &AtomicBool::new(cancelled_value),
                 &metrics,
-                (None, None),
+                PublicDispatchObservation {
+                    observation: None,
+                    mutation_cpu: None,
+                    arithmetic_facts: None,
+                },
             )
             .unwrap_err();
             assert_eq!(error.to_string(), expected);
@@ -6761,7 +6842,11 @@ mod paid_settlement_consistency_tests {
                 &AtomicBool::new(false),
                 &AtomicBool::new(false),
                 &metrics,
-                (None, Some(&measurement)),
+                PublicDispatchObservation {
+                    observation: None,
+                    mutation_cpu: Some(&measurement),
+                    arithmetic_facts: None,
+                },
             )
             .unwrap_err();
             assert_eq!(error.to_string(), expected);
