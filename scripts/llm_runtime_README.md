@@ -15,6 +15,22 @@ own real network/parameters/genesis/family/plan to these explicit reference root
 Ports validation, a runtime receipt and an artifact hash do not certify native
 inference, independent custody, computational hardness or public reward authority.
 
+The internal `decode_tokens(model, tokenizer, tokens, task_id, contract, cid,
+plan, torch, device, artifact=None, role='current-backbone')` accepts one bounded
+list of already fully encoded token IDs. It snapshots that list, validates the
+original request domain and checks actual int64 input / finite FP32 logits with
+exact batch, sequence and vocabulary shapes. It neither templates nor truncates
+the input. The original `decode` wrapper still applies `prompt_tokens` once and
+uses the same greedy loop, smallest-ID tie break, fixed count and decode flags.
+The family remains at input128/output16; callers must supply their actual full
+context compilation, tokenizer and loaded-attempt binding. This extraction adds
+no Hepta provider, held FinalUse permission, model result or I10 acceptance.
+
+The existing pilot test entry imports the routing controls. Optional tiny CPU
+tensor controls use `TRNM_ACTUAL_DECODER_TENSOR_TESTS=1 python -m unittest discover
+-s scripts -p test_llm_runtime_decode.py -v`; without that explicit opt-in they
+report NOT_RUN. They use constructed tensors, not pretrained model weights.
+
 ## Execution
 
 Use a fresh output directory and retained exact `material-manifest.json` with the

@@ -686,12 +686,43 @@ def train(model, tokenizer, plan, role, torch, device):
 
 
 def decode(model, tokenizer, row, contract, cid, plan, torch, device, artifact=None, role='current-backbone'):
-    c = contract_module()
     tokens = prompt_tokens(tokenizer, row, plan['input_tokens_max'])
+    return decode_tokens(model, tokenizer, tokens, row['id'], contract, cid, plan, torch, device,
+                         artifact=artifact, role=role)
+
+
+def decode_tokens(model, tokenizer, tokens, task_id, contract, cid, plan, torch, device,
+                  artifact=None, role='current-backbone'):
+    """Internal single-sequence decoder: IDs are already fully templated/encoded.
+
+    No prompt rendering, tokenizer proxy, truncation or loading authority is
+    supplied here. The caller owns full-context compilation and actual load
+    binding. Request/response domains and the original family caps are retained.
+    """
+    require(type(plan) is dict, 'RUNTIME_DECODE_LIMIT')
+    # Retain the checked immutable execution scalars, not a caller-owned plan.
+    plan = {name: plan.get(name) for name in
+            ('input_tokens_max', 'generation_tokens', 'backend', 'snapshot')}
+    require(type(plan['input_tokens_max']) is int and
+            1 <= plan['input_tokens_max'] <= 128 and
+            type(plan['generation_tokens']) is int and 1 <= plan['generation_tokens'] <= 16,
+            'RUNTIME_DECODE_LIMIT')
+    require(type(plan['snapshot']) is str and bool(plan['snapshot']), 'RUNTIME_DECODE_CONTEXT')
+    require(type(tokens) is list and 1 <= len(tokens) <= plan['input_tokens_max'],
+            'RUNTIME_NO_TRUNCATION')
+    # Snapshot only a bounded list; caller mutation cannot rewrite the request.
+    tokens = tokens.copy()
+    backend = plan.get('backend')
+    require(backend in ('cpu', 'cuda', 'rocm', 'mps') and
+            getattr(device, 'type', None) == ('cuda' if backend == 'rocm' else backend),
+            'RUNTIME_DECODER_DEVICE')
+    c = contract_module()
     request = dict(schema='pon-causal-decoder-request-v1', contract=cid, input_ids=[tokens],
                    attention_mask=[[True]*len(tokens)], generation_tokens=plan['generation_tokens'])
     rid = c.validate_decoder_request(request, contract, cid)
     ids = torch.tensor([tokens], dtype=torch.int64, device=device)
+    require(ids.dtype == torch.int64 and ids.device.type == device.type and
+            tuple(ids.shape) == (1, len(tokens)), 'RUNTIME_INPUT_TENSOR')
     generated, logits_root = [], hashlib.sha256()
     model.eval()
     with torch.inference_mode():
@@ -699,8 +730,11 @@ def decode(model, tokenizer, row, contract, cid, plan, torch, device, artifact=N
             mask = torch.ones_like(ids, dtype=torch.bool)
             positions = mask.to(torch.int64).cumsum(-1)-1
             result = model(input_ids=ids, attention_mask=mask, position_ids=positions, use_cache=False)
-            require(result.logits.dtype == torch.float32 and result.logits.device.type == device.type and
-                    torch.isfinite(result.logits).all().item(), 'RUNTIME_LOGITS_DEVICE_OR_NONFINITE')
+            require(result.logits.dtype == torch.float32 and result.logits.device.type == device.type,
+                    'RUNTIME_LOGITS_DEVICE_OR_NONFINITE')
+            require(tuple(result.logits.shape) == (1, ids.shape[1], contract['architecture']['vocabulary']),
+                    'RUNTIME_LOGITS_SHAPE')
+            require(torch.isfinite(result.logits).all().item(), 'RUNTIME_LOGITS_DEVICE_OR_NONFINITE')
             last = result.logits[:, -1, :]
             logits_root.update(tensor_bytes(last))
             # argmax selects the first (smallest-token-id) maximal element.
@@ -712,7 +746,7 @@ def decode(model, tokenizer, row, contract, cid, plan, torch, device, artifact=N
                     generated_token_ids=[generated], decoded_outputs=[decoded])
     roots = c.validate_decoder_response(response, request, contract, cid)
     require(roots[0] == hashlib.sha256(decoded.encode()).hexdigest(), 'RUNTIME_DECODE_BYTE_ROOT')
-    return dict(task=row['id'], request=request, request_id=rid, response=response,
+    return dict(task=task_id, request=request, request_id=rid, response=response,
                 artifact=artifact or contract['backbone']['index_root'], role=role,
                 output_sha256=roots[0], logits_sha256=logits_root.hexdigest(),
                 input_tokens=len(tokens), generated_tokens=len(generated), actual_device=str(device),

@@ -375,6 +375,15 @@ retain component identities and the original failures.
 | PN4 | Combined local source `ebc0076c84b9a7c15b4cc4fb87ee1d3971846022` passed seven native budget tests, forty-four scalar CPU tests, three public-target tests and full workspace/all-target/all-feature strict release Clippy. The bounded read-only inventory exposes existing pending/receipted operations without dispatch or payment authority. Mature mining rewards have already been credited and their reward rows removed; a second payment cannot be funded by that historical row. Actual M06 locks/debits, meters and reconciliation remain necessary. |
 | PN5 | Three independent administrators, hosting providers and failure domains, preregistered WAN faults, repair and at least seventy-two hours of real operation are still missing. |
 
+Within the same PN3/I10 prerequisite, M14's existing runtime now separates its
+internal `decode_tokens` loop from the unchanged single-prompt wrapper. Already
+encoded IDs use the original request/response domains, input128/output16 bounds,
+fixed-count greedy rule and actual tensor dtype/device/shape checks. Caller-side
+full-context compilation and actual loaded-attempt binding remain required.
+Routing controls and opt-in tiny CPU tensor equivalence/refusal tests are not a
+pretrained-model run, Hepta provider, held FinalUse or three-round/I10 result;
+outer closure remains UNKNOWN. M14's existing inventory includes these controls.
+
 Within PN3, the existing [runtime component](../../scripts/llm_runtime_README.md)
 adds the explicit `linux-owned-exit-terminal-subset-v3` observer and distinct
 `llm-runtime-public-pilot-plan-v3` domain. It retains the complete initial V2
