@@ -99,6 +99,115 @@ class RssIdentityTests(unittest.TestCase):
             opened.assert_not_called()
             closed.assert_not_called()
 
+    @contextlib.contextmanager
+    def exiting_group(self, mutate=None, before_second_identity=None):
+        """Controlled procfs state fixtures; not native exit observations."""
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            files = {
+                'self/status': 'Pid: 10000\nNSpid: 10000 500\n',
+                'self/fdinfo/17': 'Pid: 10001\nNSpid: 10001 501\n',
+            }
+            for tid, inner, state in ((10001, 501, 'Z'), (10002, 502, 'R')):
+                status = (f'Name: explicit exit-state fixture\nState: {state}\nTgid: 10001\n'
+                          f'Pid: {tid}\nPPid: 10000\nNStgid: 10001 501\nNSpid: {tid} {inner}\n'
+                          'Threads: 2\nKthread: 0\nvoluntary_ctxt_switches: 1\nnonvoluntary_ctxt_switches: 2\n')
+                parts = {3: state, 4: 10000, 9: 4, 20: 2, 22: 12345 + tid}
+                raw_stat = f'{tid} (a deliberately tricky ) name) ' + ' '.join(str(parts.get(n, 0)) for n in range(3, 53)) + '\n'
+                files[f'10001/task/{tid}/status'] = status
+                files[f'10001/task/{tid}/stat'] = raw_stat
+                if tid == 10001:
+                    files['10001/status'] = status
+            for name, contents in files.items():
+                path = root / name
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text(contents)
+            if mutate:
+                mutate(root)
+            original_open = runtime.os.open
+            identity_reads = 0
+
+            def mapped_open(name, flags, mode=0o777, *, dir_fd=None):
+                nonlocal identity_reads
+                if name == '/proc/self/fdinfo/17':
+                    identity_reads += 1
+                    if identity_reads == 2 and before_second_identity:
+                        before_second_identity(root)
+                if isinstance(name, str) and name.startswith('/proc/'):
+                    name = root / name.removeprefix('/proc/')
+                return original_open(name, flags, mode, dir_fd=dir_fd)
+
+            process = SimpleNamespace(pid=501, termination_fd=17, reaped=False, observation_error=None)
+            with patch.object(runtime.os, 'open', side_effect=mapped_open), \
+                    patch.object(runtime.os, 'getpid', return_value=500):
+                yield process, root
+
+    def test_complete_bound_exit_group_proves_cleanup_without_producing_rss(self):
+        with self.exiting_group() as (process, _):
+            proof = runtime.owned_exit_cleanup_proof(process)
+        self.assertEqual(proof['schema'], 'linux-owned-thread-group-exit-cleanup-v1')
+        self.assertEqual(proof['pidfd_nspid'], [10001, 501])
+        self.assertEqual(proof['threads'], [
+            dict(tid=10001, state='Z', flags=4, start_time_ticks=22346),
+            dict(tid=10002, state='R', flags=4, start_time_ticks=22347)])
+        self.assertIs(proof['rss_sample_produced'], False)
+
+    def test_live_thread_kernel_thread_or_surviving_mm_cannot_prove_cleanup(self):
+        def change_stat(root, field, value):
+            path = root / '10001/task/10002/stat'
+            prefix, tail = path.read_text().rsplit(') ', 1)
+            parts = tail.split()
+            parts[field - 3] = str(value)
+            path.write_text(prefix + ') ' + ' '.join(parts) + '\n')
+
+        variants = [lambda root: change_stat(root, 9, 0),
+                    lambda root: change_stat(root, 9, 4 | 0x00200000),
+                    lambda root: change_stat(root, 23, 4096),
+                    lambda root: change_stat(root, 24, 1)]
+        for extra in ('VmRSS: 0 kB\n', 'VmSize: 0 kB\n', 'RssAnon: 0 kB\n'):
+            variants.append(lambda root, extra=extra: (root/'10001/task/10002/status').write_text(
+                (root/'10001/task/10002/status').read_text() + extra))
+        for mutate in variants:
+            with self.subTest(mutate=mutate), self.exiting_group(mutate) as (process, _):
+                diagnostic = {}
+                self.assertIsNone(runtime.owned_exit_cleanup_proof(process, diagnostic))
+                self.assertIn('exit_cleanup_proof_error', diagnostic)
+
+    def test_wrong_identity_incomplete_members_and_replaced_pidfd_fail_closed(self):
+        variants = [
+            lambda root: (root/'self/fdinfo/17').write_text('Pid: 10001\nNSpid: 10001 502\n'),
+            lambda root: (root/'10001/task/10002/status').write_text(
+                (root/'10001/task/10002/status').read_text().replace('NStgid: 10001 501', 'NStgid: 10001 502')),
+            lambda root: (root/'10001/task/10002/status').write_text(
+                (root/'10001/task/10002/status').read_text().replace('PPid: 10000', 'PPid: 9999')),
+            lambda root: (root/'10001/task/10002/status').write_text('Pid: 10002\n'),
+            lambda root: (root/'10001/task/10002').rename(root/'10001/task/10003'),
+            lambda root: (root/'10001/status').write_text(
+                (root/'10001/status').read_text().replace('Threads: 2', 'Threads: 3')),
+        ]
+        for mutate in variants:
+            with self.subTest(mutate=mutate), self.exiting_group(mutate) as (process, _):
+                self.assertIsNone(runtime.owned_exit_cleanup_proof(process))
+        with self.exiting_group(before_second_identity=lambda root: (root/'self/fdinfo/17').write_text(
+                'Pid: -1\nNSpid: -1\n')) as (process, _):
+            self.assertIsNone(runtime.owned_exit_cleanup_proof(process))
+
+    def test_unterminated_or_duplicate_proc_fields_cannot_mean_no_mm(self):
+        for transform in (lambda raw: raw.rstrip('\n'), lambda raw: raw + 'VmRSS: 1 kB\nVmRSS: 0 kB\n',
+                          lambda raw: raw + 'Unexpected: ' + 'a' * 16384 + '\n'):
+            with self.subTest(transform=transform), self.exiting_group(
+                    lambda root: (root/'10001/task/10002/status').write_text(
+                        transform((root/'10001/task/10002/status').read_text()))) as (process, _):
+                self.assertIsNone(runtime.owned_exit_cleanup_proof(process))
+
+    def test_actual_live_owned_child_cannot_receive_exit_cleanup_proof(self):
+        process = runtime._Wait4Child([sys.executable, '-c', 'import time;time.sleep(5)'])
+        try:
+            self.assertIsNone(runtime.owned_exit_cleanup_proof(process))
+        finally:
+            process.finish()
+        self.assertTrue(process.reaped)
+
 
 class RssSupervisionTests(unittest.TestCase):
     BUDGET = dict(wall_seconds=2, rss_bytes=128 * 1024**2)
@@ -230,6 +339,165 @@ class RssSupervisionTests(unittest.TestCase):
             self.assertEqual(waited.call_count, 2)
             signalled.assert_not_called()
             self.assert_receipt(directory, result)
+
+    def test_address_space_exit_precedes_waitable_terminal_by_bounded_pidfd_wait(self):
+        for peak, outcome, reason in ((8192, 'success', None),
+                                      (256 * 1024, 'failed', 'rss-budget-exceeded')):
+            child = self.child_control()
+            waits = [(0, 0, None), (0, 0, None), (child.pid, 0, self.usage(peak))]
+            with self.subTest(peak=peak), tempfile.TemporaryDirectory() as temporary:
+                directory = Path(temporary) / 'address-space-exit-race'
+                with self.control(child, waits, [None]) as (waited, _, signalled, killed, _), \
+                        patch.object(runtime.select, 'select', return_value=([17], [], [])) as ready:
+                    result = runtime.supervise(['deterministic-address-space-exit'], directory, self.BUDGET)
+                self.assertEqual((result['outcome'], result['stop_reason']), (outcome, reason))
+                self.assertEqual(waited.call_count, 3)
+                self.assertEqual(result['waited_child_peak_rss_bytes'], peak * 1024)
+                bounded_waits = [call.args for call in ready.call_args_list if call.args[3] > 0]
+                self.assertEqual(len(bounded_waits), 1)
+                self.assertEqual(bounded_waits[0][:3], ([17], [], []))
+                self.assertLessEqual(bounded_waits[0][3], 0.05)
+                self.assertEqual(result['rss_observation_gaps'][0]['reconciliation']['terminal_reap'], 'terminal')
+                signalled.assert_not_called()
+                killed.assert_not_called()
+                self.assert_receipt(directory, result)
+
+    def test_reconciliation_without_terminal_receipt_cannot_turn_cleanup_into_success(self):
+        child = self.child_control()
+        waits = [(0, 0, None)] * 3 + [(child.pid, 0, self.usage())]
+        with tempfile.TemporaryDirectory() as temporary:
+            directory = Path(temporary) / 'readable-but-not-waitable'
+            with self.control(child, waits, [None]) as (_, _, signalled, _, _), \
+                    patch.object(runtime.select, 'select', return_value=([17], [], [])):
+                result = runtime.supervise(['deterministic-no-terminal-receipt'], directory, self.BUDGET)
+            self.assertEqual((result['outcome'], result['stop_reason']),
+                             ('failed', 'rss-observation-unavailable'))
+            signalled.assert_called_once_with(17, signal.SIGTERM)
+
+    def test_proven_kernel_cleanup_can_exceed_one_sample_but_still_requires_exact_rusage(self):
+        for peak, exit_status, outcome, reason in (
+                (8192, 0, 'success', None),
+                (256 * 1024, 0, 'failed', 'rss-budget-exceeded'),
+                (8192, 3 << 8, 'failed', None)):
+            child = self.child_control()
+            clock = [0]
+            polls = []
+
+            def ready_after_kernel_cleanup(readable, write, exceptional, seconds):
+                polls.append(seconds)
+                clock[0] += round(seconds * 10**9)
+                return ([17] if len(polls) == 4 else [], [], [])
+
+            with self.subTest(peak=peak, exit_status=exit_status), tempfile.TemporaryDirectory() as temporary:
+                directory = Path(temporary) / 'proved-kernel-teardown'
+                waits = [(0, 0, None), (0, 0, None), (child.pid, exit_status, self.usage(peak))]
+                with self.control(child, waits, [None]) as (waited, observed, signalled, _, _), \
+                        patch.object(runtime.time, 'monotonic_ns', side_effect=lambda: clock[0]), \
+                        patch.object(runtime, 'owned_rss_diagnostic', return_value={}), \
+                        patch.object(runtime, 'owned_exit_cleanup_proof', return_value={'controlled_exit_proof_fixture': True}), \
+                        patch.object(runtime.select, 'select', side_effect=ready_after_kernel_cleanup):
+                    result = runtime.supervise(['controlled-kernel-cleanup'], directory, self.BUDGET)
+                self.assertEqual((result['outcome'], result['stop_reason']), (outcome, reason))
+                self.assertEqual(result['sampled_peak_rss_bytes'], 0)
+                self.assertEqual(result['waited_child_peak_rss_bytes'], peak * 1024)
+                self.assertEqual(result['observed_wall_ns'], 200_000_000)
+                self.assertEqual(waited.call_count, 3)
+                observed.assert_called_once_with(child.pid)
+                signalled.assert_not_called()
+                self.assertEqual(result['rss_observation_gaps'][0]['reconciliation']['mode'], 'kernel-exit-cleanup')
+                self.assert_receipt(directory, result)
+
+    def test_proved_cleanup_never_renews_original_wall_after_diagnostics(self):
+        child = self.child_control()
+        clock = [0]
+        diagnostics = 0
+
+        def diagnostic(_):
+            nonlocal diagnostics
+            if diagnostics == 0:
+                clock[0] += 500_000_000
+            diagnostics += 1
+            return {}
+
+        def never_ready(readable, write, exceptional, seconds):
+            clock[0] += round(seconds * 10**9)
+            return [], [], []
+
+        with tempfile.TemporaryDirectory() as temporary:
+            directory = Path(temporary) / 'proved-cleanup-original-wall'
+            waits = [(0, 0, None), (0, 0, None), (child.pid, 0, self.usage())]
+            with self.control(child, waits, [None]) as (_, _, signalled, _, _), \
+                    patch.object(runtime.time, 'monotonic_ns', side_effect=lambda: clock[0]), \
+                    patch.object(runtime, 'owned_rss_diagnostic', side_effect=diagnostic), \
+                    patch.object(runtime, 'owned_exit_cleanup_proof', return_value={'controlled_exit_proof_fixture': True}), \
+                    patch.object(runtime.select, 'select', side_effect=never_ready):
+                result = runtime.supervise(['controlled-proved-cleanup-timeout'], directory, self.BUDGET)
+            self.assertEqual((result['outcome'], result['stop_reason']), ('failed', 'wall-budget-exceeded'))
+            self.assertEqual(result['exit_code'], 0)
+            self.assertEqual(result['observed_wall_ns'], 2_000_000_000)
+            observation = result['rss_observation_gaps'][0]['reconciliation']
+            self.assertEqual(observation['absolute_wall_deadline_ns'], 2_000_000_000)
+            self.assertEqual(observation['wait_deadline_ns'], 2_000_000_000)
+            self.assertEqual(observation['elapsed_ns'], 1_500_000_000)
+            self.assertEqual(observation['wait_polls'], 30)
+            signalled.assert_called_once_with(17, signal.SIGTERM)
+
+    def test_missing_proof_still_stops_after_one_sample_even_if_cleanup_later_succeeds(self):
+        child = self.child_control()
+        clock = [0]
+        polls = []
+
+        def not_ready(readable, write, exceptional, seconds):
+            polls.append(seconds)
+            clock[0] += round(seconds * 10**9)
+            return [], [], []
+
+        with tempfile.TemporaryDirectory() as temporary:
+            directory = Path(temporary) / 'unproved-cleanup'
+            waits = [(0, 0, None), (0, 0, None), (child.pid, 0, self.usage())]
+            with self.control(child, waits, [None]), \
+                    patch.object(runtime.time, 'monotonic_ns', side_effect=lambda: clock[0]), \
+                    patch.object(runtime, 'owned_rss_diagnostic', return_value={}), \
+                    patch.object(runtime, 'owned_exit_cleanup_proof', return_value=None), \
+                    patch.object(runtime.select, 'select', side_effect=not_ready):
+                result = runtime.supervise(['controlled-unproved-cleanup'], directory, self.BUDGET)
+            self.assertEqual((result['outcome'], result['stop_reason']), ('failed', 'rss-observation-unavailable'))
+            self.assertEqual(polls, [0.05])
+            self.assertEqual(result['rss_observation_gaps'][0]['reconciliation']['mode'], 'unproved-exit-race')
+
+    def test_proved_exit_and_ready_pidfd_cannot_replace_exact_terminal_receipt(self):
+        child = self.child_control()
+        waits = [(0, 0, None)] * 3 + [(child.pid, 0, self.usage())]
+        with tempfile.TemporaryDirectory() as temporary:
+            with self.control(child, waits, [None]) as (_, _, signalled, _, _), \
+                    patch.object(runtime, 'owned_rss_diagnostic', return_value={}), \
+                    patch.object(runtime, 'owned_exit_cleanup_proof', return_value={'controlled_exit_proof_fixture': True}), \
+                    patch.object(runtime.select, 'select', return_value=([17], [], [])):
+                result = runtime.supervise(['controlled-proved-exit-no-receipt'], Path(temporary)/'no-receipt', self.BUDGET)
+            self.assertEqual((result['outcome'], result['stop_reason']), ('failed', 'rss-observation-unavailable'))
+            self.assertEqual(result['exit_code'], 0)
+            signalled.assert_called_once_with(17, signal.SIGTERM)
+
+    def test_actual_child_delayed_exit_requires_owned_pidfd_and_exact_wait4(self):
+        original_wait4 = runtime.os.wait4
+        injected = 0
+
+        def initial_nonterminal(pid, options):
+            nonlocal injected
+            if injected < 2:
+                injected += 1
+                return 0, 0, None
+            return original_wait4(pid, options)
+
+        with tempfile.TemporaryDirectory() as temporary:
+            directory = Path(temporary) / 'actual-delayed-exit'
+            with patch.object(runtime.os, 'wait4', side_effect=initial_nonterminal), \
+                    patch.object(runtime, 'current_rss', return_value=None):
+                result = runtime.supervise([sys.executable, '-c', 'print("done")'], directory, self.BUDGET)
+            self.assertEqual((result['outcome'], result['stop_reason']), ('success', None))
+            self.assertEqual(result['exit_code'], 0)
+            self.assertTrue(result['waited_child_reaped'])
+            self.assertGreater(result['waited_child_peak_rss_bytes'], 0)
 
     def test_terminal_receipt_cannot_bypass_wall_deadline(self):
         child = self.child_control()

@@ -1,5 +1,10 @@
 # Public development intake V3 and the native local pool
 
+The current source selects signed resource revision **r12**, described in
+[Verified completion within the original CPU account](#verified-completion-within-the-original-cpu-account).
+The r10 contracts, vectors and earlier observations below remain historical;
+they do not qualify r11's wider paid interval or r12's completion scheduling.
+
 This is a fresh, explicitly selected development profile. It connects paid guest
 transport requests to the Node's actual persistent pool. It does not certify public
 readiness, independence, fair access under saturation, exact transaction inclusion,
@@ -314,8 +319,22 @@ or checked arithmetic immediately disable further mutation starts and settle
 without a fabricated zero or reserve refund. A completed native outcome and
 signed success remain unchanged. These are worker execution intervals, not exact
 OS thread lifetimes: startup, teardown and post-sample bookkeeping are excluded.
-Reactor parsing, caller/ticket authentication, response signing/output and
-unrelated service or miner threads remain outside this account. A completed mutation's accounting failure disables future starts
+Resource revision r11 extends that same owner interval from the paid raw body's
+digest and canonical decode through signed response serialization. Complete raw
+bodies enter the existing bounded queue before parsing; the original CPU reserve
+must be acquired before body hashing, JSON allocation, or native dispatch. Bad
+digests and noncanonical paid bodies therefore consume measured CPU and receive
+a bounded signed refusal. The existing body-memory reservation remains held.
+The nested `mutation_body_decode_cpu_ns` and `mutation_response_cpu_ns` counters
+are included in O and O-W+C; adding them again would double-count CPU. The CPU
+burst, refill, start reserve, worker count, request deadlines and campaign
+depletion threshold are unchanged. Challenge refill preserves fractional
+nanosecond credit at the existing 128/second rate, discarding surplus only at
+the existing 32-token ceiling and preserving the 8-token read reserve.
+
+Reactor caller/ticket authentication, socket copying, queue waiting and unrelated
+service or miner threads remain outside this account. Historical r10 observations
+retain their narrower scope and failed outcomes. A completed mutation's accounting failure disables future starts
 without replacing its actual native outcome or signed success. No completed
 fact is undone, and no failed measurement is refunded as zero.
 
@@ -339,6 +358,111 @@ signed native admission, post-success clock failure, read availability under
 controlled debt, rotated callers, debt/refill arithmetic and missing clocks.
 Fresh runtime evidence is required for any new source or resource digest;
 historical r4 loopback and Tailnet results retain their original scope.
+
+## Verified completion within the original CPU account
+
+Revision r12 addresses a specific starvation mechanism: after spending CPU on
+a complete successful W1 verification, a native Submit could lose its execution
+at the next budget checkpoint while later failed-W1 probes consumed the next
+refill. A FIFO start reservation alone does not preserve completed verification
+or provide time for the actual admission and activation that follows it.
+
+Only the private `WorkCheckedPacket` returned by a complete successful native
+W1 verification can promote its current public request. A claimed ticket, partial
+transcript, wrong product, caller key, author key or supplied success flag cannot
+promote a request. The original per-request owner remains live through M06,
+actual activation and signed response construction. No successful W1 result is
+treated as task, state, block, payment or finality authority.
+
+| Resource | r12 behavior |
+| --- | --- |
+| CPU burst | Original 2,000,000,000 ns; process-cold start still begins at zero. |
+| CPU refill | Original 250,000,000 ns per wall second. |
+| Start reservation | Original 100,000,000 ns per actual mutation owner. |
+| In-flight owners | Original maximum two; no additional worker or queue. |
+| New unverified start | Waits in the existing FIFO while any verified completion remains live. |
+| Already running unverified probe | Refused at the next cooperative checkpoint after its original cumulative start quantum; every nonpreemptive overrun is still charged. It cannot spend successive completion refills. |
+| Verified completion checkpoint | Debits actual CPU, then cooperatively waits for the original refill when needed. |
+| Deadline and stop | Original absolute task/service deadline and original cancellation flags, bound once before body decoding. |
+| Unknown clock or lost accounting | Still disables future mutation; unknown CPU is never returned as zero. |
+
+Scheduling adds no credit. The unchanged scalar identity is
+`stored credit = initial credit + credited refill - actual paid CPU - outstanding
+start reservations - settlement discard`. The same owner and scoped-worker
+samples debit every observed interval, including CPU used to manage a wait; final
+settlement subtracts only the unpaid residual. Sleeping itself is wall time, not
+a CPU refund. The completion counter is ownership state and never appears as a
+second balance or token source.
+
+After its first quantum, a permitted continuation still requires stored credit
+of at least minus its own original reservation. Adding all outstanding reserves
+therefore leaves every other owner's full reserve protected. A complete W1
+request waits on a shortage instead of making that shortage a permanent local
+cancellation. New probe starts remain paused during this wait; an already
+running probe has at most its original quantum plus the next cooperative
+observation interval. With at most two existing owners, failed-W1 probes cannot
+continually reacquire the refills needed by a verified request. A completed,
+cancelled, timed-out or unknown request releases its scheduling ownership exactly
+once and settles through the original account.
+
+This is cooperative scheduling. A State/root/history calculation, signature,
+SQLite call or another indivisible native stage can cross a budget or deadline
+before the next checkpoint. Its actual CPU remains charged. A budget/deadline
+failure after admission can leave a real admitted block whose activation is not
+complete; neither the scheduler nor settlement rolls back that native fact.
+The read queue remains separate, but reads can still wait for the shared Node
+owner during an active native completion.
+
+The existing-packet branch does **not** automatically promote a request. Exact
+stored packet bytes are not a new completion entitlement, and current activation
+still has its original clock/history/owner checks. Consequently recovery of an
+already admitted but inactive packet can still encounter ordinary budget
+shortage. Skipping those checks would require a separately justified native
+authority and is not part of r12.
+
+This policy does not establish general fairness against valid-W1 traffic. An
+attacker with a genuine complete W1 packet that later fails native task/state
+checks receives the same bounded completion opportunity as any other valid-W1
+request. Queue acquisition, Sybil churn, such valid-work attacks and independent
+WAN operation require their own evidence. The original 24-attacker campaign,
+30-second phases, three honest rounds, four-CPU/16-GiB envelope and genuine
+total-budget-depletion predicate remain unchanged. A new result must retain its
+own source, binary and signed profile; previous r11 starvation and all earlier
+failed depletion observations remain failed evidence.
+
+The fresh r12 exact profiles at lifetime 2,000 ms are:
+
+| Ticket bits | Profile digest |
+| --- | --- |
+| 8 | `98db0a0a3cf84367cc62b293ace125ecfed37798b45c74e1382c9e625d3955b0` |
+| 12 | `56f683ca9a56a872747f58899c2734763303ad547cabf88d24a18c3994517d15` |
+| 16 | `0b32dc1c5cb3cd32f127792c2437a7e06afdee24dfd145e6c147ae9effc93973` |
+
+The signature regression retains correctly signed r10 and r11 predecessor
+inputs and rejects them under r12. Focused native controls use the actual W1
+verifier and Linux thread CPU clock for refill continuation, concurrent probe
+limits, complete accounting, cancellation, unknown clocks, false products and
+the existing-packet path. These controls supplement the unchanged original
+multi-process campaign; they do not replace it or claim that an unexecuted source
+has passed.
+
+[Exact profile vectors](../../../../config/pon/public-resource-profile-vectors-v1.json)
+retain the original r10/r11 contract bytes and the new r12 bytes. The Python
+policy reader independently recomputes their length-prefixed domain hashes;
+source-integrity controls compare the current Rust contract with the frozen r12
+bytes. This does not authenticate a remote signature or establish execution.
+New campaign reports record the actual selected `PublicPolicy::id()` alongside
+their unchanged bits/lifetime parameters at both report and phase level. The
+current CI reader requires the configured exact profile. Both retained-artifact
+readers also accept `--expected-public-policy-id` for an explicit pin.
+
+Older reports without this metadata keep their previous readback and unknown
+resource revision. Request observer v3 alone identifies CPU coverage, and is
+shared by r11 and r12; it is never used to guess the scheduling revision. An
+explicit profile pin rejects missing historical metadata, a changed digest,
+mixed phases and mixed complete runs. Attaching current metadata cannot change
+failed confirmations or insufficient genuine total-budget depletion into a
+successful campaign.
 
 ## Recoverable CPU shortage at the existing dequeue boundary
 

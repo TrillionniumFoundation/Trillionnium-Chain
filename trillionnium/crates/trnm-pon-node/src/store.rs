@@ -4,6 +4,8 @@ pub(crate) mod authenticated_state;
 pub mod capacity_observation;
 pub mod evaluation_observation;
 pub mod evaluation_round_observation;
+mod funding;
+pub(crate) mod growth;
 mod historical_commitment;
 #[cfg(test)]
 mod historical_commitment_tests;
@@ -14,6 +16,7 @@ mod operator_continuous_owner;
 mod operator_mining_owner;
 #[cfg(test)]
 pub(crate) mod public_reader;
+pub mod storage_service;
 mod task_observation;
 use crate::{
     consensus::{self, Work},
@@ -540,6 +543,7 @@ pub struct Node {
     settings: Settings,
     workers: usize,
     state_backend: StateBackend,
+    growth_epoch: Option<growth::Epoch>,
     #[cfg(test)]
     // Research reader's immutable source DDL, never a cached on-disk verdict.
     expected_schema: BTreeMap<String, String>,
@@ -576,18 +580,21 @@ pub struct Node {
 enum StateBackend {
     Legacy,
     AuthenticatedV1,
+    PermanentAccountGrowthV2,
 }
 impl StateBackend {
     fn ddl(self) -> String {
         match self {
             Self::Legacy => ddl(),
             Self::AuthenticatedV1 => format!("{}{}", ddl(), native_authenticated::DDL),
+            Self::PermanentAccountGrowthV2 => format!("{}{}", ddl(), growth::DDL),
         }
     }
     fn schema_id(self) -> Hash {
         let domain: &[u8] = match self {
             Self::Legacy => b"native-branch-schema-v2",
             Self::AuthenticatedV1 => b"native-authenticated-branch-schema-v1",
+            Self::PermanentAccountGrowthV2 => b"native-permanent-account-growth-schema-v2",
         };
         hash(domain, &[self.ddl().as_bytes()])
     }
@@ -932,6 +939,11 @@ impl Node {
             !authenticated_migration_pending(path)?,
             "NATIVE_STATE_MIGRATION_PENDING",
         )?;
+        ensure(
+            settings.is_permanent_account_growth_v2()
+                == (state_backend == StateBackend::PermanentAccountGrowthV2),
+            "GROWTH_PROFILE_BACKEND",
+        )?;
         let NativeOwners {
             policy: owner_policy,
             mining: mining_owner,
@@ -1102,23 +1114,32 @@ impl Node {
                 params![
                     settings.genesis.as_slice(),
                     [0u8; 64].as_slice(),
-                    root(&settings.initial)?.as_slice()
+                    if state_backend == StateBackend::PermanentAccountGrowthV2 {
+                        growth::initial_root(&settings)?
+                    } else {
+                        root(&settings.initial)?
+                    }
+                    .as_slice()
                 ],
             )?;
             tx.execute(
                 "INSERT INTO active VALUES(1,?,0,0)",
                 [settings.genesis.as_slice()],
             )?;
-            for (key, value) in &settings.initial {
+            if state_backend != StateBackend::PermanentAccountGrowthV2 {
+                for (key, value) in &settings.initial {
+                    tx.execute(
+                        "INSERT INTO kv VALUES(0,?,?)",
+                        params![key, canonical(value)?],
+                    )?;
+                }
                 tx.execute(
-                    "INSERT INTO kv VALUES(0,?,?)",
-                    params![key, canonical(value)?],
+                    "INSERT INTO snapshots VALUES(?,?)",
+                    params![settings.genesis.as_slice(), canonical(&settings.initial)?],
                 )?;
+            } else {
+                growth::seed(&tx, &settings)?;
             }
-            tx.execute(
-                "INSERT INTO snapshots VALUES(?,?)",
-                params![settings.genesis.as_slice(), canonical(&settings.initial)?],
-            )?;
             if state_backend == StateBackend::AuthenticatedV1 {
                 native_authenticated::seed(&tx, &settings)?;
             }
@@ -1139,6 +1160,7 @@ impl Node {
             settings,
             workers,
             state_backend,
+            growth_epoch: None,
             #[cfg(test)]
             expected_schema,
             #[cfg(test)]
@@ -1158,6 +1180,12 @@ impl Node {
             public_service_epoch_listeners: 0,
             public_service_epoch_unknown: false,
         };
+        if node.state_backend == StateBackend::PermanentAccountGrowthV2 {
+            node.growth_cold_open()?;
+            // Settings retain the immutable genesis input for exact reopen. Hot
+            // execution never clones this bootstrap State or the full account set.
+            return Ok(node);
+        }
         node.read_active()?;
         if node.state_backend == StateBackend::AuthenticatedV1 {
             native_authenticated::verify_history_with_cache(
@@ -1936,6 +1964,13 @@ impl Node {
         Ok((bytes32(tip)?, g))
     }
     pub fn next_nonce(&self, sender: Hash) -> Result<u64> {
+        if self.state_backend == StateBackend::PermanentAccountGrowthV2 {
+            return self
+                .growth_account(self.active()?.0, sender)?
+                .map_or(0, |a| a.nonce)
+                .checked_add(1)
+                .ok_or_else(|| "NONCE_OVERFLOW".into());
+        }
         let state = self.state_at(self.active()?.0)?;
         next_nonce_from_state(&state, sender)
     }
@@ -2269,6 +2304,10 @@ impl Node {
         Ok(prepared)
     }
     pub fn read_active(&self) -> Result<(Hash, u64, State)> {
+        ensure(
+            self.state_backend != StateBackend::PermanentAccountGrowthV2,
+            "GROWTH_COMPLETE_STATE_UNAVAILABLE",
+        )?;
         self.read_active_with_progress(&mut || Ok(()))
     }
     /// Rechecks actual KV bytes and root, with cancellation at most 256 rows apart.
@@ -2277,6 +2316,10 @@ impl Node {
         &self,
         progress: &mut dyn FnMut() -> Result<()>,
     ) -> Result<(Hash, u64, State)> {
+        ensure(
+            self.state_backend != StateBackend::PermanentAccountGrowthV2,
+            "GROWTH_COMPLETE_STATE_UNAVAILABLE",
+        )?;
         let _measurement = (self.state_backend == StateBackend::AuthenticatedV1).then(|| {
             self.authenticated_arithmetic
                 .history
@@ -2569,6 +2612,10 @@ impl Node {
         tip: Hash,
         progress: &mut dyn FnMut() -> Result<()>,
     ) -> Result<State> {
+        ensure(
+            self.state_backend != StateBackend::PermanentAccountGrowthV2,
+            "GROWTH_COMPLETE_STATE_UNAVAILABLE",
+        )?;
         let _measurement = (self.state_backend == StateBackend::AuthenticatedV1).then(|| {
             self.authenticated_arithmetic
                 .history
@@ -2692,6 +2739,9 @@ impl Node {
         Ok(out)
     }
     pub fn expected_target(&self, parent: Hash) -> Result<Hash> {
+        if self.state_backend == StateBackend::PermanentAccountGrowthV2 {
+            return self.growth_expected_target(parent);
+        }
         let height = self.record(parent)?.height.checked_add(1).ok_or("HEIGHT")?;
         let recent = self.recent(parent)?;
         let interval = self.settings.limit("retarget_interval")?;
@@ -2876,6 +2926,10 @@ impl Node {
         self.admit_work_checked(checked, observed_now)
     }
     fn precheck_owner_packet(&self, packet: &Packet) -> Result<()> {
+        ensure(
+            self.state_backend != StateBackend::PermanentAccountGrowthV2,
+            "GROWTH_PACKET_REQUIRED",
+        )?;
         self.continuous_packet_gate(packet)?;
         self.mining_packet_gate(packet)?;
         if let Some(owner) = &self.owner_policy {
@@ -4152,6 +4206,9 @@ impl Node {
         Ok(())
     }
     pub fn activate(&mut self, target: Hash) -> Result<Hash> {
+        if self.state_backend == StateBackend::PermanentAccountGrowthV2 {
+            return self.growth_activate(target);
+        }
         self.activate_with_fault(target, None)
     }
     pub fn activate_with_fault(
@@ -4159,6 +4216,10 @@ impl Node {
         target: Hash,
         mut hook: Option<&mut Hook<'_>>,
     ) -> Result<Hash> {
+        if self.state_backend == StateBackend::PermanentAccountGrowthV2 {
+            ensure(hook.is_none(), "GROWTH_USE_PROGRESS_HOOK")?;
+            return self.growth_activate(target);
+        }
         self.continuous_activation_gate(target)?;
         self.mining_activation_gate(target)?;
         self.namespace()?;
@@ -4466,6 +4527,9 @@ impl Node {
         Ok(target)
     }
     pub fn recover(&mut self) -> Result<Hash> {
+        if self.state_backend == StateBackend::PermanentAccountGrowthV2 {
+            return self.growth_recover();
+        }
         if let Some(tip) = self.continuous_recovery_unchanged()? {
             return Ok(tip);
         }

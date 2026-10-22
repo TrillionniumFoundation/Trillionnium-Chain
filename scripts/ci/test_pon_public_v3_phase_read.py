@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 """Reader counterexamples only; these synthetic records are not native evidence."""
+import hashlib
+import json
 from pathlib import Path
 import sys
 import tempfile
@@ -8,6 +10,7 @@ import unittest
 sys.dont_write_bytecode = True
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import pon_public_v3_phase_read as reader
+from test_pon_public_v3_policy_read import observation
 
 
 def record():
@@ -50,6 +53,127 @@ def attribution_call(body_digest):
 
 
 class ReaderTests(unittest.TestCase):
+    def test_historical_derivation_is_explicit_and_cannot_downgrade_paid_cpu_or_policy(self):
+        phases = [attribution_phase([], [], [], [record()]) for _ in reader.MODES]
+        for phase, mode in zip(phases, reader.MODES):
+            phase['mode'] = mode
+        report = dict(schema='native-public-v3-separate-process-campaign-v2',
+            state_backend='authenticated-v1', finite_experiment_criteria_met=False,
+            economics_complete=False, best_observed_cold_legal_method=None,
+            preparation=dict(cpu_ns=None, wall_ns=None), phases=phases)
+        old_schema = 'pon-public-v3-multiprocess-phase-derivation-v1'
+        historical = reader.analyze_for_retained_schema(report, old_schema)
+        self.assertEqual(historical['schema'], old_schema)
+        self.assertTrue(historical['scope']['cpu_excludes_reactor_authentication_and_response_signing'])
+        self.assertNotIn('dispatch_cpu_scope', historical['phases'][0]['receiver'])
+        self.assertFalse(historical['native_finite_experiment_criteria_met'])
+        self.assertTrue(all(not phase['genuine_budget_depletion_observed']
+                            and phase['confirmed_rounds'] == 0
+                            and phase['scheduled_confirmation_rounds'] == 3
+                            for phase in historical['phases']))
+        current = reader.analyze(report)
+        self.assertEqual(reader.analyze_for_retained_schema(report, current['schema']), current)
+        for unknown in (None, 'pon-public-v3-multiprocess-phase-derivation-v3'):
+            with self.assertRaisesRegex(ValueError, 'unknown retained'):
+                reader.analyze_for_retained_schema(report, unknown)
+        phases[0]['receiver_observation']['schema'] = 'public-v3-local-request-resource-observation-v3'
+        with self.assertRaisesRegex(ValueError, 'cannot describe paid-envelope'):
+            reader.analyze_for_retained_schema(report, old_schema)
+        phases[0]['receiver_observation']['schema'] = 'public-v3-local-request-resource-observation-v2'
+        report['public_resource_policy'] = observation()
+        with self.assertRaisesRegex(ValueError, 'cannot erase explicit'):
+            reader.analyze_for_retained_schema(report, old_schema)
+
+    def test_requested_profile_pin_cannot_relabel_missing_or_mismatched_historical_input(self):
+        phases = [attribution_phase([], [], [], [record()]) for _ in reader.MODES]
+        for phase, mode in zip(phases, reader.MODES):
+            phase['mode'] = mode
+        report = dict(schema='native-public-v3-separate-process-campaign-v2',
+            state_backend='authenticated-v1', finite_experiment_criteria_met=False,
+            economics_complete=False, best_observed_cold_legal_method=None,
+            preparation=dict(cpu_ns=None, wall_ns=None), phases=phases)
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'report.json'
+            def save():
+                raw = json.dumps(report).encode()
+                path.write_bytes(raw)
+                return hashlib.sha256(raw).hexdigest()
+            original_hash = save()
+            legacy = reader.read_report(path, original_hash)
+            self.assertFalse(legacy['native_finite_experiment_criteria_met'])
+            with self.assertRaisesRegex(ValueError, 'absent from historical'):
+                reader.read_report(path, original_hash, observation()['policy_id'])
+            report['public_resource_policy'] = observation()
+            for phase in phases:
+                phase['public_resource_policy'] = observation()
+                phase['receiver_observation'].update(schema='public-v3-local-request-resource-observation-v3',
+                    cpu_includes_reactor_authentication_or_response_signing=True,
+                    cpu_includes_reactor_authentication=False,
+                    dispatch_cpu_includes_paid_body_decode=True,
+                    dispatch_cpu_includes_response_signing=True)
+            current_hash = save()
+            current = reader.read_report(path, current_hash, observation()['policy_id'])
+            self.assertFalse(current['native_finite_experiment_criteria_met'])
+            with self.assertRaisesRegex(ValueError, 'does not match requested pin'):
+                reader.read_report(path, current_hash, observation('r11')['policy_id'])
+            phases[1]['public_resource_policy'] = observation('r11')
+            with self.assertRaisesRegex(ValueError, 'mixed or missing'):
+                reader.read_report(path, save())
+            # Explicit null means a normal observed phase, not a startup error
+            # permitting mixed/missing policy metadata under the requested pin.
+            phases[1]['startup_or_campaign_error'] = None
+            with self.assertRaisesRegex(ValueError, 'mixed or missing'):
+                reader.read_report(path, save(), observation()['policy_id'])
+            del phases[1]['public_resource_policy']
+            with self.assertRaisesRegex(ValueError, 'mixed or missing'):
+                reader.read_report(path, save(), observation()['policy_id'])
+
+    def test_exact_policy_metadata_distinguishes_r11_r12_and_does_not_relabel_history(self):
+        phase = attribution_phase([], [], [], [record()])
+        self.assertNotIn('public_resource_policy', reader.phase_summary(phase))
+        phase['public_resource_policy'] = observation('r10')
+        self.assertEqual(reader.phase_summary(phase)['public_resource_policy']['resource_revision'], 'r10')
+        phase['receiver_observation'].update(schema='public-v3-local-request-resource-observation-v3',
+            cpu_includes_reactor_authentication_or_response_signing=True,
+            cpu_includes_reactor_authentication=False,
+            dispatch_cpu_includes_paid_body_decode=True,
+            dispatch_cpu_includes_response_signing=True)
+        with self.assertRaisesRegex(ValueError, 'CPU scope disagree'):
+            reader.phase_summary(phase)
+        for revision in ('r11', 'r12'):
+            phase['public_resource_policy'] = observation(revision)
+            readback = reader.phase_summary(phase)
+            self.assertEqual(readback['public_resource_policy']['resource_revision'], revision)
+            self.assertFalse(readback['genuine_budget_depletion_observed'])
+            self.assertFalse(readback['native_phase_criteria_met'])
+        phase['public_resource_policy']['policy_id'] = '0' * 64
+        with self.assertRaises(ValueError):
+            reader.phase_summary(phase)
+
+    def test_paid_envelope_v3_requires_exact_scope_and_preserves_legacy_meaning(self):
+        phase = attribution_phase([], [], [], [record()])
+        legacy = reader.phase_summary(phase)
+        self.assertEqual(legacy['receiver']['dispatch_cpu_scope'], 'native-dispatch-only')
+        observer = phase['receiver_observation']
+        observer.update(schema='public-v3-local-request-resource-observation-v3',
+                        cpu_includes_reactor_authentication_or_response_signing=True,
+                        cpu_includes_reactor_authentication=False,
+                        dispatch_cpu_includes_paid_body_decode=True,
+                        dispatch_cpu_includes_response_signing=True)
+        current = reader.phase_summary(phase)
+        self.assertEqual(current['receiver']['dispatch_cpu_scope'],
+                         'paid-body-decode-native-dispatch-signed-response')
+        self.assertFalse(current['genuine_budget_depletion_observed'])
+        for key in ('cpu_includes_reactor_authentication_or_response_signing',
+                    'cpu_includes_reactor_authentication',
+                    'dispatch_cpu_includes_paid_body_decode',
+                    'dispatch_cpu_includes_response_signing'):
+            previous = observer[key]
+            observer[key] = not previous
+            with self.subTest(key=key), self.assertRaises(ValueError):
+                reader.phase_summary(phase)
+            observer[key] = previous
+
     def test_unknown_body_digest_never_becomes_a_role_identity(self):
         for caller_role in range(3):
             for retained_null in (False, True):

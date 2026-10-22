@@ -125,7 +125,14 @@ verification, root/persistence cost, peak RSS, actual GPU/VRAM use or explicit n
 queue/Busy outcomes, state growth, active physical slots and recovery duration.
 
 The optional public request observer uses
-`public-v3-local-request-resource-observation-v2`. Each retained request has exactly
+`public-v3-local-request-resource-observation-v3`. Its outer owner CPU covers the
+r11 paid body decode, native dispatch and signed response envelope, also retained
+by r12. This observation schema does not identify the scheduling revision: new
+original campaign reports bind their exact signed policy identifier in
+`public_resource_policy`, checked against the independent r10/r11/r12 vectors.
+Historical missing policy metadata stays unknown, and r11 starvation remains
+failed evidence. Historical v1/v2 totals retain their original scope; source/profile
+identifiers must be preserved when comparing them. Each retained request has exactly
 seven Submit slots: decode, context-owner wait, context, full work, admission-owner
 wait, admission, and submit-result generation. Every entered slot records monotonic
 wall time and, where available, the actual dispatcher thread's CPU time. Slots not

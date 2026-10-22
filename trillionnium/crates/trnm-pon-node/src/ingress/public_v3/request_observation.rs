@@ -220,7 +220,12 @@ pub struct PublicRequestObservationSnapshot {
     pub records: Vec<PublicRequestObservation>,
     pub observation_has_consensus_authority: bool,
     pub cpu_intervals_are_nested_not_additive: bool,
+    // Retained OR field: true in v3 because response signing is included. The
+    // separate flags below prevent interpreting it as reactor CPU coverage.
     pub cpu_includes_reactor_authentication_or_response_signing: bool,
+    pub cpu_includes_reactor_authentication: bool,
+    pub dispatch_cpu_includes_paid_body_decode: bool,
+    pub dispatch_cpu_includes_response_signing: bool,
     pub submit_phase_cpu_excludes_scoped_workers: bool,
     pub stream_bytes_are_physical_network_bytes: bool,
 }
@@ -302,7 +307,7 @@ impl PublicRequestObserver {
             }
         }
         PublicRequestObservationSnapshot {
-            schema: "public-v3-local-request-resource-observation-v2",
+            schema: "public-v3-local-request-resource-observation-v3",
             capacity: self.0.capacity,
             accepted_connections_seen: self.0.seen.load(Ordering::Acquire),
             records_not_retained: self.0.omitted.load(Ordering::Acquire),
@@ -311,7 +316,10 @@ impl PublicRequestObserver {
             records,
             observation_has_consensus_authority: false,
             cpu_intervals_are_nested_not_additive: true,
-            cpu_includes_reactor_authentication_or_response_signing: false,
+            cpu_includes_reactor_authentication_or_response_signing: true,
+            cpu_includes_reactor_authentication: false,
+            dispatch_cpu_includes_paid_body_decode: true,
+            dispatch_cpu_includes_response_signing: true,
             submit_phase_cpu_excludes_scoped_workers: true,
             stream_bytes_are_physical_network_bytes: false,
         }
@@ -585,8 +593,12 @@ mod tests {
         let snapshot = observer.snapshot();
         assert_eq!(
             snapshot.schema,
-            "public-v3-local-request-resource-observation-v2"
+            "public-v3-local-request-resource-observation-v3"
         );
+        assert!(snapshot.cpu_includes_reactor_authentication_or_response_signing);
+        assert!(!snapshot.cpu_includes_reactor_authentication);
+        assert!(snapshot.dispatch_cpu_includes_paid_body_decode);
+        assert!(snapshot.dispatch_cpu_includes_response_signing);
         assert!(snapshot.submit_phase_cpu_excludes_scoped_workers);
         assert!(snapshot.cpu_intervals_are_nested_not_additive);
         assert!(!snapshot.observation_has_consensus_authority);

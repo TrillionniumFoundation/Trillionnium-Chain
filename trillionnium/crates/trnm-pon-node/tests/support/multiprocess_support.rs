@@ -59,8 +59,15 @@ pub fn rss() -> Value {
     json!({"rss_bytes":value("VmRSS:"),"lifetime_peak_rss_bytes":value("VmHWM:"),"kernel_rusage_self_peak_rss_bytes":peak,
         "scope":"Linux /proc/self magic self and kernel RUSAGE_SELF; peak is whole process lifetime, not an isolated allocation or incremental memory bound"})
 }
+const POLICY_BITS: u8 = 8;
+const POLICY_LIFETIME_MS: u64 = 2000;
 pub fn policy() -> PublicPolicy {
-    PublicPolicy::new(8, Duration::from_secs(2)).unwrap()
+    PublicPolicy::new(POLICY_BITS, Duration::from_millis(POLICY_LIFETIME_MS)).unwrap()
+}
+pub fn policy_observation() -> Value {
+    json!({"schema":"public-protected-resource-policy-observation-v1",
+        "transport_profile":public_v3::PROFILE,"policy_id":hex::encode(policy().id()),
+        "ticket_bits":POLICY_BITS,"lifetime_ms":POLICY_LIFETIME_MS})
 }
 pub fn identity(seed: u8) -> DevelopmentIdentity {
     DevelopmentIdentity::from_secret_hex(&hex::encode([seed; 32])).unwrap()

@@ -65,6 +65,7 @@ MODEL_EVOLUTION_ORACLES = ('    python3 formal/pon-nakamoto-v1/test_model_evolut
                           '    python3 formal/pon-nakamoto-v1/test_model_task_windows_oracle.py -v\n')
 COST_BOUNDARY_READERS = ('    python3 scripts/ci/test_pon_w1_budget_readers.py --raw-dir evidence/pon-upgrade-implementation-20261018/native-rounds/chain-p0-native-54\n'
                          '    python3 scripts/ci/test_pon_public_v3_phase_read.py\n'
+                         '    python3 scripts/ci/test_pon_public_v3_policy_read.py\n'
                          '    python3 scripts/ci/test_run_pon_w1_native_campaign.py\n')
 ORIGINAL_CAMPAIGN_READER = r'''    python3 scripts/ci/test_read_original_native_campaign.py \
       --artifact-dir evidence/pon-upgrade-implementation-20261018/native-rounds/chain-pr327-original-campaign-39694587963 \

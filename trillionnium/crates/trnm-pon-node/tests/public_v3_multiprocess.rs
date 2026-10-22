@@ -221,7 +221,7 @@ fn paid_depletion(
         "separately_observed_public_settled_cpu_ns":metrics.mutation_cpu_charged_ns,
         "observed_terminal_mutation_cpu_refusals":metrics.mutation_cpu_refusals,
         "meter":meter,"clock_failures":metrics.mutation_cpu_clock_failures,
-        "domain_cpu_scope":"original metered owner plus joined scoped-worker CPU; excludes reactor authentication/response, queue waiting and separate process clocks",
+        "domain_cpu_scope":"paid-envelope-v3 body digest/canonical decode, native dispatch and signed response owner CPU plus joined scoped-worker CPU; exact scheduling revision is bound by public_resource_policy; excludes reactor authentication/socket I/O, queue waiting and separate process clocks",
         "balance_identity_has_work_or_execution_authority":false,
         "scope":"optional exact actual paid-credit identity; old threshold unchanged; terminal refusals separate because original FIFO waits for refill; no physical cost lower bound"})
 }
@@ -963,6 +963,7 @@ fn phase(
         "receiver_client_state_equal":actual.0==checked.0&&actual.2==checked.2,
         "initial_tip":hex::encode(initial.0),"final_receiver_tip":hex::encode(actual.0),"final_client_tip":hex::encode(checked.0),
         "whole_parent_phase_cpu_ns":support::elapsed_cpu(whole_cpu),"whole_parent_phase_wall_ns":whole_started.elapsed().as_nanos(),"rss":support::rss()});
+    report["public_resource_policy"] = support::policy_observation();
     report["client_native_history_arithmetic_before"] = client_native_history_before;
     report["client_native_history_arithmetic_after"] = client_native_history_after;
     report["client_observation_scope"] = json!("bounded by the original 64 history calls; import includes complete-page activation, confirmation is separate; native snapshots exclude setup and final read_active; nested costs are not additive");
@@ -1177,7 +1178,7 @@ fn campaign(output: &Path, state_backend: StateBackendChoice) {
         && phases
             .iter()
             .all(|p| p["finite_phase_criteria_met"] == true);
-    let report = json!({"schema":"native-public-v3-separate-process-campaign-v2","scope":"finite controlled TCP loopback; separate attacker OS processes, one host and controller; original two input modes/caps and service/client policy; fixed honest schedule; actual optional paid-credit flow, no WAN/independent operator claim",
+    let mut report = json!({"schema":"native-public-v3-separate-process-campaign-v2","scope":"finite controlled TCP loopback; separate attacker OS processes, one host and controller; original two input modes/caps and service/client policy; fixed honest schedule; actual optional paid-credit flow, no WAN/independent operator claim",
         "state_backend":state_backend.label(),
         "settings_profile":"native-public-evaluation-dev-v1 + continuity_v1 explicit maintenance","preparation":preparation,
         "economics":economics,"best_observed_cold_legal_method":work::METHODS[best],"selection_candidates_cpu_ns":candidates,
@@ -1185,6 +1186,7 @@ fn campaign(output: &Path, state_backend: StateBackendChoice) {
         "phases":phases,"finite_experiment_criteria_met":complete,
         "work_profile_qualified":false,"cryptographic_hardness_qualified":false,"independent_operators":false,"wan_qualified":false,
         "production_candidate":false,"release_ready":false});
+    report["public_resource_policy"] = support::policy_observation();
     support::write_new(&output.join("report.json"), &report);
     assert!(
         complete,
@@ -1307,7 +1309,7 @@ fn valid_work_state_root_replays_are_paid_without_admission() {
             let before = domain.observe_actual_flow().unwrap();
             let response = support::call(address, &settings, request(), 72, epoch, end);
             // Native dispatch joins M06 workers and finishes the paid permit
-            // before response signing. No other mutation uses this domain.
+            // after response signing, before delivery. No other mutation uses this domain.
             let after = domain.observe_actual_flow().unwrap();
             let paid_cpu_ns = before
                 .as_ref()

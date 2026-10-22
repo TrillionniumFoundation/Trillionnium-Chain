@@ -683,6 +683,36 @@ PN1 accounting; PN1/PN2 implementation may iterate before joint acceptance.
 Keep required-target/chainwork, DAA/time boundaries, fork eligibility and
 partition/reorg regressions in the existing consensus owner throughout this work.
 
+**Local implementation observation, 2026-10-22.** The explicitly selected
+[permanent-account growth v2](../protocol/pon-nakamoto-v1/details/NATIVE_ACCOUNT_GROWTH_V2.md)
+now connects the original-parent AAM1 proof, bounded complete working partition,
+shared signature/nonce/fee/mandatory M06 rules and actual SQLite COW/delta/branch
+publication through the existing Node. PGH2/PNP2, network, parameters, genesis
+and storage schema have separate identities. The old full-State profile and cap
+retain their meanings. Zero-balance leaves keep their nonces; cold open replays
+retained branches and audits the retained COW graph before publishing the new
+backend's explicit local storage epoch.
+
+The earlier release-mode native scale run passed in 216.25 seconds: 65,520
+explicit genesis accounts became 65,552 through actual signed transitions,
+with 34 transfers, two cold reopens and one heavier-fork reorganization. Its
+first growth block used 35 proof accounts, six working keys and 417 additional
+COW nodes. The separate four-owner query used 59 point reads and a 3,722-byte
+multiproof; those are not whole-block admission costs. This run predates the
+optional SQLite evidence export and final combined source. The original log
+remains evidence; the final create-only scale export and exact source/binary/merge
+qualification remain outstanding at this checkpoint. No million-account,
+public-ingress, unlimited-retention or throughput qualification follows.
+
+The original authenticated-v1 hot path still performs complete-State/account
+checks and tip-to-genesis history checks at admission and activation. Consecutive
+heights through H therefore incur O(H²) cumulative history reads despite
+exact-input arithmetic caches. Fixed-snapshot parent/header/record reuse may
+reduce constant costs only while preserving all current error, clock, owner,
+cancellation and final writeback semantics. This increment adds no cross-snapshot
+validity cache and removes no integrity check. Nested native stage CPU observations
+must be read separately from PN1's real total budget and honest-completion result.
+
 1. First measure complete-State encoding, actual SQL/graph reads, history seals,
    proof collection, execution, lock wait, durable commit and client import.
    Retain 9bd's exact-byte arithmetic reuse and final integrity fences. Batching
@@ -830,6 +860,31 @@ silently. State I/O or verifier amplification is repaired in its owner first.
 
 Owners: M00/M07/M08/M13/M15 and the existing release/activation authority.
 Entry: accepted PN0–PN5 evidence on the exact proposed binaries and contexts.
+
+**Materialized rehearsal observation, 2026-10-22.** The existing Node now exposes
+`rehearse_growth_migration_v2` and an independent READ_ONLY cold verifier for
+quiescent legacy/authenticated sources. Native job `1a16282a4b9-1b6abb-2da2`
+exited 0 with all six rehearsal tests passing and exported both actual source
+formats under `pn6-growth-rehearsal-candidates` in the local execution root.
+The exact log locator, test coverage and flags are recorded in the
+[growth profile observations](../protocol/pon-nakamoto-v1/details/NATIVE_ACCOUNT_GROWTH_V2.md#observed-development-runs--2026-10-22).
+This batch has no final combined-source manifest; later source changes still
+require their own applicable qualification.
+
+The archive preserves every retained original-schema branch, signed transaction,
+state/delta root, local replay/outbox/pool record and reorganization fact. The
+candidate checkpoint retains the original height, nonces and monetary duties,
+with actual COW nodes and complete unchanged working rows. Readback independently
+reexecutes the old history and audits the new checkpoint; failed pending stages
+remain visible, and publication never replaces an existing destination.
+
+This candidate schema cannot admit or activate blocks. `migration_executed`,
+`old_work_promoted`, `consensus_activation`, `production_enabled` and
+`external_journals_imported` remain false. External M09/M12 effects and revocation
+history are not copied or reset. Executable cross-context work/evaluation rules,
+external-owner drain/reconciliation, independent PN0–PN5 acceptance and the actual
+governed release decision are still required. Source preservation and six passing
+local tests do not close those requirements or grant activation authority.
 
 Rehearse drain/reconciliation, full source verification, isolated destination
 publication, cold readback and abort/recovery with all obligations and old-profile

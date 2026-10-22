@@ -36,8 +36,18 @@ or authenticated guest identity claims. The export omits request bodies, keys,
 guest identities, peer addresses, paths and raw error strings. Connection IDs
 are local counters, not process IDs. Application bytes count successful stream
 syscalls, not physical network bytes or acknowledged delivery. Dispatch and full
-work thread CPU intervals overlap and must not be added. Reactor authentication
-and response signing CPU is excluded. A finite record capacity or measurement
+work thread CPU intervals overlap and must not be added. The nested observer
+schema `public-v3-local-request-resource-observation-v3` reports the owner
+interval introduced in r11 and retained by r12, including paid body digest/canonical
+decoding and signed response construction. The shared observer schema does not
+identify scheduling policy; preserve the actual signed admission policy identifier.
+New original campaign reports retain it separately as `public_resource_policy`,
+and missing historical policy metadata stays unknown. Its separate CPU flags
+explicitly exclude reactor authentication and
+socket copying. Historical v1/v2 observer records excluded response signing;
+their CPU totals retain that original meaning. The seven native Submit phase
+slots continue to exclude body-envelope decoding, response construction and
+scoped worker CPU. A finite record capacity or measurement
 failure sets capture coverage incomplete; it does not invent absent samples.
 Native stages remain nonpreemptive and the observation is unsigned local data.
 

@@ -31,8 +31,12 @@ const PROFILE: &str = "native-authenticated-local-migration-v1";
 const MIN_GROWTH_RESERVATION_BYTES: u64 = 1024 * 1024;
 const MAX_GROWTH_RESERVATION_BYTES: u64 = 8 * 1024 * 1024 * 1024;
 
+mod growth_rehearsal;
 #[path = "growth_reservation_io.rs"]
 mod growth_reservation_io;
+pub use growth_rehearsal::{
+    verify_growth_rehearsal_v2, GrowthRehearsalProgressV2, GrowthRehearsalReceiptV2,
+};
 
 /// Cancellation is checked before any target publication and within proof,
 /// execution, SQL-copy and authenticated-node work. No callback follows publish.

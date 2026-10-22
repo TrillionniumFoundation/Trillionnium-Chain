@@ -8,6 +8,7 @@ Torch/Transformers/PEFT are isolated optional runtime dependencies, not node dep
 """
 from __future__ import annotations
 import argparse
+import contextlib
 import errno
 import gc
 import hashlib
@@ -869,10 +870,258 @@ class _Wait4Child(subprocess.Popen):
                 self.termination_fd = None
 
 
+def owned_rss_diagnostic(process):
+    """Bounded non-authoritative diagnostics for this already-owned child only.
+
+    Never scan procfs, read command lines/environments, or open a PID obtained
+    without proving its position in the owned pidfd's namespace coordinates.
+    These observations explain a failure; they never replace the wait4 receipt.
+    """
+    detail = dict(owned_pid=process.pid, pidfd_ready=None)
+    if process.termination_fd is None:
+        return dict(detail, error='owned-pidfd-unavailable')
+
+    def fields(path):
+        with Path(path).open() as source:
+            raw = source.read(16385)
+        if len(raw) > 16384:
+            raise ValueError('status-size')
+        return {key: value.strip() for line in raw.splitlines() if ':' in line
+                for key, value in [line.split(':', 1)]}
+
+    try:
+        ready, _, _ = select.select([process.termination_fd], [], [], 0)
+        detail['pidfd_ready'] = bool(ready)
+        parent = fields('/proc/self/status')
+        parent_namespace = list(map(int, parent['NSpid'].split()))
+        detail['parent_nspid'] = parent_namespace
+        identity = fields(f'/proc/self/fdinfo/{process.termination_fd}')
+        visible_pid = int(identity['Pid'])
+        namespace = list(map(int, identity['NSpid'].split()))
+        detail.update(pidfd_visible_pid=visible_pid, pidfd_nspid=namespace)
+        coordinate = len(parent_namespace) - 1
+        if (not parent_namespace or parent_namespace[-1] != os.getpid() or visible_pid <= 0 or
+                len(namespace) <= coordinate or namespace[0] != visible_pid or
+                namespace[coordinate] != process.pid):
+            return dict(detail, error='pidfd-coordinate-unavailable')
+        child = fields(f'/proc/{visible_pid}/status')
+        if (int(child['Pid']) != visible_pid or int(child['PPid']) != parent_namespace[0] or
+                list(map(int, child['NSpid'].split())) != namespace):
+            return dict(detail, error='owned-child-coordinate-changed')
+        detail['child'] = {name: child.get(name) for name in
+                           ('State', 'Pid', 'PPid', 'NSpid', 'VmRSS', 'VmSize', 'Threads')}
+        # Diagnostic only: an exiting leader can lose its mm while another
+        # thread in this *same owned thread group* still holds it. Inspect at
+        # most 64 member statuses, never scan unrelated process directories.
+        if child.get('State', '').startswith('Z') and not child.get('VmRSS'):
+            members = []
+            for task in Path(f'/proc/{visible_pid}/task').iterdir():
+                if not task.name.isdecimal() or len(members) >= 64:
+                    raise ValueError('owned-thread-set-limit')
+                status = fields(task/'status')
+                if (int(status['Tgid']) != visible_pid or int(status['Pid']) != int(task.name) or
+                        int(status['PPid']) != parent_namespace[0] or
+                        list(map(int, status['NStgid'].split())) != namespace):
+                    raise ValueError('owned-thread-coordinate-changed')
+                members.append({name: status.get(name) for name in
+                    ('State', 'Pid', 'Tgid', 'PPid', 'NSpid', 'NStgid', 'VmRSS', 'VmSize')})
+            detail['owned_threads'] = sorted(members, key=lambda row: int(row['Pid']))
+        after = fields(f'/proc/self/fdinfo/{process.termination_fd}')
+        detail['pidfd_identity_changed_during_read'] = identity != after
+    except (OSError, KeyError, TypeError, ValueError) as error:
+        detail['error'] = f'{type(error).__name__}:{getattr(error, "errno", None)}'
+    detail['exit_cleanup_proof'] = owned_exit_cleanup_proof(process, detail)
+    return detail
+
+
+def owned_exit_cleanup_proof(process, diagnostic=None):
+    """Prove every member of the owned group has irreversibly left userspace.
+
+    Linux do_exit sets PF_EXITING before exit_mm clears current->mm and calls
+    mmput. That final kernel cleanup can outlive the leader and its VmRSS. See
+    linux v6.6.37 kernel/exit.c and fs/proc/array.c: PF_EXITING tasks permanently
+    stop executing, and proc status emits task_mem only when get_task_mm succeeds.
+    This is an exit-state proof, NOT an RSS sample or a terminal/reap receipt.
+
+    Require a stable, complete, bounded owned thread set, pinned directory fds,
+    exact namespace coordinates, PF_EXITING on every non-kernel member, and no
+    surviving userspace mm. Any changing/incomplete observation fails closed.
+    """
+    def read(name, directory=None):
+        descriptor = os.open(name, os.O_RDONLY | os.O_CLOEXEC | os.O_NOFOLLOW,
+                             dir_fd=directory)
+        with os.fdopen(descriptor, encoding='utf-8', errors='strict') as source:
+            raw = source.read(16385)
+        if len(raw) > 16384 or not raw.endswith('\n'):
+            raise ValueError('proc-text-incomplete-or-overbound')
+        return raw
+
+    def fields(name, directory=None):
+        result = {}
+        for line in read(name, directory).splitlines():
+            key, separator, value = line.partition(':')
+            if not separator or key in result:
+                raise ValueError('proc-field-format')
+            result[key] = value.split()
+        return result
+
+    def number(value):
+        if len(value) != 1 or not value[0].isdecimal():
+            raise ValueError('proc-number-format')
+        return int(value[0])
+
+    def member(status, tid, visible, namespace, parent_pid, count):
+        if (number(status['Pid']) != tid or number(status['Tgid']) != visible or
+                number(status['PPid']) != parent_pid or number(status['Threads']) != count or
+                list(map(int, status['NStgid'])) != namespace or
+                len(status['NSpid']) != len(namespace) or int(status['NSpid'][0]) != tid or
+                number(status['Kthread']) != 0 or
+                'nonvoluntary_ctxt_switches' not in status or
+                any(key.startswith('Vm') or key in ('RssAnon', 'RssFile', 'RssShmem')
+                    for key in status)):
+            raise ValueError('thread-not-proven-without-userspace-mm')
+
+    def stat(directory, tid, parent_pid, count):
+        raw = read('stat', directory)
+        prefix, separator, tail = raw.rpartition(') ')
+        if not separator or not prefix.startswith(f'{tid} ('):
+            raise ValueError('task-stat-identity')
+        parts = tail.split()
+        if len(parts) < 50 or len(parts[0]) != 1:
+            raise ValueError('task-stat-incomplete')
+        flags, start = int(parts[6]), int(parts[19])
+        if (int(parts[1]) != parent_pid or not flags & 0x00000004 or
+                flags & 0x00200000 or int(parts[17]) != count or start <= 0 or
+                int(parts[20]) != 0 or int(parts[21]) != 0):
+            raise ValueError('task-not-in-userspace-free-exit')
+        return dict(tid=tid, state=parts[0], flags=flags, start_time_ticks=start)
+
+    def names(directory):
+        result = []
+        with os.scandir(directory) as entries:
+            for entry in entries:
+                if not entry.name.isdecimal() or len(result) >= 64:
+                    raise ValueError('owned-thread-set-limit')
+                result.append(int(entry.name))
+        return sorted(result)
+
+    try:
+        if process.termination_fd is None or process.reaped or process.observation_error:
+            raise ValueError('owned-exit-handle-unavailable')
+        parent = fields('/proc/self/status')
+        parent_pid = number(parent['Pid'])
+        parent_namespace = list(map(int, parent['NSpid']))
+        identity_path = f'/proc/self/fdinfo/{process.termination_fd}'
+        identity = fields(identity_path)
+        visible = number(identity['Pid'])
+        namespace = list(map(int, identity['NSpid']))
+        coordinate = len(parent_namespace)-1
+        if (not parent_namespace or parent_namespace[0] != parent_pid or
+                parent_namespace[-1] != os.getpid() or visible <= 0 or
+                len(namespace) <= coordinate or namespace[0] != visible or
+                namespace[coordinate] != process.pid):
+            raise ValueError('owned-pidfd-coordinate')
+        with contextlib.ExitStack() as stack:
+            def directory(name, parent_fd=None):
+                descriptor = os.open(name, os.O_RDONLY | os.O_DIRECTORY | os.O_CLOEXEC |
+                                     os.O_NOFOLLOW, dir_fd=parent_fd)
+                stack.callback(os.close, descriptor)
+                return descriptor
+            group = directory(f'/proc/{visible}')
+            leader = fields('status', group)
+            count = number(leader['Threads'])
+            if not 1 <= count <= 64 or leader['State'][0] != 'Z':
+                raise ValueError('leader-not-zombie-or-thread-count')
+            member(leader, visible, visible, namespace, parent_pid, count)
+            if list(map(int, leader['NSpid'])) != namespace:
+                raise ValueError('owned-leader-namespace')
+            tasks = directory('task', group)
+            tids = names(tasks)
+            if len(tids) != count or visible not in tids:
+                raise ValueError('incomplete-owned-thread-set')
+            descriptors = {tid: directory(str(tid), tasks) for tid in tids}
+            rows = []
+            for tid, descriptor in descriptors.items():
+                status = fields('status', descriptor)
+                member(status, tid, visible, namespace, parent_pid, count)
+                rows.append(stat(descriptor, tid, parent_pid, count))
+            # Holding each task directory also prevents pathname reuse from
+            # substituting a different task in the confirming second pass.
+            for row in rows:
+                descriptor = descriptors[row['tid']]
+                member(fields('status', descriptor), row['tid'], visible, namespace, parent_pid, count)
+                after = stat(descriptor, row['tid'], parent_pid, count)
+                if after['start_time_ticks'] != row['start_time_ticks']:
+                    raise ValueError('owned-task-identity-changed')
+            after = fields('status', group)
+            member(after, visible, visible, namespace, parent_pid, count)
+            if after['State'][0] != 'Z' or names(tasks) != tids or fields(identity_path) != identity:
+                raise ValueError('owned-thread-set-or-pidfd-changed')
+        return dict(schema='linux-owned-thread-group-exit-cleanup-v1',
+                    owned_pid=process.pid, pidfd_visible_pid=visible, pidfd_nspid=namespace,
+                    kernel_release=os.uname().release, threads=rows,
+                    observed_at_monotonic_ns=time.monotonic_ns(), rss_sample_produced=False)
+    except (OSError, AttributeError, KeyError, IndexError, TypeError, ValueError) as error:
+        if diagnostic is not None:
+            diagnostic['exit_cleanup_proof_error'] = f'{type(error).__name__}:{error}'
+        return None
+
+
+def reconcile_unobserved_exit(process, absolute_wall_deadline_ns, diagnostic=None):
+    """Reconcile terminal observation, or proven irreversible kernel cleanup.
+
+    Without a complete owned exit proof the existing one-sample (50 ms) limit
+    remains. A proved group has no userspace execution or mm left to sample;
+    wait for its kernel teardown only until the ORIGINAL absolute wall deadline.
+    Neither path manufactures RSS or substitutes pidfd readiness for exact wait4.
+    The caller still checks waited peak RSS, exit status, observer errors and wall.
+    """
+    started = time.monotonic_ns()
+    state = process.reap()
+    if diagnostic is not None:
+        diagnostic.update(initial_reap=state, absolute_wall_deadline_ns=absolute_wall_deadline_ns)
+    if state != 'live':
+        if diagnostic is not None:
+            diagnostic['elapsed_ns'] = time.monotonic_ns()-started
+        return state == 'terminal'
+    if process.termination_fd is None or started >= absolute_wall_deadline_ns:
+        return False
+    proof = owned_exit_cleanup_proof(process, diagnostic)
+    deadline = absolute_wall_deadline_ns if proof is not None else min(
+        absolute_wall_deadline_ns, started + 50_000_000)
+    if diagnostic is not None:
+        diagnostic.update(mode='kernel-exit-cleanup' if proof is not None else 'unproved-exit-race',
+                          exit_cleanup_proof=proof, wait_deadline_ns=deadline)
+    polls = 0
+    ready = []
+    state = 'not-polled-pidfd-not-ready'
+    while time.monotonic_ns() < deadline:
+        remaining = (deadline-time.monotonic_ns()) / 10**9
+        if remaining <= 0:
+            break
+        try:
+            ready, _, _ = select.select([process.termination_fd], [], [], min(0.05, remaining))
+        except (OSError, TypeError, ValueError) as error:
+            process.fail(f'exit-reconciliation:{type(error).__name__}')
+            break
+        polls += 1
+        if ready:
+            state = process.reap()
+            break
+        if proof is None:
+            break
+    if diagnostic is not None:
+        diagnostic.update(pidfd_ready_after_wait=bool(ready), terminal_reap=state,
+                          wait_polls=polls, elapsed_ns=time.monotonic_ns()-started)
+    return bool(ready) and state == 'terminal'
+
+
 def supervise(command, directory, budget):
     """Kill only this fresh child when its measured wall/RSS budget is exceeded."""
     directory = Path(directory); directory.mkdir(mode=0o700)
     start, high, reason = time.monotonic_ns(), 0, None
+    wall_deadline_ns = start + round(budget['wall_seconds'] * 10**9)
+    rss_gaps = []
     observer_cpu_start = time.process_time_ns()
     with (directory/'process.log').open('w') as log:
         try:
@@ -887,6 +1136,7 @@ def supervise(command, directory, budget):
                           owned_child_exit_observed=False, child_spawned=False,
                           cleanup_method='no-child-spawned',
                           waited_child_observation_error=str(error), child_cpu_ns=None,
+                          rss_observation_gaps=[],
                           observer_cpu_ns=time.process_time_ns()-observer_cpu_start,
                           cpu_scope='No child spawned; no waited-child CPU observation',
                           memory_scope='No child spawned; no RSS observation', outcome='failed')
@@ -901,8 +1151,13 @@ def supervise(command, directory, budget):
                 elif rss is None:
                     # Only an exact terminal wait4 receipt can distinguish an
                     # exit race from observation loss while the child is live.
-                    if process.reap() != 'terminal':
-                        reason = 'rss-observation-unavailable'
+                    gap = dict(at_wall_ns=time.monotonic_ns()-start,
+                               before=owned_rss_diagnostic(process), reconciliation={})
+                    if not reconcile_unobserved_exit(process, wall_deadline_ns, gap['reconciliation']):
+                        reason = ('wall-budget-exceeded' if time.monotonic_ns() >= wall_deadline_ns
+                                  else 'rss-observation-unavailable')
+                    gap['after'] = owned_rss_diagnostic(process)
+                    rss_gaps.append(gap)
                 elif rss > budget['rss_bytes']:
                     reason = 'rss-budget-exceeded'
                 if reason or process.reaped:
@@ -926,6 +1181,7 @@ def supervise(command, directory, budget):
                   owned_child_exit_observed=process.owned_exit_observed,
                   child_spawned=True, cleanup_method=process.cleanup_method,
                   waited_child_observation_error=process.observation_error,
+                  rss_observation_gaps=rss_gaps,
                   child_cpu_ns=process.waited_cpu_ns,
                   observer_cpu_ns=time.process_time_ns()-observer_cpu_start,
                   cpu_scope='Exact owned-child Linux wait4 user-plus-system CPU; includes inherited waited-descendant accounting',

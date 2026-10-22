@@ -9,9 +9,9 @@ use std::{
 use crate::proof_adapter::{build_proof_adapter, DEFAULT_PROOF_ADAPTER};
 use crate::{
     adapter_error_signal, apply_reputation_signal, attach_llm_provenance, classify_adapter_error,
-    execute_payload, load_ingress_records, reputation_gap_bps_from_best,
+    execute_payload, load_ingress_snapshot, reputation_gap_bps_from_best,
     reputation_gap_bps_from_worst, resolve_llm_adapter_policy, run_llm_adapter_with_retry,
-    save_ingress_records, transition_request_status, AdapterErrorKind, LlmAdapterPolicy,
+    save_ingress_snapshot, transition_request_status, AdapterErrorKind, LlmAdapterPolicy,
     ReputationSignal, PROOF_ADAPTER_ENV,
 };
 use trnm_types::RequestStatus;
@@ -91,7 +91,7 @@ pub(crate) fn handle_run_assigned(
             "invalid {PROOF_ADAPTER_ENV}={proof_adapter_name:?}: {e}; supported={DEFAULT_PROOF_ADAPTER}"
         )
     })?;
-    let mut records = load_ingress_records(&ingress_file)?;
+    let mut records = load_ingress_snapshot(&ingress_file)?;
     let mut n = 0usize;
     let mut skipped: BTreeMap<&'static str, usize> = BTreeMap::new();
     for rec in records.iter_mut() {
@@ -205,7 +205,7 @@ pub(crate) fn handle_run_assigned(
             reputation_gap_bps_from_worst(reputation_signal)
         );
     }
-    save_ingress_records(&ingress_file, &records)?;
+    save_ingress_snapshot(&ingress_file, &records)?;
     let skip_summary = format_skip_summary(&skipped);
     println!(
         "{}",

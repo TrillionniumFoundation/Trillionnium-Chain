@@ -1,4 +1,5 @@
 //! Ordinary native development entrypoint. Signed transactions remain external inputs.
+mod growth_cli;
 mod host_public_guard;
 use serde_json::{json, Value};
 use std::{
@@ -1011,6 +1012,9 @@ fn run() -> Result<Value> {
         return Err(
             "EXPLICIT_DEVELOPMENT_REQUIRED: public test identities; no monetary value".into(),
         );
+    }
+    if command.starts_with("growth-") {
+        return growth_cli::run(&command, &args);
     }
     let extra = match command.as_str() {
         "genesis-prepare" => "--output",
