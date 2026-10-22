@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Collect the fixed four-file W1 CPU campaign from one clean exact source.
+"""Collect an explicit fixed W1 CPU campaign from one clean exact source.
 
 Run under the explicitly declared runtime cgroup on each host. This script
 checks the actual inherited limits; it does not create or modify services.
-The four existing mathematical cases/attempt budgets and CPU domain are fixed.
+The default V1 four-file grid is unchanged. --cost-matrix-v2 selects the separate
+fixed all-producer/fact-cache V2 matrix; both retain the original CPU domain.
 Source, binary, logs, environment and failures are retained outside the repo.
 """
 from __future__ import annotations
@@ -172,6 +173,9 @@ def campaign_args(binary, row):
 def run(args):
     require(re.fullmatch('[0-9a-f]{40}', args.expected_head)
             and re.fullmatch('[0-9a-f]{40}', args.expected_tree), 'FULL_HEAD_AND_TREE_REQUIRED')
+    matrix_v2 = getattr(args, 'cost_matrix_v2', False)
+    example = 'pon_w1_cost_matrix_v2' if matrix_v2 else 'pon_w1_budget_report'
+    grid = [('w1-all-producers-v2',)] if matrix_v2 else GRID
     out, target = args.out.resolve(), args.target_dir.resolve()
     require(not out.is_relative_to(ROOT), 'OUTPUT_MUST_BE_OUTSIDE_SOURCE')
     require(not target.is_relative_to(ROOT), 'TARGET_MUST_BE_OUTSIDE_SOURCE')
@@ -185,7 +189,7 @@ def run(args):
     env = {key: value for key, value in os.environ.items() if not key.startswith('TRNM_')}
     env.update(CARGO_TARGET_DIR=str(target), CARGO_BUILD_JOBS='2', CARGO_NET_OFFLINE='true',
                RUSTUP_TOOLCHAIN='1.95.0', PYTHONDONTWRITEBYTECODE='1')
-    result = {'schema': 'pon-w1-native-campaign-bundle-v1', 'head': args.expected_head,
+    result = {'schema': ('pon-w1-native-cost-matrix-bundle-v2' if matrix_v2 else 'pon-w1-native-campaign-bundle-v1'), 'head': args.expected_head,
               'tree': args.expected_tree, 'native': False, 'operator_count': 1,
               'independent_operator_qualification': False, 'host_label': args.host_label,
               'started_utc': datetime.now(timezone.utc).isoformat(), 'steps': [],
@@ -221,7 +225,7 @@ def run(args):
             ('cargo-version', [*cargo, '-Vv']),
             ('build', [*cargo, 'build', '--offline', '--locked', '--release', '--jobs', '2',
                        '--manifest-path', 'trillionnium/Cargo.toml', '-p', 'trnm-pon-node',
-                       '--example', 'pon_w1_budget_report', '--message-format=json'])):
+                       '--example', example, '--message-format=json'])):
             step = run_step(out, name, command, env, timeout=BUILD_SECONDS if name == 'build' else 60)
             result['steps'].append(step)
             require(step['complete_success'], name.upper() + '_FAILED')
@@ -229,14 +233,14 @@ def run(args):
         for line in (out / 'build.stdout.log').read_bytes().splitlines():
             row = json.loads(line)
             if (row.get('reason') == 'compiler-artifact'
-                    and row.get('target', {}).get('name') == 'pon_w1_budget_report'
+                    and row.get('target', {}).get('name') == example
                     and row.get('executable')):
                 candidates.append(Path(row['executable']).resolve())
         require(len(candidates) == 1, 'ONE_EXACT_NATIVE_BINARY_REQUIRED')
         build_artifact = candidates[0]
         require(build_artifact.is_relative_to(target) and build_artifact.is_file(), 'EXPECTED_TARGET_BINARY_REQUIRED')
         artifact_hash = sha(build_artifact)
-        retained_binary = out / 'pon_w1_budget_report.bin'
+        retained_binary = out / (example + '.bin')
         with build_artifact.open('rb') as source, retained_binary.open('xb') as destination:
             shutil.copyfileobj(source, destination)
         retained_binary.chmod(0o700)
@@ -248,16 +252,24 @@ def run(args):
                             'retained_bytes_are_executed_directly': True}
         validate_source(source_snapshot(), args.expected_head, args.expected_tree)
         write_new(out / 'binary-before.json', result['binary'])
-        for row in GRID:
+        for row in grid:
             # Never replace, repeat or drop a failed arm/file to improve the cohort.
-            step = run_step(out, row[0], campaign_args(binary, row), env,
+            step = run_step(out, row[0], [str(binary)] if matrix_v2 else campaign_args(binary, row), env,
                             timeout=RUN_SECONDS, stdout_name=row[0] + '.jsonl')
             result['steps'].append(step)
             result['native'] = result['native'] or step['returncode'] is not None
         require(all(row['complete_success'] for row in result['steps']), 'NATIVE_CAMPAIGN_STEP_FAILED')
         sys.path.insert(0, str(ROOT / 'scripts'))
-        import pon_w1_budget_reader as reader
-        validations = {row[0]: reader.analyze(out / (row[0] + '.jsonl')) for row in GRID}
+        if matrix_v2:
+            import pon_w1_cost_matrix_reader as reader
+        else:
+            import pon_w1_budget_reader as reader
+        validations = {row[0]: reader.analyze(out / (row[0] + '.jsonl')) for row in grid}
+        if matrix_v2:
+            # A complete native capture may establish a real failing cost gate.
+            # Preserve that verdict separately from framing/semantic correctness.
+            result['local_cost_gate'] = validations['w1-all-producers-v2']['local_cost_gate']
+            result['local_observation_gate'] = validations['w1-all-producers-v2']['local_observation_gate']
         write_new(out / 'raw-validation.json', validations)
         require(all(value['record_consistency'] == 'PASS' and not value['semantic_alerts']
                     for value in validations.values()), 'RAW_RECORD_CONSISTENCY_FAILED')
@@ -299,6 +311,8 @@ def main():
     parser.add_argument('--expected-head', required=True)
     parser.add_argument('--expected-tree', required=True)
     parser.add_argument('--expected-nice', type=int, default=10)
+    parser.add_argument('--cost-matrix-v2', action='store_true',
+                        help='explicit 13-producer/fact-cache CPU capture; original four-file V1 grid is unchanged')
     return run(parser.parse_args())
 
 

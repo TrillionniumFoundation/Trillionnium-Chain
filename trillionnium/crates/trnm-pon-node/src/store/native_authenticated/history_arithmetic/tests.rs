@@ -352,6 +352,74 @@ fn every_history_progress_boundary_keeps_cancellation_identity_and_retry() {
     history(&node, tip, true, &mut || Ok(())).unwrap();
 }
 
+#[test]
+fn pinned_initial_arithmetic_keeps_current_genesis_sql_and_cold_open_checks() {
+    let directory = tempfile::tempdir().unwrap();
+    let (node, ids) = chain(directory.path(), 3);
+    let tip = ids[3];
+    // Warm the exact initial root, then evict complete inputs with real root
+    // calculations. No supplied root or validity fact enters the SQL checker.
+    let cache = &node.authenticated_arithmetic;
+    cache
+        .state_root(&node.settings, &node.settings.initial)
+        .unwrap();
+    for marker in 0..6u64 {
+        let mut input = node.settings.initial.clone();
+        input.insert("unactivated-root-marker".into(), serde_json::json!(marker));
+        cache.state_root(&node.settings, &input).unwrap();
+        cache.complete(&node.settings, &input).unwrap();
+    }
+    history(&node, tip, true, &mut || Ok(())).unwrap();
+    let foreign = Connection::open(directory.path().join("native.sqlite")).unwrap();
+    let initial_root = trnm_mvcc_fee::pon_executor::root(&node.settings.initial).unwrap();
+    for mutation in [
+        "UPDATE blocks SET state_root=zeroblob(32) WHERE id=?",
+        "UPDATE blocks SET parent=zeroblob(32) WHERE id=?",
+        "UPDATE blocks SET height=1 WHERE id=?",
+        "UPDATE blocks SET chainwork=CAST(chainwork AS TEXT) WHERE id=?",
+    ] {
+        foreign.execute(mutation, [ids[0].as_slice()]).unwrap();
+        same_error(
+            history(&node, tip, true, &mut || Ok(())),
+            history(&node, tip, false, &mut || Ok(())),
+        );
+        foreign
+            .execute(
+                "UPDATE blocks SET parent=NULL,height=0,chainwork=zeroblob(64),state_root=? WHERE id=?",
+                params![initial_root.as_slice(), ids[0].as_slice()],
+            )
+            .unwrap();
+        history(&node, tip, true, &mut || Ok(())).unwrap();
+    }
+    let mut changed = node.settings.initial.clone();
+    changed.insert("foreign-genesis-row".into(), serde_json::json!(0));
+    foreign
+        .execute(
+            "UPDATE snapshots SET state=? WHERE block=?",
+            params![canonical(&changed).unwrap(), ids[0].as_slice()],
+        )
+        .unwrap();
+    same_error(
+        history(&node, tip, true, &mut || Ok(())),
+        history(&node, tip, false, &mut || Ok(())),
+    );
+    foreign
+        .execute(
+            "UPDATE snapshots SET state=? WHERE block=?",
+            params![
+                canonical(&node.settings.initial).unwrap(),
+                ids[0].as_slice()
+            ],
+        )
+        .unwrap();
+    history(&node, tip, true, &mut || Ok(())).unwrap();
+    let settings = node.settings.clone();
+    drop(foreign);
+    drop(node);
+    let reopened = Node::open_with_authenticated_state(directory.path(), settings, 1).unwrap();
+    assert_eq!(reopened.read_active().unwrap().0, tip);
+}
+
 fn delta_database(rows: &[Delta]) -> Connection {
     let db = Connection::open_in_memory().unwrap();
     db.execute_batch("CREATE TABLE deltas(block BLOB NOT NULL,key TEXT NOT NULL,before BLOB,after BLOB,PRIMARY KEY(block,key));").unwrap();

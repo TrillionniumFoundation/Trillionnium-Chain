@@ -29,6 +29,12 @@ pub const MAX_PROJECTION_CHANGES: usize = 4096;
 const MAX_NODE_BYTES: usize = 163;
 const NODE_SELECT: &str = "SELECT substr(data,1,164) FROM archive_nodes WHERE id=?";
 
+// Test-only observations of the original arithmetic entry, not storage reads.
+#[cfg(test)]
+std::thread_local! {
+    static NODE_DECODE_CALLS: std::cell::Cell<u64> = const { std::cell::Cell::new(0) };
+}
+
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum ArchiveError {
     Context,
@@ -339,6 +345,8 @@ impl Node {
         }
     }
     fn decode(id: Hash, bytes: &[u8]) -> Result<Self> {
+        #[cfg(test)]
+        NODE_DECODE_CALLS.with(|calls| calls.set(calls.get().saturating_add(1)));
         if bytes.len() > MAX_NODE_BYTES || id != hash(b"account-archive-node-record-v1", &[bytes]) {
             return Err(ArchiveError::CorruptRecord);
         }
@@ -1043,11 +1051,21 @@ fn save_node(db: &Connection, node: &Node) -> Result<()> {
     Ok(())
 }
 fn load_node(db: &Connection, id: Hash) -> Result<Node> {
+    load_node_decoded(db, id, Node::decode)
+}
+
+// The caller may reuse only codec/hash arithmetic on these just-read SQL bytes.
+// Missing rows, SQLite type errors and the original bounded SELECT remain here.
+fn load_node_decoded(
+    db: &Connection,
+    id: Hash,
+    decode: impl FnOnce(Hash, &[u8]) -> Result<Node>,
+) -> Result<Node> {
     let bytes: Option<Vec<u8>> = db
         .prepare_cached(NODE_SELECT)?
         .query_row([id.as_slice()], |r| r.get(0))
         .optional()?;
-    Node::decode(id, &bytes.ok_or(ArchiveError::DataUnavailable)?)
+    decode(id, &bytes.ok_or(ArchiveError::DataUnavailable)?)
 }
 fn load_checkpoint(db: &Connection, context: Context, id: Hash) -> Result<Checkpoint> {
     let row: Option<(Vec<u8>, Vec<u8>)> = db

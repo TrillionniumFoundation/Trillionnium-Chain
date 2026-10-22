@@ -93,7 +93,8 @@ def simulated_sustained_report():
                 mutation_dispatch_excluding_work_cpu_ns=10, mutation_cpu_clock_failures=0,
                 mutation_cpu_in_flight_after_shutdown=0, mutation_cpu_unavailable_after_shutdown=False,
                 work_started=17, work_finished=17, work_failed=16, mutation_cpu_refusals=0, accepted_connections=19)},
-            observations=dict(records=records, accepted_connections_seen=19, capacity=16384,
+            observations=dict(schema='public-v3-local-request-resource-observation-v2',
+                records=records, accepted_connections_seen=19, capacity=16384,
                 records_not_retained=0, measurement_failures=0, counter_overflow=False,
                 cpu_intervals_are_nested_not_additive=True, observation_has_consensus_authority=False,
                 cpu_includes_reactor_authentication_or_response_signing=False)))
@@ -207,7 +208,8 @@ def simulated_confirmation_report():
                 mutation_full_work_cpu_ns=10, mutation_dispatch_excluding_work_cpu_ns=10,
                 mutation_cpu_clock_failures=0, work_started=7+17*index,
                 work_finished=7+17*index, work_failed=17*index)),
-            observations=dict(cpu_intervals_are_nested_not_additive=True, counter_overflow=False,
+            observations=dict(schema='public-v3-local-request-resource-observation-v2',
+                cpu_intervals_are_nested_not_additive=True, counter_overflow=False,
                 observation_has_consensus_authority=False, cpu_includes_reactor_authentication_or_response_signing=False,
                 stream_bytes_are_physical_network_bytes=False, capacity=16384,
                 accepted_connections_seen=len(records), records_not_retained=0,
@@ -223,6 +225,27 @@ def simulated_confirmation_report():
 
 
 class BinarySelectionTests(unittest.TestCase):
+    def test_observer_cpu_scope_keeps_historical_and_paid_envelope_distinct(self):
+        legacy = dict(schema='public-v3-local-request-resource-observation-v2',
+                      cpu_includes_reactor_authentication_or_response_signing=False)
+        driver.observer_cpu_scope(legacy)
+        current = dict(schema='public-v3-local-request-resource-observation-v3',
+                       cpu_includes_reactor_authentication_or_response_signing=True,
+                       cpu_includes_reactor_authentication=False,
+                       dispatch_cpu_includes_paid_body_decode=True,
+                       dispatch_cpu_includes_response_signing=True)
+        driver.observer_cpu_scope(current)
+        for key in ('cpu_includes_reactor_authentication_or_response_signing',
+                    'cpu_includes_reactor_authentication',
+                    'dispatch_cpu_includes_paid_body_decode',
+                    'dispatch_cpu_includes_response_signing'):
+            changed = {**current, key: not current[key]}
+            with self.subTest(key=key), self.assertRaises(ValueError):
+                driver.observer_cpu_scope(changed)
+        for schema in ('unknown', None):
+            with self.subTest(schema=schema), self.assertRaises(ValueError):
+                driver.observer_cpu_scope({**legacy, 'schema': schema})
+
     def test_exact_artifact_selected(self):
         p = Path('/tmp/exact-build-test')
         self.assertEqual(driver.select_binary(['ordinary compiler diagnostic', artifact(p)]), p)
