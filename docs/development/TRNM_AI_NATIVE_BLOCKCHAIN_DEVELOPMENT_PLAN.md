@@ -892,6 +892,16 @@ partition/reorg regressions in the existing consensus owner throughout this work
    finality. Export/migration verifies the complete source and publishes an
    isolated destination only after readback; source remains recoverable.
 
+I03/I04 implemented subitem: the existing M07 native AAM1 query can now supply
+its opaque checkpoint directly to M06's compact complete-State reference adapter,
+without a separate AccountArchive. The same parent/context, witness budgets,
+mandatory/successor checks and cancellation order remain. The signed native
+differential suite covers zero balances/nonces, refunds and maturity; previews
+cannot publish SQL or active state. This does not connect witnesses to Packet or
+native admission, select GSC2, remove complete-State scans, or relax any 65,536
+legacy cap. Bounded witness discovery/working input, durable deltas/root retention,
+migration and fault/scaling acceptance in I03–I05 remain open; PN2 stays unqualified.
+
 Exit: actual signed native transitions cross 65,536 permanent accounts with
 bounded W and working partition; small-state complete/reference differential
 execution agrees. Pass zero-balance/re-entry/nonce, wrong-parent/omitted/extra

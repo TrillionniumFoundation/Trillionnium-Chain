@@ -296,6 +296,24 @@ the complete final State after M06 and qualified task output accounting; the
 independent full-State comparison therefore includes records created after ordinary
 application execution. This does not replace the complete input relation above.
 
+`prepare_state_witness_from_checkpoint` and
+`execute_compact_from_checkpoint_and_progress` now consume the opaque checkpoint
+and AAM1 returned by `Node::authenticated_account_multiproof` directly, without an
+AccountArchive sidecar. M07 owns the native read transaction/proof; M06 rechecks
+the exact complete parent root, account root/count, context, original values and
+complete non-account input before the same mandatory/successor relation. The
+adapter performs no storage access or publication. It preserves the existing
+budget, parent/height/source checks, proof errors and progress/cancellation order.
+
+`trnm-pon-node/tests/native_compact_execution.rs` compares real signed transfers,
+zero-balance nonce/re-entry, expiry refunds and reward-maturity spending with
+ordinary authenticated Node admission and cold reopen. Missing, extra, forged,
+wrong-parent/context and incomplete working input fail without State fallback;
+SQL/active-state comparisons cover success and cancelled/failed previews.
+The 65,536-total-key cap, Packet and namespaces are unchanged. Complete-State
+construction, full scans and proof discovery remain; this is an I03/I04 reference
+adapter, not bounded native admission, GSC2 integration or PN2 closure.
+
 
 ## 本轮来源绑定（Round 10）
 
