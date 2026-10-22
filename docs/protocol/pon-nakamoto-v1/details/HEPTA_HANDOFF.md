@@ -101,7 +101,9 @@ long-term storage or an ordinary Hepta owner path. No persistent service is inst
 ## Evidence required for three learning generations
 
 Each generation must use its predecessor's actually adopted model, newly authorized task
-experience and untouched prospective evaluation sources. Record independent owner receipts,
+experience and declared reproducible evaluation tasks. Existing public or
+previously seen tasks are admissible for controlled three-generation engineering
+tests; unseen data and independent data custody are not prerequisites. Record owner receipts,
 resource use, valid no-update outcomes, budget exhaustion and withdrawals. Three signed
 synthetic-score release transitions only test the ledger lifecycle and do not satisfy this
 requirement. No parallel full-system rewrite is an acceptable substitute.
@@ -287,7 +289,7 @@ engineering below. I06–I08 or adapter delivery alone cannot close that gate.
 
 | Priority / existing interface | Accountable delivery owner | Dependency and acceptance |
 | --- | --- | --- |
-| P0 / I06–I07 | Hepta learning/artifact/export/evaluation owners with M10/M11 | Freeze a real pretrained model family, actual installed parent, source permissions, independent future-data custody and versioned evaluation/decision profile before candidate disclosure. Actual training/forward receipts and strong equal-budget controls replace fixture scores. |
+| P0 / I06–I07 | Hepta learning/artifact/export/evaluation owners with M10/M11 | Freeze a real pretrained model family, actual installed parent, source permissions, named test data with declared exposure/reuse and versioned evaluation/decision profile. Existing public or previously seen tasks are valid for controlled engineering tests. Actual training/forward receipts and strong equal-budget controls replace fixture scores. |
 | P0 / I08 | M14 with the compiled Hepta TaskFlow adapter/coordinator | Consume the same durable packet/effect identity and schema-4 exact task settlement; reconcile Unknown before further dispatch. Exercise wrong task/provider/output, stale view and reorg with zero unauthorized/repeated external effects. |
 | P1 / I09–I10 | M09 and M10 release owner with Hepta safe loader, selection/resource/FinalUse owners | After the frozen I06–I08 contract, fetch the complete pinned dependency closure and install only after fresh local authority checks. Three real cycles each end in actual next-task loaded-model readback; a valid no-update retains the actual parent. |
 | P1 / PN4 funding; P2 / PN5 extension of I09 | M09/M12/M14/M17 with independent storage/evaluation operators | Establish funded byte-time/repair duties before storage acknowledgement. After the configured-peer loader loop and PN4 duties, qualify independent replica renewal/repair, bounded public discovery and WAN operation. Extra providers or evaluator keys do not close PN3 efficacy. |
@@ -328,7 +330,7 @@ authority, and consumers still apply their own admitted release policy.
 | --- | --- | --- |
 | 1 / task + learning.operator/plasticity | Authorized real task episode, scope and actual installed model -> immutable candidate and training/resource receipt | Preserve consent/source/forget frontiers; no training/export authority inferred from task completion or a memory projection. |
 | 2 / learning.artifacts + export/withdrawal owner | Actual candidate bytes, lineage and current signed head -> scoped authorized export | DENY_ALL publication is insufficient. Withdrawal/generation changes fence later use; publication cannot promise recall of distributed copies. |
-| 3 / learning.eval + independent selector | Frozen parent/candidate/controls, future-window custody, scoring and equal budgets -> selected/no-update/invalid/unknown result | Use actual parameter forward/training. Missing, leaked, biased or unsupported evaluation cannot become positive gain. Separate custody from multiple keys under one operator. |
+| 3 / learning.eval + independent selector | Frozen parent/candidate/controls, named task bytes/exposure/reuse, scoring and equal budgets -> selected/no-update/invalid/unknown result | Use actual parameter forward/training and report results on those tasks. Previously seen data is allowed for engineering tests; undeclared reuse or unsupported scores cannot become evidence for unseen-task gain. Preserve existing selection authority. |
 | 4 / TaskFlow + compiled adapter | Exact evaluated release/task binding -> durable original effect bytes, submission and read-only reconciliation | Lost ACK queries the same identity. Unknown does not authorize re-signing/re-dispatch. Keep provider SHA256, Chain ids and upgrade-binding domains explicit. |
 | 5 / M14 observation consumer | Exact packet and current schema-4 observation -> checked active acceptance plus explicit confirmation policy | Match task id, owner, provider, output, accept transaction, exact-packet ancestry and observed generation/tip. Legacy schema 3 remains readable but cannot satisfy accepted-task binding. Not-found or reorg removes entitlement, never the local terminal fact. |
 | 6 / release owner + M09 fetch + existing loader | Selected release closure, pinned TCM1 ids and finite resource reservation -> verified compatible complete bytes | Withheld/corrupt dependencies, wrong base/tokenizer/dtype/shape and expired original budget stop installation. Byte retrieval itself grants no use. |
@@ -375,10 +377,13 @@ training and evaluation source/time/exposure partitions, consent/withdrawal
 heads, independent owner roles, frozen decision thresholds and sample/power
 justification, baseline outcomes, total cost, exact TaskFlow/packet identities,
 active acceptance/confirmation, installation generation, loader readback and
-subsequent untouched-window results. Missing fields remain unknown with a
+subsequent named-task results. Missing fields remain unknown with a
 reason. Predeclare the uncertainty-adjusted minimum gain over the installed
 parent, strong-control comparison, retention/safety/cost bounds and repeated-
-selection correction; do not tune on the supposedly future window. A losing
+selection correction for statistical efficacy claims. Controlled engineering
+tests may reuse declared public/seen tasks and do not require independent data
+custody. Report their results within that dataset; future generalization needs
+separate evidence. A losing
 or unsafe candidate retains the current model and gets zero
 model-improvement reward. Evaluation/transport resources still settle under
 their original scoped budget.
