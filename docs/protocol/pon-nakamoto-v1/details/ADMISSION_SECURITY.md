@@ -56,6 +56,50 @@ counts. If the no-attack baseline fails, repair and measure it before attributin
 the whole deficit to adversarial W1. A local passing test cannot close the
 independent or computational-security gates.
 
+### Fixed-seed ROOT rejection component cost
+
+The opt-in `signed_seed_state_root_replay_component_cost` in
+`trnm-pon-node/tests/public_v3_multiprocess.rs` shares the existing
+`valid_work_state_root_replays_are_paid_without_admission` runner. The original
+eight signed transactions on genesis and two M06 workers still require known
+positive scoped-worker CPU. The new fixture uses the same seed builder as the
+original campaign: four legally admitted blocks with 256 signed transfers each,
+then its first business transaction (nonce 1025) on the fixed h4 parent, with
+one M06 worker. State is never injected or enlarged adaptively.
+
+After changing only the reference State root, the producer performs a fresh
+legal W1 search. Its actual prepared-producer/search CPU and wall cost and all
+ticket attempts are retained, including failed attempts before the winner;
+Node-owned seed/reference searches retain aggregate cost with their unexposed
+attempt counts explicitly unavailable. Separate preparation, independent W1
+verification, encoding and client-thread costs are retained. Process preparation
+totals enclose their component measurements and must not be added to them.
+The shared-process `support::call` CPU includes receiver work; its separate
+`client_thread_cost` is the isolated client observation.
+
+Three sequential, identical bodies use fresh ordinary public handshakes. Each
+must finish Work successfully, execute M06 and refuse `ROOT`, with exact body
+digest/connection coverage, positive known owner CPU and a settled paid debit.
+For one transaction/one M06 worker, known scoped CPU must be zero; unknown is
+not converted to zero. The first request follows real seed replay and is not an
+OS-cache-cold claim; the next two expose warm replay costs. Stored block/event
+counts, active state and cold readback must remain unchanged; the false packet
+must stay absent before and after a separate legal reference acceptance epoch.
+Repeated expensive rejection is established by these assertions, not inferred
+from a successful admission's commit cost or a presumed negative cache.
+
+Run this selector explicitly with `--ignored --exact --test-threads=1`, in
+release mode, with a fresh `TRNM_CI_RECEIPT_DIR`. Retain exact source/binary,
+command, real hardware, affinity and cgroup/resource limits alongside the raw
+JSON. A local host different from the original 4-CPU/16-GiB CI is only a
+controlled component-cost observation. The fixture changes no production
+limits, protocol, 2 CPU-second burst, 0.25 refill or 100 ms depletion threshold.
+It cannot qualify a sustained-load campaign, PN1 fairness or work hardness.
+The original source `8d56f2f` campaign's three FAIL results remain: all 189
+submission observations/27 confirmation rounds succeeded, but all six hostile
+phases lacked genuine paid depletion. A full supplemental saturation cohort
+and independent honest windows remain unexecuted by this test.
+
 ## Implemented local capacity boundary
 
 `trnm-transport::proof_admission` allocates three public permits and one recovery permit,

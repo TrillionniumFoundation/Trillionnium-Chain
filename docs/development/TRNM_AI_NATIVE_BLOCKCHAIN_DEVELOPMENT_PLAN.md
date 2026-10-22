@@ -1,6 +1,6 @@
 # Trillionnium Chain Development Plan — PoN / Hepta-PoH revision
 
-Plan ID: `trnm-chain-development-plan-v2` (stable registry identity; content revision 18).
+Plan ID: `trnm-chain-development-plan-v2` (stable registry identity; content revision 19).
 Effective: 2026-09-28; priority implementation revision: 2026-10-22. Status: selected development direction; no runtime activation.
 Canonical destination: `refs/heads/main`; continuation uses the current main lineage, not retired PR #194.
 Current source/head/tree/base and prospective merge are derived at verification time.
@@ -123,6 +123,31 @@ all 913 listed files were length/hash-checked. Its prepared business bytes
 contain only three distinct transactions. This establishes neither continuous
 attack pressure nor public TPS; it is not an observed honest-confirmation
 failure. Earlier 6/18 overlap observations below belong to earlier sources.
+Read-only flow reconciliation found all six hostile phases above the 100 ms
+depletion threshold, including a conservative between-sample lower bound of
+232.852451 ms in the lowest phase. Delivered hostile dispatch CPU was about
+0.188–0.193 CPU-second/second for from-zero and 0.230–0.237 for late-product,
+below the unchanged 0.25 refill. The preceding challenge limiter and cheap
+rejection workload therefore matter; reducing a threshold or treating a
+reservation as spent CPU would not qualify the original failed trials.
+
+PN1 now reuses the existing valid-W1/false-State-root public replay regression
+for an explicit opt-in, three-request component cost preflight. The additional
+fixture fixes the original four blocks/1,024 signed seed transfers, h4 parent,
+first business transaction (nonce 1025) and one M06 worker. It remakes W1 after
+changing State root and sends the same body through three fresh public
+handshakes. Work/M06 stages, actual owner plus scoped CPU, settled debit,
+unchanged SQL/native state and cold reopen are checked, with a separate legal
+acceptance control. The old eight-transaction/genesis/two-M06-worker regression
+remains. Preparation, all actual search attempts, encoding and independent
+verification costs are retained; preparation totals include nested components.
+See [PN1 component cost boundary](../protocol/pon-nakamoto-v1/details/ADMISSION_SECURITY.md#fixed-seed-root-rejection-component-cost).
+This preflight does not measure sustained arrival rate, honest overlap or
+burst depletion. A later explicitly supplemental cohort must first freeze its
+real offered workload and independent honest window, retain the original
+front-door limits/budgets and account actual producer costs. Original three-run
+FAIL, work-profile qualification and activation flags remain unchanged.
+
 The same source's [CodeQL check 119818040273](https://github.com/TrillionniumFoundation/Trillionnium-Chain/runs/119818040273)
 reports failure with thirteen high annotations. Independent disposition is
 required; the alert count is not thirteen independently confirmed exploits.
