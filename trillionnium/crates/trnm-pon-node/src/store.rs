@@ -14,6 +14,7 @@ pub(crate) mod native_authenticated;
 pub mod native_budget;
 mod operator_continuous_owner;
 mod operator_mining_owner;
+pub mod pinned_account_query;
 #[cfg(test)]
 pub(crate) mod public_reader;
 mod task_observation;
@@ -1260,26 +1261,7 @@ impl Node {
         let tx = self.db.unchecked_transaction()?;
         let read_changes = tx.total_changes();
         self.storage_context()?;
-        let state = self.state_at_with_progress(block, &mut || {
-            progress(NativeAccountProofProgress::StateReplay)
-        })?;
-        native_authenticated::verify_state(&tx, &self.settings, block, &state, &mut || {
-            progress(NativeAccountProofProgress::StateVerification)
-        })?;
-        let record = native_authenticated::load(&tx, block)?;
-        let context = crate::account_archive_prototype::Context {
-            network: self.settings.network(),
-            parameters: self.settings.parameters(),
-            genesis: self.settings.genesis(),
-        };
-        let checkpoint = crate::account_archive_prototype::native_store::query_checkpoint(
-            &tx,
-            context,
-            block,
-            record.height,
-            record.state.state_root,
-            &record.accounts,
-        )?;
+        let (checkpoint, _) = self.checked_account_query_checkpoint(&tx, block, progress)?;
         let (proof, observation) =
             multiproof::from_native_database(&tx, &checkpoint, owners, &|point| {
                 progress(NativeAccountProofProgress::Proof(point))

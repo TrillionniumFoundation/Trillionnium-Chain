@@ -135,6 +135,37 @@ delta record and parent relation back to genesis. Account nodes needed for an
 individual state are checked when that state is read; this does not constitute
 a perpetual audit of every inactive branch's physical storage.
 
+### Explicit historical account-query pins
+
+`Node::pin_authenticated_account_query` performs the existing complete-State
+reconstruction and verification once in one read snapshot. It issues an opaque,
+non-deserializable process-local `PinnedNativeAccountQuery`, binding context,
+historical checkpoint, exact authenticated record and bounded native block bytes.
+It is an explicitly retained historical query input, not an optional arithmetic
+cache or a fresh assertion about current KV. The caller owns its lifetime and
+storage; the Node adds no unbounded pin registry or durable schema.
+
+`authenticated_account_multiproof_at_pin` rereads namespace/context, the exact
+record and native block identity, then traverses actual content-checked Patricia
+nodes to construct and verify AAM1. It does not replay State or history. Missing
+records/nodes and changed bindings fail; missing storage cannot become proved
+absence or a complete-State fallback. Each query retains the original request
+bounds, cooperative cancellation, same-connection write fence and rollback.
+
+The pin selects fixed historical content. An active-branch change does not make
+it current-use authority, and a valid proof does not audit unrelated live KV or
+historical deltas. There is no retention promise: required roots must still be
+available. Cold open, native admission, undo/reorganization, final commit and the
+original strict account query retain their full checks. Pin issuance remains
+linear, default roots/wire/caps are unchanged, and neither I03 bounded-parent
+execution nor complete PN2 acceptance follows. SQLite page/RSS/time costs and
+total retained caller pins are not qualified by Patricia point-read counts.
+
+Differential tests compare actual signed-block and original strict-query bytes,
+prove repeated queries work while KV/snapshot/delta tables are unavailable,
+check cancellation and record/context/block/node damage, and require unchanged
+cold open to reject damaged live KV even when historical proof content survives.
+
 ### Bounded reuse of exact arithmetic inputs
 
 The native Node owns one volatile arithmetic cache. It retains at most three

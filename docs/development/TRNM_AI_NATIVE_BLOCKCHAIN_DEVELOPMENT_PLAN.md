@@ -921,6 +921,15 @@ native admission, select GSC2, remove complete-State scans, or relax any 65,536
 legacy cap. Bounded witness discovery/working input, durable deltas/root retention,
 migration and fault/scaling acceptance in I03–I05 remain open; PN2 stays unqualified.
 
+I04 producer subitem: the existing M07 owner can now issue an explicit opaque
+historical account-query pin after the same complete-State validation, then
+produce AAM1 from real Patricia paths without replaying State on each repeated
+query. Each query rereads exact record/block/context bindings and fails on missing
+or damaged tree bytes. This is fixed-root content access, not a fresh KV/history
+audit, active-state entitlement, retention promise or executable bounded parent.
+The original strict query, cold open, native execution/commit/reorg and all caps
+retain their checks. See the existing [native storage contract](../protocol/pon-nakamoto-v1/details/NATIVE_AUTHENTICATED_STORAGE_V1.md#explicit-historical-account-query-pins).
+
 Exit: actual signed native transitions cross 65,536 permanent accounts with
 bounded W and working partition; small-state complete/reference differential
 execution agrees. Pass zero-balance/re-entry/nonce, wrong-parent/omitted/extra

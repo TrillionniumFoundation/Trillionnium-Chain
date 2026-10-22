@@ -45,6 +45,7 @@ pub use store::native_budget::{
     NativeBudgetInventoryV1, NativeBudgetLaneV1, NativeBudgetLocalRecordV1,
     NativeBudgetObservationV1, NativeBudgetRequestV1, NativeContributionClaimV1,
 };
+pub use store::pinned_account_query::PinnedNativeAccountQuery;
 pub use store::{
     ConfirmationBatch, ContinuousSearchRequest, DerivedCommitmentStatus, MiningEpochCancellation,
     NativeAccountProofProgress, Node, Observation, OwnedContinuousLeaseResult,
