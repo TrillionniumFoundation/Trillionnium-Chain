@@ -4187,9 +4187,13 @@ mod tests {
     }
     #[test]
     fn paid_envelope_resource_profile_has_fresh_exact_signed_commitment() {
-        // Fixed independent SHA-256/length-framing vector for development
+        // Fixed independent r13 SHA-256/length-framing vector for development
         // bits=16 and lifetime=2000 ms; the policy numbers themselves did not change.
         assert_eq!(
+            hex::encode(PublicPolicy::development().id()),
+            "e171d2942b8abfd95351036464b5451b4562f0854f4b43b2de59c4e486bda176"
+        );
+        assert_ne!(
             hex::encode(PublicPolicy::development().id()),
             "0b32dc1c5cb3cd32f127792c2437a7e06afdee24dfd145e6c147ae9effc93973"
         );
