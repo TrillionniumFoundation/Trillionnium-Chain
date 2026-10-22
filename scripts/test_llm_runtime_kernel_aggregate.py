@@ -74,6 +74,10 @@ class AggregateTests(unittest.TestCase):
         self.assertEqual(record['outer_reconciliation'], 'UNKNOWN')
         self.assertFalse(record['authorization'])
         self.assertEqual(cap.fact.counters['memory.current'], '0\n')
+        self.assertIs(cap.fact.operation, cap)
+        record['counters']['memory.current'] = '999\n'
+        self.assertEqual(cap.fact.counters['memory.current'], '0\n')
+        with self.assertRaises(TypeError): cap.fact.counters['memory.current'] = '1\n'
         with self.assertRaisesRegex(ValueError, 'outer-reconciliation'):
             cap.close(cap.owner)
         self.assertIs(self.native.operation, cap)
@@ -203,16 +207,24 @@ class AggregateTests(unittest.TestCase):
                     if slot[1] >= 0: self.native.release_owned(slot)
                 self.native.operation = None
 
-    def acquisition_fixture(self):
+    def acquisition_fixture(self, memory_bytes=8*1024**3, controller_budget=None):
         root = Path(self.temporary.name)/'mount'; unit = root/'user.slice'/'fixture.service'
         controller = unit/'controller'; leaf = unit/('aggregate-'+'a'*32)
         controller.mkdir(parents=True); leaf.mkdir()
-        quota = dict(memory_bytes=128*1024**2, cpu_quota_us=100000, tasks=16)
+        quota = controller_budget or dict(memory_bytes=128*1024**2, cpu_quota_us=100000, tasks=16)
         for path in (root/'user.slice', unit, controller, leaf):
             fields = dict(kernel._FIXED, **{'memory.max': str(16*1024**3)+'\n'})
+            if path == unit:
+                fields.update({'cgroup.max.descendants': '2\n', 'cgroup.max.depth': '1\n',
+                    'cgroup.procs': '', 'cgroup.stat': 'nr_descendants 2\nnr_dying_descendants 0\n'})
             if path == controller:
                 fields.update({'memory.max': str(quota['memory_bytes'])+'\n',
-                    'cpu.max': '100000 100000\n', 'pids.max': '16\n'})
+                    'cpu.max': str(quota['cpu_quota_us'])+' 100000\n',
+                    'pids.max': str(quota['tasks'])+'\n'})
+            if path == leaf:
+                fields.update({'memory.max': str(memory_bytes)+'\n',
+                    'cpu.max': str(400000-quota['cpu_quota_us'])+' 100000\n',
+                    'pids.max': str(256-quota['tasks'])+'\n'})
             if path in (controller, leaf):
                 fields.update({'cgroup.max.descendants': '0\n', 'cgroup.subtree_control': ''})
             if path == leaf:
@@ -239,7 +251,7 @@ class AggregateTests(unittest.TestCase):
                     patch.dict(os.environ, {'INVOCATION_ID': '1'*32}), \
                     patch.object(aggregate.subprocess, 'run', return_value=observed):
                 cap = aggregate.acquire_aggregate_mechanics(self.native, unit='fixture.service',
-                    invocation='1'*32, operation=str(leaf), memory_bytes=16*1024**3,
+                    invocation='1'*32, operation=str(leaf), memory_bytes=memory_bytes,
                     controller_budget=quota, owner=self)
                 self.cap = cap
                 return action(cap) if action is not None else cap
@@ -250,13 +262,39 @@ class AggregateTests(unittest.TestCase):
         self.cap = cap = acquire()
         self.assertEqual(cap.nodes[0][0], leaf)
         self.assertEqual(len(cap.nodes), 4)
+        self.assertEqual(cap.nodes[0][3]['memory.max'], str(8*1024**3)+'\n')
+        self.assertEqual(cap.nodes[0][3]['cpu.max'], '300000 100000\n')
+        self.assertEqual(cap.nodes[0][3]['pids.max'], '240\n')
         self.assertIs(self.native.operation, cap)
         cap.close(self); self.assertIsNone(self.native.operation)
 
+    def test_declared_16g_aggregate_plus_controller_refuses_before_any_group_fd(self):
+        leaf, unit, controller, observed, acquire = self.acquisition_fixture(memory_bytes=16*1024**3)
+        descriptors_before = set(os.listdir('/proc/self/fd'))
+        with self.assertRaisesRegex(ValueError, 'aggregate-controller-headroom'):
+            acquire()
+        self.assertIsNone(self.native.operation)
+        self.assertEqual(set(os.listdir('/proc/self/fd')), descriptors_before)
+
+    def test_exact_memory_headroom_and_positive_cpu_task_partition_bind_actual_fields(self):
+        quota = dict(memory_bytes=8*1024**3, cpu_quota_us=300000, tasks=250)
+        leaf, unit, controller, observed, acquire = self.acquisition_fixture(controller_budget=quota)
+        self.cap = cap = acquire()
+        self.assertEqual(cap.nodes[0][3]['memory.max'], str(8*1024**3)+'\n')
+        self.assertEqual(cap.nodes[1][3]['memory.max'], str(8*1024**3)+'\n')
+        self.assertEqual(cap.nodes[0][3]['cpu.max'], '100000 100000\n')
+        self.assertEqual(cap.nodes[0][3]['pids.max'], '6\n')
+        cap.close(self)
+
     def test_synthetic_acquisition_rejects_unbounded_or_changed_parent_controller_and_used_leaf(self):
         for target, name, value in (('unit', 'memory.max', 'max\n'),
+                ('unit', 'cgroup.max.descendants', 'max\n'), ('unit', 'cgroup.max.depth', 'max\n'),
+                ('unit', 'cgroup.stat', 'nr_descendants 3\nnr_dying_descendants 0\n'),
+                ('unit', 'cgroup.stat', 'nr_descendants 2\nnr_dying_descendants 1\n'),
+                ('unit', 'cgroup.procs', '123\n'),
                 ('controller', 'memory.max', 'max\n'), ('controller', 'cpu.max', 'max 100000\n'),
                 ('controller', 'pids.max', 'max\n'), ('leaf', 'cgroup.max.descendants', 'max\n'),
+                ('leaf', 'cpu.max', '400000 100000\n'), ('leaf', 'pids.max', '256\n'),
                 ('leaf', 'memory.peak', '1\n'), ('leaf', 'cpu.stat', 'usage_usec 1\n')):
             with self.subTest(target=target, name=name):
                 leaf, unit, controller, observed, acquire = self.acquisition_fixture()
@@ -270,6 +308,21 @@ class AggregateTests(unittest.TestCase):
                 import shutil
                 shutil.rmtree(Path(self.temporary.name)/'mount')
 
+    def test_headroom_arithmetic_refuses_before_membership_io_or_registration(self):
+        base = dict(memory_bytes=128*1024**2, cpu_quota_us=100000, tasks=16)
+        for memory, controller in ((16*1024**3, base),
+                (8*1024**3, dict(base, cpu_quota_us=400000)),
+                (8*1024**3, dict(base, tasks=256)),
+                (8*1024**3, dict(base, memory_bytes=8*1024**3+1))):
+            with self.subTest(memory=memory, controller=controller), \
+                    patch.object(Path, 'read_text', side_effect=AssertionError('membership IO')), \
+                    patch.object(aggregate.os, 'open', side_effect=AssertionError('group FD')):
+                with self.assertRaisesRegex(ValueError, 'aggregate-controller-headroom'):
+                    aggregate.acquire_aggregate_mechanics(self.native, unit='fixture.service',
+                        invocation='1'*32, operation='/not-a-group', memory_bytes=memory,
+                        controller_budget=controller, owner=self)
+                self.assertIsNone(self.native.operation)
+
     def test_foreign_thread_acquisition_refuses_before_io_or_slot_change(self):
         def foreign():
             with patch.object(Path, 'read_text', side_effect=AssertionError('foreign IO')):
@@ -278,6 +331,29 @@ class AggregateTests(unittest.TestCase):
                         invocation='1'*32, operation='/not-a-group', memory_bytes=16*1024**3,
                         controller_budget={}, owner=self)
         with ThreadPoolExecutor(max_workers=1) as pool: pool.submit(foreign).result()
+        self.assertIsNone(self.native.operation)
+
+    def test_real_signal_reentry_during_acquisition_refuses_and_outer_close_retries(self):
+        leaf, unit, controller, observed, acquire = self.acquisition_fixture()
+        failures = []; original = aggregate._source; fired = False
+        def handler(signum, frame):
+            try:
+                aggregate.acquire_aggregate_mechanics(self.native, unit='fixture.service',
+                    invocation='1'*32, operation=str(leaf), memory_bytes=8*1024**3,
+                    controller_budget={}, owner=self)
+            except ValueError as error: failures.append(str(error))
+        def source():
+            nonlocal fired
+            if not fired:
+                fired = True; os.kill(os.getpid(), signal.SIGUSR1)
+            return original()
+        previous = signal.signal(signal.SIGUSR1, handler)
+        try:
+            with patch.object(aggregate, '_source', side_effect=source): self.cap = acquire()
+        finally: signal.signal(signal.SIGUSR1, previous)
+        self.assertEqual(failures, ['kernel-native-lifecycle-busy'])
+        self.assertEqual(self.native._busy._recursion_count(), 0)
+        self.cap.close(self); self.cap.close(self)
         self.assertIsNone(self.native.operation)
 
     def test_actual_held_directory_and_limits_or_invocation_change_is_sticky(self):

@@ -360,7 +360,7 @@ this live capability. Their source-specific campaign outcomes do not qualify
 the new native path; this slice preserves the separate V2/V3/V4 dispatchers.
 
 The explicit `_aggregate_operation` keyword adds only controlled aggregate
-mechanics v1. It rejects simultaneous `_controlled_operation` and requires the
+mechanics v2. It rejects simultaneous `_controlled_operation` and requires the
 new private live type; the old capability cannot acquire another path to gain
 this role. In a pre-existing stable delegated U, the external original owner is
 MainPID in finite `controller`; a fresh manual `aggregate-<32hex>` leaf A holds
@@ -371,11 +371,19 @@ relay reaper. No cgroup/unit is created, stopped or deleted by this module.
 
 Acquisition reads the actual controller's finite memory/CPU/tasks limits and
 binds the original InvocationID, mount, boot, source, ancestor FDs and names/inodes.
-U stays exactly 16GiB/400%/256 tasks; A is 8GiB or 16GiB/400%/256 and has no
-subgroups. Shared U limits include controller costs, so this supplies no extra
-headroom or admission proof for a full 16GiB payload. Controller budget fields
-select exact readback predicates, not a grant. All payload must use trusted
+U stays exactly 16GiB/400%/256 tasks. Before group IO or registration, A memory
+plus controller memory must fit 16GiB, while controller CPU/tasks must be positive
+and strictly below U. A CPU quota/tasks are exactly U minus controller; all actual
+fields must match. Thus a 16GiB A refuses, while e.g. an 8GiB A with a
+128MiB/100%/16-task controller gets 300%/240 tasks and no subgroups. Source
+`686442fc` omitted this partition and accepted overcommitted declared budgets;
+preserve its ordinary-FD red, not its old headroom claim. V2 supplies no extra
+capacity or admission grant. Controller budget fields select exact readback
+predicates, not authority. All payload must use trusted
 source inside A; same-UID escape or external-service delegation is not isolated.
+U permits exactly its two leaf groups (depth1/descendants2); unexpected internal
+participants or dying groups refuse, so a third allocation cannot reuse the
+declared partition. No existing systemd parent is reconfigured by acquisition.
 
 Only the original direct-owned supervisor's exact wait4 path can create the
 private post-terminal fact: A must be empty, have no descendants/dying charge,

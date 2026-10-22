@@ -549,7 +549,7 @@ and accounting properties; preserve FAIL. An external controller with an
 explicit original-unit lifetime/final-data protocol remains required under
 the existing PN3/PN4 owners. No outer success path is supplied by this slice.
 
-The next M14/I10 slice implements controlled aggregate mechanics v1 through
+The next M14/I10 slice implements controlled aggregate mechanics v2 through
 the same runtime's explicit `_aggregate_operation`; supplying it together with
 the old capability refuses. A stable delegated U keeps an external original
 wait4 owner in finite `controller`; its birth-bound Python supervisor and every
@@ -557,8 +557,13 @@ payload participant (model, trainer, verifier and descendants) belong to one
 fresh manual aggregate leaf, with zero allowed subgroups. The inner model wait4
 owner remains unchanged. Held mount/boot/InvocationID/path/inode/source/ancestor
 identities and actual controller limits bind the mechanics; U's original
-16GiB/400%/256 envelope is not increased. Controller costs consume that envelope,
-so no full-payload capacity grant is implied. This trusted same-admin boundary
+16GiB/400%/256 envelope is not increased. A memory plus controller memory must fit
+the parent before IO/registration, and A CPU/tasks equal U minus the strictly
+positive controller share. Actual fields must match this partition; a 16GiB A
+refuses. Source `686442fc` incorrectly accepted overcommitted declared budgets;
+preserve its ordinary-FD red. U has exactly the two known leaves, depth1 and
+descendants2, with no internal payload or dying groups. Acquisition changes no
+parent configuration and V2 supplies no capacity grant. This trusted same-admin boundary
 does not isolate hostile same-UID migration or external service dispatch.
 
 The original direct-owned supervisor's exact wait4 plus empty/no-dying aggregate,

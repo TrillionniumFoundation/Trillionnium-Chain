@@ -1,4 +1,4 @@
-"""Private controlled aggregate mechanics v1, not a grant or whole-unit receipt.
+"""Private controlled aggregate mechanics v2, not a grant or whole-unit receipt.
 
 An external original wait4 owner stays in U/controller; its Python supervisor
 and every payload participant belong to leaf A. No group/unit is created or
@@ -9,6 +9,7 @@ from pathlib import Path
 import re
 import stat
 import subprocess
+from types import MappingProxyType
 
 import llm_runtime_kernel_owned as kernel
 
@@ -60,11 +61,12 @@ def _raw(fd):
 
 
 class _TerminalAggregateFact:
-    __slots__ = ('counters', 'waited_cpu_ns', 'exit_code')
+    __slots__ = ('operation', 'counters', 'waited_cpu_ns', 'exit_code')
 
-    def __init__(self, token, counters, waited_cpu_ns, exit_code=None):
-        require(token is _TOKEN, 'aggregate-private-fact')
-        self.counters, self.waited_cpu_ns, self.exit_code = counters, waited_cpu_ns, exit_code
+    def __init__(self, token, counters, waited_cpu_ns, exit_code=None, operation=None):
+        require(token is _TOKEN and type(operation) is _AggregateOperation, 'aggregate-private-fact')
+        self.operation, self.counters = operation, MappingProxyType(dict(counters))
+        self.waited_cpu_ns, self.exit_code = waited_cpu_ns, exit_code
 
 
 class _AggregateOperation:
@@ -92,6 +94,9 @@ class _AggregateOperation:
         require(type(controller) is dict and set(controller) == set(bounds) and
             all(type(controller[k]) is int and 0 < controller[k] <= bounds[k] for k in bounds),
             'aggregate-controller-finite-budget')
+        require(memory + controller['memory_bytes'] <= _PARENT_MEMORY and
+            controller['cpu_quota_us'] < bounds['cpu_quota_us'] and controller['tasks'] < bounds['tasks'],
+            'aggregate-controller-headroom')
         require(re.fullmatch(r'[A-Za-z0-9_-]+\.service', unit) and
             re.fullmatch(r'[0-9a-f]{32}', invocation) and
             os.environ.get('INVOCATION_ID') == invocation, 'aggregate-invocation')
@@ -114,11 +119,14 @@ class _AggregateOperation:
         native.operation = self  # Same fixed strong slot before any group FD opens.
         try:
             finite = dict(kernel._FIXED, **{'memory.max': str(memory)+'\n',
+                'cpu.max': str(bounds['cpu_quota_us']-controller['cpu_quota_us'])+' 100000\n',
+                'pids.max': str(bounds['tasks']-controller['tasks'])+'\n',
                 'cgroup.max.descendants': '0\n', 'cgroup.subtree_control': ''})
             control = dict(finite, **{'memory.max': str(controller['memory_bytes'])+'\n',
                 'cpu.max': str(controller['cpu_quota_us'])+' 100000\n',
                 'pids.max': str(controller['tasks'])+'\n'})
-            unit_fields = dict(kernel._FIXED, **{'memory.max': str(_PARENT_MEMORY)+'\n'})
+            unit_fields = dict(kernel._FIXED, **{'memory.max': str(_PARENT_MEMORY)+'\n',
+                'cgroup.max.descendants': '2\n', 'cgroup.max.depth': '1\n'})
             self._open(self.operation, finite)
             self._open(self.unit_path/'controller', control)
             path = self.unit_path
@@ -183,6 +191,12 @@ class _AggregateOperation:
                     'aggregate-path-or-fd-replaced')
                 require({name: kernel._text(fd, name) for name in expected} == expected,
                         'aggregate-limits-changed')
+            unit_fd = self.nodes[2][1]
+            tree = _numbers(kernel._text(unit_fd, 'cgroup.stat'))
+            require(kernel._text(unit_fd, 'cgroup.procs') == '' and
+                tree.get('nr_descendants') == 2 and tree.get('nr_dying_descendants') == 0 and
+                all(value == 0 for key, value in tree.items() if key.startswith('nr_dying_')),
+                'aggregate-parent-participants-or-dying')
         except BaseException:
             self.failed = True
             raise
@@ -205,8 +219,8 @@ class _AggregateOperation:
                 raw = _raw(self.nodes[0][1])
                 self._verify_locked()
                 require(raw == _raw(self.nodes[0][1]), 'aggregate-counter-snapshot-changed')
-                fact = _TerminalAggregateFact(_TOKEN, raw, child.waited_cpu_ns, child.returncode)
-                result = dict(scope='controlled-aggregate-mechanics-v1-charge-not-RSS', counters=raw,
+                fact = _TerminalAggregateFact(_TOKEN, raw, child.waited_cpu_ns, child.returncode, self)
+                result = dict(scope='controlled-aggregate-mechanics-v2-charge-not-RSS', counters=raw,
                     aggregate_observed=True, supervisor_exit_code=child.returncode,
                     outer_reconciliation='UNKNOWN', reservation='RETAINED',
                     authorization=False, adoption=False)
