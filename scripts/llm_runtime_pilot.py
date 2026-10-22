@@ -845,6 +845,12 @@ class _Wait4Child(subprocess.Popen):
 
     def __init__(self, *args, **kwargs):
         self.kernel_operation = kwargs.pop('_controlled_operation', None)
+        aggregate_operation = kwargs.pop('_aggregate_operation', None)
+        if aggregate_operation is not None:
+            from llm_runtime_kernel_aggregate import _AggregateOperation
+            require(self.kernel_operation is None and type(aggregate_operation) is _AggregateOperation,
+                    'AGGREGATE_SPAWN_INTERFACE')
+            self.kernel_operation = aggregate_operation
         kernel_deadline = kwargs.pop('_kernel_deadline', None)
         self.kernel_evidence = None
         self.reaped = False
@@ -874,8 +880,10 @@ class _Wait4Child(subprocess.Popen):
                 except OSError as error:
                     raise _Wait4Unsupported('pidfd capability cleanup unavailable') from error
         if self.kernel_operation is not None:
-            from llm_runtime_kernel_owned import _ControlledOperation
-            require(type(self.kernel_operation) is _ControlledOperation and len(args) == 1 and
+            if aggregate_operation is None:
+                from llm_runtime_kernel_owned import _ControlledOperation
+                require(type(self.kernel_operation) is _ControlledOperation, 'KERNEL_SPAWN_INTERFACE')
+            require(len(args) == 1 and
                     set(kwargs) == {'stdout', 'stderr'} and kwargs['stderr'] is subprocess.STDOUT and
                     type(kernel_deadline) is float, 'KERNEL_SPAWN_INTERFACE')
             self.returncode = None
@@ -1391,13 +1399,22 @@ def _drain_exit_cleanup(process, observation, owner_token, start, budget, *, exi
     return 'rss-exit-cleanup-observation-unavailable', record
 
 
-def supervise(command, directory, budget, *, exit_observation=None, _controlled_operation=None):
+def supervise(command, directory, budget, *, exit_observation=None, _controlled_operation=None,
+              _aggregate_operation=None):
     """Kill only this fresh child when its measured wall/RSS budget is exceeded."""
     observation_type = exit_observation_class(exit_observation) if exit_observation is not None else None
+    kernel_keyword = '_controlled_operation'
+    if _aggregate_operation is not None:
+        from llm_runtime_kernel_aggregate import _AggregateOperation
+        require(_controlled_operation is None and type(_aggregate_operation) is _AggregateOperation,
+                'AGGREGATE_BUDGET_INTERFACE')
+        _controlled_operation = _aggregate_operation
+        kernel_keyword = '_aggregate_operation'
     if _controlled_operation is not None:
-        from llm_runtime_kernel_owned import _ControlledOperation
-        require(type(_controlled_operation) is _ControlledOperation and
-                type(budget) is dict and set(budget) == {'rss_bytes', 'wall_seconds'} and
+        if _aggregate_operation is None:
+            from llm_runtime_kernel_owned import _ControlledOperation
+            require(type(_controlled_operation) is _ControlledOperation, 'KERNEL_BUDGET_INTERFACE')
+        require(type(budget) is dict and set(budget) == {'rss_bytes', 'wall_seconds'} and
                 type(budget['rss_bytes']) is int and budget['rss_bytes'] == _controlled_operation.memory and
                 type(budget['wall_seconds']) is int and 0 < budget['wall_seconds'] <=
                 (600 if _controlled_operation.memory == 8*1024**3 else 1800), 'KERNEL_BUDGET_INTERFACE')
@@ -1413,8 +1430,8 @@ def supervise(command, directory, budget, *, exit_observation=None, _controlled_
     with (directory/'process.log').open('w') as log:
         try:
             try:
-                kernel = (dict(_controlled_operation=_controlled_operation,
-                    _kernel_deadline=(start/10**9)+budget['wall_seconds'])
+                kernel = ({kernel_keyword: _controlled_operation,
+                    '_kernel_deadline': (start/10**9)+budget['wall_seconds']}
                     if _controlled_operation is not None else {})
                 if _controlled_operation is not None:
                     process = object.__new__(_Wait4Child)

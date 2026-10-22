@@ -549,6 +549,30 @@ and accounting properties; preserve FAIL. An external controller with an
 explicit original-unit lifetime/final-data protocol remains required under
 the existing PN3/PN4 owners. No outer success path is supplied by this slice.
 
+The next M14/I10 slice implements controlled aggregate mechanics v1 through
+the same runtime's explicit `_aggregate_operation`; supplying it together with
+the old capability refuses. A stable delegated U keeps an external original
+wait4 owner in finite `controller`; its birth-bound Python supervisor and every
+payload participant (model, trainer, verifier and descendants) belong to one
+fresh manual aggregate leaf, with zero allowed subgroups. The inner model wait4
+owner remains unchanged. Held mount/boot/InvocationID/path/inode/source/ancestor
+identities and actual controller limits bind the mechanics; U's original
+16GiB/400%/256 envelope is not increased. Controller costs consume that envelope,
+so no full-payload capacity grant is implied. This trusted same-admin boundary
+does not isolate hostile same-UID migration or external service dispatch.
+
+The original direct-owned supervisor's exact wait4 plus empty/no-dying aggregate,
+zero memory.current/swap.current and unchanged limits/identity can produce only
+a private raw post-terminal observation. The owner rechecks after collecting
+memory.peak/events/cpu.stat and requires two matching raw snapshots without
+retry; nonzero charge or any unknown retains the original
+owner and descriptors. No group deletion, cached-final substitute, grant refund
+or whole-unit equivalence is supplied, even after that fact. Original d50 FAIL,
+old profiles/100ms/default RSS/public 2GiB and outer UNKNOWN remain. Actual finite
+cgroup placement is NOT_RUN. The next dependency remains the existing Hepta
+kernel.operations Store's CPU destination/independent FinalUse/terminal release
+protocol; this module adds no second manager or journal and no I10/model result.
+
 The ordinary merge with source `8caf5387` retains the inherited runtime and
 persistent neural-read worker, its default held-pidfd/irreversible-exit helpers,
 all explicit V2–V4 source-bound paths and the controlled native owner. Explicit

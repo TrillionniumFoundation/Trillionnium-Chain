@@ -359,6 +359,38 @@ at source `cc9b599` retain their existing supervise signature and do not supply
 this live capability. Their source-specific campaign outcomes do not qualify
 the new native path; this slice preserves the separate V2/V3/V4 dispatchers.
 
+The explicit `_aggregate_operation` keyword adds only controlled aggregate
+mechanics v1. It rejects simultaneous `_controlled_operation` and requires the
+new private live type; the old capability cannot acquire another path to gain
+this role. In a pre-existing stable delegated U, the external original owner is
+MainPID in finite `controller`; a fresh manual `aggregate-<32hex>` leaf A holds
+its birth-bound Python supervisor and all payload descendants, including model,
+training and verification. The supervisor's own model wait4 owner is unchanged.
+Both layers reuse the existing `_Wait4Child` and in-process C gate; there is no
+relay reaper. No cgroup/unit is created, stopped or deleted by this module.
+
+Acquisition reads the actual controller's finite memory/CPU/tasks limits and
+binds the original InvocationID, mount, boot, source, ancestor FDs and names/inodes.
+U stays exactly 16GiB/400%/256 tasks; A is 8GiB or 16GiB/400%/256 and has no
+subgroups. Shared U limits include controller costs, so this supplies no extra
+headroom or admission proof for a full 16GiB payload. Controller budget fields
+select exact readback predicates, not a grant. All payload must use trusted
+source inside A; same-UID escape or external-service delegation is not isolated.
+
+Only the original direct-owned supervisor's exact wait4 path can create the
+private post-terminal fact: A must be empty, have no descendants/dying charge,
+zero memory.current/swap.current, unchanged identity/limits, and readable raw
+memory.peak/events/cpu.stat. Identity/limits and empty/zero charge are rechecked
+after reading counters; two complete raw snapshots must match, without retry.
+This is a raw post-terminal observation, not a claim
+that asynchronous kernel accounting can never change or that charge equals RSS.
+Nonzero charge, missing/malformed counters or identity/limits failure retain owner/FDs;
+even a private fact leaves outer UNKNOWN and reservation RETAINED. The existing
+Hepta kernel.operations Store/CPU destination, independent FinalUse and explicit
+release protocol are still open. The versioned aggregate boundary is not the
+old whole-unit contract; d50 remains FAIL. Ordinary-FD/synthetic counter tests
+and tiny own-child handoff faults do not qualify valid cgroup placement or models.
+
 The ordinary merge with source `8caf5387` preserves its inherited runtime,
 persistent neural-read worker and default reconciliation helpers, alongside the
 explicit V2–V4 paths and controlled native owner. Reconciliation metadata names
