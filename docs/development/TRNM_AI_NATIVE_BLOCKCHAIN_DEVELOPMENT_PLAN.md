@@ -193,9 +193,30 @@ the cohort remains claimed once. Original inputs/criteria are unchanged, and the
 old c61 failure and its missing records remain unchanged. These launcher controls
 are not a new pressure result or final whole-unit resource settlement.
 
-The same source's [CodeQL check 119818040273](https://github.com/TrillionniumFoundation/Trillionnium-Chain/runs/119818040273)
+A separate current-source freeze `f7795a3d72bb59d9f0625186d301fc3ce0dc028e`
+then passed the same one baseline/ROOT supplemental cohort, with the optional
+cache still off and the original inputs/limits unchanged. All 24 actors and
+21 business blocks completed; the three depth-six confirmations ended at
+5.967304544, 16.120909061 and 26.006862713 seconds, each with contained numeric
+depletion and signed ROOT replies. Paid/settled owner CPU was 9,403,286,579 ns,
+with known zero scoped CPU. Hash readback covered 152 original files /
+57,416,786 bytes; independent closed SQL copies agreed on all current State
+rows, tip/root, height25/events25/blocks26 and hostile-ID absence. All three v2
+after-checks passed, and all 26 observed processes/original cgroup were gone.
+Current source includes scheduling/native-arithmetic changes, so this does not
+attribute the improvement to the unused cache. The generic finite-phase flag
+is still false; the separately frozen ROOT predicate alone passed. Capacity
+exhaustion, nonce churn, cheapest-work hardness, original campaign failures,
+deleted-unit final accounting and three real model upgrades remain open under
+their existing PN1/PN3/PN4 owners. See the same
+[supplemental admission contract](../protocol/pon-nakamoto-v1/details/ADMISSION_SECURITY.md#fixed-seed-root-supplemental-cohort)
+for source/binary/report pins and retained capture limitations.
+
+The historical audit source `8d56f2f173d3e870846cf1129d48647f2b84540a`'s
+[CodeQL check 119818040273](https://github.com/TrillionniumFoundation/Trillionnium-Chain/runs/119818040273)
 reports failure with thirteen high annotations. Independent disposition is
 required; the alert count is not thirteen independently confirmed exploits.
+That check does not scan or qualify the later 8caf/f779 source heads.
 
 Each PN exit retains source pair/profile, accountable owner, actual caller and
 command, frozen workload/thresholds, raw outputs, missing observations and

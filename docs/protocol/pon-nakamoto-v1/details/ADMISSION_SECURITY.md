@@ -184,6 +184,41 @@ live after-observations, not final counters after unit deletion, and supplies no
 missing observation for the earlier failed c61 cohort. Launcher fault controls
 use mocked native execution and real small file hashes, not a new pressure run.
 
+A later, separately frozen current-source cohort on
+`f7795a3d72bb59d9f0625186d301fc3ce0dc028e` (tree
+`c09f6946bb2cb0b40e7489d6ca57e4aaecec3bb7`) **passed these supplemental
+criteria only**. Its release binary SHA256 is
+`07d34e50e289135e652f04c50cdbe8fce17ab7399273889cc1abf2d32c706ab4`;
+report SHA256 is `d049d54ef1670a576098ab71ab1f95bf9af1efcb86fad19cce2eab7941dee346`.
+The original inputs, caps, deadlines and aggregate service limits were unchanged;
+the optional ROOT rejection cache stayed **off**. Current scheduling and native
+arithmetic differ from c61; this is not an isolated causal comparison of one
+optimization. One malformed launcher command was rejected before service creation
+or cohort claim, retained, and corrected; exactly one native cohort was executed.
+
+All 24 actors completed below the cap without forced kill. All 21 business blocks
+and three depth-six confirmations completed, at 5.967304544, 16.120909061 and
+26.006862713 seconds; each round contained genuine numeric depletion and 151,
+152 and 152 signature-verified ROOT replies respectively. Of 595 samples, 541
+met the original depletion predicate; minimum remaining paid credit was
+67,817,742 ns. Whole paid/settled owner CPU reconciled to 9,403,286,579 ns with
+known zero scoped CPU. The scheduling owner retained 45 of 4,096 fixed identities
+and observed 662 repeat skips; this does not qualify capacity exhaustion or
+distinct-nonce churn. The generic phase's `finite_phase_criteria_met` remains
+false; only the separately frozen valid-Work/ROOT supplemental predicate passed.
+
+All 152 captured files / 57,416,786 bytes were hash-verified. Independent SQL
+readback of closed snapshot copies matched both full current key/value sets,
+tip/root, height 25, 25 events and 26 stored blocks; all 24 hostile IDs were
+absent. Local activation generations legitimately differ (receiver 25, client 7)
+and are not chain heights. A prior read-only Python inspection created empty WAL
+and reader SHM sidecars after capture; these are retained separately, with all
+original captured bytes unchanged. Binary/source/live-resource after-checks
+passed; all 26 observed processes and the original cgroup were gone at cleanup.
+This is not final raw accounting of a deleted unit. The earlier c61 and original
+three-run failures remain failed; no PN1, hardness, independent-operator, WAN,
+model-loop or production qualification changes.
+
 ### Optional bounded final-ROOT rejection component
 
 `Node::enable_local_root_rejection_cache` explicitly enables one volatile cache
