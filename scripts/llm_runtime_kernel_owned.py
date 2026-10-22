@@ -71,6 +71,9 @@ class _Native:
             self.spawn.argtypes = [ctypes.c_int, ctypes.c_int, ctypes.c_char_p, strings, strings,
                                    ctypes.POINTER(ctypes.c_int)]
             self.spawn.restype = ctypes.c_int
+            self.close_handoff = self.library.trnm_kernel_close_v1
+            self.close_handoff.argtypes = [ctypes.POINTER(ctypes.c_int), ctypes.c_uint]
+            self.close_handoff.restype = ctypes.c_int
         except BaseException:
             os.close(self.fd)
             raise
@@ -119,6 +122,7 @@ class _ControlledOperation:
         self.boot = Path('/proc/sys/kernel/random/boot_id').read_text()
         self.failed = self.consumed = False
         self.child = None
+        self.spawn_owner = None
         try:
             path = self.operation
             while path != _ROOT:
@@ -179,24 +183,29 @@ class _ControlledOperation:
             self.failed = True
             raise
 
-    def spawn(self, command, stdout):
+    def spawn(self, command, stdout, owner):
         self.verify()
         require(not self.consumed and type(command) is list and 0 < len(command) <= 256 and
             all(type(v) is str and '\0' not in v for v in command) and
             Path(command[0]).is_absolute(), 'kernel-command-or-reuse')
         self.consumed = True
+        require(self.spawn_owner is None and owner.kernel_operation is self, 'kernel-owner-bound')
+        # Before native entry: the same Python wait4 owner and its slots survive
+        # pending signals or allocation failures anywhere after clone3 succeeds.
+        self.spawn_owner = owner
         values = [os.fsencode(v) for v in command]
         environment = [os.fsencode(k+'='+v) for k, v in os.environ.items()]
         require(sum(map(len, values+environment)) <= 1024**2, 'kernel-exec-bound')
         array = lambda v: (ctypes.c_char_p*(len(v)+1))(*v, None)
-        result = (ctypes.c_int*4)()
         error = self.native.spawn(self.nodes[0][1], stdout.fileno(), values[0],
-                                  array(values), array(environment), result)
+                                  array(values), array(environment), owner._kernel_handoff)
         if error: raise OSError(error, 'kernel-clone3-refused')
-        return tuple(result)
 
-    def allow_exec(self, pid, pidfd, ack, error_fd, deadline):
+    def allow_exec(self, owner, deadline):
+        require(self.spawn_owner is owner, 'kernel-owner-bound')
         try:
+            pid, pidfd = owner.pid, owner.termination_fd
+            ack, error_fd = owner._kernel_handoff[2], owner._kernel_handoff[3]
             self.verify()
             visible, parent, _ = proc._pidfd_identity(pid, pidfd)
             fields = proc._proc_fields(Path(f'/proc/{visible}/status'))
@@ -211,7 +220,7 @@ class _ControlledOperation:
             self.failed = True
             raise
         finally:
-            os.close(ack); os.close(error_fd)
+            owner._close_kernel_handoff(12)
 
     def terminal_record(self, pid, pidfd):
         try:

@@ -52,3 +52,15 @@ refused:;
     for (int i=0; i<2; i++) { if (ack[i]>=0) close(ack[i]); if (error[i]>=0) close(error[i]); }
     return code;
 }
+
+/* Close and clear under one native call: Python signals cannot split them. */
+int trnm_kernel_close_v1(int result[4], unsigned int mask) {
+    int error = 0;
+    for (int i = 1; i < 4; i++) {
+        if ((mask & (1U << i)) && result[i] >= 0) {
+            if (close(result[i]) < 0 && !error) error = errno;
+            result[i] = -1;
+        }
+    }
+    return error;
+}

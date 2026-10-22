@@ -878,17 +878,26 @@ class _Wait4Child(subprocess.Popen):
                     set(kwargs) == {'stdout', 'stderr'} and kwargs['stderr'] is subprocess.STDOUT and
                     type(kernel_deadline) is float, 'KERNEL_SPAWN_INTERFACE')
             self.returncode = None
-            self.pid, self.termination_fd, ack, error = self.kernel_operation.spawn(args[0], kwargs['stdout'])
+            import ctypes
+            self._kernel_handoff = (ctypes.c_int*4)(-1, -1, -1, -1)
+            self._kernel_admitted = False
+            self._kernel_cleanup_required = _OwnedChildCleanupRequired(self,
+                dict(outcome='failed', stop_reason='kernel-handoff-unresolved', reservation='RETAINED'))
             try:
-                self.kernel_operation.allow_exec(self.pid, self.termination_fd, ack, error, kernel_deadline)
+                self.kernel_operation.spawn(args[0], kwargs['stdout'], self)
+                self._adopt_kernel_handoff()
+                self.kernel_operation.allow_exec(self, kernel_deadline)
+                self._kernel_admitted = True
+                return
             except BaseException as failure:
-                self.fail(f'kernel-spawn:{type(failure).__name__}')
-                self.finish()
-                if not isinstance(failure, Exception):
-                    if not self.reap_resolved:
-                        raise _OwnedChildCleanupRequired(self, dict(outcome='failed',
-                            stop_reason='kernel-spawn-interrupted', reservation='RETAINED')) from failure
-                    raise
+                # Constant/prebuilt failure state: never format/allocate first
+                # and thereby lose the native output after a MemoryError.
+                self.observation_error = 'kernel-spawn-handoff-failed'
+                try:
+                    self._rollback_kernel_handoff()
+                except BaseException:
+                    raise self._kernel_cleanup_required
+                if self._kernel_handoff[0] <= 0 or not isinstance(failure, Exception): raise
             return
         super().__init__(*args, **kwargs)
         try:
@@ -900,6 +909,23 @@ class _Wait4Child(subprocess.Popen):
         # Popen's destructor performs waitpid and can steal the rusage receipt.
         # supervise's finally block exclusively terminates/reaps this child.
         pass
+
+    def _adopt_kernel_handoff(self):
+        self.pid = self._kernel_handoff[0]
+        descriptor = self._kernel_handoff[1]
+        self.termination_fd = descriptor if descriptor >= 0 else None
+
+    def _close_kernel_handoff(self, mask):
+        error = self.kernel_operation.native.close_handoff(self._kernel_handoff, mask)
+        if error: raise OSError(error, 'kernel-handoff-close')
+
+    def _rollback_kernel_handoff(self):
+        self._close_kernel_handoff(12)
+        if self._kernel_handoff[0] > 0:
+            self._adopt_kernel_handoff()
+            self.signal_owned(signal.SIGKILL)
+            self.finish()
+            if not self.reap_resolved: raise self._kernel_cleanup_required
 
     def fail(self, message):
         if self.observation_error is None:
@@ -1034,7 +1060,10 @@ class _Wait4Child(subprocess.Popen):
                     self.fail(f'kernel-terminal:{type(failure).__name__}')
             if self.termination_fd is not None and self.reap_resolved:
                 try:
-                    os.close(self.termination_fd)
+                    if getattr(self, '_kernel_handoff', None) is not None:
+                        self._close_kernel_handoff(2)
+                    else:
+                        os.close(self.termination_fd)
                 except OSError as error:
                     self.fail(f'close-pidfd:{error.errno}')
                 self.termination_fd = None
@@ -1133,30 +1162,35 @@ def supervise(command, directory, budget, *, exit_observation=None, _controlled_
     exit_cleanup_observation = None
     owner_token = object()
     observer_cpu_start = time.process_time_ns()
+    process = None
     with (directory/'process.log').open('w') as log:
         try:
-            kernel = (dict(_controlled_operation=_controlled_operation,
-                _kernel_deadline=(start/10**9)+budget['wall_seconds'])
-                if _controlled_operation is not None else {})
-            process = _Wait4Child(command, stdout=log, stderr=subprocess.STDOUT, **kernel)
-        except _Wait4Unsupported as error:
-            result = dict(exit_code=None, stop_reason='rss-owner-unsupported',
-                          observed_wall_ns=time.monotonic_ns()-start,
-                          sampled_peak_rss_bytes=0, budget=budget, sample_interval_ms=50,
-                          waited_child_peak_rss_bytes=None, waited_child_reaped=False,
-                          owned_child_reap_resolved=False,
-                          owned_child_echild_observed=False,
-                          owned_child_exit_observed=False, child_spawned=False,
-                          cleanup_method='no-child-spawned',
-                          waited_child_observation_error=str(error), child_cpu_ns=None,
-                          observer_cpu_ns=time.process_time_ns()-observer_cpu_start,
-                          cpu_scope='No child spawned; no waited-child CPU observation',
-                          memory_scope='No child spawned; no RSS observation', outcome='failed')
-            if exit_observation is not None:
-                result['exit_observation_profile'] = exit_observation
-            save(directory/'supervisor.json', result)
-            return result
-        try:
+            try:
+                kernel = (dict(_controlled_operation=_controlled_operation,
+                    _kernel_deadline=(start/10**9)+budget['wall_seconds'])
+                    if _controlled_operation is not None else {})
+                if _controlled_operation is not None:
+                    process = object.__new__(_Wait4Child)
+                    process.__init__(command, stdout=log, stderr=subprocess.STDOUT, **kernel)
+                else:
+                    process = _Wait4Child(command, stdout=log, stderr=subprocess.STDOUT)
+            except _Wait4Unsupported as error:
+                result = dict(exit_code=None, stop_reason='rss-owner-unsupported',
+                              observed_wall_ns=time.monotonic_ns()-start,
+                              sampled_peak_rss_bytes=0, budget=budget, sample_interval_ms=50,
+                              waited_child_peak_rss_bytes=None, waited_child_reaped=False,
+                              owned_child_reap_resolved=False,
+                              owned_child_echild_observed=False,
+                              owned_child_exit_observed=False, child_spawned=False,
+                              cleanup_method='no-child-spawned',
+                              waited_child_observation_error=str(error), child_cpu_ns=None,
+                              observer_cpu_ns=time.process_time_ns()-observer_cpu_start,
+                              cpu_scope='No child spawned; no waited-child CPU observation',
+                              memory_scope='No child spawned; no RSS observation', outcome='failed')
+                if exit_observation is not None:
+                    result['exit_observation_profile'] = exit_observation
+                save(directory/'supervisor.json', result)
+                return result
             while process.observation_error is None and process.reap() == 'live':
                 sample_trace = {}
                 trace_token = _RSS_READ_TRACE.set(sample_trace)
@@ -1211,7 +1245,19 @@ def supervise(command, directory, budget, *, exit_observation=None, _controlled_
                     break
                 time.sleep(0.05)
         finally:
-            process.finish()
+            if process is not None:
+                if _controlled_operation is None:
+                    process.finish()
+                elif getattr(process, '_kernel_handoff', None) is not None:
+                    try:
+                        if process._kernel_admitted:
+                            process.finish()
+                        else:
+                            process._rollback_kernel_handoff()
+                    except BaseException:
+                        if process.observation_error is None:
+                            process.observation_error = 'kernel-owner-cleanup-interrupted'
+                        raise process._kernel_cleanup_required
     if reason is None:
         if process.observation_error or not process.reaped or process.waited_peak_rss_bytes is None:
             reason = 'waited-child-observation-unavailable'

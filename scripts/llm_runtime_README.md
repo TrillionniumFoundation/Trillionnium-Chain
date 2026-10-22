@@ -297,6 +297,18 @@ at source `cc9b599` retain their existing supervise signature and do not supply
 this live capability. Their source-specific campaign outcomes do not qualify
 the new native path; this slice preserves the separate V2/V3/V4 dispatchers.
 
+Independent review rejected the initial spawn slice `ce4ae661`: a pending
+exception after native success could precede tuple/field handoff and strand its
+gated child. Preserve that rejected source. The repair prebinds the original
+Python owner, its native output slots and cleanup exception before clone; there
+is no returned ownership tuple. Constructor and monitoring share owner cleanup.
+Post-clone signals/allocation failures either use the same pidfd/exact wait4 or
+throw the prebuilt exception retaining that owner and reservation. Native FD
+close also clears its slot before Python can observe a pending signal, including
+when the descriptor is immediately reused. Twenty-one synthetic-native-output
+fault cases use real tiny owned children; persistent-allocation and reused-FD
+cases test retained cleanup. They are not native cgroup or model acceptance.
+
 `sampled_peak_rss_bytes` remains the direct-child sampling result.
 `waited_child_peak_rss_bytes` separately records that exact child's Linux `wait4`
 `ru_maxrss` in KiB times 1024. A quick exit can succeed without a sample only when

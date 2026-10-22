@@ -332,6 +332,17 @@ ordinary supervise call and gain no kernel capability automatically; preserve
 their separate source-bound campaign evidence and V2/V3/V4 semantics when
 integrating this additive optional path.
 
+Independent review rejected initial controlled spawn source `ce4ae661` for the
+post-clone tuple/field-handoff exception gap; retain that rejection. This same
+M14 owner now binds its native result slots and prebuilt cleanup exception
+before clone, and constructor/monitoring share cleanup. Any post-clone signal
+or allocation failure must resolve the original pidfd/exact wait4 or explicitly
+retain that owner and reservation. A native close-and-clear primitive prevents
+pending signals from leaving stale slots that could close reused descriptors.
+The 21 real tiny-child fault cases use synthetic native outputs; persistent
+allocation and exact gate/pidfd-number reuse tests cover cleanup, not cgroup
+placement, whole-unit closure, model acceptance or I10.
+
 The optional scalar-credit freshness observation reads the original watermark
 and projects the original refill arithmetic without changing the clock, credit,
 owner or depletion predicate. Its added sampler contention and complete-path
