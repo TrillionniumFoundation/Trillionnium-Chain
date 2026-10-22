@@ -78,3 +78,41 @@ No new work profile, parser, reference model or banner is allowed to set a produ
 flag. An unqualified primitive cannot be replaced automatically by PoCO or pure hashing.
 Failed qualification directs further design/implementation; it is not a reason to
 announce a scientifically established impossible task or to claim success prematurely.
+
+## S6. Audit remediation acceptance matrix
+
+These are pending domain obligations for the existing PN0–PN6 sequence, not
+newly executed test selectors, registered procedures or acceptance receipts.
+Implement each in its current owner, then add exact source/test bindings to
+the existing registries. Preserve all earlier counterexamples and old-profile
+regressions. A passing documentation gate closes none of these rows.
+
+| Ref / phase / owners | Adversarial case | Required acceptance evidence |
+| --- | --- | --- |
+| A01 / PN0 / M15/M17 | Hepta receipt pins an older Chain; scan succeeds with unresolved alerts | Exact head/tree/base/merge/binary/profile pair; actual required checks and rule/path/data-flow triage. Old-pair receipts and aggregate alert counts do not certify the current pair. |
+| A02 / PN1 / M01/M02/M17 | Structured or preprocessed producer gets cheaper effective work | Equal-target full-cost samples, all setup/failed attempts and task/hardware assumptions, plus independent security analysis. No invented cost lower bound or machine-count adversary fraction. |
+| A03 / PN1 / M04/M15 | Ticket-passing false transcripts consume shared resources while honest paid traffic runs | Original-budget three-mode campaign meets 3/3 timely client-verified rounds per mode in three complete runs; full CPU ownership and all failed/Busy/unknown cohorts retained. Resource bounds and computational security have separate verdicts. |
+| A04 / PN2 / M00/M06/M07 | Research archive exceeds 65,536 leaves but native profile still uses old cap/root | Actual signed native admission of at least 65,537 permanent accounts in a new context, bounded working/witness/packet limits and independent aggregate/root verification. Old-profile replay remains exact. |
+| A05 / PN2 / M06/M07/M09 | Missing account is presented as absent; required refund/miner/range row omitted | Original-parent proof authentication and complete mandatory coverage reject the omission; present-zero existence/nonce and monetary conservation survive re-entry/reorg. Unavailable is distinct from invalid or absent. |
+| A06 / PN2 / M07/M08/M13 | Disk-full, partial commit, provider loss or GC removes a needed fork/duty | Reserved writes/root retention, atomic rollback/recovery, verified deep-fork backfill and cold readback; source-preserving migration. Local effects/revocations never rewind. |
+| A07 / PN3 / M10/M11 | Public fixed tasks, same-custodian keys or future-window leakage give ceiling scores | Independent source/time custody, exposure audit, frozen statistical rule and strong equal-budget controls. Unknown/no-gain remains unaccepted/zero payout; private evaluations use an explicit trust profile. |
+| A08 / PN3 / M14/M15 + Hepta owners | Old packet/task/provider or orphaned acceptance is reused to install | Exact schema-3 owner/provider/output/task/packet and active ancestry/generation, explicit confirmation policy and current local selection/withdrawal/resource checks. No chain observation constructs FinalUse. |
+| A09 / PN3 / Hepta existing owners | Download/selection receipt claims improvement but runtime uses old weights | Three actual lineage cycles with installed-parent inference readback; sustained-benefit claim separately needs three installed prospectively qualified beneficial releases. Historical decisions retain actual model identity. |
+| A10 / PN3 / M09/M10 | Valid individual chunks form incompatible or incomplete model | Bounded release closure, pinned base/tokenizer/router/layout/runtime and required Cells; reject cycles, version/shape/quantization conflicts, missing dependencies and unsafe loader input before use. |
+| A11 / PN4 / M09/M12 | Sybil contributions, repeat repair or reorg creates unbacked reward/resource obligations | Separate funded finite budgets, duplicate/lineage controls, byte-time/repair/service units, exact effect reconciliation and conservation through maturity/expiry/refund. |
+| A12 / PN5 / M04/M09/M17 | Origin/provider disappears, discovery is eclipsed or slow peers drain retries | Three independent replicas, retrieval with one lost, budgeted repair, bounded discovery/confidentiality profile, and preregistered 72-hour WAN fault/load campaign; all requested release cohorts reported. |
+| A13 / PN6 / M00/M13/M15 | Migration/rollback promotes old proof or restores revoked authority | Complete source/obligation reconciliation, fresh destination/profile/domain identity, abort/recovery rehearsal and explicit governed release decision. No flag promotion by source merge. |
+
+Each acceptance package identifies the plan revision, scenario refs, owner,
+executed source/tree/base/merge and binary, full profile/configuration, hardware
+and custody/failure domains. Include preregistered thresholds and denominators,
+raw signed/byte artifacts and logs with hashes, retained failures, missing data,
+independent reproduction and exact first error/recovery outcome. Separate source
+binding, local component pass, ordinary product execution, independent acceptance
+and production authorization. Null is required for an unmeasured outcome.
+
+Numerical objectives in the plan are development gates. They do not establish
+unlimited-attack fairness, cheapest-adversary hardness, infinite storage, future
+model benefit or permanent data availability. Any changed assumptions, deadlines,
+budget or scoring policy create a separately named campaign/profile; the original
+failed cohort remains failed.
