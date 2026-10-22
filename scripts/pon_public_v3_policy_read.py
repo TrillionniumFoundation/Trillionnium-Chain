@@ -14,6 +14,8 @@ import struct
 
 CONFIG = Path(__file__).resolve().parents[1] / 'config/pon/public-resource-profile-vectors-v1.json'
 OBSERVATION_SCHEMA = 'public-protected-resource-policy-observation-v1'
+ARITHMETIC_PROFILE = 'arithmetic-facts-v1'
+ARITHMETIC_REVISION = 'r13-arithmetic-facts-v1'
 
 
 def require(value, message):
@@ -21,23 +23,35 @@ def require(value, message):
         raise ValueError(message)
 
 
+def domain_hash(domain, parts):
+    tag = domain.encode('ascii')
+    h = hashlib.sha256(b'TRNM-PON1\0' + struct.pack('<H', len(tag)) + tag)
+    for part in parts:
+        h.update(struct.pack('<I', len(part)))
+        h.update(part)
+    return h.hexdigest()
+
+
 def policy_id(config, revision, ticket_bits, lifetime_ms):
     require(type(ticket_bits) is int and 8 <= ticket_bits <= 20
             and type(lifetime_ms) is int and 100 <= lifetime_ms <= 2000,
             'exact public policy parameters required')
     require(revision in config['revisions'], 'unknown public resource revision')
-    tag = config['hash_domain'].encode('ascii')
-    h = hashlib.sha256(b'TRNM-PON1\0' + struct.pack('<H', len(tag)) + tag)
     parts = [config['transport_profile'].encode('ascii'),
              config['revisions'][revision]['resource_contract'].encode('ascii'),
              bytes([ticket_bits]), struct.pack('<Q', lifetime_ms),
              *(struct.pack('<Q', config[key]) for key in
                ('burst_ns', 'refill_ns_per_second', 'start_reserve_ns')),
              struct.pack('<I', config['worker_limit'])]
-    for part in parts:
-        h.update(struct.pack('<I', len(part)))
-        h.update(part)
-    return h.hexdigest()
+    return domain_hash(config['hash_domain'], parts)
+
+
+def arithmetic_policy_id(config, ticket_bits, lifetime_ms):
+    entry = config['arithmetic_profile']
+    return domain_hash(entry['hash_domain'], [
+        bytes.fromhex(policy_id(config, entry['base_revision'], ticket_bits, lifetime_ms)),
+        entry['resource_contract'].encode('ascii'), struct.pack('<Q', entry['slots']),
+        struct.pack('<Q', entry['maximum_software_bytes'])])
 
 
 def load_profiles(path=CONFIG):
@@ -70,6 +84,23 @@ def load_profiles(path=CONFIG):
         for row in entry['vectors']:
             require(policy_id(config, revision, row['ticket_bits'], row['lifetime_ms'])
                     == row['policy_id'], 'public policy vector hash mismatch')
+    entry = config['arithmetic_profile']
+    require(set(entry) == {'work_profile', 'resource_revision', 'base_revision', 'hash_domain',
+            'source', 'resource_contract', 'slots', 'maximum_software_bytes', 'vectors'}
+            and entry['work_profile'] == ARITHMETIC_PROFILE
+            and entry['resource_revision'] == ARITHMETIC_REVISION
+            and entry['base_revision'] == 'r13'
+            and entry['hash_domain'] == 'public-protected-profile-v3-arithmetic-facts-v1'
+            and entry['source'] == 'trillionnium/crates/trnm-pon-node/src/ingress/public_v3/work_arithmetic.rs'
+            and type(entry['slots']) is int and entry['slots'] == 64
+            and type(entry['maximum_software_bytes']) is int
+            and entry['maximum_software_bytes'] == 4 * 1024 * 1024
+            and [(row['ticket_bits'], row['lifetime_ms']) for row in entry['vectors']]
+                == [(8, 2000), (12, 2000), (16, 2000)],
+            'explicit separate arithmetic profile and original r13 bounds required')
+    for row in entry['vectors']:
+        require(arithmetic_policy_id(config, row['ticket_bits'], row['lifetime_ms']) == row['policy_id'],
+                'arithmetic policy vector hash mismatch')
     return config
 
 
@@ -85,5 +116,9 @@ def identify_observation(value):
     matches = [revision for revision in config['revisions']
                if policy_id(config, revision, value['ticket_bits'], value['lifetime_ms'])
                    == value['policy_id']]
+    if arithmetic_policy_id(config, value['ticket_bits'], value['lifetime_ms']) == value['policy_id']:
+        require(not matches, 'ambiguous public policy identifier')
+        return {**value, 'resource_revision': ARITHMETIC_REVISION,
+                'base_resource_revision': 'r13', 'work_profile': ARITHMETIC_PROFILE}
     require(len(matches) == 1, 'unrecognized or mismatched public policy identifier')
     return {**value, 'resource_revision': matches[0]}

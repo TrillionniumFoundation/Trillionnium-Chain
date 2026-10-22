@@ -10,7 +10,7 @@ import unittest
 sys.dont_write_bytecode = True
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import pon_public_v3_phase_read as reader
-from test_pon_public_v3_policy_read import observation
+from test_pon_public_v3_policy_read import arithmetic_observation as arithmetic_policy, observation
 
 
 def record():
@@ -61,7 +61,135 @@ def attribution_call(body_digest):
             'response': {'value': {'error': 'SYNTHETIC_CONTROL'}}, 'error': None}
 
 
+def arithmetic_work(reused=False, completed=True):
+    return dict(schema='public-v3-work-arithmetic-observation-v1', slots=64,
+        retained_software_bytes=4000000, completed=completed,
+        arithmetic=(dict(lookup_probes=1 if reused else 64, lookup_contended=False,
+            exact_fact_found=reused, trace_reused=reused, product_reused=reused,
+            transcript_entered=not reused, transcript_completed=not reused,
+            product_entered=not reused, product_completed=not reused,
+            publication_probes=0 if reused else 64,
+            publication='none' if reused else 'product') if completed else None))
+
+
+def arithmetic_report():
+    """Exact native producer shape, with synthetic unknown/failed measurements."""
+    phases = [attribution_phase([], [], [], [
+        {**record(), 'work_arithmetic': arithmetic_work()},
+        {**record(), 'work_arithmetic': arithmetic_work(reused=True)},
+        {**record(), 'work_arithmetic': arithmetic_work(completed=False)}, record()])
+        for _ in reader.MODES]
+    for phase, mode in zip(phases, reader.MODES):
+        phase.update(mode=mode, public_resource_policy=arithmetic_policy(),
+            work_profile='arithmetic-facts-v1', completion_work_observation=completion_observation(),
+            work_arithmetic_owner=dict(schema='public-v3-campaign-arithmetic-owner-v1',
+                initial_state='fresh-empty-by-construction', slots=64,
+                retained_software_bytes=4000000, setup_cpu_ns=1, setup_wall_ns=2,
+                scope='synthetic producer-shaped control; retained software, not RSS',
+                adversarial_key_churn_service_qualified=False))
+        phase['receiver_observation'].update(schema='public-v3-local-request-resource-observation-v3',
+            cpu_includes_reactor_authentication_or_response_signing=True,
+            cpu_includes_reactor_authentication=False,
+            dispatch_cpu_includes_paid_body_decode=True, dispatch_cpu_includes_response_signing=True)
+    return dict(schema=reader.ARITHMETIC_REPORT_SCHEMA,
+        state_backend='authenticated-v1', work_profile='arithmetic-facts-v1',
+        original_r13_campaign_qualified=False, adversarial_key_churn_service_qualified=False,
+        public_resource_policy=arithmetic_policy(), finite_experiment_criteria_met=False,
+        economics_complete=False, best_observed_cold_legal_method=None,
+        preparation=dict(cpu_ns=None, wall_ns=None), phases=phases)
+
+
 class ReaderTests(unittest.TestCase):
+    def test_original_native_raw_report_remains_historical_and_cannot_claim_arithmetic(self):
+        path = Path(__file__).resolve().parents[2] / 'evidence/pon-upgrade-implementation-20261018/native-rounds/chain-390-operational/public-v3-multiprocess/report.json'
+        original = 'c662cf7d71adec835eb22e60058e3eccb7dc3faa88a31e262ec1bd4bdc069233'
+        value = reader.read_report(path, original)
+        self.assertNotIn('work_profile', value)
+        self.assertNotIn('public_resource_policy', value)
+        self.assertNotIn('work_arithmetic', value['phases'][0]['receiver']['all_retained_records'])
+        self.assertFalse(value['native_finite_experiment_criteria_met'])
+        self.assertEqual([phase['confirmed_rounds'] for phase in value['phases']], [0, 0, 0])
+        self.assertTrue(all(phase['genuine_budget_depletion_observed'] for phase in value['phases']))
+        with self.assertRaisesRegex(ValueError, 'absent from historical'):
+            reader.read_report(path, original, arithmetic_policy()['policy_id'])
+        report = json.loads(path.read_bytes())
+        report.update(schema=reader.ARITHMETIC_REPORT_SCHEMA, work_profile='arithmetic-facts-v1')
+        with self.assertRaisesRegex(ValueError, 'requires explicit policy'):
+            reader.analyze(report)
+
+    def test_arithmetic_report_recomputes_identity_and_preserves_path_unknowns_and_failure(self):
+        report = arithmetic_report()
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'report.json'
+            raw = json.dumps(report).encode()
+            path.write_bytes(raw)
+            value = reader.read_report(path, hashlib.sha256(raw).hexdigest(),
+                                       arithmetic_policy()['policy_id'])
+            with self.assertRaisesRegex(ValueError, 'does not match requested pin'):
+                reader.read_report(path, hashlib.sha256(raw).hexdigest(), observation()['policy_id'])
+        self.assertEqual(value['source_report_schema'], report['schema'])
+        self.assertEqual(value['public_resource_policy']['resource_revision'], 'r13-arithmetic-facts-v1')
+        self.assertFalse(value['scope']['original_r13_campaign_qualified'])
+        self.assertFalse(value['scope']['adversarial_key_churn_service_qualified'])
+        self.assertFalse(value['native_finite_experiment_criteria_met'])
+        for phase in value['phases']:
+            actual = phase['receiver']['all_retained_records']['work_arithmetic']
+            self.assertEqual([actual[key] for key in ('observed_records', 'unobserved_records',
+                'completed_observations', 'unfinished_observations')], [3, 1, 2, 1])
+            self.assertEqual(actual['path_counts']['product_reused'], 1)
+            self.assertEqual(actual['path_counts']['transcript_completed'], 1)
+            self.assertEqual(phase['confirmed_rounds'], 0)
+            self.assertFalse(phase['native_phase_criteria_met'])
+        source = Path(__file__).resolve().parents[2] / 'trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs'
+        self.assertIn('json!("' + report['schema'] + '")', source.read_text())
+        # Failed startup retains its separate profile but cannot invent owner or CPU observations.
+        report['phases'][0] = dict(mode='baseline', state_backend='authenticated-v1',
+            public_resource_policy=arithmetic_policy(), work_profile='arithmetic-facts-v1',
+            startup_or_campaign_error='synthetic startup failure')
+        self.assertFalse(reader.analyze(report)['phases'][0]['observations_available'])
+
+    def test_arithmetic_report_cannot_claim_raw_policy_schema_owner_or_success(self):
+        for edit in (
+            lambda r: r.update(schema='native-public-v3-separate-process-campaign-v2'),
+            lambda r: r.update(public_resource_policy=observation()),
+            lambda r: r.pop('work_profile'),
+            lambda r: r.update(original_r13_campaign_qualified=True),
+            lambda r: r.update(adversarial_key_churn_service_qualified=True),
+            lambda r: r['phases'][0].pop('work_profile'),
+            lambda r: r['phases'][0].update(public_resource_policy=observation()),
+            lambda r: r['phases'][0].pop('work_arithmetic_owner'),
+            lambda r: r['phases'][0]['work_arithmetic_owner'].update(slots=65),
+            lambda r: r['phases'][0]['work_arithmetic_owner'].update(initial_state='prewarmed'),
+            lambda r: r['phases'][0]['work_arithmetic_owner'].update(retained_software_bytes=3999999),
+            lambda r: r['phases'][0]['work_arithmetic_owner'].update(adversarial_key_churn_service_qualified=True),
+        ):
+            report = arithmetic_report()
+            edit(report)
+            with self.subTest(edit=edit), self.assertRaises(ValueError):
+                reader.analyze(report)
+
+    def test_arithmetic_attributes_do_not_turn_reuse_into_recomputation_or_absence_into_zero(self):
+        for edit in (
+            lambda v: v.update(completed=False),
+            lambda v: v.update(slots=65),
+            lambda v: v.update(retained_software_bytes=4194305),
+            lambda v: v['arithmetic'].update(lookup_probes=True),
+            lambda v: v['arithmetic'].update(publication_probes=65),
+            lambda v: v['arithmetic'].update(transcript_entered=True),
+            lambda v: v['arithmetic'].update(exact_fact_found=False),
+            lambda v: v['arithmetic'].update(trace_reused=False),
+            lambda v: v['arithmetic'].update(publication='product'),
+        ):
+            value = arithmetic_work(reused=True)
+            edit(value)
+            with self.subTest(edit=edit), self.assertRaises(ValueError):
+                reader.arithmetic_observation(value)
+        phase = arithmetic_report()['phases'][0]
+        phase['public_resource_policy'] = observation()
+        del phase['work_profile'], phase['work_arithmetic_owner']
+        with self.assertRaisesRegex(ValueError, 'require explicit arithmetic profile'):
+            reader.phase_summary(phase)
+
     def test_historical_derivation_is_explicit_and_cannot_downgrade_paid_cpu_or_policy(self):
         phases = [attribution_phase([], [], [], [record()]) for _ in reader.MODES]
         for phase, mode in zip(phases, reader.MODES):

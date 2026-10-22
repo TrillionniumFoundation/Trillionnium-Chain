@@ -24,6 +24,11 @@ EXPECTED = {
             '0b32dc1c5cb3cd32f127792c2437a7e06afdee24dfd145e6c147ae9effc93973'],
     'r13': ['c110c3ccb1e229c3a85f4819b1e087fa819c865b50f8bd3ab78d3b8f45206cb2', 'af74a97fd543741369cf58b5e58a16f33ea74d71bb4d4641ab4700827bac1607', 'e171d2942b8abfd95351036464b5451b4562f0854f4b43b2de59c4e486bda176'],
 }
+ARITHMETIC_EXPECTED = [
+    '14ada27ef062b1e510b7d7ab470e83157e58e7752b8f27a754f64dac614146e3',
+    '05ace470c6c6d89dabe506e4fa96555847f34e72ae28255b8eb80c9f9c2dfe5b',
+    '8af03f5efd2dc465f6180faddd36561c6f4d42f996ab0f901594c2b460c3d1bd',
+]
 
 
 def observation(revision='r13'):
@@ -32,7 +37,58 @@ def observation(revision='r13'):
                 policy_id=EXPECTED[revision][0], ticket_bits=8, lifetime_ms=2000)
 
 
+def arithmetic_observation():
+    return {**observation(), 'policy_id': ARITHMETIC_EXPECTED[0]}
+
+
 class PolicyReaderTests(unittest.TestCase):
+    def test_separate_arithmetic_vectors_bind_exact_source_contract_and_base(self):
+        config = reader.load_profiles()
+        entry = config['arithmetic_profile']
+        self.assertEqual([reader.arithmetic_policy_id(config, bits, 2000)
+                          for bits in (8, 12, 16)], ARITHMETIC_EXPECTED)
+        value = reader.identify_observation(arithmetic_observation())
+        self.assertEqual((value['resource_revision'], value['base_resource_revision'],
+                          value['work_profile']),
+                         ('r13-arithmetic-facts-v1', 'r13', 'arithmetic-facts-v1'))
+        self.assertNotEqual(value['policy_id'], observation()['policy_id'])
+        source = (reader.CONFIG.parents[2] / entry['source']).read_text()
+        self.assertIn('b"' + entry['hash_domain'] + '"', source)
+        self.assertEqual(re.findall(r'b"(fresh-empty-server-local-owner/[^\"]+)"', source),
+                         [entry['resource_contract']])
+        self.assertIn('&self.id()', source)
+        self.assertIn('&(MAX_ARITHMETIC_FACT_SLOTS as u64).to_le_bytes()', source)
+        self.assertIn('&(MAX_ARITHMETIC_FACT_SOFTWARE_BYTES as u64).to_le_bytes()', source)
+        crypto = reader.CONFIG.parents[2] / 'trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts.rs'
+        self.assertRegex(crypto.read_text(), r'MAX_ARITHMETIC_FACT_SLOTS: usize = 64;')
+        self.assertRegex(crypto.read_text(), r'MAX_ARITHMETIC_FACT_SOFTWARE_BYTES: usize = 4 \* 1024 \* 1024;')
+        for fields in ({'ticket_bits': 12}, {'lifetime_ms': 1999}, {'ticket_bits': True},
+                       {'work_profile': 'arithmetic-facts-v1'}, {'resource_revision': 'r13'}):
+            with self.subTest(fields=fields), self.assertRaises(ValueError):
+                reader.identify_observation({**arithmetic_observation(), **fields})
+
+    def test_arithmetic_metadata_or_vectors_cannot_be_repinned(self):
+        config = reader.load_profiles()
+        for field, changed in (('base_revision', 'r12'), ('slots', 65), ('slots', True),
+                               ('maximum_software_bytes', 8388608), ('source', 'elsewhere.rs'),
+                               ('work_profile', 'raw-r13'), ('hash_domain', 'public-protected-profile-v3')):
+            with tempfile.TemporaryDirectory() as directory:
+                value = copy.deepcopy(config)
+                value['arithmetic_profile'][field] = changed
+                path = Path(directory) / 'profiles.json'
+                path.write_text(json.dumps(value))
+                with self.subTest(field=field, changed=changed), self.assertRaises(ValueError):
+                    reader.load_profiles(path)
+        for edit in (lambda entry: entry['vectors'][0].update(policy_id=EXPECTED['r13'][0]),
+                     lambda entry: entry.update(resource_contract=entry['resource_contract'] + '/changed')):
+            value = copy.deepcopy(config)
+            edit(value['arithmetic_profile'])
+            with tempfile.TemporaryDirectory() as directory:
+                path = Path(directory) / 'profiles.json'
+                path.write_text(json.dumps(value))
+                with self.assertRaises(ValueError):
+                    reader.load_profiles(path)
+
     def test_independent_r10_r11_r12_r13_vectors_recompute_exactly(self):
         config = reader.load_profiles()
         for revision, expected in EXPECTED.items():

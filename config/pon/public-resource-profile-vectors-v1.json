@@ -89,5 +89,32 @@
       ]
     }
   },
-  "source_vectors_are_native_acceptance": false
+  "source_vectors_are_native_acceptance": false,
+  "arithmetic_profile": {
+    "work_profile": "arithmetic-facts-v1",
+    "resource_revision": "r13-arithmetic-facts-v1",
+    "base_revision": "r13",
+    "hash_domain": "public-protected-profile-v3-arithmetic-facts-v1",
+    "source": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/work_arithmetic.rs",
+    "resource_contract": "fresh-empty-server-local-owner/exact-challenge-and-canonical-whole-A-B-bytes/completed-trace-and-optional-completed-product-only/no-verdict-task-target-state-or-authorization-cache/current-grammar-field-task-target-and-trace-product-claims-every-call/original-cooperative-cancellation/no-publish-on-returned-cancel/bounded-final-compare-publish-tail/try-lock-no-wait-contention-does-actual-raw-math/fixed64-slots-round-robin-no-growth/software-objects-not-RSS/original-actual-thread-CPU-owner-includes-all-math-cache-work/no-added-credit-deadline-or-completion-identity/independent-per-request-arithmetic-observation",
+    "slots": 64,
+    "maximum_software_bytes": 4194304,
+    "vectors": [
+      {
+        "ticket_bits": 8,
+        "lifetime_ms": 2000,
+        "policy_id": "14ada27ef062b1e510b7d7ab470e83157e58e7752b8f27a754f64dac614146e3"
+      },
+      {
+        "ticket_bits": 12,
+        "lifetime_ms": 2000,
+        "policy_id": "05ace470c6c6d89dabe506e4fa96555847f34e72ae28255b8eb80c9f9c2dfe5b"
+      },
+      {
+        "ticket_bits": 16,
+        "lifetime_ms": 2000,
+        "policy_id": "8af03f5efd2dc465f6180faddd36561c6f4d42f996ab0f901594c2b460c3d1bd"
+      }
+    ]
+  }
 }
