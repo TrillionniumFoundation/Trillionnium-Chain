@@ -445,6 +445,21 @@ tests run without the native ABI gate; controlled owner/FD tests still require
 actual CPython 3.12.3. This correction does not rerun the probe, identify its old
 exact input, qualify models or change UNKNOWN/RETAINED.
 
+The original wait4 owner's aggregate-only terminal error path now copies only
+that existing validated immutable diagnostic tuple. Exact error/value types and
+allowlists are bound before clone; no terminal-exception import, counter reread,
+exception, traceback, capability or owner is retained as diagnostic data. The
+original `kernel-terminal:<type>` failure is set first. Optional projection faults,
+including MemoryError/KeyboardInterrupt, are isolated so the original pidfd-close
+path still runs; they are reported as diagnostic projection unavailable. Only
+present aggregate diagnostic data adds an output field. Default/legacy IO and
+failure outcomes remain unchanged. Ordinary owned-pidfd tests establish this
+cleanup boundary, not valid cgroup placement, zero charge, model use or release.
+Prepared `7abd4172` remains NOT_RUN: its A participants still write ordinary log
+and JSON files, including `supervisor.json.partial`, which can retain page-cache
+charge. A finite evidence pipe is a separate pending source change; creating its
+FDs in C would not establish that A-written buffer pages are charged only to C.
+
 The ordinary merge with source `8caf5387` preserves its inherited runtime,
 persistent neural-read worker and default reconciliation helpers, alongside the
 explicit V2–V4 paths and controlled native owner. Reconciliation metadata names

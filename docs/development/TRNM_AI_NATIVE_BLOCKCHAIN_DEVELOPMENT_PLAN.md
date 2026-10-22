@@ -603,6 +603,14 @@ or authority; callers must retain it in their existing first-failure record,
 without another read. Non-ABI parser/ordinary-file controls run separately from
 the CPython 3.12.3 native owner tests. This repair does not identify the old exact
 input, retry the attempt or qualify aggregate birth placement or a model.
+The original wait4 owner's aggregate terminal-error path retains only this
+existing typed immutable counter tuple, with pre-clone type bindings and no
+exception/traceback/capability references. Projection faults cannot replace the
+original refusal or skip the original pidfd-close path; ordinary owned-FD tests
+cover MemoryError/KeyboardInterrupt. This is diagnostic evidence only. Prepared
+`7abd4172` stays NOT_RUN because A still writes log/JSON file pages; finite
+evidence transport remains a separate source change and does not guarantee zero
+charge or authorize operation release, Store/FinalUse use or a model.
 The next dependency remains the existing Hepta
 kernel.operations Store's CPU destination/independent FinalUse/terminal release
 protocol; this module adds no second manager or journal and no I10/model result.

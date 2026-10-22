@@ -881,11 +881,21 @@ class _Wait4Child(subprocess.Popen):
     def __init__(self, *args, **kwargs):
         self.kernel_operation = kwargs.pop('_controlled_operation', None)
         aggregate_operation = kwargs.pop('_aggregate_operation', None)
+        self._counter_error_type = self._counter_diagnostic_type = None
+        self.kernel_counter_diagnostic = None
+        self.kernel_counter_diagnostic_projection_failed = False
         if aggregate_operation is not None:
-            from llm_runtime_kernel_aggregate import _AggregateOperation
+            from llm_runtime_kernel_aggregate import (_AggregateOperation, AggregateCounterError,
+                _CounterDiagnostic, _RAW)
             require(self.kernel_operation is None and type(aggregate_operation) is _AggregateOperation,
                     'AGGREGATE_SPAWN_INTERFACE')
             self.kernel_operation = aggregate_operation
+            # Bind exact types/allowlists before clone, never import or allocate
+            # a tuple while handling a terminal_record exception.
+            self._counter_error_type, self._counter_diagnostic_type = AggregateCounterError, _CounterDiagnostic
+            self._counter_filenames = tuple('aggregate/'+name for name in _RAW) + ('unit/cgroup.stat',)
+            self._counter_reasons = ('aggregate-counter-format', 'aggregate-counter-overflow',
+                                     'aggregate-counter-fields', 'aggregate-counter-scalar')
         kernel_deadline = kwargs.pop('_kernel_deadline', None)
         self.kernel_evidence = None
         self.reaped = False
@@ -974,6 +984,15 @@ class _Wait4Child(subprocess.Popen):
     def fail(self, message):
         if self.observation_error is None:
             self.observation_error = message
+
+    def _retain_kernel_counter_diagnostic(self, error):
+        if type(error) is not self._counter_error_type:
+            return
+        value = error.counter_diagnostic
+        if (type(value) is self._counter_diagnostic_type and type(value.filename) is str and
+                type(value.raw) is str and type(value.reason) is str and len(value.raw) <= 65536 and
+                value.filename in self._counter_filenames and value.reason in self._counter_reasons):
+            self.kernel_counter_diagnostic = value  # Existing immutable strings only.
 
     def reap(self, options=os.WNOHANG):
         if self.reaped:
@@ -1102,6 +1121,13 @@ class _Wait4Child(subprocess.Popen):
                     self.kernel_evidence = self.kernel_operation.terminal_record(self.pid, self.termination_fd)
                 except Exception as failure:
                     self.fail(f'kernel-terminal:{type(failure).__name__}')
+                    if getattr(self, '_counter_error_type', None) is not None:
+                        try:
+                            self._retain_kernel_counter_diagnostic(failure)
+                        except BaseException:
+                            # Optional evidence cannot replace the first cause
+                            # or escape past the original pidfd-close below.
+                            self.kernel_counter_diagnostic_projection_failed = True
             if self.termination_fd is not None and self.reap_resolved:
                 try:
                     if getattr(self, '_kernel_handoff', None) is not None:
@@ -1603,6 +1629,13 @@ def supervise(command, directory, budget, *, exit_observation=None, _controlled_
         result['controlled_kernel_spawn'] = dict(evidence=process.kernel_evidence,
             scope='spawn-only-controlled-kernel-charge-not-RSS', reservation='RETAINED',
             outer_reconciliation='UNKNOWN', installation_accepted=False)
+        diagnostic = process.kernel_counter_diagnostic
+        if diagnostic is not None:
+            result['controlled_kernel_spawn']['counter_diagnostic'] = dict(filename=diagnostic.filename,
+                raw=diagnostic.raw, reason=diagnostic.reason, diagnostic_only=True,
+                source='exact-original-terminal-record-exception')
+        if process.kernel_counter_diagnostic_projection_failed:
+            result['controlled_kernel_spawn']['counter_diagnostic_projection_failed'] = True
     if exit_cleanup_observation is not None:
         result['exit_cleanup_observation'] = exit_cleanup_observation
     if exit_observation is not None:
