@@ -18,6 +18,9 @@ mod operator_continuous_owner;
 mod operator_mining_owner;
 #[cfg(test)]
 pub(crate) mod public_reader;
+mod root_rejection_cache;
+#[cfg(test)]
+mod root_rejection_cache_tests;
 pub mod storage_service;
 mod task_observation;
 use crate::{
@@ -603,6 +606,8 @@ pub struct Node {
     commitment_cache: RefCell<Option<ActiveCommitment>>,
     // Bounded tree material only. Historical State still comes from all original SQL reads.
     historical_commitment_cache: RefCell<historical_commitment::HistoricalCommitments>,
+    // Explicit opt-in only. Never persisted, exported or shared across Node owners.
+    root_rejection_cache: RefCell<Option<Box<root_rejection_cache::Cache>>>,
     // Exact-input arithmetic only; never replaces an actual State/node/history
     // read or its comparison. Volatile and bounded within this existing owner.
     authenticated_arithmetic: native_authenticated::ArithmeticCache,
@@ -807,6 +812,37 @@ pub struct ConfirmationBatch {
     pub distinct_bodies_checked: usize,
 }
 impl Node {
+    /// Enable bounded volatile final-ROOT rejection reuse for this Node owner.
+    /// Default is off; no CLI/profile/consensus or CPU-budget change is implied.
+    /// Repeated calls cannot reset entries, TTL or a failed monotonic clock.
+    pub fn enable_local_root_rejection_cache(&mut self) -> Result<()> {
+        self.ready()?;
+        ensure(
+            !growth_profile_v2::enabled(&self.settings.app),
+            "GROWTH_REFERENCE_OWNER",
+        )?;
+        let mut cache = self.root_rejection_cache.borrow_mut();
+        if cache.is_none() {
+            *cache = Some(Box::default());
+        }
+        Ok(())
+    }
+    fn root_rejection_scope(&self, parent: Hash, root: Hash) -> root_rejection_cache::Scope {
+        root_rejection_cache::Scope {
+            context: hash(
+                b"local-m06-final-root-rejection-v1",
+                &[
+                    &self.settings.network(),
+                    &self.settings.parameters(),
+                    &self.settings.genesis(),
+                    &self.state_backend.selected_schema_id(&self.settings),
+                    self.settings.task_profile().as_bytes(),
+                ],
+            ),
+            parent,
+            root,
+        }
+    }
     pub fn open(path: &Path, settings: Settings, workers: usize) -> Result<Self> {
         Self::open_with_fault(path, settings, workers, None)
     }
@@ -1236,6 +1272,7 @@ impl Node {
             public_history_test_snapshot: false,
             commitment_cache: RefCell::new(None),
             historical_commitment_cache: RefCell::default(),
+            root_rejection_cache: RefCell::new(None),
             authenticated_arithmetic: native_authenticated::ArithmeticCache::default(),
             commitment_observation: RefCell::new(None),
             history_read_counters: Cell::new(HistoryReadCounters::default()),
@@ -2262,6 +2299,20 @@ impl Node {
         control: &ExecutionControl<'_, Error>,
         owner_permit: Option<&OwnerPacketPermit>,
     ) -> Result<trnm_mvcc_fee::pon_commitment::StagedOutput> {
+        self.execute_derived_core_with_rejection(actual, block, control, owner_permit, None)
+            .map(|(output, _)| output)
+    }
+    fn execute_derived_core_with_rejection(
+        &self,
+        actual: &State,
+        block: ExecutionRequest<'_>,
+        control: &ExecutionControl<'_, Error>,
+        owner_permit: Option<&OwnerPacketPermit>,
+        exact_packet: Option<(&Header, &[u8])>,
+    ) -> Result<(
+        trnm_mvcc_fee::pon_commitment::StagedOutput,
+        Option<root_rejection_cache::Scope>,
+    )> {
         let _measurement = (self.state_backend == StateBackend::AuthenticatedV1).then(|| {
             self.authenticated_arithmetic
                 .history
@@ -2328,7 +2379,7 @@ impl Node {
             )
             .map_err(local_execution_error)?;
             *self.commitment_observation.borrow_mut() = Some(result.commitment.observation.clone());
-            return Ok(result);
+            return Ok((result, None));
         }
         let (bound, observation) = pon_commitment::CheckedExecutionParent::check_and_bind(
             actual,
@@ -2362,14 +2413,38 @@ impl Node {
         };
         // Preserve the second original cancellation boundary without rebinding
         // and rehashing the same immutable, already-checked parent state.
-        let result = progress(ExecutionProgress::BeforeParentBinding)
-            .map_err(ExecutionError::Cancelled)
-            .and_then(|()| bound.execute_with_control(request(), &self.settings.app, control));
+        progress(ExecutionProgress::BeforeParentBinding)?;
+        // Work, current eligibility, complete State/root/account graph, owner
+        // gates and both original cancellation boundaries have all run afresh.
+        // Only the deterministic M06/output portion may be omitted on a hit.
+        let rejection = exact_packet
+            .filter(|_| self.root_rejection_cache.borrow().is_some())
+            .map(|(header, bytes)| {
+                (
+                    header,
+                    bytes,
+                    self.root_rejection_scope(parent, current_root),
+                )
+            });
+        if let Some((header, bytes, scope)) = rejection {
+            let rejects = self
+                .root_rejection_cache
+                .borrow_mut()
+                .as_mut()
+                .is_some_and(|cache| {
+                    cache.rejects(scope, bytes, header, root_rejection_cache::now_ns())
+                });
+            if rejects {
+                progress(ExecutionProgress::BeforeOutput)?;
+                return Err("ROOT".into());
+            }
+        }
+        let result = bound.execute_with_control(request(), &self.settings.app, control);
         match result {
             Ok(output) => {
                 *self.commitment_observation.borrow_mut() =
                     Some(output.commitment.observation.clone());
-                Ok(output)
+                Ok((output, rejection.map(|(_, _, scope)| scope)))
             }
             Err(ExecutionError::Relation("COMMITMENT_PARENT" | "COMMITMENT_ROOT")) => {
                 // A wrong internal snapshot cannot reject an otherwise valid
@@ -2385,6 +2460,7 @@ impl Node {
                     control,
                 )
                 .map_err(local_execution_error)
+                .map(|output| (output, rejection.map(|(_, _, scope)| scope)))
             }
             Err(error) => Err(local_execution_error(error)),
         }
@@ -3606,7 +3682,7 @@ impl Node {
             progress(ExecutionProgress::BeforeParentBinding)
         })?;
         let registered_task = self.eligible_work_task_from_state(&prior, h.work_task, h.height)?;
-        let executed = self.execute_derived_core(
+        let (executed, rejection_scope) = self.execute_derived_core_with_rejection(
             &prior,
             ExecutionRequest {
                 transactions: &packet.transactions,
@@ -3617,6 +3693,7 @@ impl Node {
             },
             control,
             owner_permit.as_ref(),
+            Some((h, &bytes)),
         )?;
         let mut output = executed.output;
         let mut commitment = executed.commitment;
@@ -3631,10 +3708,26 @@ impl Node {
                 output.root = commitment.root;
             }
         }
-        ensure(
-            h.state == output.root && h.receipts == sequence_root("receipts", &output.receipts),
-            "ROOT",
-        )?;
+        let receipts_root = sequence_root("receipts", &output.receipts);
+        if h.state != output.root || h.receipts != receipts_root {
+            // This private fact is constructed only after successful full M06
+            // and task-output derivation. No arbitrary Err(ROOT) is retained.
+            if let Some(scope) = rejection_scope {
+                progress(ExecutionProgress::BeforeOutput)?;
+                if let Some(cache) = self.root_rejection_cache.borrow_mut().as_mut() {
+                    cache.retain(
+                        scope,
+                        bytes,
+                        root_rejection_cache::FinalMismatch {
+                            state: output.root,
+                            receipts: receipts_root,
+                        },
+                        root_rejection_cache::now_ns(),
+                    );
+                }
+            }
+            return Err("ROOT".into());
+        }
         if self.state_backend == StateBackend::AuthenticatedV1 {
             // Pure successor tree material is already available from M06. Offer
             // it to the existing bounded historical cache before SQL readback;

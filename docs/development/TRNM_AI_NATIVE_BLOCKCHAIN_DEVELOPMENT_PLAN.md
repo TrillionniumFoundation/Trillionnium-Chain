@@ -1,6 +1,6 @@
 # Trillionnium Chain Development Plan — PoN / Hepta-PoH revision
 
-Plan ID: `trnm-chain-development-plan-v2` (stable registry identity; content revision 18).
+Plan ID: `trnm-chain-development-plan-v2` (stable registry identity; content revision 19).
 Effective: 2026-09-28; priority implementation revision: 2026-10-22. Status: selected development direction; no runtime activation.
 Canonical destination: `refs/heads/main`; continuation uses the current main lineage, not retired PR #194.
 Current source/head/tree/base and prospective merge are derived at verification time.
@@ -123,6 +123,69 @@ all 913 listed files were length/hash-checked. Its prepared business bytes
 contain only three distinct transactions. This establishes neither continuous
 attack pressure nor public TPS; it is not an observed honest-confirmation
 failure. Earlier 6/18 overlap observations below belong to earlier sources.
+Read-only flow reconciliation found all six hostile phases above the 100 ms
+depletion threshold, including a conservative between-sample lower bound of
+232.852451 ms in the lowest phase. Delivered hostile dispatch CPU was about
+0.188–0.193 CPU-second/second for from-zero and 0.230–0.237 for late-product,
+below the unchanged 0.25 refill. The preceding challenge limiter and cheap
+rejection workload therefore matter; reducing a threshold or treating a
+reservation as spent CPU would not qualify the original failed trials.
+
+PN1 now reuses the existing valid-W1/false-State-root public replay regression
+for an explicit opt-in, three-request component cost preflight. The additional
+fixture fixes the original four blocks/1,024 signed seed transfers, h4 parent,
+first business transaction (nonce 1025) and one M06 worker. It remakes W1 after
+changing State root and sends the same body through three fresh public
+handshakes. Work/M06 stages, actual owner plus scoped CPU, settled debit,
+unchanged SQL/native state and cold reopen are checked, with a separate legal
+acceptance control. The old eight-transaction/genesis/two-M06-worker regression
+remains. Preparation, all actual search attempts, encoding and independent
+verification costs are retained; preparation totals include nested components.
+See [PN1 component cost boundary](../protocol/pon-nakamoto-v1/details/ADMISSION_SECURITY.md#fixed-seed-root-rejection-component-cost).
+This preflight does not measure sustained arrival rate, honest overlap or
+burst depletion. A later explicitly supplemental cohort must first freeze its
+real offered workload and independent honest window, retain the original
+front-door limits/budgets and account actual producer costs. Original three-run
+FAIL, work-profile qualification and activation flags remain unchanged.
+
+PN1 supplemental code now extends the same phase/actor owner with one separate
+valid-W1/false-root cohort: one 30-second baseline plus one 30-second pressure
+phase, 24 separate producer processes and the fixed h4/1,024 signed seed.
+Original caps, depletion arithmetic, t=1/5/9 schedule and three depth-six
+confirmations remain. Exact-body receiver Admission/CPU observations and wholly
+contained signature-verified client ROOT replies are separate requirements;
+global paid settlement, 24 complete actor reports and exact live/cold State
+readback are mandatory. The prepare/execute selector uses the existing source,
+resource and bounded-process owners and freezes a read-only binary before any
+single aggregate 400%/16-GiB user-service run. After source `c61e2112` and its
+immutable release binary were frozen, one separately authorized cohort **FAILED**:
+baseline 3/3 confirmations; pressure 2/3, with final h25 Submit `FRAME_DEADLINE`
+and receiver h24/events24 after the fixed window. Genuine paid depletion,
+593 signed ROOT replies, 24 complete actors, all hostile packets absent and
+known whole-domain settlement of 9,396,951,692 ns were observed; they do not
+replace the missing third confirmation. No retry occurred. The failure path
+missed within-service final resource/source snapshots; independent post-failure
+raw source/hash and process/cgroup cleanup checks remain separate evidence.
+Original three-run/six-hostile FAIL, PN1/hardness and activation verdicts remain
+unchanged. See the existing
+[admission contract](../protocol/pon-nakamoto-v1/details/ADMISSION_SECURITY.md#fixed-seed-root-supplemental-cohort).
+
+The next M03/M06 component, composed by the existing M15 Node, is an explicit, default-off
+`Node::enable_local_root_rejection_cache` API. Only the final mismatch after
+actual M06 and task-output derivation may retain an exact encoded packet with
+its checked immutable parent/root and local source/profile context. Every
+replay still verifies complete Work, current context/eligibility, actual State,
+root/account graph, owner/mining/continuous gates and cancellation, and pays
+actual CPU. The volatile cache has 32 slots, a 2-MiB software-retention cap and
+30-second monotonic TTL; unknown/backward time clears and disables it until
+owner reopen. It retains no acceptance, generic ROOT, cancellation, Unknown or
+local-integrity error. This component has no public CLI/service activation,
+new lane, budget or wire/namespace change, and excludes the growth-reference
+executor. Local component tests do not qualify nonce churn, the arithmetic
+research profile or PN1; the failed original and supplemental campaigns remain
+failed. See the existing
+[bounded rejection component contract](../protocol/pon-nakamoto-v1/details/ADMISSION_SECURITY.md#optional-bounded-final-root-rejection-component).
+
 The same source's [CodeQL check 119818040273](https://github.com/TrillionniumFoundation/Trillionnium-Chain/runs/119818040273)
 reports failure with thirteen high annotations. Independent disposition is
 required; the alert count is not thirteen independently confirmed exploits.

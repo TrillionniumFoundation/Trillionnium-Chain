@@ -330,6 +330,7 @@ fn read_only_archive(directory: &Path, settings: Settings, backend: StateBackend
         public_history_test_snapshot: false,
         commitment_cache: RefCell::new(None),
         historical_commitment_cache: RefCell::default(),
+        root_rejection_cache: RefCell::new(None),
         authenticated_arithmetic: native_authenticated::ArithmeticCache::default(),
         commitment_observation: RefCell::new(None),
         history_read_counters: Cell::new(super::super::HistoryReadCounters::default()),
