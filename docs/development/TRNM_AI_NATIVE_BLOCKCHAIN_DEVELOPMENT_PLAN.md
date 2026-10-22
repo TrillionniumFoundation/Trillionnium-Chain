@@ -146,8 +146,9 @@ journal, status registry or successful receipt is created by these edits.
   receipts. Already admitted or Unknown effects still require reconciliation.
   No-update does not waive the separate successful cross-node I09/I10 cohort.
   Adopted updates create a fresh generation; rejected/no-gain candidates earn
-  no improvement reward. Three genuinely beneficial installed releases require
-  their own prospective efficacy result.
+  no improvement reward. Three installed improvements on declared tasks require
+  three actual measured gains and next-task readbacks. A separate claim of
+  improvement on future tasks requires its own prospective efficacy result.
 
 Controlled engineering tests may use existing public or previously seen tasks.
 An unseen future dataset or independent data custodian is not a prerequisite
@@ -991,9 +992,11 @@ duplicate call, withheld Cell, bad shape/loader, author loss, stale/reorged task
 withdrawal during download/install and restart at each owner boundary. Keep local
 effects/revocations monotonic. Mechanical completion and efficacy are separate:
 three no-update cycles can pass safe loop behavior, never a claim of three
-improvements. Sustained improvement needs at least three separately installed,
-prospectively qualified beneficial releases under the frozen statistical rule;
-no-gain yields zero adoption/reward, not a manufactured success.
+improvements. Three installed improvements on the declared tasks require three
+separately measured gains under the frozen rule; public or previously seen
+tasks remain valid engineering inputs. A claim of sustained improvement on
+future tasks separately requires prospective qualification. No-gain yields
+zero adoption/reward, not a manufactured success.
 
 ### PN4 — Rewards, reorg liabilities and free service
 
