@@ -1153,6 +1153,14 @@ any native table, then admit and cold-open normally with the same owner. These
 boundaries do not make a single hash operation preemptible or close the remaining
 PN2 qualification and retention items above.
 
+The same explicit growth admission callback now reaches full W1 replay through
+the existing typed verifier, preserving original control sources and `WORK:*`
+invalidity. Failed or cancelled work cannot publish a child or reuse success.
+Public PNP2 intake remains dependent on the shared original CPU/deadline/resource
+owner and joint PN1/PN2 qualification. Global I05 bounds remain open: the inert
+migration reservation and the separate M09 Cell arena are not ledger-root or WAL
+quotas, and a SQLite page-exhaustion rollback test supplies no retention policy.
+
 Exit: actual signed native transitions cross 65,536 permanent accounts with
 bounded W and working partition; small-state complete/reference differential
 execution agrees. Pass zero-balance/re-entry/nonce, wrong-parent/omitted/extra

@@ -3,6 +3,8 @@ use super::*;
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum GrowthProgress {
     BeforeWork,
+    /// Existing full W1 replay boundaries; these do not certify a public CPU budget.
+    Work(pon_work::VerificationProgress),
     Execution(pon_executor::ExecutionProgress),
     BeforePersistence,
     AccountNode,
@@ -168,13 +170,17 @@ impl Node {
             return Ok(id);
         }
         progress(GrowthProgress::BeforeWork)?;
-        pon_work::verify(
+        pon_work::verify_with_progress(
             packet.header.challenge(),
             packet.header.ledger.work_task,
             packet.header.ledger.target,
             &packet.proof,
+            &mut |point| progress(GrowthProgress::Work(point)),
         )
-        .map_err(|e| Error::from(format!("WORK:{e:?}")))?;
+        .map_err(|error| match error {
+            pon_work::VerificationError::Relation(error) => Error::from(format!("WORK:{error:?}")),
+            pon_work::VerificationError::Cancelled(error) => error,
+        })?;
         let h = &packet.header.ledger;
         // The single owner rebinds the parent in its actual write transaction.
         let tx = rusqlite::Transaction::new_unchecked(

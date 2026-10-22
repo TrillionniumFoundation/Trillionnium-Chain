@@ -520,6 +520,162 @@ fn native_growth_v2_final_successor_proof_cancellation_preserves_original_error(
     cancel_growth_proof_at(ProofTestPhase::FinalSuccessor);
 }
 
+#[test]
+fn native_growth_v2_work_replay_cancellation_preserves_original_error() {
+    use pon_work::VerificationProgress as Point;
+    let dir = tempfile::tempdir().unwrap();
+    let settings = settings();
+    let mut node =
+        Node::open_with_permanent_account_growth_v2(dir.path(), settings.clone()).unwrap();
+    let packet = make(
+        &node,
+        settings.genesis(),
+        vec![transfer(&settings, 0, 1, public(81), 1_000)],
+    );
+    let before = rows(&node.db);
+    let active_before = node.active().unwrap();
+    for cut in [
+        Point::BeforeReplay,
+        Point::Noise {
+            label: 0,
+            counter: 0,
+        },
+        Point::MatrixRow { row: 0 },
+        Point::TranscriptTile {
+            row: 0,
+            column: 0,
+            inner: 0,
+        },
+        Point::BeforeProduct,
+        Point::BeforeVerifiedWork,
+    ] {
+        for with_source in [false, true] {
+            let cut_seen = AtomicBool::new(false);
+            let identity = std::sync::Arc::new(());
+            let error = node
+                .admit_growth_with_progress(&packet, 100_000, &|point| {
+                    assert!(
+                        !cut_seen.load(Ordering::Relaxed),
+                        "progress after failed Work"
+                    );
+                    if point == GrowthProgress::Work(cut) {
+                        cut_seen.store(true, Ordering::Relaxed);
+                        if with_source {
+                            Err(Error::from(std::io::Error::new(
+                                std::io::ErrorKind::Interrupted,
+                                ProofControlSource(identity.clone()),
+                            )))
+                        } else {
+                            Err(Error::new(ErrorCode::PublicRequestCancelled))
+                        }
+                    } else {
+                        Ok(())
+                    }
+                })
+                .unwrap_err();
+            assert!(cut_seen.load(Ordering::Relaxed), "{cut:?}");
+            if with_source {
+                assert_eq!(error.kind(), crate::ErrorKind::Transport);
+                let source = std::error::Error::source(&error)
+                    .unwrap()
+                    .downcast_ref::<std::io::Error>()
+                    .unwrap()
+                    .get_ref()
+                    .unwrap()
+                    .downcast_ref::<ProofControlSource>()
+                    .unwrap();
+                assert!(std::sync::Arc::ptr_eq(&identity, &source.0));
+            } else {
+                assert!(error.is(ErrorCode::PublicRequestCancelled), "{error:?}");
+                assert_eq!(error.kind(), crate::ErrorKind::Cancelled);
+            }
+            assert_eq!(node.active().unwrap(), active_before);
+            assert_eq!(rows(&node.db), before, "{cut:?}");
+            assert!(node.growth_packet(packet.id().unwrap()).is_err());
+        }
+    }
+    let id = admit(&mut node, &packet);
+    let active = node.active().unwrap();
+    let after = rows(&node.db);
+    drop(node);
+    let node = Node::open_with_permanent_account_growth_v2(dir.path(), settings).unwrap();
+    assert_eq!(node.active().unwrap(), active);
+    assert_eq!(
+        node.growth_account(id, public(81))
+            .unwrap()
+            .unwrap()
+            .balance,
+        1_000
+    );
+    assert_eq!(rows(&node.db), after);
+}
+
+#[test]
+fn native_growth_v2_work_failures_never_publish_or_reuse_success() {
+    let dir = tempfile::tempdir().unwrap();
+    let settings = settings();
+    let mut node =
+        Node::open_with_permanent_account_growth_v2(dir.path(), settings.clone()).unwrap();
+    let packet = make(
+        &node,
+        settings.genesis(),
+        vec![transfer(&settings, 0, 1, public(82), 1_000)],
+    );
+    let at = 4 + 2 * pon_work::CELLS * 4;
+    let mut field = packet.clone();
+    field.proof[at..at + 4].copy_from_slice(&u32::MAX.to_le_bytes());
+    let mut product = packet.clone();
+    let old = u32::from_le_bytes(product.proof[at..at + 4].try_into().unwrap());
+    let changed = ((u128::from(old) + 1) % pon_work::Q) as u32;
+    product.proof[at..at + 4].copy_from_slice(&changed.to_le_bytes());
+    let before = rows(&node.db);
+    let active_before = node.active().unwrap();
+    for (bad, expected, expected_replay) in [
+        (&field, "WORK:Field", false),
+        (&product, "WORK:Product", true),
+    ] {
+        assert_eq!(bad.id().unwrap(), packet.id().unwrap());
+        for _ in 0..2 {
+            let replay = AtomicBool::new(false);
+            let product_started = AtomicBool::new(false);
+            let error = node
+                .admit_growth_with_progress(bad, 100_000, &|point| {
+                    match point {
+                        GrowthProgress::BeforeWork => {}
+                        GrowthProgress::Work(work) => {
+                            replay.store(true, Ordering::Relaxed);
+                            if work == pon_work::VerificationProgress::BeforeProduct {
+                                product_started.store(true, Ordering::Relaxed);
+                            }
+                            assert_ne!(work, pon_work::VerificationProgress::BeforeVerifiedWork);
+                        }
+                        _ => panic!("failed Work reached a later stage: {point:?}"),
+                    }
+                    Ok(())
+                })
+                .unwrap_err();
+            assert_eq!(error.to_string(), expected);
+            assert_eq!(replay.load(Ordering::Relaxed), expected_replay);
+            assert_eq!(product_started.load(Ordering::Relaxed), expected_replay);
+            assert_eq!(node.active().unwrap(), active_before);
+            assert_eq!(rows(&node.db), before);
+        }
+    }
+    let id = admit(&mut node, &packet);
+    let admitted = rows(&node.db);
+    for bad in [&field, &product] {
+        assert_eq!(
+            node.admit_growth(bad, 100_000).unwrap_err().to_string(),
+            "DUPLICATE_CONTENT",
+        );
+        assert_eq!(rows(&node.db), admitted);
+    }
+    drop(node);
+    let node = Node::open_with_permanent_account_growth_v2(dir.path(), settings).unwrap();
+    assert_eq!(node.active().unwrap().0, id);
+    assert_eq!(rows(&node.db), admitted);
+}
+
 fn cancel_reorg_at(cuts: &[GrowthProgress]) {
     let dir = tempfile::tempdir().unwrap();
     let settings = settings();

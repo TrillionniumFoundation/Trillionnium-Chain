@@ -144,6 +144,15 @@ Pruning, root garbage collection and bounded total disk retention are not yet
 implemented by this backend. Exhausted physical storage is a failed transaction,
 not permission to delete an account or interpret an unavailable node as absence.
 
+The migration storage-reservation file is an inert source-bound allocation; the
+growth writer does not consume it as a ledger quota. M09's Cell retention arena
+owns Cell obligations, not these ledger roots. Neither bounds `archive_nodes`,
+`growth_states`, block/delta/event history, WAL or temporary files. The existing
+`max_page_count` fault test establishes atomic rollback when SQLite pages are
+exhausted; it is not a configured global disk-retention policy. I05 still requires
+actual required-root/obligation ownership and complete storage/recovery budgets
+before root GC can become safe.
+
 Explicit growth activation now checks its cancellation callback before each pair
 of ancestor reads, each ordered undo/apply journal write pair, and each actual
 steps/events read including EOF and the final reorg singleton. Cancellation keeps
@@ -166,6 +175,16 @@ slot to return the first original control error, including its typed source,
 without exposing the internal relation sentinel or retrying failed computation.
 No signature, hash relation, M06 public interface or persistent namespace changes.
 Single hash/lift operations and bounded partition scans remain cooperative stages.
+
+`admit_growth_with_progress` also forwards the existing full W1 replay boundaries
+through `GrowthProgress::Work`. Its typed verifier returns the original callback
+error and source on cancellation; invalid Work keeps the original `WORK:*`
+relation failure. Cheap encoding/field/task/ticket checks still precede replay.
+No failed or cancelled replay produces a verified-work capability, child or
+cached success. This extends the explicit native admission callback only; the
+local builder and cold audit retain their existing interfaces. A public PNP2
+listener still needs the shared original CPU/deadline/resource owner and its
+security/service qualification before accepting network submissions.
 
 ## Existing authenticated-v1 cost boundary
 
