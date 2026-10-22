@@ -42,6 +42,17 @@ macro_rules! error_codes {
 }
 
 error_codes! {
+    GrowthProfile => ("GROWTH_PROFILE", PolicyRefusal),
+    GrowthModelProfile => ("GROWTH_MODEL_PROFILE", PolicyRefusal),
+    GrowthAccount => ("GROWTH_ACCOUNT", ProtocolInvalid),
+    GrowthCapacity => ("GROWTH_CAPACITY", Capacity),
+    GrowthReferenceBackend => ("GROWTH_REFERENCE_BACKEND", PolicyRefusal),
+    GrowthReferenceOwner => ("GROWTH_REFERENCE_OWNER", PolicyRefusal),
+    GrowthReferenceBindingRequired => ("GROWTH_REFERENCE_BINDING_REQUIRED", PolicyRefusal),
+    GrowthReferencePoolUnsupported => ("GROWTH_REFERENCE_POOL_UNSUPPORTED", PolicyRefusal),
+    GrowthReferenceMigrationUnsupported => ("GROWTH_REFERENCE_MIGRATION_UNSUPPORTED", PolicyRefusal),
+    GrowthReferenceReaderUnsupported => ("GROWTH_REFERENCE_LEGACY_READER_UNSUPPORTED", PolicyRefusal),
+    GrowthReferenceSessionUnsupported => ("GROWTH_REFERENCE_SESSION_UNSUPPORTED", PolicyRefusal),
     Hash => ("HASH", ProtocolInvalid),
     HeaderCodec => ("HEADER_CODEC", ProtocolInvalid),
     TransactionCodec => ("TRANSACTION_CODEC", ProtocolInvalid),

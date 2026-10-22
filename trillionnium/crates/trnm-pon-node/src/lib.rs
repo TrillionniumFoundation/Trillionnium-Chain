@@ -38,9 +38,13 @@ pub use store::evaluation_round_observation::{
     EvaluationRoundAnchor, EvaluationRoundBaseAnchor, EvaluationRoundObservation,
 };
 pub use store::growth::{GrowthObservation, GrowthPacket, GrowthProgress, GrowthWorkingSnapshot};
+pub use store::growth_reference::GrowthReferenceObservation;
 pub use store::mempool::{
     PoolBatch, PoolGcSummary, PoolGroupStatus, PoolLimits, PoolReceipt, PoolState, PoolStatus,
     LOCAL_POOL_PROFILE,
+};
+pub use store::native_budget::{
+    NativeBudgetLaneV1, NativeBudgetObservationV1, NativeBudgetRequestV1, NativeContributionClaimV1,
 };
 pub use store::storage_service::{
     native_cell_repair_subject_v1, NativeCellEffectReadbackV1, NativeCellRepairCpuObservationV1,
@@ -54,6 +58,7 @@ pub use store::{
 use trnm_crypto_primitives::pon_work;
 use trnm_crypto_primitives::qualified_work_task::{derive_matrices, AdmissionContext};
 use trnm_mvcc_fee::continuity_v1::{self, PROFILE as CONTINUITY_TASK_PROFILE};
+use trnm_mvcc_fee::growth_profile_v2::PROFILE as GROWTH_TASK_PROFILE;
 use trnm_mvcc_fee::pon_executor::{self, Config, State};
 use trnm_mvcc_fee::pon_executor::{LEGACY_TASK_PROFILE, QUALIFIED_DEMANDS, SIGNED_TASK_PROFILE};
 use trnm_mvcc_fee::qualified_task_lifecycle;
@@ -276,12 +281,15 @@ impl Settings {
         if let Some(time) = genesis_timestamp {
             ensure(time > 0 && time <= i64::MAX as u64, "GENESIS_TIME")?;
             app.params["genesis_timestamp"] = json!(time);
-            let label = if matches!(
+            let label = if task_profile == GROWTH_TASK_PROFILE {
+                format!("trnm-pon-growth-reference-v2-17-{policy}-{time}")
+            } else if matches!(
                 task_profile,
                 LIFECYCLE_TASK_PROFILE
                     | ATOMIC_TASK_PROFILE
                     | OVERLAP_TASK_PROFILE
                     | CONTINUITY_TASK_PROFILE
+                    | GROWTH_TASK_PROFILE
             ) {
                 format!(
                     "trnm-pon-task-lifecycle-wall-devnet-{}-{policy}-{time}",
@@ -368,6 +376,7 @@ impl Settings {
                 | ATOMIC_TASK_PROFILE
                 | OVERLAP_TASK_PROFILE
                 | CONTINUITY_TASK_PROFILE
+                | GROWTH_TASK_PROFILE
         ) {
             let model: Vec<u8> = a.iter().flat_map(|v| v.to_le_bytes()).collect();
             let input: Vec<u8> = b.iter().flat_map(|v| v.to_le_bytes()).collect();
@@ -428,7 +437,7 @@ impl Settings {
             &[
                 &app.network,
                 &app.parameters,
-                &pon_executor::root(&initial)?,
+                &pon_executor::root_for_config(&initial, &app)?,
                 &time.to_le_bytes(),
             ],
         );
@@ -444,6 +453,12 @@ impl Settings {
     pub fn network(&self) -> Hash {
         self.app.network
     }
+    /// Complete actual-State computation selected by this frozen context. This
+    /// is not a parent, admission or installation capability.
+    pub fn state_root(&self, state: &State) -> Result<Hash> {
+        Ok(pon_executor::root_for_config(state, &self.app)?)
+    }
+
     pub fn parameters(&self) -> Hash {
         self.app.parameters
     }
@@ -480,6 +495,7 @@ impl Settings {
                     | ATOMIC_TASK_PROFILE
                     | OVERLAP_TASK_PROFILE
                     | CONTINUITY_TASK_PROFILE
+                    | GROWTH_TASK_PROFILE
             ),
             "TASK_PROFILE",
         )?;
@@ -501,6 +517,7 @@ impl Settings {
                     | ATOMIC_TASK_PROFILE
                     | OVERLAP_TASK_PROFILE
                     | CONTINUITY_TASK_PROFILE
+                    | GROWTH_TASK_PROFILE
             ),
             "TASK_PROFILE",
         )?;

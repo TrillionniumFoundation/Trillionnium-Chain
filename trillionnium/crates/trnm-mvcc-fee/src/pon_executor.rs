@@ -248,6 +248,16 @@ pub fn root(state: &State) -> Result<Hash> {
     })
 }
 
+/// Consensus-profile selected root. The historical root function and every old
+/// profile retain their complete grammar, error order and 65,536-key boundary.
+pub fn root_for_config(state: &State, cfg: &Config) -> Result<Hash> {
+    if crate::growth_profile_v2::enabled(cfg) {
+        Ok(crate::growth_profile_v2::commitment(state, cfg)?.id())
+    } else {
+        root(state)
+    }
+}
+
 #[derive(Clone)]
 pub struct Config {
     pub network: Hash,
@@ -484,6 +494,13 @@ impl Config {
                 )));
             }
             CONTINUITY_TASK_PROFILE => continuity_v1::configure(&mut params, policy)?,
+            crate::growth_profile_v2::PROFILE => {
+                require(
+                    model_profile == "linear-expert-dev-v1",
+                    "GROWTH_MODEL_PROFILE",
+                )?;
+                crate::growth_profile_v2::configure(&mut params, policy)?;
+            }
             CHECKPOINT_TASK_PROFILE => return Err("CHECKPOINT_POLICY_REQUIRED"),
             _ => return Err("WORK_TASK_PROFILE"),
         }
@@ -1193,6 +1210,7 @@ fn prepare(raw: &[u8], height: u64, cfg: &Config, signatures: &AtomicUsize) -> R
                     | OVERLAP_TASK_PROFILE
                     | CHECKPOINT_TASK_PROFILE
                     | CONTINUITY_TASK_PROFILE
+                    | crate::growth_profile_v2::PROFILE
             ),
         "WORK_TASK_PROFILE",
     )?;
@@ -2194,7 +2212,7 @@ pub fn execute(
             workers,
         },
         cfg,
-        |_, next| root(next),
+        |_, next| root_for_config(next, cfg),
     )
 }
 /// Cooperative pure preview; all spawned workers are joined before any return.
@@ -2205,7 +2223,13 @@ pub fn execute_with_progress<E: Send>(
     cfg: &Config,
     progress: &(impl Fn(ExecutionProgress) -> std::result::Result<(), E> + Sync),
 ) -> ControlledResult<Output, E> {
-    execute_with_commitment_and_progress(parent, block, cfg, |_, next| root(next), progress)
+    execute_with_commitment_and_progress(
+        parent,
+        block,
+        cfg,
+        |_, next| root_for_config(next, cfg),
+        progress,
+    )
 }
 pub fn execute_with_control<E: Send>(
     parent: &State,
@@ -2213,7 +2237,13 @@ pub fn execute_with_control<E: Send>(
     cfg: &Config,
     control: &ExecutionControl<'_, E>,
 ) -> ControlledResult<Output, E> {
-    execute_with_commitment_and_control(parent, block, cfg, |_, next| root(next), control)
+    execute_with_commitment_and_control(
+        parent,
+        block,
+        cfg,
+        |_, next| root_for_config(next, cfg),
+        control,
+    )
 }
 /// Reexecute the ordinary complete-State relation while observing the exact
 /// mandatory and canonical transaction writes. A partial or rejected result
@@ -2228,7 +2258,7 @@ pub fn execute_observed(
         parent,
         block,
         cfg,
-        |_, next| root(next),
+        |_, next| root_for_config(next, cfg),
         &ExecutionControl::new(&no_cancellation, &()),
         StateInputs {
             observer: Some(observer),
@@ -2252,7 +2282,7 @@ pub fn execute_with_account_point_access<E: Send>(
         parent,
         block,
         cfg,
-        |_, next| root(next),
+        |_, next| root_for_config(next, cfg),
         &ExecutionControl::new(progress, &()),
         StateInputs {
             accounts: Some(account_access),
@@ -2276,7 +2306,7 @@ pub fn execute_with_authenticated_state_input<E: Send>(
         parent,
         block,
         cfg,
-        |_, next| root(next),
+        |_, next| root_for_config(next, cfg),
         &ExecutionControl::new(progress, &()),
         StateInputs {
             accounts: Some(account_access),
@@ -2307,7 +2337,7 @@ pub fn execute_with_authenticated_obligation_input<E: Send>(
         parent,
         block,
         cfg,
-        |_, next| root(next),
+        |_, next| root_for_config(next, cfg),
         &ExecutionControl::new(progress, &()),
         StateInputs {
             accounts: Some(account_access),
@@ -2950,6 +2980,10 @@ pub struct SessionOutput {
 }
 impl ExecutionSession {
     pub fn new(state: State, expected_root: Hash, config: Config) -> Result<Self> {
+        require(
+            !crate::growth_profile_v2::enabled(&config),
+            "GROWTH_REFERENCE_SESSION_UNSUPPORTED",
+        )?;
         let mut bytes = BTreeMap::new();
         for (key, value) in &state {
             bytes.insert(key.as_bytes().to_vec(), canonical(value)?);

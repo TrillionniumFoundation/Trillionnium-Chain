@@ -18,11 +18,33 @@ from check_ci_contract import (ROOT, validate, CONTINUITY_BUILD, CONTINUITY_TRAN
                                EVALUATION_QUORUM_ORACLE, check_independent_conformance,
                                MODEL_EVOLUTION_ORACLES, COST_BOUNDARY_READERS,
                                ORIGINAL_CAMPAIGN_READER,
-                               NATIVE_RELEASE_BLOCK,
+                               NATIVE_RELEASE_BLOCK, NATIVE_GROWTH_RELEASE_BLOCK, GSC2_SYNTHETIC_ORACLE,
                                NODE_EXAMPLE_BUILD, ACCOUNT_ARCHIVE_ORACLE, ACCOUNT_EXECUTION_ORACLE)
 from check_cross_arch_cost import (COST_JOB_OVERHEAD_SECONDS, COST_JOB_TIMEOUT_MINUTES,
                                    cost_job_budget_seconds, rejection_job_budget_seconds)
 from report_current_implementation import DESTINATION, markdown, projection, validate as current_validate
+
+
+SYNTHETIC_GROWTH_PIPELINE = r'''python3() {
+  if test "${1:-}" = -B && test "${2:-}" = formal/pon-nakamoto-v1/check_gsc2_native_readback.py; then
+    test "$#" = 8
+    test "$3" = --artifact-dir
+    test "$4" = "$TRNM_CI_RECEIPT_DIR/native-growth-reference"
+    test "$5" = --source-root
+    test "$6" = "$(pwd -P)"
+    test "$7" = --minimum-accounts
+    test "$8" = 65537
+    printf '%s\n' '{"scope":"synthetic shell control only, not a SQLite or native-growth observation"}'
+    return "${TRNM_TEST_READBACK_STATUS:-0}"
+  fi
+  command python3 "$@"
+}
+synthetic_growth_native() {
+  test "$TRNM_NATIVE_GROWTH_EXPORT_DIRECTORY" = "$TRNM_CI_RECEIPT_DIR/native-growth-reference"
+  mkdir "$TRNM_NATIVE_GROWTH_EXPORT_DIRECTORY"
+  printf '%s\n' 'running 1 test' 'test store::growth_reference::tests::native_growth_reference_65537_signed_accounts_and_cold_reopen ... ok' 'test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 9 filtered out; finished in 0.00s'
+}
+'''
 
 
 class EvaluationQuorumLaneTests(unittest.TestCase):
@@ -35,6 +57,127 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
 
     def test_actual_lane_preserves_quorum_reference_and_retained_vector_checks(self):
         check_independent_conformance(self.script, self.lanes)
+
+    def test_current_readers_and_runtime_controls_cannot_be_missing_duplicated_stubbed_or_moved(self):
+        # Independent inventory: removing a required command from the checker
+        # must not silently remove that command's negative coverage as well.
+        paths = (
+            'scripts/ci/test_pon_w1_cost_matrix_reader.py',
+            'scripts/ci/test_pon_public_v3_policy_read.py',
+            'scripts/ci/test_llm_cell_handoff_deadline.py',
+            'scripts/test_llm_runtime_rss_owner.py',
+            'scripts/test_llm_runtime_exit_observation.py',
+            'scripts/test_llm_inherited_runtime.py',
+            'scripts/test_llm_neural_read_worker.py',
+        )
+        for path in paths:
+            command = '    python3 ' + path + '\n'
+            self.assertEqual(self.script.count(command), 1)
+            changes = {
+                'missing': self.script.replace(command, ''),
+                'duplicate': self.script.replace(command, command * 2),
+                'true stub': self.script.replace(command, command.replace('python3 ', 'true # python3 ')),
+                'comment': self.script.replace(command, '    # ' + command.lstrip()),
+                'wrong lane': self.script.replace(command, '').replace('  fuzz-smoke)\n', '  fuzz-smoke)\n' + command),
+                'other-lane duplicate': self.script.replace('  fuzz-smoke)\n', '  fuzz-smoke)\n  ' + command.lstrip()),
+            }
+            for label, changed in changes.items():
+                with self.subTest(path=path, change=label), self.assertRaises(ValueError):
+                    check_independent_conformance(changed, self.lanes)
+
+    def test_current_runtime_controls_must_follow_pilot_and_parent_material(self):
+        parent = '    python3 scripts/test_llm_parent_material.py\n'
+        for path in ('scripts/test_llm_runtime_rss_owner.py',
+                     'scripts/test_llm_runtime_exit_observation.py',
+                     'scripts/test_llm_inherited_runtime.py',
+                     'scripts/test_llm_neural_read_worker.py'):
+            command = '    python3 ' + path + '\n'
+            early = self.script.replace(command, '').replace(parent, command + parent)
+            with self.subTest(path=path), self.assertRaisesRegex(ValueError, 'runtime owner'):
+                check_independent_conformance(early, self.lanes)
+
+    def test_gsc2_synthetic_reader_cannot_be_removed_duplicated_commented_or_moved(self):
+        for replacement in ['', GSC2_SYNTHETIC_ORACLE * 2,
+                            '    # ' + GSC2_SYNTHETIC_ORACLE.lstrip(),
+                            GSC2_SYNTHETIC_ORACLE.replace('python3 ', 'true # python3 '),
+                            GSC2_SYNTHETIC_ORACLE.replace('$(pwd -P)', '/tmp/stale-source'),
+                            GSC2_SYNTHETIC_ORACLE.replace(' --source-root "$(pwd -P)"', '')]:
+            with self.subTest(replacement=replacement), self.assertRaisesRegex(ValueError, 'GSC2 synthetic'):
+                check_independent_conformance(self.script.replace(GSC2_SYNTHETIC_ORACLE, replacement), self.lanes)
+        moved = self.script.replace(GSC2_SYNTHETIC_ORACLE, '').replace(
+            '  repository-truth)\n', '  repository-truth)\n' + GSC2_SYNTHETIC_ORACLE)
+        with self.assertRaisesRegex(ValueError, 'GSC2 synthetic'):
+            check_independent_conformance(moved, self.lanes)
+        early = self.script.replace(GSC2_SYNTHETIC_ORACLE, '').replace(
+            NODE_EXAMPLE_BUILD, GSC2_SYNTHETIC_ORACLE + NODE_EXAMPLE_BUILD)
+        with self.assertRaisesRegex(ValueError, 'GSC2 synthetic'):
+            check_independent_conformance(early, self.lanes)
+
+    def test_native_growth_every_guard_and_command_is_mandatory_once_and_in_rust_lane(self):
+        for command in NATIVE_GROWTH_RELEASE_BLOCK.splitlines(keepends=True):
+            for replacement in ['', command * 2, '      # ' + command.lstrip(),
+                                command.replace(command.lstrip(), 'true # ' + command.lstrip())]:
+                with self.subTest(command=command, replacement=replacement), self.assertRaises(ValueError):
+                    check_independent_conformance(self.script.replace(command, replacement), self.lanes)
+            moved = self.script.replace(command, '').replace('  protocol-contract)\n',
+                '  protocol-contract)\n' + command)
+            with self.subTest(command=command, mutation='moved'), self.assertRaises(ValueError):
+                check_independent_conformance(moved, self.lanes)
+
+    def test_native_growth_cannot_lower_threshold_relabel_test_or_reuse_export(self):
+        changes = [('--minimum-accounts 65537', '--minimum-accounts 65536'),
+                   ('--minimum-accounts 65537', '--minimum-accounts 64'),
+                   ('--minimum-accounts 65537', ''),
+                   ('native_growth_reference_65537_signed_accounts_and_cold_reopen',
+                    'native_growth_reference_64_signed_accounts_and_cold_reopen'),
+                   ('TRNM_NATIVE_GROWTH_EXPORT_DIRECTORY=', 'WRONG_GROWTH_EXPORT='),
+                   ('/native-growth-reference"', '/previous-growth-reference"'),
+                   ('/native-growth-reference-release.log"', '/previous-growth.log"'),
+                   ('--source-root "$(pwd -P)"', '--source-root /tmp/stale-source'),
+                   (' --offline ', ' '), (' --locked ', ' '), (' --nocapture ', ' '),
+                   (' -p trnm-pon-node ', ' -p trnm-protocol '),
+                   ('2>&1 | tee ', '2>&1 || tee ')]
+        for before, after in changes:
+            changed = NATIVE_GROWTH_RELEASE_BLOCK.replace(before, after)
+            self.assertNotEqual(changed, NATIVE_GROWTH_RELEASE_BLOCK)
+            with self.subTest(before=before, after=after), self.assertRaises(ValueError):
+                check_independent_conformance(self.script.replace(NATIVE_GROWTH_RELEASE_BLOCK, changed), self.lanes)
+
+    def test_native_growth_libtest_check_must_precede_sqlite_readback(self):
+        lines = NATIVE_GROWTH_RELEASE_BLOCK.splitlines(keepends=True)
+        for indices in [(4, 5), (5, 8)]:
+            changed = lines.copy()
+            first, second = indices
+            changed[first], changed[second] = changed[second], changed[first]
+            with self.subTest(indices=indices), self.assertRaises(ValueError):
+                check_independent_conformance(self.script.replace(NATIVE_GROWTH_RELEASE_BLOCK,
+                    ''.join(changed)), self.lanes)
+        moved = self.script.replace(NATIVE_GROWTH_RELEASE_BLOCK, '').replace(
+            '  protocol-contract)\n', '  protocol-contract)\n' + NATIVE_GROWTH_RELEASE_BLOCK)
+        with self.assertRaises(ValueError):
+            check_independent_conformance(moved, self.lanes)
+        duplicated = self.script.replace('  fuzz-smoke)\n',
+            '  fuzz-smoke)\n' + NATIVE_GROWTH_RELEASE_BLOCK)
+        with self.assertRaises(ValueError):
+            check_independent_conformance(duplicated, self.lanes)
+
+    def test_growth_sqlite_readback_failure_remains_a_shell_failure(self):
+        # Synthetic cargo/checker exercise only pipeline plumbing and failure
+        # propagation. The actual SQLite oracle has separate native/synthetic CI.
+        with tempfile.TemporaryDirectory(prefix='growth-readback-shell-') as temporary:
+            root = Path(temporary) / 'receipt with spaces'
+            root.mkdir()
+            prelude = ('set -euo pipefail\n' + SYNTHETIC_GROWTH_PIPELINE +
+                       'cargo() { synthetic_growth_native; }\n'
+                       'trnm_native_receipt_root="$TRNM_CI_RECEIPT_DIR"\n')
+            result = subprocess.run(['bash', '-c', prelude + NATIVE_GROWTH_RELEASE_BLOCK +
+                'touch "$TRNM_CI_RECEIPT_DIR/incorrect-success"\n'], cwd=ROOT,
+                env={'PATH': '/usr/bin:/bin', 'TRNM_CI_RECEIPT_DIR': str(root),
+                     'TRNM_TEST_READBACK_STATUS': '19'}, capture_output=True, text=True, timeout=10)
+            self.assertEqual(result.returncode, 19, result.stderr)
+            self.assertTrue((root / 'native-growth-reference-release.log').is_file())
+            self.assertTrue((root / 'native-growth-reference/readback.json').is_file())
+            self.assertFalse((root / 'incorrect-success').exists())
 
     def test_reward_budget_controls_cannot_be_omitted_duplicated_or_moved(self):
         command = '    python3 formal/pon-nakamoto-v1/test_reward_budget_oracle.py\n'
@@ -584,7 +727,7 @@ class CiContractTests(unittest.TestCase):
     def test_full_capacity_and_account_verification_execute_exact_release_tests_sequentially(self):
         path = 'scripts/ci/ci_job.sh'
         commands = [line + '\n' for line in NATIVE_RELEASE_BLOCK.splitlines() if ' cargo test ' in line]
-        self.assertEqual(len(commands), 2)
+        self.assertEqual(len(commands), 3)
         for line in commands:
             for replacement in ['', line.replace('cargo test ', 'true # cargo test '),
                                 line.replace(' --release ', ' '), line.replace(' --exact ', ' '),
@@ -595,8 +738,8 @@ class CiContractTests(unittest.TestCase):
         self.rejected(path, commands[0], commands[0].replace(
             'native_authenticated_full_capacity_refund_entry_and_pending_reorganization_recover',
             'native_authenticated_signed_growth_branches_reopen_and_compact_queries'))
-        self.rejected(path, commands[1], commands[1].replace('TRNM_NATIVE_ACCOUNT_VERIFY_COST_DIRECTORY=', 'WRONG_OUTPUT='))
-        self.rejected(path, commands[1], commands[1].replace('/native-account-verification-cost"', '/old-cost"'))
+        self.rejected(path, commands[-1], commands[-1].replace('TRNM_NATIVE_ACCOUNT_VERIFY_COST_DIRECTORY=', 'WRONG_OUTPUT='))
+        self.rejected(path, commands[-1], commands[-1].replace('/native-account-verification-cost"', '/old-cost"'))
         swapped = NATIVE_RELEASE_BLOCK.replace(commands[0], 'RELEASE_CONTROL_PLACEHOLDER\n')
         swapped = swapped.replace(commands[1], commands[0]).replace('RELEASE_CONTROL_PLACEHOLDER\n', commands[1])
         self.rejected(path, NATIVE_RELEASE_BLOCK, swapped)
@@ -605,10 +748,10 @@ class CiContractTests(unittest.TestCase):
     def test_release_test_execution_checks_cannot_be_removed_relabelled_or_reordered(self):
         checks = [line for line in NATIVE_RELEASE_BLOCK.splitlines(keepends=True)
                   if 'python3 scripts/ci/check_required_native_test.py ' in line]
-        self.assertEqual(len(checks), 2)
+        self.assertEqual(len(checks), 3)
         for line in checks:
             for replacement in ['', line.replace('python3 ', 'true # python3 '), line * 2,
-                                line.replace(' --test account_archive_prototype::', ' --test other::'),
+                                line.replace(' --test ', ' --test other::'),
                                 line.replace('/native-', '/previous-native-')]:
                 with self.subTest(line=line, replacement=replacement):
                     self.rejected('scripts/ci/ci_job.sh', line, replacement)
@@ -635,6 +778,8 @@ cargo() {
       printf '%s\\n' 'synthetic capacity stderr' >&2
       if test "$TRNM_TEST_FAILURE" = capacity; then return 7; fi
       printf '%s\\n' 'running 1 test' 'test account_archive_prototype::native_store::batch_tests::native_authenticated_full_capacity_refund_entry_and_pending_reorganization_recover ... ok' 'test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 9 filtered out; finished in 0.00s' ;;
+    *native_growth_reference_65537_signed_accounts_and_cold_reopen*)
+      synthetic_growth_native ;;
     *native_complete_account_verification_cost*)
       test "$TRNM_NATIVE_ACCOUNT_VERIFY_COST_DIRECTORY" = "$TRNM_CI_RECEIPT_DIR/native-account-verification-cost"
       printf '%s\\n' 'synthetic account stdout'
@@ -644,7 +789,7 @@ cargo() {
   esac
 }
 '''
-                result = subprocess.run(['bash', '-c', harness + NATIVE_RELEASE_BLOCK], cwd=self.root,
+                result = subprocess.run(['bash', '-c', SYNTHETIC_GROWTH_PIPELINE + harness + NATIVE_RELEASE_BLOCK], cwd=self.root,
                                         env={'PATH': '/usr/bin:/bin', 'TRNM_CI_RECEIPT_DIR': str(root),
                                              'TRNM_TEST_FAILURE': failed_case},
                                         capture_output=True, text=True, timeout=10)
@@ -667,6 +812,11 @@ cargo() {
     *native_authenticated_full_capacity_refund_entry_and_pending_reorganization_recover*)
       stage=capacity
       name=account_archive_prototype::native_store::batch_tests::native_authenticated_full_capacity_refund_entry_and_pending_reorganization_recover ;;
+    *native_growth_reference_65537_signed_accounts_and_cold_reopen*)
+      stage=growth
+      name=store::growth_reference::tests::native_growth_reference_65537_signed_accounts_and_cold_reopen
+      test "$TRNM_NATIVE_GROWTH_EXPORT_DIRECTORY" = "$TRNM_CI_RECEIPT_DIR/native-growth-reference"
+      mkdir "$TRNM_NATIVE_GROWTH_EXPORT_DIRECTORY" ;;
     *native_complete_account_verification_cost*)
       stage=account
       name=account_archive_prototype::native_primitive_tests::native_complete_account_verification_cost ;;
@@ -693,23 +843,25 @@ cargo() {
 }
 '''
         with tempfile.TemporaryDirectory(prefix='trnm-release-outcomes-') as temporary:
-            for stage in ['capacity', 'account']:
+            for stage in ['capacity', 'growth', 'account']:
                 for mode in ['pass', 'zero', 'ignored', 'wrong', 'incomplete', 'nonzero']:
                     with self.subTest(stage=stage, mode=mode):
                         output = Path(temporary) / f'{stage} {mode}'
                         calls = Path(temporary) / f'{stage}-{mode}.calls'
-                        result = subprocess.run(['bash', '-c', harness + NATIVE_RELEASE_BLOCK],
+                        result = subprocess.run(['bash', '-c', SYNTHETIC_GROWTH_PIPELINE + harness + NATIVE_RELEASE_BLOCK],
                             cwd=self.root, env={'PATH': '/usr/bin:/bin',
                                 'TRNM_CI_RECEIPT_DIR': str(output), 'TRNM_TEST_CALLS': str(calls),
                                 'TRNM_TEST_STAGE': stage, 'TRNM_TEST_MODE': mode},
                             capture_output=True, text=True, timeout=10)
                         expected = 0 if mode == 'pass' else 23 if mode == 'nonzero' else 1
                         self.assertEqual(result.returncode, expected, result.stderr)
-                        expected_calls = ['capacity'] if stage == 'capacity' and mode != 'pass' else ['capacity', 'account']
+                        expected_calls = (['capacity'] if stage == 'capacity' and mode != 'pass' else
+                                          ['capacity', 'growth'] if stage == 'growth' and mode != 'pass' else
+                                          ['capacity', 'growth', 'account'])
                         self.assertEqual(calls.read_text().splitlines(), expected_calls)
                         self.assertTrue((output / 'native-capacity-release.log').is_file())
                         self.assertEqual((output / 'native-account-verification-cost.log').exists(),
-                                         len(expected_calls) == 2)
+                                         len(expected_calls) == 3)
 
     def test_model_observation_block_cannot_move_to_another_lane(self):
         original = (self.root / 'scripts/ci/ci_job.sh').read_text()

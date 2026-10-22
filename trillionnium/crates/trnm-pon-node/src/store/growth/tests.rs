@@ -825,3 +825,103 @@ fn export_scale_evidence(node: &Node, observation: &serde_json::Value) {
     );
     fs::File::open(directory).unwrap().sync_all().unwrap();
 }
+
+#[test]
+fn native_growth_v2_and_complete_state_reference_reject_cross_profile_openers() {
+    let dir = tempfile::tempdir().unwrap();
+    let reference = Settings::development_with_profiles(
+        Some(1),
+        "native-public-evaluation-dev-v1",
+        trnm_mvcc_fee::growth_profile_v2::PROFILE,
+    )
+    .unwrap();
+    assert_eq!(
+        reference
+            .clone()
+            .with_permanent_account_growth_v2("forbidden-hybrid")
+            .err()
+            .unwrap()
+            .to_string(),
+        "GROWTH_PROFILE_SOURCE"
+    );
+    let fresh = dir.path().join("never-created");
+    assert_eq!(
+        Node::open_with_permanent_account_growth_v2(&fresh, reference.clone())
+            .err()
+            .unwrap()
+            .to_string(),
+        "GROWTH_PROFILE"
+    );
+    assert!(!fresh.exists());
+    let bounded = settings();
+    assert_eq!(
+        Node::open(&fresh, bounded.clone(), 1)
+            .err()
+            .unwrap()
+            .to_string(),
+        "GROWTH_PROFILE_BACKEND"
+    );
+    assert!(!fresh.exists());
+    let mut hybrid = bounded.clone();
+    hybrid.app.params["work_task_profile"] = json!(trnm_mvcc_fee::growth_profile_v2::PROFILE);
+    assert_eq!(
+        Node::open_with_permanent_account_growth_v2(&fresh, hybrid)
+            .err()
+            .unwrap()
+            .to_string(),
+        "GROWTH_PROFILE"
+    );
+    assert!(!fresh.exists());
+
+    let reference_path = dir.path().join("reference");
+    let node = Node::open(&reference_path, reference.clone(), 1).unwrap();
+    let reference_rows = rows(&node.db);
+    drop(node);
+    assert!(Node::open_with_permanent_account_growth_v2(&reference_path, bounded.clone()).is_err());
+    let node = Node::open(&reference_path, reference.clone(), 1).unwrap();
+    assert_eq!(rows(&node.db), reference_rows);
+    drop(node);
+    let bounded_path = dir.path().join("bounded");
+    let node = Node::open_with_permanent_account_growth_v2(&bounded_path, bounded.clone()).unwrap();
+    let bounded_rows = rows(&node.db);
+    drop(node);
+    assert!(Node::open(&bounded_path, reference, 1).is_err());
+    let node = Node::open_with_permanent_account_growth_v2(&bounded_path, bounded).unwrap();
+    assert_eq!(rows(&node.db), bounded_rows);
+}
+
+#[test]
+fn native_growth_v2_cold_open_never_ignores_reference_budget_records() {
+    let dir = tempfile::tempdir().unwrap();
+    let settings = settings();
+    let mut node =
+        Node::open_with_permanent_account_growth_v2(dir.path(), settings.clone()).unwrap();
+    let packet = make(
+        &node,
+        settings.genesis(),
+        vec![transfer(&settings, 0, 1, public(10), 1_000)],
+    );
+    admit(&mut node, &packet);
+    drop(node);
+    // A recognized but malformed local-observation record must stop cold open;
+    // otherwise the early growth return would silently discard its meaning.
+    let db = Connection::open(dir.path().join("native.sqlite")).unwrap();
+    let key = format!("pon-native-budget-v1:op:{}", hex::encode([166; 32]));
+    db.execute(
+        "INSERT INTO metadata(key,value) VALUES(?1,?2)",
+        params![key, b"{}".as_slice()],
+    )
+    .unwrap();
+    let before = rows(&db);
+    db.close().unwrap();
+    let error = Node::open_with_permanent_account_growth_v2(dir.path(), settings)
+        .err()
+        .unwrap();
+    assert_eq!(error.to_string(), "BUDGET_RECORD_CODEC");
+    let db = Connection::open_with_flags(
+        dir.path().join("native.sqlite"),
+        rusqlite::OpenFlags::SQLITE_OPEN_READ_ONLY,
+    )
+    .unwrap();
+    assert_eq!(rows(&db), before);
+}

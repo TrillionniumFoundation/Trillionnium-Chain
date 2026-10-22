@@ -964,6 +964,7 @@ fn phase(
         "initial_tip":hex::encode(initial.0),"final_receiver_tip":hex::encode(actual.0),"final_client_tip":hex::encode(checked.0),
         "whole_parent_phase_cpu_ns":support::elapsed_cpu(whole_cpu),"whole_parent_phase_wall_ns":whole_started.elapsed().as_nanos(),"rss":support::rss()});
     report["public_resource_policy"] = support::policy_observation();
+    report["completion_work_observation"] = json!(domain.observe_completion_work().ok());
     report["client_native_history_arithmetic_before"] = client_native_history_before;
     report["client_native_history_arithmetic_after"] = client_native_history_after;
     report["client_observation_scope"] = json!("bounded by the original 64 history calls; import includes complete-page activation, confirmation is separate; native snapshots exclude setup and final read_active; nested costs are not additive");

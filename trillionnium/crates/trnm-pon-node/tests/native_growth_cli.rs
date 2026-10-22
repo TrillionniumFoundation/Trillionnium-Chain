@@ -231,3 +231,26 @@ fn native_growth_v2_cli_rejects_ambiguous_or_malformed_inputs_before_creating_st
         std::fs::read(existing.join("native.sqlite")).unwrap()
     );
 }
+
+#[test]
+fn capacity_observe_refuses_complete_state_reference_before_creating_store() {
+    let dir = tempfile::tempdir().unwrap();
+    let store = dir.path().join("never-created");
+    let output = Command::new(env!("CARGO_BIN_EXE_trnm-pon-node"))
+        .args([
+            "capacity-observe",
+            "--development",
+            "--genesis-time",
+            "1",
+            "--evaluation-policy",
+            "native-public-evaluation-dev-v1",
+            "--task-profile",
+            trnm_mvcc_fee::growth_profile_v2::PROFILE,
+        ])
+        .arg("--store")
+        .arg(&store)
+        .output()
+        .unwrap();
+    rejected(output, "CONTINUITY_PROFILE");
+    assert!(!store.exists());
+}

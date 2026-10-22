@@ -12,7 +12,7 @@ impl Settings {
     /// its context-bound bootstrap records are regenerated for the new network.
     pub fn with_permanent_account_growth_v2(mut self, namespace: &str) -> Result<Self> {
         ensure(
-            continuity_v1::enabled(&self.app)
+            self.app.task_profile() == continuity_v1::PROFILE
                 && self.app.params.get("state_profile").is_none()
                 && self.operator_bootstrap.is_none()
                 && self.operator_material.is_none()
@@ -85,7 +85,11 @@ impl Settings {
 }
 
 pub(super) fn require(settings: &Settings) -> Result<()> {
-    ensure(settings.is_permanent_account_growth_v2(), "GROWTH_PROFILE")?;
+    ensure(
+        settings.is_permanent_account_growth_v2()
+            && settings.app.task_profile() == continuity_v1::PROFILE,
+        "GROWTH_PROFILE",
+    )?;
     let expected = json!({
         "accounts": limits::MAX_ACCOUNTS, "working_keys": limits::MAX_WORKING_KEYS,
         "working_bytes": limits::MAX_WORKING_BYTES, "mandatory_owners": limits::MAX_MANDATORY_OWNERS,

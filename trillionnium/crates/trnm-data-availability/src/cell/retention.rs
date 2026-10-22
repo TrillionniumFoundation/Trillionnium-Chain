@@ -1255,7 +1255,7 @@ fn validate_schema(connection: &Connection) -> CellResultV1<()> {
         require(actual.as_deref() == Some(expected), "retention schema")?;
     }
     let objects: u64 = connection.query_row(
-        "SELECT count(*) FROM sqlite_master WHERE name NOT LIKE 'sqlite_%'",
+        "SELECT count(*) FROM sqlite_master WHERE name NOT GLOB 'sqlite_*'",
         [],
         |r| r.get(0),
     )?;

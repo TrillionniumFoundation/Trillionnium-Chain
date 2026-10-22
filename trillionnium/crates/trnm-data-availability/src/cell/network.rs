@@ -12,8 +12,11 @@ use std::{
 };
 
 use super::{
-    manifest::MAX_MANIFEST_BYTES, require, store::verify_chunk, CellChunkV1, CellDigestV1,
-    CellErrorV1, CellManifestV1, CellResultV1, CellStoreV1, MAX_CELL_BYTES, MAX_CHUNK_BYTES,
+    manifest::MAX_MANIFEST_BYTES,
+    require,
+    store::{verify_chunk, verify_chunk_length, MAX_CHUNK_COMMIT_BATCH},
+    CellChunkV1, CellDigestV1, CellErrorV1, CellManifestV1, CellResultV1, CellStoreV1,
+    MAX_CELL_BYTES, MAX_CHUNK_BYTES,
 };
 
 /// Explicit finite limits for this configured-peer pilot. There is no peer
@@ -182,7 +185,8 @@ pub(super) fn fetch_cell_in_session(
         require(Instant::now() <= deadline, "cache scan deadline")?;
         match store.chunk(expected.sha256)? {
             Some(bytes) => {
-                verify_chunk(expected, &bytes)?;
+                // chunk() already hashes the actual cache buffer on every read.
+                verify_chunk_length(expected, &bytes)?;
                 report.cached_chunks += 1;
             }
             None => missing.push((index, expected.clone())),
@@ -212,17 +216,48 @@ pub(super) fn fetch_cell_in_session(
         }
         drop(sender);
         let mut failure = None;
-        for (chunk, result) in receiver {
-            let written = result.and_then(|(bytes, peer, rejected)| {
-                store.put_chunk(chunk, &bytes)?;
+        let mut pending: Vec<(&CellChunkV1, Vec<u8>, SocketAddr, usize)> =
+            Vec::with_capacity(MAX_CHUNK_COMMIT_BATCH);
+        let mut flush = |pending: &mut Vec<(&CellChunkV1, Vec<u8>, SocketAddr, usize)>| {
+            require(Instant::now() <= deadline, "chunk persistence deadline")?;
+            let chunks: Vec<_> = pending
+                .iter()
+                .map(|(chunk, bytes, _, _)| (*chunk, bytes.as_slice()))
+                .collect();
+            store.put_chunk_batch(&chunks)?;
+            for (_, bytes, peer, rejected) in pending.drain(..) {
                 report.downloaded_bytes += bytes.len() as u64;
                 report.downloaded_chunks += 1;
                 report.rejected_responses += rejected;
                 report.supplying_peers.insert(peer);
-                Ok(())
-            });
+            }
+            require(Instant::now() <= deadline, "chunk persistence deadline")
+        };
+        for (chunk, result) in receiver {
+            let written = match result {
+                Ok((bytes, peer, rejected)) => {
+                    pending.push((chunk, bytes, peer, rejected));
+                    if pending.len() == MAX_CHUNK_COMMIT_BATCH {
+                        flush(&mut pending)
+                    } else {
+                        Ok(())
+                    }
+                }
+                Err(error) => Err(error),
+            };
             if let Err(error) = written {
                 cancelled.store(true, Ordering::Relaxed);
+                failure.get_or_insert(error);
+            }
+            // Failed batches must not accumulate beyond the fixed memory cap.
+            if pending.len() == MAX_CHUNK_COMMIT_BATCH {
+                pending.clear();
+            }
+        }
+        if !pending.is_empty() {
+            // Keep the final verified prefix on a connection/byte-budget error
+            // too, while respecting the original absolute time bound.
+            if let Err(error) = flush(&mut pending) {
                 failure.get_or_insert(error);
             }
         }
@@ -231,15 +266,24 @@ pub(super) fn fetch_cell_in_session(
         }
         Ok(())
     })
-    .map_err(|error| responses.annotate_error(error))?;
+    .map_err(|error| match error {
+        // All workers have joined: keep the existing aggregate byte-budget
+        // classification even if a different request failed slightly earlier.
+        CellErrorV1::Io(error) => unavailable_with_transport_cause(transport, Some(error)),
+        error => responses.annotate_error(error),
+    })?;
     require(Instant::now() <= deadline, "fetch deadline")?;
-    store.verify_complete_until(&manifest, deadline)?;
-    require(Instant::now() <= deadline, "fetch deadline")?;
+    if let Some(output) = output {
+        // Materialization itself freshly hashes every cached chunk, verifies
+        // the ordered full payload, syncs, and checks this same deadline before
+        // create-only publication. A preceding sink pass duplicates that work.
+        store.materialize_until(&manifest, output, deadline)?;
+    } else {
+        store.verify_complete_until(&manifest, deadline)?;
+        require(Instant::now() <= deadline, "fetch deadline")?;
+    }
     report.connection_attempts = limits.max_connections - requests_left.load(Ordering::Relaxed);
     report.received_response_bytes = responses.received()?;
-    if let Some(output) = output {
-        store.materialize_until(&manifest, output, deadline)?;
-    }
     Ok((manifest, report))
 }
 
@@ -255,6 +299,7 @@ pub(super) fn fetch_manifest(
         Some(manifest) => manifest,
         None => {
             let mut received = None;
+            let mut last_io = None;
             for peer in peers {
                 let candidate =
                     request(*peer, 1, pinned, MAX_MANIFEST_BYTES, transport).and_then(|wire| {
@@ -273,10 +318,15 @@ pub(super) fn fetch_manifest(
                         received = Some(store.put_manifest(pinned, &wire)?);
                         break;
                     }
-                    Err(_) => rejected += 1,
+                    Err(error) => {
+                        rejected += 1;
+                        if let CellErrorV1::Io(error) = error {
+                            last_io = Some(error);
+                        }
+                    }
                 }
             }
-            received.ok_or_else(|| transport.responses.annotate_error(CellErrorV1::Unavailable))?
+            received.ok_or_else(|| unavailable_with_transport_cause(transport, last_io))?
         }
     };
     require(
@@ -292,6 +342,7 @@ fn download_chunk(
     peers: &[SocketAddr],
     transport: &RequestContext<'_>,
 ) -> CellResultV1<(Vec<u8>, SocketAddr, usize)> {
+    let mut last_io = None;
     for offset in 0..peers.len() {
         let peer = peers[(order + offset) % peers.len()];
         let candidate =
@@ -299,11 +350,29 @@ fn download_chunk(
                 verify_chunk(chunk, &bytes)?;
                 Ok(bytes)
             });
-        if let Ok(bytes) = candidate {
-            return Ok((bytes, peer, offset));
+        match candidate {
+            Ok(bytes) => return Ok((bytes, peer, offset)),
+            Err(CellErrorV1::Io(error)) => last_io = Some(error),
+            Err(_) => (),
         }
     }
-    Err(CellErrorV1::Unavailable)
+    Err(unavailable_with_transport_cause(transport, last_io))
+}
+
+// Keep the existing unavailable/byte-budget semantics for absent or malformed
+// bytes. When all configured peers fail, retain the last real transport cause
+// instead of hiding a timeout/reset behind generic unavailability. This adds no
+// retries, telemetry API, peer list, or unbounded error history.
+fn unavailable_with_transport_cause(
+    transport: &RequestContext<'_>,
+    last_io: Option<io::Error>,
+) -> CellErrorV1 {
+    match transport.responses.annotate_error(CellErrorV1::Unavailable) {
+        CellErrorV1::Unavailable => last_io
+            .map(CellErrorV1::Io)
+            .unwrap_or(CellErrorV1::Unavailable),
+        error => error,
+    }
 }
 
 /// A finite configured-peer server. No model code is executed and no CURRENT
@@ -482,6 +551,33 @@ fn request(
     maximum: usize,
     transport: &RequestContext<'_>,
 ) -> CellResultV1<Vec<u8>> {
+    let started = Instant::now();
+    let mut phase = "budget";
+    request_in_phase(peer, kind, digest, maximum, transport, &mut phase).map_err(|error| {
+        if let CellErrorV1::Io(error) = error {
+            let detail: String = error.to_string().chars().take(192).collect();
+            CellErrorV1::Io(io::Error::new(
+                error.kind(),
+                format!(
+                    "cell request peer={peer} kind={kind} phase={phase} elapsed_ms={} os={:?}: {detail}",
+                    started.elapsed().as_millis(),
+                    error.raw_os_error(),
+                ),
+            ))
+        } else {
+            error
+        }
+    })
+}
+
+fn request_in_phase(
+    peer: SocketAddr,
+    kind: u8,
+    digest: CellDigestV1,
+    maximum: usize,
+    transport: &RequestContext<'_>,
+    phase: &mut &'static str,
+) -> CellResultV1<Vec<u8>> {
     if transport.responses.received()? == transport.responses.maximum {
         return Err(io::Error::other("CELL_RESPONSE_BYTE_BUDGET_EXHAUSTED").into());
     }
@@ -492,13 +588,16 @@ fn request(
         })
         .map_err(|_| CellErrorV1::Invalid("connection budget exhausted"))?;
     let deadline = transport.overall.min(Instant::now() + transport.timeout);
+    *phase = "connect";
     let mut stream = TcpStream::connect_timeout(&peer, remaining(deadline)?)?;
     let mut query = [0; 37];
     query[..4].copy_from_slice(b"TCQ1");
     query[4] = kind;
     query[5..].copy_from_slice(&digest);
+    *phase = "request-write";
     write_deadline(&mut stream, &query, deadline)?;
     let mut header = [0; 9];
+    *phase = "response-header";
     read_deadline(
         &mut stream,
         &mut header,
@@ -519,6 +618,7 @@ fn request(
         "response byte bound",
     )?;
     let mut bytes = vec![0; length];
+    *phase = "response-body";
     read_deadline(&mut stream, &mut bytes, deadline, Some(transport.responses))?;
     Ok(bytes)
 }

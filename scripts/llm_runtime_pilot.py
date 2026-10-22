@@ -9,6 +9,7 @@ Torch/Transformers/PEFT are isolated optional runtime dependencies, not node dep
 from __future__ import annotations
 import argparse
 import contextlib
+import contextvars
 import errno
 import gc
 import hashlib
@@ -43,6 +44,21 @@ QUALIFICATIONS = ['public_network_ready', 'authenticated_inference_accepted',
                   'independent_accepted', 'prospective_accepted', 'public_reward_eligible']
 REPOSITORY = Path(__file__).resolve().parents[1]
 FAMILY_PATH = REPOSITORY/'config/pon/model-family-smollm2-135m-v1.json'
+_RSS_READ_TRACE = contextvars.ContextVar('llm-owned-rss-read-trace', default=None)
+_RSS_OWNER_CONTEXT = contextvars.ContextVar('llm-owned-rss-owner', default=None)
+_RSS_EXIT_OBSERVATION = contextvars.ContextVar('llm-owned-rss-exit-observation', default=None)
+
+
+def exit_observation_profile():
+    from llm_runtime_exit_observation import PROFILE, MAX_DRAIN_NS
+    return dict(profile=PROFILE, maximum_drain_ns=MAX_DRAIN_NS,
+                observer_source_sha256=file_sha(REPOSITORY/'scripts/llm_runtime_exit_observation.py'),
+                diagnostic_source_sha256=file_sha(REPOSITORY/'scripts/llm_runtime_rss_diagnostics.py'))
+
+
+def validate_exit_observation_profile(profile):
+    require(type(profile) is dict and profile == exit_observation_profile(), 'RUNTIME_EXIT_OBSERVER_BINDING')
+    return profile
 
 
 def canonical(value):
@@ -174,11 +190,12 @@ def tasks():
     return sorted(rows, key=lambda row: row['id'])
 
 
-def experiment_plan(materials, *, backend='cpu', threads=4, steps=10):
+def experiment_plan(materials, *, backend='cpu', threads=4, steps=10, exit_observation='strict-v1'):
     require(backend in ('cpu', 'cuda', 'rocm', 'mps'), 'RUNTIME_BACKEND')
     require(type(threads) is int and 1 <= threads <= 8 and type(steps) is int and 1 <= steps <= 100,
             'RUNTIME_LIMIT')
-    return dict(schema='llm-runtime-public-pilot-plan-v1', model=MODEL, revision=REVISION,
+    require(exit_observation in ('strict-v1', 'linux-owned-exit-cleanup-v2'), 'RUNTIME_EXIT_OBSERVER_PROFILE')
+    plan = dict(schema='llm-runtime-public-pilot-plan-v1', model=MODEL, revision=REVISION,
                 model_family_profile='smollm2-135m-cpu-dev-v1',
                 model_family_configuration_sha256=file_sha(FAMILY_PATH),
                 snapshot=identity(materials), runtime_source=file_sha(__file__), backend=backend,
@@ -195,10 +212,18 @@ def experiment_plan(materials, *, backend='cpu', threads=4, steps=10):
                 measurement_scope='process-CPU-wall-peakRSS-Linux-IO-and-profiler-supported-FLOPs',
                 source_scope='operator-controlled-public-fixtures-no-future-independent-custody',
                 **{name: False for name in QUALIFICATIONS})
+    if exit_observation != 'strict-v1':
+        plan.update(schema='llm-runtime-public-pilot-plan-v2', exit_observation=exit_observation_profile())
+    return plan
 
 
 def validate_plan(plan):
-    require(plan['schema'] == 'llm-runtime-public-pilot-plan-v1' and
+    if plan['schema'] == 'llm-runtime-public-pilot-plan-v2':
+        validate_exit_observation_profile(plan['exit_observation'])
+    else:
+        require(plan['schema'] == 'llm-runtime-public-pilot-plan-v1' and
+                'exit_observation' not in plan, 'RUNTIME_EXIT_OBSERVER_PROFILE')
+    require(
             plan['backend'] in ('cpu','cuda','rocm','mps') and
             type(plan['threads']) is int and 1 <= plan['threads'] <= 8 and
             type(plan['generation_tokens']) is int and 1 <= plan['generation_tokens'] <= 16 and
@@ -241,11 +266,26 @@ def read_io():
 
 def current_rss(pid=None):
     """Observe only self or a uniquely identified child in this procfs PID view."""
+    trace = _RSS_READ_TRACE.get()
+
+    def unavailable(reason, error=None):
+        if trace is not None and 'reason' not in trace:
+            trace.update(reason=reason, error_type=type(error).__name__ if error else None,
+                         error_errno=getattr(error, 'errno', None))
+        return None
+
     try:
         def read(path):
-            with path.open() as source:
-                value = source.read(65537)
+            try:
+                with path.open() as source:
+                    value = source.read(65537)
+            except OSError as error:
+                kind = ('parent-status' if str(path) == '/proc/self/status' else
+                        'pidfd-fdinfo' if '/fdinfo/' in str(path) else 'child-status')
+                unavailable(kind + '-read', error)
+                raise
             if len(value) > 65536:
+                unavailable('proc-read-bound')
                 raise ValueError('proc observation bound')
             return value
 
@@ -253,16 +293,20 @@ def current_rss(pid=None):
             fields = {}
             for row in read(path).splitlines():
                 key, separator, value = row.partition(':')
-                if separator and key in ('Pid', 'PPid', 'NSpid', 'VmRSS'):
+                if separator and key in ('Pid', 'PPid', 'Tgid', 'NSpid', 'NStgid', 'State', 'Threads', 'VmRSS'):
                     if key in fields:
+                        unavailable('duplicate-proc-identity')
                         raise ValueError('duplicate proc identity')
                     fields[key] = value.split()
             return fields
 
         def rss(fields):
+            if 'VmRSS' not in fields:
+                unavailable('vmrss-missing')
             value, unit = fields['VmRSS']
             value = int(value)
             if unit != 'kB' or value <= 0:
+                unavailable('vmrss-invalid')
                 raise ValueError('invalid proc RSS')
             return value * 1024
 
@@ -271,15 +315,21 @@ def current_rss(pid=None):
         parent_namespace = list(map(int, parent['NSpid']))
         if (not parent_namespace or parent_namespace[0] != parent_pid or
                 parent_namespace[-1] != os.getpid()):
-            return None
+            return unavailable('parent-namespace-mismatch')
         if pid is None or pid == os.getpid():
             return rss(parent)
         if type(pid) is not int or pid <= 0:
-            return None
+            return unavailable('invalid-child-pid')
         # The procfs mount may show an outer PID namespace. A pidfd opened for
         # the known Popen child gives an owned, kernel-bound mapping; never scan
         # arbitrary /proc PIDs or signal the mapped procfs identifier.
-        descriptor = os.pidfd_open(pid, 0)
+        owner = _RSS_OWNER_CONTEXT.get()
+        borrowed = owner is not None and owner[0] == pid
+        try:
+            descriptor = owner[1] if borrowed else os.pidfd_open(pid, 0)
+        except (OSError, AttributeError) as error:
+            unavailable('pidfd-open', error)
+            raise
         try:
             identity_path = Path(f'/proc/self/fdinfo/{descriptor}')
             identity = status(identity_path)
@@ -288,19 +338,36 @@ def current_rss(pid=None):
             coordinate = len(parent_namespace) - 1
             if (visible_pid <= 0 or len(namespace) <= coordinate or
                     namespace[0] != visible_pid or namespace[coordinate] != pid):
-                return None
+                return unavailable('pidfd-namespace-mismatch')
             fields = status(Path(f'/proc/{visible_pid}/status'))
+            missing_sample_ns = time.monotonic_ns() if 'VmRSS' not in fields else None
             child_pid, = map(int, fields['Pid'])
             child_parent, = map(int, fields['PPid'])
             if (child_pid != visible_pid or child_parent != parent_pid or
                     list(map(int, fields['NSpid'])) != namespace or
                     status(identity_path) != identity):
-                return None
+                return unavailable('child-or-pidfd-identity-mismatch')
+            if missing_sample_ns is not None and borrowed and fields.get('State', [None])[0] == 'Z':
+                # Classification is completed within this missing sample, using
+                # the supervisor's original pidfd and held task-directory FDs.
+                # A later post-gap diagnostic can never grant this authority.
+                try:
+                    from llm_runtime_exit_observation import ExitOnlyObservation
+                    observation = ExitOnlyObservation(pid, descriptor, owner[2], fields, missing_sample_ns)
+                    _RSS_EXIT_OBSERVATION.set(observation)
+                except (OSError, AttributeError, KeyError, ValueError, TypeError) as error:
+                    if trace is not None:
+                        trace['exit_classification_error'] = type(error).__name__
             return rss(fields)
         finally:
-            os.close(descriptor)
-    except (OSError, AttributeError, KeyError, ValueError):
-        return None
+            try:
+                if not borrowed:
+                    os.close(descriptor)
+            except OSError as error:
+                unavailable('pidfd-close', error)
+                raise
+    except (OSError, AttributeError, KeyError, ValueError) as error:
+        return unavailable('malformed-or-unavailable-proc', error)
 
 
 def synchronize(torch, backend):
@@ -1116,12 +1183,49 @@ def reconcile_unobserved_exit(process, absolute_wall_deadline_ns, diagnostic=Non
     return bool(ready) and state == 'terminal'
 
 
-def supervise(command, directory, budget):
+def _drain_exit_cleanup(process, observation, owner_token, start, budget):
+    """Retain the reservation while waiting for exact wait4, never report RSS=0."""
+    from llm_runtime_exit_observation import ExitOnlyObservation, MAX_DRAIN_NS
+    record = dict(outcome='failed', snapshots=[], missing_sample_ns=observation.sample_started_ns)
+    deadline = min(start + budget['wall_seconds'] * 10**9,
+                   observation.sample_started_ns + MAX_DRAIN_NS)
+    try:
+        require(type(observation) is ExitOnlyObservation and
+                observation.belongs_to(process.pid, process.termination_fd, owner_token),
+                'RUNTIME_EXIT_OBSERVER_OWNER')
+        record['snapshots'].append(observation.record)
+        while time.monotonic_ns() < deadline:
+            state = process.reap()
+            if state == 'terminal':
+                observed_ns = time.monotonic_ns()
+                require(process.observation_error is None and process.waited_peak_rss_bytes is not None and
+                        process.waited_cpu_ns is not None and observed_ns <= deadline,
+                        'RUNTIME_EXIT_WAIT4_RECEIPT')
+                record.update(outcome='terminal-wait4', completed_ns=observed_ns)
+                return None, record
+            require(state == 'live' and process.observation_error is None, 'RUNTIME_EXIT_WAIT4_UNKNOWN')
+            record['snapshots'].append(observation.recheck())
+            if time.monotonic_ns() >= deadline:
+                break
+            time.sleep(min(0.001, max(0, (deadline-time.monotonic_ns())/10**9)))
+        record['error'] = 'exit-cleanup-deadline'
+    except (OSError, AttributeError, KeyError, ValueError, TypeError) as error:
+        record['error'] = type(error).__name__
+    record['completed_ns'] = time.monotonic_ns()
+    return 'rss-exit-cleanup-observation-unavailable', record
+
+
+def supervise(command, directory, budget, *, exit_observation=None):
     """Kill only this fresh child when its measured wall/RSS budget is exceeded."""
+    if exit_observation is not None:
+        validate_exit_observation_profile(exit_observation)
     directory = Path(directory); directory.mkdir(mode=0o700)
     start, high, reason = time.monotonic_ns(), 0, None
     wall_deadline_ns = start + round(budget['wall_seconds'] * 10**9)
     rss_gaps = []
+    rss_gap_diagnostic = None
+    exit_cleanup_observation = None
+    owner_token = object()
     observer_cpu_start = time.process_time_ns()
     with (directory/'process.log').open('w') as log:
         try:
@@ -1140,26 +1244,63 @@ def supervise(command, directory, budget):
                           observer_cpu_ns=time.process_time_ns()-observer_cpu_start,
                           cpu_scope='No child spawned; no waited-child CPU observation',
                           memory_scope='No child spawned; no RSS observation', outcome='failed')
+            if exit_observation is not None:
+                result['exit_observation_profile'] = exit_observation
             save(directory/'supervisor.json', result)
             return result
         try:
             while process.observation_error is None and process.reap() == 'live':
-                rss = current_rss(process.pid)
+                sample_trace = {}
+                trace_token = _RSS_READ_TRACE.set(sample_trace)
+                owner_context = ((process.pid, process.termination_fd, owner_token)
+                                 if exit_observation is not None else None)
+                owner_context_token = _RSS_OWNER_CONTEXT.set(owner_context)
+                exit_context_token = _RSS_EXIT_OBSERVATION.set(None)
+                try:
+                    rss = current_rss(process.pid)
+                    exit_sample = _RSS_EXIT_OBSERVATION.get()
+                finally:
+                    _RSS_READ_TRACE.reset(trace_token)
+                    _RSS_OWNER_CONTEXT.reset(owner_context_token)
+                    _RSS_EXIT_OBSERVATION.reset(exit_context_token)
                 high = max(high, rss or 0)
-                if (time.monotonic_ns()-start) / 10**9 > budget['wall_seconds']:
-                    reason = 'wall-budget-exceeded'
-                elif rss is None:
-                    # Only an exact terminal wait4 receipt can distinguish an
-                    # exit race from observation loss while the child is live.
-                    gap = dict(at_wall_ns=time.monotonic_ns()-start,
-                               before=owned_rss_diagnostic(process), reconciliation={})
-                    if not reconcile_unobserved_exit(process, wall_deadline_ns, gap['reconciliation']):
-                        reason = ('wall-budget-exceeded' if time.monotonic_ns() >= wall_deadline_ns
-                                  else 'rss-observation-unavailable')
-                    gap['after'] = owned_rss_diagnostic(process)
-                    rss_gaps.append(gap)
-                elif rss > budget['rss_bytes']:
-                    reason = 'rss-budget-exceeded'
+                try:
+                    if (time.monotonic_ns()-start) / 10**9 > budget['wall_seconds']:
+                        reason = 'wall-budget-exceeded'
+                    elif rss is None:
+                        if exit_observation is not None:
+                            from llm_runtime_exit_observation import ExitOnlyObservation
+                            if type(exit_sample) is ExitOnlyObservation:
+                                # The explicit V2 observer keeps its original
+                                # 100ms cap. Its failure cannot fall through to
+                                # the separate held-pidfd terminal proof path.
+                                reason, exit_cleanup_observation = _drain_exit_cleanup(
+                                    process, exit_sample, owner_token, start, budget)
+                            elif process.reap() != 'terminal':
+                                reason = 'rss-observation-unavailable'
+                        else:
+                            # Only the owned identity's positive irreversible
+                            # exit proof may wait within the original wall
+                            # budget. Unknown RSS is never converted to zero.
+                            gap = dict(at_wall_ns=time.monotonic_ns()-start,
+                                       before=owned_rss_diagnostic(process), reconciliation={})
+                            if not reconcile_unobserved_exit(process, wall_deadline_ns, gap['reconciliation']):
+                                reason = ('wall-budget-exceeded' if time.monotonic_ns() >= wall_deadline_ns
+                                          else 'rss-observation-unavailable')
+                            gap['after'] = owned_rss_diagnostic(process)
+                            rss_gaps.append(gap)
+                        if reason:
+                            from llm_runtime_rss_diagnostics import owned_child_rss_gap
+                            rss_gap_diagnostic = owned_child_rss_gap(process.pid, process.termination_fd)
+                            rss_gap_diagnostic['missing_sample_detail'] = sample_trace or {'reason': 'observer-returned-none-without-detail'}
+                    elif rss > budget['rss_bytes']:
+                        reason = 'rss-budget-exceeded'
+                finally:
+                    if exit_sample is not None:
+                        try:
+                            exit_sample.close()
+                        except (OSError, AttributeError, TypeError, ValueError):
+                            reason = reason or 'rss-exit-cleanup-close-unavailable'
                 if reason or process.reaped:
                     break
                 time.sleep(0.05)
@@ -1182,11 +1323,19 @@ def supervise(command, directory, budget):
                   child_spawned=True, cleanup_method=process.cleanup_method,
                   waited_child_observation_error=process.observation_error,
                   rss_observation_gaps=rss_gaps,
+                  terminal_reconciliation_profile=('explicit-linux-owned-exit-cleanup-v2' if exit_observation is not None
+                                                   else 'linux-held-pidfd-irreversible-exit-v1'),
                   child_cpu_ns=process.waited_cpu_ns,
                   observer_cpu_ns=time.process_time_ns()-observer_cpu_start,
                   cpu_scope='Exact owned-child Linux wait4 user-plus-system CPU; includes inherited waited-descendant accounting',
                   memory_scope='sampled_peak_rss_bytes is direct-child 50ms RSS; waited_child_peak_rss_bytes is exact owned-child Linux wait4 ru_maxrss in KiB times 1024, a maximum single-process high-water with inherited waited-descendant accounting; neither is simultaneous process-tree RSS',
                   outcome='success' if process.returncode == 0 and reason is None else 'failed')
+    if rss_gap_diagnostic is not None:
+        result['rss_gap_diagnostic'] = rss_gap_diagnostic
+    if exit_cleanup_observation is not None:
+        result['exit_cleanup_observation'] = exit_cleanup_observation
+    if exit_observation is not None:
+        result['exit_observation_profile'] = exit_observation
     save(directory/'supervisor.json', result)
     if not process.reap_resolved:
         # Preserve a failed receipt and the handle. The CLI cannot claim general
@@ -1225,7 +1374,8 @@ def run(args):
     directory.mkdir(mode=0o700, parents=False, exist_ok=False)
     manifest, _ = verify_materials(args.materials)
     verify_family(read_json(FAMILY_PATH))
-    plan = validate_plan(experiment_plan(manifest, backend=args.backend, threads=args.threads, steps=args.steps))
+    plan = validate_plan(experiment_plan(manifest, backend=args.backend, threads=args.threads, steps=args.steps,
+                                        exit_observation=args.exit_observation_profile))
     save(directory/'experiment-plan.json', plan)
     save(directory/'experiment-freeze.json', dict(plan=identity(plan), frozen_before_candidate_training=True,
         scope='same-operator-local-freeze-no-independent-release', utc_ns=time.time_ns()))
@@ -1237,7 +1387,8 @@ def run(args):
             path_plan = directory/(name+'-plan.json'); save(path_plan, phase_plan)
         command = base+['--plan', str(path_plan), '--output', str(path), '--phase', phase_name, '--role', role]
         if artifact is not None: command += ['--artifact', str(artifact)]
-        result = supervise(command, path, plan['training_budget' if phase_name=='train' else 'inference_budget'])
+        result = supervise(command, path, plan['training_budget' if phase_name=='train' else 'inference_budget'],
+                           exit_observation=plan.get('exit_observation'))
         records.append(dict(name=name, **result)); save(directory/'phase-outcomes.json', records)
         print(json.dumps(dict(phase=name, **result)), flush=True)
         require(result['outcome'] == 'success', 'RUNTIME_REQUIRED_PHASE_ABORT:'+name)
@@ -1307,6 +1458,8 @@ def main():
     runner.add_argument('--materials', required=True); runner.add_argument('--output', required=True)
     runner.add_argument('--backend', choices=['cpu','cuda','rocm','mps'], default='cpu')
     runner.add_argument('--threads', type=int, default=4); runner.add_argument('--steps', type=int, default=10)
+    runner.add_argument('--exit-observation-profile', choices=['strict-v1', 'linux-owned-exit-cleanup-v2'],
+                        default='strict-v1')
     worker = commands.add_parser('_child')
     for name in ('materials','output','plan','phase','role'): worker.add_argument('--'+name, required=True)
     worker.add_argument('--artifact')
@@ -1317,3 +1470,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+

@@ -42,9 +42,14 @@ adapter therefore requires both a budget and claim to reserve that whole origina
 amount. It does not invent fractional task or mining-reward payments. A reward
 ID binds parent, height and miner while its amount also includes the block fees;
 a sibling branch with different fees cannot authorize work under an old whole
-amount. Release and quota claims retain
-their ordinary native allocation and consumer-consent checks. A task already in
-`receipt` status must bind its nonzero native `output` to the claim subject both
+amount. Release allocation proofs and quota consumer-consent signatures are
+verified by M06 when the ordinary tag 9 or tag 11 transaction executes; the real
+Node payment reader reexecutes that transition before recording the payment.
+Reserving a release or quota claim, or appending its external intent, does not
+itself verify the contribution's allocation path or obtain consumer permission
+for a future service. `New` records durable local admission of that intent; it
+is not that service authorization. A task already in `receipt` status must bind
+its nonzero native `output` to the claim subject both
 at reservation and before the first external intent. The native release claim
 map is also rechecked before that intent, not merely at initial reservation.
 A quota source ID commits its original units, parties, deadline and parameter
@@ -58,6 +63,18 @@ measurement charges the whole original reservation. A completed job cannot
 change its recorded cost on retry. Resource numbers do not themselves prove a
 GPU lease, allocated storage extent, packet transfer or model improvement; those
 facts belong to the corresponding worker or storage owner.
+
+The implemented physical bridge in
+[storage_service.rs](../../../../trillionnium/crates/trnm-pon-node/src/store/storage_service.rs)
+accepts only `Task` funding at the entry to both `retain_native_cell` and
+`repair_native_cell`, before capacity reservation or physical work. Release and
+quota claims cannot enter those dispatch paths. The six-lane accounting and
+payment-observation interfaces do not establish six complete physical service
+or payout pipelines. A future release or quota worker must authenticate its
+request-specific allocation entitlement or consumer consent before an external
+effect; `reserve` and `begin_effect` are insufficient for that authorization.
+Durable intent admission also does not lock native escrow, demonstrate future
+retention byte-time, or protect against restoration of the entire host journal.
 
 ## Actual payments and native cancellation
 

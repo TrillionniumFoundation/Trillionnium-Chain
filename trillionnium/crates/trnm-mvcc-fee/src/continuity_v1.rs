@@ -13,7 +13,10 @@ pub const MAINTENANCE_KEY: &str = "consensus-maintenance-v1";
 pub const MAX_KEYS: usize = 65_536;
 
 pub fn enabled(cfg: &Config) -> bool {
-    cfg.task_profile() == PROFILE
+    matches!(
+        cfg.task_profile(),
+        PROFILE | crate::growth_profile_v2::PROFILE
+    )
 }
 
 pub(crate) fn configure(params: &mut Value, policy: &str) -> Result<()> {
@@ -335,8 +338,26 @@ pub(crate) fn check_state_with_account_access_and_monetary(
         return Ok(());
     }
     check_maintenance(state, maintenance_task()?, cfg)?;
-    if capacity_with_sources(state, height, cfg, account_access, monetary)?.required_keys > MAX_KEYS
-    {
+    let capacity = capacity_with_sources(state, height, cfg, account_access, monetary)?;
+    if crate::growth_profile_v2::enabled(cfg) {
+        let accounts = state
+            .keys()
+            .filter(|key| key.starts_with("account:"))
+            .count();
+        let working = state.len().checked_sub(accounts).ok_or("RANGE")?;
+        let required_accounts = accounts
+            .checked_add(capacity.credit_account_reserve)
+            .ok_or("RANGE")?;
+        let required_working = working
+            .checked_add(capacity.archive_reserve)
+            .and_then(|count| count.checked_add(capacity.reward_queue_reserve))
+            .ok_or("RANGE")?;
+        if required_accounts > crate::growth_profile_v2::MAX_PERMANENT_ACCOUNTS
+            || required_working > crate::growth_profile_v2::MAX_WORKING_KEYS
+        {
+            return Err("STATE_CAPACITY");
+        }
+    } else if capacity.required_keys > MAX_KEYS {
         return Err("STATE_CAPACITY");
     }
     Ok(())

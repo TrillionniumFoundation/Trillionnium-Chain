@@ -467,20 +467,20 @@ fn funding(
     })
 }
 
-#[derive(Clone, Debug, BorshSerialize, BorshDeserialize)]
+#[derive(Clone, Debug, Eq, PartialEq, BorshSerialize, BorshDeserialize)]
 struct Budget {
     policy: NativeBudgetPolicyV1,
     funding: FundingPin,
     closed: bool,
 }
-#[derive(Clone, Debug, BorshSerialize, BorshDeserialize)]
+#[derive(Clone, Debug, Eq, PartialEq, BorshSerialize, BorshDeserialize)]
 struct Effect {
     operation: NativeBudgetHashV1,
     effect: NativeBudgetHashV1,
     window: Option<(u64, u64)>,
     receipt: Option<NativeBudgetHashV1>,
 }
-#[derive(Clone, Debug, BorshSerialize, BorshDeserialize)]
+#[derive(Clone, Debug, Eq, PartialEq, BorshSerialize, BorshDeserialize)]
 struct Claim {
     specification: NativeBudgetClaimV1,
     outcome: Option<NativeResourceOutcomeV1>,
@@ -524,7 +524,7 @@ pub struct NativeBudgetStoreV1 {
     configuration: NativeBudgetConfigV1,
 }
 enum Update<T> {
-    Append(Event, T),
+    Append(Box<Event>, T),
     Replay(T),
 }
 fn encoded<T: BorshSerialize>(value: &T) -> NativeBudgetResultV1<Vec<u8>> {
@@ -544,10 +544,57 @@ fn fixed(bytes: Vec<u8>) -> NativeBudgetResultV1<NativeBudgetHashV1> {
         .try_into()
         .map_err(|_| NativeBudgetErrorV1::Invalid("BUDGET_JOURNAL_ROOT"))
 }
+fn check_store_schema(connection: &Connection) -> NativeBudgetResultV1<()> {
+    let application: i64 = connection.pragma_query_value(None, "application_id", |r| r.get(0))?;
+    let version: i64 = connection.pragma_query_value(None, "user_version", |r| r.get(0))?;
+    require(
+        application == APPLICATION_ID && version == 1,
+        "BUDGET_FOREIGN_DATABASE",
+    )?;
+    for (name, expected) in [
+        ("native_budget_meta_v1", META_SQL),
+        ("native_budget_events_v1", EVENT_SQL),
+    ] {
+        let actual: Option<String> = connection
+            .query_row(
+                "SELECT sql FROM sqlite_master WHERE type='table' AND name=?1",
+                [name],
+                |r| r.get(0),
+            )
+            .optional()?;
+        require(actual.as_deref() == Some(expected), "BUDGET_STORE_SCHEMA")?;
+    }
+    let objects: u64 = connection.query_row(
+        "SELECT count(*) FROM sqlite_master WHERE name NOT GLOB 'sqlite_*'",
+        [],
+        |r| r.get(0),
+    )?;
+    require(objects == 2, "BUDGET_STORE_SCHEMA")
+}
+/// A caller-local readback expectation, never stored state or a new hash domain.
+/// A valid concurrent append may extend it; the exact committed event and the
+/// complete state derived at its prefix must still be present in one snapshot.
+#[derive(Clone, Copy)]
+struct JournalReadback<'a> {
+    sequence: u64,
+    root: NativeBudgetHashV1,
+    payload: Option<&'a [u8]>,
+    state: &'a BudgetState,
+}
 fn load(
     connection: &Connection,
     configuration: &NativeBudgetConfigV1,
 ) -> NativeBudgetResultV1<(BudgetState, u64, NativeBudgetHashV1)> {
+    load_checked(connection, configuration, None)
+}
+fn load_checked(
+    connection: &Connection,
+    configuration: &NativeBudgetConfigV1,
+    readback: Option<JournalReadback<'_>>,
+) -> NativeBudgetResultV1<(BudgetState, u64, NativeBudgetHashV1)> {
+    // A live handle must not turn schema/namespace changes made after open into
+    // permission to write or an authoritative same-ID replay.
+    check_store_schema(connection)?;
     let (bytes, expected_count, expected_root): (Option<Vec<u8>>, u64, Vec<u8>) = connection.query_row(
         "SELECT CASE WHEN length(configuration)<=16384 THEN configuration ELSE NULL END,sequence,root FROM native_budget_meta_v1 WHERE singleton=1", [],
         |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?)))?;
@@ -562,6 +609,14 @@ fn load(
     let mut state = BudgetState::default();
     let mut sequence = 0;
     let mut previous = [0; 32];
+    let mut readback_seen = readback.is_none();
+    if let Some(expected) = readback.filter(|expected| expected.sequence == 0) {
+        require(
+            expected.root == previous && expected.payload.is_none() && expected.state == &state,
+            "BUDGET_JOURNAL_READBACK",
+        )?;
+        readback_seen = true;
+    }
     let mut query = connection.prepare("SELECT sequence,CASE WHEN length(payload)<=16384 THEN payload ELSE NULL END,root FROM native_budget_events_v1 ORDER BY sequence")?;
     let mut rows = query.query([])?;
     while let Some(row) = rows.next()? {
@@ -577,12 +632,24 @@ fn load(
         let event: Event = borsh::from_slice(&payload)?;
         require(encoded(&event)? == payload, "BUDGET_JOURNAL_ENCODING")?;
         state.apply(&event, configuration)?;
+        if let Some(expected) = readback.filter(|expected| expected.sequence == sequence) {
+            require(
+                root == expected.root
+                    && expected.state == &state
+                    && expected
+                        .payload
+                        .is_none_or(|exact| exact == payload.as_slice()),
+                "BUDGET_JOURNAL_READBACK",
+            )?;
+            readback_seen = true;
+        }
         previous = root;
     }
     require(
         sequence == expected_count && fixed(expected_root)? == previous,
         "BUDGET_JOURNAL_HEAD",
     )?;
+    require(readback_seen, "BUDGET_JOURNAL_READBACK")?;
     Ok((state, sequence, previous))
 }
 // Standalone readers must pin one SQLite snapshot too: reading the head and
@@ -592,10 +659,28 @@ fn load_snapshot(
     connection: &Connection,
     configuration: &NativeBudgetConfigV1,
 ) -> NativeBudgetResultV1<(BudgetState, u64, NativeBudgetHashV1)> {
+    load_snapshot_checked(connection, configuration, None)
+}
+fn load_snapshot_checked(
+    connection: &Connection,
+    configuration: &NativeBudgetConfigV1,
+    readback: Option<JournalReadback<'_>>,
+) -> NativeBudgetResultV1<(BudgetState, u64, NativeBudgetHashV1)> {
     let transaction = connection.unchecked_transaction()?;
-    let state = load(&transaction, configuration)?;
+    let state = load_checked(&transaction, configuration, readback)?;
     transaction.commit()?;
     Ok(state)
+}
+fn check_exact_readback(
+    connection: &Connection,
+    configuration: &NativeBudgetConfigV1,
+    expected: JournalReadback<'_>,
+) -> NativeBudgetResultV1<()> {
+    let (_, sequence, root) = load_checked(connection, configuration, Some(expected))?;
+    require(
+        sequence == expected.sequence && root == expected.root,
+        "BUDGET_JOURNAL_READBACK",
+    )
 }
 impl NativeBudgetStoreV1 {
     pub fn open(path: &Path, configuration: NativeBudgetConfigV1) -> NativeBudgetResultV1<Self> {
@@ -618,12 +703,13 @@ impl NativeBudgetStoreV1 {
         let mut connection = Connection::open(path)?;
         connection.busy_timeout(Duration::from_secs(5))?;
         connection.pragma_update(None, "trusted_schema", false)?;
+        connection.pragma_update(None, "synchronous", "FULL")?;
         let application: i64 =
             connection.pragma_query_value(None, "application_id", |r| r.get(0))?;
         let version: i64 = connection.pragma_query_value(None, "user_version", |r| r.get(0))?;
         if application == 0 && version == 0 {
             let count: u64 = connection.query_row(
-                "SELECT count(*) FROM sqlite_master WHERE name NOT LIKE 'sqlite_%'",
+                "SELECT count(*) FROM sqlite_master WHERE name NOT GLOB 'sqlite_*'",
                 [],
                 |r| r.get(0),
             )?;
@@ -632,12 +718,26 @@ impl NativeBudgetStoreV1 {
                 connection.transaction_with_behavior(TransactionBehavior::Immediate)?;
             transaction.execute_batch(META_SQL)?;
             transaction.execute_batch(EVENT_SQL)?;
-            transaction.execute(
-                "INSERT INTO native_budget_meta_v1 VALUES(1,?1,0,?2)",
-                params![encoded(&configuration)?, [0u8; 32].as_slice()],
+            require(
+                transaction.execute(
+                    "INSERT INTO native_budget_meta_v1 VALUES(1,?1,0,?2)",
+                    params![encoded(&configuration)?, [0u8; 32].as_slice()],
+                )? == 1,
+                "BUDGET_JOURNAL_WRITE",
             )?;
             transaction.pragma_update(None, "application_id", APPLICATION_ID)?;
             transaction.pragma_update(None, "user_version", 1)?;
+            let empty = BudgetState::default();
+            check_exact_readback(
+                &transaction,
+                &configuration,
+                JournalReadback {
+                    sequence: 0,
+                    root: [0; 32],
+                    payload: None,
+                    state: &empty,
+                },
+            )?;
             transaction.commit()?;
         } else {
             require(
@@ -645,27 +745,8 @@ impl NativeBudgetStoreV1 {
                 "BUDGET_FOREIGN_DATABASE",
             )?;
         }
-        for (name, expected) in [
-            ("native_budget_meta_v1", META_SQL),
-            ("native_budget_events_v1", EVENT_SQL),
-        ] {
-            let actual: Option<String> = connection
-                .query_row(
-                    "SELECT sql FROM sqlite_master WHERE type='table' AND name=?1",
-                    [name],
-                    |r| r.get(0),
-                )
-                .optional()?;
-            require(actual.as_deref() == Some(expected), "BUDGET_STORE_SCHEMA")?;
-        }
-        let objects: u64 = connection.query_row(
-            "SELECT count(*) FROM sqlite_master WHERE name NOT LIKE 'sqlite_%'",
-            [],
-            |r| r.get(0),
-        )?;
-        require(objects == 2, "BUDGET_STORE_SCHEMA")?;
+        check_store_schema(&connection)?;
         connection.pragma_update(None, "journal_mode", "WAL")?;
-        connection.pragma_update(None, "synchronous", "FULL")?;
         load_snapshot(&connection, &configuration)?;
         Ok(Self {
             connection,
@@ -681,8 +762,20 @@ impl NativeBudgetStoreV1 {
             .transaction_with_behavior(TransactionBehavior::Immediate)?;
         let (mut state, sequence, previous) = load(&transaction, &self.configuration)?;
         match make(&state)? {
-            Update::Replay(value) => Ok(value),
+            Update::Replay(value) => {
+                let expected = JournalReadback {
+                    sequence,
+                    root: previous,
+                    payload: None,
+                    state: &state,
+                };
+                check_exact_readback(&transaction, &self.configuration, expected)?;
+                transaction.commit()?;
+                load_snapshot_checked(&self.connection, &self.configuration, Some(expected))?;
+                Ok(value)
+            }
             Update::Append(event, value) => {
+                let event = *event;
                 state.apply(&event, &self.configuration)?;
                 let payload = encoded(&event)?;
                 require(
@@ -695,15 +788,33 @@ impl NativeBudgetStoreV1 {
                     "BUDGET_JOURNAL_LIMIT",
                 )?;
                 let root = event_root(previous, sequence, &payload);
-                transaction.execute(
-                    "INSERT INTO native_budget_events_v1 VALUES(?1,?2,?3)",
-                    params![sequence, payload, root.as_slice()],
+                require(
+                    transaction.execute(
+                        "INSERT INTO native_budget_events_v1 VALUES(?1,?2,?3)",
+                        params![sequence, payload, root.as_slice()],
+                    )? == 1,
+                    "BUDGET_JOURNAL_WRITE",
                 )?;
-                transaction.execute(
-                    "UPDATE native_budget_meta_v1 SET sequence=?1,root=?2 WHERE singleton=1",
-                    params![sequence, root.as_slice()],
+                require(
+                    transaction.execute(
+                        "UPDATE native_budget_meta_v1 SET sequence=?1,root=?2 WHERE singleton=1 AND sequence=?3 AND root=?4",
+                        params![sequence, root.as_slice(), sequence - 1, previous.as_slice()],
+                    )? == 1,
+                    "BUDGET_JOURNAL_WRITE",
                 )?;
+                let expected = JournalReadback {
+                    sequence,
+                    root,
+                    payload: Some(&payload),
+                    state: &state,
+                };
+                check_exact_readback(&transaction, &self.configuration, expected)?;
                 transaction.commit()?;
+                // Only an actual committed readback permits New. If the read
+                // fails after a successful commit, return uncertainty; a later
+                // retry reloads the real intent and can only reconcile it.
+                // No in-memory state is retained or advanced on the error path.
+                load_snapshot_checked(&self.connection, &self.configuration, Some(expected))?;
                 Ok(value)
             }
         }
@@ -725,11 +836,11 @@ impl NativeBudgetStoreV1 {
             )?;
             let funding = funding(&observed, policy.resource_cap.lane())?;
             Ok(Update::Append(
-                Event::Open {
+                Box::new(Event::Open {
                     anchor: observed.anchor,
                     funding,
                     policy,
-                },
+                }),
                 NativeBudgetReplayV1::New,
             ))
         })
@@ -759,11 +870,11 @@ impl NativeBudgetStoreV1 {
             )?;
             let funding = funding(&observed, policy.resource_cap.lane())?;
             Ok(Update::Append(
-                Event::Reserve {
+                Box::new(Event::Reserve {
                     anchor: observed.anchor,
                     funding,
                     claim,
-                },
+                }),
                 NativeBudgetReplayV1::New,
             ))
         })
@@ -823,14 +934,14 @@ impl NativeBudgetStoreV1 {
             )?;
             let funding = funding(&observed, policy.resource_cap.lane())?;
             Ok(Update::Append(
-                Event::Intent {
+                Box::new(Event::Intent {
                     anchor: observed.anchor,
                     funding,
                     claim,
                     operation,
                     effect,
                     window,
-                },
+                }),
                 NativeBudgetReplayV1::New,
             ))
         })
@@ -856,11 +967,11 @@ impl NativeBudgetStoreV1 {
                 return Ok(Update::Replay(NativeBudgetReplayV1::Done));
             }
             Ok(Update::Append(
-                Event::Complete {
+                Box::new(Event::Complete {
                     claim,
                     operation,
                     receipt: target_receipt,
-                },
+                }),
                 NativeBudgetReplayV1::New,
             ))
         })
@@ -893,11 +1004,11 @@ impl NativeBudgetStoreV1 {
                 return Ok(Update::Replay(NativeBudgetReplayV1::Done));
             }
             Ok(Update::Append(
-                Event::Resources {
+                Box::new(Event::Resources {
                     claim,
                     outcome,
                     consumed: actual,
-                },
+                }),
                 NativeBudgetReplayV1::New,
             ))
         })
@@ -931,7 +1042,7 @@ impl NativeBudgetStoreV1 {
                 "BUDGET_NATIVE_PAYMENT_BINDING",
             )?;
             Ok(Update::Append(
-                Event::Payment { claim, observed },
+                Box::new(Event::Payment { claim, observed }),
                 NativeBudgetReplayV1::New,
             ))
         })
@@ -952,10 +1063,10 @@ impl NativeBudgetStoreV1 {
                 "BUDGET_NATIVE_SOURCE_BINDING",
             )?;
             Ok(Update::Append(
-                Event::Close {
+                Box::new(Event::Close {
                     anchor: observed.anchor,
                     budget,
-                },
+                }),
                 NativeBudgetReplayV1::New,
             ))
         })
@@ -1003,7 +1114,7 @@ impl NativeBudgetStoreV1 {
 
 #[cfg(test)]
 mod tests;
-#[derive(Default)]
+#[derive(Clone, Default, Eq, PartialEq)]
 struct BudgetState {
     anchor: Option<NativeBudgetAnchorV1>,
     sources: BTreeMap<NativeFundingSourceV1, (FundingPin, u64)>,

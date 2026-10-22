@@ -3,6 +3,7 @@
 //! change the work relation, or replace local irrevocable withdrawal/effect history.
 use crate::checkpoint_tile_policy_v1::{self, PROFILE as CHECKPOINT_PROFILE};
 use crate::continuity_v1::PROFILE as CONTINUITY_PROFILE;
+use crate::growth_profile_v2::PROFILE as GROWTH_PROFILE;
 use crate::pon_executor::{Config, Result, State};
 use serde_json::{json, Value};
 use trnm_crypto_primitives::qualified_work_task::lifecycle_v2::verify_lifecycle_statement;
@@ -25,7 +26,12 @@ use trnm_protocol::{
 pub fn enabled(cfg: &Config) -> bool {
     matches!(
         cfg.task_profile(),
-        PROFILE | ATOMIC_PROFILE | OVERLAP_PROFILE | CHECKPOINT_PROFILE | CONTINUITY_PROFILE
+        PROFILE
+            | ATOMIC_PROFILE
+            | OVERLAP_PROFILE
+            | CHECKPOINT_PROFILE
+            | CONTINUITY_PROFILE
+            | GROWTH_PROFILE
     )
 }
 
@@ -375,7 +381,7 @@ fn renewed_record(
     )?;
     let signed_window = if matches!(
         cfg.task_profile(),
-        OVERLAP_PROFILE | CHECKPOINT_PROFILE | CONTINUITY_PROFILE
+        OVERLAP_PROFILE | CHECKPOINT_PROFILE | CONTINUITY_PROFILE | GROWTH_PROFILE
     ) {
         // Fresh V4 and checkpoint-maintenance atomic22 use the overlap rule. Its source statement is
         // still independently verified at the actual containing height below.
@@ -445,7 +451,7 @@ fn registered_record(
     ensure(source == current.source, "TASK_SOURCE")?;
     let statement =
         verify_lifecycle_statement(raw, &current, height).map_err(|_| "TASK_STATEMENT")?;
-    if cfg.task_profile() == CONTINUITY_PROFILE {
+    if crate::continuity_v1::enabled(cfg) {
         ensure(
             signed.manifest.matrix_task != crate::continuity_v1::maintenance_task()?,
             "CONTINUITY_TASK_RESERVED",
@@ -549,7 +555,11 @@ pub fn apply_verified_command(
         ATOMIC_RENEW_TAG
             if matches!(
                 cfg.task_profile(),
-                ATOMIC_PROFILE | OVERLAP_PROFILE | CHECKPOINT_PROFILE | CONTINUITY_PROFILE
+                ATOMIC_PROFILE
+                    | OVERLAP_PROFILE
+                    | CHECKPOINT_PROFILE
+                    | CONTINUITY_PROFILE
+                    | GROWTH_PROFILE
             ) =>
         {
             atomic_renew(view, tx, height, cfg)

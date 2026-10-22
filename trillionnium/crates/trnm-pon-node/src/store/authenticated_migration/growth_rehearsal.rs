@@ -201,6 +201,10 @@ fn verify_source(
     node: &Node,
     progress: &(impl Fn(AuthenticatedMigrationProgress) -> Result<()> + Sync),
 ) -> Result<(u64, u64)> {
+    ensure(
+        !trnm_mvcc_fee::growth_profile_v2::enabled(&node.settings.app),
+        "GROWTH_REFERENCE_MIGRATION_UNSUPPORTED",
+    )?;
     node.namespace()?;
     node.storage_context()?;
     node.ready()?;
@@ -218,6 +222,9 @@ fn verify_source(
     )?;
     node.validate_authenticated_replay()?;
     node.validate_authenticated_outbox()?;
+    // These source-local observations remain archive facts, never candidate
+    // dispatch or payment authority. Check their set and real source history.
+    node.validate_native_budget_records_v1()?;
     let pool: u64 = node
         .db
         .query_row("SELECT count(*) FROM local_pool_metadata", [], |r| r.get(0))?;
@@ -570,6 +577,10 @@ impl Node {
         namespace: &str,
         progress: &(impl Fn(GrowthRehearsalProgressV2) -> Result<()> + Sync),
     ) -> Result<GrowthRehearsalReceiptV2> {
+        ensure(
+            !trnm_mvcc_fee::growth_profile_v2::enabled(&self.settings.app),
+            "GROWTH_REFERENCE_MIGRATION_UNSUPPORTED",
+        )?;
         let backend = backend_name(self.state_backend)?;
         self.namespace()?;
         self.ready()?;

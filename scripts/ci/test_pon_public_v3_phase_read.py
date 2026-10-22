@@ -46,6 +46,15 @@ def attribution_phase(submissions, history, attacks, records):
     }
 
 
+def completion_observation():
+    return dict(schema='public-v3-live-owner-completion-work-v1',
+        identity_domain='public-v3-complete-work-identity-v1', identity_capacity=4096,
+        identity_storage_bytes=131072, retained_identities=2, live_completions=0,
+        repeated_identity_skips=1, full_capacity_skips=0,
+        epoch_scope='same-shared-live-cpu-owner', evicts_live_epoch_identities=False,
+        survives_process_restart=False, full_capacity_disables_ordinary_verification=False)
+
+
 def attribution_call(body_digest):
     return {'status': 'refused', 'returned_after_window': False,
             'public_request_body_digest': body_digest,
@@ -106,6 +115,7 @@ class ReaderTests(unittest.TestCase):
             report['public_resource_policy'] = observation()
             for phase in phases:
                 phase['public_resource_policy'] = observation()
+                phase['completion_work_observation'] = completion_observation()
                 phase['receiver_observation'].update(schema='public-v3-local-request-resource-observation-v3',
                     cpu_includes_reactor_authentication_or_response_signing=True,
                     cpu_includes_reactor_authentication=False,
@@ -128,7 +138,7 @@ class ReaderTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, 'mixed or missing'):
                 reader.read_report(path, save(), observation()['policy_id'])
 
-    def test_exact_policy_metadata_distinguishes_r11_r12_and_does_not_relabel_history(self):
+    def test_exact_policy_metadata_distinguishes_r11_r12_r13_and_does_not_relabel_history(self):
         phase = attribution_phase([], [], [], [record()])
         self.assertNotIn('public_resource_policy', reader.phase_summary(phase))
         phase['public_resource_policy'] = observation('r10')
@@ -140,13 +150,43 @@ class ReaderTests(unittest.TestCase):
             dispatch_cpu_includes_response_signing=True)
         with self.assertRaisesRegex(ValueError, 'CPU scope disagree'):
             reader.phase_summary(phase)
-        for revision in ('r11', 'r12'):
+        for revision in ('r11', 'r12', 'r13'):
             phase['public_resource_policy'] = observation(revision)
+            if revision == 'r13':
+                phase['completion_work_observation'] = completion_observation()
             readback = reader.phase_summary(phase)
             self.assertEqual(readback['public_resource_policy']['resource_revision'], revision)
             self.assertFalse(readback['genuine_budget_depletion_observed'])
             self.assertFalse(readback['native_phase_criteria_met'])
         phase['public_resource_policy']['policy_id'] = '0' * 64
+        with self.assertRaises(ValueError):
+            reader.phase_summary(phase)
+
+    def test_r13_registry_scope_is_bounded_explicit_and_never_added_to_r12(self):
+        phase = attribution_phase([], [], [], [record()])
+        phase['receiver_observation'].update(schema='public-v3-local-request-resource-observation-v3',
+            cpu_includes_reactor_authentication_or_response_signing=True,
+            cpu_includes_reactor_authentication=False, dispatch_cpu_includes_paid_body_decode=True,
+            dispatch_cpu_includes_response_signing=True)
+        phase['public_resource_policy'] = observation('r12')
+        historical = reader.phase_summary(phase)
+        self.assertNotIn('completion_work_observation', historical)
+        phase['completion_work_observation'] = completion_observation()
+        with self.assertRaisesRegex(ValueError, 'requires explicit r13'):
+            reader.phase_summary(phase)
+        phase['public_resource_policy'] = observation('r13')
+        self.assertEqual(reader.phase_summary(phase)['completion_work_observation'], completion_observation())
+        for change in ({'survives_process_restart': True}, {'identity_capacity': 8192},
+                       {'retained_identities': 4097}, {'live_completions': 3},
+                       {'full_capacity_skips': None}, {'evicts_live_epoch_identities': True},
+                       {'epoch_scope': 'per-connection'}, {'identity_storage_bytes': True}):
+            phase['completion_work_observation'] = {**completion_observation(), **change}
+            with self.subTest(change=change), self.assertRaises(ValueError):
+                reader.phase_summary(phase)
+        phase['completion_work_observation'] = None
+        with self.assertRaises(ValueError):
+            reader.phase_summary(phase)
+        del phase['completion_work_observation']
         with self.assertRaises(ValueError):
             reader.phase_summary(phase)
 

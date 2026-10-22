@@ -2,7 +2,7 @@
 """Exact signed-policy identifiers, not signature/host/native execution evidence.
 
 Retained observation schemas do not imply a resource revision. In particular,
-r11 and r12 both use the paid-envelope v3 observer. Missing policy stays unknown.
+r11, r12 and r13 all use the paid-envelope v3 observer. Missing policy stays unknown.
 """
 from __future__ import annotations
 
@@ -53,13 +53,13 @@ def load_profiles(path=CONFIG):
 
     config = json.loads(raw, object_pairs_hook=unique)
     require(config['schema'] == 'pon-public-resource-profile-vectors-v1'
-            and config['current_revision'] == 'r12'
+            and config['current_revision'] == 'r13'
             and config['transport_profile'] == 'public-protected-development-v3'
             and config['hash_domain'] == 'public-protected-profile-v3'
             and [config[key] for key in ('burst_ns', 'refill_ns_per_second',
                                         'start_reserve_ns', 'worker_limit')]
                 == [2_000_000_000, 250_000_000, 100_000_000, 2]
-            and set(config['revisions']) == {'r10', 'r11', 'r12'}
+            and set(config['revisions']) == {'r10', 'r11', 'r12', 'r13'}
             and config['source_vectors_are_native_acceptance'] is False,
             'original resource numbers and explicit profile history required')
     for revision, entry in config['revisions'].items():

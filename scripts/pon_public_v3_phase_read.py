@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Read retained multiprocess observations; never infer confirmations from ACKs.
 
-Historical v1/v2 and the r11/r12 paid CPU envelope's v3 observations are accepted.
+Historical v1/v2 and the r11/r12/r13 paid CPU envelope's v3 observations are accepted.
 An explicit observed policy is checked against exact revision vectors. Missing
 historical policy metadata is not inferred from the shared observer schema.
 Missing measurements stay unknown. This reader does not run native admission,
@@ -141,6 +141,31 @@ def execution_summary(rows, instrumented):
     return result
 
 
+def completion_work_observation(value):
+    """Exact local r13 boundary, never a permanent spent-work or fairness proof."""
+    fixed = {
+        'schema': 'public-v3-live-owner-completion-work-v1',
+        'identity_domain': 'public-v3-complete-work-identity-v1',
+        'identity_capacity': 4096, 'identity_storage_bytes': 4096 * 32,
+        'epoch_scope': 'same-shared-live-cpu-owner',
+        'evicts_live_epoch_identities': False, 'survives_process_restart': False,
+        'full_capacity_disables_ordinary_verification': False,
+    }
+    counters = ('retained_identities', 'live_completions', 'repeated_identity_skips',
+                'full_capacity_skips')
+    require(type(value) is dict and set(value) == set(fixed) | set(counters),
+            'exact r13 completion-work observation required')
+    require(all(type(value[key]) is type(expected) and value[key] == expected
+                for key, expected in fixed.items()), 'r13 completion-work scope mismatch')
+    for key in counters:
+        require(type(value[key]) is int and 0 <= value[key] <= 2**64 - 1,
+                'r13 completion-work counter must be known')
+    require(value['retained_identities'] <= 4096
+            and value['live_completions'] <= min(2, value['retained_identities']),
+            'r13 completion-work capacity mismatch')
+    return dict(value)
+
+
 def phase_summary(phase):
     mode = phase['mode']
     require(mode in MODES, 'unknown campaign phase')
@@ -155,6 +180,12 @@ def phase_summary(phase):
     if base['startup_or_campaign_error'] is not None:
         base.update(observations_available=False, confirmed_rounds=None)
         return base
+    if policy is not None and policy['resource_revision'] == 'r13':
+        base['completion_work_observation'] = completion_work_observation(
+            phase.get('completion_work_observation'))
+    else:
+        require('completion_work_observation' not in phase,
+                'completion-work observation requires explicit r13 policy')
     require(phase['duration_seconds'] == 30, 'original 30-second phase required')
     rounds = phase['confirmations']
     indices = [integer(row['round']) for row in rounds]
@@ -173,7 +204,7 @@ def phase_summary(phase):
                        'public-v3-local-request-resource-observation-v3'), 'unknown observer schema')
     instrumented = schema.endswith(('-v2', '-v3'))
     if policy is not None:
-        require(schema.endswith('-v3') is (policy['resource_revision'] in ('r11', 'r12')),
+        require(schema.endswith('-v3') is (policy['resource_revision'] in ('r11', 'r12', 'r13')),
                 'public policy and observed CPU scope disagree')
     if schema.endswith('-v3'):
         require(observer.get('cpu_includes_reactor_authentication_or_response_signing') is True

@@ -915,3 +915,195 @@ fn fetch_to_file_publishes_exact_network_bytes_without_replacing_existing_output
     assert_eq!(fs::read(&output).unwrap(), bytes);
     assert_no_partial_files(directory.path());
 }
+
+#[test]
+fn bounded_chunk_batch_rejects_bad_member_without_changing_prior_cache() {
+    use super::store::MAX_CHUNK_COMMIT_BATCH;
+
+    let directory = tempfile::tempdir().unwrap();
+    let path = directory.path().join("cache.sqlite");
+    let store = CellStoreV1::open(&path).unwrap();
+    let bytes = [vec![11; 16_384], vec![12; 16_384], vec![13; 16_384]];
+    let chunks: Vec<_> = bytes
+        .iter()
+        .map(|bytes| CellChunkV1 {
+            size: bytes.len() as u32,
+            sha256: Sha256::digest(bytes).into(),
+        })
+        .collect();
+    store.put_chunk(&chunks[0], &bytes[0]).unwrap();
+    let invalid = vec![99; bytes[2].len()];
+    assert!(matches!(
+        store.put_chunk_batch(&[(&chunks[1], &bytes[1]), (&chunks[2], &invalid)]),
+        Err(CellErrorV1::Invalid("chunk digest"))
+    ));
+    assert_eq!(
+        store.chunk(chunks[0].sha256).unwrap(),
+        Some(bytes[0].clone())
+    );
+    assert!(store.chunk(chunks[1].sha256).unwrap().is_none());
+    assert!(store.chunk(chunks[2].sha256).unwrap().is_none());
+    let oversized = vec![(&chunks[1], bytes[1].as_slice()); MAX_CHUNK_COMMIT_BATCH + 1];
+    assert!(matches!(
+        store.put_chunk_batch(&oversized),
+        Err(CellErrorV1::Invalid("chunk commit batch bound"))
+    ));
+    assert!(store.chunk(chunks[1].sha256).unwrap().is_none());
+    store
+        .put_chunk_batch(&[(&chunks[1], &bytes[1]), (&chunks[2], &bytes[2])])
+        .unwrap();
+    drop(store);
+    let reopened = CellStoreV1::open(&path).unwrap();
+    for (chunk, bytes) in chunks.iter().zip(&bytes) {
+        assert_eq!(
+            reopened.chunk(chunk.sha256).unwrap().as_deref(),
+            Some(bytes.as_slice())
+        );
+    }
+}
+
+#[test]
+fn bounded_chunk_batch_rolls_back_late_sql_abort_and_suppressed_row() {
+    for action in ["ABORT", "IGNORE"] {
+        let directory = tempfile::tempdir().unwrap();
+        let path = directory.path().join("cache.sqlite");
+        let store = CellStoreV1::open(&path).unwrap();
+        let bytes = [vec![21; 16_384], vec![22; 16_384], vec![23; 16_384]];
+        let chunks: Vec<_> = bytes
+            .iter()
+            .map(|bytes| CellChunkV1 {
+                size: bytes.len() as u32,
+                sha256: Sha256::digest(bytes).into(),
+            })
+            .collect();
+        store.put_chunk(&chunks[0], &bytes[0]).unwrap();
+        let db = Connection::open(&path).unwrap();
+        let raise = if action == "ABORT" {
+            "RAISE(ABORT,'late chunk write failure')"
+        } else {
+            "RAISE(IGNORE)"
+        };
+        db.execute_batch(&format!(
+            "CREATE TRIGGER fail_second BEFORE INSERT ON cell_chunks_v1
+             WHEN NEW.hash=X'{}' BEGIN SELECT {raise}; END;",
+            digest_hex(chunks[2].sha256),
+        ))
+        .unwrap();
+        assert!(store
+            .put_chunk_batch(&[(&chunks[1], &bytes[1]), (&chunks[2], &bytes[2])])
+            .is_err());
+        assert_eq!(
+            store.chunk(chunks[0].sha256).unwrap(),
+            Some(bytes[0].clone())
+        );
+        assert!(
+            store.chunk(chunks[1].sha256).unwrap().is_none(),
+            "first row leaked from failed batch"
+        );
+        assert!(store.chunk(chunks[2].sha256).unwrap().is_none());
+        db.execute_batch("DROP TRIGGER fail_second").unwrap();
+        store
+            .put_chunk_batch(&[(&chunks[1], &bytes[1]), (&chunks[2], &bytes[2])])
+            .unwrap();
+        drop(store);
+        drop(db);
+        let reopened = CellStoreV1::open(&path).unwrap();
+        assert_eq!(
+            reopened.chunk(chunks[2].sha256).unwrap(),
+            Some(bytes[2].clone())
+        );
+    }
+}
+
+#[test]
+fn batched_fetch_to_file_rejects_full_digest_after_valid_network_chunks() {
+    let directory = tempfile::tempdir().unwrap();
+    let input = directory.path().join("input");
+    // More than one bounded commit, with distinct chunk hashes.
+    let bytes: Vec<_> = (0..(9 * 16_384 + 123)).map(|i| (i % 251) as u8).collect();
+    fs::write(&input, &bytes).unwrap();
+    let origin_path = directory.path().join("origin.sqlite");
+    let origin = CellStoreV1::open(&origin_path).unwrap();
+    let valid = origin.pack_file(&input, context(), 16_384).unwrap();
+    let wrong = CellManifestV1::new(
+        context(),
+        valid.size(),
+        [0; 32],
+        16_384,
+        valid.chunks().to_vec(),
+    )
+    .unwrap();
+    origin.put_manifest(wrong.id(), &wrong.encode()).unwrap();
+    let publisher = Peer::start(&origin_path);
+    let receiver = CellStoreV1::open(&directory.path().join("receiver.sqlite")).unwrap();
+    let output = directory.path().join("must-not-exist");
+    let result = fetch_cell_to_file(
+        &receiver,
+        wrong.id(),
+        &[publisher.address],
+        limits(),
+        &output,
+    );
+    publisher.stop();
+    assert!(matches!(
+        result,
+        Err(CellErrorV1::Invalid("complete payload digest"))
+    ));
+    assert!(!output.exists());
+    assert_no_partial_files(directory.path());
+    // The rejected full-payload relation does not discard already verified,
+    // committed chunk bytes; it also cannot publish a completion marker.
+    receiver.verify_complete(&valid).unwrap();
+}
+
+#[test]
+fn failed_fetch_keeps_transport_phase_without_renewing_request_deadline() {
+    use std::{io::Read, net::TcpListener, sync::mpsc, time::Instant};
+
+    let directory = tempfile::tempdir().unwrap();
+    let input = directory.path().join("input");
+    fs::write(&input, [7; 8192]).unwrap();
+    let receiver = CellStoreV1::open(&directory.path().join("receiver.sqlite")).unwrap();
+    let origin = CellStoreV1::open(&directory.path().join("origin.sqlite")).unwrap();
+    let manifest = origin.pack_file(&input, context(), 16_384).unwrap();
+    receiver
+        .put_manifest(manifest.id(), &manifest.encode())
+        .unwrap();
+    let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+    let address = listener.local_addr().unwrap();
+    let (release, hold) = mpsc::channel();
+    let peer = std::thread::spawn(move || {
+        let (mut stream, _) = listener.accept().unwrap();
+        stream
+            .set_read_timeout(Some(Duration::from_secs(2)))
+            .unwrap();
+        let mut query = [0; 37];
+        stream.read_exact(&mut query).unwrap();
+        assert_eq!(query[4], 2);
+        let _ = hold.recv_timeout(Duration::from_secs(2));
+    });
+    let mut bounded = limits();
+    bounded.parallelism = 1;
+    bounded.request_timeout = Duration::from_millis(100);
+    bounded.overall_timeout = Duration::from_secs(2);
+    let output = directory.path().join("must-not-exist");
+    let started = Instant::now();
+    let error =
+        fetch_cell_to_file(&receiver, manifest.id(), &[address], bounded, &output).unwrap_err();
+    release.send(()).unwrap();
+    peer.join().unwrap();
+    assert!(started.elapsed() < Duration::from_secs(1));
+    let detail = error.to_string();
+    assert!(detail.contains("phase=response-header"), "{detail}");
+    assert!(
+        detail.contains("kind=2") && detail.contains("elapsed_ms="),
+        "{detail}"
+    );
+    assert!(detail.len() < 512, "unbounded peer error text");
+    assert!(!output.exists());
+    assert!(receiver
+        .chunk(manifest.chunks()[0].sha256)
+        .unwrap()
+        .is_none());
+    assert_no_partial_files(directory.path());
+}

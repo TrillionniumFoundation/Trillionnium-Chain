@@ -18,6 +18,10 @@ pub(super) const MUTATION_CPU_BURST_NS: u64 = 2_000_000_000;
 pub(super) const MUTATION_CPU_REFILL_NS_PER_SECOND: u64 = 250_000_000;
 pub(super) const MUTATION_CPU_START_RESERVE_NS: u64 = 100_000_000;
 pub(super) const MUTATION_CPU_WORKERS: usize = 2;
+// Exact local scheduling identities, bounded once at owner-epoch construction.
+// At capacity ordinary paid validation/recovery continues without promotion.
+// This is not a permanent work-spent ledger, a second CPU pool or a validity rule.
+pub(super) const COMPLETION_WORK_CAPACITY: usize = 4096;
 
 /// Diagnostic shadow of actual arithmetic events. Unknown telemetry never
 /// changes the original credit, cancellation, refill or reservation semantics.
@@ -116,6 +120,10 @@ pub(super) struct PaidMutationCpuBudget {
     // A full W1 success can protect only its existing public request. This is
     // scheduling state, not another bucket, start reserve or work authority.
     verified_completions: usize,
+    completion_work: Box<[[u8; 32]; COMPLETION_WORK_CAPACITY]>,
+    completion_work_len: usize,
+    completion_replay_skips: u64,
+    completion_capacity_skips: u64,
     flow: Option<CpuFlow>,
 }
 impl PaidMutationCpuBudget {
@@ -127,6 +135,10 @@ impl PaidMutationCpuBudget {
             in_flight: 0,
             unavailable: false,
             verified_completions: 0,
+            completion_work: Box::new([[0; 32]; COMPLETION_WORK_CAPACITY]),
+            completion_work_len: 0,
+            completion_replay_skips: 0,
+            completion_capacity_skips: 0,
             flow: Some(CpuFlow::new(i128::from(MUTATION_CPU_BURST_NS))),
         }
     }
@@ -428,7 +440,11 @@ impl LiveRequestCpu {
     /// Only the private packet owning an actually verified complete W1 relation
     /// may enter this stage. It remains the very same charged request. Existing
     /// ledger packets, claimed tickets and failed/partial W1 do not call this.
-    pub(super) fn work_verified(&self, _checked: &crate::store::WorkCheckedPacket) -> Result<()> {
+    pub(super) fn work_verified(&self, checked: &crate::store::WorkCheckedPacket) -> Result<()> {
+        self.checkpoint()?;
+        // Hashing the canonical complete packet is paid by this same original
+        // thread interval; no caller-supplied identity can claim priority.
+        let identity = checked.completion_identity()?;
         self.checkpoint()?;
         let mut state = self
             .state
@@ -457,6 +473,21 @@ impl LiveRequestCpu {
                 && budget.in_flight <= MUTATION_CPU_WORKERS,
             "PUBLIC_MUTATION_CPU_UNAVAILABLE",
         )?;
+        // Claim and promotion are one atomic operation in the shared CPU owner.
+        // Never remove entries on success, relation error, cancellation, Unknown
+        // or listener reconstruction. Full capacity only withholds this extra
+        // scheduling benefit; it is not an invalid-work or recovery verdict.
+        if budget.completion_work[..budget.completion_work_len].contains(&identity) {
+            budget.completion_replay_skips = budget.completion_replay_skips.saturating_add(1);
+            return Ok(());
+        }
+        if budget.completion_work_len == COMPLETION_WORK_CAPACITY {
+            budget.completion_capacity_skips = budget.completion_capacity_skips.saturating_add(1);
+            return Ok(());
+        }
+        let index = budget.completion_work_len;
+        budget.completion_work[index] = identity;
+        budget.completion_work_len += 1;
         budget.verified_completions += 1;
         state.verified_completion = true;
         Ok(())
@@ -1393,3 +1424,45 @@ mod metered_fact_tests;
 #[cfg(all(test, target_os = "linux"))]
 #[path = "scalar_cpu_metered_fact_network_tests.rs"]
 mod metered_fact_network_tests;
+
+/// Local scheduling observation only. No work validity, chain/funding authority
+/// or permanent replay guarantee follows from these volatile owner-epoch rows.
+#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize)]
+pub struct ServiceCompletionWorkObservation {
+    pub schema: &'static str,
+    pub identity_domain: &'static str,
+    pub identity_capacity: usize,
+    pub identity_storage_bytes: usize,
+    pub retained_identities: usize,
+    pub live_completions: usize,
+    pub repeated_identity_skips: u64,
+    pub full_capacity_skips: u64,
+    pub epoch_scope: &'static str,
+    pub evicts_live_epoch_identities: bool,
+    pub survives_process_restart: bool,
+    pub full_capacity_disables_ordinary_verification: bool,
+}
+impl ServiceMutationCpuDomain {
+    /// Reads the existing shared owner without refill or mutation. Counter
+    /// saturation is diagnostic only and never evicts an exact identity.
+    pub fn observe_completion_work(&self) -> Result<ServiceCompletionWorkObservation> {
+        let budget = self
+            .budget
+            .lock()
+            .map_err(|_| "PUBLIC_MUTATION_CPU_UNAVAILABLE")?;
+        Ok(ServiceCompletionWorkObservation {
+            schema: "public-v3-live-owner-completion-work-v1",
+            identity_domain: "public-v3-complete-work-identity-v1",
+            identity_capacity: COMPLETION_WORK_CAPACITY,
+            identity_storage_bytes: std::mem::size_of::<[[u8; 32]; COMPLETION_WORK_CAPACITY]>(),
+            retained_identities: budget.completion_work_len,
+            live_completions: budget.verified_completions,
+            repeated_identity_skips: budget.completion_replay_skips,
+            full_capacity_skips: budget.completion_capacity_skips,
+            epoch_scope: "same-shared-live-cpu-owner",
+            evicts_live_epoch_identities: false,
+            survives_process_restart: false,
+            full_capacity_disables_ordinary_verification: false,
+        })
+    }
+}

@@ -65,6 +65,8 @@ Local transport, research and offline rows do not alter the consensus revision.
 | model-evolution-v5 | 16 | [MODEL_EVOLUTION_V5](../../docs/development/specs/pon/MODEL_EVOLUTION_V5.md) | [run](../../trillionnium/crates/trnm-pon-node/src/main.rs) |
 | model-task-windows-v1 | 16 | [MODEL_TASK_WINDOWS_V1](../../docs/development/specs/pon/MODEL_TASK_WINDOWS_V1.md) | [run](../../trillionnium/crates/trnm-pon-node/src/main.rs) |
 | cell-p2p-v1 | local/research | [CELL_P2P_V1](../../docs/protocol/pon-nakamoto-v1/details/CELL_P2P_V1.md) | [run](../../trillionnium/crates/trnm-data-availability/src/bin/trnm-cell.rs) |
+| native-growth-reference-v2 | 17 | [PERMANENT_ACCOUNT_STORAGE_BOUNDARY](../../docs/development/specs/pon/PERMANENT_ACCOUNT_STORAGE_BOUNDARY.md) | [Node::growth_reference_observation](../../trillionnium/crates/trnm-pon-node/src/store/growth_reference.rs) |
+| native-local-budget-obligations-v1 | local/research | [REWARD_BUDGETS_V1](../../docs/development/specs/pon/REWARD_BUDGETS_V1.md) | [Node::reserve_native_budget_v1](../../trillionnium/crates/trnm-pon-node/src/store/native_budget.rs) |
 
 ## Registered acceptance boundaries
 

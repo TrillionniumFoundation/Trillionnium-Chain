@@ -1089,3 +1089,161 @@ fn journal_write_fence_rechecks_live_namespace_for_same_id_replay_and_report() {
         NativeBudgetReplayV1::Pending
     );
 }
+#[test]
+fn journal_write_fence_committed_readback_requires_exact_prefix_and_allows_valid_append() {
+    let (directory, mut store, mut owner, _policy, claim) = setup(NativeBudgetLaneV1::Serving);
+    store.reserve(&mut owner, claim.clone()).unwrap();
+    store
+        .begin_effect(&mut owner, claim.claim, [80; 32], [81; 32])
+        .unwrap();
+    let (state, sequence, root) = load_snapshot(&store.connection, &configuration()).unwrap();
+    let payload: Vec<u8> = store
+        .connection
+        .query_row(
+            "SELECT payload FROM native_budget_events_v1 WHERE sequence=?1",
+            [sequence],
+            |r| r.get(0),
+        )
+        .unwrap();
+    let expected = JournalReadback {
+        sequence,
+        root,
+        payload: Some(&payload),
+        state: &state,
+    };
+    let mut other =
+        NativeBudgetStoreV1::open(&directory.path().join("budget.sqlite"), configuration())
+            .unwrap();
+    other
+        .record_resources(
+            claim.claim,
+            NativeResourceOutcomeV1::NoGain,
+            Some(resources(NativeBudgetLaneV1::Serving, 2)),
+        )
+        .unwrap();
+    // A legitimate append between commit and readback must not falsely erase
+    // the writer's exact prefix or invent an extra New permission on retry.
+    let (current, current_sequence, _) =
+        load_snapshot_checked(&store.connection, &configuration(), Some(expected)).unwrap();
+    assert_eq!(current_sequence, sequence + 1);
+    assert_eq!(
+        current.claim(claim.claim).unwrap().outcome,
+        Some(NativeResourceOutcomeV1::NoGain)
+    );
+    assert_eq!(
+        store
+            .begin_effect(&mut owner, claim.claim, [80; 32], [81; 32])
+            .unwrap(),
+        NativeBudgetReplayV1::Pending
+    );
+    let transaction = store.connection.unchecked_transaction().unwrap();
+    assert!(check_exact_readback(&transaction, &configuration(), expected).is_err());
+    drop(transaction);
+    let mut wrong_payload = payload.clone();
+    wrong_payload[0] ^= 1;
+    assert!(load_snapshot_checked(
+        &store.connection,
+        &configuration(),
+        Some(JournalReadback {
+            payload: Some(&wrong_payload),
+            ..expected
+        })
+    )
+    .is_err());
+    let mut wrong_state = state.clone();
+    wrong_state
+        .claims
+        .get_mut(&claim.claim)
+        .unwrap()
+        .effect
+        .as_mut()
+        .unwrap()
+        .receipt = Some([90; 32]);
+    assert!(load_snapshot_checked(
+        &store.connection,
+        &configuration(),
+        Some(JournalReadback {
+            state: &wrong_state,
+            ..expected
+        })
+    )
+    .is_err());
+    assert!(load_snapshot_checked(
+        &store.connection,
+        &configuration(),
+        Some(JournalReadback {
+            root: [0; 32],
+            ..expected
+        })
+    )
+    .is_err());
+}
+
+#[test]
+fn journal_write_fence_same_id_replay_never_uses_an_old_memory_state() {
+    let (directory, mut store, mut owner, _policy, claim) = setup(NativeBudgetLaneV1::Storage);
+    store.reserve(&mut owner, claim.clone()).unwrap();
+    store
+        .begin_effect(&mut owner, claim.claim, [80; 32], [81; 32])
+        .unwrap();
+    let before = store.report().unwrap();
+    let (sequence, root): (u64, Vec<u8>) = store
+        .connection
+        .query_row(
+            "SELECT sequence,root FROM native_budget_meta_v1 WHERE singleton=1",
+            [],
+            |r| Ok((r.get(0)?, r.get(1)?)),
+        )
+        .unwrap();
+    let outside = Connection::open(directory.path().join("budget.sqlite")).unwrap();
+    outside
+        .execute(
+            "UPDATE native_budget_events_v1 SET root=?1 WHERE sequence=?2",
+            params![[88u8; 32].as_slice(), sequence],
+        )
+        .unwrap();
+    assert!(store
+        .begin_effect(&mut owner, claim.claim, [80; 32], [81; 32])
+        .is_err());
+    assert!(store.report().is_err());
+    outside
+        .execute(
+            "UPDATE native_budget_events_v1 SET root=?1 WHERE sequence=?2",
+            params![root, sequence],
+        )
+        .unwrap();
+    assert_eq!(store.report().unwrap(), before);
+    assert_eq!(
+        store
+            .begin_effect(&mut owner, claim.claim, [80; 32], [81; 32])
+            .unwrap(),
+        NativeBudgetReplayV1::Pending
+    );
+}
+#[test]
+fn journal_write_fence_does_not_hide_user_objects_behind_sql_like_underscore() {
+    let (directory, mut store, mut owner, _policy, claim) = setup(NativeBudgetLaneV1::Storage);
+    store.reserve(&mut owner, claim.clone()).unwrap();
+    let before = store.report().unwrap();
+    let outside = Connection::open(directory.path().join("budget.sqlite")).unwrap();
+    // SQLite reserves the literal sqlite_ prefix. SQL LIKE's underscore also
+    // matches X, so sqliteX... is a legal user trigger, never an internal row.
+    outside.execute_batch("CREATE TRIGGER sqliteX_hidden_intent BEFORE INSERT ON native_budget_events_v1 BEGIN SELECT RAISE(IGNORE); END;").unwrap();
+    assert!(
+        store.report().is_err(),
+        "user trigger was hidden by SQL LIKE underscore"
+    );
+    assert!(store.reserve(&mut owner, claim.clone()).is_err());
+    assert!(
+        NativeBudgetStoreV1::open(&directory.path().join("budget.sqlite"), configuration())
+            .is_err()
+    );
+    outside
+        .execute_batch("DROP TRIGGER sqliteX_hidden_intent;")
+        .unwrap();
+    assert_eq!(store.report().unwrap(), before);
+    assert_eq!(
+        store.reserve(&mut owner, claim).unwrap(),
+        NativeBudgetReplayV1::Pending
+    );
+}

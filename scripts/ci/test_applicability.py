@@ -12,9 +12,55 @@ from check_applicability import (
     EVALUATION_QUORUM_PROFILE, EVALUATION_QUORUM_TESTS, validate_evaluation_quorum_profile,
     MODEL_EVOLUTION_PROFILE, MODEL_TASK_WINDOWS_PROFILE, CELL_P2P_PROFILE,
     MODEL_AND_CELL_TESTS, validate_model_and_cell_profile,
+    NATIVE_CONTINUATION_PROFILES, validate_native_continuation_profile,
     validate, markdown, profile_table,
 )
 from report_module_evidence import check_test_selector
+
+
+class NativeContinuationApplicabilityTests(unittest.TestCase):
+    """Source navigation must not substitute old domains or grant acceptance."""
+
+    def setUp(self):
+        profiles = json.loads((ROOT / REGISTRY).read_text())['profiles']
+        self.profiles = [row for row in profiles if row['id'] in NATIVE_CONTINUATION_PROFILES]
+        self.assertEqual(len(self.profiles), 2)
+
+    def test_actual_owners_and_all_native_recovery_controls_are_bound(self):
+        for profile in self.profiles:
+            validate_native_continuation_profile(profile)
+            for selector in profile['tests']:
+                check_test_selector(ROOT, selector)
+
+    def test_growth_cannot_reuse_old_profile_or_local_budget_claim_consensus(self):
+        for original in self.profiles:
+            for field, value in (
+                ('configuration', 'config/pon/continuity-v1.json'),
+                ('consensus_revision', 12), ('modules', ['M07']),
+                ('entrypoint', {'path': 'trillionnium/crates/trnm-pon-node/src/store.rs',
+                                'symbol': 'Node::open'}),
+            ):
+                profile = deepcopy(original)
+                profile[field] = value
+                with self.subTest(profile=original['id'], field=field), self.assertRaises(ValueError):
+                    validate_native_continuation_profile(profile)
+
+    def test_no_required_native_control_can_disappear(self):
+        for original in self.profiles:
+            for selector in NATIVE_CONTINUATION_PROFILES[original['id']]['tests']:
+                profile = deepcopy(original)
+                profile['tests'].remove(selector)
+                with self.subTest(selector=selector), self.assertRaises(ValueError):
+                    validate_native_continuation_profile(profile)
+
+    def test_navigation_cannot_be_promoted_to_an_execution_receipt(self):
+        for original in self.profiles:
+            for field, value in (('evidence_class', 'local-execution'),
+                                 ('receipt', {'result': 'PASS'})):
+                profile = deepcopy(original)
+                profile[field] = value
+                with self.subTest(profile=original['id'], field=field), self.assertRaises(ValueError):
+                    validate_native_continuation_profile(profile)
 
 
 class EvaluationQuorumApplicabilityTests(unittest.TestCase):
@@ -200,7 +246,7 @@ class ApplicabilityTests(unittest.TestCase):
 
     def test_native_authenticated_profile_is_explicit_local_source_navigation(self):
         result = validate(self.root)
-        self.assertEqual(len(result['profiles']), 22)
+        self.assertEqual(len(result['profiles']), 24)
         profile = next(p for p in result['profiles'] if p['id'] == NATIVE_STORAGE_PROFILE)
         self.assertEqual(profile['entrypoint'], NATIVE_STORAGE_ENTRY)
         for field in ('configuration', 'revision_pointer', 'consensus_revision', 'receipt'):

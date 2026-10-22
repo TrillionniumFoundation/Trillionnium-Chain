@@ -606,6 +606,10 @@ struct PreviewBinding<'a> {
 impl Node {
     /// Explicit opt-in on a fresh DDL identity; no import or migration of older pools.
     pub fn enable_local_mempool(&mut self, limits: PoolLimits) -> Result<Hash> {
+        ensure(
+            !trnm_mvcc_fee::growth_profile_v2::enabled(&self.settings.app),
+            "GROWTH_REFERENCE_POOL_UNSUPPORTED",
+        )?;
         self.namespace()?;
         limits.validate()?;
         let raw = serde_json::to_vec(&limits)?;
@@ -669,6 +673,10 @@ impl Node {
         Ok(context)
     }
     fn pool_policy(&self) -> Result<(Hash, PoolLimits)> {
+        ensure(
+            !trnm_mvcc_fee::growth_profile_v2::enabled(&self.settings.app),
+            "GROWTH_REFERENCE_POOL_UNSUPPORTED",
+        )?;
         self.namespace()?;
         let (context, raw): (Vec<u8>, Vec<u8>) = self
             .db

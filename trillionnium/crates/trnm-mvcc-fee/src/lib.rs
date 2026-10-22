@@ -32,6 +32,7 @@ pub mod deployment_checkpoint_tile_v1;
 pub mod deterministic_parallel_v1;
 mod engine;
 mod error;
+pub mod growth_profile_v2;
 pub mod public_evaluation;
 pub mod qualified_task_lifecycle;
 mod store;

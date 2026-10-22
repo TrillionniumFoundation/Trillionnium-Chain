@@ -35,6 +35,53 @@ pub fn account_archive_branch_hash(left: Hash, right: Hash) -> Hash {
     encoded[77..].copy_from_slice(&right);
     Sha256::digest(encoded).into()
 }
+
+/// Complete reference rebuild of the existing account-archive sparse relation.
+/// No source, storage, execution or admission authority is implied. Profile
+/// owners enforce their own finite account count and monetary limits.
+pub fn account_archive_root_from_accounts(
+    accounts: impl IntoIterator<Item = (Hash, u64, u64)>,
+) -> Result<Hash, WireError> {
+    static EMPTY: std::sync::OnceLock<[Hash; 257]> = std::sync::OnceLock::new();
+    let empty = EMPTY.get_or_init(|| {
+        let mut values = [[0; 32]; 257];
+        values[256] = hash(b"account-archive-empty-v1", &[]);
+        for depth in (0..256).rev() {
+            values[depth] = account_archive_branch_hash(values[depth + 1], values[depth + 1]);
+        }
+        values
+    });
+    let mut rows: Vec<_> = accounts
+        .into_iter()
+        .map(|(owner, balance, nonce)| {
+            (
+                hash(b"account-archive-key-v1", &[&owner]),
+                hash(
+                    b"account-archive-leaf-v1",
+                    &[&owner, &balance.to_le_bytes(), &nonce.to_le_bytes()],
+                ),
+            )
+        })
+        .collect();
+    rows.sort_unstable_by_key(|row| row.0);
+    if rows.windows(2).any(|pair| pair[0].0 == pair[1].0) {
+        return Err(WireError::KeyCollision);
+    }
+    fn subtree(rows: &[(Hash, Hash)], depth: usize, empty: &[Hash; 257]) -> Hash {
+        if rows.is_empty() {
+            return empty[depth];
+        }
+        if depth == 256 {
+            return rows[0].1;
+        }
+        let split = rows.partition_point(|row| row.0[depth / 8] & (128 >> (depth % 8)) == 0);
+        account_archive_branch_hash(
+            subtree(&rows[..split], depth + 1, empty),
+            subtree(&rows[split..], depth + 1, empty),
+        )
+    }
+    Ok(subtree(&rows, 0, empty))
+}
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Header {
     pub network: Hash,
@@ -377,6 +424,22 @@ fn state_root_from_hashes(mut leaves: Vec<(Hash, Hash)>) -> Result<Hash, WireErr
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn account_archive_reference_root_matches_independent_vectors() {
+        assert_eq!(
+            hex::encode(account_archive_root_from_accounts([]).unwrap()),
+            "c19429dfa77d3aaedb639dd367f7ac1cab288d30dd60f06c4786d8c66c3345ac"
+        );
+        assert_eq!(
+            hex::encode(account_archive_root_from_accounts([([9; 32], 7, 3)]).unwrap()),
+            "0f54f056e419772853d3168d1c21e0c2ca9e47e374c3bb95769238d952a9ac78"
+        );
+        assert_eq!(
+            account_archive_root_from_accounts([([9; 32], 7, 3), ([9; 32], 7, 3)]),
+            Err(WireError::KeyCollision)
+        );
+    }
+
     #[test]
     fn header_exact_and_context_bound() {
         let mut h = Header {

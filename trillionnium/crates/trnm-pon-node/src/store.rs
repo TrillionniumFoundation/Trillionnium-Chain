@@ -6,12 +6,14 @@ pub mod evaluation_observation;
 pub mod evaluation_round_observation;
 mod funding;
 pub(crate) mod growth;
+pub mod growth_reference;
 mod historical_commitment;
 #[cfg(test)]
 mod historical_commitment_tests;
 mod history_page;
 pub mod mempool;
 pub(crate) mod native_authenticated;
+pub mod native_budget;
 mod operator_continuous_owner;
 mod operator_mining_owner;
 #[cfg(test)]
@@ -47,14 +49,15 @@ use trnm_crypto_primitives::qualified_work_task::{
 };
 use trnm_mvcc_fee::checkpoint_tile_policy_v1::PROFILE as CHECKPOINT_TASK_PROFILE;
 use trnm_mvcc_fee::continuity_v1::{self, PROFILE as CONTINUITY_TASK_PROFILE};
+use trnm_mvcc_fee::growth_profile_v2::{self, PROFILE as GROWTH_TASK_PROFILE};
 use trnm_mvcc_fee::pon_commitment::{
     self, CacheLimits, CheckedCommitment, CommitmentObservation, ExecutionRequest,
     PreparedCommitment,
 };
+#[cfg(test)]
+use trnm_mvcc_fee::pon_executor::root;
 use trnm_mvcc_fee::pon_executor::SIGNED_TASK_PROFILE;
-use trnm_mvcc_fee::pon_executor::{
-    root, ExecutionControl, ExecutionError, ExecutionProgress, State,
-};
+use trnm_mvcc_fee::pon_executor::{ExecutionControl, ExecutionError, ExecutionProgress, State};
 use trnm_mvcc_fee::qualified_task_lifecycle;
 use trnm_protocol::pon_wire::{hash, Hash, Header, HEADER_BYTES};
 use trnm_protocol::qualified_work_task::lifecycle_v2::PROFILE as LIFECYCLE_TASK_PROFILE;
@@ -434,6 +437,15 @@ impl WorkCheckedPacket {
             owner_permit: None,
         })
     }
+    /// Exact, domain-separated identity of the private fully verified packet.
+    /// This is only a local scheduling key; it confers no admission, task or
+    /// payment authority. Canonical transaction/proof bytes are all committed.
+    pub(crate) fn completion_identity(&self) -> Result<Hash> {
+        Ok(hash(
+            b"public-v3-complete-work-identity-v1",
+            &[&self.packet.encode()?],
+        ))
+    }
     pub(crate) fn verify(packet: Packet) -> Result<Self> {
         let h = &packet.header;
         let work = pon_work::verify(h.challenge(), h.work_task, h.target, &packet.proof)
@@ -588,6 +600,16 @@ impl StateBackend {
             Self::Legacy => ddl(),
             Self::AuthenticatedV1 => format!("{}{}", ddl(), native_authenticated::DDL),
             Self::PermanentAccountGrowthV2 => format!("{}{}", ddl(), growth::DDL),
+        }
+    }
+    fn selected_schema_id(self, settings: &Settings) -> Hash {
+        if growth_profile_v2::enabled(&settings.app) {
+            hash(
+                b"native-growth-reference-branch-schema-v2",
+                &[self.ddl().as_bytes()],
+            )
+        } else {
+            self.schema_id()
         }
     }
     fn schema_id(self) -> Hash {
@@ -949,6 +971,17 @@ impl Node {
             mining: mining_owner,
             continuous: continuous_owner,
         } = owners;
+        if growth_profile_v2::enabled(&settings.app) {
+            ensure(
+                state_backend == StateBackend::Legacy,
+                "GROWTH_REFERENCE_BACKEND",
+            )?;
+            ensure(
+                owner_policy.is_none() && mining_owner.is_none() && continuous_owner.is_none(),
+                "GROWTH_REFERENCE_OWNER",
+            )?;
+        }
+
         ensure(
             usize::from(owner_policy.is_some())
                 + usize::from(mining_owner.is_some())
@@ -997,7 +1030,7 @@ impl Node {
             .try_lock_exclusive()
             .map_err(|_| Error::from("WRITER_BUSY"))?;
         let ddl = state_backend.ddl();
-        let schema_id = state_backend.schema_id();
+        let schema_id = state_backend.selected_schema_id(&settings);
         let expected = canonical(
             &serde_json::json!({"schema":hex::encode(schema_id),"parameters":hex::encode(settings.parameters()),"genesis":hex::encode(settings.genesis())}),
         )?;
@@ -1117,7 +1150,7 @@ impl Node {
                     if state_backend == StateBackend::PermanentAccountGrowthV2 {
                         growth::initial_root(&settings)?
                     } else {
-                        root(&settings.initial)?
+                        settings.state_root(&settings.initial)?
                     }
                     .as_slice()
                 ],
@@ -1181,6 +1214,9 @@ impl Node {
             public_service_epoch_unknown: false,
         };
         if node.state_backend == StateBackend::PermanentAccountGrowthV2 {
+            // Complete-State reference budget records cannot be silently ignored
+            // by this backend. Validate/refuse them before any growth recovery.
+            node.validate_native_budget_records_v1()?;
             node.growth_cold_open()?;
             // Settings retain the immutable genesis input for exact reopen. Hot
             // execution never clones this bootstrap State or the full account set.
@@ -1198,6 +1234,7 @@ impl Node {
         }
         node.validate_authenticated_replay()?;
         node.validate_authenticated_outbox()?;
+        node.validate_native_budget_records_v1()?;
         node.recover()?;
         node.read_active()?;
         crate::ancestry_index::validate_tip(&node.db, node.ancestry_context(), node.active()?.0)?;
@@ -1844,7 +1881,10 @@ impl Node {
     }
     fn storage_context(&self) -> Result<()> {
         for (key, expected) in [
-            ("schema", self.state_backend.schema_id()),
+            (
+                "schema",
+                self.state_backend.selected_schema_id(&self.settings),
+            ),
             ("parameters", self.settings.parameters()),
             ("genesis", self.settings.genesis()),
         ] {
@@ -1879,7 +1919,7 @@ impl Node {
             self.authenticated_arithmetic
                 .state_root(&self.settings, state)?
         } else {
-            root(state)?
+            self.settings.state_root(state)?
         };
         ensure(actual_root == record.root, "ROOT").map_err(Error::local_integrity)?;
         if self.state_backend == StateBackend::AuthenticatedV1 {
@@ -1896,6 +1936,7 @@ impl Node {
     }
     /// Check actual data after the last transactional write. A post-COMMIT
     /// observation cannot repair a suppressed write or a trigger-corrupted slot.
+    #[cfg(test)]
     fn check_active_before_commit(&self) -> Result<()> {
         self.check_active_before_commit_with_progress(&mut || Ok(()))
     }
@@ -2032,7 +2073,12 @@ impl Node {
                 let key_len: i64 = row.get(2)?;
                 let value_len: i64 = row.get(3)?;
                 ensure(
-                    state.len() < 65_536
+                    state.len()
+                        < if growth_profile_v2::enabled(&self.settings.app) {
+                            growth_profile_v2::MAX_TOTAL_KEYS
+                        } else {
+                            65_536
+                        }
                         && (0..=160).contains(&key_len)
                         && (0..=4096).contains(&value_len),
                     "STATE_BYTES",
@@ -2086,8 +2132,11 @@ impl Node {
         expected: Hash,
         prior: Option<&CheckedCommitment>,
     ) -> Result<PreparedCommitment> {
-        let result =
-            pon_commitment::checked_snapshot(actual, expected, prior, CacheLimits::default());
+        let result = if growth_profile_v2::enabled(&self.settings.app) {
+            pon_commitment::growth_reference_snapshot(actual, Some(expected), &self.settings.app)
+        } else {
+            pon_commitment::checked_snapshot(actual, expected, prior, CacheLimits::default())
+        };
         match result {
             Ok(prepared) => {
                 if self.state_backend == StateBackend::AuthenticatedV1 {
@@ -2235,6 +2284,18 @@ impl Node {
         .flatten();
         // Always encode/compare the actual supplied parent with its admitted root.
         // Missing/refused/wrong material retains the original complete fallback.
+        if growth_profile_v2::enabled(&self.settings.app) {
+            let result = pon_commitment::execute_growth_reference_with_control(
+                actual,
+                current_root,
+                block,
+                &self.settings.app,
+                control,
+            )
+            .map_err(local_execution_error)?;
+            *self.commitment_observation.borrow_mut() = Some(result.commitment.observation.clone());
+            return Ok(result);
+        }
         let (bound, observation) = pon_commitment::CheckedExecutionParent::check_and_bind(
             actual,
             current_root,
@@ -2299,7 +2360,11 @@ impl Node {
         actual: &State,
         prior: Option<&CheckedCommitment>,
     ) -> Result<PreparedCommitment> {
-        let prepared = pon_commitment::derive_snapshot(actual, prior, CacheLimits::default())?;
+        let prepared = if growth_profile_v2::enabled(&self.settings.app) {
+            pon_commitment::growth_reference_snapshot(actual, None, &self.settings.app)?
+        } else {
+            pon_commitment::derive_snapshot(actual, prior, CacheLimits::default())?
+        };
         *self.commitment_observation.borrow_mut() = Some(prepared.observation.clone());
         Ok(prepared)
     }
@@ -2761,6 +2826,52 @@ impl Node {
             self.settings.limit("target_spacing_seconds")?,
             self.settings.target("pow_limit_hex")?,
         )
+    }
+    /// A cancelled controlled activation may have committed only part of its
+    /// existing reorg intent. Permit only the exact already-admitted intent
+    /// target to reach the original controlled activation/recovery checks.
+    /// Every other request retains ready()'s REORG_IN_PROGRESS refusal.
+    pub(crate) fn pending_exact_activation_replay(
+        &self,
+        packet: &Packet,
+        observed_now: u64,
+        progress: &mut dyn FnMut() -> Result<()>,
+    ) -> Result<Option<Hash>> {
+        progress()?;
+        self.namespace()?;
+        let pending: Option<Vec<u8>> = self
+            .db
+            .query_row(
+                "SELECT new_tip FROM reorg WHERE singleton=1 AND done=0",
+                [],
+                |row| fixed_blob::<32>(row, 0),
+            )
+            .optional()
+            .map_err(|error| Error::from(error).local_integrity())?;
+        let Some(pending) = pending else {
+            return Ok(None);
+        };
+        let id = packet.id()?;
+        if pending.as_slice() != id.as_slice() {
+            return Ok(None);
+        }
+        self.precheck_owner_packet(packet)?;
+        let h = &packet.header;
+        ensure(
+            h.network == self.settings.network() && h.parameters == self.settings.parameters(),
+            "NETWORK",
+        )?;
+        ensure(
+            self.packet(id).map_err(Error::local_integrity)?.encode()? == packet.encode()?,
+            "DUPLICATE_CONTENT",
+        )?;
+        ensure(
+            h.timestamp as u128
+                <= observed_now as u128 + self.settings.limit("future_skew_seconds")? as u128,
+            "TIME_DEFERRED",
+        )?;
+        progress()?;
+        Ok(Some(id))
     }
     pub(crate) fn check_admission_context(
         &self,
@@ -3552,7 +3663,10 @@ impl Node {
         // These are disposable accelerators: retain the existing 64-row policy,
         // genesis anchor, full history/delta checks and post-write readback.
         // Legacy cadence remains unchanged; no validity verdict is cached.
-        if self.state_backend == StateBackend::AuthenticatedV1 || h.height.is_multiple_of(128) {
+        if self.state_backend == StateBackend::AuthenticatedV1
+            || growth_profile_v2::enabled(&self.settings.app)
+            || h.height.is_multiple_of(128)
+        {
             ensure(
                 tx.execute(
                     "INSERT INTO snapshots VALUES(?,?)",
@@ -3704,6 +3818,7 @@ impl Node {
                     | ATOMIC_TASK_PROFILE
                     | OVERLAP_TASK_PROFILE
                     | CONTINUITY_TASK_PROFILE
+                    | GROWTH_TASK_PROFILE
                     | CHECKPOINT_TASK_PROFILE
             ),
             "WORK_TASK_PROFILE",
@@ -3746,6 +3861,7 @@ impl Node {
                     | ATOMIC_TASK_PROFILE
                     | OVERLAP_TASK_PROFILE
                     | CONTINUITY_TASK_PROFILE
+                    | GROWTH_TASK_PROFILE
                     | CHECKPOINT_TASK_PROFILE
             ),
             "WORK_TASK_PROFILE",
@@ -3810,6 +3926,7 @@ impl Node {
                     | ATOMIC_TASK_PROFILE
                     | OVERLAP_TASK_PROFILE
                     | CONTINUITY_TASK_PROFILE
+                    | GROWTH_TASK_PROFILE
                     | CHECKPOINT_TASK_PROFILE
             ),
             "WORK_TASK_PROFILE",
@@ -3894,6 +4011,7 @@ impl Node {
                 | ATOMIC_TASK_PROFILE
                 | OVERLAP_TASK_PROFILE
                 | CONTINUITY_TASK_PROFILE
+                | GROWTH_TASK_PROFILE
                 | CHECKPOINT_TASK_PROFILE
         ) {
             let eligible =
@@ -4160,19 +4278,38 @@ impl Node {
         self.activate_observed(id, observed_now)?;
         Ok(packet)
     }
+    // Reference-budget and other local callers retain their no-cancellation
+    // contract; all original transactional validation remains shared.
     fn atomic<T>(&self, run: impl FnOnce() -> Result<T>) -> Result<T> {
+        self.atomic_with_progress(&mut || Ok(()), |_| run())
+    }
+    fn atomic_with_progress<T>(
+        &self,
+        progress: &mut dyn FnMut() -> Result<()>,
+        run: impl FnOnce(&mut dyn FnMut() -> Result<()>) -> Result<T>,
+    ) -> Result<T> {
+        progress()?;
         let tx = rusqlite::Transaction::new_unchecked(
             &self.db,
             rusqlite::TransactionBehavior::Immediate,
         )?;
-        let result = run()?;
-        self.check_active_before_commit()?;
+        let result = run(progress)?;
+        self.check_active_before_commit_with_progress(progress)?;
         self.continuous_scope_checkpoint()?;
         self.mining_scope_checkpoint()?;
+        progress()?;
         tx.commit()?;
+        // No cancellation after COMMIT: the durable result is already factual.
         Ok(result)
     }
-    fn apply_delta(&self, id: Hash, slot: u64, detach: bool) -> Result<()> {
+    fn apply_delta_with_progress(
+        &self,
+        id: Hash,
+        slot: u64,
+        detach: bool,
+        progress: &mut dyn FnMut() -> Result<()>,
+    ) -> Result<()> {
+        progress()?;
         let mut read = self
             .db
             .prepare_cached("SELECT value FROM kv WHERE slot=? AND key=?")?;
@@ -4182,7 +4319,8 @@ impl Node {
         let mut delete = self
             .db
             .prepare_cached("DELETE FROM kv WHERE slot=? AND key=?")?;
-        for (key, before, after) in self.delta_rows(id)? {
+        for (key, before, after) in self.delta_rows_with_progress(id, progress)? {
+            progress()?;
             let (expected, new) = if detach {
                 (after, before)
             } else {
@@ -4214,16 +4352,26 @@ impl Node {
     pub fn activate_with_fault(
         &mut self,
         target: Hash,
-        mut hook: Option<&mut Hook<'_>>,
+        hook: Option<&mut Hook<'_>>,
     ) -> Result<Hash> {
+        self.activate_with_fault_and_progress(target, hook, &mut || Ok(()))
+    }
+    fn activate_with_fault_and_progress(
+        &mut self,
+        target: Hash,
+        mut hook: Option<&mut Hook<'_>>,
+        progress: &mut dyn FnMut() -> Result<()>,
+    ) -> Result<Hash> {
+        progress()?;
         if self.state_backend == StateBackend::PermanentAccountGrowthV2 {
             ensure(hook.is_none(), "GROWTH_USE_PROGRESS_HOOK")?;
-            return self.growth_activate(target);
+            let progress = RefCell::new(progress);
+            return self.growth_activate_with_progress(target, &|_| (progress.borrow_mut())());
         }
         self.continuous_activation_gate(target)?;
         self.mining_activation_gate(target)?;
         self.namespace()?;
-        self.resume_intent(&mut hook)?;
+        self.resume_intent_with_progress(&mut hook, progress)?;
         let (old, g) = self.active()?;
         if self.record(target)?.work <= self.record(old)?.work {
             return Ok(old);
@@ -4234,18 +4382,22 @@ impl Node {
             .ok_or("GENERATION")?;
         if self.record(target)?.parent == Some(old) && hook.is_none() {
             let slot = self.slot()?;
+            progress()?;
             let prior = self.cached_parent(old)?;
+            progress()?;
             let mut staged = None;
-            self.atomic(|| {
-                self.apply_delta(target, slot, false)?;
-                let state = self.slot_state(slot)?;
+            self.atomic_with_progress(progress, |progress| {
+                self.apply_delta_with_progress(target, slot, false, progress)?;
+                let state = self.slot_state_with_progress(slot, progress)?;
                 continuity_v1::check_state(&state, self.record(target)?.height, &self.settings.app)
                     .map_err(|error| Error::from(error).local_integrity())?;
+                progress()?;
                 staged = Some(self.checked_commitment(
                     &state,
                     self.record(target)?.root,
                     prior.as_ref(),
                 )?);
+                progress()?;
                 ensure(
                     self.db.execute(
                         "UPDATE active SET tip=?,generation=? WHERE singleton=1",
@@ -4267,7 +4419,7 @@ impl Node {
                     "GENERATION",
                 )
                 .map_err(Error::local_integrity)?;
-                self.check_events(next, &[(0, 1, target)])?;
+                self.check_events_with_progress(next, &[(0, 1, target)], progress)?;
                 Ok(())
             })?;
             ensure(
@@ -4281,7 +4433,7 @@ impl Node {
         // Reorganizations retain the independent full-root path and reseed only
         // after actual durable publication/recovery, never from a stale preview.
         self.invalidate_commitment();
-        self.atomic(|| {
+        self.atomic_with_progress(progress, |progress| {
             self.db.execute("DELETE FROM kv WHERE slot=?", [next])?;
             self.db.execute(
                 "INSERT INTO kv SELECT ?,key,value FROM kv WHERE slot=?",
@@ -4293,6 +4445,7 @@ impl Node {
             let mut detached = 0i64;
             let mut attached = 0i64;
             while left != right {
+                progress()?;
                 if self.record(left)?.height >= self.record(right)?.height {
                     self.db.execute(
                         "INSERT INTO steps VALUES(?,0,?)",
@@ -4319,50 +4472,75 @@ impl Node {
                 params![old.as_slice(), target.as_slice(), next],
             )?;
             ensure(
-                self.active()? == (old, g) && self.check_steps(old, target, 0)? == count as u64,
+                self.active()? == (old, g)
+                    && self.check_steps_with_progress(old, target, 0, progress)? == count as u64,
                 "REORG_STEPS",
             )
             .map_err(Error::local_integrity)?;
             self.check_reorg_row(old, target, next, 0, 0)?;
-            self.check_persisted_state(old, &self.slot_state(next)?, &mut || Ok(()))?;
+            self.check_persisted_state(
+                old,
+                &self.slot_state_with_progress(next, progress)?,
+                progress,
+            )?;
             Ok(())
         })?;
         cut(&mut hook, "intent")?;
-        self.resume_intent(&mut hook)
+        self.resume_intent_with_progress(&mut hook, progress)
     }
     fn check_steps(&self, old: Hash, target: Hash, cursor: u64) -> Result<u64> {
+        self.check_steps_with_progress(old, target, cursor, &mut || Ok(()))
+    }
+    fn check_steps_with_progress(
+        &self,
+        old: Hash,
+        target: Hash,
+        cursor: u64,
+        progress: &mut dyn FnMut() -> Result<()>,
+    ) -> Result<u64> {
+        progress()?;
         let mut stmt = self
             .db
-            .prepare("SELECT ordinal,kind,block FROM steps ORDER BY ordinal")?;
-        let rows = stmt.query_map([], |r| {
-            Ok((
-                r.get::<_, u64>(0)?,
-                r.get::<_, u64>(1)?,
-                r.get::<_, Vec<u8>>(2)?,
-            ))
-        })?;
+            .prepare("SELECT ordinal,kind,block FROM steps ORDER BY ordinal")
+            .map_err(|error| Error::from(error).local_integrity())?;
+        let rows = stmt
+            .query_map([], |r| {
+                Ok((
+                    r.get::<_, u64>(0)?,
+                    r.get::<_, u64>(1)?,
+                    r.get::<_, Vec<u8>>(2)?,
+                ))
+            })
+            .map_err(|error| Error::from(error).local_integrity())?;
         let mut current = old;
         let mut count = 0u64;
         let mut attaching = false;
         for row in rows {
-            let (ordinal, kind, bytes) = row?;
-            let id = bytes32(bytes)?;
+            progress()?;
+            let (ordinal, kind, bytes) =
+                row.map_err(|error| Error::from(error).local_integrity())?;
+            let id = bytes32(bytes).map_err(Error::local_integrity)?;
             ensure(ordinal == count, "REORG_STEPS").map_err(Error::local_integrity)?;
             match kind {
                 0 => {
                     ensure(!attaching && id == current, "REORG_STEPS")
                         .map_err(Error::local_integrity)?;
-                    current = self.parent(id)?;
+                    current = self.parent(id).map_err(Error::local_integrity)?;
                 }
                 1 => {
                     attaching = true;
-                    ensure(self.parent(id)? == current, "REORG_STEPS")
-                        .map_err(Error::local_integrity)?;
+                    ensure(
+                        self.parent(id).map_err(Error::local_integrity)? == current,
+                        "REORG_STEPS",
+                    )
+                    .map_err(Error::local_integrity)?;
                     current = id;
                 }
                 _ => return Err(Error::from("REORG_STEPS").local_integrity()),
             }
-            count = count.checked_add(1).ok_or("ANCESTRY_LIMIT")?;
+            count = count
+                .checked_add(1)
+                .ok_or_else(|| Error::from("ANCESTRY_LIMIT").local_integrity())?;
         }
         ensure(current == target && cursor <= count, "REORG_STEPS")
             .map_err(Error::local_integrity)?;
@@ -4395,21 +4573,47 @@ impl Node {
         )
         .map_err(Error::local_integrity)
     }
-    fn check_events(&self, generation: u64, expected: &[(u64, u64, Hash)]) -> Result<()> {
-        let rows: Vec<(u64, u64, Vec<u8>)> = self
+    fn check_events_with_progress(
+        &self,
+        generation: u64,
+        expected: &[(u64, u64, Hash)],
+        progress: &mut dyn FnMut() -> Result<()>,
+    ) -> Result<()> {
+        progress()?;
+        let mut statement = self
             .db
-            .prepare("SELECT ordinal,kind,block FROM events WHERE generation=? ORDER BY ordinal")?
-            .query_map([generation], |row| {
-                Ok((row.get(0)?, row.get(1)?, row.get(2)?))
-            })?
-            .collect::<std::result::Result<_, _>>()?;
-        let expected: Vec<_> = expected
-            .iter()
-            .map(|(ordinal, kind, id)| (*ordinal, *kind, id.to_vec()))
-            .collect();
-        ensure(rows == expected, "REORG_EVENTS").map_err(Error::local_integrity)
+            .prepare("SELECT ordinal,kind,block FROM events WHERE generation=? ORDER BY ordinal")?;
+        let rows = statement.query_map([generation], |row| {
+            Ok((
+                row.get::<_, u64>(0)?,
+                row.get::<_, u64>(1)?,
+                row.get::<_, Vec<u8>>(2)?,
+            ))
+        })?;
+        let mut count = 0usize;
+        for row in rows {
+            progress()?;
+            let (ordinal, kind, id) = row?;
+            ensure(
+                expected.get(count).is_some_and(|want| {
+                    want.0 == ordinal && want.1 == kind && want.2.as_slice() == id.as_slice()
+                }),
+                "REORG_EVENTS",
+            )
+            .map_err(Error::local_integrity)?;
+            count += 1;
+        }
+        ensure(count == expected.len(), "REORG_EVENTS").map_err(Error::local_integrity)
     }
     fn resume_intent(&mut self, hook: &mut Option<&mut Hook<'_>>) -> Result<Hash> {
+        self.resume_intent_with_progress(hook, &mut || Ok(()))
+    }
+    fn resume_intent_with_progress(
+        &mut self,
+        hook: &mut Option<&mut Hook<'_>>,
+        progress: &mut dyn FnMut() -> Result<()>,
+    ) -> Result<Hash> {
+        progress()?;
         let row = self
             .db
             .query_row(
@@ -4438,18 +4642,19 @@ impl Node {
         let target = bytes32(target)?;
         ensure(g > 0 && self.active()? == (old, g - 1), "GENERATION")
             .map_err(Error::local_integrity)?;
-        let count = self
-            .check_steps(old, target, position)
-            .map_err(Error::local_integrity)?;
+        // Control errors are not local-integrity failures. Only malformed
+        // retained rows are classified by the checking functions themselves.
+        let count = self.check_steps_with_progress(old, target, position, progress)?;
         for index in position..count {
+            progress()?;
             let (kind, bytes) = self.db.query_row(
                 "SELECT kind,block FROM steps WHERE ordinal=?",
                 [index],
                 |r| Ok((r.get::<_, u64>(0)?, r.get::<_, Vec<u8>>(1)?)),
             )?;
             let id = bytes32(bytes)?;
-            self.atomic(|| {
-                self.apply_delta(id, g, kind == 0)?;
+            self.atomic_with_progress(progress, |progress| {
+                self.apply_delta_with_progress(id, g, kind == 0, progress)?;
                 ensure(
                     self.db
                         .execute("UPDATE reorg SET cursor=? WHERE singleton=1", [index + 1])?
@@ -4459,7 +4664,11 @@ impl Node {
                 .map_err(Error::local_integrity)?;
                 self.check_reorg_row(old, target, g, index + 1, 0)?;
                 let resulting = if kind == 0 { self.parent(id)? } else { id };
-                self.check_persisted_state(resulting, &self.slot_state(g)?, &mut || Ok(()))?;
+                self.check_persisted_state(
+                    resulting,
+                    &self.slot_state_with_progress(g, progress)?,
+                    progress,
+                )?;
                 Ok(())
             })?;
             cut(
@@ -4467,13 +4676,18 @@ impl Node {
                 &format!("{}:{index}", if kind == 0 { "detach" } else { "attach" }),
             )?;
         }
-        let state = self.slot_state(g)?;
+        let state = self.slot_state_with_progress(g, progress)?;
+        progress()?;
         continuity_v1::check_state(&state, self.record(target)?.height, &self.settings.app)
             .map_err(|error| Error::from(error).local_integrity())?;
-        ensure(root(&state)? == self.record(target)?.root, "ROOT")
-            .map_err(Error::local_integrity)?;
+        ensure(
+            self.settings.state_root(&state)? == self.record(target)?.root,
+            "ROOT",
+        )
+        .map_err(Error::local_integrity)?;
+        progress()?;
         cut(hook, "before-publish")?;
-        self.atomic(|| {
+        self.atomic_with_progress(progress, |progress| {
             let expected: Vec<(u64, u64, Hash)> = self
                 .db
                 .prepare("SELECT ordinal,kind,block FROM steps ORDER BY ordinal")?
@@ -4485,6 +4699,7 @@ impl Node {
                     ))
                 })?
                 .map(|row| {
+                    progress()?;
                     let (ordinal, kind, id) = row?;
                     Ok((ordinal, kind, bytes32(id)?))
                 })
@@ -4519,8 +4734,12 @@ impl Node {
             )
             .map_err(Error::local_integrity)?;
             self.check_reorg_row(old, target, g, count, 1)?;
-            self.check_events(g, &expected)?;
-            self.check_persisted_state(target, &self.slot_state(g)?, &mut || Ok(()))?;
+            self.check_events_with_progress(g, &expected, progress)?;
+            self.check_persisted_state(
+                target,
+                &self.slot_state_with_progress(g, progress)?,
+                progress,
+            )?;
             Ok(())
         })?;
         cut(hook, "published")?;
@@ -4547,16 +4766,39 @@ impl Node {
         self.activate(bytes32(best)?)
     }
     pub fn check_observed_history(&self, tip: Hash, observed_now: u64) -> Result<()> {
+        self.check_observed_history_with_progress(tip, observed_now, &mut || Ok(()))
+    }
+    fn check_observed_history_with_progress(
+        &self,
+        tip: Hash,
+        observed_now: u64,
+        progress: &mut dyn FnMut() -> Result<()>,
+    ) -> Result<()> {
+        progress()?;
         let bound = observed_now as u128 + self.settings.limit("future_skew_seconds")? as u128;
         let mut current = tip;
         while current != self.settings.genesis() {
+            progress()?;
             (current, _) = self.visit_header_batch(current, &mut |_, link| {
+                progress()?;
                 ensure(link.header.timestamp as u128 <= bound, "TIME_DEFERRED")
             })?;
         }
-        Ok(())
+        progress()
     }
     pub fn activate_observed(&mut self, tip: Hash, observed_now: u64) -> Result<Hash> {
+        self.activate_observed_with_progress(tip, observed_now, &mut || Ok(()))
+    }
+    /// Cooperative existing-packet recovery keeps all original time, owner,
+    /// State and journal validation. SQL/root primitives remain indivisible;
+    /// cancellation before a commit rolls back only that uncommitted step.
+    pub(crate) fn activate_observed_with_progress(
+        &mut self,
+        tip: Hash,
+        observed_now: u64,
+        progress: &mut dyn FnMut() -> Result<()>,
+    ) -> Result<Hash> {
+        progress()?;
         let _measurement = (self.state_backend == StateBackend::AuthenticatedV1).then(|| {
             self.authenticated_arithmetic
                 .history
@@ -4564,8 +4806,8 @@ impl Node {
         });
         self.continuous_activation_gate(tip)?;
         self.mining_activation_gate(tip)?;
-        self.check_observed_history(tip, observed_now)?;
-        self.activate(tip)
+        self.check_observed_history_with_progress(tip, observed_now, progress)?;
+        self.activate_with_fault_and_progress(tip, None, progress)
     }
     pub fn confirmation(
         &self,
@@ -4869,7 +5111,7 @@ impl Node {
         let (authenticated_outbox_sessions, authenticated_outbox_pending) =
             self.authenticated_outbox_counts()?;
         Ok(
-            serde_json::json!({"network":hex::encode(self.settings.network()),"parameters":hex::encode(self.settings.parameters()),"genesis":hex::encode(self.settings.genesis()),"tip":hex::encode(tip),"height":row.height,"chainwork_hex":hex::encode(row.work.bytes()),"state_root":hex::encode(root(&state)?),"generation":g,"state_keys":state.len(),"stored_blocks":blocks,"events":events,"authenticated_sessions":authenticated_sessions,"authenticated_pending":authenticated_pending,"authenticated_audit_rows":authenticated_audit_rows,"authenticated_outbox_sessions":authenticated_outbox_sessions,"authenticated_outbox_pending":authenticated_outbox_pending,"production_activation":false}),
+            serde_json::json!({"network":hex::encode(self.settings.network()),"parameters":hex::encode(self.settings.parameters()),"genesis":hex::encode(self.settings.genesis()),"tip":hex::encode(tip),"height":row.height,"chainwork_hex":hex::encode(row.work.bytes()),"state_root":hex::encode(self.settings.state_root(&state)?),"generation":g,"state_keys":state.len(),"stored_blocks":blocks,"events":events,"authenticated_sessions":authenticated_sessions,"authenticated_pending":authenticated_pending,"authenticated_audit_rows":authenticated_audit_rows,"authenticated_outbox_sessions":authenticated_outbox_sessions,"authenticated_outbox_pending":authenticated_outbox_pending,"production_activation":false}),
         )
     }
 }

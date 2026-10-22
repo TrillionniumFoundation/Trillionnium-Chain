@@ -127,9 +127,9 @@ queue/Busy outcomes, state growth, active physical slots and recovery duration.
 The optional public request observer uses
 `public-v3-local-request-resource-observation-v3`. Its outer owner CPU covers the
 r11 paid body decode, native dispatch and signed response envelope, also retained
-by r12. This observation schema does not identify the scheduling revision: new
+by r12/r13. This observation schema does not identify the scheduling revision: new
 original campaign reports bind their exact signed policy identifier in
-`public_resource_policy`, checked against the independent r10/r11/r12 vectors.
+`public_resource_policy`, checked against the independent r10/r11/r12/r13 vectors.
 Historical missing policy metadata stays unknown, and r11 starvation remains
 failed evidence. Historical v1/v2 totals retain their original scope; source/profile
 identifiers must be preserved when comparing them. Each retained request has exactly
@@ -658,3 +658,24 @@ recovery path, including unavailable data and stale work. The current reference
 transport DAG does not implement GHAST/GHOSTDAG/Prism ordering or inherit their
 security. Select a consensus successor only after a measured propagation/fork
 bottleneck and an explicit new ordering/state/reward/reorg contract justify it.
+
+### R13 replay/cancellation evidence is additional
+
+R13 limits same-complete-packet priority reacquisition only within one live CPU
+owner, using 4,096 monotonic exact identities with no eviction. Capacity full
+disables extra promotion, not ordinary verification/recovery. An actual restart
+begins a new zero-credit identity epoch; no permanent work-spent or general
+valid-W1 fairness guarantee follows. The receiver reports this capacity, actual
+marker/counter observations and epoch scope separately from its unchanged CPU
+flow identity. Historical r12 phases retain their own resource digest and
+derivation without synthetic r13 fields.
+
+Focused controls must exercise a genuinely verified W1 packet with a failing
+native root, concurrent claims, full-capacity ordinary admission, Unknown and
+cancellation retention, plus cancellation after actual durable reorganization
+progress and exact retry of signed transfer deltas. These do not replace the
+original native campaign or close its throughput acceptance by themselves.
+Every original attack count, two-second client deadline, CPU/RAM setting,
+confirmation denominator and genuine depletion condition remains unchanged.
+Deep roots and individual SQLite operations remain cooperative observation
+intervals rather than hard CPU preemption; all observed overruns remain paid.

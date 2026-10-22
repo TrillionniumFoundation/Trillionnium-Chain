@@ -783,6 +783,59 @@
       ],
       "evidence_class": "source-binding",
       "receipt": null
+    },
+    {
+      "id": "native-growth-reference-v2",
+      "modules": [
+        "M00",
+        "M06",
+        "M07",
+        "M08",
+        "M17"
+      ],
+      "configuration": "config/pon/growth-reference-v2.json",
+      "revision_pointer": "consensus_revision",
+      "consensus_revision": 17,
+      "document": "docs/development/specs/pon/PERMANENT_ACCOUNT_STORAGE_BOUNDARY.md",
+      "entrypoint": {
+        "path": "trillionnium/crates/trnm-pon-node/src/store/growth_reference.rs",
+        "symbol": "Node::growth_reference_observation"
+      },
+      "tests": [
+        "trillionnium/crates/trnm-pon-node/src/store/growth_reference_tests.rs::native_growth_reference_signed_zero_reentry_and_cold_recovery",
+        "trillionnium/crates/trnm-pon-node/src/store/growth_reference_tests.rs::native_growth_reference_reorganization_cut_and_corruption_fail_stop",
+        "trillionnium/crates/trnm-pon-node/src/store/growth_reference_tests.rs::native_growth_reference_65537_signed_accounts_and_cold_reopen",
+        "trillionnium/crates/trnm-pon-node/src/store/growth_reference_tests.rs::native_growth_reference_public_checked_apis_bind_actual_profile_parent"
+      ],
+      "evidence_class": "source-binding",
+      "receipt": null
+    },
+    {
+      "id": "native-local-budget-obligations-v1",
+      "modules": [
+        "M07",
+        "M12",
+        "M15",
+        "M17"
+      ],
+      "configuration": null,
+      "revision_pointer": null,
+      "consensus_revision": null,
+      "document": "docs/development/specs/pon/REWARD_BUDGETS_V1.md",
+      "entrypoint": {
+        "path": "trillionnium/crates/trnm-pon-node/src/store/native_budget.rs",
+        "symbol": "Node::reserve_native_budget_v1"
+      },
+      "tests": [
+        "trillionnium/crates/trnm-pon-node/src/store/native_budget_tests.rs::native_signed_funding_and_exact_operations_survive_both_backends_reopen",
+        "trillionnium/crates/trnm-pon-node/src/store/native_budget_tests.rs::fork_or_spent_source_denies_new_intent_but_preserves_resource_and_target_receipt",
+        "trillionnium/crates/trnm-pon-node/src/store/native_budget_tests.rs::transaction_failure_leaves_no_partial_record_head_or_double_resource_charge",
+        "trillionnium/crates/trnm-pon-node/src/store/native_budget_tests.rs::cold_open_refuses_deleted_oversized_and_forged_funding_records",
+        "trillionnium/crates/trnm-pon-node/src/store/native_budget_tests.rs::native_mining_funds_keep_maturity_and_do_not_create_payment_authority",
+        "trillionnium/crates/trnm-pon-node/src/store/native_budget_tests.rs::abrupt_exit_preserves_committed_resource_reservations_and_pending_intent"
+      ],
+      "evidence_class": "source-binding",
+      "receipt": null
     }
   ]
 }

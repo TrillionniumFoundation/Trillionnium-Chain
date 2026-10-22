@@ -931,3 +931,32 @@ fn expired_absolute_retirement_deadline_cannot_release_a_slot_without_a_successo
     // in-deadline retirement; it is not weakened by the wall-clock fence.
     assert!(store.retire([1; 32], 10, None, deadline()).unwrap().retired);
 }
+
+#[test]
+fn sqlite_like_wildcard_cannot_hide_a_user_trigger_at_repair_or_reopen() {
+    let dir = tempfile::tempdir().unwrap();
+    let (cache, manifest, _) = material(dir.path(), 5000);
+    let path = dir.path().join("retention");
+    let cfg = config(1, 8192);
+    let mut store = CellRetentionStoreV1::create(&path, cfg.clone()).unwrap();
+    store.reserve(contract(1, &manifest)).unwrap();
+    store.acknowledge([1; 32], &cache, deadline()).unwrap();
+    damage(&mut store);
+    let before = fs::read(path.join("payload.arena")).unwrap();
+    // SQLite permits this user name. LIKE's underscore wildcard must not
+    // classify it as an internal sqlite_* object and bypass the schema fence.
+    store
+        .connection
+        .execute_batch(
+            "CREATE TRIGGER sqliteX_hidden_repair AFTER INSERT ON repairs BEGIN SELECT 1; END;",
+        )
+        .unwrap();
+    let live_rejected = store
+        .repair_controlled([1; 32], [101; 32], &cache, deadline(), &mut || Ok(()))
+        .is_err();
+    let payload_unchanged = fs::read(path.join("payload.arena")).unwrap() == before;
+    drop(store);
+    let cold_rejected = CellRetentionStoreV1::open(&path, cfg).is_err();
+    assert!(live_rejected && payload_unchanged && cold_rejected,
+        "noninternal trigger bypass: live_rejected={live_rejected}, payload_unchanged={payload_unchanged}, cold_rejected={cold_rejected}");
+}

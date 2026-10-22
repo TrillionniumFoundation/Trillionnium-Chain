@@ -780,3 +780,95 @@ fn native_payment_bridge_evaluated_release_claim_and_individual_reward_maturity(
         );
     }
 }
+
+#[test]
+fn native_payment_bridge_reference_task_requires_confirmed_gsc2_transition() {
+    let dir = tempfile::tempdir().unwrap();
+    let path = dir.path().join("reference-node");
+    let settings = crate::Settings::development_with_profiles(
+        Some(1),
+        "native-public-evaluation-dev-v1",
+        trnm_mvcc_fee::growth_profile_v2::PROFILE,
+    )
+    .unwrap();
+    let mut node = Node::open(&path, settings.clone(), 1).unwrap();
+    let initial = node.read_active().unwrap().2;
+    assert_ne!(
+        settings.state_root(&initial).unwrap(),
+        trnm_mvcc_fee::pon_executor::root(&initial).unwrap()
+    );
+    let (task, reserve) = reserve_task(&settings, 1, 2_000, 20);
+    let first = mine(&mut node, settings.genesis(), vec![reserve]);
+    let source = NativeFundingSourceV1::Task(task);
+    let observed = node.observe_funding(source).unwrap();
+    assert_eq!(observed.anchor.state_root, node.record(first).unwrap().root);
+    assert_eq!(observed.row.unwrap()["remaining"], 2_000);
+
+    let output = [161; 32];
+    let mut payload = task.to_vec();
+    payload.extend(output);
+    let receipt = signed(&settings, 1, 1, 4, payload.clone());
+    let settle = signed(&settings, 0, 2, 5, payload);
+    let query = NativePaymentQueryV1 {
+        source,
+        subject: output,
+        beneficiary: public(1),
+        operation: transaction_id(&settle),
+        maximum_gross_units: 2_000,
+    };
+    // This separate reference journal records declared local observations. Even
+    // its completed receipt is not a confirmed M06 payment or an M12 Positive.
+    let reference = crate::NativeBudgetRequestV1 {
+        operation: [162; 32],
+        subject: output,
+        beneficiary: public(1),
+        lane: crate::NativeBudgetLaneV1::Storage,
+        source: task,
+        amount: 2_000,
+        source_cap: 2_000,
+        resource_cap: [100, 1_000],
+        resource_reservation: [40, 400],
+        contribution: None,
+    };
+    node.reserve_native_budget_v1(reference.clone()).unwrap();
+    node.settle_native_budget_resources_v1(reference.operation, [40, 400])
+        .unwrap();
+    node.prepare_native_budget_effect_v1(reference.operation, [163; 32])
+        .unwrap();
+    let local = node
+        .finish_native_budget_effect_v1(reference.operation, [163; 32], [164; 32])
+        .unwrap();
+    assert!(local.effect_completed);
+    assert!(!local.chain_funds_locked && !local.payment_executed && !local.execution_authority);
+    assert!(node.observe_payment(&query).is_err());
+
+    let provider_before = balance(&node, public(1));
+    let provider_fee = exact_fee(&settings, &receipt);
+    let settled = mine(&mut node, first, vec![receipt, settle]);
+    let paid = node.observe_payment(&query).unwrap();
+    assert_eq!(paid.anchor.block, settled);
+    assert_eq!(paid.anchor.state_root, node.record(settled).unwrap().root);
+    assert_eq!(
+        (paid.gross_escrow_debit, paid.beneficiary_credit),
+        (2_000, 2_000)
+    );
+    assert_eq!(
+        balance(&node, public(1)),
+        provider_before + 2_000 - provider_fee
+    );
+    let mut wrong = query.clone();
+    wrong.subject = [165; 32];
+    assert!(node.observe_payment(&wrong).is_err());
+    drop(node);
+    let mut node = Node::open(&path, settings.clone(), 1).unwrap();
+    assert_eq!(node.observe_payment(&query).unwrap(), paid);
+    let mut fork = settings.genesis();
+    for _ in 0..3 {
+        fork = mine(&mut node, fork, vec![]);
+    }
+    assert_eq!(node.active().unwrap().0, fork);
+    assert!(node.observe_payment(&query).is_err());
+    let retained = node.reserve_native_budget_v1(reference).unwrap();
+    assert!(retained.effect_completed && !retained.funding_current);
+    assert!(!retained.payment_executed && !retained.execution_authority);
+}

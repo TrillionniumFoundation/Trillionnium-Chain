@@ -282,6 +282,10 @@ impl Node {
         maximum_sql: u64,
         progress: &mut dyn FnMut(u64) -> Result<()>,
     ) -> Result<PublicHistorySnapshot> {
+        ensure(
+            !trnm_mvcc_fee::growth_profile_v2::enabled(&self.settings.app),
+            "GROWTH_REFERENCE_LEGACY_READER_UNSUPPORTED",
+        )?;
         progress(0)?;
         #[cfg(test)]
         let maximum_sql = self

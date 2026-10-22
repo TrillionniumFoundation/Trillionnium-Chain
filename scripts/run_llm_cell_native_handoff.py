@@ -33,6 +33,15 @@ def write_json(path: Path, value: object) -> None:
         os.fsync(stream.fileno())
 
 
+def remaining_fetch_budget(deadline: float) -> tuple[float, int, int]:
+    remaining = deadline - time.monotonic()
+    # Floor the original remaining window. No child receives rounded-up time.
+    overall_ms = int(remaining * 1000)
+    if overall_ms < 10:
+        raise TimeoutError("original aggregate transfer window is below the 10ms minimum request deadline")
+    return remaining, overall_ms, min(2000, overall_ms)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     for name in ("chain", "hepta", "source-parent", "source-materials", "output",
@@ -115,26 +124,60 @@ def main() -> None:
                     raise TimeoutError("finite producer did not announce its listener")
                 listen_line = server.stdout.readline()
             address = json.loads(listen_line)["address"]
-            transfer_deadline = time.monotonic() + 35
-            for index, member in enumerate(evidence["members"]):
-                remaining = int(transfer_deadline - time.monotonic())
-                if remaining < 1:
-                    raise TimeoutError("original aggregate transfer deadline exhausted")
-                command = [str(args.cell_bin), "fetch", "--store", str(consumer),
-                    "--manifest", member["pack"]["manifest"], "--peers", address,
-                    "--output", member["destination"], "--max-bytes", str(member["pack"]["bytes"]),
-                    "--seconds", str(remaining), "--parallelism", "2"]
-                fetched = subprocess.run(command, capture_output=True, text=True,
-                    timeout=remaining + 2)
-                (args.output / f"fetch-{index}.log").write_text(fetched.stdout + fetched.stderr)
-                fetched.check_returncode()
-                result = json.loads(fetched.stdout)
-                if result["downloaded_chunks"] != member["pack"]["chunks"] or result["cached_chunks"] != 0:
-                    raise ValueError("member was not fully fetched from this producer")
-                if sha(Path(member["destination"])) != member["pack"]["payload_sha256"]:
-                    raise ValueError("consumer readback differs from pinned bytes")
-                member["fetch"] = result
-                member["consumer_sha256"] = sha(Path(member["destination"]))
+            transfer_started = time.monotonic()
+            transfer_deadline = transfer_started + 35
+            transfer = {"schema": "cell-native-aggregate-transfer-v1", "clock": "monotonic",
+                "limit_seconds": 35, "all_members_verified": False,
+                "scope": "listener announced through all member fetches and final consumer readback; excludes packing, provider drain and Hepta load"}
+            evidence["transfer"] = transfer
+            try:
+                for index, member in enumerate(evidence["members"]):
+                    member_started = time.monotonic()
+                    timing = {"started_seconds": member_started - transfer_started,
+                        "completed": False}
+                    member["transfer_timing"] = timing
+                    try:
+                        remaining, overall_ms, request_ms = remaining_fetch_budget(transfer_deadline)
+                        timing["overall_timeout_ms"] = overall_ms
+                        timing["request_timeout_ms"] = request_ms
+                        command = [str(args.cell_bin), "fetch", "--store", str(consumer),
+                            "--manifest", member["pack"]["manifest"], "--peers", address,
+                            "--output", member["destination"], "--max-bytes", str(member["pack"]["bytes"]),
+                            "--overall-ms", str(overall_ms), "--request-ms", str(request_ms),
+                            "--parallelism", "2"]
+                        fetch_started = time.monotonic()
+                        try:
+                            fetched = subprocess.run(command, capture_output=True, text=True,
+                                timeout=remaining + 2)
+                        finally:
+                            timing["fetch_elapsed_seconds"] = time.monotonic() - fetch_started
+                        (args.output / f"fetch-{index}.log").write_text(fetched.stdout + fetched.stderr)
+                        fetched.check_returncode()
+                        result = json.loads(fetched.stdout)
+                        if result["downloaded_chunks"] != member["pack"]["chunks"] or result["cached_chunks"] != 0:
+                            raise ValueError("member was not fully fetched from this producer")
+                        readback_started = time.monotonic()
+                        try:
+                            if sha(Path(member["destination"])) != member["pack"]["payload_sha256"]:
+                                raise ValueError("consumer readback differs from pinned bytes")
+                            member["fetch"] = result
+                            member["consumer_sha256"] = sha(Path(member["destination"]))
+                        finally:
+                            timing["readback_elapsed_seconds"] = time.monotonic() - readback_started
+                        timing["completed"] = True
+                    finally:
+                        member_ended = time.monotonic()
+                        timing["ended_seconds"] = member_ended - transfer_started
+                        timing["elapsed_seconds"] = member_ended - member_started
+                transfer["all_members_verified"] = True
+            finally:
+                transfer_ended = time.monotonic()
+                transfer["elapsed_seconds"] = transfer_ended - transfer_started
+                transfer["within_original_deadline"] = transfer_ended < transfer_deadline
+            # The subprocess timeout includes cleanup slack. It is not authority
+            # to accept a late final file or readback as an in-window transfer.
+            if not transfer["within_original_deadline"]:
+                raise TimeoutError("original aggregate transfer deadline exhausted after consumer readback")
             tail, _ = server.communicate(timeout=50)
             (args.output / "server-stdout.log").write_text(listen_line + tail)
             if server.returncode != 0:
@@ -149,7 +192,7 @@ def main() -> None:
         config_path = args.output / "native-config.json"
         write_json(config_path, config)
         env = {**os.environ, "PATH": str(args.just.parent) + os.pathsep + os.environ.get("PATH", ""),
-            "CARGO_TARGET_DIR": str(args.hepta_target), "CARGO_BUILD_JOBS": "6",
+            "CARGO_TARGET_DIR": str(args.hepta_target), "CARGO_BUILD_JOBS": "4",
             "CARGO_PROFILE_DEV_DEBUG": "0", "CARGO_PROFILE_TEST_DEBUG": "0",
             "HF_HUB_OFFLINE": "1", "TRANSFORMERS_OFFLINE": "1", "CUDA_VISIBLE_DEVICES": "",
             "OMP_NUM_THREADS": "4", "MKL_NUM_THREADS": "4", "HEPTA_PN3_NEURAL_NATIVE_CONFIG": str(config_path)}

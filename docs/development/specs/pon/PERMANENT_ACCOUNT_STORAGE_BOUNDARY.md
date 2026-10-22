@@ -311,3 +311,90 @@ No installed profile selects the v2 state root, and no 65,537th native key is
 admitted by this increment. Signed growth, atomic migration, complete mandatory
 witnesses, storage sufficiency, fault recovery and independent availability
 remain the required PN2 acceptance above.
+
+
+## Native complete-State growth reference, revision 17
+
+The explicitly selected development task profile
+`consensus-maintenance-growth-reference-dev-v2` is a native reference increment.
+It keeps the ordinary Node, W1 validation, cumulative-work fork choice, single
+SQLite writer, branch deltas, monotonic local facts and recovery machinery. Its
+GSC2 state relation separates at most 1,000,000 permanent accounts from at most
+65,536 non-account working rows. Future missing mandatory recipients reserve
+permanent-account capacity; evaluation archives and the unfilled mining-reward
+queue reserve working capacity. Every balance and nonce, including a present
+zero-balance account, remains committed. Monetary conservation is checked from
+all actual account, escrow and reward rows.
+
+GSC2 is exactly 196 bytes: four magic bytes; network, parameters and account
+root; account count, account balance and permanent-account ceiling; working
+root; working count, working ceiling, escrow balance, reward balance and issued
+supply. Hashes occupy 32 bytes and all counts/amounts use little-endian u64.
+`H("native-permanent-account-state-v2", GSC2)` is a fresh native root domain.
+It reuses the existing account-archive sparse key/leaf/branch relation and the
+old root grammar for the complete bounded working partition. This is not the
+research observation's commitment id: that observation includes genesis, which
+cannot be used to recursively construct its own new genesis state root. The
+native network and parameters are frozen first, genesis commits the initial
+GSC2 root, and subsequent headers bind the genesis ancestry and selected
+parameters into W1's challenge. The old state-root function and every historical
+profile retain their original bytes, errors and 65,536-total-key ceiling.
+
+The new development context has a separate chain label, parameter digest,
+genesis and `native-growth-reference-branch-schema-v2` namespace identity.
+`config/pon/growth-reference-v2.json` freezes revision 17, the two finite
+capacity dimensions, the root/schema domains and the unqualified acceptance
+flags. Its canonical JSON hash under `native-growth-reference-policy-v2` is
+included in the parameters and checked when the native root is constructed.
+Header checks, preparation, admission, actual SQL reads, snapshots, reorganization,
+final publication, stats and cold reopen all select the same root relation.
+Complete actual State is checked against the owner's stored parent root before
+M06 execution; a caller-provided commitment or serialized observation is not
+accepted as that parent. Legacy tree capabilities are not reinterpreted, and
+legacy optional root caches return no snapshot for this profile. This reference
+retains full scans and complete-State root reconstruction: it has not met the
+bounded-witness hot-path objective.
+
+Every admitted reference block receives a complete canonical snapshot under the
+existing 64-retained-snapshot policy plus the genesis anchor. Snapshots remain
+comparison material, with exact deltas and final transactional readback fences;
+pruned/inactive paths still replay retained deltas. This changes the new context's
+storage cadence, not historical contexts or consensus finality.
+
+Authenticated-v1 storage, operator-owned task/mining/continuous modes, the legacy
+M05 prefix pool, legacy ExecutionSession, the research public reader and the old
+single-total-key capacity observation explicitly refuse this profile where their
+legacy-root contracts do not apply. `growth_reference_observation` instead reads
+and checks the actual active State, root, tip and generation, reports separate
+permanent/working obligations, and retains `complete_state_required=true`,
+`bounded_witness_qualified=false` and `production_activation=false`.
+
+Fresh development namespaces are supported by this increment. Cross-profile
+live migration remains unimplemented: old signed work/evaluation records and
+acknowledged obligations cannot be relabeled under new network parameters, and
+the old authenticated migration entry refuses the reference profile. A future
+source-preserving migration must explicitly account for those facts rather than
+copy rows and claim authorization.
+
+Native tests cover signed transfers, zero-balance nonce retention and re-entry,
+old/new namespace rejection, unsupported-backend refusal before creation,
+reorganization interruption/cold recovery, independent account-root readback and
+corruption refusal. The separately selected release gate starts at the ordinary
+four-account genesis and submits genuinely signed transfers until the active
+native ledger has 65,537 permanent accounts, then cold reopens it. No synthetic
+archive, preallocated account genesis or mathematical vector substitutes for
+that execution. Until the actual selected run finishes, this is an implemented
+acceptance selector, not a passed native-growth campaign. Even a successful run
+leaves bounded witnesses, source-preserving migration, storage sufficiency,
+provider/full-disk/physical-loss coverage and independent WAN acceptance open.
+
+The required release gate can retain its original SQLite store and `native.json`
+by selecting an absent absolute `TRNM_NATIVE_GROWTH_EXPORT_DIRECTORY`. The
+independent Python current-state reader checks actual SQL schema objects against
+the selected literal DDL, canonical actual KV bytes, both complete sparse roots,
+monetary conservation, GSC2 encoding and the active header/context. Its output
+hashes the retained database files and receipt, and marks full-history
+signature/W1 replay, compiler identity, mandatory liability recomputation and
+fault causality as unproved. The small reader controls use an explicitly
+synthetic SQLite fixture with dummy proof bytes; they are parser/math negative
+controls, never a substitute for the signed native campaign.

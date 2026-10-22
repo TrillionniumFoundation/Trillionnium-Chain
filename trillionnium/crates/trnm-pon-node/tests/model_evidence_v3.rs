@@ -9,7 +9,10 @@ use trnm_mvcc_fee::{
     pon_executor::{self, Config, State},
     public_evaluation as evaluation,
 };
-use trnm_pon_node::{development_public, Node, Settings};
+use trnm_pon_node::{
+    development_public, NativeBudgetLaneV1, NativeBudgetRequestV1, NativeContributionClaimV1, Node,
+    Settings,
+};
 use trnm_protocol::{
     integer_factor_v2::FactorWitnessV2,
     pon_wire::{hash, Envelope, Hash},
@@ -826,6 +829,41 @@ fn objective_release_shared_source_reward_reopen_and_review_fork_are_native() {
         if height == 56 {
             assert_eq!(after["model:current"], hex::encode(released));
             assert_eq!(after[&source_key]["reserved_units"], 100_000);
+            let request = NativeBudgetRequestV1 {
+                operation: hash(b"native-budget-contribution-test", &[&released]),
+                subject: first.contribution_id,
+                beneficiary: development_public(0).unwrap(),
+                lane: NativeBudgetLaneV1::Contribution,
+                source: released,
+                amount: 50_000,
+                source_cap: 100_000,
+                resource_cap: [100, 100],
+                resource_reservation: [20, 20],
+                contribution: Some(NativeContributionClaimV1 {
+                    candidate: first.contribution_id,
+                    score: POSITIVE_SCORE,
+                    siblings: vec![leaves[1]],
+                }),
+            };
+            let mut wrong = request.clone();
+            wrong.operation = hash(b"native-budget-wrong-payee-test", &[&released]);
+            wrong.beneficiary = development_public(1).unwrap();
+            assert_eq!(
+                node.reserve_native_budget_v1(wrong)
+                    .err()
+                    .unwrap()
+                    .to_string(),
+                "BUDGET_ALLOCATION"
+            );
+            let observation = node.reserve_native_budget_v1(request.clone()).unwrap();
+            assert!(
+                !observation.funding_current
+                    && !observation.chain_funds_locked
+                    && !observation.payment_executed
+                    && !observation.execution_authority
+            );
+            node.settle_native_budget_resources_v1(request.operation, [10, 10])
+                .unwrap();
         }
         if height == 58 {
             assert!(!after.contains_key(&format!(

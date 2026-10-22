@@ -12,14 +12,29 @@ use std::collections::{BTreeMap, BTreeSet};
 use trnm_mvcc_fee::pon_executor::State;
 use trnm_protocol::pon_wire::Hash;
 
-/// Exact mathematical inputs only. Every stored node is still read and decoded
-/// before this helper can reuse a compressed-path hash. No SQL/Node verdict is
-/// retained, so rollback, external writes and triggers need no invalidation.
+#[path = "native_node_decode.rs"]
+mod node_decode;
+
+/// Exact mathematical inputs only. Every stored node is still read from SQL.
+/// Node decoding can reuse only the complete actual bytes and expected ID;
+/// compressed-path hashes bind all their original inputs separately. No row,
+/// graph, state, ancestry or commit verdict survives a call.
 type LiftInput = (Hash, Hash, usize, usize);
 #[derive(Default)]
-pub(crate) struct LiftCache(RefCell<BTreeMap<LiftInput, Hash>>);
+pub(crate) struct LiftCache(
+    RefCell<BTreeMap<LiftInput, Hash>>,
+    node_decode::NodeDecodeArithmetic,
+);
 impl LiftCache {
     const MAX_ENTRIES: usize = 8192;
+
+    pub(crate) fn decode_observation(&self) -> serde_json::Value {
+        self.1.observation()
+    }
+
+    fn load_node(&self, db: &Connection, id: Hash) -> super::Result<Node> {
+        super::load_node_decoded(db, id, |expected, bytes| self.1.decode(expected, bytes))
+    }
     pub(super) fn lift(&self, node: &Node, depth: usize) -> Hash {
         let key = (node.path, node.digest, node.depth, depth);
         if let Ok(entries) = self.0.try_borrow() {
@@ -350,7 +365,7 @@ pub(crate) fn verify_with_lifts(
     let actual = super::accounts(state).map_err(storage)?;
     let node = root
         .node
-        .map(|id| super::load_node(db, id))
+        .map(|id| lifts.map_or_else(|| super::load_node(db, id), |cache| cache.load_node(db, id)))
         .transpose()
         .map_err(storage)?;
     crate::ensure(
@@ -416,9 +431,9 @@ fn child_with_lifts(
     else {
         return Err(ArchiveError::CorruptRecord);
     };
-    // Preserve the actual SQL read, identity decode, path/depth and parent hash
-    // comparisons. Only lift arithmetic on the just-read node can be reused.
-    let out = super::load_node(db, if right_side { right } else { left })?;
+    // Preserve the actual SQL read, exact-input decode, path/depth and parent
+    // hash comparisons. Only arithmetic on the just-read bytes can be reused.
+    let out = lifts.load_node(db, if right_side { right } else { left })?;
     if out.depth <= parent.depth
         || super::common(&out.path, &parent.path) < parent.depth
         || super::bit(&out.path, parent.depth) != right_side
@@ -465,7 +480,7 @@ pub(crate) fn audit_growth(db: &Connection, root: &Root) -> Result<()> {
     let mut balance = 0u64;
     while let Some(node) = stack.pop() {
         crate::ensure(
-            seen.insert(node.id) && seen.len() as u64 <= maximum * 2 - 1,
+            seen.insert(node.id) && (seen.len() as u64) < maximum * 2,
             "NATIVE_ACCOUNT_GRAPH",
         )
         .map_err(Error::local_integrity)?;

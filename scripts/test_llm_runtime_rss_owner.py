@@ -17,6 +17,82 @@ import llm_runtime_pilot as runtime
 
 class RssIdentityTests(unittest.TestCase):
     @contextlib.contextmanager
+    def diagnostic_proc(self, overrides=None):
+        import llm_runtime_rss_diagnostics as diagnostics
+        identity = {'Pid': ['10001'], 'NSpid': ['10001', '501']}
+        leader = dict(Pid=['10001'], PPid=['10000'], Tgid=['10001'], NSpid=['10001', '501'],
+                      NStgid=['10001', '501'], State=['Z', '(zombie)'], Threads=['2'])
+        task = dict(Pid=['10002'], PPid=['10000'], Tgid=['10001'], NSpid=['10002', '502'],
+                    NStgid=['10001', '501'], State=['S', '(sleeping)'], VmRSS=['8192', 'kB'])
+        records = {'/proc/self/status': {'Pid': ['10000'], 'NSpid': ['10000', '500']},
+            '/proc/self/fdinfo/17': identity, '/proc/10001/status': leader,
+            '/proc/10001/task/10001/status': leader, '/proc/10001/task/10002/status': task}
+        records.update(overrides or {})
+        reads = []
+
+        def read(path):
+            reads.append(str(path))
+            value = records[str(path)]
+            if isinstance(value, Exception):
+                raise value
+            return value
+
+        poll = Mock()
+        poll.poll.return_value = []
+        def task_stat(path):
+            return dict(pid=int(path.parent.name), ppid=10000, flags=4, pf_exiting=True, pf_kthread=False,
+                        state='Z' if path.parent.name == '10001' else 'R',
+                        starttime_ticks=12345, vsize_bytes=0, rss_pages=0)
+        with patch.object(diagnostics, '_fields', side_effect=read), \
+                patch.object(diagnostics, '_task_stat', side_effect=task_stat), \
+                patch.object(diagnostics.os, 'getpid', return_value=500), \
+                patch.object(diagnostics.select, 'poll', return_value=poll), \
+                patch.object(Path, 'iterdir', side_effect=lambda: iter([Path('/proc/10001/task/10001'),
+                                                                       Path('/proc/10001/task/10002')])):
+            yield diagnostics, reads, poll
+
+    def test_post_gap_diagnostic_can_distinguish_zombie_leader_and_live_group(self):
+        with self.diagnostic_proc() as (diagnostics, _, poll):
+            result = diagnostics.owned_child_rss_gap(501, 17)
+            self.assertTrue(result['identity_verified'])
+            self.assertEqual(result['leader_state'], 'Z')
+            self.assertIsNone(result['leader_rss_fields'])
+            self.assertEqual([(v['state'], v['rss_fields'], v['leader']) for v in result['task_samples']],
+                [('Z', None, True), ('S', ['8192', 'kB'], False)])
+            self.assertTrue(all(v['stat']['pf_exiting'] for v in result['task_samples']))
+            self.assertTrue(result['task_list_stable'])
+            self.assertTrue(result['held_pidfd_identity_unchanged_after'])
+            self.assertEqual(result['diagnostic_status'], 'observed')
+            poll.poll.assert_called_once_with(0)
+
+    def test_task_stat_diagnostic_parses_parenthesized_comm_without_echo(self):
+        import llm_runtime_rss_diagnostics as diagnostics
+        # Fields 3..24, with a deliberately awkward but untrusted comm.
+        fields = ['R', '10000', '1', '1', '0', '-1', '4'] + ['0'] * 12 + ['12345', '0', '0']
+        raw = '10002 (private canary ) name) ' + ' '.join(fields) + '\n'
+        with patch.object(Path, 'open', return_value=io.StringIO(raw)):
+            value = diagnostics._task_stat(Path('/proc/10001/task/10002/stat'))
+        self.assertEqual((value['pid'], value['ppid'], value['starttime_ticks']), (10002, 10000, 12345))
+        self.assertTrue(value['pf_exiting'])
+        self.assertNotIn('private canary', json.dumps(value))
+
+    def test_post_gap_diagnostic_never_reads_unbound_process_or_claims_rss_success(self):
+        for wrong in [dict(Pid=['-1'], NSpid=['-1']), dict(Pid=['10001'], NSpid=['10001', '502'])]:
+            with self.subTest(wrong=wrong), self.diagnostic_proc({'/proc/self/fdinfo/17': wrong}) as (diagnostics, reads, _):
+                result = diagnostics.owned_child_rss_gap(501, 17)
+                self.assertFalse(result['identity_verified'])
+                self.assertEqual(result['diagnostic_status'], 'unavailable')
+                self.assertFalse(any(path.startswith('/proc/10001') for path in reads))
+                self.assertNotIn('rss_bytes', result)
+
+    def test_post_gap_diagnostic_fault_never_replaces_the_original_refusal(self):
+        with self.diagnostic_proc({'/proc/10001/status': PermissionError(errno.EACCES, 'private canary')}) as (diagnostics, _, _):
+            result = diagnostics.owned_child_rss_gap(501, 17)
+            self.assertEqual(result['error_errno'], errno.EACCES)
+            self.assertEqual(result['diagnostic_status'], 'unavailable')
+            self.assertNotIn('private canary', json.dumps(result))
+
+    @contextlib.contextmanager
     def proc(self, nested=True, overrides=None, second_identity=None):
         parent = 10000 if nested else 500
         child = 10001 if nested else 501
@@ -75,6 +151,33 @@ class RssIdentityTests(unittest.TestCase):
         with self.proc(second_identity='Pid: -1\nNSpid: -1\n') as (_, _, closed):
             self.assertIsNone(runtime.current_rss(501))
             closed.assert_called_once_with(17)
+
+    def test_missing_sample_details_preserve_exact_read_boundary(self):
+        cases = [({'/proc/10001/status': 'Pid: 10001\nPPid: 10000\nNSpid: 10001 501\n'},
+                  'vmrss-missing', None),
+                 ({'/proc/10001/status': PermissionError(errno.EACCES, 'private canary')},
+                  'child-status-read', errno.EACCES),
+                 ({'/proc/self/fdinfo/17': 'Pid: -1\nNSpid: -1\n'},
+                  'pidfd-namespace-mismatch', None)]
+        for overrides, reason, number in cases:
+            detail = {}
+            token = runtime._RSS_READ_TRACE.set(detail)
+            try:
+                with self.subTest(reason=reason), self.proc(overrides=overrides):
+                    self.assertIsNone(runtime.current_rss(501))
+                    self.assertEqual((detail['reason'], detail['error_errno']), (reason, number))
+                    self.assertNotIn('private canary', json.dumps(detail))
+            finally:
+                runtime._RSS_READ_TRACE.reset(token)
+        detail = {}
+        token = runtime._RSS_READ_TRACE.set(detail)
+        try:
+            with self.proc() as (_, opened, _):
+                opened.side_effect = ProcessLookupError(errno.ESRCH, 'no longer visible')
+                self.assertIsNone(runtime.current_rss(501))
+                self.assertEqual((detail['reason'], detail['error_errno']), ('pidfd-open', errno.ESRCH))
+        finally:
+            runtime._RSS_READ_TRACE.reset(token)
 
     def test_missing_malformed_or_overbound_observations_fail_closed(self):
         for value in (FileNotFoundError('owned proc entry disappeared'), 'x' * 65537,

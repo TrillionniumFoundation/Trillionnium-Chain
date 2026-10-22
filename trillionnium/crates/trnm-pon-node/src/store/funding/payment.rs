@@ -439,7 +439,7 @@ impl Node {
             self.record_task_output(h.height, &mut output.state, &eligible, &product)?;
         }
         ensure(
-            pon_executor::root(&output.state)? == h.state
+            self.settings.state_root(&output.state)? == h.state
                 && sequence_root("receipts", &output.receipts) == h.receipts
                 && self.state_at(id)? == output.state,
             "NATIVE_PAYMENT_TRANSITION",

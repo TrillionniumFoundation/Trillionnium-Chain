@@ -61,6 +61,13 @@ storage/repair and serving budgets, including their distinct resource units.
 Its executable conservation and external-intent fork controls do not verify
 native funding or add a native settlement/undo adapter.
 
+The same specification now defines a native Node increment using the existing
+single-writer metadata store: actual signed-history escrow observation, bounded
+local resource obligations and monotonic global operation/effect intent records.
+It neither locks on-chain funds nor executes payment or external effects. Resource
+measurements and source-local caps remain protected-owner inputs; worker-meter
+integration, payment/undo and independent economics are still required.
+
 ## Current source and verification
 
 - [`formal/pon-nakamoto-v1/ledger.py`](../../formal/pon-nakamoto-v1/ledger.py).

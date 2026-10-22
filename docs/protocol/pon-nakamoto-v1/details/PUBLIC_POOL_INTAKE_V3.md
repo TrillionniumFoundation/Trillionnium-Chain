@@ -1,9 +1,9 @@
 # Public development intake V3 and the native local pool
 
-The current source selects signed resource revision **r12**, described in
-[Verified completion within the original CPU account](#verified-completion-within-the-original-cpu-account).
+The current source selects signed resource revision **r13**, described in
+[Bounded completion replay and controlled existing recovery](#bounded-completion-replay-and-controlled-existing-recovery).
 The r10 contracts, vectors and earlier observations below remain historical;
-they do not qualify r11's wider paid interval or r12's completion scheduling.
+they do not qualify r11's wider paid interval, r12's completion scheduling or r13's bounded replay/recovery changes.
 
 This is a fresh, explicitly selected development profile. It connects paid guest
 transport requests to the Node's actual persistent pool. It does not certify public
@@ -449,8 +449,8 @@ has passed.
 [Exact profile vectors](../../../../config/pon/public-resource-profile-vectors-v1.json)
 retain the original r10/r11 contract bytes and the new r12 bytes. The Python
 policy reader independently recomputes their length-prefixed domain hashes;
-source-integrity controls compare the current Rust contract with the frozen r12
-bytes. This does not authenticate a remote signature or establish execution.
+r12 source-integrity controls compared that Rust contract with the frozen r12
+bytes. The current r13 contract and its own vectors are described below. This does not authenticate a remote signature or establish execution.
 New campaign reports record the actual selected `PublicPolicy::id()` alongside
 their unchanged bits/lifetime parameters at both report and phase level. The
 current CI reader requires the configured exact profile. Both retained-artifact
@@ -1230,3 +1230,82 @@ Same-UID SQLite file replacement, privileged host manipulation, host
 power-loss durability, independent Node directories, cross-host operation
 entitlement, exact lost CPU nanoseconds, model efficacy and FinalUse remain
 unqualified. The required `trnmponpublic.slice` is still not deployed.
+
+## Bounded completion replay and controlled existing recovery
+
+The current signed resource revision is **r13**. It retains r12's original
+2,000,000,000 ns burst, 250,000,000 ns/s refill, 100,000,000 ns start reservation,
+two mutation owners, existing queues and absolute request deadlines. It adds no
+CPU allocation, worker, author preference or consensus validity rule.
+
+A complete W1 is not necessarily newly acquired work. In r12, repeatedly sending
+one genuinely verified W1 packet that fails the later native State root check can
+repeatedly gain completion priority. R13 limits that scheduling benefit for the
+same exact packet within one live shared CPU owner. The private
+`WorkCheckedPacket` computes a domain-separated SHA-256 identity over the complete
+canonical packet, including its header, transaction bytes and full proof. The
+bounded hash/encoding and exact identity lookup run in the same paid request
+interval; neither a caller-provided digest nor a claimed successful proof grants
+priority.
+
+| Boundary | r13 behavior |
+| --- | --- |
+| Identity store | Fixed array of 4,096 32-byte identities: 131,072 bytes of identity storage, plus fixed owner bookkeeping. No per-request growing map. |
+| Claim | Exact lookup and insertion share the original CPU-owner mutex with completion promotion. Concurrent verification of the same packet can promote at most one request. |
+| Retention | A marker remains after success, native invalidity, timeout, cancellation and Unknown. There is no TTL, LRU, deletion or recycling within the live owner epoch. |
+| Duplicate | Full original paid verification and recovery remain permitted; the duplicate receives no new completion priority. |
+| Capacity full | A new identity receives no extra priority. Ordinary paid verification, admission and exact recovery remain available; capacity is not a work-invalid verdict. |
+| Listener reconstruction | Existing server/domain clones share the same exact marker array. Reconstructing a listener cannot clear it. |
+| Actual process restart | Begins a new volatile identity epoch with the original zero CPU credit. This is explicitly not permanent-once protection across restarts, different hosts, independently created owners or complete host rollback. |
+
+An adversary can acquire many different valid W1 packets and fill this fixed
+array. Distinct valid work can still qualify before capacity; after capacity,
+new honest work also uses ordinary scheduling. The policy therefore closes
+same-packet priority reacquisition within its declared epoch. It does not prove
+general fairness, a lower bound on cheapest producer cost, sustained honest
+throughput under valid-work spam or indefinite liveness. Empty or reset epochs
+must not be represented as historical work-spent evidence.
+
+Exact stored packets still receive no completion promotion. Their existing
+activation path now carries the original live cancellation/CPU checkpoint through
+actual ancestor rows, reorganization steps, delta application, State reads,
+event comparisons and the final transactional checks before each commit. It
+retains all current-clock, owner, task, State, root and journal validation. A
+signature, bounded hash/root primitive or individual SQLite operation remains
+indivisible; observed overruns remain fully charged. This is cooperative
+cancellation, not a hard preemption guarantee at the deadline or at 100 ms.
+
+Cancellation can leave a legitimately committed partial reorganization intent.
+Only a request carrying the exact complete stored packet matching that intent's
+current `new_tip` may pass the pending-ready boundary to resume the same checked
+activation. Other packets keep the original pending-intent refusal. The partial
+intent, committed cursor and payment/nonce deltas remain factual; the unfinished
+transaction rolls back, and the next exact retry continues from the durable
+cursor. Completion does not reapply an already committed transfer. No cancellation
+checkpoint is added after the final commit, and a fresh submission's already
+committed native result retains its original durable-success behavior.
+
+The exact r13 profile digests at the unchanged 2,000 ms cookie lifetime are:
+
+| Ticket bits | Profile digest |
+| --- | --- |
+| 8 | `c110c3ccb1e229c3a85f4819b1e087fa819c865b50f8bd3ab78d3b8f45206cb2` |
+| 12 | `af74a97fd543741369cf58b5e58a16f33ea74d71bb4d4641ab4700827bac1607` |
+| 16 | `e171d2942b8abfd95351036464b5451b4562f0854f4b43b2de59c4e486bda176` |
+
+The independent vector file retains every r10, r11 and r12 byte string and digest.
+The new Rust signature control rejects all three validly signed predecessor
+profiles under r13. Request observer v3 remains a CPU-coverage schema shared by
+r11/r12/r13; it never identifies a scheduling revision. R13 phases additionally
+retain `completion_work_observation`, derived from the actual shared CPU owner:
+capacity, storage bytes, retained identities, live completions, duplicate skips,
+capacity skips and explicit epoch/restart scope. Missing or unknown r13 metadata
+is refused by the reader. Historical r12 reports keep their own derivation and
+are never assigned r13 markers or a new policy implicitly.
+
+These source and focused regression controls are not a substitute for the
+original campaign. Its 24 attackers, 30-second phases, three honest rounds,
+original two-second client deadline, four-CPU/16-GiB host envelope and genuine
+total-budget-depletion predicate are unchanged. R11 and r12 failures remain
+retained failures. R13 needs its own exact source, binary, profile and measured
+native result; no unexecuted source is a successful observation.
