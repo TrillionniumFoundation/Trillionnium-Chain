@@ -2,6 +2,7 @@
 import contextlib
 import copy
 import errno
+import json
 import os
 from pathlib import Path
 import sys
@@ -181,6 +182,76 @@ class ExitObservationTests(unittest.TestCase):
             finally:
                 runtime._RSS_OWNER_CONTEXT.reset(context); runtime._RSS_EXIT_OBSERVATION.reset(candidate)
                 runtime._RSS_READ_TRACE.reset(trace)
+
+    def test_missing_sample_trace_uses_original_fields_without_another_status_read(self):
+        from test_llm_runtime_rss_owner import RssIdentityTests
+        for state, owned, precondition in [('R',True,'initial-leader-not-zombie'),
+                ('Z',False,'no-matching-owner-context'), ('Q',True,'initial-leader-not-zombie')]:
+            with self.subTest(state=state, owned=owned):
+                details = {}; trace = runtime._RSS_READ_TRACE.set(details)
+                context = runtime._RSS_OWNER_CONTEXT.set((501,17,object()) if owned else None)
+                candidate = runtime._RSS_EXIT_OBSERVATION.set(None)
+                try:
+                    with RssIdentityTests().proc(overrides={'/proc/10001/status':self.status(state=state)}) as (reads, _, _), \
+                            patch.object(runtime.time, 'monotonic_ns', return_value=123456), \
+                            patch.object(exits, 'ExitOnlyObservation', side_effect=AssertionError('must not classify')) as capture:
+                        self.assertIsNone(runtime.current_rss(501))
+                        capture.assert_not_called()
+                    sample = details['same_sample_exit_classification']
+                    self.assertEqual((sample['initial_state'],sample['initial_threads']), (state,2))
+                    self.assertEqual(sample['missing_sample_ns'],123456)
+                    self.assertEqual(sample['source'],'original-child-status-read-before-return')
+                    self.assertEqual(sample['precondition'],precondition)
+                    self.assertEqual(sample['borrowed_owner_present'],owned)
+                    self.assertFalse(sample['attempted']); self.assertTrue(sample['diagnostic_only'])
+                    self.assertEqual(details['reason'],'vmrss-missing')
+                    self.assertIsNone(runtime._RSS_EXIT_OBSERVATION.get())
+                    self.assertEqual(reads.count('/proc/10001/status'),1)
+                finally:
+                    runtime._RSS_READ_TRACE.reset(trace);runtime._RSS_OWNER_CONTEXT.reset(context)
+                    runtime._RSS_EXIT_OBSERVATION.reset(candidate)
+
+    def test_same_sample_constructor_refusal_is_diagnostic_not_authority(self):
+        from test_llm_runtime_rss_owner import RssIdentityTests
+        for fault, code, number in [(exits.ExitObservationError('exit-task-set'),'exit-task-set',None),
+                (OSError(errno.ESRCH,'private canary'),None,errno.ESRCH)]:
+            details = {}; trace = runtime._RSS_READ_TRACE.set(details)
+            context = runtime._RSS_OWNER_CONTEXT.set((501,17,object()))
+            candidate = runtime._RSS_EXIT_OBSERVATION.set(None)
+            try:
+                with self.subTest(fault=type(fault).__name__), \
+                        RssIdentityTests().proc(overrides={'/proc/10001/status':self.status()}), \
+                        patch.object(exits,'ExitOnlyObservation',side_effect=fault):
+                    self.assertIsNone(runtime.current_rss(501))
+                sample = details['same_sample_exit_classification']
+                self.assertTrue(sample['attempted']);self.assertEqual(sample['result'],'unavailable')
+                self.assertEqual((sample['rejection_code'],sample['error_errno']),(code,number))
+                self.assertEqual(details['reason'],'vmrss-missing')
+                self.assertNotIn('private canary',json.dumps(details))
+                self.assertIsNone(runtime._RSS_EXIT_OBSERVATION.get())
+            finally:
+                runtime._RSS_READ_TRACE.reset(trace);runtime._RSS_OWNER_CONTEXT.reset(context)
+                runtime._RSS_EXIT_OBSERVATION.reset(candidate)
+
+    def test_original_non_zombie_missing_rss_stays_failed_after_terminal_zero_exit(self):
+        from test_llm_runtime_rss_owner import RssIdentityTests,RssSupervisionTests
+        helper=RssSupervisionTests();child=helper.child_control()
+        original=runtime.current_rss
+        def non_zombie_sample(pid):
+            with RssIdentityTests().proc(overrides={'/proc/10001/status':self.status(state='R')}):
+                return original(pid)
+        with tempfile.TemporaryDirectory() as temporary, \
+                helper.control(child,[(0,0,None),(0,0,None),(501,0,helper.usage())]) as (_,observed,_,_,_), \
+                patch.object(exits,'ExitOnlyObservation',side_effect=AssertionError('must not classify')):
+            observed.side_effect=non_zombie_sample
+            result=runtime.supervise(['owned missing-sample control'],Path(temporary)/'failed',helper.BUDGET,
+                exit_observation=runtime.exit_observation_profile())
+        self.assertEqual(result['exit_code'],0)
+        self.assertEqual((result['outcome'],result['stop_reason']),('failed','rss-observation-unavailable'))
+        detail=result['rss_gap_diagnostic']['missing_sample_detail']['same_sample_exit_classification']
+        self.assertEqual((detail['initial_state'],detail['initial_threads']),('R',2))
+        self.assertEqual(detail['precondition'],'initial-leader-not-zombie')
+        self.assertFalse(detail['attempted'])
 
     def test_v2_terminal_wait4_caps_invalid_and_unknown_remain_authoritative(self):
         from test_llm_runtime_rss_owner import RssSupervisionTests

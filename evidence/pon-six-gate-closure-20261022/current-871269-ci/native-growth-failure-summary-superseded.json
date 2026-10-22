@@ -1,0 +1,184 @@
+{
+  "actual_active_state_at_stop": null,
+  "actual_active_state_reason": "Partial DB/WAL/SHM preserved without opening SQLite or modifying/relabeling the partial store",
+  "after_resource_stop_full_raw_guard": {
+    "base": null,
+    "candidate": "87126992dd5634348cc1a788442126997b28c624",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "87126992dd5634348cc1a788442126997b28c624",
+    "tested_tree": "579771a4735f58c9d3391edc76e1d7552bb9a606",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 682534734,
+    "tracked_entries": 4224,
+    "tracked_worktree_verified": true
+  },
+  "before_native_launch_full_raw_guard": null,
+  "before_native_launch_guard_scope": "Git head/tree/status metadata only",
+  "binary": {
+    "bytes": 34296368,
+    "path": "/workspace/scratch/b29eed737707/chain-current/trillionnium/target/release/deps/trnm_pon_node-aafb8b567cab19df",
+    "retained_copy_sha256": "8b2ee87d7e195126de4353c576b335a81b9bf08692ad3e227583a05f1df4f38f",
+    "sha256": "8b2ee87d7e195126de4353c576b335a81b9bf08692ad3e227583a05f1df4f38f"
+  },
+  "checks_not_run": [
+    "exact nonempty successful-native-case checker",
+    "independent current-root reader requiring actual65537 final export"
+  ],
+  "classification": "Native required gate incomplete after shared-disk resource safety stop; not source or protocol assertion failure",
+  "complete_native_export_present": false,
+  "latest_logged_progress": {
+    "active_accounts": 57348,
+    "height": 224,
+    "tip": "0ee86e67fdd05a344af26c90a6800fcfdb060e325d46928cc44d1c7679d835cd"
+  },
+  "manifest_sha256": "f70249ee80621d214169902fff9ea88794643730af830fb9bec4a271dd4443dc",
+  "midrun_full_raw_guard": {
+    "base": null,
+    "candidate": "87126992dd5634348cc1a788442126997b28c624",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "87126992dd5634348cc1a788442126997b28c624",
+    "tested_tree": "579771a4735f58c9d3391edc76e1d7552bb9a606",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 682534734,
+    "tracked_entries": 4224,
+    "tracked_worktree_verified": true
+  },
+  "native_process_direct_terminal_status": null,
+  "native_process_status_reason": "Launcher resource exception occurred before wait/result accounting; original pinned process subsequently disappeared",
+  "native_test_was_not_retried": true,
+  "original_native_result_file_present": false,
+  "original_runner_observed_exit_code": 1,
+  "original_runner_session": 35914,
+  "original_source_after_metadata_file_present": false,
+  "partial_store_was_not_sql_seeded_or_modified": true,
+  "postprocessor_v1_observed_exit_code": 130,
+  "postprocessor_v2_observed_exit_code": 1,
+  "postprocessor_v2_result": {
+    "error_type": "RuntimeError",
+    "native_test_was_not_retried": true,
+    "reason": "UNKNOWN: original resource safety stop; no native acceptance claim",
+    "result": "UNKNOWN",
+    "scope": "Postprocessing qualification unavailable; original native status is retained separately and never inferred from observer failure",
+    "source_was_not_modified": true
+  },
+  "progress": [
+    {
+      "active_accounts": 4100,
+      "height": 16,
+      "tip": "d17f3c711883d0809a263ed014ad1a60511b748d67fed74d44d8e6fdebe24860"
+    },
+    {
+      "active_accounts": 8196,
+      "height": 32,
+      "tip": "914512224fce7cd14e51729f1b1caefd7515cc892e90d7e16708709d4aa74129"
+    },
+    {
+      "active_accounts": 12292,
+      "height": 48,
+      "tip": "86c7319b2fd151204d4fc5e25e6fd2d137ecfe20471ef43613f83cc7e8e82241"
+    },
+    {
+      "active_accounts": 16388,
+      "height": 64,
+      "tip": "7413d1178112b4f66b71ffb7b8f1dfa59a7dee7c5e423c95720012ad1075a8c3"
+    },
+    {
+      "active_accounts": 20484,
+      "height": 80,
+      "tip": "d936980ad31b6045a1010e0e811bc332df7170197d7667c5f78d8731ebf8102d"
+    },
+    {
+      "active_accounts": 24580,
+      "height": 96,
+      "tip": "344ffa80e433737262a343e1cf3dba618433ef8855d04c011decc954be5cb48b"
+    },
+    {
+      "active_accounts": 28676,
+      "height": 112,
+      "tip": "e3382505edccf2d048e7db70f2550a6e7d9c28f2494ce207f273b9a92873d74b"
+    },
+    {
+      "active_accounts": 32772,
+      "height": 128,
+      "tip": "b49330c1f5904de8e5a088057e8ee28eba7188130745de68facc94cfd8677ce6"
+    },
+    {
+      "active_accounts": 36868,
+      "height": 144,
+      "tip": "a6dd1d82d0144a40e7ddeb82f899b2c301003950d4835d535609d4729e8ee0b1"
+    },
+    {
+      "active_accounts": 40964,
+      "height": 160,
+      "tip": "bcc5d35707ee4ba6233643c13366908720f07d2424b7e8637539355518b85530"
+    },
+    {
+      "active_accounts": 45060,
+      "height": 176,
+      "tip": "99050a9985fe1c60f697bb2e74b286d57e1aee87ec0db0525288f26f7d90e2a5"
+    },
+    {
+      "active_accounts": 49156,
+      "height": 192,
+      "tip": "c43f9de16b49365869682df9c99efaeb412348164ce5a4db96653b29a7e410ff"
+    },
+    {
+      "active_accounts": 53252,
+      "height": 208,
+      "tip": "dc3aa0308a2f1c6a7ac290f3a98056a1c33d55f983ac09b1f8226767694102b7"
+    },
+    {
+      "active_accounts": 57348,
+      "height": 224,
+      "tip": "0ee86e67fdd05a344af26c90a6800fcfdb060e325d46928cc44d1c7679d835cd"
+    }
+  ],
+  "resource_observation": {
+    "minimum_sampled_shared_free_bytes": 237518848,
+    "original_stream_process_cpu_rss": null,
+    "original_stream_reason": "PID namespace lookup invalid; raw0 values retained as unknown",
+    "peak_sampled_scoped_store_bytes": 395136928,
+    "pidfd": null,
+    "proc_exe_attestation": null,
+    "terminal_wait4_or_rusage": null,
+    "v2_last_sampled_native_cpu_seconds": 3814.2400000000002,
+    "v2_process_binding_scope": "Read-only /proc statistics pinned by exact argv, observed parent lineage, NSpid and start ticks. Namespace permissions prevent held pidfd and proc executable identity; not process/executable attestation.",
+    "v2_sampled_peak_native_rss_bytes": 190750720
+  },
+  "resource_stop": {
+    "observation": {
+      "elapsed_seconds": 3821.716872997,
+      "free_bytes": 237518848,
+      "pids": [
+        27
+      ],
+      "scoped_store_bytes": 395136928,
+      "scoped_store_files": {
+        "tmp/.tmpVxMcUU/native.sqlite": 387391488,
+        "tmp/.tmpVxMcUU/native.sqlite-shm": 32768,
+        "tmp/.tmpVxMcUU/native.sqlite-wal": 7712672,
+        "tmp/.tmpVxMcUU/owner.lock": 0
+      },
+      "sum_process_cpu_seconds": 0,
+      "sum_rss_bytes": 0,
+      "unix": 1792657735.3486197
+    },
+    "reason": "free space below 300MB; SIGSTOP preserves raw temporary store, not a physical-fault acceptance test"
+  },
+  "result": "UNKNOWN",
+  "schema": "native-growth-resource-stop-failure-v1",
+  "scope": {
+    "65537_native_boundary_accepted": false,
+    "bounded_witness_qualified": false,
+    "cooperative_boundary_recovery_accepted_by_this_attempt": false,
+    "physical_fault_acceptance": false,
+    "production_activation": false,
+    "whole_PN2_closed": false
+  },
+  "source_head": "87126992dd5634348cc1a788442126997b28c624",
+  "source_tree": "579771a4735f58c9d3391edc76e1d7552bb9a606"
+}
