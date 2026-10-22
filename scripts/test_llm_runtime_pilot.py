@@ -168,6 +168,7 @@ from test_llm_runtime_rss_owner import RssIdentityTests, RssSupervisionTests
 from test_llm_runtime_exit_observation import ExitObservationTests
 from test_llm_runtime_exit_subset_observation import TerminalSubsetTests
 from test_llm_runtime_exit_worker_observation import WorkerPidfdTests
+from test_llm_runtime_exit_worker_wait4 import WorkerWait4Tests
 
 
 if __name__=='__main__':unittest.main()

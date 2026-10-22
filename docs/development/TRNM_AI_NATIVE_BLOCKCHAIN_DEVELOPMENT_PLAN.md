@@ -257,6 +257,16 @@ three-round installed-parent/consumer execution remain open. The engineering
 task set may be frozen public or previously seen data; report only that set's
 actual performance, without claiming future-task generalization.
 
+Independent review rejected initial V4 candidate `3052245` at the real wait4
+boundary: reaped pidfd fdinfo Pid/NSpid become `-1`, so a post-reap live-identity
+check falsely rejected completion. Preserve that failure. The corrected V4
+keeps strict live-owner checks before reap and during every recheck, and checks
+only original held PID/FD/token capabilities after the supervisor's exact owned
+terminal wait4/resource receipt. A caller-supplied terminal flag cannot bypass
+the live checks. Real own-child wait4 success and wrong-owner/replaced-FD cases,
+plus synthetic unknown/wrong-wait refusal tests, cover this repair; no new full
+model pilot or three-round acceptance follows from it.
+
 The optional scalar-credit freshness observation reads the original watermark
 and projects the original refill arithmetic without changing the clock, credit,
 owner or depletion predicate. Its added sampler contention and complete-path

@@ -31,12 +31,11 @@ class WorkerPidfdObservation(base.ExitOnlyObservation):
         self.failure_context = None
         super().__init__(pid, held_pidfd, owner_token, initial_leader, missing_sample_ns)
 
-    def _owner(self):
+    def _held_capabilities(self):
         base._require(not self.closed and
             base._signature(self.held_pidfd) == self.held_signature and
             base._signature(self.group_fd) == self.group_signature and
-            base._signature(self.tasks_fd) == self.tasks_signature and
-            base._pidfd_identity(self.pid, self.held_pidfd) == self.identity,
+            base._signature(self.tasks_fd) == self.tasks_signature,
             'exit-owner-changed')
         for name, descriptor in self.task_fds.items():
             base._require(base._signature(descriptor) == self.task_signatures[name],
@@ -46,6 +45,11 @@ class WorkerPidfdObservation(base.ExitOnlyObservation):
             # its original task; never rebind it from a later numeric identity.
             base._require(base._signature(descriptor) == self.thread_signatures[name],
                           'exit-worker-pidfd-reused')
+
+    def _owner(self):
+        self._held_capabilities()
+        base._require(base._pidfd_identity(self.pid, self.held_pidfd) == self.identity,
+                      'exit-owner-changed')
 
     def _deadline(self):
         base._require(time.monotonic_ns() < self.sample_started_ns + MAX_DRAIN_NS,
@@ -243,6 +247,21 @@ class WorkerPidfdObservation(base.ExitOnlyObservation):
             return False
         try:
             self._owner()
+            return super().belongs_to(pid, held_pidfd, owner_token)
+        except (OSError, ValueError, KeyError, TypeError):
+            return False
+
+    def terminal_belongs_to(self, pid, held_pidfd, owner_token):
+        """Held capability only; never authorizes a live poll or a recheck.
+
+        The supervisor calls this only after its exact owned wait4 receipt.
+        Reaped pidfd fdinfo says -1, so live namespace/proc checks cannot apply.
+        No caller-supplied terminal boolean or later identity can mint authority.
+        """
+        if not self.baseline_qualified or self.failed:
+            return False
+        try:
+            self._held_capabilities()
             return super().belongs_to(pid, held_pidfd, owner_token)
         except (OSError, ValueError, KeyError, TypeError):
             return False

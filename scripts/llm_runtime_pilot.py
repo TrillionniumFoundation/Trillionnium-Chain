@@ -1060,7 +1060,12 @@ def _drain_exit_cleanup(process, observation, owner_token, start, budget, *, exi
                         process.waited_cpu_ns is not None and observed_ns <= deadline,
                         'RUNTIME_EXIT_WAIT4_RECEIPT')
                 if is_subset:
-                    require(observation.belongs_to(process.pid, process.termination_fd, owner_token),
+                    # Only this exact terminal-wait4 branch may use V4's held
+                    # capability check: kernel reap erases live fdinfo identity.
+                    terminal_owner = (observation.terminal_belongs_to
+                        if exit_observation['profile'] == EXIT_PROFILES[3]
+                        else observation.belongs_to)
+                    require(terminal_owner(process.pid, process.termination_fd, owner_token),
                             'RUNTIME_EXIT_OBSERVER_OWNER')
                     record['retirement_closed_by'] = 'exact-owned-child-terminal-wait4'
                     record['terminal_retired_tasks'] = list(observation.pending_retired)

@@ -199,6 +199,19 @@ crossing 100ms refuses. The V3 full-pilot failure above remains FAIL; the V4
 component and its tests do not establish a successful new full model attempt,
 training gain, installation or a completed three-round engineering loop.
 
+Independent real-child review rejected the initial V4 candidate `3052245`:
+it required a live group pidfd fdinfo identity after exact wait4 had reaped the
+child, when the kernel reports Pid/NSpid as `-1`. That failed candidate and its
+earlier fixture-only terminal coverage remain retained. The correction keeps
+the original live-owner check for admission and every recheck. Only after the
+supervisor's exact owned terminal wait4 and resource checks does a separate
+method verify the original PID, FD signatures and owner token, without asking
+for a now-erased live identity. No caller-provided terminal flag changes the
+pre-reap checks. Actual own-child wait4 tests cover that transition and reject
+wrong tokens and replaced FDs. Separate synthetic unknown/wrong-wait and missing
+receipt cases remain refused before the terminal helper. This review repair
+does not convert either model pilot failure or qualify a new full pilot.
+
 `sampled_peak_rss_bytes` remains the direct-child sampling result.
 `waited_child_peak_rss_bytes` separately records that exact child's Linux `wait4`
 `ru_maxrss` in KiB times 1024. A quick exit can succeed without a sample only when
