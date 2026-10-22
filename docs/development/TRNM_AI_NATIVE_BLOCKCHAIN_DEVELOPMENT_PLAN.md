@@ -186,6 +186,13 @@ research profile or PN1; the failed original and supplemental campaigns remain
 failed. See the existing
 [bounded rejection component contract](../protocol/pon-nakamoto-v1/details/ADMISSION_SECURITY.md#optional-bounded-final-root-rejection-component).
 
+The same supplemental runner now uses execution-report namespace v2 to retain
+independent binary, source and live-resource after-observations on ordinary
+native failure. Missing after-evidence cannot pass or replace the primary error;
+the cohort remains claimed once. Original inputs/criteria are unchanged, and the
+old c61 failure and its missing records remain unchanged. These launcher controls
+are not a new pressure result or final whole-unit resource settlement.
+
 The same source's [CodeQL check 119818040273](https://github.com/TrillionniumFoundation/Trillionnium-Chain/runs/119818040273)
 reports failure with thirteen high annotations. Independent disposition is
 required; the alert count is not thirteen independently confirmed exploits.

@@ -6,6 +6,7 @@ import os
 from pathlib import Path
 import sys
 import tempfile
+from types import SimpleNamespace
 import unittest
 from unittest.mock import patch
 
@@ -154,6 +155,75 @@ class RootSupplementTests(unittest.TestCase):
             bad['budget_samples'][0].update(changed)
             with self.subTest(sample=changed), self.assertRaises((ValueError, KeyError)):
                 runner.checked_depletion_samples(bad)
+
+    def execute_control(self, native_success, *, corrupt=False, source_failure=False):
+        # Only the orchestrator is exercised: no native process/service or
+        # pressure campaign runs. Binary/file hashes use real temporary bytes.
+        prepared, binary, manifest = self.prepared()
+        self.read_prepared(prepared, manifest)
+        output = self.path / 'execute'
+        output.mkdir()
+        args = SimpleNamespace(prepared=manifest, prepared_sha256=runner.sha(manifest),
+                               expected_head='a' * 40, expected_tree='b' * 40,
+                               unit='trnm-pn1-root-control.service')
+        before = {'cgroup': '/original.service'}
+        after = {'cgroup': '/replaced.service' if corrupt else before['cgroup']}
+        source_labels = []
+
+        def source(output, label, env, head, tree):
+            source_labels.append(label)
+            if label == 'source-after' and source_failure:
+                raise ValueError('CONTROL_SOURCE_AFTER_UNAVAILABLE')
+            return {'complete_success': True}
+
+        def native(output, label, command, env, timeout):
+            self.assertEqual(label, 'supplement')
+            (output / 'raw').mkdir()
+            (output / 'raw/report.json').write_text('{}')
+            if corrupt:
+                binary.chmod(0o700)
+                binary.write_bytes(b'evil')
+                binary.chmod(0o500)
+            return {'complete_success': native_success}
+
+        with patch.object(runner, 'environment', return_value={}), \
+                patch.object(runner, 'resource_observation', side_effect=[before, after]) as observed, \
+                patch.object(runner, 'validate_resources'), \
+                patch.object(runner, 'service_identity'), \
+                patch.object(runner, 'exact_source', side_effect=source), \
+                patch.object(runner, 'run_step', side_effect=native) as executed, \
+                patch.object(runner, 'check_report'):
+            passed = runner.execute(args, output)
+        self.assertEqual(executed.call_count, 1)
+        self.assertEqual(observed.call_count, 2)
+        self.assertEqual(source_labels, ['source-before', 'source-after'])
+        self.assertTrue((self.path / 'execute-claimed.json').exists())
+        self.assertEqual(json.loads((output / 'resource-after.json').read_text()), after)
+        return passed, json.loads((output / 'results.json').read_text())
+
+    def test_failed_native_preserves_after_observations_without_retry(self):
+        passed, result = self.execute_control(False)
+        self.assertIs(passed, False)
+        self.assertEqual(result['failure'], 'NATIVE_SUPPLEMENT_FAILED')
+        self.assertEqual(result['schema'], 'pon-root-supplement-execution-v2')
+        self.assertTrue(all(row['complete_success'] for row in result['post_observations'].values()))
+
+    def test_failed_native_keeps_primary_failure_and_each_independent_after_failure(self):
+        passed, result = self.execute_control(False, corrupt=True, source_failure=True)
+        self.assertIs(passed, False)
+        self.assertEqual(result['failure'], 'NATIVE_SUPPLEMENT_FAILED')
+        post = result['post_observations']
+        self.assertEqual(post['binary']['failure'], 'FROZEN_BINARY_CHANGED')
+        self.assertEqual(post['source']['failure'], 'CONTROL_SOURCE_AFTER_UNAVAILABLE')
+        self.assertEqual(post['resources']['failure'], 'CGROUP_CHANGED')
+        self.assertTrue(all(row['complete_success'] is False for row in post.values()))
+
+    def test_missing_after_source_prevents_successful_native_from_passing(self):
+        passed, result = self.execute_control(True, source_failure=True)
+        self.assertIs(passed, False)
+        self.assertEqual(result['failure'], 'CONTROL_SOURCE_AFTER_UNAVAILABLE')
+        self.assertIs(result['post_observations']['binary']['complete_success'], True)
+        self.assertIs(result['post_observations']['resources']['complete_success'], True)
 
 
 if __name__ == '__main__':

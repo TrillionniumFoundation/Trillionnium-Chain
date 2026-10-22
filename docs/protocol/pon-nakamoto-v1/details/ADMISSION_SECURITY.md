@@ -174,6 +174,16 @@ after failure confirmed the frozen source, and the immutable binary hash was
 unchanged; a removed cgroup's final counters cannot be reconstructed. No PN1,
 original-campaign, hardness, independent-operator, WAN or production flag changes.
 
+The subsequent `pon-root-supplement-execution-v2` launcher attempts the frozen
+binary hash, exact source and live-service resource readbacks independently after
+an ordinary measured-run failure as well as success. Each unavailable observation
+is recorded without suppressing the others or replacing the original failure.
+Any failed after-check prevents success. The one-use claim and all original
+native inputs, deadlines and acceptance criteria remain unchanged. This records
+live after-observations, not final counters after unit deletion, and supplies no
+missing observation for the earlier failed c61 cohort. Launcher fault controls
+use mocked native execution and real small file hashes, not a new pressure run.
+
 ### Optional bounded final-ROOT rejection component
 
 `Node::enable_local_root_rejection_cache` explicitly enables one volatile cache

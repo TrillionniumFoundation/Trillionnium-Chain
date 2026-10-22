@@ -247,10 +247,11 @@ def check_report(value, cgroup):
 
 def execute(args, output):
     env = environment()
-    result = {'schema': 'pon-root-supplement-execution-v1', 'head': args.expected_head,
+    result = {'schema': 'pon-root-supplement-execution-v2', 'head': args.expected_head,
               'tree': args.expected_tree, 'started_utc': now(), 'inputs': INPUTS,
               'prepared_sha256': args.prepared_sha256, 'binary': None,
-              'complete_success': False, 'pressure_selector_executed': False, 'failure': None}
+              'complete_success': False, 'pressure_selector_executed': False, 'failure': None,
+              'post_observations': {}}
     try:
         prepared, binary = prepared_input(args.prepared.resolve(), args.prepared_sha256,
                                           args.expected_head, args.expected_tree)
@@ -271,15 +272,38 @@ def execute(args, output):
         require(result['step']['complete_success'], 'NATIVE_SUPPLEMENT_FAILED')
         report = json.loads((output / 'raw/report.json').read_text())
         check_report(report, resources['cgroup'])
-        require(sha(binary) == prepared['binary']['sha256'], 'FROZEN_BINARY_CHANGED')
-        exact_source(output, 'source-after', env, args.expected_head, args.expected_tree)
-        after = resource_observation()
-        write_new(output / 'resource-after.json', after)
-        validate_resources(after, 10)
-        require(after['cgroup'] == resources['cgroup'], 'CGROUP_CHANGED')
         result['complete_success'] = True
     except (OSError, ValueError, KeyError, TypeError) as error:
         result['failure'] = str(error)
+    finally:
+        if result['pressure_selector_executed']:
+            # A failed native run remains claimed and failed. Each independent
+            # after-observation is still attempted in the original live service;
+            # one unavailable observation must not suppress the others.
+            def frozen_binary():
+                require(sha(binary) == prepared['binary']['sha256'], 'FROZEN_BINARY_CHANGED')
+
+            def after_source():
+                exact_source(output, 'source-after', env, args.expected_head, args.expected_tree)
+
+            def after_resources():
+                after = resource_observation()
+                write_new(output / 'resource-after.json', after)
+                validate_resources(after, 10)
+                require(after['cgroup'] == resources['cgroup'], 'CGROUP_CHANGED')
+
+            for label, observe in (('binary', frozen_binary), ('source', after_source),
+                                   ('resources', after_resources)):
+                row = {'complete_success': False, 'failure': None}
+                try:
+                    observe()
+                    row['complete_success'] = True
+                except (OSError, ValueError, KeyError, TypeError) as error:
+                    row['failure'] = str(error)
+                    result['complete_success'] = False
+                    if result['failure'] is None:
+                        result['failure'] = str(error)
+                result['post_observations'][label] = row
     result['completed_utc'] = now()
     result['files'] = {str(p.relative_to(output)): {'bytes': p.stat().st_size, 'sha256': sha(p)}
                        for p in sorted(output.rglob('*')) if p.is_file() and not p.is_symlink()}
