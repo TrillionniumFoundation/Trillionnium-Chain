@@ -107,6 +107,17 @@ it does not prove the relation invalid. `not-started` means the original domain
 refused the start. Neither outcome is changed into a failed proof, a successful
 proof or a zero-cost verification.
 
+The read-only accounting reader binds the original standalone policy to its
+2,000,000,000 ns burst, 250,000,000 CPU ns/second refill, 100,000,000 ns start
+reservation and two-worker limit. A capture that consistently substitutes all
+copies of these values is refused rather than called an observation of that
+original policy. A completed false-trace verdict must specifically be
+`Transcript`; an early `Field` or other error remains a semantic disagreement.
+Completed transcript rejections and successful verifications must report at
+least 897 and 1,099 checkpoints respectively. Rejection sampling may add more.
+Local cancellation retains its original unknown relation outcome, even at zero
+checkpoints. These consistency checks do not authenticate the host or rerun W1.
+
 The receiver phase starts one explicit local domain after generation and raw
 diagnostics, then keeps that same domain across every class, arm and repetition.
 Its original burst, wall-time refill, start reserve, live checkpoint debit,

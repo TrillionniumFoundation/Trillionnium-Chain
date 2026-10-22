@@ -291,7 +291,7 @@ path. PoN orders exact commitments, task acceptance, release policy and settleme
 Real model evaluation uses the existing evaluator/selector owners with an
 explicit trust profile for source custody and independent attestations. A signed
 quality claim is not trustless computation or PoN chainwork. If on-chain adoption
-semantics change, select a fresh M10/M11 context; the schema-3 task observation
+semantics change, select a fresh M10/M11 context; the schema-4 task observation
 alone only binds settled task facts. Private held-out outcomes cannot silently
 replace the current all-node deterministic scorer's public replay inputs.
 
@@ -315,7 +315,7 @@ authority, and consumers still apply their own admitted release policy.
 | 2 / learning.artifacts + export/withdrawal owner | Actual candidate bytes, lineage and current signed head -> scoped authorized export | DENY_ALL publication is insufficient. Withdrawal/generation changes fence later use; publication cannot promise recall of distributed copies. |
 | 3 / learning.eval + independent selector | Frozen parent/candidate/controls, future-window custody, scoring and equal budgets -> selected/no-update/invalid/unknown result | Use actual parameter forward/training. Missing, leaked, biased or unsupported evaluation cannot become positive gain. Separate custody from multiple keys under one operator. |
 | 4 / TaskFlow + compiled adapter | Exact evaluated release/task binding -> durable original effect bytes, submission and read-only reconciliation | Lost ACK queries the same identity. Unknown does not authorize re-signing/re-dispatch. Keep provider SHA256, Chain ids and upgrade-binding domains explicit. |
-| 5 / M14 observation consumer | Exact packet and current schema-3 observation -> checked active acceptance plus explicit confirmation policy | Match task id, owner, provider, output, accept transaction, exact-packet ancestry and observed generation/tip. Not-found or reorg removes entitlement, never the local terminal fact. |
+| 5 / M14 observation consumer | Exact packet and current schema-4 observation -> checked active acceptance plus explicit confirmation policy | Match task id, owner, provider, output, accept transaction, exact-packet ancestry and observed generation/tip. Legacy schema 3 remains readable but cannot satisfy accepted-task binding. Not-found or reorg removes entitlement, never the local terminal fact. |
 | 6 / release owner + M09 fetch + existing loader | Selected release closure, pinned TCM1 ids and finite resource reservation -> verified compatible complete bytes | Withheld/corrupt dependencies, wrong base/tokenizer/dtype/shape and expired original budget stop installation. Byte retrieval itself grants no use. |
 | 7 / selection/artifact/resource/FinalUse owners | Current signed head/withdrawal, local generation, confirmation and compatible artifact -> fresh CURRENT generation | Recheck immediately before admission; chain generation is not a castable local generation. Code/structural/consensus changes require their own owners. |
 | 8 / neuron runtime + outcome/evaluation owner | Next ordinary task -> actual loaded weights/generation and inference/resource/outcome receipt | Record the model actually used, including cached Encoder features. Recheck feature input/model/preprocessing/scope/generation; no stale-feature reuse after install. |

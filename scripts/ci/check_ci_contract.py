@@ -164,6 +164,12 @@ def check_independent_conformance(script: str, required: set[str]) -> None:
     pairs = re.findall(r'(?ms)^  ([a-z][a-z0-9-]*)\)\n(.*?)(?=^    ;;$)', script)
     lanes = dict(pairs)
     require(len(pairs) == len(lanes) and set(lanes) == required, 'exact five executable lane selectors')
+    parent_material = '    python3 scripts/test_llm_parent_material.py\n'
+    require(parent_material in lanes['protocol-contract'] and script.count(parent_material) == 1,
+            'parent material byte checks must execute exactly once in protocol-contract')
+    reward_budgets = '    python3 formal/pon-nakamoto-v1/test_reward_budget_oracle.py\n'
+    require(reward_budgets in lanes['protocol-contract'] and script.count(reward_budgets) == 1,
+            'five-lane reward budget controls must execute exactly once in protocol-contract')
     continuity = CONTINUITY_BUILD + CONTINUITY_ORIGINAL + CONTINUITY_TRANSITIONS + PAIRED_WORK_ORACLE + ZERO_WORK_ORACLE
     require(continuity in lanes['protocol-contract'] and script.count(CONTINUITY_ORIGINAL) == 1
             and script.count(CONTINUITY_TRANSITIONS) == 1,

@@ -1,6 +1,6 @@
 # Trillionnium Chain Development Plan — PoN / Hepta-PoH revision
 
-Plan ID: `trnm-chain-development-plan-v2` (stable registry identity; content revision 15).
+Plan ID: `trnm-chain-development-plan-v2` (stable registry identity; content revision 16).
 Effective: 2026-09-28; priority implementation revision: 2026-10-20. Status: selected development direction; no runtime activation.
 Canonical destination: `refs/heads/main`; continuation uses the current main lineage, not retired PR #194.
 Current source/head/tree/base and prospective merge are derived at verification time.
@@ -91,6 +91,51 @@ the latter three. Do not create an additional global optimizer, operation
 journal or parallel implementation plan.
 PN1 public-service repair and PN2 storage engineering may iterate together on
 one frozen workload; neither stage may declare the other's missing result passed.
+
+### 2026-10-22 six-stage execution checkpoint
+
+The fresh inspected pair is Chain PR #323 head
+`5eb30bdedba2bb4933f5c97211426fc2df21bb7c`, actual main-target merge
+`f122f99dddffdf5015940667d0d5d97244a95800`, and Hepta PR #2559 head
+`d66e0bf8e147efa7300dd4296f912121932b00a3`, actual stacked-base merge
+`e298582d3f564a6332f8bacbe9d075ebaf2b3ccd`. Hepta's compiled observation is
+schema 4 and preserves `accepted_task`; legacy schema 3 remains readable but
+cannot satisfy the independently pinned task-acceptance comparison. These are
+inspected predecessors for this increment, not execution receipts for later edits.
+
+The [source-bound CI/security readback](../../evidence/pon-six-gate-closure-20261022/ci-security-before.json)
+and [18-finding source review](../../evidence/pon-six-gate-closure-20261022/codeql-current-readback.json)
+retain the current security gate failure (one critical, 17 high) separately from
+successful analysis/export. The exported branch SARIF has 224 results, a different
+scope. Exact span/message matches and source semantics support review; they do
+not authenticate an undocumented exporter-to-gate mapping, dismiss an alert or
+replace independent security acceptance. New source requires new scanning.
+
+Original native campaign run `39718009547` failed all three complete trials.
+All nine phases confirmed their three scheduled rounds and retained equal
+receiver/client state. In all six hostile phases the original genuine-depletion
+condition was false: measured mutation CPU was below the original available
+credit/refill envelope. This is insufficient demonstrated pressure, not an
+observed honest-confirmation failure. Keep the original workload, predicate and
+failed artifact; no aggregate success, reduced refill or fabricated depletion
+may convert it into acceptance. A separate valid-W1/late-state-root depletion
+control retains its own inputs and cannot replace this campaign's verdict.
+
+| Gate | This increment's executable boundary | Full exit still required |
+| --- | --- | --- |
+| PN0 | Exact pair/source review and CI fault repair; schema-4 handoff navigation. | Applicable final head/merge CI, current security disposition and cross-repository execution. |
+| PN1 | Same-target reader binds original CPU policy, completed false-trace error and replay checkpoints. | Cheapest-adversary assumptions and actual public service under a declared, sufficiently delivered attack envelope. |
+| PN2 | Private verified growth-commitment capability before candidate-profile binding. | New native growth profile, real signed transactions beyond the old boundary, durable migration and recovery. |
+| PN3 | Explicit real-adapter parent-material preflight; original training controls preserved. | Actual three-round installed-parent lineage and next-task use, independent prospective evaluation and complete release integration. |
+| PN4 | [Separate finite lane budgets](specs/pon/REWARD_BUDGETS_V1.md) with replay/reorg/external-effect reference controls. | Native funding/escrow integration, actual storage/service obligations and independent economic review. |
+| PN5 | Preserve the preregistration and independent-custody requirements below. | Three independently administered operators, accessible existing nodes and a complete frozen 72-hour WAN campaign. |
+
+The available hosted CI uses the existing `ubuntu-24.04` and `ubuntu-24.04-arm`
+labels. Queue metadata does not establish dedicated-cloud terminal access or
+prove an organization-wide runner-capacity cause. No independently controlled
+operator roster, authorized WAN endpoint set or real-model materials were
+available to this execution. Keep those concrete inputs outstanding; local
+processes, more development keys and synthetic model bytes cannot supply them.
 
 Every performance/iteration report must retain the following distinct quantities.
 Unknown or unexecuted stages are null with a reason, never copied from an earlier
@@ -540,7 +585,7 @@ before it becomes callable. Do not turn these rows into permissive JSON adapters
 | I05 / PN2/PN4 | M07/M08/M13 -> M09 retention owner | Required roots, acknowledged obligations, byte reservation and retention/recovery endpoints -> durable storage responsibility. Provider receipt is not proof of possession forever, chain validity or finality; GC must preserve reachable roots and mandatory duties. |
 | I06 / PN3 | Hepta artifact/export owner -> M10/M11 | Actual installed parent, candidate manifest/bytes, consent/export and current withdrawal scope -> scoped publication/evaluation input. ArtifactOwnerService publication with DENY_ALL does not authorize redistribution. |
 | I07 / PN3 | M10 candidate + independent data custodian -> M11/Hepta evaluator and selector | Frozen parent/candidate/control identities, source/time/exposure windows, total budgets and decision rule -> gain/no-gain/invalid/unknown evidence. Evaluation quorum is an application policy, never ledger work or local installation authority. |
-| I08 / PN3 | M14 packet-status -> existing Hepta TaskFlow coordinator | Already durable exact packet/effect bytes -> schema-3 storage/active-ancestry/depth/work observation plus exact accepted-task binding when present. Match task, owner, provider, output and generation; local absence never proves global NotDispatched. |
+| I08 / PN3 | M14 packet-status -> existing Hepta TaskFlow coordinator | Already durable exact packet/effect bytes -> schema-4 storage/active-ancestry/depth/work observation plus exact accepted-task binding when present. Legacy schema 3 cannot satisfy task acceptance. Match task, owner, provider, output and generation; local absence never proves global NotDispatched. |
 | I09 / PN3/PN5 | M10 release owner -> M09 fetch -> existing Hepta loader | Selected release dependency closure and pinned TCM1 identities, finite peers, original deadline and resource budget -> freshly verified complete bytes and provenance. Manifest ID, payload SHA256 and any external CID retain their distinct algorithms/domains. Download success grants no CURRENT/FinalUse authority. |
 | I10 / PN3 | Existing Hepta selection/artifact/resource/FinalUse owners -> neuron runtime | Current signed artifact/withdrawal head, compatible verified bytes, local generation, explicit chain confirmation policy and real resource admission -> fresh local installation and actual inference readback. Reorg or withdrawal fences further use; durable external effects are reconciled under their original identity. |
 
@@ -704,7 +749,7 @@ proceed with those failures visible.
 3. Run candidate -> authorized export -> independent evaluation/selection ->
    exact durable TaskFlow submission -> current chain observation/confirmation ->
    pinned release-closure download -> existing loader/resource/FinalUse admission
-   -> fresh CURRENT generation -> actual next-task readback. Keep schema-3
+   -> fresh CURRENT generation -> actual next-task readback. Keep schema-4
    accepted-task binding and model-output/effect-packet digest domains distinct.
    The coordinator composes owners and creates neither new authority nor journal.
 4. Integrate the existing configured-peer Cell pilot first. Release selection

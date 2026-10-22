@@ -132,9 +132,9 @@ impl StateCommitment {
     }
 }
 
-/// Research-only successor relation that separates permanent account history
-/// from the bounded non-account working partition. It is not installed in any
-/// header parameters, genesis, native admission or signature domain.
+/// Untrusted serializable observation of the research successor relation.
+/// Recomputing its public digest does not authenticate its account or working
+/// roots. Only `VerifiedGrowthStateCommitmentV2` can enter candidate binding.
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct GrowthStateCommitmentV2 {
@@ -177,6 +177,50 @@ impl GrowthStateCommitmentV2 {
     }
 }
 
+/// A relation computed from authenticated archive bytes or a complete native
+/// source State. Serialization exposes only the historical observation bytes;
+/// deserialization and public-field mutation cannot manufacture this value.
+/// It is still research-only: no header, migration or admission is activated.
+///
+/// A valid-looking observation, including a recomputed digest, is not sufficient:
+/// ```compile_fail
+/// use trnm_pon_node::{Settings, account_archive_execution::state_witness::{
+///     GrowthStateCommitmentV2, growth_profile_binding_v2,
+/// }};
+/// # fn bind(raw: GrowthStateCommitmentV2, settings: Settings) {
+/// let _ = growth_profile_binding_v2(&settings, &raw, "growth-v2");
+/// # }
+/// ```
+/// Nor can a retained JSON observation restore a checked capability:
+/// ```compile_fail
+/// use trnm_pon_node::account_archive_execution::state_witness::VerifiedGrowthStateCommitmentV2;
+/// let _: VerifiedGrowthStateCommitmentV2 = serde_json::from_str("{}").unwrap();
+/// ```
+/// The read-only observation projection does not permit replacing a verified root:
+/// ```compile_fail
+/// use trnm_pon_node::account_archive_execution::state_witness::VerifiedGrowthStateCommitmentV2;
+/// # fn replace(mut checked: VerifiedGrowthStateCommitmentV2) {
+/// checked.permanent_account_root = [0; 32];
+/// # }
+/// ```
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[serde(transparent)]
+pub struct VerifiedGrowthStateCommitmentV2 {
+    observation: GrowthStateCommitmentV2,
+}
+impl VerifiedGrowthStateCommitmentV2 {
+    pub fn observation(&self) -> &GrowthStateCommitmentV2 {
+        &self.observation
+    }
+}
+impl std::ops::Deref for VerifiedGrowthStateCommitmentV2 {
+    type Target = GrowthStateCommitmentV2;
+
+    fn deref(&self) -> &Self::Target {
+        self.observation()
+    }
+}
+
 /// Bind a verified permanent-account archive aggregate to a complete bounded
 /// non-account partition. The archive observation is constructed from actual
 /// authenticated bytes; raw caller count/balance claims cannot call this path.
@@ -184,7 +228,7 @@ pub fn growth_commitment_v2(
     settings: &Settings,
     accounts: &AccountAggregateObservation,
     working: &State,
-) -> Result<GrowthStateCommitmentV2> {
+) -> Result<VerifiedGrowthStateCommitmentV2> {
     let context = accounts.context();
     if context.network != settings.network()
         || context.parameters != settings.parameters()
@@ -221,7 +265,7 @@ pub fn growth_commitment_v2(
         id: [0; 32],
     };
     out.id = out.digest();
-    Ok(out)
+    Ok(VerifiedGrowthStateCommitmentV2 { observation: out })
 }
 
 /// Migration/reference conversion from the actual complete source State. This is
@@ -231,7 +275,7 @@ pub fn growth_commitment_v2(
 pub(crate) fn growth_commitment_from_complete_state_v2(
     settings: &Settings,
     state: &State,
-) -> Result<GrowthStateCommitmentV2> {
+) -> Result<VerifiedGrowthStateCommitmentV2> {
     let account_values = accounts(state)?;
     let working = non_accounts(state);
     if account_values.len() as u64 > MAX_PERMANENT_ACCOUNTS_V2
@@ -262,7 +306,7 @@ pub(crate) fn growth_commitment_from_complete_state_v2(
         id: [0; 32],
     };
     out.id = out.digest();
-    Ok(out)
+    Ok(VerifiedGrowthStateCommitmentV2 { observation: out })
 }
 
 /// Candidate-only identity for a future profile that would install the v2
@@ -305,7 +349,7 @@ impl GrowthProfileBindingV2 {
 /// later migration/activation implementation, not that implementation itself.
 fn growth_profile_binding_from_namespace_v2(
     settings: &Settings,
-    commitment: &GrowthStateCommitmentV2,
+    commitment: &VerifiedGrowthStateCommitmentV2,
     namespace: Hash,
 ) -> Result<GrowthProfileBindingV2> {
     if commitment.schema != GROWTH_COMMITMENT_SCHEMA_V2
@@ -356,7 +400,7 @@ fn growth_profile_binding_from_namespace_v2(
 
 pub fn growth_profile_binding_v2(
     settings: &Settings,
-    commitment: &GrowthStateCommitmentV2,
+    commitment: &VerifiedGrowthStateCommitmentV2,
     storage_namespace: &str,
 ) -> Result<GrowthProfileBindingV2> {
     if storage_namespace.is_empty()
@@ -383,7 +427,7 @@ pub fn growth_profile_binding_v2(
 /// already-bound namespace digest; it does not grant activation.
 pub(crate) fn verify_growth_profile_binding_v2(
     settings: &Settings,
-    commitment: &GrowthStateCommitmentV2,
+    commitment: &VerifiedGrowthStateCommitmentV2,
     binding: &GrowthProfileBindingV2,
 ) -> Result<()> {
     let expected =
@@ -1398,6 +1442,12 @@ mod growth_v2_tests {
 
         let working = State::from([("meta:issued".into(), json!(6))]);
         let committed = growth_commitment_v2(&settings, &aggregate, &working).unwrap();
+        // The capability changes the Rust trust boundary, not the retained
+        // JSON/hash grammar. A deserialized view remains a plain observation.
+        let observed_bytes = serde_json::to_vec(committed.observation()).unwrap();
+        assert_eq!(serde_json::to_vec(&committed).unwrap(), observed_bytes);
+        let observed: GrowthStateCommitmentV2 = serde_json::from_slice(&observed_bytes).unwrap();
+        assert_eq!(&observed, committed.observation());
         let mut complete = working.clone();
         for (owner, account) in &values {
             complete.insert(
@@ -1451,7 +1501,7 @@ mod growth_v2_tests {
             StateWitnessError::Context.into()
         );
         let mut forged = committed.clone();
-        forged.id[0] ^= 1;
+        forged.observation.id[0] ^= 1;
         assert_eq!(
             growth_profile_binding_v2(&settings, &forged, "authenticated-growth-v2").unwrap_err(),
             StateWitnessError::Commitment.into()
@@ -1477,6 +1527,34 @@ mod growth_v2_tests {
         assert_eq!(
             growth_commitment_v2(&settings, &aggregate, &unconserved).unwrap_err(),
             StateWitnessError::Conservation.into()
+        );
+    }
+
+    #[test]
+    fn growth_v2_digest_matches_independent_length_prefixed_vector() {
+        // Separately encoded with Python hashlib/struct, including the exact
+        // TRNM-PON1\0 prefix, u16 tag length, u32 part lengths and LE u64 fields.
+        // This is an encoding vector, not an archive/native admission claim.
+        let observed = GrowthStateCommitmentV2 {
+            schema: GROWTH_COMMITMENT_SCHEMA_V2.into(),
+            network: [1; 32],
+            parameters: [2; 32],
+            genesis: [3; 32],
+            permanent_account_root: [4; 32],
+            permanent_account_count: 4,
+            permanent_account_balance: 6,
+            maximum_permanent_accounts: 1_000_000,
+            working_root: [5; 32],
+            working_count: 3,
+            maximum_working_keys: 65_536,
+            escrow_balance: 7,
+            reward_balance: 11,
+            issued: 24,
+            id: [0; 32],
+        };
+        assert_eq!(
+            hex::encode(observed.digest()),
+            "ba917ebec07c26941051ef1c17d4596abd7ca16b913525038117ebcee5628e82"
         );
     }
 

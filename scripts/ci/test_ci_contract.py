@@ -36,6 +36,26 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
     def test_actual_lane_preserves_quorum_reference_and_retained_vector_checks(self):
         check_independent_conformance(self.script, self.lanes)
 
+    def test_reward_budget_controls_cannot_be_omitted_duplicated_or_moved(self):
+        command = '    python3 formal/pon-nakamoto-v1/test_reward_budget_oracle.py\n'
+        original = (ROOT / 'scripts/ci/ci_job.sh').read_text()
+        for label, changed in [('omitted', original.replace(command, '')),
+                               ('duplicated', original.replace(command, command * 2)),
+                               ('moved', original.replace(command, '').replace(
+                                   '  fuzz-smoke)\n', '  fuzz-smoke)\n' + command))]:
+            with self.subTest(change=label), self.assertRaisesRegex(ValueError, 'reward budget'):
+                check_independent_conformance(changed, self.lanes)
+
+    def test_parent_material_checks_cannot_be_omitted_duplicated_or_moved(self):
+        command = '    python3 scripts/test_llm_parent_material.py\n'
+        for changed in [self.script.replace(command, ''),
+                        self.script.replace(command, '    true # omitted parent preflight\n'),
+                        self.script.replace(command, command * 2),
+                        self.script.replace(command, '').replace('  fuzz-smoke)\n',
+                            '  fuzz-smoke)\n' + command)]:
+            with self.subTest(changed=changed), self.assertRaisesRegex(ValueError, 'parent material'):
+                check_independent_conformance(changed, self.lanes)
+
     def test_original_campaign_reader_keeps_original_pins_and_lane(self):
         for replacement in ['', ORIGINAL_CAMPAIGN_READER * 2,
                             ORIGINAL_CAMPAIGN_READER.replace('python3', 'true # python3'),

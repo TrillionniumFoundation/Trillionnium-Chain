@@ -284,3 +284,30 @@ read back roots and recovery references; then publish through the existing owner
 Abort leaves the source usable and the incomplete destination unselected.
 Local revocation/effect history is carried as monotonic facts, not imported as
 rewindable branch state. Production migration still requires PN6 authorization.
+
+## Verified v2 relation interface
+
+The candidate-binding input now distinguishes a serializable
+`GrowthStateCommitmentV2` observation from a private
+`VerifiedGrowthStateCommitmentV2` capability. The public archive relation obtains
+the latter only from authenticated account bytes and the complete bounded
+working partition; the internal migration/reference relation obtains it from
+the complete actual source State. Candidate binding and retained-binding
+verification accept only this capability. A JSON observation with a recomputed
+digest cannot enter either API, and the read-only projection cannot replace a
+verified root. Serialization retains the exact existing observation grammar and
+all commitment/profile hash domains.
+
+This closes an interface-hardening subitem, not native growth acceptance. The
+old API could bind a caller-constructed self-consistent observation as a
+candidate identity; it already granted no admission or activation, and the
+actual Node migration owner independently reconstructed its source relation.
+The private type makes that provenance requirement executable before a future
+profile owner is connected. Compile-fail controls cover raw-observation binding,
+deserialization and mutation; a separately encoded digest vector and the real
+archive/reference comparison check that the byte relation is unchanged.
+
+No installed profile selects the v2 state root, and no 65,537th native key is
+admitted by this increment. Signed growth, atomic migration, complete mandatory
+witnesses, storage sufficiency, fault recovery and independent availability
+remain the required PN2 acceptance above.

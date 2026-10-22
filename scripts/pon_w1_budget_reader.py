@@ -24,7 +24,18 @@ SCHEMA = "pon-w1-same-target-budget-v1"
 CLASSES = ("dense", "zero", "rank-one", "sparse")
 ARMS = ("generic", "structured", "blocked-zero", "from-zero-false-trace")
 KERNELS = ("production", "scalar-reference", "limb")
-Q, N = 4_294_967_291, 64
+Q, N, R = 4_294_967_291, 64, 8
+ORIGINAL_RECEIVER_PARAMETERS = {
+    "burst_ns": 2_000_000_000,
+    "refill_ns_per_second": 250_000_000,
+    "start_reserve_ns": 100_000_000,
+    "worker_limit": 2,
+}
+# One BeforeReplay, four 512-field noise expansions (eight fields per
+# hash), two 64-row products and all 8^3 transcript tiles. Rejection
+# sampling can add checkpoints, so these are lower bounds, not exact counts.
+TRANSCRIPT_CHECKPOINT_MINIMUM = 1 + 4 * (N * R // 8) + 2 * N + (N // R) ** 3
+VERIFIED_CHECKPOINT_MINIMUM = TRANSCRIPT_CHECKPOINT_MINIMUM + 1 + 3 * N + R + 1
 
 
 def require(condition, message):
@@ -156,6 +167,24 @@ def outcome(row, label):
     return row["kind"]
 
 
+def full_verifier_outcome(row, arm, label):
+    """Check a completed verdict without turning cancellation into invalidity.
+
+    A false-trace prefix has canonical fields and the right task/ticket. The
+    original diagnostic can reject it only after replay with Transcript. A
+    different relation error is retained as a semantic disagreement. These
+    counters remain host-reported evidence; they do not reverify a proof.
+    """
+    actual = outcome(row["outcome"], label)
+    checkpoints = integer(row["checkpoints"], label + ".checkpoints")
+    expected = {"kind": "relation-error", "error": "Transcript"} if arm == ARMS[-1] else {
+        "kind": "verified-work", "error": None}
+    if row["outcome"] == expected:
+        minimum = TRANSCRIPT_CHECKPOINT_MINIMUM if arm == ARMS[-1] else VERIFIED_CHECKPOINT_MINIMUM
+        require(checkpoints >= minimum, label + ": completed verdict omits full replay checkpoints")
+    return actual, expected
+
+
 def analyze(path):
     raw = path.read_bytes()
     require(raw and raw.endswith(b"\n"), "empty or truncated JSONL (missing final newline)")
@@ -251,12 +280,11 @@ def analyze(path):
                 for kernel in KERNELS:
                     diagnostic = take("raw-verifier-diagnostic")
                     require(diagnostic["case"] == case and diagnostic["kernel"] == kernel and digest(diagnostic["task"], case) == task and digest(diagnostic["target"], case) == target, case + ": raw diagnostic context/coverage")
-                    observed = outcome(diagnostic["outcome"], case)
-                    expected = "relation-error" if arm == ARMS[-1] else "verified-work"
-                    if observed != expected:
-                        alerts.append({"case": case, "kernel": kernel, "expected": expected, "observed": diagnostic["outcome"]})
+                    _, expected = full_verifier_outcome(diagnostic, arm, case)
+                    if diagnostic["outcome"] != expected:
+                        alerts.append({"case": case, "kernel": kernel, "expected": expected["kind"],
+                                       "expected_error": expected["error"], "observed": diagnostic["outcome"]})
                     timing(diagnostic["timing"], case + ".raw")
-                    integer(diagnostic["checkpoints"], case + ".checkpoints")
                     cpu, producer_cpu = diagnostic["timing"]["cpu_ns"], total["cpu_ns"]
                     ratio = diagnostic["receiver_cpu_over_full_producer_search_cpu"]
                     expected_ratio = cpu / producer_cpu if cpu is not None and producer_cpu else None
@@ -266,6 +294,7 @@ def analyze(path):
     domain = take("receiver-domain-start")
     require(integer(domain["domain_count"], "domain_count") == 1, "receiver must use one original domain")
     parameters = state(domain["state"], "initial")
+    require(parameters == ORIGINAL_RECEIVER_PARAMETERS, "original receiver budget parameters were substituted")
     require(domain["state"]["stored_credit_ns"] == parameters["burst_ns"] and domain["state"]["accounting_unavailable"] is False, "standalone initial budget mismatch")
     previous = domain["state"]
     counts, receiver_by_arm, settlements = Counter(), defaultdict(Counter), []
@@ -305,17 +334,18 @@ def analyze(path):
                 continue
             require(status == "started", "unknown receiver status")
             counts["started_replays"] += 1
-            actual = outcome(row["outcome"], case)
+            actual, expected = full_verifier_outcome(row, arm, case)
             counters = {"verified-work": "verified_work", "relation-error": "relation_errors", "local-cancellation": "local_cancellations"}
             counts[counters[actual]] += 1
             receiver_by_arm[arm][actual] += 1
-            integer(row["checkpoints"], "receiver checkpoints")
             if actual == "local-cancellation":
                 cancel_errors[row["outcome"]["error"]] += 1
                 if row["outcome"]["error"] == "PUBLIC_MUTATION_CPU_BUDGET" and first_budget_denial is None:
                     first_budget_denial = {"request_ordinal": counts["requested_replays"], "case": case, "round": round_number, "status": actual}
-            elif actual != ("relation-error" if arm == ARMS[-1] else "verified-work"):
-                alerts.append({"case": case, "round": round_number, "receiver_outcome": row["outcome"]})
+            elif row["outcome"] != expected:
+                alerts.append({"case": case, "round": round_number, "expected": expected["kind"],
+                               "expected_error": expected["error"],
+                               "receiver_outcome": row["outcome"]})
             settlement = row["settlement"]
             require(settlement["schema"] == "service-owner-scoped-thread-cpu-settlement-v1", "settlement schema")
             for key in ("owner_cpu_ns", "scoped_worker_cpu_ns", "total_cpu_ns", "live_paid_cpu_ns", "residual_cpu_ns"):

@@ -195,6 +195,63 @@ class ActualLogCounterexamples(unittest.TestCase):
         result = reader.analyze(self.altered('w1-seed1.jsonl', mutate))
         self.assertTrue(result['semantic_alerts'])
 
+    def test_consistently_substituted_receiver_policy_is_not_the_original_domain(self):
+        for field in reader.ORIGINAL_RECEIVER_PARAMETERS:
+            with self.subTest(field=field):
+                def mutate(rows):
+                    def change(value):
+                        if isinstance(value, dict):
+                            if value.get('schema') == 'public-v3-local-stored-cpu-budget-v1':
+                                value[field] *= 2
+                                if field == 'burst_ns':
+                                    value['stored_credit_ns'] += reader.ORIGINAL_RECEIVER_PARAMETERS[field]
+                            for item in value.values():
+                                change(item)
+                        elif isinstance(value, list):
+                            for item in value:
+                                change(item)
+                    change(rows)
+                    if field == 'burst_ns':
+                        flow = rows[-1]['actual_flow']
+                        for key in ('initial_credit_ns', 'remaining_paid_credit_ns', 'stored_credit_ns'):
+                            flow[key] += reader.ORIGINAL_RECEIVER_PARAMETERS[field]
+                self.reject('w1-seed1.jsonl', mutate)
+
+    def test_early_false_trace_relation_error_is_not_full_transcript_rejection(self):
+        for kind in ('raw-verifier-diagnostic', 'receiver'):
+            with self.subTest(kind=kind):
+                def mutate(rows):
+                    row = next(row for row in rows if row['kind'] == kind
+                               and row['case'].endswith('/from-zero-false-trace'))
+                    row['outcome']['error'] = 'Field'
+                result = reader.analyze(self.altered('w1-seed1.jsonl', mutate))
+                self.assertTrue(result['semantic_alerts'])
+                self.assertEqual(result['semantic_alerts'][0]['expected'], 'relation-error')
+                self.assertEqual(result['semantic_alerts'][0]['expected_error'], 'Transcript')
+
+    def test_completed_verdict_cannot_omit_transcript_or_product_checkpoints(self):
+        for kind in ('raw-verifier-diagnostic', 'receiver'):
+            for false_trace in (False, True):
+                with self.subTest(kind=kind, false_trace=false_trace):
+                    def mutate(rows):
+                        row = next(row for row in rows if row['kind'] == kind
+                                   and row['case'].endswith('/from-zero-false-trace') == false_trace)
+                        minimum = reader.TRANSCRIPT_CHECKPOINT_MINIMUM if false_trace else reader.VERIFIED_CHECKPOINT_MINIMUM
+                        row['checkpoints'] = minimum - 1
+                    self.reject('w1-seed1.jsonl', mutate)
+
+    def test_cancelled_false_trace_remains_unknown_even_before_first_checkpoint(self):
+        def mutate(rows):
+            row = next(row for row in rows if row['kind'] == 'receiver'
+                       and row['case'].endswith('/from-zero-false-trace'))
+            row['outcome'] = {'kind': 'local-cancellation', 'error': 'PUBLIC_MUTATION_CPU_BUDGET'}
+            row['checkpoints'] = 0
+            rows[-1]['relation_errors'] -= 1
+            rows[-1]['local_cancellations'] += 1
+        result = reader.analyze(self.altered('w1-seed1.jsonl', mutate))
+        self.assertEqual(result['semantic_alerts'], [])
+        self.assertEqual(result['receiver_counts_recomputed']['local_cancellations'], 1)
+
     def test_winning_trial_ratio_cannot_replace_full_producer_cost(self):
         def mutate(rows):
             producers = {row['case']: row for row in rows if row['kind'] == 'producer'}

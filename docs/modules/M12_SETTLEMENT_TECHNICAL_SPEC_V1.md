@@ -55,6 +55,12 @@ Replay, uncompensated liabilities, expiry starvation, sponsor self-traffic and o
 
 Funded GPU capacity, market sustainability, fee adaptation and independent economic acceptance remain absent.
 
+The [five-lane PN4 reference](../development/specs/pon/REWARD_BUDGETS_V1.md)
+separates existing mining rewards, sponsor-funded contribution, evaluation,
+storage/repair and serving budgets, including their distinct resource units.
+Its executable conservation and external-intent fork controls do not verify
+native funding or add a native settlement/undo adapter.
+
 ## Current source and verification
 
 - [`formal/pon-nakamoto-v1/ledger.py`](../../formal/pon-nakamoto-v1/ledger.py).

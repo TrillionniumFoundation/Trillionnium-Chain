@@ -110,6 +110,39 @@ reward acceptance flags stay false; ordinary successful phase execution is recor
 separately. Native adoption/consumer/outbox and independent evaluation remain their
 existing owners' responsibility.
 
+## Explicit parent material preflight
+
+This entry currently reuses the Linux pilot utilities. Its checked-byte result
+does not establish native Windows material loading or cross-platform installation.
+
+After the existing native Cell release fetch has provided complete bytes, the
+read-only parent preflight checks the original target contract, wrapped adapter
+and actual safetensors against three independently retained identities:
+
+```sh
+python scripts/llm_parent_material.py \
+  --contract /isolated/parent/target-contract.json \
+  --adapter /isolated/parent/wrapped-adapter.json \
+  --artifact /isolated/parent/artifact.safetensors \
+  --expected-contract "$parent_contract_id" \
+  --expected-adapter "$parent_adapter_id" \
+  --expected-file-sha256 "$parent_file_sha256"
+python -m unittest discover -s scripts -p test_llm_parent_material.py -v
+```
+
+The contract must preserve the pinned SmolLM2 FP32 backbone and tokenizer roots,
+all 60 rank4 q/v insertion sites and the fixed ports. The bounded parser checks
+all 120 F32 factor tensors, exact shapes and byte ranges, complete nonoverlapping
+payload coverage, factor hashes and finite values using the existing adapter
+contract. A self-rehashed file cannot replace the independently retained adapter
+identity. The command writes no installation or CURRENT state, loads no remote
+code and imports no optional model runtime. Its JSON result proves only the
+supplied material preflight. It does not verify the unavailable full backbone
+bytes, evaluation, adoption, lineage authorization, actual reload/inference or
+three-round execution. The original single-round pilot and its five controls
+retain their existing semantics; inheriting a trained parent requires a separately
+qualified runtime integration and control plan.
+
 ## Native negative bridge input and public output
 
 The [zero-gain bridge](../trillionnium/crates/trnm-pon-node/examples/llm_zero_gain_round.rs)
