@@ -86,6 +86,9 @@ impl Drop for ConnectionLease {
 }
 struct ChallengeBudget {
     tokens: u64,
+    // Fractional token numerator with denominator 1e9. Poll frequency must not
+    // change the declared rate; a full bucket discards all surplus credit.
+    fractional: u64,
     updated: Instant,
 }
 impl ListenerIntake {
@@ -105,6 +108,7 @@ impl ListenerIntake {
             read_grants: Arc::new(Mutex::new(0)),
             challenges: Mutex::new(ChallengeBudget {
                 tokens,
+                fractional: 0,
                 updated: Instant::now(),
             }),
             leases: Arc::new(Mutex::new(ConnectionLeases::default())),
@@ -196,15 +200,17 @@ impl ListenerIntake {
         // A second listener can sample its clock before the first gets this lock.
         // Keep one monotonic refill watermark; never credit an interval twice.
         if let Some(elapsed) = now.checked_duration_since(budget.updated) {
-            let credit = elapsed
-                .as_millis()
-                .saturating_mul(u128::from(CHALLENGES_PER_SECOND))
-                / 1000;
-            if credit > 0 {
-                let credit = credit.min(u128::from(CHALLENGE_BURST)) as u64;
-                budget.tokens = (budget.tokens + credit).min(CHALLENGE_BURST);
-                budget.updated = now;
-            }
+            const SCALE: u128 = 1_000_000_000;
+            let credit = (u128::from(budget.tokens) * SCALE + u128::from(budget.fractional))
+                .saturating_add(
+                    elapsed
+                        .as_nanos()
+                        .saturating_mul(u128::from(CHALLENGES_PER_SECOND)),
+                )
+                .min(u128::from(CHALLENGE_BURST) * SCALE);
+            budget.tokens = (credit / SCALE) as u64;
+            budget.fractional = (credit % SCALE) as u64;
+            budget.updated = now;
         }
         if budget.tokens == 0 || (mutating_operation(op) && budget.tokens <= READ_CHALLENGE_RESERVE)
         {
@@ -383,6 +389,68 @@ mod tests {
         let issued: usize = handles.into_iter().map(|h| h.join().unwrap()).sum();
         assert_eq!(issued, CHALLENGE_BURST as usize);
     }
+    #[test]
+    fn challenge_fractional_refill_preserves_the_declared_rate_under_dense_polling() {
+        let intake = ListenerIntake::after_process_restart();
+        let start = intake.challenges.lock().unwrap().updated;
+        let mut issued = 0_u64;
+        for millis in 1..=1000_u64 {
+            let now = start + Duration::from_millis(millis);
+            issued += u64::from(intake.try_challenge(2, now).unwrap());
+            assert!(issued <= millis * CHALLENGES_PER_SECOND / 1000);
+            // A second listener carrying an older clock must neither credit the
+            // interval again nor move the refill watermark backwards.
+            assert!(!intake
+                .try_challenge(2, now - Duration::from_millis(1))
+                .unwrap());
+        }
+        assert_eq!(issued, CHALLENGES_PER_SECOND);
+    }
+
+    #[test]
+    fn challenge_fractional_refill_keeps_the_original_mutation_read_reserve() {
+        let intake = ListenerIntake::new();
+        let start = intake.challenges.lock().unwrap().updated;
+        for _ in 0..CHALLENGE_BURST - READ_CHALLENGE_RESERVE {
+            assert!(intake.try_challenge(1, start).unwrap());
+        }
+        let mut issued = 0_u64;
+        for millis in 1..=1000_u64 {
+            issued += u64::from(
+                intake
+                    .try_challenge(1, start + Duration::from_millis(millis))
+                    .unwrap(),
+            );
+        }
+        assert_eq!(issued, CHALLENGES_PER_SECOND);
+        let end = start + Duration::from_secs(1);
+        assert!(!intake.try_challenge(1, end).unwrap());
+        for _ in 0..READ_CHALLENGE_RESERVE {
+            assert!(intake.try_challenge(2, end).unwrap());
+        }
+        assert!(!intake.try_challenge(2, end).unwrap());
+    }
+
+    #[test]
+    fn challenge_fractional_refill_discards_surplus_at_the_original_burst() {
+        let intake = ListenerIntake::new();
+        let start = intake.challenges.lock().unwrap().updated;
+        let full = start + Duration::from_nanos(500);
+        for _ in 0..CHALLENGE_BURST {
+            assert!(intake.try_challenge(2, full).unwrap());
+        }
+        let one_token_ns = 1_000_000_000 / CHALLENGES_PER_SECOND;
+        assert!(!intake
+            .try_challenge(2, full + Duration::from_nanos(one_token_ns - 1))
+            .unwrap());
+        assert!(intake
+            .try_challenge(2, full + Duration::from_nanos(one_token_ns))
+            .unwrap());
+        assert!(!intake
+            .try_challenge(2, full + Duration::from_nanos(one_token_ns))
+            .unwrap());
+    }
+
     #[test]
     fn unavailable_challenge_lock_does_not_create_another_budget() {
         let intake = Arc::new(ListenerIntake::new());

@@ -36,8 +36,18 @@ or authenticated guest identity claims. The export omits request bodies, keys,
 guest identities, peer addresses, paths and raw error strings. Connection IDs
 are local counters, not process IDs. Application bytes count successful stream
 syscalls, not physical network bytes or acknowledged delivery. Dispatch and full
-work thread CPU intervals overlap and must not be added. Reactor authentication
-and response signing CPU is excluded. A finite record capacity or measurement
+work thread CPU intervals overlap and must not be added. The nested observer
+schema `public-v3-local-request-resource-observation-v3` reports the owner
+interval introduced in r11 and retained by r12/r13, including paid body digest/canonical
+decoding and signed response construction. The shared observer schema does not
+identify scheduling policy; preserve the actual signed admission policy identifier.
+New original campaign reports retain it separately as `public_resource_policy`,
+and missing historical policy metadata stays unknown. Its separate CPU flags
+explicitly exclude reactor authentication and
+socket copying. Historical v1/v2 observer records excluded response signing;
+their CPU totals retain that original meaning. The seven native Submit phase
+slots continue to exclude body-envelope decoding, response construction and
+scoped worker CPU. A finite record capacity or measurement
 failure sets capture coverage incomplete; it does not invent absent samples.
 Native stages remain nonpreemptive and the observation is unsigned local data.
 
@@ -56,3 +66,19 @@ creation, post-join descriptor failure, pre-join SIGKILL, and a real miner stdou
 failure after native activation. These are finite local tests, not a network
 service guarantee, independent accounting certificate or consensus rollback
 test. No existing signed admission bytes or numerical verifier are replaced.
+
+## R13 scheduling observations are separate
+
+The request observer's v3 CPU scope does not identify the resource revision.
+R13 keeps the same paid CPU coverage and adds the exact signed policy digest plus
+a separate `completion_work_observation` in campaign phases. That object reports
+the current shared live CPU owner's fixed 4,096 identities (131,072 identity
+bytes), live promotions and duplicate/capacity skips. Its restart flag is false:
+identity retention is monotonic only within that live owner epoch, while an
+actual process restart begins a new zero-credit epoch. Full capacity withholds
+extra promotion and does not reject ordinary verification or recovery.
+
+The reader requires these explicit bounds for r13 and preserves r12 derivations
+without adding fields. Unknown observations stay unknown and cannot manufacture
+a genuine depletion interval, a confirmation, permanent-once work or fairness.
+See [the signed policy boundary](PUBLIC_POOL_INTAKE_V3.md#bounded-completion-replay-and-controlled-existing-recovery).

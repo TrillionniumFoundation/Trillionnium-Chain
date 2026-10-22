@@ -39,7 +39,7 @@ const DIRECTORY_FLAGS: OFlags = OFlags::RDONLY
 
 // Resolve every ancestor relative to an already opened directory. A single
 // absolute open with O_NOFOLLOW would protect only the final path component.
-fn directory_components(path: &Path) -> Result<File> {
+pub(super) fn directory_components(path: &Path) -> Result<File> {
     ensure(path.is_absolute(), "GROWTH_STORAGE_TARGET")?;
     let mut directory = File::from(
         open("/", DIRECTORY_FLAGS, Mode::empty())
@@ -60,7 +60,7 @@ fn directory_components(path: &Path) -> Result<File> {
     Ok(directory)
 }
 
-fn check_named_parent(parent: &File, path: &Path) -> Result<()> {
+pub(super) fn check_named_parent(parent: &File, path: &Path) -> Result<()> {
     let named = directory_components(path)?;
     let final_named = fs::symlink_metadata(path)?;
     ensure(

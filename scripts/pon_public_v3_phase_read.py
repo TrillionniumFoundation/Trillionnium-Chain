@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 """Read retained multiprocess observations; never infer confirmations from ACKs.
 
-Both historical v1 and instrumented v2 receiver observations are accepted.
+Historical v1/v2 and the r11/r12/r13 paid CPU envelope's v3 observations are accepted.
+An explicit observed policy is checked against exact revision vectors. Missing
+historical policy metadata is not inferred from the shared observer schema.
 Missing measurements stay unknown. This reader does not run native admission,
 authenticate a host/source claim or issue a production qualification.
 """
@@ -14,6 +16,8 @@ import json
 from pathlib import Path
 import re
 import sys
+
+from pon_public_v3_policy_read import identify_observation
 
 PHASES = ('decode', 'context_owner_wait', 'context', 'work',
           'admission_owner_wait', 'admission', 'submit_result')
@@ -117,7 +121,7 @@ def execution_summary(rows, instrumented):
         for row in rows:
             phases = row.get('submit_phases')
             require(isinstance(phases, list) and [p.get('phase') for p in phases] == list(PHASES),
-                    'v2 observation must retain all seven ordered phase slots')
+                    'instrumented observation must retain all seven ordered phase slots')
             for phase in phases:
                 columns[phase['phase']].append(phase)
         result['submit_phases'] = []
@@ -137,6 +141,31 @@ def execution_summary(rows, instrumented):
     return result
 
 
+def completion_work_observation(value):
+    """Exact local r13 boundary, never a permanent spent-work or fairness proof."""
+    fixed = {
+        'schema': 'public-v3-live-owner-completion-work-v1',
+        'identity_domain': 'public-v3-complete-work-identity-v1',
+        'identity_capacity': 4096, 'identity_storage_bytes': 4096 * 32,
+        'epoch_scope': 'same-shared-live-cpu-owner',
+        'evicts_live_epoch_identities': False, 'survives_process_restart': False,
+        'full_capacity_disables_ordinary_verification': False,
+    }
+    counters = ('retained_identities', 'live_completions', 'repeated_identity_skips',
+                'full_capacity_skips')
+    require(type(value) is dict and set(value) == set(fixed) | set(counters),
+            'exact r13 completion-work observation required')
+    require(all(type(value[key]) is type(expected) and value[key] == expected
+                for key, expected in fixed.items()), 'r13 completion-work scope mismatch')
+    for key in counters:
+        require(type(value[key]) is int and 0 <= value[key] <= 2**64 - 1,
+                'r13 completion-work counter must be known')
+    require(value['retained_identities'] <= 4096
+            and value['live_completions'] <= min(2, value['retained_identities']),
+            'r13 completion-work capacity mismatch')
+    return dict(value)
+
+
 def phase_summary(phase):
     mode = phase['mode']
     require(mode in MODES, 'unknown campaign phase')
@@ -144,9 +173,19 @@ def phase_summary(phase):
             'scheduled_confirmation_rounds': ROUNDS,
             'native_phase_criteria_met': phase.get('finite_phase_criteria_met'),
             'startup_or_campaign_error': phase.get('startup_or_campaign_error')}
+    policy = None
+    if 'public_resource_policy' in phase:
+        policy = identify_observation(phase['public_resource_policy'])
+        base['public_resource_policy'] = policy
     if base['startup_or_campaign_error'] is not None:
         base.update(observations_available=False, confirmed_rounds=None)
         return base
+    if policy is not None and policy['resource_revision'] == 'r13':
+        base['completion_work_observation'] = completion_work_observation(
+            phase.get('completion_work_observation'))
+    else:
+        require('completion_work_observation' not in phase,
+                'completion-work observation requires explicit r13 policy')
     require(phase['duration_seconds'] == 30, 'original 30-second phase required')
     rounds = phase['confirmations']
     indices = [integer(row['round']) for row in rounds]
@@ -161,8 +200,18 @@ def phase_summary(phase):
     observer = phase['receiver_observation']
     schema = observer['schema']
     require(schema in ('public-v3-local-request-resource-observation-v1',
-                       'public-v3-local-request-resource-observation-v2'), 'unknown observer schema')
-    instrumented = schema.endswith('-v2')
+                       'public-v3-local-request-resource-observation-v2',
+                       'public-v3-local-request-resource-observation-v3'), 'unknown observer schema')
+    instrumented = schema.endswith(('-v2', '-v3'))
+    if policy is not None:
+        require(schema.endswith('-v3') is (policy['resource_revision'] in ('r11', 'r12', 'r13')),
+                'public policy and observed CPU scope disagree')
+    if schema.endswith('-v3'):
+        require(observer.get('cpu_includes_reactor_authentication_or_response_signing') is True
+                and observer.get('cpu_includes_reactor_authentication') is False
+                and observer.get('dispatch_cpu_includes_paid_body_decode') is True
+                and observer.get('dispatch_cpu_includes_response_signing') is True,
+                'v3 paid body/response CPU scope required')
     require(observer['cpu_intervals_are_nested_not_additive'] is True,
             'nested CPU observation scope required')
     if instrumented:
@@ -194,6 +243,8 @@ def phase_summary(phase):
         'receiver': {'schema': schema, **{key: observer.get(key) for key in (
             'capacity', 'accepted_connections_seen', 'records_not_retained',
             'measurement_failures', 'counter_overflow')},
+            'dispatch_cpu_scope': ('paid-body-decode-native-dispatch-signed-response'
+                                   if schema.endswith('-v3') else 'native-dispatch-only'),
             'native_observer_complete': phase['observer_complete'],
             'all_retained_records': execution_summary(observer['records'], instrumented),
             'by_observed_body_role': {role: execution_summary(rows, instrumented)
@@ -219,7 +270,15 @@ def analyze(report):
     require([row['mode'] for row in report['phases']] == list(MODES), 'all three original phases required')
     require(all(row.get('state_backend') == report.get('state_backend') for row in report['phases']),
             'mixed backend observations')
-    return {'schema': 'pon-public-v3-multiprocess-phase-derivation-v1',
+    if 'public_resource_policy' in report:
+        identify_observation(report['public_resource_policy'])
+        require(all(row.get('public_resource_policy') == report['public_resource_policy']
+                    for row in report['phases'] if row.get('startup_or_campaign_error') is None),
+                'mixed or missing phase resource policies')
+    else:
+        require(all('public_resource_policy' not in row for row in report['phases']),
+                'phase resource policy without original report identity')
+    return {'schema': 'pon-public-v3-multiprocess-phase-derivation-v2',
             'state_backend': report.get('state_backend'),
             'native_finite_experiment_criteria_met': report['finite_experiment_criteria_met'],
             'native_economics_complete': report['economics_complete'],
@@ -234,12 +293,50 @@ def analyze(report):
                       'acknowledgments_are_not_confirmations': True,
                       'cpu_intervals_are_nested_not_additive': True,
                       'submit_phase_cpu_excludes_scoped_workers': True,
-                      'cpu_excludes_reactor_authentication_and_response_signing': True,
+                      'cpu_excludes_reactor_authentication': True,
+                      'dispatch_cpu_scope_retained_per_observer_schema': True,
+                      'submit_phase_cpu_excludes_response_signing': True,
                       'unknown_cpu_is_not_zero': True,
                       'v1_missing_phase_measurements_are_not_reconstructed': True}}
 
 
-def read_report(path, expected):
+def analyze_for_retained_schema(report, schema):
+    """Reproduce an explicitly named immutable derivation format exactly.
+
+    The original v1 reader accepted only v1/v2 native CPU observations, which
+    excluded response construction. Its output had one combined exclusion flag
+    and no per-phase dispatch_cpu_scope. These are the only versioned formatting
+    differences: every original measurement, outcome, denominator and threshold
+    field remains in the exact equality comparison performed by the caller.
+    """
+    require(schema in ('pon-public-v3-multiprocess-phase-derivation-v1',
+                       'pon-public-v3-multiprocess-phase-derivation-v2'),
+            'unknown retained phase derivation schema')
+    if schema.endswith('-v2'):
+        return analyze(report)
+    require('public_resource_policy' not in report
+            and all('public_resource_policy' not in phase for phase in report['phases']),
+            'historical v1 derivation cannot erase explicit public policy')
+    require(all(phase.get('startup_or_campaign_error') is not None
+                or phase['receiver_observation']['schema'] in (
+                    'public-v3-local-request-resource-observation-v1',
+                    'public-v3-local-request-resource-observation-v2')
+                for phase in report['phases']),
+            'historical v1 derivation cannot describe paid-envelope v3 CPU')
+    value = analyze(report)
+    value['schema'] = schema
+    for phase in value['phases']:
+        if phase['observations_available']:
+            del phase['receiver']['dispatch_cpu_scope']
+    scope = value['scope']
+    del scope['cpu_excludes_reactor_authentication']
+    del scope['dispatch_cpu_scope_retained_per_observer_schema']
+    del scope['submit_phase_cpu_excludes_response_signing']
+    scope['cpu_excludes_reactor_authentication_and_response_signing'] = True
+    return value
+
+
+def read_report(path, expected, expected_public_policy_id=None):
     require(re.fullmatch('[0-9a-f]{64}', expected), 'explicit report SHA256 required')
     path = Path(path)
     require(path.is_file() and not path.is_symlink(), 'regular report file required')
@@ -247,7 +344,15 @@ def read_report(path, expected):
     raw = path.read_bytes()
     require(len(raw) <= MAX_REPORT_BYTES and hashlib.sha256(raw).hexdigest() == expected,
             'retained report SHA256 mismatch')
-    value = analyze(json.loads(raw, parse_constant=lambda _: (_ for _ in ()).throw(ValueError('nonfinite JSON'))))
+    report = json.loads(raw, parse_constant=lambda _: (_ for _ in ()).throw(ValueError('nonfinite JSON')))
+    if expected_public_policy_id is not None:
+        digest(expected_public_policy_id)
+        require('public_resource_policy' in report,
+                'pinned public policy is absent from historical report')
+        observed = identify_observation(report['public_resource_policy'])
+        require(observed['policy_id'] == expected_public_policy_id,
+                'observed public policy does not match requested pin')
+    value = analyze(report)
     value['input'] = {'report': str(path), 'bytes': len(raw), 'sha256': expected}
     return value
 
@@ -256,8 +361,11 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--raw-dir', required=True, type=Path)
     parser.add_argument('--expected-report-sha256', required=True)
+    parser.add_argument('--expected-public-policy-id',
+                        help='Require explicit matching policy metadata; never infer it for old reports')
     args = parser.parse_args()
-    print(json.dumps(read_report(args.raw_dir / 'report.json', args.expected_report_sha256),
+    print(json.dumps(read_report(args.raw_dir / 'report.json', args.expected_report_sha256,
+                                args.expected_public_policy_id),
                      sort_keys=True, indent=2, allow_nan=False))
 
 

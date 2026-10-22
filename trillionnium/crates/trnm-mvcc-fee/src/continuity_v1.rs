@@ -162,7 +162,7 @@ fn reserve_owner(
 pub fn capacity(state: &State, height: u64, cfg: &Config) -> Result<Capacity> {
     capacity_with_account_access(state, height, cfg, None)
 }
-fn capacity_with_account_access(
+pub(crate) fn capacity_with_account_access(
     state: &State,
     height: u64,
     cfg: &Config,

@@ -21,6 +21,8 @@ pub const SIGNED_TASK_PROFILE: &str = "signed-task-dev-v1";
 pub const LEGACY_TASK_PROFILE: &str = "legacy-task-v1";
 pub const QUALIFIED_DEMANDS: u64 = 16;
 
+pub mod growth;
+
 pub type State = BTreeMap<String, Value>;
 pub type Result<T> = std::result::Result<T, &'static str>;
 /// Optional computation-input gate for semantic account point accesses. The
@@ -54,11 +56,32 @@ pub fn is_monetary_obligation(key: &str) -> bool {
 pub struct MonetaryObligationInput<'a> {
     pub rows: &'a State,
 }
+/// Read-only observations of the actual canonical M06 path. They convey no
+/// validation or funding authority; an owner must verify the completed output
+/// against the admitted header before publishing any observation.
+pub trait CanonicalTransitionObserver: Sync {
+    fn mandatory(&self, _before: &State, _after: &State, _receipts: &[Vec<u8>]) -> Result<()> {
+        Ok(())
+    }
+    fn transaction(
+        &self,
+        _index: usize,
+        _envelope: &Envelope,
+        _before: &State,
+        _writes: &State,
+        _fee: u64,
+        _receipt: &[u8],
+    ) -> Result<()> {
+        Ok(())
+    }
+}
 #[derive(Default)]
 struct StateInputs<'a> {
     accounts: Option<&'a AccountPointAccess<'a>>,
     mandatory: Option<&'a MandatoryStateInput<'a>>,
     monetary: Option<&'a MonetaryObligationInput<'a>>,
+    growth: Option<&'a growth::AccountPartition>,
+    observer: Option<&'a dyn CanonicalTransitionObserver>,
     #[cfg(test)]
     // Private per-call research only; default false and absent from production.
     experimental_skip_repeated_senders: bool,
@@ -2222,6 +2245,27 @@ pub fn execute_with_control<E: Send>(
         control,
     )
 }
+/// Reexecute the ordinary complete-State relation while observing the exact
+/// mandatory and canonical transaction writes. A partial or rejected result
+/// must never be published as a payment observation by the caller.
+pub fn execute_observed(
+    parent: &State,
+    block: BlockExecution<'_>,
+    cfg: &Config,
+    observer: &dyn CanonicalTransitionObserver,
+) -> Result<Output> {
+    relation_only(execute_with_state_inputs(
+        parent,
+        block,
+        cfg,
+        |_, next| root_for_config(next, cfg),
+        &ExecutionControl::new(&no_cancellation, &()),
+        StateInputs {
+            observer: Some(observer),
+            ..StateInputs::default()
+        },
+    ))
+}
 /// Explicit serial research consumer of semantic account point-access evidence.
 /// This function still requires a complete State and performs its ordinary funds,
 /// prefix, capacity and root checks. It neither authenticates the callback nor
@@ -2268,6 +2312,8 @@ pub fn execute_with_authenticated_state_input<E: Send>(
             accounts: Some(account_access),
             mandatory: Some(mandatory_input),
             monetary: None,
+            growth: None,
+            observer: None,
             #[cfg(test)]
             experimental_skip_repeated_senders: false,
         },
@@ -2297,6 +2343,8 @@ pub fn execute_with_authenticated_obligation_input<E: Send>(
             accounts: Some(account_access),
             mandatory: Some(mandatory_input),
             monetary: Some(monetary_input),
+            growth: None,
+            observer: None,
             #[cfg(test)]
             experimental_skip_repeated_senders: false,
         },
@@ -2367,6 +2415,8 @@ fn execute_with_state_inputs<E: Send>(
         accounts: account_access,
         mandatory: mandatory_input,
         monetary: monetary_input,
+        growth,
+        observer,
         #[cfg(test)]
         experimental_skip_repeated_senders,
     } = inputs;
@@ -2391,7 +2441,11 @@ fn execute_with_state_inputs<E: Send>(
         account_access,
         mandatory_input,
         monetary_input,
+        growth,
     )?;
+    if let Some(observer) = observer {
+        observer.mandatory(parent, &state, &receipts)?;
+    }
     progress(ExecutionProgress::AfterMandatory).map_err(ExecutionError::Cancelled)?;
     let mut fees = 0;
     let mut metrics = Metrics {
@@ -2566,6 +2620,16 @@ fn execute_with_state_inputs<E: Send>(
                 }
             }
         };
+        if let Some(observer) = observer {
+            observer.transaction(
+                index,
+                &prepared.envelope,
+                &state,
+                &patch.writes,
+                patch.fee,
+                &patch.receipt,
+            )?;
+        }
         fees = add(fees, patch.fee)?;
         receipts.push(patch.receipt.clone());
         patch.apply(&mut state);
@@ -2576,7 +2640,11 @@ fn execute_with_state_inputs<E: Send>(
     state.extend(block_reward_updates(
         &state, height, miner, parent_id, fees, cfg,
     )?);
-    check_completed_block_state_with_account_access(&state, height, cfg, account_access)?;
+    if let Some(partition) = growth {
+        partition.check_successor(parent, &state, height, cfg, account_access)?;
+    } else {
+        check_completed_block_state_with_account_access(&state, height, cfg, account_access)?;
+    }
     let root_start = std::time::Instant::now();
     progress(ExecutionProgress::BeforeCommitment).map_err(ExecutionError::Cancelled)?;
     let root = commitment(parent, &state)?;
@@ -2606,7 +2674,7 @@ fn prepare_block_state_with_account_access(
     cfg: &Config,
     account_access: Option<&AccountPointAccess<'_>>,
 ) -> Result<(State, Vec<Vec<u8>>)> {
-    prepare_block_state_with_inputs(parent, height, cfg, account_access, None, None)
+    prepare_block_state_with_inputs(parent, height, cfg, account_access, None, None, None)
 }
 fn prepare_block_state_with_inputs(
     parent: &State,
@@ -2615,6 +2683,7 @@ fn prepare_block_state_with_inputs(
     account_access: Option<&AccountPointAccess<'_>>,
     mandatory_input: Option<&MandatoryStateInput<'_>>,
     monetary_input: Option<&MonetaryObligationInput<'_>>,
+    growth: Option<&growth::AccountPartition>,
 ) -> Result<(State, Vec<Vec<u8>>)> {
     if let Some(input) = monetary_input {
         require(
@@ -2638,7 +2707,14 @@ fn prepare_block_state_with_inputs(
             "MANDATORY_STATE_PARTITION",
         )?;
     }
-    if continuity_v1::enabled(cfg) {
+    if let Some(partition) = growth {
+        partition.check_parent(
+            parent,
+            height.checked_sub(1).ok_or("HEIGHT")?,
+            cfg,
+            account_access,
+        )?;
+    } else if continuity_v1::enabled(cfg) {
         continuity_v1::check_state_with_account_access_and_monetary(
             parent,
             height.checked_sub(1).ok_or("HEIGHT")?,

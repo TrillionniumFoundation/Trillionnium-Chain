@@ -910,3 +910,608 @@ fn authenticated_migration_process_exit_leaves_pending_and_source_reopens() {
         assert_eq!(completed.replayed_blocks, 1);
     }
 }
+
+fn rehearsal_signed(
+    settings: &Settings,
+    sender: u64,
+    nonce: u64,
+    tag: u8,
+    payload: Vec<u8>,
+) -> Vec<u8> {
+    let mut tx = Envelope {
+        network: settings.network(),
+        sender: public(sender),
+        nonce,
+        expiry: 2000,
+        fee_limit: 1_000_000,
+        tag,
+        payload,
+        signature: [0; 64],
+    };
+    let key = signing_key_from_hex(&hex::encode(hash(
+        b"DEV-ONLY-KEY",
+        &[&sender.to_le_bytes()],
+    )))
+    .unwrap();
+    tx.signature = hex::decode(sign_hex(&key, &tx.signing_digest().unwrap()))
+        .unwrap()
+        .try_into()
+        .unwrap();
+    tx.encode().unwrap()
+}
+fn rehearsal_with_obligations_and_zero_nonce() -> Fixture {
+    let mut fixture = Fixture::new();
+    fixture.complete_branch();
+    let settings = fixture.node.settings.clone();
+    let provider = public(1);
+    let budget = 5_000u64;
+    let deadline = 30u64;
+    let task = hash(
+        b"task-instance-v3",
+        &[
+            &settings.network(),
+            &settings.parameters(),
+            &public(0),
+            &4u64.to_le_bytes(),
+            &provider,
+            &budget.to_le_bytes(),
+            &deadline.to_le_bytes(),
+        ],
+    );
+    let mut payload = task.to_vec();
+    payload.extend(provider);
+    payload.extend(budget.to_le_bytes());
+    payload.extend(deadline.to_le_bytes());
+    let reserve_task = rehearsal_signed(&settings, 0, 4, 2, payload);
+    let units = 2u64;
+    let consumer = public(2);
+    let quota = hash(
+        b"quota-instance-v3",
+        &[
+            &settings.network(),
+            &settings.parameters(),
+            &public(0),
+            &5u64.to_le_bytes(),
+            &consumer,
+            &provider,
+            &units.to_le_bytes(),
+            &deadline.to_le_bytes(),
+        ],
+    );
+    let mut payload = quota.to_vec();
+    payload.extend(consumer);
+    payload.extend(provider);
+    payload.extend(units.to_le_bytes());
+    payload.extend(deadline.to_le_bytes());
+    let reserve_quota = rehearsal_signed(&settings, 0, 5, 10, payload);
+    let parent = fixture.node.active().unwrap().0;
+    let block = admit(
+        &mut fixture.node,
+        parent,
+        5,
+        3,
+        vec![reserve_task, reserve_quota],
+    );
+    fixture.node.activate(block).unwrap();
+    let mut payload = public(4).to_vec();
+    payload.extend(101u64.to_le_bytes());
+    let spend = rehearsal_signed(&settings, 99, 1, 1, payload);
+    let amount =
+        101 + settings.app.fees[1] + spend.len() as u64 * settings.limit("byte_fee_units").unwrap();
+    let fund = transfer(&settings, 6, 99, amount);
+    let block = admit(&mut fixture.node, block, 6, 3, vec![fund, spend]);
+    fixture.node.activate(block).unwrap();
+    fixture.node.pool_reconcile().unwrap();
+    fixture
+}
+
+#[test]
+fn growth_rehearsal_preserves_all_native_facts_nonce_liabilities_and_cold_checkpoint() {
+    use crate::account_archive_prototype::{multiproof, native_store, Context};
+    let export = std::env::var_os("TRNM_GROWTH_REHEARSAL_EXPORT_DIR").map(PathBuf::from);
+    if let Some(path) = &export {
+        assert!(path.is_absolute());
+        fs::create_dir(path).unwrap();
+        fs::write(path.join("source-settings.json"),canonical(&serde_json::json!({
+            "schema":"native-growth-rehearsal-fixture-input-v2","genesis_timestamp":1,
+            "evaluation_profile":"native-public-evaluation-dev-v1","continuity_profile":continuity_v1::PROFILE,
+            "namespace":"growth-rehearsal/checked-local-v2","source_state_in_each_archive":true,
+            "production_enabled":false,"migration_executed":false,"external_journals_imported":false
+        })).unwrap()).unwrap();
+    }
+    for authenticated in [false, true] {
+        let fixture = rehearsal_with_obligations_and_zero_nonce();
+        let authenticated_path = fixture.dir.path().join("authenticated-source");
+        let authenticated_node = if authenticated {
+            fixture
+                .node
+                .migrate_to_authenticated_state(&authenticated_path)
+                .unwrap();
+            Some(Node::open_with_authenticated_state(&authenticated_path, settings(), 1).unwrap())
+        } else {
+            None
+        };
+        let source = authenticated_node.as_ref().unwrap_or(&fixture.node);
+        let before = logical_rows(&source.db);
+        let files = durable_bytes(&source.directory);
+        let (tip, generation, state) = source.read_active().unwrap();
+        assert_eq!(
+            state[&format!("account:{}", hex::encode(public(99)))],
+            serde_json::json!({"balance":0,"nonce":1})
+        );
+        let destination = export
+            .as_ref()
+            .map(|p| {
+                p.join(if authenticated {
+                    "authenticated-source-candidate"
+                } else {
+                    "legacy-source-candidate"
+                })
+            })
+            .unwrap_or_else(|| fixture.dir.path().join("candidate"));
+        let receipt = source
+            .rehearse_growth_migration_v2(&destination, "growth-rehearsal/checked-local-v2")
+            .unwrap();
+        assert_eq!(source.active().unwrap(), (tip, generation));
+        assert_eq!(logical_rows(&source.db), before);
+        assert_eq!(durable_bytes(&source.directory), files);
+        assert_eq!(receipt.source_height, 6);
+        assert_eq!(receipt.source_tip, tip);
+        assert_eq!(receipt.source_generation, generation);
+        assert_eq!(receipt.retained_blocks, 9);
+        assert!(receipt.replayed_transactions >= 8);
+        assert!(receipt.candidate_materialized && receipt.independent_cold_readback);
+        assert!(
+            !receipt.migration_executed
+                && !receipt.consensus_activation
+                && !receipt.production_enabled
+                && !receipt.old_work_promoted
+        );
+        assert!(receipt.candidate_commitment.escrow_balance >= 5_000);
+        assert!(receipt.candidate_commitment.reward_balance > 0);
+        assert_eq!(
+            verify_growth_rehearsal_v2(settings(), &destination).unwrap(),
+            receipt
+        );
+        let db = Connection::open_with_flags(
+            destination.join("native.sqlite"),
+            rusqlite::OpenFlags::SQLITE_OPEN_READ_ONLY,
+        )
+        .unwrap();
+        let raw: Vec<u8> = db
+            .query_row("SELECT data FROM growth_checkpoint", [], |r| r.get(0))
+            .unwrap();
+        let stored: serde_json::Value = serde_json::from_slice(&raw).unwrap();
+        let working: State = serde_json::from_value(stored["working"].clone()).unwrap();
+        assert_eq!(
+            working,
+            state
+                .iter()
+                .filter(|(k, _)| !k.starts_with("account:"))
+                .map(|(k, v)| (k.clone(), v.clone()))
+                .collect()
+        );
+        assert!(working
+            .iter()
+            .filter(|(k, _)| k.starts_with("task:") || k.starts_with("quota:"))
+            .all(|(_, v)| v["deadline"] == 30));
+        let accounts: native_store::Root =
+            serde_json::from_value(stored["accounts"].clone()).unwrap();
+        let context = Context {
+            network: receipt.candidate_commitment.network,
+            parameters: receipt.candidate_commitment.parameters,
+            genesis: receipt.candidate_commitment.genesis,
+        };
+        let checkpoint = native_store::query_growth_checkpoint(
+            &db,
+            context,
+            context.genesis,
+            receipt.source_height,
+            receipt.candidate_commitment.id,
+            &accounts,
+        )
+        .unwrap();
+        let (proof, _) = multiproof::from_native_database(&db, &checkpoint, &[public(99)], &|_| {
+            Ok::<_, crate::account_archive_prototype::ArchiveError>(())
+        })
+        .unwrap();
+        let checked = multiproof::CheckedMultiproof::verify(context, &checkpoint, &proof).unwrap();
+        let zero = checked.account(public(99)).unwrap().unwrap();
+        assert_eq!((zero.balance, zero.nonce), (0, 1));
+        drop(db);
+        // Existing entrypoints cannot treat this rehearsal as a runnable ledger.
+        assert!(Node::open(&destination, settings(), 1).is_err());
+        assert!(Node::open_with_permanent_account_growth_v2(
+            &destination,
+            settings()
+                .with_permanent_account_growth_v2("separate-native-runtime")
+                .unwrap()
+        )
+        .is_err());
+        assert_eq!(
+            verify_growth_rehearsal_v2(settings(), &destination).unwrap(),
+            receipt
+        );
+        assert!(source
+            .rehearse_growth_migration_v2(&destination, "growth-rehearsal/checked-local-v2")
+            .is_err());
+        assert_eq!(source.read_active().unwrap().2, state);
+    }
+}
+
+#[test]
+fn growth_rehearsal_rejects_inactive_source_corruption_without_publication() {
+    let fixture = rehearsal_with_obligations_and_zero_nonce();
+    let mut ancestors = BTreeSet::new();
+    let mut tip = fixture.node.active().unwrap().0;
+    loop {
+        ancestors.insert(tip);
+        if tip == fixture.node.settings.genesis() {
+            break;
+        }
+        tip = fixture.node.parent(tip).unwrap();
+    }
+    let ids = fixture
+        .node
+        .db
+        .prepare("SELECT id FROM blocks WHERE packet IS NOT NULL")
+        .unwrap()
+        .query_map([], |r| r.get::<_, Vec<u8>>(0))
+        .unwrap()
+        .collect::<std::result::Result<Vec<_>, _>>()
+        .unwrap();
+    let inactive = ids
+        .into_iter()
+        .map(|id| bytes32(id).unwrap())
+        .find(|id| !ancestors.contains(id))
+        .unwrap();
+    let mut packet = fixture.node.packet(inactive).unwrap().encode().unwrap();
+    let last = packet.len() - 1;
+    packet[last] ^= 1;
+    fixture
+        .node
+        .db
+        .execute(
+            "UPDATE blocks SET packet=? WHERE id=?",
+            params![packet, inactive.as_slice()],
+        )
+        .unwrap();
+    let before = durable_bytes(&fixture.node.directory);
+    let destination = fixture.dir.path().join("candidate");
+    assert!(fixture
+        .node
+        .rehearse_growth_migration_v2(&destination, "growth-rehearsal/bad-source")
+        .is_err());
+    assert!(!destination.exists());
+    assert_eq!(durable_bytes(&fixture.node.directory), before);
+}
+
+#[test]
+fn growth_rehearsal_cancel_and_late_disk_tamper_preserve_failed_stages_and_source() {
+    for corrupt in [false, true] {
+        let fixture = rehearsal_with_obligations_and_zero_nonce();
+        let before = durable_bytes(&fixture.node.directory);
+        let target = fixture.dir.path().join("candidate");
+        let result = fixture.node.rehearse_growth_migration_v2_with_progress(
+            &target,
+            "growth-rehearsal/fault",
+            &|point| {
+                if !corrupt && point == GrowthRehearsalProgressV2::SourceCopied {
+                    return Err("REHEARSAL_TEST_CANCEL".into());
+                }
+                if corrupt && point == GrowthRehearsalProgressV2::BeforePublish {
+                    let stage = fs::read_dir(fixture.dir.path())?
+                        .map(|e| e.map(|e| e.path()))
+                        .collect::<std::result::Result<Vec<_>, _>>()?
+                        .into_iter()
+                        .find(|p| {
+                            p.file_name()
+                                .unwrap()
+                                .to_string_lossy()
+                                .starts_with("native-growth-rehearsal-staging-")
+                        })
+                        .unwrap();
+                    let db = Connection::open(stage.join("native.sqlite"))?;
+                    db.execute(
+                        "DELETE FROM archive_nodes WHERE id=(SELECT id FROM archive_nodes LIMIT 1)",
+                        [],
+                    )?;
+                }
+                Ok(())
+            },
+        );
+        assert!(result.is_err());
+        assert!(!target.exists());
+        assert_eq!(durable_bytes(&fixture.node.directory), before);
+        let stages: Vec<_> = fs::read_dir(fixture.dir.path())
+            .unwrap()
+            .map(|e| e.unwrap().path())
+            .filter(|p| {
+                p.file_name()
+                    .unwrap()
+                    .to_string_lossy()
+                    .starts_with("native-growth-rehearsal-staging-")
+            })
+            .collect();
+        assert_eq!(stages.len(), 1);
+        assert!(stages[0].join("growth-rehearsal.pending").is_file());
+        assert!(verify_growth_rehearsal_v2(settings(), &stages[0]).is_err());
+        let retry = fixture.dir.path().join("fresh-retry");
+        assert!(fixture
+            .node
+            .rehearse_growth_migration_v2(&retry, "growth-rehearsal/retry")
+            .is_ok());
+    }
+}
+
+#[test]
+fn growth_rehearsal_cold_verifier_rejects_resealed_source_and_activation_claim() {
+    for fake_activation in [false, true] {
+        let fixture = rehearsal_with_obligations_and_zero_nonce();
+        let target = fixture.dir.path().join("candidate");
+        let mut receipt = fixture
+            .node
+            .rehearse_growth_migration_v2(&target, "growth-rehearsal/cold-adversary")
+            .unwrap();
+        if fake_activation {
+            receipt.consensus_activation = true;
+        } else {
+            let db = Connection::open(target.join("source/native.sqlite")).unwrap();
+            let slot = fixture.node.slot().unwrap();
+            let key = format!("account:{}", hex::encode(public(99)));
+            db.execute(
+                "UPDATE kv SET value=? WHERE slot=? AND key=?",
+                params![
+                    canonical(&serde_json::json!({"balance":0,"nonce":0})).unwrap(),
+                    slot,
+                    key
+                ],
+            )
+            .unwrap();
+            db.close().unwrap();
+            let bytes = fs::read(target.join("source/native.sqlite")).unwrap();
+            receipt.source_archive_sha256 = Sha256::digest(bytes).into();
+        }
+        fs::write(
+            target.join("growth-rehearsal.json"),
+            canonical(&receipt).unwrap(),
+        )
+        .unwrap();
+        assert!(verify_growth_rehearsal_v2(settings(), &target).is_err());
+        assert_eq!(
+            fixture.node.read_active().unwrap().2[&format!("account:{}", hex::encode(public(99)))]
+                ["nonce"],
+            1
+        );
+    }
+}
+
+#[test]
+fn growth_rehearsal_process_exit_retains_pending_and_source_reopens() {
+    const CHILD: &str = "TRNM_GROWTH_REHEARSAL_CRASH_CHILD";
+    if let Ok(path) = std::env::var(CHILD) {
+        let root = PathBuf::from(path);
+        let mut source = Node::open(&root.join("source"), settings(), 1).unwrap();
+        let genesis = source.settings.genesis();
+        let block = admit(&mut source, genesis, 1, 3, vec![]);
+        source.activate(block).unwrap();
+        let _ = source.rehearse_growth_migration_v2_with_progress(
+            &root.join("candidate"),
+            "growth-rehearsal/process-cut",
+            &|point| {
+                if point == GrowthRehearsalProgressV2::CheckpointCommitted {
+                    std::process::exit(93);
+                }
+                Ok(())
+            },
+        );
+        panic!("process cut not reached");
+    }
+    let dir = tempfile::tempdir().unwrap();
+    let status=std::process::Command::new(std::env::current_exe().unwrap())
+        .args(["store::authenticated_migration::tests::growth_rehearsal_process_exit_retains_pending_and_source_reopens","--exact","--nocapture"])
+        .env(CHILD,dir.path()).status().unwrap();
+    assert_eq!(status.code(), Some(93));
+    assert!(!dir.path().join("candidate").exists());
+    let source = Node::open(&dir.path().join("source"), settings(), 1).unwrap();
+    assert_eq!(source.record(source.active().unwrap().0).unwrap().height, 1);
+    let stage = fs::read_dir(dir.path())
+        .unwrap()
+        .map(|e| e.unwrap().path())
+        .find(|p| {
+            p.file_name()
+                .unwrap()
+                .to_string_lossy()
+                .starts_with("native-growth-rehearsal-staging-")
+        })
+        .unwrap();
+    assert!(stage.join("growth-rehearsal.pending").is_file());
+    assert!(verify_growth_rehearsal_v2(settings(), &stage).is_err());
+    let receipt = source
+        .rehearse_growth_migration_v2(
+            &dir.path().join("fresh-retry"),
+            "growth-rehearsal/fresh-after-crash",
+        )
+        .unwrap();
+    assert!(receipt.candidate_materialized && !receipt.consensus_activation);
+}
+
+#[test]
+fn growth_rehearsal_late_destination_collision_keeps_pending_and_does_not_replace() {
+    let fixture = rehearsal_with_obligations_and_zero_nonce();
+    let before = durable_bytes(&fixture.node.directory);
+    let destination = fixture.dir.path().join("racing-destination");
+    let result = fixture.node.rehearse_growth_migration_v2_with_progress(
+        &destination,
+        "growth-rehearsal/no-replace",
+        &|point| {
+            if point == GrowthRehearsalProgressV2::BeforePublish {
+                fs::create_dir(&destination)?;
+                fs::write(
+                    destination.join("other-owner.txt"),
+                    b"must remain unchanged",
+                )?;
+            }
+            Ok(())
+        },
+    );
+    assert!(result.is_err());
+    assert_eq!(
+        fs::read(destination.join("other-owner.txt")).unwrap(),
+        b"must remain unchanged"
+    );
+    assert_eq!(fs::read_dir(&destination).unwrap().count(), 1);
+    assert_eq!(durable_bytes(&fixture.node.directory), before);
+    let stage = fs::read_dir(fixture.dir.path())
+        .unwrap()
+        .map(|e| e.unwrap().path())
+        .find(|p| {
+            p.file_name()
+                .unwrap()
+                .to_string_lossy()
+                .starts_with("native-growth-rehearsal-staging-")
+        })
+        .unwrap();
+    assert!(stage.join("growth-rehearsal.pending").is_file());
+    assert!(verify_growth_rehearsal_v2(settings(), &stage).is_err());
+}
+
+#[test]
+fn growth_rehearsal_rejects_complete_state_reference_before_creating_a_candidate() {
+    let dir = tempfile::tempdir().unwrap();
+    let reference = Settings::development_with_profiles(
+        Some(1),
+        "native-public-evaluation-dev-v1",
+        trnm_mvcc_fee::growth_profile_v2::PROFILE,
+    )
+    .unwrap();
+    let source = Node::open(&dir.path().join("source"), reference, 1).unwrap();
+    let before = logical_rows(&source.db);
+    let files = durable_bytes(&source.directory);
+    let target = dir.path().join("candidate");
+    assert_eq!(
+        source
+            .rehearse_growth_migration_v2(&target, "growth-rehearsal/reference-refused")
+            .err()
+            .unwrap()
+            .to_string(),
+        "GROWTH_REFERENCE_MIGRATION_UNSUPPORTED"
+    );
+    assert!(!target.exists());
+    assert_eq!(logical_rows(&source.db), before);
+    assert_eq!(durable_bytes(&source.directory), files);
+}
+
+#[test]
+fn growth_rehearsal_preserves_reference_budget_history_and_rejects_resealed_corruption() {
+    let mut fixture = rehearsal_with_obligations_and_zero_nonce();
+    let state = fixture.node.read_active().unwrap().2;
+    let key = state.keys().find(|key| key.starts_with("task:")).unwrap();
+    let task = crate::digest(key.strip_prefix("task:").unwrap()).unwrap();
+    let request = crate::NativeBudgetRequestV1 {
+        operation: [167; 32],
+        subject: [168; 32],
+        beneficiary: public(1),
+        lane: crate::NativeBudgetLaneV1::Storage,
+        source: task,
+        amount: 1_000,
+        source_cap: 5_000,
+        resource_cap: [100, 1_000],
+        resource_reservation: [40, 400],
+        contribution: None,
+    };
+    let observed = fixture
+        .node
+        .reserve_native_budget_v1(request.clone())
+        .unwrap();
+    assert!(observed.funding_current && observed.resources_consumed.is_none());
+    assert!(!observed.payment_executed && !observed.execution_authority);
+    let before = logical_rows(&fixture.node.db);
+    let target = fixture.dir.path().join("candidate-with-local-observations");
+    let mut receipt = fixture
+        .node
+        .rehearse_growth_migration_v2(&target, "growth-rehearsal/local-observations")
+        .unwrap();
+    assert_eq!(
+        verify_growth_rehearsal_v2(settings(), &target).unwrap(),
+        receipt
+    );
+    assert!(
+        !receipt.migration_executed
+            && !receipt.external_journals_imported
+            && !receipt.consensus_activation
+    );
+    let archived = Connection::open_with_flags(
+        target.join("source/native.sqlite"),
+        rusqlite::OpenFlags::SQLITE_OPEN_READ_ONLY,
+    )
+    .unwrap();
+    assert_eq!(logical_rows(&archived), before);
+    archived.close().unwrap();
+    assert_eq!(logical_rows(&fixture.node.db), before);
+
+    let operation_key = format!("pon-native-budget-v1:op:{}", hex::encode(request.operation));
+    fixture
+        .node
+        .db
+        .execute("DELETE FROM metadata WHERE key=?1", [&operation_key])
+        .unwrap();
+    let corrupt_source = logical_rows(&fixture.node.db);
+    let absent = fixture.dir.path().join("must-not-publish");
+    assert_eq!(
+        fixture
+            .node
+            .rehearse_growth_migration_v2(&absent, "growth-rehearsal/bad-local-observation")
+            .err()
+            .unwrap()
+            .to_string(),
+        "BUDGET_RECORD_SET"
+    );
+    assert!(!absent.exists());
+    assert_eq!(logical_rows(&fixture.node.db), corrupt_source);
+
+    // Recompute every public file/table digest after corrupting the archived
+    // budget set. Independent cold verification must still check its real local
+    // relation; a matching copy/receipt hash cannot authenticate these records.
+    let archived = Connection::open(target.join("source/native.sqlite")).unwrap();
+    archived
+        .execute("DELETE FROM metadata WHERE key=?1", [&operation_key])
+        .unwrap();
+    let (select, columns) = ordered_select(&archived, "metadata").unwrap();
+    let mut statement = archived.prepare(&select).unwrap();
+    let mut rows = statement.query([]).unwrap();
+    let mut digest = Sha256::new();
+    digest.update(b"native-growth-rehearsal-table-v2\0");
+    digest.update(("metadata".len() as u64).to_le_bytes());
+    digest.update(b"metadata");
+    let mut count = 0u64;
+    while let Some(row) = rows.next().unwrap() {
+        hash_values(&mut digest, &values(row, columns).unwrap());
+        count += 1;
+    }
+    digest.update(count.to_le_bytes());
+    let table = receipt
+        .source_tables
+        .iter_mut()
+        .find(|table| table.table == "metadata")
+        .unwrap();
+    table.rows = count;
+    table.digest = digest.finalize().into();
+    drop(rows);
+    drop(statement);
+    archived.close().unwrap();
+    receipt.source_archive_sha256 =
+        Sha256::digest(fs::read(target.join("source/native.sqlite")).unwrap()).into();
+    fs::write(
+        target.join("growth-rehearsal.json"),
+        canonical(&receipt).unwrap(),
+    )
+    .unwrap();
+    assert_eq!(
+        verify_growth_rehearsal_v2(settings(), &target)
+            .err()
+            .unwrap()
+            .to_string(),
+        "BUDGET_RECORD_SET"
+    );
+}

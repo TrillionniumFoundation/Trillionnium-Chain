@@ -5,9 +5,11 @@
 
 use std::{fmt, io};
 
+pub mod discovery;
 mod manifest;
 mod network;
 mod release;
+mod retention;
 mod store;
 
 pub use manifest::{
@@ -19,6 +21,9 @@ pub use network::{
 };
 pub use release::{
     fetch_release_to_file, read_pinned_release, CellReleaseFetchLimitsV1, CellReleaseFetchReportV1,
+};
+pub use retention::{
+    CellRetentionConfigV1, CellRetentionContractV1, CellRetentionReadbackV1, CellRetentionStoreV1,
 };
 pub use store::{CellReleaseLimitsV1, CellStoreV1};
 
