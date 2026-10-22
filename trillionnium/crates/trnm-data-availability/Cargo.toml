@@ -30,3 +30,7 @@ rustix = { version = "1.1.4", features = ["time"] }
 serde = { version = "1", features = ["derive"] }
 serde_json = { version = "1", features = ["arbitrary_precision"] }
 tempfile = "3"
+
+[[bin]]
+name = "trnm-cell-discovery"
+path = "src/bin/trnm-cell-discovery.rs"

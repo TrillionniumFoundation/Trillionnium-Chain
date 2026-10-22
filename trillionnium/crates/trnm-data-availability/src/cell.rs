@@ -5,6 +5,7 @@
 
 use std::{fmt, io};
 
+pub mod discovery;
 mod manifest;
 mod network;
 mod release;

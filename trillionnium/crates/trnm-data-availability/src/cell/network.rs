@@ -59,7 +59,9 @@ impl CellPeerLimitsV1 {
             .ok_or(CellErrorV1::Invalid("response byte budget overflow"))
     }
 
-    pub(super) fn validate(self) -> CellResultV1<()> {
+    /// Check the existing finite bounds before an explicit caller opens local
+    /// stores. This does not start or renew any network session or deadline.
+    pub fn validate(self) -> CellResultV1<()> {
         require(
             self.request_timeout >= Duration::from_millis(10)
                 && self.request_timeout <= Duration::from_secs(30),
@@ -294,9 +296,22 @@ pub(super) fn fetch_manifest(
     limits: CellPeerLimitsV1,
     transport: &RequestContext<'_>,
 ) -> CellResultV1<(CellManifestV1, usize)> {
+    let (manifest, rejected, _) = fetch_manifest_observed(store, pinned, peers, limits, transport)?;
+    Ok((manifest, rejected))
+}
+
+// Capture the result of the actual first cache read, without a separate probe
+// or additional network request. Existing callers retain their original API.
+pub(super) fn fetch_manifest_observed(
+    store: &CellStoreV1,
+    pinned: CellDigestV1,
+    peers: &[SocketAddr],
+    limits: CellPeerLimitsV1,
+    transport: &RequestContext<'_>,
+) -> CellResultV1<(CellManifestV1, usize, bool)> {
     let mut rejected = 0;
-    let manifest = match store.manifest(pinned)? {
-        Some(manifest) => manifest,
+    let (manifest, initial_cache_hit) = match store.manifest(pinned)? {
+        Some(manifest) => (manifest, true),
         None => {
             let mut received = None;
             let mut last_io = None;
@@ -326,14 +341,17 @@ pub(super) fn fetch_manifest(
                     }
                 }
             }
-            received.ok_or_else(|| unavailable_with_transport_cause(transport, last_io))?
+            (
+                received.ok_or_else(|| unavailable_with_transport_cause(transport, last_io))?,
+                false,
+            )
         }
     };
     require(
         manifest.size() <= limits.max_cell_bytes,
         "cell exceeds byte budget",
     )?;
-    Ok((manifest, rejected))
+    Ok((manifest, rejected, initial_cache_hit))
 }
 
 fn download_chunk(
@@ -525,7 +543,7 @@ impl ResponseBudget {
         Ok(())
     }
 
-    fn read(
+    pub(super) fn read(
         &self,
         stream: &mut TcpStream,
         bytes: &mut [u8],
@@ -623,14 +641,14 @@ fn request_in_phase(
     Ok(bytes)
 }
 
-fn remaining(deadline: Instant) -> io::Result<Duration> {
+pub(super) fn remaining(deadline: Instant) -> io::Result<Duration> {
     deadline
         .checked_duration_since(Instant::now())
         .filter(|d| !d.is_zero())
         .ok_or_else(|| io::Error::new(io::ErrorKind::TimedOut, "cell absolute deadline"))
 }
 
-fn read_deadline(
+pub(super) fn read_deadline(
     stream: &mut TcpStream,
     mut bytes: &mut [u8],
     deadline: Instant,
@@ -657,7 +675,11 @@ fn read_deadline(
     Ok(())
 }
 
-fn write_deadline(stream: &mut TcpStream, mut bytes: &[u8], deadline: Instant) -> io::Result<()> {
+pub(super) fn write_deadline(
+    stream: &mut TcpStream,
+    mut bytes: &[u8],
+    deadline: Instant,
+) -> io::Result<()> {
     while !bytes.is_empty() {
         stream.set_write_timeout(Some(remaining(deadline)?))?;
         match stream.write(bytes) {
