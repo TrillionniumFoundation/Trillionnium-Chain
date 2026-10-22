@@ -88,8 +88,19 @@ def sha(path):
 
 
 def file_identities(database):
-    return {p.name: {'bytes': p.stat().st_size, 'sha256': sha(p)}
-            for p in (database, Path(str(database) + '-wal')) if p.exists()}
+    result = {}
+    for path in (database, Path(str(database) + '-wal')):
+        require(not path.is_symlink(), 'regular database/WAL files required')
+        if not path.exists():
+            continue
+        require(path.is_file(), 'regular database/WAL files required')
+        size = path.stat().st_size
+        # A mode=ro WAL reader may create an empty WAL alongside the database.
+        # It contains no transaction bytes; keep pinning every nonempty WAL.
+        if path != database and size == 0:
+            continue
+        result[path.name] = {'bytes': size, 'sha256': sha(path)}
+    return result
 
 
 def ddl_from_source(root):
