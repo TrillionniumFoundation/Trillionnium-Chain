@@ -24,6 +24,11 @@ case "${1:?required job}" in
     python3 scripts/ci/test_pon_w1_budget_readers.py --raw-dir evidence/pon-upgrade-implementation-20261018/native-rounds/chain-p0-native-54
     python3 scripts/ci/test_pon_public_v3_phase_read.py
     python3 scripts/ci/test_run_pon_w1_native_campaign.py
+    python3 scripts/ci/test_read_original_native_campaign.py \
+      --artifact-dir evidence/pon-upgrade-implementation-20261018/native-rounds/chain-pr327-original-campaign-39694587963 \
+      --expected-manifest-sha256 12406cc156e57c130fa14af2b50b386031ec3640ce7f0234ed5bc9f0a700aac3 \
+      --expected-head 9e705ccf75b7318dcc4bda4815956f58beb10e72 \
+      --expected-tree 521ae87a28060d545979069b189eebbc74a71fd8 --retained-subset
     python3 scripts/ci/test_account_archive_conformance.py
     python3 scripts/ci/test_run_account_execution_conformance.py
     python3 scripts/ci/report_current_implementation.py --check

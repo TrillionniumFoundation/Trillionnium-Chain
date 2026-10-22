@@ -66,6 +66,12 @@ MODEL_EVOLUTION_ORACLES = ('    python3 formal/pon-nakamoto-v1/test_model_evolut
 COST_BOUNDARY_READERS = ('    python3 scripts/ci/test_pon_w1_budget_readers.py --raw-dir evidence/pon-upgrade-implementation-20261018/native-rounds/chain-p0-native-54\n'
                          '    python3 scripts/ci/test_pon_public_v3_phase_read.py\n'
                          '    python3 scripts/ci/test_run_pon_w1_native_campaign.py\n')
+ORIGINAL_CAMPAIGN_READER = r'''    python3 scripts/ci/test_read_original_native_campaign.py \
+      --artifact-dir evidence/pon-upgrade-implementation-20261018/native-rounds/chain-pr327-original-campaign-39694587963 \
+      --expected-manifest-sha256 12406cc156e57c130fa14af2b50b386031ec3640ce7f0234ed5bc9f0a700aac3 \
+      --expected-head 9e705ccf75b7318dcc4bda4815956f58beb10e72 \
+      --expected-tree 521ae87a28060d545979069b189eebbc74a71fd8 --retained-subset
+'''
 NODE_EXAMPLE_BUILD = '    cargo build --offline --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --bins --examples\n'
 ACCOUNT_ARCHIVE_ORACLE = ('    python3 formal/pon-nakamoto-v1/test_account_archive_oracle.py -v\n'
                           '    python3 scripts/ci/run_account_archive_conformance.py\n')
@@ -172,7 +178,8 @@ def check_independent_conformance(script: str, required: set[str]) -> None:
             all(script.count(command) == 1 for command in EVALUATION_QUORUM_ORACLE.splitlines(keepends=True)),
             'evaluation quorum oracle and exact retained vectors must execute once in protocol-contract without rewriting fixtures')
     for block, lane, label in [(MODEL_EVOLUTION_ORACLES, 'protocol-contract', 'model evolution and task-window oracles'),
-                               (COST_BOUNDARY_READERS, 'repository-truth', 'work-cost and DAA reader controls')]:
+                               (COST_BOUNDARY_READERS, 'repository-truth', 'work-cost and DAA reader controls'),
+                               (ORIGINAL_CAMPAIGN_READER, 'repository-truth', 'original campaign source-pinned reader controls')]:
         require(block in lanes[lane] and all(script.count(command) == 1 for command in block.splitlines(keepends=True)),
                 label + ' must execute once in their original lane')
     require(NODE_EXAMPLE_BUILD + ACCOUNT_ARCHIVE_ORACLE in lanes['protocol-contract'] and

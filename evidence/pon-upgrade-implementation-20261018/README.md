@@ -78,3 +78,12 @@ member manifest and [derived observations](native-rounds/chain-494-final-native/
 have exact source identities; all 310 members are preserved, with only five small
 JSON members expanded. No production, independent-operator or WAN qualification
 follows from these development observations.
+
+The later [original three-run cloud campaign](native-rounds/chain-pr327-original-campaign-39694587963/SCOPE.md)
+retains source `9e705cc`, its three unchanged 30-second-mode reports, resource
+observations and fixed denominators. All three original finite experiments
+passed. Their 189 submission observations reuse 21 body identities; their 27
+confirmation observations reuse three transaction identities. Only nine of the
+18 hostile confirmation rounds overlap an observed depletion sample. These are
+controlled-loopback observations, not a sustainable unique-transaction TPS,
+independent-operator, work-hardness, installed-model or production qualification.

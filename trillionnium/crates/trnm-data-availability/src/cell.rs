@@ -7,6 +7,7 @@ use std::{fmt, io};
 
 mod manifest;
 mod network;
+mod release;
 mod store;
 
 pub use manifest::{
@@ -15,6 +16,9 @@ pub use manifest::{
 };
 pub use network::{
     fetch_cell, fetch_cell_to_file, serve_cells, CellFetchReportV1, CellPeerLimitsV1,
+};
+pub use release::{
+    fetch_release_to_file, read_pinned_release, CellReleaseFetchLimitsV1, CellReleaseFetchReportV1,
 };
 pub use store::{CellReleaseLimitsV1, CellStoreV1};
 
@@ -92,3 +96,6 @@ pub fn parse_digest(value: &str) -> CellResultV1<CellDigestV1> {
 
 #[cfg(test)]
 mod tests;
+
+#[cfg(test)]
+mod release_tests;

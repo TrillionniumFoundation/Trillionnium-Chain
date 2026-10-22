@@ -39,7 +39,7 @@ def analysis(ident=1, ref=HEAD_REF, commit=HEAD, category="language:rust"):
 
 
 def check(status="completed", conclusion="failure", output=None, ident=501, commit=HEAD):
-    return {"id": ident, "name": "CodeQL", "app": {"slug": "github-advanced-security"},
+    return {"id": ident, "name": "CodeQL", "app": {"id": 57789, "slug": "github-advanced-security"},
             "head_sha": commit, "status": status, "conclusion": conclusion,
             "pull_requests": [{"number": 323, "head": {"sha": HEAD, "repo": {"url": API_BASE}},
                                "base": {"sha": BASE, "repo": {"url": API_BASE}}}],
@@ -293,7 +293,9 @@ class ExportTests(unittest.TestCase):
         wrong_endpoint["output"]["annotations_url"] = "https://other.invalid/annotations"
         wrong_app = check()
         wrong_app["app"]["slug"] = "different-check-owner"
-        for metadata in (wrong_source, wrong_pr, wrong_endpoint, wrong_app):
+        wrong_app_id = check()
+        wrong_app_id["app"]["id"] = 1
+        for metadata in (wrong_source, wrong_pr, wrong_endpoint, wrong_app, wrong_app_id):
             with self.subTest(metadata=metadata):
                 server = Server()
                 server.metadata_at_read = lambda _, __: metadata
@@ -302,6 +304,41 @@ class ExportTests(unittest.TestCase):
                 self.assertEqual(result["check_annotations"], [])
                 self.assertFalse(any("/annotations?" in request for request in server.requests))
                 self.assertTrue((out / "poll-002-annotations/501/before.json").is_file())
+
+    def test_absent_pr_association_is_source_only_never_a_pr_gate_claim(self):
+        current = check()
+        current["pull_requests"] = []
+        current["output"].update(annotations_count=1, title="35 new alerts")
+        server = Server(checks=[current])
+        server.annotations[501] = [annotation(7)]
+        code, result, _ = self.run_export(server)
+        self.assertEqual(code, 0)
+        self.assertEqual(result["schema"], "codeql-exact-source-analysis-export-v2")
+        self.assertFalse(result["target_pr_gate_authenticated"])
+        self.assertIsNone(result["target_pr_gate_verdict"])
+        evidence = result["check_annotations"][0]
+        self.assertIsNone(evidence["pr"])
+        self.assertEqual(evidence["requested_pr"], 323)
+        self.assertEqual(evidence["pr_association"], "unavailable-source-only")
+        self.assertIsNone(evidence["check_alert_count_from_title"])
+        self.assertIsNone(evidence["gate_alert_count_from_title"])
+        self.assertEqual(evidence["annotation_analysis_association"], "unproven")
+        self.assertFalse(evidence["complete_pr_gate_alert_mapping"])
+        self.assertEqual(evidence["exported_annotations_count"], 1)
+
+    def test_absent_pr_binding_cannot_hide_metadata_change_or_malformed_associations(self):
+        current = check()
+        current["pull_requests"] = []
+        missing = dict(current)
+        del missing["pull_requests"]
+        for altered in (check(), {**current, "pull_requests": None}, missing):
+            with self.subTest(altered=altered):
+                server = Server(checks=[current])
+                server.metadata_at_read = lambda _, __: altered
+                code, result, _ = self.run_export(server)
+                self.assertEqual(code, 1)
+                self.assertEqual(result["check_annotations"], [])
+                self.assertFalse(any("/annotations?" in request for request in server.requests))
 
     def test_annotation_count_change_or_short_page_cannot_claim_completion(self):
         current = check()

@@ -8,12 +8,13 @@ use std::{
     net::{SocketAddr, TcpListener},
     path::PathBuf,
     sync::atomic::AtomicBool,
-    time::Duration,
+    time::{Duration, Instant},
 };
 
 use trnm_data_availability::cell::{
-    digest_hex, fetch_cell_to_file, parse_digest, serve_cells, CellContextV1, CellErrorV1,
-    CellPeerLimitsV1, CellStoreV1, MAX_CELL_BYTES,
+    digest_hex, fetch_cell_to_file, fetch_release_to_file, parse_digest, read_pinned_release,
+    serve_cells, CellContextV1, CellErrorV1, CellPeerLimitsV1, CellReleaseFetchLimitsV1,
+    CellReleaseLimitsV1, CellStoreV1, MAX_CELL_BYTES,
 };
 
 type Result<T> = std::result::Result<T, Box<dyn Error>>;
@@ -24,7 +25,10 @@ serve --store DB --bind IP:PORT --seconds N [--request-ms 2000] [--max-connectio
 fetch --store DB --manifest HEX --peers IP:PORT,IP:PORT --output ABSENT_FILE --max-bytes N --seconds N [--parallelism 2] [--request-ms 2000] [--max-connections 32768] [--max-response-bytes N]
   Response-byte default: 2 * max-bytes + 2097152 + 9 * max-connections; 0 is cache-only.
 verify --store DB --manifest HEX
-manifest --store DB --manifest HEX --output ABSENT_FILE";
+manifest --store DB --manifest HEX --output ABSENT_FILE
+fetch-release --store DB --release-file OWNER_TCR1 --release HEX --peers IP:PORT,IP:PORT --output ABSENT_MARKER --max-bytes N --max-chunks N --seconds N --max-response-bytes N [--parallelism 2] [--request-ms 2000] [--max-connections 32768]
+  One aggregate reservation covers all declared members. Output is the exact TCR1 completion marker, not weights or use authority.
+verify-release --store DB --release-file OWNER_TCR1 --release HEX --max-bytes N --max-chunks N --seconds N";
 
 fn main() {
     if let Err(error) = run() {
@@ -53,6 +57,8 @@ fn run() -> Result<()> {
         "fetch" => fetch(&mut args),
         "verify" => verify(&mut args),
         "manifest" => manifest(&mut args),
+        "fetch-release" => fetch_release(&mut args),
+        "verify-release" => verify_release(&mut args),
         _ => Err(CellErrorV1::Invalid("unknown command; use --help").into()),
     }
 }
@@ -176,6 +182,88 @@ fn manifest(args: &mut Args) -> Result<()> {
         .open(output)?;
     file.write_all(&manifest.encode())?;
     file.sync_all()?;
+    Ok(())
+}
+
+fn release_limits(args: &mut Args) -> Result<(CellReleaseLimitsV1, Duration)> {
+    let max_payload_bytes = args.take("--max-bytes")?.parse()?;
+    let max_chunks = args.take("--max-chunks")?.parse()?;
+    let seconds: u64 = args.take("--seconds")?.parse()?;
+    if !(1..=86_400).contains(&seconds) || max_payload_bytes == 0 || max_chunks == 0 {
+        return Err(CellErrorV1::Invalid("release resource budget").into());
+    }
+    let duration = Duration::from_secs(seconds);
+    let deadline = Instant::now()
+        .checked_add(duration)
+        .ok_or(CellErrorV1::Invalid("release deadline"))?;
+    Ok((
+        CellReleaseLimitsV1 {
+            max_payload_bytes,
+            max_chunks,
+            deadline,
+        },
+        duration,
+    ))
+}
+
+fn fetch_release(args: &mut Args) -> Result<()> {
+    let store = PathBuf::from(args.take("--store")?);
+    let root = PathBuf::from(args.take("--release-file")?);
+    let pinned = parse_digest(&args.take("--release")?)?;
+    let peer_text = args.take("--peers")?;
+    let peers = peer_text
+        .split(',')
+        .filter(|value| !value.is_empty())
+        .map(str::parse)
+        .collect::<std::result::Result<Vec<SocketAddr>, _>>()?;
+    let output = PathBuf::from(args.take("--output")?);
+    let (release_limits, overall_timeout) = release_limits(args)?;
+    let request_ms = args.optional("--request-ms", "2000").parse()?;
+    let parallelism = args.optional("--parallelism", "2").parse()?;
+    let max_connections = args.optional("--max-connections", "32768").parse()?;
+    let max_response_bytes = args.take("--max-response-bytes")?.parse()?;
+    args.finish()?;
+    let release = read_pinned_release(&root, pinned)?;
+    let store = CellStoreV1::open(&store)?;
+    let report = fetch_release_to_file(
+        &store,
+        &release,
+        pinned,
+        &peers,
+        CellReleaseFetchLimitsV1 {
+            peer: CellPeerLimitsV1 {
+                request_timeout: Duration::from_millis(request_ms),
+                overall_timeout,
+                max_cell_bytes: release_limits.max_payload_bytes.min(MAX_CELL_BYTES),
+                parallelism,
+                max_connections,
+                max_response_bytes,
+            },
+            release: release_limits,
+        },
+        &output,
+    )?;
+    println!("{{\"schema\":\"trnm.cell.release.fetch.v1\",\"release\":\"{}\",\"cells\":{},\"payload_bytes\":{},\"chunks\":{},\"cached_chunks\":{},\"downloaded_chunks\":{},\"downloaded_bytes\":{},\"received_response_bytes\":{},\"max_response_bytes\":{},\"connection_attempts\":{},\"rejected_responses\":{},\"suppliers\":{}}}",
+        digest_hex(report.release_id), report.cells, report.payload_bytes, report.chunks,
+        report.cached_chunks, report.downloaded_chunks, report.downloaded_bytes,
+        report.received_response_bytes, max_response_bytes, report.connection_attempts,
+        report.rejected_responses, report.supplying_peers.len());
+    Ok(())
+}
+
+fn verify_release(args: &mut Args) -> Result<()> {
+    let store = PathBuf::from(args.take("--store")?);
+    let root = PathBuf::from(args.take("--release-file")?);
+    let pinned = parse_digest(&args.take("--release")?)?;
+    let (limits, _) = release_limits(args)?;
+    args.finish()?;
+    let release = read_pinned_release(&root, pinned)?;
+    CellStoreV1::open(&store)?.verify_release_complete(&release, limits)?;
+    println!(
+        "{{\"schema\":\"trnm.cell.release.verify.v1\",\"release\":\"{}\",\"cells\":{}}}",
+        digest_hex(pinned),
+        release.cells().len()
+    );
     Ok(())
 }
 

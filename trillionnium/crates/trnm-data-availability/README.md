@@ -25,6 +25,25 @@ chunk-reference and absolute deadline limits. It checks every manifest and the
 aggregate limits before reading payloads, then verifies against the same deadline.
 Shared chunks count for each full-payload read. Blocking filesystem calls are
 cooperative; these limits do not reserve disk bandwidth or grant installation.
+`fetch-release` takes the release owner's local TCR1 file plus its independently
+pinned digest. It fetches every declared member through the existing configured
+peers under one shared connection, actual response-byte and absolute time budget.
+All member manifests must fit the declared aggregate payload/chunk limits and
+match the release context before any missing payload is downloaded. Only a
+complete freshly verified cache permits create-only publication of the exact
+TCR1 completion marker. Partial verified chunks may remain cached on failure;
+there is no partial marker, automatic retry, discovery or refreshed member budget.
+As with single-Cell materialization, a failure after the no-replace link may
+leave a complete marker. Reconcile its pinned identity and current cache with
+`verify-release`; an uncertain acknowledgement does not permit overwriting it.
+The marker is not a weights bundle, storage lease or model-use token; consumers
+must recheck cache integrity and their normal owners before use. `verify-release`
+performs that bounded local cache check without publication. Release roots are
+not discovered over TCP; TCQ1, TCS1 and cache schema version 1 stay unchanged.
+The supplied local release file and destination directory are caller-controlled.
+This path does not defend against a hostile process with the same local
+filesystem authority. Filesystem operations remain cooperative and can return
+after the deadline; the operation is not a hard real-time guarantee.
 It does not discover peers, authenticate a public network, issue storage proofs,
 change `CURRENT`, bypass withdrawal, or grant model execution. Those boundaries
 remain explicit until a later public DA qualification.

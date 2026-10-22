@@ -44,6 +44,35 @@ the exact complete payload length. The manifest parser accepts at most 1 MiB;
 the maximum canonical list is smaller than that cap. There is no decompressor,
 object deserializer, remote code import, path field, or executable weight format.
 
+## Owner-declared release set
+
+`CellReleaseManifestV1` adds a separate TCR1 object supplied by the existing
+release owner. Its canonical encoding is four bytes `TCR1`, the same family
+and five dependency digests, a four-byte member count, then sorted unique
+32-byte TCM1 IDs. All dependency and member digests must be nonzero, including
+an explicitly named initial parent/genesis. Parsing is capped at 1 MiB and
+32,760 members before allocation. Its ID is SHA256 over
+`trnm.cell-release-manifest.v1\0` followed by the complete canonical bytes.
+It checks only the declared set; omitted dependencies, safe tensor shapes and
+model executability remain the release and loader owners' decisions.
+
+`fetch-release` takes the locally supplied TCR1 file and an independently pinned
+release ID. It first obtains all member manifests, verifies the exact common
+context and checks the aggregate payload bytes and chunk-reference limits before
+fetching any payload. Members share the original absolute deadline, connection
+counter and actual response-byte budget. Per-member success does not replenish
+any resource. Shared chunks count for each actual full-payload verification.
+
+After full cache readback, the command publishes the exact TCR1 bytes as a
+create-only completion marker. Pre-publication errors leave no marker; a
+post-link durability or cleanup error can coexist with a complete marker and
+must be reconciled through the same pinned identity and `verify-release`, not
+overwrite or blind resubmission. A marker grants neither a storage lease nor
+CURRENT/FinalUse; consumers revalidate bytes and their own authority before use.
+The local input and output namespace is owner-controlled. Filesystem checks
+are cooperative and do not supply a hard wall-time guarantee against hostile
+local filesystem peers or blocking storage.
+
 ## Transport and resources
 
 This pilot uses explicitly configured TCP peers, not the BitTorrent wire
@@ -156,6 +185,15 @@ report additions do not change TCM1, TCQ1, TCS1 or the cache schema.
 `verify` rechecks a complete local version. `manifest` exports the
 canonical pinned manifest for the existing release owner. No command implicitly
 discovers a model, changes its authority or activates a consensus profile.
+
+`fetch-release --store DB --release-file ROOT --release HEX --peers IP:PORT,IP:PORT
+--output ABSENT_MARKER --max-bytes N --max-chunks N --max-response-bytes N
+--max-connections N --seconds N` fetches the owner-declared set. `verify-release`
+uses the same store, root, pinned release ID and total byte/chunk/time budgets
+without a network call. The new CLI reports have distinct
+`trnm.cell.release.fetch.v1` and `trnm.cell.release.verify.v1` identities. TCM1,
+TCQ1, TCS1 and the existing cache schema are unchanged. The root is supplied
+locally; this increment does not add public root discovery.
 
 ## Executable acceptance
 

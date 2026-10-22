@@ -14,3 +14,14 @@ visible; deterministic operation-identity and challenge fixtures keep their
 original semantic names, values and signed bytes. No finding is dismissed or
 suppressed, and no query or security gate changes. Only a fresh unchanged-config
 scan and the designated reviewer can establish the next security disposition.
+
+These 37 original API annotations are not the whole branch's SARIF results or
+a later PR gate. On source `9e705ccf75b7318dcc4bda4815956f58beb10e72`, the
+subsequent API SARIF contains 223 results; the aggregate check reports 35 alerts.
+The two changed diagnostic sites disappear from that SARIF. The 35 previously
+external-review-required alerts retain their source spans/fingerprints there;
+this is not an independent false-positive disposition. The source check's
+`pull_requests` array is empty, so its PR-specific annotation association remains
+unavailable. The exporter v2 preserves source-only annotations with an explicit
+null PR verdict instead of inferring an association from summary text or another
+Actions check suite. A complete read-only export still cannot clear the gate.

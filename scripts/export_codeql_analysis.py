@@ -5,6 +5,8 @@ The REST SARIF response is an API-provided subset of an analysis upload. This
 exports all available exact-source analyses/categories observed after the
 repository's CodeQL check completes, not all historical branch alerts. Check
 annotations are retained separately and are not the complete PR gate alert set.
+Checks without an API-reported PR association are exported as source-only
+observations; neither their title nor another Actions suite supplies that link.
 """
 
 import argparse
@@ -177,6 +179,7 @@ def snapshot(api, target, directory):
                          f"{directory}/checks-{commit}", "check_runs")
         for row in rows:
             if row["name"] == "CodeQL" and row.get("app", {}).get("slug") == "github-advanced-security":
+                require(row["app"].get("id") == 57789, "CodeQL check app identity mismatch")
                 require(row["head_sha"] == commit, "CodeQL check source mismatch")
                 checks.append(row)
     # Default setup uploads to refs/pull/N/head; other setups use the merge ref.
@@ -229,22 +232,28 @@ def annotation_check_binding(api, target, row):
     require(type(ident) is int and ident > 0, "Invalid annotation check ID")
     require(row.get("name") == "CodeQL"
             and row.get("app", {}).get("slug") == "github-advanced-security"
+            and row.get("app", {}).get("id") == 57789
             and row.get("head_sha") in {target["head"], target["merge"]},
             "Annotation check source/app mismatch")
     require(row.get("status") == "completed" and row.get("conclusion") in {"success", "failure"}
             and not configurations_missing(row), "Annotation check is not complete")
-    require(any(pr.get("number") == target["pr"]
+    associations = row.get("pull_requests")
+    require(isinstance(associations, list), "Annotation check PR associations are not an array")
+    associated = any(pr.get("number") == target["pr"]
                 and all(pr.get(kind, {}).get("sha") == target[kind]
                         and pr.get(kind, {}).get("repo", {}).get("url") == api.base
                         for kind in ("head", "base"))
-                for pr in row.get("pull_requests", [])),
+                for pr in associations)
+    require(not associations or associated,
             "Annotation check does not identify the frozen same-repository PR head/base")
     output = row.get("output") or {}
     count = output.get("annotations_count")
     require(type(count) is int and count >= 0, "Invalid reported annotation count")
     require(output.get("annotations_url") == f"{api.base}/check-runs/{ident}/annotations",
             "Annotation URL does not identify the same repository/check")
-    return {"id": ident, "head_sha": row["head_sha"], "pr": target["pr"],
+    return {"id": ident, "head_sha": row["head_sha"],
+            "requested_pr": target["pr"], "pr": target["pr"] if associated else None,
+            "pr_association": "exact-head-and-base" if associated else "unavailable-source-only",
             "source_kind": "head" if row["head_sha"] == target["head"] else "prospective-merge",
             "status": row["status"], "conclusion": row["conclusion"], "output": output}
 
@@ -270,12 +279,18 @@ def export_check_annotations(api, target, state, directory):
         title_count = re.match(r"^([0-9]+) new alerts\b", expected["output"].get("title") or "")
         coverage = {key: value for key, value in expected.items() if key != "output"}
         coverage.update({
+            "schema": "codeql-source-check-annotations-v2",
             "reported_annotations_count": count, "exported_annotations_count": len(annotations),
-            "gate_alert_count_from_title": int(title_count[1]) if title_count else None,
+            "check_alert_count_from_title": int(title_count[1])
+                if title_count and expected["pr"] is not None else None,
+            "gate_alert_count_from_title": int(title_count[1])
+                if title_count and expected["pr"] is not None else None,
             "all_reported_check_annotations_exported": True,
             "complete_pr_gate_alert_mapping": False,
-            "scope": "Only API-exposed check annotations; their count is not the PR gate alert total. "
-                     "No SARIF matches or fixed-alert judgments are inferred.",
+            "annotation_analysis_association": "unproven",
+            "scope": "Only API-exposed source/check annotations; their count is not the PR gate alert total. "
+                     "An empty PR association is explicitly unknown, not derived from a summary or Actions suite. "
+                     "No SARIF matches, security pass or fixed-alert judgments are inferred.",
             "metadata_before": prefix + "/before.json", "metadata_after": prefix + "/after.json",
             "raw_pages_prefix": prefix + "/page-",
         })
@@ -297,10 +312,11 @@ def main():
     api = API(os.environ.get("GITHUB_REPOSITORY", ""), token, args.out,
               time.monotonic() + args.wait_seconds)
     result = {
-        "schema": "codeql-exact-source-analysis-export-v1",
+        "schema": "codeql-exact-source-analysis-export-v2",
         "started_utc": datetime.now(timezone.utc).isoformat(),
         "complete": False, "security_gate_changed": False,
-        "scope": "All API-available exact PR source analyses/categories after the existing CodeQL check completes; SARIF is the API-provided subset.",
+        "target_pr_gate_authenticated": False, "target_pr_gate_verdict": None,
+        "scope": "All API-available exact PR source analyses/categories after the existing CodeQL check completes; SARIF is the API-provided subset. Source-only check annotations may lack a PR association; complete export does not qualify the PR security gate.",
         "full_original_sarif_upload": False, "all_branch_historical_alerts": False,
         "analyses": [], "check_annotations": [], "error": None,
     }

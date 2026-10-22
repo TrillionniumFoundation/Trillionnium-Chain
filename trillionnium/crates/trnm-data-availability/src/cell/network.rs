@@ -56,7 +56,7 @@ impl CellPeerLimitsV1 {
             .ok_or(CellErrorV1::Invalid("response byte budget overflow"))
     }
 
-    fn validate(self) -> CellResultV1<()> {
+    pub(super) fn validate(self) -> CellResultV1<()> {
         require(
             self.request_timeout >= Duration::from_millis(10)
                 && self.request_timeout <= Duration::from_secs(30),
@@ -148,39 +148,23 @@ fn fetch_cell_inner(
         requests_left: &requests_left,
         responses: &responses,
     };
-    let mut rejected = 0;
-    let manifest = match store.manifest(pinned)? {
-        Some(manifest) => manifest,
-        None => {
-            let mut received = None;
-            for peer in peers {
-                let candidate =
-                    request(*peer, 1, pinned, MAX_MANIFEST_BYTES, &transport).and_then(|wire| {
-                        let manifest = CellManifestV1::decode(&wire)?;
-                        require(manifest.id() == pinned, "manifest digest")?;
-                        require(
-                            manifest.size() <= limits.max_cell_bytes,
-                            "cell exceeds byte budget",
-                        )?;
-                        Ok(wire)
-                    });
-                match candidate {
-                    Ok(wire) => {
-                        // A valid response cannot turn a local persistence
-                        // failure into peer unavailability or budget exhaustion.
-                        received = Some(store.put_manifest(pinned, &wire)?);
-                        break;
-                    }
-                    Err(_) => rejected += 1,
-                }
-            }
-            received.ok_or_else(|| responses.annotate_error(CellErrorV1::Unavailable))?
-        }
-    };
-    require(
-        manifest.size() <= limits.max_cell_bytes,
-        "cell exceeds byte budget",
-    )?;
+    fetch_cell_in_session(store, pinned, peers, limits, &transport, output)
+}
+
+/// Reuse the caller's original connection, response-byte and time reservation.
+/// Only this module's single-cell wrapper or the release fetcher may create it.
+pub(super) fn fetch_cell_in_session(
+    store: &CellStoreV1,
+    pinned: CellDigestV1,
+    peers: &[SocketAddr],
+    limits: CellPeerLimitsV1,
+    transport: &RequestContext<'_>,
+    output: Option<&Path>,
+) -> CellResultV1<(CellManifestV1, CellFetchReportV1)> {
+    let deadline = transport.overall;
+    let requests_left = transport.requests_left;
+    let responses = transport.responses;
+    let (manifest, rejected) = fetch_manifest(store, pinned, peers, limits, transport)?;
     let mut missing = Vec::new();
     let mut report = CellFetchReportV1 {
         manifest_id: pinned,
@@ -213,7 +197,6 @@ fn fetch_cell_inner(
             let missing = &missing;
             let next = &next;
             let cancelled = &cancelled;
-            let transport = &transport;
             scope.spawn(move || {
                 while !cancelled.load(Ordering::Relaxed) {
                     let index = next.fetch_add(1, Ordering::Relaxed);
@@ -258,6 +241,49 @@ fn fetch_cell_inner(
         store.materialize_until(&manifest, output, deadline)?;
     }
     Ok((manifest, report))
+}
+
+pub(super) fn fetch_manifest(
+    store: &CellStoreV1,
+    pinned: CellDigestV1,
+    peers: &[SocketAddr],
+    limits: CellPeerLimitsV1,
+    transport: &RequestContext<'_>,
+) -> CellResultV1<(CellManifestV1, usize)> {
+    let mut rejected = 0;
+    let manifest = match store.manifest(pinned)? {
+        Some(manifest) => manifest,
+        None => {
+            let mut received = None;
+            for peer in peers {
+                let candidate =
+                    request(*peer, 1, pinned, MAX_MANIFEST_BYTES, transport).and_then(|wire| {
+                        let manifest = CellManifestV1::decode(&wire)?;
+                        require(manifest.id() == pinned, "manifest digest")?;
+                        require(
+                            manifest.size() <= limits.max_cell_bytes,
+                            "cell exceeds byte budget",
+                        )?;
+                        Ok(wire)
+                    });
+                match candidate {
+                    Ok(wire) => {
+                        // A valid response cannot turn a local persistence
+                        // failure into peer unavailability or budget exhaustion.
+                        received = Some(store.put_manifest(pinned, &wire)?);
+                        break;
+                    }
+                    Err(_) => rejected += 1,
+                }
+            }
+            received.ok_or_else(|| transport.responses.annotate_error(CellErrorV1::Unavailable))?
+        }
+    };
+    require(
+        manifest.size() <= limits.max_cell_bytes,
+        "cell exceeds byte budget",
+    )?;
+    Ok((manifest, rejected))
 }
 
 fn download_chunk(
@@ -338,14 +364,14 @@ fn serve_one(stream: &mut TcpStream, store: &CellStoreV1, deadline: Instant) -> 
     Ok(())
 }
 
-struct RequestContext<'a> {
-    timeout: Duration,
-    overall: Instant,
-    requests_left: &'a AtomicU64,
-    responses: &'a ResponseBudget,
+pub(super) struct RequestContext<'a> {
+    pub(super) timeout: Duration,
+    pub(super) overall: Instant,
+    pub(super) requests_left: &'a AtomicU64,
+    pub(super) responses: &'a ResponseBudget,
 }
 
-struct ResponseBudget {
+pub(super) struct ResponseBudget {
     maximum: u64,
     state: Mutex<ResponseBytes>,
     returned: Condvar,
@@ -358,7 +384,7 @@ struct ResponseBytes {
 }
 
 impl ResponseBudget {
-    fn new(maximum: u64) -> Self {
+    pub(super) fn new(maximum: u64) -> Self {
         Self {
             maximum,
             state: Mutex::new(ResponseBytes {
@@ -370,7 +396,7 @@ impl ResponseBudget {
         }
     }
 
-    fn received(&self) -> io::Result<u64> {
+    pub(super) fn received(&self) -> io::Result<u64> {
         self.state
             .lock()
             .map(|state| state.received)

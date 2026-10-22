@@ -17,6 +17,7 @@ from check_ci_contract import (ROOT, validate, CONTINUITY_BUILD, CONTINUITY_TRAN
                                PAIRED_WORK_ORACLE, ZERO_WORK_ORACLE, MODEL_WINDOW_ORACLE,
                                EVALUATION_QUORUM_ORACLE, check_independent_conformance,
                                MODEL_EVOLUTION_ORACLES, COST_BOUNDARY_READERS,
+                               ORIGINAL_CAMPAIGN_READER,
                                NATIVE_RELEASE_BLOCK,
                                NODE_EXAMPLE_BUILD, ACCOUNT_ARCHIVE_ORACLE, ACCOUNT_EXECUTION_ORACLE)
 from check_cross_arch_cost import (COST_JOB_OVERHEAD_SECONDS, COST_JOB_TIMEOUT_MINUTES,
@@ -34,6 +35,18 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
 
     def test_actual_lane_preserves_quorum_reference_and_retained_vector_checks(self):
         check_independent_conformance(self.script, self.lanes)
+
+    def test_original_campaign_reader_keeps_original_pins_and_lane(self):
+        for replacement in ['', ORIGINAL_CAMPAIGN_READER * 2,
+                            ORIGINAL_CAMPAIGN_READER.replace('python3', 'true # python3'),
+                            ORIGINAL_CAMPAIGN_READER.replace('--retained-subset', ''),
+                            ORIGINAL_CAMPAIGN_READER.replace('9e705ccf75b7318dcc4bda4815956f58beb10e72', '0' * 40)]:
+            with self.subTest(replacement=replacement), self.assertRaises(ValueError):
+                check_independent_conformance(self.script.replace(ORIGINAL_CAMPAIGN_READER, replacement), self.lanes)
+        moved = self.script.replace(ORIGINAL_CAMPAIGN_READER, '').replace(
+            '  fuzz-smoke)\n', '  fuzz-smoke)\n' + ORIGINAL_CAMPAIGN_READER)
+        with self.assertRaises(ValueError):
+            check_independent_conformance(moved, self.lanes)
 
     def test_new_evolution_and_cost_checks_cannot_be_removed_skipped_duplicated_or_moved(self):
         for block in [MODEL_EVOLUTION_ORACLES, COST_BOUNDARY_READERS]:
