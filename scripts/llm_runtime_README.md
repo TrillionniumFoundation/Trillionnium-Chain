@@ -135,6 +135,17 @@ and V2 failures retain their original outcomes; source/unit checks do not prove
 a successful full model pilot, model improvement, native installation or the
 three-round Hepta loop.
 
+The first fixed-environment V3 real-model attempt on2026-10-22 failed in its
+first loader despite exit code zero after loading and eight forward/decode
+steps. An ENOENT made the same-call task frontier incomplete; the supervisor
+retained `rss-exit-cleanup-observation-unavailable`. The last complete two-task
+recheck was64.536ms from the original gap, refusal ended at66.641ms, and the
+post-refusal diagnostic showed one task at67.581ms. None supplies the missing
+stable subset or a timestamped timely terminal wait4. Raw evidence and the
+earlier V2 failure remain unchanged. Training and adoption did not run. This
+demonstrated blocker requires a reviewed observer change and a fresh frozen
+attempt; it cannot be passed by retrying inside the original record.
+
 `sampled_peak_rss_bytes` remains the direct-child sampling result.
 `waited_child_peak_rss_bytes` separately records that exact child's Linux `wait4`
 `ru_maxrss` in KiB times 1024. A quick exit can succeed without a sample only when

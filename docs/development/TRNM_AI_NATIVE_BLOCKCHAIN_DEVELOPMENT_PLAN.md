@@ -210,6 +210,22 @@ refusal exercise this component boundary. They do not close PN3, convert prior
 failed observations, establish a completed full pilot or replace the actual
 cross-node three-round model/consumer/evaluation acceptance above.
 
+The first fixed-environment V3 full model attempt on 2026-10-22 is FAIL.
+Its first loader completed the actual pretrained model load and eight
+forward/greedy-decode steps, then exited zero, but an ENOENT during the same-call
+task frontier caused `rss-exit-cleanup-observation-unavailable`. Twenty-two
+complete snapshots preceded the refusal: the last good two-task recheck was
+64.536ms after the original missing sample, refusal ended at66.641ms, and a
+later diagnostic showed one task at67.581ms. That later observation cannot
+authorize a stable subset or prove timely terminal wait4, whose timestamp was
+not captured. The stage took33.956s wall and37.340s exact-child CPU; sampled
+peak RSS was1,073,172,480 bytes and waited peak was1,142,767,616 bytes. All twenty
+original run/input/control files and hashes remain retained, and the earlier
+V2 evidence was rechecked unchanged. No training, assessment, adoption or reward
+ran. M17/M10 must close the incomplete-frontier observation through an explicit
+reviewed source/profile and a fresh frozen experiment; a later diagnostic,
+deadline extension or successful child exit cannot convert this failure.
+
 The optional scalar-credit freshness observation reads the original watermark
 and projects the original refill arithmetic without changing the clock, credit,
 owner or depletion predicate. Its added sampler contention and complete-path
