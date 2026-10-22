@@ -62,7 +62,10 @@ these controls do not qualify public fairness or independent custody.
 
 **Expected result:** Replacing model bytes at the same path fails the requested digest before load; malformed or executable-shaped artifacts reject.
 
-**Resource and retention rule:** This loader accepts64KiB, distinct from the generic64MiB transport target.
+**Resource and retention rule:** This integer loader accepts 64 KiB. The separate
+TCM1 byte protocol permits at most 64 GiB and 16,384 chunks per cell, with the
+smaller bound applying; each fetch also obeys its caller's finite byte and other
+resource budgets. The protocol ceiling is not a local memory or storage grant.
 
 ## Concrete regression selectors
 
