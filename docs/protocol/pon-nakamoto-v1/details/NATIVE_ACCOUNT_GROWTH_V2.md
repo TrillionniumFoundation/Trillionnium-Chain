@@ -144,6 +144,18 @@ Pruning, root garbage collection and bounded total disk retention are not yet
 implemented by this backend. Exhausted physical storage is a failed transaction,
 not permission to delete an account or interpret an unavailable node as absence.
 
+Explicit growth activation now checks its cancellation callback before each pair
+of ancestor reads, each ordered undo/apply journal write pair, and each actual
+steps/events read including EOF and the final reorg singleton. Cancellation keeps
+the original error and rolls back all rows, active root and generation. Journal
+readback streams exact rows in the original steps, events, singleton order rather
+than collecting three duplicate journal vectors; the undo/apply paths still grow
+with fork depth. `GrowthProgress` is a process-local API, with no signed or stored
+schema change. These are cooperative boundaries, not preemption within one SQL
+operation or hash. The original complete checks and the cold-open replay remain;
+this change does not supply public PNP2 admission, global retention or PN2
+qualification.
+
 ## Existing authenticated-v1 cost boundary
 
 The separately selected growth backend does not change the original

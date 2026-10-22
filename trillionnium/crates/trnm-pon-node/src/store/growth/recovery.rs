@@ -6,6 +6,18 @@ pub enum GrowthProgress {
     Execution(pon_executor::ExecutionProgress),
     BeforePersistence,
     AccountNode,
+    /// Before each pair of ancestor reads, in the existing fork-walk order.
+    ReorgAncestor {
+        index: usize,
+    },
+    /// Before each ordered undo/apply journal write pair.
+    ReorgWrite {
+        index: usize,
+    },
+    /// Before each steps/events row read, including EOF, then the reorg singleton.
+    ReorgReadback {
+        index: usize,
+    },
     BeforeCommit,
 }
 
@@ -268,7 +280,12 @@ impl Node {
         let mut right = target;
         let mut undo = Vec::new();
         let mut apply = Vec::new();
+        let mut ancestor_index = 0;
         while left != right {
+            progress(GrowthProgress::ReorgAncestor {
+                index: ancestor_index,
+            })?;
+            ancestor_index += 1;
             let l = self.record(left)?;
             let r = self.record(right)?;
             if l.height >= r.height {
@@ -279,14 +296,14 @@ impl Node {
                 right = r.parent.ok_or("GROWTH_ANCESTRY")?;
             }
         }
-        apply.reverse();
-        let changes: Vec<_> = undo
+        let changes = undo
             .iter()
             .map(|id| (0u64, *id))
-            .chain(apply.iter().map(|id| (1u64, *id)))
-            .collect();
+            .chain(apply.iter().rev().map(|id| (1u64, *id)));
+        let change_count = undo.len() + apply.len();
         tx.execute("DELETE FROM steps", [])?;
-        for (index, (kind, id)) in changes.iter().enumerate() {
+        for (index, (kind, id)) in changes.clone().enumerate() {
+            progress(GrowthProgress::ReorgWrite { index })?;
             ensure(
                 tx.execute(
                     "INSERT INTO steps VALUES(?,?,?)",
@@ -303,7 +320,7 @@ impl Node {
             )?;
         }
         ensure(tx.execute("INSERT INTO reorg VALUES(1,?,?,?,?,1) ON CONFLICT(singleton) DO UPDATE SET old_tip=excluded.old_tip,new_tip=excluded.new_tip,generation=excluded.generation,cursor=excluded.cursor,done=excluded.done",
-            params![old.as_slice(),target.as_slice(),next,changes.len() as u64])? == 1, "STORAGE_WRITE")?;
+            params![old.as_slice(),target.as_slice(),next,change_count as u64])? == 1, "STORAGE_WRITE")?;
         ensure(tx.execute("UPDATE active SET tip=?,generation=?,state_slot=? WHERE singleton=1 AND tip=? AND generation=?",
             params![target.as_slice(),next,next,old.as_slice(),generation])? == 1, "STALE_VIEW")?;
         ensure(
@@ -312,49 +329,83 @@ impl Node {
                 && load(&tx, target)?.commitment.id == self.record(target)?.root,
             "STORAGE_WRITE",
         )?;
-        self.growth_check_latest_journal(old, target, next, &changes)?;
+        self.growth_check_latest_journal_with_progress(old, target, next, changes, progress)?;
         progress(GrowthProgress::BeforeCommit)?;
         self.growth_guard()?;
         tx.commit()?;
         Ok(target)
     }
 
-    fn growth_check_latest_journal(
+    pub(super) fn growth_check_latest_journal(
         &self,
         old: Hash,
         target: Hash,
         generation: u64,
         changes: &[(u64, Hash)],
     ) -> Result<()> {
-        let steps: Vec<(u64, u64, Vec<u8>)> = self
-            .db
-            .prepare("SELECT ordinal,kind,block FROM steps ORDER BY ordinal")?
-            .query_map([], |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?)))?
-            .collect::<std::result::Result<_, _>>()?;
-        let events: Vec<(u64, u64, Vec<u8>)> = self
-            .db
-            .prepare("SELECT ordinal,kind,block FROM events WHERE generation=? ORDER BY ordinal")?
-            .query_map([generation], |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?)))?
-            .collect::<std::result::Result<_, _>>()?;
-        let expected: Vec<_> = changes
-            .iter()
-            .enumerate()
-            .map(|(i, (kind, id))| (i as u64, *kind, id.to_vec()))
-            .collect();
+        self.growth_check_latest_journal_with_progress(
+            old,
+            target,
+            generation,
+            changes.iter().copied(),
+            &|_| Ok(()),
+        )
+    }
+
+    fn growth_check_latest_journal_with_progress(
+        &self,
+        old: Hash,
+        target: Hash,
+        generation: u64,
+        changes: impl Iterator<Item = (u64, Hash)> + Clone,
+        progress: &impl Fn(GrowthProgress) -> Result<()>,
+    ) -> Result<()> {
+        let change_count = changes.clone().count();
+        let mut matches = true;
+        let mut index = 0;
+        for (sql, selected_generation) in [
+            (
+                "SELECT ordinal,kind,block FROM steps ORDER BY ordinal",
+                None,
+            ),
+            (
+                "SELECT ordinal,kind,block FROM events WHERE generation=? ORDER BY ordinal",
+                Some(generation),
+            ),
+        ] {
+            let mut statement = self.db.prepare(sql)?;
+            let mut rows = match selected_generation {
+                Some(generation) => statement.query([generation])?,
+                None => statement.query([])?,
+            };
+            let mut expected = changes.clone().enumerate();
+            loop {
+                progress(GrowthProgress::ReorgReadback { index })?;
+                index += 1;
+                let Some(row) = rows.next()? else {
+                    matches &= expected.next().is_none();
+                    break;
+                };
+                let actual: (u64, u64, Vec<u8>) = (row.get(0)?, row.get(1)?, row.get(2)?);
+                matches &= expected.next().is_some_and(|(ordinal, (kind, id))| {
+                    actual.0 == ordinal as u64 && actual.1 == kind && actual.2 == id
+                });
+            }
+        }
+        progress(GrowthProgress::ReorgReadback { index })?;
         let reorg: (Vec<u8>, Vec<u8>, u64, u64, u64) = self.db.query_row(
             "SELECT old_tip,new_tip,generation,cursor,done FROM reorg WHERE singleton=1",
             [],
             |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?, r.get(3)?, r.get(4)?)),
         )?;
         ensure(
-            steps == expected
-                && events == expected
+            matches
                 && reorg
                     == (
                         old.to_vec(),
                         target.to_vec(),
                         generation,
-                        changes.len() as u64,
+                        change_count as u64,
                         1,
                     ),
             "GROWTH_REORG_JOURNAL",

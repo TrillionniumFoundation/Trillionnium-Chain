@@ -387,6 +387,155 @@ fn native_growth_v2_cancelled_writes_and_activation_are_atomic() {
     assert_eq!(node.next_nonce(public(0)).unwrap(), 2);
 }
 
+fn cancel_reorg_at(cuts: &[GrowthProgress]) {
+    let dir = tempfile::tempdir().unwrap();
+    let settings = settings();
+    let mut node =
+        Node::open_with_permanent_account_growth_v2(dir.path(), settings.clone()).unwrap();
+    let mut old = settings.genesis();
+    for height in 1..=2 {
+        let packet = make(
+            &node,
+            old,
+            vec![transfer(&settings, 0, height, public(50 + height), 10_000)],
+        );
+        old = admit(&mut node, &packet);
+    }
+    let mut fork = settings.genesis();
+    for height in 1..=3 {
+        let packet = make(
+            &node,
+            fork,
+            vec![transfer(&settings, 0, height, public(60 + height), 10_000)],
+        );
+        fork = node.admit_growth(&packet, 100_000).unwrap();
+    }
+    let before = rows(&node.db);
+    let active_before = node.active().unwrap();
+    assert_eq!(active_before.0, old);
+    for &cut in cuts {
+        let calls = AtomicUsize::new(0);
+        let error = node
+            .growth_activate_with_progress(fork, &|point| {
+                if point == cut {
+                    calls.fetch_add(1, Ordering::Relaxed);
+                    Err(Error::new(ErrorCode::PublicRequestCancelled))
+                } else {
+                    Ok(())
+                }
+            })
+            .unwrap_err();
+        assert!(error.is(ErrorCode::PublicRequestCancelled), "{error:?}");
+        assert_eq!(calls.load(Ordering::Relaxed), 1, "{cut:?}");
+        assert_eq!(node.active().unwrap(), active_before, "{cut:?}");
+        assert_eq!(rows(&node.db), before, "{cut:?}");
+    }
+    // Each interrupted operation rolled back, leaving the same owner usable.
+    assert_eq!(node.growth_activate(fork).unwrap(), fork);
+    let active = node.active().unwrap();
+    assert_eq!(active.1, active_before.1 + 1);
+    assert_eq!(node.next_nonce(public(0)).unwrap(), 4);
+    assert_eq!(
+        node.growth_account(old, public(0)).unwrap().unwrap().nonce,
+        2
+    );
+    let after = rows(&node.db);
+    drop(node);
+    let node = Node::open_with_permanent_account_growth_v2(dir.path(), settings).unwrap();
+    assert_eq!(node.active().unwrap(), active);
+    assert_eq!(rows(&node.db), after);
+    assert_eq!(node.next_nonce(public(0)).unwrap(), 4);
+    assert_eq!(
+        node.growth_account(old, public(0)).unwrap().unwrap().nonce,
+        2
+    );
+}
+
+#[test]
+fn native_growth_v2_reorg_ancestor_cancellation_is_atomic() {
+    cancel_reorg_at(&[
+        GrowthProgress::ReorgAncestor { index: 0 },
+        GrowthProgress::ReorgAncestor { index: 4 },
+    ]);
+}
+
+#[test]
+fn native_growth_v2_reorg_write_cancellation_is_atomic() {
+    cancel_reorg_at(&[
+        GrowthProgress::ReorgWrite { index: 0 },
+        GrowthProgress::ReorgWrite { index: 4 },
+    ]);
+}
+
+#[test]
+fn native_growth_v2_reorg_readback_cancellation_is_atomic() {
+    cancel_reorg_at(&[
+        GrowthProgress::ReorgReadback { index: 0 },
+        GrowthProgress::ReorgReadback { index: 12 },
+    ]);
+}
+
+#[test]
+fn native_growth_v2_reorg_readback_preserves_exact_rows_and_singleton() {
+    let dir = tempfile::tempdir().unwrap();
+    let settings = settings();
+    let mut node =
+        Node::open_with_permanent_account_growth_v2(dir.path(), settings.clone()).unwrap();
+    let old = settings.genesis();
+    let packet = make(
+        &node,
+        old,
+        vec![transfer(&settings, 0, 1, public(70), 1_000)],
+    );
+    let target = admit(&mut node, &packet);
+    let generation = node.active().unwrap().1;
+    let changes = [(1, target)];
+    node.growth_check_latest_journal(old, target, generation, &changes)
+        .unwrap();
+    let before = rows(&node.db);
+    for table in ["steps", "events"] {
+        let insert = if table == "steps" {
+            "INSERT INTO steps SELECT ordinal+1,kind,block FROM steps"
+        } else {
+            "INSERT INTO events SELECT generation,ordinal+1,kind,block FROM events"
+        };
+        for sql in [
+            format!("DELETE FROM {table}"),
+            insert.to_owned(),
+            format!("UPDATE {table} SET ordinal=3"),
+            format!("UPDATE {table} SET kind=0"),
+            format!("UPDATE {table} SET block=zeroblob(32)"),
+        ] {
+            let tx = node.db.unchecked_transaction().unwrap();
+            tx.execute(&sql, []).unwrap();
+            assert!(
+                node.growth_check_latest_journal(old, target, generation, &changes)
+                    .is_err(),
+                "{sql}"
+            );
+            tx.rollback().unwrap();
+            assert_eq!(rows(&node.db), before);
+        }
+    }
+    for sql in [
+        "UPDATE reorg SET old_tip=zeroblob(32)",
+        "UPDATE reorg SET new_tip=zeroblob(32)",
+        "UPDATE reorg SET generation=100",
+        "UPDATE reorg SET cursor=0",
+        "UPDATE reorg SET done=0",
+    ] {
+        let tx = node.db.unchecked_transaction().unwrap();
+        tx.execute(sql, []).unwrap();
+        assert!(
+            node.growth_check_latest_journal(old, target, generation, &changes)
+                .is_err(),
+            "{sql}"
+        );
+        tx.rollback().unwrap();
+        assert_eq!(rows(&node.db), before);
+    }
+}
+
 #[test]
 fn native_growth_v2_missing_proof_extra_proof_and_external_loss_refuse() {
     let dir = tempfile::tempdir().unwrap();

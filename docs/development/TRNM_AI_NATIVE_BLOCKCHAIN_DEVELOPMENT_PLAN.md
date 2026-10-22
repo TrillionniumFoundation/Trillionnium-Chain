@@ -1132,6 +1132,17 @@ audit, active-state entitlement, retention promise or executable bounded parent.
 The original strict query, cold open, native execution/commit/reorg and all caps
 retain their checks. See the existing [native storage contract](../protocol/pon-nakamoto-v1/details/NATIVE_AUTHENTICATED_STORAGE_V1.md#explicit-historical-account-query-pins).
 
+The separately selected native growth backend already binds its private audited
+parent aggregate and complete bounded working partition to the actual header,
+then shares M06 with proved touched accounts; the complete-State compact reference
+above does not replace that path. Its activation now propagates cancellation
+through ancestor reads, ordered journal writes and streamed exact journal readback.
+The original cancellation error and whole-transaction rollback remain. Duplicate
+journal vectors are removed, while the two fork paths, cold retained-history audit
+and permanent root retention still grow. No public PNP2 admission, global disk
+bound, source-preserving activation migration or final-source scaling acceptance
+is supplied by this increment.
+
 Exit: actual signed native transitions cross 65,536 permanent accounts with
 bounded W and working partition; small-state complete/reference differential
 execution agrees. Pass zero-balance/re-entry/nonce, wrong-parent/omitted/extra
