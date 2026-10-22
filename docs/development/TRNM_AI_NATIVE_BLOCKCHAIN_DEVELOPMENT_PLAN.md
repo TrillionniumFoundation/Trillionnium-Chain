@@ -395,6 +395,17 @@ separate current source bindings from local execution, historical receipts, host
 checks, prospective-merge checks and external acceptance. This plan records no current
 PR pass: derive exact candidate/base/merge identities and retrieve their actual CI results.
 
+The 2026-10-22 PN0 repair retains the failed `d78744b` hosted Rust baseline
+(run `39785191834`, job `119846398662`): its signed 65,537-account test passed,
+but the independent reader refused because a `mode=ro` SQLite connection
+created an empty WAL. The reader now treats an absent WAL and exactly zero
+WAL bytes alike while pinning the complete main database, every nonempty WAL
+and the original receipt. It still reads committed WAL content; `immutable=1`
+would skip that content and is not used. The same exported database passes
+the repaired mathematical readback; empty-WAL lifecycle, WAL-only nonce
+tampering and changes during readback have explicit controls. This checker
+repair does not supply current-head CI, bounded-state or work qualification.
+
 #### Priority implementation revision: capacity, work, model evidence and engineering
 
 The current generated [implementation/profile view](../architecture/CURRENT_IMPLEMENTATION.md)
