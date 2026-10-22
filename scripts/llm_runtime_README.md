@@ -381,6 +381,8 @@ preserve its ordinary-FD red, not its old headroom claim. V2 supplies no extra
 capacity or admission grant. Controller budget fields select exact readback
 predicates, not authority. All payload must use trusted
 source inside A; same-UID escape or external-service delegation is not isolated.
+The budget is privately copied before validation/IO, so later caller mutation
+cannot reopen the partition (`2478cef6` ordinary-FD rejection failure retained).
 U permits exactly its two leaf groups (depth1/descendants2); unexpected internal
 participants or dying groups refuse, so a third allocation cannot reuse the
 declared partition. No existing systemd parent is reconfigured by acquisition.
@@ -398,6 +400,8 @@ Hepta kernel.operations Store/CPU destination, independent FinalUse and explicit
 release protocol are still open. The versioned aggregate boundary is not the
 old whole-unit contract; d50 remains FAIL. Ordinary-FD/synthetic counter tests
 and tiny own-child handoff faults do not qualify valid cgroup placement or models.
+Acquisition remains trusted preparation; these tests do not prove every async
+exception boundary between `os.open` and Python owner-slot assignment leak-free.
 
 The ordinary merge with source `8caf5387` preserves its inherited runtime,
 persistent neural-read worker and default reconciliation helpers, alongside the

@@ -90,8 +90,10 @@ class _AggregateOperation:
     def _initialize_locked(self, native, unit, invocation, operation, memory, controller, owner):
         require(native.fd >= 0 and native.operation is None, 'kernel-native-operation-retained')
         require(type(memory) is int and memory in (8*1024**3, _PARENT_MEMORY), 'aggregate-memory')
+        require(type(controller) is dict, 'aggregate-controller-finite-budget')
+        controller = controller.copy()  # Never reread a caller's mutable budget after IO.
         bounds = {'memory_bytes': _PARENT_MEMORY, 'cpu_quota_us': 400000, 'tasks': 256}
-        require(type(controller) is dict and set(controller) == set(bounds) and
+        require(set(controller) == set(bounds) and
             all(type(controller[k]) is int and 0 < controller[k] <= bounds[k] for k in bounds),
             'aggregate-controller-finite-budget')
         require(memory + controller['memory_bytes'] <= _PARENT_MEMORY and

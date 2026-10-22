@@ -286,6 +286,21 @@ class AggregateTests(unittest.TestCase):
         self.assertEqual(cap.nodes[0][3]['pids.max'], '6\n')
         cap.close(self)
 
+    def test_mutating_caller_budget_during_preparation_cannot_reopen_headroom(self):
+        quota = dict(memory_bytes=128*1024**2, cpu_quota_us=100000, tasks=16)
+        leaf, unit, controller, observed, acquire = self.acquisition_fixture(controller_budget=quota)
+        original = aggregate._source; fired = False
+        def changed():
+            nonlocal fired
+            if not fired:
+                fired = True
+                quota['memory_bytes'] = 16*1024**3
+                (controller/'memory.max').write_text(str(quota['memory_bytes'])+'\n')
+            return original()
+        with patch.object(aggregate, '_source', side_effect=changed):
+            with self.assertRaisesRegex(ValueError, 'aggregate-finite-limits'): acquire()
+        self.assertIsNone(self.native.operation)
+
     def test_synthetic_acquisition_rejects_unbounded_or_changed_parent_controller_and_used_leaf(self):
         for target, name, value in (('unit', 'memory.max', 'max\n'),
                 ('unit', 'cgroup.max.descendants', 'max\n'), ('unit', 'cgroup.max.depth', 'max\n'),

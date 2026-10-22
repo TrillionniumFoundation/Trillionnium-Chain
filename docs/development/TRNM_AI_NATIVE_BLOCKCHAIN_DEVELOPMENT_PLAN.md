@@ -565,6 +565,9 @@ preserve its ordinary-FD red. U has exactly the two known leaves, depth1 and
 descendants2, with no internal payload or dying groups. Acquisition changes no
 parent configuration and V2 supplies no capacity grant. This trusted same-admin boundary
 does not isolate hostile same-UID migration or external service dispatch.
+The checked budget is privately copied before IO; retain the `2478cef6`
+ordinary-FD caller-mutation red. Acquisition still assumes trusted preparation,
+not general leak freedom at every open-to-Python-slot async exception boundary.
 
 The original direct-owned supervisor's exact wait4 plus empty/no-dying aggregate,
 zero memory.current/swap.current and unchanged limits/identity can produce only
