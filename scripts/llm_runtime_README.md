@@ -22,6 +22,10 @@ original request domain and checks actual int64 input / finite FP32 logits with
 exact batch, sequence and vocabulary shapes. It neither templates nor truncates
 the input. The original `decode` wrapper still applies `prompt_tokens` once and
 uses the same greedy loop, smallest-ID tie break, fixed count and decode flags.
+Retain the `a4533609` check-to-copy race: an exact caller list grown after the
+initial length check reached validation with 8192 copied IDs. Snapshotting now
+copies at most the input cap plus one and rechecks that private snapshot before
+validation or tensor construction; over-cap input is rejected, never truncated.
 The family remains at input128/output16; callers must supply their actual full
 context compilation, tokenizer and loaded-attempt binding. This extraction adds
 no Hepta provider, held FinalUse permission, model result or I10 acceptance.

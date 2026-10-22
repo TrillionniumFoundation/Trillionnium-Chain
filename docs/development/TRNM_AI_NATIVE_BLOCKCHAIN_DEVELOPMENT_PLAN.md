@@ -383,6 +383,9 @@ full-context compilation and actual loaded-attempt binding remain required.
 Routing controls and opt-in tiny CPU tensor equivalence/refusal tests are not a
 pretrained-model run, Hepta provider, held FinalUse or three-round/I10 result;
 outer closure remains UNKNOWN. M14's existing inventory includes these controls.
+The `a4533609` caller-growth red remains: copying after a length check was not a
+hard bound. The snapshot now copies at most cap+1 and rechecks its own length;
+growth beyond the cap refuses before validation/forward, with no truncation.
 
 Within PN3, the existing [runtime component](../../scripts/llm_runtime_README.md)
 adds the explicit `linux-owned-exit-terminal-subset-v3` observer and distinct

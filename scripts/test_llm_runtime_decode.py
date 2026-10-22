@@ -3,6 +3,7 @@ import copy
 import hashlib
 import os
 import struct
+import sys
 from types import SimpleNamespace
 import unittest
 from unittest.mock import Mock, patch
@@ -40,6 +41,38 @@ class DecodeRoutingTests(unittest.TestCase):
             with self.subTest(tokens=repr(tokens)), self.assertRaises(ValueError):
                 runtime.decode_tokens(Mock(), Mock(), tokens, 'task', contract, cid,
                                       plan, Mock(), SimpleNamespace(type='cpu'))
+
+    def test_caller_growth_after_length_check_is_refused_before_contract_or_tensor(self):
+        contract = fixture_contract()
+        cid = c.freeze_target_contract(contract)[1]
+        plan = dict(input_tokens_max=128, generation_tokens=8, backend='cpu', snapshot='s')
+        tokens, copied_lengths, private_lengths = [1], [], []
+        original_require, original_validate = runtime.require, c.validate_decoder_request
+        grown = False
+
+        def grow_after_check(value, code):
+            nonlocal grown
+            if code == 'RUNTIME_NO_TRUNCATION' and grown:
+                private_lengths.append(len(sys._getframe(1).f_locals['tokens']))
+            original_require(value, code)
+            if code == 'RUNTIME_NO_TRUNCATION' and not grown:
+                grown = True
+                tokens.extend([1]*8191)
+
+        def observe_copy(request, *args):
+            copied_lengths.append(len(request['input_ids'][0]))
+            return original_validate(request, *args)
+
+        torch = Mock()
+        with patch.object(runtime, 'require', grow_after_check), \
+                patch.object(c, 'validate_decoder_request', observe_copy), \
+                self.assertRaises(ValueError):
+            runtime.decode_tokens(Mock(), Mock(), tokens, 'task', contract, cid,
+                                  plan, torch, SimpleNamespace(type='cpu'))
+        self.assertEqual(len(tokens), 8192)
+        self.assertEqual(copied_lengths, [], 'oversized caller copy reached the validator')
+        self.assertEqual(private_lengths, [plan['input_tokens_max']+1])
+        torch.tensor.assert_not_called()
 
 
 @unittest.skipUnless(os.environ.get('TRNM_ACTUAL_DECODER_TENSOR_TESTS') == '1',

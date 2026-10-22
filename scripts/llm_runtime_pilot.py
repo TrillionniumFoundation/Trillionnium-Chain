@@ -711,7 +711,8 @@ def decode_tokens(model, tokenizer, tokens, task_id, contract, cid, plan, torch,
     require(type(tokens) is list and 1 <= len(tokens) <= plan['input_tokens_max'],
             'RUNTIME_NO_TRUNCATION')
     # Snapshot only a bounded list; caller mutation cannot rewrite the request.
-    tokens = tokens.copy()
+    tokens = tokens[:plan['input_tokens_max'] + 1]
+    require(1 <= len(tokens) <= plan['input_tokens_max'], 'RUNTIME_NO_TRUNCATION')
     backend = plan.get('backend')
     require(backend in ('cpu', 'cuda', 'rocm', 'mps') and
             getattr(device, 'type', None) == ('cuda' if backend == 'rocm' else backend),
