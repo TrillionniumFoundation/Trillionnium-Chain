@@ -583,7 +583,7 @@ class NativeDurableSchemaTests(unittest.TestCase):
             self.extract(self.current+'\n'+backend)
 
     def test_actual_opener_and_selected_schema_bindings_cannot_be_replaced(self):
-        pair = 'let ddl = state_backend.ddl();\n        let schema_id = state_backend.schema_id();'
+        pair = 'let ddl = state_backend.ddl();\n        let schema_id = state_backend.selected_schema_id(&settings);'
         mutations = [
             ('default-open','Self::open_with_fault(path, settings, workers, None)',
              'Self::open_with_authenticated_state_and_fault(path, settings, workers, None)'),
@@ -594,7 +594,7 @@ class NativeDurableSchemaTests(unittest.TestCase):
             ('auth-selected','StateBackend::AuthenticatedV1,\n        )\n    }\n    /// Explicit local operator policy',
              'StateBackend::Legacy,\n        )\n    }\n    /// Explicit local operator policy'),
             ('ddl-unselected','let ddl = state_backend.ddl();','let ddl = ddl();'),
-            ('schema-unselected','let schema_id = state_backend.schema_id();','let schema_id = StateBackend::Legacy.schema_id();'),
+            ('schema-unselected','let schema_id = state_backend.selected_schema_id(&settings);','let schema_id = StateBackend::Legacy.schema_id();'),
             ('nested-pair',pair,'if false { '+pair+' }'),
         ]
         for label,before,after in mutations:
@@ -602,6 +602,8 @@ class NativeDurableSchemaTests(unittest.TestCase):
                 self.extract(self.replace_once(self.current,before,after))
         rebound = [
             'let state_backend = StateBackend::AuthenticatedV1;',
+            'let settings = settings;',
+            'let (settings, _) = (settings, ());',
             'let ddl = StateBackend::AuthenticatedV1.ddl();',
             'let mut ddl = StateBackend::AuthenticatedV1.ddl();',
             'let ddl: String = StateBackend::AuthenticatedV1.ddl();',
@@ -616,6 +618,51 @@ class NativeDurableSchemaTests(unittest.TestCase):
         for statement in rebound:
             with self.subTest(statement=statement),self.assertRaisesRegex(ValueError,'durable backend selected schema rebound'):
                 self.extract(self.replace_once(self.current,pair,pair+'\n        '+statement))
+
+    def test_selected_settings_cannot_be_mutated_through_fields_or_borrowed(self):
+        header = 'fn open_selected(\n        path: &Path,\n        settings: Settings,'
+        pair = 'let ddl = state_backend.ddl();\n        let schema_id = state_backend.selected_schema_id(&settings);'
+        statements = [
+            'settings.app.params["work_task_profile"] = serde_json::json!("legacy-task-v1");',
+            'settings.app.params["work_task_profile"][0] = serde_json::json!(0);',
+            'settings.app = settings.app.clone();',
+            'let alias = &mut settings;',
+            'let alias = &mut settings.app;',
+            'let alias = &mut (settings.app);',
+        ]
+        for statement in statements:
+            with self.subTest(statement=statement),self.assertRaisesRegex(ValueError,'durable backend selected schema rebound'):
+                # A mutable parameter makes these mutations executable in Rust;
+                # body-only source inspection must refuse the mutation itself.
+                changed = self.replace_once(self.current,header,header.replace('settings:','mut settings:',1))
+                self.extract(self.replace_once(changed,pair,statement+'\n        '+pair))
+
+    def test_growth_selection_is_exact_without_widening_legacy_evidence(self):
+        # Recognizing the current selector must not permit a changed growth
+        # namespace, bypassed selector or an unapproved implementation body.
+        # Every negative still targets exactly one real current-source site.
+        selector = ('fn selected_schema_id(self, settings: &Settings) -> Hash {\n'
+                    '        if growth_profile_v2::enabled(&settings.app) {')
+        mutations = [
+            ('wrong-growth-domain', 'b"native-growth-reference-branch-schema-v2"',
+             'b"native-branch-schema-v2"'),
+            ('growth-literal-space', 'b"native-growth-reference-branch-schema-v2"',
+             'b"native-growth-reference-branch- schema-v2"'),
+            ('flipped-growth-selector', selector, selector.replace('if growth_', 'if !growth_', 1)),
+            ('bypassed-growth-selector', selector,
+             selector.replace('if growth_profile_v2::enabled(&settings.app) {', 'if false {', 1)),
+            ('default-instead-selected', 'let schema_id = state_backend.selected_schema_id(&settings);',
+             'let schema_id = state_backend.schema_id();'),
+            ('bypassed-backend', 'let schema_id = state_backend.selected_schema_id(&settings);',
+             'let schema_id = StateBackend::Legacy.selected_schema_id(&settings);'),
+            ('ignored-settings', 'let schema_id = state_backend.selected_schema_id(&settings);',
+             'let schema_id = state_backend.selected_schema_id(&settings.clone());'),
+            ('unapproved-method', 'impl StateBackend {',
+             'impl StateBackend { fn other(self) -> Hash { self.schema_id() }'),
+        ]
+        for label,before,after in mutations:
+            with self.subTest(label=label),self.assertRaisesRegex(ValueError,'durable (?:backend|growth schema domain)'):
+                self.extract(self.replace_once(self.current,before,after))
 
     def test_backend_decoys_and_historical_hash_cannot_authorize_bad_active_mapping(self):
         backend = self.current[self.current.index('impl StateBackend {'):self.current.index('\nstruct NativeOwners {')]

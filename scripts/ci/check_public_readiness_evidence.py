@@ -283,6 +283,16 @@ def native_durable_schema(root):
                         Self::AuthenticatedV1 => format!("{}{}", ddl(), native_authenticated::DDL),
                     }
                 }
+                fn selected_schema_id(self, settings: &Settings) -> Hash {
+                    if growth_profile_v2::enabled(&settings.app) {
+                        hash(
+                            b"native-growth-reference-branch-schema-v2",
+                            &[self.ddl().as_bytes()],
+                        )
+                    } else {
+                        self.schema_id()
+                    }
+                }
                 fn schema_id(self) -> Hash {
                     let domain: &[u8] = match self {
                         Self::Legacy => b"native-branch-schema-v2",
@@ -292,8 +302,11 @@ def native_durable_schema(root):
                 }
             ''', 'durable backend composition/domain')
             backend_ddl = body(implementation,'fn','ddl')
+            selected_domain = body(implementation,'fn','selected_schema_id')
             domain = body(implementation,'fn','schema_id')
             require(value(backend_ddl,r'\bformat!\s*\(') == '{}{}', 'durable backend composition')
+            require(value(selected_domain,r'\bhash\s*\(\s*b') == 'native-growth-reference-branch-schema-v2',
+                    'durable growth schema domain')
             for variant, expected in [('Legacy','native-branch-schema-v2'),
                                       ('AuthenticatedV1','native-authenticated-branch-schema-v1')]:
                 require(value(domain,r'\bSelf::'+variant+r'\s*=>\s*b') == expected,
@@ -314,13 +327,15 @@ def native_durable_schema(root):
             for name, expected in selections.items():
                 layout(body(node,'fn',name),expected,'durable backend opener '+name)
             selected = rust_code(body(node,'fn','open_selected'))
-            bindings = list(re.finditer(r'\blet\s+ddl\s*=\s*state_backend\.ddl\(\)\s*;\s*let\s+schema_id\s*=\s*state_backend\.schema_id\(\)\s*;',selected))
+            bindings = list(re.finditer(r'\blet\s+ddl\s*=\s*state_backend\.ddl\(\)\s*;\s*let\s+schema_id\s*=\s*state_backend\.selected_schema_id\(\s*&\s*settings\s*\)\s*;',selected))
             require(len(bindings) == 1 and direct(selected,bindings[0].start()),
                     'durable backend selected schema')
             remaining = selected[:bindings[0].start()]+selected[bindings[0].end():]
-            names = r'\b(?:state_backend|ddl|schema_id)\b'
+            names = r'\b(?:state_backend|settings|ddl|schema_id)\b'
+            places = names+r'(?:\s*\.\s*[A-Za-z_]\w*|\s*\[[^\]]*\])*'
             require(not re.search(r'\blet\s+[^;=]*'+names+r'[^;=]*=',remaining)
-                    and not re.search(names+r'\s*(?:\[[^\]]*\]\s*)?[+*/%&|^\-]?=(?!=)',remaining),
+                    and not re.search(places+r'\s*[+*/%&|^\-]?=(?!=)',remaining)
+                    and not re.search(r'&\s*mut\s*\(*\s*'+names,remaining),
                     'durable backend selected schema rebound')
         else:
             matches = [match for match in re.finditer(r'\bhash\(\s*b"native-branch-schema-v2"\s*,\s*&\[\s*ddl\.as_bytes\(\)\s*\]\s*\)',source)
