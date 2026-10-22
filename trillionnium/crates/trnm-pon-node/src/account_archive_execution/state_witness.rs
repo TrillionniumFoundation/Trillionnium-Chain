@@ -8,6 +8,8 @@
 //! paths, and preserves nonce and existence. The complete non-account partition
 //! is still supplied and scanned: no efficient range proof or partial-State
 //! backend is claimed. Complete State remains the independent comparison path.
+pub(crate) mod native_growth;
+
 use super::obligations::MAX_EXECUTION_ACCOUNTS;
 use super::{CheckedExecutionError, Result};
 use crate::account_archive_prototype::{
@@ -180,7 +182,9 @@ impl GrowthStateCommitmentV2 {
 /// A relation computed from authenticated archive bytes or a complete native
 /// source State. Serialization exposes only the historical observation bytes;
 /// deserialization and public-field mutation cannot manufacture this value.
-/// It is still research-only: no header, migration or admission is activated.
+/// This wrapper alone activates no header, migration or admission. The selected
+/// native growth backend separately binds it to its audited database epoch,
+/// actual parent header and original-parent account multiproof.
 ///
 /// A valid-looking observation, including a recomputed digest, is not sufficient:
 /// ```compile_fail

@@ -417,17 +417,28 @@ if __name__ == '__main__':
     mode.add_argument('--run', action='store_true')
     mode.add_argument('--input', type=Path)
     mode.add_argument('--verify', type=Path)
+    mode.add_argument('--matrix-v2', type=Path, help='read explicit native all-producer CPU/fact-cache V2 JSONL; never relabel V1 evidence')
     parser.add_argument('--out', type=Path)
     parser.add_argument('--expected-target')
     parser.add_argument('--historical', action='store_true')
     parser.add_argument('--prepared', type=Path, help='evaluate supplied paired costs under the reporting-only acceptance profile')
     parser.add_argument('--service', type=Path, help='complete local honest/attacker event ledger; missing is unmeasured')
     parser.add_argument('--require-local-acceptance', action='store_true', help='exit 2 unless every local observation gate passes; never grants external acceptance')
+    parser.add_argument('--require-cost-gates', action='store_true',
+                        help='V2 only: exit 2 unless original numeric cost gates pass; does not grant service or hardness acceptance')
     args = parser.parse_args()
-    require(not (args.prepared or args.service or args.require_local_acceptance) or
+    require(not args.require_cost_gates or args.matrix_v2 is not None,
+            '--require-cost-gates requires --matrix-v2')
+    require(not (args.prepared or args.service) or
             (args.input is not None and args.prepared is not None),
             'acceptance options require --input and --prepared')
-    if args.run:
+    require(not args.require_local_acceptance or args.matrix_v2 is not None or
+            (args.input is not None and args.prepared is not None),
+            'local acceptance requires explicit cost inputs')
+    if args.matrix_v2 is not None:
+        from pon_w1_cost_matrix_reader import analyze
+        value = analyze(args.matrix_v2)
+    elif args.run:
         require(args.out is not None, '--run requires --out')
         value = collect(args.out)
     elif args.verify:
@@ -443,4 +454,7 @@ if __name__ == '__main__':
                      'summary': summarize(load(args.input), args.expected_target)}
     print(encoded(value).decode(), end='')
     if args.require_local_acceptance and value['local_observation_gate'] != 'pass':
+        sys.exit(2)
+
+    if args.require_cost_gates and value['local_cost_gate'] != 'pass':
         sys.exit(2)

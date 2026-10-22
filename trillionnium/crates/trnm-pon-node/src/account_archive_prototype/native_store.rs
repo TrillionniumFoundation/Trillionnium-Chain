@@ -12,14 +12,29 @@ use std::collections::{BTreeMap, BTreeSet};
 use trnm_mvcc_fee::pon_executor::State;
 use trnm_protocol::pon_wire::Hash;
 
-/// Exact mathematical inputs only. Every stored node is still read and decoded
-/// before this helper can reuse a compressed-path hash. No SQL/Node verdict is
-/// retained, so rollback, external writes and triggers need no invalidation.
+#[path = "native_node_decode.rs"]
+mod node_decode;
+#[path = "native_node_reader.rs"]
+mod node_reader;
+use node_reader::NodeReader;
+
+/// Exact mathematical inputs only. Every stored node is still read from SQL.
+/// Node decoding can reuse only the complete actual bytes and expected ID;
+/// compressed-path hashes bind all their original inputs separately. No row,
+/// graph, state, ancestry or commit verdict survives a call.
 type LiftInput = (Hash, Hash, usize, usize);
 #[derive(Default)]
-pub(crate) struct LiftCache(RefCell<BTreeMap<LiftInput, Hash>>);
+pub(crate) struct LiftCache(
+    RefCell<BTreeMap<LiftInput, Hash>>,
+    node_decode::NodeDecodeArithmetic,
+);
 impl LiftCache {
     const MAX_ENTRIES: usize = 8192;
+
+    pub(crate) fn decode_observation(&self) -> serde_json::Value {
+        self.1.observation()
+    }
+
     pub(super) fn lift(&self, node: &Node, depth: usize) -> Hash {
         let key = (node.path, node.digest, node.depth, depth);
         if let Ok(entries) = self.0.try_borrow() {
@@ -71,13 +86,21 @@ fn controlled<T>(
 }
 
 fn load_root(db: &Connection, root: &Root, empty: &[Hash; 257]) -> Result<Option<Node>> {
+    load_root_bounded(db, root, empty, 65_536)
+}
+fn load_root_bounded(
+    db: &Connection,
+    root: &Root,
+    empty: &[Hash; 257],
+    maximum: u64,
+) -> Result<Option<Node>> {
     let node = root
         .node
         .map(|id| super::load_node(db, id))
         .transpose()
         .map_err(storage)?;
     crate::ensure(
-        root.count <= 65_536
+        root.count <= maximum
             && root.node.is_none() == (root.count == 0)
             && node.as_ref().map_or(empty[0], |node| node.lift(0, empty)) == root.digest,
         "NATIVE_ACCOUNT_ROOT",
@@ -228,8 +251,33 @@ pub(crate) fn apply(
     deltas: &[crate::store::Delta],
     progress: &mut dyn FnMut() -> Result<()>,
 ) -> Result<Root> {
+    apply_bounded(db, parent, deltas, progress, 65_536)
+}
+
+/// Only the explicitly selected growth owner calls this versioned bound.
+pub(crate) fn apply_growth(
+    db: &Connection,
+    parent: &Root,
+    deltas: &[crate::store::Delta],
+    progress: &mut dyn FnMut() -> Result<()>,
+) -> Result<Root> {
+    apply_bounded(
+        db,
+        parent,
+        deltas,
+        progress,
+        trnm_mvcc_fee::pon_executor::growth::MAX_ACCOUNTS,
+    )
+}
+fn apply_bounded(
+    db: &Connection,
+    parent: &Root,
+    deltas: &[crate::store::Delta],
+    progress: &mut dyn FnMut() -> Result<()>,
+    maximum: u64,
+) -> Result<Root> {
     let empty = empty_hashes();
-    let original = load_root(db, parent, &empty)?;
+    let original = load_root_bounded(db, parent, &empty, maximum)?;
     let mut updates = Vec::new();
     let mut count = parent.count;
     // Canonical key order can visit a credit before its matching debit. Keep a
@@ -264,7 +312,7 @@ pub(crate) fn apply(
             .ok_or("NATIVE_ACCOUNT_BALANCE")?;
         updates.push(Node::account(owner, next));
     }
-    crate::ensure(count <= 65_536, "NATIVE_ACCOUNT_COUNT").map_err(Error::local_integrity)?;
+    crate::ensure(count <= maximum, "NATIVE_ACCOUNT_COUNT").map_err(Error::local_integrity)?;
     let balance = u64::try_from(balance)
         .map_err(|_| Error::from("NATIVE_ACCOUNT_BALANCE").local_integrity())?;
     updates.sort_unstable_by_key(|node| node.path);
@@ -315,9 +363,10 @@ pub(crate) fn verify_with_lifts(
 ) -> Result<()> {
     let empty = empty_hashes();
     let actual = super::accounts(state).map_err(storage)?;
+    let mut reader = NodeReader::new(db);
     let node = root
         .node
-        .map(|id| super::load_node(db, id))
+        .map(|id| reader.load(id, lifts))
         .transpose()
         .map_err(storage)?;
     crate::ensure(
@@ -352,8 +401,12 @@ pub(crate) fn verify_with_lifts(
                     .ok_or("NATIVE_ACCOUNT_BALANCE")?;
             }
             Kind::Fork { .. } => {
-                stack.push(child_with_lifts(db, &node, true, &empty, lifts).map_err(storage)?);
-                stack.push(child_with_lifts(db, &node, false, &empty, lifts).map_err(storage)?);
+                stack.push(
+                    child_with_lifts(&mut reader, &node, true, &empty, lifts).map_err(storage)?,
+                );
+                stack.push(
+                    child_with_lifts(&mut reader, &node, false, &empty, lifts).map_err(storage)?,
+                );
             }
         }
     }
@@ -365,15 +418,12 @@ pub(crate) fn verify_with_lifts(
 }
 
 fn child_with_lifts(
-    db: &Connection,
+    reader: &mut NodeReader<'_>,
     parent: &Node,
     right_side: bool,
     empty: &[Hash; 257],
     lifts: Option<&LiftCache>,
 ) -> super::Result<Node> {
-    let Some(lifts) = lifts else {
-        return super::child(db, parent, right_side, empty);
-    };
     let Kind::Fork {
         left,
         right,
@@ -383,13 +433,16 @@ fn child_with_lifts(
     else {
         return Err(ArchiveError::CorruptRecord);
     };
-    // Preserve the actual SQL read, identity decode, path/depth and parent hash
-    // comparisons. Only lift arithmetic on the just-read node can be reused.
-    let out = super::load_node(db, if right_side { right } else { left })?;
+    // Preserve the actual SQL read, exact-input decode, path/depth and parent
+    // hash comparisons. Only arithmetic on the just-read bytes can be reused.
+    let out = reader.load(if right_side { right } else { left }, lifts)?;
     if out.depth <= parent.depth
         || super::common(&out.path, &parent.path) < parent.depth
         || super::bit(&out.path, parent.depth) != right_side
-        || lifts.lift(&out, parent.depth + 1) != if right_side { right_hash } else { left_hash }
+        || lifts.map_or_else(
+            || out.lift(parent.depth + 1, empty),
+            |cache| cache.lift(&out, parent.depth + 1),
+        ) != if right_side { right_hash } else { left_hash }
     {
         return Err(ArchiveError::CorruptRecord);
     }
@@ -408,6 +461,140 @@ pub(crate) fn query_checkpoint(
 ) -> Result<super::Checkpoint> {
     let empty = empty_hashes();
     let node = load_root(db, root, &empty)?;
+    Ok(super::make_checkpoint(
+        context,
+        block,
+        None,
+        height,
+        Some(state_root),
+        node.as_ref(),
+        root.count,
+    ))
+}
+
+/// Cold audit: authenticate every reachable node and independently recover count
+/// and balance. It is intentionally linear and never called by the growth hot path.
+pub(crate) fn audit_growth(db: &Connection, root: &Root) -> Result<()> {
+    let empty = empty_hashes();
+    let maximum = trnm_mvcc_fee::pon_executor::growth::MAX_ACCOUNTS;
+    let mut stack: Vec<_> = load_root_bounded(db, root, &empty, maximum)?
+        .into_iter()
+        .collect();
+    let mut seen = BTreeSet::new();
+    let mut owners = BTreeSet::new();
+    let mut balance = 0u64;
+    while let Some(node) = stack.pop() {
+        crate::ensure(
+            seen.insert(node.id) && (seen.len() as u64) < maximum * 2,
+            "NATIVE_ACCOUNT_GRAPH",
+        )
+        .map_err(Error::local_integrity)?;
+        match node.kind {
+            Kind::Leaf(owner, account) => {
+                crate::ensure(owners.insert(owner), "NATIVE_ACCOUNT_DUPLICATE")
+                    .map_err(Error::local_integrity)?;
+                balance = balance
+                    .checked_add(account.balance)
+                    .ok_or("NATIVE_ACCOUNT_BALANCE")?;
+            }
+            Kind::Fork { .. } => {
+                stack.push(super::child(db, &node, false, &empty).map_err(storage)?);
+                stack.push(super::child(db, &node, true, &empty).map_err(storage)?);
+            }
+        }
+    }
+    crate::ensure(
+        owners.len() as u64 == root.count && balance == root.balance,
+        "NATIVE_ACCOUNT_AGGREGATE",
+    )
+    .map_err(Error::local_integrity)
+}
+
+/// One frozen cold snapshot may share checked immutable node aggregates across
+/// retained roots. This cache never escapes the audit or survives SQL writes.
+pub(crate) fn audit_growth_roots(db: &Connection, roots: &[Root]) -> Result<()> {
+    let empty = empty_hashes();
+    let maximum = trnm_mvcc_fee::pon_executor::growth::MAX_ACCOUNTS;
+    let mut memo: BTreeMap<Hash, (u64, u64)> = BTreeMap::new();
+    for root in roots {
+        let first = load_root_bounded(db, root, &empty, maximum)?;
+        let Some(first) = first else {
+            crate::ensure(root.balance == 0, "NATIVE_ACCOUNT_AGGREGATE")?;
+            continue;
+        };
+        let root_id = first.id;
+        let mut stack = vec![(first, false)];
+        while let Some((node, visited)) = stack.pop() {
+            if memo.contains_key(&node.id) {
+                continue;
+            }
+            match node.kind {
+                Kind::Leaf(_, account) => {
+                    memo.insert(node.id, (1, account.balance));
+                }
+                Kind::Fork { left, right, .. } if visited => {
+                    let l = memo.get(&left).ok_or("NATIVE_ACCOUNT_GRAPH")?;
+                    let r = memo.get(&right).ok_or("NATIVE_ACCOUNT_GRAPH")?;
+                    let count = l.0.checked_add(r.0).ok_or("NATIVE_ACCOUNT_COUNT")?;
+                    let balance = l.1.checked_add(r.1).ok_or("NATIVE_ACCOUNT_BALANCE")?;
+                    crate::ensure(count <= maximum, "NATIVE_ACCOUNT_COUNT")?;
+                    memo.insert(node.id, (count, balance));
+                }
+                Kind::Fork { .. } => {
+                    let left = super::child(db, &node, false, &empty).map_err(storage)?;
+                    let right = super::child(db, &node, true, &empty).map_err(storage)?;
+                    stack.push((node, true));
+                    stack.push((right, false));
+                    stack.push((left, false));
+                }
+            }
+        }
+        crate::ensure(
+            memo.get(&root_id) == Some(&(root.count, root.balance)),
+            "NATIVE_ACCOUNT_AGGREGATE",
+        )?;
+    }
+    let stored: usize = db.query_row("SELECT count(*) FROM archive_nodes", [], |r| r.get(0))?;
+    crate::ensure(stored == memo.len(), "NATIVE_ACCOUNT_ORPHAN")?;
+    Ok(())
+}
+
+pub(crate) fn seed_growth(db: &Connection, state: &State) -> Result<Root> {
+    let values = super::accounts(state).map_err(storage)?;
+    crate::ensure(
+        values.len() as u64 <= trnm_mvcc_fee::pon_executor::growth::MAX_ACCOUNTS,
+        "NATIVE_ACCOUNT_COUNT",
+    )?;
+    let ordered = super::ordered_accounts(&values).map_err(storage)?;
+    let empty = empty_hashes();
+    let node = super::build(Some(db), &ordered, &empty, &mut || Ok(())).map_err(storage)?;
+    let root = Root {
+        node: node.as_ref().map(|n| n.id),
+        digest: node.as_ref().map_or(empty[0], |n| n.lift(0, &empty)),
+        count: values.len() as u64,
+        balance: values.values().try_fold(0u64, |sum, a| {
+            sum.checked_add(a.balance).ok_or("NATIVE_ACCOUNT_BALANCE")
+        })?,
+    };
+    audit_growth(db, &root)?;
+    Ok(root)
+}
+
+pub(crate) fn query_growth_checkpoint(
+    db: &Connection,
+    context: super::Context,
+    block: Hash,
+    height: u64,
+    state_root: Hash,
+    root: &Root,
+) -> Result<super::Checkpoint> {
+    let empty = empty_hashes();
+    let node = load_root_bounded(
+        db,
+        root,
+        &empty,
+        trnm_mvcc_fee::pon_executor::growth::MAX_ACCOUNTS,
+    )?;
     Ok(super::make_checkpoint(
         context,
         block,

@@ -150,6 +150,19 @@ class RuntimePilotTests(unittest.TestCase):
             self.assertIn('started',(directory/'process.log').read_text())
             self.assertTrue((directory/'supervisor.json').is_file())
 
+    def test_explicit_profiles_cannot_fall_through_to_default_exit_reconciliation(self):
+        for profile in runtime.EXIT_PROFILES[1:]:
+            with self.subTest(profile=profile), tempfile.TemporaryDirectory() as temporary, \
+                    patch.object(runtime, 'current_rss', return_value=None), \
+                    patch.object(runtime, 'reconcile_unobserved_exit', side_effect=AssertionError('explicit fallback')), \
+                    patch.object(runtime, 'owned_rss_diagnostic', side_effect=AssertionError('default diagnostic')):
+                result = runtime.supervise([sys.executable, '-c', 'import time;time.sleep(1)'],
+                    Path(temporary)/'run', dict(wall_seconds=2, rss_bytes=128*1024**2),
+                    exit_observation=runtime.exit_observation_profile(profile))
+            self.assertEqual(result['outcome'], 'failed')
+            self.assertEqual(result['rss_observation_gaps'], [])
+            self.assertEqual(result['terminal_reconciliation_profile'], 'explicit-'+profile)
+
     def test_real_memory_budget_child_and_successful_child_have_distinct_results(self):
         if not Path('/proc').is_dir():self.skipTest('Linux RSS owner required')
         with tempfile.TemporaryDirectory() as temporary:

@@ -73,9 +73,15 @@ CPU, observer CPU and end-to-end phase wall time. A held `pidfd` binds terminati
 to that child. RSS reads use the kernel's own fdinfo PID namespace mapping and
 verify the child PID, parent and namespace before and after observation; a local
 numeric PID is not assumed to name the same process in the mounted `/proc` view.
-Under the default `strict-v1` observer, missing RSS while an exact wait observes
-a live child is a sticky failure.
-Such failures now retain the exact read-boundary reason and a bounded post-gap
+The integrated default `strict-v1` keeps the existing held-pidfd reconciliation:
+an unproved missing-RSS race may wait at most one 50ms sample for exact wait4.
+A complete bounded owned-thread proof of irreversible PF_EXITING/no-mm cleanup
+may wait only until the original absolute phase wall deadline. Neither route
+produces an RSS sample, accepts pidfd readiness without exact wait4, renews the
+deadline or bypasses terminal RSS/CPU/status checks. The explicit V2–V4 observers
+retain their original 100ms limit and never fall through to this default path.
+Historical source-specific missing-RSS failures remain FAIL.
+Failed observations retain the exact read-boundary reason and a bounded post-gap
 snapshot through the original held pidfd: leader state/RSS, group thread states
 and identity continuity. The snapshots occur after the missing sample and cannot
 replace it, establish memory bounds or turn a failed observation into success.
@@ -296,6 +302,13 @@ profile is unchanged. Ordinary inherited-runtime/neural-read callers observed
 at source `cc9b599` retain their existing supervise signature and do not supply
 this live capability. Their source-specific campaign outcomes do not qualify
 the new native path; this slice preserves the separate V2/V3/V4 dispatchers.
+
+The ordinary merge with source `8caf5387` preserves its inherited runtime,
+persistent neural-read worker and default reconciliation helpers, alongside the
+explicit V2–V4 paths and controlled native owner. Reconciliation metadata names
+the actual explicit profile. Existing campaign5 three-round observations and
+its gen2/gen3 16/32, zero-changed-decision, Ineligible result retain their own
+source scope; this merged source has no new model/cgroup/FinalUse qualification.
 
 Independent review rejected the initial spawn slice `ce4ae661`: a pending
 exception after native success could precede tuple/field handoff and strand its

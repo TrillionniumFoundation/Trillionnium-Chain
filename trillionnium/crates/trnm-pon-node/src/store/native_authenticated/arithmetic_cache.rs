@@ -26,9 +26,9 @@ struct CompleteEntry {
     value: StateCommitment,
 }
 
-// One independent root arithmetic entry keeps the repeated genesis root from
-// depending on parent/child complete-commitment eviction. It owns at most the
-// same 4 MiB exact-input bound and contains no database identity or verdict.
+// One independent root arithmetic entry retains only the actual initial State.
+// Historical parent/child roots must not replace it during unactivated branch
+// import. It owns the same 4 MiB exact-input bound and no database verdict.
 struct RootEntry {
     context: [Hash; 3],
     bytes: Vec<u8>,
@@ -62,6 +62,7 @@ impl ArithmeticCache {
     pub(crate) fn observation(&self) -> serde_json::Value {
         let mut value = self.history.observation();
         value["complete_root_arithmetic"] = self.root_arithmetic.observation();
+        value["account_node_decode_arithmetic"] = self.lifts.decode_observation();
         value
     }
 
@@ -71,7 +72,7 @@ impl ArithmeticCache {
         state: &State,
     ) -> trnm_mvcc_fee::pon_executor::Result<Hash> {
         let _measurement = self.history.observe(super::HistoryStage::CompleteStateRoot);
-        // The separate root entry is usually genesis. It must not evict the
+        // The separate root entry is genesis arithmetic. It must not evict the
         // offered successor tree or force a large child->genesis->child rebuild.
         // Exact current bytes and namespace, never a caller's digest, select it.
         let context = [
@@ -88,6 +89,33 @@ impl ArithmeticCache {
             }
         }
         self.root_arithmetic.calculate(settings, state)
+    }
+
+    fn retain_initial_complete_root(
+        &self,
+        settings: &Settings,
+        context: [Hash; 3],
+        bytes: &[u8],
+        value: Hash,
+    ) {
+        // Complete-cache hits must warm the independent initial root too. A
+        // later FIFO eviction must not turn a genesis check into a destructive
+        // rewrite of the offered successor's mathematical tree. The existing
+        // entry is only exact-input arithmetic; context alone never returns it.
+        let vacant = self
+            .root
+            .try_borrow()
+            .is_ok_and(|entry| entry.as_ref().is_none_or(|entry| entry.context != context));
+        if !vacant || bounded_bytes(&settings.initial).as_deref() != Some(bytes) {
+            return;
+        }
+        if let Ok(mut entry) = self.root.try_borrow_mut() {
+            *entry = Some(RootEntry {
+                context,
+                bytes: bytes.to_vec(),
+                value,
+            });
+        }
     }
 
     /// Reuse exact complete bytes or derive from the same bounded opaque M06
@@ -110,6 +138,7 @@ impl ArithmeticCache {
             }) {
                 #[cfg(test)]
                 self.root_hits.set(self.root_hits.get() + 1);
+                self.retain_initial_complete_root(settings, context, bytes, entry.value.state_root);
                 return Ok(entry.value.state_root);
             }
         }
@@ -122,11 +151,24 @@ impl ArithmeticCache {
                 return Ok(entry.value);
             }
         }
-        let value = self
-            .root_arithmetic
-            .calculate(settings, state)
-            .map_err(crate::Error::from)?;
-        if let (Some(bytes), Ok(mut entry)) = (bytes, self.root.try_borrow_mut()) {
+        // A complete actual-input comparison, not a claimed block/root or a
+        // Value equality, identifies initial arithmetic. In particular, changed
+        // settings with the same context and integer/float encodings still run
+        // the original root grammar. Do not rewrite a large current tree into
+        // genesis merely to calculate this independent, bounded root entry.
+        let initial_input = state.len() == settings.initial.len()
+            && bytes
+                .as_deref()
+                .is_some_and(|actual| bounded_bytes(&settings.initial).as_deref() == Some(actual));
+        let value = if initial_input {
+            trnm_mvcc_fee::pon_executor::root(state)
+        } else {
+            self.root_arithmetic.calculate(settings, state)
+        }
+        .map_err(crate::Error::from)?;
+        if let (true, Some(bytes), Ok(mut entry)) =
+            (initial_input, bytes, self.root.try_borrow_mut())
+        {
             *entry = Some(RootEntry {
                 context,
                 bytes,
@@ -373,5 +415,70 @@ mod tests {
             .insert("root-only-input".into(), json!(-0.0));
         assert!(cache.state_root(&changed, &changed.initial).is_err());
         assert_eq!(cache.root.borrow().as_ref().unwrap().bytes, retained);
+    }
+
+    #[test]
+    fn initial_root_survives_unactivated_branch_roots_without_whole_tree_churn() {
+        let settings = Settings::development(Some(1000)).unwrap();
+        let cache = ArithmeticCache::default();
+        // The native genesis check can first hit a complete commitment. That
+        // must also warm the independent root entry before this FIFO evicts it.
+        let initial = cache.complete(&settings, &settings.initial).unwrap();
+        assert_eq!(
+            cache.state_root(&settings, &settings.initial).unwrap(),
+            initial.state_root
+        );
+        let mut funded = settings.initial.clone();
+        for index in 0..64u64 {
+            let owner = trnm_protocol::pon_wire::hash(
+                b"initial-root-arithmetic-account-v1",
+                &[&index.to_le_bytes()],
+            );
+            funded.insert(
+                format!("account:{}", hex::encode(owner)),
+                json!({"balance":0,"nonce":index}),
+            );
+        }
+        let prepared = trnm_mvcc_fee::pon_commitment::derive_snapshot(
+            &funded,
+            None,
+            trnm_mvcc_fee::pon_commitment::CacheLimits::default(),
+        )
+        .unwrap();
+        cache.offer_root_material(&settings, prepared.snapshot.as_ref());
+        let before = cache.observation()["complete_root_arithmetic"]["counters"]
+            ["actual_changed_keys"]
+            .as_u64()
+            .unwrap();
+        for marker in 0..6u64 {
+            let mut historical = funded.clone();
+            historical.insert("historical-root-marker".into(), json!(marker));
+            let expected = trnm_mvcc_fee::pon_executor::root(&historical).unwrap();
+            assert_eq!(cache.state_root(&settings, &historical).unwrap(), expected);
+            assert_eq!(
+                cache.complete(&settings, &historical).unwrap().state_root,
+                expected
+            );
+            assert_eq!(
+                cache.state_root(&settings, &settings.initial).unwrap(),
+                initial.state_root
+            );
+        }
+        let after = cache.observation()["complete_root_arithmetic"]["counters"]
+            ["actual_changed_keys"]
+            .as_u64()
+            .unwrap();
+        assert_eq!(
+            after - before,
+            6,
+            "six actual marker changes must not remove and rebuild the 64 unchanged accounts for genesis checks"
+        );
+        let retained = cache.root.borrow();
+        assert_eq!(
+            retained.as_ref().unwrap().bytes,
+            bounded_bytes(&settings.initial).unwrap()
+        );
+        assert!(retained.as_ref().unwrap().bytes.len() <= MAX_COMPLETE_BYTES);
+        assert_eq!(cache.complete.borrow().len(), MAX_COMPLETE_ENTRIES);
     }
 }

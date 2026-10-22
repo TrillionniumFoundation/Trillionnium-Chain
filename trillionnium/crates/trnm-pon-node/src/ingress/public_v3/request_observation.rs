@@ -1,4 +1,5 @@
 //! Optional bounded local measurements. Never ledger or transport authority.
+use super::work_arithmetic::PublicArithmeticWorkObservation;
 use serde::Serialize;
 use std::sync::{
     atomic::{AtomicBool, AtomicU64, Ordering},
@@ -94,6 +95,11 @@ pub struct PublicRequestObservation {
     pub full_work_started: bool,
     pub full_work_accepted: Option<bool>,
     pub full_work_thread_cpu_ns: Option<u64>,
+    /// Present only for the separately signed, explicit arithmetic-fact profile.
+    /// The legacy full_work interval still measures actual complete-relation
+    /// verification; it must not be interpreted as a fresh arithmetic replay.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub work_arithmetic: Option<PublicArithmeticWorkObservation>,
     pub dispatch_started: bool,
     pub dispatch_accepted: Option<bool>,
     pub dispatch_thread_cpu_ns: Option<u64>,
@@ -133,6 +139,7 @@ impl PublicRequestObservation {
             full_work_started: false,
             full_work_accepted: None,
             full_work_thread_cpu_ns: None,
+            work_arithmetic: None,
             dispatch_started: false,
             dispatch_accepted: None,
             dispatch_thread_cpu_ns: None,
@@ -156,6 +163,7 @@ struct TaskProgress {
     full_work_started: bool,
     full_work_accepted: Option<bool>,
     full_work_thread_cpu_ns: Option<u64>,
+    work_arithmetic: Option<PublicArithmeticWorkObservation>,
     dispatch_started: bool,
     dispatch_accepted: Option<bool>,
     dispatch_thread_cpu_ns: Option<u64>,
@@ -167,6 +175,7 @@ impl Default for TaskProgress {
             full_work_started: false,
             full_work_accepted: None,
             full_work_thread_cpu_ns: None,
+            work_arithmetic: None,
             dispatch_started: false,
             dispatch_accepted: None,
             dispatch_thread_cpu_ns: None,
@@ -220,7 +229,12 @@ pub struct PublicRequestObservationSnapshot {
     pub records: Vec<PublicRequestObservation>,
     pub observation_has_consensus_authority: bool,
     pub cpu_intervals_are_nested_not_additive: bool,
+    // Retained OR field: true in v3 because response signing is included. The
+    // separate flags below prevent interpreting it as reactor CPU coverage.
     pub cpu_includes_reactor_authentication_or_response_signing: bool,
+    pub cpu_includes_reactor_authentication: bool,
+    pub dispatch_cpu_includes_paid_body_decode: bool,
+    pub dispatch_cpu_includes_response_signing: bool,
     pub submit_phase_cpu_excludes_scoped_workers: bool,
     pub stream_bytes_are_physical_network_bytes: bool,
 }
@@ -269,6 +283,7 @@ impl PublicRequestObserver {
                         value.full_work_started = task.full_work_started;
                         value.full_work_accepted = task.full_work_accepted;
                         value.full_work_thread_cpu_ns = task.full_work_thread_cpu_ns;
+                        value.work_arithmetic = task.work_arithmetic;
                         value.dispatch_started = task.dispatch_started;
                         value.dispatch_accepted = task.dispatch_accepted;
                         value.dispatch_thread_cpu_ns = task.dispatch_thread_cpu_ns;
@@ -302,7 +317,7 @@ impl PublicRequestObserver {
             }
         }
         PublicRequestObservationSnapshot {
-            schema: "public-v3-local-request-resource-observation-v2",
+            schema: "public-v3-local-request-resource-observation-v3",
             capacity: self.0.capacity,
             accepted_connections_seen: self.0.seen.load(Ordering::Acquire),
             records_not_retained: self.0.omitted.load(Ordering::Acquire),
@@ -311,7 +326,10 @@ impl PublicRequestObserver {
             records,
             observation_has_consensus_authority: false,
             cpu_intervals_are_nested_not_additive: true,
-            cpu_includes_reactor_authentication_or_response_signing: false,
+            cpu_includes_reactor_authentication_or_response_signing: true,
+            cpu_includes_reactor_authentication: false,
+            dispatch_cpu_includes_paid_body_decode: true,
+            dispatch_cpu_includes_response_signing: true,
             submit_phase_cpu_excludes_scoped_workers: true,
             stream_bytes_are_physical_network_bytes: false,
         }
@@ -473,6 +491,11 @@ impl TaskObservation {
             r.full_work_started = true;
         });
     }
+    pub(super) fn work_arithmetic(&self, observation: PublicArithmeticWorkObservation) {
+        self.0.update_task(|r| {
+            r.work_arithmetic = Some(observation);
+        });
+    }
     pub(super) fn work_finished(&self, cpu: Option<u64>, accepted: bool) {
         self.0.update_task(|r| {
             r.full_work_thread_cpu_ns = cpu;
@@ -585,8 +608,12 @@ mod tests {
         let snapshot = observer.snapshot();
         assert_eq!(
             snapshot.schema,
-            "public-v3-local-request-resource-observation-v2"
+            "public-v3-local-request-resource-observation-v3"
         );
+        assert!(snapshot.cpu_includes_reactor_authentication_or_response_signing);
+        assert!(!snapshot.cpu_includes_reactor_authentication);
+        assert!(snapshot.dispatch_cpu_includes_paid_body_decode);
+        assert!(snapshot.dispatch_cpu_includes_response_signing);
         assert!(snapshot.submit_phase_cpu_excludes_scoped_workers);
         assert!(snapshot.cpu_intervals_are_nested_not_additive);
         assert!(!snapshot.observation_has_consensus_authority);

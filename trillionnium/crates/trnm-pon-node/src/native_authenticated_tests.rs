@@ -57,6 +57,9 @@ fn make(node: &Node, parent: Hash, transactions: Vec<Vec<u8>>) -> Packet {
 }
 fn open(path: &Path, backend: StateBackend) -> Node {
     match backend {
+        StateBackend::PermanentAccountGrowthV2 => {
+            panic!("use the separately selected growth fixture")
+        }
         StateBackend::Legacy => Node::open(path, settings(), 1).unwrap(),
         StateBackend::AuthenticatedV1 => {
             Node::open_with_authenticated_state(path, settings(), 1).unwrap()

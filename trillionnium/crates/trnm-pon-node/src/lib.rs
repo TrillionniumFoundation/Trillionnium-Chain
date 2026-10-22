@@ -28,7 +28,8 @@ mod store;
 pub use error::{Error, ErrorCode, ErrorKind};
 use serde_json::{json, Value};
 pub use store::authenticated_migration::{
-    AuthenticatedMigrationProgress, AuthenticatedMigrationReceipt, GrowthMigrationPlanV2,
+    verify_growth_rehearsal_v2, AuthenticatedMigrationProgress, AuthenticatedMigrationReceipt,
+    GrowthMigrationPlanV2, GrowthRehearsalProgressV2, GrowthRehearsalReceiptV2,
     GrowthStorageReservationV2, PreservedTable,
 };
 pub use store::capacity_observation::CapacityObservation;
@@ -36,6 +37,7 @@ pub use store::evaluation_observation::{EvaluationAnchor, EvaluationObservation,
 pub use store::evaluation_round_observation::{
     EvaluationRoundAnchor, EvaluationRoundBaseAnchor, EvaluationRoundObservation,
 };
+pub use store::growth::{GrowthObservation, GrowthPacket, GrowthProgress, GrowthWorkingSnapshot};
 pub use store::growth_reference::GrowthReferenceObservation;
 pub use store::mempool::{
     PoolBatch, PoolGcSummary, PoolGroupStatus, PoolLimits, PoolReceipt, PoolState, PoolStatus,
@@ -44,6 +46,10 @@ pub use store::mempool::{
 pub use store::native_budget::{
     NativeBudgetInventoryV1, NativeBudgetLaneV1, NativeBudgetLocalRecordV1,
     NativeBudgetObservationV1, NativeBudgetRequestV1, NativeContributionClaimV1,
+};
+pub use store::storage_service::{
+    native_cell_repair_subject_v1, NativeCellEffectReadbackV1, NativeCellRepairCpuObservationV1,
+    NativeCellRepairRequestV1, NativeCellRetentionRequestV1,
 };
 pub use store::{
     ConfirmationBatch, ContinuousSearchRequest, DerivedCommitmentStatus, MiningEpochCancellation,

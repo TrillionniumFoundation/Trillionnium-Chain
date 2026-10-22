@@ -9,6 +9,8 @@ on:
       - formal/pon-nakamoto-v1/bounded_process*.py
       - scripts/run_pon_w1_native_campaign.py
       - scripts/pon_public_v3_phase_read.py
+      - scripts/pon_public_v3_policy_read.py
+      - scripts/ci/test_pon_public_v3_policy_read.py
       - scripts/project-preflight.sh
       - scripts/ci/verify_ci_source.py
       - .github/workflows/pon-native-campaign-qualification.yml
@@ -94,15 +96,19 @@ jobs:
           sys.path[:0] = [str(root / 'scripts'), str(root / 'scripts/ci')]
           import run_pon_w1_native_campaign as bounds
           import pon_public_v3_phase_read as phase_reader
+          from pon_public_v3_policy_read import load_profiles, policy_id
           from verify_ci_source import verify
 
           selector = 'separate_process_work_and_signed_confirmation_campaign'
+          policy_vectors = load_profiles()
+          expected_public_policy = policy_id(policy_vectors, policy_vectors['current_revision'], 8, 2000)
           result = {
               'schema': 'pon-original-native-campaign-ci-v1',
               'source_kind': 'head', 'expected_head': expected_head,
               'expected_tree': expected_tree, 'profile': 'release',
               'toolchain': '1.95.0', 'state_backend': 'authenticated-v1',
               'planned_complete_runs': 3, 'attempts': [],
+              'expected_public_policy_id': expected_public_policy,
               'started_utc': datetime.now(timezone.utc).isoformat(),
               'build_timeout_seconds': 1800,
               'original_campaign_outer_timeout_seconds': 600,
@@ -219,7 +225,7 @@ jobs:
                   try:
                       raw_path = report_dir / 'report.json'
                       report_hash = bounds.sha(raw_path)
-                      derived = phase_reader.read_report(raw_path, report_hash)
+                      derived = phase_reader.read_report(raw_path, report_hash, expected_public_policy)
                       bounds.write_new(out / f'{name}-phase-readback.json', derived)
                       raw = json.loads(raw_path.read_bytes())
                       preparation = raw['preparation']
