@@ -331,6 +331,10 @@ impl Node {
             matches!(self.state_backend, StateBackend::Legacy),
             "AUTHENTICATED_MIGRATION_SOURCE_PROFILE",
         )?;
+        ensure(
+            !trnm_mvcc_fee::growth_profile_v2::enabled(&self.settings.app),
+            "GROWTH_REFERENCE_MIGRATION_UNSUPPORTED",
+        )?;
         // A copied DB must never become an unrestricted route around an external
         // task/mining/continuous-owner journal. Such ownership requires its own
         // authorized migration relation; it is not implicitly downgraded here.

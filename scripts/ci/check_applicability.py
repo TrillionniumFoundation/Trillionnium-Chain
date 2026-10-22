@@ -17,6 +17,35 @@ EVALUATION_QUORUM_PROFILE = 'native-evaluation-quorum-v2'
 MODEL_EVOLUTION_PROFILE = 'model-evolution-v5'
 MODEL_TASK_WINDOWS_PROFILE = 'model-task-windows-v1'
 CELL_P2P_PROFILE = 'cell-p2p-v1'
+NATIVE_CONTINUATION_PROFILES = {
+    'native-growth-reference-v2': {
+        'configuration': 'config/pon/growth-reference-v2.json',
+        'revision_pointer': 'consensus_revision', 'consensus_revision': 17,
+        'document': 'docs/development/specs/pon/PERMANENT_ACCOUNT_STORAGE_BOUNDARY.md',
+        'entrypoint': {'path': 'trillionnium/crates/trnm-pon-node/src/store/growth_reference.rs',
+                       'symbol': 'Node::growth_reference_observation'},
+        'modules': ['M00', 'M06', 'M07', 'M08', 'M17'],
+        'tests': ['trillionnium/crates/trnm-pon-node/src/store/growth_reference_tests.rs::' + name
+                  for name in ('native_growth_reference_signed_zero_reentry_and_cold_recovery',
+                               'native_growth_reference_reorganization_cut_and_corruption_fail_stop',
+                               'native_growth_reference_65537_signed_accounts_and_cold_reopen',
+                               'native_growth_reference_public_checked_apis_bind_actual_profile_parent')],
+    },
+    'native-local-budget-obligations-v1': {
+        'configuration': None, 'revision_pointer': None, 'consensus_revision': None,
+        'document': 'docs/development/specs/pon/REWARD_BUDGETS_V1.md',
+        'entrypoint': {'path': 'trillionnium/crates/trnm-pon-node/src/store/native_budget.rs',
+                       'symbol': 'Node::reserve_native_budget_v1'},
+        'modules': ['M07', 'M12', 'M15', 'M17'],
+        'tests': ['trillionnium/crates/trnm-pon-node/src/store/native_budget_tests.rs::' + name
+                  for name in ('native_signed_funding_and_exact_operations_survive_both_backends_reopen',
+                               'fork_or_spent_source_denies_new_intent_but_preserves_resource_and_target_receipt',
+                               'transaction_failure_leaves_no_partial_record_head_or_double_resource_charge',
+                               'cold_open_refuses_deleted_oversized_and_forged_funding_records',
+                               'native_mining_funds_keep_maturity_and_do_not_create_payment_authority',
+                               'abrupt_exit_preserves_committed_resource_reservations_and_pending_intent')],
+    },
+}
 MODEL_AND_CELL_TESTS = {
     MODEL_EVOLUTION_PROFILE: {
         'trillionnium/crates/trnm-protocol/tests/integer_evolution_v3.rs': {
@@ -117,6 +146,18 @@ NATIVE_STORAGE_TESTS = {
         'SignedApplicationControls.test_native_compact_query_is_independently_checked_when_present',
     },
 }
+
+
+def validate_native_continuation_profile(profile: dict) -> None:
+    """Keep the new native reference and local obligations in their exact scope."""
+    expected = NATIVE_CONTINUATION_PROFILES[profile['id']]
+    for field in ('configuration', 'revision_pointer', 'consensus_revision',
+                  'document', 'entrypoint', 'modules'):
+        require(profile[field] == expected[field], 'native continuation boundary identity')
+    require(set(expected['tests']) <= set(profile['tests']),
+            'native continuation recovery and negative controls required')
+    require(profile['evidence_class'] == 'source-binding' and profile['receipt'] is None,
+            'native continuation navigation cannot claim execution acceptance')
 
 
 def validate_evaluation_quorum_profile(profile: dict) -> None:
@@ -232,7 +273,7 @@ def validate(root: Path = ROOT) -> dict:
             'history-state-resource-bounds', 'internal-error-identity', 'model-composition-v4',
             'account-archive-research-v1', 'model-window-history-v1', NATIVE_STORAGE_PROFILE,
             EVALUATION_QUORUM_PROFILE, MODEL_EVOLUTION_PROFILE, MODEL_TASK_WINDOWS_PROFILE,
-            CELL_P2P_PROFILE},
+            CELL_P2P_PROFILE, *NATIVE_CONTINUATION_PROFILES},
             'applicability profile coverage')
     for profile in profiles:
         require(profile['modules'] and set(profile['modules']) <= set(maturity), 'profile modules')
@@ -243,6 +284,8 @@ def validate(root: Path = ROOT) -> dict:
             validate_evaluation_quorum_profile(profile)
         if profile['id'] in MODEL_AND_CELL_TESTS:
             validate_model_and_cell_profile(profile)
+        if profile['id'] in NATIVE_CONTINUATION_PROFILES:
+            validate_native_continuation_profile(profile)
         safe(root, profile['document'])
         check_symbol(root, profile['entrypoint'])
         require(profile['tests'], 'missing profile tests')

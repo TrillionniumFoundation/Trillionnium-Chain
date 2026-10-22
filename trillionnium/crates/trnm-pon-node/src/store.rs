@@ -4,12 +4,14 @@ pub(crate) mod authenticated_state;
 pub mod capacity_observation;
 pub mod evaluation_observation;
 pub mod evaluation_round_observation;
+pub mod growth_reference;
 mod historical_commitment;
 #[cfg(test)]
 mod historical_commitment_tests;
 mod history_page;
 pub mod mempool;
 pub(crate) mod native_authenticated;
+pub mod native_budget;
 mod operator_continuous_owner;
 mod operator_mining_owner;
 #[cfg(test)]
@@ -44,14 +46,15 @@ use trnm_crypto_primitives::qualified_work_task::{
 };
 use trnm_mvcc_fee::checkpoint_tile_policy_v1::PROFILE as CHECKPOINT_TASK_PROFILE;
 use trnm_mvcc_fee::continuity_v1::{self, PROFILE as CONTINUITY_TASK_PROFILE};
+use trnm_mvcc_fee::growth_profile_v2::{self, PROFILE as GROWTH_TASK_PROFILE};
 use trnm_mvcc_fee::pon_commitment::{
     self, CacheLimits, CheckedCommitment, CommitmentObservation, ExecutionRequest,
     PreparedCommitment,
 };
+#[cfg(test)]
+use trnm_mvcc_fee::pon_executor::root;
 use trnm_mvcc_fee::pon_executor::SIGNED_TASK_PROFILE;
-use trnm_mvcc_fee::pon_executor::{
-    root, ExecutionControl, ExecutionError, ExecutionProgress, State,
-};
+use trnm_mvcc_fee::pon_executor::{ExecutionControl, ExecutionError, ExecutionProgress, State};
 use trnm_mvcc_fee::qualified_task_lifecycle;
 use trnm_protocol::pon_wire::{hash, Hash, Header, HEADER_BYTES};
 use trnm_protocol::qualified_work_task::lifecycle_v2::PROFILE as LIFECYCLE_TASK_PROFILE;
@@ -584,6 +587,16 @@ impl StateBackend {
             Self::AuthenticatedV1 => format!("{}{}", ddl(), native_authenticated::DDL),
         }
     }
+    fn selected_schema_id(self, settings: &Settings) -> Hash {
+        if growth_profile_v2::enabled(&settings.app) {
+            hash(
+                b"native-growth-reference-branch-schema-v2",
+                &[self.ddl().as_bytes()],
+            )
+        } else {
+            self.schema_id()
+        }
+    }
     fn schema_id(self) -> Hash {
         let domain: &[u8] = match self {
             Self::Legacy => b"native-branch-schema-v2",
@@ -937,6 +950,17 @@ impl Node {
             mining: mining_owner,
             continuous: continuous_owner,
         } = owners;
+        if growth_profile_v2::enabled(&settings.app) {
+            ensure(
+                state_backend == StateBackend::Legacy,
+                "GROWTH_REFERENCE_BACKEND",
+            )?;
+            ensure(
+                owner_policy.is_none() && mining_owner.is_none() && continuous_owner.is_none(),
+                "GROWTH_REFERENCE_OWNER",
+            )?;
+        }
+
         ensure(
             usize::from(owner_policy.is_some())
                 + usize::from(mining_owner.is_some())
@@ -985,7 +1009,7 @@ impl Node {
             .try_lock_exclusive()
             .map_err(|_| Error::from("WRITER_BUSY"))?;
         let ddl = state_backend.ddl();
-        let schema_id = state_backend.schema_id();
+        let schema_id = state_backend.selected_schema_id(&settings);
         let expected = canonical(
             &serde_json::json!({"schema":hex::encode(schema_id),"parameters":hex::encode(settings.parameters()),"genesis":hex::encode(settings.genesis())}),
         )?;
@@ -1102,7 +1126,7 @@ impl Node {
                 params![
                     settings.genesis.as_slice(),
                     [0u8; 64].as_slice(),
-                    root(&settings.initial)?.as_slice()
+                    settings.state_root(&settings.initial)?.as_slice()
                 ],
             )?;
             tx.execute(
@@ -1170,6 +1194,7 @@ impl Node {
         }
         node.validate_authenticated_replay()?;
         node.validate_authenticated_outbox()?;
+        node.validate_native_budget_records_v1()?;
         node.recover()?;
         node.read_active()?;
         crate::ancestry_index::validate_tip(&node.db, node.ancestry_context(), node.active()?.0)?;
@@ -1816,7 +1841,10 @@ impl Node {
     }
     fn storage_context(&self) -> Result<()> {
         for (key, expected) in [
-            ("schema", self.state_backend.schema_id()),
+            (
+                "schema",
+                self.state_backend.selected_schema_id(&self.settings),
+            ),
             ("parameters", self.settings.parameters()),
             ("genesis", self.settings.genesis()),
         ] {
@@ -1851,7 +1879,7 @@ impl Node {
             self.authenticated_arithmetic
                 .state_root(&self.settings, state)?
         } else {
-            root(state)?
+            self.settings.state_root(state)?
         };
         ensure(actual_root == record.root, "ROOT").map_err(Error::local_integrity)?;
         if self.state_backend == StateBackend::AuthenticatedV1 {
@@ -1997,7 +2025,12 @@ impl Node {
                 let key_len: i64 = row.get(2)?;
                 let value_len: i64 = row.get(3)?;
                 ensure(
-                    state.len() < 65_536
+                    state.len()
+                        < if growth_profile_v2::enabled(&self.settings.app) {
+                            growth_profile_v2::MAX_TOTAL_KEYS
+                        } else {
+                            65_536
+                        }
                         && (0..=160).contains(&key_len)
                         && (0..=4096).contains(&value_len),
                     "STATE_BYTES",
@@ -2051,8 +2084,11 @@ impl Node {
         expected: Hash,
         prior: Option<&CheckedCommitment>,
     ) -> Result<PreparedCommitment> {
-        let result =
-            pon_commitment::checked_snapshot(actual, expected, prior, CacheLimits::default());
+        let result = if growth_profile_v2::enabled(&self.settings.app) {
+            pon_commitment::growth_reference_snapshot(actual, Some(expected), &self.settings.app)
+        } else {
+            pon_commitment::checked_snapshot(actual, expected, prior, CacheLimits::default())
+        };
         match result {
             Ok(prepared) => {
                 if self.state_backend == StateBackend::AuthenticatedV1 {
@@ -2200,6 +2236,18 @@ impl Node {
         .flatten();
         // Always encode/compare the actual supplied parent with its admitted root.
         // Missing/refused/wrong material retains the original complete fallback.
+        if growth_profile_v2::enabled(&self.settings.app) {
+            let result = pon_commitment::execute_growth_reference_with_control(
+                actual,
+                current_root,
+                block,
+                &self.settings.app,
+                control,
+            )
+            .map_err(local_execution_error)?;
+            *self.commitment_observation.borrow_mut() = Some(result.commitment.observation.clone());
+            return Ok(result);
+        }
         let (bound, observation) = pon_commitment::CheckedExecutionParent::check_and_bind(
             actual,
             current_root,
@@ -2264,7 +2312,11 @@ impl Node {
         actual: &State,
         prior: Option<&CheckedCommitment>,
     ) -> Result<PreparedCommitment> {
-        let prepared = pon_commitment::derive_snapshot(actual, prior, CacheLimits::default())?;
+        let prepared = if growth_profile_v2::enabled(&self.settings.app) {
+            pon_commitment::growth_reference_snapshot(actual, None, &self.settings.app)?
+        } else {
+            pon_commitment::derive_snapshot(actual, prior, CacheLimits::default())?
+        };
         *self.commitment_observation.borrow_mut() = Some(prepared.observation.clone());
         Ok(prepared)
     }
@@ -3498,7 +3550,10 @@ impl Node {
         // These are disposable accelerators: retain the existing 64-row policy,
         // genesis anchor, full history/delta checks and post-write readback.
         // Legacy cadence remains unchanged; no validity verdict is cached.
-        if self.state_backend == StateBackend::AuthenticatedV1 || h.height.is_multiple_of(128) {
+        if self.state_backend == StateBackend::AuthenticatedV1
+            || growth_profile_v2::enabled(&self.settings.app)
+            || h.height.is_multiple_of(128)
+        {
             ensure(
                 tx.execute(
                     "INSERT INTO snapshots VALUES(?,?)",
@@ -3650,6 +3705,7 @@ impl Node {
                     | ATOMIC_TASK_PROFILE
                     | OVERLAP_TASK_PROFILE
                     | CONTINUITY_TASK_PROFILE
+                    | GROWTH_TASK_PROFILE
                     | CHECKPOINT_TASK_PROFILE
             ),
             "WORK_TASK_PROFILE",
@@ -3692,6 +3748,7 @@ impl Node {
                     | ATOMIC_TASK_PROFILE
                     | OVERLAP_TASK_PROFILE
                     | CONTINUITY_TASK_PROFILE
+                    | GROWTH_TASK_PROFILE
                     | CHECKPOINT_TASK_PROFILE
             ),
             "WORK_TASK_PROFILE",
@@ -3756,6 +3813,7 @@ impl Node {
                     | ATOMIC_TASK_PROFILE
                     | OVERLAP_TASK_PROFILE
                     | CONTINUITY_TASK_PROFILE
+                    | GROWTH_TASK_PROFILE
                     | CHECKPOINT_TASK_PROFILE
             ),
             "WORK_TASK_PROFILE",
@@ -3840,6 +3898,7 @@ impl Node {
                 | ATOMIC_TASK_PROFILE
                 | OVERLAP_TASK_PROFILE
                 | CONTINUITY_TASK_PROFILE
+                | GROWTH_TASK_PROFILE
                 | CHECKPOINT_TASK_PROFILE
         ) {
             let eligible =
@@ -4409,8 +4468,11 @@ impl Node {
         let state = self.slot_state(g)?;
         continuity_v1::check_state(&state, self.record(target)?.height, &self.settings.app)
             .map_err(|error| Error::from(error).local_integrity())?;
-        ensure(root(&state)? == self.record(target)?.root, "ROOT")
-            .map_err(Error::local_integrity)?;
+        ensure(
+            self.settings.state_root(&state)? == self.record(target)?.root,
+            "ROOT",
+        )
+        .map_err(Error::local_integrity)?;
         cut(hook, "before-publish")?;
         self.atomic(|| {
             let expected: Vec<(u64, u64, Hash)> = self
@@ -4805,7 +4867,7 @@ impl Node {
         let (authenticated_outbox_sessions, authenticated_outbox_pending) =
             self.authenticated_outbox_counts()?;
         Ok(
-            serde_json::json!({"network":hex::encode(self.settings.network()),"parameters":hex::encode(self.settings.parameters()),"genesis":hex::encode(self.settings.genesis()),"tip":hex::encode(tip),"height":row.height,"chainwork_hex":hex::encode(row.work.bytes()),"state_root":hex::encode(root(&state)?),"generation":g,"state_keys":state.len(),"stored_blocks":blocks,"events":events,"authenticated_sessions":authenticated_sessions,"authenticated_pending":authenticated_pending,"authenticated_audit_rows":authenticated_audit_rows,"authenticated_outbox_sessions":authenticated_outbox_sessions,"authenticated_outbox_pending":authenticated_outbox_pending,"production_activation":false}),
+            serde_json::json!({"network":hex::encode(self.settings.network()),"parameters":hex::encode(self.settings.parameters()),"genesis":hex::encode(self.settings.genesis()),"tip":hex::encode(tip),"height":row.height,"chainwork_hex":hex::encode(row.work.bytes()),"state_root":hex::encode(self.settings.state_root(&state)?),"generation":g,"state_keys":state.len(),"stored_blocks":blocks,"events":events,"authenticated_sessions":authenticated_sessions,"authenticated_pending":authenticated_pending,"authenticated_audit_rows":authenticated_audit_rows,"authenticated_outbox_sessions":authenticated_outbox_sessions,"authenticated_outbox_pending":authenticated_outbox_pending,"production_activation":false}),
         )
     }
 }

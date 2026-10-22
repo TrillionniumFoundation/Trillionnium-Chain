@@ -311,10 +311,10 @@
           "id": "M06.ExecuteCandidate",
           "inputs": "parent map, ordered signed txs,height,miner,parentId",
           "output": "next map, ordered receipts, state root",
-          "algorithm": "Run deterministic due expiry and maturity before txs; execute the closed command set enabled by the exact context; transfer exact fees, stage subsidy; verify global conservation and size bounds. Remote calls, floats and evaluator programs never run inside state transition. Explicit AAW1/AAM1 research execution gates actual semantic account accesses and applies proof-derived mandatory/final account roots while retaining complete non-account inputs and the independent full State reference. The optional native authenticated backend binds the actual resulting StateCommitment and changed paths to the admitted block; it does not replace full-State execution. An explicit monetary-range path authenticates every quota:/release:/reward:/task: row, including future and zero-valued obligations, with immediate ordered boundaries and canonical shared frontier against a private full-parent anchor. M06 independently checks the exact parent projection and consumes those verified rows for mandatory monetary discovery and original capacity; other non-account rules and default admission retain the complete State reference.",
+          "algorithm": "Run deterministic due expiry and maturity before txs; execute the closed command set enabled by the exact context; transfer exact fees, stage subsidy; verify global conservation and size bounds. Remote calls, floats and evaluator programs never run inside state transition. Explicit AAW1/AAM1 research execution gates actual semantic account accesses and applies proof-derived mandatory/final account roots while retaining complete non-account inputs and the independent full State reference. The optional native authenticated backend binds the actual resulting StateCommitment and changed paths to the admitted block; it does not replace full-State execution. An explicit monetary-range path authenticates every quota:/release:/reward:/task: row, including future and zero-valued obligations, with immediate ordered boundaries and canonical shared frontier against a private full-parent anchor. M06 independently checks the exact parent projection and consumes those verified rows for mandatory monetary discovery and original capacity; other non-account rules and default admission retain the complete State reference. The separately selected revision17 growth-reference profile partitions permanent account root/count/balance from bounded working root/count/liabilities in GSC2, binds the exact frozen policy in parameters, and uses this same native transition and recovery engine. It still reads the complete State; no bounded-witness or throughput qualification follows.",
           "commit": "Return complete state/delta intent; caller M07 owns persistence.",
           "errors": "EVIDENCE, AUTHORITY, STATE, FUNDS, CONSERVATION, LIMIT",
-          "limits": "expiry16,task256,tx256,statekeys65536 Monetary ranges are a separate research input with full-parent checking, not a compact substitute for complete State validation or a new consensus activation."
+          "limits": "expiry16,task256,tx256,statekeys65536 Monetary ranges are a separate research input with full-parent checking, not a compact substitute for complete State validation or a new consensus activation. The explicit growth-reference policy has separate limits of 1,000,000 permanent accounts and 65,536 working keys; default and previous profile bounds retain their exact values."
         },
         {
           "id": "M06.DeriveBranchDelta",
@@ -381,7 +381,8 @@
         "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_primitive_tests.rs",
         "trillionnium/crates/trnm-pon-node/src/native_ancestry_commit_tests.rs",
         "trillionnium/crates/trnm-pon-node/src/native_account_query_tests.rs",
-        "trillionnium/crates/trnm-pon-node/src/ancestry_index.rs"
+        "trillionnium/crates/trnm-pon-node/src/ancestry_index.rs",
+        "trillionnium/crates/trnm-mvcc-fee/src/growth_profile_v2.rs"
       ],
       "test_classes": [
         "ExecutionTests",
@@ -412,7 +413,7 @@
           "id": "M07.OpenNamespace",
           "inputs": "Private path, expected Settings/parameter commitment and explicit local backend; migration additionally requires an already held legacy Node and fresh destination path.",
           "output": "One writable Node namespace or refusal; explicit migration returns a checked preservation receipt only after the fresh destination fence is durably released.",
-          "algorithm": "Default legacy-v2 and explicit authenticated-v1 Node openers verify separate exact schema identities and reject one another without mutation. New authenticated initialization seeds the actual genesis commitment inside the native namespace. One-time migration holds the legacy writer lock and consistent snapshot, replays every retained native block against actual parent/header/work/application/receipts authority, preserves all retained typed local rows, and constructs a fresh destination behind a durable pending fence. Atomic no-replace staging publication, final closed/reopened validation and durable fence removal are required before success; external owner-journal sources and nested/existing targets reject. Existing owned initialization crash recovery retains its exact durable intent; foreign incomplete databases and injected schema objects still reject without writable mutation.",
+          "algorithm": "Default legacy-v2 and explicit authenticated-v1 Node openers verify separate exact schema identities and reject one another without mutation. New authenticated initialization seeds the actual genesis commitment inside the native namespace. One-time migration holds the legacy writer lock and consistent snapshot, replays every retained native block against actual parent/header/work/application/receipts authority, preserves all retained typed local rows, and constructs a fresh destination behind a durable pending fence. Atomic no-replace staging publication, final closed/reopened validation and durable fence removal are required before success; external owner-journal sources and nested/existing targets reject. Existing owned initialization crash recovery retains its exact durable intent; foreign incomplete databases and injected schema objects still reject without writable mutation. The explicit growth-reference profile additionally selects its own schema domain and GSC2 root under the existing full-State SQLite backend, rejecting authenticated-v1 and external operator owners. It cannot open an old-profile namespace or silently migrate its roots.",
           "commit": "Existing native initialization retains its durable intent transaction. Authenticated migration never rewrites the legacy source or resumes its reorg; only a fresh fully checked target is released, with pending reorg/local facts preserved and no external operations dispatched.",
           "errors": "NAMESPACE, WRITER_BUSY, NETWORK",
           "limits": "One native writer; ordinary append updates the active slot, while a pending fork may own a separate staged slot. Migration retains all source history and uses a fresh destination; no in-place conversion or partial-State cost claim."
@@ -447,7 +448,9 @@
         "trillionnium/crates/trnm-pon-node/src/native_ancestry_commit_tests.rs",
         "trillionnium/crates/trnm-pon-node/src/native_account_query_tests.rs",
         "trillionnium/crates/trnm-pon-node/src/ancestry_index.rs",
-        "scripts/ci/ci_job.sh"
+        "scripts/ci/ci_job.sh",
+        "trillionnium/crates/trnm-pon-node/src/store/growth_reference.rs",
+        "trillionnium/crates/trnm-pon-node/src/store/native_budget.rs"
       ],
       "test_classes": [
         "DiskReorgTests",
@@ -689,7 +692,9 @@
       "source_refs": [
         "formal/pon-nakamoto-v1/experiments/settle_model.py",
         "formal/pon-nakamoto-v1/ledger.py",
-        "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs"
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+        "trillionnium/crates/trnm-pon-node/src/store/native_budget.rs",
+        "trillionnium/crates/trnm-pon-node/src/store/native_budget_relation.rs"
       ],
       "test_classes": [
         "ExecutionTests"

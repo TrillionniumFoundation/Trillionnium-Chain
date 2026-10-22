@@ -1303,6 +1303,7 @@ fn run() -> Result<Value> {
     // Reject other profiles before opening or creating a store.
     if command == "capacity-observe"
         && settings.task_profile() != trnm_mvcc_fee::continuity_v1::PROFILE
+        && settings.task_profile() != trnm_mvcc_fee::growth_profile_v2::PROFILE
     {
         return Err("CONTINUITY_PROFILE".into());
     }

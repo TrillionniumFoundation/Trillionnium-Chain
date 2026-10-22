@@ -78,6 +78,17 @@ ACCOUNT_ARCHIVE_ORACLE = ('    python3 formal/pon-nakamoto-v1/test_account_archi
 ACCOUNT_EXECUTION_ORACLE = ('    python3 formal/pon-nakamoto-v1/test_account_execution_oracle.py -v\n'
                             '    python3 formal/pon-nakamoto-v1/test_state_witness_oracle.py -v\n'
                             '    python3 scripts/ci/run_account_execution_conformance.py\n')
+GSC2_SYNTHETIC_ORACLE = '    python3 -B formal/pon-nakamoto-v1/test_gsc2_native_readback_synthetic.py --source-root "$(pwd -P)"\n'
+NATIVE_GROWTH_RELEASE_BLOCK = '''      test ! -e "$trnm_native_receipt_root/native-growth-reference-release.log"
+      test ! -L "$trnm_native_receipt_root/native-growth-reference-release.log"
+      test ! -e "$trnm_native_receipt_root/native-growth-reference"
+      test ! -L "$trnm_native_receipt_root/native-growth-reference"
+      TRNM_NATIVE_GROWTH_EXPORT_DIRECTORY="$trnm_native_receipt_root/native-growth-reference" cargo test --offline --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib store::growth_reference::tests::native_growth_reference_65537_signed_accounts_and_cold_reopen -- --exact --ignored --nocapture --test-threads=1 2>&1 | tee "$trnm_native_receipt_root/native-growth-reference-release.log"
+      python3 scripts/ci/check_required_native_test.py "$trnm_native_receipt_root/native-growth-reference-release.log" --test store::growth_reference::tests::native_growth_reference_65537_signed_accounts_and_cold_reopen
+      test ! -e "$trnm_native_receipt_root/native-growth-reference/readback.json"
+      test ! -L "$trnm_native_receipt_root/native-growth-reference/readback.json"
+      python3 -B formal/pon-nakamoto-v1/check_gsc2_native_readback.py --artifact-dir "$trnm_native_receipt_root/native-growth-reference" --source-root "$(pwd -P)" --minimum-accounts 65537 > "$trnm_native_receipt_root/native-growth-reference/readback.json"
+'''
 RUST_ALL_TARGETS = 'cargo test --locked --manifest-path trillionnium/Cargo.toml --workspace --all-targets --all-features'
 RUST_DOCS = '    cargo test --locked --manifest-path trillionnium/Cargo.toml --workspace --doc --all-features\n'
 RUST_CLIPPY = '    cargo clippy --locked --manifest-path trillionnium/Cargo.toml --workspace --all-targets --all-features -- -D warnings\n'
@@ -143,6 +154,7 @@ NATIVE_RELEASE_BLOCK = '''    (
       test ! -L "$trnm_native_receipt_root/native-capacity-release.log"
       cargo test --offline --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib account_archive_prototype::native_store::batch_tests::native_authenticated_full_capacity_refund_entry_and_pending_reorganization_recover -- --exact --ignored --nocapture --test-threads=1 2>&1 | tee "$trnm_native_receipt_root/native-capacity-release.log"
       python3 scripts/ci/check_required_native_test.py "$trnm_native_receipt_root/native-capacity-release.log" --test account_archive_prototype::native_store::batch_tests::native_authenticated_full_capacity_refund_entry_and_pending_reorganization_recover
+''' + NATIVE_GROWTH_RELEASE_BLOCK + '''\
       test ! -e "$trnm_native_receipt_root/native-account-verification-cost"
       test ! -L "$trnm_native_receipt_root/native-account-verification-cost"
       test ! -e "$trnm_native_receipt_root/native-account-verification-cost.log"
@@ -170,6 +182,9 @@ def check_independent_conformance(script: str, required: set[str]) -> None:
     reward_budgets = '    python3 formal/pon-nakamoto-v1/test_reward_budget_oracle.py\n'
     require(reward_budgets in lanes['protocol-contract'] and script.count(reward_budgets) == 1,
             'five-lane reward budget controls must execute exactly once in protocol-contract')
+    require(code_lines(lanes['protocol-contract']).count(GSC2_SYNTHETIC_ORACLE.strip()) == 1
+            and code_lines(script).count(GSC2_SYNTHETIC_ORACLE.strip()) == 1,
+            'GSC2 synthetic readback counterexamples must execute exactly once in protocol-contract with the current source root')
     continuity = CONTINUITY_BUILD + CONTINUITY_ORIGINAL + CONTINUITY_TRANSITIONS + PAIRED_WORK_ORACLE + ZERO_WORK_ORACLE
     require(continuity in lanes['protocol-contract'] and script.count(CONTINUITY_ORIGINAL) == 1
             and script.count(CONTINUITY_TRANSITIONS) == 1,
@@ -194,11 +209,21 @@ def check_independent_conformance(script: str, required: set[str]) -> None:
     require(NODE_EXAMPLE_BUILD + ACCOUNT_ARCHIVE_ORACLE + ACCOUNT_EXECUTION_ORACLE in lanes['protocol-contract'] and
             script.count(ACCOUNT_EXECUTION_ORACLE) == 1,
             'native account execution, complete state witness and independent JSON oracles must execute once after the actual Node release build')
+    require(NODE_EXAMPLE_BUILD + ACCOUNT_ARCHIVE_ORACLE + ACCOUNT_EXECUTION_ORACLE +
+            GSC2_SYNTHETIC_ORACLE in lanes['protocol-contract'],
+            'GSC2 synthetic counterexamples must follow the unchanged native archive/execution oracle sequence')
     expected = ('    cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check\n'
                 '    python3 scripts/ci/run_supply_chain.py\n' + MODEL_OBSERVATION_BLOCK +
                 NATIVE_RELEASE_BLOCK + RUST_DOCS + RUST_CLIPPY)
     require(code_lines(lanes['rust-baseline']) == code_lines(expected),
-            'one actual workspace test must collect fresh native observations, check every independent reader, explicitly execute both release controls, then run docs/Clippy outside exports')
+            'one actual workspace test must collect fresh native observations, check every independent reader, explicitly execute all three release controls, then run docs/Clippy outside exports')
+    require(NATIVE_GROWTH_RELEASE_BLOCK in lanes['rust-baseline'] and
+            all(code_lines(script).count(command) == 1
+                for command in code_lines(NATIVE_GROWTH_RELEASE_BLOCK)),
+            'native 65537-account growth must execute once in rust-baseline with a fresh export, exact nonempty release test and independent SQLite readback')
+    require(script.count('TRNM_NATIVE_GROWTH_EXPORT_DIRECTORY') ==
+            NATIVE_GROWTH_RELEASE_BLOCK.count('TRNM_NATIVE_GROWTH_EXPORT_DIRECTORY'),
+            'native growth export selector must remain in its one release/readback block')
     require(script.count(RUST_ALL_TARGETS) == 1, 'the full workspace observation suite must execute exactly once')
     for selector in ['TRNM_MODEL_COMPOSITION_VECTORS', 'TRNM_MODEL_COMPOSITION_RUN_ID',
                      'TRNM_OBLIGATION_RANGE_VECTORS', 'TRNM_ZERO_PAIRED_PREFIX_OUTPUT',
@@ -206,7 +231,7 @@ def check_independent_conformance(script: str, required: set[str]) -> None:
         require(script.count(selector) == MODEL_OBSERVATION_BLOCK.count(selector),
                 'native observation selectors must remain inside the single test/oracle subshell')
     require(script.count(NATIVE_RELEASE_BLOCK) == 1,
-            'full-capacity and account-verification release controls must execute once sequentially')
+            'full-capacity, signed-growth and account-verification release controls must execute once sequentially')
 
 
 def require(ok: bool, message: str) -> None:

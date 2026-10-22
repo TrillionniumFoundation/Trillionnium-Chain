@@ -334,3 +334,5 @@ partial-State、数据可用性或独立验收，`independent_accepted=false`。
 - `formal/pon-nakamoto-v1/test_obligation_range_oracle.py::MonetaryRangeOracle.test_frontier_zero_overlap_duplicate_reorder_and_digest_changes_fail`.
 - `formal/pon-nakamoto-v1/test_obligation_range_oracle.py::MonetaryRangeOracle.test_exact_json_shape_dimensions_and_byte_bounds`.
 - `formal/pon-nakamoto-v1/test_obligation_range_oracle.py::MonetaryRangeOracle.test_serde_struct_bytes_are_canonical_independent_of_json_map_input_order`.
+
+The explicitly selected [growth-reference policy](../development/specs/pon/PERMANENT_ACCOUNT_STORAGE_BOUNDARY.md) uses a separate revision17 parameter/root domain and account/working capacities in the same executor. It retains complete State scans; bounded-witness execution and production acceptance remain open.

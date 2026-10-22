@@ -307,7 +307,7 @@ impl Session<'_, '_> {
         // Actual full State reconstruction/root validation remains with Node.
         let state = self.node.state_at(id)?;
         ensure(
-            trnm_mvcc_fee::pon_executor::root(&state)? == packet.header.state,
+            self.node.settings().state_root(&state)? == packet.header.state,
             "SUBMIT_RECOVERY_LOCAL_ROOT",
         )?;
         self.plan.alive()?;
@@ -347,7 +347,7 @@ impl Session<'_, '_> {
         let state = self.node.state_at(tip)?;
         ensure(
             head.height == expected_height
-                && head.state_root == hex::encode(trnm_mvcc_fee::pon_executor::root(&state)?),
+                && head.state_root == hex::encode(self.node.settings().state_root(&state)?),
             "SUBMIT_RECOVERY_HEAD_ROOT",
         )?;
         self.plan.alive()?;

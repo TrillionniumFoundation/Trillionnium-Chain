@@ -70,6 +70,7 @@ fn commitment_status(node: &Node) -> Value {
                     FullRootReason::WorkspaceBudget => "workspace-budget",
                     FullRootReason::DeltaBudget => "delta-budget",
                     FullRootReason::InternalSnapshotMismatch => "internal-snapshot-mismatch",
+                    FullRootReason::GrowthReferenceProfile => "growth-reference-profile",
                 }),
             ),
         };

@@ -221,3 +221,5 @@ packet equality, and cold reopen. Original controls remain mandatory. This is
 not remote Sybil qualification, independent model adoption, physical power loss
 or long-term DA evidence. Final-source head/actual-main-merge and paired Hepta
 acceptance must execute separately on both x64 and ARM64.
+
+The explicit [native growth reference](../development/specs/pon/PERMANENT_ACCOUNT_STORAGE_BOUNDARY.md) uses its own schema/root context with the existing full-State writer and recovery engine. Its namespace does not convert old roots or claim source-preserving migration. [Local budget obligations](../development/specs/pon/REWARD_BUDGETS_V1.md) persist separately from branch undo and confer no payment or effect authority.

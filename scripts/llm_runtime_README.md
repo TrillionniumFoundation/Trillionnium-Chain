@@ -69,7 +69,35 @@ CPU, observer CPU and end-to-end phase wall time. A held `pidfd` binds terminati
 to that child. RSS reads use the kernel's own fdinfo PID namespace mapping and
 verify the child PID, parent and namespace before and after observation; a local
 numeric PID is not assumed to name the same process in the mounted `/proc` view.
-Missing RSS while an exact wait observes a live child is a sticky failure.
+Under the default `strict-v1` observer, missing RSS while an exact wait observes
+a live child is a sticky failure.
+Such failures now retain the exact read-boundary reason and a bounded post-gap
+snapshot through the original held pidfd: leader state/RSS, group thread states
+and identity continuity. The snapshots occur after the missing sample and cannot
+replace it, establish memory bounds or turn a failed observation into success.
+
+Linux workers whose leader is already a zombie can still be running kernel exit
+cleanup before the group becomes waitable. The explicit
+`--exit-observation-profile linux-owned-exit-cleanup-v2` option freezes a fresh
+`llm-runtime-public-pilot-plan-v2`, including both observer source hashes. During
+the original missing-VmRSS sample it borrows the supervisor's original pidfd and
+holds every task directory FD across two complete observations. Classification
+requires a zombie leader, an unchanged complete task set and thread count, stable
+identity/starttime, and all tasks `PF_EXITING`, non-`PF_KTHREAD`, with no observable
+VmRSS and stat vsize/RSS fields zero. Malformed, missing or changed observations
+reject. A trace dictionary or later diagnostic cannot authorize this branch.
+
+The classified state permits at most 100ms from the original missing sample,
+bounded by the original wall deadline, to obtain the exact terminal wait4 receipt.
+Every intervening live poll rechecks the held directories and identities. Any
+fault, task-set change, unknown wait or timeout is sticky, including a later zero
+exit. Reservations and the original pidfd remain held through terminal cleanup;
+valid waited peak RSS/CPU and the original RSS/wall caps still govern success.
+No zero-RSS sample is inserted. Kernel exit can detach `current->mm` before its
+final release, so this classification establishes neither physical page release
+nor zero resource consumption. Historical failed observations retain their
+original strict-v1 outcome. The unit fixtures and live-user-thread refusal test
+qualify this boundary; they do not establish model efficacy.
 
 `sampled_peak_rss_bytes` remains the direct-child sampling result.
 `waited_child_peak_rss_bytes` separately records that exact child's Linux `wait4`

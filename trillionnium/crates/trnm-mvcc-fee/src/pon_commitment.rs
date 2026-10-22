@@ -62,6 +62,7 @@ pub enum FullRootReason {
     WorkspaceBudget,
     DeltaBudget,
     InternalSnapshotMismatch,
+    GrowthReferenceProfile,
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum CommitmentMethod {
@@ -133,6 +134,110 @@ pub struct ExecutionRequest<'a> {
     pub miner: Hash,
     pub parent_id: Hash,
     pub workers: usize,
+}
+
+/// Complete-State reference for the explicitly isolated growth profile. It does
+/// not create or reuse a legacy tree capability. The actual parent is checked
+/// against the owner's recorded root before any transaction executes.
+pub fn growth_reference_snapshot(
+    actual: &State,
+    expected: Option<Hash>,
+    cfg: &Config,
+) -> Result<PreparedCommitment> {
+    if !crate::growth_profile_v2::enabled(cfg) {
+        return Err("GROWTH_PROFILE");
+    }
+    let root = pon_executor::root_for_config(actual, cfg)?;
+    if expected.is_some_and(|value| value != root) {
+        return Err("COMMITMENT_ROOT");
+    }
+    let mut payload = 0usize;
+    for (key, value) in actual {
+        let encoded = pon_executor::canonical(value)?;
+        payload = payload
+            .checked_add(key.len())
+            .and_then(|n| n.checked_add(encoded.len()))
+            .ok_or("COMMITMENT_CHARGE")?;
+    }
+    Ok(PreparedCommitment {
+        root,
+        snapshot: None,
+        changes: Vec::new(),
+        observation: CommitmentObservation {
+            method: CommitmentMethod::FullRoot(FullRootReason::GrowthReferenceProfile),
+            actual_keys: actual.len(),
+            actual_payload_bytes: payload,
+            changed_keys: 0,
+            changed_payload_bytes: 0,
+            compressed_nodes: None,
+            // Reference State/root memory is not a legacy optional-cache charge.
+            workspace_charge_bytes: 0,
+        },
+    })
+}
+
+pub fn execute_growth_reference_with_control<E: Send>(
+    actual_parent: &State,
+    expected_parent_root: Hash,
+    request: ExecutionRequest<'_>,
+    cfg: &Config,
+    control: &pon_executor::ExecutionControl<'_, E>,
+) -> ControlledResult<StagedOutput, E> {
+    (control.progress)(ExecutionProgress::BeforeParentBinding)
+        .map_err(ExecutionError::Cancelled)?;
+    growth_reference_snapshot(actual_parent, Some(expected_parent_root), cfg)?;
+    let output = pon_executor::execute_with_control(
+        actual_parent,
+        BlockExecution {
+            transactions: request.transactions,
+            height: request.height,
+            miner: request.miner,
+            parent_id: request.parent_id,
+            workers: request.workers,
+        },
+        cfg,
+        control,
+    )?;
+    let mut commitment = growth_reference_snapshot(&output.state, Some(output.root), cfg)?;
+    let mut old = actual_parent.iter().peekable();
+    let mut next = output.state.iter().peekable();
+    while old.peek().is_some() || next.peek().is_some() {
+        let key = match (old.peek(), next.peek()) {
+            (Some((a, _)), Some((b, _))) => (*a).min(*b),
+            (Some((a, _)), None) => a,
+            (None, Some((b, _))) => b,
+            (None, None) => break,
+        };
+        let before = if old.peek().is_some_and(|(name, _)| name == &key) {
+            let (_, value) = old.next().ok_or("COMMITMENT_CHARGE")?;
+            Some(pon_executor::canonical(value)?)
+        } else {
+            None
+        };
+        let after = if next.peek().is_some_and(|(name, _)| name == &key) {
+            let (_, value) = next.next().ok_or("COMMITMENT_CHARGE")?;
+            Some(pon_executor::canonical(value)?)
+        } else {
+            None
+        };
+        if before != after {
+            commitment.observation.changed_payload_bytes = commitment
+                .observation
+                .changed_payload_bytes
+                .checked_add(key.len())
+                .and_then(|n| n.checked_add(before.as_ref().map_or(0, Vec::len)))
+                .and_then(|n| n.checked_add(after.as_ref().map_or(0, Vec::len)))
+                .ok_or("COMMITMENT_CHARGE")?;
+            commitment.changes.push(Change {
+                key: key.as_bytes().to_vec(),
+                before,
+                after,
+            });
+        }
+    }
+    commitment.observation.changed_keys = commitment.changes.len();
+    (control.progress)(ExecutionProgress::BeforeOutput).map_err(ExecutionError::Cancelled)?;
+    Ok(StagedOutput { output, commitment })
 }
 #[derive(Clone, Copy)]
 struct Charges {
@@ -624,6 +729,16 @@ pub fn execute_checked(
     config: &Config,
     limits: CacheLimits,
 ) -> Result<StagedOutput> {
+    if crate::growth_profile_v2::enabled(config) {
+        limits.validate()?;
+        return pon_executor::relation_only(execute_growth_reference_with_control(
+            actual_parent,
+            expected_parent_root,
+            request,
+            config,
+            &pon_executor::ExecutionControl::new(&pon_executor::no_cancellation, &()),
+        ));
+    }
     CheckedExecutionParent::bind(actual_parent, expected_parent_root, predecessor, limits)?
         .execute(request, config)
 }
@@ -657,6 +772,16 @@ pub fn execute_checked_with_control<E: Send>(
     limits: CacheLimits,
     control: &pon_executor::ExecutionControl<'_, E>,
 ) -> ControlledResult<StagedOutput, E> {
+    if crate::growth_profile_v2::enabled(config) {
+        limits.validate()?;
+        return execute_growth_reference_with_control(
+            actual_parent,
+            expected_parent_root,
+            request,
+            config,
+            control,
+        );
+    }
     (control.progress)(ExecutionProgress::BeforeParentBinding)
         .map_err(ExecutionError::Cancelled)?;
     CheckedExecutionParent::bind(actual_parent, expected_parent_root, predecessor, limits)?
@@ -769,6 +894,9 @@ impl<'a> CheckedExecutionParent<'a> {
         config: &Config,
         control: &pon_executor::ExecutionControl<'_, E>,
     ) -> ControlledResult<StagedOutput, E> {
+        if crate::growth_profile_v2::enabled(config) {
+            return Err("GROWTH_REFERENCE_BINDING_REQUIRED".into());
+        }
         let mut staged = None;
         let output = pon_executor::execute_with_commitment_and_control(
             self.state,
@@ -807,6 +935,9 @@ impl<'a> CheckedExecutionParent<'a> {
         config: &Config,
         control: &pon_executor::ExecutionControl<'_, E>,
     ) -> ControlledResult<CheckedTransactionPrefix<'a>, E> {
+        if crate::growth_profile_v2::enabled(config) {
+            return Err("GROWTH_REFERENCE_BINDING_REQUIRED".into());
+        }
         let execution = pon_executor::TransactionPrefix::new(self.state, context, config, control)?;
         Ok(CheckedTransactionPrefix {
             parent: self,

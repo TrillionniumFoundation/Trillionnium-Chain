@@ -53,7 +53,7 @@ impl Node {
         progress: &mut dyn FnMut() -> Result<()>,
     ) -> Result<CapacityObservation> {
         ensure(
-            continuity_v1::enabled(&self.settings.app),
+            self.settings.task_profile() == continuity_v1::PROFILE,
             "CONTINUITY_PROFILE",
         )?;
         self.ready()?;

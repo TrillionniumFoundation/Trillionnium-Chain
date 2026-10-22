@@ -1,6 +1,6 @@
 # Trillionnium Chain Development Plan — PoN / Hepta-PoH revision
 
-Plan ID: `trnm-chain-development-plan-v2` (stable registry identity; content revision 16).
+Plan ID: `trnm-chain-development-plan-v2` (stable registry identity; content revision 17).
 Effective: 2026-09-28; priority implementation revision: 2026-10-20. Status: selected development direction; no runtime activation.
 Canonical destination: `refs/heads/main`; continuation uses the current main lineage, not retired PR #194.
 Current source/head/tree/base and prospective merge are derived at verification time.
@@ -94,24 +94,37 @@ one frozen workload; neither stage may declare the other's missing result passed
 
 ### 2026-10-22 six-stage execution checkpoint
 
-The fresh inspected pair is Chain PR #323 head
-`5eb30bdedba2bb4933f5c97211426fc2df21bb7c`, actual main-target merge
-`f122f99dddffdf5015940667d0d5d97244a95800`, and Hepta PR #2559 head
-`d66e0bf8e147efa7300dd4296f912121932b00a3`, actual stacked-base merge
-`e298582d3f564a6332f8bacbe9d075ebaf2b3ccd`. Hepta's compiled observation is
+Fresh PR readback still identifies the published pair as Chain PR #323 head
+`1131d067f7ae4e6ccb1bf27e05df34818311daec`, actual main-target merge
+`64aa682996b36c3f1ee6bc4ed0f3cceecb8a086b`, and Hepta PR #2559 head
+`097d97137a43aee84fb96be12e44135278776748`, actual stacked-base merge
+`5a915bb6eb6704a789ced9976dd26acf706146ac`. Hepta's compiled observation is
 schema 4 and preserves `accepted_task`; legacy schema 3 remains readable but
 cannot satisfy the independently pinned task-acceptance comparison. These are
-inspected predecessors for this increment, not execution receipts for later edits.
+published predecessors of the current local integration. Re-read the complete
+head/tree/base/merge tuples and checks before qualifying that integration.
+
+The [paired run](https://github.com/TrillionniumFoundation/hepta-private-ci/actions/runs/39727952205)
+completed successfully on four Linux lanes and both Windows ledger lanes.
+Each Linux lane's 107 execution receipts, source tuple, log hashes and actual
+backend envelopes were independently read back. Installation, independence and
+activation qualifications remain false. This run does not certify later local
+growth, budget, observer or Windows boundary changes. A separately source-built,
+GNU-time-measured complete repository-truth execution on exact Chain `1131d067`
+finished in about 630 seconds with exit 0; retain the earlier failed execution
+and do not transfer this pass to the new integration. Required baseline and
+priority jobs still queued are pending, not passes.
 
 The [source-bound CI/security readback](../../evidence/pon-six-gate-closure-20261022/ci-security-before.json)
 and [18-finding source review](../../evidence/pon-six-gate-closure-20261022/codeql-current-readback.json)
-retain the current security gate failure (one critical, 17 high) separately from
+retain the published `1131d067` security gate failure (one critical, 17 high) separately from
 successful analysis/export. The exported branch SARIF has 224 results, a different
-scope. Exact span/message matches and source semantics support review; they do
-not authenticate an undocumented exporter-to-gate mapping, dismiss an alert or
+scope. The 18 candidate exporter matches have no independently proved mapping;
+their acceptance remains unknown/null. Source review does not dismiss alerts or
 replace independent security acceptance. New source requires new scanning.
 
-Original native campaign run `39718009547` failed all three complete trials.
+Original [native campaign run `39718009547`](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/39718009547)
+on Chain `5eb30bdedba2bb4933f5c97211426fc2df21bb7c` failed all three complete trials.
 All nine phases confirmed their three scheduled rounds and retained equal
 receiver/client state. In all six hostile phases the original genuine-depletion
 condition was false: measured mutation CPU was below the original available
@@ -121,21 +134,41 @@ failed artifact; no aggregate success, reduced refill or fabricated depletion
 may convert it into acceptance. A separate valid-W1/late-state-root depletion
 control retains its own inputs and cannot replace this campaign's verdict.
 
+The current [original-policy campaign `39727391523`](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/39727391523)
+on published `1131d067` completed successfully and passed strict raw-artifact
+readback: 189 submissions and 27 confirmed rounds across nine phases. Only 10
+of the 18 hostile-phase honest rounds overlap observed genuine CPU depletion;
+this is not all-round or continuous saturation. Preserve the original budgets,
+workload, denominators and failed predecessor. This result does not close the
+cheapest-work assumptions or public service under a sufficiently delivered
+attack envelope.
+
+The [Windows deletion-boundary run `39727952366`](https://github.com/TrillionniumFoundation/hepta-private-ci/actions/runs/39727952366)
+on `097d9713` passed all four native NT probes on both source and merge lanes,
+but failed the broad-identity and restricted-process deletion boundaries:
+the outside parent granted `FILE_DELETE_CHILD` (64), and outside files and
+directories were actually deleted. Locally integrated successor repairs make
+managed launches that claim this isolation fail closed with a typed error
+before side effects. They preserve the original `097d9713` positive tests and
+gates; fail-closed refusal does not qualify functional Windows isolation.
+
 | Gate | This increment's executable boundary | Full exit still required |
 | --- | --- | --- |
-| PN0 | Exact pair/source review and CI fault repair; schema-4 handoff navigation. | Applicable final head/merge CI, current security disposition and cross-repository execution. |
-| PN1 | Same-target reader binds original CPU policy, completed false-trace error and replay checkpoints. | Cheapest-adversary assumptions and actual public service under a declared, sufficiently delivered attack envelope. |
-| PN2 | Private verified growth-commitment capability before candidate-profile binding. | New native growth profile, real signed transactions beyond the old boundary, durable migration and recovery. |
-| PN3 | Explicit real-adapter parent-material preflight; original training controls preserved. | Actual three-round installed-parent lineage and next-task use, independent prospective evaluation and complete release integration. |
-| PN4 | [Separate finite lane budgets](specs/pon/REWARD_BUDGETS_V1.md) with replay/reorg/external-effect reference controls. | Native funding/escrow integration, actual storage/service obligations and independent economic review. |
+| PN0 | Published pair readback above; current local native growth/budget source passes complete strict Clippy; the Hepta mechanical Core fix still needs native CI. | Applicable final head/merge CI, security disposition, functional Windows isolation and fresh cross-repository execution. |
+| PN1 | Original-policy reader and successful current campaign; genuine CPU-depletion coverage is 10/18 hostile honest rounds. | Cheapest-adversary assumptions and actual public service under a declared, sufficiently delivered attack envelope. |
+| PN2 | Isolated revision17 GSC2 native complete-State growth reference and required 65,537-account signed-transaction/recovery test are integrated locally; the final long test has not run. | Actual final-source signed boundary and recovery evidence, bounded working-state/proof validation and source-preserving migration. Complete-State reference roots are not bounded witnesses. |
+| PN3 | Real model materials are accessible. The opt-in frozen observer-v2 at `b90cde2354d7ba1968783cb87c146191905e5d15` preserves strict-v1 defaults and passes 56 observer tests. A real 135M CPU loader completed in 11.09 seconds without exercising the special exit-only branch. Both original strict 12-phase attempts stopped on unknown RSS before training and remain failures. | Actual training, three-round installed-parent lineage and next-task use, Hepta neuron loading, independent prospective evaluation and complete release integration. Loader success is not a trained update or exit-only-path qualification. |
+| PN4 | [Separate finite lane budgets](specs/pon/REWARD_BUDGETS_V1.md) now have native local obligation persistence; six component tests passed again on the integrated native source, including abrupt-exit recovery. | Native debit/escrow locks, actual resource-owner measurement and dispatch, funded storage/service obligations and independent economic review. Local records do not lock chain funds or pay rewards. |
 | PN5 | Preserve the preregistration and independent-custody requirements below. | Three independently administered operators, accessible existing nodes and a complete frozen 72-hour WAN campaign. |
 
 The available hosted CI uses the existing `ubuntu-24.04` and `ubuntu-24.04-arm`
 labels. Queue metadata does not establish dedicated-cloud terminal access or
-prove an organization-wide runner-capacity cause. No independently controlled
-operator roster, authorized WAN endpoint set or real-model materials were
-available to this execution. Keep those concrete inputs outstanding; local
-processes, more development keys and synthetic model bytes cannot supply them.
+prove an organization-wide runner-capacity cause. Real public model materials
+and a working local CPU loader are now available. No three independently
+controlled operators or qualified 72-hour WAN campaign have been established;
+local processes and additional development keys cannot supply that evidence.
+The integrated native source passes full strict Clippy and four independent growth-root vector tests, three small signed growth/recovery tests, six local budget tests and the original native model-release integration test. The required long signed growth run and current-pair CI still need terminal evidence.
+No PN0–PN6 stage is closed by this checkpoint and no readiness flag changes.
 
 Every performance/iteration report must retain the following distinct quantities.
 Unknown or unexecuted stages are null with a reason, never copied from an earlier
