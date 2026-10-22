@@ -1,9 +1,11 @@
 """Owned ordinary FDs and invalid-cgroup refusal only; valid placement NOT_RUN."""
 import ctypes
+from concurrent.futures import ThreadPoolExecutor
 import errno
 import os
 from pathlib import Path
 import sys
+import signal
 import tempfile
 from types import SimpleNamespace
 import unittest
@@ -36,7 +38,7 @@ class KernelCloseTests(unittest.TestCase):
         cap = object.__new__(kind)
         cap.native = self.native; cap.owner = object()
         cap.closed = cap.consumed = cap.native_refused_without_child = False
-        cap.spawn_owner = None; cap.nodes = []; cap.verify = Mock()
+        cap.spawn_owner = None; cap.nodes = []; cap._verify_locked = Mock()
         cap._fd_owners = [(ctypes.c_int*4)(0, -1, -1, -1) for _ in range(16)]
         for i in range(count):
             path = Path(self.temporary.name)/str(i); path.mkdir(exist_ok=True)
@@ -199,6 +201,106 @@ class KernelCloseTests(unittest.TestCase):
         self.assertTrue(cap.closed); self.assertIs(self.native.operation, cap)
         cap.close(cap.owner)
         self.assertIsNone(self.native.operation)
+
+    def acquisition(self):
+        return kernel.acquire_controlled_operation(self.native, unit='unit.service',
+            invocation='1'*32, operation='/sys/fs/cgroup/user.slice/unit.service/operation-'+'2'*32,
+            memory_bytes=8*1024**3, owner=object())
+
+    def test_review_double_acquire_race_foreign_threads_refuse_before_any_io(self):
+        # Original review red: both crossed the empty-slot check during proc IO,
+        # then one live cap was overwritten. New ABI refuses before that IO.
+        fd = self.native.fd
+        with patch.object(Path, 'read_text', side_effect=AssertionError('no foreign IO')), \
+                patch.object(kernel.os, 'open', side_effect=AssertionError('no foreign FD')), \
+                ThreadPoolExecutor(max_workers=2) as pool:
+            futures = [pool.submit(self.acquisition) for _ in range(2)]
+            for future in futures:
+                with self.assertRaisesRegex(ValueError, 'owner-thread'): future.result(timeout=2)
+        self.assertIsNone(self.native.operation); self.assertEqual(self.native.fd, fd)
+        os.fstat(fd)
+
+    def test_review_close_acquire_race_cannot_register_during_owner_close(self):
+        # Original review red: Native.close passed None, then an acquisition
+        # registered before signature returned; close destroyed its memfd.
+        original = kernel.proc._signature
+        with ThreadPoolExecutor(max_workers=1) as pool:
+            def paused(fd):
+                future = pool.submit(self.acquisition)
+                with self.assertRaisesRegex(ValueError, 'owner-thread'): future.result(timeout=2)
+                self.assertIsNone(self.native.operation)
+                return original(fd)
+            with patch.object(kernel.proc, '_signature', side_effect=paused): self.native.close()
+        self.assertEqual(self.native.fd, -1); self.assertIsNone(self.native.operation)
+
+    def test_foreign_cap_and_native_operations_reject_without_slot_mutation(self):
+        cap = self.fixture(); before = [list(slot) for slot in cap._fd_owners]
+        operations = [self.native.close, cap.verify, lambda: cap.close(cap.owner),
+            lambda: cap.spawn(['/bin/true'], None, None), lambda: cap.allow_exec(None, 1.0),
+            lambda: cap.terminal_record(0, 0)]
+        with ThreadPoolExecutor(max_workers=1) as pool:
+            for operation in operations:
+                with self.assertRaisesRegex(ValueError, 'owner-thread'):
+                    pool.submit(operation).result(timeout=2)
+        self.assertEqual([list(slot) for slot in cap._fd_owners], before)
+        self.assertIs(self.native.operation, cap); self.assertFalse(cap.closed or cap.consumed)
+
+    def test_process_identity_change_refuses_inherited_native_handle(self):
+        with patch.object(kernel.os, 'getpid', return_value=os.getpid()+1):
+            with self.assertRaisesRegex(ValueError, 'owner-thread'): self.native.close()
+            with self.assertRaisesRegex(ValueError, 'owner-thread'): self.acquisition()
+        os.fstat(self.native.fd); self.assertIsNone(self.native.operation)
+
+    def signal_reentry(self):
+        errors = []
+        def handler(signum, frame):
+            for action in (self.native.close, self.acquisition):
+                try: action()
+                except kernel.KernelBudgetError as error: errors.append(str(error))
+                else: self.fail('signal handler changed lifecycle state')
+        return errors, handler
+
+    def test_real_signal_during_acquisition_refuses_reentry_and_cleanup_uses_same_lock(self):
+        errors, handler = self.signal_reentry(); original = Path.read_text
+        def synthetic_read(path, *args, **kwargs):
+            if str(path) == '/proc/self/cgroup':
+                os.kill(os.getpid(), signal.SIGUSR1)
+                return '0::/user.slice/unit.service/supervisor\n'
+            if str(path) == '/proc/sys/kernel/random/boot_id': return 'synthetic-boot\n'
+            return original(path, *args, **kwargs)
+        previous = signal.signal(signal.SIGUSR1, handler)
+        try:
+            with patch.dict(os.environ, {'INVOCATION_ID':'1'*32}), \
+                    patch.object(Path, 'read_text', synthetic_read), \
+                    patch.object(kernel.os, 'open', side_effect=OSError('stop before real FD')), \
+                    self.assertRaisesRegex(OSError, 'stop before real FD'):
+                self.acquisition()
+        finally: signal.signal(signal.SIGUSR1, previous)
+        self.assertEqual(errors, ['kernel-native-lifecycle-busy']*2)
+        self.assertIsNone(self.native.operation); os.fstat(self.native.fd)
+        self.native.close()  # Failed acquisition did not leave the guard busy.
+
+    def test_real_signal_during_native_close_refuses_nested_acquire_and_close(self):
+        errors, handler = self.signal_reentry(); original = kernel.proc._signature
+        def paused(fd):
+            os.kill(os.getpid(), signal.SIGUSR1)
+            return original(fd)
+        previous = signal.signal(signal.SIGUSR1, handler)
+        try:
+            with patch.object(kernel.proc, '_signature', side_effect=paused): self.native.close()
+        finally: signal.signal(signal.SIGUSR1, previous)
+        self.assertEqual(errors, ['kernel-native-lifecycle-busy']*2)
+        self.assertIsNone(self.native.operation); self.assertEqual(self.native.fd, -1)
+
+    def test_cap_close_and_spawn_share_the_same_nonreentrant_guard(self):
+        cap = self.fixture()
+        cap._verify_locked.side_effect = lambda: cap.close(cap.owner)
+        with patch.object(self.native, 'spawn') as spawn, self.assertRaisesRegex(ValueError, 'lifecycle-busy'):
+            cap.spawn(['/bin/true'], None, None)
+        spawn.assert_not_called()
+        self.assertFalse(cap.consumed or cap.closed)
+        self.assertIs(self.native.operation, cap)
+        cap.close(cap.owner)
 
 
 if __name__ == '__main__': unittest.main()

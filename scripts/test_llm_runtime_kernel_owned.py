@@ -45,7 +45,7 @@ class KernelOwnedTests(unittest.TestCase):
 
     def native_fixture(self, cap, children):
         """Synthetic native output backed by tiny own children, never cgroups."""
-        cap.consumed = False; cap.verify = Mock(); cap.nodes = [(None, -1, None, None)]
+        cap.consumed = False; cap._verify_locked = Mock(); cap.nodes = [(None, -1, None, None)]
         cap.allow_exec = Mock(side_effect=lambda owner, deadline: owner._close_kernel_handoff(12))
         cap.terminal_record = Mock()
         def spawn(group, output, exe, argv, env, result):

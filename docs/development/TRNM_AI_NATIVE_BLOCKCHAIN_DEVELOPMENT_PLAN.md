@@ -523,6 +523,13 @@ ancestor descriptors first. Consumed/unknown child or outer state always
 refuses close and retains the same owner. Native errno/close-and-clear slots
 survive signals/allocation failures without closing reused FD numbers. This
 does not stop a unit, refund a grant, complete FinalUse or qualify a model.
+Independent review rejected initial close source `6e0e064b` for deterministic
+acquire/acquire and close/acquire races; retain both failures. A fixed creating
+process/Thread identity and shared nonblocking lifecycle guard now refuse
+foreign or signal-reentrant operations before IO/FD/slot mutation. Owner-thread
+lifetime is required; no recursive/blocking lock or arbitrary thread handoff is
+introduced. Constructor cleanup reuses its held guard. This closes the local
+slot race only and does not qualify the unit envelope or FinalUse.
 
 The delegated-unit failure still blocks outer reconciliation. Upstream
 systemd255 [SERVICE_EXITED pruning](https://github.com/systemd/systemd/blob/db11bab38ccf1ed257f310d29070843d4c58ea01/src/core/service.c#L1263)

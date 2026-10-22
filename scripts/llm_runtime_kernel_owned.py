@@ -4,6 +4,7 @@ This slice cannot settle its outer reservation, install a model or stop a unit.
 Same-administrator source/toolchain scope only; no hostile same-UID isolation.
 """
 import ctypes
+from contextlib import contextmanager
 import fcntl
 import hashlib
 import os
@@ -13,6 +14,7 @@ import select
 import stat
 import subprocess
 import tempfile
+import threading
 import time
 
 import llm_runtime_exit_observation as proc
@@ -66,6 +68,8 @@ class _Native:
     def __init__(self, token, raw, sources):
         require(token is _TOKEN, 'kernel-native-constructor')
         self.sources, self.binary_sha256 = sources, _digest(raw)
+        self._owner_pid, self._owner_thread = os.getpid(), threading.current_thread()
+        self._busy = threading.Lock()
         self.operation = None  # One fixed strong slot, never an unbounded registry.
         self._fd_owner = (ctypes.c_int*4)(0, -1, -1, -1)
         self._fd_owner[1] = os.memfd_create('trnm-controlled-spawn-abi1', os.MFD_CLOEXEC | os.MFD_ALLOW_SEALING)
@@ -97,6 +101,25 @@ class _Native:
 
     def close(self):
         """Close only this sealed memfd, not dlclose an executing library."""
+        with self._exclusive():
+            self._close_locked()
+
+    @contextmanager
+    def _exclusive(self):
+        # A concrete Thread object also rejects recycled numeric thread IDs.
+        # Nonblocking acquisition refuses signal-handler reentry, not deadlock.
+        require(os.getpid() == self._owner_pid and threading.current_thread() is self._owner_thread,
+                'kernel-native-owner-thread')
+        acquired = False
+        try:
+            acquired = self._busy.acquire(blocking=False)
+            require(acquired, 'kernel-native-lifecycle-busy')
+            yield
+        finally:
+            if acquired:
+                self._busy.release()
+
+    def _close_locked(self):
         require(self.operation is None, 'kernel-native-operation-retained')
         require(self._fd_owner[0] == 0, 'kernel-native-close-failed')
         if self.fd < 0:
@@ -131,6 +154,12 @@ def _text(fd, name):
 
 class _ControlledOperation:
     def __init__(self, token, native, unit, invocation, operation, memory, owner):
+        require(token is _TOKEN and type(native) is _Native and owner is not None,
+                'kernel-capability-constructor')
+        with native._exclusive():
+            self._initialize_locked(token, native, unit, invocation, operation, memory, owner)
+
+    def _initialize_locked(self, token, native, unit, invocation, operation, memory, owner):
         require(token is _TOKEN and type(native) is _Native and owner is not None,
                 'kernel-capability-constructor')
         require(native.fd >= 0 and native.operation is None, 'kernel-native-operation-retained')
@@ -187,10 +216,10 @@ class _ControlledOperation:
             require(_text(self.nodes[0][1], 'cgroup.procs') == '' and
                     _text(self.nodes[0][1], 'pids.current') == '0\n' and
                     _text(self.nodes[0][1], 'cgroup.subtree_control') == '', 'kernel-operation-not-empty')
-            self.verify()
+            self._verify_locked()
         except BaseException:
             try:
-                self.close(owner)
+                self._close_locked(owner)
             except BaseException:
                 raise self._close_required
             raise
@@ -201,6 +230,10 @@ class _ControlledOperation:
         A consumed/unknown child or outer boundary deliberately has no close
         path. No caller receipt or boolean may grant permission to discard it.
         """
+        with self.native._exclusive():
+            self._close_locked(owner)
+
+    def _close_locked(self, owner):
         require(owner is self.owner, 'kernel-close-owner')
         if self.closed:
             if self.native.operation is self:
@@ -228,6 +261,10 @@ class _ControlledOperation:
         self.native.operation = None
 
     def verify(self):
+        with self.native._exclusive():
+            self._verify_locked()
+
+    def _verify_locked(self):
         require(not self.closed, 'kernel-capability-closed')
         require(not self.failed, 'kernel-sticky-failure')
         try:
@@ -255,7 +292,11 @@ class _ControlledOperation:
             raise
 
     def spawn(self, command, stdout, owner):
-        self.verify()
+        with self.native._exclusive():
+            self._spawn_locked(command, stdout, owner)
+
+    def _spawn_locked(self, command, stdout, owner):
+        self._verify_locked()
         require(not self.consumed and type(command) is list and 0 < len(command) <= 256 and
             all(type(v) is str and '\0' not in v for v in command) and
             Path(command[0]).is_absolute(), 'kernel-command-or-reuse')
@@ -277,11 +318,15 @@ class _ControlledOperation:
             raise OSError(error, 'kernel-clone3-refused')
 
     def allow_exec(self, owner, deadline):
+        with self.native._exclusive():
+            self._allow_exec_locked(owner, deadline)
+
+    def _allow_exec_locked(self, owner, deadline):
         require(self.spawn_owner is owner, 'kernel-owner-bound')
         try:
             pid, pidfd = owner.pid, owner.termination_fd
             ack, error_fd = owner._kernel_handoff[2], owner._kernel_handoff[3]
-            self.verify()
+            self._verify_locked()
             visible, parent, _ = proc._pidfd_identity(pid, pidfd)
             fields = proc._proc_fields(Path(f'/proc/{visible}/status'))
             require(proc._one(fields, 'PPid') == parent and
@@ -298,8 +343,12 @@ class _ControlledOperation:
             owner._close_kernel_handoff(12)
 
     def terminal_record(self, pid, pidfd):
+        with self.native._exclusive():
+            return self._terminal_record_locked(pid, pidfd)
+
+    def _terminal_record_locked(self, pid, pidfd):
         try:
-            self.verify()
+            self._verify_locked()
             require(self.child == (pid, pidfd, proc._signature(pidfd)), 'kernel-child-owner-changed')
             fd = self.nodes[0][1]
             require(_text(fd, 'cgroup.procs') == '' and _text(fd, 'pids.current') == '0\n' and

@@ -301,6 +301,17 @@ close-and-clear slots retain errno before returning to Python, so interruption
 cannot leave a stale FD number to close a later descriptor. Close failures keep
 the original owner reachable. Existing source preparation remains within the
 trusted same-administrator scope, not a general hostile FD-table contract.
+Independent review rejected initial close source `6e0e064b`: concurrent
+acquisitions could overwrite its strong slot, and a close/acquire interleaving
+could close a newly retained capability's memfd. Preserve both synthetic reds.
+Native now belongs to its constructing process and concrete Python Thread
+object for its entire lifetime. Foreign-thread/process operations refuse before
+IO or slot/FD mutation; callers must keep that owner thread alive through close.
+One shared nonblocking guard covers acquisition and all public capability/Native
+lifecycle entry points. Same-thread signal reentry refuses as busy, never waits
+or reenters a recursive lock. Constructor failure cleanup uses the same already
+held guard. Private locked helpers are implementation details, not authority or
+cross-thread handoff APIs. These bounds do not establish outer reconciliation.
 
 Two earlier, separately identified capability cohorts remain FAIL. The first
 clone3 returned EACCES from the outside SSH scope. The second's delegated-service
