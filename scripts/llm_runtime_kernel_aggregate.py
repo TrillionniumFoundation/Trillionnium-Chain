@@ -15,6 +15,7 @@ from typing import NamedTuple
 import llm_runtime_kernel_owned as kernel
 
 _TOKEN = object()
+_CHARGE_COUNTER_FILES = ('aggregate/memory.current', 'aggregate/memory.swap.current')
 _PARENT_MEMORY = 16*1024**3
 _RAW = ('memory.current', 'memory.swap.current', 'memory.peak', 'memory.events',
         'cpu.stat', 'cgroup.events', 'cgroup.stat', 'pids.current', 'cgroup.procs')
@@ -37,11 +38,13 @@ class AggregateCounterError(kernel.KernelBudgetError):
         _counter_input(raw, filename)
         require(type(code) is str and code in ('aggregate-counter-format',
             'aggregate-counter-overflow', 'aggregate-counter-fields', 'aggregate-counter-scalar',
-            'aggregate-not-fresh'),
+            'aggregate-not-fresh', 'aggregate-charge-retained'),
             'aggregate-counter-reason')
         require(code != 'aggregate-not-fresh' or filename in
             ('aggregate/memory.peak', 'aggregate/cpu.stat', 'aggregate/memory.events'),
             'aggregate-freshness-filename')
+        require(code != 'aggregate-charge-retained' or filename in _CHARGE_COUNTER_FILES,
+            'aggregate-charge-filename')
         super().__init__(code)
         self._counter_diagnostic = _CounterDiagnostic(filename, raw, code)
 
@@ -94,9 +97,9 @@ def _raw(fd):
             'aggregate-descendants-or-dying')
     require(all(value == 0 for key, value in tree.items() if key.startswith('nr_dying_')),
             'aggregate-dying-charge')
-    require(_scalar(raw['memory.current'], 'aggregate/memory.current') == 0 and
-            _scalar(raw['memory.swap.current'], 'aggregate/memory.swap.current') == 0,
-            'aggregate-charge-retained')
+    for name in ('memory.current', 'memory.swap.current'):
+        _counter_require(_scalar(raw[name], 'aggregate/'+name) == 0,
+            'aggregate-charge-retained', 'aggregate/'+name, raw[name])
     _scalar(raw['memory.peak'], 'aggregate/memory.peak')
     _numbers(raw['memory.events'], 'aggregate/memory.events')
     require('usage_usec' in _numbers(raw['cpu.stat'], 'aggregate/cpu.stat'), 'aggregate-cpu-counter-missing')

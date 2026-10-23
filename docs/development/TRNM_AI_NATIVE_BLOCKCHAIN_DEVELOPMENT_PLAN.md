@@ -631,6 +631,20 @@ unknown counters and every other freshness predicate still require zero; raw
 inputs and parser bounds remain. No counter reset, baseline subtraction,
 budget/deadline change or new actual group/model qualification follows. The
 old failed candidates remain retained and must not be retried.
+The single `e2cc9b11` on source `24a1e86b` acquired A and recorded both owned
+`wait4` exits at zero plus all three complete FIFO frames and EOF. Terminal
+observation still failed with `KernelBudgetError`; its exact fixed reason was
+not exported. Later forensic `memory.current` reads were 290816 and 286720,
+with zero processes/population/dying state, and do not identify the original
+failure. No private terminal fact, release or refund followed administrative
+collection. The original tiny catch now retains only a prebound known code from
+an exact one-string `KernelBudgetError`, while original memory current/swap
+zero failures retain their first bounded raw text with exact two-file pairing.
+Unknown codes/types, extra arguments and unrelated filenames refuse projection;
+optional diagnostic faults cannot bypass the original pidfd close. No new reads,
+zero/equality changes, waiting loop, budget or deadline changes are introduced.
+Pending charge drain remains a separate PN4 matter; empty groups need not reach
+zero charge within eight seconds. The used nonce is retained and never retried.
 The original wait4 owner's aggregate terminal-error path retains only this
 existing typed immutable counter tuple, with pre-clone type bindings and no
 exception/traceback/capability references. Projection faults cannot replace the
