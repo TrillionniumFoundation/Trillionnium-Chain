@@ -18,6 +18,10 @@ import llm_runtime_host_scope_io as bus
 import llm_runtime_kernel_owned as kernel
 
 
+def owned_slot_snapshot(cap):
+    return tuple((tuple(slot), signature) for slot, signature in cap._fds)
+
+
 class HostScopeTests(unittest.TestCase):
     def test_scope_request_binds_original_pid_exact_limits_and_no_auxiliary_unit(self):
         unit = 'trnm-host-'+'a'*32+'.scope'
@@ -185,6 +189,7 @@ class HostScopeTests(unittest.TestCase):
     def test_scope_request_unknown_is_sticky_and_cannot_close_or_retry(self):
         cap, _, _ = self.fixture()
         cap._manager.call.side_effect = TimeoutError('unknown manager outcome')
+        original_slots = owned_slot_snapshot(cap)
         with self.assertRaises(TimeoutError): cap.admit()
         self.assertTrue(cap._started)
         self.assertTrue(cap._failed)
@@ -193,6 +198,7 @@ class HostScopeTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'one-original-request'): cap.admit()
         with self.assertRaisesRegex(ValueError, 'original-effect-retained'): cap.close_before_effect()
         self.assertEqual(cap._fds, held)
+        self.assertEqual(owned_slot_snapshot(cap), original_slots)
         self.assertEqual(cap._manager.call.call_count, 1)
 
     def test_changed_limit_or_late_charge_refuses_without_cleaning_up(self):
@@ -255,6 +261,28 @@ class HostScopeTests(unittest.TestCase):
         cap.close_before_effect()  # Skips the original native-cleared last slot.
         self.assertTrue(cap._closed)
         with self.assertRaises(OSError): os.fstat(first)
+
+    def test_owned_fd_snapshot_detects_controlled_mutable_slot_or_signature_change(self):
+        # Real held descriptors, synthetic bookkeeping changes only. No manager
+        # request occurs and the ordinary fixture teardown closes its own FDs;
+        # no mutated capability is admitted, reused or settled.
+        for mutation in ('slot', 'signature'):
+            with self.subTest(mutation=mutation):
+                cap, _, _ = self.fixture()
+                fd = cap._retain(os.open('/dev/null', os.O_RDONLY | os.O_CLOEXEC))
+                before = owned_slot_snapshot(cap)
+                shallow = list(cap._fds)
+                if mutation == 'slot':
+                    cap._fds[-1][0][0] = 5  # Explicit test-only error-state mutation.
+                else:
+                    cap._fds[-1][1] = ('controlled-signature-change',)
+                self.assertEqual(cap._fds, shallow)  # Shows why the old copy missed it.
+                with self.assertRaises(AssertionError):
+                    self.assertEqual(owned_slot_snapshot(cap), before)
+                os.fstat(fd)  # Mutation neither closed nor replaced the real FD.
+                self.assertFalse(cap._started)
+                self.assertFalse(cap._ready)
+                cap._manager.call.assert_not_called()
 
     def test_constructor_cleanup_fault_carries_same_original_native_slot_owner(self):
         native = kernel.build_controlled_native()

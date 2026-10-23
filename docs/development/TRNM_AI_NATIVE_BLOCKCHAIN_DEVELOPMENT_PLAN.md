@@ -1851,9 +1851,12 @@ Consequently this is only a fresh namespace/subsequent-charge boundary; O's
 complete RSS, original host baseline funding and physical resource return
 remain open. Compatible ancestor ceilings are not reservations or CPU service.
 
-The seventeen local controls use real bounded transport subprocesses, the original
+The eighteen local controls use real bounded transport subprocesses, the original
 source-built native close-and-clear slots and
-ordinary temporary-FD layout fixtures with a mock manager. A separate read-only
+ordinary temporary-FD layout fixtures with a mock manager. The retained-owner
+regression adds an immutable copy of every native slot value and signature;
+controlled bookkeeping mutations around real owned FDs must be detected without
+changing the original assertions. A separate read-only
 query checked real `busctl` method/property response shapes against the existing
 manager. No native scope was created or admitted. Native S/H qualification,
 original C birth/pidfd/wait4, whole-U zero-charge terminal capture inside the

@@ -378,8 +378,10 @@ The original owner is retained before any request; ambiguous or failed requests
 cannot retry, stop/delete the scope or close its owned FDs as a successful
 retirement. This remains a trusted preparatory interface, without C birth,
 whole-U terminal observation or money authority. The
-[seventeen controls](test_llm_runtime_host_scope.py) exercise bounded real
-transport and ordinary-FD/mock-manager layouts, not native scope admission.
+[eighteen controls](test_llm_runtime_host_scope.py) exercise bounded real
+transport and ordinary-FD/mock-manager layouts, including immutable retained-slot
+comparison under controlled bookkeeping mutations. They do not establish native
+scope admission.
 Pre-migration O memory stays charged to its original cgroup; the new ceilings
 therefore do not bound all O RSS or settle its original host baseline.
 
