@@ -189,8 +189,10 @@ class _AggregateOperation:
             _counter_require(_scalar(initial['memory.peak'], 'aggregate/memory.peak') == 0,
                 'aggregate-not-fresh', 'aggregate/memory.peak', initial['memory.peak'])
             for name in ('cpu.stat', 'memory.events'):
-                _counter_require(all(value == 0 for value in
-                    _numbers(initial[name], 'aggregate/'+name).values()),
+                # nr_periods counts elapsed bandwidth intervals, not CPU use.
+                # Keep every other counter, including unknown fields, at zero.
+                _counter_require(all(value == 0 or (name == 'cpu.stat' and key == 'nr_periods')
+                    for key, value in _numbers(initial[name], 'aggregate/'+name).items()),
                     'aggregate-not-fresh', 'aggregate/'+name, initial[name])
             self._verify_locked()
         except BaseException:

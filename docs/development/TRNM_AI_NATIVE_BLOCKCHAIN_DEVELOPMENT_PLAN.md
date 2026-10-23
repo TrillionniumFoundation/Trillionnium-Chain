@@ -616,6 +616,21 @@ an unknown reason cannot silently become diagnostic evidence. Synthetic
 ordinary-FD controls preserve refusal, first raw bytes and no-child cleanup;
 they do not qualify an actual group. Do not rerun `3eb2b52a`, reset counters,
 delete/reclaim A, subtract a baseline or infer a release from collection.
+The later single `1c1b674c` on source `ad644fe3` retained the exact initial
+`cpu.stat`: `nr_periods 2`, with all usage, user, system, nice, forced-idle,
+throttling and burst fields zero. It failed before a runtime child or model;
+source identity held and administrative stop/collection did not release the
+reservation. Linux [bandwidth statistics](https://origin.kernel.org/doc/html/v5.19/scheduler/sched-bwc.html#statistics)
+define `nr_periods` as elapsed enforcement intervals. The
+[cgroup v2 interface](https://docs.kernel.org/admin-guide/cgroup-v2.html#cpu-interface-files)
+separates usage from bandwidth counters; the upstream 7.0.14
+[period timer](https://github.com/gregkh/linux/blob/v7.0.14/kernel/sched/fair.c)
+increments intervals before its idle check. Only that exact key in initial
+`cpu.stat` may now be nonzero. All actual usage, throttling, burst, forced-idle,
+unknown counters and every other freshness predicate still require zero; raw
+inputs and parser bounds remain. No counter reset, baseline subtraction,
+budget/deadline change or new actual group/model qualification follows. The
+old failed candidates remain retained and must not be retried.
 The original wait4 owner's aggregate terminal-error path retains only this
 existing typed immutable counter tuple, with pre-clone type bindings and no
 exception/traceback/capability references. Projection faults cannot replace the
