@@ -242,12 +242,12 @@ class EvidencePipeOwnershipTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,'unregistered-slots'):cap.close(cap.owner)
         os.fstat(descriptor);os.fstat(cap.nodes[0][1]);self.assertIs(self.native.operation,cap)
 
-    def test_registered_pipe_cannot_bypass_not_yet_integrated_terminal_transport(self):
+    def test_registered_pipe_without_original_child_binding_cannot_create_terminal_fact(self):
         import test_llm_runtime_kernel_aggregate as fixtures
         cap=self.fixture();pipe=self.prepare(cap)
         cap.child=cap.fact=None
         child=fixtures.AggregateTests.owned_terminal(self,cap)
-        with patch.object(aggregate,'_raw') as raw,self.assertRaisesRegex(ValueError,'transport-not-integrated'):
+        with patch.object(aggregate,'_raw') as raw,self.assertRaisesRegex(ValueError,'evidence-pipe-child-owner'):
             cap.terminal_record(child.pid,child.termination_fd)
         raw.assert_not_called();self.assertIsNone(cap.fact);self.assertIs(cap.evidence_pipe,pipe)
         self.assertIs(self.native.operation,cap)

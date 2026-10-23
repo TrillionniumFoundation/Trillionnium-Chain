@@ -287,8 +287,12 @@ class _AggregateOperation:
                     type(child.waited_cpu_ns) is int and child.waited_cpu_ns >= 0 and
                     type(child.returncode) is int,
                     'aggregate-exact-owned-wait4-required')
-                require(getattr(self, 'evidence_pipe', None) is None,
-                        'evidence-pipe-terminal-transport-not-integrated')
+                pipe = getattr(self, 'evidence_pipe', None)
+                if pipe is not None:
+                    from llm_runtime_evidence_pipe import _EvidencePipeOwner
+                    require(type(pipe) is _EvidencePipeOwner and pipe.capability is self,
+                            'evidence-pipe-owner')
+                    pipe._finish_locked(child)
                 raw = _raw(self.nodes[0][1])
                 self._verify_locked()
                 require(raw == _raw(self.nodes[0][1]), 'aggregate-counter-snapshot-changed')

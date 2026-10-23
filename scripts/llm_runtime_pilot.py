@@ -896,6 +896,12 @@ class _Wait4Child(subprocess.Popen):
             self._counter_filenames = tuple('aggregate/'+name for name in _RAW) + ('unit/cgroup.stat',)
             self._counter_reasons = ('aggregate-counter-format', 'aggregate-counter-overflow',
                                      'aggregate-counter-fields', 'aggregate-counter-scalar')
+            pipe = getattr(aggregate_operation, 'evidence_pipe', None)
+            if pipe is not None:
+                from llm_runtime_evidence_pipe import _EvidencePipeOwner
+                require(type(pipe) is _EvidencePipeOwner and pipe.capability is aggregate_operation,
+                        'TINY_EVIDENCE_OWNER')
+                self._tiny_pipe, self._tiny_pipe_type = pipe, _EvidencePipeOwner
         kernel_deadline = kwargs.pop('_kernel_deadline', None)
         self.kernel_evidence = None
         self.reaped = False
@@ -1094,6 +1100,32 @@ class _Wait4Child(subprocess.Popen):
         except (OSError, AttributeError, TypeError, ValueError) as error:
             self.fail(f'signal:{type(error).__name__}:{getattr(error, "errno", None)}')
 
+    def _finish_tiny_pipe(self):
+        try:
+            require(type(self._tiny_pipe) is self._tiny_pipe_type and
+                self._tiny_pipe.capability is self.kernel_operation, 'TINY_EVIDENCE_OWNER')
+            if (self.reaped and self.cleanup_method == 'wait4' and self.observation_error is None and
+                    self.kernel_evidence is None):
+                self.kernel_evidence = self.kernel_operation.terminal_record(self.pid, self.termination_fd)
+                require(type(self.kernel_evidence) is dict, 'TINY_EVIDENCE_TERMINAL')
+        except BaseException as failure:
+            self.fail('kernel-terminal-tiny-evidence-unavailable')
+            try:
+                self.kernel_tiny_terminal_failure = type(failure).__name__[:64]
+                self._retain_kernel_counter_diagnostic(failure)
+            except BaseException: self.kernel_counter_diagnostic_projection_failed = True
+        finally:
+            # Same original close boundary, also when typed transport raises KI/MI.
+            if self.termination_fd is not None and self.reap_resolved:
+                try:
+                    if getattr(self, '_kernel_handoff', None) is not None:
+                        self._close_kernel_handoff(2)
+                    else:
+                        os.close(self.termination_fd)
+                except OSError as error:
+                    self.fail(f'close-pidfd:{error.errno}')
+                self.termination_fd = None
+
     def finish(self):
         try:
             if self.owned_exit_observed and not self.reap_resolved:
@@ -1114,6 +1146,8 @@ class _Wait4Child(subprocess.Popen):
                     if not self.owned_exit_observed:
                         time.sleep(min(0.01, max(0, deadline - time.monotonic())))
         finally:
+            if getattr(self, '_tiny_pipe', None) is not None:
+                self._finish_tiny_pipe()
             if (getattr(self, 'kernel_operation', None) is not None and self.reaped and
                     self.cleanup_method == 'wait4' and self.observation_error is None and
                     self.kernel_evidence is None):
@@ -1461,7 +1495,7 @@ def _drain_exit_cleanup(process, observation, owner_token, start, budget, *, exi
 
 
 def supervise(command, directory, budget, *, exit_observation=None, _controlled_operation=None,
-              _aggregate_operation=None):
+              _aggregate_operation=None, _evidence_pipe=None):
     """Kill only this fresh child when its measured wall/RSS budget is exceeded."""
     observation_type = exit_observation_class(exit_observation) if exit_observation is not None else None
     kernel_keyword = '_controlled_operation'
@@ -1479,7 +1513,24 @@ def supervise(command, directory, budget, *, exit_observation=None, _controlled_
                 type(budget['rss_bytes']) is int and budget['rss_bytes'] == _controlled_operation.memory and
                 type(budget['wall_seconds']) is int and 0 < budget['wall_seconds'] <=
                 (600 if _controlled_operation.memory == 8*1024**3 else 1800), 'KERNEL_BUDGET_INTERFACE')
-    directory = Path(directory); directory.mkdir(mode=0o700)
+    pipe_owner = pipe_writer = None
+    if _evidence_pipe is not None:
+        from llm_runtime_evidence_pipe import _EvidencePipeOwner
+        from llm_runtime_evidence_frames import _EvidencePipeWriter
+        require(exit_observation is None and type(budget) is dict and
+            set(budget) == {'wall_seconds','rss_bytes'} and
+            all(type(budget[key]) is int for key in budget), 'TINY_EVIDENCE_INTERFACE')
+        if type(_evidence_pipe) is _EvidencePipeOwner:
+            require(_aggregate_operation is _evidence_pipe.capability and
+                budget == dict(wall_seconds=8, rss_bytes=8*1024**3), 'TINY_EVIDENCE_INTERFACE')
+            pipe_owner = _evidence_pipe
+        else:
+            require(type(_evidence_pipe) is _EvidencePipeWriter and _evidence_pipe.role == 'supervisor' and
+                _controlled_operation is None and budget == dict(wall_seconds=2,rss_bytes=64*1024**2),
+                'TINY_EVIDENCE_INTERFACE')
+            pipe_writer = _evidence_pipe
+    directory = Path(directory)
+    if pipe_writer is None: directory.mkdir(mode=0o700)
     start, high, reason = time.monotonic_ns(), 0, None
     wall_deadline_ns = start + round(budget['wall_seconds'] * 10**9)
     rss_gaps = []
@@ -1488,15 +1539,21 @@ def supervise(command, directory, budget, *, exit_observation=None, _controlled_
     owner_token = object()
     observer_cpu_start = time.process_time_ns()
     process = None
-    with (directory/'process.log').open('w') as log:
+    with (pipe_writer if pipe_writer is not None else
+          (directory/'process.log').open('wb' if pipe_owner is not None else 'w')) as log:
         try:
             try:
+                if pipe_owner is not None:
+                    pipe_owner.configure(wall_deadline_ns, log)
+                    command = command+['--evidence-deadline-ns',str(wall_deadline_ns)]
                 kernel = ({kernel_keyword: _controlled_operation,
                     '_kernel_deadline': (start/10**9)+budget['wall_seconds']}
                     if _controlled_operation is not None else {})
                 if _controlled_operation is not None:
                     process = object.__new__(_Wait4Child)
-                    process.__init__(command, stdout=log, stderr=subprocess.STDOUT, **kernel)
+                    process.__init__(command, stdout=pipe_owner if pipe_owner is not None else log,
+                        stderr=subprocess.STDOUT, **kernel)
+                    if pipe_owner is not None: pipe_owner.adopted(process)
                 else:
                     process = _Wait4Child(command, stdout=log, stderr=subprocess.STDOUT)
             except _Wait4Unsupported as error:
@@ -1515,9 +1572,17 @@ def supervise(command, directory, budget, *, exit_observation=None, _controlled_
                               memory_scope='No child spawned; no RSS observation', outcome='failed')
                 if exit_observation is not None:
                     result['exit_observation_profile'] = exit_observation
-                save(directory/'supervisor.json', result)
+                if pipe_writer is None: save(directory/'supervisor.json', result)
+                else: pipe_writer.emit('inner-supervisor',dict(result=result,owned_child_pid=None,supervisor_pid=os.getpid()))
                 return result
             while process.observation_error is None and process.reap() == 'live':
+                if pipe_owner is not None:
+                    try: pipe_owner.drain(process)
+                    except BaseException as failure:
+                        process.fail('evidence-pipe-transport-unavailable')
+                        reason = 'evidence-pipe-transport-unavailable'
+                        if not isinstance(failure,Exception) or isinstance(failure,MemoryError): raise
+                        break
                 sample_trace = {}
                 trace_token = _RSS_READ_TRACE.set(sample_trace)
                 owner_context = ((process.pid, process.termination_fd, owner_token)
@@ -1640,7 +1705,14 @@ def supervise(command, directory, budget, *, exit_observation=None, _controlled_
         result['exit_cleanup_observation'] = exit_cleanup_observation
     if exit_observation is not None:
         result['exit_observation_profile'] = exit_observation
-    save(directory/'supervisor.json', result)
+    if pipe_owner is not None:
+        result['tiny_evidence_transport'] = dict(records=pipe_owner.frames.records,
+            received_bytes=pipe_owner.frames.received, first_error=pipe_owner.frames.failure,
+            error_fragment_hex=pipe_owner.frames.fragment.hex(), eof=pipe_owner.eof,
+            terminal_failure_type=getattr(process,'kernel_tiny_terminal_failure',None),
+            terminal_io_closed=True if pipe_owner.terminal_complete else None, authority=False)
+    if pipe_writer is None: save(directory/'supervisor.json', result)
+    else: pipe_writer.emit('inner-supervisor',dict(result=result,owned_child_pid=process.pid,supervisor_pid=os.getpid()))
     if not process.reap_resolved:
         # Preserve a failed receipt and the handle. The CLI cannot claim general
         # cleanup if its kernel will not resolve cleanup of its owned child.

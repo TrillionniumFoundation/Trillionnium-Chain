@@ -490,11 +490,17 @@ ASCII result remains supported. Its CPython3.12.3 writer
 borrows nonblocking stdout1, validates
 direction/FIFO identity, requires an absolute deadline at most8s ahead at
 construction and never resets it within that writer or closes the borrowed
-endpoint. Binding that deadline to the original outer owner remains pending;
-this writer interface supplies no budget authority or general model exporter.
-Original supervise IO, bounded owner drain and the exact-wait4-before-raw EOF/
-read-slot-close integration remain open: a registered pipe still explicitly
-refuses terminal fact creation. Ordinary FIFO tests include Python fault
+endpoint. The private tiny supervise path now binds this to its original8s
+start/deadline, exact aggregate owner and same C log FD. C closes its original
+write slot after adoption and drains at most4KiB per original loop pass. A's
+exact borrowed-writer path keeps its original2s/64MiB budget and bypasses all
+mkdir/open/save branches, including unsupported/failed/exception paths. Only
+the original aggregate terminal_record, after exact owned wait4/identity, can
+finish bounded EOF drain and native read-slot close before both raw snapshots.
+Tiny terminal KI/MI and diagnostic faults cannot skip original pidfd closure;
+unknown/partial IO remains retained, never a release. Old/default finish and IO
+remain their own branch. This is tiny mechanics with synthetic birth/raw tests,
+not valid placement, a budget grant or a general model/stdout exporter. Ordinary FIFO tests include Python fault
 injection after native return, full16 ancestor plus2 FIFO slots, FD reuse,
 partial-close errno, real SIGUSR1 lock reentry and invalid-cgroup refusal;
 native-internal signal interruption is not established. Small ordinary child

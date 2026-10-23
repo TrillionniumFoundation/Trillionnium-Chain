@@ -625,13 +625,18 @@ output; capture-time dict mutation refuses and growing lists/aliases stay
 bounded. This does not claim an atomic caller-state or native observation.
 The borrowed nonblocking
 stdout writer keeps one supplied absolute
-deadline at most8s ahead at construction; binding it to the original outer
-owner remains open and this interface grants no budget authority. Pure parsing
+deadline at most8s ahead at construction. The private tiny path binds it to the
+original C8s owner/start, drains4KiB/pass and gives A the original2s writer path
+without mkdir/open/save. Original exact wait4/identity must precede final EOF/
+native read-slot close, which precede both original raw snapshots. Typed tiny
+terminal KI/MI/projection faults preserve original pidfd cleanup; partial/
+unknown remains RETAINED, not release. Tests use ordinary real children with
+synthetic native birth/limits/raw; they do not qualify a valid unit or model.
+This interface grants no budget authority. Pure parsing
 and small ordinary-FIFO child controls cover
-malformed/truncated/extra frames, backpressure and deadline refusal. Bounded
-owner drain, every original supervise IO branch and exact-wait4-before-raw EOF/
-actual read-slot close remain open; a registered pipe cannot create a terminal
-fact. Post-native Python exception injection does not claim native-internal
+malformed/truncated/extra frames, backpressure and deadline refusal. Actual
+valid-unit verification and original Store/FinalUse closure remain open.
+Post-native Python exception injection does not claim native-internal
 signal interruption; SIGUSR1 tests prove guard reentry refusal. Ordinary FD
 controls do not qualify a valid unit or prove that C-created pipe pages charge C.
 The next dependency remains the existing Hepta
