@@ -1851,7 +1851,7 @@ Consequently this is only a fresh namespace/subsequent-charge boundary; O's
 complete RSS, original host baseline funding and physical resource return
 remain open. Compatible ancestor ceilings are not reservations or CPU service.
 
-The twenty-two local controls retain all eighteen original controls and use real bounded transport subprocesses, the original
+The twenty-eight local controls retain all twenty-two preceding controls and use real bounded transport subprocesses, the original
 source-built native close-and-clear slots and
 ordinary temporary-FD layout fixtures with a mock manager. The retained-owner
 regression adds an immutable copy of every native slot value and signature;
@@ -1874,6 +1874,55 @@ read-order, first-value and sticky-owner controls do not qualify native pristine
 Actual exit status stays UNKNOWN and whole-probe completion remains NOT_PROVEN;
 the ordinary-exit intent and missing PID are not settlement or resource-return
 proof. Another fresh native request requires independent review and a new GO.
+
+**P0 phase correction, same original owner (preparation slice only).** The next
+[exact-e6 native observation](../../evidence/pon-upgrade-implementation-20261018/native-rounds/host-memcg-phase-boundary-20261023/SCOPE.md)
+captured `operation.memory.current=258048\n` at the first failed read, without
+rereading. It remains UNKNOWN. Official Linux7 and Ubuntu7.0-38 source select the
+parent active memcg while allocating accounted child-memcg statistics: creating
+C/A below U can charge U even while O runs in observer and before C/A task birth.
+The exact byte decomposition and deployed HWE source/config identity are not
+proved. These are real U expenses, neither a deductible baseline nor exempt
+bookkeeping. The original complete-layout `admit` path and all seven pristine
+zero/empty requirements remain unchanged in meaning and remain unqualified.
+
+M14/M17's existing `HostScopeAdmission`, manager/FD owner and limits now expose
+`prepare_fresh_host_leaf()` -> same original owner -> `admit_fresh_leaf()` ->
+private `_FreshULeafFact` -> `consume_fresh_leaf(fact)` once. No caller supplies a
+leaf/pristine claim. The actual registered topology is only S/H/observer/U; the
+unchanged guard runs on U before any C/A directory exists. The fact is bound to
+that original owner, source, fresh generation, PID, manager unit/invocation and
+held U identity; it cannot be copied/serialized or used by another owner. The
+consume operation rechecks the actual facts, returns no authority and transitions
+to LEAF_PROOF_CONSUMED; any ambiguity becomes sticky UNKNOWN_RETAINED with the
+original slots held. It creates no child, operation grant, new owner or journal.
+All old22 plus six new ordinary-FD/mock-manager controls pass locally; none is
+native admission or resource-return qualification.
+
+The existing PN4 dependency and acceptance sequence is:
+
+| Stage / owner | Interface and required evidence | Status / exit |
+| --- | --- | --- |
+| Fresh leaf / M14/M17 | Same original owner; exact topology/limits/source/generation and original seven-zero guard before C/A | Preparation and one-shot consumption implemented; new native qualification OPEN |
+| C/A preparation and birth / same owner, Hepta kernel.operations | Consume the same fact once, then create exact bounded C/A; charge all child bookkeeping to U's 16GiB; original native birth/pidfd/wait4 binding | OPEN; no successful placeholder |
+| Running and quiescing / same original O | Monotonic existing operation/effect identity; authoritative original C and A exits plus zero leaf populations/descendants | OPEN; never call running U pristine |
+| Normal retirement / same original O | Only after both exits are known, retire A then C once using original parent FD/name/inode, then native close-and-clear of those original held slots | OPEN; unknown/partial removal retains all remaining slots, never retries or reuses names |
+| Whole-U terminal / original evidence-pipe and aggregate owners | Retain U/S/H/observer; actual U descendants0/dying0/current0/swap0, exact identity/limits and unchanged historical meters before original cutoff | OPEN; no charge/peak reset or baseline subtraction |
+| FinalUse and I05/I10 settlement / existing effect owners | Original authoritative terminal identity and budget/funding evidence, then existing AuthBus reconciliation | OPEN; no new journal or refund path |
+
+The eight-second fact cutoff is the original supervise start plus8s, never a new
+retirement window. Historical peak/CPU remain recorded; peak0 is a fresh-leaf
+prebirth condition, not a resettable terminal meter. Kernel CSS teardown/charge
+drain can remain pending past the cutoff: that result is UNKNOWN_RETAINED, with
+no terminal receipt, new entry or refund. Linux7 `rmdir` can block in-kernel;
+synchronous remove/poll code cannot promise an eight-second return. A future
+reviewed native asynchronous effect interface may occupy at most one bounded
+slot permanently owned by original O. On timeout it retains the slot/handles,
+forbids reentry and grants no refund; timely observer return does not prove the
+effect finished. That primitive, guardian lifetime/budget, real C/A birth and
+retirement are not implemented by this preparation slice and remain explicit
+PN4 blockers. No additional native side effects are authorized by these tests.
+
 Native S/H qualification,
 original C birth/pidfd/wait4, whole-U zero-charge terminal capture inside the
 unchanged original eight-second deadline, FinalUse entry and AuthBus settlement

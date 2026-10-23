@@ -21,6 +21,7 @@ import llm_runtime_kernel_owned as kernel
 import llm_runtime_host_scope_io as bus
 
 _TOKEN = object()
+_LEAF_FACT_TOKEN = object()
 _ROOT = Path('/sys/fs/cgroup')
 _CONTROLLERS = frozenset(('cpu', 'memory', 'pids'))
 _NAMESPACES = ('mnt', 'cgroup', 'pid', 'user')
@@ -117,6 +118,26 @@ def _pristine_message(failure):
     return message
 
 
+class _FreshULeafFact:
+    """One nontransferable preparation fact, owned by the existing original cap."""
+    __slots__ = ('_owner', '_generation', '_binding')
+
+    def __init__(self, token, owner):
+        kernel.require(token is _LEAF_FACT_TOKEN and type(owner) is HostScopeAdmission,
+                       'host-leaf-private-fact')
+        self._owner, self._generation = owner, owner._leaf_generation
+        self._binding = owner._leaf_binding()
+
+    def __reduce_ex__(self, protocol):
+        raise TypeError('host-leaf-fact-not-serializable')
+
+    def __copy__(self):
+        raise TypeError('host-leaf-fact-not-copyable')
+
+    def __deepcopy__(self, memo):
+        raise TypeError('host-leaf-fact-not-copyable')
+
+
 class HostScopeAdmission:
     """One original namespace request. Call admit once; retain it before any effect.
 
@@ -130,6 +151,7 @@ class HostScopeAdmission:
         self._fds, self._groups, self._namespaces, self._ancestors = [], {}, {}, []
         self._started = self._ready = self._failed = self._closed = False
         self._first_pristine_failure = None
+        self._leaf_generation = self._leaf_phase = self._leaf_fact = None
         self._unit = 'trnm-host-'+uuid.uuid4().hex+'.scope'
         self._operation_name = 'operation-'+uuid.uuid4().hex
         self._source = _source()
@@ -307,6 +329,8 @@ class HostScopeAdmission:
         """Perform one real namespace request, without native birth or paid authority."""
         with self._lock:
             self._owner()
+            kernel.require(getattr(self, '_leaf_generation', None) is None,
+                           'host-leaf-profile-not-legacy-admit')
             kernel.require(not self._started and not self._failed, 'host-one-original-request')
             kernel.require(kernel._text(self._proc, 'cgroup') == self._original_membership,
                            'host-membership-changed-before-request')
@@ -348,6 +372,112 @@ class HostScopeAdmission:
             except BaseException:
                 self._failed = True
                 self._ready = False
+                raise
+
+    def _leaf_binding(self):
+        return (self._leaf_generation, self._pid, self._unit, self._invocation,
+                self._operation_name, self._groups['operation'][2:], self._source)
+
+    def admit_fresh_leaf(self):
+        """Prepare S/H/O/U only; prove original zero counters before C/A exist."""
+        with self._lock:
+            self._owner()
+            kernel.require(getattr(self, '_leaf_generation', None) is not None and self._leaf_phase == 'PREPARED'
+                and not self._started and not self._failed, 'host-leaf-one-original-request')
+            kernel.require(kernel._text(self._proc, 'cgroup') == self._original_membership,
+                           'host-membership-changed-before-request')
+            self._started = True
+            try:
+                self._job = self._manager.call('StartTransientUnit', 'ssa(sv)a(sa(sv))',
+                    bus.scope_request(self._unit, self._pid), 'o')
+                kernel.require(type(self._job) is str and re.fullmatch(
+                    r'/org/freedesktop/systemd1/job/[1-9][0-9]*', self._job), 'host-original-start-job')
+                self._unit_path = self._manager.call('GetUnit', 's', [self._unit], 'o')
+                control = self._manager_readback()
+                scope = self._open_original_scope(control)
+                kernel.require(kernel._text(self._proc, 'cgroup') == '0::'+control+'\n'
+                    and kernel._text(scope, 'cgroup.procs') == str(self._pid)+'\n'
+                    and not _directory_names(scope) and
+                    kernel._text(scope, 'cgroup.subtree_control') == '', 'host-original-fresh-scope')
+                host = self._group('host', scope, 'host')
+                self._write(host, 'cgroup.procs', str(self._pid)+'\n')
+                kernel.require(kernel._text(scope, 'cgroup.procs') == '', 'host-scope-no-internal-process')
+                self._write(scope, 'cgroup.subtree_control', '+cpu +memory +pids\n')
+                self._configure('host', host)
+                observer = self._group('observer', host, 'observer')
+                self._write(observer, 'cgroup.procs', str(self._pid)+'\n')
+                kernel.require(kernel._text(host, 'cgroup.procs') == '', 'host-no-internal-process')
+                self._write(host, 'cgroup.subtree_control', '+cpu +memory +pids\n')
+                self._configure('observer', observer)
+                operation = self._group('operation', host, self._operation_name)
+                self._configure('operation', operation)
+                self._write(operation, 'cgroup.subtree_control', '+cpu +memory +pids\n')
+                self._leaf_phase, self._ready = 'FRESH_U_LEAF', True
+                self._verify_fresh_leaf_locked()
+                self._leaf_fact = _FreshULeafFact(_LEAF_FACT_TOKEN, self)
+                return self._leaf_fact
+            except BaseException:
+                self._leaf_phase, self._failed, self._ready = 'UNKNOWN_RETAINED', True, False
+                raise
+
+    def _verify_fresh_leaf_locked(self):
+        self._owner()
+        kernel.require(self._leaf_generation is not None and self._leaf_phase == 'FRESH_U_LEAF'
+            and self._ready and not self._failed, 'host-leaf-phase-or-sticky-failure')
+        control = self._manager_readback()
+        kernel.require(type(self._invocation) is tuple and len(self._invocation) == 16
+            and all(type(value) is int and 0 <= value <= 255 for value in self._invocation)
+            and any(self._invocation), 'host-leaf-original-invocation-required')
+        kernel.require(tuple(self._groups) == ('scope', 'host', 'observer', 'operation'),
+                       'host-leaf-exact-registered-groups')
+        kernel.require(kernel._text(self._proc, 'cgroup') == '0::'+control+'/host/observer\n',
+                       'host-observer-membership')
+        for fd, values in self._ancestors:
+            kernel.require(all(kernel._text(fd, key) == value for key, value in values.items()),
+                           'host-ancestor-ceiling-changed')
+        for role, (parent, name, fd, signature) in self._groups.items():
+            if parent is not None:
+                fresh = os.open(name, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC,
+                                dir_fd=parent)
+                try:
+                    kernel.require(kernel.proc._signature(fresh) == signature, 'host-group-replaced')
+                finally:
+                    os.close(fresh)
+            self._check_mount(fd)
+            kernel.require(kernel._text(fd, 'cgroup.type') == 'domain\n', 'host-domain-only')
+            for key, value in _limits(role).items():
+                kernel.require(kernel._text(fd, key) == value, 'host-exact-budget-required')
+            names = {'scope': frozenset(('host',)),
+                     'host': frozenset(('observer', self._operation_name))}.get(role, frozenset())
+            kernel.require(_directory_names(fd) == names, 'host-leaf-exact-topology')
+            tree = _fields(kernel._text(fd, 'cgroup.stat'))
+            kernel.require(tree.get('nr_descendants') == {'scope': 3, 'host': 2}.get(role, 0)
+                and tree.get('nr_dying_descendants') == 0 and
+                all(value == 0 for key, value in tree.items() if key.startswith('nr_dying_')),
+                'host-descendant-or-dying-mismatch')
+            controllers = kernel._text(fd, 'cgroup.subtree_control').split()
+            kernel.require(len(controllers) == (0 if role == 'observer' else 3) and
+                frozenset(controllers) == (frozenset() if role == 'observer' else _CONTROLLERS),
+                'host-subtree-controllers')
+        for role in ('scope', 'host'):
+            kernel.require(kernel._text(self._groups[role][2], 'cgroup.procs') == '',
+                           'host-original-only-observer')
+        kernel.require(kernel._text(self._groups['observer'][2], 'cgroup.procs') == str(self._pid)+'\n',
+                       'host-original-only-observer')
+        self._require_pristine('operation', self._groups['operation'][2])
+
+    def consume_fresh_leaf(self, fact):
+        """Consume this original preparation fact once; create no C/A or grant."""
+        with self._lock:
+            try:
+                self._owner()
+                kernel.require(type(fact) is _FreshULeafFact and fact is self._leaf_fact and
+                    fact._owner is self and fact._generation == self._leaf_generation and
+                    fact._binding == self._leaf_binding(), 'host-leaf-original-fact-required')
+                self._verify_fresh_leaf_locked()
+                self._leaf_phase, self._ready = 'LEAF_PROOF_CONSUMED', False
+            except BaseException:
+                self._leaf_phase, self._failed, self._ready = 'UNKNOWN_RETAINED', True, False
                 raise
 
     def _verify_locked(self):
@@ -430,3 +560,16 @@ class HostScopeAdmission:
 def prepare_host_scope():
     """Allocate an original owner before effects; caller must retain this object."""
     return HostScopeAdmission(_TOKEN)
+
+
+def prepare_fresh_host_leaf():
+    """Opt-in staged preparation on the same owner; no caller pristine claims."""
+    owner = prepare_host_scope()
+    owner._owner()
+    kernel.require(type(owner) is HostScopeAdmission and not owner._started and
+        not owner._failed and not owner._closed and getattr(owner, '_leaf_generation', None) is None,
+        'host-leaf-fresh-original-owner-required')
+    owner._leaf_generation = uuid.uuid4().hex
+    owner._leaf_phase = 'PREPARED'
+    owner._leaf_fact = None
+    return owner

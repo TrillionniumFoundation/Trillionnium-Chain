@@ -378,7 +378,7 @@ The original owner is retained before any request; ambiguous or failed requests
 cannot retry, stop/delete the scope or close its owned FDs as a successful
 retirement. This remains a trusted preparatory interface, without C birth,
 whole-U terminal observation or money authority. The
-[twenty-two controls](test_llm_runtime_host_scope.py) retain all eighteen original controls and exercise bounded real
+[twenty-eight controls](test_llm_runtime_host_scope.py) retain all twenty-two preceding controls and exercise bounded real
 transport and ordinary-FD/mock-manager layouts, including immutable retained-slot
 comparison under controlled bookkeeping mutations. They do not establish native
 scope admission.
@@ -393,6 +393,24 @@ first-failure tuple keeps the full bounded raw. Actual exit status remains
 UNKNOWN, planned exit is only intent, and no diagnostic test closes pristine or
 authorizes reuse of the old cap/unit. A new native experiment requires separate
 independent review and GO under the same PN4 plan.
+The [exact-e6 first-read observation](../evidence/pon-upgrade-implementation-20261018/native-rounds/host-memcg-phase-boundary-20261023/SCOPE.md)
+records U `memory.current=258048\n`, still UNKNOWN. Linux7 child-memcg statistics
+can be charged to parent U when C/A directories are created. The byte
+composition is unproved; these charges are not exempted or subtracted. The
+original full-layout mode and seven pristine predicates remain intact.
+The opt-in `prepare_fresh_host_leaf()` returns the same original owner;
+`admit_fresh_leaf()` creates only S/H/observer/U and actually verifies fresh leaf
+U. Its private fact is bound to that owner/source/generation/original identities,
+not caller claims, and refuses copying/serialization. `consume_fresh_leaf(fact)`
+rechecks once, returns None and retains the consumed fact; it creates no C/A or
+authority. Unknown outcomes retain the original slots with no second admission.
+Six added ordinary-file/mock-manager controls are contract evidence only.
+The existing PN4 plan owns the next C/A birth, authoritative exits, ordered
+retirement and actual zero-charge/dying-free terminal requirements. They remain
+OPEN. The original eight-second fact deadline is unchanged; blocking removal
+cannot be presented as a hard eight-second return. A future asynchronous effect
+slot must be singular, bounded and permanently retained by the original owner
+on UNKNOWN, with no reentry/release/refund. This slice supplies no such primitive.
 Pre-migration O memory stays charged to its original cgroup; the new ceilings
 therefore do not bound all O RSS or settle its original host baseline.
 

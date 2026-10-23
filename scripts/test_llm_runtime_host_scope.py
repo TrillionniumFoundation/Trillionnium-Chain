@@ -413,6 +413,119 @@ class HostScopeTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'sticky-failure'): cap.verify()
         self.assertEqual((paths['operation']/'memory.current').read_text(), '4096\n')
 
+    def leaf_fixture(self):
+        cap, paths, writes = self.fixture()
+        cap._source = host._source()
+        cap._invocation = tuple(range(16))  # Mock manager's stored original binding.
+        with patch.object(host, 'prepare_host_scope', return_value=cap):
+            prepared = host.prepare_fresh_host_leaf()
+        self.assertIs(prepared, cap)
+        return cap, paths, writes
+
+    def test_fresh_leaf_fact_is_bound_to_same_owner_and_consumed_only_once(self):
+        cap, paths, _ = self.leaf_fixture()
+        original_native = cap._native
+        fact = cap.admit_fresh_leaf()
+        self.assertEqual(tuple(cap._groups), ('scope', 'host', 'observer', 'operation'))
+        self.assertFalse((paths['operation']/'controller').exists())
+        self.assertFalse((paths['operation']/'aggregate').exists())
+        self.assertEqual((paths['operation']/'memory.current').read_text(), '0\n')
+        self.assertEqual((paths['operation']/'memory.peak').read_text(), '0\n')
+        self.assertIs(fact._owner, cap)
+        self.assertIs(cap._native, original_native)
+        self.assertEqual(fact._generation, cap._leaf_generation)
+        self.assertIsNone(cap.consume_fresh_leaf(fact))
+        self.assertEqual(cap._leaf_phase, 'LEAF_PROOF_CONSUMED')
+        self.assertFalse(cap._ready)
+        self.assertIs(cap._leaf_fact, fact)
+        with self.assertRaises(ValueError): cap.consume_fresh_leaf(fact)
+        self.assertEqual(cap._leaf_phase, 'UNKNOWN_RETAINED')
+        for name in ('spawn', 'prepare_children', 'retire', 'settle', 'refund'):
+            self.assertFalse(hasattr(cap, name))
+
+    def test_leaf_profile_has_no_caller_pristine_or_legacy_admission_bypass(self):
+        cap, _, _ = self.fixture()
+        with self.assertRaises(ValueError): cap.admit_fresh_leaf()
+        cap._manager.call.assert_not_called()
+        for keyword in ('pristine', 'leaf'):
+            with self.subTest(keyword=keyword), self.assertRaises(TypeError):
+                host.prepare_fresh_host_leaf(**{keyword: True})
+        with self.assertRaises(ValueError): host._FreshULeafFact(object(), cap)
+        leaf, _, _ = self.leaf_fixture()
+        with self.assertRaisesRegex(ValueError, 'not-legacy-admit'): leaf.admit()
+        leaf._manager.call.assert_not_called()
+
+    def test_leaf_fact_rejects_copy_foreign_generation_and_replaced_original_path(self):
+        import pickle
+        for mutation in ('generation', 'foreign', 'path'):
+            with self.subTest(mutation=mutation):
+                cap, paths, _ = self.leaf_fixture()
+                fact = cap.admit_fresh_leaf()
+                original_slots = owned_slot_snapshot(cap)
+                for operation in (copy.copy, copy.deepcopy, pickle.dumps):
+                    with self.assertRaises(TypeError): operation(fact)
+                if mutation == 'generation':
+                    cap._leaf_generation = 'different-generation'
+                elif mutation == 'foreign':
+                    other, _, _ = self.leaf_fixture()
+                    fact = other.admit_fresh_leaf()
+                else:
+                    paths['operation'].rename(paths['operation'].with_name('original-moved'))
+                    paths['operation'].mkdir()
+                with self.assertRaises(ValueError): cap.consume_fresh_leaf(fact)
+                self.assertEqual(cap._leaf_phase, 'UNKNOWN_RETAINED')
+                self.assertTrue(cap._failed)
+                self.assertEqual(owned_slot_snapshot(cap), original_slots)
+                for slot, _ in cap._fds: os.fstat(slot[1])
+
+    def test_leaf_unknown_manager_outcome_retains_original_slots_and_no_retry(self):
+        cap, _, _ = self.leaf_fixture()
+        cap._manager.call.side_effect = TimeoutError('original leaf request unknown')
+        before = owned_slot_snapshot(cap)
+        with self.assertRaises(TimeoutError): cap.admit_fresh_leaf()
+        self.assertTrue(cap._started)
+        self.assertTrue(cap._failed)
+        self.assertEqual(cap._leaf_phase, 'UNKNOWN_RETAINED')
+        self.assertEqual(owned_slot_snapshot(cap), before)
+        with self.assertRaises(ValueError): cap.admit_fresh_leaf()
+        with self.assertRaises(ValueError): cap.close_before_effect()
+        self.assertEqual(cap._manager.call.call_count, 1)
+
+    def test_leaf_positive_charge_before_consumption_is_not_exempted(self):
+        cap, paths, _ = self.leaf_fixture()
+        fact = cap.admit_fresh_leaf()
+        before = owned_slot_snapshot(cap)
+        (paths['operation']/'memory.current').write_text('258048\n')
+        (paths['operation']/'memory.peak').write_text('258048\n')
+        with self.assertRaises(kernel.KernelBudgetError) as caught: cap.consume_fresh_leaf(fact)
+        data = json.loads(str(caught.exception).split('host-pristine-diagnostic=', 1)[1])
+        self.assertEqual((data['role'], data['field'], data['raw']),
+                         ('operation', 'memory.current', '258048\n'))
+        self.assertEqual(cap._leaf_phase, 'UNKNOWN_RETAINED')
+        self.assertEqual(owned_slot_snapshot(cap), before)
+        self.assertEqual((paths['operation']/'memory.peak').read_text(), '258048\n')
+
+    def test_terminal_raw_requires_actual_zero_charge_and_no_dying_without_peak_reset(self):
+        import llm_runtime_kernel_aggregate as aggregate
+        _, root, fd, _ = self.pristine_fixture()
+        (root/'memory.events').write_text('low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\n')
+        (root/'memory.current').write_text('258048\n')
+        (root/'memory.peak').write_text('258048\n')
+        (root/'cpu.stat').write_text('usage_usec 42\n')
+        for descendants, dying in ((2, 0), (0, 2)):
+            (root/'cgroup.stat').write_text(f'nr_descendants {descendants}\nnr_dying_descendants {dying}\n')
+            with self.assertRaisesRegex(ValueError, 'descendants-or-dying'): aggregate._raw(fd)
+        (root/'cgroup.stat').write_text('nr_descendants 0\nnr_dying_descendants 0\n')
+        with self.assertRaisesRegex(ValueError, 'charge-retained'): aggregate._raw(fd)
+        (root/'memory.current').write_text('0\n')
+        (root/'memory.swap.current').write_text('1\n')
+        with self.assertRaisesRegex(ValueError, 'charge-retained'): aggregate._raw(fd)
+        (root/'memory.swap.current').write_text('0\n')
+        raw = aggregate._raw(fd)  # Ordinary parser facts, not native retirement/WholeU.
+        self.assertEqual(raw['memory.peak'], '258048\n')
+        self.assertEqual(raw['cpu.stat'], 'usage_usec 42\n')
+        self.assertEqual((root/'memory.peak').read_text(), '258048\n')
+
 
 if __name__ == '__main__':
     suite = unittest.defaultTestLoader.loadTestsFromTestCase(HostScopeTests)
