@@ -300,6 +300,19 @@ pub fn prepare_state_witness(
     state_witness::prepare(settings, &checkpoint, parent_state, &parent_accounts)
 }
 
+/// Prepare untrusted witness material from an opaque native or archive query
+/// checkpoint. The complete actual parent and account relation are rechecked;
+/// no serialized root/count claim can construct the checkpoint capability.
+/// This performs no storage access or publication and does not select GSC2.
+pub fn prepare_state_witness_from_checkpoint(
+    settings: &Settings,
+    checkpoint: &Checkpoint,
+    parent_state: &State,
+) -> Result<StateWitness> {
+    let parent_accounts = check_checkpoint_source(settings, checkpoint, parent_state)?;
+    state_witness::prepare(settings, checkpoint, parent_state, &parent_accounts)
+}
+
 fn check_parent_source(
     settings: &Settings,
     archive: &AccountArchive,
@@ -307,12 +320,21 @@ fn check_parent_source(
     parent_state: &State,
 ) -> Result<(Checkpoint, BTreeMap<Hash, Account>)> {
     let checkpoint = archive.checkpoint(parent_checkpoint)?;
+    let parent_accounts = check_checkpoint_source(settings, &checkpoint, parent_state)?;
+    Ok((checkpoint, parent_accounts))
+}
+
+fn check_checkpoint_source(
+    settings: &Settings,
+    checkpoint: &Checkpoint,
+    parent_state: &State,
+) -> Result<BTreeMap<Hash, Account>> {
     let context = Context {
         network: settings.network(),
         parameters: settings.parameters(),
         genesis: settings.genesis(),
     };
-    CheckedAccounts::verify(context, &checkpoint, &[], &[])?;
+    CheckedAccounts::verify(context, checkpoint, &[], &[])?;
     if checkpoint.source_state_root()
         != Some(pon_executor::root(parent_state).map_err(CheckedExecutionError::Relation)?)
     {
@@ -324,7 +346,7 @@ fn check_parent_source(
     {
         return Err(CheckedExecutionError::AccountSource);
     }
-    Ok((checkpoint, parent_accounts))
+    Ok(parent_accounts)
 }
 
 pub fn execute_with_state_witness(
@@ -435,6 +457,46 @@ pub fn execute_with_compact_state_witness_and_progress(
     })
 }
 
+/// Consume the opaque checkpoint/AAM1 returned by
+/// [`crate::Node::authenticated_account_multiproof`] without an AccountArchive
+/// sidecar. This is the same complete-State reference relation and its two
+/// proof-derived transitions, not native admission or partial-State execution.
+/// The caller pins the exact parent State/block and supplies the complete
+/// non-account witness; missing proof input never falls back to State.
+pub fn execute_compact_from_checkpoint_and_progress(
+    settings: &Settings,
+    checkpoint: &Checkpoint,
+    parent_state: &State,
+    block: BlockInput<'_>,
+    input: CompactStateExecutionInput<'_>,
+    progress: &(impl Fn(StateWitnessProgress) -> Result<()> + Sync),
+) -> Result<CompactStateWitnessExecutionOutput> {
+    progress(StateWitnessProgress::BeforeBinding)?;
+    let result = execute_from_checkpoint_source(
+        settings,
+        checkpoint.id(),
+        parent_state,
+        block,
+        ExecutionEvidence {
+            accounts: AccountEvidence::Compact(input.accounts),
+            state: Some(StateControl {
+                witness: input.state,
+                monetary: None,
+                progress,
+            }),
+        },
+        &|point| progress(StateWitnessProgress::Execution(point)),
+        || Ok(checkpoint.clone()),
+    )?;
+    Ok(CompactStateWitnessExecutionOutput {
+        execution: StateWitnessExecutionOutput {
+            execution: result.execution,
+            state_observation: result.state.ok_or(StateWitnessError::Observation)?,
+        },
+        account_proof: result.compact.ok_or(StateWitnessError::Observation)?,
+    })
+}
+
 /// A separate research relation: a private anchor is checked from the complete
 /// parent; complete monetary range proofs then supply M06's actual original
 /// monetary enumeration. Other cleanup and complete successor checks retain the
@@ -512,6 +574,26 @@ fn execute_inner(
     evidence: ExecutionEvidence<'_>,
     progress: &(impl Fn(ExecutionProgress) -> Result<()> + Sync),
 ) -> Result<InternalOutput> {
+    execute_from_checkpoint_source(
+        settings,
+        parent_checkpoint,
+        parent_state,
+        block,
+        evidence,
+        progress,
+        || Ok(archive.checkpoint(parent_checkpoint)?),
+    )
+}
+
+fn execute_from_checkpoint_source(
+    settings: &Settings,
+    parent_checkpoint: Hash,
+    parent_state: &State,
+    block: BlockInput<'_>,
+    evidence: ExecutionEvidence<'_>,
+    progress: &(impl Fn(ExecutionProgress) -> Result<()> + Sync),
+    load_checkpoint: impl FnOnce() -> Result<Checkpoint>,
+) -> Result<InternalOutput> {
     let budget = WitnessBudget::for_block(settings, parent_state.len(), block.transactions.len())?;
     match evidence.accounts {
         AccountEvidence::Expanded(witnesses) => {
@@ -522,7 +604,7 @@ fn execute_inner(
         }
     }
     progress(ExecutionProgress::BeforeParentBinding)?;
-    let checkpoint = archive.checkpoint(parent_checkpoint)?;
+    let checkpoint = load_checkpoint()?;
     let context = Context {
         network: settings.network(),
         parameters: settings.parameters(),

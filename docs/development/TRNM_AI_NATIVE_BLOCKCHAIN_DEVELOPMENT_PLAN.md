@@ -1144,6 +1144,73 @@ must be read separately from PN1's real total budget and honest-completion resul
    finality. Export/migration verifies the complete source and publishes an
    isolated destination only after readback; source remains recoverable.
 
+I03/I04 implemented subitem: the existing M07 native AAM1 query can now supply
+its opaque checkpoint directly to M06's compact complete-State reference adapter,
+without a separate AccountArchive. The same parent/context, witness budgets,
+mandatory/successor checks and cancellation order remain. The signed native
+differential suite covers zero balances/nonces, refunds and maturity; previews
+cannot publish SQL or active state. This does not connect witnesses to Packet or
+native admission, select GSC2, remove complete-State scans, or relax any 65,536
+legacy cap. Bounded witness discovery/working input, durable deltas/root retention,
+migration and fault/scaling acceptance in I03–I05 remain open; PN2 stays unqualified.
+
+PN2 cold-journal subitem: the original growth Node's cold-open read transaction
+now streams every event twice. The first pass preserves the prior complete
+SQL-type-error priority; the second checks every genesis-to-active journal edge
+with scalar generation/ordinal state. Two actual row cursors then compare the
+latest steps/events and original reorg singleton, including both EOFs. Existing
+hot reorg cancellation and publication remain unchanged. This removes the
+all-events and last-generation event vectors while adding one O(E) read pass;
+the 33-byte stored-hash copy bound and two retained event rows do not bound
+SQLite pages, RSS or the rest of cold open. Blocks, checked roots/COW aggregates,
+fork paths, DB/WAL and historical obligations still require their original
+verification and I05 retention/resource ownership. No root is pruned, no local
+history threshold becomes finality, and PN2 remains unqualified. Actual native
+differential checks pass on 73 events and a 49-step reorg, including 27 SQLite
+corruptions and the original late-type-error priority. The retained growth suite
+passes 17 tests with the original 65,536-account release case ignored under the
+existing serial CI setting. An earlier default-parallel run's `WRITER_BUSY`
+failure remains recorded separately; its cause is not established by the later
+serial pass. These results do not close global root/disk retention.
+
+I04 producer subitem: the existing M07 owner can now issue an explicit opaque
+historical account-query pin after the same complete-State validation, then
+produce AAM1 from real Patricia paths without replaying State on each repeated
+query. Each query rereads exact record/block/context bindings and fails on missing
+or damaged tree bytes. This is fixed-root content access, not a fresh KV/history
+audit, active-state entitlement, retention promise or executable bounded parent.
+The original strict query, cold open, native execution/commit/reorg and all caps
+retain their checks. See the existing [native storage contract](../protocol/pon-nakamoto-v1/details/NATIVE_AUTHENTICATED_STORAGE_V1.md#explicit-historical-account-query-pins).
+
+The separately selected native growth backend already binds its private audited
+parent aggregate and complete bounded working partition to the actual header,
+then shares M06 with proved touched accounts; the complete-State compact reference
+above does not replace that path. Its activation now propagates cancellation
+through ancestor reads, ordered journal writes and streamed exact journal readback.
+The original cancellation error and whole-transaction rollback remain. Duplicate
+journal vectors are removed, while the two fork paths, cold retained-history audit
+and permanent root retention still grow. No public PNP2 admission, global disk
+bound, source-preserving activation migration or final-source scaling acceptance
+is supplied by this increment.
+
+Its original-parent proof verification and both proof-derived successor root
+computations now propagate the same original control error through existing
+multiproof progress boundaries. M06's public interface and successful second
+successor recomputation remain unchanged; a private single-error owner bridges
+its string-only commitment result. Real signed small fixtures must reject early,
+hash-stage and final-output cancellation without publishing any child or changing
+any native table, then admit and cold-open normally with the same owner. These
+boundaries do not make a single hash operation preemptible or close the remaining
+PN2 qualification and retention items above.
+
+The same explicit growth admission callback now reaches full W1 replay through
+the existing typed verifier, preserving original control sources and `WORK:*`
+invalidity. Failed or cancelled work cannot publish a child or reuse success.
+Public PNP2 intake remains dependent on the shared original CPU/deadline/resource
+owner and joint PN1/PN2 qualification. Global I05 bounds remain open: the inert
+migration reservation and the separate M09 Cell arena are not ledger-root or WAL
+quotas, and a SQLite page-exhaustion rollback test supplies no retention policy.
+
 Exit: actual signed native transitions cross 65,536 permanent accounts with
 bounded W and working partition; small-state complete/reference differential
 execution agrees. Pass zero-balance/re-entry/nonce, wrong-parent/omitted/extra

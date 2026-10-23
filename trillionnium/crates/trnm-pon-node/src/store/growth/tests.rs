@@ -3,7 +3,7 @@
 //! fully proved successor transactions cross it. It is not synthetic history.
 use super::*;
 use crate::{development_public, ErrorCode, Packet};
-use std::sync::atomic::{AtomicUsize, Ordering};
+use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
 use trnm_crypto_primitives::{sign_hex, signing_key_from_hex};
 use trnm_protocol::pon_wire::hash;
 
@@ -14,6 +14,222 @@ fn base_settings() -> Settings {
         continuity_v1::PROFILE,
     )
     .unwrap()
+}
+
+// The pre-change collect algorithm remains a test-only differential oracle.
+// Counters observe its actual retained vectors, not another streaming model.
+fn collected_cold_journal(node: &Node) -> Result<(usize, usize)> {
+    let values: Vec<(u64, u64, u64, Vec<u8>)> = node
+        .db
+        .prepare("SELECT generation,ordinal,kind,block FROM events ORDER BY generation,ordinal")?
+        .query_map([], |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?, r.get(3)?)))?
+        .collect::<std::result::Result<_, _>>()?;
+    let count = values.len();
+    let mut peak = 0;
+    let mut tip = node.settings.genesis();
+    let mut generation = 0u64;
+    let mut old = tip;
+    let mut changes = Vec::new();
+    for (g, ordinal, kind, raw) in values {
+        if g != generation {
+            ensure(g == generation + 1, "GROWTH_REORG_JOURNAL")?;
+            generation = g;
+            old = tip;
+            changes.clear();
+        }
+        ensure(ordinal == changes.len() as u64, "GROWTH_REORG_JOURNAL")?;
+        let id = bytes32(raw)?;
+        match kind {
+            0 => {
+                ensure(tip == id, "GROWTH_REORG_JOURNAL")?;
+                tip = node.record(id)?.parent.ok_or("GROWTH_REORG_JOURNAL")?;
+            }
+            1 => {
+                ensure(node.record(id)?.parent == Some(tip), "GROWTH_REORG_JOURNAL")?;
+                tip = id;
+            }
+            _ => return Err("GROWTH_REORG_JOURNAL".into()),
+        }
+        changes.push((kind, id));
+        peak = peak.max(changes.len());
+    }
+    ensure(
+        node.active()? == (tip, generation) && node.slot()? == generation,
+        "GROWTH_REORG_JOURNAL",
+    )?;
+    if generation > 0 {
+        node.growth_check_latest_journal(old, tip, generation, &changes)?;
+    } else {
+        let rows: u64 = node.db.query_row(
+            "SELECT (SELECT count(*) FROM reorg)+(SELECT count(*) FROM steps)",
+            [],
+            |r| r.get(0),
+        )?;
+        ensure(rows == 0, "GROWTH_REORG_JOURNAL")?;
+    }
+    Ok((count, peak))
+}
+
+fn cold_journal_error(error: &Error) -> String {
+    use std::error::Error as _;
+    format!(
+        "{}|{:?}|{:?}|{}|{:?}",
+        error,
+        error.code(),
+        error.kind(),
+        error.requires_owner_stop(),
+        error
+            .source()
+            .and_then(|source| source.downcast_ref::<rusqlite::Error>())
+    )
+}
+
+fn compare_cold_journal(node: &Node) -> Result<super::recovery::ColdJournalReads> {
+    assert!(
+        !node.db.is_autocommit(),
+        "original cold read snapshot required"
+    );
+    let changes = node.db.total_changes();
+    let old = collected_cold_journal(node);
+    let new = node.growth_check_journal();
+    assert_eq!(
+        old.as_ref().map(|_| ()).map_err(cold_journal_error),
+        new.as_ref().map(|_| ()).map_err(cold_journal_error)
+    );
+    assert_eq!(node.db.total_changes(), changes);
+    new
+}
+
+#[test]
+fn native_growth_v2_cold_journal_streams_real_history_and_deep_reorg() {
+    let dir = tempfile::tempdir().unwrap();
+    let settings = settings();
+    let mut node =
+        Node::open_with_permanent_account_growth_v2(dir.path(), settings.clone()).unwrap();
+    let mut old = settings.genesis();
+    for _ in 0..24 {
+        let packet = make(&node, old, vec![]);
+        old = admit(&mut node, &packet);
+    }
+    let tx = node.db.unchecked_transaction().unwrap();
+    let observation = compare_cold_journal(&node).unwrap();
+    assert_eq!(collected_cold_journal(&node).unwrap(), (24, 1));
+    assert_eq!(
+        (observation.typed_events, observation.semantic_events),
+        (24, 24)
+    );
+    assert_eq!(observation.peak_event_rows, 2);
+    tx.rollback().unwrap();
+    let mut fork = settings.genesis();
+    for height in 1..=25 {
+        let transactions = if height == 1 {
+            vec![transfer(&settings, 0, 1, public(100), 1000)]
+        } else {
+            vec![]
+        };
+        let packet = make(&node, fork, transactions);
+        fork = node.admit_growth(&packet, 100_000).unwrap();
+    }
+    assert_eq!(node.growth_activate(fork).unwrap(), fork);
+    let before = rows(&node.db);
+    let tx = node.db.unchecked_transaction().unwrap();
+    let observation = compare_cold_journal(&node).unwrap();
+    assert_eq!(collected_cold_journal(&node).unwrap(), (73, 49));
+    assert_eq!(
+        (observation.typed_events, observation.semantic_events),
+        (73, 73)
+    );
+    assert_eq!(
+        (observation.latest_steps, observation.latest_events),
+        (49, 49)
+    );
+    assert_eq!(observation.peak_event_rows, 2);
+    eprintln!("growth_cold_journal_actual_rows old_vectors=(73,49) new={observation:?}; excludes SQLite pages/RSS/other cold audit collections");
+    tx.rollback().unwrap();
+    let faults = [
+        "UPDATE events SET generation=0 WHERE generation=1",
+        "UPDATE events SET generation=100 WHERE generation=25",
+        "UPDATE events SET ordinal=1 WHERE generation=1",
+        "DELETE FROM events WHERE generation=1",
+        "UPDATE events SET kind=7 WHERE generation=1",
+        "UPDATE events SET block=zeroblob(31) WHERE generation=1",
+        "UPDATE events SET block='typed-text' WHERE generation=25 AND ordinal=48",
+        "UPDATE events SET kind='typed-kind' WHERE generation=25 AND ordinal=48",
+        "UPDATE events SET ordinal='typed-ordinal' WHERE generation=25 AND ordinal=48",
+        "INSERT INTO events SELECT generation,99,kind,block FROM events WHERE generation=25 AND ordinal=48",
+        "DELETE FROM steps WHERE ordinal=0",
+        "UPDATE steps SET ordinal=ordinal+1000",
+        "INSERT INTO steps SELECT 999,kind,block FROM steps WHERE ordinal=0",
+        "UPDATE steps SET block=zeroblob(100000) WHERE ordinal=48",
+        "UPDATE steps SET kind='typed-step' WHERE ordinal=48",
+        "UPDATE reorg SET old_tip=zeroblob(32)",
+        "UPDATE reorg SET new_tip=zeroblob(32)",
+        "UPDATE reorg SET generation=100",
+        "UPDATE reorg SET cursor=0",
+        "UPDATE reorg SET done=0",
+        "UPDATE reorg SET old_tip='typed-reorg'",
+        "UPDATE active SET tip=zeroblob(32)",
+        "UPDATE active SET state_slot=state_slot+1",
+        // Collect converted every row first: late type errors must still win.
+        "UPDATE events SET kind=7 WHERE generation=1; UPDATE events SET block='late-type' WHERE generation=25 AND ordinal=48",
+        "UPDATE events SET block=zeroblob(31) WHERE generation=1; UPDATE events SET kind='late-kind' WHERE generation=25 AND ordinal=48",
+        // An oversized BLOB is a later shape failure, not a premature type error.
+        "UPDATE events SET kind=7 WHERE generation=1; UPDATE events SET block=zeroblob(100000) WHERE generation=25 AND ordinal=48",
+        "UPDATE events SET kind=7 WHERE generation=1; UPDATE steps SET kind='later-step-type' WHERE ordinal=48",
+    ];
+    for (index, sql) in faults.into_iter().enumerate() {
+        let tx = node.db.unchecked_transaction().unwrap();
+        tx.execute_batch(sql).unwrap();
+        let error = compare_cold_journal(&node).unwrap_err();
+        if index == 23 || index == 24 {
+            use std::error::Error as _;
+            assert!(
+                error.source().unwrap().is::<rusqlite::Error>(),
+                "{index}: {error:?}"
+            );
+        }
+        tx.rollback().unwrap();
+        assert_eq!(rows(&node.db), before, "fault {index}");
+    }
+    let active = node.active().unwrap();
+    drop(node);
+    let node = Node::open_with_permanent_account_growth_v2(dir.path(), settings).unwrap();
+    assert_eq!(node.active().unwrap(), active);
+    assert_eq!(rows(&node.db), before);
+}
+
+#[test]
+fn native_growth_v2_cold_journal_zero_generation_and_late_typed_error_priority() {
+    let dir = tempfile::tempdir().unwrap();
+    let settings = settings();
+    let node = Node::open_with_permanent_account_growth_v2(dir.path(), settings.clone()).unwrap();
+    let tx = node.db.unchecked_transaction().unwrap();
+    assert_eq!(compare_cold_journal(&node).unwrap().peak_event_rows, 0);
+    tx.rollback().unwrap();
+    for sql in [
+        "INSERT INTO steps VALUES(0,1,zeroblob(32))",
+        "INSERT INTO reorg VALUES(1,zeroblob(32),zeroblob(32),0,0,1)",
+    ] {
+        let tx = node.db.unchecked_transaction().unwrap();
+        tx.execute_batch(sql).unwrap();
+        assert_eq!(
+            compare_cold_journal(&node).unwrap_err().to_string(),
+            "GROWTH_REORG_JOURNAL"
+        );
+        tx.rollback().unwrap();
+    }
+    let tx = node.db.unchecked_transaction().unwrap();
+    tx.execute(
+        "INSERT INTO events VALUES(1,0,7,?)",
+        [settings.genesis().as_slice()],
+    )
+    .unwrap();
+    tx.execute_batch("INSERT INTO events VALUES(2,0,1,'later-invalid-type')")
+        .unwrap();
+    let error = compare_cold_journal(&node).unwrap_err();
+    use std::error::Error as _;
+    assert!(error.source().unwrap().is::<rusqlite::Error>());
+    tx.rollback().unwrap();
 }
 fn settings() -> Settings {
     base_settings()
@@ -385,6 +601,444 @@ fn native_growth_v2_cancelled_writes_and_activation_are_atomic() {
     let node = Node::open_with_permanent_account_growth_v2(dir.path(), settings).unwrap();
     assert_eq!(node.active().unwrap().0, id);
     assert_eq!(node.next_nonce(public(0)).unwrap(), 2);
+}
+
+#[derive(Clone, Copy, Debug)]
+enum ProofTestPhase {
+    Parent,
+    Commitment,
+    FinalSuccessor,
+}
+impl ProofTestPhase {
+    fn point(self, progress: GrowthProgress) -> Option<multiproof::MultiproofProgress> {
+        match (self, progress) {
+            (Self::Parent, GrowthProgress::ParentProof(point))
+            | (Self::Commitment, GrowthProgress::CommitmentProof(point))
+            | (Self::FinalSuccessor, GrowthProgress::FinalSuccessorProof(point)) => Some(point),
+            _ => None,
+        }
+    }
+}
+#[derive(Clone, Copy, Debug)]
+enum ProofTestCut {
+    Early,
+    Hash,
+    Late,
+}
+impl ProofTestCut {
+    fn matches(self, point: multiproof::MultiproofProgress) -> bool {
+        use multiproof::MultiproofProgress as Point;
+        match self {
+            Self::Early => matches!(
+                point,
+                Point::Account { index: 0 } | Point::Update { index: 0 }
+            ),
+            Self::Hash => matches!(point, Point::Hash { .. }),
+            Self::Late => point == Point::BeforeOutput,
+        }
+    }
+}
+#[derive(Debug)]
+struct ProofControlSource(std::sync::Arc<()>);
+impl std::fmt::Display for ProofControlSource {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str("original growth proof control source")
+    }
+}
+impl std::error::Error for ProofControlSource {}
+
+fn cancel_growth_proof_at(phase: ProofTestPhase) {
+    let dir = tempfile::tempdir().unwrap();
+    let settings = settings();
+    let mut node =
+        Node::open_with_permanent_account_growth_v2(dir.path(), settings.clone()).unwrap();
+    let packet = make(
+        &node,
+        settings.genesis(),
+        vec![transfer(&settings, 0, 1, public(80), 1_000)],
+    );
+    let before = rows(&node.db);
+    let active_before = node.active().unwrap();
+    for cut in [ProofTestCut::Early, ProofTestCut::Hash, ProofTestCut::Late] {
+        for with_source in [false, true] {
+            let cut_seen = AtomicBool::new(false);
+            let identity = std::sync::Arc::new(());
+            let error = node
+                .admit_growth_with_progress(&packet, 100_000, &|point| {
+                    assert!(
+                        !cut_seen.load(Ordering::Relaxed),
+                        "progress after failed callback"
+                    );
+                    if phase.point(point).is_some_and(|point| cut.matches(point)) {
+                        cut_seen.store(true, Ordering::Relaxed);
+                        if with_source {
+                            Err(Error::from(std::io::Error::new(
+                                std::io::ErrorKind::Interrupted,
+                                ProofControlSource(identity.clone()),
+                            )))
+                        } else {
+                            Err(Error::new(ErrorCode::PublicRequestCancelled))
+                        }
+                    } else {
+                        Ok(())
+                    }
+                })
+                .unwrap_err();
+            assert!(cut_seen.load(Ordering::Relaxed), "{phase:?} {cut:?}");
+            if with_source {
+                assert_eq!(error.kind(), crate::ErrorKind::Transport);
+                let source = std::error::Error::source(&error)
+                    .unwrap()
+                    .downcast_ref::<std::io::Error>()
+                    .unwrap()
+                    .get_ref()
+                    .unwrap()
+                    .downcast_ref::<ProofControlSource>()
+                    .unwrap();
+                assert!(std::sync::Arc::ptr_eq(&identity, &source.0));
+            } else {
+                assert!(error.is(ErrorCode::PublicRequestCancelled), "{error:?}");
+                assert_eq!(error.kind(), crate::ErrorKind::Cancelled);
+            }
+            assert_eq!(node.active().unwrap(), active_before);
+            assert_eq!(rows(&node.db), before, "{phase:?} {cut:?}");
+            assert!(node.growth_packet(packet.id().unwrap()).is_err());
+        }
+    }
+    let id = admit(&mut node, &packet);
+    let active = node.active().unwrap();
+    let after = rows(&node.db);
+    drop(node);
+    let node = Node::open_with_permanent_account_growth_v2(dir.path(), settings).unwrap();
+    assert_eq!(node.active().unwrap(), active);
+    assert_eq!(
+        node.growth_account(id, public(80))
+            .unwrap()
+            .unwrap()
+            .balance,
+        1_000
+    );
+    assert_eq!(rows(&node.db), after);
+}
+
+#[test]
+fn native_growth_v2_parent_proof_cancellation_preserves_original_error() {
+    cancel_growth_proof_at(ProofTestPhase::Parent);
+}
+
+#[test]
+fn native_growth_v2_commitment_proof_cancellation_preserves_original_error() {
+    cancel_growth_proof_at(ProofTestPhase::Commitment);
+}
+
+#[test]
+fn native_growth_v2_final_successor_proof_cancellation_preserves_original_error() {
+    cancel_growth_proof_at(ProofTestPhase::FinalSuccessor);
+}
+
+#[test]
+fn native_growth_v2_work_replay_cancellation_preserves_original_error() {
+    use pon_work::VerificationProgress as Point;
+    let dir = tempfile::tempdir().unwrap();
+    let settings = settings();
+    let mut node =
+        Node::open_with_permanent_account_growth_v2(dir.path(), settings.clone()).unwrap();
+    let packet = make(
+        &node,
+        settings.genesis(),
+        vec![transfer(&settings, 0, 1, public(81), 1_000)],
+    );
+    let before = rows(&node.db);
+    let active_before = node.active().unwrap();
+    for cut in [
+        Point::BeforeReplay,
+        Point::Noise {
+            label: 0,
+            counter: 0,
+        },
+        Point::MatrixRow { row: 0 },
+        Point::TranscriptTile {
+            row: 0,
+            column: 0,
+            inner: 0,
+        },
+        Point::BeforeProduct,
+        Point::BeforeVerifiedWork,
+    ] {
+        for with_source in [false, true] {
+            let cut_seen = AtomicBool::new(false);
+            let identity = std::sync::Arc::new(());
+            let error = node
+                .admit_growth_with_progress(&packet, 100_000, &|point| {
+                    assert!(
+                        !cut_seen.load(Ordering::Relaxed),
+                        "progress after failed Work"
+                    );
+                    if point == GrowthProgress::Work(cut) {
+                        cut_seen.store(true, Ordering::Relaxed);
+                        if with_source {
+                            Err(Error::from(std::io::Error::new(
+                                std::io::ErrorKind::Interrupted,
+                                ProofControlSource(identity.clone()),
+                            )))
+                        } else {
+                            Err(Error::new(ErrorCode::PublicRequestCancelled))
+                        }
+                    } else {
+                        Ok(())
+                    }
+                })
+                .unwrap_err();
+            assert!(cut_seen.load(Ordering::Relaxed), "{cut:?}");
+            if with_source {
+                assert_eq!(error.kind(), crate::ErrorKind::Transport);
+                let source = std::error::Error::source(&error)
+                    .unwrap()
+                    .downcast_ref::<std::io::Error>()
+                    .unwrap()
+                    .get_ref()
+                    .unwrap()
+                    .downcast_ref::<ProofControlSource>()
+                    .unwrap();
+                assert!(std::sync::Arc::ptr_eq(&identity, &source.0));
+            } else {
+                assert!(error.is(ErrorCode::PublicRequestCancelled), "{error:?}");
+                assert_eq!(error.kind(), crate::ErrorKind::Cancelled);
+            }
+            assert_eq!(node.active().unwrap(), active_before);
+            assert_eq!(rows(&node.db), before, "{cut:?}");
+            assert!(node.growth_packet(packet.id().unwrap()).is_err());
+        }
+    }
+    let id = admit(&mut node, &packet);
+    let active = node.active().unwrap();
+    let after = rows(&node.db);
+    drop(node);
+    let node = Node::open_with_permanent_account_growth_v2(dir.path(), settings).unwrap();
+    assert_eq!(node.active().unwrap(), active);
+    assert_eq!(
+        node.growth_account(id, public(81))
+            .unwrap()
+            .unwrap()
+            .balance,
+        1_000
+    );
+    assert_eq!(rows(&node.db), after);
+}
+
+#[test]
+fn native_growth_v2_work_failures_never_publish_or_reuse_success() {
+    let dir = tempfile::tempdir().unwrap();
+    let settings = settings();
+    let mut node =
+        Node::open_with_permanent_account_growth_v2(dir.path(), settings.clone()).unwrap();
+    let packet = make(
+        &node,
+        settings.genesis(),
+        vec![transfer(&settings, 0, 1, public(82), 1_000)],
+    );
+    let at = 4 + 2 * pon_work::CELLS * 4;
+    let mut field = packet.clone();
+    field.proof[at..at + 4].copy_from_slice(&u32::MAX.to_le_bytes());
+    let mut product = packet.clone();
+    let old = u32::from_le_bytes(product.proof[at..at + 4].try_into().unwrap());
+    let changed = ((u128::from(old) + 1) % pon_work::Q) as u32;
+    product.proof[at..at + 4].copy_from_slice(&changed.to_le_bytes());
+    let before = rows(&node.db);
+    let active_before = node.active().unwrap();
+    for (bad, expected, expected_replay) in [
+        (&field, "WORK:Field", false),
+        (&product, "WORK:Product", true),
+    ] {
+        assert_eq!(bad.id().unwrap(), packet.id().unwrap());
+        for _ in 0..2 {
+            let replay = AtomicBool::new(false);
+            let product_started = AtomicBool::new(false);
+            let error = node
+                .admit_growth_with_progress(bad, 100_000, &|point| {
+                    match point {
+                        GrowthProgress::BeforeWork => {}
+                        GrowthProgress::Work(work) => {
+                            replay.store(true, Ordering::Relaxed);
+                            if work == pon_work::VerificationProgress::BeforeProduct {
+                                product_started.store(true, Ordering::Relaxed);
+                            }
+                            assert_ne!(work, pon_work::VerificationProgress::BeforeVerifiedWork);
+                        }
+                        _ => panic!("failed Work reached a later stage: {point:?}"),
+                    }
+                    Ok(())
+                })
+                .unwrap_err();
+            assert_eq!(error.to_string(), expected);
+            assert_eq!(replay.load(Ordering::Relaxed), expected_replay);
+            assert_eq!(product_started.load(Ordering::Relaxed), expected_replay);
+            assert_eq!(node.active().unwrap(), active_before);
+            assert_eq!(rows(&node.db), before);
+        }
+    }
+    let id = admit(&mut node, &packet);
+    let admitted = rows(&node.db);
+    for bad in [&field, &product] {
+        assert_eq!(
+            node.admit_growth(bad, 100_000).unwrap_err().to_string(),
+            "DUPLICATE_CONTENT",
+        );
+        assert_eq!(rows(&node.db), admitted);
+    }
+    drop(node);
+    let node = Node::open_with_permanent_account_growth_v2(dir.path(), settings).unwrap();
+    assert_eq!(node.active().unwrap().0, id);
+    assert_eq!(rows(&node.db), admitted);
+}
+
+fn cancel_reorg_at(cuts: &[GrowthProgress]) {
+    let dir = tempfile::tempdir().unwrap();
+    let settings = settings();
+    let mut node =
+        Node::open_with_permanent_account_growth_v2(dir.path(), settings.clone()).unwrap();
+    let mut old = settings.genesis();
+    for height in 1..=2 {
+        let packet = make(
+            &node,
+            old,
+            vec![transfer(&settings, 0, height, public(50 + height), 10_000)],
+        );
+        old = admit(&mut node, &packet);
+    }
+    let mut fork = settings.genesis();
+    for height in 1..=3 {
+        let packet = make(
+            &node,
+            fork,
+            vec![transfer(&settings, 0, height, public(60 + height), 10_000)],
+        );
+        fork = node.admit_growth(&packet, 100_000).unwrap();
+    }
+    let before = rows(&node.db);
+    let active_before = node.active().unwrap();
+    assert_eq!(active_before.0, old);
+    for &cut in cuts {
+        let calls = AtomicUsize::new(0);
+        let error = node
+            .growth_activate_with_progress(fork, &|point| {
+                if point == cut {
+                    calls.fetch_add(1, Ordering::Relaxed);
+                    Err(Error::new(ErrorCode::PublicRequestCancelled))
+                } else {
+                    Ok(())
+                }
+            })
+            .unwrap_err();
+        assert!(error.is(ErrorCode::PublicRequestCancelled), "{error:?}");
+        assert_eq!(calls.load(Ordering::Relaxed), 1, "{cut:?}");
+        assert_eq!(node.active().unwrap(), active_before, "{cut:?}");
+        assert_eq!(rows(&node.db), before, "{cut:?}");
+    }
+    // Each interrupted operation rolled back, leaving the same owner usable.
+    assert_eq!(node.growth_activate(fork).unwrap(), fork);
+    let active = node.active().unwrap();
+    assert_eq!(active.1, active_before.1 + 1);
+    assert_eq!(node.next_nonce(public(0)).unwrap(), 4);
+    assert_eq!(
+        node.growth_account(old, public(0)).unwrap().unwrap().nonce,
+        2
+    );
+    let after = rows(&node.db);
+    drop(node);
+    let node = Node::open_with_permanent_account_growth_v2(dir.path(), settings).unwrap();
+    assert_eq!(node.active().unwrap(), active);
+    assert_eq!(rows(&node.db), after);
+    assert_eq!(node.next_nonce(public(0)).unwrap(), 4);
+    assert_eq!(
+        node.growth_account(old, public(0)).unwrap().unwrap().nonce,
+        2
+    );
+}
+
+#[test]
+fn native_growth_v2_reorg_ancestor_cancellation_is_atomic() {
+    cancel_reorg_at(&[
+        GrowthProgress::ReorgAncestor { index: 0 },
+        GrowthProgress::ReorgAncestor { index: 4 },
+    ]);
+}
+
+#[test]
+fn native_growth_v2_reorg_write_cancellation_is_atomic() {
+    cancel_reorg_at(&[
+        GrowthProgress::ReorgWrite { index: 0 },
+        GrowthProgress::ReorgWrite { index: 4 },
+    ]);
+}
+
+#[test]
+fn native_growth_v2_reorg_readback_cancellation_is_atomic() {
+    cancel_reorg_at(&[
+        GrowthProgress::ReorgReadback { index: 0 },
+        GrowthProgress::ReorgReadback { index: 12 },
+    ]);
+}
+
+#[test]
+fn native_growth_v2_reorg_readback_preserves_exact_rows_and_singleton() {
+    let dir = tempfile::tempdir().unwrap();
+    let settings = settings();
+    let mut node =
+        Node::open_with_permanent_account_growth_v2(dir.path(), settings.clone()).unwrap();
+    let old = settings.genesis();
+    let packet = make(
+        &node,
+        old,
+        vec![transfer(&settings, 0, 1, public(70), 1_000)],
+    );
+    let target = admit(&mut node, &packet);
+    let generation = node.active().unwrap().1;
+    let changes = [(1, target)];
+    node.growth_check_latest_journal(old, target, generation, &changes)
+        .unwrap();
+    let before = rows(&node.db);
+    for table in ["steps", "events"] {
+        let insert = if table == "steps" {
+            "INSERT INTO steps SELECT ordinal+1,kind,block FROM steps"
+        } else {
+            "INSERT INTO events SELECT generation,ordinal+1,kind,block FROM events"
+        };
+        for sql in [
+            format!("DELETE FROM {table}"),
+            insert.to_owned(),
+            format!("UPDATE {table} SET ordinal=3"),
+            format!("UPDATE {table} SET kind=0"),
+            format!("UPDATE {table} SET block=zeroblob(32)"),
+        ] {
+            let tx = node.db.unchecked_transaction().unwrap();
+            tx.execute(&sql, []).unwrap();
+            assert!(
+                node.growth_check_latest_journal(old, target, generation, &changes)
+                    .is_err(),
+                "{sql}"
+            );
+            tx.rollback().unwrap();
+            assert_eq!(rows(&node.db), before);
+        }
+    }
+    for sql in [
+        "UPDATE reorg SET old_tip=zeroblob(32)",
+        "UPDATE reorg SET new_tip=zeroblob(32)",
+        "UPDATE reorg SET generation=100",
+        "UPDATE reorg SET cursor=0",
+        "UPDATE reorg SET done=0",
+    ] {
+        let tx = node.db.unchecked_transaction().unwrap();
+        tx.execute(sql, []).unwrap();
+        assert!(
+            node.growth_check_latest_journal(old, target, generation, &changes)
+                .is_err(),
+            "{sql}"
+        );
+        tx.rollback().unwrap();
+        assert_eq!(rows(&node.db), before);
+    }
 }
 
 #[test]
