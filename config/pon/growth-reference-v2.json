@@ -1,0 +1,19 @@
+{
+  "schema": "pon-native-growth-reference-policy-v2",
+  "id": "consensus-maintenance-growth-reference-dev-v2",
+  "consensus_revision": 17,
+  "state_commitment_profile": "native-permanent-account-state-v2",
+  "storage_schema_domain": "native-growth-reference-branch-schema-v2",
+  "capacity": {
+    "maximum_permanent_accounts": 1000000,
+    "maximum_working_keys": 65536,
+    "maximum_total_state_keys": 1065536
+  },
+  "validation": "complete-state-reference-not-bounded-witness",
+  "production_eligible": false,
+  "default_selected": false,
+  "bounded_witness_qualified": false,
+  "source_preserving_migration_accepted": false,
+  "hardness_accepted": false,
+  "public_service_accepted": false
+}

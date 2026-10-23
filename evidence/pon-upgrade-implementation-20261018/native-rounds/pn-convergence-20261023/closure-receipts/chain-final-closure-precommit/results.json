@@ -1,0 +1,111 @@
+[
+  {
+    "name": "preflight",
+    "command": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "returncode": 0,
+    "seconds": 0.08843844197690487,
+    "log_sha256": "aad5fe72fdfb2416334d058d0ea1ebb520cd1960706c97cc9697ce6becd58ac2"
+  },
+  {
+    "name": "refresh-embedded-source-inventory",
+    "command": [
+      "python3",
+      "scripts/refresh_distributed_source_inventory.py"
+    ],
+    "returncode": 0,
+    "seconds": 0.11546632496174425,
+    "log_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+  },
+  {
+    "name": "original-three-backend-payment",
+    "command": [
+      "cargo",
+      "test",
+      "--release",
+      "--locked",
+      "--offline",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "store::funding::tests::native_payment_bridge_task_exact_signed_transition_net_balance_and_reorg",
+      "--",
+      "--exact",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "returncode": 0,
+    "seconds": 243.44445502501912,
+    "log_sha256": "068f364b90902e2ce4ab6bdc82107f5501bcaafda040efe6c4e7654590c9e094"
+  },
+  {
+    "name": "source-integrity-negative-tests",
+    "command": [
+      "python3",
+      "scripts/ci/test_ci_source_integrity.py",
+      "-v"
+    ],
+    "returncode": 0,
+    "seconds": 3.937620372045785,
+    "log_sha256": "dadd062047232309857322ec6a36cc822a2de004fa85bd1f9ac3002c4044be1e"
+  },
+  {
+    "name": "complete-locked-metadata",
+    "command": [
+      "cargo",
+      "metadata",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--locked",
+      "--offline",
+      "--format-version=1"
+    ],
+    "returncode": 0,
+    "seconds": 0.20561378996353596,
+    "log_sha256": "60c22e9b7d5a28ca023336513b35c5c90808191a63bd1b090b72238a3e639850"
+  },
+  {
+    "name": "embedded-inventory-check",
+    "command": [
+      "python3",
+      "scripts/refresh_distributed_source_inventory.py",
+      "--check"
+    ],
+    "returncode": 0,
+    "seconds": 0.09827205806504935,
+    "log_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+  },
+  {
+    "name": "strict-workspace-clippy-after-inventory",
+    "command": [
+      "cargo",
+      "clippy",
+      "--locked",
+      "--offline",
+      "--workspace",
+      "--all-targets",
+      "--all-features",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "returncode": 0,
+    "seconds": 18.739464372978546,
+    "log_sha256": "9a0e09dbcaa4d67ad9e9177e6f1f732d6445a09c0a425fde1a0825a1b970e844"
+  },
+  {
+    "name": "format-check",
+    "command": [
+      "cargo",
+      "fmt",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "returncode": 0,
+    "seconds": 17.221286654938012,
+    "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+]
