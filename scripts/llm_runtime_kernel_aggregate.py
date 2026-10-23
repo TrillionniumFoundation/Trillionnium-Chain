@@ -36,8 +36,12 @@ class AggregateCounterError(kernel.KernelBudgetError):
     def __init__(self, code, filename, raw):
         _counter_input(raw, filename)
         require(type(code) is str and code in ('aggregate-counter-format',
-            'aggregate-counter-overflow', 'aggregate-counter-fields', 'aggregate-counter-scalar'),
+            'aggregate-counter-overflow', 'aggregate-counter-fields', 'aggregate-counter-scalar',
+            'aggregate-not-fresh'),
             'aggregate-counter-reason')
+        require(code != 'aggregate-not-fresh' or filename in
+            ('aggregate/memory.peak', 'aggregate/cpu.stat', 'aggregate/memory.events'),
+            'aggregate-freshness-filename')
         super().__init__(code)
         self._counter_diagnostic = _CounterDiagnostic(filename, raw, code)
 
@@ -182,9 +186,12 @@ class _AggregateOperation:
                 require(signature[0] == kernel._ROOT.stat().st_dev and
                     info['mnt_id'].strip() == mount[0], 'aggregate-shadow-mount')
             initial = _raw(self.nodes[0][1])
-            require(_scalar(initial['memory.peak'], 'aggregate/memory.peak') == 0 and
-                all(value == 0 for name in ('cpu.stat', 'memory.events')
-                    for value in _numbers(initial[name], 'aggregate/'+name).values()), 'aggregate-not-fresh')
+            _counter_require(_scalar(initial['memory.peak'], 'aggregate/memory.peak') == 0,
+                'aggregate-not-fresh', 'aggregate/memory.peak', initial['memory.peak'])
+            for name in ('cpu.stat', 'memory.events'):
+                _counter_require(all(value == 0 for value in
+                    _numbers(initial[name], 'aggregate/'+name).values()),
+                    'aggregate-not-fresh', 'aggregate/'+name, initial[name])
             self._verify_locked()
         except BaseException:
             try: self._close_locked(owner)

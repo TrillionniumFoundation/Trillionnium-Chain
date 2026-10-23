@@ -603,6 +603,19 @@ or authority; callers must retain it in their existing first-failure record,
 without another read. Non-ABI parser/ordinary-file controls run separately from
 the CPython 3.12.3 native owner tests. This repair does not identify the old exact
 input, retry the attempt or qualify aggregate birth placement or a model.
+The later actual tiny `3eb2b52a` on source `51146530` passed the parser but
+refused initial acquisition with `aggregate-not-fresh`, before any runtime
+child or model. Its stopped unit supplied 17 retained evidence files; the
+original initial counter text was not exported, so the particular nonzero
+field remains unknown. Initial freshness now uses the same bounded immutable
+counter diagnostic for the first failed `memory.peak`, `cpu.stat` or
+`memory.events` predicate, in the original short-circuit order and without
+another read. All zero, empty, identity and cleanup requirements remain.
+The outer C first-failure exporter must explicitly allow that exact reason;
+an unknown reason cannot silently become diagnostic evidence. Synthetic
+ordinary-FD controls preserve refusal, first raw bytes and no-child cleanup;
+they do not qualify an actual group. Do not rerun `3eb2b52a`, reset counters,
+delete/reclaim A, subtract a baseline or infer a release from collection.
 The original wait4 owner's aggregate terminal-error path retains only this
 existing typed immutable counter tuple, with pre-clone type bindings and no
 exception/traceback/capability references. Projection faults cannot replace the

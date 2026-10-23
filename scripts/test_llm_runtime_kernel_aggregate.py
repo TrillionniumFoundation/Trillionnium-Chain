@@ -293,6 +293,47 @@ class AggregateTests(unittest.TestCase):
         self.assertIsNone(self.native.operation)
         self.assertEqual(set(os.listdir('/proc/self/fd')), descriptors_before)
 
+    def test_initial_freshness_failure_retains_exact_first_raw_without_extra_read(self):
+        # Real ordinary owned FDs, but all group/membership claims are fixtures.
+        cases = [
+            ({'memory.peak': '4096\n'}, 'memory.peak', '4096\n'),
+            ({'cpu.stat': 'usage_usec 1\n'}, 'cpu.stat', 'usage_usec 1\n'),
+            ({'memory.events': 'oom 1\n'}, 'memory.events', 'oom 1\n'),
+            ({'memory.peak': '4096\n', 'cpu.stat': 'usage_usec 1\n',
+              'memory.events': 'oom 1\n'}, 'memory.peak', '4096\n'),
+            ({'cpu.stat': 'usage_usec 1\n', 'memory.events': 'oom 1\n'},
+             'cpu.stat', 'usage_usec 1\n'),
+        ]
+        for fields, filename, raw in cases:
+            with self.subTest(fields=fields):
+                import shutil
+                mount = Path(self.temporary.name)/'mount'
+                if mount.exists(): shutil.rmtree(mount)
+                leaf, unit, controller, observed, acquire = self.acquisition_fixture()
+                for name, text in fields.items(): (leaf/name).write_text(text)
+                before = set(os.listdir('/proc/self/fd'))
+                read = kernel._text
+                reads = []
+                def observed_read(fd, name):
+                    reads.append(name)
+                    return read(fd, name)
+                with patch.object(kernel, '_text', side_effect=observed_read), \
+                        self.assertRaises(kernel.KernelBudgetError) as caught:
+                    acquire()
+                error = caught.exception
+                self.assertEqual(str(error), 'aggregate-not-fresh')
+                self.assertIsInstance(error, aggregate.AggregateCounterError)
+                self.assertEqual(error.counter_diagnostic,
+                    ('aggregate/'+filename, raw, 'aggregate-not-fresh'))
+                for name in ('memory.peak', 'cpu.stat', 'memory.events'):
+                    self.assertEqual(reads.count(name), 1)
+                (leaf/filename).write_text('0\n' if filename == 'memory.peak' else 'usage_usec 0\n')
+                self.assertEqual(error.counter_diagnostic.raw, raw)
+                self.assertIsNone(self.native.operation)
+                self.assertEqual(set(os.listdir('/proc/self/fd')), before)
+                import shutil
+                shutil.rmtree(Path(self.temporary.name)/'mount')
+
     def test_exact_memory_headroom_and_positive_cpu_task_partition_bind_actual_fields(self):
         quota = dict(memory_bytes=8*1024**3, cpu_quota_us=300000, tasks=250)
         leaf, unit, controller, observed, acquire = self.acquisition_fixture(controller_budget=quota)
