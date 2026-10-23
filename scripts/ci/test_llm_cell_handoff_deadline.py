@@ -17,6 +17,30 @@ handoff = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(handoff)
 
 
+def controlled_release(command, flags, payloads):
+    """Mock CLI framing only; real TCR1 validation is tested by the native CLI."""
+    if command[1] == "prepare-release":
+        members = flags["--manifests"].split(",")
+        data = json.dumps(sorted(members)).encode()
+        Path(flags["--output"]).write_bytes(data)
+        release = handoff.hashlib.sha256(data).hexdigest()
+        schema = "trnm.cell.release.prepare.v1"
+    else:
+        data = Path(flags["--release-file"]).read_bytes()
+        members = json.loads(data)
+        Path(flags["--output"]).write_bytes(data)
+        release = flags["--release"]
+        schema = "trnm.cell.release.fetch.v1"
+    observation = {"schema": schema, "release": release, "cells": len(members),
+        "payload_bytes": sum(len(payloads[member]) for member in members),
+        "chunks": len(members)}
+    if command[1] == "fetch-release":
+        observation.update({"cached_chunks": 0, "downloaded_chunks": len(members),
+            "received_response_bytes": observation["payload_bytes"],
+            "connection_attempts": 2 * len(members)})
+    return observation
+
+
 class CellHandoffDeadlineTests(unittest.TestCase):
     def test_remaining_window_is_floored_and_request_never_exceeds_it(self):
         for now, expected in ((100.0, (35.0, 35000, 2000)),
@@ -80,7 +104,7 @@ class CellHandoffDeadlineTests(unittest.TestCase):
             def controlled_sha(path):
                 path = Path(path)
                 value = actual_sha(path)
-                if output in path.parents and path.name != "producer.sqlite":
+                if output in path.parents and path.parent.name in ("consumer-parent", "consumer-materials"):
                     readbacks.append(path.name)
                     if path.name == "artifact.safetensors":
                         clock[0] = 135.25
@@ -93,7 +117,11 @@ class CellHandoffDeadlineTests(unittest.TestCase):
                     digest = actual_sha(Path(flags["--input"]))
                     payloads[digest] = data
                     observation = {"manifest": digest, "payload_sha256": digest, "bytes": len(data), "chunks": 1}
+                elif command[1] in ("prepare-release", "fetch-release"):
+                    observation = controlled_release(command, flags, payloads)
                 elif command[1] == "fetch":
+                    self.assertEqual(flags["--peers"], "")
+                    self.assertEqual(flags["--max-response-bytes"], "0")
                     self.assertNotIn("--seconds", flags)
                     overall_ms, request_ms = int(flags["--overall-ms"]), int(flags["--request-ms"])
                     self.assertGreaterEqual(request_ms, 10)
@@ -104,7 +132,8 @@ class CellHandoffDeadlineTests(unittest.TestCase):
                     destination.write_bytes(payloads[flags["--manifest"]])
                     fetched_names.append(destination.name)
                     clock[0] += 0.5
-                    observation = {"downloaded_chunks": 1, "cached_chunks": 0}
+                    observation = {"downloaded_chunks": 0, "cached_chunks": 1,
+                        "received_response_bytes": 0, "connection_attempts": 0}
                 else:
                     self.fail("late transfer must not start native consumer use")
                 return subprocess.CompletedProcess(command, 0, json.dumps(observation), "")
@@ -191,12 +220,17 @@ class CellHandoffConsumerTests(unittest.TestCase):
                 payloads[digest] = source.read_bytes()
                 observation = {"manifest": digest, "payload_sha256": digest,
                     "bytes": len(payloads[digest]), "chunks": 1}
+            elif command[1] in ("prepare-release", "fetch-release"):
+                observation = controlled_release(command, flags, payloads)
             elif command[1] == "fetch":
+                self.assertEqual(flags["--peers"], "")
+                self.assertEqual(flags["--max-response-bytes"], "0")
                 destination = Path(flags["--output"])
                 with destination.open("xb") as stream:
                     stream.write(payloads[flags["--manifest"]])
                 fetched_names.append(destination.name)
-                observation = {"downloaded_chunks": 1, "cached_chunks": 0}
+                observation = {"downloaded_chunks": 0, "cached_chunks": 1,
+                        "received_response_bytes": 0, "connection_attempts": 0}
             else:
                 self.fail("unexpected controlled subprocess")
             return subprocess.CompletedProcess(command, 0, json.dumps(observation), "")
