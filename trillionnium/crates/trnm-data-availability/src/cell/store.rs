@@ -6,7 +6,7 @@ use std::{
     time::Instant,
 };
 
-use rusqlite::{params, Connection, OptionalExtension};
+use rusqlite::{params, Connection, OpenFlags, OptionalExtension};
 use sha2::{Digest, Sha256};
 
 use super::{
@@ -33,6 +33,7 @@ pub struct CellReleaseLimitsV1 {
 /// A separate, disposable byte cache; never a ledger or release authority.
 pub struct CellStoreV1 {
     connection: Connection,
+    read_only: bool,
 }
 
 impl CellStoreV1 {
@@ -70,7 +71,28 @@ impl CellStoreV1 {
         }
         connection.pragma_update(None, "journal_mode", "WAL")?;
         connection.pragma_update(None, "synchronous", "FULL")?;
-        Ok(Self { connection })
+        Ok(Self {
+            connection,
+            read_only: false,
+        })
+    }
+
+    /// Existing disposable cache only; serving never creates or repairs a DB.
+    pub(super) fn open_read_only(path: &Path) -> CellResultV1<Self> {
+        let connection = Connection::open_with_flags(path, OpenFlags::SQLITE_OPEN_READ_ONLY)?;
+        connection.busy_timeout(std::time::Duration::ZERO)?;
+        connection.pragma_update(None, "trusted_schema", false)?;
+        let application: i64 =
+            connection.pragma_query_value(None, "application_id", |r| r.get(0))?;
+        let version: i64 = connection.pragma_query_value(None, "user_version", |r| r.get(0))?;
+        require(
+            application == APPLICATION_ID && version == 1,
+            "cache namespace",
+        )?;
+        Ok(Self {
+            connection,
+            read_only: true,
+        })
     }
 
     pub fn put_manifest(&self, pinned: CellDigestV1, wire: &[u8]) -> CellResultV1<CellManifestV1> {
@@ -167,10 +189,12 @@ impl CellStoreV1 {
                 return Ok(Some(bytes));
             }
         }
-        self.connection.execute(
-            "DELETE FROM cell_chunks_v1 WHERE hash = ?1",
-            [hash.as_slice()],
-        )?;
+        if !self.read_only {
+            self.connection.execute(
+                "DELETE FROM cell_chunks_v1 WHERE hash = ?1",
+                [hash.as_slice()],
+            )?;
+        }
         Ok(None)
     }
 

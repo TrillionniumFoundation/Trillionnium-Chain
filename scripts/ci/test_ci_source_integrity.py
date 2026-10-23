@@ -53,6 +53,20 @@ class TrackedSourceTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.check()
 
+    def test_new_native_c_bytes_are_verified_without_an_extension_allowlist(self):
+        source = self.root/'owned-spawn.c'
+        source.write_bytes(b'int owned(void) { return 0; }\n')
+        self.git('add', '.')
+        self.git('commit', '-qm', 'native C fixture')
+        self.head = self.git('rev-parse', 'HEAD')
+        self.assertEqual(self.check()['tracked_entries'], 6)
+        self.git('config', 'core.trustctime', 'false')
+        self.git('config', 'core.checkStat', 'minimal')
+        info = source.stat()
+        source.write_bytes(source.read_bytes().replace(b'return 0', b'return 1'))
+        os.utime(source, ns=(info.st_atime_ns, info.st_mtime_ns))
+        with self.assertRaises(ValueError): self.check()
+
     def test_skip_worktree_cannot_hide_modified_source(self):
         self.git('update-index', '--skip-worktree', 'nested/source.rs')
         (self.root / 'nested/source.rs').write_text('changed\n')

@@ -1174,9 +1174,9 @@ fn dispatch_shared_with_execution_observation(
                 let (existing, permit) =
                     observe_submit_phase(observation, SubmitPhase::Context, || {
                         let clock = now()?;
-                        // Pending activation lookup checks metadata, not parent State.
-                        // Keep request cancellation/CPU accounting without announcing
-                        // a parent-binding stage before the ordinary proof precheck.
+                        // Pending activation checks do not reconstruct parent State.
+                        // Keep request cancellation without emitting a State progress
+                        // event before the ordinary proof/task prechecks below.
                         let pending_exact =
                             owner.pending_exact_activation_replay(&packet, clock, &mut || {
                                 progress(0)

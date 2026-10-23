@@ -2,11 +2,55 @@ use super::*;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum GrowthProgress {
+    /// Before any request-local context or owner-state lookup.
+    BeforeContext,
+    /// Before each bounded target/time ancestor header and record pair.
+    HeaderAncestor {
+        index: usize,
+    },
     BeforeWork,
+    /// Existing full W1 replay boundaries; these do not certify a public CPU budget.
+    Work(pon_work::VerificationProgress),
     Execution(pon_executor::ExecutionProgress),
     BeforePersistence,
     AccountNode,
+    /// Existing original-parent multiproof verification boundaries.
+    ParentProof(multiproof::MultiproofProgress),
+    /// Proof-derived root computation inside the unchanged M06 callback.
+    CommitmentProof(multiproof::MultiproofProgress),
+    /// Independent final successor recomputation before persistence.
+    FinalSuccessorProof(multiproof::MultiproofProgress),
+    /// Before each pair of ancestor reads, in the existing fork-walk order.
+    ReorgAncestor {
+        index: usize,
+    },
+    /// Before each ordered undo/apply journal write pair.
+    ReorgWrite {
+        index: usize,
+    },
+    /// Before each steps/events row read, including EOF, then the reorg singleton.
+    ReorgReadback {
+        index: usize,
+    },
     BeforeCommit,
+    BeforeObservation,
+    /// Before each actual active-membership SQL lookup; its original budget remains.
+    MembershipRead {
+        index: u64,
+    },
+    ObservationDelta,
+    BeforeObservationTask,
+    ObservationReady,
+}
+
+// Operation-local read counters, never a retained validity or resource grant.
+#[derive(Debug, Default)]
+pub(super) struct ColdJournalReads {
+    pub(super) typed_events: u64,
+    pub(super) semantic_events: u64,
+    pub(super) latest_steps: u64,
+    pub(super) latest_events: u64,
+    pub(super) peak_event_rows: usize,
 }
 
 impl Node {
@@ -91,6 +135,14 @@ impl Node {
         packet: &GrowthPacket,
         observed_now: u64,
     ) -> Result<()> {
+        self.check_growth_header_with_progress(packet, observed_now, &|_| Ok(()))
+    }
+    pub(super) fn check_growth_header_with_progress(
+        &self,
+        packet: &GrowthPacket,
+        observed_now: u64,
+        progress: &(impl Fn(GrowthProgress) -> Result<()> + Sync),
+    ) -> Result<()> {
         let h = &packet.header.ledger;
         ensure(
             h.network == self.settings.network() && h.parameters == self.settings.parameters(),
@@ -101,7 +153,10 @@ impl Node {
                 && h.height <= i64::MAX as u64,
             "HEIGHT",
         )?;
-        ensure(h.target == self.growth_target(h.parent)?, "TARGET")?;
+        ensure(
+            h.target == self.growth_target_with_progress(h.parent, progress)?,
+            "TARGET",
+        )?;
         ensure(
             h.transactions == sequence_root("transactions", &packet.transactions),
             "ROOT",
@@ -111,7 +166,7 @@ impl Node {
             "CONTINUITY_MAINTENANCE",
         )?;
         let times: Vec<_> = self
-            .growth_recent(h.parent)?
+            .growth_recent_with_progress(h.parent, progress)?
             .iter()
             .take(11)
             .map(|p| p.0)
@@ -133,9 +188,27 @@ impl Node {
         observed_now: u64,
         progress: &(impl Fn(GrowthProgress) -> Result<()> + Sync),
     ) -> Result<Hash> {
+        if let Some(id) =
+            self.precheck_growth_admission_with_progress(packet, observed_now, progress)?
+        {
+            return Ok(id);
+        }
+        let checked = GrowthWorkCheckedPacket::verify_with_progress(packet.clone(), progress)?;
+        self.admit_growth_work_checked_with_progress(checked, observed_now, progress)
+    }
+
+    /// Bounded current-owner context only. A successful absence result conveys
+    /// no reusable parent-State or clock authority across owner-lock release.
+    pub(crate) fn precheck_growth_admission_with_progress(
+        &self,
+        packet: &GrowthPacket,
+        observed_now: u64,
+        progress: &(impl Fn(GrowthProgress) -> Result<()> + Sync),
+    ) -> Result<Option<Hash>> {
+        progress(GrowthProgress::BeforeContext)?;
         self.growth_guard()?;
         let bytes = packet.encode()?;
-        self.check_growth_header(packet, observed_now)?;
+        self.check_growth_header_with_progress(packet, observed_now, progress)?;
         let id = packet.id()?;
         let previous: Option<Vec<u8>> = self
             .db
@@ -147,16 +220,29 @@ impl Node {
             .optional()?;
         if let Some(previous) = previous {
             ensure(previous == bytes, "DUPLICATE_CONTENT")?;
+            return Ok(Some(id));
+        }
+        Ok(None)
+    }
+
+    /// The caller must reacquire the original Node owner after W1 verification.
+    /// Consume the private immutable packet, then repeat current context/time
+    /// checks and bind the actual parent inside the original write transaction.
+    /// A verified mathematical work relation is never a cached admission verdict.
+    pub(crate) fn admit_growth_work_checked_with_progress(
+        &mut self,
+        checked: GrowthWorkCheckedPacket,
+        observed_now: u64,
+        progress: &(impl Fn(GrowthProgress) -> Result<()> + Sync),
+    ) -> Result<Hash> {
+        let (packet, _verified_work) = checked.into_parts();
+        if let Some(id) =
+            self.precheck_growth_admission_with_progress(&packet, observed_now, progress)?
+        {
             return Ok(id);
         }
-        progress(GrowthProgress::BeforeWork)?;
-        pon_work::verify(
-            packet.header.challenge(),
-            packet.header.ledger.work_task,
-            packet.header.ledger.target,
-            &packet.proof,
-        )
-        .map_err(|e| Error::from(format!("WORK:{e:?}")))?;
+        let bytes = packet.encode()?;
+        let id = packet.id()?;
         let h = &packet.header.ledger;
         // The single owner rebinds the parent in its actual write transaction.
         let tx = rusqlite::Transaction::new_unchecked(
@@ -164,11 +250,10 @@ impl Node {
             rusqlite::TransactionBehavior::Immediate,
         )?;
         self.growth_guard()?;
+        self.check_growth_header_with_progress(&packet, observed_now, progress)?;
         let active_before = self.active()?;
         let parent = self.growth_parent(h.parent)?;
-        let mut executed = execute(&self.settings, &parent, packet, &|point| {
-            progress(GrowthProgress::Execution(point))
-        })?;
+        let mut executed = execute(&self.settings, &parent, &packet, progress)?;
         ensure(
             h.state == executed.state.commitment.id
                 && h.receipts == sequence_root("receipts", &executed.receipts),
@@ -268,7 +353,12 @@ impl Node {
         let mut right = target;
         let mut undo = Vec::new();
         let mut apply = Vec::new();
+        let mut ancestor_index = 0;
         while left != right {
+            progress(GrowthProgress::ReorgAncestor {
+                index: ancestor_index,
+            })?;
+            ancestor_index += 1;
             let l = self.record(left)?;
             let r = self.record(right)?;
             if l.height >= r.height {
@@ -279,14 +369,14 @@ impl Node {
                 right = r.parent.ok_or("GROWTH_ANCESTRY")?;
             }
         }
-        apply.reverse();
-        let changes: Vec<_> = undo
+        let changes = undo
             .iter()
             .map(|id| (0u64, *id))
-            .chain(apply.iter().map(|id| (1u64, *id)))
-            .collect();
+            .chain(apply.iter().rev().map(|id| (1u64, *id)));
+        let change_count = undo.len() + apply.len();
         tx.execute("DELETE FROM steps", [])?;
-        for (index, (kind, id)) in changes.iter().enumerate() {
+        for (index, (kind, id)) in changes.clone().enumerate() {
+            progress(GrowthProgress::ReorgWrite { index })?;
             ensure(
                 tx.execute(
                     "INSERT INTO steps VALUES(?,?,?)",
@@ -303,7 +393,7 @@ impl Node {
             )?;
         }
         ensure(tx.execute("INSERT INTO reorg VALUES(1,?,?,?,?,1) ON CONFLICT(singleton) DO UPDATE SET old_tip=excluded.old_tip,new_tip=excluded.new_tip,generation=excluded.generation,cursor=excluded.cursor,done=excluded.done",
-            params![old.as_slice(),target.as_slice(),next,changes.len() as u64])? == 1, "STORAGE_WRITE")?;
+            params![old.as_slice(),target.as_slice(),next,change_count as u64])? == 1, "STORAGE_WRITE")?;
         ensure(tx.execute("UPDATE active SET tip=?,generation=?,state_slot=? WHERE singleton=1 AND tip=? AND generation=?",
             params![target.as_slice(),next,next,old.as_slice(),generation])? == 1, "STALE_VIEW")?;
         ensure(
@@ -312,75 +402,129 @@ impl Node {
                 && load(&tx, target)?.commitment.id == self.record(target)?.root,
             "STORAGE_WRITE",
         )?;
-        self.growth_check_latest_journal(old, target, next, &changes)?;
+        self.growth_check_latest_journal_with_progress(old, target, next, changes, progress)?;
         progress(GrowthProgress::BeforeCommit)?;
         self.growth_guard()?;
         tx.commit()?;
         Ok(target)
     }
 
-    fn growth_check_latest_journal(
+    #[cfg(test)]
+    pub(super) fn growth_check_latest_journal(
         &self,
         old: Hash,
         target: Hash,
         generation: u64,
         changes: &[(u64, Hash)],
     ) -> Result<()> {
-        let steps: Vec<(u64, u64, Vec<u8>)> = self
-            .db
-            .prepare("SELECT ordinal,kind,block FROM steps ORDER BY ordinal")?
-            .query_map([], |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?)))?
-            .collect::<std::result::Result<_, _>>()?;
-        let events: Vec<(u64, u64, Vec<u8>)> = self
-            .db
-            .prepare("SELECT ordinal,kind,block FROM events WHERE generation=? ORDER BY ordinal")?
-            .query_map([generation], |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?)))?
-            .collect::<std::result::Result<_, _>>()?;
-        let expected: Vec<_> = changes
-            .iter()
-            .enumerate()
-            .map(|(i, (kind, id))| (i as u64, *kind, id.to_vec()))
-            .collect();
+        self.growth_check_latest_journal_with_progress(
+            old,
+            target,
+            generation,
+            changes.iter().copied(),
+            &|_| Ok(()),
+        )
+    }
+
+    fn growth_check_latest_journal_with_progress(
+        &self,
+        old: Hash,
+        target: Hash,
+        generation: u64,
+        changes: impl Iterator<Item = (u64, Hash)> + Clone,
+        progress: &impl Fn(GrowthProgress) -> Result<()>,
+    ) -> Result<()> {
+        let change_count = changes.clone().count();
+        let mut matches = true;
+        let mut index = 0;
+        for (sql, selected_generation) in [
+            (
+                "SELECT ordinal,kind,block FROM steps ORDER BY ordinal",
+                None,
+            ),
+            (
+                "SELECT ordinal,kind,block FROM events WHERE generation=? ORDER BY ordinal",
+                Some(generation),
+            ),
+        ] {
+            let mut statement = self.db.prepare(sql)?;
+            let mut rows = match selected_generation {
+                Some(generation) => statement.query([generation])?,
+                None => statement.query([])?,
+            };
+            let mut expected = changes.clone().enumerate();
+            loop {
+                progress(GrowthProgress::ReorgReadback { index })?;
+                index += 1;
+                let Some(row) = rows.next()? else {
+                    matches &= expected.next().is_none();
+                    break;
+                };
+                let actual: (u64, u64, Vec<u8>) = (row.get(0)?, row.get(1)?, row.get(2)?);
+                matches &= expected.next().is_some_and(|(ordinal, (kind, id))| {
+                    actual.0 == ordinal as u64 && actual.1 == kind && actual.2 == id
+                });
+            }
+        }
+        progress(GrowthProgress::ReorgReadback { index })?;
         let reorg: (Vec<u8>, Vec<u8>, u64, u64, u64) = self.db.query_row(
             "SELECT old_tip,new_tip,generation,cursor,done FROM reorg WHERE singleton=1",
             [],
             |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?, r.get(3)?, r.get(4)?)),
         )?;
         ensure(
-            steps == expected
-                && events == expected
+            matches
                 && reorg
                     == (
                         old.to_vec(),
                         target.to_vec(),
                         generation,
-                        changes.len() as u64,
+                        change_count as u64,
                         1,
                     ),
             "GROWTH_REORG_JOURNAL",
         )
     }
 
-    fn growth_check_journal(&self) -> Result<()> {
-        let rows: Vec<(u64, u64, u64, Vec<u8>)> = self
-            .db
-            .prepare(
-                "SELECT generation,ordinal,kind,block FROM events ORDER BY generation,ordinal",
-            )?
-            .query_map([], |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?, r.get(3)?)))?
-            .collect::<std::result::Result<_, _>>()?;
+    pub(super) fn growth_check_journal(&self) -> Result<ColdJournalReads> {
+        // The caller retains the original cold-open read transaction throughout
+        // both passes and final readback. Collect used to convert ALL SQL rows
+        // before checking any journal rule. Keep that error priority without
+        // retaining the history; fixed_blob preserves type errors and copies at
+        // most33 bytes even from a corrupt oversized stored cell.
+        let mut observation = ColdJournalReads::default();
+        let mut statement = self.db.prepare(
+            "SELECT generation,ordinal,kind,block FROM events ORDER BY generation,ordinal",
+        )?;
+        {
+            let mut rows = statement.query([])?;
+            while let Some(row) = rows.next()? {
+                let _: (u64, u64, u64, Vec<u8>) = (
+                    row.get(0)?,
+                    row.get(1)?,
+                    row.get(2)?,
+                    super::super::fixed_blob::<32>(row, 3)?,
+                );
+                observation.typed_events += 1;
+                observation.peak_event_rows = 1;
+            }
+        }
         let mut tip = self.settings.genesis();
         let mut generation = 0u64;
         let mut old = tip;
-        let mut changes = Vec::new();
-        for (g, ordinal, kind, raw) in rows {
+        let mut changes = 0u64;
+        let mut rows = statement.query([])?;
+        while let Some(row) = rows.next()? {
+            let (g, ordinal, kind): (u64, u64, u64) = (row.get(0)?, row.get(1)?, row.get(2)?);
+            let raw = super::super::fixed_blob::<32>(row, 3)?;
+            observation.semantic_events += 1;
             if g != generation {
                 ensure(g == generation + 1, "GROWTH_REORG_JOURNAL")?;
                 generation = g;
                 old = tip;
-                changes.clear();
+                changes = 0;
             }
-            ensure(ordinal == changes.len() as u64, "GROWTH_REORG_JOURNAL")?;
+            ensure(ordinal == changes, "GROWTH_REORG_JOURNAL")?;
             let id = bytes32(raw)?;
             match kind {
                 0 => {
@@ -393,28 +537,99 @@ impl Node {
                 }
                 _ => return Err("GROWTH_REORG_JOURNAL".into()),
             }
-            changes.push((kind, id));
+            changes += 1;
         }
+        drop(rows);
+        drop(statement);
         ensure(
             self.active()? == (tip, generation) && self.slot()? == generation,
             "GROWTH_REORG_JOURNAL",
         )?;
         if generation > 0 {
-            self.growth_check_latest_journal(old, tip, generation, &changes)
+            self.growth_check_cold_latest_journal(old, tip, generation, changes, &mut observation)?;
         } else {
             let rows: u64 = self.db.query_row(
                 "SELECT (SELECT count(*) FROM reorg)+(SELECT count(*) FROM steps)",
                 [],
                 |r| r.get(0),
             )?;
-            ensure(rows == 0, "GROWTH_REORG_JOURNAL")
+            ensure(rows == 0, "GROWTH_REORG_JOURNAL")?;
         }
+        Ok(observation)
+    }
+
+    fn growth_check_cold_latest_journal(
+        &self,
+        old: Hash,
+        target: Hash,
+        generation: u64,
+        count: u64,
+        observation: &mut ColdJournalReads,
+    ) -> Result<()> {
+        // All events already passed typed and semantic checks in this same read
+        // snapshot. Compare actual rows, including both EOFs; no digest replaces
+        // the exact latest journal. The hot callback-bearing checker is unchanged.
+        let mut steps = self
+            .db
+            .prepare("SELECT ordinal,kind,block FROM steps ORDER BY ordinal")?;
+        let mut events = self
+            .db
+            .prepare("SELECT ordinal,kind,block FROM events WHERE generation=? ORDER BY ordinal")?;
+        let mut steps = steps.query([])?;
+        let mut events = events.query([generation])?;
+        let mut matches = true;
+        let mut index = 0u64;
+        loop {
+            let step = steps
+                .next()?
+                .map(|row| -> rusqlite::Result<_> {
+                    Ok((
+                        row.get::<_, u64>(0)?,
+                        row.get::<_, u64>(1)?,
+                        super::super::fixed_blob::<32>(row, 2)?,
+                    ))
+                })
+                .transpose()?;
+            let event = events
+                .next()?
+                .map(|row| -> rusqlite::Result<_> {
+                    Ok((
+                        row.get::<_, u64>(0)?,
+                        row.get::<_, u64>(1)?,
+                        super::super::fixed_blob::<32>(row, 2)?,
+                    ))
+                })
+                .transpose()?;
+            if step.is_none() && event.is_none() {
+                break;
+            }
+            observation.latest_steps += u64::from(step.is_some());
+            observation.latest_events += u64::from(event.is_some());
+            observation.peak_event_rows = observation
+                .peak_event_rows
+                .max(usize::from(step.is_some()) + usize::from(event.is_some()));
+            matches &= step.as_ref().is_some_and(|row| row.0 == index)
+                && event.as_ref().is_some_and(|row| row.0 == index)
+                && step == event;
+            index += 1;
+        }
+        let reorg: (Vec<u8>, Vec<u8>, u64, u64, u64) = self.db.query_row(
+            "SELECT old_tip,new_tip,generation,cursor,done FROM reorg WHERE singleton=1",
+            [],
+            |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?, r.get(3)?, r.get(4)?)),
+        )?;
+        ensure(
+            matches
+                && index == count
+                && reorg == (old.to_vec(), target.to_vec(), generation, count, 1),
+            "GROWTH_REORG_JOURNAL",
+        )
     }
 
     /// Cold integrity is deliberately separate from request latency. Every retained
     /// branch is reexecuted against its parent witness, and every retained root is
     /// checked against real COW nodes before the operation epoch is published.
-    pub(in crate::store) fn growth_cold_open(&mut self) -> Result<()> {
+    pub(in crate::store) fn growth_cold_open(&mut self, recover: bool) -> Result<()> {
         profile::require(&self.settings)?;
         let read = self.db.unchecked_transaction()?;
         let version: u64 = self.db.query_row("PRAGMA data_version", [], |r| r.get(0))?;
@@ -510,7 +725,9 @@ impl Node {
             version,
             schema: expected_schema,
         });
-        self.growth_recover()?;
+        if recover {
+            self.growth_recover()?;
+        }
         Ok(())
     }
 }

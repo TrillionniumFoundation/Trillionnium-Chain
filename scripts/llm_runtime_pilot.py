@@ -47,18 +47,61 @@ FAMILY_PATH = REPOSITORY/'config/pon/model-family-smollm2-135m-v1.json'
 _RSS_READ_TRACE = contextvars.ContextVar('llm-owned-rss-read-trace', default=None)
 _RSS_OWNER_CONTEXT = contextvars.ContextVar('llm-owned-rss-owner', default=None)
 _RSS_EXIT_OBSERVATION = contextvars.ContextVar('llm-owned-rss-exit-observation', default=None)
+_RSS_EXIT_CLASS = contextvars.ContextVar('llm-owned-rss-exit-class', default=None)
+EXIT_PROFILES = ('strict-v1', 'linux-owned-exit-cleanup-v2', 'linux-owned-exit-terminal-subset-v3',
+                 'linux-owned-exit-worker-pidfd-v4')
 
 
-def exit_observation_profile():
+def exit_observation_profile(profile='linux-owned-exit-cleanup-v2'):
     from llm_runtime_exit_observation import PROFILE, MAX_DRAIN_NS
-    return dict(profile=PROFILE, maximum_drain_ns=MAX_DRAIN_NS,
+    require(profile in EXIT_PROFILES[1:], 'RUNTIME_EXIT_OBSERVER_BINDING')
+    result = dict(profile=PROFILE, maximum_drain_ns=MAX_DRAIN_NS,
                 observer_source_sha256=file_sha(REPOSITORY/'scripts/llm_runtime_exit_observation.py'),
                 diagnostic_source_sha256=file_sha(REPOSITORY/'scripts/llm_runtime_rss_diagnostics.py'))
+    if profile == EXIT_PROFILES[2]:
+        from llm_runtime_exit_subset_observation import PROFILE as SUBSET_PROFILE
+        result.update(profile=SUBSET_PROFILE,
+            base_observer_source_sha256=result['observer_source_sha256'],
+            observer_source_sha256=file_sha(REPOSITORY/'scripts/llm_runtime_exit_subset_observation.py'))
+    elif profile == EXIT_PROFILES[3]:
+        from llm_runtime_exit_worker_observation import PROFILE as WORKER_PROFILE
+        result.update(profile=WORKER_PROFILE,
+            base_observer_source_sha256=result['observer_source_sha256'],
+            observer_source_sha256=file_sha(REPOSITORY/'scripts/llm_runtime_exit_worker_observation.py'))
+    return result
 
 
 def validate_exit_observation_profile(profile):
-    require(type(profile) is dict and profile == exit_observation_profile(), 'RUNTIME_EXIT_OBSERVER_BINDING')
+    require(type(profile) is dict and profile.get('profile') in EXIT_PROFILES[1:] and
+            profile == exit_observation_profile(profile['profile']), 'RUNTIME_EXIT_OBSERVER_BINDING')
     return profile
+
+
+def exit_observation_class(profile):
+    validate_exit_observation_profile(profile)
+    if profile['profile'] == EXIT_PROFILES[1]:
+        from llm_runtime_exit_observation import ExitOnlyObservation
+        return ExitOnlyObservation
+    if profile['profile'] == EXIT_PROFILES[2]:
+        from llm_runtime_exit_subset_observation import TerminalSubsetObservation
+        return TerminalSubsetObservation
+    from llm_runtime_exit_worker_observation import WorkerPidfdObservation
+    return WorkerPidfdObservation
+
+
+def plan_exit_profile(plan):
+    profiles = dict(zip(('llm-runtime-public-pilot-plan-v1',
+                         'llm-runtime-public-pilot-plan-v2',
+                         'llm-runtime-public-pilot-plan-v3',
+                         'llm-runtime-public-pilot-plan-v4'), EXIT_PROFILES))
+    require(type(plan) is dict and plan.get('schema') in profiles, 'RUNTIME_EXIT_OBSERVER_PROFILE')
+    expected = profiles[plan['schema']]
+    if expected == 'strict-v1':
+        require('exit_observation' not in plan, 'RUNTIME_EXIT_OBSERVER_PROFILE')
+    else:
+        profile = validate_exit_observation_profile(plan.get('exit_observation'))
+        require(profile['profile'] == expected, 'RUNTIME_EXIT_OBSERVER_PROFILE')
+    return expected
 
 
 def canonical(value):
@@ -194,7 +237,7 @@ def experiment_plan(materials, *, backend='cpu', threads=4, steps=10, exit_obser
     require(backend in ('cpu', 'cuda', 'rocm', 'mps'), 'RUNTIME_BACKEND')
     require(type(threads) is int and 1 <= threads <= 8 and type(steps) is int and 1 <= steps <= 100,
             'RUNTIME_LIMIT')
-    require(exit_observation in ('strict-v1', 'linux-owned-exit-cleanup-v2'), 'RUNTIME_EXIT_OBSERVER_PROFILE')
+    require(exit_observation in EXIT_PROFILES, 'RUNTIME_EXIT_OBSERVER_PROFILE')
     plan = dict(schema='llm-runtime-public-pilot-plan-v1', model=MODEL, revision=REVISION,
                 model_family_profile='smollm2-135m-cpu-dev-v1',
                 model_family_configuration_sha256=file_sha(FAMILY_PATH),
@@ -213,16 +256,13 @@ def experiment_plan(materials, *, backend='cpu', threads=4, steps=10, exit_obser
                 source_scope='operator-controlled-public-fixtures-no-future-independent-custody',
                 **{name: False for name in QUALIFICATIONS})
     if exit_observation != 'strict-v1':
-        plan.update(schema='llm-runtime-public-pilot-plan-v2', exit_observation=exit_observation_profile())
+        plan.update(schema='llm-runtime-public-pilot-plan-v'+str(EXIT_PROFILES.index(exit_observation)+1),
+                    exit_observation=exit_observation_profile(exit_observation))
     return plan
 
 
 def validate_plan(plan):
-    if plan['schema'] == 'llm-runtime-public-pilot-plan-v2':
-        validate_exit_observation_profile(plan['exit_observation'])
-    else:
-        require(plan['schema'] == 'llm-runtime-public-pilot-plan-v1' and
-                'exit_observation' not in plan, 'RUNTIME_EXIT_OBSERVER_PROFILE')
+    plan_exit_profile(plan)
     require(
             plan['backend'] in ('cpu','cuda','rocm','mps') and
             type(plan['threads']) is int and 1 <= plan['threads'] <= 8 and
@@ -372,7 +412,8 @@ def current_rss(pid=None):
                     if classification_trace is not None:
                         classification_trace['attempted'] = True
                     from llm_runtime_exit_observation import ExitOnlyObservation
-                    observation = ExitOnlyObservation(pid, descriptor, owner[2], fields, missing_sample_ns)
+                    observation_type = _RSS_EXIT_CLASS.get() or ExitOnlyObservation
+                    observation = observation_type(pid, descriptor, owner[2], fields, missing_sample_ns)
                     _RSS_EXIT_OBSERVATION.set(observation)
                     if classification_trace is not None:
                         classification_trace['result'] = 'typed-observation-created'
@@ -645,12 +686,44 @@ def train(model, tokenizer, plan, role, torch, device):
 
 
 def decode(model, tokenizer, row, contract, cid, plan, torch, device, artifact=None, role='current-backbone'):
-    c = contract_module()
     tokens = prompt_tokens(tokenizer, row, plan['input_tokens_max'])
+    return decode_tokens(model, tokenizer, tokens, row['id'], contract, cid, plan, torch, device,
+                         artifact=artifact, role=role)
+
+
+def decode_tokens(model, tokenizer, tokens, task_id, contract, cid, plan, torch, device,
+                  artifact=None, role='current-backbone'):
+    """Internal single-sequence decoder: IDs are already fully templated/encoded.
+
+    No prompt rendering, tokenizer proxy, truncation or loading authority is
+    supplied here. The caller owns full-context compilation and actual load
+    binding. Request/response domains and the original family caps are retained.
+    """
+    require(type(plan) is dict, 'RUNTIME_DECODE_LIMIT')
+    # Retain the checked immutable execution scalars, not a caller-owned plan.
+    plan = {name: plan.get(name) for name in
+            ('input_tokens_max', 'generation_tokens', 'backend', 'snapshot')}
+    require(type(plan['input_tokens_max']) is int and
+            1 <= plan['input_tokens_max'] <= 128 and
+            type(plan['generation_tokens']) is int and 1 <= plan['generation_tokens'] <= 16,
+            'RUNTIME_DECODE_LIMIT')
+    require(type(plan['snapshot']) is str and bool(plan['snapshot']), 'RUNTIME_DECODE_CONTEXT')
+    require(type(tokens) is list and 1 <= len(tokens) <= plan['input_tokens_max'],
+            'RUNTIME_NO_TRUNCATION')
+    # Snapshot only a bounded list; caller mutation cannot rewrite the request.
+    tokens = tokens[:plan['input_tokens_max'] + 1]
+    require(1 <= len(tokens) <= plan['input_tokens_max'], 'RUNTIME_NO_TRUNCATION')
+    backend = plan.get('backend')
+    require(backend in ('cpu', 'cuda', 'rocm', 'mps') and
+            getattr(device, 'type', None) == ('cuda' if backend == 'rocm' else backend),
+            'RUNTIME_DECODER_DEVICE')
+    c = contract_module()
     request = dict(schema='pon-causal-decoder-request-v1', contract=cid, input_ids=[tokens],
                    attention_mask=[[True]*len(tokens)], generation_tokens=plan['generation_tokens'])
     rid = c.validate_decoder_request(request, contract, cid)
     ids = torch.tensor([tokens], dtype=torch.int64, device=device)
+    require(ids.dtype == torch.int64 and ids.device.type == device.type and
+            tuple(ids.shape) == (1, len(tokens)), 'RUNTIME_INPUT_TENSOR')
     generated, logits_root = [], hashlib.sha256()
     model.eval()
     with torch.inference_mode():
@@ -658,8 +731,11 @@ def decode(model, tokenizer, row, contract, cid, plan, torch, device, artifact=N
             mask = torch.ones_like(ids, dtype=torch.bool)
             positions = mask.to(torch.int64).cumsum(-1)-1
             result = model(input_ids=ids, attention_mask=mask, position_ids=positions, use_cache=False)
-            require(result.logits.dtype == torch.float32 and result.logits.device.type == device.type and
-                    torch.isfinite(result.logits).all().item(), 'RUNTIME_LOGITS_DEVICE_OR_NONFINITE')
+            require(result.logits.dtype == torch.float32 and result.logits.device.type == device.type,
+                    'RUNTIME_LOGITS_DEVICE_OR_NONFINITE')
+            require(tuple(result.logits.shape) == (1, ids.shape[1], contract['architecture']['vocabulary']),
+                    'RUNTIME_LOGITS_SHAPE')
+            require(torch.isfinite(result.logits).all().item(), 'RUNTIME_LOGITS_DEVICE_OR_NONFINITE')
             last = result.logits[:, -1, :]
             logits_root.update(tensor_bytes(last))
             # argmax selects the first (smallest-token-id) maximal element.
@@ -671,7 +747,7 @@ def decode(model, tokenizer, row, contract, cid, plan, torch, device, artifact=N
                     generated_token_ids=[generated], decoded_outputs=[decoded])
     roots = c.validate_decoder_response(response, request, contract, cid)
     require(roots[0] == hashlib.sha256(decoded.encode()).hexdigest(), 'RUNTIME_DECODE_BYTE_ROOT')
-    return dict(task=row['id'], request=request, request_id=rid, response=response,
+    return dict(task=task_id, request=request, request_id=rid, response=response,
                 artifact=artifact or contract['backbone']['index_root'], role=role,
                 output_sha256=roots[0], logits_sha256=logits_root.hexdigest(),
                 input_tokens=len(tokens), generated_tokens=len(generated), actual_device=str(device),
@@ -795,7 +871,7 @@ class _OwnedChildCleanupRequired(RuntimeError):
 
 
 class _Wait4Child(subprocess.Popen):
-    """One Linux Popen spawn, exclusively reaped by the calls below.
+    """One direct Linux child, exclusively reaped by the calls below.
 
     Requires default SIGCHLD handling and no competing wait/reap thread. A
     detected lost receipt permits cleanup only; this is not a general guarantee
@@ -803,6 +879,31 @@ class _Wait4Child(subprocess.Popen):
     """
 
     def __init__(self, *args, **kwargs):
+        self.kernel_operation = kwargs.pop('_controlled_operation', None)
+        aggregate_operation = kwargs.pop('_aggregate_operation', None)
+        self._counter_error_type = self._counter_diagnostic_type = None
+        self.kernel_counter_diagnostic = None
+        self.kernel_counter_diagnostic_projection_failed = False
+        if aggregate_operation is not None:
+            from llm_runtime_kernel_aggregate import (_AggregateOperation, AggregateCounterError,
+                _CounterDiagnostic, _RAW)
+            require(self.kernel_operation is None and type(aggregate_operation) is _AggregateOperation,
+                    'AGGREGATE_SPAWN_INTERFACE')
+            self.kernel_operation = aggregate_operation
+            # Bind exact types/allowlists before clone, never import or allocate
+            # a tuple while handling a terminal_record exception.
+            self._counter_error_type, self._counter_diagnostic_type = AggregateCounterError, _CounterDiagnostic
+            self._counter_filenames = tuple('aggregate/'+name for name in _RAW) + ('unit/cgroup.stat',)
+            self._counter_reasons = ('aggregate-counter-format', 'aggregate-counter-overflow',
+                                     'aggregate-counter-fields', 'aggregate-counter-scalar')
+            pipe = getattr(aggregate_operation, 'evidence_pipe', None)
+            if pipe is not None:
+                from llm_runtime_evidence_pipe import _EvidencePipeOwner
+                require(type(pipe) is _EvidencePipeOwner and pipe.capability is aggregate_operation,
+                        'TINY_EVIDENCE_OWNER')
+                self._tiny_pipe, self._tiny_pipe_type = pipe, _EvidencePipeOwner
+        kernel_deadline = kwargs.pop('_kernel_deadline', None)
+        self.kernel_evidence = None
         self.reaped = False
         self.reap_resolved = False
         self.no_waitable_child_observed = False
@@ -829,6 +930,35 @@ class _Wait4Child(subprocess.Popen):
                     os.close(probe)
                 except OSError as error:
                     raise _Wait4Unsupported('pidfd capability cleanup unavailable') from error
+        if self.kernel_operation is not None:
+            if aggregate_operation is None:
+                from llm_runtime_kernel_owned import _ControlledOperation
+                require(type(self.kernel_operation) is _ControlledOperation, 'KERNEL_SPAWN_INTERFACE')
+            require(len(args) == 1 and
+                    set(kwargs) == {'stdout', 'stderr'} and kwargs['stderr'] is subprocess.STDOUT and
+                    type(kernel_deadline) is float, 'KERNEL_SPAWN_INTERFACE')
+            self.returncode = None
+            import ctypes
+            self._kernel_handoff = (ctypes.c_int*4)(-1, -1, -1, -1)
+            self._kernel_admitted = False
+            self._kernel_cleanup_required = _OwnedChildCleanupRequired(self,
+                dict(outcome='failed', stop_reason='kernel-handoff-unresolved', reservation='RETAINED'))
+            try:
+                self.kernel_operation.spawn(args[0], kwargs['stdout'], self)
+                self._adopt_kernel_handoff()
+                self.kernel_operation.allow_exec(self, kernel_deadline)
+                self._kernel_admitted = True
+                return
+            except BaseException as failure:
+                # Constant/prebuilt failure state: never format/allocate first
+                # and thereby lose the native output after a MemoryError.
+                self.observation_error = 'kernel-spawn-handoff-failed'
+                try:
+                    self._rollback_kernel_handoff()
+                except BaseException:
+                    raise self._kernel_cleanup_required
+                if self._kernel_handoff[0] <= 0 or not isinstance(failure, Exception): raise
+            return
         super().__init__(*args, **kwargs)
         try:
             self.termination_fd = os.pidfd_open(self.pid, 0)
@@ -840,9 +970,35 @@ class _Wait4Child(subprocess.Popen):
         # supervise's finally block exclusively terminates/reaps this child.
         pass
 
+    def _adopt_kernel_handoff(self):
+        self.pid = self._kernel_handoff[0]
+        descriptor = self._kernel_handoff[1]
+        self.termination_fd = descriptor if descriptor >= 0 else None
+
+    def _close_kernel_handoff(self, mask):
+        error = self.kernel_operation.native.close_handoff(self._kernel_handoff, mask)
+        if error: raise OSError(error, 'kernel-handoff-close')
+
+    def _rollback_kernel_handoff(self):
+        self._close_kernel_handoff(12)
+        if self._kernel_handoff[0] > 0:
+            self._adopt_kernel_handoff()
+            self.signal_owned(signal.SIGKILL)
+            self.finish()
+            if not self.reap_resolved: raise self._kernel_cleanup_required
+
     def fail(self, message):
         if self.observation_error is None:
             self.observation_error = message
+
+    def _retain_kernel_counter_diagnostic(self, error):
+        if type(error) is not self._counter_error_type:
+            return
+        value = error.counter_diagnostic
+        if (type(value) is self._counter_diagnostic_type and type(value.filename) is str and
+                type(value.raw) is str and type(value.reason) is str and len(value.raw) <= 65536 and
+                value.filename in self._counter_filenames and value.reason in self._counter_reasons):
+            self.kernel_counter_diagnostic = value  # Existing immutable strings only.
 
     def reap(self, options=os.WNOHANG):
         if self.reaped:
@@ -944,6 +1100,32 @@ class _Wait4Child(subprocess.Popen):
         except (OSError, AttributeError, TypeError, ValueError) as error:
             self.fail(f'signal:{type(error).__name__}:{getattr(error, "errno", None)}')
 
+    def _finish_tiny_pipe(self):
+        try:
+            require(type(self._tiny_pipe) is self._tiny_pipe_type and
+                self._tiny_pipe.capability is self.kernel_operation, 'TINY_EVIDENCE_OWNER')
+            if (self.reaped and self.cleanup_method == 'wait4' and self.observation_error is None and
+                    self.kernel_evidence is None):
+                self.kernel_evidence = self.kernel_operation.terminal_record(self.pid, self.termination_fd)
+                require(type(self.kernel_evidence) is dict, 'TINY_EVIDENCE_TERMINAL')
+        except BaseException as failure:
+            self.fail('kernel-terminal-tiny-evidence-unavailable')
+            try:
+                self.kernel_tiny_terminal_failure = type(failure).__name__[:64]
+                self._retain_kernel_counter_diagnostic(failure)
+            except BaseException: self.kernel_counter_diagnostic_projection_failed = True
+        finally:
+            # Same original close boundary, also when typed transport raises KI/MI.
+            if self.termination_fd is not None and self.reap_resolved:
+                try:
+                    if getattr(self, '_kernel_handoff', None) is not None:
+                        self._close_kernel_handoff(2)
+                    else:
+                        os.close(self.termination_fd)
+                except OSError as error:
+                    self.fail(f'close-pidfd:{error.errno}')
+                self.termination_fd = None
+
     def finish(self):
         try:
             if self.owned_exit_observed and not self.reap_resolved:
@@ -964,9 +1146,28 @@ class _Wait4Child(subprocess.Popen):
                     if not self.owned_exit_observed:
                         time.sleep(min(0.01, max(0, deadline - time.monotonic())))
         finally:
+            if getattr(self, '_tiny_pipe', None) is not None:
+                self._finish_tiny_pipe()
+            if (getattr(self, 'kernel_operation', None) is not None and self.reaped and
+                    self.cleanup_method == 'wait4' and self.observation_error is None and
+                    self.kernel_evidence is None):
+                try:
+                    self.kernel_evidence = self.kernel_operation.terminal_record(self.pid, self.termination_fd)
+                except Exception as failure:
+                    self.fail(f'kernel-terminal:{type(failure).__name__}')
+                    if getattr(self, '_counter_error_type', None) is not None:
+                        try:
+                            self._retain_kernel_counter_diagnostic(failure)
+                        except BaseException:
+                            # Optional evidence cannot replace the first cause
+                            # or escape past the original pidfd-close below.
+                            self.kernel_counter_diagnostic_projection_failed = True
             if self.termination_fd is not None and self.reap_resolved:
                 try:
-                    os.close(self.termination_fd)
+                    if getattr(self, '_kernel_handoff', None) is not None:
+                        self._close_kernel_handoff(2)
+                    else:
+                        os.close(self.termination_fd)
                 except OSError as error:
                     self.fail(f'close-pidfd:{error.errno}')
                 self.termination_fd = None
@@ -1226,6 +1427,13 @@ def _exit_recheck_refusal(error):
         'exit-owner-context', 'exit-leader-not-in-task-set', 'exit-leader', 'exit-task-set',
         'exit-task-fd-reused', 'exit-task-identity', 'exit-task-namespace',
         'exit-task-not-exit-only', 'exit-leader-state', 'exit-owner-changed', 'exit-task-starttime',
+        'exit-subset-task-set', 'exit-subset-frontier-change',
+        'exit-subset-remaining-not-zombie', 'exit-subset-sticky-failure',
+        'exit-worker-pidfd-reused', 'exit-worker-pidfd-binding', 'exit-worker-pidfd-unavailable',
+        'exit-worker-retirement-ineligible', 'exit-worker-terminal-event-unavailable',
+        'exit-worker-task-set', 'exit-worker-frontier-change',
+        'exit-worker-remaining-not-zombie', 'exit-worker-recapture-bound',
+        'exit-worker-sticky-failure', 'exit-worker-deadline',
     }
     code = (error.args[0] if type(error) is ExitObservationError and len(error.args) == 1 and
             type(error.args[0]) is str and error.args[0] in codes else None)
@@ -1235,14 +1443,17 @@ def _exit_recheck_refusal(error):
                 diagnostic_only=True)
 
 
-def _drain_exit_cleanup(process, observation, owner_token, start, budget):
+def _drain_exit_cleanup(process, observation, owner_token, start, budget, *, exit_observation=None):
     """Retain the reservation while waiting for exact wait4, never report RSS=0."""
     from llm_runtime_exit_observation import ExitOnlyObservation, MAX_DRAIN_NS
     record = dict(outcome='failed', snapshots=[], missing_sample_ns=observation.sample_started_ns)
     deadline = min(start + budget['wall_seconds'] * 10**9,
                    observation.sample_started_ns + MAX_DRAIN_NS)
     try:
-        require(type(observation) is ExitOnlyObservation and
+        observation_type = (exit_observation_class(exit_observation)
+                            if exit_observation is not None else ExitOnlyObservation)
+        is_subset = observation_type is not ExitOnlyObservation
+        require(type(observation) is observation_type and
                 observation.belongs_to(process.pid, process.termination_fd, owner_token),
                 'RUNTIME_EXIT_OBSERVER_OWNER')
         record['snapshots'].append(observation.record)
@@ -1253,6 +1464,16 @@ def _drain_exit_cleanup(process, observation, owner_token, start, budget):
                 require(process.observation_error is None and process.waited_peak_rss_bytes is not None and
                         process.waited_cpu_ns is not None and observed_ns <= deadline,
                         'RUNTIME_EXIT_WAIT4_RECEIPT')
+                if is_subset:
+                    # Only this exact terminal-wait4 branch may use V4's held
+                    # capability check: kernel reap erases live fdinfo identity.
+                    terminal_owner = (observation.terminal_belongs_to
+                        if exit_observation['profile'] == EXIT_PROFILES[3]
+                        else observation.belongs_to)
+                    require(terminal_owner(process.pid, process.termination_fd, owner_token),
+                            'RUNTIME_EXIT_OBSERVER_OWNER')
+                    record['retirement_closed_by'] = 'exact-owned-child-terminal-wait4'
+                    record['terminal_retired_tasks'] = list(observation.pending_retired)
                 record.update(outcome='terminal-wait4', completed_ns=observed_ns)
                 return None, record
             require(state == 'live' and process.observation_error is None, 'RUNTIME_EXIT_WAIT4_UNKNOWN')
@@ -1260,6 +1481,8 @@ def _drain_exit_cleanup(process, observation, owner_token, start, budget):
                 record['snapshots'].append(observation.recheck())
             except (OSError, AttributeError, KeyError, ValueError, TypeError) as error:
                 record['recheck_refusal'] = _exit_recheck_refusal(error)
+                if is_subset and observation.failure_context is not None:
+                    record['same_call_subset_failure'] = observation.failure_context
                 raise
             if time.monotonic_ns() >= deadline:
                 break
@@ -1271,11 +1494,43 @@ def _drain_exit_cleanup(process, observation, owner_token, start, budget):
     return 'rss-exit-cleanup-observation-unavailable', record
 
 
-def supervise(command, directory, budget, *, exit_observation=None):
+def supervise(command, directory, budget, *, exit_observation=None, _controlled_operation=None,
+              _aggregate_operation=None, _evidence_pipe=None):
     """Kill only this fresh child when its measured wall/RSS budget is exceeded."""
-    if exit_observation is not None:
-        validate_exit_observation_profile(exit_observation)
-    directory = Path(directory); directory.mkdir(mode=0o700)
+    observation_type = exit_observation_class(exit_observation) if exit_observation is not None else None
+    kernel_keyword = '_controlled_operation'
+    if _aggregate_operation is not None:
+        from llm_runtime_kernel_aggregate import _AggregateOperation
+        require(_controlled_operation is None and type(_aggregate_operation) is _AggregateOperation,
+                'AGGREGATE_BUDGET_INTERFACE')
+        _controlled_operation = _aggregate_operation
+        kernel_keyword = '_aggregate_operation'
+    if _controlled_operation is not None:
+        if _aggregate_operation is None:
+            from llm_runtime_kernel_owned import _ControlledOperation
+            require(type(_controlled_operation) is _ControlledOperation, 'KERNEL_BUDGET_INTERFACE')
+        require(type(budget) is dict and set(budget) == {'rss_bytes', 'wall_seconds'} and
+                type(budget['rss_bytes']) is int and budget['rss_bytes'] == _controlled_operation.memory and
+                type(budget['wall_seconds']) is int and 0 < budget['wall_seconds'] <=
+                (600 if _controlled_operation.memory == 8*1024**3 else 1800), 'KERNEL_BUDGET_INTERFACE')
+    pipe_owner = pipe_writer = None
+    if _evidence_pipe is not None:
+        from llm_runtime_evidence_pipe import _EvidencePipeOwner
+        from llm_runtime_evidence_frames import _EvidencePipeWriter
+        require(exit_observation is None and type(budget) is dict and
+            set(budget) == {'wall_seconds','rss_bytes'} and
+            all(type(budget[key]) is int for key in budget), 'TINY_EVIDENCE_INTERFACE')
+        if type(_evidence_pipe) is _EvidencePipeOwner:
+            require(_aggregate_operation is _evidence_pipe.capability and
+                budget == dict(wall_seconds=8, rss_bytes=8*1024**3), 'TINY_EVIDENCE_INTERFACE')
+            pipe_owner = _evidence_pipe
+        else:
+            require(type(_evidence_pipe) is _EvidencePipeWriter and _evidence_pipe.role == 'supervisor' and
+                _controlled_operation is None and budget == dict(wall_seconds=2,rss_bytes=64*1024**2),
+                'TINY_EVIDENCE_INTERFACE')
+            pipe_writer = _evidence_pipe
+    directory = Path(directory)
+    if pipe_writer is None: directory.mkdir(mode=0o700)
     start, high, reason = time.monotonic_ns(), 0, None
     wall_deadline_ns = start + round(budget['wall_seconds'] * 10**9)
     rss_gaps = []
@@ -1283,35 +1538,58 @@ def supervise(command, directory, budget, *, exit_observation=None):
     exit_cleanup_observation = None
     owner_token = object()
     observer_cpu_start = time.process_time_ns()
-    with (directory/'process.log').open('w') as log:
+    process = None
+    with (pipe_writer if pipe_writer is not None else
+          (directory/'process.log').open('wb' if pipe_owner is not None else 'w')) as log:
         try:
-            process = _Wait4Child(command, stdout=log, stderr=subprocess.STDOUT)
-        except _Wait4Unsupported as error:
-            result = dict(exit_code=None, stop_reason='rss-owner-unsupported',
-                          observed_wall_ns=time.monotonic_ns()-start,
-                          sampled_peak_rss_bytes=0, budget=budget, sample_interval_ms=50,
-                          waited_child_peak_rss_bytes=None, waited_child_reaped=False,
-                          owned_child_reap_resolved=False,
-                          owned_child_echild_observed=False,
-                          owned_child_exit_observed=False, child_spawned=False,
-                          cleanup_method='no-child-spawned',
-                          waited_child_observation_error=str(error), child_cpu_ns=None,
-                          rss_observation_gaps=[],
-                          observer_cpu_ns=time.process_time_ns()-observer_cpu_start,
-                          cpu_scope='No child spawned; no waited-child CPU observation',
-                          memory_scope='No child spawned; no RSS observation', outcome='failed')
-            if exit_observation is not None:
-                result['exit_observation_profile'] = exit_observation
-            save(directory/'supervisor.json', result)
-            return result
-        try:
+            try:
+                if pipe_owner is not None:
+                    pipe_owner.configure(wall_deadline_ns, log)
+                    command = command+['--evidence-deadline-ns',str(wall_deadline_ns)]
+                kernel = ({kernel_keyword: _controlled_operation,
+                    '_kernel_deadline': (start/10**9)+budget['wall_seconds']}
+                    if _controlled_operation is not None else {})
+                if _controlled_operation is not None:
+                    process = object.__new__(_Wait4Child)
+                    process.__init__(command, stdout=pipe_owner if pipe_owner is not None else log,
+                        stderr=subprocess.STDOUT, **kernel)
+                    if pipe_owner is not None: pipe_owner.adopted(process)
+                else:
+                    process = _Wait4Child(command, stdout=log, stderr=subprocess.STDOUT)
+            except _Wait4Unsupported as error:
+                result = dict(exit_code=None, stop_reason='rss-owner-unsupported',
+                              observed_wall_ns=time.monotonic_ns()-start,
+                              sampled_peak_rss_bytes=0, budget=budget, sample_interval_ms=50,
+                              waited_child_peak_rss_bytes=None, waited_child_reaped=False,
+                              owned_child_reap_resolved=False,
+                              owned_child_echild_observed=False,
+                              owned_child_exit_observed=False, child_spawned=False,
+                              cleanup_method='no-child-spawned',
+                              waited_child_observation_error=str(error), child_cpu_ns=None,
+                              rss_observation_gaps=[],
+                              observer_cpu_ns=time.process_time_ns()-observer_cpu_start,
+                              cpu_scope='No child spawned; no waited-child CPU observation',
+                              memory_scope='No child spawned; no RSS observation', outcome='failed')
+                if exit_observation is not None:
+                    result['exit_observation_profile'] = exit_observation
+                if pipe_writer is None: save(directory/'supervisor.json', result)
+                else: pipe_writer.emit('inner-supervisor',dict(result=result,owned_child_pid=None,supervisor_pid=os.getpid()))
+                return result
             while process.observation_error is None and process.reap() == 'live':
+                if pipe_owner is not None:
+                    try: pipe_owner.drain(process)
+                    except BaseException as failure:
+                        process.fail('evidence-pipe-transport-unavailable')
+                        reason = 'evidence-pipe-transport-unavailable'
+                        if not isinstance(failure,Exception) or isinstance(failure,MemoryError): raise
+                        break
                 sample_trace = {}
                 trace_token = _RSS_READ_TRACE.set(sample_trace)
                 owner_context = ((process.pid, process.termination_fd, owner_token)
                                  if exit_observation is not None else None)
                 owner_context_token = _RSS_OWNER_CONTEXT.set(owner_context)
                 exit_context_token = _RSS_EXIT_OBSERVATION.set(None)
+                class_context_token = _RSS_EXIT_CLASS.set(observation_type)
                 try:
                     rss = current_rss(process.pid)
                     exit_sample = _RSS_EXIT_OBSERVATION.get()
@@ -1319,6 +1597,7 @@ def supervise(command, directory, budget, *, exit_observation=None):
                     _RSS_READ_TRACE.reset(trace_token)
                     _RSS_OWNER_CONTEXT.reset(owner_context_token)
                     _RSS_EXIT_OBSERVATION.reset(exit_context_token)
+                    _RSS_EXIT_CLASS.reset(class_context_token)
                 high = max(high, rss or 0)
                 try:
                     if (time.monotonic_ns()-start) / 10**9 > budget['wall_seconds']:
@@ -1326,12 +1605,20 @@ def supervise(command, directory, budget, *, exit_observation=None):
                     elif rss is None:
                         if exit_observation is not None:
                             from llm_runtime_exit_observation import ExitOnlyObservation
-                            if type(exit_sample) is ExitOnlyObservation:
-                                # The explicit V2 observer keeps its original
-                                # 100ms cap. Its failure cannot fall through to
-                                # the separate held-pidfd terminal proof path.
+                            if type(exit_sample) is observation_type:
+                                # Once explicitly classified, even an immediately ready
+                                # terminal receipt must obey its original 100ms cap.
+                                # Owner loss is sticky inside drain, not a reason to
+                                # fall back to the ordinary exact-exit race branch.
                                 reason, exit_cleanup_observation = _drain_exit_cleanup(
-                                    process, exit_sample, owner_token, start, budget)
+                                    process, exit_sample, owner_token, start, budget,
+                                    exit_observation=exit_observation)
+                            elif exit_sample is not None and (
+                                    observation_type is not ExitOnlyObservation or
+                                    isinstance(exit_sample, ExitOnlyObservation)):
+                                # A mismatched typed/profile result must never use
+                                # the ordinary exact-exit race as fallback authority.
+                                reason = 'rss-exit-cleanup-observation-unavailable'
                             elif process.reap() != 'terminal':
                                 reason = 'rss-observation-unavailable'
                         else:
@@ -1361,7 +1648,19 @@ def supervise(command, directory, budget, *, exit_observation=None):
                     break
                 time.sleep(0.05)
         finally:
-            process.finish()
+            if process is not None:
+                if _controlled_operation is None:
+                    process.finish()
+                elif getattr(process, '_kernel_handoff', None) is not None:
+                    try:
+                        if process._kernel_admitted:
+                            process.finish()
+                        else:
+                            process._rollback_kernel_handoff()
+                    except BaseException:
+                        if process.observation_error is None:
+                            process.observation_error = 'kernel-owner-cleanup-interrupted'
+                        raise process._kernel_cleanup_required
     if reason is None:
         if process.observation_error or not process.reaped or process.waited_peak_rss_bytes is None:
             reason = 'waited-child-observation-unavailable'
@@ -1369,6 +1668,9 @@ def supervise(command, directory, budget, *, exit_observation=None):
             reason = 'wall-budget-exceeded'
         elif process.waited_peak_rss_bytes > budget['rss_bytes']:
             reason = 'rss-budget-exceeded'
+    if _controlled_operation is not None:
+        # No outer FinalUse/reconciliation bridge exists in this spawn-only slice.
+        reason = reason or 'kernel-outer-reconciliation-required'
     result = dict(exit_code=process.returncode, stop_reason=reason, observed_wall_ns=time.monotonic_ns()-start,
                   sampled_peak_rss_bytes=high, budget=budget, sample_interval_ms=50,
                   waited_child_peak_rss_bytes=process.waited_peak_rss_bytes,
@@ -1379,7 +1681,7 @@ def supervise(command, directory, budget, *, exit_observation=None):
                   child_spawned=True, cleanup_method=process.cleanup_method,
                   waited_child_observation_error=process.observation_error,
                   rss_observation_gaps=rss_gaps,
-                  terminal_reconciliation_profile=('explicit-linux-owned-exit-cleanup-v2' if exit_observation is not None
+                  terminal_reconciliation_profile=('explicit-'+exit_observation['profile'] if exit_observation is not None
                                                    else 'linux-held-pidfd-irreversible-exit-v1'),
                   child_cpu_ns=process.waited_cpu_ns,
                   observer_cpu_ns=time.process_time_ns()-observer_cpu_start,
@@ -1388,11 +1690,29 @@ def supervise(command, directory, budget, *, exit_observation=None):
                   outcome='success' if process.returncode == 0 and reason is None else 'failed')
     if rss_gap_diagnostic is not None:
         result['rss_gap_diagnostic'] = rss_gap_diagnostic
+    if _controlled_operation is not None:
+        result['controlled_kernel_spawn'] = dict(evidence=process.kernel_evidence,
+            scope='spawn-only-controlled-kernel-charge-not-RSS', reservation='RETAINED',
+            outer_reconciliation='UNKNOWN', installation_accepted=False)
+        diagnostic = process.kernel_counter_diagnostic
+        if diagnostic is not None:
+            result['controlled_kernel_spawn']['counter_diagnostic'] = dict(filename=diagnostic.filename,
+                raw=diagnostic.raw, reason=diagnostic.reason, diagnostic_only=True,
+                source='exact-original-terminal-record-exception')
+        if process.kernel_counter_diagnostic_projection_failed:
+            result['controlled_kernel_spawn']['counter_diagnostic_projection_failed'] = True
     if exit_cleanup_observation is not None:
         result['exit_cleanup_observation'] = exit_cleanup_observation
     if exit_observation is not None:
         result['exit_observation_profile'] = exit_observation
-    save(directory/'supervisor.json', result)
+    if pipe_owner is not None:
+        result['tiny_evidence_transport'] = dict(records=pipe_owner.frames.records,
+            received_bytes=pipe_owner.frames.received, first_error=pipe_owner.frames.failure,
+            error_fragment_hex=pipe_owner.frames.fragment.hex(), eof=pipe_owner.eof,
+            terminal_failure_type=getattr(process,'kernel_tiny_terminal_failure',None),
+            terminal_io_closed=True if pipe_owner.terminal_complete else None, authority=False)
+    if pipe_writer is None: save(directory/'supervisor.json', result)
+    else: pipe_writer.emit('inner-supervisor',dict(result=result,owned_child_pid=process.pid,supervisor_pid=os.getpid()))
     if not process.reap_resolved:
         # Preserve a failed receipt and the handle. The CLI cannot claim general
         # cleanup if its kernel will not resolve cleanup of its owned child.
@@ -1514,7 +1834,7 @@ def main():
     runner.add_argument('--materials', required=True); runner.add_argument('--output', required=True)
     runner.add_argument('--backend', choices=['cpu','cuda','rocm','mps'], default='cpu')
     runner.add_argument('--threads', type=int, default=4); runner.add_argument('--steps', type=int, default=10)
-    runner.add_argument('--exit-observation-profile', choices=['strict-v1', 'linux-owned-exit-cleanup-v2'],
+    runner.add_argument('--exit-observation-profile', choices=EXIT_PROFILES,
                         default='strict-v1')
     worker = commands.add_parser('_child')
     for name in ('materials','output','plan','phase','role'): worker.add_argument('--'+name, required=True)

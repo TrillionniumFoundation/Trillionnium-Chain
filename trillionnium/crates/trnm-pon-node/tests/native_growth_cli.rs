@@ -2,12 +2,13 @@
 //! selected development namespace. Historical CLI/packet namespaces stay distinct.
 use serde_json::{json, Value};
 use std::{
+    io::Write,
     path::Path,
-    process::{Command, Output},
+    process::{Command, Output, Stdio},
 };
 use trnm_crypto_primitives::{sign_hex, signing_key_from_hex};
 use trnm_mvcc_fee::continuity_v1;
-use trnm_pon_node::{development_public, Settings};
+use trnm_pon_node::{development_public, GrowthPacket, Settings};
 use trnm_protocol::pon_wire::{hash, Envelope};
 
 const NAMESPACE: &str = "native-growth-cli-v2";
@@ -41,24 +42,35 @@ fn rejected(output: Output, text: &str) {
         String::from_utf8_lossy(&output.stderr)
     );
 }
-fn signed_transfer() -> String {
-    let settings = Settings::development_with_profiles(
+fn packet_status(store: &Path, packet: &[u8]) -> Output {
+    let mut child = command("growth-packet-status", store)
+        .arg("--packet-stdin")
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .spawn()
+        .unwrap();
+    child.stdin.take().unwrap().write_all(packet).unwrap();
+    child.wait_with_output().unwrap()
+}
+fn settings() -> Settings {
+    Settings::development_with_profiles(
         Some(1),
         "native-public-evaluation-dev-v1",
         continuity_v1::PROFILE,
     )
     .unwrap()
     .with_permanent_account_growth_v2(NAMESPACE)
-    .unwrap();
-    let mut payload = development_public(9).unwrap().to_vec();
-    payload.extend(10_000u64.to_le_bytes());
+    .unwrap()
+}
+fn signed_transaction(nonce: u64, tag: u8, payload: Vec<u8>) -> String {
     let mut envelope = Envelope {
-        network: settings.network(),
+        network: settings().network(),
         sender: development_public(0).unwrap(),
-        nonce: 1,
+        nonce,
         expiry: 2000,
         fee_limit: 1_000_000,
-        tag: 1,
+        tag,
         payload,
         signature: [0; 64],
     };
@@ -69,6 +81,11 @@ fn signed_transfer() -> String {
         .try_into()
         .unwrap();
     hex::encode(envelope.encode().unwrap())
+}
+fn signed_transfer() -> String {
+    let mut payload = development_public(9).unwrap().to_vec();
+    payload.extend(10_000u64.to_le_bytes());
+    signed_transaction(1, 1, payload)
 }
 
 #[test]
@@ -99,6 +116,11 @@ fn native_growth_v2_cli_signed_packet_remote_admission_and_cold_current_snapshot
     assert_eq!(mined["result"]["admitted"], true);
     assert_eq!(mined["result"]["state"]["height"], 1);
     assert_eq!(mined["result"]["state"]["permanent_accounts"], 5);
+    let initial_capacity = &mined["result"]["state"]["mandatory_owner_capacity"];
+    assert_eq!(initial_capacity["owners"], 1);
+    assert_eq!(initial_capacity["escrow_owners"], 0);
+    assert_eq!(initial_capacity["reward_owners"], 1);
+    assert_eq!(initial_capacity["unused_owner_slots_in_snapshot"], 31);
     assert_eq!(&std::fs::read(&packet).unwrap()[..4], b"PNP2");
     let received = accepted(
         command("growth-submit", &validator)
@@ -109,6 +131,59 @@ fn native_growth_v2_cli_signed_packet_remote_admission_and_cold_current_snapshot
             .unwrap(),
     );
     assert_eq!(received["result"]["state"], mined["result"]["state"]);
+    // Independent cold process lookup also handles a lost submit response;
+    // the caller supplies the original bytes, never a retagged PNP1 receipt.
+    let bytes = std::fs::read(&packet).unwrap();
+    let observed = accepted(packet_status(&validator, &bytes));
+    let observed = &observed["result"];
+    assert_eq!(
+        observed["schema"],
+        "pon-native-exact-growth-packet-observation-v1"
+    );
+    assert_eq!(observed["packet_profile"], "PNP2");
+    assert_eq!(
+        observed["state_profile"],
+        "permanent-account-growth-native-v2"
+    );
+    assert_eq!(observed["block"], mined["result"]["block"]);
+    assert_eq!(observed["stored_exact"], true);
+    assert_eq!(observed["active_chain_member"], true);
+    assert_eq!(observed["active_depth"], 0);
+    assert!(observed["accepted_task"].is_null());
+    for field in ["network", "parameters", "genesis", "generation"] {
+        assert_eq!(observed[field], received["result"]["state"][field]);
+    }
+    let mut changed = GrowthPacket::decode(&bytes).unwrap();
+    changed.proof[0] ^= 1;
+    rejected(
+        packet_status(&validator, &changed.encode().unwrap()),
+        "DUPLICATE_CONTENT",
+    );
+    let missing = dir.path().join("status-must-not-create");
+    rejected(
+        packet_status(&missing, &bytes),
+        "GROWTH_PACKET_STATUS_EXISTING_STORE_REQUIRED",
+    );
+    assert!(!missing.exists());
+    let mut wrong_context = Command::new(env!("CARGO_BIN_EXE_trnm-pon-node"));
+    rejected(
+        wrong_context
+            .args([
+                "growth-packet-status",
+                "--development",
+                "--genesis-time",
+                "1",
+                "--growth-namespace",
+                "foreign-growth-cli-v2",
+            ])
+            .arg("--store")
+            .arg(&validator)
+            .arg("--packet")
+            .arg(&packet)
+            .output()
+            .unwrap(),
+        "STORAGE_CONTEXT",
+    );
     let current = accepted(command("growth-recover", &validator).output().unwrap());
     assert_eq!(current["result"], mined["result"]["state"]);
     let account = accepted(
@@ -167,6 +242,65 @@ fn native_growth_v2_cli_signed_packet_remote_admission_and_cold_current_snapshot
         std::fs::read(exported).unwrap(),
         std::fs::read(packet).unwrap()
     );
+
+    // Actual signed reservation adds an escrow owner distinct from the miner.
+    // Its next-height expiry is visible without predicting candidate admission.
+    let settings = settings();
+    let task = hash(
+        b"task-instance-v3",
+        &[
+            &settings.network(),
+            &settings.parameters(),
+            &development_public(0).unwrap(),
+            &2u64.to_le_bytes(),
+            &development_public(1).unwrap(),
+            &1000u64.to_le_bytes(),
+            &3u64.to_le_bytes(),
+        ],
+    );
+    let mut payload = task.to_vec();
+    payload.extend(development_public(1).unwrap());
+    payload.extend(1000u64.to_le_bytes());
+    payload.extend(3u64.to_le_bytes());
+    std::fs::write(
+        &txs,
+        serde_json::to_vec(&vec![signed_transaction(2, 2, payload)]).unwrap(),
+    )
+    .unwrap();
+    let reserved = accepted(
+        command("growth-mine", &validator)
+            .arg("--transactions")
+            .arg(&txs)
+            .args([
+                "--timestamp",
+                "21",
+                "--logical-now",
+                "1000",
+                "--miner",
+                &hex::encode(development_public(3).unwrap()),
+            ])
+            .arg("--output")
+            .arg(dir.path().join("reserve.pnp2"))
+            .output()
+            .unwrap(),
+    );
+    let capacity = &reserved["result"]["state"]["mandatory_owner_capacity"];
+    assert_eq!(
+        capacity["schema"],
+        "native-growth-mandatory-owner-capacity-observation-v1"
+    );
+    assert_eq!(capacity["owners"], 2);
+    assert_eq!(capacity["escrow_owners"], 1);
+    assert_eq!(capacity["reward_owners"], 1);
+    assert_eq!(capacity["shared_owners"], 0);
+    assert_eq!(capacity["reward_records"], 2);
+    assert_eq!(capacity["escrow_records_due_by_next_height"], 1);
+    assert_eq!(capacity["reward_records_maturing_by_next_height"], 0);
+    assert_eq!(capacity["due_record_counts_are_not_execution_counts"], true);
+    assert_eq!(capacity["unused_owner_slots_in_snapshot"], 30);
+    assert_eq!(capacity["same_block_execution_may_release_owners"], true);
+    assert_eq!(capacity["snapshot_only"], true);
+    assert_eq!(capacity["admission_authority"], false);
 }
 
 #[test]
@@ -176,6 +310,14 @@ fn native_growth_v2_cli_rejects_ambiguous_or_malformed_inputs_before_creating_st
     rejected(
         command("growth-status", &store)
             .args(["--state-backend", "legacy-v2"])
+            .output()
+            .unwrap(),
+        "GROWTH_OPTION",
+    );
+    assert!(!store.exists());
+    rejected(
+        command("growth-packet-status", &store)
+            .args(["--state-backend", "authenticated-v1"])
             .output()
             .unwrap(),
         "GROWTH_OPTION",

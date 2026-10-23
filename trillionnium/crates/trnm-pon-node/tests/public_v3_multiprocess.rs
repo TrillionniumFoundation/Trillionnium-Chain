@@ -296,6 +296,88 @@ fn hostile_work(observer: &public_v3::PublicRequestObserver, digests: &[Vec<u8>]
         "rejected_work_cpu_ns":rows.iter().filter(|r|r.full_work_accepted==Some(false)).try_fold(0_u64,|sum,r|sum.checked_add(r.full_work_thread_cpu_ns?)),
         "scope":"cumulative actual original receiver Submit work observations matched by exact original wire body digest"})
 }
+fn hostile_admission(observer: &public_v3::PublicRequestObserver, digests: &[Vec<u8>]) -> Value {
+    let snapshot = observer.snapshot();
+    let rows: Vec<_> = snapshot
+        .records
+        .iter()
+        .filter(|row| {
+            row.operation == Some(1)
+                && row.body_digest.as_ref().is_some_and(|digest| {
+                    digests.iter().any(|expected| expected.as_slice() == digest)
+                })
+                && row.full_work_accepted == Some(true)
+                && row.dispatch_accepted == Some(false)
+                && row.submit_phases.iter().any(|p| {
+                    p.phase == public_v3::SubmitPhase::Admission
+                        && p.completed
+                        && p.accepted == Some(false)
+                })
+        })
+        .collect();
+    json!({"accepted_work_admission_refusals":rows.len(),
+        "admission_cpu_ns":rows.iter().try_fold(0_u64,|sum,row|sum.checked_add(row.submit_phases.iter()
+            .find(|p|p.phase==public_v3::SubmitPhase::Admission)?.thread_cpu_ns?)),
+        "scope":"exact hostile bodies, valid Work followed by Admission refusal; observer has no error text, these are not all labeled ROOT"})
+}
+fn signed_root_response_inside(call: &Value, start: u64, end: u64, digests: &[Vec<u8>]) -> bool {
+    call["started_ns"].as_u64().is_some_and(|v| v >= start)
+        && call["ended_ns"].as_u64().is_some_and(|v| v <= end)
+        && call["public_request_body_digest"]
+            .as_str()
+            .and_then(|s| hex::decode(s).ok())
+            .is_some_and(|digest| digests.contains(&digest))
+        && call.get("error") == Some(&Value::Null)
+        && call["returned_after_window"] == false
+        && call["status"] == "refused"
+        && call["response"]["ok"] == false
+        && call["response"]["value"]["error"] == "ROOT"
+}
+fn known_positive(value: &Value, keys: &[&str]) -> bool {
+    keys.iter()
+        .all(|key| value[key].as_u64().is_some_and(|n| n > 0))
+}
+fn checked_root_acquisition(value: &Value, worker: usize, method: usize) -> bool {
+    let Some(attempts) = value["attempts"]
+        .as_array()
+        .filter(|a| !a.is_empty() && a.len() <= 4096)
+    else {
+        return false;
+    };
+    let Some(header) = value["header"]
+        .as_str()
+        .and_then(|s| hex::decode(s).ok())
+        .and_then(|raw| Header::decode(&raw).ok())
+    else {
+        return false;
+    };
+    value["valid_work_for_root_rejection"] == true
+        && value["setup_calls"] == 1
+        && value["worker"] == worker
+        && value["method_index"] == method
+        && known_positive(
+            value,
+            &[
+                "acquisition_cpu_ns",
+                "acquisition_wall_ns",
+                "diagnostic_cpu_ns",
+                "diagnostic_wall_ns",
+            ],
+        )
+        && attempts.iter().enumerate().all(|(index, row)| {
+            row["nonce"] == 2_000_000 + worker as u64 * 10_000 + index as u64
+                && row["target_hit"] == (index + 1 == attempts.len())
+        })
+        && attempts.last().unwrap()["nonce"] == header.nonce
+}
+fn unified_cgroup() -> String {
+    fs::read_to_string("/proc/self/cgroup")
+        .unwrap()
+        .lines()
+        .find_map(|line| line.strip_prefix("0::"))
+        .expect("unified cgroup")
+        .to_owned()
+}
 fn public_work_header() -> Header {
     let settings = support::settings();
     Header {
@@ -508,8 +590,13 @@ fn attack_actor(job: &Value, directory: &Path) -> Value {
     let entire = Instant::now();
     let work_profile = support::WorkProfile::from_actor_job(job)
         .expect("exact explicit actor profile, or the original raw job");
-    let template = header(job);
+    let mut template = header(job);
     let mode = job["mode"].as_str().unwrap();
+    assert!(matches!(
+        mode,
+        "from-zero" | "late-product" | "valid-work-root"
+    ));
+    let root_mode = mode == "valid-work-root";
     let acquisition_started = Instant::now();
     let acquisition_cpu = support::cpu();
     let rss_before = support::rss();
@@ -517,9 +604,14 @@ fn attack_actor(job: &Value, directory: &Path) -> Value {
         let (proof, attempts) = work::from_zero(template.clone()).unwrap();
         (template, proof, attempts, 0)
     } else {
+        if root_mode {
+            template.state[0] ^= 1;
+        }
         let producer = work::Producer::new(job["method"].as_u64().unwrap() as usize).unwrap();
         let (header, mut proof, attempts) = work::legal_search(&producer, template).unwrap();
-        work::corrupt_product(&mut proof);
+        if !root_mode {
+            work::corrupt_product(&mut proof);
+        }
         (header, proof, attempts, 1)
     };
     let transactions: Vec<Vec<u8>> = job["transactions"]
@@ -554,7 +646,7 @@ fn attack_actor(job: &Value, directory: &Path) -> Value {
     });
     let diagnostic_cpu_ns = support::elapsed_cpu(diagnostic_cpu);
     let diagnostic_wall_ns = diagnostic_started.elapsed().as_nanos();
-    let acquisition = json!({"mode":mode,"setup_calls":setups,"attempts":attempts,
+    let mut acquisition = json!({"mode":mode,"setup_calls":setups,"attempts":attempts,
         "header":hex::encode(packet.header.encode()),"packet_digest":hex::encode(hash(b"multiprocess-attack-packet-v1", &[&wire])),
         "packet_bytes":wire.len(),"proof_digest":hex::encode(hash(b"multiprocess-observed-proof-v1", &[&packet.proof])),
         "public_request_body_digest":hex::encode(hash(b"public-request-body-v3", &[&public_body])),
@@ -562,17 +654,28 @@ fn attack_actor(job: &Value, directory: &Path) -> Value {
         "rss_before":rss_before,"rss_after":support::rss(),"diagnostic_result":diagnostic,"relation_rejection_matches_mode":relation_rejection_matches_mode,
         "diagnostic_cpu_ns":diagnostic_cpu_ns,"diagnostic_wall_ns":diagnostic_wall_ns,
         "scope":"own acquisition from public header/task; includes all local setup/search records and packet encoding; diagnostic verification separate"});
+    if root_mode {
+        acquisition["valid_work_for_root_rejection"] = json!(diagnostic.is_ok());
+        acquisition["packet_id"] = json!(hex::encode(packet.id().unwrap()));
+        acquisition["worker"] = job["worker"].clone();
+        acquisition["method_index"] = job["method"].clone();
+    }
     // Preserve acquisition before readiness, so an interrupted actor cannot erase
     // expensive preparation or a negative relation result.
     support::write_new(&directory.join("acquisition.json"), &acquisition);
     assert!(
-        relation_rejection_matches_mode,
+        if root_mode {
+            diagnostic.is_ok()
+        } else {
+            relation_rejection_matches_mode
+        },
         "own acquired input rejected at unexpected relation stage; acquisition retained"
     );
-    support::write_new(
-        &directory.join("ready.json"),
-        &json!({"pid":std::process::id(),"mode":mode}),
-    );
+    let mut ready = json!({"pid":std::process::id(),"mode":mode});
+    if root_mode {
+        ready["cgroup"] = json!(unified_cgroup());
+    }
+    support::write_new(&directory.join("ready.json"), &ready);
     let marker = PathBuf::from(job["start_marker"].as_str().unwrap());
     let ready_deadline = Instant::now() + Duration::from_secs(180);
     while !marker.exists() && Instant::now() < ready_deadline {
@@ -667,6 +770,8 @@ fn phase(
         work_profile,
     } = configuration;
     fs::create_dir(path).unwrap();
+    let root_mode = mode == Some("valid-work-root");
+    let controller_cgroup = root_mode.then(unified_cgroup);
     let whole_started = Instant::now();
     let whole_cpu = support::cpu();
     let setup_started = Instant::now();
@@ -742,6 +847,37 @@ fn phase(
         support::ready_sleep();
     }
     let ready_count = actors.iter().filter(|actor| actor.ready.exists()).count();
+    let root_readiness: Vec<Value> = if root_mode {
+        actors
+            .iter()
+            .map(|actor| {
+                fs::read(&actor.ready)
+                    .ok()
+                    .and_then(|raw| serde_json::from_slice(&raw).ok())
+                    .unwrap_or(Value::Null)
+            })
+            .collect()
+    } else {
+        Vec::new()
+    };
+    let root_acquisitions: Vec<Value> = if root_mode {
+        actors
+            .iter()
+            .map(|actor| {
+                fs::read(actor.ready.parent().unwrap().join("acquisition.json"))
+                    .ok()
+                    .and_then(|raw| serde_json::from_slice::<Value>(&raw).ok())
+                    .unwrap_or(Value::Null)
+            })
+            .collect()
+    } else {
+        Vec::new()
+    };
+    let root_packet_ids: Vec<[u8; 32]> = root_acquisitions
+        .iter()
+        .filter(|v| v["valid_work_for_root_rejection"] == true)
+        .filter_map(|v| hex::decode(v["packet_id"].as_str()?).ok()?.try_into().ok())
+        .collect();
     let hostile_digests: Vec<Vec<u8>> = actors
         .iter()
         .filter_map(|actor| fs::read(actor.ready.parent().unwrap().join("acquisition.json")).ok())
@@ -814,6 +950,7 @@ fn phase(
             }
             let round_start = support::monotonic().saturating_sub(epoch);
             let hostile_before = hostile_work(&observer, &hostile_digests);
+            let root_before = root_mode.then(|| hostile_admission(&observer, &hostile_digests));
             let final_index = (round + 1) * 7;
             while next < final_index && support::monotonic() < end && submissions.len() < 128 {
                 let mut row = support::call_with_work_profile(
@@ -895,6 +1032,14 @@ fn phase(
             }
             let ended = support::monotonic().saturating_sub(epoch);
             let hostile_after = hostile_work(&observer, &hostile_digests);
+            let root_after = root_mode.then(|| hostile_admission(&observer, &hostile_digests));
+            // Live snapshots are not atomic. ROOT evidence conservatively ends
+            // after both snapshots, still inside the original fixed phase end.
+            let ended = if root_mode {
+                support::monotonic().saturating_sub(epoch)
+            } else {
+                ended
+            };
             let receiver_hostile_work_rejected_during_round = hostile_before["work_rejected"]
                 .as_u64()
                 .zip(hostile_after["work_rejected"].as_u64())
@@ -912,6 +1057,20 @@ fn phase(
             confirmations.push(json!({"round":round,"started_ns":round_start,"ended_ns":ended,"confirmed_inside_pressure_window":confirmed,
                 "transaction":hex::encode(transaction),"included_block":hex::encode(included),"tip":hex::encode(tip),"observation":observation,
                 "receiver_hostile_before":hostile_before,"receiver_hostile_after":hostile_after,"receiver_hostile_work_rejected_during_round":receiver_hostile_work_rejected_during_round}));
+            if let Some((before, after)) = root_before.zip(root_after) {
+                let progressed = ["accepted_work_admission_refusals", "admission_cpu_ns"]
+                    .iter()
+                    .all(|key| {
+                        before[key]
+                            .as_u64()
+                            .zip(after[key].as_u64())
+                            .is_some_and(|(a, b)| b > a)
+                    });
+                let row = confirmations.last_mut().unwrap();
+                row["receiver_hostile_admission_before"] = before;
+                row["receiver_hostile_admission_after"] = after;
+                row["accepted_work_admission_refusal_during_round"] = json!(progressed);
+            }
             if !confirmed {
                 break;
             }
@@ -1001,7 +1160,7 @@ fn phase(
         .filter(|row| row.full_work_accepted == Some(true))
         .count();
     let observer_complete = captured.coverage_complete();
-    let phase_criteria = all_confirmed
+    let common_criteria = all_confirmed
         && actual.0 == checked.0
         && actual.2 == checked.2
         && observer_complete
@@ -1009,7 +1168,9 @@ fn phase(
         && service_outcome["Ok"]["mutation_cpu_clock_failures"] == 0
         && final_meter.in_flight == 0
         && !final_meter.accounting_unavailable
-        && errors.is_empty()
+        && errors.is_empty();
+    let phase_criteria = !root_mode
+        && common_criteria
         && (mode.is_none()
             || (depletion_at.is_some()
                 && ready_count == ATTACKERS
@@ -1050,6 +1211,136 @@ fn phase(
     report["client_native_history_arithmetic_before"] = client_native_history_before;
     report["client_native_history_arithmetic_after"] = client_native_history_after;
     report["client_observation_scope"] = json!("bounded by the original 64 history calls; import includes complete-page activation, confirmation is separate; native snapshots exclude setup and final read_active; nested costs are not additive");
+    if root_mode {
+        // Concurrent mutations share this domain. Reconcile the entire closed
+        // domain, never attribute overlapping paid deltas to individual calls.
+        let flow = domain.observe_actual_flow().unwrap();
+        let owner_cpu = captured
+            .records
+            .iter()
+            .filter(|row| row.operation == Some(1) && row.dispatch_started)
+            .try_fold(0_u64, |sum, row| {
+                sum.checked_add(row.dispatch_thread_cpu_ns?)
+            });
+        let settled = flow.as_ref().is_some_and(|f| {
+            f.balance_identity_verified
+                && f.live_owners == 0
+                && f.booked_reservation_ns == 0
+                && f.unsettled_known_live_cpu_ns == 0
+                && f.paid_cpu_debit_ns > 0
+                && f.paid_cpu_debit_ns == f.settled_full_cpu_ns
+                && Some(f.paid_cpu_debit_ns) == owner_cpu
+                && service_outcome["Ok"]["mutation_cpu_charged_ns"].as_u64() == owner_cpu
+        });
+        let membership = root_readiness.len() == ATTACKERS
+            && root_readiness
+                .iter()
+                .all(|r| r["cgroup"].as_str() == controller_cgroup.as_deref());
+        let acquisition_complete = root_acquisitions.len() == ATTACKERS
+            && children.len() == ATTACKERS
+            && root_acquisitions
+                .iter()
+                .zip(children.iter())
+                .zip(root_readiness.iter())
+                .enumerate()
+                .all(|(worker, ((acquisition, child), ready))| {
+                    let result = &child["report"]["result"];
+                    checked_root_acquisition(acquisition, worker, method)
+                        && result["acquisition"] == *acquisition
+                        && result["worker"] == worker
+                        && result["pid"] == child["pid"]
+                        && ready["pid"] == child["pid"]
+                        && result["calls"].as_array().is_some_and(|calls| {
+                            !calls.is_empty()
+                                && calls.iter().all(|call| {
+                                    call["public_request_body_digest"]
+                                        == acquisition["public_request_body_digest"]
+                                })
+                        })
+                })
+            && root_packet_ids
+                .iter()
+                .collect::<std::collections::BTreeSet<_>>()
+                .len()
+                == ATTACKERS
+            && hostile_digests
+                .iter()
+                .collect::<std::collections::BTreeSet<_>>()
+                .len()
+                == ATTACKERS
+            && root_acquisitions
+                .iter()
+                .filter_map(|v| v["header"].as_str())
+                .collect::<std::collections::BTreeSet<_>>()
+                .len()
+                == ATTACKERS;
+        for round in report["confirmations"].as_array_mut().unwrap() {
+            let start = round["started_ns"].as_u64().unwrap();
+            let end = round["ended_ns"].as_u64().unwrap();
+            round["signed_root_responses_inside_round"] = json!(attack_calls
+                .iter()
+                .filter(|call| signed_root_response_inside(call, start, end, &hostile_digests))
+                .count());
+        }
+        let final_stats = owner.lock().unwrap().stats().unwrap();
+        let absent = |node: &Node| {
+            root_packet_ids.len() == ATTACKERS
+                && root_packet_ids.iter().all(|id| {
+                    node.packet(*id)
+                        .err()
+                        .is_some_and(|e| e.to_string() == "UNKNOWN_PARENT")
+                })
+        };
+        let live_absent = absent(&owner.lock().unwrap());
+        drop(owner);
+        let reopened = state_backend.open(&path.join("receiver"), settings.clone());
+        let cold_equal =
+            reopened.read_active().unwrap() == actual && reopened.stats().unwrap() == final_stats;
+        let cold_absent = absent(&reopened);
+        let expected_tip = business.last().unwrap().id().unwrap();
+        let expected_counts = final_stats["stored_blocks"] == 26
+            && final_stats["events"] == 25
+            && final_stats["height"] == 25
+            && actual.0 == expected_tip;
+        let root_criteria = common_criteria
+            && depletion_at.is_some()
+            && ready_count == ATTACKERS
+            && successful_actors
+            && membership
+            && acquisition_complete
+            && settled
+            && hostile_digests.len() == ATTACKERS
+            && overlaps.len() == ROUNDS
+            && overlaps.iter().all(|n| *n > 0)
+            && report["confirmations"].as_array().unwrap().iter().all(|r| {
+                r["accepted_work_admission_refusal_during_round"] == true
+                    && r["signed_root_responses_inside_round"]
+                        .as_u64()
+                        .is_some_and(|n| n > 0)
+            })
+            && report["confirmations"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .any(|r| r["paid_credit_depletion_observed_during_round"] == true)
+            && attack_calls.iter().all(|r| r["status"] != "ok")
+            && live_absent
+            && cold_absent
+            && cold_equal
+            && expected_counts;
+        report["root_supplement"] = json!({"criteria_met":root_criteria,
+            "controller_cgroup":controller_cgroup,"actor_readiness":root_readiness,"aggregate_membership_verified":membership,
+            "checked_acquisitions_complete":acquisition_complete,"acquisitions":root_acquisitions,
+            "whole_domain_paid_reconciled":settled,"mutation_owner_cpu_ns":owner_cpu,
+            "aggregate_scoped_cpu_ns":flow.as_ref().zip(owner_cpu).and_then(|(f,c)|f.paid_cpu_debit_ns.checked_sub(c)),
+            "hostile_packet_ids":root_packet_ids.iter().map(hex::encode).collect::<Vec<_>>(),
+            "hostile_packets_absent_live":live_absent,"hostile_packets_absent_cold":cold_absent,
+            "cold_state_equal":cold_equal,"expected_legal_counts_and_tip":expected_counts,"final_stats":final_stats,
+            "final_state_rows":actual.2.iter().map(|(k,v)|(hex::encode(k),hex::encode(serde_json::to_vec(v).unwrap()))).collect::<Vec<_>>(),
+            "scope":"whole-domain paid CPU includes honest and hostile Submit; known zero scoped CPU from one M06 worker; ROOT reply evidence and observer refusal evidence are separate; cold reopen is after the window",
+            "round_snapshot_scope":"live observer snapshots are non-atomic; ROOT round end follows the last after snapshot and must remain before the fixed phase end",
+            "original_campaign_qualified":false});
+    }
     report
 }
 
@@ -1187,16 +1478,7 @@ fn run_campaign(work_profile: support::WorkProfile) {
         panic!("campaign failed; retained {}", output.display());
     }
 }
-fn campaign(output: &Path, configuration: CampaignConfiguration) {
-    let CampaignConfiguration {
-        state_backend,
-        work_profile,
-    } = configuration;
-    eprintln!("P0 native campaign: honest 1024 signed transfers and 21 business blocks");
-    let settings = support::settings();
-    let preparation_started = Instant::now();
-    let preparation_cpu = support::cpu();
-    let mut miner = state_backend.open(&output.join("honest-miner"), settings.clone());
+fn signed_campaign_seed(miner: &mut Node, settings: &Settings) -> Vec<Packet> {
     let mut seed = Vec::new();
     // Real funded accounts and full signed execution, not injected SQL/state or
     // a cheap verifier fixture. All processes still use the original CPU budget.
@@ -1205,7 +1487,7 @@ fn campaign(output: &Path, configuration: CampaignConfiguration) {
             .map(|slot| {
                 let nonce = block * 256 + slot + 1;
                 support::signed_transfer(
-                    &settings,
+                    settings,
                     nonce,
                     hash(b"multiprocess-funded-account-v1", &[&nonce.to_le_bytes()]),
                 )
@@ -1220,14 +1502,18 @@ fn campaign(output: &Path, configuration: CampaignConfiguration) {
                 4096,
             )
             .unwrap();
-        replay(&mut miner, std::slice::from_ref(&packet));
+        replay(miner, std::slice::from_ref(&packet));
         seed.push(packet);
     }
+    seed
+}
+
+fn signed_campaign_business(miner: &mut Node, settings: &Settings) -> Vec<Packet> {
     let mut business = Vec::new();
     for index in 0..ROUNDS * 7 {
         let transactions = if index % 7 == 0 {
             vec![support::signed_transfer(
-                &settings,
+                settings,
                 1025 + (index / 7) as u64,
                 development_public(1).unwrap(),
             )]
@@ -1243,9 +1529,24 @@ fn campaign(output: &Path, configuration: CampaignConfiguration) {
                 4096,
             )
             .unwrap();
-        replay(&mut miner, std::slice::from_ref(&packet));
+        replay(miner, std::slice::from_ref(&packet));
         business.push(packet);
     }
+    business
+}
+
+fn campaign(output: &Path, configuration: CampaignConfiguration) {
+    let CampaignConfiguration {
+        state_backend,
+        work_profile,
+    } = configuration;
+    eprintln!("P0 native campaign: honest 1024 signed transfers and 21 business blocks");
+    let settings = support::settings();
+    let preparation_started = Instant::now();
+    let preparation_cpu = support::cpu();
+    let mut miner = state_backend.open(&output.join("honest-miner"), settings.clone());
+    let seed = signed_campaign_seed(&mut miner, &settings);
+    let business = signed_campaign_business(&mut miner, &settings);
     let preparation = json!({"state_backend":state_backend.label(),"cpu_ns":support::elapsed_cpu(preparation_cpu),"wall_ns":preparation_started.elapsed().as_nanos(),
         "actual_signed_seed_transfers":1024,"seed_blocks":4,"business_blocks":business.len(),"rss":support::rss(),
         "seed":seed.iter().map(|p|json!({"id":hex::encode(p.id().unwrap()),"header":hex::encode(p.header.encode()),"transactions":p.transactions.len()})).collect::<Vec<_>>(),
@@ -1406,38 +1707,238 @@ fn campaign(output: &Path, configuration: CampaignConfiguration) {
 }
 
 #[test]
+#[ignore = "explicit single 30s baseline + 30s ROOT supplement; use the pinned resource runner"]
+fn separate_process_root_rejection_and_signed_confirmation_supplement() {
+    let output = PathBuf::from(
+        std::env::var_os("TRNM_ROOT_SUPPLEMENT_REPORT_DIR")
+            .expect("explicit fresh supplemental report directory"),
+    );
+    fs::create_dir(&output).unwrap();
+    let setup_started = Instant::now();
+    let setup_cpu = support::cpu();
+    let settings = support::settings();
+    let backend = StateBackendChoice::AuthenticatedV1;
+    let mut producer = backend.open(&output.join("honest-miner"), settings.clone());
+    let seed = signed_campaign_seed(&mut producer, &settings);
+    let business = signed_campaign_business(&mut producer, &settings);
+    assert_eq!(seed.len(), 4);
+    assert!(seed.iter().all(|p| p.transactions.len() == 256));
+    assert_eq!(business.len(), 21);
+    assert_eq!(business[0].header.parent, seed[3].id().unwrap());
+    assert_eq!(business[0].header.height, 5);
+    assert_eq!(business[0].transactions.len(), 1);
+    assert_eq!(
+        trnm_protocol::pon_wire::Envelope::decode(&business[0].transactions[0])
+            .unwrap()
+            .nonce,
+        1025
+    );
+    let expected = producer.read_active().unwrap();
+    let expected_stats = producer.stats().unwrap();
+    let expected_rows: Vec<_> = expected
+        .2
+        .iter()
+        .map(|(k, v)| (hex::encode(k), hex::encode(serde_json::to_vec(v).unwrap())))
+        .collect();
+    let preparation = json!({"cpu_ns":support::elapsed_cpu(setup_cpu),"wall_ns":setup_started.elapsed().as_nanos(),
+        "seed_packets":seed.iter().map(|p|hex::encode(p.encode().unwrap())).collect::<Vec<_>>(),
+        "business_packets":business.iter().map(|p|hex::encode(p.encode().unwrap())).collect::<Vec<_>>(),
+        "expected_stats":expected_stats,"expected_state_rows":expected_rows,
+        "scope":"all real signing, Node search attempts, execution and durable reference preparation; Node search denominator unavailable; no injected State"});
+    support::write_new(&output.join("preparation.json"), &preparation);
+    drop(producer);
+    let mut phases = Vec::new();
+    for mode in [None, Some("valid-work-root")] {
+        let name = mode.unwrap_or("baseline");
+        let configuration =
+            CampaignConfiguration::new(backend, support::WorkProfile::RawR13).unwrap();
+        let result = std::panic::catch_unwind(||phase(&output.join(name),&settings,&seed,&business,mode,0,configuration))
+            .unwrap_or_else(|error|json!({"mode":name,"startup_or_campaign_error":error.downcast_ref::<String>()
+                .cloned().or_else(||error.downcast_ref::<&str>().map(|s|s.to_string())).unwrap_or_else(||"non-string panic".to_owned())}));
+        support::write_new(&output.join(format!("{name}.json")), &result);
+        phases.push(result);
+    }
+    let root = &phases[1]["root_supplement"];
+    let producer_state_equal =
+        root["final_stats"] == expected_stats && root["final_state_rows"] == json!(expected_rows);
+    let preparation_known = known_positive(&preparation, &["cpu_ns", "wall_ns"]);
+    let passed = preparation_known
+        && phases[0]["finite_phase_criteria_met"] == true
+        && root["criteria_met"] == true
+        && producer_state_equal;
+    support::write_new(
+        &output.join("report.json"),
+        &json!({
+        "schema":"native-public-v3-root-supplement-v1","supplemental_criteria_met":passed,
+        "state_backend":"authenticated-v1","m06_workers":1,"producer_method":work::METHODS[0],
+        "seed_transfers":1024,"seed_blocks":4,"business_blocks":21,"phase_seconds":30,
+        "actor_call_cap":CALL_CAP,"planned_complete_runs":1,"producer_state_equal":producer_state_equal,"preparation_cost_known":preparation_known,
+        "preparation":preparation,"phases":phases,
+        "scope":"one predeclared same-host baseline and ROOT cohort; signed client ROOT replies separate from observer Admission refusals; not the original cheap-proof campaign",
+        "original_campaign_qualified":false,"work_profile_qualified":false,"independent_operators":false,
+        "wan_qualified":false,"production_candidate":false,"production_activation":false}),
+    );
+    assert!(
+        passed,
+        "supplemental criteria failed; preserve {}",
+        output.display()
+    );
+}
+
+#[test]
+fn root_acquisition_receipt_refuses_unknown_cost_and_incomplete_search() {
+    let mut header = public_work_header();
+    header.nonce = 2_000_000;
+    let receipt = json!({"valid_work_for_root_rejection":true,"setup_calls":1,"worker":0,"method_index":0,
+        "header":hex::encode(header.encode()),"attempts":[{"nonce":2_000_000,"target_hit":true}],
+        "acquisition_cpu_ns":1,"acquisition_wall_ns":2,"diagnostic_cpu_ns":3,"diagnostic_wall_ns":4});
+    assert!(checked_root_acquisition(&receipt, 0, 0));
+    for key in [
+        "acquisition_cpu_ns",
+        "acquisition_wall_ns",
+        "diagnostic_cpu_ns",
+        "diagnostic_wall_ns",
+    ] {
+        for missing in [Value::Null, json!(0)] {
+            let mut bad = receipt.clone();
+            bad[key] = missing;
+            assert!(!checked_root_acquisition(&bad, 0, 0));
+        }
+    }
+    for attempts in [
+        json!([]),
+        json!([{"nonce":2_000_000,"target_hit":false}]),
+        json!([{"nonce":2_000_001,"target_hit":true}]),
+        json!([{"nonce":2_000_000,"target_hit":true},{"nonce":2_000_001,"target_hit":true}]),
+    ] {
+        let mut bad = receipt.clone();
+        bad["attempts"] = attempts;
+        assert!(!checked_root_acquisition(&bad, 0, 0));
+    }
+    assert!(!checked_root_acquisition(&receipt, 1, 0));
+    assert!(!checked_root_acquisition(&receipt, 0, 1));
+    assert!(!known_positive(
+        &json!({"cpu_ns":null,"wall_ns":1}),
+        &["cpu_ns", "wall_ns"]
+    ));
+}
+
+#[test]
+fn root_reply_overlap_requires_signed_refusal_inside_the_whole_window() {
+    let digests = vec![vec![7; 32]];
+    let row = json!({"started_ns":10,"ended_ns":20,"status":"refused","error":null,"returned_after_window":false,
+        "public_request_body_digest":hex::encode(&digests[0]),"response":{"ok":false,"value":{"error":"ROOT"}}});
+    assert!(signed_root_response_inside(&row, 10, 20, &digests));
+    assert!(!signed_root_response_inside(&row, 11, 20, &digests));
+    assert!(!signed_root_response_inside(&row, 10, 19, &digests));
+    assert!(!signed_root_response_inside(&row, 10, 20, &[]));
+    for error in [
+        "PUBLIC_MUTATION_CPU_BUDGET",
+        "PUBLIC_CLIENT_DEADLINE",
+        "Product",
+    ] {
+        let mut other = row.clone();
+        other["response"]["value"]["error"] = json!(error);
+        assert!(!signed_root_response_inside(&other, 10, 20, &digests));
+    }
+    let mut unknown = row;
+    unknown["ended_ns"] = Value::Null;
+    assert!(!signed_root_response_inside(&unknown, 10, 20, &digests));
+}
+
+#[test]
 fn valid_work_state_root_replays_are_paid_without_admission() {
+    root_replay_component_cost(false);
+}
+
+#[test]
+#[ignore = "explicit fixed 1024-signed-seed component cost; not a saturation campaign"]
+fn signed_seed_state_root_replay_component_cost() {
+    root_replay_component_cost(true);
+}
+
+// Keep the original eight-transaction/two-worker regression and its positive
+// scoped-worker assertion. The additional fixture uses the original campaign's
+// exact four seed blocks and first business transaction, with one M06 worker.
+fn root_replay_component_cost(signed_seed: bool) {
     let output = std::env::var_os("TRNM_CI_RECEIPT_DIR")
         .map(PathBuf::from)
         .unwrap_or_else(|| tempfile::tempdir().unwrap().keep())
-        .join("valid-work-root-rejection");
+        .join(if signed_seed {
+            "signed-seed-root-component-cost"
+        } else {
+            "valid-work-root-rejection"
+        });
     fs::create_dir(&output).unwrap();
+    let preparation_started = Instant::now();
+    let preparation_cpu = support::cpu();
     let settings = support::settings();
+    let workers = if signed_seed { 1 } else { 2 };
     let open =
-        |path: &Path| Node::open_with_authenticated_state(path, settings.clone(), 2).unwrap();
+        |path: &Path| Node::open_with_authenticated_state(path, settings.clone(), workers).unwrap();
+    let setup_started = Instant::now();
+    let setup_cpu = support::cpu();
     let mut producer = open(&output.join("producer"));
+    let seed = if signed_seed {
+        signed_campaign_seed(&mut producer, &settings)
+    } else {
+        Vec::new()
+    };
+    let producer_setup_cost = json!({"cpu_ns":support::elapsed_cpu(setup_cpu),
+        "wall_ns":setup_started.elapsed().as_nanos(),"seed_blocks":seed.len(),
+        "signed_seed_transfers":seed.iter().map(|p|p.transactions.len()).sum::<usize>(),
+        "scope":"fresh owner open; all actual seed signing, search, execution and durable replay; Node search attempt counts unavailable, not omitted from CPU"});
+    support::write_new(&output.join("producer-setup.json"), &producer_setup_cost);
     let reference_started = Instant::now();
     let reference_cpu = support::cpu();
+    let transactions = if signed_seed {
+        vec![support::signed_transfer(
+            &settings,
+            1025,
+            development_public(1).unwrap(),
+        )]
+    } else {
+        (1..=8)
+            .map(|sequence| {
+                support::signed_transfer(&settings, sequence, development_public(1).unwrap())
+            })
+            .collect()
+    };
     let reference = producer
         .make_consensus_maintenance(
-            settings.genesis(),
-            (1..=8)
-                .map(|sequence| {
-                    support::signed_transfer(&settings, sequence, development_public(1).unwrap())
-                })
-                .collect(),
+            producer.active().unwrap().0,
+            transactions,
             development_public(0).unwrap(),
-            settings.genesis_time() + 10,
+            settings.genesis_time() + if signed_seed { 50 } else { 10 },
             4096,
         )
         .unwrap();
     let reference_cost = json!({"cpu_ns":support::elapsed_cpu(reference_cpu),
         "wall_ns":reference_started.elapsed().as_nanos(),"attempt_count":null,
         "scope":"actual reference construction; Node does not expose its search denominator"});
+    let reference_accept_started = Instant::now();
+    let reference_accept_cpu = support::cpu();
     replay(&mut producer, std::slice::from_ref(&reference));
     let expected = producer.read_active().unwrap();
     let expected_stats = producer.stats().unwrap();
     drop(producer);
+    let reference_accept_cost = json!({"cpu_ns":support::elapsed_cpu(reference_accept_cpu),
+        "wall_ns":reference_accept_started.elapsed().as_nanos(),
+        "scope":"producer reference replay, expected-state readback and close; includes legal commit, not ROOT-refusal cost"});
+    if signed_seed {
+        assert_eq!(seed.len(), 4);
+        assert!(seed.iter().all(|p| p.transactions.len() == 256));
+        assert_eq!(seed.last().unwrap().header.height, 4);
+        assert_eq!(reference.header.parent, seed.last().unwrap().id().unwrap());
+        assert_eq!(reference.header.height, 5);
+        assert_eq!(reference.transactions.len(), 1);
+        assert_eq!(
+            trnm_protocol::pon_wire::Envelope::decode(&reference.transactions[0])
+                .unwrap()
+                .nonce,
+            1025
+        );
+    }
     let mut wrong_header = reference.header.clone();
     wrong_header.state[0] ^= 1;
     let acquisition_started = Instant::now();
@@ -1457,13 +1958,38 @@ fn valid_work_state_root_replays_are_paid_without_admission() {
         proof,
         transactions: reference.transactions.clone(),
     };
+    let verify_reference_started = Instant::now();
+    let verify_reference_cpu = support::cpu();
     let reference_verified = check_winner(&reference.header, &reference.proof);
+    let verify_reference_cost = json!({"cpu_ns":support::elapsed_cpu(verify_reference_cpu),
+        "wall_ns":verify_reference_started.elapsed().as_nanos()});
+    let verify_wrong_started = Instant::now();
+    let verify_wrong_cpu = support::cpu();
     let wrong_verified = check_winner(&wrong.header, &wrong.proof);
+    let verify_wrong_cost = json!({"cpu_ns":support::elapsed_cpu(verify_wrong_cpu),
+        "wall_ns":verify_wrong_started.elapsed().as_nanos()});
+    let encoding_started = Instant::now();
+    let encoding_cpu = support::cpu();
+    let seed_encoded: Vec<_> = seed
+        .iter()
+        .map(|p| hex::encode(p.encode().unwrap()))
+        .collect();
+    let reference_encoded = hex::encode(reference.encode().unwrap());
+    let wrong_encoded = hex::encode(wrong.encode().unwrap());
+    let fixture_encoding_cost = json!({"cpu_ns":support::elapsed_cpu(encoding_cpu),
+        "wall_ns":encoding_started.elapsed().as_nanos()});
+    let preparation_cost = json!({"cpu_ns":support::elapsed_cpu(preparation_cpu),
+        "wall_ns":preparation_started.elapsed().as_nanos(),
+        "scope":"calling process preparation including all setup/search attempts, legal replay, independent W1 checks and fixture encoding; component costs are nested, do not add this total to components"});
     support::write_new(
         &output.join("fixture.json"),
         &json!({
-        "reference_packet":hex::encode(reference.encode().unwrap()),
-        "wrong_root_packet":hex::encode(wrong.encode().unwrap()),
+        "reference_packet":reference_encoded,"wrong_root_packet":wrong_encoded,
+        "seed_packets":seed_encoded,"m06_workers":workers,"parent_height":reference.header.height-1,
+        "producer_setup_cost":producer_setup_cost,"reference_acceptance_cost":reference_accept_cost,
+        "independent_reference_w1_verification_cost":verify_reference_cost,
+        "independent_wrong_root_w1_verification_cost":verify_wrong_cost,
+        "fixture_packet_encoding_cost":fixture_encoding_cost,"preparation_cost":preparation_cost,
         "reference_cost":reference_cost,"acquisition":acquisition,
         "strict_reference_verification":reference_verified,"strict_changed_header_verification":wrong_verified,
         "signed_transactions":reference.transactions.len(),"attempt_count":attempts.len()}),
@@ -1481,6 +2007,17 @@ fn valid_work_state_root_replays_are_paid_without_admission() {
         .all(|row| row["target_hit"] == false));
 
     let run = |node: Node, packet: &Packet, count: usize, accepted: bool, label: &str| {
+        let encoding_started = Instant::now();
+        let encoding_cpu = support::cpu();
+        let wire = hex::encode(packet.encode().unwrap());
+        let request = || Request::Submit {
+            packet: wire.clone(),
+        };
+        let body = serde_json::to_vec(&request()).unwrap();
+        let digest = hash(b"public-request-body-v3", &[&body]);
+        let encoding_cost = json!({"cpu_ns":support::elapsed_cpu(encoding_cpu),
+            "wall_ns":encoding_started.elapsed().as_nanos(),"body_bytes":body.len(),
+            "scope":"actual packet encode, hex, Submit body JSON and body digest before service startup; each public call retains its own client preparation and handshake costs"});
         let owner = Arc::new(Mutex::new(node));
         let listener = TcpListener::bind("127.0.0.1:0").unwrap();
         let address = listener.local_addr().unwrap();
@@ -1506,18 +2043,14 @@ fn valid_work_state_root_replays_are_paid_without_admission() {
                 .map_err(|error| error.to_string())
             })),
         };
-        let wire = hex::encode(packet.encode().unwrap());
-        let request = || Request::Submit {
-            packet: wire.clone(),
-        };
-        let body = serde_json::to_vec(&request()).unwrap();
-        let digest = hash(b"public-request-body-v3", &[&body]);
         let epoch = support::monotonic();
         let end = epoch + 30_000_000_000;
         let mut calls = Vec::new();
         for index in 0..count {
             let before = domain.observe_actual_flow().unwrap();
+            let client_started = ClientOperationStamp::start(epoch);
             let response = support::call(address, &settings, request(), 72, epoch, end);
+            let client_cost = client_started.finish(epoch);
             // Native dispatch joins M06 workers and finishes the paid permit
             // after response signing, before delivery. No other mutation uses this domain.
             let after = domain.observe_actual_flow().unwrap();
@@ -1536,7 +2069,7 @@ fn valid_work_state_root_replays_are_paid_without_admission() {
             });
             calls.push(
                 json!({"ordinal":index,"reuse":if index == 0 {"first"} else {"warm"},
-                "call":response,"flow_before":before,"flow_after":after,
+                "call":response,"client_thread_cost":client_cost,"flow_before":before,"flow_after":after,
                 "quiescent":quiescent,"paid_owner_plus_scoped_worker_cpu_ns":paid_cpu_ns,
                 "native_stats_after":owner.lock().unwrap().stats().unwrap()}),
             );
@@ -1581,10 +2114,20 @@ fn valid_work_state_root_replays_are_paid_without_admission() {
                         && p.completed == accepted
                         && p.accepted == accepted.then_some(true)
                 })
-                && scoped.is_some_and(|ns| ns > 0);
+                && row.dispatch_thread_cpu_ns.is_some_and(|ns| ns > 0)
+                && if signed_seed {
+                    // One transaction and one M06 worker execute on the owner;
+                    // known zero child CPU is valid, unlike an unknown sample.
+                    scoped == Some(0)
+                } else {
+                    scoped.is_some_and(|ns| ns > 0)
+                };
         }
         let replies_match = calls.iter().all(|row| {
             row["quiescent"] == true
+                && row["client_thread_cost"]["thread_cpu_ns"]
+                    .as_u64()
+                    .is_some_and(|ns| ns > 0)
                 && row["call"]["public_request_body_digest"] == hex::encode(digest)
                 && row["call"]["status"] == if accepted { "ok" } else { "refused" }
                 && row["call"]["response"]["ok"] == accepted
@@ -1605,7 +2148,10 @@ fn valid_work_state_root_replays_are_paid_without_admission() {
             && total_paid == sum
             && service_outcome["Ok"]["mutation_cpu_charged_ns"].as_u64() == total_paid
             && service_outcome["Ok"]["mutation_cpu_clock_failures"] == 0;
+        let encoding_measured = encoding_cost["cpu_ns"].as_u64().is_some_and(|ns| ns > 0)
+            && encoding_cost["wall_ns"].as_u64().is_some_and(|ns| ns > 0);
         let result = json!({"calls":calls,"body_digest":hex::encode(digest),"observer":captured,
+            "request_encoding_cost":encoding_cost,"encoding_measured":encoding_measured,
             "initial_flow":initial_flow,"final_flow":final_flow,"final_meter":final_meter,
             "total_paid_owner_plus_scoped_worker_cpu_ns":total_paid,"service":service_outcome,
             "stages_match":stages_match,"replies_match":replies_match,"settled":settled});
@@ -1618,7 +2164,10 @@ fn valid_work_state_root_replays_are_paid_without_admission() {
         (node, result)
     };
     let receiver_path = output.join("receiver");
+    let receiver_setup_started = Instant::now();
+    let receiver_setup_cpu = support::cpu();
     let mut receiver = open(&receiver_path);
+    replay(&mut receiver, &seed);
     // Match the original campaign's trusted owner setup before taking the
     // no-admission baseline; cold reopen must retain this exact configuration.
     let pool_context = receiver
@@ -1633,6 +2182,9 @@ fn valid_work_state_root_replays_are_paid_without_admission() {
         .unwrap();
     let initial = receiver.read_active().unwrap();
     let initial_stats = receiver.stats().unwrap();
+    let receiver_setup_cost = json!({"cpu_ns":support::elapsed_cpu(receiver_setup_cpu),
+        "wall_ns":receiver_setup_started.elapsed().as_nanos(),
+        "scope":"fresh receiver open, real seed replay, original mempool setup and baseline readback; first request has no preceding ROOT replay but is not OS-cache-cold"});
     let (receiver, rejected) = run(receiver, &wrong, 3, false, "rejections");
     let live_unchanged =
         receiver.read_active().unwrap() == initial && receiver.stats().unwrap() == initial_stats;
@@ -1676,9 +2228,28 @@ fn valid_work_state_root_replays_are_paid_without_admission() {
         .unwrap()
         .iter()
         .all(|call| call["native_stats_after"] == initial_stats);
-    let passed = [&rejected, &legal]
-        .iter()
-        .all(|r| r["stages_match"] == true && r["replies_match"] == true && r["settled"] == true)
+    let preparation_measured = [
+        &producer_setup_cost,
+        &reference_cost,
+        &reference_accept_cost,
+        &acquisition,
+        &verify_reference_cost,
+        &verify_wrong_cost,
+        &fixture_encoding_cost,
+        &preparation_cost,
+        &receiver_setup_cost,
+    ]
+    .iter()
+    .all(|cost| {
+        cost["cpu_ns"].as_u64().is_some_and(|ns| ns > 0)
+            && cost["wall_ns"].as_u64().is_some_and(|ns| ns > 0)
+    });
+    let passed = [&rejected, &legal].iter().all(|r| {
+        r["stages_match"] == true
+            && r["replies_match"] == true
+            && r["settled"] == true
+            && r["encoding_measured"] == true
+    }) && preparation_measured
         && live_unchanged
         && cold_unchanged
         && each_rejection_unchanged
@@ -1689,7 +2260,10 @@ fn valid_work_state_root_replays_are_paid_without_admission() {
     support::write_new(
         &output.join("report.json"),
         &json!({
-        "schema":"public-v3-valid-work-root-rejection-v1","passed":passed,
+        "schema":if signed_seed {"public-v3-signed-seed-root-component-cost-v1"} else {"public-v3-valid-work-root-rejection-v1"},"passed":passed,
+        "m06_workers":workers,"signed_seed_transfers":seed.iter().map(|p|p.transactions.len()).sum::<usize>(),
+        "receiver_setup_cost":receiver_setup_cost,"preparation_measured":preparation_measured,
+        "cost_scope":"process CPU during sequential preparation; nested totals must not be double-counted; support::call process CPU includes this in-process receiver, while client_thread_cost isolates client CPU",
         "pool_context":hex::encode(pool_context),
         "scope":"three sequential identical valid-W1 false-root bodies; actual M06 refusal and native-state readback; ordinary service crash-fence metadata is outside no-admission claim",
         "reference_packet_id":hex::encode(reference.id().unwrap()),"wrong_packet_id":hex::encode(wrong.id().unwrap()),

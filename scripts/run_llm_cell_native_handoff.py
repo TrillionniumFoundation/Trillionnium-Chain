@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Controlled TCP dependency download followed by original Hepta inference owners.
+"""Controlled TCP dependency download; the native Hepta consumer is unavailable.
 
 This creates evidence, not independent evaluation, product qualification or a
 release decision. All source and destination directories must be explicit. The
-producer's finite server exits before the consumer loads the downloaded model.
+finite producer exits before the unavailable consumer boundary. Transport
+completion cannot establish I10; this command deliberately fails closed there.
 """
 from __future__ import annotations
 
@@ -44,6 +45,8 @@ def remaining_fetch_budget(deadline: float) -> tuple[float, int, int]:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
+    # Retain the original absolute-path invocation arguments. Hepta, Python,
+    # just and target paths do not enable an unshipped native consumer.
     for name in ("chain", "hepta", "source-parent", "source-materials", "output",
                  "python", "cell-bin", "just", "hepta-target"):
         parser.add_argument(f"--{name}", type=Path, required=True)
@@ -55,9 +58,10 @@ def main() -> None:
     started = time.monotonic()
     evidence = {
         "schema": "pon-smollm-cell-native-handoff-v1", "status": "running",
-        "scope": "one-host-controlled-tcp-full-model-dependencies-original-hepta-owners",
+        "scope": "one-host-controlled-tcp-full-model-dependencies-native-consumer-unavailable",
         "independent_operators": False, "independent_evaluation": False,
         "product_qualification": False, "production_activation": False,
+        "native_consumer_status": "UNAVAILABLE", "native_receipt_status": "UNVERIFIED",
         "cell_binary_sha256": sha(args.cell_bin), "members": [],
     }
     server = None
@@ -112,11 +116,42 @@ def main() -> None:
                 raise ValueError("pack payload observation mismatch")
             evidence["members"].append({"name": name, "source": str(source),
                 "destination": str(destination), "pack": observation})
+        # Declare the complete compatibility set before acquisition. The native
+        # CLI verifies every local member and publishes canonical TCR1 bytes;
+        # this root carries transport completeness, never model-use authority.
+        total_bytes = sum(member["pack"]["bytes"] for member in evidence["members"])
+        total_chunks = sum(member["pack"]["chunks"] for member in evidence["members"])
+        release_file = args.output / "source-release.tcr1"
+        command = [str(args.cell_bin), "prepare-release", "--store", str(producer),
+            "--manifests", ",".join(member["pack"]["manifest"] for member in evidence["members"]),
+            "--output", str(release_file), "--max-bytes", str(total_bytes),
+            "--max-chunks", str(total_chunks), "--overall-ms", "120000"]
+        prepared = subprocess.run(command, capture_output=True, text=True, timeout=122)
+        (args.output / "prepare-release.log").write_text(prepared.stdout + prepared.stderr)
+        prepared.check_returncode()
+        release = json.loads(prepared.stdout)
+        if (release["schema"] != "trnm.cell.release.prepare.v1"
+                or release["cells"] != len(members)
+                or release["payload_bytes"] != total_bytes
+                or release["chunks"] != total_chunks):
+            raise ValueError("prepared release differs from the declared complete set")
+        # A bounded retry allowance covers response headers and all manifests.
+        # These limits are shared across the release, not reset for each cell.
+        connection_budget = 2 * (total_chunks + len(members))
+        response_budget = 2 * total_bytes + len(members) * 1_048_576 + 9 * connection_budget
+        evidence["release"] = {"prepare": release, "source_file": str(release_file),
+            "source_sha256": sha(release_file), "max_response_bytes": response_budget,
+            "max_connections": connection_budget, "selection_authority": False}
+        if consumer.exists():
+            raise ValueError("controlled consumer store must initially be absent")
+        evidence["release"]["consumer_initially_absent"] = True
         # One finite producer, one initially empty consumer. These are controlled
         # loopback processes and never count as independent custody or a WAN test.
         with (args.output / "server-stderr.log").open("w") as server_error:
             server = subprocess.Popen([str(args.cell_bin), "serve", "--store", str(producer),
-                "--bind", "127.0.0.1:0", "--seconds", "45"], stdout=subprocess.PIPE,
+                "--bind", "127.0.0.1:0", "--seconds", "45", "--bounded-workers", "2",
+                "--max-connections", str(connection_budget),
+                "--max-served-bytes", str(response_budget)], stdout=subprocess.PIPE,
                 stderr=server_error, text=True)
             with selectors.DefaultSelector() as poll:
                 poll.register(server.stdout, selectors.EVENT_READ)
@@ -126,11 +161,40 @@ def main() -> None:
             address = json.loads(listen_line)["address"]
             transfer_started = time.monotonic()
             transfer_deadline = transfer_started + 35
-            transfer = {"schema": "cell-native-aggregate-transfer-v1", "clock": "monotonic",
+            transfer = {"schema": "cell-native-aggregate-transfer-v2", "clock": "monotonic",
                 "limit_seconds": 35, "all_members_verified": False,
-                "scope": "listener announced through all member fetches and final consumer readback; excludes packing, provider drain and Hepta load"}
+                "scope": "listener announced through aggregate TCR1 fetch, cache-only materialization and final consumer readback; excludes packing, release preparation, provider drain and Hepta load"}
             evidence["transfer"] = transfer
             try:
+                remaining, overall_ms, request_ms = remaining_fetch_budget(transfer_deadline)
+                complete_release = args.output / "consumer-release.tcr1"
+                command = [str(args.cell_bin), "fetch-release", "--store", str(consumer),
+                    "--release-file", str(release_file), "--release", release["release"],
+                    "--peers", address, "--output", str(complete_release),
+                    "--max-bytes", str(total_bytes), "--max-chunks", str(total_chunks),
+                    "--overall-ms", str(overall_ms), "--request-ms", str(request_ms),
+                    "--max-response-bytes", str(response_budget),
+                    "--max-connections", str(connection_budget), "--parallelism", "2"]
+                fetched = subprocess.run(command, capture_output=True, text=True,
+                    timeout=remaining + 2)
+                (args.output / "fetch-release.log").write_text(fetched.stdout + fetched.stderr)
+                fetched.check_returncode()
+                result = json.loads(fetched.stdout)
+                if (result["schema"] != "trnm.cell.release.fetch.v1"
+                        or result["release"] != release["release"]
+                        or result["cells"] != len(members)
+                        or result["payload_bytes"] != total_bytes
+                        or result["chunks"] != total_chunks
+                        or result["cached_chunks"] + result["downloaded_chunks"] != total_chunks
+                        or result["received_response_bytes"] > response_budget
+                        or result["connection_attempts"] > connection_budget
+                        or sha(complete_release) != evidence["release"]["source_sha256"]):
+                    raise ValueError("aggregate release completion differs from pinned set or budget")
+                evidence["release"]["fetch"] = result
+                evidence["release"]["completion_file"] = str(complete_release)
+                # Any cache hits in the aggregate acquisition arise within this
+                # fresh release transfer. Materialization must now use only the
+                # verified local store and spend no further network budget.
                 for index, member in enumerate(evidence["members"]):
                     member_started = time.monotonic()
                     timing = {"started_seconds": member_started - transfer_started,
@@ -141,10 +205,11 @@ def main() -> None:
                         timing["overall_timeout_ms"] = overall_ms
                         timing["request_timeout_ms"] = request_ms
                         command = [str(args.cell_bin), "fetch", "--store", str(consumer),
-                            "--manifest", member["pack"]["manifest"], "--peers", address,
+                            "--manifest", member["pack"]["manifest"], "--peers", "",
                             "--output", member["destination"], "--max-bytes", str(member["pack"]["bytes"]),
                             "--overall-ms", str(overall_ms), "--request-ms", str(request_ms),
-                            "--parallelism", "2"]
+                            "--parallelism", "1", "--max-connections", "1",
+                            "--max-response-bytes", "0"]
                         fetch_started = time.monotonic()
                         try:
                             fetched = subprocess.run(command, capture_output=True, text=True,
@@ -154,8 +219,11 @@ def main() -> None:
                         (args.output / f"fetch-{index}.log").write_text(fetched.stdout + fetched.stderr)
                         fetched.check_returncode()
                         result = json.loads(fetched.stdout)
-                        if result["downloaded_chunks"] != member["pack"]["chunks"] or result["cached_chunks"] != 0:
-                            raise ValueError("member was not fully fetched from this producer")
+                        if (result["downloaded_chunks"] != 0
+                                or result["cached_chunks"] != member["pack"]["chunks"]
+                                or result["received_response_bytes"] != 0
+                                or result["connection_attempts"] != 0):
+                            raise ValueError("member materialization escaped the verified release store")
                         readback_started = time.monotonic()
                         try:
                             if sha(Path(member["destination"])) != member["pack"]["payload_sha256"]:
@@ -186,30 +254,13 @@ def main() -> None:
         parent["directory"] = str(stage)
         consumer_parent = stage / "parent-material.json"
         write_json(consumer_parent, parent)
-        config = {"schema": "hepta-smollm-neural-native-check-v1", "python": str(args.python),
-            "chain": str(args.chain), "materials": str(material_stage), "parent": str(consumer_parent),
-            "parent_sha256": sha(consumer_parent), "output": str(args.output / "original-hepta-consumer")}
-        config_path = args.output / "native-config.json"
-        write_json(config_path, config)
-        env = {**os.environ, "PATH": str(args.just.parent) + os.pathsep + os.environ.get("PATH", ""),
-            "CARGO_TARGET_DIR": str(args.hepta_target), "CARGO_BUILD_JOBS": "4",
-            "CARGO_PROFILE_DEV_DEBUG": "0", "CARGO_PROFILE_TEST_DEBUG": "0",
-            "HF_HUB_OFFLINE": "1", "TRANSFORMERS_OFFLINE": "1", "CUDA_VISIBLE_DEVICES": "",
-            "OMP_NUM_THREADS": "4", "MKL_NUM_THREADS": "4", "HEPTA_PN3_NEURAL_NATIVE_CONFIG": str(config_path)}
-        command = [str(args.just), "test", "--offline", "--locked", "--retries", "0", "-p", "codex-hepta-infer-worker-host",
-            "--run-ignored", "only", "real_smollm_parent_query_original_control_final_use_and_terminal_unload"]
-        with (args.output / "hepta-native.log").open("w") as log:
-            native = subprocess.run(command, cwd=args.hepta / "codex-rs", env=env,
-                stdout=log, stderr=subprocess.STDOUT, timeout=600)
-        evidence["hepta_exit_code"] = native.returncode
-        if native.returncode:
-            raise RuntimeError("original Hepta consumer check failed; see retained native log")
-        result_path = Path(config["output"]) / "native-owner-bridge-result.json"
-        evidence["native_result"] = json.loads(result_path.read_text())
-        evidence["native_result_sha256"] = sha(result_path)
         evidence["source_parent_sha256"] = sha(args.source_parent)
         evidence["consumer_parent_sha256"] = sha(consumer_parent)
-        evidence["status"] = "passed"
+        # No supported native consumer or owner-receipt contract is shipped.
+        # Do not invoke an unknown selector, parse arbitrary JSON as authority,
+        # or invent success fields for a future I10 implementation.
+        raise RuntimeError("native Hepta consumer UNAVAILABLE; owner receipt UNVERIFIED: "
+                           "no supported consumer or receipt contract is shipped")
     except BaseException as error:
         evidence["status"] = "failed"
         evidence["error"] = str(error)

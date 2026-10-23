@@ -1515,3 +1515,374 @@ fn growth_rehearsal_preserves_reference_budget_history_and_rejects_resealed_corr
         "BUDGET_RECORD_SET"
     );
 }
+
+#[test]
+fn growth_rehearsal_cold_verifier_refuses_wal_archives_without_writes() {
+    fn archive_files(directory: &Path) -> BTreeMap<PathBuf, Option<Hash>> {
+        let mut files = BTreeMap::new();
+        for parent in [directory.to_path_buf(), directory.join("source")] {
+            for entry in fs::read_dir(parent).unwrap() {
+                let entry = entry.unwrap();
+                let path = entry.path();
+                let digest = if entry.file_type().unwrap().is_dir() {
+                    None
+                } else {
+                    Some(Sha256::digest(fs::read(&path).unwrap()).into())
+                };
+                files.insert(path.strip_prefix(directory).unwrap().to_path_buf(), digest);
+            }
+        }
+        files
+    }
+    for checkpoint in [false, true] {
+        let fixture = rehearsal_with_obligations_and_zero_nonce();
+        let target = fixture.dir.path().join("wal-candidate");
+        let mut receipt = fixture
+            .node
+            .rehearse_growth_migration_v2(&target, "growth-rehearsal/wal-refusal")
+            .unwrap();
+        let database = if checkpoint {
+            target.join("native.sqlite")
+        } else {
+            target.join("source/native.sqlite")
+        };
+        let db = Connection::open(&database).unwrap();
+        let mode: String = db
+            .query_row("PRAGMA journal_mode=WAL", [], |r| r.get(0))
+            .unwrap();
+        assert_eq!(mode, "wal");
+        db.close().unwrap();
+        let bytes = fs::read(&database).unwrap();
+        assert_eq!(&bytes[18..20], &[2, 2]);
+        assert!(!database.with_extension("sqlite-wal").exists());
+        assert!(!database.with_extension("sqlite-shm").exists());
+        let digest = Sha256::digest(bytes).into();
+        if checkpoint {
+            receipt.checkpoint_sha256 = digest;
+        } else {
+            receipt.source_archive_sha256 = digest;
+        }
+        fs::write(
+            target.join("growth-rehearsal.json"),
+            canonical(&receipt).unwrap(),
+        )
+        .unwrap();
+        let before = archive_files(&target);
+        let source_before = durable_bytes(&fixture.node.directory);
+        let result = verify_growth_rehearsal_v2(settings(), &target);
+        assert_eq!(
+            archive_files(&target),
+            before,
+            "cold verification must not create WAL/SHM sidecars"
+        );
+        assert!(
+            result.is_err(),
+            "a resealed WAL-mode file is not the standalone rehearsal format"
+        );
+        assert_eq!(durable_bytes(&fixture.node.directory), source_before);
+    }
+}
+
+fn cold_rehearsal_files(directory: &Path) -> BTreeMap<PathBuf, Option<Hash>> {
+    let mut files = BTreeMap::new();
+    for parent in [directory.to_path_buf(), directory.join("source")] {
+        for entry in fs::read_dir(parent).unwrap() {
+            let entry = entry.unwrap();
+            let path = entry.path();
+            let digest = if entry.file_type().unwrap().is_dir() {
+                None
+            } else {
+                Some(Sha256::digest(fs::read(&path).unwrap()).into())
+            };
+            files.insert(path.strip_prefix(directory).unwrap().to_path_buf(), digest);
+        }
+    }
+    files
+}
+
+#[test]
+fn growth_rehearsal_cold_snapshot_budget_is_aggregate_and_cleans_success() {
+    let fixture = rehearsal_with_obligations_and_zero_nonce();
+    let target = fixture.dir.path().join("bounded-candidate");
+    let receipt = fixture
+        .node
+        .rehearse_growth_migration_v2(&target, "growth-rehearsal/copy-budget")
+        .unwrap();
+    let source_before = durable_bytes(&fixture.node.directory);
+    let before = cold_rehearsal_files(&target);
+    let bytes = fs::metadata(target.join("source/native.sqlite"))
+        .unwrap()
+        .len()
+        .checked_add(fs::metadata(target.join("native.sqlite")).unwrap().len())
+        .unwrap();
+    assert_eq!(
+        verify_growth_rehearsal_v2_with_snapshot_byte_limit(settings(), &target, bytes - 1)
+            .err()
+            .unwrap()
+            .to_string(),
+        "GROWTH_REHEARSAL_SNAPSHOT_LIMIT"
+    );
+    assert_eq!(cold_rehearsal_files(&target), before);
+    assert_eq!(durable_bytes(&fixture.node.directory), source_before);
+    assert_eq!(
+        verify_growth_rehearsal_v2_with_snapshot_byte_limit(settings(), &target, bytes).unwrap(),
+        receipt
+    );
+
+    let mut snapshot = None;
+    let actual =
+        growth_rehearsal::verify_with_snapshot_hook(settings(), &target, bytes, |private| {
+            assert!(!private.starts_with(&target));
+            for directory in [private.to_path_buf(), private.join("source")] {
+                assert_eq!(
+                    fs::metadata(directory).unwrap().permissions().mode() & 0o7777,
+                    0o700
+                );
+            }
+            for file in [
+                "native.sqlite",
+                "owner.lock",
+                "source/native.sqlite",
+                "source/owner.lock",
+            ] {
+                assert_eq!(
+                    fs::metadata(private.join(file))
+                        .unwrap()
+                        .permissions()
+                        .mode()
+                        & 0o7777,
+                    0o600
+                );
+            }
+            snapshot = Some(private.to_path_buf());
+            Ok(())
+        })
+        .unwrap();
+    assert_eq!(actual, receipt);
+    assert!(
+        !snapshot.unwrap().exists(),
+        "successful readback removes its private copy"
+    );
+    assert_eq!(cold_rehearsal_files(&target), before);
+    assert_eq!(durable_bytes(&fixture.node.directory), source_before);
+}
+
+#[test]
+fn growth_rehearsal_cold_snapshot_replays_copies_and_rejects_replaced_wal_paths() {
+    for checkpoint in [false, true] {
+        let fixture = rehearsal_with_obligations_and_zero_nonce();
+        let target = fixture.dir.path().join("replaced-candidate");
+        let receipt = fixture
+            .node
+            .rehearse_growth_migration_v2(&target, "growth-rehearsal/replaced-after-copy")
+            .unwrap();
+        let database = if checkpoint {
+            target.join("native.sqlite")
+        } else {
+            target.join("source/native.sqlite")
+        };
+        let original_bytes = fs::read(&database).unwrap();
+        let source_before = durable_bytes(&fixture.node.directory);
+        let replacement = fixture.dir.path().join("unrelated-wal.sqlite");
+        let retained = fixture.dir.path().join("retained-original.sqlite");
+        let db = Connection::open(&replacement).unwrap();
+        db.execute_batch("CREATE TABLE unrelated(value INTEGER);")
+            .unwrap();
+        let mode: String = db
+            .query_row("PRAGMA journal_mode=WAL", [], |r| r.get(0))
+            .unwrap();
+        assert_eq!(mode, "wal");
+        db.close().unwrap();
+        let replacement_bytes = fs::read(&replacement).unwrap();
+        assert_eq!(&replacement_bytes[18..20], &[2, 2]);
+        assert!(!replacement.with_extension("sqlite-wal").exists());
+        assert!(!replacement.with_extension("sqlite-shm").exists());
+
+        let mut snapshot = None;
+        let mut after_replacement = None;
+        let result = growth_rehearsal::verify_with_snapshot_hook(
+            settings(),
+            &target,
+            DEFAULT_GROWTH_REHEARSAL_SNAPSHOT_BYTE_LIMIT_V2,
+            |private| {
+                // The receipt-bound copies already exist. Replacing either
+                // original pathname must not redirect the subsequent SQLite opens.
+                snapshot = Some(private.to_path_buf());
+                fs::rename(&database, &retained)?;
+                fs::rename(&replacement, &database)?;
+                after_replacement = Some(cold_rehearsal_files(&target));
+                Ok(())
+            },
+        );
+        assert_eq!(
+            result.err().unwrap().to_string(),
+            "GROWTH_REHEARSAL_FILE_CHANGED"
+        );
+        assert_eq!(cold_rehearsal_files(&target), after_replacement.unwrap());
+        assert_eq!(fs::read(&database).unwrap(), replacement_bytes);
+        assert_eq!(fs::read(&retained).unwrap(), original_bytes);
+        assert!(!database.with_extension("sqlite-wal").exists());
+        assert!(!database.with_extension("sqlite-shm").exists());
+        assert!(
+            !snapshot.unwrap().exists(),
+            "failed readback removes its private copy"
+        );
+
+        fs::rename(&database, &replacement).unwrap();
+        fs::rename(&retained, &database).unwrap();
+        assert_eq!(
+            verify_growth_rehearsal_v2(settings(), &target).unwrap(),
+            receipt
+        );
+        assert_eq!(durable_bytes(&fixture.node.directory), source_before);
+    }
+}
+
+#[test]
+fn growth_rehearsal_file_hash_bounds_append_without_hiding_corruption() {
+    use growth_rehearsal::FileReadProgress;
+    let directory = tempfile::tempdir().unwrap();
+    let path = directory.path().join("input");
+    for bytes in [Vec::new(), b"receipt bytes".to_vec(), vec![17; 65_536]] {
+        fs::write(&path, &bytes).unwrap();
+        let expected: Hash = Sha256::digest(&bytes).into();
+        assert_eq!(
+            growth_rehearsal::file_hash_with_progress(&path, &mut |_| Ok(())).unwrap(),
+            expected
+        );
+    }
+    let initial = vec![17; 65_536];
+    fs::write(&path, &initial).unwrap();
+    let mut observed = None;
+    let mut hashed = 0u64;
+    let mut appended = false;
+    let result = growth_rehearsal::file_hash_with_progress(&path, &mut |point| {
+        match point {
+            FileReadProgress::BeforeOpen => (),
+            FileReadProgress::Observed { bytes } => observed = Some(bytes),
+            FileReadProgress::Consumed { bytes } => {
+                hashed = hashed.checked_add(bytes).unwrap();
+                if !appended {
+                    OpenOptions::new()
+                        .append(true)
+                        .open(&path)?
+                        .write_all(&[23; 4_096])?;
+                    appended = true;
+                }
+            }
+        }
+        Ok(())
+    });
+    assert!(
+        result.is_err(),
+        "a changed file must not yield an accepted digest"
+    );
+    assert_eq!(observed, Some(initial.len() as u64));
+    assert!(appended);
+    assert!(
+        hashed <= initial.len() as u64,
+        "file hash consumed appended bytes beyond its observed length: {hashed}"
+    );
+    assert_eq!(
+        fs::metadata(&path).unwrap().len(),
+        initial.len() as u64 + 4_096
+    );
+}
+
+#[test]
+fn growth_rehearsal_file_reads_refuse_fifo_replacement_before_open() {
+    const CHILD: &str = "TRNM_GROWTH_REHEARSAL_READ_FIFO_CHILD";
+    const MODE: &str = "TRNM_GROWTH_REHEARSAL_READ_FIFO_MODE";
+    if let Some(directory) = std::env::var_os(CHILD) {
+        let directory = PathBuf::from(directory);
+        let receipt = std::env::var(MODE).unwrap() == "receipt";
+        let name = if receipt {
+            "growth-rehearsal.json"
+        } else {
+            "input"
+        };
+        let path = directory.join(name);
+        fs::write(&path, b"regular before open").unwrap();
+        let mut replace = |point| {
+            if point == growth_rehearsal::FileReadProgress::BeforeOpen {
+                fs::rename(&path, directory.join("retained"))?;
+                rustix::fs::mknodat(
+                    File::open(&directory)?,
+                    name,
+                    rustix::fs::FileType::Fifo,
+                    rustix::fs::Mode::RUSR | rustix::fs::Mode::WUSR,
+                    0,
+                )
+                .map_err(std::io::Error::from)?;
+                fs::write(directory.join("fifo-ready"), b"ready")?;
+            }
+            Ok(())
+        };
+        let result = if receipt {
+            growth_rehearsal::read_receipt_with_progress(&directory, &mut replace).map(|_| ())
+        } else {
+            growth_rehearsal::file_hash_with_progress(&path, &mut replace).map(|_| ())
+        };
+        assert_eq!(result.err().unwrap().to_string(), "GROWTH_REHEARSAL_FILE");
+        assert_eq!(
+            fs::read(directory.join("retained")).unwrap(),
+            b"regular before open"
+        );
+        return;
+    }
+    let mut failed = Vec::new();
+    for mode in ["hash", "receipt"] {
+        let directory = tempfile::tempdir().unwrap();
+        let mut child = std::process::Command::new(std::env::current_exe().unwrap())
+            .args([
+                "store::authenticated_migration::tests::growth_rehearsal_file_reads_refuse_fifo_replacement_before_open",
+                "--exact", "--nocapture",
+            ])
+            .env(CHILD, directory.path()).env(MODE, mode)
+            .spawn().unwrap();
+        let startup_deadline = std::time::Instant::now() + std::time::Duration::from_secs(10);
+        let mut fifo_deadline = None;
+        loop {
+            if let Some(status) = child.try_wait().unwrap() {
+                if !status.success() {
+                    failed.push(mode);
+                }
+                break;
+            }
+            let now = std::time::Instant::now();
+            if fifo_deadline.is_none() && directory.path().join("fifo-ready").exists() {
+                fifo_deadline = Some(now + std::time::Duration::from_secs(2));
+            }
+            if now >= fifo_deadline.unwrap_or(startup_deadline) {
+                child.kill().unwrap();
+                child.wait().unwrap();
+                failed.push(mode);
+                break;
+            }
+            std::thread::sleep(std::time::Duration::from_millis(10));
+        }
+        assert_eq!(
+            fs::read(directory.path().join("retained")).unwrap(),
+            b"regular before open"
+        );
+    }
+    assert!(
+        failed.is_empty(),
+        "file reads blocked or failed after regular-to-FIFO replacement: {failed:?}"
+    );
+}
+
+#[test]
+fn growth_rehearsal_file_receipt_retains_one_mib_limit() {
+    let directory = tempfile::tempdir().unwrap();
+    let path = directory.path().join("growth-rehearsal.json");
+    fs::write(&path, vec![b' '; 1_048_577]).unwrap();
+    assert_eq!(
+        growth_rehearsal::read_receipt_with_progress(directory.path(), &mut |_| Ok(()))
+            .err()
+            .unwrap()
+            .to_string(),
+        "GROWTH_REHEARSAL_RECEIPT_LIMIT"
+    );
+    assert_eq!(fs::metadata(&path).unwrap().len(), 1_048_577);
+}

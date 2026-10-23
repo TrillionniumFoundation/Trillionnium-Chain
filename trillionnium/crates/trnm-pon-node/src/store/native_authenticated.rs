@@ -84,6 +84,25 @@ struct NativeBlock {
 }
 type StoredBlockRow = (Option<Vec<u8>>, u64, Vec<u8>, Option<Vec<u8>>, Vec<u8>);
 
+// An exact bounded row identity for a process-local, previously checked query.
+// This digest alone authenticates neither a block nor any state commitment.
+pub(super) fn account_query_block_identity(db: &Connection, block: Hash) -> Result<Hash> {
+    local((|| {
+        let row: StoredBlockRow =
+            db.prepare_cached(NATIVE_BLOCK_SQL)?
+                .query_row([block.as_slice()], |row| {
+                    Ok((
+                        row.get(0)?,
+                        row.get(1)?,
+                        row.get(2)?,
+                        row.get(3)?,
+                        row.get(4)?,
+                    ))
+                })?;
+        Ok(hash(b"native-account-query-block-v1", &[&canonical(&row)?]))
+    })())
+}
+
 // Every invocation rebinds parameters and rereads the current typed rows. The
 // optional history material reuses pure codec/hash results only after complete
 // actual-input equality; ancestry, state, work and validity are never supplied.
