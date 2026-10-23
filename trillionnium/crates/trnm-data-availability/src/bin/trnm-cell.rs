@@ -14,7 +14,8 @@ use std::{
 use trnm_data_availability::cell::{
     digest_hex, fetch_cell_to_file, fetch_release_to_file, parse_digest, read_pinned_release,
     serve_cells, serve_cells_bounded, CellContextV1, CellErrorV1, CellPeerLimitsV1,
-    CellReleaseFetchLimitsV1, CellReleaseLimitsV1, CellServeLimitsV1, CellStoreV1, MAX_CELL_BYTES,
+    CellReleaseFetchLimitsV1, CellReleaseLimitsV1, CellReleaseManifestV1, CellServeLimitsV1,
+    CellStoreV1, MAX_CELL_BYTES,
 };
 
 type Result<T> = std::result::Result<T, Box<dyn Error>>;
@@ -26,9 +27,11 @@ fetch --store DB --manifest HEX --peers IP:PORT,IP:PORT --output ABSENT_FILE --m
   Response-byte default: 2 * max-bytes + 2097152 + 9 * max-connections; 0 is cache-only.
 verify --store DB --manifest HEX
 manifest --store DB --manifest HEX --output ABSENT_FILE
-fetch-release --store DB --release-file OWNER_TCR1 --release HEX --peers IP:PORT,IP:PORT --output ABSENT_MARKER --max-bytes N --max-chunks N --seconds N --max-response-bytes N [--parallelism 2] [--request-ms 2000] [--max-connections 32768]
+prepare-release --store DB --manifests HEX,HEX --output ABSENT_TCR1 --max-bytes N --max-chunks N (--seconds N | --overall-ms N)
+  Verify all locally declared members and prepare their canonical TCR1 root; no selection authority.
+fetch-release --store DB --release-file OWNER_TCR1 --release HEX --peers IP:PORT,IP:PORT --output ABSENT_MARKER --max-bytes N --max-chunks N (--seconds N | --overall-ms N) --max-response-bytes N [--parallelism 2] [--request-ms 2000] [--max-connections 32768]
   One aggregate reservation covers all declared members. Output is the exact TCR1 completion marker, not weights or use authority.
-verify-release --store DB --release-file OWNER_TCR1 --release HEX --max-bytes N --max-chunks N --seconds N";
+verify-release --store DB --release-file OWNER_TCR1 --release HEX --max-bytes N --max-chunks N (--seconds N | --overall-ms N)";
 
 fn main() {
     if let Err(error) = run() {
@@ -57,6 +60,7 @@ fn run() -> Result<()> {
         "fetch" => fetch(&mut args),
         "verify" => verify(&mut args),
         "manifest" => manifest(&mut args),
+        "prepare-release" => prepare_release(&mut args),
         "fetch-release" => fetch_release(&mut args),
         "verify-release" => verify_release(&mut args),
         _ => Err(CellErrorV1::Invalid("unknown command; use --help").into()),
@@ -221,11 +225,13 @@ fn manifest(args: &mut Args) -> Result<()> {
 fn release_limits(args: &mut Args) -> Result<(CellReleaseLimitsV1, Duration)> {
     let max_payload_bytes = args.take("--max-bytes")?.parse()?;
     let max_chunks = args.take("--max-chunks")?.parse()?;
-    let seconds: u64 = args.take("--seconds")?.parse()?;
-    if !(1..=86_400).contains(&seconds) || max_payload_bytes == 0 || max_chunks == 0 {
+    let duration = args.fetch_timeout()?;
+    if !(Duration::from_millis(10)..=Duration::from_secs(86_400)).contains(&duration)
+        || max_payload_bytes == 0
+        || max_chunks == 0
+    {
         return Err(CellErrorV1::Invalid("release resource budget").into());
     }
-    let duration = Duration::from_secs(seconds);
     let deadline = Instant::now()
         .checked_add(duration)
         .ok_or(CellErrorV1::Invalid("release deadline"))?;
@@ -237,6 +243,56 @@ fn release_limits(args: &mut Args) -> Result<(CellReleaseLimitsV1, Duration)> {
         },
         duration,
     ))
+}
+
+/// Prepare one caller-declared local set through the same aggregate verifier and
+/// create-only publication path as acquisition. No bytes are fetched from peers.
+fn prepare_release(args: &mut Args) -> Result<()> {
+    let store = PathBuf::from(args.take("--store")?);
+    let member_text = args.take("--manifests")?;
+    if member_text.len() > 1_048_576 {
+        return Err(CellErrorV1::Invalid("release member argument size").into());
+    }
+    let members = member_text
+        .split(',')
+        .map(parse_digest)
+        .collect::<std::result::Result<Vec<_>, _>>()?;
+    let first = *members
+        .first()
+        .ok_or(CellErrorV1::Invalid("release cell count"))?;
+    let output = PathBuf::from(args.take("--output")?);
+    let (release_limits, overall_timeout) = release_limits(args)?;
+    args.finish()?;
+    let store = CellStoreV1::open(&store)?;
+    let context = store
+        .manifest(first)?
+        .ok_or(CellErrorV1::Invalid("release member manifest unavailable"))?
+        .context()
+        .clone();
+    let release = CellReleaseManifestV1::new(context, members)?;
+    let report = fetch_release_to_file(
+        &store,
+        &release,
+        release.id(),
+        &[],
+        CellReleaseFetchLimitsV1 {
+            peer: CellPeerLimitsV1 {
+                request_timeout: overall_timeout.min(Duration::from_secs(2)),
+                overall_timeout,
+                max_cell_bytes: release_limits.max_payload_bytes.min(MAX_CELL_BYTES),
+                parallelism: 1,
+                max_connections: 1,
+                max_response_bytes: 0,
+            },
+            release: release_limits,
+        },
+        &output,
+    )?;
+    println!(
+        "{{\"schema\":\"trnm.cell.release.prepare.v1\",\"release\":\"{}\",\"cells\":{},\"payload_bytes\":{},\"chunks\":{}}}",
+        digest_hex(report.release_id), report.cells, report.payload_bytes, report.chunks
+    );
+    Ok(())
 }
 
 fn fetch_release(args: &mut Args) -> Result<()> {
