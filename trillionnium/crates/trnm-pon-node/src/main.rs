@@ -66,6 +66,113 @@ fn packet_input(args: &BTreeMap<String, String>) -> Result<Vec<u8>> {
     }
     Ok(bytes)
 }
+
+fn growth_input_remaining(deadline: Instant) -> Result<Duration> {
+    deadline
+        .checked_duration_since(Instant::now())
+        .filter(|remaining| !remaining.is_zero())
+        .ok_or_else(|| "PUBLIC_CLIENT_DEADLINE".into())
+}
+
+/// The ordinary growth client's one command-start deadline includes its exact
+/// packet input. Poll the original stdin descriptor; no helper reader can
+/// outlive the command. Regular filesystem calls remain nonpreemptible, with
+/// deadline checks before and after each call. Legacy packet_input is unchanged.
+fn growth_packet_input(args: &BTreeMap<String, String>, deadline: Instant) -> Result<Vec<u8>> {
+    const LIMIT: usize = 1_048_576;
+    let path = args.get("--packet");
+    let stdin = args.get("--packet-stdin").map(String::as_str) == Some("true");
+    if path.is_some() == stdin {
+        return Err("PACKET_INPUT_EXACTLY_ONE".into());
+    }
+    growth_input_remaining(deadline)?;
+    let mut file = if let Some(path) = path {
+        let opened = OpenOptions::new()
+            .read(true)
+            .custom_flags(libc::O_NOFOLLOW | libc::O_CLOEXEC | libc::O_NONBLOCK)
+            .open(path);
+        growth_input_remaining(deadline)?;
+        let file = opened.map_err(|_| "PUBLIC_GROWTH_PACKET_FILE")?;
+        let metadata = file.metadata();
+        growth_input_remaining(deadline)?;
+        let metadata = metadata.map_err(|_| "PUBLIC_GROWTH_PACKET_FILE")?;
+        if !metadata.file_type().is_file() {
+            return Err("PUBLIC_GROWTH_PACKET_FILE".into());
+        }
+        if metadata.len() > LIMIT as u64 {
+            return Err("INPUT_LIMIT".into());
+        }
+        Some(file)
+    } else {
+        None
+    };
+    let mut bytes = Vec::new();
+    let mut buffer = [0u8; 64 * 1024];
+    loop {
+        let remaining = growth_input_remaining(deadline)?;
+        if file.is_none() {
+            let mut descriptor = libc::pollfd {
+                fd: libc::STDIN_FILENO,
+                events: libc::POLLIN,
+                revents: 0,
+            };
+            let milliseconds = remaining.as_millis().clamp(1, i32::MAX as u128) as i32;
+            // SAFETY: one initialized descriptor remains live for this call.
+            let ready = unsafe { libc::poll(&mut descriptor, 1, milliseconds) };
+            let poll_error = (ready < 0).then(std::io::Error::last_os_error);
+            growth_input_remaining(deadline)?;
+            if let Some(error) = poll_error {
+                if error.kind() == std::io::ErrorKind::Interrupted {
+                    continue;
+                }
+                return Err(error.into());
+            }
+            if ready == 0 {
+                continue;
+            }
+            if descriptor.revents & (libc::POLLERR | libc::POLLNVAL) != 0 {
+                return Err("PUBLIC_GROWTH_PACKET_STDIN".into());
+            }
+            if descriptor.revents & (libc::POLLIN | libc::POLLHUP) == 0 {
+                continue;
+            }
+        }
+        let maximum = buffer.len().min(LIMIT + 1 - bytes.len());
+        let read = if let Some(file) = file.as_mut() {
+            file.read(&mut buffer[..maximum])
+        } else {
+            // SAFETY: the original stdin is the sole command input, and the
+            // initialized writable slice has the stated bounded length. Poll
+            // precedes this read; no other command thread consumes stdin.
+            let count =
+                unsafe { libc::read(libc::STDIN_FILENO, buffer.as_mut_ptr().cast(), maximum) };
+            if count < 0 {
+                Err(std::io::Error::last_os_error())
+            } else {
+                Ok(count as usize)
+            }
+        };
+        growth_input_remaining(deadline)?;
+        let count = match read {
+            Err(error)
+                if matches!(
+                    error.kind(),
+                    std::io::ErrorKind::Interrupted | std::io::ErrorKind::WouldBlock
+                ) =>
+            {
+                continue
+            }
+            other => other?,
+        };
+        if count == 0 {
+            return Ok(bytes);
+        }
+        bytes.extend_from_slice(&buffer[..count]);
+        if bytes.len() > LIMIT {
+            return Err("INPUT_LIMIT".into());
+        }
+    }
+}
 fn read_owned_configuration(
     path: &str,
     limit: u64,
@@ -219,6 +326,11 @@ fn authenticated_state_backend(command: &str, args: &BTreeMap<String, String>) -
     let authenticated = match choice.as_str() {
         "legacy-v2" => false,
         "authenticated-v1" => true,
+        "permanent-account-growth-native-v2"
+            if command == "serve" && public_growth_profile(args) =>
+        {
+            false
+        }
         _ => return Err("NATIVE_STATE_BACKEND".into()),
     };
     if !matches!(
@@ -274,7 +386,7 @@ fn request_observation_export(
         return Ok(None);
     };
     if command != "serve"
-        || !public_pool_profile(args)
+        || !public_v3_service_profile(args)
         || args.get("--public-development-network").map(String::as_str) != Some("true")
     {
         return Err("REQUEST_OBSERVATION_EXPLICIT_PUBLIC_V3_REQUIRED".into());
@@ -464,11 +576,96 @@ fn admission_profile(args: &BTreeMap<String, String>) -> Result<bool> {
 fn public_profile(args: &BTreeMap<String, String>) -> bool {
     matches!(
         args.get("--admission-profile").map(String::as_str),
-        Some(ingress::public_v2::PROFILE | ingress::public_v3::PROFILE)
+        Some(
+            ingress::public_v2::PROFILE
+                | ingress::public_v3::PROFILE
+                | ingress::public_v3::GROWTH_PROFILE
+        )
     )
 }
 fn public_pool_profile(args: &BTreeMap<String, String>) -> bool {
     args.get("--admission-profile").map(String::as_str) == Some(ingress::public_v3::PROFILE)
+}
+
+fn public_growth_profile(args: &BTreeMap<String, String>) -> bool {
+    args.get("--admission-profile").map(String::as_str) == Some(ingress::public_v3::GROWTH_PROFILE)
+}
+fn public_v3_service_profile(args: &BTreeMap<String, String>) -> bool {
+    public_pool_profile(args) || public_growth_profile(args)
+}
+// Explicit fixed growth namespace/profile before owner configuration or store I/O.
+fn growth_network_options(command: &str, args: &BTreeMap<String, String>) -> Result<bool> {
+    let growth = public_growth_profile(args);
+    if !growth {
+        if args.contains_key("--growth-namespace")
+            || args.contains_key("--resource-profile-sha256")
+            || args.contains_key("--request-deadline-ms")
+            || command == "packet-status" && args.contains_key("--peer")
+        {
+            return Err("PUBLIC_GROWTH_PROFILE".into());
+        }
+        return Ok(false);
+    }
+    if !matches!(command, "serve" | "push" | "packet-status" | "head") {
+        return Err("PUBLIC_GROWTH_PROFILE".into());
+    }
+    if command == "serve" {
+        if args.get("--state-backend").map(String::as_str)
+            != Some("permanent-account-growth-native-v2")
+            || args.get("--public-development-network").map(String::as_str) != Some("true")
+        {
+            return Err("PUBLIC_GROWTH_PROFILE".into());
+        }
+    } else if [
+        "--store",
+        "--state-backend",
+        "--workers",
+        "--logical-now",
+        "--reliable-submit",
+        "--submit-deadline-ms",
+        "--submit-attempts",
+        "--submit-call-cap",
+        "--submit-parent-depth",
+    ]
+    .iter()
+    .any(|key| args.contains_key(*key))
+    {
+        return Err("PUBLIC_GROWTH_CLIENT_OPTIONS".into());
+    }
+    need(args, "--growth-namespace")?;
+    if number(args, "--workers", 1)? != 1 {
+        return Err("PUBLIC_GROWTH_WORKERS".into());
+    }
+    if args.keys().any(|key| {
+        key.starts_with("--operator-task-")
+            || matches!(
+                key.as_str(),
+                "--evaluation-policy"
+                    | "--task-profile"
+                    | "--model-profile"
+                    | "--model-task-windows"
+                    | "--model-task-windows-sha256"
+                    | "--model-data-owner"
+                    | "--actor-profile"
+                    | "--deployment-spec"
+                    | "--deployment-bootstrap"
+                    | "--deployment-model"
+                    | "--deployment-input"
+                    | "--deployment-checkpoint"
+                    | "--deployment-activation"
+                    | "--pool-policy"
+                    | "--mine"
+                    | "--peers"
+                    | "--peer-poll-ms"
+                    | "--peer-pages"
+                    | "--authenticated-development-network"
+                    | "--peer-roster"
+                    | "--session-generation"
+            )
+    }) {
+        return Err("PUBLIC_GROWTH_UNSUPPORTED_OPTIONS".into());
+    }
+    Ok(true)
 }
 
 // Refuse an option/profile mismatch BEFORE opening a Node or service
@@ -476,7 +673,7 @@ fn public_pool_profile(args: &BTreeMap<String, String>) -> bool {
 fn validate_host_kernel_profile(command: &str, args: &BTreeMap<String, String>) -> Result<()> {
     if args.contains_key("--host-kernel-parent")
         && (command != "serve"
-            || !public_pool_profile(args)
+            || !public_v3_service_profile(args)
             || args.get("--public-development-network").map(String::as_str) != Some("true"))
     {
         return Err("PUBLIC_HOST_KERNEL_PROFILE".into());
@@ -532,6 +729,82 @@ fn public_policy(args: &BTreeMap<String, String>) -> Result<ingress::public_v2::
         Duration::from_millis(number(args, "--admission-ttl-ms", 2000)?),
     )
 }
+/// Ordinary client commands keep the original protected TCP implementation.
+/// The explicit profile pins PNP2/context and never opens a local Node/store.
+fn growth_network_call(
+    command: &str,
+    args: &BTreeMap<String, String>,
+    settings: &Settings,
+    started: Instant,
+) -> Result<Value> {
+    let policy = ingress::public_v3::PublicPolicy::new(
+        u8::try_from(number(args, "--admission-bits", 16)?).map_err(|_| "PUBLIC_POLICY")?,
+        Duration::from_millis(number(args, "--admission-ttl-ms", 2000)?),
+    )?;
+    let profile = digest(need(args, "--resource-profile-sha256")?)?;
+    if profile != policy.growth_id() {
+        return Err("PUBLIC_GROWTH_RESOURCE_PIN".into());
+    }
+    let milliseconds = number(args, "--request-deadline-ms", 30000)?;
+    if !(1..=30000).contains(&milliseconds) {
+        return Err("PUBLIC_CLIENT_DEADLINE_LIMIT".into());
+    }
+    let deadline = started + Duration::from_millis(milliseconds);
+    let (operation, request) = match command {
+        "push" | "packet-status" => {
+            let raw = growth_packet_input(args, deadline)?;
+            let packet = trnm_pon_node::GrowthPacket::decode(&raw)?;
+            if packet.header.ledger.network != settings.network()
+                || packet.header.ledger.parameters != settings.parameters()
+            {
+                return Err("NETWORK".into());
+            }
+            let text = hex::encode(raw); // Preserve the exact supplied canonical bytes.
+            if command == "push" {
+                (
+                    "growth_submit_v1",
+                    ingress::public_v3::Request::GrowthSubmitV1 { packet: text },
+                )
+            } else {
+                (
+                    "growth_packet_status_v1",
+                    ingress::public_v3::Request::GrowthPacketStatusV1 { packet: text },
+                )
+            }
+        }
+        "head" => ("growth_head_v1", ingress::public_v3::Request::GrowthHeadV1),
+        _ => return Err("PUBLIC_OPERATION_PROFILE".into()),
+    };
+    growth_input_remaining(deadline)?;
+    let identity = public_identity(args)?;
+    growth_input_remaining(deadline)?;
+    let pinned_server = need(args, "--server-public")?;
+    let (reply, metrics) = ingress::public_v3::call_public_protected_growth_v1(
+        need(args, "--peer")?.parse().map_err(|_| "ADDRESS")?,
+        &request,
+        settings,
+        pinned_server,
+        &identity,
+        policy,
+        Some(deadline),
+    );
+    let reply = reply?; // Includes exact signed profile/N/P/G/server/body/response checks.
+    let mut value = json!({
+        "schema":"pon-native-growth-remote-client-result-v1",
+        "transport_profile":ingress::public_v3::GROWTH_PROFILE,
+        "resource_profile":hex::encode(profile), "server_public":pinned_server,
+        "network":hex::encode(settings.network()), "parameters":hex::encode(settings.parameters()),
+        "genesis":hex::encode(settings.genesis()), "operation":operation,
+        "verified_signed_response":true, "response":reply,
+        "production_activation":false
+    });
+    if args.contains_key("--client-observations") {
+        value["client_observation"] = json!({"metrics":metrics,"unsigned_local_observation":true,
+            "transport_phase_authority":false,"public_ready":false});
+    }
+    Ok(value)
+}
+
 fn public_identity(args: &BTreeMap<String, String>) -> Result<ingress::DevelopmentIdentity> {
     if args.contains_key("--peer-roster")
         || args.contains_key("--session-generation")
@@ -1030,7 +1303,7 @@ fn run() -> Result<Value> {
         "mine" | "make" => "--transactions --timestamp --output --parent --miner --task-bootstrap --task-manifest --task-model --task-input --consensus-maintenance",
         "task-fixture" => "--task-model --task-input --demand-index --purpose --not-before --expires --demand-nonce --output",
         "submit" => "--packet --packet-stdin --peer",
-        "packet-status" => "--packet --packet-stdin",
+        "packet-status" => "--packet --packet-stdin --peer",
         "push" => "--packet --packet-stdin --peer --reliable-submit --submit-deadline-ms --submit-attempts --submit-call-cap --submit-parent-depth",
         "export" => "--block --output",
         "confirm" => "--transaction --block",
@@ -1038,7 +1311,7 @@ fn run() -> Result<Value> {
         "sync" => "--peer --tip --after --pages --evaluation-candidate --evaluation-round-blocks",
         "head" => "--peer",
         "history" => "--peer --tip --after",
-        "serve" => "--listen --seconds --mining-seconds --pool-policy --mine --miner --blocks --pace-ms --search-attempts --max-transactions --max-transaction-bytes --task-bootstrap --task-model --task-input --consensus-maintenance --peers --peer-poll-ms --peer-pages --request-observation-output --request-observation-capacity --host-kernel-parent",
+        "serve" => "--listen --seconds --mining-seconds --pool-policy --mine --miner --blocks --pace-ms --search-attempts --max-transactions --max-transaction-bytes --task-bootstrap --task-model --task-input --consensus-maintenance --peers --peer-poll-ms --peer-pages --request-observation-output --request-observation-capacity --host-kernel-parent --growth-namespace",
         _ => return Err("UNKNOWN_COMMAND".into()),
     };
     let authentication_options = match command.as_str() {
@@ -1046,12 +1319,15 @@ fn run() -> Result<Value> {
             "--authenticated-development-network --public-development-network --auth-secret --peer-roster --session-generation"
         }
         "push" | "sync" => "--auth-secret --server-public --session-generation",
-        "head" | "history" | "pool-push" | "pool-status-remote" => "--auth-secret --server-public",
+        "head" | "history" | "pool-push" | "pool-status-remote" | "packet-status" => "--auth-secret --server-public",
         _ => "",
     };
     let admission_options = match command.as_str() {
         "serve" => "--admission-profile --admission-bits --admission-ttl-ms",
-        "push" | "sync" | "head" | "history" | "pool-push" | "pool-status-remote" => {
+        "push" | "head" | "packet-status" => {
+            "--admission-profile --admission-bits --admission-ttl-ms --client-observations --growth-namespace --resource-profile-sha256 --request-deadline-ms"
+        }
+        "sync" | "history" | "pool-push" | "pool-status-remote" => {
             "--admission-profile --admission-bits --admission-ttl-ms --client-observations"
         }
         _ => "",
@@ -1064,6 +1340,7 @@ fn run() -> Result<Value> {
             return Err(format!("UNKNOWN_OPTION:{key}").into());
         }
     }
+    let growth_network = growth_network_options(&command, &args)?;
     validate_host_kernel_profile(&command, &args)?;
     let authenticated_state = authenticated_state_backend(&command, &args)?;
     // Fixed outside authority is authenticated before any model/material loader.
@@ -1159,7 +1436,8 @@ fn run() -> Result<Value> {
     if !public_profile(&args) {
         admission_profile(&args)?;
     }
-    if args.contains_key("--client-observations") && !public_pool_profile(&args) {
+    if args.contains_key("--client-observations") && !public_pool_profile(&args) && !growth_network
+    {
         return Err("PUBLIC_V3_REQUIRED".into());
     }
     if matches!(
@@ -1197,7 +1475,14 @@ fn run() -> Result<Value> {
         "--deployment-input",
     ];
     let actor_present = actor_options.iter().any(|key| args.contains_key(*key));
-    let settings = if actor_present {
+    let settings = if growth_network {
+        Settings::development_with_profiles(
+            Some(number(&args, "--genesis-time", 1)?),
+            "native-public-evaluation-dev-v1",
+            trnm_mvcc_fee::continuity_v1::PROFILE,
+        )?
+        .with_permanent_account_growth_v2(need(&args, "--growth-namespace")?)?
+    } else if actor_present {
         if !actor_options.iter().all(|key| args.contains_key(*key))
             || [
                 "--genesis-time",
@@ -1303,6 +1588,9 @@ fn run() -> Result<Value> {
             windows,
         )?
     };
+    if growth_network && command != "serve" {
+        return growth_network_call(&command, &args, &settings, command_started);
+    }
     // This local observation has no peer request or signed response counterpart.
     // Reject other profiles before opening or creating a store.
     if command == "capacity-observe"
@@ -1548,13 +1836,17 @@ fn run() -> Result<Value> {
         return Err("PACKET_STATUS_EXISTING_STORE_REQUIRED".into());
     }
     let clock = number(&args, "--logical-now", ingress::now()?)?;
-    let mut node = open_operator_node(
-        Path::new(need(&args, "--store")?),
-        settings,
-        number(&args, "--workers", 1)? as usize,
-        owner_task_config,
-        authenticated_state,
-    )?;
+    let mut node = if growth_network {
+        Node::open_with_permanent_account_growth_v2(Path::new(need(&args, "--store")?), settings)?
+    } else {
+        open_operator_node(
+            Path::new(need(&args, "--store")?),
+            settings,
+            number(&args, "--workers", 1)? as usize,
+            owner_task_config,
+            authenticated_state,
+        )?
+    };
     let value = match command.as_str() {
         "status" | "recover" => node.stats()?,
         "packet-status" => {
@@ -1885,13 +2177,22 @@ fn run() -> Result<Value> {
                 let identity = public_identity(&args)?;
                 let server_public = identity.public_key().to_owned();
                 let lifetime = Duration::from_secs(number(&args, "--seconds", 30)?);
-                if public_pool_profile(&args) {
+                if public_v3_service_profile(&args) {
                     if lifetime == Duration::ZERO || lifetime > Duration::from_secs(259200) {
                         return Err("PUBLIC_LIFETIME".into());
                     }
-                    let pool = pool_policy(&args)?;
+                    let pool = if growth_network {
+                        None
+                    } else {
+                        Some(pool_policy(&args)?)
+                    };
                     let mining = if args.contains_key("--mine") {
-                        Some(mining_configuration(&args, node.settings(), &pool, 30)?)
+                        Some(mining_configuration(
+                            &args,
+                            node.settings(),
+                            pool.as_ref().ok_or("PUBLIC_GROWTH_UNSUPPORTED_OPTIONS")?,
+                            30,
+                        )?)
                     } else {
                         None
                     };
@@ -1915,6 +2216,17 @@ fn run() -> Result<Value> {
                     // kill-and-relaunch cannot reclaim the historical 2s burst.
                     let server =
                         ingress::public_v3::PublicServer::new_process_cold(identity, policy)?;
+                    let server = if growth_network {
+                        server.with_native_growth()?
+                    } else {
+                        server
+                    };
+                    let resource_profile = server.resource_profile();
+                    let profile = if growth_network {
+                        ingress::public_v3::GROWTH_PROFILE
+                    } else {
+                        ingress::public_v3::PROFILE
+                    };
                     let listener = std::net::TcpListener::bind(
                         args.get("--listen")
                             .map(String::as_str)
@@ -1933,18 +2245,25 @@ fn run() -> Result<Value> {
                         .as_ref()
                         .map(|budget| budget.resource_sample())
                         .transpose()?;
-                    let pool_context = node.enable_local_mempool(pool)?;
+                    let pool_context = pool
+                        .map(|pool| node.enable_local_mempool(pool))
+                        .transpose()?;
+                    let state = if growth_network {
+                        node.growth_head_observation_with_progress(&|_| Ok(()))?
+                    } else {
+                        node.stats()?
+                    };
                     println!(
                         "{}",
                         json!({"event":"listening","address":listener.local_addr()?.to_string(),
-                        "state":node.stats()?,"server_public":server_public,"scope":"public-development-unqualified",
+                        "state":state,"server_public":server_public,"scope":"public-development-unqualified",
                         "host_process_slot":_host_guard.slot,
                         "host_process_budget_scope":"cooperative-local-service-processes-4",
                         "root_kernel_parent_checked":host_kernel.is_some(),
                         "root_kernel_resources_before":host_resources_before,
                         "initial_paid_cpu_credit_ns":server.mutation_cpu_domain().observe()?.stored_credit_ns,
-                        "admission_profile":ingress::public_v3::PROFILE,"admission_profile_digest":hex::encode(policy.id()),
-                        "pool_context":hex::encode(pool_context),"mining_enabled":mining.is_some(),
+                        "admission_profile":profile,"admission_profile_digest":hex::encode(resource_profile),
+                        "pool_context":pool_context.map(hex::encode),"mining_enabled":mining.is_some(),
                         "peer_polling_enabled":polling.is_some(),"peer_polling_context":polling_context,
                         "confidentiality":false,"identity_authority":false,"public_network_ready":false,"production_activation":false})
                     );
@@ -1957,9 +2276,9 @@ fn run() -> Result<Value> {
                             "parameters":hex::encode(owner.settings().parameters()),
                             "genesis":hex::encode(owner.settings().genesis()),
                             "task_profile":owner.settings().task_profile(),
-                            "admission_profile":ingress::public_v3::PROFILE,
-                            "admission_policy_id":hex::encode(policy.id()),
-                            "pool_context":hex::encode(pool_context)}))
+                            "admission_profile":profile,
+                            "admission_policy_id":hex::encode(resource_profile),
+                            "pool_context":pool_context.map(hex::encode)}))
                     } else {
                         None
                     };

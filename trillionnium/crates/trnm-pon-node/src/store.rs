@@ -587,6 +587,9 @@ fn next_nonce_from_state(state: &State, sender: Hash) -> Result<u64> {
 pub struct Node {
     db: Connection,
     owner: File,
+    // Declared after db/owner so SQLite closes before private files are removed.
+    // The guard also retains the existing source namespace's exclusive lock.
+    growth_observer_snapshot: Option<growth::observer::Snapshot>,
     directory: PathBuf,
     directory_id: (u64, u64),
     database_id: (u64, u64),
@@ -1289,6 +1292,7 @@ impl Node {
         let mut node = Self {
             db,
             owner,
+            growth_observer_snapshot: None,
             directory,
             directory_id: (metadata.dev(), metadata.ino()),
             database_id: (dm.dev(), dm.ino()),
@@ -1934,6 +1938,9 @@ impl Node {
         ))
     }
     fn namespace(&self) -> Result<()> {
+        if let Some(snapshot) = &self.growth_observer_snapshot {
+            snapshot.check()?;
+        }
         ensure(
             !authenticated_migration_pending(&self.directory)?,
             "NATIVE_STATE_MIGRATION_PENDING",

@@ -1,7 +1,7 @@
 # Trillionnium Chain Development Plan — PoN / Hepta-PoH revision
 
-Plan ID: `trnm-chain-development-plan-v2` (stable registry identity; content revision 19).
-Effective: 2026-09-28; priority implementation revision: 2026-10-22. Status: selected development direction; no runtime activation.
+Plan ID: `trnm-chain-development-plan-v2` (stable registry identity; content revision 20).
+Effective: 2026-09-28; priority implementation revision: 2026-10-23. Status: selected development direction; no runtime activation.
 Canonical destination: `refs/heads/main`; continuation uses the current main lineage, not retired PR #194.
 Current source/head/tree/base and prospective merge are derived at verification time.
 Assessed legacy baseline: `c552c31c6d3c5ac47522a124e02c6b8bca4e23f2`, tree
@@ -106,6 +106,58 @@ I07 evaluation precede I08 exact task observation; I09 complete release fetch
 precedes I10 local admission/install/readback. Reuse Hepta's existing
 [global plan](https://github.com/TrillionniumFoundation/hepta-private-ci/blob/c38e7727220f32c7410f59083c5ea7878bbae078/docs/DEVELOPMENT.md)
 and work-package owners; Agentd composes calls and creates no second store.
+
+### 2026-10-23 convergence checkpoint within PN0–PN6
+
+This checkpoint continues the sequence and owners below; it creates no second
+plan or activation authority. The integration includes the reviewed #328–#334
+follow-ups in the existing #323 lineage. Historical failures and earlier
+source identities remain intact. The [convergence evidence index](../../evidence/pon-upgrade-implementation-20261018/native-rounds/pn-convergence-20261023/SCOPE.md)
+separates actual native observations, tested overlay hashes and still-open exits.
+Exact final commits, prospective merges and paired binary identities must be read
+from their own receipts; a source identity check does not execute acceptance tests.
+
+| Phase | Concrete acquired result | Remaining exit obligation |
+| --- | --- | --- |
+| PN0 | Reviewed integration, retained original failures, complete source overlays, corrected public export and Hepta dependency/build inputs. The combined Chain slice passed 59 focused native cases, strict workspace/all-target/all-feature Clippy and formatting. | Final clean-source/head and prospective-merge checks, current Chain/Hepta pair, release-binary receipts and unresolved security disposition remain separately required. |
+| PN1 | The original #333 artifact was completely length/hash checked. Role-specific CPU closes the actual paid-account identity; the unchanged valid-W1/false-root supplement remains the next execution entry. | Original three campaign verdicts remain FAIL: 189/189 honest submission observations and 27/27 confirmations succeeded, but no hostile phase met actual depletion qualification. Minimum legitimate-work cost, structured/hardware advantage and independent security/reproduction remain unqualified. |
+| PN2 | The ordinary growth `serve`, `push`, remote `packet-status` and `head` share the original owner and paid domain through a fresh signed profile. Typed W1, exact status, stdin deadline and output-reserve regressions passed. The separate cold observer now audits a bounded private copy without letting SQLite open the source. | Signed 65,536-boundary release/export receipt on the final source, history/catchup, retained-history/resource curves, future-owner capacity, physical-fault limits and joint PN1/PN2 service qualification remain open. Component regressions alone do not close PN2. |
+| PN3 | The fixed Hepta ordinary neural entry composes original qualification replay, CURRENT selection, verified payload FD, Unix FinalUse and durable inference control. Component tests passed on their recorded overlay; retained real training has three lineage generations, two evaluated comparisons and zero beneficial comparisons. | Actual eligible CURRENT/independently authorized ordinary next-task consumption and useful-release evidence are still required. Live growth transport integration and exact final paired binaries require their own native receipts. |
+| PN4 | Payment readback preserves the original historical claim while reobserving current branch membership; the real signed task/reorg test covers all three backends without new payment, effect or journal mutation. | A local claim is not a chain funding lock. Complete byte-time retention, repair and reorg funding replacement, independently metered budgets and economic acceptance remain open. |
+| PN5 | Existing finite configured-peer Cell/TCR1 evidence and fault regressions are retained with their actual sources and unsuccessful overall handoff outcomes. | At least three genuinely independent operators/failure domains and the preregistered at-least-72-hour WAN experiment, including retrieval, repair and recovery cohorts, are still mandatory. |
+| PN6 | Private-copy rehearsal verification and bounded descriptor/receipt reads passed 14 focused cases; three original cold-observer failures were reproduced before the fix, then the combined growth suite passed 34 cases. | Cross-context compatibility, owner drain/reconciliation, operational migration/rollback, predecessor exits and the existing governed activation decision remain required. Production activation remains false. |
+
+The PN1 accounting denominator is precise: paid mutation CPU equals actual
+`attack_submit` plus `honest_submit` owner CPU. The 7.5–9.0 seconds per hostile
+phase include honest submits. Read CPU, attacker construction and independent
+client import remain separate. All nine phases end with zero live owners,
+booked reservations and unsettled known-live CPU. The 3,863–3,865 issued
+challenges per 30-second hostile phase approach the fixed 3,872 reference
+ceiling, while mean hostile owner CPU remains 1.588–1.650 ms/from-zero and
+1.895–1.944 ms/late-product. These are local intake/cost observations, not
+business TPS. The ROOT supplement keeps its original workload, budgets and
+deadlines, with the optional rejection cache off; its result cannot replace
+the cheap-proof failures or independent work qualification.
+
+The new PN2 profile is explicit: submit and exact status remain paid operations;
+head has fixed metadata and the original control output reserve, but still
+waits for the same owner. Admission reacquires that owner after full typed W1
+and rechecks current clock/context/parent/epoch. Postcommit activation retains
+its charged, O(reorg-depth), nonpreemptible tail. The cold local interface keeps
+its exclusive lock and O(H) audit cost; private copying has a local 8 GiB main-file
+ceiling, not a total disk/CPU/device-latency bound. Existing source recovery logs
+require ordinary writer recovery before retry. Neither path grants installation
+or final-use authority; maintenance retains `accepted_task=null`.
+
+The mandatory-owner signed regression reached the 32-distinct-future-owner union
+with 62 transactions, 37 working keys, 12,910 working bytes, 33 proof accounts and
+a 64,551-byte packet. A new reward address was excluded while an existing miner
+could continue; refunds and maturity later released the constraint. This is
+entry exclusion below the other ceilings, not permanent halt. An authenticated,
+versioned reservation/due-owner design and conservation/reorg/migration evidence
+are needed before changing that rule; raising the cap or redirecting rewards is
+not its repair. The read-only capacity report grants no admission authority.
+
 
 ### Audit remediation baseline and acceptance records
 

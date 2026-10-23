@@ -2,6 +2,12 @@ use super::*;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum GrowthProgress {
+    /// Before any request-local context or owner-state lookup.
+    BeforeContext,
+    /// Before each bounded target/time ancestor header and record pair.
+    HeaderAncestor {
+        index: usize,
+    },
     BeforeWork,
     /// Existing full W1 replay boundaries; these do not certify a public CPU budget.
     Work(pon_work::VerificationProgress),
@@ -27,6 +33,14 @@ pub enum GrowthProgress {
         index: usize,
     },
     BeforeCommit,
+    BeforeObservation,
+    /// Before each actual active-membership SQL lookup; its original budget remains.
+    MembershipRead {
+        index: u64,
+    },
+    ObservationDelta,
+    BeforeObservationTask,
+    ObservationReady,
 }
 
 // Operation-local read counters, never a retained validity or resource grant.
@@ -121,6 +135,14 @@ impl Node {
         packet: &GrowthPacket,
         observed_now: u64,
     ) -> Result<()> {
+        self.check_growth_header_with_progress(packet, observed_now, &|_| Ok(()))
+    }
+    pub(super) fn check_growth_header_with_progress(
+        &self,
+        packet: &GrowthPacket,
+        observed_now: u64,
+        progress: &(impl Fn(GrowthProgress) -> Result<()> + Sync),
+    ) -> Result<()> {
         let h = &packet.header.ledger;
         ensure(
             h.network == self.settings.network() && h.parameters == self.settings.parameters(),
@@ -131,7 +153,10 @@ impl Node {
                 && h.height <= i64::MAX as u64,
             "HEIGHT",
         )?;
-        ensure(h.target == self.growth_target(h.parent)?, "TARGET")?;
+        ensure(
+            h.target == self.growth_target_with_progress(h.parent, progress)?,
+            "TARGET",
+        )?;
         ensure(
             h.transactions == sequence_root("transactions", &packet.transactions),
             "ROOT",
@@ -141,7 +166,7 @@ impl Node {
             "CONTINUITY_MAINTENANCE",
         )?;
         let times: Vec<_> = self
-            .growth_recent(h.parent)?
+            .growth_recent_with_progress(h.parent, progress)?
             .iter()
             .take(11)
             .map(|p| p.0)
@@ -163,9 +188,27 @@ impl Node {
         observed_now: u64,
         progress: &(impl Fn(GrowthProgress) -> Result<()> + Sync),
     ) -> Result<Hash> {
+        if let Some(id) =
+            self.precheck_growth_admission_with_progress(packet, observed_now, progress)?
+        {
+            return Ok(id);
+        }
+        let checked = GrowthWorkCheckedPacket::verify_with_progress(packet.clone(), progress)?;
+        self.admit_growth_work_checked_with_progress(checked, observed_now, progress)
+    }
+
+    /// Bounded current-owner context only. A successful absence result conveys
+    /// no reusable parent-State or clock authority across owner-lock release.
+    pub(crate) fn precheck_growth_admission_with_progress(
+        &self,
+        packet: &GrowthPacket,
+        observed_now: u64,
+        progress: &(impl Fn(GrowthProgress) -> Result<()> + Sync),
+    ) -> Result<Option<Hash>> {
+        progress(GrowthProgress::BeforeContext)?;
         self.growth_guard()?;
         let bytes = packet.encode()?;
-        self.check_growth_header(packet, observed_now)?;
+        self.check_growth_header_with_progress(packet, observed_now, progress)?;
         let id = packet.id()?;
         let previous: Option<Vec<u8>> = self
             .db
@@ -177,20 +220,29 @@ impl Node {
             .optional()?;
         if let Some(previous) = previous {
             ensure(previous == bytes, "DUPLICATE_CONTENT")?;
+            return Ok(Some(id));
+        }
+        Ok(None)
+    }
+
+    /// The caller must reacquire the original Node owner after W1 verification.
+    /// Consume the private immutable packet, then repeat current context/time
+    /// checks and bind the actual parent inside the original write transaction.
+    /// A verified mathematical work relation is never a cached admission verdict.
+    pub(crate) fn admit_growth_work_checked_with_progress(
+        &mut self,
+        checked: GrowthWorkCheckedPacket,
+        observed_now: u64,
+        progress: &(impl Fn(GrowthProgress) -> Result<()> + Sync),
+    ) -> Result<Hash> {
+        let (packet, _verified_work) = checked.into_parts();
+        if let Some(id) =
+            self.precheck_growth_admission_with_progress(&packet, observed_now, progress)?
+        {
             return Ok(id);
         }
-        progress(GrowthProgress::BeforeWork)?;
-        pon_work::verify_with_progress(
-            packet.header.challenge(),
-            packet.header.ledger.work_task,
-            packet.header.ledger.target,
-            &packet.proof,
-            &mut |point| progress(GrowthProgress::Work(point)),
-        )
-        .map_err(|error| match error {
-            pon_work::VerificationError::Relation(error) => Error::from(format!("WORK:{error:?}")),
-            pon_work::VerificationError::Cancelled(error) => error,
-        })?;
+        let bytes = packet.encode()?;
+        let id = packet.id()?;
         let h = &packet.header.ledger;
         // The single owner rebinds the parent in its actual write transaction.
         let tx = rusqlite::Transaction::new_unchecked(
@@ -198,9 +250,10 @@ impl Node {
             rusqlite::TransactionBehavior::Immediate,
         )?;
         self.growth_guard()?;
+        self.check_growth_header_with_progress(&packet, observed_now, progress)?;
         let active_before = self.active()?;
         let parent = self.growth_parent(h.parent)?;
-        let mut executed = execute(&self.settings, &parent, packet, progress)?;
+        let mut executed = execute(&self.settings, &parent, &packet, progress)?;
         ensure(
             h.state == executed.state.commitment.id
                 && h.receipts == sequence_root("receipts", &executed.receipts),

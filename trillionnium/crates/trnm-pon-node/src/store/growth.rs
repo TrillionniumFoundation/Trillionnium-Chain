@@ -28,13 +28,16 @@ use trnm_mvcc_fee::{
 use trnm_protocol::pon_growth::GrowthHeader;
 use trnm_protocol::pon_wire::{Envelope, Hash, Header};
 mod observation;
+pub(super) mod observer;
 mod packet;
 mod profile;
 mod recovery;
 #[cfg(test)]
 mod tests;
+mod work_checked;
 pub use packet::GrowthPacket;
 pub use recovery::GrowthProgress;
+pub(crate) use work_checked::GrowthWorkCheckedPacket;
 
 pub(crate) const DDL: &str = "CREATE TABLE archive_nodes(id BLOB PRIMARY KEY,data BLOB NOT NULL);\nCREATE TABLE growth_states(block BLOB PRIMARY KEY,data BLOB NOT NULL);";
 const MAX_RECORD_BYTES: usize = 524_288;
@@ -195,10 +198,33 @@ impl Node {
     pub fn open_with_permanent_account_growth_v2(path: &Path, settings: Settings) -> Result<Self> {
         Self::open_growth_selected(path, settings, false)
     }
-    /// An existing namespace, a real SQLite read-only connection and the full
-    /// cold audit. This cannot initialize storage or recover/activate a branch.
+    /// Observe a locked existing namespace through a private SQLite snapshot.
+    /// Any source WAL/SHM/rollback journal requires ordinary writer recovery.
+    /// The default main-file copy limit is 8 GiB; history replay is not CPU-bounded.
     pub fn open_growth_packet_observer(path: &Path, settings: Settings) -> Result<Self> {
-        Self::open_growth_selected(path, settings, true)
+        Self::open_growth_packet_observer_with_snapshot_byte_limit(
+            path,
+            settings,
+            observer::DEFAULT_SNAPSHOT_BYTE_LIMIT,
+        )
+    }
+    /// A caller-selected local copy-byte limit, not consensus or reservation
+    /// authority. No SQLite connection ever opens the source namespace.
+    pub fn open_growth_packet_observer_with_snapshot_byte_limit(
+        path: &Path,
+        settings: Settings,
+        snapshot_byte_limit: u64,
+    ) -> Result<Self> {
+        profile::require(&settings)?;
+        ensure(
+            !super::owner_marker_present(path)?,
+            "OWNER_TASK_POLICY_REQUIRED",
+        )?;
+        let snapshot = observer::Snapshot::create(path, snapshot_byte_limit)?;
+        let mut node = Self::open_growth_selected(snapshot.path(), settings, true)?;
+        snapshot.check()?;
+        node.growth_observer_snapshot = Some(snapshot);
+        Ok(node)
     }
     fn open_growth_selected(
         path: &Path,
@@ -378,25 +404,31 @@ impl Node {
         id: Hash,
         observer: Option<&dyn pon_executor::CanonicalTransitionObserver>,
     ) -> Result<()> {
+        self.growth_check_retained_transition_with_progress(id, observer, &|_| Ok(()))
+    }
+    fn growth_check_retained_transition_with_progress(
+        &self,
+        id: Hash,
+        observer: Option<&dyn pon_executor::CanonicalTransitionObserver>,
+        progress: &(impl Fn(GrowthProgress) -> Result<()> + Sync),
+    ) -> Result<()> {
+        progress(GrowthProgress::BeforeContext)?;
         self.growth_guard()?;
         let packet = self.growth_load_packet(id)?;
-        self.check_growth_header(&packet, u64::MAX)?;
-        pon_work::verify(
-            packet.header.challenge(),
-            packet.header.ledger.work_task,
-            packet.header.ledger.target,
-            &packet.proof,
-        )
-        .map_err(|error| Error::from(format!("WORK:{error:?}")))?;
+        self.check_growth_header_with_progress(&packet, u64::MAX, progress)?;
+        let checked = GrowthWorkCheckedPacket::verify_with_progress(packet, progress)?;
+        let (packet, _verified_work) = checked.into_parts();
         let parent = self.growth_parent(packet.header.ledger.parent)?;
-        let executed = execute_observed(&self.settings, &parent, &packet, observer, &|_| Ok(()))?;
+        let executed = execute_observed(&self.settings, &parent, &packet, observer, progress)?;
         let stored = self.growth_parent(id)?;
         ensure(
             executed.state.commitment == stored.source.stored.commitment
                 && executed.state.working == stored.source.stored.working
                 && executed.state.parent_commitment == stored.source.stored.parent_commitment
                 && executed.state.deltas == stored.source.stored.deltas
-                && self.delta_rows_with_progress(id, &mut || Ok(()))? == executed.deltas
+                && self.delta_rows_with_progress(id, &mut || {
+                    progress(GrowthProgress::ObservationDelta)
+                })? == executed.deltas
                 && packet.header.ledger.state == executed.state.commitment.id
                 && packet.header.ledger.receipts == sequence_root("receipts", &executed.receipts),
             "NATIVE_PAYMENT_TRANSITION",
@@ -421,10 +453,17 @@ impl Node {
         ensure(header.block_id(bytes32(trace)?) == id, "GROWTH_PACKET_ID")?;
         Ok(header)
     }
-    fn growth_recent(&self, mut id: Hash) -> Result<Vec<(u64, Hash)>> {
+    fn growth_recent_with_progress(
+        &self,
+        mut id: Hash,
+        progress: &(impl Fn(GrowthProgress) -> Result<()> + Sync),
+    ) -> Result<Vec<(u64, Hash)>> {
         let maximum = self.settings.limit("retarget_interval")?.max(11) as usize;
         let mut recent = Vec::new();
         while id != self.settings.genesis() && recent.len() < maximum {
+            progress(GrowthProgress::HeaderAncestor {
+                index: recent.len(),
+            })?;
             // The frozen storage epoch already checked each complete packet.
             // DAA only reads its fixed header and trace identity, never the
             // account witness and W1 body once per ancestor per request.
@@ -452,8 +491,15 @@ impl Node {
         self.growth_target(parent)
     }
     fn growth_target(&self, parent: Hash) -> Result<Hash> {
+        self.growth_target_with_progress(parent, &|_| Ok(()))
+    }
+    fn growth_target_with_progress(
+        &self,
+        parent: Hash,
+        progress: &(impl Fn(GrowthProgress) -> Result<()> + Sync),
+    ) -> Result<Hash> {
         let height = self.record(parent)?.height.checked_add(1).ok_or("HEIGHT")?;
-        let recent = self.growth_recent(parent)?;
+        let recent = self.growth_recent_with_progress(parent, progress)?;
         let interval = self.settings.limit("retarget_interval")?;
         let target = recent.first().ok_or("UNKNOWN_PARENT")?.1;
         if !height.is_multiple_of(interval) {

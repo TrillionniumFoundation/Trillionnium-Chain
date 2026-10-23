@@ -532,7 +532,7 @@ fn native_growth_v2_exact_packet_observation_binds_bytes_context_and_active_snap
     assert_eq!(deeper["active_membership_sql_lookups"], 3);
     let tx = node.db.unchecked_transaction().unwrap();
     assert_eq!(
-        node.growth_active_member(child_id, id, 1, 1)
+        node.growth_active_member(child_id, id, 1, 1, &|_| Ok(()))
             .unwrap_err()
             .to_string(),
         "GROWTH_MEMBERSHIP_BUDGET"
@@ -606,6 +606,243 @@ fn native_growth_v2_packet_observer_opens_read_only_without_recovering() {
     assert_eq!(error.to_string(), "GROWTH_REORG_JOURNAL");
     let database = Connection::open(dir.path().join("native.sqlite")).unwrap();
     assert_eq!(rows(&database), pending);
+}
+
+// Include every byte of these deliberately small real Node fixtures. SQL row
+// counts alone cannot detect SQLite creating or changing WAL/SHM sidecars.
+fn cold_observer_files(path: &Path) -> BTreeMap<String, Vec<u8>> {
+    std::fs::read_dir(path)
+        .unwrap()
+        .map(|entry| {
+            let entry = entry.unwrap();
+            assert!(entry.file_type().unwrap().is_file());
+            (
+                entry.file_name().into_string().unwrap(),
+                std::fs::read(entry.path()).unwrap(),
+            )
+        })
+        .collect()
+}
+
+#[test]
+fn native_growth_v2_cold_observer_preserves_closed_wal_namespace() {
+    use fs2::FileExt;
+    let directory = tempfile::tempdir().unwrap();
+    let settings = settings();
+    let mut writer =
+        Node::open_with_permanent_account_growth_v2(directory.path(), settings.clone()).unwrap();
+    let packet = make(
+        &writer,
+        settings.genesis(),
+        vec![transfer(&settings, 0, 1, public(100), 1000)],
+    );
+    let id = admit(&mut writer, &packet);
+    let expected = writer.growth_exact_packet_observation(&packet).unwrap();
+    let account = writer.growth_account(id, public(100)).unwrap().unwrap();
+    drop(writer);
+    let before = cold_observer_files(directory.path());
+    assert_eq!(before["native.sqlite"][18..20], [2, 2]);
+    assert!(!before.contains_key("native.sqlite-wal"));
+    assert!(!before.contains_key("native.sqlite-shm"));
+    let observer = Node::open_growth_packet_observer(directory.path(), settings.clone()).unwrap();
+    assert_eq!(
+        observer.growth_exact_packet_observation(&packet).unwrap(),
+        expected
+    );
+    assert_eq!(
+        observer.growth_account(id, public(100)).unwrap().as_ref(),
+        Some(&account)
+    );
+    assert_eq!(observer.db.total_changes(), 0);
+    assert!(observer
+        .db
+        .execute("UPDATE active SET generation=generation", [])
+        .is_err());
+    let competing_owner = std::fs::OpenOptions::new()
+        .read(true)
+        .write(true)
+        .open(directory.path().join("owner.lock"))
+        .unwrap();
+    assert!(competing_owner.try_lock_exclusive().is_err());
+    assert_eq!(
+        cold_observer_files(directory.path()),
+        before,
+        "a cold observer must not create or change source WAL/SHM files"
+    );
+    drop(observer);
+    assert_eq!(cold_observer_files(directory.path()), before);
+    competing_owner.try_lock_exclusive().unwrap();
+    FileExt::unlock(&competing_owner).unwrap();
+}
+
+#[test]
+fn native_growth_v2_cold_observer_requires_existing_owner_without_creating_it() {
+    let directory = tempfile::tempdir().unwrap();
+    let settings = settings();
+    drop(Node::open_with_permanent_account_growth_v2(directory.path(), settings.clone()).unwrap());
+    std::fs::remove_file(directory.path().join("owner.lock")).unwrap();
+    let before = cold_observer_files(directory.path());
+    let result = Node::open_growth_packet_observer(directory.path(), settings);
+    assert_eq!(cold_observer_files(directory.path()), before);
+    assert!(
+        result.is_err(),
+        "missing source ownership cannot be manufactured by observation"
+    );
+}
+
+#[test]
+fn native_growth_v2_cold_observer_refuses_live_logs_before_sqlite_or_packet_absence() {
+    let original = tempfile::tempdir().unwrap();
+    let settings = settings();
+    let mut writer =
+        Node::open_with_permanent_account_growth_v2(original.path(), settings.clone()).unwrap();
+    writer
+        .db
+        .execute_batch("PRAGMA wal_checkpoint(TRUNCATE);")
+        .unwrap();
+    let packet = make(
+        &writer,
+        settings.genesis(),
+        vec![transfer(&settings, 0, 1, public(100), 1000)],
+    );
+    let id = admit(&mut writer, &packet);
+    let expected = writer.growth_exact_packet_observation(&packet).unwrap();
+    let account = writer.growth_account(id, public(100)).unwrap().unwrap();
+    // Copy a quiescent, genuinely committed Node main/WAL pair while its one
+    // writer remains open. The copied namespace has no process holding its
+    // owner lock, as after a crash; the original writer is never disturbed.
+    let directory = tempfile::tempdir().unwrap();
+    for name in [
+        "native.sqlite",
+        "native.sqlite-wal",
+        "native.sqlite-shm",
+        "owner.lock",
+    ] {
+        std::fs::copy(original.path().join(name), directory.path().join(name)).unwrap();
+    }
+    let before = cold_observer_files(directory.path());
+    assert!(before["native.sqlite-wal"].len() > 32);
+    let result = Node::open_growth_packet_observer(directory.path(), settings.clone());
+    assert_eq!(cold_observer_files(directory.path()), before);
+    let error = match result {
+        Ok(_) => {
+            panic!("existing logs require ordinary writer recovery, never a packet-status answer")
+        }
+        Err(error) => error,
+    };
+    assert_eq!(error.to_string(), "GROWTH_OBSERVATION_RECOVERY_REQUIRED");
+    let recovered =
+        Node::open_with_permanent_account_growth_v2(directory.path(), settings.clone()).unwrap();
+    assert_eq!(
+        recovered.growth_exact_packet_observation(&packet).unwrap(),
+        expected
+    );
+    assert_eq!(
+        recovered.growth_account(id, public(100)).unwrap().as_ref(),
+        Some(&account)
+    );
+    drop(recovered);
+    let closed = cold_observer_files(directory.path());
+    assert!(!closed.contains_key("native.sqlite-wal"));
+    assert!(!closed.contains_key("native.sqlite-shm"));
+    let observer = Node::open_growth_packet_observer(directory.path(), settings).unwrap();
+    assert_eq!(
+        observer.growth_exact_packet_observation(&packet).unwrap(),
+        expected
+    );
+    assert_eq!(
+        observer.growth_account(id, public(100)).unwrap().as_ref(),
+        Some(&account)
+    );
+    drop(observer);
+    assert_eq!(cold_observer_files(directory.path()), closed);
+}
+
+#[test]
+fn native_growth_v2_cold_observer_bounds_copy_and_cleans_private_snapshot() {
+    use std::os::unix::fs::PermissionsExt;
+    let directory = tempfile::tempdir().unwrap();
+    let settings = settings();
+    drop(Node::open_with_permanent_account_growth_v2(directory.path(), settings.clone()).unwrap());
+    let before = cold_observer_files(directory.path());
+    let bytes = before["native.sqlite"].len() as u64;
+    let error = match Node::open_growth_packet_observer_with_snapshot_byte_limit(
+        directory.path(),
+        settings.clone(),
+        bytes - 1,
+    ) {
+        Ok(_) => panic!("a main file above the local copy budget must be rejected"),
+        Err(error) => error,
+    };
+    assert_eq!(error.to_string(), "GROWTH_OBSERVATION_SNAPSHOT_LIMIT");
+    assert_eq!(cold_observer_files(directory.path()), before);
+    let observer = Node::open_growth_packet_observer_with_snapshot_byte_limit(
+        directory.path(),
+        settings,
+        bytes,
+    )
+    .unwrap();
+    let snapshot = observer.directory.clone();
+    assert_ne!(snapshot, directory.path());
+    assert_eq!(
+        std::fs::metadata(&snapshot).unwrap().permissions().mode() & 0o7777,
+        0o700
+    );
+    for name in ["native.sqlite", "owner.lock"] {
+        assert_eq!(
+            std::fs::metadata(snapshot.join(name))
+                .unwrap()
+                .permissions()
+                .mode()
+                & 0o7777,
+            0o600
+        );
+    }
+    assert_eq!(cold_observer_files(directory.path()), before);
+    drop(observer);
+    assert!(
+        !snapshot.exists(),
+        "close SQLite before removing its private namespace"
+    );
+    assert_eq!(cold_observer_files(directory.path()), before);
+}
+
+#[test]
+fn native_growth_v2_cold_observer_fences_source_changes_despite_private_epoch() {
+    use std::io::Write;
+    let directory = tempfile::tempdir().unwrap();
+    let settings = settings();
+    let mut writer =
+        Node::open_with_permanent_account_growth_v2(directory.path(), settings.clone()).unwrap();
+    let packet = make(&writer, settings.genesis(), vec![]);
+    admit(&mut writer, &packet);
+    drop(writer);
+    let observer = Node::open_growth_packet_observer(directory.path(), settings).unwrap();
+    let version: u64 = observer
+        .db
+        .query_row("PRAGMA data_version", [], |row| row.get(0))
+        .unwrap();
+    let mut changed = std::fs::OpenOptions::new()
+        .append(true)
+        .open(directory.path().join("native.sqlite"))
+        .unwrap();
+    changed.write_all(&[0]).unwrap();
+    let before = cold_observer_files(directory.path());
+    assert_eq!(
+        observer
+            .db
+            .query_row("PRAGMA data_version", [], |row| row.get::<_, u64>(0))
+            .unwrap(),
+        version,
+    );
+    assert_eq!(
+        observer
+            .growth_exact_packet_observation(&packet)
+            .unwrap_err()
+            .to_string(),
+        "GROWTH_OBSERVATION_FILE_CHANGED",
+    );
+    assert_eq!(cold_observer_files(directory.path()), before);
 }
 
 #[test]
@@ -1062,7 +1299,9 @@ fn native_growth_v2_work_failures_never_publish_or_reuse_success() {
             let error = node
                 .admit_growth_with_progress(bad, 100_000, &|point| {
                     match point {
-                        GrowthProgress::BeforeWork => {}
+                        GrowthProgress::BeforeContext
+                        | GrowthProgress::HeaderAncestor { .. }
+                        | GrowthProgress::BeforeWork => {}
                         GrowthProgress::Work(work) => {
                             replay.store(true, Ordering::Relaxed);
                             if work == pon_work::VerificationProgress::BeforeProduct {
@@ -1787,3 +2026,6 @@ fn native_growth_v2_cold_open_never_ignores_reference_budget_records() {
 
 #[path = "mandatory_capacity_tests.rs"]
 mod mandatory_capacity;
+
+#[path = "work_checked_tests.rs"]
+mod work_checked;

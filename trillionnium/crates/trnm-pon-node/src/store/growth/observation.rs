@@ -9,17 +9,57 @@ use serde_json::Value;
 const MEMBERSHIP_SQL_BUDGET: u64 = 8193;
 
 impl Node {
+    /// Fixed metadata only, under this existing cold-audited growth owner.
+    /// This opens no new connection and reads no working State or packet body.
+    pub fn growth_head_observation_with_progress(
+        &self,
+        progress: &(impl Fn(GrowthProgress) -> Result<()> + Sync),
+    ) -> Result<Value> {
+        progress(GrowthProgress::BeforeObservation)?;
+        self.growth_guard()?;
+        let tx = self.db.unchecked_transaction()?;
+        self.growth_guard()?;
+        let changes = self.db.total_changes();
+        let (tip, generation) = self.active()?;
+        let record = self.record(tip)?;
+        progress(GrowthProgress::ObservationReady)?;
+        self.growth_guard()?;
+        ensure(self.active()? == (tip, generation), "STALE_VIEW")?;
+        ensure(
+            self.db.total_changes() == changes,
+            "GROWTH_OBSERVATION_WRITE",
+        )
+        .map_err(Error::local_integrity)?;
+        let value = json!({
+            "schema":"pon-native-growth-head-observation-v1",
+            "packet_profile":"PNP2", "state_profile":limits::PROFILE,
+            "network":hex::encode(self.settings.network()),
+            "parameters":hex::encode(self.settings.parameters()),
+            "genesis":hex::encode(self.settings.genesis()),
+            "tip":hex::encode(tip), "height":record.height,
+            "chainwork_hex":hex::encode(record.work.bytes()),
+            "state_root":hex::encode(record.root), "generation":generation,
+            "local_target_only":true, "confirmation_authority":false,
+            "finality_authority":false, "execution_authority":false,
+            "production_activation":false
+        });
+        tx.rollback()?;
+        Ok(value)
+    }
+
     pub(super) fn growth_active_member(
         &self,
         mut current: Hash,
         block: Hash,
         block_height: u64,
         budget: u64,
+        progress: &(impl Fn(GrowthProgress) -> Result<()> + Sync),
     ) -> Result<(bool, u64)> {
         let mut used = 0;
         let mut expected: Option<(u64, consensus::Work)> = None;
         loop {
             ensure(used < budget, "GROWTH_MEMBERSHIP_BUDGET")?;
+            progress(GrowthProgress::MembershipRead { index: used })?;
             let record = self.record(current)?;
             used += 1;
             if let Some((height, work)) = expected {
@@ -38,6 +78,7 @@ impl Node {
                 return Ok((false, used));
             }
             ensure(used < budget, "GROWTH_MEMBERSHIP_BUDGET")?;
+            progress(GrowthProgress::MembershipRead { index: used })?;
             let header = self.growth_header(current)?.ledger;
             used += 1;
             ensure(
@@ -63,6 +104,18 @@ impl Node {
     /// in this already-open native growth owner. No admission, activation, or
     /// operation identity is created. An absent packet is only local absence.
     pub fn growth_exact_packet_observation(&self, packet: &GrowthPacket) -> Result<Value> {
+        self.growth_exact_packet_observation_with_progress(packet, &|_| Ok(()))
+    }
+
+    /// The original owner may supply its existing deadline/CPU checkpoint. The
+    /// complete retained W1/M06/proof checks remain inside one read snapshot.
+    /// This does not place an expensive observation on an unmetered read lane.
+    pub fn growth_exact_packet_observation_with_progress(
+        &self,
+        packet: &GrowthPacket,
+        progress: &(impl Fn(GrowthProgress) -> Result<()> + Sync),
+    ) -> Result<Value> {
+        progress(GrowthProgress::BeforeObservation)?;
         self.growth_guard()?;
         ensure(
             packet.header.ledger.network == self.settings.network()
@@ -94,7 +147,7 @@ impl Node {
             ensure(raw == expected, "DUPLICATE_CONTENT")?;
             // Reuse the original native W1, original-parent account witness,
             // signed M06 execution, receipt, commitment and retained delta checks.
-            self.growth_check_retained_transition(id, None)?;
+            self.growth_check_retained_transition_with_progress(id, None, progress)?;
             let record = self.record(id)?;
             let header = &packet.header.ledger;
             let parent = self.record(header.parent)?;
@@ -110,7 +163,7 @@ impl Node {
             )
             .map_err(Error::local_integrity)?;
             let (member, used) =
-                self.growth_active_member(tip, id, record.height, MEMBERSHIP_SQL_BUDGET)?;
+                self.growth_active_member(tip, id, record.height, MEMBERSHIP_SQL_BUDGET, progress)?;
             active_chain_member = member;
             active_membership_sql_lookups = Some(used);
             if member {
@@ -131,11 +184,13 @@ impl Node {
             false
         };
         let accepted_task = if stored_exact && active_chain_member {
+            progress(GrowthProgress::BeforeObservationTask)?;
             let working = self.growth_parent(tip)?.source.stored.working;
             self.accepted_task_from_working(&packet.transactions, &working)?
         } else {
             None
         };
+        progress(GrowthProgress::ObservationReady)?;
         self.growth_guard()?;
         ensure(self.active()? == (tip, generation), "STALE_VIEW")?;
         ensure(

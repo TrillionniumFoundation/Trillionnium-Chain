@@ -10,6 +10,11 @@ use serde_json::json;
 use std::cell::{Cell, RefCell};
 use trnm_protocol::pon_wire::hash;
 
+mod snapshot;
+
+/// Local temporary-copy cap only, not a history-work bound or storage reservation.
+pub const DEFAULT_GROWTH_REHEARSAL_SNAPSHOT_BYTE_LIMIT_V2: u64 = 8 * 1024 * 1024 * 1024;
+
 const SCHEMA: &str = "native-growth-migration-rehearsal-v2";
 const CHECKPOINT_DDL:&str="CREATE TABLE metadata(key TEXT PRIMARY KEY,value BLOB NOT NULL);CREATE TABLE archive_nodes(id BLOB PRIMARY KEY,data BLOB NOT NULL);CREATE TABLE growth_checkpoint(singleton INTEGER PRIMARY KEY CHECK(singleton=1),data BLOB NOT NULL);";
 const PENDING_REHEARSAL: &str = "growth-rehearsal.pending";
@@ -136,35 +141,22 @@ fn candidate_settings(source: &Settings, binding: &GrowthProfileBindingV2) -> Se
     candidate.genesis = binding.candidate_genesis;
     candidate
 }
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(super) enum FileReadProgress {
+    BeforeOpen,
+    Observed { bytes: u64 },
+    Consumed { bytes: u64 },
+}
 fn file_hash(path: &Path) -> Result<Hash> {
-    plain(path)?;
-    let mut f = OpenOptions::new()
-        .read(true)
-        .custom_flags(libc::O_NOFOLLOW | libc::O_CLOEXEC)
-        .open(path)?;
-    let before = f.metadata()?;
-    ensure(
-        before.is_file() && before.nlink() == 1,
-        "GROWTH_REHEARSAL_FILE",
-    )?;
-    let mut digest = Sha256::new();
-    let mut buffer = [0u8; 65_536];
-    loop {
-        let n = f.read(&mut buffer)?;
-        if n == 0 {
-            break;
-        }
-        digest.update(&buffer[..n]);
-    }
-    let after = f.metadata()?;
-    let visible = fs::symlink_metadata(path)?;
-    ensure(
-        (before.dev(), before.ino(), before.len()) == (after.dev(), after.ino(), after.len())
-            && (visible.dev(), visible.ino(), visible.len())
-                == (before.dev(), before.ino(), before.len()),
-        "GROWTH_REHEARSAL_FILE_CHANGED",
-    )?;
-    Ok(digest.finalize().into())
+    file_hash_with_progress(path, &mut |_| Ok(()))
+}
+// Private deterministic file-replacement/read boundary; production supplies no
+// callback effects. Tests exercise this same path instead of a copy of the hash.
+pub(super) fn file_hash_with_progress(
+    path: &Path,
+    progress: &mut impl FnMut(FileReadProgress) -> Result<()>,
+) -> Result<Hash> {
+    snapshot::file_hash_with_progress(path, progress)
 }
 fn optional_hash(path: &Path) -> Result<Option<Hash>> {
     match fs::symlink_metadata(path) {
@@ -286,8 +278,30 @@ fn verify_source(
     Ok((blocks, transactions))
 }
 
-/// Private verifier owner. It opens archived SQLite with READ_ONLY and never
-/// invokes native initialization, recovery, activation, signing or external work.
+fn lock_archive_owner(directory: &Path) -> Result<File> {
+    plain(&directory.join("owner.lock"))?;
+    let owner = OpenOptions::new()
+        .read(true)
+        .custom_flags(libc::O_NOFOLLOW | libc::O_NONBLOCK | libc::O_CLOEXEC)
+        .open(directory.join("owner.lock"))?;
+    FileExt::try_lock_shared(&owner).map_err(|_| Error::from("WRITER_BUSY"))?;
+    check_archive_owner(directory, &owner)?;
+    Ok(owner)
+}
+fn check_archive_owner(directory: &Path, owner: &File) -> Result<()> {
+    plain(&directory.join("owner.lock"))?;
+    let held = owner.metadata()?;
+    let named = fs::symlink_metadata(directory.join("owner.lock"))?;
+    ensure(
+        held.is_file()
+            && held.nlink() == 1
+            && (held.dev(), held.ino()) == (named.dev(), named.ino()),
+        "GROWTH_REHEARSAL_OWNER_CHANGED",
+    )
+}
+
+/// Private verifier owner. Only a receipt-bound private copy reaches SQLite;
+/// it never invokes native initialization, recovery, signing or external work.
 fn read_only_archive(directory: &Path, settings: Settings, backend: StateBackend) -> Result<Node> {
     ensure(
         fs::symlink_metadata(directory)?.is_dir(),
@@ -299,11 +313,7 @@ fn read_only_archive(directory: &Path, settings: Settings, backend: StateBackend
     for name in ["native.sqlite", "owner.lock"] {
         plain(&directory.join(name))?;
     }
-    let owner = OpenOptions::new()
-        .read(true)
-        .custom_flags(libc::O_NOFOLLOW | libc::O_CLOEXEC)
-        .open(directory.join("owner.lock"))?;
-    FileExt::try_lock_shared(&owner).map_err(|_| Error::from("WRITER_BUSY"))?;
+    let owner = lock_archive_owner(&directory)?;
     let db = Connection::open_with_flags(
         directory.join("native.sqlite"),
         OpenFlags::SQLITE_OPEN_READ_ONLY | OpenFlags::SQLITE_OPEN_NO_MUTEX,
@@ -315,6 +325,7 @@ fn read_only_archive(directory: &Path, settings: Settings, backend: StateBackend
     Ok(Node {
         db,
         owner,
+        growth_observer_snapshot: None,
         directory,
         directory_id: (metadata.dev(), metadata.ino()),
         database_id: (dm.dev(), dm.ino()),
@@ -344,19 +355,14 @@ fn read_only_archive(directory: &Path, settings: Settings, backend: StateBackend
     })
 }
 fn read_receipt(directory: &Path) -> Result<GrowthRehearsalReceiptV2> {
+    read_receipt_with_progress(directory, &mut |_| Ok(()))
+}
+pub(super) fn read_receipt_with_progress(
+    directory: &Path,
+    progress: &mut impl FnMut(FileReadProgress) -> Result<()>,
+) -> Result<GrowthRehearsalReceiptV2> {
     let path = directory.join(REHEARSAL_RECEIPT);
-    plain(&path)?;
-    ensure(
-        fs::metadata(&path)?.len() <= 1_048_576,
-        "GROWTH_REHEARSAL_RECEIPT_LIMIT",
-    )?;
-    let file = OpenOptions::new()
-        .read(true)
-        .custom_flags(libc::O_NOFOLLOW | libc::O_CLOEXEC)
-        .open(path)?;
-    let mut bytes = Vec::new();
-    file.take(1_048_577).read_to_end(&mut bytes)?;
-    ensure(bytes.len() <= 1_048_576, "GROWTH_REHEARSAL_RECEIPT_LIMIT")?;
+    let bytes = snapshot::read_receipt_bytes_with_progress(&path, progress)?;
     let receipt: GrowthRehearsalReceiptV2 = serde_json::from_slice(&bytes)?;
     ensure(
         canonical(&receipt)? == bytes
@@ -377,6 +383,8 @@ fn verify_directory(
     directory: &Path,
     source_settings: Settings,
     allow_pending: bool,
+    snapshot_byte_limit: u64,
+    after_snapshot: impl FnOnce(&Path) -> Result<()>,
 ) -> Result<GrowthRehearsalReceiptV2> {
     let directory_meta = fs::symlink_metadata(directory)?;
     ensure(directory_meta.is_dir(), "GROWTH_REHEARSAL_DIRECTORY")?;
@@ -407,10 +415,8 @@ fn verify_directory(
     )?;
     let source_path = directory.join("source");
     let native_path = directory.join("native.sqlite");
-    ensure(
-        fs::symlink_metadata(&source_path)?.is_dir(),
-        "GROWTH_REHEARSAL_DIRECTORY",
-    )?;
+    let source_meta = fs::symlink_metadata(&source_path)?;
+    ensure(source_meta.is_dir(), "GROWTH_REHEARSAL_DIRECTORY")?;
     let source_names: BTreeSet<_> = fs::read_dir(&source_path)?
         .map(|e| e.map(|e| e.file_name()))
         .collect::<std::result::Result<_, _>>()?;
@@ -425,15 +431,58 @@ fn verify_directory(
         source_names == expected_source,
         "GROWTH_REHEARSAL_DIRECTORY",
     )?;
-    let before_source = file_hash(&source_path.join("native.sqlite"))?;
-    let before_checkpoint = file_hash(&native_path)?;
+    let original_owner = lock_archive_owner(&source_path)?;
     ensure(
-        before_source == receipt.source_archive_sha256
-            && before_checkpoint == receipt.checkpoint_sha256
-            && optional_hash(&source_path.join("authenticated-migration.json"))?
-                == receipt.source_receipt_sha256,
+        optional_hash(&source_path.join("authenticated-migration.json"))?
+            == receipt.source_receipt_sha256,
         "GROWTH_REHEARSAL_FILE_DIGEST",
     )?;
+    snapshot::with_snapshot(
+        directory,
+        receipt.source_archive_sha256,
+        receipt.checkpoint_sha256,
+        snapshot_byte_limit,
+        |private| {
+            after_snapshot(private)?;
+            verify_snapshot(private, source_settings, &receipt)?;
+            ensure(
+                file_hash(&source_path.join("native.sqlite"))? == receipt.source_archive_sha256
+                    && file_hash(&native_path)? == receipt.checkpoint_sha256
+                    && optional_hash(&source_path.join("authenticated-migration.json"))?
+                        == receipt.source_receipt_sha256,
+                "GROWTH_REHEARSAL_FILE_CHANGED",
+            )?;
+            let after = fs::symlink_metadata(directory)?;
+            let source_after = fs::symlink_metadata(&source_path)?;
+            let names: BTreeSet<_> = fs::read_dir(directory)?
+                .map(|e| e.map(|e| e.file_name()))
+                .collect::<std::result::Result<_, _>>()?;
+            let source_names: BTreeSet<_> = fs::read_dir(&source_path)?
+                .map(|e| e.map(|e| e.file_name()))
+                .collect::<std::result::Result<_, _>>()?;
+            ensure(
+                after.is_dir()
+                    && source_after.is_dir()
+                    && (directory_meta.dev(), directory_meta.ino()) == (after.dev(), after.ino())
+                    && (source_meta.dev(), source_meta.ino())
+                        == (source_after.dev(), source_after.ino())
+                    && names == expected
+                    && source_names == expected_source,
+                "GROWTH_REHEARSAL_DIRECTORY",
+            )?;
+            check_archive_owner(&source_path, &original_owner)?;
+            Ok(receipt)
+        },
+    )
+}
+
+fn verify_snapshot(
+    directory: &Path,
+    source_settings: Settings,
+    receipt: &GrowthRehearsalReceiptV2,
+) -> Result<()> {
+    let source_path = directory.join("source");
+    let native_path = directory.join("native.sqlite");
     let source = read_only_archive(
         &source_path,
         source_settings.clone(),
@@ -542,17 +591,7 @@ fn verify_directory(
     )?;
     checkpoint_read.rollback()?;
     snapshot.rollback()?;
-    ensure(
-        file_hash(&source_path.join("native.sqlite"))? == before_source
-            && file_hash(&native_path)? == before_checkpoint,
-        "GROWTH_REHEARSAL_FILE_CHANGED",
-    )?;
-    let after = fs::symlink_metadata(directory)?;
-    ensure(
-        (directory_meta.dev(), directory_meta.ino()) == (after.dev(), after.ino()),
-        "GROWTH_REHEARSAL_DIRECTORY",
-    )?;
-    Ok(receipt)
+    Ok(())
 }
 
 /// Independently reopen and replay the archived old-profile history, rebuild the
@@ -562,7 +601,44 @@ pub fn verify_growth_rehearsal_v2(
     source_settings: Settings,
     directory: &Path,
 ) -> Result<GrowthRehearsalReceiptV2> {
-    verify_directory(directory, source_settings, false)
+    verify_growth_rehearsal_v2_with_snapshot_byte_limit(
+        source_settings,
+        directory,
+        DEFAULT_GROWTH_REHEARSAL_SNAPSHOT_BYTE_LIMIT_V2,
+    )
+}
+
+/// Choose a local cap for the combined source/checkpoint temporary copies.
+/// This bounds copied bytes only, not retained history, SQL memory or replay CPU.
+/// Input archives are never opened by SQLite and no WAL/journal is imported.
+pub fn verify_growth_rehearsal_v2_with_snapshot_byte_limit(
+    source_settings: Settings,
+    directory: &Path,
+    snapshot_byte_limit: u64,
+) -> Result<GrowthRehearsalReceiptV2> {
+    verify_directory(
+        directory,
+        source_settings,
+        false,
+        snapshot_byte_limit,
+        |_| Ok(()),
+    )
+}
+
+#[cfg(test)]
+pub(super) fn verify_with_snapshot_hook(
+    source_settings: Settings,
+    directory: &Path,
+    snapshot_byte_limit: u64,
+    after_snapshot: impl FnOnce(&Path) -> Result<()>,
+) -> Result<GrowthRehearsalReceiptV2> {
+    verify_directory(
+        directory,
+        source_settings,
+        false,
+        snapshot_byte_limit,
+        after_snapshot,
+    )
 }
 impl Node {
     pub fn rehearse_growth_migration_v2(
@@ -770,7 +846,13 @@ impl Node {
         progress(GrowthRehearsalProgressV2::BeforePublish)?;
         stage_identity(&parent_directory, &parent, &stage_directory, &stage)?;
         ensure(
-            verify_directory(&stage, self.settings.clone(), true)? == receipt,
+            verify_directory(
+                &stage,
+                self.settings.clone(),
+                true,
+                DEFAULT_GROWTH_REHEARSAL_SNAPSHOT_BYTE_LIMIT_V2,
+                |_| Ok(()),
+            )? == receipt,
             "GROWTH_REHEARSAL_READBACK",
         )?;
         self.namespace()?;

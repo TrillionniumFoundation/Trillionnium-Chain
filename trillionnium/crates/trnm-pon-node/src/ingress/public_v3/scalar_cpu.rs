@@ -503,6 +503,20 @@ impl LiveRequestCpu {
         // Hashing the canonical complete packet is paid by this same original
         // thread interval; no caller-supplied identity can claim priority.
         let identity = checked.completion_identity()?;
+        self.promote_verified_identity(identity)
+    }
+    /// The growth token owns the complete PGH2/PNP2 W1 relation. It shares this
+    /// original request, deadline and fixed completion-identity set.
+    pub(super) fn growth_work_verified(
+        &self,
+        checked: &crate::store::growth::GrowthWorkCheckedPacket,
+    ) -> Result<()> {
+        self.checkpoint()?;
+        let identity = checked.completion_identity()?;
+        self.promote_verified_identity(identity)
+    }
+    // Only the two typed full-work entrypoints above may produce this identity.
+    fn promote_verified_identity(&self, identity: [u8; 32]) -> Result<()> {
         self.checkpoint()?;
         let mut state = self
             .state

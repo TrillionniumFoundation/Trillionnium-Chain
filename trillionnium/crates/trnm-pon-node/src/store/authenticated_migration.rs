@@ -35,7 +35,9 @@ mod growth_rehearsal;
 #[path = "growth_reservation_io.rs"]
 mod growth_reservation_io;
 pub use growth_rehearsal::{
-    verify_growth_rehearsal_v2, GrowthRehearsalProgressV2, GrowthRehearsalReceiptV2,
+    verify_growth_rehearsal_v2, verify_growth_rehearsal_v2_with_snapshot_byte_limit,
+    GrowthRehearsalProgressV2, GrowthRehearsalReceiptV2,
+    DEFAULT_GROWTH_REHEARSAL_SNAPSHOT_BYTE_LIMIT_V2,
 };
 
 /// Cancellation is checked before any target publication and within proof,

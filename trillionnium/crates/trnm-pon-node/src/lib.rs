@@ -28,9 +28,10 @@ mod store;
 pub use error::{Error, ErrorCode, ErrorKind};
 use serde_json::{json, Value};
 pub use store::authenticated_migration::{
-    verify_growth_rehearsal_v2, AuthenticatedMigrationProgress, AuthenticatedMigrationReceipt,
-    GrowthMigrationPlanV2, GrowthRehearsalProgressV2, GrowthRehearsalReceiptV2,
-    GrowthStorageReservationV2, PreservedTable,
+    verify_growth_rehearsal_v2, verify_growth_rehearsal_v2_with_snapshot_byte_limit,
+    AuthenticatedMigrationProgress, AuthenticatedMigrationReceipt, GrowthMigrationPlanV2,
+    GrowthRehearsalProgressV2, GrowthRehearsalReceiptV2, GrowthStorageReservationV2,
+    PreservedTable, DEFAULT_GROWTH_REHEARSAL_SNAPSHOT_BYTE_LIMIT_V2,
 };
 pub use store::capacity_observation::CapacityObservation;
 pub use store::evaluation_observation::{EvaluationAnchor, EvaluationObservation, EvaluationPhase};
