@@ -1851,7 +1851,7 @@ Consequently this is only a fresh namespace/subsequent-charge boundary; O's
 complete RSS, original host baseline funding and physical resource return
 remain open. Compatible ancestor ceilings are not reservations or CPU service.
 
-The twenty-eight local controls retain all twenty-two preceding controls and use real bounded transport subprocesses, the original
+The twenty-nine local controls retain all twenty-two preceding controls and use real bounded transport subprocesses, the original
 source-built native close-and-clear slots and
 ordinary temporary-FD layout fixtures with a mock manager. The retained-owner
 regression adds an immutable copy of every native slot value and signature;
@@ -1896,7 +1896,9 @@ held U identity; it cannot be copied/serialized or used by another owner. The
 consume operation rechecks the actual facts, returns no authority and transitions
 to LEAF_PROOF_CONSUMED; any ambiguity becomes sticky UNKNOWN_RETAINED with the
 original slots held. It creates no child, operation grant, new owner or journal.
-All old22 plus six new ordinary-FD/mock-manager controls pass locally; none is
+Factory owner/generation faults close before effects; cleanup failure returns
+the same owner through `KernelOwnedCloseRequired`. All old22 plus seven new
+ordinary-FD/mock-manager controls pass locally; none is
 native admission or resource-return qualification.
 
 The existing PN4 dependency and acceptance sequence is:

@@ -565,11 +565,18 @@ def prepare_host_scope():
 def prepare_fresh_host_leaf():
     """Opt-in staged preparation on the same owner; no caller pristine claims."""
     owner = prepare_host_scope()
-    owner._owner()
-    kernel.require(type(owner) is HostScopeAdmission and not owner._started and
-        not owner._failed and not owner._closed and getattr(owner, '_leaf_generation', None) is None,
-        'host-leaf-fresh-original-owner-required')
-    owner._leaf_generation = uuid.uuid4().hex
-    owner._leaf_phase = 'PREPARED'
-    owner._leaf_fact = None
-    return owner
+    try:
+        owner._owner()
+        kernel.require(type(owner) is HostScopeAdmission and not owner._started and
+            not owner._failed and not owner._closed and getattr(owner, '_leaf_generation', None) is None,
+            'host-leaf-fresh-original-owner-required')
+        owner._leaf_generation = uuid.uuid4().hex
+        owner._leaf_phase = 'PREPARED'
+        owner._leaf_fact = None
+        return owner
+    except BaseException:
+        try:
+            owner.close_before_effect()
+        except BaseException:
+            raise kernel.KernelOwnedCloseRequired(owner)
+        raise

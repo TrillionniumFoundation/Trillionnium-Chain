@@ -378,7 +378,7 @@ The original owner is retained before any request; ambiguous or failed requests
 cannot retry, stop/delete the scope or close its owned FDs as a successful
 retirement. This remains a trusted preparatory interface, without C birth,
 whole-U terminal observation or money authority. The
-[twenty-eight controls](test_llm_runtime_host_scope.py) retain all twenty-two preceding controls and exercise bounded real
+[twenty-nine controls](test_llm_runtime_host_scope.py) retain all twenty-two preceding controls and exercise bounded real
 transport and ordinary-FD/mock-manager layouts, including immutable retained-slot
 comparison under controlled bookkeeping mutations. They do not establish native
 scope admission.
@@ -404,7 +404,9 @@ U. Its private fact is bound to that owner/source/generation/original identities
 not caller claims, and refuses copying/serialization. `consume_fresh_leaf(fact)`
 rechecks once, returns None and retains the consumed fact; it creates no C/A or
 authority. Unknown outcomes retain the original slots with no second admission.
-Six added ordinary-file/mock-manager controls are contract evidence only.
+Factory owner/generation faults close before effects; a cleanup fault returns the
+same original cap through `KernelOwnedCloseRequired`. Seven added ordinary-file/
+mock-manager controls are contract evidence only.
 The existing PN4 plan owns the next C/A birth, authoritative exits, ordered
 retirement and actual zero-charge/dying-free terminal requirements. They remain
 OPEN. The original eight-second fact deadline is unchanged; blocking removal

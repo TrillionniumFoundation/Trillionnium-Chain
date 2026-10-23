@@ -72,10 +72,10 @@ jobs:
           import importlib, json, sys, unittest
           sys.path.insert(0, 'scripts')
           suite = unittest.defaultTestLoader.loadTestsFromModule(importlib.import_module('test_llm_runtime_host_scope'))
-          if suite.countTestCases() != 28:
-              raise RuntimeError('fresh host contract requires all 28 controls')
+          if suite.countTestCases() != 29:
+              raise RuntimeError('fresh host contract requires all 29 controls')
           result = unittest.TextTestRunner(verbosity=2).run(suite)
-          passed = result.wasSuccessful() and result.testsRun == 28 and not result.skipped and not result.expectedFailures
+          passed = result.wasSuccessful() and result.testsRun == 29 and not result.skipped and not result.expectedFailures
           print(json.dumps(dict(scope='ordinary FD and bounded transport; native scope admission NOT_RUN', executed=result.testsRun, skipped=len(result.skipped), passed=passed)))
           raise SystemExit(0 if passed else 1)
           PY

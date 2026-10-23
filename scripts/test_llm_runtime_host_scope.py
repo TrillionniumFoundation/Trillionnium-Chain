@@ -527,6 +527,37 @@ class HostScopeTests(unittest.TestCase):
         self.assertEqual((root/'memory.peak').read_text(), '258048\n')
 
 
+    def test_leaf_factory_failure_closes_or_returns_same_real_owned_fd_slots(self):
+        for failure in ('owner', 'generation', 'cleanup'):
+            with self.subTest(failure=failure):
+                cap, _, _ = self.fixture()
+                fd = cap._fds[0][0][1]
+                if failure != 'generation':
+                    cap._owner.side_effect = InterruptedError('injected leaf owner check')
+                if failure == 'cleanup':
+                    release = cap._native.release_owned
+                    def uncertain_close(slot):
+                        release(slot)  # Real native close-and-clear before injected error.
+                        slot[0] = 5
+                    cap._native.release_owned = uncertain_close
+                with patch.object(host, 'prepare_host_scope', return_value=cap), \
+                     patch.object(host.uuid, 'uuid4', side_effect=OSError('injected generation')):
+                    expected = kernel.KernelOwnedCloseRequired if failure == 'cleanup' else OSError
+                    with self.assertRaises(expected) as caught: host.prepare_fresh_host_leaf()
+                cap._manager.call.assert_not_called()
+                self.assertFalse(cap._started)
+                with self.assertRaises(OSError): os.fstat(fd)
+                if failure == 'cleanup':
+                    self.assertIs(caught.exception.capability, cap)
+                    self.assertEqual(tuple(cap._fds[0][0]), (5, -1, -1, -1))
+                    self.assertFalse(cap._closed)
+                    cap._native.release_owned = release
+                    cap._fds[0][0][0] = 0  # Test-only cleanup of injected status.
+                    cap.close_before_effect()
+                self.assertTrue(cap._closed)
+                self.assertEqual(cap._fds, [])
+
+
 if __name__ == '__main__':
     suite = unittest.defaultTestLoader.loadTestsFromTestCase(HostScopeTests)
     result = unittest.TextTestRunner(verbosity=2).run(suite)
