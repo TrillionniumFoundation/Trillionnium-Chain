@@ -9,6 +9,7 @@ An uncertain effect retains this original object/FDs; it is never rolled back
 by deleting groups, stopping a scope, resetting counters or moving O back.
 """
 import ctypes
+import json
 import os
 from pathlib import Path
 import re
@@ -96,6 +97,26 @@ def _ancestor_allows(values):
         _decimal(parts[0]+'\n') >= 5*period), 'host-ancestor-insufficient-cpu-ceiling')
 
 
+def _pristine_message(failure):
+    role, field, raw, reason, unit, operation, fd, identity = failure
+    data = {'schema': 'host-pristine-first-read-v1', 'role': role, 'field': field,
+        'original_reason': reason, 'unit': unit, 'operation': operation,
+        'stored_fd': fd, 'stored_identity': identity, 'raw': raw,
+        'raw_characters': len(raw) if raw is not None else None,
+        'raw_sha256_utf8': kernel._digest(raw.encode('utf-8')) if raw is not None else None,
+        'raw_truncated_in_message': False, 'read_again': False}
+    prefix = reason+'; host-pristine-diagnostic='
+    message = prefix+json.dumps(data, sort_keys=True, separators=(',', ':'))
+    # The original native probe exports at most4096 exception characters.
+    # Keep identity/length/hash first-class and mark any omitted raw suffix;
+    # failure itself retains the complete first returned <=65536-character raw.
+    while len(message) > 3900 and data['raw']:
+        data['raw'] = data['raw'][:len(data['raw'])//2]
+        data['raw_truncated_in_message'] = True
+        message = prefix+json.dumps(data, sort_keys=True, separators=(',', ':'))
+    return message
+
+
 class HostScopeAdmission:
     """One original namespace request. Call admit once; retain it before any effect.
 
@@ -108,6 +129,7 @@ class HostScopeAdmission:
         self._pid, self._thread = os.getpid(), threading.current_thread()
         self._fds, self._groups, self._namespaces, self._ancestors = [], {}, {}, []
         self._started = self._ready = self._failed = self._closed = False
+        self._first_pristine_failure = None
         self._unit = 'trnm-host-'+uuid.uuid4().hex+'.scope'
         self._operation_name = 'operation-'+uuid.uuid4().hex
         self._source = _source()
@@ -366,18 +388,34 @@ class HostScopeAdmission:
                 and frozenset(controllers) == (_CONTROLLERS if role in ('scope', 'host', 'operation')
                                                else frozenset()), 'host-subtree-controllers')
             if role not in ('scope', 'host', 'observer'):
-                kernel.require(kernel._text(fd, 'cgroup.procs') == '' and
-                    _decimal(kernel._text(fd, 'pids.current')) == 0 and
-                    _fields(kernel._text(fd, 'cgroup.events')).get('populated') == 0 and
-                    _decimal(kernel._text(fd, 'memory.current')) == 0 and
-                    _decimal(kernel._text(fd, 'memory.swap.current')) == 0 and
-                    _decimal(kernel._text(fd, 'memory.peak')) == 0 and
-                    _fields(kernel._text(fd, 'cpu.stat')).get('usage_usec') == 0,
-                    'host-operation-not-pristine')
+                self._require_pristine(role, fd)
         kernel.require(kernel._text(scope, 'cgroup.procs') == '' and
             kernel._text(host, 'cgroup.procs') == '' and
             kernel._text(self._groups['observer'][2], 'cgroup.procs') == str(self._pid)+'\n',
             'host-original-only-observer')
+
+    def _require_pristine(self, role, fd):
+        field, raw = None, None
+        def text(name):
+            nonlocal field, raw
+            field, raw = name, None
+            raw = kernel._text(fd, name)  # The original guard's one read.
+            return raw
+        try:
+            kernel.require(text('cgroup.procs') == '' and
+                _decimal(text('pids.current')) == 0 and
+                _fields(text('cgroup.events')).get('populated') == 0 and
+                _decimal(text('memory.current')) == 0 and
+                _decimal(text('memory.swap.current')) == 0 and
+                _decimal(text('memory.peak')) == 0 and
+                _fields(text('cpu.stat')).get('usage_usec') == 0,
+                'host-operation-not-pristine')
+        except kernel.KernelBudgetError as error:
+            if getattr(self, '_first_pristine_failure', None) is None:
+                identity = self._groups[role][3]
+                self._first_pristine_failure = (role, field, raw, str(error),
+                    self._unit, self._operation_name, fd, identity)
+            raise kernel.KernelBudgetError(_pristine_message(self._first_pristine_failure)) from error
 
     def verify(self):
         with self._lock:

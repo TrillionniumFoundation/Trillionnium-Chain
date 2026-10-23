@@ -4,6 +4,7 @@ The full layout fixture uses ordinary temporary files and a mock manager. Its
 positive path is a contract check, never evidence of native scope admission.
 """
 import copy
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -307,6 +308,110 @@ class HostScopeTests(unittest.TestCase):
         cap._fds[0][0][0] = 0  # Test-only release after preserving the injected error.
         cap.close_before_effect()
         self.assertTrue(cap._closed)
+
+    def pristine_fixture(self, role='operation'):
+        # Ordinary files/FD only, with no constructor, manager or native grant.
+        temporary = tempfile.TemporaryDirectory()
+        self.addCleanup(temporary.cleanup)
+        root = Path(temporary.name)
+        fields = [('cgroup.procs', ''), ('pids.current', '0\n'),
+            ('cgroup.events', 'populated 0\nfrozen 0\n'), ('memory.current', '0\n'),
+            ('memory.swap.current', '0\n'), ('memory.peak', '0\n'),
+            ('cpu.stat', 'usage_usec 0\nnr_periods 0\n')]
+        for name, raw in fields: (root/name).write_text(raw)
+        fd = os.open(root, os.O_RDONLY | os.O_DIRECTORY | os.O_CLOEXEC)
+        self.addCleanup(os.close, fd)
+        cap = object.__new__(host.HostScopeAdmission)
+        cap._unit, cap._operation_name = 'fixture-only.scope', 'fixture-operation'
+        cap._first_pristine_failure = None
+        cap._groups = {role: (None, role, fd, kernel.proc._signature(fd))}
+        return cap, root, fd, [name for name, _ in fields]
+
+    def test_pristine_real_counters_keep_original_short_circuit_read_order(self):
+        failures = ['123\n', '1\n', 'populated 1\nfrozen 0\n',
+            '4096\n', '1\n', '1\n', 'usage_usec 1\n']
+        for role in ('operation', 'controller', 'aggregate'):
+            for index, raw in enumerate(failures):
+                with self.subTest(role=role, counter=index):
+                    cap, root, fd, order = self.pristine_fixture(role)
+                    name = order[index]; (root/name).write_text(raw)
+                    reads, original = [], kernel._text
+                    def text(directory, field):
+                        reads.append(field)
+                        return original(directory, field)
+                    with patch.object(kernel, '_text', side_effect=text):
+                        with self.assertRaises(kernel.KernelBudgetError) as caught:
+                            cap._require_pristine(role, fd)
+                    self.assertEqual(reads, order[:index+1])
+                    self.assertTrue(str(caught.exception).startswith('host-operation-not-pristine;'))
+                    data = json.loads(str(caught.exception).split('host-pristine-diagnostic=', 1)[1])
+                    self.assertEqual((data['role'], data['field'], data['raw']), (role, name, raw))
+                    self.assertFalse(data['raw_truncated_in_message'])
+                    self.assertFalse(data['read_again'])
+                    self.assertEqual((root/name).read_text(), raw)
+        cap, _, fd, order = self.pristine_fixture()
+        with patch.object(kernel, '_text', wraps=kernel._text) as text:
+            cap._require_pristine('operation', fd)
+        self.assertEqual([call.args[1] for call in text.call_args_list], order)
+        self.assertIsNone(cap._first_pristine_failure)
+
+    def test_pristine_first_raw_survives_file_change_without_diagnostic_reread(self):
+        cap, root, fd, order = self.pristine_fixture('aggregate')
+        (root/'memory.current').write_text('4096\n')
+        original, reads = kernel._text, []
+        def text(directory, name):
+            reads.append(name)
+            raw = original(directory, name)
+            if name == 'memory.current': (root/name).write_text('8192\n')
+            return raw
+        with patch.object(kernel, '_text', side_effect=text):
+            with self.assertRaises(kernel.KernelBudgetError) as caught:
+                cap._require_pristine('aggregate', fd)
+        retained = cap._first_pristine_failure
+        self.assertEqual(reads, order[:4])
+        self.assertEqual(retained[2], '4096\n')
+        self.assertEqual((root/'memory.current').read_text(), '8192\n')
+        with patch.object(kernel, '_text', side_effect=AssertionError('diagnostics must not read')):
+            data = json.loads(host._pristine_message(retained).split('host-pristine-diagnostic=', 1)[1])
+        self.assertEqual(data['raw'], '4096\n')
+        self.assertIs(cap._first_pristine_failure, retained)
+        self.assertEqual(str(caught.exception), host._pristine_message(retained))
+
+    def test_pristine_parse_reason_and_long_raw_remain_explicit_and_bounded(self):
+        for name, raw, reason in [('pids.current', '01\n', 'host-counter-format'),
+            ('cgroup.procs', 'x'*65536, 'host-operation-not-pristine')]:
+            with self.subTest(name=name):
+                cap, root, fd, order = self.pristine_fixture()
+                (root/name).write_text(raw)
+                with patch.object(kernel, '_text', wraps=kernel._text) as text:
+                    with self.assertRaises(kernel.KernelBudgetError) as caught:
+                        cap._require_pristine('operation', fd)
+                message = str(caught.exception)
+                data = json.loads(message.split('host-pristine-diagnostic=', 1)[1])
+                self.assertEqual(data['original_reason'], reason)
+                self.assertEqual(data['field'], name)
+                self.assertEqual(data['raw_sha256_utf8'], hashlib.sha256(raw.encode()).hexdigest())
+                self.assertEqual(cap._first_pristine_failure[2], raw)
+                self.assertLessEqual(len(message), 3900)
+                self.assertEqual(data['raw_truncated_in_message'], len(raw) == 65536)
+                self.assertEqual([call.args[1] for call in text.call_args_list], order[:order.index(name)+1])
+
+    def test_existing_layout_failure_exports_exact_counter_before_sticky_refusal(self):
+        # Actual ordinary-file mutation through original verify path; no unit.
+        cap, paths, _ = self.fixture(); cap.admit()
+        original_slots = owned_slot_snapshot(cap)
+        (paths['operation']/'memory.current').write_text('4096\n')
+        with self.assertRaises(kernel.KernelBudgetError) as caught: cap.verify()
+        message = str(caught.exception)
+        self.assertIn('host-pristine-diagnostic=', message)
+        data = json.loads(message.split('host-pristine-diagnostic=', 1)[1])
+        self.assertEqual((data['role'], data['field'], data['raw']),
+                         ('operation', 'memory.current', '4096\n'))
+        self.assertEqual(owned_slot_snapshot(cap), original_slots)
+        self.assertTrue(cap._failed)
+        self.assertFalse(cap._ready)
+        with self.assertRaisesRegex(ValueError, 'sticky-failure'): cap.verify()
+        self.assertEqual((paths['operation']/'memory.current').read_text(), '4096\n')
 
 
 if __name__ == '__main__':

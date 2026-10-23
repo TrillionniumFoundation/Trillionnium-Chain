@@ -378,10 +378,21 @@ The original owner is retained before any request; ambiguous or failed requests
 cannot retry, stop/delete the scope or close its owned FDs as a successful
 retirement. This remains a trusted preparatory interface, without C birth,
 whole-U terminal observation or money authority. The
-[eighteen controls](test_llm_runtime_host_scope.py) exercise bounded real
+[twenty-two controls](test_llm_runtime_host_scope.py) retain all eighteen original controls and exercise bounded real
 transport and ordinary-FD/mock-manager layouts, including immutable retained-slot
 comparison under controlled bookkeeping mutations. They do not establish native
 scope admission.
+A separate [exact378 native attempt](../evidence/pon-upgrade-implementation-20261018/native-rounds/host-namespace-pristine-failure-20261023/SCOPE.md)
+failed `host-operation-not-pristine` and remains UNKNOWN. Its original
+job/invocation/owner and stored groups/FDs were retained; neither the failing
+role/counter nor resource return was proved. The diagnostic successor preserves
+each original empty/zero condition and short-circuit read order, recording the
+first returned role/field/raw without rereading. Its bounded error message marks
+any raw truncation and includes the complete-value length/hash; the immutable
+first-failure tuple keeps the full bounded raw. Actual exit status remains
+UNKNOWN, planned exit is only intent, and no diagnostic test closes pristine or
+authorizes reuse of the old cap/unit. A new native experiment requires separate
+independent review and GO under the same PN4 plan.
 Pre-migration O memory stays charged to its original cgroup; the new ceilings
 therefore do not bound all O RSS or settle its original host baseline.
 

@@ -1851,14 +1851,30 @@ Consequently this is only a fresh namespace/subsequent-charge boundary; O's
 complete RSS, original host baseline funding and physical resource return
 remain open. Compatible ancestor ceilings are not reservations or CPU service.
 
-The eighteen local controls use real bounded transport subprocesses, the original
+The twenty-two local controls retain all eighteen original controls and use real bounded transport subprocesses, the original
 source-built native close-and-clear slots and
 ordinary temporary-FD layout fixtures with a mock manager. The retained-owner
 regression adds an immutable copy of every native slot value and signature;
 controlled bookkeeping mutations around real owned FDs must be detected without
 changing the original assertions. A separate read-only
 query checked real `busctl` method/property response shapes against the existing
-manager. No native scope was created or admitted. Native S/H qualification,
+manager. Those controls create no native scope. A separate
+[first native attempt on exact378](../../evidence/pon-upgrade-implementation-20261018/native-rounds/host-namespace-pristine-failure-20261023/SCOPE.md)
+reached `host-operation-not-pristine` in its one original admission and remains
+UNKNOWN. Its twelve exports preserve original owner/job/invocation, six stored
+group identities and sixteen owned slots; the old unit/cap is never reused.
+The old guard did not identify the failing role/counter, so no charge or kernel
+bookkeeping is exempted and no root cause is asserted. The diagnostic successor
+captures role/field and the same first returned raw value without rereading,
+reordering or weakening any original short-circuit empty/zero predicate.
+An immutable first-failure tuple retains the complete bounded raw; exception
+messages expose its length/hash and explicitly mark any raw suffix omitted to
+fit the existing probe's4096-character diagnostic limit. Ordinary-file counter,
+read-order, first-value and sticky-owner controls do not qualify native pristine.
+Actual exit status stays UNKNOWN and whole-probe completion remains NOT_PROVEN;
+the ordinary-exit intent and missing PID are not settlement or resource-return
+proof. Another fresh native request requires independent review and a new GO.
+Native S/H qualification,
 original C birth/pidfd/wait4, whole-U zero-charge terminal capture inside the
 unchanged original eight-second deadline, FinalUse entry and AuthBus settlement
 remain required in that order. This interface exposes no spawn, terminal,
