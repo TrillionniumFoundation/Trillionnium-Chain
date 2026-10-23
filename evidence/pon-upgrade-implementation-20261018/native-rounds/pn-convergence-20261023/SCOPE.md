@@ -149,3 +149,67 @@ The first Hepta live formatting attempt failed because the new credential test o
 ### Lossless raw-log archives
 
 The repository-wide *.log ignore rule does not admit copied raw logs by default. The original command logs are therefore stored here as *.log.gz, with deterministic lossless compression. RAW_LOG_INDEX.json maps each original filename and byte length/SHA256 to its archive. Result records keep the original uncompressed log hashes. Decompress an archive before comparing it with the command log hash. Original execution files remain unchanged outside the checkout. This packaging correction changes no code, command, assertion or original verdict.
+
+## Later fixed-source results and request-local parent repair
+
+The files under `closure-receipts/` retain subsequent commands and original
+logs, including unsuccessful attempts. `ARCHIVE_INDEX.json` maps each copied or
+losslessly compressed member to its original byte length and SHA256. It does
+not relabel the earlier observations in this directory.
+
+At clean Chain `96a98a635def8c13b2d4f234aa1daee59c57afa0` / Hepta
+`3e9efb15faa261a4dc3ffc3205cd259aaee41a3f`, all five original native pair
+selectors actually ran and passed. The source before/after receipts stayed
+clean. These are one Linux x86_64 local pair, not complete hosted workflows,
+independent operators, WAN qualification or real model qualification. Two
+earlier runner environment failures are retained separately; they did not
+execute the corresponding native acceptance scenarios.
+
+The explicit release boundary selector at Chain `96a98a6` ran one ignored
+native test: one pass, zero failures, zero ignored after explicit selection.
+Its 224.11-second native duration excludes the small outer-command overhead.
+The signed transition exported `native.json`, settings, five packets and the
+SQLite identity. It seeded 65,520 accounts and ended at 65,552 after 34 signed
+transfers, two reopens and one reorg. Six working keys, 59 point reads, 417
+copied nodes and a 3,722-byte witness are finite cost observations, not TPS,
+an arbitrary history bound or growth from a small genesis. The SQLite bytes
+are not duplicated here; their length and SHA remain in the original receipt.
+The original CI rust-baseline now explicitly requires this selector and a
+regular, nonempty native export in both source-head and base-merge lanes.
+
+The original cache-OFF ROOT supplement at `96a98a6` is FAIL. Its baseline
+completed 21 honest submissions and three confirmations. Twenty-four hostile
+actors then produced genuine paid-credit depletion, while the first honest
+confirmation round timed out; subsequent two rounds did not start. Fifteen
+honest submission attempts yielded ten IO errors, three refusals and two frame
+deadlines. The 149 full-W1 successes are not native block admissions. The tip
+stayed at seed height, no hostile ROOT packet appeared in live or cold state,
+and the observer state was equal. Paid CPU was 9,399,693,107 ns and its identity
+closed with zero live owners, reservations, unsettled known-live CPU and
+in-flight mutation CPU. These correctness/accounting observations do not
+satisfy the failed honest-service criterion. The exact 11,161,529-byte original
+report is retained losslessly with SHA256
+`2ec262e77df4f616dc348645c953e4d7aed779a5e773a09484e6ee546fbd8b79`.
+
+The subsequent admission-parent repair is a separately identified overlay on
+`96a98a6`. It reuses a just-checked state/eligibility only inside one held
+owner/request, fenced by SQLite data-version and same-connection row mutation
+epochs. Current context/clock and the second cancellation/CPU checkpoint
+remain. It changes neither work, budgets, deadlines, cache policy nor the
+M06-to-commit tail. Four targeted tests and seven original ROOT-cache tests
+pass; the original three-backend signed payment/reorg case, strict workspace
+Clippy, formatting, CI contract/execution tests and source-integrity negative
+tests also pass on their recorded bytes.
+
+The four-case RED log retains two failures: the intended duplicate-parent-read
+regression and a test fixture that called stats while its intentionally damaged
+KV was still null. The latter was repaired by retaining the ROOT owner-stop
+assertion, restoring the bytes, then reading stats; it was not a second
+production vulnerability. Raw failed and successful logs remain separate.
+
+Neither this overlay's component passes nor the old fixed pair certify a
+different new head. The final source and actual GitHub merge refs, fresh release
+binaries, new signed ordinary-owner pairing and unchanged ROOT replay require
+their own receipts. Existing future-owner exclusion, history/resource bounds,
+useful model improvement, funded retention/repair, independent 72-hour WAN and
+governed activation exits remain open.

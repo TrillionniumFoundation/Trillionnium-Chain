@@ -148,6 +148,8 @@ type ReplayRow = (
 );
 const AUTH_RESPONSE_RETENTION: u64 = 16;
 #[cfg(test)]
+mod admission_parent_tests;
+#[cfg(test)]
 mod authenticated_replay_tests;
 
 /// Parent authority for one owner operation only. Never retained by Node or proof
@@ -164,6 +166,32 @@ impl ParentTaskEligibility {
             Self::Legacy | Self::ConsensusMaintenance => None,
             Self::Signed(manifest) => Some(manifest),
             Self::Lifecycle(eligible) => Some(eligible.manifest()),
+        }
+    }
+}
+
+/// Private result of this admission's complete current-parent validation. It
+/// never crosses an owner release, enters a Node cache or grants work/commit
+/// authority. The epoch only permits omitting a duplicate read in this call.
+struct CheckedAdmissionParent {
+    state: State,
+    eligibility: ParentTaskEligibility,
+    epoch: Option<AdmissionStateEpoch>,
+}
+#[derive(Clone, Copy, PartialEq, Eq)]
+struct AdmissionStateEpoch {
+    data_version: u64,
+    total_changes: u64,
+}
+enum CheckedAdmissionContext {
+    Existing(Hash),
+    Parent(CheckedAdmissionParent),
+}
+impl CheckedAdmissionContext {
+    fn existing(self) -> Option<Hash> {
+        match self {
+            Self::Existing(id) => Some(id),
+            Self::Parent(_) => None,
         }
     }
 }
@@ -3016,7 +3044,9 @@ impl Node {
         observed_now: u64,
         progress: &mut dyn FnMut() -> Result<()>,
     ) -> Result<Option<Hash>> {
-        self.check_admission_context_for_permit(packet, observed_now, None, progress)
+        Ok(self
+            .check_admission_context_for_permit(packet, observed_now, None, progress)?
+            .existing())
     }
     /// The ordinary public V3 service verifies bounded W1 before reconstructing
     /// all parent State. Local owner policies still bind their complete task
@@ -3030,7 +3060,11 @@ impl Node {
         let task_before_work = self.owner_policy.is_some()
             || self.continuous_owner.is_some()
             || self.mining_owner.is_some();
-        self.check_admission_context_inner(packet, observed_now, None, progress, task_before_work)
+        if task_before_work {
+            self.check_admission_context_with_progress(packet, observed_now, progress)
+        } else {
+            self.check_admission_header_context(packet, observed_now, None)
+        }
     }
     fn check_admission_context_for_permit(
         &self,
@@ -3038,16 +3072,19 @@ impl Node {
         observed_now: u64,
         reserved: Option<&OwnerPacketPermit>,
         progress: &mut dyn FnMut() -> Result<()>,
-    ) -> Result<Option<Hash>> {
-        self.check_admission_context_inner(packet, observed_now, reserved, progress, true)
+    ) -> Result<CheckedAdmissionContext> {
+        if let Some(id) = self.check_admission_header_context(packet, observed_now, reserved)? {
+            return Ok(CheckedAdmissionContext::Existing(id));
+        }
+        Ok(CheckedAdmissionContext::Parent(
+            self.check_admission_parent(packet, progress)?,
+        ))
     }
-    fn check_admission_context_inner(
+    fn check_admission_header_context(
         &self,
         packet: &Packet,
         observed_now: u64,
         reserved: Option<&OwnerPacketPermit>,
-        progress: &mut dyn FnMut() -> Result<()>,
-        task_before_work: bool,
     ) -> Result<Option<Hash>> {
         // Bounded full-packet identity precedes State/lease/context/Work work.
         self.precheck_owner_packet(packet)?;
@@ -3121,15 +3158,33 @@ impl Node {
         // them before task lookup; a passing filter still requires full replay.
         pon_work::precheck_proof_statement(h.challenge(), h.work_task, h.target, &packet.proof)
             .map_err(|error| Error::from(format!("WORK:{error:?}")))?;
-        if !task_before_work {
-            // Only the unowned public preflight can defer this expensive stage.
-            // A verified proof is still not a task/State/commit authorization.
-            return Ok(None);
-        }
+        // Only the unowned public preflight stops here. Final admission and
+        // local owner policies must also run check_admission_parent afresh.
+        Ok(None)
+    }
+    fn admission_state_epoch(&self) -> Result<AdmissionStateEpoch> {
+        Ok(AdmissionStateEpoch {
+            data_version: self
+                .db
+                .query_row("PRAGMA data_version", [], |row| row.get(0))?,
+            total_changes: self.db.total_changes(),
+        })
+    }
+    fn check_admission_parent(
+        &self,
+        packet: &Packet,
+        progress: &mut dyn FnMut() -> Result<()>,
+    ) -> Result<CheckedAdmissionParent> {
+        let h = &packet.header;
+        // The Node owner excludes cooperating writers. These inexpensive SQLite
+        // observations additionally withhold reuse after same-connection row mutations
+        // or commits by a foreign connection, including diagnostic fault hooks.
+        // They do not authenticate arbitrary out-of-band filesystem changes.
+        let before = self.admission_state_epoch()?;
+        let state = self.state_at_with_progress(h.parent, progress)?;
+        let eligibility = self.eligible_work_task_from_state(&state, h.work_task, h.height)?;
         // Signed task context/expiry/parent registration reject before full work replay.
-        if let Some(manifest) =
-            self.eligible_work_task_with_progress(h.parent, h.work_task, h.height, progress)?
-        {
+        if let Some(manifest) = eligibility.manifest() {
             // The fixed recipe's actual model and input artifacts are precisely the
             // proof's A/B bytes. An untrusted miner can bypass every local builder;
             // the validator must bind these commitments before transcript replay.
@@ -3156,7 +3211,12 @@ impl Node {
                 "TASK_INPUT_BINDING",
             )?;
         }
-        Ok(None)
+        let epoch = (self.admission_state_epoch()? == before).then_some(before);
+        Ok(CheckedAdmissionParent {
+            state,
+            eligibility,
+            epoch,
+        })
     }
     pub fn admit(&mut self, packet: &Packet, observed_now: u64) -> Result<Hash> {
         if let Some(id) = self.check_admission_context(packet, observed_now)? {
@@ -3641,14 +3701,15 @@ impl Node {
             work: verified_work,
             owner_permit,
         } = checked;
-        if let Some(id) = self.check_admission_context_for_permit(
+        let checked_parent = match self.check_admission_context_for_permit(
             &packet,
             observed_now,
             owner_permit.as_ref(),
             &mut || (control.progress)(ExecutionProgress::BeforeParentBinding),
         )? {
-            return Ok(id);
-        }
+            CheckedAdmissionContext::Existing(id) => return Ok(id),
+            CheckedAdmissionContext::Parent(parent) => parent,
+        };
         ensure(
             self.owner_policy.is_some() == owner_permit.is_some(),
             "OWNER_TASK_PERMIT_REQUIRED",
@@ -3698,10 +3759,24 @@ impl Node {
         let h = &packet.header;
         let id = packet.id()?;
         let parent = self.record(h.parent)?;
-        let prior = self.state_at_with_progress(h.parent, &mut || {
-            progress(ExecutionProgress::BeforeParentBinding)
-        })?;
-        let registered_task = self.eligible_work_task_from_state(&prior, h.work_task, h.height)?;
+        // Keep the original second parent-read cancellation/CPU boundary. The
+        // first full State/root/account/task/material validation was in this
+        // same admission, while holding this same owner. No new ledger writes
+        // have run. A changed or unstable SQL epoch retains full fresh checks.
+        progress(ExecutionProgress::BeforeParentBinding)?;
+        let checked_parent = if checked_parent.epoch == Some(self.admission_state_epoch()?) {
+            checked_parent
+        } else {
+            drop(checked_parent);
+            self.check_admission_parent(&packet, &mut || {
+                progress(ExecutionProgress::BeforeParentBinding)
+            })?
+        };
+        let CheckedAdmissionParent {
+            state: prior,
+            eligibility: registered_task,
+            ..
+        } = checked_parent;
         let (executed, rejection_scope) = self.execute_derived_core_with_rejection(
             &prior,
             ExecutionRequest {

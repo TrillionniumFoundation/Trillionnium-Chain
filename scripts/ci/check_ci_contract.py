@@ -101,6 +101,15 @@ NATIVE_GROWTH_RELEASE_BLOCK = '''      test ! -e "$trnm_native_receipt_root/nati
       test ! -L "$trnm_native_receipt_root/native-growth-reference/readback.json"
       python3 -B formal/pon-nakamoto-v1/check_gsc2_native_readback.py --artifact-dir "$trnm_native_receipt_root/native-growth-reference" --source-root "$(pwd -P)" --minimum-accounts 65537 > "$trnm_native_receipt_root/native-growth-reference/readback.json"
 '''
+NATIVE_GROWTH_V2_RELEASE_BLOCK = '''      test ! -e "$trnm_native_receipt_root/native-growth-v2-release.log"
+      test ! -L "$trnm_native_receipt_root/native-growth-v2-release.log"
+      test ! -e "$trnm_native_receipt_root/native-growth-v2"
+      test ! -L "$trnm_native_receipt_root/native-growth-v2"
+      TRNM_NATIVE_GROWTH_V2_EXPORT_DIR="$trnm_native_receipt_root/native-growth-v2" cargo test --offline --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib store::growth::tests::native_growth_v2_signed_cross_65536_bounded_io_zero_nonce_and_reopen -- --exact --ignored --nocapture --test-threads=1 2>&1 | tee "$trnm_native_receipt_root/native-growth-v2-release.log"
+      python3 scripts/ci/check_required_native_test.py "$trnm_native_receipt_root/native-growth-v2-release.log" --test store::growth::tests::native_growth_v2_signed_cross_65536_bounded_io_zero_nonce_and_reopen
+      test -s "$trnm_native_receipt_root/native-growth-v2/native.json"
+      test ! -L "$trnm_native_receipt_root/native-growth-v2/native.json"
+'''
 RUST_ALL_TARGETS = 'cargo test --locked --manifest-path trillionnium/Cargo.toml --workspace --all-targets --all-features'
 RUST_DOCS = '    cargo test --locked --manifest-path trillionnium/Cargo.toml --workspace --doc --all-features\n'
 RUST_CLIPPY = '    cargo clippy --locked --manifest-path trillionnium/Cargo.toml --workspace --all-targets --all-features -- -D warnings\n'
@@ -166,7 +175,7 @@ NATIVE_RELEASE_BLOCK = '''    (
       test ! -L "$trnm_native_receipt_root/native-capacity-release.log"
       cargo test --offline --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib account_archive_prototype::native_store::batch_tests::native_authenticated_full_capacity_refund_entry_and_pending_reorganization_recover -- --exact --ignored --nocapture --test-threads=1 2>&1 | tee "$trnm_native_receipt_root/native-capacity-release.log"
       python3 scripts/ci/check_required_native_test.py "$trnm_native_receipt_root/native-capacity-release.log" --test account_archive_prototype::native_store::batch_tests::native_authenticated_full_capacity_refund_entry_and_pending_reorganization_recover
-''' + NATIVE_GROWTH_RELEASE_BLOCK + '''\
+''' + NATIVE_GROWTH_RELEASE_BLOCK + NATIVE_GROWTH_V2_RELEASE_BLOCK + '''\
       test ! -e "$trnm_native_receipt_root/native-account-verification-cost"
       test ! -L "$trnm_native_receipt_root/native-account-verification-cost"
       test ! -e "$trnm_native_receipt_root/native-account-verification-cost.log"
@@ -306,7 +315,7 @@ def check_independent_conformance(script: str, required: set[str]) -> None:
                 '    python3 scripts/ci/run_supply_chain.py\n' + MODEL_OBSERVATION_BLOCK +
                 NATIVE_RELEASE_BLOCK + RUST_DOCS + RUST_CLIPPY)
     require(code_lines(lanes['rust-baseline']) == code_lines(expected),
-            'one actual workspace test must collect fresh native observations, check every independent reader, explicitly execute all three release controls, then run docs/Clippy outside exports')
+            'one actual workspace test must collect fresh native observations, check every independent reader, explicitly execute all four release controls, then run docs/Clippy outside exports')
     require(NATIVE_GROWTH_RELEASE_BLOCK in lanes['rust-baseline'] and
             all(code_lines(script).count(command) == 1
                 for command in code_lines(NATIVE_GROWTH_RELEASE_BLOCK)),
@@ -314,6 +323,13 @@ def check_independent_conformance(script: str, required: set[str]) -> None:
     require(script.count('TRNM_NATIVE_GROWTH_EXPORT_DIRECTORY') ==
             NATIVE_GROWTH_RELEASE_BLOCK.count('TRNM_NATIVE_GROWTH_EXPORT_DIRECTORY'),
             'native growth export selector must remain in its one release/readback block')
+    require(NATIVE_GROWTH_V2_RELEASE_BLOCK in lanes['rust-baseline'] and
+            all(code_lines(script).count(command) == 1
+                for command in code_lines(NATIVE_GROWTH_V2_RELEASE_BLOCK)),
+            'bounded native growth must execute once in rust-baseline with its fresh export and exact nonempty release test')
+    require(script.count('TRNM_NATIVE_GROWTH_V2_EXPORT_DIR') ==
+            NATIVE_GROWTH_V2_RELEASE_BLOCK.count('TRNM_NATIVE_GROWTH_V2_EXPORT_DIR'),
+            'bounded native growth export selector must remain in its one release block')
     require(script.count(RUST_ALL_TARGETS) == 1, 'the full workspace observation suite must execute exactly once')
     for selector in ['TRNM_MODEL_COMPOSITION_VECTORS', 'TRNM_MODEL_COMPOSITION_RUN_ID',
                      'TRNM_OBLIGATION_RANGE_VECTORS', 'TRNM_ZERO_PAIRED_PREFIX_OUTPUT',
@@ -321,7 +337,7 @@ def check_independent_conformance(script: str, required: set[str]) -> None:
         require(script.count(selector) == MODEL_OBSERVATION_BLOCK.count(selector),
                 'native observation selectors must remain inside the single test/oracle subshell')
     require(script.count(NATIVE_RELEASE_BLOCK) == 1,
-            'full-capacity, signed-growth and account-verification release controls must execute once sequentially')
+            'full-capacity, reference-growth, bounded-growth and account-verification release controls must execute once sequentially')
     require(code_lines(lanes['protocol-contract']) == code_lines(PROTOCOL_CONTRACT_BLOCK),
             'protocol-contract must retain its complete straight-line command sequence without shell control flow that skips tests or swallows failures')
     dispatch_prefix = ('#!/usr/bin/env bash\nset -euo pipefail\n'
