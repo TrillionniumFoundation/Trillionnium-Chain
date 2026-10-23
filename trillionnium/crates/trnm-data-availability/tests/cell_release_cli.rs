@@ -123,8 +123,8 @@ fn fetch_args(
         "42000".into(),
         "--max-chunks".into(),
         "4".into(),
-        "--seconds".into(),
-        "5".into(),
+        "--overall-ms".into(),
+        "5000".into(),
         "--max-connections".into(),
         "6".into(),
         "--max-response-bytes".into(),
@@ -153,7 +153,24 @@ fn cli_pins_release_and_shares_budgets_before_create_only_completion() {
     let second = origin.pack_file(&input, context.clone(), 16_384).unwrap();
     let release = CellReleaseManifestV1::new(context, vec![first.id(), second.id()]).unwrap();
     let root = directory.path().join("owner.tcr1");
-    fs::write(&root, release.encode()).unwrap();
+    let prepared = cli(&prepare_args(
+        &origin_path,
+        &format!("{},{}", digest_hex(second.id()), digest_hex(first.id())),
+        &root,
+        42_000,
+        4,
+    ));
+    assert!(
+        prepared.status.success(),
+        "{}",
+        String::from_utf8_lossy(&prepared.stderr)
+    );
+    let prepared_report: serde_json::Value = serde_json::from_slice(&prepared.stdout).unwrap();
+    assert_eq!(prepared_report["schema"], "trnm.cell.release.prepare.v1");
+    assert_eq!(prepared_report["release"], digest_hex(release.id()));
+    assert_eq!(prepared_report["payload_bytes"], 42_000);
+    assert_eq!(prepared_report["chunks"], 4);
+    assert_eq!(fs::read(&root).unwrap(), release.encode());
     let pinned = digest_hex(release.id());
     let budget = first.encode().len() as u64 + second.encode().len() as u64 + 42_000 + 6 * 9;
     let peer = Peer::new(&origin_path);
@@ -237,4 +254,107 @@ fn cli_pins_release_and_shares_budgets_before_create_only_completion() {
         String::from_utf8_lossy(&verify.stderr)
     );
     assert_eq!(peer.finish(), 12);
+}
+
+fn prepare_args(
+    store: &Path,
+    members: &str,
+    output: &Path,
+    bytes: u64,
+    chunks: u64,
+) -> Vec<String> {
+    [
+        "prepare-release".into(),
+        "--store".into(),
+        store.display().to_string(),
+        "--manifests".into(),
+        members.into(),
+        "--output".into(),
+        output.display().to_string(),
+        "--max-bytes".into(),
+        bytes.to_string(),
+        "--max-chunks".into(),
+        chunks.to_string(),
+        "--overall-ms".into(),
+        "5000".into(),
+    ]
+    .into()
+}
+
+#[test]
+fn cli_release_preparation_rejects_incomplete_incompatible_and_over_budget_sets() {
+    let directory = tempfile::tempdir().unwrap();
+    let origin_path = directory.path().join("origin.sqlite");
+    let origin = CellStoreV1::open(&origin_path).unwrap();
+    let context = CellContextV1 {
+        family: "prepare-cli-v1".into(),
+        base: [1; 32],
+        parent: [2; 32],
+        tokenizer: [3; 32],
+        layout: [4; 32],
+        runtime: [5; 32],
+    };
+    let input = directory.path().join("input");
+    fs::write(&input, vec![1; 20_000]).unwrap();
+    let first = origin.pack_file(&input, context.clone(), 16_384).unwrap();
+    fs::write(&input, vec![2; 22_000]).unwrap();
+    let second = origin.pack_file(&input, context.clone(), 16_384).unwrap();
+    let mut other_context = context.clone();
+    other_context.parent = [7; 32];
+    let other = origin.pack_file(&input, other_context, 16_384).unwrap();
+    let exact = format!("{},{}", digest_hex(first.id()), digest_hex(second.id()));
+    let cases = [
+        (
+            "duplicate",
+            format!("{0},{0}", digest_hex(first.id())),
+            42_000,
+            4,
+        ),
+        (
+            "missing",
+            format!("{},{}", digest_hex(first.id()), digest_hex([9; 32])),
+            42_000,
+            4,
+        ),
+        (
+            "incompatible",
+            format!("{},{}", digest_hex(first.id()), digest_hex(other.id())),
+            42_000,
+            4,
+        ),
+        ("payload-budget", exact.clone(), 41_999, 4),
+        ("chunk-budget", exact.clone(), 42_000, 3),
+    ];
+    for (name, members, bytes, chunks) in cases {
+        let output = directory.path().join(format!("{name}.tcr1"));
+        let result = cli(&prepare_args(
+            &origin_path,
+            &members,
+            &output,
+            bytes,
+            chunks,
+        ));
+        assert!(!result.status.success(), "{name} unexpectedly prepared");
+        assert!(!output.exists(), "{name} published an incomplete root");
+    }
+    let deadline_output = directory.path().join("deadline.tcr1");
+    let mut ambiguous = prepare_args(&origin_path, &exact, &deadline_output, 42_000, 4);
+    ambiguous.extend(["--seconds".into(), "5".into()]);
+    assert!(!cli(&ambiguous).status.success());
+    assert!(!deadline_output.exists());
+
+    let output = directory.path().join("exact.tcr1");
+    let args = prepare_args(&origin_path, &exact, &output, 42_000, 4);
+    let prepared = cli(&args);
+    assert!(
+        prepared.status.success(),
+        "{}",
+        String::from_utf8_lossy(&prepared.stderr)
+    );
+    let canonical = CellReleaseManifestV1::new(context, vec![first.id(), second.id()]).unwrap();
+    assert_eq!(fs::read(&output).unwrap(), canonical.encode());
+    let retry = cli(&args);
+    assert!(!retry.status.success());
+    assert!(String::from_utf8_lossy(&retry.stderr).contains("release marker exists"));
+    assert_eq!(fs::read(&output).unwrap(), canonical.encode());
 }

@@ -1,0 +1,20 @@
+{
+  "command": [
+    "cargo",
+    "test",
+    "--locked",
+    "--offline",
+    "-p",
+    "trnm-pon-node",
+    "--lib",
+    "growth_rehearsal_file_",
+    "--",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "returncode": 101,
+  "seconds": 258.37389153195545,
+  "log": "/tmp/trnm-pn-convergence-20261023/evidence-root/growth-file-read-red.log",
+  "log_sha256": "59d2889e62ec37336cbc4b3e9ff855e58116fa7ed4e35ebb8de001af2be47fa4",
+  "expected_original_failure_observed": true
+}

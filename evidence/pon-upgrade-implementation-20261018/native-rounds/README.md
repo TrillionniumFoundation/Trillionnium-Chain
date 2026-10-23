@@ -54,3 +54,11 @@ deduplication must accompany any derived ratios.
 The runs are finite, single-host development measurements. They do not establish
 independent operators, an adversarial lower bound on work cost, public-network
 availability, model efficacy, or installed and subsequently qualified updates.
+
+## PN0–PN6 convergence, 2026-10-23
+
+The [convergence index](pn-convergence-20261023/SCOPE.md) preserves original red
+observations, source-bound combined growth/migration/public-entry results,
+paired Hepta component observations and explicit remaining phase exits. Overlay
+results, clean source identity, release binaries and prospective-merge gates
+remain separate evidence. See its [file manifest](pn-convergence-20261023/MANIFEST.json).

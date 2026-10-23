@@ -1247,3 +1247,86 @@ fn journal_write_fence_does_not_hide_user_objects_behind_sql_like_underscore() {
         NativeBudgetReplayV1::Pending
     );
 }
+
+#[test]
+fn native_payment_readback_rechecks_exact_current_owner_and_never_changes_history() {
+    let (directory, mut store, mut owner, policy, claim) = setup(NativeBudgetLaneV1::Serving);
+    store.reserve(&mut owner, claim.clone()).unwrap();
+    assert!(store
+        .reobserve_native_payment(&mut owner, claim.claim)
+        .is_err());
+    store
+        .record_resources(
+            claim.claim,
+            NativeResourceOutcomeV1::Positive,
+            Some(resources(NativeBudgetLaneV1::Serving, 2)),
+        )
+        .unwrap();
+    owner.advance(12);
+    let historical = NativePaymentObservationV1 {
+        anchor: owner.anchor,
+        source: policy.source,
+        subject: claim.subject,
+        beneficiary: claim.beneficiary,
+        operation: [90; 32],
+        gross_escrow_debit: 20,
+        beneficiary_credit: 18,
+    };
+    owner.payment = Some(historical.clone());
+    store
+        .record_native_payment(&mut owner, claim.claim, historical.operation)
+        .unwrap();
+    let report = store.report().unwrap();
+    owner.advance(13);
+    let mut current = historical.clone();
+    current.anchor = owner.anchor;
+    owner.payment = Some(current.clone());
+    let readback = store
+        .reobserve_native_payment(&mut owner, claim.claim)
+        .unwrap();
+    assert_eq!(readback.historical, historical);
+    assert_eq!(readback.observed, current);
+    assert_eq!(store.report().unwrap(), report);
+    for field in 0..10 {
+        let mut bad = current.clone();
+        match field {
+            0 => bad.source = NativeFundingSourceV1::Quota([41; 32]),
+            1 => bad.subject = [71; 32],
+            2 => bad.beneficiary = [99; 32],
+            3 => bad.operation = [91; 32],
+            4 => bad.gross_escrow_debit = 19,
+            5 => bad.beneficiary_credit = 17,
+            6 => bad.anchor.network[0] ^= 1,
+            7 => bad.anchor.parameters[0] ^= 1,
+            8 => bad.anchor.genesis[0] ^= 1,
+            _ => bad.anchor = anchor(),
+        }
+        owner.payment = Some(bad);
+        assert!(store
+            .reobserve_native_payment(&mut owner, claim.claim)
+            .is_err());
+        assert_eq!(store.report().unwrap(), report);
+    }
+    owner.payment = None;
+    assert!(matches!(
+        store.reobserve_native_payment(&mut owner, claim.claim),
+        Err(NativeBudgetErrorV1::Invalid(
+            "NATIVE_PAYMENT_PROOF_UNAVAILABLE"
+        ))
+    ));
+    assert_eq!(store.report().unwrap(), report);
+    drop(store);
+    let store = NativeBudgetStoreV1::open(&directory.path().join("budget.sqlite"), configuration())
+        .unwrap();
+    assert!(store
+        .reobserve_native_payment(&mut owner, claim.claim)
+        .is_err());
+    assert_eq!(store.report().unwrap(), report);
+    owner.payment = Some(current.clone());
+    let readback = store
+        .reobserve_native_payment(&mut owner, claim.claim)
+        .unwrap();
+    assert_eq!(readback.historical, historical);
+    assert_eq!(readback.observed, current);
+    assert_eq!(store.report().unwrap(), report);
+}

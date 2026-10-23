@@ -1,7 +1,31 @@
 //! Native-only binding to the cold-audited, generation-fenced storage owner.
 //! Public JSON observations cannot construct either the source or a verified parent.
 use super::*;
+use crate::account_archive_prototype::{multiproof::MultiproofProgress, ArchiveError};
 use crate::store::growth::CheckedRootSource;
+
+/// A computation relation and the caller's original control failure have
+/// different owners. A serialized marker cannot manufacture a control error.
+#[derive(Debug)]
+pub(crate) enum NativeGrowthFailure {
+    Relation(CheckedExecutionError),
+    Control(crate::Error),
+}
+impl From<CheckedExecutionError> for NativeGrowthFailure {
+    fn from(error: CheckedExecutionError) -> Self {
+        Self::Relation(error)
+    }
+}
+impl From<ArchiveError> for NativeGrowthFailure {
+    fn from(error: ArchiveError) -> Self {
+        Self::Relation(error.into())
+    }
+}
+impl From<StateWitnessError> for NativeGrowthFailure {
+    fn from(error: StateWitnessError) -> Self {
+        Self::Relation(error.into())
+    }
+}
 
 pub(crate) fn bind(
     settings: &Settings,
@@ -38,11 +62,12 @@ pub(crate) fn bind(
 
 /// Every account value comes from the original-parent proof; omitted accounts
 /// retain their authenticated root and aggregates. No full account scan occurs.
-pub(crate) fn successor(
+pub(crate) fn successor_with_progress(
     parent: &VerifiedGrowthStateCommitmentV2,
     proof: &CheckedMultiproof,
     view: &State,
-) -> Result<VerifiedGrowthStateCommitmentV2> {
+    progress: &(impl Fn(MultiproofProgress) -> crate::Result<()> + ?Sized),
+) -> std::result::Result<VerifiedGrowthStateCommitmentV2, NativeGrowthFailure> {
     let after = accounts(view)?;
     let original: BTreeMap<_, _> = proof.values().collect();
     for (&owner, before) in &original {
@@ -83,7 +108,9 @@ pub(crate) fn successor(
         .checked_sub(removed)
         .and_then(|n| n.checked_add(added))
         .ok_or(StateWitnessError::Aggregate)?;
-    let (root, _) = proof.root_for_updates(&updates, &|_| Ok::<_, CheckedExecutionError>(()))?;
+    let (root, _) = proof.root_for_updates(&updates, &|point| {
+        progress(point).map_err(NativeGrowthFailure::Control)
+    })?;
     let working = non_accounts(view);
     let (escrow_balance, reward_balance, issued) = components(&working)?;
     if count > MAX_PERMANENT_ACCOUNTS_V2

@@ -9,9 +9,12 @@ use super::{
 };
 mod intake;
 use intake::{ConnectionLease, ListenerIntake};
+mod growth;
 pub(super) mod request_observation;
 pub mod scalar_cpu;
 mod work_arithmetic;
+use growth::ClientProfile;
+pub use growth::{call_public_protected_growth_v1, GROWTH_PROFILE};
 pub use request_observation::{
     ApplicationFrameBytes, ApplicationFramePhase, PublicRequestObservation,
     PublicRequestObservationSnapshot, PublicRequestObserver, SubmitPhase, SubmitPhaseObservation,
@@ -71,6 +74,13 @@ pub enum Request {
         transactions: Vec<String>,
     },
     PoolStatus,
+    GrowthSubmitV1 {
+        packet: String,
+    },
+    GrowthPacketStatusV1 {
+        packet: String,
+    },
+    GrowthHeadV1,
 }
 pub const PROFILE: &str = "public-protected-development-v3";
 const HELLO_BYTES: usize = 108;
@@ -556,6 +566,9 @@ fn request_op(request: &Request) -> Result<u8> {
         Request::History { .. } => Ok(3),
         Request::PoolSubmitBundle { .. } => Ok(4),
         Request::PoolStatus => Ok(5),
+        Request::GrowthSubmitV1 { .. } => Ok(6),
+        Request::GrowthPacketStatusV1 { .. } => Ok(7),
+        Request::GrowthHeadV1 => Ok(8),
     }
 }
 fn response_maximum(op: u8) -> usize {
@@ -565,14 +578,15 @@ fn response_maximum(op: u8) -> usize {
         16384
     }
 }
+// Historical name denotes the paid resource lane; growth exact reads also pay.
 fn mutating_operation(op: u8) -> bool {
-    matches!(op, 1 | 4)
+    matches!(op, 1 | 4 | 6 | 7)
 }
 fn body_maximum(op: u8) -> Result<usize> {
     match op {
-        1 => Ok(MAX_BODY),
+        1 | 6 | 7 => Ok(MAX_BODY),
         4 => Ok(MAX_POOL_BODY),
-        2 | 3 | 5 => Ok(MAX_READ_BODY),
+        2 | 3 | 5 | 8 => Ok(MAX_READ_BODY),
         _ => Err("PUBLIC_OPERATION".into()),
     }
 }
@@ -642,7 +656,7 @@ impl Hello {
         let op = raw[4];
         let len = u32::from_le_bytes(raw[8..12].try_into().map_err(|_| "PUBLIC_HELLO")?) as usize;
         ensure(
-            matches!(op, 1..=5) && len > 0 && len <= body_maximum(op)?,
+            matches!(op, 1..=8) && len > 0 && len <= body_maximum(op)?,
             "PUBLIC_BODY_LIMIT",
         )?;
         Ok(Self {
@@ -667,6 +681,7 @@ impl Hello {
 pub struct PublicServer {
     identity: DevelopmentIdentity,
     policy: PublicPolicy,
+    native_growth: bool,
     secret: Hash,
     epoch: Hash,
     started: Instant,
@@ -690,6 +705,7 @@ impl PublicServer {
         Ok(Self {
             identity,
             policy,
+            native_growth: false,
             secret: entropy()?,
             epoch: entropy()?,
             started: Instant::now(),
@@ -736,6 +752,7 @@ impl PublicServer {
         u64::try_from(self.started.elapsed().as_millis()).map_err(|_| "PUBLIC_CLOCK".into())
     }
     fn cookie(&self, s: &Settings, h: Hello, peer: SocketAddr) -> Result<Cookie> {
+        ensure(self.operation_allowed(h.op), "PUBLIC_OPERATION_PROFILE")?;
         let tick = self.tick()?;
         let mut c = Cookie {
             schema: "public-resource-cookie-v3".into(),
@@ -769,6 +786,7 @@ impl PublicServer {
         Ok(c)
     }
     fn validate(&self, c: &Cookie, s: &Settings, check_expiry: bool) -> Result<()> {
+        ensure(self.operation_allowed(c.op), "PUBLIC_OPERATION_PROFILE")?;
         ensure(
             c.schema == "public-resource-cookie-v3"
                 && c.profile == hex::encode(self.resource_profile())
@@ -917,9 +935,14 @@ fn canonical_request(bytes: &[u8], op: u8) -> Result<Request> {
     if op == 4 {
         pool_bundle_body_guard(bytes)?;
     }
-    if op == 1 {
-        // Reject escaping/non-hex packet text before serde's scratch allocation.
-        let prefix = br#"{"op":"submit","packet":""#;
+    if matches!(op, 1 | 6 | 7) {
+        // Every packet-bearing profile rejects noncanonical hex before allocation.
+        let prefix: &[u8] = match op {
+            1 => br#"{"op":"submit","packet":""#,
+            6 => br#"{"op":"growth_submit_v1","packet":""#,
+            7 => br#"{"op":"growth_packet_status_v1","packet":""#,
+            _ => unreachable!(),
+        };
         let text = bytes
             .strip_prefix(prefix)
             .and_then(|b| b.strip_suffix(br#""}"#))
@@ -1385,6 +1408,23 @@ fn public_dispatch(
         mutation_cpu,
         arithmetic_facts,
     } = observation;
+    if matches!(
+        &request,
+        Request::GrowthSubmitV1 { .. }
+            | Request::GrowthPacketStatusV1 { .. }
+            | Request::GrowthHeadV1
+    ) {
+        return growth::dispatch(
+            node,
+            request,
+            deadline,
+            stop,
+            cancelled,
+            metrics,
+            observation,
+            mutation_cpu,
+        );
+    }
     let live_cpu = mutation_cpu.map(|cpu| &cpu.workers);
     let mut progress = |steps: u64| {
         task_alive(deadline, stop, cancelled)?;
@@ -1520,6 +1560,9 @@ fn public_dispatch(
                 true,
             )
         }
+        Request::GrowthSubmitV1 { .. }
+        | Request::GrowthPacketStatusV1 { .. }
+        | Request::GrowthHeadV1 => unreachable!("growth dispatched above"),
         Request::Head => {
             let owner = lock_owner(node, &mut progress)?;
             owner.public_head_metadata()
@@ -1797,7 +1840,10 @@ fn serve_public_protected_v3_inner(
             )
         };
         let mut owner = lock_owner(&node, &mut progress)?;
-        if !owner.is_continuous() {
+        if server.native_growth {
+            owner.growth_head_observation_with_progress(&|_| Ok(()))?;
+            ensure(!owner.is_continuous(), "PUBLIC_GROWTH_OWNER")?;
+        } else if !owner.is_continuous() {
             owner.pool_status_snapshot()?;
         } // Never enable a pool from the guest listener.
         progress(0)?;
@@ -1879,7 +1925,7 @@ fn serve_public_protected_v3_inner(
                             let permit = BufferPermit::acquire(
                                 output_pool.clone(),
                                 response_max * 4,
-                                if matches!(task.cookie.op, 2 | 5) {
+                                if matches!(task.cookie.op, 2 | 5 | 8) {
                                     MAX_OUTPUT_BYTES
                                 } else {
                                     MAX_OUTPUT_BYTES - CONTROL_OUTPUT_RESERVE
@@ -2001,18 +2047,11 @@ fn serve_public_protected_v3_inner(
                             m.peak_output_reserved_bytes =
                                 m.peak_output_reserved_bytes.max(reserved);
                             if outcome.is_ok() {
-                                if mutating_operation(task.cookie.op) {
-                                    if task.cookie.op == 4 {
-                                        m.completed_pool_submit += 1;
-                                    } else {
-                                        m.completed_submit += 1;
-                                    }
-                                } else {
-                                    if task.cookie.op == 5 {
-                                        m.completed_pool_status += 1;
-                                    } else {
-                                        m.completed_read += 1;
-                                    }
+                                match task.cookie.op {
+                                    1 | 6 => m.completed_submit += 1,
+                                    4 => m.completed_pool_submit += 1,
+                                    5 => m.completed_pool_status += 1,
+                                    _ => m.completed_read += 1,
                                 }
                             } else if mutating_operation(task.cookie.op) {
                                 m.executor_refusals += 1;
@@ -2248,6 +2287,10 @@ fn serve_public_protected_v3_inner(
                                     return Ok(Stage::Hello(bytes));
                                 }
                                 let hello = Hello::parse(&bytes)?;
+                                ensure(
+                                    server.operation_allowed(hello.op),
+                                    "PUBLIC_OPERATION_PROFILE",
+                                )?;
                                 if let Some(record) = &conn.observation {
                                     record.request(hello.op, hello.digest);
                                 }
@@ -2848,7 +2891,7 @@ pub fn call_public_protected_v3_with_deadline(
         settings,
         pinned_server,
         caller,
-        (policy, false),
+        (policy, ClientProfile::Legacy),
         outer_deadline,
     )
 }
@@ -2859,10 +2902,11 @@ fn call_public_protected_v3_with_profile(
     settings: &Settings,
     pinned_server: &str,
     caller: &DevelopmentIdentity,
-    policy_and_arithmetic: (PublicPolicy, bool),
+    policy_and_arithmetic: (PublicPolicy, ClientProfile),
     outer_deadline: Option<Instant>,
 ) -> (Result<PublicReply>, PublicClientMetrics) {
-    let (policy, arithmetic_facts) = policy_and_arithmetic;
+    let (policy, client_profile) = policy_and_arithmetic;
+    let expected_profile = client_profile.id(policy);
     let call_start = Instant::now();
     let mut phase_start = call_start;
     let mut phase = PublicClientStage::Construction;
@@ -2874,6 +2918,10 @@ fn call_public_protected_v3_with_profile(
         PublicPolicy::new(policy.bits, Duration::from_millis(policy.lifetime_ms))?;
         let raw = serde_json::to_vec(request)?;
         let op = request_op(request)?;
+        ensure(
+            client_profile.operation_allowed(op),
+            "PUBLIC_OPERATION_PROFILE",
+        )?;
         canonical_request(&raw, op)?;
         let hello = Hello {
             op,
@@ -2920,11 +2968,7 @@ fn call_public_protected_v3_with_profile(
             settings,
             pinned_server,
             policy,
-            if arithmetic_facts {
-                policy.arithmetic_facts_id()
-            } else {
-                policy.id()
-            },
+            expected_profile,
         )?;
         metrics.challenge_ns = elapsed_ns(phase_start);
         phase = PublicClientStage::SolutionSearch;
@@ -2992,12 +3036,7 @@ fn call_public_protected_v3_with_profile(
         ensure(
             serde_json::to_vec(&r)? == bytes
                 && r.schema == "public-protected-response-v3"
-                && r.profile
-                    == hex::encode(if arithmetic_facts {
-                        policy.arithmetic_facts_id()
-                    } else {
-                        policy.id()
-                    })
+                && r.profile == hex::encode(expected_profile)
                 && r.network == hex::encode(settings.network())
                 && r.parameters == hex::encode(settings.parameters())
                 && r.genesis == hex::encode(settings.genesis())
@@ -6384,7 +6423,7 @@ mod tests {
         assert!(Hello::parse(&hello(1, MAX_BODY + 1).encode()).is_err());
         assert!(Hello::parse(&hello(2, MAX_READ_BODY).encode()).is_ok());
         assert!(Hello::parse(&hello(2, MAX_READ_BODY + 1).encode()).is_err());
-        assert!(Hello::parse(&hello(6, 1).encode()).is_err());
+        assert!(Hello::parse(&hello(9, 1).encode()).is_err());
         assert!(Hello::parse(&hello(1, 0).encode()).is_err());
         let mut bytes = hello(1, 1).encode();
         bytes[5] = 1;

@@ -3,14 +3,14 @@
 use super::{need, number, packet_input, read};
 use serde_json::{json, Value};
 use std::{
-    collections::BTreeMap,
+    collections::{BTreeMap, BTreeSet},
     fs,
     io::Write,
     path::Path,
     time::{SystemTime, UNIX_EPOCH},
 };
 use trnm_mvcc_fee::{continuity_v1, pon_executor::growth as limits};
-use trnm_pon_node::{digest, Error, GrowthPacket, Node, Result, Settings};
+use trnm_pon_node::{digest, Error, GrowthPacket, GrowthWorkingSnapshot, Node, Result, Settings};
 use trnm_protocol::pon_wire::{Envelope, Hash};
 
 fn parse_number(args: &BTreeMap<String, String>, name: &str) -> Result<u64> {
@@ -43,8 +43,79 @@ fn selected(args: &BTreeMap<String, String>, node: &Node) -> Result<Hash> {
         .map(|s| digest(s))
         .unwrap_or_else(|| Ok(node.active()?.0))
 }
+fn mandatory_capacity(snapshot: &GrowthWorkingSnapshot) -> Result<Value> {
+    let owners = limits::mandatory_owners(&snapshot.working)?;
+    let unused_owner_slots = limits::MAX_MANDATORY_OWNERS
+        .checked_sub(owners.len())
+        .ok_or("GROWTH_CAPACITY_OBSERVATION")?;
+    let next_height = snapshot.height.checked_add(1).ok_or("HEIGHT")?;
+    let mut escrow_owners = BTreeSet::new();
+    let mut reward_owners = BTreeSet::new();
+    let mut escrow_records = 0u64;
+    let mut reward_records = 0u64;
+    let mut escrow_due = 0u64;
+    let mut reward_due = 0u64;
+    for (key, value) in &snapshot.working {
+        let reward = key.starts_with("reward:");
+        let escrow =
+            (key.starts_with("task:") || key.starts_with("quota:") || key.starts_with("release:"))
+                && value["remaining"]
+                    .as_u64()
+                    .ok_or("GROWTH_CAPACITY_OBSERVATION")?
+                    > 0;
+        if !reward && !escrow {
+            continue;
+        }
+        let owner = value["owner"]
+            .as_str()
+            .ok_or("GROWTH_CAPACITY_OBSERVATION")?;
+        if reward {
+            reward_owners.insert(owner);
+            reward_records += 1;
+            reward_due += u64::from(
+                value["maturity"]
+                    .as_u64()
+                    .ok_or("GROWTH_CAPACITY_OBSERVATION")?
+                    <= next_height,
+            );
+        } else {
+            escrow_owners.insert(owner);
+            escrow_records += 1;
+            escrow_due += u64::from(
+                value["deadline"]
+                    .as_u64()
+                    .ok_or("GROWTH_CAPACITY_OBSERVATION")?
+                    <= next_height,
+            );
+        }
+    }
+    // This is classification of the already authenticated snapshot. It is not
+    // a new admission predicate: the original M06 prologue and caller's actual
+    // transactions can release owners before the next reward is appended.
+    Ok(json!({
+        "schema":"native-growth-mandatory-owner-capacity-observation-v1",
+        "scope":"all-future-monetary-owners",
+        "owner_limit":limits::MAX_MANDATORY_OWNERS,
+        "owners":owners.len(),
+        "escrow_owners":escrow_owners.len(),
+        "reward_owners":reward_owners.len(),
+        "shared_owners":escrow_owners.intersection(&reward_owners).count(),
+        "unused_owner_slots_in_snapshot":unused_owner_slots,
+        "escrow_records":escrow_records,
+        "reward_records":reward_records,
+        "next_height":next_height,
+        "escrow_records_due_by_next_height":escrow_due,
+        "reward_records_maturing_by_next_height":reward_due,
+        "due_record_counts_are_not_execution_counts":true,
+        "counts_zero_amount_reward_rows":true,
+        "same_block_execution_may_release_owners":true,
+        "snapshot_only":true,
+        "admission_authority":false
+    }))
+}
 fn status(node: &Node) -> Result<Value> {
     let snapshot = node.growth_current_working()?;
+    let capacity = mandatory_capacity(&snapshot)?;
     Ok(
         json!({"schema":"native-growth-current-observation-v2","block":hex::encode(snapshot.block),
         "height":snapshot.height,"generation":snapshot.generation,"state_root":hex::encode(snapshot.commitment.id),
@@ -52,7 +123,7 @@ fn status(node: &Node) -> Result<Value> {
         "genesis":hex::encode(snapshot.commitment.genesis),"working_root":hex::encode(snapshot.commitment.working_root),
         "permanent_account_root":hex::encode(snapshot.commitment.permanent_account_root),
         "permanent_accounts":snapshot.commitment.permanent_account_count,"working_keys":snapshot.working.len(),
-        "commitment":snapshot.commitment}),
+        "commitment":snapshot.commitment,"mandatory_owner_capacity":capacity}),
     )
 }
 
@@ -66,6 +137,7 @@ pub(super) fn run(command: &str, args: &BTreeMap<String, String>) -> Result<Valu
             "--transactions --timestamp --output --parent --miner --search-attempts --logical-now"
         }
         "growth-submit" => "--packet --packet-stdin --logical-now",
+        "growth-packet-status" => "--packet --packet-stdin",
         "growth-export" => "--block --output",
         "growth-activate" => "--block",
         _ => return Err("GROWTH_COMMAND".into()),
@@ -102,11 +174,14 @@ pub(super) fn run(command: &str, args: &BTreeMap<String, String>) -> Result<Valu
     } else {
         None
     };
-    let supplied = if command == "growth-submit" {
+    let supplied = if matches!(command, "growth-submit" | "growth-packet-status") {
         Some(GrowthPacket::decode(&packet_input(args)?)?)
     } else {
         None
     };
+    if command == "growth-packet-status" && !path.join("native.sqlite").is_file() {
+        return Err("GROWTH_PACKET_STATUS_EXISTING_STORE_REQUIRED".into());
+    }
     let owners = if command == "growth-witness" {
         let raw: Vec<String> = serde_json::from_slice(&read(need(args, "--owners")?, 80_000)?)?;
         if raw.is_empty() || raw.len() > limits::MAX_WITNESS_ACCOUNTS {
@@ -155,7 +230,11 @@ pub(super) fn run(command: &str, args: &BTreeMap<String, String>) -> Result<Valu
             .map_err(|_| Error::from("CLOCK"))?
             .as_secs(),
     )?;
-    let mut node = Node::open_with_permanent_account_growth_v2(path, settings)?;
+    let mut node = if command == "growth-packet-status" {
+        Node::open_growth_packet_observer(path, settings)?
+    } else {
+        Node::open_with_permanent_account_growth_v2(path, settings)?
+    };
     let result = match command {
         "growth-status" => status(&node)?,
         "growth-recover" => {
@@ -209,6 +288,9 @@ pub(super) fn run(command: &str, args: &BTreeMap<String, String>) -> Result<Valu
             let id = node.admit_growth(&packet, now)?;
             let active = node.activate(id)?;
             json!({"block":hex::encode(id),"admitted":true,"active":hex::encode(active),"state":status(&node)?})
+        }
+        "growth-packet-status" => {
+            node.growth_exact_packet_observation(&supplied.ok_or("GROWTH_PACKET_REQUIRED")?)?
         }
         "growth-export" => {
             let packet = node.growth_packet(block.ok_or("GROWTH_BLOCK_REQUIRED")?)?;

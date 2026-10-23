@@ -122,6 +122,15 @@ pub struct NativePaymentObservationV1 {
     /// Quota use pays gross minus its actual native fee; never conflate them.
     pub beneficiary_credit: u64,
 }
+/// Two observations of the same monetary effect, not a new payment or a
+/// finality/execution capability. `observed` is current only at the native
+/// owner's checked snapshot; the historical journal is not rewritten.
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct NativePaymentReadbackV1 {
+    pub historical: NativePaymentObservationV1,
+    pub observed: NativePaymentObservationV1,
+}
+
 pub trait NativeFundingOwnerV1 {
     fn observe_funding(
         &mut self,
@@ -1045,6 +1054,46 @@ impl NativeBudgetStoreV1 {
                 Box::new(Event::Payment { claim, observed }),
                 NativeBudgetReplayV1::New,
             ))
+        })
+    }
+    /// Recheck one recorded payment against the native owner's current chain.
+    /// The exact query comes only from the retained claim/payment. Owner refusal
+    /// remains an error, not proof of nonpayment or permission to pay/dispatch
+    /// again. Reappearance on another branch may change the observation anchor,
+    /// but must preserve the original monetary effect and all local history.
+    pub fn reobserve_native_payment(
+        &self,
+        owner: &mut impl NativeFundingOwnerV1,
+        claim: NativeBudgetHashV1,
+    ) -> NativeBudgetResultV1<NativePaymentReadbackV1> {
+        let (mut state, _, _) = load_snapshot(&self.connection, &self.configuration)?;
+        let record = state.claim(claim)?;
+        let historical = record.payment.clone().ok_or(NativeBudgetErrorV1::Invalid(
+            "BUDGET_NATIVE_PAYMENT_UNRECORDED",
+        ))?;
+        let query = NativePaymentQueryV1 {
+            source: state.budget(record.specification.budget)?.policy.source,
+            subject: record.specification.subject,
+            beneficiary: record.specification.beneficiary,
+            operation: historical.operation,
+            maximum_gross_units: record.specification.monetary_reservation,
+        };
+        let observed = owner.observe_payment(&query)?;
+        // Apply the existing context/generation rule to this disposable snapshot,
+        // never append an event or change the historical anchor on a readback.
+        state.observe_anchor(observed.anchor, &self.configuration)?;
+        require(
+            observed.source == historical.source
+                && observed.subject == historical.subject
+                && observed.beneficiary == historical.beneficiary
+                && observed.operation == historical.operation
+                && observed.gross_escrow_debit == historical.gross_escrow_debit
+                && observed.beneficiary_credit == historical.beneficiary_credit,
+            "BUDGET_NATIVE_PAYMENT_READBACK_BINDING",
+        )?;
+        Ok(NativePaymentReadbackV1 {
+            historical,
+            observed,
         })
     }
     pub fn close_expired(

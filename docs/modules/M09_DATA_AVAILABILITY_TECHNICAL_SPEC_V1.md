@@ -42,6 +42,12 @@ before receiving them. Complete materialization uses
 an owner-controlled destination and no-replace publication; byte retrieval
 does not select CURRENT, execute a model or establish independent custodians.
 
+Explicit `serve_cells_bounded` adds at most four read-only workers with no
+application waiting queue. Overload counts toward the finite connection limit;
+the shared actual-write budget charges partial failed responses. Worker errors
+stop intake and all admitted threads are joined. The serial default remains;
+these controls do not qualify public fairness or independent custody.
+
 **Atomic/commit boundary:** Retention obligations separate from self-contained historical work certificates.
 
 ## M09.ArtifactIdentity
@@ -56,7 +62,10 @@ does not select CURRENT, execute a model or establish independent custodians.
 
 **Expected result:** Replacing model bytes at the same path fails the requested digest before load; malformed or executable-shaped artifacts reject.
 
-**Resource and retention rule:** This loader accepts64KiB, distinct from the generic64MiB transport target.
+**Resource and retention rule:** This integer loader accepts 64 KiB. The separate
+TCM1 byte protocol permits at most 64 GiB and 16,384 chunks per cell, with the
+smaller bound applying; each fetch also obeys its caller's finite byte and other
+resource budgets. The protocol ceiling is not a local memory or storage grant.
 
 ## Concrete regression selectors
 

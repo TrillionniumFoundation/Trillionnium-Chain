@@ -16,8 +16,12 @@ pub(crate) mod native_authenticated;
 pub mod native_budget;
 mod operator_continuous_owner;
 mod operator_mining_owner;
+pub mod pinned_account_query;
 #[cfg(test)]
 pub(crate) mod public_reader;
+mod root_rejection_cache;
+#[cfg(test)]
+mod root_rejection_cache_tests;
 pub mod storage_service;
 mod task_observation;
 use crate::{
@@ -144,6 +148,8 @@ type ReplayRow = (
 );
 const AUTH_RESPONSE_RETENTION: u64 = 16;
 #[cfg(test)]
+mod admission_parent_tests;
+#[cfg(test)]
 mod authenticated_replay_tests;
 
 /// Parent authority for one owner operation only. Never retained by Node or proof
@@ -160,6 +166,32 @@ impl ParentTaskEligibility {
             Self::Legacy | Self::ConsensusMaintenance => None,
             Self::Signed(manifest) => Some(manifest),
             Self::Lifecycle(eligible) => Some(eligible.manifest()),
+        }
+    }
+}
+
+/// Private result of this admission's complete current-parent validation. It
+/// never crosses an owner release, enters a Node cache or grants work/commit
+/// authority. The epoch only permits omitting a duplicate read in this call.
+struct CheckedAdmissionParent {
+    state: State,
+    eligibility: ParentTaskEligibility,
+    epoch: Option<AdmissionStateEpoch>,
+}
+#[derive(Clone, Copy, PartialEq, Eq)]
+struct AdmissionStateEpoch {
+    data_version: u64,
+    total_changes: u64,
+}
+enum CheckedAdmissionContext {
+    Existing(Hash),
+    Parent(CheckedAdmissionParent),
+}
+impl CheckedAdmissionContext {
+    fn existing(self) -> Option<Hash> {
+        match self {
+            Self::Existing(id) => Some(id),
+            Self::Parent(_) => None,
         }
     }
 }
@@ -583,6 +615,9 @@ fn next_nonce_from_state(state: &State, sender: Hash) -> Result<u64> {
 pub struct Node {
     db: Connection,
     owner: File,
+    // Declared after db/owner so SQLite closes before private files are removed.
+    // The guard also retains the existing source namespace's exclusive lock.
+    growth_observer_snapshot: Option<growth::observer::Snapshot>,
     directory: PathBuf,
     directory_id: (u64, u64),
     database_id: (u64, u64),
@@ -603,6 +638,8 @@ pub struct Node {
     commitment_cache: RefCell<Option<ActiveCommitment>>,
     // Bounded tree material only. Historical State still comes from all original SQL reads.
     historical_commitment_cache: RefCell<historical_commitment::HistoricalCommitments>,
+    // Explicit opt-in only. Never persisted, exported or shared across Node owners.
+    root_rejection_cache: RefCell<Option<Box<root_rejection_cache::Cache>>>,
     // Exact-input arithmetic only; never replaces an actual State/node/history
     // read or its comparison. Volatile and bounded within this existing owner.
     authenticated_arithmetic: native_authenticated::ArithmeticCache,
@@ -807,6 +844,37 @@ pub struct ConfirmationBatch {
     pub distinct_bodies_checked: usize,
 }
 impl Node {
+    /// Enable bounded volatile final-ROOT rejection reuse for this Node owner.
+    /// Default is off; no CLI/profile/consensus or CPU-budget change is implied.
+    /// Repeated calls cannot reset entries, TTL or a failed monotonic clock.
+    pub fn enable_local_root_rejection_cache(&mut self) -> Result<()> {
+        self.ready()?;
+        ensure(
+            !growth_profile_v2::enabled(&self.settings.app),
+            "GROWTH_REFERENCE_OWNER",
+        )?;
+        let mut cache = self.root_rejection_cache.borrow_mut();
+        if cache.is_none() {
+            *cache = Some(Box::default());
+        }
+        Ok(())
+    }
+    fn root_rejection_scope(&self, parent: Hash, root: Hash) -> root_rejection_cache::Scope {
+        root_rejection_cache::Scope {
+            context: hash(
+                b"local-m06-final-root-rejection-v1",
+                &[
+                    &self.settings.network(),
+                    &self.settings.parameters(),
+                    &self.settings.genesis(),
+                    &self.state_backend.selected_schema_id(&self.settings),
+                    self.settings.task_profile().as_bytes(),
+                ],
+            ),
+            parent,
+            root,
+        }
+    }
     pub fn open(path: &Path, settings: Settings, workers: usize) -> Result<Self> {
         Self::open_with_fault(path, settings, workers, None)
     }
@@ -848,6 +916,7 @@ impl Node {
                 continuous: None,
             },
             StateBackend::AuthenticatedV1,
+            false,
         )
     }
     /// Explicit local operator policy; neither permissionless nor consensus authority.
@@ -981,6 +1050,7 @@ impl Node {
                 continuous: continuous_owner,
             },
             StateBackend::Legacy,
+            false,
         )
     }
     fn open_selected(
@@ -990,6 +1060,7 @@ impl Node {
         mut hook: Option<&mut Hook<'_>>,
         owners: NativeOwners,
         state_backend: StateBackend,
+        growth_observation_only: bool,
     ) -> Result<Self> {
         ensure(
             !authenticated_migration_pending(path)?,
@@ -1000,6 +1071,13 @@ impl Node {
                 == (state_backend == StateBackend::PermanentAccountGrowthV2),
             "GROWTH_PROFILE_BACKEND",
         )?;
+        if growth_observation_only {
+            ensure(
+                state_backend == StateBackend::PermanentAccountGrowthV2
+                    && path.join("native.sqlite").is_file(),
+                "GROWTH_PACKET_STATUS_EXISTING_STORE_REQUIRED",
+            )?;
+        }
         let NativeOwners {
             policy: owner_policy,
             mining: mining_owner,
@@ -1042,6 +1120,10 @@ impl Node {
         let directory = path.canonicalize()?;
         let dbpath = directory.join("native.sqlite");
         let marker = directory.join("initializing.json");
+        ensure(
+            !growth_observation_only || !marker.exists(),
+            "GROWTH_OBSERVATION_RECOVERY_REQUIRED",
+        )?;
         let lock = directory.join("owner.lock");
         for p in [
             &dbpath,
@@ -1146,15 +1228,32 @@ impl Node {
         ] {
             plain(p)?;
         }
-        let mut db = Connection::open(&dbpath)?;
+        ensure(
+            !growth_observation_only || initialized,
+            "GROWTH_PACKET_STATUS_EXISTING_STORE_REQUIRED",
+        )?;
+        let mut db = if growth_observation_only {
+            Connection::open_with_flags(
+                &dbpath,
+                OpenFlags::SQLITE_OPEN_READ_ONLY | OpenFlags::SQLITE_OPEN_NO_MUTEX,
+            )?
+        } else {
+            Connection::open(&dbpath)?
+        };
         let dm = fs::metadata(&dbpath)?;
         if let Some(previous) = prior_inode {
             ensure(previous == (dm.dev(), dm.ino()), "NAMESPACE_CHANGED")?;
         }
         db.busy_timeout(Duration::from_secs(5))?;
-        db.execute_batch(
-            "PRAGMA trusted_schema=OFF; PRAGMA foreign_keys=ON; PRAGMA journal_mode=WAL; PRAGMA synchronous=FULL;",
-        )?;
+        if growth_observation_only {
+            db.execute_batch(
+                "PRAGMA trusted_schema=OFF; PRAGMA foreign_keys=ON; PRAGMA query_only=ON;",
+            )?;
+        } else {
+            db.execute_batch(
+                "PRAGMA trusted_schema=OFF; PRAGMA foreign_keys=ON; PRAGMA journal_mode=WAL; PRAGMA synchronous=FULL;",
+            )?;
+        }
         if !initialized {
             ensure(intent, "INITIALIZATION_INTENT_REQUIRED")?;
             let tx = db.transaction_with_behavior(rusqlite::TransactionBehavior::Immediate)?;
@@ -1221,6 +1320,7 @@ impl Node {
         let mut node = Self {
             db,
             owner,
+            growth_observer_snapshot: None,
             directory,
             directory_id: (metadata.dev(), metadata.ino()),
             database_id: (dm.dev(), dm.ino()),
@@ -1236,6 +1336,7 @@ impl Node {
             public_history_test_snapshot: false,
             commitment_cache: RefCell::new(None),
             historical_commitment_cache: RefCell::default(),
+            root_rejection_cache: RefCell::new(None),
             authenticated_arithmetic: native_authenticated::ArithmeticCache::default(),
             commitment_observation: RefCell::new(None),
             history_read_counters: Cell::new(HistoryReadCounters::default()),
@@ -1251,7 +1352,7 @@ impl Node {
             // Complete-State reference budget records cannot be silently ignored
             // by this backend. Validate/refuse them before any growth recovery.
             node.validate_native_budget_records_v1()?;
-            node.growth_cold_open()?;
+            node.growth_cold_open(!growth_observation_only)?;
             // Settings retain the immutable genesis input for exact reopen. Hot
             // execution never clones this bootstrap State or the full account set.
             return Ok(node);
@@ -1334,26 +1435,7 @@ impl Node {
         let tx = self.db.unchecked_transaction()?;
         let read_changes = tx.total_changes();
         self.storage_context()?;
-        let state = self.state_at_with_progress(block, &mut || {
-            progress(NativeAccountProofProgress::StateReplay)
-        })?;
-        native_authenticated::verify_state(&tx, &self.settings, block, &state, &mut || {
-            progress(NativeAccountProofProgress::StateVerification)
-        })?;
-        let record = native_authenticated::load(&tx, block)?;
-        let context = crate::account_archive_prototype::Context {
-            network: self.settings.network(),
-            parameters: self.settings.parameters(),
-            genesis: self.settings.genesis(),
-        };
-        let checkpoint = crate::account_archive_prototype::native_store::query_checkpoint(
-            &tx,
-            context,
-            block,
-            record.height,
-            record.state.state_root,
-            &record.accounts,
-        )?;
+        let (checkpoint, _) = self.checked_account_query_checkpoint(&tx, block, progress)?;
         let (proof, observation) =
             multiproof::from_native_database(&tx, &checkpoint, owners, &|point| {
                 progress(NativeAccountProofProgress::Proof(point))
@@ -1884,6 +1966,9 @@ impl Node {
         ))
     }
     fn namespace(&self) -> Result<()> {
+        if let Some(snapshot) = &self.growth_observer_snapshot {
+            snapshot.check()?;
+        }
         ensure(
             !authenticated_migration_pending(&self.directory)?,
             "NATIVE_STATE_MIGRATION_PENDING",
@@ -2262,6 +2347,20 @@ impl Node {
         control: &ExecutionControl<'_, Error>,
         owner_permit: Option<&OwnerPacketPermit>,
     ) -> Result<trnm_mvcc_fee::pon_commitment::StagedOutput> {
+        self.execute_derived_core_with_rejection(actual, block, control, owner_permit, None)
+            .map(|(output, _)| output)
+    }
+    fn execute_derived_core_with_rejection(
+        &self,
+        actual: &State,
+        block: ExecutionRequest<'_>,
+        control: &ExecutionControl<'_, Error>,
+        owner_permit: Option<&OwnerPacketPermit>,
+        exact_packet: Option<(&Header, &[u8])>,
+    ) -> Result<(
+        trnm_mvcc_fee::pon_commitment::StagedOutput,
+        Option<root_rejection_cache::Scope>,
+    )> {
         let _measurement = (self.state_backend == StateBackend::AuthenticatedV1).then(|| {
             self.authenticated_arithmetic
                 .history
@@ -2328,7 +2427,7 @@ impl Node {
             )
             .map_err(local_execution_error)?;
             *self.commitment_observation.borrow_mut() = Some(result.commitment.observation.clone());
-            return Ok(result);
+            return Ok((result, None));
         }
         let (bound, observation) = pon_commitment::CheckedExecutionParent::check_and_bind(
             actual,
@@ -2362,14 +2461,38 @@ impl Node {
         };
         // Preserve the second original cancellation boundary without rebinding
         // and rehashing the same immutable, already-checked parent state.
-        let result = progress(ExecutionProgress::BeforeParentBinding)
-            .map_err(ExecutionError::Cancelled)
-            .and_then(|()| bound.execute_with_control(request(), &self.settings.app, control));
+        progress(ExecutionProgress::BeforeParentBinding)?;
+        // Work, current eligibility, complete State/root/account graph, owner
+        // gates and both original cancellation boundaries have all run afresh.
+        // Only the deterministic M06/output portion may be omitted on a hit.
+        let rejection = exact_packet
+            .filter(|_| self.root_rejection_cache.borrow().is_some())
+            .map(|(header, bytes)| {
+                (
+                    header,
+                    bytes,
+                    self.root_rejection_scope(parent, current_root),
+                )
+            });
+        if let Some((header, bytes, scope)) = rejection {
+            let rejects = self
+                .root_rejection_cache
+                .borrow_mut()
+                .as_mut()
+                .is_some_and(|cache| {
+                    cache.rejects(scope, bytes, header, root_rejection_cache::now_ns())
+                });
+            if rejects {
+                progress(ExecutionProgress::BeforeOutput)?;
+                return Err("ROOT".into());
+            }
+        }
+        let result = bound.execute_with_control(request(), &self.settings.app, control);
         match result {
             Ok(output) => {
                 *self.commitment_observation.borrow_mut() =
                     Some(output.commitment.observation.clone());
-                Ok(output)
+                Ok((output, rejection.map(|(_, _, scope)| scope)))
             }
             Err(ExecutionError::Relation("COMMITMENT_PARENT" | "COMMITMENT_ROOT")) => {
                 // A wrong internal snapshot cannot reject an otherwise valid
@@ -2385,6 +2508,7 @@ impl Node {
                     control,
                 )
                 .map_err(local_execution_error)
+                .map(|output| (output, rejection.map(|(_, _, scope)| scope)))
             }
             Err(error) => Err(local_execution_error(error)),
         }
@@ -2920,7 +3044,9 @@ impl Node {
         observed_now: u64,
         progress: &mut dyn FnMut() -> Result<()>,
     ) -> Result<Option<Hash>> {
-        self.check_admission_context_for_permit(packet, observed_now, None, progress)
+        Ok(self
+            .check_admission_context_for_permit(packet, observed_now, None, progress)?
+            .existing())
     }
     /// The ordinary public V3 service verifies bounded W1 before reconstructing
     /// all parent State. Local owner policies still bind their complete task
@@ -2934,7 +3060,11 @@ impl Node {
         let task_before_work = self.owner_policy.is_some()
             || self.continuous_owner.is_some()
             || self.mining_owner.is_some();
-        self.check_admission_context_inner(packet, observed_now, None, progress, task_before_work)
+        if task_before_work {
+            self.check_admission_context_with_progress(packet, observed_now, progress)
+        } else {
+            self.check_admission_header_context(packet, observed_now, None)
+        }
     }
     fn check_admission_context_for_permit(
         &self,
@@ -2942,16 +3072,19 @@ impl Node {
         observed_now: u64,
         reserved: Option<&OwnerPacketPermit>,
         progress: &mut dyn FnMut() -> Result<()>,
-    ) -> Result<Option<Hash>> {
-        self.check_admission_context_inner(packet, observed_now, reserved, progress, true)
+    ) -> Result<CheckedAdmissionContext> {
+        if let Some(id) = self.check_admission_header_context(packet, observed_now, reserved)? {
+            return Ok(CheckedAdmissionContext::Existing(id));
+        }
+        Ok(CheckedAdmissionContext::Parent(
+            self.check_admission_parent(packet, progress)?,
+        ))
     }
-    fn check_admission_context_inner(
+    fn check_admission_header_context(
         &self,
         packet: &Packet,
         observed_now: u64,
         reserved: Option<&OwnerPacketPermit>,
-        progress: &mut dyn FnMut() -> Result<()>,
-        task_before_work: bool,
     ) -> Result<Option<Hash>> {
         // Bounded full-packet identity precedes State/lease/context/Work work.
         self.precheck_owner_packet(packet)?;
@@ -3025,15 +3158,33 @@ impl Node {
         // them before task lookup; a passing filter still requires full replay.
         pon_work::precheck_proof_statement(h.challenge(), h.work_task, h.target, &packet.proof)
             .map_err(|error| Error::from(format!("WORK:{error:?}")))?;
-        if !task_before_work {
-            // Only the unowned public preflight can defer this expensive stage.
-            // A verified proof is still not a task/State/commit authorization.
-            return Ok(None);
-        }
+        // Only the unowned public preflight stops here. Final admission and
+        // local owner policies must also run check_admission_parent afresh.
+        Ok(None)
+    }
+    fn admission_state_epoch(&self) -> Result<AdmissionStateEpoch> {
+        Ok(AdmissionStateEpoch {
+            data_version: self
+                .db
+                .query_row("PRAGMA data_version", [], |row| row.get(0))?,
+            total_changes: self.db.total_changes(),
+        })
+    }
+    fn check_admission_parent(
+        &self,
+        packet: &Packet,
+        progress: &mut dyn FnMut() -> Result<()>,
+    ) -> Result<CheckedAdmissionParent> {
+        let h = &packet.header;
+        // The Node owner excludes cooperating writers. These inexpensive SQLite
+        // observations additionally withhold reuse after same-connection row mutations
+        // or commits by a foreign connection, including diagnostic fault hooks.
+        // They do not authenticate arbitrary out-of-band filesystem changes.
+        let before = self.admission_state_epoch()?;
+        let state = self.state_at_with_progress(h.parent, progress)?;
+        let eligibility = self.eligible_work_task_from_state(&state, h.work_task, h.height)?;
         // Signed task context/expiry/parent registration reject before full work replay.
-        if let Some(manifest) =
-            self.eligible_work_task_with_progress(h.parent, h.work_task, h.height, progress)?
-        {
+        if let Some(manifest) = eligibility.manifest() {
             // The fixed recipe's actual model and input artifacts are precisely the
             // proof's A/B bytes. An untrusted miner can bypass every local builder;
             // the validator must bind these commitments before transcript replay.
@@ -3060,7 +3211,12 @@ impl Node {
                 "TASK_INPUT_BINDING",
             )?;
         }
-        Ok(None)
+        let epoch = (self.admission_state_epoch()? == before).then_some(before);
+        Ok(CheckedAdmissionParent {
+            state,
+            eligibility,
+            epoch,
+        })
     }
     pub fn admit(&mut self, packet: &Packet, observed_now: u64) -> Result<Hash> {
         if let Some(id) = self.check_admission_context(packet, observed_now)? {
@@ -3545,14 +3701,15 @@ impl Node {
             work: verified_work,
             owner_permit,
         } = checked;
-        if let Some(id) = self.check_admission_context_for_permit(
+        let checked_parent = match self.check_admission_context_for_permit(
             &packet,
             observed_now,
             owner_permit.as_ref(),
             &mut || (control.progress)(ExecutionProgress::BeforeParentBinding),
         )? {
-            return Ok(id);
-        }
+            CheckedAdmissionContext::Existing(id) => return Ok(id),
+            CheckedAdmissionContext::Parent(parent) => parent,
+        };
         ensure(
             self.owner_policy.is_some() == owner_permit.is_some(),
             "OWNER_TASK_PERMIT_REQUIRED",
@@ -3602,11 +3759,25 @@ impl Node {
         let h = &packet.header;
         let id = packet.id()?;
         let parent = self.record(h.parent)?;
-        let prior = self.state_at_with_progress(h.parent, &mut || {
-            progress(ExecutionProgress::BeforeParentBinding)
-        })?;
-        let registered_task = self.eligible_work_task_from_state(&prior, h.work_task, h.height)?;
-        let executed = self.execute_derived_core(
+        // Keep the original second parent-read cancellation/CPU boundary. The
+        // first full State/root/account/task/material validation was in this
+        // same admission, while holding this same owner. No new ledger writes
+        // have run. A changed or unstable SQL epoch retains full fresh checks.
+        progress(ExecutionProgress::BeforeParentBinding)?;
+        let checked_parent = if checked_parent.epoch == Some(self.admission_state_epoch()?) {
+            checked_parent
+        } else {
+            drop(checked_parent);
+            self.check_admission_parent(&packet, &mut || {
+                progress(ExecutionProgress::BeforeParentBinding)
+            })?
+        };
+        let CheckedAdmissionParent {
+            state: prior,
+            eligibility: registered_task,
+            ..
+        } = checked_parent;
+        let (executed, rejection_scope) = self.execute_derived_core_with_rejection(
             &prior,
             ExecutionRequest {
                 transactions: &packet.transactions,
@@ -3617,6 +3788,7 @@ impl Node {
             },
             control,
             owner_permit.as_ref(),
+            Some((h, &bytes)),
         )?;
         let mut output = executed.output;
         let mut commitment = executed.commitment;
@@ -3631,10 +3803,26 @@ impl Node {
                 output.root = commitment.root;
             }
         }
-        ensure(
-            h.state == output.root && h.receipts == sequence_root("receipts", &output.receipts),
-            "ROOT",
-        )?;
+        let receipts_root = sequence_root("receipts", &output.receipts);
+        if h.state != output.root || h.receipts != receipts_root {
+            // This private fact is constructed only after successful full M06
+            // and task-output derivation. No arbitrary Err(ROOT) is retained.
+            if let Some(scope) = rejection_scope {
+                progress(ExecutionProgress::BeforeOutput)?;
+                if let Some(cache) = self.root_rejection_cache.borrow_mut().as_mut() {
+                    cache.retain(
+                        scope,
+                        bytes,
+                        root_rejection_cache::FinalMismatch {
+                            state: output.root,
+                            receipts: receipts_root,
+                        },
+                        root_rejection_cache::now_ns(),
+                    );
+                }
+            }
+            return Err("ROOT".into());
+        }
         if self.state_backend == StateBackend::AuthenticatedV1 {
             // Pure successor tree material is already available from M06. Offer
             // it to the existing bounded historical cache before SQL readback;

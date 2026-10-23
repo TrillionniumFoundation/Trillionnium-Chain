@@ -1,7 +1,7 @@
 # Trillionnium Chain Development Plan — PoN / Hepta-PoH revision
 
-Plan ID: `trnm-chain-development-plan-v2` (stable registry identity; content revision 18).
-Effective: 2026-09-28; priority implementation revision: 2026-10-22. Status: selected development direction; no runtime activation.
+Plan ID: `trnm-chain-development-plan-v2` (stable registry identity; content revision 21).
+Effective: 2026-09-28; priority implementation revision: 2026-10-23. Status: selected development direction; no runtime activation.
 Canonical destination: `refs/heads/main`; continuation uses the current main lineage, not retired PR #194.
 Current source/head/tree/base and prospective merge are derived at verification time.
 Assessed legacy baseline: `c552c31c6d3c5ac47522a124e02c6b8bca4e23f2`, tree
@@ -107,6 +107,74 @@ precedes I10 local admission/install/readback. Reuse Hepta's existing
 [global plan](https://github.com/TrillionniumFoundation/hepta-private-ci/blob/c38e7727220f32c7410f59083c5ea7878bbae078/docs/DEVELOPMENT.md)
 and work-package owners; Agentd composes calls and creates no second store.
 
+### 2026-10-23 convergence checkpoint within PN0–PN6
+
+This checkpoint continues the sequence and owners below; it creates no second
+plan or activation authority. The integration includes the reviewed #328–#334
+follow-ups in the existing #323 lineage. Historical failures and earlier
+source identities remain intact. The [convergence evidence index](../../evidence/pon-upgrade-implementation-20261018/native-rounds/pn-convergence-20261023/SCOPE.md)
+separates actual native observations, tested overlay hashes and still-open exits.
+Exact final commits, actual GitHub merge refs and paired binary identities must
+be read from their own receipts. A source check does not execute acceptance tests.
+
+| Phase | Concrete acquired result | Remaining exit obligation |
+| --- | --- | --- |
+| PN0 | Fixed Chain `96a98a635def8c13b2d4f234aa1daee59c57afa0` and Hepta `3e9efb15faa261a4dc3ffc3205cd259aaee41a3f` passed five actual native pair selectors with source/binary receipts. The subsequent request-local parent-reuse overlay passed four new native regressions, seven original ROOT-cache cases, the original three-backend payment/reorg case, strict workspace/all-target/all-feature Clippy, formatting and source-integrity negative tests. | The new integrated heads and actual merge refs need their own clean-source, binary and paired receipts. Later Hepta owner and dependency changes are not covered by the old pair. Hosted checks and unresolved independent security disposition remain separate gates. |
+| PN1 | The unchanged cache-OFF ROOT supplement actually ran at `96a98a6`: 24 hostile actors caused real paid-credit depletion; baseline completed 21 honest submits and three confirmations. Under attack the first honest confirmation round started and timed out, with zero confirmations; the other two rounds never started. No hostile ROOT packet entered live/cold state and the paid CPU ledger reconciled. | This is an observed honest-service FAIL, separate from the three original cheap-proof campaign FAILs that lacked depletion. Request-local parent reuse is a narrower repair, not a passing replay. Minimum legitimate-work cost, structured/hardware advantage, original-workload service qualification and independent reproduction remain open. |
+| PN2 | The ordinary growth owner and cold-copy regressions retain their earlier 59-case scope. The explicit release boundary case at `96a98a6` passed: 65,520 genesis accounts grew to 65,552 through 34 signed transfers, two reopens and one reorg, with six working keys and a 3,722-byte witness. The original `rust-baseline` job now requires this nonzero ignored-selector execution and its native export in both source lanes. | The seeded boundary observation is neither growth from a small genesis nor public TPS. New-source release receipts, history/catchup, retained-history/resource curves, future-owner capacity, physical-fault limits and joint PN1/PN2 service qualification remain open. |
+| PN3 | The ordinary neural entry composes original qualification replay, CURRENT selection, verified payload FD, Unix FinalUse and durable inference control. The old fixed pair's five native tests include live growth transport and restart/reorg. Retained real training has three lineage generations, two evaluated comparisons and zero beneficial comparisons. | The subsequent signed ordinary-owner path needs final-pair execution. Synthetic task authorization does not establish actual eligible CURRENT, independently authorized ordinary model consumption or a beneficial upgrade. Those real model exits remain required. |
+| PN4 | Payment readback preserves the historical claim while reobserving current branch membership; the actual signed task/reorg regression passed on all three backends, without adding a payment, effect or journal mutation. | A local claim is not a chain funding lock. Complete byte-time retention, repair and reorg funding replacement, independently metered budgets and economic acceptance remain open. |
+| PN5 | Existing finite configured-peer Cell/TCR1 evidence and fault regressions remain bound to their actual sources and unsuccessful overall handoff outcomes. | At least three independent operators/failure domains and the preregistered at-least-72-hour WAN experiment, including retrieval, repair and recovery cohorts, remain mandatory. |
+| PN6 | Private-copy rehearsal verification and bounded descriptor/receipt reads passed 14 focused cases; three original cold-observer failures were reproduced before repair, then the combined growth suite passed 34 cases. | Cross-context compatibility, owner drain/reconciliation, operational migration/rollback, predecessor exits and the existing governed activation decision remain required. Production activation remains false. |
+
+The PN1 accounting denominator is precise: paid mutation CPU equals actual
+`attack_submit` plus `honest_submit` owner CPU. The original cheap-proof
+campaign's 7.5–9.0 seconds per hostile phase include honest submits. Read CPU,
+attacker construction and independent client import remain separate. Those
+three campaign verdicts stay FAIL: 189/189 honest submission observations and
+27/27 confirmations succeeded, but no hostile phase met depletion qualification.
+They are not evidence of failed honest confirmation in those trials.
+
+The separate ROOT supplement preserves its original work, actors, budgets,
+deadlines and resource envelope, with the optional rejection cache off. Its
+attack phase measured 9,399,693,107 ns paid CPU; balance identity closed with
+zero live owners, booked reservations, unsettled known-live CPU and in-flight
+mutation CPU at shutdown. Full W1 verification passed for 149 requests; this
+does not mean 149 blocks were admitted. The native tip stayed at seed height
+and no hostile packet appeared after cold reopen. The only started honest round
+ran from approximately 1.00048 s to 30.01571 s with 15 unsuccessful/timed-out
+submission attempts and zero confirmations. State correctness and accounting
+closure do not erase this observed service failure or establish caller fairness.
+
+The parent-reuse repair keeps a freshly checked parent only within the same
+admission request and held owner. SQLite data-version and same-connection row
+mutation epochs fence reuse; foreign commits force the original parent recheck.
+Current clock/context checks and the second cancellation/CPU checkpoint remain.
+It does not cache authority across callers, change W1/budgets/deadlines, enable
+the optional ROOT cache or alter the nonpreemptible commit tail. Four new native
+regressions and the seven original cache cases pass on the recorded overlay.
+Their PASS does not certify the unchanged ROOT campaign on a later source.
+
+The PN2 profile remains explicit: submit and exact status are paid operations;
+head has fixed metadata and the original control output reserve, but waits for
+the same owner. Admission reacquires that owner after typed W1 and rechecks
+current clock/context/parent/epoch. Postcommit activation retains its charged,
+O(reorg-depth), nonpreemptible tail. The cold interface keeps its exclusive lock
+and O(H) audit cost; its local 8 GiB main-file copy ceiling is not a total
+disk/CPU/device-latency bound. Source recovery logs require ordinary writer
+recovery before retry. Neither path grants install or final-use authority;
+maintenance retains `accepted_task=null`.
+
+The mandatory-owner signed regression reached the 32-distinct-future-owner union
+with 62 transactions, 37 working keys, 12,910 working bytes, 33 proof accounts and
+a 64,551-byte packet. A new reward address was excluded while an existing miner
+could continue; refunds and maturity later released the constraint. This is
+entry exclusion below the other ceilings, not permanent halt. An authenticated,
+versioned reservation/due-owner design and conservation/reorg/migration evidence
+are needed before changing the rule; raising the cap or redirecting rewards is
+not its repair. The read-only capacity report grants no admission authority.
+
+
 ### Audit remediation baseline and acceptance records
 
 The 2026-10-22 audit inspected Chain `8d56f2f173d3e870846cf1129d48647f2b84540a`
@@ -123,9 +191,100 @@ all 913 listed files were length/hash-checked. Its prepared business bytes
 contain only three distinct transactions. This establishes neither continuous
 attack pressure nor public TPS; it is not an observed honest-confirmation
 failure. Earlier 6/18 overlap observations below belong to earlier sources.
-The same source's [CodeQL check 119818040273](https://github.com/TrillionniumFoundation/Trillionnium-Chain/runs/119818040273)
+Read-only flow reconciliation found all six hostile phases above the 100 ms
+depletion threshold, including a conservative between-sample lower bound of
+232.852451 ms in the lowest phase. Delivered hostile dispatch CPU was about
+0.188–0.193 CPU-second/second for from-zero and 0.230–0.237 for late-product,
+below the unchanged 0.25 refill. The preceding challenge limiter and cheap
+rejection workload therefore matter; reducing a threshold or treating a
+reservation as spent CPU would not qualify the original failed trials.
+
+PN1 now reuses the existing valid-W1/false-State-root public replay regression
+for an explicit opt-in, three-request component cost preflight. The additional
+fixture fixes the original four blocks/1,024 signed seed transfers, h4 parent,
+first business transaction (nonce 1025) and one M06 worker. It remakes W1 after
+changing State root and sends the same body through three fresh public
+handshakes. Work/M06 stages, actual owner plus scoped CPU, settled debit,
+unchanged SQL/native state and cold reopen are checked, with a separate legal
+acceptance control. The old eight-transaction/genesis/two-M06-worker regression
+remains. Preparation, all actual search attempts, encoding and independent
+verification costs are retained; preparation totals include nested components.
+See [PN1 component cost boundary](../protocol/pon-nakamoto-v1/details/ADMISSION_SECURITY.md#fixed-seed-root-rejection-component-cost).
+This preflight does not measure sustained arrival rate, honest overlap or
+burst depletion. A later explicitly supplemental cohort must first freeze its
+real offered workload and independent honest window, retain the original
+front-door limits/budgets and account actual producer costs. Original three-run
+FAIL, work-profile qualification and activation flags remain unchanged.
+
+PN1 supplemental code now extends the same phase/actor owner with one separate
+valid-W1/false-root cohort: one 30-second baseline plus one 30-second pressure
+phase, 24 separate producer processes and the fixed h4/1,024 signed seed.
+Original caps, depletion arithmetic, t=1/5/9 schedule and three depth-six
+confirmations remain. Exact-body receiver Admission/CPU observations and wholly
+contained signature-verified client ROOT replies are separate requirements;
+global paid settlement, 24 complete actor reports and exact live/cold State
+readback are mandatory. The prepare/execute selector uses the existing source,
+resource and bounded-process owners and freezes a read-only binary before any
+single aggregate 400%/16-GiB user-service run. After source `c61e2112` and its
+immutable release binary were frozen, one separately authorized cohort **FAILED**:
+baseline 3/3 confirmations; pressure 2/3, with final h25 Submit `FRAME_DEADLINE`
+and receiver h24/events24 after the fixed window. Genuine paid depletion,
+593 signed ROOT replies, 24 complete actors, all hostile packets absent and
+known whole-domain settlement of 9,396,951,692 ns were observed; they do not
+replace the missing third confirmation. No retry occurred. The failure path
+missed within-service final resource/source snapshots; independent post-failure
+raw source/hash and process/cgroup cleanup checks remain separate evidence.
+Original three-run/six-hostile FAIL, PN1/hardness and activation verdicts remain
+unchanged. See the existing
+[admission contract](../protocol/pon-nakamoto-v1/details/ADMISSION_SECURITY.md#fixed-seed-root-supplemental-cohort).
+
+The next M03/M06 component, composed by the existing M15 Node, is an explicit, default-off
+`Node::enable_local_root_rejection_cache` API. Only the final mismatch after
+actual M06 and task-output derivation may retain an exact encoded packet with
+its checked immutable parent/root and local source/profile context. Every
+replay still verifies complete Work, current context/eligibility, actual State,
+root/account graph, owner/mining/continuous gates and cancellation, and pays
+actual CPU. The volatile cache has 32 slots, a 2-MiB software-retention cap and
+30-second monotonic TTL; unknown/backward time clears and disables it until
+owner reopen. It retains no acceptance, generic ROOT, cancellation, Unknown or
+local-integrity error. This component has no public CLI/service activation,
+new lane, budget or wire/namespace change, and excludes the growth-reference
+executor. Local component tests do not qualify nonce churn, the arithmetic
+research profile or PN1; the failed original and supplemental campaigns remain
+failed. See the existing
+[bounded rejection component contract](../protocol/pon-nakamoto-v1/details/ADMISSION_SECURITY.md#optional-bounded-final-root-rejection-component).
+
+The same supplemental runner now uses execution-report namespace v2 to retain
+independent binary, source and live-resource after-observations on ordinary
+native failure. Missing after-evidence cannot pass or replace the primary error;
+the cohort remains claimed once. Original inputs/criteria are unchanged, and the
+old c61 failure and its missing records remain unchanged. These launcher controls
+are not a new pressure result or final whole-unit resource settlement.
+
+A separate current-source freeze `f7795a3d72bb59d9f0625186d301fc3ce0dc028e`
+then passed the same one baseline/ROOT supplemental cohort, with the optional
+cache still off and the original inputs/limits unchanged. All 24 actors and
+21 business blocks completed; the three depth-six confirmations ended at
+5.967304544, 16.120909061 and 26.006862713 seconds, each with contained numeric
+depletion and signed ROOT replies. Paid/settled owner CPU was 9,403,286,579 ns,
+with known zero scoped CPU. Hash readback covered 152 original files /
+57,416,786 bytes; independent closed SQL copies agreed on all current State
+rows, tip/root, height25/events25/blocks26 and hostile-ID absence. All three v2
+after-checks passed, and all 26 observed processes/original cgroup were gone.
+Current source includes scheduling/native-arithmetic changes, so this does not
+attribute the improvement to the unused cache. The generic finite-phase flag
+is still false; the separately frozen ROOT predicate alone passed. Capacity
+exhaustion, nonce churn, cheapest-work hardness, original campaign failures,
+deleted-unit final accounting and three real model upgrades remain open under
+their existing PN1/PN3/PN4 owners. See the same
+[supplemental admission contract](../protocol/pon-nakamoto-v1/details/ADMISSION_SECURITY.md#fixed-seed-root-supplemental-cohort)
+for source/binary/report pins and retained capture limitations.
+
+The historical audit source `8d56f2f173d3e870846cf1129d48647f2b84540a`'s
+[CodeQL check 119818040273](https://github.com/TrillionniumFoundation/Trillionnium-Chain/runs/119818040273)
 reports failure with thirteen high annotations. Independent disposition is
 required; the alert count is not thirteen independently confirmed exploits.
+That check does not scan or qualify the later 8caf/f779 source heads.
 
 Each PN exit retains source pair/profile, accountable owner, actual caller and
 command, frozen workload/thresholds, raw outputs, missing observations and
@@ -935,8 +1094,39 @@ repair and complete no-replace materialization are exercised with real loopback
 connections, origin removal, two suppliers, corruption, partial downloads,
 exhausted connection budgets and a byte-dripping peer. This grants neither model
 loading/installation nor CURRENT/FinalUse authority. Independent storage owners,
-WAN delivery, discovery, private transport and long-term replica renewal require
-their own implementations and observations.
+WAN delivery, public discovery, private transport and long-term replica renewal
+require their own observations. The merged explicit development
+[rendezvous](specs/pon/CELL_PROVIDER_DISCOVERY_DEV_V1.md) and
+[native-funded retention](specs/pon/CELL_RETENTION_V1.md) remain separate scoped
+components, with no independent custody or public-network qualification.
+
+The explicit configured-peer bounded serving option now shares an actual-write
+budget across at most four read-only workers with no application waiting queue.
+Overload consumes the original connection limit; partial failed writes are
+charged, and shutdown/error paths join admitted workers. The default serial
+route is preserved. This is PN3/PN5 transport engineering, not public fairness,
+complete model loading or independent custody acceptance.
+Merged discovery shares the client's original connection/response/deadline
+reservation; bounded serving still reads only the disposable cache. Actual
+discovery/retention databases are rejected as cache namespaces. Neither this
+merge nor its local transport regressions rerun or qualify earlier model cohorts.
+
+A2026-10-22 controlled three-host cohort transferred eight pinned public
+SmolLM2-135M-Instruct material files,271,178,816 payload bytes in266 chunks.
+The debug build failed the original120s verification deadline after all chunks
+were present; its exact failing verification stage and CPU cause remain unknown.
+A release-preparation attempt failed the binary SHA gate before network activity
+because a concurrent local test rebuild changed the distribution path. Both
+failures are retained. A fresh cold-cache attempt with the immutable release
+binary completed A-to-B fetch in36.691s and, after A stopped normally, B-to-C in
+37.966s, under the unchanged120s/512MiB payload/1GiB response budgets. Independent
+release verification took4.723s/5.391s. All eight materialized files matched their
+pins and passed the runtime material verifier. Each server completed275 requests
+and wrote271,192,859 application bytes including a nine-byte final control reply.
+This closes only the controlled public-material transport/source-loss byte
+subitem. The operators share administration; semantic release closure, I10
+installation, independent custody and PN5 remain open. The subsequent full model
+pilot failed its exit-observation gate and grants no model-loop acceptance.
 
 The additive TCR1 whole-release route pins an owner-supplied release manifest and
 digest, checks all member manifests before payload download, and shares one
@@ -1448,6 +1638,73 @@ must be read separately from PN1's real total budget and honest-completion resul
    needs reachability. A pruned deep valid fork uses verified resync, not invented
    finality. Export/migration verifies the complete source and publishes an
    isolated destination only after readback; source remains recoverable.
+
+I03/I04 implemented subitem: the existing M07 native AAM1 query can now supply
+its opaque checkpoint directly to M06's compact complete-State reference adapter,
+without a separate AccountArchive. The same parent/context, witness budgets,
+mandatory/successor checks and cancellation order remain. The signed native
+differential suite covers zero balances/nonces, refunds and maturity; previews
+cannot publish SQL or active state. This does not connect witnesses to Packet or
+native admission, select GSC2, remove complete-State scans, or relax any 65,536
+legacy cap. Bounded witness discovery/working input, durable deltas/root retention,
+migration and fault/scaling acceptance in I03–I05 remain open; PN2 stays unqualified.
+
+PN2 cold-journal subitem: the original growth Node's cold-open read transaction
+now streams every event twice. The first pass preserves the prior complete
+SQL-type-error priority; the second checks every genesis-to-active journal edge
+with scalar generation/ordinal state. Two actual row cursors then compare the
+latest steps/events and original reorg singleton, including both EOFs. Existing
+hot reorg cancellation and publication remain unchanged. This removes the
+all-events and last-generation event vectors while adding one O(E) read pass;
+the 33-byte stored-hash copy bound and two retained event rows do not bound
+SQLite pages, RSS or the rest of cold open. Blocks, checked roots/COW aggregates,
+fork paths, DB/WAL and historical obligations still require their original
+verification and I05 retention/resource ownership. No root is pruned, no local
+history threshold becomes finality, and PN2 remains unqualified. Actual native
+differential checks pass on 73 events and a 49-step reorg, including 27 SQLite
+corruptions and the original late-type-error priority. The retained growth suite
+passes 17 tests with the original 65,536-account release case ignored under the
+existing serial CI setting. An earlier default-parallel run's `WRITER_BUSY`
+failure remains recorded separately; its cause is not established by the later
+serial pass. These results do not close global root/disk retention.
+
+I04 producer subitem: the existing M07 owner can now issue an explicit opaque
+historical account-query pin after the same complete-State validation, then
+produce AAM1 from real Patricia paths without replaying State on each repeated
+query. Each query rereads exact record/block/context bindings and fails on missing
+or damaged tree bytes. This is fixed-root content access, not a fresh KV/history
+audit, active-state entitlement, retention promise or executable bounded parent.
+The original strict query, cold open, native execution/commit/reorg and all caps
+retain their checks. See the existing [native storage contract](../protocol/pon-nakamoto-v1/details/NATIVE_AUTHENTICATED_STORAGE_V1.md#explicit-historical-account-query-pins).
+
+The separately selected native growth backend already binds its private audited
+parent aggregate and complete bounded working partition to the actual header,
+then shares M06 with proved touched accounts; the complete-State compact reference
+above does not replace that path. Its activation now propagates cancellation
+through ancestor reads, ordered journal writes and streamed exact journal readback.
+The original cancellation error and whole-transaction rollback remain. Duplicate
+journal vectors are removed, while the two fork paths, cold retained-history audit
+and permanent root retention still grow. No public PNP2 admission, global disk
+bound, source-preserving activation migration or final-source scaling acceptance
+is supplied by this increment.
+
+Its original-parent proof verification and both proof-derived successor root
+computations now propagate the same original control error through existing
+multiproof progress boundaries. M06's public interface and successful second
+successor recomputation remain unchanged; a private single-error owner bridges
+its string-only commitment result. Real signed small fixtures must reject early,
+hash-stage and final-output cancellation without publishing any child or changing
+any native table, then admit and cold-open normally with the same owner. These
+boundaries do not make a single hash operation preemptible or close the remaining
+PN2 qualification and retention items above.
+
+The same explicit growth admission callback now reaches full W1 replay through
+the existing typed verifier, preserving original control sources and `WORK:*`
+invalidity. Failed or cancelled work cannot publish a child or reuse success.
+Public PNP2 intake remains dependent on the shared original CPU/deadline/resource
+owner and joint PN1/PN2 qualification. Global I05 bounds remain open: the inert
+migration reservation and the separate M09 Cell arena are not ledger-root or WAL
+quotas, and a SQLite page-exhaustion rollback test supplies no retention policy.
 
 Exit: actual signed native transitions cross 65,536 permanent accounts with
 bounded W and working partition; small-state complete/reference differential
