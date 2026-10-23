@@ -837,6 +837,28 @@ This interface grants no budget authority. Pure parsing
 and small ordinary-FIFO child controls cover
 malformed/truncated/extra frames, backpressure and deadline refusal. Actual
 valid-unit verification and original Store/FinalUse closure remain open.
+The later `83ca245b` tiny observation on source `90232d41` completed both
+original wait4 exits and three FIFO records, but its first terminal read found
+`memory.current=159744` and permanently retained the reservation. Later
+same-held-group diagnostic reads found 4096 then 0; those late observations do not
+repair the failed capability, and their complete counter vectors differ.
+The PN4 successor reconciles kernel charge teardown only inside the first live
+tiny terminal transition, using the already-configured original absolute 8s
+deadline. Only exact memory/swap charge-retained errors may wait, at most 801 reconciliation
+attempts plus the unchanged final snapshot with sleeps bounded by 10ms and remaining time. Format, identity, process,
+descendant and snapshot-equality failures remain immediate sticky failures.
+The original deadline is checked before and after every wait and observation;
+the final held pidfd/wait4 checks, exact-zero memory and swap, and two equal
+complete raw vectors still precede private fact publication before that deadline.
+Blocking system observation retains its original two-second call timeout, so a
+failed observation or cleanup can return after eight seconds; such a tail never
+publishes a timely fact. No counter reset, reclaim,
+limit change, new budget or retry of a failed capability is allowed. Non-tiny
+terminal paths do not wait. Existing owned-process CI now runs 59 original plus 7
+new controls on exact CPython 3.12.3 for source and prospective merge, requiring
+all 66 successes, zero skips and zero expected failures. These ordinary-child/synthetic-counter controls
+do not establish a real aggregate pass, outer reconciliation, resource refund,
+Store/FinalUse authorization or any model upgrade round.
 Post-native Python exception injection does not claim native-internal
 signal interruption; SIGUSR1 tests prove guard reentry refusal. Ordinary FD
 controls do not qualify a valid unit or prove that C-created pipe pages charge C.
