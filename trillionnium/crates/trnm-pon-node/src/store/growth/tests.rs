@@ -1784,3 +1784,6 @@ fn native_growth_v2_cold_open_never_ignores_reference_budget_records() {
     .unwrap();
     assert_eq!(rows(&db), before);
 }
+
+#[path = "mandatory_capacity_tests.rs"]
+mod mandatory_capacity;
