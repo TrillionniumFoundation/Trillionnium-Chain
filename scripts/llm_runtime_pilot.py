@@ -870,6 +870,46 @@ class _OwnedChildCleanupRequired(RuntimeError):
         self.child, self.receipt = child, receipt
 
 
+_AGGREGATE_TERMINAL_CODES = (
+    'aggregate-charge-retained',
+    'aggregate-closed-or-sticky',
+    'aggregate-counter-bound',
+    'aggregate-counter-filename',
+    'aggregate-counter-snapshot-changed',
+    'aggregate-cpu-counter-missing',
+    'aggregate-descendants-or-dying',
+    'aggregate-dying-charge',
+    'aggregate-exact-owned-wait4-required',
+    'aggregate-limits-changed',
+    'aggregate-not-empty',
+    'aggregate-parent-participants-or-dying',
+    'aggregate-path-or-fd-replaced',
+    'aggregate-private-fact',
+    'aggregate-source-or-owner-moved',
+    'aggregate-unit-identity',
+    'aggregate-unit-observation',
+    'evidence-pipe-child-owner',
+    'evidence-pipe-close-or-log-state',
+    'evidence-pipe-eof-unknown',
+    'evidence-pipe-exact-wait4-required',
+    'evidence-pipe-fd-direction',
+    'evidence-pipe-fd-flags',
+    'evidence-pipe-fd-replaced',
+    'evidence-pipe-guard',
+    'evidence-pipe-owner',
+    'evidence-pipe-parent-log',
+    'evidence-pipe-reported-context',
+    'evidence-pipe-slot-replaced',
+    'kernel-file-bound',
+    'kernel-file-type',
+    'kernel-native-lifecycle-busy',
+    'kernel-native-owner-thread',
+    'kernel-owned-close-failed',
+    'kernel-source-changed',
+    'kernel-source-file',
+)
+
+
 class _Wait4Child(subprocess.Popen):
     """One direct Linux child, exclusively reaped by the calls below.
 
@@ -884,9 +924,14 @@ class _Wait4Child(subprocess.Popen):
         self._counter_error_type = self._counter_diagnostic_type = None
         self.kernel_counter_diagnostic = None
         self.kernel_counter_diagnostic_projection_failed = False
+        self._terminal_budget_error_type = None
+        self._terminal_budget_codes = ()
+        self.kernel_tiny_terminal_code = None
+        self.kernel_terminal_code_projection_failed = False
         if aggregate_operation is not None:
             from llm_runtime_kernel_aggregate import (_AggregateOperation, AggregateCounterError,
-                _CounterDiagnostic, _RAW)
+                _CounterDiagnostic, _RAW, _CHARGE_COUNTER_FILES)
+            from llm_runtime_kernel_owned import KernelBudgetError
             require(self.kernel_operation is None and type(aggregate_operation) is _AggregateOperation,
                     'AGGREGATE_SPAWN_INTERFACE')
             self.kernel_operation = aggregate_operation
@@ -895,7 +940,10 @@ class _Wait4Child(subprocess.Popen):
             self._counter_error_type, self._counter_diagnostic_type = AggregateCounterError, _CounterDiagnostic
             self._counter_filenames = tuple('aggregate/'+name for name in _RAW) + ('unit/cgroup.stat',)
             self._counter_reasons = ('aggregate-counter-format', 'aggregate-counter-overflow',
-                                     'aggregate-counter-fields', 'aggregate-counter-scalar')
+                'aggregate-counter-fields', 'aggregate-counter-scalar', 'aggregate-charge-retained')
+            self._charge_counter_filenames = _CHARGE_COUNTER_FILES
+            self._terminal_budget_error_type = KernelBudgetError
+            self._terminal_budget_codes = _AGGREGATE_TERMINAL_CODES
             pipe = getattr(aggregate_operation, 'evidence_pipe', None)
             if pipe is not None:
                 from llm_runtime_evidence_pipe import _EvidencePipeOwner
@@ -991,13 +1039,23 @@ class _Wait4Child(subprocess.Popen):
         if self.observation_error is None:
             self.observation_error = message
 
+    def _retain_kernel_terminal_code(self, error):
+        if self.kernel_tiny_terminal_code is not None or type(error) is not self._terminal_budget_error_type:
+            return
+        values = error.args
+        if (type(values) is tuple and len(values) == 1 and type(values[0]) is str and
+                len(values[0]) <= 128 and values[0] in self._terminal_budget_codes):
+            self.kernel_tiny_terminal_code = values[0]  # Original fixed string only.
+
     def _retain_kernel_counter_diagnostic(self, error):
         if type(error) is not self._counter_error_type:
             return
         value = error.counter_diagnostic
         if (type(value) is self._counter_diagnostic_type and type(value.filename) is str and
                 type(value.raw) is str and type(value.reason) is str and len(value.raw) <= 65536 and
-                value.filename in self._counter_filenames and value.reason in self._counter_reasons):
+                value.filename in self._counter_filenames and value.reason in self._counter_reasons and
+                (value.reason != 'aggregate-charge-retained' or
+                    value.filename in self._charge_counter_filenames)):
             self.kernel_counter_diagnostic = value  # Existing immutable strings only.
 
     def reap(self, options=os.WNOHANG):
@@ -1111,7 +1169,11 @@ class _Wait4Child(subprocess.Popen):
         except BaseException as failure:
             self.fail('kernel-terminal-tiny-evidence-unavailable')
             try:
-                self.kernel_tiny_terminal_failure = type(failure).__name__[:64]
+                if getattr(self, 'kernel_tiny_terminal_failure', None) is None:
+                    self.kernel_tiny_terminal_failure = type(failure).__name__[:64]
+                    self._retain_kernel_terminal_code(failure)
+            except BaseException: self.kernel_terminal_code_projection_failed = True
+            try:
                 self._retain_kernel_counter_diagnostic(failure)
             except BaseException: self.kernel_counter_diagnostic_projection_failed = True
         finally:
@@ -1710,6 +1772,8 @@ def supervise(command, directory, budget, *, exit_observation=None, _controlled_
             received_bytes=pipe_owner.frames.received, first_error=pipe_owner.frames.failure,
             error_fragment_hex=pipe_owner.frames.fragment.hex(), eof=pipe_owner.eof,
             terminal_failure_type=getattr(process,'kernel_tiny_terminal_failure',None),
+            terminal_failure_code=getattr(process,'kernel_tiny_terminal_code',None),
+            terminal_code_projection_failed=True if getattr(process,'kernel_terminal_code_projection_failed',False) else None,
             terminal_io_closed=True if pipe_owner.terminal_complete else None, authority=False)
     if pipe_writer is None: save(directory/'supervisor.json', result)
     else: pipe_writer.emit('inner-supervisor',dict(result=result,owned_child_pid=process.pid,supervisor_pid=os.getpid()))

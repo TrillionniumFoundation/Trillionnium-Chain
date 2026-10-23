@@ -293,6 +293,111 @@ class AggregateTests(unittest.TestCase):
         self.assertIsNone(self.native.operation)
         self.assertEqual(set(os.listdir('/proc/self/fd')), descriptors_before)
 
+    def test_initial_freshness_failure_retains_exact_first_raw_without_extra_read(self):
+        # Real ordinary owned FDs, but all group/membership claims are fixtures.
+        cases = [
+            ({'memory.peak': '4096\n'}, 'memory.peak', '4096\n'),
+            ({'cpu.stat': 'usage_usec 1\n'}, 'cpu.stat', 'usage_usec 1\n'),
+            ({'memory.events': 'oom 1\n'}, 'memory.events', 'oom 1\n'),
+            ({'memory.peak': '4096\n', 'cpu.stat': 'usage_usec 1\n',
+              'memory.events': 'oom 1\n'}, 'memory.peak', '4096\n'),
+            ({'cpu.stat': 'usage_usec 1\n', 'memory.events': 'oom 1\n'},
+             'cpu.stat', 'usage_usec 1\n'),
+        ]
+        for fields, filename, raw in cases:
+            with self.subTest(fields=fields):
+                import shutil
+                mount = Path(self.temporary.name)/'mount'
+                if mount.exists(): shutil.rmtree(mount)
+                leaf, unit, controller, observed, acquire = self.acquisition_fixture()
+                for name, text in fields.items(): (leaf/name).write_text(text)
+                before = set(os.listdir('/proc/self/fd'))
+                read = kernel._text
+                reads = []
+                def observed_read(fd, name):
+                    reads.append(name)
+                    return read(fd, name)
+                with patch.object(kernel, '_text', side_effect=observed_read), \
+                        self.assertRaises(kernel.KernelBudgetError) as caught:
+                    acquire()
+                error = caught.exception
+                self.assertEqual(str(error), 'aggregate-not-fresh')
+                self.assertIsInstance(error, aggregate.AggregateCounterError)
+                self.assertEqual(error.counter_diagnostic,
+                    ('aggregate/'+filename, raw, 'aggregate-not-fresh'))
+                for name in ('memory.peak', 'cpu.stat', 'memory.events'):
+                    self.assertEqual(reads.count(name), 1)
+                (leaf/filename).write_text('0\n' if filename == 'memory.peak' else 'usage_usec 0\n')
+                self.assertEqual(error.counter_diagnostic.raw, raw)
+                self.assertIsNone(self.native.operation)
+                self.assertEqual(set(os.listdir('/proc/self/fd')), before)
+                import shutil
+                shutil.rmtree(Path(self.temporary.name)/'mount')
+
+    def test_observed_elapsed_periods_without_cpu_consumption_acquire_synthetic_group(self):
+        # Exact retained 1c1b674c input; ordinary files, not a new actual group.
+        raw = ('usage_usec 0\nuser_usec 0\nsystem_usec 0\nnice_usec 0\n'
+            'core_sched.force_idle_usec 0\nnr_periods 2\nnr_throttled 0\n'
+            'throttled_usec 0\nnr_bursts 0\nburst_usec 0\n')
+        leaf, unit, controller, observed, acquire = self.acquisition_fixture()
+        (leaf/'cpu.stat').write_text(raw)
+        before = set(os.listdir('/proc/self/fd'))
+        cap = acquire()
+        self.assertIsNone(cap.fact)
+        self.assertEqual(aggregate._raw(cap.nodes[0][1])['cpu.stat'], raw)
+        self.assertIs(self.native.operation, cap)
+        cap.close(self)
+        self.assertIsNone(self.native.operation)
+        self.assertEqual(set(os.listdir('/proc/self/fd')), before)
+
+    def test_elapsed_periods_never_hide_spent_cpu_throttling_burst_or_unknown_values(self):
+        leaf, unit, controller, observed, acquire = self.acquisition_fixture()
+        fields = ('usage_usec', 'user_usec', 'system_usec', 'nice_usec',
+            'core_sched.force_idle_usec', 'nr_throttled', 'throttled_usec',
+            'nr_bursts', 'burst_usec', 'unknown_counter', 'nr_periods_extra')
+        for name in fields:
+            with self.subTest(name=name):
+                raw = 'usage_usec 0\nnr_periods 2\n'
+                raw = raw.replace('usage_usec 0', 'usage_usec 1') if name == 'usage_usec' else raw+name+' 1\n'
+                (leaf/'cpu.stat').write_text(raw)
+                before = set(os.listdir('/proc/self/fd'))
+                with self.assertRaises(aggregate.AggregateCounterError) as caught:
+                    acquire()
+                self.assertEqual(caught.exception.counter_diagnostic,
+                    ('aggregate/cpu.stat', raw, 'aggregate-not-fresh'))
+                self.assertIsNone(self.native.operation)
+                self.assertEqual(set(os.listdir('/proc/self/fd')), before)
+
+    def test_period_exception_is_cpu_only_and_preserves_first_freshness_failure(self):
+        leaf, unit, controller, observed, acquire = self.acquisition_fixture()
+        (leaf/'cpu.stat').write_text('usage_usec 0\nnr_periods 2\n')
+        for name, raw in (('memory.peak', '1\n'), ('memory.events', 'nr_periods 1\n')):
+            with self.subTest(name=name):
+                (leaf/name).write_text(raw)
+                before = set(os.listdir('/proc/self/fd'))
+                with self.assertRaises(aggregate.AggregateCounterError) as caught:
+                    acquire()
+                self.assertEqual(caught.exception.counter_diagnostic,
+                    ('aggregate/'+name, raw, 'aggregate-not-fresh'))
+                self.assertIsNone(self.native.operation)
+                self.assertEqual(set(os.listdir('/proc/self/fd')), before)
+                (leaf/name).write_text('0\n' if name == 'memory.peak' else 'oom 0\n')
+
+    def test_elapsed_period_counter_still_obeys_original_parser_bounds(self):
+        leaf, unit, controller, observed, acquire = self.acquisition_fixture()
+        for periods, reason in (('-1', 'format'), (str(2**64), 'overflow'),
+                ('1.0', 'format'), ('1\nnr_periods 2', 'format')):
+            with self.subTest(periods=periods):
+                raw = 'usage_usec 0\nnr_periods '+periods+'\n'
+                (leaf/'cpu.stat').write_text(raw)
+                before = set(os.listdir('/proc/self/fd'))
+                with self.assertRaises(aggregate.AggregateCounterError) as caught:
+                    acquire()
+                self.assertEqual(caught.exception.counter_diagnostic,
+                    ('aggregate/cpu.stat', raw, 'aggregate-counter-'+reason))
+                self.assertIsNone(self.native.operation)
+                self.assertEqual(set(os.listdir('/proc/self/fd')), before)
+
     def test_exact_memory_headroom_and_positive_cpu_task_partition_bind_actual_fields(self):
         quota = dict(memory_bytes=8*1024**3, cpu_quota_us=300000, tasks=250)
         leaf, unit, controller, observed, acquire = self.acquisition_fixture(controller_budget=quota)

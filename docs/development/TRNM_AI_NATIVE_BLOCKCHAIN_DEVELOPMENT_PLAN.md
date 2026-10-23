@@ -746,6 +746,48 @@ or authority; callers must retain it in their existing first-failure record,
 without another read. Non-ABI parser/ordinary-file controls run separately from
 the CPython 3.12.3 native owner tests. This repair does not identify the old exact
 input, retry the attempt or qualify aggregate birth placement or a model.
+The later actual tiny `3eb2b52a` on source `51146530` passed the parser but
+refused initial acquisition with `aggregate-not-fresh`, before any runtime
+child or model. Its stopped unit supplied 17 retained evidence files; the
+original initial counter text was not exported, so the particular nonzero
+field remains unknown. Initial freshness now uses the same bounded immutable
+counter diagnostic for the first failed `memory.peak`, `cpu.stat` or
+`memory.events` predicate, in the original short-circuit order and without
+another read. All zero, empty, identity and cleanup requirements remain.
+The outer C first-failure exporter must explicitly allow that exact reason;
+an unknown reason cannot silently become diagnostic evidence. Synthetic
+ordinary-FD controls preserve refusal, first raw bytes and no-child cleanup;
+they do not qualify an actual group. Do not rerun `3eb2b52a`, reset counters,
+delete/reclaim A, subtract a baseline or infer a release from collection.
+The later single `1c1b674c` on source `ad644fe3` retained the exact initial
+`cpu.stat`: `nr_periods 2`, with all usage, user, system, nice, forced-idle,
+throttling and burst fields zero. It failed before a runtime child or model;
+source identity held and administrative stop/collection did not release the
+reservation. Linux [bandwidth statistics](https://origin.kernel.org/doc/html/v5.19/scheduler/sched-bwc.html#statistics)
+define `nr_periods` as elapsed enforcement intervals. The
+[cgroup v2 interface](https://docs.kernel.org/admin-guide/cgroup-v2.html#cpu-interface-files)
+separates usage from bandwidth counters; the upstream 7.0.14
+[period timer](https://github.com/gregkh/linux/blob/v7.0.14/kernel/sched/fair.c)
+increments intervals before its idle check. Only that exact key in initial
+`cpu.stat` may now be nonzero. All actual usage, throttling, burst, forced-idle,
+unknown counters and every other freshness predicate still require zero; raw
+inputs and parser bounds remain. No counter reset, baseline subtraction,
+budget/deadline change or new actual group/model qualification follows. The
+old failed candidates remain retained and must not be retried.
+The single `e2cc9b11` on source `24a1e86b` acquired A and recorded both owned
+`wait4` exits at zero plus all three complete FIFO frames and EOF. Terminal
+observation still failed with `KernelBudgetError`; its exact fixed reason was
+not exported. Later forensic `memory.current` reads were 290816 and 286720,
+with zero processes/population/dying state, and do not identify the original
+failure. No private terminal fact, release or refund followed administrative
+collection. The original tiny catch now retains only a prebound known code from
+an exact one-string `KernelBudgetError`, while original memory current/swap
+zero failures retain their first bounded raw text with exact two-file pairing.
+Unknown codes/types, extra arguments and unrelated filenames refuse projection;
+optional diagnostic faults cannot bypass the original pidfd close. No new reads,
+zero/equality changes, waiting loop, budget or deadline changes are introduced.
+Pending charge drain remains a separate PN4 matter; empty groups need not reach
+zero charge within eight seconds. The used nonce is retained and never retried.
 The original wait4 owner's aggregate terminal-error path retains only this
 existing typed immutable counter tuple, with pre-clone type bindings and no
 exception/traceback/capability references. Projection faults cannot replace the
