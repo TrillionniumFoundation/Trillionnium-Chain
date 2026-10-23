@@ -19,11 +19,18 @@ default = []
 [dependencies]
 borsh = { version = "1", features = ["derive"] }
 ed25519-dalek = "2"
+fs2 = "0.4"
+libc = "0.2"
 rusqlite = { version = "0.32", features = ["bundled"] }
 sha2 = "0.10"
 
 [dev-dependencies]
 hex = "0.4"
+rustix = { version = "1.1.4", features = ["time", "net"] }
 serde = { version = "1", features = ["derive"] }
 serde_json = { version = "1", features = ["arbitrary_precision"] }
 tempfile = "3"
+
+[[bin]]
+name = "trnm-cell-discovery"
+path = "src/bin/trnm-cell-discovery.rs"

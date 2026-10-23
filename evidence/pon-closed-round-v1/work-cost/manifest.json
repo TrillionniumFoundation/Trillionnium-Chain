@@ -1,0 +1,15 @@
+{
+  "files": {
+    "build.log": "ead43daf3252e0ae51ffab43213d786f228b2abbe1de9fbec7e5b0255c0010c2",
+    "execution.json": "8afa12e73b281218c5ae871ae25f32701acd5b89a94ea62cba86a809440ea54a",
+    "native-stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "native-work.json": "e1e1d22d44fd1442cf926dea439d5b41aeb194a0f7766dcf1ad97e588b355111",
+    "summary.json": "8a5de49489422de305d9218d0848aedbf47fdc6175e8c90f2d1015b141efc5d1"
+  },
+  "honest_public_service_measured": false,
+  "independent_accepted": false,
+  "production_activation": false,
+  "public_network_tested": false,
+  "schema": "pon-native-cost-files-v1",
+  "work_hardness_accepted": false
+}
