@@ -1,0 +1,210 @@
+"""Execute the existing multiprocess test; this is not the W1 grid."""
+from datetime import datetime, timezone
+import json
+import os
+from pathlib import Path
+import platform
+import re
+import shutil
+import subprocess
+import sys
+
+root, out, target = (Path(value).resolve() for value in sys.argv[1:4])
+cargo, expected_head, expected_tree = sys.argv[4:7]
+sys.dont_write_bytecode = True
+sys.path[:0] = [str(root / 'scripts'), str(root / 'scripts/ci')]
+import run_pon_w1_native_campaign as bounds
+import pon_public_v3_phase_read as phase_reader
+from verify_ci_source import verify
+
+selector = 'separate_process_work_and_signed_confirmation_campaign'
+result = {
+    'schema': 'pon-original-native-campaign-ci-v1',
+    'source_kind': 'head', 'expected_head': expected_head,
+    'expected_tree': expected_tree, 'profile': 'release',
+    'toolchain': '1.95.0', 'state_backend': 'authenticated-v1',
+    'planned_complete_runs': 3, 'attempts': [],
+    'started_utc': datetime.now(timezone.utc).isoformat(),
+    'build_timeout_seconds': 1800,
+    'original_campaign_outer_timeout_seconds': 600,
+    'original_inputs': {'seed_transfers': 1024, 'seed_blocks': 4,
+                        'business_blocks': 21, 'phase_seconds': 30,
+                        'modes': ['baseline', 'from-zero', 'late-product'],
+                        'attacker_processes': [0, 24, 24]},
+    'expected_resources': {'cpu_max': '400000 100000',
+                           'memory_max': '17179869184', 'nice': 10},
+    'binary': None, 'source_after': None, 'complete_success': False,
+    'failure': None, 'finalization_failures': [],
+    'runner_sha256': bounds.sha(__file__),
+    'scope': 'same-host controlled loopback; no independent-operator, WAN, hardness, model-efficacy or activation qualification',
+}
+binary = None
+
+def source_observation(name):
+    value = verify('head', expected_head, root=root)
+    bounds.require(value['tested_tree'] == expected_tree,
+                   'EXPECTED_TREE_CHANGED')
+    bounds.write_new(out / name, value)
+    return value
+
+def resources(name):
+    value = bounds.resource_observation()
+    bounds.write_new(out / name, value)
+    bounds.validate_resources(value, 10)
+    return value
+
+try:
+    bounds.require(platform.machine() == 'x86_64', 'NATIVE_X64_REQUIRED')
+    bounds.require(not out.is_relative_to(root)
+                   and not target.is_relative_to(root)
+                   and not out.is_relative_to(target)
+                   and not target.is_relative_to(out), 'ISOLATED_OUTPUT_REQUIRED')
+    bounds.validate_build_environment(os.environ)
+    source_observation('source-before-build.json')
+    resources('resource-before-build.json')
+    bounds.write_new(out / 'hardware.json', {
+        'machine': platform.machine(), 'kernel': platform.release(),
+        'logical_cpu_count': os.cpu_count(),
+        'cpu_models': sorted({
+            line.split(':', 1)[1].strip()
+            for line in Path('/proc/cpuinfo').read_text().splitlines()
+            if line.startswith('model name')}),
+        'meminfo': Path('/proc/meminfo').read_text(),
+        'physical_resources_are_observations_not_reservations': True,
+    })
+    env = {key: value for key, value in os.environ.items()
+           if not key.startswith('TRNM_')}
+    env.update(CARGO_TARGET_DIR=str(target), CARGO_BUILD_JOBS='2',
+               CARGO_NET_OFFLINE='true', CARGO_INCREMENTAL='0',
+               RUSTUP_TOOLCHAIN='1.95.0', RUST_TEST_THREADS='1',
+               PYTHONDONTWRITEBYTECODE='1')
+    command = [cargo, '+1.95.0', 'test', '--locked', '--offline',
+               '--release', '--manifest-path', 'trillionnium/Cargo.toml',
+               '-p', 'trnm-pon-node', '--test', 'public_v3_multiprocess']
+    build = bounds.run_step(
+        out, 'build', [*command, '--no-run', '--message-format=json'],
+        env, timeout=1800)
+    result['build'] = build
+    bounds.require(build['complete_success'], 'RELEASE_TEST_BUILD_FAILED')
+    artifacts = []
+    for line in (out / build['stdout']).read_bytes().splitlines():
+        row = json.loads(line)
+        if (row.get('reason') == 'compiler-artifact'
+                and row.get('target', {}).get('name') == 'public_v3_multiprocess'
+                and row.get('profile', {}).get('test') is True
+                and row.get('executable')):
+            artifacts.append(row)
+    bounds.require(len(artifacts) == 1, 'ONE_EXACT_TEST_BINARY_REQUIRED')
+    artifact = artifacts[0]
+    bounds.require(artifact['profile']['opt_level'] == '3'
+                   and artifact['profile']['debug_assertions'] is False,
+                   'ACTUAL_OPTIMIZED_RELEASE_TEST_PROFILE_REQUIRED')
+    binary = Path(artifact['executable']).resolve(strict=True)
+    bounds.require(binary.is_relative_to(target) and binary.is_file(),
+                   'EXPECTED_TARGET_BINARY_REQUIRED')
+    retained = out / 'public_v3_multiprocess.bin'
+    digest = bounds.sha(binary)
+    with binary.open('rb') as source, retained.open('xb') as destination:
+        shutil.copyfileobj(source, destination)
+    retained.chmod(0o700)
+    bounds.require(bounds.sha(retained) == digest, 'BINARY_CAPTURE_CHANGED')
+    result['binary'] = {
+        'build_artifact': str(binary), 'retained': retained.name,
+        'sha256_before': digest, 'sha256_after': None,
+        'bytes': retained.stat().st_size,
+        'actual_compiler_artifact_profile': artifact['profile'],
+        'build_separate_from_measured_campaign': True,
+        'execution': 'original cargo test command using the checked build artifact',
+    }
+    bounds.write_new(out / 'binary-before.json', result['binary'])
+    source_observation('source-before-campaigns.json')
+    for number in range(1, 4):
+        name = f'run-{number}'
+        report_dir = out / f'{name}-raw'
+        # The original Rust test itself must create this directory.
+        bounds.require(not os.path.lexists(report_dir), 'NEW_REPORT_DIR_REQUIRED')
+        resources(f'{name}-resource-before.json')
+        bounds.require(bounds.sha(binary) == digest, 'TEST_BINARY_CHANGED')
+        run_env = dict(env, TRNM_MULTIPROCESS_STATE_BACKEND='authenticated-v1',
+                       TRNM_MULTIPROCESS_REPORT_DIR=str(report_dir))
+        step = bounds.run_step(
+            out, name,
+            [*command, selector, '--', '--exact', '--ignored',
+             '--nocapture', '--test-threads=1'],
+            run_env, timeout=600)
+        attempt = {'number': number, 'step': step,
+                   'report_directory': report_dir.name,
+                   'report_validation_failure': None,
+                   'original_criteria_met': False, 'complete_success': False}
+        result['attempts'].append(attempt)
+        try:
+            raw_path = report_dir / 'report.json'
+            report_hash = bounds.sha(raw_path)
+            derived = phase_reader.read_report(raw_path, report_hash)
+            bounds.write_new(out / f'{name}-phase-readback.json', derived)
+            raw = json.loads(raw_path.read_bytes())
+            preparation = raw['preparation']
+            phases = raw['phases']
+            bounds.require(
+                raw['state_backend'] == 'authenticated-v1'
+                and preparation['actual_signed_seed_transfers'] == 1024
+                and preparation['seed_blocks'] == 4
+                and preparation['business_blocks'] == 21
+                and [phase['mode'] for phase in phases]
+                    == ['baseline', 'from-zero', 'late-product']
+                and [phase['duration_seconds'] for phase in phases] == [30, 30, 30]
+                and [phase['attacker_processes_requested'] for phase in phases]
+                    == [0, 24, 24], 'ORIGINAL_CAMPAIGN_INPUTS_REQUIRED')
+            attempt['report_sha256'] = report_hash
+            attempt['original_criteria_met'] = (
+                raw['finite_experiment_criteria_met'] is True
+                and raw['economics_complete'] is True
+                and all(phase['finite_phase_criteria_met'] is True
+                        for phase in phases))
+            stdout = (out / step['stdout']).read_text(errors='replace')
+            one_test_passed = re.search(
+                r'^test result: ok\. 1 passed; 0 failed; 0 ignored;',
+                stdout, re.MULTILINE) is not None
+            attempt['complete_success'] = (
+                step['complete_success'] and one_test_passed
+                and attempt['original_criteria_met'])
+        except (OSError, ValueError, KeyError, TypeError) as error:
+            attempt['report_validation_failure'] = str(error)
+        bounds.write_new(out / f'{name}-result.json', attempt)
+        resources(f'{name}-resource-after.json')
+        source_observation(f'{name}-source-after.json')
+        bounds.require(bounds.sha(binary) == digest, 'TEST_BINARY_CHANGED')
+        # A failed native run stays failed; the next predeclared run is
+        # a distinct complete observation, never a replacement retry.
+    result['complete_success'] = (
+        len(result['attempts']) == 3
+        and all(row['complete_success'] for row in result['attempts']))
+    if not result['complete_success']:
+        result['failure'] = 'ORIGINAL_THREE_RUN_CAMPAIGN_FAILED'
+except (OSError, ValueError, KeyError, TypeError, subprocess.SubprocessError) as error:
+    result['failure'] = str(error)
+    result['complete_success'] = False
+finally:
+    for name, observation in (
+            ('source', lambda: source_observation('source-after-native.json')),
+            ('resources', lambda: resources('resource-after-native.json'))):
+        try:
+            value = observation()
+            if name == 'source':
+                result['source_after'] = value
+        except (OSError, ValueError, subprocess.SubprocessError) as error:
+            result['finalization_failures'].append(f'{name}: {error}')
+    if binary is not None and result['binary'] is not None:
+        try:
+            result['binary']['sha256_after'] = bounds.sha(binary)
+            bounds.require(result['binary']['sha256_after']
+                           == result['binary']['sha256_before'],
+                           'TEST_BINARY_CHANGED')
+        except (OSError, ValueError) as error:
+            result['finalization_failures'].append(f'binary: {error}')
+    result['complete_success'] = (
+        result['complete_success'] and not result['finalization_failures'])
+    result['completed_utc'] = datetime.now(timezone.utc).isoformat()
+    bounds.write_new(out / 'results.json', result)
+print(json.dumps(result, sort_keys=True))
+raise SystemExit(0 if result['complete_success'] else 1)

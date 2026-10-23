@@ -1,0 +1,33 @@
+{
+  "schema": "controlled-source-inference-v2",
+  "task_commitment": "4d4661e35b6d5eb1544132ebf543d0790e196aa7186a174d8170a01cf4c2fbb2",
+  "model_artifact": "c5a3f6458465e5fa7617c49ddc5a265950ae9d55097a7b8ae6badb7a5f99999d",
+  "predictions": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "duration_seconds": 0.0024657209978613537,
+  "training_consent": false
+}

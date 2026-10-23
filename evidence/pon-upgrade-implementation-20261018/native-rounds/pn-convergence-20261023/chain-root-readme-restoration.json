@@ -1,0 +1,7 @@
+{
+  "reason": "Restore the existing owner-cleared root README contract; documentation remains in the sole development plan and technical guides. No guard or expected assertion was changed.",
+  "restored_from": "cc9b599515eb5a9a895174c80220c32de12c6b4f",
+  "before_sha256": "f5fd5b3bd3bfa49042b2a3c208cf05a99f54f05f610f481b04b54aa75d5c438a",
+  "after_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+  "initial_repository_truth": "chain-final-verification-results.json"
+}

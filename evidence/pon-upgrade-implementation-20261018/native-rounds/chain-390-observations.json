@@ -1,0 +1,671 @@
+{
+  "schema": "chain-390-derived-observations-v1",
+  "source_commit": "390617cbe7b169843f60c5622ec26d2531f385d3",
+  "source_tree": "f2817209ce22b41fdffda284d37c9381edcd6dae",
+  "derivation_scope": "Read-only arithmetic and ID/context checks of retained native reports; no new native verification, consensus receipt or production authority. All original raw bytes retained.",
+  "host_scope": "Controlled main Linux host and loopback; no independent operators, no WAN, no model training or future utility observation.",
+  "independent_operators": false,
+  "wan_qualified": false,
+  "production_activation": false,
+  "pipelines": {
+    "successful_slow": {
+      "raw_summary": {
+        "path": "chain-390-measured-followup/continuous-growth-protocol-pace/summary.json",
+        "bytes": 2193599,
+        "sha256": "83fdfd337aeaf10f5cd0e82eaa5884da4fb71cd7671083322ea824b4e848751a"
+      },
+      "campaign_passed": true,
+      "campaign_error": null,
+      "censored": false,
+      "network": "0698ca3b184697ad0d45312b7e39559cb3f13e00618d3dc43d6c16b33970afdb",
+      "parameters": "559446e1411500347ca4c6fb8f0b0fe198b09845296afe6d488e2b6a8528cca6",
+      "genesis": "254becf4a2b4c260436d76291227215311b41a788dc69a1c19b3e766b4c5acb9",
+      "pace_ms": 10000,
+      "logical_pacing": false,
+      "stage_counts": {
+        "execution_and_work_completed": 800,
+        "input_constructed": 800,
+        "local_active": 800,
+        "local_durable_admitted": 800,
+        "policy_confirmed": 800,
+        "remote_acknowledged": 800,
+        "remote_membership_verified": 800
+      },
+      "whole_campaign_seconds": 1052.985140773,
+      "inclusion_window_seconds": 992.26407885,
+      "socket_metrics": {
+        "admission_accepted": 106,
+        "admission_challenges": 106,
+        "admission_hello_handoffs": 57,
+        "admission_rejected_before_work": 0,
+        "admission_reserved_read_only_refusals": 1,
+        "admission_unnegotiated_requests": 0,
+        "admission_verification_ns": 1835743,
+        "authenticated_requests": 0,
+        "busy_requests": 0,
+        "completed_requests": 313,
+        "malformed_requests": 0,
+        "pending_busy_requests": 0,
+        "protected_preface_refusals": 0,
+        "rejected_requests": 0,
+        "replayed_responses": 0,
+        "socket_connections": 314,
+        "work_verification_ns": 510528993,
+        "work_verifications": 106
+      },
+      "confirmation_poll_counts": {
+        "block_batches_started": 700,
+        "block_batches_validated": 700,
+        "maximum_queries_per_rpc": 56,
+        "queries_started": 5600,
+        "queries_validated": 5600,
+        "rpc_started": 106,
+        "rpc_validated": 106
+      },
+      "producer_close_ns": 28043776,
+      "producer_final_state": {
+        "authenticated_audit_rows": 0,
+        "authenticated_outbox_pending": 0,
+        "authenticated_outbox_sessions": 0,
+        "authenticated_pending": 0,
+        "authenticated_sessions": 0,
+        "chainwork_hex": "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000d4",
+        "events": 106,
+        "generation": 106,
+        "genesis": "254becf4a2b4c260436d76291227215311b41a788dc69a1c19b3e766b4c5acb9",
+        "height": 106,
+        "network": "0698ca3b184697ad0d45312b7e39559cb3f13e00618d3dc43d6c16b33970afdb",
+        "parameters": "559446e1411500347ca4c6fb8f0b0fe198b09845296afe6d488e2b6a8528cca6",
+        "production_activation": false,
+        "state_keys": 827,
+        "state_root": "e4dbfd1bb24e43c87b14b4bf038a23b1543f5af8d5fe4e86a0051e57e217aefb",
+        "stored_blocks": 107,
+        "tip": "d0058c7ed0b8511e1305877e48497f740666c5b959ce0cadade5e93d3c34e8da"
+      },
+      "producer_validator_heads_agree": true,
+      "planned_transactions": 800,
+      "unique_membership_verified_transactions": 800,
+      "unique_confirmed_transactions": 800,
+      "accepted_ids_sha256": "968bbbeb3f7e6af9307d9fa99c3632a60f19f545103e33a5817bd2409fd2b136",
+      "confirmed_ids_sha256": "968bbbeb3f7e6af9307d9fa99c3632a60f19f545103e33a5817bd2409fd2b136",
+      "id_digest_encoding": "UTF-8 lexicographically sorted lowercase transaction IDs, each followed by LF; no other bytes",
+      "planned_not_constructed_transactions": 0,
+      "constructed_without_completed_execution_and_work": 0,
+      "membership_verified_pending_confirmation_transactions": 0,
+      "pending_confirmation_blocks": 0,
+      "pending_confirmation_record_indices": [],
+      "business_block_records": 100,
+      "empty_descendant_records": 6,
+      "unique_confirmed_transactions_per_whole_campaign_second": 0.7597448140746955,
+      "unique_membership_verified_transactions_per_inclusion_window_second": 0.8062369857499755,
+      "latency": {
+        "confirmation_block_samples": {
+          "count": 100,
+          "p50_ns": 61791226089,
+          "p95_ns": 62723588513,
+          "p99_ns": 63384339129
+        },
+        "inclusion_block_samples": {
+          "count": 100,
+          "p50_ns": 1523940244,
+          "p95_ns": 2344306818,
+          "p99_ns": 3156529532
+        }
+      },
+      "finite_observed_work_verifications_per_whole_campaign_second": 0.10066618786489716,
+      "socket_work_verification_elapsed_wall_ns": 510528993,
+      "isolated_state_commit_rate": null,
+      "initial_two_ledger_apparent_bytes": 362192,
+      "final_two_ledger_apparent_bytes": 13139968,
+      "net_two_ledger_apparent_growth_bytes": 12777776,
+      "final_campaign_directory_apparent_bytes": 20264742,
+      "final_errors": {
+        "final_head_error": null,
+        "producer_final_error": null,
+        "server_error": null
+      }
+    },
+    "failed_fast": {
+      "raw_summary": {
+        "path": "chain-390-operational/continuous-growth/summary.json",
+        "bytes": 1819226,
+        "sha256": "46dbec1d776ff4453d3d5c5c998aea54241054cdce37e67cf1f7d1c182908d15"
+      },
+      "campaign_passed": false,
+      "campaign_error": "WORK_BUDGET",
+      "censored": true,
+      "network": "a9cda4be1b855913e901cda4391515045cc45a0b5eed071a22a768df30566b12",
+      "parameters": "4cc98a5b2b391e5b090e2ef1172b2f6411702a6f3ae40b2f60e15f5945089f7e",
+      "genesis": "cdf192be147fcc4f9732d1c9aeb9b5ca82045a39d7db9151f2d4e54f4d4c0831",
+      "pace_ms": 1000,
+      "logical_pacing": false,
+      "stage_counts": {
+        "execution_and_work_completed": 688,
+        "input_constructed": 696,
+        "local_active": 688,
+        "local_durable_admitted": 688,
+        "policy_confirmed": 640,
+        "remote_acknowledged": 688,
+        "remote_membership_verified": 688
+      },
+      "whole_campaign_seconds": 168.083421769,
+      "inclusion_window_seconds": 160.495024711,
+      "socket_metrics": {
+        "admission_accepted": 86,
+        "admission_challenges": 86,
+        "admission_hello_handoffs": 53,
+        "admission_rejected_before_work": 0,
+        "admission_reserved_read_only_refusals": 0,
+        "admission_unnegotiated_requests": 0,
+        "admission_verification_ns": 1461103,
+        "authenticated_requests": 0,
+        "busy_requests": 0,
+        "completed_requests": 259,
+        "malformed_requests": 0,
+        "pending_busy_requests": 0,
+        "protected_preface_refusals": 0,
+        "rejected_requests": 0,
+        "replayed_responses": 0,
+        "socket_connections": 259,
+        "work_verification_ns": 407954032,
+        "work_verifications": 86
+      },
+      "confirmation_poll_counts": {
+        "block_batches_started": 581,
+        "block_batches_validated": 581,
+        "maximum_queries_per_rpc": 56,
+        "queries_started": 4648,
+        "queries_validated": 4648,
+        "rpc_started": 86,
+        "rpc_validated": 86
+      },
+      "producer_close_ns": 13800461,
+      "producer_final_state": {
+        "authenticated_audit_rows": 0,
+        "authenticated_outbox_pending": 0,
+        "authenticated_outbox_sessions": 0,
+        "authenticated_pending": 0,
+        "authenticated_sessions": 0,
+        "chainwork_hex": "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000056c9",
+        "events": 86,
+        "generation": 86,
+        "genesis": "cdf192be147fcc4f9732d1c9aeb9b5ca82045a39d7db9151f2d4e54f4d4c0831",
+        "height": 86,
+        "network": "a9cda4be1b855913e901cda4391515045cc45a0b5eed071a22a768df30566b12",
+        "parameters": "4cc98a5b2b391e5b090e2ef1172b2f6411702a6f3ae40b2f60e15f5945089f7e",
+        "production_activation": false,
+        "state_keys": 715,
+        "state_root": "a2c8d601ef19f1a001a0836f761be57f1afbd9fb4f1a38d897d608401d83cecb",
+        "stored_blocks": 87,
+        "tip": "b0f077217cbcc2a0377f0661cf1a050f1067a16ced50868d4db7e8a2844b4c6f"
+      },
+      "producer_validator_heads_agree": true,
+      "planned_transactions": 800,
+      "unique_membership_verified_transactions": 688,
+      "unique_confirmed_transactions": 640,
+      "accepted_ids_sha256": "cd883be1690274feefb459b02ddd50f935fc8fc2b8630797d4d857530aa1030b",
+      "confirmed_ids_sha256": "5e13fb953f840f4556a236959d0ddf4f6950a049dfc0a918f02659c1d96e6215",
+      "id_digest_encoding": "UTF-8 lexicographically sorted lowercase transaction IDs, each followed by LF; no other bytes",
+      "planned_not_constructed_transactions": 104,
+      "constructed_without_completed_execution_and_work": 8,
+      "membership_verified_pending_confirmation_transactions": 48,
+      "pending_confirmation_blocks": 6,
+      "pending_confirmation_record_indices": [
+        80,
+        81,
+        82,
+        83,
+        84,
+        85
+      ],
+      "business_block_records": 86,
+      "empty_descendant_records": 0,
+      "unique_confirmed_transactions_per_whole_campaign_second": 3.807633098281181,
+      "unique_membership_verified_transactions_per_inclusion_window_second": 4.286737244589775,
+      "latency": {
+        "confirmation_block_samples": {
+          "count": 80,
+          "p50_ns": 8802688286,
+          "p95_ns": 26365319492,
+          "p99_ns": null
+        },
+        "inclusion_block_samples": {
+          "count": 86,
+          "p50_ns": 1218897660,
+          "p95_ns": 4291095560,
+          "p99_ns": null
+        }
+      },
+      "finite_observed_work_verifications_per_whole_campaign_second": 0.5116506975815337,
+      "socket_work_verification_elapsed_wall_ns": 407954032,
+      "isolated_state_commit_rate": null,
+      "initial_two_ledger_apparent_bytes": 362192,
+      "final_two_ledger_apparent_bytes": 10739712,
+      "net_two_ledger_apparent_growth_bytes": 10377520,
+      "final_campaign_directory_apparent_bytes": 16558105,
+      "final_errors": {
+        "final_head_error": null,
+        "producer_final_error": null,
+        "server_error": null
+      }
+    }
+  },
+  "pipeline_comparison_scope": "Same source, distinct fresh network/parameter/genesis identities and evolving work targets. Closed-loop paced finite runs, not saturation, paired same-task cost evidence or sustainable capacity.",
+  "public_v3_multiprocess": {
+    "raw_report": {
+      "path": "chain-390-operational/public-v3-multiprocess/report.json",
+      "bytes": 7483114,
+      "sha256": "c662cf7d71adec835eb22e60058e3eccb7dc3faa88a31e262ec1bd4bdc069233"
+    },
+    "settings_profile": "native-public-evaluation-dev-v1 + continuity_v1 explicit maintenance",
+    "backend": "legacy-v2",
+    "original_settings_preserved": true,
+    "seed_transfers": 1024,
+    "business_blocks": 21,
+    "blocks_per_planned_signed_round": 7,
+    "planned_signed_rounds_per_phase": 3,
+    "phases": {
+      "baseline": {
+        "raw": {
+          "path": "chain-390-operational/public-v3-multiprocess/baseline.json",
+          "bytes": 1025396,
+          "sha256": "900889024ff85ba7717cd4821acc18f7f81e3d55a6142bb7fdac2995d96dbe84"
+        },
+        "planned_signed_rounds": 3,
+        "started_signed_rounds": 1,
+        "confirmed_signed_rounds_inside_pressure_window": 0,
+        "unique_confirmed_transactions_inside_pressure_window": 0,
+        "planned_confirmation_fraction": 0.0,
+        "final_actual_flow": {
+          "balance_identity_verified": true,
+          "booked_reservation_ns": 0,
+          "credited_refill_ns": 7293508982,
+          "discarded_refill_ns": 255027100,
+          "initial_credit_ns": 2000000000,
+          "live_debited_cpu_ns": 9475264151,
+          "live_owners": 0,
+          "paid_cpu_debit_ns": 9475382602,
+          "remaining_paid_credit_ns": -181873620,
+          "schema": "public-v3-local-actual-cpu-flow-v1",
+          "settled_full_cpu_ns": 9475382602,
+          "settlement_discard_ns": 0,
+          "settlement_residual_cpu_ns": 118451,
+          "stored_credit_ns": -181873620,
+          "unsettled_known_live_cpu_ns": 0
+        },
+        "final_meter": {
+          "accounting_unavailable": false,
+          "burst_ns": 2000000000,
+          "in_flight": 0,
+          "refill_ns_per_second": 250000000,
+          "schema": "public-v3-local-stored-cpu-budget-v1",
+          "start_reserve_ns": 100000000,
+          "stored_credit_ns": -181873620,
+          "worker_limit": 2
+        },
+        "original_owner_resources_zero_after_shutdown": true,
+        "finite_phase_criteria_met": false,
+        "duration_seconds": 30,
+        "attacker_processes_requested": 0,
+        "attacker_processes_ready": 0,
+        "receiver_client_state_equal": false,
+        "full_work_accepted": 36,
+        "full_work_failed": 0,
+        "completed_submit": 4,
+        "completed_read": 0,
+        "mutation_cpu_refusals": 31,
+        "mutation_cpu_charged_ns": 9475382602,
+        "mutation_full_work_cpu_ns": 239863877,
+        "mutation_dispatch_excluding_work_cpu_ns": 9235518725,
+        "mutation_cpu_debt_ns_after_shutdown": 181873620
+      },
+      "from-zero": {
+        "raw": {
+          "path": "chain-390-operational/public-v3-multiprocess/from-zero.json",
+          "bytes": 3029296,
+          "sha256": "8d2f68e8eedac1affcdb4932edb85cecae38705872b540a5019a51c81090ce76"
+        },
+        "planned_signed_rounds": 3,
+        "started_signed_rounds": 1,
+        "confirmed_signed_rounds_inside_pressure_window": 0,
+        "unique_confirmed_transactions_inside_pressure_window": 0,
+        "planned_confirmation_fraction": 0.0,
+        "final_actual_flow": {
+          "balance_identity_verified": true,
+          "booked_reservation_ns": 0,
+          "credited_refill_ns": 7480119430,
+          "discarded_refill_ns": 176447039,
+          "initial_credit_ns": 2000000000,
+          "live_debited_cpu_ns": 9393785648,
+          "live_owners": 0,
+          "paid_cpu_debit_ns": 9394589367,
+          "remaining_paid_credit_ns": 85530063,
+          "schema": "public-v3-local-actual-cpu-flow-v1",
+          "settled_full_cpu_ns": 9394589367,
+          "settlement_discard_ns": 0,
+          "settlement_residual_cpu_ns": 803719,
+          "stored_credit_ns": 85530063,
+          "unsettled_known_live_cpu_ns": 0
+        },
+        "final_meter": {
+          "accounting_unavailable": false,
+          "burst_ns": 2000000000,
+          "in_flight": 0,
+          "refill_ns_per_second": 250000000,
+          "schema": "public-v3-local-stored-cpu-budget-v1",
+          "start_reserve_ns": 100000000,
+          "stored_credit_ns": 85530063,
+          "worker_limit": 2
+        },
+        "original_owner_resources_zero_after_shutdown": true,
+        "finite_phase_criteria_met": false,
+        "duration_seconds": 30,
+        "attacker_processes_requested": 24,
+        "attacker_processes_ready": 24,
+        "receiver_client_state_equal": false,
+        "full_work_accepted": 14,
+        "full_work_failed": 200,
+        "completed_submit": 2,
+        "completed_read": 0,
+        "mutation_cpu_refusals": 2,
+        "mutation_cpu_charged_ns": 9394589367,
+        "mutation_full_work_cpu_ns": 998983851,
+        "mutation_dispatch_excluding_work_cpu_ns": 8395605516,
+        "mutation_cpu_debt_ns_after_shutdown": 0
+      },
+      "late-product": {
+        "raw": {
+          "path": "chain-390-operational/public-v3-multiprocess/late-product.json",
+          "bytes": 2974178,
+          "sha256": "61ee230c2210bd5cd4de9225dd4d6cd9262acf90e11715d26dd89c3680d64be6"
+        },
+        "planned_signed_rounds": 3,
+        "started_signed_rounds": 1,
+        "confirmed_signed_rounds_inside_pressure_window": 0,
+        "unique_confirmed_transactions_inside_pressure_window": 0,
+        "planned_confirmation_fraction": 0.0,
+        "final_actual_flow": {
+          "balance_identity_verified": true,
+          "booked_reservation_ns": 0,
+          "credited_refill_ns": 7382662553,
+          "discarded_refill_ns": 558799475,
+          "initial_credit_ns": 2000000000,
+          "live_debited_cpu_ns": 9514136653,
+          "live_owners": 0,
+          "paid_cpu_debit_ns": 9514946622,
+          "remaining_paid_credit_ns": -132284069,
+          "schema": "public-v3-local-actual-cpu-flow-v1",
+          "settled_full_cpu_ns": 9514946622,
+          "settlement_discard_ns": 0,
+          "settlement_residual_cpu_ns": 809969,
+          "stored_credit_ns": -132284069,
+          "unsettled_known_live_cpu_ns": 0
+        },
+        "final_meter": {
+          "accounting_unavailable": false,
+          "burst_ns": 2000000000,
+          "in_flight": 0,
+          "refill_ns_per_second": 250000000,
+          "schema": "public-v3-local-stored-cpu-budget-v1",
+          "start_reserve_ns": 100000000,
+          "stored_credit_ns": -132284069,
+          "worker_limit": 2
+        },
+        "original_owner_resources_zero_after_shutdown": true,
+        "finite_phase_criteria_met": false,
+        "duration_seconds": 30,
+        "attacker_processes_requested": 24,
+        "attacker_processes_ready": 24,
+        "receiver_client_state_equal": false,
+        "full_work_accepted": 14,
+        "full_work_failed": 174,
+        "completed_submit": 4,
+        "completed_read": 0,
+        "mutation_cpu_refusals": 12,
+        "mutation_cpu_charged_ns": 9514946622,
+        "mutation_full_work_cpu_ns": 964163890,
+        "mutation_dispatch_excluding_work_cpu_ns": 8550782732,
+        "mutation_cpu_debt_ns_after_shutdown": 132284069
+      }
+    },
+    "scope": "Baseline already failed without attackers. Mutation dispatch/execution is not independently profiled by SQL/history function; History is a read lane, excluded from this mutation CPU accounting. CPU balance and resource cleanup do not establish service availability."
+  },
+  "narrow_network_only": {
+    "raw": {
+      "path": "chain-390-measured-followup/receipts/network-only-business/report.json",
+      "bytes": 1196053,
+      "sha256": "017a34958668f9a4556b7264c9fd98faecf6d4f2b8c45cae12d61e90c87324ee"
+    },
+    "passed": true,
+    "unique_confirmed_transactions": 24,
+    "confirmed_ids_sha256": "38fe1aadd3a8a04c195a36147bcf2d83fa7adf516f6d477df75272201c05a9db",
+    "full_state_equal": true,
+    "reopen_equal": true,
+    "overlapping_false_calls": 88,
+    "window_ns": 6000000000,
+    "scope": "bounded same-process loopback public TCP load; original r10 resource policy; reference-acquired false traces and rotating keys; distinct native consumer reexecutes downloaded history; prebuilt blocks/logical timestamps; not independent operators, physical cost lower bound, remote exhaustion guarantee, saturated TPS or WAN",
+    "formal_final_confirmation_after_attack_threads_join": true,
+    "continuous_pressure_confirmation_capacity": null
+  },
+  "native_results": {
+    "chain-390-native": {
+      "raw": {
+        "path": "chain-390-native/results.json",
+        "bytes": 5544,
+        "sha256": "c1ca06bd2aff845e6cd9c0e9afab33e9e89fc6d512883fe7f13d93a9904e60a6"
+      },
+      "steps": [
+        {
+          "name": "preflight",
+          "returncode": 0,
+          "elapsed_seconds": 0.08289105404401198
+        },
+        {
+          "name": "source-inventory",
+          "returncode": 0,
+          "elapsed_seconds": 0.09262373601086438
+        },
+        {
+          "name": "fmt",
+          "returncode": 0,
+          "elapsed_seconds": 15.777546893979888
+        },
+        {
+          "name": "release-native-binaries",
+          "returncode": 0,
+          "elapsed_seconds": 69.71525453298818
+        },
+        {
+          "name": "factor-membership",
+          "returncode": 0,
+          "elapsed_seconds": 110.81782179395668
+        },
+        {
+          "name": "quorum-observer-reorg",
+          "returncode": 0,
+          "elapsed_seconds": 26.375917249999475
+        },
+        {
+          "name": "original-observers",
+          "returncode": 0,
+          "elapsed_seconds": 44.99156022397801
+        },
+        {
+          "name": "shared64-pressure",
+          "returncode": 0,
+          "elapsed_seconds": 2.9144338570185937
+        },
+        {
+          "name": "pinned-peer-cli",
+          "returncode": 0,
+          "elapsed_seconds": 9.064063573023304
+        },
+        {
+          "name": "original-public-pool-and-from-zero",
+          "returncode": 0,
+          "elapsed_seconds": 16.296862443967257
+        },
+        {
+          "name": "strict-clippy",
+          "returncode": 0,
+          "elapsed_seconds": 30.414626932004467
+        },
+        {
+          "name": "source-integrity-negative",
+          "returncode": 0,
+          "elapsed_seconds": 3.6307162779849023
+        },
+        {
+          "name": "applicability-negative",
+          "returncode": 1,
+          "elapsed_seconds": 959.9146324180183
+        }
+      ]
+    },
+    "chain-390-operational": {
+      "raw": {
+        "path": "chain-390-operational/results.json",
+        "bytes": 6314,
+        "sha256": "a1836633c5ad3f619bc424737a425f518d65eb55d6ba2696428be4f70b9a0166"
+      },
+      "steps": [
+        {
+          "name": "preflight",
+          "returncode": 0,
+          "elapsed_seconds": 0.09236546797910705
+        },
+        {
+          "name": "task-fixture-plan",
+          "returncode": 0,
+          "elapsed_seconds": 0.005415388965047896
+        },
+        {
+          "name": "task-fixture-prepare",
+          "returncode": 0,
+          "elapsed_seconds": 0.4124383819871582
+        },
+        {
+          "name": "continuous-growth-100-blocks",
+          "returncode": 2,
+          "elapsed_seconds": 168.2497984180227
+        },
+        {
+          "name": "public-v3-mixed",
+          "returncode": 101,
+          "elapsed_seconds": 4.074581020977348
+        },
+        {
+          "name": "public-v3-multiprocess",
+          "returncode": 101,
+          "elapsed_seconds": 144.8158232960268
+        },
+        {
+          "name": "public-roles-restart",
+          "returncode": 0,
+          "elapsed_seconds": 23.306719700980466
+        },
+        {
+          "name": "submit-recovery",
+          "returncode": 0,
+          "elapsed_seconds": 35.47866280796006
+        },
+        {
+          "name": "native-process-cuts",
+          "returncode": 0,
+          "elapsed_seconds": 10.551947539963294
+        },
+        {
+          "name": "data-availability",
+          "returncode": 0,
+          "elapsed_seconds": 17.415440540004056
+        }
+      ]
+    },
+    "chain-390-measured-followup": {
+      "raw": {
+        "path": "chain-390-measured-followup/results.json",
+        "bytes": 1864,
+        "sha256": "edca5d2b02d6285d29463dca4f2219c2af50c99b6db005e376ddcd1bc0c06db4"
+      },
+      "steps": [
+        {
+          "name": "preflight",
+          "returncode": 0,
+          "elapsed_seconds": 0.1087338009965606
+        },
+        {
+          "name": "network-only-business-original-parent-created",
+          "returncode": 0,
+          "elapsed_seconds": 7.769538720953278
+        },
+        {
+          "name": "continuous-growth-protocol-pace",
+          "returncode": 0,
+          "elapsed_seconds": 1053.2078180359676
+        }
+      ]
+    }
+  },
+  "functional_recovery_observations": [
+    {
+      "name": "public-roles-restart",
+      "returncode": 0,
+      "elapsed_seconds": 23.306719700980466
+    },
+    {
+      "name": "submit-recovery",
+      "returncode": 0,
+      "elapsed_seconds": 35.47866280796006
+    },
+    {
+      "name": "native-process-cuts",
+      "returncode": 0,
+      "elapsed_seconds": 10.551947539963294
+    },
+    {
+      "name": "data-availability",
+      "returncode": 0,
+      "elapsed_seconds": 17.415440540004056
+    }
+  ],
+  "six_development_metrics": {
+    "unique_valid_confirmed_transactions_per_second": {
+      "successful_finite_slow": 0.7597448140746955,
+      "failed_censored_fast": 3.807633098281181,
+      "sustainable_public_capacity": null
+    },
+    "proof_verification_and_state_commit_rates": {
+      "finite_pipeline_work_verification_counts": {
+        "successful_slow": 106,
+        "failed_fast": 86
+      },
+      "isolated_proof_verification_capacity": null,
+      "isolated_state_commit_capacity": null,
+      "observations": "See complete transaction stage counts and whole-campaign denominators in pipelines, and exact metered mutation CPU decomposition in public_v3_multiprocess. Work verification elapsed fields are wall time."
+    },
+    "candidate_to_actual_install_p50_p95_p99": null,
+    "installed_and_subsequently_qualified_updates": null,
+    "honest_completion_during_attack": {
+      "planned_rounds_per_phase": 3,
+      "confirmed_rounds": {
+        "baseline": 0,
+        "from-zero": 0,
+        "late-product": 0
+      },
+      "baseline_also_failed_without_attackers": true,
+      "arbitrary_anonymous_flood_fairness": null
+    },
+    "loss_reorg_restart_new_node_cost": null
+  },
+  "limitations": [
+    "Confirmation is installed depth plus required work, not deterministic finality or execution authority.",
+    "Whole campaign denominator starts after setup/listener preparation and includes business, polling, drain and close; final summary serialization is excluded.",
+    "Inclusion uses first intake through last business Submit acknowledgement whose later membership was checked; it is not confirmation throughput.",
+    "Latency samples are blocks, correlated and conditional on completion; p95 needs 20 samples and p99 needs 100, not confidence bounds.",
+    "Six slow empty descendants count toward time and storage, not business latency samples. Fast failure leaves planned/unconstructed/unfinished/pending cohorts visible.",
+    "Ledger bytes sum producer and validator metadata lengths after close; net growth is not physical writes, one-node cost or live WAL peak.",
+    "Functional restart, cut and DA command durations can include setup/build and do not measure calibrated WAN or fresh-node sync recovery cost.",
+    "Narrow network-only followup prepared the original parent directory; the original missing-directory failure remains archived. Formal final confirmation happens after hostile worker joins.",
+    "Native applicability-negative still failed expected profile count 18 versus 19; this batch is not all-pass."
+  ]
+}
