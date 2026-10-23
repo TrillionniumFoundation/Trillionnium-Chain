@@ -961,6 +961,26 @@ where
             MigrationErrorV0::BaseStateMismatch,
         ));
     }
+    // A self-consistent delta digest is not evidence for its declared output
+    // count. Bound reservation by actual validated inputs before trusting that
+    // count: only value-bearing entries can add rows, and each adds at most one.
+    let maximum_output_rows = base_rows
+        .len()
+        .checked_add(
+            delta
+                .entries
+                .iter()
+                .filter(|entry| entry.value.is_some())
+                .count(),
+        )
+        .ok_or(IncrementalDeltaErrorV0::Protocol(
+            MigrationErrorV0::TargetRowsOutOfBounds,
+        ))?;
+    if delta.target_row_count > maximum_output_rows as u64 {
+        return Err(IncrementalDeltaErrorV0::Protocol(
+            MigrationErrorV0::TargetStateMismatch,
+        ));
+    }
     let mut output = Vec::with_capacity(delta.target_row_count as usize);
     let mut base_index = 0_usize;
     for entry in &delta.entries {
@@ -3730,6 +3750,48 @@ mod tests {
             apply_incremental_delta_v0(&delta, &source, &target_context, &base, &HashRoot).unwrap(),
             target
         );
+    }
+
+    #[test]
+    fn incremental_delta_rejects_impossible_output_count_without_changing_base() {
+        for (base, target) in [
+            (vec![], vec![]),
+            (vec![target_row(1, 10)], vec![]),
+            (vec![], vec![target_row(1, 10)]),
+            (vec![target_row(1, 10)], vec![target_row(1, 11)]),
+        ] {
+            let source = source_context(&base, d(91), 10, 1, 1);
+            let target_context = source_context(&target, d(91), 11, 2, 2);
+            let valid = derive_incremental_delta_v0(
+                d(90),
+                d(91),
+                source,
+                target_context,
+                &base,
+                &target,
+                &HashRoot,
+            )
+            .unwrap();
+            let original_base = base.clone();
+            for claimed_count in [4096, MAX_EXPORT_ROWS_V0] {
+                let mut delta = valid.clone();
+                delta.target_row_count = claimed_count;
+                delta.delta_digest = delta.canonical_digest();
+                assert!(delta.validate().is_ok());
+                assert!(matches!(
+                    apply_incremental_delta_v0(&delta, &source, &target_context, &base, &HashRoot),
+                    Err(IncrementalDeltaErrorV0::Protocol(
+                        MigrationErrorV0::TargetStateMismatch
+                    ))
+                ));
+                assert_eq!(base, original_base);
+            }
+            assert_eq!(
+                apply_incremental_delta_v0(&valid, &source, &target_context, &base, &HashRoot)
+                    .unwrap(),
+                target
+            );
+        }
     }
 
     struct RejectContext;

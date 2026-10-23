@@ -14,3 +14,9 @@ cargo test --locked -p trnm-state-import --all-targets --all-features
 
 Run from `trillionnium`. See [modules](../../../docs/modules/README.md) and
 [ownership](../../../config/portability-inventory-v1.json).
+
+Incremental application bounds output reservation by validated base rows plus
+value-bearing delta entries before using the declared target count. This is a
+conservative allocation bound, not proof of the exact output count; the merged
+rows, count, digest and root are still checked before returning a result. Input
+storage, cloning of admitted rows and retained database size remain separate costs.
