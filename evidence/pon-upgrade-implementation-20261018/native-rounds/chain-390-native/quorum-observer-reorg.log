@@ -1,0 +1,9 @@
+   Compiling trnm-pon-node v0.1.0 (/home/qian-qi/work/pon-upgrade-implementation-20261018/chain-performance/trillionnium/crates/trnm-pon-node)
+    Finished `release` profile [optimized] target(s) in 4.14s
+     Running tests/model_evidence_v3.rs (/home/qian-qi/work/pon-upgrade-implementation-20261018/target-chain-performance/release/deps/model_evidence_v3-035d09161e1f63a3)
+
+running 1 test
+test explicit_quorum_native_release_survives_one_absence_and_hash_appeal_with_durable_reorg ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 22.19s
+

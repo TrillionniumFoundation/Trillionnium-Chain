@@ -1,0 +1,16 @@
+{
+  "schema": "current-source-campaign-full-artifact-provenance-v1",
+  "run": 39739585823,
+  "job": 119693303007,
+  "artifact": 12412055636,
+  "zip_bytes": 68013344,
+  "zip_sha256": "233fabf3af094b05d39dd858eb55d20306a66dec770862df450f8c9f7231d773",
+  "reader_source": "87126992dd5634348cc1a788442126997b28c624",
+  "original_manifest_sha256": "75c1c8dbd1c9de69caa3e6c86cfb30992615e4a31af51008052be95797d6b674",
+  "full_original_files_verified": 910,
+  "full_original_bytes_verified": 320779809,
+  "reader_executes_native_test": false,
+  "original_zip_retained_local": "/workspace/scratch/ff4dad3c0eb8/tmp/round0423-artifacts/12412055636.zip",
+  "independent_operators": false,
+  "production_activation": false
+}
