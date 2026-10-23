@@ -618,7 +618,12 @@ C spawn text stays unchanged. The separate source-bound tiny framing prelude
 now bounds three ordered schema-checked records to 64KiB/frame, 256KiB total and
 4KiB/read. Before serialization, a bounded complete-envelope traversal includes
 keys/punctuation/Unicode escape costs and256-bit integer limits; oversized
-65KiB leaf/key controls refuse before the serializer. The borrowed nonblocking
+65KiB leaf/key controls refuse before the serializer. Incremental private
+dict/list capture shares one total budget; all subsequent schema/serialization
+reads use that captured graph. Caller changes after capture cannot enlarge the
+output; capture-time dict mutation refuses and growing lists/aliases stay
+bounded. This does not claim an atomic caller-state or native observation.
+The borrowed nonblocking
 stdout writer keeps one supplied absolute
 deadline at most8s ahead at construction; binding it to the original outer
 owner remains open and this interface grants no budget authority. Pure parsing

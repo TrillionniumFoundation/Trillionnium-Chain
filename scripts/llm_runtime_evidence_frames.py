@@ -36,20 +36,30 @@ def _string(value, state):
              1 if 32 <= number < 127 else 6 if number <= 65535 else 12)
 
 
-def _tree(value, depth=0, state=None):
+def _tree(value, depth=0, state=None, *, snapshot=False):
     if state is None: state = [0, 0]
     state[0] += 1
     require(depth <= 16 and state[0] <= 8192, 'evidence-pipe-json-bound')
     if type(value) is dict:
         require(len(value) <= 8192, 'evidence-pipe-json-bound')
-        _add(state, 2+max(0,len(value)-1))  # Braces and commas, then keys/colons.
-        for key, item in value.items():
+        _add(state, 2)
+        private = {} if snapshot else None
+        for index, (key, item) in enumerate(value.items()):
+            if index: _add(state,1)
             require(type(key) is str, 'evidence-pipe-json-key')
-            _string(key,state); _add(state,1); _tree(item,depth+1,state)
+            _string(key,state); _add(state,1)
+            captured = _tree(item,depth+1,state,snapshot=snapshot)
+            if snapshot: private[key] = captured
+        return private
     elif type(value) is list:
         require(len(value) <= 8192, 'evidence-pipe-json-bound')
-        _add(state, 2+max(0,len(value)-1))
-        for item in value: _tree(item,depth+1,state)
+        _add(state, 2)
+        private = [] if snapshot else None
+        for index, item in enumerate(value):
+            if index: _add(state,1)
+            captured = _tree(item,depth+1,state,snapshot=snapshot)
+            if snapshot: private.append(captured)
+        return private
     elif type(value) is str:
         _string(value,state)
     else:
@@ -60,6 +70,7 @@ def _tree(value, depth=0, state=None):
             _add(state, (value.bit_length()*30103)//100000+1+(value < 0))
         else:
             _add(state, 32 if type(value) is float else 5 if value is False else 4)
+    return value  # Exact immutable leaf; no caller-owned dict/list escapes.
 
 
 def _pid(value): return type(value) is int and 0 < value < 2**31
@@ -102,12 +113,15 @@ def _record(kind, data):
 
 
 def encode_frame(kind, data):
-    _record(kind, data)
-    envelope = dict(schema=SCHEMA, kind=kind, data=data)
-    _tree(envelope)  # Bound the complete escaped envelope before serialization.
+    try:
+        # One shared total budget, incremental containers, no eager items/deepcopy.
+        envelope = _tree(dict(schema=SCHEMA, kind=kind, data=data), snapshot=True)
+    except RuntimeError:
+        raise EvidencePipeError('evidence-pipe-json-input-mutated') from None
+    _record(envelope['kind'], envelope['data'])  # Only the private snapshot below.
     raw = json.dumps(envelope, sort_keys=True,
         separators=(',', ':'), allow_nan=False).encode()
-    require(1 <= len(raw) <= MAX_FRAME and (kind != KINDS[0] or len(raw)+4 <= 4096),
+    require(1 <= len(raw) <= MAX_FRAME and (envelope['kind'] != KINDS[0] or len(raw)+4 <= 4096),
             'evidence-pipe-frame-bound')
     return struct.pack('<I', len(raw))+raw
 

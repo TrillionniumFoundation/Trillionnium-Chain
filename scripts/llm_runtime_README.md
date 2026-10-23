@@ -479,7 +479,14 @@ fail sticky. Before serialization, a deterministic traversal also bounds the
 whole envelope to64KiB using JSON punctuation/key/Unicode escape costs, at most
 8192 nodes/16 levels and256-bit integers. Oversized string/key lengths refuse
 before character iteration; no large-string encoding is used to test the
-limit. A legal60KiB ASCII result remains supported. Its CPython3.12.3 writer
+limit. Capture constructs private dict/list containers incrementally under one
+shared total budget, without deepcopy or an eager items-list. Schema checks and
+the serializer read only this captured graph; exact immutable leaves can be
+shared. Original-input mutation after capture cannot enlarge serialized data.
+Dict iteration changes fail closed; list growth/repeated aliases remain subject
+to the same budget. This is a bounded captured record, not an atomic snapshot
+of all concurrently changing caller fields or native authority. A legal60KiB
+ASCII result remains supported. Its CPython3.12.3 writer
 borrows nonblocking stdout1, validates
 direction/FIFO identity, requires an absolute deadline at most8s ahead at
 construction and never resets it within that writer or closes the borrowed

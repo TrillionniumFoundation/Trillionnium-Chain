@@ -1,9 +1,11 @@
 """Pure framing and ordinary borrowed-FIFO tests; no unit/cgroup/model."""
 import fcntl
+import inspect
 import json
 import os
 from pathlib import Path
 import select
+import signal
 import struct
 import subprocess
 import sys
@@ -30,6 +32,25 @@ def wire(values=None):
 
 
 class EvidenceFrameTests(unittest.TestCase):
+    def with_signal_at(self, function, marker, predicate, mutation, call):
+        lines, start = inspect.getsourcelines(function)
+        target = start+next(index for index,line in enumerate(lines) if marker in line)
+        previous_handler, previous_trace = signal.getsignal(signal.SIGUSR1), sys.gettrace()
+        delivered=[]
+        def handler(*_):
+            delivered.append(True);mutation()
+        def tracer(frame,event,arg):
+            if (event=='line' and frame.f_code is function.__code__ and frame.f_lineno==target
+                    and not delivered and predicate(frame.f_locals)):
+                signal.raise_signal(signal.SIGUSR1)
+            return tracer
+        try:
+            signal.signal(signal.SIGUSR1,handler);sys.settrace(tracer)
+            return call()
+        finally:
+            sys.settrace(previous_trace);signal.signal(signal.SIGUSR1,previous_handler)
+            self.assertEqual(len(delivered),1)
+
     def decode(self, raw, size=4096):
         parser = frames._TinyFrames()
         for offset in range(0, len(raw), size): parser.feed(raw[offset:offset+size])
@@ -161,6 +182,63 @@ class EvidenceFrameTests(unittest.TestCase):
         encoded=frames.encode_frame(frames.KINDS[1],value)
         self.assertEqual(struct.unpack('<I',encoded[:4])[0],len(encoded)-4)
         self.assertIn(b'\\ud83d\\ude42\\u4e2d',encoded)
+
+    def test_actual_signal_after_capture_cannot_change_schema_or_serialized_body(self):
+        value=records()[1];before=json.loads(json.dumps(value));encoded_lengths=[]
+        def mutation():
+            value['result'].clear();value['result']['padding']='x'*(frames.MAX_FRAME+1)
+        previous=sys.getprofile()
+        def profiler(frame,event,arg):
+            if (event=='return' and frame.f_code.co_name=='encode' and
+                frame.f_code.co_filename.endswith('/json/encoder.py') and type(arg) is str):
+                encoded_lengths.append(len(arg))
+        try:
+            sys.setprofile(profiler)
+            raw=self.with_signal_at(frames.encode_frame,'_record(envelope',lambda _:True,
+                mutation,lambda:frames.encode_frame(frames.KINDS[1],value))
+        finally:sys.setprofile(previous)
+        self.assertEqual(json.loads(raw[4:])['data'],before)
+        self.assertEqual(encoded_lengths,[len(raw)-4]);self.assertLessEqual(max(encoded_lengths),frames.MAX_FRAME)
+        self.assertEqual(len(value['result']['padding']),frames.MAX_FRAME+1)
+
+    def test_dict_size_change_during_capture_refuses_without_serializer(self):
+        value=records()[1];source=value['result']
+        with patch.object(frames.json,'dumps',side_effect=AssertionError('serializer reached')) as serializer:
+            with self.assertRaisesRegex(ValueError,'json-input-mutated'):
+                self.with_signal_at(frames._tree,'captured = _tree(item',
+                    lambda scope:scope['value'] is source and scope['snapshot'],
+                    lambda:source.update(added=1),lambda:frames.encode_frame(frames.KINDS[1],value))
+            serializer.assert_not_called()
+
+    def test_list_growth_during_capture_uses_same_total_budget_before_serializer(self):
+        value=records()[1];source=[0];value['result']['extra']=source
+        with patch.object(frames.json,'dumps',side_effect=AssertionError('serializer reached')) as serializer:
+            with self.assertRaisesRegex(ValueError,'json-byte-bound'):
+                self.with_signal_at(frames._tree,'if snapshot: private.append',
+                    lambda scope:scope['value'] is source and scope['snapshot'],
+                    lambda:source.append('x'*(frames.MAX_FRAME+1)),
+                    lambda:frames.encode_frame(frames.KINDS[1],value))
+            serializer.assert_not_called()
+
+    def test_immutable_leaf_replacement_during_capture_cannot_change_captured_value(self):
+        value=records()[1];leaf='immutable-before-signal';value['result']['extra']=leaf
+        raw=self.with_signal_at(frames._string,'require(type(value)',
+            lambda scope:scope['value'] is leaf,
+            lambda:value['result'].update(extra='x'*(frames.MAX_FRAME+1)),
+            lambda:frames.encode_frame(frames.KINDS[1],value))
+        self.assertEqual(json.loads(raw[4:])['data']['result']['extra'],leaf)
+
+    def test_snapshot_owns_every_mutable_container_and_counts_repeated_aliases(self):
+        value=records()[1];shared=[{'key':'v'}];value['result']['extra']=[shared,shared]
+        private=frames._tree(value,snapshot=True)
+        self.assertIsNot(private,value);self.assertIsNot(private['result'],value['result'])
+        self.assertIsNot(private['result']['extra'][0],shared)
+        self.assertIsNot(private['result']['extra'][0],private['result']['extra'][1])
+        shared[0]['key']='changed';self.assertEqual(private['result']['extra'][0][0]['key'],'v')
+        large=[0]*4096;value['result']['extra']=[large,large]
+        with patch.object(frames.json,'dumps',side_effect=AssertionError('serializer reached')) as serializer:
+            with self.assertRaisesRegex(ValueError,'json-bound'):frames.encode_frame(frames.KINDS[1],value)
+            serializer.assert_not_called()
 
 
 @unittest.skipUnless(sys.implementation.name == 'cpython' and sys.version_info[:3] == (3,12,3),
