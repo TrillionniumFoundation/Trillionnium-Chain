@@ -1174,17 +1174,19 @@ fn dispatch_shared_with_execution_observation(
                 let (existing, permit) =
                     observe_submit_phase(observation, SubmitPhase::Context, || {
                         let clock = now()?;
+                        // Pending activation lookup checks metadata, not parent State.
+                        // Keep request cancellation/CPU accounting without announcing
+                        // a parent-binding stage before the ordinary proof precheck.
+                        let pending_exact =
+                            owner.pending_exact_activation_replay(&packet, clock, &mut || {
+                                progress(0)
+                            })?;
                         let mut checkpoint = || {
                             progress(0)?;
                             (control.progress)(
                                 trnm_mvcc_fee::pon_executor::ExecutionProgress::BeforeParentBinding,
                             )
                         };
-                        let pending_exact = owner.pending_exact_activation_replay(
-                            &packet,
-                            clock,
-                            &mut checkpoint,
-                        )?;
                         let existing = if pending_exact.is_some() {
                             pending_exact
                         } else if public_proof_before_unowned_task {

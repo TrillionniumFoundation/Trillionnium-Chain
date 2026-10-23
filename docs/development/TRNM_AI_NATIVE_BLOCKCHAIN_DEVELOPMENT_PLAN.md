@@ -2067,6 +2067,18 @@ Exact-source and prospective-merge CI must validate this change; source fixes
 do not replace a measured hostile public-service campaign or the unresolved
 work-hardness and independently governed model-evolution qualifications.
 
+The `6724ed1905e11d30775738ad0eb84b53d1d9ea97` hosted Rust baseline and
+prospective-merge jobs each retained 625 passing tests and two failing ingress
+ordering tests. Both failures reproduce on that source: the pending-activation
+metadata probe incorrectly emitted `BeforeParentBinding` even when no recovery
+was pending. It did not reconstruct parent State. The repair keeps that probe
+before ordinary readiness checks and preserves its request cancellation and CPU
+checkpoint, while reserving the execution-stage callback for actual parent
+binding. The original bad-statement, false-transcript, valid-retry, SQL-tamper
+and cancelled-reorganization recovery assertions remain unchanged. This is an
+ingress control-flow correction; it does not alter proof acceptance or replace
+the original failed native service campaign.
+
 The first CI run for this encoding-precheck source stopped before native recent-
 batch tests because its reviewed store blob guard still named the preceding
 implementation. The successor pins the actual reviewed `store.rs` blob
