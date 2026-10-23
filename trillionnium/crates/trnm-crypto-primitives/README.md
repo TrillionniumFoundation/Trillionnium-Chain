@@ -15,6 +15,14 @@ cargo test --locked -p trnm-crypto-primitives --all-targets --all-features
 Run from `trillionnium`. See [modules](../../../docs/modules/README.md) and
 [ownership](../../../config/portability-inventory-v1.json).
 
+## Fixed-width text decoding
+
+Hash/key and signature hex decoding uses fixed-size output arrays. Wrong-width
+inputs are checked for malformed hex without allocating a decoded copy; historical
+malformed-hex, length and lowercase error precedence is preserved. This bounds
+auxiliary decoding storage, not the caller's input storage or the linear scan cost.
+Signature point-canonicality and strict verification checks remain unchanged.
+
 ## Executable PoN candidate
 
 This package now contains an exact experimental PoN finite-field transcript relation and verifier.

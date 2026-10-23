@@ -34,29 +34,28 @@ pub fn put_u64(out: &mut Vec<u8>, value: u64) {
     out.extend_from_slice(&value.to_be_bytes());
 }
 
-pub fn decode_hash32(label: &str, value: &str) -> Result<Hash32> {
-    if value.len() == 64 {
-        // Common fixed-width success path: preserve decode-before-case error
-        // precedence without a temporary Vec and canonical re-encoded String.
-        let mut out = [0u8; 32];
-        hex::decode_to_slice(value, &mut out)
-            .map_err(|_| anyhow!("{label} must be lowercase hex"))?;
+// Decode a fixed-width canonical value without an input-sized temporary allocation.
+// Wrong-width text keeps the historical malformed-hex-before-length error order;
+// scanning that text is still linear work, but does not allocate decoded bytes.
+fn decode_fixed_hex<const N: usize>(label: &str, value: &str) -> Result<[u8; N]> {
+    if value.len() != N * 2 {
         ensure!(
-            !value.bytes().any(|byte| byte.is_ascii_uppercase()),
-            "{label} must use canonical lowercase hex"
+            value.len().is_multiple_of(2) && value.bytes().all(|byte| byte.is_ascii_hexdigit()),
+            "{label} must be lowercase hex"
         );
-        return Ok(out);
+        return Err(anyhow!("{label} must encode exactly {N} bytes"));
     }
-    // Retain historical malformed-input versus wrong-length error precedence.
-    let bytes = hex::decode(value).map_err(|_| anyhow!("{label} must be lowercase hex"))?;
-    ensure!(bytes.len() == 32, "{label} must encode exactly 32 bytes");
+    let mut out = [0u8; N];
+    hex::decode_to_slice(value, &mut out).map_err(|_| anyhow!("{label} must be lowercase hex"))?;
     ensure!(
-        hex::encode(&bytes) == value,
+        !value.bytes().any(|byte| byte.is_ascii_uppercase()),
         "{label} must use canonical lowercase hex"
     );
-    let mut out = [0u8; 32];
-    out.copy_from_slice(&bytes);
     Ok(out)
+}
+
+pub fn decode_hash32(label: &str, value: &str) -> Result<Hash32> {
+    decode_fixed_hex(label, value)
 }
 
 // RFC8032 section5.1.3: y is canonical and negative zero is not an encoding.
@@ -79,14 +78,7 @@ fn canonical_ed25519_point(bytes: &[u8; 32]) -> bool {
 }
 
 pub fn decode_signature(label: &str, value: &str) -> Result<Signature> {
-    let bytes = hex::decode(value).map_err(|_| anyhow!("{label} must be lowercase hex"))?;
-    ensure!(bytes.len() == 64, "{label} must encode exactly 64 bytes");
-    ensure!(
-        hex::encode(&bytes) == value,
-        "{label} must use canonical lowercase hex"
-    );
-    let mut out = [0u8; 64];
-    out.copy_from_slice(&bytes);
+    let out: [u8; 64] = decode_fixed_hex(label, value)?;
     let r: [u8; 32] = out[..32].try_into().expect("fixed signature R");
     ensure!(canonical_ed25519_point(&r), "signature R is not canonical");
     Ok(Signature::from_bytes(&out))
@@ -181,6 +173,72 @@ mod tests {
             let encoded = hex::encode(value);
             assert_eq!(decode_hash32("test", &encoded).unwrap(), value);
             assert_same_hash_decode(&encoded.to_ascii_uppercase());
+        }
+    }
+
+    fn original_signature_decoder(value: &str) -> Result<Signature> {
+        let bytes = hex::decode(value).map_err(|_| anyhow!("test must be lowercase hex"))?;
+        ensure!(bytes.len() == 64, "test must encode exactly 64 bytes");
+        ensure!(
+            hex::encode(&bytes) == value,
+            "test must use canonical lowercase hex"
+        );
+        let mut out = [0; 64];
+        out.copy_from_slice(&bytes);
+        let r: [u8; 32] = out[..32].try_into().unwrap();
+        ensure!(canonical_ed25519_point(&r), "signature R is not canonical");
+        Ok(Signature::from_bytes(&out))
+    }
+
+    fn assert_same_signature_decode(value: &str) {
+        let expected = original_signature_decoder(value)
+            .map(|signature| signature.to_bytes())
+            .map_err(|error| error.to_string());
+        let actual = decode_signature("test", value)
+            .map(|signature| signature.to_bytes())
+            .map_err(|error| error.to_string());
+        assert_eq!(actual, expected, "input: {value:?}");
+    }
+
+    #[test]
+    fn fixed_signature_text_preserves_ascii_and_error_precedence() {
+        for position in 0..128 {
+            for byte in 0..=127u8 {
+                let mut value = [b'0'; 128];
+                value[position] = byte;
+                assert_same_signature_decode(core::str::from_utf8(&value).unwrap());
+            }
+        }
+        for length in 0..=258 {
+            for pattern in ["0", "A", "g"] {
+                assert_same_signature_decode(&pattern.repeat(length));
+            }
+        }
+        for value in [
+            "é".repeat(64),
+            "𐀀".repeat(32),
+            format!("A{}g", "0".repeat(126)),
+        ] {
+            assert_same_signature_decode(&value);
+        }
+        for byte in 0..=255u8 {
+            let encoded = hex::encode([byte; 64]);
+            assert_same_signature_decode(&encoded);
+            assert_same_signature_decode(&encoded.to_ascii_uppercase());
+        }
+    }
+
+    #[test]
+    fn oversized_fixed_hex_preserves_rejection_precedence() {
+        for pattern in ["0", "A", "g", "é"] {
+            let value = pattern.repeat(32 * 1024);
+            assert_same_hash_decode(&value);
+            assert_same_signature_decode(&value);
+        }
+        for suffix in ["g", "00", "0é"] {
+            let value = format!("{}{}", "0".repeat(64 * 1024 - 1), suffix);
+            assert_same_hash_decode(&value);
+            assert_same_signature_decode(&value);
         }
     }
 
