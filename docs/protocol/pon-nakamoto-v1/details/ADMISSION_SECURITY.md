@@ -56,6 +56,216 @@ counts. If the no-attack baseline fails, repair and measure it before attributin
 the whole deficit to adversarial W1. A local passing test cannot close the
 independent or computational-security gates.
 
+### Fixed-seed ROOT rejection component cost
+
+The opt-in `signed_seed_state_root_replay_component_cost` in
+`trnm-pon-node/tests/public_v3_multiprocess.rs` shares the existing
+`valid_work_state_root_replays_are_paid_without_admission` runner. The original
+eight signed transactions on genesis and two M06 workers still require known
+positive scoped-worker CPU. The new fixture uses the same seed builder as the
+original campaign: four legally admitted blocks with 256 signed transfers each,
+then its first business transaction (nonce 1025) on the fixed h4 parent, with
+one M06 worker. State is never injected or enlarged adaptively.
+
+After changing only the reference State root, the producer performs a fresh
+legal W1 search. Its actual prepared-producer/search CPU and wall cost and all
+ticket attempts are retained, including failed attempts before the winner;
+Node-owned seed/reference searches retain aggregate cost with their unexposed
+attempt counts explicitly unavailable. Separate preparation, independent W1
+verification, encoding and client-thread costs are retained. Process preparation
+totals enclose their component measurements and must not be added to them.
+The shared-process `support::call` CPU includes receiver work; its separate
+`client_thread_cost` is the isolated client observation.
+
+Three sequential, identical bodies use fresh ordinary public handshakes. Each
+must finish Work successfully, execute M06 and refuse `ROOT`, with exact body
+digest/connection coverage, positive known owner CPU and a settled paid debit.
+For one transaction/one M06 worker, known scoped CPU must be zero; unknown is
+not converted to zero. The first request follows real seed replay and is not an
+OS-cache-cold claim; the next two expose warm replay costs. Stored block/event
+counts, active state and cold readback must remain unchanged; the false packet
+must stay absent before and after a separate legal reference acceptance epoch.
+Repeated expensive rejection is established by these assertions, not inferred
+from a successful admission's commit cost or a presumed negative cache.
+
+Run this selector explicitly with `--ignored --exact --test-threads=1`, in
+release mode, with a fresh `TRNM_CI_RECEIPT_DIR`. Retain exact source/binary,
+command, real hardware, affinity and cgroup/resource limits alongside the raw
+JSON. A local host different from the original 4-CPU/16-GiB CI is only a
+controlled component-cost observation. The fixture changes no production
+limits, protocol, 2 CPU-second burst, 0.25 refill or 100 ms depletion threshold.
+It cannot qualify a sustained-load campaign, PN1 fairness or work hardness.
+The original source `8d56f2f` campaign's three FAIL results remain: all 189
+submission observations/27 confirmation rounds succeeded, but all six hostile
+phases lacked genuine paid depletion. A full supplemental saturation cohort
+and independent honest windows remain unexecuted by this test.
+
+### Fixed-seed ROOT supplemental cohort
+
+The separate ignored selector
+`separate_process_root_rejection_and_signed_confirmation_supplement` reuses the
+same phase and actor owners for one 30-second baseline followed by one 30-second
+`valid-work-root` pressure phase. It retains the h4/1,024 signed seed and nonce
+1025 one-transaction body. Each of 24 actors independently prepares the selected
+generic producer, searches W1 on its own changed-root/header-nonce instance, checks
+the winner and replays its fixed body through fresh ordinary signed handshakes.
+All actual attempts and known positive acquisition/diagnostic costs are required.
+The original from-zero/late-product campaign, three runs and six hostile FAIL
+results remain separate and unchanged.
+
+The 480-call cap, t=1/5/9 signed business schedule, seven blocks per round,
+three independent-client confirmations at depth six, 2-second CPU burst,
+0.25-second/second refill and original strict credit <100 ms / paid debit >1.9 s
+depletion predicate remain. Each round needs exact-hostile-body receiver Work
+acceptance followed by Admission refusal with CPU progress, and at least one
+actual signature-verified client ROOT refusal wholly within that round. The
+observer has no error text; its Admission refusals are not all labeled ROOT.
+CPU-budget refusal, deadline/Unknown and overlapping-only calls cannot supply
+the ROOT response. Live observer snapshots are non-atomic; the ROOT evidence
+interval closes after the last snapshot and must remain inside the fixed phase.
+
+All 24 reports must complete without reaching the cap or forced kill. After
+service joins, reconcile the whole paid/settled/Submit-owner/service CPU domain;
+concurrent per-request paid deltas are not ownership evidence. One M06 worker
+requires known zero scoped CPU, not an invented zero for missing telemetry.
+All 24 distinct hostile packet IDs remain absent live and after cold reopen;
+the receiver/client must equal the producer's exact 21-business-block State and
+expected block/event counts. Cold reopen occurs after the window and contributes
+no timely confirmation.
+
+`scripts/run_pon_root_supplement.py prepare` freezes one clean source and a
+read-only release test binary without running that selector. `execute` requires
+the exact prepared-manifest SHA and binary, one new `trnm-pn1-root-*.service`
+systemd user service with aggregate CPUQuota=400%, CPUQuotaPeriodSec=100ms,
+MemoryMax=16G, Nice=10, KillMode=control-group and RuntimeMaxSec=600. Controller,
+verifier, actors and descendants share that service; actual limits and actor
+readiness membership are checked. An exclusive claim prevents rerunning the
+same prepared cohort after failure. Existing bounded-process/source/resource
+owners retain commands, streams, source/binary hashes and failed observations.
+The initial source freeze retained **NOT_RUN** until a separate authorization.
+One authorized 30-second baseline plus 30-second ROOT phase then ran on
+`c61e2112de67f9295258246b42d3c3ebf652d445`, with immutable release binary SHA256
+`7c036d081c7b92cfb933633c26ca6e9bcdcb0fa09302209865bb2dd5f5e9c2bd`, inside one
+actual aggregate 400%/100-ms/16-GiB/Nice-10 systemd user service. It **FAILED**.
+The baseline completed all three depth-six confirmations. Under ROOT pressure,
+the first two confirmed, but the third had no confirmation at 30.007524305 s.
+Twenty of 21 honest submissions succeeded; the final h25 submission ended with
+`FRAME_DEADLINE`. The receiver stopped at h24, 24 events and 25 stored blocks;
+the client retained its h18 confirmed tip. Final producer equality therefore
+failed. No after-window recovery was counted as timely progress.
+
+The retained pressure input produced 617 hostile calls: 593 signed ROOT replies
+and 24 client I/O/deadline failures. All 24 actors completed below their cap,
+without forced kill; exact-body Work/Admission CPU progressed in each observed
+round. The original numeric depletion relation and whole-sample containment
+were independently read back from the retained samples. Final paid CPU was
+9,396,951,692 ns, equal to settled full/Submit-owner/service CPU, with known
+zero scoped CPU. All 24 hostile packet IDs stayed absent live and cold; cold
+reopen matched the incomplete live receiver. These facts do not repair the
+missing third business confirmation or pass the supplemental cohort.
+
+The failed native step exited 101 and the launcher failed without retry. The
+exclusive cohort claim, original streams, all actor reports, numeric samples,
+source/binary pins and service properties remain retained privately. The unit
+and all 26 observed original processes were gone at cleanup. A measurement
+limitation also remains: the runner's failure path did not emit its planned
+within-service source/resource-after records. An independent raw source check
+after failure confirmed the frozen source, and the immutable binary hash was
+unchanged; a removed cgroup's final counters cannot be reconstructed. No PN1,
+original-campaign, hardness, independent-operator, WAN or production flag changes.
+
+The subsequent `pon-root-supplement-execution-v2` launcher attempts the frozen
+binary hash, exact source and live-service resource readbacks independently after
+an ordinary measured-run failure as well as success. Each unavailable observation
+is recorded without suppressing the others or replacing the original failure.
+Any failed after-check prevents success. The one-use claim and all original
+native inputs, deadlines and acceptance criteria remain unchanged. This records
+live after-observations, not final counters after unit deletion, and supplies no
+missing observation for the earlier failed c61 cohort. Launcher fault controls
+use mocked native execution and real small file hashes, not a new pressure run.
+
+A later, separately frozen current-source cohort on
+`f7795a3d72bb59d9f0625186d301fc3ce0dc028e` (tree
+`c09f6946bb2cb0b40e7489d6ca57e4aaecec3bb7`) **passed these supplemental
+criteria only**. Its release binary SHA256 is
+`07d34e50e289135e652f04c50cdbe8fce17ab7399273889cc1abf2d32c706ab4`;
+report SHA256 is `d049d54ef1670a576098ab71ab1f95bf9af1efcb86fad19cce2eab7941dee346`.
+The original inputs, caps, deadlines and aggregate service limits were unchanged;
+the optional ROOT rejection cache stayed **off**. Current scheduling and native
+arithmetic differ from c61; this is not an isolated causal comparison of one
+optimization. One malformed launcher command was rejected before service creation
+or cohort claim, retained, and corrected; exactly one native cohort was executed.
+
+All 24 actors completed below the cap without forced kill. All 21 business blocks
+and three depth-six confirmations completed, at 5.967304544, 16.120909061 and
+26.006862713 seconds; each round contained genuine numeric depletion and 151,
+152 and 152 signature-verified ROOT replies respectively. Of 595 samples, 541
+met the original depletion predicate; minimum remaining paid credit was
+67,817,742 ns. Whole paid/settled owner CPU reconciled to 9,403,286,579 ns with
+known zero scoped CPU. The scheduling owner retained 45 of 4,096 fixed identities
+and observed 662 repeat skips; this does not qualify capacity exhaustion or
+distinct-nonce churn. The generic phase's `finite_phase_criteria_met` remains
+false; only the separately frozen valid-Work/ROOT supplemental predicate passed.
+
+All 152 captured files / 57,416,786 bytes were hash-verified. Independent SQL
+readback of closed snapshot copies matched both full current key/value sets,
+tip/root, height 25, 25 events and 26 stored blocks; all 24 hostile IDs were
+absent. Local activation generations legitimately differ (receiver 25, client 7)
+and are not chain heights. A prior read-only Python inspection created empty WAL
+and reader SHM sidecars after capture; these are retained separately, with all
+original captured bytes unchanged. Binary/source/live-resource after-checks
+passed; all 26 observed processes and the original cgroup were gone at cleanup.
+This is not final raw accounting of a deleted unit. The earlier c61 and original
+three-run failures remain failed; no PN1, hardness, independent-operator, WAN,
+model-loop or production qualification changes.
+
+### Optional bounded final-ROOT rejection component
+
+`Node::enable_local_root_rejection_cache` explicitly enables one volatile cache
+in the existing M15 Node's M06 execution path. Default open, cold reopen and every current
+CLI/service constructor leave it off. This is a local component API, not a
+public resource profile, admission capability or activation. Growth-reference
+execution is excluded. Existing raw/scoped cost fixtures retain their default
+uncached execution.
+
+Only admission's final State/receipts comparison, after successful real M06 and
+qualified task-output derivation, constructs a private mismatch fact. The key
+contains the full encoded packet, actual checked parent ID/root and local
+network/parameters/genesis/backend/task-profile context. A fact cannot be
+serialized, imported, shared or survive the owning process/source instance.
+Retention receives the same binding scope returned by the checked executor;
+an earlier SQL Record is not that scope. An A→B→A SQL fault regression checks
+that a refusal derived from B cannot reject the restored valid A packet.
+Current full W1 verification still precedes the private checked-packet type.
+Each hit follows fresh header/task/time checks, actual State restoration,
+canonical parent-root and account-graph checks, owner permits/journal rechecks,
+mining/continuous gates and both original parent-binding cancellation points.
+Only deterministic execution/output derivation is omitted. A final progress
+checkpoint precedes returning cached ROOT or retaining a new fact. Generic
+ROOT errors, accepted packets, cancellation, Unknown and local integrity failures
+never become facts. A changed actual SQL root, State or account graph remains a
+fresh integrity failure, even with an identical packet.
+
+The fixed array has at most 32 entries. Its 2-MiB retention cap includes fixed
+cache/Node-field metadata and exact boxed packet lengths; this is not an RSS or
+allocator-overhead bound. Oldest facts are evicted as necessary. TTL is 30
+seconds from creation, never renewed by a hit/duplicate. A failed, out-of-range
+or backward monotonic sample clears facts and disables reuse for that owner;
+reenabling does not reset it. There is no new durable journal, lane, identity
+whitelist, CPU credit, wire domain, State cap or namespace. Actual owner/worker
+CPU continues through the existing paid accounting; no saved cost is charged as
+executed CPU.
+
+Component tests exercise true cold execution then skipped replay execution,
+fresh full Work and signed public ROOT replies with positive actual settled
+CPU, nonmatching bytes/context/parent/root, changed storage, cancellation,
+generic-error exclusion, cold reopen, eviction, exact-byte/slot limits and
+clock/TTL failure. They are not a new pressure campaign or a throughput proof.
+No full campaign is run for this component. Nonce/body churn can miss every
+entry, and fresh full Work/State/context costs remain. Original PN1 and the
+`c61e2112` supplemental failures, arithmetic-profile research boundaries and
+all production/qualification flags remain unchanged.
+
 ## Implemented local capacity boundary
 
 `trnm-transport::proof_admission` allocates three public permits and one recovery permit,
