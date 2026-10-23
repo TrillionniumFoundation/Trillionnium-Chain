@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Controlled TCP dependency download followed by original Hepta inference owners.
+"""Controlled TCP dependency download; the native Hepta consumer is unavailable.
 
 This creates evidence, not independent evaluation, product qualification or a
 release decision. All source and destination directories must be explicit. The
-producer's finite server exits before the consumer loads the downloaded model.
+finite producer exits before the unavailable consumer boundary. Transport
+completion cannot establish I10; this command deliberately fails closed there.
 """
 from __future__ import annotations
 
@@ -44,6 +45,8 @@ def remaining_fetch_budget(deadline: float) -> tuple[float, int, int]:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
+    # Retain the original absolute-path invocation arguments. Hepta, Python,
+    # just and target paths do not enable an unshipped native consumer.
     for name in ("chain", "hepta", "source-parent", "source-materials", "output",
                  "python", "cell-bin", "just", "hepta-target"):
         parser.add_argument(f"--{name}", type=Path, required=True)
@@ -55,9 +58,10 @@ def main() -> None:
     started = time.monotonic()
     evidence = {
         "schema": "pon-smollm-cell-native-handoff-v1", "status": "running",
-        "scope": "one-host-controlled-tcp-full-model-dependencies-original-hepta-owners",
+        "scope": "one-host-controlled-tcp-full-model-dependencies-native-consumer-unavailable",
         "independent_operators": False, "independent_evaluation": False,
         "product_qualification": False, "production_activation": False,
+        "native_consumer_status": "UNAVAILABLE", "native_receipt_status": "UNVERIFIED",
         "cell_binary_sha256": sha(args.cell_bin), "members": [],
     }
     server = None
@@ -186,30 +190,13 @@ def main() -> None:
         parent["directory"] = str(stage)
         consumer_parent = stage / "parent-material.json"
         write_json(consumer_parent, parent)
-        config = {"schema": "hepta-smollm-neural-native-check-v1", "python": str(args.python),
-            "chain": str(args.chain), "materials": str(material_stage), "parent": str(consumer_parent),
-            "parent_sha256": sha(consumer_parent), "output": str(args.output / "original-hepta-consumer")}
-        config_path = args.output / "native-config.json"
-        write_json(config_path, config)
-        env = {**os.environ, "PATH": str(args.just.parent) + os.pathsep + os.environ.get("PATH", ""),
-            "CARGO_TARGET_DIR": str(args.hepta_target), "CARGO_BUILD_JOBS": "4",
-            "CARGO_PROFILE_DEV_DEBUG": "0", "CARGO_PROFILE_TEST_DEBUG": "0",
-            "HF_HUB_OFFLINE": "1", "TRANSFORMERS_OFFLINE": "1", "CUDA_VISIBLE_DEVICES": "",
-            "OMP_NUM_THREADS": "4", "MKL_NUM_THREADS": "4", "HEPTA_PN3_NEURAL_NATIVE_CONFIG": str(config_path)}
-        command = [str(args.just), "test", "--offline", "--locked", "--retries", "0", "-p", "codex-hepta-infer-worker-host",
-            "--run-ignored", "only", "real_smollm_parent_query_original_control_final_use_and_terminal_unload"]
-        with (args.output / "hepta-native.log").open("w") as log:
-            native = subprocess.run(command, cwd=args.hepta / "codex-rs", env=env,
-                stdout=log, stderr=subprocess.STDOUT, timeout=600)
-        evidence["hepta_exit_code"] = native.returncode
-        if native.returncode:
-            raise RuntimeError("original Hepta consumer check failed; see retained native log")
-        result_path = Path(config["output"]) / "native-owner-bridge-result.json"
-        evidence["native_result"] = json.loads(result_path.read_text())
-        evidence["native_result_sha256"] = sha(result_path)
         evidence["source_parent_sha256"] = sha(args.source_parent)
         evidence["consumer_parent_sha256"] = sha(consumer_parent)
-        evidence["status"] = "passed"
+        # No supported native consumer or owner-receipt contract is shipped.
+        # Do not invoke an unknown selector, parse arbitrary JSON as authority,
+        # or invent success fields for a future I10 implementation.
+        raise RuntimeError("native Hepta consumer UNAVAILABLE; owner receipt UNVERIFIED: "
+                           "no supported consumer or receipt contract is shipped")
     except BaseException as error:
         evidence["status"] = "failed"
         evidence["error"] = str(error)

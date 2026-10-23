@@ -375,6 +375,300 @@ retain component identities and the original failures.
 | PN4 | Combined local source `ebc0076c84b9a7c15b4cc4fb87ee1d3971846022` passed seven native budget tests, forty-four scalar CPU tests, three public-target tests and full workspace/all-target/all-feature strict release Clippy. The bounded read-only inventory exposes existing pending/receipted operations without dispatch or payment authority. Mature mining rewards have already been credited and their reward rows removed; a second payment cannot be funded by that historical row. Actual M06 locks/debits, meters and reconciliation remain necessary. |
 | PN5 | Three independent administrators, hosting providers and failure domains, preregistered WAN faults, repair and at least seventy-two hours of real operation are still missing. |
 
+Within the same PN3/I10 prerequisite, M14's existing runtime now separates its
+internal `decode_tokens` loop from the unchanged single-prompt wrapper. Already
+encoded IDs use the original request/response domains, input128/output16 bounds,
+fixed-count greedy rule and actual tensor dtype/device/shape checks. Caller-side
+full-context compilation and actual loaded-attempt binding remain required.
+Routing controls and opt-in tiny CPU tensor equivalence/refusal tests are not a
+pretrained-model run, Hepta provider, held FinalUse or three-round/I10 result;
+outer closure remains UNKNOWN. M14's existing inventory includes these controls.
+The `a4533609` caller-growth red remains: copying after a length check was not a
+hard bound. The snapshot now copies at most cap+1 and rechecks its own length;
+growth beyond the cap refuses before validation/forward, with no truncation.
+
+Within PN3, the existing [runtime component](../../scripts/llm_runtime_README.md)
+adds the explicit `linux-owned-exit-terminal-subset-v3` observer and distinct
+`llm-runtime-public-pilot-plan-v3` domain. It retains the complete initial V2
+classification, all original FDs/identities and sticky refusal. Only a same-call
+stable double frontier may record a strictly smaller set of unchanged zombie
+tasks; removed tasks remain pending until the original owned-child terminal
+wait4 proves group completion. Unknown/additional/reappearing tasks, changed
+identity, running remaining tasks, malformed reads and unknown waits reject.
+The original missing-sample 100ms deadline and wall/RSS caps do not change.
+Strict-v1 remains the default and V2 behavior is retained. Schema/profile/source
+bindings, parent-step dispatch, adversarial units and the real live-user-thread
+refusal exercise this component boundary. They do not close PN3, convert prior
+failed observations, establish a completed full pilot or replace the actual
+cross-node three-round model/consumer/evaluation acceptance above.
+
+The first fixed-environment V3 full model attempt on 2026-10-22 is FAIL.
+Its first loader completed the actual pretrained model load and eight
+forward/greedy-decode steps, then exited zero, but an ENOENT during the same-call
+task frontier caused `rss-exit-cleanup-observation-unavailable`. Twenty-two
+complete snapshots preceded the refusal: the last good two-task recheck was
+64.536ms after the original missing sample, refusal ended at66.641ms, and a
+later diagnostic showed one task at67.581ms. That later observation cannot
+authorize a stable subset or prove timely terminal wait4, whose timestamp was
+not captured. The stage took33.956s wall and37.340s exact-child CPU; sampled
+peak RSS was1,073,172,480 bytes and waited peak was1,142,767,616 bytes. All twenty
+original run/input/control files and hashes remain retained, and the earlier
+V2 evidence was rechecked unchanged. No training, assessment, adoption or reward
+ran. M17/M10 must close the incomplete-frontier observation through an explicit
+reviewed source/profile and a fresh frozen experiment; a later diagnostic,
+deadline extension or successful child exit cannot convert this failure.
+
+The same PN3 M17/M10 runtime component now has the explicit worker-only
+`linux-owned-exit-worker-pidfd-v4` / `llm-runtime-public-pilot-plan-v4` successor.
+It retains strict-v1 as default and the frozen V2/V3 observer bytes. Full V2
+initial qualification precedes binding every original nonleader's held kernel
+thread pidfd to its task FD, starttime and namespace; acquisition changes or an
+unavailable `PIDFD_THREAD` refuse. A later worker disappearance needs that
+same held descriptor's actual terminal event. Interrupted frontiers then need
+two new complete remaining frontiers in the same call, with matching names,
+counts and original starttimes, all original predicates, and remaining Z tasks.
+Each recapture consumes a newly proved original worker, at most the original
+worker count. Previously observed illegal/unknown fields stay sticky. Leader
+loss, unproved count mismatch, additions/reappearance, wrong FD/event and missing proof
+refuse; no early-leader pidfd event or count-based inference supplies authority.
+Own tiny-child tests confirmed worker-event/proc-disappearance separation from
+group completion and the kernel's delayed early-leader event. Those observations
+and adversarial units establish only this component boundary. Original held
+FDs/reservations, missing-sample 100ms, wall/RSS caps and exact owned-child wait4
+with valid resource receipt remain mandatory, with no zero-RSS insertion.
+The V3 failure remains FAIL; a reviewed fresh-source full pilot and actual
+three-round installed-parent/consumer execution remain open. The engineering
+task set may be frozen public or previously seen data; report only that set's
+actual performance, without claiming future-task generalization.
+
+Independent review rejected initial V4 candidate `3052245` at the real wait4
+boundary: reaped pidfd fdinfo Pid/NSpid become `-1`, so a post-reap live-identity
+check falsely rejected completion. Preserve that failure. The corrected V4
+keeps strict live-owner checks before reap and during every recheck, and checks
+only original held PID/FD/token capabilities after the supervisor's exact owned
+terminal wait4/resource receipt. A caller-supplied terminal flag cannot bypass
+the live checks. Real own-child wait4 success and wrong-owner/replaced-FD cases,
+plus synthetic unknown/wrong-wait refusal tests, cover this repair; no new full
+model pilot or three-round acceptance follows from it.
+
+The first full V4 `1cabbb1` real-model attempt is also FAIL. Its first loader
+completed actual pretrained loading and eight forward/decode requests, exited
+zero, and was genuinely reaped, but the supervisor refused
+`exit-worker-frontier-change`. Fourteen complete snapshots ended with two tasks
+at 77.997ms after the original gap. A newly observed original worker pidfd
+terminal event at 82.285ms coincided with Threads=2 and one enumerated task;
+strict refusal completed at 82.344ms. The later 87.258ms one-task/group-ready
+diagnostic does not supply a complete same-call double frontier or prove
+timely exact wait4; that terminal timestamp remains UNKNOWN. All 4,248 deployed
+tracked source blobs were reverified unchanged, all original run/control bytes
+and hashes remain retained, and later stages are NOT_RUN. No retry converts it.
+The same M17/M10 component repairs only capture across a newly proved original
+worker retirement: this `_names` call must add fresh bound terminal proof,
+retain the leader in a strict subset and read the old count equal to the
+complete committed active-set size at entry. That incomplete fragment may be
+discarded through the existing bounded recapture; two new complete count/name
+consistent remaining Z frontiers in the same call are still mandatory. Raw
+count/names/proof context is retained. Repeated/previously retired proof,
+intermediate or unexplained counts, new/reappeared tasks, leader loss and
+already seen illegal fields remain sticky refusals. The original maximum
+worker count, 100ms origin, resources, owned wait4 and post-reap capability
+checks do not change. No new profile/schema, successful pilot or PN3 acceptance
+is created by this repair; the retained `1cabbb1` outcome stays FAIL.
+
+The separately frozen `9d9b2ac` actual full attempt remains FAIL. Both loaders
+passed and the candidate completed ten training steps and saved a 933,544-byte
+LoRA, but supervision refused `exit-worker-deadline`. Twenty-four complete
+frontiers retained a zombie leader plus a running PF_EXITING/no-mm worker; the
+last completed at 97.655707ms and rejection at 100.772941ms from the original
+missing-RSS status sample. The present worker's thread-pidfd readiness, complete
+failed-call frontier and exact cleanup wait4 time are UNKNOWN. Later four
+control trains and five evaluations were NOT_RUN. This failure supplies no
+three-round, installation, I10 or beneficial-release acceptance.
+
+Within the same PN3/PN4 M14/M17 owner, the optional controlled kernel-spawn
+slice extends the original `_Wait4Child`, never an external parent DTO or a
+second supervisor. The tracked C helper makes the direct child with clone3
+INTO_CGROUP/PIDFD and an async-safe exec gate; the original Python owner alone
+does membership admission, signaling, exact wait4 and cleanup. M14's portability
+inventory now names its C/FFI sources. Internal explicit source compilation and
+sealed-memfd loading bind actual library bytes and all reused parsers; source
+guard checks C without extension exemptions. A typed live operation capability
+requires exact unit InvocationID/MainPID, supervisor membership, cgroup2 mount,
+operation/ancestor held-FD and name/inode identity, finite unchanged 8/16GiB,
+400%-CPU, zero-swap and 256-task limits and no tighter ancestor. There is no
+serialized grant, fallback, new CLI/profile, old-100ms relaxation or change to
+the public root 2GiB profile. Existing public/seen tasks remain usable for
+engineering, with only their observed dataset results reported.
+
+The first outside-subtree clone3 EACCES cohort and the later delegated-service
+cohort remain FAIL: the latter proved its own native birth-placement/pidfd/
+membership/wait4/operation-empty primitive, but lost the unit ControlGroup path
+before authoritative whole-unit reconciliation. Neither result qualifies this
+new source. Unit-stop InvocationID authority, escape/shared-page accounting,
+ancestor expenses, ordinary Hepta operation/FinalUse integration and complete
+outer closure remain open under existing PN3/PN4 owners. Raw cgroup charge is
+never RSS or released credit. Every new controlled result is deliberately
+failed pending outer reconciliation, with reservation RETAINED; no refund,
+installation or adoption authority is emitted. Local native refusal and
+synthetic-capability real wait4 tests are not model/cgroup qualification. The
+source `cc9b599` inherited-runtime and neural-read adapters use the unchanged
+ordinary supervise call and gain no kernel capability automatically; preserve
+their separate source-bound campaign evidence and V2/V3/V4 semantics when
+integrating this additive optional path.
+
+Independent review rejected initial controlled spawn source `ce4ae661` for the
+post-clone tuple/field-handoff exception gap; retain that rejection. This same
+M14 owner now binds its native result slots and prebuilt cleanup exception
+before clone, and constructor/monitoring share cleanup. Any post-clone signal
+or allocation failure must resolve the original pidfd/exact wait4 or explicitly
+retain that owner and reservation. A native close-and-clear primitive prevents
+pending signals from leaving stale slots that could close reused descriptors.
+The 21 real tiny-child fault cases use synthetic native outputs; persistent
+allocation and exact gate/pidfd-number reuse tests cover cleanup, not cgroup
+placement, whole-unit closure, model acceptance or I10.
+
+The same M14 capability now provides explicit descriptor closure only before
+spawn, or after an actual native refusal proves all child slots untouched.
+One fixed strong Native slot retains its open capability. Native memfd closure
+refuses while that slot is occupied; eligible cap closure resolves its original
+ancestor descriptors first. Consumed/unknown child or outer state always
+refuses close and retains the same owner. Native errno/close-and-clear slots
+survive signals/allocation failures without closing reused FD numbers. This
+does not stop a unit, refund a grant, complete FinalUse or qualify a model.
+Independent review rejected initial close source `6e0e064b` for deterministic
+acquire/acquire and close/acquire races; retain both failures. A fixed creating
+process/Thread identity refuses foreign operations before IO/FD/slot mutation.
+Review then rejected `445fdda6` for the native Lock.acquire-to-Python-local
+exception window; preserve that deterministic opcode fault injection. The new
+controlled helper explicitly requires CPython 3.12.3's
+[native BEFORE_WITH](https://github.com/python/cpython/blob/v3.12.3/Python/bytecodes.c#L2316)
+and exact C RLock. Public wrappers enter the native lock directly and reject
+recursion count above one inside the protected block; no generator acquisition
+wrapper or Python acquired flag remains. Unsupported ABI, including 3.14,
+refuses before source IO/compiler/memfd; ordinary default supervision is unchanged.
+Owner-thread lifetime remains required, and constructor cleanup reuses its held
+lock. These controls close only local ownership windows, not the unit envelope
+or FinalUse; prior 3.14 runs retain their old-source scope.
+
+The delegated-unit failure still blocks outer reconciliation. Upstream
+systemd255 [SERVICE_EXITED pruning](https://github.com/systemd/systemd/blob/db11bab38ccf1ed257f310d29070843d4c58ea01/src/core/service.c#L1263)
+and [inactive-unit pruning](https://github.com/systemd/systemd/blob/db11bab38ccf1ed257f310d29070843d4c58ea01/src/core/unit.c#L2757)
+can remove the cgroup before final property readback. Its
+[accounting getters](https://github.com/systemd/systemd/blob/db11bab38ccf1ed257f310d29070843d4c58ea01/src/core/cgroup.c#L4065)
+may return last cached values. Neither finite properties nor preheld directory
+FDs prove final raw accounting. The old cohort lacks the post-main InvocationID
+and accounting properties; preserve FAIL. An external controller with an
+explicit original-unit lifetime/final-data protocol remains required under
+the existing PN3/PN4 owners. No outer success path is supplied by this slice.
+
+The next M14/I10 slice implements controlled aggregate mechanics v2 through
+the same runtime's explicit `_aggregate_operation`; supplying it together with
+the old capability refuses. A stable delegated U keeps an external original
+wait4 owner in finite `controller`; its birth-bound Python supervisor and every
+payload participant (model, trainer, verifier and descendants) belong to one
+fresh manual aggregate leaf, with zero allowed subgroups. The inner model wait4
+owner remains unchanged. Held mount/boot/InvocationID/path/inode/source/ancestor
+identities and actual controller limits bind the mechanics; U's original
+16GiB/400%/256 envelope is not increased. A memory plus controller memory must fit
+the parent before IO/registration, and A CPU/tasks equal U minus the strictly
+positive controller share. Actual fields must match this partition; a 16GiB A
+refuses. Source `686442fc` incorrectly accepted overcommitted declared budgets;
+preserve its ordinary-FD red. U has exactly the two known leaves, depth1 and
+descendants2, with no internal payload or dying groups. Acquisition changes no
+parent configuration and V2 supplies no capacity grant. This trusted same-admin boundary
+does not isolate hostile same-UID migration or external service dispatch.
+The checked budget is privately copied before IO; retain the `2478cef6`
+ordinary-FD caller-mutation red. Acquisition still assumes trusted preparation,
+not general leak freedom at every open-to-Python-slot async exception boundary.
+
+The original direct-owned supervisor's exact wait4 plus empty/no-dying aggregate,
+zero memory.current/swap.current and unchanged limits/identity can produce only
+a private raw post-terminal observation. The owner rechecks after collecting
+memory.peak/events/cpu.stat and requires two matching raw snapshots without
+retry; nonzero charge or any unknown retains the original
+owner and descriptors. No group deletion, cached-final substitute, grant refund
+or whole-unit equivalence is supplied, even after that fact. Original d50 FAIL,
+old profiles/100ms/default RSS/public 2GiB and outer UNKNOWN remain. The one actual
+tiny `ea2434d5` attempt failed at initial aggregate acquisition with
+`aggregate-counter-format`, before runtime clone3/supervisor/payload. Its original
+offending filename/raw was not retained and the stopped group was collected;
+that exact input remains unknown. A separate later read of existing 4060 groups
+found the official Linux
+[`core_sched.force_idle_usec`](https://github.com/torvalds/linux/blob/v7.0/kernel/cgroup/rstat.c#L703)
+key, which the old underscore-only parser deterministically rejects. The parser
+now permits only that exact additional dotted key, retaining duplicate, u64,
+field/read bounds and every empty/zero-charge/identity predicate. Parse failures
+carry an immutable bounded original filename/raw/reason tuple, without an owner
+or authority; callers must retain it in their existing first-failure record,
+without another read. Non-ABI parser/ordinary-file controls run separately from
+the CPython 3.12.3 native owner tests. This repair does not identify the old exact
+input, retry the attempt or qualify aggregate birth placement or a model.
+The original wait4 owner's aggregate terminal-error path retains only this
+existing typed immutable counter tuple, with pre-clone type bindings and no
+exception/traceback/capability references. Projection faults cannot replace the
+original refusal or skip the original pidfd-close path; ordinary owned-FD tests
+cover MemoryError/KeyboardInterrupt. This is diagnostic evidence only. Prepared
+`7abd4172` stays NOT_RUN because A still writes log/JSON file pages; finite
+evidence transport remains a separate source change and does not guarantee zero
+charge or authorize operation release, Store/FinalUse use or a model.
+The private pipe ownership prelude retains the original16 ancestor slots plus
+two native-populated FIFO slots, with same-owner/nochild-or-actual-refusal gates,
+native identities/errno, endpoint direction and actual source binding. Original
+C spawn text stays unchanged. The separate source-bound tiny framing prelude
+now bounds three ordered schema-checked records to 64KiB/frame, 256KiB total and
+4KiB/read. Before serialization, a bounded complete-envelope traversal includes
+keys/punctuation/Unicode escape costs and256-bit integer limits; oversized
+65KiB leaf/key controls refuse before the serializer. Incremental private
+dict/list capture shares one total budget; all subsequent schema/serialization
+reads use that captured graph. Caller changes after capture cannot enlarge the
+output; capture-time dict mutation refuses and growing lists/aliases stay
+bounded. This does not claim an atomic caller-state or native observation.
+The borrowed nonblocking
+stdout writer keeps one supplied absolute
+deadline at most8s ahead at construction. The private tiny path binds it to the
+original C8s owner/start, drains4KiB/pass and gives A the original2s writer path
+without mkdir/open/save. Original exact wait4/identity must precede final EOF/
+native read-slot close, which precede both original raw snapshots. Typed tiny
+terminal KI/MI/projection faults preserve original pidfd cleanup; partial/
+unknown remains RETAINED, not release. Tests use ordinary real children with
+synthetic native birth/limits/raw; they do not qualify a valid unit or model.
+This interface grants no budget authority. Pure parsing
+and small ordinary-FIFO child controls cover
+malformed/truncated/extra frames, backpressure and deadline refusal. Actual
+valid-unit verification and original Store/FinalUse closure remain open.
+Post-native Python exception injection does not claim native-internal
+signal interruption; SIGUSR1 tests prove guard reentry refusal. Ordinary FD
+controls do not qualify a valid unit or prove that C-created pipe pages charge C.
+The next dependency remains the existing Hepta
+kernel.operations Store's CPU destination/independent FinalUse/terminal release
+protocol; this module adds no second manager or journal and no I10/model result.
+
+The ordinary merge with source `8caf5387` retains the inherited runtime and
+persistent neural-read worker, its default held-pidfd/irreversible-exit helpers,
+all explicit V2–V4 source-bound paths and the controlled native owner. Explicit
+profiles cannot fall through to default reconciliation; their 100ms ceilings
+remain. The default waits for proved kernel cleanup only within the original
+absolute phase wall budget and still requires exact wait4/resources. Campaign5
+and its 16/32 equal gen2/gen3/zero-changed-decision Ineligible result keep their
+original source scope. This merge adds no model, cgroup, FinalUse or I10 result.
+
+The existing [Cell/native handoff script](../../scripts/run_llm_cell_native_handoff.py)
+implements controlled dependency transport and byte readback, but its native
+Hepta consumer and owner-receipt contract are not shipped. Inspection of Hepta
+`deaf31954d53fa8eba543525221c34f9b1b3d1b6`, primary
+`061f14c8f4722506b38a39ff3921b6bd42b8c8aa` and PoN base
+`c38e7727220f32c7410f59083c5ea7878bbae078` finds no matching consumer.
+After the unchanged original transfer deadline, readbacks and finite producer
+drain, this script records consumer UNAVAILABLE and receipt UNVERIFIED, keeps
+the top-level result failed and invokes no unknown native command. The retained
+absolute-path arguments cannot enable that absent consumer. A missing report
+already failed closed; the removed arbitrary-JSON success branch could instead
+promote a mocked child exit0 with a failed or unrelated JSON report. The red/green
+controls use mocked orchestration and small real file hashes, not actual model
+execution or a real model failure. They preserve the original late-readback
+failure and do not close the real caller, load-attempt binding, resource,
+FinalUse, three-cycle next-task readback or I10 obligations.
+
 The optional scalar-credit freshness observation reads the original watermark
 and projects the original refill arithmetic without changing the clock, credit,
 owner or depletion predicate. Its added sampler contention and complete-path
