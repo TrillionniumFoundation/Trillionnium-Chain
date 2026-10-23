@@ -384,10 +384,20 @@ fn native_payment_bridge_task_exact_signed_transition_net_balance_and_reorg() {
             report["budgets"][0]["historically_observed_native_gross_debit"],
             2_000
         );
+        let readback = budgets
+            .reobserve_native_payment(&mut node, claim.claim)
+            .unwrap();
+        assert_eq!(readback.historical, observed);
+        assert_eq!(readback.observed, observed);
+        assert_eq!(budgets.report().unwrap(), report);
         let fork_a = mine(&mut node, first, vec![]);
         let fork = mine(&mut node, fork_a, vec![]);
         assert_eq!(node.active().unwrap().0, fork);
         assert!(node.observe_payment(&query).is_err());
+        assert!(budgets
+            .reobserve_native_payment(&mut node, claim.claim)
+            .is_err());
+        assert_eq!(budgets.report().unwrap(), report);
         assert_eq!(
             node.observe_funding(source).unwrap().row.unwrap()["remaining"],
             2_000
@@ -399,6 +409,9 @@ fn native_payment_bridge_task_exact_signed_transition_net_balance_and_reorg() {
         let mut node = open(&node_path, backend);
         let mut budgets = NativeBudgetStoreV1::open(&journal, config).unwrap();
         assert!(node.observe_payment(&query).is_err());
+        assert!(budgets
+            .reobserve_native_payment(&mut node, claim.claim)
+            .is_err());
         assert_eq!(budgets.report().unwrap(), report);
         assert_eq!(
             budgets
@@ -416,6 +429,26 @@ fn native_payment_bridge_task_exact_signed_transition_net_balance_and_reorg() {
             balance(&node, public(1)),
             provider_before,
             "historical replay issues no replacement payment"
+        );
+        // The same signed payment may reappear on a heavier branch. This
+        // reobservation updates only the returned anchor: no new claim, credit,
+        // physical effect or historical journal event is created.
+        let restored_a = mine(&mut node, settled, vec![]);
+        let restored = mine(&mut node, restored_a, vec![]);
+        assert_eq!(node.active().unwrap().0, restored);
+        let readback = budgets
+            .reobserve_native_payment(&mut node, claim.claim)
+            .unwrap();
+        assert_eq!(readback.historical, observed);
+        assert_eq!(readback.observed.anchor.block, restored);
+        assert!(readback.observed.anchor.generation > observed.anchor.generation);
+        assert_eq!(readback.observed.operation, operation);
+        assert_eq!(readback.observed.gross_escrow_debit, 2_000);
+        assert_eq!(readback.observed.beneficiary_credit, 2_000);
+        assert_eq!(budgets.report().unwrap(), report);
+        assert_eq!(
+            balance(&node, public(1)),
+            provider_before + 2_000 - 300 - actual_fees
         );
         let mut duplicate = claim;
         duplicate.claim = [79; 32];
