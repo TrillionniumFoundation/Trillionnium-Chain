@@ -18,6 +18,7 @@ struct State {
     active: BTreeSet<(bool, [u8; 32])>,
     generation: u64,
     stopped: bool,
+    generation_exhausted: bool,
 }
 #[derive(Clone)]
 pub struct PublicIngress(Arc<Mutex<State>>);
@@ -87,12 +88,25 @@ impl RecoveryIngress {
     pub fn stop(&self) -> Result<(), Refusal> {
         let mut s = self.0.lock().map_err(|_| Refusal::Poisoned)?;
         s.stopped = true;
-        s.generation = s.generation.checked_add(1).ok_or(Refusal::Stopped)?;
+        s.generation = match s.generation.checked_add(1) {
+            Some(next) => next,
+            None => {
+                // This stop cannot invalidate permits by advancing generation.
+                // Keep cancellation permanent rather than reviving those permits.
+                s.generation_exhausted = true;
+                return Err(Refusal::Stopped);
+            }
+        };
         Ok(())
     }
     /// Resume does not erase outstanding jobs; old permits retain their capacity until dropped.
+    /// A failed generation increment permanently fences this ingress instance.
     pub fn resume(&self) -> Result<(), Refusal> {
-        self.0.lock().map_err(|_| Refusal::Poisoned)?.stopped = false;
+        let mut s = self.0.lock().map_err(|_| Refusal::Poisoned)?;
+        if s.generation_exhausted {
+            return Err(Refusal::Stopped);
+        }
+        s.stopped = false;
         Ok(())
     }
 }
@@ -178,6 +192,52 @@ mod tests {
         drop(held);
         assert!(public.try_acquire([7; 32], [7; 32]).is_ok());
     }
+    #[test]
+    fn exhausted_generation_cannot_resume_or_revive_permits() {
+        let (public, recovery) = bounded_ingress();
+        public.0.lock().unwrap().generation = u64::MAX - 1;
+        let predecessor = public.try_acquire([1; 32], [1; 32]).unwrap();
+        recovery.stop().unwrap();
+        assert!(predecessor.cancelled());
+        // The last successful increment still supports ordinary resume.
+        recovery.resume().unwrap();
+        assert!(predecessor.cancelled());
+        let last_public = public.try_acquire([2; 32], [2; 32]).unwrap();
+        let last_recovery = recovery.try_acquire([3; 32]).unwrap();
+        assert!(!last_public.cancelled());
+        assert!(!last_recovery.cancelled());
+        assert_eq!(recovery.stop(), Err(Refusal::Stopped));
+        assert!(last_public.cancelled());
+        assert!(last_recovery.cancelled());
+        for _ in 0..2 {
+            assert_eq!(recovery.resume(), Err(Refusal::Stopped));
+            assert_eq!(recovery.stop(), Err(Refusal::Stopped));
+            assert!(last_public.cancelled());
+            assert!(last_recovery.cancelled());
+            assert!(matches!(
+                public.try_acquire([4; 32], [4; 32]),
+                Err(Refusal::Stopped)
+            ));
+            assert!(matches!(
+                recovery.try_acquire([5; 32]),
+                Err(Refusal::Stopped)
+            ));
+        }
+        {
+            let state = public.0.lock().unwrap();
+            assert_eq!(state.public, 2);
+            assert_eq!(state.recovery, 1);
+            assert_eq!(state.active.len(), 3);
+        }
+        drop((predecessor, last_public, last_recovery));
+        let state = public.0.lock().unwrap();
+        assert_eq!(state.public, 0);
+        assert_eq!(state.recovery, 0);
+        assert!(state.peers.is_empty());
+        assert!(state.active.is_empty());
+        assert!(state.stopped);
+    }
+
     #[test]
     fn public_duplicate_cannot_pin_a_locally_requested_recovery_digest() {
         let (public, recovery) = bounded_ingress();
