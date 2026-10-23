@@ -902,6 +902,16 @@ execution or a real model failure. They preserve the original late-readback
 failure and do not close the real caller, load-attempt binding, resource,
 FinalUse, three-cycle next-task readback or I10 obligations.
 
+The same PN3/PN4 M09 path now freezes a persistent TCL2/schema2 logical cache
+quota across all ordinary writer entries, including the handoff script. The
+script requires explicit `--cache-max-bytes`, `--cache-max-chunks` and
+`--cache-max-manifests`, reusing those exact caps for the complete producer and
+consumer sets without changing its original transfer deadline or assertions.
+Atomic dedup/whole-batch admission and actual cache deletion never alter M12
+funding or paid I05 duties. This bounds live payload/catalog/key/row occupancy;
+physical DB/WAL/SHM/temp/output reservations remain open, together with the
+existing native consumer, installation and three-cycle model acceptance gaps.
+
 The optional scalar-credit freshness observation reads the original watermark
 and projects the original refill arithmetic without changing the clock, credit,
 owner or depletion predicate. Its added sampler contention and complete-path
@@ -3172,8 +3182,9 @@ separate materialization without the original deadline. It now calls
 retrieval, complete verification, final write and the pre-publication checkpoint.
 The additive `materialize_until` API rechecks original cached payload bytes;
 the existing no-deadline materialization API remains available to explicit
-callers. Protocol bytes, manifest/cache schemas, limits and CLI report fields
-are unchanged. Checks are cooperative: filesystem calls cannot be preempted,
+callers. That deadline-only increment preserved protocol bytes, manifest/cache
+schemas, limits and CLI report fields. The later TCL2 cache admission increment
+is specified above and in the same Cell contract. Checks are cooperative: filesystem calls cannot be preempted,
 and a complete file is not deleted after publication because subsequent I/O
 takes time. The exact boundary is documented in
 [CELL_P2P_V1](../protocol/pon-nakamoto-v1/details/CELL_P2P_V1.md).

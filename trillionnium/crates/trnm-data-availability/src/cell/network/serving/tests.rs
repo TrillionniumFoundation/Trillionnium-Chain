@@ -17,7 +17,7 @@ fn fixture() -> (tempfile::TempDir, std::path::PathBuf, CellManifestV1) {
     let input = dir.path().join("weights");
     fs::write(&input, [7_u8; 16_384]).unwrap();
     let path = dir.path().join("cache.sqlite");
-    let store = CellStoreV1::open(&path).unwrap();
+    let store = CellStoreV1::open(&path, cache_config()).unwrap();
     let manifest = store
         .pack_file(
             &input,
@@ -93,7 +93,7 @@ fn half_request_does_not_block_honest_pinned_fetch() {
     let mut slow = TcpStream::connect(server.address).unwrap();
     slow.write_all(b"T").unwrap();
     server.accepted(1);
-    let cache = CellStoreV1::open(&dir.path().join("consumer.sqlite")).unwrap();
+    let cache = CellStoreV1::open(&dir.path().join("consumer.sqlite"), cache_config()).unwrap();
     let (actual, report) = fetch_cell(
         &cache,
         manifest.id(),
@@ -343,7 +343,7 @@ fn unread_large_response_keeps_absolute_deadline_and_exact_partial_write_charge(
     let (dir, path, manifest) = fixture();
     let input = dir.path().join("large");
     fs::write(&input, vec![7_u8; MAX_CHUNK_BYTES as usize]).unwrap();
-    let source = CellStoreV1::open(&path).unwrap();
+    let source = CellStoreV1::open(&path, cache_config()).unwrap();
     let manifest = source
         .pack_file(&input, manifest.context().clone(), MAX_CHUNK_BYTES)
         .unwrap();
@@ -477,7 +477,7 @@ fn bounded_corrupt_chunk_read_keeps_row_then_writable_fetch_repairs_exact_pin() 
         .unwrap();
     assert_eq!(readback, bad); // Read-only serving cannot repair/delete corruption.
     let healthy_path = dir.path().join("healthy.sqlite");
-    let healthy = CellStoreV1::open(&healthy_path).unwrap();
+    let healthy = CellStoreV1::open(&healthy_path, cache_config()).unwrap();
     assert_eq!(
         healthy
             .pack_file(
@@ -496,7 +496,7 @@ fn bounded_corrupt_chunk_read_keeps_row_then_writable_fetch_repairs_exact_pin() 
             ..limits()
         },
     );
-    let receiver = CellStoreV1::open(&path).unwrap();
+    let receiver = CellStoreV1::open(&path, cache_config()).unwrap();
     let (received, report) = fetch_cell(
         &receiver,
         manifest.id(),
@@ -518,4 +518,13 @@ fn bounded_corrupt_chunk_read_keeps_row_then_writable_fetch_repairs_exact_pin() 
         vec![7_u8; chunk.size as usize]
     );
     assert_eq!(server.finish().completed_requests, 1);
+}
+
+// Explicit finite fixture quota; covers the existing <=32MiB commit fixtures.
+fn cache_config() -> crate::cell::CellCacheConfigV2 {
+    crate::cell::CellCacheConfigV2 {
+        max_logical_bytes: 64 * 1024 * 1024,
+        max_chunk_rows: 4096,
+        max_manifest_rows: 256,
+    }
 }

@@ -1,4 +1,7 @@
 use super::*;
+
+#[path = "cache_quota_tests.rs"]
+mod cache_quota;
 use crate::development_public;
 use crate::store::StateBackend;
 use std::{
@@ -122,7 +125,7 @@ fn material(directory: &Path) -> (CellStoreV1, CellManifestV1, Vec<u8>) {
         .collect::<Vec<_>>();
     let source = directory.join("source.cell");
     fs::write(&source, &bytes).unwrap();
-    let cache = CellStoreV1::open(&directory.join("cache.sqlite")).unwrap();
+    let cache = CellStoreV1::open(&directory.join("cache.sqlite"), cache_config()).unwrap();
     let manifest = cache
         .pack_file(
             &source,
@@ -237,7 +240,7 @@ fn native_cell_storage_escrow_replay_and_reorg_keep_physical_obligation() {
         drop(retained);
         drop(cache);
         fs::remove_file(dir.path().join("source.cell")).unwrap();
-        let empty = CellStoreV1::open(&dir.path().join("empty.sqlite")).unwrap();
+        let empty = CellStoreV1::open(&dir.path().join("empty.sqlite"), cache_config()).unwrap();
         let mut node = open_node(&node_path, backend);
         let mut budgets = NativeBudgetStoreV1::open(&journal, conf).unwrap();
         let mut retained = CellRetentionStoreV1::open(&path, retention_config()).unwrap();
@@ -302,7 +305,7 @@ fn native_cell_failed_initial_copy_needs_a_separate_funded_repair_and_preserves_
     let repair_source = fund(&mut node, 2, 200);
     let (cache, manifest, bytes) = material(dir.path());
     let storage = request(storage_source, &manifest);
-    let partial = CellStoreV1::open(&dir.path().join("partial.sqlite")).unwrap();
+    let partial = CellStoreV1::open(&dir.path().join("partial.sqlite"), cache_config()).unwrap();
     partial
         .put_chunk(
             &manifest.chunks()[0],
@@ -440,4 +443,13 @@ fn native_cell_repair_cpu_owner_cannot_move_threads_or_resume_after_exhaustion()
     tiny.ceiling_ns = u64::MAX;
     assert!(tiny.check().is_err());
     assert!(RepairCpuOwner::start(1_000_000_000, Instant::now() - Duration::from_secs(1)).is_err());
+}
+
+// Explicit finite fixture quota; covers the existing <=32MiB commit fixtures.
+fn cache_config() -> trnm_data_availability::cell::CellCacheConfigV2 {
+    trnm_data_availability::cell::CellCacheConfigV2 {
+        max_logical_bytes: 64 * 1024 * 1024,
+        max_chunk_rows: 4096,
+        max_manifest_rows: 256,
+    }
 }

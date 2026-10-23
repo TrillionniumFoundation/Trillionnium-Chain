@@ -50,8 +50,15 @@ def main() -> None:
     for name in ("chain", "hepta", "source-parent", "source-materials", "output",
                  "python", "cell-bin", "just", "hepta-target"):
         parser.add_argument(f"--{name}", type=Path, required=True)
+    for name in ("cache-max-bytes", "cache-max-chunks", "cache-max-manifests"):
+        parser.add_argument(f"--{name}", type=int, required=True)
     args = parser.parse_args()
-    for value in vars(args).values():
+    if min(args.cache_max_bytes, args.cache_max_chunks, args.cache_max_manifests) <= 0:
+        parser.error("cache limits must be positive and finite")
+    cache_limits = ["--cache-max-bytes", str(args.cache_max_bytes),
+                    "--cache-max-chunks", str(args.cache_max_chunks),
+                    "--cache-max-manifests", str(args.cache_max_manifests)]
+    for value in (value for value in vars(args).values() if isinstance(value, Path)):
         if not value.is_absolute():
             parser.error("all paths must be absolute")
     args.output.mkdir(mode=0o700, parents=False, exist_ok=False)
@@ -106,7 +113,7 @@ def main() -> None:
         producer = args.output / "producer.sqlite"
         consumer = args.output / "consumer.sqlite"
         for index, (name, source, destination) in enumerate(members):
-            command = [str(args.cell_bin), "pack", "--store", str(producer),
+            command = [str(args.cell_bin), "pack", *cache_limits, "--store", str(producer),
                        "--input", str(source), *context]
             packed = subprocess.run(command, capture_output=True, text=True, timeout=120)
             (args.output / f"pack-{index}.log").write_text(packed.stdout + packed.stderr)
@@ -122,7 +129,7 @@ def main() -> None:
         total_bytes = sum(member["pack"]["bytes"] for member in evidence["members"])
         total_chunks = sum(member["pack"]["chunks"] for member in evidence["members"])
         release_file = args.output / "source-release.tcr1"
-        command = [str(args.cell_bin), "prepare-release", "--store", str(producer),
+        command = [str(args.cell_bin), "prepare-release", *cache_limits, "--store", str(producer),
             "--manifests", ",".join(member["pack"]["manifest"] for member in evidence["members"]),
             "--output", str(release_file), "--max-bytes", str(total_bytes),
             "--max-chunks", str(total_chunks), "--overall-ms", "120000"]
@@ -168,7 +175,7 @@ def main() -> None:
             try:
                 remaining, overall_ms, request_ms = remaining_fetch_budget(transfer_deadline)
                 complete_release = args.output / "consumer-release.tcr1"
-                command = [str(args.cell_bin), "fetch-release", "--store", str(consumer),
+                command = [str(args.cell_bin), "fetch-release", *cache_limits, "--store", str(consumer),
                     "--release-file", str(release_file), "--release", release["release"],
                     "--peers", address, "--output", str(complete_release),
                     "--max-bytes", str(total_bytes), "--max-chunks", str(total_chunks),
@@ -204,7 +211,7 @@ def main() -> None:
                         remaining, overall_ms, request_ms = remaining_fetch_budget(transfer_deadline)
                         timing["overall_timeout_ms"] = overall_ms
                         timing["request_timeout_ms"] = request_ms
-                        command = [str(args.cell_bin), "fetch", "--store", str(consumer),
+                        command = [str(args.cell_bin), "fetch", *cache_limits, "--store", str(consumer),
                             "--manifest", member["pack"]["manifest"], "--peers", "",
                             "--output", member["destination"], "--max-bytes", str(member["pack"]["bytes"]),
                             "--overall-ms", str(overall_ms), "--request-ms", str(request_ms),

@@ -95,7 +95,7 @@ fn fixture(path: &Path) -> (CellManifestV1, Vec<u8>, PathBuf) {
     let input = path.join("actual-cell-input");
     fs::write(&input, &bytes).unwrap();
     let store_path = path.join("origin.sqlite");
-    let store = CellStoreV1::open(&store_path).unwrap();
+    let store = CellStoreV1::open(&store_path, cache_config()).unwrap();
     let manifest = store.pack_file(&input, cell_context(), 16_384).unwrap();
     (manifest, bytes, store_path)
 }
@@ -229,7 +229,7 @@ fn tcp_higher_sequence_cannot_hide_observed_earlier_sequence_equivocation() {
         second.address,
         third.address,
     ]);
-    let consumer = CellStoreV1::open(&temp.path().join("consumer.sqlite")).unwrap();
+    let consumer = CellStoreV1::open(&temp.path().join("consumer.sqlite"), cache_config()).unwrap();
     let directory =
         CellProviderDirectoryV1::open(&temp.path().join("consumer-directory.sqlite"), context())
             .unwrap();
@@ -300,4 +300,13 @@ fn tcp_higher_sequence_cannot_hide_observed_earlier_sequence_equivocation() {
         "durable high water remains seq2 despite exclusion from this operation"
     );
     assert_eq!(dials, [0, 0, 0], "A(seq1), C(seq2), B(seq1) equivocation must exclude this owner before any actual provider TCP dial");
+}
+
+// Explicit finite fixture quota; covers the existing <=32MiB commit fixtures.
+fn cache_config() -> crate::cell::CellCacheConfigV2 {
+    crate::cell::CellCacheConfigV2 {
+        max_logical_bytes: 64 * 1024 * 1024,
+        max_chunk_rows: 4096,
+        max_manifest_rows: 256,
+    }
 }

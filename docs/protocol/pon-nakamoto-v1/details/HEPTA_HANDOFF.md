@@ -425,7 +425,12 @@ The script retains its original aggregate transfer deadline and readbacks,
 then drains the finite producer and fails closed with consumer UNAVAILABLE and
 receipt UNVERIFIED. It does not start an unknown native selector or accept an
 arbitrary JSON report as success. Original absolute-path arguments remain
-accepted for invocation compatibility and grant no consumer capability.
+accepted for invocation compatibility and grant no consumer capability. The
+existing writer route additionally requires `--cache-max-bytes`,
+`--cache-max-chunks` and `--cache-max-manifests`; it carries those exact persistent
+TCL2 limits across all members without granting a new allowance per fetch.
+Logical cache admission does not reserve physical DB/WAL/SHM/temp/output space
+or authorize Hepta loading.
 Mocked exit0/failed-JSON controls reproduce the removed orchestration bug;
 they are neither real-model failures nor I10 execution evidence. A future
 implementation must use the existing selection, artifact, resource and FinalUse

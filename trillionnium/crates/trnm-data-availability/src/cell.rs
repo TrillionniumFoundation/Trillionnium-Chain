@@ -5,6 +5,7 @@
 
 use std::{fmt, io};
 
+mod cache_budget;
 pub mod discovery;
 mod manifest;
 mod network;
@@ -12,6 +13,7 @@ mod release;
 mod retention;
 mod store;
 
+pub use cache_budget::{CellCacheConfigV2, CellCacheUsageV2};
 pub use manifest::{
     CellChunkV1, CellContextV1, CellManifestV1, CellReleaseManifestV1, MAX_CELL_BYTES,
     MAX_CHUNK_BYTES,
@@ -37,6 +39,7 @@ pub enum CellErrorV1 {
     Io(io::Error),
     Sql(rusqlite::Error),
     Unavailable,
+    CacheQuotaExceeded,
     ResponseByteBudgetExhausted {
         received_response_bytes: u64,
         max_response_bytes: u64,
@@ -50,6 +53,7 @@ impl fmt::Display for CellErrorV1 {
             Self::Io(error) => write!(f, "cell I/O: {error}"),
             Self::Sql(error) => write!(f, "cell storage: {error}"),
             Self::Unavailable => f.write_str("cell: no configured peer supplied the pinned bytes"),
+            Self::CacheQuotaExceeded => f.write_str("cell: CELL_CACHE_QUOTA_EXHAUSTED"),
             Self::ResponseByteBudgetExhausted {
                 received_response_bytes,
                 max_response_bytes,
@@ -68,6 +72,11 @@ impl From<io::Error> for CellErrorV1 {
 }
 impl From<rusqlite::Error> for CellErrorV1 {
     fn from(value: rusqlite::Error) -> Self {
+        if matches!(&value, rusqlite::Error::SqliteFailure(_, Some(message))
+            if message == "CHECK constraint failed: cell_cache_capacity")
+        {
+            return Self::CacheQuotaExceeded;
+        }
         Self::Sql(value)
     }
 }

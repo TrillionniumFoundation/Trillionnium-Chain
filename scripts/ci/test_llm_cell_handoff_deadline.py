@@ -94,7 +94,8 @@ class CellHandoffDeadlineTests(unittest.TestCase):
             arguments = {"chain": chain, "hepta": root / "hepta", "source-parent": parent_file,
                 "source-materials": materials, "output": output, "python": root / "python",
                 "cell-bin": cell_bin, "just": root / "just", "hepta-target": root / "hepta-target"}
-            argv = [str(SCRIPT)]
+            argv = [str(SCRIPT), "--cache-max-bytes", "67108864",
+                "--cache-max-chunks", "4096", "--cache-max-manifests", "256"]
             for key, value in arguments.items():
                 argv.extend(("--" + key, str(value)))
             clock, payloads, fetched_names = [100.0], {}, []
@@ -112,6 +113,10 @@ class CellHandoffDeadlineTests(unittest.TestCase):
 
             def controlled_run(command, **kwargs):
                 flags = dict(zip(command[2::2], command[3::2]))
+                for key, value in (("--cache-max-bytes", "67108864"),
+                                   ("--cache-max-chunks", "4096"),
+                                   ("--cache-max-manifests", "256")):
+                    self.assertEqual(flags[key], value)
                 if command[1] == "pack":
                     data = Path(flags["--input"]).read_bytes()
                     digest = actual_sha(Path(flags["--input"]))
@@ -204,7 +209,8 @@ class CellHandoffConsumerTests(unittest.TestCase):
         arguments = {"chain": chain, "hepta": root / "hepta", "source-parent": parent_file,
             "source-materials": materials, "output": output, "python": root / "python",
             "cell-bin": cell_bin, "just": root / "just", "hepta-target": root / "hepta-target"}
-        argv = [str(SCRIPT)]
+        argv = [str(SCRIPT), "--cache-max-bytes", "67108864",
+                "--cache-max-chunks", "4096", "--cache-max-manifests", "256"]
         for key, value in arguments.items():
             argv.extend(("--" + key, str(value)))
         payloads, native_calls, fetched_names = {}, [], []
@@ -214,6 +220,10 @@ class CellHandoffConsumerTests(unittest.TestCase):
                 native_calls.append(command)
                 return subprocess.CompletedProcess(command, 0)
             flags = dict(zip(command[2::2], command[3::2]))
+            for key, value in (("--cache-max-bytes", "67108864"),
+                               ("--cache-max-chunks", "4096"),
+                               ("--cache-max-manifests", "256")):
+                self.assertEqual(flags[key], value)
             if command[1] == "pack":
                 source = Path(flags["--input"])
                 digest = handoff.sha(source)

@@ -85,6 +85,14 @@ Parameter substitution, hostile object formats, unavailable custodians and expir
 
 Physical-host copies and source-path loss are tested by a scoped campaign; geographic independence, renewal and long-retention responsibility remain unaccepted.
 
+The existing Cell cache uses fresh TCL2/schema2 with mandatory immutable finite
+logical-byte/chunk-row/manifest-row limits. All ordinary puts and corrupt-cache
+deletes share atomic persisted accounting; exact cold reopen checks full schema
+and actual bounded occupancy. This PN3/PN4 cache allowance is independent of I05
+paid retention, native funding and the 4096 retained obligation identities.
+DB/WAL/SHM/temp/output physical budgeting remains open. See the existing
+[Cell contract](../protocol/pon-nakamoto-v1/details/CELL_P2P_V1.md).
+
 ## Current source and verification
 
 - [`formal/pon-nakamoto-v1/model_contract.py`](../../formal/pon-nakamoto-v1/model_contract.py).
