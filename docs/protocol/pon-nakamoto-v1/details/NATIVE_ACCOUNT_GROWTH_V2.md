@@ -144,6 +144,48 @@ Pruning, root garbage collection and bounded total disk retention are not yet
 implemented by this backend. Exhausted physical storage is a failed transaction,
 not permission to delete an account or interpret an unavailable node as absence.
 
+The migration storage-reservation file is an inert source-bound allocation; the
+growth writer does not consume it as a ledger quota. M09's Cell retention arena
+owns Cell obligations, not these ledger roots. Neither bounds `archive_nodes`,
+`growth_states`, block/delta/event history, WAL or temporary files. The existing
+`max_page_count` fault test establishes atomic rollback when SQLite pages are
+exhausted; it is not a configured global disk-retention policy. I05 still requires
+actual required-root/obligation ownership and complete storage/recovery budgets
+before root GC can become safe.
+
+Explicit growth activation now checks its cancellation callback before each pair
+of ancestor reads, each ordered undo/apply journal write pair, and each actual
+steps/events read including EOF and the final reorg singleton. Cancellation keeps
+the original error and rolls back all rows, active root and generation. Journal
+readback streams exact rows in the original steps, events, singleton order rather
+than collecting three duplicate journal vectors; the undo/apply paths still grow
+with fork depth. `GrowthProgress` is a process-local API, with no signed or stored
+schema change. These are cooperative boundaries, not preemption within one SQL
+operation or hash. The original complete checks and the cold-open replay remain;
+this change does not supply public PNP2 admission, global retention or PN2
+qualification.
+
+The same explicit admission callback also receives `ParentProof`,
+`CommitmentProof` and `FinalSuccessorProof` at the existing multiproof account,
+frontier, update, fork-hash and output boundaries. The last phase retains the
+independent successor recomputation before persistence. A private typed failure
+keeps archive/relation errors separate from the original callback error. The
+unchanged M06 string-returning commitment interface uses one local owned error
+slot to return the first original control error, including its typed source,
+without exposing the internal relation sentinel or retrying failed computation.
+No signature, hash relation, M06 public interface or persistent namespace changes.
+Single hash/lift operations and bounded partition scans remain cooperative stages.
+
+`admit_growth_with_progress` also forwards the existing full W1 replay boundaries
+through `GrowthProgress::Work`. Its typed verifier returns the original callback
+error and source on cancellation; invalid Work keeps the original `WORK:*`
+relation failure. Cheap encoding/field/task/ticket checks still precede replay.
+No failed or cancelled replay produces a verified-work capability, child or
+cached success. This extends the explicit native admission callback only; the
+local builder and cold audit retain their existing interfaces. A public PNP2
+listener still needs the shared original CPU/deadline/resource owner and its
+security/service qualification before accepting network submissions.
+
 ## Existing authenticated-v1 cost boundary
 
 The separately selected growth backend does not change the original
