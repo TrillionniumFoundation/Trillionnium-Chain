@@ -994,6 +994,18 @@ only that exact count to 12. Rust source, selectors, ignored-test execution,
 resource/time budgets and source checks remain unchanged; the four original
 logs prove the corrected count matches, not that later workflow steps passed.
 
+In original-integration run `39921443580`, branch-encoding jobs
+[120307385007](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/39921443580/job/120307385007)
+and [120307384981](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/39921443580/job/120307384981)
+executed the complete authenticated-migration selection: all original 29 members
+and six added cold-snapshot/file-read controls passed, with zero failures or
+ignored tests. Both jobs then failed because the shell still required 29 passes.
+The successor requires exactly 35 while retaining the original complete Cargo
+command, selector, pipefail, zero-failure/zero-ignore checks, source guards and
+all other workflow assertions. The two failed jobs remain failed observations;
+replaying their logs checks this count repair, not a new native execution,
+subsequent workflow steps, final-source CI or production qualification.
+
 The [current security export](../../evidence/pon-six-gate-closure-20261022/current-871269-ci/security-export-exact-source.json)
 retains check `119708392458`, all 13 API-exposed annotations and the exact-source
 exporter metadata. The 234 Rust SARIF results have a different scope; neither
