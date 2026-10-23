@@ -180,8 +180,11 @@ Same-hash UPSERTs charge only the size difference; a failed eight-chunk transact
 rolls back its rows and allowance together. Reopening checks complete table/trigger
 definitions and bounded actual SUM/COUNT against the counters without repairing
 them. Catalog validation copies at most the expected object count plus one, guards
-string byte lengths before copying and excludes only the literal `sqlite_` internal
-prefix; the foreign-database check stops at its first user object. A failed download keeps its committed verified prefix charged. Read-only
+string byte lengths before copying and inspects every object regardless of its
+name prefix. Only the two exact primary-key automatic indexes are accepted, with
+their original type/name/table and genuinely NULL SQL; an oversized non-NULL SQL
+value cannot become an accepted NULL. The foreign-database check stops at its
+first object, including an internal object left by a previously used database. A failed download keeps its committed verified prefix charged. Read-only
 serving loads these persisted limits and holds no query snapshot across socket I/O.
 Actual corrupt-cache deletion returns only logical cache allowance. It does not
 retire a paid duty, release native funding or prove that filesystem blocks were freed.
@@ -294,11 +297,13 @@ trnm-data-availability --lib cell::` contains actual TCP and disk tests for:
   complete-payload digest before publication, and never replaces an existing
   output. The combined network-to-file success path returns the exact bytes.
 
-The same existing native suite includes [TCL2 cache admission controls](../../../../trillionnium/crates/trnm-data-availability/src/cell/cache_budget_tests.rs):
+The same existing native suite includes [TCL2 cache admission controls](../../../../trillionnium/crates/trnm-data-availability/src/cell/cache_budget_tests.rs)
+and [complete catalog controls](../../../../trillionnium/crates/trnm-data-availability/src/cell/cache_catalog_tests.rs):
 exact byte/row boundaries and full-cache dedup, two real concurrent writers,
 atomic eight-row rollback, cross-reopen immutable limits, retained verified
 prefixes after a later quota refusal, actual corrupt-row deletion, bounded
-catalog/counter/trigger validation and literal-prefix hidden-trigger refusal.
+catalog/counter/trigger validation, reserved-prefix trigger refusal and exact
+automatic-index identity/NULL SQL checks.
 Writable and read-only cold-open failures preserve the original database.
 The existing [CLI controls](../../../../trillionnium/crates/trnm-data-availability/tests/cell_fetch_deadline_cli.rs)
 require every writer cap before cache creation and prohibit read-only manifest

@@ -99,49 +99,108 @@ fn schema() -> Vec<(&'static str, &'static str, String)> {
     objects
 }
 
+fn catalog_schema() -> Vec<(&'static str, &'static str, &'static str, Option<String>)> {
+    let mut objects: Vec<_> = schema()
+        .into_iter()
+        .map(|(kind, name, sql)| {
+            let table = match name {
+                "cell_cache_quota_v2"
+                | "cache_config_immutable"
+                | "cache_config_no_delete"
+                | "cache_config_no_replace" => "cell_cache_quota_v2",
+                "cell_chunks_v1" | "cache_chunk_insert" | "cache_chunk_update"
+                | "cache_chunk_delete" => "cell_chunks_v1",
+                "cell_manifests_v1"
+                | "cache_manifest_insert"
+                | "cache_manifest_update"
+                | "cache_manifest_delete" => "cell_manifests_v1",
+                _ => unreachable!("fixed cache schema object"),
+            };
+            (kind, name, table, Some(sql))
+        })
+        .collect();
+    // Only these two PRIMARY KEY indexes are implicit in our exact DDL.
+    // INTEGER PRIMARY KEY on the quota singleton creates no automatic index.
+    objects.extend([
+        (
+            "index",
+            "sqlite_autoindex_cell_chunks_v1_1",
+            "cell_chunks_v1",
+            None,
+        ),
+        (
+            "index",
+            "sqlite_autoindex_cell_manifests_v1_1",
+            "cell_manifests_v1",
+            None,
+        ),
+    ]);
+    objects.sort_by_key(|(_, name, _, _)| *name);
+    objects
+}
+
 fn validate_schema(connection: &Connection) -> CellResultV1<()> {
-    let expected = schema();
+    let expected = catalog_schema();
     let max_kind = expected
         .iter()
-        .map(|(kind, _, _)| kind.len())
+        .map(|(kind, _, _, _)| kind.len())
         .max()
         .unwrap();
     let max_name = expected
         .iter()
-        .map(|(_, name, _)| name.len())
+        .map(|(_, name, _, _)| name.len())
         .max()
         .unwrap();
-    let max_sql = expected.iter().map(|(_, _, sql)| sql.len()).max().unwrap();
+    let max_table = expected
+        .iter()
+        .map(|(_, _, table, _)| table.len())
+        .max()
+        .unwrap();
+    let max_sql = expected
+        .iter()
+        .filter_map(|(_, _, _, sql)| sql.as_ref().map(String::len))
+        .max()
+        .unwrap();
     // Bound our own row/string copies before Rust allocation. SQLite's internal
     // parsing of an externally modified schema is a separate physical limit.
-    // Do not ORDER BY an untrusted catalog before applying this row bound.
+    // No prefix can hide an object, and no ORDER BY precedes this row bound.
     let mut query = connection.prepare(
         "SELECT CASE WHEN length(CAST(type AS BLOB))<=?1 THEN type END,
                 CASE WHEN length(CAST(name AS BLOB))<=?2 THEN name END,
-                CASE WHEN length(CAST(sql AS BLOB))<=?3 THEN sql END
-         FROM sqlite_schema WHERE name NOT GLOB 'sqlite_*' LIMIT ?4",
+                CASE WHEN length(CAST(tbl_name AS BLOB))<=?3 THEN tbl_name END,
+                CASE WHEN length(CAST(sql AS BLOB))<=?4 THEN sql END,
+                sql IS NULL
+         FROM sqlite_schema LIMIT ?5",
     )?;
     let mut actual = query
         .query_map(
-            params![max_kind, max_name, max_sql, expected.len() + 1],
+            params![max_kind, max_name, max_table, max_sql, expected.len() + 1],
             |row| {
                 Ok((
                     row.get::<_, Option<String>>(0)?,
                     row.get::<_, Option<String>>(1)?,
                     row.get::<_, Option<String>>(2)?,
+                    row.get::<_, Option<String>>(3)?,
+                    row.get::<_, bool>(4)?,
                 ))
             },
         )?
         .collect::<rusqlite::Result<Vec<_>>>()?;
     require(actual.len() == expected.len(), "cache schema objects")?;
     actual.sort_by(|left, right| left.1.cmp(&right.1));
-    for ((kind, name, sql), (expected_kind, expected_name, expected_sql)) in
-        actual.iter().zip(expected)
+    for (
+        (kind, name, table, sql, raw_sql_is_null),
+        (expected_kind, expected_name, expected_table, expected_sql),
+    ) in actual.iter().zip(expected)
     {
         require(
             kind.as_deref() == Some(expected_kind)
-                && name.as_deref() == Some(expected_name)
-                && sql.as_deref() == Some(expected_sql.as_str()),
+            && name.as_deref() == Some(expected_name)
+            && table.as_deref() == Some(expected_table)
+            // An oversized non-NULL SQL value must never look like an implicit
+            // index's legitimate NULL after the bounded-copy CASE expression.
+            && (sql.is_none() == *raw_sql_is_null)
+            && sql.as_deref() == expected_sql.as_deref(),
             "cache schema definition",
         )?;
     }
@@ -236,7 +295,7 @@ pub(super) fn open(
     if writable && application == 0 && version == 0 {
         let config = expected.ok_or(super::CellErrorV1::Invalid("cache configuration required"))?;
         let populated: bool = transaction.query_row(
-            "SELECT EXISTS(SELECT 1 FROM sqlite_schema WHERE name NOT GLOB 'sqlite_*' LIMIT 1)",
+            "SELECT EXISTS(SELECT 1 FROM sqlite_schema LIMIT 1)",
             [],
             |row| row.get(0),
         )?;

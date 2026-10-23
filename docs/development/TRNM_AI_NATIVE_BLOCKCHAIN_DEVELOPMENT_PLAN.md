@@ -907,6 +907,9 @@ quota across all ordinary writer entries, including the handoff script. The
 script requires explicit `--cache-max-bytes`, `--cache-max-chunks` and
 `--cache-max-manifests`, reusing those exact caps for the complete producer and
 consumer sets without changing its original transfer deadline or assertions.
+Cold validation inspects the complete catalog, allowing only the two exact
+automatic primary-key indexes; reserved-prefix objects cannot bypass it, and a
+fresh namespace refuses every pre-existing catalog object.
 Atomic dedup/whole-batch admission and actual cache deletion never alter M12
 funding or paid I05 duties. This bounds live payload/catalog/key/row occupancy;
 physical DB/WAL/SHM/temp/output reservations remain open, together with the

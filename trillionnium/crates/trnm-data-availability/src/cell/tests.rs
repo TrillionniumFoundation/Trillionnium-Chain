@@ -17,6 +17,8 @@ use super::*;
 
 #[path = "cache_budget_tests.rs"]
 mod cache_budget;
+#[path = "cache_catalog_tests.rs"]
+mod cache_catalog;
 
 fn context() -> CellContextV1 {
     CellContextV1 {
