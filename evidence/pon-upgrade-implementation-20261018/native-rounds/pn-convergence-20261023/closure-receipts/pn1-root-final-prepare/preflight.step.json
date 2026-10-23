@@ -1,0 +1,22 @@
+{
+  "command": [
+    "/bin/bash",
+    "scripts/project-preflight.sh"
+  ],
+  "complete_success": true,
+  "cwd": "/tmp/trnm-pn-convergence-20261023/integration",
+  "elapsed_ns": 92288450,
+  "elapsed_seconds": 0.09228845,
+  "error": null,
+  "name": "preflight",
+  "outer_stage_timeout_seconds": 60,
+  "returncode": 0,
+  "stderr": "preflight.stderr.log",
+  "stderr_bytes": 0,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_truncated": false,
+  "stdout": "preflight.stdout.log",
+  "stdout_bytes": 164,
+  "stdout_sha256": "61a4688389ad7efa35429b831a470881b04665a5497a46b65d76d43fba1332c5",
+  "stdout_truncated": false
+}

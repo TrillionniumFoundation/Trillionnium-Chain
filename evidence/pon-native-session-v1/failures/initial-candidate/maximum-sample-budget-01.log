@@ -1,0 +1,15 @@
+source 93c0f02f2d1e8672a4a6c6204c5eecec3f08df25
+MAXIMUM_SAMPLE_BUDGET_REJECTED FUNDS
+elapsed_seconds 35.66986530600116
+Traceback (most recent call last):
+  File "<stdin>", line 7, in <module>
+  File "/home/qian-qi/Documents/chain-pr204-continuation-20260929-w2v1wt_g/source/formal/pon-nakamoto-v1/experiments/session_cost.py", line 34, in cases
+    next_state,receipts=execute_reference(state,txs,h,public(key(0)),parent)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qian-qi/Documents/chain-pr204-continuation-20260929-w2v1wt_g/source/formal/pon-nakamoto-v1/ledger.py", line 111, in execute_reference
+    if tag!=11:require(acct['balance']>=fee,'FUNDS');acct['balance']-=fee
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qian-qi/Documents/chain-pr204-continuation-20260929-w2v1wt_g/source/formal/pon-nakamoto-v1/ledger.py", line 28, in require
+    if not ok:raise ValueError(code)
+              ^^^^^^^^^^^^^^^^^^^^^^
+ValueError: FUNDS

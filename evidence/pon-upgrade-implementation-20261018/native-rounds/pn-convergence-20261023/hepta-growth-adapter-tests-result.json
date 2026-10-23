@@ -1,0 +1,20 @@
+{
+  "parent_head": "b9f6181d01108912401707d64ef66106830fcfa9",
+  "patch_sha256": "031deb0fbe7974a5f628037e64158c6cf900a6df88d355b412990970941d4e7b",
+  "command": [
+    "nice",
+    "-n",
+    "10",
+    "just",
+    "test",
+    "-p",
+    "codex-hepta-agentd",
+    "--lib",
+    "-E",
+    "test(automation_effect_host)"
+  ],
+  "returncode": 101,
+  "seconds": 1147.980283048004,
+  "log": "/tmp/trnm-pn-convergence-20261023/evidence-root/hepta-growth-adapter-tests.log",
+  "log_sha256": "c2917fb2e97691727068be56ca4b5bca6f8494bc8c39afc5cf1a9fdd3c42016f"
+}

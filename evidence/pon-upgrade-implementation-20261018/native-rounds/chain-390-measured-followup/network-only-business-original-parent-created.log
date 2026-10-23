@@ -1,0 +1,9 @@
+    Finished `release` profile [optimized] target(s) in 0.27s
+     Running tests/public_v3_service_campaign.rs (/home/qian-qi/work/pon-upgrade-implementation-20261018/target-chain-performance/release/deps/public_v3_service_campaign-a16b866263390a19)
+
+running 1 test
+test network_only_business::network_only_business_confirmations_survive_rotating_false_work ... {"confirmed":24,"false_calls":115,"overlap":88,"passed":true,"schema":"public-v3-network-only-business-v1"}
+ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 7.45s
+

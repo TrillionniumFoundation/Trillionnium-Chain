@@ -1,0 +1,7 @@
+{
+  "schema": "exact-original-utf8-log-v1",
+  "original_filename": "applicability-count-recheck.log",
+  "bytes": 275,
+  "sha256": "928c2ad90a9e59872913646013d5f3eee436e9d4dc2c972cceecc66fea87f1f6",
+  "raw_utf8": "test_native_authenticated_profile_is_explicit_local_source_navigation (__main__.ApplicabilityTests.test_native_authenticated_profile_is_explicit_local_source_navigation) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 17.299s\n\nOK\n"
+}

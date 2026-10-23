@@ -1,0 +1,16 @@
+{
+  "actual_compiler_artifact_profile": {
+    "debug_assertions": false,
+    "debuginfo": 0,
+    "opt_level": "3",
+    "overflow_checks": false,
+    "test": true
+  },
+  "build_artifact": "/home/runner/work/_temp/target-native-campaign/release/deps/public_v3_multiprocess-ed1f83f1304f9903",
+  "build_separate_from_measured_campaign": true,
+  "bytes": 8471112,
+  "execution": "original cargo test command using the checked build artifact",
+  "retained": "public_v3_multiprocess.bin",
+  "sha256_after": null,
+  "sha256_before": "efaeadc30b476271923af6b51b6149e71f882b0088f6fbdb7bc2609235aa7f61"
+}
