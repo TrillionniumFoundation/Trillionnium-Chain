@@ -849,6 +849,7 @@ impl Node {
                 continuous: None,
             },
             StateBackend::AuthenticatedV1,
+            false,
         )
     }
     /// Explicit local operator policy; neither permissionless nor consensus authority.
@@ -982,6 +983,7 @@ impl Node {
                 continuous: continuous_owner,
             },
             StateBackend::Legacy,
+            false,
         )
     }
     fn open_selected(
@@ -991,6 +993,7 @@ impl Node {
         mut hook: Option<&mut Hook<'_>>,
         owners: NativeOwners,
         state_backend: StateBackend,
+        growth_observation_only: bool,
     ) -> Result<Self> {
         ensure(
             !authenticated_migration_pending(path)?,
@@ -1001,6 +1004,13 @@ impl Node {
                 == (state_backend == StateBackend::PermanentAccountGrowthV2),
             "GROWTH_PROFILE_BACKEND",
         )?;
+        if growth_observation_only {
+            ensure(
+                state_backend == StateBackend::PermanentAccountGrowthV2
+                    && path.join("native.sqlite").is_file(),
+                "GROWTH_PACKET_STATUS_EXISTING_STORE_REQUIRED",
+            )?;
+        }
         let NativeOwners {
             policy: owner_policy,
             mining: mining_owner,
@@ -1043,6 +1053,10 @@ impl Node {
         let directory = path.canonicalize()?;
         let dbpath = directory.join("native.sqlite");
         let marker = directory.join("initializing.json");
+        ensure(
+            !growth_observation_only || !marker.exists(),
+            "GROWTH_OBSERVATION_RECOVERY_REQUIRED",
+        )?;
         let lock = directory.join("owner.lock");
         for p in [
             &dbpath,
@@ -1147,15 +1161,32 @@ impl Node {
         ] {
             plain(p)?;
         }
-        let mut db = Connection::open(&dbpath)?;
+        ensure(
+            !growth_observation_only || initialized,
+            "GROWTH_PACKET_STATUS_EXISTING_STORE_REQUIRED",
+        )?;
+        let mut db = if growth_observation_only {
+            Connection::open_with_flags(
+                &dbpath,
+                OpenFlags::SQLITE_OPEN_READ_ONLY | OpenFlags::SQLITE_OPEN_NO_MUTEX,
+            )?
+        } else {
+            Connection::open(&dbpath)?
+        };
         let dm = fs::metadata(&dbpath)?;
         if let Some(previous) = prior_inode {
             ensure(previous == (dm.dev(), dm.ino()), "NAMESPACE_CHANGED")?;
         }
         db.busy_timeout(Duration::from_secs(5))?;
-        db.execute_batch(
-            "PRAGMA trusted_schema=OFF; PRAGMA foreign_keys=ON; PRAGMA journal_mode=WAL; PRAGMA synchronous=FULL;",
-        )?;
+        if growth_observation_only {
+            db.execute_batch(
+                "PRAGMA trusted_schema=OFF; PRAGMA foreign_keys=ON; PRAGMA query_only=ON;",
+            )?;
+        } else {
+            db.execute_batch(
+                "PRAGMA trusted_schema=OFF; PRAGMA foreign_keys=ON; PRAGMA journal_mode=WAL; PRAGMA synchronous=FULL;",
+            )?;
+        }
         if !initialized {
             ensure(intent, "INITIALIZATION_INTENT_REQUIRED")?;
             let tx = db.transaction_with_behavior(rusqlite::TransactionBehavior::Immediate)?;
@@ -1252,7 +1283,7 @@ impl Node {
             // Complete-State reference budget records cannot be silently ignored
             // by this backend. Validate/refuse them before any growth recovery.
             node.validate_native_budget_records_v1()?;
-            node.growth_cold_open()?;
+            node.growth_cold_open(!growth_observation_only)?;
             // Settings retain the immutable genesis input for exact reopen. Hot
             // execution never clones this bootstrap State or the full account set.
             return Ok(node);

@@ -27,6 +27,7 @@ use trnm_mvcc_fee::{
 };
 use trnm_protocol::pon_growth::GrowthHeader;
 use trnm_protocol::pon_wire::{Envelope, Hash, Header};
+mod observation;
 mod packet;
 mod profile;
 mod recovery;
@@ -192,6 +193,18 @@ impl Node {
     /// An explicitly selected fresh native namespace; the existing owner lock,
     /// WAL/FULL durability and atomic initialization remain in force.
     pub fn open_with_permanent_account_growth_v2(path: &Path, settings: Settings) -> Result<Self> {
+        Self::open_growth_selected(path, settings, false)
+    }
+    /// An existing namespace, a real SQLite read-only connection and the full
+    /// cold audit. This cannot initialize storage or recover/activate a branch.
+    pub fn open_growth_packet_observer(path: &Path, settings: Settings) -> Result<Self> {
+        Self::open_growth_selected(path, settings, true)
+    }
+    fn open_growth_selected(
+        path: &Path,
+        settings: Settings,
+        observation_only: bool,
+    ) -> Result<Self> {
         profile::require(&settings)?;
         ensure(
             !super::owner_marker_present(path)?,
@@ -208,6 +221,7 @@ impl Node {
                 continuous: None,
             },
             StateBackend::PermanentAccountGrowthV2,
+            observation_only,
         )
     }
     fn growth_guard(&self) -> Result<()> {
@@ -357,6 +371,13 @@ impl Node {
         id: Hash,
         observer: &dyn pon_executor::CanonicalTransitionObserver,
     ) -> Result<()> {
+        self.growth_check_retained_transition(id, Some(observer))
+    }
+    fn growth_check_retained_transition(
+        &self,
+        id: Hash,
+        observer: Option<&dyn pon_executor::CanonicalTransitionObserver>,
+    ) -> Result<()> {
         self.growth_guard()?;
         let packet = self.growth_load_packet(id)?;
         self.check_growth_header(&packet, u64::MAX)?;
@@ -368,14 +389,7 @@ impl Node {
         )
         .map_err(|error| Error::from(format!("WORK:{error:?}")))?;
         let parent = self.growth_parent(packet.header.ledger.parent)?;
-        let executed =
-            execute_observed(
-                &self.settings,
-                &parent,
-                &packet,
-                Some(observer),
-                &|_| Ok(()),
-            )?;
+        let executed = execute_observed(&self.settings, &parent, &packet, observer, &|_| Ok(()))?;
         let stored = self.growth_parent(id)?;
         ensure(
             executed.state.commitment == stored.source.stored.commitment
