@@ -1822,6 +1822,51 @@ zero adoption/reward, not a manufactured success.
 Owners: M09/M10/M11/M12 with M07/M08 and existing local effect owners.
 Entry: PN2 conservation and PN3 exact operation/release identities.
 
+**P0 native owner prerequisite, fresh namespace interface.** The existing
+runtime owner now has a separate preparatory
+[HostScopeAdmission](../../scripts/llm_runtime_host_scope.py) interface, with
+[bounded manager transport](../../scripts/llm_runtime_host_scope_io.py).
+It issues the actual `StartTransientUnit` request for the original caller O;
+it does not execute that request at import or during the fixture tests.
+The manager owns fresh scope S. O creates H only below S's original held FD.
+O moves S -> H, enables S's controllers only after S is empty, creates
+`H/observer`, moves there and enables H's controllers only after H is empty.
+S has the manager's 17GiB/500%/272-task ceiling; H has the same resource ceiling
+and real depth2/descendants4 bounds. H contains observer O (1GiB/100%/16) and
+operation U (16GiB/400%/256, depth1/descendants2); U contains controller C
+(128MiB/100%/16) and aggregate A (8GiB/300%/240), both bounded leaves.
+These engineering ceilings are nested, not additional supply or funding.
+S's topology controls are not part of systemd255's delegated-file allowlist;
+the interface neither writes them nor claims a kernel topology bound on S.
+Exact observed S-only-H topology and hard H bounds are separate predicates.
+
+The original PID/thread/starttime, boot, namespace handles, manager unique name,
+original invocation, mount, directory FDs, source bytes, limits and ancestor
+ceilings are retained and checked. Existing groups are never adopted. Any
+unknown manager outcome or later mismatch is sticky; the original owner and
+FDs remain held. No stop/delete/reset/second request converts it to success.
+Moving O does not move previously charged pages, as specified by the
+[kernel memory-ownership contract](https://docs.kernel.org/admin-guide/cgroup-v2.html#memory-ownership).
+Consequently this is only a fresh namespace/subsequent-charge boundary; O's
+complete RSS, original host baseline funding and physical resource return
+remain open. Compatible ancestor ceilings are not reservations or CPU service.
+
+The seventeen local controls use real bounded transport subprocesses, the original
+source-built native close-and-clear slots and
+ordinary temporary-FD layout fixtures with a mock manager. A separate read-only
+query checked real `busctl` method/property response shapes against the existing
+manager. No native scope was created or admitted. Native S/H qualification,
+original C birth/pidfd/wait4, whole-U zero-charge terminal capture inside the
+unchanged original eight-second deadline, FinalUse entry and AuthBus settlement
+remain required in that order. This interface exposes no spawn, terminal,
+settlement, refund or model-install operation. The original sixty-six aggregate
+and charge-wait assertions remain unchanged. Fallible signature reads retain the
+already opened FD in the original native slot; close-and-clear is one unchanged
+source-built C call. Partial close faults keep that slot, and constructor cleanup
+failure returns the same owner through `KernelOwnedCloseRequired`. The generic
+`os.open` to Python-slot acquisition boundary is still trusted preparation,
+without a general asynchronous-signal leak-freedom qualification.
+
 Deliver separate finite mining, contribution, evaluation, byte-retention/repair
 and inference budgets. Reserve storage capacity and mandatory successor duties
 before acknowledgement. Price actual byte-time, transfer, evaluation and service

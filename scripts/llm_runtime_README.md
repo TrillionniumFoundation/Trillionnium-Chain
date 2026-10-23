@@ -367,6 +367,22 @@ future external controller must bind the live original unit before main exit
 and obtain authoritative final identity/empty/limits/counters before release.
 Preheld FDs do not guarantee that observation beats manager pruning. No such
 outer controller/settlement protocol is implemented by this close slice.
+The fresh [host namespace preparation](llm_runtime_host_scope.py) uses the
+original manager request for a scope S and a create-only delegate-owned H below
+it. S -> H -> observer migration empties each parent before distributing domain
+controllers. Only H receives the real depth2/descendants4 hard bound; the
+manager's S topology files are not silently written or treated as bounded.
+S/H are each capped at 17GiB/500%/272 tasks, with O1GiB/100%/16 and the original
+U16GiB/400%/256 partition. C128MiB/100%/16 and A8GiB/300%/240 stay unchanged.
+The original owner is retained before any request; ambiguous or failed requests
+cannot retry, stop/delete the scope or close its owned FDs as a successful
+retirement. This remains a trusted preparatory interface, without C birth,
+whole-U terminal observation or money authority. The
+[seventeen controls](test_llm_runtime_host_scope.py) exercise bounded real
+transport and ordinary-FD/mock-manager layouts, not native scope admission.
+Pre-migration O memory stays charged to its original cgroup; the new ceilings
+therefore do not bound all O RSS or settle its original host baseline.
+
 Those facts neither qualify this new in-process source nor supply whole-unit
 empty/inode reconciliation. `memory.peak/events` measure cgroup charge, not
 physical RSS; shared-page ownership, escaping same-UID code, ancestor expenses,
