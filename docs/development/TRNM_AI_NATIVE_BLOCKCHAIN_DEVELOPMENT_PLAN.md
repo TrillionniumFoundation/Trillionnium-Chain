@@ -1123,6 +1123,25 @@ native admission, select GSC2, remove complete-State scans, or relax any 65,536
 legacy cap. Bounded witness discovery/working input, durable deltas/root retention,
 migration and fault/scaling acceptance in I03–I05 remain open; PN2 stays unqualified.
 
+PN2 cold-journal subitem: the original growth Node's cold-open read transaction
+now streams every event twice. The first pass preserves the prior complete
+SQL-type-error priority; the second checks every genesis-to-active journal edge
+with scalar generation/ordinal state. Two actual row cursors then compare the
+latest steps/events and original reorg singleton, including both EOFs. Existing
+hot reorg cancellation and publication remain unchanged. This removes the
+all-events and last-generation event vectors while adding one O(E) read pass;
+the 33-byte stored-hash copy bound and two retained event rows do not bound
+SQLite pages, RSS or the rest of cold open. Blocks, checked roots/COW aggregates,
+fork paths, DB/WAL and historical obligations still require their original
+verification and I05 retention/resource ownership. No root is pruned, no local
+history threshold becomes finality, and PN2 remains unqualified. Actual native
+differential checks pass on 73 events and a 49-step reorg, including 27 SQLite
+corruptions and the original late-type-error priority. The retained growth suite
+passes 17 tests with the original 65,536-account release case ignored under the
+existing serial CI setting. An earlier default-parallel run's `WRITER_BUSY`
+failure remains recorded separately; its cause is not established by the later
+serial pass. These results do not close global root/disk retention.
+
 I04 producer subitem: the existing M07 owner can now issue an explicit opaque
 historical account-query pin after the same complete-State validation, then
 produce AAM1 from real Patricia paths without replaying State on each repeated

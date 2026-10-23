@@ -15,6 +15,222 @@ fn base_settings() -> Settings {
     )
     .unwrap()
 }
+
+// The pre-change collect algorithm remains a test-only differential oracle.
+// Counters observe its actual retained vectors, not another streaming model.
+fn collected_cold_journal(node: &Node) -> Result<(usize, usize)> {
+    let values: Vec<(u64, u64, u64, Vec<u8>)> = node
+        .db
+        .prepare("SELECT generation,ordinal,kind,block FROM events ORDER BY generation,ordinal")?
+        .query_map([], |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?, r.get(3)?)))?
+        .collect::<std::result::Result<_, _>>()?;
+    let count = values.len();
+    let mut peak = 0;
+    let mut tip = node.settings.genesis();
+    let mut generation = 0u64;
+    let mut old = tip;
+    let mut changes = Vec::new();
+    for (g, ordinal, kind, raw) in values {
+        if g != generation {
+            ensure(g == generation + 1, "GROWTH_REORG_JOURNAL")?;
+            generation = g;
+            old = tip;
+            changes.clear();
+        }
+        ensure(ordinal == changes.len() as u64, "GROWTH_REORG_JOURNAL")?;
+        let id = bytes32(raw)?;
+        match kind {
+            0 => {
+                ensure(tip == id, "GROWTH_REORG_JOURNAL")?;
+                tip = node.record(id)?.parent.ok_or("GROWTH_REORG_JOURNAL")?;
+            }
+            1 => {
+                ensure(node.record(id)?.parent == Some(tip), "GROWTH_REORG_JOURNAL")?;
+                tip = id;
+            }
+            _ => return Err("GROWTH_REORG_JOURNAL".into()),
+        }
+        changes.push((kind, id));
+        peak = peak.max(changes.len());
+    }
+    ensure(
+        node.active()? == (tip, generation) && node.slot()? == generation,
+        "GROWTH_REORG_JOURNAL",
+    )?;
+    if generation > 0 {
+        node.growth_check_latest_journal(old, tip, generation, &changes)?;
+    } else {
+        let rows: u64 = node.db.query_row(
+            "SELECT (SELECT count(*) FROM reorg)+(SELECT count(*) FROM steps)",
+            [],
+            |r| r.get(0),
+        )?;
+        ensure(rows == 0, "GROWTH_REORG_JOURNAL")?;
+    }
+    Ok((count, peak))
+}
+
+fn cold_journal_error(error: &Error) -> String {
+    use std::error::Error as _;
+    format!(
+        "{}|{:?}|{:?}|{}|{:?}",
+        error,
+        error.code(),
+        error.kind(),
+        error.requires_owner_stop(),
+        error
+            .source()
+            .and_then(|source| source.downcast_ref::<rusqlite::Error>())
+    )
+}
+
+fn compare_cold_journal(node: &Node) -> Result<super::recovery::ColdJournalReads> {
+    assert!(
+        !node.db.is_autocommit(),
+        "original cold read snapshot required"
+    );
+    let changes = node.db.total_changes();
+    let old = collected_cold_journal(node);
+    let new = node.growth_check_journal();
+    assert_eq!(
+        old.as_ref().map(|_| ()).map_err(cold_journal_error),
+        new.as_ref().map(|_| ()).map_err(cold_journal_error)
+    );
+    assert_eq!(node.db.total_changes(), changes);
+    new
+}
+
+#[test]
+fn native_growth_v2_cold_journal_streams_real_history_and_deep_reorg() {
+    let dir = tempfile::tempdir().unwrap();
+    let settings = settings();
+    let mut node =
+        Node::open_with_permanent_account_growth_v2(dir.path(), settings.clone()).unwrap();
+    let mut old = settings.genesis();
+    for _ in 0..24 {
+        let packet = make(&node, old, vec![]);
+        old = admit(&mut node, &packet);
+    }
+    let tx = node.db.unchecked_transaction().unwrap();
+    let observation = compare_cold_journal(&node).unwrap();
+    assert_eq!(collected_cold_journal(&node).unwrap(), (24, 1));
+    assert_eq!(
+        (observation.typed_events, observation.semantic_events),
+        (24, 24)
+    );
+    assert_eq!(observation.peak_event_rows, 2);
+    tx.rollback().unwrap();
+    let mut fork = settings.genesis();
+    for height in 1..=25 {
+        let transactions = if height == 1 {
+            vec![transfer(&settings, 0, 1, public(100), 1000)]
+        } else {
+            vec![]
+        };
+        let packet = make(&node, fork, transactions);
+        fork = node.admit_growth(&packet, 100_000).unwrap();
+    }
+    assert_eq!(node.growth_activate(fork).unwrap(), fork);
+    let before = rows(&node.db);
+    let tx = node.db.unchecked_transaction().unwrap();
+    let observation = compare_cold_journal(&node).unwrap();
+    assert_eq!(collected_cold_journal(&node).unwrap(), (73, 49));
+    assert_eq!(
+        (observation.typed_events, observation.semantic_events),
+        (73, 73)
+    );
+    assert_eq!(
+        (observation.latest_steps, observation.latest_events),
+        (49, 49)
+    );
+    assert_eq!(observation.peak_event_rows, 2);
+    eprintln!("growth_cold_journal_actual_rows old_vectors=(73,49) new={observation:?}; excludes SQLite pages/RSS/other cold audit collections");
+    tx.rollback().unwrap();
+    let faults = [
+        "UPDATE events SET generation=0 WHERE generation=1",
+        "UPDATE events SET generation=100 WHERE generation=25",
+        "UPDATE events SET ordinal=1 WHERE generation=1",
+        "DELETE FROM events WHERE generation=1",
+        "UPDATE events SET kind=7 WHERE generation=1",
+        "UPDATE events SET block=zeroblob(31) WHERE generation=1",
+        "UPDATE events SET block='typed-text' WHERE generation=25 AND ordinal=48",
+        "UPDATE events SET kind='typed-kind' WHERE generation=25 AND ordinal=48",
+        "UPDATE events SET ordinal='typed-ordinal' WHERE generation=25 AND ordinal=48",
+        "INSERT INTO events SELECT generation,99,kind,block FROM events WHERE generation=25 AND ordinal=48",
+        "DELETE FROM steps WHERE ordinal=0",
+        "UPDATE steps SET ordinal=ordinal+1000",
+        "INSERT INTO steps SELECT 999,kind,block FROM steps WHERE ordinal=0",
+        "UPDATE steps SET block=zeroblob(100000) WHERE ordinal=48",
+        "UPDATE steps SET kind='typed-step' WHERE ordinal=48",
+        "UPDATE reorg SET old_tip=zeroblob(32)",
+        "UPDATE reorg SET new_tip=zeroblob(32)",
+        "UPDATE reorg SET generation=100",
+        "UPDATE reorg SET cursor=0",
+        "UPDATE reorg SET done=0",
+        "UPDATE reorg SET old_tip='typed-reorg'",
+        "UPDATE active SET tip=zeroblob(32)",
+        "UPDATE active SET state_slot=state_slot+1",
+        // Collect converted every row first: late type errors must still win.
+        "UPDATE events SET kind=7 WHERE generation=1; UPDATE events SET block='late-type' WHERE generation=25 AND ordinal=48",
+        "UPDATE events SET block=zeroblob(31) WHERE generation=1; UPDATE events SET kind='late-kind' WHERE generation=25 AND ordinal=48",
+        // An oversized BLOB is a later shape failure, not a premature type error.
+        "UPDATE events SET kind=7 WHERE generation=1; UPDATE events SET block=zeroblob(100000) WHERE generation=25 AND ordinal=48",
+        "UPDATE events SET kind=7 WHERE generation=1; UPDATE steps SET kind='later-step-type' WHERE ordinal=48",
+    ];
+    for (index, sql) in faults.into_iter().enumerate() {
+        let tx = node.db.unchecked_transaction().unwrap();
+        tx.execute_batch(sql).unwrap();
+        let error = compare_cold_journal(&node).unwrap_err();
+        if index == 23 || index == 24 {
+            use std::error::Error as _;
+            assert!(
+                error.source().unwrap().is::<rusqlite::Error>(),
+                "{index}: {error:?}"
+            );
+        }
+        tx.rollback().unwrap();
+        assert_eq!(rows(&node.db), before, "fault {index}");
+    }
+    let active = node.active().unwrap();
+    drop(node);
+    let node = Node::open_with_permanent_account_growth_v2(dir.path(), settings).unwrap();
+    assert_eq!(node.active().unwrap(), active);
+    assert_eq!(rows(&node.db), before);
+}
+
+#[test]
+fn native_growth_v2_cold_journal_zero_generation_and_late_typed_error_priority() {
+    let dir = tempfile::tempdir().unwrap();
+    let settings = settings();
+    let node = Node::open_with_permanent_account_growth_v2(dir.path(), settings.clone()).unwrap();
+    let tx = node.db.unchecked_transaction().unwrap();
+    assert_eq!(compare_cold_journal(&node).unwrap().peak_event_rows, 0);
+    tx.rollback().unwrap();
+    for sql in [
+        "INSERT INTO steps VALUES(0,1,zeroblob(32))",
+        "INSERT INTO reorg VALUES(1,zeroblob(32),zeroblob(32),0,0,1)",
+    ] {
+        let tx = node.db.unchecked_transaction().unwrap();
+        tx.execute_batch(sql).unwrap();
+        assert_eq!(
+            compare_cold_journal(&node).unwrap_err().to_string(),
+            "GROWTH_REORG_JOURNAL"
+        );
+        tx.rollback().unwrap();
+    }
+    let tx = node.db.unchecked_transaction().unwrap();
+    tx.execute(
+        "INSERT INTO events VALUES(1,0,7,?)",
+        [settings.genesis().as_slice()],
+    )
+    .unwrap();
+    tx.execute_batch("INSERT INTO events VALUES(2,0,1,'later-invalid-type')")
+        .unwrap();
+    let error = compare_cold_journal(&node).unwrap_err();
+    use std::error::Error as _;
+    assert!(error.source().unwrap().is::<rusqlite::Error>());
+    tx.rollback().unwrap();
+}
 fn settings() -> Settings {
     base_settings()
         .with_permanent_account_growth_v2("native-growth-v2-test")

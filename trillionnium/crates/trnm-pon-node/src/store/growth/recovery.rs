@@ -29,6 +29,16 @@ pub enum GrowthProgress {
     BeforeCommit,
 }
 
+// Operation-local read counters, never a retained validity or resource grant.
+#[derive(Debug, Default)]
+pub(super) struct ColdJournalReads {
+    pub(super) typed_events: u64,
+    pub(super) semantic_events: u64,
+    pub(super) latest_steps: u64,
+    pub(super) latest_events: u64,
+    pub(super) peak_event_rows: usize,
+}
+
 impl Node {
     pub fn make_growth_consensus_maintenance(
         &self,
@@ -346,6 +356,7 @@ impl Node {
         Ok(target)
     }
 
+    #[cfg(test)]
     pub(super) fn growth_check_latest_journal(
         &self,
         old: Hash,
@@ -422,26 +433,45 @@ impl Node {
         )
     }
 
-    fn growth_check_journal(&self) -> Result<()> {
-        let rows: Vec<(u64, u64, u64, Vec<u8>)> = self
-            .db
-            .prepare(
-                "SELECT generation,ordinal,kind,block FROM events ORDER BY generation,ordinal",
-            )?
-            .query_map([], |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?, r.get(3)?)))?
-            .collect::<std::result::Result<_, _>>()?;
+    pub(super) fn growth_check_journal(&self) -> Result<ColdJournalReads> {
+        // The caller retains the original cold-open read transaction throughout
+        // both passes and final readback. Collect used to convert ALL SQL rows
+        // before checking any journal rule. Keep that error priority without
+        // retaining the history; fixed_blob preserves type errors and copies at
+        // most33 bytes even from a corrupt oversized stored cell.
+        let mut observation = ColdJournalReads::default();
+        let mut statement = self.db.prepare(
+            "SELECT generation,ordinal,kind,block FROM events ORDER BY generation,ordinal",
+        )?;
+        {
+            let mut rows = statement.query([])?;
+            while let Some(row) = rows.next()? {
+                let _: (u64, u64, u64, Vec<u8>) = (
+                    row.get(0)?,
+                    row.get(1)?,
+                    row.get(2)?,
+                    super::super::fixed_blob::<32>(row, 3)?,
+                );
+                observation.typed_events += 1;
+                observation.peak_event_rows = 1;
+            }
+        }
         let mut tip = self.settings.genesis();
         let mut generation = 0u64;
         let mut old = tip;
-        let mut changes = Vec::new();
-        for (g, ordinal, kind, raw) in rows {
+        let mut changes = 0u64;
+        let mut rows = statement.query([])?;
+        while let Some(row) = rows.next()? {
+            let (g, ordinal, kind): (u64, u64, u64) = (row.get(0)?, row.get(1)?, row.get(2)?);
+            let raw = super::super::fixed_blob::<32>(row, 3)?;
+            observation.semantic_events += 1;
             if g != generation {
                 ensure(g == generation + 1, "GROWTH_REORG_JOURNAL")?;
                 generation = g;
                 old = tip;
-                changes.clear();
+                changes = 0;
             }
-            ensure(ordinal == changes.len() as u64, "GROWTH_REORG_JOURNAL")?;
+            ensure(ordinal == changes, "GROWTH_REORG_JOURNAL")?;
             let id = bytes32(raw)?;
             match kind {
                 0 => {
@@ -454,22 +484,93 @@ impl Node {
                 }
                 _ => return Err("GROWTH_REORG_JOURNAL".into()),
             }
-            changes.push((kind, id));
+            changes += 1;
         }
+        drop(rows);
+        drop(statement);
         ensure(
             self.active()? == (tip, generation) && self.slot()? == generation,
             "GROWTH_REORG_JOURNAL",
         )?;
         if generation > 0 {
-            self.growth_check_latest_journal(old, tip, generation, &changes)
+            self.growth_check_cold_latest_journal(old, tip, generation, changes, &mut observation)?;
         } else {
             let rows: u64 = self.db.query_row(
                 "SELECT (SELECT count(*) FROM reorg)+(SELECT count(*) FROM steps)",
                 [],
                 |r| r.get(0),
             )?;
-            ensure(rows == 0, "GROWTH_REORG_JOURNAL")
+            ensure(rows == 0, "GROWTH_REORG_JOURNAL")?;
         }
+        Ok(observation)
+    }
+
+    fn growth_check_cold_latest_journal(
+        &self,
+        old: Hash,
+        target: Hash,
+        generation: u64,
+        count: u64,
+        observation: &mut ColdJournalReads,
+    ) -> Result<()> {
+        // All events already passed typed and semantic checks in this same read
+        // snapshot. Compare actual rows, including both EOFs; no digest replaces
+        // the exact latest journal. The hot callback-bearing checker is unchanged.
+        let mut steps = self
+            .db
+            .prepare("SELECT ordinal,kind,block FROM steps ORDER BY ordinal")?;
+        let mut events = self
+            .db
+            .prepare("SELECT ordinal,kind,block FROM events WHERE generation=? ORDER BY ordinal")?;
+        let mut steps = steps.query([])?;
+        let mut events = events.query([generation])?;
+        let mut matches = true;
+        let mut index = 0u64;
+        loop {
+            let step = steps
+                .next()?
+                .map(|row| -> rusqlite::Result<_> {
+                    Ok((
+                        row.get::<_, u64>(0)?,
+                        row.get::<_, u64>(1)?,
+                        super::super::fixed_blob::<32>(row, 2)?,
+                    ))
+                })
+                .transpose()?;
+            let event = events
+                .next()?
+                .map(|row| -> rusqlite::Result<_> {
+                    Ok((
+                        row.get::<_, u64>(0)?,
+                        row.get::<_, u64>(1)?,
+                        super::super::fixed_blob::<32>(row, 2)?,
+                    ))
+                })
+                .transpose()?;
+            if step.is_none() && event.is_none() {
+                break;
+            }
+            observation.latest_steps += u64::from(step.is_some());
+            observation.latest_events += u64::from(event.is_some());
+            observation.peak_event_rows = observation
+                .peak_event_rows
+                .max(usize::from(step.is_some()) + usize::from(event.is_some()));
+            matches &= step.as_ref().is_some_and(|row| row.0 == index)
+                && event.as_ref().is_some_and(|row| row.0 == index)
+                && step == event;
+            index += 1;
+        }
+        let reorg: (Vec<u8>, Vec<u8>, u64, u64, u64) = self.db.query_row(
+            "SELECT old_tip,new_tip,generation,cursor,done FROM reorg WHERE singleton=1",
+            [],
+            |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?, r.get(3)?, r.get(4)?)),
+        )?;
+        ensure(
+            matches
+                && index == count
+                && reorg == (old.to_vec(), target.to_vec(), generation, count, 1),
+            "GROWTH_REORG_JOURNAL",
+        )
     }
 
     /// Cold integrity is deliberately separate from request latency. Every retained
