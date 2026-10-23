@@ -859,6 +859,16 @@ new controls on exact CPython 3.12.3 for source and prospective merge, requiring
 all 66 successes, zero skips and zero expected failures. These ordinary-child/synthetic-counter controls
 do not establish a real aggregate pass, outer reconciliation, resource refund,
 Store/FinalUse authorization or any model upgrade round.
+The subsequent [single controlled observation](../../evidence/pon-upgrade-implementation-20261018/native-rounds/aggregate-charge-wait-20261023/SCOPE.md)
+on exact source `ec0f58d3` completed its original outer terminal observation in
+3.080 seconds under that unchanged eight-second deadline. Exact owned wait4,
+three FIFO records and EOF, true zero memory/swap charge and the original equal
+complete snapshot assertion produced the private mechanics fact. The inside
+controller took 5.321 seconds; the overlapping durations are not additive. All 24
+collected files and 18 source pins matched independent remote readback. This
+closes that tiny terminal charge-drain reproduction only. The original outer
+reconciliation and consumed-capability close still refuse release: UNKNOWN and
+RETAINED, no manual aggregate deletion, no refund, no model load or upgrade round.
 Post-native Python exception injection does not claim native-internal
 signal interruption; SIGUSR1 tests prove guard reentry refusal. Ordinary FD
 controls do not qualify a valid unit or prove that C-created pipe pages charge C.
