@@ -53,24 +53,24 @@ fn packet_status(store: &Path, packet: &[u8]) -> Output {
     child.stdin.take().unwrap().write_all(packet).unwrap();
     child.wait_with_output().unwrap()
 }
-fn signed_transfer() -> String {
-    let settings = Settings::development_with_profiles(
+fn settings() -> Settings {
+    Settings::development_with_profiles(
         Some(1),
         "native-public-evaluation-dev-v1",
         continuity_v1::PROFILE,
     )
     .unwrap()
     .with_permanent_account_growth_v2(NAMESPACE)
-    .unwrap();
-    let mut payload = development_public(9).unwrap().to_vec();
-    payload.extend(10_000u64.to_le_bytes());
+    .unwrap()
+}
+fn signed_transaction(nonce: u64, tag: u8, payload: Vec<u8>) -> String {
     let mut envelope = Envelope {
-        network: settings.network(),
+        network: settings().network(),
         sender: development_public(0).unwrap(),
-        nonce: 1,
+        nonce,
         expiry: 2000,
         fee_limit: 1_000_000,
-        tag: 1,
+        tag,
         payload,
         signature: [0; 64],
     };
@@ -81,6 +81,11 @@ fn signed_transfer() -> String {
         .try_into()
         .unwrap();
     hex::encode(envelope.encode().unwrap())
+}
+fn signed_transfer() -> String {
+    let mut payload = development_public(9).unwrap().to_vec();
+    payload.extend(10_000u64.to_le_bytes());
+    signed_transaction(1, 1, payload)
 }
 
 #[test]
@@ -111,6 +116,11 @@ fn native_growth_v2_cli_signed_packet_remote_admission_and_cold_current_snapshot
     assert_eq!(mined["result"]["admitted"], true);
     assert_eq!(mined["result"]["state"]["height"], 1);
     assert_eq!(mined["result"]["state"]["permanent_accounts"], 5);
+    let initial_capacity = &mined["result"]["state"]["mandatory_owner_capacity"];
+    assert_eq!(initial_capacity["owners"], 1);
+    assert_eq!(initial_capacity["escrow_owners"], 0);
+    assert_eq!(initial_capacity["reward_owners"], 1);
+    assert_eq!(initial_capacity["unused_owner_slots_in_snapshot"], 31);
     assert_eq!(&std::fs::read(&packet).unwrap()[..4], b"PNP2");
     let received = accepted(
         command("growth-submit", &validator)
@@ -232,6 +242,65 @@ fn native_growth_v2_cli_signed_packet_remote_admission_and_cold_current_snapshot
         std::fs::read(exported).unwrap(),
         std::fs::read(packet).unwrap()
     );
+
+    // Actual signed reservation adds an escrow owner distinct from the miner.
+    // Its next-height expiry is visible without predicting candidate admission.
+    let settings = settings();
+    let task = hash(
+        b"task-instance-v3",
+        &[
+            &settings.network(),
+            &settings.parameters(),
+            &development_public(0).unwrap(),
+            &2u64.to_le_bytes(),
+            &development_public(1).unwrap(),
+            &1000u64.to_le_bytes(),
+            &3u64.to_le_bytes(),
+        ],
+    );
+    let mut payload = task.to_vec();
+    payload.extend(development_public(1).unwrap());
+    payload.extend(1000u64.to_le_bytes());
+    payload.extend(3u64.to_le_bytes());
+    std::fs::write(
+        &txs,
+        serde_json::to_vec(&vec![signed_transaction(2, 2, payload)]).unwrap(),
+    )
+    .unwrap();
+    let reserved = accepted(
+        command("growth-mine", &validator)
+            .arg("--transactions")
+            .arg(&txs)
+            .args([
+                "--timestamp",
+                "21",
+                "--logical-now",
+                "1000",
+                "--miner",
+                &hex::encode(development_public(3).unwrap()),
+            ])
+            .arg("--output")
+            .arg(dir.path().join("reserve.pnp2"))
+            .output()
+            .unwrap(),
+    );
+    let capacity = &reserved["result"]["state"]["mandatory_owner_capacity"];
+    assert_eq!(
+        capacity["schema"],
+        "native-growth-mandatory-owner-capacity-observation-v1"
+    );
+    assert_eq!(capacity["owners"], 2);
+    assert_eq!(capacity["escrow_owners"], 1);
+    assert_eq!(capacity["reward_owners"], 1);
+    assert_eq!(capacity["shared_owners"], 0);
+    assert_eq!(capacity["reward_records"], 2);
+    assert_eq!(capacity["escrow_records_due_by_next_height"], 1);
+    assert_eq!(capacity["reward_records_maturing_by_next_height"], 0);
+    assert_eq!(capacity["due_record_counts_are_not_execution_counts"], true);
+    assert_eq!(capacity["unused_owner_slots_in_snapshot"], 30);
+    assert_eq!(capacity["same_block_execution_may_release_owners"], true);
+    assert_eq!(capacity["snapshot_only"], true);
+    assert_eq!(capacity["admission_authority"], false);
 }
 
 #[test]
