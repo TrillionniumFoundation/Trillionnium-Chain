@@ -119,7 +119,7 @@ impl SignedResearchCommandV1 {
         let nonce = decoder.uint()?;
         let public_key = decoder.bytes_exact()?;
         let command = ResearchCommandV1::decode(&mut decoder)?;
-        let signature = decoder.bytes()?.to_vec();
+        let signature = decoder.bytes_exact::<64>()?.to_vec();
         decoder.finish()?;
 
         let signed = Self {

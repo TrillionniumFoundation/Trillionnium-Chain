@@ -1,0 +1,21 @@
+{
+  "command": [
+    "cargo",
+    "+1.95.0",
+    "test",
+    "--release",
+    "--offline",
+    "--locked",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-mvcc-fee",
+    "growth_reference",
+    "--",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "returncode": 0,
+  "seconds": 62.17692852020264,
+  "log_sha256": "89461789c62869e1ef0207e63c5ec10cfd21e827c81d448a023e029e6f2be3b7"
+}

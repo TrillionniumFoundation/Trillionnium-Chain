@@ -128,6 +128,23 @@ keep distinct goals; public metrics do not override their hard constraints. Lear
 routing and model parameters cannot become execution tokens or rewrite deterministic
 reflex, truth, ownership, revocation or privacy boundaries.
 
+## Executable bounded attribution and evaluation lifecycle
+
+[Bounded linear attribution](details/MODEL_ATTRIBUTION.md) recomputes exact BA normal
+forms, merges known-source/copy budgets, retains complementary components, exhausts
+finite subsets and records downstream use and every reported verifier attempt cost.
+Fingerprints and probes never become general functional-equivalence proofs. Optional
+LLM metadata is unexecuted; independent prospective target-model acceptance remains
+required. No chain reward authority is added.
+
+[The frozen public-evaluation lifecycle](details/PUBLIC_EVALUATION_LIFECYCLE.md) seals
+roster/lineage and task/model context, checks signed candidate/commit/reveal records,
+enforces deterministic height deadlines and missing-evidence abort, retains signature
+conflicts for next-round disqualification and records appeals without silent rescoring.
+It is off-chain policy on existing owners; native revision4 and chainwork are unchanged.
+Independent governance and truthful prospective measurement are not inferred from
+distinct keys or signed minimum scores.
+
 ## Concrete compatible family and experiment
 
 [M1](details/MODEL_EVALUATION.md) now defines exact features, tensor shapes, integer

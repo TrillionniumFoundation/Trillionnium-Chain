@@ -1,0 +1,776 @@
+[
+  {
+    "run": 1,
+    "mode": "baseline",
+    "final_actual_flow": {
+      "balance_identity_verified": true,
+      "booked_reservation_ns": 0,
+      "credited_refill_ns": 1137259671,
+      "discarded_refill_ns": 1258579156,
+      "initial_credit_ns": 2000000000,
+      "live_debited_cpu_ns": 1488596536,
+      "live_owners": 0,
+      "paid_cpu_debit_ns": 1488638207,
+      "remaining_paid_credit_ns": 1648621464,
+      "schema": "public-v3-local-actual-cpu-flow-v1",
+      "settled_full_cpu_ns": 1488638207,
+      "settlement_discard_ns": 0,
+      "settlement_residual_cpu_ns": 41671,
+      "stored_credit_ns": 1648621464,
+      "unsettled_known_live_cpu_ns": 0
+    },
+    "native_service_outcome": {
+      "issued_challenges": 42,
+      "mutation_cpu_charged_ns": 1488638207,
+      "mutation_full_work_cpu_ns": 22581812,
+      "mutation_dispatch_excluding_work_cpu_ns": 1466056395
+    },
+    "receiver_by_observed_body_role": {
+      "client_history": {
+        "records": 21,
+        "dispatch_thread_cpu_ns": {
+          "known_count": 21,
+          "max_ns": 2106712,
+          "min_ns": 554337,
+          "p50_nearest_rank_ns": 727435,
+          "p95_nearest_rank_ns": 1308712,
+          "sum_known_ns": 17256438,
+          "unknown_count": 0
+        },
+        "full_work_thread_cpu_ns": {
+          "known_count": 0,
+          "max_ns": null,
+          "mean_known_ns": null,
+          "min_ns": null,
+          "p50_nearest_rank_ns": null,
+          "p95_nearest_rank_ns": null,
+          "sum_known_ns": 0,
+          "unknown_count": 0
+        }
+      },
+      "honest_submit": {
+        "records": 21,
+        "dispatch_thread_cpu_ns": {
+          "known_count": 21,
+          "max_ns": 81565488,
+          "min_ns": 64400806,
+          "p50_nearest_rank_ns": 70237274,
+          "p95_nearest_rank_ns": 77479908,
+          "sum_known_ns": 1488638207,
+          "unknown_count": 0
+        },
+        "full_work_thread_cpu_ns": {
+          "known_count": 21,
+          "max_ns": 1109805,
+          "min_ns": 1041584,
+          "p50_nearest_rank_ns": 1075434,
+          "p95_nearest_rank_ns": 1097617,
+          "sum_known_ns": 22581812,
+          "unknown_count": 0
+        }
+      }
+    }
+  },
+  {
+    "run": 1,
+    "mode": "from-zero",
+    "final_actual_flow": {
+      "balance_identity_verified": true,
+      "booked_reservation_ns": 0,
+      "credited_refill_ns": 7460209137,
+      "discarded_refill_ns": 44071411,
+      "initial_credit_ns": 2000000000,
+      "live_debited_cpu_ns": 7526590474,
+      "live_owners": 0,
+      "paid_cpu_debit_ns": 7529655303,
+      "remaining_paid_credit_ns": 1930553834,
+      "schema": "public-v3-local-actual-cpu-flow-v1",
+      "settled_full_cpu_ns": 7529655303,
+      "settlement_discard_ns": 0,
+      "settlement_residual_cpu_ns": 3064829,
+      "stored_credit_ns": 1930553834,
+      "unsettled_known_live_cpu_ns": 0
+    },
+    "native_service_outcome": {
+      "issued_challenges": 3865,
+      "mutation_cpu_charged_ns": 7529655303,
+      "mutation_full_work_cpu_ns": 3454542410,
+      "mutation_dispatch_excluding_work_cpu_ns": 4075112893
+    },
+    "receiver_by_observed_body_role": {
+      "attack_submit": {
+        "records": 3843,
+        "dispatch_thread_cpu_ns": {
+          "known_count": 3819,
+          "max_ns": 4032605,
+          "min_ns": 1384275,
+          "p50_nearest_rank_ns": 1550944,
+          "p95_nearest_rank_ns": 1820395,
+          "sum_known_ns": 6065364107,
+          "unknown_count": 0
+        },
+        "full_work_thread_cpu_ns": {
+          "known_count": 3819,
+          "max_ns": 2277017,
+          "min_ns": 807805,
+          "p50_nearest_rank_ns": 881735,
+          "p95_nearest_rank_ns": 1039711,
+          "sum_known_ns": 3431633419,
+          "unknown_count": 0
+        }
+      },
+      "client_history": {
+        "records": 21,
+        "dispatch_thread_cpu_ns": {
+          "known_count": 21,
+          "max_ns": 892501,
+          "min_ns": 470191,
+          "p50_nearest_rank_ns": 695016,
+          "p95_nearest_rank_ns": 811711,
+          "sum_known_ns": 14209914,
+          "unknown_count": 0
+        },
+        "full_work_thread_cpu_ns": {
+          "known_count": 0,
+          "max_ns": null,
+          "mean_known_ns": null,
+          "min_ns": null,
+          "p50_nearest_rank_ns": null,
+          "p95_nearest_rank_ns": null,
+          "sum_known_ns": 0,
+          "unknown_count": 0
+        }
+      },
+      "honest_submit": {
+        "records": 21,
+        "dispatch_thread_cpu_ns": {
+          "known_count": 21,
+          "max_ns": 75448306,
+          "min_ns": 65087300,
+          "p50_nearest_rank_ns": 69284702,
+          "p95_nearest_rank_ns": 73673477,
+          "sum_known_ns": 1464291196,
+          "unknown_count": 0
+        },
+        "full_work_thread_cpu_ns": {
+          "known_count": 21,
+          "max_ns": 1122233,
+          "min_ns": 1047573,
+          "p50_nearest_rank_ns": 1100021,
+          "p95_nearest_rank_ns": 1115975,
+          "sum_known_ns": 22908991,
+          "unknown_count": 0
+        }
+      }
+    }
+  },
+  {
+    "run": 1,
+    "mode": "late-product",
+    "final_actual_flow": {
+      "balance_identity_verified": true,
+      "booked_reservation_ns": 0,
+      "credited_refill_ns": 7492548401,
+      "discarded_refill_ns": 14178451,
+      "initial_credit_ns": 2000000000,
+      "live_debited_cpu_ns": 9001165290,
+      "live_owners": 0,
+      "paid_cpu_debit_ns": 9004829149,
+      "remaining_paid_credit_ns": 487719252,
+      "schema": "public-v3-local-actual-cpu-flow-v1",
+      "settled_full_cpu_ns": 9004829149,
+      "settlement_discard_ns": 0,
+      "settlement_residual_cpu_ns": 3663859,
+      "stored_credit_ns": 487719252,
+      "unsettled_known_live_cpu_ns": 0
+    },
+    "native_service_outcome": {
+      "issued_challenges": 3864,
+      "mutation_cpu_charged_ns": 9004829149,
+      "mutation_full_work_cpu_ns": 4274824710,
+      "mutation_dispatch_excluding_work_cpu_ns": 4730004439
+    },
+    "receiver_by_observed_body_role": {
+      "attack_submit": {
+        "records": 3842,
+        "dispatch_thread_cpu_ns": {
+          "known_count": 3819,
+          "max_ns": 5166727,
+          "min_ns": 1680797,
+          "p50_nearest_rank_ns": 1894325,
+          "p95_nearest_rank_ns": 2217147,
+          "sum_known_ns": 7424086927,
+          "unknown_count": 0
+        },
+        "full_work_thread_cpu_ns": {
+          "known_count": 3819,
+          "max_ns": 2903450,
+          "min_ns": 998039,
+          "p50_nearest_rank_ns": 1087712,
+          "p95_nearest_rank_ns": 1351206,
+          "sum_known_ns": 4251449055,
+          "unknown_count": 0
+        }
+      },
+      "client_history": {
+        "records": 21,
+        "dispatch_thread_cpu_ns": {
+          "known_count": 21,
+          "max_ns": 1089294,
+          "min_ns": 556990,
+          "p50_nearest_rank_ns": 739483,
+          "p95_nearest_rank_ns": 999771,
+          "sum_known_ns": 15713816,
+          "unknown_count": 0
+        },
+        "full_work_thread_cpu_ns": {
+          "known_count": 0,
+          "max_ns": null,
+          "mean_known_ns": null,
+          "min_ns": null,
+          "p50_nearest_rank_ns": null,
+          "p95_nearest_rank_ns": null,
+          "sum_known_ns": 0,
+          "unknown_count": 0
+        }
+      },
+      "honest_submit": {
+        "records": 21,
+        "dispatch_thread_cpu_ns": {
+          "known_count": 21,
+          "max_ns": 80540698,
+          "min_ns": 71135971,
+          "p50_nearest_rank_ns": 75189767,
+          "p95_nearest_rank_ns": 78666464,
+          "sum_known_ns": 1580742222,
+          "unknown_count": 0
+        },
+        "full_work_thread_cpu_ns": {
+          "known_count": 21,
+          "max_ns": 1254070,
+          "min_ns": 1063917,
+          "p50_nearest_rank_ns": 1096486,
+          "p95_nearest_rank_ns": 1252919,
+          "sum_known_ns": 23375655,
+          "unknown_count": 0
+        }
+      }
+    }
+  },
+  {
+    "run": 2,
+    "mode": "baseline",
+    "final_actual_flow": {
+      "balance_identity_verified": true,
+      "booked_reservation_ns": 0,
+      "credited_refill_ns": 1057014843,
+      "discarded_refill_ns": 1335897503,
+      "initial_credit_ns": 2000000000,
+      "live_debited_cpu_ns": 1399021378,
+      "live_owners": 0,
+      "paid_cpu_debit_ns": 1399058857,
+      "remaining_paid_credit_ns": 1657955986,
+      "schema": "public-v3-local-actual-cpu-flow-v1",
+      "settled_full_cpu_ns": 1399058857,
+      "settlement_discard_ns": 0,
+      "settlement_residual_cpu_ns": 37479,
+      "stored_credit_ns": 1657955986,
+      "unsettled_known_live_cpu_ns": 0
+    },
+    "native_service_outcome": {
+      "issued_challenges": 42,
+      "mutation_cpu_charged_ns": 1399058857,
+      "mutation_full_work_cpu_ns": 21758923,
+      "mutation_dispatch_excluding_work_cpu_ns": 1377299934
+    },
+    "receiver_by_observed_body_role": {
+      "client_history": {
+        "records": 21,
+        "dispatch_thread_cpu_ns": {
+          "known_count": 21,
+          "max_ns": 1037086,
+          "min_ns": 479656,
+          "p50_nearest_rank_ns": 695828,
+          "p95_nearest_rank_ns": 810128,
+          "sum_known_ns": 14618272,
+          "unknown_count": 0
+        },
+        "full_work_thread_cpu_ns": {
+          "known_count": 0,
+          "max_ns": null,
+          "mean_known_ns": null,
+          "min_ns": null,
+          "p50_nearest_rank_ns": null,
+          "p95_nearest_rank_ns": null,
+          "sum_known_ns": 0,
+          "unknown_count": 0
+        }
+      },
+      "honest_submit": {
+        "records": 21,
+        "dispatch_thread_cpu_ns": {
+          "known_count": 21,
+          "max_ns": 69546050,
+          "min_ns": 61657935,
+          "p50_nearest_rank_ns": 67187893,
+          "p95_nearest_rank_ns": 69507289,
+          "sum_known_ns": 1399058857,
+          "unknown_count": 0
+        },
+        "full_work_thread_cpu_ns": {
+          "known_count": 21,
+          "max_ns": 1088634,
+          "min_ns": 1015785,
+          "p50_nearest_rank_ns": 1031769,
+          "p95_nearest_rank_ns": 1073852,
+          "sum_known_ns": 21758923,
+          "unknown_count": 0
+        }
+      }
+    }
+  },
+  {
+    "run": 2,
+    "mode": "from-zero",
+    "final_actual_flow": {
+      "balance_identity_verified": true,
+      "booked_reservation_ns": 0,
+      "credited_refill_ns": 7454218663,
+      "discarded_refill_ns": 51397090,
+      "initial_credit_ns": 2000000000,
+      "live_debited_cpu_ns": 7786121005,
+      "live_owners": 0,
+      "paid_cpu_debit_ns": 7789375425,
+      "remaining_paid_credit_ns": 1664843238,
+      "schema": "public-v3-local-actual-cpu-flow-v1",
+      "settled_full_cpu_ns": 7789375425,
+      "settlement_discard_ns": 0,
+      "settlement_residual_cpu_ns": 3254420,
+      "stored_credit_ns": 1664843238,
+      "unsettled_known_live_cpu_ns": 0
+    },
+    "native_service_outcome": {
+      "issued_challenges": 3864,
+      "mutation_cpu_charged_ns": 7789375425,
+      "mutation_full_work_cpu_ns": 3468894996,
+      "mutation_dispatch_excluding_work_cpu_ns": 4320480429
+    },
+    "receiver_by_observed_body_role": {
+      "attack_submit": {
+        "records": 3843,
+        "dispatch_thread_cpu_ns": {
+          "known_count": 3819,
+          "max_ns": 4550147,
+          "min_ns": 1328312,
+          "p50_nearest_rank_ns": 1621299,
+          "p95_nearest_rank_ns": 1849529,
+          "sum_known_ns": 6302846983,
+          "unknown_count": 0
+        },
+        "full_work_thread_cpu_ns": {
+          "known_count": 3819,
+          "max_ns": 2424015,
+          "min_ns": 805221,
+          "p50_nearest_rank_ns": 884930,
+          "p95_nearest_rank_ns": 1032490,
+          "sum_known_ns": 3446134249,
+          "unknown_count": 0
+        }
+      },
+      "client_history": {
+        "records": 21,
+        "dispatch_thread_cpu_ns": {
+          "known_count": 21,
+          "max_ns": 899352,
+          "min_ns": 489881,
+          "p50_nearest_rank_ns": 676749,
+          "p95_nearest_rank_ns": 807374,
+          "sum_known_ns": 14225459,
+          "unknown_count": 0
+        },
+        "full_work_thread_cpu_ns": {
+          "known_count": 0,
+          "max_ns": null,
+          "mean_known_ns": null,
+          "min_ns": null,
+          "p50_nearest_rank_ns": null,
+          "p95_nearest_rank_ns": null,
+          "sum_known_ns": 0,
+          "unknown_count": 0
+        }
+      },
+      "honest_submit": {
+        "records": 21,
+        "dispatch_thread_cpu_ns": {
+          "known_count": 21,
+          "max_ns": 77707343,
+          "min_ns": 60131117,
+          "p50_nearest_rank_ns": 71311253,
+          "p95_nearest_rank_ns": 77110255,
+          "sum_known_ns": 1486528442,
+          "unknown_count": 0
+        },
+        "full_work_thread_cpu_ns": {
+          "known_count": 21,
+          "max_ns": 1150866,
+          "min_ns": 1034243,
+          "p50_nearest_rank_ns": 1087592,
+          "p95_nearest_rank_ns": 1113971,
+          "sum_known_ns": 22760747,
+          "unknown_count": 0
+        }
+      }
+    }
+  },
+  {
+    "run": 2,
+    "mode": "late-product",
+    "final_actual_flow": {
+      "balance_identity_verified": true,
+      "booked_reservation_ns": 0,
+      "credited_refill_ns": 7492442628,
+      "discarded_refill_ns": 12997308,
+      "initial_credit_ns": 2000000000,
+      "live_debited_cpu_ns": 8762526729,
+      "live_owners": 0,
+      "paid_cpu_debit_ns": 8765798936,
+      "remaining_paid_credit_ns": 726643692,
+      "schema": "public-v3-local-actual-cpu-flow-v1",
+      "settled_full_cpu_ns": 8765798936,
+      "settlement_discard_ns": 0,
+      "settlement_residual_cpu_ns": 3272207,
+      "stored_credit_ns": 726643692,
+      "unsettled_known_live_cpu_ns": 0
+    },
+    "native_service_outcome": {
+      "issued_challenges": 3863,
+      "mutation_cpu_charged_ns": 8765798936,
+      "mutation_full_work_cpu_ns": 4258943310,
+      "mutation_dispatch_excluding_work_cpu_ns": 4506855626
+    },
+    "receiver_by_observed_body_role": {
+      "attack_submit": {
+        "records": 3842,
+        "dispatch_thread_cpu_ns": {
+          "known_count": 3819,
+          "max_ns": 4223680,
+          "min_ns": 1580798,
+          "p50_nearest_rank_ns": 1837020,
+          "p95_nearest_rank_ns": 2212681,
+          "sum_known_ns": 7237045018,
+          "unknown_count": 0
+        },
+        "full_work_thread_cpu_ns": {
+          "known_count": 3819,
+          "max_ns": 2526218,
+          "min_ns": 998449,
+          "p50_nearest_rank_ns": 1083596,
+          "p95_nearest_rank_ns": 1349923,
+          "sum_known_ns": 4234715751,
+          "unknown_count": 0
+        }
+      },
+      "client_history": {
+        "records": 21,
+        "dispatch_thread_cpu_ns": {
+          "known_count": 21,
+          "max_ns": 1034934,
+          "min_ns": 516420,
+          "p50_nearest_rank_ns": 686324,
+          "p95_nearest_rank_ns": 1006882,
+          "sum_known_ns": 15051191,
+          "unknown_count": 0
+        },
+        "full_work_thread_cpu_ns": {
+          "known_count": 0,
+          "max_ns": null,
+          "mean_known_ns": null,
+          "min_ns": null,
+          "p50_nearest_rank_ns": null,
+          "p95_nearest_rank_ns": null,
+          "sum_known_ns": 0,
+          "unknown_count": 0
+        }
+      },
+      "honest_submit": {
+        "records": 21,
+        "dispatch_thread_cpu_ns": {
+          "known_count": 21,
+          "max_ns": 90218176,
+          "min_ns": 67186660,
+          "p50_nearest_rank_ns": 72608603,
+          "p95_nearest_rank_ns": 77057145,
+          "sum_known_ns": 1528753918,
+          "unknown_count": 0
+        },
+        "full_work_thread_cpu_ns": {
+          "known_count": 21,
+          "max_ns": 2562763,
+          "min_ns": 1011789,
+          "p50_nearest_rank_ns": 1089325,
+          "p95_nearest_rank_ns": 1124007,
+          "sum_known_ns": 24227559,
+          "unknown_count": 0
+        }
+      }
+    }
+  },
+  {
+    "run": 3,
+    "mode": "baseline",
+    "final_actual_flow": {
+      "balance_identity_verified": true,
+      "booked_reservation_ns": 0,
+      "credited_refill_ns": 1089031842,
+      "discarded_refill_ns": 1319109541,
+      "initial_credit_ns": 2000000000,
+      "live_debited_cpu_ns": 1478958517,
+      "live_owners": 0,
+      "paid_cpu_debit_ns": 1478995302,
+      "remaining_paid_credit_ns": 1610036540,
+      "schema": "public-v3-local-actual-cpu-flow-v1",
+      "settled_full_cpu_ns": 1478995302,
+      "settlement_discard_ns": 0,
+      "settlement_residual_cpu_ns": 36785,
+      "stored_credit_ns": 1610036540,
+      "unsettled_known_live_cpu_ns": 0
+    },
+    "native_service_outcome": {
+      "issued_challenges": 42,
+      "mutation_cpu_charged_ns": 1478995302,
+      "mutation_full_work_cpu_ns": 23035019,
+      "mutation_dispatch_excluding_work_cpu_ns": 1455960283
+    },
+    "receiver_by_observed_body_role": {
+      "client_history": {
+        "records": 21,
+        "dispatch_thread_cpu_ns": {
+          "known_count": 21,
+          "max_ns": 956757,
+          "min_ns": 536250,
+          "p50_nearest_rank_ns": 682478,
+          "p95_nearest_rank_ns": 870228,
+          "sum_known_ns": 14621127,
+          "unknown_count": 0
+        },
+        "full_work_thread_cpu_ns": {
+          "known_count": 0,
+          "max_ns": null,
+          "mean_known_ns": null,
+          "min_ns": null,
+          "p50_nearest_rank_ns": null,
+          "p95_nearest_rank_ns": null,
+          "sum_known_ns": 0,
+          "unknown_count": 0
+        }
+      },
+      "honest_submit": {
+        "records": 21,
+        "dispatch_thread_cpu_ns": {
+          "known_count": 21,
+          "max_ns": 105982436,
+          "min_ns": 59373839,
+          "p50_nearest_rank_ns": 69029961,
+          "p95_nearest_rank_ns": 75857626,
+          "sum_known_ns": 1478995302,
+          "unknown_count": 0
+        },
+        "full_work_thread_cpu_ns": {
+          "known_count": 21,
+          "max_ns": 1147302,
+          "min_ns": 1056576,
+          "p50_nearest_rank_ns": 1099500,
+          "p95_nearest_rank_ns": 1146470,
+          "sum_known_ns": 23035019,
+          "unknown_count": 0
+        }
+      }
+    }
+  },
+  {
+    "run": 3,
+    "mode": "from-zero",
+    "final_actual_flow": {
+      "balance_identity_verified": true,
+      "booked_reservation_ns": 0,
+      "credited_refill_ns": 7457203437,
+      "discarded_refill_ns": 48191285,
+      "initial_credit_ns": 2000000000,
+      "live_debited_cpu_ns": 7651589401,
+      "live_owners": 0,
+      "paid_cpu_debit_ns": 7654852567,
+      "remaining_paid_credit_ns": 1802350870,
+      "schema": "public-v3-local-actual-cpu-flow-v1",
+      "settled_full_cpu_ns": 7654852567,
+      "settlement_discard_ns": 0,
+      "settlement_residual_cpu_ns": 3263166,
+      "stored_credit_ns": 1802350870,
+      "unsettled_known_live_cpu_ns": 0
+    },
+    "native_service_outcome": {
+      "issued_challenges": 3863,
+      "mutation_cpu_charged_ns": 7654852567,
+      "mutation_full_work_cpu_ns": 3481620623,
+      "mutation_dispatch_excluding_work_cpu_ns": 4173231944
+    },
+    "receiver_by_observed_body_role": {
+      "attack_submit": {
+        "records": 3842,
+        "dispatch_thread_cpu_ns": {
+          "known_count": 3819,
+          "max_ns": 4463287,
+          "min_ns": 1361741,
+          "p50_nearest_rank_ns": 1588569,
+          "p95_nearest_rank_ns": 1836659,
+          "sum_known_ns": 6197901269,
+          "unknown_count": 0
+        },
+        "full_work_thread_cpu_ns": {
+          "known_count": 3819,
+          "max_ns": 2261624,
+          "min_ns": 829017,
+          "p50_nearest_rank_ns": 887573,
+          "p95_nearest_rank_ns": 1031299,
+          "sum_known_ns": 3458678706,
+          "unknown_count": 0
+        }
+      },
+      "client_history": {
+        "records": 21,
+        "dispatch_thread_cpu_ns": {
+          "known_count": 21,
+          "max_ns": 1119530,
+          "min_ns": 487377,
+          "p50_nearest_rank_ns": 667125,
+          "p95_nearest_rank_ns": 752683,
+          "sum_known_ns": 14037468,
+          "unknown_count": 0
+        },
+        "full_work_thread_cpu_ns": {
+          "known_count": 0,
+          "max_ns": null,
+          "mean_known_ns": null,
+          "min_ns": null,
+          "p50_nearest_rank_ns": null,
+          "p95_nearest_rank_ns": null,
+          "sum_known_ns": 0,
+          "unknown_count": 0
+        }
+      },
+      "honest_submit": {
+        "records": 21,
+        "dispatch_thread_cpu_ns": {
+          "known_count": 21,
+          "max_ns": 83836575,
+          "min_ns": 63573693,
+          "p50_nearest_rank_ns": 68927426,
+          "p95_nearest_rank_ns": 76605269,
+          "sum_known_ns": 1456951298,
+          "unknown_count": 0
+        },
+        "full_work_thread_cpu_ns": {
+          "known_count": 21,
+          "max_ns": 1154492,
+          "min_ns": 1059780,
+          "p50_nearest_rank_ns": 1087702,
+          "p95_nearest_rank_ns": 1139420,
+          "sum_known_ns": 22941917,
+          "unknown_count": 0
+        }
+      }
+    }
+  },
+  {
+    "run": 3,
+    "mode": "late-product",
+    "final_actual_flow": {
+      "balance_identity_verified": true,
+      "booked_reservation_ns": 0,
+      "credited_refill_ns": 7493679172,
+      "discarded_refill_ns": 12662594,
+      "initial_credit_ns": 2000000000,
+      "live_debited_cpu_ns": 8852501281,
+      "live_owners": 0,
+      "paid_cpu_debit_ns": 8855907818,
+      "remaining_paid_credit_ns": 637771354,
+      "schema": "public-v3-local-actual-cpu-flow-v1",
+      "settled_full_cpu_ns": 8855907818,
+      "settlement_discard_ns": 0,
+      "settlement_residual_cpu_ns": 3406537,
+      "stored_credit_ns": 637771354,
+      "unsettled_known_live_cpu_ns": 0
+    },
+    "native_service_outcome": {
+      "issued_challenges": 3865,
+      "mutation_cpu_charged_ns": 8855907818,
+      "mutation_full_work_cpu_ns": 4277609143,
+      "mutation_dispatch_excluding_work_cpu_ns": 4578298675
+    },
+    "receiver_by_observed_body_role": {
+      "attack_submit": {
+        "records": 3843,
+        "dispatch_thread_cpu_ns": {
+          "known_count": 3820,
+          "max_ns": 5214277,
+          "min_ns": 1617011,
+          "p50_nearest_rank_ns": 1854255,
+          "p95_nearest_rank_ns": 2223616,
+          "sum_known_ns": 7311254805,
+          "unknown_count": 0
+        },
+        "full_work_thread_cpu_ns": {
+          "known_count": 3820,
+          "max_ns": 3058822,
+          "min_ns": 1000282,
+          "p50_nearest_rank_ns": 1088413,
+          "p95_nearest_rank_ns": 1334981,
+          "sum_known_ns": 4254733833,
+          "unknown_count": 0
+        }
+      },
+      "client_history": {
+        "records": 21,
+        "dispatch_thread_cpu_ns": {
+          "known_count": 21,
+          "max_ns": 1034273,
+          "min_ns": 566746,
+          "p50_nearest_rank_ns": 723399,
+          "p95_nearest_rank_ns": 997869,
+          "sum_known_ns": 15570565,
+          "unknown_count": 0
+        },
+        "full_work_thread_cpu_ns": {
+          "known_count": 0,
+          "max_ns": null,
+          "mean_known_ns": null,
+          "min_ns": null,
+          "p50_nearest_rank_ns": null,
+          "p95_nearest_rank_ns": null,
+          "sum_known_ns": 0,
+          "unknown_count": 0
+        }
+      },
+      "honest_submit": {
+        "records": 21,
+        "dispatch_thread_cpu_ns": {
+          "known_count": 21,
+          "max_ns": 80938723,
+          "min_ns": 67277486,
+          "p50_nearest_rank_ns": 73651746,
+          "p95_nearest_rank_ns": 77034718,
+          "sum_known_ns": 1544653013,
+          "unknown_count": 0
+        },
+        "full_work_thread_cpu_ns": {
+          "known_count": 21,
+          "max_ns": 1151738,
+          "min_ns": 1015605,
+          "p50_nearest_rank_ns": 1086150,
+          "p95_nearest_rank_ns": 1133401,
+          "sum_known_ns": 22875310,
+          "unknown_count": 0
+        }
+      }
+    }
+  }
+]

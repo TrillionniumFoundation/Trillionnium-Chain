@@ -1,0 +1,238 @@
+[
+  {
+    "name": "preflight-before-fix",
+    "command": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "returncode": 0,
+    "seconds": 0.08521574595943093,
+    "log_sha256": "aad5fe72fdfb2416334d058d0ea1ebb520cd1960706c97cc9697ce6becd58ac2"
+  },
+  {
+    "name": "admission-parent-reuse-fix-after-red.patch-check",
+    "command": [
+      "git",
+      "apply",
+      "--check",
+      "/tmp/trnm-pn-convergence-20261023/evidence-root/final-closure-patches/admission-parent-reuse-fix-after-red.patch"
+    ],
+    "returncode": 0,
+    "seconds": 0.007434443919919431,
+    "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "admission-parent-reuse-fix-after-red.patch-apply",
+    "command": [
+      "git",
+      "apply",
+      "/tmp/trnm-pn-convergence-20261023/evidence-root/final-closure-patches/admission-parent-reuse-fix-after-red.patch"
+    ],
+    "returncode": 0,
+    "seconds": 0.00607741205021739,
+    "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "pn-native-growth-release-ci-v1.patch-check",
+    "command": [
+      "git",
+      "apply",
+      "--check",
+      "/tmp/trnm-pn-convergence-20261023/evidence-root/final-closure-patches/pn-native-growth-release-ci-v1.patch"
+    ],
+    "returncode": 0,
+    "seconds": 0.0048023819690570235,
+    "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "pn-native-growth-release-ci-v1.patch-apply",
+    "command": [
+      "git",
+      "apply",
+      "/tmp/trnm-pn-convergence-20261023/evidence-root/final-closure-patches/pn-native-growth-release-ci-v1.patch"
+    ],
+    "returncode": 0,
+    "seconds": 0.006248923018574715,
+    "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "ci-shell-syntax",
+    "command": [
+      "bash",
+      "-n",
+      "scripts/ci/ci_job.sh"
+    ],
+    "returncode": 0,
+    "seconds": 0.004578806925565004,
+    "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "ci-contract",
+    "command": [
+      "python3",
+      "scripts/ci/check_ci_contract.py"
+    ],
+    "returncode": 0,
+    "seconds": 0.13224783400073647,
+    "log_sha256": "9dc9c460bfb8a0da9730ff9e6acc8d76cbdf3bfd873c933e273c775ada8233b3"
+  },
+  {
+    "name": "ci-contract-negative",
+    "command": [
+      "python3",
+      "scripts/ci/test_ci_contract.py",
+      "-v"
+    ],
+    "returncode": 0,
+    "seconds": 8.992479335982352,
+    "log_sha256": "a6a1450d70c46f8e30e0eb5fe67ee0db9c214677d091aff9f96452a0c14e927d"
+  },
+  {
+    "name": "ci-shell-execution",
+    "command": [
+      "python3",
+      "scripts/ci/test_ci_execution.py",
+      "-v"
+    ],
+    "returncode": 0,
+    "seconds": 24.708913719980046,
+    "log_sha256": "2c130c4cc613bab25e55d122db8d4bfc935ba8e2c99a4181e3b964894367cdc4"
+  },
+  {
+    "name": "rust-format",
+    "command": [
+      "cargo",
+      "fmt",
+      "--all"
+    ],
+    "returncode": 0,
+    "seconds": 16.40550908492878,
+    "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "preflight-test-repair",
+    "command": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "returncode": 0,
+    "seconds": 0.11741710093338042,
+    "log_sha256": "aad5fe72fdfb2416334d058d0ea1ebb520cd1960706c97cc9697ce6becd58ac2"
+  },
+  {
+    "name": "test-repair-check",
+    "command": [
+      "git",
+      "apply",
+      "--check",
+      "/tmp/trnm-pn-convergence-20261023/evidence-root/final-closure-patches/admission-parent-reuse-test-repair.patch"
+    ],
+    "returncode": 0,
+    "seconds": 0.004529702942818403,
+    "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "test-repair-apply",
+    "command": [
+      "git",
+      "apply",
+      "/tmp/trnm-pn-convergence-20261023/evidence-root/final-closure-patches/admission-parent-reuse-test-repair.patch"
+    ],
+    "returncode": 0,
+    "seconds": 0.0038672289811074734,
+    "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "rust-format-after-test-repair",
+    "command": [
+      "cargo",
+      "fmt",
+      "--all"
+    ],
+    "returncode": 0,
+    "seconds": 17.035092775011435,
+    "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "parent-reuse-green-native",
+    "command": [
+      "cargo",
+      "test",
+      "--release",
+      "--locked",
+      "--offline",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "store::admission_parent_tests::",
+      "--",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "returncode": 0,
+    "seconds": 255.837027598056,
+    "log_sha256": "c8f60d8a0bc32dee59595493e8810c4b4eeb11997ecb236ad6188ea069a5157d"
+  },
+  {
+    "name": "original-root-refusal-tests",
+    "command": [
+      "cargo",
+      "test",
+      "--release",
+      "--locked",
+      "--offline",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "root_rejection_cache",
+      "--",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "returncode": 0,
+    "seconds": 6.45528860995546,
+    "log_sha256": "2029647a0a141371a4e6d901d6084a468a2e1273e2c34f5b9d1ff6df7d152bc8"
+  },
+  {
+    "name": "strict-workspace-clippy",
+    "command": [
+      "cargo",
+      "clippy",
+      "--locked",
+      "--offline",
+      "--workspace",
+      "--all-targets",
+      "--all-features",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "returncode": 0,
+    "seconds": 130.3710321629187,
+    "log_sha256": "4f74f6be5e03151bb07ccc25aa02e1d62dac207c3874a297071f7349d7274a24"
+  },
+  {
+    "name": "rust-format-check",
+    "command": [
+      "cargo",
+      "fmt",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "returncode": 0,
+    "seconds": 17.487066624918953,
+    "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "diff-check",
+    "command": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "returncode": 0,
+    "seconds": 0.06606173911131918,
+    "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+]
