@@ -445,6 +445,190 @@ fn native_growth_v2_signed_branches_nonce_obligations_and_cold_reopen() {
 }
 
 #[test]
+fn native_growth_v2_exact_packet_observation_binds_bytes_context_and_active_snapshot() {
+    let dir = tempfile::tempdir().unwrap();
+    let settings = settings();
+    let mut node =
+        Node::open_with_permanent_account_growth_v2(dir.path(), settings.clone()).unwrap();
+    let packet = make(
+        &node,
+        settings.genesis(),
+        vec![transfer(&settings, 0, 1, public(9), 1000)],
+    );
+    let initial = rows(&node.db);
+    let absent = node.growth_exact_packet_observation(&packet).unwrap();
+    assert_eq!(absent["stored_exact"], false);
+    assert_eq!(absent["active_chain_member"], false);
+    assert!(absent["block_height"].is_null());
+    assert!(absent["accepted_task"].is_null());
+    assert_eq!(rows(&node.db), initial);
+
+    let id = admit(&mut node, &packet);
+    let retained = rows(&node.db);
+    let changes = node.db.total_changes();
+    let exact = node.growth_exact_packet_observation(&packet).unwrap();
+    assert_eq!(
+        exact["schema"],
+        "pon-native-exact-growth-packet-observation-v1"
+    );
+    assert_eq!(exact["packet_profile"], "PNP2");
+    assert_eq!(exact["state_profile"], limits::PROFILE);
+    assert_eq!(exact["network"], hex::encode(settings.network()));
+    assert_eq!(exact["parameters"], hex::encode(settings.parameters()));
+    assert_eq!(exact["genesis"], hex::encode(settings.genesis()));
+    assert_eq!(exact["block"], hex::encode(id));
+    assert_eq!(exact["stored_exact"], true);
+    assert_eq!(exact["active_chain_member"], true);
+    assert_eq!(exact["active_depth"], 0);
+    assert_eq!(exact["active_work_depth_hex"], hex::encode([0u8; 64]));
+    assert_eq!(exact["generation"], node.active().unwrap().1);
+    assert!(exact["accepted_task"].is_null());
+    assert_eq!(exact["local_target_only"], true);
+    for key in [
+        "global_absence_authority",
+        "confirmation_authority",
+        "finality_authority",
+        "execution_authority",
+        "production_activation",
+    ] {
+        assert_eq!(exact[key], false);
+    }
+    assert_eq!(node.db.total_changes(), changes);
+    assert_eq!(rows(&node.db), retained);
+
+    // PNP2 identity includes the trace, not every W1 byte. An unchanged ID
+    // cannot make changed proof bytes count as the exact retained packet.
+    let mut changed = packet.clone();
+    changed.proof[0] ^= 1;
+    assert_eq!(changed.id().unwrap(), id);
+    assert_eq!(
+        node.growth_exact_packet_observation(&changed)
+            .unwrap_err()
+            .to_string(),
+        "DUPLICATE_CONTENT"
+    );
+    let mut foreign = packet.clone();
+    foreign.header.ledger.network[0] ^= 1;
+    assert_eq!(
+        node.growth_exact_packet_observation(&foreign)
+            .unwrap_err()
+            .to_string(),
+        "NETWORK"
+    );
+    assert_eq!(rows(&node.db), retained);
+
+    let child = make(&node, id, vec![]);
+    let child_id = admit(&mut node, &child);
+    let deeper = node.growth_exact_packet_observation(&packet).unwrap();
+    assert_eq!(deeper["active_depth"], 1);
+    assert_eq!(
+        deeper["active_work_depth_hex"],
+        hex::encode(
+            consensus::required_work(child.header.ledger.target)
+                .unwrap()
+                .bytes()
+        )
+    );
+    assert_eq!(deeper["active_membership_sql_lookups"], 3);
+    let tx = node.db.unchecked_transaction().unwrap();
+    assert_eq!(
+        node.growth_active_member(child_id, id, 1, 1)
+            .unwrap_err()
+            .to_string(),
+        "GROWTH_MEMBERSHIP_BUDGET"
+    );
+    tx.rollback().unwrap();
+
+    let mut fork = settings.genesis();
+    for _ in 0..3 {
+        let next = make(&node, fork, vec![]);
+        fork = node.admit_growth(&next, 100_000).unwrap();
+    }
+    assert_eq!(node.activate(fork).unwrap(), fork);
+    let before = rows(&node.db);
+    let inactive = node.growth_exact_packet_observation(&packet).unwrap();
+    assert_eq!(inactive["stored_exact"], true);
+    assert_eq!(inactive["active_chain_member"], false);
+    assert!(inactive["active_depth"].is_null());
+    assert!(inactive["active_work_depth_hex"].is_null());
+    assert!(inactive["accepted_task"].is_null());
+    assert_ne!(inactive["generation"], exact["generation"]);
+    assert_eq!(rows(&node.db), before);
+    drop(node);
+    let node = Node::open_with_permanent_account_growth_v2(dir.path(), settings).unwrap();
+    assert_eq!(
+        node.growth_exact_packet_observation(&packet).unwrap(),
+        inactive
+    );
+    assert_eq!(rows(&node.db), before);
+}
+
+#[test]
+fn native_growth_v2_packet_observer_opens_read_only_without_recovering() {
+    let dir = tempfile::tempdir().unwrap();
+    let settings = settings();
+    let missing = dir.path().join("missing");
+    assert!(Node::open_growth_packet_observer(&missing, settings.clone()).is_err());
+    assert!(!missing.exists());
+    let mut node =
+        Node::open_with_permanent_account_growth_v2(dir.path(), settings.clone()).unwrap();
+    let packet = make(&node, settings.genesis(), vec![]);
+    // Admission can survive a lost acknowledgement before activation. A status
+    // read must report the actual old selection, not finish the owner's write.
+    let id = node.admit_growth(&packet, 100_000).unwrap();
+    assert_eq!(node.active().unwrap(), (settings.genesis(), 0));
+    let before = rows(&node.db);
+    drop(node);
+    let observer = Node::open_growth_packet_observer(dir.path(), settings.clone()).unwrap();
+    assert_eq!(observer.active().unwrap(), (settings.genesis(), 0));
+    let result = observer.growth_exact_packet_observation(&packet).unwrap();
+    assert_eq!(result["stored_exact"], true);
+    assert_eq!(result["active_chain_member"], false);
+    assert_eq!(result["generation"], 0);
+    assert_eq!(observer.db.total_changes(), 0);
+    assert!(observer
+        .db
+        .execute("UPDATE active SET generation=generation", [])
+        .is_err());
+    assert_eq!(rows(&observer.db), before);
+    drop(observer);
+
+    // The ordinary writer retains its original recovery behavior.
+    let node = Node::open_with_permanent_account_growth_v2(dir.path(), settings.clone()).unwrap();
+    assert_eq!(node.active().unwrap(), (id, 1));
+    node.db.execute("UPDATE reorg SET done=0", []).unwrap();
+    let pending = rows(&node.db);
+    drop(node);
+    let error = match Node::open_growth_packet_observer(dir.path(), settings) {
+        Ok(_) => panic!("incomplete reorg must remain unavailable to the observer"),
+        Err(error) => error,
+    };
+    assert_eq!(error.to_string(), "GROWTH_REORG_JOURNAL");
+    let database = Connection::open(dir.path().join("native.sqlite")).unwrap();
+    assert_eq!(rows(&database), pending);
+}
+
+#[test]
+fn native_growth_v2_exact_packet_observation_refuses_foreign_epoch() {
+    let dir = tempfile::tempdir().unwrap();
+    let settings = settings();
+    let mut node =
+        Node::open_with_permanent_account_growth_v2(dir.path(), settings.clone()).unwrap();
+    let packet = make(&node, settings.genesis(), vec![]);
+    admit(&mut node, &packet);
+    let foreign = Connection::open(dir.path().join("native.sqlite")).unwrap();
+    foreign
+        .execute("UPDATE active SET generation=generation+1", [])
+        .unwrap();
+    assert_eq!(
+        node.growth_exact_packet_observation(&packet)
+            .unwrap_err()
+            .to_string(),
+        "GROWTH_STORAGE_EPOCH_CHANGED"
+    );
+}
+
+#[test]
 fn native_growth_v2_real_task_escrow_settlement_and_expiry() {
     let dir = tempfile::tempdir().unwrap();
     let settings = settings();
@@ -506,6 +690,23 @@ fn native_growth_v2_real_task_escrow_settlement_and_expiry() {
         &second,
     );
     let second_id = admit(&mut node, &second);
+    let exact = node.growth_exact_packet_observation(&second).unwrap();
+    assert_eq!(exact["accepted_task"]["task_id"], hex::encode(task));
+    assert_eq!(exact["accepted_task"]["owner"], hex::encode(public(0)));
+    assert_eq!(exact["accepted_task"]["provider"], hex::encode(public(1)));
+    assert_eq!(exact["accepted_task"]["output_sha256"], hex::encode(output));
+    assert_eq!(exact["accepted_task"]["accepted_in_exact_packet"], true);
+    assert_eq!(exact["accepted_task"]["current_status"], "settled");
+    assert_eq!(
+        exact["accepted_task"]["accept_tx_id"],
+        hex::encode(
+            Envelope::decode(&second.transactions[1])
+                .unwrap()
+                .id()
+                .unwrap()
+        )
+    );
+    assert!(node.growth_exact_packet_observation(&first).unwrap()["accepted_task"].is_null());
     assert_reference(&node, second_id, &state);
     assert_eq!(
         node.growth_observe(second_id)
@@ -528,6 +729,10 @@ fn native_growth_v2_real_task_escrow_settlement_and_expiry() {
         fork = node.admit_growth(&packet, 100_000).unwrap();
     }
     node.activate(fork).unwrap();
+    let reverted = node.growth_exact_packet_observation(&second).unwrap();
+    assert_eq!(reverted["stored_exact"], true);
+    assert_eq!(reverted["active_chain_member"], false);
+    assert!(reverted["accepted_task"].is_null());
     assert_eq!(
         node.growth_observe(fork).unwrap().commitment.escrow_balance,
         0

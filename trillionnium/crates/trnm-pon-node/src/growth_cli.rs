@@ -66,6 +66,7 @@ pub(super) fn run(command: &str, args: &BTreeMap<String, String>) -> Result<Valu
             "--transactions --timestamp --output --parent --miner --search-attempts --logical-now"
         }
         "growth-submit" => "--packet --packet-stdin --logical-now",
+        "growth-packet-status" => "--packet --packet-stdin",
         "growth-export" => "--block --output",
         "growth-activate" => "--block",
         _ => return Err("GROWTH_COMMAND".into()),
@@ -102,11 +103,14 @@ pub(super) fn run(command: &str, args: &BTreeMap<String, String>) -> Result<Valu
     } else {
         None
     };
-    let supplied = if command == "growth-submit" {
+    let supplied = if matches!(command, "growth-submit" | "growth-packet-status") {
         Some(GrowthPacket::decode(&packet_input(args)?)?)
     } else {
         None
     };
+    if command == "growth-packet-status" && !path.join("native.sqlite").is_file() {
+        return Err("GROWTH_PACKET_STATUS_EXISTING_STORE_REQUIRED".into());
+    }
     let owners = if command == "growth-witness" {
         let raw: Vec<String> = serde_json::from_slice(&read(need(args, "--owners")?, 80_000)?)?;
         if raw.is_empty() || raw.len() > limits::MAX_WITNESS_ACCOUNTS {
@@ -155,7 +159,11 @@ pub(super) fn run(command: &str, args: &BTreeMap<String, String>) -> Result<Valu
             .map_err(|_| Error::from("CLOCK"))?
             .as_secs(),
     )?;
-    let mut node = Node::open_with_permanent_account_growth_v2(path, settings)?;
+    let mut node = if command == "growth-packet-status" {
+        Node::open_growth_packet_observer(path, settings)?
+    } else {
+        Node::open_with_permanent_account_growth_v2(path, settings)?
+    };
     let result = match command {
         "growth-status" => status(&node)?,
         "growth-recover" => {
@@ -209,6 +217,9 @@ pub(super) fn run(command: &str, args: &BTreeMap<String, String>) -> Result<Valu
             let id = node.admit_growth(&packet, now)?;
             let active = node.activate(id)?;
             json!({"block":hex::encode(id),"admitted":true,"active":hex::encode(active),"state":status(&node)?})
+        }
+        "growth-packet-status" => {
+            node.growth_exact_packet_observation(&supplied.ok_or("GROWTH_PACKET_REQUIRED")?)?
         }
         "growth-export" => {
             let packet = node.growth_packet(block.ok_or("GROWTH_BLOCK_REQUIRED")?)?;

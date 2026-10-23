@@ -2,12 +2,13 @@
 //! selected development namespace. Historical CLI/packet namespaces stay distinct.
 use serde_json::{json, Value};
 use std::{
+    io::Write,
     path::Path,
-    process::{Command, Output},
+    process::{Command, Output, Stdio},
 };
 use trnm_crypto_primitives::{sign_hex, signing_key_from_hex};
 use trnm_mvcc_fee::continuity_v1;
-use trnm_pon_node::{development_public, Settings};
+use trnm_pon_node::{development_public, GrowthPacket, Settings};
 use trnm_protocol::pon_wire::{hash, Envelope};
 
 const NAMESPACE: &str = "native-growth-cli-v2";
@@ -40,6 +41,17 @@ fn rejected(output: Output, text: &str) {
         "{}",
         String::from_utf8_lossy(&output.stderr)
     );
+}
+fn packet_status(store: &Path, packet: &[u8]) -> Output {
+    let mut child = command("growth-packet-status", store)
+        .arg("--packet-stdin")
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .spawn()
+        .unwrap();
+    child.stdin.take().unwrap().write_all(packet).unwrap();
+    child.wait_with_output().unwrap()
 }
 fn signed_transfer() -> String {
     let settings = Settings::development_with_profiles(
@@ -109,6 +121,59 @@ fn native_growth_v2_cli_signed_packet_remote_admission_and_cold_current_snapshot
             .unwrap(),
     );
     assert_eq!(received["result"]["state"], mined["result"]["state"]);
+    // Independent cold process lookup also handles a lost submit response;
+    // the caller supplies the original bytes, never a retagged PNP1 receipt.
+    let bytes = std::fs::read(&packet).unwrap();
+    let observed = accepted(packet_status(&validator, &bytes));
+    let observed = &observed["result"];
+    assert_eq!(
+        observed["schema"],
+        "pon-native-exact-growth-packet-observation-v1"
+    );
+    assert_eq!(observed["packet_profile"], "PNP2");
+    assert_eq!(
+        observed["state_profile"],
+        "permanent-account-growth-native-v2"
+    );
+    assert_eq!(observed["block"], mined["result"]["block"]);
+    assert_eq!(observed["stored_exact"], true);
+    assert_eq!(observed["active_chain_member"], true);
+    assert_eq!(observed["active_depth"], 0);
+    assert!(observed["accepted_task"].is_null());
+    for field in ["network", "parameters", "genesis", "generation"] {
+        assert_eq!(observed[field], received["result"]["state"][field]);
+    }
+    let mut changed = GrowthPacket::decode(&bytes).unwrap();
+    changed.proof[0] ^= 1;
+    rejected(
+        packet_status(&validator, &changed.encode().unwrap()),
+        "DUPLICATE_CONTENT",
+    );
+    let missing = dir.path().join("status-must-not-create");
+    rejected(
+        packet_status(&missing, &bytes),
+        "GROWTH_PACKET_STATUS_EXISTING_STORE_REQUIRED",
+    );
+    assert!(!missing.exists());
+    let mut wrong_context = Command::new(env!("CARGO_BIN_EXE_trnm-pon-node"));
+    rejected(
+        wrong_context
+            .args([
+                "growth-packet-status",
+                "--development",
+                "--genesis-time",
+                "1",
+                "--growth-namespace",
+                "foreign-growth-cli-v2",
+            ])
+            .arg("--store")
+            .arg(&validator)
+            .arg("--packet")
+            .arg(&packet)
+            .output()
+            .unwrap(),
+        "STORAGE_CONTEXT",
+    );
     let current = accepted(command("growth-recover", &validator).output().unwrap());
     assert_eq!(current["result"], mined["result"]["state"]);
     let account = accepted(
@@ -176,6 +241,14 @@ fn native_growth_v2_cli_rejects_ambiguous_or_malformed_inputs_before_creating_st
     rejected(
         command("growth-status", &store)
             .args(["--state-backend", "legacy-v2"])
+            .output()
+            .unwrap(),
+        "GROWTH_OPTION",
+    );
+    assert!(!store.exists());
+    rejected(
+        command("growth-packet-status", &store)
+            .args(["--state-backend", "authenticated-v1"])
             .output()
             .unwrap(),
         "GROWTH_OPTION",

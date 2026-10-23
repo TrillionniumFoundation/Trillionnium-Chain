@@ -576,7 +576,7 @@ impl Node {
     /// Cold integrity is deliberately separate from request latency. Every retained
     /// branch is reexecuted against its parent witness, and every retained root is
     /// checked against real COW nodes before the operation epoch is published.
-    pub(in crate::store) fn growth_cold_open(&mut self) -> Result<()> {
+    pub(in crate::store) fn growth_cold_open(&mut self, recover: bool) -> Result<()> {
         profile::require(&self.settings)?;
         let read = self.db.unchecked_transaction()?;
         let version: u64 = self.db.query_row("PRAGMA data_version", [], |r| r.get(0))?;
@@ -672,7 +672,9 @@ impl Node {
             version,
             schema: expected_schema,
         });
-        self.growth_recover()?;
+        if recover {
+            self.growth_recover()?;
+        }
         Ok(())
     }
 }

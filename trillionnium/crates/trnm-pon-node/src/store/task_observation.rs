@@ -3,6 +3,7 @@
 use super::Node;
 use crate::{ensure, sequence_root, Error, Packet, Result};
 use serde::Serialize;
+use trnm_mvcc_fee::pon_executor::State;
 use trnm_protocol::pon_wire::{Envelope, Hash};
 
 #[derive(Serialize)]
@@ -17,6 +18,23 @@ pub(super) struct AcceptedTaskObservation {
     current_status: &'static str,
 }
 
+fn unique_acceptance(transactions: &[Vec<u8>]) -> Result<Option<Envelope>> {
+    let mut acceptance = None;
+    for raw in transactions {
+        let tx = Envelope::decode(raw)
+            .map_err(|_| Error::from("TRANSACTION_CODEC").local_integrity())?;
+        if tx.tag == 5 {
+            // A multi-accept block cannot name one unambiguous upgrade in this
+            // optional convenience observation.
+            if acceptance.is_some() {
+                return Ok(None);
+            }
+            acceptance = Some(tx);
+        }
+    }
+    Ok(acceptance)
+}
+
 impl Node {
     pub(super) fn accepted_task_observation(
         &self,
@@ -29,20 +47,7 @@ impl Node {
             "ROOT",
         )
         .map_err(Error::local_integrity)?;
-        let mut acceptance = None;
-        for raw in &packet.transactions {
-            let tx = Envelope::decode(raw)
-                .map_err(|_| Error::from("TRANSACTION_CODEC").local_integrity())?;
-            if tx.tag == 5 {
-                // A multi-accept block remains a valid block, but cannot name one
-                // unambiguous upgrade for this optional convenience observation.
-                if acceptance.is_some() {
-                    return Ok(None);
-                }
-                acceptance = Some(tx);
-            }
-        }
-        let Some(tx) = acceptance else {
+        let Some(tx) = unique_acceptance(&packet.transactions)? else {
             return Ok(None);
         };
         let (state_tip, state_generation, state) = self.read_active()?;
@@ -50,6 +55,27 @@ impl Node {
             (tip, generation) == (state_tip, state_generation),
             "STALE_VIEW",
         )?;
+        self.accepted_task_in_state(&tx, &state)
+    }
+
+    /// The growth observer has already checked the exact retained transition
+    /// and obtains this working partition from its active read snapshot.
+    pub(super) fn accepted_task_from_working(
+        &self,
+        transactions: &[Vec<u8>],
+        working: &State,
+    ) -> Result<Option<AcceptedTaskObservation>> {
+        let Some(tx) = unique_acceptance(transactions)? else {
+            return Ok(None);
+        };
+        self.accepted_task_in_state(&tx, working)
+    }
+
+    fn accepted_task_in_state(
+        &self,
+        tx: &Envelope,
+        state: &State,
+    ) -> Result<Option<AcceptedTaskObservation>> {
         let task_id = hex::encode(&tx.payload[..32]);
         let Some(task) = state.get(&format!("task:{task_id}")) else {
             // An expired/pruned local record is not a current settlement proof.
