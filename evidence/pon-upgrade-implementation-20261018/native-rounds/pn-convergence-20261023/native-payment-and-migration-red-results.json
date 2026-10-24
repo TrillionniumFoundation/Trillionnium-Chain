@@ -1,0 +1,47 @@
+{
+  "source_head": "3de1dd45300e83a55c1c163534ef600532f28267",
+  "overlay_diff_sha256": "e1a084cf1e02e5ebcc98f54f9634233a6565a46cd24eed072d1504f139cf57cc",
+  "commands": [
+    {
+      "name": "native-payment-budget",
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-service-settlement",
+        "--lib",
+        "native_budget::tests::",
+        "--",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "returncode": 0,
+      "seconds": 14.440286293043755,
+      "log": "/tmp/trnm-pn-convergence-20261023/evidence-root/native-payment-budget.log",
+      "log_sha256": "fd8f3bb8982b6051ddc66af325c158303ce51a68a8bbe9676cadfc88f08744fc"
+    },
+    {
+      "name": "growth-rehearsal-wal-red",
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "store::authenticated_migration::tests::growth_rehearsal_cold_verifier_refuses_wal_archives_without_writes",
+        "--",
+        "--exact",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "returncode": 101,
+      "seconds": 287.1881138300523,
+      "log": "/tmp/trnm-pn-convergence-20261023/evidence-root/growth-rehearsal-wal-red.log",
+      "log_sha256": "5a85d6b00dfcf8283a74308eb31eac105ea1e124c125caf2dc3839772195f34d"
+    }
+  ]
+}

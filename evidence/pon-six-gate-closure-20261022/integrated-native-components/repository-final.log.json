@@ -1,0 +1,7 @@
+{
+  "schema": "exact-original-utf8-log-v1",
+  "original_filename": "repository-final.log",
+  "bytes": 306,
+  "sha256": "d86a1f118bea624c05c974fb1a5042417a97b96d1a91d3b20e3b8822aaf02fe9",
+  "raw_utf8": "{\"activation\": false, \"head\": \"68bd00f5d498ab5ab57bbff526497c0a6ffef28e\", \"local_links\": 1071, \"normal_dependency_edges\": 17, \"result\": \"PASS\", \"runtime_implemented\": false, \"rust_files\": 877, \"source_state\": \"dirty-candidate\", \"tree\": \"476e51c2bc08b0125438a1c8adef8c33a1bb449c\", \"workspace_packages\": 25}\n"
+}

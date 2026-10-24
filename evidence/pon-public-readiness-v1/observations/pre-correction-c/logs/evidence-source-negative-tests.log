@@ -1,0 +1,26 @@
+test_client_receipt_cannot_rebind_source_or_fetch_a_branch (__main__.EvidenceSourceTests.test_client_receipt_cannot_rebind_source_or_fetch_a_branch) ... ok
+test_client_receipt_retains_exact_source_after_squash (__main__.EvidenceSourceTests.test_client_receipt_retains_exact_source_after_squash) ... ok
+test_corpus_cannot_rebind_implementation_or_another_corpus (__main__.EvidenceSourceTests.test_corpus_cannot_rebind_implementation_or_another_corpus) ... ok
+test_corpus_commit_and_tree_each_require_strict_lowercase_sha (__main__.EvidenceSourceTests.test_corpus_commit_and_tree_each_require_strict_lowercase_sha) ... ok
+test_corpus_fetch_does_not_accept_mismatched_tree (__main__.EvidenceSourceTests.test_corpus_fetch_does_not_accept_mismatched_tree) ... ok
+test_corpus_fetch_uses_only_declared_exact_object_and_tree (__main__.EvidenceSourceTests.test_corpus_fetch_uses_only_declared_exact_object_and_tree) ... ok
+test_corpus_matching_implementation_pair_deduplicates (__main__.EvidenceSourceTests.test_corpus_matching_implementation_pair_deduplicates) ... ok
+test_corpus_requires_complete_pair_before_any_command (__main__.EvidenceSourceTests.test_corpus_requires_complete_pair_before_any_command) ... ok
+test_cost_collection_cannot_fetch_branch_or_conflicting_tree (__main__.EvidenceSourceTests.test_cost_collection_cannot_fetch_branch_or_conflicting_tree) ... ok
+test_existing_corpus_is_checked_without_fetch (__main__.EvidenceSourceTests.test_existing_corpus_is_checked_without_fetch) ... ok
+test_existing_objects_do_not_fetch (__main__.EvidenceSourceTests.test_existing_objects_do_not_fetch) ... ok
+test_failed_fetch_does_not_succeed (__main__.EvidenceSourceTests.test_failed_fetch_does_not_succeed) ... ok
+test_invalid_declared_identity_rejects_before_any_command (__main__.EvidenceSourceTests.test_invalid_declared_identity_rejects_before_any_command) ... ok
+test_missing_sources_fetch_only_exact_repo_and_commit (__main__.EvidenceSourceTests.test_missing_sources_fetch_only_exact_repo_and_commit) ... ok
+test_nested_cost_collection_has_its_own_exact_source (__main__.EvidenceSourceTests.test_nested_cost_collection_has_its_own_exact_source) ... ok
+test_new_cost_package_cannot_rebind_existing_source_tree (__main__.EvidenceSourceTests.test_new_cost_package_cannot_rebind_existing_source_tree) ... ok
+test_new_cost_package_rejects_branch_as_measurement (__main__.EvidenceSourceTests.test_new_cost_package_rejects_branch_as_measurement) ... ok
+test_new_cost_package_retains_exact_original_source (__main__.EvidenceSourceTests.test_new_cost_package_retains_exact_original_source) ... ok
+test_no_pair_or_nested_failure_does_not_invent_source (__main__.EvidenceSourceTests.test_no_pair_or_nested_failure_does_not_invent_source) ... ok
+test_non_sha_cannot_be_a_fetch_argument (__main__.EvidenceSourceTests.test_non_sha_cannot_be_a_fetch_argument) ... ok
+test_tree_mismatch_is_not_evidence (__main__.EvidenceSourceTests.test_tree_mismatch_is_not_evidence) ... ok
+
+----------------------------------------------------------------------
+Ran 21 tests in 0.017s
+
+OK
