@@ -1664,6 +1664,18 @@ strict Clippy. No test, native deadline or assertion is removed. This addresses
 observed scheduler cancellation after successful capacity/growth controls; fresh
 hosted execution of the new scheduling remains pending.
 
+The current published Hepta owner-native source is `0cb5b74d` and its actual
+original-base preview is `c9d1b1dd`, with parents `[c38e7727, 0cb5b74d]` and the
+verified merge tree. Its existing full native workflow and Windows diagnostics
+are requested, not passing evidence. The ordinary Linux suite passed 1,042 cases
+with 17 separately accounted inherited qualifications; 832 Python controls and
+six V8 tests against the original checksum-verified sandbox artifact also pass.
+The existing Windows workflow retains both x64 lanes and adds both ARM64 lanes.
+All fifteen receipts require their exact named cases and one complete summary;
+compiler host, Windows architecture and the fixed runner/target pair must agree.
+A wrong test, duplicate result or green total cannot replace an original red.
+See the same [Hepta development obligations](https://github.com/TrillionniumFoundation/hepta-private-ci/blob/0cb5b74d6b1a9a406856969ad889bf270562434e/docs/DEVELOPMENT.md).
+
 Exit: one reproducible source-pair/configuration inventory and per-gate results
 with unresolved items assigned. Block dependent acceptance on required failures;
 continue scoped repair and offline research. Do not rerun historical cleanup or
@@ -1835,6 +1847,19 @@ Public PNP2 intake remains dependent on the shared original CPU/deadline/resourc
 owner and joint PN1/PN2 qualification. Global I05 bounds remain open: the inert
 migration reservation and the separate M09 Cell arena are not ledger-root or WAL
 quotas, and a SQLite page-exhaustion rollback test supplies no retention policy.
+
+The existing Hepta bounded-state dependency also retains the real 1,000-cycle
+SQLite and process-reopen workloads. After earlier 600.030-second SQLite
+timeouts, the original four explicit qualifications pass at `df1b0c7f`: SQLite
+in 554.851 seconds, 1,000 actual child-process cycles in 467.420 seconds and both
+original crash probes. All 279 ordinary memory cases pass. The implementation
+reuses only the same freshly verified journal within one read or the original
+write transaction, retains live lease/state/digest/witness checks and borrows
+five actual row texts. No cross-call cache, workload reduction, deadline change,
+event deletion or new authority is introduced. This closes that finite controlled
+timeout; it does not close the 4,096-event insertion/cold-load boundaries under
+repair, global I05 retention, Windows execution, real-model or public throughput
+acceptance. The existing PN2 owners retain those obligations.
 
 Exit: actual signed native transitions cross 65,536 permanent accounts with
 bounded W and working partition; small-state complete/reference differential
