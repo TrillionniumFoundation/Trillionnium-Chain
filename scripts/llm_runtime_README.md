@@ -508,6 +508,22 @@ controls test frame writing/backpressure and expired-deadline refusal without
 any unit or valid group. These controls prove no charge
 attribution/zero, and do not qualify a model, Store/FinalUse or resource release.
 
+For tiny evidence only, the first live aggregate terminal transition can now
+observe delayed kernel charge teardown until the already-configured original
+absolute 8s deadline. It waits only for exact memory/swap charge-retained errors,
+with at most 801 reconciliation attempts plus the unchanged final snapshot,
+and sleeps of at most 10ms or the remaining time. All other
+failures remain immediate and sticky. The original owner, held pidfd, exact
+wait4, source/limits, empty/no-dying groups, zero memory/swap and equal complete
+counter snapshots are still required before publishing a private fact, inside
+that same deadline. The original blocking system-observation timeout and cleanup
+can leave a failure tail beyond eight seconds; that cannot publish a timely fact.
+No failed capability is retried, counter reset/reclaim or
+limit change occurs, and non-tiny terminal paths do not wait. The retained
+`83ca245b` failure is unchanged; later diagnostic zero is not its success receipt.
+The 66 mandatory ordinary-owner controls in the existing cleanup CI establish
+neither real aggregate acceptance nor outer reconciliation/refund/model results.
+
 The ordinary merge with source `8caf5387` preserves its inherited runtime,
 persistent neural-read worker and default reconciliation helpers, alongside the
 explicit V2–V4 paths and controlled native owner. Reconciliation metadata names

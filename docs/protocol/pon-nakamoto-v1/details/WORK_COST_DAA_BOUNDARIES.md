@@ -124,6 +124,93 @@ that the retained native files have not changed. Old v1 derived reports remain
 historical observations. Fresh native observations are needed before making a
 claim about the current source on either host.
 
+## Original service campaign: complete same-target costs
+
+The original multiprocess service campaign also measures eight legal producer
+implementations on its actual first business packet's task, parent and target.
+The existing [original campaign reader](../../../../scripts/read_original_native_campaign.py)
+now derives `pon-original-native-campaign-work-costs-v1` inside readback-v2.
+Raw campaign and phase schemas remain unchanged. The reader binds the original
+header, transactions, nonce stream, target misses, winning proof digest and
+complete encoded packet digest; it does not independently replay W1 transcripts.
+
+Each implementation retains both cold preparation and **actual four-search
+preparation reuse**, with three samples per mode. A complete cohort has twelve
+winning searches and nineteen complete legal attempts. The process CPU interval
+includes preparation, all misses and winners, allocation, packet encoding and
+diagnostic recording. Nested setup/search clocks describe that inclusive total;
+adding them again would double count. Independent verification is a separate
+interval. The common public workload is fixed; full block preparation, durable
+admission, transport and business confirmation are outside these acquisition
+intervals. A missing subclock remains unknown and never becomes free work.
+
+The retained [native campaign run 39980481947](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/39980481947)
+measured source `4e49725f1b457a422dbb12f620101903c21599d7`, tree
+`0c2c1cfddc42b23b6f45ad6b4e75bb3dd486d7e6`. Its file-list SHA-256 is
+`e75a2d89978341bcae2498ceb7a3930d24d0398771535321aba9b831efcb75c8`;
+all 910 listed files / 312,805,891 bytes and the retained binary digest were
+checked. The new reader's derivation of those old bytes is not a native run of
+the reader's newer source or of subsequent consensus changes.
+
+| Run | Cold generic CPU, 12 winners | Lowest complete fixed cold method | Its CPU, 12 winners | Lowest complete four-search-reuse method | Its CPU, 12 winners |
+| --- | ---: | --- | ---: | --- | ---: |
+| 1 | 12,548,383 ns | maintenance-limb | 8,147,915 ns | maintenance-limb | 8,127,559 ns |
+| 2 | 11,908,507 ns | maintenance-limb | 8,246,068 ns | maintenance-periodic | 8,813,768 ns |
+| 3 | 12,130,782 ns | maintenance-limb | 8,285,211 ns | maintenance-limb | 8,174,315 ns |
+
+Selection compares each fixed implementation over its whole twelve-winner
+cohort. It never combines the fastest individual samples into a fictitious
+strategy. Repeating the same deterministic stream across methods does not
+create additional independent work samples. These observations cover a small
+development target and one maintenance material; they do not measure a
+64-winner reuse horizon, production difficulty, all selectable tasks, GPU/ASIC
+implementations, energy or the globally cheapest valid producer.
+
+The separate from-zero arm starts with public A/B and a claimed zero C, then
+searches fake transcripts without first acquiring a genuine proof. Each actor
+retains 29 hash trials, twelve target hits, complete construction CPU and
+separate full rejection CPU. All full relation diagnostics report `Transcript`.
+Across these retained cohorts, rejection CPU divided by **complete** false
+construction CPU is 5.177922–5.644848. These target hits contribute zero valid
+chainwork. This receiver amplification is a service attack cost, not a faster
+valid mining strategy.
+
+The original three-run service verdict remains PASS on that exact measured
+source and envelope. The independent readback retains 189 submission
+observations and 27 confirmation rounds. Eleven of eighteen hostile rounds
+overlap observed depletion; it does not relabel all eighteen as continuously
+depleted. Earlier failed campaigns remain failed. None of these finite local
+results establishes sustainable WAN TPS or independently operated service.
+
+### Effective-work adversary model
+
+For a declared same-hardware CPU budget fraction `q`, and a fixed legal
+implementation advantage `s = baseline_complete_cost / alternative_complete_cost`,
+the conditional model is:
+
+`q_effective = q * s / (1 - q + q * s)`.
+
+Its half-work budget boundary is `q = 1 / (1 + s)`. This calculation assumes
+linear throughput in allocated CPU, the same task and target distribution,
+equal availability and no unmodeled network or hardware advantage. Neither
+`q` nor network adversarial share was measured. The reader preserves exact
+integer ratios and labels these outputs as assumptions. It excludes invalid
+from-zero target hits from both valid-work numerators.
+
+| Adversary capability | Relevant authority and cost | Remaining qualification |
+| --- | --- | --- |
+| Faster legal structure, product reuse or hardware | Full verifier validity and target-derived cumulative work remain required; compare complete fixed producer strategies | Lowest valid cost over all selectable tasks, realistic reuse horizons, accelerators and task-selection incentives |
+| Cheap fabricated trace or malformed packet flood | Bounded framing and original admission/CPU owners may reject or cancel; cancellation is not a completed invalidity verdict | Whole request cost, sustained depletion, caller fairness and independent WAN service |
+| Valid-work flood with deliberately failing application roots | Valid W1 alone cannot authorize M06 state mutation; original owner still checks parent, context, state and receipt roots | Combined verification/execution cost and honest-service performance on the exact current source |
+| Timestamp manipulation or branch withholding | Actual expected target, median-time rules and cumulative verified work select the branch | Effective-work share, legal timing schedules, propagation and confirmation risk; useful-looking output supplies no extra finality |
+| Reused or stale task/model material | Exact signed task window, parent, output and consumption owners govern usefulness separately from W1 | Actual installed-parent training, evaluation, release closure and next-task use; mining parity does not establish model gain |
+
+This separates statement correctness, computational qualification and honest
+service. The new reader closes complete-denominator and same-input accounting
+gaps for retained observations; cryptographic hardness and public qualification
+remain open until their own evidence exists. No reward, consensus or activation
+flag follows from the sensitivity model.
+
 ## Actual PNW1 timestamp and chainwork boundaries
 
 The existing

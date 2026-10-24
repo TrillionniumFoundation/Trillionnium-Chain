@@ -15,6 +15,11 @@ use sha2::{Digest, Sha256};
 
 use super::*;
 
+#[path = "cache_budget_tests.rs"]
+mod cache_budget;
+#[path = "cache_catalog_tests.rs"]
+mod cache_catalog;
+
 fn context() -> CellContextV1 {
     CellContextV1 {
         family: "native-test-v1".into(),
@@ -59,7 +64,7 @@ impl Peer {
         let stop = shutdown.clone();
         let path = path.to_owned();
         let handle = thread::spawn(move || {
-            let store = CellStoreV1::open(&path)?;
+            let store = CellStoreV1::open(&path, cache_config())?;
             serve_cells(&listener, &store, &stop, limits())
         });
         Self {
@@ -97,13 +102,13 @@ fn origin_offline_independent_replicas_multisource_and_corrupt_cache_repair() {
     let bytes = payload();
     fs::write(&input, &bytes).unwrap();
     let origin_path = directory.path().join("origin.sqlite");
-    let origin = CellStoreV1::open(&origin_path).unwrap();
+    let origin = CellStoreV1::open(&origin_path, cache_config()).unwrap();
     let manifest = origin.pack_file(&input, context(), 16_384).unwrap();
     let publisher = Peer::start(&origin_path);
     let a_path = directory.path().join("a.sqlite");
     let b_path = directory.path().join("b.sqlite");
     for path in [&a_path, &b_path] {
-        let replica = CellStoreV1::open(path).unwrap();
+        let replica = CellStoreV1::open(path, cache_config()).unwrap();
         let (received, report) =
             fetch_cell(&replica, manifest.id(), &[publisher.address], limits()).unwrap();
         assert_eq!(received, manifest);
@@ -123,7 +128,7 @@ fn origin_offline_independent_replicas_multisource_and_corrupt_cache_repair() {
     let a = Peer::start(&a_path);
     let b = Peer::start(&b_path);
     let consumer_path = directory.path().join("consumer.sqlite");
-    let consumer = CellStoreV1::open(&consumer_path).unwrap();
+    let consumer = CellStoreV1::open(&consumer_path, cache_config()).unwrap();
     let (_, report) =
         fetch_cell(&consumer, manifest.id(), &[a.address, b.address], limits()).unwrap();
     assert_eq!(report.supplying_peers.len(), 2);
@@ -157,9 +162,9 @@ fn missing_chunk_never_publishes_partial_payload_and_verified_cache_resumes() {
     let directory = tempfile::tempdir().unwrap();
     let input = directory.path().join("input");
     fs::write(&input, payload()).unwrap();
-    let origin = CellStoreV1::open(&directory.path().join("origin")).unwrap();
+    let origin = CellStoreV1::open(&directory.path().join("origin"), cache_config()).unwrap();
     let manifest = origin.pack_file(&input, context(), 16_384).unwrap();
-    let partial = CellStoreV1::open(&directory.path().join("partial")).unwrap();
+    let partial = CellStoreV1::open(&directory.path().join("partial"), cache_config()).unwrap();
     partial
         .put_manifest(manifest.id(), &manifest.encode())
         .unwrap();
@@ -185,7 +190,7 @@ fn wrong_pins_context_chunks_and_noncanonical_manifests_fail_closed() {
     let directory = tempfile::tempdir().unwrap();
     let input = directory.path().join("input");
     fs::write(&input, payload()).unwrap();
-    let store = CellStoreV1::open(&directory.path().join("store")).unwrap();
+    let store = CellStoreV1::open(&directory.path().join("store"), cache_config()).unwrap();
     let manifest = store.pack_file(&input, context(), 16_384).unwrap();
     assert_eq!(
         CellManifestV1::decode(&manifest.encode()).unwrap(),
@@ -223,7 +228,7 @@ fn release_manifest_requires_complete_context_bound_closure() {
     let second_input = directory.path().join("second");
     fs::write(&first_input, vec![1_u8; 8192]).unwrap();
     fs::write(&second_input, vec![2_u8; 8192]).unwrap();
-    let store = CellStoreV1::open(&directory.path().join("store")).unwrap();
+    let store = CellStoreV1::open(&directory.path().join("store"), cache_config()).unwrap();
     let first = store.pack_file(&first_input, context(), 16_384).unwrap();
     let second = store.pack_file(&second_input, context(), 16_384).unwrap();
     assert_ne!(first.id(), second.id());
@@ -245,7 +250,7 @@ fn release_manifest_requires_complete_context_bound_closure() {
         .verify_release_complete(&release, release_limits())
         .unwrap();
 
-    let missing = CellStoreV1::open(&directory.path().join("missing")).unwrap();
+    let missing = CellStoreV1::open(&directory.path().join("missing"), cache_config()).unwrap();
     missing.put_manifest(first.id(), &first.encode()).unwrap();
     for chunk in first.chunks() {
         missing
@@ -259,7 +264,7 @@ fn release_manifest_requires_complete_context_bound_closure() {
 
     let mut incompatible = context();
     incompatible.runtime = [99; 32];
-    let other = CellStoreV1::open(&directory.path().join("incompatible")).unwrap();
+    let other = CellStoreV1::open(&directory.path().join("incompatible"), cache_config()).unwrap();
     let foreign = other
         .pack_file(&second_input, incompatible, 16_384)
         .unwrap();
@@ -275,12 +280,12 @@ fn release_verification_reserves_aggregate_work_before_reading_payloads() {
     let directory = tempfile::tempdir().unwrap();
     let input = directory.path().join("input");
     fs::write(&input, vec![1_u8; 20_000]).unwrap();
-    let origin = CellStoreV1::open(&directory.path().join("origin")).unwrap();
+    let origin = CellStoreV1::open(&directory.path().join("origin"), cache_config()).unwrap();
     let first = origin.pack_file(&input, context(), 16_384).unwrap();
     fs::write(&input, vec![2_u8; 20_000]).unwrap();
     let second = origin.pack_file(&input, context(), 16_384).unwrap();
     let release = CellReleaseManifestV1::new(context(), vec![first.id(), second.id()]).unwrap();
-    let cache = CellStoreV1::open(&directory.path().join("cache")).unwrap();
+    let cache = CellStoreV1::open(&directory.path().join("cache"), cache_config()).unwrap();
     for manifest in [&first, &second] {
         cache
             .put_manifest(manifest.id(), &manifest.encode())
@@ -383,7 +388,7 @@ fn foreign_database_is_not_repurposed() {
     let path = directory.path().join("ledger.sqlite");
     let foreign = Connection::open(&path).unwrap();
     foreign.execute_batch("CREATE TABLE existing_ledger (value INTEGER); INSERT INTO existing_ledger VALUES (42);").unwrap();
-    assert!(CellStoreV1::open(&path).is_err());
+    assert!(CellStoreV1::open(&path, cache_config()).is_err());
     assert_eq!(
         foreign
             .query_row("SELECT value FROM existing_ledger", [], |row| row
@@ -418,9 +423,9 @@ fn corrupt_network_supplier_is_rejected_and_honest_peer_completes_same_pin() {
     let input = directory.path().join("model");
     fs::write(&input, vec![7; 8192]).unwrap();
     let origin_path = directory.path().join("origin");
-    let origin = CellStoreV1::open(&origin_path).unwrap();
+    let origin = CellStoreV1::open(&origin_path, cache_config()).unwrap();
     let manifest = origin.pack_file(&input, context(), 16_384).unwrap();
-    let receiver = CellStoreV1::open(&directory.path().join("receiver")).unwrap();
+    let receiver = CellStoreV1::open(&directory.path().join("receiver"), cache_config()).unwrap();
     receiver
         .put_manifest(manifest.id(), &manifest.encode())
         .unwrap();
@@ -437,7 +442,7 @@ fn corrupt_network_supplier_is_rejected_and_honest_peer_completes_same_pin() {
     thread.join().unwrap();
     honest.stop();
 
-    let empty = CellStoreV1::open(&directory.path().join("empty")).unwrap();
+    let empty = CellStoreV1::open(&directory.path().join("empty"), cache_config()).unwrap();
     let (oversized, thread) = wrong_peer(Vec::new(), u32::MAX);
     assert!(fetch_cell(&empty, manifest.id(), &[oversized], limits()).is_err());
     assert!(empty.manifest(manifest.id()).unwrap().is_none());
@@ -450,10 +455,10 @@ fn exhausted_transport_budget_keeps_verified_chunks_for_retry() {
     let input = directory.path().join("input");
     fs::write(&input, payload()).unwrap();
     let path = directory.path().join("origin");
-    let origin = CellStoreV1::open(&path).unwrap();
+    let origin = CellStoreV1::open(&path, cache_config()).unwrap();
     let manifest = origin.pack_file(&input, context(), 16_384).unwrap();
     let publisher = Peer::start(&path);
-    let receiver = CellStoreV1::open(&directory.path().join("receiver")).unwrap();
+    let receiver = CellStoreV1::open(&directory.path().join("receiver"), cache_config()).unwrap();
     let mut bounded = limits();
     bounded.parallelism = 1;
     bounded.max_connections = 2;
@@ -480,10 +485,10 @@ fn parallel_fetch_uses_exact_response_budget_and_cache_needs_no_network_bytes() 
     let bytes = payload();
     fs::write(&input, &bytes).unwrap();
     let path = directory.path().join("origin");
-    let origin = CellStoreV1::open(&path).unwrap();
+    let origin = CellStoreV1::open(&path, cache_config()).unwrap();
     let manifest = origin.pack_file(&input, context(), 16_384).unwrap();
     let publisher = Peer::start(&path);
-    let receiver = CellStoreV1::open(&directory.path().join("receiver")).unwrap();
+    let receiver = CellStoreV1::open(&directory.path().join("receiver"), cache_config()).unwrap();
     let mut bounded = limits();
     bounded.parallelism = 4;
     bounded.max_response_bytes = bytes.len() as u64
@@ -507,9 +512,9 @@ fn corrupt_response_exhausts_bytes_before_honest_fallback_and_explicit_retry_rec
     let input = directory.path().join("model");
     fs::write(&input, vec![7; 8192]).unwrap();
     let path = directory.path().join("origin");
-    let origin = CellStoreV1::open(&path).unwrap();
+    let origin = CellStoreV1::open(&path, cache_config()).unwrap();
     let manifest = origin.pack_file(&input, context(), 16_384).unwrap();
-    let receiver = CellStoreV1::open(&directory.path().join("receiver")).unwrap();
+    let receiver = CellStoreV1::open(&directory.path().join("receiver"), cache_config()).unwrap();
     receiver
         .put_manifest(manifest.id(), &manifest.encode())
         .unwrap();
@@ -548,13 +553,16 @@ fn truncated_body_and_rejected_header_charge_only_received_bytes_before_fallback
     let input = directory.path().join("model");
     fs::write(&input, vec![7; 8192]).unwrap();
     let path = directory.path().join("origin");
-    let origin = CellStoreV1::open(&path).unwrap();
+    let origin = CellStoreV1::open(&path, cache_config()).unwrap();
     let manifest = origin.pack_file(&input, context(), 16_384).unwrap();
     let honest = Peer::start(&path);
     for (body, declared) in [(vec![7; 137], 8192), (Vec::new(), u32::MAX)] {
         let rejected_bytes = body.len() as u64 + 9;
-        let receiver =
-            CellStoreV1::open(&directory.path().join(format!("receiver-{declared}"))).unwrap();
+        let receiver = CellStoreV1::open(
+            &directory.path().join(format!("receiver-{declared}")),
+            cache_config(),
+        )
+        .unwrap();
         receiver
             .put_manifest(manifest.id(), &manifest.encode())
             .unwrap();
@@ -579,12 +587,15 @@ fn manifest_header_and_body_obey_response_budget_before_cache_publication() {
     let input = directory.path().join("model");
     fs::write(&input, vec![7; 8192]).unwrap();
     let path = directory.path().join("origin");
-    let origin = CellStoreV1::open(&path).unwrap();
+    let origin = CellStoreV1::open(&path, cache_config()).unwrap();
     let manifest = origin.pack_file(&input, context(), 16_384).unwrap();
     let publisher = Peer::start(&path);
     for maximum in [5, manifest.encode().len() as u64 + 8] {
-        let receiver =
-            CellStoreV1::open(&directory.path().join(format!("receiver-{maximum}"))).unwrap();
+        let receiver = CellStoreV1::open(
+            &directory.path().join(format!("receiver-{maximum}")),
+            cache_config(),
+        )
+        .unwrap();
         let mut bounded = limits();
         bounded.max_response_bytes = maximum;
         let failure =
@@ -622,9 +633,9 @@ fn slow_response_cannot_extend_absolute_deadline_and_honest_peer_keeps_pin() {
     let bytes = vec![7; 8192];
     fs::write(&input, &bytes).unwrap();
     let origin_path = directory.path().join("origin");
-    let origin = CellStoreV1::open(&origin_path).unwrap();
+    let origin = CellStoreV1::open(&origin_path, cache_config()).unwrap();
     let manifest = origin.pack_file(&input, context(), 16_384).unwrap();
-    let receiver = CellStoreV1::open(&directory.path().join("receiver")).unwrap();
+    let receiver = CellStoreV1::open(&directory.path().join("receiver"), cache_config()).unwrap();
     receiver
         .put_manifest(manifest.id(), &manifest.encode())
         .unwrap();
@@ -746,7 +757,7 @@ fn expired_materialization_deadline_keeps_output_absent_and_legacy_api_works() {
     let input = directory.path().join("input");
     let bytes = payload();
     fs::write(&input, &bytes).unwrap();
-    let store = CellStoreV1::open(&directory.path().join("store")).unwrap();
+    let store = CellStoreV1::open(&directory.path().join("store"), cache_config()).unwrap();
     let manifest = store.pack_file(&input, context(), 16_384).unwrap();
     let output = directory.path().join("output");
     let expired = std::time::Instant::now() - Duration::from_secs(1);
@@ -769,10 +780,10 @@ fn fetch_to_file_reuses_original_deadline_after_sync_and_before_publication() {
     let bytes = vec![7; 8192];
     fs::write(&input, &bytes).unwrap();
     let origin_path = directory.path().join("origin");
-    let origin = CellStoreV1::open(&origin_path).unwrap();
+    let origin = CellStoreV1::open(&origin_path, cache_config()).unwrap();
     let manifest = origin.pack_file(&input, context(), 16_384).unwrap();
     let publisher = Peer::start(&origin_path);
-    let receiver = CellStoreV1::open(&directory.path().join("receiver")).unwrap();
+    let receiver = CellStoreV1::open(&directory.path().join("receiver"), cache_config()).unwrap();
     let output = directory.path().join("output");
     let reached = Rc::new(Cell::new(false));
     let observed = reached.clone();
@@ -841,7 +852,7 @@ fn deadline_materialization_rechecks_cache_payload_and_never_overwrites() {
     let bytes = payload();
     fs::write(&input, &bytes).unwrap();
     let path = directory.path().join("store");
-    let store = CellStoreV1::open(&path).unwrap();
+    let store = CellStoreV1::open(&path, cache_config()).unwrap();
     let manifest = store.pack_file(&input, context(), 16_384).unwrap();
     let output = directory.path().join("output");
     let deadline = std::time::Instant::now() + Duration::from_secs(30);
@@ -893,10 +904,10 @@ fn fetch_to_file_publishes_exact_network_bytes_without_replacing_existing_output
     let bytes = payload();
     fs::write(&input, &bytes).unwrap();
     let path = directory.path().join("origin");
-    let origin = CellStoreV1::open(&path).unwrap();
+    let origin = CellStoreV1::open(&path, cache_config()).unwrap();
     let manifest = origin.pack_file(&input, context(), 16_384).unwrap();
     let publisher = Peer::start(&path);
-    let receiver = CellStoreV1::open(&directory.path().join("receiver")).unwrap();
+    let receiver = CellStoreV1::open(&directory.path().join("receiver"), cache_config()).unwrap();
     let output = directory.path().join("output");
     let (received, report) = fetch_cell_to_file(
         &receiver,
@@ -922,7 +933,7 @@ fn bounded_chunk_batch_rejects_bad_member_without_changing_prior_cache() {
 
     let directory = tempfile::tempdir().unwrap();
     let path = directory.path().join("cache.sqlite");
-    let store = CellStoreV1::open(&path).unwrap();
+    let store = CellStoreV1::open(&path, cache_config()).unwrap();
     let bytes = [vec![11; 16_384], vec![12; 16_384], vec![13; 16_384]];
     let chunks: Vec<_> = bytes
         .iter()
@@ -953,7 +964,7 @@ fn bounded_chunk_batch_rejects_bad_member_without_changing_prior_cache() {
         .put_chunk_batch(&[(&chunks[1], &bytes[1]), (&chunks[2], &bytes[2])])
         .unwrap();
     drop(store);
-    let reopened = CellStoreV1::open(&path).unwrap();
+    let reopened = CellStoreV1::open(&path, cache_config()).unwrap();
     for (chunk, bytes) in chunks.iter().zip(&bytes) {
         assert_eq!(
             reopened.chunk(chunk.sha256).unwrap().as_deref(),
@@ -967,7 +978,7 @@ fn bounded_chunk_batch_rolls_back_late_sql_abort_and_suppressed_row() {
     for action in ["ABORT", "IGNORE"] {
         let directory = tempfile::tempdir().unwrap();
         let path = directory.path().join("cache.sqlite");
-        let store = CellStoreV1::open(&path).unwrap();
+        let store = CellStoreV1::open(&path, cache_config()).unwrap();
         let bytes = [vec![21; 16_384], vec![22; 16_384], vec![23; 16_384]];
         let chunks: Vec<_> = bytes
             .iter()
@@ -1007,7 +1018,7 @@ fn bounded_chunk_batch_rolls_back_late_sql_abort_and_suppressed_row() {
             .unwrap();
         drop(store);
         drop(db);
-        let reopened = CellStoreV1::open(&path).unwrap();
+        let reopened = CellStoreV1::open(&path, cache_config()).unwrap();
         assert_eq!(
             reopened.chunk(chunks[2].sha256).unwrap(),
             Some(bytes[2].clone())
@@ -1023,7 +1034,7 @@ fn batched_fetch_to_file_rejects_full_digest_after_valid_network_chunks() {
     let bytes: Vec<_> = (0..(9 * 16_384 + 123)).map(|i| (i % 251) as u8).collect();
     fs::write(&input, &bytes).unwrap();
     let origin_path = directory.path().join("origin.sqlite");
-    let origin = CellStoreV1::open(&origin_path).unwrap();
+    let origin = CellStoreV1::open(&origin_path, cache_config()).unwrap();
     let valid = origin.pack_file(&input, context(), 16_384).unwrap();
     let wrong = CellManifestV1::new(
         context(),
@@ -1035,7 +1046,8 @@ fn batched_fetch_to_file_rejects_full_digest_after_valid_network_chunks() {
     .unwrap();
     origin.put_manifest(wrong.id(), &wrong.encode()).unwrap();
     let publisher = Peer::start(&origin_path);
-    let receiver = CellStoreV1::open(&directory.path().join("receiver.sqlite")).unwrap();
+    let receiver =
+        CellStoreV1::open(&directory.path().join("receiver.sqlite"), cache_config()).unwrap();
     let output = directory.path().join("must-not-exist");
     let result = fetch_cell_to_file(
         &receiver,
@@ -1063,8 +1075,10 @@ fn failed_fetch_keeps_transport_phase_without_renewing_request_deadline() {
     let directory = tempfile::tempdir().unwrap();
     let input = directory.path().join("input");
     fs::write(&input, [7; 8192]).unwrap();
-    let receiver = CellStoreV1::open(&directory.path().join("receiver.sqlite")).unwrap();
-    let origin = CellStoreV1::open(&directory.path().join("origin.sqlite")).unwrap();
+    let receiver =
+        CellStoreV1::open(&directory.path().join("receiver.sqlite"), cache_config()).unwrap();
+    let origin =
+        CellStoreV1::open(&directory.path().join("origin.sqlite"), cache_config()).unwrap();
     let manifest = origin.pack_file(&input, context(), 16_384).unwrap();
     receiver
         .put_manifest(manifest.id(), &manifest.encode())
@@ -1106,4 +1120,13 @@ fn failed_fetch_keeps_transport_phase_without_renewing_request_deadline() {
         .unwrap()
         .is_none());
     assert_no_partial_files(directory.path());
+}
+
+// Explicit finite fixture quota; covers the existing <=32MiB commit fixtures.
+fn cache_config() -> crate::cell::CellCacheConfigV2 {
+    crate::cell::CellCacheConfigV2 {
+        max_logical_bytes: 64 * 1024 * 1024,
+        max_chunk_rows: 4096,
+        max_manifest_rows: 256,
+    }
 }

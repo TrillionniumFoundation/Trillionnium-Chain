@@ -61,7 +61,7 @@ impl Peer {
         let stop = shutdown.clone();
         let path = path.to_owned();
         let handle = thread::spawn(move || {
-            let store = CellStoreV1::open(&path)?;
+            let store = CellStoreV1::open(&path, cache_config())?;
             serve_cells(&listener, &store, &stop, peer_limits())
         });
         Self {
@@ -102,7 +102,7 @@ impl Fixture {
     fn with_second_context(second_context: CellContextV1) -> Self {
         let directory = tempfile::tempdir().unwrap();
         let origin_path = directory.path().join("origin.sqlite");
-        let origin = CellStoreV1::open(&origin_path).unwrap();
+        let origin = CellStoreV1::open(&origin_path, cache_config()).unwrap();
         let first_input = directory.path().join("first.input");
         let second_input = directory.path().join("second.input");
         fs::write(&first_input, vec![11; 20_000]).unwrap();
@@ -130,7 +130,7 @@ impl Fixture {
     }
 
     fn cache(&self, name: &str) -> CellStoreV1 {
-        CellStoreV1::open(&self.path(name)).unwrap()
+        CellStoreV1::open(&self.path(name), cache_config()).unwrap()
     }
 
     fn successful_response_bytes(&self) -> u64 {
@@ -223,8 +223,8 @@ fn release_fetch_collects_all_members_from_two_distinct_loopback_stores() {
     let fixture = Fixture::new();
     let a_path = fixture.path("a.sqlite");
     let b_path = fixture.path("b.sqlite");
-    let a_store = CellStoreV1::open(&a_path).unwrap();
-    let b_store = CellStoreV1::open(&b_path).unwrap();
+    let a_store = CellStoreV1::open(&a_path, cache_config()).unwrap();
+    let b_store = CellStoreV1::open(&b_path, cache_config()).unwrap();
     copy_member(&fixture.origin, &a_store, &fixture.members[0]);
     copy_member(&fixture.origin, &b_store, &fixture.members[1]);
     let a = Peer::start(&a_path);
@@ -462,7 +462,7 @@ fn release_fetch_rejects_incompatible_member_context_before_chunks() {
 fn release_fetch_missing_member_does_not_publish_a_subset_marker() {
     let fixture = Fixture::new();
     let partial_path = fixture.path("partial.sqlite");
-    let partial = CellStoreV1::open(&partial_path).unwrap();
+    let partial = CellStoreV1::open(&partial_path, cache_config()).unwrap();
     copy_member(&fixture.origin, &partial, &fixture.members[0]);
     let peer = Peer::start(&partial_path);
     let receiver = fixture.cache("receiver.sqlite");
@@ -654,4 +654,13 @@ fn release_marker_sync_keeps_original_deadline_and_cleans_up_after_cutoff() {
     assert_eq!(report.connection_attempts, 0);
     assert_eq!(fs::read(output).unwrap(), fixture.release.encode());
     assert_no_partial_files(fixture.directory.path());
+}
+
+// Explicit finite fixture quota; covers the existing <=32MiB commit fixtures.
+fn cache_config() -> crate::cell::CellCacheConfigV2 {
+    crate::cell::CellCacheConfigV2 {
+        max_logical_bytes: 64 * 1024 * 1024,
+        max_chunk_rows: 4096,
+        max_manifest_rows: 256,
+    }
 }

@@ -762,6 +762,48 @@ or authority; callers must retain it in their existing first-failure record,
 without another read. Non-ABI parser/ordinary-file controls run separately from
 the CPython 3.12.3 native owner tests. This repair does not identify the old exact
 input, retry the attempt or qualify aggregate birth placement or a model.
+The later actual tiny `3eb2b52a` on source `51146530` passed the parser but
+refused initial acquisition with `aggregate-not-fresh`, before any runtime
+child or model. Its stopped unit supplied 17 retained evidence files; the
+original initial counter text was not exported, so the particular nonzero
+field remains unknown. Initial freshness now uses the same bounded immutable
+counter diagnostic for the first failed `memory.peak`, `cpu.stat` or
+`memory.events` predicate, in the original short-circuit order and without
+another read. All zero, empty, identity and cleanup requirements remain.
+The outer C first-failure exporter must explicitly allow that exact reason;
+an unknown reason cannot silently become diagnostic evidence. Synthetic
+ordinary-FD controls preserve refusal, first raw bytes and no-child cleanup;
+they do not qualify an actual group. Do not rerun `3eb2b52a`, reset counters,
+delete/reclaim A, subtract a baseline or infer a release from collection.
+The later single `1c1b674c` on source `ad644fe3` retained the exact initial
+`cpu.stat`: `nr_periods 2`, with all usage, user, system, nice, forced-idle,
+throttling and burst fields zero. It failed before a runtime child or model;
+source identity held and administrative stop/collection did not release the
+reservation. Linux [bandwidth statistics](https://origin.kernel.org/doc/html/v5.19/scheduler/sched-bwc.html#statistics)
+define `nr_periods` as elapsed enforcement intervals. The
+[cgroup v2 interface](https://docs.kernel.org/admin-guide/cgroup-v2.html#cpu-interface-files)
+separates usage from bandwidth counters; the upstream 7.0.14
+[period timer](https://github.com/gregkh/linux/blob/v7.0.14/kernel/sched/fair.c)
+increments intervals before its idle check. Only that exact key in initial
+`cpu.stat` may now be nonzero. All actual usage, throttling, burst, forced-idle,
+unknown counters and every other freshness predicate still require zero; raw
+inputs and parser bounds remain. No counter reset, baseline subtraction,
+budget/deadline change or new actual group/model qualification follows. The
+old failed candidates remain retained and must not be retried.
+The single `e2cc9b11` on source `24a1e86b` acquired A and recorded both owned
+`wait4` exits at zero plus all three complete FIFO frames and EOF. Terminal
+observation still failed with `KernelBudgetError`; its exact fixed reason was
+not exported. Later forensic `memory.current` reads were 290816 and 286720,
+with zero processes/population/dying state, and do not identify the original
+failure. No private terminal fact, release or refund followed administrative
+collection. The original tiny catch now retains only a prebound known code from
+an exact one-string `KernelBudgetError`, while original memory current/swap
+zero failures retain their first bounded raw text with exact two-file pairing.
+Unknown codes/types, extra arguments and unrelated filenames refuse projection;
+optional diagnostic faults cannot bypass the original pidfd close. No new reads,
+zero/equality changes, waiting loop, budget or deadline changes are introduced.
+Pending charge drain remains a separate PN4 matter; empty groups need not reach
+zero charge within eight seconds. The used nonce is retained and never retried.
 The original wait4 owner's aggregate terminal-error path retains only this
 existing typed immutable counter tuple, with pre-clone type bindings and no
 exception/traceback/capability references. Projection faults cannot replace the
@@ -795,6 +837,38 @@ This interface grants no budget authority. Pure parsing
 and small ordinary-FIFO child controls cover
 malformed/truncated/extra frames, backpressure and deadline refusal. Actual
 valid-unit verification and original Store/FinalUse closure remain open.
+The later `83ca245b` tiny observation on source `90232d41` completed both
+original wait4 exits and three FIFO records, but its first terminal read found
+`memory.current=159744` and permanently retained the reservation. Later
+same-held-group diagnostic reads found 4096 then 0; those late observations do not
+repair the failed capability, and their complete counter vectors differ.
+The PN4 successor reconciles kernel charge teardown only inside the first live
+tiny terminal transition, using the already-configured original absolute 8s
+deadline. Only exact memory/swap charge-retained errors may wait, at most 801 reconciliation
+attempts plus the unchanged final snapshot with sleeps bounded by 10ms and remaining time. Format, identity, process,
+descendant and snapshot-equality failures remain immediate sticky failures.
+The original deadline is checked before and after every wait and observation;
+the final held pidfd/wait4 checks, exact-zero memory and swap, and two equal
+complete raw vectors still precede private fact publication before that deadline.
+Blocking system observation retains its original two-second call timeout, so a
+failed observation or cleanup can return after eight seconds; such a tail never
+publishes a timely fact. No counter reset, reclaim,
+limit change, new budget or retry of a failed capability is allowed. Non-tiny
+terminal paths do not wait. Existing owned-process CI now runs 59 original plus 7
+new controls on exact CPython 3.12.3 for source and prospective merge, requiring
+all 66 successes, zero skips and zero expected failures. These ordinary-child/synthetic-counter controls
+do not establish a real aggregate pass, outer reconciliation, resource refund,
+Store/FinalUse authorization or any model upgrade round.
+The subsequent [single controlled observation](../../evidence/pon-upgrade-implementation-20261018/native-rounds/aggregate-charge-wait-20261023/SCOPE.md)
+on exact source `ec0f58d3` completed its original outer terminal observation in
+3.080 seconds under that unchanged eight-second deadline. Exact owned wait4,
+three FIFO records and EOF, true zero memory/swap charge and the original equal
+complete snapshot assertion produced the private mechanics fact. The inside
+controller took 5.321 seconds; the overlapping durations are not additive. All 24
+collected files and 18 source pins matched independent remote readback. This
+closes that tiny terminal charge-drain reproduction only. The original outer
+reconciliation and consumed-capability close still refuse release: UNKNOWN and
+RETAINED, no manual aggregate deletion, no refund, no model load or upgrade round.
 Post-native Python exception injection does not claim native-internal
 signal interruption; SIGUSR1 tests prove guard reentry refusal. Ordinary FD
 controls do not qualify a valid unit or prove that C-created pipe pages charge C.
@@ -827,6 +901,19 @@ controls use mocked orchestration and small real file hashes, not actual model
 execution or a real model failure. They preserve the original late-readback
 failure and do not close the real caller, load-attempt binding, resource,
 FinalUse, three-cycle next-task readback or I10 obligations.
+
+The same PN3/PN4 M09 path now freezes a persistent TCL2/schema2 logical cache
+quota across all ordinary writer entries, including the handoff script. The
+script requires explicit `--cache-max-bytes`, `--cache-max-chunks` and
+`--cache-max-manifests`, reusing those exact caps for the complete producer and
+consumer sets without changing its original transfer deadline or assertions.
+Cold validation inspects the complete catalog, allowing only the two exact
+automatic primary-key indexes; reserved-prefix objects cannot bypass it, and a
+fresh namespace refuses every pre-existing catalog object.
+Atomic dedup/whole-batch admission and actual cache deletion never alter M12
+funding or paid I05 duties. This bounds live payload/catalog/key/row occupancy;
+physical DB/WAL/SHM/temp/output reservations remain open, together with the
+existing native consumer, installation and three-cycle model acceptance gaps.
 
 The optional scalar-credit freshness observation reads the original watermark
 and projects the original refill arithmetic without changing the clock, credit,
@@ -919,6 +1006,18 @@ the shell still required the predecessor count of 11. The successor changes
 only that exact count to 12. Rust source, selectors, ignored-test execution,
 resource/time budgets and source checks remain unchanged; the four original
 logs prove the corrected count matches, not that later workflow steps passed.
+
+In original-integration run `39921443580`, branch-encoding jobs
+[120307385007](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/39921443580/job/120307385007)
+and [120307384981](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/39921443580/job/120307384981)
+executed the complete authenticated-migration selection: all original 29 members
+and six added cold-snapshot/file-read controls passed, with zero failures or
+ignored tests. Both jobs then failed because the shell still required 29 passes.
+The successor requires exactly 35 while retaining the original complete Cargo
+command, selector, pipefail, zero-failure/zero-ignore checks, source guards and
+all other workflow assertions. The two failed jobs remain failed observations;
+replaying their logs checks this count repair, not a new native execution,
+subsequent workflow steps, final-source CI or production qualification.
 
 The [current security export](../../evidence/pon-six-gate-closure-20261022/current-871269-ci/security-export-exact-source.json)
 retains check `119708392458`, all 13 API-exposed annotations and the exact-source
@@ -1491,6 +1590,33 @@ candidate and base without changing deployed services or another repository.
    df6 improved baseline to 2/3 while both hostile modes stayed 0/3. The 9bd
    successor's original-budget campaign is pending, not inferred from its cache
    and import regressions. See the existing performance acceptance contract.
+
+The 2026-10-24 local CI repair keeps the original lane commands and assertions.
+Ordinary evidence-test children bind only their own checkout's script directory,
+including prospective merges, instead of inheriting a stale head's `PYTHONPATH`.
+The durable-schema reader requires the current legacy/authenticated openers'
+literal `false` growth-observation argument; changed backend, mode and rebinding
+mutants still reject. The shared funding fixture reads the real account's next
+nonce before each unchanged funding transaction. The merged runtime group executes
+the original 269 cases plus both source-path controls: 264 pass and the seven
+existing opt-in model cases remain unexecuted. Both the isolated-interpreter decoy
+control and the cloned head/prospective-merge poisoned-path control remain. The
+concurrent PID fixture reads actual procfs names from the pidfd namespace metadata.
+All 44 external-reader cases and five real storage-service cases pass locally.
+The concurrent cloud build-input workflow is retained without certifying its
+resource bounds or execution. Current hosted head/merge checks,
+fresh CodeQL disposition and native/model acceptance remain separate open gates.
+
+The same PN0 CI boundary now partitions the unchanged local `rust-baseline`
+commands into required runtime and quality workers for both candidate and actual
+prospective merge. Each worker retains 180 minutes; the original required check
+names run fail-closed fan-in after every outcome. Both current-run/current-attempt
+receipts, exact source before/after and executed command hashes must agree, and
+both jobs must succeed. Runtime retains the workspace, signed oracles and four
+exact ignored native controls; quality retains formatting, supply-chain, docs and
+strict Clippy. No test, native deadline or assertion is removed. This addresses
+observed scheduler cancellation after successful capacity/growth controls; fresh
+hosted execution of the new scheduling remains pending.
 
 Exit: one reproducible source-pair/configuration inventory and per-gate results
 with unresolved items assigned. Block dependent acceptance on required failures;
@@ -2618,6 +2744,18 @@ Exact-source and prospective-merge CI must validate this change; source fixes
 do not replace a measured hostile public-service campaign or the unresolved
 work-hardness and independently governed model-evolution qualifications.
 
+The `6724ed1905e11d30775738ad0eb84b53d1d9ea97` hosted Rust baseline and
+prospective-merge jobs each retained 625 passing tests and two failing ingress
+ordering tests. Both failures reproduce on that source: the pending-activation
+metadata probe incorrectly emitted `BeforeParentBinding` even when no recovery
+was pending. It did not reconstruct parent State. The repair keeps that probe
+before ordinary readiness checks and preserves its request cancellation and CPU
+checkpoint, while reserving the execution-stage callback for actual parent
+binding. The original bad-statement, false-transcript, valid-retry, SQL-tamper
+and cancelled-reorganization recovery assertions remain unchanged. This is an
+ingress control-flow correction; it does not alter proof acceptance or replace
+the original failed native service campaign.
+
 The first CI run for this encoding-precheck source stopped before native recent-
 batch tests because its reviewed store blob guard still named the preceding
 implementation. The successor pins the actual reviewed `store.rs` blob
@@ -3074,8 +3212,9 @@ separate materialization without the original deadline. It now calls
 retrieval, complete verification, final write and the pre-publication checkpoint.
 The additive `materialize_until` API rechecks original cached payload bytes;
 the existing no-deadline materialization API remains available to explicit
-callers. Protocol bytes, manifest/cache schemas, limits and CLI report fields
-are unchanged. Checks are cooperative: filesystem calls cannot be preempted,
+callers. That deadline-only increment preserved protocol bytes, manifest/cache
+schemas, limits and CLI report fields. The later TCL2 cache admission increment
+is specified above and in the same Cell contract. Checks are cooperative: filesystem calls cannot be preempted,
 and a complete file is not deleted after publication because subsequent I/O
 takes time. The exact boundary is documented in
 [CELL_P2P_V1](../protocol/pon-nakamoto-v1/details/CELL_P2P_V1.md).

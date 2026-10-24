@@ -39,7 +39,7 @@ leave a complete marker. Reconcile its pinned identity and current cache with
 The marker is not a weights bundle, storage lease or model-use token; consumers
 must recheck cache integrity and their normal owners before use. `verify-release`
 performs that bounded local cache check without publication. Release roots are
-not discovered over TCP; TCQ1, TCS1 and cache schema version 1 stay unchanged.
+not discovered over TCP; TCM1, TCQ1, TCS1 and TCR1 stay unchanged.
 The supplied local release file and destination directory are caller-controlled.
 This path does not defend against a hostile process with the same local
 filesystem authority. Filesystem operations remain cooperative and can return
@@ -47,6 +47,16 @@ after the deadline; the operation is not a hard real-time guarantee.
 It does not discover peers, authenticate a public network, issue storage proofs,
 change `CURRENT`, bypass withdrawal, or grant model execution. Those boundaries
 remain explicit until a later public DA qualification.
+
+The disposable cache now requires fresh TCL2/schema2 and explicit immutable
+`CellCacheConfigV2` limits on every writable open. Live payload, manifest wire
+and each 32-byte key share one logical byte quota; chunk/manifest rows have
+separate finite bounds. Ordinary writer commands require `--cache-max-bytes N
+--cache-max-chunks N --cache-max-manifests N`; exact retries reuse these same
+persisted caps. `serve`/`manifest` read existing caches only. Old TCL1 caches are
+refused, never automatically reset. Atomic dedup/batch/deletion accounting and
+cold schema/counter checks do not reserve physical DB/WAL/SHM/temp/output bytes.
+Cache deletion changes no acknowledged retention obligation or native funding.
 
 ```bash
 cargo test --locked -p trnm-data-availability --all-targets --all-features

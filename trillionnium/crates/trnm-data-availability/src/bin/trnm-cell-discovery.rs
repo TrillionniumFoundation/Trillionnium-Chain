@@ -1,6 +1,6 @@
 //! Explicit finite development rendezvous and bootstrap-discovered Cell fetch.
 //! An advertisement is not custody, payment, model selection or use authority.
-//! The existing configured-peer trnm-cell executable is unchanged.
+//! Configured-peer trnm-cell remains separate; both use finite TCL2 cache limits.
 
 const USAGE: &str = "trnm-cell-discovery: opt-in finite development discovery (Unix)
 Every command requires --profile cell-provider-discovery-dev-v1.
@@ -13,7 +13,7 @@ context-digest --family FAMILY --base HEX --parent HEX --tokenizer HEX --layout 
 sign --record-output ABSENT_FILE --secret-key-file RAW_32_BYTE_PRIVATE_FILE --owner HEX --manifest HEX --cell-context HEX --endpoint IP:PORT --sequence N --issued-unix-seconds N --expires-unix-seconds N <context>
 announce --record EXACT_335_BYTE_FILE --owner HEX --manifest HEX --cell-context HEX --bootstrap IP:PORT <context> <scope> <client limits>
 serve --directory DB --bind IP:PORT (--seconds N | --overall-ms N) --request-ms N --max-connections N <context> <scope>
-fetch --directory DB --store DB --manifest HEX --cell-context HEX --bootstraps IP:PORT[,IP:PORT] --output ABSENT_FILE <context> <scope> <client limits>
+fetch --directory DB --store DB --cache-max-bytes N --cache-max-chunks N --cache-max-manifests N --manifest HEX --cell-context HEX --bootstraps IP:PORT[,IP:PORT] --output ABSENT_FILE <context> <scope> <client limits>
 All pins, namespace, numeric addresses and limits are explicit. No DNS/referrals/DHT.
 Private seed files must be regular, nonsymlink, exactly 32 raw bytes, one link,
 and mode 0600 or stricter; seed bytes are never printed. Records are public.
@@ -65,7 +65,8 @@ mod unix {
             CellProviderStatementV1, CellRendezvousLimitsV1, CELL_DISCOVERY_PROFILE_V1,
             CELL_PROVIDER_RECORD_BYTES_V1, MAX_DISCOVERY_BOOTSTRAPS,
         },
-        parse_digest, CellContextV1, CellDigestV1, CellErrorV1, CellPeerLimitsV1, CellStoreV1,
+        parse_digest, CellCacheConfigV2, CellContextV1, CellDigestV1, CellErrorV1,
+        CellPeerLimitsV1, CellStoreV1,
     };
 
     type Result<T> = std::result::Result<T, Box<dyn Error>>;
@@ -238,6 +239,12 @@ mod unix {
     fn fetch(args: &mut Args, started: Instant) -> Result<()> {
         let path = PathBuf::from(args.take("--directory")?);
         let store = PathBuf::from(args.take("--store")?);
+        let cache_config = CellCacheConfigV2 {
+            max_logical_bytes: args.number("--cache-max-bytes")?,
+            max_chunk_rows: args.number("--cache-max-chunks")?,
+            max_manifest_rows: args.number("--cache-max-manifests")?,
+        };
+        cache_config.validate()?;
         let request = args.request()?;
         let bootstraps = list(&args.take("--bootstraps")?, MAX_DISCOVERY_BOOTSTRAPS, parse)?;
         let output = PathBuf::from(args.take("--output")?);
@@ -246,7 +253,7 @@ mod unix {
         args.finish()?;
         let original_deadline = deadline(started, limits.overall_timeout)?;
         let directory = CellProviderDirectoryV1::open(&path, request.context)?;
-        let store = CellStoreV1::open(&store)?;
+        let store = CellStoreV1::open(&store, cache_config)?;
         let options = CellDiscoveryOptionsV1 {
             request,
             bootstraps,

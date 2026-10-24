@@ -306,8 +306,9 @@ PN5_CELL_CONTEXT=(--family pn5-cli-demo-v1 --base "$PN5_BASE" --parent "$PN5_PAR
 PN5_SCOPE=(--scope loopback-dev --ports 47810,47811)
 PN5_LIMITS=(--overall-ms 10000 --request-ms 2000 --max-bytes 1048576
   --parallelism 2 --max-connections 64 --max-response-bytes 4194304)
+PN5_CACHE=(--cache-max-bytes 1073741824 --cache-max-chunks 4096 --cache-max-manifests 256)
 "$PN5_BIN_DIR/trnm-cell" pack --store "$PN5_DIR/origin.sqlite" \
-  --input "$PN5_DIR/input.cell" "${PN5_CELL_CONTEXT[@]}" > "$PN5_DIR/pack.json"
+  "${PN5_CACHE[@]}" --input "$PN5_DIR/input.cell" "${PN5_CELL_CONTEXT[@]}" > "$PN5_DIR/pack.json"
 "$PN5_BIN_DIR/trnm-cell-discovery" key-public --profile "$PN5_PROFILE" \
   --secret-key-file "$PN5_DIR/advertising.seed" > "$PN5_DIR/owner.json"
 "$PN5_BIN_DIR/trnm-cell-discovery" context-digest --profile "$PN5_PROFILE" \
@@ -351,7 +352,7 @@ PN5_EXPIRES=$((PN5_ISSUED + 60))
   --record "$PN5_DIR/provider.cdp1" --owner "$PN5_OWNER" \
   --manifest "$PN5_MANIFEST" --cell-context "$PN5_CELL_DIGEST" --bootstrap 127.0.0.1:47811
 "$PN5_BIN_DIR/trnm-cell-discovery" fetch --profile "$PN5_PROFILE" \
-  "${PN5_CONTEXT[@]}" "${PN5_SCOPE[@]}" "${PN5_LIMITS[@]}" \
+  "${PN5_CONTEXT[@]}" "${PN5_SCOPE[@]}" "${PN5_LIMITS[@]}" "${PN5_CACHE[@]}" \
   --directory "$PN5_DIR/consumer-directory.sqlite" --store "$PN5_DIR/consumer-cache.sqlite" \
   --manifest "$PN5_MANIFEST" --cell-context "$PN5_CELL_DIGEST" \
   --bootstraps 127.0.0.1:47811 --output "$PN5_DIR/complete.cell"

@@ -169,8 +169,32 @@ artifact format before public distribution.
 
 ## Cache integrity and publication
 
-`CellStoreV1` uses a separate SQLite namespace with application ID `0x54434c31`
-and schema version 1. A populated foreign database is refused. New manifests
+`CellStoreV1` uses the fresh TCL2 SQLite namespace, application ID `0x54434c32`
+and schema version 2. Old TCL1 and populated foreign databases are refused;
+opening never resets or migrates them. Each writable open requires an exact
+persisted `CellCacheConfigV2`: finite logical bytes, chunk rows and manifest
+rows. Logical bytes count every live chunk payload, manifest wire and 32-byte
+content key. Atomic insert/update/delete triggers enforce that one whole-cache
+allowance across pack, direct puts, batch fetch, discovery and retention rehydration.
+Same-hash UPSERTs charge only the size difference; a failed eight-chunk transaction
+rolls back its rows and allowance together. Reopening checks complete table/trigger
+definitions and bounded actual SUM/COUNT against the counters without repairing
+them. Catalog validation copies at most the expected object count plus one, guards
+string byte lengths before copying and inspects every object regardless of its
+name prefix. Only the two exact primary-key automatic indexes are accepted, with
+their original type/name/table and genuinely NULL SQL; an oversized non-NULL SQL
+value cannot become an accepted NULL. The foreign-database check stops at its
+first object, including an internal object left by a previously used database. A failed download keeps its committed verified prefix charged. Read-only
+serving loads these persisted limits and holds no query snapshot across socket I/O.
+Actual corrupt-cache deletion returns only logical cache allowance. It does not
+retire a paid duty, release native funding or prove that filesystem blocks were freed.
+
+This first PN3/PN4 increment does not close physical DB/index/free-page, WAL,
+SHM, SQLite temporary-file or caller-output reservations. `max_page_count` alone
+does not bound WAL; checkpoint policy is not a hard sidecar quota. Materialized
+temporary/output files remain with the original caller's separate resource owner.
+No process-wide limit, automatic reset, expiry or vacuum substitutes for those
+remaining I05/PN4 physical-owner requirements. New manifests
 are persisted only after full decoding and pinned-ID comparison. New chunks
 are persisted only after length and SHA256 verification. Each cache read checks
 the bytes again. A corrupt disposable chunk is removed and becomes a missing
@@ -214,10 +238,17 @@ output path. Its optional `--max-response-bytes N` sets the response budget;
 the bounded default is `2 * max-bytes + 2097152 + 9 * max-connections`.
 Its successful `trnm.cell.fetch.v1` JSON adds `received_response_bytes` and
 `max_response_bytes` without changing existing payload counters. These local
-report additions do not change TCM1, TCQ1, TCS1 or the cache schema.
+report additions do not change TCM1, TCQ1 or TCS1; the separately bounded local
+cache uses the fresh TCL2/schema2 namespace described above.
 `verify` rechecks a complete local version. `manifest` exports the
 canonical pinned manifest for the existing release owner. No command implicitly
 discovers a model, changes its authority or activates a consensus profile.
+
+Every writable command (`pack`, `fetch`, `verify`, `prepare-release`,
+`fetch-release`, `verify-release`) also requires `--cache-max-bytes N
+--cache-max-chunks N --cache-max-manifests N`. Reuse the same exact limits for
+that cache on every invocation; a per-member payload budget is not a new cache
+allowance. `serve` and `manifest` use only an existing read-only TCL2 cache.
 
 `fetch-release --store DB --release-file ROOT --release HEX --peers IP:PORT,IP:PORT
 --output ABSENT_MARKER --max-bytes N --max-chunks N --max-response-bytes N
@@ -225,7 +256,7 @@ discovers a model, changes its authority or activates a consensus profile.
 uses the same store, root, pinned release ID and total byte/chunk/time budgets
 without a network call. The new CLI reports have distinct
 `trnm.cell.release.fetch.v1` and `trnm.cell.release.verify.v1` identities. TCM1,
-TCQ1, TCS1 and the existing cache schema are unchanged. The root is supplied
+TCQ1 and TCS1 are unchanged; only the local cache schema is TCL2. The root is supplied
 locally; this increment does not add public root discovery.
 
 ## Executable acceptance
@@ -265,6 +296,22 @@ trnm-data-availability --lib cell::` contains actual TCP and disk tests for:
 - Fresh complete verification rejects corrupted cache bytes and a mismatched
   complete-payload digest before publication, and never replaces an existing
   output. The combined network-to-file success path returns the exact bytes.
+
+The same existing native suite includes [TCL2 cache admission controls](../../../../trillionnium/crates/trnm-data-availability/src/cell/cache_budget_tests.rs)
+and [complete catalog controls](../../../../trillionnium/crates/trnm-data-availability/src/cell/cache_catalog_tests.rs):
+exact byte/row boundaries and full-cache dedup, two real concurrent writers,
+atomic eight-row rollback, cross-reopen immutable limits, retained verified
+prefixes after a later quota refusal, actual corrupt-row deletion, bounded
+catalog/counter/trigger validation, reserved-prefix trigger refusal and exact
+automatic-index identity/NULL SQL checks.
+Writable and read-only cold-open failures preserve the original database.
+The existing [CLI controls](../../../../trillionnium/crates/trnm-data-availability/tests/cell_fetch_deadline_cli.rs)
+require every writer cap before cache creation and prohibit read-only manifest
+export from creating a missing cache. The existing M12 [native paid-storage controls](../../../../trillionnium/crates/trnm-pon-node/src/store/storage_service/cache_quota_tests.rs)
+require actual cache deletion and rehydration quota refusal to leave the original
+paid obligation, retained-byte target, funding row and budget report unchanged.
+These controls execute through the existing workspace matrix; they do not replace
+its retained tests or establish hard physical storage bounds.
 
 Loopback tests establish byte and failure semantics. Cross-host delivery and
 actual loader receipts must name their source, model, hosts and failures; neither

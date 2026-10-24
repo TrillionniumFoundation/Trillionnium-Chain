@@ -55,6 +55,12 @@ Replay, uncompensated liabilities, expiry starvation, sponsor self-traffic and o
 
 Funded GPU capacity, market sustainability, fee adaptation and independent economic acceptance remain absent.
 
+M09's disposable TCL2 cache allowance is not an M12 funding or paid-retention
+reservation. Actual cache row deletion may return that cache's logical allowance
+only; it cannot retire an acknowledged duty, clear a retained-byte/byte-block
+claim, release an Unknown effect or refund funds. Physical DB/WAL/SHM/temp/output
+composition remains an existing PN4 obligation.
+
 The [five-lane PN4 reference](../development/specs/pon/REWARD_BUDGETS_V1.md)
 separates existing mining rewards, sponsor-funded contribution, evaluation,
 storage/repair and serving budgets, including their distinct resource units.

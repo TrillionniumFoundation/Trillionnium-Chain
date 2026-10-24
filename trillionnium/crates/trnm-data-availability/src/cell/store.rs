@@ -14,7 +14,6 @@ use super::{
     CellManifestV1, CellReleaseManifestV1, CellResultV1, MAX_CELL_BYTES, MAX_CHUNK_BYTES,
 };
 
-const APPLICATION_ID: i64 = 0x5443_4c31;
 static OUTPUT_SEQUENCE: AtomicU64 = AtomicU64::new(0);
 // One short FULL transaction retains at most 32 MiB of already received bytes.
 // The caller must collect the batch before taking the SQLite writer lock.
@@ -37,38 +36,12 @@ pub struct CellStoreV1 {
 }
 
 impl CellStoreV1 {
-    pub fn open(path: &Path) -> CellResultV1<Self> {
+    pub fn open(path: &Path, config: super::CellCacheConfigV2) -> CellResultV1<Self> {
+        config.validate()?;
         let connection = Connection::open(path)?;
         connection.busy_timeout(std::time::Duration::from_secs(5))?;
         connection.pragma_update(None, "trusted_schema", false)?;
-        let application: i64 =
-            connection.pragma_query_value(None, "application_id", |r| r.get(0))?;
-        let version: i64 = connection.pragma_query_value(None, "user_version", |r| r.get(0))?;
-        if application == 0 && version == 0 {
-            let tables: i64 = connection.query_row(
-                "SELECT count(*) FROM sqlite_master WHERE name NOT LIKE 'sqlite_%'",
-                [],
-                |r| r.get(0),
-            )?;
-            require(tables == 0, "foreign cache database")?;
-            connection.execute_batch(
-                "BEGIN IMMEDIATE;
-                 CREATE TABLE cell_manifests_v1 (
-                     id BLOB PRIMARY KEY CHECK(length(id) = 32),
-                     wire BLOB NOT NULL CHECK(length(wire) <= 1048576));
-                 CREATE TABLE cell_chunks_v1 (
-                     hash BLOB PRIMARY KEY CHECK(length(hash) = 32),
-                     bytes BLOB NOT NULL CHECK(length(bytes) BETWEEN 1 AND 4194304));
-                 PRAGMA application_id = 1413696561;
-                 PRAGMA user_version = 1;
-                 COMMIT;",
-            )?;
-        } else {
-            require(
-                application == APPLICATION_ID && version == 1,
-                "cache namespace",
-            )?;
-        }
+        super::cache_budget::open(&connection, Some(config), true)?;
         connection.pragma_update(None, "journal_mode", "WAL")?;
         connection.pragma_update(None, "synchronous", "FULL")?;
         Ok(Self {
@@ -78,21 +51,25 @@ impl CellStoreV1 {
     }
 
     /// Existing disposable cache only; serving never creates or repairs a DB.
-    pub(super) fn open_read_only(path: &Path) -> CellResultV1<Self> {
+    pub fn open_read_only(path: &Path) -> CellResultV1<Self> {
         let connection = Connection::open_with_flags(path, OpenFlags::SQLITE_OPEN_READ_ONLY)?;
         connection.busy_timeout(std::time::Duration::ZERO)?;
         connection.pragma_update(None, "trusted_schema", false)?;
-        let application: i64 =
-            connection.pragma_query_value(None, "application_id", |r| r.get(0))?;
-        let version: i64 = connection.pragma_query_value(None, "user_version", |r| r.get(0))?;
-        require(
-            application == APPLICATION_ID && version == 1,
-            "cache namespace",
-        )?;
+        super::cache_budget::open(&connection, None, false)?;
         Ok(Self {
             connection,
             read_only: true,
         })
+    }
+
+    pub fn cache_usage(&self) -> CellResultV1<super::CellCacheUsageV2> {
+        let transaction = rusqlite::Transaction::new_unchecked(
+            &self.connection,
+            rusqlite::TransactionBehavior::Deferred,
+        )?;
+        let usage = super::cache_budget::audit(&transaction, None)?;
+        transaction.commit()?;
+        Ok(usage)
     }
 
     pub fn put_manifest(&self, pinned: CellDigestV1, wire: &[u8]) -> CellResultV1<CellManifestV1> {
