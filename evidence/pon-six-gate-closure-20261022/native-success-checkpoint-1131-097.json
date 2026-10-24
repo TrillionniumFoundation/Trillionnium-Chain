@@ -1,0 +1,112 @@
+{
+  "schema": "readonly-exact-native-campaign-pair-checkpoint-v1",
+  "assembled_utc": "2026-10-22T07:05:30.811343+00:00",
+  "github_original_runs_snapshot": "exact-campaign-and-pair-github-snapshot.json",
+  "campaign": {
+    "run": 39727391523,
+    "job": 119654348496,
+    "artifact": 12405996241,
+    "source_head": "1131d067f7ae4e6ccb1bf27e05df34818311daec",
+    "source_tree": "0e57df7986857fc6ff7ecfb05817b639663955ce",
+    "strict_reader_actual_exit_code": 0,
+    "strict_reader_result": "campaign-strict-reader.json",
+    "strict_reader_original_stderr": "campaign-strict-reader.stderr.log",
+    "reader_source_identities": "campaign-reader-source-identities.json",
+    "readback_full_artifact_consistent": true,
+    "full_original_member_count": 910,
+    "verified_original_bytes": 303785160,
+    "denominators": {
+      "all_hostile_rounds_depletion_overlapped": false,
+      "complete_runs": 3,
+      "confirmation_round_observations": 27,
+      "hostile_round_observations": 18,
+      "hostile_rounds_with_observed_depletion_overlap": 10,
+      "phases": 9,
+      "submitted_block_observations": 189,
+      "unique_observed_transaction_ids": 3
+    },
+    "phase_detail": "campaign-nine-phase-detail.json",
+    "all_six_hostile_phases_have_genuine_depletion": true,
+    "all_27_signed_confirmation_round_observations_in_window": true,
+    "fixed_cpu_policy": {
+      "burst_ns": 2000000000,
+      "start_reserve_ns": 100000000,
+      "refill_ns_per_second": 250000000,
+      "worker_limit": 2
+    },
+    "original_github_zip_and_member_preservation": {
+      "schema": "lossless-member-repack-v1",
+      "created_utc": "2026-10-22T07:03:12.868525+00:00",
+      "github_original_zip": {
+        "bytes": 66808270,
+        "sha256": "61d933bb797d9b1b9ff0e0ea66ec5e560964598ff0661fbb76bbe44085c6ac42",
+        "artifact_id": 12405996241,
+        "workflow_run": 39727391523
+      },
+      "retained_repack": {
+        "path": "campaign-1131-lossless-repack.zip",
+        "bytes": 68339673,
+        "sha256": "399fd2f2f514dac5b8c8499d369923ff0ff7525f671be712f13508dd60f80b7b",
+        "is_original_github_zip_bytes": false
+      },
+      "all_original_member_bytes_verified_equal": true,
+      "original_members": 911,
+      "member_manifest": "campaign-zip-members.json",
+      "strict_reader_result_before_repacking": "campaign-strict-reader.json",
+      "strict_reader_stderr": "campaign-strict-reader.stderr.log",
+      "actions_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/39727391523",
+      "removed_duplicate_unpacked_directory": "campaign-1131-39727391523",
+      "original_unpacked_bytes": 303945241,
+      "expected_bytes_released": 235605568
+    },
+    "original_job_log": "chain-campaign-job-119654348496.raw.log",
+    "scope": {
+      "cryptographic_hardness_qualified": false,
+      "current_source_qualification": false,
+      "depletion_overlap_is_full_sample_interval_inside_round_not_continuous_saturation": true,
+      "host_or_custody_attestation": false,
+      "hostile_round_counters_are_retained_original_snapshots_not_reexecuted": true,
+      "independent_operators_qualified": false,
+      "model_benefit_measured": false,
+      "omitted_files_or_complete_zip_verified": null,
+      "production_activation": false,
+      "reader_executes_native_test": false,
+      "reader_replays_consensus_or_verifies_signatures": false,
+      "resource_limits_are_ceilings_not_physical_reservations": true,
+      "same_host_controlled_loopback": true,
+      "source_binding_is_retained_observation_not_checkout_verification": true,
+      "sustainable_business_tps": null,
+      "unknown_is_not_zero": true,
+      "wan_qualified": false
+    }
+  },
+  "pair": {
+    "run": 39727952205,
+    "head": "097d97137a43aee84fb96be12e44135278776748",
+    "chain_head": "1131d067f7ae4e6ccb1bf27e05df34818311daec",
+    "full_readback": "pair-four-lane-readback.json",
+    "four_native_lanes_confirmed_consistent": true,
+    "per_lane_receipts": 107,
+    "per_lane_positive_test_minimum_receipts": 103,
+    "per_lane_passed_test_count_sum_not_unique": 927,
+    "native_pair_envelopes_total": 16,
+    "native_tuple_and_binary_hash_and_inclusion_confirmation_reorg_checked": true,
+    "scope": {
+      "downloaded_complete_original_zips": true,
+      "extracted_local_files": "root-level metadata and original logs; complete ZIPs retained",
+      "reader_reexecutes_native_tests_or_signatures": false,
+      "source_or_host_attestation": false,
+      "actual_model_installation_verified": false,
+      "independent_operators": false,
+      "production_activation": false
+    }
+  },
+  "limits": {
+    "no_remote_writes_reruns_or_alert_dismissals": true,
+    "old_failed_observations_untouched": true,
+    "all_project_blockers_closed": false,
+    "hostile_round_depletion_overlap_is_10_of_18_not_continuous": true,
+    "no_independent_signature_reverification_or_host_custody_attestation_by_reader": true,
+    "cannot_promote_these_exact_heads_to_later_unpublished_integration": true
+  }
+}

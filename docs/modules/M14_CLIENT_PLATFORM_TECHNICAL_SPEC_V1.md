@@ -5,7 +5,7 @@ Revision: invariant-driven revision3. Selected target: `pon-nakamoto-v1`.
 
 ## Scope and ownership
 
-Closed receipt before quota-use signing, distinct from a local capability.
+Closed service-consent receipts and native/reference fully verifying client observations; none is a local capability.
 
 The claims below apply to their named component and tests, not to an independently accepted full native node.
 
@@ -19,17 +19,17 @@ Read active pointer and generation kv in one snapshot and recompute root; return
 
 ### M14.ConsumePublishedModel
 
-Consumer consent binds expected network, parameters, model, request, input, provider and quota; no opaque result hash silently substitutes another service. Check exact consumer expectations and canonical bytes; signature also binds full genesis parameter context.
+Consumer consent binds expected network, parameters, model, request, input, provider and quota; no opaque result hash silently substitutes another service. Check exact consumer expectations and canonical bytes; signature also binds full genesis parameter context. Confirmation reads one active view, validates all memberships, and checks that tip/generation still match before returning.
 
-**Atomic/commit boundary:** Check exact consumer expectations and canonical bytes; signature also binds full genesis parameter context.
+**Atomic/commit boundary:** Check exact consumer expectations and canonical bytes; signature also binds full genesis parameter context. Confirmation reads one active view, validates all memberships, and checks that tip/generation still match before returning.
 
 ## M14.ServiceReceiptBinding
 
 **Invariant:** Consumer consent binds expected network, parameters, model, request, input, provider and quota; no opaque result hash silently substitutes another service.
 
-**Scope:** Closed receipt before quota-use signing, distinct from a local capability.
+**Scope:** Closed service-consent receipts and native/reference fully verifying client observations; none is a local capability.
 
-**Atomic boundary:** Check exact consumer expectations and canonical bytes; signature also binds full genesis parameter context.
+**Atomic boundary:** Check exact consumer expectations and canonical bytes; signature also binds full genesis parameter context. Confirmation reads one active view, validates all memberships, and checks that tip/generation still match before returning.
 
 **Failure schedule:** Replace every receipt field; Missing expected identities; Extra authority field; Noncanonical bytes.
 
@@ -49,10 +49,12 @@ These exact functions contain executable assertions. The registry only checks bi
 
 Stale confirmation, input/model substitution, cross-genesis signatures and unsafe remote-result authority.
 
-Public client confirmation verification and normal Hepta final-use integration remain unimplemented.
+Controlled full-verifying confirmation is implemented in N2 below; succinct light verification, public-network currentness and normal Hepta final-use integration remain unimplemented.
 
 ## Current source and verification
 
+- [`trillionnium/crates/trnm-pon-node/src/store.rs`](../../trillionnium/crates/trnm-pon-node/src/store.rs).
+- [`trillionnium/crates/trnm-pon-node/src/main.rs`](../../trillionnium/crates/trnm-pon-node/src/main.rs).
 - [`formal/pon-nakamoto-v1/inference_receipt.py`](../../formal/pon-nakamoto-v1/inference_receipt.py).
 - [`formal/pon-nakamoto-v1/ledger.py`](../../formal/pon-nakamoto-v1/ledger.py).
 
@@ -60,11 +62,14 @@ No test binding or local campaign grants independent acceptance, ordinary Hepta 
 
 ## Executed evidence and scope
 
-The [current measured package](../../evidence/pon-v3/README.md) includes exact source,
-raw command exits and concrete invariant test results. Its verifier distinguishes
-runtime byte identity from documentation edits and cannot grant independent acceptance.
-Module-specific limitations above remain in force even when the referenced local test
-passes. The development plan, not this link or a count of procedures, selects next work.
+[Responsibility-level evidence navigation](README.md#responsibility-and-evidence) reads
+measured commits from immutable receipts. The module's entries in
+[module-maturity-v1.json](../../config/pon/module-maturity-v1.json) identify actual callable
+owners, controlled entrypoints, backends, persistence and exact observed test selectors.
+Run `python3 scripts/ci/report_module_evidence.py --module M14` from the repository
+root to see subject-byte and complete recorded-runtime matches separately, plus scenarios
+not observed in each package. A byte match is not a new test run or product acceptance.
+Historical v1/v3/v4 results are never repinned. The sole plan selects further work.
 
 ## Frozen evaluation and consent continuation
 
@@ -75,3 +80,46 @@ is created by a frozen artifact. The following additional regressions are execut
 - `formal/pon-nakamoto-v1/test_inference_receipt.py::InferenceBindingTests.test_expected_cost_nonce_and_returned_output_cannot_be_omitted`.
 - `formal/pon-nakamoto-v1/test_inference_receipt.py::InferenceBindingTests.test_oversized_receipt_rejects_before_json`.
 - `formal/pon-nakamoto-v1/test_inference_receipt.py::InferenceBindingTests.test_expected_boolean_counter_alias_rejects`.
+
+## Bounded receiver / confirmation continuation
+
+The actual controlled caller is `formal/pon-nakamoto-v1/client_confirmation.py`.
+[N2](../protocol/pon-nakamoto-v1/details/NETWORK_CLIENT.md#n2--executed-bounded-history-receiver-and-local-confirmation)
+defines page fields, caller-pinned cursors, full work/state validation, per-block commit,
+interrupted-prefix recovery, local confirmation and clock/currentness limits. The existing
+Ledger remains the only persistent owner. Maturity now binds this caller and its exact
+regressions; native public-host and ordinary Hepta integration flags remain false.
+
+A receiver computes work and transaction membership rather than accepting RPC assertions.
+This is a full-verifying reference client with explicit optional native work/execution
+components, NOT a succinct light client or proof of the globally latest tip. Completed
+lower-work delivery does not replace the receiver's heavier observed branch. Successful
+logical-clock tests cannot be reported as live confirmed public throughput.
+
+The current-clock observation checks every verified ancestor, not only the tip. Exact
+stored retransmission does not reuse an earlier clock verdict. Cancellation yields no
+partial confirmation, and a generation change during traversal rejects STALE_VIEW.
+See N2 for the actual callback, retry, memory and linear-history cost boundaries.
+
+## Native cache / receiver continuation
+
+The exact continuation is specified in [native execution](../protocol/pon-nakamoto-v1/details/EXECUTION_PARALLEL.md), [admission](../protocol/pon-nakamoto-v1/details/ADMISSION_SECURITY.md) and [client/recovery](../protocol/pon-nakamoto-v1/details/NETWORK_CLIENT.md). It does not promote native persistence, independent acceptance or public-network capacity. Exact additional counterexamples:
+
+- `formal/pon-nakamoto-v1/test_client_confirmation.py::VerifiedHistoryTests.test_batch_distinct_memberships_share_only_one_coherent_observation`.
+- `formal/pon-nakamoto-v1/test_client_confirmation.py::VerifiedHistoryTests.test_batch_rechecks_future_spike_below_all_requested_inclusions`.
+- `formal/pon-nakamoto-v1/test_client_confirmation.py::VerifiedHistoryTests.test_batch_cancellation_cannot_leave_reusable_currentness`.
+
+## Native development continuation and remaining scope
+
+Native single and bounded batch confirmation bind transaction, genesis, policy, generation, work/depth and local clock after complete membership/ancestry checks. The ordinary CLI and socket paths share one ancestry observation per batch, validate each membership, and cancel without partial success. This is not a succinct light client, public freshness proof or Hepta final-use authority.
+
+The current callable mappings remain in `config/pon/module-maturity-v1.json`.
+Exact native entry, storage and work behavior is specified by N3 in NETWORK_CLIENT,
+the native continuation in STATE_RECOVERY and the prepared-producer section in WORK_PROFILE.
+No historical receipt is relabelled as executing this source.
+
+Native ancestry observations now use block-ID-bound stored-header projections instead
+of materializing every full packet. Requested bodies still undergo full membership
+checking, and all clock/generation/cancellation semantics remain. Full transaction-page
+replay and stored header/trace/body mutations are covered by the native node suite;
+[N2](../protocol/pon-nakamoto-v1/details/NETWORK_CLIENT.md) retains the finite local scope.

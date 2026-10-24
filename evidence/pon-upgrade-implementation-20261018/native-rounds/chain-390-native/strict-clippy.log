@@ -1,0 +1,21 @@
+    Checking trnm-mvcc-fee v0.1.0 (/home/qian-qi/work/pon-upgrade-implementation-20261018/chain-performance/trillionnium/crates/trnm-mvcc-fee)
+    Checking utf8parse v0.2.2
+    Checking colorchoice v1.0.5
+    Checking is_terminal_polyfill v1.70.2
+    Checking anstyle v1.0.14
+    Checking anstyle-query v1.1.5
+    Checking anstyle-parse v1.0.0
+   Compiling heck v0.5.0
+    Checking clap_lex v1.1.0
+    Checking anstream v1.0.0
+    Checking strsim v0.11.1
+   Compiling clap_derive v4.6.0
+    Checking trnm-types v0.1.0 (/home/qian-qi/work/pon-upgrade-implementation-20261018/chain-performance/trillionnium/crates/trnm-types)
+    Checking clap_builder v4.6.0
+    Checking wait-timeout v0.2.1
+    Checking shlex v1.3.0
+    Checking shell-escape v0.1.5
+    Checking clap v4.6.0
+    Checking trnm-worker-agent v0.1.0 (/home/qian-qi/work/pon-upgrade-implementation-20261018/chain-performance/trillionnium/crates/trnm-worker-agent)
+    Checking trnm-pon-node v0.1.0 (/home/qian-qi/work/pon-upgrade-implementation-20261018/chain-performance/trillionnium/crates/trnm-pon-node)
+    Finished `dev` profile [unoptimized] target(s) in 30.24s

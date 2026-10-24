@@ -1,0 +1,30 @@
+{
+  "schema": "pon-consensus-maintenance-continuity-v1",
+  "id": "consensus-maintenance-continuity-dev-v1",
+  "consensus_revision": 12,
+  "production_eligible": false,
+  "hardness_accepted": false,
+  "useful_model_work_accepted": false,
+  "lifecycle": "explicit optional V4 signed overlap leases; their expiry, revocation, source and output rules remain enforced",
+  "maintenance": {
+    "namespace": "consensus-maintenance-v1",
+    "source": "genesis-committed public deterministic maintenance fixture; no user-demand or private-source attestation",
+    "purpose": "ledger continuity and reproducible field-matrix verification",
+    "matrix_dimension": 64,
+    "model_element": "A[i]=(13*i+17)%257 for i in 0..4096, little-endian u32",
+    "input_element": "B[i]=(29*i+31)%263 for i in 0..4096, little-endian u32",
+    "availability": "exact installed genesis policy reconstructs both materials without an external signer or lease",
+    "selection": "explicit maintenance option or exact matching registered material; never substitution for a selected expired or revoked task",
+    "useful_output_credit": 0,
+    "work_relation": "unchanged pon-matmul-transcript-64-v1; full transcript and ticket predicate required"
+  },
+  "capacity": {
+    "maximum_keys": 65536,
+    "invariant": "actual keys + distinct absent mandatory credit recipients + absent future evaluation archive rows + missing reward queue slots <= maximum keys",
+    "credit_liabilities": "all reward owners, plus positive task/quota/release remaining owners",
+    "queue_reserve": "reward_maturity_blocks minus current reward rows, with exact one pending reward per remaining height",
+    "archive_liabilities": "public evaluation contributions whose evaluation archive key does not exist",
+    "zero_balance_accounts": "retained with nonce; no deletion or replay-protection reset",
+    "overflow": "reject the optional growth before publication; preserve parent state, roots, nonce and durable active tip"
+  }
+}
