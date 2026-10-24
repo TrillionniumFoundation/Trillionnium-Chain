@@ -2,7 +2,8 @@
 
 No funding/grant producer or public acquisition path. The C record is bounded
 transport after C's exact wait4(A); O's separate exact wait4(C) and actual raw
-U/C/A observations remain mandatory. No retirement/whole-U/refund authority.
+U/C/A observations remain mandatory. Private child retirement grants no Whole-U
+or refund authority and never clears the original process-lifetime owner root.
 """
 import ctypes
 import fcntl
@@ -18,6 +19,26 @@ import llm_runtime_kernel_owned as kernel
 _TOKEN = object()
 _MAGIC = 0x31574134544e5243
 require = kernel.require
+
+
+class _ExactTerminal:
+    """One internal fact, emitted only after the original two exact waits."""
+    __slots__ = ('launch', 'child', 'record', 'binding')
+
+    def __init__(self, token, launch, child):
+        require(token is _TOKEN and launch.record is not None,
+                'host-retirement-exact-terminal-required')
+        self.launch, self.child, self.record = launch, child, launch.record
+        self.binding = launch.operation.child
+
+    def __reduce_ex__(self, protocol):
+        raise TypeError('host-retirement-terminal-not-serializable')
+
+    def __copy__(self):
+        raise TypeError('host-retirement-terminal-not-copyable')
+
+    def __deepcopy__(self, memo):
+        raise TypeError('host-retirement-terminal-not-copyable')
 
 
 class _ControllerWaitRole:
@@ -65,6 +86,7 @@ class _AggregateLaunch:
         self.identities = (ctypes.c_uint64*6)()
         self.status = ctypes.c_int(-1)
         self.record = None
+        self._terminal_fact = self._retirement_attempt = None
         self._wait_role = None
         self._retirement = (ctypes.c_uint64*24)()  # Original fixed output before native effect.
         self.source = kernel._digest(kernel._bytes(Path(__file__)))
@@ -191,6 +213,135 @@ class _AggregateLaunch:
         self.record = (aggregate_pid, os.waitstatus_to_exitcode(status), user_us, system_us)
         self.native.release_owned(self.read_slot)
         require(self.read_slot[0] == 0 and self.read_slot[1] == -1, 'kernel-owned-close-failed')
+        require(time.monotonic_ns() < self.deadline_ns, 'host-retirement-original-cutoff')
+        self._terminal_fact = _ExactTerminal(_TOKEN, self, child)
         return dict(scope='native-C-exact-wait4-A-transport-only', pid=aggregate_pid,
             exit_code=self.record[1], waited_user_us=user_us, waited_system_us=system_us,
             whole_u_terminal=False, resource_return_proven=False, reservation='RETAINED')
+
+    def _activate_retirement_locked(self, raw):
+        op, cap = self.operation, self.operation.cap
+        fact, child = self._terminal_fact, op.spawn_owner
+        require(type(fact) is _ExactTerminal and op._retirement_terminal is fact and
+            fact.launch is self and fact.child is child and fact.record is self.record and
+            fact.binding == op.child and cap._leaf_phase == 'CONTROLLER_EXIT_OBSERVED' and
+            child.reaped and child.reap_resolved and child.owned_exit_observed and
+            child.cleanup_method == 'wait4' and child.observation_error is None and
+            child.returncode == 0 and self._wait_role is child._aggregate_wait_role and
+            self._wait_role.child is child and self._wait_role.launch is self and
+            time.monotonic_ns() < self.deadline_ns, 'host-retirement-exact-terminal-required')
+        from llm_runtime_host_scope import _fields
+        require(all(raw[role]['cgroup.procs'] == '' and raw[role]['pids.current'] == '0\n' and
+            _fields(raw[role]['cgroup.events']).get('populated') == 0
+            for role in ('operation', 'controller', 'aggregate')),
+            'host-retirement-original-quiescence')
+        handoff = child._kernel_handoff
+        require(tuple(handoff) == (child.pid, child.termination_fd, -1, -1) and
+            op.child == (child.pid, child.termination_fd, kernel.proc._signature(handoff[1])) and
+            self.read_slot[1] == self.write_slot[1] == -1,
+            'host-retirement-original-C-slots')
+        owners = []
+        for role in ('aggregate', 'controller'):
+            parent, name, fd, identity = cap._groups[role]
+            matches = [slot for slot, signature in cap._fds if slot[1] == fd and signature == identity]
+            require(parent == cap._groups['operation'][2] and name == role and len(matches) == 1,
+                    'host-retirement-original-group-slots')
+            owners.append(matches[0])
+        identities = (ctypes.c_uint64*12)(*(cap._groups['operation'][3]+
+            cap._groups['aggregate'][3]+cap._groups['controller'][3]+op.child[2]))
+        # Strongly retain the exact original arrays BEFORE native entry/pending
+        # Python signals. No caller DTO, release switch or second owner exists.
+        self._retirement_attempt = (fact, owners[0], owners[1], handoff, identities)
+        cap._retirement_attempt = self
+        cap._leaf_phase = 'CHILDREN_RETIRING'
+        error = self.native.activate_retirement(cap._groups['operation'][2],
+            owners[0], owners[1], handoff, identities, self.deadline_ns, self._retirement)
+        require(error == 0, 'host-retirement-native-activation-refused')
+        return self._retirement_status_locked()
+
+    def _retirement_status_locked(self):
+        # This verifier is distinct from the original live/EMPTY verifier. It
+        # never reads arrays concurrently close-cleared by the worker.
+        import llm_runtime_host_scope as host
+        import llm_runtime_host_controller as controller
+        op, cap = self.operation, self.operation.cap
+        require(self.native._busy._recursion_count() == 1 and self.native.operation is op and
+            op._aggregate is self and cap._retirement_attempt is self and
+            self._retirement_attempt is not None and host._retained_aggregate_owner() is cap and
+            kernel._digest(kernel._bytes(Path(__file__))) == self.source and
+            kernel._digest(kernel._bytes(Path(controller.__file__))) == op._source,
+            'host-retirement-original-retained-owner')
+        cap._owner_identity()
+        require(self.native.snapshot_retirement(self._retirement) == 0,
+                'host-retirement-original-worker-slot')
+        words = tuple(self._retirement)
+        require(words[2] == cap._pid and words[3] == threading.get_native_id() and
+            words[8] == self.deadline_ns and words[19] == 1 and words[20] <= 31,
+            'host-retirement-original-effect-identity')
+        result = dict(scope='original-O-child-retirement-only', phase=words[0],
+            native_error=words[1], progress=words[20], child_unlink_and_close_proven=False,
+            whole_u_terminal=False, resource_return_proven=False, reservation='RETAINED',
+            outer_reconciliation='UNKNOWN', authorization=False)
+        if words[0] in (4, 5) or words[1] or time.monotonic_ns() >= self.deadline_ns:
+            op._refuse(kernel.KernelBudgetError('host-retirement-unknown-retained'))
+            return result
+        if words[0] != 7 or not words[17] or op.failed:
+            return result
+        require(words[20:23] == (31, 1, 0), 'host-retirement-incomplete-native-progress')
+        _, aggregate, controller, child, _ = self._retirement_attempt
+        require(tuple(aggregate) == tuple(controller) == (0, -1, -1, -1) and
+            tuple(child) == (op.spawn_owner.pid, -1, -1, -1),
+            'host-retirement-original-close-facts')
+        op.spawn_owner._adopt_kernel_handoff()  # Project the original cleared pidfd, never a new owner.
+        # DONE release-publishes stable close-cleared arrays. Other retained
+        # handles, source, namespaces, original manager and limits stay exact.
+        for slot, identity in cap._fds:
+            if slot is aggregate or slot is controller: continue
+            require(slot[0] == 0 and slot[1] >= 0 and kernel.proc._signature(slot[1]) == identity,
+                    'host-retirement-retained-fd-changed')
+        control = cap._manager_readback()
+        require(kernel._text(cap._proc, 'cgroup') == '0::'+control+'/host/observer\n',
+                'host-observer-membership')
+        for fd, values in cap._ancestors:
+            require(all(kernel._text(fd, key) == value for key, value in values.items()),
+                    'host-ancestor-ceiling-changed')
+        for role in ('scope', 'host', 'observer', 'operation'):
+            parent, name, fd, identity = cap._groups[role]
+            if parent is not None:
+                fresh = os.open(name, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC,
+                                dir_fd=parent)
+                try: require(kernel.proc._signature(fresh) == identity, 'host-group-replaced')
+                finally: os.close(fresh)
+            cap._check_mount(fd)
+            require(kernel._text(fd, 'cgroup.type') == 'domain\n' and
+                all(kernel._text(fd, key) == value for key, value in host._limits(role).items()),
+                'host-exact-budget-required')
+            expected_names = {'scope': frozenset(('host',)),
+                'host': frozenset(('observer', cap._operation_name))}.get(role, frozenset())
+            require(host._directory_names(fd) == expected_names, 'host-retirement-exact-topology')
+            tree = host._fields(kernel._text(fd, 'cgroup.stat'))
+            require(tree.get('nr_descendants') == {'scope': 3, 'host': 2}.get(role, 0),
+                    'host-retirement-descendant-mismatch')
+            controls = kernel._text(fd, 'cgroup.subtree_control').split()
+            expected = frozenset() if role == 'observer' else host._CONTROLLERS
+            require(len(controls) == len(expected) and frozenset(controls) == expected,
+                    'host-subtree-controllers')
+            require(kernel._text(fd, 'cgroup.procs') == (str(cap._pid)+'\n' if role == 'observer' else ''),
+                    'host-original-only-observer')
+        from llm_runtime_host_controller import _RAW
+        raw = {key: kernel._text(cap._groups['operation'][2], key) for key in _RAW}
+        require(sum(map(len, raw.values())) <= 65536, 'host-controller-observation-bound')
+        current, peak = (host._decimal(raw[key]) for key in ('memory.current', 'memory.peak'))
+        cpu, events = host._fields(raw['cpu.stat']), host._fields(raw['memory.events'])
+        old_peak, old_cpu = op._meters['operation']
+        require('usage_usec' in cpu and {'low', 'high', 'max', 'oom', 'oom_kill'} <= set(events) and
+            not any(events.values()) and raw['memory.swap.current'] == '0\n' and
+            0 <= current <= peak <= host._BUDGETS['operation'][0] and
+            peak >= old_peak and cpu['usage_usec'] >= old_cpu and
+            raw['pids.current'] == '0\n' and raw['cgroup.procs'] == '' and
+            host._fields(raw['cgroup.events']).get('populated') == 0,
+            'host-retirement-U-history-or-quiescence')
+        op._meters['operation'] = (peak, cpu['usage_usec'])
+        require(time.monotonic_ns() < self.deadline_ns, 'host-retirement-original-cutoff')
+        result.update(child_unlink_and_close_proven=True, counters=raw)
+        return result  # Raw U.current/dying may remain positive. Never a Whole-U/refund fact.

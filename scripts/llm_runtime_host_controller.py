@@ -51,6 +51,7 @@ class _HostControllerOperation:
                 self.native_refused_without_child = False
                 self.spawn_owner = self.child = None
                 self._aggregate = None  # One private subordinate native launch, never a grant.
+                self._retirement_terminal = None
                 self._first_error = None
                 self._meters = {'operation': (0, 0), 'controller': (0, 0), 'aggregate': (0, 0)}
                 self._source = kernel._digest(kernel._bytes(Path(__file__)))
@@ -222,6 +223,7 @@ class _HostControllerOperation:
                     require(raw['aggregate']['cgroup.procs'] == '' and
                         raw['aggregate']['pids.current'] == '0\n', 'host-controller-descendants-remain')
                     aggregate_record = self._aggregate._terminal_locked(child)
+                    self._retirement_terminal = self._aggregate._terminal_fact
                 self.cap._leaf_phase = 'CONTROLLER_EXIT_OBSERVED'
                 result = dict(scope='original-O-exact-wait4-C-only', counters=raw,
                     waited_cpu_ns=child.waited_cpu_ns, exit_code=child.returncode,
@@ -230,6 +232,31 @@ class _HostControllerOperation:
                 if aggregate_record is not None:
                     result['aggregate_wait4_transport'] = aggregate_record
                 return result
+            except BaseException as error:
+                self._refuse(error)
+                raise
+
+    def _retire_children(self):
+        """One private original-owner effect; no Whole-U or settlement fact."""
+        with self.native._lock_for_owner():
+            require(self.native._busy._recursion_count() == 1, 'kernel-native-lifecycle-busy')
+            try:
+                from llm_runtime_host_aggregate import _AggregateLaunch
+                require(type(self._aggregate) is _AggregateLaunch and
+                    getattr(self.cap, '_retirement_attempt', None) is None,
+                    'host-retirement-original-single-attempt')
+                raw = self._verify_locked()  # All original live checks, before any effect.
+                return self._aggregate._activate_retirement_locked(raw)
+            except BaseException as error:
+                self._refuse(error)
+                raise
+
+    def _retirement_status(self):
+        with self.native._lock_for_owner():
+            require(self.native._busy._recursion_count() == 1 and self._aggregate is not None,
+                    'host-retirement-original-single-attempt')
+            try:
+                return self._aggregate._retirement_status_locked()
             except BaseException as error:
                 self._refuse(error)
                 raise
