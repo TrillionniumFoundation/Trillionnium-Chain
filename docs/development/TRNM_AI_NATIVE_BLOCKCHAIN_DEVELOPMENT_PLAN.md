@@ -1603,6 +1603,17 @@ existing opt-in model cases remain unexecuted. All 44 external-reader cases and
 five real storage-service cases pass locally. Current hosted head/merge checks,
 fresh CodeQL disposition and native/model acceptance remain separate open gates.
 
+The same PN0 CI boundary now partitions the unchanged local `rust-baseline`
+commands into required runtime and quality workers for both candidate and actual
+prospective merge. Each worker retains 180 minutes; the original required check
+names run fail-closed fan-in after every outcome. Both current-run/current-attempt
+receipts, exact source before/after and executed command hashes must agree, and
+both jobs must succeed. Runtime retains the workspace, signed oracles and four
+exact ignored native controls; quality retains formatting, supply-chain, docs and
+strict Clippy. No test, native deadline or assertion is removed. This addresses
+observed scheduler cancellation after successful capacity/growth controls; fresh
+hosted execution of the new scheduling remains pending.
+
 Exit: one reproducible source-pair/configuration inventory and per-gate results
 with unresolved items assigned. Block dependent acceptance on required failures;
 continue scoped repair and offline research. Do not rerun historical cleanup or

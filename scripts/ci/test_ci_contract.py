@@ -1012,13 +1012,36 @@ cargo() {
 
     def test_merge_lane_requires_all_actual_lanes(self):
         self.rejected('.github/workflows/trnm-required-baseline.yml',
-                      'lane: [repository-truth, protocol-contract, fuzz-smoke, rust-baseline, external-evidence-contract]',
+                      'lane: [repository-truth, protocol-contract, fuzz-smoke, external-evidence-contract]',
                       'lane: [repository-truth]')
 
     def test_merge_identity_is_not_itself_an_execution_pass(self):
         self.rejected('.github/workflows/trnm-required-baseline.yml',
                       'run: bash scripts/ci/ci_job.sh "${{ matrix.lane }}"',
                       'run: python3 scripts/ci/check_repository.py')
+
+    def test_required_rust_fanins_cannot_skip_ignore_or_invent_shards(self):
+        path = '.github/workflows/trnm-required-baseline.yml'
+        for worker in ['rust-baseline-shards', 'prospective-rust-shards']:
+            for before, after in [
+                ('    needs: ' + worker + '\n', ''),
+                ('TRNM_RUST_SHARD_RESULT: ${{ needs.' + worker + '.result }}', 'TRNM_RUST_SHARD_RESULT: success')]:
+                with self.subTest(before=before):
+                    self.rejected(path, before, after)
+        for before, after in [
+            ('    if: always()\n    runs-on: ubuntu-24.04\n    timeout-minutes: 180',
+             '    if: success()\n    runs-on: ubuntu-24.04\n    timeout-minutes: 180'),
+            ("${{ always() && github.event_name == 'pull_request' }}", "github.event_name == 'pull_request'"),
+            ('shard: [runtime, quality]', 'shard: [runtime]'),
+            ('name: prospective-merge (rust-baseline)', 'name: unrelated-rust'),
+            ('      - name: Run retained Rust shard\n        run:', '      - name: Run retained Rust shard\n        if: false\n        run:'),
+            ('--dependency-result "$TRNM_RUST_SHARD_RESULT"', '--dependency-result success'),
+            ('          path: |\n            ${{ runner.temp }}/ci-observations/rust-shard.json\n            ${{ runner.temp }}/ci-observations/rust-shard.sh\n',
+             '          path: ${{ runner.temp }}/ci-observations/\n'),
+            ('rust-shard-head-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_attempt }}-*', 'rust-shard-head-*'),
+            ('rust-shard-prospective-merge-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_attempt }}-*', 'rust-shard-prospective-merge-*')]:
+            with self.subTest(before=before):
+                self.rejected(path, before, after)
 
     def test_failure_cannot_be_marked_ignorable(self):
         self.rejected('.github/workflows/trnm-required-baseline.yml',
