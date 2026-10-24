@@ -2028,6 +2028,30 @@ whole-U terminal accounting, original baseline funding and settlement remain
 OPEN. The source controls use ordinary files/FDs and a mock manager, including
 modeled positive U metadata charges; they are not new kernel measurements.
 
+The next internal C-mechanics slice retains the same original O and held C
+FD through a private `_HostControllerOperation` binding. The unchanged clone3
+ABI, four persistent native handoff slots, exec-error pipe, pidfd and exact
+`_Wait4Child` wait4/rusage owner are reused through a dedicated internal type
+selector; neither the old aggregate constructor nor a caller boolean opens it.
+The original namespace owner still exposes no spawn/terminal/refund factory.
+There is no CLI or public acquisition function: the existing Hepta funded
+registration and sealed FinalUse/opaque grant producer must gate a future real
+entry. Missing that producer remains a production blocker, not a successful
+stub or a new Python funding/signature issuer.
+
+C running/exit observations validate the original manager, O identity/observer
+membership, retained six groups, exact limits/topology and unchanged pristine A.
+U/C actual current and historical peak stay charged in full; retained peak/CPU
+meters cannot rewind. No counters are reset or metadata subtracted. An exact
+owned wait4 of C before the same supplied absolute eight-second cutoff can
+record C's process exit plus raw U/C meters only; it cannot prove whole-U empty,
+retire C/A or refund a reservation. The existing aggregate evidence-pipe and
+framing controls remain unchanged; a real scope-C-to-A transport/owner binding
+is still required before any complete O/C/A execution entry can be exposed.
+Local controls use ordinary files/mock namespace observations and a real direct
+ordinary wait4 child. They do not execute native clone3 into C, prove kernel
+placement, grant FinalUse or count toward three real-model upgrades.
+
 The existing PN4 dependency and acceptance sequence is:
 
 | Stage / owner | Interface and required evidence | Status / exit |
