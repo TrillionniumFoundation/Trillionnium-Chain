@@ -15,6 +15,7 @@ import llm_runtime_kernel_owned as kernel
 import llm_runtime_evidence_pipe as transport
 import llm_runtime_pilot as runtime
 import test_llm_runtime_evidence_pipe as ownership
+from test_llm_runtime_evidence_frames import source_child_environment
 
 PAYLOAD = """import os,sys,resource
 from pathlib import Path
@@ -55,7 +56,7 @@ class EvidenceTransportTests(unittest.TestCase):
         def spawn(group,output,exe,argv,environment,slots):
             # Test-only ordinary spawn; actual native INTO_CGROUP is NOT_RUN.
             child=subprocess.Popen([os.fsdecode(value) for value in argv if value],
-                stdout=output,stderr=subprocess.STDOUT)
+                stdout=output,stderr=subprocess.STDOUT,env=source_child_environment())
             self.children.append(child)
             slots[:]=(child.pid,os.pidfd_open(child.pid),-1,-1)
             return 0

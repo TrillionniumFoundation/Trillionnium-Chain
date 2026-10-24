@@ -325,11 +325,11 @@ def native_durable_schema(root):
                     Self::open_inner(path, settings, workers, hook, None, None, None)''',
                 'open_inner':'''Self::open_selected(path, settings, workers, hook,
                     NativeOwners { policy: owner_policy, mining: mining_owner, continuous: continuous_owner, },
-                    StateBackend::Legacy,)''',
+                    StateBackend::Legacy, false,)''',
                 'open_with_authenticated_state':'''Self::open_with_authenticated_state_and_fault(path, settings, workers, None)''',
                 'open_with_authenticated_state_and_fault':'''ensure(!owner_marker_present(path)?, "OWNER_TASK_POLICY_REQUIRED")?;
                     Self::open_selected(path, settings, workers, hook,
-                        NativeOwners { policy: None, mining: None, continuous: None, }, StateBackend::AuthenticatedV1,)''',
+                        NativeOwners { policy: None, mining: None, continuous: None, }, StateBackend::AuthenticatedV1, false,)''',
             }
             for name, expected in selections.items():
                 layout(body(node,'fn',name),expected,'durable backend opener '+name)

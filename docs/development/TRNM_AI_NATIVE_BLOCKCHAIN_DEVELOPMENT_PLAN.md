@@ -1591,6 +1591,18 @@ candidate and base without changing deployed services or another repository.
    successor's original-budget campaign is pending, not inferred from its cache
    and import regressions. See the existing performance acceptance contract.
 
+The 2026-10-24 local CI repair keeps the original lane commands and assertions.
+Ordinary evidence-test children bind only their own checkout's script directory,
+including prospective merges, instead of inheriting a stale head's `PYTHONPATH`.
+The durable-schema reader requires the current legacy/authenticated openers'
+literal `false` growth-observation argument; changed backend, mode and rebinding
+mutants still reject. The paid-cache test reads the real account's next nonce
+before signing its unchanged funding transaction. The full runtime group executes
+the original 269 cases plus one source-path control: 263 pass and the seven
+existing opt-in model cases remain unexecuted. All 44 external-reader cases and
+five real storage-service cases pass locally. Current hosted head/merge checks,
+fresh CodeQL disposition and native/model acceptance remain separate open gates.
+
 Exit: one reproducible source-pair/configuration inventory and per-gate results
 with unresolved items assigned. Block dependent acceptance on required failures;
 continue scoped repair and offline research. Do not rerun historical cleanup or

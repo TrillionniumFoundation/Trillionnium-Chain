@@ -719,10 +719,10 @@ class NativeDurableSchemaTests(unittest.TestCase):
              'Self::open_with_authenticated_state_and_fault(path, settings, workers, None)'),
             ('fault-open','Self::open_inner(path, settings, workers, hook, None, None, None)',
              'Self::open_with_authenticated_state_and_fault(path, settings, workers, hook)'),
-            ('legacy-selected','StateBackend::Legacy,\n        )\n    }\n    fn open_selected',
-             'StateBackend::AuthenticatedV1,\n        )\n    }\n    fn open_selected'),
-            ('auth-selected','StateBackend::AuthenticatedV1,\n        )\n    }\n    /// Explicit local operator policy',
-             'StateBackend::Legacy,\n        )\n    }\n    /// Explicit local operator policy'),
+            ('legacy-selected','StateBackend::Legacy,\n            false,\n        )\n    }\n    fn open_selected',
+             'StateBackend::AuthenticatedV1,\n            false,\n        )\n    }\n    fn open_selected'),
+            ('auth-selected','StateBackend::AuthenticatedV1,\n            false,\n        )\n    }\n    /// Explicit local operator policy',
+             'StateBackend::Legacy,\n            false,\n        )\n    }\n    /// Explicit local operator policy'),
             ('ddl-unselected','let ddl = state_backend.ddl();','let ddl = ddl();'),
             ('schema-unselected','let schema_id = state_backend.selected_schema_id(&settings);','let schema_id = StateBackend::Legacy.schema_id();'),
             ('nested-pair',pair,'if false { '+pair+' }'),
@@ -748,6 +748,18 @@ class NativeDurableSchemaTests(unittest.TestCase):
         for statement in rebound:
             with self.subTest(statement=statement),self.assertRaisesRegex(ValueError,'durable backend selected schema rebound'):
                 self.extract(self.replace_once(self.current,pair,pair+'\n        '+statement))
+
+    def test_legacy_and_authenticated_openers_cannot_enable_growth_observation_mode(self):
+        for backend, after in (('Legacy', 'fn open_selected'),
+                               ('AuthenticatedV1', '/// Explicit local operator policy')):
+            tail = '\n        )\n    }\n    '+after
+            current = 'StateBackend::'+backend+',\n            false,'+tail
+            for replacement in ('true', 'growth_observation_only', 'false || true',
+                                '{ false }', 'false, true'):
+                changed = 'StateBackend::'+backend+',\n            '+replacement+','+tail
+                with self.subTest(backend=backend, replacement=replacement), \
+                        self.assertRaisesRegex(ValueError, 'durable backend opener'):
+                    self.extract(self.replace_once(self.current,current,changed))
 
     def test_selected_settings_cannot_be_mutated_through_fields_or_borrowed(self):
         header = 'fn open_selected(\n        path: &Path,\n        settings: Settings,'
