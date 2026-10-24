@@ -2107,6 +2107,14 @@ faults, including a worker still blocked past the cutoff; the existing namespace
 controls explicitly model this new transport.
 They do not qualify fresh observer placement, C/A retirement or raw U zero.
 
+Native snapshots acquire the initialization publication before reading any
+ordinary owner/output fields; EMPTY/OWNED refuse without inspecting them.
+Preparation claims the fixed slot before scanning its output and refuses an
+occupied slot before caller-buffer reads. A nonzero first output consumes the
+same failed slot without reset. Four additional controls pause initialization
+and protect the original output page, retaining the original nine preparation
+assertions and cutoff; neither refusal path may race the owner's snapshot.
+
 The existing PN4 dependency and acceptance sequence is:
 
 | Stage / owner | Interface and required evidence | Status / exit |

@@ -71,9 +71,12 @@ static void *trnm_retirement_worker(void *unused) {
 }
 
 int trnm_kernel_retirement_snapshot_v1(uint64_t output[TRNM_RETIRE_WORDS]) {
+    /* OWNED is still initializing ordinary fields. Acquire the publication
+     * before even comparing its stored output/PID/TID, including on refusal. */
+    unsigned phase = atomic_load_explicit(&trnm_retirement.phase, memory_order_acquire);
+    if (phase == TRNM_RETIRE_EMPTY || phase == TRNM_RETIRE_OWNED) return EAGAIN;
     if (!output || output != trnm_retirement.output || getpid() != trnm_retirement.pid ||
         syscall(SYS_gettid) != trnm_retirement.owner_tid) return EPERM;
-    unsigned phase = atomic_load_explicit(&trnm_retirement.phase, memory_order_acquire);
     if ((phase == TRNM_RETIRE_STARTING || phase == TRNM_RETIRE_READY) &&
         !trnm_before(trnm_retirement.deadline)) {
         atomic_store(&trnm_retirement.expired, 1);
@@ -103,6 +106,11 @@ int trnm_kernel_retirement_snapshot_v1(uint64_t output[TRNM_RETIRE_WORDS]) {
 int trnm_kernel_retirement_prepare_v1(int observer, const uint64_t identity[3],
         const char *membership, size_t membership_size, uint64_t deadline,
         uint64_t output[TRNM_RETIRE_WORDS]) {
+    /* An occupied slot never inspects caller buffers, which may be the output
+     * currently written by its original owner's snapshot. Immutable identity/
+     * membership inputs are validated only while the slot still appears empty. */
+    if (atomic_load_explicit(&trnm_retirement.phase, memory_order_acquire) != TRNM_RETIRE_EMPTY)
+        return EALREADY;
     uint64_t now = trnm_now_ns();
     struct stat meta; struct statfs fs;
     if (!output || !identity || !membership || !membership_size || membership_size > 4096 ||
@@ -111,17 +119,20 @@ int trnm_kernel_retirement_prepare_v1(int observer, const uint64_t identity[3],
         fstat(observer, &meta) || fstatfs(observer, &fs) || fs.f_type != TRNM_CGROUP2_MAGIC ||
         !S_ISDIR(meta.st_mode) || (uint64_t)meta.st_dev != identity[0] ||
         (uint64_t)meta.st_ino != identity[1] || (uint64_t)meta.st_mode != identity[2]) return EINVAL;
-    for (unsigned i = 0; i < TRNM_RETIRE_WORDS; i++) if (output[i]) return EINVAL;
     unsigned empty = TRNM_RETIRE_EMPTY;
     if (!atomic_compare_exchange_strong(&trnm_retirement.phase, &empty, TRNM_RETIRE_OWNED))
         return EALREADY;
+    /* Only the winning initializer can read this shared output. All snapshots
+     * refuse OWNED and every competing prepare loses before its output scan. */
+    int error = 0;
+    for (unsigned i = 0; i < TRNM_RETIRE_WORDS; i++) if (output[i]) { error = EINVAL; break; }
     trnm_retirement.output = output; trnm_retirement.pid = getpid();
     trnm_retirement.owner_tid = (pid_t)syscall(SYS_gettid); trnm_retirement.deadline = deadline;
     for (unsigned i = 0; i < 3; i++) trnm_retirement.observer[i] = identity[i];
     memcpy(trnm_retirement.expected, membership, membership_size);
     trnm_retirement.expected_size = membership_size;
     trnm_retirement.membership[1] = trnm_retirement.membership[2] = trnm_retirement.membership[3] = -1;
-    int error = trnm_retirement_membership();
+    if (!error) error = trnm_retirement_membership();
     long page = sysconf(_SC_PAGESIZE);
     if (!error && (page < 4096 || page > 65536 || (page & (page-1)) ||
         TRNM_RETIRE_STACK % (size_t)page)) error = EINVAL;

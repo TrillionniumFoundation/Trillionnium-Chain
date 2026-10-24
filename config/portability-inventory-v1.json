@@ -614,6 +614,7 @@
         "scripts/test_llm_runtime_host_aggregate.py",
         "scripts/llm_runtime_retirement_slot.c",
         "scripts/test_llm_runtime_retirement_slot.py",
+        "scripts/test_llm_runtime_retirement_publication.py",
         "scripts/test_llm_runtime_decode.py",
         "scripts/llm_runtime_exit_observation.py",
         "scripts/test_llm_runtime_kernel_owned.py",
