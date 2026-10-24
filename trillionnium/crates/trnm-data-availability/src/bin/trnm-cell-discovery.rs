@@ -13,7 +13,7 @@ context-digest --family FAMILY --base HEX --parent HEX --tokenizer HEX --layout 
 sign --record-output ABSENT_FILE --secret-key-file RAW_32_BYTE_PRIVATE_FILE --owner HEX --manifest HEX --cell-context HEX --endpoint IP:PORT --sequence N --issued-unix-seconds N --expires-unix-seconds N <context>
 announce --record EXACT_335_BYTE_FILE --owner HEX --manifest HEX --cell-context HEX --bootstrap IP:PORT <context> <scope> <client limits>
 serve --directory DB --bind IP:PORT (--seconds N | --overall-ms N) --request-ms N --max-connections N <context> <scope>
-fetch --directory DB --store DB --cache-max-bytes N --cache-max-chunks N --cache-max-manifests N --manifest HEX --cell-context HEX --bootstraps IP:PORT[,IP:PORT] --output ABSENT_FILE <context> <scope> <client limits>
+fetch --directory DB --store DB --cache-max-bytes N --cache-max-chunks N --cache-max-manifests N --cache-max-db-bytes N --manifest HEX --cell-context HEX --bootstraps IP:PORT[,IP:PORT] --output ABSENT_FILE <context> <scope> <client limits>
 All pins, namespace, numeric addresses and limits are explicit. No DNS/referrals/DHT.
 Private seed files must be regular, nonsymlink, exactly 32 raw bytes, one link,
 and mode 0600 or stricter; seed bytes are never printed. Records are public.
@@ -65,7 +65,7 @@ mod unix {
             CellProviderStatementV1, CellRendezvousLimitsV1, CELL_DISCOVERY_PROFILE_V1,
             CELL_PROVIDER_RECORD_BYTES_V1, MAX_DISCOVERY_BOOTSTRAPS,
         },
-        parse_digest, CellCacheConfigV2, CellContextV1, CellDigestV1, CellErrorV1,
+        parse_digest, CellCacheConfigV4, CellContextV1, CellDigestV1, CellErrorV1,
         CellPeerLimitsV1, CellStoreV1,
     };
 
@@ -239,7 +239,8 @@ mod unix {
     fn fetch(args: &mut Args, started: Instant) -> Result<()> {
         let path = PathBuf::from(args.take("--directory")?);
         let store = PathBuf::from(args.take("--store")?);
-        let cache_config = CellCacheConfigV2 {
+        let cache_config = CellCacheConfigV4 {
+            max_database_bytes: args.number("--cache-max-db-bytes")?,
             max_logical_bytes: args.number("--cache-max-bytes")?,
             max_chunk_rows: args.number("--cache-max-chunks")?,
             max_manifest_rows: args.number("--cache-max-manifests")?,

@@ -19,6 +19,8 @@ use super::*;
 mod cache_budget;
 #[path = "cache_catalog_tests.rs"]
 mod cache_catalog;
+#[path = "cache_image_tests.rs"]
+mod cache_image;
 
 fn context() -> CellContextV1 {
     CellContextV1 {
@@ -1123,8 +1125,9 @@ fn failed_fetch_keeps_transport_phase_without_renewing_request_deadline() {
 }
 
 // Explicit finite fixture quota; covers the existing <=32MiB commit fixtures.
-fn cache_config() -> crate::cell::CellCacheConfigV2 {
-    crate::cell::CellCacheConfigV2 {
+fn cache_config() -> crate::cell::CellCacheConfigV4 {
+    crate::cell::CellCacheConfigV4 {
+        max_database_bytes: 128 * 1024 * 1024,
         max_logical_bytes: 64 * 1024 * 1024,
         max_chunk_rows: 4096,
         max_manifest_rows: 256,

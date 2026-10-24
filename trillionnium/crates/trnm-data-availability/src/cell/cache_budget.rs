@@ -1,28 +1,59 @@
-//! Persistent logical cache admission. DB/WAL/SHM/temp/output physical space is separate.
+//! Persistent logical admission plus a main DB-image length/page cap.
+//! WAL admission is separately owned by cache_wal; this is not block reservation.
 use rusqlite::{params, Connection, TransactionBehavior};
 
 use super::{require, CellResultV1};
 
-pub(super) const APPLICATION_ID: i64 = 0x5443_4c32;
+pub(super) const APPLICATION_ID: i64 = 0x5443_4c34;
 
 /// Immutable per-cache limits; no per-fetch reset or unlimited default.
 /// Logical bytes include chunk payload, manifest wire and every 32-byte key.
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
-pub struct CellCacheConfigV2 {
+pub struct CellCacheConfigV4 {
+    /// Main database image/file length only; not total disk usage or reservation.
+    pub max_database_bytes: u64,
     pub max_logical_bytes: u64,
     pub max_chunk_rows: u64,
     pub max_manifest_rows: u64,
 }
 
-impl CellCacheConfigV2 {
+impl CellCacheConfigV4 {
+    /// One spill-free transaction from an empty WAL, including the bundled
+    /// SQLite maximum 64-KiB sector-padding allowance (16 additional frames).
+    pub fn max_wal_bytes(self) -> CellResultV1<u64> {
+        self.validate()?;
+        Ok(32 + (self.max_database_bytes / 4096 + 16) * 4120)
+    }
+
+    /// Conservative 32-KiB wal-index regions, including its shorter first region.
+    pub fn max_shm_bytes(self) -> CellResultV1<u64> {
+        self.validate()?;
+        Ok(32768 * (1 + (self.max_database_bytes / 4096 + 16).div_ceil(4096)))
+    }
+
     pub fn validate(self) -> CellResultV1<()> {
         require(
-            (1..=1_099_511_627_776).contains(&self.max_logical_bytes)
+            (262_144..=2_199_023_255_552).contains(&self.max_database_bytes)
+                && self.max_database_bytes.is_multiple_of(4096)
+                && (1..=1_099_511_627_776).contains(&self.max_logical_bytes)
                 && (1..=1_048_576).contains(&self.max_chunk_rows)
                 && (1..=1_048_576).contains(&self.max_manifest_rows),
             "finite cache configuration",
         )
     }
+}
+
+pub(super) fn config(connection: &Connection) -> CellResultV1<CellCacheConfigV4> {
+    let value = connection.query_row(
+        "SELECT max_database_bytes,max_bytes,max_chunks,max_manifests FROM cell_cache_quota_v4 WHERE singleton=1",
+        [],
+        |r| Ok(CellCacheConfigV4 {
+            max_database_bytes: r.get(0)?, max_logical_bytes: r.get(1)?,
+            max_chunk_rows: r.get(2)?, max_manifest_rows: r.get(3)?,
+        }),
+    )?;
+    value.validate()?;
+    Ok(value)
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -40,24 +71,25 @@ fn schema() -> Vec<(&'static str, &'static str, String)> {
         ("table", "cell_chunks_v1", "CREATE TABLE cell_chunks_v1 (
             hash BLOB PRIMARY KEY CHECK(length(hash)=32),
             bytes BLOB NOT NULL CHECK(length(bytes) BETWEEN 1 AND 4194304)) STRICT".to_owned()),
-        ("table", "cell_cache_quota_v2", "CREATE TABLE cell_cache_quota_v2 (
+        ("table", "cell_cache_quota_v4", "CREATE TABLE cell_cache_quota_v4 (
             singleton INTEGER PRIMARY KEY CHECK(singleton=1),
             max_bytes INTEGER NOT NULL CHECK(max_bytes BETWEEN 1 AND 1099511627776),
             max_chunks INTEGER NOT NULL CHECK(max_chunks BETWEEN 1 AND 1048576),
             max_manifests INTEGER NOT NULL CHECK(max_manifests BETWEEN 1 AND 1048576),
+            max_database_bytes INTEGER NOT NULL CHECK(max_database_bytes BETWEEN 262144 AND 2199023255552 AND max_database_bytes%4096=0),
             used_bytes INTEGER NOT NULL, chunk_rows INTEGER NOT NULL, manifest_rows INTEGER NOT NULL,
             CONSTRAINT cell_cache_capacity CHECK(
                 typeof(used_bytes)='integer' AND used_bytes BETWEEN 0 AND max_bytes AND
                 typeof(chunk_rows)='integer' AND chunk_rows BETWEEN 0 AND max_chunks AND
                 typeof(manifest_rows)='integer' AND manifest_rows BETWEEN 0 AND max_manifests)) STRICT".to_owned()),
         ("trigger", "cache_config_immutable", "CREATE TRIGGER cache_config_immutable
-            BEFORE UPDATE OF singleton,max_bytes,max_chunks,max_manifests ON cell_cache_quota_v2
+            BEFORE UPDATE OF singleton,max_bytes,max_chunks,max_manifests,max_database_bytes ON cell_cache_quota_v4
             BEGIN SELECT RAISE(ABORT,'cache_config_immutable'); END".to_owned()),
         ("trigger", "cache_config_no_delete", "CREATE TRIGGER cache_config_no_delete
-            BEFORE DELETE ON cell_cache_quota_v2
+            BEFORE DELETE ON cell_cache_quota_v4
             BEGIN SELECT RAISE(ABORT,'cache_config_immutable'); END".to_owned()),
         ("trigger", "cache_config_no_replace", "CREATE TRIGGER cache_config_no_replace
-            BEFORE INSERT ON cell_cache_quota_v2 WHEN EXISTS(SELECT 1 FROM cell_cache_quota_v2)
+            BEFORE INSERT ON cell_cache_quota_v4 WHEN EXISTS(SELECT 1 FROM cell_cache_quota_v4)
             BEGIN SELECT RAISE(ABORT,'cache_config_immutable'); END".to_owned()),
     ];
     for (table, data, counter) in [
@@ -89,7 +121,7 @@ fn schema() -> Vec<(&'static str, &'static str, String)> {
                 name,
                 format!(
                     "CREATE TRIGGER {name} AFTER {event} ON {table} BEGIN
-                 UPDATE cell_cache_quota_v2 SET used_bytes=used_bytes+({bytes}),
+                 UPDATE cell_cache_quota_v4 SET used_bytes=used_bytes+({bytes}),
                  {counter}={counter}{rows} WHERE singleton=1; END"
                 ),
             ));
@@ -104,10 +136,10 @@ fn catalog_schema() -> Vec<(&'static str, &'static str, &'static str, Option<Str
         .into_iter()
         .map(|(kind, name, sql)| {
             let table = match name {
-                "cell_cache_quota_v2"
+                "cell_cache_quota_v4"
                 | "cache_config_immutable"
                 | "cache_config_no_delete"
-                | "cache_config_no_replace" => "cell_cache_quota_v2",
+                | "cache_config_no_replace" => "cell_cache_quota_v4",
                 "cell_chunks_v1" | "cache_chunk_insert" | "cache_chunk_update"
                 | "cache_chunk_delete" => "cell_chunks_v1",
                 "cell_manifests_v1"
@@ -209,16 +241,17 @@ fn validate_schema(connection: &Connection) -> CellResultV1<()> {
 
 pub(super) fn audit(
     connection: &Connection,
-    expected: Option<CellCacheConfigV2>,
+    expected: Option<CellCacheConfigV4>,
 ) -> CellResultV1<CellCacheUsageV2> {
     validate_schema(connection)?;
     let (config, usage) = connection.query_row(
-        "SELECT max_bytes,max_chunks,max_manifests,used_bytes,chunk_rows,manifest_rows
-         FROM cell_cache_quota_v2 WHERE singleton=1",
+        "SELECT max_bytes,max_chunks,max_manifests,used_bytes,chunk_rows,manifest_rows,max_database_bytes
+         FROM cell_cache_quota_v4 WHERE singleton=1",
         [],
         |row| {
             Ok((
-                CellCacheConfigV2 {
+                CellCacheConfigV4 {
+                    max_database_bytes: row.get(6)?,
                     max_logical_bytes: row.get(0)?,
                     max_chunk_rows: row.get(1)?,
                     max_manifest_rows: row.get(2)?,
@@ -232,6 +265,7 @@ pub(super) fn audit(
         },
     )?;
     config.validate()?;
+    check_image(connection, config.max_database_bytes, false)?;
     require(
         expected.is_none_or(|value| value == config),
         "cache configuration differs",
@@ -275,7 +309,7 @@ pub(super) fn audit(
 
 pub(super) fn open(
     connection: &Connection,
-    expected: Option<CellCacheConfigV2>,
+    expected: Option<CellCacheConfigV4>,
     writable: bool,
 ) -> CellResultV1<()> {
     if let Some(config) = expected {
@@ -300,6 +334,8 @@ pub(super) fn open(
             |row| row.get(0),
         )?;
         require(!populated, "foreign cache database")?;
+        transaction.pragma_update(None, "page_size", 4096)?;
+        check_image(&transaction, config.max_database_bytes, true)?;
         for (kind, _, sql) in schema().iter().filter(|(kind, _, _)| *kind == "table") {
             debug_assert_eq!(*kind, "table");
             transaction.execute_batch(sql)?;
@@ -308,22 +344,63 @@ pub(super) fn open(
             transaction.execute_batch(sql)?;
         }
         transaction.execute(
-            "INSERT INTO cell_cache_quota_v2 VALUES(1,?1,?2,?3,0,0,0)",
+            "INSERT INTO cell_cache_quota_v4 VALUES(1,?1,?2,?3,?4,0,0,0)",
             params![
                 config.max_logical_bytes,
                 config.max_chunk_rows,
-                config.max_manifest_rows
+                config.max_manifest_rows,
+                config.max_database_bytes
             ],
         )?;
         transaction.pragma_update(None, "application_id", APPLICATION_ID)?;
-        transaction.pragma_update(None, "user_version", 2)?;
+        transaction.pragma_update(None, "user_version", 4)?;
     } else {
         require(
-            application == APPLICATION_ID && version == 2,
+            application == APPLICATION_ID && version == 4,
             "cache namespace",
         )?;
     }
     audit(&transaction, expected)?;
+    if writable {
+        let cap: u64 = transaction.query_row(
+            "SELECT max_database_bytes FROM cell_cache_quota_v4 WHERE singleton=1",
+            [],
+            |r| r.get(0),
+        )?;
+        check_image(&transaction, cap, true)?;
+    }
     transaction.commit()?;
+    Ok(())
+}
+
+// The SQLite pager limit is connection-local, not a persistent database header.
+// Every writer must reapply it; readers only audit the persisted image contract.
+fn check_image(
+    connection: &Connection,
+    max_database_bytes: u64,
+    writable: bool,
+) -> CellResultV1<()> {
+    let page_size: u64 = connection.pragma_query_value(None, "page_size", |r| r.get(0))?;
+    let pages: u64 = connection.pragma_query_value(None, "page_count", |r| r.get(0))?;
+    require(page_size == 4096, "cache database page size")?;
+    let image_bytes = pages
+        .checked_mul(page_size)
+        .ok_or(super::CellErrorV1::Invalid("cache database image overflow"))?;
+    let path = connection
+        .path()
+        .ok_or(super::CellErrorV1::Invalid("cache database path"))?;
+    let metadata = std::fs::symlink_metadata(path)?;
+    require(
+        metadata.is_file()
+            && metadata.len() <= max_database_bytes
+            && image_bytes <= max_database_bytes,
+        "cache database image cap",
+    )?;
+    if writable {
+        let expected = max_database_bytes / page_size;
+        let actual: u64 =
+            connection.pragma_update_and_check(None, "max_page_count", expected, |r| r.get(0))?;
+        require(actual == expected, "cache database page limit")?;
+    }
     Ok(())
 }

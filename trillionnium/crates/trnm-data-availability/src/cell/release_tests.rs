@@ -657,8 +657,9 @@ fn release_marker_sync_keeps_original_deadline_and_cleans_up_after_cutoff() {
 }
 
 // Explicit finite fixture quota; covers the existing <=32MiB commit fixtures.
-fn cache_config() -> crate::cell::CellCacheConfigV2 {
-    crate::cell::CellCacheConfigV2 {
+fn cache_config() -> crate::cell::CellCacheConfigV4 {
+    crate::cell::CellCacheConfigV4 {
+        max_database_bytes: 128 * 1024 * 1024,
         max_logical_bytes: 64 * 1024 * 1024,
         max_chunk_rows: 4096,
         max_manifest_rows: 256,

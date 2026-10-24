@@ -169,11 +169,15 @@ artifact format before public distribution.
 
 ## Cache integrity and publication
 
-`CellStoreV1` uses the fresh TCL2 SQLite namespace, application ID `0x54434c32`
-and schema version 2. Old TCL1 and populated foreign databases are refused;
+`CellStoreV1` uses the fresh TCL4 SQLite namespace, application ID `0x54434c34`
+and schema version 4. Old TCL1/TCL2/TCL3 and populated foreign databases are refused;
 opening never resets or migrates them. Each writable open requires an exact
-persisted `CellCacheConfigV2`: finite logical bytes, chunk rows and manifest
-rows. Logical bytes count every live chunk payload, manifest wire and 32-byte
+persisted `CellCacheConfigV4`: finite logical bytes, chunk rows, manifest
+rows and main-database image bytes. The last cap is 4096-aligned, from 256KiB
+to 2TiB; every writer sets and reads back `max_page_count` at fixed 4096-byte
+page size. Cold readers/writers refuse wrong page sizes, excessive page counts
+or oversized main-file tails without truncation. This bounds supported SQLite
+DB images/file length, not allocated blocks or guaranteed backing capacity. Logical bytes count every live chunk payload, manifest wire and 32-byte
 content key. Atomic insert/update/delete triggers enforce that one whole-cache
 allowance across pack, direct puts, batch fetch, discovery and retention rehydration.
 Same-hash UPSERTs charge only the size difference; a failed eight-chunk transaction
@@ -189,12 +193,49 @@ serving loads these persisted limits and holds no query snapshot across socket I
 Actual corrupt-cache deletion returns only logical cache allowance. It does not
 retire a paid duty, release native funding or prove that filesystem blocks were freed.
 
-This first PN3/PN4 increment does not close physical DB/index/free-page, WAL,
-SHM, SQLite temporary-file or caller-output reservations. `max_page_count` alone
-does not bound WAL; checkpoint policy is not a hard sidecar quota. Materialized
-temporary/output files remain with the original caller's separate resource owner.
-No process-wide limit, automatic reset, expiry or vacuum substitutes for those
-remaining I05/PN4 physical-owner requirements. New manifests
+The TCL4 writer gate bounds supported cache WAL growth across independent
+processes without treating a checkpoint threshold as a quota. Initialization,
+manifest/chunk UPSERTs, the original eight-chunk transaction and corrupt-cache
+DELETE share one zero-byte, OS-locked `-writer-lock-v4` identity. Canonical parent
+paths share the lock; the owner-controlled namespace must not be replaced,
+renamed or aliased while open. Unix opens reject observed symlinks and hard links.
+Old writers cannot open the new application/schema; there is no in-place TCL3
+migration or protection against arbitrary external SQLite writes.
+
+Before every mutation, the owner requires a complete TRUNCATE checkpoint and
+an actual zero-length WAL. A pinned reader that prevents that checkpoint returns
+`CELL_CACHE_WRITER_BUSY` before the batch changes rows or counters. Releasing the
+reader permits the same original batch to retry. The gate shares the existing
+five-second writer-contention allowance with SQLite through one absolute budget;
+the checkpoint itself refuses immediately on a held reader. Filesystem and SQLite
+calls remain cooperative, so this is not a hard elapsed-time guarantee.
+
+Every connection disables close-time checkpoints, every writer disables automatic
+checkpoints and dirty-page spill, and `synchronous=FULL` remains required. Only
+this writer gate checkpoints. For the locked bundled SQLite 3.46.0 backend, one
+transaction from an empty WAL has at most one frame per main-image page plus up
+to 16 FULL-sync padding frames. With main cap `C` and 4096-byte pages, the WAL
+file-length allowance is `32 + (C/4096 + 16) * 4120` bytes. Its separate SHM
+allowance is `32768 * (1 + ceil((C/4096 + 16)/4096))` bytes, conservatively allowing
+the shorter first wal-index region. Existing oversized sidecars are refused;
+post-write checks are invariant diagnostics, not the preventive limit. Prevention
+comes from serialized zero-WAL admission and the spill-free bounded transaction.
+A backend-version substitution fails closed pending new qualification.
+
+These are logical file-length bounds, not allocated-block reservation, guaranteed
+free space, a filesystem/global quota, or I05 funding. New-cache rollback-journal
+creation, SQLite memory/temp peaks, caller temporary/output files, block allocation
+and other stores remain separate resource owners and open exits. Materialized
+output is bounded only by its caller's declared payload contract. The immutable
+TCL3 control still demonstrates WAL 449112 > main cap 262144; its original writes,
+retries and greater-than assertion are preserved in a test-only historical owner.
+
+Official SQLite contracts describe [TRUNCATE checkpoint completion](https://sqlite.org/pragma.html#pragma_wal_checkpoint),
+[dirty-page spill](https://sqlite.org/pragma.html#pragma_cache_spill) and
+[single-transaction WAL behavior](https://sqlite.org/wal.html#avoiding_excessively_large_wal_files).
+FULL sector-padding and wal-index capacity are also checked against the exact
+locked SQLite amalgamation; no `journal_size_limit` or automatic checkpoint is
+used as a hard cap. New manifests
 are persisted only after full decoding and pinned-ID comparison. New chunks
 are persisted only after length and SHA256 verification. Each cache read checks
 the bytes again. A corrupt disposable chunk is removed and becomes a missing
@@ -239,16 +280,16 @@ the bounded default is `2 * max-bytes + 2097152 + 9 * max-connections`.
 Its successful `trnm.cell.fetch.v1` JSON adds `received_response_bytes` and
 `max_response_bytes` without changing existing payload counters. These local
 report additions do not change TCM1, TCQ1 or TCS1; the separately bounded local
-cache uses the fresh TCL2/schema2 namespace described above.
+cache uses the fresh TCL4/schema3 namespace described above.
 `verify` rechecks a complete local version. `manifest` exports the
 canonical pinned manifest for the existing release owner. No command implicitly
 discovers a model, changes its authority or activates a consensus profile.
 
 Every writable command (`pack`, `fetch`, `verify`, `prepare-release`,
 `fetch-release`, `verify-release`) also requires `--cache-max-bytes N
---cache-max-chunks N --cache-max-manifests N`. Reuse the same exact limits for
+--cache-max-chunks N --cache-max-manifests N --cache-max-db-bytes N`. Reuse the same exact limits for
 that cache on every invocation; a per-member payload budget is not a new cache
-allowance. `serve` and `manifest` use only an existing read-only TCL2 cache.
+allowance. `serve` and `manifest` use only an existing read-only TCL4 cache.
 
 `fetch-release --store DB --release-file ROOT --release HEX --peers IP:PORT,IP:PORT
 --output ABSENT_MARKER --max-bytes N --max-chunks N --max-response-bytes N
@@ -256,7 +297,7 @@ allowance. `serve` and `manifest` use only an existing read-only TCL2 cache.
 uses the same store, root, pinned release ID and total byte/chunk/time budgets
 without a network call. The new CLI reports have distinct
 `trnm.cell.release.fetch.v1` and `trnm.cell.release.verify.v1` identities. TCM1,
-TCQ1 and TCS1 are unchanged; only the local cache schema is TCL2. The root is supplied
+TCQ1 and TCS1 are unchanged; only the local cache schema is TCL4. The root is supplied
 locally; this increment does not add public root discovery.
 
 ## Executable acceptance
@@ -297,7 +338,7 @@ trnm-data-availability --lib cell::` contains actual TCP and disk tests for:
   complete-payload digest before publication, and never replaces an existing
   output. The combined network-to-file success path returns the exact bytes.
 
-The same existing native suite includes [TCL2 cache admission controls](../../../../trillionnium/crates/trnm-data-availability/src/cell/cache_budget_tests.rs)
+The same existing native suite includes [TCL4 cache admission controls](../../../../trillionnium/crates/trnm-data-availability/src/cell/cache_budget_tests.rs)
 and [complete catalog controls](../../../../trillionnium/crates/trnm-data-availability/src/cell/cache_catalog_tests.rs):
 exact byte/row boundaries and full-cache dedup, two real concurrent writers,
 atomic eight-row rollback, cross-reopen immutable limits, retained verified

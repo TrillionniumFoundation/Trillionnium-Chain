@@ -463,6 +463,7 @@ fn fetch_args(
     arg(&mut args, "--cache-max-bytes", "67108864");
     arg(&mut args, "--cache-max-chunks", "4096");
     arg(&mut args, "--cache-max-manifests", "256");
+    arg(&mut args, "--cache-max-db-bytes", "134217728");
     arg(&mut args, "--manifest", digest_hex(manifest.id()));
     arg(&mut args, "--cell-context", context);
     // This is the only selection list: the actual provider is learned from TCP.
@@ -678,8 +679,9 @@ fn cli_wrong_cell_context_cannot_discover_provider_or_publish_payload() {
 }
 
 // Explicit finite fixture quota; covers the existing <=32MiB commit fixtures.
-fn cache_config() -> trnm_data_availability::cell::CellCacheConfigV2 {
-    trnm_data_availability::cell::CellCacheConfigV2 {
+fn cache_config() -> trnm_data_availability::cell::CellCacheConfigV4 {
+    trnm_data_availability::cell::CellCacheConfigV4 {
+        max_database_bytes: 128 * 1024 * 1024,
         max_logical_bytes: 64 * 1024 * 1024,
         max_chunk_rows: 4096,
         max_manifest_rows: 256,

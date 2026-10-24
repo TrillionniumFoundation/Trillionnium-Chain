@@ -962,8 +962,9 @@ fn sqlite_like_wildcard_cannot_hide_a_user_trigger_at_repair_or_reopen() {
 }
 
 // Explicit finite fixture quota; covers the existing <=32MiB commit fixtures.
-fn cache_config() -> crate::cell::CellCacheConfigV2 {
-    crate::cell::CellCacheConfigV2 {
+fn cache_config() -> crate::cell::CellCacheConfigV4 {
+    crate::cell::CellCacheConfigV4 {
+        max_database_bytes: 128 * 1024 * 1024,
         max_logical_bytes: 64 * 1024 * 1024,
         max_chunk_rows: 4096,
         max_manifest_rows: 256,

@@ -902,18 +902,36 @@ execution or a real model failure. They preserve the original late-readback
 failure and do not close the real caller, load-attempt binding, resource,
 FinalUse, three-cycle next-task readback or I10 obligations.
 
-The same PN3/PN4 M09 path now freezes a persistent TCL2/schema2 logical cache
-quota across all ordinary writer entries, including the handoff script. The
-script requires explicit `--cache-max-bytes`, `--cache-max-chunks` and
-`--cache-max-manifests`, reusing those exact caps for the complete producer and
-consumer sets without changing its original transfer deadline or assertions.
-Cold validation inspects the complete catalog, allowing only the two exact
-automatic primary-key indexes; reserved-prefix objects cannot bypass it, and a
-fresh namespace refuses every pre-existing catalog object.
-Atomic dedup/whole-batch admission and actual cache deletion never alter M12
-funding or paid I05 duties. This bounds live payload/catalog/key/row occupancy;
-physical DB/WAL/SHM/temp/output reservations remain open, together with the
-existing native consumer, installation and three-cycle model acceptance gaps.
+The same PN1/PN2/I05 M09 cache path now uses fresh TCL3/schema3 with immutable
+logical bytes, chunk/manifest rows and an explicit main-database image/file-length
+cap. `--cache-max-bytes`, `--cache-max-chunks`, `--cache-max-manifests` and
+`--cache-max-db-bytes` are mandatory for all six Cell writer commands, discovery
+fetch and the existing handoff script. The same exact configuration covers every
+producer/consumer member; each writer reapplies and reads back SQLite's
+connection-local `max_page_count`, using fixed 4096-byte pages. The image cap is
+4096-aligned, from 256KiB to 2TiB. Existing read-only entries audit persisted caps,
+page size/count and file length. TCL2/foreign databases, oversized images or tail
+padding are refused without migration, truncation or quota reset. Cold catalog
+validation still requires all 14 exact objects and only the two automatic PK
+indexes; reserved prefixes cannot hide an object.
+
+The new actual controls observe native SQLite FULL/13 with unused logical
+allowance, complete eight-chunk transaction rollback and exact cold readback,
+two real writer connections and a fresh reopen that cannot renew the cap,
+unchanged old TCL2 bytes, and the original allowed 8 x 4MiB batch. Existing logical
+quota, catalog, corrupt-cache, release, read-only and deadline assertions remain.
+An initial WAL control failed because identical UPSERTs generated no new pages;
+the retained correction holds a real reader while writing distinct small chunks.
+Its WAL exceeded the 256KiB main-image cap while main pages and logical usage
+remained bounded. This is an explicit limit of the new contract.
+
+This bounds supported cache-writer DB images/file length, not allocated blocks,
+physical backing reservation or total disk peaks. WAL/SHM/TEMP/output and
+retention metadata/WAL remain open, together with global ledger roots, funded
+I05 duties, native consumption, installation and three-cycle model acceptance.
+Checkpoint thresholds and journal-size retention are not peak limits. Cache
+admission/deletion never changes M12 funding or paid obligations. No 35-second
+aggregate handoff or original 8-second owner window is extended by this slice.
 
 The optional scalar-credit freshness observation reads the original watermark
 and projects the original refill arithmetic without changing the clock, credit,
@@ -3213,7 +3231,7 @@ retrieval, complete verification, final write and the pre-publication checkpoint
 The additive `materialize_until` API rechecks original cached payload bytes;
 the existing no-deadline materialization API remains available to explicit
 callers. That deadline-only increment preserved protocol bytes, manifest/cache
-schemas, limits and CLI report fields. The later TCL2 cache admission increment
+schemas, limits and CLI report fields. The later TCL3 cache image/admission increment
 is specified above and in the same Cell contract. Checks are cooperative: filesystem calls cannot be preempted,
 and a complete file is not deleted after publication because subsequent I/O
 takes time. The exact boundary is documented in

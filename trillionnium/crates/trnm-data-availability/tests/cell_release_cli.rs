@@ -115,6 +115,8 @@ fn fetch_args(
         "4096".into(),
         "--cache-max-manifests".into(),
         "256".into(),
+        "--cache-max-db-bytes".into(),
+        "134217728".into(),
         "--store".into(),
         cache.display().to_string(),
         "--release-file".into(),
@@ -247,6 +249,8 @@ fn cli_pins_release_and_shares_budgets_before_create_only_completion() {
         "4096".into(),
         "--cache-max-manifests".into(),
         "256".into(),
+        "--cache-max-db-bytes".into(),
+        "134217728".into(),
         "--store".into(),
         cache.display().to_string(),
         "--release-file".into(),
@@ -283,6 +287,8 @@ fn prepare_args(
         "4096".into(),
         "--cache-max-manifests".into(),
         "256".into(),
+        "--cache-max-db-bytes".into(),
+        "134217728".into(),
         "--store".into(),
         store.display().to_string(),
         "--manifests".into(),
@@ -378,8 +384,9 @@ fn cli_release_preparation_rejects_incomplete_incompatible_and_over_budget_sets(
 }
 
 // Explicit finite fixture quota; covers the existing <=32MiB commit fixtures.
-fn cache_config() -> trnm_data_availability::cell::CellCacheConfigV2 {
-    trnm_data_availability::cell::CellCacheConfigV2 {
+fn cache_config() -> trnm_data_availability::cell::CellCacheConfigV4 {
+    trnm_data_availability::cell::CellCacheConfigV4 {
+        max_database_bytes: 128 * 1024 * 1024,
         max_logical_bytes: 64 * 1024 * 1024,
         max_chunk_rows: 4096,
         max_manifest_rows: 256,

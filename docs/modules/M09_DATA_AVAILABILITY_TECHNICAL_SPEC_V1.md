@@ -85,12 +85,21 @@ Parameter substitution, hostile object formats, unavailable custodians and expir
 
 Physical-host copies and source-path loss are tested by a scoped campaign; geographic independence, renewal and long-retention responsibility remain unaccepted.
 
-The existing Cell cache uses fresh TCL2/schema2 with mandatory immutable finite
-logical-byte/chunk-row/manifest-row limits. All ordinary puts and corrupt-cache
+The existing Cell cache uses fresh TCL4/schema4 with mandatory immutable finite
+logical-byte/chunk-row/manifest-row limits and a main-DB image/file-length cap.
+Every writer reapplies and reads back the persisted cap at fixed 4096-byte pages;
+old TCL1/TCL2/TCL3, wrong pages, oversized images and tails fail closed without migration. All ordinary puts and corrupt-cache
 deletes share atomic persisted accounting; exact cold reopen checks full schema
 and actual bounded occupancy. This PN3/PN4 cache allowance is independent of I05
 paid retention, native funding and the 4096 retained obligation identities.
-DB/WAL/SHM/temp/output physical budgeting remains open. See the existing
+Supported writers now share a zero-WAL admission gate across processes: complete
+TRUNCATE before mutation, disabled dirty-page spill, unchanged FULL sync and one
+bounded original transaction. A long reader causes pre-write refusal; the same
+batch retries after release. WAL and SHM file lengths have separate derived caps
+from the immutable main-image cap, including FULL sector padding. The frozen TCL3
+449112-byte WAL counterexample remains a historical control. Allocated-block
+reservation, new-cache rollback journal, memory/temp/output peaks and global I05
+funding remain open; these file-length caps are not total-disk quotas. See the existing
 [Cell contract](../protocol/pon-nakamoto-v1/details/CELL_P2P_V1.md).
 
 ## Current source and verification
