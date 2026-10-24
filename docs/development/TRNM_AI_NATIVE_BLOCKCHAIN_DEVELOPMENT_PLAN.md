@@ -2002,7 +2002,23 @@ staged API is not the still-absent controller process/spawn authority protected
 by the original controls, and existing production adapters cannot consume it as
 ready. Partial creation/configuration or any later uncertainty keeps the original
 cap, first error, attempted role and held slots in UNKNOWN_RETAINED; it performs
-no close, removal, retry or adoption. Native C/A preparation remains NOT_RUN.
+no close, removal, retry or adoption. A subsequent controlled empty-group
+preparation observation is recorded below; native C/A process birth remains
+NOT_RUN.
+
+One controlled Linux experiment on source `03b67a955b8fcb6b6c920be584eaad5c0a71d34d`
+now preserves [the exact source and raw exports](../../evidence/pon-upgrade-implementation-20261018/native-rounds/host-child-groups-preparation-20261024/SCOPE.md).
+The same original owner consumed its fresh fact and prepared the six held
+groups with the original limits. Pre-child U satisfied all original pristine
+requirements; afterward full U `memory.current=352256` and `memory.peak=524288`
+include the child metadata without subtraction or reset. Empty C/A retained
+zero memory, tasks and CPU usage; operation memory events were zero. Exactly
+one launcher and twelve readonly exports ran. The final export classified
+`CHILD_GROUPS_OBSERVED_ONLY`; early samples lacked the not-yet-written ending
+record, so the original conservative aggregate remains UNKNOWN. Both results
+and every export are retained. This is an executed empty-group preparation on
+that pinned source, not qualification of the later combined candidate,
+controller/worker birth, whole-U retirement, refund or model acceptance.
 
 The old aggregate constructor requires a service with the current C in its
 controller subgroup; this scope's original O remains in H/observer. It cannot
@@ -2017,7 +2033,7 @@ The existing PN4 dependency and acceptance sequence is:
 | Stage / owner | Interface and required evidence | Status / exit |
 | --- | --- | --- |
 | Fresh leaf / M14/M17 | Same original owner; exact topology/limits/source/generation and original seven-zero guard before C/A | Preparation and one-shot consumption implemented; new native qualification OPEN |
-| C/A preparation and birth / same owner, Hepta kernel.operations | Consume the same fact once, then create exact bounded C/A; charge all child bookkeeping to U's 16GiB; original native birth/pidfd/wait4 binding | Same-owner source preparation implemented; native C/A preparation and actual birth/wait4 OPEN |
+| C/A preparation and birth / same owner, Hepta kernel.operations | Consume the same fact once, then create exact bounded C/A; charge all child bookkeeping to U's 16GiB; original native birth/pidfd/wait4 binding | One source-bound controlled empty-group preparation observed; original conservative UNKNOWN retained; actual process birth/wait4 and whole-U qualification OPEN |
 | Running and quiescing / same original O | Monotonic existing operation/effect identity; authoritative original C and A exits plus zero leaf populations/descendants | OPEN; never call running U pristine |
 | Normal retirement / same original O | Only after both exits are known, retire A then C once using original parent FD/name/inode, then native close-and-clear of those original held slots | OPEN; unknown/partial removal retains all remaining slots, never retries or reuses names |
 | Whole-U terminal / original evidence-pipe and aggregate owners | Retain U/S/H/observer; actual U descendants0/dying0/current0/swap0, exact identity/limits and unchanged historical meters before original cutoff | OPEN; no charge/peak reset or baseline subtraction |
