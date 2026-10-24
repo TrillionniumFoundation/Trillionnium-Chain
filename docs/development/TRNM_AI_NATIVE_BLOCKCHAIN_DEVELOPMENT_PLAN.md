@@ -2100,8 +2100,8 @@ then retains actual U/C/A counters, including nonzero residual charges and all
 historical meters. Pipe EOF is not proof that a payload executed. Seventeen new
 controls cover the private binding, sticky refusals, original deadline, actual
 native wait4 subroutines and actual exec handle closure; successful native
-cgroup C/A birth is NOT_RUN. This adds no public entry, FinalUse/funding issuer,
-retirement, whole-U terminal or refund; production funded entry, A→C retirement
+cgroup C/A birth is NOT_RUN. This handoff adds no public entry, FinalUse/funding issuer,
+whole-U terminal or refund; production funded entry, A→C retirement
 and raw U zero before the original cutoff remain OPEN.
 
 The same launch installs a private retention-only C-wait role on original O's
@@ -2134,8 +2134,8 @@ the unchanged observer 1GiB/100%/16-task total ceilings. Native PID/TID, exact
 held observer identity, current thread membership, actual stack address and
 the same absolute cutoff are bound before readiness. This is bounded use of
 the existing ceilings, not physical funding or a claim that task headroom is a
-reservation. No effect activation/deletion API exists in this slice. Its one
-preborn worker waits to the original monotonic cutoff; expiry/refusal retains
+reservation. Preparation alone grants no effect authority. Its one
+preborn worker waits to the original monotonic cutoff without a qualified request; expiry/refusal retains
 the stack, original root and fixed state, with no later worker, queue or retry.
 Nine real native controls run in O's existing read-only cgroup, checking actual
 thread membership, both guard maps, duplicate refusal, cutoff and preparation
@@ -2151,6 +2151,26 @@ same failed slot without reset. Four additional controls pause initialization
 and protect the original output page, retaining the original nine preparation
 assertions and cutoff; neither refusal path may race the owner's snapshot.
 
+The original private controller now admits one child-retirement effect only
+from its internally retained exact O→C/C→A terminal fact, after repeating every
+original live identity/limit/history and zero-population check. The same preborn
+worker consumes a release-published fixed payload and removes A then C through
+the original U FD and exact held name/inode checks, closing each original slot
+and finally the original C pidfd. Each irreversible step records actual progress;
+error, blocking or late completion retains the root and every remaining slot,
+without retry/reentry or a renewed deadline. A sticky pre-entry marker forbids
+live verifier scans while those arrays may be closing. A separate strict phase
+verifier accepts only complete native progress, original identity/quiescence and
+unchanged U history; it reports unlink/close facts, never Whole-U or resource
+return. Eight real own-directory controls (explicit test-only filesystem wrapper)
+and six modeled exact-terminal/phase controls do not qualify real cgroup
+retirement. The original preparation observation helper rereads its same buffer
+after actual thread disappearance for its unchanged finished==1 assertion;
+the prior cached-snapshot race and a deterministic old-helper failure are kept.
+Linux has no unlinkat expected-inode argument: this remains the existing trusted
+administrator namespace scope, not hostile same-UID rename isolation. Actual
+cgroup retirement, U dying/current zero and funded entry remain OPEN.
+
 The existing PN4 dependency and acceptance sequence is:
 
 | Stage / owner | Interface and required evidence | Status / exit |
@@ -2158,7 +2178,7 @@ The existing PN4 dependency and acceptance sequence is:
 | Fresh leaf / M14/M17 | Same original owner; exact topology/limits/source/generation and original seven-zero guard before C/A | Preparation and one-shot consumption implemented; new native qualification OPEN |
 | C/A preparation and birth / same owner, Hepta kernel.operations | Consume the same fact once, then create exact bounded C/A; charge all child bookkeeping to U's 16GiB; original native birth/pidfd/wait4 binding | One source-bound controlled empty-group preparation observed; original conservative UNKNOWN retained; actual process birth/wait4 and whole-U qualification OPEN |
 | Running and quiescing / same original O | Monotonic existing operation/effect identity; authoritative original C and A exits plus zero leaf populations/descendants | OPEN; never call running U pristine |
-| Normal retirement / same original O | Only after both exits are known, retire A then C once using original parent FD/name/inode, then native close-and-clear of those original held slots | OPEN; unknown/partial removal retains all remaining slots, never retries or reuses names |
+| Normal retirement / same original O | Only after both exits are known, retire A then C once using original parent FD/name/inode, then native close-and-clear of those original held slots | Private one-shot mechanism and finite controls implemented; actual cgroup qualification OPEN. Unknown/partial removal retains remaining slots, never retries or reuses names |
 | Whole-U terminal / original evidence-pipe and aggregate owners | Retain U/S/H/observer; actual U descendants0/dying0/current0/swap0, exact identity/limits and unchanged historical meters before original cutoff | OPEN; no charge/peak reset or baseline subtraction |
 | FinalUse and I05/I10 settlement / existing effect owners | Original authoritative terminal identity and budget/funding evidence, then existing AuthBus reconciliation | OPEN; no new journal or refund path |
 
