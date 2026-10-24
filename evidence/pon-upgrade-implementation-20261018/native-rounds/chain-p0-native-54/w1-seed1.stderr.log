@@ -1,0 +1,12 @@
+   Compiling libc v0.2.184
+   Compiling rustix v1.1.4
+   Compiling linux-raw-sys v0.12.1
+   Compiling trnm-mvcc-fee v0.1.0 (/home/qian-qi/work/pon-upgrade-implementation-20261018/chain/trillionnium/crates/trnm-mvcc-fee)
+   Compiling trnm-mempool v0.1.0 (/home/qian-qi/work/pon-upgrade-implementation-20261018/chain/trillionnium/crates/trnm-mempool)
+   Compiling getrandom v0.4.2
+   Compiling fs2 v0.4.3
+   Compiling trnm-transport v0.1.0 (/home/qian-qi/work/pon-upgrade-implementation-20261018/chain/trillionnium/crates/trnm-transport)
+   Compiling tempfile v3.27.0
+   Compiling trnm-pon-node v0.1.0 (/home/qian-qi/work/pon-upgrade-implementation-20261018/chain/trillionnium/crates/trnm-pon-node)
+    Finished `release` profile [optimized] target(s) in 1m 01s
+     Running `/home/qian-qi/work/pon-upgrade-implementation-20261018/target-chain-performance/release/examples/pon_w1_budget_report --samples 3 --attempts 32 --receiver-replays 1 --target 7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff --seed 1`

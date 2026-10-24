@@ -1,0 +1,168 @@
+{
+  "schema": "readonly-codeql-check-triage-v1",
+  "source_commit": "190d952c2f1d0e8364c958d1060ace2b560eb4a6",
+  "check_run_id": 110055711918,
+  "gate_conclusion": "failure",
+  "annotation_count": 12,
+  "PR_ref": "refs/pull/204/head",
+  "pr_open_alert_count": 112,
+  "baseline_open_alert_count": 100,
+  "same_alert_ids_as_baseline": 100,
+  "new_annotations": [
+    {
+      "alert": 988,
+      "rule": "rust/hard-coded-cryptographic-value",
+      "security_severity": "critical",
+      "path": "trillionnium/crates/trnm-pon-node/tests/qualified_tasks.rs",
+      "line": 513,
+      "classifications": [
+        "test"
+      ],
+      "created_at": "2026-09-30T19:22:41Z",
+      "source_commit": "190d952c2f1d0e8364c958d1060ace2b560eb4a6",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/security/code-scanning/988"
+    },
+    {
+      "alert": 987,
+      "rule": "rust/hard-coded-cryptographic-value",
+      "security_severity": "critical",
+      "path": "trillionnium/crates/trnm-pon-node/tests/qualified_tasks.rs",
+      "line": 472,
+      "classifications": [
+        "test"
+      ],
+      "created_at": "2026-09-30T19:22:41Z",
+      "source_commit": "190d952c2f1d0e8364c958d1060ace2b560eb4a6",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/security/code-scanning/987"
+    },
+    {
+      "alert": 986,
+      "rule": "rust/hard-coded-cryptographic-value",
+      "security_severity": "critical",
+      "path": "trillionnium/crates/trnm-pon-node/tests/qualified_tasks.rs",
+      "line": 433,
+      "classifications": [
+        "test"
+      ],
+      "created_at": "2026-09-30T19:22:41Z",
+      "source_commit": "190d952c2f1d0e8364c958d1060ace2b560eb4a6",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/security/code-scanning/986"
+    },
+    {
+      "alert": 985,
+      "rule": "rust/hard-coded-cryptographic-value",
+      "security_severity": "critical",
+      "path": "trillionnium/crates/trnm-pon-node/tests/qualified_tasks.rs",
+      "line": 426,
+      "classifications": [
+        "test"
+      ],
+      "created_at": "2026-09-30T19:22:41Z",
+      "source_commit": "190d952c2f1d0e8364c958d1060ace2b560eb4a6",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/security/code-scanning/985"
+    },
+    {
+      "alert": 984,
+      "rule": "rust/hard-coded-cryptographic-value",
+      "security_severity": "critical",
+      "path": "trillionnium/crates/trnm-pon-node/tests/qualified_tasks.rs",
+      "line": 408,
+      "classifications": [
+        "test"
+      ],
+      "created_at": "2026-09-30T19:22:41Z",
+      "source_commit": "190d952c2f1d0e8364c958d1060ace2b560eb4a6",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/security/code-scanning/984"
+    },
+    {
+      "alert": 983,
+      "rule": "rust/hard-coded-cryptographic-value",
+      "security_severity": "critical",
+      "path": "trillionnium/crates/trnm-pon-node/tests/qualified_tasks.rs",
+      "line": 386,
+      "classifications": [
+        "test"
+      ],
+      "created_at": "2026-09-30T19:22:41Z",
+      "source_commit": "190d952c2f1d0e8364c958d1060ace2b560eb4a6",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/security/code-scanning/983"
+    },
+    {
+      "alert": 982,
+      "rule": "rust/hard-coded-cryptographic-value",
+      "security_severity": "critical",
+      "path": "trillionnium/crates/trnm-pon-node/tests/qualified_tasks.rs",
+      "line": 382,
+      "classifications": [
+        "test"
+      ],
+      "created_at": "2026-09-30T19:22:41Z",
+      "source_commit": "190d952c2f1d0e8364c958d1060ace2b560eb4a6",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/security/code-scanning/982"
+    },
+    {
+      "alert": 981,
+      "rule": "rust/hard-coded-cryptographic-value",
+      "security_severity": "critical",
+      "path": "trillionnium/crates/trnm-pon-node/tests/qualified_tasks.rs",
+      "line": 376,
+      "classifications": [
+        "test"
+      ],
+      "created_at": "2026-09-30T19:22:41Z",
+      "source_commit": "190d952c2f1d0e8364c958d1060ace2b560eb4a6",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/security/code-scanning/981"
+    },
+    {
+      "alert": 980,
+      "rule": "rust/hard-coded-cryptographic-value",
+      "security_severity": "critical",
+      "path": "trillionnium/crates/trnm-pon-node/tests/qualified_tasks.rs",
+      "line": 324,
+      "classifications": [
+        "test"
+      ],
+      "created_at": "2026-09-30T19:22:41Z",
+      "source_commit": "190d952c2f1d0e8364c958d1060ace2b560eb4a6",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/security/code-scanning/980"
+    },
+    {
+      "alert": 979,
+      "rule": "rust/hard-coded-cryptographic-value",
+      "security_severity": "critical",
+      "path": "trillionnium/crates/trnm-pon-node/tests/qualified_tasks.rs",
+      "line": 299,
+      "classifications": [
+        "test"
+      ],
+      "created_at": "2026-09-30T19:22:41Z",
+      "source_commit": "190d952c2f1d0e8364c958d1060ace2b560eb4a6",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/security/code-scanning/979"
+    },
+    {
+      "alert": 978,
+      "rule": "rust/hard-coded-cryptographic-value",
+      "security_severity": "critical",
+      "path": "trillionnium/crates/trnm-pon-node/tests/qualified_tasks.rs",
+      "line": 166,
+      "classifications": [
+        "test"
+      ],
+      "created_at": "2026-09-30T19:22:41Z",
+      "source_commit": "190d952c2f1d0e8364c958d1060ace2b560eb4a6",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/security/code-scanning/978"
+    },
+    {
+      "alert": 977,
+      "rule": "rust/cleartext-logging",
+      "security_severity": "high",
+      "path": "trillionnium/crates/trnm-pon-node/src/main.rs",
+      "line": 552,
+      "classifications": [],
+      "created_at": "2026-09-30T11:53:14Z",
+      "source_commit": "190d952c2f1d0e8364c958d1060ace2b560eb4a6",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/security/code-scanning/977"
+    }
+  ],
+  "triage_scope": "Readonly: public transaction sequence fixtures are distinct from cryptographic randomness. Cleartext logging taint crosses private identity factory call, but secret field serialization was not observed. Gate remains failed; no suppression/settings edits."
+}

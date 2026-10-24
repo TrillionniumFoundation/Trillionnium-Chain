@@ -1,0 +1,269 @@
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.106
+   Compiling quote v1.0.45
+   Compiling unicode-ident v1.0.24
+   Compiling typenum v1.19.0
+   Compiling cfg-if v1.0.4
+   Compiling semver v1.0.27
+   Compiling generic-array v0.14.7
+   Compiling cpufeatures v0.2.17
+   Compiling serde_core v1.0.228
+   Compiling zerocopy v0.8.48
+   Compiling rustc_version v0.4.1
+   Compiling ahash v0.8.12
+   Compiling syn v2.0.117
+   Compiling hashbrown v0.16.1
+   Compiling find-msvc-tools v0.1.9
+   Compiling winnow v1.0.4
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling equivalent v1.0.2
+   Compiling digest v0.10.7
+   Compiling once_cell v1.21.4
+   Compiling shlex v1.3.0
+   Compiling sha2 v0.10.9
+   Compiling cc v1.2.59
+   Compiling toml_parser v1.1.3+spec-1.1.0
+   Compiling indexmap v2.13.1
+   Compiling curve25519-dalek v4.1.3
+   Compiling serde v1.0.228
+   Compiling pkg-config v0.3.32
+   Compiling thiserror v1.0.69
+   Compiling vcpkg v0.2.15
+   Compiling toml_datetime v1.1.1+spec-1.1.0
+   Compiling toml_edit v0.25.13+spec-1.1.0
+   Compiling libsqlite3-sys v0.30.1
+   Compiling serde_derive v1.0.228
+   Compiling curve25519-dalek-derive v0.1.1
+   Compiling thiserror-impl v1.0.69
+   Compiling zeroize v1.8.2
+   Compiling zmij v1.0.21
+   Compiling subtle v2.6.1
+   Compiling anyhow v1.0.103
+   Compiling signature v2.2.0
+   Compiling libc v0.2.184
+   Compiling bitflags v2.11.0
+   Compiling cfg_aliases v0.2.2
+   Compiling borsh v1.8.0
+   Compiling ed25519 v2.2.3
+   Compiling hashbrown v0.14.5
+   Compiling proc-macro-crate v3.5.0
+   Compiling hex v0.4.3
+   Compiling serde_json v1.0.149
+   Compiling rustix v1.1.4
+   Compiling getrandom v0.4.2
+   Compiling trnm-protocol v0.1.0 (/home/qian-qi/work/pon-upgrade-implementation-20261018/chain-performance/trillionnium/crates/trnm-protocol)
+   Compiling borsh-derive v1.8.0
+   Compiling ed25519-dalek v2.2.0
+   Compiling hashlink v0.9.1
+   Compiling smallvec v1.15.1
+   Compiling fallible-iterator v0.3.0
+   Compiling fallible-streaming-iterator v0.1.9
+   Compiling linux-raw-sys v0.12.1
+   Compiling memchr v2.8.0
+   Compiling itoa v1.0.18
+   Compiling trnm-crypto-primitives v0.1.0 (/home/qian-qi/work/pon-upgrade-implementation-20261018/chain-performance/trillionnium/crates/trnm-crypto-primitives)
+   Compiling trnm-verification-profiles v0.1.0 (/home/qian-qi/work/pon-upgrade-implementation-20261018/chain-performance/trillionnium/crates/trnm-verification-profiles)
+   Compiling fastrand v2.3.0
+   Compiling tempfile v3.27.0
+   Compiling rusqlite v0.32.1
+   Compiling trnm-mvcc-fee v0.1.0 (/home/qian-qi/work/pon-upgrade-implementation-20261018/chain-performance/trillionnium/crates/trnm-mvcc-fee)
+    Finished `test` profile [unoptimized] target(s) in 46.68s
+     Running unittests src/lib.rs (/home/qian-qi/work/pon-upgrade-implementation-20261018/target-chain-performance/debug/deps/trnm_mvcc_fee-261fd4cdba95d700)
+
+running 72 tests
+test checkpoint_tile_material_v1::tests::ieee_integer_rounding_zero_subnormal_ties_clips_and_nonfinite ... ok
+test deterministic_parallel_v1::tests::canonical_indices_and_unique_transaction_ids_are_required ... ok
+test deterministic_parallel_v1::tests::fee_limit_and_worker_bounds_fail_closed ... ok
+test checkpoint_tile_material_v1::tests::all_finite_bf16_patterns_match_independent_exact_f64_powers_and_even_rounding ... ok
+test deterministic_parallel_v1::tests::reverted_and_out_of_resource_never_write ... ok
+test deterministic_parallel_v1::tests::undeclared_access_and_noncanonical_sets_fail_closed ... ok
+test deterministic_parallel_v1::tests::worker_count_does_not_change_roots_or_receipts ... ok
+test model_composition_v4::tests::a_rank_three_sum_has_no_rank_three_ilf2_witness_escape ... ok
+test model_composition_v4::tests::exact_sum_and_ablation_count_a_nonzero_parent_once ... ok
+test model_composition_v4::tests::exact_zero_subset_is_refused_even_when_full_bundle_is_nonzero ... ok
+test model_composition_v4::tests::wide_sum_preserves_cancellation_but_checks_every_ablation_range ... ok
+test pon_commitment::bounded_encoding_tests::actual_state_fallback_encoding_cost ... ignored, explicit whole-test process RSS comparison; no Node or throughput qualification
+test model_composition_v4::oracle_observations::native_arithmetic_observations_for_independent_python ... ok
+test pon_commitment::bounded_encoding_tests::bounded_fallback_matches_old_full_map_for_forks_removals_and_every_budget ... ok
+test pon_commitment::bounded_encoding_tests::canonical_buffer_reuse_component_timing ... ignored, explicit encoder allocation A/B; excludes SQLite, roots, execution and networking
+test pon_commitment::bounded_encoding_tests::discarded_cache_never_hides_late_canonical_or_wire_errors_or_invalid_limits ... ok
+test pon_commitment::bounded_encoding_tests::payload_and_workspace_exact_edges_preserve_old_selection_and_root ... ok
+test pon_commitment::bounded_encoding_tests::reused_encoders_preserve_shrinking_values_deletions_and_late_errors ... ok
+test pon_commitment::bounded_encoding_tests::bounded_encoder_discards_full_payload_map_but_keeps_exact_old_charges ... ok
+test pon_commitment::checked_binding_tests::checked_binding_complete_cost_observation ... ignored, explicit same-operation binding cost; not Node or network throughput
+test pon_commitment::checked_binding_tests::checked_binding_matches_two_steps_for_cold_warm_and_every_budget_fallback ... ok
+test pon_commitment::checked_binding_tests::checked_binding_preserves_wrong_roots_late_errors_and_invalid_limits ... ok
+test pon_commitment::checked_binding_tests::checked_binding_rechecks_actual_values_and_repairs_only_derived_material ... ok
+test pon_commitment::tests::cancelled_panicked_and_partially_started_workers_all_finish_and_join ... ok
+test pon_commitment::tests::cancelled_prepare_apply_and_staged_root_never_publish_output_or_change_parent ... ok
+test pon_commitment::tests::checked_binding_signed_execution_errors_and_cancellation_match_two_steps ... ok
+test pon_commitment::tests::controlled_cancellation_joins_every_started_scoped_worker_before_return ... ok
+test pon_commitment::tests::controlled_previews_preserve_full_state_receipts_and_canonical_errors_for_all_workers ... ok
+test pon_commitment::checked_binding_tests::checked_binding_actual_eight_mib_payload_fallback_keeps_all_bytes ... ok
+test pon_commitment::tests::immutable_parent_corrupt_tree_fallback_matches_full_execution ... ok
+test pon_commitment::tests::immutable_parent_preview_component_timing ... ignored, explicit component timing; excludes SQLite, M05 and Node lock wait
+test pon_commitment::tests::immutable_parent_previews_match_full_execution_including_failures_and_rebind ... ok
+test pon_commitment::tests::internal_tree_mismatch_uses_complete_root_without_mutating_snapshot ... ok
+test pon_commitment::tests::late_canonical_error_precedes_cache_choice_and_all_change_clones ... ok
+test pon_commitment::tests::resource_fallback_finishes_full_root_before_required_change_clones ... ok
+test pon_commitment::tests::scoped_accounting_preserves_all_workers_state_receipts_and_late_error_parity ... ok
+test pon_commitment::tests::warm_parent_binding_cancellation_preserves_shared_bytes_and_successful_retry ... ok
+test pon_commitment::tests::warm_parent_binding_component_timing ... ignored, explicit binding A/B timing; excludes execution, SQLite and Node locks
+test pon_commitment::tests::warm_parent_binding_preserves_late_canonical_limits_and_context_error_order ... ok
+test pon_commitment::tests::warm_parent_binding_shares_only_after_complete_actual_comparison ... ok
+test pon_executor::repeated_sender_tests::repeated_sender_cancel_and_partial_worker_start_join_all_actual_workers ... ok
+test pon_executor::repeated_sender_tests::repeated_sender_complete_failures_preserve_canonical_first_error_and_parent ... ok
+test pon_executor::repeated_sender_tests::repeated_sender_complete_signed_batches_keep_state_receipts_root_and_every_signature ... ok
+test pon_executor::repeated_sender_tests::repeated_sender_tag11_and_cross_sender_funding_keep_complete_canonical_relation ... ok
+test pon_executor::session_tests::invalid_context_transaction_and_sequence_never_publish_session_state ... ok
+test pon_executor::session_tests::session_state_and_receipts_equal_existing_complete_builder ... ok
+test pon_executor::streaming_root_tests::complete_root_encoding_cost ... ignored, explicit paired complete-root cost; synthetic values, not native ledger growth
+test pon_executor::streaming_root_tests::streamed_m06_root_keeps_complete_canonical_value_errors_before_wire_limits ... ok
+test pon_executor::streaming_root_tests::streamed_m06_root_matches_original_values_removals_and_branch_edits ... ok
+test store::object_delta_tests::object_delta_detects_committed_parent_drift_before_first_write_v1 ... ok
+test store::object_delta_tests::object_delta_empty_initialization_and_noop_have_exact_write_counts_v1 ... ok
+test store::object_delta_tests::object_delta_insert_update_delete_matches_complete_target_v1 ... ok
+test store::object_delta_tests::object_delta_parent_drift_under_write_lock_rejects_and_rolls_back_v1 ... ok
+test store::object_delta_tests::object_delta_sqlite_full_after_partial_writes_rolls_back_exactly_v1 ... ok
+test store::object_delta_tests::object_delta_unexpected_parent_row_is_not_erased_v1 ... ok
+test tests::committed_sparse_block_writes_only_changed_objects_and_replays_exactly_v1 ... ok
+test tests::conflicts_outcomes_resources_and_fee_reduction_are_deterministic ... ok
+test tests::crash_outcomes_reopen_to_exact_source_target_or_fence ... ok
+test tests::exact_replay_and_parent_identity_are_fail_closed ... ok
+test tests::execution_preview_executes_full_fee_path_without_advancing_the_store ... ok
+test tests::open_existing_requires_precreated_regular_nonsymlink_store ... ok
+test tests::parallel_execution_tests::hotspot_revert_and_resource_exhaustion_match_sequential_journal_oracle ... ok
+test tests::parallel_execution_tests::multiple_speculative_failures_report_the_canonical_transaction_error ... ok
+test tests::parallel_execution_tests::speculative_insufficient_funds_is_retried_after_predecessor_funds_payer_or_source ... ok
+test tests::parallel_execution_tests::stale_speculative_success_cannot_publish_when_canonical_payer_is_exhausted ... ok
+test tests::parallel_execution_tests::workers_compute_program_meter_fees_and_successors_on_immutable_parent ... ok
+test tests::persistent_parallel_worker_count_bounds_fail_closed ... ok
+test tests::persistent_parallel_worker_counts_reopen_to_identical_canonical_results ... ok
+test tests::schema_sidecar_and_self_consistent_row_tamper_fail_closed ... ok
+test tests::static_access_fee_and_arithmetic_mutants_fail_before_commit ... ok
+test tests::vector_inventory_matches_executable_candidate_assertions ... ok
+test pon_commitment::tests::disjoint_delta_exact_and_overflow_preserve_full_state_and_allocation_order has been running for over 60 seconds
+test pon_commitment::tests::disjoint_delta_exact_and_overflow_preserve_full_state_and_allocation_order ... ok
+
+test result: ok. 66 passed; 0 failed; 6 ignored; 0 measured; 0 filtered out; finished in 72.71s
+
+     Running tests/capacity_progress.rs (/home/qian-qi/work/pon-upgrade-implementation-20261018/target-chain-performance/debug/deps/capacity_progress-02edcd8cb4694f54)
+
+running 7 tests
+test cancellation_payload_cannot_be_reinterpreted_as_invalid_state ... ok
+test complete_scan_preserves_shared_zero_reward_and_archive_reservations ... ok
+test every_interruption_cut_stops_without_publishing_or_mutating_and_can_retry ... ok
+test malformed_state_keeps_original_error_and_cannot_publish_partial_capacity ... ok
+test non_clone_cancellation_payload_keeps_its_identity ... ok
+test wrong_profile_rejects_before_progress_without_upgrading_old_context ... ok
+test complete_scan_matches_legacy_at_batch_and_capacity_boundaries ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.86s
+
+     Running tests/checkpoint_tile_material_v1.rs (/home/qian-qi/work/pon-upgrade-implementation-20261018/target-chain-performance/debug/deps/checkpoint_tile_material_v1-1c446ebe02e3383c)
+
+running 5 tests
+test actual_hashed_stream_header_must_equal_the_parsed_header ... ok
+test original_checkpoint_unselected_bytes_and_expected_matrix_pins_are_not_claims ... ok
+test closed_activation_and_descriptor_changes_cannot_select_a_new_recipe ... ok
+test strict_header_extents_unknown_fields_duplicates_and_progress_stop ... ok
+test synthetic_codec_fixture_full_relation_and_actual_signed_admission_binding ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.36s
+
+     Running tests/checkpoint_tile_policy_v1.rs (/home/qian-qi/work/pon-upgrade-implementation-20261018/target-chain-performance/debug/deps/checkpoint_tile_policy_v1-adcd6bdfc765315c)
+
+running 1 test
+test canonical_bounded_policy_false_claims_and_exact_fresh_context ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+     Running tests/continuity_v1.rs (/home/qian-qi/work/pon-upgrade-implementation-20261018/target-chain-performance/debug/deps/continuity_v1-5f2e6494d51c16e9)
+
+running 6 tests
+test all_future_credit_owners_and_archive_rows_are_reserved_once ... ok
+test maturity_queue_gaps_duplicates_and_mutated_maintenance_reject ... ok
+test native_evaluation_closure_at_capacity_materializes_archive_then_cleans_it ... ok
+test new_profile_has_fresh_context_and_genesis_reserves_the_whole_queue ... ok
+test real_empty_execution_preserves_liability_bound_and_account_nonces ... ok
+test native_deferred_funded_expiry_at_capacity_consumes_reserved_accounts ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 30.75s
+
+     Running tests/incremental_prefix.rs (/home/qian-qi/work/pon-upgrade-implementation-20261018/target-chain-performance/debug/deps/incremental_prefix-b252db2c4338f854)
+
+running 8 tests
+test authenticated_mandatory_partition_executes_full_cleanup_refunds_and_maturity ... ok
+test authenticated_mandatory_refusal_prevents_transaction_preparation_and_missing_rows_refuse ... ok
+test changed_actual_parent_bytes_and_forged_root_never_construct_a_prefix ... ok
+test every_suffix_cancellation_and_unwind_restores_the_last_complete_prefix ... ok
+test incremental_signed_prefixes_keep_one_prologue_complete_rewards_receipts_and_roots ... ok
+test invalid_partial_group_and_changed_prefix_leave_prior_nonce_fees_and_state ... ok
+test warm_parent_and_full_root_fallback_keep_the_same_complete_prefix_outputs ... ok
+test actual_capacity_rejection_rolls_back_suffix_and_allows_existing_account_transfer has been running for over 60 seconds
+test actual_capacity_rejection_rolls_back_suffix_and_allows_existing_account_transfer ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 73.24s
+
+     Running tests/pon_commitment.rs (/home/qian-qi/work/pon-upgrade-implementation-20261018/target-chain-performance/debug/deps/pon_commitment-8e9005f5167d4cde)
+
+running 16 tests
+test branching_stages_and_unknown_parent_reseed_do_not_advance_base ... ok
+test disabled_cache_still_executes_real_full_rules_and_exact_deltas ... ok
+test actual_workspace_charge_exact_minus_plus_one_preserves_complete_large_deltas ... ok
+test explicitly_selected_8192_key_and_workspace_limits_remain_full_root_fallbacks ... ok
+test full_actual_difference_checks_removals_empty_values_and_late_bad_value ... ok
+test increasing_the_software_key_budget_does_not_permit_invalid_cache_limits ... ok
+test late_invalid_signature_nonce_and_funds_do_not_mutate_parent_or_snapshot ... ok
+test explicitly_selected_16384_boundary_is_checked_and_16385_remains_a_full_root_fallback ... ok
+test payload_budget_fallback_is_explicit_and_real_root_is_unchanged ... ok
+test protocol_bounds_canonical_errors_and_full_key_limit_remain_enforced ... ok
+test real_signed_prefixes_parallel_receipts_and_complete_state_are_identical ... ok
+test same_context_changed_actual_state_wrong_root_and_wrong_snapshot_are_rejected ... ok
+test serial_new_accounts_and_reward_maturity_match_each_actual_successor ... ok
+test maximum_keys_and_payload_combination_checks_exact_minus_and_plus_one has been running for over 60 seconds
+test signed_large_parent_prefixes_keep_full_rules_roots_receipts_and_exact_delta_parity ... ok
+test workspace_budget_still_falls_back_below_key_and_payload_limits ... ok
+test maximum_keys_and_payload_combination_checks_exact_minus_and_plus_one ... ok
+
+test result: ok. 16 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 109.12s
+
+     Running tests/qualified_task_lifecycle_v2.rs (/home/qian-qi/work/pon-upgrade-implementation-20261018/target-chain-performance/debug/deps/qualified_task_lifecycle_v2-225beef5c47b9428)
+
+running 8 tests
+test canonical_parallel_execution_tracks_global_generation_and_prefix_conflicts ... ok
+test authenticated_revocation_is_terminal_and_preserves_retention ... ok
+test explicit_genesis_has_real_bound_maintenance_and_old_context_isolated ... ok
+test failed_fee_signature_nonce_and_wrong_profile_do_not_publish_state ... ok
+test renewal_requires_new_source_statement_and_preserves_real_output_meter ... ok
+test same_matrix_cannot_authorize_two_active_demands_and_slot_integrity_checked ... ok
+test source_cannot_reset_material_or_statement_sequence ... ok
+test more_than_sixteen_demands_recycle_bounded_metadata_and_never_reuse_identity ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.37s
+
+     Running tests/qualified_task_lifecycle_v3.rs (/home/qian-qi/work/pon-upgrade-implementation-20261018/target-chain-performance/debug/deps/qualified_task_lifecycle_v3-1d2cb379d0c5ae3c)
+
+running 1 test
+test lifecycle_owner_writes_exactly_once_after_all_validations_and_never_on_failure ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/qualified_task_lifecycle_v4.rs (/home/qian-qi/work/pon-upgrade-implementation-20261018/target-chain-performance/debug/deps/qualified_task_lifecycle_v4-04081d55a8da1389)
+
+running 3 tests
+test old_v3_keeps_exact_height_and_never_adopts_v4_overlapping_behavior ... ok
+test overlap_owner_writes_exactly_once_after_all_validations_and_never_on_failure ... ok
+test signed_overlap_includes_at900_905_999_but_future_expired_regressing_or_invalid_sources_do_not_write ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+   Doc-tests trnm_mvcc_fee
+
+running 2 tests
+test crates/trnm-mvcc-fee/src/lib.rs - (line 14) - compile fail ... ok
+test crates/trnm-mvcc-fee/src/lib.rs - (line 19) - compile fail ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.11s
+
