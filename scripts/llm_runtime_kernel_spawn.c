@@ -164,6 +164,7 @@ static int trnm_controller_wait4(int pid, int pidfd, uint64_t deadline, uint64_t
         if (got < 0 && errno != EINTR) return errno;
         if (!trnm_before(deadline)) {
             error = ETIMEDOUT;
+            if (!record[7]) record[7] = ETIMEDOUT;
             /* Only the pidfd from this C's original clone is signalled. A
              * blocking cleanup wait cannot renew the original O deadline or
              * produce a successful record. If kernel cleanup stalls, C remains
@@ -177,15 +178,34 @@ static int trnm_controller_wait4(int pid, int pidfd, uint64_t deadline, uint64_t
         if (poll(&descriptor, 1, 1) < 0 && errno != EINTR) return errno;
     }
     if (!WIFEXITED(status) && !WIFSIGNALED(status)) return ECHILD;
+    /* Cleanup ownership and usable rusage are distinct facts. Even a malformed
+     * usage receipt cannot undo this actual terminal wait4 or justify retry. */
+    record[3] |= 1;
+    record[4] = (uint64_t)status;
     if (usage.ru_utime.tv_sec < 0 || usage.ru_utime.tv_usec < 0 || usage.ru_utime.tv_usec >= 1000000 ||
         usage.ru_stime.tv_sec < 0 || usage.ru_stime.tv_usec < 0 || usage.ru_stime.tv_usec >= 1000000 ||
         (uint64_t)usage.ru_utime.tv_sec > UINT64_MAX / 1000000 - 1 ||
         (uint64_t)usage.ru_stime.tv_sec > UINT64_MAX / 1000000 - 1) return EOVERFLOW;
-    record[3] |= 1; /* Actual exact wait4, not pidfd readiness or waitpid. */
-    record[4] = (uint64_t)status;
     record[5] = (uint64_t)usage.ru_utime.tv_sec * 1000000 + (uint64_t)usage.ru_utime.tv_usec;
     record[6] = (uint64_t)usage.ru_stime.tv_sec * 1000000 + (uint64_t)usage.ru_stime.tv_usec;
+    if (!trnm_before(deadline) && !error) error = ETIMEDOUT;
+    if (error && !record[7]) record[7] = (uint64_t)error;
     return error;
+}
+
+static int trnm_controller_reap_or_retain(int slots[4], uint64_t deadline, uint64_t record[8]) {
+    int error = trnm_controller_wait4(slots[0], slots[1], deadline, record);
+    if (!(record[3] & 1)) {
+        if (!record[7]) record[7] = (uint64_t)(error ? error : ECHILD);
+        /* No terminal exact wait4(A): do not close the original A pidfd, exit
+         * C, retry birth or emit a success record. This same bounded C process
+         * and its original four slots stay retained under original O. The
+         * original deadline has not changed; late A exit cannot unlock this
+         * sticky state. There is no registry, new helper or polling retry. */
+        for (;;) pause();
+    }
+    int closed = trnm_kernel_close_v1(slots, 2U);
+    return error ? error : closed;
 }
 
 static void trnm_controller_record(int fd, uint64_t record[8]) {
@@ -242,11 +262,12 @@ static void trnm_controller_run(int aggregate, int record_fd, const char *exe,
         }
         trnm_kernel_close_v1(slots, 12U);
         if (error) {
-            if (syscall(SYS_pidfd_send_signal, slots[1], SIGKILL, NULL, 0) && errno != ESRCH) record[7] = (uint64_t)errno;
+            if (!record[7]) record[7] = (uint64_t)error;
+            if (syscall(SYS_pidfd_send_signal, slots[1], SIGKILL, NULL, 0) && errno != ESRCH &&
+                !record[7]) record[7] = (uint64_t)errno;
         }
-        int waited = trnm_controller_wait4(slots[0], slots[1], deadline, record);
+        int waited = trnm_controller_reap_or_retain(slots, deadline, record);
         if (!error) error = waited;
-        trnm_kernel_close_v1(slots, 2U);
     }
     if (!trnm_before(deadline) && !error) error = ETIMEDOUT;
     if (!record[7]) record[7] = (uint64_t)error;

@@ -2061,12 +2061,23 @@ are closed, and A/receipt handles are CLOEXEC. The same absolute monotonic
 eight-second cutoff crosses both births and O's receipt read without renewal.
 O reads one bounded 64-byte C record only after its separate exact wait4(C),
 then retains actual U/C/A counters, including nonzero residual charges and all
-historical meters. Pipe EOF is not proof that a payload executed. Thirteen new
+historical meters. Pipe EOF is not proof that a payload executed. Sixteen new
 controls cover the private binding, sticky refusals, original deadline, actual
 native wait4 subroutines and actual exec handle closure; successful native
 cgroup C/A birth is NOT_RUN. This adds no public entry, FinalUse/funding issuer,
 retirement, whole-U terminal or refund; production funded entry, A→C retirement
 and raw U zero before the original cutoff remain OPEN.
+
+The same launch installs a private retention-only C-wait role on original O's
+`_Wait4Child` before native entry or any G write. Rollback, finish, direct signals
+and pidfd-close paths cannot kill C or discard its original pidfd, including
+after G raises a pending exception or the original eight seconds expire. Even
+timely C/A exit does not release that handle before the still-open retirement
+protocol. Native C likewise retains its original A slots and waits in its same
+bounded process after an unresolved wait/poll/kill error; late A exit cannot
+renew or unlock UNKNOWN. An actual terminal wait4 is kept distinct from invalid
+rusage. Real ordinary-child fault controls exercise both owners and exact
+test-only cleanup; none qualifies cgroup birth, retirement or model release.
 
 The existing PN4 dependency and acceptance sequence is:
 

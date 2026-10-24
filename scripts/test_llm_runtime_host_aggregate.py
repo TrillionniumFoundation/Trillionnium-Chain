@@ -9,6 +9,7 @@ import errno
 import fcntl
 import os
 from pathlib import Path
+import select
 import signal
 import struct
 import subprocess
@@ -38,6 +39,10 @@ class HostAggregateTests(unittest.TestCase):
         def cleanup():
             for slot in (launch.read_slot, launch.write_slot):
                 if slot[1] >= 0: op.native.release_owned(slot)
+            child = op.spawn_owner
+            if child is not None and child._kernel_handoff[1] >= 0:
+                # Ordinary fixture cleanup only; no product retirement/refund.
+                op.native.close_handoff(child._kernel_handoff, 2)
         self.addCleanup(cleanup)
         return launch, op, cap, paths
 
@@ -358,6 +363,295 @@ int trnm_test_closed_world_exec(int aggregate, int record, int output, const cha
             os.fstat(unexpected)
         finally:
             for fd in (read,write,group,unexpected): os.close(fd)
+
+
+class NativeControllerFaultTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory(prefix='trnm-native-C-fault-test-')
+        # Same fault interposition as the independent fixed-622 review. Only
+        # this test library replaces calls; production has no fallback/hook.
+        prefix = b'#define syscall review_syscall\n#define poll review_poll\n#define wait4 review_wait4_call\n'
+        suffix = b'''
+#undef syscall
+#undef poll
+#undef wait4
+extern long syscall(long, ...);
+extern int poll(struct pollfd *, nfds_t, int);
+extern pid_t wait4(pid_t, int *, int, struct rusage *);
+static int review_mode = 0;
+static int review_slots[4] = {-1,-1,-1,-1};
+long review_syscall(long number, ...) {
+    if (number == SYS_pidfd_send_signal) { errno = EPERM; return -1; }
+    errno = ENOSYS; return -1;
+}
+int review_poll(struct pollfd *fds, nfds_t count, int timeout) {
+    if (review_mode == 2) { errno = ENOMEM; return -1; }
+    return poll(fds, count, timeout);
+}
+pid_t review_wait4_call(pid_t pid, int *status, int options, struct rusage *usage) {
+    if (review_mode == 3) { errno = EIO; return -1; }
+    pid_t got = wait4(pid, status, options, usage);
+    if (review_mode == 4 && got == pid) usage->ru_utime.tv_usec = 1000000;
+    return got;
+}
+int review_wait(int mode, int pid, int pidfd, uint64_t deadline, uint64_t record[8]) {
+    review_mode = mode;
+    return trnm_controller_wait4(pid, pidfd, deadline, record);
+}
+static void review_cleanup(int signum) {
+    (void)signum;
+    int status;
+    long got;
+    do { got = wait4(review_slots[0], &status, 0, NULL); } while (got < 0 && errno == EINTR);
+    if (got != review_slots[0]) _exit(89);
+    trnm_kernel_close_v1(review_slots, 2U);
+    _exit(88); /* Test-only failed cleanup, never a product success record. */
+}
+static void review_child_owner(int mode, int info, int gate_read, int gate_write, uint64_t deadline) {
+    close(gate_write);
+    struct sigaction action = {0};
+    action.sa_handler = review_cleanup;
+    sigemptyset(&action.sa_mask);
+    if (sigaction(SIGUSR1, &action, NULL)) _exit(125);
+    int child = fork();
+    if (!child) {
+        close(info);
+        char permission;
+        ssize_t count;
+        do { count = read(gate_read, &permission, 1); } while (count < 0 && errno == EINTR);
+        _exit(count == 1 && permission == 'G' ? 7 : 8);
+    }
+    close(gate_read);
+    if (child < 0) _exit(125);
+    review_slots[0] = child;
+    review_slots[1] = (int)syscall(SYS_pidfd_open, child, 0);
+    uint32_t identity[2] = {(uint32_t)child, (uint32_t)review_slots[1]};
+    if (review_slots[1] < 0 || write(info, identity, sizeof(identity)) != sizeof(identity)) {
+        int status;
+        syscall(SYS_pidfd_send_signal, review_slots[1], SIGKILL, NULL, 0);
+        wait4(child, &status, 0, NULL);
+        _exit(125);
+    }
+    close(info);
+    review_mode = mode;
+    uint64_t record[8] = {0};
+    trnm_controller_reap_or_retain(review_slots, deadline, record);
+    _exit(90); /* Returning before an actual A reap is the regression. */
+}
+int review_start_owner(int mode, int info, int gate_read, int gate_write, uint64_t deadline) {
+    int controller = fork();
+    if (controller) return controller;
+    review_child_owner(mode, info, gate_read, gate_write, deadline);
+    _exit(125);
+}
+int review_start_gated_owner(int info, int gate_read, int gate_write, int ack_read, int ack_write,
+        int error_read, int error_write, uint64_t deadline) {
+    int controller = fork();
+    if (controller) return controller;
+    close(ack_write); close(error_read);
+    char permission;
+    ssize_t count;
+    do { count = read(ack_read, &permission, 1); } while (count < 0 && errno == EINTR);
+    close(ack_read);
+    if (count != 1 || permission != 'G') _exit(126);
+    close(error_write);
+    review_child_owner(0, info, gate_read, gate_write, deadline);
+    _exit(125);
+}
+'''
+        source = kernel._bytes(kernel._C)
+        cls.output = Path(cls.temporary.name)/'faults.so'
+        built = subprocess.run(['/usr/bin/cc','-std=c11','-shared','-fPIC','-O2','-Wall','-Wextra','-Werror',
+            '-x','c','-','-o',str(cls.output)],input=prefix+source+suffix,capture_output=True)
+        if built.returncode: raise AssertionError(built.stderr.decode())
+        if kernel._bytes(kernel._C) != source: raise AssertionError('source changed during fault build')
+        cls.library = ctypes.CDLL(str(cls.output))
+        cls.wait = cls.library.review_wait
+        cls.wait.argtypes = [ctypes.c_int,ctypes.c_int,ctypes.c_int,ctypes.c_uint64,
+            ctypes.POINTER(ctypes.c_uint64)]
+        cls.wait.restype = ctypes.c_int
+
+    @classmethod
+    def tearDownClass(cls): cls.temporary.cleanup()
+
+    def test_real_C_retains_exact_A_pidfd_on_signal_poll_and_wait_fault_even_after_A_exit(self):
+        # A separate ordinary test process is subreaper only for its own test
+        # children, so even a failing regression cannot strand an orphan. The
+        # product C remains native and never returns to a Python interpreter.
+        script = r'''
+import ctypes,errno,os,pathlib,select,signal,struct,sys,time
+libc=ctypes.CDLL(None,use_errno=True)
+assert libc.prctl(36,1,0,0,0)==0
+lib=ctypes.CDLL(sys.argv[1]);start=lib.review_start_owner
+start.argtypes=[ctypes.c_int,ctypes.c_int,ctypes.c_int,ctypes.c_int,ctypes.c_uint64]
+start.restype=ctypes.c_int
+mode=int(sys.argv[2]);info_r,info_w=os.pipe();gate_r,gate_w=os.pipe()
+deadline=1 if mode==1 else time.monotonic_ns()+8*10**9
+controller=start(mode,info_w,gate_r,gate_w,deadline)
+assert controller>0
+os.close(info_w);os.close(gate_r)
+cfd=os.pidfd_open(controller,0);afd=None;child=None;reaped=False
+try:
+ assert select.select([info_r],[],[],1)[0]
+ raw=os.read(info_r,8);assert len(raw)==8
+ child,held_fd=struct.unpack('=2I',raw);afd=os.pidfd_open(child,0)
+ until=time.monotonic()+1
+ while time.monotonic()<until:
+  if pathlib.Path('/proc/'+str(controller)+'/wchan').read_text().strip() in ('__do_sys_pause','do_sys_pause'):break
+  time.sleep(.001)
+ assert not select.select([cfd],[],[],0)[0], 'C exited before actual A wait4'
+ assert os.wait4(controller,os.WNOHANG)[0]==0
+ assert 'Pid:\t'+str(child)+'\n' in pathlib.Path('/proc/'+str(controller)+'/fdinfo/'+str(held_fd)).read_text()
+ try:os.wait4(child,os.WNOHANG)
+ except ChildProcessError:pass
+ else:raise AssertionError('O improperly became A wait owner')
+ os.write(gate_w,b'G');os.close(gate_w);gate_w=-1
+ assert select.select([afd],[],[],1)[0]
+ assert not select.select([cfd],[],[],0)[0], 'late A exit unlocked C UNKNOWN'
+ assert 'Pid:\t'+str(child)+'\n' in pathlib.Path('/proc/'+str(controller)+'/fdinfo/'+str(held_fd)).read_text()
+ signal.pidfd_send_signal(cfd,signal.SIGUSR1)
+ waited,status,_=os.wait4(controller,0);reaped=True
+ assert waited==controller and os.waitstatus_to_exitcode(status)==88
+ try:os.wait4(child,os.WNOHANG)
+ except ChildProcessError:pass
+ else:raise AssertionError('test cleanup lost exact C wait4(A)')
+ print('ordinary-C/A-fault mode='+str(mode)+' retained-original-A-pidfd; late-exit-not-success; exact-test-cleanup')
+finally:
+ if gate_w>=0:os.close(gate_w)
+ if not reaped:
+  try:signal.pidfd_send_signal(cfd,signal.SIGUSR1)
+  except ProcessLookupError:pass
+  os.wait4(controller,0)
+ if child is not None:
+  try:
+   if os.wait4(child,os.WNOHANG)[0]==0:
+    signal.pidfd_send_signal(afd,signal.SIGKILL);os.wait4(child,0)
+  except ChildProcessError:pass
+ for fd in (info_r,cfd,afd):
+  if fd is not None:os.close(fd)
+'''
+        for mode in (1,2,3):
+            with self.subTest(mode=mode):
+                result = subprocess.run([sys.executable,'-c',script,str(self.output),str(mode)],
+                    capture_output=True,text=True,timeout=8)
+                self.assertEqual(result.returncode,0,result.stdout+result.stderr)
+                self.assertIn('late-exit-not-success; exact-test-cleanup',result.stdout)
+                print(result.stdout.strip())
+
+    def test_late_actual_wait_and_bad_rusage_never_become_timely_success_or_lose_cleanup_fact(self):
+        for mode in ('late','bad-rusage'):
+            with self.subTest(mode=mode):
+                child = subprocess.Popen([sys.executable,'-c','raise SystemExit(7)'])
+                fd = os.pidfd_open(child.pid,0)
+                try:
+                    if mode == 'late': self.assertTrue(select.select([fd],[],[],1)[0])
+                    record = (ctypes.c_uint64*8)()
+                    error = self.wait(4 if mode == 'bad-rusage' else 0,child.pid,fd,
+                        time.monotonic_ns()+8*10**9 if mode == 'bad-rusage' else 1,record)
+                    self.assertEqual(error,errno.EOVERFLOW if mode == 'bad-rusage' else errno.ETIMEDOUT)
+                    self.assertEqual(record[3],1)
+                    self.assertEqual(os.waitstatus_to_exitcode(record[4]),7)
+                    child.returncode = 7
+                    with self.assertRaises(ChildProcessError):os.wait4(child.pid,os.WNOHANG)
+                finally:
+                    os.close(fd)
+                    if child.returncode is None:child.kill();child.wait()
+
+    def test_original_O_pending_G_rollback_finish_deadline_and_signal_keep_real_C_wait_owner(self):
+        script = r'''
+import ctypes,os,pathlib,select,signal,struct,sys,time
+from unittest.mock import patch
+sys.path.insert(0,sys.argv[2])
+import llm_runtime_kernel_owned as kernel
+import llm_runtime_pilot as runtime
+from test_llm_runtime_host_aggregate import HostAggregateTests
+libc=ctypes.CDLL(None,use_errno=True);assert libc.prctl(36,1,0,0,0)==0
+lib=ctypes.CDLL(sys.argv[1]);start=lib.review_start_gated_owner
+start.argtypes=[ctypes.c_int]*7+[ctypes.c_uint64];start.restype=ctypes.c_int
+fixture=HostAggregateTests('test_private_single_slot_immutable_command_same_original_deadline_and_owner')
+launch,op,cap,paths=fixture.launch()
+mode=sys.argv[3];info_r,info_w=os.pipe();gate_r,gate_w=os.pipe()
+controller=None;cfd=None;afd=None;child=None;owner=None;reaped=False;ack_write=None
+original_read=pathlib.Path.read_text;original_write=os.write;original_signal=signal.pidfd_send_signal
+def handoff(cgroup,agroup,output,record,exe,argv,env,deadline,slots):
+ global controller,cfd,ack_write
+ ack_read,ack_write=os.pipe2(os.O_CLOEXEC);error_read,error_write=os.pipe2(os.O_CLOEXEC)
+ controller=start(info_w,gate_r,gate_w,ack_read,ack_write,error_read,error_write,deadline)
+ assert controller>0
+ cfd=os.pidfd_open(controller,0);slots[:]=(controller,cfd,ack_write,error_read)
+ os.close(ack_read);os.close(error_write)
+ return 0
+def membership(path,*args,**kwargs):
+ if controller is not None and path==pathlib.Path('/proc/'+str(controller)+'/cgroup'):
+  return '0::/'+str(op.operation.relative_to(kernel._ROOT))+'\n'
+ return original_read(path,*args,**kwargs)
+def pending_write(fd,raw):
+ count=original_write(fd,raw)
+ if mode=='pending-G' and fd==ack_write and raw==b'G':raise MemoryError('after actual C G write')
+ return count
+try:
+ with open(os.devnull,'wb') as log,patch.object(op.native,'spawn_controller',side_effect=handoff),patch.object(pathlib.Path,'read_text',membership),patch.object(kernel.os,'write',side_effect=pending_write):
+  if mode=='pending-G':
+   try:runtime._Wait4Child(['/bin/true'],stdout=log,stderr=runtime.subprocess.STDOUT,_host_controller_operation=op,_kernel_deadline=op.deadline)
+   except runtime._OwnedChildCleanupRequired as failure:owner=failure.child
+   else:raise AssertionError('pending G did not retain original cleanup owner')
+  else:owner=runtime._Wait4Child(['/bin/true'],stdout=log,stderr=runtime.subprocess.STDOUT,_host_controller_operation=op,_kernel_deadline=op.deadline)
+ os.close(info_w);info_w=-1;os.close(gate_r);gate_r=-1
+ assert select.select([info_r],[],[],1)[0]
+ raw=os.read(info_r,8);assert len(raw)==8
+ child,held_fd=struct.unpack('=2I',raw);afd=os.pidfd_open(child,0)
+ assert owner is op.spawn_owner and owner._aggregate_wait_role is launch._wait_role
+ if mode=='deadline':
+  assert not select.select([cfd],[],[],max(0,op.deadline-time.monotonic()+.01))[0]
+  assert time.monotonic()>=op.deadline
+ with patch.object(runtime.signal,'pidfd_send_signal',wraps=original_signal) as signals:
+  if mode=='rollback':
+   try:owner._rollback_kernel_handoff()
+   except runtime._OwnedChildCleanupRequired as failure:assert failure is owner._kernel_cleanup_required
+   else:raise AssertionError('live C rollback lost its owner')
+  elif mode=='direct-signal':owner.signal_owned(signal.SIGKILL)
+  else:owner.finish()
+  assert signals.call_count==0, 'O signalled C while C still owns A'
+ assert owner.termination_fd==cfd and owner._kernel_handoff[1]==cfd
+ assert not select.select([cfd],[],[],0)[0]
+ assert 'Pid:\t'+str(child)+'\n' in pathlib.Path('/proc/'+str(controller)+'/fdinfo/'+str(held_fd)).read_text()
+ assert op.native.operation is op and op.spawn_owner is owner and launch.record is None
+ assert owner.kernel_evidence is None and owner.observation_error is not None
+ try:owner._close_kernel_handoff(2)
+ except runtime._OwnedChildCleanupRequired as failure:assert failure is owner._kernel_cleanup_required
+ else:raise AssertionError('ordinary close released retained C pidfd')
+ os.fstat(cfd)
+ # Enter test-only exact C cleanup while A is still gated. Releasing A first
+ # races a legitimate normal native C wait4/exit against the cleanup handler.
+ original_signal(cfd,signal.SIGUSR1)
+ original_write(gate_w,b'G');os.close(gate_w);gate_w=-1
+ assert select.select([afd],[],[],1)[0]
+ waited,status,_=os.wait4(controller,0);reaped=True
+ assert waited==controller and os.waitstatus_to_exitcode(status)==88
+ print('original-O-cleanup '+mode+' real-G; no-C-signal; original-C/A-handles-retained; no-WholeU')
+finally:
+ if gate_w>=0:os.close(gate_w)
+ if controller is not None and not reaped:
+  try:original_signal(cfd,signal.SIGUSR1)
+  except ProcessLookupError:pass
+  os.wait4(controller,0)
+ if child is not None:
+  try:
+   if os.wait4(child,os.WNOHANG)[0]==0:
+    original_signal(afd,signal.SIGKILL);os.wait4(child,0)
+  except ChildProcessError:pass
+ for fd in (info_r,info_w,gate_r,afd):
+  if fd is not None and fd>=0:os.close(fd)
+ fixture.doCleanups()
+'''
+        for mode in ('pending-G','rollback','finish','deadline','direct-signal'):
+            with self.subTest(mode=mode):
+                result = subprocess.run([sys.executable,'-c',script,str(self.output),str(Path(__file__).parent),mode],
+                    capture_output=True,text=True,timeout=15)
+                self.assertEqual(result.returncode,0,result.stdout+result.stderr)
+                self.assertIn('no-C-signal; original-C/A-handles-retained; no-WholeU',result.stdout)
+                print(result.stdout.strip())
 
 
 if __name__ == '__main__': unittest.main(verbosity=2)

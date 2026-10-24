@@ -19,6 +19,31 @@ _MAGIC = 0x31574134544e5243
 require = kernel.require
 
 
+class _ControllerWaitRole:
+    """A retention-only role, installed before native C can possibly run A.
+
+    No release/unlock operation exists in this slice. Even timely C/A exit keeps
+    the original C pidfd for the still-open original-owner retirement protocol.
+    """
+    __slots__ = ('launch', 'child')
+
+    def __init__(self, token, launch, child):
+        from llm_runtime_pilot import _Wait4Child
+        require(token is _TOKEN and type(launch) is _AggregateLaunch and type(child) is _Wait4Child and
+            child.kernel_operation is launch.operation and launch.operation.spawn_owner is child and
+            launch.operation.native.operation is launch.operation, 'host-aggregate-retained-wait-role')
+        self.launch, self.child = launch, child
+
+    def __reduce_ex__(self, protocol):
+        raise TypeError('host-aggregate-wait-role-not-serializable')
+
+    def __copy__(self):
+        raise TypeError('host-aggregate-wait-role-not-copyable')
+
+    def __deepcopy__(self, memo):
+        raise TypeError('host-aggregate-wait-role-not-copyable')
+
+
 class _AggregateLaunch:
     def __init__(self, token, operation, command):
         from llm_runtime_host_controller import _HostControllerOperation
@@ -37,6 +62,7 @@ class _AggregateLaunch:
         self.identities = (ctypes.c_uint64*6)()
         self.status = ctypes.c_int(-1)
         self.record = None
+        self._wait_role = None
         self.source = kernel._digest(kernel._bytes(Path(__file__)))
         with self.native._lock_for_owner():
             require(self.native._busy._recursion_count() == 1, 'kernel-native-lifecycle-busy')
@@ -93,6 +119,9 @@ class _AggregateLaunch:
         require(sum(map(len, values+environment)) <= 1024**2, 'kernel-exec-bound')
         array = lambda v: (ctypes.c_char_p*(len(v)+1))(*v, None)
         op.consumed, op.spawn_owner = True, owner  # Before native entry/pending signals.
+        role = _ControllerWaitRole(_TOKEN, self, owner)
+        self._wait_role = role
+        owner._aggregate_wait_role = role  # Persistent before C birth or any G write.
         error = self.native.spawn_controller(op.nodes[0][1], op.cap._groups['aggregate'][2],
             stdout.fileno(), self.write_slot[1], values[0], array(values), array(environment),
             self.deadline_ns, owner._kernel_handoff)
