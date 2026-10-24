@@ -94,6 +94,24 @@ jobs:
           print(json.dumps(dict(scope='ordinary FD and mock manager; native child preparation/birth NOT_RUN', executed=result.testsRun, skipped=len(result.skipped), passed=passed)))
           raise SystemExit(0 if passed else 1)
           PY
+      - name: Exercise original native handoff and private host controller mechanics
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY' 2>&1 | tee "$RUNNER_TEMP/aggregate-owner-controls/host-controller-mechanics.log"
+          import importlib, json, sys, unittest
+          sys.path.insert(0, 'scripts')
+          rows = []
+          for name, expected in [('test_llm_runtime_kernel_owned', 16), ('test_llm_runtime_host_controller', 9)]:
+              suite = unittest.defaultTestLoader.loadTestsFromModule(importlib.import_module(name))
+              if suite.countTestCases() != expected:
+                  raise RuntimeError(f'{name}: expected {expected} controls, found {suite.countTestCases()}')
+              result = unittest.TextTestRunner(verbosity=2).run(suite)
+              passed = result.wasSuccessful() and result.testsRun == expected and not result.skipped and not result.expectedFailures
+              rows.append(dict(module=name, executed=result.testsRun, skipped=len(result.skipped), passed=passed))
+          print(json.dumps(dict(scope='original handoff and ordinary FD/private controller controls; funded native entry and whole-U return NOT_RUN', results=rows)))
+          raise SystemExit(0 if all(row['passed'] for row in rows) else 1)
+          PY
       - name: Preserve exact source after controls
         if: always() && steps.identity.outcome == 'success'
         shell: bash
