@@ -15,6 +15,7 @@ from verify_ci_source import verify
 # Include the raw-worktree negatives in both existing repository-truth lanes.
 from test_ci_source_integrity import TrackedSourceTests
 from test_ci_observation_process import ObserverProcessOwnershipTests
+from test_rust_baseline_shards import RustShardTests
 
 
 class SourceIdentityTests(unittest.TestCase):
