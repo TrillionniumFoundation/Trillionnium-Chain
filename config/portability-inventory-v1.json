@@ -607,6 +607,8 @@
       "decision": "retain-controlled-linux-in-process-spawn-primitive",
       "supporting_sources": [
         "scripts/llm_runtime_pilot.py",
+        "scripts/llm_runtime_host_controller.py",
+        "scripts/test_llm_runtime_host_controller.py",
         "scripts/test_llm_runtime_decode.py",
         "scripts/llm_runtime_exit_observation.py",
         "scripts/test_llm_runtime_kernel_owned.py",

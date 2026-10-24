@@ -921,6 +921,12 @@ class _Wait4Child(subprocess.Popen):
     def __init__(self, *args, **kwargs):
         self.kernel_operation = kwargs.pop('_controlled_operation', None)
         aggregate_operation = kwargs.pop('_aggregate_operation', None)
+        host_controller = kwargs.pop('_host_controller_operation', None)
+        if host_controller is not None:
+            from llm_runtime_host_controller import _HostControllerOperation
+            require(self.kernel_operation is None and aggregate_operation is None and
+                type(host_controller) is _HostControllerOperation, 'HOST_CONTROLLER_SPAWN_INTERFACE')
+            self.kernel_operation = host_controller
         self._counter_error_type = self._counter_diagnostic_type = None
         self.kernel_counter_diagnostic = None
         self.kernel_counter_diagnostic_projection_failed = False
@@ -979,7 +985,7 @@ class _Wait4Child(subprocess.Popen):
                 except OSError as error:
                     raise _Wait4Unsupported('pidfd capability cleanup unavailable') from error
         if self.kernel_operation is not None:
-            if aggregate_operation is None:
+            if aggregate_operation is None and host_controller is None:
                 from llm_runtime_kernel_owned import _ControlledOperation
                 require(type(self.kernel_operation) is _ControlledOperation, 'KERNEL_SPAWN_INTERFACE')
             require(len(args) == 1 and
