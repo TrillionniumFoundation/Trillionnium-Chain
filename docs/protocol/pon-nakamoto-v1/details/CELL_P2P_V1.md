@@ -280,7 +280,7 @@ the bounded default is `2 * max-bytes + 2097152 + 9 * max-connections`.
 Its successful `trnm.cell.fetch.v1` JSON adds `received_response_bytes` and
 `max_response_bytes` without changing existing payload counters. These local
 report additions do not change TCM1, TCQ1 or TCS1; the separately bounded local
-cache uses the fresh TCL4/schema3 namespace described above.
+cache uses the fresh TCL4/schema4 namespace described above.
 `verify` rechecks a complete local version. `manifest` exports the
 canonical pinned manifest for the existing release owner. No command implicitly
 discovers a model, changes its authority or activates a consensus profile.

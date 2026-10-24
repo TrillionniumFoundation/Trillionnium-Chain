@@ -1664,8 +1664,8 @@ strict Clippy. No test, native deadline or assertion is removed. This addresses
 observed scheduler cancellation after successful capacity/growth controls; fresh
 hosted execution of the new scheduling remains pending.
 
-The current published Hepta owner-native source is `0cb5b74d` and its actual
-original-base preview is `c9d1b1dd`, with parents `[c38e7727, 0cb5b74d]` and the
+The current published Hepta owner-native source is `394d1c75` and its actual
+original-base preview is `1dddb018`, with parents `[c38e7727, 394d1c75]` and the
 verified merge tree. Its existing full native workflow and Windows diagnostics
 are requested, not passing evidence. The ordinary Linux suite passed 1,042 cases
 with 17 separately accounted inherited qualifications; 832 Python controls and
@@ -1674,14 +1674,20 @@ The existing Windows workflow retains both x64 lanes and adds both ARM64 lanes.
 All fifteen receipts require their exact named cases and one complete summary;
 compiler host, Windows architecture and the fixed runner/target pair must agree.
 A wrong test, duplicate result or green total cannot replace an original red.
-Both actual ARM diagnostic lanes now pass all four original stage, four
+Both actual ARM diagnostic lanes pass all four original stage, four
 primary-owner, five security, four principal and four volume cases. The full
 library still reports 14 passes and 23 owner failures; FinalUse and Registry
-owners still fail. Nine sandbox groups did not run because of two compilation
-errors, now under repair without changing their original assertions. Bounded
-test-only ancestor/SID observations do not add a trusted subject or relax owner
-admission. x64 and full current-pair native acceptance remain required.
-See the same [Hepta development obligations](https://github.com/TrillionniumFoundation/hepta-private-ci/blob/0cb5b74d6b1a9a406856969ad889bf270562434e/docs/DEVELOPMENT.md).
+owners still fail. The two compilation errors are repaired: all nine sandbox
+groups actually execute on both ARM lanes. The original full-restriction
+candidate, partial-delete regression, four mechanism probes and eight ACL
+controls pass. The broad-identity regression still observes parent DELETE_CHILD
+permission, and legacy execution still refuses its missing qualified producer.
+The same-call diagnostic binds the common initial ancestor failure to the actual
+volume-root TrustedInstaller SID; no private-store owner policy is changed by
+that observation. Preserve the earlier nine NOT_RUN outcomes and both current
+failed lanes in [the original diagnostic run](https://github.com/TrillionniumFoundation/hepta-private-ci/actions/runs/40117218852).
+x64 and full current-pair native acceptance remain required.
+See the same [Hepta development obligations](https://github.com/TrillionniumFoundation/hepta-private-ci/blob/394d1c7559513f4c28930b4bb1425ff383350ddc/docs/DEVELOPMENT.md).
 
 Exit: one reproducible source-pair/configuration inventory and per-gate results
 with unresolved items assigned. Block dependent acceptance on required failures;
@@ -1868,7 +1874,11 @@ timeout. The separate `0ca2b9dd` count-capacity repair reads at most 4,097 rows
 and still rejects oversize state, and refuses a new 4,097th event in the original
 write transaction before insertion. Three actual cold/full/idempotent/no-rewrite
 controls and 282 memory cases pass; the combined `cd30140a` source passes 1,045
-ordinary cases. These finite results do not close per-row byte costs, global I05
+ordinary cases. The final published `394d1c75` combination also executes all four
+original qualifications: SQLite1,000 in549.305s, actual process1,000 in470.916s,
+KG crash recovery in0.122s and writer crash/reopen in0.131s. The original600s
+test ceiling,30s child ceiling, workloads and assertions remain unchanged.
+These finite results do not close per-row byte costs, global I05
 retention, Windows execution, real-model or public throughput acceptance. The
 existing PN2 owners retain those obligations.
 
@@ -2150,6 +2160,12 @@ occupied slot before caller-buffer reads. A nonzero first output consumes the
 same failed slot without reset. Four additional controls pause initialization
 and protect the original output page, retaining the original nine preparation
 assertions and cutoff; neither refusal path may race the owner's snapshot.
+The first `9cf5de77` preparation retained eighteen real TSAN warnings. Its
+`01c65582` successor passes the unchanged TSAN driver with11,263 competing
+calls per thread and no warnings; the same four new controls actually fail
+against the old C source and pass on the fix. Independent159/159 controls and
+the full952-case repository-truth job pass with zero skips. These results close
+the two identified publication races, not native C/A birth or retirement.
 
 The existing PN4 dependency and acceptance sequence is:
 
