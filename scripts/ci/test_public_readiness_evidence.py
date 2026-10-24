@@ -753,6 +753,18 @@ class NativeDurableSchemaTests(unittest.TestCase):
             with self.subTest(statement=statement),self.assertRaisesRegex(ValueError,'durable backend selected schema rebound'):
                 self.extract(self.replace_once(self.current,pair,pair+'\n        '+statement))
 
+    def test_legacy_and_authenticated_openers_cannot_enable_growth_observation_mode(self):
+        for backend, after in (('Legacy', 'fn open_selected'),
+                               ('AuthenticatedV1', '/// Explicit local operator policy')):
+            tail = '\n        )\n    }\n    '+after
+            current = 'StateBackend::'+backend+',\n            false,'+tail
+            for replacement in ('true', 'growth_observation_only', 'false || true',
+                                '{ false }', 'false, true'):
+                changed = 'StateBackend::'+backend+',\n            '+replacement+','+tail
+                with self.subTest(backend=backend, replacement=replacement), \
+                        self.assertRaisesRegex(ValueError, 'durable backend opener'):
+                    self.extract(self.replace_once(self.current,current,changed))
+
     def test_selected_settings_cannot_be_mutated_through_fields_or_borrowed(self):
         header = 'fn open_selected(\n        path: &Path,\n        settings: Settings,'
         pair = 'let ddl = state_backend.ddl();\n        let schema_id = state_backend.selected_schema_id(&settings);'

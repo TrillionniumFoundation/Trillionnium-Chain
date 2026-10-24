@@ -1591,6 +1591,33 @@ candidate and base without changing deployed services or another repository.
    successor's original-budget campaign is pending, not inferred from its cache
    and import regressions. See the existing performance acceptance contract.
 
+The 2026-10-24 local CI repair keeps the original lane commands and assertions.
+Ordinary evidence-test children bind only their own checkout's script directory,
+including prospective merges, instead of inheriting a stale head's `PYTHONPATH`.
+The durable-schema reader requires the current legacy/authenticated openers'
+literal `false` growth-observation argument; changed backend, mode and rebinding
+mutants still reject. The shared funding fixture reads the real account's next
+nonce before each unchanged funding transaction. The merged runtime group executes
+the original 269 cases plus both source-path controls: 264 pass and the seven
+existing opt-in model cases remain unexecuted. Both the isolated-interpreter decoy
+control and the cloned head/prospective-merge poisoned-path control remain. The
+concurrent PID fixture reads actual procfs names from the pidfd namespace metadata.
+All 44 external-reader cases and five real storage-service cases pass locally.
+The concurrent cloud build-input workflow is retained without certifying its
+resource bounds or execution. Current hosted head/merge checks,
+fresh CodeQL disposition and native/model acceptance remain separate open gates.
+
+The same PN0 CI boundary now partitions the unchanged local `rust-baseline`
+commands into required runtime and quality workers for both candidate and actual
+prospective merge. Each worker retains 180 minutes; the original required check
+names run fail-closed fan-in after every outcome. Both current-run/current-attempt
+receipts, exact source before/after and executed command hashes must agree, and
+both jobs must succeed. Runtime retains the workspace, signed oracles and four
+exact ignored native controls; quality retains formatting, supply-chain, docs and
+strict Clippy. No test, native deadline or assertion is removed. This addresses
+observed scheduler cancellation after successful capacity/growth controls; fresh
+hosted execution of the new scheduling remains pending.
+
 Exit: one reproducible source-pair/configuration inventory and per-gate results
 with unresolved items assigned. Block dependent acceptance on required failures;
 continue scoped repair and offline research. Do not rerun historical cleanup or
