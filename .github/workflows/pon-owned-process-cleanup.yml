@@ -79,6 +79,21 @@ jobs:
           print(json.dumps(dict(scope='ordinary FD and bounded transport; native scope admission NOT_RUN', executed=result.testsRun, skipped=len(result.skipped), passed=passed)))
           raise SystemExit(0 if passed else 1)
           PY
+      - name: Exercise same-owner child preparation without native cgroup effects
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY' 2>&1 | tee "$RUNNER_TEMP/aggregate-owner-controls/host-child-preparation.log"
+          import importlib, json, sys, unittest
+          sys.path.insert(0, 'scripts')
+          suite = unittest.defaultTestLoader.loadTestsFromModule(importlib.import_module('test_llm_runtime_host_children'))
+          if suite.countTestCases() != 9:
+              raise RuntimeError('child preparation requires all 9 new controls')
+          result = unittest.TextTestRunner(verbosity=2).run(suite)
+          passed = result.wasSuccessful() and result.testsRun == 9 and not result.skipped and not result.expectedFailures
+          print(json.dumps(dict(scope='ordinary FD and mock manager; native child preparation/birth NOT_RUN', executed=result.testsRun, skipped=len(result.skipped), passed=passed)))
+          raise SystemExit(0 if passed else 1)
+          PY
       - name: Preserve exact source after controls
         if: always() && steps.identity.outcome == 'success'
         shell: bash

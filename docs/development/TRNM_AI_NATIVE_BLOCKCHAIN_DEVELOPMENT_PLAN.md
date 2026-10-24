@@ -1901,12 +1901,37 @@ the same owner through `KernelOwnedCloseRequired`. All old22 plus seven new
 ordinary-FD/mock-manager controls pass locally; none is
 native admission or resource-return qualification.
 
+The same staged owner now exposes `prepare_fresh_child_groups()` only after
+LEAF_PROOF_CONSUMED. It creates C then A with create-only relative mkdir, holds
+their actual FDs and configures/readbacks the original C128MiB/100%/16 and
+A8GiB/300%/240 ceilings under U16GiB/400%/256. Each intermediate topology is
+checked with the same original manager/invocation, PID/thread/source, held
+identities and ancestor ceilings. U's actual current and historical peak must
+fit its full memory ceiling, with zero swap/tasks/CPU usage and memory events;
+no child metadata is subtracted or exempted. Only newly created C/A use the
+unchanged seven pristine predicates. U is never called pristine after birth of
+its child groups. `verify_child_preparation()` reads the dedicated completed
+phase; successful preparation returns None and keeps `_ready=False`. This narrow
+staged API is not the still-absent controller process/spawn authority protected
+by the original controls, and existing production adapters cannot consume it as
+ready. Partial creation/configuration or any later uncertainty keeps the original
+cap, first error, attempted role and held slots in UNKNOWN_RETAINED; it performs
+no close, removal, retry or adoption. Native C/A preparation remains NOT_RUN.
+
+The old aggregate constructor requires a service with the current C in its
+controller subgroup; this scope's original O remains in H/observer. It cannot
+be passed to that constructor or cast to a KernelBudget/Qualified fact. Actual
+O-parent wait4(C), C-parent wait4(A), evidence binding/drain, ordered retirement,
+whole-U terminal accounting, original baseline funding and settlement remain
+OPEN. The source controls use ordinary files/FDs and a mock manager, including
+modeled positive U metadata charges; they are not new kernel measurements.
+
 The existing PN4 dependency and acceptance sequence is:
 
 | Stage / owner | Interface and required evidence | Status / exit |
 | --- | --- | --- |
 | Fresh leaf / M14/M17 | Same original owner; exact topology/limits/source/generation and original seven-zero guard before C/A | Preparation and one-shot consumption implemented; new native qualification OPEN |
-| C/A preparation and birth / same owner, Hepta kernel.operations | Consume the same fact once, then create exact bounded C/A; charge all child bookkeeping to U's 16GiB; original native birth/pidfd/wait4 binding | OPEN; no successful placeholder |
+| C/A preparation and birth / same owner, Hepta kernel.operations | Consume the same fact once, then create exact bounded C/A; charge all child bookkeeping to U's 16GiB; original native birth/pidfd/wait4 binding | Same-owner source preparation implemented; native C/A preparation and actual birth/wait4 OPEN |
 | Running and quiescing / same original O | Monotonic existing operation/effect identity; authoritative original C and A exits plus zero leaf populations/descendants | OPEN; never call running U pristine |
 | Normal retirement / same original O | Only after both exits are known, retire A then C once using original parent FD/name/inode, then native close-and-clear of those original held slots | OPEN; unknown/partial removal retains all remaining slots, never retries or reuses names |
 | Whole-U terminal / original evidence-pipe and aggregate owners | Retain U/S/H/observer; actual U descendants0/dying0/current0/swap0, exact identity/limits and unchanged historical meters before original cutoff | OPEN; no charge/peak reset or baseline subtraction |

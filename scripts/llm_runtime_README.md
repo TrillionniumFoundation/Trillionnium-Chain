@@ -407,6 +407,19 @@ authority. Unknown outcomes retain the original slots with no second admission.
 Factory owner/generation faults close before effects; a cleanup fault returns the
 same original cap through `KernelOwnedCloseRequired`. Seven added ordinary-file/
 mock-manager controls are contract evidence only.
+The next source-only phase is explicitly `prepare_fresh_child_groups()` on that
+same cap after consumption, followed by `verify_child_preparation()`. It performs
+real create-only C/A directory setup and exact original limits/readback, retaining
+the same manager/native/FD owner. U current/peak include all C/A metadata and
+must stay within16GiB, with zero swap/tasks/CPU usage/memory events. C/A alone
+retain the original seven-zero checks. Success returns None, keeps `_ready=False`
+and supplies no spawn/Qualified/KernelBudget fact; this is not the old production
+adapter's absent controller-owner capability. Uncertain partial setup records
+the first error and attempted role on the same cap, prohibits retry/close/removal
+and retains every original held slot. Ordinary-file/mock-manager controls do not
+prove native C/A preparation. Actual O->C->A parent wait4 binding and drain are
+still required; the old service/current-controller constructor is incompatible
+with this scope/O-in-observer layout and is not reused.
 The existing PN4 plan owns the next C/A birth, authoritative exits, ordered
 retirement and actual zero-charge/dying-free terminal requirements. They remain
 OPEN. The original eight-second fact deadline is unchanged; blocking removal

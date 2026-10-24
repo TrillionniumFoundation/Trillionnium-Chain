@@ -152,6 +152,7 @@ class HostScopeAdmission:
         self._started = self._ready = self._failed = self._closed = False
         self._first_pristine_failure = None
         self._leaf_generation = self._leaf_phase = self._leaf_fact = None
+        self._child_preparation_attempt = self._first_child_preparation_error = None
         self._unit = 'trnm-host-'+uuid.uuid4().hex+'.scope'
         self._operation_name = 'operation-'+uuid.uuid4().hex
         self._source = _source()
@@ -480,6 +481,119 @@ class HostScopeAdmission:
                 self._leaf_phase, self._failed, self._ready = 'UNKNOWN_RETAINED', True, False
                 raise
 
+    def _child_preparation_failed(self, error):
+        # Keep the original namespace, partial attempt and all held slots. No
+        # retry, removal, descriptor close, new owner or execution grant follows.
+        phase = getattr(self, '_leaf_phase', None)
+        self._leaf_phase, self._failed, self._ready = 'UNKNOWN_RETAINED', True, False
+        if getattr(self, '_first_child_preparation_error', None) is None:
+            self._first_child_preparation_error = (
+                phase, getattr(self, '_child_preparation_attempt', None), error)
+
+    def prepare_fresh_child_groups(self):
+        """Same-owner staged C/A setup only; never a legacy ready/spawn capability."""
+        with self._lock:
+            try:
+                self._owner()
+                kernel.require(getattr(self, '_leaf_generation', None) is not None and
+                    self._leaf_phase == 'LEAF_PROOF_CONSUMED' and self._started and
+                    not self._ready and not self._failed, 'host-children-consumed-leaf-required')
+                self._leaf_phase = 'PREPARING_CHILD_GROUPS'
+                self._child_preparation_attempt = None
+                self._verify_child_preparation_locked(())
+                for role in ('controller', 'aggregate'):
+                    self._child_preparation_attempt = role  # Retain before mkdir.
+                    self._configure(role, self._group(role, self._groups['operation'][2], role))
+                    children = (('controller',) if role == 'controller' else
+                                ('controller', 'aggregate'))
+                    self._verify_child_preparation_locked(children)
+                self._leaf_phase = 'CHILD_GROUPS_PREPARED'
+                # _ready stays False: the old adapter cannot consume this phase.
+            except BaseException as error:
+                self._child_preparation_failed(error)
+                raise
+
+    def _verify_child_preparation_locked(self, children):
+        self._owner()
+        kernel.require(getattr(self, '_leaf_generation', None) is not None and
+            self._leaf_phase in ('PREPARING_CHILD_GROUPS', 'CHILD_GROUPS_PREPARED') and
+            self._started and not self._ready and not self._failed and
+            children in ((), ('controller',), ('controller', 'aggregate')),
+            'host-child-preparation-phase-or-sticky-failure')
+        fact = self._leaf_fact
+        kernel.require(type(fact) is _FreshULeafFact and fact._owner is self and
+            fact._generation == self._leaf_generation and fact._binding == self._leaf_binding(),
+            'host-leaf-original-fact-required')
+        control = self._manager_readback()
+        kernel.require(type(self._invocation) is tuple and len(self._invocation) == 16 and
+            all(type(value) is int and 0 <= value <= 255 for value in self._invocation)
+            and any(self._invocation), 'host-leaf-original-invocation-required')
+        kernel.require(tuple(self._groups) == ('scope', 'host', 'observer', 'operation')+children,
+                       'host-children-exact-registered-groups')
+        kernel.require(kernel._text(self._proc, 'cgroup') == '0::'+control+'/host/observer\n',
+                       'host-observer-membership')
+        for fd, values in self._ancestors:
+            kernel.require(all(kernel._text(fd, key) == value for key, value in values.items()),
+                           'host-ancestor-ceiling-changed')
+        for role, (parent, name, fd, signature) in self._groups.items():
+            if parent is not None:
+                fresh = os.open(name, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC,
+                                dir_fd=parent)
+                try:
+                    kernel.require(kernel.proc._signature(fresh) == signature, 'host-group-replaced')
+                finally:
+                    os.close(fresh)
+            self._check_mount(fd)
+            kernel.require(kernel._text(fd, 'cgroup.type') == 'domain\n', 'host-domain-only')
+            for key, value in _limits(role).items():
+                kernel.require(kernel._text(fd, key) == value, 'host-exact-budget-required')
+            names = {'scope': frozenset(('host',)),
+                     'host': frozenset(('observer', self._operation_name)),
+                     'operation': frozenset(children)}.get(role, frozenset())
+            kernel.require(_directory_names(fd) == names, 'host-child-preparation-exact-topology')
+            tree = _fields(kernel._text(fd, 'cgroup.stat'))
+            count = {'scope': 3+len(children), 'host': 2+len(children),
+                     'operation': len(children)}.get(role, 0)
+            kernel.require(tree.get('nr_descendants') == count and
+                tree.get('nr_dying_descendants') == 0 and
+                all(value == 0 for key, value in tree.items() if key.startswith('nr_dying_')),
+                'host-descendant-or-dying-mismatch')
+            controllers = kernel._text(fd, 'cgroup.subtree_control').split()
+            active = role in ('scope', 'host', 'operation')
+            kernel.require(len(controllers) == (3 if active else 0) and
+                frozenset(controllers) == (_CONTROLLERS if active else frozenset()),
+                'host-subtree-controllers')
+        for role in ('scope', 'host', 'operation'):
+            kernel.require(kernel._text(self._groups[role][2], 'cgroup.procs') == '',
+                           'host-original-only-observer')
+        kernel.require(kernel._text(self._groups['observer'][2], 'cgroup.procs') == str(self._pid)+'\n',
+                       'host-original-only-observer')
+        operation = self._groups['operation'][2]
+        current = _decimal(kernel._text(operation, 'memory.current'))
+        peak = _decimal(kernel._text(operation, 'memory.peak'))
+        kernel.require(current <= peak <= _BUDGETS['operation'][0] and
+            _decimal(kernel._text(operation, 'memory.swap.current')) == 0 and
+            _decimal(kernel._text(operation, 'pids.current')) == 0 and
+            _fields(kernel._text(operation, 'cgroup.events')).get('populated') == 0 and
+            _fields(kernel._text(operation, 'cpu.stat')).get('usage_usec') == 0 and
+            all(value == 0 for value in _fields(kernel._text(operation, 'memory.events')).values()),
+            'host-active-preparation-operation-budget')
+        # Child memcg metadata is charged in full to U above. Only the actual
+        # new empty leaves C/A retain the original seven-zero requirements.
+        for role in children:
+            self._require_pristine(role, self._groups[role][2])
+
+    def verify_child_preparation(self):
+        """Read this original prepared phase only; return no transferable fact."""
+        with self._lock:
+            try:
+                kernel.require(self._leaf_phase == 'CHILD_GROUPS_PREPARED',
+                               'host-child-preparation-not-complete')
+                self._verify_child_preparation_locked(('controller', 'aggregate'))
+            except BaseException as error:
+                self._child_preparation_failed(error)
+                raise
+
     def _verify_locked(self):
         self._owner()
         kernel.require(self._ready and not self._failed, 'host-not-ready-or-sticky-failure')
@@ -552,6 +666,8 @@ class HostScopeAdmission:
             try:
                 self._verify_locked()
             except BaseException:
+                if getattr(self, '_leaf_generation', None) is not None:
+                    self._leaf_phase = 'UNKNOWN_RETAINED'
                 self._failed = True
                 self._ready = False
                 raise
