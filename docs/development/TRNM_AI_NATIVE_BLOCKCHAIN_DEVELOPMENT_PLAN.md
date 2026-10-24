@@ -1674,6 +1674,13 @@ The existing Windows workflow retains both x64 lanes and adds both ARM64 lanes.
 All fifteen receipts require their exact named cases and one complete summary;
 compiler host, Windows architecture and the fixed runner/target pair must agree.
 A wrong test, duplicate result or green total cannot replace an original red.
+Both actual ARM diagnostic lanes now pass all four original stage, four
+primary-owner, five security, four principal and four volume cases. The full
+library still reports 14 passes and 23 owner failures; FinalUse and Registry
+owners still fail. Nine sandbox groups did not run because of two compilation
+errors, now under repair without changing their original assertions. Bounded
+test-only ancestor/SID observations do not add a trusted subject or relax owner
+admission. x64 and full current-pair native acceptance remain required.
 See the same [Hepta development obligations](https://github.com/TrillionniumFoundation/hepta-private-ci/blob/0cb5b74d6b1a9a406856969ad889bf270562434e/docs/DEVELOPMENT.md).
 
 Exit: one reproducible source-pair/configuration inventory and per-gate results
@@ -1857,9 +1864,13 @@ reuses only the same freshly verified journal within one read or the original
 write transaction, retains live lease/state/digest/witness checks and borrows
 five actual row texts. No cross-call cache, workload reduction, deadline change,
 event deletion or new authority is introduced. This closes that finite controlled
-timeout; it does not close the 4,096-event insertion/cold-load boundaries under
-repair, global I05 retention, Windows execution, real-model or public throughput
-acceptance. The existing PN2 owners retain those obligations.
+timeout. The separate `0ca2b9dd` count-capacity repair reads at most 4,097 rows
+and still rejects oversize state, and refuses a new 4,097th event in the original
+write transaction before insertion. Three actual cold/full/idempotent/no-rewrite
+controls and 282 memory cases pass; the combined `cd30140a` source passes 1,045
+ordinary cases. These finite results do not close per-row byte costs, global I05
+retention, Windows execution, real-model or public throughput acceptance. The
+existing PN2 owners retain those obligations.
 
 Exit: actual signed native transitions cross 65,536 permanent accounts with
 bounded W and working partition; small-state complete/reference differential
