@@ -609,6 +609,8 @@
         "scripts/llm_runtime_pilot.py",
         "scripts/llm_runtime_host_controller.py",
         "scripts/test_llm_runtime_host_controller.py",
+        "scripts/llm_runtime_host_aggregate.py",
+        "scripts/test_llm_runtime_host_aggregate.py",
         "scripts/test_llm_runtime_decode.py",
         "scripts/llm_runtime_exit_observation.py",
         "scripts/test_llm_runtime_kernel_owned.py",

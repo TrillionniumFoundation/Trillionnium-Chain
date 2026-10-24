@@ -2052,6 +2052,22 @@ Local controls use ordinary files/mock namespace observations and a real direct
 ordinary wait4 child. They do not execute native clone3 into C, prove kernel
 placement, grant FinalUse or count toward three real-model upgrades.
 
+The subsequent private `_AggregateLaunch` supplies a fixed native C body, rather
+than executing Python inside C. Original O still owns the same C clone3 handoff,
+four persistent slots and exact `_Wait4Child`; native C uses its held A FD with
+the unchanged spawn ABI and itself exact-waits A. Before A birth, C retains only
+stdio, held A and its fixed receipt pipe; inherited O/ancestor/funding handles
+are closed, and A/receipt handles are CLOEXEC. The same absolute monotonic
+eight-second cutoff crosses both births and O's receipt read without renewal.
+O reads one bounded 64-byte C record only after its separate exact wait4(C),
+then retains actual U/C/A counters, including nonzero residual charges and all
+historical meters. Pipe EOF is not proof that a payload executed. Thirteen new
+controls cover the private binding, sticky refusals, original deadline, actual
+native wait4 subroutines and actual exec handle closure; successful native
+cgroup C/A birth is NOT_RUN. This adds no public entry, FinalUse/funding issuer,
+retirement, whole-U terminal or refund; production funded entry, A→C retirement
+and raw U zero before the original cutoff remain OPEN.
+
 The existing PN4 dependency and acceptance sequence is:
 
 | Stage / owner | Interface and required evidence | Status / exit |
