@@ -1030,8 +1030,28 @@ class _Wait4Child(subprocess.Popen):
         self.termination_fd = descriptor if descriptor >= 0 else None
 
     def _close_kernel_handoff(self, mask):
+        if mask & 2 and self._retains_C_wait_owner():
+            raise self._kernel_cleanup_required
         error = self.kernel_operation.native.close_handoff(self._kernel_handoff, mask)
         if error: raise OSError(error, 'kernel-handoff-close')
+
+    def _retains_C_wait_owner(self):
+        role = getattr(self, '_aggregate_wait_role', None)
+        if role is None:
+            return False  # Ordinary and C-only cleanup retain their original behavior.
+        try:
+            from llm_runtime_host_aggregate import _ControllerWaitRole
+            if (type(role) is not _ControllerWaitRole or role.child is not self or
+                    role.launch._wait_role is not role or role.launch.operation is not self.kernel_operation or
+                    role.launch is not self.kernel_operation._aggregate or
+                    role.launch.native is not self.kernel_operation.native or
+                    role.launch.operation.spawn_owner is not self or
+                    role.launch.operation.native.operation is not self.kernel_operation):
+                raise self._kernel_cleanup_required
+            role.launch.native._lock_for_owner()  # PID/concrete Thread; no IO/new owner.
+        except BaseException:
+            raise self._kernel_cleanup_required
+        return True  # Retention only; no boolean can release or authorize this role.
 
     def _rollback_kernel_handoff(self):
         self._close_kernel_handoff(12)
@@ -1154,6 +1174,9 @@ class _Wait4Child(subprocess.Popen):
     def signal_owned(self, signum):
         if self.owned_exit_observed:
             return
+        if self._retains_C_wait_owner():
+            self.fail('kernel-C-wait-owner-retained')
+            return  # C may already own A, even if the G write raised a pending exception.
         try:
             if self.termination_fd is not None:
                 signal.pidfd_send_signal(self.termination_fd, signum)
@@ -1196,6 +1219,14 @@ class _Wait4Child(subprocess.Popen):
 
     def finish(self):
         try:
+            if self._retains_C_wait_owner():
+                # One original exact WNOHANG observation, no TERM/KILL, grace
+                # window, waitpid substitution or forgetting the C handoff.
+                if not self.reaped and not self.no_waitable_child_observed:
+                    self.reap()
+                if not self.reaped:
+                    self.fail('kernel-C-wait-owner-retained')
+                return
             if self.owned_exit_observed and not self.reap_resolved:
                 if self.reap() == 'unknown':
                     self.cleanup_reap()
@@ -1230,7 +1261,8 @@ class _Wait4Child(subprocess.Popen):
                             # Optional evidence cannot replace the first cause
                             # or escape past the original pidfd-close below.
                             self.kernel_counter_diagnostic_projection_failed = True
-            if self.termination_fd is not None and self.reap_resolved:
+            if (self.termination_fd is not None and self.reap_resolved and
+                    not self._retains_C_wait_owner()):
                 try:
                     if getattr(self, '_kernel_handoff', None) is not None:
                         self._close_kernel_handoff(2)

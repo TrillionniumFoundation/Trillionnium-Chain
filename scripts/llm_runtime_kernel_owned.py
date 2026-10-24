@@ -109,6 +109,10 @@ class _Native:
             self.spawn.argtypes = [ctypes.c_int, ctypes.c_int, ctypes.c_char_p, strings, strings,
                                    ctypes.POINTER(ctypes.c_int)]
             self.spawn.restype = ctypes.c_int
+            self.spawn_controller = self.library.trnm_kernel_controller_v1
+            self.spawn_controller.argtypes = [ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_int,
+                ctypes.c_char_p, strings, strings, ctypes.c_uint64, ctypes.POINTER(ctypes.c_int)]
+            self.spawn_controller.restype = ctypes.c_int
             self.close_handoff = self.library.trnm_kernel_close_v1
             self.close_handoff.argtypes = [ctypes.POINTER(ctypes.c_int), ctypes.c_uint]
             self.close_handoff.restype = ctypes.c_int

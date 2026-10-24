@@ -50,8 +50,9 @@ class _HostControllerOperation:
                 self.failed = self.consumed = self.closed = False
                 self.native_refused_without_child = False
                 self.spawn_owner = self.child = None
+                self._aggregate = None  # One private subordinate native launch, never a grant.
                 self._first_error = None
-                self._meters = {'operation': (0, 0), 'controller': (0, 0)}
+                self._meters = {'operation': (0, 0), 'controller': (0, 0), 'aggregate': (0, 0)}
                 self._source = kernel._digest(kernel._bytes(Path(__file__)))
                 self.native.operation = self  # Retain before any subsequent fallible observation.
                 cap._leaf_phase = 'CONTROLLER_PREPARED'
@@ -123,9 +124,18 @@ class _HostControllerOperation:
                         'host-original-only-observer')
             require(kernel._text(cap._groups['observer'][2], 'cgroup.procs') == str(cap._pid)+'\n',
                     'host-original-only-observer')
-            cap._require_pristine('aggregate', cap._groups['aggregate'][2])
+            launch = self._aggregate
+            if launch is not None:
+                from llm_runtime_host_aggregate import _AggregateLaunch
+                require(type(launch) is _AggregateLaunch and launch.operation is self,
+                        'host-aggregate-private-mechanics')
+                launch._verify_locked()
+            if launch is None or not self.consumed:
+                cap._require_pristine('aggregate', cap._groups['aggregate'][2])
+            roles = ('operation', 'controller', 'aggregate') if launch is not None and self.consumed else (
+                'operation', 'controller')
             raw = {role: {key: kernel._text(cap._groups[role][2], key) for key in _RAW}
-                   for role in ('operation', 'controller')}
+                   for role in roles}
             require(sum(len(v) for group in raw.values() for v in group.values()) <= 65536,
                     'host-controller-observation-bound')
             for role, values in raw.items():
@@ -141,17 +151,23 @@ class _HostControllerOperation:
                 require(peak >= old_peak and cpu['usage_usec'] >= old_cpu,
                         'host-controller-historical-meter-rewind')
                 self._meters[role] = (peak, cpu['usage_usec'])
-            procs = raw['controller']['cgroup.procs']
-            require(procs == '' or re.fullmatch(r'(?:[1-9][0-9]{0,9}\n){1,16}', procs),
-                    'host-controller-task-format')
-            pids = procs.splitlines()
-            tasks = host._decimal(raw['controller']['pids.current'])
-            # pids.current counts tasks/threads; cgroup.procs lists thread groups.
-            require(len(pids) == len(set(pids)) and all(int(pid) < 2**31 for pid in pids) and
-                host._decimal(raw['operation']['pids.current']) == tasks and len(pids) <= tasks,
-                'host-controller-task-population')
-            for role in ('operation', 'controller'):
-                require(host._fields(raw[role]['cgroup.events']).get('populated') == (1 if tasks else 0),
+            task_counts = {}
+            for role in roles[1:]:
+                procs = raw[role]['cgroup.procs']
+                require(procs == '' or re.fullmatch(r'(?:[1-9][0-9]{0,9}\n){1,'+
+                    str(host._BUDGETS[role][2])+r'}', procs), 'host-controller-task-format')
+                pids = procs.splitlines()
+                tasks = host._decimal(raw[role]['pids.current'])
+                # pids.current counts tasks/threads; procs lists thread groups.
+                require(len(pids) == len(set(pids)) and all(int(pid) < 2**31 for pid in pids) and
+                    len(pids) <= tasks, 'host-controller-task-population')
+                task_counts[role] = tasks
+            task_counts['operation'] = sum(task_counts.values())
+            require(host._decimal(raw['operation']['pids.current']) == task_counts['operation'],
+                    'host-controller-task-population')
+            for role in roles:
+                require(host._fields(raw[role]['cgroup.events']).get('populated') ==
+                    (1 if task_counts[role] else 0),
                         'host-controller-task-population')
             if not self.consumed:
                 cap._require_pristine('controller', cap._groups['controller'][2])
@@ -166,7 +182,11 @@ class _HostControllerOperation:
             require(type(owner) is _Wait4Child and owner.kernel_operation is self and
                 time.monotonic() < self.deadline, 'host-controller-original-child-owner')
             self.cap._leaf_phase = 'CONTROLLER_STARTING'
-            kernel._ControlledOperation._spawn_locked(self, command, stdout, owner)
+            if self._aggregate is None:
+                kernel._ControlledOperation._spawn_locked(self, command, stdout, owner)
+            else:
+                self._verify_locked()
+                self._aggregate._spawn_locked(command, stdout, owner)
         except BaseException as error:
             self._refuse(error)
             raise
@@ -197,11 +217,19 @@ class _HostControllerOperation:
                 require(raw['controller']['cgroup.procs'] == '' and
                     raw['controller']['pids.current'] == raw['operation']['pids.current'] == '0\n',
                     'host-controller-descendants-remain')
+                aggregate_record = None
+                if self._aggregate is not None:
+                    require(raw['aggregate']['cgroup.procs'] == '' and
+                        raw['aggregate']['pids.current'] == '0\n', 'host-controller-descendants-remain')
+                    aggregate_record = self._aggregate._terminal_locked(child)
                 self.cap._leaf_phase = 'CONTROLLER_EXIT_OBSERVED'
-                return dict(scope='original-O-exact-wait4-C-only', counters=raw,
+                result = dict(scope='original-O-exact-wait4-C-only', counters=raw,
                     waited_cpu_ns=child.waited_cpu_ns, exit_code=child.returncode,
                     whole_u_terminal=False, resource_return_proven=False,
                     reservation='RETAINED', outer_reconciliation='UNKNOWN', authorization=False)
+                if aggregate_record is not None:
+                    result['aggregate_wait4_transport'] = aggregate_record
+                return result
             except BaseException as error:
                 self._refuse(error)
                 raise

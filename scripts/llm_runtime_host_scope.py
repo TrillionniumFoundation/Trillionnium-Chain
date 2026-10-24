@@ -26,9 +26,52 @@ _ROOT = Path('/sys/fs/cgroup')
 _CONTROLLERS = frozenset(('cpu', 'memory', 'pids'))
 _NAMESPACES = ('mnt', 'cgroup', 'pid', 'user')
 _PROFILE = 'linux-fresh-host-namespace-charge-boundary-v1'
+# One process-lifetime retention root, not a second authority or an owner map.
+# Only private C/A preparation installs it; this slice has no retirement/clear.
+_AGGREGATE_OWNER_ROOT = None
+_AGGREGATE_ROOT_LOCK = threading.Lock()
 _BUDGETS = {'scope': (17*1024**3, 500000, 272), 'host': (17*1024**3, 500000, 272),
     'observer': (1024**3, 100000, 16), 'operation': (16*1024**3, 400000, 256),
     'controller': (128*1024**2, 100000, 16), 'aggregate': (8*1024**3, 300000, 240)}
+
+
+def _require_aggregate_root_empty():
+    kernel.require(_AGGREGATE_OWNER_ROOT is None,
+                   'host-aggregate-before-C-birth-owner-retained')
+
+
+def _retain_aggregate_owner(launch):
+    from llm_runtime_host_aggregate import _AggregateLaunch
+    from llm_runtime_host_controller import _HostControllerOperation
+    global _AGGREGATE_OWNER_ROOT
+    kernel.require(type(launch) is _AggregateLaunch, 'host-aggregate-root-private-launch')
+    op = launch.operation
+    kernel.require(type(op) is _HostControllerOperation and type(op.cap) is HostScopeAdmission and
+        op.cap._native is op.native is launch.native and op.native.operation is op and
+        op._aggregate is launch and op.native._busy._recursion_count() == 1 and
+        op.cap._pid == op.native._owner_pid == os.getpid() and
+        op.cap._thread is op.native._owner_thread is threading.current_thread(),
+        'host-aggregate-root-original-owner')
+    kernel.require(_AGGREGATE_ROOT_LOCK.acquire(blocking=False), 'host-aggregate-root-busy')
+    try:
+        _require_aggregate_root_empty()
+        _AGGREGATE_OWNER_ROOT = (os.getpid(), threading.current_thread(), op.cap)
+    finally:
+        _AGGREGATE_ROOT_LOCK.release()
+
+
+def _retained_aggregate_owner():
+    """Retrieve the same retained owner; this grants no execution/close authority."""
+    root = _AGGREGATE_OWNER_ROOT
+    kernel.require(type(root) is tuple and len(root) == 3 and root[0] == os.getpid() and
+        root[1] is threading.current_thread() and type(root[2]) is HostScopeAdmission,
+        'host-aggregate-root-original-pid-thread')
+    cap = root[2]
+    kernel.require(cap._pid == root[0] and cap._thread is root[1] and
+        cap._native._owner_pid == root[0] and cap._native._owner_thread is root[1] and
+        cap._native.operation is not None and cap._native.operation.cap is cap,
+        'host-aggregate-root-original-owner')
+    return cap
 
 
 def _source():
@@ -146,6 +189,7 @@ class HostScopeAdmission:
     """
     def __init__(self, token):
         kernel.require(token is _TOKEN, 'host-private-constructor')
+        _require_aggregate_root_empty()  # Before native compilation or held-FD IO.
         self._lock = kernel._native_rlock()
         self._pid, self._thread = os.getpid(), threading.current_thread()
         self._fds, self._groups, self._namespaces, self._ancestors = [], {}, {}, []
@@ -328,6 +372,7 @@ class HostScopeAdmission:
 
     def admit(self):
         """Perform one real namespace request, without native birth or paid authority."""
+        _require_aggregate_root_empty()
         with self._lock:
             self._owner()
             kernel.require(getattr(self, '_leaf_generation', None) is None,
@@ -381,6 +426,7 @@ class HostScopeAdmission:
 
     def admit_fresh_leaf(self):
         """Prepare S/H/O/U only; prove original zero counters before C/A exist."""
+        _require_aggregate_root_empty()
         with self._lock:
             self._owner()
             kernel.require(getattr(self, '_leaf_generation', None) is not None and self._leaf_phase == 'PREPARED'
@@ -675,6 +721,7 @@ class HostScopeAdmission:
 
 def prepare_host_scope():
     """Allocate an original owner before effects; caller must retain this object."""
+    _require_aggregate_root_empty()
     return HostScopeAdmission(_TOKEN)
 
 
