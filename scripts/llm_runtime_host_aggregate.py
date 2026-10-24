@@ -10,6 +10,7 @@ import os
 from pathlib import Path
 import stat
 import struct
+import threading
 import time
 
 import llm_runtime_kernel_owned as kernel
@@ -65,6 +66,7 @@ class _AggregateLaunch:
         self.status = ctypes.c_int(-1)
         self.record = None
         self._wait_role = None
+        self._retirement = (ctypes.c_uint64*24)()  # Original fixed output before native effect.
         self.source = kernel._digest(kernel._bytes(Path(__file__)))
         with self.native._lock_for_owner():
             require(self.native._busy._recursion_count() == 1, 'kernel-native-lifecycle-busy')
@@ -74,6 +76,7 @@ class _AggregateLaunch:
             operation._aggregate = self  # Strong registration precedes native pipe creation.
             try:
                 _retain_aggregate_owner(self)  # Survives loss/GC of every caller reference.
+                self._prepare_retirement_locked()
                 returned = self.native.prepare_pipe(self.read_slot, self.write_slot,
                     self.identities, ctypes.byref(self.status))
                 require(returned == self.status.value == 0, 'host-aggregate-pipe-refused')
@@ -91,6 +94,37 @@ class _AggregateLaunch:
     def __deepcopy__(self, memo):
         raise TypeError('host-aggregate-not-copyable')
 
+    def _prepare_retirement_locked(self):
+        cap = self.operation.cap
+        observer = cap._groups['observer']
+        identity = (ctypes.c_uint64*3)(*observer[3])
+        membership = os.fsencode('0::'+cap._groups['scope'][1]+'/host/observer\n')
+        error = self.native.prepare_retirement(observer[2], identity, membership,
+            len(membership), self.deadline_ns, self._retirement)
+        require(error == 0, 'host-retirement-preparation-refused')
+        # Worker is already born under the original observer before C/A or the
+        # receipt pipe. Readiness consumes the SAME absolute deadline.
+        while self._retirement[0] in (1, 2):
+            require(time.monotonic_ns() < self.deadline_ns, 'host-retirement-readiness-cutoff')
+            require(self.native.snapshot_retirement(self._retirement) == 0,
+                    'host-retirement-original-worker-slot')
+            if self._retirement[0] in (1, 2): time.sleep(.001)
+        self._verify_retirement_locked()
+
+    def _verify_retirement_locked(self):
+        require(self.native.snapshot_retirement(self._retirement) == 0,
+                'host-retirement-original-worker-slot')
+        words = tuple(self._retirement)
+        page = words[13]
+        require(words[0] == 3 and words[1] == 0 and words[2] == os.getpid() and
+            words[3] == threading.get_native_id() and 0 < words[4] < 2**31 and words[4] != words[3] and
+            words[5:8] == self.operation.cap._groups['observer'][3] and words[8] == self.deadline_ns and
+            4096 <= page <= 65536 and page & (page-1) == 0 and words[9] >= page and
+            words[10] == 1024**2+2*page and words[11] == words[9]+page and words[12] == 1024**2 and
+            words[14] == 0 and words[15] == 2**64-1 and words[16] == 1 and words[17] == 0 and
+            words[11] <= words[18] < words[11]+words[12] and not any(words[19:]) and
+            time.monotonic_ns() < self.deadline_ns, 'host-retirement-worker-preparation-only')
+
     def _verify_locked(self):
         op = self.operation
         self.native._lock_for_owner()
@@ -100,6 +134,7 @@ class _AggregateLaunch:
             self.read_slot is self._slots[0] and self.write_slot is self._slots[1] and
             kernel._digest(kernel._bytes(Path(__file__))) == self.source,
             'host-aggregate-original-owner-or-source')
+        self._verify_retirement_locked()
         for index, slot in enumerate((self.read_slot, self.write_slot)):
             require(slot[0] == 0, 'kernel-owned-close-failed')
             if slot[1] >= 0:

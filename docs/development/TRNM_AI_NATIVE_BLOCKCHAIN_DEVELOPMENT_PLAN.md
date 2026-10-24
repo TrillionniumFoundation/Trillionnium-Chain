@@ -2127,6 +2127,30 @@ caller reference, collects garbage and checks the exact retained slots/FDs;
 test isolation clears its mock root only after exact C→A and O→C cleanup.
 This retention root does not retire C/A, prove raw U zero or release funding.
 
+That same rooted launch now predeclares a single native retirement preparation
+slot before its receipt pipe or C/A birth. It allocates a fixed 1MiB stack plus
+two protected pages and creates one native thread in original O/observer under
+the unchanged observer 1GiB/100%/16-task total ceilings. Native PID/TID, exact
+held observer identity, current thread membership, actual stack address and
+the same absolute cutoff are bound before readiness. This is bounded use of
+the existing ceilings, not physical funding or a claim that task headroom is a
+reservation. No effect activation/deletion API exists in this slice. Its one
+preborn worker waits to the original monotonic cutoff; expiry/refusal retains
+the stack, original root and fixed state, with no later worker, queue or retry.
+Nine real native controls run in O's existing read-only cgroup, checking actual
+thread membership, both guard maps, duplicate refusal, cutoff and preparation
+faults, including a worker still blocked past the cutoff; the existing namespace
+controls explicitly model this new transport.
+They do not qualify fresh observer placement, C/A retirement or raw U zero.
+
+Native snapshots acquire the initialization publication before reading any
+ordinary owner/output fields; EMPTY/OWNED refuse without inspecting them.
+Preparation claims the fixed slot before scanning its output and refuses an
+occupied slot before caller-buffer reads. A nonzero first output consumes the
+same failed slot without reset. Four additional controls pause initialization
+and protect the original output page, retaining the original nine preparation
+assertions and cutoff; neither refusal path may race the owner's snapshot.
+
 The existing PN4 dependency and acceptance sequence is:
 
 | Stage / owner | Interface and required evidence | Status / exit |
