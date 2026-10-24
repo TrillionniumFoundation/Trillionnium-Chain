@@ -85,12 +85,15 @@ Parameter substitution, hostile object formats, unavailable custodians and expir
 
 Physical-host copies and source-path loss are tested by a scoped campaign; geographic independence, renewal and long-retention responsibility remain unaccepted.
 
-The existing Cell cache uses fresh TCL2/schema2 with mandatory immutable finite
-logical-byte/chunk-row/manifest-row limits. All ordinary puts and corrupt-cache
+The existing Cell cache uses fresh TCL3/schema3 with mandatory immutable finite
+logical-byte/chunk-row/manifest-row limits and a main-DB image/file-length cap.
+Every writer reapplies and reads back the persisted cap at fixed 4096-byte pages;
+old TCL2, wrong pages, oversized images and tails fail closed without migration. All ordinary puts and corrupt-cache
 deletes share atomic persisted accounting; exact cold reopen checks full schema
 and actual bounded occupancy. This PN3/PN4 cache allowance is independent of I05
 paid retention, native funding and the 4096 retained obligation identities.
-DB/WAL/SHM/temp/output physical budgeting remains open. See the existing
+Allocated-block reservation and WAL/SHM/temp/output physical peaks remain open;
+the main-image cap is not a total-disk or global-ledger quota. See the existing
 [Cell contract](../protocol/pon-nakamoto-v1/details/CELL_P2P_V1.md).
 
 ## Current source and verification

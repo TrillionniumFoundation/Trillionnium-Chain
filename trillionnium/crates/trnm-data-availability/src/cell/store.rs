@@ -36,9 +36,14 @@ pub struct CellStoreV1 {
 }
 
 impl CellStoreV1 {
-    pub fn open(path: &Path, config: super::CellCacheConfigV2) -> CellResultV1<Self> {
+    pub fn open(path: &Path, config: super::CellCacheConfigV3) -> CellResultV1<Self> {
         config.validate()?;
-        let connection = Connection::open(path)?;
+        let connection = Connection::open_with_flags(
+            path,
+            OpenFlags::SQLITE_OPEN_READ_WRITE
+                | OpenFlags::SQLITE_OPEN_CREATE
+                | OpenFlags::SQLITE_OPEN_NOFOLLOW,
+        )?;
         connection.busy_timeout(std::time::Duration::from_secs(5))?;
         connection.pragma_update(None, "trusted_schema", false)?;
         super::cache_budget::open(&connection, Some(config), true)?;
@@ -52,7 +57,10 @@ impl CellStoreV1 {
 
     /// Existing disposable cache only; serving never creates or repairs a DB.
     pub fn open_read_only(path: &Path) -> CellResultV1<Self> {
-        let connection = Connection::open_with_flags(path, OpenFlags::SQLITE_OPEN_READ_ONLY)?;
+        let connection = Connection::open_with_flags(
+            path,
+            OpenFlags::SQLITE_OPEN_READ_ONLY | OpenFlags::SQLITE_OPEN_NOFOLLOW,
+        )?;
         connection.busy_timeout(std::time::Duration::ZERO)?;
         connection.pragma_update(None, "trusted_schema", false)?;
         super::cache_budget::open(&connection, None, false)?;

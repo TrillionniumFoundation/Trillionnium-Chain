@@ -306,7 +306,7 @@ PN5_CELL_CONTEXT=(--family pn5-cli-demo-v1 --base "$PN5_BASE" --parent "$PN5_PAR
 PN5_SCOPE=(--scope loopback-dev --ports 47810,47811)
 PN5_LIMITS=(--overall-ms 10000 --request-ms 2000 --max-bytes 1048576
   --parallelism 2 --max-connections 64 --max-response-bytes 4194304)
-PN5_CACHE=(--cache-max-bytes 1073741824 --cache-max-chunks 4096 --cache-max-manifests 256)
+PN5_CACHE=(--cache-max-bytes 1073741824 --cache-max-chunks 4096 --cache-max-manifests 256 --cache-max-db-bytes 2147483648)
 "$PN5_BIN_DIR/trnm-cell" pack --store "$PN5_DIR/origin.sqlite" \
   "${PN5_CACHE[@]}" --input "$PN5_DIR/input.cell" "${PN5_CELL_CONTEXT[@]}" > "$PN5_DIR/pack.json"
 "$PN5_BIN_DIR/trnm-cell-discovery" key-public --profile "$PN5_PROFILE" \

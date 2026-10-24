@@ -108,6 +108,8 @@ fn fetch_args(cache: &Path, output: &Path, pinned: &str, peer: &str) -> Vec<Stri
         "4096".into(),
         "--cache-max-manifests".into(),
         "256".into(),
+        "--cache-max-db-bytes".into(),
+        "134217728".into(),
         "--store".into(),
         cache.display().to_string(),
         "--manifest".into(),
@@ -251,6 +253,7 @@ fn cli_requires_each_persistent_quota_before_creating_a_writer_cache() {
         "--cache-max-bytes",
         "--cache-max-chunks",
         "--cache-max-manifests",
+        "--cache-max-db-bytes",
     ] {
         let cache = directory.path().join(missing);
         let output = directory.path().join(format!("{missing}-output"));
@@ -320,8 +323,9 @@ fn cli_manifest_reads_persisted_caps_and_cannot_create_a_missing_cache() {
 }
 
 // Explicit finite fixture quota; covers the existing <=32MiB commit fixtures.
-fn cache_config() -> trnm_data_availability::cell::CellCacheConfigV2 {
-    trnm_data_availability::cell::CellCacheConfigV2 {
+fn cache_config() -> trnm_data_availability::cell::CellCacheConfigV3 {
+    trnm_data_availability::cell::CellCacheConfigV3 {
+        max_database_bytes: 128 * 1024 * 1024,
         max_logical_bytes: 64 * 1024 * 1024,
         max_chunk_rows: 4096,
         max_manifest_rows: 256,

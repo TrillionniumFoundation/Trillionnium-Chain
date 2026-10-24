@@ -427,9 +427,10 @@ receipt UNVERIFIED. It does not start an unknown native selector or accept an
 arbitrary JSON report as success. Original absolute-path arguments remain
 accepted for invocation compatibility and grant no consumer capability. The
 existing writer route additionally requires `--cache-max-bytes`,
-`--cache-max-chunks` and `--cache-max-manifests`; it carries those exact persistent
-TCL2 limits across all members without granting a new allowance per fetch.
-Logical cache admission does not reserve physical DB/WAL/SHM/temp/output space
+`--cache-max-chunks`, `--cache-max-manifests` and `--cache-max-db-bytes`; it carries those exact persistent
+TCL3 limits across all members without granting a new allowance per fetch.
+The separate main-DB image/file-length cap does not reserve allocated blocks
+or bound WAL/SHM/temp/output peaks
 or authorize Hepta loading.
 Mocked exit0/failed-JSON controls reproduce the removed orchestration bug;
 they are neither real-model failures nor I10 execution evidence. A future

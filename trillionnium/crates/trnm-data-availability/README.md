@@ -48,14 +48,17 @@ It does not discover peers, authenticate a public network, issue storage proofs,
 change `CURRENT`, bypass withdrawal, or grant model execution. Those boundaries
 remain explicit until a later public DA qualification.
 
-The disposable cache now requires fresh TCL2/schema2 and explicit immutable
-`CellCacheConfigV2` limits on every writable open. Live payload, manifest wire
+The disposable cache now requires fresh TCL3/schema3 and explicit immutable
+`CellCacheConfigV3` limits on every writable open. Live payload, manifest wire
 and each 32-byte key share one logical byte quota; chunk/manifest rows have
 separate finite bounds. Ordinary writer commands require `--cache-max-bytes N
---cache-max-chunks N --cache-max-manifests N`; exact retries reuse these same
-persisted caps. `serve`/`manifest` read existing caches only. Old TCL1 caches are
+--cache-max-chunks N --cache-max-manifests N --cache-max-db-bytes N`; exact retries reuse these same
+persisted caps. `serve`/`manifest` read existing caches only. Old TCL1/TCL2 caches are
 refused, never automatically reset. Atomic dedup/batch/deletion accounting and
-cold schema/counter checks do not reserve physical DB/WAL/SHM/temp/output bytes.
+cold schema/counter checks preserve the original logical quota. The added immutable
+main-DB image/file-length cap uses 4096-byte pages and is reapplied on every writer
+connection; read-only opens audit it. It does not reserve allocated blocks or bound
+WAL/SHM/temp/output peaks. Oversized main files and tails are refused unchanged.
 Cache deletion changes no acknowledged retention obligation or native funding.
 
 ```bash

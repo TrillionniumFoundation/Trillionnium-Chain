@@ -55,7 +55,7 @@ Replay, uncompensated liabilities, expiry starvation, sponsor self-traffic and o
 
 Funded GPU capacity, market sustainability, fee adaptation and independent economic acceptance remain absent.
 
-M09's disposable TCL2 cache allowance is not an M12 funding or paid-retention
+M09's disposable TCL3 cache allowance is not an M12 funding or paid-retention
 reservation. Actual cache row deletion may return that cache's logical allowance
 only; it cannot retire an acknowledged duty, clear a retained-byte/byte-block
 claim, release an Unknown effect or refund funds. Physical DB/WAL/SHM/temp/output

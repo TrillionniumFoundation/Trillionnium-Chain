@@ -13,7 +13,7 @@ mod release;
 mod retention;
 mod store;
 
-pub use cache_budget::{CellCacheConfigV2, CellCacheUsageV2};
+pub use cache_budget::{CellCacheConfigV3, CellCacheUsageV2};
 pub use manifest::{
     CellChunkV1, CellContextV1, CellManifestV1, CellReleaseManifestV1, MAX_CELL_BYTES,
     MAX_CHUNK_BYTES,

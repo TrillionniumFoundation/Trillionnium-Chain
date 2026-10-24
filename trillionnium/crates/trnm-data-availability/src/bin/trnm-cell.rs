@@ -13,7 +13,7 @@ use std::{
 
 use trnm_data_availability::cell::{
     digest_hex, fetch_cell_to_file, fetch_release_to_file, parse_digest, read_pinned_release,
-    serve_cells, serve_cells_bounded, CellCacheConfigV2, CellContextV1, CellErrorV1,
+    serve_cells, serve_cells_bounded, CellCacheConfigV3, CellContextV1, CellErrorV1,
     CellPeerLimitsV1, CellReleaseFetchLimitsV1, CellReleaseLimitsV1, CellReleaseManifestV1,
     CellServeLimitsV1, CellStoreV1, MAX_CELL_BYTES,
 };
@@ -21,7 +21,7 @@ use trnm_data_availability::cell::{
 type Result<T> = std::result::Result<T, Box<dyn Error>>;
 
 const USAGE: &str = "trnm-cell: finite configured-peer content cache (no model authority)
-Writers (pack,fetch,verify,prepare-release,fetch-release,verify-release) also require --cache-max-bytes N --cache-max-chunks N --cache-max-manifests N. Persisted TCL2/schema2 caps must match on every reopen; no physical DB/WAL/SHM/output quota is claimed.
+Writers (pack,fetch,verify,prepare-release,fetch-release,verify-release) also require --cache-max-bytes N --cache-max-chunks N --cache-max-manifests N --cache-max-db-bytes N. Persisted TCL3/schema3 caps must match on every reopen; the main DB image/file-length cap is separate from logical usage; no allocated-block reservation or WAL/SHM/TEMP/output quota is claimed.
 pack --store DB --input FILE --family FAMILY --base HEX --parent HEX --tokenizer HEX --layout HEX --runtime HEX [--chunk-bytes 1048576]
 serve --store DB --bind IP:PORT --seconds N [--request-ms 2000] [--max-connections 8192] [--bounded-workers 1..4 --max-served-bytes N]
 fetch --store DB --manifest HEX --peers IP:PORT,IP:PORT --output ABSENT_FILE --max-bytes N (--seconds N | --overall-ms N) [--parallelism 2] [--request-ms 2000] [--max-connections 32768] [--max-response-bytes N]
@@ -386,8 +386,9 @@ impl Args {
             .remove(key)
             .ok_or_else(|| CellErrorV1::Invalid(key).into())
     }
-    fn cache_config(&mut self) -> Result<CellCacheConfigV2> {
-        let config = CellCacheConfigV2 {
+    fn cache_config(&mut self) -> Result<CellCacheConfigV3> {
+        let config = CellCacheConfigV3 {
+            max_database_bytes: self.take("--cache-max-db-bytes")?.parse()?,
             max_logical_bytes: self.take("--cache-max-bytes")?.parse()?,
             max_chunk_rows: self.take("--cache-max-chunks")?.parse()?,
             max_manifest_rows: self.take("--cache-max-manifests")?.parse()?,

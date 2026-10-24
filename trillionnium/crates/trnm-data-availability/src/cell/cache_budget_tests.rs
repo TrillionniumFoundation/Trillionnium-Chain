@@ -24,7 +24,8 @@ fn persistent_whole_cache_counts_catalog_payload_keys_and_exact_dedup() {
     let path = directory.path().join("quota.sqlite");
     let (first, bytes) = material(1);
     let (second, second_bytes) = material(2);
-    let config = CellCacheConfigV2 {
+    let config = CellCacheConfigV3 {
+        max_database_bytes: 128 * 1024 * 1024,
         max_logical_bytes: (bytes.len() + first.encode().len() + 64) as u64 * 2,
         max_chunk_rows: 2,
         max_manifest_rows: 2,
@@ -74,7 +75,8 @@ fn persistent_whole_cache_counts_catalog_payload_keys_and_exact_dedup() {
     assert!(matches!(
         CellStoreV1::open(
             &path,
-            CellCacheConfigV2 {
+            CellCacheConfigV3 {
+                max_database_bytes: 128 * 1024 * 1024,
                 max_logical_bytes: config.max_logical_bytes + 1,
                 ..config
             }
@@ -91,7 +93,8 @@ fn eight_member_quota_failure_rolls_back_all_rows_and_duplicate_batch_charges_on
         .iter()
         .map(|(manifest, bytes)| (&manifest.chunks()[0], bytes.as_slice()))
         .collect();
-    let config = CellCacheConfigV2 {
+    let config = CellCacheConfigV3 {
+        max_database_bytes: 128 * 1024 * 1024,
         max_logical_bytes: 7 * (16_384 + 32),
         max_chunk_rows: 7,
         max_manifest_rows: 1,
@@ -132,7 +135,8 @@ fn two_actual_writer_connections_serialize_capacity_and_shared_hash_dedup() {
     for same_hash in [false, true] {
         let directory = tempfile::tempdir().unwrap();
         let path = directory.path().join("concurrent.sqlite");
-        let config = CellCacheConfigV2 {
+        let config = CellCacheConfigV3 {
+            max_database_bytes: 128 * 1024 * 1024,
             max_logical_bytes: 16_384 + 32,
             max_chunk_rows: 1,
             max_manifest_rows: 1,
@@ -189,7 +193,7 @@ fn cold_open_rejects_counter_and_exact_trigger_corruption_without_reset() {
         drop(cache);
         let db = Connection::open(&path).unwrap();
         match damage {
-            "counter" => { db.execute("UPDATE cell_cache_quota_v2 SET used_bytes=0", []).unwrap(); }
+            "counter" => { db.execute("UPDATE cell_cache_quota_v3 SET used_bytes=0", []).unwrap(); }
             "trigger" => db.execute_batch("DROP TRIGGER cache_chunk_insert;
                 CREATE TRIGGER cache_chunk_insert AFTER INSERT ON cell_chunks_v1 BEGIN SELECT 1; END;").unwrap(),
             _ => db.execute_batch("ALTER TABLE cell_chunks_v1 ADD COLUMN unexpected INTEGER;").unwrap(),
@@ -260,11 +264,11 @@ fn immutable_configuration_and_integer_bounds_cannot_reset_allowance() {
     let cache = CellStoreV1::open(&path, config).unwrap();
     let db = Connection::open(&path).unwrap();
     for sql in [
-        "UPDATE cell_cache_quota_v2 SET max_bytes=max_bytes+1",
-        "DELETE FROM cell_cache_quota_v2",
-        "INSERT OR REPLACE INTO cell_cache_quota_v2 VALUES(1,1,1,1,0,0,0)",
-        "UPDATE cell_cache_quota_v2 SET used_bytes=9223372036854775807+1",
-        "UPDATE cell_cache_quota_v2 SET chunk_rows=-1",
+        "UPDATE cell_cache_quota_v3 SET max_bytes=max_bytes+1",
+        "DELETE FROM cell_cache_quota_v3",
+        "INSERT OR REPLACE INTO cell_cache_quota_v3 VALUES(1,1,1,1,262144,0,0,0)",
+        "UPDATE cell_cache_quota_v3 SET used_bytes=9223372036854775807+1",
+        "UPDATE cell_cache_quota_v3 SET chunk_rows=-1",
     ] {
         assert!(db.execute(sql, []).is_err(), "{sql}");
     }
@@ -279,7 +283,8 @@ fn immutable_configuration_and_integer_bounds_cannot_reset_allowance() {
     let invalid = directory.path().join("must-not-create.sqlite");
     assert!(CellStoreV1::open(
         &invalid,
-        CellCacheConfigV2 {
+        CellCacheConfigV3 {
+            max_database_bytes: 128 * 1024 * 1024,
             max_logical_bytes: u64::MAX,
             ..config
         }
@@ -308,7 +313,8 @@ fn actual_corrupt_chunk_deletion_returns_only_its_logical_cache_allowance() {
     let directory = tempfile::tempdir().unwrap();
     let path = directory.path().join("delete.sqlite");
     let (manifest, bytes) = material(12);
-    let config = CellCacheConfigV2 {
+    let config = CellCacheConfigV3 {
+        max_database_bytes: 128 * 1024 * 1024,
         max_logical_bytes: 16_384 + 32,
         max_chunk_rows: 1,
         max_manifest_rows: 1,
@@ -341,7 +347,7 @@ fn actual_corrupt_chunk_deletion_returns_only_its_logical_cache_allowance() {
 #[test]
 fn catalog_and_chunk_row_limits_apply_even_with_unused_byte_allowance() {
     let directory = tempfile::tempdir().unwrap();
-    let config = CellCacheConfigV2 {
+    let config = CellCacheConfigV3 {
         max_chunk_rows: 1,
         max_manifest_rows: 1,
         ..cache_config()
@@ -379,7 +385,8 @@ fn ordinary_authorized_fetches_share_one_persistent_quota_and_failed_fetch_keeps
     }
     let peer = Peer::start(&source);
     let path = directory.path().join("consumer.sqlite");
-    let config = CellCacheConfigV2 {
+    let config = CellCacheConfigV3 {
+        max_database_bytes: 128 * 1024 * 1024,
         max_logical_bytes: (bytes.len() + first.encode().len() + 64) as u64,
         max_chunk_rows: 1,
         max_manifest_rows: 2,
@@ -396,7 +403,8 @@ fn ordinary_authorized_fetches_share_one_persistent_quota_and_failed_fetch_keeps
     );
     drop(consumer);
     let partial_path = directory.path().join("partial.sqlite");
-    let partial_config = CellCacheConfigV2 {
+    let partial_config = CellCacheConfigV3 {
+        max_database_bytes: 128 * 1024 * 1024,
         max_logical_bytes: first.encode().len() as u64 + 32,
         max_chunk_rows: 1,
         max_manifest_rows: 1,
@@ -441,7 +449,8 @@ fn ordinary_authorized_fetches_share_one_persistent_quota_and_failed_fetch_keeps
         origin.put_chunk(chunk, bytes).unwrap();
     }
     let prefix_path = directory.path().join("verified-prefix.sqlite");
-    let prefix_config = CellCacheConfigV2 {
+    let prefix_config = CellCacheConfigV3 {
+        max_database_bytes: 128 * 1024 * 1024,
         max_logical_bytes: nine.encode().len() as u64 + 32 + 8 * (16_384 + 32),
         max_chunk_rows: 8,
         max_manifest_rows: 1,

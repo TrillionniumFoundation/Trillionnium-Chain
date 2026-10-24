@@ -1,5 +1,5 @@
 use super::*;
-use trnm_data_availability::cell::{CellCacheConfigV2, CellErrorV1};
+use trnm_data_availability::cell::{CellCacheConfigV3, CellErrorV1};
 
 #[test]
 fn cache_deletion_and_cache_quota_failure_cannot_release_actual_paid_retention() {
@@ -48,7 +48,8 @@ fn cache_deletion_and_cache_quota_failure_cannot_release_actual_paid_retention()
     );
     let blocked = CellStoreV1::open(
         &directory.path().join("blocked.sqlite"),
-        CellCacheConfigV2 {
+        CellCacheConfigV3 {
+            max_database_bytes: 128 * 1024 * 1024,
             max_logical_bytes: 1,
             max_chunk_rows: 1,
             max_manifest_rows: 1,

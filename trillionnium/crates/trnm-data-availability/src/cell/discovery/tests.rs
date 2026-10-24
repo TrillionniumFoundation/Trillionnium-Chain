@@ -1127,8 +1127,9 @@ fn four_bootstraps_exhaust_exact_eight_attempts_and_64_validation_slots_without_
 }
 
 // Explicit finite fixture quota; covers the existing <=32MiB commit fixtures.
-fn cache_config() -> crate::cell::CellCacheConfigV2 {
-    crate::cell::CellCacheConfigV2 {
+fn cache_config() -> crate::cell::CellCacheConfigV3 {
+    crate::cell::CellCacheConfigV3 {
+        max_database_bytes: 128 * 1024 * 1024,
         max_logical_bytes: 64 * 1024 * 1024,
         max_chunk_rows: 4096,
         max_manifest_rows: 256,

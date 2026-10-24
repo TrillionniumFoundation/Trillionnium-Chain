@@ -169,11 +169,15 @@ artifact format before public distribution.
 
 ## Cache integrity and publication
 
-`CellStoreV1` uses the fresh TCL2 SQLite namespace, application ID `0x54434c32`
-and schema version 2. Old TCL1 and populated foreign databases are refused;
+`CellStoreV1` uses the fresh TCL3 SQLite namespace, application ID `0x54434c33`
+and schema version 3. Old TCL1/TCL2 and populated foreign databases are refused;
 opening never resets or migrates them. Each writable open requires an exact
-persisted `CellCacheConfigV2`: finite logical bytes, chunk rows and manifest
-rows. Logical bytes count every live chunk payload, manifest wire and 32-byte
+persisted `CellCacheConfigV3`: finite logical bytes, chunk rows, manifest
+rows and main-database image bytes. The last cap is 4096-aligned, from 256KiB
+to 2TiB; every writer sets and reads back `max_page_count` at fixed 4096-byte
+page size. Cold readers/writers refuse wrong page sizes, excessive page counts
+or oversized main-file tails without truncation. This bounds supported SQLite
+DB images/file length, not allocated blocks or guaranteed backing capacity. Logical bytes count every live chunk payload, manifest wire and 32-byte
 content key. Atomic insert/update/delete triggers enforce that one whole-cache
 allowance across pack, direct puts, batch fetch, discovery and retention rehydration.
 Same-hash UPSERTs charge only the size difference; a failed eight-chunk transaction
@@ -189,8 +193,8 @@ serving loads these persisted limits and holds no query snapshot across socket I
 Actual corrupt-cache deletion returns only logical cache allowance. It does not
 retire a paid duty, release native funding or prove that filesystem blocks were freed.
 
-This first PN3/PN4 increment does not close physical DB/index/free-page, WAL,
-SHM, SQLite temporary-file or caller-output reservations. `max_page_count` alone
+This PN1/PN2/I05 M09 increment does not reserve physical DB/index/free-page
+backing or close WAL, SHM, SQLite temporary-file or caller-output peaks. `max_page_count` alone
 does not bound WAL; checkpoint policy is not a hard sidecar quota. Materialized
 temporary/output files remain with the original caller's separate resource owner.
 No process-wide limit, automatic reset, expiry or vacuum substitutes for those
@@ -239,16 +243,16 @@ the bounded default is `2 * max-bytes + 2097152 + 9 * max-connections`.
 Its successful `trnm.cell.fetch.v1` JSON adds `received_response_bytes` and
 `max_response_bytes` without changing existing payload counters. These local
 report additions do not change TCM1, TCQ1 or TCS1; the separately bounded local
-cache uses the fresh TCL2/schema2 namespace described above.
+cache uses the fresh TCL3/schema3 namespace described above.
 `verify` rechecks a complete local version. `manifest` exports the
 canonical pinned manifest for the existing release owner. No command implicitly
 discovers a model, changes its authority or activates a consensus profile.
 
 Every writable command (`pack`, `fetch`, `verify`, `prepare-release`,
 `fetch-release`, `verify-release`) also requires `--cache-max-bytes N
---cache-max-chunks N --cache-max-manifests N`. Reuse the same exact limits for
+--cache-max-chunks N --cache-max-manifests N --cache-max-db-bytes N`. Reuse the same exact limits for
 that cache on every invocation; a per-member payload budget is not a new cache
-allowance. `serve` and `manifest` use only an existing read-only TCL2 cache.
+allowance. `serve` and `manifest` use only an existing read-only TCL3 cache.
 
 `fetch-release --store DB --release-file ROOT --release HEX --peers IP:PORT,IP:PORT
 --output ABSENT_MARKER --max-bytes N --max-chunks N --max-response-bytes N
@@ -256,7 +260,7 @@ allowance. `serve` and `manifest` use only an existing read-only TCL2 cache.
 uses the same store, root, pinned release ID and total byte/chunk/time budgets
 without a network call. The new CLI reports have distinct
 `trnm.cell.release.fetch.v1` and `trnm.cell.release.verify.v1` identities. TCM1,
-TCQ1 and TCS1 are unchanged; only the local cache schema is TCL2. The root is supplied
+TCQ1 and TCS1 are unchanged; only the local cache schema is TCL3. The root is supplied
 locally; this increment does not add public root discovery.
 
 ## Executable acceptance
@@ -297,7 +301,7 @@ trnm-data-availability --lib cell::` contains actual TCP and disk tests for:
   complete-payload digest before publication, and never replaces an existing
   output. The combined network-to-file success path returns the exact bytes.
 
-The same existing native suite includes [TCL2 cache admission controls](../../../../trillionnium/crates/trnm-data-availability/src/cell/cache_budget_tests.rs)
+The same existing native suite includes [TCL3 cache admission controls](../../../../trillionnium/crates/trnm-data-availability/src/cell/cache_budget_tests.rs)
 and [complete catalog controls](../../../../trillionnium/crates/trnm-data-availability/src/cell/cache_catalog_tests.rs):
 exact byte/row boundaries and full-cache dedup, two real concurrent writers,
 atomic eight-row rollback, cross-reopen immutable limits, retained verified
