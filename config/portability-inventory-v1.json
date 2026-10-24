@@ -66,7 +66,7 @@
       "package": "trnm-protocol",
       "module": "M00",
       "path": "trillionnium/crates/trnm-protocol",
-      "role": "Canonical transaction and fee contracts; fresh portable task schema.",
+      "role": "Canonical transaction/fee contracts and explicitly selected bounded ILF2/tag23 and ILF3/tag24 witness codecs; complete ILM2/ILM3 decoding and actual parent loading belong to M06; no admission authority.",
       "consensus_authority": false,
       "production_activation": false
     },
@@ -82,7 +82,7 @@
       "package": "trnm-data-availability",
       "module": "M09",
       "path": "trillionnium/crates/trnm-data-availability",
-      "role": "Signed storage responsibility, chunk retrieval, repair and retention; no block consensus.",
+      "role": "Signed storage responsibility and retention plus a separate TCM1/TCQ1/TCS1 configured-peer cell byte cache with pinned identity, bounded TCP repair and complete no-replace materialization; no block consensus or model-use authority.",
       "consensus_authority": false,
       "production_activation": false
     },
@@ -98,7 +98,7 @@
       "package": "trnm-mvcc-fee",
       "module": "M06",
       "path": "trillionnium/crates/trnm-mvcc-fee",
-      "role": "Deterministic serial/parallel execution, fee deltas and incremental storage.",
+      "role": "Deterministic ordered execution, fee deltas, checked derived commitments, explicit revision12 mandatory-capacity continuity, revision13 native model evidence, revision14 composition and revision16 bounded base/router/expert/mask updates with optional owner-pinned pre-genesis task windows; State publication remains with the Node owner.",
       "consensus_authority": false,
       "production_activation": false
     },
@@ -154,7 +154,7 @@
       "package": "trnm-crypto-primitives",
       "module": "M01",
       "path": "trillionnium/crates/trnm-crypto-primitives",
-      "role": "Extract domain hash, strict Ed25519 and canonical fixed-width decoding.",
+      "role": "Strict identity and exact experimental W1 verification, optimized production kernel plus scalar reference and structural producer comparisons; no work-hardness qualification.",
       "consensus_authority": false,
       "production_activation": false
     },
@@ -162,7 +162,7 @@
       "package": "trnm-verification-profiles",
       "module": "M11",
       "path": "trillionnium/crates/trnm-verification-profiles",
-      "role": "Extract profile/challenge lifecycle; delete stake-quorum backend and weight permission.",
+      "role": "Reusable evaluation/profile contracts and exact bounded integer BA normal form; no stake-quorum backend, model-parent authentication or general functional-equivalence authority.",
       "consensus_authority": false,
       "production_activation": false
     },
@@ -195,6 +195,14 @@
       "module": "M12",
       "path": "trillionnium/crates/trnm-escrow-vault",
       "role": "Pure in-memory escrow conservation reference; no second production ledger or durability claim.",
+      "consensus_authority": false,
+      "production_activation": false
+    },
+    {
+      "package": "trnm-pon-node",
+      "module": "M15",
+      "path": "trillionnium/crates/trnm-pon-node",
+      "role": "Native development composition with a single branch/replay/outbox SQLite owner, explicit maintenance choice, bounded public entrypoints, typed local error identity, checked history projections and explicit revision16 model/task-window CLI context binding; not a publicly qualified deployment.",
       "consensus_authority": false,
       "production_activation": false
     }
@@ -592,6 +600,34 @@
     }
   ],
   "auxiliary_disposition": [
+    {
+      "source": "scripts/llm_runtime_kernel_spawn.c",
+      "destination": "scripts/llm_runtime_kernel_owned.py",
+      "module": "M14",
+      "decision": "retain-controlled-linux-in-process-spawn-primitive",
+      "supporting_sources": [
+        "scripts/llm_runtime_pilot.py",
+        "scripts/llm_runtime_host_scope.py",
+        "scripts/llm_runtime_host_controller.py",
+        "scripts/test_llm_runtime_host_controller.py",
+        "scripts/llm_runtime_host_aggregate.py",
+        "scripts/test_llm_runtime_host_aggregate.py",
+        "scripts/test_llm_runtime_decode.py",
+        "scripts/llm_runtime_exit_observation.py",
+        "scripts/test_llm_runtime_kernel_owned.py",
+        "scripts/test_llm_runtime_kernel_close.py",
+        "scripts/llm_runtime_kernel_aggregate.py",
+        "scripts/test_llm_runtime_kernel_aggregate.py",
+        "scripts/test_llm_runtime_kernel_diagnostic.py",
+        "scripts/llm_runtime_evidence_pipe.py",
+        "scripts/test_llm_runtime_evidence_pipe.py",
+        "scripts/llm_runtime_evidence_frames.py",
+        "scripts/test_llm_runtime_evidence_frames.py",
+        "scripts/test_llm_runtime_evidence_transport.py",
+        "scripts/ci/verify_ci_source.py"
+      ],
+      "scope": "Optional same-administrator CPython 3.12.3 native child birth placement under the existing Python wait4 owner; unsupported controlled ABI refuses before preparation. Explicit aggregate mechanics bind an external owner, finite controller leaf and unchanged 16GiB parent, but never authorize/delete/refund an operation. No public-profile activation, RSS equivalence, FinalUse settlement or model acceptance."
+    },
     {
       "source": "contracts/audit-events",
       "destination": "trnm-audit-events",

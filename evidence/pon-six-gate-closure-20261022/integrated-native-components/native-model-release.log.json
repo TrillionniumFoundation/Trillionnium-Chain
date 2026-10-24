@@ -1,0 +1,7 @@
+{
+  "schema": "exact-original-utf8-log-v1",
+  "original_filename": "native-model-release.log",
+  "bytes": 537,
+  "sha256": "7c2fe4833ecfe7ee8c054c2df5ff1bb6955b024a2e2123e5956526de548fdb38",
+  "raw_utf8": "   Compiling trnm-pon-node v0.1.0 (/workspace/scratch/ff4dad3c0eb8/chain-integration/trillionnium/crates/trnm-pon-node)\n    Finished `release` profile [optimized] target(s) in 2m 03s\n     Running tests/model_evidence_v3.rs (/workspace/scratch/b29eed737707/chain-current/trillionnium/target/release/deps/model_evidence_v3-035d09161e1f63a3)\n\nrunning 1 test\ntest objective_release_shared_source_reward_reopen_and_review_fork_are_native ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 12.96s\n\n"
+}
