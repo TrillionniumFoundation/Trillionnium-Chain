@@ -902,7 +902,7 @@ execution or a real model failure. They preserve the original late-readback
 failure and do not close the real caller, load-attempt binding, resource,
 FinalUse, three-cycle next-task readback or I10 obligations.
 
-The same PN1/PN2/I05 M09 cache path now uses fresh TCL3/schema3 with immutable
+The same PN1/PN2/I05 M09 cache path now uses fresh TCL4/schema4 with immutable
 logical bytes, chunk/manifest rows and an explicit main-database image/file-length
 cap. `--cache-max-bytes`, `--cache-max-chunks`, `--cache-max-manifests` and
 `--cache-max-db-bytes` are mandatory for all six Cell writer commands, discovery
@@ -910,7 +910,7 @@ fetch and the existing handoff script. The same exact configuration covers every
 producer/consumer member; each writer reapplies and reads back SQLite's
 connection-local `max_page_count`, using fixed 4096-byte pages. The image cap is
 4096-aligned, from 256KiB to 2TiB. Existing read-only entries audit persisted caps,
-page size/count and file length. TCL2/foreign databases, oversized images or tail
+page size/count and file length. TCL1/TCL2/TCL3/foreign databases, oversized images or tail
 padding are refused without migration, truncation or quota reset. Cold catalog
 validation still requires all 14 exact objects and only the two automatic PK
 indexes; reserved prefixes cannot hide an object.
@@ -923,13 +923,41 @@ quota, catalog, corrupt-cache, release, read-only and deadline assertions remain
 An initial WAL control failed because identical UPSERTs generated no new pages;
 the retained correction holds a real reader while writing distinct small chunks.
 Its WAL exceeded the 256KiB main-image cap while main pages and logical usage
-remained bounded. This is an explicit limit of the new contract.
+remained bounded. That complete original TCL3 control and its greater-than
+assertion remain in an explicitly test-only historical fixture; no production
+TCL3 reader/writer or fallback remains.
 
-This bounds supported cache-writer DB images/file length, not allocated blocks,
-physical backing reservation or total disk peaks. WAL/SHM/TEMP/output and
-retention metadata/WAL remain open, together with global ledger roots, funded
-I05 duties, native consumption, installation and three-cycle model acceptance.
-Checkpoint thresholds and journal-size retention are not peak limits. Cache
+The TCL4 increment keeps admission in the original `CellStoreV1`. Initialization,
+manifest/chunk writes, the original eight-chunk batch and corrupt-cache deletion
+share one persistent zero-byte OS writer-lock identity. A complete TRUNCATE
+checkpoint and actual zero-length WAL are required before another write; a held
+reader refuses the new batch before mutation. Lock contention and SQLite share
+the original single five-second budget. Every connection disables automatic and
+close-time checkpoints and dirty-page spill, retaining `synchronous=FULL`.
+Complete cold schema/configuration/counter audit precedes any writable checkpoint:
+the original cold-catalog no-rewrite assertion caught and now prevents a real
+ordering defect. Process-crash recovery, two independent CLI writers and exact
+same-operation retry are actual controls, not only mocked lock observations.
+
+For immutable main-image cap C, the supported locked SQLite 3.46.0 writer protocol
+derives WAL length `32 + (C/4096 + 16) * 4120` and a separate SHM length
+`32768 * (1 + ceil((C/4096 + 16)/4096))`. The additional frames conservatively
+cover the bundled backend's maximum FULL-sector padding. This bound requires
+empty-WAL admission and one spill-free original-owner transaction; changing the
+backend/VFS requires new qualification. Existing oversized sidecars are rejected,
+while after-commit checks are invariant diagnostics, not preventive quotas.
+Because closing does not checkpoint, committed WAL can remain: copying only the
+main DB is not a complete cold export. Retain/recover the coherent namespace or
+reconstruct this disposable cache through the existing pinned fetch owner.
+
+This bounds supported cache-writer DB images and WAL/SHM logical file lengths,
+not allocated blocks, backing reservation or total disk peaks. Initialization's
+rollback journal, SQLite TEMP/memory, caller output and retention metadata/WAL
+remain open, together with global ledger roots, funded I05 duties, native model
+consumption, installation and three-cycle acceptance. Arbitrary direct SQL,
+custom VFS and adversarial namespace replacement are outside this owner protocol;
+there is no claimed OS-wide quota. Checkpoint thresholds and journal-size
+retention are not peak limits. Cache
 admission/deletion never changes M12 funding or paid obligations. No 35-second
 aggregate handoff or original 8-second owner window is extended by this slice.
 
@@ -3231,7 +3259,7 @@ retrieval, complete verification, final write and the pre-publication checkpoint
 The additive `materialize_until` API rechecks original cached payload bytes;
 the existing no-deadline materialization API remains available to explicit
 callers. That deadline-only increment preserved protocol bytes, manifest/cache
-schemas, limits and CLI report fields. The later TCL3 cache image/admission increment
+schemas, limits and CLI report fields. The later TCL3 image and current TCL4 WAL-admission increments
 is specified above and in the same Cell contract. Checks are cooperative: filesystem calls cannot be preempted,
 and a complete file is not deleted after publication because subsequent I/O
 takes time. The exact boundary is documented in
