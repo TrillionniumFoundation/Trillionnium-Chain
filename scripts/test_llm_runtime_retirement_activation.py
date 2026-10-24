@@ -13,6 +13,7 @@ import tempfile
 import threading
 import time
 import unittest
+from unittest.mock import patch
 
 import llm_runtime_kernel_owned as kernel
 import test_llm_runtime_retirement_slot as preparation
@@ -214,6 +215,29 @@ void review_continue(void) { atomic_store(&review_release, 1); }
         self.assertEqual((out[1],out[19],out[20]),(errno.ESTALE,1,0))
         self.assertEqual(lib.review_count(),0)
         self.finished(lib,out,deadline)
+
+    def test_actual_thread_disappearance_requires_final_same_slot_observation(self):
+        # Force the real observation window: the original worker is still in
+        # its bounded test syscall after expiry; /proc check sees it disappear
+        # after the first snapshot. Assertions/cutoff/effects stay unchanged.
+        lib=preparation.RetirementPreparationTests.library(self,'blocked-wait')
+        values=self.input();out=values[3]
+        error,deadline=self.prepare(lib,values,.1)
+        self.assertEqual(error,0);self.ready(lib,out,deadline)
+        while not lib.review_entered():
+            self.assertLess(time.monotonic_ns(),deadline);time.sleep(.001)
+        time.sleep(max(0,(deadline-time.monotonic_ns())/10**9)+.01)
+        actual_exists=Path.exists;worker=Path('/proc/self/task/'+str(out[4]));observed=[]
+        def check(path):
+            if path==worker:
+                observed.append(out[17])
+                while actual_exists(path):
+                    self.assertLess(time.monotonic_ns(),deadline+10**9);time.sleep(.001)
+                return False
+            return actual_exists(path)
+        with patch.object(Path,'exists',check):self.expired(lib,out,deadline)
+        self.assertEqual(observed,[0,1])
+        self.assertEqual((out[0],out[1],out[17]),(4,errno.ETIMEDOUT,1))
 
 
 if __name__=='__main__':unittest.main(verbosity=2)
