@@ -49,6 +49,8 @@ class _AggregateLaunch:
         from llm_runtime_host_controller import _HostControllerOperation
         require(token is _TOKEN and type(operation) is _HostControllerOperation,
                 'host-aggregate-private-mechanics')
+        from llm_runtime_host_scope import _require_aggregate_root_empty, _retain_aggregate_owner
+        _require_aggregate_root_empty()  # Before command/source/slot or native-pipe work.
         require(type(command) is list and 0 < len(command) <= 256 and
             all(type(v) is str and '\0' not in v for v in command) and
             Path(command[0]).is_absolute() and sum(len(os.fsencode(v)) for v in command) <= 1024**2,
@@ -71,6 +73,7 @@ class _AggregateLaunch:
             operation._verify_locked()
             operation._aggregate = self  # Strong registration precedes native pipe creation.
             try:
+                _retain_aggregate_owner(self)  # Survives loss/GC of every caller reference.
                 returned = self.native.prepare_pipe(self.read_slot, self.write_slot,
                     self.identities, ctypes.byref(self.status))
                 require(returned == self.status.value == 0, 'host-aggregate-pipe-refused')

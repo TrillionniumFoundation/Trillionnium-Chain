@@ -17,13 +17,31 @@ import sys
 import tempfile
 import time
 import unittest
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 import llm_runtime_host_aggregate as aggregate
+import llm_runtime_host_scope as host
 import llm_runtime_kernel_owned as kernel
 import llm_runtime_pilot as runtime
 import test_llm_runtime_host_controller as original
 import test_llm_runtime_host_scope as legacy
+
+
+def _cleanup_fixture_aggregate(launch):
+    # Test isolation only: never clear a production owner or a live real child.
+    op = launch.operation
+    assert isinstance(op.cap._owner, Mock), 'only ordinary/mock namespace fixtures may reset the root'
+    child = op.spawn_owner
+    if child is not None and child._kernel_handoff[0] > 0:
+        assert child.reaped and child.reap_resolved, 'test must exact-wait its real C first'
+        with unittest.TestCase().assertRaises(ChildProcessError):
+            os.wait4(child.pid, os.WNOHANG)
+    for slot in (launch.read_slot, launch.write_slot):
+        if slot[1] >= 0: op.native.release_owned(slot)
+    if child is not None and child._kernel_handoff[1] >= 0:
+        op.native.close_handoff(child._kernel_handoff, 2)
+    if host._AGGREGATE_OWNER_ROOT is not None and host._AGGREGATE_OWNER_ROOT[2] is op.cap:
+        host._AGGREGATE_OWNER_ROOT = None
 
 
 class HostAggregateTests(unittest.TestCase):
@@ -32,18 +50,13 @@ class HostAggregateTests(unittest.TestCase):
     binding = original.ControllerMechanicsTests.binding
 
     def launch(self):
+        if host._AGGREGATE_OWNER_ROOT is not None:
+            _cleanup_fixture_aggregate(host._retained_aggregate_owner()._native.operation._aggregate)
         op, cap, paths, writes, fact = self.binding()
         launch = aggregate._AggregateLaunch(aggregate._TOKEN, op, ['/bin/true'])
         for role in ('operation', 'controller', 'aggregate'):
             (paths[role]/'memory.events').write_text('low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\n')
-        def cleanup():
-            for slot in (launch.read_slot, launch.write_slot):
-                if slot[1] >= 0: op.native.release_owned(slot)
-            child = op.spawn_owner
-            if child is not None and child._kernel_handoff[1] >= 0:
-                # Ordinary fixture cleanup only; no product retirement/refund.
-                op.native.close_handoff(child._kernel_handoff, 2)
-        self.addCleanup(cleanup)
+        self.addCleanup(_cleanup_fixture_aggregate, launch)
         return launch, op, cap, paths
 
     def owner(self, op):
@@ -558,13 +571,15 @@ finally:
                     os.close(fd)
                     if child.returncode is None:child.kill();child.wait()
 
-    def test_original_O_pending_G_rollback_finish_deadline_and_signal_keep_real_C_wait_owner(self):
+    def _run_original_O_owner_probe(self, modes):
         script = r'''
-import ctypes,os,pathlib,select,signal,struct,sys,time
+import ctypes,gc,os,pathlib,select,signal,struct,sys,tempfile,threading,time,weakref
 from unittest.mock import patch
 sys.path.insert(0,sys.argv[2])
 import llm_runtime_kernel_owned as kernel
 import llm_runtime_pilot as runtime
+import llm_runtime_host_aggregate as aggregate
+import llm_runtime_host_scope as host
 from test_llm_runtime_host_aggregate import HostAggregateTests
 libc=ctypes.CDLL(None,use_errno=True);assert libc.prctl(36,1,0,0,0)==0
 lib=ctypes.CDLL(sys.argv[1]);start=lib.review_start_gated_owner
@@ -588,11 +603,11 @@ def membership(path,*args,**kwargs):
  return original_read(path,*args,**kwargs)
 def pending_write(fd,raw):
  count=original_write(fd,raw)
- if mode=='pending-G' and fd==ack_write and raw==b'G':raise MemoryError('after actual C G write')
+ if mode in ('pending-G','gc-drop-all') and fd==ack_write and raw==b'G':raise MemoryError('after actual C G write')
  return count
 try:
  with open(os.devnull,'wb') as log,patch.object(op.native,'spawn_controller',side_effect=handoff),patch.object(pathlib.Path,'read_text',membership),patch.object(kernel.os,'write',side_effect=pending_write):
-  if mode=='pending-G':
+  if mode in ('pending-G','gc-drop-all'):
    try:runtime._Wait4Child(['/bin/true'],stdout=log,stderr=runtime.subprocess.STDOUT,_host_controller_operation=op,_kernel_deadline=op.deadline)
    except runtime._OwnedChildCleanupRequired as failure:owner=failure.child
    else:raise AssertionError('pending G did not retain original cleanup owner')
@@ -602,6 +617,39 @@ try:
  raw=os.read(info_r,8);assert len(raw)==8
  child,held_fd=struct.unpack('=2I',raw);afd=os.pidfd_open(child,0)
  assert owner is op.spawn_owner and owner._aggregate_wait_role is launch._wait_role
+ if mode=='gc-drop-all':
+  expected_slots=tuple(owner._kernel_handoff)
+  expected_fds=tuple((fd,kernel.proc._signature(fd)) for fd in
+   [cap._native.fd,cfd,launch.read_slot[1]]+[entry[0][1] for entry in cap._fds])
+  refs=[weakref.ref(value) for value in (owner,op,cap,cap._native,launch,owner._kernel_handoff)]
+  fixture._cleanups[:]=[entry for entry in fixture._cleanups if
+   isinstance(getattr(entry[0],'__self__',None),tempfile.TemporaryDirectory)]
+  callbacks=fixture._cleanups[:]
+  del owner,op,cap,launch,paths,fixture
+  gc.collect();gc.collect()
+  assert all(ref() is not None for ref in refs), 'original C/A owner graph collected'
+  cap=host._retained_aggregate_owner();op=cap._native.operation;launch=op._aggregate;owner=op.spawn_owner
+  assert tuple(owner._kernel_handoff)==expected_slots
+  assert all(kernel.proc._signature(fd)==signature for fd,signature in expected_fds)
+  assert host._AGGREGATE_OWNER_ROOT==(os.getpid(),threading.current_thread(),cap)
+  with patch.object(kernel,'build_controlled_native') as build,patch.object(host.bus,'UserManager') as manager:
+   for prepare in (host.prepare_host_scope,lambda:host.HostScopeAdmission(host._TOKEN)):
+    try:prepare()
+    except ValueError as error:assert 'owner-retained' in str(error)
+    else:raise AssertionError('second prepare passed retained root')
+   build.assert_not_called();manager.assert_not_called()
+  with patch.object(op.native,'prepare_pipe') as pipe,patch.object(kernel,'_bytes') as source:
+   try:aggregate._AggregateLaunch(aggregate._TOKEN,op,['/bin/true'])
+   except ValueError as error:assert 'owner-retained' in str(error)
+   else:raise AssertionError('second aggregate passed retained root')
+   pipe.assert_not_called();source.assert_not_called()
+  foreign=[]
+  def other_thread():
+   try:host._retained_aggregate_owner()
+   except ValueError as error:foreign.append(str(error))
+  thread=threading.Thread(target=other_thread);thread.start();thread.join()
+  assert foreign==['host-aggregate-root-original-pid-thread']
+  assert host._retained_aggregate_owner() is cap
  if mode=='deadline':
   assert not select.select([cfd],[],[],max(0,op.deadline-time.monotonic()+.01))[0]
   assert time.monotonic()>=op.deadline
@@ -627,8 +675,14 @@ try:
  original_signal(cfd,signal.SIGUSR1)
  original_write(gate_w,b'G');os.close(gate_w);gate_w=-1
  assert select.select([afd],[],[],1)[0]
- waited,status,_=os.wait4(controller,0);reaped=True
- assert waited==controller and os.waitstatus_to_exitcode(status)==88
+ assert owner.reap(0)=='terminal';reaped=True
+ assert owner.reaped and owner.reap_resolved and owner.returncode==88
+ if mode=='gc-drop-all':
+  assert host._retained_aggregate_owner() is cap, 'C exit improperly released the root'
+  from test_llm_runtime_host_aggregate import _cleanup_fixture_aggregate
+  _cleanup_fixture_aggregate(launch) # Only after real C exact-reaped its A, then O exact-reaped C.
+  assert host._AGGREGATE_OWNER_ROOT is None
+  print('all-caller-references-dropped; GC retained same owner and exact FDs; second prepare/aggregate denied before IO')
  print('original-O-cleanup '+mode+' real-G; no-C-signal; original-C/A-handles-retained; no-WholeU')
 finally:
  if gate_w>=0:os.close(gate_w)
@@ -643,15 +697,25 @@ finally:
   except ChildProcessError:pass
  for fd in (info_r,info_w,gate_r,afd):
   if fd is not None and fd>=0:os.close(fd)
- fixture.doCleanups()
+ if mode=='gc-drop-all':
+  for callback,args,kwargs in reversed(callbacks):callback(*args,**kwargs)
+ else:fixture.doCleanups()
 '''
-        for mode in ('pending-G','rollback','finish','deadline','direct-signal'):
+        for mode in modes:
             with self.subTest(mode=mode):
                 result = subprocess.run([sys.executable,'-c',script,str(self.output),str(Path(__file__).parent),mode],
                     capture_output=True,text=True,timeout=15)
                 self.assertEqual(result.returncode,0,result.stdout+result.stderr)
                 self.assertIn('no-C-signal; original-C/A-handles-retained; no-WholeU',result.stdout)
+                if mode == 'gc-drop-all':
+                    self.assertIn('all-caller-references-dropped; GC retained same owner and exact FDs',result.stdout)
                 print(result.stdout.strip())
+
+    def test_original_O_pending_G_rollback_finish_deadline_and_signal_keep_real_C_wait_owner(self):
+        self._run_original_O_owner_probe(('pending-G','rollback','finish','deadline','direct-signal'))
+
+    def test_pending_G_all_caller_references_dropped_keeps_fixed_original_owner_root(self):
+        self._run_original_O_owner_probe(('gc-drop-all',))
 
 
 if __name__ == '__main__': unittest.main(verbosity=2)

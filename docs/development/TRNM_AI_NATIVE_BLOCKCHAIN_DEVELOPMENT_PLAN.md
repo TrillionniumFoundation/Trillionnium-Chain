@@ -2061,7 +2061,7 @@ are closed, and A/receipt handles are CLOEXEC. The same absolute monotonic
 eight-second cutoff crosses both births and O's receipt read without renewal.
 O reads one bounded 64-byte C record only after its separate exact wait4(C),
 then retains actual U/C/A counters, including nonzero residual charges and all
-historical meters. Pipe EOF is not proof that a payload executed. Sixteen new
+historical meters. Pipe EOF is not proof that a payload executed. Seventeen new
 controls cover the private binding, sticky refusals, original deadline, actual
 native wait4 subroutines and actual exec handle closure; successful native
 cgroup C/A birth is NOT_RUN. This adds no public entry, FinalUse/funding issuer,
@@ -2078,6 +2078,18 @@ bounded process after an unresolved wait/poll/kill error; late A exit cannot
 renew or unlock UNKNOWN. An actual terminal wait4 is kept distinct from invalid
 rusage. Real ordinary-child fault controls exercise both owners and exact
 test-only cleanup; none qualifies cgroup birth, retirement or model release.
+
+Before that launch can create its native receipt pipe or C, the original host
+module installs one fixed process-lifetime strong root for the same cap, bound
+to the real O PID and concrete Thread. Losing all caller references and garbage
+collection cannot discard the original C/A wait-owner graph or its held FDs.
+Existing-root checks reject a second host preparation or aggregate before new
+native/manager/pipe IO. The root exposes retrieval only on the same PID/Thread;
+UNKNOWN and even a normal C receipt cannot clear it. The existing C-only path
+does not install this C/A root. A real ordinary pending-G control drops every
+caller reference, collects garbage and checks the exact retained slots/FDs;
+test isolation clears its mock root only after exact C→A and O→C cleanup.
+This retention root does not retire C/A, prove raw U zero or release funding.
 
 The existing PN4 dependency and acceptance sequence is:
 
