@@ -1,0 +1,25 @@
+{
+  "schema": "pon-contract-authority-supplement-v1",
+  "source_commit": "dbb1c989342639c4c04366a0d12bc3ecb4760e04",
+  "source_tree": "a38495fe234c4ae71aeae3c570d5d91acf847fee",
+  "reason": "same exact source; correct only the owned test TMPDIR permission from0775 to0700; original failure remains",
+  "command": [
+    "bash",
+    "scripts/ci/ci_job.sh",
+    "rust-baseline"
+  ],
+  "returncode": 0,
+  "timed_out": false,
+  "elapsed_ns": 213232930768,
+  "log": "rust-baseline.log",
+  "log_sha256": "f55d60b43b74dcee24059f0045d1858ba01bc122387d38352f7343506590d96f",
+  "temporary_directory_mode": "0o700",
+  "product_source_modified": false,
+  "product_guard_relaxed": false,
+  "source_clean_after": true,
+  "original_report_sha256": "6139f422b9de79de6f8e01999ffbe81d2f14fb64bc58f5c81ccab2804b86e8d2",
+  "finished_utc": "2026-09-29T09:35:33.817467+00:00",
+  "production_activation": false,
+  "independent_accepted": false,
+  "physical_power_loss": false
+}
