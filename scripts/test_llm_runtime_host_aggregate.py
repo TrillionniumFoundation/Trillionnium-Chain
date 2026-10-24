@@ -15,6 +15,7 @@ import struct
 import subprocess
 import sys
 import tempfile
+import threading
 import time
 import unittest
 from unittest.mock import Mock, patch
@@ -53,6 +54,18 @@ class HostAggregateTests(unittest.TestCase):
         if host._AGGREGATE_OWNER_ROOT is not None:
             _cleanup_fixture_aggregate(host._retained_aggregate_owner()._native.operation._aggregate)
         op, cap, paths, writes, fact = self.binding()
+        # Existing controls model namespace observations. This models only the
+        # new preparation transport; separate real-native controls qualify it.
+        def prepare_worker(observer, identity, membership, size, deadline, words):
+            self.assertIs(host._retained_aggregate_owner(),cap)
+            self.assertIs(op._aggregate._retirement,words)
+            self.assertEqual((op._aggregate.read_slot[1],op._aggregate.write_slot[1]),(-1,-1))
+            words[:] = (3, 0, os.getpid(), threading.get_native_id(), threading.get_native_id()+1,
+                *cap._groups['observer'][3], deadline, 0x1000000, 1024**2+8192,
+                0x1001000, 1024**2, 4096, 0, 2**64-1, 1, 0, 0x1002000, 0, 0, 0, 0, 0)
+            return 0
+        op.native.prepare_retirement = Mock(side_effect=prepare_worker)
+        op.native.snapshot_retirement = Mock(return_value=0)
         launch = aggregate._AggregateLaunch(aggregate._TOKEN, op, ['/bin/true'])
         for role in ('operation', 'controller', 'aggregate'):
             (paths[role]/'memory.events').write_text('low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\n')
