@@ -8,7 +8,7 @@ fn cache_deletion_and_cache_quota_failure_cannot_release_actual_paid_retention()
         &directory.path().join("node"),
         StateBackend::PermanentAccountGrowthV2,
     );
-    let source = fund(&mut node, 1, 1000);
+    let source = fund(&mut node, 1000);
     let (cache, manifest, _) = material(directory.path());
     let request = request(source, &manifest);
     let mut budgets =

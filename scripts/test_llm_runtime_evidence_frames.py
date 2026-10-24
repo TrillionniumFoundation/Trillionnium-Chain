@@ -32,6 +32,22 @@ def wire(values=None):
 
 
 class EvidenceFrameTests(unittest.TestCase):
+    def test_child_script_imports_exact_source_from_an_unrelated_working_directory(self):
+        with tempfile.TemporaryDirectory() as directory:
+            # A fresh interpreter does not inherit unittest's sys.path. A CWD
+            # or PYTHONPATH decoy must not replace the module under test either.
+            (Path(directory)/'llm_runtime_evidence_frames.py').write_text(
+                "raise AssertionError('imported unrelated module')\n")
+            script = EvidenceWriterTests().script('print(f.__file__)')
+            for flags in ([], ['-I']):
+                with self.subTest(flags=flags):
+                    child = subprocess.run([sys.executable, *flags, '-c', script],
+                        cwd=directory, env=dict(os.environ, PYTHONPATH=directory),
+                        capture_output=True, text=True, timeout=3)
+                    self.assertEqual(child.returncode, 0, child.stderr)
+                    self.assertEqual(Path(child.stdout.strip()).resolve(),
+                                     Path(frames.__file__).resolve())
+
     def with_signal_at(self, function, marker, predicate, mutation, call):
         lines, start = inspect.getsourcelines(function)
         target = start+next(index for index,line in enumerate(lines) if marker in line)
@@ -246,6 +262,7 @@ class EvidenceFrameTests(unittest.TestCase):
 class EvidenceWriterTests(unittest.TestCase):
     def script(self, suffix):
         return ('import os,sys,time,json,signal,threading\n'
+                f'sys.path.insert(0, {str(Path(__file__).resolve().parent)!r})\n'
                 'import llm_runtime_evidence_frames as f\n'
                 'values='+repr(records())+'\n'+suffix)
 

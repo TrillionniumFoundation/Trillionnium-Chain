@@ -65,7 +65,10 @@ fn mine(node: &mut Node, parent: Hash, transactions: Vec<Vec<u8>>) -> Hash {
     node.activate(tip).unwrap();
     tip
 }
-fn fund(node: &mut Node, nonce: u64, amount: u64) -> NativeFundingSourceV1 {
+fn fund(node: &mut Node, amount: u64) -> NativeFundingSourceV1 {
+    // This is the current account transaction sequence, not a cryptographic
+    // nonce. Read the real backend so repeated funding follows committed state.
+    let nonce = node.next_nonce(public(0)).unwrap();
     let network = node.settings.network();
     let until = 50u64;
     let task = hash(
@@ -200,7 +203,7 @@ fn native_cell_storage_escrow_replay_and_reorg_keep_physical_obligation() {
         let node_path = dir.path().join("node");
         let mut node = open_node(&node_path, backend);
         let genesis = node.settings.genesis();
-        let source = fund(&mut node, 1, 1000);
+        let source = fund(&mut node, 1000);
         let (cache, manifest, _) = material(dir.path());
         let request = request(source, &manifest);
         let conf = config(&node);
@@ -269,7 +272,7 @@ fn native_cell_storage_escrow_replay_and_reorg_keep_physical_obligation() {
 fn native_cell_storage_subject_and_real_byte_block_capacity_are_required_before_effect() {
     let dir = tempfile::tempdir().unwrap();
     let mut node = open_node(&dir.path().join("node"), StateBackend::AuthenticatedV1);
-    let source = fund(&mut node, 1, 1000);
+    let source = fund(&mut node, 1000);
     let (cache, manifest, _) = material(dir.path());
     let request = request(source, &manifest);
     let mut budgets =
@@ -301,8 +304,8 @@ fn native_cell_failed_initial_copy_needs_a_separate_funded_repair_and_preserves_
         &dir.path().join("node"),
         StateBackend::PermanentAccountGrowthV2,
     );
-    let storage_source = fund(&mut node, 1, 1000);
-    let repair_source = fund(&mut node, 2, 200);
+    let storage_source = fund(&mut node, 1000);
+    let repair_source = fund(&mut node, 200);
     let (cache, manifest, bytes) = material(dir.path());
     let storage = request(storage_source, &manifest);
     let partial = CellStoreV1::open(&dir.path().join("partial.sqlite"), cache_config()).unwrap();
