@@ -72,6 +72,7 @@ static int trnm_retirement_remove(const char *name, int *slot, const uint64_t id
     if (!trnm_retirement_timely()) return ETIMEDOUT;
     int error = trnm_retirement_named(trnm_retirement.parent, name, slot, id);
     if (error) return error;
+    if (!trnm_retirement_timely()) return ETIMEDOUT;
     if (unlinkat(trnm_retirement.parent, name, AT_REMOVEDIR)) return errno;
     atomic_fetch_or_explicit(&trnm_retirement.progress, bit, memory_order_release);
     /* Record the irreversible removal even when it returned after the cutoff.

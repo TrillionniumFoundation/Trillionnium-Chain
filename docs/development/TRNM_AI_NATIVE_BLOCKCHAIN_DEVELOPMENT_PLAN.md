@@ -2166,7 +2166,7 @@ A sticky pre-entry marker forbids
 live verifier scans while those arrays may be closing. A separate strict phase
 verifier accepts only complete native progress, original identity/quiescence and
 unchanged U history; it reports unlink/close facts, never Whole-U or resource
-return. Nine real own-directory controls (explicit test-only filesystem wrapper)
+return. Ten real own-directory controls (explicit test-only filesystem wrapper)
 and seven modeled exact-terminal/phase controls do not qualify real cgroup
 retirement. The original preparation observation helper rereads its same buffer
 after actual thread disappearance for its unchanged finished==1 assertion;

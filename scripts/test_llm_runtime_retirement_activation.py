@@ -30,16 +30,19 @@ class RetirementActivationTests(unittest.TestCase):
         self.addCleanup(temporary.cleanup)
         source = b'''#define fstatfs review_statfs
 #define unlinkat review_unlinkat
+#define fstatat review_statat
 #define close review_close
 '''+kernel._bytes(kernel._C)+b'\n'+kernel._bytes(kernel._RETIREMENT_C)+b'''
 #undef fstatfs
 #undef unlinkat
+#undef fstatat
 #undef close
 extern int fstatfs(int, struct statfs *);
 extern int unlinkat(int, const char *, int);
+extern int fstatat(int, const char *, struct stat *, int);
 extern int close(int);
 static int review_parent = -1, review_aggregate = -1, review_fault;
-static _Atomic unsigned review_calls, review_entered, review_release;
+static _Atomic unsigned review_calls, review_entered, review_release, review_metadata;
 static _Atomic int review_effect_tid;
 void review_configure(int parent, int aggregate, int fault) {
     review_parent = parent; review_aggregate = aggregate; review_fault = fault;
@@ -48,6 +51,16 @@ int review_statfs(int fd, struct statfs *value) {
     int result = fstatfs(fd, value);
     if (!result && fd == review_parent && review_fault != 9) value->f_type = TRNM_CGROUP2_MAGIC;
     return result;
+}
+int review_statat(int parent, const char *name, struct stat *value, int flags) {
+    if (parent == review_parent && !strcmp(name, "aggregate")) {
+        unsigned call = atomic_fetch_add(&review_metadata, 1) + 1;
+        if (review_fault == 5 && call == 3) {
+            atomic_store(&review_entered, 1);
+            while (!atomic_load(&review_release)) usleep(1000);
+        }
+    }
+    return fstatat(parent, name, value, flags);
 }
 int review_unlinkat(int parent, const char *name, int flags) {
     if (parent == review_parent) {
@@ -263,6 +276,20 @@ void review_continue(void) { atomic_store(&review_release, 1); }
         self.assertEqual(lib.review_count(),1)
         self.assertEqual(lib.trnm_kernel_retirement_activate_v1(*args),errno.EALREADY)
         self.assertEqual(lib.trnm_kernel_retirement_retain_v1(out),errno.EALREADY)
+
+    def test_unknown_during_last_name_check_never_begins_a_new_unlink(self):
+        lib,root,owned,child,out,deadline,args=self.fixture(5)
+        saved=[tuple(v) for v in owned+[child]]
+        self.assertEqual(lib.trnm_kernel_retirement_activate_v1(*args),0)
+        while not lib.review_blocked():
+            self.assertLess(time.monotonic_ns(),deadline);time.sleep(.001)
+        self.assertEqual(lib.review_count(),0) # Only metadata, no unlink entered.
+        self.assertEqual(lib.trnm_kernel_retirement_retain_v1(out),0)
+        lib.review_continue();self.finished(lib,out,deadline)
+        self.assertEqual((out[0],out[1],out[20],out[21]),(5,errno.ECANCELED,0,1))
+        self.assertEqual([tuple(v) for v in owned+[child]],saved)
+        self.assertEqual(lib.review_count(),0)
+        self.assertTrue((root/'aggregate').is_dir());self.assertTrue((root/'controller').is_dir())
 
 
 if __name__=='__main__':unittest.main(verbosity=2)
