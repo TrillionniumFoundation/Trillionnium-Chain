@@ -302,6 +302,16 @@ locally; this increment does not add public root discovery.
 
 ## Executable acceptance
 
+The [TCL4 three-host relay](../../../../evidence/pon-upgrade-implementation-20261018/native-rounds/cell-tcl4-release-three-host-20261024/SCOPE.md)
+executes the existing configured-peer path with all271,178,816 public model
+bytes and266 chunks. The release build completes the two120s fetch windows in
+33.255s and38.782s, with the original supplier stopped before the second hop.
+The consumer rehashes all eight material files; no loader or model forward runs.
+The preceding development-build deadline failure is retained separately. Both
+attempts use the same finite TCL4 caps and unchanged27 driver assertions. This
+does not close the funded retention, physical/global storage or public-discovery
+obligations below.
+
 `cargo test --locked --manifest-path trillionnium/Cargo.toml -p
 trnm-data-availability --lib cell::` contains actual TCP and disk tests for:
 

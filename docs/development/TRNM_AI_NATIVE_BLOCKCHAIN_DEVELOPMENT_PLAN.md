@@ -1935,6 +1935,15 @@ proceed with those failures visible.
    verify full payload and dependencies before loader entry. Public discovery,
    independent replication/repair and private transport mature at PN5.
 
+The current [controlled TCL4 relay](../../evidence/pon-upgrade-implementation-20261018/native-rounds/cell-tcl4-release-three-host-20261024/SCOPE.md)
+passes the configured-peer transport subitem using the complete271MB public
+material set,266 chunks and the same four finite persisted cache limits on
+three actual tailnet hosts. Release transfers finish in33.255s and38.782s under
+the unchanged120s windows; origin loss precedes the replica-to-consumer hop.
+The development-build120s verification failure remains recorded separately.
+This supplies byte/dependency readback only; real loader entry, installation,
+next-task use, funded retention and three beneficial upgrades remain open.
+
 Exit: at least three consecutive real lineage cycles, each using the actually
 installed predecessor (or retaining it on a valid no-update), plus an independent
 consumer's authorized next task. Bind each decision to exact bytes, evidence,
