@@ -65,7 +65,8 @@ static int trnm_retirement_named(int parent, const char *name, int *slot, const 
         (uint64_t)meta.st_mode == id[2] ? 0 : ESTALE;
 }
 static int trnm_retirement_timely(void) {
-    return !atomic_load(&trnm_retirement.expired) && trnm_before(trnm_retirement.deadline);
+    return !atomic_load(&trnm_retirement.error) && !atomic_load(&trnm_retirement.expired) &&
+        trnm_before(trnm_retirement.deadline);
 }
 static int trnm_retirement_remove(const char *name, int *slot, const uint64_t id[3], unsigned bit) {
     if (!trnm_retirement_timely()) return ETIMEDOUT;
@@ -265,7 +266,8 @@ int trnm_kernel_retirement_activate_v1(int parent, int aggregate[4], int control
         aggregate == child || controller == child || child[0] <= 0 || child[2] != -1 || child[3] != -1)
         error = EINVAL;
     if (!error) error = trnm_retirement_identity(parent, identities);
-    if (!error && (fstatfs(parent, &fs) || fs.f_type != TRNM_CGROUP2_MAGIC)) error = EINVAL;
+    if (!error && fstatfs(parent, &fs)) error = errno;
+    if (!error && fs.f_type != TRNM_CGROUP2_MAGIC) error = EINVAL;
     if (!error) error = trnm_retirement_named(parent, "aggregate", aggregate, identities + 3);
     if (!error) error = trnm_retirement_named(parent, "controller", controller, identities + 6);
     if (!error) error = trnm_retirement_identity(child[1], identities + 9);
@@ -290,4 +292,17 @@ int trnm_kernel_retirement_activate_v1(int parent, int aggregate[4], int control
         atomic_store(&trnm_retirement.expired, 1); /* Worker must not begin/continue effects. */
     }
     return error;
+}
+
+/* Retention only, bound to the same original O/output. This cannot clear a
+ * slot, create work, cancel an in-kernel syscall or grant another attempt. */
+int trnm_kernel_retirement_retain_v1(uint64_t output[TRNM_RETIRE_WORDS]) {
+    unsigned phase = atomic_load_explicit(&trnm_retirement.phase, memory_order_acquire);
+    if (phase == TRNM_RETIRE_EMPTY || phase == TRNM_RETIRE_OWNED) return EAGAIN;
+    if (!output || output != trnm_retirement.output || getpid() != trnm_retirement.pid ||
+        syscall(SYS_gettid) != trnm_retirement.owner_tid) return EPERM;
+    if (phase != TRNM_RETIRE_READY && phase != TRNM_RETIRE_RUNNING) return EALREADY;
+    int no_error = 0;
+    atomic_compare_exchange_strong(&trnm_retirement.error, &no_error, ECANCELED);
+    return 0;
 }

@@ -179,5 +179,20 @@ class HostRetirementTests(unittest.TestCase):
         with self.assertRaises(ValueError):op._retire_children()
         self.assertEqual(op.native.activate_retirement.call_count,1)
 
+    def test_pending_entry_and_retention_latch_failure_keep_original_first_error(self):
+        launch,op,cap,paths,child=self.terminal()
+        first=MemoryError('original-pending-return')
+        later=KeyboardInterrupt('retain-latch-return')
+        op.native.activate_retirement=Mock(side_effect=first)
+        op.native.retain_retirement=Mock(side_effect=later)
+        saved=tuple(tuple(slot) for slot,_ in cap._fds)
+        with self.assertRaises(MemoryError):op._retire_children()
+        self.assertIs(op._first_error,first)
+        self.assertIs(op._retirement_latch_failure,later)
+        op.native.retain_retirement.assert_called_once_with(launch._retirement)
+        self.assertEqual(tuple(tuple(slot) for slot,_ in cap._fds),saved)
+        self.assertIs(host._retained_aggregate_owner(),cap)
+        self.assertTrue(op.failed);self.assertEqual(cap._leaf_phase,'UNKNOWN_RETAINED')
+
 
 if __name__=='__main__':unittest.main(verbosity=2)

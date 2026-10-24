@@ -52,6 +52,7 @@ class _HostControllerOperation:
                 self.spawn_owner = self.child = None
                 self._aggregate = None  # One private subordinate native launch, never a grant.
                 self._retirement_terminal = None
+                self._retirement_latch_failure = None
                 self._first_error = None
                 self._meters = {'operation': (0, 0), 'controller': (0, 0), 'aggregate': (0, 0)}
                 self._source = kernel._digest(kernel._bytes(Path(__file__)))
@@ -73,6 +74,14 @@ class _HostControllerOperation:
             self._first_error = error  # Same exception object, no formatting/copy or retry.
         self.failed = True
         self.cap._leaf_phase, self.cap._failed, self.cap._ready = 'UNKNOWN_RETAINED', True, False
+        if self._aggregate is not None and getattr(self.cap, '_retirement_attempt', None) is self._aggregate:
+            try:
+                self.native.retain_retirement(self._aggregate._retirement)
+            except BaseException as failure:
+                # Preserve the original first failure even at this error path.
+                # One fixed retained diagnostic, no retry/helper/clear action.
+                if self._retirement_latch_failure is None:
+                    self._retirement_latch_failure = failure
 
     def _verify_locked(self):
         try:

@@ -137,6 +137,9 @@ class _Native:
             self.activate_retirement.argtypes = [ctypes.c_int, slots, slots, slots, words,
                 ctypes.c_uint64, words]
             self.activate_retirement.restype = ctypes.c_int
+            self.retain_retirement = self.library.trnm_kernel_retirement_retain_v1
+            self.retain_retirement.argtypes = [words]
+            self.retain_retirement.restype = ctypes.c_int
         except BaseException:
             os.close(self.fd)
             raise

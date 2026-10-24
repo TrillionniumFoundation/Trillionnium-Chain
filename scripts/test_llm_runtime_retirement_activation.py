@@ -87,6 +87,8 @@ void review_continue(void) { atomic_store(&review_release, 1); }
         lib.trnm_kernel_retirement_activate_v1.argtypes = [ctypes.c_int,slots,slots,slots,words,
             ctypes.c_uint64,words]
         lib.trnm_kernel_retirement_activate_v1.restype = ctypes.c_int
+        lib.trnm_kernel_retirement_retain_v1.argtypes = [words]
+        lib.trnm_kernel_retirement_retain_v1.restype = ctypes.c_int
         lib.review_configure.argtypes = [ctypes.c_int,ctypes.c_int,ctypes.c_int]
         return lib
 
@@ -238,6 +240,29 @@ void review_continue(void) { atomic_store(&review_release, 1); }
         with patch.object(Path,'exists',check):self.expired(lib,out,deadline)
         self.assertEqual(observed,[0,1])
         self.assertEqual((out[0],out[1],out[17]),(4,errno.ETIMEDOUT,1))
+
+    def test_original_owner_retention_latch_stops_after_inflight_remove_before_same_cutoff(self):
+        lib,root,owned,child,out,deadline,args=self.fixture(3)
+        saved=[tuple(v) for v in owned+[child]]
+        self.assertEqual(lib.trnm_kernel_retirement_activate_v1(*args),0)
+        while not lib.review_blocked():
+            self.assertLess(time.monotonic_ns(),deadline);time.sleep(.001)
+        seen=[]
+        thread=threading.Thread(target=lambda:seen.append(lib.trnm_kernel_retirement_retain_v1(out)))
+        thread.start();thread.join();self.assertEqual(seen,[errno.EPERM])
+        self.assertEqual(lib.trnm_kernel_retirement_retain_v1((ctypes.c_uint64*24)()),errno.EPERM)
+        self.assertEqual(lib.trnm_kernel_retirement_snapshot_v1(out),0)
+        self.assertEqual(out[1],0)
+        self.assertEqual(lib.trnm_kernel_retirement_retain_v1(out),0)
+        self.assertLess(time.monotonic_ns(),deadline)
+        lib.review_continue();self.finished(lib,out,deadline)
+        self.assertEqual((out[0],out[1],out[20],out[21]),(5,errno.ECANCELED,1,1))
+        self.assertEqual(out[8],deadline)
+        self.assertEqual([tuple(v) for v in owned+[child]],saved)
+        self.assertFalse((root/'aggregate').exists());self.assertTrue((root/'controller').is_dir())
+        self.assertEqual(lib.review_count(),1)
+        self.assertEqual(lib.trnm_kernel_retirement_activate_v1(*args),errno.EALREADY)
+        self.assertEqual(lib.trnm_kernel_retirement_retain_v1(out),errno.EALREADY)
 
 
 if __name__=='__main__':unittest.main(verbosity=2)

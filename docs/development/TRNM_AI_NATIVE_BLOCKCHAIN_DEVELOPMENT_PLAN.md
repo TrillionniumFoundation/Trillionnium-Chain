@@ -2158,12 +2158,16 @@ worker consumes a release-published fixed payload and removes A then C through
 the original U FD and exact held name/inode checks, closing each original slot
 and finally the original C pidfd. Each irreversible step records actual progress;
 error, blocking or late completion retains the root and every remaining slot,
-without retry/reentry or a renewed deadline. A sticky pre-entry marker forbids
+without retry/reentry or a renewed deadline. A same-O retain-only native latch
+propagates a pending Python failure to the worker before its next irreversible
+step, preserving the original first error even if the latch itself raises; an
+already entered kernel call cannot be canceled or recast as timely success.
+A sticky pre-entry marker forbids
 live verifier scans while those arrays may be closing. A separate strict phase
 verifier accepts only complete native progress, original identity/quiescence and
 unchanged U history; it reports unlink/close facts, never Whole-U or resource
-return. Eight real own-directory controls (explicit test-only filesystem wrapper)
-and six modeled exact-terminal/phase controls do not qualify real cgroup
+return. Nine real own-directory controls (explicit test-only filesystem wrapper)
+and seven modeled exact-terminal/phase controls do not qualify real cgroup
 retirement. The original preparation observation helper rereads its same buffer
 after actual thread disappearance for its unchanged finished==1 assertion;
 the prior cached-snapshot race and a deterministic old-helper failure are kept.
