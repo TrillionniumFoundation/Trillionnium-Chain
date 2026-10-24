@@ -61,6 +61,7 @@ class HostRetirementTests(unittest.TestCase):
                 launch,op,cap,paths=self.launch()
                 launch._terminal_fact=substitute;op._retirement_terminal=substitute
                 op.native.activate_retirement=Mock()
+                with self.assertRaises(TypeError):launch._activate_retirement_locked({'pristine':True})
                 with self.assertRaisesRegex(ValueError,'exact-terminal-required'):op._retire_children()
                 op.native.activate_retirement.assert_not_called()
                 self.assertIsNone(getattr(cap,'_retirement_attempt',None))

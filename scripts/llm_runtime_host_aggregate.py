@@ -219,8 +219,13 @@ class _AggregateLaunch:
             exit_code=self.record[1], waited_user_us=user_us, waited_system_us=system_us,
             whole_u_terminal=False, resource_return_proven=False, reservation='RETAINED')
 
-    def _activate_retirement_locked(self, raw):
+    def _activate_retirement_locked(self):
         op, cap = self.operation, self.operation.cap
+        self.native._lock_for_owner()
+        require(self.native._busy._recursion_count() == 1 and
+            getattr(cap, '_retirement_attempt', None) is None,
+            'host-retirement-original-single-attempt')
+        raw = op._verify_locked()  # Fresh original observations; no caller-supplied DTO.
         fact, child = self._terminal_fact, op.spawn_owner
         require(type(fact) is _ExactTerminal and op._retirement_terminal is fact and
             fact.launch is self and fact.child is child and fact.record is self.record and

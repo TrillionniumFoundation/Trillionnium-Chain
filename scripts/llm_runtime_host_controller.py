@@ -254,8 +254,7 @@ class _HostControllerOperation:
                 require(type(self._aggregate) is _AggregateLaunch and
                     getattr(self.cap, '_retirement_attempt', None) is None,
                     'host-retirement-original-single-attempt')
-                raw = self._verify_locked()  # All original live checks, before any effect.
-                return self._aggregate._activate_retirement_locked(raw)
+                return self._aggregate._activate_retirement_locked()
             except BaseException as error:
                 self._refuse(error)
                 raise
