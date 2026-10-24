@@ -65,7 +65,7 @@ mod unix {
             CellProviderStatementV1, CellRendezvousLimitsV1, CELL_DISCOVERY_PROFILE_V1,
             CELL_PROVIDER_RECORD_BYTES_V1, MAX_DISCOVERY_BOOTSTRAPS,
         },
-        parse_digest, CellCacheConfigV3, CellContextV1, CellDigestV1, CellErrorV1,
+        parse_digest, CellCacheConfigV4, CellContextV1, CellDigestV1, CellErrorV1,
         CellPeerLimitsV1, CellStoreV1,
     };
 
@@ -239,7 +239,7 @@ mod unix {
     fn fetch(args: &mut Args, started: Instant) -> Result<()> {
         let path = PathBuf::from(args.take("--directory")?);
         let store = PathBuf::from(args.take("--store")?);
-        let cache_config = CellCacheConfigV3 {
+        let cache_config = CellCacheConfigV4 {
             max_database_bytes: args.number("--cache-max-db-bytes")?,
             max_logical_bytes: args.number("--cache-max-bytes")?,
             max_chunk_rows: args.number("--cache-max-chunks")?,

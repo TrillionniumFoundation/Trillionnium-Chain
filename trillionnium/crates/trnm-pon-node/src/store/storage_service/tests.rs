@@ -446,8 +446,8 @@ fn native_cell_repair_cpu_owner_cannot_move_threads_or_resume_after_exhaustion()
 }
 
 // Explicit finite fixture quota; covers the existing <=32MiB commit fixtures.
-fn cache_config() -> trnm_data_availability::cell::CellCacheConfigV3 {
-    trnm_data_availability::cell::CellCacheConfigV3 {
+fn cache_config() -> trnm_data_availability::cell::CellCacheConfigV4 {
+    trnm_data_availability::cell::CellCacheConfigV4 {
         max_database_bytes: 128 * 1024 * 1024,
         max_logical_bytes: 64 * 1024 * 1024,
         max_chunk_rows: 4096,

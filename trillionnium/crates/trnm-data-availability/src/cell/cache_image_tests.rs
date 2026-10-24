@@ -2,8 +2,8 @@ use super::*;
 use std::{io::Write, sync::Barrier};
 
 const CAP: u64 = 262_144;
-fn image_config() -> CellCacheConfigV3 {
-    CellCacheConfigV3 {
+fn image_config() -> CellCacheConfigV4 {
+    CellCacheConfigV4 {
         max_database_bytes: CAP,
         ..cache_config()
     }
@@ -183,16 +183,16 @@ fn fourth_config_is_immutable_exact_finite_and_old_tcl2_is_not_migrated() {
     let cache = CellStoreV1::open(&path, image_config()).unwrap();
     let db = Connection::open(&path).unwrap();
     for sql in [
-        "UPDATE cell_cache_quota_v3 SET max_database_bytes=max_database_bytes+4096",
-        "DELETE FROM cell_cache_quota_v3",
-        "INSERT OR REPLACE INTO cell_cache_quota_v3 VALUES(1,1,1,1,262144,0,0,0)",
+        "UPDATE cell_cache_quota_v4 SET max_database_bytes=max_database_bytes+4096",
+        "DELETE FROM cell_cache_quota_v4",
+        "INSERT OR REPLACE INTO cell_cache_quota_v4 VALUES(1,1,1,1,262144,0,0,0)",
     ] {
         assert!(db.execute(sql, []).is_err(), "{sql}");
     }
     assert!(matches!(
         CellStoreV1::open(
             &path,
-            CellCacheConfigV3 {
+            CellCacheConfigV4 {
                 max_database_bytes: CAP + 4096,
                 ..image_config()
             }
@@ -203,7 +203,7 @@ fn fourth_config_is_immutable_exact_finite_and_old_tcl2_is_not_migrated() {
         let absent = dir.path().join(format!("invalid-{limit}"));
         assert!(CellStoreV1::open(
             &absent,
-            CellCacheConfigV3 {
+            CellCacheConfigV4 {
                 max_database_bytes: limit,
                 ..image_config()
             }
@@ -244,6 +244,8 @@ fn fourth_config_is_immutable_exact_finite_and_old_tcl2_is_not_migrated() {
 
 #[test]
 fn held_reader_with_real_changes_allows_wal_to_exceed_the_main_database_cap() {
+    // Frozen historical TCL3 control; original body, counts and >cap assertion remain.
+    use historical_tcl3::{image_config, CellStoreV1};
     let dir = tempfile::tempdir().unwrap();
     let path = dir.path().join("wal.sqlite");
     let cache = CellStoreV1::open(&path, image_config()).unwrap();
@@ -354,3 +356,77 @@ CREATE TRIGGER cache_manifest_delete AFTER DELETE ON cell_manifests_v1 BEGIN
 INSERT INTO cell_cache_quota_v2 VALUES(1,67108864,4096,256,0,0,0);
 PRAGMA application_id=1413696562; PRAGMA user_version=2;
 "#;
+
+// Test-only original TCL3 owner. Production never opens or migrates TCL3.
+#[test]
+fn original_tcl3_cache_is_refused_without_migration_or_reset() {
+    let dir = tempfile::tempdir().unwrap();
+    let path = dir.path().join("original-tcl3.sqlite");
+    let old = historical_tcl3::CellStoreV1::open(&path, historical_tcl3::image_config()).unwrap();
+    let (c, b) = chunk(1, 16_384);
+    old.put_chunk(&c, &b).unwrap();
+    drop(old);
+    let before = fs::read(&path).unwrap();
+    assert!(matches!(
+        CellStoreV1::open(&path, image_config()),
+        Err(CellErrorV1::Invalid("cache namespace"))
+    ));
+    assert!(matches!(
+        CellStoreV1::open_read_only(&path),
+        Err(CellErrorV1::Invalid("cache namespace"))
+    ));
+    assert_eq!(fs::read(&path).unwrap(), before);
+}
+
+// Frozen cache_budget.rs from 8b0cdc25327ab8bc59cdcda4ffed1f673c311d24:
+// sha256 254ccb0e0a8171f2a00dfb919c8153c45518d16eb9499104850d5b49a9075e52.
+mod historical_tcl3 {
+    use super::*;
+    use crate::cell::historical_tcl3_cache_budget as budget;
+    pub(super) fn image_config() -> budget::CellCacheConfigV3 {
+        budget::CellCacheConfigV3 {
+            max_database_bytes: CAP,
+            max_logical_bytes: 64 * 1024 * 1024,
+            max_chunk_rows: 4096,
+            max_manifest_rows: 256,
+        }
+    }
+    pub(super) struct CellStoreV1 {
+        connection: Connection,
+    }
+    impl CellStoreV1 {
+        pub(super) fn open(path: &Path, config: budget::CellCacheConfigV3) -> CellResultV1<Self> {
+            config.validate()?;
+            let connection = Connection::open_with_flags(
+                path,
+                rusqlite::OpenFlags::SQLITE_OPEN_READ_WRITE
+                    | rusqlite::OpenFlags::SQLITE_OPEN_CREATE
+                    | rusqlite::OpenFlags::SQLITE_OPEN_NOFOLLOW,
+            )?;
+            connection.busy_timeout(Duration::from_secs(5))?;
+            connection.pragma_update(None, "trusted_schema", false)?;
+            budget::open(&connection, Some(config), true)?;
+            connection.pragma_update(None, "journal_mode", "WAL")?;
+            connection.pragma_update(None, "synchronous", "FULL")?;
+            Ok(Self { connection })
+        }
+        pub(super) fn put_chunk(&self, expected: &CellChunkV1, bytes: &[u8]) -> CellResultV1<()> {
+            crate::cell::store::verify_chunk(expected, bytes)?;
+            self.connection.execute(
+                "INSERT INTO cell_chunks_v1(hash, bytes) VALUES (?1, ?2)
+                ON CONFLICT(hash) DO UPDATE SET bytes = excluded.bytes",
+                params![expected.sha256.as_slice(), bytes],
+            )?;
+            Ok(())
+        }
+        pub(super) fn cache_usage(&self) -> CellResultV1<budget::CellCacheUsageV2> {
+            let transaction = rusqlite::Transaction::new_unchecked(
+                &self.connection,
+                rusqlite::TransactionBehavior::Deferred,
+            )?;
+            let usage = budget::audit(&transaction, None)?;
+            transaction.commit()?;
+            Ok(usage)
+        }
+    }
+}

@@ -1,15 +1,15 @@
 //! Persistent logical admission plus a main DB-image length/page cap.
-//! This is not allocated-block reservation or a WAL/SHM/temp/output disk limit.
+//! WAL admission is separately owned by cache_wal; this is not block reservation.
 use rusqlite::{params, Connection, TransactionBehavior};
 
 use super::{require, CellResultV1};
 
-pub(super) const APPLICATION_ID: i64 = 0x5443_4c33;
+pub(super) const APPLICATION_ID: i64 = 0x5443_4c34;
 
 /// Immutable per-cache limits; no per-fetch reset or unlimited default.
 /// Logical bytes include chunk payload, manifest wire and every 32-byte key.
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
-pub struct CellCacheConfigV3 {
+pub struct CellCacheConfigV4 {
     /// Main database image/file length only; not total disk usage or reservation.
     pub max_database_bytes: u64,
     pub max_logical_bytes: u64,
@@ -17,7 +17,20 @@ pub struct CellCacheConfigV3 {
     pub max_manifest_rows: u64,
 }
 
-impl CellCacheConfigV3 {
+impl CellCacheConfigV4 {
+    /// One spill-free transaction from an empty WAL, including the bundled
+    /// SQLite maximum 64-KiB sector-padding allowance (16 additional frames).
+    pub fn max_wal_bytes(self) -> CellResultV1<u64> {
+        self.validate()?;
+        Ok(32 + (self.max_database_bytes / 4096 + 16) * 4120)
+    }
+
+    /// Conservative 32-KiB wal-index regions, including its shorter first region.
+    pub fn max_shm_bytes(self) -> CellResultV1<u64> {
+        self.validate()?;
+        Ok(32768 * (1 + (self.max_database_bytes / 4096 + 16).div_ceil(4096)))
+    }
+
     pub fn validate(self) -> CellResultV1<()> {
         require(
             (262_144..=2_199_023_255_552).contains(&self.max_database_bytes)
@@ -28,6 +41,19 @@ impl CellCacheConfigV3 {
             "finite cache configuration",
         )
     }
+}
+
+pub(super) fn config(connection: &Connection) -> CellResultV1<CellCacheConfigV4> {
+    let value = connection.query_row(
+        "SELECT max_database_bytes,max_bytes,max_chunks,max_manifests FROM cell_cache_quota_v4 WHERE singleton=1",
+        [],
+        |r| Ok(CellCacheConfigV4 {
+            max_database_bytes: r.get(0)?, max_logical_bytes: r.get(1)?,
+            max_chunk_rows: r.get(2)?, max_manifest_rows: r.get(3)?,
+        }),
+    )?;
+    value.validate()?;
+    Ok(value)
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -45,7 +71,7 @@ fn schema() -> Vec<(&'static str, &'static str, String)> {
         ("table", "cell_chunks_v1", "CREATE TABLE cell_chunks_v1 (
             hash BLOB PRIMARY KEY CHECK(length(hash)=32),
             bytes BLOB NOT NULL CHECK(length(bytes) BETWEEN 1 AND 4194304)) STRICT".to_owned()),
-        ("table", "cell_cache_quota_v3", "CREATE TABLE cell_cache_quota_v3 (
+        ("table", "cell_cache_quota_v4", "CREATE TABLE cell_cache_quota_v4 (
             singleton INTEGER PRIMARY KEY CHECK(singleton=1),
             max_bytes INTEGER NOT NULL CHECK(max_bytes BETWEEN 1 AND 1099511627776),
             max_chunks INTEGER NOT NULL CHECK(max_chunks BETWEEN 1 AND 1048576),
@@ -57,13 +83,13 @@ fn schema() -> Vec<(&'static str, &'static str, String)> {
                 typeof(chunk_rows)='integer' AND chunk_rows BETWEEN 0 AND max_chunks AND
                 typeof(manifest_rows)='integer' AND manifest_rows BETWEEN 0 AND max_manifests)) STRICT".to_owned()),
         ("trigger", "cache_config_immutable", "CREATE TRIGGER cache_config_immutable
-            BEFORE UPDATE OF singleton,max_bytes,max_chunks,max_manifests,max_database_bytes ON cell_cache_quota_v3
+            BEFORE UPDATE OF singleton,max_bytes,max_chunks,max_manifests,max_database_bytes ON cell_cache_quota_v4
             BEGIN SELECT RAISE(ABORT,'cache_config_immutable'); END".to_owned()),
         ("trigger", "cache_config_no_delete", "CREATE TRIGGER cache_config_no_delete
-            BEFORE DELETE ON cell_cache_quota_v3
+            BEFORE DELETE ON cell_cache_quota_v4
             BEGIN SELECT RAISE(ABORT,'cache_config_immutable'); END".to_owned()),
         ("trigger", "cache_config_no_replace", "CREATE TRIGGER cache_config_no_replace
-            BEFORE INSERT ON cell_cache_quota_v3 WHEN EXISTS(SELECT 1 FROM cell_cache_quota_v3)
+            BEFORE INSERT ON cell_cache_quota_v4 WHEN EXISTS(SELECT 1 FROM cell_cache_quota_v4)
             BEGIN SELECT RAISE(ABORT,'cache_config_immutable'); END".to_owned()),
     ];
     for (table, data, counter) in [
@@ -95,7 +121,7 @@ fn schema() -> Vec<(&'static str, &'static str, String)> {
                 name,
                 format!(
                     "CREATE TRIGGER {name} AFTER {event} ON {table} BEGIN
-                 UPDATE cell_cache_quota_v3 SET used_bytes=used_bytes+({bytes}),
+                 UPDATE cell_cache_quota_v4 SET used_bytes=used_bytes+({bytes}),
                  {counter}={counter}{rows} WHERE singleton=1; END"
                 ),
             ));
@@ -110,10 +136,10 @@ fn catalog_schema() -> Vec<(&'static str, &'static str, &'static str, Option<Str
         .into_iter()
         .map(|(kind, name, sql)| {
             let table = match name {
-                "cell_cache_quota_v3"
+                "cell_cache_quota_v4"
                 | "cache_config_immutable"
                 | "cache_config_no_delete"
-                | "cache_config_no_replace" => "cell_cache_quota_v3",
+                | "cache_config_no_replace" => "cell_cache_quota_v4",
                 "cell_chunks_v1" | "cache_chunk_insert" | "cache_chunk_update"
                 | "cache_chunk_delete" => "cell_chunks_v1",
                 "cell_manifests_v1"
@@ -215,16 +241,16 @@ fn validate_schema(connection: &Connection) -> CellResultV1<()> {
 
 pub(super) fn audit(
     connection: &Connection,
-    expected: Option<CellCacheConfigV3>,
+    expected: Option<CellCacheConfigV4>,
 ) -> CellResultV1<CellCacheUsageV2> {
     validate_schema(connection)?;
     let (config, usage) = connection.query_row(
         "SELECT max_bytes,max_chunks,max_manifests,used_bytes,chunk_rows,manifest_rows,max_database_bytes
-         FROM cell_cache_quota_v3 WHERE singleton=1",
+         FROM cell_cache_quota_v4 WHERE singleton=1",
         [],
         |row| {
             Ok((
-                CellCacheConfigV3 {
+                CellCacheConfigV4 {
                     max_database_bytes: row.get(6)?,
                     max_logical_bytes: row.get(0)?,
                     max_chunk_rows: row.get(1)?,
@@ -283,7 +309,7 @@ pub(super) fn audit(
 
 pub(super) fn open(
     connection: &Connection,
-    expected: Option<CellCacheConfigV3>,
+    expected: Option<CellCacheConfigV4>,
     writable: bool,
 ) -> CellResultV1<()> {
     if let Some(config) = expected {
@@ -318,7 +344,7 @@ pub(super) fn open(
             transaction.execute_batch(sql)?;
         }
         transaction.execute(
-            "INSERT INTO cell_cache_quota_v3 VALUES(1,?1,?2,?3,?4,0,0,0)",
+            "INSERT INTO cell_cache_quota_v4 VALUES(1,?1,?2,?3,?4,0,0,0)",
             params![
                 config.max_logical_bytes,
                 config.max_chunk_rows,
@@ -327,17 +353,17 @@ pub(super) fn open(
             ],
         )?;
         transaction.pragma_update(None, "application_id", APPLICATION_ID)?;
-        transaction.pragma_update(None, "user_version", 3)?;
+        transaction.pragma_update(None, "user_version", 4)?;
     } else {
         require(
-            application == APPLICATION_ID && version == 3,
+            application == APPLICATION_ID && version == 4,
             "cache namespace",
         )?;
     }
     audit(&transaction, expected)?;
     if writable {
         let cap: u64 = transaction.query_row(
-            "SELECT max_database_bytes FROM cell_cache_quota_v3 WHERE singleton=1",
+            "SELECT max_database_bytes FROM cell_cache_quota_v4 WHERE singleton=1",
             [],
             |r| r.get(0),
         )?;

@@ -5,6 +5,10 @@ This creates evidence, not independent evaluation, product qualification or a
 release decision. All source and destination directories must be explicit. The
 finite producer exits before the unavailable consumer boundary. Transport
 completion cannot establish I10; this command deliberately fails closed there.
+All six writer CLI entries use fresh TCL4/schema4 caches and the same immutable
+caps. The main-image cap also derives supported WAL/SHM file-length allowances;
+a pinned cache reader can refuse before mutation. Old TCL3 caches are not migrated.
+No allocated-block, output, whole-model use or global-disk authority is supplied.
 """
 from __future__ import annotations
 

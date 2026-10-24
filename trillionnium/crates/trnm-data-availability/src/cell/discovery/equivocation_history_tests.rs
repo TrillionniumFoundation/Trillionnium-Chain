@@ -303,8 +303,8 @@ fn tcp_higher_sequence_cannot_hide_observed_earlier_sequence_equivocation() {
 }
 
 // Explicit finite fixture quota; covers the existing <=32MiB commit fixtures.
-fn cache_config() -> crate::cell::CellCacheConfigV3 {
-    crate::cell::CellCacheConfigV3 {
+fn cache_config() -> crate::cell::CellCacheConfigV4 {
+    crate::cell::CellCacheConfigV4 {
         max_database_bytes: 128 * 1024 * 1024,
         max_logical_bytes: 64 * 1024 * 1024,
         max_chunk_rows: 4096,
