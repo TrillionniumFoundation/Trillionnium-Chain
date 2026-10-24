@@ -1908,6 +1908,146 @@ zero adoption/reward, not a manufactured success.
 Owners: M09/M10/M11/M12 with M07/M08 and existing local effect owners.
 Entry: PN2 conservation and PN3 exact operation/release identities.
 
+**P0 native owner prerequisite, fresh namespace interface.** The existing
+runtime owner now has a separate preparatory
+[HostScopeAdmission](../../scripts/llm_runtime_host_scope.py) interface, with
+[bounded manager transport](../../scripts/llm_runtime_host_scope_io.py).
+It issues the actual `StartTransientUnit` request for the original caller O;
+it does not execute that request at import or during the fixture tests.
+The manager owns fresh scope S. O creates H only below S's original held FD.
+O moves S -> H, enables S's controllers only after S is empty, creates
+`H/observer`, moves there and enables H's controllers only after H is empty.
+S has the manager's 17GiB/500%/272-task ceiling; H has the same resource ceiling
+and real depth2/descendants4 bounds. H contains observer O (1GiB/100%/16) and
+operation U (16GiB/400%/256, depth1/descendants2); U contains controller C
+(128MiB/100%/16) and aggregate A (8GiB/300%/240), both bounded leaves.
+These engineering ceilings are nested, not additional supply or funding.
+S's topology controls are not part of systemd255's delegated-file allowlist;
+the interface neither writes them nor claims a kernel topology bound on S.
+Exact observed S-only-H topology and hard H bounds are separate predicates.
+
+The original PID/thread/starttime, boot, namespace handles, manager unique name,
+original invocation, mount, directory FDs, source bytes, limits and ancestor
+ceilings are retained and checked. Existing groups are never adopted. Any
+unknown manager outcome or later mismatch is sticky; the original owner and
+FDs remain held. No stop/delete/reset/second request converts it to success.
+Moving O does not move previously charged pages, as specified by the
+[kernel memory-ownership contract](https://docs.kernel.org/admin-guide/cgroup-v2.html#memory-ownership).
+Consequently this is only a fresh namespace/subsequent-charge boundary; O's
+complete RSS, original host baseline funding and physical resource return
+remain open. Compatible ancestor ceilings are not reservations or CPU service.
+
+The twenty-nine local controls retain all twenty-two preceding controls and use real bounded transport subprocesses, the original
+source-built native close-and-clear slots and
+ordinary temporary-FD layout fixtures with a mock manager. The retained-owner
+regression adds an immutable copy of every native slot value and signature;
+controlled bookkeeping mutations around real owned FDs must be detected without
+changing the original assertions. A separate read-only
+query checked real `busctl` method/property response shapes against the existing
+manager. Those controls create no native scope. A separate
+[first native attempt on exact378](../../evidence/pon-upgrade-implementation-20261018/native-rounds/host-namespace-pristine-failure-20261023/SCOPE.md)
+reached `host-operation-not-pristine` in its one original admission and remains
+UNKNOWN. Its twelve exports preserve original owner/job/invocation, six stored
+group identities and sixteen owned slots; the old unit/cap is never reused.
+The old guard did not identify the failing role/counter, so no charge or kernel
+bookkeeping is exempted and no root cause is asserted. The diagnostic successor
+captures role/field and the same first returned raw value without rereading,
+reordering or weakening any original short-circuit empty/zero predicate.
+An immutable first-failure tuple retains the complete bounded raw; exception
+messages expose its length/hash and explicitly mark any raw suffix omitted to
+fit the existing probe's4096-character diagnostic limit. Ordinary-file counter,
+read-order, first-value and sticky-owner controls do not qualify native pristine.
+Actual exit status stays UNKNOWN and whole-probe completion remains NOT_PROVEN;
+the ordinary-exit intent and missing PID are not settlement or resource-return
+proof. Another fresh native request requires independent review and a new GO.
+
+**P0 phase correction, same original owner (preparation slice only).** The next
+[exact-e6 native observation](../../evidence/pon-upgrade-implementation-20261018/native-rounds/host-memcg-phase-boundary-20261023/SCOPE.md)
+captured `operation.memory.current=258048\n` at the first failed read, without
+rereading. It remains UNKNOWN. Official Linux7 and Ubuntu7.0-38 source select the
+parent active memcg while allocating accounted child-memcg statistics: creating
+C/A below U can charge U even while O runs in observer and before C/A task birth.
+The exact byte decomposition and deployed HWE source/config identity are not
+proved. These are real U expenses, neither a deductible baseline nor exempt
+bookkeeping. The original complete-layout `admit` path and all seven pristine
+zero/empty requirements remain unchanged in meaning and remain unqualified.
+
+M14/M17's existing `HostScopeAdmission`, manager/FD owner and limits now expose
+`prepare_fresh_host_leaf()` -> same original owner -> `admit_fresh_leaf()` ->
+private `_FreshULeafFact` -> `consume_fresh_leaf(fact)` once. No caller supplies a
+leaf/pristine claim. The actual registered topology is only S/H/observer/U; the
+unchanged guard runs on U before any C/A directory exists. The fact is bound to
+that original owner, source, fresh generation, PID, manager unit/invocation and
+held U identity; it cannot be copied/serialized or used by another owner. The
+consume operation rechecks the actual facts, returns no authority and transitions
+to LEAF_PROOF_CONSUMED; any ambiguity becomes sticky UNKNOWN_RETAINED with the
+original slots held. It creates no child, operation grant, new owner or journal.
+Factory owner/generation faults close before effects; cleanup failure returns
+the same owner through `KernelOwnedCloseRequired`. All old22 plus seven new
+ordinary-FD/mock-manager controls pass locally; none is
+native admission or resource-return qualification.
+
+The same staged owner now exposes `prepare_fresh_child_groups()` only after
+LEAF_PROOF_CONSUMED. It creates C then A with create-only relative mkdir, holds
+their actual FDs and configures/readbacks the original C128MiB/100%/16 and
+A8GiB/300%/240 ceilings under U16GiB/400%/256. Each intermediate topology is
+checked with the same original manager/invocation, PID/thread/source, held
+identities and ancestor ceilings. U's actual current and historical peak must
+fit its full memory ceiling, with zero swap/tasks/CPU usage and memory events;
+no child metadata is subtracted or exempted. Only newly created C/A use the
+unchanged seven pristine predicates. U is never called pristine after birth of
+its child groups. `verify_child_preparation()` reads the dedicated completed
+phase; successful preparation returns None and keeps `_ready=False`. This narrow
+staged API is not the still-absent controller process/spawn authority protected
+by the original controls, and existing production adapters cannot consume it as
+ready. Partial creation/configuration or any later uncertainty keeps the original
+cap, first error, attempted role and held slots in UNKNOWN_RETAINED; it performs
+no close, removal, retry or adoption. Native C/A preparation remains NOT_RUN.
+
+The old aggregate constructor requires a service with the current C in its
+controller subgroup; this scope's original O remains in H/observer. It cannot
+be passed to that constructor or cast to a KernelBudget/Qualified fact. Actual
+O-parent wait4(C), C-parent wait4(A), evidence binding/drain, ordered retirement,
+whole-U terminal accounting, original baseline funding and settlement remain
+OPEN. The source controls use ordinary files/FDs and a mock manager, including
+modeled positive U metadata charges; they are not new kernel measurements.
+
+The existing PN4 dependency and acceptance sequence is:
+
+| Stage / owner | Interface and required evidence | Status / exit |
+| --- | --- | --- |
+| Fresh leaf / M14/M17 | Same original owner; exact topology/limits/source/generation and original seven-zero guard before C/A | Preparation and one-shot consumption implemented; new native qualification OPEN |
+| C/A preparation and birth / same owner, Hepta kernel.operations | Consume the same fact once, then create exact bounded C/A; charge all child bookkeeping to U's 16GiB; original native birth/pidfd/wait4 binding | Same-owner source preparation implemented; native C/A preparation and actual birth/wait4 OPEN |
+| Running and quiescing / same original O | Monotonic existing operation/effect identity; authoritative original C and A exits plus zero leaf populations/descendants | OPEN; never call running U pristine |
+| Normal retirement / same original O | Only after both exits are known, retire A then C once using original parent FD/name/inode, then native close-and-clear of those original held slots | OPEN; unknown/partial removal retains all remaining slots, never retries or reuses names |
+| Whole-U terminal / original evidence-pipe and aggregate owners | Retain U/S/H/observer; actual U descendants0/dying0/current0/swap0, exact identity/limits and unchanged historical meters before original cutoff | OPEN; no charge/peak reset or baseline subtraction |
+| FinalUse and I05/I10 settlement / existing effect owners | Original authoritative terminal identity and budget/funding evidence, then existing AuthBus reconciliation | OPEN; no new journal or refund path |
+
+The eight-second fact cutoff is the original supervise start plus8s, never a new
+retirement window. Historical peak/CPU remain recorded; peak0 is a fresh-leaf
+prebirth condition, not a resettable terminal meter. Kernel CSS teardown/charge
+drain can remain pending past the cutoff: that result is UNKNOWN_RETAINED, with
+no terminal receipt, new entry or refund. Linux7 `rmdir` can block in-kernel;
+synchronous remove/poll code cannot promise an eight-second return. A future
+reviewed native asynchronous effect interface may occupy at most one bounded
+slot permanently owned by original O. On timeout it retains the slot/handles,
+forbids reentry and grants no refund; timely observer return does not prove the
+effect finished. That primitive, guardian lifetime/budget, real C/A birth and
+retirement are not implemented by this preparation slice and remain explicit
+PN4 blockers. No additional native side effects are authorized by these tests.
+
+Native S/H qualification,
+original C birth/pidfd/wait4, whole-U zero-charge terminal capture inside the
+unchanged original eight-second deadline, FinalUse entry and AuthBus settlement
+remain required in that order. This interface exposes no spawn, terminal,
+settlement, refund or model-install operation. The original sixty-six aggregate
+and charge-wait assertions remain unchanged. Fallible signature reads retain the
+already opened FD in the original native slot; close-and-clear is one unchanged
+source-built C call. Partial close faults keep that slot, and constructor cleanup
+failure returns the same owner through `KernelOwnedCloseRequired`. The generic
+`os.open` to Python-slot acquisition boundary is still trusted preparation,
+without a general asynchronous-signal leak-freedom qualification.
+
 Deliver separate finite mining, contribution, evaluation, byte-retention/repair
 and inference budgets. Reserve storage capacity and mandatory successor duties
 before acknowledgement. Price actual byte-time, transfer, evaluation and service
