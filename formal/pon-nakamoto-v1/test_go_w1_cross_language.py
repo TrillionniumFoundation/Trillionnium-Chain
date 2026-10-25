@@ -31,11 +31,6 @@ class GoW1CrossLanguageTests(unittest.TestCase):
             raise RuntimeError('GO_BUILD_FAILED: '+build.stderr.decode(errors='replace')[:4096])
         cls.observations = []
 
-    @classmethod
-    def tearDownClass(cls):
-        if hasattr(cls,'temp'):
-            cls.temp.cleanup()
-
     def call(self, mode, payload):
         self.assertLessEqual(len(payload), 96 + W.PROOF_BYTES + 1)
         return subprocess.run([self.binary,mode],input=payload,capture_output=True,
