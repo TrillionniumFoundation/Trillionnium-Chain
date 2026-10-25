@@ -1,0 +1,67 @@
+{
+  "head": "ec0f58d36cf3929df23b36e9d796696b3dbf1884",
+  "full_tree_claim": false,
+  "scope": "exact Git blob dependency subset only; no checkout or whole-tree execution claim",
+  "files": [
+    {
+      "path": "scripts/llm_runtime_pilot.py",
+      "bytes": 110375,
+      "sha256": "a175de7764eb406ed0969fd6d2d1c752750a3fcc9f87dc6601aba6eec87029b6",
+      "git_blob": "85909e9d54124a3701fdb54a144b08551d8dccf3"
+    },
+    {
+      "path": "scripts/llm_runtime_kernel_owned.py",
+      "bytes": 20637,
+      "sha256": "2c7836dada8f9a428e50c899b189167d598c650b3c676b00d26bd9c864bfd252",
+      "git_blob": "812bcf8c8569e905abeb7689de71286b6c2cd6ff"
+    },
+    {
+      "path": "scripts/llm_runtime_kernel_aggregate.py",
+      "bytes": 20654,
+      "sha256": "6fb401bd45a76702c94ae0e3c1efa85e19bbf3ff97b4ff784b6ddeb64c4a6c30",
+      "git_blob": "31df5f4ed42019649c9d7b68ae27a7dfd16211e1"
+    },
+    {
+      "path": "scripts/llm_runtime_kernel_spawn.c",
+      "bytes": 4180,
+      "sha256": "ca954a7521f4b34185f63965353ecb67b7305471c0b855115bcb39eb06d2d762",
+      "git_blob": "8916ea57ca030161681b6f66a65cf7eda36d565a"
+    },
+    {
+      "path": "scripts/llm_runtime_exit_observation.py",
+      "bytes": 10742,
+      "sha256": "c1aa0ab8889e2cbe2efd8cc80ae4f9bbb52b464aebc756a51cc5bd872c3dd086",
+      "git_blob": "6773513937f5d9b9f60f53acc8aee086b64292da"
+    },
+    {
+      "path": "scripts/llm_runtime_exit_subset_observation.py",
+      "bytes": 6327,
+      "sha256": "c24af5385011acdf898a9b899f73f64c660c30dae0fadcda6e6957f80f501aff",
+      "git_blob": "de783721d327904e3166f857505e912ed7bda9f0"
+    },
+    {
+      "path": "scripts/llm_runtime_exit_worker_observation.py",
+      "bytes": 15677,
+      "sha256": "aef05e632748437b6d7c815b54af3c99fa79b924846f12e6b80b19c100fe0db3",
+      "git_blob": "4150312a04bb93e03b6b4c31810e33dd0ffa3723"
+    },
+    {
+      "path": "scripts/llm_runtime_rss_diagnostics.py",
+      "bytes": 6867,
+      "sha256": "d15f4ddc914475ecc8ab473a16f8916b7dd805d8b39d741e49a9d2f63d8fe320",
+      "git_blob": "06c7add733a7ac8ecd208a1f88b0ed41f6abd931"
+    },
+    {
+      "path": "scripts/llm_runtime_evidence_pipe.py",
+      "bytes": 9540,
+      "sha256": "f91c14223f7128dc307e82c580ff0d09b57ef7521badb5796f37ec4827a3bed5",
+      "git_blob": "32a4c0cadceaa40bda10da3ba44ac8a3a3d7671e"
+    },
+    {
+      "path": "scripts/llm_runtime_evidence_frames.py",
+      "bytes": 11704,
+      "sha256": "8f291b3e413275d32f175c0a2a7d98210d279b83f5f3a65e24bcca9c57cb9449",
+      "git_blob": "c073014e2ff2dd9ac2d9dd1c87b56e65ef886991"
+    }
+  ]
+}
