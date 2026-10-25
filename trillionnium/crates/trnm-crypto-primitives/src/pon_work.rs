@@ -12,6 +12,7 @@ pub mod maintenance_limb;
 pub mod maintenance_periodic;
 pub mod maintenance_prefix;
 pub mod paired_product;
+pub mod rejection_cache;
 pub mod structured;
 
 pub const PROFILE: &str = "pon-matmul-transcript-64-v1";

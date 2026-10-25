@@ -56,4 +56,71 @@ class WorkPrecheckTests(unittest.TestCase):
                     self.assertEqual(observed.call_count,1)
                 ledger.recover();self.assertEqual(ledger.active()[0],bid)
             finally:ledger.close()
+
+class FourFromZeroTicketRegression(unittest.TestCase):
+    """P0: four distinct forged traces, identical task/challenge/target, no valid work."""
+    def test_four_ticket_hits_replay_and_reject(self):
+        import time
+        a=[0]*W.CELLS
+        challenge=bytes(range(32))
+        target=bytes.fromhex('7f'+'ff'*31)
+        task=W.task_id(a,a)
+        self.assertEqual(task.hex(),'6618f8a794517852f621993ccb6ac311c684e1db2b9d1d47166fa00a744c4c29')
+        prefix=b'PNW1'+W.field_bytes(a)+W.field_bytes(a)+W.field_bytes(a)
+        expected=(
+            'e20adbeeda03ed387f4a0ddb92be0210c56047c19f4bbf3768df51619a8c7888',
+            '516f779a970c30a78736aecece4fa24d2c55f9932ceaf27657ac2903367464b8',
+            '70882ef88c393f966c8f58f51dbf953045e7ba09bae4ea3ab9590e19afe0e720',
+            '23490d58b41f730b287d9eeaef73e9308dc8f3057ec591fbcbd00981a3ac768d',
+        )
+        cases=[]
+        with patch.object(W,'prove',side_effect=AssertionError('valid W1 proof forbidden')):
+            for nonce in range(128):
+                trace=L.H('public-v3-from-zero-v1',challenge,struct.pack('<Q',nonce))
+                ticket=L.H('ticket',challenge,trace)
+                if ticket <= target:
+                    cases.append((nonce,trace,ticket,prefix+trace))
+                if len(cases)==4:break
+            self.assertEqual(len(cases),4)
+            self.assertEqual([row[0] for row in cases],[0,1,2,3])
+            self.assertEqual([row[1].hex() for row in cases],list(expected))
+            observations=[]
+            for nonce,trace,ticket,proof in cases:
+                self.assertEqual(len(proof),W.PROOF_BYTES)
+                started=time.process_time_ns()
+                self.assertEqual(W.precheck(challenge,task,target,proof)[3],ticket)
+                precheck_ns=time.process_time_ns()-started
+                with patch.object(W,'evaluate',wraps=W.evaluate) as replay:
+                    started=time.process_time_ns()
+                    with self.assertRaisesRegex(ValueError,'^TRANSCRIPT
+):
+                        W.verify(challenge,task,target,proof)
+                    receiver_ns=time.process_time_ns()-started
+                self.assertEqual(replay.call_count,1)
+                self.assertGreaterEqual(precheck_ns,0)
+                self.assertGreaterEqual(receiver_ns,0)
+                self.assertEqual(proof[-32:],trace)
+                observations.append({
+                    'nonce':nonce,'trace':trace.hex(),'ticket':ticket.hex(),
+                    'proof_sha256':__import__('hashlib').sha256(proof).hexdigest(),
+                    'precheck_cpu_ns':precheck_ns,'receiver_oracle_cpu_ns':receiver_ns,
+                    'replay_calls':replay.call_count,'outcome':'TRANSCRIPT',
+                    'verified_work':False,
+                })
+            report={
+                'schema':'trnm-four-from-zero-python-oracle-p0-v1',
+                'challenge':challenge.hex(),'target':target.hex(),'task':task.hex(),
+                'proof_generation_used':False,'cases':observations,
+                'native_node_state_verified':False,'host_cpu_owner_verified':False,
+                'production_activation':False,
+            }
+            print(__import__('json').dumps(report,sort_keys=True))
+            # New, exclusive report path; never overwrite earlier measurements.
+            path=__import__('os').environ.get('TRNM_W1_FOUR_PY_REPORT')
+            if path:
+                with open(path,'x',encoding='utf-8') as stream:
+                    __import__('json').dump(report,stream,indent=2,sort_keys=True)
+                    stream.write('\n')
+        # This oracle-only test grants no Node, chainwork, CPU-owner or WAN acceptance.
+
 if __name__=='__main__':unittest.main(verbosity=2)

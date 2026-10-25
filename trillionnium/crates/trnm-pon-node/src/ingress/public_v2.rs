@@ -695,6 +695,14 @@ pub fn serve_public_protected_v2(
         lifetime > Duration::ZERO && lifetime <= Duration::from_secs(3600),
         "PUBLIC_LIFETIME",
     )?;
+    // V2 does not own V3's measured mutation-CPU account. Its legacy
+    // Hashcash and two-worker bound are not a permissionless WAN DoS defense.
+    // Fail before opening a remotely reachable listener. V3 is the selected
+    // development route for protected public ingress with CPU accounting.
+    ensure(
+        listener.local_addr()?.ip().is_loopback(),
+        "PUBLIC_V2_LOOPBACK_ONLY",
+    )?;
     let settings = node.settings().clone();
     let node = Arc::new(Mutex::new(node));
     let metrics = Arc::new(Mutex::new(PublicMetrics::default()));
@@ -714,6 +722,10 @@ fn serve_public_protected_v2_with_owner(
     ensure(
         lifetime > Duration::ZERO && lifetime <= Duration::from_secs(3600),
         "PUBLIC_LIFETIME",
+    )?;
+    ensure(
+        listener.local_addr()?.ip().is_loopback(),
+        "PUBLIC_V2_LOOPBACK_ONLY",
     )?;
     listener.set_nonblocking(true)?;
     let end = Instant::now() + lifetime;
@@ -1569,6 +1581,27 @@ mod tests {
             thread::sleep(Duration::from_millis(2));
         }
     }
+    #[test]
+    fn v2_refuses_non_loopback_before_starting_unmetered_full_w1() {
+        let directory = tempfile::tempdir().unwrap();
+        let now = super::super::now().unwrap();
+        let settings = Settings::development(Some(now - 100)).unwrap();
+        let node = Node::open(directory.path(), settings, 2).unwrap();
+        // Only bind an unspecified local socket: no remote connection or
+        // listener thread is started by this test.
+        let listener = TcpListener::bind("0.0.0.0:0").unwrap();
+        assert!(!listener.local_addr().unwrap().ip().is_loopback());
+        let error = serve_public_protected_v2(
+            listener,
+            node,
+            Duration::from_secs(1),
+            Arc::new(AtomicBool::new(false)),
+            server(),
+        )
+        .unwrap_err();
+        assert_eq!(error.to_string(), "PUBLIC_V2_LOOPBACK_ONLY");
+    }
+
     #[test]
     fn paid_mutation_body_budget_preserves_signed_read_service_with_rotating_callers() {
         let directory = tempfile::tempdir().unwrap();

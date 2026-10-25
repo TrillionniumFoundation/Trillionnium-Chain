@@ -682,3 +682,173 @@ not request refusal counts. The finite localhost three-phase control accepted al
 180 honest Submit/Head/History requests while cached and distinct-fork Product
 mutations were refused; it does not establish unknown-caller Sybil fairness or
 restore the separately unexecuted remote mixed-hostile qualification.
+
+
+## Four from-zero W1 transcripts: executable P0 boundary
+
+The existing public V3 from-zero attack and CPU-domain regressions are retained.
+An additional P0 case now constructs **four different** ticket-valid false traces
+under one challenge, canonical A/B, task and target, without calling a real W1
+producer or training. These test inputs are not asserted to be the user's earlier
+four unprovided raw payloads.
+
+* The independent Python oracle method
+  'FourFromZeroTicketRegression.test_four_ticket_hits_replay_and_reject' in
+  'formal/pon-nakamoto-v1/test_work_precheck.py' fixes challenge bytes 00..1f
+  and target 7f followed by 31 ff bytes. Its four winning trial nonces are
+  0, 1, 2, 3. Each must pass the cheap filter, perform one actual arithmetic
+  replay and fail with TRANSCRIPT.
+* The native method
+  'four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged' in
+  'trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs' selects
+  a real Node genesis maintenance context, then searches four distinct trace
+  claims under **that exact same native header challenge and target**.
+  Each is fully rejected by the reference, default and limb verifiers;
+  the reference path must visit all 512 transcript tiles, reach neither
+  product nor VerifiedWork, and Node admission must return WORK:Transcript
+  with no block, active-head, stats or cold-reopen change.
+* The existing 'scripts/ci/run_from_zero_native.py' owner now requires this
+  fifth named native test, while preserving its original four test selectors.
+  The native test prints a source-scoped report with per-case CPU and wall-clock
+  times. 'TRNM_W1_FOUR_NATIVE_REPORT' optionally saves a new create-only
+  raw JSON file; clocks that are unavailable remain null. Those are newly
+  observed costs, not fabricated historical CPU measurements.
+
+A mathematical negative test and a correctly rejected invalid block are not
+proof of public denial-of-service resistance.
+
+## P1–P6 remaining acceptance, without new authorities
+
+| Phase | Existing owner | Required evidence (not conferred by this patch) |
+| --- | --- | --- |
+| P1 | M04/M15 | Enumerate all externally reachable complete W1 verification callers and bind an actual shared host/process CPU and memory owner. Key rotation, different listener process, process restart and cancellation cannot mint fresh unaudited mutation capacity. |
+| P2 | M04/M17 | Freeze W1 target, V3 Cookie bits and expiry, full actor/source identities and CPU/GPU/hash rates. Measure whole false-trace producer, all misses, honest Cookie cost, receive/decode/W1/M06 costs and tail latency under identical resource limits; estimate no hardware-independent minimum from a single CPU. A signed Cookie revision needs a fresh versioned profile. |
+| P3 | M04/M15/M17 | Cross-connection cookie replay, caller-key rotation, distinct false traces, valid-work/false-StateRoot, benign requests and branch recovery share one real budget. Busy/Deferred/local cancellation never imply Invalid or negative chainwork. |
+| P4 | M17/A03 | In **three runs per each of three attack modes**, demonstrate 3/3 timely client-confirmed honest rounds per run under preregistered attacker and host budgets; include all failures, Busy and censored requests, unchanged task/challenge and complete raw receipts. Local/same-admin runs are not independent WAN acceptance. |
+| P5 | M01/M02/M17 | Compare W2-A Merkle intermediate-commitment sampling, W2-B complete cryptographic computation proof and W2-C explicitly separated anti-Sybil PoW. Bind complete original statement, unique lottery ticket, replay/fork choice and total generation plus validation cost. Freivalds product checks alone do not authenticate the false transcript. |
+| P6 | M01/M02/M17 | An independent reviewer implements a third verifier from a frozen new version's statement and byte grammar, tests hidden bad/valid witnesses and grinding/replay, and signs an environment/source-bound opinion. No internal vector or single assistant review can supply independence. |
+
+All existing W1 signed domain, 49,188-byte proof, challenge, ticket formula,
+fork choice and protocol acceptance remain unchanged. Admitting public work
+is a *resource* decision; only complete verification confers the existing
+VerifiedWork result. New W2 logic must use a separately governed version,
+consensus context and external review, not an implicit fallback.
+
+
+### P1 initial concrete W1 caller inventory (source audit, not an acceptance claim)
+
+This static inspection is pinned to source parent
+'630f871293e48588e0a1ceae7ceb64973d3ec31d'.
+It names concrete native callers; a complete public reachability graph and
+verified host-wide budgets remain pending.
+
+| Entry | Actual W1 call | Existing cost owner and gap |
+| --- | --- | --- |
+| M15 native Node 'store.rs:Node::admit' | 'WorkCheckedPacket::verify' followed by checked native admission | Context/owner checked; not itself a host-wide public CPU scheduler. All remotely influenced callers need upstream resource ownership. |
+| M04 native ingress 'ingress.rs:measured_work_verify' | Full 'WorkCheckedPacket::verify' | Timed wall duration and admission permits; wall milliseconds are not actual calling-thread CPU or a host-wide hard budget. |
+| M04 V2 'ingress/public_v2.rs:public_dispatch' | Full 'WorkCheckedPacket::verify' | Bounded public worker and phase deadline; records wall time but no V3-style actual CPU debit. This is an explicitly unresolved P1 exposure if externally enabled. |
+| M04 V3 'ingress/public_v3.rs:public_dispatch' | 'verify_with_progress' / arithmetic-fact variant | Actual thread CPU charged by 'PaidMutationCpuPermit' in original finite service domain; per-process/host-wide and physical multi-CPU isolation remain separate obligations. |
+| M05 opt-in 'ingress/metered_work_facts.rs' | Private verified-work fact cache plus metered source | Requires caller-supplied 'ServiceMutationCpuDomain'; does not replace V2/V3 network listeners. |
+| Native mining 'mining.rs' | Local producer proof self-check through 'pon_work::verify' | Local mining producer, not by itself remote mutation admission. |
+
+Before closing P1, audit *every* exported CLI/listener/gossip/sync path
+including these wrappers, test externally reachable bad-work input on all
+selected profiles, retain true CPU/memory/process-owner evidence, and ensure
+all processes share the same physical capacity cap. Introducing new
+accounting without these readbacks is not a completed fix.
+
+
+### Reproduction of bounded P0 and P2 research paths
+
+Run the original project preflight and the existing source-bound CI owner
+before treating any output as an exact-source runtime observation. New output
+files must not already exist. The Python oracle has no native chain authority:
+
+    TRNM_W1_FOUR_PY_REPORT=/absolute/new-p0-oracle.json \
+      python3 formal/pon-nakamoto-v1/test_work_precheck.py -v
+
+The native Node test is included in the required original
+'run_from_zero_native.py' selector list. A directly targeted development run
+can use the original native test target with the unchanged W1 proof profile:
+
+    TRNM_W1_FOUR_NATIVE_REPORT=/absolute/new-p0-native.json \
+      cargo test --locked --manifest-path trillionnium/Cargo.toml \
+      -p trnm-pon-node --test public_v3_from_zero \
+      four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged \
+      -- --exact --nocapture --test-threads=1
+
+The optional P2 sample tool computes the same SHA-256 framing and big-endian
+ticket leading-zero predicate as V3, **but on synthetic Cookie ID bytes**:
+
+    python3 scripts/ci/test_pon_v3_cookie_cpu_study.py
+    python3 scripts/pon_v3_cookie_cpu_study.py \
+      --bits 8 12 16 --samples 2 --max-attempts 262144 \
+      --out /absolute/new-cookie-cpu-proxy.json
+
+It records all misses, limited searches, actual Python process CPU and wall
+clock, capped output and missing GPU/native observations as null. This is
+not an authenticated V3 transport session, a real GPU hash-rate measurement,
+a client cost bound across devices, or evidence of affordable honest access.
+No P2 production admission parameter is selected by the results.
+
+
+### P1 interim network boundary (current candidate after the first fix)
+
+Legacy 'public_v2::serve_public_protected_v2' and its private owner
+composition now reject non-loopback bind addresses with
+'PUBLIC_V2_LOOPBACK_ONLY' before accepting any proof. An explicit native
+regression binds '0.0.0.0:0' and checks refusal without starting a service.
+This intentionally narrows a legacy development transport that has no
+V3-equivalent measured mutation-CPU account. It does **not** make trusted
+loopback clients Sybil-resistant and does not close P1. Legacy V2 signed
+payloads and W1 proof verification remain unchanged on permitted loopback
+listeners; migration to the V3 CPU-metered interface must be explicit.
+Other native authenticated/protected entrypoints still require independent
+host-budget evaluation and P1 remains OPEN.
+
+
+### P1/P3 additive defense and original resource-owner integration
+
+The original CPU-domain implementation (V3 'scalar_cpu') is reused by a new
+plain-W1 Submit-only native seam 'ingress::dispatch_shared_with_metered_w1'.
+It retains all known Node context/owner checks and one actual
+'ServiceMutationCpuDomain' for both complete W1 verification and M06 execution
+and its scoped worker intervals. Results preserve the **original native
+outcome** and return CPU settlement separately. An invalid Transcript/Product
+cost still debits the owner; if live accounting becomes Unknown, no fabricated
+credit or success is issued. The Node pins its first original CPU-domain
+identity and rejects a later newly created domain for the same owner.
+
+This seam is **opt-in**, and was not silently wired into other independently
+versioned network profiles. It is tested for valid and invalid statements,
+shared cloned budget, new-domain refusal and unchanged prior state; no cross-
+process host owner, physical hard preemption or independently operated WAN
+review has been executed. It does not close P1.
+
+A separate optional direct-mapped math-only cache in
+'trnm-crypto-primitives/src/pon_work/rejection_cache.rs' stores only
+fully replayed immutable 'Transcript' or 'Product' failures. Bounds: 1..256
+slots and positive TTL at most 30 seconds, with complete profile, challenge,
+task, target and proof bytes bound in the key. Expired/poisoned/evicted entries
+fall back to unchanged full verification. A hit invokes the caller's
+cancellation checkpoint and can return **only a WorkError**, never
+VerifiedWork, block application, task authority or chainwork. Present parent,
+time, eligibility, and application context must still be verified by the
+existing Node owner. Different bogus traces miss and still cost one full
+replay each; a fresh false trace can still starve the original CPU budget.
+
+The V3 'PublicServer::with_w1_rejection_cache' builder selects this option
+explicitly. Its default is **off**; signed V3 policy identity, task wire,
+W1/PNW1 proof bytes, target, W1 ticket/chainwork and runtime activation
+remain unchanged. This is a bounded local optimization for repeated invalid
+bytes, **not** a remedy for cheap novel false transcripts, Sybil identities,
+or host-wide CPU fairness. Public rollout needs a separate reviewed
+configuration/evidence scope.
+
+### P5 W2-A concrete research outcome
+
+See [the 512-leaf W2-A sampled Merkle prototype](W2_A_RESEARCH.md).
+A real one-leaf-corrupted committed transcript escapes a small deterministic
+sample, with normal-looking authenticated sampled openings. Hence this
+scheme is not an accepted succinct proof, and no passing filtered statement
+may grant consensus authority. W2-B/W2-C/P6 independent acceptance stay OPEN.

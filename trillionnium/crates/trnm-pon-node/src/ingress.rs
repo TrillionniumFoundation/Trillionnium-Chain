@@ -629,21 +629,50 @@ pub struct Metrics {
     pub admission_verification_ns: u64,
     pub work_verifications: u64,
     pub work_verification_ns: u64,
+    /// Known actual calling-thread CPU only; the full original W1/M05 interval.
+    /// No guessed CPU is inserted when the clock is missing or moves backward.
+    pub work_verification_thread_cpu_known_ns: u64,
+    pub work_verification_thread_cpu_known_calls: u64,
+    pub work_verification_thread_cpu_unknown_calls: u64,
 }
 fn elapsed_ns(start: Instant) -> u64 {
     u64::try_from(start.elapsed().as_nanos()).unwrap_or(u64::MAX)
 }
+#[cfg(target_os = "linux")]
+fn calling_thread_cpu_ns() -> Option<u64> {
+    use rustix::time::{clock_gettime_dynamic, ClockId, DynamicClockId};
+    let time = clock_gettime_dynamic(DynamicClockId::Known(ClockId::ThreadCPUTime)).ok()?;
+    let seconds = u64::try_from(time.tv_sec).ok()?;
+    let nanos = u64::try_from(time.tv_nsec).ok()?;
+    if nanos >= 1_000_000_000 { return None; }
+    seconds.checked_mul(1_000_000_000)?.checked_add(nanos)
+}
+#[cfg(not(target_os = "linux"))]
+fn calling_thread_cpu_ns() -> Option<u64> { None }
+
 fn measured_work_verify(packet: Packet, metrics: &Mutex<Metrics>) -> Result<WorkCheckedPacket> {
     let start = Instant::now();
+    let start_cpu = calling_thread_cpu_ns();
     metrics
         .lock()
         .map_err(|_| "METRICS_POISONED")?
         .work_verifications += 1;
     let result = WorkCheckedPacket::verify(packet);
+    let actual_cpu = start_cpu.zip(calling_thread_cpu_ns())
+        .and_then(|(before, after)| after.checked_sub(before));
     let mut counts = metrics.lock().map_err(|_| "METRICS_POISONED")?;
     counts.work_verification_ns = counts
         .work_verification_ns
         .saturating_add(elapsed_ns(start));
+    if let Some(cpu) = actual_cpu {
+        counts.work_verification_thread_cpu_known_ns =
+            counts.work_verification_thread_cpu_known_ns.saturating_add(cpu);
+        counts.work_verification_thread_cpu_known_calls =
+            counts.work_verification_thread_cpu_known_calls.saturating_add(1);
+    } else {
+        counts.work_verification_thread_cpu_unknown_calls =
+            counts.work_verification_thread_cpu_unknown_calls.saturating_add(1);
+    }
     result
 }
 
@@ -1072,7 +1101,10 @@ fn submit_result(node: &mut Node, id: Hash, clock: u64) -> Result<Value> {
 
 #[path = "ingress/metered_work_facts.rs"]
 mod metered_work_facts;
-pub use metered_work_facts::{dispatch_shared_with_metered_work_facts, MeteredWorkFactOutcome};
+pub use metered_work_facts::{
+    dispatch_shared_with_metered_w1, dispatch_shared_with_metered_work_facts,
+    MeteredWorkFactOutcome,
+};
 
 /// Explicit local-development W1 fact-reuse entrypoint on the existing M05/M06
 /// and durable owner path. This is NOT selected by V2/V3 network listeners or CLI.
@@ -1332,12 +1364,24 @@ fn serve_inner(
     authentication: Option<Arc<AuthenticatedServer>>,
     admission: Option<AdmissionPolicy>,
 ) -> Result<Metrics> {
+    let listener_address = listener.local_addr()?;
     if authentication.is_none() {
         ensure(
-            listener.local_addr()?.ip().is_loopback(),
+            listener_address.ip().is_loopback(),
             "DEVELOPMENT_LOOPBACK_ONLY",
         )?;
     }
+    // A signed allowlist still does not pay verification CPU. Remote legacy
+    // authenticated listeners must choose the pre-existing bounded transport
+    // AdmissionPolicy; the unpriced authenticated-only transport is local-only.
+    if !listener_address.ip().is_loopback() {
+        ensure(admission.is_some(), "DEVELOPMENT_REMOTE_ADMISSION_REQUIRED")?;
+    }
+    // An allowlisted peer is not a CPU resource owner. All remotely exposed
+    // legacy authenticated listeners must join the SAME administrator-owned
+    // host cgroup as public V3 before accepting a single socket. A service
+    // without that parent fails closed; no fresh per-listener CPU allowance.
+    let host_kernel = crate::host_kernel_parent::require_for_listener(listener_address)?;
     ensure(
         lifetime > Duration::ZERO && lifetime <= Duration::from_secs(3600),
         "SERVER_BUDGET",
@@ -1373,7 +1417,13 @@ fn serve_inner(
             let authentication = authentication.clone();
             let settings = settings.clone();
             let handoff_senders = handoff_senders.clone();
+            let host_kernel_for_worker = host_kernel.as_ref();
             workers.push(scope.spawn(move || -> Result<()> {
+                // Membership is checked on the ACTUAL native thread, not
+                // only on the listener's different parent thread.
+                if let Some(kernel) = host_kernel_for_worker {
+                    kernel.verify()?;
+                }
                 while !stop.load(Ordering::Acquire) && Instant::now() < deadline {
                     let handed = if admission.is_some() {
                         handoff_receiver.as_ref().and_then(|receiver| {
@@ -1628,7 +1678,18 @@ fn serve_inner(
                             &node,
                             request.request.clone(),
                             &mut progress,
-                            |packet| measured_work_verify(packet, &metrics),
+                            |packet| {
+                                if let Some(kernel) = host_kernel_for_worker {
+                                    kernel.verify()?;
+                                }
+                                let checked = measured_work_verify(packet, &metrics)?;
+                                // Recheck the actual worker after expensive W1, so a
+                                // moved thread cannot promote its observed work.
+                                if let Some(kernel) = host_kernel_for_worker {
+                                    kernel.verify()?;
+                                }
+                                Ok(checked)
+                            },
                         );
                         let succeeded = outcome.is_ok();
                         let terminal_reply =
@@ -1714,7 +1775,14 @@ fn serve_inner(
                             }
                         };
                     let result = dispatch_shared_with(&node, request, &mut progress, |packet| {
-                        measured_work_verify(packet, &metrics)
+                        if let Some(kernel) = host_kernel_for_worker {
+                            kernel.verify()?;
+                        }
+                        let checked = measured_work_verify(packet, &metrics)?;
+                        if let Some(kernel) = host_kernel_for_worker {
+                            kernel.verify()?;
+                        }
+                        Ok(checked)
                     });
                     let reply = match result {
                         Ok(value) => {
@@ -3379,6 +3447,74 @@ mod tests {
             server.public_key()
         );
         (server, client)
+    }
+
+    #[test]
+    fn authenticated_legacy_nonloopback_has_no_unmetered_host_bypass() {
+        // V3 and legacy authenticated ingress now check the SAME fixed parent.
+        // This regression works with either an unprivileged CI host (denied)
+        // or an actual admin-provisioned parent (must be verified, never None).
+        let remote: SocketAddr = "0.0.0.0:0".parse().unwrap();
+        assert!(crate::host_kernel_parent::require_host_kernel_budget(remote, None).is_err());
+        let probe = crate::host_kernel_parent::require_for_listener(remote);
+        match &probe {
+            Ok(Some(kernel)) => kernel.verify().unwrap(),
+            Err(_) => {}
+            Ok(None) => panic!("nonloopback must not run without host budget"),
+        }
+        // Even when an administrator provisioned a valid cgroup, the
+        // unaffordable no-cookie authenticated-only WAN transport is denied.
+        {
+            let dir = tempfile::tempdir().unwrap();
+            let settings = Settings::development(Some(now().unwrap() - 100)).unwrap();
+            let (authentication, _) = authentication_fixture(&settings);
+            let node = Node::open(dir.path(), settings, 2).unwrap();
+            let listener = TcpListener::bind(remote).unwrap();
+            let error = serve_authenticated(
+                listener, node, Duration::from_secs(1),
+                Arc::new(AtomicBool::new(true)), authentication,
+            ).unwrap_err();
+            assert_eq!(error.to_string(), "DEVELOPMENT_REMOTE_ADMISSION_REQUIRED");
+        }
+        // The priced, authenticated legacy WAN route requires the original
+        // host parent too; no second identity-scoped host budget is allowed.
+        if let Err(expected) = probe {
+            let dir = tempfile::tempdir().unwrap();
+            let settings = Settings::development(Some(now().unwrap() - 100)).unwrap();
+            let (authentication, _) = authentication_fixture(&settings);
+            let node = Node::open(dir.path(), settings, 2).unwrap();
+            let listener = TcpListener::bind(remote).unwrap();
+            let error = serve_authenticated_protected(
+                listener, node, Duration::from_secs(1),
+                Arc::new(AtomicBool::new(true)),
+                authentication, AdmissionPolicy::development(),
+            ).unwrap_err();
+            assert_eq!(error.to_string(), expected.to_string());
+        }
+    }
+
+    #[test]
+    fn measured_native_w1_rejection_reports_real_or_explicitly_unknown_thread_cpu() {
+        let dir = tempfile::tempdir().unwrap();
+        let settings = Settings::development(Some(now().unwrap() - 100)).unwrap();
+        let node = Node::open(dir.path(), settings.clone(), 2).unwrap();
+        let original = node.make(
+            settings.genesis(), vec![],
+            crate::development_public(0).unwrap(),
+            settings.genesis_time() + 10, 4096,
+        ).unwrap();
+        let mut bad = original;
+        let last = bad.proof.len() - 1;
+        bad.proof[last] ^= 1;
+        let metrics = Mutex::new(Metrics::default());
+        // The adjusted trace may happen to miss target; accept either a
+        // cheap TARGET refusal or expensive TRANSCRIPT refusal as invalid.
+        assert!(measured_work_verify(bad, &metrics).is_err());
+        let snapshot = metrics.lock().unwrap();
+        assert_eq!(snapshot.work_verifications, 1);
+        assert_eq!(snapshot.work_verification_thread_cpu_unknown_calls
+                   + snapshot.work_verification_thread_cpu_known_calls, 1);
+        assert!(snapshot.work_verification_ns > 0);
     }
 
     #[test]

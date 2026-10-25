@@ -31,6 +31,7 @@ SOURCE = 'trillionnium/crates/trnm-pon-node/tests/' + TARGET + '.rs'
 TESTS = (
     'caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct',
     'from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection',
+    'four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged',
     'from_zero_service_shares_cpu_with_honest_work_and_reopened_owner',
     'from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline',
 )
