@@ -369,6 +369,14 @@ actual loader receipts must name their source, model, hosts and failures; neithe
 case establishes independent operators, arbitrary large-model loading or a
 permissionless storage network by itself.
 
+The later [controlled original-owner observation](../../../../evidence/pon-upgrade-implementation-20261018/native-rounds/real-model-owner-controlled-20261025/SCOPE.md)
+actually loads the eight TCL4 peer-fetched upstream files in Hepta `07731d31`.
+Its unchanged signed neural read and verified terminal unload case passes in
+17.753s under the original per-operation bounds. The adapter comes from the
+separate controlled parameter lineage. This advances configured-peer material
+testing from bytes to a real model forward, without qualifying a selected
+complete release, CURRENT installation, funded storage or the three-round loop.
+
 ## PN3 release closure and real loader interface
 
 This is I09 of the

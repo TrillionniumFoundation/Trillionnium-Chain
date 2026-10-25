@@ -1038,10 +1038,10 @@ gates; fail-closed refusal does not qualify functional Windows isolation.
 
 | Gate | This increment's executable boundary | Full exit still required |
 | --- | --- | --- |
-| PN0 | Predecessor pair readback above; published `8712699` passes full strict Clippy locally. Current head/merge CI and full Hepta Rust remain incomplete. Current CodeQL gate reports 13 high annotations; its Rust SARIF has 234 results. | Applicable final head/merge CI, independent security disposition, functional Windows isolation and fresh cross-repository execution. |
+| PN0 | Chain `ef2a6958` passes its fourteen baseline execution jobs and current CodeQL; aggregation and priority CI remain queued. Hepta `07731d31` pins that source and `81d9d829`, passes fourteen exact static checks and 865 Python controls, and starts original full CI on source and actual preview. Both ARM diagnostic lanes pass fourteen of sixteen original/additive groups, but broad-identity deletion and the missing production legacy route still fail. Historical CodeQL findings and earlier native failures remain retained at their own sources. | Applicable final head/merge CI, independent security disposition, functional Windows isolation and fresh cross-repository execution. Matching trees or partial passes do not waive the two native failures. |
 | PN1 | Current original-policy campaign `39739585823` passed full original-artifact readback: 189 submissions, 27 confirmations and 6/18 hostile honest rounds overlapping genuine CPU depletion. | Cheapest-adversary assumptions and actual public service under a declared, sufficiently delivered attack envelope. |
 | PN2 | Published revision17 GSC2 native complete-State reference and required 65,537-account signed-transaction/recovery test; the unique published-source local long run stopped at its original shared-disk safety boundary, last logged 57,348 accounts at height 224. No final 65,537 export or successful libtest result exists. | Terminal signed-boundary/recovery/readback evidence, bounded working-state/proof validation and source-preserving migration. Complete-State reference roots are not bounded witnesses. |
-| PN3 | Published-source real SmolLM2-135M CPU pilot trained a ten-step candidate and saved a 933,544-byte adapter, then failed phase four on unknown RSS. Actual source-built Cell CLI downloaded that candidate in 15 chunks and rechecked bytes/material pins. Same-read exit diagnostics retain the original State/Threads and failed preconditions without changing classification, limits or strict-v1 defaults. | Complete five controls, three-round installed-parent lineage and next-task use, Hepta neuron loading, declared-task evaluation and complete release integration. Existing public/seen tasks are valid for engineering acceptance; prospective efficacy is a separate claim. One local supplier and one candidate transfer cannot qualify this loop. |
+| PN3 | Source `ef2a6958` completes all twelve strict-v1 real 135M five-control phases; candidate and strongest control each score 1/2, so gain is zero and no adoption/reward follows. Three real parameter generations load their predecessors and execute direct next tasks. On Hepta `07731d31`, original artifact publication/recovery and signed read/unload pass, including actual loading of peer-fetched upstream weights. The gen2/gen3 comparison still fails its original 60s limit; its required 66 control records and all task/signature assertions remain intact. Earlier unknown-RSS and transfer failures remain retained. | Finish the original comparison within its unchanged bounds, then three-round installed-parent/CURRENT and ordinary next-task closure through existing ledger, evaluation, selection and complete-release owners. Existing public/seen tasks remain valid for engineering acceptance. Three parameter generations or one peer-loaded forward do not qualify three installed improvements. |
 | PN4 | [Separate finite lane budgets](specs/pon/REWARD_BUDGETS_V1.md) now have native local obligation persistence; six component tests passed again on the integrated native source, including abrupt-exit recovery. | Native debit/escrow locks, actual resource-owner measurement and dispatch, funded storage/service obligations and independent economic review. Local records do not lock chain funds or pay rewards. |
 | PN5 | Preserve the preregistration and independent-custody requirements below. | Three independently administered operators, accessible existing nodes and a complete frozen 72-hour WAN campaign. |
 
@@ -2229,14 +2229,24 @@ mutating a normal returned DTO cannot expand the process-lifetime root. Fifteen
 modeled held-directory/clock controls exercise this boundary;
 they are not native cgroup qualification or a claim of bounded syscall latency.
 
+The [2026-10-25 actual controlled evidence](../../evidence/pon-upgrade-implementation-20261018/native-rounds/real-model-owner-controlled-20261025/SCOPE.md)
+now includes fresh `/bin/true` C/A birth, both exact waits and native retirement
+on `6a96dd94` and `ec6868da`, with progress31 and step5. The latter original
+raw-U observation fails its original start+8s cutoff and keeps the same owner,
+root and handles. Only a separate post-deadline diagnostic reports remaining
+kernel charge4,096 with zero processes/descendants/dying; it is not a terminal
+receipt. Native child retirement is therefore observed in this controlled
+scope, while raw-U zero, funded entry and whole-unit return remain blockers.
+No old Unknown owner is cleaned or reused to obtain these results.
+
 The existing PN4 dependency and acceptance sequence is:
 
 | Stage / owner | Interface and required evidence | Status / exit |
 | --- | --- | --- |
 | Fresh leaf / M14/M17 | Same original owner; exact topology/limits/source/generation and original seven-zero guard before C/A | Preparation and one-shot consumption implemented; new native qualification OPEN |
-| C/A preparation and birth / same owner, Hepta kernel.operations | Consume the same fact once, then create exact bounded C/A; charge all child bookkeeping to U's 16GiB; original native birth/pidfd/wait4 binding | One source-bound controlled empty-group preparation observed; original conservative UNKNOWN retained; actual process birth/wait4 and whole-U qualification OPEN |
-| Running and quiescing / same original O | Monotonic existing operation/effect identity; authoritative original C and A exits plus zero leaf populations/descendants | OPEN; never call running U pristine |
-| Normal retirement / same original O | Only after both exits are known, retire A then C once using original parent FD/name/inode, then native close-and-clear of those original held slots | Private one-shot mechanism and finite controls implemented; actual cgroup qualification OPEN. Unknown/partial removal retains remaining slots, never retries or reuses names |
+| C/A preparation and birth / same owner, Hepta kernel.operations | Consume the same fact once, then create exact bounded C/A; charge all child bookkeeping to U's 16GiB; original native birth/pidfd/wait4 binding | Two actual fresh controlled empty-payload runs observe birth and exact waits; funded/native model and whole-U qualification remain OPEN |
+| Running and quiescing / same original O | Monotonic existing operation/effect identity; authoritative original C and A exits plus zero leaf populations/descendants | Observed only for the named controlled empty payload; never call running U pristine or generalize to the model/funded route |
+| Normal retirement / same original O | Only after both exits are known, retire A then C once using original parent FD/name/inode, then native close-and-clear of those original held slots | Native child retirement observed on the named controlled sources; no full raw-U return. Unknown/partial removal retains remaining slots, never retries or reuses names |
 | Whole-U terminal / original evidence-pipe and aggregate owners | Retain U/S/H/observer; actual U descendants0/dying0/current0/swap0, exact identity/limits and unchanged historical meters before original cutoff | OPEN; no charge/peak reset or baseline subtraction |
 | FinalUse and I05/I10 settlement / existing effect owners | Original authoritative terminal identity and budget/funding evidence, then existing AuthBus reconciliation | OPEN; no new journal or refund path |
 
@@ -2245,13 +2255,14 @@ retirement window. Historical peak/CPU remain recorded; peak0 is a fresh-leaf
 prebirth condition, not a resettable terminal meter. Kernel CSS teardown/charge
 drain can remain pending past the cutoff: that result is UNKNOWN_RETAINED, with
 no terminal receipt, new entry or refund. Linux7 `rmdir` can block in-kernel;
-synchronous remove/poll code cannot promise an eight-second return. A future
-reviewed native asynchronous effect interface may occupy at most one bounded
-slot permanently owned by original O. On timeout it retains the slot/handles,
+synchronous remove/poll code cannot promise an eight-second return. The private
+native asynchronous effect above occupies at most one bounded slot permanently
+owned by original O. On timeout it retains the slot/handles,
 forbids reentry and grants no refund; timely observer return does not prove the
-effect finished. That primitive, guardian lifetime/budget, real C/A birth and
-retirement are not implemented by this preparation slice and remain explicit
-PN4 blockers. No additional native side effects are authorized by these tests.
+effect finished. Actual controlled empty-payload birth/retirement does not supply
+the original guardian lifetime/budget, funded model entry or whole-U terminal
+evidence; those remain explicit PN4 blockers. No additional native side effects
+are authorized by these tests.
 
 Native S/H qualification,
 original C birth/pidfd/wait4, whole-U zero-charge terminal capture inside the
