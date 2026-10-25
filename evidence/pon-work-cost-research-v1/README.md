@@ -5,6 +5,24 @@ This evidence namespace belongs to PN1 in the sole
 It records a supplemental local research campaign. It does not change W1,
 production code, difficulty, reward weights or any readiness/acceptance flag.
 
+## Published local results
+
+The [results report](RESULTS.md) explains the completed native campaign, known
+optimization advantages, retained slower outcomes and the unresolved hardness
+obligation. [All 445 summary groups](campaign-summary.json) retain exact cost
+fractions; [paired performance analysis](analysis-performance.json) and
+[Hepta/numerical analysis](hepta-numerical-analysis.json) expose narrower findings.
+The [artifact index](artifact-index.json) binds the separately delivered full raw
+archive, failed first collection, original logs and executed binaries.
+
+The measured source is `c9e30f41a534b8544dcb8f96a36ae88735a070d1`, tree
+`101c804e61041ac8f349e40b2c713319b4297c18`. A subsequent evidence-only publication
+must not be substituted for that measurement. Sixteen jobs and 3,336 cohorts
+completed; the 128,285 research attempts are native-reported observations across
+counterfactual comparisons, not 128,285 globally unique paid blocks. Independent
+Python full-relation replay covers 84 retained main-campaign winners and, in a
+separate post-hoc check, 14 selector representatives. Retention is outcome-selected.
+
 ## Frozen experiment contract
 
 The [security game](../../docs/protocol/pon-nakamoto-v1/details/W1_COST_SECURITY_GAME.md)

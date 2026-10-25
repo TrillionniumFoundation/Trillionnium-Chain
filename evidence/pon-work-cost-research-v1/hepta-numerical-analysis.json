@@ -1,0 +1,315 @@
+{
+  "analysis_kind": "read-only reconciliation; no new protocol execution, training, build, or performance measurement",
+  "declared_source_hashes_checked_against_immutable_git_objects": {
+    "config/pon/ledger-v1.json": true,
+    "config/pon/work-profile-v1.json": true,
+    "formal/pon-nakamoto-v1/contract_wire.py": true,
+    "formal/pon-nakamoto-v1/experiments/numerical_boundary.py": true,
+    "formal/pon-nakamoto-v1/experiments/qualification_separation.py": true,
+    "formal/pon-nakamoto-v1/ledger.py": true,
+    "formal/pon-nakamoto-v1/reference.py": true,
+    "formal/pon-nakamoto-v1/strict_signature.py": true,
+    "formal/pon-nakamoto-v1/work_oracle.py": true,
+    "trillionnium/crates/trnm-mvcc-fee/src/checkpoint_tile_material_v1.rs": true
+  },
+  "failure_classification": {
+    "earlier_environment_failures": "Earlier sandbox ENOSPC prevented command launch; these are environment observations, not verifier acceptance/rejection results",
+    "expected_protocol_negative_controls": "23 native exit-code-2 LENGTH/WORK rejections with matching reference outcomes; successful negative tests, not 23 runtime failures",
+    "retained_collection_failure_is_not_protocol_failure": true,
+    "retained_v1_collection_receipt": {
+      "complete_success": false,
+      "failure": "NATIVE_JOB_FAILED:long-reuse-hot-seed303",
+      "last_step": {
+        "error": "NATIVE_STDOUT_LIMIT",
+        "name": "long-reuse-hot-seed303",
+        "output_limit_bytes": 67108864,
+        "returncode": -9,
+        "stderr_truncated": false,
+        "stdout_bytes": 67108864,
+        "stdout_truncated": true
+      },
+      "path": "/workspace/scratch/3863a747524b/w1-cost-raw/campaign-frozen-bcbc922-v1/campaign.json",
+      "sha256": "262a2677d54be982ef262fadaf6da4990a3b8545ba3ff2890cb1a4cc1f3b2f1a"
+    }
+  },
+  "historical_model_controls": {
+    "candidate_evaluation": [
+      1,
+      2
+    ],
+    "historical_files": {
+      "evidence/pon-upgrade-implementation-20261018/native-rounds/real-model-owner-controlled-20261025/five-controls.json": "54d58df2f281bd9c8fb18a76043db1f748b71c52ce68e59ceb5140a6ffee07e9",
+      "evidence/pon-upgrade-implementation-20261018/native-rounds/real-model-owner-controlled-20261025/original-native-owner-results.json": "f9de5eb40c59a21bf958f6d8b3887fccf1bfcc36ff8f7f0e7d4dcaaa106afd41"
+    },
+    "new_training_or_installation_executed_this_round": false,
+    "original_owner_peer_weight_read_outcome": "PASS",
+    "original_owner_peer_weight_read_scope": "Original signed neural read and verified unload over actual peer-fetched upstream model weights. Parameter adapter supplied by controlled real lineage; not a selected complete Cell release.",
+    "recomputed_gain": [
+      0,
+      1
+    ],
+    "reported_CURRENT_updated": false,
+    "reported_installed": false,
+    "reported_public_reward_eligible": false,
+    "reported_three_round_closed": false,
+    "scope": "readback-of-committed-historical-observations; not reexecuted or linked to this W1 job",
+    "strongest_control_evaluation": [
+      1,
+      2
+    ],
+    "successful_controlled_phases": 12,
+    "total_controlled_phases": 12
+  },
+  "input_reports": {
+    "/workspace/scratch/3863a747524b/w1-cost-raw/numerical-frozen-c9e30f4-v2.json": "f62b9ed7a75b62234880814f14042a74d536eeab1ac6cd277b803ad412adff71",
+    "/workspace/scratch/3863a747524b/w1-cost-raw/qualification-frozen-c9e30f4-v2.json": "603f9b21f2c1f1d8f1cad7ed827e162a20647413ae5a89519b86be2a49dc88a0"
+  },
+  "numerical_controls": {
+    "FP8_or_Pearl_qualified": false,
+    "activation_ranks_over_scale_grid": [
+      37
+    ],
+    "case_count": 735,
+    "clipping_control": {
+      "activation_clipped": 3099,
+      "input_transform": {
+        "activation": "B_integer",
+        "weight": "A_integer / 2"
+      },
+      "max_absolute_product_error": [
+        "141836697",
+        "16384"
+      ],
+      "weight_clipped": 3564
+    },
+    "default_max_absolute_product_error": [
+      "199",
+      "131072"
+    ],
+    "default_mean_absolute_product_error": [
+      "677071",
+      "1073741824"
+    ],
+    "default_scale_pair": [
+      14,
+      4
+    ],
+    "direct_float_substitution": {
+      "float32_mismatches": 32,
+      "float64_mismatches": 32,
+      "float_substitution_preserves_W1": false,
+      "relation": "first 32 EL*ER entries from real W1 challenge expansion; inner dimension 8",
+      "scope": "finite arithmetic counterexamples, not all GPUs or all floating kernels"
+    },
+    "exact_fixture_control_max_error": [
+      "0",
+      "1"
+    ],
+    "exact_fixture_control_scale_pair": [
+      14,
+      6
+    ],
+    "full_material_policy_executed": false,
+    "input_source": {
+      "path": "formal/pon-nakamoto-v1/vectors/matrices.bin",
+      "scope": "historical-maintenance-vector; not neural checkpoint or real activation",
+      "sha256": "312ad8d99b89dbfb0ab13916e97048d8b5fb5e92e695da2d7b7e132fdd475321",
+      "task": "56dac087e1241f23d72e47421fee9b439d9c8e4ad7eab89598ed46f8c6e61f34"
+    },
+    "input_transform": {
+      "activation": "exact FP32 B_integer / 64",
+      "weight": "exact BF16 A_integer / 4096"
+    },
+    "integer_wrap": {
+      "current_clip_bound": 268427264,
+      "expanded_both_clip_32767_bound": 68715282496,
+      "expanded_example_residue": 4290773131,
+      "expanded_example_signed_decode": -4194160,
+      "expanded_signed_decode_matches_integer": false,
+      "half_field": 2147483645
+    },
+    "mismatch_count": 0,
+    "native_source_slice_executed": true,
+    "not_real_neural_checkpoint_or_activation": true,
+    "padded_output_columns_all_exact_zero": true,
+    "scale_grid_count": 9,
+    "source_slice_scope": "exact-original-private-primitive-source-slice-only",
+    "structure_is_not_a_measured_speedup": true,
+    "token_padding_ranks": [
+      1,
+      2,
+      8,
+      16,
+      32,
+      37
+    ],
+    "token_padding_retained_columns": [
+      1,
+      2,
+      8,
+      16,
+      32,
+      64
+    ],
+    "training_executed": false,
+    "weight_ranks_over_scale_grid": [
+      31
+    ],
+    "whole_crate_compiled_by_this_probe": false,
+    "zero_error_scope": "constructed exactly representable maintenance-fixture control, not a neural accuracy or convergence result"
+  },
+  "protocol_controls": {
+    "accepted": 2,
+    "case_count": 25,
+    "credited_chainwork": 2,
+    "duplicate_admissions": 3,
+    "expected_rejections": 23,
+    "forged_precheck_ticket_passed": true,
+    "full_forgery_rejection": "TRANSCRIPT",
+    "header_contextual_admission_scope": "existing Python SQLite ledger; its own actual header target/context remains enforced",
+    "header_field_mutations": [
+      {
+        "admission_error": "NETWORK",
+        "field": "network",
+        "new_challenge": "3949cf6f9b63ffbd73fcf9dd4d3ab7cb0edc30460aa41058be0d43e863c4ae22"
+      },
+      {
+        "admission_error": "NETWORK",
+        "field": "parameters",
+        "new_challenge": "88621d458047513ece6bb820a2ee6a72d4515bee814bddf73a7d2d2764169997"
+      },
+      {
+        "admission_error": "UNKNOWN_PARENT",
+        "field": "parent",
+        "new_challenge": "2cce965423e8ce069912b16227ec848c6c47de72d7687381f9d00aad8f16be3c"
+      },
+      {
+        "admission_error": "HEIGHT",
+        "field": "height",
+        "new_challenge": "11c8026800f2f79297107a82f164432f19527ebcbad91a607cb2ccaffb6052b6"
+      },
+      {
+        "admission_error": "TRANSCRIPT",
+        "field": "timestamp",
+        "new_challenge": "5f918ff27b831e79d80c5ebc59da9d726955a68d559995b57249fc8f4e89016e"
+      },
+      {
+        "admission_error": "TARGET",
+        "field": "target",
+        "new_challenge": "d358760bf4d30cd3ea288b9cf14f0483c8c18a21ec7f59026de02d72313ac881"
+      },
+      {
+        "admission_error": "TARGET",
+        "field": "miner",
+        "new_challenge": "46244124fcfe621e39c6edaae336744fa0a5b25df8063b8ab79e911412f195fb"
+      },
+      {
+        "admission_error": "ROOT",
+        "field": "transactions",
+        "new_challenge": "f4b15cc4c5ba8d121c50f07b446bd234a21864cb4b5e7baff01e6023fe0a240f"
+      },
+      {
+        "admission_error": "TRANSCRIPT",
+        "field": "state",
+        "new_challenge": "4fda8240a222087662dcb75b73c1162b02a7f59686cd256009d1b43de8a85611"
+      },
+      {
+        "admission_error": "TARGET",
+        "field": "receipts",
+        "new_challenge": "6ec057a0b75f340af8df98c019db9245615b16764e8fe63920794e78f2a47ed5"
+      },
+      {
+        "admission_error": "TASK",
+        "field": "work_task",
+        "new_challenge": "51118721fffe3fef7ec9cee82379ddfcc4631384a2d03cbe24fc16d89e2e8eff"
+      },
+      {
+        "admission_error": "TARGET",
+        "field": "nonce",
+        "new_challenge": "3ce41d4297ec42551f1c577dc577d66f36269a87bf88139efddab0761c51c6eb"
+      }
+    ],
+    "header_relation_control_uses_maximum_verifier_threshold": true,
+    "native_binary": {
+      "path": "/tmp/w1-cost-frozen-c9e30f4-v2/release/examples/pon_work_io",
+      "sha256": "bc90e4bd06b941e2b9cfb22363692bd26c8df2753119da359356934fa3f1f72f"
+    },
+    "native_binary_current_file_sha256_matches": true,
+    "native_negative_exit_codes": [
+      2
+    ],
+    "native_negative_stderr_categories": {
+      "LENGTH": 2,
+      "WORK": 21
+    },
+    "native_scope": "25 direct pon_work_io relation-verifier calls; detailed rejection taxonomy belongs to Python oracle because native CLI usually returns WORK",
+    "oracle_and_native_accept_reject_agree": true,
+    "oracle_rejection_categories": {
+      "FIELD": 3,
+      "LENGTH": 2,
+      "PRODUCT": 1,
+      "TARGET": 1,
+      "TASK": 3,
+      "TRANSCRIPT": 12,
+      "VERSION": 1
+    },
+    "positive_cases": [
+      "committed-accepted-block",
+      "exact-ticket-threshold"
+    ],
+    "retained_blocks_including_genesis": 2
+  },
+  "qualifications_not_granted": {
+    "global_cost_lower_bound_proved": false,
+    "new_model_training_executed": false,
+    "new_profile_activated": false,
+    "ordinary_hepta_install_executed": false,
+    "production_W1_modified": false,
+    "profile_external_hardness_acceptance": false,
+    "profile_production_eligible": false,
+    "timing_or_throughput_claim": false,
+    "training_convergence_established": false
+  },
+  "schema": "pon-hepta-numerical-analysis-v1",
+  "service_fulfilment": {
+    "chainwork_increment_from_required_target": 2,
+    "header_sha256": "d8225b3af324ebef6d13978d30651f16c8e0e4b3023e59880da378f7b59c2560",
+    "implementation_layer": "existing Python ledger/SQLite and Python W1 proof generator; separate native relation controls do not turn this into a native end-to-end neural job",
+    "model_current": "0000000000000000000000000000000000000000000000000000000000000000",
+    "model_evaluation_records": 0,
+    "proof_sha256": "0d10d6d7c7ba6cf2f7985b82aac2daa137c534f197cf9cb631a8560b39a78c05",
+    "remaining": 0,
+    "scope": "actual-development-contract-on-maintenance-output; no neural-training claim",
+    "search_attempts": 1,
+    "status": "settled",
+    "task": "630623650c48eea48a32d26f2f004403c15e93aef7a562592f08a153190ff14a",
+    "transaction_tags": [
+      2,
+      4,
+      5
+    ]
+  },
+  "signature_controls": {
+    "S_plus_L_error": "SIGNATURE",
+    "canonical_unsigned_command_count": 1,
+    "different_transaction_and_receipt_roots": true,
+    "hypothetical_envelope_hash_identity_count": 2,
+    "hypothetical_semantic_identity_count": 1,
+    "hypothetical_warning": "A randomized future proof envelope must not create extra full-cost tickets. No Groth16 implementation is executed here.",
+    "interpretation": "two valid key-holder-chosen Ed25519 signatures represent one unsigned command; new signed roots require fresh W1 and account nonce blocks repeated effects; not public signature malleability or an executed Groth16 exploit",
+    "old_work_for_new_body_error": "TRANSCRIPT",
+    "raw_tx_id_count": 2,
+    "same_application_state": true,
+    "same_block_replay_error": "NONCE",
+    "scope": "key-holder-chosen-valid-signatures; not public Ed25519 rerandomization",
+    "second_command_effect_error": "NONCE",
+    "signature_sha256": [
+      "3549941e31b57542822dad99968b383268ee681e806b124168d9ab712908c434",
+      "be97535835c484677ec0562f7a2ae06ff99e17755e344760d88e51a2f99a28ff"
+    ],
+    "valid_signature_count": 2,
+    "wrong_message_error": "SIGNATURE"
+  },
+  "source_commit": "c9e30f41a534b8544dcb8f96a36ae88735a070d1",
+  "source_tree": "101c804e61041ac8f349e40b2c713319b4297c18"
+}
