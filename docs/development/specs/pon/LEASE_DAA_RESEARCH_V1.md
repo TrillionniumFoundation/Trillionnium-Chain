@@ -376,3 +376,29 @@ actual test run, full state/archive growth measurement, independent signer or
 public source credential is claimed by writing it. It must fail visibly if
 the included terminal-retention rule or nonce accounting diverges, rather than
 changing or silently replacing the old Q4/Revision12 agreement rules.
+
+## Branch-pinned DAA observer continuation (2026-10-25)
+
+Added a separate non-activated M02 observer named daa_branch_research.
+It walks at most 4096 actual native packet ancestors and requires the
+recomputed packet ID, exact network/parameters, strictly descending heights,
+and a pinned genesis-adjacent anchor (height 1, block ID, target, genesis
+parent). It applies either raw-parent or MTP11 time to the isolated ASERT
+integer oracle without changing native expected_target or branch work.
+
+The actual native test isolated_asert_context_rejects_wrong_anchor_and_uses_real_w1_branch_history
+supplies packet IDs from Node::packet and Packet::id after real W1 admission.
+It tests context substitution, malformed ancestry, absent anchor, overflow
+of bounded history reads, unchanged legacy difficulty, and cold reopening.
+The independent Python reference test has six negative/positive groups.
+The short-history MTP control explicitly uses candidate height 2: with just
+genesis and its first child, the upper median equals raw parent time.
+For candidate height 3, MTP already differs from the raw clock; the previous
+height-3 equality assertion was corrected before this source was promoted.
+
+Limits: the public research observer's genesis_timestamp is caller-supplied
+and not authenticated by the function. All trusted context, proof validation
+and snapshot integrity remain the invoking Node's responsibility. This is
+not a live consensus variant, a complete branch-index implementation,
+reorg-safe activation, W1 hardness proof, or public confirmation result.
+P1-C and every independent-operator acceptance remain open.

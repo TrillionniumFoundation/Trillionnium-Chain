@@ -91,8 +91,8 @@ class BranchResearchTests(unittest.TestCase):
                 shadow_target_from_ancestry(bad, tip, records)
 
     def test_short_parent_window_mtp(self):
-        records, _, anchor = branch(length=2)
-        tip = next(key for key, row in records.items() if row.height == 2)
+        records, _, anchor = branch(length=1)
+        tip = next(key for key, row in records.items() if row.height == 1)
         self.assertEqual(shadow_target_from_ancestry(context(anchor), tip, records),
                          shadow_target_from_ancestry(
                              context(anchor, clock="mtp11"), tip, records))
