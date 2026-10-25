@@ -417,3 +417,30 @@ owner, not by this ancestry observer. The independent Python model assumes
 an already authenticated header mapping and therefore cannot establish
 that native Packet identity binding passed on the current Rust source.
 Exact-source native execution and all P1-C/P2 qualification remain OPEN.
+
+## Indexed native owner ASERT shadow — continuation (2026-10-25)
+
+The original `daa_branch_research::shadow_target_from_ancestry` is an intentionally
+bounded full-packet oracle: it refuses ancestry beyond 4,096 direct parent reads.
+This is not a viable method for fixed-anchor DAA evaluation on an indefinitely
+growing chain, because a full walk from the current tip to height one scales
+linearly and eventually reaches its configured cap.
+
+`Node::research_asert_target_indexed` is a separate, read-only M02/M07 seam. It
+compares caller context against the installed network, parameters, genesis time,
+10-second spacing and PoW ceiling; checks the actual height-one anchor packet;
+verifies the anchor is on the *named parent fork* using the existing bounded
+sealed binary-lifting ancestry index; and derives raw or exactly eleven MTP
+source timestamps from the native header owner. There is no caller-provided
+membership flag, cached clock verdict, signed-task override, live target write,
+change to `expected_target`, or new consensus revision. The active generation
+is rechecked before returning a diagnostic value.
+
+The expanded real W1 fork test asserts the same result as the existing full-packet
+research oracle when both are in scope, a two-record linear oracle refusal,
+read-only indexed success on that same path, wrong-height-one-fork rejection,
+wrong network/parameter/target/spacing refusal, and restart parity. This proves
+only the stated finite native scenario *when run*; it does not prove unbounded
+header retention, physical damage recovery, W1 mining-cost fairness, secure
+network timestamps, public attack tolerance, or activation of an ASERT rule.
+The original 16-block DAA remains the only installed branch-validity rule.
