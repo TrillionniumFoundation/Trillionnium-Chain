@@ -8,10 +8,12 @@ and the existing [computational qualification obligations](WORK_COST_DAA_BOUNDAR
 It changes no W1 bytes, task eligibility, target, required work, fork choice,
 reward, receiver budget, signed domain or qualification flag.
 
-The baseline inspected for this specification is
-`630f871293e48588e0a1ceae7ceb64973d3ec31d`. A subsequent measurement must name its
-own actual source, tree, binary and environment; that baseline cannot authenticate
-a later executable. Mathematical examples below are not native observations.
+The original specification inspected
+`630f871293e48588e0a1ceae7ceb64973d3ec31d`; the adaptive-game review on 2026-10-25
+starts from `33ff263a7dcf738aaade46ecd98d2ae122fc5789`. A subsequent measurement
+must name its own actual source, tree, binary and environment; neither baseline
+authenticates a later executable. Mathematical examples below are not native
+observations or a claim that a hypothetical hybrid defect exists in current W1.
 
 ## 1. Question and explicit limits
 
@@ -36,6 +38,13 @@ mining ticket. A passed local timing comparison is not a computational lower
 bound. An adversary faster than a reference supplies an **upper bound** on the
 minimum possible producer cost, and evidence against a stronger fairness claim.
 Failure to find such an adversary supplies no universal lower bound.
+
+The reduction must cover the actual compact output relation. Current W1 carries
+a digest of its canonical intermediate transcript, not the complete intermediate
+array. A lower bound on explicitly writing every intermediate cannot simply be
+reused as a lower bound on producing that digest. Hash/transcript dependency and
+joint production across challenges need their own argument; this distinction is
+an open proof obligation, not evidence of a particular shortcut.
 
 ## 2. Existing coverage and the research increment
 
@@ -66,8 +75,8 @@ precede it, but exploration and held-out evaluation have separate receipts.
 | Protocol context | Chain/genesis and parameter commitments, W1 relation, canonical encodings, target policy and exact native eligibility version |
 | Workload policy | Supplied operands versus source-extracted material; allowed task families; eligible task sets; reference task-selection policy; provenance evidence if claimed |
 | Adversary | Executable and algorithm hash, allowed public/private state, selection/dispatch policy, hardware, parallelism and any training/search used to select it |
-| Preprocessing | What is known before challenge release, advice/cache bytes, actual preparation cost or explicitly unknown historical cost, storage bound and reuse horizon |
-| Challenge process | Input-commitment/reveal order, allowed header fields, parent supply/advancement, seed generation and any selection or abort rights |
+| Preprocessing | What is known before challenge release, advice/cache bytes, actual preparation cost or explicitly unknown historical cost, storage bound, reuse horizon and credit capacity of already revealed winning inputs |
+| Challenge process | Input-commitment/reveal order, allowed header fields, parent supply/advancement, seed generation, selection/abort rights and when the target and credit weight become fixed |
 | Scope | Number of tasks and parents, epochs/renewals/restarts, cache sharing, target strata, budget and stopping rule |
 | Measurement | Resource units and instruments, included/excluded work, start/end boundaries, worker aggregation, transport and output retention |
 | Inference | Preselected kappa target, registered comparisons, repetitions, holdout construction, confidence allocation and assumptions for any tail bound |
@@ -78,6 +87,13 @@ timestamp, target, miner, transaction/state/receipt roots, task and nonce before
 deriving the challenge. Research must preserve that fact. A synthetic challenge
 stream is labeled synthetic; it cannot stand in for a legal branch-derived
 header or a live task lease.
+
+The useful product `A*B` can still be reused across these challenges, as existing
+prepared producers demonstrate. A different header nonce requires a valid
+challenge-specific transcript. That binding does not prove that its cheapest
+production method repeats a whole reference multiplication. Current W1 has no
+separate floor nonce added after its transcript; section 8's extra-nonce examples
+are hypothetical composition controls, not current-W1 vulnerability findings.
 
 ### 3.1 Preparation and adaptive challenge selection
 
@@ -92,6 +108,13 @@ its preparation receipt and online cost. If the cache's historical cost is
 unknown, label the result **conditional online cost with unaccounted preparation**;
 do not manufacture an amortized full cost. A preprocessing claim requires its
 time, memory, input dependence and lifetime to be specified.
+
+Retain already revealed winning lottery inputs even when their useful witnesses
+are not complete at the online start. An adversary could screen a floor win
+during preparation and complete its witness later. Counting only complete initial
+proofs would hide that advantage. Section 6 uses an explicit upper bound on the
+bank's remaining credit capacity, distinct from verified initial work. Identities
+already credited cannot receive a second credit.
 
 The adversary may select among eligible tasks, inspect public challenge-derived
 material, discard unfavorable seeds, choose kernels, batch work, and stop early,
@@ -128,6 +151,15 @@ revocation, clock, state-root or application authority. An offline supplied-pare
 experiment must say which parent construction and task-source costs are excluded.
 An advancing-parent experiment charges the work needed to produce its new
 parents; it cannot obtain an unlimited free history oracle.
+
+A later context chosen after inspecting the cache is not an independent fresh
+context. For example, two paid fair lottery queries in one of four contexts give
+probability `3/16` of a usable cached hit under a later uniform independent context,
+but `3/4` when that context can be selected after seeing the bank. A bound
+`min(1, R*q/2^h)` on `R` releases overlapping `q` prequeried contexts requires
+conditional context min-entropy at least `h` given the bank and earlier history.
+It is only an overlap bound. Actual parent/header choices must not be relabeled
+external independent seeds to obtain that premise.
 
 Record reuse horizons explicitly, including one search, many challenges for one
 task, several simultaneous parents and lease/profile changes. A measured finite
@@ -198,6 +230,13 @@ throughput observation under that parallelism; it is not aggregate physical
 work. Missing energy/CPU/transport measurements remain unknown. Reference FLOPs,
 scalar multiplication counts and nominal accelerator throughput are not lower
 bounds on any of these resources.
+
+A zero or unmeasured charge in one resource dimension cannot be replaced by a
+positive unit cost. If fresh queries or submissions cost zero in the declared
+scalar model and no namespace/output cap is supplied, there is no finite
+resource-only query cap. A finite namespace can cap counts without establishing
+a physical cost lower bound. Positive-cost finite models do not prohibit these
+adversaries in the real qualification game.
 
 For one declared scalar resource `C`, record actual disjoint charges:
 
@@ -273,16 +312,18 @@ per sample is an oracle selector, not a measured executable miner.
 
 A theoretical cost-rate objective could instead assert
 
-`E[N_A(P,B)] <= kappa * (B / c_reference) * p + delta`,
+`E[N_A(P,B)] <= E[K_0(P)] + kappa * (B / c_reference) * p + delta`,
 
 where `c_reference` is resource per defined reference opportunity, `p` its
-lottery probability, and `delta` is a bound on the **expected extra count**.
+lottery probability, `K_0` bounds the already revealed bank's remaining credit
+capacity, and `delta` bounds the **expected extra count**.
 If a proof supplies only bad-event probability `epsilon`, converting it into
 this expectation bound requires a finite maximum output count, for example
 `delta <= N_max * epsilon`. Do not add a probability to a count without that
-step. Preprocessing and initial reusable opportunity credits must be included
-in the theorem's parameters. This document does not assert this inequality
-for W1.
+step. `K_0` includes outputs supported by known winning inputs whose witnesses
+will be completed online; it is an upper bound, not a count of verified proofs.
+Preprocessing and initial credits stay in the theorem's parameters. This
+document does not assert this inequality for W1.
 
 ### 6.1 Conditions for a binomial upper bound
 
@@ -291,39 +332,77 @@ has `p=(T+1)/2^256`; target zero is explicitly refused, so `p=0` there. Thus the
 existing `7f...ff` and `07...ff` diagnostic targets have probabilities `1/2` and
 `1/32`, respectively, under the uniform-ticket model.
 
-A binomial domination argument needs a reduction establishing all of:
+Fix the information `F_0` at online start. A binomial domination reduction must
+establish all of the following, rather than assuming them from reference code:
 
-1. At most a deterministic `Q(P,B)` fresh, distinct effective opportunities can
-   be obtained within budget, including adaptive screening and preprocessing.
-2. Conditional on the prior history, each opportunity has success probability
-   at most `p` with an appropriate fresh-randomness coupling. A valid output
-   obtained without such an opportunity has a separately bounded bad-event
-   probability `epsilon`.
-3. Duplicate credit, post-budget outputs, task eligibility and all branch
-   transitions obey the specified game. `Q` is a precommitted maximum, not a
-   random stopping count selected after a win.
+1. `K_0` bounds remaining credit supported by the already revealed winning bank,
+   including incomplete witnesses. Declare its conditioning and preprocessing
+   cost. Zero target permits no eligible initial winning credit.
+2. `Q_A(P,B)` bounds distinct fresh adversarial lottery-oracle queries and `G(P,B)`
+   bounds distinct submitted lottery inputs not previously queried. Complete
+   those inputs lazily when a verifier checks them: at most `Q_A+G` fresh answers
+   are revealed. Both caps are deterministic for the conditional claim, not an
+   observed stopping count selected after a win.
+3. Given prior information, each fresh answer hits with probability at most `p`.
+   Inputs, target predicates and credit weights are fixed before that answer.
+   Include screening, aborts and any verifier response used for online selection.
+4. Outside a coupled failure event with `Pr[Bad | F_0] <= epsilon`, each counted
+   outcome maps to an appropriate successful answer or the initial bank. At most
+   `L` outcomes may map to one fresh success; the intended injective rule has
+   `L=1`. Eligibility, semantic deduplication, budget endpoints and branch changes
+   must obey the actual game. Repeated encodings are not new credit.
 
-Only under those premises may one claim
+On that coupling, `N_A(P,B) <= K_0 + L*sum(Y_i)` for at most `Q_A+G` answers.
+Conditional Bernoulli domination and padding to the deterministic cap give
 
-`Pr[N_A(P,B) >= k] <= Pr[Binomial(Q(P,B), p) >= k] + epsilon`,
+`Pr[N_A(P,B) >= k | F_0] <= Pr[Binomial(Q_A+G,p) >= ceil((k-K_0)/L)] + epsilon`.
 
-clipped to one. The right side is dimensionless. A budget-to-opportunity
-reduction is precisely the missing work-hardness obligation; assuming that
-every opportunity costs one complete reference execution would beg the question.
-For arbitrary adversarial publication/withholding, use a domination or a
-conditional counting bound, not a requirement that its published stream be
-exactly Poisson.
+The tail is one for `k<=K_0`; clip the final bound to one. A random `K_0` needs
+integration over `F_0` or a justified deterministic upper bound. Apply the bad-event
+term through a coupling/union bound, not by assuming that conditioning on no
+failure preserves independent answers. With finite output cap `N_max`, a
+corresponding conditional expectation bound is
+`K_0 + L*(Q_A+G)*p + N_max*epsilon`.
 
-For a binomial variable, an independently checkable rational bound is
+A full-valid candidate submitted without first querying its target hash still
+succeeds with probability `p`. With `Q_A=0`, `G=1`, `p=1/2`, the chance is `1/2`,
+not zero or automatically `2^-256`. An incorrect guessed trace failing full
+verification is a different event. A query-only physical floor must also cover
+the cost/cap of this direct-submission path. When a failure-probability approach
+is used instead, the explicit `G*p` union bound is not negligible at diagnostic
+targets. The verifier performing a hash does not certify miner expenditure.
 
-`Pr[N >= k] <= min(1, (1-p+p*z)^Q / z^k)` for rational `z >= 1`.
+For `S=sum(Y_i)`, an exact rational Chernoff control is
+`Pr[S>=s] <= min(1, (1-p+p*z)^(Q_A+G)/z^s)` for rational `z>=1`.
+The missing W1 obligation is the actual budget-to-opportunity reduction; defining
+an opportunity as one complete reference execution would beg the question.
+Adversarial withholding requires domination/counting bounds, not a demand that
+the published stream be exactly Poisson. A mean alone supplies only Markov's
+inequality `Pr[N>=k] <= E[N]/k` for `k>0`.
 
-More general adaptive resource/target processes need an explicitly proved
-conditional moment-generating-function or supermartingale premise. An empirical
-mean or histogram cannot supply that premise. Without it, a mean bound supplies
-only Markov's inequality `Pr[N >= k] <= E[N]/k` for `k>0`.
+### 6.2 Predictable choices and optional stopping
 
-### 6.2 Small countermodels the inference must survive
+Let `p_i` and nonnegative integer `w_i` be fixed given the information before
+fresh answer `i`, with `Pr[Y_i=1 | F_(i-1)] <= p_i`. For fixed rational `z>=1`, set
+
+`M_t = product_(i<=t) z^(w_i*Y_i)/(1-p_i+p_i*z^w_i), M_0=1`.
+
+Each factor's conditional expectation is at most one, so `M_t` is a nonnegative
+supermartingale. Ville's inequality gives
+`Pr[exists t: M_t >= 1/alpha] <= alpha`, including adaptive stopping. This permits
+predictable target/weight choices, not choices made after seeing that same answer.
+It requires all relevant fresh reveals, including screened misses and verifier
+completion of unqueried outputs. A serialized record alone cannot prove the
+conditional probability or predictability premises.
+
+The weighting must match actual target-derived credit. Application to an online
+physical budget still needs `K_0`, `Q_A`, `G`, multiplicity and failure control.
+No empirical mean, histogram or finite e-process check establishes those premises
+or the honest-growth/network/DAA conditions for chain security. Use a predeclared
+sampling/stopping rule or a valid time-uniform method; repeated inspection of
+fixed-sample intervals is not an optional-stopping guarantee.
+
+### 6.3 Small countermodels the inference must survive
 
 * Eight independent fair opportunities have mean four and probability `1/256`
   of eight successes. Eight perfectly correlated fair indicators have the same
@@ -342,6 +421,32 @@ only Markov's inequality `Pr[N >= k] <= E[N]/k` for `k>0`.
 The [exact arithmetic controls](../../../../formal/pon-nakamoto-v1/experiments/w1_cost_security_math.py)
 and [finite checks](../../../../formal/pon-nakamoto-v1/experiments/test_w1_cost_security_math.py)
 reproduce these examples using rational arithmetic. They prove no W1 reduction.
+
+The supplemental [adaptive models](../../../../formal/pon-nakamoto-v1/experiments/w1_adaptive_cost_models.py)
+and [exhaustive controls](../../../../formal/pon-nakamoto-v1/experiments/test_w1_adaptive_cost_models.py)
+cover the initial-bank and `Q_A+G` cases above, and the following additional cases:
+
+* One fair floor query authorizing three different outcomes gives probability
+  `1/2` of at least two outcomes; an injective one-query binomial tail is zero.
+* A one-unit screen that reveals the target bit, followed by an eight-unit
+  completion, succeeds with probability `15/16` in budget twelve by screening
+  up to four fair candidates. The selected completion is not a fresh fair coin.
+  This is a deliberately specified leakage model, not a demonstrated W1 shortcut.
+* Keeping only that selected hit gives e-value `3/2` at `z=3` with probability
+  `15/16`, exceeding the supposed `2/3` crossing bound. Retaining the preceding
+  misses gives crossing probability `1/2`, consistent with the bound.
+
+The paid-screening model also separates public cost signals from target leakage.
+For class frequencies `a_j`, screen cost `s`, completion cost `c_j` and conditional
+hit rate `p_j`, its optimal mean satisfies
+`V(b)=sum_j a_j*max(V(b-s), p_j+V(b-s-c_j))`, with infeasible terms omitted.
+For at-least-`k` probability the finish term is
+`p_j*V_(k-1)(b-s-c_j)+(1-p_j)*V_k(b-s-c_j)`, with `V_0=1`.
+Different thresholds can select different policies and do not define one PMF.
+Small independent policy-distribution enumeration checks the dynamic program.
+Native experiments must measure the real signal extraction and discarded-seed
+costs and retain full validity evidence; the synthetic class distribution does
+not establish an actual W1 cost or leakage distribution.
 
 ## 7. Preselected kappa sensitivity targets and evidence grades
 
@@ -427,14 +532,19 @@ Assume an AND construction requires both a valid useful-work statement and a
 fresh hash-floor success. The floor input must commit to the complete relevant
 context and semantic useful-work identity; proof randomness, alternate encoding,
 parent changes and extra nonce choices must have declared lottery consequences.
-Credit cannot reuse one floor success for many distinct counted outcomes.
+Credit cannot reuse one floor success for many distinct counted outcomes without
+an explicit multiplicity bound. The useful witness may be reusable on misses
+even when semantic deduplication limits it to one eventual credited result.
 
-If a model allows at most `Q_H` distinct floor-oracle queries, each with
-conditional success probability `p_H`, then complete valid outputs are a subset
-of those successes, up to an explicit guessing/binding failure term. The
-binomial bound from section 6 applies to the floor under these premises.
-Converting physical budget `B` to `Q_H` requires its own resource assumption;
-the random-oracle query model does not prove joules, dollars or ASIC equality.
+Let `Q_H` cap fresh floor queries and `G_H` cap fresh inputs submitted without a
+prior floor query; complete the latter at verification. With conditional hit
+probability at most `p_H`, bounded initial credit capacity `K_0`, and at most `L`
+outputs per floor hit, section 6 gives the conditional bound using `Q_H+G_H`.
+Binding/validity failures need their own explicit term. A correctly formed
+unqueried output is not automatically a negligible guessing failure.
+Converting physical budget `B` to `Q_H`, `G_H` and initial capacity requires its
+own resource assumptions; the random-oracle query model proves no joule, dollar
+or ASIC equality and cannot erase preprocessing or submission alternatives.
 
 Without a useful-work cost theorem, the guaranteed component is only this
 independent floor. One must not add an unproved useful-work lower bound. Even
@@ -485,6 +595,33 @@ respectively.
 These results explain the cost of relying only on the floor; they do not select
 a production mixture or replace research on the pure matrix primitive.
 
+### 8.3 Failed floor nonces and genuine non-amortization
+
+For positive abstract costs `U` per useful statement and `H` per floor query,
+and independent floor success probability `p>0`, the following are different
+schedules. They must not inherit the same cost fraction or reduction by name.
+
+| Hypothetical rule | First-win expected cost | Required distinction |
+| --- | --- | --- |
+| Recompute useful work for every floor nonce | `(U+H)/p` | Requires a real dependency/non-amortization argument, not a mandated honest implementation |
+| Reuse useful result on misses, consume it at its first hit | `U+H/p` | At most one final credit per useful statement still permits this saving |
+| Reuse one useful result for many separately credited floor nonces | `U` once, then `H` per fresh query | Every permitted new outcome and its floor mapping must be counted |
+
+With `U=9`, `H=1`, `p=1/2`, the first two means are twenty and eleven. In finite
+budget twenty the expected counts are respectively `1` and `2559/2048`; the last
+schedule gives `11/2`. Thus even the finite-budget count ratio differs from the
+inverse first-win mean-cost ratio. The supplemental exact models independently
+enumerate these schedules. They make no native timing or W1 hardness claim.
+
+Floor-first screening is another possibility if a floor input can be known
+before the useful result. Fix actual dependencies and what each failed check
+forces the miner to do. A true non-amortization claim must bound the resources
+for producing multiple newly credited outcomes jointly, with preprocessing,
+concurrent tasks/parents and all nonce choices allowed by the real protocol.
+Separate validity checks, separate benchmark costs, or an expected cost for one
+honest success do not prove that direct-sum property. This obligation remains
+open for pure W1 and for any proposed useful-plus-floor composition.
+
 ## 9. Research obligations and executable acceptance
 
 The four stages below refine the existing PN1 work, without creating another
@@ -529,6 +666,8 @@ root:
 ```sh
 python3 -B formal/pon-nakamoto-v1/experiments/test_w1_cost_security_math.py -v
 python3 -B formal/pon-nakamoto-v1/experiments/w1_cost_security_math.py
+python3 -B formal/pon-nakamoto-v1/experiments/test_w1_adaptive_cost_models.py -v
+python3 -B formal/pon-nakamoto-v1/experiments/w1_adaptive_cost_models.py
 ```
 
 The second command emits `pon-w1-cost-security-math-v1` to stdout. Capture it only
@@ -539,6 +678,14 @@ Tests enumerate small Bernoulli spaces independently, check generating-function
 bounds, expose correlation/stopping/refund countermodels, and verify hybrid
 threshold inversions and explicit floor hardware advantages. Their success is
 arithmetic evidence under the stated premises, not evidence that W1 meets them.
+
+The supplemental output is `pon-w1-adaptive-cost-models-v1`. It additionally
+checks unqueried submissions, bounded floor fanout, initial banks, zero-cost query
+caps, paid adaptive screening and predictable weighted tails. Its finite dynamic
+programs are checked against small independent execution/policy enumerations.
+Mathematical premises, consequences proved under those premises, native
+observations and open resource reductions must retain separate labels. No test
+result promotes a hardware, universal-hardness or production-activation flag.
 
 ## 10. Primary references and their applicability
 
@@ -556,12 +703,40 @@ arithmetic evidence under the stated premises, not evidence that W1 meets them.
   [DOI](https://doi.org/10.1007/978-3-319-96884-1_26). Non-amortization and
   multi-proof success are relevant qualification goals; its assumptions and
   constructions are not a theorem about arbitrary ML inputs or W1 hardware.
+  The accessible author-hosted [Vasudevan thesis](https://www.comp.nus.edu.sg/~prashant/files/papers/phd_thesis.pdf),
+  September 2018, section 3.1.1, printed pp.53-55 and section 3.4, states the
+  multi-challenge definition and direct-sum development. Independent generated
+  challenges, nonuniform Word-RAM cost and asymptotic assumptions must not be
+  replaced by arbitrary ML inputs and physical hardware without a reduction.
+* Howard, Ramdas, McAuliffe and Sekhon, [Time-uniform Chernoff bounds via
+  nonnegative supermartingales, arXiv v8](https://arxiv.org/abs/1808.03204v8),
+  2025-12-17; [full text](https://arxiv.org/html/1808.03204v8), section 2.3,
+  Lemma 1. Journal publication: Probability Surveys 17 (2020), 257-317,
+  [DOI](https://doi.org/10.1214/18-PS321). Ville's inequality needs an actual
+  nonnegative supermartingale; a selected empirical stream does not establish it.
 * Ding, [On Pearl Blockchain's Proof of Useful Work: Systematization and
   Flexibility](https://arxiv.org/abs/2610.25347v1), 2026-10-18. Its Theorem 4.1
   establishes efficient sensitivity checking. That local numerical condition
   is not a proof of resource-to-lottery optimality for W1.
+* Bünz, Chen and Guan, [It Takes Two: Proofs of Work for Fiat-Shamir](https://eprint.iacr.org/2026/2326),
+  preprint received 2026-10-03 and approved 2026-10-05. The official abstract
+  distinguishes strong PoW and non-amortizing PoW and reports a separation under
+  sufficiently cheap verification, plus a composition. Only its metadata and
+  abstract were retrievable in this review. This is a related boundary, not an
+  applied W1 theorem or proof that pure matrix PoN is impossible.
+* Dotan and Tochner, [Proofs of Useless Work, arXiv v2](https://arxiv.org/abs/2007.01046v2),
+  2021-11-06; [full text](https://arxiv.org/html/2007.01046v2), sections 3-4.
+  Miner-selected tasks and known solutions belong in the adversary model.
+  Their negative conclusions depend on the specified REMS and efficiency model.
+* Demirel, [Proof of Demand Is Not Proof of Work](https://eprint.iacr.org/2026/1492),
+  received 2026-07-21, revised 2026-10-07. The checked official metadata/abstract
+  separates work soundness, job binding and exogenous demand. Coalition
+  self-payments cannot simply be treated as irrecoverable computation cost.
+  Demand qualification is separate from W1's missing computational reduction.
 
 The [KW ePrint entry](https://eprint.iacr.org/2025/685) lists a 2025-12-08
 revision; the preceding literature review could read its metadata but not its
 PDF. The detailed references here identify the arXiv and ESA texts actually
-read, rather than asserting an unchecked byte-for-byte equivalence.
+read, rather than asserting an unchecked byte-for-byte equivalence. The primary
+metadata/version checks above were repeated on 2026-10-25; no unverified later
+paper or search-index summary is treated as an established result.

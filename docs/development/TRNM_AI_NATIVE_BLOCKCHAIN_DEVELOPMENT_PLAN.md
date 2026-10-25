@@ -1,6 +1,6 @@
 # Trillionnium Chain Development Plan — PoN / Hepta-PoH revision
 
-Plan ID: `trnm-chain-development-plan-v2` (stable registry identity; content revision 23).
+Plan ID: `trnm-chain-development-plan-v2` (stable registry identity; content revision 24).
 Effective: 2026-09-28; priority implementation revision: 2026-10-25. Status: selected development direction; no runtime activation.
 Canonical destination: `refs/heads/main`; continuation uses the current main lineage, not retired PR #194.
 Current source/head/tree/base and prospective merge are derived at verification time.
@@ -147,6 +147,36 @@ observer costs must remain visible. Mathematical assumptions, finite observation
 and unmeasured resources receive different verdicts. Pure matrix PoN remains the
 main research direction; a hypothetical priced work floor is a conditional cost
 comparison, not an enabled fallback. No readiness or acceptance flag changes.
+
+### PN1 adaptive and joint execution refinement — 2026-10-25
+
+The same cost-security obligation now has an explicit
+[adaptive/joint research contract](../protocol/pon-nakamoto-v1/details/W1_ADAPTIVE_JOINT_RESEARCH.md)
+and a separate [58-job registered plan](../../formal/pon-nakamoto-v1/experiments/w1_adaptive_joint_campaign_v1.json).
+Its four-lane AVX2 producer computes complete independent challenge transcripts
+jointly, with exact finite-field limb reduction and the unchanged PNW1 bytes.
+A lack of AVX2 is an explicit unsupported result. The comparison uses the same
+challenge stream and an ordinary sequential prepared producer. Cold preparation
+is per batch, not a hardware cache flush or the prior campaign's per-attempt cold.
+
+The native parent experiment acquires both development task alternatives through
+the original Node, pays for actual signed registration/renewal/revocation and
+parent advancement, and compares fixed task choices with paid public-noise
+screening. Arithmetic caches never supply current task authority. All research
+proofs, including misses, are retained and independently replayed. Original
+Node internal misses are reconstructed after the strategy ends and explicitly
+supply no new credit or selection feedback. Actual native receipts remain
+native observations; Python arithmetic replay does not attest the node host.
+
+The [exact finite models](../../formal/pon-nakamoto-v1/experiments/w1_adaptive_cost_models.py)
+exercise completed random-oracle queries, unqueried submissions, prepaid winning
+credit capacity, bounded fanout, paid selection and predictable weighted stopping.
+Hypothetical hybrid schedules distinguish fresh useful work, reuse on failed
+floor nonces, and repeated credited outputs. A successful finite control supplies
+neither a physical resource conversion nor a universal non-amortization theorem.
+The pure matrix direction, original service envelope and PN0–PN6 acceptance
+meaning remain unchanged. Source/plan freezing precedes performance collection;
+measurements and their complete limitations must be published separately.
 
 ### Audit contract refinement — 2026-10-25
 

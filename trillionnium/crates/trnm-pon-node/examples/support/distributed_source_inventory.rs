@@ -3200,6 +3200,20 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-pon-node/examples/pon_w1_joint_research.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/examples/pon_w1_joint_research.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/examples/pon_w1_parent_reuse_research.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/examples/pon_w1_parent_reuse_research.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-pon-node/examples/public_pool_fixture.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -3253,6 +3267,20 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-pon-node/examples/support/w1_from_zero.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/examples/support/w1_joint_challenge.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/examples/support/w1_joint_challenge.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/examples/support/w1_parent_reuse.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/examples/support/w1_parent_reuse.rs"
         )),
     ),
     (
