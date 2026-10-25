@@ -44,5 +44,12 @@ separate read after that deadline finds 4,096 bytes of kernel charge; it is
 diagnosis only. No old Unknown owner is stopped or reused, and no reclaim,
 counter reset, baseline subtraction, funding or refund is performed.
 
+A separately reviewed fresh fixed-payload single-CPU diagnostic on `ec6868da`
+observes raw U zero within the unchanged original start+8s window in 12 samples.
+Its original owner remains retained; Whole-U, physical resource return, funding
+and refund remain false. No old owner is touched. This is one scheduling
+observation, not a general multi-CPU repair or unique kernel-cause proof. The
+original failed multi-CPU observation remains in `host-retirement.json`.
+
 `manifest.json` fixes the compact JSON projections. These unsigned observations
 cannot mint any of the original admission, selection, funding or release proofs.

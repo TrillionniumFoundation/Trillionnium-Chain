@@ -1664,7 +1664,7 @@ strict Clippy. No test, native deadline or assertion is removed. This addresses
 observed scheduler cancellation after successful capacity/growth controls; fresh
 hosted execution of the new scheduling remains pending.
 
-The current published Hepta owner-native source is `394d1c75` and its actual
+The earlier published Hepta owner-native source was `394d1c75` and its actual
 original-base preview is `1dddb018`, with parents `[c38e7727, 394d1c75]` and the
 verified merge tree. Its existing full native workflow and Windows diagnostics
 are requested, not passing evidence. The ordinary Linux suite passed 1,042 cases
@@ -1687,6 +1687,24 @@ volume-root TrustedInstaller SID; no private-store owner policy is changed by
 that observation. Preserve the earlier nine NOT_RUN outcomes and both current
 failed lanes in [the original diagnostic run](https://github.com/TrillionniumFoundation/hepta-private-ci/actions/runs/40117218852).
 x64 and full current-pair native acceptance remain required.
+
+The subsequent published source `07731d31` and actual original-base preview
+`ccff5bed` retain all native gates. Both ARM diagnostic lanes pass the original
+private-state, FinalUse, Registry, owner-lock and held-RX controls; both still fail
+the original broad-identity deletion and guarded legacy execution regressions.
+Their complete native workflow runs
+[source](https://github.com/TrillionniumFoundation/hepta-private-ci/actions/runs/40177457993)
+and [actual preview](https://github.com/TrillionniumFoundation/hepta-private-ci/actions/runs/40178472384)
+then fail all four ARM test shards. The source executes 18,491 tests: 18,113 pass,
+343 fail and 35 time out. The original partition filters are separate from these
+378 actual failures. No passing build or diagnostic receipt closes that gate.
+Within this same PN0 item, Hepta now has local successor repairs for held writable
+Windows directory synchronization and typed native-TLS negotiation fallback,
+including actual certificate-denial controls. Their scoped Linux packages pass
+39 and 100 tests respectively; source checking is not native Windows execution.
+The fresh managed-runner original process/token proof remains only a launch
+prerequisite. Its complete qualified production route and the original deletion
+assertions remain required, without a test-only bypass or longer limits.
 See the same [Hepta development obligations](https://github.com/TrillionniumFoundation/hepta-private-ci/blob/394d1c7559513f4c28930b4bb1425ff383350ddc/docs/DEVELOPMENT.md).
 
 Exit: one reproducible source-pair/configuration inventory and per-gate results
@@ -2236,7 +2254,13 @@ raw-U observation fails its original start+8s cutoff and keeps the same owner,
 root and handles. Only a separate post-deadline diagnostic reports remaining
 kernel charge4,096 with zero processes/descendants/dying; it is not a terminal
 receipt. Native child retirement is therefore observed in this controlled
-scope, while raw-U zero, funded entry and whole-unit return remain blockers.
+scope, while raw-U zero, funded entry and whole-unit return remain blockers. A separately reviewed
+fresh fixed `/bin/true` diagnostic pins only its new owner and descendants to one
+allowed CPU. Within the same original start+8s window, the unchanged sampler
+observes raw U zero in 12 samples, while retaining the original owner and all
+Whole-U/funding/refund flags as false. The earlier multi-CPU failure is preserved.
+This is a scheduling diagnostic, not a product policy, a uniquely proved kernel
+cause or closure of multi-CPU physical return and bounded retained-state gates.
 No old Unknown owner is cleaned or reused to obtain these results.
 
 The existing PN4 dependency and acceptance sequence is:
