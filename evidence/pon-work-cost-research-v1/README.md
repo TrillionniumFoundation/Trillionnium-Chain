@@ -41,6 +41,15 @@ SHA-256 separately from the publication commit. The runner retains raw output an
 failed observations outside the source checkout. Compact derived results can be
 published here without rebranding them as independent hardware attestation.
 
+The first frozen source was `bcbc922b3dbfef403effb9e9224191e2a6736017`.
+Its campaign completed the first ten registered jobs, then the long-reuse hot
+job reached the 64-MiB stdout collection limit. The collector preserved the
+truncated stream, original failure and complete preceding observations and
+marked the entire campaign incomplete. The next source revision preregisters a
+256-MiB collection limit and reruns every job. Workload, algorithms, CPU budgets,
+targets, seeds, sample counts and stopping rules are unchanged. The first run is
+not silently combined with the repeat or counted as a complete successful trial.
+
 ## Reproduce the native campaign
 
 Use a clean checkout of the **measured source**, direct Rust 1.95.0 binaries,

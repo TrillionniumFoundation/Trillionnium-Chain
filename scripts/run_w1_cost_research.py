@@ -223,6 +223,9 @@ def validate_plan(plan):
     require(plan.get("schema") == "pon-w1-cost-research-plan-v1", "PLAN_SCHEMA")
     require(plan.get("production_activation") is False, "PLAN_AUTHORITY")
     require(plan.get("hardness_accepted") is False, "PLAN_HARDNESS")
+    limit = plan.get("collection_output_limit_bytes", 64 * 1024 * 1024)
+    require(type(limit) is int and limit in (64 * 1024 * 1024, 256 * 1024 * 1024),
+            "PLAN_OUTPUT_LIMIT")
     jobs = plan.get("jobs")
     require(type(jobs) is list and 1 <= len(jobs) <= 64, "PLAN_JOB_COUNT")
     names = set()
@@ -258,6 +261,7 @@ def run(args):
     git("ls-files", "--error-unmatch", str(plan_path.relative_to(ROOT)))
     plan = json.loads(plan_path.read_text())
     jobs = validate_plan(plan)
+    output_limit = plan.get("collection_output_limit_bytes", 64 * 1024 * 1024)
     require(args.cpu in os.sched_getaffinity(0), "CPU_AFFINITY_UNAVAILABLE")
     taskset = shutil.which("taskset")
     require(taskset is not None, "TASKSET_REQUIRED")
@@ -311,7 +315,7 @@ def run(args):
                        "--message-format=json"], 1200),
         )
         for name, command, timeout in setup:
-            step = run_step(out, name, command, env, timeout, 64 * 1024 * 1024)
+            step = run_step(out, name, command, env, timeout, output_limit)
             report["steps"].append(step)
             require(step["complete_success"], "SETUP_FAILED:" + name)
             if name == "rustc-version":
@@ -338,7 +342,7 @@ def run(args):
             require(sha(binary) == report["binary"]["sha256"], "BINARY_CHANGED")
             command = [taskset, "-c", str(args.cpu), str(binary), *job["args"]]
             step = run_step(out, job["name"], command, env,
-                            job["timeout_seconds"], 64 * 1024 * 1024)
+                            job["timeout_seconds"], output_limit)
             report["steps"].append(step)
             print(json.dumps({"job": job["name"], "complete": step["complete_success"],
                               "wall_ns": step["wall_ns"]}), flush=True)

@@ -16,6 +16,7 @@ import copy
 from contextlib import contextmanager
 import importlib.util
 import json
+import os
 from pathlib import Path
 import subprocess
 import tempfile
@@ -375,13 +376,14 @@ class ReaderControls(unittest.TestCase):
             with self.assertRaisesRegex(ValueError,"TRUNCATED_OR_OVERLONG_RECORD"):reader.validate_raw(path,replay=False)
 
     @contextmanager
-    def bundle(self):
+    def bundle(self, collection_limit=None):
         with tempfile.TemporaryDirectory(prefix="w1-bundle-test-") as d:
             base=Path(d);source=base/"source";out=base/"bundle";source.mkdir();out.mkdir()
             args=self.cases["hot-repeat"]["args"]
             plan={"schema":"pon-w1-cost-research-plan-v1","baseline_source":"63"*20,
                   "production_activation":False,"hardness_accepted":False,"work_function_changed":False,
                   "jobs":[{"name":"tiny","args":args,"timeout_seconds":60}]}
+            if collection_limit is not None:plan["collection_output_limit_bytes"]=collection_limit
             plan_rel="formal/pon-nakamoto-v1/experiments/w1_cost_campaign_v1.json"
             plan_bytes=(json.dumps(plan,sort_keys=True,indent=2)+"\n").encode()
             runner_bytes=(reader.ROOT/"scripts/run_w1_cost_research.py").read_bytes()
@@ -411,7 +413,7 @@ class ReaderControls(unittest.TestCase):
             steps=[]
             for name,command,timeout,raw in setup:
                 (out/(name+".stdout")).write_bytes(raw);(out/(name+".stderr")).write_bytes(b"")
-                row=dict(name=name,command=command,cwd=str(source),timeout_seconds=timeout,output_limit_bytes=64*1024*1024,returncode=0,error=None,stdout_truncated=False,stderr_truncated=False,stdout=name+".stdout",stderr=name+".stderr",wall_ns=1,stdout_bytes=len(raw),stderr_bytes=0,stdout_sha256=reader.digest(raw),stderr_sha256=reader.digest(b""),complete_success=True)
+                row=dict(name=name,command=command,cwd=str(source),timeout_seconds=timeout,output_limit_bytes=(collection_limit if collection_limit is not None else 64*1024*1024),returncode=0,error=None,stdout_truncated=False,stderr_truncated=False,stdout=name+".stdout",stderr=name+".stderr",wall_ns=1,stdout_bytes=len(raw),stderr_bytes=0,stdout_sha256=reader.digest(raw),stderr_sha256=reader.digest(b""),complete_success=True)
                 steps.append(row);(out/(name+".step.json")).write_text(json.dumps(row))
             (out/"preregistered-plan.json").write_bytes(plan_bytes)
             manifest=dict(schema="pon-w1-cost-research-bundle-v1",complete_success=True,source_unchanged=True,failure=None,source_before=source_receipt,source_after=source_receipt,raw_source_before=raw_receipt,raw_source_after=raw_receipt,hardness_accepted=False,production_activation=False,independent_hardware_qualification=False,profile="release",inherited_build_overrides={},target_directory_was_new=True,runner_sha256=reader.digest(runner_bytes),plan_source_path=plan_rel,plan_sha256=reader.digest(plan_bytes),binary={"path":binary,"sha256":"bb"*32,"bytes":1},compiler={"path":compiler,"sha256":"cc"*32},cargo={"path":cargo,"sha256":"dd"*32},declared_build_environment=env,hardware_before_sha256=reader.sha(out/"hardware-before.json"),hardware_after_sha256=reader.sha(out/"hardware-after.json"),steps=steps,cargo_configurations=[{"path":str(path),"exists":False,"sha256":None} for path in sorted(configs)],toolchain="rustc 1.95.0 (fixture)\n",cargo_executable_artifact=artifact)
@@ -426,6 +428,37 @@ class ReaderControls(unittest.TestCase):
             self.assertEqual(value["native_reported"]["attempts"],2)
             self.assertEqual(value["python_replayed"]["full_relation_attempts"],1)
             self.assertFalse(value["native_execution_attested_by_reader"])
+
+    def test_registered_collection_envelope_is_source_bound_and_not_a_job_change(self):
+        for limit in (None,64*1024*1024,256*1024*1024):
+            with self.subTest(limit=limit),self.bundle(limit) as (out,manifest,pins):
+                value=reader.read_bundle(out,**pins)
+                self.assertEqual(value["collection_output_limit_bytes"],limit or 64*1024*1024)
+                self.assertEqual(value["native_reported"]["attempts"],2)
+                step=manifest["steps"][-1]
+                step["output_limit_bytes"]=(256*1024*1024 if step["output_limit_bytes"]==64*1024*1024 else 64*1024*1024)
+                (out/(step["name"]+".step.json")).write_text(json.dumps(step))
+                (out/"campaign.json").write_text(json.dumps(manifest));pins["expected_manifest_sha256"]=reader.sha(out/"campaign.json")
+                with self.assertRaisesRegex(ValueError,"STEP_ENVELOPE"):reader.read_bundle(out,**pins)
+        for limit in (True,0,64*1024*1024+1,512*1024*1024):
+            with self.subTest(limit=limit),self.assertRaisesRegex(ValueError,"COLLECTION_OUTPUT_LIMIT"):
+                reader.collection_limit(limit)
+
+    def test_over_64_mib_raw_boundary_without_large_allocation(self):
+        with tempfile.TemporaryDirectory() as d:
+            path=Path(d)/"small-fixture.jsonl";path.write_bytes(encode_rows(self.cases["hot-repeat"]["rows"]))
+            original_stat=Path.stat
+            def observed_size(item,*args,**kwargs):
+                observed=original_stat(item,*args,**kwargs)
+                if item==path:
+                    fields=list(observed);fields[6]=64*1024*1024+1
+                    return os.stat_result(fields)
+                return observed
+            with patch.object(Path,"stat",observed_size):
+                with self.assertRaisesRegex(ValueError,"RAW_OUTPUT_LIMIT"):reader.validate_raw(path,replay=False)
+                value=reader.validate_raw(path,replay=False,output_limit_bytes=256*1024*1024)
+                self.assertEqual(value["native_reported"]["attempts"],2)
+                self.assertEqual(value["collection_output_limit_bytes"],256*1024*1024)
 
     def test_external_identity_pins_cannot_be_inferred_from_bundle(self):
         with self.bundle() as (out,manifest,pins):

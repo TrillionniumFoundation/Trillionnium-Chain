@@ -94,6 +94,10 @@ class EvidenceControls(unittest.TestCase):
                 "hardness_accepted": False, "jobs": [
                     {"name": "fixed", "args": ["--attempts", "1"], "timeout_seconds": 10}]}
         runner.validate_plan(plan)
+        runner.validate_plan({**plan, "collection_output_limit_bytes": 256 * 1024 * 1024})
+        for limit in (0, 1, True, 1024 * 1024 * 1024):
+            with self.subTest(output_limit=limit), self.assertRaisesRegex(ValueError, "PLAN_OUTPUT_LIMIT"):
+                runner.validate_plan({**plan, "collection_output_limit_bytes": limit})
         for field in ("production_activation", "hardness_accepted"):
             with self.subTest(field=field), self.assertRaises(ValueError):
                 runner.validate_plan({**plan, field: True})

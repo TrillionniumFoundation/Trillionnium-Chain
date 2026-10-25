@@ -30,6 +30,7 @@ from pon_w1_cost_matrix_reader import material as expected_material, _rank
 
 SCHEMA = "pon-w1-valid-cost-game-v1"
 MAX_LINE = 2 * 1024 * 1024
+COLLECTION_LIMITS = (64 * 1024 * 1024, 256 * 1024 * 1024)
 N, Q, PROOF_BYTES = 64, 4294967291, 49188
 ARMS = (
     "scalar-original", "prepared-generic", "prepared-structured", "tiled-classical",
@@ -357,7 +358,13 @@ def checked_rows(path):
             yield row
 
 
-def validate_raw(path, *, replay=True, expected_options=None):
+def collection_limit(value):
+    require(type(value) is int and value in COLLECTION_LIMITS, "COLLECTION_OUTPUT_LIMIT")
+    return value
+
+
+def validate_raw(path, *, replay=True, expected_options=None, output_limit_bytes=COLLECTION_LIMITS[0]):
+    require(Path(path).stat().st_size <= collection_limit(output_limit_bytes), "RAW_OUTPUT_LIMIT")
     campaign = None
     materials = {}
     cohorts = []
@@ -847,6 +854,7 @@ def validate_raw(path, *, replay=True, expected_options=None):
     require(finished and material_cost is not None, "MISSING_END_OR_MATERIAL")
     require(retained_families == winning_families, "MISSING_REPRESENTATIVE_CERTIFICATE")
     return {"schema": "pon-w1-cost-research-raw-derived-v1", "file": str(path), "sha256": sha(path), "rows": row_count,
+            "collection_output_limit_bytes": output_limit_bytes,
             "options": campaign["options"], "material_construction": material_cost,
             "python_full_relation_replays": examples, "cohorts": cohorts,
             "registered_options_checked": expected_options is not None,
@@ -953,6 +961,7 @@ def validate_plan(plan):
     require(plan.get("production_activation") is False and plan.get("hardness_accepted") is False and
             plan.get("work_function_changed") is False, "PLAN_AUTHORITY")
     hx(plan["baseline_source"], 20, "PLAN_BASELINE")
+    collection_limit(plan.get("collection_output_limit_bytes", COLLECTION_LIMITS[0]))
     jobs = plan.get("jobs")
     require(type(jobs) is list and 1 <= len(jobs) <= 64, "PLAN_JOB_COUNT")
     names = set(SETUP_NAMES)
@@ -1011,6 +1020,7 @@ def read_bundle(directory, *, expected_head, expected_tree, expected_plan_sha256
     bundle, plan = decode(manifest_path.read_bytes()), decode(plan_path.read_bytes())
     require(sha(plan_path) == expected_plan_sha256 == bundle["plan_sha256"], "BUNDLE_PLAN_PIN")
     jobs = validate_plan(plan)
+    output_limit = collection_limit(plan.get("collection_output_limit_bytes", COLLECTION_LIMITS[0]))
     require(bundle["schema"] == "pon-w1-cost-research-bundle-v1" and
             bundle["complete_success"] is True and bundle["source_unchanged"] is True and
             bundle["failure"] is None, "INCOMPLETE_SOURCE_BOUND_BUNDLE")
@@ -1089,11 +1099,12 @@ def read_bundle(directory, *, expected_head, expected_tree, expected_plan_sha256
         require(type(step["command"]) is list and all(type(value) is str for value in step["command"]), "STEP_COMMAND")
         require(type(step["cwd"]) is str and Path(step["cwd"]).is_absolute(), "STEP_CWD")
         cwd = step["cwd"] if cwd is None else cwd
-        require(step["cwd"] == cwd and step["output_limit_bytes"] == 64 * 1024 * 1024, "STEP_ENVELOPE")
+        require(step["cwd"] == cwd and type(step["output_limit_bytes"]) is int and
+                step["output_limit_bytes"] == output_limit, "STEP_ENVELOPE")
         uint64(step["wall_ns"], "STEP_WALL")
         for stream in ("stdout", "stderr"):
             require(step[stream] == step["name"] + "." + stream, "STEP_STREAM_IDENTITY")
-            path = bundle_file(directory, step[stream], 64 * 1024 * 1024 if stream == "stdout" else 4 * 1024 * 1024)
+            path = bundle_file(directory, step[stream], output_limit if stream == "stdout" else 4 * 1024 * 1024)
             require(path.stat().st_size == uint64(step[stream + "_bytes"], "STREAM_BYTES") and
                     sha(path) == step[stream + "_sha256"], "CHANGED_RAW_STREAM")
         receipt = bundle_file(directory, step["name"] + ".step.json", 1024 * 1024)
@@ -1121,15 +1132,15 @@ def read_bundle(directory, *, expected_head, expected_tree, expected_plan_sha256
     for name, command, timeout in expected_setup:
         require(by_name[name]["command"] == command and by_name[name]["timeout_seconds"] == timeout,
                 "SETUP_COMMAND_BINDING:" + name)
-    toolchain = bundle_file(directory, "rustc-version.stdout").read_text()
+    toolchain = bundle_file(directory, "rustc-version.stdout", output_limit).read_text()
     require(toolchain == bundle["toolchain"] and toolchain.startswith("rustc 1.95.0 "), "COMPILER_VERSION_RECEIPT")
-    preflight = decode(bundle_file(directory, "preflight.stdout").read_bytes())
+    preflight = decode(bundle_file(directory, "preflight.stdout", output_limit).read_bytes())
     require(preflight["result"] == "PASS" and preflight["project"] == "trillionnium-chain" and
             preflight["remote_policy_mutated"] is False and preflight["branch"] == before["branch"], "PREFLIGHT_RECEIPT")
-    metadata = decode(bundle_file(directory, "metadata.stdout").read_bytes())
+    metadata = decode(bundle_file(directory, "metadata.stdout", output_limit).read_bytes())
     require(metadata["workspace_root"] == str(root / "trillionnium") and
             metadata["target_directory"] == environment["CARGO_TARGET_DIR"], "CARGO_METADATA_PATHS")
-    build_messages = [decode(line) for line in bundle_file(directory, "build.stdout").read_bytes().splitlines()]
+    build_messages = [decode(line) for line in bundle_file(directory, "build.stdout", output_limit).read_bytes().splitlines()]
     artifacts = [row for row in build_messages if row.get("reason") == "compiler-artifact" and
                  row.get("target", {}).get("name") == "pon_w1_cost_game" and row.get("executable")]
     require(len(artifacts) == 1 and artifacts[0] == bundle["cargo_executable_artifact"] and
@@ -1150,11 +1161,13 @@ def read_bundle(directory, *, expected_head, expected_tree, expected_plan_sha256
                 "REGISTERED_JOB_COMMAND_BINDING")
         launcher = command[0] if launcher is None else launcher
         require(command[0] == launcher, "TASKSET_CHANGED")
-        result = validate_raw(directory / step["stdout"], expected_options=options_from_args(job["args"]))
+        result = validate_raw(directory / step["stdout"], expected_options=options_from_args(job["args"]),
+                              output_limit_bytes=output_limit)
         result["job"] = job["name"]
         result["whole_waited_child_resources"] = step.get("whole_waited_child_resources")
         raw_results.append(result)
     return {"schema": "pon-w1-cost-research-derived-v1", "source": before,
+            "collection_output_limit_bytes": output_limit,
             "binary": binary, "plan_sha256": expected_plan_sha256, "raw_manifest_sha256": expected_manifest_sha256,
             "external_identity_pins_checked": True,
             "external_pins_must_come_from_trusted_owner_not_from_untrusted_bundle": True,
@@ -1183,6 +1196,8 @@ def main():
     parser.add_argument("--expected-plan-sha256")
     parser.add_argument("--expected-binary-sha256")
     parser.add_argument("--expected-manifest-sha256")
+    parser.add_argument("--raw-output-limit-bytes", type=int, choices=COLLECTION_LIMITS,
+                        help="explicit standalone raw envelope; bundle mode uses only its source-bound plan")
     args = parser.parse_args()
     try:
         pins = {key: getattr(args, key) for key in ("expected_head", "expected_tree", "expected_plan_sha256",
@@ -1190,10 +1205,12 @@ def main():
         require(not args.out.exists(), "OUTPUT_ALREADY_EXISTS")
         if args.bundle:
             require(all(value is not None for value in pins.values()), "BUNDLE_REQUIRES_ALL_EXTERNAL_PINS")
+            require(args.raw_output_limit_bytes is None, "BUNDLE_ENVELOPE_COMES_FROM_REGISTERED_PLAN")
             result = read_bundle(args.bundle, **pins)
         else:
             require(all(value is None for value in pins.values()), "RAW_IS_NOT_A_SOURCE_BOUND_BUNDLE")
-            result = validate_raw(args.raw)
+            result = validate_raw(args.raw, output_limit_bytes=(args.raw_output_limit_bytes
+                                  if args.raw_output_limit_bytes is not None else COLLECTION_LIMITS[0]))
         with args.out.open("x") as stream:
             json.dump(result, stream, indent=2, sort_keys=True, allow_nan=False)
             stream.write("\n")

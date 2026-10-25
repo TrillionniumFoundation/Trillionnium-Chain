@@ -1,6 +1,8 @@
 {
   "schema": "pon-w1-cost-research-plan-v1",
   "date": "2026-10-25",
+  "collection_output_limit_bytes": 268435456,
+  "collection_amendment": "The first source-frozen campaign bcbc922b3dbfef403effb9e9224191e2a6736017 stopped at its 64-MiB long-reuse stdout bound. Preserve that failed observation; rerun the complete unchanged workload with a preregistered 256-MiB collection bound.",
   "baseline_source": "630f871293e48588e0a1ceae7ceb64973d3ec31d",
   "research_question": "distinct full-valid winning tickets under charged preparation, selection and generation budgets",
   "production_activation": false,
