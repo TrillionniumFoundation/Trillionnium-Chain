@@ -522,6 +522,31 @@ impl WorkCheckedPacket {
             owner_permit: None,
         })
     }
+    /// Optional exact invalid-mathematics cache. The current Node still
+    /// checks context, task, source, clock and owner before this verifier is
+    /// selected. Only previously fully verified Transcript/Product failures
+    /// can return early; never a VerifiedWork or a consensus-invalidity veto.
+    pub(crate) fn verify_with_rejection_cache(
+        packet: Packet,
+        cache: &pon_work::rejection_cache::RejectionCache,
+        progress: &mut impl FnMut(pon_work::VerificationProgress) -> Result<()>,
+    ) -> Result<Self> {
+        let h = &packet.header;
+        let work = cache
+            .verify_with_progress(h.challenge(), h.work_task, h.target, &packet.proof, progress)
+            .map_err(|error| match error {
+                pon_work::VerificationError::Relation(error) => {
+                    Error::from(format!("WORK:{error:?}"))
+                }
+                pon_work::VerificationError::Cancelled(error) => error,
+            })?;
+        Ok(Self {
+            packet,
+            work,
+            owner_permit: None,
+        })
+    }
+
     pub(crate) fn verify_with_progress(
         packet: Packet,
         progress: &mut impl FnMut(pon_work::VerificationProgress) -> Result<()>,
