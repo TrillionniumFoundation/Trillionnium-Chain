@@ -908,3 +908,27 @@ P0 native, P1 cross-process/host owner, P2 adversarial hardware pricing,
 P3 mixed WAN and identity churn, P4 A03 honest service, P5 sound proof
 system/security economics and P6 independent public review remain
 **OPEN** until their own actual qualifying receipts exist.
+
+
+### P5/P6 follow-on: matched research and Go third-language oracle
+
+The separately scoped [matched four-arm comparison](W2_P5_MATCHED_RESEARCH.md)
+uses one synthetic Header-derived challenge and one canonical W1 task for
+W1, W2-A, W2-B and W2-C CPU/rejection observations. Its W2-A counterexample
+still passes a sampled Merkle filter, W2-B still fully replays a
+131,072-byte intermediate transcript witness, and W2-C still incurs
+independent non-neural security hashes before original W1. No valid
+STARK/SNARK exists and no measured result changes the actual W1 profile.
+
+The [Go W1 oracle](W2_GO_ORACLE.md) is a standalone, stdlib-only third-language
+full verifier with independently reduced modular arithmetic and strict
+W1 wire/domain/checking order. Its research tests include the **four**
+same-challenge forged tickets, the legal W1 proof golden vectors,
+W2-C two-nonce puzzle commitments and early/late W1 negative cases.
+This substantially improves *cross-language reference coverage*, but
+is not an independent external reviewer, WAN fault qualification or a
+new accepted consensus profile.
+
+P6 external reviewer sign-off, independently hidden vector corpus,
+cryptographic proof-system soundness and fault/resource qualification
+remain open; do not infer these from Rust/Python/Go parity alone.
