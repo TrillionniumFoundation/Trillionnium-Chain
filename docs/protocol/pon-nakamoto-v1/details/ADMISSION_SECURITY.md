@@ -790,3 +790,18 @@ clock, capped output and missing GPU/native observations as null. This is
 not an authenticated V3 transport session, a real GPU hash-rate measurement,
 a client cost bound across devices, or evidence of affordable honest access.
 No P2 production admission parameter is selected by the results.
+
+
+### P1 interim network boundary (current candidate after the first fix)
+
+Legacy 'public_v2::serve_public_protected_v2' and its private owner
+composition now reject non-loopback bind addresses with
+'PUBLIC_V2_LOOPBACK_ONLY' before accepting any proof. An explicit native
+regression binds '0.0.0.0:0' and checks refusal without starting a service.
+This intentionally narrows a legacy development transport that has no
+V3-equivalent measured mutation-CPU account. It does **not** make trusted
+loopback clients Sybil-resistant and does not close P1. Legacy V2 signed
+payloads and W1 proof verification remain unchanged on permitted loopback
+listeners; migration to the V3 CPU-metered interface must be explicit.
+Other native authenticated/protected entrypoints still require independent
+host-budget evaluation and P1 remains OPEN.
