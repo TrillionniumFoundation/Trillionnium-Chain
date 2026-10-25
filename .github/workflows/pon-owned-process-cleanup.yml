@@ -102,7 +102,7 @@ jobs:
           import importlib, json, sys, unittest
           sys.path.insert(0, 'scripts')
           rows = []
-          for name, expected in [('test_llm_runtime_kernel_owned', 16), ('test_llm_runtime_host_controller', 9), ('test_llm_runtime_host_aggregate', 17), ('test_llm_runtime_retirement_slot', 9), ('test_llm_runtime_retirement_publication', 4), ('test_llm_runtime_retirement_activation', 10), ('test_llm_runtime_host_retirement', 7), ('test_llm_runtime_retirement_steps', 4), ('test_llm_runtime_host_u_readback', 14)]:
+          for name, expected in [('test_llm_runtime_kernel_owned', 16), ('test_llm_runtime_host_controller', 9), ('test_llm_runtime_host_aggregate', 17), ('test_llm_runtime_retirement_slot', 9), ('test_llm_runtime_retirement_publication', 4), ('test_llm_runtime_retirement_activation', 10), ('test_llm_runtime_host_retirement', 7), ('test_llm_runtime_retirement_steps', 4), ('test_llm_runtime_host_u_readback', 15)]:
               suite = unittest.defaultTestLoader.loadTestsFromModule(importlib.import_module(name))
               if suite.countTestCases() != expected:
                   raise RuntimeError(f'{name}: expected {expected} controls, found {suite.countTestCases()}')

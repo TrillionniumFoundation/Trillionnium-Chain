@@ -394,7 +394,7 @@ class _AggregateLaunch:
                 time.monotonic_ns() < state.deadline_ns,
                     'host-U-readback-original-cutoff')
             state.samples += 1
-            state.last = raw  # One bounded nine-file observation, no history list.
+            state.last = tuple(raw.items())  # Immutable nine-file snapshot; returned DTO cannot grow it.
             state.zero = state.zero+1 if zero else 0
             if state.zero == 2:
                 return dict(result, scope='original-O-raw-U-observation-only',

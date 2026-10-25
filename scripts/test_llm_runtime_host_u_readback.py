@@ -249,5 +249,23 @@ class HostUReadbackTests(unittest.TestCase):
         self.assertIs(op._first_error, first)
         self.retained(launch, op, cap, saved)
 
+    def test_returned_counter_mutation_cannot_expand_the_rooted_snapshot(self):
+        launch, op, cap, paths = self.completed()
+        self.zero(paths)
+        result = op._read_u_terminal()
+        expected = tuple(result['counters'].items())
+        self.assertIs(type(launch._u_readback.last), tuple)
+        self.assertEqual(len(expected), 9)
+        result['counters']['consumer_note'] = 'x'*65537
+        result['counters']['memory.current'] = ['consumer-owned-mutable-value']
+        self.assertEqual(launch._u_readback.last, expected)
+        result['counters'].clear()
+        self.assertEqual(launch._u_readback.last, expected)
+        self.assertTrue(all(type(key) is type(value) is str for key,value in launch._u_readback.last))
+        self.assertLessEqual(sum(len(value) for _,value in launch._u_readback.last), 65536)
+        self.assertIs(host._retained_aggregate_owner(), cap)
+        self.assertTrue(result['raw_u_zero_observed'])
+        self.assertFalse(result['whole_u_terminal']);self.assertFalse(result['funded_whole_u'])
+
 
 if __name__ == '__main__': unittest.main(verbosity=2)
