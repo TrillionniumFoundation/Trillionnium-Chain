@@ -26,6 +26,12 @@ case "${1:?required job}" in
     python3 scripts/ci/test_pon_public_v3_policy_read.py
     python3 scripts/ci/test_run_pon_w1_native_campaign.py
     python3 scripts/ci/test_pon_w1_cost_matrix_reader.py
+    python3 scripts/ci/test_w1_cost_research_runner.py
+    python3 scripts/ci/test_w1_cost_research_reader.py
+    python3 formal/pon-nakamoto-v1/experiments/test_w1_cost_security_math.py
+    python3 formal/pon-nakamoto-v1/experiments/test_qualification_separation.py
+    python3 formal/pon-nakamoto-v1/experiments/test_numerical_boundary.py
+    python3 formal/pon-nakamoto-v1/experiments/test_task_family_selection.py
     python3 scripts/ci/test_llm_cell_handoff_deadline.py
     python3 scripts/ci/test_read_original_native_campaign.py \
       --artifact-dir evidence/pon-upgrade-implementation-20261018/native-rounds/chain-pr327-original-campaign-39694587963 \

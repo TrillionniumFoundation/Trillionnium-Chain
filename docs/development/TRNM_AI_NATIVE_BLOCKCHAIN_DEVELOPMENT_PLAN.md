@@ -1,6 +1,6 @@
 # Trillionnium Chain Development Plan — PoN / Hepta-PoH revision
 
-Plan ID: `trnm-chain-development-plan-v2` (stable registry identity; content revision 22).
+Plan ID: `trnm-chain-development-plan-v2` (stable registry identity; content revision 23).
 Effective: 2026-09-28; priority implementation revision: 2026-10-25. Status: selected development direction; no runtime activation.
 Canonical destination: `refs/heads/main`; continuation uses the current main lineage, not retired PR #194.
 Current source/head/tree/base and prospective merge are derived at verification time.
@@ -106,6 +106,47 @@ I07 evaluation precede I08 exact task observation; I09 complete release fetch
 precedes I10 local admission/install/readback. Reuse Hepta's existing
 [global plan](https://github.com/TrillionniumFoundation/hepta-private-ci/blob/c38e7727220f32c7410f59083c5ea7878bbae078/docs/DEVELOPMENT.md)
 and work-package owners; Agentd composes calls and creates no second store.
+
+### PN1 cost-security research amendment — 2026-10-25
+
+The [W1 cost security game](../protocol/pon-nakamoto-v1/details/W1_COST_SECURITY_GAME.md)
+refines the existing PN1 / I01–I02 qualification obligation. It defines charged
+preprocessing, concurrent tasks and parents, reuse horizons, adaptive algorithms,
+resource vectors and distinct semantic tickets. Relation correctness, eligible
+parent-bound candidates, completed admission and canonical chain growth retain
+separate counts. Reference FLOPs are an algorithm description, never an adversary
+lower bound. The sensitivity targets 11/10, 5/4, 2 and 4 are research parameters;
+none is an accepted protocol security factor.
+
+The [preregistered local experiment](../../formal/pon-nakamoto-v1/experiments/w1_cost_campaign_v1.json)
+compares the thirteen retained producers and a research-only
+[general integer-paired producer](../protocol/pon-nakamoto-v1/details/W1_INTEGER_PAIRED_GENERAL_RESEARCH.md)
+with charged preparation, all attempts, algorithm-selection training, repeated
+challenges and three actual parent states. Its runner requires an exact clean
+source and records the actual local resource envelope. This supplemental cohort
+does not replace the original 400%-CPU / 16-GiB service qualification, establish
+independent hardware performance or change W1. The term `cold` means rebuilding
+the producer; it does not assert flushed hardware caches. Batch observations use
+a sequential queue. The adaptive arm selects algorithms on a fixed task; arbitrary
+task/seed selection remains a separate obligation. A separately registered
+[task-family selector](../../formal/pon-nakamoto-v1/experiments/task_family_selection.py)
+actually trains nine family/algorithm combinations, selects without reading
+winning counts and evaluates a precommitted independent challenge stream. Its
+100-ms / 1-s / 5-s process-CPU budgets charge all training, child startup, native
+observers and raw retention. This relation-only choice between three fixed public
+families does not establish arbitrary native task eligibility or seed grinding.
+
+The [qualification separation experiment](../protocol/pon-nakamoto-v1/details/W1_QUALIFICATION_SEPARATION_RESEARCH.md)
+checks exact codecs, duplicate semantics, signed-body challenge binding, service
+settlement and numerical boundaries. Quantizer fixtures and retained historical
+Hepta observations do not qualify new training convergence or installed releases.
+The [research evidence](../../evidence/pon-work-cost-research-v1/README.md) records
+the measured source separately from subsequent publication. Complete registered
+cohorts, failed and zero-yield cases, inclusive production-completion costs and
+observer costs must remain visible. Mathematical assumptions, finite observations
+and unmeasured resources receive different verdicts. Pure matrix PoN remains the
+main research direction; a hypothetical priced work floor is a conditional cost
+comparison, not an enabled fallback. No readiness or acceptance flag changes.
 
 ### Audit contract refinement — 2026-10-25
 
