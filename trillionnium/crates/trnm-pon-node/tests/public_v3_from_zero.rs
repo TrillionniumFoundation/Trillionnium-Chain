@@ -672,7 +672,11 @@ fn four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged() {
     let task = pon_work::task_id(&a, &b).unwrap();
     let genesis = settings.genesis();
     let target = node.expected_target(genesis).unwrap();
-    let header = genesis_header(&settings, target, 10_000, task);
+    let mut header = genesis_header(&settings, target, 10_000, task);
+    // This must be a fresh valid Node header context, not the legacy fixed
+    // 2025 test header that would fail TIME before W1 verification.
+    header.timestamp = settings.genesis_time() + 1;
+    header.miner = development_public(0).unwrap();
     let challenge = header.challenge();
     let initial_stats = node.stats().unwrap();
     let initial_active = node.read_active().unwrap();
