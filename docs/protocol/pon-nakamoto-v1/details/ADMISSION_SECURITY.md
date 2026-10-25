@@ -733,3 +733,26 @@ fork choice and protocol acceptance remain unchanged. Admitting public work
 is a *resource* decision; only complete verification confers the existing
 VerifiedWork result. New W2 logic must use a separately governed version,
 consensus context and external review, not an implicit fallback.
+
+
+### P1 initial concrete W1 caller inventory (source audit, not an acceptance claim)
+
+This static inspection is pinned to source parent
+'630f871293e48588e0a1ceae7ceb64973d3ec31d'.
+It names concrete native callers; a complete public reachability graph and
+verified host-wide budgets remain pending.
+
+| Entry | Actual W1 call | Existing cost owner and gap |
+| --- | --- | --- |
+| M15 native Node 'store.rs:Node::admit' | 'WorkCheckedPacket::verify' followed by checked native admission | Context/owner checked; not itself a host-wide public CPU scheduler. All remotely influenced callers need upstream resource ownership. |
+| M04 native ingress 'ingress.rs:measured_work_verify' | Full 'WorkCheckedPacket::verify' | Timed wall duration and admission permits; wall milliseconds are not actual calling-thread CPU or a host-wide hard budget. |
+| M04 V2 'ingress/public_v2.rs:public_dispatch' | Full 'WorkCheckedPacket::verify' | Bounded public worker and phase deadline; records wall time but no V3-style actual CPU debit. This is an explicitly unresolved P1 exposure if externally enabled. |
+| M04 V3 'ingress/public_v3.rs:public_dispatch' | 'verify_with_progress' / arithmetic-fact variant | Actual thread CPU charged by 'PaidMutationCpuPermit' in original finite service domain; per-process/host-wide and physical multi-CPU isolation remain separate obligations. |
+| M05 opt-in 'ingress/metered_work_facts.rs' | Private verified-work fact cache plus metered source | Requires caller-supplied 'ServiceMutationCpuDomain'; does not replace V2/V3 network listeners. |
+| Native mining 'mining.rs' | Local producer proof self-check through 'pon_work::verify' | Local mining producer, not by itself remote mutation admission. |
+
+Before closing P1, audit *every* exported CLI/listener/gossip/sync path
+including these wrappers, test externally reachable bad-work input on all
+selected profiles, retain true CPU/memory/process-owner evidence, and ensure
+all processes share the same physical capacity cap. Introducing new
+accounting without these readbacks is not a completed fix.
