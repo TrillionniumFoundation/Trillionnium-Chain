@@ -297,3 +297,54 @@ Those new Rust selectors remain NOT_RUN on this Go/Python-only host. P0-A/B
 and P1-C therefore remain awaiting native evidence. Cheapest eligible W1 work
 cost, public hostile-proof admission, independent operators, physical custody,
 source/material liveness and P2 WAN acceptance remain separate open blockers.
+
+
+## Joint Lease × DAA adversarial screening (synthetic, non-activated)
+
+An additional bounded experiment lives in
+[lease_daa_fault_matrix.py](../../../../formal/pon-nakamoto-v1/lease_daa_fault_matrix.py),
+with independent negative controls in
+[test_lease_daa_fault_matrix.py](../../../../formal/pon-nakamoto-v1/test_lease_daa_fault_matrix.py).
+It *does not* implement or select an alternate consensus profile and cannot be
+counted as a valid W1 packet, independent operator, source authorization or
+accepted public-network claim.
+
+This research combines three DAA algorithms (original 16-block, raw parent
+ASERT and parent-MTP11 ASERT) with four **exogenously assumed** work-capacity
+conditions (steady, abrupt drop, alternating hashrate and all outside leases
+lapsed). For each scenario it compares honest timestamps, endpoint-push and
+MTP-floor timestamps under the same seeded synthetic Poisson mining process.
+All constructed timestamps must satisfy the existing MTP11/future-skew
+predicate. The resulting target feeds back into subsequent simulated block
+waiting time; cumulative *expected required work* is recorded separately
+from observed height.
+
+The attacker share is a conditional effective-work model, not an observed W1
+advantage, and can be changed in the bounded configuration. Full-Maintenance
+participation **is not assumed**: the lease-loss scenario explicitly assumes
+only 40% of nominal mining capacity elects the existing genesis Maintenance
+work after height 64. No signed task silently switches to that source; no
+source signer, lease or material is fabricated. If all real miners leave, no
+PoW DAA can manufacture a block or claim liveness.
+
+The default frozen development screen uses seeds [0,1,20261025], 192 heights,
+three algorithms, four capacity scenarios and three timestamp strategies:
+108 deterministic run records. The local Go/Python-only development container
+ran 6/6 new Python negative controls and the retained 14/14 research controls.
+The case-indexed JSON digest over the 108 runs (no native W1 proofs) is:
+
+    a914a8e593b3447293687b0db28813044914564ef9f4407f64b7e856d1a6090a
+
+Generate a new evidence file without overwriting previous research:
+
+    cd formal/pon-nakamoto-v1
+    python3 -m unittest -v test_daa_lease_research.py test_lease_daa_fault_matrix.py
+    python3 lease_daa_fault_matrix.py --output /absolute/new/fault-screen.json
+
+The simulation is **not a calibrated selfish-mining game, real clock or
+propagation model**. It does not connect a native Node, source operator, real
+W1 producer or independent public verifier. Measured effective-work fractions,
+real hardware costs, native full W1 fork tests, source-owner leases, negative
+cost asymmetry and WAN chain-quality experiments remain the blocking P0-C,
+P1-B, P1-C and P2 exits. The retained P0-A/P0-B Rust selectors still require
+a current-source compiler-enabled native execution receipt.
