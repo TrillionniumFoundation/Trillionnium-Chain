@@ -633,4 +633,119 @@ mod daa_extreme_vectors {
         );
     }
 }
+/// Isolated, non-activated ASERT ancestry observer. Installed consensus
+/// expected_target never calls this module. Callers must supply records from
+/// an independently validated native Node, not unauthenticated P2P headers.
+pub mod daa_branch_research {
+    use super::daa_research::{asert_target, AsertInputs};
+    use crate::{ensure, Result};
+    use trnm_protocol::pon_wire::{Hash, Header};
 
+    #[derive(Clone, Copy, Debug, PartialEq, Eq)]
+    pub enum ParentClock {
+        Raw,
+        Median11,
+    }
+
+    #[derive(Clone, Copy, Debug)]
+    pub struct AnchoredResearchContext {
+        pub network: Hash,
+        pub parameters: Hash,
+        pub genesis: Hash,
+        pub genesis_timestamp: u64,
+        pub anchor_block: Hash,
+        pub anchor_target: Hash,
+        pub anchor_height: u64,
+        pub spacing: u64,
+        pub half_life: u64,
+        pub pow_limit: Hash,
+        pub parent_clock: ParentClock,
+        pub max_ancestor_reads: usize,
+    }
+
+    /// Compute a shadow target from a linked observed ancestry.
+    /// read_verified must return the actual recomputed full packet id;
+    /// this function does NOT itself verify the proof, signed context,
+    /// genesis timestamp authority or block availability.
+    /// A future consensus revision needs a committed and reviewed context.
+    pub fn shadow_target_from_ancestry(
+        context: AnchoredResearchContext,
+        observed_parent: Hash,
+        mut read_verified: impl FnMut(Hash) -> Result<(Hash, Header)>,
+    ) -> Result<Hash> {
+        ensure(
+            context.anchor_height == 1
+                && context.anchor_block != context.genesis
+                && context.genesis != [0; 32]
+                && context.network != [0; 32]
+                && context.parameters != [0; 32]
+                && (1..=4096).contains(&context.max_ancestor_reads)
+                && context.spacing > 0
+                && context.half_life > 0,
+            "ASERT_BRANCH_CONTEXT",
+        )?;
+        let mut cursor = observed_parent;
+        let mut previous_height = None;
+        let mut parent_height = None;
+        let mut parent_timestamp = None;
+        let mut observed_times = Vec::with_capacity(11);
+        for _ in 0..context.max_ancestor_reads {
+            ensure(cursor != context.genesis, "ASERT_ANCHOR_MISSING")?;
+            let (actual_id, header) = read_verified(cursor)?;
+            ensure(
+                actual_id == cursor
+                    && header.network == context.network
+                    && header.parameters == context.parameters
+                    && header.height >= context.anchor_height,
+                "ASERT_ANCESTRY_CONTEXT",
+            )?;
+            if let Some(next_height) = previous_height {
+                ensure(
+                    header.height.checked_add(1) == Some(next_height),
+                    "ASERT_ANCESTRY_HEIGHT",
+                )?;
+            }
+            if parent_height.is_none() {
+                parent_height = Some(header.height);
+                parent_timestamp = Some(header.timestamp);
+            }
+            if observed_times.len() < 11 {
+                observed_times.push(header.timestamp);
+            }
+            if cursor == context.anchor_block {
+                ensure(
+                    header.height == context.anchor_height
+                        && header.parent == context.genesis
+                        && header.target == context.anchor_target,
+                    "ASERT_ANCHOR_BINDING",
+                )?;
+                if observed_times.len() < 11 {
+                    observed_times.push(context.genesis_timestamp);
+                }
+                let selected_time = match context.parent_clock {
+                    ParentClock::Raw => parent_timestamp.ok_or("ASERT_ANCESTRY_EMPTY")?,
+                    ParentClock::Median11 => {
+                        observed_times.sort_unstable();
+                        observed_times[observed_times.len() / 2]
+                    }
+                };
+                return asert_target(AsertInputs {
+                    anchor_target: context.anchor_target,
+                    anchor_parent_time: context.genesis_timestamp,
+                    evaluation_parent_time: selected_time,
+                    anchor_height: context.anchor_height,
+                    candidate_height: parent_height
+                        .ok_or("ASERT_ANCESTRY_EMPTY")?
+                        .checked_add(1)
+                        .ok_or("ASERT_ANCESTRY_HEIGHT")?,
+                    spacing: context.spacing,
+                    half_life: context.half_life,
+                    pow_limit: context.pow_limit,
+                });
+            }
+            previous_height = Some(header.height);
+            cursor = header.parent;
+        }
+        Err("ASERT_ANCESTRY_BUDGET".into())
+    }
+}

@@ -636,3 +636,114 @@ fn shadow_asert_distinguishes_two_real_w1_forks_and_survives_cold_reopen() {
     assert_eq!(restored.active().unwrap().0, heavier);
     // This test grants neither new DAA authority nor confirmed public TPS.
 }
+/// ASERT must read actual native W1 ancestry instead of an attacker-supplied
+/// target or a locally chosen timestamp sequence. Shadow computation has no
+/// block-validity, fork-choice, storage or activation authority.
+#[test]
+fn isolated_asert_context_rejects_wrong_anchor_and_uses_real_w1_branch_history() {
+    use consensus::daa_branch_research::{
+        shadow_target_from_ancestry, AnchoredResearchContext, ParentClock,
+    };
+
+    let temp = tempfile::tempdir().unwrap();
+    let path = temp.path().join("native");
+    let settings = Settings::development(Some(GENESIS_TIME)).unwrap();
+    let mut node = Node::open(&path, settings.clone(), 1).unwrap();
+    let mut parent = settings.genesis();
+    let mut anchor_id = None;
+    let mut anchor_target = None;
+    for height in 1..=20 {
+        let packet = extend(&mut node, parent, GENESIS_TIME + height * 10, height, 0);
+        verify_work(&packet);
+        if height == 1 {
+            anchor_id = Some(packet.id().unwrap());
+            anchor_target = Some(packet.header.target);
+        }
+        parent = packet.id().unwrap();
+    }
+    let mut pow_limit = [255_u8; 32];
+    pow_limit[0] = 127;
+    let context = AnchoredResearchContext {
+        network: settings.network(),
+        parameters: settings.parameters(),
+        genesis: settings.genesis(),
+        genesis_timestamp: GENESIS_TIME,
+        anchor_block: anchor_id.unwrap(),
+        anchor_target: anchor_target.unwrap(),
+        anchor_height: 1,
+        spacing: 10,
+        half_life: 7200,
+        pow_limit,
+        parent_clock: ParentClock::Raw,
+        max_ancestor_reads: 32,
+    };
+    let old = node.expected_target(parent).unwrap();
+    let raw = shadow_target_from_ancestry(context, parent, |id| {
+        let packet = node.packet(id)?;
+        Ok((packet.id()?, packet.header))
+    })
+    .unwrap();
+    assert_eq!(raw, context.anchor_target);
+    let median = shadow_target_from_ancestry(
+        AnchoredResearchContext {
+            parent_clock: ParentClock::Median11,
+            ..context
+        },
+        parent,
+        |id| {
+            let packet = node.packet(id)?;
+            Ok((packet.id()?, packet.header))
+        },
+    )
+    .unwrap();
+    assert!(median < raw, "MTP11 lags raw parent on a monotonic chain");
+    assert_eq!(node.expected_target(parent).unwrap(), old);
+
+    for bad in [
+        AnchoredResearchContext { parameters: [0x91; 32], ..context },
+        AnchoredResearchContext { anchor_target: [0x44; 32], ..context },
+        AnchoredResearchContext { anchor_block: [0x11; 32], ..context },
+        AnchoredResearchContext { max_ancestor_reads: 2, ..context },
+        AnchoredResearchContext { genesis: [0x22; 32], ..context },
+    ] {
+        assert!(shadow_target_from_ancestry(bad, parent, |id| {
+            let packet = node.packet(id)?;
+            Ok((packet.id()?, packet.header))
+        })
+        .is_err());
+    }
+    assert!(
+        shadow_target_from_ancestry(context, parent, |id| {
+            let packet = node.packet(id)?;
+            Ok(([0u8; 32], packet.header))
+        })
+        .is_err(),
+        "wrong recomputed packet id cannot enter the shadow"
+    );
+    assert!(
+        shadow_target_from_ancestry(context, parent, |id| {
+            let packet = node.packet(id)?;
+            let mut header = packet.header;
+            if id == context.anchor_block {
+                header.height += 1;
+            }
+            Ok((packet.id()?, header))
+        })
+        .is_err(),
+        "incorrect ancestor height cannot enter the shadow"
+    );
+    node.activate(parent).unwrap();
+    let before = node.read_active().unwrap();
+    drop(node);
+    let reopened = Node::open(&path, settings, 1).unwrap();
+    assert_eq!(reopened.read_active().unwrap(), before);
+    assert_eq!(reopened.expected_target(parent).unwrap(), old);
+    assert_eq!(
+        shadow_target_from_ancestry(context, parent, |id| {
+            let packet = reopened.packet(id)?;
+            Ok((packet.id()?, packet.header))
+        })
+        .unwrap(),
+        raw
+    );
+}
