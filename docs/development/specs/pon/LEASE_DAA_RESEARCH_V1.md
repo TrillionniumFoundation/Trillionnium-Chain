@@ -444,3 +444,30 @@ only the stated finite native scenario *when run*; it does not prove unbounded
 header retention, physical damage recovery, W1 mining-cost fairness, secure
 network timestamps, public attack tolerance, or activation of an ASERT rule.
 The original 16-block DAA remains the only installed branch-validity rule.
+
+## Independent compiled C arithmetic oracle (research continuation)
+
+A third implementation \`formal/pon-nakamoto-v1/daa_reference_c.c\` now
+computes the same *research-only* fixed-point ASERT formula using C11/GNU
+checked \`__int128\` operations and OpenSSL BIGNUM for u256 target arithmetic.
+This implementation does not call Python or Go, cannot grant native consensus
+authority and has no W1 work statement or parent-chain validator.
+
+Executed locally with GCC 14 and OpenSSL 3.5, then compared to the existing
+Python reference for five different frozen 512-case seeds (2,560 comparisons).
+The three-seed checked-in test additionally compiles the exact C source with
+warnings denied, checks bounded rejects and compares 1,536 C results against
+the independent Python oracle. The existing Go suite remains a distinct
+independent arithmetic implementation. This is evidence about fixed-point
+arithmetic over those finite inputs, *not* a native Rust compile/run, proof
+of correct difficulty against an adversary, independent operator validation,
+or a fresh ASERT consensus-profile activation.
+
+From a checkout with the needed development libraries:
+
+\`\`\`sh
+python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_daa_c_oracle.py' -v
+\`\`\`
+
+No existing signed domains, DAA activation, historical source-bound receipts
+or production flags are modified by this auxiliary research file.
