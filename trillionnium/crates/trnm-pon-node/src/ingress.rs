@@ -1335,12 +1335,18 @@ fn serve_inner(
     authentication: Option<Arc<AuthenticatedServer>>,
     admission: Option<AdmissionPolicy>,
 ) -> Result<Metrics> {
+    let listener_address = listener.local_addr()?;
     if authentication.is_none() {
         ensure(
-            listener.local_addr()?.ip().is_loopback(),
+            listener_address.ip().is_loopback(),
             "DEVELOPMENT_LOOPBACK_ONLY",
         )?;
     }
+    // An allowlisted peer is not a CPU resource owner. All remotely exposed
+    // legacy authenticated listeners must join the SAME administrator-owned
+    // host cgroup as public V3 before accepting a single socket. A service
+    // without that parent fails closed; no fresh per-listener CPU allowance.
+    let host_kernel = crate::host_kernel_parent::require_for_listener(listener_address)?;
     ensure(
         lifetime > Duration::ZERO && lifetime <= Duration::from_secs(3600),
         "SERVER_BUDGET",
@@ -1376,7 +1382,13 @@ fn serve_inner(
             let authentication = authentication.clone();
             let settings = settings.clone();
             let handoff_senders = handoff_senders.clone();
+            let host_kernel_for_worker = host_kernel.as_ref();
             workers.push(scope.spawn(move || -> Result<()> {
+                // Membership is checked on the ACTUAL native thread, not
+                // only on the listener's different parent thread.
+                if let Some(kernel) = host_kernel_for_worker {
+                    kernel.verify()?;
+                }
                 while !stop.load(Ordering::Acquire) && Instant::now() < deadline {
                     let handed = if admission.is_some() {
                         handoff_receiver.as_ref().and_then(|receiver| {
@@ -1631,7 +1643,12 @@ fn serve_inner(
                             &node,
                             request.request.clone(),
                             &mut progress,
-                            |packet| measured_work_verify(packet, &metrics),
+                            |packet| {
+                                if let Some(kernel) = host_kernel_for_worker {
+                                    kernel.verify()?;
+                                }
+                                measured_work_verify(packet, &metrics)
+                            },
                         );
                         let succeeded = outcome.is_ok();
                         let terminal_reply =
@@ -1717,6 +1734,9 @@ fn serve_inner(
                             }
                         };
                     let result = dispatch_shared_with(&node, request, &mut progress, |packet| {
+                        if let Some(kernel) = host_kernel_for_worker {
+                            kernel.verify()?;
+                        }
                         measured_work_verify(packet, &metrics)
                     });
                     let reply = match result {
