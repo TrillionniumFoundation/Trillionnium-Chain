@@ -517,3 +517,122 @@ fn isolated_asert_shadows_actual_native_w1_ancestry_without_activation() {
     assert_eq!(restored.packet(parent).unwrap().header.target, initial);
 }
 
+
+
+/// Shadow ASERT comparison on two genuinely mined W1 branches. The active
+/// consensus/required-work rules remain the original installed legacy profile.
+/// Both forks are admitted through the original Node and checked after reopen.
+#[test]
+fn shadow_asert_distinguishes_two_real_w1_forks_and_survives_cold_reopen() {
+    use consensus::daa_research::{asert_target, AsertInputs};
+
+    let dir = tempfile::tempdir().unwrap();
+    let store = dir.path().join("node");
+    let settings = Settings::development(Some(GENESIS_TIME)).unwrap();
+    let mut node = Node::open(&store, settings.clone(), 1).unwrap();
+    let genesis = settings.genesis();
+    let original_first_target = node.expected_target(genesis).unwrap();
+    let mut common = genesis;
+    for height in 1..=15_u64 {
+        let packet = extend(
+            &mut node,
+            common,
+            GENESIS_TIME + height * 10,
+            height,
+            0,
+        );
+        verify_work(&packet);
+        common = packet.id().unwrap();
+    }
+
+    // Fork B's timestamps are four seconds behind the honest fork, but each
+    // timestamp passes the original MTP11 and local-clock validation. A short
+    // timing difference must be observed by the shadow calculation without
+    // changing either installed expected target.
+    let mut honest = common;
+    let mut altered = common;
+    for height in 16..=23_u64 {
+        let a = extend(
+            &mut node,
+            honest,
+            GENESIS_TIME + height * 10,
+            height,
+            0,
+        );
+        let b = extend(
+            &mut node,
+            altered,
+            GENESIS_TIME + height * 10 - 4,
+            height,
+            1,
+        );
+        verify_work(&a);
+        verify_work(&b);
+        assert_eq!(a.header.target, b.header.target);
+        honest = a.id().unwrap();
+        altered = b.id().unwrap();
+    }
+    let honest_parent_time = node.packet(honest).unwrap().header.timestamp;
+    let altered_parent_time = node.packet(altered).unwrap().header.timestamp;
+    assert_eq!(honest_parent_time, GENESIS_TIME + 230);
+    assert_eq!(altered_parent_time, GENESIS_TIME + 226);
+
+    let mut pow_limit = [255_u8; 32];
+    pow_limit[0] = 127;
+    let shadow = AsertInputs {
+        anchor_target: original_first_target,
+        anchor_parent_time: GENESIS_TIME,
+        evaluation_parent_time: honest_parent_time,
+        anchor_height: 1,
+        candidate_height: 24,
+        spacing: 10,
+        half_life: 7200,
+        pow_limit,
+    };
+    let honest_shadow = asert_target(shadow).unwrap();
+    let altered_shadow = asert_target(AsertInputs {
+        evaluation_parent_time: altered_parent_time,
+        ..shadow
+    }).unwrap();
+    assert_ne!(honest_shadow, altered_shadow);
+    assert_eq!(
+        node.expected_target(honest).unwrap(),
+        node.expected_target(altered).unwrap(),
+    );
+
+    node.activate(honest).unwrap();
+    assert_eq!(node.active().unwrap().0, honest);
+    let extra = extend(&mut node, altered, GENESIS_TIME + 236, 24, 1);
+    verify_work(&extra);
+    let heavier = extra.id().unwrap();
+    node.activate(heavier).unwrap();
+    assert_eq!(node.active().unwrap().0, heavier);
+    let before = node.read_active().unwrap();
+    assert_eq!(before.0, heavier);
+    assert_eq!(
+        node.expected_target(honest).unwrap(),
+        node.expected_target(altered).unwrap(),
+    );
+
+    drop(node);
+    let restored = Node::open(&store, settings, 1).unwrap();
+    assert_eq!(restored.read_active().unwrap(), before);
+    assert_eq!(restored.packet(honest).unwrap().header.timestamp, honest_parent_time);
+    assert_eq!(restored.packet(altered).unwrap().header.timestamp, altered_parent_time);
+    assert_eq!(
+        asert_target(AsertInputs {
+            evaluation_parent_time: restored.packet(honest).unwrap().header.timestamp,
+            ..shadow
+        }).unwrap(),
+        honest_shadow,
+    );
+    assert_eq!(
+        asert_target(AsertInputs {
+            evaluation_parent_time: restored.packet(altered).unwrap().header.timestamp,
+            ..shadow
+        }).unwrap(),
+        altered_shadow,
+    );
+    assert_eq!(restored.active().unwrap().0, heavier);
+    // This test grants neither new DAA authority nor confirmed public TPS.
+}
