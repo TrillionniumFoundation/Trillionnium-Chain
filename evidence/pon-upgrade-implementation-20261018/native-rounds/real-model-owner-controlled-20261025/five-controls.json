@@ -4,10 +4,7 @@
   "calibration_selected_control": "fresh-budget-matched-lora",
   "consumption_not_assumed_equal": true,
   "experiment": "4eb748aee63bb946b93c5df6780833691dc3a90e91dd1d8e6d29d1c93b9c7420",
-  "gain_vs_strongest_evaluation_control": [
-    0,
-    1
-  ],
+  "gain_vs_strongest_evaluation_control": [0, 1],
   "independent_accepted": false,
   "output_byte_metric": "equal-source-group-exact-output-bytes",
   "positive_vs_all_controls": false,
@@ -19,54 +16,24 @@
   "scope": "actual-local-short-LLM-pilot-no-future-independent-quality-or-native-admission",
   "scores": {
     "budget-matched-full-tune": {
-      "calibration": [
-        1,
-        2
-      ],
-      "evaluation": [
-        1,
-        2
-      ]
+      "calibration": [1, 2],
+      "evaluation": [1, 2]
     },
     "candidate": {
-      "calibration": [
-        1,
-        2
-      ],
-      "evaluation": [
-        1,
-        2
-      ]
+      "calibration": [1, 2],
+      "evaluation": [1, 2]
     },
     "current-backbone": {
-      "calibration": [
-        0,
-        1
-      ],
-      "evaluation": [
-        0,
-        1
-      ]
+      "calibration": [0, 1],
+      "evaluation": [0, 1]
     },
     "fresh-budget-matched-lora": {
-      "calibration": [
-        1,
-        2
-      ],
-      "evaluation": [
-        1,
-        2
-      ]
+      "calibration": [1, 2],
+      "evaluation": [1, 2]
     },
     "randomized-rank-matched-lora": {
-      "calibration": [
-        0,
-        1
-      ],
-      "evaluation": [
-        0,
-        1
-      ]
+      "calibration": [0, 1],
+      "evaluation": [0, 1]
     }
   },
   "source": "65ccc6454befd96fa5ce1f5bdde2c56cb6cbb741cf495b8d24a758039f99f755",

@@ -4,8 +4,8 @@
   "files": [
     {
       "path": "five-controls.json",
-      "bytes": 7741,
-      "sha256": "0735d8002d3fcfb23c2c791304738561fad27320481ca520060e7b960c7bdd77"
+      "bytes": 7489,
+      "sha256": "54d58df2f281bd9c8fb18a76043db1f748b71c52ce68e59ceb5140a6ffee07e9"
     },
     {
       "path": "host-retirement.json",
