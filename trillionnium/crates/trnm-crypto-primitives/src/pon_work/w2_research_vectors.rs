@@ -91,8 +91,8 @@ fn canonical_w2c_separated_security_vectors_preserve_real_w1_refusal() {
         assert_eq!(hex::encode(ticket), expected);
     }
     let task = hash(b"task", &[&zero_field, &zero_field]);
-    assert_eq!(
+    assert!(matches!(
         verify(challenge, task, [255; 32], &fake_proof),
         Err(WorkError::Transcript)
-    );
+    ));
 }
