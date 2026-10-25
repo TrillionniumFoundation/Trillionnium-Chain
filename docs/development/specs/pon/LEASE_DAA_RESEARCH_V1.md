@@ -202,3 +202,27 @@ owner, not two independent WAN consensus operators.
 P0-C work-hardness, hostile ingress, task-source independence, native long-term
 Q4 reclaim and all P2 WAN/physical acceptance remain explicit blockers.
 Production remains disabled and old Q4/Revision12/DAA rules are unchanged.
+
+## Explicit long native expiration and retention exercise
+
+An additional opt-in native test,
+`long_native_retention_safe_sole_slot_reopen_after_1100_maintenance_blocks`,
+is marked `#[ignore]` because it creates 1,108 actual W1 Maintenance blocks
+and durable SQLite transitions. It observes the original sole lease expire
+at block 1000 while maintenance continues, refuses that old task at 1001,
+checks the retained slot at 1100, then includes a newly signed requester
+OPEN and independently signed source REGISTER at block 1101 after the
+retention boundary. Blocks through 1108 provide the existing depth/work
+policy confirmation; a cold store reopen must reproduce the same state.
+
+This is a *test to run*, not an executed result in the present environment:
+the container has no Rust compiler or external source operators. A pass would
+establish the named local lifecycle continuity only, not the economic
+hardness of the fixed Maintenance relation, independent signers, long-term
+artifact availability, or real WAN safety. It leaves old serialized
+statements, consensus profiles and production activation untouched.
+
+Run manually on a Rust-enabled controlled checkout:
+
+    cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib long_native_retention_safe_sole_slot_reopen_after_1100_maintenance_blocks -- --ignored --test-threads=1
+
