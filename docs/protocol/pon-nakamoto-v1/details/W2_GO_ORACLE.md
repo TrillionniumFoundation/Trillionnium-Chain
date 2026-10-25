@@ -64,3 +64,37 @@ chosen hidden valid and malformed work/circuit witnesses; an exact
 protocol/version/genesis commitment; independent hardware and operator
 custody; concrete security assumptions; and signed retained artifacts.
 Until then P6 remains OPEN and all public/model authority stays off.
+
+
+## Full 49,188-byte cross-language differential bridge
+
+The optional Go binary 'go_oracle/cmd/pon_w1_io' is an exactly bounded
+stdio-only prove/verify reference, with no network/storage/Node access.
+'formal/pon-nakamoto-v1/test_go_w1_cross_language.py' builds that
+standalone standard-library Go binary with GOWORK=off, GOPROXY=off,
+GOSUMDB=off and compares **ten** separate zero/dense/sparse input
+variants, each with a fresh deterministic challenge.
+
+For each input, Python and Go must produce the same **entire** 49,188
+proof bytes (not merely matching final digests), both independently
+verify the packet, and Go must reject a modified claimed trace with
+'Transcript'. A separate negative input tests noncanonical q, short
+stdin and unknown mode. The Go verify response's domain-separated
+32-byte digest is a test receipt only; it is **not** the original
+'VerifiedWork' or a publicly admissible block.
+
+On October 25, 2026 a source-equivalent independently staged local
+Go 1.23.2 and Python differential completed 10/10 full byte
+comparisons and 10/10 forged-trace negative checks. Go's separate
+four-case unit suite passed 4/4. This is same-author cross-language
+arithmetic evidence, NOT an outside operator's independent review.
+
+To repeat in the actual full repository:
+
+    python3 formal/pon-nakamoto-v1/test_go_w1_cross_language.py
+
+Optionally set TRNM_GO_W1_PARITY_REPORT to an absent file path for
+a create-only JSON per-case proof SHA and verdict report. No Go
+installation should be silently treated as a passing test. Any
+production profile, mining reward or new W2 cryptographic proof
+system is explicitly outside this executable bridge.
