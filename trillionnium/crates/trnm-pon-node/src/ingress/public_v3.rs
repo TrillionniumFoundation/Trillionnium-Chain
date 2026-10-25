@@ -688,6 +688,8 @@ pub struct PublicServer {
     mutation_cpu: Arc<Mutex<PaidMutationCpuBudget>>,
     arithmetic_facts:
         Option<trnm_crypto_primitives::pon_work::arithmetic_facts::ArithmeticFactCache>,
+    w1_rejection_cache:
+        Option<trnm_crypto_primitives::pon_work::rejection_cache::RejectionCache>,
     #[cfg(test)]
     fail_next_output: AtomicBool,
     #[cfg(test)]
@@ -711,6 +713,7 @@ impl PublicServer {
             started: Instant::now(),
             mutation_cpu: Arc::new(Mutex::new(PaidMutationCpuBudget::new())),
             arithmetic_facts: None,
+            w1_rejection_cache: None,
             #[cfg(test)]
             fail_next_output: AtomicBool::new(false),
             #[cfg(test)]
@@ -722,6 +725,18 @@ impl PublicServer {
             #[cfg(test)]
             fail_next_live_cpu_finish: AtomicBool::new(false),
         })
+    }
+    /// Opt-in exact invalid-math suppression for a single bounded V3 service.
+    /// Does not alter W1 validity, signed profile, caller admission budgets or
+    /// the complete verifier; NEW bogus traces still consume one full replay.
+    /// Future public rollout requires a separately reviewed resource profile.
+    pub fn with_w1_rejection_cache(mut self, slots: usize, ttl: Duration) -> Result<Self> {
+        ensure(self.arithmetic_facts.is_none(), "PUBLIC_W1_CACHE_MODE")?;
+        self.w1_rejection_cache =
+            Some(trnm_crypto_primitives::pon_work::rejection_cache::RejectionCache::new(
+                slots, ttl,
+            ).ok_or("PUBLIC_W1_CACHE_LIMIT")?);
+        Ok(self)
     }
     /// Actual fresh native CLI process: zero initial CPU and challenge credit.
     /// It remains a development-unqualified service, not a host CPU proof.
@@ -1393,6 +1408,8 @@ struct PublicDispatchObservation<'a> {
     mutation_cpu: Option<&'a MutationCpuMeasurement>,
     arithmetic_facts:
         Option<&'a trnm_crypto_primitives::pon_work::arithmetic_facts::ArithmeticFactCache>,
+    w1_rejection_cache:
+        Option<&'a trnm_crypto_primitives::pon_work::rejection_cache::RejectionCache>,
 }
 fn public_dispatch(
     node: &Mutex<Node>,
@@ -1407,6 +1424,7 @@ fn public_dispatch(
         observation,
         mutation_cpu,
         arithmetic_facts,
+        w1_rejection_cache,
     } = observation;
     if matches!(
         &request,
@@ -1498,7 +1516,12 @@ fn public_dispatch(
                         live_cpu.map_or(Ok(()), ScopedWorkerCpu::checkpoint)
                     };
                     let result = match arithmetic_facts {
-                        None => WorkCheckedPacket::verify_with_progress(packet, &mut checkpoint),
+                        None => match w1_rejection_cache {
+                            Some(cache) => WorkCheckedPacket::verify_with_rejection_cache(
+                                packet, cache, &mut checkpoint,
+                            ),
+                            None => WorkCheckedPacket::verify_with_progress(packet, &mut checkpoint),
+                        },
                         Some(facts) => {
                             if let Some(record) = observation {
                                 record.work_arithmetic(PublicArithmeticWorkObservation::started(
@@ -2024,6 +2047,9 @@ fn serve_public_protected_v3_inner(
                                                         mutation_cpu,
                                                         arithmetic_facts: server
                                                             .arithmetic_facts
+                                                            .as_ref(),
+                                                        w1_rejection_cache: server
+                                                            .w1_rejection_cache
                                                             .as_ref(),
                                                     },
                                                 )
@@ -4429,6 +4455,7 @@ mod tests {
                     observation: None,
                     mutation_cpu: None,
                     arithmetic_facts: None,
+                    w1_rejection_cache: None,
                 },
             )
             .unwrap_err();
@@ -6889,6 +6916,7 @@ mod paid_settlement_consistency_tests {
                     observation: None,
                     mutation_cpu: Some(&measurement),
                     arithmetic_facts: None,
+                    w1_rejection_cache: None,
                 },
             )
             .unwrap_err();
