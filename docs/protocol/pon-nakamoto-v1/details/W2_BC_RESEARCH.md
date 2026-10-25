@@ -90,6 +90,10 @@ any socket is accepted. For any nonloopback endpoint the kernel-required parent
 is the **same fixed administrator-controlled cgroup v2 parent** used by V3,
 not a per-process namespace or an identity-based allowance. Actual worker
 threads verify membership and finite quotas before and after W1 replay.
+Unpriced authenticated-only WAN ingress is refused even when the parent
+exists; the explicitly protected authenticated route also requires the existing
+native transport Hashcash AdmissionPolicy. DEVELOPMENT_REMOTE_ADMISSION_REQUIRED
+is a local service refusal, never a consensus-invalid work judgment.
 Separately collected known calling-thread CPU and explicit unknown counts
 do not replace kernel host limits or make the legacy entry a V3 worker.
 
@@ -98,3 +102,34 @@ potential exposure requiring deployment controls and cross-service budget
 checks. Authenticated native intake also lacks the V3 per-request CPU debit;
 P1 cannot close until all reachable real network/relay paths and operator
 deployment policies have been exercised with measured host totals and failures.
+
+
+## Cross-language Go oracle: third implementation, not third-party acceptance
+
+The isolated 'formal/pon-nakamoto-v1/go_w1_oracle' module has no Rust or
+external Go dependencies. Its matrix products deliberately use exact reduced
+uint64 partial terms instead of Rust's original u128 accumulator, and it
+reconstructs all 512 W1 transcript tiles, the challenge expansions, exact
+q=2^32-5 field operations and both late rejection errors.
+
+Manual execution with a local Go 1.23+ toolchain:
+
+    cd formal/pon-nakamoto-v1/go_w1_oracle
+    go test ./... -count=1
+    go build -o /new/isolated/path/pon_w1_io ./cmd/pon_w1_io
+
+The research-only bridge has 'prove' and 'verify' stdin modes. A successful
+'verify' returns a separately tagged 32-byte test receipt, NOT native
+VerifiedWork, Chainwork, a full Node state acceptance, or final-use authority.
+
+A separately run local Go/Python experiment compared exact full 49,188-byte
+valid proof equality, the SHA256 proof vector, four deterministic forged
+transcripts passing the cheap ticket filter, and both early/late native-like
+error codes. The four incorrect transcripts all returned Transcript from
+Go. Go test ./... -count=1 passed on Go 1.23.2. No Rust compiler was
+available in that scratch container; the same exact committed source and
+native Rust differential on the proper Chain checkout remain unverified.
+
+An assistant-written Go implementation does not constitute an independent
+external reviewer. P6 is still open for external cryptanalysis of hardness,
+soundness, work-unique lottery, resource costs, and adversarial vectors.
