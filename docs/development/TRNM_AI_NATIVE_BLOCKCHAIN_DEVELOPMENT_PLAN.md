@@ -1,6 +1,6 @@
 # Trillionnium Chain Development Plan — PoN / Hepta-PoH revision
 
-Plan ID: `trnm-chain-development-plan-v2` (stable registry identity; content revision 24).
+Plan ID: `trnm-chain-development-plan-v2` (stable registry identity; content revision 25).
 Effective: 2026-09-28; priority implementation revision: 2026-10-25. Status: selected development direction; no runtime activation.
 Canonical destination: `refs/heads/main`; continuation uses the current main lineage, not retired PR #194.
 Current source/head/tree/base and prospective merge are derived at verification time.
@@ -177,6 +177,16 @@ neither a physical resource conversion nor a universal non-amortization theorem.
 The pure matrix direction, original service envelope and PN0–PN6 acceptance
 meaning remain unchanged. Source/plan freezing precedes performance collection;
 measurements and their complete limitations must be published separately.
+
+The [completed bounded campaign](../../evidence/pon-work-adaptive-joint-v1/README.md)
+now binds measured commit b951208273472fda11bd78dc7c01923591652224 and tree
+40e619e4c188f22126d9ce63db87f125343a2378 to all 58 registered jobs and 2729 full
+proof-record replays. All 21 joint pairs and 6 parent cache pairs, slower cases,
+zero yields, caps and budget overshoot remain visible. The parent pairs have
+identical within-budget counts and stop at their attempt cap; their CPU ratios
+do not establish increased maximum budget yield. The bounded closure ledger
+does not close universal cost hardness, independent hardware, genuine Hepta
+quality or production qualification. Publication preserves measured identity.
 
 ### Audit contract refinement — 2026-10-25
 

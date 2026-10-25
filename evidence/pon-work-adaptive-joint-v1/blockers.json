@@ -1,0 +1,122 @@
+{
+  "all_project_blockers_closed": false,
+  "closed": [
+    {
+      "boundary": "规定P/B、K0、Q_A+G、fanout、停止时刻、直接提交与资源维度；不宣称CPU下界",
+      "evidence": "W1_COST_SECURITY_GAME.md §§4–8；26个已执行精确数学控制",
+      "id": "W1R-C01",
+      "status": "closed-for-declared-bounded-scope",
+      "title": "成本游戏与条件概率承诺"
+    },
+    {
+      "boundary": "仅冻结AVX2实现、所测关系及取消/部分lane边界",
+      "evidence": "10个joint Rust控制；22个reader控制；42 jobs的1822份完整proof重放",
+      "id": "W1R-C02",
+      "status": "closed-for-declared-bounded-scope",
+      "title": "真实四挑战联合实现"
+    },
+    {
+      "boundary": "原Node隔离开发权限；两个预算控制保持不完整；不授予公开任务权限",
+      "evidence": "16 parent jobs；14完整生命周期；907份parent完整记录重放",
+      "id": "W1R-C03",
+      "status": "closed-for-declared-bounded-scope",
+      "title": "付费原生任务与父状态流程"
+    },
+    {
+      "boundary": "研究proof全部保留；原Node内部miss事后重建，不冒称生成时保留",
+      "evidence": "2270研究记录、168辅助winner、291事后重建，共2729记录",
+      "id": "W1R-C04",
+      "status": "closed-for-declared-bounded-scope",
+      "title": "全量研究proof及负结果取证"
+    },
+    {
+      "boundary": "软件来源一致性；不构成硬件/时钟/解释器attestation",
+      "evidence": "commit/tree、plan、两fresh Cargo artifact、manifest；379个reader闭包文件",
+      "id": "W1R-C05",
+      "status": "closed-for-declared-bounded-scope",
+      "title": "冻结来源与外部pins"
+    },
+    {
+      "boundary": "CPU、费用、RSS分开；能耗/网络未测；未完成无成功资格",
+      "evidence": "58 jobs；分母、超支、cap、观察成本、whole-child残差、RSS",
+      "id": "W1R-C06",
+      "status": "closed-for-declared-bounded-scope",
+      "title": "成本口径与预算会计"
+    },
+    {
+      "boundary": "不等于完整远端CI、发布资格或共识安全证明",
+      "evidence": "83新增Python、39既有reader/math、34来源负例、91 CI契约；200 Rust/2既有ignore；fmt/Clippy/link/inventory",
+      "id": "W1R-C07",
+      "status": "closed-for-declared-bounded-scope",
+      "title": "提交源码验证与既有控制保留"
+    }
+  ],
+  "completion_scope": "registered bounded implementation and evidence obligations",
+  "measured_commit": "b951208273472fda11bd78dc7c01923591652224",
+  "measurement_limitations": [
+    "Parent pairs have equal within-1s winners and all complete jobs stop at their 32-attempt plan cap; CPU rate ratios are not increased N_B.",
+    "Formal duplicate-nonce control repeats a miss: 7 records, 1 semantic opportunity, 0 winners; winning duplicate checks are separate functional/native evidence.",
+    "Original Node internal miss bytes are reconstructed after execution, not retained when generated.",
+    "Limited tests cannot prove absence of a faster algorithm; no universal kappa."
+  ],
+  "open": [
+    {
+      "completion_criterion": "给出适用于实际压缩transcript、选择、预处理、批量算法的困难性假设与归约或下界，说明K0、Q_A+G、L、epsilon如何受(P,B)限制",
+      "current_limitation": "参考FLOPs、运行时间、满秩或digest正确性不能替代",
+      "id": "W1R-O01",
+      "kind": "研究阻塞",
+      "status": "open",
+      "title": "实际W1资源预算到新鲜机会的归约"
+    },
+    {
+      "completion_criterion": "覆盖任意合法结构、同时父状态森林、长期预处理、最快已知专用算法；形式结论明确攻击者类",
+      "current_limitation": "本轮两个开发任务、一个popcount信号、实际前进历史和共同准备环境有限",
+      "id": "W1R-O02",
+      "kind": "研究阻塞",
+      "status": "open",
+      "title": "任意自适应任务、种子与多父状态"
+    },
+    {
+      "completion_criterion": "指定生产可接受优势和资源模型，接入honest growth、DAA、重组/传播与公平性论证，并定义假设失败时的停止/升级规则",
+      "current_limitation": "1.10/1.25/2/4仅敏感性研究；观察最大值不是上界",
+      "id": "W1R-O03",
+      "kind": "协议资格阻塞",
+      "status": "open",
+      "title": "生产kappa与完整链安全参数"
+    },
+    {
+      "completion_criterion": "真实ARM/GPU及可得专用硬件执行完整关系和失败路径，独立操作者复核，测joules、内存/带宽及必要通信",
+      "current_limitation": "仅一个非独占x64宿主；不能用模拟或标签补齐",
+      "id": "W1R-O04",
+      "kind": "外部实测阻塞",
+      "status": "open",
+      "title": "独立硬件与物理成本"
+    },
+    {
+      "completion_criterion": "固定失败nonce复用/结果消费，证明绑定和fanout，再建立floor物理成本及与useful成本的可加性",
+      "current_limitation": "有限抽象模型不提供物理floor；未启用混合共识",
+      "id": "W1R-O05",
+      "kind": "研究阻塞",
+      "status": "open",
+      "title": "混合基础工作的可组合成本"
+    },
+    {
+      "completion_criterion": "实际Hepta任务和外生需求，独立质量/毒化评测，模型采用、回滚与发布权限完整证据",
+      "current_limitation": "开发费用、关系正确和本地接纳不等于模型进步",
+      "id": "W1R-O06",
+      "kind": "独立产品资格阻塞",
+      "status": "open",
+      "title": "真实Hepta效用、需求与采用权限"
+    },
+    {
+      "completion_criterion": "若引入ZK或批量验证，单独证明任务/父状态/计奖身份绑定、健全性、多证明摊销边界，测全流程",
+      "current_limitation": "本轮没有部署ZK；验证更快不自动意味着出票仍昂贵",
+      "id": "W1R-O07",
+      "kind": "后续架构资格阻塞",
+      "status": "open",
+      "title": "验证压缩/ZK后的票据扩增"
+    }
+  ],
+  "production_activation": false,
+  "schema": "pon-w1-adaptive-joint-blocker-ledger-v1"
+}
