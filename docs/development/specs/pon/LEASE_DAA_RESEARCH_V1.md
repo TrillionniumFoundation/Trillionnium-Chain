@@ -245,3 +245,55 @@ The script does not execute Rust, authenticate PoN anchors or accept W1 blocks.
 Passing two or three implementations from the same development effort remains
 distinct from an independent protocol-security review.
 
+
+
+## Native branch-specific ASERT and read-only Q4 forecast
+
+The original installed target remains determined exclusively by legacy M02
+arithmetic. The new native selector
+shadow_asert_distinguishes_two_real_w1_forks_and_survives_cold_reopen creates
+two real W1 branches sharing their first 15 blocks. Height 16..23 headers
+have valid but distinct timestamps four seconds apart, and a height-24 packet
+makes the second branch strictly heavier. Shadow ASERT distinguishes the
+different validated parent timestamps without modifying either installed
+expected target; both historical branches are checked again on cold reopen.
+
+The additional native revision12 test
+q4_presigned_overlap_survives_revocable_branch_and_maintenance_reorg signs
+one Q4 tag22 successor and one matching source statement with public dev keys.
+Identical raw signed bytes are admitted at distinct valid heights of two
+competing real Maintenance W1 branches. It checks source sequence rollback,
+heavy-fork replacement, new lease eligibility, zero useful-output credit,
+and cold-state recovery. It neither re-signs automatically nor changes Q4
+or revision12 historical byte semantics.
+
+The public, read-only forecast_q4_renewal_window API receives old/new
+canonical lease values, a prospective inclusion height and bounded assumed
+queue-delay/margin. It reports timing advice only: AwaitSignedWindow, Candidate,
+AtRisk or Expired. It does not verify dual signatures, attest availability,
+guarantee inclusion, read an authoritative Node generation or issue an
+execution capability. The original owner must re-read every real parent,
+verify rights and signatures, and submit the original signed tag22.
+Malformed context, revision, source and window fail closed. Forecasts cannot
+resurrect a revoked task or trigger an implicit Maintenance fallback.
+
+Independent Go-Python subprocess arithmetic on the local research host was
+expanded from 128 to 512 seeded cases: 444 exact matching numeric targets,
+68 matching strict range refusals and zero mismatches. The locally executed
+case-indexed JSON SHA-256 digest is
+8f5f228087a17925956b61be1abb3bd0eecb6d60346ef613c7cffa3f7f098b18.
+This is numeric research, not an independent security institution, native W1
+execution or a source-complete rust/whole-network qualification. The local
+Python oracle text is not byte-identical to the latest GitHub blob, so this
+new expanded cohort is not labeled exact-head native source evidence.
+
+Rust-only selectors to execute on a clean, compiler-enabled checkout:
+
+    cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test daa_adversarial_schedule shadow_asert_distinguishes_two_real_w1_forks_and_survives_cold_reopen -- --test-threads=1
+    cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib q4_presigned_overlap_survives_revocable_branch_and_maintenance_reorg -- --test-threads=1
+    cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib q4_renewal_window_is_advisory_and_never_resurrects_expired_source -- --test-threads=1
+
+Those new Rust selectors remain NOT_RUN on this Go/Python-only host. P0-A/B
+and P1-C therefore remain awaiting native evidence. Cheapest eligible W1 work
+cost, public hostile-proof admission, independent operators, physical custody,
+source/material liveness and P2 WAN acceptance remain separate open blockers.
