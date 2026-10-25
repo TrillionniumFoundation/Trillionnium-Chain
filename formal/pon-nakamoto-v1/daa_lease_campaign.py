@@ -7,6 +7,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import random
 from pathlib import Path
 from daa_research_oracle import (Lease, asert_target, legacy_retarget,
                                  mtp11, q4_atomic_renew, q4_slot_reclaimable,
@@ -92,6 +93,102 @@ def lease_scenarios() -> dict[str, bool]:
     return results
 
 
+
+def selfish_withholding_toy(alpha: float, gamma: float, steps: int, seed: int) -> dict:
+    """Basic private-lead/one-block-tie Markov toy, NOT native selfish mining.
+
+    q=alpha is already an *effective* work share. Gamma describes honest
+    extension onto the attacker branch in a public tie. No network delays,
+    DAG rules, task selection or DAA are hidden in this estimator.
+    """
+    if not 0 <= alpha <= 1 or not 0 <= gamma <= 1 or steps <= 0:
+        raise ValueError("withholding toy parameters")
+    rng = random.Random(seed)
+    private_lead = 0
+    tie = False
+    attacker = honest = 0
+    for _ in range(steps):
+        attacker_finds = rng.random() < alpha
+        if tie:
+            if attacker_finds:
+                attacker += 2
+            elif rng.random() < gamma:
+                attacker += 1
+                honest += 1
+            else:
+                honest += 2
+            tie = False
+        elif private_lead == 0:
+            if attacker_finds:
+                private_lead = 1
+            else:
+                honest += 1
+        elif private_lead == 1:
+            if attacker_finds:
+                private_lead = 2
+            else:
+                private_lead = 0
+                tie = True
+        elif private_lead == 2:
+            if attacker_finds:
+                private_lead += 1
+            else:
+                attacker += 2
+                private_lead = 0
+        elif attacker_finds:
+            private_lead += 1
+        else:
+            attacker += 1
+            private_lead -= 1
+    accepted = attacker + honest
+    return {"alpha_effective": alpha, "gamma": gamma, "steps": steps,
+            "seed": seed, "accepted_attacker": attacker, "accepted_honest": honest,
+            "unsettled_private_lead": private_lead, "unsettled_tie": tie,
+            "fraction_of_settled_attacker_blocks":
+                round(attacker / accepted, 7) if accepted else None,
+            "claim": "toy-only-no-DAA-network-or-actual-PoW"}
+
+
+def partition_selection_toy() -> dict:
+    """A longer easy-target branch must not win only because it is longer."""
+    heavier = sum(work(INITIAL) for _ in range(12))
+    easier = sum(work(min(TARGET_LIMIT, INITIAL * 4)) for _ in range(13))
+    assert heavier > easier
+    return {"branch_a_height": 12, "branch_b_height": 13,
+            "branch_a_accumulated_required_work": heavier,
+            "branch_b_accumulated_required_work": easier,
+            "selected": "A", "actual_partition_packets": 0,
+            "actual_heavier_fork_reorg": False}
+
+
+def source_outage_toy() -> dict:
+    """Source diversity is a custody *assumption*, not signed independence."""
+    independent_controllers = ("source-A", "source-B", "source-C")
+    cases = {}
+    for unavailable in (0, 1, 2, 3):
+        remaining = independent_controllers[unavailable:]
+        cases[f"{unavailable}_controllers_unavailable"] = {
+            "leased_task_available": bool(remaining),
+            "genesis_maintenance_task_available": True,
+            "remaining_controllers": list(remaining),
+        }
+    return cases
+
+
+def half_life_sensitivity(times: list[int], grid=(3600, 7200, 14400, 28800)) -> dict:
+    """Research-only candidate response to identical validated timestamps."""
+    result = {}
+    for half_life in grid:
+        curves = targets(times, half_life)
+        result[str(half_life)] = {
+            "last_target_asert_raw": format(curves["asert_raw"][-1], "064x"),
+            "last_target_asert_mtp": format(curves["asert_mtp"][-1], "064x"),
+            "last_target_ratio_asert_raw": round(curves["asert_raw"][-1] / INITIAL, 8),
+            "last_target_ratio_asert_mtp": round(curves["asert_mtp"][-1] / INITIAL, 8),
+        }
+    return result
+
+
 def run_campaign() -> dict:
     warp = fabricated_endpoint_schedule()
     warp_targets = targets(warp)
@@ -134,6 +231,12 @@ def run_campaign() -> dict:
                   "half_life": HALF_LIFE, "timewarp_now": 2000,
                   "timewarp_count": 80, "fixed_anchor_height": 1},
         "lease_model_negative_controls": lease_scenarios(),
+        "source_dropout_model": source_outage_toy(),
+        "partition_heavier_chain_example": partition_selection_toy(),
+        "selfish_withholding_toy": [selfish_withholding_toy(share, 0.5, 20000, 1256)
+                                  for share in (0.0, 0.2, 0.3, 0.4, 1.0)],
+        "half_life_grid": {name: half_life_sensitivity(workload_times(name))
+                           for name in ("steady", "oscillating", "hashrate_shock")},
         "timewarp_schedule_sha256": hashlib.sha256(json.dumps(warp, separators=(",", ":")).encode()).hexdigest(),
         "timewarp_checkpoints": outcomes,
         "timeseries_scenarios": scenarios,

@@ -7,7 +7,8 @@ from daa_research_oracle import (
 )
 from daa_lease_campaign import (
     HALF_LIFE, INITIAL, TARGET_LIMIT, fabricated_endpoint_schedule,
-    lease_scenarios, run_campaign, targets, workload_times,
+    half_life_sensitivity, lease_scenarios, partition_selection_toy,
+    selfish_withholding_toy, source_outage_toy, run_campaign, targets, workload_times,
 )
 
 
@@ -87,6 +88,26 @@ class JointBoundaryTests(unittest.TestCase):
             curves = targets(times)
             self.assertEqual({len(xs) for xs in curves.values()}, {161})
             self.assertTrue(all(1 <= t <= TARGET_LIMIT for xs in curves.values() for t in xs))
+
+    def test_same_inputs_four_half_lives(self):
+        grid = half_life_sensitivity(workload_times("hashrate_shock"))
+        self.assertEqual(list(grid), ["3600", "7200", "14400", "28800"])
+        self.assertTrue(grid["3600"]["last_target_ratio_asert_raw"] >
+                        grid["28800"]["last_target_ratio_asert_raw"])
+
+    def test_withholding_toy_is_deterministic_not_security_evidence(self):
+        for a in (0.0, 0.2, 0.3, 0.4, 1.0):
+            left = selfish_withholding_toy(a, 0.5, 20000, 1256)
+            self.assertEqual(left, selfish_withholding_toy(a, 0.5, 20000, 1256))
+            self.assertEqual(left["claim"], "toy-only-no-DAA-network-or-actual-PoW")
+        self.assertEqual(selfish_withholding_toy(0, 0.5, 20000, 1256)["accepted_attacker"], 0)
+        self.assertEqual(selfish_withholding_toy(1, 0.5, 20000, 1256)["accepted_honest"], 0)
+
+    def test_source_dropout_and_partition_do_not_invent_operator_proofs(self):
+        self.assertTrue(source_outage_toy()["3_controllers_unavailable"]["genesis_maintenance_task_available"])
+        self.assertFalse(source_outage_toy()["3_controllers_unavailable"]["leased_task_available"])
+        self.assertEqual(partition_selection_toy()["selected"], "A")
+        self.assertFalse(partition_selection_toy()["actual_heavier_fork_reorg"])
 
     def test_report_preserves_unaccepted_boundaries(self):
         report = run_campaign()
