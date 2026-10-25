@@ -3402,6 +3402,31 @@ mod tests {
     use super::*;
 
     #[test]
+    fn w1_negative_cache_is_explicit_bounded_and_never_activated_by_default() {
+        let make = || {
+            PublicServer::new(
+                DevelopmentIdentity::from_secret_hex(&hex::encode([71; 32])).unwrap(),
+                PublicPolicy::new(8, Duration::from_secs(2)).unwrap(),
+            )
+            .unwrap()
+        };
+        assert!(make().w1_rejection_cache.is_none());
+        let selected = make()
+            .with_w1_rejection_cache(8, Duration::from_secs(1))
+            .unwrap();
+        assert!(selected.w1_rejection_cache.is_some());
+        assert!(make()
+            .with_w1_rejection_cache(0, Duration::from_secs(1))
+            .is_err());
+        assert!(make()
+            .with_w1_rejection_cache(8, Duration::from_secs(60))
+            .is_err());
+        // Signed policy identity remains the original V3 identity. This is
+        // strictly optional/local and is not an activated protocol migration.
+        assert_eq!(selected.policy.id(), make().policy.id());
+    }
+
+    #[test]
     fn client_stage_identity_preserves_observation_labels_and_exact_failed_phase_accounting() {
         let initial = || PublicClientMetrics {
             construction_ns: 11,
