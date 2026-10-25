@@ -3441,6 +3441,59 @@ mod tests {
     }
 
     #[test]
+    fn authenticated_legacy_nonloopback_has_no_unmetered_host_bypass() {
+        // V3 and legacy authenticated ingress now check the SAME fixed parent.
+        // This regression works with either an unprivileged CI host (denied)
+        // or an actual admin-provisioned parent (must be verified, never None).
+        let remote: SocketAddr = "0.0.0.0:0".parse().unwrap();
+        assert!(crate::host_kernel_parent::require_host_kernel_budget(remote, None).is_err());
+        let probe = crate::host_kernel_parent::require_for_listener(remote);
+        match &probe {
+            Ok(Some(kernel)) => kernel.verify().unwrap(),
+            Err(_) => {}
+            Ok(None) => panic!("nonloopback must not run without host budget"),
+        }
+        if let Err(expected) = probe {
+            let dir = tempfile::tempdir().unwrap();
+            let settings = Settings::development(Some(now().unwrap() - 100)).unwrap();
+            let (authentication, _) = authentication_fixture(&settings);
+            let node = Node::open(dir.path(), settings, 2).unwrap();
+            let listener = TcpListener::bind(remote).unwrap();
+            let error = serve_authenticated(
+                listener,
+                node,
+                Duration::from_secs(1),
+                Arc::new(AtomicBool::new(true)),
+                authentication,
+            ).unwrap_err();
+            assert_eq!(error.to_string(), expected.to_string());
+        }
+    }
+
+    #[test]
+    fn measured_native_w1_rejection_reports_real_or_explicitly_unknown_thread_cpu() {
+        let dir = tempfile::tempdir().unwrap();
+        let settings = Settings::development(Some(now().unwrap() - 100)).unwrap();
+        let node = Node::open(dir.path(), settings.clone(), 2).unwrap();
+        let original = node.make(
+            settings.genesis(), vec![],
+            crate::development_public(0).unwrap(),
+            settings.genesis_time() + 10, 4096,
+        ).unwrap();
+        let mut bad = original;
+        bad.proof[bad.proof.len() - 1] ^= 1;
+        let metrics = Mutex::new(Metrics::default());
+        // The adjusted trace may happen to miss target; accept either a
+        // cheap TARGET refusal or expensive TRANSCRIPT refusal as invalid.
+        assert!(measured_work_verify(bad, &metrics).is_err());
+        let snapshot = metrics.lock().unwrap();
+        assert_eq!(snapshot.work_verifications, 1);
+        assert_eq!(snapshot.work_verification_thread_cpu_unknown_calls
+                   + u64::from(snapshot.work_verification_thread_cpu_known_ns > 0), 1);
+        assert!(snapshot.work_verification_ns > 0);
+    }
+
+    #[test]
     fn test_authenticated_bytes_bind_session_signature_and_canonical_request() {
         let settings = Settings::development(Some(now().unwrap() - 100)).unwrap();
         let (server, client) = authentication_fixture(&settings);
