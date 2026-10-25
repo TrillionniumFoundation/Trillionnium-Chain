@@ -730,12 +730,80 @@ fn isolated_asert_context_rejects_wrong_anchor_and_uses_real_w1_branch_history()
         .is_err(),
         "incorrect ancestor height cannot enter the shadow"
     );
+    // A linear-from-genesis research query with a two-packet budget refuses
+    // this twenty-block ancestry; the sealed native index path can prove the
+    // same anchor membership without raising or refreshing that budget.
+    let shallow = AnchoredResearchContext {
+        max_ancestor_reads: 2,
+        ..context
+    };
+    assert!(shadow_target_from_ancestry(shallow, parent, |id| node.packet(id)).is_err());
+    assert_eq!(node.research_asert_target_indexed(shallow, parent).unwrap(), raw);
+    assert_eq!(
+        node.research_asert_target_indexed(
+            AnchoredResearchContext {
+                parent_clock: ParentClock::Median11,
+                ..shallow
+            },
+            parent,
+        )
+        .unwrap(),
+        median
+    );
+    // A valid but different height-one W1 fork is not the anchor of the
+    // selected parent even if its target, height and genesis are identical.
+    let unrelated_first = extend(
+        &mut node,
+        settings.genesis(),
+        GENESIS_TIME + 10,
+        1,
+        1,
+    )
+    .id()
+    .unwrap();
+    assert_ne!(unrelated_first, context.anchor_block);
+    assert!(
+        node.research_asert_target_indexed(
+            AnchoredResearchContext {
+                anchor_block: unrelated_first,
+                ..shallow
+            },
+            parent,
+        )
+        .is_err()
+    );
+    for wrong in [
+        AnchoredResearchContext { parameters: [0x91; 32], ..shallow },
+        AnchoredResearchContext { spacing: 11, ..shallow },
+        AnchoredResearchContext { pow_limit: [0x77; 32], ..shallow },
+        AnchoredResearchContext { anchor_target: [0x44; 32], ..shallow },
+    ] {
+        assert!(node.research_asert_target_indexed(wrong, parent).is_err());
+    }
     node.activate(parent).unwrap();
     let before = node.read_active().unwrap();
     drop(node);
     let reopened = Node::open(&path, settings, 1).unwrap();
     assert_eq!(reopened.read_active().unwrap(), before);
     assert_eq!(reopened.expected_target(parent).unwrap(), old);
+    assert_eq!(
+        reopened
+            .research_asert_target_indexed(shallow, parent)
+            .unwrap(),
+        raw
+    );
+    assert_eq!(
+        reopened
+            .research_asert_target_indexed(
+                AnchoredResearchContext {
+                    parent_clock: ParentClock::Median11,
+                    ..shallow
+                },
+                parent,
+            )
+            .unwrap(),
+        median
+    );
     assert_eq!(
         shadow_target_from_ancestry(context, parent, |id| {
             reopened.packet(id)

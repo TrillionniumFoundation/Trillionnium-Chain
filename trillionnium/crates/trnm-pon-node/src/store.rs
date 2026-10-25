@@ -2985,6 +2985,97 @@ impl Node {
             self.settings.target("pow_limit_hex")?,
         )
     }
+    /// Read-only fixed-anchor ASERT shadow through the native sealed ancestry index.
+    ///
+    /// Unlike the deliberately bounded linear ancestry research oracle, this
+    /// consults at most eleven recent timestamp rows and a bounded logarithmic
+    /// ancestor-membership check. The caller's anchor is still RESEARCH input,
+    /// not a genesis-authorized consensus rule. No block validity, chainwork,
+    /// state, persistent receipt or live DAA is changed by this observation.
+    pub fn research_asert_target_indexed(
+        &self,
+        context: consensus::daa_branch_research::AnchoredResearchContext,
+        parent: Hash,
+    ) -> Result<Hash> {
+        use consensus::daa_branch_research::ParentClock;
+        use consensus::daa_research::{asert_target, AsertInputs};
+
+        self.ready()?;
+        ensure(
+            context.network == self.settings.network()
+                && context.parameters == self.settings.parameters()
+                && context.genesis == self.settings.genesis()
+                && context.genesis_timestamp == self.settings.genesis_time()
+                && context.spacing == self.settings.limit("target_spacing_seconds")?
+                && context.pow_limit == self.settings.target("pow_limit_hex")?
+                && context.anchor_height == 1
+                && context.anchor_block != context.genesis
+                && (1..=4096).contains(&context.max_ancestor_reads),
+            "ASERT_OWNER_CONTEXT",
+        )?;
+        // The owner retains the admission provenance and sealed parent links.
+        // A caller-provided header list or Boolean ancestry receipt is never
+        // accepted as evidence that the anchor belongs to this fork.
+        let generation = self.active()?;
+        let anchor = self.stored_header_link(context.anchor_block)?.header;
+        let candidate_parent = self.stored_header_link(parent)?.header;
+        ensure(
+            anchor.height == context.anchor_height
+                && anchor.parent == context.genesis
+                && anchor.target == context.anchor_target
+                && candidate_parent.height >= anchor.height,
+            "ASERT_ANCHOR_BINDING",
+        )?;
+        let is_ancestor = crate::ancestry_index::contains(
+            &self.db,
+            self.ancestry_context(),
+            parent,
+            context.anchor_block,
+            crate::ancestry_index::READ_SQL_BUDGET,
+            &mut |_| Ok(()),
+        )?;
+        ensure(is_ancestor, "ASERT_ANCHOR_MISSING")?;
+        let parent_time = match context.parent_clock {
+            ParentClock::Raw => candidate_parent.timestamp,
+            ParentClock::Median11 => {
+                let mut times = Vec::with_capacity(11);
+                let mut cursor = parent;
+                while times.len() < 11 && cursor != context.genesis {
+                    let maximum = (11 - times.len()) as u64;
+                    (cursor, _) =
+                        self.visit_header_batch_limited(cursor, maximum, &mut |_, link| {
+                            times.push(link.header.timestamp);
+                            Ok(())
+                        })?;
+                }
+                if cursor == context.genesis && times.len() < 11 {
+                    times.push(context.genesis_timestamp);
+                }
+                ensure(
+                    times.first() == Some(&candidate_parent.timestamp),
+                    "ASERT_PARENT_TIME",
+                )?;
+                times.sort_unstable();
+                times[times.len() / 2]
+            }
+        };
+        let target = asert_target(AsertInputs {
+            anchor_target: context.anchor_target,
+            anchor_parent_time: context.genesis_timestamp,
+            evaluation_parent_time: parent_time,
+            anchor_height: context.anchor_height,
+            candidate_height: candidate_parent
+                .height
+                .checked_add(1)
+                .ok_or("ASERT_ANCESTRY_HEIGHT")?,
+            spacing: context.spacing,
+            half_life: context.half_life,
+            pow_limit: context.pow_limit,
+        })?;
+        ensure(self.active()? == generation, "STALE_VIEW")?;
+        Ok(target)
+    }
+
     /// A cancelled controlled activation may have committed only part of its
     /// existing reorg intent. Permit only the exact already-admitted intent
     /// target to reach the original controlled activation/recovery checks.
