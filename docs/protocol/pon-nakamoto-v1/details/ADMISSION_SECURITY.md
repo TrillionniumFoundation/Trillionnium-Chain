@@ -56,6 +56,50 @@ counts. If the no-attack baseline fails, repair and measure it before attributin
 the whole deficit to adversarial W1. A local passing test cannot close the
 independent or computational-security gates.
 
+### PN1 identity-capacity and sustained-pressure acceptance target
+
+This supplements, and never changes, the original campaign and the fixed-seed
+ROOT cohort below. M03/M04/M15 own I02 scheduling and actual resource settlement;
+M17 owns the frozen offered workload and complete result denominator. The
+current completion-work table has 4,096 identities per live owner epoch. Full
+capacity removes new-identity promotion while ordinary paid validation remains
+available. The existing full-table component control is not a sustained-service
+qualification and the table is not a durable operation/replay journal.
+
+Preregister an additional cohort that really constructs at least 4,097 distinct
+complete-W1 packets, including the relevant changed-root rejection cases, and
+continues distinct-nonce traffic after the table fills. Retain every attempted
+construction, failed search, packet digest and actual CPU cost. Run matched
+replay-only, new-identity and honest-only controls on fresh namespaces with the
+same fixed initial state and original resource policy. The honest schedule,
+duration, arrival/byte rates and finite actor budgets are fixed before execution.
+If generation cannot supply the declared rate, record producer limitation; do
+not call an underoffered receiver saturated or reduce the workload afterward.
+
+| Boundary | Required supplement evidence |
+| --- | --- |
+| Capacity | Observe occupancy reaching 4,096 through real work, attempts beyond it, promotion/fallback/repeat counts and bounded retained memory; direct fixture filling cannot satisfy this row. |
+| Pressure | Every planned honest confirmation round overlaps an exact hostile rejection and observed actual paid depletion. Retain coverage duration and maximum nondepleted gap against their preregistered thresholds; reservations and global averages are not spent CPU. |
+| Honest service | Every planned round satisfies its original absolute deadline and depth/work policy, including rounds after capacity exhaustion. Retain Busy/timeouts/missing rounds; cold reopen cannot supply timely confirmation. |
+| Accounting | Actual owner and all scoped-worker CPU settle once; measured cleanup, in-flight bytes/workers and unresolved owner costs reconcile. Unknown samples remain unknown. |
+| Integrity and recovery | No invalid block or partial state enters live/cold history; legal traffic after pressure, listener reconstruction and process restart preserve their stated accounting/recovery semantics without fresh credit for an unresolved effect. |
+
+A cohort fails its supplemental service claim if any required row is absent
+or a frozen threshold fails. Preserve the original campaign's own PASS/FAIL
+unchanged. In particular, the audited source `ef2a6958` original run
+[40120511847](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40120511847)
+passed 27 confirmation rounds, but only seven of eighteen hostile rounds
+overlapped observed depletion and its prepared business set had three distinct
+transactions per run. It did not execute this capacity/churn supplement.
+
+If measurements motivate epoch rotation or a different bounded fair queue,
+specify its owner lifecycle, replay/identity retention and recovery behavior
+before implementation. TTL eviction or restart must not let a repeated hostile
+packet repeatedly regain priority or replenish the original operation budget.
+Changing scheduling cannot weaken complete W1, current-parent/state rechecks,
+original deadlines or M07 atomic commit. Qualify this service change jointly
+with PN2 state/history cost; computational hardness remains a separate I01 gate.
+
 ### Fixed-seed ROOT rejection component cost
 
 The opt-in `signed_seed_state_root_replay_component_cost` in

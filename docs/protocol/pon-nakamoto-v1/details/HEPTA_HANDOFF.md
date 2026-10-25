@@ -428,10 +428,12 @@ arbitrary JSON report as success. Original absolute-path arguments remain
 accepted for invocation compatibility and grant no consumer capability. The
 existing writer route additionally requires `--cache-max-bytes`,
 `--cache-max-chunks`, `--cache-max-manifests` and `--cache-max-db-bytes`; it carries those exact persistent
-TCL3 limits across all members without granting a new allowance per fetch.
-The separate main-DB image/file-length cap does not reserve allocated blocks
-or bound WAL/SHM/temp/output peaks
-or authorize Hepta loading.
+TCL4 limits across all members without granting a new allowance per fetch.
+Earlier TCL3 observations retain their original source. Current supported
+TCL4 writers have separate main-image and WAL/SHM file-length bounds; these
+do not reserve physical backing or cover TEMP/memory/output peaks, native
+funding or Hepta loading. See the current
+[Cell cache and release interface](CELL_P2P_V1.md#pn3-release-closure-and-real-loader-interface).
 Mocked exit0/failed-JSON controls reproduce the removed orchestration bug;
 they are neither real-model failures nor I10 execution evidence. A future
 implementation must use the existing selection, artifact, resource and FinalUse

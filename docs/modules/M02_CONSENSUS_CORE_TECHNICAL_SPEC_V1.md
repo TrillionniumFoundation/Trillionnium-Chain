@@ -57,6 +57,18 @@ Admission-to-activation gaps, fabricated chainwork, stale parent and partitioned
 
 Native P2P consensus actor, timestamp attack qualification and independently operated network are pending.
 
+For PN1/I01, M02 consumes only M01's private complete verified-work fact plus
+the actual expected target; M03/M04 scheduling observations never supply
+chainwork. [Work-cost/DAA qualification](../protocol/pon-nakamoto-v1/details/WORK_COST_DAA_BOUNDARIES.md#pn1-computational-qualification-delivery)
+requires complete legal strategy costs, preprocessing/hardware assumptions and
+legal-clock/withholding scenarios. An easier valid target contributes less
+required work. For PN1/PN2 throughput, use the existing
+[measured optimization order](../protocol/pon-nakamoto-v1/details/PERFORMANCE_ACCEPTANCE.md#pn1pn2-measured-optimization-order)
+before considering another ordering algorithm. Parallel-block proposals must
+define ordering before post-state roots, conflicts, withheld data and recovery;
+they cannot inherit another protocol's theorem for W1. Any changed target,
+work or fork-choice rule requires its own reviewed namespace and PN6 migration.
+
 ## Current source and verification
 
 - [`trillionnium/crates/trnm-pon-node/src/consensus.rs`](../../trillionnium/crates/trnm-pon-node/src/consensus.rs).

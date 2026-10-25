@@ -102,6 +102,37 @@ reservation, new-cache rollback journal, memory/temp/output peaks and global I05
 funding remain open; these file-length caps are not total-disk quotas. See the existing
 [Cell contract](../protocol/pon-nakamoto-v1/details/CELL_P2P_V1.md).
 
+### PN3/PN4/PN5 interface and acceptance obligations
+
+These are target obligations inside the existing PN0–PN6 plan and I05/I09/I10
+interfaces. The current TCM1/TCR1 byte path, TCL4 cache, development rendezvous
+and v1 single-manifest retention contract remain their separate implemented
+components; none already implements a complete neural release-closure codec.
+
+| Existing stage / owner seam | Required implementation and exit |
+| --- | --- |
+| PN3 / M10 -> M09 -> Hepta loader -> M17 | Version the complete closure and finite `ResolveReleaseRequest/Result`; bind family/base/tokenizer/layout/shape/dtype/quantization/runtime/router, mandatory Cells/dependencies and selected generation. Reject cycles, absent mandatory bytes and incompatible loaders. Each adopted round requires verified cross-node retrieval, safe installation and next-task loaded-hash readback; no-update reads back the retained parent. The three-round mechanical loop still needs a separate successful cross-node I09/I10 installation cohort including origin loss. |
+| PN4 / M09 <-> M12 | Version release-wide funded duty, byte-time tariff, renewal/repair reservation and unknown-effect reconciliation. Reserve physical capacity before ACK; retain original effect/payment fences across restart/reorg. Cache completion is no duty or payment receipt. |
+| PN5 / M09/M14 -> M17 | Qualify finite discovery, independent replicas, shared-budget repair and complete-release service during the at-least-72-hour WAN campaign. Initial target is three independent complete replicas; all promised releases must meet the frozen threshold and deadlines. |
+
+The exact target messages, errors and codec compatibility rules live in the
+[Cell interface](../protocol/pon-nakamoto-v1/details/CELL_P2P_V1.md#pn3-release-closure-and-real-loader-interface),
+[discovery seam](../development/specs/pon/CELL_PROVIDER_DISCOVERY_DEV_V1.md#pn5-extension-seam--target-not-the-dev-v1-codec)
+and [retention duty](../development/specs/pon/CELL_RETENTION_V1.md#pn4pn5-release-wide-duty-interface--target).
+Implement canonical vectors and negative cross-version refusal before plumbing
+the loader or network adapter. Unknown publication/repair outcomes permit only
+exact-target reconciliation; retries do not reset reservation or authorization.
+
+Freeze workload/source/profile, numeric latency/resource/sample thresholds and
+failure matrix before measurement. Report verified MB/s, complete-release
+availability, cold/warm loader latency, repair debt and unique confirmed chain
+TPS separately. Compare persistent connections, bounded rare-piece scheduling,
+BT v2/DHT or erasure coding only against the same workload and original budgets;
+they remain reviewed options until selected, implemented and qualified. GC must
+preserve all lease/reorg/rollback roots and shared dependencies. Model integrity,
+availability, quality and local installation remain four independently checked
+claims, with failed cohorts preserved under their actual source identities.
+
 ## Current source and verification
 
 - [`formal/pon-nakamoto-v1/model_contract.py`](../../formal/pon-nakamoto-v1/model_contract.py).

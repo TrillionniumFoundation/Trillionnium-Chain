@@ -142,6 +142,52 @@ Counts cover application response bytes
 actually read, including rejected headers and bodies; request bytes, TCP/IP
 overhead, retransmissions and unread socket data are outside this metric.
 
+### PN5 extension seam — target, not the dev-v1 codec
+
+Public swarm discovery belongs to existing PN5/I09 after the PN3 configured-peer
+loader and PN4 funded-duty gates. The current 335-byte record, signed domains,
+directory high water and fixed resource limits remain unchanged. A selected DHT
+or BitTorrent v2 adapter needs its own reviewed versioned codec and exact vectors;
+it cannot reinterpret CDP1, TCM1 or TCR1 fields or silently widen address scope.
+
+| Target input/output | Required binding and result |
+| --- | --- |
+| `DiscoverProvidersRequest` | Original operation, pinned closure/object ID and context, public/private export profile, allowed bootstraps/scopes, remaining connection/byte/validation/CPU reservation and original deadline. |
+| `DiscoverProvidersResult` | Same identity, finite candidate records with expiry/provenance, exact consumed counters and `Candidates`, `Unavailable`, `Refused` or `Unknown`. Candidates remain untrusted location hints until actual pinned bytes verify. |
+| `ProviderObservation` | Actual dial/result, verified object/chunks, observed duration/bytes and failure category. A successful probe is neither a storage lease nor operator-independence evidence. |
+
+Target errors distinguish invalid identity/codec, stale/conflicting record,
+disallowed scope, capacity, budget/deadline exhaustion and unresolved publication.
+Unknown announce outcomes reconcile the exact signed record and sequence; a lost
+ACK does not authorize a new sequence, payment, retry effect or fresh allowance.
+Fetch may retain verified bytes, but re-entry needs current authorization and the
+explicit remaining reservation. Lookup, dialing, repair and model retrieval share
+that reservation instead of each creating their own queue or timeout.
+
+For any external infohash/CID, the adapter must commit to the algorithm, codec,
+canonical metainfo/DAG bytes and mapping to the pinned release/object IDs. Specify
+whether a mapping names a TCM1 wire object, raw payload or complete release;
+these have different hashes. Test a valid external hash for the wrong internal
+object, alternate codecs, mutable tags, malformed magnets and truncated proofs.
+No successful external lookup bypasses the original manifest/context checks.
+
+The PN5 freeze record names at least three independent administrators and failure
+domains, bootstrap diversity, topology, TTLs, query/hop/parallel limits, ingress/
+egress and queue caps, object workload and the honest completion deadline. Run
+at least 72 hours, retaining each cold/warm and fault cohort separately. Required
+faults include all-bootstrap loss, eclipse/provider spam, same-owner equivocation,
+expired records, clock jumps, slow/corrupt providers, restart and flash crowd.
+Pass requires zero pin changes, unauthorized private advertisements, budget resets
+or duplicate aggregate counting, plus honest complete-release service inside
+the precommitted limits for cohorts with the declared surviving discovery and
+provider paths. Total discovery/object loss must return typed Unavailable by
+the original deadline without a version or authority fallback; count that as
+an availability failure, not successful service. Finite safe refusal alone
+does not qualify fairness, and aggregate success cannot hide failed cohorts.
+Private manifests reveal model topology and interest even when payloads are
+encrypted. The export owner must explicitly choose an authenticated private
+discovery profile; unknown/private objects never spill into public lookups.
+
 `LoopbackDevOnly` is an explicit development choice with finite ports.
 `ScopedDeployment` requires explicit canonical nonzero-prefix CIDRs and finite
 service ports. It rejects loopback, unspecified, link-local, multicast,

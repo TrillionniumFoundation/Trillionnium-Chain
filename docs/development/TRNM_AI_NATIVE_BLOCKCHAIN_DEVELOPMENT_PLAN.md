@@ -1,7 +1,7 @@
 # Trillionnium Chain Development Plan — PoN / Hepta-PoH revision
 
-Plan ID: `trnm-chain-development-plan-v2` (stable registry identity; content revision 21).
-Effective: 2026-09-28; priority implementation revision: 2026-10-23. Status: selected development direction; no runtime activation.
+Plan ID: `trnm-chain-development-plan-v2` (stable registry identity; content revision 22).
+Effective: 2026-09-28; priority implementation revision: 2026-10-25. Status: selected development direction; no runtime activation.
 Canonical destination: `refs/heads/main`; continuation uses the current main lineage, not retired PR #194.
 Current source/head/tree/base and prospective merge are derived at verification time.
 Assessed legacy baseline: `c552c31c6d3c5ac47522a124e02c6b8bca4e23f2`, tree
@@ -106,6 +106,56 @@ I07 evaluation precede I08 exact task observation; I09 complete release fetch
 precedes I10 local admission/install/readback. Reuse Hepta's existing
 [global plan](https://github.com/TrillionniumFoundation/hepta-private-ci/blob/c38e7727220f32c7410f59083c5ea7878bbae078/docs/DEVELOPMENT.md)
 and work-package owners; Agentd composes calls and creates no second store.
+
+### Audit contract refinement — 2026-10-25
+
+This amendment refines the existing PN0–PN6 exits and I01–I10 interfaces. It
+adds no phase, consensus selection, runtime API or acceptance flag. The inspected
+inputs were Chain `ef2a6958a6f3d8fdfaea25fbc58fb1ecd188134c` and Hepta
+`07731d314366bb9215753d23355b3ebf6449b32b`; they are audit provenance, not
+future execution pins. PN0 must resolve the actual two heads, bases, merge
+objects, configuration and binaries again before testing the delivered change.
+
+The [original native campaign on that Chain source](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40120511847)
+passed its three declared runs. Read-only audit verified all 910 artifact-list
+files / 328,625,725 bytes in artifact `12591401163` and recomputed its three
+phase derivations: 189 submission observations, 27 confirmation rounds and
+three distinct prepared business transactions per run. All six hostile phases
+observed real depletion, while seven of eighteen hostile confirmation rounds
+overlapped observed depletion. This finite same-host PASS coexists with earlier
+FAILs; it proves neither continuous saturation nor work hardness, independent
+WAN service or the new churn cohort below. A changed document is no new run.
+
+| Existing phase / interface | Next accountable delivery and predecessor | Required exit evidence |
+| --- | --- | --- |
+| PN0 / all | M00/M15/M17 and Hepta engineering/evidence owners freeze one source-pair matrix and unresolved security disposition before execution. | Actual commands, raw inputs/results, source/tree/config/binary identities and applicable head/merge CI; queued or absent checks remain incomplete. |
+| PN1 / I01–I02 | M01/M02 compare complete legal work and DAA assumptions; M03/M04/M15 exercise real paid verification, ROOT failures and identity-capacity churn. | Separate correctness, computational-cost and honest-service verdicts under the original budget; supplemental cohorts and their overlap requirements follow the admission contract. |
+| PN2 / I03–I05 | M06/M07/M08/M13 profile and remove full-State/history hot-path dependence through the explicit bounded-parent profile, preserving one durable writer. | Same-root execution, conservation/reorg/crash/cold-readback plus cost curves over accounts, touched keys, history and conflicts; report the old full-read path separately. |
+| PN3 / I06–I10 | Existing Hepta export/evaluation/selection/TaskFlow/loader/FinalUse owners compose the ordinary real-model caller; M09 supplies the complete selected closure. | Three actual predecessor-bound cycles and next-task readbacks; no-update mechanics, installation and three beneficial releases receive separate verdicts. |
+| PN4 / I05/I08/I10 | M09/M12 and Hepta operations reconcile actual funding, byte-time/repair and original physical effects after PN2 conservation and PN3 identities. | Coin locks/debits and measured service are distinguished from local reservations; unknown effects, reorg funding loss and exhausted lifetime slots never become refunds or fresh dispatch. |
+| PN5 / I02/I09 | M04/M09/M14/M17 extend the configured-peer complete-loader path with bounded discovery, independent custody and repair after joint PN1–PN4. | At least three independent administrators/failure domains and the existing at-least-72-hour WAN campaign, with every named load/fault cohort meeting its frozen objectives. |
+| PN6 / all | Existing migration/release owners drain, reconcile and rehearse only after the preceding exits. | Source-preserving migration, cold verification, rollback/recovery and the specific governed decision; no document, merge or model reward activates consensus. |
+
+For each row, register the existing callable or explicitly mark the proposed
+seam unimplemented. Its request must bind the original operation, profile and
+source context, parent/release/task identities as applicable, local generation,
+original deadline and finite CPU/byte/disk/worker reservations. Its result must
+name the same request, checked facts, actual charged costs, durable completion
+or typed refusal, and the owner of unresolved effects. These are semantic
+requirements, not a common replacement wire format. Busy, Unavailable,
+Deadline and Unknown cannot be collapsed into Invalid or a success Boolean.
+An Unknown is reconciled through its original operation before another effect.
+
+The authoritative detail remains in [work cost and DAA](../protocol/pon-nakamoto-v1/details/WORK_COST_DAA_BOUNDARIES.md),
+[admission](../protocol/pon-nakamoto-v1/details/ADMISSION_SECURITY.md),
+[performance](../protocol/pon-nakamoto-v1/details/PERFORMANCE_ACCEPTANCE.md),
+[Hepta handoff](../protocol/pon-nakamoto-v1/details/HEPTA_HANDOFF.md) and
+[Cell distribution](../protocol/pon-nakamoto-v1/details/CELL_P2P_V1.md).
+Hepta's existing global plan crosswalk owns the same local module deliveries;
+its P0–P8 phases are not renamed. Keep bulk training, evaluation and weight
+transfer outside ordering except for bytes required by the explicit work
+relation. Consensus confirms commitments; model quality, durable availability
+and local execution permission each require their own evidence.
 
 ### 2026-10-23 convergence checkpoint within PN0–PN6
 
@@ -1742,6 +1792,19 @@ as separate correctness, resource and public-service contracts.
    independently imported confirmations in each mode; repeat the complete frozen
    campaign three times with all failures retained. This is a finite development
    regression under that attack envelope, not universal public fairness.
+5. After preserving that result, execute the separately preregistered I02
+   capacity/churn supplement: actually produce at least 4,097 distinct complete
+   work identities, cross the current 4,096-entry scheduling boundary, and keep
+   fresh identities arriving during honest confirmation. Report table occupancy,
+   new/repeated identities, real construction cost and ordinary-path fallbacks.
+   Direct table injection is a component test, not this cohort. Retain the
+   original service CPU/worker/deadline/confirmation limits; declare offered load,
+   total duration and honest schedule before construction, never after a failure.
+6. Qualify timestamp/DAA effects with the actual work model and legal clocks,
+   oscillating effective hashrate, withholding and partitions. An easier target
+   still contributes less required work. A proposed DAA or work relation change
+   requires explicit version/domain/migration review and new independent vectors;
+   queue repair or a different PoW paper cannot qualify the unchanged relation.
 
 Exit: separate work-security and honest-service verdicts with raw denominators,
 assumptions and independent reproduction. Queue cleanup or ACK alone cannot pass.
@@ -1952,6 +2015,26 @@ proceed with those failures visible.
    Fetch missing chunks from finite peers with the original budget/deadline;
    verify full payload and dependencies before loader entry. Public discovery,
    independent replication/repair and private transport mature at PN5.
+
+The PN3 receipt must join each round's actual predecessor load, authorized task
+episode, dataset/export scope, train/control/evaluation calls, selected release,
+exact TaskFlow operation/packet and schema-4 observation, closure fetch, loader
+admission, installed generation and ordinary next-task loaded hashes/output.
+Round two and three obtain their parent from that runtime readback, never from
+the previous candidate filename. A no-update keeps and actually executes the
+old parent; it cannot supply an installation or beneficial-release count.
+Bind the safe loader to the complete base/tokenizer/runtime/router/Cell closure,
+not merely a TCR1 member set. The existing Hepta operation owner reconciles
+lost/unknown effects; this receipt creates no new issuer or learning journal.
+Three no-update cycles do not waive the separate successful cross-node I09/I10
+cohort with actual compatible installation and ordinary next-task readback.
+
+The controlled 135M five-control observation in the inspected Hepta source
+reports zero gain against the strongest control and no ordinary installation
+or three-round closure. Preserve that result. Require frozen matched training
+and evaluation costs, whole-composition safety/noninferiority and raw per-task
+results for any successor; public/seen engineering tasks remain permitted,
+while future-generalization claims need separate prospective evidence.
 
 The current [controlled TCL4 relay](../../evidence/pon-upgrade-implementation-20261018/native-rounds/cell-tcl4-release-three-host-20261024/SCOPE.md)
 passes the configured-peer transport subitem using the complete271MB public
