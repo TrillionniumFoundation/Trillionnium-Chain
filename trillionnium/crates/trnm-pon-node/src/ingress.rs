@@ -629,21 +629,47 @@ pub struct Metrics {
     pub admission_verification_ns: u64,
     pub work_verifications: u64,
     pub work_verification_ns: u64,
+    /// Known actual calling-thread CPU only; the full original W1/M05 interval.
+    /// No guessed CPU is inserted when the clock is missing or moves backward.
+    pub work_verification_thread_cpu_known_ns: u64,
+    pub work_verification_thread_cpu_unknown_calls: u64,
 }
 fn elapsed_ns(start: Instant) -> u64 {
     u64::try_from(start.elapsed().as_nanos()).unwrap_or(u64::MAX)
 }
+#[cfg(target_os = "linux")]
+fn calling_thread_cpu_ns() -> Option<u64> {
+    use rustix::time::{clock_gettime_dynamic, ClockId, DynamicClockId};
+    let time = clock_gettime_dynamic(DynamicClockId::Known(ClockId::ThreadCPUTime)).ok()?;
+    let seconds = u64::try_from(time.tv_sec).ok()?;
+    let nanos = u64::try_from(time.tv_nsec).ok()?;
+    if nanos >= 1_000_000_000 { return None; }
+    seconds.checked_mul(1_000_000_000)?.checked_add(nanos)
+}
+#[cfg(not(target_os = "linux"))]
+fn calling_thread_cpu_ns() -> Option<u64> { None }
+
 fn measured_work_verify(packet: Packet, metrics: &Mutex<Metrics>) -> Result<WorkCheckedPacket> {
     let start = Instant::now();
+    let start_cpu = calling_thread_cpu_ns();
     metrics
         .lock()
         .map_err(|_| "METRICS_POISONED")?
         .work_verifications += 1;
     let result = WorkCheckedPacket::verify(packet);
+    let actual_cpu = start_cpu.zip(calling_thread_cpu_ns())
+        .and_then(|(before, after)| after.checked_sub(before));
     let mut counts = metrics.lock().map_err(|_| "METRICS_POISONED")?;
     counts.work_verification_ns = counts
         .work_verification_ns
         .saturating_add(elapsed_ns(start));
+    if let Some(cpu) = actual_cpu {
+        counts.work_verification_thread_cpu_known_ns =
+            counts.work_verification_thread_cpu_known_ns.saturating_add(cpu);
+    } else {
+        counts.work_verification_thread_cpu_unknown_calls =
+            counts.work_verification_thread_cpu_unknown_calls.saturating_add(1);
+    }
     result
 }
 
@@ -1647,7 +1673,13 @@ fn serve_inner(
                                 if let Some(kernel) = host_kernel_for_worker {
                                     kernel.verify()?;
                                 }
-                                measured_work_verify(packet, &metrics)
+                                let checked = measured_work_verify(packet, &metrics)?;
+                                // Recheck the actual worker after expensive W1, so a
+                                // moved thread cannot promote its observed work.
+                                if let Some(kernel) = host_kernel_for_worker {
+                                    kernel.verify()?;
+                                }
+                                Ok(checked)
                             },
                         );
                         let succeeded = outcome.is_ok();
@@ -1737,7 +1769,11 @@ fn serve_inner(
                         if let Some(kernel) = host_kernel_for_worker {
                             kernel.verify()?;
                         }
-                        measured_work_verify(packet, &metrics)
+                        let checked = measured_work_verify(packet, &metrics)?;
+                        if let Some(kernel) = host_kernel_for_worker {
+                            kernel.verify()?;
+                        }
+                        Ok(checked)
                     });
                     let reply = match result {
                         Ok(value) => {
