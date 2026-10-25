@@ -1131,3 +1131,121 @@ fn q4_presigned_overlap_survives_revocable_branch_and_maintenance_reorg() {
     // Historic Q4 signed bytes and legacy DAA remain unchanged; this is not a
     // live signer/retransmission/WAN liveness guarantee.
 }
+
+/// Opt-in full native Q4/Revision12 regression: every optional slot was actually
+/// occupied and revoked before expiry; it cannot be recycled at the final
+/// retention height. Actual W1 Maintenance packets preserve chain growth until
+/// the next height, when 32 independently signed OPEN envelopes are admitted.
+/// No automatic renewal, synthesized source attestation or old-domain rewrite.
+#[test]
+#[ignore = "expensive: >1110 real native W1 blocks and cold SQLite reopen"]
+fn long_native_all_32_retained_slots_reopen_only_after_retention_boundary() {
+    use trnm_protocol::qualified_work_task::lifecycle_v2::{DemandRevocationV2, DEMAND_SLOTS};
+
+    let dir = tempfile::tempdir().unwrap();
+    let settings = settings();
+    let bootstrap = settings.bootstrap_lifecycle_task().unwrap();
+    let mut node = Node::open(dir.path(), settings.clone(), 1).unwrap();
+    let mut originals = vec![bootstrap.lease.clone()];
+    let mut opens = Vec::new();
+    for slot in 1..DEMAND_SLOTS {
+        let mut lease = bootstrap.lease.clone();
+        lease.slot = slot;
+        lease.generation = u64::from(slot) + 1;
+        lease.revision = 1;
+        lease.not_before = 1;
+        lease.expires = 1001;
+        lease.available_until = 1101;
+        lease.demand_id = lease.derived_demand_id();
+        opens.push(signed(&settings, 1, u64::from(slot), 18, lease.encode().unwrap()));
+        originals.push(lease);
+    }
+    mine(&mut node, 1, opens);
+    let active = node.read_active().unwrap();
+    for slot in 0..DEMAND_SLOTS {
+        assert_eq!(
+            active.2[&qualified_task_lifecycle::slot_key(slot).unwrap()]["status"],
+            "active",
+        );
+    }
+    let mut revocations = Vec::new();
+    for (slot, lease) in originals.iter().enumerate() {
+        revocations.push(signed(
+            &settings, 1, 32 + slot as u64, 20,
+            DemandRevocationV2 {
+                network: settings.network(), parameters: settings.parameters(),
+                slot: slot as u8, demand_id: lease.demand_id,
+                requester: lease.requester, expected_revision: lease.revision,
+            }.encode().unwrap(),
+        ));
+    }
+    mine(&mut node, 2, revocations);
+    for height in 3..=1100_u64 {
+        mine(&mut node, height, vec![]);
+    }
+    let before = node.read_active().unwrap();
+    assert_eq!(node.next_nonce(development_public(1).unwrap()).unwrap(), 64);
+    assert_eq!(
+        before.2[&qualified_task_lifecycle::slot_key(1).unwrap()]["status"],
+        "revoked",
+    );
+    // Slot 1's last retained height is 1101: a candidate at that same height
+    // must be refused without advancing the original requester nonce or state.
+    let mut premature = bootstrap.lease.clone();
+    premature.slot = 1;
+    premature.generation = 33;
+    premature.revision = 1;
+    premature.not_before = 1101;
+    premature.expires = 2101;
+    premature.available_until = 2201;
+    premature.demand_id = premature.derived_demand_id();
+    let early_tx = signed(&settings, 1, 64, 18, premature.encode().unwrap());
+    let error = node.make_consensus_maintenance(
+        before.0, vec![early_tx], development_public(0).unwrap(), 11011, 4096,
+    ).unwrap_err();
+    assert_eq!(error.to_string(), "TASK_RETAINED");
+    assert_eq!(node.read_active().unwrap(), before);
+    assert_eq!(node.next_nonce(development_public(1).unwrap()).unwrap(), 64);
+    mine(&mut node, 1101, vec![]);
+
+    // Only now are all original slots past their signed availability retention.
+    // Every new lease uses a globally increasing branch generation and the
+    // original requester signs each full QDL2 envelope independently.
+    let mut fresh = Vec::new();
+    for slot in 0..DEMAND_SLOTS {
+        let mut lease = bootstrap.lease.clone();
+        lease.slot = slot;
+        lease.generation = u64::from(slot) + 33;
+        lease.revision = 1;
+        lease.not_before = 1102;
+        lease.expires = 2102;
+        lease.available_until = 2202;
+        lease.demand_id = lease.derived_demand_id();
+        fresh.push(signed(&settings, 1, 64 + u64::from(slot), 18,
+                          lease.encode().unwrap()));
+    }
+    let watched_tx = fresh.last().unwrap().clone();
+    let watched = hash(b"tx-id", &[&watched_tx]);
+    let included = mine(&mut node, 1102, fresh);
+    let after = node.read_active().unwrap();
+    for slot in 0..DEMAND_SLOTS {
+        let record = &after.2[&qualified_task_lifecycle::slot_key(slot).unwrap()];
+        assert_eq!(record["status"], "active");
+        assert_eq!(record["opened_height"], 1102);
+    }
+    assert_eq!(node.next_nonce(development_public(1).unwrap()).unwrap(), 96);
+    assert_eq!(
+        after.2[continuity_v1::MAINTENANCE_KEY]["useful_output_credit"], 0,
+    );
+    for height in 1103..=1110_u64 {
+        mine(&mut node, height, vec![]);
+    }
+    let confirmed = node.confirmation(watched, included, 100_000).unwrap();
+    assert!(confirmed.confirmed && !confirmed.reorged);
+    assert!(!confirmed.finalized && !confirmed.execution_authority);
+    let tip = node.read_active().unwrap();
+    drop(node);
+    let reopened = Node::open(dir.path(), settings, 1).unwrap();
+    assert_eq!(reopened.read_active().unwrap(), tip);
+    assert!(reopened.confirmation(watched, included, 100_000).unwrap().confirmed);
+}

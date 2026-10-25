@@ -348,3 +348,31 @@ real hardware costs, native full W1 fork tests, source-owner leases, negative
 cost asymmetry and WAN chain-quality experiments remain the blocking P0-C,
 P1-B, P1-C and P2 exits. The retained P0-A/P0-B Rust selectors still require
 a current-source compiler-enabled native execution receipt.
+
+
+## All-32-slot post-retention real-W1 native selector (opt-in, NOT_RUN)
+
+The original native continuity_tests.rs owner now has an additional expensive,
+explicitly ignored regression:
+long_native_all_32_retained_slots_reopen_only_after_retention_boundary.
+
+Unlike the earlier 32-slot short test or single-slot 1108-block test, this
+selector opens 31 additional real QDL2 slots alongside the original bootstrap,
+revokes all 32 using signed transactions, then executes normal Genesis
+Maintenance W1 blocks through height 1100. It demands that the last retained
+slot refuse an otherwise valid signed reopening at **height 1101** with no
+requester nonce or State mutation, and only after that original retention
+boundary opens all 32 new generations in a normal height-1102 Maintenance
+block. The test advances through height 1110, demands depth/work transaction
+confirmation, and cold-reopens the original SQLite Node.
+
+    cargo test --locked --manifest-path trillionnium/Cargo.toml \
+      -p trnm-pon-node --lib \
+      long_native_all_32_retained_slots_reopen_only_after_retention_boundary \
+      -- --ignored --test-threads=1
+
+This is an additional test **definition only**. No installed Rust compiler,
+actual test run, full state/archive growth measurement, independent signer or
+public source credential is claimed by writing it. It must fail visibly if
+the included terminal-retention rule or nonce accounting diverges, rather than
+changing or silently replacing the old Q4/Revision12 agreement rules.
