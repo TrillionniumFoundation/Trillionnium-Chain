@@ -16,4 +16,4 @@ consensus_authority = false
 
 
 [dev-dependencies]
-trnm-crypto-primitives = { path = "../trnm-crypto-primitives" }
+trnm-crypto-primitives = { version = "=0.1.0", path = "../trnm-crypto-primitives" }

@@ -1,0 +1,55 @@
+{
+  "after": {
+    "commit": "3e9efb15faa261a4dc3ffc3205cd259aaee41a3f",
+    "dirty": false,
+    "parents": [
+      "50e9a5f9654dcc360af2d0467f00c413c1203526"
+    ],
+    "tree": "559c14b1857ad3ca57234323d54a2173b9c2692e"
+  },
+  "base_sha": "f8c9419df6ddeb36ff8b522a50219981fb8d9345",
+  "before": {
+    "commit": "3e9efb15faa261a4dc3ffc3205cd259aaee41a3f",
+    "dirty": false,
+    "parents": [
+      "50e9a5f9654dcc360af2d0467f00c413c1203526"
+    ],
+    "tree": "559c14b1857ad3ca57234323d54a2173b9c2692e"
+  },
+  "command": [
+    "just",
+    "test",
+    "--locked",
+    "-p",
+    "codex-hepta-agentd",
+    "--lib",
+    "-E",
+    "test(real_growth_remote_chain_resident_task_lost_ack_confirm_reorg_restart)",
+    "--run-ignored",
+    "only",
+    "--no-capture"
+  ],
+  "command_exit_code": 0,
+  "elapsed_seconds": 60.514338491950184,
+  "exit_code": 0,
+  "finished_at": "2026-10-23T07:02:23.966328+00:00",
+  "job": null,
+  "lane": "source-head",
+  "log_bytes": 32694,
+  "log_file": "real_growth_remote_chain_resident_task_lost_ack_confirm_reorg_restart.json.96af855ca63d4209b444676a8f56a302.log",
+  "log_sha256": "62afb9492a18ac00e7ed36feb6993c33c7852abc5c5cc6a5965dd55dea233535",
+  "minimum_tests": 1,
+  "observed_failed_tests": 0,
+  "observed_passed_tests": 1,
+  "output_limit_exceeded": false,
+  "returncode": 0,
+  "run_attempt": null,
+  "run_id": null,
+  "schema_version": 1,
+  "source_sha": "3e9efb15faa261a4dc3ffc3205cd259aaee41a3f",
+  "started_at": "2026-10-23T07:01:23.446993+00:00",
+  "status": "passed",
+  "tested_sha": "3e9efb15faa261a4dc3ffc3205cd259aaee41a3f",
+  "timed_out": false,
+  "working_directory": "/tmp/trnm-pn-convergence-20261023/hepta-integration"
+}

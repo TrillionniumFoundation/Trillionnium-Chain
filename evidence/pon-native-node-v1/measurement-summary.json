@@ -1,0 +1,103 @@
+{
+  "source_commit": "b34561d1ade376512a34fed3fd78938ed2431ecd",
+  "source_tree": "5a91b1ecc696b8a0c468ee8ba2a3dd0fe9e8d3d8",
+  "native_tests": 1842,
+  "native_doc_tests": 15,
+  "native_node_cases": 22,
+  "native_cli_invocations": 386,
+  "confirmation_costs": [
+    {
+      "scenario": "independent",
+      "samples": 3,
+      "query_count": 48,
+      "serial_median_ns": 2069195253,
+      "batch_median_ns": 43622393,
+      "scope": "48 process-inclusive individual observations versus one 48-query process; not public TPS"
+    },
+    {
+      "scenario": "hot-sender",
+      "samples": 3,
+      "query_count": 48,
+      "serial_median_ns": 1711849649,
+      "batch_median_ns": 35356287,
+      "scope": "48 process-inclusive individual observations versus one 48-query process; not public TPS"
+    }
+  ],
+  "prepared_costs": [
+    {
+      "class": "dense",
+      "target": "07ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "samples": 8,
+      "baseline_median_ns": 81221789.0,
+      "prepared_with_setup_median_ns": 70126428.5,
+      "baseline_divided_by_prepared": 1.1582193865754906,
+      "fastest_adversary_qualified": false
+    },
+    {
+      "class": "dense",
+      "target": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "samples": 8,
+      "baseline_median_ns": 4369188.0,
+      "prepared_with_setup_median_ns": 4264649.0,
+      "baseline_divided_by_prepared": 1.0245129200550853,
+      "fastest_adversary_qualified": false
+    },
+    {
+      "class": "zero",
+      "target": "07ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "samples": 8,
+      "baseline_median_ns": 112755750.0,
+      "prepared_with_setup_median_ns": 96806644.0,
+      "baseline_divided_by_prepared": 1.1647521837447439,
+      "fastest_adversary_qualified": false
+    },
+    {
+      "class": "zero",
+      "target": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "samples": 8,
+      "baseline_median_ns": 3385602.5,
+      "prepared_with_setup_median_ns": 3510817.5,
+      "baseline_divided_by_prepared": 0.9643345175304612,
+      "fastest_adversary_qualified": false
+    },
+    {
+      "class": "rank-one",
+      "target": "07ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "samples": 8,
+      "baseline_median_ns": 40838467.5,
+      "prepared_with_setup_median_ns": 35083218.5,
+      "baseline_divided_by_prepared": 1.164045639085251,
+      "fastest_adversary_qualified": false
+    },
+    {
+      "class": "rank-one",
+      "target": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "samples": 8,
+      "baseline_median_ns": 6941855.5,
+      "prepared_with_setup_median_ns": 6581420.5,
+      "baseline_divided_by_prepared": 1.054765532759987,
+      "fastest_adversary_qualified": false
+    },
+    {
+      "class": "sparse",
+      "target": "07ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "samples": 8,
+      "baseline_median_ns": 68558152.5,
+      "prepared_with_setup_median_ns": 56329363.0,
+      "baseline_divided_by_prepared": 1.2170944042097547,
+      "fastest_adversary_qualified": false
+    },
+    {
+      "class": "sparse",
+      "target": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "samples": 8,
+      "baseline_median_ns": 5177703.0,
+      "prepared_with_setup_median_ns": 4795742.5,
+      "baseline_divided_by_prepared": 1.07964574828611,
+      "fastest_adversary_qualified": false
+    }
+  ],
+  "public_confirmed_tps": null,
+  "independent_accepted": false,
+  "production_activation": false
+}
