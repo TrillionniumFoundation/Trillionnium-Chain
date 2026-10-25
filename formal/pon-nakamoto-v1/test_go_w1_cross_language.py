@@ -47,6 +47,9 @@ class GoW1CrossLanguageTests(unittest.TestCase):
             original=W.prove(challenge,a,b)
             self.assertEqual(native.stdout,original)
             task=W.task_id(a,b)
+            oracle_ticket,oracle_product=W.verify(challenge,task,bytes([255])*32,original)
+            self.assertEqual(oracle_ticket,H('ticket',challenge,original[-32:]))
+            self.assertEqual(len(oracle_product),W.CELLS)
             statement=challenge+task+bytes([255])*32+original
             result=self.call('verify',statement)
             self.assertEqual(result.returncode,0,result.stderr.decode(errors='replace'))
@@ -63,6 +66,7 @@ class GoW1CrossLanguageTests(unittest.TestCase):
                 'proof_sha256':hashlib.sha256(original).hexdigest(),
                 'full_bytes_equal':True,
                 'valid_go_verifier':True,
+                'valid_python_verifier':True,
                 'false_trace_rejected_by_go':True,
                 'chainwork_authority':False,
             })
