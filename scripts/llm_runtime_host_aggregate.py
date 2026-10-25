@@ -388,7 +388,10 @@ class _AggregateLaunch:
             # descendant/dying counters and actual current resources drain.
             zero = host._decimal(raw['memory.current']) == 0 and not any(
                 value for key, value in tree.items() if key.startswith('nr_dying_'))
-            require(time.monotonic_ns() < state.deadline_ns,
+            require(not op.failed and not op.closed and
+                op.cap._groups['operation'] is state.group and
+                state.deadline_ns == self.deadline_ns == int(op.deadline*10**9) and
+                time.monotonic_ns() < state.deadline_ns,
                     'host-U-readback-original-cutoff')
             state.samples += 1
             state.last = raw  # One bounded nine-file observation, no history list.

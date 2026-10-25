@@ -218,6 +218,27 @@ class HostUReadbackTests(unittest.TestCase):
                 self.assertTrue(op.failed)
                 self.assertIs(host._retained_aggregate_owner(), cap)
 
+    def test_cancel_during_second_zero_parse_refuses_before_acceptance(self):
+        launch, op, cap, paths = self.completed()
+        self.zero(paths)
+        saved = tuple(tuple(slot) for slot, _ in cap._fds)
+        completed = []
+        verify, decimal = launch._retirement_status_locked, host._decimal
+        first = MemoryError('cancel during second zero parse')
+        def observe():
+            result = verify()
+            completed.append(1)
+            return result
+        def cancel(value):
+            if len(completed)==2: op._refuse(first)
+            return decimal(value)
+        with (patch.object(launch, '_retirement_status_locked', side_effect=observe),
+              patch.object(host, '_decimal', side_effect=cancel)):
+            with self.assertRaisesRegex(ValueError, 'original-cutoff'): op._read_u_terminal()
+        self.assertEqual((len(completed), launch._u_readback.samples), (2, 1))
+        self.assertIs(op._first_error, first)
+        self.retained(launch, op, cap, saved)
+
     def test_pending_observation_exception_consumes_slot_without_close_or_retry(self):
         launch, op, cap, paths = self.completed()
         saved = tuple(tuple(slot) for slot, _ in cap._fds)

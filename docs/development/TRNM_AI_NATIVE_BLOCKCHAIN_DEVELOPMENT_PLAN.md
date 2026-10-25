@@ -2197,7 +2197,9 @@ historical peak/CPU are monotonic, never reset or subtracted. Missing/malformed
 fields, drift, cancellation, late reads or exhaustion retain UNKNOWN and every
 remaining original FD/root, with no reentry. Success reports only
 `raw_u_zero_observed`; Whole-U, funded return, authorization and refund remain
-false. Thirteen modeled held-directory/clock controls exercise this boundary;
+false. The acceptance check also rechecks sticky failure/closed state and the
+same held U/deadline after parsing, including cancellation during the second
+zero read. Fourteen modeled held-directory/clock controls exercise this boundary;
 they are not native cgroup qualification or a claim of bounded syscall latency.
 
 The existing PN4 dependency and acceptance sequence is:
