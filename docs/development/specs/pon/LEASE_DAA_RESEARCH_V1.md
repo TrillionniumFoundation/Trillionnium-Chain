@@ -144,3 +144,16 @@ Legacy reports remain bound to their original schema/source; do not rewrite
 their bytes or infer superiority from single-seed p95. The added Python
 selectors only test input denial, timestamp validity and seed repeatability.
 P1-B adversarial and P2 independent operational acceptance remain open.
+
+## Real native-ancestry shadow comparison (non-activated)
+
+A further native selector, `isolated_asert_shadows_actual_native_w1_ancestry_without_activation`,
+retains 48 actual mined/admitted W1 packets at a 10s declared logical timestamp
+cadence, reads their original validated parent ancestry, and calculates both
+raw-parent and MTP11 ASERT shadow targets without using either result in Node
+admission. It checks steady-cadence raw equality, MTP lag, the unchanged
+legacy expected target, native packet readback, full branch activation and cold
+SQLite reopening. Fixed logical-clock fixtures are not physically paced public
+mining. This test has NOT been compiled or executed in the current isolated host
+and does not activate ASERT or satisfy P1-C/P2; it is an additional falsifiable
+native qualification selector to run on a real Rust environment.

@@ -457,3 +457,63 @@ fn native_daa_clamps_mtp_future_chainwork_and_authenticated_reopen() {
     });
     evidence.retain(&report);
 }
+
+#[test]
+fn isolated_asert_shadows_actual_native_w1_ancestry_without_activation() {
+    use consensus::daa_research::{asert_target, AsertInputs};
+
+    // The native Node keeps original revision/required-work/fork-choice.
+    // ASERT receives REAL admitted-parent timestamps but has no authority
+    // to select a Packet target or mutate the genesis parameter commitment.
+    let temporary = tempfile::tempdir().unwrap();
+    let path = temporary.path().join("node");
+    let settings = Settings::development(Some(GENESIS_TIME)).unwrap();
+    let mut node = Node::open(&path, settings.clone(), 1).unwrap();
+    let mut parent = settings.genesis();
+    let initial = node.expected_target(parent).unwrap();
+    let mut pow_limit = [255_u8; 32];
+    pow_limit[0] = 127;
+    let mut shadow_comparisons = 0u64;
+    for height in 1..=48_u64 {
+        let original_expected = node.expected_target(parent).unwrap();
+        let stamp = GENESIS_TIME + height * 10;
+        let packet = extend(&mut node, parent, stamp, height, 0);
+        verify_work(&packet);
+        assert_eq!(packet.header.target, original_expected);
+        if height >= 2 {
+            let ancestor_times = timestamps(&node, parent);
+            let mut sorted = ancestor_times.clone();
+            sorted.sort_unstable();
+            let parent_mtp = sorted[sorted.len() / 2];
+            let input = AsertInputs {
+                anchor_target: initial,
+                anchor_parent_time: GENESIS_TIME,
+                evaluation_parent_time: packet.header.timestamp - 10,
+                anchor_height: 1,
+                candidate_height: height,
+                spacing: 10,
+                half_life: 7200,
+                pow_limit,
+            };
+            let raw = asert_target(input).unwrap();
+            let median = asert_target(AsertInputs {
+                evaluation_parent_time: parent_mtp,
+                ..input
+            }).unwrap();
+            assert_eq!(raw, initial, "steady native W1 cadence at height {height}");
+            assert!(median <= raw, "MTP never exceeds raw parent time on this monotone branch");
+            assert_eq!(node.packet(packet.id().unwrap()).unwrap().header.target, original_expected);
+            shadow_comparisons += 1;
+        }
+        parent = packet.id().unwrap();
+    }
+    assert_eq!(shadow_comparisons, 47);
+    node.activate(parent).unwrap();
+    let before = node.read_active().unwrap();
+    assert_eq!(before.0, parent);
+    drop(node);
+    let restored = Node::open(&path, settings, 1).unwrap();
+    assert_eq!(restored.read_active().unwrap(), before);
+    assert_eq!(restored.packet(parent).unwrap().header.target, initial);
+}
+
