@@ -137,7 +137,7 @@ pub(crate) mod tests;
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Q4RenewalPhase {
     AwaitSignedWindow,
-    Candidate,
+    WindowOpenByTime,
     AtRisk,
     Expired,
 }
@@ -199,7 +199,7 @@ pub fn forecast_q4_renewal_window(
     } else if remaining < need {
         Q4RenewalPhase::AtRisk
     } else {
-        Q4RenewalPhase::Candidate
+        Q4RenewalPhase::WindowOpenByTime
     };
     Ok(Q4RenewalForecast {
         phase,
