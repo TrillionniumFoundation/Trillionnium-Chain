@@ -234,3 +234,40 @@ fn m05_one_slot_accepts_full_256_signed_transfer_block_without_duplicate_effects
     assert_eq!(facts.capacity(), 1);
     println!("M05_FACT_CAPACITY signed_transfers=256 next_nonce=257 slots=1 full_replays=1 duplicate_dispatches=1");
 }
+
+/// Cost ownership is shared across different W1 statements and caller identities.
+/// The native verdict is never inferred from a CPU reservation or cached prior result.
+#[test]
+fn m05_plain_w1_metered_dispatch_debits_invalid_and_valid_work_in_one_owner_domain() {
+    let (_dir, node, packet) = fixture();
+    let domain = public_v3::ServiceMutationCpuDomain::standalone();
+    let cloned = domain.clone();
+    assert!(domain.shares_domain_with(&cloned));
+    let initial = node.lock().unwrap().read_active().unwrap();
+    let bad = bad_product(&packet, 0);
+    let failed = dispatch_shared_with_metered_w1(
+        &node,
+        request(&bad),
+        &domain,
+        &|| Ok(()),
+    )
+    .unwrap();
+    assert_eq!(failed.native.unwrap_err().to_string(), "WORK:Product");
+    assert!(!failed.cpu.accounting_unavailable);
+    assert!(failed.cpu.total_cpu_ns.is_some_and(|v| v > 0));
+    assert_eq!(node.lock().unwrap().read_active().unwrap(), initial);
+
+    let accepted = dispatch_shared_with_metered_w1(
+        &node,
+        request(&packet),
+        &cloned,
+        &|| Ok(()),
+    )
+    .unwrap();
+    assert!(!accepted.cpu.accounting_unavailable);
+    assert!(accepted.cpu.total_cpu_ns.is_some_and(|v| v > 0));
+    assert_eq!(
+        accepted.native.unwrap()["block"],
+        hex::encode(packet.id().unwrap())
+    );
+}
