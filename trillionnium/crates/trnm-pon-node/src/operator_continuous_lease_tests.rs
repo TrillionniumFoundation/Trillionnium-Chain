@@ -111,7 +111,7 @@ fn q4_renewal_window_is_advisory_and_never_resurrects_expired_source() {
     let next = DemandLeaseV2::decode(&hex::decode(&edge.new_complete_lease).unwrap()).unwrap();
 
     let ready = forecast_q4_renewal_window(&old, &next, 50, 5, 10).unwrap();
-    assert_eq!(ready.phase, Q4RenewalPhase::Candidate);
+    assert_eq!(ready.phase, Q4RenewalPhase::WindowOpenByTime);
     assert_eq!(ready.earliest_possible_height, 50);
     assert_eq!(ready.last_legal_height, 100);
     assert_eq!(ready.inclusion_slack_blocks, 50);
@@ -123,7 +123,7 @@ fn q4_renewal_window_is_advisory_and_never_resurrects_expired_source() {
     // Inclusion at the final legal height is valid only with no modeled delay.
     assert_eq!(
         forecast_q4_renewal_window(&old, &next, 100, 0, 0).unwrap().phase,
-        Q4RenewalPhase::Candidate,
+        Q4RenewalPhase::WindowOpenByTime,
     );
     assert_eq!(
         forecast_q4_renewal_window(&old, &next, 101, 0, 0).unwrap().phase,
