@@ -67,6 +67,21 @@ class FaultMatrixTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             simulate(CampaignConfig(seed=0), 'legacy16', 'steady', 'no-such-attack')
 
+    def test_staggered_32_slot_reclaim_boundaries(self):
+        from daa_research_oracle import Lease, q4_slot_reclaimable
+        original = [Lease(0, 1000, 1100, 1)] + [
+            Lease(1, 1001, 1101, 1) for _ in range(31)
+        ]
+        self.assertEqual(len(original), 32)
+        # A global slot generation can advance only through a properly signed
+        # OPEN; this time-only test cannot issue such a signature.
+        self.assertEqual(sum(q4_slot_reclaimable(x, 1101, "revoked")
+                             for x in original), 1)
+        self.assertEqual(sum(q4_slot_reclaimable(x, 1102, "revoked")
+                             for x in original), 32)
+        self.assertEqual(sum(q4_slot_reclaimable(x, 1100, "revoked")
+                             for x in original), 0)
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -330,7 +330,7 @@ PoW DAA can manufacture a block or claim liveness.
 The default frozen development screen uses seeds [0,1,20261025], 192 heights,
 three algorithms, four capacity scenarios and three timestamp strategies:
 108 deterministic run records. The local Go/Python-only development container
-ran 6/6 new Python negative controls and the retained 14/14 research controls.
+ran 7/7 new Python negative controls and the retained 14/14 research controls (21/21 total).
 The case-indexed JSON digest over the 108 runs (no native W1 proofs) is:
 
     a914a8e593b3447293687b0db28813044914564ef9f4407f64b7e856d1a6090a
