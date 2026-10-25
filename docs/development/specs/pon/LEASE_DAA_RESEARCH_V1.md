@@ -157,3 +157,20 @@ SQLite reopening. Fixed logical-clock fixtures are not physically paced public
 mining. This test has NOT been compiled or executed in the current isolated host
 and does not activate ASERT or satisfy P1-C/P2; it is an additional falsifiable
 native qualification selector to run on a real Rust environment.
+
+## Independent ASERT extreme-shift oracle repair (research-only)
+
+The Python oracle previously attempted an unbounded left shift when a legal u64
+parent timestamp and tiny half-life produced a very large positive exponent.
+This can raise MemoryError before an expected research verdict. It now mirrors
+the existing native ASERT saturation checks: shifts >= 256 return pow_limit,
+and shifts <= -512 return target 1. No consensus target selector changed.
+
+Both languages now declare a frozen 512-case xorshift64 input stream, including
+maximum u64 parent times, floor/negative exponent semantics, 1-second
+half-lives, and finite raw fixed-point values. The committed Python expected
+SHA-256 over 512 concatenated 32-byte targets is:
+`6be87e237c37aec8c50af8d4eaf9e14a0ca60e7dc69f18143ede1ef70c420c97`.
+Python generated this digest locally, but the new exact-source Rust test is
+NOT_RUN on the present host. This corrects a research verifier resource
+bug; it does not prove public W1 hardness or activate a new DAA.

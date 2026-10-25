@@ -579,3 +579,58 @@ mod daa_research_tests {
         // Checks valid header times ONLY, no signed blocks, W1 proofs or mining claims.
     }
 }
+
+#[cfg(test)]
+mod daa_extreme_vectors {
+    use super::daa_research::{asert_target, AsertInputs};
+    use sha2::{Digest, Sha256};
+
+    /// 512 deterministically generated observations frozen from the independent
+    /// Python big-integer implementation. No W1 proof or activated profile.
+    #[test]
+    fn signed_exponent_shift_boundaries_match_independent_python_digest() {
+        let mut state = 0x62b7_f30a_c985_1d4e_u64;
+        let mut next = || {
+            state ^= state << 13;
+            state ^= state >> 7;
+            state ^= state << 17;
+            state
+        };
+        let mut anchor_target = [0_u8; 32];
+        anchor_target[4] = 0x10; // 2^220
+        let mut pow_limit = [255_u8; 32];
+        pow_limit[0] = 0;
+        pow_limit[1] = 0; // 2^240 - 1
+        let mut digest = Sha256::new();
+        for i in 0..512_u64 {
+            let candidate_height = 2 + next() % 1000;
+            let anchor_parent_time = 1_000_000 + next() % 100_000;
+            let deviation = (next() % 100_000) as i64 - 50_000;
+            let mut parent_time = (anchor_parent_time as i64
+                + ((candidate_height - 1) * 10) as i64 + deviation) as u64;
+            if i % 17 == 0 {
+                parent_time = u64::MAX;
+            }
+            if i % 19 == 0 {
+                parent_time = 0;
+            }
+            let half_life = [3600, 7200, 14400, 28800, 1][(i % 5) as usize];
+            let value = asert_target(AsertInputs {
+                anchor_target,
+                anchor_parent_time,
+                evaluation_parent_time: parent_time,
+                anchor_height: 1,
+                candidate_height,
+                spacing: 10,
+                half_life,
+                pow_limit,
+            }).unwrap();
+            digest.update(value);
+        }
+        assert_eq!(
+            hex::encode(digest.finalize()),
+            "6be87e237c37aec8c50af8d4eaf9e14a0ca60e7dc69f18143ede1ef70c420c97"
+        );
+    }
+}
+

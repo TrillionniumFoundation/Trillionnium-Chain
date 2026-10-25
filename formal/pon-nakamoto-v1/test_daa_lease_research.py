@@ -32,6 +32,42 @@ class DaaReferenceTests(unittest.TestCase):
                 self.assertEqual(format(asert_target(a, before, at_parent, ah, h,
                                                     tau, hl, cap), "064x"), expected)
 
+    def test_512_seeded_asert_extreme_shift_vectors_agree_with_native_contract(self):
+        import hashlib
+        MASK = (1 << 64) - 1
+        state = 0x62b7_f30a_c985_1d4e
+        def next_u64():
+            nonlocal state
+            state ^= (state << 13) & MASK
+            state ^= state >> 7
+            state ^= (state << 17) & MASK
+            state &= MASK
+            return state
+        digest = hashlib.sha256()
+        for i in range(512):
+            height = 2 + next_u64() % 1000
+            before = 1_000_000 + next_u64() % 100_000
+            deviation = next_u64() % 100_000 - 50_000
+            parent = before + (height - 1) * 10 + deviation
+            if i % 17 == 0:
+                parent = MASK
+            if i % 19 == 0:
+                parent = 0
+            half_life = (3600, 7200, 14400, 28800, 1)[i % 5]
+            result = asert_target(1 << 220, before, parent, 1, height,
+                                  10, half_life, (1 << 240) - 1)
+            digest.update(result.to_bytes(32, "big"))
+        self.assertEqual(
+            digest.hexdigest(),
+            "6be87e237c37aec8c50af8d4eaf9e14a0ca60e7dc69f18143ede1ef70c420c97",
+        )
+        self.assertEqual(
+            asert_target(1 << 220, 1000000, MASK, 1, 2, 10, 1, (1 << 240) - 1),
+            (1 << 240) - 1,
+        )
+        self.assertEqual(asert_target(1 << 220, MASK, 0, 1, 2, 10, 1,
+                                      (1 << 240) - 1), 1)
+
     def test_legacy_exact_integer_boundaries(self):
         x = 1 << 220
         self.assertEqual(legacy_retarget(x, 0, 600, 16, 10, TARGET_LIMIT), x * 4)

@@ -88,6 +88,13 @@ def asert_target(anchor_target: int, anchor_parent_time: int,
     factor = (195_766_423_245_049 * fractional +
               971_821_376 * fractional**2 +
               5_127 * fractional**3 + (1 << 47)) // (1 << 48) + RADIX
+    # Match native saturation before allocating shifted Python integers:
+    # a legal u64 parent time with short half-life can otherwise allocate
+    # an astronomically large integer and exhaust the research verifier.
+    if shifts >= 256:
+        return pow_limit
+    if shifts <= -512:
+        return 1
     value = anchor_target * factor
     value = value << shifts if shifts >= 0 else value >> -shifts
     value >>= 16
