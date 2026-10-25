@@ -67,6 +67,10 @@ class JointBoundaryTests(unittest.TestCase):
         self.assertFalse(q4_atomic_renew(old, new, 1001, True, True))
         self.assertFalse(q4_slot_reclaimable(old, 1100, "revoked"))
         self.assertTrue(q4_slot_reclaimable(old, 1101, "revoked"))
+        self.assertFalse(q4_slot_reclaimable(old, 1100, "active"))
+        self.assertTrue(q4_slot_reclaimable(old, 1101, "active"))
+        with self.assertRaises(ValueError):
+            q4_slot_reclaimable(old, 1101, "unknown")
         with self.assertRaises(ValueError):
             Lease(0, 1000, 1101, 1)
 

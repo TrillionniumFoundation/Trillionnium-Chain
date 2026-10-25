@@ -86,6 +86,8 @@ def lease_scenarios() -> dict[str, bool]:
         "invalid_missing_requester_signature": not q4_atomic_renew(old, successor, 900, False, True),
         "not_reclaimable_at_retention_bound": not q4_slot_reclaimable(old, 1100, "revoked"),
         "reclaimable_after_retention_bound": q4_slot_reclaimable(old, 1101, "revoked"),
+        "active_window_after_retention_can_reopen": q4_slot_reclaimable(old, 1101, "active"),
+        "active_at_retention_endpoint_cannot_reopen": not q4_slot_reclaimable(old, 1100, "active"),
         "no_auto_signing": not q4_atomic_renew(old, successor, 900, False, False),
         "maintenance_independent_of_lease": True,
     }

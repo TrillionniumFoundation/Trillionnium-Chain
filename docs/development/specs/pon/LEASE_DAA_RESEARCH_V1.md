@@ -113,3 +113,13 @@ nonqualified relaxation of the activation flag is permitted.
 - Prior real timestamp/valid-work evidence: `docs/protocol/pon-nakamoto-v1/details/WORK_COST_DAA_BOUNDARIES.md`.
 - External numerical source: [BCH aserti3-2d specification](https://upgradespecs.bitcoincashnode.org/2020-11-15-asert/).
 - External time-warp precedent: [Bitcoin BIP94](https://github.com/bitcoin/bips/blob/master/bip-0094.mediawiki).
+
+## Source-bound 32-slot retention continuation (2026-10-25)
+
+Research additions to the existing Q4/M06 and Revision12 native suites:
+
+- `all_32_q4_slots_reject_early_reopen_and_allow_only_retention_safe_generation` constructs all 32 original QDL2 slots, refuses a 33rd distinct slot and early reuse (at and before `available_until`), then tests a new generation on the first legal height. Both stale ACTIVE and explicitly revoked records have the same retention bound. Pure M06 transition state is replayed; a cloned state is not a real fork.
+- `native_32_slot_revocation_preserves_maintenance_confirmation_and_reopen` exercises actual signed 31 new opens, all 32 signed revocations, a rejected early replacement, explicit Genesis Maintenance W1 work, client policy-confirmation readback and SQLite reopen. The identities are all development fixtures and do not constitute independent operators.
+- The Python Q4 model previously required `expired` or `revoked` status for slot reuse, while the native `open` checks only `previous.available_until < height`. The research model now follows the native rule and still validates diagnostic statuses. This does not change the original Q4 signed bytes, `open`, fee, nonce, eligibility or retention semantics.
+
+The new Rust selectors are **NOT_RUN** in this isolated execution host (Rust toolchain and full project checkout are absent); no compile/Clippy/native proof success is claimed. The previous 11 Python research controls must be rerun on the final exact source. Do not promote P0-A, P0-B, P0-C, P1-C or P2 based on file presence or a test declaration. Production remains disabled.

@@ -139,6 +139,13 @@ def q4_atomic_renew(old: Lease, successor: Lease, actual_height: int,
 
 
 def q4_slot_reclaimable(old: Lease, height: int, status: str) -> bool:
-    """Model for explicit expired/revoked retained-slot reuse prerequisite only."""
+    """Mirror M06 open: expiry + retention height, NOT stored status.
+
+    A currently recorded "active" lease may be safely replaced once its
+    retention horizon has passed. This predicate is not authorization to open:
+    a fresh signed requester operation, generation, nonce and fee remain necessary.
+    """
     _u64(height, "height")
-    return status in {"expired", "revoked"} and height > old.available_until
+    if status not in {"active", "revoked", "expired"}:
+        raise ValueError("unknown research lease status")
+    return height > old.available_until
