@@ -632,6 +632,7 @@ pub struct Metrics {
     /// Known actual calling-thread CPU only; the full original W1/M05 interval.
     /// No guessed CPU is inserted when the clock is missing or moves backward.
     pub work_verification_thread_cpu_known_ns: u64,
+    pub work_verification_thread_cpu_known_calls: u64,
     pub work_verification_thread_cpu_unknown_calls: u64,
 }
 fn elapsed_ns(start: Instant) -> u64 {
@@ -666,6 +667,8 @@ fn measured_work_verify(packet: Packet, metrics: &Mutex<Metrics>) -> Result<Work
     if let Some(cpu) = actual_cpu {
         counts.work_verification_thread_cpu_known_ns =
             counts.work_verification_thread_cpu_known_ns.saturating_add(cpu);
+        counts.work_verification_thread_cpu_known_calls =
+            counts.work_verification_thread_cpu_known_calls.saturating_add(1);
     } else {
         counts.work_verification_thread_cpu_unknown_calls =
             counts.work_verification_thread_cpu_unknown_calls.saturating_add(1);
@@ -3481,7 +3484,8 @@ mod tests {
             settings.genesis_time() + 10, 4096,
         ).unwrap();
         let mut bad = original;
-        bad.proof[bad.proof.len() - 1] ^= 1;
+        let last = bad.proof.len() - 1;
+        bad.proof[last] ^= 1;
         let metrics = Mutex::new(Metrics::default());
         // The adjusted trace may happen to miss target; accept either a
         // cheap TARGET refusal or expensive TRANSCRIPT refusal as invalid.
@@ -3489,7 +3493,7 @@ mod tests {
         let snapshot = metrics.lock().unwrap();
         assert_eq!(snapshot.work_verifications, 1);
         assert_eq!(snapshot.work_verification_thread_cpu_unknown_calls
-                   + u64::from(snapshot.work_verification_thread_cpu_known_ns > 0), 1);
+                   + snapshot.work_verification_thread_cpu_known_calls, 1);
         assert!(snapshot.work_verification_ns > 0);
     }
 
