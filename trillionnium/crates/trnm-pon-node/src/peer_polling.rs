@@ -958,6 +958,87 @@ mod tests {
         }
     }
     #[test]
+    fn pinned_peer_requires_the_existing_service_domain_before_full_work() {
+        let now = ingress::now().unwrap();
+        let settings = Settings::development(Some(now - 100)).unwrap();
+        let dir = tempfile::tempdir().unwrap();
+        let node = Node::open(dir.path(), settings.clone(), 2).unwrap();
+        let packet = node.make(
+            settings.genesis(),
+            vec![],
+            development_public(0).unwrap(),
+            settings.genesis_time() + 10,
+            4096,
+        ).unwrap();
+        let before = node.stats().unwrap();
+        let guarded = Mutex::new(node);
+        let stop = AtomicBool::new(false);
+        let refused = admit_page(
+            &guarded,
+            packet,
+            Instant::now() + Duration::from_secs(10),
+            &stop,
+        ).unwrap_err();
+        assert_eq!(refused.to_string(), "OWNER_PUBLIC_SERVICE_DOMAIN_UNBOUND");
+        assert_eq!(guarded.lock().unwrap().stats().unwrap(), before);
+        assert_eq!(guarded.lock().unwrap().read_active().unwrap().0, settings.genesis());
+    }
+
+    #[test]
+    fn pinned_peer_false_product_spends_the_same_real_cpu_bucket_without_chainwork() {
+        let now = ingress::now().unwrap();
+        let settings = Settings::development(Some(now - 100)).unwrap();
+        let dir = tempfile::tempdir().unwrap();
+        let node = Node::open(dir.path(), settings.clone(), 2).unwrap();
+        let mut packet = node.make(
+            settings.genesis(),
+            vec![],
+            development_public(0).unwrap(),
+            settings.genesis_time() + 10,
+            4096,
+        ).unwrap();
+        // Corrupt only C; keep the canonical challenge, A/B, task and winning
+        // W1 transcript unchanged so this forces a full late Product refusal.
+        let offset = 4 + 2 * pon_work::CELLS * 4;
+        let prior = u32::from_le_bytes(packet.proof[offset..offset + 4].try_into().unwrap());
+        let forged = ((u128::from(prior) + 1) % pon_work::Q) as u32;
+        packet.proof[offset..offset + 4].copy_from_slice(&forged.to_le_bytes());
+        assert_eq!(
+            pon_work::verify(
+                packet.header.challenge(),
+                packet.header.work_task,
+                packet.header.target,
+                &packet.proof
+            ).unwrap_err(),
+            pon_work::WorkError::Product
+        );
+        let before = node.stats().unwrap();
+        let guarded = Mutex::new(node);
+        let cpu = crate::ingress::public_v3::ServiceMutationCpuDomain::standalone();
+        guarded.lock().unwrap().bind_public_service_cpu_domain(&cpu).unwrap();
+        assert!(guarded.lock().unwrap().public_service_cpu_domain()
+            .unwrap().shares_domain_with(&cpu));
+        let initial = cpu.observe().unwrap();
+        let stop = AtomicBool::new(false);
+        let refused = admit_page(
+            &guarded,
+            packet,
+            Instant::now() + Duration::from_secs(10),
+            &stop,
+        ).unwrap_err();
+        assert_eq!(refused.to_string(), "WORK:Product");
+        let final_state = cpu.observe().unwrap();
+        assert_eq!(final_state.in_flight, 0);
+        assert!(!final_state.accounting_unavailable);
+        // Balance cannot increase above the original full warm burst;
+        // metered intervals and entire settlement belong to this exact
+        // service epoch. Dedicated hardware cost campaigns measure CPU ns.
+        assert!(final_state.stored_credit_ns <= initial.stored_credit_ns);
+        assert_eq!(guarded.lock().unwrap().stats().unwrap(), before);
+        assert_eq!(guarded.lock().unwrap().read_active().unwrap().0, settings.genesis());
+    }
+
+    #[test]
     fn config_has_exact_context_finite_limits_and_no_discovery() {
         let settings = Settings::development(Some(1)).unwrap();
         let cfg = config(&settings);
