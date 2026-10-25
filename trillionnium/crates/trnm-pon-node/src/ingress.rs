@@ -1335,12 +1335,16 @@ fn serve_inner(
     authentication: Option<Arc<AuthenticatedServer>>,
     admission: Option<AdmissionPolicy>,
 ) -> Result<Metrics> {
-    if authentication.is_none() {
-        ensure(
-            listener.local_addr()?.ip().is_loopback(),
-            "DEVELOPMENT_LOOPBACK_ONLY",
-        )?;
-    }
+    // A signed identity (or a transport admission puzzle) does not supply
+    // the process/host-wide measured CPU budget required for remotely sent
+    // W1 proofs. All legacy ingress profiles share this one fail-closed
+    // boundary; public V3 owns the separately metered remote-development path.
+    // Keep loopback development interoperability without inventing a new
+    // signed profile, weakening the verifier, or activating public consensus.
+    ensure(
+        listener.local_addr()?.ip().is_loopback(),
+        "DEVELOPMENT_LOOPBACK_ONLY",
+    )?;
     ensure(
         lifetime > Duration::ZERO && lifetime <= Duration::from_secs(3600),
         "SERVER_BUDGET",
@@ -2102,6 +2106,10 @@ pub fn sync_from(
     page_budget: usize,
 ) -> Result<Hash> {
     ensure((1..=4096).contains(&page_budget), "SYNC_BUDGET")?;
+    // A verified peer identity is not a CPU or M06 State budget.
+    // Until an explicitly metered WAN importer owns every W1 replay and
+    // durable effect, historical sync through this entry is loopback-only.
+    ensure(address.ip().is_loopback(), "SYNC_UNMETERED_LOOPBACK_ONLY")?;
     for _ in 0..page_budget {
         let request = Request::History {
             tip: hex::encode(tip),
@@ -2135,6 +2143,10 @@ pub fn sync_from_authenticated(
     replay_nonce: &mut u64,
 ) -> Result<Hash> {
     ensure((1..=4096).contains(&page_budget), "SYNC_BUDGET")?;
+    // A verified peer identity is not a CPU or M06 State budget.
+    // Until an explicitly metered WAN importer owns every W1 replay and
+    // durable effect, historical sync through this entry is loopback-only.
+    ensure(address.ip().is_loopback(), "SYNC_UNMETERED_LOOPBACK_ONLY")?;
     let settings = node.settings().clone();
     for _ in 0..page_budget {
         let value = call_authenticated(
@@ -2170,6 +2182,10 @@ pub fn sync_from_authenticated_durable(
     client: &AuthenticatedClient,
 ) -> Result<Hash> {
     ensure((1..=4096).contains(&page_budget), "SYNC_BUDGET")?;
+    // A verified peer identity is not a CPU or M06 State budget.
+    // Until an explicitly metered WAN importer owns every W1 replay and
+    // durable effect, historical sync through this entry is loopback-only.
+    ensure(address.ip().is_loopback(), "SYNC_UNMETERED_LOOPBACK_ONLY")?;
     for _ in 0..page_budget {
         let value = call_authenticated_durable(
             node,
@@ -2197,6 +2213,98 @@ pub fn sync_from_authenticated_durable(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn legacy_remote_page_import_is_refused_before_a_single_unmetered_w1_replay() {
+        let temp = tempfile::tempdir().unwrap();
+        let settings = Settings::development(Some(now().unwrap() - 100)).unwrap();
+        let mut node = Node::open(temp.path(), settings.clone(), 2).unwrap();
+        let genesis = settings.genesis();
+        let before = node.stats().unwrap();
+        // Documentation-range address: never dial this address in the test.
+        let remote: SocketAddr = "203.0.113.7:17771".parse().unwrap();
+        let signer = DevelopmentIdentity::from_secret_hex(&hex::encode([57u8; 32]))
+            .unwrap();
+        let observer = DevelopmentIdentity::from_secret_hex(&hex::encode([58u8; 32]))
+            .unwrap();
+        let client = AuthenticatedClient::new(
+            signer,
+            observer.public_key().to_owned(),
+            1,
+        )
+        .unwrap();
+        assert_eq!(
+            sync_from(&mut node, remote, genesis, genesis, 1)
+                .unwrap_err().to_string(),
+            "SYNC_UNMETERED_LOOPBACK_ONLY"
+        );
+        let mut replay_nonce = 1;
+        assert_eq!(
+            sync_from_authenticated(
+                &mut node, remote, genesis, genesis, 1,
+                &client, &mut replay_nonce,
+            )
+            .unwrap_err().to_string(),
+            "SYNC_UNMETERED_LOOPBACK_ONLY"
+        );
+        assert_eq!(replay_nonce, 1, "refused import consumed no signed nonce");
+        assert_eq!(
+            sync_from_authenticated_durable(
+                &mut node, remote, genesis, genesis, 1, &client,
+            )
+            .unwrap_err().to_string(),
+            "SYNC_UNMETERED_LOOPBACK_ONLY"
+        );
+        assert_eq!(node.stats().unwrap(), before);
+        assert_eq!(node.read_active().unwrap().0, genesis);
+    }
+
+    #[test]
+    fn legacy_unmetered_w1_all_four_ingress_profiles_refuse_wan_bind() {
+        let temp = tempfile::tempdir().unwrap();
+        let settings = Settings::development(Some(now().unwrap() - 100)).unwrap();
+        let signed = || {
+            let owner = DevelopmentIdentity::from_secret_hex(&hex::encode([53u8; 32]))
+                .unwrap();
+            let peer = DevelopmentIdentity::from_secret_hex(&hex::encode([54u8; 32]))
+                .unwrap();
+            AuthenticatedServer::new(owner, vec![peer.public_key().to_owned()], 1)
+                .unwrap()
+        };
+        for profile in 0..4u8 {
+            // Binding an unspecified address is permitted; accepting a single
+            // remote connection or performing W1 is NOT part of this test.
+            let listener = TcpListener::bind("0.0.0.0:0").unwrap();
+            assert!(!listener.local_addr().unwrap().ip().is_loopback());
+            let node = Node::open(
+                &temp.path().join(format!("legacy-wan-refused-{profile}")),
+                settings.clone(),
+                2,
+            )
+            .unwrap();
+            let stop = Arc::new(AtomicBool::new(false));
+            let result = match profile {
+                0 => serve(listener, node, Duration::from_secs(1), stop),
+                1 => serve_protected(
+                    listener, node, Duration::from_secs(1), stop,
+                    AdmissionPolicy::development(),
+                ),
+                2 => serve_authenticated(
+                    listener, node, Duration::from_secs(1), stop, signed(),
+                ),
+                3 => serve_authenticated_protected(
+                    listener, node, Duration::from_secs(1), stop,
+                    signed(), AdmissionPolicy::development(),
+                ),
+                _ => unreachable!(),
+            };
+            assert_eq!(
+                result.unwrap_err().to_string(),
+                "DEVELOPMENT_LOOPBACK_ONLY",
+                "unmetered profile {profile} must reject WAN regardless of signature or Hashcash"
+            );
+        }
+    }
 
     #[test]
     fn protected_hello_rendezvous_from_reserved_socket_preserves_full_native_admission() {
