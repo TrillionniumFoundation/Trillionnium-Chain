@@ -756,3 +756,37 @@ including these wrappers, test externally reachable bad-work input on all
 selected profiles, retain true CPU/memory/process-owner evidence, and ensure
 all processes share the same physical capacity cap. Introducing new
 accounting without these readbacks is not a completed fix.
+
+
+### Reproduction of bounded P0 and P2 research paths
+
+Run the original project preflight and the existing source-bound CI owner
+before treating any output as an exact-source runtime observation. New output
+files must not already exist. The Python oracle has no native chain authority:
+
+    TRNM_W1_FOUR_PY_REPORT=/absolute/new-p0-oracle.json \
+      python3 formal/pon-nakamoto-v1/test_work_precheck.py -v
+
+The native Node test is included in the required original
+'run_from_zero_native.py' selector list. A directly targeted development run
+can use the original native test target with the unchanged W1 proof profile:
+
+    TRNM_W1_FOUR_NATIVE_REPORT=/absolute/new-p0-native.json \
+      cargo test --locked --manifest-path trillionnium/Cargo.toml \
+      -p trnm-pon-node --test public_v3_from_zero \
+      four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged \
+      -- --exact --nocapture --test-threads=1
+
+The optional P2 sample tool computes the same SHA-256 framing and big-endian
+ticket leading-zero predicate as V3, **but on synthetic Cookie ID bytes**:
+
+    python3 scripts/ci/test_pon_v3_cookie_cpu_study.py
+    python3 scripts/pon_v3_cookie_cpu_study.py \
+      --bits 8 12 16 --samples 2 --max-attempts 262144 \
+      --out /absolute/new-cookie-cpu-proxy.json
+
+It records all misses, limited searches, actual Python process CPU and wall
+clock, capped output and missing GPU/native observations as null. This is
+not an authenticated V3 transport session, a real GPU hash-rate measurement,
+a client cost bound across devices, or evidence of affordable honest access.
+No P2 production admission parameter is selected by the results.
