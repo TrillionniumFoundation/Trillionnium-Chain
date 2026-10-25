@@ -36,3 +36,24 @@ not been executed in that environment. Agreement between three implementations
 written within one development effort is **not independent institutional
 security review**. Work hardness, ASERT attack resistance, WAN liveness,
 timestamp incentives and production eligibility remain unaccepted.
+
+## Dynamic Go ↔ Python differential execution
+
+From the repository root (requires a local Go compiler and Python 3):
+
+    python3 formal/pon-nakamoto-v1/daa_go_differential.py --output NEW_NONEXISTENT_REPORT.json
+
+The driver compiles Go into a disposable temporary directory, executes the
+actual Go binary for 128 seeded inputs and compares each response with the
+separate Python exact-integer research oracle. It includes very large u64
+timestamps, varied valid targets, seven half-lives and i128 overflow cases.
+Go and Python must agree on all exact accepted values and typed range
+refusals. The case stream is deterministic and cannot pass by comparing
+two hardcoded report files.
+
+Locally observed on 2026-10-25: 111 targets, 17 range refusals, zero mismatches.
+The SHA-256 over canonical per-case result rows is
+`46c785d0954adf4ebc11b446768b4ab724b1e6892ffde9b2525121f21a62e132`.
+These are numeric differential results, **not** actual native Rust execution
+or consensus/PoW qualification.
+

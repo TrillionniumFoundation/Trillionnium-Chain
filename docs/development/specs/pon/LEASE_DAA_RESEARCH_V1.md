@@ -226,3 +226,22 @@ Run manually on a Rust-enabled controlled checkout:
 
     cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib long_native_retention_safe_sole_slot_reopen_after_1100_maintenance_blocks -- --ignored --test-threads=1
 
+## Executed Go–Python dynamic differential run
+
+A new deterministic program `formal/pon-nakamoto-v1/daa_go_differential.py`
+builds and runs the standalone Go source using a separate process on 128
+individually selected full-width ASERT input tuples. All signed-range checks
+are independently evaluated by the Python integer implementation. The local
+run observed **111 identical full-width target values, 17 identical strict
+ASERT_RESEARCH_RANGE refusals, zero mismatches**. Its SHA-256 commitment
+over case-indexed outcomes is
+`46c785d0954adf4ebc11b446768b4ab724b1e6892ffde9b2525121f21a62e132`.
+
+Exact command from repository root:
+
+    python3 formal/pon-nakamoto-v1/daa_go_differential.py --output NEW_NONEXISTENT_REPORT.json
+
+The script does not execute Rust, authenticate PoN anchors or accept W1 blocks.
+Passing two or three implementations from the same development effort remains
+distinct from an independent protocol-security review.
+
