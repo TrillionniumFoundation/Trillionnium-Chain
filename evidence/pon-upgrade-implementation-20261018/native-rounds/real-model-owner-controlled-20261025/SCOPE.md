@@ -33,9 +33,21 @@ cold reopen. Both original model unloads succeed. The original evaluator still
 returns `Ineligible` for binary correctness; no installation is authorized.
 Only local material paths and the parent descriptors' directory field are
 relocated and freshly hashed; tensors, training receipts and all five runtime
-source pins are unchanged. The 4060 is offline, so its rerun remains pending.
+source pins are unchanged. That local result is not a 4060 rerun.
 The earlier failures are not replaced. This is controlled component execution,
 not an initial selected neural parent or three ordinary product upgrades.
+
+The integrated `b27a2f5e` source is separately executed with one frozen archive.
+On the local ROG, the same three original cases pass in 0.240, 13.129 and
+6.234 seconds. On the restored 4060, artifact publication passes in 3.216 seconds
+and signed neural read/unload passes in 29.451 seconds, but the comparison fails
+in 41.219 seconds. Its first candidate query becomes `Indeterminate`; the worker
+gets BrokenPipe when sending the computed response, and its supervisor fails.
+Only two load settlements and one unsuccessful query are present, rather than
+the required 66 records. The unchanged retry refuses existing output. This is
+not the earlier 60-second timeout and is not counted as success. Both observed
+results, the original limits, raw hashes and diagnostic uncertainty are retained
+in `integrated-b27-original-native.json`. No output is deleted or deadline enlarged.
 
 Actual fresh native host runs on `6a96dd94` and `ec6868da` prove the original
 C/A waits and ordered child retirement. The latter raw-U observation fails the

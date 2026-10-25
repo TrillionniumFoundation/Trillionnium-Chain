@@ -2261,6 +2261,21 @@ observes raw U zero in 12 samples, while retaining the original owner and all
 Whole-U/funding/refund flags as false. The earlier multi-CPU failure is preserved.
 This is a scheduling diagnostic, not a product policy, a uniquely proved kernel
 cause or closure of multi-CPU physical return and bounded retained-state gates.
+
+The same controlled original-model cases are then run from one frozen Hepta
+`b27a2f5e` archive on both hosts. The local ROG passes all three; its full
+comparison takes13.129 seconds. The restored4060 passes artifact publication
+and signed read/unload, but fails the comparison at41.219 seconds after its
+first query becomes Indeterminate and the candidate worker encounters
+BrokenPipe at response send. Its original retry refuses existing output. The
+actual control has only three records per phase, not66. Preserve both hosts'
+[exact outcomes](../../evidence/pon-upgrade-implementation-20261018/native-rounds/real-model-owner-controlled-20261025/integrated-b27-original-native.json);
+no unique first-query cause, initial neural-parent load or installed upgrade is
+proved. The owning Hepta prerequisite now validates canonical positive-zero
+initial bytes and exposes only non-installing selected material with original
+selector expiry, known revocation and fresh CURRENT checks. Actual main-weight
+measurement, ordinary task context, eligible child selection and subsequent
+CURRENT/cold-reopen composition remain the next PN3 dependencies.
 No old Unknown owner is cleaned or reused to obtain these results.
 
 The existing PN4 dependency and acceptance sequence is:

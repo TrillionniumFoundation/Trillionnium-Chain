@@ -26,6 +26,11 @@
       "path": "parallel-start-original-native.json",
       "bytes": 4020,
       "sha256": "5e3695ebce9b42e8625f0396b9228dfec9106428f0655c8ab4c1174238929450"
+    },
+    {
+      "path": "integrated-b27-original-native.json",
+      "bytes": 3909,
+      "sha256": "479bf43a9376edf21533d9723478c62d0090042d0a41860fae00abb2f7dcbdb5"
     }
   ],
   "raw_materials": "Original raw archives/logs retained in the task workspace at the exact SHA256 identities above; private host paths and keys are not published."
