@@ -787,6 +787,24 @@ fn isolated_asert_context_rejects_wrong_anchor_and_uses_real_w1_branch_history()
     assert_eq!(reopened.read_active().unwrap(), before);
     assert_eq!(reopened.expected_target(parent).unwrap(), old);
     assert_eq!(
+        reopened
+            .research_asert_target_indexed(shallow, parent)
+            .unwrap(),
+        raw
+    );
+    assert_eq!(
+        reopened
+            .research_asert_target_indexed(
+                AnchoredResearchContext {
+                    parent_clock: ParentClock::Median11,
+                    ..shallow
+                },
+                parent,
+            )
+            .unwrap(),
+        median
+    );
+    assert_eq!(
         shadow_target_from_ancestry(context, parent, |id| {
             reopened.packet(id)
         })
