@@ -21,6 +21,16 @@ _MAGIC = 0x31574134544e5243
 require = kernel.require
 
 
+class _RawUReadback:
+    """One bounded observation slot; never a funding or settlement capability."""
+    __slots__ = ('launch', 'group', 'deadline_ns', 'consumed', 'samples', 'zero', 'last')
+
+    def __init__(self, launch):
+        self.launch, self.deadline_ns = launch, launch.deadline_ns
+        self.group = launch.operation.cap._groups['operation']  # Same held U tuple, not a path reopen.
+        self.consumed, self.samples, self.zero, self.last = False, 0, 0, None
+
+
 class _ExactTerminal:
     """One internal fact, emitted only after the original two exact waits."""
     __slots__ = ('launch', 'child', 'record', 'binding')
@@ -89,6 +99,7 @@ class _AggregateLaunch:
         self._terminal_fact = self._retirement_attempt = None
         self._wait_role = None
         self._retirement = (ctypes.c_uint64*24)()  # Original fixed output before native effect.
+        self._u_readback = _RawUReadback(self)  # Fixed before any pipe/C/A effect, consumed once.
         self.source = kernel._digest(kernel._bytes(Path(__file__)))
         with self.native._lock_for_owner():
             require(self.native._busy._recursion_count() == 1, 'kernel-native-lifecycle-busy')
@@ -352,3 +363,41 @@ class _AggregateLaunch:
         require(time.monotonic_ns() < self.deadline_ns, 'host-retirement-original-cutoff')
         result.update(child_unlink_and_close_proven=True, counters=raw)
         return result  # Raw U.current/dying may remain positive. Never a Whole-U/refund fact.
+
+    def _read_u_terminal_locked(self):
+        import llm_runtime_host_scope as host
+        op, state = self.operation, self._u_readback
+        require(self.native._busy._recursion_count() == 1 and type(state) is _RawUReadback and
+            state.launch is self and not state.consumed, 'host-U-readback-single-attempt')
+        state.consumed = True  # Before fallible observations or pending Python exceptions.
+        require(getattr(op.cap, '_retirement_attempt', None) is self and
+            self._retirement_attempt is not None, 'host-U-readback-retirement-not-proven')
+        for _ in range(801):  # Existing charge-wait bound, never an additional deadline.
+            require(not op.failed and not op.closed and
+                op.cap._groups['operation'] is state.group and
+                state.deadline_ns == self.deadline_ns == int(op.deadline*10**9) and
+                time.monotonic_ns() < state.deadline_ns, 'host-U-readback-original-cutoff')
+            result = self._retirement_status_locked()  # Full original source/owner/limits/history.
+            require(result['child_unlink_and_close_proven'] and not op.failed,
+                    'host-U-readback-retirement-not-proven')
+            raw = result['counters']
+            tree = host._fields(raw['cgroup.stat'])
+            require({'nr_descendants', 'nr_dying_descendants'} <= set(tree) and
+                tree['nr_descendants'] == 0, 'host-U-readback-descendant-fields')
+            # nr_subsys_* includes U itself and is NOT a zero predicate. Only
+            # descendant/dying counters and actual current resources drain.
+            zero = host._decimal(raw['memory.current']) == 0 and not any(
+                value for key, value in tree.items() if key.startswith('nr_dying_'))
+            require(time.monotonic_ns() < state.deadline_ns,
+                    'host-U-readback-original-cutoff')
+            state.samples += 1
+            state.last = raw  # One bounded nine-file observation, no history list.
+            state.zero = state.zero+1 if zero else 0
+            if state.zero == 2:
+                return dict(result, scope='original-O-raw-U-observation-only',
+                    raw_u_zero_observed=True, funded_whole_u=False, samples=state.samples)
+            if not zero:
+                remaining = state.deadline_ns-time.monotonic_ns()
+                require(remaining > 0, 'host-U-readback-original-cutoff')
+                time.sleep(min(.01, remaining/10**9))
+        raise kernel.KernelBudgetError('host-U-readback-sample-bound-retained')

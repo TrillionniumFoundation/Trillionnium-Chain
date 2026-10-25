@@ -2185,6 +2185,21 @@ Linux has no unlinkat expected-inode argument: this remains the existing trusted
 administrator namespace scope, not hostile same-UID rename isolation. Actual
 cgroup retirement, U dying/current zero and funded entry remain OPEN.
 
+The same original launch also predeclares one private raw-U readback slot before
+its pipe/C/A effects. After complete exact child retirement, its no-argument
+owner call consumes that slot once and repeats the complete retirement-phase
+source/identity/limits/history verifier for every observation. At most801 reads
+use the original absolute cutoff, with at most10ms between positive current or
+dying observations; this is no additional window or helper. Two consecutive
+complete raw-U zero observations are required: current/swap/pids/procs/populated,
+descendants and all dying counters. U's own `nr_subsys_*` counts remain intact;
+historical peak/CPU are monotonic, never reset or subtracted. Missing/malformed
+fields, drift, cancellation, late reads or exhaustion retain UNKNOWN and every
+remaining original FD/root, with no reentry. Success reports only
+`raw_u_zero_observed`; Whole-U, funded return, authorization and refund remain
+false. Thirteen modeled held-directory/clock controls exercise this boundary;
+they are not native cgroup qualification or a claim of bounded syscall latency.
+
 The existing PN4 dependency and acceptance sequence is:
 
 | Stage / owner | Interface and required evidence | Status / exit |

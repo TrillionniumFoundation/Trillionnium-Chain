@@ -268,3 +268,14 @@ class _HostControllerOperation:
             except BaseException as error:
                 self._refuse(error)
                 raise
+
+    def _read_u_terminal(self):
+        """One private same-owner raw observation; no Whole-U/funding authority."""
+        with self.native._lock_for_owner():
+            require(self.native._busy._recursion_count() == 1 and self._aggregate is not None,
+                    'host-U-readback-original-owner')
+            try:
+                return self._aggregate._read_u_terminal_locked()
+            except BaseException as error:
+                self._refuse(error)
+                raise
