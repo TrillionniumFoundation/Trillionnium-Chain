@@ -2323,9 +2323,7 @@ mod tests {
             // Authenticating a remote service is not equivalent to a CPU
             // budget. Both signed and durable signed sync must refuse before
             // connecting, same as the unauthenticated remote sync above.
-            let (authentication, _) = authentication_fixture(&settings);
             let (_, client) = authentication_fixture(&settings);
-            let _ = authentication;
             let mut replay_nonce = 1_u64;
             let auth_error = sync_from_authenticated(
                 &mut node,
