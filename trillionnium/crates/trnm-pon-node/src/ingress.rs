@@ -2215,6 +2215,51 @@ mod tests {
     use super::*;
 
     #[test]
+    fn legacy_remote_page_import_is_refused_before_a_single_unmetered_w1_replay() {
+        let temp = tempfile::tempdir().unwrap();
+        let settings = Settings::development(Some(now().unwrap() - 100)).unwrap();
+        let mut node = Node::open(temp.path(), settings.clone(), 2).unwrap();
+        let genesis = settings.genesis();
+        let before = node.stats().unwrap();
+        // Documentation-range address: never dial this address in the test.
+        let remote: SocketAddr = "203.0.113.7:17771".parse().unwrap();
+        let signer = DevelopmentIdentity::from_secret_hex(&hex::encode([57u8; 32]))
+            .unwrap();
+        let observer = DevelopmentIdentity::from_secret_hex(&hex::encode([58u8; 32]))
+            .unwrap();
+        let client = AuthenticatedClient::new(
+            signer,
+            observer.public_key().to_owned(),
+            1,
+        )
+        .unwrap();
+        assert_eq!(
+            sync_from(&mut node, remote, genesis, genesis, 1)
+                .unwrap_err().to_string(),
+            "SYNC_UNMETERED_LOOPBACK_ONLY"
+        );
+        let mut replay_nonce = 1;
+        assert_eq!(
+            sync_from_authenticated(
+                &mut node, remote, genesis, genesis, 1,
+                &client, &mut replay_nonce,
+            )
+            .unwrap_err().to_string(),
+            "SYNC_UNMETERED_LOOPBACK_ONLY"
+        );
+        assert_eq!(replay_nonce, 1, "refused import consumed no signed nonce");
+        assert_eq!(
+            sync_from_authenticated_durable(
+                &mut node, remote, genesis, genesis, 1, &client,
+            )
+            .unwrap_err().to_string(),
+            "SYNC_UNMETERED_LOOPBACK_ONLY"
+        );
+        assert_eq!(node.stats().unwrap(), before);
+        assert_eq!(node.read_active().unwrap().0, genesis);
+    }
+
+    #[test]
     fn legacy_unmetered_w1_all_four_ingress_profiles_refuse_wan_bind() {
         let temp = tempfile::tempdir().unwrap();
         let settings = Settings::development(Some(now().unwrap() - 100)).unwrap();
