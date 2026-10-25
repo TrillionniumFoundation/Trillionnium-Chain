@@ -211,6 +211,49 @@ gaps for retained observations; cryptographic hardness and public qualification
 remain open until their own evidence exists. No reward, consensus or activation
 flag follows from the sensitivity model.
 
+## PN1 computational qualification delivery
+
+This is the I01 exit within the existing plan, not a new work profile. M03 owns
+attempt construction, M01 the full relation check, M02 target/required-work and
+M17 independent qualification. The current 64-by-64 finite-field statement and
+49,188-byte certificate establish arithmetic correctness only. Training utility,
+rights to export data and permission to install a model remain other contracts.
+
+Before the qualification run, freeze selectable task families, targets spanning
+the declared difficulty range, nonce/challenge streams, setup-reuse horizons,
+hardware/compiler configuration, trial counts, exhaustion bounds and the
+maximum admitted legal advantage. Include dense, zero, rank-one, sparse and
+maintenance material; unsupported strategies and misses remain visible. Compare
+one executable fixed strategy over every declared case, including task-selection
+cost. Candidate-dependent cherry-picking of the fastest samples is not a miner.
+An executable strategy may itself select kernels from public inputs/targets;
+freeze that dispatcher and charge its selection, preprocessing and failed work.
+Do not exclude such adaptive legal miners by testing only single kernels.
+
+| I01 obligation | Required raw denominator and adversarial control | Acceptance boundary |
+| --- | --- | --- |
+| Fresh challenge and lottery | Every attempted nonce/header/task binding, complete setup/search and winning bytes; mutate each bound field and test copied/stale solutions | No verified work for a changed statement; independent oracle agrees on target hits and required work. A passing ticket alone is insufficient. |
+| Non-amortized marginal cost | Actual repeated searches at every frozen reuse horizon, including shared preparation, batching and legal task choice | Retain complete cold and reused cost per attempted/winning proof. Any unmeasured horizon or cheaper unexplained legal strategy leaves the corresponding cost claim open. |
+| Hardware advantage | Same mathematical inputs/targets and winning bytes across named CPU/accelerator strategies, including memory/transfer/setup costs and missing support | Report conditional effective-work share and concentration under explicit hardware assumptions; two CPU hosts do not establish GPU/FPGA/ASIC bounds. |
+| Invalid-work rejection | From-zero false traces, late-product errors and valid-W1/false-State-root packets with complete producer and whole receiver costs | Invalid inputs add zero chainwork; availability is accepted separately through I02 on the same targets and real resource envelope. |
+| Difficulty and timing | Legal median/future-window schedules, oscillating effective hashrate, withholding and partition/heal; actual target/chainwork/confirmation traces | Preserve work arithmetic and recovery; independently review chain quality and timestamp incentives before selecting production rules. |
+
+A finite speed comparison can bound only its measured strategies and declared
+environment. Computational qualification additionally needs an independent
+review of the lottery, selectable-input and preprocessing assumptions and a
+third verifier with hidden negative vectors. Publish residual assumptions and
+the admitted advantage alongside the verdict; no absence of a discovered
+shortcut becomes a universal lower-bound theorem. An unresolved assumption
+keeps `work_profile_qualified` false even when all arithmetic regressions pass.
+
+Research may compare [RandomX's work-function design](https://github.com/tevador/RandomX/blob/master/doc/design.md)
+and [matrix-multiplication useful-work constructions](https://arxiv.org/abs/2504.09971v4)
+against these same obligations. RandomX is not a throughput/fork-choice
+protocol; matrix PoUW results carry their own complexity and parameter
+assumptions. GHOSTDAG/Prism-style ordering does not prove W1 marginal cost.
+Any replacement remains an explicit PN1/PN6 decision with a fresh context,
+not an automatic hash-only, evaluator-vote or BFT fallback.
+
 ## Actual PNW1 timestamp and chainwork boundaries
 
 The existing

@@ -431,6 +431,34 @@ Missing dependencies never yield a complete result. The release owner validates
 closure completeness and the safe loader validates formats/shapes without remote
 code import before the existing FinalUse owner can admit the selected generation.
 
+The following **target interface**, still to be implemented and versioned, makes
+that seam reviewable. These are semantic message names, not new exported APIs,
+current CLI fields or authority owners.
+
+| Message / owner | Required typed contract |
+| --- | --- |
+| `ResolveReleaseRequest` / M10 -> M09 | Original operation and attempt, closure codec/domain/ID, model profile, selected generation, mandatory object set and a single shared resource reservation. Mutable tags are resolved by M10 before this request. |
+| `ResolveReleaseResult` / M09 -> M10/Hepta | Same operation/closure/generation, `Complete`, `Incomplete`, `Refused` or `Unknown`; verified object IDs, absent IDs, actual suppliers/counters, materialization identities and completion/readback status. Only a fresh complete closure may return `Complete`. |
+| `AdmitReleaseRequest` / M10 -> existing Hepta owners | Complete byte result plus independently current release/withdrawal, compatibility, resource and installation authority. M09 supplies no authority token. |
+| `LoadedReleaseReadback` / actual Hepta runtime -> M17 | Installed closure and generation, actual base/tokenizer/router/Cell hashes, loader/runtime profile, next task identity and its result. A fetch receipt or intended configuration is insufficient. |
+
+Target error categories are `InvalidClosure`, `UnsupportedCodec`,
+`IncompatibleProfile`, `MissingDependency`, `Unavailable`, `IntegrityFailure`,
+`BudgetExhausted`, `DeadlineExceeded`, `PublicationConflict`, `Withdrawn` and
+`UnknownEffect`. Every result preserves the original identity and consumed
+reservation; errors do not replenish it. After publication may have begun,
+`UnknownEffect` permits only exact-target verification/reconciliation. A new
+attempt needs explicit remaining authority and budget; it cannot blindly repeat
+the effect, silently replace the output or obtain a fresh reservation by rename.
+
+Before closure implementation, M10/M09 and the Hepta loader owner jointly freeze
+the new codec's canonical byte order, hash domain, supported algorithms and
+maximum byte/object/depth/fanout/active-set limits. Define independent vectors
+for empty/oversized lists, cycles, aliases, conflicting dimensions and duplicate
+dependencies. All size arithmetic is checked before allocation. The closure
+also freezes reconstruction order and maximum delta depth; loading cannot follow
+an unbounded parent chain. Existing TCM1/TCR1 parsers and identities remain exact.
+
 Implement local SSD -> RAM -> device-memory staging and bounded prefetch through
 the actual neuron runtime. Bind cached tensors/features to exact content and local
 generation, and count download, full hash, disk, deserialization and transfer to
@@ -458,6 +486,21 @@ all closure members. Freeze cold/warm latency, memory, sample-count and completi
 targets before the run; undersampled p99 remains unknown. Weight MB/s, cache hit
 rate and model-load latency are separate from unique client-confirmed chain TPS.
 
+The PN3 freeze record must contain numeric payload/dependency counts, chunk
+distribution, total cold bytes, cache state, concurrency, link rate/RTT/loss,
+disk/runtime/device profile, deadlines, every resource ceiling and sample count.
+Select limits from the intended deployment envelope and an independently retained
+baseline, then sign/hash that record before candidate measurement. Lower bounds
+such as bytes/link-rate inform the target; a failed run cannot choose its own
+new limit. Publish complete and incomplete cohorts separately, with raw duration
+samples, quantile method and the preselected confidence interval. Require at
+least 100 completed samples before reporting a measured p99; this floor alone
+does not establish confidence, and inadequate cohorts keep the target unqualified.
+Completed-sample quantiles are conditional on completion: retain all attempted
+requests and failure/timeout censoring denominators, never invent a completion
+duration for an unresolved attempt or claim an all-attempt p99 from survivors.
+This is a target measurement rule, not a new claim about the two existing relay samples.
+
 ## PN5 swarm discovery, storage and repair target
 
 BitTorrent-style content addressing, multi-source pieces, resumable verified
@@ -469,6 +512,16 @@ release's complete reachable dependency closure, not the union of all cached
 Cells in the network. Local inference still needs the active weights and KV/
 activation memory. Remote execution of missing layers is a separate compute,
 privacy and latency protocol, not implemented by P2P byte fetch.
+
+BitTorrent v2 wire compatibility, a DHT and persistent request multiplexing are
+**reviewable PN5 adapter options**, not selected replacements for TCQ1/TCS1 or
+the development rendezvous. Benchmark them against the current serial and
+four-worker configurations using the same release, cached prefix, hosts, network
+faults, concurrency and total budgets. Record setup cost, verified useful MB/s,
+time to complete the least-available mandatory object, CPU/RSS/disk cost and
+honest service under flash crowds; higher raw socket throughput alone fails the
+comparison. A rare-piece scheduler must use bounded observations and queues;
+untrusted availability claims cannot create unbounded probes or work.
 
 Deliver discovery after PN3 works with configured providers. Use a separately
 versioned peer/provider envelope with bounded TTL, candidate count, lookup hops,
