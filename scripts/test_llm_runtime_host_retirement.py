@@ -140,7 +140,7 @@ class HostRetirementTests(unittest.TestCase):
             return 0
         op.native.activate_retirement=Mock(side_effect=activate)
         op._retire_children()
-        launch._retirement[0]=4;launch._retirement[1]=errno.ETIMEDOUT;launch._retirement[20]=1
+        launch._retirement[0]=4;launch._retirement[1]=errno.ETIMEDOUT;launch._retirement[20]=1;launch._retirement[23]=0x80000001
         # While native is blocked, no caller may scan mutable original slot
         # contents. A signature spy would fail if the phase verifier did so.
         with patch.object(kernel.proc,'_signature',side_effect=AssertionError('inflight slot scan')):
@@ -162,7 +162,7 @@ class HostRetirementTests(unittest.TestCase):
             op.native.close_handoff(original,2)
             for role,count in [('scope',3),('host',2),('operation',0)]:
                 (paths[role]/'cgroup.stat').write_text('nr_descendants '+str(count)+'\nnr_dying_descendants 1\n')
-            out[0]=7;out[17]=1;out[19]=1;out[20]=31;out[21]=1
+            out[0]=7;out[17]=1;out[19]=1;out[20]=31;out[21]=1;out[23]=5
             return 0
         op.native.activate_retirement=Mock(side_effect=activate)
         result=op._retire_children()

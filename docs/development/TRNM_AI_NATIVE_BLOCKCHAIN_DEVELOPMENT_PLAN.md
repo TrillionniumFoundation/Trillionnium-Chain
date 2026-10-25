@@ -2159,9 +2159,19 @@ the original U FD and exact held name/inode checks, closing each original slot
 and finally the original C pidfd. Each irreversible step records actual progress;
 error, blocking or late completion retains the root and every remaining slot,
 without retry/reentry or a renewed deadline. A same-O retain-only native latch
-propagates a pending Python failure to the worker before its next irreversible
-step, preserving the original first error even if the latch itself raises; an
-already entered kernel call cannot be canceled or recast as timely success.
+registers UNKNOWN on the same fixed atomic word as each of the five steps
+(A unlink, A close, C unlink, C close, original C pidfd close). Each step has
+one strong CAS against its exact predecessor. Cancellation first forbids a new
+commit; a step that commits first may finish only that step and records its
+actual progress, while subsequent steps and remaining FDs stay retained. The
+original first error survives even a failure of the latch. This linearization
+does not preempt a committed syscall or guarantee when the scheduler enters it;
+the original absolute eight-second checks still reject late success. Private
+snapshot layout2 assigns word23 to last committed step0..5 plus sticky STOP
+(0x80000000), source-bound to a fresh prepared owner with no old-root adoption.
+Four additional controls cover all five before/after-commit orders, a late
+committed step, and strict layout/phase rejection; retained f69 with only
+test synchronization pauses fails all five before-commit effect assertions.
 A sticky pre-entry marker forbids
 live verifier scans while those arrays may be closing. A separate strict phase
 verifier accepts only complete native progress, original identity/quiescence and

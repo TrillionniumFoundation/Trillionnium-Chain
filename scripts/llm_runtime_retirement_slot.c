@@ -9,13 +9,16 @@
 
 #define TRNM_RETIRE_STACK (1024U * 1024U)
 #define TRNM_RETIRE_WORDS 24U
+/* Private snapshot layout2: word23 = last committed step0..5 | sticky stop.
+ * Source-bound fresh preparation only; no adoption of a layout1 live owner. */
+#define TRNM_RETIRE_STOP UINT32_C(0x80000000)
 enum { TRNM_RETIRE_EMPTY, TRNM_RETIRE_OWNED, TRNM_RETIRE_STARTING,
        TRNM_RETIRE_READY, TRNM_RETIRE_EXPIRED, TRNM_RETIRE_UNKNOWN,
        TRNM_RETIRE_RUNNING, TRNM_RETIRE_DONE };
 _Static_assert(ATOMIC_INT_LOCK_FREE == 2 && sizeof(_Atomic unsigned) == 4,
                "retirement-futex-requires-lock-free-u32");
 static struct {
-    _Atomic unsigned phase, command, expired, claimed, progress, effect_finished;
+    _Atomic unsigned phase, command, expired, claimed, progress, effect_finished, step_state;
     _Atomic int error, tid, wait_finished, pidfd_close_error;
     _Atomic uintptr_t stack_sample;
     pid_t pid, owner_tid;
@@ -66,13 +69,33 @@ static int trnm_retirement_named(int parent, const char *name, int *slot, const 
 }
 static int trnm_retirement_timely(void) {
     return !atomic_load(&trnm_retirement.error) && !atomic_load(&trnm_retirement.expired) &&
+        !(atomic_load(&trnm_retirement.step_state) & TRNM_RETIRE_STOP) &&
         trnm_before(trnm_retirement.deadline);
+}
+/* One strong CAS per step, at most five. Retention/expiry sets STOP on this
+ * SAME atomic word. If STOP wins, no new step commits. If the step wins, only
+ * that committed syscall may finish, even if scheduling delays its entry.
+ * This is a linearization rule, never a hard-real-time/preemption guarantee. */
+static int trnm_retirement_commit(unsigned step) {
+    if (!trnm_retirement_timely()) {
+        int error = atomic_load(&trnm_retirement.error);
+        if (!error) error = atomic_load(&trnm_retirement.step_state) & TRNM_RETIRE_STOP ?
+            ECANCELED : ETIMEDOUT;
+        atomic_fetch_or_explicit(&trnm_retirement.step_state, TRNM_RETIRE_STOP, memory_order_acq_rel);
+        return error;
+    }
+    unsigned expected = step - 1U;
+    if (!atomic_compare_exchange_strong_explicit(&trnm_retirement.step_state, &expected, step,
+        memory_order_acq_rel, memory_order_acquire))
+        return expected & TRNM_RETIRE_STOP ? ECANCELED : EPROTO;
+    return 0;
 }
 static int trnm_retirement_remove(const char *name, int *slot, const uint64_t id[3], unsigned bit) {
     if (!trnm_retirement_timely()) return ETIMEDOUT;
     int error = trnm_retirement_named(trnm_retirement.parent, name, slot, id);
     if (error) return error;
-    if (!trnm_retirement_timely()) return ETIMEDOUT;
+    error = trnm_retirement_commit(bit == 1U ? 1U : 3U);
+    if (error) return error;
     if (unlinkat(trnm_retirement.parent, name, AT_REMOVEDIR)) return errno;
     atomic_fetch_or_explicit(&trnm_retirement.progress, bit, memory_order_release);
     /* Record the irreversible removal even when it returned after the cutoff.
@@ -83,7 +106,8 @@ static int trnm_retirement_remove(const char *name, int *slot, const uint64_t id
     if (errno != ENOENT) return errno;
     error = trnm_retirement_identity(slot[1], id);
     if (error) return error;
-    if (!trnm_retirement_timely()) return ETIMEDOUT;
+    error = trnm_retirement_commit(bit == 1U ? 2U : 4U);
+    if (error) return error;
     error = trnm_kernel_release_owned_v1(slot);
     atomic_fetch_or_explicit(&trnm_retirement.progress, bit << 1, memory_order_release);
     return error ? error : trnm_retirement_timely() ? 0 : ETIMEDOUT;
@@ -101,7 +125,7 @@ static int trnm_retirement_effect(void) {
         trnm_retirement.identities + 3, 1U);
     if (!error) error = trnm_retirement_remove("controller", trnm_retirement.controller,
         trnm_retirement.identities + 6, 4U);
-    if (!error && !trnm_retirement_timely()) error = ETIMEDOUT;
+    if (!error) error = trnm_retirement_commit(5U);
     if (!error) {
         error = trnm_kernel_close_v1(trnm_retirement.child, 2U);
         atomic_store(&trnm_retirement.pidfd_close_error, error);
@@ -135,6 +159,7 @@ static void *trnm_retirement_worker(void *unused) {
             atomic_store_explicit(&trnm_retirement.effect_finished, 1, memory_order_release);
         } else error = wait_error ? wait_error : EPROTO;
     }
+    if (error) atomic_fetch_or_explicit(&trnm_retirement.step_state, TRNM_RETIRE_STOP, memory_order_acq_rel);
     int no_error = 0;
     atomic_compare_exchange_strong(&trnm_retirement.error, &no_error, error);
     atomic_store_explicit(&trnm_retirement.phase,
@@ -154,6 +179,7 @@ int trnm_kernel_retirement_snapshot_v1(uint64_t output[TRNM_RETIRE_WORDS]) {
         syscall(SYS_gettid) != trnm_retirement.owner_tid) return EPERM;
     if ((phase == TRNM_RETIRE_STARTING || phase == TRNM_RETIRE_READY || phase == TRNM_RETIRE_RUNNING) &&
         !trnm_before(trnm_retirement.deadline)) {
+        atomic_fetch_or_explicit(&trnm_retirement.step_state, TRNM_RETIRE_STOP, memory_order_acq_rel);
         atomic_store(&trnm_retirement.expired, 1);
         int no_error = 0;
         atomic_compare_exchange_strong(&trnm_retirement.error, &no_error, ETIMEDOUT);
@@ -180,6 +206,7 @@ int trnm_kernel_retirement_snapshot_v1(uint64_t output[TRNM_RETIRE_WORDS]) {
     output[20] = atomic_load_explicit(&trnm_retirement.progress, memory_order_acquire);
     output[21] = atomic_load_explicit(&trnm_retirement.effect_finished, memory_order_acquire);
     output[22] = (uint64_t)atomic_load(&trnm_retirement.pidfd_close_error);
+    output[23] = atomic_load_explicit(&trnm_retirement.step_state, memory_order_acquire);
     return 0;
 }
 
@@ -240,6 +267,7 @@ int trnm_kernel_retirement_prepare_v1(int observer, const uint64_t identity[3],
         if (!error) trnm_retirement.created = 1;
     }
     if (error) {
+        atomic_fetch_or_explicit(&trnm_retirement.step_state, TRNM_RETIRE_STOP, memory_order_acq_rel);
         atomic_store(&trnm_retirement.error, error);
         atomic_store_explicit(&trnm_retirement.phase, TRNM_RETIRE_UNKNOWN, memory_order_release);
     }
@@ -277,6 +305,7 @@ int trnm_kernel_retirement_activate_v1(int parent, int aggregate[4], int control
         child[1] == controller[1] || child[1] == parent)) error = EINVAL;
     if (!error && !trnm_retirement_timely()) error = ETIMEDOUT;
     if (error) {
+        atomic_fetch_or_explicit(&trnm_retirement.step_state, TRNM_RETIRE_STOP, memory_order_acq_rel);
         int no_error = 0;
         atomic_compare_exchange_strong(&trnm_retirement.error, &no_error, error);
         atomic_store_explicit(&trnm_retirement.phase, TRNM_RETIRE_UNKNOWN, memory_order_release);
@@ -288,6 +317,7 @@ int trnm_kernel_retirement_activate_v1(int parent, int aggregate[4], int control
     atomic_store_explicit(&trnm_retirement.command, 1, memory_order_release);
     if (syscall(SYS_futex, &trnm_retirement.command, FUTEX_WAKE_PRIVATE, 1, NULL, NULL, 0) < 0) {
         error = errno;
+        atomic_fetch_or_explicit(&trnm_retirement.step_state, TRNM_RETIRE_STOP, memory_order_acq_rel);
         int no_error = 0;
         atomic_compare_exchange_strong(&trnm_retirement.error, &no_error, error);
         atomic_store(&trnm_retirement.expired, 1); /* Worker must not begin/continue effects. */
@@ -303,6 +333,7 @@ int trnm_kernel_retirement_retain_v1(uint64_t output[TRNM_RETIRE_WORDS]) {
     if (!output || output != trnm_retirement.output || getpid() != trnm_retirement.pid ||
         syscall(SYS_gettid) != trnm_retirement.owner_tid) return EPERM;
     if (phase != TRNM_RETIRE_READY && phase != TRNM_RETIRE_RUNNING) return EALREADY;
+    atomic_fetch_or_explicit(&trnm_retirement.step_state, TRNM_RETIRE_STOP, memory_order_acq_rel);
     int no_error = 0;
     atomic_compare_exchange_strong(&trnm_retirement.error, &no_error, ECANCELED);
     return 0;

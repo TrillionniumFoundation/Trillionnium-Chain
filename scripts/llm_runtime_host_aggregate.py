@@ -281,18 +281,20 @@ class _AggregateLaunch:
                 'host-retirement-original-worker-slot')
         words = tuple(self._retirement)
         require(words[2] == cap._pid and words[3] == threading.get_native_id() and
-            words[8] == self.deadline_ns and words[19] == 1 and words[20] <= 31,
+            words[8] == self.deadline_ns and words[19] == 1 and
+            words[23] & ~0x80000007 == 0 and words[23] & 7 <= 5 and
+            words[20] in (0, 1, 3, 7, 15, 31) and words[20] <= (1 << (words[23] & 7))-1,
             'host-retirement-original-effect-identity')
         result = dict(scope='original-O-child-retirement-only', phase=words[0],
-            native_error=words[1], progress=words[20], child_unlink_and_close_proven=False,
+            native_error=words[1], progress=words[20], step_state=words[23], child_unlink_and_close_proven=False,
             whole_u_terminal=False, resource_return_proven=False, reservation='RETAINED',
             outer_reconciliation='UNKNOWN', authorization=False)
-        if words[0] in (4, 5) or words[1] or time.monotonic_ns() >= self.deadline_ns:
+        if words[0] in (4, 5) or words[1] or words[23] & 0x80000000 or time.monotonic_ns() >= self.deadline_ns:
             op._refuse(kernel.KernelBudgetError('host-retirement-unknown-retained'))
             return result
         if words[0] != 7 or not words[17] or op.failed:
             return result
-        require(words[20:23] == (31, 1, 0), 'host-retirement-incomplete-native-progress')
+        require(words[20:24] == (31, 1, 0, 5), 'host-retirement-incomplete-native-progress')
         _, aggregate, controller, child, _ = self._retirement_attempt
         require(tuple(aggregate) == tuple(controller) == (0, -1, -1, -1) and
             tuple(child) == (op.spawn_owner.pid, -1, -1, -1),

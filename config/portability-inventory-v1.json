@@ -616,6 +616,7 @@
         "scripts/test_llm_runtime_retirement_slot.py",
         "scripts/test_llm_runtime_retirement_publication.py",
         "scripts/test_llm_runtime_retirement_activation.py",
+        "scripts/test_llm_runtime_retirement_steps.py",
         "scripts/test_llm_runtime_host_retirement.py",
         "scripts/test_llm_runtime_decode.py",
         "scripts/llm_runtime_exit_observation.py",
