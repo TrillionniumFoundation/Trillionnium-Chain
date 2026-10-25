@@ -174,3 +174,31 @@ SHA-256 over 512 concatenated 32-byte targets is:
 Python generated this digest locally, but the new exact-source Rust test is
 NOT_RUN on the present host. This corrects a research verifier resource
 bug; it does not prove public W1 hardness or activate a new DAA.
+
+## Third-language numeric oracle and second native readback (2026-10-25 continuation)
+
+A **standalone Go math/big** implementation has been added under
+`formal/pon-nakamoto-v1/daa_reference_go`. This is a third source-language
+numeric implementation: it independently computes the same exact 512-case
+SHA-256 target stream as the existing Python and Rust candidates. Its local
+Go unit tests and CLI were actually executed in the current research
+container, including i128 overflow, negative floor shifts and huge-exponent
+saturation. The frozen SHA-256 target-stream digest is
+`6be87e237c37aec8c50af8d4eaf9e14a0ca60e7dc69f18143ede1ef70c420c97`.
+See its own README for exact commands and nonclaims. This improves P1-A
+arithmetical reproducibility, but does **not** provide a third independently
+operated security reviewer, deployed consensus profile or W1 hardness proof.
+
+The existing native `maintenance_recovers_signed_task_registration_and_policy_confirmation_after_revoke`
+regression is strengthened to have a **second Node instance** with a separate
+SQLite directory decode and admit each original W1 packet independently,
+compare branch state and actual depth/work confirmations, reject a corrupted
+registered-block proof without state mutation, and reopen both stores at the
+same final tip. Those changes are test-only. The new Rust source has not been
+compiled in the current Go/Python-only container and is not recorded as an
+executed native receipt. Both Node instances have one developer/administrative
+owner, not two independent WAN consensus operators.
+
+P0-C work-hardness, hostile ingress, task-source independence, native long-term
+Q4 reclaim and all P2 WAN/physical acceptance remain explicit blockers.
+Production remains disabled and old Q4/Revision12/DAA rules are unchanged.

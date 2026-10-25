@@ -682,6 +682,10 @@ fn maintenance_recovers_signed_task_registration_and_policy_confirmation_after_r
     let settings = settings();
     let bootstrap = settings.bootstrap_lifecycle_task().unwrap();
     let mut node = Node::open(dir.path(), settings.clone(), 2).unwrap();
+    // A second SQLite owner independently replays *real* PNW1 packet bytes.
+    // This is a same-admin development client, not an independent operator.
+    let verifier_path = dir.path().join("separate-verifier");
+    let mut verifier = Node::open(&verifier_path, settings.clone(), 1).unwrap();
     let old_task = bootstrap.signed.manifest.matrix_task;
     let revoke = DemandRevocationV2 {
         network: settings.network(),
@@ -692,7 +696,11 @@ fn maintenance_recovers_signed_task_registration_and_policy_confirmation_after_r
         expected_revision: bootstrap.lease.revision,
     };
     let revocation_tx = signed(&settings, 1, 1, 20, revoke.encode().unwrap());
-    mine(&mut node, 1, vec![revocation_tx]);
+    let first = mine(&mut node, 1, vec![revocation_tx]);
+    let first_packet = node.packet(first).unwrap();
+    assert_eq!(verifier.admit(&first_packet, 100_000).unwrap(), first);
+    verifier.activate(first).unwrap();
+    assert_eq!(verifier.read_active().unwrap(), node.read_active().unwrap());
     assert!(node.lifecycle_task_lease(node.active().unwrap().0, old_task, 2).is_err());
 
     // Fresh real signed requester and source statements, not a renewed or
@@ -752,6 +760,10 @@ fn maintenance_recovers_signed_task_registration_and_policy_confirmation_after_r
     let open_tx = signed(&settings, 2, 1, 18, successor.encode().unwrap());
     let register_tx = signed(&settings, 0, 1, 21, signed_statement.encode().unwrap());
     let include = mine(&mut node, 2, vec![open_tx, register_tx.clone()]);
+    let registered_packet = node.packet(include).unwrap();
+    assert_eq!(verifier.admit(&registered_packet, 100_000).unwrap(), include);
+    verifier.activate(include).unwrap();
+    assert_eq!(verifier.read_active().unwrap(), node.read_active().unwrap());
     assert!(node.lifecycle_task_lease(include, signed_statement.manifest.matrix_task, 3).is_ok());
     assert!(node.lifecycle_task_lease(include, old_task, 3).is_err());
     assert_eq!(
@@ -759,18 +771,50 @@ fn maintenance_recovers_signed_task_registration_and_policy_confirmation_after_r
         0,
     );
     for height in 3..=9 {
-        mine(&mut node, height, vec![]);
+        let block = mine(&mut node, height, vec![]);
+        let bytes = node.packet(block).unwrap().encode().unwrap();
+        let independently_decoded = Packet::decode(&bytes).unwrap();
+        assert_eq!(verifier.admit(&independently_decoded, 100_000).unwrap(), block);
+        verifier.activate(block).unwrap();
+        assert_eq!(verifier.read_active().unwrap(), node.read_active().unwrap());
     }
+    // Invalid proof on an independently observed block cannot mutate
+    // either owner; even a valid header must still pass the full W1 relation.
+    let verified_before = verifier.read_active().unwrap();
+    let mut corrupt = registered_packet.clone();
+    let last = corrupt.proof.len() - 1;
+    corrupt.proof[last] ^= 1;
+    assert!(verifier.admit(&corrupt, 100_000).is_err());
+    assert_eq!(verifier.read_active().unwrap(), verified_before);
     let confirmation = node.confirmation(hash(b"tx-id", &[&register_tx]), include, 100_000).unwrap();
     assert!(confirmation.confirmed);
     assert!(!confirmation.reorged);
     assert!(!confirmation.finalized);
     assert!(!confirmation.execution_authority);
+    let independent_confirmation = verifier
+        .confirmation(hash(b"tx-id", &[&register_tx]), include, 100_000)
+        .unwrap();
+    assert_eq!(independent_confirmation.transaction, confirmation.transaction);
+    assert_eq!(independent_confirmation.included_block, confirmation.included_block);
+    assert_eq!(independent_confirmation.observed_tip, confirmation.observed_tip);
+    assert_eq!(independent_confirmation.required_work_delta, confirmation.required_work_delta);
+    assert_eq!(independent_confirmation.work_delta, confirmation.work_delta);
+    assert!(independent_confirmation.confirmed);
+    assert!(!independent_confirmation.reorged);
+    assert!(!independent_confirmation.finalized);
+    assert!(!independent_confirmation.execution_authority);
     let before = node.read_active().unwrap();
+    assert_eq!(verifier.read_active().unwrap(), before);
     drop(node);
-    let reopened = Node::open(dir.path(), settings, 1).unwrap();
+    drop(verifier);
+    let reopened = Node::open(dir.path(), settings.clone(), 1).unwrap();
+    let independent_reopened = Node::open(&verifier_path, settings, 1).unwrap();
     assert_eq!(reopened.read_active().unwrap(), before);
+    assert_eq!(independent_reopened.read_active().unwrap(), before);
     assert!(reopened.confirmation(hash(b"tx-id", &[&register_tx]), include, 100_000)
+        .unwrap().confirmed);
+    assert!(independent_reopened
+        .confirmation(hash(b"tx-id", &[&register_tx]), include, 100_000)
         .unwrap().confirmed);
 }
 
