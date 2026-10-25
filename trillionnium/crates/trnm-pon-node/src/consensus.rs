@@ -638,8 +638,8 @@ mod daa_extreme_vectors {
 /// an independently validated native Node, not unauthenticated P2P headers.
 pub mod daa_branch_research {
     use super::daa_research::{asert_target, AsertInputs};
-    use crate::{ensure, Result};
-    use trnm_protocol::pon_wire::{Hash, Header};
+    use crate::{ensure, Packet, Result};
+    use trnm_protocol::pon_wire::Hash;
 
     #[derive(Clone, Copy, Debug, PartialEq, Eq)]
     pub enum ParentClock {
@@ -664,14 +664,14 @@ pub mod daa_branch_research {
     }
 
     /// Compute a shadow target from a linked observed ancestry.
-    /// read_verified must return the actual recomputed full packet id;
-    /// this function does NOT itself verify the proof, signed context,
-    /// genesis timestamp authority or block availability.
+    /// read_verified supplies the complete stored Packet; the observed
+    /// packet ID is recomputed here before trusting its Header. The caller
+    /// still owns full W1 verification, genesis time and state provenance.
     /// A future consensus revision needs a committed and reviewed context.
     pub fn shadow_target_from_ancestry(
         context: AnchoredResearchContext,
         observed_parent: Hash,
-        mut read_verified: impl FnMut(Hash) -> Result<(Hash, Header)>,
+        mut read_verified: impl FnMut(Hash) -> Result<Packet>,
     ) -> Result<Hash> {
         ensure(
             context.anchor_height == 1
@@ -691,7 +691,9 @@ pub mod daa_branch_research {
         let mut observed_times = Vec::with_capacity(11);
         for _ in 0..context.max_ancestor_reads {
             ensure(cursor != context.genesis, "ASERT_ANCHOR_MISSING")?;
-            let (actual_id, header) = read_verified(cursor)?;
+            let packet = read_verified(cursor)?;
+            let actual_id = packet.id()?;
+            let header = packet.header;
             ensure(
                 actual_id == cursor
                     && header.network == context.network

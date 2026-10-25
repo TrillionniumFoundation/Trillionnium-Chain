@@ -679,8 +679,7 @@ fn isolated_asert_context_rejects_wrong_anchor_and_uses_real_w1_branch_history()
     };
     let old = node.expected_target(parent).unwrap();
     let raw = shadow_target_from_ancestry(context, parent, |id| {
-        let packet = node.packet(id)?;
-        Ok((packet.id()?, packet.header))
+        node.packet(id)
     })
     .unwrap();
     assert_eq!(raw, context.anchor_target);
@@ -691,8 +690,7 @@ fn isolated_asert_context_rejects_wrong_anchor_and_uses_real_w1_branch_history()
         },
         parent,
         |id| {
-            let packet = node.packet(id)?;
-            Ok((packet.id()?, packet.header))
+            node.packet(id)
         },
     )
     .unwrap();
@@ -707,27 +705,27 @@ fn isolated_asert_context_rejects_wrong_anchor_and_uses_real_w1_branch_history()
         AnchoredResearchContext { genesis: [0x22; 32], ..context },
     ] {
         assert!(shadow_target_from_ancestry(bad, parent, |id| {
-            let packet = node.packet(id)?;
-            Ok((packet.id()?, packet.header))
+            node.packet(id)
         })
         .is_err());
     }
     assert!(
         shadow_target_from_ancestry(context, parent, |id| {
-            let packet = node.packet(id)?;
-            Ok(([0u8; 32], packet.header))
+            let mut packet = node.packet(id)?;
+            let last = packet.proof.len() - 1;
+            packet.proof[last] ^= 1;
+            Ok(packet)
         })
         .is_err(),
-        "wrong recomputed packet id cannot enter the shadow"
+        "a changed proof changes BlockId and cannot impersonate the packet"
     );
     assert!(
         shadow_target_from_ancestry(context, parent, |id| {
-            let packet = node.packet(id)?;
-            let mut header = packet.header;
+            let mut packet = node.packet(id)?;
             if id == context.anchor_block {
-                header.height += 1;
+                packet.header.height += 1;
             }
-            Ok((packet.id()?, header))
+            Ok(packet)
         })
         .is_err(),
         "incorrect ancestor height cannot enter the shadow"
@@ -740,8 +738,7 @@ fn isolated_asert_context_rejects_wrong_anchor_and_uses_real_w1_branch_history()
     assert_eq!(reopened.expected_target(parent).unwrap(), old);
     assert_eq!(
         shadow_target_from_ancestry(context, parent, |id| {
-            let packet = reopened.packet(id)?;
-            Ok((packet.id()?, packet.header))
+            reopened.packet(id)
         })
         .unwrap(),
         raw

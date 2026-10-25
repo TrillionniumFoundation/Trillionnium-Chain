@@ -402,3 +402,18 @@ and snapshot integrity remain the invoking Node's responsibility. This is
 not a live consensus variant, a complete branch-index implementation,
 reorg-safe activation, W1 hardness proof, or public confirmation result.
 P1-C and every independent-operator acceptance remain open.
+
+### Native Packet-bound shadow input hardening
+
+The first research helper accepted a caller-supplied pair of claimed packet ID
+and Header. Those two fields are independently mutable and are not a
+cryptographic pair. The current helper now requires a complete stored Packet
+and recomputes Packet::id internally before reading its Header. Negative
+cases mutate actual proof bytes and Header.height; both must fail the exact
+parent lookup without changing consensus or durable state.
+
+The complete W1 relation is still verified by the original Node admission
+owner, not by this ancestry observer. The independent Python model assumes
+an already authenticated header mapping and therefore cannot establish
+that native Packet identity binding passed on the current Rust source.
+Exact-source native execution and all P1-C/P2 qualification remain OPEN.
