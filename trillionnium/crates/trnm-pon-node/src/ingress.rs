@@ -2203,6 +2203,53 @@ mod tests {
     use super::*;
 
     #[test]
+    fn legacy_unmetered_w1_all_four_ingress_profiles_refuse_wan_bind() {
+        let temp = tempfile::tempdir().unwrap();
+        let settings = Settings::development(Some(now().unwrap() - 100)).unwrap();
+        let signed = || {
+            let owner = DevelopmentIdentity::from_secret_hex(&hex::encode([53u8; 32]))
+                .unwrap();
+            let peer = DevelopmentIdentity::from_secret_hex(&hex::encode([54u8; 32]))
+                .unwrap();
+            AuthenticatedServer::new(owner, vec![peer.public_key().to_owned()], 1)
+                .unwrap()
+        };
+        for profile in 0..4u8 {
+            // Binding an unspecified address is permitted; accepting a single
+            // remote connection or performing W1 is NOT part of this test.
+            let listener = TcpListener::bind("0.0.0.0:0").unwrap();
+            assert!(!listener.local_addr().unwrap().ip().is_loopback());
+            let node = Node::open(
+                &temp.path().join(format!("legacy-wan-refused-{profile}")),
+                settings.clone(),
+                2,
+            )
+            .unwrap();
+            let stop = Arc::new(AtomicBool::new(false));
+            let result = match profile {
+                0 => serve(listener, node, Duration::from_secs(1), stop),
+                1 => serve_protected(
+                    listener, node, Duration::from_secs(1), stop,
+                    AdmissionPolicy::development(),
+                ),
+                2 => serve_authenticated(
+                    listener, node, Duration::from_secs(1), stop, signed(),
+                ),
+                3 => serve_authenticated_protected(
+                    listener, node, Duration::from_secs(1), stop,
+                    signed(), AdmissionPolicy::development(),
+                ),
+                _ => unreachable!(),
+            };
+            assert_eq!(
+                result.unwrap_err().to_string(),
+                "DEVELOPMENT_LOOPBACK_ONLY",
+                "unmetered profile {profile} must reject WAN regardless of signature or Hashcash"
+            );
+        }
+    }
+
+    #[test]
     fn protected_hello_rendezvous_from_reserved_socket_preserves_full_native_admission() {
         let (_dir, node, packet) = pending_packet();
         let settings = node.lock().unwrap().settings().clone();
