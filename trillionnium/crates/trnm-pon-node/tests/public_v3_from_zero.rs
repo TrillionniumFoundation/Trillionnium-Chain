@@ -661,6 +661,146 @@ fn from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection() {
 }
 
 #[test]
+fn four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged() {
+    // One actual genesis header/challenge/task/target, four distinct fake traces.
+    // None of the four attack submissions acquires a valid work proof.
+    let temp = tempfile::tempdir().unwrap();
+    let now = ingress::now().unwrap();
+    let settings = Settings::development(Some(now - 100)).unwrap();
+    let mut node = Node::open(temp.path(), settings.clone(), 2).unwrap();
+    let (a, b) = maintenance();
+    let task = pon_work::task_id(&a, &b).unwrap();
+    let genesis = settings.genesis();
+    let target = node.expected_target(genesis).unwrap();
+    let header = genesis_header(&settings, target, 10_000, task);
+    let challenge = header.challenge();
+    let initial_stats = node.stats().unwrap();
+    let initial_active = node.read_active().unwrap();
+    let construction_started = Instant::now();
+    let construction_cpu = ThreadCpuStamp::start();
+    let prefix = w1_from_zero::proof_prefix(&a, &b).unwrap();
+    let mut cases = Vec::new();
+    for nonce in 0..128_u64 {
+        let (trace, ticket) = w1_from_zero::trial(challenge, nonce);
+        if target != [0; 32] && ticket <= target {
+            let mut proof = prefix.clone();
+            proof[pon_work::PROOF_BYTES - 32..].copy_from_slice(&trace);
+            cases.push((nonce, trace, ticket, proof));
+        }
+        if cases.len() == 4 {
+            break;
+        }
+    }
+    let total_construction_cpu_ns = cpu_elapsed(construction_cpu);
+    let total_construction_wall_ns = ns(construction_started);
+    assert_eq!(cases.len(), 4, "bounded four-case search must succeed");
+    let mut observations = Vec::new();
+    for (nonce, trace, ticket, proof) in cases {
+        assert_eq!(
+            pon_work::precheck_proof_statement(challenge, task, target, &proof),
+            Ok(())
+        );
+        let full_started = Instant::now();
+        let full_cpu = ThreadCpuStamp::start();
+        let mut tiles = 0;
+        let mut post_replay = 0;
+        let checked = pon_work::verify_reference_with_progress(
+            challenge,
+            task,
+            target,
+            &proof,
+            &mut |point| {
+                match point {
+                    pon_work::VerificationProgress::TranscriptTile { .. } => tiles += 1,
+                    pon_work::VerificationProgress::BeforeProduct
+                    | pon_work::VerificationProgress::BeforeVerifiedWork => post_replay += 1,
+                    _ => {}
+                }
+                Ok::<(), ()>(())
+            },
+        );
+        let full_cpu_ns = cpu_elapsed(full_cpu);
+        let full_wall_ns = ns(full_started);
+        assert!(matches!(
+            checked,
+            Err(pon_work::VerificationError::Relation(pon_work::WorkError::Transcript))
+        ));
+        assert_eq!(tiles, 512, "reject only after full scalar transcript replay");
+        assert_eq!(post_replay, 0, "forgery must not reach product/VerifiedWork");
+        assert!(matches!(
+            pon_work::verify(challenge, task, target, &proof),
+            Err(pon_work::WorkError::Transcript)
+        ));
+        assert!(matches!(
+            pon_work::verify_limb(challenge, task, target, &proof),
+            Err(pon_work::WorkError::Transcript)
+        ));
+        let packet = Packet {
+            header: header.clone(),
+            transactions: vec![],
+            proof: proof.clone(),
+        };
+        let admission_started = Instant::now();
+        let admission_cpu = ThreadCpuStamp::start();
+        let error = node.admit(&packet, now).unwrap_err().to_string();
+        let admission_cpu_ns = cpu_elapsed(admission_cpu);
+        let admission_wall_ns = ns(admission_started);
+        assert_eq!(error, "WORK:Transcript");
+        assert_eq!(node.stats().unwrap(), initial_stats);
+        assert_eq!(node.read_active().unwrap(), initial_active);
+        observations.push(json!({
+            "nonce": nonce,
+            "trace": hex::encode(trace),
+            "ticket": hex::encode(ticket),
+            "proof_identity": hex::encode(hash(b"p0-false-proof", &[&proof])),
+            "replayed_tiles": tiles,
+            "verified_work": false,
+            "full_verify_cpu_ns": full_cpu_ns,
+            "full_verify_wall_ns": full_wall_ns,
+            "native_admission_cpu_ns": admission_cpu_ns,
+            "native_admission_wall_ns": admission_wall_ns,
+            "native_admission_result": error,
+            "state_and_chainwork_unchanged": true,
+        }));
+    }
+    drop(node);
+    let reopened = Node::open(temp.path(), settings, 2).unwrap();
+    assert_eq!(reopened.stats().unwrap(), initial_stats);
+    assert_eq!(reopened.read_active().unwrap(), initial_active);
+    let report = json!({
+        "schema": "trnm-p0-four-from-zero-native-v1",
+        "challenge": hex::encode(challenge),
+        "target": hex::encode(target),
+        "task": hex::encode(task),
+        "header": hex::encode(header.encode()),
+        "total_construction_cpu_ns": total_construction_cpu_ns,
+        "total_construction_wall_ns": total_construction_wall_ns,
+        "proof_search_bound": 128,
+        "cases": observations,
+        "valid_proof_generation": false,
+        "native_state_and_chainwork_unchanged": true,
+        "public_network_ready": false,
+        "independent_accepted": false,
+        "production_activation": false,
+    });
+    println!("{report}");
+    // Create-only raw report prevents overwriting an earlier measurement.
+    if let Some(path) = std::env::var_os("TRNM_W1_FOUR_NATIVE_REPORT") {
+        use std::io::Write;
+        let mut output = fs::OpenOptions::new()
+            .write(true)
+            .create_new(true)
+            .open(path)
+            .unwrap();
+        output
+            .write_all(serde_json::to_string_pretty(&report).unwrap().as_bytes())
+            .unwrap();
+        output.write_all(b"\n").unwrap();
+        output.sync_all().unwrap();
+    }
+}
+
+#[test]
 fn caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct() {
     assert_eq!(checked_cpu_ns(0, 0), Some(0));
     assert_eq!(checked_cpu_ns(1, 999_999_999), Some(1_999_999_999));
