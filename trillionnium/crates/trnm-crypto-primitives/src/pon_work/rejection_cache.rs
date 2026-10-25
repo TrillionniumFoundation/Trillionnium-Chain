@@ -149,6 +149,57 @@ mod tests {
     }
 
     #[test]
+    fn four_distinct_from_zero_false_traces_each_owe_first_full_replay() {
+        // The cache is strictly an EXACT retransmission defense, not an
+        // attacker-cost floor and not a Sybil or arbitrary-trace defense.
+        let cache = RejectionCache::new(64, Duration::from_secs(30)).unwrap();
+        let zeros = vec![0; CELLS];
+        let task = task_id(&zeros, &zeros).unwrap();
+        let challenge = [81; 32];
+        let target = [255; 32];
+        let mut first = None;
+        let mut digests = std::collections::BTreeSet::new();
+        for nonce in 0_u64..4 {
+            // Deliberately never call prove() or reuse a valid transcript.
+            let fake = hash(b"w1-negative-cache-from-zero-v1", &[
+                &challenge,
+                &nonce.to_le_bytes(),
+            ]);
+            assert!(digests.insert(fake));
+            let mut wire = vec![0u8; PROOF_BYTES];
+            wire[..4].copy_from_slice(b"PNW1");
+            wire[PROOF_BYTES - 32..].copy_from_slice(&fake);
+            let mut tiles = 0;
+            let result = cache.verify_with_progress(
+                challenge, task, target, &wire, &mut |point| {
+                    if matches!(point, VerificationProgress::TranscriptTile { .. }) {
+                        tiles += 1;
+                    }
+                    Ok::<(), ()>(())
+                },
+            );
+            assert!(matches!(result,
+                Err(VerificationError::Relation(WorkError::Transcript))));
+            assert_eq!(tiles, 512, "new fake claim must not inherit prior negative fact");
+            if first.is_none() {
+                first = Some(wire);
+            }
+        }
+        let mut replayed = 0;
+        let hit = cache.verify_with_progress(
+            challenge, task, target, &first.unwrap(), &mut |point| {
+                if matches!(point, VerificationProgress::TranscriptTile { .. }) {
+                    replayed += 1;
+                }
+                Ok::<(), ()>(())
+            },
+        );
+        assert!(matches!(hit,
+            Err(VerificationError::Relation(WorkError::Transcript))));
+        assert_eq!(replayed, 0, "only an exact cached false proof is short-circuited");
+    }
+
+    #[test]
     fn local_cancellation_cannot_use_a_cached_fact_as_a_verdict() {
         let cache = RejectionCache::new(1, Duration::from_secs(1)).unwrap();
         let zeros = vec![0; CELLS];
