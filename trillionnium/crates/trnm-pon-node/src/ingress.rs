@@ -1335,12 +1335,16 @@ fn serve_inner(
     authentication: Option<Arc<AuthenticatedServer>>,
     admission: Option<AdmissionPolicy>,
 ) -> Result<Metrics> {
-    if authentication.is_none() {
-        ensure(
-            listener.local_addr()?.ip().is_loopback(),
-            "DEVELOPMENT_LOOPBACK_ONLY",
-        )?;
-    }
+    // A signed identity (or a transport admission puzzle) does not supply
+    // the process/host-wide measured CPU budget required for remotely sent
+    // W1 proofs. All legacy ingress profiles share this one fail-closed
+    // boundary; public V3 owns the separately metered remote-development path.
+    // Keep loopback development interoperability without inventing a new
+    // signed profile, weakening the verifier, or activating public consensus.
+    ensure(
+        listener.local_addr()?.ip().is_loopback(),
+        "DEVELOPMENT_LOOPBACK_ONLY",
+    )?;
     ensure(
         lifetime > Duration::ZERO && lifetime <= Duration::from_secs(3600),
         "SERVER_BUDGET",
