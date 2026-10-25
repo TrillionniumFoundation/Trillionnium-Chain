@@ -1072,7 +1072,7 @@ fn submit_result(node: &mut Node, id: Hash, clock: u64) -> Result<Value> {
 
 #[path = "ingress/metered_work_facts.rs"]
 mod metered_work_facts;
-pub use metered_work_facts::{dispatch_shared_with_metered_work_facts, MeteredWorkFactOutcome};
+pub use metered_work_facts::{dispatch_shared_with_metered_w1, dispatch_shared_with_metered_work_facts, MeteredWorkFactOutcome};
 
 /// Explicit local-development W1 fact-reuse entrypoint on the existing M05/M06
 /// and durable owner path. This is NOT selected by V2/V3 network listeners or CLI.
