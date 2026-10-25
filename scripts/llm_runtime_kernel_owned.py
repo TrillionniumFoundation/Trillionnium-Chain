@@ -132,6 +132,14 @@ class _Native:
             self.snapshot_retirement = self.library.trnm_kernel_retirement_snapshot_v1
             self.snapshot_retirement.argtypes = [words]
             self.snapshot_retirement.restype = ctypes.c_int
+            self.activate_retirement = self.library.trnm_kernel_retirement_activate_v1
+            slots = ctypes.POINTER(ctypes.c_int)
+            self.activate_retirement.argtypes = [ctypes.c_int, slots, slots, slots, words,
+                ctypes.c_uint64, words]
+            self.activate_retirement.restype = ctypes.c_int
+            self.retain_retirement = self.library.trnm_kernel_retirement_retain_v1
+            self.retain_retirement.argtypes = [words]
+            self.retain_retirement.restype = ctypes.c_int
         except BaseException:
             os.close(self.fd)
             raise

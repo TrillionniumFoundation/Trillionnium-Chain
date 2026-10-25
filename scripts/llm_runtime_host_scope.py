@@ -264,6 +264,16 @@ class HostScopeAdmission:
             os.fstat(fd).st_dev == os.fstat(self._root).st_dev, 'host-cgroup-shadow-mount')
 
     def _owner(self):
+        kernel.require(getattr(self, '_retirement_attempt', None) is None,
+                       'host-retirement-live-observation-forbidden')
+        self._owner_identity()
+        for slot, signature in self._fds:
+            kernel.require(slot[0] == 0 and slot[1] >= 0 and signature is not None and
+                kernel.proc._signature(slot[1]) == signature, 'host-held-fd-changed')
+
+    def _owner_identity(self):
+        # Retirement has its own strict phase verifier. Never scan arrays that
+        # its original native worker may still be close-clearing asynchronously.
         kernel.require(os.getpid() == self._pid and threading.current_thread() is self._thread,
                        'host-original-pid-thread-required')
         kernel.require(not self._closed, 'host-closed')
@@ -278,9 +288,6 @@ class HostScopeAdmission:
             finally:
                 os.close(fresh)
         kernel.require(self._native.sources == kernel._sources(), 'host-native-source-changed')
-        for slot, signature in self._fds:
-            kernel.require(slot[0] == 0 and slot[1] >= 0 and signature is not None and
-                kernel.proc._signature(slot[1]) == signature, 'host-held-fd-changed')
 
     def close_before_effect(self):
         kernel.require(os.getpid() == self._pid and threading.current_thread() is self._thread,

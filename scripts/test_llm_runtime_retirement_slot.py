@@ -96,6 +96,9 @@ int review_entered(void) { return atomic_load(&review_wait_entered); }
             time.sleep(.001)
         self.assertEqual(output[0],4)
         self.assertEqual(output[1],errno.ETIMEDOUT)
+        # Thread disappearance follows the earlier snapshot. Observe the same
+        # original slot once more; never assert on its pre-exit cached words.
+        self.assertEqual(lib.trnm_kernel_retirement_snapshot_v1(output),0)
         self.assertEqual(output[17],1) # Wait finished only, not resource-return authority.
         self.assertFalse(Path('/proc/self/task/'+str(output[4])).exists())
 
