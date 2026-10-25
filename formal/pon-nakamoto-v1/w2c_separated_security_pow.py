@@ -136,3 +136,28 @@ def comparison(bits=(8,12), cap=65536):
             'header_source':'synthetic 318 bytes; not signed native Header',
             'gpu_measurement':None,'independent_security_acceptance':False,
             'rows':rows}
+
+
+def main():
+    import argparse
+    import json
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--bits', nargs='+', type=int, default=[8, 12])
+    parser.add_argument('--cap', type=int, default=65536)
+    parser.add_argument('--out')
+    args = parser.parse_args()
+    if len(args.bits) != len(set(args.bits)) or any(not 8 <= x <= 28 for x in args.bits):
+        parser.error('unique difficulties 8..28 are required')
+    if not 1 <= args.cap <= MAX_ATTEMPTS:
+        parser.error('cap must be 1..1048576')
+    data = comparison(tuple(args.bits), args.cap)
+    output = json.dumps(data, sort_keys=True, indent=2) + '\n'
+    if args.out:
+        with open(args.out, 'x', encoding='utf-8') as stream:
+            stream.write(output)
+    else:
+        print(output, end='')
+
+
+if __name__ == '__main__':
+    main()
