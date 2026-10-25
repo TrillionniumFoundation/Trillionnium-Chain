@@ -447,9 +447,9 @@ The original 16-block DAA remains the only installed branch-validity rule.
 
 ## Independent compiled C arithmetic oracle (research continuation)
 
-A third implementation \`formal/pon-nakamoto-v1/daa_reference_c.c\` now
+A third implementation `formal/pon-nakamoto-v1/daa_reference_c.c` now
 computes the same *research-only* fixed-point ASERT formula using C11/GNU
-checked \`__int128\` operations and OpenSSL BIGNUM for u256 target arithmetic.
+checked `__int128` operations and OpenSSL BIGNUM for u256 target arithmetic.
 This implementation does not call Python or Go, cannot grant native consensus
 authority and has no W1 work statement or parent-chain validator.
 
@@ -465,9 +465,9 @@ or a fresh ASERT consensus-profile activation.
 
 From a checkout with the needed development libraries:
 
-\`\`\`sh
+```sh
 python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_daa_c_oracle.py' -v
-\`\`\`
+```
 
 No existing signed domains, DAA activation, historical source-bound receipts
 or production flags are modified by this auxiliary research file.
