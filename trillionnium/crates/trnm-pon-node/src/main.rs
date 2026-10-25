@@ -2078,6 +2078,15 @@ fn run() -> Result<Value> {
             let address = need(&args, "--peer")?
                 .parse()
                 .map_err(|_| Error::from("PEER_ADDRESS"))?;
+            // Public V3 History and authenticated legacy History both carry
+            // arbitrary remote W1 proofs into this existing Node. A WAN sync
+            // must join the SAME fixed kernel parent as the public receiver.
+            // Loopback-only developer sync retains its original behavior.
+            let host_kernel =
+                trnm_pon_node::host_kernel_parent::require_for_listener(address)?;
+            if let Some(kernel) = &host_kernel {
+                kernel.verify()?;
+            }
             let tip = digest(need(&args, "--tip")?)?;
             let after = args
                 .get("--after")
@@ -2096,6 +2105,9 @@ fn run() -> Result<Value> {
                     if complete {
                         break;
                     }
+                    if let Some(kernel) = &host_kernel {
+                        kernel.verify()?;
+                    }
                     let reply = public_call(
                         &args,
                         &ingress::Request::History {
@@ -2113,6 +2125,9 @@ fn run() -> Result<Value> {
                     let page: ingress::Page = serde_json::from_value(reply.value)?;
                     complete = page.complete;
                     cursor = ingress::receive_page(&mut node, page, tip, cursor, ingress::now()?)?;
+                    if let Some(kernel) = &host_kernel {
+                        kernel.verify()?;
+                    }
                 }
                 if !complete {
                     return Err(format!(
