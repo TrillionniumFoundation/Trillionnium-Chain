@@ -1027,3 +1027,107 @@ fn long_native_retention_safe_sole_slot_reopen_after_1100_maintenance_blocks() {
     assert_eq!(restored.read_active().unwrap(), before);
     assert!(restored.confirmation(tx_id, included, 100_000).unwrap().confirmed);
 }
+
+
+/// Exact Q4 signed overlap under revision12: a single pre-signed tag22
+/// remains usable at two inclusion heights on competing authentic W1 branches.
+/// Mining authority comes exclusively from Genesis Maintenance. The old branch
+/// is removed by a strictly heavier competing branch, not by a reset or stub.
+#[test]
+fn q4_presigned_overlap_survives_revocable_branch_and_maintenance_reorg() {
+    use trnm_protocol::qualified_work_task::lifecycle_v4::AtomicRenewTaskV4;
+
+    let temp = tempfile::tempdir().unwrap();
+    let settings = settings();
+    let bootstrap = settings.bootstrap_lifecycle_task().unwrap();
+    let mut successor = bootstrap.lease.clone();
+    successor.revision += 1;
+    successor.not_before = 1;
+    successor.expires = 1001;
+    successor.available_until = 1101;
+    // Neither work identity nor model/output meter is changed during renewal.
+    let mut source_statement = bootstrap.signed.clone();
+    source_statement.lease_id = successor.id().unwrap();
+    source_statement.manifest.source_record = successor.bound_source_record().unwrap();
+    source_statement.manifest.withdrawal_head = successor.withdrawal_frontier().unwrap();
+    source_statement.manifest.demand_nonce = 2;
+    source_statement.manifest.not_before = successor.not_before;
+    source_statement.manifest.expires = successor.expires;
+    source_statement.manifest.available_until = successor.available_until;
+    source_statement.manifest.output_meter =
+        source_statement.manifest.derived_output_meter();
+    assert_eq!(
+        source_statement.manifest.output_meter,
+        bootstrap.signed.manifest.output_meter,
+    );
+    let source_key = signing_key_from_hex(
+        &hex::encode(hash(b"DEV-ONLY-KEY", &[&0u64.to_le_bytes()])),
+    ).unwrap();
+    source_statement.signature = hex::decode(sign_hex(
+        &source_key,
+        &source_statement.signing_message().unwrap(),
+    )).unwrap().try_into().unwrap();
+    let presigned = signed(
+        &settings,
+        1,
+        1,
+        22,
+        AtomicRenewTaskV4 {
+            lease: successor,
+            signed: source_statement,
+        }.encode().unwrap(),
+    );
+
+    let mut node = Node::open(temp.path(), settings.clone(), 2).unwrap();
+    for height in 1..=3 {
+        mine(&mut node, height, vec![]);
+    }
+    let common = node.active().unwrap().0;
+    let owner = development_public(0).unwrap();
+    let make_branch = |node: &mut Node, parent: Hash, height: u64,
+                       txs: Vec<Vec<u8>>, skew: u64| -> Hash {
+        let packet = node.make_consensus_maintenance(
+            parent, txs, owner, 1 + height * 10 + skew, 4096,
+        ).unwrap();
+        assert_eq!(packet.header.work_task, continuity_v1::maintenance_task().unwrap());
+        let id = node.admit(&packet, 100_000).unwrap();
+        assert_eq!(node.packet(id).unwrap().encode().unwrap(), packet.encode().unwrap());
+        id
+    };
+
+    let original_renewed = make_branch(&mut node, common, 4, vec![presigned.clone()], 0);
+    node.activate(original_renewed).unwrap();
+    let first_state = node.read_active().unwrap().2;
+    let slot = qualified_task_lifecycle::slot_key(0).unwrap();
+    assert_eq!(first_state[&slot]["source_sequence"], 2);
+    // Different header timestamp/parent; no tag22 on this branch yet.
+    let competing4 = make_branch(&mut node, common, 4, vec![], 1);
+    assert_eq!(node.activate(competing4).unwrap(), original_renewed);
+    let competing5 = make_branch(&mut node, competing4, 5, vec![], 1);
+    node.activate(competing5).unwrap();
+    assert_eq!(node.active().unwrap().0, competing5);
+    let undone = node.read_active().unwrap().2;
+    assert_eq!(undone[&slot]["source_sequence"], 1);
+    assert_eq!(undone[&slot]["output_count"], first_state[&slot]["output_count"]);
+
+    let competing6 = make_branch(&mut node, competing5, 6, vec![presigned.clone()], 1);
+    node.activate(competing6).unwrap();
+    let renewed_again = node.read_active().unwrap().2;
+    assert_eq!(renewed_again[&slot]["source_sequence"], 2);
+    assert_eq!(renewed_again[&slot]["output_count"], first_state[&slot]["output_count"]);
+    assert_eq!(
+        renewed_again[continuity_v1::MAINTENANCE_KEY]["useful_output_credit"], 0,
+    );
+    assert!(node.lifecycle_task_lease(
+        competing6, bootstrap.signed.manifest.matrix_task, 7
+    ).is_ok());
+    let before = node.read_active().unwrap();
+    drop(node);
+    let restored = Node::open(temp.path(), settings, 1).unwrap();
+    assert_eq!(restored.read_active().unwrap(), before);
+    assert_eq!(restored.state_at(original_renewed).unwrap(), first_state);
+    assert_eq!(restored.state_at(competing5).unwrap(), undone);
+    assert_eq!(restored.state_at(competing6).unwrap(), renewed_again);
+    // Historic Q4 signed bytes and legacy DAA remain unchanged; this is not a
+    // live signer/retransmission/WAN liveness guarantee.
+}
