@@ -7,6 +7,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
 import random
 from pathlib import Path
 from daa_research_oracle import (Lease, asert_target, legacy_retarget,
@@ -191,6 +192,86 @@ def half_life_sensitivity(times: list[int], grid=(3600, 7200, 14400, 28800)) -> 
     return result
 
 
+def stochastic_mining_path(algorithm: str, scenario: str, seed: int,
+                           blocks: int = 160, half_life: int = 7200,
+                           attacker_timestamp_share: float = 0.0) -> dict:
+    """Seeded Poisson research toy: each computed target feeds back into future time.
+
+    The simulated hash rate and uniform lottery have NOT been established for W1.
+    This contains no physical miners, signed lease, P2P or forking network.
+    """
+    if algorithm not in {"legacy", "asert_raw", "asert_mtp"}:
+        raise ValueError("research DAA selector")
+    if scenario not in {"steady", "shock", "oscillating", "maintenance_dropout"}:
+        raise ValueError("research hashrate scenario")
+    if isinstance(seed, bool) or not isinstance(seed, int) or seed < 0:
+        raise ValueError("seed")
+    if not 2 <= blocks <= 4096 or not 3600 <= half_life <= 28800:
+        raise ValueError("block count/half-life")
+    if not 0 <= attacker_timestamp_share <= 1:
+        raise ValueError("timestamp share")
+    rng = random.Random(seed)
+    times = [0]
+    wall = 0.0
+    target = INITIAL
+    intervals = []
+    targets_by_height = []
+    attacker_headers = 0
+    clock_catchups = 0
+    for h in range(1, blocks + 1):
+        if algorithm == "legacy" and h % INTERVAL == 0:
+            target = legacy_retarget(target, times[h - INTERVAL], times[h - 1],
+                                     INTERVAL, SPACING, TARGET_LIMIT)
+        elif h > 1 and algorithm != "legacy":
+            parent_clock = (times[-1] if algorithm == "asert_raw" else
+                            mtp11(list(reversed(times))))
+            target = asert_target(INITIAL, times[0], parent_clock, 1, h,
+                                  SPACING, half_life, TARGET_LIMIT)
+        rate = 1.0
+        if scenario == "shock" and h > 40:
+            rate = 0.2
+        elif scenario == "oscillating":
+            rate = 0.4 if (h // 16) % 2 else 2.0
+        elif scenario == "maintenance_dropout" and h > 64:
+            rate = 0.2
+        expected = SPACING * (INITIAL / target) / rate
+        previous_wall = wall
+        wall += -math.log1p(-rng.random()) * expected
+        now = math.floor(wall)
+        ancestor = list(reversed(times))
+        min_stamp = mtp11(ancestor) + 1
+        stamp = max(now, min_stamp)
+        if rng.random() < attacker_timestamp_share:
+            attacker_headers += 1
+            if h % INTERVAL == 15:
+                stamp = now + 120
+            elif h % INTERVAL == 0:
+                stamp = min_stamp
+        if stamp > now + 120:
+            wall += stamp - (now + 120)
+            now = math.floor(wall)
+            clock_catchups += 1
+        assert valid_time(stamp, ancestor, now, 120)
+        times.append(stamp)
+        intervals.append(wall - previous_wall)
+        targets_by_height.append(target)
+    sorted_intervals = sorted(intervals)
+    return {
+        "algorithm": algorithm, "scenario": scenario, "seed": seed,
+        "blocks": blocks, "half_life": half_life,
+        "timestamp_controlled_headers": attacker_headers,
+        "clock_catchups": clock_catchups,
+        "complete_header_time_validations": blocks,
+        "elapsed_seconds": round(wall, 4),
+        "mean_interval_seconds": round(wall / blocks, 4),
+        "p95_interval_seconds": round(sorted_intervals[math.ceil(0.95 * blocks) - 1], 4),
+        "max_interval_seconds": round(sorted_intervals[-1], 4),
+        "last_target_vs_initial": round(target / INITIAL, 8),
+        "total_required_work": str(sum(map(work, targets_by_height))),
+        "real_w1_proofs": 0, "real_operators": 0,
+        "scope": "seeded-Poisson-synthetic-with-target-feedback-no-W1-or-network",
+    }
+
 def run_campaign() -> dict:
     warp = fabricated_endpoint_schedule()
     warp_targets = targets(warp)
@@ -220,7 +301,7 @@ def run_campaign() -> dict:
         for name, curves in control.items()
     }
     return {
-        "schema": "trnm-lease-daa-research-v1",
+        "schema": "trnm-lease-daa-research-v2",
         "scope": "synthetic-deterministic-integer-oracle-only",
         "production_qualified": False,
         "native_w1_proofs": 0,
@@ -234,6 +315,13 @@ def run_campaign() -> dict:
                   "timewarp_count": 80, "fixed_anchor_height": 1},
         "lease_model_negative_controls": lease_scenarios(),
         "source_dropout_model": source_outage_toy(),
+        "stochastic_feedback_probes": {
+            scenario: {
+                algorithm: stochastic_mining_path(algorithm, scenario, 20261025, 160, 7200, 0.3)
+                for algorithm in ("legacy", "asert_raw", "asert_mtp")
+            }
+            for scenario in ("steady", "shock", "oscillating", "maintenance_dropout")
+        },
         "partition_heavier_chain_example": partition_selection_toy(),
         "selfish_withholding_toy": [selfish_withholding_toy(share, 0.5, 20000, 1256)
                                   for share in (0.0, 0.2, 0.3, 0.4, 1.0)],

@@ -8,7 +8,8 @@ from daa_research_oracle import (
 from daa_lease_campaign import (
     HALF_LIFE, INITIAL, TARGET_LIMIT, fabricated_endpoint_schedule,
     half_life_sensitivity, lease_scenarios, partition_selection_toy,
-    selfish_withholding_toy, source_outage_toy, run_campaign, targets, workload_times,
+    selfish_withholding_toy, source_outage_toy, stochastic_mining_path,
+    run_campaign, targets, workload_times,
 )
 
 
@@ -112,6 +113,27 @@ class JointBoundaryTests(unittest.TestCase):
         self.assertFalse(source_outage_toy()["3_controllers_unavailable"]["leased_task_available"])
         self.assertEqual(partition_selection_toy()["selected"], "A")
         self.assertFalse(partition_selection_toy()["actual_heavier_fork_reorg"])
+
+    def test_stochastic_target_feedback_validity_and_repeatability(self):
+        for scenario in ("steady", "shock", "oscillating", "maintenance_dropout"):
+            for algorithm in ("legacy", "asert_raw", "asert_mtp"):
+                with self.subTest(scenario=scenario, algorithm=algorithm):
+                    x = stochastic_mining_path(algorithm, scenario, 20261025, 160, 7200, 0.3)
+                    self.assertEqual(x, stochastic_mining_path(
+                        algorithm, scenario, 20261025, 160, 7200, 0.3))
+                    self.assertEqual(x["complete_header_time_validations"], 160)
+                    self.assertEqual(x["real_w1_proofs"], 0)
+                    self.assertGreater(x["elapsed_seconds"], 0)
+                    self.assertGreater(x["p95_interval_seconds"], 0)
+
+    def test_stochastic_target_feedback_refuses_bad_inputs(self):
+        for patch in ({"algorithm": "unknown"}, {"scenario": "unknown"},
+                      {"attacker_timestamp_share": 1.2}, {"blocks": 0},
+                      {"half_life": 0}, {"seed": -1}):
+            args = {"algorithm": "legacy", "scenario": "steady", "seed": 33}
+            args.update(patch)
+            with self.subTest(args=args), self.assertRaises(ValueError):
+                stochastic_mining_path(**args)
 
     def test_report_preserves_unaccepted_boundaries(self):
         report = run_campaign()

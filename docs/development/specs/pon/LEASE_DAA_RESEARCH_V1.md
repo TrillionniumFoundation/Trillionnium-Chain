@@ -123,3 +123,24 @@ Research additions to the existing Q4/M06 and Revision12 native suites:
 - The Python Q4 model previously required `expired` or `revoked` status for slot reuse, while the native `open` checks only `previous.available_until < height`. The research model now follows the native rule and still validates diagnostic statuses. This does not change the original Q4 signed bytes, `open`, fee, nonce, eligibility or retention semantics.
 
 The new Rust selectors are **NOT_RUN** in this isolated execution host (Rust toolchain and full project checkout are absent); no compile/Clippy/native proof success is claimed. The previous 11 Python research controls must be rerun on the final exact source. Do not promote P0-A, P0-B, P0-C, P1-C or P2 based on file presence or a test declaration. Production remains disabled.
+
+## Deterministic Poisson feedback comparison (research v2 only)
+
+The previously fixed 80-header time-warp schedule and equal-header half-life
+curves are preserved. A separate `stochastic_mining_path` model now feeds each
+legacy/raw-ASERT/MTP-ASERT target back into subsequent exponentially distributed
+waiting times. Fixed seed 20261025 runs 160 simulated headers with four
+effective-hashrate scenarios: steady; abrupt fivefold reduction; periodic
+0.4x/2x oscillation; and a simulated loss of 80% of miners when lease
+sources disappear while genesis maintenance remains available. An optional
+30% timestamp-controller toy varies some endpoint timestamps within the original
+MTP11 and future-skew constraints. Every produced time is checked; no valid W1
+proof, independent miner, signed task, network fork, GPU cost or confirmation
+security follows.
+
+The report schema advances from `trnm-lease-daa-research-v1` to `v2` because
+the stochastic distributions and their assumptions are additional fields.
+Legacy reports remain bound to their original schema/source; do not rewrite
+their bytes or infer superiority from single-seed p95. The added Python
+selectors only test input denial, timestamp validity and seed repeatability.
+P1-B adversarial and P2 independent operational acceptance remain open.
