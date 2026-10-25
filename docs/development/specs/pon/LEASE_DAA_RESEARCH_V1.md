@@ -269,7 +269,7 @@ or revision12 historical byte semantics.
 
 The public, read-only forecast_q4_renewal_window API receives old/new
 canonical lease values, a prospective inclusion height and bounded assumed
-queue-delay/margin. It reports timing advice only: AwaitSignedWindow, Candidate,
+queue-delay/margin. It reports timing advice only: AwaitSignedWindow, WindowOpenByTime,
 AtRisk or Expired. It does not verify dual signatures, attest availability,
 guarantee inclusion, read an authoritative Node generation or issue an
 execution capability. The original owner must re-read every real parent,
