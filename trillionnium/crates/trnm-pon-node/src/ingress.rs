@@ -1371,6 +1371,12 @@ fn serve_inner(
             "DEVELOPMENT_LOOPBACK_ONLY",
         )?;
     }
+    // A signed allowlist still does not pay verification CPU. Remote legacy
+    // authenticated listeners must choose the pre-existing bounded transport
+    // AdmissionPolicy; the unpriced authenticated-only transport is local-only.
+    if !listener_address.ip().is_loopback() {
+        ensure(admission.is_some(), "DEVELOPMENT_REMOTE_ADMISSION_REQUIRED")?;
+    }
     // An allowlisted peer is not a CPU resource owner. All remotely exposed
     // legacy authenticated listeners must join the SAME administrator-owned
     // host cgroup as public V3 before accepting a single socket. A service
@@ -3456,18 +3462,32 @@ mod tests {
             Err(_) => {}
             Ok(None) => panic!("nonloopback must not run without host budget"),
         }
-        if let Err(expected) = probe {
+        // Even when an administrator provisioned a valid cgroup, the
+        // unaffordable no-cookie authenticated-only WAN transport is denied.
+        {
             let dir = tempfile::tempdir().unwrap();
             let settings = Settings::development(Some(now().unwrap() - 100)).unwrap();
             let (authentication, _) = authentication_fixture(&settings);
             let node = Node::open(dir.path(), settings, 2).unwrap();
             let listener = TcpListener::bind(remote).unwrap();
             let error = serve_authenticated(
-                listener,
-                node,
-                Duration::from_secs(1),
+                listener, node, Duration::from_secs(1),
+                Arc::new(AtomicBool::new(true)), authentication,
+            ).unwrap_err();
+            assert_eq!(error.to_string(), "DEVELOPMENT_REMOTE_ADMISSION_REQUIRED");
+        }
+        // The priced, authenticated legacy WAN route requires the original
+        // host parent too; no second identity-scoped host budget is allowed.
+        if let Err(expected) = probe {
+            let dir = tempfile::tempdir().unwrap();
+            let settings = Settings::development(Some(now().unwrap() - 100)).unwrap();
+            let (authentication, _) = authentication_fixture(&settings);
+            let node = Node::open(dir.path(), settings, 2).unwrap();
+            let listener = TcpListener::bind(remote).unwrap();
+            let error = serve_authenticated_protected(
+                listener, node, Duration::from_secs(1),
                 Arc::new(AtomicBool::new(true)),
-                authentication,
+                authentication, AdmissionPolicy::development(),
             ).unwrap_err();
             assert_eq!(error.to_string(), expected.to_string());
         }
