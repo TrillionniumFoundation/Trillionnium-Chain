@@ -805,3 +805,50 @@ payloads and W1 proof verification remain unchanged on permitted loopback
 listeners; migration to the V3 CPU-metered interface must be explicit.
 Other native authenticated/protected entrypoints still require independent
 host-budget evaluation and P1 remains OPEN.
+
+
+### P1/P3 additive defense and original resource-owner integration
+
+The original CPU-domain implementation (V3 'scalar_cpu') is reused by a new
+plain-W1 Submit-only native seam 'ingress::dispatch_shared_with_metered_w1'.
+It retains all known Node context/owner checks and one actual
+'ServiceMutationCpuDomain' for both complete W1 verification and M06 execution
+and its scoped worker intervals. Results preserve the **original native
+outcome** and return CPU settlement separately. An invalid Transcript/Product
+cost still debits the owner; if live accounting becomes Unknown, no fabricated
+credit or success is issued. The Node pins its first original CPU-domain
+identity and rejects a later newly created domain for the same owner.
+
+This seam is **opt-in**, and was not silently wired into other independently
+versioned network profiles. It is tested for valid and invalid statements,
+shared cloned budget, new-domain refusal and unchanged prior state; no cross-
+process host owner, physical hard preemption or independently operated WAN
+review has been executed. It does not close P1.
+
+A separate optional direct-mapped math-only cache in
+'trnm-crypto-primitives/src/pon_work/rejection_cache.rs' stores only
+fully replayed immutable 'Transcript' or 'Product' failures. Bounds: 1..256
+slots and positive TTL at most 30 seconds, with complete profile, challenge,
+task, target and proof bytes bound in the key. Expired/poisoned/evicted entries
+fall back to unchanged full verification. A hit invokes the caller's
+cancellation checkpoint and can return **only a WorkError**, never
+VerifiedWork, block application, task authority or chainwork. Present parent,
+time, eligibility, and application context must still be verified by the
+existing Node owner. Different bogus traces miss and still cost one full
+replay each; a fresh false trace can still starve the original CPU budget.
+
+The V3 'PublicServer::with_w1_rejection_cache' builder selects this option
+explicitly. Its default is **off**; signed V3 policy identity, task wire,
+W1/PNW1 proof bytes, target, W1 ticket/chainwork and runtime activation
+remain unchanged. This is a bounded local optimization for repeated invalid
+bytes, **not** a remedy for cheap novel false transcripts, Sybil identities,
+or host-wide CPU fairness. Public rollout needs a separate reviewed
+configuration/evidence scope.
+
+### P5 W2-A concrete research outcome
+
+See [the 512-leaf W2-A sampled Merkle prototype](W2_A_RESEARCH.md).
+A real one-leaf-corrupted committed transcript escapes a small deterministic
+sample, with normal-looking authenticated sampled openings. Hence this
+scheme is not an accepted succinct proof, and no passing filtered statement
+may grant consensus authority. W2-B/W2-C/P6 independent acceptance stay OPEN.
