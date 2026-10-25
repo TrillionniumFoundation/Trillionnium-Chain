@@ -43,6 +43,24 @@ class W2CResearchTests(unittest.TestCase):
         self.assertEqual(result['outcome'],'SECURITY_TARGET')
         self.assertFalse(result['w1_replayed'])
 
+    def test_one_global_security_ticket_cannot_price_two_independent_receivers(self):
+        # This is an intentional negative control, not a service admission test:
+        # W2-C's globally transferable security ticket has no receiver, cookie
+        # issuance epoch or single-use identity. The same ticket can be checked
+        # on two different nodes and each pays full W1 replay CPU.
+        candidate,_=S.search(self.header,self.bad,8,65536)
+        self.assertIsNotNone(candidate)
+        first=S.validate(candidate,self.task,8)
+        second=S.validate(candidate,self.task,8)
+        self.assertEqual(first['outcome'],'W1_TRANSCRIPT')
+        self.assertEqual(second['outcome'],'W1_TRANSCRIPT')
+        self.assertTrue(first['w1_replayed'])
+        self.assertTrue(second['w1_replayed'])
+        self.assertFalse(first['verified_work'])
+        self.assertFalse(second['verified_work'])
+        # Public V3's server-bound one-use Cookie is a SEPARATE admission
+        # mechanism; it must not be replaced by this research ticket.
+
     def test_exact_header_and_proof_commitment_and_capped_search(self):
         changed_h=self.header[:-1]+bytes([self.header[-1]^1])
         changed_p=self.proof[:-1]+bytes([self.proof[-1]^1])
