@@ -682,3 +682,54 @@ not request refusal counts. The finite localhost three-phase control accepted al
 180 honest Submit/Head/History requests while cached and distinct-fork Product
 mutations were refused; it does not establish unknown-caller Sybil fairness or
 restore the separately unexecuted remote mixed-hostile qualification.
+
+
+## Four from-zero W1 transcripts: executable P0 boundary
+
+The existing public V3 from-zero attack and CPU-domain regressions are retained.
+An additional P0 case now constructs **four different** ticket-valid false traces
+under one challenge, canonical A/B, task and target, without calling a real W1
+producer or training. These test inputs are not asserted to be the user's earlier
+four unprovided raw payloads.
+
+* The independent Python oracle method
+  'FourFromZeroTicketRegression.test_four_ticket_hits_replay_and_reject' in
+  'formal/pon-nakamoto-v1/test_work_precheck.py' fixes challenge bytes 00..1f
+  and target 7f followed by 31 ff bytes. Its four winning trial nonces are
+  0, 1, 2, 3. Each must pass the cheap filter, perform one actual arithmetic
+  replay and fail with TRANSCRIPT.
+* The native method
+  'four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged' in
+  'trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs' selects
+  a real Node genesis maintenance context, then searches four distinct trace
+  claims under **that exact same native header challenge and target**.
+  Each is fully rejected by the reference, default and limb verifiers;
+  the reference path must visit all 512 transcript tiles, reach neither
+  product nor VerifiedWork, and Node admission must return WORK:Transcript
+  with no block, active-head, stats or cold-reopen change.
+* The existing 'scripts/ci/run_from_zero_native.py' owner now requires this
+  fifth named native test, while preserving its original four test selectors.
+  The native test prints a source-scoped report with per-case CPU and wall-clock
+  times. 'TRNM_W1_FOUR_NATIVE_REPORT' optionally saves a new create-only
+  raw JSON file; clocks that are unavailable remain null. Those are newly
+  observed costs, not fabricated historical CPU measurements.
+
+A mathematical negative test and a correctly rejected invalid block are not
+proof of public denial-of-service resistance.
+
+## P1–P6 remaining acceptance, without new authorities
+
+| Phase | Existing owner | Required evidence (not conferred by this patch) |
+| --- | --- | --- |
+| P1 | M04/M15 | Enumerate all externally reachable complete W1 verification callers and bind an actual shared host/process CPU and memory owner. Key rotation, different listener process, process restart and cancellation cannot mint fresh unaudited mutation capacity. |
+| P2 | M04/M17 | Freeze W1 target, V3 Cookie bits and expiry, full actor/source identities and CPU/GPU/hash rates. Measure whole false-trace producer, all misses, honest Cookie cost, receive/decode/W1/M06 costs and tail latency under identical resource limits; estimate no hardware-independent minimum from a single CPU. A signed Cookie revision needs a fresh versioned profile. |
+| P3 | M04/M15/M17 | Cross-connection cookie replay, caller-key rotation, distinct false traces, valid-work/false-StateRoot, benign requests and branch recovery share one real budget. Busy/Deferred/local cancellation never imply Invalid or negative chainwork. |
+| P4 | M17/A03 | In **three runs per each of three attack modes**, demonstrate 3/3 timely client-confirmed honest rounds per run under preregistered attacker and host budgets; include all failures, Busy and censored requests, unchanged task/challenge and complete raw receipts. Local/same-admin runs are not independent WAN acceptance. |
+| P5 | M01/M02/M17 | Compare W2-A Merkle intermediate-commitment sampling, W2-B complete cryptographic computation proof and W2-C explicitly separated anti-Sybil PoW. Bind complete original statement, unique lottery ticket, replay/fork choice and total generation plus validation cost. Freivalds product checks alone do not authenticate the false transcript. |
+| P6 | M01/M02/M17 | An independent reviewer implements a third verifier from a frozen new version's statement and byte grammar, tests hidden bad/valid witnesses and grinding/replay, and signs an environment/source-bound opinion. No internal vector or single assistant review can supply independence. |
+
+All existing W1 signed domain, 49,188-byte proof, challenge, ticket formula,
+fork choice and protocol acceptance remain unchanged. Admitting public work
+is a *resource* decision; only complete verification confers the existing
+VerifiedWork result. New W2 logic must use a separately governed version,
+consensus context and external review, not an implicit fallback.
