@@ -1,0 +1,26 @@
+{
+  "schema": "trnm-w2-research-vectors-v0",
+  "authority": "none",
+  "reference_claim": "Python research bytes only; not independent cryptographic acceptance",
+  "w2b": {
+    "challenge_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+    "task_hex": "cac3c5379382194f355a87a5625a46d86241f0d491305a21c95a5d1c795e90da",
+    "target_hex": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "w1_proof_sha256": "b6d53b8205e0f9c1054541722fd517b73dab3235810fa65195b8074f153ffb04",
+    "w1_trace_hex": "01c964f77a54e08bf174888a15c25ed0aea7756ced4b90bb8bebc26745b0d46e",
+    "w1_product_sha256": "32d788ca02e1244ec9378419999bab2aac3856d65a826982be4397af762459fd",
+    "tile_witness_sha256": "c332a6fc521faf6a8d979b942449596f0e3fa89fd07e9c0c9f308be4537fce7e",
+    "tile_witness_bytes": 131072,
+    "w2a_merkle_root_hex": "a4119624c22377181af0ad24c6b22ec67ca7c113360c3cc0f180b55448ada107",
+    "w2b_statement_hex": "1aa3ba12f447b66a2a9b3bea15786493eff62cd97fbfdb968067683bf78039d7"
+  },
+  "w2c": {
+    "header_sha256": "bf9f9e1a7443cae2f2b2da449f197d10dc9eab89d7426886c81e142df41a6d37",
+    "fake_proof_sha256": "3d24f79389c76cd71ad16455709878a740f18af1da851498288ef2001dd6cd49",
+    "proposal_hex": "4068356fd3bc37585ad640e23e1040cd96c2b60a9ed3b987854f0f2469637589",
+    "security_ticket_nonce0_hex": "b2a270922619282e262ca045856a413f0b33ac0400d91045bdc1ec8a40a79fb6",
+    "security_ticket_nonce1_hex": "51edd0c15496b7e132cbb30e4111d32d33c9407482cfa4432b5c92fe4616bee1",
+    "bits8_nonce0_hit": false,
+    "w1_proof_bytes": 49188
+  }
+}
