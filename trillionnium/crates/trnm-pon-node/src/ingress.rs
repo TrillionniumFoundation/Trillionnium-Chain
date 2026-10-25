@@ -2106,6 +2106,10 @@ pub fn sync_from(
     page_budget: usize,
 ) -> Result<Hash> {
     ensure((1..=4096).contains(&page_budget), "SYNC_BUDGET")?;
+    // A verified peer identity is not a CPU or M06 State budget.
+    // Until an explicitly metered WAN importer owns every W1 replay and
+    // durable effect, historical sync through this entry is loopback-only.
+    ensure(address.ip().is_loopback(), "SYNC_UNMETERED_LOOPBACK_ONLY")?;
     for _ in 0..page_budget {
         let request = Request::History {
             tip: hex::encode(tip),
@@ -2139,6 +2143,10 @@ pub fn sync_from_authenticated(
     replay_nonce: &mut u64,
 ) -> Result<Hash> {
     ensure((1..=4096).contains(&page_budget), "SYNC_BUDGET")?;
+    // A verified peer identity is not a CPU or M06 State budget.
+    // Until an explicitly metered WAN importer owns every W1 replay and
+    // durable effect, historical sync through this entry is loopback-only.
+    ensure(address.ip().is_loopback(), "SYNC_UNMETERED_LOOPBACK_ONLY")?;
     let settings = node.settings().clone();
     for _ in 0..page_budget {
         let value = call_authenticated(
@@ -2174,6 +2182,10 @@ pub fn sync_from_authenticated_durable(
     client: &AuthenticatedClient,
 ) -> Result<Hash> {
     ensure((1..=4096).contains(&page_budget), "SYNC_BUDGET")?;
+    // A verified peer identity is not a CPU or M06 State budget.
+    // Until an explicitly metered WAN importer owns every W1 replay and
+    // durable effect, historical sync through this entry is loopback-only.
+    ensure(address.ip().is_loopback(), "SYNC_UNMETERED_LOOPBACK_ONLY")?;
     for _ in 0..page_budget {
         let value = call_authenticated_durable(
             node,
