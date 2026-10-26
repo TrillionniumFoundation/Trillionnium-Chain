@@ -61,3 +61,25 @@ lifecycle, authenticated M07 cold-reopen, independent attack hardware, or
 real network service measurement is claimed. This tests a *known*
 cheap-false-transcript property; no local wall-clock ratio can close P0-C.
 The original P0-A/B/P0-C, P1-C and P2 blockers stay OPEN.
+
+## Follow-up half-target from-zero falsification (same local host)
+
+The new `TestHalfRangeFromZeroForgedTicketVsFullVerification` constructs
+candidate witnesses using only the published 64x64 A/B, a zero product and
+freshly hashed invented transcript digests. It **does not** first compute
+a valid W1 proof. For each synthetic challenge it searches until the
+*same half-range dev target shape* passes the actual cheap Ticket predicate,
+and then requires the complete independent verifier to return
+`TRANSCRIPT`, never `VerifiedWork`.
+
+Actual run on the Go 1.23.2 container: **64/64** fabricated tickets from
+**112** total hash trials; generation including all public A/B witness assembly
+and precheck took **12.117174 ms wall**, and 64 complete late rejections
+took **82.846352 ms wall**, ratio **6.84x** in that finite sample.
+This is stronger than the earlier all-FF diagnostic because all 64 claimed
+tickets satisfy the development half-range target, but all have zero valid
+chainwork. The challenges are still synthetic, not genuine native signed
+headers; wall clock is not the original paid native service CPU clock.
+This observation cannot qualify honest public-miner service, Sybil costs,
+hardware advantage or minimum valid producer difficulty. These blockers
+remain OPEN.
