@@ -71,11 +71,32 @@ def run(binary: Path, count=N_CASES, seed=FIXTURE_SEED):
             actual = native.stdout.strip()
             match = native.returncode == 0 and actual == want
             kind = "target"
-        except ValueError:
+        except ValueError as error:
             want = None
             actual = native.stderr.strip()
-            match = native.returncode != 0 and actual == "ASERT_RESEARCH_RANGE"
-            kind = "rejected-range"
+            # A parameter refusal is not an i128 range overflow. In the Go
+            # reference these are distinct observable error domains; do not
+            # reclassify a bad anchor/height/zero half-life as a range event.
+            message = str(error)
+            if message in (
+                "anchor target", "pow limit", "ASERT anchor exceeds limit",
+                "ASERT heights/spacing/half-life",
+            ):
+                expected_error = "ASERT_RESEARCH_PARAMETERS"
+                kind = "rejected-parameters"
+            elif message in (
+                "ASERT ideal span overflows i128",
+                "ASERT deviation overflows i128",
+                "ASERT exponent overflows i128",
+            ):
+                expected_error = "ASERT_RESEARCH_RANGE"
+                kind = "rejected-range"
+            else:
+                # Go flags/hex codecs have different input grammars from Python
+                # scalar objects. Refuse ambiguous probes rather than credit a
+                # match under a guessed error kind.
+                raise ValueError("UNCOMPARABLE_ASERT_INPUT") from error
+            match = native.returncode != 0 and actual == expected_error
         if not match:
             raise RuntimeError(f"independent oracle mismatch case={i} input={x} go_rc={native.returncode} got={actual!r} expected={want!r}")
         rows.append({"case": i, "kind": kind, "go_result": actual})
