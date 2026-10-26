@@ -22,7 +22,7 @@ class StatelessReceiverAdmission:
 
     def __init__(self, receiver: bytes, secret: bytes, epoch: bytes,
                  *, lifetime_ms: int = 2000, capacity: int = 64,
-                 entropy=None):
+                 entropy=None, paid_spends=None):
         self.receiver = bytes32(receiver, 'RECEIVER')
         self.secret = bytes32(secret, 'SECRET')
         self.epoch = bytes32(epoch, 'EPOCH')
@@ -36,6 +36,14 @@ class StatelessReceiverAdmission:
         self.spent: dict[bytes, int] = {}  # exact paid grant -> original expiry
         self.last_now_ms = 0
         self.lock = threading.RLock()
+        # Optional, RESEARCH ONLY. This is the SAME already selected durable
+        # paid-only owner; a clone with a different local file is not safe.
+        if paid_spends is not None:
+            expected = H('w2c-stored-owner-v1', self.receiver, self.epoch, self.secret)
+            if (paid_spends.context != expected
+                    or paid_spends.capacity != self.capacity):
+                raise ValueError('OWNER_CONTEXT_MISMATCH')
+        self.paid_spends = paid_spends
 
     def _clock(self, now_ms: int):
         exact_u64(now_ms, 'CLOCK')
@@ -52,6 +60,8 @@ class StatelessReceiverAdmission:
 
     def pending_paid(self) -> int:
         with self.lock:
+            if self.paid_spends is not None:
+                return self.paid_spends.pending_paid()
             return len(self.spent)
 
     def offer(self, proposal: bytes, caller: bytes, bits: int, now_ms: int) -> Grant:
@@ -102,6 +112,10 @@ class StatelessReceiverAdmission:
             # MAC binds the exact grant. One paid ticket spends once, regardless
             # of caller key, retransmission, or other signed connection identity.
             key = H('w2c-stateless-paid-grant-v1', payload, mac)
+            if self.paid_spends is not None:
+                # SQLite commits this original claim before W1 starts. No
+                # second in-memory spent table can bypass the shared owner.
+                return self.paid_spends.claim(key, grant.expires_ms, now_ms)
             if key in self.spent:
                 return 'REPLAY'
             # Fail closed on saturation *before* expensive W1 replay.
