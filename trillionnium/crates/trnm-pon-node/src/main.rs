@@ -2087,6 +2087,14 @@ fn run() -> Result<Value> {
             if let Some(kernel) = &host_kernel {
                 kernel.verify()?;
             }
+            // One Node-bound cold CPU epoch across all imported History pages
+            // and its existing V3 owner; the trusted peer never mints credit.
+            if !address.ip().is_loopback() {
+                node.prepare_remote_sync_cpu_domain(
+                    address,
+                    Instant::now() + Duration::from_secs(2),
+                )?;
+            }
             let tip = digest(need(&args, "--tip")?)?;
             let after = args
                 .get("--after")
