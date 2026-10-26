@@ -88,3 +88,25 @@ and versioned migration/reorg tests, plus complete matched resource
 costs on real CPU/GPU/ASIC hardware. P1-P4 resource fairness and
 A03 physical attack cohorts remain separate. No production
 activation or automatic hash-only/BFT fallback is authorized.
+
+
+## Exact prototype-bound second readback
+
+The bounded cost harness now records the current W2-D **source Git blob**
+('cc4feae72ed0f32f3aea3337ab82bb0b215e7f95') in addition to the
+fixed independent W1 oracle source and fails closed if a supposedly
+valid W1 producer and W2-D research verifier ever disagree. A second
+source-bound local run (same two classes, seed, target and sample size)
+saved raw JSON SHA256
+'825daa63fb819c3be68a85a46b70d6dc6f51881c9941e0c1f3fb6099b93048c0'.
+
+The second single-process CPU observations were:
+- Zero: original W1 legal verify 75.9 ms, W2-D legal verify 35.9 ms,
+  self-consistent false tape rejection 17.6 ms.
+- Dense: original W1 legal verify 76.5 ms, W2-D legal verify 37.6 ms,
+  self-consistent false tape rejection 18.5 ms.
+
+Original first-run measurements remain preserved above. Host contention,
+sampling noise and benchmark order make these observations nonexclusive.
+Neither faster Python means faster Rust nor does a smaller rejection
+cost prove attacker-side payment or accepted security.
