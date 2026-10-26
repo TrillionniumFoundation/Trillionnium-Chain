@@ -989,6 +989,23 @@ mod tests {
             &mut |_| Ok(()),
         )
         .is_err());
+        let cancelled = indexed_heights_for_daa_research(
+            &db,
+            ctx,
+            ids[129],
+            &[129, 65],
+            READ_SQL_BUDGET,
+            &mut |count| {
+                if count >= 3 {
+                    Err("ASERT_INDEX_CANCELLED".into())
+                } else {
+                    Ok(())
+                }
+            },
+        )
+        .unwrap_err();
+        assert_eq!(cancelled.to_string(), "ASERT_INDEX_CANCELLED");
+
         db.execute(
             "UPDATE ancestry_jump SET seal=? WHERE block=? AND level=6",
             params![[0_u8; 32].as_slice(), ids[129].as_slice()],
