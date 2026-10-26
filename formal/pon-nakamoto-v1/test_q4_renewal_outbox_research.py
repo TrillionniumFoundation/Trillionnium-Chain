@@ -192,4 +192,67 @@ class RenewalOutboxTests(unittest.TestCase):
         self.assertEqual(transaction_id(raw),manual)
         self.assertNotEqual(transaction_id(raw),h(raw))
 
+
+    def test_raw_observation_append_cannot_bypass_full_canonical_grammar(self):
+        # Directly call the internal append boundary to prove that even a
+        # future owner bypassing observe() cannot journal unparseable facts.
+        with self.open() as db:
+            key = db.prepare(intent())
+            db.dispatch_unknown(key)
+            good = observation().wire()
+            variants = []
+            for start, length in ((0, 8), (8, 32), (81, 32)):
+                bad = bytearray(good)
+                bad[start:start+length] = bytes(length)
+                variants.append(bytes(bad))
+            missing = bytearray(good)
+            missing[49:81] = bytes(32)
+            variants.append(bytes(missing))
+            wrong_tag = bytearray(good)
+            wrong_tag[48] = 5
+            variants.append(bytes(wrong_tag))
+            variants += [good[:-1], bytearray(good)]
+            for malformed in variants:
+                with self.subTest(malformed=str(malformed[:9])):
+                    with self.assertRaises(OutboxError):
+                        db._event(key, 'OBSERVED_INCLUDED', malformed)
+            self.assertEqual(db.audit(), 1)
+            db.observe(key, observation())
+            self.assertEqual(db.audit(), 2)
+
+    def test_cold_replay_rejects_rehashed_semantically_invalid_observations(self):
+        # This is a parser/grammar boundary, not an adversarial hash-chain
+        # security claim. Recompute the local row checksum deliberately to
+        # ensure the audit does not accept malformed fields on checksum alone.
+        from q4_renewal_outbox_research import EVENT_DOMAIN
+        with self.open() as db:
+            key = db.prepare(intent())
+            db.dispatch_unknown(key)
+            db.observe(key, observation())
+        with sqlite3.connect(self.file) as raw:
+            n, ident, kind, original, prev, previous_digest = raw.execute(
+                'SELECT ordinal,intent_id,kind,observation,prev,digest '
+                'FROM q4_outbox_events_v1 WHERE ordinal=2'
+            ).fetchone()
+            for start, size in ((0,8),(8,32),(49,32),(81,32)):
+                malformed = bytearray(original)
+                malformed[start:start+size] = bytes(size)
+                bad = bytes(malformed)
+                digest = h(EVENT_DOMAIN + n.to_bytes(8,'big') + ident
+                           + kind.encode('ascii') + bad + prev)
+                raw.execute('UPDATE q4_outbox_events_v1 '
+                            'SET observation=?,digest=? WHERE ordinal=2',
+                            (bad, digest))
+                raw.commit()
+                with self.subTest(start=start):
+                    with self.assertRaisesRegex(OutboxError, 'OBSERVATION_'):
+                        self.open()
+                raw.execute('UPDATE q4_outbox_events_v1 '
+                            'SET observation=?,digest=? WHERE ordinal=2',
+                            (original, previous_digest))
+                raw.commit()
+        with self.open() as db:
+            self.assertEqual(db.audit(), 2)
+            self.assertTrue(db.status(key)['dispatch_unknown'])
+
 if __name__ == '__main__': unittest.main()
