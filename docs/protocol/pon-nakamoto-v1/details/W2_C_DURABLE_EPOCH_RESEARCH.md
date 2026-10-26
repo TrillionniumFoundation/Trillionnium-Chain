@@ -110,3 +110,54 @@ status is not used as a blocker or as an acceptance receipt.
 Independent activation requires a new versioned policy, original owner
 integration, actual resource observations and governed release. No hidden
 fallback to a different consensus mechanism is allowed.
+
+
+## P2 original-W1 cost and durable issuer overhead: four finite CPU samples
+
+Added 'formal/pon-nakamoto-v1/w2c_durable_cost.py', which freezes the
+same 318-byte research header, 64x64 zero A/B/C, task, W1 target
+'7f' + 31 'ff' bytes and fake transcript generation. Every PNW1
+ticket attempt (including misses) is retained. Each receiver sample
+performs an independently bound durable W2-C grant, complete cost-ticket
+search, synchronous SQLite paid commit, exact paid replay refusal,
+the **original Python scalar W1** false-transcript rejection and
+ordinary epoch rotation. Every case reports actual process CPU and wall
+timestamps; the standalone hash loop and issuer are not a V3 handshake.
+
+| W2-C bits / sample | False W1 target trials | Cost-ticket hashes | Attacker W2 search CPU ms | Issuer/paid CPU ms | Full receiver W1 rejection CPU ms |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| 8 / 0 | 2 | 84 | 0.2164 | 0.0958 / 0.3523 | 73.3991 |
+| 8 / 1 | 2 | 114 | 0.3039 | 0.0948 / 0.2585 | 76.5749 |
+| 12 / 0 | 2 | 1,058 | 2.5625 | 0.0806 / 0.2864 | 72.3908 |
+| 12 / 1 | 2 | 8,868 | 21.1148 | 0.0831 / 0.4596 | 73.1053 |
+
+Each fake W1 proof was also independently generated in about 0.66–0.73 ms
+of Python process CPU; this is a **separate numerator**, not zero effort.
+Issuer/paid costs are **defender** costs and must not be added to attacker
+search CPU. The W1 verdict was 'TRANSCRIPT' in all four cases; all
+Chainwork and public-activation fields remain false. The finite research
+report sha256 is:
+'3ed3a0a259902ba53ca5d459a62d73760f03bfe377b3c2c5291a73faf8c89379'.
+
+Reproduce with a new exclusive output path:
+
+    python3 -B formal/pon-nakamoto-v1/w2c_durable_cost.py \
+        --bits 8 12 --samples 2 --cap 65536 \
+        --out /unique/empty/filename.json
+
+The analyzer bounds samples to 1..16, cost-ticket bits to 8..20 and
+search attempts to 1..1,048,576, rejects a duplicate bit arm and keeps
+exhausted costs separately. No fixed CPU-/GPU-independent hardness lower
+bound, fork-choice activation or attack-service SLA is inferred from
+these four Python-only cases. The added two cost-report tests expand
+the isolated local suite to **14/14 passed**. The new source blob is
+'d231675b41a8c0cb36be8aa5ef4e3282eeaa8849' and latest test blob is
+'53af98b551886c3c2d9086248721aaf9e0e0a50e'.
+
+**Security verdict remains HOLD_NO_GO**. These observations confirm that
+8-bit W2-C tickets can be hundreds of times cheaper in this Python setup
+than one expensive transcript refusal, even after adding a durable
+paid record. The two 12-bit samples vary substantially; selecting bits
+from a finite winning sample would be an invalid hardness/fairness claim.
+GPU/ASIC cost, actual V3 signed-cookie overhead, multi-receiver network,
+operator economics and independent attack/cryptography signoff remain OPEN.
