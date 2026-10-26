@@ -2849,6 +2849,10 @@ pub struct PublicClientMetrics {
     pub construction_ns: u64,
     pub challenge_ns: u64,
     pub solution_search_ns: u64,
+    // Additive native-only CPU field. Skip the unchanged serialized V3
+    // PublicClientMetrics schema; a separate opt-in object exports it.
+    #[serde(skip_serializing)]
+    pub solution_search_thread_cpu_ns: Option<u64>,
     pub solution_trials: u64,
     pub solution_found: bool,
     pub solution_body_response_ns: u64,
@@ -2880,6 +2884,7 @@ pub struct PublicClientCpuObservation {
     pub solution_trials: u64,
     pub solution_found: bool,
     pub solution_search_wall_ns: u64,
+    pub solution_search_thread_cpu_ns: Option<u64>,
     pub failed_stage: Option<PublicClientStage>,
     pub native_server_cpu_known: bool,
     pub gpu_cpu_equivalence_assumed: bool,
@@ -2908,6 +2913,7 @@ pub fn call_public_protected_v3_with_cpu_observation(
         solution_trials: metrics.solution_trials,
         solution_found: metrics.solution_found,
         solution_search_wall_ns: metrics.solution_search_ns,
+        solution_search_thread_cpu_ns: metrics.solution_search_thread_cpu_ns,
         failed_stage: metrics.failed_stage,
         native_server_cpu_known: false,
         gpu_cpu_equivalence_assumed: false,
@@ -2986,6 +2992,7 @@ fn call_public_protected_v3_with_profile(
     let mut phase_start = call_start;
     let mut phase = PublicClientStage::Construction;
     let mut metrics = PublicClientMetrics::default();
+    let mut solution_cpu_stamp: Option<ThreadCpuStamp> = None;
     let result = (|| -> Result<PublicReply> {
         if let Some(deadline) = outer_deadline {
             ensure(Instant::now() < deadline, "PUBLIC_CLIENT_DEADLINE")?;
@@ -3048,6 +3055,10 @@ fn call_public_protected_v3_with_profile(
         metrics.challenge_ns = elapsed_ns(phase_start);
         phase = PublicClientStage::SolutionSearch;
         phase_start = Instant::now();
+        // Begin the actual calling-thread CPU interval *before* Cookie ID
+        // preparation and every nonce trial. Keep a stamp on all early exits
+        // so expired/capped searches never become "zero CPU".
+        solution_cpu_stamp = ThreadCpuStamp::start();
         let started = Instant::now();
         let id = cookie.id()?;
         let mut solved = None;
@@ -3070,6 +3081,8 @@ fn call_public_protected_v3_with_profile(
         let nonce = solved.ok_or("PUBLIC_SOLVE_BUDGET")?;
         let solve_elapsed_ns = elapsed_ns(started);
         metrics.solution_search_ns = elapsed_ns(phase_start);
+        metrics.solution_search_thread_cpu_ns =
+            solution_cpu_stamp.take().and_then(ThreadCpuStamp::finish);
         metrics.solution_found = true;
         phase = PublicClientStage::SolutionBodyResponse;
         phase_start = Instant::now();
@@ -3137,6 +3150,11 @@ fn call_public_protected_v3_with_profile(
             identity_authority: false,
         })
     })();
+    // The original early-error branch may leave the search before a winning
+    // ticket. Its real CPU is charged to the observation once, even on expiry.
+    if let Some(stamp) = solution_cpu_stamp.take() {
+        metrics.solution_search_thread_cpu_ns = stamp.finish();
+    }
     if result.is_err() {
         metrics.record_failure(phase, elapsed_ns(phase_start));
     }
@@ -3520,6 +3538,7 @@ mod tests {
             construction_ns: 11,
             challenge_ns: 12,
             solution_search_ns: 13,
+            solution_search_thread_cpu_ns: None,
             solution_trials: 17,
             solution_found: true,
             solution_body_response_ns: 14,
@@ -3893,7 +3912,11 @@ mod tests {
         assert!(cpu_observation.solution_trials > 0);
         assert_eq!(cpu_observation.solution_trials, existing.solution_trials);
         assert_eq!(cpu_observation.solution_search_wall_ns, existing.solution_search_ns);
+        assert_eq!(cpu_observation.solution_search_thread_cpu_ns, existing.solution_search_thread_cpu_ns);
         assert!(cpu_observation.client_wall_ns >= existing.total_elapsed_ns);
+        if let (Some(search), Some(all)) = (cpu_observation.solution_search_thread_cpu_ns, cpu_observation.client_thread_cpu_ns) {
+            assert!(search <= all, "ticket search cannot exceed full caller CPU interval");
+        }
         if let Some(actual) = cpu_observation.client_thread_cpu_ns {
             assert!(actual > 0);
         }
