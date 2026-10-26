@@ -95,3 +95,47 @@ Beyond P1, V3 Cookie CPU/GPU/ASIC economics (P2), paid/unpaid and
 wrong-StateRoot identity-churn campaigns (P3), original A03 campaign
 (P4), actually sound and cost-qualified W2 (P5), and independent
 cryptography/operational signoff (P6) are **not closed** by this code.
+
+
+## Final intake boundary refinement: raw / decoded value imports
+
+The first candidate wrapped only the already-deserialized `Page`. This did
+not charge the original resource account for JSON-to-Page conversion. The new
+source uses one common private `receive_page_from_decoder` that verifies the
+same Host parent, acquires the **original Node CPU operation before invoking
+its JSON decoder**, executes the private `receive_page_with_operation`,
+settles actual thread/scoped-worker CPU even for early parsing failures,
+and rechecks Host membership after any native side effect.
+
+The supported source-bound export forms are:
+
+| Entry | Interpretation | Original resource reservation |
+| --- | --- | --- |
+| `receive_page_wire_from(node,source,raw,...)` | bounded raw frame into typed History Page | Before `serde_json::from_slice`, canonical byte decode, W1/M06 |
+| `receive_page_value_from(node,source,value,...)` | decoded client JSON `Value` into Page | Before `serde_json::from_value`, canonical packet decode, W1/M06 |
+| `receive_page_from(node,source,page,...)` | already typed Page, retained library compatibility | Before all native canonical packet decode, W1/M06 |
+| private `receive_page_with_operation` | exact local parser / execution owner | Not externally callable; no unguarded public Work path |
+
+Ordinary native `sync_from` uses the raw-frame method; authenticated and
+durable authenticated variants, and CLI V3 public History, call the decoded
+value method rather than performing typed conversion outside the original CPU
+reservation. All four derive `complete` from the independently validated
+cursor equality `after == tip`, not an untrusted remote boolean. Structural
+parser errors are local input rejection, not Chainwork or VerifiedWork.
+
+`ingress::tests::raw_and_value_history_parsers_reserve_cpu_before_json_decode`
+holds both original mutation worker reservations and submits intentionally
+malformed raw JSON and malformed `Value`. The required result is the
+**original local CPU Busy** before typed parsing. After releasing the
+reservations, the same malformed inputs must fail their real parsers,
+settle full CPU, and leave active and stored State unchanged.
+
+This strengthens **JSON-to-Page conversion ownership only**. Upstream network
+buffer allocation, authenticated response verification, outer JSON-to-Value
+conversion and HTTP/socket per-frame handling retain their independent
+existing bounded transport owners; they do not become free CPU or proven
+Sybil-fair by the existence of this wrapper. Public-V3 source authenticity
+still depends on its actual signed Cookie/transport and operator origin
+policy; a local proxy could falsely present remote bytes as loopback.
+The P1 public readiness verdict remains OPEN until the complete physical
+intake ledger and honest-service campaign reconcile these boundaries.
