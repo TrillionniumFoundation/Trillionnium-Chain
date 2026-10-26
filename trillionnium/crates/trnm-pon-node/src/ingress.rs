@@ -2109,13 +2109,43 @@ fn call_authenticated_durable_inner(
     Err(Error::authenticated_remote(terminal, error))
 }
 
+// Remote History has no previously paid inbound V3 mutation permit. Start one
+// original Node-owned operation at a time; do not invent credit or restart the
+// epoch for each page. Original refill is the ONLY source of future credit.
+// A bounded wait is local scheduling (not W1 invalidity or new consensus TTL).
+fn begin_history_cpu(
+    cpu: &public_v3::ServiceMutationCpuDomain,
+    deadline: Instant,
+) -> Result<public_v3::ServiceMutationCpuOperation> {
+    loop {
+        // One absolute page-level budget, never 5 seconds *per attacker proof*.
+        // Exhaustion is local Busy, NOT proof invalidity or new chainwork.
+        ensure(Instant::now() < deadline, "PUBLIC_MUTATION_CPU_BUDGET")?;
+        match cpu.begin() {
+            Ok(operation) => return Ok(operation),
+            Err(error) if error.is(ErrorCode::PublicMutationCpuBudget)
+                && Instant::now() < deadline =>
+            {
+                thread::sleep(
+                    Duration::from_millis(5).min(deadline.saturating_duration_since(Instant::now())),
+                );
+            }
+            Err(error) => return Err(error),
+        }
+    }
+}
+
 fn receive_page(
     node: &mut Node,
     page: Page,
     tip: Hash,
     after: Hash,
     clock: u64,
+    cpu: &public_v3::ServiceMutationCpuDomain,
 ) -> Result<Hash> {
+    // Same absolute deadline for every proof in this one incoming page.
+    // Neither a new peer nor a later packet replenishes the waiting window.
+    let page_deadline = Instant::now() + Duration::from_secs(5);
     ensure(
         page.schema == "pon-native-history-v1"
             && page.network == hex::encode(node.settings().network())
@@ -2152,10 +2182,70 @@ fn receive_page(
         "PAGE_COMPLETE",
     )?;
     for packet in &packets {
-        node.admit(packet, clock)?;
+        // A signed remote History page does NOT pay for local W1/M06. Claim
+        // this exact Node's one original CPU domain BEFORE context/State work,
+        // and settle the measured owner+scoped-worker total on every outcome.
+        // The original bucket starts cold and cannot be reset per page/peer.
+        let original = begin_history_cpu(cpu, page_deadline)?;
+        let live = original.checkpoint_handle();
+        let check = || {
+            ensure(Instant::now() < page_deadline, "PUBLIC_MUTATION_CPU_BUDGET")?;
+            live.checkpoint()
+        };
+        let native = (|| -> Result<()> {
+            check()?;
+            // Preserve exactly Node::admit's context -> owner reservation ->
+            // W1 relation -> current-parent/state/commit ordering. A duplicate
+            // still checks context and cannot inherit another packet's rights.
+            if node.check_admission_context_with_progress(
+                packet, clock, &mut || check(),
+            )?.is_some() {
+                return Ok(());
+            }
+            let permit = node.begin_owner_work(packet)?;
+            check()?;
+            let checked = WorkCheckedPacket::verify_with_progress(
+                packet.clone(), &mut |_| check(),
+            )?;
+            check()?;
+            let checked = node.attach_owner_work(checked, permit)?;
+            let execute_progress = |_step| check();
+            let control = trnm_mvcc_fee::pon_executor::ExecutionControl::new(
+                &execute_progress,
+                original.worker_accounting(),
+            );
+            node.admit_work_checked_with_control(checked, clock, &control)?;
+            Ok(())
+        })();
+        // No early '?' may skip settlement. Any verified native commit is a
+        // factual durable operation, even if its CPU accounting fails later.
+        let paid = original.finish();
+        if paid.accounting_unavailable {
+            return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+        }
+        native?;
     }
     if page.complete {
-        node.activate_observed(tip, clock)?;
+        // History completion may activate/reorganize a whole valid branch.
+        // This is a separate potentially expensive native operation, never
+        // free CPU merely because all received W1 proofs were valid.
+        let original = begin_history_cpu(cpu, page_deadline)?;
+        let live = original.checkpoint_handle();
+        let activated = node.activate_observed_with_progress(
+            tip,
+            clock,
+            &mut || {
+                ensure(Instant::now() < page_deadline, "PUBLIC_MUTATION_CPU_BUDGET")?;
+                live.checkpoint()
+            },
+        );
+        // Preserve original committed chain facts if a late accounting
+        // failure happens; never re-label native success as consensus-invalid.
+        let paid = original.finish();
+        if paid.accounting_unavailable {
+            return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+        }
+        activated?;
     }
     Ok(next)
 }
@@ -2178,7 +2268,18 @@ pub fn receive_page_from(
     if let Some(kernel) = &host_kernel {
         kernel.verify()?;
     }
-    let native = receive_page(node, page, tip, after, clock);
+    // The checked Node, not the peer/caller, chooses its one CPU owner.
+    // Never permit a new Process/Peer/Page to replace an existing domain.
+    let cpu = match node.public_service_cpu_domain() {
+        Ok(existing) => existing,
+        Err(error) if error.is(ErrorCode::OwnerPublicServiceDomainUnbound) => {
+            let cold = public_v3::ServiceMutationCpuDomain::cold_remote_sync_epoch();
+            node.bind_public_service_cpu_domain(&cold)?;
+            cold
+        }
+        Err(error) => return Err(error),
+    };
+    let native = receive_page(node, page, tip, after, clock, &cpu);
     // A completed native admission cannot be undone by a post-verification
     // host fault. That fault still makes the overall synchronization fail.
     if let Some(kernel) = &host_kernel {
@@ -2396,6 +2497,197 @@ mod tests {
             assert_eq!(node.stats().unwrap(), original);
             assert_eq!(node.read_active().unwrap().0, settings.genesis());
         }
+    }
+
+    #[test]
+    fn received_history_expired_page_cpu_deadline_never_mints_new_budget() {
+        let original = public_v3::ServiceMutationCpuDomain::cold_remote_sync_epoch();
+        let initial = original.observe().unwrap();
+        assert_eq!(initial.stored_credit_ns, 0);
+        assert_eq!(initial.in_flight, 0);
+        // Empty time budget must reject even if a later refill would make a
+        // reservation available; it never creates a new 5s per-proof window.
+        let error = match begin_history_cpu(&original, Instant::now()) {
+            Ok(operation) => {
+                let _ = operation.finish();
+                panic!("expired page granted a new W1 CPU reservation")
+            }
+            Err(error) => error,
+        };
+        assert!(error.is(ErrorCode::PublicMutationCpuBudget));
+        let after = original.observe().unwrap();
+        assert_eq!(after.stored_credit_ns, 0);
+        assert_eq!(after.in_flight, 0);
+        assert!(!after.accounting_unavailable);
+        assert!(original.observe_actual_flow().unwrap().unwrap().balance_identity_verified);
+    }
+
+    #[test]
+    fn imported_history_reuses_one_cold_cpu_owner_and_charges_distinct_late_forgery() {
+        let time = now().unwrap();
+        let settings = Settings::development(Some(time - 100)).unwrap();
+        let dir = tempfile::tempdir().unwrap();
+        let mut node = Node::open(dir.path(), settings.clone(), 2).unwrap();
+        let genesis = settings.genesis();
+        let good = node.make(
+            genesis, vec![], crate::development_public(0).unwrap(),
+            settings.genesis_time() + 10, 4096,
+        ).unwrap();
+        let block = good.id().unwrap();
+        let baseline = node.stats().unwrap();
+        let localhost: SocketAddr = "127.0.0.1:12345".parse().unwrap();
+        let page_for = |packet: &Packet| Page {
+            schema: "pon-native-history-v1".into(),
+            network: hex::encode(settings.network()),
+            parameters: hex::encode(settings.parameters()),
+            genesis: hex::encode(genesis),
+            tip: hex::encode(block),
+            after: hex::encode(genesis),
+            packets: vec![hex::encode(packet.encode().unwrap())],
+            next: hex::encode(block),
+            complete: true,
+        };
+        assert!(node.public_service_cpu_domain().is_err());
+
+        // A canonical wrong C preserves the *same* full real W1 transcript,
+        // ticket/challenge, task and target, reaching a late Product rejection.
+        let mut original_domain: Option<public_v3::ServiceMutationCpuDomain> = None;
+        for (step, source_port) in [(1u128, 12345u16), (2u128, 23456u16)] {
+            let mut fake = good.clone();
+            let offset = 4 + 2 * trnm_crypto_primitives::pon_work::CELLS * 4;
+            let prior = u32::from_le_bytes(
+                fake.proof[offset..offset + 4].try_into().unwrap(),
+            );
+            let changed =
+                ((u128::from(prior) + step) % trnm_crypto_primitives::pon_work::Q) as u32;
+            fake.proof[offset..offset + 4].copy_from_slice(&changed.to_le_bytes());
+            // Changing the purported source/connection must not buy new
+            // original CPU credit or create a second Node owner.
+            let source = SocketAddr::from(([127, 0, 0, 1], source_port));
+            assert_eq!(
+                receive_page_from(
+                    &mut node, source, page_for(&fake), block, genesis, time,
+                ).unwrap_err().to_string(),
+                "WORK:Product",
+            );
+            let cpu = node.public_service_cpu_domain().unwrap();
+            if let Some(prior) = &original_domain {
+                assert!(prior.shares_domain_with(&cpu));
+            } else {
+                original_domain = Some(cpu.clone());
+            }
+            let meter = cpu.observe().unwrap();
+            let flow = cpu.observe_actual_flow().unwrap().unwrap();
+            assert_eq!(meter.in_flight, 0);
+            assert!(!meter.accounting_unavailable);
+            assert_eq!(flow.initial_credit_ns, 0);
+            assert_eq!(flow.live_owners, 0);
+            assert_eq!(flow.booked_reservation_ns, 0);
+            assert!(flow.balance_identity_verified);
+            assert!(flow.settled_full_cpu_ns > 0);
+            assert!(flow.paid_cpu_debit_ns > 0);
+            assert_eq!(node.stats().unwrap(), baseline);
+            assert_eq!(node.read_active().unwrap().0, genesis);
+        }
+        // No new service allowance was created by a changed payload or page.
+        let original = node.public_service_cpu_domain().unwrap();
+        let credit_before_valid = original.observe_actual_flow().unwrap().unwrap();
+        assert!(credit_before_valid.paid_cpu_debit_ns > 0);
+        let accepted = receive_page_from(
+            &mut node, localhost, page_for(&good), block, genesis, time,
+        ).unwrap();
+        assert_eq!(accepted, block);
+        assert_eq!(node.read_active().unwrap().0, block);
+        assert_eq!(node.stats().unwrap()["height"], 1);
+        let same = node.public_service_cpu_domain().unwrap();
+        assert!(original.shares_domain_with(&same));
+        let final_flow = same.observe_actual_flow().unwrap().unwrap();
+        assert!(final_flow.balance_identity_verified);
+        assert_eq!(final_flow.initial_credit_ns, 0);
+        assert!(final_flow.paid_cpu_debit_ns > credit_before_valid.paid_cpu_debit_ns);
+        assert_eq!(final_flow.live_owners, 0);
+        assert_eq!(final_flow.booked_reservation_ns, 0);
+    }
+
+    #[test]
+    fn imported_history_valid_w1_bad_state_root_pays_cpu_but_cannot_change_chain() {
+        let time = now().unwrap();
+        let settings = Settings::development(Some(time - 100)).unwrap();
+        let dir = tempfile::tempdir().unwrap();
+        let mut node = Node::open(dir.path(), settings.clone(), 2).unwrap();
+        let genesis = settings.genesis();
+        let good = node.make(
+            genesis, vec![], crate::development_public(0).unwrap(),
+            settings.genesis_time() + 10, 4096,
+        ).unwrap();
+        let baseline = node.stats().unwrap();
+        let mut false_root = good.clone();
+        false_root.header.state[0] ^= 1;
+        // The changed header is a NEW challenge. Regenerate genuine,
+        // exact W1 transcript and winning lottery for this wrong-StateRoot
+        // statement; do not rely on stale or forged work to reach M06.
+        let n = trnm_crypto_primitives::pon_work::CELLS * 4;
+        let matrix = |offset: usize| -> Vec<u32> {
+            false_root.proof[offset..offset + n].chunks_exact(4)
+                .map(|bytes| u32::from_le_bytes(bytes.try_into().unwrap()))
+                .collect()
+        };
+        let a = matrix(4);
+        let b = matrix(4 + n);
+        assert_eq!(
+            trnm_crypto_primitives::pon_work::task_id(&a, &b).unwrap(),
+            false_root.header.work_task
+        );
+        let producer = trnm_crypto_primitives::pon_work::PreparedTask::new(&a, &b).unwrap();
+        let mut winner = None;
+        for nonce in 0..4096u64 {
+            false_root.header.nonce = nonce;
+            let challenge = false_root.header.challenge();
+            let proof = producer.prove(challenge).unwrap();
+            let trace = &proof[proof.len() - 32..];
+            if trnm_crypto_primitives::pon_work::hash(
+                b"ticket", &[&challenge, trace],
+            ) <= false_root.header.target {
+                winner = Some(proof);
+                break;
+            }
+        }
+        false_root.proof = winner.expect("same-target legitimate W1 must find winner");
+        let work = trnm_crypto_primitives::pon_work::verify(
+            false_root.header.challenge(),
+            false_root.header.work_task,
+            false_root.header.target,
+            &false_root.proof,
+        ).unwrap();
+        assert_eq!(work.challenge(), false_root.header.challenge());
+        let false_id = false_root.id().unwrap();
+        let remote_page = Page {
+            schema: "pon-native-history-v1".into(),
+            network: hex::encode(settings.network()),
+            parameters: hex::encode(settings.parameters()),
+            genesis: hex::encode(genesis),
+            tip: hex::encode(false_id),
+            after: hex::encode(genesis),
+            packets: vec![hex::encode(false_root.encode().unwrap())],
+            next: hex::encode(false_id),
+            complete: true,
+        };
+        let source: SocketAddr = "127.0.0.1:12345".parse().unwrap();
+        let result = receive_page_from(
+            &mut node, source, remote_page, false_id, genesis, time,
+        );
+        assert_eq!(result.unwrap_err().to_string(), "ROOT");
+        let cpu = node.public_service_cpu_domain().unwrap();
+        let flow = cpu.observe_actual_flow().unwrap().unwrap();
+        assert!(flow.balance_identity_verified);
+        assert_eq!(flow.initial_credit_ns, 0);
+        assert!(flow.paid_cpu_debit_ns > 0);
+        assert_eq!(flow.live_owners, 0);
+        assert_eq!(flow.booked_reservation_ns, 0);
+        assert_eq!(node.stats().unwrap(), baseline);
+        assert_eq!(node.read_active().unwrap().0, genesis);
+        // The expected native chain is still empty; an invalid application
+        // must neither grant work score nor close source-authentication gates.
     }
 
     #[test]

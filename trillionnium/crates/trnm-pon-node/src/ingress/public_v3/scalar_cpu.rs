@@ -891,6 +891,15 @@ impl ServiceMutationCpuDomain {
             budget: Arc::new(Mutex::new(PaidMutationCpuBudget::new())),
         }
     }
+    /// A remote History import may assign one original Node-owned CPU epoch
+    /// only AFTER the existing fixed host-kernel parent is checked. Never
+    /// create this per packet/page/peer; cold start grants zero initial CPU.
+    /// This is a local service resource allowance, NOT ledger authority.
+    pub(crate) fn cold_remote_sync_epoch() -> Self {
+        Self {
+            budget: Arc::new(Mutex::new(PaidMutationCpuBudget::cold_start())),
+        }
+    }
     pub fn shares_domain_with(&self, other: &Self) -> bool {
         Arc::ptr_eq(&self.budget, &other.budget)
     }
