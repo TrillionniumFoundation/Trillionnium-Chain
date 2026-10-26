@@ -69,11 +69,9 @@ def verify_named_entrypoints(files):
                  and 'receive_page_from(node, address, page' in body
                  and 'receive_page(node, page' not in body,
                  name + '_must_check_original_parent_each_page')
-    native_listener = section(ingress, '\nfn serve_inner(\n',
-                              '\n#[path = "ingress/metered_work_facts.rs"]') if (
-                              '\n#[path = "ingress/metered_work_facts.rs"]' in ingress[
-                                ingress.find('\nfn serve_inner(\n'):]) else (
-                              ingress[ingress.find('\nfn serve_inner(\n'):])
+    legacy_start = ingress.find('\nfn serve_inner(\n')
+    required(legacy_start >= 0, 'missing_legacy_listener_owner')
+    native_listener = ingress[legacy_start:ingress.find('\npub fn sync_from(\n', legacy_start)]
     required('DEVELOPMENT_REMOTE_ADMISSION_REQUIRED' in native_listener
              and 'host_kernel_parent::require_for_listener(listener_address)?' in native_listener
              and 'kernel.verify()?' in native_listener,
