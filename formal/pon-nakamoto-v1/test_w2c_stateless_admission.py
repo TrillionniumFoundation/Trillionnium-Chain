@@ -119,14 +119,7 @@ class StatelessTests(unittest.TestCase):
         self.assertEqual(self.issuer.pay(offer,proposal,nonce,120),'READY_RESOURCE_ONLY')
         # Hashcash paid-for *access to verification*, not useful work, and no
         # train/evaluate/state/ledger authority is available in this module.
-        with self.assertRaisesRegex(ValueError,'^TRANSCRIPT        for bits in (7,25):
-            with self.assertRaisesRegex(ValueError,'BITS'):
-                make(bits=bits)
-        with self.assertRaisesRegex(ValueError,'NONCE'):
-            ticket(self.paid()[0],-1)
-
-if __name__=='__main__':unittest.main(verbosity=2)
-):
+        with self.assertRaisesRegex(ValueError,'^TRANSCRIPT$'):
             W.verify(challenge,task,bytes([255])*32,false_proof)
         self.assertEqual(self.issuer.pay(offer,proposal,nonce,120),'REPLAY')
 
