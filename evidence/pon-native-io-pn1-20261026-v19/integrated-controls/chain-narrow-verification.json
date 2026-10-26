@@ -1,0 +1,64 @@
+{
+  "recorded_utc": "2026-10-26T11:31:38.576095+00:00",
+  "steps": [
+    {
+      "name": "preflight",
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--dev"
+      ],
+      "returncode": 0,
+      "error": null,
+      "elapsed_seconds": 0.08258897600171622,
+      "stdout_sha256": "63a5bf3b9fc8975dac9742c8f5f7f77a05a0ea5bf4d40403dcdb791778eb44a3",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "python26",
+      "argv": [
+        "taskset",
+        "--cpu-list",
+        "0,1,2,3",
+        "nice",
+        "-n",
+        "19",
+        "prlimit",
+        "--as=1073741824",
+        "--fsize=16777216",
+        "--",
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/ci",
+        "-p",
+        "test_pon_native_io_*.py",
+        "-v"
+      ],
+      "returncode": 0,
+      "error": null,
+      "elapsed_seconds": 6.935182893008459,
+      "stdout_sha256": "cdfe15d93ec547fe5ca9f7e1c4fe2203be445c52fe37ebcb97eba8c83d64e75a",
+      "stderr_sha256": "3f041b096465361f046113e5ea148b3dfe396348ce4c95a6abd3d15f8e4fc2b7"
+    },
+    {
+      "name": "repository-source-and-links",
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/check_repository.py"
+      ],
+      "returncode": -9,
+      "error": "NATIVE_EXECUTOR_TIMEOUT",
+      "elapsed_seconds": 60.00670353299938,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "all_requested_checks_pass": false,
+  "full_native_or_CI_qualified": false,
+  "merge_ready": false
+}

@@ -1,0 +1,27 @@
+{
+  "first_error": "COMPONENT_NATIVE_NONZERO",
+  "limits": {
+    "binary": 201326592,
+    "inventory": 32505856,
+    "outer": 134152192,
+    "terminal": 65536
+  },
+  "observed_step": null,
+  "phase": "prepare",
+  "physical_enospc_terminal_guaranteed": false,
+  "qualification": false,
+  "reserved_bytes": {
+    "binary": 0,
+    "inventory": 0,
+    "outer": 0,
+    "terminal": 0
+  },
+  "schema": "pon-identity-outer-terminal-v2",
+  "sync_calls_added": 0,
+  "used_bytes": {
+    "binary": 0,
+    "inventory": 0,
+    "outer": 80218,
+    "terminal": 0
+  }
+}

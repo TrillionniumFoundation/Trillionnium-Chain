@@ -1101,3 +1101,93 @@ fixtures and retained failure context do not qualify public Nice10 preparation,
 execution and readback, whole writer/strict reader, seven actual roots, the original
 4096+fresh workload, Windows, three model rounds, independent WAN, or merge readiness.
 A clean committed corrected source and all original required executions remain due.
+
+
+2026-10-26 PN1/I02 first real public preparation failure and bounded monitor correction (V19):
+The first actual clean-source public prepare on ec0acdff5717b8f584b26f30f1162bd9bf1cc888
+(tree 49de9450a7738b15f3dc63b808f957ce49804df2) failed. The real Cargo child
+PID 1404396 / birth 8179665 / parent 1379349 was reaped with wait -9 after
+62.971600613 seconds; the complete owner used 88.91997036199609 seconds.
+The original 1200-second build bound did not expire. Actual source and Nice10,
+400% CPU, 16GiB and four-CPU observations were retained. No prepared document,
+execution or independent readback was produced. Original stdout/stderr, step and
+terminal records remain failures. The sender and cause of SIGKILL are UNKNOWN:
+normal compiler-progress logs and the limited journal/kernel lookup do not prove
+or exclude OOM, an external stop, or a monitor stop.
+
+An independent controlled reproduction against immutable ec0 source found that
+real unlink and rmdir between enumeration and stat/descent abort the original
+monitor with ENOENT; the same watch fault kills a real owned child. Those three
+original RED observations establish a defect, not the cause of the earlier build.
+The correction restarts the entire held-tree scan only for internal ENOENT, under
+the same single five-second deadline and cumulative 200,000-entry bound, retaining
+partial observed logical peaks. It does not skip a disappeared entry and accept
+an incomplete scan. Missing or replaced top roots, permission errors, symlinks,
+FIFOs, other unknown objects, persistent churn and cap overruns remain refusals.
+The original 6GiB target / 512MiB reserve and watch interval are unchanged.
+
+The monitor retains its first bounded typed error, observed retries, actual owned
+child wait and kill attempts alongside the original first writer error. A later
+NONZERO or terminal-publication refusal cannot promote success or erase these
+observations. The mandatory prepared monitor record uses fresh stored schema
+`pon-native-io-three-fd-component-prepared-v2`; build-specific failure diagnostics
+use `pon-native-io-component-owned-build-step-failure-v2`. The profile, claim domain,
+original execution failure schema, selector, native/full acceptance and all caps
+remain unchanged. Logical sampling is not a physical or instantaneous quota.
+New tests exercise actual filesystem changes and owned child termination; they
+cannot qualify Cargo preparation, one-shot execution, complete-bundle readback,
+full-writer/strict-reader, seven roots, 4096+fresh, Windows or model/WAN acceptance.
+A new clean committed source and the actual public prepare → execute → independent
+readback remain required. Any new-source attempt must retain the first failed
+owner's spent budget; no unchanged-head retry, fake prepared record, old binary,
+fresh budget reset or discarded failed target is allowed. Full guards and merge
+readiness remain false, and the existing PN0–PN6 acceptance stays in force.
+
+On the fixed V19 source, all seven added controls passed in 6.050 seconds.
+The final combined five-module run passed all twenty-six tests in 6.578 seconds
+(owner 7.094219090 seconds); the two original test files and all original nineteen
+test bodies remained byte-for-byte unchanged. All five actual ec0 helper sources
+and every current candidate Python pin were checked before and after. These are
+bounded Nice19/AS1GiB controls, not a successful public build or any full acceptance.
+
+
+### PN3/I09–I10 cold runtime namespace and authority boundary (2026-10-26; OPEN)
+
+The existing selected-release path must receive a complete, explicitly versioned
+runtime identity and an owner-admitted private held runtime/material namespace.
+The current fixed eleven-material verifier authenticates its stated bytes; it does
+not attest the interpreter/stdlib/native dependency graph, preserve every ancestor
+until the HF path reopens it, or mint CURRENT/FinalUse/installation authority.
+Keep the old eleven-role/300MiB base limits and all existing permissions unchanged;
+new stored or signed runtime contracts require fresh namespaces and exact checks.
+
+The same owner must reserve and retain every overlapping cache, DB/WAL/SHM,
+installed/staging tree, archive/extraction scratch, old/new version, metadata and
+held/unknown object inside its original controlled-root budget. A separate pathname,
+unlink, failed SSH connection or hash verification cannot create a refund. The old
+923MB observation is a RECORD pathname sum; the432MB shared library is already in
+it, the512MiB cache bound is a different measure, and the300MiB bound applies only
+to fixed base roles. Pocket's original UNKNOWN1GiB is NETWORK reservation, not disk.
+Preserve its charge and the original failed/frozen LAN admission; no replacement
+provider, new budget or disk-free claim follows from this clarification.
+
+The actual interpreter/import/HF opens must stay bound to the admitted identity and
+namespace. Refuse missing libraries/wheels, undeclared ambient or online imports,
+ancestor replacement, premature eviction, permission/full-disk/crash failures and
+unknown terminal. Keep original resource, selector/CURRENT, FinalUse, Ready,
+cancellation, shutdown/actual-child and reconciliation checks. Data download or
+forward completion never substitutes for install authority or OS-child terminal.
+The ordinary I10/next-task route and three actual parent/train/evaluate/download/
+install/readback rounds, with a separate benefit decision, remain required.
+
+The original eleven-object SQLite I09 and signed native case retain their limited
+preinstalled-runtime PASS while the overall I10 handoff remains FAIL/UNVERIFIED.
+The original35-second material cohort does not certify full cold runtime acquisition.
+Do not extend any original timer, role, quota or assertion to obtain green output.
+Keep original three-replica custody/repair/version retention and independent
+three-administrator/fault-domain72hWAN acceptance. Same-administrator LAN cannot
+prove these. Full cold runtime and production/merge readiness remain false.
+See [cold-release evidence](../../../../evidence/pon-upgrade-implementation-20261018/native-rounds/cold-release-contract-20261026/REPORT.md) for exact source, original raw scopes, units and pending interfaces.
+
+Retained V19 [original failed preparation and integrated bounded controls](../../../../evidence/pon-native-io-pn1-20261026-v19/README.md)
+include the additional source-check diagnostic timeouts; none closes public or full qualification.
