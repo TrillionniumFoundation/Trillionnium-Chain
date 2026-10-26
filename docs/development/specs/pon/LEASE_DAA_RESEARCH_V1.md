@@ -686,3 +686,92 @@ remain OPEN. Future protocol integration must commit its own signed context,
 runtime activation rule, anti-rollback/reorg policy, persistent bounded
 ancestry proofs and independent client confirmations, without changing any
 historical revision.
+
+
+## 2026-10-26: bounded native ancestry-index ASERT shadow beyond 4096 heights
+
+This continuation is RESEARCH ONLY, stacked on PR #336; neither the
+installed retarget/expected_target nor Q4/revision12 semantics are changed.
+
+### Original liveness failure and repair boundary
+
+The genesis-adjacent linear ASERT oracle returns ASERT_ANCESTRY_BUDGET at
+height 4097, by design. That is an availability/scaling limit, not an invalid
+work verdict or permission to accept a peer-supplied summary. Raising the
+4096 read limit only moves the problem.
+
+M15 already owns a derived binary-lifting ancestry_jump table. It writes
+jump rows with a locally admitted block in one SQLite transaction and checks
+row context, canonical header identifier, block/ancestor heights, original
+header parent, row seals, and visible two-half links at read time. The new
+TEST-ONLY indexed_heights_for_daa_research uses those same checked jumps and
+a single cumulative 1024-SQL-operation budget. It resolves up to 24 strictly
+descending branch-local requested heights; nearby MTP11 heights reuse the
+already reached ancestor instead of rescanning from the original tip.
+Duplicate, reversed, out-of-range, missing and corrupt lookups fail. This
+local index does not independently authenticate a malicious database owner.
+
+The TEST-ONLY Node::indexed_asert_shadow obtains the actual candidate branch
+parent, activation-height block target, anchor predecessor and two MTP11
+windows from retained native packets and the sealed index. It uses BOTH
+parent and anchor predecessor MTP11 for the median mode. The resulting
+research-only integer target and observed index SQL count grant NO admission,
+work, selection, activation, local capability or persistent authority.
+Installed expected_target never calls this observer.
+
+### Named native selectors (not executed in this environment)
+
+- ancestry_index::tests::indexed_daa_research_reads_branch_local_heights_with_one_budget_and_refuses_corruption:
+  finite branch/corruption/reversed/duplicate/cancellation-budget cases
+- continuity_tests::indexed_asert_shadow_uses_admitted_fork_anchors_and_survives_native_reopen:
+  real W1 Maintenance packets, diverging activation block, MTP11/raw parity,
+  higher-work branch switch, SQLite reopen, original DAA unchanged
+- ancestry_index::tests::indexed_daa_research_stays_bounded_past_the_old_4096_parent_horizon:
+  explicitly IGNORED 4105-height synthetic index fixture, not a valid PoW chain
+- continuity_tests::indexed_asert_shadow_above_4096_real_maintenance_blocks:
+  explicitly IGNORED 4105 real Maintenance W1 proof packets with cold reopen
+
+Exact-source native test execution and full final-source Clippy/format remain
+required before marking even the narrow native implementation qualified.
+
+The native design still needs a separately versioned, reviewed consensus
+activation context, work-validating alternate verifier, independent operator
+WAN risk research and actual longest-retained-state/retention policy.
+Nothing in this research changes the production eligibility flags.
+
+
+### Independent simulated 4105-height indexed lookup
+
+New exact Git research blobs:
+- daa_indexed_shadow_oracle.py: 41df577186751706f10e46bdfbd1f345cad8e5dc
+- test_daa_indexed_shadow_oracle.py: 4fd06521ea598430e564d55946b1a2d89c049a26
+
+Four local tests executed successfully using identical Git blob bytes for these
+two new files: 4105 synthetic assumed-validated headers; raw/MTP11 target
+comparison; fork below the activation anchor; reversed/duplicate/out-of-range,
+budget exhausted and altered-jump refusals. The local imported ASERT Python
+module was the earlier research working copy, NOT the exact later GitHub
+dependency hash; current-source complete regression remains NOT_RUN. The
+simulator uses conservative APPROXIMATE query costs, not native SQLite read
+telemetry, and signs/mines zero W1 blocks.
+
+The first conservative 4105-height simulation needed 432 cost units and
+exposed an overstrict, non-protocol <400 test assertion. That assertion was
+corrected to the existing 1024 budget; original native long-run tests likewise
+use the existing READ_SQL_BUDGET instead of inventing a stricter numeric SLO.
+The failed first observation and correction are retained here.
+
+### Further negative: branch-specific anchor target and short-genesis MTP
+
+The independent index simulator adds an explicitly different ASERT target
+at the competing branch's activation block (not merely a different block ID).
+The old-branch and new-branch research results must therefore differ. A
+separate short-genesis case evaluates both raw and MTP11 when the anchor
+predecessor is the genesis timestamp and fewer than 11 parents exist.
+
+Five local Python tests PASS on the **byte-identical new test and indexed
+index module** (Git blob test source 662a0f7f225d9caf4f2b19aea0d7a1e17341c215,
+module 41df577186751706f10e46bdfbd1f345cad8e5dc).
+The imported ASERT arithmetic was the pre-existing local research copy, not
+an execution of the exact PR parent source. None of these synthetic blocks
+carries W1 or source-signer authority.
