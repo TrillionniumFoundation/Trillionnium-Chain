@@ -261,4 +261,54 @@ class RenewalOutboxTests(unittest.TestCase):
             self.assertEqual(db.audit(), 2)
             self.assertTrue(db.status(key)['dispatch_unknown'])
 
+    def test_same_generation_tip_and_height_drift_refused_even_via_internal_append(self):
+        # A native active-chain tip/height change must advance its generation.
+        # These are still UNTRUSTED research observations, never finality proof.
+        from dataclasses import replace
+        with self.open() as db:
+            key = db.prepare(intent())
+            db.dispatch_unknown(key)
+            db.observe(key, observation('included', 7, b'first'))
+            for changed in (
+                observation('reorged', 7, b'second'),
+                replace(observation('confirmed', 7, b'first'), observed_height=951),
+            ):
+                with self.subTest(changed=changed.kind):
+                    with self.assertRaisesRegex(OutboxError, 'OBSERVATION_SAME_GENERATION_DRIFT'):
+                        db.observe(key, changed)
+                    with self.assertRaisesRegex(OutboxError, 'OBSERVATION_SAME_GENERATION_DRIFT'):
+                        db._event(key, 'OBSERVED_' + changed.kind.upper(), changed.wire())
+            self.assertEqual(db.audit(), 2)
+            # Same tip and height can produce a different advisory disposition.
+            db.observe(key, observation('confirmed', 7, b'first'))
+            # A genuine later generation may identify a different tip.
+            db.observe(key, observation('reorged', 8, b'second'))
+            self.assertEqual(db.audit(), 4)
+        with self.open() as reopened:
+            self.assertEqual(reopened.audit(), 4)
+            self.assertTrue(reopened.status(key)['dispatch_unknown'])
+
+    def test_cold_audit_refuses_validly_rehashed_same_generation_height_drift(self):
+        # Recompute the local hash chain after mutating height: a checksum
+        # alone must not conceal inconsistent generation/active-tip metadata.
+        from q4_renewal_outbox_research import EVENT_DOMAIN
+        with self.open() as db:
+            key = db.prepare(intent())
+            db.dispatch_unknown(key)
+            db.observe(key, observation('included', 7, b'first'))
+            db.observe(key, observation('confirmed', 7, b'first'))
+        with sqlite3.connect(self.file) as raw:
+            ordinal, ident, kind, original, prev = raw.execute(
+                'SELECT ordinal,intent_id,kind,observation,prev '
+                'FROM q4_outbox_events_v1 WHERE ordinal=3').fetchone()
+            changed = bytearray(original)
+            changed[40:48] = (951).to_bytes(8, 'big')
+            amended = bytes(changed)
+            checksum = h(EVENT_DOMAIN + ordinal.to_bytes(8,'big') + ident
+                         + kind.encode('ascii') + amended + prev)
+            raw.execute('UPDATE q4_outbox_events_v1 SET observation=?,digest=? '
+                        'WHERE ordinal=3', (amended, checksum))
+        with self.assertRaisesRegex(OutboxError, 'OBSERVATION_SAME_GENERATION_DRIFT'):
+            self.open()
+
 if __name__ == '__main__': unittest.main()

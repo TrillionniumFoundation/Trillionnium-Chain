@@ -60,3 +60,21 @@ checkout; the local separately reconstructed observation-codec probe passed.
 Real Q4 signatures, original-owner journals, independent PoN client proofs,
 WAN lost-ACK handling, uninterrupted mining and production admission remain
 strictly unqualified. No old Q4, Maintenance, W1 or DAA consensus rule changed.
+
+## Same-generation source-history integrity (research hardening)
+
+A native active-chain tip/height transition advances its original owner generation.
+The Q4 research outbox now rejects two observations under the **same** local
+generation when their observed tip or height differs, in both the immediate
+SQLite transaction and a complete cold-open audit. It still permits separate
+Included/Confirmed labels at one tip and a change of tip in a **later** generation.
+The original absolute generation monotonicity, immutable signed-packet identity,
+pre-effect DISPATCH_UNKNOWN fence and unknown-result no-redispatch remain unchanged.
+
+Negative controls exercise direct internal event calls and a validly rehashed
+SQLite observation whose claimed height changes without a generation increment.
+This only catches inconsistent locally supplied research metadata: neither the
+labels nor a matching generation is an authenticated native M08 client proof.
+No Q4 codebook, Ed25519 rules, W1 work, DAA, authority or production switches
+are changed; independent final-source tests and an original signed-client handoff
+remain outstanding.

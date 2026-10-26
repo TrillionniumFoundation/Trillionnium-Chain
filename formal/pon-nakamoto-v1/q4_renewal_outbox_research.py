@@ -208,6 +208,7 @@ class RenewalOutbox:
         count = 0
         dispatch = set()
         last_generation = {}
+        last_view = {}
         for ordinal, ident,kind,obs,prev,digest in self.db.execute('SELECT ordinal,intent_id,kind,observation,prev,digest FROM q4_outbox_events_v1 ORDER BY ordinal'):
             count += 1
             if count > self.max_events: raise OutboxError('EVENT_BUDGET')
@@ -222,7 +223,14 @@ class RenewalOutbox:
                 if ident not in dispatch: raise OutboxError('OBSERVATION_BEFORE_DISPATCH')
                 generation = _validate_observation_wire(kind, obs)
                 if generation < last_generation.get(ident,0): raise OutboxError('OBSERVATION_REGRESSION')
+                previous = last_view.get(ident)
+                # In the original native owner a changed active tip/height
+                # advances generation. Two claims under the same generation
+                # cannot silently name different chain histories.
+                if previous is not None and generation == previous[0] and obs[8:48] != previous[1]:
+                    raise OutboxError('OBSERVATION_SAME_GENERATION_DRIFT')
                 last_generation[ident] = generation
+                last_view[ident] = (generation, obs[8:48])
             else:
                 raise OutboxError('UNKNOWN_EVENT')
             prior = digest
@@ -253,8 +261,13 @@ class RenewalOutbox:
                 if self.db.execute("SELECT 1 FROM q4_outbox_events_v1 WHERE intent_id=? AND kind='DISPATCH_UNKNOWN'",(ident,)).fetchone() is None:
                     raise OutboxError('OBSERVATION_BEFORE_DISPATCH')
                 last = self.db.execute("SELECT observation FROM q4_outbox_events_v1 WHERE intent_id=? AND kind LIKE 'OBSERVED_%' ORDER BY ordinal DESC LIMIT 1",(ident,)).fetchone()
-                if last and int.from_bytes(last[0][:8],'big') > int.from_bytes(obs[:8],'big'):
-                    raise OutboxError('OBSERVATION_REGRESSION')
+                if last:
+                    old_generation = int.from_bytes(last[0][:8], 'big')
+                    new_generation = int.from_bytes(obs[:8], 'big')
+                    if old_generation > new_generation:
+                        raise OutboxError('OBSERVATION_REGRESSION')
+                    if old_generation == new_generation and last[0][8:48] != obs[8:48]:
+                        raise OutboxError('OBSERVATION_SAME_GENERATION_DRIFT')
             else: raise OutboxError('UNKNOWN_EVENT')
             digest = hashlib.sha256(EVENT_DOMAIN + u64(n,'ordinal') + ident + kind.encode('ascii') + obs + prev).digest()
             self.db.execute('INSERT INTO q4_outbox_events_v1 VALUES (?,?,?,?,?,?)',(n,ident,kind,obs,prev,digest))
