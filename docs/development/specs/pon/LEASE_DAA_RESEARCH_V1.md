@@ -586,3 +586,50 @@ lease renewal, reserved block height, storage assurance, proof admission or
 success token. Reorg, missing material, revocation, signature or signer absence
 must still be rechecked against the original Node owners. Exact-head native
 execution and WAN queue-lag measurement are still missing; P0-B remains OPEN.
+
+## P0-C × P1-B: legal-prover cost × source-loss fork sensitivity
+
+The additive, unactivated research files
+`formal/pon-nakamoto-v1/daa_legal_cost_sensitivity.py` and
+`test_daa_legal_cost_sensitivity.py` extend the existing fork-local
+`ForkSimulator`, without rewriting the frozen original 72-case research
+campaign. A single measured-or-hypothetical multiplier changes ONLY miner B's
+Poisson rate of producing a complete *valid* work ticket. Required work for an
+accepted header remains exactly `floor(2^256/(target+1))`; there is no score,
+lease, identity, proof or model-quality chainwork multiplier. The study combines
+legitimate prover cost advantage with independently selected task-outage
+capacity and real branch-local DAA arithmetic in the synthetic model.
+
+Frozen sensitivity dimensions: 3 seeds × 3 unchanged DAA choices × 2 B
+timestamp policies × 4 legal-production speed factors (1, 1.5, 3, 8) = 72
+finite cases. `speed=1` must produce the **entire unchanged base simulation
+report** for the same seed; speed>1 may change which hypothetical miner wins
+without changing the per-header required work. The original documented
+`task_outage_at` remains an exogenous assumption, not an authorized lease
+revocation. If both miners have zero available work, even an arbitrarily
+faster legal miner cannot create a simulated block. Identity, rate, bounds,
+NaN/Infinity, zero, time, and false-authority negative controls fail closed.
+
+Run from `formal/pon-nakamoto-v1`:
+
+```sh
+python3 -m unittest -v test_daa_legal_cost_sensitivity.py
+python3 daa_legal_cost_sensitivity.py --output /new/absolute/path/cost-sensitivity.json
+```
+
+The 72-row output is create-only, includes actual zero W1 proofs, zero real WAN
+transmissions and zero independent operators, and exposes pre/post-outage
+expected valid-ticket shares separately from realized finite-fork results. A
+conditional output like 30% ordinary resource share becoming 56.25% after a
+3× legitimate prover cost advantage is an *assumption sensitivity*, never a
+measurement or a common-prefix theorem. It cannot qualify cheapest legal W1
+production, source independence, real DAA economics or a new protocol revision.
+
+**Executed local scope:** 6/6 Python tests and the 72-case campaign pass with
+an explicitly reconstructed local version of the parent fork simulator and
+its existing mathematical oracle. The new two Python files' exact Git blobs
+match the locally executed source; the parent simulator was **not** fetched
+as an executable checkout and this is not an exact complete-current-branch
+Python run. No CI outcome is being used for closure. The full PR source pair,
+real W1 valid-work/native fork source, full network service, independent
+hardware and WAN tests remain open; P0-C, P1-B and P2 are not closed.
