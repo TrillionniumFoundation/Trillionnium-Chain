@@ -291,4 +291,3 @@ class RenewalOutbox:
                 'last_untrusted_observation':next((x[0].replace('OBSERVED_','').lower() for x in reversed(events) if x[0].startswith('OBSERVED_')),None),
                 'observations':sum(1 for x in events if x[0].startswith('OBSERVED_')),
                 'has_no_durable_dispatch_fence':len(events)==0}
-

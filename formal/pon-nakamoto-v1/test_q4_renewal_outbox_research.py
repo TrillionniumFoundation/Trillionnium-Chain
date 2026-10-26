@@ -193,4 +193,3 @@ class RenewalOutboxTests(unittest.TestCase):
         self.assertNotEqual(transaction_id(raw),h(raw))
 
 if __name__ == '__main__': unittest.main()
-
