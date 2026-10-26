@@ -155,10 +155,10 @@ def sign_release_fixture(bundle: CellBundle, plan_id: bytes, reviewer_ids: tuple
 
 @dataclass(frozen=True)
 class ResearchObservation:
+    """Non-authoritative diagnostic facts only; no adoption/release field."""
     manifest_id: bytes
-    approved_signers: tuple[bytes, ...]
+    observed_reviewer_key_ids: tuple[bytes, ...]
     content_objects_checked: int
-    adoption_authorized: bool = False
 
 
 def verify_release_research(
