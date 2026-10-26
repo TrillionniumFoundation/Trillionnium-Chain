@@ -99,6 +99,7 @@ def analyze(data):
                               'ATTACK_CPU', allow_null=True)
         trial_cost = 0
         found = 0
+        all_trials_known = True
         for i, trial in enumerate(trials):
             require(type(trial) is dict
                     and number(trial.get('nonce'), 'TRIAL_NONCE') == i,
@@ -107,12 +108,14 @@ def analyze(data):
             measured = number(trial.get('cpu_ns'), 'TRIAL_CPU', allow_null=True)
             if measured is not None:
                 trial_cost += measured
+            else:
+                all_trials_known = False
             found += int(trial['ticket_hit'])
         require(found == 1 and trials[-1]['ticket_hit'] is True,
                 'WINNING_TRIAL_ONLY')
         require(complete_cpu is None or complete_cpu >= trial_cost,
                 'NESTED_CPU_NOT_IN_TOTAL')
-        if complete_cpu is None:
+        if complete_cpu is None or complete_cpu == 0 or not all_trials_known:
             all_attack_known = False
         else:
             full_attacker_cpu += complete_cpu
@@ -149,9 +152,9 @@ def analyze(data):
             'declared_calls': len(receives),
             'full_attacker_cpu_ns': complete_cpu,
             'receiver_cpu_ns': receiver_cpu if receiver_known else None,
-            'observed_same-clock_cpu_amplification':
-                ratio(receiver_cpu, complete_cpu) if receiver_known else None,
-            'observed_all_costs_known': complete_cpu is not None and receiver_known,
+            'observed_cpu_ns_ratio_conditional':
+                ratio(receiver_cpu, complete_cpu) if receiver_known and all_trials_known else None,
+            'observed_all_costs_known': complete_cpu is not None and complete_cpu > 0 and receiver_known and all_trials_known,
             'fully_invalid_work_authorized': False,
         })
     require(calls <= MAX_RECEIVERS, 'TOTAL_RECEIVER_CALL_LIMIT')
