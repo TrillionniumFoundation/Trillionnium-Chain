@@ -342,21 +342,36 @@ fn admit_page(node: &Mutex<Node>, packet: Packet, end: Instant, stop: &AtomicBoo
         let owner = lock(node, end, stop)?;
         // The peer is authenticated, not CPU-funded. A pinned peer must
         // never mint its own allowance or bypass the public service budget.
-        let cpu = owner.public_service_cpu_domain()?;
-        if owner
-            .check_admission_context(&packet, ingress::now()?)?
-            .is_some()
-        {
-            return Ok(false);
-        }
-        cpu
+        // Only fetch the bound budget identity before reserving actual CPU.
+        // A cold historical-parent context check can itself be expensive.
+        owner.public_service_cpu_domain()?
     };
     progress(end, stop)?;
-    // Exactly the original service bucket, across identities/listeners and
-    // inbound V3 and outbound peer polling. No new budget or chain authority.
+    // The ONE original CPU reservation starts BEFORE reconstructing parent
+    // State, checking ancestry/task and replaying any transcript.
     let operation = cpu.begin()?;
     let checkpoint = operation.checkpoint_handle();
     let native = (|| -> Result<bool> {
+        progress(end, stop)?;
+        checkpoint.checkpoint()?;
+        {
+            let owner = lock(node, end, stop)?;
+            if owner
+                .check_admission_context_with_progress(
+                    &packet,
+                    ingress::now()?,
+                    &mut || {
+                        progress(end, stop)?;
+                        checkpoint.checkpoint()
+                    },
+                )?
+                .is_some()
+            {
+                // Exact stored work stays a duplicate, not fresh Chainwork.
+                // This context read was still paid from the same original CPU.
+                return Ok(false);
+            }
+        }
         progress(end, stop)?;
         checkpoint.checkpoint()?;
         let checked = WorkCheckedPacket::verify_with_progress(packet, &mut |_| {
@@ -374,8 +389,9 @@ fn admit_page(node: &Mutex<Node>, packet: Packet, end: Instant, stop: &AtomicBoo
         owner.admit_work_checked_with_control(checked, ingress::now()?, &control)?;
         Ok(true)
     })();
-    // Success, false transcript, cancellation, M06 failures and panics cannot
-    // invent a refund. The operation owns all actual scoped workers and
+    // Parent State replay, exact duplicate, success, false transcript,
+    // cancellation, M06 failures and panics all owe actual CPU settlement.
+    // The operation owns all actual scoped workers and
     // settles even after a native rejection. Post-commit accounting cannot
     // retroactively invalidate an already admitted fact.
     let settlement = operation.finish();
