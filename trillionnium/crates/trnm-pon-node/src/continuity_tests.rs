@@ -845,6 +845,7 @@ fn native_32_slot_revocation_preserves_maintenance_confirmation_and_reopen() {
     }
     let watched_tx = opens.last().unwrap().clone();
     let included = mine(&mut node, 1, opens);
+    let mut packet_history = vec![node.packet(included).unwrap()];
     let saturated = node.read_active().unwrap();
     assert_eq!(saturated.0, included);
     for slot in 0..DEMAND_SLOTS {
@@ -868,7 +869,8 @@ fn native_32_slot_revocation_preserves_maintenance_confirmation_and_reopen() {
             &settings, 1, 32 + slot as u64, 20, request.encode().unwrap(),
         ));
     }
-    mine(&mut node, 2, revocations);
+    let revoked_block = mine(&mut node, 2, revocations);
+    packet_history.push(node.packet(revoked_block).unwrap());
     let revoked = node.read_active().unwrap();
     for slot in 0..DEMAND_SLOTS {
         assert_eq!(
@@ -897,7 +899,8 @@ fn native_32_slot_revocation_preserves_maintenance_confirmation_and_reopen() {
     assert_eq!(node.next_nonce(development_public(1).unwrap()).unwrap(), 64);
 
     for height in 3..=9 {
-        mine(&mut node, height, vec![]);
+        let id = mine(&mut node, height, vec![]);
+        packet_history.push(node.packet(id).unwrap());
     }
     let watched = hash(b"tx-id", &[&watched_tx]);
     let observed = node.confirmation(watched, included, 100_000).unwrap();
@@ -905,6 +908,33 @@ fn native_32_slot_revocation_preserves_maintenance_confirmation_and_reopen() {
     assert!(!observed.reorged);
     assert!(!observed.finalized);
     assert!(!observed.execution_authority);
+
+    // Separate fresh SQLite recipient recomputes W1, execution and chainwork for
+    // every full packet; neither source/node header claims nor a JSON flag grant
+    // confirmation. Both processes remain under one development administrator.
+    let independent_path = dir.path().join("independent-w1-receiver");
+    let mut independent = Node::open(&independent_path, settings.clone(), 1).unwrap();
+    for original in &packet_history {
+        let raw = original.encode().unwrap();
+        let packet = Packet::decode(&raw).unwrap();
+        let expected = packet.id().unwrap();
+        assert_eq!(independent.admit(&packet, 100_000).unwrap(), expected);
+        independent.activate(expected).unwrap();
+    }
+    assert_eq!(independent.read_active().unwrap(), node.read_active().unwrap());
+    let independent_observed = independent.confirmation(watched, included, 100_000).unwrap();
+    assert_eq!(independent_observed.observed_tip, observed.observed_tip);
+    assert_eq!(independent_observed.required_work_delta, observed.required_work_delta);
+    assert_eq!(independent_observed.work_delta, observed.work_delta);
+    assert!(independent_observed.confirmed && !independent_observed.reorged);
+    assert!(!independent_observed.finalized && !independent_observed.execution_authority);
+    let independent_before = independent.read_active().unwrap();
+    drop(independent);
+    let independent_reopened = Node::open(&independent_path, settings.clone(), 1).unwrap();
+    assert_eq!(independent_reopened.read_active().unwrap(), independent_before);
+    assert!(independent_reopened.confirmation(watched, included, 100_000)
+        .unwrap().confirmed);
+    drop(independent_reopened);
     let before = node.read_active().unwrap();
     drop(node);
     let reopened = Node::open(dir.path(), settings, 1).unwrap();

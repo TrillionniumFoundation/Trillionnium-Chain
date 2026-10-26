@@ -45,3 +45,19 @@ W1 proofs, consensus rules, signer ownership and activation flags are unchanged.
 Only a bounded research journal is affected. A privileged rewrite of SQLite
 rows and hashes, a concurrent hostile filesystem process, ordinary Hepta source
 consent, native M05/M07 integration and public liveness remain separate blockers.
+
+## Native receiver conformance continuation (source-only, 2026-10-26)
+
+The existing non-ignored Revision 12 all-32-slot revocation regression now also
+feeds every original W1 packet (opening 31 additional slots, revoking all 32,
+then empty Maintenance confirmation fillers) through exact wire encode/decode
+into a separate fresh SQLite Node. That receiver recomputes the actual complete
+work relation, transaction execution and active state. Its transaction confirmation
+must match the producer tip/required-work/delta and survive independent cold
+reopen. This is two storage owners under one administrator; it is not proof of
+independent geographic validators or a 72-hour public WAN cohort.
+
+The native Rust selector has been committed as source but was NOT compiled or
+executed in this tool environment (no rustc/cargo). Exact-head native validation
+and the original opt-in 1108-block retention test remain open. No existing
+consensus rule or source/requester authorization has changed.
