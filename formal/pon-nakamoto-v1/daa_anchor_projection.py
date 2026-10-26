@@ -282,6 +282,37 @@ class ForkLocalAnchorProjection:
             return parent.anchored is not None and row.anchored == parent.anchored
         return row.anchored is None and parent.anchored is None
 
+    def audit_full_local_ancestry(self, tip: bytes, *, max_rows: int) -> int:
+        """Cold/recovery self-consistency audit with an EXPLICIT finite read budget.
+
+        Unlike the O(1) hot-path projection, this deliberately visits every
+        stored ancestor and checks that it is linked to the prior committed row.
+        It does NOT verify native work/proofs or attest the stored bytes. The
+        native owner must verify complete Packet ancestry before installing
+        a rebuilt/loaded projection as authority. Budget exhaustion is a
+        recoverable Unavailable condition, not an invalid-block verdict.
+        """
+        if type(max_rows) is not int or not 1 <= max_rows <= 1_000_000:
+            raise ValueError('PROJECTION_AUDIT_BUDGET')
+        seen: set[bytes] = set()
+        cursor = tip
+        reads = 0
+        while True:
+            if reads >= max_rows:
+                raise ValueError('PROJECTION_AUDIT_BUDGET')
+            if cursor in seen:
+                raise ValueError('PROJECTION_CYCLE')
+            seen.add(cursor)
+            row = self.read_local(cursor)
+            reads += 1
+            if not self.validate_local_chain(cursor):
+                raise ValueError('PROJECTION_INTEGRITY')
+            if row.height == 0:
+                if row.block_id != self.context.genesis:
+                    raise ValueError('PROJECTION_GENESIS')
+                return reads
+            cursor = row.parent_id
+
     @classmethod
     def rebuild_from_validated_order(cls, context: ProjectedAsertContext,
                                      observed: Iterable[VerifiedHeaderObservation]

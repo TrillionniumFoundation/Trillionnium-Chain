@@ -48,6 +48,9 @@ class AnchorProjectionResearch(unittest.TestCase):
                     self.assertEqual(ledger.expected_shadow_target(parent), BASE)
             self.assertEqual(ledger.read_local(parent).height, 12000)
             self.assertTrue(ledger.validate_local_chain(parent))
+            self.assertEqual(ledger.audit_full_local_ancestry(parent, max_rows=12001), 12001)
+            with self.assertRaisesRegex(ValueError, 'PROJECTION_AUDIT_BUDGET'):
+                ledger.audit_full_local_ancestry(parent, max_rows=4096)
 
     def test_fork_spanning_activation_keeps_own_anchor(self):
         ledger = ForkLocalAnchorProjection(context())
@@ -136,6 +139,13 @@ class AnchorProjectionResearch(unittest.TestCase):
             context('mtp11'), observed)
         self.assertEqual(restarted.read_local(parent), base.read_local(parent))
         self.assertEqual(restarted.expected_shadow_target(parent), BASE)
+        self.assertEqual(restarted.audit_full_local_ancestry(parent, max_rows=80), 80)
+        early = observed[8].claimed_id
+        early_row = restarted.read_local(early)
+        restarted._rows[early] = replace(early_row, timestamp=START + 999)
+        with self.assertRaisesRegex(ValueError, 'PROJECTION_INTEGRITY'):
+            restarted.audit_full_local_ancestry(parent, max_rows=80)
+        restarted._rows[early] = early_row
         last = restarted.read_local(parent)
         restarted._rows[parent] = replace(last, times_parent_first=(last.timestamp,))
         with self.assertRaisesRegex(ValueError, 'PROJECTION_INTEGRITY'):
