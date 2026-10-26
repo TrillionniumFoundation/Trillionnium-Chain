@@ -3365,6 +3365,12 @@ mod shared_cpu_domain_source_tests {
             read.0.unwrap().ok,
             "unpaid Head must survive real CPU exhaustion"
         );
+        // Unlike the synthetic CPU proxy, this is an actual signed V3
+        // loopback Cookie acquired through the original TCP client.
+        assert!(read.1.solution_found);
+        assert!(read.1.solution_trials > 0);
+        assert!(read.1.solution_search_thread_cpu_ns.is_some(),
+            "real signed Cookie search must report actual thread CPU");
         let honest = call_public_protected_v3_with_deadline(
             address,
             &Request::Submit {
@@ -3380,6 +3386,10 @@ mod shared_cpu_domain_source_tests {
             honest.0.unwrap().ok,
             "signed honest Submit must recover via original CPU refill"
         );
+        assert!(honest.1.solution_found);
+        assert!(honest.1.solution_trials > 0);
+        assert!(honest.1.solution_search_thread_cpu_ns.is_some(),
+            "honest signed Submit must retain actual Cookie CPU and failed trials");
         terminate.store(true, Ordering::Release);
         let finished = worker.join().unwrap().unwrap();
         assert_eq!(finished.mutation_cpu_in_flight_after_shutdown, 0);
@@ -3454,8 +3464,9 @@ mod tests {
                         u64::try_from(wall.elapsed().as_nanos()).ok(),
                 }));
                 assert!((1..=1_048_576).contains(&attempts));
-                assert_eq!(accepted.is_some(), winner(id, accepted.unwrap_or(0), bits)
-                    && accepted.is_some());
+                if let Some(nonce) = accepted {
+                    assert!(winner(id, nonce, bits));
+                }
             }
         }
 
