@@ -63,6 +63,9 @@ class DurableStatelessIntegrationTests(unittest.TestCase):
                                        capacity=4,spent_owner=writer)
         with self.assertRaises(OwnerUnavailable):
             DurablePaidSpendOwner(self.path,RECEIVER,b'X'*32,4)
+        with self.assertRaisesRegex(ValueError, 'OWNER_CONTEXT'):
+            StatelessReceiverAdmission(RECEIVER, SECRET, EPOCH, capacity=4,
+                                       required_bits=16, spent_owner=writer)
 
     def test_durable_owner_error_does_not_turn_into_w1_validity(self):
         issuer = self.issuer()
