@@ -164,3 +164,42 @@ production bits, GPU/ASIC fairness or resistance to issuance CPU floods.
 A real deployer must pin difficulty to a versioned signed transport policy
 and enforce an authentic server clock; the caller-supplied research time and
 difficulty values are **not** a production-safe remote API.
+
+
+## Matched-reference CPU experiment: the original amplification persists
+
+The executable 'formal/pon-nakamoto-v1/w2c_stateless_paired_cost.py'
+compares the original independently coded W1 Python oracle against its
+own fixed 64x64 zero task, the unchanged half-target
+'7f' followed by 31 'ff' bytes and a deterministic fresh challenge stream.
+It requires the **exact Git blob SHA**
+'9cbfccd2d50af48fc43522b967ffdfb1f45ec098' for 'work_oracle.py'
+before accepting the report. Every failed legal challenge, winner,
+independently searched fabricated trace, early precheck and full verifier
+outcome is retained, including bounded exhaustion cases. A third test
+selector 'test_w2c_stateless_paired_cost.py' refuses bad bounds, impossible
+ticket payments and omitted valid-work attempt denominators.
+
+A local exploratory Python process-CPU run used
+'--seed 1 --samples 2 --bits 8 12 --w1-attempts 8
+--ticket-attempts 8192' and retained JSON SHA256
+'b681deddd4bc953a840799b17d953c8effbaef67a305190448323b39cea05a0a'.
+This was one executable process and two deterministic samples, with *both
+difficulty arms reusing each sample's same task/challenge stream*: four
+observations are **not** four independently sourced tasks.
+
+| Sample / local receiver bits | W1 legal attempts | Full legal producer CPU ms | False producer CPU ms | Full false rejection CPU ms | Receiver / false producer CPU | Extra stateless ticket CPU ms |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| 0 / 8 | 2 | 150.80 | 0.0888 | 74.42 | 838.3x | 0.47 |
+| 0 / 12 | 2 | 152.71 | 0.1074 | 76.15 | 709.0x | 0.66 |
+| 1 / 8 | 2 | 149.83 | 0.0609 | 77.17 | 1267.1x | 0.53 |
+| 1 / 12 | 2 | 156.87 | 0.0888 | 79.11 | 890.7x | 12.94 |
+
+Each paid local ticket remained **non-authoritative**; every forged W1
+proof was rejected as TRANSCRIPT. These are *Python-only CPU* observations:
+no actual native Rust W1 path, V3 signed Cookie/body handling, WAN/cgroup
+contention, GPU/ASIC hashes, honest pending work or independent operator.
+Neither the raw CPU ratios nor the synthetic bits determine an acceptable
+public security price. The exact-source-native security qualification,
+A03 3x3x3, GPU calibration, W2 soundness, and third-party cryptanalysis are
+still OPEN.
