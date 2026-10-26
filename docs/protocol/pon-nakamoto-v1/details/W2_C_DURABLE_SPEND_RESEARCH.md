@@ -51,7 +51,7 @@ Execute from a full repository checkout:
 
     python3 formal/pon-nakamoto-v1/test_w2c_durable_receiver.py -v
 
-The current-turn local scratch run executed **11/11 tests PASS** on an
+The current-turn local scratch run executed **12/12 tests PASS** on an
 actual Linux filesystem and Python SQLite. It covered:
 
 - 32 concurrent same-grant calls: exactly one READY, 31 REPLAY
@@ -65,6 +65,9 @@ actual Linux filesystem and Python SQLite. It covered:
 - monotonic-clock regression followed by denial of all new offers
 - an actual child process calling os._exit(0) immediately after durable
   spend commit, then a parent reopening and reading its retained paid row
+- real SQLite max-page-count exhaustion under repeated paid requests:
+  the first out-of-space insert fails closed, prior committed rows survive
+  reopening, no false READY is returned; this is not full-disk or power loss
 - an actual 512-tile W1 independent Python oracle replay: forged
   transcript returns TRANSCRIPT **after** paid ticket, repeat returns REPLAY.
 
@@ -74,7 +77,7 @@ locally executed:
 | Source | Git blob SHA-1 |
 | --- | --- |
 | 'w2c_durable_receiver.py' | 'afa20256affa295d1ee085056e5dca2b189b437f' |
-| 'test_w2c_durable_receiver.py' | '934c3bd1eb6e63088acb026532902ad9ae2a51a2' |
+| 'test_w2c_durable_receiver.py' | '2990b7f973c8f26857a03da4c254a10ca1b06347' |
 | Original 'work_oracle.py' scalar W1 | '9cbfccd2d50af48fc43522b967ffdfb1f45ec098' |
 
 The local scratch test used the unmodified 2,944-byte independent W1 oracle
