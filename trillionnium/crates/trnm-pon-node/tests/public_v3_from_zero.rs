@@ -439,6 +439,27 @@ fn phase(
         && honest_call
             .as_ref()
             .is_some_and(|row| row["client_thread_cpu_ns"].as_u64().is_some());
+    // P2: the same REAL public V3 cookie/nonce operation is now measured
+    // with an actual calling-thread CPU clock, not inferred from wall time.
+    // Refusals before solution-search legitimately have no Cookie CPU sample.
+    // Every authentic late W1 Transcript rejection must have paid the original
+    // signed Cookie price, as must all successful Head/Submit clients.
+    let signed_cookie_cpu_known = read_rows
+        .iter()
+        .all(|row| row["metrics"]["solution_search_thread_cpu_ns"].as_u64().is_some())
+        && honest_call.as_ref().is_some_and(|row| {
+            row["metrics"]["solution_search_thread_cpu_ns"]
+                .as_u64()
+                .is_some()
+        })
+        && attack_rows.iter().filter(|row| {
+            row["call"]["status"] == "refused"
+                && row["call"]["response"]["value"]["error"] == "WORK:Transcript"
+        }).all(|row| {
+            row["call"]["metrics"]["solution_search_thread_cpu_ns"]
+                .as_u64()
+                .is_some()
+        });
     let complete_denominators = attack_rows.len() == ATTACKS
         && constructed_hits + exhausted_searches == ATTACKS
         && submitted_attacks == constructed_hits
@@ -450,6 +471,7 @@ fn phase(
         && complete_denominators
         && construction_cpu_known
         && client_cpu_known
+        && signed_cookie_cpu_known
         && honest_call.as_ref().is_some_and(returned_on_time)
         && state_equal
         && cpu_known
@@ -467,6 +489,9 @@ fn phase(
             "constructed_hits": constructed_hits, "exhausted_searches": exhausted_searches,
             "submitted_attacks": submitted_attacks, "complete_denominators": complete_denominators,
             "attacker_and_client_cpu_known": construction_cpu_known && client_cpu_known,
+            "signed_v3_cookie_search_thread_cpu_known": signed_cookie_cpu_known,
+            "signed_v3_cookie_cpu_is_nested_in_full_client_cpu": true,
+            "cookie_gpu_hash_rate_measured": false,
             "all_preparation_cpu_includes_construction_subintervals": true,
             "from_zero": attack_rows, "honest_reads": read_rows,
             "honest_submit": honest_call, "honest_build_error": honest_build_error,
