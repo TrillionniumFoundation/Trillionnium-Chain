@@ -1,12 +1,12 @@
 # PCQ1/PCR1 — PQ Cell chunk retrieval and local replay observation (research, HOLD_NO_GO)
 
-This is an incremental M09/M01 **offline** extension of PQ Cell releases in PR #406, with direct TPQ1 purpose=5 ML-DSA-65 signatures supplied by the existing, unchanged \`pq_envelope.py\`. It changes no mainline PoN consensus, Ed25519 transactions, work bytes, fees, W1 work factor, Chainwork, Hepta Final-use or production activation flag.
+This is an incremental M09/M01 **offline** extension of PQ Cell releases in PR #406, with direct TPQ1 purpose=5 ML-DSA-65 signatures supplied by the existing, unchanged `pq_envelope.py`. It changes no mainline PoN consensus, Ed25519 transactions, work bytes, fees, W1 work factor, Chainwork, Hepta Final-use or production activation flag.
 
 ## Purpose and authority boundary
 
 The objective is to ensure that a responding peer supplies *exactly* a challenged chunk from a caller-pinned Cell weight catalog and signs the retrieval observation with a genuinely verified ML-DSA-65 key. The signature is not proof that the key belongs to a real custodian, that the peer held bytes before the challenge, that storage is continuously available or that a model may be adopted. RetrievalObservation provides only non-authoritative diagnostic facts, not VerifiedWork, a grant, a storage reward or a final-use token. The one-use SQLite table is purely local; never use it for chain-wide nullifiers, payment, consistency with a reorg or historical rights.
 
-**Critical trust requirement:** The caller must provide *independently authenticated* \`expected_catalog_digest\`, \`expected_release\`, trusted provider key ID, requester identity and challenge nonce. Reading these from the same peer-controlled catalog or signed response proves only self-consistency. The current PR #406 PCB1 release format does not itself anchor the new catalog root; production activation requires an explicitly reviewed versioned release extension and real Hepta export/final-use authorization.
+**Critical trust requirement:** The caller must provide *independently authenticated* `expected_catalog_digest`, `expected_release`, trusted provider key ID, requester identity and challenge nonce. Reading these from the same peer-controlled catalog or signed response proves only self-consistency. The current PR #406 PCB1 release format does not itself anchor the new catalog root; production activation requires an explicitly reviewed versioned release extension and real Hepta export/final-use authorization.
 
 ## Binary formats and proof derivation
 
@@ -20,12 +20,12 @@ Exact messages and hash domain separators are encoded by the executable research
 
 ## Local execution and evidence
 
-\`\`\`sh
+```sh
 cd formal/pon-nakamoto-v1
 python3 -m unittest -v test_pq_cell_custody.py
-\`\`\`
+```
 
-The local campaign executed 13 tests with Python 3.13.5 and OpenSSL 3.5.5 default-provider genuine ML-DSA-65; source blobs on GitHub match the executed local file bytes. Tests include all 217 per-byte PCQ1 mutations; altered chunk, proof and ML-DSA signature; odd-branch Merkle malleability; wrong signer, release, generation, nonce, requester, catalog or expiry; a *fully self-consistent malicious replacement tree under the same release ID*; strict frame and size limits; SQLite foreign schema/trigger/primary-key downgrades; cold reopening, exact retry and eight parallel independent SQLite connections allowing exactly one FIRST_RECORD. See \`evidence/pon-pq-cell-custody-v1/\`. This is a local environment, not independent operator acceptance.
+The local campaign executed 13 tests with Python 3.13.5 and OpenSSL 3.5.5 default-provider genuine ML-DSA-65; source blobs on GitHub match the executed local file bytes. Tests include all 217 per-byte PCQ1 mutations; altered chunk, proof and ML-DSA signature; odd-branch Merkle malleability; wrong signer, release, generation, nonce, requester, catalog or expiry; a *fully self-consistent malicious replacement tree under the same release ID*; strict frame and size limits; SQLite foreign schema/trigger/primary-key downgrades; cold reopening, exact retry and eight parallel independent SQLite connections allowing exactly one FIRST_RECORD. See `evidence/pon-pq-cell-custody-v1/`. This is a local environment, not independent operator acceptance.
 
 ## Remaining critical blockers
 
