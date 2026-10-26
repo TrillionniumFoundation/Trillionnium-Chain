@@ -476,3 +476,44 @@ DAA, establish real attacker work fractions or activate ASERT. P0-C,
 P1-C and P2 remain independently blocked; P1-B still requires
 real-W1 authenticated forks, independently administered partition/heal
 and withholding economics under frozen deployment assumptions.
+
+## P0-C Go arithmetic, genuine W1 transcript, and same-target negative cost probe
+
+A separate, experimental Go verifier at
+`formal/pon-nakamoto-v1/work_go_probe.go` independently implements the
+entire W1 64×64 matrix transcript, corrected AB output, canonical PNW1
+certificate and ticket verification. The Python test
+`test_w1_go_research.py` independently regenerates proofs for four public
+matrix structures and seeds 0/1/9 and requires bit-for-bit digest
+agreement for both one full proof and the first successful same-target
+challenge search. Go itself checks canonical 49,188-byte length, direct
+AB, transcript/product/task/length tampering and rejects a cheap forged
+ticket after full verification; `Precheck` is never VerifiedWork.
+
+The producer and forged-ticket negative use the **same target**
+`7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff`.
+The honest producer recomputes one complete W1 attempt per fresh synthetic
+challenge until winning, recording all failed attempts and their total
+wall time; the false producer searches only claimed transcript digests,
+never supplying a valid W1 relation. Both remain non-consensus probes:
+challenges are local research hashes rather than real serialized block
+headers, public task leases or miner identity contexts.
+
+An actual local Go execution observed **4 passing Python test functions**
+(including 12 signed-independent-bytes *arithmetical* comparison cases,
+not independent participants) and **128 wall-clock cost samples**
+(32 seeds for dense, zero, sparse and rank-one). The exact raw local
+receipt, source/binary hash identities, limitations and reproduction
+instructions are preserved in
+`evidence/pon-w1-go-same-target-local-20261025/README.md` and its
+`raw_32_per_shape.json`. The median full forged-rejection versus cheap
+fake producer wall-time ratio was approximately 43–44 in this
+development environment. A legal-winning producer's complete search was
+measured separately; neither figure is an attacker's optimal cost
+or an expected mainnet resource ratio.
+
+The executed Go process is not the native Rust verifier. No GPU/ASIC,
+worst-case honest/full-node ingress, Sybil attack, independent hardware
+or operator qualification occurred. P0-C remains OPEN. This evidence
+does not change W1, consensus revision, reward, task permissions, old
+DAA, production flags or the source-sensitive historic evidence package.
