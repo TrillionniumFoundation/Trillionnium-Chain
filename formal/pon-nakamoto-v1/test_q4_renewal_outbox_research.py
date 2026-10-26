@@ -388,6 +388,62 @@ class RenewalOutboxTests(unittest.TestCase):
             db.observe(key, observation('confirmed', 4))
             self.assertEqual(db.audit(), 3)
 
+
+    def test_hot_writer_refuses_corrupt_latest_event_without_append(self):
+        with self.open() as db:
+            key = db.prepare(intent())
+            db.dispatch_unknown(key)
+            db.db.execute(
+                'UPDATE q4_outbox_events_v1 SET digest=? WHERE ordinal=1',
+                (h(b'tampered-tail-digest'),)
+            )
+            with self.assertRaisesRegex(OutboxError, '^EVENT_TAIL_CORRUPT
+        with self.open() as db:
+            db.db.execute('BEGIN IMMEDIATE')
+            try:
+                with self.assertRaisesRegex(OutboxError, 'AUDIT_REENTRANT'):
+                    db.audit()
+                self.assertTrue(db.db.in_transaction)
+            finally:
+                db.db.execute('ROLLBACK')
+            self.assertEqual(db.audit(), 0)
+
+if __name__ == '__main__': unittest.main()
+):
+                db.observe(key, observation())
+            self.assertEqual(
+                db.db.execute('SELECT COUNT(*) FROM q4_outbox_events_v1').fetchone()[0], 1
+            )
+            with self.assertRaises(OutboxError):
+                db.status(key)
+
+    def test_hot_writer_refuses_changed_penultimate_digest_without_append(self):
+        with self.open() as db:
+            key = db.prepare(intent())
+            db.dispatch_unknown(key)
+            db.observe(key, observation('included', 1))
+            db.db.execute(
+                'UPDATE q4_outbox_events_v1 SET digest=? WHERE ordinal=1',
+                (h(b'tampered-predecessor-digest'),)
+            )
+            with self.assertRaisesRegex(OutboxError, '^EVENT_TAIL_CORRUPT
+        with self.open() as db:
+            db.db.execute('BEGIN IMMEDIATE')
+            try:
+                with self.assertRaisesRegex(OutboxError, 'AUDIT_REENTRANT'):
+                    db.audit()
+                self.assertTrue(db.db.in_transaction)
+            finally:
+                db.db.execute('ROLLBACK')
+            self.assertEqual(db.audit(), 0)
+
+if __name__ == '__main__': unittest.main()
+):
+                db.observe(key, observation('confirmed', 2))
+            self.assertEqual(
+                db.db.execute('SELECT COUNT(*) FROM q4_outbox_events_v1').fetchone()[0], 2
+            )
+
     def test_nested_audit_refuses_without_rolling_back_writer_intent(self):
         with self.open() as db:
             db.db.execute('BEGIN IMMEDIATE')

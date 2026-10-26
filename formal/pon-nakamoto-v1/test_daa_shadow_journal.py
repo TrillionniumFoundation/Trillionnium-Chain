@@ -120,6 +120,37 @@ class ShadowJournalTests(unittest.TestCase):
         with self.assertRaisesRegex(JournalError, 'DATABASE_ROW_DIGEST'):
             ShadowJournal(self.path, CTX, GEN)
 
+    def test_hot_activate_refuses_corrupt_candidate_without_moving_tip(self):
+        with ShadowJournal(self.path, CTX, GEN) as journal:
+            one, packet = candidate(GEN, 1)
+            journal.append(one, packet)
+            journal.db.execute(
+                'UPDATE daa_shadow_headers_v1 SET digest=? WHERE block_id=?',
+                (sha(b'changed-after-append'), one.block_id),
+            )
+            with self.assertRaisesRegex(JournalError, 'HEADER_ROW_DIGEST'):
+                journal.activate(one.block_id, GEN)
+            self.assertEqual(journal.active(), GEN)
+            self.assertEqual(
+                journal.db.execute(
+                    "SELECT value FROM daa_shadow_meta_v1 WHERE key='active_tip'"
+                ).fetchone()[0], GEN
+            )
+
+    def test_hot_active_tip_refuses_corrupted_selected_row(self):
+        with ShadowJournal(self.path, CTX, GEN) as journal:
+            one, packet = candidate(GEN, 1)
+            journal.append(one, packet)
+            journal.activate(one.block_id, GEN)
+            journal.db.execute(
+                'UPDATE daa_shadow_headers_v1 SET digest=? WHERE block_id=?',
+                (sha(b'changed-after-activation'), one.block_id),
+            )
+            with self.assertRaisesRegex(JournalError, 'HEADER_ROW_DIGEST'):
+                journal.active()
+            with self.assertRaisesRegex(JournalError, 'HEADER_ROW_DIGEST'):
+                journal.activate(one.block_id, one.block_id)
+
     def test_corrupt_digest_refused_even_on_identical_replay(self):
         with ShadowJournal(self.path, CTX, GEN) as journal:
             one, packet = candidate(GEN, 1)

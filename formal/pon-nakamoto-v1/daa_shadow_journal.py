@@ -152,9 +152,17 @@ class ShadowJournal:
 
     def _valid_tip(self, tip: bytes) -> None:
         _id(tip, 'active_tip')
-        if tip != self.genesis and self.db.execute(
-                'SELECT 1 FROM daa_shadow_headers_v1 WHERE block_id=?', (tip,)).fetchone() is None:
-            raise JournalError('ACTIVE_TIP_UNAVAILABLE')
+        if tip != self.genesis:
+            if self.db.execute(
+                    'SELECT 1 FROM daa_shadow_headers_v1 WHERE block_id=?',
+                    (tip,)).fetchone() is None:
+                raise JournalError('ACTIVE_TIP_UNAVAILABLE')
+            # A stored row's existence is not an integrity check.  When a
+            # concurrent local corruption occurs after startup, refuse to
+            # expose it as a healthy active tip or publish it via CAS.
+            # This is only the local row/identity check, not PoN proof or
+            # an authenticated verification of its complete ancestry.
+            self.get(tip)
 
     def active(self) -> bytes:
         value = self.db.execute("SELECT value FROM daa_shadow_meta_v1 WHERE key='active_tip'").fetchone()
