@@ -2274,6 +2274,22 @@ lost/unknown effects; this receipt creates no new issuer or learning journal.
 Three no-update cycles do not waive the separate successful cross-node I09/I10
 cohort with actual compatible installation and ordinary next-task readback.
 
+The fixed initial V1 remains the original canonical positive-zero parent. Both
+LoRA factors are zero, so copying it over PEFT initialization leaves both factor
+gradients zero. The explicit [trainable working-copy preparation V2](../../scripts/llm_initial_trainable_setup_v2.py)
+now captures the caller's seeded A, reads back the original parent through the
+existing copy operation, then restores A while B stays positive zero. It rejects
+negative-zero-only A, factor/base/buffer overlap, operator drift and compiled
+module dispatch before mutation. Thirteen real small CPU Torch/PEFT controls
+pass without skips; the original nine controls and all V1 assertions remain.
+This is an unsigned preparation component only: the seed is caller-declared,
+function preservation is algebraic B-zero reasoning, and its setup hash change
+is neither learning nor useful gain. PN3's existing runtime owner must still
+bind the explicit V2 source/recipe and actual predecessor readback into the
+same training/evaluation budget and lineage, verify the full 135M model, and
+complete ordinary installation and next-task readback. No CURRENT, selection,
+FinalUse, reward or three-round gate is opened by these controls.
+
 The controlled 135M five-control observation in the inspected Hepta source
 reports zero gain against the strongest control and no ordinary installation
 or three-round closure. Preserve that result. Require frozen matched training
