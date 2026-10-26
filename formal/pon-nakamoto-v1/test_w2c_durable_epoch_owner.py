@@ -164,29 +164,39 @@ os._exit(0)   # deliberately skip close() and all normal teardown
 
     @unittest.skipUnless(hasattr(os,'fork'), 'real OS fork required')
     def test_child_fork_inheriting_the_same_owner_is_fenced(self):
-        owner=self.owner()
-        read_end, write_end=os.pipe()
-        child=os.fork()
-        if child==0:
-            os.close(read_end)
-            try:
-                owner.offer(self.proposal,self.caller,8,100)
-            except ValueError as error:
-                os.write(write_end,str(error).encode())
-            else:
-                os.write(write_end,b'UNEXPECTED_READY')
-            finally:
-                os._exit(0)
-        os.close(write_end)
-        response=os.read(read_end,100)
-        os.close(read_end)
-        _,status=os.waitpid(child,0)
-        self.assertEqual(status,0)
-        self.assertEqual(response,b'FORKED_OWNER')
-        grant,nonce=self.grant(owner)
-        self.assertEqual(owner.consume(grant,self.proposal,self.caller,nonce,120),
-                         'READY_RESOURCE_ONLY')
-        owner.close()
+        # Run the fork in a fresh interpreter before a test suite can leave
+        # worker threads behind. No sqlite operation may occur in that child.
+        script = """
+import os, sys
+from contract_wire import H
+from w2c_durable_epoch_owner import DurableReceiverOwner
+from w2c_receiver_admission import solve
+owner=DurableReceiverOwner(sys.argv[1],bytes([71])*32,bytes([27])*32)
+read_end, write_end=os.pipe()
+child=os.fork()
+if child==0:
+    os.close(read_end)
+    try:
+        owner.offer(H('durable-p3-fixed-proposal'),bytes([12])*32,8,100)
+    except ValueError as error:
+        os.write(write_end,str(error).encode())
+    else:
+        os.write(write_end,b'UNEXPECTED_READY')
+    os._exit(0)
+os.close(write_end)
+answer=os.read(read_end,100)
+os.close(read_end)
+_, status=os.waitpid(child,0)
+assert status==0 and answer==b'FORKED_OWNER', (status,answer)
+grant=owner.offer(H('durable-p3-fixed-proposal'),bytes([12])*32,8,100)
+nonce,_=solve(grant,65536)
+assert owner.consume(grant,H('durable-p3-fixed-proposal'),bytes([12])*32,nonce,120)=='READY_RESOURCE_ONLY'
+owner.close()
+"""
+        completed=subprocess.run([sys.executable,'-B','-c',script,self.path],
+                                  env={**os.environ,'PYTHONPATH':str(Path(__file__).resolve().parent)},
+                                  capture_output=True,text=True,timeout=10)
+        self.assertEqual(completed.returncode,0,completed.stderr)
 
     def test_no_consensus_authority_ever_created(self):
         owner = self.owner()
