@@ -4264,6 +4264,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-pon-node/tests/daa_indexed_anchor_research.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/tests/daa_indexed_anchor_research.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-pon-node/tests/derived_commitment.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),

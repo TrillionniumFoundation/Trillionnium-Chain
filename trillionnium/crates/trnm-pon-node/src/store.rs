@@ -2985,6 +2985,81 @@ impl Node {
             self.settings.target("pow_limit_hex")?,
         )
     }
+    /// Bounded native-index shadow ASERT over an already admitted PoN fork.
+    /// It uses the existing sealed ancestry index rather than walking back
+    /// to the fixed anchor on every query, including after 4096 blocks.
+    /// Research output has NO block-validity, chainwork or activation authority.
+    pub fn indexed_asert_research_target(
+        &self,
+        context: consensus::daa_branch_research::AnchoredResearchContext,
+        observed_parent: Hash,
+        max_index_sql: u64,
+    ) -> Result<Hash> {
+        use consensus::daa_branch_research::ParentClock;
+        use consensus::daa_research::{asert_target, AsertInputs};
+
+        ensure(
+            context.anchor_height == 1
+                && context.anchor_block != context.genesis
+                && context.genesis == self.settings.genesis()
+                && context.network == self.settings.network()
+                && context.parameters == self.settings.parameters()
+                && context.genesis_timestamp == self.settings.genesis_time()
+                && context.spacing == self.settings.limit("target_spacing_seconds")?
+                && context.pow_limit == self.settings.target("pow_limit_hex")?
+                && context.half_life > 0
+                && (1..=4096).contains(&context.max_ancestor_reads)
+                && (2..=crate::ancestry_index::READ_SQL_BUDGET).contains(&max_index_sql),
+            "ASERT_INDEXED_CONTEXT",
+        )?;
+        self.ready()?;
+        let parent_row = self.record(observed_parent)?;
+        ensure(parent_row.height >= context.anchor_height, "ASERT_INDEXED_PARENT")?;
+        let anchor = self.stored_header_link(context.anchor_block)?;
+        ensure(
+            anchor.header.height == context.anchor_height
+                && anchor.header.parent == context.genesis
+                && anchor.header.target == context.anchor_target,
+            "ASERT_INDEXED_ANCHOR",
+        )?;
+        let is_ancestor = crate::ancestry_index::contains(
+            &self.db,
+            self.ancestry_context(),
+            observed_parent,
+            context.anchor_block,
+            max_index_sql,
+            &mut |_| Ok(()),
+        )
+        .map_err(Error::local_integrity)?;
+        ensure(is_ancestor, "ASERT_INDEXED_FORK")?;
+
+        let mut recent = Vec::with_capacity(11);
+        self.visit_header_batch_limited(observed_parent, 11, &mut |_, link| {
+            recent.push(link.header.timestamp);
+            Ok(())
+        })?;
+        if recent.len() < 11 {
+            recent.push(context.genesis_timestamp);
+        }
+        let parent_time = match context.parent_clock {
+            ParentClock::Raw => *recent.first().ok_or("ASERT_INDEXED_PARENT")?,
+            ParentClock::Median11 => {
+                recent.sort_unstable();
+                recent[recent.len() / 2]
+            }
+        };
+        asert_target(AsertInputs {
+            anchor_target: context.anchor_target,
+            anchor_parent_time: context.genesis_timestamp,
+            evaluation_parent_time: parent_time,
+            anchor_height: context.anchor_height,
+            candidate_height: parent_row.height.checked_add(1).ok_or("ASERT_INDEXED_HEIGHT")?,
+            spacing: context.spacing,
+            half_life: context.half_life,
+            pow_limit: context.pow_limit,
+        })
+    }
+
     /// A cancelled controlled activation may have committed only part of its
     /// existing reorg intent. Permit only the exact already-admitted intent
     /// target to reach the original controlled activation/recovery checks.
