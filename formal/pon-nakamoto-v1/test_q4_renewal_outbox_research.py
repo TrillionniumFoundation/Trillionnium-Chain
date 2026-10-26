@@ -388,6 +388,63 @@ class RenewalOutboxTests(unittest.TestCase):
             db.observe(key, observation('confirmed', 4))
             self.assertEqual(db.audit(), 3)
 
+    def test_earlier_corrupted_event_refuses_next_append_without_mutating_history(self):
+        # The previous guard checked only the last observed event. An older
+        # committed row can be changed by another SQLite owner while the last
+        # observation remains canonical. A new append must not extend that
+        # invalid historical prefix.
+        with self.open() as db:
+            key = db.prepare(intent())
+            db.dispatch_unknown(key)
+            db.observe(key, observation('included', 2))
+            db.observe(key, observation('confirmed', 3))
+            with sqlite3.connect(self.file) as other:
+                original = other.execute(
+                    'SELECT observation FROM q4_outbox_events_v1 WHERE ordinal=2'
+                ).fetchone()[0]
+                other.execute(
+                    'UPDATE q4_outbox_events_v1 SET observation=? WHERE ordinal=2',
+                    (original[:-1] + bytes([original[-1] ^ 1]),))
+            with self.assertRaisesRegex(OutboxError, 'EVENT_DIGEST'):
+                db.observe(key, observation('unavailable', 4))
+            self.assertFalse(db.db.in_transaction)
+            with sqlite3.connect(self.file) as other:
+                self.assertEqual(other.execute(
+                    'SELECT COUNT(*) FROM q4_outbox_events_v1').fetchone()[0], 3)
+                other.execute(
+                    'UPDATE q4_outbox_events_v1 SET observation=? WHERE ordinal=2',
+                    (original,))
+            db.observe(key, observation('unavailable', 4))
+            self.assertEqual(db.audit(), 4)
+
+    def test_corrupted_old_intent_prevents_unrelated_new_prepare(self):
+        with self.open() as db:
+            db.prepare(intent())
+            another = replace(intent(), operation_id=h(b'independent operation'),
+                              signed_transaction=b'R' * 1187)
+            with sqlite3.connect(self.file) as other:
+                other.execute(
+                    'UPDATE q4_outbox_intents_v1 SET wire=? WHERE operation_id=?',
+                    (intent().wire() + b'corrupt', intent().operation_id))
+            with self.assertRaisesRegex(OutboxError, 'INTENT_CORRUPT'):
+                db.prepare(another)
+            self.assertFalse(db.db.in_transaction)
+            with sqlite3.connect(self.file) as other:
+                self.assertEqual(other.execute(
+                    'SELECT COUNT(*) FROM q4_outbox_intents_v1').fetchone()[0], 1)
+
+    def test_valid_concurrent_owner_append_reaudits_once_then_continues(self):
+        with self.open() as reader, self.open() as writer:
+            key = reader.prepare(intent())
+            writer.dispatch_unknown(key)
+            reader.observe(key, observation('included', 2))
+            writer.observe(key, observation('confirmed', 3))
+            reader.observe(key, observation('unavailable', 4))
+            self.assertEqual(reader.audit(), 4)
+            self.assertEqual(writer.audit(), 4)
+            self.assertEqual(reader.status(key)['last_untrusted_observation'],
+                             'unavailable')
+
     def test_nested_audit_refuses_without_rolling_back_writer_intent(self):
         with self.open() as db:
             db.db.execute('BEGIN IMMEDIATE')
