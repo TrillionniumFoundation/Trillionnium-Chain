@@ -63,14 +63,14 @@ class SqlitePaidSpendOwner:
             con.execute('BEGIN IMMEDIATE')
             con.execute('CREATE TABLE IF NOT EXISTS owner ('
                         'single INTEGER PRIMARY KEY CHECK(single=1), '
-                        'context BLOB NOT NULL, highest_ms INTEGER NOT NULL)')
+                        'context BLOB NOT NULL, capacity INTEGER NOT NULL, highest_ms INTEGER NOT NULL)')
             con.execute('CREATE TABLE IF NOT EXISTS spent ('
                         'key BLOB PRIMARY KEY CHECK(length(key)=32), '
                         'expires_ms INTEGER NOT NULL) WITHOUT ROWID')
-            row = con.execute('SELECT context FROM owner WHERE single=1').fetchone()
+            row = con.execute('SELECT context, capacity FROM owner WHERE single=1').fetchone()
             if row is None:
-                con.execute('INSERT INTO owner VALUES(1, ?, -1)', (context,))
-            elif row[0] != context:
+                con.execute('INSERT INTO owner VALUES(1, ?, ?, -1)', (context, capacity))
+            elif row[0] != context or row[1] != capacity:
                 raise ValueError('OWNER_CONTEXT_MISMATCH')
             con.commit()
         self._check_file()
@@ -102,10 +102,10 @@ class SqlitePaidSpendOwner:
         try:
             with closing(self._connect()) as con, con:
                 con.execute('BEGIN IMMEDIATE')
-                row = con.execute('SELECT context, highest_ms FROM owner WHERE single=1').fetchone()
-                if row is None or row[0] != self.context:
+                row = con.execute('SELECT context, capacity, highest_ms FROM owner WHERE single=1').fetchone()
+                if row is None or row[0] != self.context or row[1] != self.capacity:
                     raise ValueError('OWNER_CONTEXT_MISMATCH')
-                if now_ms < row[1]:
+                if now_ms < row[2]:
                     return 'CLOCK_REGRESSION'
                 con.execute('UPDATE owner SET highest_ms=? WHERE single=1', (now_ms,))
                 con.execute('DELETE FROM spent WHERE expires_ms<=?', (now_ms,))
@@ -125,8 +125,8 @@ class SqlitePaidSpendOwner:
     def pending_paid(self):
         try:
             with closing(self._connect()) as con, con:
-                row = con.execute('SELECT context FROM owner WHERE single=1').fetchone()
-                if row is None or row[0] != self.context:
+                row = con.execute('SELECT context, capacity FROM owner WHERE single=1').fetchone()
+                if row is None or row[0] != self.context or row[1] != self.capacity:
                     raise ValueError('OWNER_CONTEXT_MISMATCH')
                 return con.execute('SELECT count(*) FROM spent').fetchone()[0]
         except (sqlite3.Error, OSError) as exc:
