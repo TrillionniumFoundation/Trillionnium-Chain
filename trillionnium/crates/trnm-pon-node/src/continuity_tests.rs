@@ -1212,21 +1212,79 @@ fn long_native_all_32_retained_slots_reopen_only_after_retention_boundary() {
     // Every new lease uses a globally increasing branch generation and the
     // original requester signs each full QDL2 envelope independently.
     let mut fresh = Vec::new();
+    let mut selected_lease = None;
     for slot in 0..DEMAND_SLOTS {
         let mut lease = bootstrap.lease.clone();
         lease.slot = slot;
         lease.generation = u64::from(slot) + 33;
         lease.revision = 1;
+        if slot == 1 {
+            lease.purpose = trnm_protocol::qualified_work_task::TaskPurpose::InferenceContraction;
+        }
         lease.not_before = 1102;
         lease.expires = 2102;
         lease.available_until = 2202;
         lease.demand_id = lease.derived_demand_id();
+        if slot == 1 {
+            selected_lease = Some(lease.clone());
+        }
         fresh.push(signed(&settings, 1, 64 + u64::from(slot), 18,
                           lease.encode().unwrap()));
     }
-    let watched_tx = fresh.last().unwrap().clone();
-    let watched = hash(b"tx-id", &[&watched_tx]);
+    // Reclaim alone is not a usable neural-work source. A real independent
+    // source statement must register actual model/input bytes, and only the
+    // successor block may select them. Other 31 slots remain occupied.
+    let selected = selected_lease.unwrap();
+    let model: Vec<u8> = (0..4096_u32)
+        .flat_map(|i| ((i * 11 + 7) % 97).to_le_bytes())
+        .collect();
+    let input: Vec<u8> = (0..4096_u32)
+        .flat_map(|i| ((i * 17 + 5) % 101).to_le_bytes())
+        .collect();
+    let (a, b) =
+        trnm_crypto_primitives::qualified_work_task::derive_matrices(&model, &input).unwrap();
+    let mut manifest = bootstrap.signed.manifest;
+    manifest.purpose = selected.purpose;
+    manifest.source = selected.source;
+    manifest.demand_id = selected.demand_id;
+    manifest.source_record = selected.bound_source_record().unwrap();
+    manifest.model = hash(b"artifact", &[&model]);
+    manifest.layer = QualifiedWorkTask::layer_id(manifest.model);
+    manifest.input = hash(b"qualified-task-input-v1", &[&input]);
+    manifest.matrix_task = trnm_crypto_primitives::pon_work::task_id(&a, &b).unwrap();
+    manifest.availability_manifest = selected.availability_manifest;
+    manifest.availability_root = selected.availability_root;
+    manifest.authorization_scope = selected.authorization_scope;
+    manifest.withdrawal_head = selected.withdrawal_frontier().unwrap();
+    manifest.demand_nonce = 1;
+    manifest.not_before = selected.not_before;
+    manifest.expires = selected.expires;
+    manifest.available_until = selected.available_until;
+    manifest.useful_output_limit = selected.purpose.output_limit();
+    manifest.output_meter = manifest.derived_output_meter();
+    let mut statement =
+        trnm_protocol::qualified_work_task::lifecycle_v2::SignedLifecycleTaskV2 {
+            lease_id: selected.id().unwrap(),
+            manifest,
+            signature: [0; 64],
+        };
+    let source_key = signing_key_from_hex(
+        &hex::encode(hash(b"DEV-ONLY-KEY", &[&0_u64.to_le_bytes()])),
+    ).unwrap();
+    statement.signature = hex::decode(sign_hex(
+        &source_key,
+        &statement.signing_message().unwrap(),
+    ))
+    .unwrap()
+    .try_into()
+    .unwrap();
+    let register = signed(&settings, 0, 1, 21, statement.encode().unwrap());
+    let watched = hash(b"tx-id", &[&register]);
+    fresh.push(register);
     let included = mine(&mut node, 1102, fresh);
+    assert!(
+        node.lifecycle_task_lease(included, statement.manifest.matrix_task, 1103).is_ok()
+    );
     let after = node.read_active().unwrap();
     for slot in 0..DEMAND_SLOTS {
         let record = &after.2[&qualified_task_lifecycle::slot_key(slot).unwrap()];
@@ -1237,7 +1295,36 @@ fn long_native_all_32_retained_slots_reopen_only_after_retention_boundary() {
     assert_eq!(
         after.2[continuity_v1::MAINTENANCE_KEY]["useful_output_credit"], 0,
     );
-    for height in 1103..=1110_u64 {
+    // Work for the newly registered demand must use its actual parent
+    // authorization; it cannot authorize its own registration block.
+    let actual = trnm_crypto_primitives::qualified_work_task::lifecycle_v2::verify_lifecycle_admission(
+        &statement.encode().unwrap(),
+        trnm_crypto_primitives::qualified_work_task::TaskMaterial {
+            model: &model, input: &input, a: &a, b: &b,
+        },
+        &selected,
+        1103,
+    ).unwrap();
+    let task_packet = node.make_with_task(
+        included,
+        vec![],
+        development_public(0).unwrap(),
+        11031,
+        4096,
+        &actual,
+        trnm_crypto_primitives::qualified_work_task::TaskMaterial {
+            model: &model, input: &input, a: &a, b: &b,
+        },
+    ).unwrap();
+    assert_eq!(task_packet.header.work_task, statement.manifest.matrix_task);
+    let task_id = node.admit(&task_packet, 100_000).unwrap();
+    node.activate(task_id).unwrap();
+    assert_eq!(node.parent_height(task_id).unwrap(), 1103);
+    assert_eq!(
+        node.read_active().unwrap().2
+            [&qualified_task_lifecycle::slot_key(1).unwrap()]["output_count"], 1,
+    );
+    for height in 1104..=1110_u64 {
         mine(&mut node, height, vec![]);
     }
     let confirmed = node.confirmation(watched, included, 100_000).unwrap();
