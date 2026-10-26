@@ -1588,3 +1588,39 @@ impl ServiceMutationCpuDomain {
         })
     }
 }
+
+#[cfg(all(test, target_os = "linux"))]
+mod cold_sync_replay_tests {
+    use super::*;
+
+    #[test]
+    fn remote_sync_begins_at_zero_then_uses_only_original_refill() {
+        let cpu = ServiceMutationCpuDomain::process_cold_sync();
+        let another_handle = cpu.clone();
+        assert!(cpu.shares_domain_with(&another_handle));
+        let start = cpu.observe().unwrap();
+        assert_eq!(start.stored_credit_ns, 0);
+        assert_eq!(start.in_flight, 0);
+        assert!(!start.accounting_unavailable);
+        assert_eq!(
+            cpu.await_one_mutation_start(Instant::now())
+                .unwrap_err()
+                .to_string(),
+            "PUBLIC_MUTATION_CPU_BUDGET"
+        );
+        cpu.await_one_mutation_start(Instant::now() + Duration::from_secs(5))
+            .unwrap();
+        let refilled = another_handle.observe().unwrap();
+        assert!(refilled.stored_credit_ns >= i128::from(MUTATION_CPU_START_RESERVE_NS));
+        assert!(refilled.stored_credit_ns <= i128::from(MUTATION_CPU_BURST_NS));
+        let work = cpu.begin().unwrap();
+        assert_eq!(another_handle.observe().unwrap().in_flight, 1);
+        let settled = work.finish();
+        assert!(!settled.accounting_unavailable);
+        let after = cpu.observe().unwrap();
+        assert_eq!(after.in_flight, 0);
+        assert!(!after.accounting_unavailable);
+        // Reusing a cloned handle never creates another starting burst.
+        assert_eq!(another_handle.observe().unwrap(), after);
+    }
+}
