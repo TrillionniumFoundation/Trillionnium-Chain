@@ -48,6 +48,14 @@ the shared actual-write budget charges partial failed responses. Worker errors
 stop intake and all admitted threads are joined. The serial default remains;
 these controls do not qualify public fairness or independent custody.
 
+PN3's optional `smollm-signed-read-v1` handoff profile exports the same eleven
+TCM1 objects and TCR1 release with a separate bounded declaration. The Hepta
+consumer owns model interpretation and must independently reconstruct every
+original manifest from received bytes before using its existing signed native
+owner. M09 supplies no selected CURRENT or installation authority. The default
+handoff refusal and original 35-second transfer/readback deadline remain;
+complete native loading and I10 acceptance are still required.
+
 **Atomic/commit boundary:** Retention obligations separate from self-contained historical work certificates.
 
 ## M09.ArtifactIdentity

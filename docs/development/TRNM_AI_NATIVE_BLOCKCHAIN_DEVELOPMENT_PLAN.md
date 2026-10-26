@@ -952,6 +952,22 @@ execution or a real model failure. They preserve the original late-readback
 failure and do not close the real caller, load-attempt binding, resource,
 FinalUse, three-cycle next-task readback or I10 obligations.
 
+The additive `--controlled-consumer-profile smollm-signed-read-v1` remains in
+this PN3/I09 work package. M09 exports the original eleven TCM1 manifests and
+one TCR1 release; `llm_cell_release.py` adds a create-only declaration capped
+at 64 KiB. Hepta's owning inference module must reconstruct those original
+wire bytes from all actual received payloads, join the original six executable
+source pins and full model/profile/parent identities, then use the existing
+signed load/query/unload owner. Declaration and readback parsing do not grant
+selection, CURRENT installation, ordinary-task qualification or reward.
+The original transfer and readback budget stays 35 seconds; model compilation
+and the explicitly selected original native case are separate observations.
+The default refusal remains unchanged, and even a controlled positive keeps
+the overall handoff failed because I10 selected installation is unavailable.
+The new bounded/duplicate-key/typed-readback refusal controls and the retained
+deadline controls are parser evidence; complete actual eleven-material native
+loading, selected installation and three installed-parent rounds remain open.
+
 The same PN1/PN2/I05 M09 cache path now uses fresh TCL4/schema4 with immutable
 logical bytes, chunk/manifest rows and an explicit main-database image/file-length
 cap. `--cache-max-bytes`, `--cache-max-chunks`, `--cache-max-manifests` and
