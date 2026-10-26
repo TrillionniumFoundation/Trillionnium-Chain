@@ -20,7 +20,25 @@ an estimated safe difficulty.
 For a declared finite sample, compare the most expensive observed rejection
 against the least expensive **complete** declared producer. Receiver fanout
 multiplies rejection cost, while an independently bound ticket is charged
-separately per receiver. Hardware advantage conservatively scales the
+separately per receiver. Crucially, the SAME forged W1 proof construction is
+charged only **once** for the same fixed challenge/task/target across nodes;
+only receiver-bound security-ticket search and per-receiver sends repeat.
+For N receivers, denote T = one ticket search, F = one fixed-W1 false
+construction, S = one first-hop send, and V = one complete receiver reject:
+
+- Receiver-bound MACs: attacker = N*(T + S) + F, receiver = N*V.
+- Globally replayable ticket: attacker = T + S + F (one initial send can
+  propagate via other peers), receiver = N*V.
+
+The old formula N*(T + F + S) for receiver-bound mode incorrectly
+assumed the same false W1 proof must be reconstructed per receiver. It
+could mask observable cost amplification; the new negative regression
+demonstrates that 10,200 guessed attacker units become only 5,200 against
+6,000 receiver units for two receivers. Distinct challenge/task statements
+require separately accounted F; the reader's declared cohort must enforce
+identical frozen source and context before using this sharing assumption.
+The formula is a conservative cost envelope, not a lower bound on attacker
+hash or hardware economics. Hardware advantage conservatively scales the
 attacker's effective hash capacity. The reader never averages away failures,
 never omits ticket misses, and never promotes `NO_OBSERVED_AMPLIFICATION`
 to a public-security qualification.
