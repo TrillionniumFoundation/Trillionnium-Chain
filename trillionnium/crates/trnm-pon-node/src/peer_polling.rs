@@ -33,6 +33,11 @@ use trnm_protocol::pon_wire::{hash, Hash};
 const MAX_CONFIG_BYTES: u64 = 16384;
 const MAX_PACKET_BYTES: usize = 1_048_576;
 const MAX_ERROR_BYTES: usize = 2048;
+// Only locally verified, late invalid W1 mathematics triggers this bounded
+// pinned-peer retry delay. No retry timer is a consensus/finality verdict.
+const INVALID_W1_BACKOFF_BASE_MS: u64 = 250;
+const INVALID_W1_BACKOFF_MAX_STREAK: u8 = 6; // 250, 500, 1k, 2k, 4k, 8k ms
+
 pub const PEER_POLLING_SCHEMA: &str = "pon-native-pinned-peer-poll-config-v1";
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -207,6 +212,8 @@ struct PeerState {
     fallbacks: u64,
     initial_fallback_used: bool,
     last_error: Option<PeerFailure>,
+    invalid_w1_streak: u8,
+    invalid_w1_retry_after: Option<Instant>,
 }
 impl PeerState {
     fn new(genesis: Hash) -> Self {
@@ -222,7 +229,23 @@ impl PeerState {
             fallbacks: 0,
             initial_fallback_used: false,
             last_error: None,
+            invalid_w1_streak: 0,
+            invalid_w1_retry_after: None,
         }
+    }
+    fn penalize_invalid_w1(&mut self, now: Instant) {
+        self.invalid_w1_streak =
+            self.invalid_w1_streak.saturating_add(1).min(INVALID_W1_BACKOFF_MAX_STREAK);
+        let delay_ms = INVALID_W1_BACKOFF_BASE_MS
+            << (self.invalid_w1_streak - 1);
+        self.invalid_w1_retry_after = Some(now + Duration::from_millis(delay_ms));
+    }
+    fn invalid_w1_delayed(&self, now: Instant) -> bool {
+        self.invalid_w1_retry_after.is_some_and(|deadline| now < deadline)
+    }
+    fn valid_new_w1_admitted(&mut self) {
+        self.invalid_w1_streak = 0;
+        self.invalid_w1_retry_after = None;
     }
     fn snapshot(&self, peer: usize) -> PeerPollingSnapshot {
         PeerPollingSnapshot {
@@ -460,6 +483,14 @@ impl Engine {
         let retained = failure(&error.to_string());
         self.states[index].failures += 1;
         self.states[index].last_error = Some(retained.clone());
+        // The error is generated only by the local full native W1 verifier.
+        // A remotely supplied text, a public Busy/Deadline, or a false StateRoot
+        // must NEVER quarantine an unrelated pinned honest peer.
+        if stage == "native_admission"
+            && matches!(error.to_string().as_str(), "WORK:Transcript" | "WORK:Product")
+        {
+            self.states[index].penalize_invalid_w1(Instant::now());
+        }
         self.event(
             index,
             EventDetail {
@@ -659,6 +690,7 @@ impl Engine {
             self.states[index].admitted += 1;
             self.pages += 1;
             if verified {
+                self.states[index].valid_new_w1_admitted();
                 self.states[index].verified += 1;
                 self.verified += 1;
             }
@@ -752,6 +784,12 @@ impl Engine {
                     return Ok(());
                 }
                 let index = (self.rotation + offset) % count;
+                // A pinned adversarial source cannot demand a fresh expensive
+                // W1 transcript replay on each 10ms poll cycle. Other pinned
+                // peers, reads and original CPU-owner work remain unaffected.
+                if self.states[index].invalid_w1_delayed(Instant::now()) {
+                    continue;
+                }
                 if failed.contains(&index) {
                     continue;
                 }
@@ -1041,6 +1079,215 @@ mod tests {
         assert!(final_state.stored_credit_ns <= initial.stored_credit_ns);
         assert_eq!(guarded.lock().unwrap().stats().unwrap(), before);
         assert_eq!(guarded.lock().unwrap().read_active().unwrap().0, settings.genesis());
+    }
+
+    #[test]
+    fn actual_ticket_passing_false_trace_quarantines_only_its_pinned_source() {
+        // The source packet was initially a legal native fixture, but the
+        // attack input below is a NEW fake trace with a fresh cheap ticket.
+        // The local full W1 verifier, never a remote error string, identifies
+        // TRANSCRIPT and starts the existing peer's bounded retry delay.
+        let clock = ingress::now().unwrap();
+        let settings = Settings::development(Some(clock - 100)).unwrap();
+        let producer_dir = tempfile::tempdir().unwrap();
+        let receiver_dir = tempfile::tempdir().unwrap();
+        let producer = Node::open(producer_dir.path(), settings.clone(), 1).unwrap();
+        let mut packet = producer
+            .make(
+                settings.genesis(),
+                vec![],
+                development_public(0).unwrap(),
+                settings.genesis_time() + 10,
+                4096,
+            )
+            .unwrap();
+        let challenge = packet.header.challenge();
+        let real_trace: Hash = packet.proof[pon_work::PROOF_BYTES - 32..]
+            .try_into()
+            .unwrap();
+        let fake_trace = (0_u64..4096)
+            .find_map(|nonce| {
+                let fake = pon_work::hash(
+                    b"pinned-peer-full-replay-false-trace",
+                    &[&challenge, &nonce.to_le_bytes()],
+                );
+                (fake != real_trace
+                    && hash(b"ticket", &[&challenge, &fake]) <= packet.header.target)
+                    .then_some(fake)
+            })
+            .expect("fixed development target must permit bounded false ticket");
+        packet.proof[pon_work::PROOF_BYTES - 32..].copy_from_slice(&fake_trace);
+        assert!(matches!(
+            pon_work::verify(
+                challenge,
+                packet.header.work_task,
+                packet.header.target,
+                &packet.proof,
+            ),
+            Err(pon_work::WorkError::Transcript)
+        ));
+        let malicious_id = packet.id().unwrap();
+        let local = Mutex::new(Node::open(receiver_dir.path(), settings.clone(), 1).unwrap());
+        let before = local.lock().unwrap().stats().unwrap();
+        let config = config(&settings);
+        let stop = AtomicBool::new(false);
+        let context = context(&local, &config, &settings, &stop);
+        let mut engine = Engine::new(&config, &settings);
+        engine.states[0].target = Some(malicious_id);
+        let mut calls = 0usize;
+        engine
+            .cycle(
+                &context,
+                &mut |_, _| {
+                    calls += 1;
+                    Ok(reply(
+                        true,
+                        page_value(
+                            &settings,
+                            malicious_id,
+                            settings.genesis(),
+                            Some(&packet),
+                        ),
+                    ))
+                },
+                &mut |_| Ok(()),
+            )
+            .unwrap();
+        assert_eq!(calls, 1);
+        assert_eq!(engine.states[0].last_error.as_ref().unwrap().message, "WORK:Transcript");
+        assert_eq!(engine.states[0].invalid_w1_streak, 1);
+        assert!(engine.states[0].invalid_w1_delayed(Instant::now()));
+        assert_eq!(engine.states[0].cursor, settings.genesis());
+        assert_eq!(local.lock().unwrap().stats().unwrap(), before);
+        engine
+            .cycle(
+                &context,
+                &mut |_, _| {
+                    calls += 1;
+                    Ok(reply(false, serde_json::json!({"error":"BUSY"})))
+                },
+                &mut |_| Ok(()),
+            )
+            .unwrap();
+        assert_eq!(calls, 1, "no second expensive peer RPC during invalid-W1 cooldown");
+        assert!(!stop.load(Ordering::Acquire));
+    }
+
+    #[test]
+    fn invalid_w1_backoff_is_bounded_monotone_and_clears_only_on_new_valid_work() {
+        let origin = Instant::now();
+        let mut peer = PeerState::new([1; 32]);
+        peer.penalize_invalid_w1(origin);
+        assert_eq!(peer.invalid_w1_streak, 1);
+        assert!(peer.invalid_w1_delayed(origin + Duration::from_millis(249)));
+        assert!(!peer.invalid_w1_delayed(origin + Duration::from_millis(250)));
+        for expected in 2..=INVALID_W1_BACKOFF_MAX_STREAK {
+            peer.penalize_invalid_w1(origin);
+            assert_eq!(peer.invalid_w1_streak, expected);
+        }
+        assert!(peer.invalid_w1_delayed(origin + Duration::from_secs(7)));
+        assert!(!peer.invalid_w1_delayed(origin + Duration::from_secs(8)));
+        for _ in 0..100 {
+            peer.penalize_invalid_w1(origin);
+        }
+        assert_eq!(peer.invalid_w1_streak, INVALID_W1_BACKOFF_MAX_STREAK);
+        assert!(!peer.invalid_w1_delayed(origin + Duration::from_secs(8)));
+        peer.valid_new_w1_admitted();
+        assert_eq!(peer.invalid_w1_streak, 0);
+        assert!(peer.invalid_w1_retry_after.is_none());
+    }
+
+    #[test]
+    fn invalid_w1_penalty_is_per_pinned_peer_and_never_triggered_by_remote_text_or_cpu_busy() {
+        let settings = Settings::development(Some(1)).unwrap();
+        let mut cfg = config(&settings);
+        cfg.peers.push(PinnedPeer {
+            address: "127.0.0.1:12346".parse().unwrap(),
+            server_public: identity(73).public_key().into(),
+        });
+        cfg.max_calls = 4;
+        cfg.validate(&settings).unwrap();
+        let dir = tempfile::tempdir().unwrap();
+        let node = Mutex::new(Node::open(dir.path(), settings.clone(), 1).unwrap());
+        let stop = AtomicBool::new(false);
+        let ctx = context(&node, &cfg, &settings, &stop);
+        let mut engine = Engine::new(&cfg, &settings);
+        let mut reported = 0usize;
+        engine.reject(
+            0,
+            "native_admission",
+            Error::from("WORK:Transcript"),
+            10,
+            None,
+            &mut |_| {
+                reported += 1;
+                Ok(())
+            },
+        ).unwrap();
+        assert!(engine.states[0].invalid_w1_delayed(Instant::now()));
+        assert_eq!(engine.states[0].invalid_w1_streak, 1);
+        engine.reject(
+            1,
+            "history",
+            Error::remote("WORK:Transcript"),
+            10,
+            None,
+            &mut |_| {
+                reported += 1;
+                Ok(())
+            },
+        ).unwrap();
+        engine.reject(
+            1,
+            "native_admission",
+            Error::from("PUBLIC_MUTATION_CPU_BUDGET"),
+            10,
+            None,
+            &mut |_| {
+                reported += 1;
+                Ok(())
+            },
+        ).unwrap();
+        engine.reject(
+            1,
+            "native_admission",
+            Error::from("ROOT"),
+            10,
+            None,
+            &mut |_| {
+                reported += 1;
+                Ok(())
+            },
+        ).unwrap();
+        assert_eq!(engine.states[1].invalid_w1_streak, 0);
+        assert!(!engine.states[1].invalid_w1_delayed(Instant::now()));
+        assert_eq!(reported, 4);
+        let mut requested = Vec::new();
+        engine.cycle(
+            &ctx,
+            &mut |index, _| {
+                requested.push(index);
+                Ok(reply(false, serde_json::json!({"error":"BUSY"})))
+            },
+            &mut |_| Ok(()),
+        ).unwrap();
+        assert_eq!(requested, vec![1], "penalized peer must not get another RPC");
+        assert_eq!(engine.calls, 1);
+        // Simulate elapsed monotonic delay; the original task/chain budget is
+        // unchanged and this never grants or validates work.
+        engine.states[0].invalid_w1_retry_after =
+            Some(Instant::now() - Duration::from_millis(1));
+        engine.cycle(
+            &ctx,
+            &mut |index, _| {
+                requested.push(index);
+                Ok(reply(false, serde_json::json!({"error":"BUSY"})))
+            },
+            &mut |_| Ok(()),
+        ).unwrap();
+        assert!(requested.contains(&0));
+        assert_eq!(engine.states[0].invalid_w1_streak, 1);
+        assert!(!stop.load(Ordering::Acquire));
     }
 
     #[test]

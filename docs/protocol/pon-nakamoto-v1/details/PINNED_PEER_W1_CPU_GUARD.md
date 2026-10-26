@@ -120,3 +120,69 @@ Exact Rust selectors added:
 and `peer_polling::tests::pinned_polling_stops_on_local_cpu_account_failure_but_not_remote_error_text`.
 This is a **source-level fix pending exact native compilation and
 physical resource failure injection**, not a new P1 pass.
+
+## P3 pinned-source repeated false-transcript retry containment (2026-10-26)
+
+This additional **local** peer-polling schedule control targets a separate
+resource-amplification mechanism not closed by merely accounting the CPU:
+a deliberately malicious *operator-pinned* remote sender can deliver different,
+properly encoded false W1 transcripts at each poll cycle. The current pinned
+poller accepts 10ms minimum intervals; each false Work claim is finally
+rejected only after its costly complete replay. Host cgroup + original V3
+bucket bound aggregate resource loss but do not prevent a single bad pinned
+peer from continuously competing with other pinned peers for scarce CPU.
+
+The new state is limited to the **existing fixed peer roster slot** (1–8
+configured peers, no new authenticated identity, allocation or protocol data):
+`invalid_w1_streak: u8` and `invalid_w1_retry_after: Option<Instant>`.
+Only *locally produced* full-W1 `WORK:Transcript` and `WORK:Product`
+errors during `native_admission` start a retry delay, with monotonic delays
+250, 500, 1000, 2000, 4000 and at most 8000 milliseconds. The streak
+saturates at 6, and the delay never exceeds 8 seconds for this exact peer.
+A new *actually verified and admitted* W1 block clears this peer's
+delay. Already admitted exact packets cannot manufacture a new valid-work
+observation to wash the streak.
+
+The scheduler skips the penalized peer before any new Head/History RPC
+while other pinned peers continue under their existing finite queues,
+work budgets and original rotation. It does not refund previously
+charged CPU or create a new host/lane budget. Local CPU budget exhaustion
+(`PUBLIC_MUTATION_CPU_BUDGET`), remote error text, disconnect, bad
+StateRoot after **valid** W1, `TIME_DEFERRED`, and local account failure
+have their **existing** retry/owner-stop classifications; none is
+reclassified into Work invalidity or a false mathematical verdict.
+The existing `PUBLIC_MUTATION_CPU_UNAVAILABLE` owner-stop rule is preserved.
+
+Exact new Rust selectors on this branch:
+
+- `invalid_w1_backoff_is_bounded_monotone_and_clears_only_on_new_valid_work`
+  verifies 250ms first delay, 8s upper bound, saturation and clear.
+- `invalid_w1_penalty_is_per_pinned_peer_and_never_triggered_by_remote_text_or_cpu_busy`
+  verifies malicious native Work errors delay only that configured peer,
+  while other peers continue, and spoofed remote text, real CPU shortage
+  and bad StateRoot do not cause quarantine.
+
+Additional end-to-end native negative selector:
+`actual_ticket_passing_false_trace_quarantines_only_its_pinned_source`
+mines one **separate legal fixture** to obtain valid header/task context,
+then substitutes a freshly chosen bogus trace whose cheap W1 ticket
+passes the original target. It confirms a real `WORK:Transcript` result
+from the Node, unchanged active history/stats/cursor, one peer request,
+and no second RPC while the original 250ms invalid-work cooldown is
+active. This uses a valid fixture to construct the negative input and
+is NOT misrepresented as the original four-from-zero attack producer.
+
+This is **not** a Sybil-safe public network admission algorithm: one
+honest pinned peer wrongly serving invalid material is temporarily
+deprioritized, and a malicious operator controlling many independent
+pinned keys/servers can distribute the attack. Reopening a polling
+process resets this *scheduler-local* cooldown but cannot authorize
+a fresh V3 CPU budget (original Node and physical owner rules continue
+to apply). The delay also cannot stop expensive W1 work already running.
+
+No documented target/lottery/proof validity/fork rule, request schema,
+signed domain, persisted Node state, score, model or FinalUse capability
+is modified. P0 source vectors, P1 physical limits and all P2–P6
+independent criteria **remain unqualified** until full exact-source Rust
+compilation, same-host hostile campaigns, original A03 3×3×3 and
+external cryptographic review. Status: SHADOW_ONLY / HOLD_NO_GO.
