@@ -544,6 +544,46 @@ class ExecutionBoundaryTests(unittest.TestCase):
         self.assertFalse(result['passed'])
         self.assertIn('NATIVE_SERVICE_NUMBER', result['failures'])
 
+    def test_optional_p2_real_signed_cookie_cpu_requires_raw_call_denominators(self):
+        # These are synthetic reader controls, never actual native TCP or GPU
+        # measurements. Archived P0 reports without the optional field retain
+        # their original accepted scope.
+        def with_cookie(doc):
+            for phase in doc['phases']:
+                phase['signed_v3_cookie_search_thread_cpu_known'] = True
+                phase['signed_v3_cookie_cpu_is_nested_in_full_client_cpu'] = True
+                all_calls = [*phase['honest_reads'], phase['honest_submit'],
+                             *(row['call'] for row in phase['from_zero'])]
+                for call in all_calls:
+                    call['metrics'] = {'solution_search_thread_cpu_ns': 1,
+                                       'solution_found': True,
+                                       'solution_trials': 1}
+        clean, _ = self.exercise(report_edit=with_cookie)
+        self.assertTrue(clean['passed'])
+
+        def altered(changer):
+            def mutation(doc):
+                with_cookie(doc)
+                changer(doc['phases'][0])
+            return mutation
+
+        for mutation in (
+            lambda phase: phase['honest_reads'][0]['metrics'].update(
+                solution_search_thread_cpu_ns=None),
+            lambda phase: phase['honest_reads'][1]['metrics'].update(
+                solution_search_thread_cpu_ns=True),
+            lambda phase: phase['honest_submit']['metrics'].update(
+                solution_trials=0),
+            lambda phase: phase['honest_submit']['metrics'].update(
+                solution_found=False),
+            lambda phase: phase['from_zero'][0]['call']['metrics'].update(
+                solution_search_thread_cpu_ns=2),
+        ):
+            result, _ = self.exercise(report_edit=altered(mutation))
+            self.assertFalse(result['passed'])
+            self.assertTrue(any(code.startswith('P2_COOKIE_CPU_') for code in result['failures']),
+                            result['failures'])
+
     def test_nested_cpu_double_count_refused(self):
         result, _ = self.exercise(report_edit=lambda doc: doc['phases'][0].update(attacker_preparation_and_worker_cpu_ns=40))
         self.assertFalse(result['passed'])
