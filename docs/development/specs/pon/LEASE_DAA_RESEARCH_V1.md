@@ -714,7 +714,12 @@ opt-in native selector are **NOT_RUN** in this working environment, which has
 Python/Go but no Rust toolchain or full project checkout. The apparent source
 flow is not an independent client implementation, a public real-task source,
 physical failure test, signer-operator independence or a P0 acceptance receipt.
-The unmodified existing Node confirmation method checks the full active chain;
-strictly independent history/proof replay and genuine source owners remain
-mandatory P0 exits. Do not convert these missing results into PASS on a source
+The test now additionally reconstructs a distinct empty SQLite receiver by
+fetching every one of 1,111 original Packet bodies and invoking its own native
+`Node::admit` / `activate`, then rechecks both receipt confirmations and
+cold-open state. A mutated historic W1 proof is an explicit rejection probe.
+This is real separate-state re-execution **when run**, not a separate client
+implementation or an independently governed operator. Strict third-party
+history/proof replay, real source owners and fault-domain evidence remain
+mandatory P0 exits. Do not convert missing execution into PASS on a source
 integrity or CI-status basis.
