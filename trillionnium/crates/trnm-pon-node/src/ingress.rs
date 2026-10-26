@@ -2109,7 +2109,7 @@ fn call_authenticated_durable_inner(
     Err(Error::authenticated_remote(terminal, error))
 }
 
-pub fn receive_page(
+fn receive_page(
     node: &mut Node,
     page: Page,
     tip: Hash,
@@ -2159,6 +2159,33 @@ pub fn receive_page(
     }
     Ok(next)
 }
+
+/// Public untrusted History import. Unlike the private local parser, this
+/// entry REQUIRES a concrete original source address and checks the existing
+/// fixed, administrator-owned host resource parent around every possible
+/// W1 replay. A caller cannot bypass the guard by calling the addressless
+/// parser from another crate or by supplying a fake already-verified work
+/// token. Only the full native Node determines consensus validity.
+pub fn receive_page_from(
+    node: &mut Node,
+    source: SocketAddr,
+    page: Page,
+    tip: Hash,
+    after: Hash,
+    clock: u64,
+) -> Result<Hash> {
+    let host_kernel = crate::host_kernel_parent::require_for_listener(source)?;
+    if let Some(kernel) = &host_kernel {
+        kernel.verify()?;
+    }
+    let native = receive_page(node, page, tip, after, clock);
+    // A completed native admission cannot be undone by a post-verification
+    // host fault. That fault still makes the overall synchronization fail.
+    if let Some(kernel) = &host_kernel {
+        kernel.verify()?;
+    }
+    native
+}
 pub fn sync_from(
     node: &mut Node,
     address: SocketAddr,
@@ -2185,7 +2212,7 @@ pub fn sync_from(
         write_frame(&mut stream, &serde_json::to_vec(&request)?)?;
         let page: Page = serde_json::from_slice(&read_frame(&mut stream)?)?;
         let complete = page.complete;
-        after = receive_page(node, page, tip, after, now()?)?;
+        after = receive_page_from(node, address, page, tip, after, now()?)?;
         // Resource-counter/membership failure does not roll back any already
         // admitted native block; it makes this sync result unqualified.
         if let Some(kernel) = &host_kernel {
@@ -2233,7 +2260,7 @@ pub fn sync_from_authenticated(
         )?;
         let page: Page = serde_json::from_value(value)?;
         let complete = page.complete;
-        after = receive_page(node, page, tip, after, now()?)?;
+        after = receive_page_from(node, address, page, tip, after, now()?)?;
         // Resource-counter/membership failure does not roll back any already
         // admitted native block; it makes this sync result unqualified.
         if let Some(kernel) = &host_kernel {
@@ -2278,7 +2305,7 @@ pub fn sync_from_authenticated_durable(
         )?;
         let page: Page = serde_json::from_value(value)?;
         let complete = page.complete;
-        after = receive_page(node, page, tip, after, now()?)?;
+        after = receive_page_from(node, address, page, tip, after, now()?)?;
         // Resource-counter/membership failure does not roll back any already
         // admitted native block; it makes this sync result unqualified.
         if let Some(kernel) = &host_kernel {
@@ -2320,6 +2347,28 @@ mod tests {
                 1,
             ).unwrap_err();
             assert_eq!(error.to_string(), expected.to_string());
+            // Public untrusted page API refuses the same unbudgeted source
+            // before it even attempts a page context/W1/State lookup.
+            let unchecked_page = Page {
+                schema: String::new(),
+                network: String::new(),
+                parameters: String::new(),
+                genesis: String::new(),
+                tip: String::new(),
+                after: String::new(),
+                packets: vec![],
+                next: String::new(),
+                complete: false,
+            };
+            let page_error = receive_page_from(
+                &mut node,
+                remote,
+                unchecked_page,
+                settings.genesis(),
+                settings.genesis(),
+                now().unwrap(),
+            ).unwrap_err();
+            assert_eq!(page_error.to_string(), expected.to_string());
             // Authenticating a remote service is not equivalent to a CPU
             // budget. Both signed and durable signed sync must refuse before
             // connecting, same as the unauthenticated remote sync above.
