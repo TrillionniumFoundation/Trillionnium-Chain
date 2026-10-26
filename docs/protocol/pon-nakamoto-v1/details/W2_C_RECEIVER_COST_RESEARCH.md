@@ -99,3 +99,25 @@ can itself be exhausted by unpaid senders without an earlier front-door limit.
 W2-C admission research must NOT be advertised as a decentralized consensus
 safety theorem. Until these gates close, continue to deny production PoN
 activation.
+
+
+## Bounded total issue count across the receiver epoch (new child research)
+
+The receiver-scoped prototype also enforces a strict
+'epoch_issue_limit' (default 4096; constructor bounds 1..65536), in addition
+to 'capacity' (1..1024) for currently retained unexpired grants.
+'issued_total' is monotonically incremented only for actually issued grants
+and is **never** refunded by token use, rejection, caller identity rotation,
+expiry or in-process reopening of issuance. After the finite count is reached
+new requests receive local BUSY even if there are zero live grants.
+Two additional unit tests exercise consumption + expiry + identity rotation
+and invalid constructor values.
+
+This is **not** a solution to an adversarial issuance flood: exhausting
+the lifetime issue allowance can deny every subsequent honest requester.
+An attacker can also restart/clone its own research issuer if it holds the
+same authority, and upstream acceptance of a remote issuer must not treat a
+fresh epoch as a legitimate refund. A true public issuer needs externally
+controlled process epochs, actual Host CPU/connection guards, bounded issuance
+work and measured honest-service fairness. No proof/ledger/production
+authority is created or activated by this monotonically bounded counter.
