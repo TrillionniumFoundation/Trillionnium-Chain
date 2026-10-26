@@ -1371,6 +1371,11 @@ mod tests {
         let cfg = config(&settings);
         let stop = AtomicBool::new(false);
         let ctx = context(&node, &cfg, &settings, &stop);
+        // This is the ORIGINAL, already-bound Node service domain.
+        // Even mathematical W1 success followed by late ROOT refusal
+        // must charge real CPU and never advance a remote peer cursor.
+        let cpu = node.lock().unwrap().public_service_cpu_domain().unwrap();
+        let before_cpu = cpu.observe_actual_flow().unwrap().unwrap();
         let mut engine = Engine::new(&cfg, &settings);
         engine.states[0].target = Some(p.id().unwrap());
         let mut rpc = |_: usize, _: &Request| {
@@ -1388,6 +1393,12 @@ mod tests {
             engine.states[0].last_error.as_ref().unwrap().message,
             "ROOT"
         );
+        let after_cpu = cpu.observe_actual_flow().unwrap().unwrap();
+        assert!(after_cpu.balance_identity_verified);
+        assert_eq!(after_cpu.live_owners, 0);
+        assert!(after_cpu.settled_full_cpu_ns > before_cpu.settled_full_cpu_ns,
+            "late ROOT refusal must charge the actual W1+M06 CPU owner");
+        assert!(after_cpu.paid_cpu_debit_ns > before_cpu.paid_cpu_debit_ns);
         assert_eq!(node.lock().unwrap().read_active().unwrap(), before);
     }
     #[test]
