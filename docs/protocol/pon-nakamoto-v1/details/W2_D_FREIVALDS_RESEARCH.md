@@ -67,7 +67,7 @@ Freivalds rejection bounds is a lower bound on legitimate mining cost.
 
 ## Bounded Python CPU observations on October 26, 2026
 
-The local 7-test run passed with a scratch Python H/matrix oracle using the
+The local 8-test run passed with a scratch Python H/matrix oracle using the
 same fixed arithmetic and domain rules. Both committed research source
 files were subsequently confirmed by exact Git blob SHA equality with
 the tested local files. This does **not** replace running the exact repo's
@@ -91,6 +91,18 @@ The raw local file is not a signed public hardware receipt and is not
 claimed to originate from the selected production operator or a GPU.
 All nested setup, hardware, concurrency, energy, data distribution, and
 honest-service overhead require separate exact-source measurement.
+
+## Four ticket-valid false products without real matrix computation
+
+A separate bounded adversarial control constructs PND0 bytes with A=B=C=C'=0
+**without** calling a legitimate producer, and searches an initial
+half-range ticket target under 64 distinct challenges. Four candidate
+tickets pass the cheap target filter but each fails deterministic
+MASKED_PROJECTION. No mining credit or native work authority results.
+This test is important precisely because reducing the cost of a
+mathematical check does not make a client-issued ticket economically
+expensive. The W2-D acceptance and cheap-fake/expensive-reject costs must
+remain separate measurements under real CPU/GPU/host/network conditions.
 
 ## P5 / P6 explicit failure and future design requirements
 
