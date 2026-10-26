@@ -74,7 +74,8 @@ fn observer(connection: &Connection) -> Result<*mut Observer> {
     // SAFETY: rusqlite owns a live handle for this shared borrow. Safe callers
     // cannot replace this private client data or close the borrowed connection.
     let handle = unsafe { connection.handle() };
-    let pointer = unsafe { ffi::sqlite3_get_clientdata(handle, KEY.as_ptr().cast()) }.cast();
+    let pointer: *mut Observer =
+        unsafe { ffi::sqlite3_get_clientdata(handle, KEY.as_ptr().cast()) }.cast();
     if pointer.is_null() {
         return Err(error("transaction observer missing"));
     }
