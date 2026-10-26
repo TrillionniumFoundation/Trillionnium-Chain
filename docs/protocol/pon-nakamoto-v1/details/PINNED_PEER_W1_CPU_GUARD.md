@@ -80,3 +80,18 @@ This is an auditable source mitigation, **not** a measured production proof:
   activation follows.
 
 Source status: SHADOW_ONLY / HOLD_NO_GO.
+
+
+## Fail-closed original CPU settlement (follow-up)
+
+The original pinned-peer W1/M06 operation no longer discards the typed
+ServiceMutationCpuSettlement. When 'accounting_unavailable' is true, the
+outbound poller returns local 'PUBLIC_MUTATION_CPU_UNAVAILABLE' instead of
+reporting a successfully verified/caught-up History page. A previously
+durably admitted native block remains factual; nothing is rolled back,
+reverified as invalid W1 or silently charged zero. A bounded poller must
+reconcile the original owner before claiming a completed sync.
+
+This is NOT a signed public V3 outcome modification. The exact current
+source requires native Rust execution and physical CPU-owner evidence before
+P1 is accepted; code inspection alone is not a receipt.
