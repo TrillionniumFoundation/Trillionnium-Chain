@@ -2342,6 +2342,94 @@ mod tests {
     use super::*;
 
     #[test]
+    fn history_page_checks_original_owner_between_valid_w1_packets() {
+        // Fixed two-block Page, not a synthetic verification result. Inject an
+        // original-resource checkpoint failure *before* the second W1 proof.
+        // The first immutable admitted block can remain on disk, while the
+        // second is neither verified nor activated; resumption then succeeds.
+        let dir = tempfile::tempdir().unwrap();
+        let now = now().unwrap();
+        let settings = crate::Settings::development(Some(now - 100)).unwrap();
+        let producer_dir = tempfile::tempdir().unwrap();
+        let mut producer = Node::open(producer_dir.path(), settings.clone(), 2).unwrap();
+        let first = producer.make(
+            settings.genesis(),
+            vec![],
+            crate::development_public(0).unwrap(),
+            settings.genesis_time() + 10,
+            4096,
+        ).unwrap();
+        let first_id = producer.admit(&first, now).unwrap();
+        producer.activate(first_id).unwrap();
+        let second = producer.make(
+            first_id,
+            vec![],
+            crate::development_public(0).unwrap(),
+            settings.genesis_time() + 20,
+            4096,
+        ).unwrap();
+        let second_id = second.id().unwrap();
+        let packet_wires = vec![
+            hex::encode(first.encode().unwrap()),
+            hex::encode(second.encode().unwrap()),
+        ];
+        let page = || Page {
+            schema: "pon-native-history-v1".into(),
+            network: hex::encode(settings.network()),
+            parameters: hex::encode(settings.parameters()),
+            genesis: hex::encode(settings.genesis()),
+            tip: hex::encode(second_id),
+            after: hex::encode(settings.genesis()),
+            packets: packet_wires.clone(),
+            next: hex::encode(second_id),
+            complete: true,
+        };
+        let mut receiving = Node::open(dir.path(), settings.clone(), 2).unwrap();
+        let mut checked = 0;
+        let error = receive_page(
+            &mut receiving,
+            page(),
+            second_id,
+            settings.genesis(),
+            now,
+            &mut || {
+                checked += 1;
+                if checked == 3 {
+                    Err("TEST_RESOURCE_OWNER_REVOKED".into())
+                } else {
+                    Ok(())
+                }
+            },
+        ).unwrap_err();
+        assert_eq!(error.to_string(), "TEST_RESOURCE_OWNER_REVOKED");
+        assert_eq!(checked, 3, "first pre+post, then second pre");
+        assert_eq!(receiving.parent_height(first_id).unwrap(), 1);
+        assert!(receiving.parent_height(second_id).is_err());
+        assert_eq!(receiving.read_active().unwrap().0, settings.genesis());
+        drop(receiving);
+        let mut recovered = Node::open(dir.path(), settings.clone(), 2).unwrap();
+        assert_eq!(recovered.parent_height(first_id).unwrap(), 1);
+        assert!(recovered.parent_height(second_id).is_err());
+        let mut completed_checks = 0;
+        assert_eq!(
+            receive_page(
+                &mut recovered,
+                page(),
+                second_id,
+                settings.genesis(),
+                now,
+                &mut || {
+                    completed_checks += 1;
+                    Ok(())
+                },
+            ).unwrap(),
+            second_id
+        );
+        assert_eq!(completed_checks, 4, "check each packet before and after");
+        assert_eq!(recovered.read_active().unwrap().0, second_id);
+    }
+
+    #[test]
     fn remote_sync_without_original_host_cgroup_rejects_before_any_network_or_w1() {
         // Documentation-only network address. If this host really has the
         // registered fixed cgroup, its owner is tested by the kernel checker.
