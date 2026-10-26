@@ -1,0 +1,76 @@
+{
+  "schema": "trnm-pon-post-quantum-transition-v1",
+  "status": "research-only-no-activation",
+  "parent_profile": "pon-nakamoto-v1",
+  "changes_existing_consensus": false,
+  "production_activation": false,
+  "allow_classical_fallback": false,
+  "reference_signature": {
+    "algorithm": "ML-DSA-65",
+    "standard": "FIPS-204",
+    "reference_backend": "OpenSSL 3.5+ default provider, offline CLI conformance only",
+    "wire_magic": "TPQ1",
+    "wire_version": 1,
+    "public_key_bytes": 1952,
+    "signature_bytes": 3309,
+    "unsigned_envelope_bytes": 176,
+    "signed_envelope_bytes": 3487,
+    "purpose_ids": {
+      "transaction": 1,
+      "artifact_publication": 2,
+      "evaluation_receipt": 3,
+      "model_release": 4,
+      "data_custody": 5,
+      "peer_identity": 6
+    },
+    "release_policy": "none: verification cannot issue release/final-use/chainwork"
+  },
+  "reference_key_exchange": {
+    "algorithm": "ML-KEM-768",
+    "standard": "FIPS-203",
+    "ciphertext_bytes": 1088,
+    "shared_secret_bytes": 32,
+    "tls_hybrid_target": "X25519MLKEM768",
+    "tls_authenticated_deployed": false
+  },
+  "existing_devnet_limits": {
+    "max_transaction_bytes": 2048,
+    "max_block_bytes": 1048576,
+    "post_quantum_transaction_wire_compatible": false
+  },
+  "candidate_limits_for_analysis_only": {
+    "max_transaction_bytes": 8192,
+    "max_block_bytes": 4194304,
+    "evaluated_for_network_or_security": false
+  },
+  "mandatory_unclosed_gates": [
+    "M00 versioned production wire and hard-fork or new-chain activation governance",
+    "M01 native audited ML-DSA signer/verifier, key custody, HSM and algorithms",
+    "M02 work quantum-cost and chain-security proof; independent hostile acceptance",
+    "M03 miner identity and publication binding with key rotation",
+    "M04 authenticated ML-KEM hybrid TLS and eclipse/replay tests",
+    "M05 transactions, nonces, fees, gas, migration and historical spend controls",
+    "M06 deterministic whole-block PQ verification budgets and no parent mutation",
+    "M07 reorg-safe state/identity mapping and durable anti-rollback",
+    "M08 confirmation, deep reorg and old/new key split recovery",
+    "M09 canonical manifest/hash agility and custody proof signatures",
+    "M10 signed model contribution and frozen compatible Cell family",
+    "M11 independent evaluator PQ identity, threshold and revocation",
+    "M12 escrow/reward maturity and replay-proof PQ claims",
+    "M13 historical signature/import and state-snapshot migration",
+    "M14 light client, model loader and PQ receipt authentication",
+    "M15 normal node/Hepta integration, key provisioning and deployment",
+    "M16 versioned authorized model-choice proposals without authority escalation",
+    "M17 independent cryptographic, WAN, fault and quantum threat acceptance"
+  ],
+  "conformance": {
+    "reference_files": [
+      "formal/pon-nakamoto-v1/pq_envelope.py",
+      "formal/pon-nakamoto-v1/test_pq_envelope.py",
+      "formal/pon-nakamoto-v1/test_pq_kem.py"
+    ],
+    "tests_are_product_activation": false,
+    "independent_accepted": false,
+    "native_node_integrated": false
+  }
+}
