@@ -51,16 +51,16 @@ Additive Python test selector:
 
     python3 formal/pon-nakamoto-v1/test_w2c_stateless_admission.py -v
 
-A local scratch run on 2026-10-25 executed **10/10 passing tests** using
+A local scratch run on 2026-10-25 executed **11/11 passing tests** using
 the source byte-identical to the submitted Git blobs (SHA1
 'c7b5104f44074c91e59b51d3d434c6d617ef452a' and
-'ff540eb98670af04458e9a05b8744f23e7ad27e9').
+'d7d4797d450bbae7c65f72376c9ea3ff87f176e9').
 The scratch 'contract_wire.H' shim contained only the exact SHA-256
 domain/length framing from the official Python oracle. Running in the
 full checkout with the official 'contract_wire' is a distinct, pending
 qualification; the same source was not compiled into Rust or used on WAN.
 
-The tested cases include:
+An eleventh local negative test also checks that a successfully paid ticket\nfor a forged W1 transcript is still rejected by the actual scalar oracle as\nTRANSCRIPT and cannot be converted into VerifiedWork.\n\nThe tested cases include:
 1. sixteen unsolved offers produce zero paid replay rows;
 2. 64 concurrent copies of one paid offer yield exactly one resource READY;
 3. two Issuer objects sharing one PaidReplayOwner cannot mint a replay;
