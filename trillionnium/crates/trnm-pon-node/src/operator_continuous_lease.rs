@@ -100,8 +100,20 @@ impl LeaseEdge {
                 && old_lease.demand_id == new_lease.demand_id
                 && old_lease.requester == new_lease.requester
                 && old_lease.source == new_lease.source
+                // Q4 freezes source, authorization, and DA identities across
+                // renewal; a new declaration digest must not bypass them.
+                && old_lease.source_record == new_lease.source_record
+                && old_lease.authorization_scope == new_lease.authorization_scope
+                && old_lease.availability_manifest == new_lease.availability_manifest
+                && old_lease.availability_root == new_lease.availability_root
+                && old_lease.cost_class == new_lease.cost_class
                 && old_lease.generation == new_lease.generation
-                && old_lease.revision.checked_add(1) == Some(new_lease.revision),
+                && old_lease.revision.checked_add(1) == Some(new_lease.revision)
+                // Early structural refusal only. M06 still verifies both
+                // signatures and the *actual* containing height.
+                && old_lease.not_before <= new_lease.not_before
+                && new_lease.not_before <= old_lease.expires
+                && new_lease.expires > old_lease.expires,
         )
     }
     /// Byte equality against actual original Node state and the actual retained
