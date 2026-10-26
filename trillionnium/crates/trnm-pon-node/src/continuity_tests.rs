@@ -1249,3 +1249,158 @@ fn long_native_all_32_retained_slots_reopen_only_after_retention_boundary() {
     assert_eq!(reopened.read_active().unwrap(), tip);
     assert!(reopened.confirmation(watched, included, 100_000).unwrap().confirmed);
 }
+
+#[test]
+fn indexed_asert_shadow_uses_admitted_fork_anchors_and_survives_native_reopen() {
+    use crate::consensus::daa_branch_research::ParentClock;
+    use crate::consensus::daa_research::{asert_target, AsertInputs};
+
+    let dir = tempfile::tempdir().unwrap();
+    let settings = settings();
+    let mut node = Node::open(dir.path(), settings.clone(), 1).unwrap();
+    let mut primary = vec![settings.genesis()];
+    for height in 1..=44 {
+        primary.push(mine(&mut node, height, vec![]));
+    }
+    let tip = primary[44];
+    let expected_legacy = node.expected_target(tip).unwrap();
+    let (raw_primary, lookups) = node
+        .indexed_asert_shadow(tip, 16, 7200, ParentClock::Raw)
+        .unwrap();
+    assert!(lookups < 400);
+    let expected_raw = asert_target(AsertInputs {
+        anchor_target: node.packet(primary[16]).unwrap().header.target,
+        anchor_parent_time: node.packet(primary[15]).unwrap().header.timestamp,
+        evaluation_parent_time: node.packet(tip).unwrap().header.timestamp,
+        anchor_height: 16,
+        candidate_height: 45,
+        spacing: settings.limit("target_spacing_seconds").unwrap(),
+        half_life: 7200,
+        pow_limit: settings.target("pow_limit_hex").unwrap(),
+    })
+    .unwrap();
+    assert_eq!(raw_primary, expected_raw);
+    let mut times: Vec<_> = primary[34..=44]
+        .iter()
+        .map(|id| node.packet(*id).unwrap().header.timestamp)
+        .collect();
+    times.sort_unstable();
+    let parent_mtp = times[5];
+    let mut anchor_times: Vec<_> = primary[5..=15]
+        .iter()
+        .map(|id| node.packet(*id).unwrap().header.timestamp)
+        .collect();
+    anchor_times.sort_unstable();
+    let (mtp_primary, mtp_queries) = node
+        .indexed_asert_shadow(tip, 16, 7200, ParentClock::Median11)
+        .unwrap();
+    assert!(mtp_queries < 400);
+    assert_eq!(
+        mtp_primary,
+        asert_target(AsertInputs {
+            anchor_target: node.packet(primary[16]).unwrap().header.target,
+            anchor_parent_time: anchor_times[5],
+            evaluation_parent_time: parent_mtp,
+            anchor_height: 16,
+            candidate_height: 45,
+            spacing: 10,
+            half_life: 7200,
+            pow_limit: settings.target("pow_limit_hex").unwrap(),
+        })
+        .unwrap()
+    );
+    // The isolated ASERT observer must NEVER change installed expected_target.
+    assert_eq!(node.expected_target(tip).unwrap(), expected_legacy);
+
+    // Fork below the activation height: the anchor must come from THIS branch.
+    let mut fork = primary[..=10].to_vec();
+    for height in 11..=45 {
+        let packet = node
+            .make_consensus_maintenance(
+                *fork.last().unwrap(),
+                vec![],
+                development_public(1).unwrap(),
+                3 + height * 10,
+                4096,
+            )
+            .unwrap();
+        let id = node.admit(&packet, 100_000).unwrap();
+        node.activate(id).unwrap();
+        fork.push(id);
+    }
+    assert_ne!(primary[16], fork[16]);
+    let fork_tip = fork[45];
+    assert_eq!(node.active().unwrap().0, fork_tip);
+    let (raw_fork, fork_cost) = node
+        .indexed_asert_shadow(fork_tip, 16, 7200, ParentClock::Raw)
+        .unwrap();
+    assert!(fork_cost < 400);
+    assert_eq!(
+        raw_fork,
+        asert_target(AsertInputs {
+            anchor_target: node.packet(fork[16]).unwrap().header.target,
+            anchor_parent_time: node.packet(fork[15]).unwrap().header.timestamp,
+            evaluation_parent_time: node.packet(fork_tip).unwrap().header.timestamp,
+            anchor_height: 16,
+            candidate_height: 46,
+            spacing: 10,
+            half_life: 7200,
+            pow_limit: settings.target("pow_limit_hex").unwrap(),
+        })
+        .unwrap()
+    );
+    // Indexed lookup also works on the retained noncanonical prior branch.
+    assert_eq!(
+        node.indexed_asert_shadow(tip, 16, 7200, ParentClock::Raw)
+            .unwrap()
+            .0,
+        raw_primary
+    );
+    let stored = node.read_active().unwrap();
+    drop(node);
+    let restored = Node::open(dir.path(), settings, 1).unwrap();
+    assert_eq!(restored.read_active().unwrap(), stored);
+    assert_eq!(
+        restored
+            .indexed_asert_shadow(fork_tip, 16, 7200, ParentClock::Raw)
+            .unwrap()
+            .0,
+        raw_fork
+    );
+    assert_eq!(
+        restored
+            .indexed_asert_shadow(tip, 16, 7200, ParentClock::Median11)
+            .unwrap()
+            .0,
+        mtp_primary
+    );
+    assert_eq!(restored.expected_target(tip).unwrap(), expected_legacy);
+}
+
+#[test]
+#[ignore = "4105 full PNW1 Maintenance blocks and disk; explicit opt-in, never a fast test"]
+fn indexed_asert_shadow_above_4096_real_maintenance_blocks() {
+    use crate::consensus::daa_branch_research::ParentClock;
+    let dir = tempfile::tempdir().unwrap();
+    let settings = settings();
+    let mut node = Node::open(dir.path(), settings.clone(), 1).unwrap();
+    let mut tip = settings.genesis();
+    for height in 1..=4105 {
+        tip = mine(&mut node, height, vec![]);
+    }
+    let legacy = node.expected_target(tip).unwrap();
+    let (raw, queries) = node
+        .indexed_asert_shadow(tip, 16, 7200, ParentClock::Raw)
+        .unwrap();
+    assert!(queries < 400);
+    drop(node);
+    let restored = Node::open(dir.path(), settings, 1).unwrap();
+    assert_eq!(
+        restored
+            .indexed_asert_shadow(tip, 16, 7200, ParentClock::Raw)
+            .unwrap()
+            .0,
+        raw
+    );
+    assert_eq!(restored.expected_target(tip).unwrap(), legacy);
+}

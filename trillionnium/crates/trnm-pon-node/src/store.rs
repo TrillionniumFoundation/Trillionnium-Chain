@@ -1382,6 +1382,109 @@ impl Node {
             genesis: self.settings.genesis(),
         }
     }
+    /// Research-only: evaluate an arbitrary-height fork-local ASERT anchor from
+    /// the native owner's retained, previously admitted packets and sealed
+    /// ancestry index. Does NOT determine expected_target, admit work, or alter
+    /// existing revision9/12 consensus. This deliberately has no release API.
+    #[cfg(test)]
+    pub(crate) fn indexed_asert_shadow(
+        &self,
+        parent: Hash,
+        activation_height: u64,
+        half_life: u64,
+        clock: crate::consensus::daa_branch_research::ParentClock,
+    ) -> Result<(Hash, u64)> {
+        use crate::consensus::daa_branch_research::ParentClock;
+        use crate::consensus::daa_research::{asert_target, AsertInputs};
+        use std::collections::{BTreeMap, BTreeSet};
+
+        self.ready()?;
+        let tip_height = self.parent_height(parent)?;
+        ensure(
+            activation_height > 0
+                && activation_height <= tip_height
+                && tip_height < u64::MAX
+                && half_life > 0,
+            "ASERT_INDEX_CONTEXT",
+        )?;
+        // At most 23 distinct heights: anchor, 11 parent MTP entries and
+        // 11 anchor-predecessor MTP entries. Descending intervals share jumps.
+        let mut requested = BTreeSet::new();
+        requested.insert(activation_height);
+        for offset in 0..11 {
+            if let Some(h) = tip_height.checked_sub(offset) {
+                requested.insert(h);
+            }
+            if let Some(h) = (activation_height - 1).checked_sub(offset) {
+                requested.insert(h);
+            }
+        }
+        let heights: Vec<_> = requested.into_iter().rev().collect();
+        let indexed = crate::ancestry_index::indexed_heights_for_daa_research(
+            &self.db,
+            self.ancestry_context(),
+            parent,
+            &heights,
+            crate::ancestry_index::READ_SQL_BUDGET,
+            &mut |_| Ok(()),
+        )?;
+        let mut times = BTreeMap::new();
+        let mut anchor_target = None;
+        for (height, id) in indexed.blocks {
+            if height == 0 {
+                ensure(id == self.settings.genesis(), "ASERT_INDEX_GENESIS")?;
+                times.insert(height, self.settings.genesis_time());
+            } else {
+                let packet = self.packet(id)?;
+                ensure(
+                    packet.id()? == id
+                        && packet.header.network == self.settings.network()
+                        && packet.header.parameters == self.settings.parameters()
+                        && packet.header.height == height,
+                    "ASERT_INDEX_PACKET",
+                )?;
+                if height == activation_height {
+                    anchor_target = Some(packet.header.target);
+                }
+                times.insert(height, packet.header.timestamp);
+            }
+        }
+        let median = |end: u64| -> Result<u64> {
+            let mut selected = Vec::with_capacity(11);
+            for offset in 0..11 {
+                let Some(height) = end.checked_sub(offset) else {
+                    break;
+                };
+                selected.push(*times.get(&height).ok_or("ASERT_INDEX_WINDOW")?);
+            }
+            ensure(!selected.is_empty(), "ASERT_INDEX_WINDOW")?;
+            selected.sort_unstable();
+            Ok(selected[selected.len() / 2])
+        };
+        let source_time = match clock {
+            ParentClock::Raw => *times.get(&tip_height).ok_or("ASERT_INDEX_PARENT")?,
+            ParentClock::Median11 => median(tip_height)?,
+        };
+        let anchor_predecessor = activation_height - 1;
+        let anchor_time = match clock {
+            ParentClock::Raw => *times
+                .get(&anchor_predecessor)
+                .ok_or("ASERT_INDEX_ANCHOR")?,
+            ParentClock::Median11 => median(anchor_predecessor)?,
+        };
+        let target = asert_target(AsertInputs {
+            anchor_target: anchor_target.ok_or("ASERT_INDEX_ANCHOR")?,
+            anchor_parent_time: anchor_time,
+            evaluation_parent_time: source_time,
+            anchor_height: activation_height,
+            candidate_height: tip_height + 1,
+            spacing: self.settings.limit("target_spacing_seconds")?,
+            half_life,
+            pow_limit: self.settings.target("pow_limit_hex")?,
+        })?;
+        Ok((target, indexed.sql_lookups))
+    }
+
     pub fn settings(&self) -> &Settings {
         &self.settings
     }

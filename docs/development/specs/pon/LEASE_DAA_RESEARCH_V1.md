@@ -686,3 +686,55 @@ remain OPEN. Future protocol integration must commit its own signed context,
 runtime activation rule, anti-rollback/reorg policy, persistent bounded
 ancestry proofs and independent client confirmations, without changing any
 historical revision.
+
+
+## 2026-10-26: bounded native ancestry-index ASERT shadow beyond 4096 heights
+
+This continuation is RESEARCH ONLY, stacked on PR #336; neither the
+installed retarget/expected_target nor Q4/revision12 semantics are changed.
+
+### Original liveness failure and repair boundary
+
+The genesis-adjacent linear ASERT oracle returns ASERT_ANCESTRY_BUDGET at
+height 4097, by design. That is an availability/scaling limit, not an invalid
+work verdict or permission to accept a peer-supplied summary. Raising the
+4096 read limit only moves the problem.
+
+M15 already owns a derived binary-lifting ancestry_jump table. It writes
+jump rows with a locally admitted block in one SQLite transaction and checks
+row context, canonical header identifier, block/ancestor heights, original
+header parent, row seals, and visible two-half links at read time. The new
+TEST-ONLY indexed_heights_for_daa_research uses those same checked jumps and
+a single cumulative 1024-SQL-operation budget. It resolves up to 24 strictly
+descending branch-local requested heights; nearby MTP11 heights reuse the
+already reached ancestor instead of rescanning from the original tip.
+Duplicate, reversed, out-of-range, missing and corrupt lookups fail. This
+local index does not independently authenticate a malicious database owner.
+
+The TEST-ONLY Node::indexed_asert_shadow obtains the actual candidate branch
+parent, activation-height block target, anchor predecessor and two MTP11
+windows from retained native packets and the sealed index. It uses BOTH
+parent and anchor predecessor MTP11 for the median mode. The resulting
+research-only integer target and observed index SQL count grant NO admission,
+work, selection, activation, local capability or persistent authority.
+Installed expected_target never calls this observer.
+
+### Named native selectors (not executed in this environment)
+
+- ancestry_index::tests::indexed_daa_research_reads_branch_local_heights_with_one_budget_and_refuses_corruption:
+  finite branch/corruption/reversed/duplicate/cancellation-budget cases
+- continuity_tests::indexed_asert_shadow_uses_admitted_fork_anchors_and_survives_native_reopen:
+  real W1 Maintenance packets, diverging activation block, MTP11/raw parity,
+  higher-work branch switch, SQLite reopen, original DAA unchanged
+- ancestry_index::tests::indexed_daa_research_stays_bounded_past_the_old_4096_parent_horizon:
+  explicitly IGNORED 4105-height synthetic index fixture, not a valid PoW chain
+- continuity_tests::indexed_asert_shadow_above_4096_real_maintenance_blocks:
+  explicitly IGNORED 4105 real Maintenance W1 proof packets with cold reopen
+
+Exact-source native test execution and full final-source Clippy/format remain
+required before marking even the narrow native implementation qualified.
+
+The native design still needs a separately versioned, reviewed consensus
+activation context, work-validating alternate verifier, independent operator
+WAN risk research and actual longest-retained-state/retention policy.
+Nothing in this research changes the production eligibility flags.

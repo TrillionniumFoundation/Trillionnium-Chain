@@ -456,6 +456,59 @@ fn ascend(
     }
     Ok(current)
 }
+/// A development-only ASERT shadow reads several real branch heights under ONE
+/// cumulative SQL/progress budget. The supplied tip must already be an admitted
+/// native block: this derived local index is not a remote proof of chainwork.
+/// Descending requests let consecutive MTP11 windows share parent traversals.
+/// The same sealed two-half checks as History apply to every nonzero jump.
+#[cfg(test)]
+#[derive(Debug)]
+pub(crate) struct IndexedHeightRead {
+    pub blocks: Vec<(u64, Hash)>,
+    pub sql_lookups: u64,
+}
+#[cfg(test)]
+pub(crate) fn indexed_heights_for_daa_research(
+    db: &Connection,
+    ctx: Context,
+    tip: Hash,
+    descending_heights: &[u64],
+    maximum_sql: u64,
+    progress: &mut dyn FnMut(u64) -> Result<()>,
+) -> Result<IndexedHeightRead> {
+    ensure(
+        (1..=24).contains(&descending_heights.len())
+            && (3..=READ_SQL_BUDGET).contains(&maximum_sql),
+        "ASERT_INDEX_REQUEST",
+    )?;
+    let mut budget = Budget {
+        used: 0,
+        maximum: maximum_sql,
+        progress,
+        origin: BudgetOrigin::Owner,
+        reads: None,
+    };
+    let tip_metadata = metadata(db, ctx, tip, &mut budget)?;
+    let mut current = tip;
+    let mut current_height = tip_metadata.height;
+    let mut blocks = Vec::with_capacity(descending_heights.len());
+    for &height in descending_heights {
+        ensure(height <= current_height, "ASERT_INDEX_HEIGHT")?;
+        if let Some(&(last, _)) = blocks.last() {
+            ensure(height < last, "ASERT_INDEX_ORDER")?;
+        }
+        current = ascend(db, ctx, current, current_height - height, &mut budget)?;
+        let actual = metadata(db, ctx, current, &mut budget)?;
+        ensure(actual.height == height, "ASERT_INDEX_HEIGHT")?;
+        blocks.push((height, current));
+        current_height = height;
+    }
+    Ok(IndexedHeightRead {
+        blocks,
+        sql_lookups: budget.used,
+    })
+}
+
 /// Bounded local observation that `candidate` is on `tip`'s retained
 /// ancestry. This is not finality or a global inclusion proof. It validates the
 /// same sealed binary-lifting rows used by history paging and returns false for
@@ -870,4 +923,111 @@ mod tests {
             .unwrap();
         assert_eq!((blocks, indexes), (0, 0));
     }
+
+    #[test]
+    fn indexed_daa_research_reads_branch_local_heights_with_one_budget_and_refuses_corruption() {
+        let (db, ctx) = fixture();
+        let ids = chain(&db, ctx, 129);
+        let requested = [129, 128, 127, 120, 65, 64, 63, 16, 15, 0];
+        let mut costs = Vec::new();
+        let result = indexed_heights_for_daa_research(
+            &db,
+            ctx,
+            ids[129],
+            &requested,
+            READ_SQL_BUDGET,
+            &mut |n| {
+                costs.push(n);
+                Ok(())
+            },
+        )
+        .unwrap();
+        assert_eq!(
+            result.blocks,
+            requested
+                .iter()
+                .map(|height| (*height, ids[*height as usize]))
+                .collect::<Vec<_>>()
+        );
+        assert_eq!(costs.last(), Some(&result.sql_lookups));
+        assert!(result.sql_lookups < 400);
+
+        let fork1 = block(&db, ctx, ids[64], 65, 7);
+        insert(&db, ctx, fork1).unwrap();
+        let fork2 = block(&db, ctx, fork1, 66, 7);
+        insert(&db, ctx, fork2).unwrap();
+        let fork = indexed_heights_for_daa_research(
+            &db,
+            ctx,
+            fork2,
+            &[66, 65, 64, 63, 0],
+            READ_SQL_BUDGET,
+            &mut |_| Ok(()),
+        )
+        .unwrap();
+        assert_eq!(fork.blocks[1].1, fork1);
+        assert_eq!(fork.blocks[2].1, ids[64]);
+        assert_ne!(fork.blocks[1].1, ids[65]);
+
+        for invalid in [&[128, 128][..], &[128, 129][..], &[130][..]] {
+            assert!(indexed_heights_for_daa_research(
+                &db,
+                ctx,
+                ids[129],
+                invalid,
+                READ_SQL_BUDGET,
+                &mut |_| Ok(()),
+            )
+            .is_err());
+        }
+        assert!(indexed_heights_for_daa_research(
+            &db,
+            ctx,
+            ids[129],
+            &[1],
+            3,
+            &mut |_| Ok(()),
+        )
+        .is_err());
+        db.execute(
+            "UPDATE ancestry_jump SET seal=? WHERE block=? AND level=6",
+            params![[0_u8; 32].as_slice(), ids[129].as_slice()],
+        )
+        .unwrap();
+        assert_eq!(
+            indexed_heights_for_daa_research(
+                &db,
+                ctx,
+                ids[129],
+                &[129, 65],
+                READ_SQL_BUDGET,
+                &mut |_| Ok(()),
+            )
+            .unwrap_err()
+            .to_string(),
+            "ANCESTRY_INDEX_SEAL"
+        );
+    }
+
+    #[test]
+    #[ignore = "4105 synthetic (non-W1) admitted-parent-shaped index rows; opt-in storage and CPU"]
+    fn indexed_daa_research_stays_bounded_past_the_old_4096_parent_horizon() {
+        let (db, ctx) = fixture();
+        let ids = chain(&db, ctx, 4105);
+        let heights = [4105, 4104, 4103, 4097, 4096, 3000, 16, 15, 0];
+        let result = indexed_heights_for_daa_research(
+            &db,
+            ctx,
+            ids[4105],
+            &heights,
+            READ_SQL_BUDGET,
+            &mut |_| Ok(()),
+        )
+        .unwrap();
+        for (height, id) in result.blocks {
+            assert_eq!(id, ids[height as usize]);
+        }
+        assert!(result.sql_lookups < 400);
+    }
+
 }
