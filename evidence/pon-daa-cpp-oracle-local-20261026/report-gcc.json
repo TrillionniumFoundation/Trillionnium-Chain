@@ -1,0 +1,30 @@
+{
+  "adversarial": {
+    "accepted": 1200,
+    "cases": 2048,
+    "line_digest": "54ec9a395e6cc0c5a5a7d95291f5a163adcbba4fc221c6cfb97af04bc5addf40",
+    "matches": 2048,
+    "mismatches": 0,
+    "rejected_parameters": 663,
+    "rejected_ranges": 185
+  },
+  "compiler": "g++",
+  "distinct_independent_operators": 0,
+  "fixed": {
+    "accepted": 512,
+    "cases": 512,
+    "line_digest": "2b1fa890562ed3b0febb80fbc9f547b23b9fe44dde45b448fd64c067ff7c2bfa",
+    "matches": 512,
+    "mismatches": 0,
+    "rejected_parameters": 0,
+    "rejected_ranges": 0
+  },
+  "fixed_512_sha256": "6be87e237c37aec8c50af8d4eaf9e14a0ca60e7dc69f18143ede1ef70c420c97",
+  "native_w1_proofs": 0,
+  "non_activated": true,
+  "python_sha256": "7d3a94021e9e6c915a94b3f5eaf9c8b67f88398bd6244b5597d7ae98d76ed353",
+  "replay": "python3 daa_cpp_differential.py --output NEW_PATH",
+  "schema": "trnm-asert-cpp-independent-math-v1",
+  "seed": 20261026,
+  "source_sha256": "c7d35d7fb33fdde22b90c61320180d191529c84b837b89fed2f747df5f9b6023"
+}
