@@ -670,6 +670,23 @@ fn growth_network_options(command: &str, args: &BTreeMap<String, String>) -> Res
 
 // Refuse an option/profile mismatch BEFORE opening a Node or service
 // ledger, rather than silently accepting a kernel-cap claim on another lane.
+/// Source-classification alone cannot prove that 127.0.0.1 is not a
+/// malicious WAN tunnel. Public History always requires the original
+/// administrator-owned aggregate Host parent. Unprotected private loopback
+/// tools retain the existing explicitly developmental route.
+fn sync_host_kernel_budget(
+    address: std::net::SocketAddr,
+    public_history: bool,
+) -> Result<Option<trnm_pon_node::host_kernel_parent::HostKernelBudget>> {
+    if public_history {
+        Ok(Some(trnm_pon_node::host_kernel_parent::require_for_public_history(
+            address,
+        )?))
+    } else {
+        trnm_pon_node::host_kernel_parent::require_for_listener(address)
+    }
+}
+
 fn validate_host_kernel_profile(command: &str, args: &BTreeMap<String, String>) -> Result<()> {
     if args.contains_key("--host-kernel-parent")
         && (command != "serve"
@@ -2087,13 +2104,7 @@ fn run() -> Result<Value> {
             // source: require the SAME fixed administrator-owned Host parent
             // even when a local proxy exposes the untrusted WAN origin.
             // Private loopback-only development sync retains its old route.
-            let host_kernel = if public_profile(&args) {
-                Some(trnm_pon_node::host_kernel_parent::require_for_public_history(
-                    address,
-                )?)
-            } else {
-                trnm_pon_node::host_kernel_parent::require_for_listener(address)?
-            };
+            let host_kernel = sync_host_kernel_budget(address, public_profile(&args))?;
             if let Some(kernel) = &host_kernel {
                 kernel.verify()?;
             }
@@ -2621,6 +2632,23 @@ mod tests {
         assert_eq!(cli_error_line(&error), "PUBLIC_MUTATION_CPU_BUDGET");
         assert_eq!(error.to_string(), "PUBLIC_MUTATION_CPU_BUDGET");
         assert!(error.is(trnm_pon_node::ErrorCode::PublicMutationCpuBudget));
+    }
+
+    #[test]
+    fn public_history_loopback_proxy_cannot_waive_original_kernel_budget() {
+        let loopback: std::net::SocketAddr = "127.0.0.1:12345".parse().unwrap();
+        let remote: std::net::SocketAddr = "192.0.2.15:12345".parse().unwrap();
+        // A private, explicitly developmental loopback tool retains the old
+        // policy. A PUBLIC profile, even over the same address, may not.
+        assert!(matches!(sync_host_kernel_budget(loopback, false), Ok(None)));
+        for source in [loopback, remote] {
+            let checked = sync_host_kernel_budget(source, true);
+            match checked {
+                Ok(Some(kernel)) => kernel.verify().unwrap(),
+                Err(_) => {}, // Unprivileged test host: fail closed.
+                Ok(None) => panic!("public history obtained an unmetered Host bypass"),
+            }
+        }
     }
 
     #[test]
