@@ -83,3 +83,49 @@ legitimate authorization/clock costs, original host budget and honest failure
 rate. Compare a complete cumulative attack budget, not just CPU ns per proof.
 P0 native Rust, P1 full Host ownership, P3 mixed hostile traffic, P4 A03 3×3×3,
 P5 sound/efficient W2 and P6 independent cryptography are also OPEN.
+
+
+## Additional 64-sample bounded CPU cohort, 2026-10-25
+
+The Go diagnostic was extended from at most eight to at most **64**
+sample indices, while retaining the same work cap 32, false-search cap 128,
+Cookie cap 262,144, fixed zero task, deterministic seeds, Go code paths
+and explicit capped status. Local source file Git Blob:
+`b416cdb6988e8ff81a6f447e251961e5226d4f11` (matches the
+published updated Go source); the tests passed before this collection.
+
+```sh
+GOTOOLCHAIN=local GOPROXY=off go run ./cmd/pon_w1_cost \
+ --samples 64 --work-cap 32 --false-cap 128 --cookie-cap 262144 \
+ --out /new/unique/go-w1-cookie-64.json
+```
+
+All 64 cases' correct original W1 proofs were generated/verified and all
+64 false transcripts were rejected as `Transcript`; the ratio does not
+count a fabricated ticket as chainwork. The same 64 false receiver samples
+had median **3.442 ms process CPU**. Cookie CPU values include all attempts
+and do not replace any capped search with a fake winning record.
+
+| Cookie bits | Valid observed ticket successes | Median actual process CPU | Minimum–maximum successful ticket CPU | Median observed full fake-W1 reject / (fake search + Cookie CPU) |
+| --- | ---: | ---: | ---: | ---: |
+| 8 | 64/64 | 0.056 ms | 0.002–3.760 ms | 66.56 |
+| 12 | 64/64 | 1.051 ms | 0.020–22.272 ms | 3.96 |
+| 16 | 63/64; **1 capped** | 34.024 ms (63 successes) | 0.171–2,211.906 ms | 0.114 |
+
+For 16-bit, the *capped* case consumed all 262,144 hashes, was retained
+as `capped=true` and excluded only from the **conditional on success**
+CPU median. It remains in the complete 64-case raw JSON denominator.
+The unusually high measured process CPU for a successful 16-bit case is
+also retained. Go process CPU spans all runtime threads and is not
+the V3 server's per-client thread clock; a process CPU value above two
+seconds is not by itself evidence of the signed 2-second V3 wall-clock
+expiry, especially under unrelated concurrent scheduling.
+
+The new local JSON object is **137,098 bytes**, SHA256:
+`2041ba86799e02a340c6152c2b4573f5f990f6850f18a8e07e8006182c66586b`.
+This is a single unprivileged Go-on-Linux environment, not a second
+independent hardware domain. No GPU, signed-cookie issuance, actual native
+Host cgroup, attack bandwidth, consumer SLA or A03 service run was
+measured. There is no justified difficulty-selection verdict and P2
+remains **OPEN**. Original per-host attack/honest CPU/GPU equal-budget
+calibration is mandatory before any signed policy revision.
