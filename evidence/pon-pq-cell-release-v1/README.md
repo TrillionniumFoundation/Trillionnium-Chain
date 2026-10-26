@@ -28,3 +28,14 @@ are included. The five fresh test keypairs and the allowlist have one local
 test owner; their independent administrative identities, task outcomes and
 model value are **not** established. The `ResearchObservation` explicitly
 does not authorize adoption. Production and quantum security gates stay open.
+
+## Combined exact-blob regression
+
+The same five exact Git source blobs (`pq_envelope`, `pq_transaction`,
+`test_pq_transaction`, `pq_cell_release`, `test_pq_cell_release`) were
+executed together with `python3 -m unittest -v test_pq_transaction.py
+test_pq_cell_release.py`: **23 tests / 0 failures / 3.144 seconds**.
+[The combined original log](combined-regression.log) has Git blob
+`c969bd607505f8dea9fbe1797fca1790c2b09353`. This only confirms
+offline test composition, not native consensus or independent product
+qualification.
