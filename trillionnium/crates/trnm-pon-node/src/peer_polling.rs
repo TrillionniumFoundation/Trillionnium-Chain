@@ -392,6 +392,7 @@ struct PollContext<'a> {
     settings: &'a Settings,
     end: Instant,
     stop: &'a AtomicBool,
+    host_kernel: Option<&'a crate::host_kernel_parent::HostKernelBudget>,
 }
 struct EventDetail {
     stage: &'static str,
@@ -494,8 +495,14 @@ impl Engine {
             settings,
             end,
             stop,
+            host_kernel,
         } = *context;
         progress(end, stop)?;
+        // The actual pinned-peer worker is a remote CPU-consumer, even when
+        // the sibling public listener is loopback-only. No cgroup = no WAN.
+        if let Some(kernel) = host_kernel {
+            kernel.verify()?;
+        }
         if self.calls >= cfg.max_calls {
             return Ok(false);
         }
@@ -641,7 +648,17 @@ impl Engine {
         };
         let mut verified = false;
         if let Some(packet) = packet {
-            match admit_page(node, packet, end, stop) {
+            if let Some(kernel) = host_kernel {
+                kernel.verify()?;
+            }
+            let admission = admit_page(node, packet, end, stop);
+            // This is after the full W1 and M06/SQLite path as well. A
+            // failed actual host identity check invalidates the sync result,
+            // never a previously committed Node fact.
+            if let Some(kernel) = host_kernel {
+                kernel.verify()?;
+            }
+            match admission {
                 Ok(value) => verified = value,
                 Err(error) => {
                     self.reject(
@@ -799,6 +816,18 @@ where
         let startup_end = started + Duration::from_secs(10);
         let settings = lock(&node, startup_end, &stop)?.settings().clone();
         cfg.validate(&settings)?;
+        // Outgoing pinned peers can be WAN even if the service listener binds
+        // 127.0.0.1. Authenticate physical host membership BEFORE any peer
+        // RPC or W1; use the same fixed root-owned cgroup as V3, never a new
+        // per-peer/process cost owner.
+        let host_kernel = cfg.peers.iter()
+            .find(|peer| !peer.address.ip().is_loopback())
+            .map(|peer| crate::host_kernel_parent::require_for_listener(peer.address))
+            .transpose()?
+            .flatten();
+        if let Some(kernel) = &host_kernel {
+            kernel.verify()?;
+        }
         // The sibling V3 listener and this poller start concurrently.
         // Await its original Node CPU binding before any remote history Work;
         // absent/unknown identity fails closed after the original startup cap.
@@ -836,6 +865,7 @@ where
             settings: &settings,
             end,
             stop: &stop,
+            host_kernel: host_kernel.as_ref(),
         };
         while Instant::now() < end && !stop.load(Ordering::Acquire) && engine.calls < cfg.max_calls
         {
@@ -846,7 +876,14 @@ where
                 break;
             }
             cycles += 1;
-            match engine.cycle(&poll_context, &mut rpc, &mut observe) {
+            if let Some(kernel) = &host_kernel {
+                kernel.verify()?;
+            }
+            let outcome = engine.cycle(&poll_context, &mut rpc, &mut observe);
+            if let Some(kernel) = &host_kernel {
+                kernel.verify()?;
+            }
+            match outcome {
                 Err(error) if error.is(ErrorCode::PeerPollCancelled) => break,
                 other => other?,
             }
@@ -960,6 +997,7 @@ mod tests {
             settings: s,
             end: Instant::now() + Duration::from_secs(120),
             stop,
+            host_kernel: None, // local synthetic test fixtures only
         }
     }
     #[test]
