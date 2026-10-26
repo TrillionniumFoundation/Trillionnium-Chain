@@ -1,0 +1,28 @@
+{
+  "clock_modes": {
+    "mtp11": {
+      "last_height": 12000,
+      "local_projection_integrity": true,
+      "observed_work_proofs": 0,
+      "parent": "770ca4cf8a4c6a831ee7a6e374455bb4e035e2ec495a8d51194e7d8674d69abf",
+      "projection_commitments_digest": "949f2322a9a1c4e98bbdd27abbe4b00dd0495cb4c12513db8542893815ea615a",
+      "shadow_target": "0x10000000000000000000000000000000000000000000000000000000",
+      "verified_network_actors": 0
+    },
+    "raw": {
+      "last_height": 12000,
+      "local_projection_integrity": true,
+      "observed_work_proofs": 0,
+      "parent": "770ca4cf8a4c6a831ee7a6e374455bb4e035e2ec495a8d51194e7d8674d69abf",
+      "projection_commitments_digest": "491ae11c0736a71af9c3fa0bc9ad26a297929f0ea8c303104e2b9df0125fb0e2",
+      "shadow_target": "0x10000000000000000000000000000000000000000000000000000000",
+      "verified_network_actors": 0
+    }
+  },
+  "fully_validated_native_work_packets": false,
+  "height": 12000,
+  "no_legacy_daa_change": true,
+  "no_production_activation": true,
+  "research_only": true,
+  "schema": "trnm-daa-anchor-projection-synthetic-v1"
+}
