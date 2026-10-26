@@ -124,6 +124,7 @@ class FloodCostSourceTests(unittest.TestCase):
             lambda d: d['cases'][0].update(complete_attacker_cpu_ns=True),
             lambda d: d['cases'][0]['receivers'][0].update(whole_receiver_cpu_ns=-1),
             lambda d: d['source'].update(head='bad'),
+            lambda d: d['source'].update(profile='unreviewed-W2'),
         ):
             row=fixture()
             mutation(row)
