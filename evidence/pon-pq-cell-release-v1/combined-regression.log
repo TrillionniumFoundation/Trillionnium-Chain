@@ -1,0 +1,28 @@
+test_change_any_canonical_body_byte_fails (test_pq_transaction.PQTransferTests.test_change_any_canonical_body_byte_fails) ... ok
+test_cross_purpose_signed_payload_cannot_be_used_for_transactions (test_pq_transaction.PQTransferTests.test_cross_purpose_signed_payload_cannot_be_used_for_transactions) ... ok
+test_fee_balance_expiry_and_no_integer_wrap (test_pq_transaction.PQTransferTests.test_fee_balance_expiry_and_no_integer_wrap) ... ok
+test_memo_512_bytes_roundtrip_without_signature (test_pq_transaction.PQTransferTests.test_memo_512_bytes_roundtrip_without_signature) ... ok
+test_noncanonical_or_missing_key_binding_reject (test_pq_transaction.PQTransferTests.test_noncanonical_or_missing_key_binding_reject) ... ok
+test_public_key_and_full_signature_are_mandatory (test_pq_transaction.PQTransferTests.test_public_key_and_full_signature_are_mandatory) ... ok
+test_real_pq_size_cannot_fit_unmodified_legacy_wire (test_pq_transaction.PQTransferTests.test_real_pq_size_cannot_fit_unmodified_legacy_wire) ... ok
+test_real_signature_and_transfer_preflight (test_pq_transaction.PQTransferTests.test_real_signature_and_transfer_preflight) ... ok
+test_reject_unexpected_frames_and_memo_size (test_pq_transaction.PQTransferTests.test_reject_unexpected_frames_and_memo_size) ... ok
+test_replay_account_generation_and_nonce_reject (test_pq_transaction.PQTransferTests.test_replay_account_generation_and_nonce_reject) ... ok
+test_signed_identity_does_not_use_signature_randomness (test_pq_transaction.PQTransferTests.test_signed_identity_does_not_use_signature_randomness) ... ok
+test_true_bool_float_and_out_of_range_rejected (test_pq_transaction.PQTransferTests.test_true_bool_float_and_out_of_range_rejected) ... ok
+test_different_network_family_parent_generation_expiry_reject (test_pq_cell_release.PQCellReleaseTests.test_different_network_family_parent_generation_expiry_reject) ... ok
+test_evaluation_receipt_signature_and_plan_binding (test_pq_cell_release.PQCellReleaseTests.test_evaluation_receipt_signature_and_plan_binding) ... ok
+test_field_limits_and_zero_resource_reject (test_pq_cell_release.PQCellReleaseTests.test_field_limits_and_zero_resource_reject) ... ok
+test_model_and_cell_weight_substitution_reject (test_pq_cell_release.PQCellReleaseTests.test_model_and_cell_weight_substitution_reject) ... ok
+test_no_false_model_adoption_or_independent_evaluator_claim (test_pq_cell_release.PQCellReleaseTests.test_no_false_model_adoption_or_independent_evaluator_claim) ... ok
+test_real_two_of_three_reviews_and_release_signature (test_pq_cell_release.PQCellReleaseTests.test_real_two_of_three_reviews_and_release_signature) ... ok
+test_receipt_quorum_duplicate_reviewer_and_untrusted_key_reject (test_pq_cell_release.PQCellReleaseTests.test_receipt_quorum_duplicate_reviewer_and_untrusted_key_reject) ... ok
+test_release_owner_cannot_self_count_as_reviewer (test_pq_cell_release.PQCellReleaseTests.test_release_owner_cannot_self_count_as_reviewer) ... ok
+test_release_signature_cannot_omit_or_relabel_reviewers (test_pq_cell_release.PQCellReleaseTests.test_release_signature_cannot_omit_or_relabel_reviewers) ... ok
+test_reordered_duplicate_or_too_many_cells_reject (test_pq_cell_release.PQCellReleaseTests.test_reordered_duplicate_or_too_many_cells_reject) ... ok
+test_strict_canonical_manifest_mutations_reject (test_pq_cell_release.PQCellReleaseTests.test_strict_canonical_manifest_mutations_reject) ... ok
+
+----------------------------------------------------------------------
+Ran 23 tests in 3.144s
+
+OK
