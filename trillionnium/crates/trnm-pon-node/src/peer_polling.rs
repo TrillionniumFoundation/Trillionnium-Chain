@@ -985,6 +985,69 @@ mod tests {
     }
 
     #[test]
+    fn two_import_paths_share_one_original_node_cpu_account_with_false_work() {
+        // Integration regression for the two originally separate fixes:
+        // pinned-peer polling (PR #340) and History import (PR #344).
+        // Two different entrypoints must consume the SAME Node-owned CPU
+        // epoch. They are not two identity-specific or process-specific pools.
+        let now = ingress::now().unwrap();
+        let settings = Settings::development(Some(now - 100)).unwrap();
+        let dir = tempfile::tempdir().unwrap();
+        let mut node = Node::open(dir.path(), settings.clone(), 2).unwrap();
+        let mut false_packet = node.make(
+            settings.genesis(),
+            vec![],
+            development_public(0).unwrap(),
+            settings.genesis_time() + 10,
+            4096,
+        ).unwrap();
+        let offset = 4 + 2 * pon_work::CELLS * 4;
+        let original = u32::from_le_bytes(
+            false_packet.proof[offset..offset + 4].try_into().unwrap()
+        );
+        let changed = ((u128::from(original) + 1) % pon_work::Q) as u32;
+        false_packet.proof[offset..offset + 4].copy_from_slice(&changed.to_le_bytes());
+        let before = node.stats().unwrap();
+        let node = Mutex::new(node);
+        let original_cpu =
+            crate::ingress::public_v3::ServiceMutationCpuDomain::standalone();
+        node.lock().unwrap().bind_public_service_cpu_domain(&original_cpu).unwrap();
+        let stop = AtomicBool::new(false);
+        let poll_error = admit_page(
+            &node,
+            false_packet.clone(),
+            Instant::now() + Duration::from_secs(10),
+            &stop,
+        ).unwrap_err();
+        assert_eq!(poll_error.to_string(), "WORK:Product");
+        let first = original_cpu.observe_actual_flow().unwrap().unwrap();
+        assert!(first.balance_identity_verified && first.settled_full_cpu_ns > 0);
+        assert_eq!(first.live_owners, 0);
+
+        let tip = false_packet.id().unwrap();
+        let page: Page = serde_json::from_value(page_value(
+            &settings, tip, settings.genesis(), Some(&false_packet)
+        )).unwrap();
+        let imported_error = crate::ingress::receive_page_from(
+            &mut node.lock().unwrap(),
+            "127.0.0.1:19424".parse().unwrap(),
+            page,
+            tip,
+            settings.genesis(),
+            now,
+        ).unwrap_err();
+        assert_eq!(imported_error.to_string(), "WORK:Product");
+        let second = original_cpu.observe_actual_flow().unwrap().unwrap();
+        assert!(second.balance_identity_verified);
+        assert!(second.settled_full_cpu_ns > first.settled_full_cpu_ns);
+        assert_eq!(second.live_owners, 0);
+        let owner = node.lock().unwrap();
+        assert!(owner.public_service_cpu_domain().unwrap().shares_domain_with(&original_cpu));
+        assert_eq!(owner.stats().unwrap(), before);
+        assert_eq!(owner.read_active().unwrap().0, settings.genesis());
+    }
+
+    #[test]
     fn pinned_peer_false_product_spends_the_same_real_cpu_bucket_without_chainwork() {
         let now = ingress::now().unwrap();
         let settings = Settings::development(Some(now - 100)).unwrap();
