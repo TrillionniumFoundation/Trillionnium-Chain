@@ -2115,6 +2115,7 @@ fn receive_page(
     tip: Hash,
     after: Hash,
     clock: u64,
+    host_kernel: Option<&crate::host_kernel_parent::HostKernelBudget>,
 ) -> Result<Hash> {
     ensure(
         page.schema == "pon-native-history-v1"
@@ -2152,7 +2153,20 @@ fn receive_page(
         "PAGE_COMPLETE",
     )?;
     for packet in &packets {
+        // A remote page can include sixteen independently expensive W1 proofs.
+        // Never defer physical host/membership and quota checks until *after*
+        // the whole batch; a hostile page must pay at most one full replay
+        // between consecutive checks, rather than a batch of sixteen.
+        if let Some(kernel) = host_kernel {
+            kernel.verify()?;
+        }
         node.admit(packet, clock)?;
+        // This guard does not revoke a just-committed native result; failure
+        // marks the remaining History sync incomplete without inventing an
+        // invalid consensus verdict or rewinding an earlier accepted block.
+        if let Some(kernel) = host_kernel {
+            kernel.verify()?;
+        }
     }
     if page.complete {
         node.activate_observed(tip, clock)?;
@@ -2178,7 +2192,7 @@ pub fn receive_page_from(
     if let Some(kernel) = &host_kernel {
         kernel.verify()?;
     }
-    let native = receive_page(node, page, tip, after, clock);
+    let native = receive_page(node, page, tip, after, clock, host_kernel.as_ref());
     // A completed native admission cannot be undone by a post-verification
     // host fault. That fault still makes the overall synchronization fail.
     if let Some(kernel) = &host_kernel {
