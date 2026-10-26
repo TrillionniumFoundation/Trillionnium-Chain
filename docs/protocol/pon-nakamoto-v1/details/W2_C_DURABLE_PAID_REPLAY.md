@@ -50,12 +50,13 @@ same-host owner with:
 
     python3 formal/pon-nakamoto-v1/test_w2c_durable_receiver.py -v
 
-Nine cases test the following claims on a trusted Linux owner:
+Ten cases test the following claims on a trusted Linux owner:
 
 | Case | Required result |
 | --- | --- |
 | 32 simultaneous identical paid tickets | Exactly one READY, 31 REPLAY |
 | Same key and repeated deterministic RNG sequence after restart | Old Epoch rejected, new Epoch payable |
+| Actual child process exits with os._exit(17) after durable COMMIT | Process lock releases; next process refuses old paid Epoch |
 | Second simultaneous same-directory owner | Exclusive lock rejects before issuing grants |
 | Wrong key on historical directory | Refuses credential change |
 | Insecure directory / stored DB file permissions | Refuses without entering W1 |
