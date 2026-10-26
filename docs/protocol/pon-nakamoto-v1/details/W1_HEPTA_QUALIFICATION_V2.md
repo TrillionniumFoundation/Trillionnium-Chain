@@ -6,6 +6,11 @@ This is an O06 source review within the
 It does not authorize a model install, synthesize a qualification receipt, or
 claim that this session ran an external model or independent operator.
 
+The subsequent [initial-parent refinement](W1_HEPTA_INITIAL_PARENT_V3.md)
+distinguishes already implemented owner-selected fixed genesis material from its
+missing ordinary host composition; initialization does not require a pre-existing
+beneficial child or relax the later evaluated-child gate.
+
 ## Exact source, not a stale PR description
 
 The newer [Hepta integration candidate, PR 3219](https://github.com/TrillionniumFoundation/hepta-private-ci/pull/3219)

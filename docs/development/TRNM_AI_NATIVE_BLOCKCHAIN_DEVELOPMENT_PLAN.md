@@ -1,6 +1,6 @@
 # Trillionnium Chain Development Plan — PoN / Hepta-PoH revision
 
-Plan ID: `trnm-chain-development-plan-v2` (stable registry identity; content revision 32).
+Plan ID: `trnm-chain-development-plan-v2` (stable registry identity; content revision 33).
 Effective: 2026-09-28; priority implementation revision: 2026-10-26 America/New_York (2026-10-26 UTC). Status: selected development direction; no runtime activation.
 Canonical destination: `refs/heads/main`; continuation uses the current main lineage, not retired PR #194.
 Current source/head/tree/base and prospective merge are derived at verification time.
@@ -1761,6 +1761,66 @@ separate: the bounded obligations close only in their declared scope;
 actual-resource hardness, arbitrary actual strategies, production chain
 security, independent physical evidence and the real Hepta product loop stay
 open. Hybrid and ZK retain conditional applicability and are not adopted.
+
+### PN1 compact miner, ticket composition and ordinary clock correction — 2026-10-26
+
+This continuation preserves O01–O07 and continues to exclude hosted CI. The
+[compact miner contract](../protocol/pon-nakamoto-v1/details/W1_COMPACT_MINER_RESEARCH_V1.md)
+removes per-attempt diagnostic JSON and trace originals, winner proof hex/hash,
+and printed posthoc miss proofs. The original deferred comparator already avoids
+online losing-proof assembly; that saving is not counted twice. Complete winners
+retain original 49,508-byte production packets and actual native admission after
+the mining seal. Every deterministic setup and online nonce is independently
+recomputed after sealing; posthoc misses are not original proof records and
+receive no new credit. The paid online trace commitment remains removable
+diagnostic cost, not an attacker resource floor.
+
+The [13-job registration](../../formal/pon-nakamoto-v1/experiments/w1_compact_miner_plan_v1.json)
+fixes two seeds, 128-ms/512-ms miner CPU budgets, a separately paid 1-second setup
+budget, original deferred/compact order and five zero/tight/cap controls before
+formal collection. Both examples must be rebuilt from the same frozen source
+and rerun on the current host. Earlier source measurements are not denominators.
+Only complete uncensored observations with identical paid setup and overlapping
+semantic opportunity/hit prefixes permit a matched ratio. External source,
+binary, manifest and readback hashes bind collection, replay and analysis.
+Unmatched observations, failures, late winners and regressions remain visible.
+Local output completion does not establish peer delivery, energy or a physical
+advantage ceiling.
+
+The [ticket-composition refinement](../protocol/pon-nakamoto-v1/details/W1_TICKET_COMPOSITION_V3.md)
+distinguishes an ideal per-message-block permutation model from actual SHA-256.
+Rooted path capacity alone is not a Bernoulli-trial theorem. Header/task/trace
+binding chronology, shared trace/ticket keys, preprocessing and terminal audit
+must be included in the same analysis. Exact finite controls test the conditional
+composition's declared boundaries; they cannot instantiate SHA, bound arbitrary
+oracle-dependent advice or establish a minimum physical query cost.
+
+The ordinary wall-clock miner has a separate implementation correction. Its
+previous immediate-parent ordering gate imposed a stronger condition than native
+timestamp admission. It now uses the existing validated ancestor projection and
+the same native time predicate while continuing to pass actual wall-clock time to
+the template. Only the native median-time refusal waits; other errors propagate.
+No logical or future timestamp is synthesized. The
+[continuous-mining contract](../protocol/pon-nakamoto-v1/details/CONTINUOUS_MINING_V1.md)
+and local native boundary tests preserve consensus, DAA, time skew and task rules.
+The precheck reads at most 11 existing header projections, leaves the deeper DAA
+checks to their original owner, and explicitly refuses the unsupported ordinary
+pool/native-growth combination before using the ordinary projection.
+This local correction does not establish O03 all-fork security or an honest
+growth lower bound.
+
+The [Hepta initial-parent refinement](../protocol/pon-nakamoto-v1/details/W1_HEPTA_INITIAL_PARENT_V3.md)
+pins the same inspected Hepta candidate and distinguishes its already implemented
+original-owner-selected fixed genesis material from the missing ordinary
+initial-only host composition. Initializing the first parent does not require a
+pre-existing improved child. It also does not remove later evaluated-child,
+CURRENT, FinalUse, adoption or rollback requirements. No actual owner input,
+model execution or independent hardware result is supplied by this source review.
+
+The current exposed host supplies only same-operator x86 observations. Absent
+ARM/GPU/independent-operator execution, measured energy and peer transfer remain
+absent. No production flag, original qualification limit, security standard or
+global O01–O07 closure condition changes in this increment.
 
 ## 1. Product mission: shared intelligence from real work
 

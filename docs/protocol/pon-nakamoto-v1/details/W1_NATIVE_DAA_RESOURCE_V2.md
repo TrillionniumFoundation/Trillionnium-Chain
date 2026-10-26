@@ -88,6 +88,51 @@ branch composed of those identities has no more new weight. It does not say
 that summing several sibling branches manufactures one heaviest branch, that
 a block is admitted within the producer deadline, or that honest nodes agree.
 
+### 2.1 Compatibility with the shared-permutation composition refinement
+
+The subsequent [literal W1 ticket composition](W1_TICKET_COMPOSITION_V3.md)
+does not instantiate the exact conditional-uniform premise above. In its empty,
+fully captured classical ideal-cipher model, previous exposures under the same
+ticket-final message-block key deplete a permutation. With predeclared total
+exposure cap `C_all<=M`, it supplies the conservative predictable upper mean
+
+`E[w(T_i)*I_i | enlarged past] <= rho = M/(M-C_all+1)`.
+
+Use that upper bound on the explicitly capped, pre-answer marked comparison
+process, without conditioning on its future no-Join event. Let n be a
+predeclared valid bound for **all** new opportunities across workers and forks,
+and w0 a predeclared deterministic upper bound on the weighted old winner bank.
+For D>w0, Markov's inequality on the comparison sum followed by the no-Join
+containment gives
+
+`Pr[total native candidate forest work >= D]`
+` <= min(1, rho*n/(D-w0) + delta + epsilon_ext)`.
+
+Here delta is the single ordinary-history Join failure term from the
+composition. Any additional resource-cap, supplied-ancestry or actual-to-ideal
+coupling failures belong in `epsilon_ext` if a separate valid bound exists.
+In particular, the actual-SHA coupling term is not established or silently zero.
+The comparison expectation is not an unconditional expectation bound on the
+actual native forest. No bound is gained by conditioning away a bad future.
+
+If each new weight also has a valid deterministic Wmax bound as in section 3,
+convexity supplies, for z>1,
+
+`beta_rho = 1 + rho*(z^Wmax-1)/Wmax`,
+
+and the corresponding conservative finite tail is
+
+`Pr[total native candidate forest work >= D]`
+` <= min(1, beta_rho^n/z^(D-w0) + delta + epsilon_ext)`.
+
+The exact predictable target-dependent compensator can be tighter, but a
+favorable realized compensator is not an unconditional tail bound. Likewise,
+retirement-dependent n or a realized w0 cannot be substituted after seeing the
+outcome; use a predeclared bound, a stated intersection event or a separately
+proved conditional construction. The prior uniform model's mean-one formulas
+retain their stated premise. Neither variant establishes honest visibility,
+common-prefix settlement, physical kappa or production security.
+
 ## 3. Bounded jumps from actual DAA and initial ancestry
 
 A stronger tail needs a jump bound. Define the exact one-adjustment floor
