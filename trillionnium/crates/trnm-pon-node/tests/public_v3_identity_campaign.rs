@@ -265,3 +265,26 @@ fn separate_process_identity_capacity_and_signed_confirmation_supplement_native_
     assert_eq!(report["native_mechanism_complete"], true, "{report}");
     assert_eq!(report["full_W1_4097_qualified"], false);
 }
+
+#[test]
+#[ignore = "PN1 public component collector only; requires real source-bound preparation and three Python input FDs"]
+fn two_process_real_w1_prefix_and_pressure_native_io_component_v1() {
+    assert_eq!(
+        std::env::var("TRNM_IDENTITY_COMPONENT_PROFILE").as_deref(),
+        Ok("pn1-native-io-three-fd-component-v1")
+    );
+    let report = campaign_native_io_v1::run(plan::Plan::control())
+        .expect("same-code native I/O finite component; retain every failure and partial");
+    assert_eq!(report["native_mechanism_complete"], true, "{report}");
+    assert_eq!(report["plan"]["qualification"], false);
+    for flag in [
+        "finite_service_qualified",
+        "whole_writer_qualified",
+        "original_three_FD_caller_qualified",
+        "independent_reader_qualified",
+        "full_W1_4097_qualified",
+        "merge_ready",
+    ] {
+        assert_eq!(report[flag], false, "{flag}: {report}");
+    }
+}
