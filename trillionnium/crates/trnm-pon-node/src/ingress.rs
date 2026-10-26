@@ -2236,7 +2236,12 @@ pub fn receive_page_from(
     // strictly loopback development traffic may retain the old local path.
     let cpu = match node.public_service_cpu_domain() {
         Ok(domain) => Some(domain),
-        Err(_) if source.ip().is_loopback() => None,
+        Err(error)
+            if source.ip().is_loopback()
+                && error.is(ErrorCode::OwnerPublicServiceDomainUnbound) =>
+        {
+            None
+        },
         Err(error) => return Err(error),
     };
     let native = receive_page_with_cpu(node, page, tip, after, clock, cpu.as_ref());
