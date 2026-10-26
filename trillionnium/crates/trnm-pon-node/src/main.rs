@@ -2087,6 +2087,10 @@ fn run() -> Result<Value> {
             if let Some(kernel) = &host_kernel {
                 kernel.verify()?;
             }
+            // Standalone trusted remote sync has no V3 listener. Bind one
+            // zero-credit Node CPU epoch, only after fixed Host cgroup
+            // verification. Re-running or rotating a peer must reuse it.
+            ingress::bind_host_verified_history_cpu_domain(&mut node, address)?;
             let tip = digest(need(&args, "--tip")?)?;
             let after = args
                 .get("--after")
