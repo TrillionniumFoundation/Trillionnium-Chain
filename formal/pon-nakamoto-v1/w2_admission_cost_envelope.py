@@ -34,6 +34,22 @@ def quantile_trials(bits, quantile=0.95):
     return math.ceil(math.log1p(-quantile) / math.log1p(-probability))
 
 
+def strict_json(raw):
+    def unique_pairs(pairs):
+        result = {}
+        for name, value in pairs:
+            if name in result:
+                raise ValueError("DUPLICATE_JSON_FIELD")
+            result[name] = value
+        return result
+
+    def nonfinite(_):
+        raise ValueError("NONFINITE_JSON")
+
+    return json.loads(raw, object_pairs_hook=unique_pairs,
+                      parse_constant=nonfinite)
+
+
 def evaluate(payload):
     if type(payload) is not dict or set(payload) != KEYS:
         raise ValueError("EXACT_INPUT_SCHEMA")
@@ -104,7 +120,7 @@ def main():
         raw = f.read(65537)
     if len(raw) > 65536:
         raise SystemExit("BOUNDED_INPUT_REQUIRED")
-    report = evaluate(json.loads(raw))
+    report = evaluate(strict_json(raw))
     rendered = json.dumps(report,sort_keys=True,indent=2)+"\n"
     if options.out:
         with open(options.out,"x",encoding="utf-8") as stream:
