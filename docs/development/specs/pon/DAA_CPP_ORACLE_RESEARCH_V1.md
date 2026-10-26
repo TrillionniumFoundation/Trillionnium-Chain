@@ -26,7 +26,8 @@ with the Boost multiprecision header installed:
 
 \`\`\`sh
 python3 -m unittest -v test_daa_cpp_differential.py
-python3 daa_cpp_differential.py --output /absolute/new/nonexistent-report.json
+python3 daa_cpp_differential.py --compiler g++ --output /absolute/new/gcc-report.json
+python3 daa_cpp_differential.py --compiler clang++ --output /absolute/new/clang-report.json
 \`\`\`
 
 The C++ oracle's input is eight whitespace-separated fields in fixed order:
@@ -40,9 +41,9 @@ height, target spacing and half-life. Each line returns one exact unsigned
 
 A single local Linux x86_64 environment compiled the source with GCC 14.2
 (\`-std=c++17 -O2 -Wall -Wextra -Werror -pedantic\`) and separately with
-Clang 17. GCC ran the six test methods and complete 2560-case differential
-with no mismatches. Clang independently compiled and produced the same
-frozen single target vector; a complete Clang 2560-case rerun is not claimed.
+Clang 17. GCC ran the six test methods and both GCC and Clang independently
+ran the complete 2560-case differential with zero mismatches and the same
+complete output digests. The C++ source is identical between compilers.
 
 The fixed 512-case concatenated 32-byte target digest equals
 \`6be87e237c37aec8c50af8d4eaf9e14a0ca60e7dc69f18143ede1ef70c420c97\`,
@@ -51,7 +52,9 @@ cases include 1200 target outputs, 663 parameter refusals and 185
 i128-range refusals, all matching the exact Python oracle from the
 stacked base at Git blob \`5cce6222769f1ab2f968516f15fcdf330fb695bd\`.
 The original source SHA256 and outcome digests are preserved in
-[evidence](../../../../evidence/pon-daa-cpp-oracle-local-20261026/report.json).
+[initial evidence](../../../../evidence/pon-daa-cpp-oracle-local-20261026/report.json),
+[GCC report](../../../../evidence/pon-daa-cpp-oracle-local-20261026/report-gcc.json)
+and [Clang report](../../../../evidence/pon-daa-cpp-oracle-local-20261026/report-clang.json).
 
 No Rust compiler, native W1 block, independent mining operator, source-signing
 key, public network, hardware cost-hardness evidence, physical restart,

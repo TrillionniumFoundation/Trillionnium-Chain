@@ -152,12 +152,13 @@ def main() -> None:
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--seed", type=int, default=20261026)
     parser.add_argument("--cases", type=int, default=2048)
+    parser.add_argument("--compiler", choices=("g++", "clang++"), default="g++")
     args = parser.parse_args()
     if args.output.exists():
         parser.error("output path must not exist (create-only)")
     with tempfile.TemporaryDirectory() as temp:
         binary = Path(temp) / "daa_asert_cpp_reference"
-        compile_oracle(binary)
+        compile_oracle(binary, compiler=args.compiler)
         fixed = xorshift_512()
         fixed_status = compare(binary, fixed)
         digest = hashlib.sha256(b"".join(bytes.fromhex(c.python_result()) for c in fixed)).hexdigest()
@@ -165,6 +166,7 @@ def main() -> None:
             raise AssertionError(f"frozen Rust 512 vector digest differs: {digest}")
         random_status = compare(binary, adversarial_cases(args.seed, args.cases))
     report = {"schema": "trnm-asert-cpp-independent-math-v1",
+              "compiler": args.compiler,
               "non_activated": True, "native_w1_proofs": 0,
               "distinct_independent_operators": 0,
               "source_sha256": hashlib.sha256(SOURCE.read_bytes()).hexdigest(),
