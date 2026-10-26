@@ -131,6 +131,30 @@ class ShadowJournalTests(unittest.TestCase):
             with self.assertRaisesRegex(JournalError, 'HEADER_ROW_DIGEST'):
                 journal.get(one.block_id)
 
+    def test_upstream_callback_cannot_reenter_original_writer(self):
+        with ShadowJournal(self.path, CTX, GEN) as journal:
+            first, packet = candidate(GEN, 1)
+            journal.append(first, packet)
+            second, next_packet = candidate(first.block_id, 2)
+            observed = []
+            def hostile_reader(header):
+                # Attempts to mutate same original SQLite writer during the
+                # read snapshot are blocked; the callback has no new budget.
+                with self.assertRaises(sqlite3.OperationalError):
+                    journal.append(second, next_packet)
+                observed.append(header.block_id)
+                return packet
+            projection = lambda h, raw: sha(b'projection-outside-authority:' + h.parent_id + raw)
+            self.assertEqual(journal.audit_against_upstream(
+                hostile_reader, projection, max_rows=1), 1)
+            self.assertEqual(observed, [first.block_id])
+            self.assertEqual(journal.audit(), 1)
+            with self.assertRaisesRegex(JournalError, 'UNKNOWN_PARENT_OR_HEADER'):
+                journal.get(second.block_id)
+            # Successful auditing releases the original snapshot lock.
+            journal.append(second, next_packet)
+            self.assertEqual(journal.audit(), 2)
+
     def test_hot_read_refuses_noncanonical_height_index(self):
         with ShadowJournal(self.path, CTX, GEN) as journal:
             one, packet = candidate(GEN, 1)

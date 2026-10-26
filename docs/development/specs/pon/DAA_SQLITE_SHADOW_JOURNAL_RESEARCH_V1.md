@@ -30,7 +30,7 @@ state root, deployment or activation bit changes.
 ## Testing and precise limits
 
 Run `cd formal/pon-nakamoto-v1 && python3 -m unittest -v test_daa_shadow_journal.py`.
-Twelve source-derived local Python/SQLite tests on 2026-10-26 passed: atomic replay,
+Thirteen source-derived local Python/SQLite tests on 2026-10-26 passed: atomic replay,
 durable branch switch, 3 pre-commit faults, post-commit Unknown, active-tip
 CAS restart, duplicate corruption, hot index drift, cold byte tampering,
 missing parent, foreign DB/symlink refusal, height and row resource bounds.
@@ -70,5 +70,16 @@ speaks for M02/M07. The audit is read-only and never calls a signer, repairs
 external effects, changes active tip, or grants model/consensus final use.
 
 This additional research contract has two focused positive/negative tests;
-the exact local Python total is now 12/12. No physical power loss, native W1
+the exact local Python total is now 13/13. No physical power loss, native W1
 packets, Rust compiler or independent operator was exercised.
+
+## Snapshot-fenced original-owner review
+
+The same upstream readback method now obtains one SQLite read transaction
+before scanning. A caller's original writer may not reenter through an audit
+callback and silently mutate the branch while evidence is assembled; read
+transactions are rolled back on every success/error path. The requested
+`max_rows` budget is checked before the deeper scan. One source-matched
+negative test checks reentrant writer refusal, unchanged tip and resumed
+ordinary append after the audit. The local research suite is 13/13; this is
+not a replacement for native atomic M07 packet/projection persistence.

@@ -313,26 +313,34 @@ class ShadowJournal:
         if (not callable(read_packet) or not callable(derive_projection)
                 or type(max_rows) is not int or not 1 <= max_rows <= self.max_headers):
             raise JournalError('OWNER_AUDIT_BUDGET_OR_CALLBACK')
-        # The row graph and indices must pass local verification first.
-        self.audit()
-        scanned = 0
-        cursor = self.db.execute('SELECT canonical FROM daa_shadow_headers_v1 '
-                                 'ORDER BY height,block_id')
-        for (encoded,) in cursor:
-            scanned += 1
-            if scanned > max_rows:
+        # One read snapshot: the application must not let the upstream owner
+        # advance a branch or append a row while an audit is being assembled.
+        self.db.execute('BEGIN')
+        try:
+            if self.db.execute('SELECT COUNT(*) FROM daa_shadow_headers_v1').fetchone()[0] > max_rows:
                 raise JournalError('OWNER_AUDIT_BUDGET')
-            header = ShadowHeader.decode(encoded)
-            packet = read_packet(header)
-            if type(packet) is not bytes or not 1 <= len(packet) <= MAX_PACKET:
-                raise JournalError('OWNER_PACKET_UNAVAILABLE')
-            if hashlib.sha256(packet).digest() != header.packet_hash:
-                raise JournalError('OWNER_PACKET_MISMATCH')
-            projection = derive_projection(header, packet)
-            if type(projection) is not bytes or len(projection) != 32:
-                raise JournalError('OWNER_PROJECTION_UNAVAILABLE')
-            if projection != header.projection_hash:
-                raise JournalError('OWNER_PROJECTION_MISMATCH')
-        # No authority is granted: a callback that lies can still pass.
-        return scanned
+            self.audit()  # local graph/index consistency under this snapshot
+            scanned = 0
+            cursor = self.db.execute('SELECT canonical FROM daa_shadow_headers_v1 '
+                                     'ORDER BY height,block_id')
+            for (encoded,) in cursor:
+                scanned += 1
+                if scanned > max_rows:
+                    raise JournalError('OWNER_AUDIT_BUDGET')
+                header = ShadowHeader.decode(encoded)
+                packet = read_packet(header)
+                if type(packet) is not bytes or not 1 <= len(packet) <= MAX_PACKET:
+                    raise JournalError('OWNER_PACKET_UNAVAILABLE')
+                if hashlib.sha256(packet).digest() != header.packet_hash:
+                    raise JournalError('OWNER_PACKET_MISMATCH')
+                projection = derive_projection(header, packet)
+                if type(projection) is not bytes or len(projection) != 32:
+                    raise JournalError('OWNER_PROJECTION_UNAVAILABLE')
+                if projection != header.projection_hash:
+                    raise JournalError('OWNER_PROJECTION_MISMATCH')
+            return scanned
+        finally:
+            # SELECT state is never published and a failed callback cannot leave
+            # an original SQLite read transaction/lock alive.
+            self.db.execute('ROLLBACK')
 
