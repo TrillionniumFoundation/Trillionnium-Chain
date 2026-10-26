@@ -2130,9 +2130,15 @@ fn run() -> Result<Value> {
                     if !reply.ok {
                         return Err(format!("PUBLIC_REMOTE_REFUSED:{}", reply.value).into());
                     }
-                    let page: ingress::Page = serde_json::from_value(reply.value)?;
-                    complete = page.complete;
-                    cursor = ingress::receive_page_from(&mut node, address, page, tip, cursor, ingress::now()?)?;
+                    cursor = ingress::receive_page_value_from(
+                        &mut node,
+                        address,
+                        reply.value,
+                        tip,
+                        cursor,
+                        ingress::now()?,
+                    )?;
+                    complete = cursor == tip;
                     if let Some(kernel) = &host_kernel {
                         kernel.verify()?;
                     }
