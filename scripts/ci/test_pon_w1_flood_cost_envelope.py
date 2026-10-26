@@ -2,6 +2,8 @@
 """Source-level negative controls for read-only W1 flood cost arithmetic."""
 import copy
 import json
+import hashlib
+import struct
 import sys
 import tempfile
 import unittest
@@ -12,12 +14,28 @@ import pon_w1_flood_cost_envelope as E
 
 
 def fixture():
+    a=bytes(16384)
+    task=E.pon_hash('task',a,a)
+    target=bytes.fromhex('7f'+'ff'*31)
+    # Exact 318-byte PNH1 header layout from the frozen independent schema.
+    header=(b'PNH1'+struct.pack('<H',1)+bytes([1])*32+
+            bytes([2])*32+bytes([3])*32+struct.pack('<Q',1)+
+            struct.pack('<Q',1_750_000_001)+target+bytes([4])*32+
+            bytes([5])*32+bytes([6])*32+bytes([7])*32+task+
+            struct.pack('<Q',5))
+    assert len(header)==318
+    challenge=E.pon_hash('challenge',header)
+    assert challenge.hex()=='be2f41a613694ec7cce8ee6bfc34e4b67848335022ce9ff3fa2138888eab1d03'
+    trace=E.pon_hash('public-v3-from-zero-v1',challenge,struct.pack('<Q',1))
+    proof=b'PNW1'+a+a+bytes(16384)+trace
     return {
         'schema': E.SCHEMA,
         'source': {'head':'1'*40, 'tree':'2'*40,
                    'profile':'pon-matmul-transcript-64-v1'},
         'cases': [{
-            'proof_sha256':'a'*64, 'complete_attacker_cpu_ns':1000,
+            'header_hex':header.hex(), 'a_hex':a.hex(), 'b_hex':a.hex(),
+            'proof_sha256':hashlib.sha256(proof).hexdigest(),
+            'complete_attacker_cpu_ns':1000,
             'attempted_trials':2,
             'trials':[{'nonce':0,'ticket_hit':False,'cpu_ns':10},
                       {'nonce':1,'ticket_hit':True,'cpu_ns':20}],
@@ -31,7 +49,6 @@ def fixture():
             ],
         }],
     }
-
 
 class FloodCostSourceTests(unittest.TestCase):
     def test_one_forgery_many_receivers_pays_producer_once(self):
@@ -110,6 +127,35 @@ class FloodCostSourceTests(unittest.TestCase):
                 path.write_text(raw)
                 with self.assertRaises(ValueError):
                     E.read(path)
+
+    def test_wrong_header_task_material_ticket_or_payload_identity_refuses(self):
+        for mutation in (
+            lambda d: d['cases'][0].update(
+                header_hex='00'+d['cases'][0]['header_hex'][2:]),
+            lambda d: d['cases'][0].update(
+                a_hex='01'+d['cases'][0]['a_hex'][2:]),
+            lambda d: d['cases'][0].update(
+                b_hex='01'+d['cases'][0]['b_hex'][2:]),
+            lambda d: d['cases'][0].update(proof_sha256='f'*64),
+            lambda d: d['cases'][0]['trials'][0].update(ticket_hit=True),
+            lambda d: d['cases'][0].update(header_hex=
+                d['cases'][0]['header_hex'][:236]+'00'+
+                d['cases'][0]['header_hex'][238:]),
+        ):
+            row=fixture()
+            mutation(row)
+            with self.assertRaises(ValueError):
+                E.analyze(row)
+
+    def test_from_zero_ticket_math_has_fixed_cross_language_vectors(self):
+        row=fixture()
+        case=row['cases'][0]
+        header,target,task,a,b=E.statement(case)
+        self.assertEqual(task.hex(),'6618f8a794517852f621993ccb6ac311c684e1db2b9d1d47166fa00a744c4c29')
+        self.assertEqual(target.hex(),'7f'+'ff'*31)
+        self.assertEqual(a,b)
+        self.assertEqual(E.analyze(row)['case_rows'][0]['challenge'],
+                         'be2f41a613694ec7cce8ee6bfc34e4b67848335022ce9ff3fa2138888eab1d03')
 
     def test_no_attacker_asic_or_host_independence_claim(self):
         result=E.analyze(fixture())
