@@ -21,6 +21,8 @@ from check_ci_contract import (ROOT, validate, CONTINUITY_BUILD, CONTINUITY_TRAN
                                NATIVE_RELEASE_BLOCK, NATIVE_GROWTH_RELEASE_BLOCK, NATIVE_GROWTH_V2_RELEASE_BLOCK,
                                GSC2_SYNTHETIC_ORACLE,
                                NODE_EXAMPLE_BUILD, ACCOUNT_ARCHIVE_ORACLE, ACCOUNT_EXECUTION_ORACLE)
+from check_ci_contract import check_model_runtime_registration
+from check_model_runtime_unit_log import expected_names as unit_names, validate as unit_log
 from check_cross_arch_cost import (COST_JOB_OVERHEAD_SECONDS, COST_JOB_TIMEOUT_MINUTES,
                                    cost_job_budget_seconds, rejection_job_budget_seconds)
 from report_current_implementation import DESTINATION, markdown, projection, validate as current_validate
@@ -1100,6 +1102,80 @@ cargo() {
             current_validate(self.root)
         finally:
             path.write_text(original)
+
+
+class ModelV2RegistrationTests(unittest.TestCase):
+    def test_actual_byte_and_tensor_workflow_registration(self):
+        script = (ROOT / 'scripts/ci/ci_job.sh').read_text()
+        check_independent_conformance(script, {'repository-truth', 'protocol-contract',
+            'fuzz-smoke', 'rust-baseline', 'external-evidence-contract'})
+        check_model_runtime_registration(ROOT)
+
+    def test_byte_suites_cannot_be_missing_duplicate_moved_filtered_or_swallowed(self):
+        script = (ROOT / 'scripts/ci/ci_job.sh').read_text()
+        lanes = {'repository-truth', 'protocol-contract', 'fuzz-smoke',
+                 'rust-baseline', 'external-evidence-contract'}
+        for path in ('scripts/test_llm_runtime_parent_step_v2.py',
+                     'scripts/test_llm_runtime_parent_step_task_v2.py'):
+            command = '    python3 ' + path + '\n'
+            changes = [script.replace(command, ''), script.replace(command, command * 2),
+                script.replace(command, command.rstrip() + ' || true\n'),
+                script.replace(command, '    if false; then\n' + command + '    fi\n'),
+                script.replace(command, command.rstrip() + ' -k subset\n'),
+                script.replace(command, '').replace('  fuzz-smoke)\n', '  fuzz-smoke)\n' + command),
+                script.replace(command, '').replace('    python3 scripts/test_llm_parent_material.py\n',
+                    command + '    python3 scripts/test_llm_parent_material.py\n')]
+            for changed in changes:
+                with self.subTest(path=path, changed=changed), self.assertRaises(ValueError):
+                    check_independent_conformance(changed, lanes)
+
+    def test_model_workflow_old_steps_budgets_architectures_and_lock_cannot_drift(self):
+        path = '.github/workflows/pon-model-parent-acceptance.yml'
+        text = (ROOT / path).read_text()
+        lock = 'scripts/ci/model-runtime-cpu-requirements.txt'
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            for name in (path, lock):
+                (root / name).parent.mkdir(parents=True, exist_ok=True)
+                (root / name).write_bytes((ROOT / name).read_bytes())
+            changes = [text.replace('timeout-minutes: 15', 'timeout-minutes: 16'),
+                text.replace('ubuntu-24.04, ubuntu-24.04-arm', 'ubuntu-24.04'),
+                text.replace('source: [head, prospective-merge]', 'source: [head]'),
+                text.replace('      - scripts/test_llm_*.py\n', ''),
+                text.replace('--require-hashes ', ''), text.replace('--only-binary=:all: ', ''),
+                text.replace('initial_trainable_setup_v2 runtime_candidate_observation_v1', 'initial_trainable_setup_v2'),
+                text.replace('id: runtime_deps', 'id: runtime_deps\n        continue-on-error: true'),
+                text.replace('scripts/test_llm_${spec}.py', 'scripts/test_llm_${spec}.py -k subset')]
+            for changed in changes:
+                (root / path).write_text(changed)
+                with self.subTest(changed=changed), self.assertRaises(ValueError):
+                    check_model_runtime_registration(root)
+            (root / path).write_text(text)
+            (root / lock).write_text((root / lock).read_text().replace('numpy==1.26.4', 'numpy==1.26.5'))
+            with self.assertRaises(ValueError):
+                check_model_runtime_registration(root)
+
+    def test_unit_log_requires_entire_original_roster_and_one_zero_skip_summary(self):
+        # Synthetic log controls test the parser, never claim Tensor execution.
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'unit.log'
+            for suite in ('setup', 'observer'):
+                names = unit_names(suite)
+                rows = [f'{name.rsplit(".", 1)[1]} ({name}) ... ok' for name in names]
+                summary = f'Ran {len(rows)} tests in 0.01s\n\nOK\n'
+                good = '\n'.join(rows) + '\n\n' + summary
+                path.write_text(good)
+                self.assertEqual(unit_log(path, suite)['executed_tests'], len(names))
+                changes = [good.replace(rows[0] + '\n', '', 1),
+                    good.replace(rows[0], rows[0] + '\n' + rows[0], 1),
+                    good.replace(' ... ok', ' ... skipped "missing dependency"', 1),
+                    good.replace(' ... ok', ' ... FAIL', 1),
+                    good.replace(f'Ran {len(rows)} tests', 'Ran 0 tests'),
+                    good + summary, good.replace('\nOK\n', '\nOK (skipped=1)\n')]
+                for changed in changes:
+                    path.write_text(changed)
+                    with self.subTest(suite=suite, changed=changed), self.assertRaises(ValueError):
+                        unit_log(path, suite)
 
 
 if __name__ == '__main__':

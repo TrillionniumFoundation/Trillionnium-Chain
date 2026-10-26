@@ -80,5 +80,50 @@ five selected-initial cases and the original gen3/gen1 signed cases; it does not
 change the actual I09 source pair or those qualification limits. All previous
 failures and raw V1 fields remain unchanged.
 
+A separate controlled run002 on clean Chain `4c8c2ee7` / Hepta `8d25c5d7`
+uses the new SQLite 3.51.3 Cell binary and fresh producer/consumer databases.
+All eleven objects / 269 chunks are fetched and read back in 4.257683 seconds
+within the original 35-second limit; the original signed native case passes
+in 10.357 seconds. This is one same-host loopback supplier, not WAN custody.
+Three authorizer bindings still yield two durable nonce claims. The overall
+controller still fails exit1 at I10 selected-installation UNAVAILABLE. This
+separate record does not rebind the original run001 to these newer sources.
+See `i09-eleven-material-sqlite3513-controlled-20261026.json`; no full PN1/SDK
+qualification, installation, ordinary next task or three-round success follows.
+
+The isolated explicit new-task V2 source `a23b5f2d` completes one actual
+SmolLM2-135M CPU training operation through the original parent-step CLI and
+supervisor. The original canonical positive-zero parent remains unchanged;
+the distinct actual task contract is retained rather than relabelling that
+parent. Setup changes only A while B remains positive zero. Ten optimizer steps
+then change all sixty A and sixty B factors (230,400 F32 values), separately
+from setup. The original 1,800-second / 16-GiB budget is unchanged: supervisor
+wall time is 25.334008 seconds and the training stage takes 18.004851 seconds.
+Exact original wait4 and completion verification succeed; one original missing
+RSS sample and its terminal reconciliation are retained, never treated as zero.
+The fourteen raw files include thirteen result-tree files and the separate
+launcher stream. See `initial-v2-controlled-train-20261026.json` for source,
+material, actual tensor and raw hash bindings. This is unsigned train-only
+engineering evidence in the current accelerate 1.15 environment, not a claim
+of historical 1.12 equivalence. Setup is not learning; optimizer byte changes
+and training loss are not quality gain. V2 evaluation/readback, CURRENT,
+selection, ordinary next-task use, reward, three rounds and Whole-U remain open.
+
+A later separate candidate-only observer on isolated Chain `0dcf8001` loads the
+actual `a23b5f2d` trained 135M candidate and completes eight tasks / sixty-four
+real forwards under its original 600-second / eight-GiB supervisor. Parent and
+candidate copy/readback cover all 120 factors; the actual loaded task contract
+remains `c9b06f9a`, distinct from the unchanged `2bb480a2` parent. Original
+post-forward backbone/factor checks and exact wait4 succeed in 8.854378 seconds;
+all seven stages and the eight original outputs/launcher pins are retained.
+One missing RSS sample is preserved with its original same-deadline terminal
+reconciliation, never as zero. See `initial-v2-candidate-observation-20261026.json`.
+This unsigned observation creates no FinalUse claim, eligible selection, I10
+installation, CURRENT, ordinary task, reward or three-round acceptance. It does
+not enable the parent-step V2 evaluate/readback dispatcher or replace matched
+quality controls; the old same-plan profile refusals and fixed V1 zero parent
+remain. The separate I09 run002 still ends with its original I10 unavailable
+exit1, and run001 retains its original source tuple.
+
 `manifest.json` fixes the compact JSON projections. These unsigned observations
 cannot mint any of the original admission, selection, funding or release proofs.

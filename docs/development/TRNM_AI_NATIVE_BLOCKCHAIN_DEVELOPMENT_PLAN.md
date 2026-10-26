@@ -1781,6 +1781,20 @@ prerequisite. Its complete qualified production route and the original deletion
 assertions remain required, without a test-only bypass or longer limits.
 See the same [Hepta development obligations](https://github.com/TrillionniumFoundation/hepta-private-ci/blob/394d1c7559513f4c28930b4bb1425ff383350ddc/docs/DEVELOPMENT.md).
 
+The local Hepta `01f2757d` checkpoint separates the four-file opaque prepared
+process/pipe/ConPTY owner prerequisite from the subsequent terminal observer.
+Security-authority retains the exact token, root proof, capability, desktop and
+Job owners; this reviewed source slice is not compiled or natively qualified.
+The retained six-file terminal candidate still has an open failure-custody
+dependency. PN4's original controlled session must own one fixed attempt slot
+before birth, retain the original child and resources through fallible readiness
+and terminal publication, and forbid another birth while Pending or Unknown.
+The current standalone test has no such longer-lived caller transfer. A stop
+request, Err-drop or late cleanup cannot establish an observed exit or release.
+Keep the same absolute eight seconds, actual exit0/7/259 and reduced-rights
+sticky-refusal assertions, plus all original Windows native groups and deletion
+failures. No fresh cleanup window, detached reaper or second registry closes it.
+
 Exit: one reproducible source-pair/configuration inventory and per-gate results
 with unresolved items assigned. Block dependent acceptance on required failures;
 continue scoped repair and offline research. Do not rerun historical cleanup or
@@ -2289,6 +2303,40 @@ bind the explicit V2 source/recipe and actual predecessor readback into the
 same training/evaluation budget and lineage, verify the full 135M model, and
 complete ordinary installation and next-task readback. No CURRENT, selection,
 FinalUse, reward or three-round gate is opened by these controls.
+
+A later [single controlled V2 train](../../evidence/pon-upgrade-implementation-20261018/native-rounds/real-model-owner-controlled-20261025/initial-v2-controlled-train-20261026.json)
+on isolated Chain `a23b5f2d` loads the real 135M backbone and original canonical
+parent, checks the distinct new-task contract, and completes ten optimizer steps
+under the original 1,800-second / 16-GiB supervisor. Setup changes sixty A factors
+with B still zero; subsequent training changes all 120 factors, separately from
+setup. Original completion and exact wait4 succeed in 25.334008 seconds, with
+the missing-RSS/terminal-reconciliation record preserved. The fourteen raw pins
+include thirteen result-tree files and one separate launcher stream. This is
+unsigned train-only evidence; V2 evaluation/readback, matched quality evidence,
+selection, I10 installation and ordinary next-task/three-round closure remain
+required. Setup changes and training loss do not count as useful gain.
+
+A separate [candidate-only V2 observation](../../evidence/pon-upgrade-implementation-20261018/native-rounds/real-model-owner-controlled-20261025/initial-v2-candidate-observation-20261026.json)
+on isolated Chain `0dcf8001` then loads that actual `a23b5f2d` trained 135M
+candidate, reads back the original parent and all 120 candidate factors, and
+executes eight tasks / sixty-four real forwards. The actual derived contract
+`c9b06f9a` stays distinct from parent `2bb480a2`; no parent or task registration
+is silently rewritten. Its original 600-second / eight-GiB supervisor reports
+success and exact wait4 in 8.854378 seconds, with all seven stages and the
+original missing-RSS reconciliation retained. This unsigned observer is a
+separate explicit route: the parent-step V2 evaluate/readback dispatcher stays
+closed. Outputs are engineering observations, not quality gain, FinalUse,
+selection, I10 installation, CURRENT, ordinary next-task or three-round success.
+The fixed V1 zero-parent profile and prior strict same-plan refusals remain.
+
+A separate [new-engine I09 run002](../../evidence/pon-upgrade-implementation-20261018/native-rounds/real-model-owner-controlled-20261025/i09-eleven-material-sqlite3513-controlled-20261026.json)
+on Chain `4c8c2ee7` / Hepta `8d25c5d7` uses fresh SQLite 3.51.3 databases, fetches
+all eleven objects in 4.257683 seconds within the original 35 seconds, and passes
+the original signed native case in 10.357 seconds. Three authorizer bindings
+yield two durable nonce claims. The controller still fails exit1 at unavailable
+I10 selected installation. Run001 retains its original `915f933c` / `da4a920`
+sources; neither observation grants CURRENT, ordinary, WAN or three-round
+acceptance, and this finite run does not qualify full PN1 or the SDK.
 
 The controlled 135M five-control observation in the inspected Hepta source
 reports zero gain against the strongest control and no ordinary installation
@@ -4053,6 +4101,109 @@ before and after the native tests and Clippy are retained. These checks do not
 grant production, model-efficacy, independent-security or release acceptance.
 
 The original release-profile no-run build now actually passes (2026-10-26T03:18Z): exit 0 in 268.031 seconds, exact opt-level 3/debug 0/assertions false/overflow checks false/test true, and an actual 10,134,904-byte ELF. Its two-copy arithmetic is 20,269,808 bytes, within the unchanged 192 MiB bucket. The root independently rechecked the ELF, both original streams, the actual durable terminal and all 22 before/after source pins; no monitor violation or owner error occurred. The separately documented 178,353,576-byte diagnostic ELF and every failed build remain historical evidence. This new result removes only the release-build/profile/size preparation blocker: no lawful prepared bundle or execution copy was created, and the original three-FD caller, whole writer, strict reader and full 4,097-identity acceptance remain unqualified. No full guard, deadline, assertion or budget changed. See the [original release-build compact receipt](../../evidence/pon-native-io-pn1-20261026-addon/sqlite3513-original-release-build.json).
+
+
+### PN1 / I02: public finite three-FD preparation and readback candidate
+
+The existing PN1/I02 sequence gains a separately named finite component entry.
+It does not enable or change the original V1/V2 full route, Plan, assertions,
+deadlines, Windows groups, pair steps or resource and evidence limits. The new
+profile and prepared/inventory/claim/dispatch/execution/readback domains use
+`pn1-native-io-three-fd-component-v1` and the corresponding
+`pon-native-io-three-fd-component-...-v1` names.
+
+| Interface | Contract and next owner |
+| --- | --- |
+| [Public collector](../../scripts/run_pon_native_io_component.py) `prepare` | On the ROG-integrated clean committed source, require exact head/tree, original Nice 10 / four CPU / 16 GiB, a fresh disjoint held build target and output. Actually run the locked offline original release no-run build, capture the compiled executable through the same held target FD, and seal original streams, source/resources, origin identity and inventory. No supplied success flag or old ELF can substitute. |
+| Same collector `execute` | Consume that real preparation once. Bind its original parent/root/leaf identity and stable claim key, retain both physical binary copies under the original 192 MiB aggregate, and pass exactly executable/output/source-cwd FDs. Run the new exact ignored selector through the existing native-I/O `Plan::control()` path; record actual parent PID/birth/wait and original descendant FD/terminal evidence. |
+| [Independent component reader](../../scripts/ci/check_pon_native_io_component.py) | Require pinned preparation and execution inventories plus the retained original claim; reject unknown/missing/partial/cap/error outcomes. Reconstruct all retained complete W1 attempts, actual calls/CPU balances, two actors and their FD bindings, three actually used healthy closed roots and private-copy SQLite cold history. It does not open producer databases for repair. |
+| [Counterexamples](../../scripts/ci/test_pon_native_io_component.py) | Retain real rename/copy/replacement, unreadable-tree, inherited-input, actual birth/wait, failed-start pipe cleanup, terminal-write and held-artifact controls. Synthetic byte fixtures only exercise capture; they are never executed or used as public preparation. |
+
+Implementation order remains PN1/I02: ROG reviews and commits the complete
+collector/selector/reader/tests delta on the existing branch, then a caller
+actually invokes public `prepare`, pins its returned documents, invokes
+`execute` once, and runs the independent reader. Only those actual results can
+close this finite mechanism prerequisite. An isolated compilation, a passed
+mechanism unit test or an internally consistent fabricated bundle cannot do so.
+The trusted local operator, chosen toolchain and pinned input receipts remain
+explicit assumptions; hashes and local process records are not host attestation.
+
+Acceptance keeps the original control Plan: two actors, one prefix plus two
+pressure calls each, prefix 30 seconds, pressure two seconds, call two seconds,
+readiness 180 seconds and cleanup five seconds. The outer finite collector is
+fixed at 180 seconds and its build child at 1,200 seconds. The original AS/FSIZE,
+three physical-domain eight-GiB ledger, all bucket limits, synchronization and
+first-error accounting remain. The separate six-GiB build target with 512 MiB
+reserve is conservatively monitored, not a physical block quota or instantaneous
+peak proof. Directory replacement or unknown scans fail; limits are not raised
+and charged partials are not refunded.
+
+The finite reader must prove two prefix and six final unique paid work identities,
+not a 4,096-entry exhaustion result. It actually uses roles 0/5/6: miner, fresh
+receiver and independent client. Seven registrations are not seven exercised
+Nodes. All full-writer/full-caller/full-reader/full-4,097, model, Windows, WAN and
+merge qualifications remain false. The next original acceptance still requires
+the complete whole writer, original caller and strict reader, followed by the
+unchanged 4,096 plus fresh sustained 24-actor workload.
+
+At this source admission, twelve finite mechanism counterexamples pass locally
+under a repository-portable loader. The Rust selector format check passes.
+Public prepare/execute/readback, compilation of the added selector on a clean
+committed source and exact-head required CI are **not yet run or qualified**.
+The original warning-bearing attempt and all earlier failures remain retained.
+Nice-19 mechanism controls do not qualify the Nice-10 public resource contract.
+
+
+2026-10-26 PN1/I02 review follow-up (V15 → V17; original acceptance unchanged):
+ROG review found that the new component owner's stream loops overwrote the step label;
+a real child/writer counterexample recorded the erroneous member name
+`build.stderr.log.step.json` in the retained RED log and failed the required
+`build.step.json` lookup. Its temporary fixture files were not preserved. Keep the step label separate from
+stream member names for both build and component execution. An independent review
+also found that the component reader called the original full-reader limit validator,
+although the actual native installer honestly writes `full_ledger_implemented=false`.
+Use a separate finite-component validator that requires that exact false value and
+preserves every original schema, role, typed PID, cgroup, address-space and file-size
+assertion. Do not mutate receipts, set a full flag true, weaken the full reader, or
+claim the false full-ledger field as full qualification. The unchanged twelve mechanism
+cases plus two new counterexamples passed after correction; the original RED and all
+prior receipts remain retained. These Nice19/AS1GiB mechanism observations are not
+public Nice10 preparation/execution/readback, full-writer/strict-reader, 4096+fresh,
+Windows, model-upgrade, WAN, or merge acceptance. A clean committed corrected source
+and its actual public preparation → execution → independent readback are still required.
+
+
+2026-10-26 PN1/I02 complete-review follow-up (V18; original acceptance unchanged):
+The revised ROG V15 ACK identifies four findings. V17 addressed R01 (step label)
+and R04 (finite/full resource discriminator); its local resource-fix label must
+not be confused with the ACK's R02. V18 addresses that R02 by retaining bounded
+failure context when real stream or step publication fails after a child has
+terminated: original child error, actual return code, PID/birth/parent/wait record,
+observed stream lengths/hashes and the publication error remain distinct. Error
+prefixes are bounded by their ASCII JSON representation, with explicit truncation.
+The original terminal reservation, first writer failure and partial charges remain;
+no physical ENOSPC guarantee is added. Claim termination uses an actual step or the
+same component/profile failure context only after the original owner validator
+accepts the recorded terminal; missing, aliased or unknown ownership stays unknown,
+and native success and full qualification are never promoted by a publication error.
+Actual read-only reserved descriptors produced kernel EBADF in the real ComponentIO
+write path after a nonzero child and a timed-out/reaped child. Both original RED
+observations and corrected finite passes remain retained; these are controlled
+storage faults, not a real disk-full or public claim execution qualification.
+
+ACK R03 restores the original finite actor schema/worker/source/tree/binary,
+setup_calls=1/prepared-generic producer and typed metadata checks, and the original
+completion-work domain/capacity/epoch/counter validation before finite 0/2/6 checks.
+A separate test module serializes and rehashes the same 61 synthetic fixtures;
+its original 60 negative assertions failed before correction and are rejected after
+correction. Its positive fixture reaches only the unrelated FD replay sentinel:
+these are predicate controls, not native, complete-bundle or signed authenticity proof.
+The combined four-module check passed nineteen mechanism/predicate tests with all
+fourteen preceding test bodies unchanged. Nice19/AS1GiB diagnostics, rehashed
+fixtures and retained failure context do not qualify public Nice10 preparation,
+execution and readback, whole writer/strict reader, seven actual roots, the original
+4096+fresh workload, Windows, three model rounds, independent WAN, or merge readiness.
+A clean committed corrected source and all original required executions remain due.
 
 
 ## Isolated lease-continuity and DAA research continuation (no activation)
