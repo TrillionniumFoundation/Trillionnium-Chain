@@ -31,6 +31,42 @@ class ConservativeCostTests(unittest.TestCase):
         data["ticket_scope"]="globally-replayable"
         self.assertEqual(V.decide(data)["status"],"OBSERVED_AMPLIFICATION")
 
+    def test_shared_false_proof_is_not_reconstructed_for_every_receiver(self):
+        # Same fixed W1 trace/claim can be prepared once; different receiver
+        # MACs require fresh security tickets, not fresh W1 matrix material.
+        # Old formula: (ticket + forge + send) * receivers = 10200,
+        # incorrectly NO_OBSERVED_AMPLIFICATION against receiver CPU=6000.
+        # Correct: ticket * 2 + forge + send * 2 = 5200.
+        data = case()
+        data["trials"][0].update(
+            actual_ticket_search_cpu_ns=100,
+            full_forgery_build_cpu_ns=5000,
+            full_send_transport_cpu_ns=0,
+            complete_receiver_reject_cpu_ns=3000,
+        )
+        result = V.decide(data)
+        self.assertEqual(result["cost_ratio_denominator"], 5200)
+        self.assertEqual(result["cost_ratio_numerator"], 6000)
+        self.assertEqual(result["status"], "OBSERVED_AMPLIFICATION")
+        self.assertFalse(result["production_qualified"])
+
+    def test_global_ticket_can_gossip_one_send_to_many_receivers(self):
+        data = case()
+        data["ticket_scope"] = "globally-replayable"
+        data["receiver_count"] = 4
+        data["trials"][0].update(
+            actual_ticket_search_cpu_ns=100,
+            full_forgery_build_cpu_ns=100,
+            full_send_transport_cpu_ns=1900,
+            complete_receiver_reject_cpu_ns=600,
+        )
+        # One ticket + one reusable fake W1 + one initial network send
+        # costs 2100; 4 independent nodes pay 2400 each in aggregate.
+        result = V.decide(data)
+        self.assertEqual(result["cost_ratio_denominator"], 2100)
+        self.assertEqual(result["cost_ratio_numerator"], 2400)
+        self.assertEqual(result["status"], "OBSERVED_AMPLIFICATION")
+
     def test_accelerator_advantage_can_reverse_observed_verdict(self):
         data=case()
         data["trials"][0]["actual_ticket_search_cpu_ns"]=40_000
