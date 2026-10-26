@@ -29,3 +29,29 @@ python3 -m unittest -v test_q4_renewal_outbox_research.py
 The tests explicitly exercise lost ACK, durable pre-/post-COMMIT cuts, delayed receipt, confirmation then reorg, expiry, cold reopen, duplicate operation/packet, different SQLite connections, monotonic generations, wrong context/length/type, forensic tampering and event/intent quotas. They use local synthetic public byte strings. No actual requester/source signature, `Node::admit`, W1 proof, P2P listener, real network partition or independent operator executes.
 
 **Production integration remains blocked:** M05/M07/kernel.operations must consume *actual signed Q4 tag22 transactions and current source/withdrawal facts* under the one original durable owner; persist a submission pre-effect fence with externally installed authority; submit through the real bounded transport and reconcile `Unknown` via independent client history and surviving/reorganized chain; preserve local effect history across deep reorganizations. Run real 32-slot retention, renewal at the last legal height, two independent signers, lost ACK, disk crash and material loss with the original native W1 Maintenance path. This research file cannot be used as an authority adapter or a new second ledger.
+
+## Canonical observation audit hardening (research continuation)
+
+The local journal now independently validates the complete fixed 113-byte
+`ChainObservation` grammar when an `OBSERVED_*` event is appended **and**
+when all historical events are replayed on cold open. It refuses zero generation,
+zero observed tip, zero evidence/receipt digest, an absent included-block digest
+for Included/Confirmed, a nonzero included-block digest for
+Reorged/Unavailable/Expired, mismatched kind tags, truncated or mutable byte
+buffers, and unknown event kinds. The original event hash and generation-order
+checks remain required. An internal call to `_event` cannot bypass this validation.
+
+Two negative suites cover malformed internal append and cold SQLite observations
+whose checksum was deliberately recomputed to match their corrupted fields.
+Recomputing a local row digest is **not** forging an authenticated chain receipt;
+the experiment proves a canonical decoder invariant, not tamper resistance
+against an administrator who can rewrite both the SQLite bytes and hash chain.
+
+These changes were published on the existing draft research branch as
+`9c848875dfdf5756af8292b3f13e808269260c38` and
+`774fc4bb08a4162be24a56e759a9718d11b961c8`. The exact-branch Python
+outbox tests still need execution in an environment possessing this full source
+checkout; the local separately reconstructed observation-codec probe passed.
+Real Q4 signatures, original-owner journals, independent PoN client proofs,
+WAN lost-ACK handling, uninterrupted mining and production admission remain
+strictly unqualified. No old Q4, Maintenance, W1 or DAA consensus rule changed.
