@@ -183,3 +183,55 @@ fn q4_renewal_window_is_advisory_and_never_resurrects_expired_source() {
     // Forecast never verifies requester/source signatures or signs replacements.
     // A reorg must re-read the actual parent lease and inspect it again.
 }
+
+#[test]
+fn mode5_lease_edge_refuses_immutable_source_da_and_expiry_rebinding_even_after_rehash() {
+    // Adversarial supplier replaces QDL2 and refreshes *both* declaration
+    // hashes. All seven replacements remain valid QDL2 encodings.
+    for case in 0..7 {
+        let (old, mut next, mut edge) = fixture();
+        let mut lease =
+            DemandLeaseV2::decode(&hex::decode(&edge.new_complete_lease).unwrap()).unwrap();
+        match case {
+            0 => lease.source_record = [0x41; 32],
+            1 => lease.authorization_scope = [0x42; 32],
+            2 => lease.availability_manifest = [0x43; 32],
+            3 => lease.availability_root = [0x44; 32],
+            4 => lease.not_before = 101, // old.expires == 100
+            5 => {
+                lease.expires = 100; // unchanged expiry
+                lease.available_until = 200;
+            }
+            6 => {
+                lease.expires = 99; // regressed expiry
+                lease.available_until = 199;
+            }
+            _ => unreachable!(),
+        }
+        let raw = lease.encode().unwrap();
+        next.task.lease_sha256 = crate::operator_task_policy::digest_bytes(&raw);
+        edge.new_complete_lease = hex::encode(&raw);
+        edge.new_task_binding = declared_binding_digest(&next).unwrap();
+        assert!(
+            edge.check_declarations(&old, &next).is_err(),
+            "Q4 invalid successor accepted after rehash: case {case}"
+        );
+    }
+}
+
+#[test]
+fn mode5_lease_edge_accepts_valid_final_height_overlap_without_granting_authority() {
+    let (old, mut next, mut edge) = fixture();
+    let mut lease =
+        DemandLeaseV2::decode(&hex::decode(&edge.new_complete_lease).unwrap()).unwrap();
+    lease.not_before = 100; // inclusion possible at old.expires == 100
+    lease.expires = 101;
+    lease.available_until = 201;
+    let raw = lease.encode().unwrap();
+    next.task.lease_sha256 = crate::operator_task_policy::digest_bytes(&raw);
+    edge.new_complete_lease = hex::encode(&raw);
+    edge.new_task_binding = declared_binding_digest(&next).unwrap();
+    assert!(edge.check_declarations(&old, &next).is_ok());
+    // No source signature, current parent, executable task, inclusion,
+    // maintenance fallback or FinalUse authority is created by this check.
+}

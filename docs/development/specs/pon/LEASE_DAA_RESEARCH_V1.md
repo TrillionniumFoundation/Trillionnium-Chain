@@ -714,3 +714,24 @@ within this research lineage. None of these cases runs native Rust, produces
 PNW1 valid work, admits a block, proves an independent validator, or qualifies
 public-network difficulty/security. Local proof/admission tests and third-party
 review remain explicit blockers. No legacy DAA or production flag changes.
+
+
+## Restricted Q4 LeaseEdge pre-admission guard (2026-10-26)
+
+The M15 restricted continuous-lease declaration comparison previously checked
+the QDL2 source/identity/revision and externally supplied declaration digests,
+but did not compare the original source-record, authorization-scope,
+availability-manifest and availability-root identities inside both complete
+leases. Nor did that pre-admission check refuse a non-extending expiry or a
+successor whose start falls after the old expiry. An adversary who supplied
+a syntactically valid successor and recomputed both declaration hashes could
+reach the pre-M06 boundary with a Q4-invalid resource/authority rebinding.
+
+`LeaseEdge::check_declarations` now rejects those seven well-formed,
+fully rehashed negative controls. A positive last-legal-height overlap is
+also retained. This is a guard BEFORE owner-side resource planning; full
+source/requester signatures, actual-height inclusion, nonce, availability,
+W1 and model operation authority remain the unchanged original owners.
+Old Q4/Revision12 wire, native consensus DAA and activation are unmodified.
+The new Rust tests remain UNRUN until executed on an exact native checkout;
+GitHub source publication is not test or production qualification.
