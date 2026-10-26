@@ -163,3 +163,44 @@ this experiment does not replace them. An attacker with a faster SHA-256
 device can still earn a cheap locally accepted Hashcash ticket and force
 costly full W1 replay. Thus **P2–P6 remain OPEN**, and production
 activation stays disabled.
+
+
+## 2026-10-26: receiver-enforced research cost floor
+
+The research prototype previously accepted any caller-selected 8..24-bit
+cost in 'StatelessReceiverAdmission.offer'. A valid grant authenticated its
+own bit count, but the receiver had no separately pinned minimum service cost:
+a sender could always choose 8-bit work even when an operator intended a
+more expensive protection policy. The MAC on a weak grant does not prove
+the receiver's current pricing rule.
+
+The new optional, typed 'minimum_bits' constructor setting defaults to
+the old 8-bit research behavior for existing vectors, with a monotonic
+'raise_minimum_bits(bits)' API. Under the existing single internal lock:
+
+- Signing a grant below the current floor raises 'PRICE_POLICY' without
+  consuming a paid slot.
+- A previously MAC-valid low-bit grant remains subject to the *current*
+  server floor at consume time and receives 'PRICE_POLICY' before any full
+  W1 validation or paid replay slot.
+- A simultaneous price decrease in the same receiver epoch is refused
+  ('PRICE_ROLLBACK'), so clients cannot revive cheaply issued grants by
+  toggling service configuration during that epoch.
+- Invalid or tampered grant MACs must still fail 'GRANT_MAC' before the
+  pricing verdict. The original exact caller/body/receiver/epoch context,
+  expiry, target and one-use behavior remain unchanged.
+- New test selectors cover caller key rotation, old grants after raising
+  the floor, monotone rules, bit bounds, unpaid-capacity invariants and
+  forged MACs. They do NOT claim native/Host CPU qualification.
+
+This **does not** determine the correct numeric floor. Hashcash has huge
+CPU/GPU/ASIC performance variability, and even high difficulty can cost
+much less than full W1 verification, especially when a bogus proof reaches
+multiple processes, aliases or compatible receivers. Selecting a production
+price requires actual per-hardware adversarial measurement and independent
+review under the original P2/P4 gates.
+
+A restart with copied secret+epoch and lost paid-grant history can still
+replay a paid ticket; the existing negative regression retains that
+failure. The floor is not a durable ledger or a consensus fork-choice rule.
+Production remains HOLD_NO_GO.
