@@ -137,7 +137,7 @@ def analyze(data, *, oracle_check=False):
     tree = source.get('tree')
     require(type(head) is str and GIT_SHA.fullmatch(head), 'HEAD')
     require(type(tree) is str and GIT_SHA.fullmatch(tree), 'TREE')
-    require(type(source.get('profile')) is str and source['profile'],
+    require(source.get('profile') == 'pon-matmul-transcript-64-v1',
             'PROFILE')
     cases = data.get('cases')
     require(type(cases) is list and 1 <= len(cases) <= MAX_CASES, 'CASE_LIMIT')
@@ -281,11 +281,24 @@ def analyze(data, *, oracle_check=False):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--input', required=True)
+    ap.add_argument('--expected-head', required=True,
+                    help='externally frozen exact 40-hex source commit')
+    ap.add_argument('--expected-tree', required=True,
+                    help='externally frozen exact 40-hex source tree')
     ap.add_argument('--out')
     ap.add_argument('--oracle-check', action='store_true',
                     help='offline Python full W1 replay; not native admission or P6 review')
     args = ap.parse_args()
-    out = analyze(read(args.input), oracle_check=args.oracle_check)
+    require(type(args.expected_head) is str and GIT_SHA.fullmatch(args.expected_head),
+            'EXPECTED_HEAD')
+    require(type(args.expected_tree) is str and GIT_SHA.fullmatch(args.expected_tree),
+            'EXPECTED_TREE')
+    raw = read(args.input)
+    require(type(raw) is dict and type(raw.get('source')) is dict
+            and raw['source'].get('head') == args.expected_head
+            and raw['source'].get('tree') == args.expected_tree,
+            'EXTERNAL_SOURCE_PIN_MISMATCH')
+    out = analyze(raw, oracle_check=args.oracle_check)
     raw = json.dumps(out, sort_keys=True, indent=2, allow_nan=False) + '\n'
     if args.out:
         # Exclusive creation: prior actual failures or observations survive.
