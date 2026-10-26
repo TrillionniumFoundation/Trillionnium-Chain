@@ -20,13 +20,18 @@ SCHEMA='w2d-late-tile-false-claim-research-v0'
 TARGET=bytes([127])+bytes([255])*31
 
 
-def campaign(seed: int, cap: int=128, target: bytes=TARGET) -> dict:
+def campaign(seed: int, cap: int=128, target: bytes=TARGET,
+             verifier=None, expected_error: str='TILE_RELATION') -> dict:
     if type(seed) is not int or not 0 <= seed < (1<<32):
         raise ValueError('SEED')
     if type(cap) is not int or not 1 <= cap <= 4096:
         raise ValueError('CAP')
     if type(target) is not bytes or len(target) != 32 or target == bytes(32):
         raise ValueError('TARGET')
+    if verifier is None:
+        verifier = D.verify
+    if type(expected_error) is not str or expected_error not in ('TILE_RELATION','BATCHED_TILE_RELATION'):
+        raise ValueError('EXPECTED_ERROR')
     challenge=H('w2d-late-attack-fixed-challenge',struct.pack('<I',seed))
     a=[((i*11+seed)%97) for i in range(W.CELLS)]
     b=[((i*17+seed)%101) for i in range(W.CELLS)]
@@ -63,13 +68,13 @@ def campaign(seed: int, cap: int=128, target: bytes=TARGET) -> dict:
     W.precheck(challenge,task,target,proof)
     before=time.process_time_ns()
     try:
-        D.verify(challenge,task,target,proof,bytes(sidecar))
+        verifier(challenge,task,target,proof,bytes(sidecar))
     except ValueError as error:
         outcome=str(error)
     else:
         raise AssertionError('INVALID_W2D_WITNESS_ACCEPTED')
     receiver_ns=time.process_time_ns()-before
-    if outcome != 'TILE_RELATION':
+    if outcome != expected_error:
         raise AssertionError('WRONG_LATE_RELATION_ERROR:'+outcome)
     return dict(schema=SCHEMA,status='TICKET_HIT_REJECTED',seed=seed,cap=cap,
                 challenge=challenge.hex(),task=task.hex(),target=target.hex(),
