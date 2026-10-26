@@ -3921,6 +3921,35 @@ mod tests {
             assert!(actual > 0);
         }
         assert_eq!(cpu_observation.failed_stage, None);
+        // Source/test-run scoped P2 evidence from an actual original signed
+        // V3 loopback Head, not a Python synthetic Cookie or a GPU price.
+        // The destination is create-only; a previous failed receipt is never
+        // silently replaced by a later test invocation.
+        let p2_cost = json!({
+            "schema": "public-v3-original-client-cpu-smoke-v1",
+            "profile": hex::encode(policy.id()),
+            "operation": "Head",
+            "signed_original_cookie_completed": true,
+            "client": cpu_observation,
+            "existing_phase_metrics": existing,
+            "receiver_w1_cpu_ns": null,
+            "hardware_gpu_price": null,
+            "independent_accepted": false,
+            "production_activation": false,
+        });
+        println!("{p2_cost}");
+        if let Some(path) = std::env::var_os("TRNM_P2_V3_COST_REPORT") {
+            use std::io::Write;
+            let mut file = std::fs::OpenOptions::new()
+                .write(true)
+                .create_new(true)
+                .open(path)
+                .unwrap();
+            file.write_all(serde_json::to_string_pretty(&p2_cost).unwrap().as_bytes())
+                .unwrap();
+            file.write_all(b"\n").unwrap();
+            file.sync_all().unwrap();
+        }
         assert_eq!(reply.value["height"], 0);
         drop(held);
         stop.store(true, Ordering::Release);
