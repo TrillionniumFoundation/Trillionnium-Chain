@@ -78,7 +78,17 @@ In 'ingress.rs':
    retains a known positive full CPU debit on the very same zero-start
    epoch. No legal work, state or Block ID is minted from the invalid
    mathematical claim.
-3. PR #342's raw/authenticated/durable remote no-Host-negative tests
+3. 'four_distinct_ticket_valid_fake_history_traces_each_pay_original_cpu'
+   builds four distinct claimed SHA256 traces from the SAME already legal
+   Header, challenge, TaskId, target and canonical A/B. It does not copy a
+   valid product or transcript into the fake proofs; the fixture's legal
+   Header was originally constructed with an actual Node. Every fake
+   passes the preliminary ticket precheck yet returns WORK:Transcript
+   after complete W1 replay, keeps native state unchanged and increases
+   the EXACT SAME cold Node CPU-domain settled-full-cost counter.
+   These newly derived samples are not falsely claimed to be the user's
+   earlier four raw attack payloads or matching old hardware timings.
+4. PR #342's raw/authenticated/durable remote no-Host-negative tests
    remain intact; they must still deny before any source connection and W1.
 
 Tests require a real Rust checkout/toolchain and cannot be declared passed
