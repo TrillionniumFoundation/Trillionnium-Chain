@@ -239,8 +239,7 @@ class RenewalOutboxTests(unittest.TestCase):
                     key=db.prepare(intent());db.dispatch_unknown(key)
                     self.assertEqual(db.audit(),1)
                 with sqlite3.connect(self.file) as raw:
-                    for statement in sql.split(';'):
-                        if statement.strip(): raw.execute(statement)
+                    raw.executescript(sql)
                 with self.assertRaisesRegex(OutboxError,'FOREIGN_SCHEMA_OBJECT'):
                     self.open()
 
