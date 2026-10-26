@@ -14,8 +14,17 @@ The read-only GitHub observation distinguishes three identities:
 | Object | Observed identity | What it establishes |
 | --- | --- | --- |
 | Hepta `main` | `f8c9419df6ddeb36ff8b522a50219981fb8d9345` | Default branch identity, not the latest PoN integration candidate |
-| [Hepta draft PR 2559](https://github.com/TrillionniumFoundation/hepta-private-ci/pull/2559) | head `c38e7727220f32c7410f59083c5ea7878bbae078`, actual merge `a7f7d3be5aa35fc589666dc6e05ef447f4ead405` | Current inspected paired development candidate; its existing Chain pair is PR 323, not W1 research PR 337 |
-| [Hepta draft PR 1681](https://github.com/TrillionniumFoundation/hepta-private-ci/pull/1681) | head `e2beb203c64b4198c49050adf0992dcbe8f3efe8` | Historical product-qualified adoption work, not source-specific qualification of the current W1 increment |
+| [Hepta draft PR 2559](https://github.com/TrillionniumFoundation/hepta-private-ci/pull/2559) | head `c38e7727220f32c7410f59083c5ea7878bbae078`, observed prospective/test merge `a7f7d3be5aa35fc589666dc6e05ef447f4ead405` | Open, draft and unmerged candidate; its existing Chain pair is PR 323, not W1 research PR 337 |
+| [Hepta draft PR 1681](https://github.com/TrillionniumFoundation/hepta-private-ci/pull/1681) | head `e2beb203c64b4198c49050adf0992dcbe8f3efe8` | Historical adoption-development candidate carrying a scoped study report; no source-specific qualification of the current W1 increment |
+
+The observed PR 2559 merge object is against its stacked base
+`75531105b27329abaeb955e77c2c04a6d14f3bcb`; `merged=false` and
+`merged_at=null` do not establish integration into `main`. The retained PR 1681
+body attributes its historical tabular execution to the earlier source tuple
+`c636bf37669d36c27f9677d6d5897a024f0b576b` /
+`4ae2c7a86cf5e0c1a37b2e032a28fc731bb3ba0a`. This increment inspects the
+retained report and README; it does not independently replay that historical
+study or qualify execution at `e2beb203`, `c38e7727` or the new Chain source.
 
 The immutable Hepta files inspected at `c38e7727` are:
 

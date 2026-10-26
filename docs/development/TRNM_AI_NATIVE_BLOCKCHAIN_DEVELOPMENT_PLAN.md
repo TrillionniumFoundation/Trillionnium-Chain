@@ -1,6 +1,6 @@
 # Trillionnium Chain Development Plan — PoN / Hepta-PoH revision
 
-Plan ID: `trnm-chain-development-plan-v2` (stable registry identity; content revision 28).
+Plan ID: `trnm-chain-development-plan-v2` (stable registry identity; content revision 29).
 Effective: 2026-09-28; priority implementation revision: 2026-10-26. Status: selected development direction; no runtime activation.
 Canonical destination: `refs/heads/main`; continuation uses the current main lineage, not retired PR #194.
 Current source/head/tree/base and prospective merge are derived at verification time.
@@ -1592,6 +1592,14 @@ zero/tight budgets and censored caps preserved. The
 requires identical paid/template/overlapping proof identities for paired ratios.
 This finite ancestor bank is not an arbitrary fork forest or long-term attacker
 class; observed setup and miner costs are not an enforced physical cost floor.
+
+The first frozen campaign at `36a47400138220244728bdd5fc7bb0a338c9ba85`
+completed all 58 jobs and full replay, but its exact-source inventory gate found
+two missing entries for the new Rust experiment. Refresh that existing embedded
+inventory before the corrected freeze and repeat the registered campaign on the
+corrected source. Preserve the first raw campaign, complete readback, rejected
+reader environments and failed gates. A passed measurement cannot override a
+failed repository gate, and new outcomes do not replace earlier observations.
 
 The [chain envelope](../protocol/pon-nakamoto-v1/details/W1_CHAIN_SECURITY_ENVELOPE_V1.md)
 connects the actual integer target weight to conditional weighted tails,
