@@ -2867,6 +2867,55 @@ impl PublicClientMetrics {
         }
     }
 }
+/// Read-only, client-thread CPU observation around an ORIGINAL signed V3
+/// request. Unlike phase wall timings, this interval is actual calling-thread
+/// CPU on the platform that provides ThreadCPUTime; missing/invalid clocks stay
+/// None. The existing PublicClientMetrics JSON and signed Cookie bytes do NOT
+/// change. This is not a GPU price, attack lower bound or server resource debit.
+#[derive(Debug, Serialize)]
+pub struct PublicClientCpuObservation {
+    pub schema: &'static str,
+    pub client_thread_cpu_ns: Option<u64>,
+    pub client_wall_ns: u64,
+    pub solution_trials: u64,
+    pub solution_found: bool,
+    pub solution_search_wall_ns: u64,
+    pub failed_stage: Option<PublicClientStage>,
+    pub native_server_cpu_known: bool,
+    pub gpu_cpu_equivalence_assumed: bool,
+    pub work_profile_qualified: bool,
+}
+
+/// Separate opt-in measurement entry: the exact original client performs
+/// handshake, Cookie verification, nonce search, caller signing and response
+/// verification. No new request nonce, cached success or resource allowance.
+pub fn call_public_protected_v3_with_cpu_observation(
+    address: SocketAddr,
+    request: &Request,
+    settings: &Settings,
+    pinned_server: &str,
+    caller: &DevelopmentIdentity,
+    policy: PublicPolicy,
+) -> (Result<PublicReply>, PublicClientMetrics, PublicClientCpuObservation) {
+    let started = Instant::now();
+    let cpu = ThreadCpuStamp::start();
+    let (result, metrics) =
+        call_public_protected_v3_with_metrics(address, request, settings, pinned_server, caller, policy);
+    let observation = PublicClientCpuObservation {
+        schema: "public-v3-client-thread-cpu-observation-v1",
+        client_thread_cpu_ns: cpu.and_then(ThreadCpuStamp::finish),
+        client_wall_ns: elapsed_ns(started),
+        solution_trials: metrics.solution_trials,
+        solution_found: metrics.solution_found,
+        solution_search_wall_ns: metrics.solution_search_ns,
+        failed_stage: metrics.failed_stage,
+        native_server_cpu_known: false,
+        gpu_cpu_equivalence_assumed: false,
+        work_profile_qualified: false,
+    };
+    (result, metrics, observation)
+}
+
 /// Wire and signed profile are identical to the ordinary client. The observation
 /// reports elapsed stage time, never an adversarial cost bound or server CPU time.
 pub fn call_public_protected_v3(
@@ -3424,6 +3473,45 @@ mod tests {
         // Signed policy identity remains the original V3 identity. This is
         // strictly optional/local and is not an activated protocol migration.
         assert_eq!(selected.policy.id(), make().policy.id());
+    }
+
+    #[test]
+    fn client_cpu_observation_is_opt_in_does_not_mint_a_ticket_or_change_old_json() {
+        let settings = Settings::development(Some(super::super::now().unwrap() - 100)).unwrap();
+        let caller = DevelopmentIdentity::from_secret_hex(&hex::encode([21; 32])).unwrap();
+        // Invalid development policy stops before socket creation. This
+        // checks the authentic public client entry, not a mock verifier.
+        let invalid_policy = PublicPolicy { bits: 7, lifetime_ms: 2000 };
+        let (result, original, observed) =
+            call_public_protected_v3_with_cpu_observation(
+                "127.0.0.1:1".parse().unwrap(),
+                &Request::Head,
+                &settings,
+                caller.public_key(),
+                &caller,
+                invalid_policy,
+            );
+        assert!(result.is_err());
+        assert_eq!(original.failed_stage, Some(PublicClientStage::Construction));
+        assert_eq!(observed.failed_stage, original.failed_stage);
+        assert_eq!(observed.solution_trials, 0);
+        assert!(!observed.solution_found);
+        assert_eq!(observed.schema, "public-v3-client-thread-cpu-observation-v1");
+        assert!(!observed.native_server_cpu_known);
+        assert!(!observed.gpu_cpu_equivalence_assumed);
+        assert!(!observed.work_profile_qualified);
+        // A new measurement schema must not silently change the original
+        // signed profile nor PublicClientMetrics serialization.
+        let baseline = PublicClientMetrics::default();
+        assert_eq!(
+            serde_json::to_value(&baseline).unwrap(),
+            json!({
+                "construction_ns":0, "challenge_ns":0,
+                "solution_search_ns":0, "solution_trials":0,
+                "solution_found":false, "solution_body_response_ns":0,
+                "total_elapsed_ns":0, "failed_stage":null,
+            })
+        );
     }
 
     #[test]
