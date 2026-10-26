@@ -24,6 +24,11 @@ case "${1:?required job}" in
     python3 scripts/ci/test_pon_w1_budget_readers.py --raw-dir evidence/pon-upgrade-implementation-20261018/native-rounds/chain-p0-native-54
     python3 scripts/ci/test_pon_public_v3_phase_read.py
     python3 scripts/ci/test_pon_public_v3_policy_read.py
+    # W2-C research: exact ticket policy, durable same-file paid-spend and
+    # cloned-epoch replay regressions. These DO NOT activate a proof profile.
+    python3 formal/pon-nakamoto-v1/test_w2c_stateless_receiver.py
+    python3 formal/pon-nakamoto-v1/test_w2c_durable_spent.py
+    python3 formal/pon-nakamoto-v1/test_w2c_durable_integration.py
     python3 scripts/ci/test_pon_v3_cookie_cpu_study.py
     python3 scripts/ci/test_run_pon_w1_native_campaign.py
     python3 scripts/ci/test_pon_w1_cost_matrix_reader.py
