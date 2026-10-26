@@ -1,0 +1,56 @@
+{
+  "schema": "w1-retained-failures-and-recovery-v1",
+  "source_or_threshold_relaxed": false,
+  "performance_rerun_after_observing_results": false,
+  "items": [
+    {
+      "scope": "implementation",
+      "items": [
+        "first late Rust unit compile: VerifiedWork lacks PartialEq; fixed test assertion with matches!",
+        "first DAA Rust compile: private Settings access; used original public installed profile, no visibility relaxation",
+        "cargo clippy/rustfmt invocation PATH errors; direct toolchain PATH corrected without warning suppression"
+      ],
+      "original_receipts_retained": true
+    },
+    {
+      "scope": "readback",
+      "attempts": [
+        "formal-late-readback-v1",
+        "formal-fork-readback-v1",
+        "formal-late-readback-v2",
+        "formal-fork-readback-v2"
+      ],
+      "failure": "READER_SOURCE_FILE_SET",
+      "extra_files": 18,
+      "extra_type": "old ignored CPython bytecode",
+      "missing_source_files": 0,
+      "original_bytecode_bytes": 589786,
+      "recovery": "preserve bytecode and failed outputs; use separate tracked-only detached frozen checkout; unchanged reader verifies all416 files before/after full replay",
+      "reader_checks_weakened": false,
+      "raw_resampled": false
+    },
+    {
+      "scope": "temporary execution transport interruption",
+      "receipt": {
+        "observed_error": "exec-server transport disconnected",
+        "approval_rejection": false,
+        "user_environment_marked_unavailable_then_available": true,
+        "recovery_observed_utc": "2026-10-26T04:52:25.755121+00:00",
+        "frozen_head_after": "dac8e6167f19994222f636b0fa19cea8c5426d69",
+        "source_dirty": false,
+        "fork_completed_steps_after": 47,
+        "fork_completed_jobs_after": 42,
+        "fork_complete_success_after": true,
+        "fork_failure_after": null,
+        "original_collector_process_result_recovered": true,
+        "performance_rerun_performed": false,
+        "raw_job_deletion_performed": false
+      },
+      "collection_complete_success_recovered": true
+    },
+    {
+      "scope": "earlier campaign failure history",
+      "policy": "preceding evidence directories and archives remain unchanged; this report does not replace their failed observations"
+    }
+  ]
+}

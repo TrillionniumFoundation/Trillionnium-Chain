@@ -436,6 +436,8 @@ attacker-chosen fixed points by definition would not solve it.
 
 ### 5.2 Remaining actual-SHA obligations
 
+A subsequent [charged bidirectional ideal-cipher rooted-path proof](W1_ROOTED_CIPHER_PATHS_V1.md) establishes a finite conditional path-capacity lemma while permitting isolated inverse-query fixed points. It closes that model-specific target; it does not instantiate actual SHA-256 or remove the obligations below.
+
 For actual SHA-256, the following are still missing:
 
 - A construction-specific **rooted-path** argument preserving temporal
@@ -533,7 +535,7 @@ verification, plus boundary tiles and strict zero-only construction.
 
 | Sub-obligation | Completion evidence | Remaining boundary |
 | --- | --- | --- |
-| New relation-preserving algorithm | Independent Python and native full-prefix/full-proof equivalence tests | CPU/energy advantage is unknown until measured under a frozen comparison |
+| New relation-preserving algorithm | Independent Python and native full-prefix/full-proof equivalence tests | [Frozen CPU comparisons](../../../../evidence/pon-work-fork-late-v1/RESULTS.md) retain gains and regressions; energy and general advantage remain unestablished |
 | Scalar-product schedule | Formula equals executed counters, including shared factors | Other costs are larger; no universal fastest algorithm claim |
 | Compression-query path theorem | Explicit model, proof, caps and negative controls | Actual SHA instantiation and physical conversion remain open |
 | Initial path bank | Exact remaining-cost scheduler and exhaustive small-bank check | Real opportunity/authority lifetimes still require native state semantics |

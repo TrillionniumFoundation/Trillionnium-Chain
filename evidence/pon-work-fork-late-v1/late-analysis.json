@@ -1,0 +1,250 @@
+{
+  "analyzer_sha256": "134cf2a7083435312231f45bc3df043a06bfd7128555376034a3f5e84fe55e55",
+  "canonical_research_chain_growth": 0,
+  "comparisons": [
+    {
+      "deferred": "main-s4101-b128000000-deferred",
+      "eager": "main-s4101-b128000000-eager",
+      "exact_setup_and_prefix_identity": true,
+      "miner_budget_ns": 128000000,
+      "scope": "single local observed run per frozen seed/envelope/mode; no universal or statistical advantage ceiling",
+      "seed": 4101,
+      "shared_original_opportunities": 154,
+      "trace_ratio": {
+        "decimal": 0.95625,
+        "denominator": 160,
+        "numerator": 153
+      },
+      "traces_by_B": {
+        "deferred": 153,
+        "eager": 160
+      },
+      "uncensored_complete_setup": true,
+      "winners_by_B": {
+        "deferred": 72,
+        "eager": 77
+      },
+      "winning_ticket_ratio": {
+        "decimal": 0.935064935064935,
+        "denominator": 77,
+        "numerator": 72
+      }
+    },
+    {
+      "deferred": "main-s4101-b512000000-deferred",
+      "eager": "main-s4101-b512000000-eager",
+      "exact_setup_and_prefix_identity": true,
+      "miner_budget_ns": 512000000,
+      "scope": "single local observed run per frozen seed/envelope/mode; no universal or statistical advantage ceiling",
+      "seed": 4101,
+      "shared_original_opportunities": 563,
+      "trace_ratio": {
+        "decimal": 1.4341637010676156,
+        "denominator": 281,
+        "numerator": 403
+      },
+      "traces_by_B": {
+        "deferred": 806,
+        "eager": 562
+      },
+      "uncensored_complete_setup": true,
+      "winners_by_B": {
+        "deferred": 404,
+        "eager": 275
+      },
+      "winning_ticket_ratio": {
+        "decimal": 1.469090909090909,
+        "denominator": 275,
+        "numerator": 404
+      }
+    },
+    {
+      "deferred": "main-s4102-b128000000-deferred",
+      "eager": "main-s4102-b128000000-eager",
+      "exact_setup_and_prefix_identity": true,
+      "miner_budget_ns": 128000000,
+      "scope": "single local observed run per frozen seed/envelope/mode; no universal or statistical advantage ceiling",
+      "seed": 4102,
+      "shared_original_opportunities": 163,
+      "trace_ratio": {
+        "decimal": 1.2469135802469136,
+        "denominator": 81,
+        "numerator": 101
+      },
+      "traces_by_B": {
+        "deferred": 202,
+        "eager": 162
+      },
+      "uncensored_complete_setup": true,
+      "winners_by_B": {
+        "deferred": 106,
+        "eager": 84
+      },
+      "winning_ticket_ratio": {
+        "decimal": 1.2619047619047619,
+        "denominator": 42,
+        "numerator": 53
+      }
+    },
+    {
+      "deferred": "main-s4102-b512000000-deferred",
+      "eager": "main-s4102-b512000000-eager",
+      "exact_setup_and_prefix_identity": true,
+      "miner_budget_ns": 512000000,
+      "scope": "single local observed run per frozen seed/envelope/mode; no universal or statistical advantage ceiling",
+      "seed": 4102,
+      "shared_original_opportunities": 563,
+      "trace_ratio": {
+        "decimal": 1.2366548042704626,
+        "denominator": 562,
+        "numerator": 695
+      },
+      "traces_by_B": {
+        "deferred": 695,
+        "eager": 562
+      },
+      "uncensored_complete_setup": true,
+      "winners_by_B": {
+        "deferred": 356,
+        "eager": 285
+      },
+      "winning_ticket_ratio": {
+        "decimal": 1.249122807017544,
+        "denominator": 285,
+        "numerator": 356
+      }
+    }
+  ],
+  "control_results": [
+    {
+      "attempts": 0,
+      "censored_by_attempt_cap": false,
+      "job": "control-p0",
+      "late_attempts": 0,
+      "late_winners": 0,
+      "options": {
+        "max_attempts": 4096,
+        "miner_budget_ns": 128000000,
+        "mode": "eager",
+        "seed": 4101,
+        "setup_budget_ns": 0
+      },
+      "setup_complete": false
+    },
+    {
+      "attempts": 0,
+      "censored_by_attempt_cap": false,
+      "job": "control-ptight",
+      "late_attempts": 0,
+      "late_winners": 0,
+      "options": {
+        "max_attempts": 4096,
+        "miner_budget_ns": 128000000,
+        "mode": "eager",
+        "seed": 4101,
+        "setup_budget_ns": 1
+      },
+      "setup_complete": false
+    },
+    {
+      "attempts": 0,
+      "censored_by_attempt_cap": false,
+      "job": "control-b0",
+      "late_attempts": 0,
+      "late_winners": 0,
+      "options": {
+        "max_attempts": 4096,
+        "miner_budget_ns": 0,
+        "mode": "eager",
+        "seed": 4101,
+        "setup_budget_ns": 1000000000
+      },
+      "setup_complete": true
+    },
+    {
+      "attempts": 1,
+      "censored_by_attempt_cap": false,
+      "job": "control-btight",
+      "late_attempts": 1,
+      "late_winners": 0,
+      "options": {
+        "max_attempts": 4096,
+        "miner_budget_ns": 100000,
+        "mode": "eager",
+        "seed": 4101,
+        "setup_budget_ns": 1000000000
+      },
+      "setup_complete": true
+    },
+    {
+      "attempts": 4,
+      "censored_by_attempt_cap": true,
+      "job": "control-eagercap",
+      "late_attempts": 0,
+      "late_winners": 0,
+      "options": {
+        "max_attempts": 4,
+        "miner_budget_ns": 128000000,
+        "mode": "eager",
+        "seed": 4101,
+        "setup_budget_ns": 1000000000
+      },
+      "setup_complete": true
+    },
+    {
+      "attempts": 4,
+      "censored_by_attempt_cap": true,
+      "job": "control-deferredcap",
+      "late_attempts": 0,
+      "late_winners": 0,
+      "options": {
+        "max_attempts": 4,
+        "miner_budget_ns": 128000000,
+        "mode": "deferred",
+        "seed": 4101,
+        "setup_budget_ns": 1000000000
+      },
+      "setup_complete": true
+    }
+  ],
+  "controls": 6,
+  "energy_measured": false,
+  "independent_hardware_evidence": false,
+  "jobs": 14,
+  "lower_bound_proved": false,
+  "main_jobs": 8,
+  "network_bandwidth_measured": false,
+  "original_miss_trace_retention": true,
+  "phase_cpu_ns": {
+    "audit": 5382398064,
+    "miner": 2570991818,
+    "receiver": 5820390350,
+    "setup": 160752981
+  },
+  "plan_sha256": "83c885e75645cd73bd6e808f8d44c4b1a68665025d91644e8eda5dd84cd76216",
+  "posthoc_credit": 0,
+  "production_kappa_established": false,
+  "pure_matrix_relation_changed": false,
+  "raw_manifest_sha256": "a0f198e20dd9bcefb64be05613aa1660dcede2b51024ad242683bad1dd9a5152",
+  "readback_sha256": "3980e785dbf8ecbe4610d32719bac1363f331b693b83d26bf169baed13c730a1",
+  "schema": "pon-w1-late-assembly-analysis-v1",
+  "source": {
+    "branch": "feature/chain-w1-cost-research-20261025",
+    "head": "dac8e6167f19994222f636b0fa19cea8c5426d69",
+    "status": "",
+    "tree": "0dabca690d55793fc62f1c6cb4c0fc9d73c52e48"
+  },
+  "totals": {
+    "attempts": 3319,
+    "full_proof_records_replayed": 3343,
+    "full_proofs_available_by_B": 2389,
+    "full_winners_available_by_B": 1661,
+    "late_attempts": 9,
+    "late_winners": 5,
+    "native_accepted": 1666,
+    "native_accepted_from_B": 1661,
+    "original_miner_full_proofs": 2397,
+    "posthoc_miss_proofs": 922,
+    "traces_available_by_B": 3310
+  }
+}

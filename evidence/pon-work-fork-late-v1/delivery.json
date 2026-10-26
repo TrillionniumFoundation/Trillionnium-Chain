@@ -1,0 +1,18 @@
+{
+  "schema": "w1-fork-late-delivery-v1",
+  "archive_filename": "W1_fork_late_evidence_20261026.tar.gz",
+  "local_path": "/workspace/scratch/3863a747524b/W1_fork_late_evidence_20261026.tar.gz",
+  "bytes": 223385726,
+  "sha256": "87cb16e6e78274b36969abb2421b51533227bfec8ddb3f8e8880d4ddb17b784d",
+  "regular_members_verified": 749,
+  "payload_files": 748,
+  "index_sha256": "d556f68b516e5cae5e724e00891daeb7686980e120d6f6670b49ffcd4d3df7a3",
+  "complete_raw_and_failures_included": true,
+  "source_commit": "dac8e6167f19994222f636b0fa19cea8c5426d69",
+  "measured_tree": "0dabca690d55793fc62f1c6cb4c0fc9d73c52e48",
+  "sealed_utc": "2026-10-26T05:12:59.583566+00:00",
+  "later_publication_validation_is_outside_packet": true,
+  "persistent_upload_attempted": false,
+  "persistent_upload_success_claimed": false,
+  "delivery_scope": "Verified local evidence packet. No new persistent upload was attempted; the prior automatic approval rejection for raw-evidence upload remains respected. Repository-backed source and compact evidence are published through the existing project branch separately."
+}

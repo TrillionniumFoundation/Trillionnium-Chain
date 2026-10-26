@@ -1,7 +1,7 @@
 # Trillionnium Chain Development Plan — PoN / Hepta-PoH revision
 
-Plan ID: `trnm-chain-development-plan-v2` (stable registry identity; content revision 31).
-Effective: 2026-09-28; priority implementation revision: 2026-10-25 America/New_York (2026-10-26 UTC). Status: selected development direction; no runtime activation.
+Plan ID: `trnm-chain-development-plan-v2` (stable registry identity; content revision 32).
+Effective: 2026-09-28; priority implementation revision: 2026-10-26 America/New_York (2026-10-26 UTC). Status: selected development direction; no runtime activation.
 Canonical destination: `refs/heads/main`; continuation uses the current main lineage, not retired PR #194.
 Current source/head/tree/base and prospective merge are derived at verification time.
 Assessed legacy baseline: `c552c31c6d3c5ac47522a124e02c6b8bca4e23f2`, tree
@@ -1696,6 +1696,71 @@ Real initial selected-parent, ordinary next-use, successful transfer/install,
 beneficial-release and public independent-operation results remain distinct.
 Absent real hardware, independent operation or product evidence remains open;
 no simulation, document status or test label can supply it.
+
+### Completed fork, late-assembly and rooted-path increment (2026-10-26)
+
+The [completed evidence report](../../evidence/pon-work-fork-late-v1/RESULTS.md)
+records actual frozen source `dac8e6167f19994222f636b0fa19cea8c5426d69`, tree
+`0dabca690d55793fc62f1c6cb4c0fc9d73c52e48`. Both independently fresh release
+builds completed their unchanged registrations: 42 fork jobs and 14 late-assembly
+jobs. All 36 fork and 8 late main jobs are complete, uncensored miner-budget
+observations. The original native DAA scenario additionally executes 36 blocks.
+All 9,195 full retained proof records are independently replayed; this count
+includes repeated records and posthoc reconstructions, not distinct rewarded
+identities. All 416 transitive reader/helper/config files match frozen Git
+before and after replay in a separate tracked-only checkout.
+
+Fork outcomes retain 4,508 research proofs, 460 original setup winners and 848
+posthoc reconstructions. There are 4,474 complete proofs and 2,189 subsequently
+native-accepted winners within B; 34 late proofs, including 18 late winners,
+receive no within-B credit. All 42 registered comparisons remain visible:
+12 of 20 arm pairs match (7 higher/5 lower; winner ratios 0.769231–1.184615),
+4 window/lifetime pairs match, all 14 adaptive/round-robin pairs retain null
+ratios for divergent semantic streams, and only 2 of 4 Strassen/specialized
+pairs match (72/77 and 66/54). The window observations are not a causal claim
+that rebuilding is generally faster. Candidate work 4,378 is not canonical
+growth: research canonical growth remains zero.
+
+Late assembly retains 3,319 original opportunities and replays 3,343 full proof
+records, including 922 posthoc misses with zero new credit. Its B includes
+1,661 complete winners; 5 late winners are excluded. Deferred/eager ratios
+are 72/77, 404/275, 106/84 and 356/285: three gains and one regression. Both
+modes compute the ticket before assembly; no protocol-enforced
+proof-before-lottery mechanism is claimed. Local output-pipe flush is the
+availability endpoint, and raw preservation/encoding is measured harness
+cost rather than an enforced attacker floor.
+
+The actual SHA arbitrary-IV fixed-point counterexample remains a definitive
+obstruction to the global ideal-F Bad-event instantiation. The subsequently
+reviewed [charged bidirectional ideal-cipher rooted-path lemma](../protocol/pon-nakamoto-v1/details/W1_ROOTED_CIPHER_PATHS_V1.md)
+permits isolated inverse-query fixed points and proves a different finite,
+classical standard-IV path-capacity statement. It keeps preprocessing,
+references, terminal audit queries, seeded-table exceptions and retirement
+coverage explicit. It does not establish actual SHA instantiation, physical
+query costs, independent lottery trials or global semantic consumption.
+
+The original DAA execution retains target/work choices 31/7/2 and branch
+chainworks 173/149/144. Forest work 196 does not replace the heaviest branch
+173. All 36 winning proofs replay; 134 internal search misses did not retain
+original proof bytes, so this is a rule-legality result, not a complete cost
+campaign. The conditional weighted-work argument still needs honest growth,
+full validation/data propagation and all-fork settlement premises.
+
+Frozen local gates pass 152 direct Python controls, the separate 78 canonical
+plan/reference controls, 231 selected Rust test executions with 2 original
+ignores, and strict workspace/all-target/all-feature Clippy with warnings
+denied. They do not claim all Rust runtime tests or independent hardware.
+Original implementation failures, four bytecode/source-set readback refusals,
+the preserved bytecode, and a recovered execution-transport interruption
+remain in the [failure ledger](../../evidence/pon-work-fork-late-v1/failure-history.json).
+No raw sampling, source check, threshold, warning policy or production flag
+was weakened. Hosted CI is outside this continuation at the user's request.
+
+[C24–C32 and O01–O07](../../evidence/pon-work-fork-late-v1/blockers.json) remain
+separate: the bounded obligations close only in their declared scope;
+actual-resource hardness, arbitrary actual strategies, production chain
+security, independent physical evidence and the real Hepta product loop stay
+open. Hybrid and ZK retain conditional applicability and are not adopted.
 
 ## 1. Product mission: shared intelligence from real work
 

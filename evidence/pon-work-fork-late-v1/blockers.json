@@ -1,0 +1,117 @@
+{
+  "schema": "w1-original-blocker-ledger-v2",
+  "original_closure_standards_unchanged": true,
+  "all_original_blockers_closed": false,
+  "bounded_closures": [
+    {
+      "id": "C24",
+      "scope": "actual paid fork forests and one shared miner budget",
+      "status": "CLOSED_WITHIN_DECLARED_SCOPE",
+      "evidence": "42 registered jobs; 36 complete uncensored main observations; real sibling state roots and admitted original owner objects; no epoch resets",
+      "boundary": "finite width/depth/material/policy class only"
+    },
+    {
+      "id": "C25",
+      "scope": "registered adaptive, cache, screening and algorithm comparisons",
+      "status": "CLOSED_WITHIN_DECLARED_SCOPE",
+      "evidence": "all 42 registered comparison entries retained, including 24 null ratios and every negative comparison",
+      "boundary": "no arbitrary or unbounded strategy ceiling; null does not mean no advantage"
+    },
+    {
+      "id": "C26",
+      "scope": "exact zero-task two-level Strassen producer",
+      "status": "CLOSED_WITHIN_DECLARED_SCOPE",
+      "evidence": "152832 to126864 scalar products, full-prefix/proof equivalence, native execution and both positive/negative fixed-budget observations",
+      "boundary": "additional arithmetic and memory cost; not a universal speedup"
+    },
+    {
+      "id": "C27",
+      "scope": "valid late-assembly schedule with full budget accounting",
+      "status": "CLOSED_WITHIN_DECLARED_SCOPE",
+      "evidence": "14 jobs, all3343 full records replayed, original misses reconstructed after seal with zero new credit; 5 late wins excluded",
+      "boundary": "both modes compute ticket before assembly; diagnostic output is not an enforced attacker floor"
+    },
+    {
+      "id": "C28",
+      "scope": "concrete actual-SHA model counterexample",
+      "status": "CLOSED_WITHIN_DECLARED_SCOPE",
+      "evidence": "literal forward/inverse SHA rounds construct free-start fixed points; three actual controls pass",
+      "boundary": "rules out the global arbitrary-CV ideal-F instantiation, not standard-IV canonical W1 security"
+    },
+    {
+      "id": "C29",
+      "scope": "charged bidirectional ideal-cipher rooted-path lemma",
+      "status": "CLOSED_WITHIN_DECLARED_SCOPE",
+      "evidence": "complete reviewed proof with Join bound, 2049m capacity, captured preparation, same-audit retirement and explicit seeded-table exceptions",
+      "boundary": "classical independent permutations only; actual SHA, physical conversion and ticket-process composition remain open"
+    },
+    {
+      "id": "C30",
+      "scope": "adaptive weighted-work interface and original DAA legality",
+      "status": "CLOSED_WITHIN_DECLARED_SCOPE",
+      "evidence": "actual floor work supermartingale; originalNode admits36 proofs; branch work31/7/2, chainwork173/149/144; all36 replayed",
+      "boundary": "no honest-growth/common-prefix theorem or production kappa"
+    },
+    {
+      "id": "C31",
+      "scope": "current Hepta source and qualification boundary",
+      "status": "CLOSED_WITHIN_DECLARED_SCOPE",
+      "evidence": "actual candidate de133b601e133917cbe1ae03efb3a2ffc06dcd4a reviewed; neural entry exists; controlled engineering tasks need not be unseen",
+      "boundary": "no current product cycle, independent quality/poisoning, successful install or beneficial-upgrade evidence"
+    },
+    {
+      "id": "C32",
+      "scope": "source-bound complete replay and lossless evidence handling",
+      "status": "CLOSED_WITHIN_DECLARED_SCOPE",
+      "evidence": "all9195 full records replayed;416 transitive helper/config files match frozen Git before/after both readers; failures and raw gzip retained",
+      "boundary": "software observation under one operator; not physical or independent execution attestation"
+    }
+  ],
+  "original_obligations": [
+    {
+      "id": "O01",
+      "name": "实际 W1 资源到有效机会的归约",
+      "status": "OPEN",
+      "remaining": "Actual SHA standard-IV/canonical-path instantiation, predictable canonical-validity and shared-ticket composition, QA/G/R/V/W0/fanout caps, nonvacuous advice and physical-resource conversion are not established. The global arbitrary-CV ideal-F route is disproved; the new ideal-cipher result is conditional."
+    },
+    {
+      "id": "O02",
+      "name": "任意自适应策略",
+      "status": "OPEN",
+      "remaining": "The registered native forest and greedy policy are finite. The mathematical model explicitly bounds captured preparation/audit and restricts oracle-dependent advice. It does not bound all actual-SHA algorithms, arbitrary favorable long-term reuse, inputs, hardware or external initial state."
+    },
+    {
+      "id": "O03",
+      "name": "生产 kappa 与链安全",
+      "status": "OPEN",
+      "remaining": "Needs a real resource-to-opportunity envelope plus weighted initial bank, honest visible growth, full validation/data propagation, actual DAA/participation and all-fork settlement reduction over a stated horizon. No production kappa or confirmation risk is selected."
+    },
+    {
+      "id": "O04",
+      "name": "独立硬件物理成本",
+      "status": "OPEN",
+      "remaining": "Only one nonexclusive x86_64 host and one operator. Real independent ARM/GPU/available specialized hardware, energy and memory/WAN bandwidth measurements remain absent."
+    },
+    {
+      "id": "O05",
+      "name": "混合基础工作",
+      "status": "OPEN_CONDITIONAL_NOT_ADOPTED",
+      "remaining": "If adopted, actual shared binding, failed-attempt reuse, consumption uniqueness and composable physical-cost guarantee are required. Cost overlap and winner-only proof generation prevent an unproved additive floor. Pure matrix remains selected."
+    },
+    {
+      "id": "O06",
+      "name": "Hepta 效用与采用权限",
+      "status": "OPEN",
+      "remaining": "Needs original-owner qualified initial neural parent, real ordinary-task lineage and controlled cycles; successful cross-node complete-Cell retrieval/install/ordinary next-use/rollback when claimed; independent quality and poisoning evaluation and beneficial-release evidence. No-update mechanics do not establish beneficial releases."
+    },
+    {
+      "id": "O07",
+      "name": "ZK 后的票据扩增",
+      "status": "OPEN_CONDITIONAL_NOT_ADOPTED",
+      "remaining": "No actual ZK backend adopted. Requires actual public statement and reward identity binding, joint/adaptive soundness and multi-proof amortization/full-workflow cost analysis; randomizing or wrapping one proof must not create extra credit."
+    }
+  ],
+  "hosted_ci_work_requested_or_followed": false,
+  "production_activation": false,
+  "pure_matrix_primary": true
+}
