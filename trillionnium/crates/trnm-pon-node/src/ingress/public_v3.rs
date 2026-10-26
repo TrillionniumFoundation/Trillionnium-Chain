@@ -3416,6 +3416,127 @@ mod shared_cpu_domain_source_tests {
 mod tests {
     use super::*;
 
+    #[cfg(target_os = "linux")]
+    #[test]
+    fn native_v3_cookie_search_and_real_w1_costs_keep_disjoint_cpu_denominators() {
+        use trnm_crypto_primitives::pon_work;
+        // Directly use the original V3 winner predicate, domain and nonce
+        // grammar. This is not a signed TCP cookie / remote operator experiment.
+        let mut cookie_rows = Vec::new();
+        for bits in [8_u8, 12, 16] {
+            for sample in 0_u64..2 {
+                let id = hash(
+                    b"v3-native-cookie-cost-fixed-id-v1",
+                    &[&[bits], &sample.to_le_bytes()],
+                );
+                let wall = Instant::now();
+                let cpu = ThreadCpuStamp::start();
+                let mut accepted = None;
+                let mut attempts = 0_u64;
+                for nonce in 0..1_048_576_u64 {
+                    attempts += 1;
+                    if winner(id, nonce, bits) {
+                        accepted = Some(nonce);
+                        break;
+                    }
+                }
+                let cpu_ns = cpu.and_then(ThreadCpuStamp::finish);
+                cookie_rows.push(json!({
+                    "bits": bits,
+                    "sample": sample,
+                    "cookie_id_sha256": hex::encode(sha2::Sha256::digest(id)),
+                    "attempts": attempts,
+                    "cap": 1_048_576,
+                    "winning_nonce": accepted,
+                    "status": if accepted.is_some() { "TARGET_HIT" } else { "CAPPED" },
+                    "client_cookie_search_thread_cpu_ns": cpu_ns,
+                    "client_cookie_search_wall_ns":
+                        u64::try_from(wall.elapsed().as_nanos()).ok(),
+                }));
+                assert!((1..=1_048_576).contains(&attempts));
+                assert_eq!(accepted.is_some(), winner(id, accepted.unwrap_or(0), bits)
+                    && accepted.is_some());
+            }
+        }
+
+        let zeros = vec![0_u32; pon_work::CELLS];
+        let task = pon_work::task_id(&zeros, &zeros).unwrap();
+        let challenge = hash(b"p2-native-matched-w1-challenge-v1", &[b"fixed-case"]);
+        let create_wall = Instant::now();
+        let create_cpu = ThreadCpuStamp::start();
+        let legal = pon_work::prove(challenge, &zeros, &zeros).unwrap();
+        let create_cpu_ns = create_cpu.and_then(ThreadCpuStamp::finish);
+        let create_wall_ns = u64::try_from(create_wall.elapsed().as_nanos()).ok();
+
+        let legal_wall = Instant::now();
+        let legal_cpu = ThreadCpuStamp::start();
+        let validated = pon_work::verify(challenge, task, [255; 32], &legal);
+        let legal_cpu_ns = legal_cpu.and_then(ThreadCpuStamp::finish);
+        assert!(validated.is_ok());
+        let legal_wall_ns = u64::try_from(legal_wall.elapsed().as_nanos()).ok();
+
+        // This caller never acquires a valid transcript to make its fake
+        // ticket. The canonical zero product is supplied, but its trace is
+        // an uncomputed claim and must consume the complete W1 rejection.
+        let mut forged = vec![0_u8; pon_work::PROOF_BYTES];
+        forged[..4].copy_from_slice(b"PNW1");
+        let fake_digest = hash(b"p2-native-false-trace-v1", &[&challenge]);
+        forged[pon_work::PROOF_BYTES - 32..].copy_from_slice(&fake_digest);
+        assert_ne!(&legal[pon_work::PROOF_BYTES - 32..], fake_digest.as_slice());
+        let reject_wall = Instant::now();
+        let reject_cpu = ThreadCpuStamp::start();
+        let mut tiles = 0_usize;
+        let rejected = pon_work::verify_with_progress(
+            challenge, task, [255; 32], &forged,
+            &mut |phase| {
+                if matches!(phase, pon_work::VerificationProgress::TranscriptTile { .. }) {
+                    tiles += 1;
+                }
+                Ok::<(), ()>(())
+            },
+        );
+        let reject_cpu_ns = reject_cpu.and_then(ThreadCpuStamp::finish);
+        let reject_wall_ns = u64::try_from(reject_wall.elapsed().as_nanos()).ok();
+        assert!(matches!(
+            rejected,
+            Err(pon_work::VerificationError::Relation(pon_work::WorkError::Transcript))
+        ));
+        assert_eq!(tiles, 512);
+        let report = json!({
+            "schema": "trnm-p2-v3-cookie-native-cpu-diagnostic-v1",
+            "scope": "original native V3 SHA256 predicate on synthetic Cookie IDs and native W1 zero-work arithmetic; no TCP handshake, GPU, attacker lower bound or host fairness claim",
+            "cookie_rows": cookie_rows,
+            "w1_input_task": hex::encode(task),
+            "w1_challenge": hex::encode(challenge),
+            "honest_native_producer_thread_cpu_ns": create_cpu_ns,
+            "honest_native_producer_wall_ns": create_wall_ns,
+            "honest_native_verify_thread_cpu_ns": legal_cpu_ns,
+            "honest_native_verify_wall_ns": legal_wall_ns,
+            "false_native_rejection_thread_cpu_ns": reject_cpu_ns,
+            "false_native_rejection_wall_ns": reject_wall_ns,
+            "false_replayed_tiles": tiles,
+            "false_relation": "TRANSCRIPT",
+            "verified_work_from_false": false,
+            "real_signed_cookie_wire": false,
+            "gpu_cost": null,
+            "independent_operators": false,
+            "new_consensus_authority": false,
+            "production_activation": false,
+        });
+        if let Some(path) = std::env::var_os("TRNM_P2_NATIVE_COOKIE_COST_REPORT") {
+            use std::io::Write;
+            let mut file = std::fs::OpenOptions::new()
+                .write(true)
+                .create_new(true)
+                .open(path)
+                .unwrap();
+            serde_json::to_writer_pretty(&mut file, &report).unwrap();
+            file.write_all(b"\n").unwrap();
+            file.sync_all().unwrap();
+        }
+        println!("{report}");
+    }
+
     #[test]
     fn w1_negative_cache_is_explicit_bounded_and_never_activated_by_default() {
         let make = || {
