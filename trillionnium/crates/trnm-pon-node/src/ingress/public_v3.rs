@@ -2849,6 +2849,10 @@ pub struct PublicClientMetrics {
     pub construction_ns: u64,
     pub challenge_ns: u64,
     pub solution_search_ns: u64,
+    // Additive native-only CPU field. Skip the unchanged serialized V3
+    // PublicClientMetrics schema; a separate opt-in object exports it.
+    #[serde(skip_serializing)]
+    pub solution_search_thread_cpu_ns: Option<u64>,
     pub solution_trials: u64,
     pub solution_found: bool,
     pub solution_body_response_ns: u64,
@@ -2867,6 +2871,57 @@ impl PublicClientMetrics {
         }
     }
 }
+/// Read-only, client-thread CPU observation around an ORIGINAL signed V3
+/// request. Unlike phase wall timings, this interval is actual calling-thread
+/// CPU on the platform that provides ThreadCPUTime; missing/invalid clocks stay
+/// None. The existing PublicClientMetrics JSON and signed Cookie bytes do NOT
+/// change. This is not a GPU price, attack lower bound or server resource debit.
+#[derive(Debug, Serialize)]
+pub struct PublicClientCpuObservation {
+    pub schema: &'static str,
+    pub client_thread_cpu_ns: Option<u64>,
+    pub client_wall_ns: u64,
+    pub solution_trials: u64,
+    pub solution_found: bool,
+    pub solution_search_wall_ns: u64,
+    pub solution_search_thread_cpu_ns: Option<u64>,
+    pub failed_stage: Option<PublicClientStage>,
+    pub native_server_cpu_known: bool,
+    pub gpu_cpu_equivalence_assumed: bool,
+    pub work_profile_qualified: bool,
+}
+
+/// Separate opt-in measurement entry: the exact original client performs
+/// handshake, Cookie verification, nonce search, caller signing and response
+/// verification. No new request nonce, cached success or resource allowance.
+pub fn call_public_protected_v3_with_cpu_observation(
+    address: SocketAddr,
+    request: &Request,
+    settings: &Settings,
+    pinned_server: &str,
+    caller: &DevelopmentIdentity,
+    policy: PublicPolicy,
+) -> (Result<PublicReply>, PublicClientMetrics, PublicClientCpuObservation) {
+    let started = Instant::now();
+    let cpu = ThreadCpuStamp::start();
+    let (result, metrics) =
+        call_public_protected_v3_with_metrics(address, request, settings, pinned_server, caller, policy);
+    let observation = PublicClientCpuObservation {
+        schema: "public-v3-client-thread-cpu-observation-v1",
+        client_thread_cpu_ns: cpu.and_then(ThreadCpuStamp::finish),
+        client_wall_ns: elapsed_ns(started),
+        solution_trials: metrics.solution_trials,
+        solution_found: metrics.solution_found,
+        solution_search_wall_ns: metrics.solution_search_ns,
+        solution_search_thread_cpu_ns: metrics.solution_search_thread_cpu_ns,
+        failed_stage: metrics.failed_stage,
+        native_server_cpu_known: false,
+        gpu_cpu_equivalence_assumed: false,
+        work_profile_qualified: false,
+    };
+    (result, metrics, observation)
+}
+
 /// Wire and signed profile are identical to the ordinary client. The observation
 /// reports elapsed stage time, never an adversarial cost bound or server CPU time.
 pub fn call_public_protected_v3(
@@ -2937,6 +2992,7 @@ fn call_public_protected_v3_with_profile(
     let mut phase_start = call_start;
     let mut phase = PublicClientStage::Construction;
     let mut metrics = PublicClientMetrics::default();
+    let mut solution_cpu_stamp: Option<ThreadCpuStamp> = None;
     let result = (|| -> Result<PublicReply> {
         if let Some(deadline) = outer_deadline {
             ensure(Instant::now() < deadline, "PUBLIC_CLIENT_DEADLINE")?;
@@ -2999,6 +3055,10 @@ fn call_public_protected_v3_with_profile(
         metrics.challenge_ns = elapsed_ns(phase_start);
         phase = PublicClientStage::SolutionSearch;
         phase_start = Instant::now();
+        // Begin the actual calling-thread CPU interval *before* Cookie ID
+        // preparation and every nonce trial. Keep a stamp on all early exits
+        // so expired/capped searches never become "zero CPU".
+        solution_cpu_stamp = ThreadCpuStamp::start();
         let started = Instant::now();
         let id = cookie.id()?;
         let mut solved = None;
@@ -3021,6 +3081,8 @@ fn call_public_protected_v3_with_profile(
         let nonce = solved.ok_or("PUBLIC_SOLVE_BUDGET")?;
         let solve_elapsed_ns = elapsed_ns(started);
         metrics.solution_search_ns = elapsed_ns(phase_start);
+        metrics.solution_search_thread_cpu_ns =
+            solution_cpu_stamp.take().and_then(ThreadCpuStamp::finish);
         metrics.solution_found = true;
         phase = PublicClientStage::SolutionBodyResponse;
         phase_start = Instant::now();
@@ -3088,6 +3150,11 @@ fn call_public_protected_v3_with_profile(
             identity_authority: false,
         })
     })();
+    // The original early-error branch may leave the search before a winning
+    // ticket. Its real CPU is charged to the observation once, even on expiry.
+    if let Some(stamp) = solution_cpu_stamp.take() {
+        metrics.solution_search_thread_cpu_ns = stamp.finish();
+    }
     if result.is_err() {
         metrics.record_failure(phase, elapsed_ns(phase_start));
     }
@@ -3427,11 +3494,51 @@ mod tests {
     }
 
     #[test]
+    fn client_cpu_observation_is_opt_in_does_not_mint_a_ticket_or_change_old_json() {
+        let settings = Settings::development(Some(super::super::now().unwrap() - 100)).unwrap();
+        let caller = DevelopmentIdentity::from_secret_hex(&hex::encode([21; 32])).unwrap();
+        // Invalid development policy stops before socket creation. This
+        // checks the authentic public client entry, not a mock verifier.
+        let invalid_policy = PublicPolicy { bits: 7, lifetime_ms: 2000 };
+        let (result, original, observed) =
+            call_public_protected_v3_with_cpu_observation(
+                "127.0.0.1:1".parse().unwrap(),
+                &Request::Head,
+                &settings,
+                caller.public_key(),
+                &caller,
+                invalid_policy,
+            );
+        assert!(result.is_err());
+        assert_eq!(original.failed_stage, Some(PublicClientStage::Construction));
+        assert_eq!(observed.failed_stage, original.failed_stage);
+        assert_eq!(observed.solution_trials, 0);
+        assert!(!observed.solution_found);
+        assert_eq!(observed.schema, "public-v3-client-thread-cpu-observation-v1");
+        assert!(!observed.native_server_cpu_known);
+        assert!(!observed.gpu_cpu_equivalence_assumed);
+        assert!(!observed.work_profile_qualified);
+        // A new measurement schema must not silently change the original
+        // signed profile nor PublicClientMetrics serialization.
+        let baseline = PublicClientMetrics::default();
+        assert_eq!(
+            serde_json::to_value(&baseline).unwrap(),
+            json!({
+                "construction_ns":0, "challenge_ns":0,
+                "solution_search_ns":0, "solution_trials":0,
+                "solution_found":false, "solution_body_response_ns":0,
+                "total_elapsed_ns":0, "failed_stage":null,
+            })
+        );
+    }
+
+    #[test]
     fn client_stage_identity_preserves_observation_labels_and_exact_failed_phase_accounting() {
         let initial = || PublicClientMetrics {
             construction_ns: 11,
             challenge_ns: 12,
             solution_search_ns: 13,
+            solution_search_thread_cpu_ns: None,
             solution_trials: 17,
             solution_found: true,
             solution_body_response_ns: 14,
@@ -3788,16 +3895,61 @@ mod tests {
         let mut h = hello(1, 1);
         h.caller = digest(caller.public_key()).unwrap();
         assert!(paid_grant(address, h, &caller, policy).is_err());
-        let reply = call_public_protected_v3(
-            address,
-            &Request::Head,
-            &settings,
-            identity(71).public_key(),
-            &identity(84),
-            policy,
-        )
-        .unwrap();
+        let (reply, existing, cpu_observation) =
+            call_public_protected_v3_with_cpu_observation(
+                address,
+                &Request::Head,
+                &settings,
+                identity(71).public_key(),
+                &identity(84),
+                policy,
+            );
+        let reply = reply.unwrap();
         assert!(reply.ok);
+        // A real signed-Cookie loopback client completed the original full
+        // admission flow, not a synthetic nonce/search-only implementation.
+        assert!(cpu_observation.solution_found);
+        assert!(cpu_observation.solution_trials > 0);
+        assert_eq!(cpu_observation.solution_trials, existing.solution_trials);
+        assert_eq!(cpu_observation.solution_search_wall_ns, existing.solution_search_ns);
+        assert_eq!(cpu_observation.solution_search_thread_cpu_ns, existing.solution_search_thread_cpu_ns);
+        assert!(cpu_observation.client_wall_ns >= existing.total_elapsed_ns);
+        if let (Some(search), Some(all)) = (cpu_observation.solution_search_thread_cpu_ns, cpu_observation.client_thread_cpu_ns) {
+            assert!(search <= all, "ticket search cannot exceed full caller CPU interval");
+        }
+        if let Some(actual) = cpu_observation.client_thread_cpu_ns {
+            assert!(actual > 0);
+        }
+        assert_eq!(cpu_observation.failed_stage, None);
+        // Source/test-run scoped P2 evidence from an actual original signed
+        // V3 loopback Head, not a Python synthetic Cookie or a GPU price.
+        // The destination is create-only; a previous failed receipt is never
+        // silently replaced by a later test invocation.
+        let p2_cost = json!({
+            "schema": "public-v3-original-client-cpu-smoke-v1",
+            "profile": hex::encode(policy.id()),
+            "operation": "Head",
+            "signed_original_cookie_completed": true,
+            "client": cpu_observation,
+            "existing_phase_metrics": existing,
+            "receiver_w1_cpu_ns": null,
+            "hardware_gpu_price": null,
+            "independent_accepted": false,
+            "production_activation": false,
+        });
+        println!("{p2_cost}");
+        if let Some(path) = std::env::var_os("TRNM_P2_V3_COST_REPORT") {
+            use std::io::Write;
+            let mut file = std::fs::OpenOptions::new()
+                .write(true)
+                .create_new(true)
+                .open(path)
+                .unwrap();
+            file.write_all(serde_json::to_string_pretty(&p2_cost).unwrap().as_bytes())
+                .unwrap();
+            file.write_all(b"\n").unwrap();
+            file.sync_all().unwrap();
+        }
         assert_eq!(reply.value["height"], 0);
         drop(held);
         stop.store(true, Ordering::Release);
