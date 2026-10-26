@@ -46,10 +46,16 @@ and the winning fake trace and verifies its exact SHA256 against
 proof_sha256. This prevents accidentally pairing another Header, a
 different task/target, missing ticket misses or unrelated proof bytes.
 
-It does **not** verify that the reconstructed trace is invalid by an
-independent W1 relation replay, nor that the caller really spent the
-reported measured CPU, nor that the destination node actually received
-the claimed bytes. The special from-zero forged-C-zero material is
+By default it does **not** replay the full W1 relation. With
+--oracle-check it invokes the repository's independently coded scalar
+Python W1 oracle, requires each rebuilt fake proof to reach the actual
+TRANSCRIPT error, and fails on a valid proof or a different result.
+This costs full *offline* arithmetic replay; it never runs on an
+untrusted network listener and never creates native VerifiedWork.
+A correct Python oracle result is still not independent external
+cryptanalysis. Neither mode verifies that the caller really spent the
+reported measured CPU, or that the destination node actually received
+the claimed bytes. The from-zero forged-C-zero material is
 research-scoped, not a generic interface for all attack variants.
 
 Each unique cases[] item binds one **SHA256 exact proof** by proof_sha256
@@ -85,6 +91,7 @@ Run on one actual measured, source-pinned input:
 
     python3 scripts/pon_w1_flood_cost_envelope.py \
       --input /unique/actual/collected-w1.json \
+      --oracle-check \
       --out /unique/new/envelope.json
 
 Output uses exclusive create: prior negative raw evidence is not overwritten.
