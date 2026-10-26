@@ -14,6 +14,7 @@ from copy import deepcopy
 import hashlib
 import json
 import os
+import re
 from pathlib import Path
 import signal
 import stat
@@ -38,7 +39,7 @@ from check_pon_identity_churn import evidence_ledger_v2, linked_evidence_ledger_
 MIB = 1024**2
 PROFILE = 'pn1-native-io-three-fd-component-v1'
 DOMAIN = 'trnm-pon-native-io-three-fd-component-claim-v1'
-PREPARED = 'pon-native-io-three-fd-component-prepared-v2'
+PREPARED = 'pon-native-io-three-fd-component-prepared-v3'
 INVENTORY = 'pon-native-io-three-fd-component-inventory-v1'
 EXECUTION = 'pon-native-io-three-fd-component-execution-v1'
 CLAIM = 'pon-native-io-three-fd-component-claim-v1'
@@ -190,6 +191,45 @@ class ComponentBundle(Bundle):
                 == self.inventory_sha256, 'COMPONENT_INVENTORY_CHANGED')
 
 
+def native_abi_build(rows, binding):
+    """Require emitted normal-C evidence, not merely Cargo/executable success.
+
+    The selected source/toolchain and original fresh-target owner remain trusted.
+    This reconstructs a bounded Cargo event; it is not host or native attestation.
+    """
+    require(type(rows) is list and all(type(row) is dict for row in rows),
+            'COMPONENT_CARGO_OBJECT_EVENTS_REQUIRED')
+    package = 'path+' + (ROOT/'trillionnium/crates/trnm-sqlite-io-boundary').as_uri() + '#0.1.0'
+    selected = [row for row in rows if row.get('reason') == 'build-script-executed'
+                and row.get('package_id') == package]
+    require(len(selected) == 1, 'COMPONENT_ONE_NATIVE_ABI_BUILD_EVENT_REQUIRED')
+    row = selected[0]
+    require(set(row) == {'reason', 'package_id', 'linked_libs', 'linked_paths',
+                        'cfgs', 'env', 'out_dir'}, 'COMPONENT_NATIVE_ABI_EVENT_FIELDS')
+    typed(row['cfgs'], ['trnm_sqlite_layout_witness'])
+    require(type(row['env']) is list and len(row['env']) == 2
+            and all(type(pair) is list and len(pair) == 2
+                    and all(type(item) is str for item in pair) for pair in row['env']),
+            'COMPONENT_NATIVE_ABI_ENV_TYPES')
+    exported = dict(row['env'])
+    typed(exported, {
+        'TRNM_SQLITE3_BUILD_FENCE': 'sqlite-3.51.3-normal-native-linux-layout-v3',
+        'TRNM_SQLITE3_AMALGAMATION_SHA256':
+            '9512509b1bccb7461f79bea8aad6280ae4699e925fa4804381b71f59e7efb0c5',
+    })
+    require(type(binding['passed_fd']) is int and 3 <= binding['passed_fd'] <= 2**31-1
+            and binding['actual_target'] == '/proc/self/fd/' + str(binding['passed_fd']),
+            'COMPONENT_NATIVE_ABI_HELD_TARGET_REQUIRED')
+    out = row['out_dir']
+    require(type(out) is str and re.fullmatch(re.escape(binding['actual_target'])
+            + r'/release/build/trnm-sqlite-io-boundary-[0-9a-f]{16}/out', out) is not None,
+            'COMPONENT_NATIVE_ABI_EXACT_TARGET_OUT_DIR')
+    typed(row['linked_libs'], ['static=trnm_sqlite_layout_witness'])
+    typed(row['linked_paths'], ['native=' + out])
+    return dict(schema='pon-native-io-component-native-abi-build-v1',
+                cargo_event=deepcopy(row), native_runtime_qualification=False)
+
+
 def validate_preparation(bundle, head, tree):
     value = bundle.json('prepared.json')
     require(value['schema'] == PREPARED and value['profile'] == PROFILE
@@ -234,12 +274,13 @@ def validate_preparation(bundle, head, tree):
     require(build['command'][:6] == prefix and len(build['command']) == 7 + len(expected)
         and canonical(build['command'][6]).is_absolute(), 'COMPONENT_BOUND_BUILD_COMMAND_REQUIRED')
     binding = value['build_target_binding']
-    require(type(binding['passed_fd']) is int and binding['passed_fd'] >= 3
+    require(type(binding['passed_fd']) is int and 3 <= binding['passed_fd'] <= 2**31-1
         and binding['actual_target'] == '/proc/self/fd/' + str(binding['passed_fd'])
         and type(binding['identity']['device']) is int and type(binding['identity']['inode']) is int
         and binding['identity']['inode'] > 0, 'COMPONENT_TARGET_BINDING_REQUIRED')
     validate_build_monitor(value, binding, build['native_process_owner'])
     artifacts = [strict_json(line) for line in bundle.raw(build['stdout']).splitlines()]
+    typed(value['native_abi_build'], native_abi_build(artifacts, binding))
     artifacts = [m for m in artifacts if m.get('reason') == 'compiler-artifact'
         and m.get('target', {}).get('name') == TARGET and m.get('executable')]
     require(len(artifacts) == 1, 'COMPONENT_ONE_ACTUAL_EXECUTABLE_REQUIRED')
@@ -984,6 +1025,7 @@ def prepare(args, io):
         value['physical_build_quota_claimed'] = False
         require(build['complete_success'], 'COMPONENT_RELEASE_BUILD_FAILED')
         rows = [strict_json(line) for line in checked_member(io.writer.fd, build['stdout'], retain=True, limit=16*MIB)[1].splitlines()]
+        value['native_abi_build'] = native_abi_build(rows, value['build_target_binding'])
         artifacts = [r for r in rows if r.get('reason') == 'compiler-artifact'
             and r.get('target', {}).get('name') == TARGET and r.get('executable')]
         require(len(artifacts) == 1, 'COMPONENT_ONE_RELEASE_EXECUTABLE_REQUIRED')

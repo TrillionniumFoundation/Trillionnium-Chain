@@ -1,0 +1,13 @@
+{
+  "utc": "2026-10-26T12:27:37.163867+00:00",
+  "before_sha256": "ff0d5a90b7110bfb7e8a92fde74bf97e1c866063d9bfe5ba1cec44960db5c881",
+  "after_sha256": "e5d507c9c91b4b7000ffd9ab994f264516e539b0c55c0b90e3c3a54f1e6799df",
+  "prepared_schema": "pon-native-io-three-fd-component-prepared-v3",
+  "new_event_schema": "pon-native-io-component-native-abi-build-v1",
+  "actual_Cargo_event_mandatory_before_binary_capture": true,
+  "reader_recomputes_same_exact_event": true,
+  "old_profile_claim_execution_domains_and_caps_unchanged": true,
+  "original_tests_unchanged": true,
+  "not_yet_tested_or_native": true,
+  "merge_ready": false
+}

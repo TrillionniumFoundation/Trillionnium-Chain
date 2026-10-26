@@ -4380,3 +4380,25 @@ two diagnostics are300+20=320 seconds, with no reset of historical failures.
 [Source, partial controls and diagnostic history](../../evidence/pon-w1-real-header-64reuse-source-20261026/README.md)
 remain below the existing PN1 acceptance. Source-to-binary/held caller/whole writer
 and reader, minimum cost, hardware and original4096+fresh work remain OPEN.
+
+### PN1 / I02 actual held-target ABI refusal and v3 admission (OPEN)
+
+Original be785 Cargo0 captured a release ELF but emitted no SQLite C witness cfg
+or links and an explicit UNQUALIFIED_REASON. The corrected absolute-Nice10
+launcher then reached the original native selector and failed PRIVATE_ABI_UNSUPPORTED.
+Its claim is consumed; the earlier capture-only admission inference is corrected,
+and all original failure/partial/terminal bytes remain. No old prepared/claim
+replay, numeric limit change, generic symlink admission or full-guard promotion
+is permitted. The Linux v3 path source retains an exact private inherited target
+FD and each ancestor; original/dup/canonical identity, compiler/toolchain and
+three-required-plus-one-optional loader allowlists stay mandatory.
+
+Prepared-v3 requires and replays the actual unique correct-package Cargo event,
+normal witness cfg, exact v3 fence/amalgamation SHA, static witness link and
+same held-target OUT_DIR. Cargo success alone is insufficient. Final32 Python
+controls (old26 unchanged) and13 real tmpfs path controls passed; actual new
+normal-C/nm/public prepare/execute/independent reader remain due. Conservative
+400 prior owner +60 diagnostics +730 next owner stays1190 under the original
+1200 build limit; failure history and original180-second execution contract stay.
+[Original failures, correction and bounded controls](../../evidence/pon-native-io-pn1-20261026-v20/README.md)
+are mechanism/source evidence only; full W1/Windows/model/WAN/merge gates remain OPEN.

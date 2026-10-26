@@ -1,0 +1,20 @@
+{
+  "utc": "2026-10-26T12:49:32.712814+00:00",
+  "old_source": "be785bf8108c538879bd805219264dbdf3e9a890",
+  "old_prepare_Cargo_capture_success_retained": true,
+  "old_prepare_was_not_native_ABI_admission": true,
+  "actual_selected_Cargo_event_cfgs_empty_and_UNQUALIFIED_REASON": true,
+  "old_earlier_positive_preparation_admission_review_corrected": "source/capture/binary hashes valid; missing actual C witness overlooked, insufficient for native admission",
+  "actual_first_execution_guard_failed_before_claim": "main/1a1780bf271-96a-11b9,ACTUAL_EXPECTED_NICE_REQUIRED;actual old nice UNKNOWN",
+  "actual_new_nice_control": "main/1a1781068cc-96a-11c3,direct19 refuses,absolute inner10 guard PASS; not old historical attribution",
+  "corrected_launcher": "main/1a1781842e6-96a-11d9 actualFAIL1, outputcomplete,not timeout",
+  "actual_native_selector": "ran1,0pass1fail0ignored,exit101 in0.135290004s",
+  "native_failure": "PRIVATE_ABI_UNSUPPORTED: loader directory must be a canonical existing directory",
+  "original_claim_consumed_and_never_reused": true,
+  "original_partial_and_terminal_records_unchanged": true,
+  "reader_NOT_RUN": "no valid execution bundle; do not invent artifact inventory hash",
+  "observed_previous_build_monotonic_owner_seconds": 367.4188822559954,
+  "future_budget_plan": "conservatively charge prior400 + standalone60 + new normalprepare730 =1190<original1200; no new build has started",
+  "task_complete": false,
+  "merge_ready": false
+}

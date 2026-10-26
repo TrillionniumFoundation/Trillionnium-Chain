@@ -29,7 +29,7 @@ const UNIX_FILE_BYTES: c_int = 120;
 #[cfg(trnm_sqlite_layout_witness)]
 const UNIX_VFS_NAME: &[u8] = b"unix\0";
 #[cfg(trnm_sqlite_layout_witness)]
-const BUILD_FENCE: &str = "sqlite-3.51.3-normal-native-linux-layout-v2";
+const BUILD_FENCE: &str = "sqlite-3.51.3-normal-native-linux-layout-v3";
 #[cfg(trnm_sqlite_layout_witness)]
 const AMALGAMATION_SHA256: &str =
     "9512509b1bccb7461f79bea8aad6280ae4699e925fa4804381b71f59e7efb0c5";
