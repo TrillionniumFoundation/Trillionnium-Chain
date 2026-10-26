@@ -891,6 +891,15 @@ impl ServiceMutationCpuDomain {
             budget: Arc::new(Mutex::new(PaidMutationCpuBudget::new())),
         }
     }
+    /// A one-time *cold* local Node epoch for explicitly initiated remote
+    /// History synchronization. The fixed host cgroup must be checked before
+    /// an external caller creates this once per Node; no warm two-second
+    /// burst, miner credit, Work authorization or per-peer reset is minted.
+    pub(crate) fn cold_for_history_sync() -> Self {
+        Self {
+            budget: Arc::new(Mutex::new(PaidMutationCpuBudget::cold_start())),
+        }
+    }
     pub fn shares_domain_with(&self, other: &Self) -> bool {
         Arc::ptr_eq(&self.budget, &other.budget)
     }

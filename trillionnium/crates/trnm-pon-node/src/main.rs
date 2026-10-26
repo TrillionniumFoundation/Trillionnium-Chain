@@ -2087,6 +2087,10 @@ fn run() -> Result<Value> {
             if let Some(kernel) = &host_kernel {
                 kernel.verify()?;
             }
+            // Public V3 History reads previously bypassed the shared CPU
+            // account. Bind once to this ORIGINAL Node before any remote
+            // page; nonloopback cold epochs have zero starting credit.
+            ingress::prepare_history_cpu_domain(&mut node, address)?;
             let tip = digest(need(&args, "--tip")?)?;
             let after = args
                 .get("--after")
