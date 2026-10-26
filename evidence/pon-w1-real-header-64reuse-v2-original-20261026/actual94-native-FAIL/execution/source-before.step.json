@@ -1,0 +1,26 @@
+{
+  "command": [
+    "/usr/bin/python3",
+    "scripts/ci/verify_ci_source.py",
+    "--kind",
+    "head",
+    "--expected-head",
+    "94b3fb60b7aa32c8bf5b7c8679d3c46a980b4060"
+  ],
+  "complete_success": true,
+  "cwd": "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/ci-follow/pn1-checkpoint64-clean94-public-qualification-20261026-001/ownedsource",
+  "elapsed_ns": 1709111267,
+  "elapsed_seconds": 1.709111267,
+  "error": null,
+  "name": "source-before",
+  "outer_stage_timeout_seconds": 120,
+  "returncode": 0,
+  "stderr": "source-before.stderr.log",
+  "stderr_bytes": 0,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_truncated": false,
+  "stdout": "source-before.stdout.log",
+  "stdout_bytes": 421,
+  "stdout_sha256": "32d7f9d19126855bc3c93f1ea9ced7a6381fa227f61bf9bef8cf4e51c7ff03a4",
+  "stdout_truncated": false
+}

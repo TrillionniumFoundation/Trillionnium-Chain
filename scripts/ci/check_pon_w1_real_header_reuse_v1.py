@@ -15,8 +15,8 @@ import struct
 import sys
 import time
 
-PROFILE = 'pn1-pnh1-signed-zero-fixed-64-reuse-component-v2'
-SCHEMA = 'pn1-pnh1-independent-relation-reader-v2'
+PROFILE = 'pn1-pnh1-signed-zero-fixed-64-reuse-component-v3'
+SCHEMA = 'pn1-pnh1-independent-relation-reader-v3'
 POLICY = ('pn1-pnh1-frozen-zero-dispatch-v1:canonical-A=B=zero=>'
           'blocked-zero-integer-paired;otherwise-refuse')
 STREAM = b'TRNM-PON-W1-PNH1-64REUSE-STREAM-V1\0'
@@ -77,6 +77,70 @@ def native_numbers(row):
         elif row['op'] == 'seal':
             uint(data['searches'], 'TOTAL_SEARCHES_INTEGER', maximum=64)
             uint(data['same_selected_setup_attempts'], 'TOTAL_SETUP_INTEGER')
+            recovery = data['ordinary_recovery']
+            uint(recovery['candidate_count'], 'RECOVERY_CANDIDATE_COUNT_INTEGER', maximum=64)
+            for name in ('before', 'after', 'cold'):
+                uint(recovery[name]['generation'], 'RECOVERY_GENERATION_INTEGER', minimum=1)
+
+
+def required_work(target):
+    """Independent integer arithmetic for M02's floor(2**256/(target+1))."""
+    require(type(target) is bytes and len(target) == 32 and any(target), 'RECOVERY_TARGET')
+    return (1 << 256) // (int.from_bytes(target, 'big') + 1)
+
+
+def active_observation(value):
+    require(type(value) is dict and set(value) == {'tip', 'generation', 'state', 'state_sha256'},
+            'RECOVERY_ACTIVE_FIELDS')
+    tip, state_sha = value['tip'], value['state_sha256']
+    for digest in (tip, state_sha):
+        require(type(digest) is str and len(digest) == 64 and digest == digest.lower()
+                and all(c in '0123456789abcdef' for c in digest), 'RECOVERY_CANONICAL_DIGEST')
+    generation = uint(value['generation'], 'RECOVERY_GENERATION_INTEGER', minimum=1)
+    require(type(value['state']) is dict, 'RECOVERY_COMPLETE_STATE_OBJECT')
+    encoded = json.dumps(value['state'], sort_keys=True, separators=(',', ':'),
+                         ensure_ascii=False, allow_nan=False).encode()
+    require(hashlib.sha256(encoded).hexdigest() == state_sha, 'RECOVERY_COMPLETE_STATE_DIGEST')
+    return tip, generation, encoded, state_sha
+
+
+def check_ordinary_recovery(seal, initial, registration, verified, candidates):
+    recovery = seal['ordinary_recovery']
+    require(type(recovery) is dict and set(recovery) == {
+        'schema', 'operation', 'rule', 'candidate_count', 'returned_tip', 'before', 'after', 'cold'},
+        'ORDINARY_RECOVERY_FIELDS')
+    require(recovery['schema'] == 'pn1-pnh1-ordinary-recovery-observation-v1'
+            and recovery['operation'] == 'ordinary-Node-recover-before-ordinary-cold-open'
+            and recovery['rule'] == 'chainwork-desc,height-asc,id-asc;activate-only-strictly-heavier-v1',
+            'ORDINARY_RECOVERY_CONTRACT')
+    require(uint(recovery['candidate_count'], 'RECOVERY_CANDIDATE_COUNT_INTEGER', maximum=64) == 64
+            and len(candidates) == len(verified) == 64, 'RECOVERY_COMPLETE_COHORT')
+    parent_work = required_work(registration['target'])
+    # Genesis work0, the verified height1 registration, and precisely the64
+    # verified same-parent height2 siblings comprise this fresh private namespace.
+    choices = [(0, 0, registration['parent'].hex()),
+               (parent_work, registration['height'], initial['parent']), *candidates]
+    require(len({row[2] for row in choices}) == 66, 'RECOVERY_DISTINCT_STORED_IDS')
+    winner_work, winner_height, winner = min(choices, key=lambda row: (-row[0], row[1], bytes.fromhex(row[2])))
+    require(0 < parent_work < winner_work < (1 << 512) and winner_height == 2,
+            'RECOVERY_STRICTLY_HEAVIER_WINNER')
+    before = active_observation(recovery['before'])
+    after = active_observation(recovery['after'])
+    cold = active_observation(recovery['cold'])
+    require(before[0] == initial['parent'] and before[1] == 1
+            and before[3] == initial['parent_state_sha256'], 'RECOVERY_ORIGINAL_HOT_PARENT')
+    require(recovery['returned_tip'] == winner == after[0] and after[1] == before[1] + 1,
+            'RECOVERY_INDEPENDENT_WINNER_AND_GENERATION')
+    expected = next((row for row in verified if row['id'] == winner), None)
+    require(expected is not None and after[3] == expected['state_sha256'], 'RECOVERY_ADMITTED_WINNER_STATE')
+    # Compare complete canonical State bytes, tip and exact integer generation;
+    # a hash-only/native-only declaration cannot close cold stability.
+    require(cold == after, 'RECOVERY_COLD_COMPLETE_TUPLE')
+    return {'winner': winner, 'height': winner_height, 'chainwork_hex': f'{winner_work:0128x}',
+            'parent_chainwork_hex': f'{parent_work:0128x}', 'generation': after[1],
+            'state_sha256': after[3], 'ordinary_recovery_rule_independently_checked': True,
+            'cold_complete_tuple_matches_hot_normalized': True,
+            'independent_state_transition_oracle': False}
 
 
 def unique(pairs):
@@ -195,6 +259,7 @@ def run(args):
          'operation_wall_ns': time.monotonic_ns() - started})
     seen = set()
     verified = []
+    candidates = []
     total_attempts = 0
     for index in range(64):
         request(index + 1, 'search')
@@ -232,6 +297,11 @@ def run(args):
         h, proof, _, tx = packet(result['packet'], wire, oracle)
         require(wire.header_encode(h) == last_header and proof == last_proof and not tx, 'ACTUAL_WINNER')
         require(result['ordinary_node_admission'] is True and result['admission_id'] == result['packet']['id'], 'NATIVE_ADMISSION_OBSERVATION')
+        require(h['parent'] == template['parent'] and h['height'] == template['height'] == 2
+                and h['target'] == template['target'], 'RECOVERY_SAME_PARENT_SIBLING_CONTEXT')
+        chainwork = required_work(registration['target']) + required_work(h['target'])
+        require(chainwork < (1 << 512), 'RECOVERY_CHAINWORK_OVERFLOW')
+        candidates.append((chainwork, h['height'], result['admission_id']))
         total_attempts += result['attempts']
         verified.append({'id': result['admission_id'], 'encoded_sha256': result['packet']['encoded_sha256'],
                          'state_sha256': result['state_sha256']})
@@ -245,9 +315,11 @@ def run(args):
     uint(total_attempts, 'TOTAL_ATTEMPTS_INTEGER', minimum=64, maximum=64 * 4096)
     require(seal['cold'] == verified and seal['same_selected_setup_attempts'] == 1, 'NATIVE_COLD_READBACK')
     require(seal['scope'] == '64-same-parent-siblings-not-64-successive-parents', 'SCOPE')
+    recovery = check_ordinary_recovery(seal, initial, registration, verified, candidates)
     emit({'kind': 'response', 'id': 65, 'op': 'seal', 'data': {
         'independent_relation_component_completed': True, 'searches': 64, 'attempts': total_attempts,
         'same_parent_siblings': True, 'successive_parents': False,
+        'ordinary_recovery': recovery,
         'independent_signature_verification': False, 'independent_parent_state_oracle': False,
         'whole_13_kernel_matrix_qualified': False, 'native_three_fd_qualified': False,
         'hardware_fairness_qualified': False, 'lowest_known_cost_audit_complete': False,

@@ -24,8 +24,8 @@ import time
 
 from run_pon_w1_native_campaign import resource_observation, validate_resources
 
-PROFILE = 'pn1-pnh1-signed-zero-fixed-64-reuse-component-v2'
-READER = 'pn1-pnh1-independent-relation-reader-v2'
+PROFILE = 'pn1-pnh1-signed-zero-fixed-64-reuse-component-v3'
+READER = 'pn1-pnh1-independent-relation-reader-v3'
 MIB = 1024 * 1024
 TOTAL_SECONDS = 120
 CALL_SECONDS = 2

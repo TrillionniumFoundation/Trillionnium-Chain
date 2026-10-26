@@ -40,7 +40,7 @@ impl<T, E: std::fmt::Debug> Diagnostic<T> for std::result::Result<T, E> {
         self.map_err(|e| io::Error::other(format!("{e:?}")).into())
     }
 }
-const PROFILE: &str = "pn1-pnh1-signed-zero-fixed-64-reuse-component-v2";
+const PROFILE: &str = "pn1-pnh1-signed-zero-fixed-64-reuse-component-v3";
 const POLICY: &str = "pn1-pnh1-frozen-zero-dispatch-v1:canonical-A=B=zero=>blocked-zero-integer-paired;otherwise-refuse";
 const STREAM: &[u8] = b"TRNM-PON-W1-PNH1-64REUSE-STREAM-V1\0";
 const SEARCHES: u64 = 64;
@@ -445,6 +445,12 @@ fn search(context: &mut Context, index: u64, sink: &mut Sink) -> Result<Value> {
         "rust_scalar_reference_uses_shared_verifier_flow":true,"independent_python_relation":"not-yet-run"}),
     )
 }
+fn active_value<T: serde::Serialize>(active: &(Hash, u64, T)) -> Result<Value> {
+    Ok(
+        json!({"tip":hex::encode(active.0),"generation":active.1,"state":&active.2,
+        "state_sha256":sha(&serde_json::to_vec(&active.2)?)}),
+    )
+}
 fn seal(mut context: Context, path: &Path) -> Result<Value> {
     require(
         context.admitted.len() == SEARCHES as usize
@@ -457,9 +463,49 @@ fn seal(mut context: Context, path: &Path) -> Result<Value> {
         before.0 == context.parent && before.1 == 1,
         "SIBLING_SCOPE_ACTIVE_PARENT",
     )?;
+    // Keep the original same-parent hot-state assertion above. Ordinary open
+    // must recover heavier admitted work (STATE_RECOVERY and the retained
+    // zero-task lifecycle regression); it cannot preserve this lighter parent.
+    // Finish that ordinary operation while hot, then test full-tuple stability
+    // across the same ordinary cold opener. All work remains inside this seal RPC.
+    require(
+        sha(&serde_json::to_vec(&before.2)?) == context.parent_state_sha,
+        "RECOVERY_PARENT_STATE",
+    )?;
+    let parent_before_recovery = active_value(&before)?;
+    let expected_generation = before.1.checked_add(1).ok_or("GENERATION")?;
+    let expected_winner = context
+        .admitted
+        .iter()
+        .map(|(id, _, _)| *id)
+        .min()
+        .ok_or("RECOVERY_COHORT_EMPTY")?;
+    // All64 already admitted headers clone the same parent/height/target;
+    // their required work is equal and strictly greater than the active parent.
+    // The independent reader recomputes the full work/height/id rule from headers.
+    let recovered = context.node.recover()?;
+    let before = context.node.read_active()?;
+    require(
+        recovered == expected_winner
+            && before.0 == expected_winner
+            && before.1 == expected_generation,
+        "ORDINARY_RECOVERY_SELECTION",
+    )?;
+    let selected_state = &context
+        .admitted
+        .iter()
+        .find(|(id, _, _)| *id == expected_winner)
+        .ok_or("RECOVERY_WINNER_NOT_ADMITTED")?
+        .2;
+    require(
+        sha(&serde_json::to_vec(&before.2)?) == *selected_state,
+        "RECOVERY_WINNER_STATE",
+    )?;
+    let normalized_before_cold = active_value(&before)?;
     drop(context.node);
     context.node = Node::open_with_authenticated_state(path, context.settings.clone(), 1)?;
     require(context.node.read_active()? == before, "COLD_ACTIVE_STATE")?;
+    let cold_active = active_value(&context.node.read_active()?)?;
     let mut cold = Vec::new();
     for (id, encoded, state) in &context.admitted {
         require(
@@ -475,6 +521,11 @@ fn seal(mut context: Context, path: &Path) -> Result<Value> {
     Ok(
         json!({"native_component_completed":true,"searches":SEARCHES,"same_selected_setup_attempts":context.registry.setup_attempts,
         "scope":"64-same-parent-siblings-not-64-successive-parents","cold":cold,
+        "ordinary_recovery":{"schema":"pn1-pnh1-ordinary-recovery-observation-v1",
+        "operation":"ordinary-Node-recover-before-ordinary-cold-open",
+        "rule":"chainwork-desc,height-asc,id-asc;activate-only-strictly-heavier-v1",
+        "candidate_count":context.admitted.len(),"returned_tip":hex::encode(recovered),
+        "before":parent_before_recovery,"after":normalized_before_cold,"cold":cold_active},
         "independent_python_relation":"not-yet-run","ordinary_public_service_paid_envelope":false,
         "renewal_revocation_expiry_controls_in_this_profile":false,"whole_13_kernel_matrix_qualified":false,
         "native_three_fd_qualified":false,"hardware_fairness_qualified":false,"lowest_known_cost_audit_complete":false,

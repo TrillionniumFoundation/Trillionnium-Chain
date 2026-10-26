@@ -1,0 +1,7 @@
+Running as unit: pn1-checkpoint64-component-execute-d092af61dcb9613e47480fda046efe87.service; invocation ID: d5da987036384f0cbc813c71b53ab246
+Finished with result: exit-code
+Main processes terminated with: code=exited/status=1
+Service runtime: 7.387s
+CPU time consumed: 7.130s
+Memory peak: 3.2M
+Memory swap peak: 0B
