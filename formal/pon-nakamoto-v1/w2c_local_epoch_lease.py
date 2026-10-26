@@ -29,8 +29,13 @@ def epoch_lock_path(private_directory, receiver):
 class LocalEpochLeasedReceiver:
     """Host-scoped process experiment. Caller auth is delegated to the V3 owner."""
 
-    def __init__(self, lock_path, receiver, *, capacity=64):
+    def __init__(self, lock_path, receiver, *, policy_bits, capacity=64):
         receiver = bytes32(receiver, 'RECEIVER')
+        # Price policy belongs to the trusted receiver operator, never to
+        # caller-supplied work bytes or a remote request's selected bits.
+        if type(policy_bits) is not int or not 8 <= policy_bits <= 24:
+            raise ValueError('EPOCH_BITS_POLICY')
+        self._policy_bits = policy_bits
         path = Path(lock_path)
         if path != epoch_lock_path(path.parent, receiver):
             raise ValueError('EPOCH_LOCK_IDENTITY')
@@ -67,6 +72,7 @@ class LocalEpochLeasedReceiver:
             raise
         self._fd = fd
         self._fingerprint = (fstat.st_dev, fstat.st_ino)
+        self._parent_fingerprint = (parent.st_dev, parent.st_ino)
         self._path = path
         self._pid = os.getpid()
         self._inner = inner
@@ -96,6 +102,15 @@ class LocalEpochLeasedReceiver:
                 or (name.st_dev, name.st_ino) != self._fingerprint
                 or original.st_nlink != 1):
             raise ValueError('EPOCH_LOCK_REPLACED')
+        if (not stat.S_ISREG(name.st_mode) or name.st_uid != os.geteuid()
+                or stat.S_IMODE(name.st_mode) != 0o600):
+            raise ValueError('EPOCH_LOCK_UNTRUSTED')
+        parent = os.stat(self._path.parent, follow_symlinks=False)
+        if ((parent.st_dev, parent.st_ino) != self._parent_fingerprint
+                or not stat.S_ISDIR(parent.st_mode)
+                or parent.st_uid != os.geteuid()
+                or stat.S_IMODE(parent.st_mode) != 0o700):
+            raise ValueError('EPOCH_PARENT_UNTRUSTED')
 
     @staticmethod
     def _now_ms():
@@ -111,7 +126,10 @@ class LocalEpochLeasedReceiver:
     def offer(self, proposal, authenticated_caller, bits):
         with self._lifecycle:
             self._require_owner()
-            return self._inner.offer(proposal, authenticated_caller, bits, self._now_ms())
+            if type(bits) is not int or bits != self._policy_bits:
+                raise ValueError('EPOCH_BITS_POLICY')
+            return self._inner.offer(proposal, authenticated_caller,
+                                     self._policy_bits, self._now_ms())
 
     def consume(self, grant, proposal, authenticated_caller, nonce):
         with self._lifecycle:
