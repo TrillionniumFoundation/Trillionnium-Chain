@@ -62,9 +62,9 @@ class PQCellReleaseTests(unittest.TestCase):
     def test_real_two_of_three_reviews_and_release_signature(self):
         receipt = self.check()
         self.assertEqual(receipt.manifest_id, manifest_id(self.manifest))
-        self.assertEqual(receipt.approved_signers, self.two_ids)
+        self.assertEqual(receipt.observed_reviewer_key_ids, self.two_ids)
         self.assertEqual(receipt.content_objects_checked, 3)
-        self.assertIs(receipt.adoption_authorized, False)
+        self.assertFalse(hasattr(receipt, "adoption_authorized"))
 
     def test_model_and_cell_weight_substitution_reject(self):
         with self.assertRaises(Reject):
@@ -167,7 +167,7 @@ class PQCellReleaseTests(unittest.TestCase):
 
     def test_no_false_model_adoption_or_independent_evaluator_claim(self):
         observed = self.check()
-        self.assertFalse(observed.adoption_authorized)
+        self.assertFalse(hasattr(observed, "adoption_authorized"))
         self.assertEqual(observed.content_objects_checked, 1 + len(self.manifest.cells))
 
 
