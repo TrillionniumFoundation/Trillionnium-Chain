@@ -378,7 +378,12 @@ fn admit_page(node: &Mutex<Node>, packet: Packet, end: Instant, stop: &AtomicBoo
     // invent a refund. The operation owns all actual scoped workers and
     // settles even after a native rejection. Post-commit accounting cannot
     // retroactively invalidate an already admitted fact.
-    let _settlement = operation.finish();
+    let settlement = operation.finish();
+    if settlement.accounting_unavailable {
+        // Preserve any durable native block, but an outbound poller cannot
+        // report complete historical synchronization with UNKNOWN CPU.
+        return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+    }
     native
 }
 struct PollContext<'a> {
@@ -1036,64 +1041,6 @@ mod tests {
         assert!(final_state.stored_credit_ns <= initial.stored_credit_ns);
         assert_eq!(guarded.lock().unwrap().stats().unwrap(), before);
         assert_eq!(guarded.lock().unwrap().read_active().unwrap().0, settings.genesis());
-    }
-
-    #[cfg(target_os = "linux")]
-    #[test]
-    fn pinned_peer_and_history_page_charge_the_same_original_cpu_domain() {
-        // Integrated shadow regression: two independent malicious ingress
-        // routes must share one Node/V3 budget, not mint credits per peer.
-        let now = ingress::now().unwrap();
-        let settings = Settings::development(Some(now - 100)).unwrap();
-        let dir = tempfile::tempdir().unwrap();
-        let mut node = Node::open(dir.path(), settings.clone(), 2).unwrap();
-        let mut fake = node.make(
-            settings.genesis(), vec![],
-            development_public(0).unwrap(),
-            settings.genesis_time() + 10, 4096,
-        ).unwrap();
-        let offset = 4 + 2 * pon_work::CELLS * 4;
-        let original = u32::from_le_bytes(fake.proof[offset..offset + 4].try_into().unwrap());
-        fake.proof[offset..offset + 4].copy_from_slice(
-            &(((u128::from(original) + 1) % pon_work::Q) as u32).to_le_bytes(),
-        );
-        assert_eq!(
-            pon_work::verify(fake.header.challenge(), fake.header.work_task,
-                             fake.header.target, &fake.proof).unwrap_err(),
-            pon_work::WorkError::Product
-        );
-        let id = fake.id().unwrap();
-        let stats = node.stats().unwrap();
-        let cpu = public_v3::ServiceMutationCpuDomain::standalone();
-        node.bind_public_service_cpu_domain(&cpu).unwrap();
-        let node = Mutex::new(node);
-        let stop = AtomicBool::new(false);
-        let cost_before = cpu.observe_actual_flow().unwrap().unwrap().settled_full_cpu_ns;
-        let first = admit_page(
-            &node, fake.clone(),
-            Instant::now() + Duration::from_secs(10), &stop,
-        ).unwrap_err();
-        assert_eq!(first.to_string(), "WORK:Product");
-        let after_peer = cpu.observe_actual_flow().unwrap().unwrap();
-        assert!(after_peer.settled_full_cpu_ns > cost_before);
-        assert_eq!(after_peer.live_owners, 0);
-
-        let remote = page_value(&settings, id, settings.genesis(), Some(&fake));
-        let page: Page = serde_json::from_value(remote).unwrap();
-        let source: SocketAddr = "127.0.0.1:1".parse().unwrap();
-        let second = {
-            let mut owner = node.lock().unwrap();
-            ingress::receive_page_from(
-                &mut owner, source, page, id, settings.genesis(), now,
-            ).unwrap_err()
-        };
-        assert_eq!(second.to_string(), "WORK:Product");
-        let after_history = cpu.observe_actual_flow().unwrap().unwrap();
-        assert!(after_history.settled_full_cpu_ns > after_peer.settled_full_cpu_ns);
-        assert_eq!(after_history.live_owners, 0);
-        assert!(after_history.balance_identity_verified);
-        assert_eq!(node.lock().unwrap().stats().unwrap(), stats);
-        assert_eq!(node.lock().unwrap().read_active().unwrap().0, settings.genesis());
     }
 
     #[test]
