@@ -417,3 +417,62 @@ owner, not by this ancestry observer. The independent Python model assumes
 an already authenticated header mapping and therefore cannot establish
 that native Packet identity binding passed on the current Rust source.
 Exact-source native execution and all P1-C/P2 qualification remain OPEN.
+
+## P1-B bounded fork / outage screening continuation
+
+The standalone, non-activated research files
+`formal/pon-nakamoto-v1/daa_fork_outage_research.py` and
+`test_daa_fork_outage_research.py` add a branch-local Poisson-clock
+fork competition to the existing scalar/timestamp research. This is not
+an additional consensus implementation. Every discovered block is a
+simulated opportunity, not a PNW1 witness; synthetic integer IDs do not
+authenticate packets, source signatures, leases or account state.
+
+The campaign preregisters 3 seeds, the three existing algorithm labels,
+4 ASERT half-lives, and 2 timestamp policies (72 rows). It executes
+24 shared-block opportunities, 64 partitioned opportunities, a
+deterministic publication/heal at which the higher cumulative required
+work wins, and 24 followup opportunities. After 40 simulated discovered
+blocks, independently assumed miner participation changes from leased
+work to explicit genesis-maintenance participation (35% of group A,
+80% of group B). These numbers are **assumptions**, not sampled
+real-worker shares or empirical W1 costs.
+
+For each simulated candidate, target is recomputed from the actual
+research parent branch. MTP11/future-window validity and accumulated
+`floor(2^256/(target+1))` are checked again for all retained fork
+headers; miner identity, chain height or claimed model utility cannot
+override the heavier-work result. It reports overwritten blocks,
+depth-six historical exposure, branch work, timestamp rejection and
+outage liveness separately. Depth-six historical exposure does **not**
+test the original policy's required-work threshold or signed business
+membership, and must never be called an actual double-spend success.
+
+A closed no-maintenance control drops both groups' assumed mining
+capacity to zero when tasks expire and reports
+`no_assumed_work_capacity`. A positive maintenance-capacity control
+continues generating synthetic blocks. Neither proves W1 solvability,
+cheapest legal computation cost, honest miner availability, peer
+independence or public network liveness.
+
+Local development results before commit: **9/9 Python unit tests
+passed**, with 72 deterministic campaign rows and canonical rows SHA256
+`097603b784410de74635d1689cfa533389bc2a5dea94279f04507ded917b34a2`.
+This does not assert exact-GitHub-tree verification or native test
+execution. The repository must retain current native W1 proof,
+Q4/Maintenance, branch/undo and confirmed-transaction tests as separate
+non-synthetic requirements.
+
+Independent reproduction from `formal/pon-nakamoto-v1`:
+
+```sh
+python3 -m unittest -v test_daa_fork_outage_research.py
+python3 daa_fork_outage_research.py --output /new/absolute/path/fork-outage.json
+```
+
+The output is create-only. A second write to the same path must fail,
+rather than overwrite evidence. The fixed cohort does not optimize the
+DAA, establish real attacker work fractions or activate ASERT. P0-C,
+P1-C and P2 remain independently blocked; P1-B still requires
+real-W1 authenticated forks, independently administered partition/heal
+and withholding economics under frozen deployment assumptions.
