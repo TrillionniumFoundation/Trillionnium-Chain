@@ -101,3 +101,31 @@ research/development unqualified.** Exact full Rust compilation and an
 actual administrator-provisioned host are unavailable in the assistant's
 current container. This file must not promote production flags, merge a
 protected branch or treat an unexecuted command as success.
+
+
+## Additional integrated P0/P2 cost-evidence cross-check
+
+The original actual TCP 'public_v3_from_zero' fixture already records *all*
+unpaid/admitted attack and honest client bodies, responses and client-local
+V3 metrics. On this integrated tree it now requires the real signed Cookie
+search CPU to be present on every successful Head and honest Submit and
+on every hostile call which completed in a late 'WORK:Transcript' refusal.
+The Cookie CPU sample remains **nested** inside whole-client CPU, never
+added to that interval or to server Work CPU. Early handshake, expired
+Cookie, Busy and unsubmitted exhausted searches are preserved with no
+fabricated Cookie CPU.
+
+The existing independent 'scripts/ci/run_from_zero_native.py' report reader
+recomputes this optional P2-on-P0 flag from **every retained original call**,
+including trial counts 1..1,048,576, correctly typed real CPU, honest
+response success, and Cookie CPU no larger than the same calling-thread
+whole request CPU. Old historical P0 reports missing this opt-in flag keep
+their original narrower meaning. Five new in-memory hostile report
+mutations exercise missing/Boolean CPU, zero trials, false solution
+completion and nested CPU overstatement. They are parser tests, not native
+W1 or public-network evidence.
+
+Still **not** a closed P2: real GPU/ASIC attacker cost, paid W1 negative
+requests on a physically shared host, representative nontrivial legal
+models, same resource budget and independent operators remain unmeasured.
+The complete A03 P4 campaign is not run on the integrated SHA.
