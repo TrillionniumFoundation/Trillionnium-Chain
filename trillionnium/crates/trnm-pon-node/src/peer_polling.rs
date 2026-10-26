@@ -33,6 +33,11 @@ use trnm_protocol::pon_wire::{hash, Hash};
 const MAX_CONFIG_BYTES: u64 = 16384;
 const MAX_PACKET_BYTES: usize = 1_048_576;
 const MAX_ERROR_BYTES: usize = 2048;
+// Only locally verified, late invalid W1 mathematics triggers this bounded
+// pinned-peer retry delay. No retry timer is a consensus/finality verdict.
+const INVALID_W1_BACKOFF_BASE_MS: u64 = 250;
+const INVALID_W1_BACKOFF_MAX_STREAK: u8 = 6; // 250, 500, 1k, 2k, 4k, 8k ms
+
 pub const PEER_POLLING_SCHEMA: &str = "pon-native-pinned-peer-poll-config-v1";
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -207,6 +212,8 @@ struct PeerState {
     fallbacks: u64,
     initial_fallback_used: bool,
     last_error: Option<PeerFailure>,
+    invalid_w1_streak: u8,
+    invalid_w1_retry_after: Option<Instant>,
 }
 impl PeerState {
     fn new(genesis: Hash) -> Self {
@@ -222,7 +229,23 @@ impl PeerState {
             fallbacks: 0,
             initial_fallback_used: false,
             last_error: None,
+            invalid_w1_streak: 0,
+            invalid_w1_retry_after: None,
         }
+    }
+    fn penalize_invalid_w1(&mut self, now: Instant) {
+        self.invalid_w1_streak =
+            self.invalid_w1_streak.saturating_add(1).min(INVALID_W1_BACKOFF_MAX_STREAK);
+        let delay_ms = INVALID_W1_BACKOFF_BASE_MS
+            << (self.invalid_w1_streak - 1);
+        self.invalid_w1_retry_after = Some(now + Duration::from_millis(delay_ms));
+    }
+    fn invalid_w1_delayed(&self, now: Instant) -> bool {
+        self.invalid_w1_retry_after.is_some_and(|deadline| now < deadline)
+    }
+    fn valid_new_w1_admitted(&mut self) {
+        self.invalid_w1_streak = 0;
+        self.invalid_w1_retry_after = None;
     }
     fn snapshot(&self, peer: usize) -> PeerPollingSnapshot {
         PeerPollingSnapshot {
@@ -460,6 +483,14 @@ impl Engine {
         let retained = failure(&error.to_string());
         self.states[index].failures += 1;
         self.states[index].last_error = Some(retained.clone());
+        // The error is generated only by the local full native W1 verifier.
+        // A remotely supplied text, a public Busy/Deadline, or a false StateRoot
+        // must NEVER quarantine an unrelated pinned honest peer.
+        if stage == "native_admission"
+            && matches!(error.to_string().as_str(), "WORK:Transcript" | "WORK:Product")
+        {
+            self.states[index].penalize_invalid_w1(Instant::now());
+        }
         self.event(
             index,
             EventDetail {
@@ -659,6 +690,7 @@ impl Engine {
             self.states[index].admitted += 1;
             self.pages += 1;
             if verified {
+                self.states[index].valid_new_w1_admitted();
                 self.states[index].verified += 1;
                 self.verified += 1;
             }
@@ -752,6 +784,12 @@ impl Engine {
                     return Ok(());
                 }
                 let index = (self.rotation + offset) % count;
+                // A pinned adversarial source cannot demand a fresh expensive
+                // W1 transcript replay on each 10ms poll cycle. Other pinned
+                // peers, reads and original CPU-owner work remain unaffected.
+                if self.states[index].invalid_w1_delayed(Instant::now()) {
+                    continue;
+                }
                 if failed.contains(&index) {
                     continue;
                 }
