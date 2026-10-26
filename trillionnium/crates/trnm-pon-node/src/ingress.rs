@@ -2528,6 +2528,11 @@ mod tests {
         let mut node = Node::open(dir.path(), settings, 2).unwrap();
         let cold = public_v3::ServiceMutationCpuDomain::cold_for_host_verified_history_sync();
         assert_eq!(cold.observe().unwrap().stored_credit_ns, 0);
+        let early = cold
+            .await_history_work_credit(Instant::now() + Duration::from_millis(1))
+            .unwrap_err();
+        assert_eq!(early.to_string(), "PUBLIC_MUTATION_CPU_BUDGET");
+        assert_eq!(cold.observe().unwrap().in_flight, 0);
         node.bind_public_service_cpu_domain(&cold).unwrap();
         let bound = node.public_service_cpu_domain().unwrap();
         assert!(bound.shares_domain_with(&cold));
