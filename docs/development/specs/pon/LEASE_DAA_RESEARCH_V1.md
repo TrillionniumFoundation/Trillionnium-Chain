@@ -686,3 +686,40 @@ remain OPEN. Future protocol integration must commit its own signed context,
 runtime activation rule, anti-rollback/reorg policy, persistent bounded
 ancestry proofs and independent client confirmations, without changing any
 historical revision.
+
+## 2026-10-26 P0-A/P0-B full-slot signed source continuation (code only)
+
+Isolated stacked branch `research/pon-q4-full-slot-registration-20261026` extends
+the existing **ignored** native selector
+`continuity_tests::long_native_all_32_retained_slots_reopen_only_after_retention_boundary`.
+It preserves the original 32-slot open/revoke, inclusive retention refusal,
+1,110+ real W1 Maintenance headers, exact historical Q4 byte rules, inherited
+difficulty adjustment, and cold SQLite reopen. It then makes one of the 32
+reopened slots an independent `InferenceContraction` source purpose, computes
+fresh canonical model/input/matrix task IDs, signs the new QWA2 statement with
+the separate development source key, and includes the normal tag21 source
+REGISTER in the next **explicit Maintenance** block.
+
+The original parent has no source registration, while the next genuine native
+parent must report the task as eligible. The test checks the source main nonce,
+unchanged zero Maintenance useful-output credit, source REGISTER and requester
+OPEN client confirmation under the installed depth+required-work policy,
+and cold-reopen readback of the selected task. A source-signed statement is
+**not** manufactured by the scheduler and the failed old selected lease is
+never used as an implicit mining fallback. No alternate W1, new Q4 domain,
+retarget or activation setting is installed.
+
+**Evidence status:** source is committed but Rust compilation and the expensive
+opt-in native selector are **NOT_RUN** in this working environment, which has
+Python/Go but no Rust toolchain or full project checkout. The apparent source
+flow is not an independent client implementation, a public real-task source,
+physical failure test, signer-operator independence or a P0 acceptance receipt.
+The test now additionally reconstructs a distinct empty SQLite receiver by
+fetching every one of 1,111 original Packet bodies and invoking its own native
+`Node::admit` / `activate`, then rechecks both receipt confirmations and
+cold-open state. A mutated historic W1 proof is an explicit rejection probe.
+This is real separate-state re-execution **when run**, not a separate client
+implementation or an independently governed operator. Strict third-party
+history/proof replay, real source owners and fault-domain evidence remain
+mandatory P0 exits. Do not convert missing execution into PASS on a source
+integrity or CI-status basis.
