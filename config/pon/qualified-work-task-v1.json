@@ -1,0 +1,72 @@
+{
+  "schema": "pon-qualified-work-task-registry-v1",
+  "status": "source-attested-development-admission-not-hardness-qualification",
+  "production_eligible": false,
+  "hardness_accepted": false,
+  "activated_in_existing_context": false,
+  "manifest_magic": "QWT1",
+  "manifest_version": 1,
+  "manifest_bytes": 584,
+  "signed_packet_magic": "QWA1",
+  "signed_packet_bytes": 652,
+  "signature": "strict-ed25519-over-H(qualified-task-source-sign-v1,manifest-bytes)",
+  "purposes": {
+    "1": "maintenance-no-model-value-credit",
+    "2": "source-attested-adapter-contraction",
+    "3": "source-attested-evaluation-contraction",
+    "4": "source-attested-inference-contraction"
+  },
+  "cost_classes": {
+    "1": "fixed-experimental-transcript64-not-a-computational-lower-bound"
+  },
+  "numeric_encodings": {
+    "1": "canonical-row-major-u32-le-less-than-4294967291"
+  },
+  "hardness_statuses": {
+    "0": "not-accepted-no-accepted-value-in-this-version"
+  },
+  "reuse_modes": {
+    "1": "fresh-header-per-attempt-single-output-meter-across-attempts"
+  },
+  "recipe": "canonical-field-matrix64-product-v1",
+  "shape": [64, 64, 64],
+  "model_bytes": 16384,
+  "input_bytes": 16384,
+  "logical_result_multiply_add_units": 262144,
+  "maximum_validity_blocks": 1000,
+  "useful_output_limit": "maintenance=0,other-source-attested-purpose=1;not-a-utility-score",
+  "hash_order": [
+    "network", "parameters", "work_profile", "source", "demand_id", "source_record",
+    "model", "layer", "input", "recipe", "matrix_task", "availability_manifest",
+    "availability_root", "authorization_scope", "withdrawal_head", "output_meter"
+  ],
+  "u64_order": [
+    "demand_nonce", "not_before", "expires", "available_until", "logical_multiply_add_units"
+  ],
+  "u32_order": ["model_bytes", "input_bytes", "useful_output_limit"],
+  "fresh_profile": {
+    "name": "signed-task-dev-v1",
+    "consensus_revision": 5,
+    "registration_tag": 13,
+    "registration_payload_bytes": 652,
+    "registration_envelope_bytes": 811,
+    "registration_fee_units": 100,
+    "genesis_demand_records": 16,
+    "source": "public-development-account-0-from-H(DEV-ONLY-KEY,LE64(0));not-production-secret-custody",
+    "demand_purpose": "index0=maintenance;index%3=1 inference,2 evaluation,0 adapter for indices1..15",
+    "bootstrap": "explicit-maintenance-demand0,source_nonce1,validity0..1000,no-arithmetic-output-credit",
+    "required_retention_blocks": 100,
+    "withdrawal": "fixed-context-bound-genesis-zero-frontier;no-live-withdrawal-command-in-v1",
+    "source_nonce": "strict-global-source-increment-at-registration,branch-relative",
+    "replay": "demand-nullifier-and-matrix-task-uniqueness-in-branch-state",
+    "meter": "branch-relative-one-arithmetic-output-per-identity;no-model-utility-or-additional-reward"
+  },
+  "ledger_integration": "Implemented tag13 only in explicit fresh signed-task-dev-v1 native contexts; tag12 and implicit maintenance are refused there. Historical default genesis, tag12 and golden roots remain unchanged.",
+  "remaining_assumptions": [
+    "Caller-pinned signed source records are an explicit attested trust contract, not truthful demand or legal/local authorization.",
+    "Present model/input bytes prove availability at this admission only, not independent custodians or promised retention.",
+    "One exact field-matrix contraction does not prove a whole classifier/LLM, learned marginal contribution or general circuit optimality.",
+    "The existing work verifier and relation remain unchanged; shortcut hardness and hostile-proof admission remain unaccepted.",
+    "Native branch storage enforces parent eligibility, source sequence, fixed withdrawal frontier and one arithmetic-output meter. The genesis demand list is finite fixture data, and bootstrap maintenance expires at height1000; this is not a production liveness contract."
+  ]
+}

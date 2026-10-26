@@ -1,0 +1,235 @@
+{
+  "encoder_component_comparison": {
+    "quantiles": "median of 16 paired alternating-order samples per arm; each sample contains 16 complete comparisons; no p95/p99 reliability claim",
+    "raw_log": "state-buffer-native/timing.log",
+    "rows": [
+      {
+        "comparisons_per_sample": 16,
+        "median_elapsed_reduction_fraction": 0.12259395561503295,
+        "original_median_ns_per_comparison": 47637.1875,
+        "original_raw_samples_ns": [
+          1523655,
+          842282,
+          845589,
+          794821,
+          837453,
+          764420,
+          759970,
+          859329,
+          764575,
+          736309,
+          722623,
+          724278,
+          729562,
+          728891,
+          728757,
+          730571
+        ],
+        "reused_median_ns_per_comparison": 41797.15625,
+        "reused_raw_samples_ns": [
+          760660,
+          742665,
+          699691,
+          703529,
+          694652,
+          696941,
+          666699,
+          670810,
+          645760,
+          644959,
+          713737,
+          650006,
+          645865,
+          646002,
+          646401,
+          647494
+        ],
+        "samples_per_arm": 16,
+        "state_keys": 64
+      },
+      {
+        "comparisons_per_sample": 16,
+        "median_elapsed_reduction_fraction": 0.09750263482953048,
+        "original_median_ns_per_comparison": 379916.65625,
+        "original_raw_samples_ns": [
+          6135177,
+          6190725,
+          6074529,
+          6019311,
+          6117656,
+          6163660,
+          6025286,
+          6021011,
+          6024677,
+          6023442,
+          6116708,
+          6164390,
+          6076151,
+          6081182,
+          6062631,
+          6213112
+        ],
+        "reused_median_ns_per_comparison": 342873.78125,
+        "reused_raw_samples_ns": [
+          5973991,
+          6023259,
+          5526244,
+          5474206,
+          5494805,
+          5447763,
+          5450405,
+          5536807,
+          5477156,
+          5432857,
+          5427676,
+          5427695,
+          5501158,
+          5616138,
+          5562678,
+          5442376
+        ],
+        "samples_per_arm": 16,
+        "state_keys": 512
+      },
+      {
+        "comparisons_per_sample": 16,
+        "median_elapsed_reduction_fraction": 0.1422922815568638,
+        "original_median_ns_per_comparison": 3207551.0,
+        "original_raw_samples_ns": [
+          53223522,
+          47032539,
+          48260902,
+          46607141,
+          51502237,
+          56132048,
+          53253570,
+          51976778,
+          52749429,
+          53948335,
+          47126977,
+          51139395,
+          53382742,
+          49996972,
+          48487122,
+          46164535
+        ],
+        "reused_median_ns_per_comparison": 2751141.25,
+        "reused_raw_samples_ns": [
+          44978923,
+          46014038,
+          51983960,
+          44998796,
+          43173393,
+          47346600,
+          52040953,
+          51935976,
+          41287033,
+          43405012,
+          43223903,
+          40146530,
+          42924439,
+          44631508,
+          43281184,
+          42544782
+        ],
+        "samples_per_arm": 16,
+        "state_keys": 4096
+      }
+    ],
+    "scope": "Repeated canonical-byte comparison of the same state; allocating reference versus reused buffer within one native release test binary. No SQLite, execution, root construction, network, cold recovery or public throughput claim."
+  },
+  "independent_operator_campaign": false,
+  "observed_date_utc": "2026-10-18",
+  "production_activation": false,
+  "required_end_to_end_metrics": {
+    "candidate_to_actual_install_p50_p95_p99": {
+      "reason": "Not measured by these native component tests; retain separate actual end-to-end observations.",
+      "value": null
+    },
+    "honest_completion_during_attack": {
+      "reason": "Not measured by these native component tests; retain separate actual end-to-end observations.",
+      "value": null
+    },
+    "installed_and_subsequently_qualified_updates": {
+      "reason": "Not measured by these native component tests; retain separate actual end-to-end observations.",
+      "value": null
+    },
+    "loss_reorg_restart_new_node_cost": {
+      "reason": "Not measured by these native component tests; retain separate actual end-to-end observations.",
+      "value": null
+    },
+    "proof_verification_and_state_commit_rates": {
+      "reason": "Not measured by these native component tests; retain separate actual end-to-end observations.",
+      "value": null
+    },
+    "unique_valid_confirmed_transactions_per_second": {
+      "reason": "Not measured by these native component tests; retain separate actual end-to-end observations.",
+      "value": null
+    }
+  },
+  "runs": [
+    {
+      "all_recorded_commands_passed": true,
+      "directory": "root-native-d76",
+      "native_host": "main",
+      "runtime_job_id": "1a14eee6c6e-1b6abb-131f",
+      "source_commit": "d76a0d0d1f8d8d685d40816ad1978b52f3aa97d0",
+      "source_tree": "50bb47d35473a059d75af5416bfd9bfcb3dbe672",
+      "test_counts": {
+        "accepted-task.log": {
+          "failed": 0,
+          "ignored": 0,
+          "passed": 4,
+          "test_executables": 1
+        },
+        "native-node.log": {
+          "failed": 0,
+          "ignored": 1,
+          "passed": 30,
+          "test_executables": 1
+        },
+        "worker.log": {
+          "failed": 0,
+          "ignored": 0,
+          "passed": 369,
+          "test_executables": 3
+        }
+      }
+    },
+    {
+      "all_recorded_commands_passed": true,
+      "directory": "state-buffer-native",
+      "native_host": "main",
+      "runtime_job_id": "1a14ef66d87-1b6abb-1339",
+      "source_commit": "336f95bd93df803527afdb50a9a4e1c8992bcbc8",
+      "source_tree": "fea26e5b3bc3cbc30a8584363da9aabf87279ce4",
+      "test_counts": {
+        "accepted-task.log": {
+          "failed": 0,
+          "ignored": 0,
+          "passed": 4,
+          "test_executables": 1
+        },
+        "live-state.log": {
+          "failed": 0,
+          "ignored": 0,
+          "passed": 3,
+          "test_executables": 1
+        },
+        "mvcc.log": {
+          "failed": 0,
+          "ignored": 6,
+          "passed": 123,
+          "test_executables": 11
+        },
+        "timing.log": {
+          "failed": 0,
+          "ignored": 0,
+          "passed": 1,
+          "test_executables": 10
+        }
+      }
+    }
+  ],
+  "schema": "pon-upgrade-native-component-observations-v1"
+}

@@ -1,0 +1,15 @@
+{
+  "schema": "release-finality-source-inputs-v2",
+  "chain_native_parent": "6861cdcd74ddb236ef01a5c6d9cc6b08d94e683f",
+  "chain_native_tree": "111e3c0f7244dc7f5a951c2c2751537a155f7d5f",
+  "chain_target_main": "9fedf7ecbbe07177069c030592b4e03dcffebb81",
+  "finality_draft_ported_not_used_as_runtime_base": "a598d586239b9c019d4a1cd4df01d70c1d39f387",
+  "hepta_source": "e2beb203c64b4198c49050adf0992dcbe8f3efe8",
+  "hepta_tree": "842e922fb641e68f32834258429a38681ec080b6",
+  "hepta_target_main": "78fdb0cf8537e3a84fc6e0a849707559c80881e8",
+  "old_ci_credit_transfers": false,
+  "new_candidate_commit_and_actual_merge": "derive from Git/CI, not self-referential file constants",
+  "all_stage_exits_complete": false,
+  "independent_neural_generations": 0,
+  "ordinary_runtime_activation": false
+}

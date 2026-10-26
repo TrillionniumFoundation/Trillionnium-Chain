@@ -2,6 +2,13 @@
 """Read-only project/branch/source boundary; never changes remote policy."""
 import json, pathlib, re, subprocess, sys, tomllib
 ROOT=pathlib.Path(__file__).resolve().parents[2]
+# GitHub checkout uses the HTTPS URL without .git. Keep an exact allowlist;
+# do not normalize foreign hosts, repository suffixes, credentials or URL extras.
+CANONICAL_ORIGINS=frozenset({
+    'https://github.com/TrillionniumFoundation/Trillionnium-Chain',
+    'https://github.com/TrillionniumFoundation/Trillionnium-Chain.git',
+    'git@github.com:TrillionniumFoundation/Trillionnium-Chain.git',
+})
 def require(ok,msg):
     if not ok: raise ValueError(msg)
 def git(*args):
@@ -16,7 +23,7 @@ def check(mode):
     require(source('PROJECT_ID',mode).strip()=='trillionnium-chain','project id mismatch')
     require(p['canonical_repository']=='TrillionniumFoundation/Trillionnium-Chain','repository mismatch')
     origin=git('remote','get-url','origin')
-    require(origin in {'https://github.com/TrillionniumFoundation/Trillionnium-Chain.git','git@github.com:TrillionniumFoundation/Trillionnium-Chain.git'},'origin mismatch')
+    require(origin in CANONICAL_ORIGINS,'origin mismatch')
     require(p['lane']=='chain-consensus','lane mismatch')
     require(p['consensus']['production_consensus_activation'] is False,'activation changed')
     require(p['consensus']['development_target']=='pon-nakamoto-v1','target mismatch')
@@ -42,7 +49,7 @@ def check(mode):
                     require(resolved.is_relative_to(ROOT/'trillionnium/crates'),'external path dependency')
                     require(resolved.is_dir(),'missing path dependency')
     if mode=='--push':
-        require(sys.argv[2]=='origin' and sys.argv[3] in {origin,'https://github.com/TrillionniumFoundation/Trillionnium-Chain.git'},'push target mismatch')
+        require(sys.argv[2]=='origin' and sys.argv[3] in CANONICAL_ORIGINS,'push target mismatch')
         updates=sys.stdin.read().splitlines()
         require(bool(updates),'no exact push updates supplied')
         for line in updates:

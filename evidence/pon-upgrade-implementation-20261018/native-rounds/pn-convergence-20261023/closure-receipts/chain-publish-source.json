@@ -1,0 +1,10 @@
+{
+  "head": "96a98a635def8c13b2d4f234aa1daee59c57afa0",
+  "tree": "0fe4e15495f0ce643db9f222ca087e518618df7b",
+  "base": "9fedf7ecbbe07177069c030592b4e03dcffebb81",
+  "previous_candidate": "8daf4d717fad698b641e9aa78385768be8a4724a",
+  "scope": "Final source after lossless evidence packaging correction; source code and tests unchanged from the prior candidate.",
+  "archive_files_verified": 108,
+  "original_logs_verified": 68,
+  "pushed": false
+}

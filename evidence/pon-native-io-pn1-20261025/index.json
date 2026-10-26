@@ -1,0 +1,83 @@
+{
+  "schema": "pn1-finite-native-io-evidence-index-v1",
+  "utc": "2026-10-25T23:15:10.296823+00:00",
+  "source_commit": "630f871293e48588e0a1ceae7ceb64973d3ec31d",
+  "source_is_uncommitted_overlay": true,
+  "files": [
+    {
+      "file": "node001-original-failure.json",
+      "bytes": 5837,
+      "sha256": "4f428c37a1b060b1840d648ced28bff0b72e18392241957287e1412f468c40f8",
+      "original_local_archive_path": "work/ci-follow/pn1-node-authenticated-native-io-root-control-20261025-001/native-execution-001/execution-receipt.json",
+      "verbatim_copy": true
+    },
+    {
+      "file": "node002-original-failure.json",
+      "bytes": 8138,
+      "sha256": "9862f470940b9665a2ecf5a208523a104449687b3bfa001bef44fc6556a69a84",
+      "original_local_archive_path": "work/ci-follow/pn1-node-authenticated-native-io-root-control-20261025-001/native-execution-002/execution-receipt.json",
+      "verbatim_copy": true
+    },
+    {
+      "file": "node004-finite-pass.json",
+      "bytes": 6246,
+      "sha256": "74c6263f6ebb521f2ae2c2573438bfff876b41c0542ed3d4c1a0c09849517fe9",
+      "original_local_archive_path": "work/ci-follow/pn1-node-authenticated-native-io-root-control-20261025-001/native-execution-004/execution-receipt.json",
+      "verbatim_copy": true
+    },
+    {
+      "file": "vfs003-finite-pass.json",
+      "bytes": 1872,
+      "sha256": "0a07392201bf6ad37bdea95abd071d327f80d85f2aef9a87bb55948bb1b0daa8",
+      "original_local_archive_path": "work/ci-follow/pn1-vfs-root-native-controls-v2-20261025-001/native-execution-003/execution-receipt.json",
+      "verbatim_copy": true
+    },
+    {
+      "file": "node004-cold-state.json",
+      "bytes": 856,
+      "sha256": "237a7eef5fd1e0acd4994fdadeb6664a5aabfd1dd40e611fed2a19b6d8ef7a23",
+      "original_local_archive_path": "work/ci-follow/pn1-node-authenticated-native-io-root-control-20261025-001/native-execution-004/observations/cold-state.json",
+      "verbatim_copy": true
+    },
+    {
+      "file": "node004-service-terminal.json",
+      "bytes": 3382,
+      "sha256": "fbea3661bb3298e6a9e9444f9b5af63b2721d7b827c828761b9588dca8695ef0",
+      "original_local_archive_path": "work/ci-follow/pn1-node-authenticated-native-io-root-control-20261025-001/native-execution-004/observations/public-service-terminal.json",
+      "verbatim_copy": true
+    },
+    {
+      "file": "readonly-close.patch",
+      "bytes": 1699,
+      "sha256": "71a3e1dbf55a728d40917c2ee9a04ea0000f823322fadb22a726341303704ee7",
+      "original_local_archive_path": "work/ci-follow/pn1-vfs-readonly-close-candidate-20261025-001/readonly-close.patch",
+      "verbatim_copy": true
+    },
+    {
+      "file": "clippy006.json",
+      "bytes": 1613,
+      "sha256": "26147a19fb06001ebfc5dbe6e20c5cdbb5a91fdb35aa853f08c775af0e735f77",
+      "original_local_archive_path": "work/ci-follow/pn1-vfs-root-native-controls-v2-20261025-001/strict-clippy-006/result.json",
+      "verbatim_copy": true
+    },
+    {
+      "file": "fmt-check.json",
+      "bytes": 221,
+      "sha256": "0ff1a8429529fa93fe2f3d7a4fce6dd453c6bd228bb4f6e571593d0799b202fe",
+      "original_local_archive_path": "work/ci-follow/pn1-readonly-close-final-fmt-check-20261025-001/result.json",
+      "verbatim_copy": true
+    },
+    {
+      "file": "sqlite-wal-reset-dependency-audit.json",
+      "bytes": 8277,
+      "sha256": "634dd4dfb1b581ff6ad82256f8c217593f9d8a487a13f2611683e46cd2baf78f",
+      "original_local_archive_path": "work/ci-follow/sqlite-wal-reset-dependency-audit-20261025-001/independent-receipt.json",
+      "verbatim_copy": true
+    }
+  ],
+  "raw_all_files_and_ELFs_available_in_local_archive_not_in_this_index": true,
+  "full_W1_4097_qualified": false,
+  "whole_campaign_IO_boundary_implemented": false,
+  "SQLite_WAL_reset_dependency_disposed": false,
+  "merge_ready": false
+}
