@@ -2,6 +2,7 @@
 from __future__ import annotations
 from dataclasses import replace
 import hashlib
+import struct
 from pathlib import Path
 import sqlite3
 import tempfile
@@ -132,6 +133,48 @@ class RenewalOutboxTests(unittest.TestCase):
             raw.execute("UPDATE q4_outbox_events_v1 SET observation=? WHERE ordinal=2",(b'forged',))
         with self.assertRaisesRegex(OutboxError,'EVENT_DIGEST'):
             self.open()
+
+    def test_cold_audit_rejects_rehashed_noncanonical_observations(self):
+        # An event's hash alone is not a proof that its payload used canonical bytes.
+        # These mutations recompute the local event digest; they are NOT an adversary
+        # with authority over authenticated client observations or host durability.
+        from q4_renewal_outbox_research import EVENT_DOMAIN
+        scenarios = [
+            ('zero tip', 8, b'\\x00'*32),
+            ('zero receipt', 81, b'\\x00'*32),
+            ('zero generation', 0, b'\\x00'*8),
+            ('zero included block', 49, b'\\x00'*32),
+            ('invalid kind tag', 48, b'\\xff'),
+        ]
+        for label, offset, patch in scenarios:
+            with self.subTest(label=label):
+                case = Path(self.tmp.name) / (label.replace(' ', '_')+'.sqlite')
+                with RenewalOutbox(case,N,P,G) as db:
+                    key=db.prepare(intent());db.dispatch_unknown(key)
+                    db.observe(key,observation('included',2))
+                with sqlite3.connect(case) as raw:
+                    ordinal,ident,kind,original,prev = raw.execute(
+                        'SELECT ordinal,intent_id,kind,observation,prev '
+                        'FROM q4_outbox_events_v1 WHERE ordinal=2'
+                    ).fetchone()
+                    forged=original[:offset]+patch+original[offset+len(patch):]
+                    digest=hashlib.sha256(EVENT_DOMAIN + struct.pack('>Q',ordinal)
+                                          + ident + kind.encode('ascii') + forged + prev).digest()
+                    raw.execute('UPDATE q4_outbox_events_v1 SET observation=?,digest=? '
+                                'WHERE ordinal=2',(forged,digest))
+                with self.assertRaisesRegex(OutboxError,'OBSERVATION_'):
+                    RenewalOutbox(case,N,P,G)
+
+    def test_valid_reorg_unavailable_replay_still_passes_canonical_audit(self):
+        with self.open() as db:
+            key=db.prepare(intent());db.dispatch_unknown(key)
+            for generation,kind in enumerate(
+                    ('included','confirmed','reorged','unavailable','expired'),start=1):
+                db.observe(key,observation(kind,generation))
+            self.assertEqual(db.audit(),6)
+        with self.open() as db:
+            self.assertEqual(db.audit(),6)
+            self.assertTrue(db.status(key)['dispatch_unknown'])
 
     def test_foreign_schema_context_symlink_and_oversized_inputs_refuse(self):
         with self.open() as db:
