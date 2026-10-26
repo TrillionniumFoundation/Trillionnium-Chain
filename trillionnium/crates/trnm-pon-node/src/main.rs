@@ -668,6 +668,20 @@ fn growth_network_options(command: &str, args: &BTreeMap<String, String>) -> Res
     Ok(true)
 }
 
+/// The listener is not the only external input. A loopback-only V3 listener
+/// can still import hostile W1 History over a nonloopback pinned peer. Select
+/// an actual configured remote endpoint as the kernel-policy trigger; this
+/// function grants no transport, budget or consensus authority.
+fn public_host_resource_address(
+    listener: std::net::SocketAddr,
+    peers: impl IntoIterator<Item = std::net::SocketAddr>,
+) -> std::net::SocketAddr {
+    peers
+        .into_iter()
+        .find(|peer| !peer.ip().is_loopback())
+        .unwrap_or(listener)
+}
+
 // Refuse an option/profile mismatch BEFORE opening a Node or service
 // ledger, rather than silently accepting a kernel-cap claim on another lane.
 fn validate_host_kernel_profile(command: &str, args: &BTreeMap<String, String>) -> Result<()> {
@@ -2235,8 +2249,17 @@ fn run() -> Result<Value> {
                     // Existing root-provisioned cgroup v2 parent: the actual
                     // kernel, not another local counter, enforces aggregate
                     // CPU/memory/task ceilings across independent processes.
-                    let host_kernel = host_public_guard::require_host_kernel_budget(
+                    let kernel_source = public_host_resource_address(
                         listener.local_addr()?,
+                        polling
+                            .iter()
+                            .flat_map(|cfg| cfg.peers.iter().map(|peer| peer.address)),
+                    );
+                    // Even a loopback-only V3 listener must use the SAME
+                    // root-owned CPU/memory/PID cgroup if it retrieves remote
+                    // History from an operator-pinned nonloopback peer.
+                    let host_kernel = host_public_guard::require_host_kernel_budget(
+                        kernel_source,
                         args.get("--host-kernel-parent").map(String::as_str),
                     )?;
                     // Host counters aggregate ALL child processes of this same
@@ -2596,6 +2619,21 @@ mod tests {
         assert_eq!(cli_error_line(&error), "PUBLIC_MUTATION_CPU_BUDGET");
         assert_eq!(error.to_string(), "PUBLIC_MUTATION_CPU_BUDGET");
         assert!(error.is(trnm_pon_node::ErrorCode::PublicMutationCpuBudget));
+    }
+
+    #[test]
+    fn loopback_service_with_remote_pinned_peer_still_requires_original_host_budget() {
+        let loopback: std::net::SocketAddr = "127.0.0.1:10001".parse().unwrap();
+        let remote: std::net::SocketAddr = "198.51.100.8:10002".parse().unwrap();
+        let remote_ipv6: std::net::SocketAddr = "[2001:db8::5]:10003".parse().unwrap();
+        assert_eq!(public_host_resource_address(loopback, []), loopback);
+        assert_eq!(public_host_resource_address(loopback, [loopback]), loopback);
+        assert_eq!(public_host_resource_address(loopback, [loopback, remote]), remote);
+        assert_eq!(public_host_resource_address(loopback, [remote_ipv6]), remote_ipv6);
+        assert!(!public_host_resource_address(loopback, [remote]).ip().is_loopback());
+        // The kernel owner is checked by the EXISTING fixed parent validator.
+        // No local resource token or signed W1 policy change is introduced.
+        assert!(host_public_guard::require_host_kernel_budget(remote, None).is_err());
     }
 
     #[test]
