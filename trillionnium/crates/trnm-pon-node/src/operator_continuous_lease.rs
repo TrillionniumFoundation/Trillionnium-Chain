@@ -192,12 +192,16 @@ pub fn forecast_q4_renewal_window(
         .ok_or(PolicyError::Budget)?;
     let earliest = next_block_height.max(next.not_before);
     let remaining = old.expires.saturating_sub(earliest);
+    // If the future signed window opens too near old.expires, the assumed
+    // queue delay plus safety margin may already be impossible. Report that
+    // risk even before next.not_before; an advisory AwaitSignedWindow alone
+    // would hide the exhausted height budget. This is not admission authority.
     let phase = if next_block_height > old.expires {
         Q4RenewalPhase::Expired
-    } else if next_block_height < next.not_before {
-        Q4RenewalPhase::AwaitSignedWindow
     } else if remaining < need {
         Q4RenewalPhase::AtRisk
+    } else if next_block_height < next.not_before {
+        Q4RenewalPhase::AwaitSignedWindow
     } else {
         Q4RenewalPhase::WindowOpenByTime
     };
