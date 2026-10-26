@@ -107,3 +107,13 @@ and cargo are unavailable here. Only the Python 6/6 test outcome and
 Python JSON are observed. Rust source/test presence is NOT native
 acceptance, and even a future Rust PASS will not prove W1 validity,
 authenticated on-disk integration or independent operator security.
+
+## Durable crash/reorg research follow-on (not installed)
+
+The separate [SQLite shadow journal](DAA_SQLITE_SHADOW_JOURNAL_RESEARCH_V1.md) now
+covers bounded atomic header/projection-identity storage, branch selection
+compare-and-swap, cold ancestry audit, corruption and injected crash cuts.
+It stores an **untrusted upstream-supplied projection digest**, so it neither
+verifies actual W1 nor supplies native M07 ownership or a production DAA. Its
+10 Python tests are not native consensus qualification. This experimental
+writer must NOT be wired as a second authoritative Node database.

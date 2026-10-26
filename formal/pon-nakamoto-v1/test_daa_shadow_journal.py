@@ -1,0 +1,184 @@
+"""Research-only crash/reorg/fault controls; zero authentic native W1 proofs."""
+from __future__ import annotations
+
+import hashlib
+from pathlib import Path
+import sqlite3
+import tempfile
+import unittest
+
+from daa_shadow_journal import ShadowHeader, ShadowJournal, JournalError, UnknownEffect, ZERO
+
+
+def sha(blob: bytes) -> bytes:
+    return hashlib.sha256(blob).digest()
+
+CTX = sha(b'non-authoritative-context')
+GEN = sha(b'nonce-free-genesis')
+TGT = (1 << 220).to_bytes(32, 'big')
+
+
+def candidate(parent: bytes, h: int, marker: int = 0) -> tuple[ShadowHeader, bytes]:
+    # These are LABORATORY BYTES; not work-checked PoN packets.
+    packet = b'RESEARCH_ONLY_NOT_W1:' + h.to_bytes(8, 'big') + marker.to_bytes(4, 'big')
+    block = sha(parent + packet)
+    derived = sha(b'projection-outside-authority:' + parent + packet)
+    return (ShadowHeader(block, parent, h, 1_700_000_000 + h * 10 + marker,
+                         TGT, sha(packet), derived), packet)
+
+
+class ShadowJournalTests(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.path = Path(self.tmp.name) / 'research-only.sqlite'
+
+    def tearDown(self):
+        self.tmp.cleanup()
+
+    def test_reboot_exact_identity_replay_cas_and_branch_retention(self):
+        with ShadowJournal(self.path, CTX, GEN) as journal:
+            first, packet1 = candidate(GEN, 1)
+            journal.append(first, packet1)
+            self.assertEqual(journal.append(first, packet1), first)
+            fork1, packet_f1 = candidate(first.block_id, 2, 1)
+            fork2, packet_f2 = candidate(first.block_id, 2, 2)
+            journal.append(fork1, packet_f1)
+            journal.append(fork2, packet_f2)
+            self.assertEqual(journal.activate(fork1.block_id, GEN), fork1.block_id)
+            with self.assertRaisesRegex(JournalError, 'ACTIVE_GENERATION_CONFLICT'):
+                journal.activate(fork2.block_id, GEN)
+        with ShadowJournal(self.path, CTX, GEN) as journal:
+            self.assertEqual(journal.audit(), 3)
+            self.assertEqual(journal.active(), fork1.block_id)
+            self.assertEqual(journal.get(fork2.block_id), fork2)
+            journal.activate(fork2.block_id, fork1.block_id)
+        with ShadowJournal(self.path, CTX, GEN) as journal:
+            self.assertEqual(journal.active(), fork2.block_id)
+            self.assertEqual(journal.get(fork1.block_id), fork1)
+
+    def test_crash_cuts_do_not_publish_partial_headers(self):
+        with ShadowJournal(self.path, CTX, GEN) as journal:
+            for stage in ('before_insert', 'after_insert', 'before_commit'):
+                entry, packet = candidate(GEN, 1, len(stage))
+                with self.assertRaisesRegex(JournalError, 'INJECTED_'):
+                    journal.append(entry, packet, fail_at=stage)
+                with self.assertRaisesRegex(JournalError, 'UNKNOWN_PARENT_OR_HEADER'):
+                    journal.get(entry.block_id)
+                self.assertEqual(journal.audit(), 0)
+            entry, packet = candidate(GEN, 1, 9)
+            with self.assertRaises(UnknownEffect):
+                journal.append(entry, packet, fail_at='after_commit')
+            self.assertEqual(journal.get(entry.block_id), entry)
+        with ShadowJournal(self.path, CTX, GEN) as journal:
+            self.assertEqual(journal.audit(), 1)
+            self.assertEqual(journal.append(entry, packet), entry)
+
+    def test_cas_fault_before_and_after_commit_preserves_unknowns(self):
+        with ShadowJournal(self.path, CTX, GEN) as journal:
+            entry, packet = candidate(GEN, 1)
+            journal.append(entry, packet)
+            with self.assertRaisesRegex(JournalError, 'INJECTED_BEFORE_COMMIT'):
+                journal.activate(entry.block_id, GEN, fail_at='before_commit')
+            self.assertEqual(journal.active(), GEN)
+            with self.assertRaises(UnknownEffect):
+                journal.activate(entry.block_id, GEN, fail_at='after_commit')
+            self.assertEqual(journal.active(), entry.block_id)
+            with self.assertRaisesRegex(JournalError, 'ACTIVE_GENERATION_CONFLICT'):
+                journal.activate(entry.block_id, GEN)
+
+    def test_immutable_context_foreign_schema_packet_and_collision(self):
+        with ShadowJournal(self.path, CTX, GEN) as journal:
+            one, packet = candidate(GEN, 1)
+            with self.assertRaisesRegex(JournalError, 'PACKET_DIGEST_OR_LENGTH'):
+                journal.append(one, packet + b'change')
+            journal.append(one, packet)
+            changed = ShadowHeader(one.block_id, one.parent_id, one.height,
+                                   one.timestamp + 1, one.target, one.packet_hash,
+                                   one.projection_hash)
+            with self.assertRaisesRegex(JournalError, 'HEADER_COLLISION'):
+                journal.append(changed, packet)
+            unknown, p2 = candidate(sha(b'unknown'), 2)
+            with self.assertRaisesRegex(JournalError, 'UNKNOWN_PARENT_OR_HEADER'):
+                journal.append(unknown, p2)
+        with self.assertRaisesRegex(JournalError, 'DATABASE_CONTEXT'):
+            ShadowJournal(self.path, sha(b'other'), GEN)
+        with ShadowJournal(self.path, CTX, GEN) as journal:
+            self.assertEqual(journal.audit(), 1)
+
+    def test_tampered_original_row_refuses_cold_open(self):
+        with ShadowJournal(self.path, CTX, GEN) as journal:
+            first, packet = candidate(GEN, 1)
+            journal.append(first, packet)
+            second, raw = candidate(first.block_id, 2)
+            journal.append(second, raw)
+        with sqlite3.connect(self.path) as db:
+            raw = bytearray(db.execute('SELECT canonical FROM daa_shadow_headers_v1 WHERE block_id=?',
+                                       (first.block_id,)).fetchone()[0])
+            raw[72] ^= 1  # changes earliest timestamp without updating identity/witness
+            db.execute('UPDATE daa_shadow_headers_v1 SET canonical=? WHERE block_id=?',
+                       (bytes(raw), first.block_id))
+        with self.assertRaisesRegex(JournalError, 'DATABASE_ROW_DIGEST'):
+            ShadowJournal(self.path, CTX, GEN)
+
+    def test_corrupt_digest_refused_even_on_identical_replay(self):
+        with ShadowJournal(self.path, CTX, GEN) as journal:
+            one, packet = candidate(GEN, 1)
+            journal.append(one, packet)
+            journal.db.execute('UPDATE daa_shadow_headers_v1 SET digest=? WHERE block_id=?',
+                               (sha(b'wrong-row'), one.block_id))
+            with self.assertRaisesRegex(JournalError, 'HEADER_ROW_DIGEST'):
+                journal.append(one, packet)
+            with self.assertRaisesRegex(JournalError, 'HEADER_ROW_DIGEST'):
+                journal.get(one.block_id)
+
+    def test_hot_read_refuses_noncanonical_height_index(self):
+        with ShadowJournal(self.path, CTX, GEN) as journal:
+            one, packet = candidate(GEN, 1)
+            journal.append(one, packet)
+            journal.db.execute('UPDATE daa_shadow_headers_v1 SET height=? WHERE block_id=?',
+                               ((42).to_bytes(8, 'big'), one.block_id))
+            with self.assertRaisesRegex(JournalError, 'HEADER_INDEX_DRIFT'):
+                journal.get(one.block_id)
+            with self.assertRaisesRegex(JournalError, 'HEADER_INDEX_DRIFT'):
+                journal.append(one, packet)
+
+    def test_missing_parent_and_orphan_active_rejected(self):
+        with ShadowJournal(self.path, CTX, GEN) as journal:
+            first, packet = candidate(GEN, 1)
+            journal.append(first, packet)
+            second, raw = candidate(first.block_id, 2)
+            journal.append(second, raw)
+            journal.activate(second.block_id, GEN)
+        with sqlite3.connect(self.path) as db:
+            db.execute('DELETE FROM daa_shadow_headers_v1 WHERE block_id=?', (first.block_id,))
+        with self.assertRaisesRegex(JournalError, 'DATABASE_BRANCH_OR_PARENT'):
+            ShadowJournal(self.path, CTX, GEN)
+
+    def test_bounded_budget_and_high_64bit_height_encoding(self):
+        with ShadowJournal(self.path, CTX, GEN, max_headers=1) as journal:
+            first, packet = candidate(GEN, 1)
+            journal.append(first, packet)
+            second, raw = candidate(first.block_id, 2)
+            with self.assertRaisesRegex(JournalError, 'HEADER_BUDGET'):
+                journal.append(second, raw)
+            bad = ShadowHeader(first.block_id, GEN, 1 << 64, 0, TGT,
+                               sha(packet), sha(b'shadow'))
+            with self.assertRaisesRegex(JournalError, 'height_RANGE'):
+                bad.wire()
+        with self.assertRaisesRegex(JournalError, 'HEADER_BUDGET'):
+            ShadowJournal(self.path, CTX, GEN, max_headers=0)
+
+    def test_symlink_and_preexisting_foreign_database_fail_closed(self):
+        other = Path(self.tmp.name) / 'foreign'
+        with sqlite3.connect(other) as db:
+            db.execute('CREATE TABLE owner_secret(a INTEGER)')
+        with self.assertRaisesRegex(JournalError, 'FOREIGN_SCHEMA'):
+            ShadowJournal(other, CTX, GEN)
+        link = Path(self.tmp.name) / 'link'
+        link.symlink_to(other)
+        with self.assertRaisesRegex(JournalError, 'DATABASE_PATH'):
+            ShadowJournal(link, CTX, GEN)
+
+
+if __name__ == '__main__':
+    unittest.main()
