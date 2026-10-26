@@ -891,6 +891,15 @@ impl ServiceMutationCpuDomain {
             budget: Arc::new(Mutex::new(PaidMutationCpuBudget::new())),
         }
     }
+    /// Trusted one-time receiver import owner, bound to the existing Node.
+    /// A fresh or restarted History sync has ZERO initial CPU credit and
+    /// earns it only from the original fixed rate. No per-peer, per-page,
+    /// per-identity or per-connection allowance can be created by this API.
+    pub(crate) fn process_cold() -> Self {
+        Self {
+            budget: Arc::new(Mutex::new(PaidMutationCpuBudget::cold_start())),
+        }
+    }
     pub fn shares_domain_with(&self, other: &Self) -> bool {
         Arc::ptr_eq(&self.budget, &other.budget)
     }
