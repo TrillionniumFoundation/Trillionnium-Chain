@@ -900,6 +900,34 @@ impl ServiceMutationCpuDomain {
             budget: Arc::new(Mutex::new(PaidMutationCpuBudget::cold_start())),
         }
     }
+    /// No new credit or worker. An operator-owned remote History sync may
+    /// wait a bounded time for the ORIGINAL zero-start bucket to refill.
+    /// A successful observation is not a reservation: begin() still atomically
+    /// rechecks the scalar budget and may refuse under concurrent V3 work.
+    pub(crate) fn await_history_work_credit(&self, deadline: Instant) -> Result<()> {
+        loop {
+            let now = Instant::now();
+            ensure(now < deadline, "PUBLIC_MUTATION_CPU_BUDGET")?;
+            let ready = {
+                let mut budget = self
+                    .budget
+                    .lock()
+                    .map_err(|_| "PUBLIC_MUTATION_CPU_UNAVAILABLE")?;
+                budget.refill(now);
+                ensure(!budget.unavailable, "PUBLIC_MUTATION_CPU_UNAVAILABLE")?;
+                budget.in_flight < MUTATION_CPU_WORKERS
+                    && budget.credit_ns >= i128::from(MUTATION_CPU_START_RESERVE_NS)
+            };
+            if ready {
+                return Ok(());
+            }
+            thread::sleep(
+                deadline
+                    .saturating_duration_since(now)
+                    .min(Duration::from_millis(5)),
+            );
+        }
+    }
     pub fn shares_domain_with(&self, other: &Self) -> bool {
         Arc::ptr_eq(&self.budget, &other.budget)
     }
