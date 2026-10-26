@@ -72,6 +72,7 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
             'scripts/ci/test_pon_w1_cost_matrix_reader.py',
             'scripts/ci/test_pon_public_v3_policy_read.py',
             'scripts/ci/test_llm_cell_handoff_deadline.py',
+            'scripts/test_llm_cell_release.py',
             'scripts/test_llm_runtime_rss_owner.py',
             'scripts/test_llm_runtime_exit_observation.py',
             'scripts/test_llm_inherited_runtime.py',
