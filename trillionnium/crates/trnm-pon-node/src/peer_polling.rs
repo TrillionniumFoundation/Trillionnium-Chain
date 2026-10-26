@@ -1547,6 +1547,48 @@ mod tests {
         assert_eq!(engine.states[0].failures, 7);
     }
     #[test]
+    fn pinned_polling_stops_on_local_cpu_account_failure_but_not_remote_error_text() {
+        let settings = Settings::development(Some(1)).unwrap();
+        let cfg = config(&settings);
+        let mut engine = Engine::new(&cfg, &settings);
+        let mut observed = 0;
+        let error = engine
+            .reject(
+                0,
+                "native_admission",
+                Error::new(ErrorCode::PublicMutationCpuUnavailable),
+                42,
+                None,
+                &mut |event| {
+                    observed += 1;
+                    assert_eq!(event.kind, "failure_cursor_retained");
+                    Ok(())
+                },
+            )
+            .expect_err("unknown original W1 CPU ownership must stop the poller");
+        assert!(error.is(ErrorCode::PublicMutationCpuUnavailable));
+        assert_eq!(engine.states[0].cursor, settings.genesis());
+        assert_eq!(engine.states[0].failures, 1);
+        assert_eq!(observed, 1);
+        // A malicious signed peer cannot force the entire local runtime to
+        // stop by returning the same text as a LOCAL failure.
+        engine.reject(
+            0,
+            "history",
+            Error::remote("PUBLIC_MUTATION_CPU_UNAVAILABLE"),
+            43,
+            None,
+            &mut |event| {
+                observed += 1;
+                assert_eq!(event.kind, "failure_cursor_retained");
+                Ok(())
+            },
+        ).unwrap();
+        assert_eq!(engine.states[0].failures, 2);
+        assert_eq!(observed, 2);
+    }
+
+    #[test]
     fn normal_zero_progress_runtime_does_not_stop_service_and_observer_error_does() {
         let settings = Settings::development(Some(1)).unwrap();
         let dir = tempfile::tempdir().unwrap();
