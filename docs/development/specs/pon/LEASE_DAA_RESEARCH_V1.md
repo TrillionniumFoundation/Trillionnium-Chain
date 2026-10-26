@@ -714,3 +714,39 @@ within this research lineage. None of these cases runs native Rust, produces
 PNW1 valid work, admits a block, proves an independent validator, or qualifies
 public-network difficulty/security. Local proof/admission tests and third-party
 review remain explicit blockers. No legacy DAA or production flag changes.
+
+## Mathematical multi-peer Lease × DAA fault-campaign v1 (2026-10-26)
+
+A separate non-activated research simulator and its executable tests now exercise the
+**same seeded abstract work budget** across legacy 16-block DAA, raw ASERT, and
+MTP11-ASERT under six explicit workload modes: steady mining, network partition/heal,
+all external source leases lost, one specialized miner's production-cost advantage,
+timestamp-endpoint adjustment attempts, and a two-block withholding toy.
+
+- Source: `formal/pon-nakamoto-v1/daa_lease_network_sim_v1.py`.
+- Tests: `formal/pon-nakamoto-v1/test_daa_lease_network_sim_v1.py`.
+- Local command: `cd formal/pon-nakamoto-v1 && python3 -m unittest -v test_daa_lease_network_sim_v1.py`.
+- Recompute the 18 deterministic scenarios with `python3 daa_lease_network_sim_v1.py`.
+- Original local files were executed on Python; **6 of 6** new unit tests passed.
+  This does **not** prove that the integrated exact-head checkout, native Rust or
+  W1-qualified network service passes.
+- Finite campaigns use an exponentially sampled, abstract winning-work event.
+  **No actual PNW1 transcript, source signature, true peer socket, independent
+  operator, stored body, transaction application or energy measurement is produced.**
+  Simplified catch-up can fetch a complete ancestor chain from a global in-memory
+  map, and this expressly assumes perfect history availability. The fixed
+  withholding toy can leave peer views divergent and is retained as an observed
+  negative outcome rather than forced consensus agreement.
+- The maintenance and leased-only modes are explicit at actor construction.
+  Loss of the last external lease stops only leased-only actors; no source
+  signature is fabricated and no expired selected task is silently switched.
+  A differential CPU/GPU/ASIC work-production proof and a real signed Q4 →
+  Maintenance → fresh authorized task → confirmed consumer sequence remain open.
+- The simulator's toy confirmation count uses the installed **depth plus
+  required-work** arithmetic, not finalized or Hepta FinalUse. Work-cost
+  advantages are declared rate multipliers, not evidence that W1 permits them.
+  Results cannot be used to choose or activate a difficulty schedule.
+
+**Closure status stays unchanged:** P0-C cheapest real W1 producer/public flood,
+P1-B real W1 + WAN/partition/withholding, P1-C versioned native ASERT
+fork/reorg/recovery, and P2 independent-operator retention/delivery remain open.
