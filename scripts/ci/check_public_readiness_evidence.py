@@ -209,7 +209,8 @@ def native_durable_schema(root):
     """Extract the legacy evidence schema from one explicitly supported contract.
 
     Historical literal V1, inline composed V2 and the explicitly selected V2
-    backend are supported. Authenticated and permanent-account growth storage
+    backend, including its exact held-I/O delegation, are supported.
+    Authenticated and permanent-account growth storage
     are different evidence scopes; recognizing their exact backend mappings
     must never append their tables or return their domains in this legacy result.
     This is not a Rust evaluator. Unknown bodies/literals fail closed. The shared
@@ -240,6 +241,14 @@ def native_durable_schema(root):
         found = bodies(text,kind,name)
         require(len(found) == 1, 'durable source body '+name)
         return found[0]
+    def header(text, name):
+        code = rust_code(text)
+        found = [match for match in re.finditer(r'\bfn\s+'+re.escape(name)+r'\b',code)
+                 if direct(code,match.start())]
+        require(len(found) == 1, 'durable source header '+name)
+        start = code.find('{',found[0].end())
+        require(start >= 0, 'durable source header '+name)
+        return text[found[0].start():start]
     def layout(actual, expected, message):
         # String payloads are not compared by whitespace normalization. Each
         # schema-affecting literal is also checked, byte for byte, with value().
@@ -333,7 +342,42 @@ def native_durable_schema(root):
             }
             for name, expected in selections.items():
                 layout(body(node,'fn',name),expected,'durable backend opener '+name)
-            selected = rust_code(body(node,'fn','open_selected'))
+            selected = body(node,'fn','open_selected')
+            if re.search(r'\bfn\s+open_selected_with_io\b',rust_code(node)):
+                # This is one known delegation, not a search through arbitrary
+                # callees. Validate the parameter/field join before inspecting
+                # the callee's direct schema binding; a broken bridge cannot
+                # fall back to an old matching pair or a nested method decoy.
+                opening_header = re.sub(r'\bmut\s+settings\s*:', 'settings:',
+                                        header(node,'open_selected'),count=1)
+                layout(opening_header, '''fn open_selected(
+                    path: &Path, settings: Settings, workers: usize,
+                    hook: Option<&mut Hook<'_>>, owners: NativeOwners,
+                    state_backend: StateBackend, growth_observation_only: bool,
+                ) -> Result<Self>''', 'durable backend selector header')
+                layout(selected, '''Self::open_selected_with_io(
+                    path, settings, workers, hook, owners,
+                    NativeStoreOpening { state_backend, growth_observation_only, native_io: None, },
+                )''', 'durable backend selector bridge')
+                layout(body(source,'struct','NativeStoreOpening'), '''
+                    state_backend: StateBackend,
+                    growth_observation_only: bool,
+                    native_io: Option<NativeIoLease>,
+                ''', 'durable backend opening layout')
+                layout(header(node,'open_selected_with_io'), '''fn open_selected_with_io(
+                    path: &Path, settings: Settings, workers: usize,
+                    mut hook: Option<&mut Hook<'_>>, owners: NativeOwners,
+                    opening: NativeStoreOpening,
+                ) -> Result<Self>''', 'durable backend opening header')
+                selected = rust_code(body(node,'fn','open_selected_with_io'))
+                unpack = re.match(r'\s*let\s+NativeStoreOpening\s*\{\s*state_backend\s*,\s*'
+                    r'growth_observation_only\s*,\s*native_io\s*,\s*\}\s*=\s*opening\s*;',selected)
+                require(unpack is not None, 'durable backend opening bindings')
+                # Only the exact, first-statement destructure introduces these
+                # original parameters. All subsequent rebinding remains denied.
+                selected = selected[unpack.end():]
+            else:
+                selected = rust_code(selected)
             bindings = list(re.finditer(r'\blet\s+ddl\s*=\s*state_backend\.ddl\(\)\s*;\s*let\s+schema_id\s*=\s*state_backend\.selected_schema_id\(\s*&\s*settings\s*\)\s*;',selected))
             require(len(bindings) == 1 and direct(selected,bindings[0].start()),
                     'durable backend selected schema')

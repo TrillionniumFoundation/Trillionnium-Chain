@@ -846,5 +846,99 @@ class NativeDurableSchemaTests(unittest.TestCase):
                 with self.subTest(name=name,index=index is not None),self.assertRaisesRegex(ValueError,'authenticated tables in legacy durable schema'):
                     self.extract(source,index)
 
+    def held_io_parts(self):
+        code = check.rust_code(self.current)
+        parts = {}
+        for kind,name in [('fn','open_selected'),('fn','open_selected_with_io'),
+                          ('struct','NativeStoreOpening')]:
+            matches = list(re.finditer(r'\b'+kind+r'\s+'+name+r'\b',code))
+            self.assertEqual(len(matches),1)
+            match = matches[0]
+            start = code.index('{',match.end())
+            end = check.rust_group_end(code,start)
+            self.assertIsNotNone(end)
+            parts[name] = (self.current[match.start():end],
+                           self.current[match.start():start],self.current[start+1:end-1])
+        return parts
+
+    def test_actual_held_io_bridge_preserves_the_independent_legacy_schema(self):
+        parts = self.held_io_parts()
+        self.assertIn('NativeStoreOpening {',parts['open_selected'][2])
+        self.assertIn('opening: NativeStoreOpening',parts['open_selected_with_io'][1])
+        ddl,domain = self.extract(self.current)
+        self.assertEqual(domain,'native-branch-schema-v2')
+        self.assertEqual(len(ddl.encode()),4775)
+        self.assertEqual(self.H_legacy_schema(ddl,domain),
+                         '8c2627fa0b06e51742e7e6d40662c61d4b4727e810abc02b24634a8a817dc0e0')
+        bridge = parts['open_selected'][2]
+        changed = self.replace_once(self.current,bridge,
+                                   bridge.replace('path,','path /* original root */,',1))
+        self.assertEqual(self.extract(changed),(ddl,domain))
+
+    def H_legacy_schema(self, ddl, domain):
+        sys.path.insert(0,str(check.ROOT/'formal/pon-nakamoto-v1'))
+        from contract_wire import H
+        return H(domain,ddl.encode()).hex()
+
+    def test_held_io_bridge_refuses_changed_fields_effects_or_nested_delegation(self):
+        bridge = self.held_io_parts()['open_selected'][2]
+        pair = 'let ddl = state_backend.ddl();\n        let schema_id = state_backend.selected_schema_id(&settings);'
+        replacements = [
+            bridge.replace('path,','other_path,',1),
+            bridge.replace('state_backend,','state_backend: StateBackend::AuthenticatedV1,',1),
+            bridge.replace('growth_observation_only,','growth_observation_only: true,',1),
+            bridge.replace('native_io: None,','native_io: Some(io),',1),
+            bridge.replace('Self::open_selected_with_io','Other::open_selected_with_io',1),
+            'if true { '+bridge+' }',
+            pair+'\n'+bridge,
+            'let settings = other_settings;\n'+bridge,
+        ]
+        for replacement in replacements:
+            with self.subTest(replacement=replacement),self.assertRaisesRegex(
+                    ValueError,'durable backend selector bridge'):
+                self.extract(self.replace_once(self.current,bridge,replacement))
+
+    def test_held_io_parameter_field_and_destructure_join_is_exact(self):
+        parts = self.held_io_parts()
+        opening,_,_ = parts['NativeStoreOpening']
+        _,header,callee = parts['open_selected_with_io']
+        unpack = callee[:callee.index('} = opening;')+len('} = opening;')]
+        changes = [
+            (parts['open_selected'][1],parts['open_selected'][1].replace(
+                'state_backend: StateBackend','other_backend: StateBackend')),
+            (header,header.replace('opening: NativeStoreOpening','other: NativeStoreOpening')),
+            (opening,opening.replace('state_backend: StateBackend','state_backend: bool')),
+            (opening,opening.replace('native_io: Option<NativeIoLease>','native_io: Option<OtherLease>')),
+            (unpack,unpack.replace('state_backend,','state_backend: other_backend,',1)),
+            (unpack,unpack.replace('= opening;','= other;',1)),
+            (unpack,'if false { '+unpack+' }'),
+            (unpack,unpack+'\n'+unpack),
+        ]
+        for before,after in changes:
+            with self.subTest(after=after),self.assertRaisesRegex(ValueError,'durable backend'):
+                self.extract(self.replace_once(self.current,before,after))
+
+    def test_held_io_nested_decoy_duplicate_and_string_binding_are_refused(self):
+        parts = self.held_io_parts()
+        whole,header,_ = parts['open_selected_with_io']
+        pair = 'let ddl = state_backend.ddl();\n        let schema_id = state_backend.selected_schema_id(&settings);'
+        for replacement in ['if false { '+pair+' }',
+                            'let NOTE: &str = '+json.dumps(pair)+';',
+                            'let NOTE: &str = r###"'+pair+'"###;',
+                            '/* '+pair+' */',
+                            pair.replace('selected_schema_id(&settings)','schema_id()')]:
+            with self.subTest(replacement=replacement),self.assertRaisesRegex(
+                    ValueError,'durable backend selected schema'):
+                self.extract(self.replace_once(self.current,pair,replacement))
+        invalid = [
+            self.replace_once(self.current,whole,whole+'\n'+whole),
+            self.replace_once(self.current,whole,'mod hidden { '+whole+' }'),
+            self.replace_once(self.current,whole,header+'{ }\n/* '+whole+' */'),
+            self.replace_once(self.current,whole,header+'{ }\nignored!('+whole+');'),
+        ]
+        for source in invalid:
+            with self.subTest(source=source[-80:]),self.assertRaisesRegex(ValueError,'durable'):
+                self.extract(source)
+
 
 if __name__ == '__main__': unittest.main(verbosity=2)
