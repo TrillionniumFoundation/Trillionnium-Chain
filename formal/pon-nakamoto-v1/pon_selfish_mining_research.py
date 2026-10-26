@@ -93,7 +93,7 @@ def simulate(p=Settings()):
         public_growth_fraction=public/completed if completed else None,
         unpublished_fraction=pending/completed if completed else None,
         attacker_fraction_of_accepted=aa/public if public else None,
-        source_outage_reached=completed>p.outage_at,
+        source_outage_reached=(completed>p.outage_at or terminal=='no_available_work_capacity'),
         terminal_reason=terminal,
         pre_outage_effective_share=effective_attacker_share(p,0),
         post_outage_effective_share=effective_attacker_share(p,p.outage_at),
