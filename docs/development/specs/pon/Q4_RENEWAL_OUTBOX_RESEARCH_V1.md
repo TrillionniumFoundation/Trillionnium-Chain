@@ -29,3 +29,26 @@ python3 -m unittest -v test_q4_renewal_outbox_research.py
 The tests explicitly exercise lost ACK, durable pre-/post-COMMIT cuts, delayed receipt, confirmation then reorg, expiry, cold reopen, duplicate operation/packet, different SQLite connections, monotonic generations, wrong context/length/type, forensic tampering and event/intent quotas. They use local synthetic public byte strings. No actual requester/source signature, `Node::admit`, W1 proof, P2P listener, real network partition or independent operator executes.
 
 **Production integration remains blocked:** M05/M07/kernel.operations must consume *actual signed Q4 tag22 transactions and current source/withdrawal facts* under the one original durable owner; persist a submission pre-effect fence with externally installed authority; submit through the real bounded transport and reconcile `Unknown` via independent client history and surviving/reorganized chain; preserve local effect history across deep reorganizations. Run real 32-slot retention, renewal at the last legal height, two independent signers, lost ACK, disk crash and material loss with the original native W1 Maintenance path. This research file cannot be used as an authority adapter or a new second ledger.
+
+
+## Canonical cold-replay observation check (research continuation)
+
+A persisted observation is no longer accepted merely because its row is exactly
+113 bytes long, its local event hash matches, and its kind tag matches the event.
+Cold audit decodes all fields and re-encodes them through the unchanged
+`ChainObservation.wire` grammar. The generation, nonzero tip, source receipt
+identity, included/confirmed block identity, and *zero* block field for
+reorged/unavailable/expired are enforced on readback. The original generation
+nonregression and once-only dispatch fence still apply.
+
+Negative controls alter one canonical field of a stored observation, **recompute
+its entire local event hash**, and demand refusal during cold open. This is
+an integrity/grammar test, not an authenticated chain proof, physical tamper
+resistance, a complete hostile local filesystem boundary, or deployment authority.
+The only effective client confirmation remains the independently verified source
+receipt from the existing chain/client owner. This research owner never signs,
+dispatches, retries or issues `FinalUse`.
+
+The isolated source/head still requires real exact-source test execution,
+project preflight and full downstream integration; the current tool environment
+does not have a compiled Rust node or the original repository checkout.
