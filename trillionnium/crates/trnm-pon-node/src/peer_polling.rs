@@ -342,21 +342,36 @@ fn admit_page(node: &Mutex<Node>, packet: Packet, end: Instant, stop: &AtomicBoo
         let owner = lock(node, end, stop)?;
         // The peer is authenticated, not CPU-funded. A pinned peer must
         // never mint its own allowance or bypass the public service budget.
-        let cpu = owner.public_service_cpu_domain()?;
-        if owner
-            .check_admission_context(&packet, ingress::now()?)?
-            .is_some()
-        {
-            return Ok(false);
-        }
-        cpu
+        // Only fetch the bound budget identity before reserving actual CPU.
+        // A cold historical-parent context check can itself be expensive.
+        owner.public_service_cpu_domain()?
     };
     progress(end, stop)?;
-    // Exactly the original service bucket, across identities/listeners and
-    // inbound V3 and outbound peer polling. No new budget or chain authority.
+    // The ONE original CPU reservation starts BEFORE reconstructing parent
+    // State, checking ancestry/task and replaying any transcript.
     let operation = cpu.begin()?;
     let checkpoint = operation.checkpoint_handle();
     let native = (|| -> Result<bool> {
+        progress(end, stop)?;
+        checkpoint.checkpoint()?;
+        {
+            let owner = lock(node, end, stop)?;
+            if owner
+                .check_admission_context_with_progress(
+                    &packet,
+                    ingress::now()?,
+                    &mut || {
+                        progress(end, stop)?;
+                        checkpoint.checkpoint()
+                    },
+                )?
+                .is_some()
+            {
+                // Exact stored work stays a duplicate, not fresh Chainwork.
+                // This context read was still paid from the same original CPU.
+                return Ok(false);
+            }
+        }
         progress(end, stop)?;
         checkpoint.checkpoint()?;
         let checked = WorkCheckedPacket::verify_with_progress(packet, &mut |_| {
@@ -374,8 +389,9 @@ fn admit_page(node: &Mutex<Node>, packet: Packet, end: Instant, stop: &AtomicBoo
         owner.admit_work_checked_with_control(checked, ingress::now()?, &control)?;
         Ok(true)
     })();
-    // Success, false transcript, cancellation, M06 failures and panics cannot
-    // invent a refund. The operation owns all actual scoped workers and
+    // Parent State replay, exact duplicate, success, false transcript,
+    // cancellation, M06 failures and panics all owe actual CPU settlement.
+    // The operation owns all actual scoped workers and
     // settles even after a native rejection. Post-commit accounting cannot
     // retroactively invalidate an already admitted fact.
     let settlement = operation.finish();
@@ -987,6 +1003,52 @@ mod tests {
         assert_eq!(refused.to_string(), "OWNER_PUBLIC_SERVICE_DOMAIN_UNBOUND");
         assert_eq!(guarded.lock().unwrap().stats().unwrap(), before);
         assert_eq!(guarded.lock().unwrap().read_active().unwrap().0, settings.genesis());
+    }
+
+    #[cfg(target_os = "linux")]
+    #[test]
+    fn pinned_peer_cannot_reconstruct_parent_on_an_exhausted_original_cpu_domain() {
+        let now = ingress::now().unwrap();
+        let settings = Settings::development(Some(now - 100)).unwrap();
+        let dir = tempfile::tempdir().unwrap();
+        let mut node = Node::open(dir.path(), settings.clone(), 2).unwrap();
+        let valid = node.make(
+            settings.genesis(),
+            vec![],
+            development_public(0).unwrap(),
+            settings.genesis_time() + 10,
+            4096,
+        ).unwrap();
+        let id = node.admit(&valid, now).unwrap();
+        node.activate_observed(id, now).unwrap();
+        let before = node.stats().unwrap();
+        let before_active = node.read_active().unwrap();
+
+        // An actual original cold process account cannot grant another
+        // free request just because its body is a duplicate or has an early
+        // invalid-header precheck. This catches accidental context-before-CPU
+        // regressions in the expensive State reconstruction path.
+        let cold_server = crate::ingress::public_v3::PublicServer::new_process_cold(
+            identity(72),
+            PublicPolicy::new(8, Duration::from_secs(2)).unwrap(),
+        ).unwrap();
+        let original = cold_server.mutation_cpu_domain();
+        assert_eq!(original.observe().unwrap().stored_credit_ns, 0);
+        node.bind_public_service_cpu_domain(&original).unwrap();
+        let guarded = Mutex::new(node);
+        let stop = AtomicBool::new(false);
+        let deadline = Instant::now() + Duration::from_secs(1);
+        for (index, mut packet) in [valid.clone(), valid].into_iter().enumerate() {
+            if index == 1 {
+                packet.header.nonce = packet.header.nonce.wrapping_add(1);
+                packet.proof[0] ^= 1;
+            }
+            let error = admit_page(&guarded, packet, deadline, &stop).unwrap_err();
+            assert_eq!(error.to_string(), "PUBLIC_MUTATION_CPU_BUDGET");
+            assert_eq!(guarded.lock().unwrap().stats().unwrap(), before);
+            assert_eq!(guarded.lock().unwrap().read_active().unwrap(), before_active);
+        }
+        assert_eq!(original.observe().unwrap().in_flight, 0);
     }
 
     #[test]
