@@ -1,0 +1,975 @@
+{
+  "schema": "w1-compact-team-review-records-v1",
+  "scope": "Separate internal agents; not external independent hardware/operator audit",
+  "reviews": [
+    {
+      "path": "compact-stage-native-v1/ticket-composition-v3-independent-review-v1.json",
+      "sha256": "44c5c991a1273ccc7b75db404893ceaac9bae65d755c14066169b9c21b6781d6",
+      "bytes": 6152,
+      "record": {
+        "checks": {
+          "audit_creates_no_new_paid_path_or_miner_credit": true,
+          "candidate_identity_fanout_one_not_realized_reward_consumption": true,
+          "canonical_old_misses_and_winners_retired_once_prepared_unqueried_not_free": true,
+          "captured_trace_paths_disjoint_for_distinct_c_on_no_Join": true,
+          "complete_c_d_t_references_before_relevant_responses": true,
+          "conditional_probability_interval_rederived": true,
+          "d_header_bytes_278_through309_split_across_challenge_blocks5_and6": true,
+          "fixed_d_k_capacity_and_binomial_dominating_process": true,
+          "forward_inverse_Join_union_bound_and_predeclared_R_cap": true,
+          "fresh_outputs_uniform_only_over_unused_per_key_outputs": true,
+          "full_t_first6_bytes_plus_final26_known_before_ticket_final_response": true,
+          "hidden_noise_key_family_disjoint_from_ticket_final_keys": true,
+          "identical_entry_freshness_distinguished_from_same_key_reuse": true,
+          "key_disjointness_is_only_literal_encoding_fact": true,
+          "last_missing_edge_binding_and_unique_empty_rooted_paths": true,
+          "literal_framing_lengths_and_blocks": {
+            "challenge": [
+              343,
+              6
+            ],
+            "noise": [
+              66,
+              2
+            ],
+            "task": [
+              32792,
+              513
+            ],
+            "ticket": [
+              90,
+              2
+            ],
+            "trace": [
+              131120,
+              2049
+            ]
+          },
+          "lower_envelope_monotonicity_in_used_pair_count": true,
+          "no_conditioning_on_future_no_Join_for_lottery_law": true,
+          "noise_final_vs_ticket_final_byte26": [
+            0,
+            128
+          ],
+          "noise_final_vs_ticket_final_byte63": [
+            16,
+            208
+          ],
+          "noise_first_vs_ticket_final_fixed_byte53": [
+            1,
+            0
+          ],
+          "old_random_bank_measurable_in_enlarged_past_not_future_selected": true,
+          "ordinary_Join_filtration_separate_from_hidden_noise_marker_filtration": true,
+          "weight_expectation_upper_rho_not_exact_mean_one": true
+        },
+        "closure_standards_changed": false,
+        "created_utc": "2026-10-26T06:02:24.107917+00:00",
+        "files": [
+          {
+            "bytes": 32142,
+            "path": "docs/protocol/pon-nakamoto-v1/details/W1_TICKET_COMPOSITION_V3.md",
+            "sha256": "755d3dd0f3cf3acc5d88ebc18a37e34dfe8a41fbab274f43f1c74fc9a062ef04"
+          },
+          {
+            "bytes": 24183,
+            "path": "formal/pon-nakamoto-v1/experiments/w1_ticket_composition_v3.py",
+            "sha256": "8064b24343740b1f6a70693f0a5c47e70b9a30b4271078f6c24123bc98738106"
+          },
+          {
+            "bytes": 18174,
+            "path": "formal/pon-nakamoto-v1/experiments/test_w1_ticket_composition_v3.py",
+            "sha256": "f7127bb870b6c9033e384afd94bfdba9b0acef89068e3d4f533157def8b9f6cd"
+          }
+        ],
+        "found_and_closed": [
+          {
+            "finding": "The first draft said register each sealed opening before checking it, while Lemma A required all sealed full t/d references before any terminal audit work. The original extractor also used the current rooted table rather than a seal snapshot.",
+            "id": "M01",
+            "resolution": "All submitted full t/d references are registered in one query-free seal action before any V query. CapturedPaths copies parents into MappingProxyType; seal is single-use and bounded by maximum_openings. extract_candidate automatically switches to the immutable capture. New controls cover the second opening protected before the first audit, an auditor-created canonical diagnostic path excluded without Join, and immutable/single-use seal.",
+            "status": "closed-in-reviewed-conditional-experiment",
+            "validation": "Final source verified at the exact three SHA-256 values in this receipt. Owner reports 21/21 targeted controls; this reviewer did not rerun them.",
+            "why_material": "Sequential per-opening registration does not alone justify placing every eventually opened path in paid captured work. Later audit paths must not become captured capacity."
+          }
+        ],
+        "method": "Independent hand/source review of the complete document, model and test sources; literal byte-offset and probability arithmetic rederived. No model/native tests, oracle experiments, builds or performance samples run by this reviewer.",
+        "model_boundary": {
+          "budgets": "Fixed before the sampled family: Q_P, Q_A, V, G and full reference allowance R; actual public exposure may be included without claiming this miner paid for it.",
+          "initial_state": "Empty-table rooted experiment; bounded family-independent initial advice unless all oracle-dependent generation is captured.",
+          "native_scope": "Upper interface for distinct opened native candidate identities; no honest visible-service lower bound, real settlement, DAA/fork-growth coupling, actual reward payment, Hepta quality or production activation.",
+          "noise_revelation": "Entire disjoint noise subfamily is visible only to the analysis filtration, never an uncharged miner API.",
+          "physical_cost": "Primitive query counts do not price CPU, energy, matrix arithmetic, bandwidth, hardware or diagnostic observations.",
+          "primitive": "Independent per-message-block ideal permutations, both query directions, fixed IV, additive feedforward; not actual SHA-256 security.",
+          "probability": "Unconditional ordinary-history Join error added after a predictable marked-process bound. No independent Bernoulli equality for shared permutation keys."
+        },
+        "model_tests_run_by_reviewer": 0,
+        "native_executions_by_reviewer": 0,
+        "original_O01_closed": false,
+        "original_O02_closed": false,
+        "performance_samples": 0,
+        "remaining_original_obligations": [
+          "Actual-SHA rooted/composition failure term and related-key structure.",
+          "Arbitrary oracle-dependent advice or uncaptured public/private preprocessing.",
+          "Seeded graph aliases, reachable cycles and stronger fanout/bank restrictions.",
+          "Physical-cost conversion and arbitrary real implementation/hardware advantage.",
+          "Honest service, DAA/fork settlement, global realized reward, Hepta quality and future proof backends."
+        ],
+        "schema": "w1-ticket-composition-v3-independent-static-review-v1",
+        "source_edits_by_reviewer": 0,
+        "status": "PASS-within-explicit-conditional-model",
+        "unresolved_concrete_findings_in_reviewed_scope": []
+      }
+    },
+    {
+      "path": "compact-stage-native-v1/campaign-code-review-final-v1.json",
+      "sha256": "91a9d520cd548a697ef52fa831debe67512809253623e6cf3b1223b6d06b1f2a",
+      "bytes": 4127,
+      "record": {
+        "checks": {
+          "all_transitive_script_formal_config_source_bytes_bound": true,
+          "eight_main_five_controls_fixed_budgets_seeds_caps": true,
+          "exact_13_jobs_and_fixed_interleaved_order": true,
+          "fresh_target_and_clean_tracked_source_collection_gates": true,
+          "incomplete_or_cap_or_changed_prefix_has_null_ratio": true,
+          "local_raw_bytes_not_network_bandwidth": true,
+          "negative_ratios_and_zero_denominator_retained": true,
+          "no_observer_cost_subtraction": true,
+          "original_and_posthoc_count_classes_separate": true,
+          "raw_gzip_and_original_step_usage_receipts_bound": true,
+          "real_direct_native_cpu_endpoint_not_phase_sum": true,
+          "signed_waited_cpu_residual_not_clamped": true,
+          "two_distinct_expected_binary_pins_and_actual_job_paths": true
+        },
+        "created_utc": "2026-10-26T05:53:33.734335+00:00",
+        "files": [
+          {
+            "bytes": 16346,
+            "path": "scripts/run_w1_compact_miner_research.py",
+            "sha256": "49e744884928d79c0a6bc5d6f65971e2b109d509e021a9c373909597308c381f"
+          },
+          {
+            "bytes": 26875,
+            "path": "scripts/read_w1_compact_miner_research.py",
+            "sha256": "15e0d433f9064391f343d676d6fcfe2134d3ab4b53d73992f4e17e254e200490"
+          },
+          {
+            "bytes": 10009,
+            "path": "scripts/analyze_w1_compact_miner_research.py",
+            "sha256": "49e8629c47a639177ef208005a49a9a2540175bcfc4ba0d4653dfd096758c670"
+          },
+          {
+            "bytes": 6731,
+            "path": "formal/pon-nakamoto-v1/experiments/w1_compact_miner_plan_v1.json",
+            "sha256": "893c2be3ede87d951c94fea93079b25cc6a9dead173f85b0be9e6a48ff423c3b"
+          },
+          {
+            "bytes": 7333,
+            "path": "scripts/ci/test_w1_compact_campaign.py",
+            "sha256": "3ff3b8063dcb67168708b109eda03969a7c083ae69ba98ccc58032a9a1f650e6"
+          }
+        ],
+        "findings": [
+          {
+            "finding": "Standalone analyzer lacked an external expected-readback SHA and relied on self-declared replay flags; options were not matched back to the registered grid.",
+            "id": "C01",
+            "resolution": "Root added required external pin before strict decode, typed registered per-job options and explicit deferred comparator mode; source rechecked.",
+            "severity": "material-analysis-integrity",
+            "status": "fixed-and-statically-rechecked"
+          },
+          {
+            "finding": "Ordinary Python equality aliased bool/int nested Cargo artifact fields and float/int collection output limit.",
+            "id": "C02",
+            "resolution": "Root uses same_json for artifact receipt and output-limit comparisons.",
+            "severity": "strict-receipt-type",
+            "status": "fixed-and-statically-rechecked"
+          },
+          {
+            "finding": "A single aggregate full-proof record count mixed compact original packets with late original and posthoc records.",
+            "id": "C03",
+            "resolution": "Root added explicit original setup/research packet/proof counts and separate deterministic/late posthoc recomputation classes.",
+            "severity": "report-scope",
+            "status": "fixed-and-statically-rechecked"
+          },
+          {
+            "finding": "Hypothesis could imply original late-deferred already assembled losing proofs online.",
+            "id": "C04",
+            "resolution": "Plan now explicitly states late-deferred already avoided online losing-proof assembly and separates compact posthoc output savings.",
+            "severity": "wording",
+            "status": "fixed-and-statically-rechecked"
+          }
+        ],
+        "remaining_limits": [
+          "Pins and local file snapshots are not native execution or hardware attestation.",
+          "Formal main observations do not yet exist at this review point; no performance conclusion.",
+          "Finite current-host comparison does not close arbitrary-strategy or physical minimum-cost obligations.",
+          "Root owns exact frozen source and final validation; these hashes describe this review snapshot."
+        ],
+        "schema": "w1-compact-campaign-independent-code-review-v1",
+        "scope": "Read-only source review plus independent literal grid arithmetic; no root-file edits, no execution of collector/analyzer/campaign tests or native measurements by reviewer.",
+        "status": "PASS-after-concrete-fixes",
+        "unresolved_concrete_findings": []
+      }
+    },
+    {
+      "path": "next-composition-math-v3/owner-review-v2.json",
+      "sha256": "217e9a1db590ac611520640cc735431f8065d45c77c74efa984ac772556b05a5",
+      "bytes": 9174,
+      "record": {
+        "schema": "w1-ticket-composition-v3-owner-final-review-v2",
+        "status": "PASS_WITHIN_EXPLICIT_CONDITIONAL_MODEL",
+        "baseline": "6488894f9f0bb2779a9aa75a4ae79a3c5d06977c",
+        "final_owned_files": [
+          {
+            "bytes": 32142,
+            "path": "docs/protocol/pon-nakamoto-v1/details/W1_TICKET_COMPOSITION_V3.md",
+            "sha256": "755d3dd0f3cf3acc5d88ebc18a37e34dfe8a41fbab274f43f1c74fc9a062ef04"
+          },
+          {
+            "bytes": 24183,
+            "path": "formal/pon-nakamoto-v1/experiments/w1_ticket_composition_v3.py",
+            "sha256": "8064b24343740b1f6a70693f0a5c47e70b9a30b4271078f6c24123bc98738106"
+          },
+          {
+            "bytes": 18174,
+            "path": "formal/pon-nakamoto-v1/experiments/test_w1_ticket_composition_v3.py",
+            "sha256": "f7127bb870b6c9033e384afd94bfdba9b0acef89068e3d4f533157def8b9f6cd"
+          }
+        ],
+        "source_rule_bindings": {
+          "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs": "b6f9f406d6d3baefb606e5abfefaf157eb0c88e0f33a03bdbb97f4d700cd98be",
+          "trillionnium/crates/trnm-protocol/src/pon_wire.rs": "b98a5beb32e9ba9f24efbf123692ffcfda83b18ff88f803e3ab03712cde599ea",
+          "trillionnium/crates/trnm-pon-node/src/lib.rs": "ae41f5c65da4c3b66750ea8896aa3ac09ea9646e5a50360d1c69bb5d3afebc61",
+          "trillionnium/crates/trnm-pon-node/src/store.rs": "0c2cdea16497e6a72d097f7096edf97407722d375e5cdc5313649afcded24c5c",
+          "trillionnium/crates/trnm-pon-node/src/consensus.rs": "53088562316151516348ea723e03b9132b9994fee14167da18c79c2c3b3fed29",
+          "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs": "630b0f6b01fbd157df433eed80c969c105d629b4128d410e372220a262040416",
+          "docs/protocol/pon-nakamoto-v1/details/W1_ROOTED_CIPHER_PATHS_V1.md": "08f25ce79810745ab0a37eb90b9c5556a7ea6dd16e6adfc05dec5ed6d456e382",
+          "formal/pon-nakamoto-v1/experiments/w1_multi_instance_cost_v2.py": "2987eb6783164d3081f2769dc056a89b7808fa02912a18584430f10eaf0fbdb5",
+          "formal/pon-nakamoto-v1/work_oracle.py": "2b90584fc4f102e9eb40ed5ab138746f4a4b3748544cd287f076a8804c955c18",
+          "formal/pon-nakamoto-v1/contract_wire.py": "cbe45d72ad20ed5683d50dceaa97b93bc74cdafced7d0896386edf9cbe9f98f6"
+        },
+        "independent_review": {
+          "path": "/workspace/scratch/3863a747524b/w1-cost-raw/compact-stage-native-v1/ticket-composition-v3-independent-review-v1.json",
+          "sha256": "44c5c991a1273ccc7b75db404893ceaac9bae65d755c14066169b9c21b6781d6",
+          "status": "PASS-within-explicit-conditional-model",
+          "scope": {
+            "budgets": "Fixed before the sampled family: Q_P, Q_A, V, G and full reference allowance R; actual public exposure may be included without claiming this miner paid for it.",
+            "initial_state": "Empty-table rooted experiment; bounded family-independent initial advice unless all oracle-dependent generation is captured.",
+            "native_scope": "Upper interface for distinct opened native candidate identities; no honest visible-service lower bound, real settlement, DAA/fork-growth coupling, actual reward payment, Hepta quality or production activation.",
+            "noise_revelation": "Entire disjoint noise subfamily is visible only to the analysis filtration, never an uncharged miner API.",
+            "physical_cost": "Primitive query counts do not price CPU, energy, matrix arithmetic, bandwidth, hardware or diagnostic observations.",
+            "primitive": "Independent per-message-block ideal permutations, both query directions, fixed IV, additive feedforward; not actual SHA-256 security.",
+            "probability": "Unconditional ordinary-history Join error added after a predictable marked-process bound. No independent Bernoulli equality for shared permutation keys."
+          },
+          "executed_tests_by_independent_reviewer": 0
+        },
+        "targeted_validation": {
+          "first_draft_tests": 18,
+          "first_draft_exit_code": 0,
+          "final_tests": 21,
+          "final_exit_code": 0,
+          "counts_are_not_added_together": true,
+          "no_native_or_performance_sampling": true
+        },
+        "retained_artifact_hashes": {
+          "initial-preflight.json": "01a9d76558408d44a1244c7d3def4ce6d979e921bb22b86410ce8378e702890d",
+          "targeted-tests-v1.log": "8cc8335a3f460f6f761fda60dfe7493ad77bf1bde5f8c5ef720ffc98e7ae36a1",
+          "targeted-tests-v1.json": "0dc066f1a289839cb65a248a6c380f1868a894f5182479610770f9d4aad05321",
+          "targeted-tests-v2.log": "7aaeb30c9a1cbdb07e1c5aafbd22e6c7db519b5faf13d82212aa000745423642",
+          "targeted-tests-v2.json": "8c434313991acb1e1cd6516622035f65998d7bcca798f2c2a0faf00f60997714",
+          "exact-model-v1.json": "80664a8e4862b1ec993bc4ddada864aeafff873c1d68aff32e88b892cf579478",
+          "exact-model-v2.json": "80664a8e4862b1ec993bc4ddada864aeafff873c1d68aff32e88b892cf579478",
+          "seal-guard-revision-v2.json": "8fbb8257f0aba98cc41275a067cea1a3e376132beec856912fbf9d5bc22bfc03",
+          "review-draft-v1-W1_TICKET_COMPOSITION_V3.md": "51fb678acc9efcff8a89a23049b2e495a115caca1cb3af3588d96225b1422ec0",
+          "review-draft-v1-w1_ticket_composition_v3.py": "ef3fb18060140a7679789c0a109a6765dcdf176490be6aaf67d794f7370516e7",
+          "review-draft-v1-test_w1_ticket_composition_v3.py": "dc5e83d0b2bb1fd3f583fe8019f0e10b11bae72d5c1d3ef728029418ea366f6d"
+        },
+        "finding_resolution": [
+          {
+            "finding": "The first draft said register each sealed opening before checking it, while Lemma A required all sealed full t/d references before any terminal audit work. The original extractor also used the current rooted table rather than a seal snapshot.",
+            "id": "M01",
+            "resolution": "All submitted full t/d references are registered in one query-free seal action before any V query. CapturedPaths copies parents into MappingProxyType; seal is single-use and bounded by maximum_openings. extract_candidate automatically switches to the immutable capture. New controls cover the second opening protected before the first audit, an auditor-created canonical diagnostic path excluded without Join, and immutable/single-use seal.",
+            "status": "closed-in-reviewed-conditional-experiment",
+            "validation": "Final source verified at the exact three SHA-256 values in this receipt. Owner reports 21/21 targeted controls; this reviewer did not rerun them.",
+            "why_material": "Sequential per-opening registration does not alone justify placing every eventually opened path in paid captured work. Later audit paths must not become captured capacity."
+          }
+        ],
+        "no_missing_local_markdown_links": true,
+        "exact_model_values_unchanged_after_guard_fix": true,
+        "conditional_progress": [
+          "source-byte separation of legal noise keys from ticket-final keys",
+          "full c/d/t pre-answer binding and one native candidate identity per canonical challenge outside Join",
+          "predictable validity in a hidden-noise analysis filtration with ordinary-history Join failure handled separately",
+          "conditional shared-permutation without-replacement upper and lower hit envelope, rho-weight correction",
+          "bounded fixed-target binomial comparison with predeclared retirement threshold, old bank and immutable captured table"
+        ],
+        "negative_controls_retained": [
+          "canonical relation trace interior can share a ticket-final key",
+          "per-key depletion can increase hit probability from 1/2 to 2/3 and native-style mean from 1 to 4/3",
+          "late header/material/trace binding causes Join in scripted model",
+          "isolated inverse fixed point allowed but rooted attachment is Join",
+          "outcome-selected validity or realized attempt conditioning can produce probability 1",
+          "auditor-only new path remains uncredited even when present in live graph without Join"
+        ],
+        "unresolved_original_obligations": [
+          "Actual-SHA rooted/composition failure term and related-key structure.",
+          "Arbitrary oracle-dependent advice or uncaptured public/private preprocessing.",
+          "Seeded graph aliases, reachable cycles and stronger fanout/bank restrictions.",
+          "Physical-cost conversion and arbitrary real implementation/hardware advantage.",
+          "Honest service, DAA/fork settlement, global realized reward, Hepta quality and future proof backends."
+        ],
+        "original_O01_O02_closed": false,
+        "production_consensus_modified_by_this_agent": false,
+        "qualification_flags_or_closure_standards_modified": false,
+        "hosted_ci_requested_or_run": false,
+        "committed_or_pushed_by_this_agent": false,
+        "primary_sources": [
+          {
+            "url": "https://nvlpubs.nist.gov/nistpubs/fips/nist.fips.180-4.pdf",
+            "sections": [
+              "5.1.1",
+              "5.2.1",
+              "6.2"
+            ],
+            "use": "literal padding, block and chaining geometry only"
+          },
+          {
+            "url": "https://arxiv.org/html/2609.28469v1",
+            "sections": [
+              "3.2",
+              "5.5"
+            ],
+            "use": "independent keyed bidirectional interface; no quantum or instantiation theorem transferred"
+          },
+          {
+            "url": "https://cs.nyu.edu/~dodis/ps/ai-perms.pdf",
+            "sections": [
+              "Introduction",
+              "auxiliary-input and lazy-sampling discussion"
+            ],
+            "use": "oracle-dependent advice caveat; no borrowed bound"
+          }
+        ],
+        "additional_retained_tool_parse_failure": {
+          "stage": "before filesystem execution",
+          "exact_message": "SyntaxError: Unexpected identifier 'R'",
+          "filesystem_changes": false
+        },
+        "all_three_owned_sources_frozen": true
+      }
+    },
+    {
+      "path": "next-composition-math-v3/native-daa-v2-integration-review-v1.json",
+      "sha256": "54e44ad4fd329523ac71fbcf129c68963a0e61a48c71b535bc77c9bb9128820f",
+      "bytes": 3682,
+      "record": {
+        "schema": "w1-native-daa-shared-permutation-integration-review-v1",
+        "status": "PASS_WITHIN_EXPLICIT_CONDITIONAL_INTERFACE",
+        "source_commit": "4b18f6bdf226553514b07caf9259360d44631a06",
+        "reviewed_section": "W1_NATIVE_DAA_RESOURCE_V2.md section 2.1, with adjacent sections 1-3 and composition sections 6-7",
+        "reviewed_files": {
+          "docs/protocol/pon-nakamoto-v1/details/W1_NATIVE_DAA_RESOURCE_V2.md": "523a1d8575ea93accb914ee2c95d481af36424aff815359ab036ffa39f5cfdb2",
+          "docs/protocol/pon-nakamoto-v1/details/W1_TICKET_COMPOSITION_V3.md": "755d3dd0f3cf3acc5d88ebc18a37e34dfe8a41fbab274f43f1c74fc9a062ef04"
+        },
+        "method": "Read-only complete-text review of the new subsection; conditional expectation, convexity and probability containment derived independently. No tests, builds, native execution or performance sampling.",
+        "checks": {
+          "old_mean_one_retains_exact_conditional_uniformity_premise": true,
+          "new_rho_accounts_for_shared_key_without_replacement": true,
+          "n_is_predeclared_global_bound_across_all_workers_and_forks": true,
+          "w0_is_predeclared_deterministic_weighted_old_bank_bound": true,
+          "D_strictly_greater_than_w0": true,
+          "Wmax_is_a_valid_deterministic_comparison_jump_bound": true,
+          "Markov_applied_to_comparison_sum_not_unconditional_actual_forest": true,
+          "Join_delta_added_once_after_no_Join_containment": true,
+          "additional_failure_terms_require_separate_valid_bounds": true,
+          "actual_SHA_coupling_is_explicitly_unestablished_and_not_silently_zero": true,
+          "retirement_dependent_or_realized_bounds_not_post_selected": true,
+          "conditional_compensator_not_replaced_by_favorable_realized_value": true,
+          "no_claim_of_honest_visibility_common_prefix_physical_kappa_or_production_security": true
+        },
+        "derivation": {
+          "mean": "For the predictable marked comparison increments X_i, E[X_i | enlarged past] <= rho. At most n increments and nonnegative weights imply E[S_n] <= rho*n.",
+          "Markov": "Outside Join and the separately bounded external failure event, native forest work <= w0 + S_n. For D > w0, P[forest >= D] <= min(1, rho*n/(D-w0) + delta + epsilon_ext). This does not condition the comparison law on a future good event.",
+          "mgf": "For z > 1 and 0 <= x <= Wmax with Wmax > 0, convexity gives z^x <= 1 + x*(z^Wmax-1)/Wmax. Hence E[z^X_i | enlarged past] <= beta_rho = 1 + rho*(z^Wmax-1)/Wmax. Iteration for at most n marks gives E[z^S_n] <= beta_rho^n and the stated beta_rho^n/z^(D-w0) + delta + epsilon_ext tail.",
+          "without_independence": "Neither derivation assumes independent opportunities or exact uniform per-key responses after prior exposures.",
+          "jump_scope": "The stated deterministic Wmax premise must constrain increments of the comparison process itself. If a smaller Wmax is first established only for eligible native DAA targets outside an ancestry failure, a pre-answer w(T)<=Wmax filter defines the appropriate comparison sequence and preserves the no-bad containment. Merely bounding the eventual accepted subset would not by itself justify its unfiltered comparison MGF.",
+          "forest_scope": "The counted forest consists of distinct identities represented by the old bank and the shared new-opportunity process. New external ancestry must be included in those stated allowances or in a separately bounded failure event; it is not free additional credited work."
+        },
+        "unresolved_concrete_findings_in_reviewed_text": [],
+        "source_files_modified": 0,
+        "native_executions": 0,
+        "performance_samples": 0,
+        "tests_or_hosted_CI_runs": 0,
+        "local_preflight": "PASS --dev, required only before writing this raw receipt",
+        "original_O01_O02_O03_closed": false
+      }
+    },
+    {
+      "path": "next-composition-math-v3/final-reporting-theory-review-v1.json",
+      "sha256": "0dd27d7a7830d26d2f9e514148a38c235c41d19965016461a74ab12ef75c821b",
+      "bytes": 9855,
+      "record": {
+        "schema": "w1-composition-and-rho-reporting-review-v1",
+        "status": "PASS_FOR_THEORY_REPORTING_WITH_ORIGINAL_BLOCKERS_OPEN",
+        "source_commit": "4b18f6bdf226553514b07caf9259360d44631a06",
+        "source_hashes": {
+          "docs/protocol/pon-nakamoto-v1/details/W1_TICKET_COMPOSITION_V3.md": "755d3dd0f3cf3acc5d88ebc18a37e34dfe8a41fbab274f43f1c74fc9a062ef04",
+          "docs/protocol/pon-nakamoto-v1/details/W1_NATIVE_DAA_RESOURCE_V2.md": "523a1d8575ea93accb914ee2c95d481af36424aff815359ab036ffa39f5cfdb2",
+          "evidence/pon-work-fork-late-v1/blockers.json": "d8e5fb80cddb35bd48f113793b414efb3279fb87c603a8efe1aae5bd69e59a37"
+        },
+        "report_paragraph_zh": "本轮闭合两个有明确边界的证明义务：在固定 IV、空初始表、全部预处理已记录的经典双向理想置换模型中，真实 W1 编码与完整 c/d/t 前答引用、统一 seal 和不可变 captured 快照共同建立可预测的 canonical-valid 标记、每个不同挑战的 2,049 项已记录路径容量，以及每个有效彩票输入至多一个 native 候选身份。共享 key 的不放回概率区间再以 rho=M/(M-C_all+1) 接入所有 worker、所有 fork 共用预算的 weighted-forest 尾界；Join 和额外失败项在比较过程分析后外加。Q_P、Q_A、V、G、R 是事先固定的上界，V 不算矿工工作；D0、K0 是可随机的旧 canonical 实例数和旧赢家数。尾界使用预声明 d、k 和确定的 n_d=floor((Q_P-2049d+Q_A)/2049)，明确保留事件 D0>=d。该模型允许任意经典自适应和批处理查询及免费联合矩阵算法，不要求批次独立。它没有证明实际 SHA 的独立置换实例化、未记录或非一致 advice、任意 seeded 状态、物理资源转换或实际硬件/批量算法的普遍成本界，也没有建立诚实可见服务或 settlement。因此 O01、O02、O03 继续 OPEN，关闭标准不变。",
+        "report_paragraph_en": "This stage closes two explicitly bounded proof obligations. In the fixed-IV, empty-table classical bidirectional ideal-permutation model with captured preprocessing, the literal W1 encoding, complete pre-answer c/d/t references, one seal and an immutable captured-path snapshot establish predictable canonical-valid marking, a 2,049-entry captured-path capacity per distinct challenge, and at most one native candidate identity per valid lottery input. A without-replacement envelope for shared keys then gives the rho=M/(M-C_all+1) weighted-forest bounds under one budget shared by all workers and forks; Join and separately bounded external failures are added after the comparison-process argument. Q_P, Q_A, V, G and R are predeclared caps; audit calls V are not miner work. D0 and K0 are potentially random old canonical-instance and winner counts. The fixed-target tail uses predeclared d,k and deterministic n_d=floor((Q_P-2049d+Q_A)/2049), retaining the intersection D0>=d. Arbitrary classical adaptive and batch queries and free joint matrix algorithms are already allowed within this capped experiment; batch independence is not assumed. Actual-SHA instantiation, uncaptured or non-uniform advice, arbitrary seeded state, physical-resource conversion and universal real-hardware or batching cost bounds remain unproved. Honest visible service and settlement are also not established. O01, O02 and O03 therefore remain OPEN under their unchanged original standards.",
+        "quantity_contract": {
+          "Q_P": {
+            "type": "predeclared nonnegative exposure cap",
+            "meaning": "All captured preprocessing primitive calls, both directions and all domains, including unsuccessful choices and supplied public/outsourced exposure. Inclusion does not claim this miner physically paid for all public work."
+          },
+          "Q_A": {
+            "type": "predeclared nonnegative exposure cap",
+            "meaning": "All additional online primitive calls before the seal; all tasks, workers and forks share the same total allowance."
+          },
+          "V": {
+            "type": "predeclared nonnegative audit-query cap",
+            "meaning": "All terminal checker calls including rejection paths. Included in the failure and depletion cap, excluded from miner captured-path work."
+          },
+          "G": {
+            "type": "predeclared opening cap",
+            "meaning": "The complete sealed submission list, including failed submissions and the needed union of old retirement and new openings. Every submitted t/d is registered before any V call."
+          },
+          "R": {
+            "type": "predeclared complete-reference cap",
+            "meaning": "All emitted full c/d/t references, including wrong guesses, repeats and checker-time references. For the deterministic extractor, R <= 3*C_all+2*G+R_explicit only with all quantities and additional explicit references bounded in advance."
+          },
+          "C_all": {
+            "type": "deterministic derived cap",
+            "formula": "Q_P+Q_A+V",
+            "condition": "Nontrivial regime C_all<=M, M=2^256; active fresh-response envelope uses C_all>=1."
+          },
+          "D0": {
+            "type": "past-measurable potentially random count; NOT a predeclared fixed constant",
+            "meaning": "Distinct old canonical challenges whose first lottery answers were already exposed, winners and misses included, with captured Q_P paths or original references covered by the same bounded audit. Invalid old paths are not retired."
+          },
+          "K0": {
+            "type": "past-measurable potentially random count; NOT a predeclared fixed constant",
+            "meaning": "Distinct winning native candidate identities in the old canonical bank. It is a count, not weighted chainwork or realized money. Prepared unseen outcomes stay in Q_P, not K0."
+          },
+          "d_and_k": {
+            "type": "predeclared fixed integers",
+            "condition": "0<=2049*d<=Q_P and k>=1",
+            "meaning": "A retirement threshold and a new-win threshold chosen before observing the outcomes used in the reported tail."
+          },
+          "n_d": {
+            "type": "deterministic derived opportunity cap",
+            "formula": "floor((Q_P-2049*d+Q_A)/2049)",
+            "meaning": "Used with the explicit intersection D0>=d; do not substitute a favorable realized D0 into an unconditional binomial tail."
+          },
+          "DAA_n_w0_Wmax": {
+            "type": "predeclared valid deterministic bounds",
+            "meaning": "n bounds the global marked comparison opportunities, w0 bounds weighted initial known winners, optional Wmax bounds comparison increments. K0 alone cannot replace w0. No per-fork budget reset or after-outcome substitution."
+          }
+        },
+        "proposed_bounded_closures": [
+          {
+            "id": "C33",
+            "status": "CLOSED_WITHIN_DECLARED_SCOPE",
+            "scope": "source-bound predictable W1 ticket composition in the captured empty-table classical ideal-permutation model",
+            "increment_over_prior": "Extends C29 with complete c/d/t chronology, disjoint-noise analysis filtration, shared-key conditional envelope, fanout-one candidate identity and implemented single-seal captured snapshot. The peer-discovered seal issue belongs inside this closure, not a duplicate extra ID.",
+            "evidence": "Complete independently reviewed v3 proof; exact-source owner final receipt; 21 targeted controls, including actual relation-level key overlap and terminal snapshot negatives.",
+            "boundary": "Actual SHA, arbitrary non-uniform/uncaptured advice, arbitrary seeded tables, physical cost and actual reward consumption are unproved."
+          },
+          {
+            "id": "C34",
+            "status": "CLOSED_WITHIN_DECLARED_SCOPE",
+            "scope": "rho-corrected weighted-forest integration for adaptive native target weights",
+            "increment_over_prior": "Extends C30 without changing its original exact-uniform premise; integrates the shared-permutation conditional mean upper bound.",
+            "evidence": "Frozen W1_NATIVE_DAA_RESOURCE_V2 section 2.1 with independent integration receipt; deterministic shared n/w0/Wmax and external failure terms explicit.",
+            "boundary": "No actual-SHA coupling bound, production kappa, honest-service lower bound, common-prefix or settlement theorem."
+          }
+        ],
+        "numbering_note": "Previous evidence has C24 through C32. Reserve C33 and C34 for these two nonduplicate theoretical advances; root may assign C35 onward to separately evidenced campaign or implementation obligations. This receipt does not mutate or reserve repository state.",
+        "recommended_current_remaining_text": {
+          "O01": "Predictable canonical validity and shared-ticket composition are proved only in the captured empty-table ideal-permutation model. Actual-SHA instantiation, justified resource/cap interfaces, nonvacuous advice treatment and physical-resource conversion remain open.",
+          "O02": "Arbitrary classical adaptive and batch oracle strategies are included inside the finite captured model, with arithmetic unrestricted. No universal bound on actual-SHA implementations, uncaptured long-term preprocessing, arbitrary initial state, hardware or real joint-algorithm advantage is established.",
+          "O03": "A rho-corrected adaptive weighted-forest upper interface is available conditionally, with a weighted initial bank. Actual resource-to-opportunity and coupling guarantees, honest visible growth, full validation/data propagation and all-fork settlement remain open."
+        },
+        "historical_ledger_should_be_preserved": true,
+        "original_statuses_unchanged": {
+          "O01": "OPEN",
+          "O02": "OPEN",
+          "O03": "OPEN",
+          "O04": "OPEN",
+          "O05": "OPEN_CONDITIONAL_NOT_ADOPTED",
+          "O06": "OPEN",
+          "O07": "OPEN_CONDITIONAL_NOT_ADOPTED"
+        },
+        "new_campaign_results_reviewed": false,
+        "new_native_runs_tests_or_performance_samples": 0,
+        "hosted_CI_inspections": 0,
+        "repository_files_modified": 0,
+        "local_preflight": "PASS --dev, required solely before raw receipt write",
+        "findings": [
+          "D0 and K0 must not be described as predeclared constants. They may be random; d,k and n_d provide the stated fixed-threshold comparison."
+        ]
+      }
+    },
+    {
+      "path": "next-composition-math-v3/final-reporting-theory-review-v2.json",
+      "sha256": "5a27317f3c6bcba124fd2b39da0e8d929d534db22b826d4377cba72b31bf3ae3",
+      "bytes": 10946,
+      "record": {
+        "schema": "w1-composition-and-rho-reporting-review-v2",
+        "status": "PASS_FOR_THEORY_REPORTING_WITH_ORIGINAL_BLOCKERS_OPEN",
+        "source_commit": "4b18f6bdf226553514b07caf9259360d44631a06",
+        "source_hashes": {
+          "docs/protocol/pon-nakamoto-v1/details/W1_TICKET_COMPOSITION_V3.md": "755d3dd0f3cf3acc5d88ebc18a37e34dfe8a41fbab274f43f1c74fc9a062ef04",
+          "docs/protocol/pon-nakamoto-v1/details/W1_NATIVE_DAA_RESOURCE_V2.md": "523a1d8575ea93accb914ee2c95d481af36424aff815359ab036ffa39f5cfdb2",
+          "evidence/pon-work-fork-late-v1/blockers.json": "d8e5fb80cddb35bd48f113793b414efb3279fb87c603a8efe1aae5bd69e59a37"
+        },
+        "report_paragraph_zh": "本轮闭合两个有明确边界的证明义务：在固定 IV、空初始表、全部预处理已记录的经典双向理想置换模型中，真实 W1 编码与完整 c/d/t 前答引用、统一 seal 和不可变 captured 快照共同建立可预测的 canonical-valid 标记、每个不同挑战的 2,049 项已记录路径容量，以及每个有效彩票输入至多一个 native 候选身份。共享 key 的不放回概率区间再以 rho=M/(M-C_all+1) 接入所有 worker、所有 fork 共用预算的 weighted-forest 尾界；Join 和额外失败项在比较过程分析后外加。Q_P、Q_A、V、G、R 是事先固定的上界，V 不算矿工工作；D0、K0 是可随机的旧 canonical 实例数和旧赢家数。尾界使用预声明 d、k 和确定的 n_d=floor((Q_P-2049d+Q_A)/2049)，明确保留事件 D0>=d。该模型允许任意经典自适应和批处理查询及免费联合矩阵算法，不要求批次独立。它没有证明实际 SHA 的独立置换实例化、未记录或非一致 advice、任意 seeded 状态、物理资源转换或实际硬件/批量算法的普遍成本界，也没有建立诚实可见服务或 settlement。因此 O01、O02、O03 继续 OPEN，关闭标准不变。",
+        "report_paragraph_en": "This stage closes two explicitly bounded proof obligations. In the fixed-IV, empty-table classical bidirectional ideal-permutation model with captured preprocessing, the literal W1 encoding, complete pre-answer c/d/t references, one seal and an immutable captured-path snapshot establish predictable canonical-valid marking, a 2,049-entry captured-path capacity per distinct challenge, and at most one native candidate identity per valid lottery input. A without-replacement envelope for shared keys then gives the rho=M/(M-C_all+1) weighted-forest bounds under one budget shared by all workers and forks; Join and separately bounded external failures are added after the comparison-process argument. Q_P, Q_A, V, G and R are predeclared caps; audit calls V are not miner work. D0 and K0 are potentially random old canonical-instance and winner counts. The fixed-target tail uses predeclared d,k and deterministic n_d=floor((Q_P-2049d+Q_A)/2049), retaining the intersection D0>=d. Arbitrary classical adaptive and batch queries and free joint matrix algorithms are already allowed within this capped experiment; batch independence is not assumed. Actual-SHA instantiation, uncaptured or non-uniform advice, arbitrary seeded state, physical-resource conversion and universal real-hardware or batching cost bounds remain unproved. Honest visible service and settlement are also not established. O01, O02 and O03 therefore remain OPEN under their unchanged original standards.",
+        "quantity_contract": {
+          "Q_P": {
+            "type": "predeclared nonnegative exposure cap",
+            "meaning": "All captured preprocessing primitive calls, both directions and all domains, including unsuccessful choices and supplied public/outsourced exposure. Inclusion does not claim this miner physically paid for all public work."
+          },
+          "Q_A": {
+            "type": "predeclared nonnegative exposure cap",
+            "meaning": "All additional online primitive calls before the seal; all tasks, workers and forks share the same total allowance."
+          },
+          "V": {
+            "type": "predeclared nonnegative audit-query cap",
+            "meaning": "All terminal checker calls including rejection paths. Included in the failure and depletion cap, excluded from miner captured-path work."
+          },
+          "G": {
+            "type": "predeclared opening cap",
+            "meaning": "The complete sealed submission list, including failed submissions and the needed union of old retirement and new openings. Every submitted t/d is registered before any V call."
+          },
+          "R": {
+            "type": "predeclared complete-reference cap",
+            "meaning": "All emitted full c/d/t references, including wrong guesses, repeats and checker-time references. For the deterministic extractor, R <= 3*C_all+2*G+R_explicit only with all quantities and additional explicit references bounded in advance."
+          },
+          "C_all": {
+            "type": "deterministic derived cap",
+            "formula": "Q_P+Q_A+V",
+            "condition": "Nontrivial regime C_all<=M, M=2^256; active fresh-response envelope uses C_all>=1."
+          },
+          "D0": {
+            "type": "Potentially random history-dependent count; NOT a predeclared fixed constant",
+            "meaning": "Distinct old canonical challenges whose first lottery answers were already exposed, winners and misses included, with captured Q_P paths or original references covered by the same bounded audit. Invalid old paths are not retired.",
+            "filtration_precision": "The capped comparison process uses an enlarged-past-measurable captured-path shadow count. The covering and binding argument equates it with the relevant old canonical bank outside Join. This does not assert that an arbitrary later-opened old claim is measurable in the ordinary miner past on all histories."
+          },
+          "K0": {
+            "type": "Potentially random history-dependent count; NOT a predeclared fixed constant",
+            "meaning": "Distinct winning native candidate identities in the old canonical bank. It is a count, not weighted chainwork or realized money. Prepared unseen outcomes stay in Q_P, not K0.",
+            "filtration_precision": "The capped comparison process uses an enlarged-past-measurable captured-path shadow count. The covering and binding argument equates it with the relevant old canonical bank outside Join. This does not assert that an arbitrary later-opened old claim is measurable in the ordinary miner past on all histories."
+          },
+          "d_and_k": {
+            "type": "predeclared fixed integers",
+            "condition": "0<=2049*d<=Q_P and k>=1",
+            "meaning": "A retirement threshold and a new-win threshold chosen before observing the outcomes used in the reported tail."
+          },
+          "n_d": {
+            "type": "deterministic derived opportunity cap",
+            "formula": "floor((Q_P-2049*d+Q_A)/2049)",
+            "meaning": "Used with the explicit intersection D0>=d; do not substitute a favorable realized D0 into an unconditional binomial tail."
+          },
+          "DAA_n_w0_Wmax": {
+            "type": "predeclared valid deterministic bounds",
+            "meaning": "n bounds the global marked comparison opportunities, w0 bounds weighted initial known winners, optional Wmax bounds comparison increments. K0 alone cannot replace w0. No per-fork budget reset or after-outcome substitution."
+          }
+        },
+        "proposed_bounded_closures": [
+          {
+            "id": "C33",
+            "status": "CLOSED_WITHIN_DECLARED_SCOPE",
+            "scope": "source-bound predictable W1 ticket composition in the captured empty-table classical ideal-permutation model",
+            "increment_over_prior": "Extends C29 with complete c/d/t chronology, disjoint-noise analysis filtration, shared-key conditional envelope, fanout-one candidate identity and implemented single-seal captured snapshot. The peer-discovered seal issue belongs inside this closure, not a duplicate extra ID.",
+            "evidence": "Complete independently reviewed v3 proof; exact-source owner final receipt; 21 targeted controls, including actual relation-level key overlap and terminal snapshot negatives.",
+            "boundary": "Actual SHA, arbitrary non-uniform/uncaptured advice, arbitrary seeded tables, physical cost and actual reward consumption are unproved."
+          },
+          {
+            "id": "C34",
+            "status": "CLOSED_WITHIN_DECLARED_SCOPE",
+            "scope": "rho-corrected weighted-forest integration for adaptive native target weights",
+            "increment_over_prior": "Extends C30 without changing its original exact-uniform premise; integrates the shared-permutation conditional mean upper bound.",
+            "evidence": "Frozen W1_NATIVE_DAA_RESOURCE_V2 section 2.1 with independent integration receipt; deterministic shared n/w0/Wmax and external failure terms explicit.",
+            "boundary": "No actual-SHA coupling bound, production kappa, honest-service lower bound, common-prefix or settlement theorem."
+          }
+        ],
+        "numbering_note": "Previous evidence has C24 through C32. Reserve C33 and C34 for these two nonduplicate theoretical advances; root may assign C35 onward to separately evidenced campaign or implementation obligations. This receipt does not mutate or reserve repository state.",
+        "recommended_current_remaining_text": {
+          "O01": "Predictable canonical validity and shared-ticket composition are proved only in the captured empty-table ideal-permutation model. Actual-SHA instantiation, justified resource/cap interfaces, nonvacuous advice treatment and physical-resource conversion remain open.",
+          "O02": "Arbitrary classical adaptive and batch oracle strategies are included inside the finite captured model, with arithmetic unrestricted. No universal bound on actual-SHA implementations, uncaptured long-term preprocessing, arbitrary initial state, hardware or real joint-algorithm advantage is established.",
+          "O03": "A rho-corrected adaptive weighted-forest upper interface is available conditionally, with a weighted initial bank. Actual resource-to-opportunity and coupling guarantees, honest visible growth, full validation/data propagation and all-fork settlement remain open."
+        },
+        "historical_ledger_should_be_preserved": true,
+        "original_statuses_unchanged": {
+          "O01": "OPEN",
+          "O02": "OPEN",
+          "O03": "OPEN",
+          "O04": "OPEN",
+          "O05": "OPEN_CONDITIONAL_NOT_ADOPTED",
+          "O06": "OPEN",
+          "O07": "OPEN_CONDITIONAL_NOT_ADOPTED"
+        },
+        "new_campaign_results_reviewed": false,
+        "new_native_runs_tests_or_performance_samples": 0,
+        "hosted_CI_inspections": 0,
+        "repository_files_modified": 0,
+        "local_preflight": "PASS --dev, required solely before raw receipt write",
+        "findings": [
+          "D0 and K0 must not be described as predeclared constants. They may be random; d,k and n_d provide the stated fixed-threshold comparison."
+        ],
+        "supersedes_reporting_receipt": {
+          "path": "/workspace/scratch/3863a747524b/w1-cost-raw/next-composition-math-v3/final-reporting-theory-review-v1.json",
+          "sha256": "0dd27d7a7830d26d2f9e514148a38c235c41d19965016461a74ab12ef75c821b",
+          "reason": "Clarify the filtration of the old-bank shadow count; bilingual paragraphs, ID recommendations and all source/probability conclusions unchanged."
+        }
+      }
+    },
+    {
+      "path": "compact-stage-native-v1/formal-results-independent-review-v1.json",
+      "sha256": "23c2d10395b5bff3d9e516bdb26bdd9bf4c58f82167b8817e89b6e517f6f847e",
+      "bytes": 10502,
+      "record": {
+        "comparisons": [
+          {
+            "B_ns": 128000000,
+            "all_local_raw_byte_ratio": 0.45054189185632976,
+            "compact_B_winners": 162,
+            "compact_attempts": 340,
+            "late_B_winners": 86,
+            "late_attempts": 178,
+            "matched": true,
+            "observed_miner_rate_ratio": 1.9030874967764877,
+            "observed_setup_plus_miner_rate_ratio": 1.9257948725831744,
+            "seed": 7101,
+            "shared_attempts": 178,
+            "winner_ratio": {
+              "decimal": 1.8837209302325582,
+              "denominator": 43,
+              "numerator": 81
+            }
+          },
+          {
+            "B_ns": 512000000,
+            "all_local_raw_byte_ratio": 0.5932306531794045,
+            "compact_B_winners": 600,
+            "compact_attempts": 1245,
+            "late_B_winners": 236,
+            "late_attempts": 500,
+            "matched": true,
+            "observed_miner_rate_ratio": 2.634872374699997,
+            "observed_setup_plus_miner_rate_ratio": 2.6369697486675987,
+            "seed": 7101,
+            "shared_attempts": 500,
+            "winner_ratio": {
+              "decimal": 2.542372881355932,
+              "denominator": 59,
+              "numerator": 150
+            }
+          },
+          {
+            "B_ns": 128000000,
+            "all_local_raw_byte_ratio": 0.3817577420687367,
+            "compact_B_winners": 168,
+            "compact_attempts": 313,
+            "late_B_winners": 119,
+            "late_attempts": 217,
+            "matched": true,
+            "observed_miner_rate_ratio": 1.4145591313239048,
+            "observed_setup_plus_miner_rate_ratio": 1.408916985695725,
+            "seed": 7102,
+            "shared_attempts": 217,
+            "winner_ratio": {
+              "decimal": 1.411764705882353,
+              "denominator": 17,
+              "numerator": 24
+            }
+          },
+          {
+            "B_ns": 512000000,
+            "all_local_raw_byte_ratio": 0.4889956471017754,
+            "compact_B_winners": 738,
+            "compact_attempts": 1408,
+            "late_B_winners": 394,
+            "late_attempts": 747,
+            "matched": true,
+            "observed_miner_rate_ratio": 1.8734912771601206,
+            "observed_setup_plus_miner_rate_ratio": 1.8754469235800177,
+            "seed": 7102,
+            "shared_attempts": 747,
+            "winner_ratio": {
+              "decimal": 1.8730964467005076,
+              "denominator": 197,
+              "numerator": 369
+            }
+          }
+        ],
+        "controls": [
+          {
+            "B_winners": 0,
+            "attempts": 0,
+            "censored": false,
+            "job": "control-setupzero",
+            "late_winners": 0,
+            "miner_cpu_ns": 6179,
+            "native_accepted_after_seal": 0,
+            "setup_complete": false,
+            "setup_cpu_ns": 53089,
+            "stop_reason": "setup-incomplete"
+          },
+          {
+            "B_winners": 0,
+            "attempts": 0,
+            "censored": false,
+            "job": "control-setuptight",
+            "late_winners": 0,
+            "miner_cpu_ns": 6059,
+            "native_accepted_after_seal": 0,
+            "setup_complete": false,
+            "setup_cpu_ns": 5915376,
+            "stop_reason": "setup-incomplete"
+          },
+          {
+            "B_winners": 0,
+            "attempts": 0,
+            "censored": false,
+            "job": "control-minerzero",
+            "late_winners": 0,
+            "miner_cpu_ns": 6790,
+            "native_accepted_after_seal": 0,
+            "setup_complete": true,
+            "setup_cpu_ns": 11461723,
+            "stop_reason": "miner-cpu-budget-stopped"
+          },
+          {
+            "B_winners": 0,
+            "attempts": 1,
+            "censored": false,
+            "job": "control-minertight",
+            "late_winners": 1,
+            "miner_cpu_ns": 382238,
+            "native_accepted_after_seal": 1,
+            "setup_complete": true,
+            "setup_cpu_ns": 12795366,
+            "stop_reason": "miner-cpu-budget-stopped"
+          },
+          {
+            "B_winners": 1,
+            "attempts": 2,
+            "censored": true,
+            "job": "control-attemptcap2",
+            "late_winners": 0,
+            "miner_cpu_ns": 633091,
+            "native_accepted_after_seal": 1,
+            "setup_complete": true,
+            "setup_cpu_ns": 11256428,
+            "stop_reason": "safety-cap-censored"
+          }
+        ],
+        "counts": {
+          "B_winner_occurrences": 2504,
+          "compact_all_nonce_recomputations_including_setup": 3316,
+          "compact_original_miss_records": 0,
+          "compact_research_attempt_occurrences": 3309,
+          "full_retained_proof_records": 3328,
+          "late_attempt_occurrences": 9,
+          "late_research_attempt_occurrences": 1642,
+          "late_winner_occurrences": 4,
+          "main_B_winner_occurrences": 2503,
+          "native_research_winner_occurrences": 2508,
+          "original_full_records": 2519,
+          "posthoc_full_records_in_late_raw": 809,
+          "proof_record_classes": {
+            "compact_all_deterministic_nonce_recomputations": 3316,
+            "compact_original_miss_records": 0,
+            "compact_original_research_packets": 1671,
+            "compact_original_setup_packets": 7,
+            "compact_posthoc_miss_recomputations": 1638,
+            "late_original_research_proofs": 837,
+            "late_original_setup_proofs": 4,
+            "late_posthoc_research_proof_records": 805,
+            "late_posthoc_setup_proof_records": 4
+          },
+          "research_attempt_occurrences": 4951
+        },
+        "cpu_accounting": {
+          "compact_post_stop_seal_cpu_ns": {
+            "max": 24236,
+            "min": 3024
+          },
+          "denominators_independently_checked": [
+            "allocated B only",
+            "actual miner phase including output, bookkeeping and seal",
+            "actual setup plus actual miner; receiver/audit excluded explicitly"
+          ],
+          "main_miner_budget_overshoot_cpu_ns": {
+            "max": 18936642,
+            "min": 192868
+          },
+          "native_endpoint_minus_phase_sum_cpu_ns": {
+            "max": 16043,
+            "min": 1863,
+            "sum": 85235
+          },
+          "native_total_endpoint_cpu_ns": 19016375046,
+          "negative_residuals_or_overshoot_not_clamped": true,
+          "phase_cpu_ns": {
+            "audit": 7075537097,
+            "miner": 2583585432,
+            "receiver": 9220749347,
+            "setup": 136417935
+          },
+          "phase_sum_cpu_ns": 19016289811,
+          "whole_waited_cpu_ns": 19068900000,
+          "whole_waited_excludes_no_receiver_or_audit_cost": true,
+          "whole_waited_minus_native_cpu_ns": {
+            "clamped": false,
+            "max": 6086935,
+            "min": 2774840,
+            "sum": 52524954
+          }
+        },
+        "hardware_scope": {
+          "cpu_model_observation": [
+            "AMD EPYC 9V74 80-Core Processor"
+          ],
+          "energy_measured": false,
+          "exclusive_cpu": false,
+          "hardware_attested": false,
+          "machine": "x86_64",
+          "network_measured": false,
+          "requested_child_cpu": 0,
+          "temporary_files": "tmpfs /dev/shm"
+        },
+        "ideal_uniform_model_hit_probability": {
+          "denominator": 2,
+          "numerator": 1
+        },
+        "inputs": {
+          "/dev/shm/w1-compact-readback-4b18f6b-v1/analysis.json": {
+            "bytes": 28133,
+            "sha256": "db84a3a38e103dc1c8b6710daf609079dc22c9318ad535407f0e420953126bbd"
+          },
+          "/dev/shm/w1-compact-readback-4b18f6b-v1/readback.json": {
+            "bytes": 3232406,
+            "sha256": "a028fe3d660c959b4e58b356fb4f0089f95072dc99f1e572909827c9b72f0897"
+          },
+          "/workspace/scratch/3863a747524b/Chain-cost-research/config/pon/devnet-v1.json": {
+            "bytes": 1964,
+            "sha256": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4"
+          },
+          "/workspace/scratch/3863a747524b/Chain-cost-research/formal/pon-nakamoto-v1/experiments/w1_compact_miner_plan_v1.json": {
+            "bytes": 6731,
+            "sha256": "893c2be3ede87d951c94fea93079b25cc6a9dead173f85b0be9e6a48ff423c3b"
+          },
+          "/workspace/scratch/3863a747524b/w1-cost-raw/compact-stage-publication-v1/supplemental-accounting.json": {
+            "bytes": 2736,
+            "sha256": "2cce3d8e1fb761eb8b1c51085d880bb511a699f37bf31e697ec3da27f04ac6e8"
+          }
+        },
+        "jobs": 13,
+        "limitations": [
+          "Four matched pairs are local observations using two seeds and nested deterministic prefixes, not four independent populations or a universal advantage ceiling.",
+          "Lower local diagnostic/encoding output cost with this development target does not establish production difficulty, consensus throughput, mature rewards, or a physical attacker cost floor.",
+          "Packet availability by B is distinct from original Node acceptance after the complete miner seal; no receiver feedback reaches generation, no research candidate activation occurs, and posthoc work receives zero new credit.",
+          "Cross-job sums and even observed distinct candidate IDs are not globally unique reward consumption; setup and reconstructed records are separate classes.",
+          "The online trace commitment remains removable diagnostic work; no observer time is subtracted to estimate a hypothetical miner.",
+          "Signed waited-minus-native residual includes final serialization and remaining drops; native recorded endpoint is not silently replaced by a phase sum.",
+          "This cross-review validates externally pinned derived evidence and arithmetic, not hardware, clock, execution attestation, or independent native state reexecution."
+        ],
+        "main_jobs": 8,
+        "method": "Read existing externally SHA-pinned readback and analysis; independently recompute counts, exact fractions, phase/residual arithmetic, paired identity prefixes, and cross-job sets. No native rerun, tests, CI, new measurements, or complete scalar replay performed by this review.",
+        "observed_development_target_hex": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "production_packet_bytes": 49508,
+        "registered_job_order_and_options_checked": true,
+        "remaining_concrete_accounting_findings": [],
+        "reviewer": "native_budget",
+        "schema": "w1-compact-independent-result-review-v1",
+        "source": {
+          "branch": "feature/chain-w1-cost-research-20261025",
+          "head": "4b18f6bdf226553514b07caf9259360d44631a06",
+          "status": "",
+          "tree": "8739627f52d68fc8dcff84282838edb940bfe81c"
+        },
+        "status": "PASS-derived-accounting-cross-review",
+        "supplemental_identity_review": {
+          "all_possible_late_hits_covered_by_actual_compact_B_credited_union": [
+            {
+              "all_hits": 86,
+              "all_hits_subset_of_compact_B_credited_union": true,
+              "job": "main-s7101-b128000000-late"
+            },
+            {
+              "all_hits": 120,
+              "all_hits_subset_of_compact_B_credited_union": true,
+              "job": "main-s7102-b128000000-late"
+            },
+            {
+              "all_hits": 236,
+              "all_hits_subset_of_compact_B_credited_union": true,
+              "job": "main-s7101-b512000000-late"
+            },
+            {
+              "all_hits": 395,
+              "all_hits_subset_of_compact_B_credited_union": true,
+              "job": "main-s7102-b512000000-late"
+            }
+          ],
+          "distinct_B_credited_native_block_ids": 1339,
+          "distinct_B_credited_research_semantic_identities": 1339,
+          "distinct_research_semantic_opportunities": 2655,
+          "global_reward_consumption_or_fanout_proved": false,
+          "same_semantic_id_implies_same_observed_block_proof_header_trace_ticket_challenge": true,
+          "setup_excluded": true
+        },
+        "utc": "2026-10-26T06:35:26.645384+00:00"
+      }
+    },
+    {
+      "path": "compact-stage-root-v1/clock-final-review-root-capture-v1.json",
+      "sha256": "90de0ec3878cd29d565347a8758f9a287a72ad543d15a081c82bb0995ffe7441",
+      "bytes": 1309,
+      "record": {
+        "schema": "w1-clock-final-review-root-capture-v1",
+        "reviewer": "/root/chain_security_v2",
+        "provenance": "Read-only final collaboration response; recorded by root, not a signed external attestation",
+        "source_commit": "4b18f6bdf226553514b07caf9259360d44631a06",
+        "conclusion": "PASS_WITHIN_LOCAL_CLOCK_CORRECTNESS_SCOPE",
+        "runtime_source_files": [
+          "trillionnium/crates/trnm-pon-node/src/mining.rs",
+          "trillionnium/crates/trnm-pon-node/src/store.rs"
+        ],
+        "validated_regressions": {
+          "clock": 5,
+          "mature_window": 1,
+          "consensus": 6,
+          "pool_mining": 8,
+          "mining_service_budget": 2
+        },
+        "facts": [
+          "Actual wall-clock sample passed unchanged; original consensus check_time reused",
+          "Only median-time refusal waits; other errors propagate",
+          "At most11 validated ancestor header projections; deeper DAA remains with original owner",
+          "PermanentAccountGrowthV2 ordinary-pool combination explicitly rejected before ordinary projection",
+          "Mature fixture651reject652accept and2x11 projections are local projection evidence, not allphysicalIO",
+          "No synthetic future timestamp, backend support, new time rule, honest-growth orsettlement theorem"
+        ],
+        "O03_closed": false,
+        "new_tests_or_experiments_executed_by_review": false,
+        "hosted_ci_queried": false
+      }
+    }
+  ],
+  "validation_counts_independently_recounted": {
+    "reviewer": "/root/native_budget",
+    "provenance": "Read-only collaboration response; all corresponding stdout/stderr sizes and SHA checked before independent log counts",
+    "validation_sha256": "21e2d05a3dea351b41c1605bf2404e57796b53223f5a1208816a009e6c6d9004",
+    "direct_python": 192,
+    "canonical_plan": 78,
+    "total_python": 270,
+    "rust_passed": 249,
+    "rust_ignored": 2,
+    "new_executions": 0
+  }
+}

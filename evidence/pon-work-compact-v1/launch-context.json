@@ -1,0 +1,41 @@
+{
+  "schema": "w1-compact-preregistered-launch-context-v1",
+  "utc_before_collection": "2026-10-26T06:22:45.010508+00:00",
+  "head": "4b18f6bdf226553514b07caf9259360d44631a06",
+  "tree": "8739627f52d68fc8dcff84282838edb940bfe81c",
+  "plan_sha256": "893c2be3ede87d951c94fea93079b25cc6a9dead173f85b0be9e6a48ff423c3b",
+  "validation_sha256": "21e2d05a3dea351b41c1605bf2404e57796b53223f5a1208816a009e6c6d9004",
+  "command": [
+    "python3",
+    "-B",
+    "scripts/run_w1_compact_miner_research.py",
+    "--out",
+    "/dev/shm/w1-compact-campaign-4b18f6b-v1",
+    "--target-dir",
+    "/dev/shm/w1-compact-campaign-target-4b18f6b-v1",
+    "--cargo",
+    "/tmp/hepta-native-rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+    "--cargo-home",
+    "/tmp/w1-cost-game-cargo",
+    "--plan",
+    "/workspace/scratch/3863a747524b/Chain-cost-research/formal/pon-nakamoto-v1/experiments/w1_compact_miner_plan_v1.json",
+    "--gnu-time",
+    "/workspace/scratch/3863a747524b/w1-gnu-time-20261025/extracted/usr/bin/time",
+    "--expected-head",
+    "4b18f6bdf226553514b07caf9259360d44631a06",
+    "--expected-tree",
+    "8739627f52d68fc8dcff84282838edb940bfe81c",
+    "--cpu",
+    "0"
+  ],
+  "environment_delta": {
+    "TMPDIR": "/dev/shm/w1-compact-runtime-tmp-v1"
+  },
+  "temporary_storage": "Linux tmpfs at /dev/shm for native temporary databases, build and raw output; same setting for all compact and deferred jobs",
+  "reason": "Avoid shared overlay ENOSPC; execution context declared before any registered performance job. Frozen algorithms, seed/order/budgets/output limit are unchanged.",
+  "shm_free_bytes_before": 1271984128,
+  "storage_device_or_disk_throughput_claim": false,
+  "independent_operator": false,
+  "formal_job_previously_executed": false,
+  "hosted_ci_queried": false
+}

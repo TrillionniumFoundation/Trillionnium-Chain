@@ -1,0 +1,69 @@
+{
+  "schema": "w1-compact-supplemental-accounting-v1",
+  "readback_sha256": "a028fe3d660c959b4e58b356fb4f0089f95072dc99f1e572909827c9b72f0897",
+  "utc": "2026-10-26T06:33:12.795339+00:00",
+  "counts_are_cross_job_identity_analysis_not_reward_consumption": true,
+  "research_attempt_occurrences": 4951,
+  "distinct_research_semantic_opportunities": 2655,
+  "B_credited_winner_occurrences": 2504,
+  "distinct_B_credited_research_candidate_identities": 1339,
+  "distinct_B_credited_native_block_ids": 1339,
+  "setup_identities_excluded": true,
+  "late_all_hit_coverage": [
+    {
+      "job": "main-s7101-b128000000-late",
+      "all_observed_hits": 86,
+      "all_hits_subset_of_actual_compact_B_credited_identities": true,
+      "reason": "same scalar-replayed semantic identity/hit prefixes; all late possible B credits therefore already included"
+    },
+    {
+      "job": "main-s7102-b128000000-late",
+      "all_observed_hits": 120,
+      "all_hits_subset_of_actual_compact_B_credited_identities": true,
+      "reason": "same scalar-replayed semantic identity/hit prefixes; all late possible B credits therefore already included"
+    },
+    {
+      "job": "main-s7101-b512000000-late",
+      "all_observed_hits": 236,
+      "all_hits_subset_of_actual_compact_B_credited_identities": true,
+      "reason": "same scalar-replayed semantic identity/hit prefixes; all late possible B credits therefore already included"
+    },
+    {
+      "job": "main-s7102-b512000000-late",
+      "all_observed_hits": 395,
+      "all_hits_subset_of_actual_compact_B_credited_identities": true,
+      "reason": "same scalar-replayed semantic identity/hit prefixes; all late possible B credits therefore already included"
+    }
+  ],
+  "within_compact_semantic_id_to_native_block_and_proof_bijective_observation": true,
+  "distinct_counts_do_not_prove_global_fanout": true,
+  "canonical_chain_growth": 0,
+  "mature_rewards": 0,
+  "native_research_winner_occurrences_including_late": 2508,
+  "per_phase_cpu_ns": {
+    "setup": 136417935,
+    "miner": 2583585432,
+    "receiver": 9220749347,
+    "audit": 7075537097
+  },
+  "whole_waited_cpu_ns": 19068900000,
+  "native_total_endpoint_cpu_ns": 19016375046,
+  "signed_observer_residual_cpu_ns": {
+    "sum": 52524954,
+    "min": 2774840,
+    "max": 6086935,
+    "clamped": false
+  },
+  "dev_target_hex": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+  "ideal_uniform_hit_probability": {
+    "numerator": 1,
+    "denominator": 2
+  },
+  "real_production_target_campaign": false,
+  "energy_joules": null,
+  "memory_bandwidth_bytes_per_second": null,
+  "WAN_bytes": null,
+  "hardware_operators": 1,
+  "new_independent_hardware_operators": 0,
+  "TMPDIR": "/dev/shm/w1-compact-runtime-tmp-v1"
+}

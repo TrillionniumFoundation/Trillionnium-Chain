@@ -1,0 +1,806 @@
+{
+  "schema": "w1-compact-job-accounting-v1",
+  "readback_sha256": "a028fe3d660c959b4e58b356fb4f0089f95072dc99f1e572909827c9b72f0897",
+  "job_metrics": [
+    {
+      "actual_network_bytes": null,
+      "attempts": 178,
+      "censored_by_attempt_cap": false,
+      "energy_joules": null,
+      "full_proof_records_replayed": 180,
+      "full_winners_available_by_B": 86,
+      "job": "main-s7101-b128000000-late",
+      "late_attempts": 1,
+      "late_winners": 0,
+      "native_accepted_from_B": 86,
+      "options": {
+        "max_attempts": 4096,
+        "miner_budget_ns": 128000000,
+        "mode": "deferred",
+        "seed": 7101,
+        "setup_budget_ns": 1000000000
+      },
+      "original_miner_full_proofs": 86,
+      "original_research_trace_count": 178,
+      "phase_cpu_ns": {
+        "audit": 323862191,
+        "miner": 129662640,
+        "receiver": 347062760,
+        "setup": 14708093
+      },
+      "posthoc_miss_proofs": 92,
+      "raw_bytes": 18201879,
+      "setup_complete": true,
+      "total_process_cpu_ns": 815305629,
+      "traces_available_by_B": 177,
+      "whole_command_scope": "includes receiver, posthoc audit and output; not online mining or network delivery",
+      "whole_waited_cpu_ns": 819537000,
+      "within_B_winners_per_allocated_miner_second": {
+        "decimal": 671.875,
+        "denominator": 8,
+        "numerator": 5375
+      },
+      "within_B_winners_per_observed_miner_second": {
+        "decimal": 663.2596714057341,
+        "denominator": 1620783,
+        "numerator": 1075000000
+      },
+      "within_B_winners_per_observed_setup_plus_miner_second": {
+        "decimal": 595.6886012347114,
+        "denominator": 144370733,
+        "numerator": 86000000000
+      }
+    },
+    {
+      "actual_network_bytes": null,
+      "attempts": 340,
+      "attempts_available_by_B": 339,
+      "availability_to_accounting_observation_cpu_ns": 160263,
+      "censored_by_attempt_cap": false,
+      "deterministic_attempts_recomputed": 341,
+      "energy_joules": null,
+      "full_proof_records_replayed": 164,
+      "full_winners_available_by_B": 162,
+      "job": "main-s7101-b128000000-compact",
+      "late_attempts": 1,
+      "late_winners": 1,
+      "native_accepted_from_B": 162,
+      "options": {
+        "max_attempts": 4096,
+        "miner_budget_ns": 128000000,
+        "seed": 7101,
+        "setup_budget_ns": 1000000000
+      },
+      "original_miss_records": 0,
+      "original_research_packet_count": 163,
+      "phase_cpu_ns": {
+        "audit": 404401258,
+        "miner": 128343142,
+        "receiver": 592095892,
+        "setup": 12873441
+      },
+      "post_stop_seal_cpu_ns": 11256,
+      "raw_bytes": 8200709,
+      "setup_complete": true,
+      "total_process_cpu_ns": 1137720182,
+      "whole_command_scope": "includes receiver, posthoc audit and output; not online mining or network delivery",
+      "whole_waited_cpu_ns": 1141280000,
+      "within_B_winners_per_allocated_miner_second": {
+        "decimal": 1265.625,
+        "denominator": 8,
+        "numerator": 10125
+      },
+      "within_B_winners_per_observed_miner_second": {
+        "decimal": 1262.2411877683344,
+        "denominator": 64171571,
+        "numerator": 81000000000
+      },
+      "within_B_winners_per_observed_setup_plus_miner_second": {
+        "decimal": 1147.1740539140505,
+        "denominator": 141216583,
+        "numerator": 162000000000
+      }
+    },
+    {
+      "actual_network_bytes": null,
+      "attempts": 313,
+      "attempts_available_by_B": 312,
+      "availability_to_accounting_observation_cpu_ns": 205192,
+      "censored_by_attempt_cap": false,
+      "deterministic_attempts_recomputed": 314,
+      "energy_joules": null,
+      "full_proof_records_replayed": 169,
+      "full_winners_available_by_B": 168,
+      "job": "main-s7102-b128000000-compact",
+      "late_attempts": 1,
+      "late_winners": 0,
+      "native_accepted_from_B": 168,
+      "options": {
+        "max_attempts": 4096,
+        "miner_budget_ns": 128000000,
+        "seed": 7102,
+        "setup_budget_ns": 1000000000
+      },
+      "original_miss_records": 0,
+      "original_research_packet_count": 168,
+      "phase_cpu_ns": {
+        "audit": 431218160,
+        "miner": 128192868,
+        "receiver": 629187014,
+        "setup": 10970342
+      },
+      "post_stop_seal_cpu_ns": 20130,
+      "raw_bytes": 8450568,
+      "setup_complete": true,
+      "total_process_cpu_ns": 1199573341,
+      "whole_command_scope": "includes receiver, posthoc audit and output; not online mining or network delivery",
+      "whole_waited_cpu_ns": 1203332000,
+      "within_B_winners_per_allocated_miner_second": {
+        "decimal": 1312.5,
+        "denominator": 2,
+        "numerator": 2625
+      },
+      "within_B_winners_per_observed_miner_second": {
+        "decimal": 1310.525325012621,
+        "denominator": 10682739,
+        "numerator": 14000000000
+      },
+      "within_B_winners_per_observed_setup_plus_miner_second": {
+        "decimal": 1207.2156139542915,
+        "denominator": 13916321,
+        "numerator": 16800000000
+      }
+    },
+    {
+      "actual_network_bytes": null,
+      "attempts": 217,
+      "censored_by_attempt_cap": false,
+      "energy_joules": null,
+      "full_proof_records_replayed": 219,
+      "full_winners_available_by_B": 119,
+      "job": "main-s7102-b128000000-late",
+      "late_attempts": 1,
+      "late_winners": 1,
+      "native_accepted_from_B": 119,
+      "options": {
+        "max_attempts": 4096,
+        "miner_budget_ns": 128000000,
+        "mode": "deferred",
+        "seed": 7102,
+        "setup_budget_ns": 1000000000
+      },
+      "original_miner_full_proofs": 120,
+      "original_research_trace_count": 217,
+      "phase_cpu_ns": {
+        "audit": 384277526,
+        "miner": 128446611,
+        "receiver": 405416217,
+        "setup": 10435888
+      },
+      "posthoc_miss_proofs": 97,
+      "raw_bytes": 22135944,
+      "setup_complete": true,
+      "total_process_cpu_ns": 928587408,
+      "traces_available_by_B": 216,
+      "whole_command_scope": "includes receiver, posthoc audit and output; not online mining or network delivery",
+      "whole_waited_cpu_ns": 932642000,
+      "within_B_winners_per_allocated_miner_second": {
+        "decimal": 929.6875,
+        "denominator": 16,
+        "numerator": 14875
+      },
+      "within_B_winners_per_observed_miner_second": {
+        "decimal": 926.4549611199941,
+        "denominator": 7555683,
+        "numerator": 7000000000
+      },
+      "within_B_winners_per_observed_setup_plus_miner_second": {
+        "decimal": 856.8394207825999,
+        "denominator": 19840357,
+        "numerator": 17000000000
+      }
+    },
+    {
+      "actual_network_bytes": null,
+      "attempts": 1245,
+      "attempts_available_by_B": 1244,
+      "availability_to_accounting_observation_cpu_ns": 571663,
+      "censored_by_attempt_cap": false,
+      "deterministic_attempts_recomputed": 1246,
+      "energy_joules": null,
+      "full_proof_records_replayed": 601,
+      "full_winners_available_by_B": 600,
+      "job": "main-s7101-b512000000-compact",
+      "late_attempts": 1,
+      "late_winners": 0,
+      "native_accepted_from_B": 600,
+      "options": {
+        "max_attempts": 4096,
+        "miner_budget_ns": 512000000,
+        "seed": 7101,
+        "setup_budget_ns": 1000000000
+      },
+      "original_miss_records": 0,
+      "original_research_packet_count": 600,
+      "phase_cpu_ns": {
+        "audit": 1398371541,
+        "miner": 512297648,
+        "receiver": 2125389374,
+        "setup": 11534781
+      },
+      "post_stop_seal_cpu_ns": 20150,
+      "raw_bytes": 30044765,
+      "setup_complete": true,
+      "total_process_cpu_ns": 4047598642,
+      "whole_command_scope": "includes receiver, posthoc audit and output; not online mining or network delivery",
+      "whole_waited_cpu_ns": 4053181000,
+      "within_B_winners_per_allocated_miner_second": {
+        "decimal": 1171.875,
+        "denominator": 8,
+        "numerator": 9375
+      },
+      "within_B_winners_per_observed_miner_second": {
+        "decimal": 1171.194133610389,
+        "denominator": 32018603,
+        "numerator": 37500000000
+      },
+      "within_B_winners_per_observed_setup_plus_miner_second": {
+        "decimal": 1145.40445910423,
+        "denominator": 523832429,
+        "numerator": 600000000000
+      }
+    },
+    {
+      "actual_network_bytes": null,
+      "attempts": 500,
+      "censored_by_attempt_cap": false,
+      "energy_joules": null,
+      "full_proof_records_replayed": 502,
+      "full_winners_available_by_B": 236,
+      "job": "main-s7101-b512000000-late",
+      "late_attempts": 1,
+      "late_winners": 0,
+      "native_accepted_from_B": 236,
+      "options": {
+        "max_attempts": 4096,
+        "miner_budget_ns": 512000000,
+        "mode": "deferred",
+        "seed": 7101,
+        "setup_budget_ns": 1000000000
+      },
+      "original_miner_full_proofs": 236,
+      "original_research_trace_count": 500,
+      "phase_cpu_ns": {
+        "audit": 944761649,
+        "miner": 530936642,
+        "receiver": 976598097,
+        "setup": 12386597
+      },
+      "posthoc_miss_proofs": 264,
+      "raw_bytes": 50646009,
+      "setup_complete": true,
+      "total_process_cpu_ns": 2464696214,
+      "traces_available_by_B": 499,
+      "whole_command_scope": "includes receiver, posthoc audit and output; not online mining or network delivery",
+      "whole_waited_cpu_ns": 2469111000,
+      "within_B_winners_per_allocated_miner_second": {
+        "decimal": 460.9375,
+        "denominator": 16,
+        "numerator": 7375
+      },
+      "within_B_winners_per_observed_miner_second": {
+        "decimal": 444.49748111376346,
+        "denominator": 265468321,
+        "numerator": 118000000000
+      },
+      "within_B_winners_per_observed_setup_plus_miner_second": {
+        "decimal": 434.36389806253067,
+        "denominator": 543323239,
+        "numerator": 236000000000
+      }
+    },
+    {
+      "actual_network_bytes": null,
+      "attempts": 747,
+      "censored_by_attempt_cap": false,
+      "energy_joules": null,
+      "full_proof_records_replayed": 749,
+      "full_winners_available_by_B": 394,
+      "job": "main-s7102-b512000000-late",
+      "late_attempts": 1,
+      "late_winners": 1,
+      "native_accepted_from_B": 394,
+      "options": {
+        "max_attempts": 4096,
+        "miner_budget_ns": 512000000,
+        "mode": "deferred",
+        "seed": 7102,
+        "setup_budget_ns": 1000000000
+      },
+      "original_miner_full_proofs": 395,
+      "original_research_trace_count": 747,
+      "phase_cpu_ns": {
+        "audit": 1341697257,
+        "miner": 512389754,
+        "receiver": 1541631642,
+        "setup": 11287573
+      },
+      "posthoc_miss_proofs": 352,
+      "raw_bytes": 75548286,
+      "setup_complete": true,
+      "total_process_cpu_ns": 3407022269,
+      "traces_available_by_B": 746,
+      "whole_command_scope": "includes receiver, posthoc audit and output; not online mining or network delivery",
+      "whole_waited_cpu_ns": 3412017000,
+      "within_B_winners_per_allocated_miner_second": {
+        "decimal": 769.53125,
+        "denominator": 32,
+        "numerator": 24625
+      },
+      "within_B_winners_per_observed_miner_second": {
+        "decimal": 768.9458989455125,
+        "denominator": 256194877,
+        "numerator": 197000000000
+      },
+      "within_B_winners_per_observed_setup_plus_miner_second": {
+        "decimal": 752.3716985364157,
+        "denominator": 523677327,
+        "numerator": 394000000000
+      }
+    },
+    {
+      "actual_network_bytes": null,
+      "attempts": 1408,
+      "attempts_available_by_B": 1407,
+      "availability_to_accounting_observation_cpu_ns": 577210,
+      "censored_by_attempt_cap": false,
+      "deterministic_attempts_recomputed": 1409,
+      "energy_joules": null,
+      "full_proof_records_replayed": 739,
+      "full_winners_available_by_B": 738,
+      "job": "main-s7102-b512000000-compact",
+      "late_attempts": 1,
+      "late_winners": 0,
+      "native_accepted_from_B": 738,
+      "options": {
+        "max_attempts": 4096,
+        "miner_budget_ns": 512000000,
+        "seed": 7102,
+        "setup_budget_ns": 1000000000
+      },
+      "original_miss_records": 0,
+      "original_research_packet_count": 738,
+      "phase_cpu_ns": {
+        "audit": 1839747739,
+        "miner": 512281770,
+        "receiver": 2595041350,
+        "setup": 10739238
+      },
+      "post_stop_seal_cpu_ns": 24236,
+      "raw_bytes": 36942783,
+      "setup_complete": true,
+      "total_process_cpu_ns": 4957815065,
+      "whole_command_scope": "includes receiver, posthoc audit and output; not online mining or network delivery",
+      "whole_waited_cpu_ns": 4963902000,
+      "within_B_winners_per_allocated_miner_second": {
+        "decimal": 1441.40625,
+        "denominator": 32,
+        "numerator": 46125
+      },
+      "within_B_winners_per_observed_miner_second": {
+        "decimal": 1440.6134342824653,
+        "denominator": 17076059,
+        "numerator": 24600000000
+      },
+      "within_B_winners_per_observed_setup_plus_miner_second": {
+        "decimal": 1411.0331874087933,
+        "denominator": 10896271,
+        "numerator": 15375000000
+      }
+    },
+    {
+      "actual_network_bytes": null,
+      "attempts": 0,
+      "attempts_available_by_B": 0,
+      "availability_to_accounting_observation_cpu_ns": 0,
+      "censored_by_attempt_cap": false,
+      "deterministic_attempts_recomputed": 0,
+      "energy_joules": null,
+      "full_proof_records_replayed": 0,
+      "full_winners_available_by_B": 0,
+      "job": "control-setupzero",
+      "late_attempts": 0,
+      "late_winners": 0,
+      "native_accepted_from_B": 0,
+      "options": {
+        "max_attempts": 4096,
+        "miner_budget_ns": 128000000,
+        "seed": 7103,
+        "setup_budget_ns": 0
+      },
+      "original_miss_records": 0,
+      "original_research_packet_count": 0,
+      "phase_cpu_ns": {
+        "audit": 5909,
+        "miner": 6179,
+        "receiver": 2684,
+        "setup": 53089
+      },
+      "post_stop_seal_cpu_ns": 3225,
+      "raw_bytes": 2888,
+      "setup_complete": false,
+      "total_process_cpu_ns": 69724,
+      "whole_command_scope": "includes receiver, posthoc audit and output; not online mining or network delivery",
+      "whole_waited_cpu_ns": 3123000,
+      "within_B_winners_per_allocated_miner_second": {
+        "decimal": 0.0,
+        "denominator": 1,
+        "numerator": 0
+      },
+      "within_B_winners_per_observed_miner_second": {
+        "decimal": 0.0,
+        "denominator": 1,
+        "numerator": 0
+      },
+      "within_B_winners_per_observed_setup_plus_miner_second": {
+        "decimal": 0.0,
+        "denominator": 1,
+        "numerator": 0
+      }
+    },
+    {
+      "actual_network_bytes": null,
+      "attempts": 0,
+      "attempts_available_by_B": 0,
+      "availability_to_accounting_observation_cpu_ns": 0,
+      "censored_by_attempt_cap": false,
+      "deterministic_attempts_recomputed": 0,
+      "energy_joules": null,
+      "full_proof_records_replayed": 0,
+      "full_winners_available_by_B": 0,
+      "job": "control-setuptight",
+      "late_attempts": 0,
+      "late_winners": 0,
+      "native_accepted_from_B": 0,
+      "options": {
+        "max_attempts": 4096,
+        "miner_budget_ns": 128000000,
+        "seed": 7103,
+        "setup_budget_ns": 1000000
+      },
+      "original_miss_records": 0,
+      "original_research_packet_count": 0,
+      "phase_cpu_ns": {
+        "audit": 21452,
+        "miner": 6059,
+        "receiver": 168801,
+        "setup": 5915376
+      },
+      "post_stop_seal_cpu_ns": 3024,
+      "raw_bytes": 3265,
+      "setup_complete": false,
+      "total_process_cpu_ns": 6113631,
+      "whole_command_scope": "includes receiver, posthoc audit and output; not online mining or network delivery",
+      "whole_waited_cpu_ns": 9482000,
+      "within_B_winners_per_allocated_miner_second": {
+        "decimal": 0.0,
+        "denominator": 1,
+        "numerator": 0
+      },
+      "within_B_winners_per_observed_miner_second": {
+        "decimal": 0.0,
+        "denominator": 1,
+        "numerator": 0
+      },
+      "within_B_winners_per_observed_setup_plus_miner_second": {
+        "decimal": 0.0,
+        "denominator": 1,
+        "numerator": 0
+      }
+    },
+    {
+      "actual_network_bytes": null,
+      "attempts": 0,
+      "attempts_available_by_B": 0,
+      "availability_to_accounting_observation_cpu_ns": 0,
+      "censored_by_attempt_cap": false,
+      "deterministic_attempts_recomputed": 1,
+      "energy_joules": null,
+      "full_proof_records_replayed": 1,
+      "full_winners_available_by_B": 0,
+      "job": "control-minerzero",
+      "late_attempts": 0,
+      "late_winners": 0,
+      "native_accepted_from_B": 0,
+      "options": {
+        "max_attempts": 4096,
+        "miner_budget_ns": 0,
+        "seed": 7103,
+        "setup_budget_ns": 1000000000
+      },
+      "original_miss_records": 0,
+      "original_research_packet_count": 0,
+      "phase_cpu_ns": {
+        "audit": 1091092,
+        "miner": 6790,
+        "receiver": 222301,
+        "setup": 11461723
+      },
+      "post_stop_seal_cpu_ns": 3836,
+      "raw_bytes": 53516,
+      "setup_complete": true,
+      "total_process_cpu_ns": 12784680,
+      "whole_command_scope": "includes receiver, posthoc audit and output; not online mining or network delivery",
+      "whole_waited_cpu_ns": 15805000,
+      "within_B_winners_per_allocated_miner_second": null,
+      "within_B_winners_per_observed_miner_second": {
+        "decimal": 0.0,
+        "denominator": 1,
+        "numerator": 0
+      },
+      "within_B_winners_per_observed_setup_plus_miner_second": {
+        "decimal": 0.0,
+        "denominator": 1,
+        "numerator": 0
+      }
+    },
+    {
+      "actual_network_bytes": null,
+      "attempts": 1,
+      "attempts_available_by_B": 0,
+      "availability_to_accounting_observation_cpu_ns": 391,
+      "censored_by_attempt_cap": false,
+      "deterministic_attempts_recomputed": 2,
+      "energy_joules": null,
+      "full_proof_records_replayed": 2,
+      "full_winners_available_by_B": 0,
+      "job": "control-minertight",
+      "late_attempts": 1,
+      "late_winners": 1,
+      "native_accepted_from_B": 0,
+      "options": {
+        "max_attempts": 4096,
+        "miner_budget_ns": 100000,
+        "seed": 7103,
+        "setup_budget_ns": 1000000000
+      },
+      "original_miss_records": 0,
+      "original_research_packet_count": 1,
+      "phase_cpu_ns": {
+        "audit": 2611143,
+        "miner": 382238,
+        "receiver": 3812298,
+        "setup": 12795366
+      },
+      "post_stop_seal_cpu_ns": 4116,
+      "raw_bytes": 103681,
+      "setup_complete": true,
+      "total_process_cpu_ns": 19604160,
+      "whole_command_scope": "includes receiver, posthoc audit and output; not online mining or network delivery",
+      "whole_waited_cpu_ns": 22379000,
+      "within_B_winners_per_allocated_miner_second": {
+        "decimal": 0.0,
+        "denominator": 1,
+        "numerator": 0
+      },
+      "within_B_winners_per_observed_miner_second": {
+        "decimal": 0.0,
+        "denominator": 1,
+        "numerator": 0
+      },
+      "within_B_winners_per_observed_setup_plus_miner_second": {
+        "decimal": 0.0,
+        "denominator": 1,
+        "numerator": 0
+      }
+    },
+    {
+      "actual_network_bytes": null,
+      "attempts": 2,
+      "attempts_available_by_B": 2,
+      "availability_to_accounting_observation_cpu_ns": 471,
+      "censored_by_attempt_cap": true,
+      "deterministic_attempts_recomputed": 3,
+      "energy_joules": null,
+      "full_proof_records_replayed": 2,
+      "full_winners_available_by_B": 1,
+      "job": "control-attemptcap2",
+      "late_attempts": 0,
+      "late_winners": 0,
+      "native_accepted_from_B": 1,
+      "options": {
+        "max_attempts": 2,
+        "miner_budget_ns": 512000000,
+        "seed": 7103,
+        "setup_budget_ns": 1000000000
+      },
+      "original_miss_records": 0,
+      "original_research_packet_count": 1,
+      "phase_cpu_ns": {
+        "audit": 3470180,
+        "miner": 633091,
+        "receiver": 4120917,
+        "setup": 11256428
+      },
+      "post_stop_seal_cpu_ns": 10325,
+      "raw_bytes": 103675,
+      "setup_complete": true,
+      "total_process_cpu_ns": 19484101,
+      "whole_command_scope": "includes receiver, posthoc audit and output; not online mining or network delivery",
+      "whole_waited_cpu_ns": 23109000,
+      "within_B_winners_per_allocated_miner_second": {
+        "decimal": 1.953125,
+        "denominator": 64,
+        "numerator": 125
+      },
+      "within_B_winners_per_observed_miner_second": {
+        "decimal": 1579.551754803022,
+        "denominator": 633091,
+        "numerator": 1000000000
+      },
+      "within_B_winners_per_observed_setup_plus_miner_second": {
+        "decimal": 84.10769182504356,
+        "denominator": 11889519,
+        "numerator": 1000000000
+      }
+    }
+  ],
+  "observer_reconciliation": [
+    {
+      "job": "main-s7101-b128000000-late",
+      "gnu_time_print_allowance_ns": 20000000,
+      "gnu_time_printed_cpu_ns": 810000000,
+      "hardware_or_clock_attestation": false,
+      "nested_native_cpu_ns": 815305629,
+      "residual_clamped": false,
+      "scope": "whole waited command minus native process CPU from its recorded origin to the explicit endpoint; final serialization and remaining drops stay in the residual",
+      "signed_residual_cpu_ns": 4231371,
+      "waited_endpoint_allowance_ns": 2000,
+      "whole_waited_cpu_ns": 819537000
+    },
+    {
+      "job": "main-s7101-b128000000-compact",
+      "gnu_time_print_allowance_ns": 20000000,
+      "gnu_time_printed_cpu_ns": 1130000000,
+      "hardware_or_clock_attestation": false,
+      "nested_native_cpu_ns": 1137720182,
+      "residual_clamped": false,
+      "scope": "whole waited command minus native process CPU from its recorded origin to the explicit endpoint; final serialization and remaining drops stay in the residual",
+      "signed_residual_cpu_ns": 3559818,
+      "waited_endpoint_allowance_ns": 2000,
+      "whole_waited_cpu_ns": 1141280000
+    },
+    {
+      "job": "main-s7102-b128000000-compact",
+      "gnu_time_print_allowance_ns": 20000000,
+      "gnu_time_printed_cpu_ns": 1190000000,
+      "hardware_or_clock_attestation": false,
+      "nested_native_cpu_ns": 1199573341,
+      "residual_clamped": false,
+      "scope": "whole waited command minus native process CPU from its recorded origin to the explicit endpoint; final serialization and remaining drops stay in the residual",
+      "signed_residual_cpu_ns": 3758659,
+      "waited_endpoint_allowance_ns": 2000,
+      "whole_waited_cpu_ns": 1203332000
+    },
+    {
+      "job": "main-s7102-b128000000-late",
+      "gnu_time_print_allowance_ns": 20000000,
+      "gnu_time_printed_cpu_ns": 930000000,
+      "hardware_or_clock_attestation": false,
+      "nested_native_cpu_ns": 928587408,
+      "residual_clamped": false,
+      "scope": "whole waited command minus native process CPU from its recorded origin to the explicit endpoint; final serialization and remaining drops stay in the residual",
+      "signed_residual_cpu_ns": 4054592,
+      "waited_endpoint_allowance_ns": 2000,
+      "whole_waited_cpu_ns": 932642000
+    },
+    {
+      "job": "main-s7101-b512000000-compact",
+      "gnu_time_print_allowance_ns": 20000000,
+      "gnu_time_printed_cpu_ns": 4040000000,
+      "hardware_or_clock_attestation": false,
+      "nested_native_cpu_ns": 4047598642,
+      "residual_clamped": false,
+      "scope": "whole waited command minus native process CPU from its recorded origin to the explicit endpoint; final serialization and remaining drops stay in the residual",
+      "signed_residual_cpu_ns": 5582358,
+      "waited_endpoint_allowance_ns": 2000,
+      "whole_waited_cpu_ns": 4053181000
+    },
+    {
+      "job": "main-s7101-b512000000-late",
+      "gnu_time_print_allowance_ns": 20000000,
+      "gnu_time_printed_cpu_ns": 2460000000,
+      "hardware_or_clock_attestation": false,
+      "nested_native_cpu_ns": 2464696214,
+      "residual_clamped": false,
+      "scope": "whole waited command minus native process CPU from its recorded origin to the explicit endpoint; final serialization and remaining drops stay in the residual",
+      "signed_residual_cpu_ns": 4414786,
+      "waited_endpoint_allowance_ns": 2000,
+      "whole_waited_cpu_ns": 2469111000
+    },
+    {
+      "job": "main-s7102-b512000000-late",
+      "gnu_time_print_allowance_ns": 20000000,
+      "gnu_time_printed_cpu_ns": 3400000000,
+      "hardware_or_clock_attestation": false,
+      "nested_native_cpu_ns": 3407022269,
+      "residual_clamped": false,
+      "scope": "whole waited command minus native process CPU from its recorded origin to the explicit endpoint; final serialization and remaining drops stay in the residual",
+      "signed_residual_cpu_ns": 4994731,
+      "waited_endpoint_allowance_ns": 2000,
+      "whole_waited_cpu_ns": 3412017000
+    },
+    {
+      "job": "main-s7102-b512000000-compact",
+      "gnu_time_print_allowance_ns": 20000000,
+      "gnu_time_printed_cpu_ns": 4960000000,
+      "hardware_or_clock_attestation": false,
+      "nested_native_cpu_ns": 4957815065,
+      "residual_clamped": false,
+      "scope": "whole waited command minus native process CPU from its recorded origin to the explicit endpoint; final serialization and remaining drops stay in the residual",
+      "signed_residual_cpu_ns": 6086935,
+      "waited_endpoint_allowance_ns": 2000,
+      "whole_waited_cpu_ns": 4963902000
+    },
+    {
+      "job": "control-setupzero",
+      "gnu_time_print_allowance_ns": 20000000,
+      "gnu_time_printed_cpu_ns": 0,
+      "hardware_or_clock_attestation": false,
+      "nested_native_cpu_ns": 69724,
+      "residual_clamped": false,
+      "scope": "whole waited command minus native process CPU from its recorded origin to the explicit endpoint; final serialization and remaining drops stay in the residual",
+      "signed_residual_cpu_ns": 3053276,
+      "waited_endpoint_allowance_ns": 2000,
+      "whole_waited_cpu_ns": 3123000
+    },
+    {
+      "job": "control-setuptight",
+      "gnu_time_print_allowance_ns": 20000000,
+      "gnu_time_printed_cpu_ns": 0,
+      "hardware_or_clock_attestation": false,
+      "nested_native_cpu_ns": 6113631,
+      "residual_clamped": false,
+      "scope": "whole waited command minus native process CPU from its recorded origin to the explicit endpoint; final serialization and remaining drops stay in the residual",
+      "signed_residual_cpu_ns": 3368369,
+      "waited_endpoint_allowance_ns": 2000,
+      "whole_waited_cpu_ns": 9482000
+    },
+    {
+      "job": "control-minerzero",
+      "gnu_time_print_allowance_ns": 20000000,
+      "gnu_time_printed_cpu_ns": 10000000,
+      "hardware_or_clock_attestation": false,
+      "nested_native_cpu_ns": 12784680,
+      "residual_clamped": false,
+      "scope": "whole waited command minus native process CPU from its recorded origin to the explicit endpoint; final serialization and remaining drops stay in the residual",
+      "signed_residual_cpu_ns": 3020320,
+      "waited_endpoint_allowance_ns": 2000,
+      "whole_waited_cpu_ns": 15805000
+    },
+    {
+      "job": "control-minertight",
+      "gnu_time_print_allowance_ns": 20000000,
+      "gnu_time_printed_cpu_ns": 10000000,
+      "hardware_or_clock_attestation": false,
+      "nested_native_cpu_ns": 19604160,
+      "residual_clamped": false,
+      "scope": "whole waited command minus native process CPU from its recorded origin to the explicit endpoint; final serialization and remaining drops stay in the residual",
+      "signed_residual_cpu_ns": 2774840,
+      "waited_endpoint_allowance_ns": 2000,
+      "whole_waited_cpu_ns": 22379000
+    },
+    {
+      "job": "control-attemptcap2",
+      "gnu_time_print_allowance_ns": 20000000,
+      "gnu_time_printed_cpu_ns": 10000000,
+      "hardware_or_clock_attestation": false,
+      "nested_native_cpu_ns": 19484101,
+      "residual_clamped": false,
+      "scope": "whole waited command minus native process CPU from its recorded origin to the explicit endpoint; final serialization and remaining drops stay in the residual",
+      "signed_residual_cpu_ns": 3624899,
+      "waited_endpoint_allowance_ns": 2000,
+      "whole_waited_cpu_ns": 23109000
+    }
+  ]
+}

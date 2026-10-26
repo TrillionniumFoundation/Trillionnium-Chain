@@ -1,0 +1,93 @@
+{
+  "schema": "w1-original-blocker-ledger-v3",
+  "original_closure_standards_unchanged": true,
+  "all_original_blockers_closed": false,
+  "original_obligations": [
+    {
+      "id": "O01",
+      "name": "实际 W1 资源到有效机会的归约",
+      "status": "OPEN",
+      "remaining": "Predictable canonical validity and shared-ticket composition are proved only in the captured empty-table ideal-permutation model. Actual-SHA instantiation, justified resource/cap interfaces, nonvacuous advice treatment and physical-resource conversion remain open."
+    },
+    {
+      "id": "O02",
+      "name": "任意自适应策略",
+      "status": "OPEN",
+      "remaining": "Arbitrary classical adaptive and batch oracle strategies are included inside the finite captured model, with arithmetic unrestricted. No universal bound on actual-SHA implementations, uncaptured long-term preprocessing, arbitrary initial state, hardware or real joint-algorithm advantage is established."
+    },
+    {
+      "id": "O03",
+      "name": "生产 kappa 与链安全",
+      "status": "OPEN",
+      "remaining": "A rho-corrected adaptive weighted-forest upper interface is available conditionally, with a weighted initial bank. Actual resource-to-opportunity and coupling guarantees, honest visible growth, full validation/data propagation and all-fork settlement remain open."
+    },
+    {
+      "id": "O04",
+      "name": "独立硬件物理成本",
+      "status": "OPEN",
+      "remaining": "Only one nonexclusive x86_64 host and one operator. Real independent ARM/GPU/available specialized hardware, energy and memory/WAN bandwidth measurements remain absent."
+    },
+    {
+      "id": "O05",
+      "name": "混合基础工作",
+      "status": "OPEN_CONDITIONAL_NOT_ADOPTED",
+      "remaining": "If adopted, actual shared binding, failed-attempt reuse, consumption uniqueness and composable physical-cost guarantee are required. Cost overlap and winner-only proof generation prevent an unproved additive floor. Pure matrix remains selected."
+    },
+    {
+      "id": "O06",
+      "name": "Hepta 效用与采用权限",
+      "status": "OPEN",
+      "remaining": "Original owner-selected fixed genesis material exists in Hepta de133b601e133917cbe1ae03efb3a2ffc06dcd4a. The distinct ordinary initial-only host constructor and real measured base forward/ordinary parent remain absent in inspected source and evidence. Initial parent creation does not require a previously improved child. Real task lineage, independent quality/poisoning, later evaluated-child CURRENT/FinalUse, adoption, cross-node complete-Cell loading and rollback remain open."
+    },
+    {
+      "id": "O07",
+      "name": "ZK 后的票据扩增",
+      "status": "OPEN_CONDITIONAL_NOT_ADOPTED",
+      "remaining": "No actual ZK backend adopted. Requires actual public statement and reward identity binding, joint/adaptive soundness and multi-proof amortization/full-workflow cost analysis; randomizing or wrapping one proof must not create extra credit."
+    }
+  ],
+  "hosted_ci_work_requested_or_followed": false,
+  "production_activation": false,
+  "pure_matrix_primary": true,
+  "previous_ledger": "../pon-work-fork-late-v1/blockers.json",
+  "previous_ledger_sha256": "d8e5fb80cddb35bd48f113793b414efb3279fb87c603a8efe1aae5bd69e59a37",
+  "bounded_closures": [
+    {
+      "id": "C33",
+      "status": "CLOSED_WITHIN_DECLARED_SCOPE",
+      "scope": "source-bound predictable W1 ticket composition in the captured empty-table classical ideal-permutation model",
+      "increment_over_prior": "Extends C29 with complete c/d/t chronology, disjoint-noise analysis filtration, shared-key conditional envelope, fanout-one candidate identity and implemented single-seal captured snapshot. The peer-discovered seal issue belongs inside this closure, not a duplicate extra ID.",
+      "evidence": "Complete independently reviewed v3 proof; exact-source owner final receipt; 21 targeted controls, including actual relation-level key overlap and terminal snapshot negatives.",
+      "boundary": "Actual SHA, arbitrary non-uniform/uncaptured advice, arbitrary seeded tables, physical cost and actual reward consumption are unproved."
+    },
+    {
+      "id": "C34",
+      "status": "CLOSED_WITHIN_DECLARED_SCOPE",
+      "scope": "rho-corrected weighted-forest integration for adaptive native target weights",
+      "increment_over_prior": "Extends C30 without changing its original exact-uniform premise; integrates the shared-permutation conditional mean upper bound.",
+      "evidence": "Frozen W1_NATIVE_DAA_RESOURCE_V2 section 2.1 with independent integration receipt; deterministic shared n/w0/Wmax and external failure terms explicit.",
+      "boundary": "No actual-SHA coupling bound, production kappa, honest-service lower bound, common-prefix or settlement theorem."
+    },
+    {
+      "id": "C35",
+      "scope": "compact actual winner production and complete deterministic attempt audit",
+      "status": "CLOSED_WITHIN_DECLARED_SCOPE",
+      "evidence": "13 registered actual native jobs completed; 1678 original compact full packet records replayed, all3316 compact deterministic nonces recomputed including1638 misses; complete winning packet49508bytes;4 late winners across both arms excluded from B credit",
+      "boundary": "No enforced diagnostic work floor, no arbitrary miner optimum, no reward activation"
+    },
+    {
+      "id": "C36",
+      "scope": "fresh-source matched registered comparison and external-pinned complete evidence replay",
+      "status": "CLOSED_WITHIN_DECLARED_SCOPE",
+      "evidence": "All13jobs, four matched comparisons and five controls retained; all3328 full proof records replayed;425 transitive source/helper/config files equal exact frozen Git before/after reader; mandatory source/binary/manifest/readback hashes checked; one local sample per arm",
+      "boundary": "One nonexclusive x86 host/operator and one observation per arm; no production kappa, energy or WAN claim"
+    },
+    {
+      "id": "C37",
+      "scope": "ordinary wall-clock mining precheck follows original timestamp admission",
+      "status": "CLOSED_WITHIN_DECLARED_SCOPE",
+      "evidence": "5 exact frozen-source clock regressions plus mature 70-block fixture; at most11 projected ancestors, explicit unsupported native-growth rejection, original admission/DAA retained",
+      "boundary": "Local defensive implementation correction; no all-fork settlement, propagation or honest growth lower bound"
+    }
+  ]
+}

@@ -1822,6 +1822,65 @@ ARM/GPU/independent-operator execution, measured energy and peer transfer remain
 absent. No production flag, original qualification limit, security standard or
 global O01–O07 closure condition changes in this increment.
 
+### Completed PN1 compact and composition evidence — 2026-10-26
+
+The [completed report](../../evidence/pon-work-compact-v1/RESULTS.md) binds
+measured source `4b18f6bdf226553514b07caf9259360d44631a06`, tree
+`8739627f52d68fc8dcff84282838edb940bfe81c`. All thirteen registered native
+jobs completed without resampling. Both release examples were freshly built
+from that source, using the same exposed x86 host, CPU0 affinity and preregistered
+tmpfs temporary-storage context. All four paired comparisons have identical
+paid setup and scalar-replayed overlapping opportunity/hit prefixes. Compact /
+deferred valid winner counts within the same allocated B are 162/86 and 600/236
+for seed 7101 at 128/512 ms, and 168/119 and 738/394 for seed 7102. The resulting
+1.411765–2.542373 ratios are finite local observations, not production kappa.
+The original deferred comparator already avoids online losing-proof assembly;
+this experiment measures removal of additional diagnostic encoding and output.
+
+All 3,328 retained full proof records were independently replayed, and all 3,316
+compact deterministic nonces were recomputed after sealing, including 1,638
+misses without original miss records. These categories overlap and are not
+summed as original evidence. The 4,951 research attempt occurrences contain 2,655
+distinct semantic opportunities; 2,504 B-credited winner occurrences contain 1,339
+distinct native candidate identities. All four late winners receive zero B
+credit, and cap 2 remains censored. Native admission happens after sealing;
+canonical research-chain growth and mature rewards remain zero.
+
+The declared target is the unchanged development target, with ideal-uniform
+hit probability1/2, not a production difficulty. Local raw output decreased to
+0.381758–0.593231 of the matched comparator output; this includes diagnostics
+and posthoc records, not network transfer or production proof compression.
+Native CPU totals are 0.136418 s setup, 2.583585 s miner, 9.220749 s receiver and
+7.075537 s audit. Original whole-child CPU and signed endpoint residuals remain
+separate. These observations do not establish honest service, propagation,
+transaction throughput, physical energy or a fastest-possible miner.
+
+The finalized v3 composition now supplies predictable canonical-valid marking,
+shared-key without-replacement probability bounds, captured preprocessing and
+single-seal extraction only inside its empty-table classical ideal-permutation
+model. Its weighted-forest integration uses rho rather than silently assuming
+conditional mean one; actual-SHA coupling and extra failure terms remain open.
+D0/K0 may be random old-bank counts; the tail uses predeclared d/k and a
+deterministic opportunity cap. No audit-created path supplies miner work.
+
+The exact measured source passed 270 Python controls and 249 selected Rust test
+executions, with two original ignored tests retained as ignored. Complete-workspace,
+all-target, all-feature strict locked/offline release Clippy and formatting
+passed. The ordinary wall-clock correction passed five boundary tests and the
+mature-window regression plus retained consensus/pool/budget tests; it keeps
+actual wall-clock time, the original admission predicate and at most 11 ancestor
+projections. Complete readback verified 425 source/helper/config files against
+frozen Git before and after every job, with no proof sampling.
+
+[Bounded closures C33–C37 and original obligations O01–O07](../../evidence/pon-work-compact-v1/blockers.json)
+remain separate. Actual SHA/resource conversion, unrestricted real strategies,
+production chain security, independent physical hardware and the real Hepta
+product loop remain open. The Hepta source review identifies selected genesis
+material already present and the separate missing initial-only ordinary host
+composition; it does not require an improved child before the first parent.
+Pure matrix remains primary; hybrid and ZK remain unadopted conditional options.
+Hosted CI was not inspected, launched, rerun or awaited for this continuation.
+
 ## 1. Product mission: shared intelligence from real work
 
 Every Hepta node can learn compatible small-model parameters from authorized real tasks.

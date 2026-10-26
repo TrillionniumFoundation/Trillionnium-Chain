@@ -1,0 +1,68 @@
+{
+  "schema": "w1-compact-failure-and-correction-history-v1",
+  "formal_native_failed_jobs": 0,
+  "formal_native_jobs": 13,
+  "formal_campaign_complete_success": true,
+  "replay_status": "PASS_COMPLETE_ALL_13_JOBS",
+  "records": [
+    {
+      "kind": "review_finding_fixed_before_freeze",
+      "description": "Strict analyzer previously lacked mandatory external readback hash. Exact typed registration/options and original deferred mode were also bound. Final20 campaign controls and independent source review passed. No result selected using unfrozen formal samples."
+    },
+    {
+      "kind": "review_finding_fixed_before_freeze",
+      "description": "All sealed t/d references must be registered before any terminal audit query; immutable copied captured-path snapshot and single-seal guard added. Final21 controls pass; first18-test passing draft retained separately and not added to final count."
+    },
+    {
+      "kind": "reader_checkout_initialization_failure",
+      "description": "A sparse no-checkout worktree initially lacked materialized source, causing import failure before replay. git read-tree populated exact frozen files; all425 helper/config files verified before actual formal replay. No performance sample or replay omitted.",
+      "receipt": {
+        "schema": "w1-reader-checkout-initialization-failure-v1",
+        "utc": "2026-10-26T06:09:17.882256+00:00",
+        "head": "4b18f6bdf226553514b07caf9259360d44631a06",
+        "path": "/tmp/w1-compact-reader-4b18f6b-v1",
+        "error": "ModuleNotFoundError: read_w1_compact_miner_research after worktree add --no-checkout and sparse-checkout set; checkout contents were not materialized",
+        "failed_before_any_replay": true,
+        "replay_or_native_credit": 0,
+        "source_integrity_gate_weakened": false,
+        "entries_before": [
+          ".git"
+        ]
+      }
+    },
+    {
+      "kind": "environment_capacity",
+      "description": "Shared overlay ENOSPC occurred during preparation of a report draft before formal sampling. The formal launch declared identical tmpfs temporary databases/build/output for both arms before collection. Raw outcomes unchanged; task-owned reproducible build caches reclaimed only after preserving exact executable bytes. Old loose failed-campaign duplicates were removed only after full52-file archive identity verification."
+    },
+    {
+      "kind": "automatic_security_review_rejection",
+      "description": "An earlier expanded timestamp research request to a subagent was rejected by automatic safety review before new source or experiment. That request was stopped; no retry. The later ordinary defensive clock correctness fix and original local regressions were completed. No security-rejected adversarial experiment is claimed as executed."
+    },
+    {
+      "kind": "tool_code_syntax_error_before_execution",
+      "description": "One orchestration JavaScript syntax error in prior mathematical review occurred before any command or model execution; not a failed or successful native observation."
+    },
+    {
+      "kind": "report_only_ENOSPC_after_successful_experiments",
+      "receipt": {
+        "schema": "w1-report-draft-storage-failure-v1",
+        "description": "After formal replay and analysis passed, writing the report draft failed copying analysis.json with ENOSPC. No runtime or raw result changed. Incomplete copied file remains recorded; publication will use exact pinned original analysis after storage relocation.",
+        "failed_destination": "/workspace/scratch/3863a747524b/w1-cost-raw/compact-stage-publication-v1/analysis.json",
+        "partial_bytes": 16384,
+        "partial_sha256": "bbab332c841f4cd7fa1300a7f5b6338e412c8bcf848c297bee4ebe7f009f274e",
+        "correct_source_sha256": "db84a3a38e103dc1c8b6710daf609079dc22c9318ad535407f0e420953126bbd"
+      },
+      "repair": "Intermediate publication files moved to tmpfs, exact pinned originals copied anew, no campaign/replay sample rerun; actual executables preserved before reclaiming reobserved task-owned reproducible caches"
+    }
+  ],
+  "preliminary_results_not_double_counted": [
+    "functional build and prefreeze native gates",
+    "first18 math controls",
+    "first31 reader grammar controls",
+    "prefreeze strict Clippy"
+  ],
+  "hosted_ci_queried": false,
+  "original_acceptance_thresholds_changed": false,
+  "analysis_status": "PASS_EXTERNALLY_PINNED_READBACK",
+  "formal_scalar_replay_failures": 0
+}
