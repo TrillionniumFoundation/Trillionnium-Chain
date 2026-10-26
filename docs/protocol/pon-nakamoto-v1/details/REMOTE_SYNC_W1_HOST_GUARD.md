@@ -106,3 +106,42 @@ must be tested separately.
 The new unexported parser remains useful for unit coverage and does
 not expose a second public unchecked history-import symbol.
 This is an API-path reduction, **not** a production/security gate PASS.
+
+
+## Per-packet Host owner fence (2026-10-26 candidate)
+
+An additional source pass identified that the already protected exported
+'receive_page_from' checked the physical cgroup before and after a **whole
+History page**. The exact page grammar permits up to sixteen individual W1
+proofs. A source-bound but untrustworthy peer could thus demand sixteen
+expensive proofs between physical-owner/membership checks. The Host's own
+kernel cgroup still throttles aggregate CPU, but relocation or quota
+violations noticed only at page boundaries are too coarse.
+
+The private 'receive_page' now has a mandatory in-process progress callback.
+Its sole externally reachable caller, 'receive_page_from', supplies a
+closure that rechecks the existing administrator-provisioned HostKernelBudget.
+Each admitted packet is bracketed by this callback:
+'check -> node.admit(packet, clock) -> check'. The callback does not
+replace the original native verifier or change consensus validity, and it
+does not mint CPU credit. The existing early public API guard still runs
+before decoding an untrusted page. No additional public no-callback import
+endpoint was introduced.
+
+The native regression
+'ingress::tests::history_page_checks_original_owner_between_valid_w1_packets'
+constructs two real legitimate W1 packets on one frozen development chain,
+then injects an owner-lost error at the **third** checkpoint (before the
+second packet). It checks that the first packet remains exactly admitted,
+the second is absent, the active head remains unchanged and cold-reopen
+retains that fact. A subsequent full retry permits both originals to be
+checked and activates the original intended tip; four packet-level checks
+must have been executed, not one check for the whole batch.
+
+This is local deterministic failure-injection coverage, not evidence of
+actual Linux cgroup migration, W1 GPU adversaries, real timeouts or
+cross-process budget fairness. A single deeply nonpreemptible W1/SQLite
+stage can still run between two checks; the fixed kernel continues to be
+the host resource owner. The loopback-relay issue remains an explicit
+open operator-deployment P1 threat. All P2–P6 qualification requirements
+and production HOLD_NO_GO flags remain unchanged.
