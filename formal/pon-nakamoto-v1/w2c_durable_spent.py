@@ -35,12 +35,19 @@ def _hash32(value: bytes, name: str) -> bytes:
 
 
 class DurablePaidSpendOwner:
-    def __init__(self, path: str | Path, receiver: bytes, epoch: bytes, capacity: int = 64):
+    def __init__(self, path: str | Path, receiver: bytes, epoch: bytes, capacity: int = 64,
+                 *, required_bits: int = 8, lifetime_ms: int = 2000):
         self.receiver = _hash32(receiver, "RECEIVER")
         self.epoch = _hash32(epoch, "EPOCH")
         if type(capacity) is not int or not 1 <= capacity <= 1024:
             raise ValueError("CAPACITY")
+        if type(required_bits) is not int or not 8 <= required_bits <= 24:
+            raise ValueError('BITS_POLICY')
+        if type(lifetime_ms) is not int or not 100 <= lifetime_ms <= 2000:
+            raise ValueError('LIFETIME_POLICY')
         self.capacity = capacity
+        self.required_bits = required_bits
+        self.lifetime_ms = lifetime_ms
         self.path = Path(path)
         if not self.path.is_absolute() or self.path.name in ("", ".", ".."):
             raise OwnerUnavailable("PATH")
@@ -56,12 +63,15 @@ class DurablePaidSpendOwner:
             raise OwnerUnavailable("PARENT") from error
         # A private directory is needed for SQLite WAL and SHM sidecars.
         if (not stat.S_ISDIR(st.st_mode) or stat.S_ISLNK(st.st_mode)
-                or st.st_uid != os.geteuid() or st.st_mode & 0o077):
+                or st.st_uid != os.geteuid() or st.st_mode & 0o077
+                or parent.resolve(strict=True) != parent):
             raise OwnerUnavailable("PARENT")
 
     def _check_file(self, create=False):
         self._owner_dir()
-        flags = os.O_RDWR | getattr(os, 'O_NOFOLLOW', 0) | getattr(os, 'O_CLOEXEC', 0)
+        if not hasattr(os, 'O_NOFOLLOW') or not hasattr(os, 'O_CLOEXEC'):
+            raise OwnerUnavailable('PLATFORM')
+        flags = os.O_RDWR | os.O_NOFOLLOW | os.O_CLOEXEC
         if create:
             flags |= os.O_CREAT
         try:
@@ -91,12 +101,14 @@ class DurablePaidSpendOwner:
             raise OwnerUnavailable("SQLITE_OPEN") from error
 
     @staticmethod
-    def _expected(receiver, epoch, capacity):
+    def _expected(receiver, epoch, capacity, required_bits, lifetime_ms):
         return {
             'schema': SCHEMA,
             'receiver': receiver,
             'epoch': epoch,
             'capacity': struct.pack('<I', capacity),
+            'required_bits': struct.pack('<B', required_bits),
+            'lifetime_ms': struct.pack('<H', lifetime_ms),
         }
 
     def _initialize(self):
@@ -105,7 +117,9 @@ class DurablePaidSpendOwner:
             db.execute("BEGIN IMMEDIATE")
             db.execute("CREATE TABLE IF NOT EXISTS meta (name TEXT PRIMARY KEY, value BLOB NOT NULL) WITHOUT ROWID")
             db.execute("CREATE TABLE IF NOT EXISTS spent (key BLOB PRIMARY KEY, expiry INTEGER NOT NULL) WITHOUT ROWID")
-            for name, value in self._expected(self.receiver, self.epoch, self.capacity).items():
+            for name, value in self._expected(
+                    self.receiver, self.epoch, self.capacity,
+                    self.required_bits, self.lifetime_ms).items():
                 prior = db.execute("SELECT value FROM meta WHERE name=?", (name,)).fetchone()
                 if prior is None:
                     db.execute("INSERT INTO meta(name,value) VALUES (?,?)", (name, value))
@@ -130,7 +144,7 @@ class DurablePaidSpendOwner:
             raise ValueError('EXPIRY_RANGE')
         if now_ms >= expires_ms:
             return 'EXPIRED'
-        if expires_ms - now_ms > 2000:
+        if expires_ms - now_ms > self.lifetime_ms:
             return 'LIFETIME_POLICY'
         db = self._connect()
         try:
