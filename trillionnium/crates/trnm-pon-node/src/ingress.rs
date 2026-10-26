@@ -2231,6 +2231,34 @@ fn receive_page_with_cpu(
     Ok(next)
 }
 
+/// Trusted operator-only setup for outbound *nonloopback* History sync.
+/// A true fixed Host kernel parent must already contain this thread. If this
+/// Node lacks a service CPU domain, it may bind only a ZERO-credit cold epoch,
+/// once for its full lifetime. Existing V3/continuous owners are reused.
+/// The remote peer, caller key and History packet have no role in allocation.
+pub fn bind_host_verified_history_cpu_domain(
+    node: &mut Node,
+    source: SocketAddr,
+) -> Result<()> {
+    if source.ip().is_loopback() {
+        return Ok(()); // Existing local-development fixtures remain unchanged.
+    }
+    let kernel = crate::host_kernel_parent::require_for_listener(source)?
+        .ok_or("PUBLIC_HOST_KERNEL_REQUIRED")?;
+    kernel.verify()?;
+    match node.public_service_cpu_domain() {
+        Ok(_) => {}
+        Err(error) if error.is(ErrorCode::OwnerPublicServiceDomainUnbound) => {
+            let cold = public_v3::ServiceMutationCpuDomain::cold_for_host_verified_history_sync();
+            node.bind_public_service_cpu_domain(&cold)?;
+            let actual = node.public_service_cpu_domain()?.observe()?;
+            ensure(actual.stored_credit_ns == 0, "SYNC_CPU_COLD_START")?;
+        }
+        Err(error) => return Err(error),
+    }
+    kernel.verify()
+}
+
 /// Public untrusted History import. Unlike the private local parser, this
 /// entry REQUIRES a concrete original source address and checks the existing
 /// fixed, administrator-owned host resource parent around every possible
@@ -2282,6 +2310,7 @@ pub fn sync_from(
     // Every WAN page may contain 16 untrusted W1 proofs. The same fixed,
     // administrator-owned host cgroup used by V3 must already contain this
     // actual sync thread; no new per-peer budget or consensus authority.
+    bind_host_verified_history_cpu_domain(node, address)?;
     let host_kernel = crate::host_kernel_parent::require_for_listener(address)?;
     for _ in 0..page_budget {
         if let Some(kernel) = &host_kernel {
@@ -2327,6 +2356,7 @@ pub fn sync_from_authenticated(
     // Every WAN page may contain 16 untrusted W1 proofs. The same fixed,
     // administrator-owned host cgroup used by V3 must already contain this
     // actual sync thread; no new per-peer budget or consensus authority.
+    bind_host_verified_history_cpu_domain(node, address)?;
     let host_kernel = crate::host_kernel_parent::require_for_listener(address)?;
     let settings = node.settings().clone();
     for _ in 0..page_budget {
@@ -2374,6 +2404,7 @@ pub fn sync_from_authenticated_durable(
     // Every WAN page may contain 16 untrusted W1 proofs. The same fixed,
     // administrator-owned host cgroup used by V3 must already contain this
     // actual sync thread; no new per-peer budget or consensus authority.
+    bind_host_verified_history_cpu_domain(node, address)?;
     let host_kernel = crate::host_kernel_parent::require_for_listener(address)?;
     for _ in 0..page_budget {
         if let Some(kernel) = &host_kernel {
