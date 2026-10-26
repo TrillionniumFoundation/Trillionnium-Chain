@@ -215,6 +215,29 @@ os._exit(0)   # deliberately skip close() and all normal teardown
                          'READY_RESOURCE_ONLY')
         a.close(); b.close()
 
+    def test_same_statement_cost_diagnostics_retain_all_attempts_and_no_chainwork(self):
+        from w2c_durable_cost import run
+        report=run((8,),1,65536)
+        self.assertEqual(report['schema'],'w2c-durable-receiver-cost-v1')
+        self.assertFalse(report['production_activation'])
+        self.assertIsNone(report['attacker_gpu_cost'])
+        self.assertEqual(len(report['rows']),1)
+        row=report['rows'][0]
+        self.assertEqual(row['status'],'COMPLETE_RESEARCH_ONLY')
+        self.assertGreater(len(row['w1_ticket_trials']),0)
+        self.assertEqual(sum(int(t['target_hit']) for t in row['w1_ticket_trials']),1)
+        self.assertGreater(row['search']['attempts'],0)
+        self.assertEqual(row['full_w1_outcome'],'TRANSCRIPT')
+        self.assertFalse(row['w1_work_verified'])
+        self.assertFalse(row['chainwork_granted'])
+
+    def test_cost_diagnostics_reject_invalid_unbounded_cohorts(self):
+        from w2c_durable_cost import run
+        for bits,samples,cap in [((7,),1,10),((8,),0,10),((8,8),1,10),
+                                 ((8,),1,0),((8,),17,10),((8,),1,(1<<20)+1)]:
+            with self.assertRaisesRegex(ValueError,'BOUNDED_PROFILE'):
+                run(bits,samples,cap)
+
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)
