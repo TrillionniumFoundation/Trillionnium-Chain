@@ -129,3 +129,55 @@ func TestCheapTicketForgeryVsFullReplayCost(t *testing.T) {
 	// Test does not assert any cost ratio as a universally proven hardness bound.
 	_ = fmt.Sprintf("%x", sha256.Sum256(falseTrace))
 }
+
+func TestHalfRangeFromZeroForgedTicketVsFullVerification(t *testing.T) {
+	// The attacker starts with only public A/B, a zero result, and hash calls.
+	// The half-range target matches the original development-work target shape;
+	// these fixed synthetic challenges are NOT current admitted parent headers.
+	a, b := tensors()
+	task, _ := TaskID(a, b)
+	target := Digest{}
+	target[0] = 0x7f
+	for j := 1; j < len(target); j++ {
+		target[j] = 0xff
+	}
+	prefix := make([]byte, 0, ProofBytes)
+	prefix = append(prefix, []byte("PNW1")...)
+	prefix = append(prefix, encodeField(a)...)
+	prefix = append(prefix, encodeField(b)...)
+	prefix = append(prefix, make([]byte, Cells*4)...)
+	var tries uint64
+	const cases = 64
+	generationStart := time.Now()
+	witnesses := make([][]byte, 0, cases)
+	challenges := make([]Digest, 0, cases)
+	for i := uint64(0); i < cases; i++ {
+		var counter [8]byte
+		binary.LittleEndian.PutUint64(counter[:], i)
+		challenge := H("falsification-challenge", counter[:])
+		challenges = append(challenges, challenge)
+		var candidate []byte
+		for j := uint64(0); j < 4096; j++ {
+			binary.LittleEndian.PutUint64(counter[:], j)
+			claimed := H("forged-trace", challenge[:], counter[:])
+			tries++
+			candidate = append(append([]byte(nil), prefix...), claimed[:]...)
+			if CheapPrecheck(challenge, task, target, candidate) == nil {
+				break
+			}
+		}
+		if CheapPrecheck(challenge, task, target, candidate) != nil {
+			t.Fatalf("no ticket for case %d", i)
+		}
+		witnesses = append(witnesses, candidate)
+	}
+	generationWall := time.Since(generationStart)
+	rejectionStart := time.Now()
+	for i, w := range witnesses {
+		if _, err := Verify(challenges[i], task, target, w); err != ErrTranscript {
+			t.Fatalf("case %d expected late Transcript, got %v", i, err)
+		}
+	}
+	rejectionWall := time.Since(rejectionStart)
+	t.Logf("from-zero public A/B: half-target tickets=%d, hash trials=%d, generation wall=%s, late-reject wall=%s, wall ratio=%.2f; research-only no hostile WAN/CPU/ASIC", cases, tries, generationWall, rejectionWall, float64(rejectionWall)/float64(generationWall))
+}
