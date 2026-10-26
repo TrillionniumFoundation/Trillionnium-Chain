@@ -33,8 +33,15 @@ The input fixture uses deterministically generated **public development test key
 
 ### Strict nonclaims / next integration
 
-Native Rust `ed25519-dalek` strict rejection of torsion/noncanonical points is not proven equivalent to `crypto/ed25519.Verify` for every hostile encoding. Independently compare weak/small-order/invalid R,S vectors against the original verifier before granting any security parity claim. Current positive and ordinary tamper cases do not close this gap.
+The Go oracle now matches the native canonical Ed25519 point encoding precheck (y below 2^255-19 and no negative identity encodings) for both public keys and signature R. Native Rust `ed25519-dalek` strict rejection of torsion/small-order points is still not proven equivalent to `crypto/ed25519.Verify` for every hostile encoding. Independently compare weak/small-order/invalid R,S vectors against the original verifier before granting any security parity claim. Current positive and ordinary tamper cases do not close this gap.
 
 Before P0-B can close, **native M05/M06/M07 + Hepta kernel.operations** must use original signed source/requester owners and actually authenticated parent state; persist dispatch intent before I/O, fence Unknown/lost-ACK, reconcile with a separately verifying Node client, and demonstrate simultaneous full-32-slot retention/reclaim, reorganization and 3 independently controlled source operators. A permissive standalone oracle cannot substitute for those runtime/wire/hardware facts. P0-C W1 cost hardness and P1-C DAA activation remain separately open.
 
 This is subordinate to `docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md`; it does not modify any installed consensus rule, signed domain or storage namespace.
+
+The stacked Rust `task_lifecycle_v4.rs` adds a **source-only, NOT_RUN**
+fixture reader that decodes these exact Go bytes through the existing native
+QDL2/QWA2/PNX1 codecs, invokes both existing strict Rust Ed25519 checks, compares
+all three frozen digests and rejects changed requester/source signatures.
+Compilation and exact-tree execution remain necessary before parity is claimed;
+it is deliberately not an M06 or native parent-state integration test.

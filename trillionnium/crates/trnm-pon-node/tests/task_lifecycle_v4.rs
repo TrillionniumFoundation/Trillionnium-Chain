@@ -634,3 +634,92 @@ fn actual_900_preview_905_delayed_inclusion_999_reorg_preserves_certificate_and_
     .unwrap();
     println!("{}", serde_json::to_string(&report).unwrap());
 }
+
+#[test]
+fn independent_go_q4_double_signed_vector_matches_original_native_codecs() {
+    // Fixed Go-generated, signed development keys and SHA-256 byte domains.
+    // This is NOT parent-State, source consent, Node::admit or final use.
+    let fixture: serde_json::Value = serde_json::from_str(include_str!(
+        "../../../../formal/pon-nakamoto-v1/q4_reference_go/q4-reference-development-vector.json"
+    ))
+    .unwrap();
+    let decode = |key: &str| hex::decode(fixture[key].as_str().unwrap()).unwrap();
+    let network: Hash = decode("network").try_into().unwrap();
+    let parameters: Hash = decode("parameters").try_into().unwrap();
+    let raw = decode("signed_transaction");
+    let previous = DemandLeaseV2::decode(&decode("old_lease")).unwrap();
+    let old_source = decode("old_source_statement");
+    let height = fixture["containing_height"].as_u64().unwrap();
+    let envelope = Envelope::decode(&raw).unwrap();
+    assert_eq!(envelope.encode().unwrap(), raw);
+    assert_eq!(envelope.tag, 22);
+    assert_eq!(envelope.network, network);
+    assert_eq!(envelope.sender, previous.requester);
+    assert_eq!(previous.network, network);
+    assert_eq!(previous.parameters, parameters);
+    let successor =
+        trnm_protocol::qualified_work_task::lifecycle_v4::AtomicRenewTaskV4::decode(
+            &envelope.payload,
+        )
+        .unwrap();
+    assert_eq!(successor.lease.network, network);
+    assert_eq!(successor.lease.parameters, parameters);
+    assert_eq!(successor.lease.requester, previous.requester);
+    assert_eq!(successor.lease.source, previous.source);
+    assert_eq!(successor.lease.revision, previous.revision + 1);
+    assert!(previous.not_before <= successor.lease.not_before);
+    assert!(successor.lease.not_before <= height && height <= previous.expires);
+    assert!(successor.lease.expires > previous.expires);
+
+    // Neither a digest nor an encoded struct is signature-verified authority.
+    // Invoke the EXISTING strict native Ed25519 implementation on both owners.
+    let digest = envelope.signing_digest().unwrap();
+    trnm_crypto_primitives::verify_hex_strict(
+        &hex::encode(previous.requester),
+        &digest,
+        &hex::encode(envelope.signature),
+    )
+    .unwrap();
+    let former = trnm_crypto_primitives::qualified_work_task::lifecycle_v2::
+        verify_lifecycle_statement(&old_source, &previous, height)
+        .unwrap();
+    let next_source = successor.signed.encode().unwrap();
+    let future = trnm_crypto_primitives::qualified_work_task::lifecycle_v2::
+        verify_lifecycle_statement(&next_source, &successor.lease, height)
+        .unwrap();
+    assert_eq!(former.manifest().model, future.manifest().model);
+    assert_eq!(former.manifest().input, future.manifest().input);
+    assert_eq!(former.manifest().matrix_task, future.manifest().matrix_task);
+    assert_eq!(former.manifest().output_meter, future.manifest().output_meter);
+    assert_eq!(future.manifest().demand_nonce, former.manifest().demand_nonce + 1);
+
+    assert_eq!(
+        hex::encode(envelope.id().unwrap()),
+        "133e6e6588018bdb8cc5888cd35e9daa5202fdcaa1e458951b3ecb3dd2ee3233"
+    );
+    assert_eq!(
+        hex::encode(successor.lease.id().unwrap()),
+        "bbb982203bb12668be298fcae53ec89f1600098da691133d7a068d931af2f880"
+    );
+    assert_eq!(
+        hex::encode(successor.signed.id().unwrap()),
+        "6566c9ed51e887d5f0e3ac0cb32bb95141f71ae873ffc1c2456b2b50607991b0"
+    );
+
+    let mut tampered_requester = raw.clone();
+    tampered_requester[1123] ^= 1;
+    let bad_requester = Envelope::decode(&tampered_requester).unwrap();
+    assert!(trnm_crypto_primitives::verify_hex_strict(
+        &hex::encode(previous.requester),
+        &bad_requester.signing_digest().unwrap(),
+        &hex::encode(bad_requester.signature),
+    )
+    .is_err());
+    let mut tampered_source = next_source;
+    tampered_source[620] ^= 1;
+    assert!(
+        trnm_crypto_primitives::qualified_work_task::lifecycle_v2::
+            verify_lifecycle_statement(&tampered_source, &successor.lease, height)
+            .is_err()
+    );
+}

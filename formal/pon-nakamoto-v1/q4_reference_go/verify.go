@@ -81,9 +81,42 @@ func hash(tag string, parts ...[]byte) Digest {
 	return out
 }
 
+// Mirrors the native canonical encoded-point precheck: y < 2^255-19,
+// with negative-zero / sign-of-identity encoding rejected. Actual curve
+// membership and small-order verification are delegated to Go Ed25519 and
+// still require independent parity vectors against Rust Dalek strict.
+func canonicalPoint(raw []byte) bool {
+	if len(raw) != 32 {
+		return false
+	}
+	var y [32]byte
+	copy(y[:], raw)
+	sign := y[31] >> 7
+	y[31] &= 0x7f
+	var p [32]byte
+	for i := range p {
+		p[i] = 0xff
+	}
+	p[0] = 237
+	p[31] = 127
+	for i := 31; i >= 0; i-- {
+		if y[i] < p[i] {
+			break
+		}
+		if y[i] > p[i] || i == 0 {
+			return false
+		}
+	}
+	var one [32]byte
+	one[0] = 1
+	minusOne := p
+	minusOne[0]--
+	return !(sign == 1 && (y == one || y == minusOne))
+}
+
 // The fixed wire uses Ed25519 over the EXACT 32-byte hash, not its hex text.
 func sigOK(pub, sig []byte, hashed Digest) bool {
-	return len(pub) == ed25519.PublicKeySize && len(sig) == ed25519.SignatureSize && !zero(pub) &&
+	return len(pub) == ed25519.PublicKeySize && len(sig) == ed25519.SignatureSize && !zero(pub) && canonicalPoint(pub) && canonicalPoint(sig[:32]) &&
 		ed25519.Verify(ed25519.PublicKey(pub), hashed[:], sig)
 }
 

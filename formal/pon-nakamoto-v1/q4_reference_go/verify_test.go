@@ -337,3 +337,42 @@ func TestPublishedDevelopmentVectorDigestsMatchExpectedByteCommitments(t *testin
 		t.Fatal("unexpected QWA2 statement digest")
 	}
 }
+
+func TestExactNativeCanonicalPointPrecheck(t *testing.T) {
+	p := bytes.Repeat([]byte{255}, 32)
+	p[0] = 237
+	p[31] = 127
+	if canonicalPoint(p) {
+		t.Fatal("y==prime accepted")
+	}
+	negativeOne := bytes.Clone(p)
+	negativeOne[0]--
+	negativeOne[31] |= 0x80
+	if canonicalPoint(negativeOne) {
+		t.Fatal("negative signed -1 representation accepted")
+	}
+	negativeIdentity := make([]byte, 32)
+	negativeIdentity[0] = 1
+	negativeIdentity[31] = 0x80
+	if canonicalPoint(negativeIdentity) {
+		t.Fatal("negative identity accepted")
+	}
+	good := newFixture()
+	pub := good.req.Public().(ed25519.PublicKey)
+	if !canonicalPoint(pub) {
+		t.Fatal("real fixture key rejected")
+	}
+	signature := good.in.RenewalTransaction[1123:]
+	if !canonicalPoint(signature[:32]) {
+		t.Fatal("real signed R rejected")
+	}
+	digest := hash("tx-sign", good.in.RenewalTransaction[:1123])
+	if !sigOK(pub, signature, digest) {
+		t.Fatal("canonical real signature rejected")
+	}
+	bad := bytes.Clone(signature)
+	copy(bad[:32], p)
+	if sigOK(pub, bad, digest) {
+		t.Fatal("noncanonical R accepted")
+	}
+}
