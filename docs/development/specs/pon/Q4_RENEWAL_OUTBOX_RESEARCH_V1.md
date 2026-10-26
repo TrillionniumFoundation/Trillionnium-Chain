@@ -29,3 +29,19 @@ python3 -m unittest -v test_q4_renewal_outbox_research.py
 The tests explicitly exercise lost ACK, durable pre-/post-COMMIT cuts, delayed receipt, confirmation then reorg, expiry, cold reopen, duplicate operation/packet, different SQLite connections, monotonic generations, wrong context/length/type, forensic tampering and event/intent quotas. They use local synthetic public byte strings. No actual requester/source signature, `Node::admit`, W1 proof, P2P listener, real network partition or independent operator executes.
 
 **Production integration remains blocked:** M05/M07/kernel.operations must consume *actual signed Q4 tag22 transactions and current source/withdrawal facts* under the one original durable owner; persist a submission pre-effect fence with externally installed authority; submit through the real bounded transport and reconcile `Unknown` via independent client history and surviving/reorganized chain; preserve local effect history across deep reorganizations. Run real 32-slot retention, renewal at the last legal height, two independent signers, lost ACK, disk crash and material loss with the original native W1 Maintenance path. This research file cannot be used as an authority adapter or a new second ledger.
+
+## 2026-10-26 v1 cold-audit hardening continuation
+
+The draft research owner now compares exact v1 table/index definitions on cold
+audit and refuses extra triggers, views, tables or a replaced single-dispatch
+index. The SQLite-internal autoindexes are excluded from this explicit user
+schema check. Full observation-wire structural roundtrip also runs on every
+cold-replayed event. Six negative controls replace an observation and recompute
+the *local* event hash; additional controls add a deleting trigger, foreign view,
+foreign table and non-unique replacement index. These test canonical replay
+rather than authenticating any external chain receipt. All original Q4 bytes,
+W1 proofs, consensus rules, signer ownership and activation flags are unchanged.
+
+Only a bounded research journal is affected. A privileged rewrite of SQLite
+rows and hashes, a concurrent hostile filesystem process, ordinary Hepta source
+consent, native M05/M07 integration and public liveness remain separate blockers.

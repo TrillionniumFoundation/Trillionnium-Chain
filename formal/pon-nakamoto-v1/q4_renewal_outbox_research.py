@@ -20,6 +20,15 @@ UINT64 = (1 << 64) - 1
 ZERO = bytes(32)
 TX_BYTES = 1187  # historical PNX1(tag22) envelope length, NOT signature verification
 
+# Frozen v1 user schema: altered constraints, triggers, views and index changes
+# fail at cold-open instead of silently changing dispatch/replay semantics.
+FROZEN_SCHEMA_DDL = {
+    'q4_outbox_meta_v1': ('table', 'CREATE TABLE q4_outbox_meta_v1 (key TEXT PRIMARY KEY, value BLOB NOT NULL) WITHOUT ROWID'),
+    'q4_outbox_intents_v1': ('table', 'CREATE TABLE q4_outbox_intents_v1 (id BLOB PRIMARY KEY, operation_id BLOB NOT NULL UNIQUE, packet_id BLOB NOT NULL UNIQUE, wire BLOB NOT NULL) WITHOUT ROWID'),
+    'q4_outbox_events_v1': ('table', 'CREATE TABLE q4_outbox_events_v1 (ordinal INTEGER PRIMARY KEY, intent_id BLOB NOT NULL, kind TEXT NOT NULL, observation BLOB NOT NULL, prev BLOB NOT NULL, digest BLOB NOT NULL)'),
+    'q4_outbox_once_v1': ('index', "CREATE UNIQUE INDEX q4_outbox_once_v1 ON q4_outbox_events_v1(intent_id) WHERE kind='DISPATCH_UNKNOWN'"),
+}
+
 class OutboxError(ValueError):
     pass
 
@@ -109,6 +118,29 @@ class ChainObservation:
                 + (identity(self.included_block, 'block') if self.included_block else ZERO)
                 + identity(self.source_receipt_digest, 'receipt'))
 
+    @classmethod
+    def from_wire(cls, raw: bytes) -> 'ChainObservation':
+        """Strict structural inverse of wire(); never a verified client receipt."""
+        if type(raw) is not bytes or len(raw) != 113:
+            raise OutboxError('OBSERVATION_WIRE')
+        kinds = {1: 'included', 2: 'confirmed', 3: 'reorged',
+                 4: 'unavailable', 5: 'expired'}
+        kind = kinds.get(raw[48])
+        if kind is None:
+            raise OutboxError('OBSERVATION_WIRE')
+        result = cls(
+            int.from_bytes(raw[:8], 'big'), raw[8:40],
+            int.from_bytes(raw[40:48], 'big'), kind,
+            raw[49:81] if kind in {'included','confirmed'} else None,
+            raw[81:113],
+        )
+        try:
+            if result.wire() != raw:
+                raise OutboxError('OBSERVATION_WIRE')
+        except OutboxError as exc:
+            raise OutboxError('OBSERVATION_WIRE') from exc
+        return result
+
 class RenewalOutbox:
     """Bounded SINGLE LOCAL RESEARCH owner. Its facts grant no publication authority."""
     def __init__(self, path: Path, network: bytes, parameters: bytes, genesis: bytes,
@@ -157,6 +189,13 @@ class RenewalOutbox:
 
     def audit(self) -> int:
         """Local integrity/monotonicity audit, NOT an external attestation."""
+        # sqlite_autoindex_* entries are SQLite-owned UNIQUE implementation
+        # details. Every other table/index/view/trigger has a frozen definition.
+        schema = {name: (kind, sql) for kind,name,sql in self.db.execute(
+            "SELECT type,name,sql FROM sqlite_master WHERE name NOT LIKE 'sqlite_%'"
+        )}
+        if schema != FROZEN_SCHEMA_DDL:
+            raise OutboxError('FOREIGN_SCHEMA_OBJECT')
         intents = {}
         operation_ids = set()
         for ident,op_id,packet_id,wire in self.db.execute('SELECT id,operation_id,packet_id,wire FROM q4_outbox_intents_v1'):
@@ -195,13 +234,14 @@ class RenewalOutbox:
             if kind == 'DISPATCH_UNKNOWN':
                 if ident in dispatch or obs: raise OutboxError('DISPATCH_DUPLICATE')
                 dispatch.add(ident)
-            elif kind.startswith('OBSERVED_'):
+            elif kind in ('OBSERVED_INCLUDED','OBSERVED_CONFIRMED','OBSERVED_REORGED',
+                          'OBSERVED_UNAVAILABLE','OBSERVED_EXPIRED'):
                 if ident not in dispatch: raise OutboxError('OBSERVATION_BEFORE_DISPATCH')
-                if len(obs) != 113: raise OutboxError('OBSERVATION_WIRE')
-                generation = int.from_bytes(obs[:8],'big')
-                if generation < last_generation.get(ident,0): raise OutboxError('OBSERVATION_REGRESSION')
-                last_generation[ident] = generation
-                if kind != 'OBSERVED_' + {1:'included',2:'confirmed',3:'reorged',4:'unavailable',5:'expired'}.get(obs[48], '').upper():
+                decoded = ChainObservation.from_wire(obs)
+                if decoded.generation < last_generation.get(ident,0):
+                    raise OutboxError('OBSERVATION_REGRESSION')
+                last_generation[ident] = decoded.generation
+                if kind != 'OBSERVED_' + decoded.kind.upper():
                     raise OutboxError('OBSERVATION_MISMATCH')
             else:
                 raise OutboxError('UNKNOWN_EVENT')

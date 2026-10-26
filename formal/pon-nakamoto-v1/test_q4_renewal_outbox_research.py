@@ -192,4 +192,63 @@ class RenewalOutboxTests(unittest.TestCase):
         self.assertEqual(transaction_id(raw),manual)
         self.assertNotEqual(transaction_id(raw),h(raw))
 
+
+    def test_cold_audit_rejects_rehashed_malformed_observation(self):
+        from q4_renewal_outbox_research import EVENT_DOMAIN
+        mutations = {
+            'zero-generation': (0,8,bytes(8)),
+            'zero-tip': (8,40,bytes(32)),
+            'zero-block': (49,81,bytes(32)),
+            'zero-receipt': (81,113,bytes(32)),
+            'unknown-kind': (48,49,bytes([255])),
+            'membership-switch': (48,49,bytes([3])),
+        }
+        for label,(start,end,replacement) in mutations.items():
+            with self.subTest(label=label):
+                self.file = Path(self.tmp.name)/(label+'.sqlite')
+                with self.open() as db:
+                    key=db.prepare(intent());db.dispatch_unknown(key)
+                    db.observe(key,observation('included',2))
+                    self.assertEqual(db.audit(),2)
+                with sqlite3.connect(self.file) as raw:
+                    ordinal,ident,kind,obs,prev=raw.execute(
+                        'SELECT ordinal,intent_id,kind,observation,prev '
+                        'FROM q4_outbox_events_v1 WHERE ordinal=2').fetchone()
+                    changed=obs[:start]+replacement+obs[end:]
+                    self.assertEqual(len(changed),113)
+                    digest=h(EVENT_DOMAIN+ordinal.to_bytes(8,'big')+ident
+                             +kind.encode('ascii')+changed+prev)
+                    raw.execute('UPDATE q4_outbox_events_v1 SET observation=?,digest=? '
+                                'WHERE ordinal=2',(changed,digest))
+                with self.assertRaisesRegex(OutboxError,'OBSERVATION_'):
+                    self.open()
+
+    def test_cold_audit_rejects_trigger_view_and_downgraded_index(self):
+        alterations = {
+            'view': 'CREATE VIEW q4_shadow AS SELECT 1',
+            'trigger': 'CREATE TRIGGER q4_shadow AFTER INSERT ON q4_outbox_events_v1 '
+                       'BEGIN DELETE FROM q4_outbox_events_v1; END',
+            'index': 'DROP INDEX q4_outbox_once_v1; '
+                     'CREATE INDEX q4_outbox_once_v1 ON q4_outbox_events_v1(intent_id)',
+            'table': 'CREATE TABLE q4_shadow (data BLOB)',
+        }
+        for label,sql in alterations.items():
+            with self.subTest(label=label):
+                self.file=Path(self.tmp.name)/(label+'.sqlite')
+                with self.open() as db:
+                    key=db.prepare(intent());db.dispatch_unknown(key)
+                    self.assertEqual(db.audit(),1)
+                with sqlite3.connect(self.file) as raw:
+                    for statement in sql.split(';'):
+                        if statement.strip(): raw.execute(statement)
+                with self.assertRaisesRegex(OutboxError,'FOREIGN_SCHEMA_OBJECT'):
+                    self.open()
+
+    def test_observation_wire_roundtrip_is_structural_only(self):
+        for kind in ('included','confirmed','reorged','unavailable','expired'):
+            result=observation(kind,3)
+            self.assertEqual(ChainObservation.from_wire(result.wire()),result)
+        with self.assertRaisesRegex(OutboxError,'OBSERVATION_WIRE'):
+            ChainObservation.from_wire(bytearray(observation().wire()))
+
 if __name__ == '__main__': unittest.main()
