@@ -143,3 +143,24 @@ The stateful and stateless examples deliberately live side by side for
 paired counterexamples; selecting the stateless one at runtime would
 require a new signed policy namespace, negative compatibility tests and
 explicit governed adoption rather than silent replacement.
+
+
+### Server-pinned cost policy: no caller-selected difficulty
+
+A further counterexample showed that signed HMAC grants alone do NOT stop
+an authenticated requester choosing the cheapest allowed search difficulty.
+The stateless research variant now freezes 'bits' in its receiving issuer
+configuration and refuses 'offer' calls requesting any other number of
+leading-zero bits, even if the value is syntactically valid. After verifying
+the MAC, 'consume' also refuses old, correctly signed grants whose bits differ
+from this current receiver policy. This prevents a policy downgrade when an
+operator raises the local research cost floor; the old grant receives
+'BITS_POLICY', not VerifiedWork, chainwork or a free workload.
+
+An additional ninth Python negative regression exercises a fixed 12-bit
+receiver rejecting an 8-bit request and a historically valid 8-bit grant.
+All nine research tests passed locally; this does not establish the correct
+production bits, GPU/ASIC fairness or resistance to issuance CPU floods.
+A real deployer must pin difficulty to a versioned signed transport policy
+and enforce an authentic server clock; the caller-supplied research time and
+difficulty values are **not** a production-safe remote API.

@@ -85,7 +85,7 @@ class StatelessReceiver:
     epoch when the in-memory spent table is lost (including power cuts).
     """
     def __init__(self, receiver, secret, epoch, *, capacity=128,
-                 ttl_ms=2000, entropy=None):
+                 ttl_ms=2000, bits=8, entropy=None):
         self.receiver = fixed32(receiver, 'RECEIVER')
         self.secret = fixed32(secret, 'SECRET')
         self.epoch = fixed32(epoch, 'EPOCH')
@@ -93,7 +93,9 @@ class StatelessReceiver:
             raise ValueError('CAPACITY')
         if type(ttl_ms) is not int or not 100 <= ttl_ms <= 2000:
             raise ValueError('TTL')
-        self.capacity, self.ttl_ms = capacity, ttl_ms
+        if type(bits) is not int or not 8 <= bits <= 24:
+            raise ValueError('BITS')
+        self.capacity, self.ttl_ms, self.bits = capacity, ttl_ms, bits
         self.entropy = entropy if entropy is not None else secrets.token_bytes
         self.spent = {}  # exact grant-id -> original absolute expiry, never evict live
         self.now_ms = 0
@@ -116,6 +118,8 @@ class StatelessReceiver:
             fixed32(proposal, 'PROPOSAL')
             if type(bits) is not int or not 8 <= bits <= 24:
                 raise ValueError('BITS')
+            if bits != self.bits:
+                raise ValueError('BITS_POLICY')
             if now_ms > MAX_U64 - self.ttl_ms:
                 raise ValueError('CLOCK_OVERFLOW')
             token = fixed32(self.entropy(32), 'ENTROPY')
@@ -142,6 +146,8 @@ class StatelessReceiver:
                 return 'CONTEXT'
             if not hmac.compare_digest(hmac.new(self.secret, encoded, hashlib.sha256).digest(), mac):
                 return 'MAC'
+            if grant.bits != self.bits:
+                return 'BITS_POLICY'
             if not grant.issued_ms <= now_ms < grant.expires_ms:
                 return 'EXPIRED'
             key = H('w2c-stateless-grant-id-v1', encoded, mac)

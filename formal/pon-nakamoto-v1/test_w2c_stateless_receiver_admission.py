@@ -46,6 +46,21 @@ class StatelessW2CResearchTests(unittest.TestCase):
         restarted=S.StatelessReceiver(self.s.receiver,self.s.secret,bytes([6])*32)
         self.assertEqual(restarted.consume(grant,self.proposal,nonce,120),'CONTEXT')
 
+    def test_signed_low_cost_grant_cannot_downgrade_server_bits(self):
+        strict=S.StatelessReceiver(self.s.receiver,self.s.secret,self.s.epoch,
+                                   bits=12,entropy=lambda n:bytes([5])*n)
+        with self.assertRaisesRegex(ValueError,'BITS_POLICY'):
+            strict.offer(self.proposal,8,100)
+        cheap,nonce=self.paid()
+        # Even if the same trusted secret/receiver/epoch were reconfigured,
+        # the receiving server cannot accept the former 8-bit ticket as 12-bit.
+        self.assertEqual(strict.consume(cheap,self.proposal,nonce,120),'BITS_POLICY')
+        self.assertEqual(len(strict.spent),0)
+        valid=strict.offer(self.proposal,12,120)
+        # The strict difficulty policy is pinned by the *receiver*, not sender.
+        self.assertEqual(valid.bits,12)
+        self.assertFalse(S.qualifies(bytes([127])+bytes(31),12))
+
     def test_expiry_and_monotonic_clock(self):
         grant,nonce=self.paid()
         self.assertEqual(self.s.consume(grant,self.proposal,nonce,2100),'EXPIRED')
