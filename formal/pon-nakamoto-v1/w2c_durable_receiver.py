@@ -43,6 +43,8 @@ class DurableReceiverAdmission:
                  entropy=None):
         self.receiver = bytes32(receiver, 'RECEIVER')
         self.secret = bytes32(secret, 'SECRET')
+        if self.secret == bytes(32):
+            raise ValueError('SECRET_ZERO')
         if type(capacity) is not int or not 1 <= capacity <= 1024:
             raise ValueError('CAPACITY')
         if type(lifetime_ms) is not int or not 100 <= lifetime_ms <= 2000:
@@ -71,8 +73,11 @@ class DurableReceiverAdmission:
                                    timeout=1.0, isolation_level=None,
                                    check_same_thread=False)
             try:
-                conn.execute('PRAGMA journal_mode=DELETE')
+                journal = conn.execute('PRAGMA journal_mode=DELETE').fetchone()[0]
                 conn.execute('PRAGMA synchronous=FULL')
+                if journal.lower() != 'delete' or conn.execute(
+                        'PRAGMA synchronous').fetchone()[0] != 2:
+                    raise ValueError('DURABLE_SQLITE_POLICY')
                 conn.execute('CREATE TABLE IF NOT EXISTS metadata ('
                              'one INTEGER PRIMARY KEY CHECK(one=1), '
                              'owner BLOB NOT NULL, generation INTEGER NOT NULL,'
@@ -107,6 +112,14 @@ class DurableReceiverAdmission:
                 except BaseException:
                     conn.execute('ROLLBACK')
                     raise
+                # Persist the private DB/directory entry before publishing any
+                # signed grant from this newly committed service epoch.
+                parent_fd = os.open(directory,
+                    os.O_RDONLY | os.O_DIRECTORY | os.O_CLOEXEC | os.O_NOFOLLOW)
+                try:
+                    os.fsync(parent_fd)
+                finally:
+                    os.close(parent_fd)
             except BaseException:
                 conn.close()
                 raise
