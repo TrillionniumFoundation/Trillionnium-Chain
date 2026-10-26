@@ -35,7 +35,9 @@ class StatelessReceiverAdmission:
         self.required_bits = required_bits
         if spent_owner is not None and (
                 spent_owner.receiver != self.receiver or spent_owner.epoch != self.epoch
-                or spent_owner.capacity != capacity):
+                or spent_owner.capacity != capacity
+                or spent_owner.required_bits != required_bits
+                or spent_owner.lifetime_ms != lifetime_ms):
             raise ValueError('OWNER_CONTEXT')
         self.spent_owner = spent_owner
         self.lifetime_ms = lifetime_ms
