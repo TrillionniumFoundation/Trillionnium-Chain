@@ -15,7 +15,7 @@ K = b'K' * 32
 def spend_child(args):
     path, nonce = args
     owner = Owner(path, R, E, capacity=4)
-    return owner.spend(K, 2000, 110 + nonce)
+    return owner.spend(K, 2000, 120)
 
 
 class TestDurableOwner(unittest.TestCase):
@@ -86,6 +86,8 @@ class TestDurableOwner(unittest.TestCase):
         self.assertEqual(self.owner.pending_paid(),0)
         with self.assertRaises(ValueError):
             self.owner.spend(b'bad',2000,100)
+        with self.assertRaisesRegex(ValueError, 'EXPIRY_RANGE'):
+            self.owner.spend(K,(1<<63)+5,100)
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)
