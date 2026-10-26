@@ -2481,6 +2481,29 @@ mod tests {
     }
 
     #[test]
+    fn received_history_expired_page_cpu_deadline_never_mints_new_budget() {
+        let original = public_v3::ServiceMutationCpuDomain::cold_remote_sync_epoch();
+        let initial = original.observe().unwrap();
+        assert_eq!(initial.stored_credit_ns, 0);
+        assert_eq!(initial.in_flight, 0);
+        // Empty time budget must reject even if a later refill would make a
+        // reservation available; it never creates a new 5s per-proof window.
+        let error = match begin_history_cpu(&original, Instant::now()) {
+            Ok(operation) => {
+                let _ = operation.finish();
+                panic!("expired page granted a new W1 CPU reservation")
+            }
+            Err(error) => error,
+        };
+        assert!(error.is(ErrorCode::PublicMutationCpuBudget));
+        let after = original.observe().unwrap();
+        assert_eq!(after.stored_credit_ns, 0);
+        assert_eq!(after.in_flight, 0);
+        assert!(!after.accounting_unavailable);
+        assert!(original.observe_actual_flow().unwrap().unwrap().balance_identity_verified);
+    }
+
+    #[test]
     fn imported_history_reuses_one_cold_cpu_owner_and_charges_distinct_late_forgery() {
         let time = now().unwrap();
         let settings = Settings::development(Some(time - 100)).unwrap();
