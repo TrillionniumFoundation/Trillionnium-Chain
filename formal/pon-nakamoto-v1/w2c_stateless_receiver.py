@@ -54,22 +54,25 @@ class StatelessReceiverAdmission:
         with self.lock:
             return len(self.spent)
 
-    def offer(self, proposal: bytes, bits: int, now_ms: int) -> Grant:
-        """MACed grant, no issuance row, even when paid slots are exhausted."""
+    def offer(self, proposal: bytes, caller: bytes, bits: int, now_ms: int) -> Grant:
+        """Caller identity is checked by an upstream authenticated transport."""
         with self.lock:
             bytes32(proposal, 'PROPOSAL')
+            bytes32(caller, 'CALLER')
             if type(bits) is not int or not 8 <= bits <= 24:
                 raise ValueError('BITS')
             self._clock(now_ms)
             if now_ms > MAX_U64 - self.lifetime_ms:
                 raise ValueError('CLOCK_OVERFLOW')
             token = bytes32(self.entropy(32), 'ENTROPY')
-            unsigned = Grant(self.receiver, self.epoch, proposal, token, bits,
+            caller_proposal = H('w2c-stateless-caller-proposal-v1', caller, proposal)
+            unsigned = Grant(self.receiver, self.epoch, caller_proposal, token, bits,
                              now_ms, now_ms + self.lifetime_ms, b'')
             mac = hmac.new(self.secret, unsigned.unsigned(), hashlib.sha256).digest()
             return replace(unsigned, mac=mac)
 
-    def consume(self, grant: Grant, proposal: bytes, nonce: int, now_ms: int) -> str:
+    def consume(self, grant: Grant, proposal: bytes, caller: bytes,
+                nonce: int, now_ms: int) -> str:
         """Only READY_RESOURCE_ONLY allows a SEPARATE, still-full W1 validation."""
         with self.lock:
             self._clock(now_ms)
@@ -79,11 +82,13 @@ class StatelessReceiverAdmission:
                 payload = grant.unsigned()
                 mac = bytes32(grant.mac, 'MAC')
                 bytes32(proposal, 'PROPOSAL')
+                bytes32(caller, 'CALLER')
                 exact_u64(nonce, 'NONCE')
             except ValueError:
                 return 'GRANT_ENCODING'
+            caller_proposal = H('w2c-stateless-caller-proposal-v1', caller, proposal)
             if (grant.receiver != self.receiver or grant.epoch != self.epoch
-                    or grant.proposal != proposal):
+                    or grant.proposal != caller_proposal):
                 return 'CONTEXT'
             if grant.expires_ms - grant.issued_ms != self.lifetime_ms:
                 return 'LIFETIME_POLICY'
