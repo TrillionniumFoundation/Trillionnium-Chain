@@ -225,7 +225,8 @@ signed registration, paid dual-task acquisition, exact W1 bytes and renewal.
 Three prefix rounds each attempt two complete research proofs and advance the
 actual active parent. The fourth parent is fixed while the same strategy continues
 until its full process-CPU budget expires. Its 4,096-attempt safety cap is explicit.
-The final parent is not activated, including when a small registered control hits
+The final research parent remains active; admitted research candidates above it
+are not activated as a new tip, including when a small registered control hits
 its safety cap. This is a native sibling-admission experiment, not measured serial
 chain growth, network TPS or a continuously changing difficulty campaign.
 

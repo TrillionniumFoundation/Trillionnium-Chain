@@ -1,0 +1,143 @@
+{
+  "actual_W1_trace_geometry": {
+    "dimension": 64,
+    "ordinary_sha256_compression_blocks": 2049,
+    "prefixes_per_cell": 8,
+    "submitted_proof_bytes": 49188,
+    "tile": 8,
+    "trace_framing_bytes": 48,
+    "trace_message_bytes": 131120,
+    "trace_word_bytes": 131072,
+    "trace_words": 32768
+  },
+  "conditional_trace_extraction": {
+    "SHA256_instantiation_proved": false,
+    "actual_W1_conditional_F0_failure_bound_supplied": false,
+    "conditional_failure_same_caps": {
+      "batch_output_cap": 1,
+      "combined_bound": "3/57896044618658097711785492504343953926634992332820282019728792003956564819968",
+      "conditioning": "fixed-collision-free-preparation",
+      "distinct_trace_input_cap_including_private_verifier": 4,
+      "online_query_cap": 1,
+      "preprocessing_query_cap": 2,
+      "trace_response_collision_bound": "5/115792089237316195423570985008687907853269984665640564039457584007913129639936",
+      "unqueried_digest_guess_bound": "1/115792089237316195423570985008687907853269984665640564039457584007913129639936"
+    },
+    "failure_example_Qp2_Qa1_G1": {
+      "batch_output_cap": 1,
+      "combined_bound": "7/115792089237316195423570985008687907853269984665640564039457584007913129639936",
+      "conditioning": "before-preprocessing",
+      "distinct_trace_input_cap_including_private_verifier": 4,
+      "online_query_cap": 1,
+      "preprocessing_query_cap": 2,
+      "trace_response_collision_bound": "3/57896044618658097711785492504343953926634992332820282019728792003956564819968",
+      "unqueried_digest_guess_bound": "1/115792089237316195423570985008687907853269984665640564039457584007913129639936"
+    },
+    "game": "batch-output ideal whole-message trace oracle; all preparation queries counted",
+    "interactive_verifier_leakage_covered": false,
+    "physical_cost_lower_bound": false
+  },
+  "current_W1_vulnerability_demonstrated": false,
+  "floor_fanout": {
+    "correct_tail": "1/2",
+    "fresh_queries": 1,
+    "incorrect_injective_tail": "0",
+    "outcomes_per_success": 3,
+    "threshold": 2
+  },
+  "hypothetical_hybrid": {
+    "budget": 20,
+    "finite_budget_schedules": {
+      "fresh-every-query": {
+        "at_least_two": "1/4",
+        "distribution": [
+          "1/4",
+          "1/2",
+          "1/4"
+        ],
+        "expected_winners": "1"
+      },
+      "reuse-many-credits": {
+        "at_least_two": "509/512",
+        "distribution": [
+          "1/2048",
+          "11/2048",
+          "55/2048",
+          "165/2048",
+          "165/1024",
+          "231/1024",
+          "231/1024",
+          "165/1024",
+          "165/2048",
+          "55/2048",
+          "11/2048",
+          "1/2048"
+        ],
+        "expected_winners": "11/2"
+      },
+      "reuse-until-success": {
+        "at_least_two": "1/4",
+        "distribution": [
+          "1/2048",
+          "1535/2048",
+          "1/4"
+        ],
+        "expected_winners": "2559/2048"
+      }
+    },
+    "first_win_mean_cost": {
+      "fresh-every-query": "20",
+      "reuse-until-success": "11"
+    },
+    "floor_cost": 1,
+    "p": "1/2",
+    "useful_cost": 9
+  },
+  "known_initial_credit_with_zero_online_queries": "1",
+  "native_measurement": false,
+  "not_closed": [
+    "W1 resource budget to fresh effective opportunities",
+    "real conditional target-information leakage or seed-cost distribution",
+    "preprocessing/advice and initial-credit limits for a real parent forest",
+    "physical hash floor cost and composition with useful computation",
+    "all adversaries/hardware, honest chain growth, DAA and network security"
+  ],
+  "ordinary_perturbed_trace_scalar_multiplications": 327680,
+  "predictable_weighted_tail_control": {
+    "any_crossing_probability": "43/256",
+    "mean_terminal_e_value": "1",
+    "total_probability": "1",
+    "ville_bound": "1/4"
+  },
+  "preprocessing_bank": {
+    "chosen_context_at_least_one": "3/4",
+    "contexts": 4,
+    "prepaid_queries": 2,
+    "uniform_fresh_context_at_least_one": "3/16",
+    "uniform_fresh_context_expected_winners": "1/4"
+  },
+  "production_activation": false,
+  "schema": "pon-w1-adaptive-cost-models-v1",
+  "scope": "exact finite abstract-resource models and conditional counterexamples",
+  "screening": {
+    "cost_signal_budget_6_at_least_two": "13/64",
+    "cost_signal_budget_6_expected_winners": "57/64",
+    "incorrect_one_completed_candidate_unconditional_p": "1/2",
+    "perfectly_revealed_target_budget_12_screen_1_completion_8": "15/16"
+  },
+  "universal_cost_bound_established": false,
+  "unqueried_submission": {
+    "adversary_queries": 0,
+    "correct_query_completed_bound": "1/2",
+    "distinct_unqueried_outputs": 1,
+    "incorrect_adversary_query_only_bound": "0",
+    "p": "1/2"
+  },
+  "zero_cost_fresh_queries_without_namespace_cap": null,
+  "zero_factored_prefix_scalar_multiplications": {
+    "middle_prefix_updates": 4096,
+    "prefix_lifts": 32768,
+    "prefix_output_products": 262144,
+    "total": 299008
+  }
+}

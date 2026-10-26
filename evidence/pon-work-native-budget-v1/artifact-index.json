@@ -1,0 +1,48 @@
+{
+  "all_project_blockers_closed": false,
+  "authoritative_outputs": [
+    {
+      "bytes": 4222570,
+      "path": "w1-cost-raw/budget-stage-readback-922e497-v1.json",
+      "sha256": "1b11d9a4f869b16b83a69f14c177ce662eccf952b09d115ffd78fb68d1ba37f9"
+    },
+    {
+      "bytes": 1082906,
+      "path": "w1-cost-raw/budget-stage-analysis-922e497-v1.json",
+      "sha256": "cc8222330c11e8dc3f868ea19a6b39ab8d8d1ebe5a1e67177bcf5ce6e4298a58"
+    },
+    {
+      "bytes": 4956,
+      "path": "w1-cost-raw/budget-stage-models-922e497-v1.json",
+      "sha256": "677a506af46cae71b7a2a898fddcac27e0ceadf7c110fd9ee604e291cb100cb7"
+    },
+    {
+      "bytes": 98920,
+      "path": "w1-cost-raw/budget-stage-core-index-v1.json",
+      "sha256": "844b04996ffc0314d881948a74fd6e2452574abc93ef3ec10b78cac98118b572"
+    }
+  ],
+  "complete_archive": {
+    "all_outer_members_size_and_sha256_verified": true,
+    "bytes": 115144683,
+    "file": "W1_native_budget_evidence_20261025.tar.gz",
+    "members": 165,
+    "sha256": "d2ce08e1d37f1692218ca591b6c3603cb9180a61b69b5d8f472c82ec46ecd8d4"
+  },
+  "core": {
+    "all_members_size_and_sha256_verified": true,
+    "bytes": 120117151,
+    "ended_unix_ns": 1792974898430577624,
+    "file": "budget-stage-complete-core-v1.tar.gz",
+    "members": 423,
+    "schema": "w1-native-budget-lossless-core-receipt-v1",
+    "sha256": "22085491844a9cc57c308638df34a6b2db3c057677c6b7fbe78f4f4c9b0005db",
+    "started_unix_ns": 1792974870564602551,
+    "uncompressed_member_bytes": 1160710484
+  },
+  "corrected_run_status": "full-reader-and-frozen-analysis-passed",
+  "delivery_receipt": "delivery.json",
+  "first_run_status": "reader-rejected-preserved-unqualified",
+  "measured_commit": "922e4970ea387f09831f34f93168ceb7b18854ee",
+  "schema": "pon-w1-native-budget-artifact-index-v1"
+}

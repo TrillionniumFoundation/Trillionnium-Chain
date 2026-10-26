@@ -1,6 +1,6 @@
 # Trillionnium Chain Development Plan — PoN / Hepta-PoH revision
 
-Plan ID: `trnm-chain-development-plan-v2` (stable registry identity; content revision 26).
+Plan ID: `trnm-chain-development-plan-v2` (stable registry identity; content revision 27).
 Effective: 2026-09-28; priority implementation revision: 2026-10-25. Status: selected development direction; no runtime activation.
 Canonical destination: `refs/heads/main`; continuation uses the current main lineage, not retired PR #194.
 Current source/head/tree/base and prospective merge are derived at verification time.
@@ -1541,6 +1541,31 @@ The cost game also refines the conditional ideal-trace-oracle extraction boundar
 its exact query geometry and finite controls do not prove actual SHA-256/W1
 hardness or a physical work floor. PN0–PN6 acceptance and pure-matrix priority stay
 unchanged. This is the same existing plan, not a separate release roadmap.
+
+The [completed 38-job evidence](../../evidence/pon-work-native-budget-v1/README.md)
+binds measured source `922e4970ea387f09831f34f93168ceb7b18854ee`. All thirty main
+jobs reached the fixed final parent and stopped on budget before the safety cap;
+all 5,322 retained proof records were replayed. This record count includes 336
+original winners repeated within 594 posthoc reconstructions, not new credit.
+The fifteen producer pairs give 9 higher, 5 lower and 1 equal specialized
+research-admission yields; twelve hot/cold pairs give 4 higher and 8 lower hot
+yields. The negative zero/hot/3102 observation remains unchanged. All main jobs
+end at height 5 and chainwork 10, not additive sibling growth. Full strategy CPU
+includes native observers and receiving admission/duplicate checks, so it is
+not an enforced attacker-miner cost floor.
+
+The first complete collection at `4628f461d8935b0976f6703c7a5c78517bac2f4e`
+failed the existing strict reader's observer-registration key check. All raw
+records remain preserved and unqualified. The corrected plan changes that
+metadata key only; all 38 commands, order, budgets and caps are unchanged, with
+a new collector prevalidation control and a complete fresh repeat. Exact-source
+validation passed 277 Python and 203 Rust tests with two pre-existing ignores,
+plus strict whole-workspace/all-target/all-feature release Clippy and formatting.
+Hosted ARM head/merge jobs had no assigned runner at the recorded observation;
+source repair does not grant that gate. The [blocker ledger](../../evidence/pon-work-native-budget-v1/blockers.json)
+retains all seven global research/product obligations and their applicability.
+No work-hardness, model-efficacy, independent-security or production acceptance
+is promoted.
 
 ## 1. Product mission: shared intelligence from real work
 
