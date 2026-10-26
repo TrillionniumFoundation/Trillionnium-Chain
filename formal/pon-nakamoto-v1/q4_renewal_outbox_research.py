@@ -109,6 +109,34 @@ class ChainObservation:
                 + (identity(self.included_block, 'block') if self.included_block else ZERO)
                 + identity(self.source_receipt_digest, 'receipt'))
 
+
+def decode_observation_wire(wire: bytes) -> ChainObservation:
+    """Check every canonical persisted byte; this does NOT authenticate the upstream receipt."""
+    if type(wire) is not bytes or len(wire) != 113:
+        raise OutboxError('OBSERVATION_WIRE')
+    by_tag = {1: 'included', 2: 'confirmed', 3: 'reorged',
+              4: 'unavailable', 5: 'expired'}
+    kind = by_tag.get(wire[48])
+    if kind is None:
+        raise OutboxError('OBSERVATION_KIND')
+    block = wire[49:81]
+    if kind in {'included', 'confirmed'}:
+        identity(block, 'block')
+    elif block != ZERO:
+        raise OutboxError('OBSERVATION_MEMBERSHIP')
+    record = ChainObservation(
+        generation=int.from_bytes(wire[:8], 'big'),
+        observed_tip=wire[8:40],
+        observed_height=int.from_bytes(wire[40:48], 'big'),
+        kind=kind,
+        included_block=block if kind in {'included', 'confirmed'} else None,
+        source_receipt_digest=wire[81:113],
+    )
+    if record.wire() != wire:
+        raise OutboxError('OBSERVATION_WIRE')
+    return record
+
+
 class RenewalOutbox:
     """Bounded SINGLE LOCAL RESEARCH owner. Its facts grant no publication authority."""
     def __init__(self, path: Path, network: bytes, parameters: bytes, genesis: bytes,
@@ -197,11 +225,11 @@ class RenewalOutbox:
                 dispatch.add(ident)
             elif kind.startswith('OBSERVED_'):
                 if ident not in dispatch: raise OutboxError('OBSERVATION_BEFORE_DISPATCH')
-                if len(obs) != 113: raise OutboxError('OBSERVATION_WIRE')
-                generation = int.from_bytes(obs[:8],'big')
-                if generation < last_generation.get(ident,0): raise OutboxError('OBSERVATION_REGRESSION')
-                last_generation[ident] = generation
-                if kind != 'OBSERVED_' + {1:'included',2:'confirmed',3:'reorged',4:'unavailable',5:'expired'}.get(obs[48], '').upper():
+                record = decode_observation_wire(obs)
+                if record.generation < last_generation.get(ident,0):
+                    raise OutboxError('OBSERVATION_REGRESSION')
+                last_generation[ident] = record.generation
+                if kind != 'OBSERVED_' + record.kind.upper():
                     raise OutboxError('OBSERVATION_MISMATCH')
             else:
                 raise OutboxError('UNKNOWN_EVENT')
