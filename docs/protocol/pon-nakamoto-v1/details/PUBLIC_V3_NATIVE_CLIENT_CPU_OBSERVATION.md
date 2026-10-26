@@ -28,6 +28,7 @@ any handshake. It adds one independently serialized
 | `client_thread_cpu_ns: Option<u64>` | Original calling-thread CPU across canonical request creation, signed Cookie verification, SHA256 nonce search, caller signing, network protocol and signed reply checks. Unknown stays `None`, not zero or elapsed wall time |
 | `client_wall_ns` | Entire wrapper call elapsed wall time, **not** a CPU cost or device energy measurement |
 | `solution_trials`, `solution_found`, `solution_search_wall_ns` | Unchanged original client search observations, including incomplete attempts and bounded expirations |
+| `solution_search_thread_cpu_ns: Option<u64>` | Actual calling-thread CPU for the original Cookie-ID calculation and SHA-256 search, including failed/expired/capped searches. An unavailable clock is `None`, not a wall-time estimate. Stored internally on the original metrics object with serialization explicitly skipped; exported only in the separate opt-in observation. |
 | `failed_stage` | Unchanged typed client phase; denial, timeout and inability to solve are never interpreted as a successful paid request |
 | `native_server_cpu_known = false` | This is a client-local caller measurement, not the server's W1/M06 CPU debit |
 | `gpu_cpu_equivalence_assumed = false`, `work_profile_qualified = false` | Prevent interpretation as GPU/ASIC economic floor or public consensus activation |
