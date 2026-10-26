@@ -261,4 +261,42 @@ class RenewalOutboxTests(unittest.TestCase):
             self.assertEqual(db.audit(), 2)
             self.assertTrue(db.status(key)['dispatch_unknown'])
 
+    def test_audit_uses_one_snapshot_and_fences_an_original_writer(self):
+        # The original journal permits a separate writer.  Once the reader
+        # pins its first SQLite page it must not mix newly committed events
+        # and intents in a moving second query.  No authority is inferred.
+        another = replace(intent(), operation_id=h(b'fresh op'),
+                          signed_transaction=b'R' * 1187)
+        with self.open() as reader, self.open() as writer:
+            reader.prepare(intent())
+            original = reader._audit_snapshot
+            attempted = []
+            def concurrent_writer():
+                # Force a real read snapshot before the writer attempts commit.
+                self.assertEqual(reader.db.execute(
+                    'SELECT COUNT(*) FROM q4_outbox_intents_v1'
+                ).fetchone()[0], 1)
+                with self.assertRaises(sqlite3.OperationalError):
+                    writer.prepare(another)
+                attempted.append(True)
+                return original()
+            reader._audit_snapshot = concurrent_writer
+            self.assertEqual(reader.audit(), 0)
+            self.assertEqual(attempted, [True])
+            reader._audit_snapshot = original
+            # The read lock was released even after the other owner's Busy.
+            writer.prepare(another)
+            self.assertEqual(reader.audit(), 0)
+
+    def test_nested_audit_refuses_without_rolling_back_writer_intent(self):
+        with self.open() as db:
+            db.db.execute('BEGIN IMMEDIATE')
+            try:
+                with self.assertRaisesRegex(OutboxError, 'AUDIT_REENTRANT'):
+                    db.audit()
+                self.assertTrue(db.db.in_transaction)
+            finally:
+                db.db.execute('ROLLBACK')
+            self.assertEqual(db.audit(), 0)
+
 if __name__ == '__main__': unittest.main()

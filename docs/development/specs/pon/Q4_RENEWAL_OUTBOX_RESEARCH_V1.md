@@ -60,3 +60,22 @@ checkout; the local separately reconstructed observation-codec probe passed.
 Real Q4 signatures, original-owner journals, independent PoN client proofs,
 WAN lost-ACK handling, uninterrupted mining and production admission remain
 strictly unqualified. No old Q4, Maintenance, W1 or DAA consensus rule changed.
+
+## One-snapshot audit under concurrent journal writers (2026-10-26)
+
+The research outbox originally queried intents and events in separate SQLite
+read statements without holding a shared read transaction. Another authorized
+local writer could commit between the two queries, creating a moving audit
+view. The read-only `audit()` path now opens a single explicit SQLite read
+transaction, checks the namespace metadata and both tables in that snapshot,
+and rolls back its read transaction on success or failure. Nested calls inside
+a caller-held write transaction refuse instead of committing or rolling back
+the caller's intent. A regression forces a second real SQLite connection to
+attempt to commit during the pinned read view, retains its Busy refusal, then
+checks that the writer can proceed after the audit ends.
+
+This is a concurrency/consistent-read repair in a synthetic SQLite research
+owner. The signed Q4 owner, real kernel.operations outbox, native PoN
+confirmation, authority to redispatch, physical power loss and independent
+operators remain separate blockers. No original Q4 signed bytes, W1, genesis
+Maintenance, DAA target, Node source or production flag is changed.

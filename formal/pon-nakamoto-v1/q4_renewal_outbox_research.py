@@ -179,7 +179,30 @@ class RenewalOutbox:
     def close(self): self.db.close()
 
     def audit(self) -> int:
-        """Local integrity/monotonicity audit, NOT an external attestation."""
+        """Audit one durable SQLite read snapshot, never a moving pair of scans.
+
+        A distinct owner may commit intents/events during an unfenced audit.
+        Both tables and the pinned namespace must be read under the SAME
+        transaction; a concurrent writer must wait or receive Busy.  This
+        journal remains research-only and authenticates no chain receipt.
+        """
+        if self.db.in_transaction:
+            raise OutboxError('AUDIT_REENTRANT')
+        self.db.execute('BEGIN')
+        try:
+            result = self._audit_snapshot()
+        except BaseException:
+            self.db.execute('ROLLBACK')
+            raise
+        self.db.execute('ROLLBACK')
+        return result
+
+    def _audit_snapshot(self) -> int:
+        pinned = dict([('schema',SCHEMA),('network',self.context[0]),
+                       ('parameters',self.context[1]),('genesis',self.context[2])])
+        actual = dict(self.db.execute('SELECT key,value FROM q4_outbox_meta_v1'))
+        if actual != pinned:
+            raise OutboxError('CONTEXT_MISMATCH')
         intents = {}
         operation_ids = set()
         for ident,op_id,packet_id,wire in self.db.execute('SELECT id,operation_id,packet_id,wire FROM q4_outbox_intents_v1'):
