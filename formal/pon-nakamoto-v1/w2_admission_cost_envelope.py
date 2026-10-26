@@ -105,7 +105,8 @@ def evaluate(payload):
         "full_A03_accepted":False,
         "production_consensus_activation":False,
         "research_verdict":"UNKNOWN_INCOMPLETE_MEASUREMENTS" if len(assessed) != len(BITS)
-            else "EXPECTED_COST_CONDITIONAL_ONLY",
+            else ("SOME_BITS_EXPECTED_COST_ONLY" if any(row["conditional_feasibility"] for row in assessed)
+                  else "NO_BIT_FEASIBLE_UNDER_DECLARED_COSTS"),
         "rows":rows,
     }
 
