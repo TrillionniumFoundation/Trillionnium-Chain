@@ -264,10 +264,6 @@ class RenewalOutbox:
         self.db.execute('BEGIN IMMEDIATE')
         committed = False
         try:
-            # Audit the complete immutable prefix in the SAME writer snapshot.
-            # A damaged earlier event/intent may not be extended just because the
-            # latest observed generation was valid. No chain authority is inferred.
-            self._audit_snapshot()
             if self.db.execute('SELECT 1 FROM q4_outbox_intents_v1 WHERE id=?', (ident,)).fetchone() is None:
                 raise OutboxError('UNKNOWN_INTENT')
             latest = self.db.execute('SELECT ordinal,digest FROM q4_outbox_events_v1 ORDER BY ordinal DESC LIMIT 1').fetchone()
@@ -286,6 +282,10 @@ class RenewalOutbox:
                 if last and _validate_observation_wire(last[0], last[1]) > int.from_bytes(obs[:8],'big'):
                     raise OutboxError('OBSERVATION_REGRESSION')
             else: raise OutboxError('UNKNOWN_EVENT')
+            # Preserve the original immediate-predecessor semantic error before
+            # the full prefix digest verdict. Still audit the entire original
+            # SQLite writer snapshot BEFORE inserting any new event.
+            self._audit_snapshot()
             digest = hashlib.sha256(EVENT_DOMAIN + u64(n,'ordinal') + ident + kind.encode('ascii') + obs + prev).digest()
             self.db.execute('INSERT INTO q4_outbox_events_v1 VALUES (?,?,?,?,?,?)',(n,ident,kind,obs,prev,digest))
             if fail_at == 'before_commit': raise OutboxError('INJECTED_BEFORE_COMMIT')

@@ -153,3 +153,15 @@ M05/M15 submission owner, a physical anti-tamper mechanism or a production
 Hepta lost-ACK path. A later native owner should use a separately reviewed
 authenticated bounded high-water/frontier with periodic full cold audit.
 No schema or Q4, W1, Maintenance, legacy DAA or activation rule changes.
+
+### Original error precedence retained
+
+The event-path full prefix audit executes **after** original local checks
+(`UNKNOWN_INTENT`, `EVENT_BUDGET`, duplicate dispatch and the complete
+immediate-predecessor observation grammar/generation) but **before INSERT**,
+all in the same original `BEGIN IMMEDIATE` transaction. This preserves the
+inherited `OBSERVATION_WIRE` counterexample for a malformed last observation
+rather than substituting `EVENT_DIGEST`, while still detecting corrupt
+nonterminal earlier history before any new write. Existing positive, fault
+injection and two newly added damaged-prefix tests remain the named selectors;
+their current GitHub-source Rust/Python execution is not claimed here.
