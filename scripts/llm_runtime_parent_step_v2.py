@@ -19,15 +19,24 @@ import llm_runtime_pilot as runtime
 
 SCHEMA = 'llm-runtime-parent-step-input-v2'
 PROFILE = 'canonical-positive-zero-to-caller-peft-A-v2'
+NEW_TASK_PROFILE = 'canonical-positive-zero-to-caller-peft-A-new-task-v2'
 ACTUAL = 'llm-runtime-parent-step-actual-v2'
 CANDIDATE = 'llm-runtime-parent-candidate-v2'
 RESULT = 'llm-runtime-parent-step-result-v2'
 
 
-def sources():
-    return dict(step.sources(), initial_setup=runtime.file_sha(setup.__file__),
+def sources(profile=PROFILE):
+    result = dict(step.sources(), initial_setup=runtime.file_sha(setup.__file__),
         parent_step_v2=runtime.file_sha(__file__), inherited=runtime.file_sha(inherited.__file__),
         family=runtime.file_sha(runtime.FAMILY_PATH))
+    if profile == NEW_TASK_PROFILE:
+        result['task_link'] = runtime.file_sha(Path(__file__).with_name('llm_runtime_parent_step_task_v2.py'))
+    return result
+
+
+def new_task(value):
+    return (type(value) is dict and type(value.get('initial_setup')) is dict and
+            value['initial_setup'].get('profile') == NEW_TASK_PROFILE)
 
 
 def binding(value):
@@ -37,6 +46,9 @@ def binding(value):
 
 
 def preflight(value):
+    if new_task(value):
+        from llm_runtime_parent_step_task_v2 import preflight as task_preflight
+        return task_preflight(value)
     step.closed(value, 'schema scope attempt_id operation experiment source files parent candidate output flags initial_setup')
     runtime.require(value['schema'] == SCHEMA and value['scope'] == step.SCOPE and
         value['source'] == sources() and value['flags'] == step.FALSES and
@@ -113,12 +125,15 @@ def verify_setup(value, descriptor, contract, original):
     return factors
 
 
-def candidate_record(value, descriptor, candidate, changed):
-    return dict(schema=CANDIDATE, scope=step.SCOPE, operation='train',
+def candidate_record(value, descriptor, candidate, changed, task_link=None):
+    record = dict(schema=CANDIDATE, scope=step.SCOPE, operation='train',
         attempt_binding=binding(value), input=runtime.identity(value), source=value['source'],
         contract=value['parent']['contract'], parent=value['parent'], parent_generation=1,
         candidate_generation=2, setup=descriptor, candidate=candidate,
         training_changed_from_setup=changed, flags=step.FALSES)
+    if new_task(value):
+        record['task_link'] = task_link if task_link is not None else value['initial_setup']['task_link']
+    return record
 
 
 def verify_completion(value):
@@ -129,7 +144,10 @@ def verify_completion(value):
     step.closed(report, 'schema scope operation attempt_id attempt_binding input source experiment parent '
         'parent_preflight parent_readback actual_backend actual_device actual_threads torch_cuda environment '
         'outcome observed_wall_ns training setup candidate setup_changed_from_parent training_changed_from_setup ' +
-        ' '.join(step.FALSES))
+        ' '.join(step.FALSES) + (' task_link' if new_task(value) else ''))
+    if new_task(value):
+        from llm_runtime_parent_step_task_v2 import verify_report
+        verify_report(value, report['task_link'])
     runtime.require(report['schema'] == ACTUAL and report['scope'] == step.SCOPE and report['operation'] == 'train' and
         report['attempt_id'] == value['attempt_id'] and report['attempt_binding'] == binding(value) and
         report['input'] == runtime.identity(value) and report['source'] == value['source'] and
@@ -155,13 +173,14 @@ def verify_completion(value):
     changed = candidate != prepared
     record = step.read_object(directory / 'parent-candidate-v2.json')
     step.closed(record, 'schema scope operation attempt_binding input source contract parent parent_generation '
-        'candidate_generation setup candidate training_changed_from_setup flags')
+        'candidate_generation setup candidate training_changed_from_setup flags' + (' task_link' if new_task(value) else ''))
     runtime.require(type(record['parent_generation']) is int and type(record['candidate_generation']) is int and
         type(record['training_changed_from_setup']) is bool and all(v is False for v in record['flags'].values()) and
         type(report['training_changed_from_setup']) is bool and
         report['training_changed_from_setup'] == changed and report['setup_changed_from_parent'] is True and
         report['setup_changed_from_parent'] == (prepared != original) and
-        record == candidate_record(value, report['setup'], report['candidate'], changed), 'PARENT_V2_LINEAGE')
+        record == candidate_record(value, report['setup'], report['candidate'], changed,
+                                   report.get('task_link')), 'PARENT_V2_LINEAGE')
     runtime.require(step.parent.read_regular(directory / 'target-contract.json',
         runtime.contract_module().MAX_MANIFEST_BYTES) == step.parent.read_regular(
             value['files']['parent_contract'], runtime.contract_module().MAX_MANIFEST_BYTES), 'PARENT_V2_CONTRACT')
@@ -187,8 +206,13 @@ def child(args, value):
             lambda: runtime.load_model(Path(value['files']['materials']), plan, imports))
         loaded, loaded_raw, cid = observer.stage('derived-material-check', lambda: runtime.make_contract(
             model, tokenizer, shapes, Path(value['files']['materials']), manifest, plan))
-        runtime.require(loaded == contract and loaded_raw == raw and cid == value['parent']['contract'],
-                        'PARENT_STEP_LOADED_CONTRACT')
+        if new_task(value):
+            from llm_runtime_parent_step_task_v2 import verify_link
+            report['task_link'] = verify_link(value, contract, loaded, loaded_raw, cid, plan)
+            cid = value['parent']['contract']
+        else:
+            runtime.require(loaded == contract and loaded_raw == raw and cid == value['parent']['contract'],
+                            'PARENT_STEP_LOADED_CONTRACT')
         model = observer.stage('adapter-insertion', lambda: runtime.insert_lora(model, plan, 'candidate', torch))
         captured = observer.stage('caller-A-capture', lambda: setup.capture_seeded_a(model, contract, torch, setup.RECIPE))
         prepared, setup_raw, setup_report = observer.stage('initial-working-copy-setup', lambda:
@@ -218,7 +242,8 @@ def child(args, value):
                                                          str(directory / 'artifact.safetensors')))
         candidate = dict(adapter=aid, file_sha256=runtime.file_sha(directory / 'artifact.safetensors'))
         changed = {n: runtime.tensor_bytes(t) for n, t in tensors.items()} != prepared
-        runtime.save(directory / 'parent-candidate-v2.json', candidate_record(value, descriptor, candidate, changed))
+        runtime.save(directory / 'parent-candidate-v2.json', candidate_record(value, descriptor, candidate, changed,
+                                                                            report.get('task_link')))
         (directory / 'target-contract.json').write_bytes(raw)
         preflight(value)
         report.update(candidate=candidate, setup_changed_from_parent=prepared != original,
@@ -233,7 +258,7 @@ def child(args, value):
 
 def run(args):
     runtime.require(args.operation == 'train', 'PARENT_V2_OPERATION_UNIMPLEMENTED')
-    runtime.require(args.initial_setup_profile == PROFILE and args.parent_material and args.parent_material_sha256,
+    runtime.require(args.initial_setup_profile in (PROFILE, NEW_TASK_PROFILE) and args.parent_material and args.parent_material_sha256,
                     'PARENT_V2_ARGUMENTS')
     runtime.require(not any(getattr(args, n) for n in ('candidate_directory', 'expected_candidate_adapter',
         'expected_candidate_file_sha256', 'expected_candidate_record_sha256', 'expected_candidate_result_sha256')),
@@ -243,12 +268,15 @@ def run(args):
     files['candidate_directory'] = None
     directory = Path(args.output).absolute()
     value = dict(schema=SCHEMA, scope=step.SCOPE, attempt_id=args.attempt_id, operation='train',
-        experiment=args.expected_plan, source=sources(), files=files,
+        experiment=args.expected_plan, source=sources(args.initial_setup_profile), files=files,
         parent=dict(contract=args.expected_contract, adapter=args.expected_parent_adapter,
                     file_sha256=args.expected_parent_file_sha256), candidate=None,
         output=str(directory / 'execution'), flags=step.FALSES,
-        initial_setup=dict(profile=PROFILE, recipe=dict(setup.RECIPE), parent_material=dict(
+        initial_setup=dict(profile=args.initial_setup_profile, recipe=dict(setup.RECIPE), parent_material=dict(
             path=str(Path(args.parent_material).absolute()), sha256=args.parent_material_sha256)))
+    if new_task(value):
+        from llm_runtime_parent_step_task_v2 import request_link
+        value['initial_setup']['task_link'] = request_link(value)
     plan, *_ = preflight(value)
     directory.mkdir(mode=0o700, parents=False, exist_ok=False)
     frozen = directory / 'parent-step-input-v2.json'
@@ -272,6 +300,6 @@ def run(args):
 
 
 def add_arguments(parser):
-    parser.add_argument('--initial-setup-profile', choices=(PROFILE,))
+    parser.add_argument('--initial-setup-profile', choices=(PROFILE, NEW_TASK_PROFILE))
     parser.add_argument('--parent-material')
     parser.add_argument('--parent-material-sha256')
