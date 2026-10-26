@@ -13,6 +13,7 @@ import hashlib
 import json
 from pathlib import Path
 import re
+import struct
 
 SCHEMA = 'pon-w1-flood-cost-input-v1'
 OUT_SCHEMA = 'pon-w1-flood-cost-accounting-v1'
@@ -40,6 +41,44 @@ def digest(value, label):
     require(type(value) is str and HEX.fullmatch(value) is not None, label)
     return value
 
+
+
+def pon_hash(tag, *parts):
+    """Fixed W1 SHA256 grammar; this verifies claimed ticket search, not W1."""
+    if type(tag) is str:
+        tag = tag.encode()
+    h = hashlib.sha256(b'TRNM-PON1\0' + struct.pack('<H', len(tag)) + tag)
+    for p in parts:
+        require(type(p) is bytes and len(p) < (1 << 32), 'HASH_PART')
+        h.update(struct.pack('<I', len(p)))
+        h.update(p)
+    return h.digest()
+
+
+def decode_hex(value, length, label):
+    require(type(value) is str and len(value) == 2 * length
+            and re.fullmatch(r'[0-9a-f]+', value) is not None, label)
+    return bytes.fromhex(value)
+
+
+def statement(case):
+    """Reconstruct precisely one from-zero PNW1 payload from claimed public data.
+
+    The ticket is independently recomputed for every trial; none of this
+    checks the true mathematical transcript or a Node's durable parent.
+    """
+    header = decode_hex(case.get('header_hex'), 318, 'HEADER')
+    require(header[:6] == b'PNH1\x01\x00', 'HEADER_VERSION')
+    target = header[118:150]  # source layout: 3 hashes, 2 u64, then target
+    require(target != bytes(32), 'ZERO_TARGET')
+    task = header[278:310]  # after miner/transactions/state/receipts
+    a = decode_hex(case.get('a_hex'), 16384, 'MATRIX_A')
+    b = decode_hex(case.get('b_hex'), 16384, 'MATRIX_B')
+    q = 4_294_967_291
+    for wire in (a, b):
+        require(all(x[0] < q for x in struct.iter_unpack('<I', wire)), 'FIELD')
+    require(pon_hash('task', a, b) == task, 'TASK')
+    return header, target, task, a, b
 
 def unique(pairs):
     out = {}
@@ -88,6 +127,8 @@ def analyze(data):
     for case in cases:
         require(type(case) is dict, 'CASE')
         proof = digest(case.get('proof_sha256'), 'PROOF_DIGEST')
+        header, target, task, a, b = statement(case)
+        challenge = pon_hash('challenge', header)
         require(proof not in all_proofs, 'DOUBLE_CHARGED_PROOF')
         all_proofs.add(proof)
         trials = case.get('trials')
@@ -105,6 +146,10 @@ def analyze(data):
                     and number(trial.get('nonce'), 'TRIAL_NONCE') == i,
                     'TRIAL_SEQUENCE')
             require(type(trial.get('ticket_hit')) is bool, 'TICKET_STATUS')
+            trace = pon_hash('public-v3-from-zero-v1', challenge,
+                             struct.pack('<Q', i))
+            observed_hit = pon_hash('ticket', challenge, trace) <= target
+            require(trial['ticket_hit'] == observed_hit, 'TICKET_VECTOR')
             measured = number(trial.get('cpu_ns'), 'TRIAL_CPU', allow_null=True)
             if measured is not None:
                 trial_cost += measured
@@ -113,6 +158,12 @@ def analyze(data):
             found += int(trial['ticket_hit'])
         require(found == 1 and trials[-1]['ticket_hit'] is True,
                 'WINNING_TRIAL_ONLY')
+        final_trace = pon_hash('public-v3-from-zero-v1', challenge,
+                               struct.pack('<Q', len(trials) - 1))
+        forged_w1 = b'PNW1' + a + b + bytes(16384) + final_trace
+        require(len(forged_w1) == 49188
+                and hashlib.sha256(forged_w1).hexdigest() == proof,
+                'EXACT_FALSE_PROOF')
         require(complete_cpu is None or complete_cpu >= trial_cost,
                 'NESTED_CPU_NOT_IN_TOTAL')
         if complete_cpu is None or complete_cpu == 0 or not all_trials_known:
@@ -149,6 +200,9 @@ def analyze(data):
             calls += 1
         rows.append({
             'proof_sha256': proof,
+            'challenge': challenge.hex(),
+            'task': task.hex(),
+            'target': target.hex(),
             'declared_calls': len(receives),
             'full_attacker_cpu_ns': complete_cpu,
             'receiver_cpu_ns': receiver_cpu if receiver_known else None,
