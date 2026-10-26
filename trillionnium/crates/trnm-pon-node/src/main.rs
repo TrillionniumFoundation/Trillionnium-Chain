@@ -668,6 +668,18 @@ fn growth_network_options(command: &str, args: &BTreeMap<String, String>) -> Res
     Ok(true)
 }
 
+/// A locally bound V3 listener may still import arbitrary W1 via a WAN peer.
+/// Choose a configured remote peer as the existing kernel-policy trigger.
+fn public_host_resource_address(
+    listener: std::net::SocketAddr,
+    peers: impl IntoIterator<Item = std::net::SocketAddr>,
+) -> std::net::SocketAddr {
+    peers
+        .into_iter()
+        .find(|peer| !peer.ip().is_loopback())
+        .unwrap_or(listener)
+}
+
 // Refuse an option/profile mismatch BEFORE opening a Node or service
 // ledger, rather than silently accepting a kernel-cap claim on another lane.
 fn validate_host_kernel_profile(command: &str, args: &BTreeMap<String, String>) -> Result<()> {
@@ -2250,8 +2262,16 @@ fn run() -> Result<Value> {
                     // Existing root-provisioned cgroup v2 parent: the actual
                     // kernel, not another local counter, enforces aggregate
                     // CPU/memory/task ceilings across independent processes.
-                    let host_kernel = host_public_guard::require_host_kernel_budget(
+                    let kernel_source = public_host_resource_address(
                         listener.local_addr()?,
+                        polling
+                            .iter()
+                            .flat_map(|cfg| cfg.peers.iter().map(|peer| peer.address)),
+                    );
+                    // An outbound nonloopback pinned peer requires the SAME
+                    // root-owned cgroup even behind a loopback V3 listener.
+                    let host_kernel = host_public_guard::require_host_kernel_budget(
+                        kernel_source,
                         args.get("--host-kernel-parent").map(String::as_str),
                     )?;
                     // Host counters aggregate ALL child processes of this same
@@ -2611,6 +2631,18 @@ mod tests {
         assert_eq!(cli_error_line(&error), "PUBLIC_MUTATION_CPU_BUDGET");
         assert_eq!(error.to_string(), "PUBLIC_MUTATION_CPU_BUDGET");
         assert!(error.is(trnm_pon_node::ErrorCode::PublicMutationCpuBudget));
+    }
+
+    #[test]
+    fn loopback_listener_with_remote_pinned_peer_requires_original_host_budget() {
+        let local: std::net::SocketAddr = "127.0.0.1:11000".parse().unwrap();
+        let wan: std::net::SocketAddr = "198.51.100.8:11001".parse().unwrap();
+        let wan6: std::net::SocketAddr = "[2001:db8::5]:11002".parse().unwrap();
+        assert_eq!(public_host_resource_address(local, []), local);
+        assert_eq!(public_host_resource_address(local, [local]), local);
+        assert_eq!(public_host_resource_address(local, [local, wan]), wan);
+        assert_eq!(public_host_resource_address(local, [wan6]), wan6);
+        assert!(host_public_guard::require_host_kernel_budget(wan, None).is_err());
     }
 
     #[test]
