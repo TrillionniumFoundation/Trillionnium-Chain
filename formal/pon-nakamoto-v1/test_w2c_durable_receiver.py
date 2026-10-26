@@ -143,6 +143,51 @@ else:
         with self.assertRaisesRegex(ValueError,'OWNER_UNAVAILABLE'):
             self.owner.offer(self.proposal,self.caller,8)
 
+    def test_paid_ticket_still_rejects_actual_false_w1_transcript(self):
+        # The cost ticket owns only a durable resource attempt. Full original
+        # W1 arithmetic still performs every transcript tile and must refuse.
+        import work_oracle as W
+        zeros=[0]*W.CELLS
+        header=H('durable-study-header')*9 + bytes(30)
+        self.assertEqual(len(header),318)
+        challenge=H('challenge',header)
+        trace=H('w2c-durable-false-trace',challenge)
+        proof=b'PNW1'+W.field_bytes(zeros)*3 + trace
+        task=W.task_id(zeros,zeros)
+        self.assertEqual(W.precheck(challenge,task,bytes([255])*32,proof)[3],
+                         H('ticket',challenge,trace))
+        proposal=H('w2c-proposal',header,proof)
+        grant=self.owner.offer(proposal,self.caller,8)
+        nonce,cost=solve(grant,65536)
+        self.assertIsNotNone(nonce)
+        self.assertEqual(self.owner.consume(grant,proposal,self.caller,nonce),
+                         'READY_RESOURCE_ONLY')
+        with self.assertRaisesRegex(ValueError,'^TRANSCRIPT
+        # Here the parent first closes its DB owner, then a real subprocess
+        # creates the durable row and calls os._exit without graceful close.
+        self.owner.close()
+        code='''import os,sys,json
+from contract_wire import H
+from w2c_durable_receiver import DurableReceiver,solve
+p=sys.argv[1];o=DurableReceiver(p,b'A'*32,b'K'*32)
+g=o.offer(H('fixed-proposal'),H('fixed-authenticated-caller'),8)
+n,_=solve(g,65536)
+a=o.consume(g,H('fixed-proposal'),H('fixed-authenticated-caller'),n)
+assert a=='READY_RESOURCE_ONLY'
+os._exit(0)
+'''
+        child=subprocess.run([sys.executable,'-c',code,str(self.path)],capture_output=True,text=True,timeout=15,env={**os.environ,'PYTHONPATH':str(Path(__file__).parent)})
+        self.assertEqual(child.returncode,0,child.stderr)
+        self.open_owner()
+        self.assertEqual(self.owner.paid_rows(),1)
+        g,n=self.mint()
+        self.assertEqual(self.owner.consume(g,self.proposal,self.caller,n),'READY_RESOURCE_ONLY')
+
+if __name__=='__main__':unittest.main(verbosity=2)
+):
+            W.verify(challenge,task,bytes([255])*32,proof)
+        self.assertEqual(self.owner.consume(grant,proposal,self.caller,nonce),'REPLAY')
+
     def test_real_crash_after_durable_commit_and_reopen(self):
         # Here the parent first closes its DB owner, then a real subprocess
         # creates the durable row and calls os._exit without graceful close.
