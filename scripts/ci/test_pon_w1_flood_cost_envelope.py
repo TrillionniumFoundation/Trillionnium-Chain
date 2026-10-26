@@ -14,7 +14,7 @@ import pon_w1_flood_cost_envelope as E
 def fixture():
     return {
         'schema': E.SCHEMA,
-        'source': {'head':'1'*64, 'tree':'2'*64,
+        'source': {'head':'1'*40, 'tree':'2'*40,
                    'profile':'pon-matmul-transcript-64-v1'},
         'cases': [{
             'proof_sha256':'a'*64, 'complete_attacker_cpu_ns':1000,
