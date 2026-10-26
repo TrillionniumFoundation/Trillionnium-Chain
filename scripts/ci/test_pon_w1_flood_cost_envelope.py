@@ -28,6 +28,9 @@ def fixture():
     assert challenge.hex()=='be2f41a613694ec7cce8ee6bfc34e4b67848335022ce9ff3fa2138888eab1d03'
     trace=E.pon_hash('public-v3-from-zero-v1',challenge,struct.pack('<Q',1))
     proof=b'PNW1'+a+a+bytes(16384)+trace
+    assert trace.hex()=='50ea84795b1ef4b44971129f3871cb7a1da56307ee436e42e9228be07e779237'
+    assert hashlib.sha256(proof).hexdigest()=='fb394de605de781203df492276921731066ddcab00cc226c903d9700466a6280'
+    assert E.pon_hash('ticket',challenge,trace).hex()=='4a12701820db92243ad7f27fd4f37ffba93e2a281c666137a4ce7ddc38663c74'
     return {
         'schema': E.SCHEMA,
         'source': {'head':'1'*40, 'tree':'2'*40,
