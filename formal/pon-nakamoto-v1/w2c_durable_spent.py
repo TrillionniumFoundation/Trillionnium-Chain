@@ -15,6 +15,7 @@ import struct
 
 SCHEMA = b"trnm-w2c-durable-spent-research-v1"
 MAX_U64 = (1 << 64) - 1
+SQLITE_SIGNED_MAX = (1 << 63) - 1
 
 
 class OwnerUnavailable(RuntimeError):
@@ -125,6 +126,8 @@ class DurablePaidSpendOwner:
         _hash32(key, 'SPEND_KEY')
         _u64(expires_ms, 'EXPIRY')
         _u64(now_ms, 'CLOCK')
+        if expires_ms > SQLITE_SIGNED_MAX:
+            raise ValueError('EXPIRY_RANGE')
         if now_ms >= expires_ms:
             return 'EXPIRED'
         if expires_ms - now_ms > 2000:
