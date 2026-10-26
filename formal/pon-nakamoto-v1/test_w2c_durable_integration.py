@@ -47,6 +47,22 @@ class DurableStatelessIntegrationTests(unittest.TestCase):
         self.assertEqual(original.pending_paid(), 1)
         self.assertEqual(copied.pending_paid(), 1)
 
+    def test_separate_copied_or_unshared_database_remains_unsafe(self):
+        # Retain the explicit counterexample rather than implying cross-host
+        # safety: two independent paid journals with identical keys/epochs
+        # cannot detect each other's accepted W1 admission tickets.
+        owner = self.issuer()
+        other_path = self.directory/'unshared-clone.sqlite'
+        clone = StatelessReceiverAdmission(
+            RECEIVER, SECRET, EPOCH, capacity=4, required_bits=8,
+            spent_owner=DurablePaidSpendOwner(other_path, RECEIVER, EPOCH, 4),
+            entropy=lambda n:b'T'*n)
+        grant = owner.offer(PROPOSAL, CALLER, 8, 100)
+        nonce, _ = solve(grant, 65536)
+        self.assertIsNotNone(nonce)
+        self.assertEqual(owner.consume(grant,PROPOSAL,CALLER,nonce,120),'READY_RESOURCE_ONLY')
+        self.assertEqual(clone.consume(grant,PROPOSAL,CALLER,nonce,120),'READY_RESOURCE_ONLY')
+
     def test_policy_16_cannot_be_downgraded_by_caller_or_grant(self):
         issuer = StatelessReceiverAdmission(
             RECEIVER, SECRET, EPOCH, required_bits=16)
