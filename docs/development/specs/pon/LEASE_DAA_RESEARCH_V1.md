@@ -567,3 +567,22 @@ only a generic prover against a cheap *invalid* ticket. It does not establish
 that cached AB is the best possible producer. P0-C is still OPEN, as are P1-B,
 P1-C and P2. No signed task, original Q4 bytes, Revision12 Maintenance rule,
 DAA, lottery, admission priority, fork choice or activation bit is modified.
+
+## P0-B: future-signed-window queue-risk priority (advisory only)
+
+The original `forecast_q4_renewal_window` could return `AwaitSignedWindow`
+for a legally pre-signed successor that starts so late that its old-lease
+inclusion slack is already smaller than the operator-declared queue lag plus
+safety margin. The phase looked merely pending, although the conservative
+height budget was already exhausted. Now `Expired` retains highest priority,
+`AtRisk` precedes `AwaitSignedWindow`, and the original `WindowOpenByTime`
+classification remains only when the timing budget fits. Existing zero-lag
+and height-100 final-boundary behavior are preserved. The negative control
+fixes old expiry 100, successor start 95, observed height 50, lag 10, margin
+10: earliest possible 95, slack 5, phase `AtRisk`, not a safe wait.
+
+This returns only a time/risk **forecast**, never a signed Q4 source statement,
+lease renewal, reserved block height, storage assurance, proof admission or
+success token. Reorg, missing material, revocation, signature or signer absence
+must still be rechecked against the original Node owners. Exact-head native
+execution and WAN queue-lag measurement are still missing; P0-B remains OPEN.
