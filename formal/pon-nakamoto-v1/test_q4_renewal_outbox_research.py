@@ -216,6 +216,12 @@ class RenewalOutboxTests(unittest.TestCase):
                 with self.subTest(malformed=str(malformed[:9])):
                     with self.assertRaises(OutboxError):
                         db._event(key, 'OBSERVED_INCLUDED', malformed)
+            # A future internal caller must not insert a DISPATCH fence for an
+            # unknown/relabelled intent even when it bypasses the public API.
+            with self.assertRaisesRegex(OutboxError, 'UNKNOWN_INTENT'):
+                db._event(h(b'nonexistent-owner'), 'DISPATCH_UNKNOWN')
+            with self.assertRaisesRegex(OutboxError, 'UNKNOWN_INTENT'):
+                db._event(h(b'nonexistent-owner'), 'OBSERVED_INCLUDED', good)
             self.assertEqual(db.audit(), 1)
             db.observe(key, observation())
             self.assertEqual(db.audit(), 2)
