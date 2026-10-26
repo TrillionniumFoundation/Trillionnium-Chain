@@ -686,3 +686,71 @@ remain OPEN. Future protocol integration must commit its own signed context,
 runtime activation rule, anti-rollback/reorg policy, persistent bounded
 ancestry proofs and independent client confirmations, without changing any
 historical revision.
+
+## 2026-10-26 follow-on: retained-slot OPEN -> independently signed REGISTER -> new work
+
+The existing opt-in native selector
+`long_native_all_32_retained_slots_reopen_only_after_retention_boundary`
+has a stricter **source-only** continuation in the stacked draft branch. Its
+original 32 previous OPEN + 32 REVOCATION operations, retained-height refusal,
+real Maintenance work, 1102 reentry, client confirmation and cold SQLite reopen
+are preserved. The continuation uses the same development-key test identities:
+one newly reopened slot becomes an actual inference-contraction demand, its
+source independently signs the exact new QWA2 statement, and the transaction
+at height 1102 registers the material. At height 1103 the Node constructs and
+validates a fresh real PNW1 block from that registered parent task, checks its
+actual output count, and returns to explicit Genesis Maintenance for later
+policy-confirmed readback. A signed OPEN by itself is never counted as a usable
+qualified-work source.
+
+The native selector remains deliberately opt-in / ignored: **this environment
+has no Rust compiler or configured project cloud host**. A correct-looking
+GitHub test source does not constitute an execution result. To establish P0-A/B
+the exact native source must compile and execute its >1110 W1 attempts with the
+independent same-admin readback, retained old-domain negative controls, and
+then be repeated under distinct administrators. No CI state is used as a closure
+proxy, and no legacy Q4/Revision12 signed bytes or DAA consensus semantics
+were modified.
+
+## 2026-10-26 follow-on: bounded selfish mining / source-outage risk screen
+
+`formal/pon-nakamoto-v1/pon_selfish_mining_research.py` is a separate,
+**non-authoritative** finite Markov-style research toy. It adds an actual
+withheld-private-chain lead/race state rather than treating a network partition
+as if it were an optimizing miner. A seeded discovery event assumes one valid
+equal-cost proof, with independent knobs for nominal attacker share, honest
+and attacker availability after external source loss, *assumed* legal W1
+speedup, and the fraction of honest miners extending a published tie. No W1
+proof is computed. Its instant race resolution has no network, clock, DAA,
+reorganization, honest confirmation-risk distribution, or external operators.
+
+Every attempted block is accounted exactly once as accepted, orphaned or
+unpublished/pending. The attacker only receives a published-chain fraction
+when the denominator is nonzero; withheld work is never silently promoted into
+chainwork. Reports retain absolute growth and unresolved private work so an
+apparently high accepted fraction cannot conceal a stalled public chain.
+
+Local isolated source-matched command:
+
+```sh
+cd formal/pon-nakamoto-v1
+python3 -m unittest -v test_pon_selfish_mining_research.py
+python3 pon_selfish_mining_research.py --output /absolute/new/withholding-outage.json
+```
+
+Nine focused Python tests passed in the isolated container; the two published
+Python Git blobs were checked against the exact bytes tested locally:
+`8271f9419daa61b848b6d7d21f3b151e4e810dee` (model) and
+`ab45f7d4d86946e902c55b2c41def9b13d441606` (tests).
+The frozen 54-case canonical row digest is
+`4a5785c5144e6560a7a52131723ca1cbb0882c22de83063fdaa1ab00c63381f4`.
+
+For an explicitly synthetic seed and gamma=0.5, a 30% nominal attacker share
+with maintenance participation 0.85 versus honest 0.35 yields post-outage
+expected valid-ticket share 0.51 even with *no* extra legal speed advantage.
+At assumed advantage 3x, the model's expected share rises to about 0.757,
+but a large amount of the attacker private chain remains unpublished: this is
+not a measured attack, a protocol threshold theorem or a prediction of
+production behavior. Actual W1 fastest-producer and asymmetric verification
+cost, timestamp/DAA feedback, peer routing, selfish mining under independent
+WAN operators and client work confirmation all remain **open**.
