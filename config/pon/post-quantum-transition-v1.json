@@ -31,7 +31,8 @@
     "ciphertext_bytes": 1088,
     "shared_secret_bytes": 32,
     "tls_hybrid_target": "X25519MLKEM768",
-    "tls_authenticated_deployed": false
+    "tls_authenticated_deployed": false,
+    "offline_authenticated_hybrid_tls_test_present": true
   },
   "existing_devnet_limits": {
     "max_transaction_bytes": 2048,
@@ -67,7 +68,8 @@
     "reference_files": [
       "formal/pon-nakamoto-v1/pq_envelope.py",
       "formal/pon-nakamoto-v1/test_pq_envelope.py",
-      "formal/pon-nakamoto-v1/test_pq_kem.py"
+      "formal/pon-nakamoto-v1/test_pq_kem.py",
+      "formal/pon-nakamoto-v1/test_pq_tls.py"
     ],
     "tests_are_product_activation": false,
     "independent_accepted": false,
