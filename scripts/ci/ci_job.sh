@@ -25,6 +25,7 @@ case "${1:?required job}" in
     python3 scripts/ci/test_pon_public_v3_phase_read.py
     python3 scripts/ci/test_pon_public_v3_policy_read.py
     python3 scripts/ci/test_pon_v3_cookie_cpu_study.py
+    python3 scripts/ci/test_pon_p0_p6_evidence_gate.py
     python3 scripts/ci/test_run_pon_w1_native_campaign.py
     python3 scripts/ci/test_pon_w1_cost_matrix_reader.py
     python3 scripts/ci/test_llm_cell_handoff_deadline.py
