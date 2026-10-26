@@ -868,6 +868,7 @@ pub fn run(options: &Options, journal: &mut Journal) -> Result<()> {
     let mut context = Context::new(options.rounds, journal)?;
     let mut cached: [Option<Producer>; 2] = [None, None];
     let mut stopped = false;
+    let mut safety_capped = false;
     let mut controls_completed = false;
     'strategy: {
         if !journal.permitted()? {
@@ -942,16 +943,16 @@ pub fn run(options: &Options, journal: &mut Journal) -> Result<()> {
             break 'strategy;
         }
         reject_material(&context, registered, journal, &mut counts)?;
-        let arm = ARMS
-            .iter()
-            .position(|name| *name == options.arm)
-            .ok_or("ARM")?;
         if options.cache == "hot" && journal.permitted()? {
             for (index, slot) in cached.iter_mut().enumerate() {
                 if !journal.permitted()? {
                     stopped = true;
                     break 'strategy;
                 }
+                let arm = ARMS
+                    .iter()
+                    .position(|name| *name == options.actual_arm(index))
+                    .ok_or("ARM")?;
                 *slot = Some(prepare(
                     arm,
                     &context.materials[index],
@@ -1009,7 +1010,7 @@ pub fn run(options: &Options, journal: &mut Journal) -> Result<()> {
             "lease_revision":context.lease.revision,"shared_templates_paid":true,
             "actual_signed_development_eligibility":true}))?;
             let mut first_winner = None;
-            for attempt in 0..options.attempts_per_parent {
+            for attempt in 0..options.attempt_limit(round) {
                 if !journal.permitted()? {
                     stopped = true;
                     break;
@@ -1020,6 +1021,11 @@ pub fn run(options: &Options, journal: &mut Journal) -> Result<()> {
                     stopped = true;
                     break;
                 }
+                let arm_name = options.actual_arm(index);
+                let arm = ARMS
+                    .iter()
+                    .position(|name| *name == arm_name)
+                    .ok_or("ARM")?;
                 let cold;
                 let producer = if options.cache == "hot" {
                     cached[index].as_ref().ok_or("HOT_CACHE_MISSING")?
@@ -1043,7 +1049,7 @@ pub fn run(options: &Options, journal: &mut Journal) -> Result<()> {
                 let completed = journal.charge(
                     "research-complete-proof",
                     start,
-                    json!({"round":round,"attempt":attempt,"task_index":index,"arm":options.arm}),
+                    json!({"round":round,"attempt":attempt,"task_index":index,"arm":arm_name}),
                 )?;
                 let start = journal.stamp()?;
                 let production = relation(pon_work::verify(
@@ -1072,7 +1078,7 @@ pub fn run(options: &Options, journal: &mut Journal) -> Result<()> {
                 let attempt_id = counts.research_completed_proofs;
                 counts.research_completed_proofs += 1;
                 journal.emit(json!({"kind":"attempt","attempt_id":attempt_id,"round":round,"attempt":attempt,
-                "task_index":index,"arm":options.arm,"cache":options.cache,"proof":fields(&header,&proof)?,
+                "task_index":index,"arm":arm_name,"cache":options.cache,"proof":fields(&header,&proof)?,
                 "proof_retention":"original-research-producer-returned-bytes","completed":completed,
                 "native_full_relation_verified":true,"native_reference_verified":true,
                 "unique_research_semantic":unique,"complete_proof_within_budget":journal.within(completed),
@@ -1099,6 +1105,12 @@ pub fn run(options: &Options, journal: &mut Journal) -> Result<()> {
             if stopped || !journal.permitted()? {
                 stopped = true;
                 break;
+            }
+            if options.budget_mode() && round + 1 == options.rounds {
+                // Equal-budget jobs stay on this paid, qualified final parent.
+                // Reaching the safety cap is censoring, never budget exhaustion.
+                safety_capped = true;
+                break 'strategy;
             }
             activate(
                 &mut context,
@@ -1233,7 +1245,7 @@ pub fn run(options: &Options, journal: &mut Journal) -> Result<()> {
         json!({"includes_temporary_state_cleanup":true}),
     )?;
     let strategy_completed = journal.stamp()?;
-    journal.emit(json!({"kind":"strategy-end","status":if stopped {"process-cpu-budget-stopped"}else{"planned-rounds-complete"},
+    journal.emit(json!({"kind":"strategy-end","status":if stopped {"process-cpu-budget-stopped"}else if safety_capped {"safety-cap-censored"}else{"planned-rounds-complete"},
         "completed":strategy_completed,"rounds_completed":counts.rounds_completed,
         "context_drop_included":true,"controls_completed":controls_completed,"controls":counts.controls,
         "acquisitions":counts.acquisitions,"original_make_completed_proofs":counts.original_make_completed_proofs,

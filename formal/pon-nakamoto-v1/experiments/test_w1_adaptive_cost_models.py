@@ -243,6 +243,148 @@ class AdaptiveCostModels(unittest.TestCase):
             with self.assertRaises(ValueError):
                 invalid()
 
+    def test_literal_trace_geometry_does_not_equal_wire_proof_size(self):
+        geometry = models.trace_geometry()
+        self.assertEqual(geometry["trace_words"], 32768)
+        self.assertEqual(geometry["trace_message_bytes"], 131120)
+        self.assertEqual(geometry["ordinary_sha256_compression_blocks"], 2049)
+        self.assertEqual(geometry["submitted_proof_bytes"], 49188)
+        self.assertGreater(geometry["trace_message_bytes"], geometry["submitted_proof_bytes"])
+        for n, tile in ((1, 1), (4, 1), (4, 2), (4, 4), (8, 2)):
+            report = models.trace_geometry(n, tile)
+            # Independently form the actual framing and word count, then pad it.
+            literal = b"TRNM-PON-TRACE1\0" + bytes(32)
+            for _bi in range(0, n, tile):
+                for _bj in range(0, n, tile):
+                    for _bk in range(0, n, tile):
+                        literal += bytes(4 * tile * tile)
+            self.assertEqual(len(literal), report["trace_message_bytes"])
+            bit_length = (len(literal) * 8).to_bytes(8, "big")
+            padded = literal + b"\x80"
+            while len(padded) % 64 != 56:
+                padded += b"\0"
+            padded += bit_length
+            self.assertEqual(len(padded) // 64, report["ordinary_sha256_compression_blocks"])
+
+    def test_factorized_prefixes_match_independent_arbitrary_residue_products(self):
+        def multiply(a, b, modulus):
+            return tuple(tuple(sum(x * y for x, y in zip(row, column)) % modulus
+                               for column in zip(*b)) for row in a)
+
+        def reference(a, b, tile, modulus):
+            n = len(a)
+            # Compute every complete restricted-prefix product independently.
+            full = {end: tuple(tuple(sum(a[i][k] * b[k][j] for k in range(end)) % modulus
+                                     for j in range(n)) for i in range(n))
+                    for end in range(tile, n + 1, tile)}
+            return tuple(full[end][i][j]
+                         for bi in range(0, n, tile) for bj in range(0, n, tile)
+                         for end in range(tile, n + 1, tile)
+                         for i in range(bi, bi + tile) for j in range(bj, bj + tile))
+
+        for n, tile, a, b in ((2, 1, 1, 1), (4, 2, 2, 3), (4, 4, 3, 1), (8, 2, 3, 2)):
+            for modulus in (17, 4294967291):
+                for pattern in (0, 1, 2):
+                    def matrix(rows, columns, salt):
+                        return tuple(tuple((0 if pattern == 0 else modulus - 1 if pattern == 1
+                                            else (31 * i + 7 * j + salt * 13)) % modulus
+                                           for j in range(columns)) for i in range(rows))
+                    left, il = matrix(n, a, 1), matrix(a, n, 2)
+                    ir, right = matrix(n, b, 3), matrix(b, n, 4)
+                    words = models.factored_prefix_words(left, il, ir, right, tile, modulus)
+                    expected = reference(multiply(left, il, modulus),
+                                         multiply(ir, right, modulus), tile, modulus)
+                    self.assertEqual(words, expected)
+                    self.assertEqual(len(words), n * n * (n // tile))
+
+    def test_low_rank_operation_count_is_only_the_declared_schedule(self):
+        counts = models.factored_prefix_multiplications(64, 8, 8, 8)
+        self.assertEqual(counts, {"middle_prefix_updates": 4096, "prefix_lifts": 32768,
+                                  "prefix_output_products": 262144, "total": 299008})
+        # Final product only would omit almost all of the required prefix bytes.
+        self.assertGreater(counts["total"], 64 * 8 * 8 + 64 * 64 * 8)
+        # Supplied rank-one task factors plus rank-eight noise need rank nine.
+        # Even these factors do not imply fewer scalar multiplies at this size.
+        self.assertGreater(models.factored_prefix_multiplications(64, 8, 9, 9)["total"],
+                           64**3 + 2 * 64**2 * 8)
+        left = models.factored_prefix_multiplications(8, 2, 2, 3)
+        right = models.factored_prefix_multiplications(8, 2, 3, 2)
+        self.assertEqual(left, right)
+
+    def test_trace_oracle_guessing_and_wrong_message_collision_are_distinct(self):
+        for bits in (1, 2, 3):
+            domain = range(2**bits)
+            # Query one noncanonical message, then submit its returned digest.
+            # The private verifier queries the different canonical message.
+            matches = sum(wrong == canonical for wrong in domain for canonical in domain)
+            actual = F(matches, len(domain)**2)
+            bound = models.trace_extraction_failure_bound(0, 1, 1, bits)
+            self.assertEqual(actual, F(1, 2**bits))
+            self.assertEqual(actual, bound["unqueried_digest_guess_bound"])
+            self.assertLessEqual(actual, bound["combined_bound"])
+            # Both messages queried: a matching digest gives ambiguous extraction.
+            self.assertEqual(actual, models.trace_extraction_failure_bound(
+                0, 2, 0, bits)["trace_response_collision_bound"])
+
+    def test_fixed_batch_guesses_count_all_candidates_not_only_accepted_output(self):
+        for bits in (1, 2, 3):
+            for guesses in range(2**bits + 2):
+                # Many guesses for one unknown digest; repeated guesses add no hit.
+                submitted = [index % (2**bits) for index in range(guesses)]
+                actual = F(sum(secret in submitted for secret in range(2**bits)), 2**bits)
+                bound = models.trace_extraction_failure_bound(0, 0, guesses, bits)
+                self.assertEqual(actual, min(F(1), F(guesses, 2**bits)))
+                self.assertLessEqual(actual, bound["combined_bound"])
+        frozen = models.trace_extraction_failure_bound(2, 1, 1)
+        self.assertEqual(frozen["distinct_trace_input_cap_including_private_verifier"], 4)
+        self.assertEqual(frozen["combined_bound"], F(7, 2**256))
+        # Hidden preparation is not equivalent to an unqueried guess: the bank
+        # can already contain the canonical message and its correct digest.
+        no_bank_claim = models.trace_extraction_failure_bound(0, 0, 1, 3)
+        self.assertGreater(F(1), no_bank_claim["combined_bound"])
+
+    def test_conditional_trace_extraction_requires_collision_free_known_table(self):
+        for bits in (2, 3):
+            size = 2**bits
+            # Fix one preparation answer, then expose two distinct new inputs.
+            # Their collision event is enumerated after fixing that actual table.
+            collision_mass = F(sum(x == 0 or y == 0 or x == y
+                                   for x in range(size) for y in range(size)), size**2)
+            bound = models.trace_extraction_failure_bound(
+                1, 2, 0, bits, conditioning="fixed-collision-free-preparation")
+            self.assertLessEqual(collision_mass, bound["trace_response_collision_bound"])
+            self.assertEqual(bound["combined_bound"], min(F(1), F(3, size)))
+        conditional = models.trace_extraction_failure_bound(
+            2, 1, 1, conditioning="fixed-collision-free-preparation")
+        self.assertEqual(conditional["combined_bound"], F(6, 2**256))
+        # Given a known prior collision, its probability is one even with no
+        # future calls; the premise cannot be inferred from a finite query cap.
+        unavailable_claim = models.trace_extraction_failure_bound(
+            2, 0, 0, 2, conditioning="fixed-collision-free-preparation")
+        self.assertEqual(unavailable_claim["combined_bound"], 0)
+        self.assertGreater(F(1), unavailable_claim["combined_bound"])
+
+    def test_trace_models_reject_ambiguous_or_oversized_parameters(self):
+        invalid = [lambda: models.trace_geometry(0, 1),
+                   lambda: models.trace_geometry(4, 0),
+                   lambda: models.trace_geometry(4, 3),
+                   lambda: models.trace_geometry(True, 1),
+                   lambda: models.factored_prefix_multiplications(4, 2, 0, 2),
+                   lambda: models.trace_extraction_failure_bound(-1, 0, 1),
+                   lambda: models.trace_extraction_failure_bound(0, True, 1),
+                   lambda: models.trace_extraction_failure_bound(0, 0, 1, 0),
+                   lambda: models.trace_extraction_failure_bound(
+                       0, 0, 1, conditioning="unexamined-state"),
+                   lambda: models.factored_prefix_words(((1,),), ((1,),), ((1,),),
+                                                       ((1,),), 1, 1),
+                   lambda: models.factored_prefix_words(((1,),), ((1,),), ((1,),),
+                                                       ((2,),), 1, 2),
+                   lambda: models.factored_prefix_words(((1,),), ((1, 2),), ((1,),),
+                                                       ((1,),), 1, 3)]
+        for operation in invalid:
+            with self.assertRaises(ValueError):
+                operation()
+
     def test_report_is_explicitly_nonqualifying_and_exact(self):
         report = models.research_report()
         self.assertFalse(report["native_measurement"])

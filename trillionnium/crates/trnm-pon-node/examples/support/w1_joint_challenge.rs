@@ -5,9 +5,7 @@
 #[cfg(target_arch = "x86_64")]
 use sha2::{Digest, Sha256};
 use std::fmt;
-use trnm_crypto_primitives::pon_work::{
-    self, Hash, PreparedTask, WorkError, CELLS, N, PROOF_BYTES, Q, R,
-};
+use trnm_crypto_primitives::pon_work::{self, Hash, PreparedTask, WorkError, N, PROOF_BYTES, Q, R};
 
 pub const SIMD_LANES: usize = 4;
 type Lanes = [u64; SIMD_LANES];
@@ -40,15 +38,18 @@ pub enum JointProgress {
         label: u8,
         counter: u32,
     },
+    #[cfg(target_arch = "x86_64")]
     NoiseRow {
         operand: u8,
         row: usize,
     },
+    #[cfg(target_arch = "x86_64")]
     TranscriptTile {
         row: usize,
         column: usize,
         inner: usize,
     },
+    #[cfg(target_arch = "x86_64")]
     BeforeDelivery,
 }
 
@@ -191,6 +192,7 @@ fn expand<E>(
 mod vector {
     use super::*;
     use std::arch::x86_64::*;
+    use trnm_crypto_primitives::pon_work::CELLS;
 
     /// Exact dot products in four independent lanes. Canonical operands are
     /// below 2^32. Never accumulate their full 64-bit products in one u64:
@@ -421,6 +423,7 @@ mod vector {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use trnm_crypto_primitives::pon_work::CELLS;
 
     #[test]
     fn invalid_material_cannot_become_a_prepared_task() {
@@ -431,6 +434,16 @@ mod tests {
         assert!(matches!(
             JointPreparedTask::new(&vec![Q as u32; CELLS], &vec![0; CELLS]),
             Err(JointError::Work(WorkError::Field))
+        ));
+    }
+
+    #[cfg(not(target_arch = "x86_64"))]
+    #[test]
+    fn unsupported_architecture_rejects_valid_material_without_a_fallback() {
+        assert!(!available());
+        assert!(matches!(
+            JointPreparedTask::new(&vec![0; CELLS], &vec![0; CELLS]),
+            Err(JointError::UnsupportedAvx2)
         ));
     }
 
@@ -488,6 +501,7 @@ mod tests {
         }
     }
 
+    #[cfg(target_arch = "x86_64")]
     #[test]
     fn cancellation_at_each_phase_and_after_complete_construction_returns_no_proofs() {
         if !available() {

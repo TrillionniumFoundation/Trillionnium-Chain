@@ -28,7 +28,10 @@ import work_oracle
 from read_w1_cost_research import require, uint64, exact
 
 SCHEMA = "pon-w1-parent-reuse-research-v1"
+BUDGET_SCHEMA = "pon-w1-parent-reuse-research-v2"
+BUDGET_MODE = "budget-final-parent-v2"
 LIMIT = 256 * 1024 * 1024
+BUDGET_LIMIT = 1024 * 1024 * 1024
 PROOF_BYTES = 49188
 LABELS = ("continuity-maintenance-v1", "signed-zero-development-v1")
 ARMS = ("prepared-generic", "paired-product", "integer-paired-general")
@@ -107,29 +110,47 @@ def before(left, right, label):
 def options_from_args(argv):
     require(type(argv) is list and len(argv) % 2 == 0 and all(type(v) is str for v in argv), "CLI_PAIRS")
     result = dict(rounds=4, attempts_per_parent=4, seed=1, cache="hot", strategy="paid-task-screen",
-                  screen_width=1, arm="integer-paired-general", cpu_budget_ns=None)
+                  screen_width=1, arm="integer-paired-general", cpu_budget_ns=None, mode=None, max_final_attempts=None)
     seen = set()
     for key, value in zip(argv[::2], argv[1::2]):
         require(key.startswith("--") and key not in seen, "CLI_DUPLICATE_OR_KEY")
         seen.add(key)
         name = key[2:].replace("-", "_")
         require(name in result and key == "--" + name.replace("_", "-"), "CLI_OPTION")
-        if name in ("rounds", "attempts_per_parent", "screen_width", "seed", "cpu_budget_ns"):
+        if name in ("rounds", "attempts_per_parent", "screen_width", "seed", "cpu_budget_ns", "max_final_attempts"):
             require(value.isascii() and value.isdecimal(), "CLI_INTEGER")
             result[name] = int(value)
         else:
             result[name] = value
+    result = {key:value for key,value in result.items() if key not in ("mode", "max_final_attempts") or value is not None}
     return validate_options(result)
 
 
+def budget_mode(options):
+    return options.get("mode") == BUDGET_MODE
+
+
+def attempt_limit(options, round_id):
+    return options["max_final_attempts"] if budget_mode(options) and round_id + 1 == options["rounds"] else options["attempts_per_parent"]
+
+
+def actual_arm(options, task_index):
+    return ("maintenance-limb", "blocked-zero")[task_index] if options["arm"] == "structure-specialized" else options["arm"]
+
+
 def validate_options(value):
-    exact(value, ("rounds", "attempts_per_parent", "seed", "cache", "strategy", "screen_width", "arm", "cpu_budget_ns"), "OPTION_FIELDS")
+    fields = {"rounds", "attempts_per_parent", "seed", "cache", "strategy", "screen_width", "arm", "cpu_budget_ns"}
+    if budget_mode(value): fields |= {"mode", "max_final_attempts"}
+    exact(value, fields, "OPTION_FIELDS")
     for key in ("rounds", "attempts_per_parent", "screen_width"):
         uint64(value[key], "OPTION_BOUND:" + key, minimum=1, maximum=8)
     number(value["seed"], "OPTION_SEED")
-    require(value["cache"] in ("hot", "cold") and value["strategy"] in STRATEGIES and value["arm"] in ARMS, "OPTION_ENUM")
+    require(value["cache"] in ("hot", "cold") and value["strategy"] in STRATEGIES and value["arm"] in (ARMS + (("structure-specialized",) if budget_mode(value) else ())), "OPTION_ENUM")
     if value["cpu_budget_ns"] is not None:
         number(value["cpu_budget_ns"], "OPTION_BUDGET")
+    if budget_mode(value):
+        require(value["rounds"] >= 2 and value["cpu_budget_ns"] is not None, "BUDGET_MODE_BOUNDS")
+        uint64(value["max_final_attempts"], "FINAL_PARENT_CAP", minimum=1, maximum=4096)
     return value
 
 
@@ -266,7 +287,7 @@ def noise(challenge):
 def load(path):
     path = Path(path).absolute()
     initial = path.lstat()
-    require(stat.S_ISREG(initial.st_mode) and not path.is_symlink() and 0 < initial.st_size <= LIMIT, "RAW_SIZE_OR_SYMLINK")
+    require(stat.S_ISREG(initial.st_mode) and not path.is_symlink() and 0 < initial.st_size <= BUDGET_LIMIT, "RAW_SIZE_OR_SYMLINK")
     rows = []
     digest = hashlib.sha256()
     identity = lambda value:(value.st_dev,value.st_ino,value.st_size,value.st_mtime_ns,value.st_ctime_ns)
@@ -277,13 +298,16 @@ def load(path):
             digest.update(line)
             require(len(line) <= 2 * 1024 * 1024 and line.endswith(b"\n"), "RAW_LINE")
             row = json.loads(line, object_pairs_hook=unique)
-            require(type(row) is dict and row.get("schema") == SCHEMA and row.get("sequence") == len(rows) and
+            require(type(row) is dict and row.get("schema") in (SCHEMA, BUDGET_SCHEMA) and row.get("sequence") == len(rows) and
                     type(row.get("sequence")) is int and type(row.get("kind")) is str, "RAW_RECORD")
             stamp(row.get("observed"))
             if rows:
+                require(row["schema"] == rows[0]["schema"], "MIXED_RAW_SCHEMA")
                 before(rows[-1]["observed"], row["observed"], "OBSERVATION_ORDER")
+            else:
+                require(initial.st_size <= (BUDGET_LIMIT if row["schema"] == BUDGET_SCHEMA else LIMIT), "RAW_SIZE_OR_SYMLINK")
             rows.append(row)
-            require(len(rows) <= 6000, "ROW_LIMIT")
+            require(len(rows) <= (128000 if row["schema"] == BUDGET_SCHEMA else 6000), "ROW_LIMIT")
         require(identity(os.fstat(stream.fileno())) == identity(opened), "RAW_MUTATED_DURING_READ")
     require(not path.is_symlink() and identity(path.lstat()) == identity(opened), "RAW_PATH_REPLACED_DURING_READ")
     require(len(rows) >= 3 and rows[0]["kind"] == "start" and rows[-1]["kind"] == "end", "RAW_COMPLETENESS")
@@ -295,6 +319,8 @@ class Reader:
     def __init__(self, rows, expected):
         self.rows = rows
         self.options = validate_options(rows[0]["options"])
+        self.budget_mode = budget_mode(self.options)
+        require(rows[0]["schema"] == (BUDGET_SCHEMA if self.budget_mode else SCHEMA), "SCHEMA_OPTIONS_BINDING")
         if expected is not None:
             require(self.options == validate_options(expected), "EXPECTED_OPTIONS")
         self.limit = self.options["cpu_budget_ns"]
@@ -408,8 +434,8 @@ class Reader:
         elif stage=="arithmetic-prepare":
             exact(row["detail"],("cache","task_index","arm"),"PREPARE_DETAIL")
             detail=row["detail"]
-            require(detail["cache"]==self.options["cache"] and detail["arm"]==self.options["arm"],"PREPARE_OPTIONS")
             number(detail["task_index"],"PREPARE_TASK",1)
+            require(detail["cache"]==self.options["cache"] and detail["arm"]==actual_arm(self.options,detail["task_index"]),"PREPARE_OPTIONS")
             if detail["cache"]=="hot":
                 require(detail["task_index"]==len(self.preparations) and not self.domains and len(self.controls)>=2,"HOT_PREPARE_ORDER")
                 self.used_charges.add(row["sequence"])
@@ -578,9 +604,10 @@ class Reader:
             if reason=="post-revocation-maintenance": require(self.revocation_readback,"RECOVERY_BEFORE_REVOCATION_CONTROL")
         else:
             round_id=number(row["round"],"ACTIVATION_ROUND",self.options["rounds"]-1)
+            require(not self.budget_mode or round_id + 1 < self.options["rounds"], "FINAL_PARENT_MUST_REMAIN_FIXED")
             require(len(self.domains)==round_id+1 and self.domains[-1]["parent"]==self.active,"ACTIVATION_ROUND_DOMAIN")
             attempts=[a for a in self.attempts if a["row"]["round"]==round_id]
-            require(len(attempts)==self.options["attempts_per_parent"] and self.selection is None,"ACTIVATION_MISSING_ATTEMPTS")
+            require(len(attempts)==attempt_limit(self.options,round_id) and self.selection is None,"ACTIVATION_MISSING_ATTEMPTS")
             winners=[a for a in attempts if a["hit"]]
             wanted=winners[0]["block"] if winners else self.domains[-1]["templates"][0]["block"]
             require(block==wanted and reason==("first-research-winner" if winners else "paid-original-template-fallback"),"ACTIVATION_POLICY")
@@ -607,7 +634,7 @@ class Reader:
 
     def expected_candidate(self,row):
         round_id=number(row["round"],"SELECTION_ROUND",self.options["rounds"]-1)
-        attempt=number(row["attempt"],"SELECTION_ATTEMPT",self.options["attempts_per_parent"]-1)
+        attempt=number(row["attempt"],"SELECTION_ATTEMPT",attempt_limit(self.options,round_id)-1)
         index=number(row["task_index"],"SELECTION_TASK",1)
         ordinal=number(row["candidate"],"SELECTION_CANDIDATE",self.options["screen_width"]-1)
         require(len(self.domains)==round_id+1 and self.domains[-1]["parent"]==self.active,"SELECTION_DOMAIN")
@@ -649,7 +676,7 @@ class Reader:
     def read_attempt(self,row):
         require(self.selection is not None and row["attempt_id"]==len(self.attempts) and type(row["attempt_id"]) is int,"ATTEMPT_ORDER")
         selection=self.selection
-        require(all(row[k]==selection[k] for k in ("round","attempt","task_index")) and row["arm"]==self.options["arm"] and row["cache"]==self.options["cache"],"ATTEMPT_SELECTION")
+        require(all(row[k]==selection[k] for k in ("round","attempt","task_index")) and row["arm"]==actual_arm(self.options,row["task_index"]) and row["cache"]==self.options["cache"],"ATTEMPT_SELECTION")
         value=proof(row["proof"],row["task_index"]);self.proof_replays+=1
         require(value["raw_header"].hex()==selection["header_hex"] and value["header"]["transactions"]==sequence_root("transactions",[]) and
                 value["header"]["receipts"]==sequence_root("receipts",[]),"ATTEMPT_HEADER")
@@ -683,20 +710,27 @@ class Reader:
     def read_summary(self,row):
         require(self.summary is None,"MULTIPLE_STRATEGY_END")
         if self.initial_stats is None:
-            exact(row,COMMON|set("status completed all_work_unique_winners research_unique_winners acquisitions research_completed_proofs rounds_completed context_drop_included controls_completed".split()),"EARLY_STRATEGY_FIELDS")
+            exact(row,COMMON|set("status completed all_work_unique_winners research_unique_winners acquisitions research_completed_proofs rounds_completed context_drop_included controls_completed".split())|({"termination_budget_poll"} if self.budget_mode else set()),"EARLY_STRATEGY_FIELDS")
             require(row["sequence"]==1 and row["status"]=="process-cpu-budget-stopped-before-context" and self.limit is not None and row["completed"]["process_cpu_ns"]>=self.limit,"EARLY_BUDGET_STOP")
             require(all(type(row[k]) is int and row[k]==0 for k in ("all_work_unique_winners","research_unique_winners","acquisitions","research_completed_proofs","rounds_completed")),"EARLY_COUNTS")
             flags(row,true=("context_drop_included",),false=("controls_completed",))
         else:
-            exact(row,COMMON|set(FULL_STRATEGY.split()),"STRATEGY_FIELDS")
+            exact(row,COMMON|set(FULL_STRATEGY.split())|({"termination_budget_poll"} if self.budget_mode else set()),"STRATEGY_FIELDS")
             require(len(self.tasks)==2 and 1 in self.statements,"INCOMPLETE_CONTEXT")
             cleanup=self.consume("native-context-drop",row)
             exact(cleanup["detail"],("includes_temporary_state_cleanup",),"DROP_DETAIL")
             flags(cleanup["detail"],true=("includes_temporary_state_cleanup",))
             before(cleanup["end"],row["completed"],"STRATEGY_DROP_TIMELINE")
             complete=row["status"]=="planned-rounds-complete"
-            require(complete or row["status"]=="process-cpu-budget-stopped","STRATEGY_STATUS")
-            if not complete: require(self.limit is not None and row["completed"]["process_cpu_ns"]>=self.limit,"FALSE_BUDGET_STOP")
+            capped=row["status"]=="safety-cap-censored"
+            require((complete and not self.budget_mode) or row["status"]=="process-cpu-budget-stopped" or (capped and self.budget_mode),"STRATEGY_STATUS")
+            if not complete and not capped:
+                require(self.limit is not None and row["completed"]["process_cpu_ns"]>=self.limit,"FALSE_BUDGET_STOP")
+            if capped:
+                last=[a for a in self.attempts if a["row"]["round"]==self.options["rounds"]-1]
+                require(len(self.domains)==self.options["rounds"] and len(last)==self.options["max_final_attempts"] and
+                        row["rounds_completed"]==self.options["rounds"]-1 and self.selection is None and not self.revocation_readback,
+                        "FALSE_SAFETY_CAP_STOP")
             rounds=sum(p["round"] is not None for p in self.parents)
             all_counts={
                 "rounds_completed":rounds,"controls":len(self.controls),"acquisitions":len(self.acquisitions),
@@ -734,6 +768,15 @@ class Reader:
             if leftovers:
                 require(leftovers[0]["end"]["process_cpu_ns"]<=row["completed"]["process_cpu_ns"],"UNFINISHED_STAGE_TIME")
             require(sum(self.charge_cpu.values())<=row["completed"]["process_cpu_ns"],"PHASE_SUM_EXCEEDS_PROCESS")
+        if self.budget_mode:
+            poll=row["termination_budget_poll"]
+            exact(poll,("observed","permitted"),"TERMINATION_POLL_FIELDS")
+            before(poll["observed"],row["completed"],"TERMINATION_POLL_TIME")
+            require(type(poll["permitted"]) is bool and poll["permitted"] == (poll["observed"]["process_cpu_ns"] < self.limit),
+                    "TERMINATION_POLL_PREDICATE")
+            require(poll["permitted"] is (row["status"]=="safety-cap-censored"),"TERMINATION_REASON_BINDING")
+            if self.initial_stats is not None:
+                require(poll==cleanup["budget_poll"],"TERMINATION_CLEANUP_POLL")
         before(row["completed"],row["observed"],"STRATEGY_COMPLETION_OBSERVED")
         self.summary=row;self.summary_sequence=row["sequence"]
 
@@ -804,7 +847,8 @@ class Reader:
                     "research_unique_complete_semantics","research_unique_winners","all_work_unique_winners","all_work_unique_native_blocks",
                     "all_work_unique_admitted_within_budget","research_unique_admitted_within_budget","screened_candidates","discarded_screen_candidates",
                     "hot_preparations","cold_preparations","transaction_count","transaction_fee_total")
-        return dict(schema="pon-w1-parent-reuse-readback-v1",options=self.options,status=self.summary["status"],
+        result = dict(schema="pon-w1-parent-reuse-readback-v2" if self.budget_mode else "pon-w1-parent-reuse-readback-v1",
+                    options=self.options,status=self.summary["status"],
                     counts={key:self.summary.get(key,0) for key in count_keys},strategy_cpu_ns=self.summary["completed"]["process_cpu_ns"],
                     charge_cpu_ns_by_stage=dict(self.charge_cpu),unattributed_strategy_cpu_ns=self.summary["completed"]["process_cpu_ns"]-sum(self.charge_cpu.values()),
                     posthoc_process_cpu_ns=self.final.get("posthoc_process_cpu_ns",0),final_stats=self.summary.get("final_native_stats"),
@@ -821,6 +865,33 @@ class Reader:
                     limits=["No independent native State execution or task-qualification proof", "CPU and native admissions are source-bound local observations",
                             "Original hidden miss bytes are reconstructed after selection, never raw original retention", "Shared acquisition is not each strategy's theoretical minimum cost",
                             "No new Hepta training, utility or physical-cost lower bound"])
+        if self.budget_mode:
+            final_round=self.options["rounds"]-1
+            final=[a for a in self.attempts if a["row"]["round"]==final_round]
+            prefix=[a for a in self.attempts if a["row"]["round"]<final_round]
+            credited=lambda values:len({a["identity"] for a in values if ("research",a["id"]) in self.admissions and
+                                       self.within(self.admissions["research",a["id"]]["admission_completed"])})
+            complete=lambda values:len({a["identity"] for a in values if self.within(a["row"]["completed"])})
+            result["budget_experiment"] = dict(
+                mode=BUDGET_MODE,measurement_scope="paid-advancing-prefix-then-fixed-final-parent-native-admissions",
+                termination_budget_poll=self.summary["termination_budget_poll"],
+                prefix_round_limit=final_round,prefix_attempt_limit_per_parent=self.options["attempts_per_parent"],
+                final_parent_attempt_cap=self.options["max_final_attempts"],
+                planned_research_attempt_cap=final_round*self.options["attempts_per_parent"]+self.options["max_final_attempts"],
+                reached_final_parent=len(self.domains)==self.options["rounds"],
+                final_parent=self.domains[-1]["parent"] if len(self.domains)==self.options["rounds"] else None,
+                prefix_research_attempts=len(prefix),final_parent_research_attempts=len(final),
+                prefix_unique_complete_within_budget=complete(prefix),final_parent_unique_complete_within_budget=complete(final),
+                prefix_unique_admitted_within_budget=credited(prefix),final_parent_unique_admitted_within_budget=credited(final),
+                safety_cap_reached=len(final)==self.options["max_final_attempts"],
+                stopped_on_safety_cap=self.summary["status"]=="safety-cap-censored",
+                stopped_on_budget=self.summary["status"].startswith("process-cpu-budget-stopped"),
+                effective_arm_by_task=[actual_arm(self.options,index) for index in range(2)],
+                continuous_chain_growth_throughput=False,maximum_adversarial_yield_proved=False)
+            result["limits"].extend(("The final parent stays fixed; distinct admitted siblings are not serial chain growth",
+                                     "Only budget-stopped jobs beyond the registered cap controls measure the complete B interval; late admissions receive no credit",
+                                     "The declared structure-specialized arm map is not a fastest-known or globally optimal policy claim"))
+        return result
 
 
 def read_parent(path, expected_options=None):

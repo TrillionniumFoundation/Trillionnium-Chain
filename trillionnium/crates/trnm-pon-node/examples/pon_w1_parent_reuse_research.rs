@@ -14,6 +14,8 @@ use std::{cell::Cell, collections::BTreeSet, io::Write, time::Instant};
 
 type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
 const SCHEMA: &str = "pon-w1-parent-reuse-research-v1";
+const BUDGET_SCHEMA: &str = "pon-w1-parent-reuse-research-v2";
+const BUDGET_MODE: &str = "budget-final-parent-v2";
 
 #[cfg(test)]
 fn materials() -> Result<Vec<w1_material::Material>> {
@@ -51,6 +53,10 @@ pub struct Options {
     screen_width: u64,
     arm: String,
     cpu_budget_ns: Option<u64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    mode: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    max_final_attempts: Option<u64>,
 }
 
 fn options() -> Result<Options> {
@@ -63,12 +69,14 @@ fn options() -> Result<Options> {
         screen_width: 1,
         arm: "integer-paired-general".into(),
         cpu_budget_ns: None,
+        mode: None,
+        max_final_attempts: None,
     };
     let mut seen = BTreeSet::new();
     let mut args = std::env::args().skip(1);
     while let Some(key) = args.next() {
         if key == "--help" {
-            println!("pon_w1_parent_reuse_research --rounds 1..8 --attempts-per-parent 1..8 --seed U64 --cache hot|cold --strategy maintenance-only|zero-only|paid-task-screen --screen-width 1..8 --arm prepared-generic|paired-product|integer-paired-general --cpu-budget-ns U64");
+            println!("pon_w1_parent_reuse_research --rounds 1..8 --attempts-per-parent 1..8 --seed U64 --cache hot|cold --strategy maintenance-only|zero-only|paid-task-screen --screen-width 1..8 --arm prepared-generic|paired-product|integer-paired-general|structure-specialized --cpu-budget-ns U64 [--mode budget-final-parent-v2 --max-final-attempts 1..4096]");
             std::process::exit(0);
         }
         if !seen.insert(key.clone()) {
@@ -84,25 +92,69 @@ fn options() -> Result<Options> {
             "--screen-width" => result.screen_width = value.parse()?,
             "--arm" => result.arm = value,
             "--cpu-budget-ns" => result.cpu_budget_ns = Some(value.parse()?),
+            "--mode" => result.mode = Some(value),
+            "--max-final-attempts" => result.max_final_attempts = Some(value.parse()?),
             _ => return Err(format!("UNKNOWN_OPTION:{key}").into()),
         }
     }
-    if !(1..=8).contains(&result.rounds)
-        || !(1..=8).contains(&result.attempts_per_parent)
-        || !(1..=8).contains(&result.screen_width)
-        || !["hot", "cold"].contains(&result.cache.as_str())
-        || !["maintenance-only", "zero-only", "paid-task-screen"]
-            .contains(&result.strategy.as_str())
-        || ![
-            "prepared-generic",
-            "paired-product",
-            "integer-paired-general",
-        ]
-        .contains(&result.arm.as_str())
-    {
-        return Err("OPTION_BOUNDS".into());
-    }
+    result.validate()?;
     Ok(result)
+}
+
+impl Options {
+    fn budget_mode(&self) -> bool {
+        self.mode.as_deref() == Some(BUDGET_MODE)
+    }
+
+    fn validate(&self) -> Result<()> {
+        if !(1..=8).contains(&self.rounds)
+            || !(1..=8).contains(&self.attempts_per_parent)
+            || !(1..=8).contains(&self.screen_width)
+            || !["hot", "cold"].contains(&self.cache.as_str())
+            || !["maintenance-only", "zero-only", "paid-task-screen"]
+                .contains(&self.strategy.as_str())
+            || !([
+                "prepared-generic",
+                "paired-product",
+                "integer-paired-general",
+            ]
+            .contains(&self.arm.as_str())
+                || self.budget_mode() && self.arm == "structure-specialized")
+        {
+            return Err("OPTION_BOUNDS".into());
+        }
+        if self.budget_mode() {
+            if self.rounds < 2
+                || self.cpu_budget_ns.is_none()
+                || !self
+                    .max_final_attempts
+                    .is_some_and(|n| (1..=4096).contains(&n))
+            {
+                return Err("BUDGET_MODE_BOUNDS".into());
+            }
+        } else if self.mode.is_some() || self.max_final_attempts.is_some() {
+            return Err("BUDGET_MODE_OPTIONS".into());
+        }
+        Ok(())
+    }
+
+    fn attempt_limit(&self, round: u64) -> u64 {
+        if self.budget_mode() && round + 1 == self.rounds {
+            // Validation requires this explicit censoring cap; it is never a
+            // claimed maximum yield under the resource budget.
+            self.max_final_attempts.expect("validated final-parent cap")
+        } else {
+            self.attempts_per_parent
+        }
+    }
+
+    fn actual_arm(&self, task_index: usize) -> &str {
+        if self.arm == "structure-specialized" {
+            ["maintenance-limb", "blocked-zero"][task_index]
+        } else {
+            &self.arm
+        }
+    }
 }
 
 #[derive(Clone, Copy, Debug, Serialize)]
@@ -112,6 +164,7 @@ pub struct Stamp {
 }
 
 pub struct Journal {
+    schema: &'static str,
     origin_cpu: u64,
     origin_wall: Instant,
     sequence: u64,
@@ -142,6 +195,7 @@ fn process_cpu() -> Result<u64> {
 impl Journal {
     fn new() -> Result<Self> {
         Ok(Self {
+            schema: SCHEMA,
             origin_cpu: process_cpu()?,
             origin_wall: Instant::now(),
             sequence: 0,
@@ -172,7 +226,12 @@ impl Journal {
 
     pub fn emit(&mut self, mut record: Value) -> Result<()> {
         let object = record.as_object_mut().ok_or("RECORD_OBJECT")?;
-        object.insert("schema".into(), json!(SCHEMA));
+        if self.schema == BUDGET_SCHEMA && object.get("kind") == Some(&json!("strategy-end")) {
+            object.insert("termination_budget_poll".into(), json!(self.last_budget_poll.get().map(|stamp| {
+                json!({"observed":stamp,"permitted":self.budget.is_none_or(|limit|stamp.process_cpu_ns<limit)})
+            })));
+        }
+        object.insert("schema".into(), json!(self.schema));
         object.insert("sequence".into(), json!(self.sequence));
         object.insert("observed".into(), json!(self.stamp()?));
         let mut stdout = std::io::stdout().lock();
@@ -204,6 +263,11 @@ fn run() -> Result<()> {
     let mut journal = Journal::new()?;
     let options = options()?;
     journal.budget = options.cpu_budget_ns;
+    journal.schema = if options.budget_mode() {
+        BUDGET_SCHEMA
+    } else {
+        SCHEMA
+    };
     journal.emit(json!({"kind":"start","options":options,
         "cpu_scope":"whole-process-through-strategy-context-drop; posthoc-reconstruction-separate",
         "budget_policy":"poll-before-new-acquisition-selection-preparation-proof-and-activation; bounded-stage overshoot retained; admission-completed-by-budget for credited winners",
@@ -221,5 +285,69 @@ fn main() {
     if let Err(error) = run() {
         eprintln!("PARENT_REUSE_RESEARCH_ERROR:{error}");
         std::process::exit(2);
+    }
+}
+
+#[cfg(test)]
+mod budget_options_tests {
+    use super::*;
+
+    fn fixture() -> Options {
+        Options {
+            rounds: 4,
+            attempts_per_parent: 2,
+            seed: 1,
+            cache: "hot".into(),
+            strategy: "paid-task-screen".into(),
+            screen_width: 1,
+            arm: "integer-paired-general".into(),
+            cpu_budget_ns: Some(1_000_000_000),
+            mode: None,
+            max_final_attempts: None,
+        }
+    }
+
+    #[test]
+    fn original_wire_options_omit_new_fields() {
+        let options = fixture();
+        options.validate().unwrap();
+        let value = serde_json::to_value(&options).unwrap();
+        assert!(value.get("mode").is_none());
+        assert!(value.get("max_final_attempts").is_none());
+        assert_eq!(options.attempt_limit(3), 2);
+    }
+
+    #[test]
+    fn budget_mode_requires_explicit_limits_and_preserves_prefix() {
+        let mut options = fixture();
+        options.mode = Some(BUDGET_MODE.into());
+        assert!(options.validate().is_err());
+        options.max_final_attempts = Some(4096);
+        options.validate().unwrap();
+        assert_eq!(options.attempt_limit(0), 2);
+        assert_eq!(options.attempt_limit(2), 2);
+        assert_eq!(options.attempt_limit(3), 4096);
+        options.max_final_attempts = Some(4097);
+        assert!(options.validate().is_err());
+        options.max_final_attempts = Some(1);
+        options.cpu_budget_ns = None;
+        assert!(options.validate().is_err());
+        options.cpu_budget_ns = Some(0);
+        options.rounds = 1;
+        assert!(options.validate().is_err());
+    }
+
+    #[test]
+    fn structure_specialization_is_explicit_and_task_bound() {
+        let mut options = fixture();
+        options.arm = "structure-specialized".into();
+        assert!(options.validate().is_err());
+        options.mode = Some(BUDGET_MODE.into());
+        options.max_final_attempts = Some(4);
+        options.validate().unwrap();
+        assert_eq!(options.actual_arm(0), "maintenance-limb");
+        assert_eq!(options.actual_arm(1), "blocked-zero");
+        options.mode = Some("unknown".into());
+        assert!(options.validate().is_err());
     }
 }

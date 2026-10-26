@@ -1,6 +1,6 @@
 # Trillionnium Chain Development Plan — PoN / Hepta-PoH revision
 
-Plan ID: `trnm-chain-development-plan-v2` (stable registry identity; content revision 25).
+Plan ID: `trnm-chain-development-plan-v2` (stable registry identity; content revision 26).
 Effective: 2026-09-28; priority implementation revision: 2026-10-25. Status: selected development direction; no runtime activation.
 Canonical destination: `refs/heads/main`; continuation uses the current main lineage, not retired PR #194.
 Current source/head/tree/base and prospective merge are derived at verification time.
@@ -1519,6 +1519,28 @@ fresh committed-source rerun of that unchanged load and independent complete
 reference replay. The earlier passed 16,411-key case remains scoped to its original
 source. Reaching 65,536 keys, rejecting 65,537 without changing parent state, large
 payload/workspace cases and hostile availability remain separate obligations.
+
+### PN1 complete-budget native admission refinement — 2026-10-25
+
+The completed native parent jobs stopped at their 32-attempt cap before spending
+the nominal second. The [38-job continuation](../../formal/pon-nakamoto-v1/experiments/w1_native_budget_campaign_v1.json)
+therefore adds a versioned research-only budget mode: pay the same registration,
+renewal and advancing prefix, then hold the final parent fixed and run until the
+inclusive CPU budget. Specialized maintenance/zero producers are compared with
+the general paired producer under frozen streams and 4,096-attempt safety caps.
+The [contract](../protocol/pon-nakamoto-v1/details/W1_ADAPTIVE_JOINT_RESEARCH.md#7-equal-budget-native-admission-continuation)
+and [analysis](../../formal/pon-nakamoto-v1/experiments/analyze_w1_native_budget.py)
+keep caps, late admissions, overshoot, auxiliary acquisition and incomplete
+lifecycle controls explicit. Sibling admissions do not become canonical growth.
+
+The original hosted ARM Clippy failure is a research-example architecture-scope
+regression: AVX2-only variants/imports were visible in ARM compilation. Scope the
+code to its actual architecture and retain explicit unsupported behavior; do not
+weaken the strict gate. New head/merge hosted observations remain necessary.
+The cost game also refines the conditional ideal-trace-oracle extraction boundary;
+its exact query geometry and finite controls do not prove actual SHA-256/W1
+hardness or a physical work floor. PN0–PN6 acceptance and pure-matrix priority stay
+unchanged. This is the same existing plan, not a separate release roadmap.
 
 ## 1. Product mission: shared intelligence from real work
 

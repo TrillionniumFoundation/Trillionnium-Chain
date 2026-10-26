@@ -687,6 +687,170 @@ Mathematical premises, consequences proved under those premises, native
 observations and open resource reductions must retain separate labels. No test
 result promotes a hardware, universal-hardness or production-activation flag.
 
+### 9.2 Actual compact trace, prefix algebra and a charged model
+
+The source inspected for this refinement starts at
+`b33a30fae35daf79db6d03895c33311dd36820ea`. Its
+[original relation and prepared producer](../../../../trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs)
+fix `N=64`, `R=8` and `q=2^32-5`. For each row tile, column tile and
+inner prefix ending at `p=8,16,...,64`, the trace hashes every canonical word
+of `(A+UV)[:,0:p] * (B+XY)[0:p,:]`, in tile/prefix/row/column order.
+`U,V,X,Y` are the four challenge-expanded rank-eight factors. No choice of
+reassociation may change any intermediate residue or its byte order.
+
+The literal encoding has the following geometry. These are **layout and
+ordinary implementation counts**, not lower bounds for an arbitrary algorithm.
+
+| Quantity | Exact value for current W1 | Meaning |
+| --- | --- | --- |
+| Prefix words | `N^2*(N/R) = 32,768` | All eight prefixes of every output cell |
+| Prefix word bytes | `131,072` | Four canonical little-endian bytes per word |
+| Trace message bytes | `16+32+131,072 = 131,120` | Trace domain, challenge, then prefix words |
+| Ordinary SHA-256 compression blocks | `ceil((131,120+9)/64) = 2,049` | Includes SHA-256 padding; excludes noise/ticket hashes |
+| Submitted PNW1 proof bytes | `4+3*64^2*4+32 = 49,188` | A, B, their final product, and a digest, without prefix arrays |
+
+In particular, serially hashing 2,049 blocks is an implementation schedule. It
+is not a proof that every SHA-256 algorithm, prepared circuit, shared computation
+or specialized device pays 2,049 independent physical costs. No compression-
+oracle or ideal whole-message-oracle theorem is established merely by that count.
+
+The exact low-rank identity for any prefix is
+
+`S_p = P_p + (A[:,0:p] X[0:p,:])Y
+       + U(V[:,0:p] B[0:p,:]) + U(V[:,0:p] X[0:p,:])Y`,
+
+where `P_p=A[:,0:p] B[0:p,:]`. The `P_p` matrices can be prepared once for a
+fixed task, but their preparation, storage and reuse horizon belong in `P`.
+That identity does not remove the challenge-dependent terms. In the zero/zero
+case it simplifies to `S_p=U M_p Y`, with `M_p=V[:,0:p] X[0:p,:]`.
+The existing [blocked-zero producer](../../../../trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_zero.rs)
+uses this identity while streaming the required words; it does not claim the
+wire proof contains the intermediate arrays.
+
+More generally, supplied factors `A'=L R0` and `B'=S T` of inner dimensions
+`a,b` give `S_p=L (R0[:,0:p] S[0:p,:]) T`. With `m=n/tile`, a classical
+scalar schedule first updates all middle prefixes, then chooses `(L M_p)T`
+or `L(M_p T)` according to the smaller final inner dimension. Its multiplication
+count is
+
+`n*a*b + m*n*a*b + m*n^2*min(a,b)`.
+
+For zero tasks with `n=64`, `tile=a=b=8`, this is
+`4,096 + 32,768 + 262,144 = 299,008` scalar multiplications. The ordinary
+perturbed-matrix/trace schedule uses `2*n^2*8+n^3=327,680`, excluding the useful
+product's preparation. Both counts exclude additions, reductions, hash work,
+encoding, allocation, transport and input/factor acquisition. They are
+constructive upper bounds for named schedules. Fast matrix multiplication,
+integer pairing, batching and hardware may change them; neither is the fastest
+possible cost or an asymptotic direct-sum bound. For supplied rank-one task
+factors plus rank-eight noise, the same simple rank-nine schedule actually has
+`341,568` multiplies, exceeding that ordinary count. Low rank alone is therefore
+insufficient to select a universally faster implementation at this fixed size.
+
+The [exact model controls](../../../../formal/pon-nakamoto-v1/experiments/test_w1_adaptive_cost_models.py)
+compare this factorized prefix schedule against independently computed restricted
+matrix products over a small field and the actual W1 field, with zero, extreme
+and mixed residues. Those small-dimension algebra controls do not replace
+actual n64 native-proof parity or benchmark a new producer. They also reconstruct
+the byte framing and SHA-256 padding independently of the geometry formula.
+
+### 9.3 Conditional trace extraction and the remaining reduction
+
+**Model boundary:** the lemma below uses an independent, domain-separated,
+ideal **whole-message trace oracle** `H_tr:{0,1}* -> {0,1}^lambda`. Actual W1
+uses SHA-256, including SHA-256 in other domains. Ideal whole-message queries,
+queries to an ideal compression function and actual SHA-256 algorithms are
+three different models. A partial-prefix hash state, a compressed description
+of a message, or a hardware circuit cannot be silently treated as an explicit
+whole-message query of the same cost. This is a conditional modeling result,
+not a SHA-256 instantiation theorem.
+
+Freeze a batch-output game with the following premises:
+
+1. Count all distinct preparation trace queries in a declared cap `Q_P^tr`,
+   and all distinct online adversary trace queries in `Q_A^tr`. Any
+   oracle-dependent advice, table, delegated query or helper response available
+   to the adversary must come from that charged, logged history. Undeclared
+   prepared trace values invalidate the premise.
+2. The adversary adaptively queries its oracles, then fixes at most `G_out`
+   complete candidate outputs before private verification of this batch. Each
+   output's header, task and claimed digest are fixed; a canonical trace message
+   is determined by the accepted relation and the other domains. Count every
+   candidate, not only winners eventually accepted. These are prevalid caps,
+   not selected observed totals after success.
+3. Verification privately completes `H_tr` on each candidate's canonical
+   message where needed. It does not expose its computed transcript or digest
+   for use in selecting this batch. Live verifier feedback, timing leakage or
+   free external trace computation requires a separate interaction/charge
+   argument; this lemma does not cover it by default.
+4. A query exposes its explicit bytes or a fully charged byte stream. The
+   recorder can associate each returned digest with that query input. Duplicate
+   calls can share a record, but distinct inputs remain distinct. A value
+   oracle on an uncharged compressed message description is not this interface.
+
+Let `q=Q_P^tr+Q_A^tr+G_out`. From the beginning of preparation, a conservative
+bad-event bound is
+
+`epsilon_extract <= min(1, (G_out + q*(q-1)/2)/2^lambda)`.
+
+The first term covers an accepted guess of a canonical digest whose message
+was never queried by the adversary; all output pairs were fixed before private
+verification, so a fresh canonical oracle value matches each guess with
+probability `2^-lambda`. A union bound applies even when guesses share a message.
+The second term separately covers response collisions among at most `q` distinct
+adversary and private-verifier inputs. Adaptive selection of a fresh input does
+not bias its independently sampled oracle answer. In particular, querying a
+wrong transcript that happens to share the canonical digest must not be omitted
+from the failure analysis.
+
+Outside those bad events, an extractor indexes the logged adversary queries by
+returned digest. For each candidate it returns the unique matching query input,
+if one exists. Every accepted candidate then has its actual canonical trace
+message in that log: absence would be an unqueried successful guess, and a
+noncanonical matching input would be a response collision. The extractor need
+not compute the matrix relation or decide which candidates are valid to return
+these candidates; the implication concerns the accepted subset. It supplies
+no native eligibility, target probability, work credit or proof of that subset's
+size. Challenge/task binding and semantic-ticket injectivity remain separate
+premises with their own failure terms.
+
+A conditional version is available for a particular `F_0` only if it contains a
+fully logged **collision-free** preparation table, and all remaining advice
+reveals no unseen trace answers. With `u=Q_A^tr+G_out`, the fresh response-collision
+term is at most `[Q_P^tr*u+u*(u-1)/2]/2^lambda`; add the same `G_out/2^lambda`
+guess term and clip at one. This excludes already known preparation collisions,
+rather than assigning them a new tiny probability. A state containing such a
+collision, hidden oracle-dependent advice or information from a differently
+specified interaction cannot use this conditional formula. Therefore neither
+formula automatically supplies section 6's `epsilon(F_0)` for actual W1.
+
+The [executable model](../../../../formal/pon-nakamoto-v1/experiments/w1_adaptive_cost_models.py)
+reports both arithmetic modes and independently enumerated tiny-oracle controls.
+For `Q_P^tr=2`, `Q_A^tr=1`, `G_out=1`, the unconditional bound is `7/2^256`;
+the expressly premised collision-free-table conditional bound is `6/2^256`.
+These values test formulas, not the applicability of a 256-bit idealization.
+
+The cost of the reduction is part of the claim. Copying all logged inputs takes
+linear time and storage in their total byte length; retaining references needs
+persistent input storage and forbids a disappearing unlogged stream. Outputting
+extracted transcript candidates also costs their bytes. No verification
+computation performed only by the extractor or honest nodes may be charged to
+the adversary retroactively. If the oracle interface explicitly charges a word
+read for every queried input word, a fresh canonical query consumes that
+**declared input-access resource**; this gives no field-multiplication, CPU-time,
+energy or hardware lower bound. A unit-cost whole-message oracle does not even
+supply that per-byte read charge. Shared prepared bytes and query setup remain
+visible rather than becoming independent physical work by definition.
+
+This refinement closes the literal layout/algebra checks and states a precise
+conditional digest-to-transcript extraction implication. The resource-to-ticket
+blocker still requires all of the following on the actual accepted adversary
+class: an applicable correlated-prefix computation assumption, a multi-instance
+bound including task/parent selection and advice, accounting of query-recording
+and extraction overhead, a SHA-256/interaction instantiation argument, and a
+resource conversion that yields useful `Q_A(P,B)`, `G(P,B)` and `K_0(P)` bounds.
+Counting 32,768 prefix words or accepting a digest does not supply those results.
+
 ## 10. Primary references and their applicability
 
 * Komargodski and Weinstein, [Proofs of Useful Work from Arbitrary Matrix

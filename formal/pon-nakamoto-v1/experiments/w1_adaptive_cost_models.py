@@ -82,6 +82,150 @@ def resource_query_cap(budget: int, query_cost: int,
     return min(cap, finite_domain) if finite_domain is not None else cap
 
 
+
+def trace_geometry(n: int = 64, tile: int = 8) -> dict[str, int]:
+    """Literal W1 layout counts, never an adversary or SHA-256 lower bound.
+
+    Generalized dimensions are finite algebra controls; deployed W1 is n=64,
+    tile=8, four-byte canonical words and a 32-byte challenge/digest. Ordinary
+    SHA-256 padding is counted, without assuming every algorithm must execute it.
+    """
+    _small(n, "n")
+    _small(tile, "tile")
+    if not tile or not n or n % tile:
+        raise ValueError("positive n must be divisible by positive tile")
+    words = n * n * (n // tile)
+    framing = len(b"TRNM-PON-TRACE1\0") + 32
+    message_bytes = framing + 4 * words
+    return {
+        "dimension": n, "tile": tile, "prefixes_per_cell": n // tile,
+        "trace_words": words, "trace_word_bytes": 4 * words,
+        "trace_framing_bytes": framing, "trace_message_bytes": message_bytes,
+        "ordinary_sha256_compression_blocks": (message_bytes + 9 + 63) // 64,
+        "submitted_proof_bytes": 4 + 3 * n * n * 4 + 32,
+    }
+
+
+def factored_prefix_multiplications(n: int, tile: int, left_rank: int,
+                                   right_rank: int) -> dict[str, int]:
+    """Constructive scalar multiply counts for A'=L*R and B'=S*T.
+
+    At each inner prefix, M=R_prefix*S_prefix. Compute (L*M)*T or
+    L*(M*T), choosing the smaller final inner dimension. Factors are supplied;
+    acquiring/recognizing them and all additions, reductions, hashes, memory and
+    proof encoding are excluded and must be paid separately. This is an upper
+    bound for this schedule, not the fastest algorithm or a direct-sum theorem.
+    """
+    geometry = trace_geometry(n, tile)
+    _small(left_rank, "left_rank")
+    _small(right_rank, "right_rank")
+    if not left_rank or not right_rank:
+        raise ValueError("factor ranks must be positive")
+    prefixes = geometry["prefixes_per_cell"]
+    middle = n * left_rank * right_rank
+    lift = prefixes * n * left_rank * right_rank
+    output = prefixes * n * n * min(left_rank, right_rank)
+    return {"middle_prefix_updates": middle, "prefix_lifts": lift,
+            "prefix_output_products": output, "total": middle + lift + output}
+
+
+def factored_prefix_words(left: tuple[tuple[int, ...], ...],
+                          inner_left: tuple[tuple[int, ...], ...],
+                          inner_right: tuple[tuple[int, ...], ...],
+                          right: tuple[tuple[int, ...], ...],
+                          tile: int, modulus: int) -> tuple[int, ...]:
+    """Small exact factorized prefix control; no noise oracle or mining authority.
+
+    Return the actual W1 tile/prefix/row/column word order for (L*R)*(S*T).
+    Prefixes cover the inner coordinates, not a fresh matrix multiplication's
+    entire final result. The scalar reference is independently in the tests.
+    """
+    _integer(modulus, "modulus", positive=True)
+    if modulus < 2:
+        raise ValueError("modulus must be at least two")
+    n = len(left)
+    geometry = trace_geometry(n, tile)
+    if n > 16:
+        raise ValueError("explicit algebra control is limited to dimension 16")
+    a = len(inner_left)
+    b = len(right)
+    if not 1 <= a <= 16 or not 1 <= b <= 16:
+        raise ValueError("explicit factor ranks must lie in 1..16")
+    shapes = ((left, n, a), (inner_left, a, n),
+              (inner_right, n, b), (right, b, n))
+    for matrix, rows, columns in shapes:
+        if len(matrix) != rows or any(len(row) != columns for row in matrix):
+            raise ValueError("factor shape mismatch")
+        if any(type(value) is not int or not 0 <= value < modulus
+               for row in matrix for value in row):
+            raise ValueError("factors must be canonical integer residues")
+    prefixes = []
+    middle = [[0] * b for _ in range(a)]
+    for block in range(geometry["prefixes_per_cell"]):
+        for x in range(a):
+            for y in range(b):
+                middle[x][y] = (middle[x][y] + sum(
+                    inner_left[x][k] * inner_right[k][y]
+                    for k in range(block * tile, (block + 1) * tile))) % modulus
+        prefixes.append(tuple(tuple(row) for row in middle))
+    words = []
+    for bi in range(n // tile):
+        lifts = [tuple(tuple(sum(left[i][x] * mid[x][y] for x in range(a)) % modulus
+                             for y in range(b))
+                       for i in range(bi * tile, (bi + 1) * tile))
+                 for mid in prefixes]
+        for bj in range(n // tile):
+            for lift in lifts:
+                for i in range(tile):
+                    for j in range(bj * tile, (bj + 1) * tile):
+                        words.append(sum(lift[i][y] * right[y][j]
+                                         for y in range(b)) % modulus)
+    return tuple(words)
+
+
+def trace_extraction_failure_bound(preprocessing_queries: int, online_queries: int,
+                                   batch_outputs: int, digest_bits: int = 256, *,
+                                   conditioning: str = "before-preprocessing"
+                                   ) -> dict[str, Fraction | int | str]:
+    """Ideal-whole-message-oracle bounds for a fixed output batch.
+
+    Qp, Qa, G are declared caps, not outcome-selected counts. All oracle-dependent
+    advice belongs to Qp; outputs are fixed before private verification. Logging
+    a complete adversary query exposes its bytes only in the declared query-input
+    model. Guessing unqueried canonical digests and any response collision among
+    adversary/private-verifier queries are separate conservative bad events.
+
+    The conditional mode additionally assumes a fully logged collision-free
+    preparation table and no advice about unseen answers. It does NOT establish
+    that premise for an arbitrary F0, instantiate SHA-256, charge physical work,
+    or cover live verifier feedback/outsourcing.
+    """
+    for value, name in ((preprocessing_queries, "preprocessing_queries"),
+                        (online_queries, "online_queries"),
+                        (batch_outputs, "batch_outputs")):
+        _integer(value, name)
+    _integer(digest_bits, "digest_bits", positive=True)
+    if digest_bits > 4096:
+        raise ValueError("digest_bits exceeds exact model limit")
+    fresh = online_queries + batch_outputs
+    total = preprocessing_queries + fresh
+    if conditioning == "before-preprocessing":
+        pairs = total * (total - 1) // 2
+    elif conditioning == "fixed-collision-free-preparation":
+        pairs = preprocessing_queries * fresh + fresh * (fresh - 1) // 2
+    else:
+        raise ValueError("unknown trace extraction conditioning")
+    guesses = min(Fraction(1), Fraction(batch_outputs, 2**digest_bits))
+    collisions = min(Fraction(1), Fraction(pairs, 2**digest_bits))
+    return {"conditioning": conditioning,
+            "preprocessing_query_cap": preprocessing_queries,
+            "online_query_cap": online_queries, "batch_output_cap": batch_outputs,
+            "distinct_trace_input_cap_including_private_verifier": total,
+            "unqueried_digest_guess_bound": guesses,
+            "trace_response_collision_bound": collisions,
+            "combined_bound": min(Fraction(1), guesses + collisions)}
+
+
 def completed_query_bound(
     adversary_queries: int,
     unqueried_submissions: int,
@@ -409,6 +553,20 @@ def research_report() -> dict:
         "current_W1_vulnerability_demonstrated": False,
         "universal_cost_bound_established": False,
         "production_activation": False,
+        "actual_W1_trace_geometry": trace_geometry(),
+        "zero_factored_prefix_scalar_multiplications":
+            factored_prefix_multiplications(64, 8, 8, 8),
+        "ordinary_perturbed_trace_scalar_multiplications": 64**3 + 2 * 64**2 * 8,
+        "conditional_trace_extraction": {
+            "game": "batch-output ideal whole-message trace oracle; all preparation queries counted",
+            "failure_example_Qp2_Qa1_G1": trace_extraction_failure_bound(2, 1, 1),
+            "conditional_failure_same_caps": trace_extraction_failure_bound(
+                2, 1, 1, conditioning="fixed-collision-free-preparation"),
+            "SHA256_instantiation_proved": False,
+            "physical_cost_lower_bound": False,
+            "actual_W1_conditional_F0_failure_bound_supplied": False,
+            "interactive_verifier_leakage_covered": False,
+        },
         "unqueried_submission": {
             "adversary_queries": 0, "distinct_unqueried_outputs": 1, "p": p,
             "correct_query_completed_bound": completed_query_bound(0, 1, p, 1),

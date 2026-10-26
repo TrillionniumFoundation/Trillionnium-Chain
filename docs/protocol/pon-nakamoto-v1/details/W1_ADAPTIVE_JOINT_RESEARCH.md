@@ -211,3 +211,55 @@ cost. Protocol adoption still needs the resource-to-opportunity assumption and
 an applicability argument for W1's actual trace digest. Output-size lower bounds
 for an explicitly materialized transcript cannot be silently transferred to the
 cost of producing only its hash.
+
+## 7. Equal-budget native admission continuation
+
+The [next registered campaign](../../../../formal/pon-nakamoto-v1/experiments/w1_native_budget_campaign_v1.json)
+addresses a specific limitation of the completed 58-job cohort: all complete
+native strategies stopped at 32 research attempts before spending their 1-second
+CPU budget. Those consumed-CPU ratios do not measure different fixed-budget
+outputs and remain unchanged historical observations.
+
+The research-only `budget-final-parent-v2` namespace retains the original Node,
+signed registration, paid dual-task acquisition, exact W1 bytes and renewal.
+Three prefix rounds each attempt two complete research proofs and advance the
+actual active parent. The fourth parent is fixed while the same strategy continues
+until its full process-CPU budget expires. Its 4,096-attempt safety cap is explicit.
+The final parent is not activated, including when a small registered control hits
+its safety cap. This is a native sibling-admission experiment, not measured serial
+chain growth, network TPS or a continuously changing difficulty campaign.
+
+All signing, preparation, original template searches, screens, discarded
+candidates, native full observers, raw retention, admission and context teardown
+remain charged from the same process origin. An atomic tail may overshoot B;
+its actual cost remains in the record and an admission completed after B earns
+no within-B credit. Original hidden search misses are reconstructed only after
+the strategy and contribute no new work credit. Arithmetic correctness, local
+native eligibility and independent hardware execution keep separate verdicts.
+
+The registered grid contains 24 main jobs (two seeds, three policies, both caches,
+and two producer choices), six 500-ms hot jobs under a third seed, and eight
+controls. Main jobs use 1 second. The producer comparison is general integer
+pairing versus a fixed structure-specific mapping: `maintenance-limb` for the
+maintenance task and `blocked-zero` for the signed development zero task. The map
+is known before measurement and is not a claim of globally fastest algorithms.
+All policies still pay for both tasks; avoiding zero registration entirely is an
+untested different policy. Producer/cache execution order alternates in advance.
+
+Each of the 30 main/short jobs closes its finite measurement obligation only if
+it reaches the final parent, stops for the actual CPU budget and does not reach
+the safety cap. Early stops, failures and caps remain visible; no parameter is
+retuned after results. Budget jobs deliberately leave final revocation controls
+incomplete. Two retained v1 lifecycle jobs separately exercise all four original
+rejection controls. Other controls cover a small final cap, zero/tight budgets,
+and exact joint/sequential proof generation after the architecture-scoping fix.
+
+The [registered analysis](../../../../formal/pon-nakamoto-v1/experiments/analyze_w1_native_budget.py)
+reports opportunities completed by B and distinct native admissions completed by
+B separately, as well as actual charged CPU, overshoot and auxiliary work.
+Its 15 producer pairs and 12 main cache pairs check identical paid acquisition
+histories and matching research prefixes. Unequal lengths are the measured yield
+outcome; divergent histories, unreached final parents or caps suppress a paired
+yield claim. Ratios with a zero baseline remain undefined. Successful collection
+alone cannot close the resource-to-opportunity hardness assumption or the external
+hardware, genuine Hepta efficacy and production qualification blockers.
