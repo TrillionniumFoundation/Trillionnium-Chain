@@ -1781,6 +1781,20 @@ prerequisite. Its complete qualified production route and the original deletion
 assertions remain required, without a test-only bypass or longer limits.
 See the same [Hepta development obligations](https://github.com/TrillionniumFoundation/hepta-private-ci/blob/394d1c7559513f4c28930b4bb1425ff383350ddc/docs/DEVELOPMENT.md).
 
+The local Hepta `01f2757d` checkpoint separates the four-file opaque prepared
+process/pipe/ConPTY owner prerequisite from the subsequent terminal observer.
+Security-authority retains the exact token, root proof, capability, desktop and
+Job owners; this reviewed source slice is not compiled or natively qualified.
+The retained six-file terminal candidate still has an open failure-custody
+dependency. PN4's original controlled session must own one fixed attempt slot
+before birth, retain the original child and resources through fallible readiness
+and terminal publication, and forbid another birth while Pending or Unknown.
+The current standalone test has no such longer-lived caller transfer. A stop
+request, Err-drop or late cleanup cannot establish an observed exit or release.
+Keep the same absolute eight seconds, actual exit0/7/259 and reduced-rights
+sticky-refusal assertions, plus all original Windows native groups and deletion
+failures. No fresh cleanup window, detached reaper or second registry closes it.
+
 Exit: one reproducible source-pair/configuration inventory and per-gate results
 with unresolved items assigned. Block dependent acceptance on required failures;
 continue scoped repair and offline research. Do not rerun historical cleanup or
