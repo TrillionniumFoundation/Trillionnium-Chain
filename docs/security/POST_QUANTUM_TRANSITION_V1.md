@@ -39,7 +39,7 @@ Requires OpenSSL with default-provider FIPS 203/204 algorithms:
 
 ```shell
 cd formal/pon-nakamoto-v1
-python3 -m unittest -v test_pq_envelope.py test_pq_kem.py test_pq_tls.py
+python3 -m unittest -v test_pq_envelope.py test_pq_kem.py test_pq_tls.py test_pq_account_migration.py
 ```
 
 Tests use actual generated ML-DSA-65 keys, real signature and verification, verify every signed-header byte's mutation rejection, bad signatures, wrong public key, Ed25519 key downgrade, changed purpose/network/generation/sequence/expiry/payload and noncanonical frames. ML-KEM-768 tests exercise real encapsulation/decapsulation, wrong recipient key, and ciphertext corruption (implicit rejection yields a different secret; a decapsulation API need not return an error). The canonical frame only binds content; the actual owner must separately enforce **current authority, withdrawal, durable one-shot use, monotonic generation and rollback**.
@@ -50,11 +50,19 @@ The additional `test_pq_tls.py` starts a **loopback-only** real TLS 1.3 OpenSSL 
 
 ML-KEM-768 raw encapsulation is not a TLS handshake. The proposed `X25519MLKEM768` TLS 1.3 group must be bound to authenticated, version-negotiated identities and an approved PQ/mixed certificate/signature policy. KEM secrecy alone provides neither peer authentication nor anti-replay; ensure 0-RTT, session resumption, KCI, downgrade, eclipse and generation-fencing cases are covered. No P2P listener is changed by this research.
 
+### Offline account migration proof and local replay journal
+
+`pq_account_migration.py` validates **both** the original strict Ed25519 signature and the destination ML-DSA-65 signature over one context-bound migration statement (network, original public key, exact PQ key, owner head, generation, operation sequence, expiry). A new destination key cannot be substituted or attributed to multiple old accounts in the **single local research journal**. An experimental SQLite `WAL/FULL` journal atomically records one account migration with `BEGIN IMMEDIATE`; exact duplicate retries return the same readback receipt. Eight independent SQLite connections in the same process tested one first recording and seven already-recorded results; cold reopen and conflicting signed re-migrations are rejected. A schema owner must initialize the WAL before concurrent consumers. This demonstrates **local duplicate accounting only**.
+
+This is NOT a ledger migration: it does not know the actual current PoN account, chain confirmation, global balances, authentic Hepta withdrawal frontier, HSM/key escrow or cross-operator state. It does not survive rollback of every independent database anchor or prevent a quantum adversary from impersonating an already-exposed classical account. **No live chain identity is changed, no account is promoted, and no irreversible effect is dispatched.** Production must bind the same transition to M05/M07/M08 and a full native admission/fork/recovery protocol before acceptance. The reference explicitly refuses to issue either `VerifiedWork` or Hepta `FinalUse`.
+
 ### Chain and Hepta migration gates
 
 1. **M00/M01/M05/M06:** register explicitly versioned PQ transaction and public-key envelopes, chain ID, fees and bounds. Implement native audited ML-DSA with independent FIPS vectors. An Ed25519->PQ account migration must require existing-account authorization while still secure, reject old-key replays, and retain a chain-specific irreversible migration record. A future hybrid/double signature may be a separate profile with its own bounds. No `verify_reference` result is a verified native authority type.
 2. **M02/M03/M07/M08/M13:** new signature rules require explicit governance-controlled network upgrade; no silent fallback. Derive chainwork from real work, and separately qualify Grover-style/search, quantum matrix algorithms, mining distribution, hardware advantage, quantum eclipse and deep-reorg economics. SHA-256 commitments and ML-DSA accounts do **not** prove PoN quantum safety. Past public-key exposure, historical key theft and old signed liabilities need a separately accepted migration rule.
 3. **M04/M09/M10/M11/M12:** authenticate manifests, shared-base/Cell deltas, evaluation receipts, custody obligations and reward claims with the right PQ identities and purpose domains. Independent evaluate/holdout authorization remains separate; a signature does not prove truthful model improvement or permission to redistribute private weights.
 4. **M14/M15/M16/M17:** make ordinary Hepta learning-artifact, withdrawal, `kernel.operations` and final-use owners supply authoritative inputs. Run genuine multi-operator WAN and physical power-cut testing with signed provenance, refresh/revocation, compromised keys, fees/TPS, CPU/RSS/VRAM, p95/p99 and ongoing cryptographic review. No development fixture issues final-use tokens or a deployment approval.
+
+Normative references for the hybrid TLS target: [RFC 10024](https://www.rfc-editor.org/rfc/rfc10024.html), and NIST FIPS 203/204 for ML-KEM and ML-DSA respectively.
 
 The complete per-module blocking list is present in the JSON. Only independently witnessed evidence for a specific source, implementation, security model and target operators may close its corresponding gate. Repository documentation/tests, including these tests, **cannot** turn `production_activation`, `independent_accepted` or `native_node_integrated` true.
