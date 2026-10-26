@@ -57,6 +57,17 @@ Run **inside an exact checked-out candidate** after its mandatory preflight:
       ingress::public_v3::tests::paid_mutation_body_budget_preserves_signed_read_service_with_rotating_callers \
       -- --exact --nocapture
 
+The existing real signed Head/mutation-queue test additionally prints
+`public-v3-original-client-cpu-smoke-v1` with old client metrics and the
+separate new actual CPU observation. For a retained raw write, select one
+previously nonexistent path before running that second test:
+
+    export TRNM_P2_V3_COST_REPORT=/unique/new/actual-v3-client-cost.json
+
+The test uses `create_new` and `sync_all` and cannot overwrite a previous
+experiment. One loopback Head request still lacks attacker GPU pricing,
+receiver W1 cost, real WAN load and P4/A03 physical fairness evidence.
+
 Keep the exact source/commit/tree, Rust binary/toolchain, CPU affinity,
 real host/cgroup root and actual output with failures, including any
 unknown CPU clocks. Running an existing previously retained binary cannot
