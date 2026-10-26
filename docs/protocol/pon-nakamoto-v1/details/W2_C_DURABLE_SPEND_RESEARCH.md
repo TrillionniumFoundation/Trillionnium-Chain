@@ -59,10 +59,10 @@ local Python test harness and checked with `git hash-object` against GitHub:
 
 | Module | Git blob |
 | --- | --- |
-| `w2c_durable_spent.py` | `ea04a117717956911b7d0667b016670d57dd86c7` (initial 12-test run; updated head may differ) |
+| `w2c_durable_spent.py` | `ea04a117717956911b7d0667b016670d57dd86c7` |
 | `w2c_stateless_receiver.py` | `1db98af8b9a77c47e08d2b588cb0cc4c15dc1330` |
-| `test_w2c_durable_spent.py` | `e508e0a6ca0297823da7972b97f9d29b2eb68cee` (initial run; updated head may differ) |
-| `test_w2c_durable_integration.py` | `f897df6c9da236cfa63f6118391ada23b3e13a43` (initial run; updated head may differ) |
+| `test_w2c_durable_spent.py` | `40252ee6847422b026c8354380be2f22e576777b` |
+| `test_w2c_durable_integration.py` | `140d7ac97022082aaf8465c17505f0d3af16ff1a` |
 
 Execute from repository root, independently of GitHub CI:
 
@@ -70,13 +70,17 @@ Execute from repository root, independently of GitHub CI:
       -s formal/pon-nakamoto-v1 \
       -p 'test_w2c_durable_*.py' -v
 
-The checked local run completed **12/12 tests**. Cases cover 24 actual
+The checked local run completed **14/14 tests**. Cases cover 24 actual
 independent Python processes competing for one paid-grant identity (exactly
 one READY, 23 REPLAY, using a fixed trusted timestamp), clone-restart
 replay, persisted clock regression, invalid receiver/Epoch/policy and
 capacity, bounded expiry recovery, corrupt database, symlink or unsafe
 parent, strict expiry overflow, persistent owner failure before work,
-and 8-bit downgrade attempts against a 16-bit issuer. The test harness
+and 8-bit downgrade attempts against a 16-bit issuer. The follow-up
+controls also abruptly exit the paid process after COMMIT, reopen the same
+journal and require REPLAY; a *separate* database with the same secret/Epoch
+is intentionally shown to double-accept the same grant. This last result is
+a negative cross-host counterexample, **not** evidence of global uniqueness. The test harness
 uses the same canonical H and grant/ticket bytes, but a locally extracted
 minimal reference of `contract_wire` / `w2c_receiver_admission`, **not
 an exact source checkout or all repository dependencies**. Tests in the
