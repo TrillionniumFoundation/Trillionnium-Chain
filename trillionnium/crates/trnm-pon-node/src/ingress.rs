@@ -2117,6 +2117,33 @@ fn receive_page_with_cpu(
     clock: u64,
     cpu: Option<&public_v3::ServiceMutationCpuDomain>,
 ) -> Result<Hash> {
+    // Reserve BEFORE parsing or allocating the untrusted page. Reusing ONE
+    // original owner across up to 16 packets charges framing, full W1 and all
+    // scoped M06 workers; packet/peer identities never mint fresh credit.
+    let operation = cpu.map(public_v3::ServiceMutationCpuDomain::begin).transpose()?;
+    let native = receive_page_with_operation(node, page, tip, after, clock, operation.as_ref());
+    if let Some(operation) = operation {
+        // Settle even after malformed page, full TRANSCRIPT/Product failure,
+        // partial native admission or local cancellation. A postcommit meter
+        // failure never declares an earlier valid block invalid.
+        if operation.finish().accounting_unavailable {
+            return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+        }
+    }
+    native
+}
+
+fn receive_page_with_operation(
+    node: &mut Node,
+    page: Page,
+    tip: Hash,
+    after: Hash,
+    clock: u64,
+    operation: Option<&public_v3::ServiceMutationCpuOperation>,
+) -> Result<Hash> {
+    let live = operation.map(public_v3::ServiceMutationCpuOperation::checkpoint_handle);
+    let checked = || live.as_ref().map_or(Ok(()), |meter| meter.checkpoint());
+    checked()?;
     ensure(
         page.schema == "pon-native-history-v1"
             && page.network == hex::encode(node.settings().network())
@@ -2138,13 +2165,14 @@ fn receive_page_with_cpu(
         page.packets.iter().map(String::len).sum::<usize>() <= MAX_FRAME - 1024,
         "PAGE_LIMIT",
     )?;
-    let packets = page
-        .packets
-        .iter()
-        .map(|s| hex_packet(s))
-        .collect::<Result<Vec<_>>>()?;
+    let mut packets = Vec::with_capacity(page.packets.len());
+    for wire in &page.packets {
+        checked()?;
+        packets.push(hex_packet(wire)?);
+    }
     let mut next = after;
     for packet in &packets {
+        checked()?;
         ensure(packet.header.parent == next, "PAGE_PARENT")?;
         next = packet.id()?;
     }
@@ -2153,62 +2181,39 @@ fn receive_page_with_cpu(
         "PAGE_COMPLETE",
     )?;
     for packet in &packets {
-        if let Some(cpu) = cpu {
-            // One already-bound Node CPU account for inbound V3, outbound sync
-            // and every externally obtained proof. Never create peer credit.
-            let operation = cpu.begin()?;
-            let live = operation.checkpoint_handle();
-            let native = (|| -> Result<Hash> {
-                live.checkpoint()?;
-                if let Some(id) =
-                    node.check_admission_context_with_progress(packet, clock, &mut || {
-                        live.checkpoint()
-                    })?
-                {
-                    return Ok(id);
-                }
-                live.checkpoint()?;
-                let permit = node.begin_owner_work(packet)?;
-                let checked = WorkCheckedPacket::verify_with_progress(
-                    packet.clone(),
-                    &mut |_| live.checkpoint(),
-                )?;
-                let checked = node.attach_owner_work(checked, permit)?;
-                live.checkpoint()?;
-                let execute = |_: trnm_mvcc_fee::pon_executor::ExecutionProgress| {
-                    live.checkpoint()
-                };
-                let control = trnm_mvcc_fee::pon_executor::ExecutionControl::new(
-                    &execute,
-                    operation.worker_accounting(),
-                );
-                node.admit_work_checked_with_control(checked, clock, &control)
-            })();
-            // Full rejected transcript and every M06 worker still owe actual
-            // CPU. An unavailable post-commit sample never rewrites Chainwork.
-            let settlement = operation.finish();
-            if settlement.accounting_unavailable {
-                return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+        checked()?;
+        if let Some(operation) = operation {
+            let mut progress = || checked();
+            if node
+                .check_admission_context_with_progress(packet, clock, &mut progress)?
+                .is_some()
+            {
+                continue;
             }
-            native?;
+            checked()?;
+            let permit = node.begin_owner_work(packet)?;
+            let verified = WorkCheckedPacket::verify_with_progress(
+                packet.clone(),
+                &mut |_| checked(),
+            )?;
+            let verified = node.attach_owner_work(verified, permit)?;
+            checked()?;
+            let execute = |_: trnm_mvcc_fee::pon_executor::ExecutionProgress| checked();
+            let control = trnm_mvcc_fee::pon_executor::ExecutionControl::new(
+                &execute,
+                operation.worker_accounting(),
+            );
+            node.admit_work_checked_with_control(verified, clock, &control)?;
         } else {
-            // Trusted loopback-only developer import; the externally exposed
-            // source-bound entry refuses any unbudgeted nonloopback source.
+            // Trusted, local-only developer parser: never selected for a WAN
+            // source lacking the Node's original shared CPU account.
             node.admit(packet, clock)?;
         }
     }
     if page.complete {
-        if let Some(cpu) = cpu {
-            let operation = cpu.begin()?;
-            let native = node.activate_observed(tip, clock);
-            let settlement = operation.finish();
-            if settlement.accounting_unavailable {
-                return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
-            }
-            native?;
-        } else {
-            node.activate_observed(tip, clock)?;
-        }
+        checked()?;
+        node.activate_observed(tip, clock)?;
+        checked()?;
     }
     Ok(next)
 }
