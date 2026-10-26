@@ -21,7 +21,7 @@ GO111MODULE=off go test -run '^$' -bench 'BenchmarkPrepared' -benchmem \
   work_go_probe.go work_go_prepared.go work_go_prepared_test.go work_go_prepared_long_test.go
 ```
 
-The parity test covers maintenance, dense, zero, rank-one and sparse input classes, three independent deterministic material seeds and four challenge IDs (60 complete proof byte comparisons). It calls the existing full verifier and exercises input aliasing, changed Challenge, false transcript/product, noncanonical fields and short inputs. The benchmark compares setup **plus all attempted proofs** at horizons 1, 4, 16, 64 and 256. The longer 64/256 runs require explicit invocation; none of these tests creates a signed native packet or a public W1 ticket in a production chain.
+The parity test covers maintenance, dense, zero, rank-one and sparse input classes, three independent deterministic material seeds and four challenge IDs (60 complete proof byte comparisons). It calls the existing full verifier and exercises input aliasing, changed Challenge, false transcript/product, noncanonical fields and short inputs. A separate 15-case half-range Ticket search compares the same full legal generic and prepared nonce stream, winning challenge, losing-attempt count, complete PNW1 certificate and full verifier; a zero-attempt search remains an explicit failure. The benchmark compares setup **plus all attempted proofs** at horizons 1, 4, 16, 64 and 256. The longer 64/256 runs require explicit invocation; none of these tests creates a signed native packet or a public W1 ticket in a production chain.
 
 ## Local reconnaissance / scope
 

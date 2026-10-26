@@ -132,6 +132,45 @@ func TestPreparedOwnsInputsAndChallengesRemainBound(t *testing.T) {
 	}
 }
 
+// Search the exact same ticket stream: valid winning evidence, number of
+// losing attempts and canonical proof bytes must not change when preprocessing.
+func TestPreparedWinningLotteryMatchesOriginalFullSearch(t *testing.T) {
+	target := [32]byte{127}
+	for k := 1; k < 32; k++ {
+		target[k] = 255
+	}
+	for _, shape := range []string{"maintenance", "dense", "zero", "rank1", "sparse"} {
+		for seed := uint32(0); seed < 3; seed++ {
+			a, b, err := preparedMaterials(shape, seed)
+			if err != nil {
+				t.Fatal(err)
+			}
+			task := H("task", FieldBytes(a), FieldBytes(b))
+			seedChallenge := preparedChallenge(shape, seed, 99)
+			c1, p1, n1, err := HonestSearch(seedChallenge, task, target, a, b, 128)
+			if err != nil {
+				t.Fatalf("generic winner: %s seed=%d: %v", shape, seed, err)
+			}
+			c2, p2, n2, err := HonestPreparedSearch(seedChallenge, task, target, a, b, 128)
+			if err != nil {
+				t.Fatalf("prepared winner: %s seed=%d: %v", shape, seed, err)
+			}
+			if c1 != c2 || n1 != n2 || !bytes.Equal(p1, p2) {
+				t.Fatalf("lottery changed by legal preprocessing: %s seed=%d", shape, seed)
+			}
+			if _, err := Verify(c2, task, target, p2); err != nil {
+				t.Fatal(err)
+			}
+		}
+	}
+	a, b := preparedMaintenance()
+	task := H("task", FieldBytes(a), FieldBytes(b))
+	seedChallenge := preparedChallenge("maintenance", 1, 0)
+	if _, _, n, err := HonestPreparedSearch(seedChallenge, task, target, a, b, 0); err == nil || n != 0 {
+		t.Fatal("zero-budget work succeeded")
+	}
+}
+
 // The benchmark includes preparation for the prepared arm. It does not assert
 // speedup because optimization benefit depends on hardware, build, workload,
 // compilation and the number of subsequent challenges.

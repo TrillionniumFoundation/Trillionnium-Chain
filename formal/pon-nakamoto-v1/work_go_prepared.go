@@ -4,6 +4,7 @@
 package main
 
 import (
+	"bytes"
 	"crypto/sha256"
 	"encoding/binary"
 	"errors"
@@ -90,4 +91,32 @@ func (p *PreparedW1Task) Prove(challenge [32]byte) ([]byte, error) {
 		return nil, errors.New("ProofLength")
 	}
 	return cert, nil
+}
+
+// HonestPreparedSearch uses the same public nonce stream and exact Ticket
+// predicate as HonestSearch. Its one-time product preparation is charged
+// before any winning/losing attempt; it does not turn a false ticket into work.
+func HonestPreparedSearch(seedChallenge, task, target [32]byte, a, b []uint32, max uint64) ([32]byte, []byte, uint64, error) {
+	producer, err := PrepareW1Task(a, b)
+	if err != nil {
+		return [32]byte{}, nil, 0, err
+	}
+	var nonce [8]byte
+	for attempt := uint64(0); attempt < max; attempt++ {
+		binary.LittleEndian.PutUint64(nonce[:], attempt)
+		c := H("research-attempt-challenge", seedChallenge[:], nonce[:])
+		proof, err := producer.Prove(c)
+		if err != nil {
+			return [32]byte{}, nil, attempt + 1, err
+		}
+		trace := proof[len(proof)-32:]
+		ticket := H("ticket", c[:], trace)
+		if bytes.Compare(ticket[:], target[:]) <= 0 {
+			if _, err := Verify(c, task, target, proof); err != nil {
+				return [32]byte{}, nil, attempt + 1, err
+			}
+			return c, proof, attempt + 1, nil
+		}
+	}
+	return [32]byte{}, nil, max, errors.New("HonestSearchExhausted")
 }
