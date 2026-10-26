@@ -378,7 +378,12 @@ fn admit_page(node: &Mutex<Node>, packet: Packet, end: Instant, stop: &AtomicBoo
     // invent a refund. The operation owns all actual scoped workers and
     // settles even after a native rejection. Post-commit accounting cannot
     // retroactively invalidate an already admitted fact.
-    let _settlement = operation.finish();
+    let settlement = operation.finish();
+    if settlement.accounting_unavailable {
+        // Preserve any durable native block, but an outbound poller cannot
+        // report complete historical synchronization with UNKNOWN CPU.
+        return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+    }
     native
 }
 struct PollContext<'a> {
