@@ -334,12 +334,43 @@ class RenewalOutbox:
         self._event(ident,kind,wire,fail_at=fail_at)
 
     def status(self, ident: bytes) -> dict:
-        identity(ident,'operation')
-        row = self.db.execute('SELECT packet_id,wire FROM q4_outbox_intents_v1 WHERE id=?',(ident,)).fetchone()
-        if row is None: raise OutboxError('UNKNOWN_INTENT')
-        events = self.db.execute('SELECT kind,observation FROM q4_outbox_events_v1 WHERE intent_id=? ORDER BY ordinal',(ident,)).fetchall()
-        return {'intent_id':ident.hex(),'transaction_id':row[0].hex(),
-                'dispatch_unknown':any(x[0]=='DISPATCH_UNKNOWN' for x in events),
-                'last_untrusted_observation':next((x[0].replace('OBSERVED_','').lower() for x in reversed(events) if x[0].startswith('OBSERVED_')),None),
-                'observations':sum(1 for x in events if x[0].startswith('OBSERVED_')),
-                'has_no_durable_dispatch_fence':len(events)==0}
+        """Return an audited, snapshot-consistent LOCAL journal observation.
+
+        The two SELECTs must not straddle another owner's commit.  In particular,
+        a pending dispatch must never be reported with the preceding intent row,
+        or a partly observed/repaired event chain represented as current.  Audit
+        still authenticates no native inclusion, client confirmation or FinalUse.
+        """
+        identity(ident, 'operation')
+        if self.db.in_transaction:
+            raise OutboxError('STATUS_REENTRANT')
+        self.db.execute('BEGIN')
+        try:
+            self._audit_snapshot()
+            row = self.db.execute(
+                'SELECT packet_id,wire FROM q4_outbox_intents_v1 WHERE id=?',
+                (ident,),
+            ).fetchone()
+            if row is None:
+                raise OutboxError('UNKNOWN_INTENT')
+            events = self.db.execute(
+                'SELECT kind,observation FROM q4_outbox_events_v1 '
+                'WHERE intent_id=? ORDER BY ordinal',
+                (ident,),
+            ).fetchall()
+            result = {
+                'intent_id': ident.hex(),
+                'transaction_id': row[0].hex(),
+                'dispatch_unknown': any(kind == 'DISPATCH_UNKNOWN' for kind, _ in events),
+                'last_untrusted_observation': next(
+                    (kind.removeprefix('OBSERVED_').lower()
+                     for kind, _ in reversed(events) if kind.startswith('OBSERVED_')),
+                    None,
+                ),
+                'observations': sum(kind.startswith('OBSERVED_') for kind, _ in events),
+                'has_no_durable_dispatch_fence': len(events) == 0,
+            }
+        finally:
+            # A research read must never leak a snapshot or SQLite writer lock.
+            self.db.execute('ROLLBACK')
+        return result
