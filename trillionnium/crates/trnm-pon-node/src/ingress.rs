@@ -2186,6 +2186,27 @@ pub fn receive_page_from(
     }
     native
 }
+
+
+/// Explicit publicly selected, untrusted History import. Even a loopback
+/// address could be a relay to a remote attacker: require the single fixed
+/// physical host CPU/memory/pids parent before any full W1 validation.
+/// A native admission that was durable before a later resource fault stays
+/// durable, but the caller may not claim successful completed synchronization.
+pub fn receive_page_from_public_sync(
+    node: &mut Node,
+    source: SocketAddr,
+    page: Page,
+    tip: Hash,
+    after: Hash,
+    clock: u64,
+) -> Result<Hash> {
+    let budget = crate::host_kernel_parent::require_for_untrusted_public_sync(source)?;
+    budget.verify()?;
+    let outcome = receive_page(node, page, tip, after, clock);
+    budget.verify()?;
+    outcome
+}
 pub fn sync_from(
     node: &mut Node,
     address: SocketAddr,
@@ -2325,6 +2346,46 @@ pub fn sync_from_authenticated_durable(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn explicit_public_sync_loopback_proxy_does_not_bypass_host_budget() {
+        let source: SocketAddr = "127.0.0.1:12345".parse().unwrap();
+        let check = crate::host_kernel_parent::require_for_untrusted_public_sync(source);
+        let directory = tempfile::tempdir().unwrap();
+        let settings = crate::Settings::development(Some(now().unwrap() - 100)).unwrap();
+        let mut node = Node::open(directory.path(), settings.clone(), 2).unwrap();
+        let before = node.stats().unwrap();
+        let untrusted = Page {
+            schema: String::new(),
+            network: String::new(),
+            parameters: String::new(),
+            genesis: String::new(),
+            tip: String::new(),
+            after: String::new(),
+            packets: vec![],
+            next: String::new(),
+            complete: false,
+        };
+        let error = receive_page_from_public_sync(
+            &mut node,
+            source,
+            untrusted,
+            settings.genesis(),
+            settings.genesis(),
+            now().unwrap(),
+        ).unwrap_err();
+        match check {
+            Err(expected) => assert_eq!(error.to_string(), expected.to_string()),
+            Ok(budget) => {
+                // A genuinely provisioned host still must fully validate
+                // the packet/page instead of treating the budget as authority.
+                budget.verify().unwrap();
+                assert_eq!(error.to_string(), "PAGE_CONTEXT");
+            }
+        }
+        assert_eq!(node.stats().unwrap(), before);
+        assert_eq!(node.read_active().unwrap().0, settings.genesis());
+    }
 
     #[test]
     fn remote_sync_without_original_host_cgroup_rejects_before_any_network_or_w1() {
