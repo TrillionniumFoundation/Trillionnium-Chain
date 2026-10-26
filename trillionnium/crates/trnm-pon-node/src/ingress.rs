@@ -2550,6 +2550,83 @@ mod tests {
 
     #[cfg(target_os = "linux")]
     #[test]
+    fn paid_history_valid_w1_with_false_state_root_rejects_without_chainwork() {
+        let now = now().unwrap();
+        let settings = crate::Settings::development(Some(now - 100)).unwrap();
+        let dir = tempfile::tempdir().unwrap();
+        let mut node = Node::open(dir.path(), settings.clone(), 2).unwrap();
+        let cpu = public_v3::ServiceMutationCpuDomain::standalone();
+        node.bind_public_service_cpu_domain(&cpu).unwrap();
+        let real = node.make(
+            settings.genesis(), vec![],
+            crate::development_public(0).unwrap(),
+            settings.genesis_time() + 10, 4096,
+        ).unwrap();
+        let cells = trnm_crypto_primitives::pon_work::CELLS;
+        let operand_bytes = cells * 4;
+        let decode = |wire: &[u8]| -> Vec<u32> {
+            wire.chunks_exact(4)
+                .map(|word| u32::from_le_bytes(word.try_into().unwrap()))
+                .collect()
+        };
+        let a = decode(&real.proof[4..4 + operand_bytes]);
+        let b = decode(&real.proof[4 + operand_bytes..4 + 2 * operand_bytes]);
+        let producer = trnm_crypto_primitives::pon_work::PreparedTask::new(&a, &b).unwrap();
+        let mut false_root = real.clone();
+        false_root.header.state[0] ^= 1;
+        let mut winner = false;
+        for nonce in 0_u64..4096 {
+            false_root.header.nonce = nonce;
+            let challenge = false_root.header.challenge();
+            let proof = producer.prove(challenge).unwrap();
+            let ticket = trnm_crypto_primitives::pon_work::hash(
+                b"ticket", &[&challenge, &proof[proof.len() - 32..]],
+            );
+            if ticket <= false_root.header.target {
+                false_root.proof = proof;
+                winner = true;
+                break;
+            }
+        }
+        assert!(winner, "actual header/root-changed task requires a fresh full W1");
+        // The exact changed-header work remains VALID, so this is a
+        // late StateRoot fault rather than an early false transcript.
+        trnm_crypto_primitives::pon_work::verify(
+            false_root.header.challenge(),
+            false_root.header.work_task,
+            false_root.header.target,
+            &false_root.proof,
+        ).unwrap();
+
+        let tip = false_root.id().unwrap();
+        let page = Page {
+            schema: "pon-native-history-v1".into(),
+            network: hex::encode(settings.network()),
+            parameters: hex::encode(settings.parameters()),
+            genesis: hex::encode(settings.genesis()),
+            tip: hex::encode(tip),
+            after: hex::encode(settings.genesis()),
+            packets: vec![hex::encode(false_root.encode().unwrap())],
+            next: hex::encode(tip),
+            complete: true,
+        };
+        let before_state = node.stats().unwrap();
+        let initial_cpu = cpu.observe().unwrap();
+        let source: SocketAddr = "127.0.0.1:1".parse().unwrap();
+        let error = receive_page_from(
+            &mut node, source, page, tip, settings.genesis(), now,
+        ).unwrap_err();
+        assert_eq!(error.to_string(), "ROOT");
+        assert_eq!(node.stats().unwrap(), before_state);
+        assert_eq!(node.read_active().unwrap().0, settings.genesis());
+        let settled = cpu.observe().unwrap();
+        assert_eq!(settled.in_flight, 0);
+        assert!(!settled.accounting_unavailable);
+        assert!(settled.stored_credit_ns < initial_cpu.stored_credit_ns);
+    }
+
+    #[cfg(target_os = "linux")]
+    #[test]
     fn loopback_proxy_with_original_cpu_owner_pays_for_false_history_and_valid_activation() {
         // A loopback relay cannot bypass CPU metering once the original
         // Node owner already belongs to the selected V3 resource epoch.
