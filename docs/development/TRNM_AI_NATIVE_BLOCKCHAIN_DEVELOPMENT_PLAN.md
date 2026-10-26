@@ -4357,3 +4357,26 @@ criterion, limit and failure observation remain in force.
 
 Retained V19 [original failed preparation and integrated bounded controls](../../evidence/pon-native-io-pn1-20261026-v19/README.md)
 include the additional source-check diagnostic timeouts; none closes public or full qualification.
+
+### PN1 / I02 real-Header fixed-dispatcher 64-reuse candidate (OPEN)
+
+The opt-in component-v2 source adds signed controlled development registration,
+ordinary Node parent/template acquisition, one pre-Header fixed dispatcher setup,
+and 64 disjoint nonce-window sibling searches under that same parent. Every miss
+and winner carries a complete work proof; ordinary admission and cold packet/state
+readback are followed by independent Python attempt reconstruction. This is not
+64 successive parents, a public paid-identity campaign, an all-13-kernel minimum,
+or a hardware-fairness or throughput result. PNH1/PNW1 and existing profiles stay
+unchanged. The original two-second parent RPC and120-second owner/oracle/seal
+bounds remain; incomplete EOF or remaining descendants remain UNKNOWN.
+
+Original real RED, revision002's remaining finally error path and Clippy101 are
+retained. Revision003 preserves first_error across event-file flush/fsync/close
+refusal and removes two redundant Result wrappers. Strict release Clippy passed
+for the exact Rust slice, while the final Python finally correction has only its
+injected partial control; no whole-source/native64 execution is claimed.
+The original600-second W1 build envelope is retained; conservative maxima for the
+two diagnostics are300+20=320 seconds, with no reset of historical failures.
+[Source, partial controls and diagnostic history](../../evidence/pon-w1-real-header-64reuse-source-20261026/README.md)
+remain below the existing PN1 acceptance. Source-to-binary/held caller/whole writer
+and reader, minimum cost, hardware and original4096+fresh work remain OPEN.

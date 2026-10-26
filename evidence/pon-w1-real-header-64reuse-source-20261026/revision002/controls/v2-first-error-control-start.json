@@ -1,0 +1,19 @@
+{
+  "actual_pid": 2470211,
+  "actual_birth": "9302990",
+  "command": [
+    "python3",
+    "-B",
+    "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/ci-follow/PN1-real-header-fixed-dispatcher-64reuse-source-candidate-20261026-001/revision-002/controls/v2-finalization-first-error-control.py",
+    "--owner",
+    "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/ci-follow/PN1-real-header-fixed-dispatcher-64reuse-source-candidate-20261026-001/revision-002/candidate/scripts/run_pon_w1_real_header_reuse_v1.py",
+    "--owned-source",
+    "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/ci-follow/pn1-public-component-source-SSH-prefetch-20261026-001/ownedsource",
+    "--output",
+    "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/ci-follow/PN1-real-header-fixed-dispatcher-64reuse-source-candidate-20261026-001/revision-002/controls/v2-finalization-first-error-negative",
+    "--remaining",
+    "6.172540297004161"
+  ],
+  "remaining_new_budget_seconds": 6.172540297004161,
+  "original_v1_budget_not_reset": true
+}

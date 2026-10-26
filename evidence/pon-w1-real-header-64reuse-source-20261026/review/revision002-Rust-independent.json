@@ -1,0 +1,111 @@
+{
+  "schema": "PN1-W1-realHeader-fixeddispatcher64-revision002-Rust-independent-static-review-v1",
+  "sealed_utc": "2026-10-26T11:55:52.584628+00:00",
+  "decision": "NO_NEW_RUST_FINDINGS_RS01_FIXED_IN_SOURCE_NOT_TYPECHECKED_NOT_NATIVE_QUALIFIED",
+  "audit_completed": true,
+  "findings": [],
+  "RS01": {
+    "prior_issue": "Unused Header import at line26",
+    "source_fix": "Only Header removed from use list; no behavior/assertion/limit change",
+    "status": "SOURCE_FIXED",
+    "compiler_or_Clippy_verification": "NOT_RUN"
+  },
+  "frozen_revision": {
+    "receipt": {
+      "path": "work/ci-follow/PN1-real-header-fixed-dispatcher-64reuse-source-candidate-20261026-001/revision-002/implementation-receipt.json",
+      "bytes": 5542,
+      "sha256": "ec6b62d57cae70cc22737bc2afe53aaa16c7e7b041957edfb2c4ed23db672188"
+    },
+    "patch": {
+      "path": "work/ci-follow/PN1-real-header-fixed-dispatcher-64reuse-source-candidate-20261026-001/revision-002/candidate.patch",
+      "bytes": 66526,
+      "sha256": "1c7c2a1d4eacebd531ed0279adecbb6052128469c4ac5d68b2816bad1a426271"
+    },
+    "manifest": {
+      "path": "work/ci-follow/PN1-real-header-fixed-dispatcher-64reuse-source-candidate-20261026-001/revision-002/manifest.json",
+      "bytes": 90136,
+      "sha256": "39ed7f1acee7db79b492b51bc5a8011599a474080ec833f091c6e1f4e26433fa"
+    }
+  },
+  "Rust_delta": {
+    "main_before": {
+      "path": "work/ci-follow/PN1-real-header-fixed-dispatcher-64reuse-source-candidate-20261026-001/candidate/trillionnium/crates/trnm-pon-node/examples/pon_w1_real_header_reuse_v1.rs",
+      "bytes": 20361,
+      "sha256": "8384beabec065666a3448fd93829279827e2b4116bd8ce5c3289d7232237a21e"
+    },
+    "main_after": {
+      "path": "work/ci-follow/PN1-real-header-fixed-dispatcher-64reuse-source-candidate-20261026-001/revision-002/candidate/trillionnium/crates/trnm-pon-node/examples/pon_w1_real_header_reuse_v1.rs",
+      "bytes": 20353,
+      "sha256": "d9fda08e06f087caac3eb175f2add128fc4a81929b3aec5a8001ad66344d84f1"
+    },
+    "support_before": {
+      "path": "work/ci-follow/PN1-real-header-fixed-dispatcher-64reuse-source-candidate-20261026-001/candidate/trillionnium/crates/trnm-pon-node/examples/support/w1_real_header_reuse_v1.rs",
+      "bytes": 5686,
+      "sha256": "7b72d963501d844e3fc046f3ad6b4fd18d8112539ab76962328a0f01727aa5f0"
+    },
+    "support_after": {
+      "path": "work/ci-follow/PN1-real-header-fixed-dispatcher-64reuse-source-candidate-20261026-001/revision-002/candidate/trillionnium/crates/trnm-pon-node/examples/support/w1_real_header_reuse_v1.rs",
+      "bytes": 5686,
+      "sha256": "7b72d963501d844e3fc046f3ad6b4fd18d8112539ab76962328a0f01727aa5f0"
+    },
+    "main_changes_only": [
+      "unusedHeader removal",
+      "explicitouterPROFILE component-v1 to component-v2"
+    ],
+    "all_other_Rust_bytes_retained": true
+  },
+  "baseline_source_interfaces": {
+    "declared_public_head": "4c8c2ee70d8aba1fc959900741e89335ddcd71f8",
+    "exact25_SHA_size_recomputedGitblob_match": true,
+    "ordinaryNode_and_originalsignedzero_fixture_interfaces_unchanged": true,
+    "new_API_or_transitive_Cargo_graph_validation": false
+  },
+  "static_semantics": [
+    {
+      "area": "realparentandregistration",
+      "result": "Original disclosed developer actor2 tag18DemandLease andactor0 tag21SignedLifecycleTask registration remains under bootstrapwork, ordinaryNode admission/activation and real accepted parentheight1. UnregisteredTASK and changedmaterialTASK_MATERIAL negatives retained. Template still binds real PNH1 network/params/parent,height2,timestamp,target,miner,transaction/state/receipt roots and fullmaterial task."
+    },
+    {
+      "area": "fixeddispatcher/setup",
+      "result": "Canonical A=B=zero is checked; hardcoded ZeroPaired constructor executes once before any Header challenge/search observation. Private13kernel registry retains Result<Option<Producer>,WorkError>, no fallback and exactselectedsetupcounter1. This is not a tested13kernel dispatcher or minimumcost selector; generic setup inside original registration/template make calls remains included but uninstrumented separately."
+    },
+    {
+      "area": "64siblings/misses",
+      "result": "Same retained producer handles64 disjoint BASE+i*4096 nonce windows on the same actual parent/template. Every attempted realHeader generates the full original PNW1 proof before ticket testing; started/completed/stream records retain misses and failure. Winners are firsthit;64siblings are not64successiveactiveparents and cannot be summed as64canonicalrewards/throughput."
+    },
+    {
+      "area": "verification/independentoracleboundary",
+      "result": "Every winner still runs productionverify and scalar-reference arithmetic with shared verify_with_kernel grammar/controlflow, then ordinaryNodeadmit with actual parent/lease/material/fullwork/M06root checks. Rust does not add an independent signature or fullparent-state oracle. SeparatePython review must establish exact fullattempt replay; no oracle/runtime result is inferred from source."
+    },
+    {
+      "area": "namespace",
+      "result": "PROFILE now component-v2: explicit CLI start rejects oldv1 label, Sink emits v2schema for responses/events/fatal. Existing private Request{id,op} grammar remains unchanged and not an authenticated crossversion capability. Original PNH1/PNW1 consensus/signed domains, POLICYv1 and mathematical STREAMV1 stay intentional and byteidentical; they do not acquire neweffectauthority. Matching Pythonv2 validation is reviewed separately. fs::create_dir requires a fresh directory leaf; Rust does not by itself prove a private/held ancestor namespace or native3FD qualification. Parent-owner namespace admission remains separately required."
+    },
+    {
+      "area": "Nodeauthority/fee/cold",
+      "result": "Public authenticated opener still has no exactpacket operatorOwnerPermit; no permit is forged/reused acrosschangedpackets. Reusable DevelopmentTaskAdmission is onlysigned/material fact; branch checks repeat. Original transaction signatures/fee_limit/nonce handling and M06transition remain;64emptytxsiblings are notpaidpublicCPUadmission. Originaldrop+newopen+64packet/stateSHA readback calls retained; no native/durablephysical result observed."
+    }
+  ],
+  "remaining_risks_and_compile_scope": [
+    "No additional concrete Rust type/API blocker found; no Cargo typecheck/strictClippy/normalreleasebuild was run, so this is not a compilerPASS. Fulltransitive/config/toolchain/source-to-executed-image admission remains required.",
+    "Actual two-second operations,120-second aggregate,512MiBactorAS/8MiBFSIZE,output limits, original sourcebinding and wholeterminal/peak constraints may still fail; no feasibility claim or budget expansion.",
+    "Controlled developer signatures and development target/state assumptions do not establish anonymous economic demand, minimum legitimate work cost, hardwarefairness or public sustainedattack success.",
+    "Crossfork/renewal/revocation/expiry replay, all13lawfulHeaders,actual64native/oracle,threeFD/full4097/24actor,Windows/model/WAN andmerge qualifications remainfalse.",
+    "This Rust review does not inherit the separately run PythonFD controls as a native W1 receipt or verify their whole-source execution; those controls are outside scope and retained as limitedmechanisms."
+  ],
+  "all_original_Rust_assertions_and_caps_retained": true,
+  "operations": {
+    "source_or_outputs_or_ROG_modified": false,
+    "Cargo_native_test_control_fmt_CI_SSH_or_remote_run": false,
+    "Python_owner_or_reader_review_duplicated": false,
+    "only_new_local_review_evidence_written": true
+  },
+  "source_binary_attestation": false,
+  "qualifying_execution_receipt": false,
+  "full_native64_pass": false,
+  "whole_W1_cost_or_hardware_or_threefd_or_full4097_qualified": false,
+  "all_owned_descendants_terminal": "UNKNOWN",
+  "merge_ready": false,
+  "task_complete": false,
+  "reviewer_wording_clarification": "Prior reviewer-only receipt/manifest retained: fresh directory leaf is not itself proof of private permissions or held ancestors. No candidate byte changed."
+}

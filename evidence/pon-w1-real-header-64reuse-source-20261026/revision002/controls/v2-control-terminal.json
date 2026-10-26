@@ -1,0 +1,12 @@
+{
+  "version": "v2",
+  "actual_pid": 2451304,
+  "actual_birth": "9271258",
+  "actual_exit": 0,
+  "actual_elapsed_seconds": 8.827459702995839,
+  "real_wait_reaped": true,
+  "stdout_bytes": 332,
+  "stderr_bytes": 0,
+  "new_budget_not_reset": true,
+  "no_W1_native_or_Cargo_run": true
+}

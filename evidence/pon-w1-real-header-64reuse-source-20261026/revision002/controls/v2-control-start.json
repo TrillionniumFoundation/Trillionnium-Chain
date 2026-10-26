@@ -1,0 +1,23 @@
+{
+  "actual_pid": 2451304,
+  "actual_birth": "9271258",
+  "command": [
+    "python3",
+    "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/ci-follow/PN1-real-header-fixed-dispatcher-64reuse-source-candidate-20261026-001/revision-002/controls/mechanism_controls_revision002.py",
+    "--candidate",
+    "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/ci-follow/PN1-real-header-fixed-dispatcher-64reuse-source-candidate-20261026-001/revision-002/candidate",
+    "--original-candidate",
+    "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/ci-follow/PN1-real-header-fixed-dispatcher-64reuse-source-candidate-20261026-001/candidate",
+    "--output",
+    "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/ci-follow/PN1-real-header-fixed-dispatcher-64reuse-source-candidate-20261026-001/revision-002/controls/v2-fixed-controls",
+    "--owned-source",
+    "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/ci-follow/pn1-public-component-source-SSH-prefetch-20261026-001/ownedsource",
+    "--version",
+    "v2",
+    "--remaining-suite-seconds",
+    "15"
+  ],
+  "new_authorized_suite_budget_seconds": 15,
+  "output_limit_each": 1048576,
+  "actual_start_monotonic_ns": 92712581434536
+}

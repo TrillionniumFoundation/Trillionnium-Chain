@@ -1191,3 +1191,11 @@ See [cold-release evidence](../../../../evidence/pon-upgrade-implementation-2026
 
 Retained V19 [original failed preparation and integrated bounded controls](../../../../evidence/pon-native-io-pn1-20261026-v19/README.md)
 include the additional source-check diagnostic timeouts; none closes public or full qualification.
+
+PN1 / I02 opt-in component-v2 [real-Header 64-reuse source diagnostics](../../../../evidence/pon-w1-real-header-64reuse-source-20261026/README.md)
+retain original failures and all fixed limits. One fixed setup precedes64 sibling
+Headers under one real parent; this does not qualify64 parent advances, public
+work hardness, all kernels, hardware parity or the4097 paid denominator. Unknown
+EOF/descendants and any original/cleanup failure remain refusals. The final
+first-error correction has a partial injected control only; strict Rust Clippy0
+is not a qualifying native/source-to-binary/whole-owner execution receipt.
