@@ -2549,6 +2549,87 @@ mod tests {
     }
 
     #[test]
+    fn imported_history_valid_w1_bad_state_root_pays_cpu_but_cannot_change_chain() {
+        let time = now().unwrap();
+        let settings = Settings::development(Some(time - 100)).unwrap();
+        let dir = tempfile::tempdir().unwrap();
+        let mut node = Node::open(dir.path(), settings.clone(), 2).unwrap();
+        let genesis = settings.genesis();
+        let good = node.make(
+            genesis, vec![], crate::development_public(0).unwrap(),
+            settings.genesis_time() + 10, 4096,
+        ).unwrap();
+        let baseline = node.stats().unwrap();
+        let mut false_root = good.clone();
+        false_root.header.state[0] ^= 1;
+        // The changed header is a NEW challenge. Regenerate genuine,
+        // exact W1 transcript and winning lottery for this wrong-StateRoot
+        // statement; do not rely on stale or forged work to reach M06.
+        let n = trnm_crypto_primitives::pon_work::CELLS * 4;
+        let matrix = |offset: usize| -> Vec<u32> {
+            false_root.proof[offset..offset + n].chunks_exact(4)
+                .map(|bytes| u32::from_le_bytes(bytes.try_into().unwrap()))
+                .collect()
+        };
+        let a = matrix(4);
+        let b = matrix(4 + n);
+        assert_eq!(
+            trnm_crypto_primitives::pon_work::task_id(&a, &b).unwrap(),
+            false_root.header.work_task
+        );
+        let producer = trnm_crypto_primitives::pon_work::PreparedTask::new(&a, &b).unwrap();
+        let mut winner = None;
+        for nonce in 0..4096u64 {
+            false_root.header.nonce = nonce;
+            let challenge = false_root.header.challenge();
+            let proof = producer.prove(challenge).unwrap();
+            let trace = &proof[proof.len() - 32..];
+            if trnm_crypto_primitives::pon_work::hash(
+                b"ticket", &[&challenge, trace],
+            ) <= false_root.header.target {
+                winner = Some(proof);
+                break;
+            }
+        }
+        false_root.proof = winner.expect("same-target legitimate W1 must find winner");
+        let work = trnm_crypto_primitives::pon_work::verify(
+            false_root.header.challenge(),
+            false_root.header.work_task,
+            false_root.header.target,
+            &false_root.proof,
+        ).unwrap();
+        assert_eq!(work.challenge(), false_root.header.challenge());
+        let false_id = false_root.id().unwrap();
+        let remote_page = Page {
+            schema: "pon-native-history-v1".into(),
+            network: hex::encode(settings.network()),
+            parameters: hex::encode(settings.parameters()),
+            genesis: hex::encode(genesis),
+            tip: hex::encode(false_id),
+            after: hex::encode(genesis),
+            packets: vec![hex::encode(false_root.encode().unwrap())],
+            next: hex::encode(false_id),
+            complete: true,
+        };
+        let source: SocketAddr = "127.0.0.1:12345".parse().unwrap();
+        let result = receive_page_from(
+            &mut node, source, remote_page, false_id, genesis, time,
+        );
+        assert_eq!(result.unwrap_err().to_string(), "ROOT");
+        let cpu = node.public_service_cpu_domain().unwrap();
+        let flow = cpu.observe_actual_flow().unwrap().unwrap();
+        assert!(flow.balance_identity_verified);
+        assert_eq!(flow.initial_credit_ns, 0);
+        assert!(flow.paid_cpu_debit_ns > 0);
+        assert_eq!(flow.live_owners, 0);
+        assert_eq!(flow.booked_reservation_ns, 0);
+        assert_eq!(node.stats().unwrap(), baseline);
+        assert_eq!(node.read_active().unwrap().0, genesis);
+        // The expected native chain is still empty; an invalid application
+        // must neither grant work score nor close source-authentication gates.
+    }
+
+    #[test]
     fn protected_hello_rendezvous_from_reserved_socket_preserves_full_native_admission() {
         let (_dir, node, packet) = pending_packet();
         let settings = node.lock().unwrap().settings().clone();
