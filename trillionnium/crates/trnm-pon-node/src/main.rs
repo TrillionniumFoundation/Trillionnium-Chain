@@ -2082,8 +2082,18 @@ fn run() -> Result<Value> {
             // arbitrary remote W1 proofs into this existing Node. A WAN sync
             // must join the SAME fixed kernel parent as the public receiver.
             // Loopback-only developer sync retains its original behavior.
-            let host_kernel =
-                trnm_pon_node::host_kernel_parent::require_for_listener(address)?;
+            // A public V3 History reply may be tunneled through 127.0.0.1.
+            // For this PUBLIC sync path, loopback is NOT proof of a trusted
+            // source: require the SAME fixed administrator-owned Host parent
+            // even when a local proxy exposes the untrusted WAN origin.
+            // Private loopback-only development sync retains its old route.
+            let host_kernel = if public_profile(&args) {
+                Some(trnm_pon_node::host_kernel_parent::require_for_public_history(
+                    address,
+                )?)
+            } else {
+                trnm_pon_node::host_kernel_parent::require_for_listener(address)?
+            };
             if let Some(kernel) = &host_kernel {
                 kernel.verify()?;
             }
