@@ -754,6 +754,7 @@ impl Engine {
             settings: _,
             end,
             stop,
+            host_kernel: _,
         } = *context;
         let count = self.states.len();
         let mut attempted_pages = 0;
