@@ -851,6 +851,27 @@ and extraction overhead, a SHA-256/interaction instantiation argument, and a
 resource conversion that yields useful `Q_A(P,B)`, `G(P,B)` and `K_0(P)` bounds.
 Counting 32,768 prefix words or accepting a digest does not supply those results.
 
+### 9.4 Temporal resource transfer and exact chain weighting
+
+The [temporal resource refinement](W1_RESOURCE_REDUCTION_V1.md) extends the
+fixed-final-batch extraction question to canonical work available before the
+first lottery answer. It explicitly includes late header/task openings, all
+early trace guesses, unseen prepared opportunities, already revealed winning
+capacity and the cost of extracting incorrect as well as correct candidates.
+The resulting resource bound remains conditional on an enlarged multi-instance
+prefix problem, a positive net lower bound and an applicable SHA-256 simulation.
+Completed-pair counts cannot supply an unbiased lottery cap when proof generation
+is deferred until winning. Exact finite controls preserve that obstruction.
+
+The [separated miner experiment](W1_MINER_RESOURCE_RESEARCH_V1.md) measures a
+physically distinct producer phase before receiver and audit execution. It
+changes no older budget endpoint and supplies no minimum attacker cost. The
+[chain envelope](W1_CHAIN_SECURITY_ENVELOPE_V1.md) uses actual integer required
+work, weighted initial banks, conditional honest progress and full validation
+delay. Its fixed-target examples and exact adaptive probability controls do not
+prove the native branch-local DAA or a production confirmation policy. These
+remain separate, named prerequisites for global O01–O03 closure.
+
 ## 10. Primary references and their applicability
 
 * Komargodski and Weinstein, [Proofs of Useful Work from Arbitrary Matrix

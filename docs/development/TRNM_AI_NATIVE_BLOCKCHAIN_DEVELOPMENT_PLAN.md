@@ -1,7 +1,7 @@
 # Trillionnium Chain Development Plan — PoN / Hepta-PoH revision
 
-Plan ID: `trnm-chain-development-plan-v2` (stable registry identity; content revision 27).
-Effective: 2026-09-28; priority implementation revision: 2026-10-25. Status: selected development direction; no runtime activation.
+Plan ID: `trnm-chain-development-plan-v2` (stable registry identity; content revision 28).
+Effective: 2026-09-28; priority implementation revision: 2026-10-26. Status: selected development direction; no runtime activation.
 Canonical destination: `refs/heads/main`; continuation uses the current main lineage, not retired PR #194.
 Current source/head/tree/base and prospective merge are derived at verification time.
 Assessed legacy baseline: `c552c31c6d3c5ac47522a124e02c6b8bca4e23f2`, tree
@@ -1566,6 +1566,45 @@ source repair does not grant that gate. The [blocker ledger](../../evidence/pon-
 retains all seven global research/product obligations and their applicability.
 No work-hardness, model-efficacy, independent-security or production acceptance
 is promoted.
+
+### PN1 temporal resource and separated miner refinement — 2026-10-26
+
+The [resource reduction](../protocol/pon-nakamoto-v1/details/W1_RESOURCE_REDUCTION_V1.md)
+now distinguishes canonical work available before the first lottery answer from
+a completed proof supplied only after winning. It includes already known
+winning capacity and unseen prepared opportunities, all early guessed ticket
+inputs, late header/task binding, candidate extraction overhead and an explicit
+temporal SHA-256 instantiation premise. The conditional prefix-to-opportunity
+bound is useful only with an independently established multi-instance resource
+assumption and positive net lower bound. It supplies neither by definition.
+Exact winner-only proof and overlapping-cost countermodels constrain possible
+hybrid/ZK successors; neither architecture is activated.
+
+The [miner resource contract](../protocol/pon-nakamoto-v1/details/W1_MINER_RESOURCE_RESEARCH_V1.md)
+adds an actual setup/miner/receiver/audit phase separation. A miner receives no
+Node or verifier callback; full proof output must be flushed within its separate
+budget before subsequent original Node admission and independent audits. The
+[58-job plan](../../formal/pon-nakamoto-v1/experiments/w1_miner_resource_campaign_v1.json)
+compares four original producer arms, selective/shared paid task acquisition,
+one/four actual historical ancestor templates, and paid noise screening, with
+zero/tight budgets and censored caps preserved. The
+[frozen analysis](../../formal/pon-nakamoto-v1/experiments/analyze_w1_miner_resource.py)
+requires identical paid/template/overlapping proof identities for paired ratios.
+This finite ancestor bank is not an arbitrary fork forest or long-term attacker
+class; observed setup and miner costs are not an enforced physical cost floor.
+
+The [chain envelope](../protocol/pon-nakamoto-v1/details/W1_CHAIN_SECURITY_ENVELOPE_V1.md)
+connects the actual integer target weight to conditional weighted tails,
+validated propagation delay, honest growth and the remaining DAA/settlement
+coupling. It preserves the distinction between a virtual OR lottery and actual
+credited counts, and includes private mining during a confirmation wait and
+initial work banks. No production kappa, confirmation guarantee or activation
+is selected. The [external qualification review](../protocol/pon-nakamoto-v1/details/W1_EXTERNAL_QUALIFICATION_V1.md)
+pins the actually inspected Hepta candidate and preserves controlled tabular,
+historical neural, independent hardware and ordinary product-use boundaries.
+An absent physical device or independent evaluator cannot be replaced by a
+passing fixture. Source/plan freezing precedes formal measurement; all existing
+failed evidence and open PN0–PN6 obligations retain their meanings.
 
 ## 1. Product mission: shared intelligence from real work
 
