@@ -124,3 +124,28 @@ verifier CPU is not enough to conclude a useful-work or security gain.
    Internal test success is NOT P6 acceptance.
 
 SHADOW_ONLY / HOLD_NO_GO / production_consensus_activation=false.
+
+
+### Security-margin versus verifier CPU: explicit negative cost control
+
+A separate **in-memory exploratory run**, not a versioned protocol or executed
+committed default, varied only the W2-D number of rounds using the same
+dense source, same target, challenge and 131,072-byte witness. For each
+round count two calling-process-CPU samples were retained:
+
+| Freivalds rounds | Fixed-commitment false-relation random-vector error | Actual Python verifier CPU, two samples |
+| ---: | --- | --- |
+| 2 (committed research default) | <= q^-2 (about 64 bits) | 71.17 / 60.06 ms |
+| 4 (temporary exploratory override) | <= q^-4 (about 128 bits) | 101.94 / 111.30 ms |
+| 6 (temporary exploratory override) | <= q^-6 (about 192 bits) | 152.65 / 220.84 ms |
+
+**Critical tradeoff:** in this tiny Python cohort, a four-round research
+variant reaches or exceeds the original full W1 verifier's roughly
+94–105 ms CPU. The apparent 2-round speed advantage may vanish at a
+security margin appropriate for a long-lived permissionless chain.
+These values are not protocol configurations or SHA256-computed security
+proofs: the candidate code intentionally hard-codes ROUNDS=2, and the
+alternate variants need **different versioned statement domains** before
+any wire compatibility claim. An adaptive adversary's total commitments,
+grinding and GPU advantage still reduce security margins. This NEGATIVE
+result blocks treating the 2-round performance gain as P5 closure.
