@@ -2522,6 +2522,34 @@ mod tests {
 
     #[cfg(target_os = "linux")]
     #[test]
+    fn trusted_history_cold_cpu_starts_at_zero_and_cannot_rebind_same_node() {
+        let dir = tempfile::tempdir().unwrap();
+        let settings = crate::Settings::development(Some(now().unwrap() - 100)).unwrap();
+        let mut node = Node::open(dir.path(), settings, 2).unwrap();
+        let cold = public_v3::ServiceMutationCpuDomain::cold_for_host_verified_history_sync();
+        assert_eq!(cold.observe().unwrap().stored_credit_ns, 0);
+        node.bind_public_service_cpu_domain(&cold).unwrap();
+        let bound = node.public_service_cpu_domain().unwrap();
+        assert!(bound.shares_domain_with(&cold));
+        let replacement = public_v3::ServiceMutationCpuDomain::cold_for_host_verified_history_sync();
+        assert_eq!(
+            node.bind_public_service_cpu_domain(&replacement)
+                .unwrap_err().to_string(),
+            "OWNER_PUBLIC_SERVICE_CPU_DOMAIN"
+        );
+        // Time only refills the old physical CPU account; a valid begin
+        // consumes its pre-existing reservation, not a synthetic new grant.
+        cold.await_history_work_credit(Instant::now() + Duration::from_secs(5))
+            .unwrap();
+        let operation = cold.begin().unwrap();
+        let actual = operation.finish();
+        assert!(!actual.accounting_unavailable);
+        assert_eq!(cold.observe().unwrap().in_flight, 0);
+        assert!(node.public_service_cpu_domain().unwrap().shares_domain_with(&cold));
+    }
+
+    #[cfg(target_os = "linux")]
+    #[test]
     fn loopback_proxy_with_original_cpu_owner_pays_for_false_history_and_valid_activation() {
         // A loopback relay cannot bypass CPU metering once the original
         // Node owner already belongs to the selected V3 resource epoch.
