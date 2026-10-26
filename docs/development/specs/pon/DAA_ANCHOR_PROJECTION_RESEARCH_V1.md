@@ -88,3 +88,22 @@ selfish mining, public verification exhaustion and chain quality;
 a fast projection does not cure unqualified W1 work hardness.
 
 All PN1/PN2/PN5 and P0-C/P1-B/P1-C/P2 qualification flags remain false.
+
+## Native compile/test-only companion
+
+The existing M02 source file now carries two gated,
+test-only modules under Rust cfg(test): an isolated rolling
+anchor projection and a source-bound deterministic comparison.
+They do **not** add a Node API, consensus target selection, published
+profile, new signature domain or persistence writer. A Rust test
+reconstructs two 12,000-header *synthetic* streams with the existing
+ASERT arithmetic, calculates exact projection-byte commitments and
+requires the above frozen raw/MTP11 digests. A second test forks across
+the activation anchor; a third refuses corrupted parent/context input.
+
+The Rust test source has been added to the candidate branch but has
+**not** been compiled or executed on the current host, because rustc
+and cargo are unavailable here. Only the Python 6/6 test outcome and
+Python JSON are observed. Rust source/test presence is NOT native
+acceptance, and even a future Rust PASS will not prove W1 validity,
+authenticated on-disk integration or independent operator security.

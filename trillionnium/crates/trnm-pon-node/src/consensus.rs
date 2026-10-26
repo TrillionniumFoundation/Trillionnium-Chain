@@ -751,3 +751,385 @@ pub mod daa_branch_research {
         Err("ASERT_ANCESTRY_BUDGET".into())
     }
 }
+
+
+/// Non-activated parent-derived ASERT anchor projection. This is not a
+/// VerifiedWork, validated-header, persistence or consensus authority. The
+/// caller must independently validate original parent and new W1 Packet before
+/// passing a research observation; no Node expected-target path calls this.
+#[cfg(test)]
+mod anchor_projection_research {
+    use super::{daa_research, ensure, Result};
+    use sha2::{Digest, Sha256};
+
+    type Hash = [u8; 32];
+
+    #[derive(Clone, Copy, Debug, Eq, PartialEq)]
+    pub enum Clock {
+        Raw,
+        Median11,
+    }
+
+    #[derive(Clone, Debug)]
+    pub struct Context {
+        pub network: Hash,
+        pub parameters: Hash,
+        pub genesis: Hash,
+        pub rule_commitment: Hash,
+        pub genesis_timestamp: u64,
+        pub activation_height: u64,
+        pub target_spacing: u64,
+        pub half_life: u64,
+        pub pow_limit: Hash,
+        pub clock: Clock,
+    }
+
+    impl Context {
+        pub fn id(&self) -> Result<Hash> {
+            ensure(
+                self.network != [0; 32]
+                    && self.parameters != [0; 32]
+                    && self.genesis != [0; 32]
+                    && self.rule_commitment != [0; 32]
+                    && self.activation_height > 0
+                    && self.activation_height < u64::MAX
+                    && self.target_spacing > 0
+                    && self.half_life > 0
+                    && self.pow_limit != [0; 32],
+                "DAA_PROJECTION_CONTEXT",
+            )?;
+            let mut digest = Sha256::new();
+            digest.update(b"TRNM-PON-DAA-PROJECTION-CONTEXT-V1\0");
+            digest.update(self.network);
+            digest.update(self.parameters);
+            digest.update(self.genesis);
+            digest.update(self.rule_commitment);
+            for value in [
+                self.genesis_timestamp,
+                self.activation_height,
+                self.target_spacing,
+                self.half_life,
+            ] {
+                digest.update(value.to_be_bytes());
+            }
+            digest.update(self.pow_limit);
+            digest.update(match self.clock {
+                Clock::Raw => b"raw".as_slice(),
+                Clock::Median11 => b"mtp11".as_slice(),
+            });
+            Ok(digest.finalize().into())
+        }
+    }
+
+    #[derive(Clone, Copy, Debug, Eq, PartialEq)]
+    pub struct Observation {
+        pub block_id: Hash,
+        pub parent_id: Hash,
+        pub network: Hash,
+        pub parameters: Hash,
+        pub height: u64,
+        pub timestamp: u64,
+        pub target: Hash,
+    }
+
+    #[derive(Clone, Debug, Eq, PartialEq)]
+    pub struct Anchor {
+        pub block: Hash,
+        pub predecessor: Hash,
+        pub height: u64,
+        pub target: Hash,
+        pub predecessor_raw: u64,
+        pub predecessor_median: u64,
+    }
+
+    #[derive(Clone, Debug, Eq, PartialEq)]
+    pub struct Projection {
+        pub block_id: Hash,
+        pub parent_id: Hash,
+        pub height: u64,
+        pub timestamp: u64,
+        pub target: Hash,
+        pub context_id: Hash,
+        pub parent_commitment: Hash,
+        pub times_parent_first: Vec<u64>,
+        pub anchor: Option<Anchor>,
+        pub commitment: Hash,
+    }
+
+    fn median(times: &[u64]) -> Result<u64> {
+        ensure(!times.is_empty() && times.len() <= 11, "DAA_PROJECTION_WINDOW")?;
+        let mut sorted = times.to_vec();
+        sorted.sort_unstable();
+        Ok(sorted[sorted.len() / 2])
+    }
+
+    impl Projection {
+        fn computed_commitment(&self) -> Result<Hash> {
+            ensure(
+                (1..=11).contains(&self.times_parent_first.len()),
+                "DAA_PROJECTION_WINDOW",
+            )?;
+            let mut digest = Sha256::new();
+            digest.update(b"TRNM-PON-DAA-LOCAL-PROJECTION-V1\0");
+            digest.update(self.context_id);
+            digest.update(self.block_id);
+            digest.update(self.parent_id);
+            digest.update(self.parent_commitment);
+            digest.update(self.height.to_be_bytes());
+            digest.update(self.timestamp.to_be_bytes());
+            digest.update(self.target);
+            digest.update([self.times_parent_first.len() as u8]);
+            for t in &self.times_parent_first {
+                digest.update(t.to_be_bytes());
+            }
+            if let Some(anchor) = &self.anchor {
+                digest.update([1]);
+                digest.update(anchor.block);
+                digest.update(anchor.predecessor);
+                digest.update(anchor.height.to_be_bytes());
+                digest.update(anchor.target);
+                digest.update(anchor.predecessor_raw.to_be_bytes());
+                digest.update(anchor.predecessor_median.to_be_bytes());
+            } else {
+                digest.update([0]);
+            }
+            Ok(digest.finalize().into())
+        }
+
+        fn check_local(&self, ctx: &Context) -> Result<()> {
+            ensure(
+                self.context_id == ctx.id()?
+                    && self.commitment == self.computed_commitment()?,
+                "DAA_PROJECTION_INTEGRITY",
+            )
+        }
+
+        pub fn genesis(ctx: &Context) -> Result<Self> {
+            let mut row = Self {
+                block_id: ctx.genesis,
+                parent_id: [0; 32],
+                height: 0,
+                timestamp: ctx.genesis_timestamp,
+                target: ctx.pow_limit,
+                context_id: ctx.id()?,
+                parent_commitment: [0; 32],
+                times_parent_first: vec![ctx.genesis_timestamp],
+                anchor: None,
+                commitment: [0; 32],
+            };
+            row.commitment = row.computed_commitment()?;
+            Ok(row)
+        }
+
+        /// Only a local continuation of a previously verified parent; this
+        /// DOES NOT establish that the given observation contains valid work.
+        pub fn append(&self, ctx: &Context, h: Observation) -> Result<Self> {
+            self.check_local(ctx)?;
+            ensure(
+                h.block_id != [0; 32]
+                    && h.block_id != ctx.genesis
+                    && h.block_id != h.parent_id
+                    && h.parent_id == self.block_id
+                    && h.network == ctx.network
+                    && h.parameters == ctx.parameters
+                    && h.height == self.height.checked_add(1).ok_or("DAA_PROJECTION_HEIGHT")?
+                    && h.target != [0; 32]
+                    && h.target <= ctx.pow_limit,
+                "DAA_PROJECTION_OBSERVATION",
+            )?;
+            let anchor = if h.height == ctx.activation_height {
+                Some(Anchor {
+                    block: h.block_id,
+                    predecessor: h.parent_id,
+                    height: h.height,
+                    target: h.target,
+                    predecessor_raw: self.timestamp,
+                    predecessor_median: median(&self.times_parent_first)?,
+                })
+            } else {
+                self.anchor.clone()
+            };
+            ensure(
+                (h.height < ctx.activation_height && anchor.is_none())
+                    || (h.height >= ctx.activation_height && anchor.is_some()),
+                "DAA_PROJECTION_ANCHOR",
+            )?;
+            let mut times = Vec::with_capacity(11);
+            times.push(h.timestamp);
+            times.extend(self.times_parent_first.iter().take(10).copied());
+            let mut row = Self {
+                block_id: h.block_id,
+                parent_id: h.parent_id,
+                height: h.height,
+                timestamp: h.timestamp,
+                target: h.target,
+                context_id: self.context_id,
+                parent_commitment: self.commitment,
+                times_parent_first: times,
+                anchor,
+                commitment: [0; 32],
+            };
+            row.commitment = row.computed_commitment()?;
+            Ok(row)
+        }
+
+        pub fn shadow_target(&self, ctx: &Context) -> Result<Hash> {
+            self.check_local(ctx)?;
+            let anchor = self.anchor.as_ref().ok_or("DAA_PROJECTION_NOT_ACTIVE")?;
+            let candidate_height = self.height.checked_add(1).ok_or("DAA_PROJECTION_HEIGHT")?;
+            let (before, observed) = match ctx.clock {
+                Clock::Raw => (anchor.predecessor_raw, self.timestamp),
+                Clock::Median11 => (anchor.predecessor_median, median(&self.times_parent_first)?),
+            };
+            daa_research::asert_target(daa_research::AsertInputs {
+                anchor_target: anchor.target,
+                anchor_parent_time: before,
+                evaluation_parent_time: observed,
+                anchor_height: anchor.height,
+                candidate_height,
+                spacing: ctx.target_spacing,
+                half_life: ctx.half_life,
+                pow_limit: ctx.pow_limit,
+            })
+        }
+    }
+}
+
+#[cfg(test)]
+mod daa_anchor_projection_research_tests {
+    use super::anchor_projection_research::{Clock, Context, Observation, Projection};
+    use sha2::{Digest, Sha256};
+
+    fn sha(bytes: &[u8]) -> [u8; 32] {
+        Sha256::digest(bytes).into()
+    }
+    fn fixture(clock: Clock) -> Context {
+        let mut cap = [255u8; 32];
+        cap[0] = 3;
+        Context {
+            network: sha(b"projected-net"),
+            parameters: sha(b"projected-parameters"),
+            genesis: sha(b"projected-genesis"),
+            rule_commitment: sha(b"projected-rule"),
+            genesis_timestamp: 1_700_000_000,
+            activation_height: 16,
+            target_spacing: 10,
+            half_life: 7200,
+            pow_limit: cap,
+            clock,
+        }
+    }
+    fn base() -> [u8; 32] {
+        let mut out = [0; 32];
+        out[4] = 0x10;
+        out
+    }
+
+    #[test]
+    fn long_shadow_matches_python_raw_and_mtp11_hashes_without_changing_node() {
+        for (clock, expected_digest) in [
+            (Clock::Raw, "491ae11c0736a71af9c3fa0bc9ad26a297929f0ea8c303104e2b9df0125fb0e2"),
+            (Clock::Median11, "949f2322a9a1c4e98bbdd27abbe4b00dd0495cb4c12513db8542893815ea615a"),
+        ] {
+            let ctx = fixture(clock);
+            let mut parent = Projection::genesis(&ctx).unwrap();
+            let mut witness = Sha256::new();
+            assert!(parent.shadow_target(&ctx).is_err());
+            for height in 1..=12_000u64 {
+                let timestamp = ctx.genesis_timestamp + height * ctx.target_spacing;
+                let mut material = Vec::with_capacity(48);
+                material.extend(parent.block_id);
+                material.extend(height.to_be_bytes());
+                material.extend(timestamp.to_be_bytes());
+                let block_id = sha(&material);
+                let current = parent.append(
+                    &ctx,
+                    Observation {
+                        block_id,
+                        parent_id: parent.block_id,
+                        network: ctx.network,
+                        parameters: ctx.parameters,
+                        height,
+                        timestamp,
+                        target: base(),
+                    },
+                ).unwrap();
+                witness.update(current.commitment);
+                assert!(current.times_parent_first.len() <= 11);
+                if height >= ctx.activation_height {
+                    assert_eq!(current.shadow_target(&ctx).unwrap(), base());
+                }
+                parent = current;
+            }
+            assert_eq!(hex::encode(witness.finalize()), expected_digest);
+        }
+    }
+
+    #[test]
+    fn branch_crossing_activation_retains_independent_anchor_without_election() {
+        let ctx = fixture(Clock::Median11);
+        let mut common = Projection::genesis(&ctx).unwrap();
+        for height in 1..15u64 {
+            let mut raw = Vec::new();
+            raw.extend(common.block_id);
+            raw.extend(height.to_be_bytes());
+            let id = sha(&raw);
+            common = common.append(&ctx, Observation {
+                block_id: id, parent_id: common.block_id,
+                network: ctx.network, parameters: ctx.parameters,
+                height, timestamp: ctx.genesis_timestamp + 10 * height,
+                target: base(),
+            }).unwrap();
+        }
+        let mut tips = Vec::new();
+        for variant in [1u64, 7u64] {
+            let mut parent = common.clone();
+            for height in 15..80u64 {
+                let mut raw = Vec::new();
+                raw.extend(parent.block_id);
+                raw.extend(height.to_be_bytes());
+                raw.extend(variant.to_be_bytes());
+                let id = sha(&raw);
+                parent = parent.append(&ctx, Observation {
+                    block_id: id, parent_id: parent.block_id,
+                    network: ctx.network, parameters: ctx.parameters,
+                    height, timestamp: ctx.genesis_timestamp + 10 * height
+                        + variant * (height - 14),
+                    target: base(),
+                }).unwrap();
+            }
+            tips.push(parent);
+        }
+        assert_ne!(tips[0].anchor, tips[1].anchor);
+        assert_ne!(tips[0].shadow_target(&ctx).unwrap(),
+                   tips[1].shadow_target(&ctx).unwrap());
+        // Examining another fork never mutates the exact original branch.
+        assert_eq!(tips[0].shadow_target(&ctx).unwrap(),
+                   tips[0].shadow_target(&ctx).unwrap());
+    }
+
+    #[test]
+    fn projected_parent_context_and_mutation_fail_before_shadow_work() {
+        let ctx = fixture(Clock::Raw);
+        let genesis = Projection::genesis(&ctx).unwrap();
+        let observation = Observation {
+            block_id: sha(b"child"),
+            parent_id: ctx.genesis,
+            network: ctx.network,
+            parameters: ctx.parameters,
+            height: 1,
+            timestamp: ctx.genesis_timestamp + 10,
+            target: base(),
+        };
+        let first = genesis.append(&ctx, observation).unwrap();
+        let mut corrupted = first.clone();
+        corrupted.timestamp += 1;
+        assert!(corrupted.shadow_target(&ctx).is_err());
+        assert!(corrupted.append(&ctx, Observation { height: 2, ..observation }).is_err());
+        assert!(genesis.append(&ctx, Observation { height: 2, ..observation }).is_err());
+        assert!(genesis.append(&ctx, Observation { network: [0; 32], ..observation }).is_err());
+        let mut changed = ctx.clone();
+        changed.rule_commitment = sha(b"another version");
+        assert!(first.append(&changed, Observation { height: 2, ..observation }).is_err());
+    }
+}
