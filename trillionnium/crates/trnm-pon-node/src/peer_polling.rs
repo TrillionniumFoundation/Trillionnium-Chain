@@ -1082,6 +1082,123 @@ mod tests {
     }
 
     #[test]
+    fn invalid_w1_backoff_is_bounded_monotone_and_clears_only_on_new_valid_work() {
+        let origin = Instant::now();
+        let mut peer = PeerState::new([1; 32]);
+        peer.penalize_invalid_w1(origin);
+        assert_eq!(peer.invalid_w1_streak, 1);
+        assert!(peer.invalid_w1_delayed(origin + Duration::from_millis(249)));
+        assert!(!peer.invalid_w1_delayed(origin + Duration::from_millis(250)));
+        for expected in 2..=INVALID_W1_BACKOFF_MAX_STREAK {
+            peer.penalize_invalid_w1(origin);
+            assert_eq!(peer.invalid_w1_streak, expected);
+        }
+        assert!(peer.invalid_w1_delayed(origin + Duration::from_secs(7)));
+        assert!(!peer.invalid_w1_delayed(origin + Duration::from_secs(8)));
+        for _ in 0..100 {
+            peer.penalize_invalid_w1(origin);
+        }
+        assert_eq!(peer.invalid_w1_streak, INVALID_W1_BACKOFF_MAX_STREAK);
+        assert!(!peer.invalid_w1_delayed(origin + Duration::from_secs(8)));
+        peer.valid_new_w1_admitted();
+        assert_eq!(peer.invalid_w1_streak, 0);
+        assert!(peer.invalid_w1_retry_after.is_none());
+    }
+
+    #[test]
+    fn invalid_w1_penalty_is_per_pinned_peer_and_never_triggered_by_remote_text_or_cpu_busy() {
+        let settings = Settings::development(Some(1)).unwrap();
+        let mut cfg = config(&settings);
+        cfg.peers.push(PinnedPeer {
+            address: "127.0.0.1:12346".parse().unwrap(),
+            server_public: identity(73).public_key().into(),
+        });
+        cfg.max_calls = 4;
+        cfg.validate(&settings).unwrap();
+        let dir = tempfile::tempdir().unwrap();
+        let node = Mutex::new(Node::open(dir.path(), settings.clone(), 1).unwrap());
+        let stop = AtomicBool::new(false);
+        let ctx = context(&node, &cfg, &settings, &stop);
+        let mut engine = Engine::new(&cfg, &settings);
+        let mut reported = 0usize;
+        engine.reject(
+            0,
+            "native_admission",
+            Error::from("WORK:Transcript"),
+            10,
+            None,
+            &mut |_| {
+                reported += 1;
+                Ok(())
+            },
+        ).unwrap();
+        assert!(engine.states[0].invalid_w1_delayed(Instant::now()));
+        assert_eq!(engine.states[0].invalid_w1_streak, 1);
+        engine.reject(
+            1,
+            "history",
+            Error::remote("WORK:Transcript"),
+            10,
+            None,
+            &mut |_| {
+                reported += 1;
+                Ok(())
+            },
+        ).unwrap();
+        engine.reject(
+            1,
+            "native_admission",
+            Error::from("PUBLIC_MUTATION_CPU_BUDGET"),
+            10,
+            None,
+            &mut |_| {
+                reported += 1;
+                Ok(())
+            },
+        ).unwrap();
+        engine.reject(
+            1,
+            "native_admission",
+            Error::from("ROOT"),
+            10,
+            None,
+            &mut |_| {
+                reported += 1;
+                Ok(())
+            },
+        ).unwrap();
+        assert_eq!(engine.states[1].invalid_w1_streak, 0);
+        assert!(!engine.states[1].invalid_w1_delayed(Instant::now()));
+        assert_eq!(reported, 4);
+        let mut requested = Vec::new();
+        engine.cycle(
+            &ctx,
+            &mut |index, _| {
+                requested.push(index);
+                Ok(reply(false, serde_json::json!({"error":"BUSY"})))
+            },
+            &mut |_| Ok(()),
+        ).unwrap();
+        assert_eq!(requested, vec![1], "penalized peer must not get another RPC");
+        assert_eq!(engine.calls, 1);
+        // Simulate elapsed monotonic delay; the original task/chain budget is
+        // unchanged and this never grants or validates work.
+        engine.states[0].invalid_w1_retry_after =
+            Some(Instant::now() - Duration::from_millis(1));
+        engine.cycle(
+            &ctx,
+            &mut |index, _| {
+                requested.push(index);
+                Ok(reply(false, serde_json::json!({"error":"BUSY"})))
+            },
+            &mut |_| Ok(()),
+        ).unwrap();
+        assert!(requested.contains(&0));
+        assert_eq!(engine.states[0].invalid_w1_streak, 1);
+        assert!(!stop.load(Ordering::Acquire));
+    }
+
+    #[test]
     fn config_has_exact_context_finite_limits_and_no_discovery() {
         let settings = Settings::development(Some(1)).unwrap();
         let cfg = config(&settings);
