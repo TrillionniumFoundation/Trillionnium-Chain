@@ -100,6 +100,320 @@ Changing scheduling cannot weaken complete W1, current-parent/state rechecks,
 original deadlines or M07 atomic commit. Qualify this service change jointly
 with PN2 state/history cost; computational hardness remains a separate I01 gate.
 
+#### Identity supplement implementation and preregistration draft
+
+The new `public_v3_identity_churn` test target begins this existing PN1/I02
+obligation; it does not replace either historical campaign. Its ordinary control
+really constructs three different complete W1 packets, submits them through the
+signed public TCP path and observes paid Work acceptance followed by `ROOT`.
+Three proofs do not exercise capacity. The ignored
+`real_paid_w1_identity_capacity_prefix` instead requests 4,097 actual distinct
+packets through the same code, retaining the real owner observations. It is a
+serial same-host capacity component, **not** the full sustained-service campaign.
+The ignored selector has not been executed by adding or compiling this code.
+
+Both use the original four legally executed seed blocks/1,024 signed transfers
+and the next signed transfer (nonce 1,025) on h4. Only the reference State root
+is changed. Each candidate receives a disjoint 4,096-nonce range starting at
+`2,000,000 + index*4096`. The real generic producer is prepared once, then creates
+each challenge's complete proof. Every target miss and producer error, actual
+thread CPU or unknown sample, winner packet, ordinary/scalar-reference checks
+and exact complete-packet identity remain in new create-only files. Changing the
+client signing key is not a new work identity. Existing registry fields are
+observed, never fixture-filled, evicted or reset by this test.
+
+Local receipt namespace `public-v3-real-identity-prefix-v1` has these files:
+
+| File | Required retained content and validation |
+| --- | --- |
+| `seed.json` | Actual encoded seed/template packets and aggregate preparation CPU; Node's unexposed preparation-search count stays null. |
+| `plan.json` | Requested count, original policy ID, actual initially empty owner, one producer setup and component scope. |
+| `NNNNN-started.json` | Index/template/nonce range, synced before search, so an interrupted construction cannot disappear. |
+| `NNNNN-construction.json` | Every attempted nonce/ticket/trace/hit and actual CPU, including errors/exhaustion; complete winner bytes and identity, separately timed construction and verifier/encoding. Missing/mismatched indices, bytes, attempts or known CPU cannot pass construction validation. |
+| `NNNNN-call.json` | Exact body digest/packet identity, real signed reply/error and client metrics/CPU, plus actual same-owner occupancy. Busy, timeout and refused calls remain in the denominator. |
+| `report.json` | Joined receiver observations, real completion counters, closed CPU balance, live/cold integrity and component verdict. All service/hardness/WAN/activation qualifications remain false. |
+
+The prefix alone supplies no source/binary collection wrapper or complete
+campaign qualification. Its local files are not exact-commit qualification receipts.
+The prefix's 1,800-second outer collection cap grants no additional per-request
+deadline, start reserve or paid credit. Do not run a capacity experiment until
+the enclosing clean-source/binary/resource collector and full preregistration
+are reviewed. Existing native campaigns and historical failures remain intact.
+
+The complete matched-cohort protocol is the next implementation slice within
+this same obligation. These **draft** values must be reviewed and frozen before
+any qualifying run; they are engineering budgets, not measured achievable rates:
+
+- Retain 24 actors, two paid workers, 2 CPU-second burst, 0.25 CPU-second/second
+  refill, 100 ms reserve, 2-second calls, 4-CPU/16-GiB host envelope and at most
+  480 calls per actor across prefix and pressure. Proposed allocation is at most
+  192 prefix calls plus 288 pressure calls per actor; 24*192 allows 4,608 offered
+  prefix packets, not an invented count of verified identities.
+- Every fresh namespace has the same real seed and prefix workload. Record the
+  prefix's actual occupancy, credit/debt and elapsed time; at least 4,096 real
+  full-work identities must be observed. Failure to fill within the proposed
+  1,800-second cap fails capacity, with all partial work retained.
+- After the prefix, retain the same live owner/credit. Run separate honest-only,
+  replay-only and fresh-identity 30-second windows; replay actors reuse their
+  actual prefix packets, while fresh actors construct a new packet for every
+  offered call. Scheduling is closed-loop, with at most one unresolved call per
+  actor and at most 288 pressure calls in 30 seconds. The 9.6 Hz arithmetic is
+  only a mean cap, not an offered fixed arrival rate. There are no catch-up
+  bursts or extra workers; every unoffered remainder and construction error is
+  retained. Separate producer limitation from time waiting for an earlier call.
+  Neither establishes receiver saturation without actual paid-depletion evidence.
+- Retain t=1/5/9, three rounds, 21 real business blocks and independently imported
+  depth-six confirmations within the original absolute window. Proposed pressure
+  coverage is at least 90% in every honest round, with no nondepleted gap over
+  one second; each round must additionally contain exact-body signed `ROOT` and
+  Work/Admission rejection observations plus actual paid depletion. Sampling
+  cannot impute depletion between missing samples.
+- The full reader must reject direct table fixtures, repeated packets labeled
+  fresh, missing/mutated attempts, source/binary/policy mismatch, credit resets,
+  unknown or double-counted CPU, omitted honest failures, absent post-capacity
+  rounds and inadequate offered pressure. It must compare hostile absence in
+  live/cold history and join every original scoped worker before reconciliation.
+
+The next source slice adds the independent `public_v3_identity_campaign` target:
+24 actual test-binary subprocesses, matched namespaces/prefixes, the closed-loop
+pressure controller, and ordinary t=1/5/9 history import/confirmation. Its raw
+namespace is `native-public-v3-identity-churn-supplement-v1`; each phase retains
+actor job/readiness/exit records, every slot disposition and construction/call
+file, 50 ms read-only owner samples, before/prefix/pressure/closed CPU flows,
+and hostile packet absence in live/cold history. Source/tree and actual executable
+digests bind each actor; a parent-held owner prevents an epoch reset at the
+prefix/pressure boundary. Actor and sample owners join even on error/unwind.
+
+The full native selector is opt-in and has not run. Its separate two-process,
+two-second control has zero honest rounds and cannot qualify capacity or service.
+An independent collector/reader must check the complete raw record and conservative
+credit-freshness bounds; point samples alone do not certify an intervening depleted
+interval. Failed searches retain trace/ticket/CPU records, but not every complete
+attempt's proof bytes: complete construction-cost qualification stays **UNKNOWN**.
+Even a later finite service PASS cannot close that cost gate, restart/reconstruction
+cohorts, independent operators or WAN acceptance. The current full supplemental
+service verdict remains NOT_RUN/NO_GO; small controls cannot promote it.
+
+The next local receipt profile, `public-v3-real-identity-prefix-v2`, additionally
+retains all 49,188 proof bytes for **every** successful `prove`, including target
+misses, inside the existing construction JSON. It reserves a complete 100-KiB
+attempt and 128-KiB terminal/winner frame before performing another proof. A
+construction is capped at 8 MiB; its stage bucket includes started, construction
+and call files. A cap after a construction starts stops proof work and preserves
+that started file, prior full attempts and an `evidence-cap` terminal; it cannot
+pass. An actor must record not-started indices in a separately reserved stage
+terminal if insufficient budget remains even to start; that full-owner route is
+not yet implemented. Any I/O error poisons the byte owner, forbidding reuse.
+The v2 writer counts
+serialized bytes before streaming one temporary file, syncing once and publishing
+it. It adds no per-attempt files or sync calls. The 32-MiB retained-data envelope
+does not claim an observed total-process heap or VM limit.
+
+The explicit three-proof v2 control has no capacity or service qualification.
+The original v1 schemas, selectors, time limits and retained failure remain.
+Full v2 collection stays closed until its remaining owned-process limits and
+whole-artifact ledger are implemented and reviewed: 64-MiB prefix buckets for
+all 72 actors, 96-MiB fresh-pressure buckets for 24 actors and 8-MiB replay-pressure
+buckets for 24 actors total 7,104 MiB. The original **8-GiB total artifact** and
+4-CPU/16-GiB resource boundaries remain; the other 1,088 MiB must cover the binary,
+all SQLite sidecars, samples, metadata, logs and the inventory itself. These caps
+are stricter local collection constraints; cap failures establish no work-hardness
+result. Full raw proof replay also cannot prove global cheapest cost or a bound
+on specialized hardware advantage.
+
+The next v2 slice declares the complete 8-GiB ledger and separate owned-process
+limits: 512-MiB actor address space from exec, 3-GiB native parent address space,
+and 8/16-MiB per-file limits. The 24 actor envelopes plus native parent total
+15 GiB, leaving the original 16-GiB cgroup authoritative for the whole run.
+Seven fixed Node roots additionally reserve 1 MiB for zero-byte locks and bounded
+initialization markers; a failed marker is preserved. A separate small native
+probe can exercise file-cap errors, VM denial and real child reap. The full-v2
+selector remains closed while actor/log/sample writers and the complete resource
+receipt chain are unfinished. These are evidence collection limits, not a change
+to the original PN1 workload, its retained failures or service acceptance.
+
+The explicit short owned-process probe has exercised a real 8-MiB file-cap
+failure, virtual-address denial and normal child reap in the original resource
+envelope. A separate native initialization trace also observed the transient
+`native.sqlite-journal` before WAL mode; a final three-file snapshot is therefore
+insufficient to certify the complete SQLite I/O bound. Rollback/temporary-file
+coverage is still required before full-v2 collection can open.
+
+The separate v2 sample writer preserves complete rows in at most twelve 8-MiB
+chunks per phase. It retains the original per-sample data sync and one final full
+sync, with attempts and successes recorded separately. Rotation adds no sync;
+cap, collision and I/O failure poison the owner and retain the first unpersisted
+observation for a failed terminal. Its small negative controls are component
+evidence only: the writer is not yet connected to the 24-actor controller, and
+the 50-ms sampling schedule and original windows remain unchanged.
+
+The separate v2 log owner caps combined actor stdout/stderr at 64 KiB and binds
+termination to the actual child pidfd. A cap or I/O failure records observed and
+retained byte counts, stops that child and joins both pipe readers; no log sync
+is added. Small real-subprocess controls exercise normal dual streams and a
+128-byte cap/termination/reap. This owner is still awaiting the full v2 actor
+and controller connection. The original v1 direct logs and failed controls remain.
+
+The v2 actor owner now connects the real h4 template, generic prepared producer,
+full-attempt acquisition and original signed TCP calls to those byte owners.
+It charges existing job bytes against a 448-KiB metadata budget and reserves a
+separate 64-KiB failed-terminal slot inside the same 512-KiB actor total. A
+construction cap, I/O failure or budget refusal stops future work/calls, records
+the started or not-started index, and retains every planned slot disposition.
+Producer setup, nested CPU clocks, replay of an actual prefix packet and the
+original deadlines remain. Its metadata-failure control is not a real capacity
+run; controller connection and the complete SQLite I/O boundary remain pending.
+
+The new v2 controller source connects that actor to its exec-time limits, real
+protected receiver, bounded dual pipes and chunked samples. It preserves the
+original owner epoch, 50-ms schedule, 30-second pressure, two-second calls,
+ordinary three rounds and live/cold hostile absence checks. Its phase owner
+reserves 64 KiB for a failure terminal inside each combined 16-MiB phase bucket;
+markers and the single unsplit report share the remainder. A cap/I/O failure
+retains its first terminal, poisons that writer and cannot qualify. Sample errors
+retain their first unpersisted observation; every child and pipe reader is joined.
+This source connection has not executed a v2 actor campaign.
+
+Before freezing or executing the full v2 plan, the three phase buckets were
+reallocated from 8 to 16 MiB each. The unchanged 8-GiB artifact ledger now reserves
+8,177.5 MiB and leaves 14.5 MiB unassigned. Earlier source descriptors and hashes
+remain historical records; no observed cap failure was converted into a pass.
+The parent per-file limit remains 16 MiB, so an oversized report still fails
+rather than being split or given extra syncs. The full selector remains closed:
+the top-level collector owner chain and complete transient SQLite file boundary
+still need implementation/review. Neither component tests nor a new I/O profile
+can close the original disk-backed control failure or claim full qualification.
+
+The top-level v2 campaign source now installs the owned parent VM/file limits
+before opening the first Node, charges preparation against its separate 8-MiB
+bucket, and owns plan, process-limit, final Node inventory and report files. The
+32-MiB root bucket is further partitioned into 1 MiB for those raw JSON files
+(including a reserved 64-KiB failure terminal) and 31 MiB for the outer inventory;
+the total ledger is unchanged. A failed phase stops later phases and preserves
+their not-started dispositions. The v2 two-actor selector retains the original
+control plan and assertions in a fresh namespace. Its separate local debug /
+source-overlay execution completed in 28.751043894 seconds: two real actors
+made six paid calls, all returned ROOT, and the identity owner grew from zero
+to two after the prefix and six after pressure. An independent reader rebuilt
+all nine complete attempted proofs (including three misses), reconciled
+519891843 ns of paid receiver CPU, and checked cold SQLite copies and actual
+parent/child termination. This is a finite component observation; the retained
+v1 two-actor failure is still open. It proves neither capacity exhaustion at
+4096 identities nor sustained post-capacity pressure, exact committed-source
+qualification, minimum work cost, hardware fairness or service improvement.
+Neither v2 campaign source nor these component observations enable full collection.
+The independent outer writer limits and complete transient SQLite I/O boundary
+remain unqualified, and the full selector still refuses to start.
+
+The subsequent fresh `pn1-owned-sqlite-real-inode-v1` implementation has a
+[finite native evidence index](../../../../evidence/pon-native-io-pn1-20261025/README.md).
+It preserves two actual Node failures: trusted pool setup was missing first;
+after correcting that prerequisite, ordinary cold reopen still latched xLock
+3850. Error 10 in that later result is the subsequent sticky admission refusal.
+A separately frozen reproduction observed a read-only descriptor's write-lock
+attempt returning EBADF; that errno is not retroactively inserted into either
+original log. Only actual read-only connections now configure and verify
+NO_CKPT_ON_CLOSE before SQL access. Writer WAL/FULL and every lower error latch
+remain unchanged. Final finite controls passed: ten VFS cases/89 receipt rows,
+and actual Node writing, two public reads, real service termination and same-root
+AuthV1 cold readback with 20 required files/27 complete healthy receipts.
+They do not open the full campaign guard, qualify the private test reader,
+produce 4,097 new identities or discharge the original service failure.
+
+The same review found a separate known persistence dependency issue in bundled
+SQLite 3.46.0: the official
+[WAL-reset defect](https://www.sqlite.org/wal.html#walreset) affects concurrent
+write/checkpoint connections. The generic safe factory permits that capability;
+scoped single-writer/serialization arrangements do not certify all consumers.
+A reviewed patched dependency and fresh ABI/native evidence are required.
+Neither successful finite cold readback nor FULL synchronization disposes of
+this race, and no historical corruption has been established here.
+
+### 2026-10-26 source overlay and evidence boundary
+
+The [dated compact evidence addendum](../../../../evidence/pon-native-io-pn1-20261026-addon/README.md)
+preserves the earlier index, all original failures and the original PN1/I02
+acceptance targets. Its 3.46 normal-C witnesses and finite PASS results qualify
+only their frozen overlays; a later dependency graph needs its own evidence.
+
+| Recorded scope | Actual retained observation | Boundary still open |
+| --- | --- | --- |
+| Held-directory native002 | Four actual Linux children/43 metadata/18 RootReceipt locations, with double rename/replacement and same-lease cold readback. Original001 is overall FAIL after MemoryError and missing final receipts; the 8,192-byte bucket-label defect remains explicit. | Logical byte/lifetime accounting is not a physical-block quota, original three-FD caller, full writer or public campaign. |
+| Original VFS004 and Node005 | Ten VFS children/89 locations = 86 healthy + three original expected SQLite 13 cap refusals; the cap case remains 64 KiB. Ordinary Node 20/27 retains 4 KiB/WAL/FULL, two-second calls, single actual join and same-lease cold AuthV1 state. | Original Node 6b4 preparation failure is separate from actual 6b9 success; all results are on the old graph. |
+| Six-file original harness bridge | Private held-output capability, exact seven role leases and four authenticated open sites; first-pass reservation plus fail-closed second-pass serialization. Strict-Clippy002, normal compilation, 13 units (11 retained + two stateful) and final formatting pass. | Strict-Clippy001 exit 101 and 13 ignored remain; native libtest child PID/birth is not separately retained, so collector identity cannot stand in for original caller qualification. Two copies of this diagnostic opt-level 3/debug 2 ELF do not fit the existing 192 MiB binary bucket; this is not a measurement of the original full selector's `--release` ELF. |
+| SQLite source/graph admission and fresh failures | Seven exact rusqlite 0.39.0 pins, sys 0.37.0/SQLite 3.51.3, v2 normal-C fence and 155 resolved nodes. Actual normal001 exit 101/28.262877 s and normal002 exit 101/4.054297 s remain. After equivalent API adaptations, normal003 compiles with exit 0/6.614984 s; its sealed receipt binds actual cfg/v2 fence, four defined globals, 19 independently read-back static layout values and the 19,130,200-byte VFS ELF (opt-level 0/debug 2). | Normal compilation and read-only C witness inspection do not establish runtime ABI/control qualification. No actual new-engine native control has passed. Earlier 3.46 PASS does not transfer; release/security closure remains open. |
+
+Keep these interfaces inside the existing I02 owner. The caller may pass only
+its private, actually inherited output File and checked identity; public
+receipt JSON cannot manufacture that authority. The held owner creates the
+seven fresh roots relative to the original directory capability. It retains
+their actual PID/dev/ino, slot/lifetime limits and one-use phase ownership;
+no canonicalized path, receipt inode, fallback backend or reset substitutes
+for those held objects. Miner, receiver, verifier and cold reopen consume the
+correct original role lease. Actual service finish/join and connection close
+precede terminal receipts and same-lease cold reopen.
+
+The generic evidence writer must charge the full checked reservation before
+second-pass File writes, bound each chunk, and preserve the first write/flush
+error even if Serialize swallows it. A size mismatch or failed write cannot
+sync/publish a successful result, refund partial bytes or unpoison subsequent
+writes. Two stateful unit controls are finite evidence, not exhaustive panic,
+I/O-fault or whole-campaign accounting qualification. Missing actual child
+identity, terminal records, complete root receipts or source/fence binding
+continues to reject the corresponding qualification.
+
+The earlier 178,353,576-byte ELF was a diagnostic build with debug 2 and
+assertions/overflow checks enabled. Retain its exact bytes, duplicate-copy
+accounting and failed budget observations. The unchanged original full caller
+instead requires an actual `--release` no-run build with opt-level 3/debug 0,
+assertions/overflow checks disabled and test true, followed by exact compiler
+profile and source-binding review. Its ELF size is not yet measured. This is
+the existing caller preparation, without stripping/deleting diagnostic evidence,
+relaxing a cap, enabling the full guard or bypassing clean-source admission.
+
+The next gate is the new engine's actual normal-C ABI witness and unchanged
+three finite control families. Then qualify every outer writer, the legitimate
+original three-FD caller and the independent strict reader before any full
+selector. Only after those gates may the frozen 4,097 complete identities
+crossing the 4,096-entry paid boundary and fresh 24-actor pressure/service
+profiles execute for acceptance. Preserve the original 8 GiB and every bucket,
+3 GiB AS/16 MiB FSIZE, 4 CPU/16 GiB, two-second calls, three 30-second pressure
+windows, proof/CPU/depletion/confirmation assertions and all failed/ignored
+observations. Full guards remain false.
+
+The original LAN setup3 stopped at 00:04:53Z with
+`FAIL_UNRESOLVED_CHILD_TERMINAL`, not a completed 72-hour observation. Its final
+elapsed time is 6.586268785 hours; seven samples/14 cold hops are only the last
+successful checkpoint. Missing listen/terminal receipt plus SSH 255 retains
+the original unknown 1 GiB ledger charge and unknown remote native termination.
+Later reachability over the existing Tailscale alias and an unavailable old
+temporary root do not establish reboot or resolve that original terminal.
+This failure closes no independent-administrator WAN, goodput, model-loading,
+release/custody/repair, ordinary three-upgrade or Windows isolation obligation.
+
+### Controlled 3.51.3 SHM compatibility and finite readback
+
+The [three-family source-bound increment](../../../../evidence/pon-native-io-pn1-20261026-addon/sqlite3513-compat-three-finite.json)
+preserves the original new-engine VFS failure (10 real terminals, three
+5386/SHMMAP failures, 80/89 required receipts). The pinned upstream's WAL
+recovery can pass state 2 directly as the extension argument. The wrapper's
+admitted state domain is now exactly 0/1/2; both nonzero states reserve all
+rounded bytes before delegation. Unknown and negative states, oversize growth
+and extra objects retain their original refusal and sticky-error behavior.
+No direct runtime argument trace is claimed.
+
+After that two-predicate fix, original VFS 10/89, Node 20/27 and held 4/43/18
+finite controls actually passed with real terminal and complete source/build/
+executed-image readback. The original three expected SQLite 13 cap refusals
+remain in VFS's denominator; Node keeps the original two-second calls,
+256 transfers, one retained proof, zero new W1, single join and cold AuthV1
+readback. The independently reviewed results qualify only those local Linux
+controls. Workspace/all-targets compilation and seven-consumer strict Clippy
+also pass. All original failed artifacts remain; the held database's 8,192
+bytes are still charged to the stricter provenance bucket rather than the
+SQLite label. Full writer/caller/reader, original release-profile preparation,
+full paid-identity attack, Windows, model/release/custody and WAN gates stay open.
+
 ### Fixed-seed ROOT rejection component cost
 
 The opt-in `signed_seed_state_root_replay_component_cost` in
@@ -682,3 +996,5 @@ not request refusal counts. The finite localhost three-phase control accepted al
 180 honest Submit/Head/History requests while cached and distinct-fork Product
 mutations were refused; it does not establish unknown-caller Sybil fairness or
 restore the separately unexecuted remote mixed-hostile qualification.
+
+The original release-profile no-run build now actually passes (2026-10-26T03:18Z): exit 0 in 268.031 seconds, exact opt-level 3/debug 0/assertions false/overflow checks false/test true, and an actual 10,134,904-byte ELF. Its two-copy arithmetic is 20,269,808 bytes, within the unchanged 192 MiB bucket. The root independently rechecked the ELF, both original streams, the actual durable terminal and all 22 before/after source pins; no monitor violation or owner error occurred. The separately documented 178,353,576-byte diagnostic ELF and every failed build remain historical evidence. This new result removes only the release-build/profile/size preparation blocker: no lawful prepared bundle or execution copy was created, and the original three-FD caller, whole writer, strict reader and full 4,097-identity acceptance remain unqualified. No full guard, deadline, assertion or budget changed. See the [original release-build compact receipt](../../../../evidence/pon-native-io-pn1-20261026-addon/sqlite3513-original-release-build.json).

@@ -1,0 +1,136 @@
+{
+  "schema": "pn1-finite-native-io-engine-source-evidence-addon-v3",
+  "utc": "2026-10-26T01:14:12.611959+00:00",
+  "source_commit": "630f871293e48588e0a1ceae7ceb64973d3ec31d",
+  "source_is_uncommitted_overlay": true,
+  "historical_engine": "rusqlite 0.32.1/sys 0.30.1/SQLite 3.46.0",
+  "new_source_candidate_engine": "exact rusqlite 0.39.0/sys 0.37.0/SQLite 3.51.3",
+  "new_candidate_ABI_fence": "sqlite-3.51.3-normal-native-linux-layout-v2",
+  "new_candidate_resolved_graph_nodes": 155,
+  "files": [
+    {
+      "file": "held002-independent-readback.json",
+      "bytes": 4315,
+      "sha256": "92cea37ecaa93775af50659670aae45c0fedd1890faa912e4214eef6e95c004a",
+      "original_local_archive_path": "work/ci-follow/pn1-held-native002-independent-readback-20261026-001/independent-receipt.json",
+      "verbatim_copy": true,
+      "qualification_scope": "historical SQLite 3.46 held-directory finite controls; original001 overall failure retained"
+    },
+    {
+      "file": "vfs004-node005-independent-readback.json",
+      "bytes": 7357,
+      "sha256": "e89d8eae33d016450571f0b752b759312a0ed13f513485735d71cd8173490332",
+      "original_local_archive_path": "work/ci-follow/pn1-current-owner-vfs004-node005-independent-review-20261026-001/independent-receipt.json",
+      "verbatim_copy": true,
+      "qualification_scope": "historical SQLite 3.46 original finite regressions on the held-owner API"
+    },
+    {
+      "file": "six-source-held-bridge-independent-review.json",
+      "bytes": 8852,
+      "sha256": "627e87a88af7338fed02401644cd2ca814436f11fdcb628deadbac24651d6dbb",
+      "original_local_archive_path": "work/ci-follow/pn1-full4097-held-bridge-independent-review-20261026-001/independent-review-receipt.json",
+      "verbatim_copy": true,
+      "qualification_scope": "historical original-engine six-file wiring and 13 units; 13 ignored and original three-FD/full qualification false"
+    },
+    {
+      "file": "sqlite3513-source-graph-admission.json",
+      "bytes": 4860,
+      "sha256": "40540560754cc0baa4ca20e450b0c11a49cdef2031d284b4bc0445940c2618bc",
+      "original_local_archive_path": "work/ci-follow/sqlite-safe-minimum-upgrade-root-admission-20261026-001/admission.json",
+      "verbatim_copy": true,
+      "qualification_scope": "source application for exact 0.39/sys 0.37/3.51.3/155-node/v2-fence only; no fresh ABI/native qualification"
+    },
+    {
+      "file": "sqlite3513-original-normal001-failure.json",
+      "bytes": 2683,
+      "sha256": "8815db88bbcabe38b2623360b9a30588171c22aa4095d148311080a4dc874a24",
+      "original_local_archive_path": "work/ci-follow/sqlite3513-fresh-normal-validation-20261026-001/normal-no-run-001/result.json",
+      "verbatim_copy": true,
+      "qualification_scope": "original actual fresh normal build exit 101 after 28.262877 s; not normal-C/ABI/native qualification"
+    }
+  ],
+  "external_original_receipt_references_not_copied": [
+    {
+      "path": "work/ci-follow/sqlite3513-fresh-normal-validation-20261026-001/normal-no-run-002/result.json",
+      "bytes": 2764,
+      "sha256": "1c5204157e0b013a6720d1507dbfe5ebc9fb676c113b3d87a587fbeab7f11cd2"
+    },
+    {
+      "path": "work/ci-follow/sqlite3513-fresh-normal-validation-20261026-001/routine-main-db-api-fix-001/receipt.json",
+      "bytes": 845,
+      "sha256": "69e3bb9e6cbf05729ddc8fc4937ee99dfcaedd0d724b2ff46842e1aa197b05ab"
+    },
+    {
+      "path": "work/ci-follow/sqlite3513-fresh-normal-validation-20261026-001/normal001-C-witness-retained/manifest.json",
+      "bytes": 4693,
+      "sha256": "36822f3b89698719f0a6c77156b75faa648c8d426297e2e7a2322c55508dc16f"
+    },
+    {
+      "path": "work/ci-follow/lan72h-setup3-terminal-failure-original-review-20261026-001/minimal-forensic-receipt.json",
+      "bytes": 3713,
+      "sha256": "bbf08cee7a2f917ba980948615874cf45ff08704415c0a104bb4fc9be565b383"
+    },
+    {
+      "path": "work/ci-follow/sqlite3513-fresh-normal-validation-20261026-001/normal003-exact-normal-gate/receipt.json",
+      "bytes": 14555,
+      "sha256": "162dbb229317ec59d9f243f96a16696c35992f29d933158a391ad29bf6f00085"
+    },
+    {
+      "path": "work/ci-follow/sqlite3513-normal003-cwitness-independent-review-20261026-001/independent-receipt.json",
+      "bytes": 18997,
+      "sha256": "574b1b867bcc2c73f41195b76b7efd50bc84a2edd835c32eb85a00a431cfd3f7"
+    }
+  ],
+  "external_reference_local_paths_are_not_repo_payload_links": true,
+  "new_source_admission_or_generated_C_artifacts_are_not_whole_normal_build_or_ABI_native_qualification": true,
+  "normal001_exit_code": 101,
+  "normal002_exit_code": 101,
+  "raw_frozen_sources_ELFs_and_all_files_retained_locally_not_reproduced_by_this_compact_index": true,
+  "old_index_and_original_failures_unchanged": true,
+  "whole_writer_original_three_FD_caller_strict_reader_full4097_qualified": false,
+  "full_guard_enabled": false,
+  "Windows_model_three_round_release_and_independent_WAN_qualified": false,
+  "merge_ready": false,
+  "task_complete": false,
+  "normal003_exit_code": 0,
+  "normal003_elapsed_seconds": 6.614983684004983,
+  "normal003_actual_cfg_v2_fence_four_globals_19_static_layout_values_gate": true,
+  "normal003_native_or_runtime_executed": false,
+  "normal003_compile_and_static_gate_does_not_qualify_runtime_ABI_or_native_controls": true,
+  "normal003_independent_real_C_object_compile_gate_reviewed": true,
+  "normal003_profile": {
+    "opt_level": "0",
+    "debuginfo": 2,
+    "debug_assertions": true,
+    "overflow_checks": true,
+    "test": true
+  },
+  "original_full_release_profile_source_readonly_review": {
+    "path": "scripts/run_pon_identity_churn.py",
+    "bytes": 58877,
+    "sha256": "177bdbdf505299693618e4060cb65a4c8a46cf1ec5c85414a38d04accdd139cf",
+    "reviewed_by": "ROOT and current_pair_ci_readonly; source was not read by this doc author",
+    "release_build_lines": [
+      867,
+      869
+    ],
+    "strict_profile_lines": [
+      [
+        878,
+        879
+      ],
+      [
+        913,
+        914
+      ]
+    ],
+    "required_profile": {
+      "opt_level": "3",
+      "debuginfo": 0,
+      "debug_assertions": false,
+      "overflow_checks": false,
+      "test": true
+    },
+    "original_release_ELF_size_not_yet_measured": true
+  }
+}

@@ -1,0 +1,210 @@
+{
+  "schema": "pn1-root-actual-authenticated-node-control-v1",
+  "started_utc": "2026-10-25T22:47:20.529233+00:00",
+  "native_timeout_seconds": 300,
+  "native_AS_bytes": 3221225472,
+  "native_FSIZE_bytes": 16777216,
+  "CPUQuota_percent": 400,
+  "MemoryMax_bytes": 17179869184,
+  "all_bucket_limit_bytes": 8589934592,
+  "logical_SQLite_reserve_bytes": 352321536,
+  "ELF_reserve_bytes": 201326592,
+  "input_reserve_bytes": 8388608,
+  "frozen_source_reserve_bytes": 268435456,
+  "metadata_and_logs_reserve_bytes": 134217728,
+  "physical_block_hard_quota_claimed": false,
+  "expected_metadata_files": 20,
+  "expected_root_receipts": 27,
+  "actual_new_W1_prove_count": 0,
+  "full_W1_4097_qualified": false,
+  "exact_committed_source": false,
+  "private_cfg_test_public_reader_path_qualified": false,
+  "full_guard_enabled": false,
+  "task_complete": false,
+  "merge_ready": false,
+  "native_exit_code": 101,
+  "native_elapsed_seconds": 4.099376972000755,
+  "owned_spawn": [
+    {
+      "pid": 2882821,
+      "kernel_start_tick": "4610820",
+      "actual_image": {
+        "dev": 2050,
+        "ino": 56938690
+      },
+      "held_ELF_dev": 2050,
+      "held_ELF_ino": 56938690
+    }
+  ],
+  "actual_root_receipts": 17,
+  "actual_metadata_files": 13,
+  "actual_node_result": {
+    "WAN_qualified": false,
+    "component_only": true,
+    "elapsed_ns": 3731886368,
+    "finalization_errors": [
+      "actual terminal root failed: actual I/O domain must remain healthy"
+    ],
+    "full_W1_4097_qualified": false,
+    "full_guard_changed": false,
+    "last_stage": "original-public-v3-read",
+    "merge_ready": false,
+    "pid": 2882821,
+    "result": {
+      "error": "IO: Connection reset by peer (os error 104)",
+      "ok": false
+    },
+    "schema": "pn1-native-node-authenticated-integration-control-v2",
+    "service_joined_ok": false,
+    "work_hardness_accepted": false,
+    "work_panic": null
+  },
+  "actual_service_terminal": {
+    "actual_join": {
+      "error": "POOL_NOT_ENABLED",
+      "kind": "joined_error"
+    },
+    "actual_join_attempts": 1,
+    "finalizer_panic": null,
+    "full_W1_4097_qualified": false,
+    "joined_ok": false,
+    "missing_or_uncertain_is_failure": true,
+    "not_started": false,
+    "owner_present": true,
+    "same_observation_reused_by_finalizer": false,
+    "schema": "pn1-native-node-service-terminal-v2",
+    "service_start_attempted": true,
+    "stop_requested": true,
+    "work_panic": null
+  },
+  "finished_utc": "2026-10-25T22:47:26.989494+00:00",
+  "elapsed_seconds": 6.460294643999077,
+  "errors": [
+    {
+      "native_nonzero": 101
+    },
+    {
+      "exact_one_test_success_missing": true
+    },
+    {
+      "incomplete_or_failed_root": {
+        "file": "terminal-seven-roots.json",
+        "json_location": "$[0]",
+        "flags": {
+          "lifecycle_complete": true,
+          "secondary_failures_complete": true,
+          "quarantine_entries_complete": true
+        },
+        "owner_pid": 2882821,
+        "failed": true
+      }
+    },
+    {
+      "root_receipt_denominator_or_locations_mismatch": true,
+      "actual": 17,
+      "missing": [
+        [
+          "all-original-connections-closed.json",
+          "$"
+        ],
+        [
+          "cold-connection-really-closed.json",
+          "$"
+        ],
+        [
+          "final-seven-roots.json",
+          "$[0]"
+        ],
+        [
+          "final-seven-roots.json",
+          "$[1]"
+        ],
+        [
+          "final-seven-roots.json",
+          "$[2]"
+        ],
+        [
+          "final-seven-roots.json",
+          "$[3]"
+        ],
+        [
+          "final-seven-roots.json",
+          "$[4]"
+        ],
+        [
+          "final-seven-roots.json",
+          "$[5]"
+        ],
+        [
+          "final-seven-roots.json",
+          "$[6]"
+        ],
+        [
+          "same-domain-cold-readback.json",
+          "$"
+        ]
+      ],
+      "extra": []
+    },
+    {
+      "success_metadata_denominator_mismatch": true,
+      "missing": [
+        "all-original-connections-closed.json",
+        "cold-connection-really-closed.json",
+        "cold-state.json",
+        "final-seven-roots.json",
+        "public-history.json",
+        "public-service-stopped.json",
+        "same-domain-cold-readback.json"
+      ],
+      "extra": []
+    },
+    {
+      "actual_node_result_failed": {
+        "WAN_qualified": false,
+        "component_only": true,
+        "elapsed_ns": 3731886368,
+        "finalization_errors": [
+          "actual terminal root failed: actual I/O domain must remain healthy"
+        ],
+        "full_W1_4097_qualified": false,
+        "full_guard_changed": false,
+        "last_stage": "original-public-v3-read",
+        "merge_ready": false,
+        "pid": 2882821,
+        "result": {
+          "error": "IO: Connection reset by peer (os error 104)",
+          "ok": false
+        },
+        "schema": "pn1-native-node-authenticated-integration-control-v2",
+        "service_joined_ok": false,
+        "work_hardness_accepted": false,
+        "work_panic": null
+      }
+    },
+    {
+      "service_terminal_failed": {
+        "actual_join": {
+          "error": "POOL_NOT_ENABLED",
+          "kind": "joined_error"
+        },
+        "actual_join_attempts": 1,
+        "finalizer_panic": null,
+        "full_W1_4097_qualified": false,
+        "joined_ok": false,
+        "missing_or_uncertain_is_failure": true,
+        "not_started": false,
+        "owner_present": true,
+        "same_observation_reused_by_finalizer": false,
+        "schema": "pn1-native-node-service-terminal-v2",
+        "service_start_attempted": true,
+        "stop_requested": true,
+        "work_panic": null
+      }
+    }
+  ],
+  "finite_Node_component_pass": false,
+  "inventory_receipt_bytes": 512005,
+  "execution_receipt_bytes": 5837,
+  "actual_all_bucket_bytes_including_final_receipts": 31202514
+}

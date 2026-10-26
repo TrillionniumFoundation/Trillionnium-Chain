@@ -1830,6 +1830,227 @@ as separate correctness, resource and public-service contracts.
    requires explicit version/domain/migration review and new independent vectors;
    queue repair or a different PoW paper cannot qualify the unchanged relation.
 
+**Finite observation, 2026-10-25; PN1 remains open.** On clean source
+`630f871293e48588e0a1ceae7ceb64973d3ec31d`, the original maintenance cost
+campaign (`samples=2`, `searches=4`, `attempt-budget=8`, `seed=1`) executed
+64 cohorts / 256 searches: 160 setups, 992 prove calls including 816 target
+misses, 176 winning searches, 80 exhausted searches and 352 post-search verifier
+calls. Independent scalar reconstruction checked 62 distinct challenges and the
+complete retained proof streams; the 256 searches contain only 16 distinct search
+paths and must not be reported as independent hardware samples. In the four
+fixed target/setup groups, maintenance-split-limb had the lowest observed complete
+setup-plus-search wall median, 7.877421% to 23.296266% below generic. Reducing its
+setups from eight to two saved only 0.091616% and 0.829763% of the corresponding
+observed totals; search timing variation is not all amortization. This is one
+machine and finite seeds, not per-prove CPU, energy, global cheapest work or a
+hardware bound. Timed target-miss proof bytes were not retained by that original
+cost collector, and its native PID is unrecorded; neither is reconstructed as
+an original observation. Cost receipt SHA-256:
+`e77e1fc242ed56c186b8df5f04bde381ed2c643bf78d818e46bb67108d13bd00`.
+
+Five original native selectors on the same clean source also passed, with zero
+selected failures or ignored tests. They exercise actual-parent maintenance
+admission/reopen, authorized zero and one-zero task preparation, invalid signed
+recipes, expiry and a heavier-branch registration rollback within their individual
+profiles. They do not authorize arbitrary replacement of a funded task or qualify
+every checkpoint/growth profile. Their original temporary databases were cleaned
+by the tests, so source-bound assertions and stdout are retained evidence rather
+than externally replayable per-proof/database exports. Independent receipt:
+`dec8ca58256fb0be7b842d0e50c8736190bfa202512b8f0817116bca34ac19fa`.
+The separate local two-actor v2 control is likewise finite: it does not close the
+retained v1 failure, the 4,097-identity supplement or the original service campaign.
+Full collection remains disabled pending complete transient SQLite I/O accounting
+and reviewed execution/output path binding. Preserve the original generic service
+workload, limits, confirmations and historical failures while implementing these
+owners; a faster cost producer must not silently replace that workload.
+
+The original hosted x64 and ARM64 cost jobs at this same source, run
+`40190608316` / attempt1, now provide matched inputs for four suites and two
+campaigns. Their original readers validate 432 paired case groups, including
+24 unsupported groups retained in the denominator. Across the eight fixed
+maintenance cases, split-limb has the lowest complete observed wall total on
+both runners; ARM64/x64 totals for that same strategy range from 2.8534 to
+2.9532. These are different hosted VMs and times: four logical processors do
+not establish equal physical cores, clock, isolation, energy or price. The
+observation does not qualify hardware fairness, least-cost work or identity
+exhaustion. Independent paired-artifact receipt:
+`db2c4de84bbf6e767bc37613209bbef1fcd320047e747b9ea39a588967752d6e`.
+
+The uncommitted execution-binding increment has five finite native FD controls
+and seventeen related reader controls, with the original permission failure
+retained. The reader now consumes the actual nested `phase.samples` owner and
+rejects the audited numeric identity/index aliases; all 231 retained assertions
+remain. This is not a real Python-three-FD to Rust bridge or a complete campaign.
+The original clean-source fence rejects the current overlay, and a clean commit
+alone still cannot pass the disabled v2 preparation gate. Review an explicit
+finite preparation contract before that bridge; do not construct a successful
+prepared record, enable full collection or substitute archive inodes for the
+original held objects. The SQLite I/O boundary and all full acceptance remain open.
+
+**Next I02 implementation boundary, still within PN1; design only.** The local
+v2 evidence descriptor's fixed `native.sqlite`, `-wal` and `-shm` roster is not
+the production r13 signed CPU/work-identity contract. Actual SQLite 3.46.0
+initialization also writes a transient rollback journal. Keep that journal's
+real name and the failed/incomplete v2 result: neither final-file inventory nor
+changing journal mode to MEMORY/OFF closes its transient I/O boundary.
+
+Review a fresh local I/O receipt namespace before implementation. The proposed
+representation permits at most three simultaneously retained growing inodes per
+Node, each at most 16 MiB, across the same seven Node roots and 336 MiB total.
+This changes object/lifetime semantics; it is not a claim that old v2 passed.
+Keep the complete 8 GiB evidence ceiling, every other bucket, parent/actor
+AS and FSIZE limits, original 4 CPU/16 GiB scope, 2-second call and three
+30-second pressure rounds. No metadata or unassigned-margin borrowing is
+allowed. Linked-but-closed files, deleted-but-open files and outstanding mappings
+still occupy their original inode slot and byte reservation. A fourth object,
+oversize growth or uncertain lifetime fails and retains evidence. One observed
+initialization fits this candidate slot model; that is not a bound for all SQL,
+temp, spill, recovery or complete campaign paths.
+
+The M15 Node owner must consume a safe connection factory for every persistent
+writer, schema probe, read-only reopen and cold public reader. Its inputs are
+held original root identities, fixed limits and the actual owning process;
+its outputs are a controlled connection and bounded actual lifetime/usage
+receipts. Keep `trnm-pon-node`'s `forbid(unsafe_code)`. Raw SQLite VFS callbacks
+require a separately reviewed safe boundary with correct inventory ownership,
+Cargo graph and lockfile changes; do not hide them in an unrelated crate or
+weaken an existing safety lint. The existing locked SQLite version must be
+checked, and every unsupported backend must reject explicitly.
+
+Reserve before all allocation paths, including journal/temp opens, writes,
+truncates, size hints, chunk rounding, shared-memory growth and mapping; an
+`xWrite` wrapper alone is insufficient. Preserve FULL synchronization and
+original SQL behavior. Account for default-Unix internal SHM operations and
+deferred closes, C callback/name lifetimes, URI/ATTACH/extension escape paths,
+all connection owners and panic/error paths. The full supplement's Node stores
+are currently opened by its controller process; actor TCP/evidence writers
+remain separate owners under the same whole-campaign ledger. A process-local
+counter is not a cross-process disk quota. Logical file-length reservations
+also do not establish allocated-block, filesystem-metadata or global host
+quota bounds. Nonpreemptive filesystem calls retain their original deadlines
+and terminal owners; Unknown cannot refund a reservation.
+
+Implementation order is safe-boundary/graph review, complete VFS plus ordinary
+Node/reader wiring, real native initialization/reopen/crash and cap-refusal
+controls, then the legitimate prepared-source/three-FD caller chain and the
+unchanged full capacity/service cohorts. Keep every original W1, identity,
+depletion, confirmation and timing assertion. The new local representation
+needs independent review and actual source-bound results; it grants no
+execution permission, guard opening, work qualification or new roadmap.
+
+**Finite native implementation increment, 2026-10-25; PN1 still open.** The
+new M15 `trnm-sqlite-io-boundary` safe factory now has actual Linux controls in
+the fresh `pn1-owned-sqlite-real-inode-v1` domain. The
+[retained receipts and limitations](../../evidence/pon-native-io-pn1-20261025/README.md)
+include both original Node failures, the read-only close initialization repair,
+ten VFS controls with 89 exact receipt rows, and the final ordinary Node
+writer/public-read/same-domain AuthV1 cold-readback control with 20 metadata
+files and 27 complete healthy root receipts. The ordinary Node control retained its original SQL,
+4 KiB pages, WAL/FULL, 256 signed transfers, two-second call deadlines, resource
+limits and old assertions. This is an uncommitted component result, not a fresh
+commit/merge qualification, a new W1 search or the full capacity campaign.
+
+Implement the next connection at the actual Python/Rust held-directory boundary:
+consume the original held directory capability and create the seven fresh roots
+relative to it. Do not canonicalize `/proc/self/fd` into a physical path or
+weaken the no-symlink ancestor walk. Bind every controller writer, read-only
+probe and cold reopen to its original lease; stream complete lifetime and
+terminal receipts into reserved existing buckets. Review the legitimate
+three-FD caller and independent reader before enabling any full selector. The
+frozen v2 filename descriptor remains historical; its guard stays closed.
+
+Separately dispose of bundled SQLite 3.46.0's known
+[WAL-reset defect](https://www.sqlite.org/wal.html#walreset) before general
+multiple-writer persistence acceptance. Its official fix requires a reviewed
+dependency/lock/graph and ABI-witness update, followed by actual native controls.
+The current per-callback mutex and successful finite readback do not establish
+that repair. No previous failure is attributed to WAL corruption without evidence.
+
+**Source/evidence update, 2026-10-26; the same PN1/I02 gate stays open.**
+The [dated evidence addendum](../../evidence/pon-native-io-pn1-20261026-addon/README.md)
+keeps the preceding observations as historical source-bound results. On the
+SQLite 3.46 overlay, held-directory native002 passed four real children,
+43 metadata files and 18 receipt locations; original001 remains an overall
+MemoryError/missing-final-receipts FAIL. The 8,192-byte database bucket label
+defect remains recorded, with all bytes charged under the stricter provenance
+cap. Original VFS004 then passed ten children/89 locations (86 healthy plus
+three original expected SQLite 13 cap refusals); only its cap case uses 64 KiB
+pages. Node005 passed 20 metadata/27 locations, the original two-second
+Head/History limits, actual single join and same-lease cold AuthV1 readback.
+Its earlier 6b4 preparation failure remains separate from actual 6b9 execution.
+None of these finite observations generated a new W1 search.
+
+The six-file original harness now connects private held-output authority and
+the exact seven role leases to miner, receiver, verifier and cold reopen. Its
+outer JSON writer reserves the first-pass byte count before actual second-pass
+writes and keeps the first error/poisoned reservation without refund. Normal
+compilation, strict-Clippy002, 13 finite units (11 retained plus two stateful
+serialization cases) and final formatting passed on that old graph. Keep
+strict-Clippy001's exit 101 and all 13 ignored selectors; ignored is not PASS.
+The native libtest child PID/starttick was not separately serialized, so no
+collector PID or earlier component child grants original three-FD caller,
+whole-writer or strict-reader qualification. Two copies of its diagnostic
+178,353,576-byte ELF (opt-level 3/debug 2/assertions and overflow checks enabled)
+exceed the unchanged 192 MiB binary bucket. This measurement applies only to
+that diagnostic ELF; the original full selector's actual `--release` ELF size
+has not been measured. The next existing caller preparation must use its
+original release profile (opt-level 3/debug 0/assertions and overflow checks
+disabled/test true), then check exact profile and source binding. Keep the
+original diagnostic bytes and budget evidence; do not strip/delete them,
+refund charged copies, borrow margin or raise a limit to qualify a run.
+
+A separate source-only admission pins all seven SQLite consumers to exact
+rusqlite 0.39.0, sys 0.37.0/SQLite 3.51.3 and the fresh
+`sqlite-3.51.3-normal-native-linux-layout-v2` fence, with a reviewed 155-node
+resolved graph. This does not inherit the 3.46 normal-C witness, ELF or PASS.
+The first fresh normal build actually failed with exit 101 after 28.262877 s;
+its generated C witness artifacts are retained, not whole-build or independent
+ABI qualification. After a narrow equivalent MAIN_DB API adaptation, attempt002
+also failed with exit 101 after 4.054297 s. Both original failures, logs and
+source-before/after pins remain. After the equivalent VFS-name API adaptation,
+normal003 actually compiled with exit 0 after 6.614984 s. Its sealed normal-C
+receipt binds the actual cfg/v2 fence, four defined witness globals, all 19
+read-only layout values and a 19,130,200-byte VFS ELF (opt-level 0/debug 2).
+An independent read-only C-object review confirms that compile gate. This is
+normal compilation and static C readback, without native execution or runtime
+ABI/control qualification. It does not close WAL-reset persistence acceptance,
+runtime/release closure or the full graph's security review.
+
+Continue the original PN1 order: actual new normal-C ABI/witness and unchanged
+held-directory, ten-case VFS and ordinary Node controls; then complete outer
+writer accounting, legitimate original three-FD execution and independent
+strict-reader qualification; only then the frozen 4,097 complete identities
+crossing the 4,096-entry paid boundary, fresh 24-actor pressure and original
+public-service profiles. Keep every original proof, CPU, identity, depletion,
+confirmation, two-second call, three 30-second pressure rounds and whole
+8 GiB/resource assertion. Full guards stay false until those source-bound gates
+actually pass. No work-hardness, Windows, ordinary three-round model,
+release/loader/custody/repair or independent-WAN gate closes.
+The original LAN setup3 is a retained FAIL after 6.586268785 hours; its seven
+successful samples/14 cold hops and unknown remote terminal/1 GiB charge cannot
+be relabelled as a completed or continuing 72-hour WAN run.
+
+**Later controlled 3.51.3 increment, 2026-10-26; still PN1/I02.**
+The [source-bound three-family result](../../evidence/pon-native-io-pn1-20261026-addon/sqlite3513-compat-three-finite.json)
+retains the first real new-engine VFS FAIL: ten terminal children, three
+WAL/SHM failures and 80/89 required receipts. Exact upstream 3.51.3 passes
+`writeLock=2` as the SHM extension argument; its Unix backend treats that
+nonzero value as extension. The controlled wrapper now admits only 0/1/2
+and reserves the complete rounded length before either nonzero call, keeping
+unknown-value rejection, the three-inode limit and every 16 MiB ceiling.
+No optional parameter-trace native was executed. With that minimal source fix,
+all original finite families actually passed and were independently read back:
+VFS ten children/89 receipts, ordinary Node 20 metadata/27 receipts and held
+four children/43 metadata/18 receipts. Original Node two-second calls, 256
+transfers, retained proof, single join and same-lease cold readback remain.
+Locked workspace/all-targets compilation and seven-consumer strict Clippy also
+passed. These are local overlays, without new W1 search, original three-FD/full
+writer/reader acceptance, full 4,097 identities, Windows, model efficacy,
+complete release/custody/repair or independent WAN qualification. The held
+collector's 8,192-byte database bucket-label defect remains explicit; all bytes
+were charged under the stricter provenance bound. No old failure or limit is
+removed, and the original release-profile binary/caller gate stays open.
+
 Exit: separate work-security and honest-service verdicts with raw denominators,
 assumptions and independent reproduction. Queue cleanup or ACK alone cannot pass.
 A failed work relation needs an explicitly versioned reviewed successor, fresh
@@ -3814,3 +4035,5 @@ the three changed workflows' actionlint checks, all twenty source-blob guards
 and the exact twenty-five-package locked Cargo graph also passed. Source digests
 before and after the native tests and Clippy are retained. These checks do not
 grant production, model-efficacy, independent-security or release acceptance.
+
+The original release-profile no-run build now actually passes (2026-10-26T03:18Z): exit 0 in 268.031 seconds, exact opt-level 3/debug 0/assertions false/overflow checks false/test true, and an actual 10,134,904-byte ELF. Its two-copy arithmetic is 20,269,808 bytes, within the unchanged 192 MiB bucket. The root independently rechecked the ELF, both original streams, the actual durable terminal and all 22 before/after source pins; no monitor violation or owner error occurred. The separately documented 178,353,576-byte diagnostic ELF and every failed build remain historical evidence. This new result removes only the release-build/profile/size preparation blocker: no lawful prepared bundle or execution copy was created, and the original three-FD caller, whole writer, strict reader and full 4,097-identity acceptance remain unqualified. No full guard, deadline, assertion or budget changed. See the [original release-build compact receipt](../../evidence/pon-native-io-pn1-20261026-addon/sqlite3513-original-release-build.json).
