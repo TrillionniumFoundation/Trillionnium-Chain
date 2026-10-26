@@ -875,7 +875,9 @@ pub mod daa_incremental_research {
             Ok(summary)
         }
 
-        pub fn len(&self) -> usize { self.summaries.len() }
+        pub fn len(&self) -> usize {
+            self.summaries.len()
+        }
     }
 
     impl Summary {
@@ -978,10 +980,18 @@ pub mod daa_incremental_research {
             })
         }
 
-        pub fn height(&self) -> u64 { self.height }
-        pub fn block_id(&self) -> Digest { self.block_id }
-        pub fn anchor_id(&self) -> Option<Digest> { self.anchor.map(|a| a.block_id) }
-        pub fn recent_count(&self) -> u8 { self.recent_len }
+        pub fn height(&self) -> u64 {
+            self.height
+        }
+        pub fn block_id(&self) -> Digest {
+            self.block_id
+        }
+        pub fn anchor_id(&self) -> Option<Digest> {
+            self.anchor.map(|a| a.block_id)
+        }
+        pub fn recent_count(&self) -> u8 {
+            self.recent_len
+        }
     }
 }
 
@@ -992,10 +1002,9 @@ mod daa_incremental_research_tests {
     };
 
     fn context(clock: ParentClock) -> Context {
-        let mut base = [0_u8; 32];
-        base[4] = 0x10; // 2^220
         let mut cap = [255_u8; 32];
-        cap[0] = 0; cap[1] = 0;
+        cap[0] = 0;
+        cap[1] = 0;
         Context {
             network: [1; 32], parameters: [2; 32], genesis: [3; 32],
             genesis_timestamp: 10_000, activation_height: 16,
