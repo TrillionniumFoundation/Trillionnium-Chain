@@ -45,11 +45,11 @@ The new files have exact published Git blob identities:
 
 | New file | Git blob SHA |
 | --- | --- |
-| `w2c_local_epoch_lease.py` | `f9e56572793b581db0d83a781b080e7606082238` |
-| `test_w2c_local_epoch_lease.py` | `25a16ad14e874c8ddf9f65373c0b28ee751cd05a` |
+| `w2c_local_epoch_lease.py` | `352cf5b9400d347d0e4360d5c381cf8eec6ebf86` |
+| `test_w2c_local_epoch_lease.py` | `446e211fda58f0de2e32f7a4c5f75ee2d32f351f` |
 
 The 2026-10-26 scratch execution copied the two new source files
-byte-for-byte (Git blob identities rechecked) and ran **7/7 passing tests**
+byte-for-byte (Git blob identities rechecked) and ran **8/8 passing tests**
 using Python 3.13 on Linux, with function-equivalent local mirrors of
 the preexisting W2-C `StatelessReceiverAdmission`,
 `Grant`/`solve` and domain-separated `H` dependencies.
@@ -58,7 +58,7 @@ This is **not an exact full-repository/preflight or native-Rust run**.
 Tests cover two actually separate OS processes contending on the same lock;
 fork-duplicated object rejection; replacement file/symlink/wrong mode;
 reopen with genuinely fresh Epoch and refused old ticket; one-use paid
-nonce replay, as well as live parent/file-mode tampering and fixed
+nonce replay, closed-owner secret lifetime, live parent/file-mode tampering and fixed
 difficulty-policy downgrade. One local fork test emits a Python
 multithreaded-fork deprecation warning; it is retained as a process-boundary
 limitation rather than hidden.
@@ -89,3 +89,23 @@ limitation rather than hidden.
 
 Status remains `SHADOW_ONLY / HOLD_NO_GO`; W1 block validity,
 fork weight, version namespaces and production activation are unchanged.
+
+## Preserved at-fork secret-retention counterexample and correction
+
+A separate Python lifetime review observed that registering the bound
+`self._after_fork_child` method via `os.register_at_fork` makes the
+process-global callback registry **retain the otherwise closed issuer
+object**, including the old secret and Epoch. The pre-fix local weakref
+counterexample returned `closed_epoch_object_retained_by_atfork_callback=True`.
+Closing its file descriptor alone was not a memory-lifetime fix.
+
+The current implementation registers a function holding only a
+`weakref.ref(self)`, then checks whether the issuer is still alive
+before safely disowning its FD after Fork. A new test
+`test_closed_epoch_owner_and_secret_not_retained_by_global_fork_callback`
+now demands garbage collection of the closed issuer. The 2026-10-26
+isolated Linux/Python 3.13 harness passed **8/8** tests against
+byte-identical new source files. This reduces accidental lifetime
+retention but **does not guarantee cryptographic zeroization** of
+old Python heap allocations, memory snapshots or external process
+copies; the independent P6 review remains open.
