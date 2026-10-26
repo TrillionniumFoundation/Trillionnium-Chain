@@ -345,6 +345,10 @@ class RenewalOutbox:
             raise OutboxError('STATUS_REENTRANT')
         self.db.execute('BEGIN')
         try:
+            # A diagnostic must not present an unaudited corrupt intent or
+            # event history as a trustworthy negative dispatch observation.
+            # This audit shares the SAME read snapshot as the following rows.
+            self._audit_snapshot()
             row = self.db.execute(
                 'SELECT packet_id,wire FROM q4_outbox_intents_v1 WHERE id=?',
                 (ident,)

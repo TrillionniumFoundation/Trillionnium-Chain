@@ -330,6 +330,41 @@ class RenewalOutboxTests(unittest.TestCase):
             self.assertTrue(db.status(key)['has_no_durable_dispatch_fence'])
             self.assertEqual(db.audit(), 0)
 
+    def test_status_refuses_corrupted_intent_in_same_durable_snapshot(self):
+        # An old status implementation could return a misleading diagnostic
+        # after a corrupted intent was visible in SQLite.  The entire bounded
+        # journal must pass canonical cold-style audit in the *same* snapshot.
+        with self.open() as db:
+            key = db.prepare(intent())
+            db.dispatch_unknown(key)
+            good = db.status(key)
+            self.assertTrue(good['dispatch_unknown'])
+            with sqlite3.connect(self.file) as raw:
+                raw.execute('UPDATE q4_outbox_intents_v1 SET wire=? WHERE id=?',
+                            (intent().wire() + b'forged', key))
+            with self.assertRaisesRegex(OutboxError, 'INTENT_CORRUPT'):
+                db.status(key)
+            self.assertFalse(db.db.in_transaction)
+
+    def test_status_refuses_tampered_dispatch_event_even_without_reopen(self):
+        with self.open() as db:
+            key = db.prepare(intent())
+            db.dispatch_unknown(key)
+            self.assertTrue(db.status(key)['dispatch_unknown'])
+            with sqlite3.connect(self.file) as raw:
+                raw.execute('UPDATE q4_outbox_events_v1 SET kind=? WHERE ordinal=1',
+                            ('OBSERVED_UNAVAILABLE',))
+            with self.assertRaisesRegex(OutboxError, 'EVENT_DIGEST'):
+                db.status(key)
+            self.assertFalse(db.db.in_transaction)
+            # Reconcile exact stored identity; never create another dispatch.
+            with sqlite3.connect(self.file) as raw:
+                raw.execute('UPDATE q4_outbox_events_v1 SET kind=? WHERE ordinal=1',
+                            ('DISPATCH_UNKNOWN',))
+            self.assertTrue(db.status(key)['dispatch_unknown'])
+            with self.assertRaisesRegex(OutboxError, 'NO_REDISPATCH'):
+                db.dispatch_unknown(key)
+
     def test_nested_audit_refuses_without_rolling_back_writer_intent(self):
         with self.open() as db:
             db.db.execute('BEGIN IMMEDIATE')

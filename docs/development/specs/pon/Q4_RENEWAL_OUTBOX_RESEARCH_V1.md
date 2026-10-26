@@ -98,3 +98,21 @@ Two negative tests force an independent SQLite writer to attempt dispatch during
 the second read and verify the original writer can proceed only after the
 snapshot releases. No real native W1, physical crash, WAN or owner admission
 was executed by this research change.
+
+## Audited diagnostic status under corrupt local history (2026-10-26)
+
+The research-only `status()` now performs the existing bounded complete
+intent/event/namespace integrity audit inside its **same SQLite read transaction**
+before returning any diagnostic about dispatch history. An altered intent wire or
+a corrupted event can no longer make an unaudited status look legitimate while
+`audit()`/cold reopen would refuse the same state. A failed status releases its
+read lock and grants no fresh attempt, nonce, payment, source signature, chain
+confirmation or `NotDispatched` authority. Two additional negative controls
+mutate a second connection's durable intent and dispatch event, observe fail-closed
+status, and check recovery without dispatch duplication. This retains the
+existing `q4_outbox_*_v1` schema and never modifies Q4 signed bytes, W1,
+Maintenance or installed DAA.
+
+This is a local integrity improvement, not tamper evidence against a privileged
+attacker who can rewrite all SQLite bytes and checksum history, and not an
+ordinary Hepta/native operator or independent client/WAN acceptance result.
