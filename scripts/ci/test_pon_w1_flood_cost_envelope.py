@@ -189,6 +189,15 @@ class FloodCostSourceTests(unittest.TestCase):
         self.assertEqual(E.analyze(row)['case_rows'][0]['challenge'],
                          'be2f41a613694ec7cce8ee6bfc34e4b67848335022ce9ff3fa2138888eab1d03')
 
+    def test_optional_independent_scalar_oracle_really_rejects_forged_trace(self):
+        # This invokes the independent Python arithmetic relation, not a mock,
+        # and cannot grant native VerifiedWork or independent P6 acceptance.
+        result=E.analyze(fixture(), oracle_check=True)
+        self.assertTrue(result['local_scalar_oracle_replayed_every_case'])
+        self.assertFalse(result['payload_relation_independently_verified'])
+        self.assertFalse(result['local_oracle_is_external_cryptanalysis'])
+        self.assertEqual(result['public_fairness_or_security_verdict'],'UNKNOWN')
+
     def test_no_attacker_asic_or_host_independence_claim(self):
         result=E.analyze(fixture())
         for field in ('source_attestation_checked',
