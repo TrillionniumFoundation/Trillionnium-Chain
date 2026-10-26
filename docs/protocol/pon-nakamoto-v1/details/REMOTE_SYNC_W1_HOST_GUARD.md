@@ -136,11 +136,15 @@ New candidate scope (child of the last committed #342 head):
    transcripts/products, cancellation and bad execution roots. An unknown
    clock or failed settlement makes the sync result unqualified and fences
    later CPU operations, but **cannot undo an already durable block**.
-4. A cold start may wait at most five seconds to acquire an original start
-   quantum through original refill; there is no new grant or altered consensus
-   TTL. Insufficient credit remains local PUBLIC_MUTATION_CPU_BUDGET, not an
-   invalid W1 verdict. Individual deep stages remain cooperative rather than
-   hard-preemptible.
+4. One entire incoming History page shares a **single absolute five-second**
+   CPU reservation/deadline window, measured from page-receive entry. It is
+   never replenished by another malicious proof inside the same page. A cold
+   start may wait within that original window to acquire a CPU start quantum
+   through existing refill; there is no new credit or changed consensus TTL.
+   Deadline expiry/insufficient credit returns local PUBLIC_MUTATION_CPU_BUDGET,
+   not an invalid W1 verdict. W1/M06 cooperative checkpoints enforce that
+   window; deep indivisible stages remain nonpreemptive. A separate native test
+   refuses an already-expired window before beginning a W1 proof.
 5. A source claiming loopback still pays this original Node-local account.
    A local TCP tunnel can lie about true origin and bypass the nonloopback
    cgroup requirement; it cannot thereby skip this local CPU charge.
