@@ -1,0 +1,29 @@
+{
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "-B",
+    "/dev/shm/W1-task-product-reader-b6f2322-v1/scripts/read_w1_task_product_research.py",
+    "--bundle",
+    "/workspace/scratch/3863a747524b/w1-cost-raw/task-product-campaign-b6f2322-v1",
+    "--out",
+    "/dev/shm/W1-task-product-readback-b6f2322-v1.json",
+    "--expected-head",
+    "b6f2322dacc4a23ec43e3207be008614e07c60b7",
+    "--expected-tree",
+    "895b472f7a2b8c532081a0dea4c021e1b30cb9a1",
+    "--expected-plan-sha256",
+    "f44e98f40bd9d3a85ed3e61024652d7b6e03b9dde593fc02e1039ad4961a9dc3",
+    "--expected-binary-sha256",
+    "e8303ab882d4c19851ebbc626c13c0a69646a816824e8a6e45ffa597b78a872e",
+    "--expected-manifest-sha256",
+    "d5be47140723a216e8b3e505a4fd19f21077b86e519853644eb91d19813bee28"
+  ],
+  "cwd": "/dev/shm/W1-task-product-reader-b6f2322-v1",
+  "native_jobs_rerun": false,
+  "output_sha256": "cce5a5275827625149a660f9bd9bd440e2ef44b22416e26052f24dc6f1a2dc91",
+  "returncode": 0,
+  "schema": "w1-task-product-complete-reader-run-v1",
+  "stderr": "",
+  "stdout": "{\"proof_records_replayed\": 56, \"accepted_verifier_calls\": 112}\n",
+  "wall_ns": 6627528835
+}

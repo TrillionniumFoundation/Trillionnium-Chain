@@ -3109,6 +3109,31 @@ impl Node {
         }
         Ok(out)
     }
+    /// Test the actual mining clock against the same validated ancestor window
+    /// and timestamp predicate as Packet admission, without reading full bodies
+    /// or deriving a replacement timestamp from the parent.
+    pub(crate) fn check_mining_wall_time(&self, parent: Hash, observed_now: u64) -> Result<()> {
+        ensure(
+            self.state_backend != StateBackend::PermanentAccountGrowthV2,
+            "GROWTH_COMPLETE_STATE_UNAVAILABLE",
+        )?;
+        // This availability check needs only MTP's eleven ancestors. The original
+        // target preparation and full admission still check the deeper DAA window.
+        let mut times = Vec::with_capacity(11);
+        let (next, _) = self.visit_header_batch_limited(parent, 11, &mut |_, link| {
+            times.push(link.header.timestamp);
+            Ok(())
+        })?;
+        if next == self.settings.genesis() && times.len() < 11 {
+            times.push(self.settings.genesis_time());
+        }
+        consensus::check_time(
+            observed_now,
+            &times,
+            observed_now,
+            self.settings.limit("future_skew_seconds")?,
+        )
+    }
     pub fn expected_target(&self, parent: Hash) -> Result<Hash> {
         if self.state_backend == StateBackend::PermanentAccountGrowthV2 {
             return self.growth_expected_target(parent);
@@ -6179,6 +6204,25 @@ mod error_boundary_tests {
             );
             assert!(!called);
         }
+        // A mature wall-clock precheck uses exactly eleven header projections,
+        // independently of the larger DAA window. Heights 70..60 have MTP 651.
+        let wall_before = node.history_read_counters();
+        assert_eq!(
+            node.check_mining_wall_time(ids[70], 651)
+                .unwrap_err()
+                .to_string(),
+            "TIME"
+        );
+        node.check_mining_wall_time(ids[70], 652).unwrap();
+        let wall_after = node.history_read_counters();
+        assert_eq!(
+            wall_after.header_link_queries - wall_before.header_link_queries,
+            2
+        );
+        assert_eq!(
+            wall_after.header_trace_bytes - wall_before.header_trace_bytes,
+            2 * 11 * (HEADER_BYTES + 32) as u64
+        );
         let n = 100_u64;
         let start = std::time::Instant::now();
         let counters0 = node.history_read_counters();

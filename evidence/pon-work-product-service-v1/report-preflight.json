@@ -1,0 +1,9 @@
+{
+  "command": [
+    "bash",
+    "scripts/project-preflight.sh"
+  ],
+  "returncode": 0,
+  "stdout": "{\"result\": \"PASS\", \"mode\": \"--dev\", \"project\": \"trillionnium-chain\", \"packages\": 25, \"branch\": \"feature/chain-w1-cost-research-20261025\", \"remote_policy_mutated\": false}\n",
+  "stderr": ""
+}

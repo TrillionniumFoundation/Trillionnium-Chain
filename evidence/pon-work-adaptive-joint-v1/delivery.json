@@ -1,0 +1,15 @@
+{
+  "absolute_path": "/workspace/scratch/3863a747524b/W1_adaptive_joint_evidence_20261025.tar.gz",
+  "all_members_bytecount_and_sha256_verified": true,
+  "bytes": 61184693,
+  "core_members_separately_verified": 312,
+  "core_sha256": "48895e1e1f9f2f43bfc08d999c0713e07a7afbd326c11060a32a409ac2900b58",
+  "file": "W1_adaptive_joint_evidence_20261025.tar.gz",
+  "hardware_attestation": false,
+  "outer_members_verified": 130,
+  "production_activation": false,
+  "schema": "w1-adaptive-joint-delivery-receipt-v1",
+  "sha256": "06e1cef3b0a8bef005ad319e4a995ea68b7e13959e5a807e1c3b6f7f02135e5a",
+  "source_commit": "b951208273472fda11bd78dc7c01923591652224",
+  "uncompressed_outer_member_bytes": 75489973
+}

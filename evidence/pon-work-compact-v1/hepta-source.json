@@ -1,0 +1,62 @@
+{
+  "schema": "w1-hepta-initial-parent-source-review-v3",
+  "utc": "2026-10-26T05:44:14.979686+00:00",
+  "head": "de133b601e133917cbe1ae03efb3a2ffc06dcd4a",
+  "source_files": [
+    {
+      "path": "codex-rs/hepta-learning-artifacts/src/selected_initial_smollm.rs",
+      "bytes": 4506,
+      "sha256": "3fbfa91e9b664edc0fde77201e7a61a4caf577ccebe4313087e1457d29ee087a",
+      "exact_git_blob": true
+    },
+    {
+      "path": "codex-rs/hepta-learning-artifacts/src/initial_smollm_genesis.rs",
+      "bytes": 2270,
+      "sha256": "a12faf2fcfb732ede89a1829e92ec18fc07aec225c2dc5702c95ae24fb31b466",
+      "exact_git_blob": true
+    },
+    {
+      "path": "codex-rs/hepta-learning-artifacts/src/selection.rs",
+      "bytes": 30316,
+      "sha256": "b1c8fdd5898512c4f8c7dff4bf94349b2c13e8b761dbd6c1d0c1123dac81e831",
+      "exact_git_blob": true
+    },
+    {
+      "path": "codex-rs/hepta-learning-artifacts/profiles/smollm2-initial-positive-zero-v1.profile",
+      "bytes": 806,
+      "sha256": "561414aec8b51f2a18ae3948dd44a321f924b1e12961a8e0139774b42387fcf0",
+      "exact_git_blob": true
+    },
+    {
+      "path": "codex-rs/hepta-learning-artifacts/profiles/smollm2-initial-positive-zero-v1.safetensors.header",
+      "bytes": 12056,
+      "sha256": "fd757f8de795870802477dcd626dfa0186fe8728d83f16f31d872cd2f89bbdb0",
+      "exact_git_blob": true
+    },
+    {
+      "path": "codex-rs/hepta-agentd/src/neural_cognitive_ranker.rs",
+      "bytes": 9656,
+      "sha256": "f44f129a2b4693b2190dbb1874cb8b6eaa1b224038811674c6febf9ffefe0d13",
+      "exact_git_blob": true
+    },
+    {
+      "path": "codex-rs/hepta-infer-worker-host/src/smollm_cognitive_host.rs",
+      "bytes": 10668,
+      "sha256": "f988f3648e06c115056b4f86593c4be526657434537fa5f748cb79c95a692ae0",
+      "exact_git_blob": true
+    },
+    {
+      "path": "docs/lane-e/END_TO_END_LEARNING_SEQUENCE.md",
+      "bytes": 34004,
+      "sha256": "7d7e973b357a42593d6eee42ae1aa4bbdb6b4a49287e920807f59c73734666a5",
+      "exact_git_blob": true
+    }
+  ],
+  "source_only": true,
+  "new_model_execution": false,
+  "new_adoption": false,
+  "independent_hardware": false,
+  "host_initial_only_composition_established": false,
+  "original_blocker": "O06",
+  "original_blocker_closed": false
+}

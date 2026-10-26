@@ -1,7 +1,7 @@
 # Trillionnium Chain Development Plan — PoN / Hepta-PoH revision
 
-Plan ID: `trnm-chain-development-plan-v2` (stable registry identity; content revision 22).
-Effective: 2026-09-28; priority implementation revision: 2026-10-25. Status: selected development direction; no runtime activation.
+Plan ID: `trnm-chain-development-plan-v2` (stable registry identity; content revision 34).
+Effective: 2026-09-28; priority implementation revision: 2026-10-26 America/New_York (2026-10-26 UTC). Status: selected development direction; no runtime activation.
 Canonical destination: `refs/heads/main`; continuation uses the current main lineage, not retired PR #194.
 Current source/head/tree/base and prospective merge are derived at verification time.
 Assessed legacy baseline: `c552c31c6d3c5ac47522a124e02c6b8bca4e23f2`, tree
@@ -106,6 +106,87 @@ I07 evaluation precede I08 exact task observation; I09 complete release fetch
 precedes I10 local admission/install/readback. Reuse Hepta's existing
 [global plan](https://github.com/TrillionniumFoundation/hepta-private-ci/blob/c38e7727220f32c7410f59083c5ea7878bbae078/docs/DEVELOPMENT.md)
 and work-package owners; Agentd composes calls and creates no second store.
+
+### PN1 cost-security research amendment — 2026-10-25
+
+The [W1 cost security game](../protocol/pon-nakamoto-v1/details/W1_COST_SECURITY_GAME.md)
+refines the existing PN1 / I01–I02 qualification obligation. It defines charged
+preprocessing, concurrent tasks and parents, reuse horizons, adaptive algorithms,
+resource vectors and distinct semantic tickets. Relation correctness, eligible
+parent-bound candidates, completed admission and canonical chain growth retain
+separate counts. Reference FLOPs are an algorithm description, never an adversary
+lower bound. The sensitivity targets 11/10, 5/4, 2 and 4 are research parameters;
+none is an accepted protocol security factor.
+
+The [preregistered local experiment](../../formal/pon-nakamoto-v1/experiments/w1_cost_campaign_v1.json)
+compares the thirteen retained producers and a research-only
+[general integer-paired producer](../protocol/pon-nakamoto-v1/details/W1_INTEGER_PAIRED_GENERAL_RESEARCH.md)
+with charged preparation, all attempts, algorithm-selection training, repeated
+challenges and three actual parent states. Its runner requires an exact clean
+source and records the actual local resource envelope. This supplemental cohort
+does not replace the original 400%-CPU / 16-GiB service qualification, establish
+independent hardware performance or change W1. The term `cold` means rebuilding
+the producer; it does not assert flushed hardware caches. Batch observations use
+a sequential queue. The adaptive arm selects algorithms on a fixed task; arbitrary
+task/seed selection remains a separate obligation. A separately registered
+[task-family selector](../../formal/pon-nakamoto-v1/experiments/task_family_selection.py)
+actually trains nine family/algorithm combinations, selects without reading
+winning counts and evaluates a precommitted independent challenge stream. Its
+100-ms / 1-s / 5-s process-CPU budgets charge all training, child startup, native
+observers and raw retention. This relation-only choice between three fixed public
+families does not establish arbitrary native task eligibility or seed grinding.
+
+The [qualification separation experiment](../protocol/pon-nakamoto-v1/details/W1_QUALIFICATION_SEPARATION_RESEARCH.md)
+checks exact codecs, duplicate semantics, signed-body challenge binding, service
+settlement and numerical boundaries. Quantizer fixtures and retained historical
+Hepta observations do not qualify new training convergence or installed releases.
+The [research evidence](../../evidence/pon-work-cost-research-v1/README.md) records
+the measured source separately from subsequent publication. Complete registered
+cohorts, failed and zero-yield cases, inclusive production-completion costs and
+observer costs must remain visible. Mathematical assumptions, finite observations
+and unmeasured resources receive different verdicts. Pure matrix PoN remains the
+main research direction; a hypothetical priced work floor is a conditional cost
+comparison, not an enabled fallback. No readiness or acceptance flag changes.
+
+### PN1 adaptive and joint execution refinement — 2026-10-25
+
+The same cost-security obligation now has an explicit
+[adaptive/joint research contract](../protocol/pon-nakamoto-v1/details/W1_ADAPTIVE_JOINT_RESEARCH.md)
+and a separate [58-job registered plan](../../formal/pon-nakamoto-v1/experiments/w1_adaptive_joint_campaign_v1.json).
+Its four-lane AVX2 producer computes complete independent challenge transcripts
+jointly, with exact finite-field limb reduction and the unchanged PNW1 bytes.
+A lack of AVX2 is an explicit unsupported result. The comparison uses the same
+challenge stream and an ordinary sequential prepared producer. Cold preparation
+is per batch, not a hardware cache flush or the prior campaign's per-attempt cold.
+
+The native parent experiment acquires both development task alternatives through
+the original Node, pays for actual signed registration/renewal/revocation and
+parent advancement, and compares fixed task choices with paid public-noise
+screening. Arithmetic caches never supply current task authority. All research
+proofs, including misses, are retained and independently replayed. Original
+Node internal misses are reconstructed after the strategy ends and explicitly
+supply no new credit or selection feedback. Actual native receipts remain
+native observations; Python arithmetic replay does not attest the node host.
+
+The [exact finite models](../../formal/pon-nakamoto-v1/experiments/w1_adaptive_cost_models.py)
+exercise completed random-oracle queries, unqueried submissions, prepaid winning
+credit capacity, bounded fanout, paid selection and predictable weighted stopping.
+Hypothetical hybrid schedules distinguish fresh useful work, reuse on failed
+floor nonces, and repeated credited outputs. A successful finite control supplies
+neither a physical resource conversion nor a universal non-amortization theorem.
+The pure matrix direction, original service envelope and PN0–PN6 acceptance
+meaning remain unchanged. Source/plan freezing precedes performance collection;
+measurements and their complete limitations must be published separately.
+
+The [completed bounded campaign](../../evidence/pon-work-adaptive-joint-v1/README.md)
+now binds measured commit b951208273472fda11bd78dc7c01923591652224 and tree
+40e619e4c188f22126d9ce63db87f125343a2378 to all 58 registered jobs and 2729 full
+proof-record replays. All 21 joint pairs and 6 parent cache pairs, slower cases,
+zero yields, caps and budget overshoot remain visible. The parent pairs have
+identical within-budget counts and stop at their attempt cap; their CPU ratios
+do not establish increased maximum budget yield. The bounded closure ledger
+does not close universal cost hardness, independent hardware, genuine Hepta
+quality or production qualification. Publication preserves measured identity.
 
 ### Audit contract refinement — 2026-10-25
 
@@ -1462,6 +1543,451 @@ fresh committed-source rerun of that unchanged load and independent complete
 reference replay. The earlier passed 16,411-key case remains scoped to its original
 source. Reaching 65,536 keys, rejecting 65,537 without changing parent state, large
 payload/workspace cases and hostile availability remain separate obligations.
+
+### PN1 complete-budget native admission refinement — 2026-10-25
+
+The completed native parent jobs stopped at their 32-attempt cap before spending
+the nominal second. The [38-job continuation](../../formal/pon-nakamoto-v1/experiments/w1_native_budget_campaign_v1.json)
+therefore adds a versioned research-only budget mode: pay the same registration,
+renewal and advancing prefix, then hold the final parent fixed and run until the
+inclusive CPU budget. Specialized maintenance/zero producers are compared with
+the general paired producer under frozen streams and 4,096-attempt safety caps.
+The [contract](../protocol/pon-nakamoto-v1/details/W1_ADAPTIVE_JOINT_RESEARCH.md#7-equal-budget-native-admission-continuation)
+and [analysis](../../formal/pon-nakamoto-v1/experiments/analyze_w1_native_budget.py)
+keep caps, late admissions, overshoot, auxiliary acquisition and incomplete
+lifecycle controls explicit. Sibling admissions do not become canonical growth.
+
+The original hosted ARM Clippy failure is a research-example architecture-scope
+regression: AVX2-only variants/imports were visible in ARM compilation. Scope the
+code to its actual architecture and retain explicit unsupported behavior; do not
+weaken the strict gate. New head/merge hosted observations remain necessary.
+The cost game also refines the conditional ideal-trace-oracle extraction boundary;
+its exact query geometry and finite controls do not prove actual SHA-256/W1
+hardness or a physical work floor. PN0–PN6 acceptance and pure-matrix priority stay
+unchanged. This is the same existing plan, not a separate release roadmap.
+
+The [completed 38-job evidence](../../evidence/pon-work-native-budget-v1/README.md)
+binds measured source `922e4970ea387f09831f34f93168ceb7b18854ee`. All thirty main
+jobs reached the fixed final parent and stopped on budget before the safety cap;
+all 5,322 retained proof records were replayed. This record count includes 336
+original winners repeated within 594 posthoc reconstructions, not new credit.
+The fifteen producer pairs give 9 higher, 5 lower and 1 equal specialized
+research-admission yields; twelve hot/cold pairs give 4 higher and 8 lower hot
+yields. The negative zero/hot/3102 observation remains unchanged. All main jobs
+end at height 5 and chainwork 10, not additive sibling growth. Full strategy CPU
+includes native observers and receiving admission/duplicate checks, so it is
+not an enforced attacker-miner cost floor.
+
+The first complete collection at `4628f461d8935b0976f6703c7a5c78517bac2f4e`
+failed the existing strict reader's observer-registration key check. All raw
+records remain preserved and unqualified. The corrected plan changes that
+metadata key only; all 38 commands, order, budgets and caps are unchanged, with
+a new collector prevalidation control and a complete fresh repeat. Exact-source
+validation passed 277 Python and 203 Rust tests with two pre-existing ignores,
+plus strict whole-workspace/all-target/all-feature release Clippy and formatting.
+Hosted ARM head/merge jobs had no assigned runner at the recorded observation;
+source repair does not grant that gate. The [blocker ledger](../../evidence/pon-work-native-budget-v1/blockers.json)
+retains all seven global research/product obligations and their applicability.
+No work-hardness, model-efficacy, independent-security or production acceptance
+is promoted.
+
+### PN1 temporal resource and separated miner refinement — 2026-10-26
+
+The [resource reduction](../protocol/pon-nakamoto-v1/details/W1_RESOURCE_REDUCTION_V1.md)
+now distinguishes canonical work available before the first lottery answer from
+a completed proof supplied only after winning. It includes already known
+winning capacity and unseen prepared opportunities, all early guessed ticket
+inputs, late header/task binding, candidate extraction overhead and an explicit
+temporal SHA-256 instantiation premise. The conditional prefix-to-opportunity
+bound is useful only with an independently established multi-instance resource
+assumption and positive net lower bound. It supplies neither by definition.
+Exact winner-only proof and overlapping-cost countermodels constrain possible
+hybrid/ZK successors; neither architecture is activated.
+
+The [miner resource contract](../protocol/pon-nakamoto-v1/details/W1_MINER_RESOURCE_RESEARCH_V1.md)
+adds an actual setup/miner/receiver/audit phase separation. A miner receives no
+Node or verifier callback; full proof output must be flushed within its separate
+budget before subsequent original Node admission and independent audits. The
+[58-job plan](../../formal/pon-nakamoto-v1/experiments/w1_miner_resource_campaign_v1.json)
+compares four original producer arms, selective/shared paid task acquisition,
+one/four actual historical ancestor templates, and paid noise screening, with
+zero/tight budgets and censored caps preserved. The
+[frozen analysis](../../formal/pon-nakamoto-v1/experiments/analyze_w1_miner_resource.py)
+requires identical paid/template/overlapping proof identities for paired ratios.
+This finite ancestor bank is not an arbitrary fork forest or long-term attacker
+class; observed setup and miner costs are not an enforced physical cost floor.
+
+The first frozen campaign at `36a47400138220244728bdd5fc7bb0a338c9ba85`
+completed all 58 jobs and full replay, but its exact-source inventory gate found
+two missing entries for the new Rust experiment. Refresh that existing embedded
+inventory before the corrected freeze and repeat the registered campaign on the
+corrected source. Preserve the first raw campaign, complete readback, rejected
+reader environments and failed gates. A passed measurement cannot override a
+failed repository gate, and new outcomes do not replace earlier observations.
+
+The [chain envelope](../protocol/pon-nakamoto-v1/details/W1_CHAIN_SECURITY_ENVELOPE_V1.md)
+connects the actual integer target weight to conditional weighted tails,
+validated propagation delay, honest growth and the remaining DAA/settlement
+coupling. It preserves the distinction between a virtual OR lottery and actual
+credited counts, and includes private mining during a confirmation wait and
+initial work banks. No production kappa, confirmation guarantee or activation
+is selected. The [external qualification review](../protocol/pon-nakamoto-v1/details/W1_EXTERNAL_QUALIFICATION_V1.md)
+pins the actually inspected Hepta candidate and preserves controlled tabular,
+historical neural, independent hardware and ordinary product-use boundaries.
+An absent physical device or independent evaluator cannot be replaced by a
+passing fixture. Source/plan freezing precedes formal measurement; all existing
+failed evidence and open PN0–PN6 obligations retain their meanings.
+
+
+The corrected execution at `42bea72eb74409d72d580dad9bde08c1bce3f8f2`
+(tree `070942d172e3fa87e657a24b2bae7c5a6c43ce37`) completed the same 58-job
+plan after restoring the two embedded Rust inventory entries. All 6,608 retained
+full proof records replayed through the unchanged strict reader, whose 394-file
+closure matches the measured Git source. All 52 main observations exhausted
+the separate miner budget without reaching the safety cap: 6,083 complete main
+proofs were available by B and 2,938 were later accepted. Forty-five late proofs,
+including 26 winners, stayed outside budget credit. Controls add eight complete
+proofs and no winner. Research candidates add no canonical chain growth.
+
+The [final results](../../evidence/pon-work-miner-resource-v1/RESULTS.md) retain
+all 32 identity-matched arm pairs, 18 cache pairs, four identity-divergent
+acquisition comparisons with null ratios, both full campaigns and the original
+failures. Exact corrected-source validation passed 396 direct Python controls,
+the canonical-plan gate's 78 reported tests, 217 selected Rust tests with two
+existing ignores, formatting, source inventory and whole-workspace all-target /
+all-feature strict release Clippy. These do not certify unexecuted hosted
+head/merge gates, hardware independence or a full-workspace Rust test run.
+
+The [blocker ledger](../../evidence/pon-work-miner-resource-v1/blockers.json)
+adds bounded closures C15–C23 while preserving O01–O07 and separate hosted
+execution E01. Conditional temporal/weighted proofs and hybrid/ZK countermodels
+have independent source/mathematical reviews; actual SHA instantiation,
+multi-instance physical hardness and Node settlement coupling remain missing.
+The external Hepta review now names a prospective/test merge, and keeps the
+historical tabular execution on its original source tuple. No production,
+quality, independent-operator or adoption qualification is promoted.
+
+
+### PN1 actual fork, deferred proof and dynamic work refinement — 2026-10-25 America/New_York
+
+This increment continues O01–O07 without managing hosted CI. It retains the
+pure-matrix research direction and every original global closure standard.
+The new [multi-instance analysis](../protocol/pon-nakamoto-v1/details/W1_MULTI_INSTANCE_COST_V2.md)
+separates an ideal compression-query model from actual SHA-256/physical costs,
+and constructs an exact finite-field zero-task Strassen/paired algorithm.
+A literal SHA-256 forward/inverse-round control constructs arbitrary-IV fixed
+points. It disproves direct actual-SHA instantiation of the model's global
+arbitrary-CV no-Bad event; it does not construct a standard-IV canonical W1
+shortcut. Rooted reachable paths need a different, explicitly justified model.
+Fewer scalar multiplications must be compared with its additional additions,
+reductions and memory use; they are not an observed speedup or a lower bound.
+
+The [fork resource contract](../protocol/pon-nakamoto-v1/details/W1_FORK_RESOURCE_RESEARCH_V1.md)
+constructs actual simultaneously retained sibling
+branches from an admitted common registration state, with bounded branch depth,
+paid acquisition, shared/window/cold reuse and measured-past-cost selection.
+The planned 42 jobs include the original general/specialized producers and four
+new Strassen-arm observations. Every epoch shares one total miner B. Adaptive
+strategies may select different challenge sequences; only exact matching paid
+forests and overlapping semantic identities permit paired ratios. This finite
+policy class does not close the arbitrary or unbounded O02 attacker class.
+
+The [late-assembly contract](../protocol/pon-nakamoto-v1/details/W1_LATE_ASSEMBLY_V1.md)
+keeps the actual trace kernel identical while deferring full proof assembly and
+output until the ticket meets the target. Its 14-job registration separately
+counts original traces, complete winning proofs available by B, later native
+admission and zero-credit posthoc loser reconstruction. Existing preparation
+already pays AB once; this increment does not claim that saving anew. All raw
+command bytes are retained with verified lossless post-command compression.
+
+The [dynamic weighted-work interface](../protocol/pon-nakamoto-v1/details/W1_NATIVE_DAA_RESOURCE_V2.md)
+proves a conditional query-budget bound for an adaptively mined forest using
+the actual target/weight floor, without fixed independent epochs. Already known
+winners require weighted W0; prepared unseen opportunities remain in N. A useful
+jump bound must also account for externally supplied ancestry. The associated
+native DAA/time vectors use the original development rules and public Node
+entrypoints. Neither the conditional theorem nor a legality-vector pass proves
+native all-fork settlement, honest progress, physical resource hardness or an
+accepted production kappa. Source freezing precedes formal collection.
+
+The [latest Hepta source review](../protocol/pon-nakamoto-v1/details/W1_HEPTA_QUALIFICATION_V2.md)
+pins the newer actual candidate `de133b601e133917cbe1ae03efb3a2ffc06dcd4a`.
+Ordinary neural bootstrap wiring exists, but pins and controlled Qualification
+receipts do not grant installation or CURRENT authority. The current Hepta plan
+allows public/previously seen engineering tasks and explicit no-update cycles;
+unseen future data is not a prerequisite for controlled mechanism testing.
+Real initial selected-parent, ordinary next-use, successful transfer/install,
+beneficial-release and public independent-operation results remain distinct.
+Absent real hardware, independent operation or product evidence remains open;
+no simulation, document status or test label can supply it.
+
+### Completed fork, late-assembly and rooted-path increment (2026-10-26)
+
+The [completed evidence report](../../evidence/pon-work-fork-late-v1/RESULTS.md)
+records actual frozen source `dac8e6167f19994222f636b0fa19cea8c5426d69`, tree
+`0dabca690d55793fc62f1c6cb4c0fc9d73c52e48`. Both independently fresh release
+builds completed their unchanged registrations: 42 fork jobs and 14 late-assembly
+jobs. All 36 fork and 8 late main jobs are complete, uncensored miner-budget
+observations. The original native DAA scenario additionally executes 36 blocks.
+All 9,195 full retained proof records are independently replayed; this count
+includes repeated records and posthoc reconstructions, not distinct rewarded
+identities. All 416 transitive reader/helper/config files match frozen Git
+before and after replay in a separate tracked-only checkout.
+
+Fork outcomes retain 4,508 research proofs, 460 original setup winners and 848
+posthoc reconstructions. There are 4,474 complete proofs and 2,189 subsequently
+native-accepted winners within B; 34 late proofs, including 18 late winners,
+receive no within-B credit. All 42 registered comparisons remain visible:
+12 of 20 arm pairs match (7 higher/5 lower; winner ratios 0.769231–1.184615),
+4 window/lifetime pairs match, all 14 adaptive/round-robin pairs retain null
+ratios for divergent semantic streams, and only 2 of 4 Strassen/specialized
+pairs match (72/77 and 66/54). The window observations are not a causal claim
+that rebuilding is generally faster. Candidate work 4,378 is not canonical
+growth: research canonical growth remains zero.
+
+Late assembly retains 3,319 original opportunities and replays 3,343 full proof
+records, including 922 posthoc misses with zero new credit. Its B includes
+1,661 complete winners; 5 late winners are excluded. Deferred/eager ratios
+are 72/77, 404/275, 106/84 and 356/285: three gains and one regression. Both
+modes compute the ticket before assembly; no protocol-enforced
+proof-before-lottery mechanism is claimed. Local output-pipe flush is the
+availability endpoint, and raw preservation/encoding is measured harness
+cost rather than an enforced attacker floor.
+
+The actual SHA arbitrary-IV fixed-point counterexample remains a definitive
+obstruction to the global ideal-F Bad-event instantiation. The subsequently
+reviewed [charged bidirectional ideal-cipher rooted-path lemma](../protocol/pon-nakamoto-v1/details/W1_ROOTED_CIPHER_PATHS_V1.md)
+permits isolated inverse-query fixed points and proves a different finite,
+classical standard-IV path-capacity statement. It keeps preprocessing,
+references, terminal audit queries, seeded-table exceptions and retirement
+coverage explicit. It does not establish actual SHA instantiation, physical
+query costs, independent lottery trials or global semantic consumption.
+
+The original DAA execution retains target/work choices 31/7/2 and branch
+chainworks 173/149/144. Forest work 196 does not replace the heaviest branch
+173. All 36 winning proofs replay; 134 internal search misses did not retain
+original proof bytes, so this is a rule-legality result, not a complete cost
+campaign. The conditional weighted-work argument still needs honest growth,
+full validation/data propagation and all-fork settlement premises.
+
+Frozen local gates pass 152 direct Python controls, the separate 78 canonical
+plan/reference controls, 231 selected Rust test executions with 2 original
+ignores, and strict workspace/all-target/all-feature Clippy with warnings
+denied. They do not claim all Rust runtime tests or independent hardware.
+Original implementation failures, four bytecode/source-set readback refusals,
+the preserved bytecode, and a recovered execution-transport interruption
+remain in the [failure ledger](../../evidence/pon-work-fork-late-v1/failure-history.json).
+No raw sampling, source check, threshold, warning policy or production flag
+was weakened. Hosted CI is outside this continuation at the user's request.
+
+[C24–C32 and O01–O07](../../evidence/pon-work-fork-late-v1/blockers.json) remain
+separate: the bounded obligations close only in their declared scope;
+actual-resource hardness, arbitrary actual strategies, production chain
+security, independent physical evidence and the real Hepta product loop stay
+open. Hybrid and ZK retain conditional applicability and are not adopted.
+
+### PN1 compact miner, ticket composition and ordinary clock correction — 2026-10-26
+
+This continuation preserves O01–O07 and continues to exclude hosted CI. The
+[compact miner contract](../protocol/pon-nakamoto-v1/details/W1_COMPACT_MINER_RESEARCH_V1.md)
+removes per-attempt diagnostic JSON and trace originals, winner proof hex/hash,
+and printed posthoc miss proofs. The original deferred comparator already avoids
+online losing-proof assembly; that saving is not counted twice. Complete winners
+retain original 49,508-byte production packets and actual native admission after
+the mining seal. Every deterministic setup and online nonce is independently
+recomputed after sealing; posthoc misses are not original proof records and
+receive no new credit. The paid online trace commitment remains removable
+diagnostic cost, not an attacker resource floor.
+
+The [13-job registration](../../formal/pon-nakamoto-v1/experiments/w1_compact_miner_plan_v1.json)
+fixes two seeds, 128-ms/512-ms miner CPU budgets, a separately paid 1-second setup
+budget, original deferred/compact order and five zero/tight/cap controls before
+formal collection. Both examples must be rebuilt from the same frozen source
+and rerun on the current host. Earlier source measurements are not denominators.
+Only complete uncensored observations with identical paid setup and overlapping
+semantic opportunity/hit prefixes permit a matched ratio. External source,
+binary, manifest and readback hashes bind collection, replay and analysis.
+Unmatched observations, failures, late winners and regressions remain visible.
+Local output completion does not establish peer delivery, energy or a physical
+advantage ceiling.
+
+The [ticket-composition refinement](../protocol/pon-nakamoto-v1/details/W1_TICKET_COMPOSITION_V3.md)
+distinguishes an ideal per-message-block permutation model from actual SHA-256.
+Rooted path capacity alone is not a Bernoulli-trial theorem. Header/task/trace
+binding chronology, shared trace/ticket keys, preprocessing and terminal audit
+must be included in the same analysis. Exact finite controls test the conditional
+composition's declared boundaries; they cannot instantiate SHA, bound arbitrary
+oracle-dependent advice or establish a minimum physical query cost.
+
+The ordinary wall-clock miner has a separate implementation correction. Its
+previous immediate-parent ordering gate imposed a stronger condition than native
+timestamp admission. It now uses the existing validated ancestor projection and
+the same native time predicate while continuing to pass actual wall-clock time to
+the template. Only the native median-time refusal waits; other errors propagate.
+No logical or future timestamp is synthesized. The
+[continuous-mining contract](../protocol/pon-nakamoto-v1/details/CONTINUOUS_MINING_V1.md)
+and local native boundary tests preserve consensus, DAA, time skew and task rules.
+The precheck reads at most 11 existing header projections, leaves the deeper DAA
+checks to their original owner, and explicitly refuses the unsupported ordinary
+pool/native-growth combination before using the ordinary projection.
+This local correction does not establish O03 all-fork security or an honest
+growth lower bound.
+
+The [Hepta initial-parent refinement](../protocol/pon-nakamoto-v1/details/W1_HEPTA_INITIAL_PARENT_V3.md)
+pins the same inspected Hepta candidate and distinguishes its already implemented
+original-owner-selected fixed genesis material from the missing ordinary
+initial-only host composition. Initializing the first parent does not require a
+pre-existing improved child. It also does not remove later evaluated-child,
+CURRENT, FinalUse, adoption or rollback requirements. No actual owner input,
+model execution or independent hardware result is supplied by this source review.
+
+The current exposed host supplies only same-operator x86 observations. Absent
+ARM/GPU/independent-operator execution, measured energy and peer transfer remain
+absent. No production flag, original qualification limit, security standard or
+global O01–O07 closure condition changes in this increment.
+
+### Completed PN1 compact and composition evidence — 2026-10-26
+
+The [completed report](../../evidence/pon-work-compact-v1/RESULTS.md) binds
+measured source `4b18f6bdf226553514b07caf9259360d44631a06`, tree
+`8739627f52d68fc8dcff84282838edb940bfe81c`. All thirteen registered native
+jobs completed without resampling. Both release examples were freshly built
+from that source, using the same exposed x86 host, CPU0 affinity and preregistered
+tmpfs temporary-storage context. All four paired comparisons have identical
+paid setup and scalar-replayed overlapping opportunity/hit prefixes. Compact /
+deferred valid winner counts within the same allocated B are 162/86 and 600/236
+for seed 7101 at 128/512 ms, and 168/119 and 738/394 for seed 7102. The resulting
+1.411765–2.542373 ratios are finite local observations, not production kappa.
+The original deferred comparator already avoids online losing-proof assembly;
+this experiment measures removal of additional diagnostic encoding and output.
+
+All 3,328 retained full proof records were independently replayed, and all 3,316
+compact deterministic nonces were recomputed after sealing, including 1,638
+misses without original miss records. These categories overlap and are not
+summed as original evidence. The 4,951 research attempt occurrences contain 2,655
+distinct semantic opportunities; 2,504 B-credited winner occurrences contain 1,339
+distinct native candidate identities. All four late winners receive zero B
+credit, and cap 2 remains censored. Native admission happens after sealing;
+canonical research-chain growth and mature rewards remain zero.
+
+The declared target is the unchanged development target, with ideal-uniform
+hit probability1/2, not a production difficulty. Local raw output decreased to
+0.381758–0.593231 of the matched comparator output; this includes diagnostics
+and posthoc records, not network transfer or production proof compression.
+Native CPU totals are 0.136418 s setup, 2.583585 s miner, 9.220749 s receiver and
+7.075537 s audit. Original whole-child CPU and signed endpoint residuals remain
+separate. These observations do not establish honest service, propagation,
+transaction throughput, physical energy or a fastest-possible miner.
+
+The finalized v3 composition now supplies predictable canonical-valid marking,
+shared-key without-replacement probability bounds, captured preprocessing and
+single-seal extraction only inside its empty-table classical ideal-permutation
+model. Its weighted-forest integration uses rho rather than silently assuming
+conditional mean one; actual-SHA coupling and extra failure terms remain open.
+D0/K0 may be random old-bank counts; the tail uses predeclared d/k and a
+deterministic opportunity cap. No audit-created path supplies miner work.
+
+The exact measured source passed 270 Python controls and 249 selected Rust test
+executions, with two original ignored tests retained as ignored. Complete-workspace,
+all-target, all-feature strict locked/offline release Clippy and formatting
+passed. The ordinary wall-clock correction passed five boundary tests and the
+mature-window regression plus retained consensus/pool/budget tests; it keeps
+actual wall-clock time, the original admission predicate and at most 11 ancestor
+projections. Complete readback verified 425 source/helper/config files against
+frozen Git before and after every job, with no proof sampling.
+
+[Bounded closures C33–C37 and original obligations O01–O07](../../evidence/pon-work-compact-v1/blockers.json)
+remain separate. Actual SHA/resource conversion, unrestricted real strategies,
+production chain security, independent physical hardware and the real Hepta
+product loop remain open. The Hepta source review identifies selected genesis
+material already present and the separate missing initial-only ordinary host
+composition; it does not require an improved child before the first parent.
+Pure matrix remains primary; hybrid and ZK remain unadopted conditional options.
+Hosted CI was not inspected, launched, rerun or awaited for this continuation.
+
+### PN1 task-product reuse and actual-instantiation/service boundaries — 2026-10-26
+
+This continuation keeps the same O01–O07 standards and excludes hosted CI.
+The new explicit [task-product fact owner](../protocol/pon-nakamoto-v1/details/W1_TASK_PRODUCT_FACTS_V1.md)
+reuses only a fully computed positive AB result across fresh challenges with the
+same complete canonical A/B bytes. Every call still performs the original
+current field/task/target checks and all challenge noise and transcript tiles.
+Current C and trace claims are never cached verdicts. The original verifier,
+Node admission, public-intake policy and consensus wire retain their behavior.
+The capacity, retained storage, contention and final cancellation boundaries are
+explicit. An empty mathematical owner is not a physically cold CPU cache.
+
+The [fixed two-seed service registration](../../formal/pon-nakamoto-v1/experiments/w1_task_product_plan_v1.json)
+owns six material families, four fresh challenges each, opposite fixed arm order
+and a separate one-slot eviction sequence. Each process retains 28 full proof
+cases and 56 verifier calls. Source and executable freezing precede formal
+collection. Per-call wall time, preparation/reference/output costs and outer
+whole-child CPU are separate; no wall ratio is a miner-cost or Node-TPS result.
+The independent reader replays every full proof through the scalar relation and
+checks the exact material, challenge, cache path, current outputs and source pins.
+
+The [actual-instantiation analysis](../protocol/pon-nakamoto-v1/details/W1_INSTANTIATION_BARRIERS_V4.md)
+rules out three specific inference shortcuts: unrestricted public-SHA/ideal-
+primitive indistinguishability, unspecified collision/preimage security as a
+threshold law, and the direct generic auxiliary-input lift of the current coarse
+seeded-path allowance. It gives a one-sided native-event transfer interface with
+unknown resource/event/identity losses preserved as unknown. These are concrete
+route obstructions, not an actual-SHA lower bound or a native attack.
+
+The [service/growth interface](../protocol/pon-nakamoto-v1/details/W1_SERVICE_GROWTH_V4.md)
+adds a conditional finite honest-work lower tail and fixed-deadline private-fork
+comparison within one joint reference experiment. All-node complete admission,
+fresh valid honest opportunities, all-window service and interference budgets,
+eligible parent/frontier monotonicity and the common world-failure event remain
+explicit hypotheses. A global CPU quota or average receiver rate supplies no
+positive honest service guarantee by itself. This does not establish all-fork
+settlement or production kappa. Pure matrix remains primary, hybrid/ZK remain
+unadopted, and the original Hepta selection, quality and adoption owners retain
+their independent obligations.
+
+
+#### Frozen task-product observations and bounded closures
+
+The completed [task-product stage](../../evidence/pon-work-product-service-v1/RESULTS.md)
+measured source `b6f2322dacc4a23ec43e3207be008614e07c60b7`, tree
+`895b472f7a2b8c532081a0dea4c021e1b30cb9a1`. Both registered seeds completed
+without native reruns. All 56 original 49,188-byte proofs passed 112 measured
+verification calls and full scalar replay, preserving 57,344 measured transcript
+tile callbacks. There were 18 fact misses and 38 hits, including the separate
+one-slot eviction sequence. No Node task eligibility, admission, canonical
+growth or reward was claimed.
+
+For the six main material families, the two raw/facts verifier wall ratios on
+18 hits per seed were 1.304746 and1.343421. Across all 24 main cases per seed,
+including each main owner's creation/destruction, the ratios were 1.239457 and
+1.242733. Including eviction, the all 28-case/lifecycle ratios were 1.211463 and
+1.262542. Five individual misses were slower and remain fully reported. These
+finite nonexclusive x86 observations are not per-arm CPU, miner-cost or Node
+throughput bounds. The current implementation removes 2/7 of the counted matrix
+multiplications on a hit while retaining all fresh transcript work; this is not
+a physical minimum-cost theorem. Default verification and admission are unchanged.
+
+Frozen validation passed 188 Rust tests, with the two original ignored cost
+observations retained, plus 255 Python checks and whole-workspace strict release
+Clippy. The unchanged full-copy source-mutant gate passed after two retained
+storage-capacity failures. The first complete reader refused old generated
+bytecode at its strict source-set boundary. A separate local checkout of all 434
+required frozen scripts/formal/config files then passed the unchanged reader,
+with no exclusions or measurement reruns. Source-set digest:
+`90745571e5862c4bf34bdc5f7cb6fb5fe0d935c1c43e42ae76379571c6773367`.
+
+The [updated ledger](../../evidence/pon-work-product-service-v1/blockers.json)
+closes C38 for the three concrete instantiation-route applicability judgments,
+C39 for the explicitly conditional service/honest-frontier/private-fixed-deadline
+interface, C40 for the opt-in exact-product owner and C41 for this complete
+source-bound observation/replay. The fixed-time private-fork event is **at** a
+predeclared deadline, not arbitrary crossing before it. The generic advice
+theorem remains valid; direct use with the current coarse seeded capacity and
+full-checker upper cap gives a vacuous bound. Actual event/resource/identity and
+world losses remain unknown. O01–O04/O06 remain OPEN and O05/O07 remain conditional
+and unadopted. Hepta source remains `de133b601e133917cbe1ae03efb3a2ffc06dcd4a`
+with no new model execution or adoption evidence in this stage. Original closure
+standards, pure matrix priority and the no-hosted-CI constraint are preserved.
 
 ## 1. Product mission: shared intelligence from real work
 

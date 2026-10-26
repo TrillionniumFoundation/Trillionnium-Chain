@@ -1,0 +1,35 @@
+{
+  "archive_sha256_before_and_after": "e7f7657f8335b012c6499fe6f0afbbb2148e278495758d2356027c7fca6c46ca",
+  "exact_verified_deleted_copies": [
+    {
+      "archive": "/workspace/scratch/3863a747524b/W1_compact_cost_evidence_20261026.tar.gz",
+      "archive_sha256": "e7f7657f8335b012c6499fe6f0afbbb2148e278495758d2356027c7fca6c46ca",
+      "bytes": 34837479,
+      "member": "executables/reobserved-task-cache-executables-v1.tar.gz",
+      "mode": 420,
+      "path": "/dev/shm/w1-compact-delivery-v1/reobserved-task-cache-executables-v1.tar.gz",
+      "sha256": "c38705081643c0722b4d08cf0c01904a81f42381ec59f3c2826423fce7f66c2f"
+    },
+    {
+      "archive": "/workspace/scratch/3863a747524b/W1_compact_cost_evidence_20261026.tar.gz",
+      "archive_sha256": "e7f7657f8335b012c6499fe6f0afbbb2148e278495758d2356027c7fca6c46ca",
+      "bytes": 6820056,
+      "member": "executables/formal/pon_w1_late_assembly_research",
+      "mode": 493,
+      "path": "/dev/shm/w1-compact-delivery-v1/formal-binaries/pon_w1_late_assembly_research",
+      "sha256": "2524fe86e0bde3be4f515397dd8a1e260ab4b37090b33d2bd62b59e8a0ffea43"
+    },
+    {
+      "archive": "/workspace/scratch/3863a747524b/W1_compact_cost_evidence_20261026.tar.gz",
+      "archive_sha256": "e7f7657f8335b012c6499fe6f0afbbb2148e278495758d2356027c7fca6c46ca",
+      "bytes": 6827144,
+      "member": "executables/formal/pon_w1_compact_miner_research",
+      "mode": 493,
+      "path": "/dev/shm/w1-compact-delivery-v1/formal-binaries/pon_w1_compact_miner_research",
+      "sha256": "238ab912fe410ecd001a2c3a82c5272e1e2ee8b72acecbae0f20557c019d713f"
+    }
+  ],
+  "prior_complete_archive_preserved": true,
+  "reclaimed_bytes": 48484679,
+  "schema": "w1-prior-compact-shm-deduplication-v1"
+}

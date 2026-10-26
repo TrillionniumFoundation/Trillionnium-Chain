@@ -1,0 +1,226 @@
+{
+  "schema": "pon-w1-compact-miner-plan-v1",
+  "production_activation": false,
+  "hardness_accepted": false,
+  "hardware_attested": false,
+  "proof_retention": "compact-original-winner-packets-and-original-late-comparator",
+  "independent_replay": "all-original-winners-and-all-deterministic-attempts-posthoc-no-feedback",
+  "waited_cpu_endpoint_allowance_ns": 2000,
+  "gnu_time_print_allowance_ns": 20000000,
+  "generation_then_receiver_then_audit": true,
+  "miner_feedback_from_receiver": false,
+  "collection_output_limit_bytes": 268435456,
+  "hypothesis": "Same exact paid task/header preparation and integer-paired trace kernel; compact removes per-attempt diagnostic JSON and trace originals and winner proof hex/hash. Original late-deferred already avoids online losing-proof assembly. Compact also avoids printing posthoc miss proofs. It retains actual winning Packet bytes and a paid online diagnostic commitment, which remains removable harness overhead, never a mandatory attacker floor.",
+  "frozen_before_performance": true,
+  "comparison_policy": "Only same newly frozen source, seed, setup/miner budgets, identical actual setup proof and exact overlapping opportunity/hit prefix. Preserve uncensored nulls, regressions and all controls. No ratio to an older campaign/source.",
+  "setup_credit": "Setup acquisition is separately paid, has no online credit, and every deterministic setup nonce is independently reconstructed after miner seal.",
+  "compression": "Verified lossless gzip after original command exit; native output and clocks unchanged; whole command energy/bandwidth not measured.",
+  "jobs": [
+    {
+      "name": "main-s7101-b128000000-late",
+      "binary": "pon_w1_late_assembly_research",
+      "args": [
+        "--setup-budget-ns",
+        "1000000000",
+        "--miner-budget-ns",
+        "128000000",
+        "--max-attempts",
+        "4096",
+        "--seed",
+        "7101",
+        "--mode",
+        "deferred"
+      ],
+      "timeout_seconds": 180
+    },
+    {
+      "name": "main-s7101-b128000000-compact",
+      "binary": "pon_w1_compact_miner_research",
+      "args": [
+        "--setup-budget-ns",
+        "1000000000",
+        "--miner-budget-ns",
+        "128000000",
+        "--max-attempts",
+        "4096",
+        "--seed",
+        "7101"
+      ],
+      "timeout_seconds": 180
+    },
+    {
+      "name": "main-s7102-b128000000-compact",
+      "binary": "pon_w1_compact_miner_research",
+      "args": [
+        "--setup-budget-ns",
+        "1000000000",
+        "--miner-budget-ns",
+        "128000000",
+        "--max-attempts",
+        "4096",
+        "--seed",
+        "7102"
+      ],
+      "timeout_seconds": 180
+    },
+    {
+      "name": "main-s7102-b128000000-late",
+      "binary": "pon_w1_late_assembly_research",
+      "args": [
+        "--setup-budget-ns",
+        "1000000000",
+        "--miner-budget-ns",
+        "128000000",
+        "--max-attempts",
+        "4096",
+        "--seed",
+        "7102",
+        "--mode",
+        "deferred"
+      ],
+      "timeout_seconds": 180
+    },
+    {
+      "name": "main-s7101-b512000000-compact",
+      "binary": "pon_w1_compact_miner_research",
+      "args": [
+        "--setup-budget-ns",
+        "1000000000",
+        "--miner-budget-ns",
+        "512000000",
+        "--max-attempts",
+        "4096",
+        "--seed",
+        "7101"
+      ],
+      "timeout_seconds": 180
+    },
+    {
+      "name": "main-s7101-b512000000-late",
+      "binary": "pon_w1_late_assembly_research",
+      "args": [
+        "--setup-budget-ns",
+        "1000000000",
+        "--miner-budget-ns",
+        "512000000",
+        "--max-attempts",
+        "4096",
+        "--seed",
+        "7101",
+        "--mode",
+        "deferred"
+      ],
+      "timeout_seconds": 180
+    },
+    {
+      "name": "main-s7102-b512000000-late",
+      "binary": "pon_w1_late_assembly_research",
+      "args": [
+        "--setup-budget-ns",
+        "1000000000",
+        "--miner-budget-ns",
+        "512000000",
+        "--max-attempts",
+        "4096",
+        "--seed",
+        "7102",
+        "--mode",
+        "deferred"
+      ],
+      "timeout_seconds": 180
+    },
+    {
+      "name": "main-s7102-b512000000-compact",
+      "binary": "pon_w1_compact_miner_research",
+      "args": [
+        "--setup-budget-ns",
+        "1000000000",
+        "--miner-budget-ns",
+        "512000000",
+        "--max-attempts",
+        "4096",
+        "--seed",
+        "7102"
+      ],
+      "timeout_seconds": 180
+    },
+    {
+      "name": "control-setupzero",
+      "binary": "pon_w1_compact_miner_research",
+      "args": [
+        "--setup-budget-ns",
+        "0",
+        "--miner-budget-ns",
+        "128000000",
+        "--max-attempts",
+        "4096",
+        "--seed",
+        "7103"
+      ],
+      "timeout_seconds": 180
+    },
+    {
+      "name": "control-setuptight",
+      "binary": "pon_w1_compact_miner_research",
+      "args": [
+        "--setup-budget-ns",
+        "1000000",
+        "--miner-budget-ns",
+        "128000000",
+        "--max-attempts",
+        "4096",
+        "--seed",
+        "7103"
+      ],
+      "timeout_seconds": 180
+    },
+    {
+      "name": "control-minerzero",
+      "binary": "pon_w1_compact_miner_research",
+      "args": [
+        "--setup-budget-ns",
+        "1000000000",
+        "--miner-budget-ns",
+        "0",
+        "--max-attempts",
+        "4096",
+        "--seed",
+        "7103"
+      ],
+      "timeout_seconds": 180
+    },
+    {
+      "name": "control-minertight",
+      "binary": "pon_w1_compact_miner_research",
+      "args": [
+        "--setup-budget-ns",
+        "1000000000",
+        "--miner-budget-ns",
+        "100000",
+        "--max-attempts",
+        "4096",
+        "--seed",
+        "7103"
+      ],
+      "timeout_seconds": 180
+    },
+    {
+      "name": "control-attemptcap2",
+      "binary": "pon_w1_compact_miner_research",
+      "args": [
+        "--setup-budget-ns",
+        "1000000000",
+        "--miner-budget-ns",
+        "512000000",
+        "--max-attempts",
+        "2",
+        "--seed",
+        "7103"
+      ],
+      "timeout_seconds": 180
+    }
+  ],
+  "all_attempts_replay": "Every compact deterministic attempt, including misses, is recomputed from retained setup/header and bound to the original paid trace commitment after seal. Reconstructed bytes are not original miss records.",
+  "completion_endpoint": "Full actual production Packet write_all plus flush must finish by B. Availability-to-accounting and stop-poll-to-seal CPU are retained; post-stop seal/output have no credit.",
+  "scope": "One current x86 host/operator, software process-CPU observations. No actual network delivery, energy, independent hardware, physical floor, adopted release or production security claim."
+}

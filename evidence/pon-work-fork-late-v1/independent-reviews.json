@@ -1,0 +1,3092 @@
+{
+  "schema": "w1-independent-software-reviews-v1",
+  "same_operator_not_independent_hardware": true,
+  "new_native_or_scalar_execution_claimed": false,
+  "reviews": {
+    "fork": {
+      "all_36_main_complete_uncensored": true,
+      "all_null_comparisons": [
+        {
+          "comparable": false,
+          "group": "arm",
+          "left": "main-w1-d1-adaptive-cost-structure-specialized-s5101",
+          "left_B_proofs": 135,
+          "left_B_winners": 70,
+          "matched_prefix_records": 3,
+          "overlap_prefix_matches": false,
+          "ratio_names_below_one": [],
+          "ratios": {
+            "actual_miner_accepted_rate_ratio": null,
+            "equal_B_complete_proof_ratio": null,
+            "equal_B_eventually_accepted_ratio": null,
+            "setup_plus_miner_accepted_rate_ratio": null
+          },
+          "reason": "incomplete-or-censored-observation-or-divergent-paid-identity",
+          "right": "main-w1-d1-adaptive-cost-integer-paired-general-s5101",
+          "right_B_proofs": 124,
+          "right_B_winners": 58,
+          "same_paid_forest": true
+        },
+        {
+          "comparable": false,
+          "group": "arm",
+          "left": "main-w4-d1-adaptive-cost-structure-specialized-s5101",
+          "left_B_proofs": 143,
+          "left_B_winners": 71,
+          "matched_prefix_records": 8,
+          "overlap_prefix_matches": false,
+          "ratio_names_below_one": [],
+          "ratios": {
+            "actual_miner_accepted_rate_ratio": null,
+            "equal_B_complete_proof_ratio": null,
+            "equal_B_eventually_accepted_ratio": null,
+            "setup_plus_miner_accepted_rate_ratio": null
+          },
+          "reason": "incomplete-or-censored-observation-or-divergent-paid-identity",
+          "right": "main-w4-d1-adaptive-cost-integer-paired-general-s5101",
+          "right_B_proofs": 135,
+          "right_B_winners": 66,
+          "same_paid_forest": true
+        },
+        {
+          "comparable": false,
+          "group": "arm",
+          "left": "strassen-w4-d1-adaptive-cost-s5101",
+          "left_B_proofs": 157,
+          "left_B_winners": 76,
+          "matched_prefix_records": 8,
+          "overlap_prefix_matches": false,
+          "ratio_names_below_one": [],
+          "ratios": {
+            "actual_miner_accepted_rate_ratio": null,
+            "equal_B_complete_proof_ratio": null,
+            "equal_B_eventually_accepted_ratio": null,
+            "setup_plus_miner_accepted_rate_ratio": null
+          },
+          "reason": "incomplete-or-censored-observation-or-divergent-paid-identity",
+          "right": "main-w4-d1-adaptive-cost-integer-paired-general-s5101",
+          "right_B_proofs": 135,
+          "right_B_winners": 66,
+          "same_paid_forest": true
+        },
+        {
+          "comparable": false,
+          "group": "arm",
+          "left": "main-w4-d2-adaptive-cost-structure-specialized-s5101",
+          "left_B_proofs": 146,
+          "left_B_winners": 81,
+          "matched_prefix_records": 8,
+          "overlap_prefix_matches": false,
+          "ratio_names_below_one": [],
+          "ratios": {
+            "actual_miner_accepted_rate_ratio": null,
+            "equal_B_complete_proof_ratio": null,
+            "equal_B_eventually_accepted_ratio": null,
+            "setup_plus_miner_accepted_rate_ratio": null
+          },
+          "reason": "incomplete-or-censored-observation-or-divergent-paid-identity",
+          "right": "main-w4-d2-adaptive-cost-integer-paired-general-s5101",
+          "right_B_proofs": 138,
+          "right_B_winners": 71,
+          "same_paid_forest": true
+        },
+        {
+          "comparable": false,
+          "group": "arm",
+          "left": "main-w4-d2-adaptive-cost-structure-specialized-s5102",
+          "left_B_proofs": 112,
+          "left_B_winners": 52,
+          "matched_prefix_records": 8,
+          "overlap_prefix_matches": false,
+          "ratio_names_below_one": [],
+          "ratios": {
+            "actual_miner_accepted_rate_ratio": null,
+            "equal_B_complete_proof_ratio": null,
+            "equal_B_eventually_accepted_ratio": null,
+            "setup_plus_miner_accepted_rate_ratio": null
+          },
+          "reason": "incomplete-or-censored-observation-or-divergent-paid-identity",
+          "right": "main-w4-d2-adaptive-cost-integer-paired-general-s5102",
+          "right_B_proofs": 111,
+          "right_B_winners": 53,
+          "same_paid_forest": true
+        },
+        {
+          "comparable": false,
+          "group": "arm",
+          "left": "main-w4-d1-adaptive-cost-structure-specialized-s5102",
+          "left_B_proofs": 144,
+          "left_B_winners": 62,
+          "matched_prefix_records": 8,
+          "overlap_prefix_matches": false,
+          "ratio_names_below_one": [],
+          "ratios": {
+            "actual_miner_accepted_rate_ratio": null,
+            "equal_B_complete_proof_ratio": null,
+            "equal_B_eventually_accepted_ratio": null,
+            "setup_plus_miner_accepted_rate_ratio": null
+          },
+          "reason": "incomplete-or-censored-observation-or-divergent-paid-identity",
+          "right": "main-w4-d1-adaptive-cost-integer-paired-general-s5102",
+          "right_B_proofs": 134,
+          "right_B_winners": 67,
+          "same_paid_forest": true
+        },
+        {
+          "comparable": false,
+          "group": "arm",
+          "left": "strassen-w4-d1-adaptive-cost-s5102",
+          "left_B_proofs": 140,
+          "left_B_winners": 62,
+          "matched_prefix_records": 8,
+          "overlap_prefix_matches": false,
+          "ratio_names_below_one": [],
+          "ratios": {
+            "actual_miner_accepted_rate_ratio": null,
+            "equal_B_complete_proof_ratio": null,
+            "equal_B_eventually_accepted_ratio": null,
+            "setup_plus_miner_accepted_rate_ratio": null
+          },
+          "reason": "incomplete-or-censored-observation-or-divergent-paid-identity",
+          "right": "main-w4-d1-adaptive-cost-integer-paired-general-s5102",
+          "right_B_proofs": 134,
+          "right_B_winners": 67,
+          "same_paid_forest": true
+        },
+        {
+          "comparable": false,
+          "group": "arm",
+          "left": "main-w1-d1-adaptive-cost-structure-specialized-s5102",
+          "left_B_proofs": 111,
+          "left_B_winners": 54,
+          "matched_prefix_records": 6,
+          "overlap_prefix_matches": false,
+          "ratio_names_below_one": [],
+          "ratios": {
+            "actual_miner_accepted_rate_ratio": null,
+            "equal_B_complete_proof_ratio": null,
+            "equal_B_eventually_accepted_ratio": null,
+            "setup_plus_miner_accepted_rate_ratio": null
+          },
+          "reason": "incomplete-or-censored-observation-or-divergent-paid-identity",
+          "right": "main-w1-d1-adaptive-cost-integer-paired-general-s5102",
+          "right_B_proofs": 140,
+          "right_B_winners": 69,
+          "same_paid_forest": true
+        },
+        {
+          "comparable": false,
+          "group": "policy",
+          "left": "main-w1-d1-adaptive-cost-integer-paired-general-s5101",
+          "left_B_proofs": 124,
+          "left_B_winners": 58,
+          "matched_prefix_records": 2,
+          "overlap_prefix_matches": false,
+          "ratio_names_below_one": [],
+          "ratios": {
+            "actual_miner_accepted_rate_ratio": null,
+            "equal_B_complete_proof_ratio": null,
+            "equal_B_eventually_accepted_ratio": null,
+            "setup_plus_miner_accepted_rate_ratio": null
+          },
+          "reason": "incomplete-or-censored-observation-or-divergent-paid-identity",
+          "right": "main-w1-d1-round-robin-integer-paired-general-s5101",
+          "right_B_proofs": 108,
+          "right_B_winners": 57,
+          "same_paid_forest": true
+        },
+        {
+          "comparable": false,
+          "group": "policy",
+          "left": "main-w1-d1-adaptive-cost-structure-specialized-s5101",
+          "left_B_proofs": 135,
+          "left_B_winners": 70,
+          "matched_prefix_records": 2,
+          "overlap_prefix_matches": false,
+          "ratio_names_below_one": [],
+          "ratios": {
+            "actual_miner_accepted_rate_ratio": null,
+            "equal_B_complete_proof_ratio": null,
+            "equal_B_eventually_accepted_ratio": null,
+            "setup_plus_miner_accepted_rate_ratio": null
+          },
+          "reason": "incomplete-or-censored-observation-or-divergent-paid-identity",
+          "right": "main-w1-d1-round-robin-structure-specialized-s5101",
+          "right_B_proofs": 98,
+          "right_B_winners": 53,
+          "same_paid_forest": true
+        },
+        {
+          "comparable": false,
+          "group": "policy",
+          "left": "main-w4-d1-adaptive-cost-integer-paired-general-s5101",
+          "left_B_proofs": 135,
+          "left_B_winners": 66,
+          "matched_prefix_records": 8,
+          "overlap_prefix_matches": false,
+          "ratio_names_below_one": [],
+          "ratios": {
+            "actual_miner_accepted_rate_ratio": null,
+            "equal_B_complete_proof_ratio": null,
+            "equal_B_eventually_accepted_ratio": null,
+            "setup_plus_miner_accepted_rate_ratio": null
+          },
+          "reason": "incomplete-or-censored-observation-or-divergent-paid-identity",
+          "right": "main-w4-d1-round-robin-integer-paired-general-s5101",
+          "right_B_proofs": 124,
+          "right_B_winners": 65,
+          "same_paid_forest": true
+        },
+        {
+          "comparable": false,
+          "group": "policy",
+          "left": "main-w4-d1-adaptive-cost-structure-specialized-s5101",
+          "left_B_proofs": 143,
+          "left_B_winners": 71,
+          "matched_prefix_records": 8,
+          "overlap_prefix_matches": false,
+          "ratio_names_below_one": [],
+          "ratios": {
+            "actual_miner_accepted_rate_ratio": null,
+            "equal_B_complete_proof_ratio": null,
+            "equal_B_eventually_accepted_ratio": null,
+            "setup_plus_miner_accepted_rate_ratio": null
+          },
+          "reason": "incomplete-or-censored-observation-or-divergent-paid-identity",
+          "right": "main-w4-d1-round-robin-structure-specialized-s5101",
+          "right_B_proofs": 142,
+          "right_B_winners": 77,
+          "same_paid_forest": true
+        },
+        {
+          "comparable": false,
+          "group": "policy",
+          "left": "main-w4-d2-adaptive-cost-integer-paired-general-s5101",
+          "left_B_proofs": 138,
+          "left_B_winners": 71,
+          "matched_prefix_records": 8,
+          "overlap_prefix_matches": false,
+          "ratio_names_below_one": [],
+          "ratios": {
+            "actual_miner_accepted_rate_ratio": null,
+            "equal_B_complete_proof_ratio": null,
+            "equal_B_eventually_accepted_ratio": null,
+            "setup_plus_miner_accepted_rate_ratio": null
+          },
+          "reason": "incomplete-or-censored-observation-or-divergent-paid-identity",
+          "right": "main-w4-d2-round-robin-integer-paired-general-s5101",
+          "right_B_proofs": 134,
+          "right_B_winners": 55,
+          "same_paid_forest": true
+        },
+        {
+          "comparable": false,
+          "group": "policy",
+          "left": "main-w4-d2-adaptive-cost-structure-specialized-s5101",
+          "left_B_proofs": 146,
+          "left_B_winners": 81,
+          "matched_prefix_records": 8,
+          "overlap_prefix_matches": false,
+          "ratio_names_below_one": [],
+          "ratios": {
+            "actual_miner_accepted_rate_ratio": null,
+            "equal_B_complete_proof_ratio": null,
+            "equal_B_eventually_accepted_ratio": null,
+            "setup_plus_miner_accepted_rate_ratio": null
+          },
+          "reason": "incomplete-or-censored-observation-or-divergent-paid-identity",
+          "right": "main-w4-d2-round-robin-structure-specialized-s5101",
+          "right_B_proofs": 138,
+          "right_B_winners": 56,
+          "same_paid_forest": true
+        },
+        {
+          "comparable": false,
+          "group": "policy",
+          "left": "main-w4-d2-adaptive-cost-structure-specialized-s5102",
+          "left_B_proofs": 112,
+          "left_B_winners": 52,
+          "matched_prefix_records": 8,
+          "overlap_prefix_matches": false,
+          "ratio_names_below_one": [],
+          "ratios": {
+            "actual_miner_accepted_rate_ratio": null,
+            "equal_B_complete_proof_ratio": null,
+            "equal_B_eventually_accepted_ratio": null,
+            "setup_plus_miner_accepted_rate_ratio": null
+          },
+          "reason": "incomplete-or-censored-observation-or-divergent-paid-identity",
+          "right": "main-w4-d2-round-robin-structure-specialized-s5102",
+          "right_B_proofs": 112,
+          "right_B_winners": 58,
+          "same_paid_forest": true
+        },
+        {
+          "comparable": false,
+          "group": "policy",
+          "left": "main-w4-d2-adaptive-cost-integer-paired-general-s5102",
+          "left_B_proofs": 111,
+          "left_B_winners": 53,
+          "matched_prefix_records": 8,
+          "overlap_prefix_matches": false,
+          "ratio_names_below_one": [],
+          "ratios": {
+            "actual_miner_accepted_rate_ratio": null,
+            "equal_B_complete_proof_ratio": null,
+            "equal_B_eventually_accepted_ratio": null,
+            "setup_plus_miner_accepted_rate_ratio": null
+          },
+          "reason": "incomplete-or-censored-observation-or-divergent-paid-identity",
+          "right": "main-w4-d2-round-robin-integer-paired-general-s5102",
+          "right_B_proofs": 108,
+          "right_B_winners": 57,
+          "same_paid_forest": true
+        },
+        {
+          "comparable": false,
+          "group": "policy",
+          "left": "main-w4-d1-adaptive-cost-structure-specialized-s5102",
+          "left_B_proofs": 144,
+          "left_B_winners": 62,
+          "matched_prefix_records": 8,
+          "overlap_prefix_matches": false,
+          "ratio_names_below_one": [],
+          "ratios": {
+            "actual_miner_accepted_rate_ratio": null,
+            "equal_B_complete_proof_ratio": null,
+            "equal_B_eventually_accepted_ratio": null,
+            "setup_plus_miner_accepted_rate_ratio": null
+          },
+          "reason": "incomplete-or-censored-observation-or-divergent-paid-identity",
+          "right": "main-w4-d1-round-robin-structure-specialized-s5102",
+          "right_B_proofs": 109,
+          "right_B_winners": 54,
+          "same_paid_forest": true
+        },
+        {
+          "comparable": false,
+          "group": "policy",
+          "left": "main-w4-d1-adaptive-cost-integer-paired-general-s5102",
+          "left_B_proofs": 134,
+          "left_B_winners": 67,
+          "matched_prefix_records": 8,
+          "overlap_prefix_matches": false,
+          "ratio_names_below_one": [],
+          "ratios": {
+            "actual_miner_accepted_rate_ratio": null,
+            "equal_B_complete_proof_ratio": null,
+            "equal_B_eventually_accepted_ratio": null,
+            "setup_plus_miner_accepted_rate_ratio": null
+          },
+          "reason": "incomplete-or-censored-observation-or-divergent-paid-identity",
+          "right": "main-w4-d1-round-robin-integer-paired-general-s5102",
+          "right_B_proofs": 119,
+          "right_B_winners": 60,
+          "same_paid_forest": true
+        },
+        {
+          "comparable": false,
+          "group": "policy",
+          "left": "main-w1-d1-adaptive-cost-structure-specialized-s5102",
+          "left_B_proofs": 111,
+          "left_B_winners": 54,
+          "matched_prefix_records": 3,
+          "overlap_prefix_matches": false,
+          "ratio_names_below_one": [],
+          "ratios": {
+            "actual_miner_accepted_rate_ratio": null,
+            "equal_B_complete_proof_ratio": null,
+            "equal_B_eventually_accepted_ratio": null,
+            "setup_plus_miner_accepted_rate_ratio": null
+          },
+          "reason": "incomplete-or-censored-observation-or-divergent-paid-identity",
+          "right": "main-w1-d1-round-robin-structure-specialized-s5102",
+          "right_B_proofs": 121,
+          "right_B_winners": 60,
+          "same_paid_forest": true
+        },
+        {
+          "comparable": false,
+          "group": "policy",
+          "left": "main-w1-d1-adaptive-cost-integer-paired-general-s5102",
+          "left_B_proofs": 140,
+          "left_B_winners": 69,
+          "matched_prefix_records": 3,
+          "overlap_prefix_matches": false,
+          "ratio_names_below_one": [],
+          "ratios": {
+            "actual_miner_accepted_rate_ratio": null,
+            "equal_B_complete_proof_ratio": null,
+            "equal_B_eventually_accepted_ratio": null,
+            "setup_plus_miner_accepted_rate_ratio": null
+          },
+          "reason": "incomplete-or-censored-observation-or-divergent-paid-identity",
+          "right": "main-w1-d1-round-robin-integer-paired-general-s5102",
+          "right_B_proofs": 155,
+          "right_B_winners": 78,
+          "same_paid_forest": true
+        },
+        {
+          "comparable": false,
+          "group": "policy",
+          "left": "strassen-w4-d1-adaptive-cost-s5101",
+          "left_B_proofs": 157,
+          "left_B_winners": 76,
+          "matched_prefix_records": 8,
+          "overlap_prefix_matches": false,
+          "ratio_names_below_one": [],
+          "ratios": {
+            "actual_miner_accepted_rate_ratio": null,
+            "equal_B_complete_proof_ratio": null,
+            "equal_B_eventually_accepted_ratio": null,
+            "setup_plus_miner_accepted_rate_ratio": null
+          },
+          "reason": "incomplete-or-censored-observation-or-divergent-paid-identity",
+          "right": "strassen-w4-d1-round-robin-s5101",
+          "right_B_proofs": 136,
+          "right_B_winners": 72,
+          "same_paid_forest": true
+        },
+        {
+          "comparable": false,
+          "group": "policy",
+          "left": "strassen-w4-d1-adaptive-cost-s5102",
+          "left_B_proofs": 140,
+          "left_B_winners": 62,
+          "matched_prefix_records": 9,
+          "overlap_prefix_matches": false,
+          "ratio_names_below_one": [],
+          "ratios": {
+            "actual_miner_accepted_rate_ratio": null,
+            "equal_B_complete_proof_ratio": null,
+            "equal_B_eventually_accepted_ratio": null,
+            "setup_plus_miner_accepted_rate_ratio": null
+          },
+          "reason": "incomplete-or-censored-observation-or-divergent-paid-identity",
+          "right": "strassen-w4-d1-round-robin-s5102",
+          "right_B_proofs": 130,
+          "right_B_winners": 66,
+          "same_paid_forest": true
+        },
+        {
+          "comparable": false,
+          "group": "strassen_against_specialized",
+          "left": "strassen-w4-d1-adaptive-cost-s5101",
+          "left_B_proofs": 157,
+          "left_B_winners": 76,
+          "matched_prefix_records": 8,
+          "overlap_prefix_matches": false,
+          "ratio_names_below_one": [],
+          "ratios": {
+            "actual_miner_accepted_rate_ratio": null,
+            "equal_B_complete_proof_ratio": null,
+            "equal_B_eventually_accepted_ratio": null,
+            "setup_plus_miner_accepted_rate_ratio": null
+          },
+          "reason": "incomplete-or-censored-observation-or-divergent-paid-identity",
+          "right": "main-w4-d1-adaptive-cost-structure-specialized-s5101",
+          "right_B_proofs": 143,
+          "right_B_winners": 71,
+          "same_paid_forest": true
+        },
+        {
+          "comparable": false,
+          "group": "strassen_against_specialized",
+          "left": "strassen-w4-d1-adaptive-cost-s5102",
+          "left_B_proofs": 140,
+          "left_B_winners": 62,
+          "matched_prefix_records": 8,
+          "overlap_prefix_matches": false,
+          "ratio_names_below_one": [],
+          "ratios": {
+            "actual_miner_accepted_rate_ratio": null,
+            "equal_B_complete_proof_ratio": null,
+            "equal_B_eventually_accepted_ratio": null,
+            "setup_plus_miner_accepted_rate_ratio": null
+          },
+          "reason": "incomplete-or-censored-observation-or-divergent-paid-identity",
+          "right": "main-w4-d1-adaptive-cost-structure-specialized-s5102",
+          "right_B_proofs": 144,
+          "right_B_winners": 62,
+          "same_paid_forest": true
+        }
+      ],
+      "all_registered_negative_metrics": [
+        {
+          "comparable": true,
+          "group": "arm",
+          "left": "main-w1-d1-round-robin-structure-specialized-s5101",
+          "left_B_proofs": 98,
+          "left_B_winners": 53,
+          "matched_prefix_records": 99,
+          "overlap_prefix_matches": true,
+          "ratio_names_below_one": [
+            "equal_B_complete_proof_ratio",
+            "equal_B_eventually_accepted_ratio",
+            "actual_miner_accepted_rate_ratio",
+            "setup_plus_miner_accepted_rate_ratio"
+          ],
+          "ratios": {
+            "actual_miner_accepted_rate_ratio": {
+              "decimal": 0.9246538397614021,
+              "denominator": 2461590125,
+              "numerator": 2276118761
+            },
+            "equal_B_complete_proof_ratio": {
+              "decimal": 0.9074074074074074,
+              "denominator": 54,
+              "numerator": 49
+            },
+            "equal_B_eventually_accepted_ratio": {
+              "decimal": 0.9298245614035088,
+              "denominator": 57,
+              "numerator": 53
+            },
+            "setup_plus_miner_accepted_rate_ratio": {
+              "decimal": 0.7944714554274938,
+              "denominator": 11693785182,
+              "numerator": 9290378533
+            }
+          },
+          "reason": null,
+          "right": "main-w1-d1-round-robin-integer-paired-general-s5101",
+          "right_B_proofs": 108,
+          "right_B_winners": 57,
+          "same_paid_forest": true
+        },
+        {
+          "comparable": true,
+          "group": "arm",
+          "left": "main-w4-d1-round-robin-structure-specialized-s5102",
+          "left_B_proofs": 109,
+          "left_B_winners": 54,
+          "matched_prefix_records": 110,
+          "overlap_prefix_matches": true,
+          "ratio_names_below_one": [
+            "equal_B_complete_proof_ratio",
+            "equal_B_eventually_accepted_ratio",
+            "actual_miner_accepted_rate_ratio",
+            "setup_plus_miner_accepted_rate_ratio"
+          ],
+          "ratios": {
+            "actual_miner_accepted_rate_ratio": {
+              "decimal": 0.896341338771554,
+              "denominator": 1287970300,
+              "numerator": 1154461023
+            },
+            "equal_B_complete_proof_ratio": {
+              "decimal": 0.9159663865546218,
+              "denominator": 119,
+              "numerator": 109
+            },
+            "equal_B_eventually_accepted_ratio": {
+              "decimal": 0.9,
+              "denominator": 10,
+              "numerator": 9
+            },
+            "setup_plus_miner_accepted_rate_ratio": {
+              "decimal": 0.7922950347694434,
+              "denominator": 288500017,
+              "numerator": 228577131
+            }
+          },
+          "reason": null,
+          "right": "main-w4-d1-round-robin-integer-paired-general-s5102",
+          "right_B_proofs": 119,
+          "right_B_winners": 60,
+          "same_paid_forest": true
+        },
+        {
+          "comparable": true,
+          "group": "arm",
+          "left": "strassen-w4-d1-round-robin-s5102",
+          "left_B_proofs": 130,
+          "left_B_winners": 66,
+          "matched_prefix_records": 120,
+          "overlap_prefix_matches": true,
+          "ratio_names_below_one": [
+            "setup_plus_miner_accepted_rate_ratio"
+          ],
+          "ratios": {
+            "actual_miner_accepted_rate_ratio": {
+              "decimal": 1.101086782163337,
+              "denominator": 1281468400,
+              "numerator": 1411007917
+            },
+            "equal_B_complete_proof_ratio": {
+              "decimal": 1.0924369747899159,
+              "denominator": 119,
+              "numerator": 130
+            },
+            "equal_B_eventually_accepted_ratio": {
+              "decimal": 1.1,
+              "denominator": 10,
+              "numerator": 11
+            },
+            "setup_plus_miner_accepted_rate_ratio": {
+              "decimal": 0.9593881281203602,
+              "denominator": 291198151,
+              "numerator": 279372049
+            }
+          },
+          "reason": null,
+          "right": "main-w4-d1-round-robin-integer-paired-general-s5102",
+          "right_B_proofs": 119,
+          "right_B_winners": 60,
+          "same_paid_forest": true
+        },
+        {
+          "comparable": true,
+          "group": "arm",
+          "left": "main-w1-d1-round-robin-structure-specialized-s5102",
+          "left_B_proofs": 121,
+          "left_B_winners": 60,
+          "matched_prefix_records": 122,
+          "overlap_prefix_matches": true,
+          "ratio_names_below_one": [
+            "equal_B_complete_proof_ratio",
+            "equal_B_eventually_accepted_ratio",
+            "actual_miner_accepted_rate_ratio",
+            "setup_plus_miner_accepted_rate_ratio"
+          ],
+          "ratios": {
+            "actual_miner_accepted_rate_ratio": {
+              "decimal": 0.772413833203221,
+              "denominator": 128300667,
+              "numerator": 99101210
+            },
+            "equal_B_complete_proof_ratio": {
+              "decimal": 0.7806451612903226,
+              "denominator": 155,
+              "numerator": 121
+            },
+            "equal_B_eventually_accepted_ratio": {
+              "decimal": 0.7692307692307693,
+              "denominator": 13,
+              "numerator": 10
+            },
+            "setup_plus_miner_accepted_rate_ratio": {
+              "decimal": 0.7398079077291333,
+              "denominator": 2495190347,
+              "numerator": 1845961550
+            }
+          },
+          "reason": null,
+          "right": "main-w1-d1-round-robin-integer-paired-general-s5102",
+          "right_B_proofs": 155,
+          "right_B_winners": 78,
+          "same_paid_forest": true
+        },
+        {
+          "comparable": true,
+          "group": "arm",
+          "left": "window-w4-d2-structure-specialized-s5101",
+          "left_B_proofs": 146,
+          "left_B_winners": 60,
+          "matched_prefix_records": 147,
+          "overlap_prefix_matches": true,
+          "ratio_names_below_one": [
+            "equal_B_complete_proof_ratio",
+            "equal_B_eventually_accepted_ratio",
+            "actual_miner_accepted_rate_ratio",
+            "setup_plus_miner_accepted_rate_ratio"
+          ],
+          "ratios": {
+            "actual_miner_accepted_rate_ratio": {
+              "decimal": 0.964000555552121,
+              "denominator": 3986211043,
+              "numerator": 3842709660
+            },
+            "equal_B_complete_proof_ratio": {
+              "decimal": 0.9798657718120806,
+              "denominator": 149,
+              "numerator": 146
+            },
+            "equal_B_eventually_accepted_ratio": {
+              "decimal": 0.967741935483871,
+              "denominator": 31,
+              "numerator": 30
+            },
+            "setup_plus_miner_accepted_rate_ratio": {
+              "decimal": 0.9386677630539216,
+              "denominator": 9880309429,
+              "numerator": 9274327950
+            }
+          },
+          "reason": null,
+          "right": "window-w4-d2-integer-paired-general-s5101",
+          "right_B_proofs": 149,
+          "right_B_winners": 62,
+          "same_paid_forest": true
+        },
+        {
+          "comparable": true,
+          "group": "arm",
+          "left": "screen-w4-d1-structure-specialized-s5102",
+          "left_B_proofs": 60,
+          "left_B_winners": 27,
+          "matched_prefix_records": 61,
+          "overlap_prefix_matches": true,
+          "ratio_names_below_one": [
+            "equal_B_complete_proof_ratio",
+            "equal_B_eventually_accepted_ratio",
+            "actual_miner_accepted_rate_ratio",
+            "setup_plus_miner_accepted_rate_ratio"
+          ],
+          "ratios": {
+            "actual_miner_accepted_rate_ratio": {
+              "decimal": 0.9312458313643474,
+              "denominator": 3718193443,
+              "numerator": 3462552144
+            },
+            "equal_B_complete_proof_ratio": {
+              "decimal": 0.8,
+              "denominator": 5,
+              "numerator": 4
+            },
+            "equal_B_eventually_accepted_ratio": {
+              "decimal": 0.9310344827586207,
+              "denominator": 29,
+              "numerator": 27
+            },
+            "setup_plus_miner_accepted_rate_ratio": {
+              "decimal": 0.8354202197158107,
+              "denominator": 7947541118,
+              "numerator": 6639536547
+            }
+          },
+          "reason": null,
+          "right": "screen-w4-d1-integer-paired-general-s5102",
+          "right_B_proofs": 75,
+          "right_B_winners": 29,
+          "same_paid_forest": true
+        },
+        {
+          "comparable": true,
+          "group": "strassen_against_specialized",
+          "left": "strassen-w4-d1-round-robin-s5101",
+          "left_B_proofs": 136,
+          "left_B_winners": 72,
+          "matched_prefix_records": 137,
+          "overlap_prefix_matches": true,
+          "ratio_names_below_one": [
+            "equal_B_complete_proof_ratio",
+            "equal_B_eventually_accepted_ratio",
+            "actual_miner_accepted_rate_ratio",
+            "setup_plus_miner_accepted_rate_ratio"
+          ],
+          "ratios": {
+            "actual_miner_accepted_rate_ratio": {
+              "decimal": 0.9365808630690944,
+              "denominator": 9873825115,
+              "numerator": 9247635648
+            },
+            "equal_B_complete_proof_ratio": {
+              "decimal": 0.9577464788732394,
+              "denominator": 71,
+              "numerator": 68
+            },
+            "equal_B_eventually_accepted_ratio": {
+              "decimal": 0.935064935064935,
+              "denominator": 77,
+              "numerator": 72
+            },
+            "setup_plus_miner_accepted_rate_ratio": {
+              "decimal": 0.9891040140809875,
+              "denominator": 2531957659,
+              "numerator": 2504369484
+            }
+          },
+          "reason": null,
+          "right": "main-w4-d1-round-robin-structure-specialized-s5101",
+          "right_B_proofs": 142,
+          "right_B_winners": 77,
+          "same_paid_forest": true
+        }
+      ],
+      "candidate_chainwork_from_B": 4378,
+      "canonical_chainwork_added_by_research": 0,
+      "checks": {
+        "actual_budget_exhaustion_and_cap_distinction": true,
+        "actual_material_cache_behavior": true,
+        "adaptive_choices_from_prior_paid_service_cost": true,
+        "all_four_registered_ratio_types": true,
+        "all_null_entries_have_real_semantic_prefix_divergence": true,
+        "distinct_leaf_states": true,
+        "exact_by_B_availability_and_late_exclusion": true,
+        "external_file_pins": true,
+        "full_paid_forest_identity": true,
+        "native_receiving_after_miner_seal": true,
+        "one_total_B_across_epochs": true,
+        "per_job_unique_identity_and_setup_separation": true,
+        "phase_contiguity_and_complete_endpoint": true,
+        "real_common_root_sibling_paths": true,
+        "repeated_setup_records_have_zero_new_credit": true,
+        "whole_child_signed_residual": true
+      },
+      "comparison_directions": {
+        "arm": {
+          "higher": 7,
+          "lower": 5,
+          "unpaired_or_censored": 8
+        },
+        "policy": {
+          "unpaired_or_censored": 14
+        },
+        "reuse": {
+          "higher": 4
+        },
+        "strassen_against_specialized": {
+          "higher": 1,
+          "lower": 1,
+          "unpaired_or_censored": 2
+        }
+      },
+      "comparisons": {
+        "arm": [
+          {
+            "comparable": true,
+            "left": "main-w1-d1-round-robin-structure-specialized-s5101",
+            "left_B_proofs": 98,
+            "left_B_winners": 53,
+            "matched_prefix_records": 99,
+            "overlap_prefix_matches": true,
+            "ratio_names_below_one": [
+              "equal_B_complete_proof_ratio",
+              "equal_B_eventually_accepted_ratio",
+              "actual_miner_accepted_rate_ratio",
+              "setup_plus_miner_accepted_rate_ratio"
+            ],
+            "ratios": {
+              "actual_miner_accepted_rate_ratio": {
+                "decimal": 0.9246538397614021,
+                "denominator": 2461590125,
+                "numerator": 2276118761
+              },
+              "equal_B_complete_proof_ratio": {
+                "decimal": 0.9074074074074074,
+                "denominator": 54,
+                "numerator": 49
+              },
+              "equal_B_eventually_accepted_ratio": {
+                "decimal": 0.9298245614035088,
+                "denominator": 57,
+                "numerator": 53
+              },
+              "setup_plus_miner_accepted_rate_ratio": {
+                "decimal": 0.7944714554274938,
+                "denominator": 11693785182,
+                "numerator": 9290378533
+              }
+            },
+            "reason": null,
+            "right": "main-w1-d1-round-robin-integer-paired-general-s5101",
+            "right_B_proofs": 108,
+            "right_B_winners": 57,
+            "same_paid_forest": true
+          },
+          {
+            "comparable": false,
+            "left": "main-w1-d1-adaptive-cost-structure-specialized-s5101",
+            "left_B_proofs": 135,
+            "left_B_winners": 70,
+            "matched_prefix_records": 3,
+            "overlap_prefix_matches": false,
+            "ratio_names_below_one": [],
+            "ratios": {
+              "actual_miner_accepted_rate_ratio": null,
+              "equal_B_complete_proof_ratio": null,
+              "equal_B_eventually_accepted_ratio": null,
+              "setup_plus_miner_accepted_rate_ratio": null
+            },
+            "reason": "incomplete-or-censored-observation-or-divergent-paid-identity",
+            "right": "main-w1-d1-adaptive-cost-integer-paired-general-s5101",
+            "right_B_proofs": 124,
+            "right_B_winners": 58,
+            "same_paid_forest": true
+          },
+          {
+            "comparable": true,
+            "left": "main-w4-d1-round-robin-structure-specialized-s5101",
+            "left_B_proofs": 142,
+            "left_B_winners": 77,
+            "matched_prefix_records": 125,
+            "overlap_prefix_matches": true,
+            "ratio_names_below_one": [],
+            "ratios": {
+              "actual_miner_accepted_rate_ratio": {
+                "decimal": 1.1830047371427155,
+                "denominator": 8348559960,
+                "numerator": 9876385981
+              },
+              "equal_B_complete_proof_ratio": {
+                "decimal": 1.1451612903225807,
+                "denominator": 62,
+                "numerator": 71
+              },
+              "equal_B_eventually_accepted_ratio": {
+                "decimal": 1.1846153846153846,
+                "denominator": 65,
+                "numerator": 77
+              },
+              "setup_plus_miner_accepted_rate_ratio": {
+                "decimal": 1.1919648603686996,
+                "denominator": 1808711294,
+                "numerator": 2155920305
+              }
+            },
+            "reason": null,
+            "right": "main-w4-d1-round-robin-integer-paired-general-s5101",
+            "right_B_proofs": 124,
+            "right_B_winners": 65,
+            "same_paid_forest": true
+          },
+          {
+            "comparable": true,
+            "left": "strassen-w4-d1-round-robin-s5101",
+            "left_B_proofs": 136,
+            "left_B_winners": 72,
+            "matched_prefix_records": 125,
+            "overlap_prefix_matches": true,
+            "ratio_names_below_one": [],
+            "ratios": {
+              "actual_miner_accepted_rate_ratio": {
+                "decimal": 1.1079795977279516,
+                "denominator": 8335047175,
+                "numerator": 9235062216
+              },
+              "equal_B_complete_proof_ratio": {
+                "decimal": 1.096774193548387,
+                "denominator": 31,
+                "numerator": 34
+              },
+              "equal_B_eventually_accepted_ratio": {
+                "decimal": 1.1076923076923078,
+                "denominator": 65,
+                "numerator": 72
+              },
+              "setup_plus_miner_accepted_rate_ratio": {
+                "decimal": 1.1789772280341646,
+                "denominator": 427473371,
+                "numerator": 503981370
+              }
+            },
+            "reason": null,
+            "right": "main-w4-d1-round-robin-integer-paired-general-s5101",
+            "right_B_proofs": 124,
+            "right_B_winners": 65,
+            "same_paid_forest": true
+          },
+          {
+            "comparable": false,
+            "left": "main-w4-d1-adaptive-cost-structure-specialized-s5101",
+            "left_B_proofs": 143,
+            "left_B_winners": 71,
+            "matched_prefix_records": 8,
+            "overlap_prefix_matches": false,
+            "ratio_names_below_one": [],
+            "ratios": {
+              "actual_miner_accepted_rate_ratio": null,
+              "equal_B_complete_proof_ratio": null,
+              "equal_B_eventually_accepted_ratio": null,
+              "setup_plus_miner_accepted_rate_ratio": null
+            },
+            "reason": "incomplete-or-censored-observation-or-divergent-paid-identity",
+            "right": "main-w4-d1-adaptive-cost-integer-paired-general-s5101",
+            "right_B_proofs": 135,
+            "right_B_winners": 66,
+            "same_paid_forest": true
+          },
+          {
+            "comparable": false,
+            "left": "strassen-w4-d1-adaptive-cost-s5101",
+            "left_B_proofs": 157,
+            "left_B_winners": 76,
+            "matched_prefix_records": 8,
+            "overlap_prefix_matches": false,
+            "ratio_names_below_one": [],
+            "ratios": {
+              "actual_miner_accepted_rate_ratio": null,
+              "equal_B_complete_proof_ratio": null,
+              "equal_B_eventually_accepted_ratio": null,
+              "setup_plus_miner_accepted_rate_ratio": null
+            },
+            "reason": "incomplete-or-censored-observation-or-divergent-paid-identity",
+            "right": "main-w4-d1-adaptive-cost-integer-paired-general-s5101",
+            "right_B_proofs": 135,
+            "right_B_winners": 66,
+            "same_paid_forest": true
+          },
+          {
+            "comparable": true,
+            "left": "main-w4-d2-round-robin-structure-specialized-s5101",
+            "left_B_proofs": 138,
+            "left_B_winners": 56,
+            "matched_prefix_records": 135,
+            "overlap_prefix_matches": true,
+            "ratio_names_below_one": [],
+            "ratios": {
+              "actual_miner_accepted_rate_ratio": {
+                "decimal": 1.0249026715793903,
+                "denominator": 7045980205,
+                "numerator": 7221443936
+              },
+              "equal_B_complete_proof_ratio": {
+                "decimal": 1.0298507462686568,
+                "denominator": 67,
+                "numerator": 69
+              },
+              "equal_B_eventually_accepted_ratio": {
+                "decimal": 1.018181818181818,
+                "denominator": 55,
+                "numerator": 56
+              },
+              "setup_plus_miner_accepted_rate_ratio": {
+                "decimal": 1.0531260693146385,
+                "denominator": 295662510,
+                "numerator": 311369897
+              }
+            },
+            "reason": null,
+            "right": "main-w4-d2-round-robin-integer-paired-general-s5101",
+            "right_B_proofs": 134,
+            "right_B_winners": 55,
+            "same_paid_forest": true
+          },
+          {
+            "comparable": false,
+            "left": "main-w4-d2-adaptive-cost-structure-specialized-s5101",
+            "left_B_proofs": 146,
+            "left_B_winners": 81,
+            "matched_prefix_records": 8,
+            "overlap_prefix_matches": false,
+            "ratio_names_below_one": [],
+            "ratios": {
+              "actual_miner_accepted_rate_ratio": null,
+              "equal_B_complete_proof_ratio": null,
+              "equal_B_eventually_accepted_ratio": null,
+              "setup_plus_miner_accepted_rate_ratio": null
+            },
+            "reason": "incomplete-or-censored-observation-or-divergent-paid-identity",
+            "right": "main-w4-d2-adaptive-cost-integer-paired-general-s5101",
+            "right_B_proofs": 138,
+            "right_B_winners": 71,
+            "same_paid_forest": true
+          },
+          {
+            "comparable": true,
+            "left": "main-w4-d2-round-robin-structure-specialized-s5102",
+            "left_B_proofs": 112,
+            "left_B_winners": 58,
+            "matched_prefix_records": 109,
+            "overlap_prefix_matches": true,
+            "ratio_names_below_one": [],
+            "ratios": {
+              "actual_miner_accepted_rate_ratio": {
+                "decimal": 1.017476805210843,
+                "denominator": 7360884867,
+                "numerator": 7489529618
+              },
+              "equal_B_complete_proof_ratio": {
+                "decimal": 1.037037037037037,
+                "denominator": 27,
+                "numerator": 28
+              },
+              "equal_B_eventually_accepted_ratio": {
+                "decimal": 1.0175438596491229,
+                "denominator": 57,
+                "numerator": 58
+              },
+              "setup_plus_miner_accepted_rate_ratio": {
+                "decimal": 1.1539526748498146,
+                "denominator": 966761306,
+                "numerator": 1115596795
+              }
+            },
+            "reason": null,
+            "right": "main-w4-d2-round-robin-integer-paired-general-s5102",
+            "right_B_proofs": 108,
+            "right_B_winners": 57,
+            "same_paid_forest": true
+          },
+          {
+            "comparable": false,
+            "left": "main-w4-d2-adaptive-cost-structure-specialized-s5102",
+            "left_B_proofs": 112,
+            "left_B_winners": 52,
+            "matched_prefix_records": 8,
+            "overlap_prefix_matches": false,
+            "ratio_names_below_one": [],
+            "ratios": {
+              "actual_miner_accepted_rate_ratio": null,
+              "equal_B_complete_proof_ratio": null,
+              "equal_B_eventually_accepted_ratio": null,
+              "setup_plus_miner_accepted_rate_ratio": null
+            },
+            "reason": "incomplete-or-censored-observation-or-divergent-paid-identity",
+            "right": "main-w4-d2-adaptive-cost-integer-paired-general-s5102",
+            "right_B_proofs": 111,
+            "right_B_winners": 53,
+            "same_paid_forest": true
+          },
+          {
+            "comparable": true,
+            "left": "main-w4-d1-round-robin-structure-specialized-s5102",
+            "left_B_proofs": 109,
+            "left_B_winners": 54,
+            "matched_prefix_records": 110,
+            "overlap_prefix_matches": true,
+            "ratio_names_below_one": [
+              "equal_B_complete_proof_ratio",
+              "equal_B_eventually_accepted_ratio",
+              "actual_miner_accepted_rate_ratio",
+              "setup_plus_miner_accepted_rate_ratio"
+            ],
+            "ratios": {
+              "actual_miner_accepted_rate_ratio": {
+                "decimal": 0.896341338771554,
+                "denominator": 1287970300,
+                "numerator": 1154461023
+              },
+              "equal_B_complete_proof_ratio": {
+                "decimal": 0.9159663865546218,
+                "denominator": 119,
+                "numerator": 109
+              },
+              "equal_B_eventually_accepted_ratio": {
+                "decimal": 0.9,
+                "denominator": 10,
+                "numerator": 9
+              },
+              "setup_plus_miner_accepted_rate_ratio": {
+                "decimal": 0.7922950347694434,
+                "denominator": 288500017,
+                "numerator": 228577131
+              }
+            },
+            "reason": null,
+            "right": "main-w4-d1-round-robin-integer-paired-general-s5102",
+            "right_B_proofs": 119,
+            "right_B_winners": 60,
+            "same_paid_forest": true
+          },
+          {
+            "comparable": true,
+            "left": "strassen-w4-d1-round-robin-s5102",
+            "left_B_proofs": 130,
+            "left_B_winners": 66,
+            "matched_prefix_records": 120,
+            "overlap_prefix_matches": true,
+            "ratio_names_below_one": [
+              "setup_plus_miner_accepted_rate_ratio"
+            ],
+            "ratios": {
+              "actual_miner_accepted_rate_ratio": {
+                "decimal": 1.101086782163337,
+                "denominator": 1281468400,
+                "numerator": 1411007917
+              },
+              "equal_B_complete_proof_ratio": {
+                "decimal": 1.0924369747899159,
+                "denominator": 119,
+                "numerator": 130
+              },
+              "equal_B_eventually_accepted_ratio": {
+                "decimal": 1.1,
+                "denominator": 10,
+                "numerator": 11
+              },
+              "setup_plus_miner_accepted_rate_ratio": {
+                "decimal": 0.9593881281203602,
+                "denominator": 291198151,
+                "numerator": 279372049
+              }
+            },
+            "reason": null,
+            "right": "main-w4-d1-round-robin-integer-paired-general-s5102",
+            "right_B_proofs": 119,
+            "right_B_winners": 60,
+            "same_paid_forest": true
+          },
+          {
+            "comparable": false,
+            "left": "main-w4-d1-adaptive-cost-structure-specialized-s5102",
+            "left_B_proofs": 144,
+            "left_B_winners": 62,
+            "matched_prefix_records": 8,
+            "overlap_prefix_matches": false,
+            "ratio_names_below_one": [],
+            "ratios": {
+              "actual_miner_accepted_rate_ratio": null,
+              "equal_B_complete_proof_ratio": null,
+              "equal_B_eventually_accepted_ratio": null,
+              "setup_plus_miner_accepted_rate_ratio": null
+            },
+            "reason": "incomplete-or-censored-observation-or-divergent-paid-identity",
+            "right": "main-w4-d1-adaptive-cost-integer-paired-general-s5102",
+            "right_B_proofs": 134,
+            "right_B_winners": 67,
+            "same_paid_forest": true
+          },
+          {
+            "comparable": false,
+            "left": "strassen-w4-d1-adaptive-cost-s5102",
+            "left_B_proofs": 140,
+            "left_B_winners": 62,
+            "matched_prefix_records": 8,
+            "overlap_prefix_matches": false,
+            "ratio_names_below_one": [],
+            "ratios": {
+              "actual_miner_accepted_rate_ratio": null,
+              "equal_B_complete_proof_ratio": null,
+              "equal_B_eventually_accepted_ratio": null,
+              "setup_plus_miner_accepted_rate_ratio": null
+            },
+            "reason": "incomplete-or-censored-observation-or-divergent-paid-identity",
+            "right": "main-w4-d1-adaptive-cost-integer-paired-general-s5102",
+            "right_B_proofs": 134,
+            "right_B_winners": 67,
+            "same_paid_forest": true
+          },
+          {
+            "comparable": true,
+            "left": "main-w1-d1-round-robin-structure-specialized-s5102",
+            "left_B_proofs": 121,
+            "left_B_winners": 60,
+            "matched_prefix_records": 122,
+            "overlap_prefix_matches": true,
+            "ratio_names_below_one": [
+              "equal_B_complete_proof_ratio",
+              "equal_B_eventually_accepted_ratio",
+              "actual_miner_accepted_rate_ratio",
+              "setup_plus_miner_accepted_rate_ratio"
+            ],
+            "ratios": {
+              "actual_miner_accepted_rate_ratio": {
+                "decimal": 0.772413833203221,
+                "denominator": 128300667,
+                "numerator": 99101210
+              },
+              "equal_B_complete_proof_ratio": {
+                "decimal": 0.7806451612903226,
+                "denominator": 155,
+                "numerator": 121
+              },
+              "equal_B_eventually_accepted_ratio": {
+                "decimal": 0.7692307692307693,
+                "denominator": 13,
+                "numerator": 10
+              },
+              "setup_plus_miner_accepted_rate_ratio": {
+                "decimal": 0.7398079077291333,
+                "denominator": 2495190347,
+                "numerator": 1845961550
+              }
+            },
+            "reason": null,
+            "right": "main-w1-d1-round-robin-integer-paired-general-s5102",
+            "right_B_proofs": 155,
+            "right_B_winners": 78,
+            "same_paid_forest": true
+          },
+          {
+            "comparable": false,
+            "left": "main-w1-d1-adaptive-cost-structure-specialized-s5102",
+            "left_B_proofs": 111,
+            "left_B_winners": 54,
+            "matched_prefix_records": 6,
+            "overlap_prefix_matches": false,
+            "ratio_names_below_one": [],
+            "ratios": {
+              "actual_miner_accepted_rate_ratio": null,
+              "equal_B_complete_proof_ratio": null,
+              "equal_B_eventually_accepted_ratio": null,
+              "setup_plus_miner_accepted_rate_ratio": null
+            },
+            "reason": "incomplete-or-censored-observation-or-divergent-paid-identity",
+            "right": "main-w1-d1-adaptive-cost-integer-paired-general-s5102",
+            "right_B_proofs": 140,
+            "right_B_winners": 69,
+            "same_paid_forest": true
+          },
+          {
+            "comparable": true,
+            "left": "window-w4-d2-structure-specialized-s5101",
+            "left_B_proofs": 146,
+            "left_B_winners": 60,
+            "matched_prefix_records": 147,
+            "overlap_prefix_matches": true,
+            "ratio_names_below_one": [
+              "equal_B_complete_proof_ratio",
+              "equal_B_eventually_accepted_ratio",
+              "actual_miner_accepted_rate_ratio",
+              "setup_plus_miner_accepted_rate_ratio"
+            ],
+            "ratios": {
+              "actual_miner_accepted_rate_ratio": {
+                "decimal": 0.964000555552121,
+                "denominator": 3986211043,
+                "numerator": 3842709660
+              },
+              "equal_B_complete_proof_ratio": {
+                "decimal": 0.9798657718120806,
+                "denominator": 149,
+                "numerator": 146
+              },
+              "equal_B_eventually_accepted_ratio": {
+                "decimal": 0.967741935483871,
+                "denominator": 31,
+                "numerator": 30
+              },
+              "setup_plus_miner_accepted_rate_ratio": {
+                "decimal": 0.9386677630539216,
+                "denominator": 9880309429,
+                "numerator": 9274327950
+              }
+            },
+            "reason": null,
+            "right": "window-w4-d2-integer-paired-general-s5101",
+            "right_B_proofs": 149,
+            "right_B_winners": 62,
+            "same_paid_forest": true
+          },
+          {
+            "comparable": true,
+            "left": "window-w4-d2-structure-specialized-s5102",
+            "left_B_proofs": 157,
+            "left_B_winners": 83,
+            "matched_prefix_records": 153,
+            "overlap_prefix_matches": true,
+            "ratio_names_below_one": [],
+            "ratios": {
+              "actual_miner_accepted_rate_ratio": {
+                "decimal": 1.0347990832639111,
+                "denominator": 102911188,
+                "numerator": 106492403
+              },
+              "equal_B_complete_proof_ratio": {
+                "decimal": 1.0328947368421053,
+                "denominator": 152,
+                "numerator": 157
+              },
+              "equal_B_eventually_accepted_ratio": {
+                "decimal": 1.0375,
+                "denominator": 80,
+                "numerator": 83
+              },
+              "setup_plus_miner_accepted_rate_ratio": {
+                "decimal": 1.0621046963923706,
+                "denominator": 12647372560,
+                "numerator": 13432833793
+              }
+            },
+            "reason": null,
+            "right": "window-w4-d2-integer-paired-general-s5102",
+            "right_B_proofs": 152,
+            "right_B_winners": 80,
+            "same_paid_forest": true
+          },
+          {
+            "comparable": true,
+            "left": "screen-w4-d1-structure-specialized-s5101",
+            "left_B_proofs": 67,
+            "left_B_winners": 36,
+            "matched_prefix_records": 59,
+            "overlap_prefix_matches": true,
+            "ratio_names_below_one": [],
+            "ratios": {
+              "actual_miner_accepted_rate_ratio": {
+                "decimal": 1.1661541734626961,
+                "denominator": 1990996483,
+                "numerator": 2321808858
+              },
+              "equal_B_complete_proof_ratio": {
+                "decimal": 1.1551724137931034,
+                "denominator": 58,
+                "numerator": 67
+              },
+              "equal_B_eventually_accepted_ratio": {
+                "decimal": 1.1612903225806452,
+                "denominator": 31,
+                "numerator": 36
+              },
+              "setup_plus_miner_accepted_rate_ratio": {
+                "decimal": 1.1950494479215619,
+                "denominator": 117206443,
+                "numerator": 140067495
+              }
+            },
+            "reason": null,
+            "right": "screen-w4-d1-integer-paired-general-s5101",
+            "right_B_proofs": 58,
+            "right_B_winners": 31,
+            "same_paid_forest": true
+          },
+          {
+            "comparable": true,
+            "left": "screen-w4-d1-structure-specialized-s5102",
+            "left_B_proofs": 60,
+            "left_B_winners": 27,
+            "matched_prefix_records": 61,
+            "overlap_prefix_matches": true,
+            "ratio_names_below_one": [
+              "equal_B_complete_proof_ratio",
+              "equal_B_eventually_accepted_ratio",
+              "actual_miner_accepted_rate_ratio",
+              "setup_plus_miner_accepted_rate_ratio"
+            ],
+            "ratios": {
+              "actual_miner_accepted_rate_ratio": {
+                "decimal": 0.9312458313643474,
+                "denominator": 3718193443,
+                "numerator": 3462552144
+              },
+              "equal_B_complete_proof_ratio": {
+                "decimal": 0.8,
+                "denominator": 5,
+                "numerator": 4
+              },
+              "equal_B_eventually_accepted_ratio": {
+                "decimal": 0.9310344827586207,
+                "denominator": 29,
+                "numerator": 27
+              },
+              "setup_plus_miner_accepted_rate_ratio": {
+                "decimal": 0.8354202197158107,
+                "denominator": 7947541118,
+                "numerator": 6639536547
+              }
+            },
+            "reason": null,
+            "right": "screen-w4-d1-integer-paired-general-s5102",
+            "right_B_proofs": 75,
+            "right_B_winners": 29,
+            "same_paid_forest": true
+          }
+        ],
+        "policy": [
+          {
+            "comparable": false,
+            "left": "main-w1-d1-adaptive-cost-integer-paired-general-s5101",
+            "left_B_proofs": 124,
+            "left_B_winners": 58,
+            "matched_prefix_records": 2,
+            "overlap_prefix_matches": false,
+            "ratio_names_below_one": [],
+            "ratios": {
+              "actual_miner_accepted_rate_ratio": null,
+              "equal_B_complete_proof_ratio": null,
+              "equal_B_eventually_accepted_ratio": null,
+              "setup_plus_miner_accepted_rate_ratio": null
+            },
+            "reason": "incomplete-or-censored-observation-or-divergent-paid-identity",
+            "right": "main-w1-d1-round-robin-integer-paired-general-s5101",
+            "right_B_proofs": 108,
+            "right_B_winners": 57,
+            "same_paid_forest": true
+          },
+          {
+            "comparable": false,
+            "left": "main-w1-d1-adaptive-cost-structure-specialized-s5101",
+            "left_B_proofs": 135,
+            "left_B_winners": 70,
+            "matched_prefix_records": 2,
+            "overlap_prefix_matches": false,
+            "ratio_names_below_one": [],
+            "ratios": {
+              "actual_miner_accepted_rate_ratio": null,
+              "equal_B_complete_proof_ratio": null,
+              "equal_B_eventually_accepted_ratio": null,
+              "setup_plus_miner_accepted_rate_ratio": null
+            },
+            "reason": "incomplete-or-censored-observation-or-divergent-paid-identity",
+            "right": "main-w1-d1-round-robin-structure-specialized-s5101",
+            "right_B_proofs": 98,
+            "right_B_winners": 53,
+            "same_paid_forest": true
+          },
+          {
+            "comparable": false,
+            "left": "main-w4-d1-adaptive-cost-integer-paired-general-s5101",
+            "left_B_proofs": 135,
+            "left_B_winners": 66,
+            "matched_prefix_records": 8,
+            "overlap_prefix_matches": false,
+            "ratio_names_below_one": [],
+            "ratios": {
+              "actual_miner_accepted_rate_ratio": null,
+              "equal_B_complete_proof_ratio": null,
+              "equal_B_eventually_accepted_ratio": null,
+              "setup_plus_miner_accepted_rate_ratio": null
+            },
+            "reason": "incomplete-or-censored-observation-or-divergent-paid-identity",
+            "right": "main-w4-d1-round-robin-integer-paired-general-s5101",
+            "right_B_proofs": 124,
+            "right_B_winners": 65,
+            "same_paid_forest": true
+          },
+          {
+            "comparable": false,
+            "left": "main-w4-d1-adaptive-cost-structure-specialized-s5101",
+            "left_B_proofs": 143,
+            "left_B_winners": 71,
+            "matched_prefix_records": 8,
+            "overlap_prefix_matches": false,
+            "ratio_names_below_one": [],
+            "ratios": {
+              "actual_miner_accepted_rate_ratio": null,
+              "equal_B_complete_proof_ratio": null,
+              "equal_B_eventually_accepted_ratio": null,
+              "setup_plus_miner_accepted_rate_ratio": null
+            },
+            "reason": "incomplete-or-censored-observation-or-divergent-paid-identity",
+            "right": "main-w4-d1-round-robin-structure-specialized-s5101",
+            "right_B_proofs": 142,
+            "right_B_winners": 77,
+            "same_paid_forest": true
+          },
+          {
+            "comparable": false,
+            "left": "main-w4-d2-adaptive-cost-integer-paired-general-s5101",
+            "left_B_proofs": 138,
+            "left_B_winners": 71,
+            "matched_prefix_records": 8,
+            "overlap_prefix_matches": false,
+            "ratio_names_below_one": [],
+            "ratios": {
+              "actual_miner_accepted_rate_ratio": null,
+              "equal_B_complete_proof_ratio": null,
+              "equal_B_eventually_accepted_ratio": null,
+              "setup_plus_miner_accepted_rate_ratio": null
+            },
+            "reason": "incomplete-or-censored-observation-or-divergent-paid-identity",
+            "right": "main-w4-d2-round-robin-integer-paired-general-s5101",
+            "right_B_proofs": 134,
+            "right_B_winners": 55,
+            "same_paid_forest": true
+          },
+          {
+            "comparable": false,
+            "left": "main-w4-d2-adaptive-cost-structure-specialized-s5101",
+            "left_B_proofs": 146,
+            "left_B_winners": 81,
+            "matched_prefix_records": 8,
+            "overlap_prefix_matches": false,
+            "ratio_names_below_one": [],
+            "ratios": {
+              "actual_miner_accepted_rate_ratio": null,
+              "equal_B_complete_proof_ratio": null,
+              "equal_B_eventually_accepted_ratio": null,
+              "setup_plus_miner_accepted_rate_ratio": null
+            },
+            "reason": "incomplete-or-censored-observation-or-divergent-paid-identity",
+            "right": "main-w4-d2-round-robin-structure-specialized-s5101",
+            "right_B_proofs": 138,
+            "right_B_winners": 56,
+            "same_paid_forest": true
+          },
+          {
+            "comparable": false,
+            "left": "main-w4-d2-adaptive-cost-structure-specialized-s5102",
+            "left_B_proofs": 112,
+            "left_B_winners": 52,
+            "matched_prefix_records": 8,
+            "overlap_prefix_matches": false,
+            "ratio_names_below_one": [],
+            "ratios": {
+              "actual_miner_accepted_rate_ratio": null,
+              "equal_B_complete_proof_ratio": null,
+              "equal_B_eventually_accepted_ratio": null,
+              "setup_plus_miner_accepted_rate_ratio": null
+            },
+            "reason": "incomplete-or-censored-observation-or-divergent-paid-identity",
+            "right": "main-w4-d2-round-robin-structure-specialized-s5102",
+            "right_B_proofs": 112,
+            "right_B_winners": 58,
+            "same_paid_forest": true
+          },
+          {
+            "comparable": false,
+            "left": "main-w4-d2-adaptive-cost-integer-paired-general-s5102",
+            "left_B_proofs": 111,
+            "left_B_winners": 53,
+            "matched_prefix_records": 8,
+            "overlap_prefix_matches": false,
+            "ratio_names_below_one": [],
+            "ratios": {
+              "actual_miner_accepted_rate_ratio": null,
+              "equal_B_complete_proof_ratio": null,
+              "equal_B_eventually_accepted_ratio": null,
+              "setup_plus_miner_accepted_rate_ratio": null
+            },
+            "reason": "incomplete-or-censored-observation-or-divergent-paid-identity",
+            "right": "main-w4-d2-round-robin-integer-paired-general-s5102",
+            "right_B_proofs": 108,
+            "right_B_winners": 57,
+            "same_paid_forest": true
+          },
+          {
+            "comparable": false,
+            "left": "main-w4-d1-adaptive-cost-structure-specialized-s5102",
+            "left_B_proofs": 144,
+            "left_B_winners": 62,
+            "matched_prefix_records": 8,
+            "overlap_prefix_matches": false,
+            "ratio_names_below_one": [],
+            "ratios": {
+              "actual_miner_accepted_rate_ratio": null,
+              "equal_B_complete_proof_ratio": null,
+              "equal_B_eventually_accepted_ratio": null,
+              "setup_plus_miner_accepted_rate_ratio": null
+            },
+            "reason": "incomplete-or-censored-observation-or-divergent-paid-identity",
+            "right": "main-w4-d1-round-robin-structure-specialized-s5102",
+            "right_B_proofs": 109,
+            "right_B_winners": 54,
+            "same_paid_forest": true
+          },
+          {
+            "comparable": false,
+            "left": "main-w4-d1-adaptive-cost-integer-paired-general-s5102",
+            "left_B_proofs": 134,
+            "left_B_winners": 67,
+            "matched_prefix_records": 8,
+            "overlap_prefix_matches": false,
+            "ratio_names_below_one": [],
+            "ratios": {
+              "actual_miner_accepted_rate_ratio": null,
+              "equal_B_complete_proof_ratio": null,
+              "equal_B_eventually_accepted_ratio": null,
+              "setup_plus_miner_accepted_rate_ratio": null
+            },
+            "reason": "incomplete-or-censored-observation-or-divergent-paid-identity",
+            "right": "main-w4-d1-round-robin-integer-paired-general-s5102",
+            "right_B_proofs": 119,
+            "right_B_winners": 60,
+            "same_paid_forest": true
+          },
+          {
+            "comparable": false,
+            "left": "main-w1-d1-adaptive-cost-structure-specialized-s5102",
+            "left_B_proofs": 111,
+            "left_B_winners": 54,
+            "matched_prefix_records": 3,
+            "overlap_prefix_matches": false,
+            "ratio_names_below_one": [],
+            "ratios": {
+              "actual_miner_accepted_rate_ratio": null,
+              "equal_B_complete_proof_ratio": null,
+              "equal_B_eventually_accepted_ratio": null,
+              "setup_plus_miner_accepted_rate_ratio": null
+            },
+            "reason": "incomplete-or-censored-observation-or-divergent-paid-identity",
+            "right": "main-w1-d1-round-robin-structure-specialized-s5102",
+            "right_B_proofs": 121,
+            "right_B_winners": 60,
+            "same_paid_forest": true
+          },
+          {
+            "comparable": false,
+            "left": "main-w1-d1-adaptive-cost-integer-paired-general-s5102",
+            "left_B_proofs": 140,
+            "left_B_winners": 69,
+            "matched_prefix_records": 3,
+            "overlap_prefix_matches": false,
+            "ratio_names_below_one": [],
+            "ratios": {
+              "actual_miner_accepted_rate_ratio": null,
+              "equal_B_complete_proof_ratio": null,
+              "equal_B_eventually_accepted_ratio": null,
+              "setup_plus_miner_accepted_rate_ratio": null
+            },
+            "reason": "incomplete-or-censored-observation-or-divergent-paid-identity",
+            "right": "main-w1-d1-round-robin-integer-paired-general-s5102",
+            "right_B_proofs": 155,
+            "right_B_winners": 78,
+            "same_paid_forest": true
+          },
+          {
+            "comparable": false,
+            "left": "strassen-w4-d1-adaptive-cost-s5101",
+            "left_B_proofs": 157,
+            "left_B_winners": 76,
+            "matched_prefix_records": 8,
+            "overlap_prefix_matches": false,
+            "ratio_names_below_one": [],
+            "ratios": {
+              "actual_miner_accepted_rate_ratio": null,
+              "equal_B_complete_proof_ratio": null,
+              "equal_B_eventually_accepted_ratio": null,
+              "setup_plus_miner_accepted_rate_ratio": null
+            },
+            "reason": "incomplete-or-censored-observation-or-divergent-paid-identity",
+            "right": "strassen-w4-d1-round-robin-s5101",
+            "right_B_proofs": 136,
+            "right_B_winners": 72,
+            "same_paid_forest": true
+          },
+          {
+            "comparable": false,
+            "left": "strassen-w4-d1-adaptive-cost-s5102",
+            "left_B_proofs": 140,
+            "left_B_winners": 62,
+            "matched_prefix_records": 9,
+            "overlap_prefix_matches": false,
+            "ratio_names_below_one": [],
+            "ratios": {
+              "actual_miner_accepted_rate_ratio": null,
+              "equal_B_complete_proof_ratio": null,
+              "equal_B_eventually_accepted_ratio": null,
+              "setup_plus_miner_accepted_rate_ratio": null
+            },
+            "reason": "incomplete-or-censored-observation-or-divergent-paid-identity",
+            "right": "strassen-w4-d1-round-robin-s5102",
+            "right_B_proofs": 130,
+            "right_B_winners": 66,
+            "same_paid_forest": true
+          }
+        ],
+        "reuse": [
+          {
+            "comparable": true,
+            "left": "window-w4-d2-integer-paired-general-s5101",
+            "left_B_proofs": 149,
+            "left_B_winners": 62,
+            "matched_prefix_records": 135,
+            "overlap_prefix_matches": true,
+            "ratio_names_below_one": [],
+            "ratios": {
+              "actual_miner_accepted_rate_ratio": {
+                "decimal": 1.1348767519049423,
+                "denominator": 3522483855,
+                "numerator": 3997585036
+              },
+              "equal_B_complete_proof_ratio": {
+                "decimal": 1.1119402985074627,
+                "denominator": 134,
+                "numerator": 149
+              },
+              "equal_B_eventually_accepted_ratio": {
+                "decimal": 1.1272727272727272,
+                "denominator": 55,
+                "numerator": 62
+              },
+              "setup_plus_miner_accepted_rate_ratio": {
+                "decimal": 1.1353883371629687,
+                "denominator": 17002934575,
+                "numerator": 19304933614
+              }
+            },
+            "reason": null,
+            "right": "main-w4-d2-round-robin-integer-paired-general-s5101",
+            "right_B_proofs": 134,
+            "right_B_winners": 55,
+            "same_paid_forest": true
+          },
+          {
+            "comparable": true,
+            "left": "window-w4-d2-structure-specialized-s5101",
+            "left_B_proofs": 146,
+            "left_B_winners": 60,
+            "matched_prefix_records": 139,
+            "overlap_prefix_matches": true,
+            "ratio_names_below_one": [],
+            "ratios": {
+              "actual_miner_accepted_rate_ratio": {
+                "decimal": 1.0674397185770306,
+                "denominator": 1800224342,
+                "numerator": 1921630965
+              },
+              "equal_B_complete_proof_ratio": {
+                "decimal": 1.0579710144927537,
+                "denominator": 69,
+                "numerator": 73
+              },
+              "equal_B_eventually_accepted_ratio": {
+                "decimal": 1.0714285714285714,
+                "denominator": 14,
+                "numerator": 15
+              },
+              "setup_plus_miner_accepted_rate_ratio": {
+                "decimal": 1.0119894110453977,
+                "denominator": 318719659,
+                "numerator": 322540920
+              }
+            },
+            "reason": null,
+            "right": "main-w4-d2-round-robin-structure-specialized-s5101",
+            "right_B_proofs": 138,
+            "right_B_winners": 56,
+            "same_paid_forest": true
+          },
+          {
+            "comparable": true,
+            "left": "window-w4-d2-structure-specialized-s5102",
+            "left_B_proofs": 157,
+            "left_B_winners": 83,
+            "matched_prefix_records": 113,
+            "overlap_prefix_matches": true,
+            "ratio_names_below_one": [],
+            "ratios": {
+              "actual_miner_accepted_rate_ratio": {
+                "decimal": 1.43658941888337,
+                "denominator": 7461061130,
+                "numerator": 10718481473
+              },
+              "equal_B_complete_proof_ratio": {
+                "decimal": 1.4017857142857142,
+                "denominator": 112,
+                "numerator": 157
+              },
+              "equal_B_eventually_accepted_ratio": {
+                "decimal": 1.4310344827586208,
+                "denominator": 58,
+                "numerator": 83
+              },
+              "setup_plus_miner_accepted_rate_ratio": {
+                "decimal": 1.3817411363118566,
+                "denominator": 4584672553,
+                "numerator": 6334830663
+              }
+            },
+            "reason": null,
+            "right": "main-w4-d2-round-robin-structure-specialized-s5102",
+            "right_B_proofs": 112,
+            "right_B_winners": 58,
+            "same_paid_forest": true
+          },
+          {
+            "comparable": true,
+            "left": "window-w4-d2-integer-paired-general-s5102",
+            "left_B_proofs": 152,
+            "left_B_winners": 80,
+            "matched_prefix_records": 109,
+            "overlap_prefix_matches": true,
+            "ratio_names_below_one": [],
+            "ratios": {
+              "actual_miner_accepted_rate_ratio": {
+                "decimal": 1.412541271021176,
+                "denominator": 365666685,
+                "numerator": 516519284
+              },
+              "equal_B_complete_proof_ratio": {
+                "decimal": 1.4074074074074074,
+                "denominator": 27,
+                "numerator": 38
+              },
+              "equal_B_eventually_accepted_ratio": {
+                "decimal": 1.4035087719298245,
+                "denominator": 57,
+                "numerator": 80
+              },
+              "setup_plus_miner_accepted_rate_ratio": {
+                "decimal": 1.50123042070426,
+                "denominator": 3074986049,
+                "numerator": 4616262600
+              }
+            },
+            "reason": null,
+            "right": "main-w4-d2-round-robin-integer-paired-general-s5102",
+            "right_B_proofs": 108,
+            "right_B_winners": 57,
+            "same_paid_forest": true
+          }
+        ],
+        "strassen_against_specialized": [
+          {
+            "comparable": true,
+            "left": "strassen-w4-d1-round-robin-s5101",
+            "left_B_proofs": 136,
+            "left_B_winners": 72,
+            "matched_prefix_records": 137,
+            "overlap_prefix_matches": true,
+            "ratio_names_below_one": [
+              "equal_B_complete_proof_ratio",
+              "equal_B_eventually_accepted_ratio",
+              "actual_miner_accepted_rate_ratio",
+              "setup_plus_miner_accepted_rate_ratio"
+            ],
+            "ratios": {
+              "actual_miner_accepted_rate_ratio": {
+                "decimal": 0.9365808630690944,
+                "denominator": 9873825115,
+                "numerator": 9247635648
+              },
+              "equal_B_complete_proof_ratio": {
+                "decimal": 0.9577464788732394,
+                "denominator": 71,
+                "numerator": 68
+              },
+              "equal_B_eventually_accepted_ratio": {
+                "decimal": 0.935064935064935,
+                "denominator": 77,
+                "numerator": 72
+              },
+              "setup_plus_miner_accepted_rate_ratio": {
+                "decimal": 0.9891040140809875,
+                "denominator": 2531957659,
+                "numerator": 2504369484
+              }
+            },
+            "reason": null,
+            "right": "main-w4-d1-round-robin-structure-specialized-s5101",
+            "right_B_proofs": 142,
+            "right_B_winners": 77,
+            "same_paid_forest": true
+          },
+          {
+            "comparable": false,
+            "left": "strassen-w4-d1-adaptive-cost-s5101",
+            "left_B_proofs": 157,
+            "left_B_winners": 76,
+            "matched_prefix_records": 8,
+            "overlap_prefix_matches": false,
+            "ratio_names_below_one": [],
+            "ratios": {
+              "actual_miner_accepted_rate_ratio": null,
+              "equal_B_complete_proof_ratio": null,
+              "equal_B_eventually_accepted_ratio": null,
+              "setup_plus_miner_accepted_rate_ratio": null
+            },
+            "reason": "incomplete-or-censored-observation-or-divergent-paid-identity",
+            "right": "main-w4-d1-adaptive-cost-structure-specialized-s5101",
+            "right_B_proofs": 143,
+            "right_B_winners": 71,
+            "same_paid_forest": true
+          },
+          {
+            "comparable": true,
+            "left": "strassen-w4-d1-round-robin-s5102",
+            "left_B_proofs": 130,
+            "left_B_winners": 66,
+            "matched_prefix_records": 110,
+            "overlap_prefix_matches": true,
+            "ratio_names_below_one": [],
+            "ratios": {
+              "actual_miner_accepted_rate_ratio": {
+                "decimal": 1.228423519629686,
+                "denominator": 115332156,
+                "numerator": 141676733
+              },
+              "equal_B_complete_proof_ratio": {
+                "decimal": 1.1926605504587156,
+                "denominator": 109,
+                "numerator": 130
+              },
+              "equal_B_eventually_accepted_ratio": {
+                "decimal": 1.2222222222222223,
+                "denominator": 9,
+                "numerator": 11
+              },
+              "setup_plus_miner_accepted_rate_ratio": {
+                "decimal": 1.210897564692603,
+                "denominator": 2620783359,
+                "numerator": 3173500187
+              }
+            },
+            "reason": null,
+            "right": "main-w4-d1-round-robin-structure-specialized-s5102",
+            "right_B_proofs": 109,
+            "right_B_winners": 54,
+            "same_paid_forest": true
+          },
+          {
+            "comparable": false,
+            "left": "strassen-w4-d1-adaptive-cost-s5102",
+            "left_B_proofs": 140,
+            "left_B_winners": 62,
+            "matched_prefix_records": 8,
+            "overlap_prefix_matches": false,
+            "ratio_names_below_one": [],
+            "ratios": {
+              "actual_miner_accepted_rate_ratio": null,
+              "equal_B_complete_proof_ratio": null,
+              "equal_B_eventually_accepted_ratio": null,
+              "setup_plus_miner_accepted_rate_ratio": null
+            },
+            "reason": "incomplete-or-censored-observation-or-divergent-paid-identity",
+            "right": "main-w4-d1-adaptive-cost-structure-specialized-s5102",
+            "right_B_proofs": 144,
+            "right_B_winners": 62,
+            "same_paid_forest": true
+          }
+        ]
+      },
+      "controls": [
+        {
+          "B": 128000000,
+          "P": 0,
+          "cap": 4,
+          "counts": {
+            "all_full_proof_records": 0,
+            "eventually_native_accepted_from_B": 0,
+            "miner_unique_complete_by_B": 0,
+            "miner_unique_target_hits_by_B": 0,
+            "original_reconstruction_records": 0,
+            "original_winner_records": 0,
+            "research_late_proofs": 0,
+            "research_late_target_hits": 0,
+            "research_proof_records": 0,
+            "research_target_hits": 0
+          },
+          "epochs": 0,
+          "job": "control-setup-zero",
+          "miner_cpu_ns": 44175,
+          "setup_complete": false,
+          "setup_cpu_ns": 108261,
+          "status": "setup-incomplete"
+        },
+        {
+          "B": 128000000,
+          "P": 1000000,
+          "cap": 4,
+          "counts": {
+            "all_full_proof_records": 0,
+            "eventually_native_accepted_from_B": 0,
+            "miner_unique_complete_by_B": 0,
+            "miner_unique_target_hits_by_B": 0,
+            "original_reconstruction_records": 0,
+            "original_winner_records": 0,
+            "research_late_proofs": 0,
+            "research_late_target_hits": 0,
+            "research_proof_records": 0,
+            "research_target_hits": 0
+          },
+          "epochs": 0,
+          "job": "control-setup-tight",
+          "miner_cpu_ns": 60610,
+          "setup_complete": false,
+          "setup_cpu_ns": 12342306,
+          "status": "setup-incomplete"
+        },
+        {
+          "B": 0,
+          "P": 1000000000,
+          "cap": 4,
+          "counts": {
+            "all_full_proof_records": 12,
+            "eventually_native_accepted_from_B": 0,
+            "miner_unique_complete_by_B": 0,
+            "miner_unique_target_hits_by_B": 0,
+            "original_reconstruction_records": 8,
+            "original_winner_records": 4,
+            "research_late_proofs": 0,
+            "research_late_target_hits": 0,
+            "research_proof_records": 0,
+            "research_target_hits": 0
+          },
+          "epochs": 0,
+          "job": "control-miner-zero",
+          "miner_cpu_ns": 94591,
+          "setup_complete": true,
+          "setup_cpu_ns": 52989917,
+          "status": "miner-cpu-budget-stopped"
+        },
+        {
+          "B": 100000,
+          "P": 1000000000,
+          "cap": 4,
+          "counts": {
+            "all_full_proof_records": 12,
+            "eventually_native_accepted_from_B": 0,
+            "miner_unique_complete_by_B": 0,
+            "miner_unique_target_hits_by_B": 0,
+            "original_reconstruction_records": 8,
+            "original_winner_records": 4,
+            "research_late_proofs": 0,
+            "research_late_target_hits": 0,
+            "research_proof_records": 0,
+            "research_target_hits": 0
+          },
+          "epochs": 1,
+          "job": "control-miner-tight",
+          "miner_cpu_ns": 133539,
+          "setup_complete": true,
+          "setup_cpu_ns": 62729303,
+          "status": "miner-cpu-budget-stopped"
+        },
+        {
+          "B": 1000000000,
+          "P": 1000000000,
+          "cap": 2,
+          "counts": {
+            "all_full_proof_records": 14,
+            "eventually_native_accepted_from_B": 0,
+            "miner_unique_complete_by_B": 2,
+            "miner_unique_target_hits_by_B": 0,
+            "original_reconstruction_records": 8,
+            "original_winner_records": 4,
+            "research_late_proofs": 0,
+            "research_late_target_hits": 0,
+            "research_proof_records": 2,
+            "research_target_hits": 0
+          },
+          "epochs": 1,
+          "job": "control-attempt-cap",
+          "miner_cpu_ns": 1857173,
+          "setup_complete": true,
+          "setup_cpu_ns": 45610005,
+          "status": "safety-cap-censored"
+        },
+        {
+          "B": 1000000000,
+          "P": 1000000000,
+          "cap": 4,
+          "counts": {
+            "all_full_proof_records": 16,
+            "eventually_native_accepted_from_B": 1,
+            "miner_unique_complete_by_B": 4,
+            "miner_unique_target_hits_by_B": 1,
+            "original_reconstruction_records": 8,
+            "original_winner_records": 4,
+            "research_late_proofs": 0,
+            "research_late_target_hits": 0,
+            "research_proof_records": 4,
+            "research_target_hits": 1
+          },
+          "epochs": 1,
+          "job": "control-cold-cap",
+          "miner_cpu_ns": 4299093,
+          "setup_complete": true,
+          "setup_cpu_ns": 44014615,
+          "status": "safety-cap-censored"
+        }
+      ],
+      "created_utc": "2026-10-26T05:04:20.220808+00:00",
+      "epochs_started_total": 581,
+      "full_scalar_replay_repeated": false,
+      "inputs": {
+        "analysis": {
+          "bytes": 1850081,
+          "path": "/workspace/scratch/3863a747524b/w1-cost-raw/next-stage-root-v2/formal-fork-readback-v3/analysis.json",
+          "sha256": "599738c936b25dc64b24753d6429225369c67555b91f5a3ef6c5eac5c6849b02"
+        },
+        "manifest": {
+          "bytes": 159375,
+          "path": "/workspace/scratch/3863a747524b/w1-cost-raw/fork-stage-campaign-dac8e61-v1/campaign.json",
+          "sha256": "176c92e9e44689885719b7cdfd6d85ee06562f7552535b1c9a7f134e25bfa595"
+        },
+        "owner_receipt": {
+          "bytes": 4717,
+          "path": "/workspace/scratch/3863a747524b/w1-cost-raw/next-stage-root-v2/formal-fork-readback-v3/receipt.json",
+          "sha256": "1c192360af642d310102756734fb8501ed7b5b8e362cef3ddab7c0e8d69eeddd"
+        },
+        "plan": {
+          "bytes": 35410,
+          "path": "/workspace/scratch/3863a747524b/Chain-cost-research/formal/pon-nakamoto-v1/experiments/w1_fork_resource_campaign_v1.json",
+          "sha256": "f8024935d0592e6d1392f393cfa3124cdf718579b62a6c5c2abf7a2223b8f8d1"
+        },
+        "readback": {
+          "bytes": 10786098,
+          "path": "/workspace/scratch/3863a747524b/w1-cost-raw/next-stage-root-v2/formal-fork-readback-v3/readback.json",
+          "sha256": "9e5036553cc7cf20f578b93fb9b246c77fbe6424967a45891680d057c29f586e"
+        },
+        "wire_schema": {
+          "bytes": 7793,
+          "path": "/workspace/scratch/3863a747524b/Chain-cost-research/config/pon/ledger-v1.json",
+          "sha256": "6755e36aab0ab9f4743da331a8dcd3374d657ff80f027ecf28db922e6d5ea39a"
+        }
+      },
+      "limitations": [
+        "Existing full scalar replay PASS is externally pinned and was not rerun by this review.",
+        "Native state and clocks remain source-bound observations, not reexecution/attestation by this review.",
+        "Counts are sums of per-job records/identities, not campaign-global distinct tickets.",
+        "Window outperforming lifetime in these four observations is not a causal claim or a universal cache recommendation.",
+        "Strassen has both positive and negative matched results; lower scalar product counts do not imply a universal speed win.",
+        "Adaptive comparisons remain null where semantic histories diverge; no counterfactual speed ratio is manufactured.",
+        "Candidate chainwork sum is not canonical chain growth, matured reward or TPS.",
+        "No arbitrary-strategy, unbounded-amortization, energy, WAN, hardware-independent or minimum miner cost claim."
+      ],
+      "main_candidate_chainwork_from_B": 4376,
+      "main_totals": {
+        "all_full_proof_records": 5762,
+        "eventually_native_accepted_from_B": 2188,
+        "miner_unique_complete_by_B": 4468,
+        "miner_unique_target_hits_by_B": 2188,
+        "original_reconstruction_records": 816,
+        "original_winner_records": 444,
+        "research_late_proofs": 34,
+        "research_late_target_hits": 18,
+        "research_proof_records": 4502,
+        "research_target_hits": 2206
+      },
+      "method": "Independent Python standard-library arithmetic over frozen full readback, original manifest and plan; no imported campaign reader/analyzer and no native execution or scalar proof rerun.",
+      "miner_overshoot_ns": {
+        "maximum": {
+          "job": "main-w1-d1-round-robin-structure-specialized-s5101",
+          "ns": 1557375
+        },
+        "minimum": {
+          "job": "main-w1-d1-adaptive-cost-structure-specialized-s5102",
+          "ns": 57240
+        }
+      },
+      "native_executions_run": 0,
+      "original_reconstruction_breakdown": {
+        "misses": 388,
+        "new_credit": 0,
+        "repeated_winners": 460
+      },
+      "phase_cpu_ns": {
+        "audit": 8289699046,
+        "miner": 4633152151,
+        "receiver": 16314093368,
+        "setup": 5183450277
+      },
+      "pins": {
+        "head": "dac8e6167f19994222f636b0fa19cea8c5426d69",
+        "manifest_sha256": "176c92e9e44689885719b7cdfd6d85ee06562f7552535b1c9a7f134e25bfa595",
+        "miner_binary_sha256": "d2caaa1e29645b4873409876916c540644ff265ed468b105a61157439d10c2df",
+        "plan_sha256": "f8024935d0592e6d1392f393cfa3124cdf718579b62a6c5c2abf7a2223b8f8d1",
+        "tree": "0dabca690d55793fc62f1c6cb4c0fc9d73c52e48"
+      },
+      "ratio_ranges": {
+        "arm": {
+          "actual_miner_accepted_rate_ratio": {
+            "maximum": {
+              "left": "main-w4-d1-round-robin-structure-specialized-s5101",
+              "ratio": {
+                "decimal": 1.1830047371427155,
+                "denominator": 8348559960,
+                "numerator": 9876385981
+              },
+              "right": "main-w4-d1-round-robin-integer-paired-general-s5101"
+            },
+            "minimum": {
+              "left": "main-w1-d1-round-robin-structure-specialized-s5102",
+              "ratio": {
+                "decimal": 0.772413833203221,
+                "denominator": 128300667,
+                "numerator": 99101210
+              },
+              "right": "main-w1-d1-round-robin-integer-paired-general-s5102"
+            }
+          },
+          "equal_B_complete_proof_ratio": {
+            "maximum": {
+              "left": "screen-w4-d1-structure-specialized-s5101",
+              "ratio": {
+                "decimal": 1.1551724137931034,
+                "denominator": 58,
+                "numerator": 67
+              },
+              "right": "screen-w4-d1-integer-paired-general-s5101"
+            },
+            "minimum": {
+              "left": "main-w1-d1-round-robin-structure-specialized-s5102",
+              "ratio": {
+                "decimal": 0.7806451612903226,
+                "denominator": 155,
+                "numerator": 121
+              },
+              "right": "main-w1-d1-round-robin-integer-paired-general-s5102"
+            }
+          },
+          "equal_B_eventually_accepted_ratio": {
+            "maximum": {
+              "left": "main-w4-d1-round-robin-structure-specialized-s5101",
+              "ratio": {
+                "decimal": 1.1846153846153846,
+                "denominator": 65,
+                "numerator": 77
+              },
+              "right": "main-w4-d1-round-robin-integer-paired-general-s5101"
+            },
+            "minimum": {
+              "left": "main-w1-d1-round-robin-structure-specialized-s5102",
+              "ratio": {
+                "decimal": 0.7692307692307693,
+                "denominator": 13,
+                "numerator": 10
+              },
+              "right": "main-w1-d1-round-robin-integer-paired-general-s5102"
+            }
+          },
+          "setup_plus_miner_accepted_rate_ratio": {
+            "maximum": {
+              "left": "screen-w4-d1-structure-specialized-s5101",
+              "ratio": {
+                "decimal": 1.1950494479215619,
+                "denominator": 117206443,
+                "numerator": 140067495
+              },
+              "right": "screen-w4-d1-integer-paired-general-s5101"
+            },
+            "minimum": {
+              "left": "main-w1-d1-round-robin-structure-specialized-s5102",
+              "ratio": {
+                "decimal": 0.7398079077291333,
+                "denominator": 2495190347,
+                "numerator": 1845961550
+              },
+              "right": "main-w1-d1-round-robin-integer-paired-general-s5102"
+            }
+          }
+        },
+        "policy": {
+          "actual_miner_accepted_rate_ratio": null,
+          "equal_B_complete_proof_ratio": null,
+          "equal_B_eventually_accepted_ratio": null,
+          "setup_plus_miner_accepted_rate_ratio": null
+        },
+        "reuse": {
+          "actual_miner_accepted_rate_ratio": {
+            "maximum": {
+              "left": "window-w4-d2-structure-specialized-s5102",
+              "ratio": {
+                "decimal": 1.43658941888337,
+                "denominator": 7461061130,
+                "numerator": 10718481473
+              },
+              "right": "main-w4-d2-round-robin-structure-specialized-s5102"
+            },
+            "minimum": {
+              "left": "window-w4-d2-structure-specialized-s5101",
+              "ratio": {
+                "decimal": 1.0674397185770306,
+                "denominator": 1800224342,
+                "numerator": 1921630965
+              },
+              "right": "main-w4-d2-round-robin-structure-specialized-s5101"
+            }
+          },
+          "equal_B_complete_proof_ratio": {
+            "maximum": {
+              "left": "window-w4-d2-integer-paired-general-s5102",
+              "ratio": {
+                "decimal": 1.4074074074074074,
+                "denominator": 27,
+                "numerator": 38
+              },
+              "right": "main-w4-d2-round-robin-integer-paired-general-s5102"
+            },
+            "minimum": {
+              "left": "window-w4-d2-structure-specialized-s5101",
+              "ratio": {
+                "decimal": 1.0579710144927537,
+                "denominator": 69,
+                "numerator": 73
+              },
+              "right": "main-w4-d2-round-robin-structure-specialized-s5101"
+            }
+          },
+          "equal_B_eventually_accepted_ratio": {
+            "maximum": {
+              "left": "window-w4-d2-structure-specialized-s5102",
+              "ratio": {
+                "decimal": 1.4310344827586208,
+                "denominator": 58,
+                "numerator": 83
+              },
+              "right": "main-w4-d2-round-robin-structure-specialized-s5102"
+            },
+            "minimum": {
+              "left": "window-w4-d2-structure-specialized-s5101",
+              "ratio": {
+                "decimal": 1.0714285714285714,
+                "denominator": 14,
+                "numerator": 15
+              },
+              "right": "main-w4-d2-round-robin-structure-specialized-s5101"
+            }
+          },
+          "setup_plus_miner_accepted_rate_ratio": {
+            "maximum": {
+              "left": "window-w4-d2-integer-paired-general-s5102",
+              "ratio": {
+                "decimal": 1.50123042070426,
+                "denominator": 3074986049,
+                "numerator": 4616262600
+              },
+              "right": "main-w4-d2-round-robin-integer-paired-general-s5102"
+            },
+            "minimum": {
+              "left": "window-w4-d2-structure-specialized-s5101",
+              "ratio": {
+                "decimal": 1.0119894110453977,
+                "denominator": 318719659,
+                "numerator": 322540920
+              },
+              "right": "main-w4-d2-round-robin-structure-specialized-s5101"
+            }
+          }
+        },
+        "strassen_against_specialized": {
+          "actual_miner_accepted_rate_ratio": {
+            "maximum": {
+              "left": "strassen-w4-d1-round-robin-s5102",
+              "ratio": {
+                "decimal": 1.228423519629686,
+                "denominator": 115332156,
+                "numerator": 141676733
+              },
+              "right": "main-w4-d1-round-robin-structure-specialized-s5102"
+            },
+            "minimum": {
+              "left": "strassen-w4-d1-round-robin-s5101",
+              "ratio": {
+                "decimal": 0.9365808630690944,
+                "denominator": 9873825115,
+                "numerator": 9247635648
+              },
+              "right": "main-w4-d1-round-robin-structure-specialized-s5101"
+            }
+          },
+          "equal_B_complete_proof_ratio": {
+            "maximum": {
+              "left": "strassen-w4-d1-round-robin-s5102",
+              "ratio": {
+                "decimal": 1.1926605504587156,
+                "denominator": 109,
+                "numerator": 130
+              },
+              "right": "main-w4-d1-round-robin-structure-specialized-s5102"
+            },
+            "minimum": {
+              "left": "strassen-w4-d1-round-robin-s5101",
+              "ratio": {
+                "decimal": 0.9577464788732394,
+                "denominator": 71,
+                "numerator": 68
+              },
+              "right": "main-w4-d1-round-robin-structure-specialized-s5101"
+            }
+          },
+          "equal_B_eventually_accepted_ratio": {
+            "maximum": {
+              "left": "strassen-w4-d1-round-robin-s5102",
+              "ratio": {
+                "decimal": 1.2222222222222223,
+                "denominator": 9,
+                "numerator": 11
+              },
+              "right": "main-w4-d1-round-robin-structure-specialized-s5102"
+            },
+            "minimum": {
+              "left": "strassen-w4-d1-round-robin-s5101",
+              "ratio": {
+                "decimal": 0.935064935064935,
+                "denominator": 77,
+                "numerator": 72
+              },
+              "right": "main-w4-d1-round-robin-structure-specialized-s5101"
+            }
+          },
+          "setup_plus_miner_accepted_rate_ratio": {
+            "maximum": {
+              "left": "strassen-w4-d1-round-robin-s5102",
+              "ratio": {
+                "decimal": 1.210897564692603,
+                "denominator": 2620783359,
+                "numerator": 3173500187
+              },
+              "right": "main-w4-d1-round-robin-structure-specialized-s5102"
+            },
+            "minimum": {
+              "left": "strassen-w4-d1-round-robin-s5101",
+              "ratio": {
+                "decimal": 0.9891040140809875,
+                "denominator": 2531957659,
+                "numerator": 2504369484
+              },
+              "right": "main-w4-d1-round-robin-structure-specialized-s5101"
+            }
+          }
+        }
+      },
+      "registered_counts": {
+        "cohorts": {
+          "control": 6,
+          "main": 24,
+          "screen": 4,
+          "strassen": 4,
+          "window": 4
+        },
+        "comparison_entries": {
+          "arm": 20,
+          "policy": 14,
+          "reuse": 4,
+          "strassen_against_specialized": 4
+        },
+        "controls": 6,
+        "jobs": 42,
+        "main": 36,
+        "manifest_steps": 47,
+        "matched_comparison_entries": 18,
+        "null_comparison_entries": 24
+      },
+      "schema": "pon-w1-fork-formal-independent-review-v1",
+      "source_changed": false,
+      "status": "PASS",
+      "target_context": {
+        "observed_targets": {
+          "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff": 4508
+        },
+        "required_work_each": 2,
+        "uniform_probability_assumed_not_proved": true
+      },
+      "total_process_cpu_ns": 34420394842,
+      "totals": {
+        "all_full_proof_records": 5816,
+        "eventually_native_accepted_from_B": 2189,
+        "miner_unique_complete_by_B": 4474,
+        "miner_unique_target_hits_by_B": 2189,
+        "original_reconstruction_records": 848,
+        "original_winner_records": 460,
+        "research_late_proofs": 34,
+        "research_late_target_hits": 18,
+        "research_proof_records": 4508,
+        "research_target_hits": 2207
+      }
+    },
+    "late": {
+      "all_jobs": [
+        {
+          "censored": false,
+          "counts": {
+            "attempts": 161,
+            "full_proof_records_replayed": 163,
+            "full_proofs_available_by_B": 160,
+            "full_winners_available_by_B": 77,
+            "late_attempts": 1,
+            "late_winners": 0,
+            "native_accepted": 77,
+            "native_accepted_from_B": 77,
+            "original_miner_full_proofs": 161,
+            "posthoc_miss_proofs": 0,
+            "traces_available_by_B": 160
+          },
+          "job": "main-s4101-b128000000-eager",
+          "miner_overshoot_ns": 501188,
+          "native_endpoint_after_four_phases_ns": 9945,
+          "phase_cpu_ns": {
+            "audit": 230823791,
+            "miner": 128501188,
+            "receiver": 244722736,
+            "setup": 12600518
+          },
+          "setup_complete": true,
+          "setup_original_records": 1,
+          "setup_reconstruction_records": 1
+        },
+        {
+          "censored": false,
+          "counts": {
+            "attempts": 154,
+            "full_proof_records_replayed": 156,
+            "full_proofs_available_by_B": 72,
+            "full_winners_available_by_B": 72,
+            "late_attempts": 1,
+            "late_winners": 1,
+            "native_accepted": 73,
+            "native_accepted_from_B": 72,
+            "original_miner_full_proofs": 73,
+            "posthoc_miss_proofs": 81,
+            "traces_available_by_B": 153
+          },
+          "job": "main-s4101-b128000000-deferred",
+          "miner_overshoot_ns": 62100,
+          "native_endpoint_after_four_phases_ns": 9925,
+          "phase_cpu_ns": {
+            "audit": 348760774,
+            "miner": 128062100,
+            "receiver": 255717979,
+            "setup": 14408189
+          },
+          "setup_complete": true,
+          "setup_original_records": 1,
+          "setup_reconstruction_records": 1
+        },
+        {
+          "censored": false,
+          "counts": {
+            "attempts": 563,
+            "full_proof_records_replayed": 565,
+            "full_proofs_available_by_B": 562,
+            "full_winners_available_by_B": 275,
+            "late_attempts": 1,
+            "late_winners": 0,
+            "native_accepted": 275,
+            "native_accepted_from_B": 275,
+            "original_miner_full_proofs": 563,
+            "posthoc_miss_proofs": 0,
+            "traces_available_by_B": 562
+          },
+          "job": "main-s4101-b512000000-eager",
+          "miner_overshoot_ns": 659129,
+          "native_endpoint_after_four_phases_ns": 18468,
+          "phase_cpu_ns": {
+            "audit": 830332209,
+            "miner": 512659129,
+            "receiver": 926727458,
+            "setup": 11884979
+          },
+          "setup_complete": true,
+          "setup_original_records": 1,
+          "setup_reconstruction_records": 1
+        },
+        {
+          "censored": false,
+          "counts": {
+            "attempts": 807,
+            "full_proof_records_replayed": 809,
+            "full_proofs_available_by_B": 404,
+            "full_winners_available_by_B": 404,
+            "late_attempts": 1,
+            "late_winners": 1,
+            "native_accepted": 405,
+            "native_accepted_from_B": 404,
+            "original_miner_full_proofs": 405,
+            "posthoc_miss_proofs": 402,
+            "traces_available_by_B": 806
+          },
+          "job": "main-s4101-b512000000-deferred",
+          "miner_overshoot_ns": 538122,
+          "native_endpoint_after_four_phases_ns": 16625,
+          "phase_cpu_ns": {
+            "audit": 1306732015,
+            "miner": 512538122,
+            "receiver": 1380741468,
+            "setup": 12529850
+          },
+          "setup_complete": true,
+          "setup_original_records": 1,
+          "setup_reconstruction_records": 1
+        },
+        {
+          "censored": false,
+          "counts": {
+            "attempts": 163,
+            "full_proof_records_replayed": 165,
+            "full_proofs_available_by_B": 162,
+            "full_winners_available_by_B": 84,
+            "late_attempts": 1,
+            "late_winners": 1,
+            "native_accepted": 85,
+            "native_accepted_from_B": 84,
+            "original_miner_full_proofs": 163,
+            "posthoc_miss_proofs": 0,
+            "traces_available_by_B": 162
+          },
+          "job": "main-s4102-b128000000-eager",
+          "miner_overshoot_ns": 685496,
+          "native_endpoint_after_four_phases_ns": 9464,
+          "phase_cpu_ns": {
+            "audit": 231689655,
+            "miner": 128685496,
+            "receiver": 287814831,
+            "setup": 12130547
+          },
+          "setup_complete": true,
+          "setup_original_records": 1,
+          "setup_reconstruction_records": 1
+        },
+        {
+          "censored": false,
+          "counts": {
+            "attempts": 203,
+            "full_proof_records_replayed": 205,
+            "full_proofs_available_by_B": 106,
+            "full_winners_available_by_B": 106,
+            "late_attempts": 1,
+            "late_winners": 1,
+            "native_accepted": 107,
+            "native_accepted_from_B": 106,
+            "original_miner_full_proofs": 107,
+            "posthoc_miss_proofs": 96,
+            "traces_available_by_B": 202
+          },
+          "job": "main-s4102-b128000000-deferred",
+          "miner_overshoot_ns": 661671,
+          "native_endpoint_after_four_phases_ns": 16254,
+          "phase_cpu_ns": {
+            "audit": 331158486,
+            "miner": 128661671,
+            "receiver": 359893151,
+            "setup": 12857549
+          },
+          "setup_complete": true,
+          "setup_original_records": 1,
+          "setup_reconstruction_records": 1
+        },
+        {
+          "censored": false,
+          "counts": {
+            "attempts": 563,
+            "full_proof_records_replayed": 565,
+            "full_proofs_available_by_B": 562,
+            "full_winners_available_by_B": 285,
+            "late_attempts": 1,
+            "late_winners": 1,
+            "native_accepted": 286,
+            "native_accepted_from_B": 285,
+            "original_miner_full_proofs": 563,
+            "posthoc_miss_proofs": 0,
+            "traces_available_by_B": 562
+          },
+          "job": "main-s4102-b512000000-eager",
+          "miner_overshoot_ns": 399089,
+          "native_endpoint_after_four_phases_ns": 14081,
+          "phase_cpu_ns": {
+            "audit": 807528388,
+            "miner": 512399089,
+            "receiver": 1071505238,
+            "setup": 11546920
+          },
+          "setup_complete": true,
+          "setup_original_records": 1,
+          "setup_reconstruction_records": 1
+        },
+        {
+          "censored": false,
+          "counts": {
+            "attempts": 696,
+            "full_proof_records_replayed": 698,
+            "full_proofs_available_by_B": 356,
+            "full_winners_available_by_B": 356,
+            "late_attempts": 1,
+            "late_winners": 0,
+            "native_accepted": 356,
+            "native_accepted_from_B": 356,
+            "original_miner_full_proofs": 356,
+            "posthoc_miss_proofs": 340,
+            "traces_available_by_B": 695
+          },
+          "job": "main-s4102-b512000000-deferred",
+          "miner_overshoot_ns": 263798,
+          "native_endpoint_after_four_phases_ns": 14191,
+          "phase_cpu_ns": {
+            "audit": 1274004177,
+            "miner": 512263798,
+            "receiver": 1283262660,
+            "setup": 12468477
+          },
+          "setup_complete": true,
+          "setup_original_records": 1,
+          "setup_reconstruction_records": 1
+        },
+        {
+          "censored": false,
+          "counts": {
+            "attempts": 0,
+            "full_proof_records_replayed": 0,
+            "full_proofs_available_by_B": 0,
+            "full_winners_available_by_B": 0,
+            "late_attempts": 0,
+            "late_winners": 0,
+            "native_accepted": 0,
+            "native_accepted_from_B": 0,
+            "original_miner_full_proofs": 0,
+            "posthoc_miss_proofs": 0,
+            "traces_available_by_B": 0
+          },
+          "job": "control-p0",
+          "miner_overshoot_ns": 0,
+          "native_endpoint_after_four_phases_ns": 5548,
+          "phase_cpu_ns": {
+            "audit": 3295,
+            "miner": 4536,
+            "receiver": 3616,
+            "setup": 40901
+          },
+          "setup_complete": false,
+          "setup_original_records": 0,
+          "setup_reconstruction_records": 0
+        },
+        {
+          "censored": false,
+          "counts": {
+            "attempts": 0,
+            "full_proof_records_replayed": 0,
+            "full_proofs_available_by_B": 0,
+            "full_winners_available_by_B": 0,
+            "late_attempts": 0,
+            "late_winners": 0,
+            "native_accepted": 0,
+            "native_accepted_from_B": 0,
+            "original_miner_full_proofs": 0,
+            "posthoc_miss_proofs": 0,
+            "traces_available_by_B": 0
+          },
+          "job": "control-ptight",
+          "miner_overshoot_ns": 0,
+          "native_endpoint_after_four_phases_ns": 5548,
+          "phase_cpu_ns": {
+            "audit": 3265,
+            "miner": 4487,
+            "receiver": 3515,
+            "setup": 36664
+          },
+          "setup_complete": false,
+          "setup_original_records": 0,
+          "setup_reconstruction_records": 0
+        },
+        {
+          "censored": false,
+          "counts": {
+            "attempts": 0,
+            "full_proof_records_replayed": 2,
+            "full_proofs_available_by_B": 0,
+            "full_winners_available_by_B": 0,
+            "late_attempts": 0,
+            "late_winners": 0,
+            "native_accepted": 0,
+            "native_accepted_from_B": 0,
+            "original_miner_full_proofs": 0,
+            "posthoc_miss_proofs": 0,
+            "traces_available_by_B": 0
+          },
+          "job": "control-b0",
+          "miner_overshoot_ns": 4907,
+          "native_endpoint_after_four_phases_ns": 22424,
+          "phase_cpu_ns": {
+            "audit": 1461549,
+            "miner": 4907,
+            "receiver": 367697,
+            "setup": 15519245
+          },
+          "setup_complete": true,
+          "setup_original_records": 1,
+          "setup_reconstruction_records": 1
+        },
+        {
+          "censored": false,
+          "counts": {
+            "attempts": 1,
+            "full_proof_records_replayed": 3,
+            "full_proofs_available_by_B": 0,
+            "full_winners_available_by_B": 0,
+            "late_attempts": 1,
+            "late_winners": 0,
+            "native_accepted": 0,
+            "native_accepted_from_B": 0,
+            "original_miner_full_proofs": 1,
+            "posthoc_miss_proofs": 0,
+            "traces_available_by_B": 0
+          },
+          "job": "control-btight",
+          "miner_overshoot_ns": 1030851,
+          "native_endpoint_after_four_phases_ns": 10014,
+          "phase_cpu_ns": {
+            "audit": 3002935,
+            "miner": 1130851,
+            "receiver": 427537,
+            "setup": 14405038
+          },
+          "setup_complete": true,
+          "setup_original_records": 1,
+          "setup_reconstruction_records": 1
+        },
+        {
+          "censored": true,
+          "counts": {
+            "attempts": 4,
+            "full_proof_records_replayed": 6,
+            "full_proofs_available_by_B": 4,
+            "full_winners_available_by_B": 1,
+            "late_attempts": 0,
+            "late_winners": 0,
+            "native_accepted": 1,
+            "native_accepted_from_B": 1,
+            "original_miner_full_proofs": 4,
+            "posthoc_miss_proofs": 0,
+            "traces_available_by_B": 4
+          },
+          "job": "control-eagercap",
+          "miner_overshoot_ns": 0,
+          "native_endpoint_after_four_phases_ns": 11907,
+          "phase_cpu_ns": {
+            "audit": 6556369,
+            "miner": 3439934,
+            "receiver": 4654801,
+            "setup": 15413683
+          },
+          "setup_complete": true,
+          "setup_original_records": 1,
+          "setup_reconstruction_records": 1
+        },
+        {
+          "censored": true,
+          "counts": {
+            "attempts": 4,
+            "full_proof_records_replayed": 6,
+            "full_proofs_available_by_B": 1,
+            "full_winners_available_by_B": 1,
+            "late_attempts": 0,
+            "late_winners": 0,
+            "native_accepted": 1,
+            "native_accepted_from_B": 1,
+            "original_miner_full_proofs": 1,
+            "posthoc_miss_proofs": 3,
+            "traces_available_by_B": 4
+          },
+          "job": "control-deferredcap",
+          "miner_overshoot_ns": 0,
+          "native_endpoint_after_four_phases_ns": 19910,
+          "phase_cpu_ns": {
+            "audit": 10341156,
+            "miner": 2636510,
+            "receiver": 4547663,
+            "setup": 14910421
+          },
+          "setup_complete": true,
+          "setup_original_records": 1,
+          "setup_reconstruction_records": 1
+        }
+      ],
+      "comparisons": [
+        {
+          "budget_ns": 128000000,
+          "deferred_traces": 153,
+          "deferred_winners": 72,
+          "eager_traces": 160,
+          "eager_winners": 77,
+          "equal_full_proof_bytes_digest_on_shared_records": 154,
+          "seed": 4101,
+          "shared_original_records": 154,
+          "shared_records_both_by_B": 153,
+          "shared_winners_both_by_B": 72,
+          "trace_ratio": {
+            "decimal": 0.95625,
+            "denominator": 160,
+            "numerator": 153
+          },
+          "winner_ratio": {
+            "decimal": 0.935064935064935,
+            "denominator": 77,
+            "numerator": 72
+          }
+        },
+        {
+          "budget_ns": 512000000,
+          "deferred_traces": 806,
+          "deferred_winners": 404,
+          "eager_traces": 562,
+          "eager_winners": 275,
+          "equal_full_proof_bytes_digest_on_shared_records": 563,
+          "seed": 4101,
+          "shared_original_records": 563,
+          "shared_records_both_by_B": 562,
+          "shared_winners_both_by_B": 275,
+          "trace_ratio": {
+            "decimal": 1.4341637010676156,
+            "denominator": 281,
+            "numerator": 403
+          },
+          "winner_ratio": {
+            "decimal": 1.469090909090909,
+            "denominator": 275,
+            "numerator": 404
+          }
+        },
+        {
+          "budget_ns": 128000000,
+          "deferred_traces": 202,
+          "deferred_winners": 106,
+          "eager_traces": 162,
+          "eager_winners": 84,
+          "equal_full_proof_bytes_digest_on_shared_records": 163,
+          "seed": 4102,
+          "shared_original_records": 163,
+          "shared_records_both_by_B": 162,
+          "shared_winners_both_by_B": 84,
+          "trace_ratio": {
+            "decimal": 1.2469135802469136,
+            "denominator": 81,
+            "numerator": 101
+          },
+          "winner_ratio": {
+            "decimal": 1.2619047619047619,
+            "denominator": 42,
+            "numerator": 53
+          }
+        },
+        {
+          "budget_ns": 512000000,
+          "deferred_traces": 695,
+          "deferred_winners": 356,
+          "eager_traces": 562,
+          "eager_winners": 285,
+          "equal_full_proof_bytes_digest_on_shared_records": 563,
+          "seed": 4102,
+          "shared_original_records": 563,
+          "shared_records_both_by_B": 562,
+          "shared_winners_both_by_B": 285,
+          "trace_ratio": {
+            "decimal": 1.2366548042704626,
+            "denominator": 562,
+            "numerator": 695
+          },
+          "winner_ratio": {
+            "decimal": 1.249122807017544,
+            "denominator": 285,
+            "numerator": 356
+          }
+        }
+      ],
+      "full_matrix_or_scalar_relation_replay_performed": false,
+      "input_hashes": {
+        "analysis.json": "fef79ee4fd152469c0148e598b814dad8f54de0bd2ce94bb1745a6ed7758aed1",
+        "readback.json": "3980e785dbf8ecbe4610d32719bac1363f331b693b83d26bf169baed13c730a1",
+        "receipt.json": "af75a20bf6f726137503388c19e6a0715949c1402ec4a5b157c75406e8043c86"
+      },
+      "inspection_failures": [
+        {
+          "kind": "TypeError",
+          "reason": "Initial readback inspection treated attempts integer summary as an array; no mutations."
+        },
+        {
+          "kind": "AssertionError",
+          "reason": "Initial independent scan incorrectly required four phase sum equal later native endpoint; source records endpoint after done-boundary encoding. Corrected by retaining positive endpoint tail; no source or data changes."
+        }
+      ],
+      "main_all_uncensored_complete": true,
+      "native_endpoint_after_four_phases_ns": {
+        "maximum": 22424,
+        "minimum": 5548,
+        "total": 184304
+      },
+      "notes": [
+        "Common original prefix includes late records; both-by-B prefix separately derived.",
+        "Original and posthoc proof-byte digests match on every common record; scalar relation validity relies on prior pinned full reader.",
+        "Global totals sum per-job counterfactual observations and are not globally unique tickets.",
+        "Observed receiver results and clocks remain source-bound claims, not execution or hardware attestation.",
+        "Native endpoint is sampled after the audit-to-done boundary encoding; four phase totals need not equal it."
+      ],
+      "performance_collection_performed": false,
+      "phase_cpu_ns": {
+        "audit": 5382398064,
+        "miner": 2570991818,
+        "receiver": 5820390350,
+        "setup": 160752981
+      },
+      "repository_files_modified": false,
+      "setup_original_records": 12,
+      "setup_reconstruction_records": 12,
+      "source": {
+        "branch": "feature/chain-w1-cost-research-20261025",
+        "head": "dac8e6167f19994222f636b0fa19cea8c5426d69",
+        "status": "",
+        "tree": "0dabca690d55793fc62f1c6cb4c0fc9d73c52e48"
+      },
+      "status": "PASS_INDEPENDENT_FIELD_AND_RATIONAL_ARITHMETIC_REVIEW",
+      "totals": {
+        "attempts": 3319,
+        "full_proof_records_replayed": 3343,
+        "full_proofs_available_by_B": 2389,
+        "full_winners_available_by_B": 1661,
+        "late_attempts": 9,
+        "late_winners": 5,
+        "native_accepted": 1666,
+        "native_accepted_from_B": 1661,
+        "original_miner_full_proofs": 2397,
+        "posthoc_miss_proofs": 922,
+        "traces_available_by_B": 3310
+      }
+    }
+  },
+  "receipt_sha256": {
+    "fork": "7c4e46e89ceaec9cf528f06ffa6b7756dd45c3b9b45380f3f77c8e3b79690cde",
+    "late": "0a5dbf88076e628d7cd00d851e0f1b37044382a9e1542b66c3f2ddf2182f621b"
+  }
+}

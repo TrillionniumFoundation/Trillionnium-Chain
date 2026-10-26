@@ -12,6 +12,9 @@ Pinned tool dependency review: [dependency security](details/DEPENDENCY_SECURITY
 Current implementation inventory: [generated view](../../architecture/CURRENT_IMPLEMENTATION.md).
 Capacity and explicit maintenance: [continuity v1](details/CONTINUITY_V1.md).
 Exact verifier/producer comparison: [W1 implementations](details/W1_IMPLEMENTATION_COMPARISON.md).
+Resource-budget security specification: [W1 cost game](details/W1_COST_SECURITY_GAME.md).
+Research-only general kernel: [integer-paired analysis](details/W1_INTEGER_PAIRED_GENERAL_RESEARCH.md).
+Separate fulfillment, quality and work: [qualification boundaries](details/W1_QUALIFICATION_SEPARATION_RESEARCH.md).
 Native model admission: [model evidence v3](details/NATIVE_MODEL_EVIDENCE_V3.md) and the explicit [composition v4 successor](details/NATIVE_MODEL_COMPOSITION_V4.md).
 State/history resource costs: [bounded operations](details/HISTORY_STATE_RESOURCE_BOUNDS_V1.md).
 Stable local failure identity: [typed errors](details/INTERNAL_ERROR_IDENTITY.md).

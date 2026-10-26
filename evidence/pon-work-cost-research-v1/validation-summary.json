@@ -1,0 +1,176 @@
+{
+  "schema": "pon-w1-cost-research-validation-v1",
+  "measured_source": "c9e30f41a534b8544dcb8f96a36ae88735a070d1",
+  "measured_tree": "101c804e61041ac8f349e40b2c713319b4297c18",
+  "native_validation": {
+    "source_head": "c9e30f41a534b8544dcb8f96a36ae88735a070d1",
+    "source_tree": "101c804e61041ac8f349e40b2c713319b4297c18",
+    "source_status": "",
+    "steps": [
+      {
+        "name": "fmt",
+        "command": [
+          "/tmp/hepta-native-rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+          "fmt",
+          "--all",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--",
+          "--check"
+        ],
+        "returncode": 0,
+        "wall_ns": 11256219192,
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "clippy",
+        "command": [
+          "/tmp/hepta-native-rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+          "clippy",
+          "--offline",
+          "--locked",
+          "--release",
+          "--jobs",
+          "2",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--workspace",
+          "--all-targets",
+          "--all-features",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "returncode": 0,
+        "wall_ns": 98029826787,
+        "log_sha256": "42c4d725da8556a875ade2e818be6c4af40d61c626dc5a628773624ec17fa66c"
+      },
+      {
+        "name": "cost-game-tests",
+        "command": [
+          "/tmp/hepta-native-rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+          "test",
+          "--offline",
+          "--locked",
+          "--release",
+          "--jobs",
+          "2",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--example",
+          "pon_w1_cost_game"
+        ],
+        "returncode": 0,
+        "wall_ns": 121303794956,
+        "log_sha256": "039021baf4727c8d4f3c029d999e39dc8db010b32609fb2e5d690a6bf8f5e915"
+      },
+      {
+        "name": "retained-protocol-crypto",
+        "command": [
+          "/tmp/hepta-native-rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+          "test",
+          "--offline",
+          "--locked",
+          "--release",
+          "--jobs",
+          "2",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-crypto-primitives",
+          "-p",
+          "trnm-protocol",
+          "--all-targets",
+          "--all-features"
+        ],
+        "returncode": 0,
+        "wall_ns": 39837370241,
+        "log_sha256": "a1ba5fdf11cfc53d71a08a32fbf8d67d44c2d7845025a3a1ec8c4bf7bb08b81e"
+      },
+      {
+        "name": "native-work-build",
+        "command": [
+          "/tmp/hepta-native-rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+          "build",
+          "--offline",
+          "--locked",
+          "--release",
+          "--jobs",
+          "2",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-crypto-primitives",
+          "--example",
+          "pon_work_io"
+        ],
+        "returncode": 0,
+        "wall_ns": 264732219,
+        "log_sha256": "e5c0a8e90ab466f98e32c8f8b9047bddbe433d120c05d099d91e35413d2e131f"
+      },
+      {
+        "name": "source-integrity",
+        "command": [
+          "python3",
+          "-B",
+          "scripts/ci/test_ci_source_integrity.py"
+        ],
+        "returncode": 0,
+        "wall_ns": 2471865946,
+        "log_sha256": "3f492a5e61d1ef36bb73611ebd15f1662104fbafe158ddc93b9651c8bcee11ea"
+      }
+    ],
+    "pass": true
+  },
+  "repository_truth_literal_invocation": {
+    "source_head": "c9e30f41a534b8544dcb8f96a36ae88735a070d1",
+    "source_tree": "101c804e61041ac8f349e40b2c713319b4297c18",
+    "source_status": "",
+    "command": [
+      "bash",
+      "scripts/ci/ci_job.sh",
+      "repository-truth"
+    ],
+    "TMPDIR": "/dev/shm/w1-cost-research-20261025/tmp",
+    "returncode": 1,
+    "wall_ns": 725634889860,
+    "log_sha256": "da725f1b11b400d97e2f0d3db1549cfd51cdce2179af2846ed5e2e99c91ed112",
+    "test_or_fixture_changes": false,
+    "mount_changes": false
+  },
+  "repository_truth_preceding_successful_test_groups": 30,
+  "repository_truth_preceding_successful_test_cases": 988,
+  "last_group_original_error": "/usr/bin/time absent; 13 errors in the final 32-test group",
+  "unchanged_last_group_dependency_retry": {
+    "source_head": "c9e30f41a534b8544dcb8f96a36ae88735a070d1",
+    "source_tree": "101c804e61041ac8f349e40b2c713319b4297c18",
+    "source_status": "",
+    "command": [
+      "python3",
+      "-B",
+      "scripts/test_qualification_runtime.py"
+    ],
+    "TRNM_GNU_TIME": "/workspace/scratch/3863a747524b/w1-gnu-time-20261025/extracted/usr/bin/time",
+    "returncode": 0,
+    "wall_ns": 3245328294,
+    "log_sha256": "8f2e25a71c1d953ed53cd1603b7d10f90cfe4ae6260afe9ab5017364464d8b82",
+    "scope": "only the final repository-truth command which failed for a missing genuine GNU time; prior failure retained",
+    "test_or_source_changes": false
+  },
+  "last_group_tests_passed_on_retry": 32,
+  "all_1020_repository_truth_test_cases_have_successful_execution": true,
+  "single_complete_repository_truth_invocation_passed": false,
+  "source_or_test_rules_changed_for_retry": false,
+  "new_kernel_tests_passed": 7,
+  "retained_protocol_crypto_tests_passed": 179,
+  "retained_protocol_crypto_tests_ignored": 2,
+  "source_integrity_negative_tests_passed": 34,
+  "experiment_python_discovery_tests_passed": 49,
+  "reader_controls_passed": 20,
+  "runner_controls_passed_in_repository_truth": 8,
+  "production_activation": false,
+  "hardness_accepted": false,
+  "github_publication_head_ci_status": "not asserted by measured-source validation"
+}

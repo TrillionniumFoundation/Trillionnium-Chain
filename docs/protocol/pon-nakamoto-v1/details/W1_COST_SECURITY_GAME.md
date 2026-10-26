@@ -1,0 +1,927 @@
+# W1 cost-security research game
+
+Status: research specification and exact arithmetic controls. Pure matrix PoN is
+the primary research path; a separately specified hybrid is a safety comparison.
+Neither path is activated by this document. This continues PN1 / I01 of the
+[sole development plan](../../../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md)
+and the existing [computational qualification obligations](WORK_COST_DAA_BOUNDARIES.md).
+It changes no W1 bytes, task eligibility, target, required work, fork choice,
+reward, receiver budget, signed domain or qualification flag.
+
+The original specification inspected
+`630f871293e48588e0a1ceae7ceb64973d3ec31d`; the adaptive-game review on 2026-10-25
+starts from `33ff263a7dcf738aaade46ecd98d2ae122fc5789`. A subsequent measurement
+must name its own actual source, tree, binary and environment; neither baseline
+authenticates a later executable. Mathematical examples below are not native
+observations or a claim that a hypothetical hybrid defect exists in current W1.
+
+## 1. Question and explicit limits
+
+The question is how many **distinct fully valid lottery tickets** an adversary
+can obtain within a declared resource budget, including preparation, selection,
+failed work and reuse. A correct certificate does not prove that its producer
+executed the reference algorithm, consumed its counted operations, trained a
+model, or paid an independent customer. Even ordinary hash PoW permits a first
+attempt win: a per-winning-block deterministic expenditure claim is the wrong
+goal. The useful target is a resource-to-success bound, including its upper tail.
+
+Keep three statements separate:
+
+1. Exact relation validity: canonical W1 inputs, transcript, product and target.
+2. Computational qualification: resource-to-ticket bounds for a stated adversary
+   model, preprocessing allowance, selectable tasks and challenge process.
+3. Native availability and usefulness: actual block admission, honest service,
+   task fulfillment, evaluation and model release, under their existing owners.
+
+An expensive failed verification is a receiver-cost observation, not a valid
+mining ticket. A passed local timing comparison is not a computational lower
+bound. An adversary faster than a reference supplies an **upper bound** on the
+minimum possible producer cost, and evidence against a stronger fairness claim.
+Failure to find such an adversary supplies no universal lower bound.
+
+The reduction must cover the actual compact output relation. Current W1 carries
+a digest of its canonical intermediate transcript, not the complete intermediate
+array. A lower bound on explicitly writing every intermediate cannot simply be
+reused as a lower bound on producing that digest. Hash/transcript dependency and
+joint production across challenges need their own argument; this distinction is
+an open proof obligation, not evidence of a particular shortcut.
+
+## 2. Existing coverage and the research increment
+
+The retained work already provides substantial prerequisites; do not recreate
+them under a new success label or move historical results to the new source.
+
+| Existing contract | Coverage already present | Increment specified here |
+| --- | --- | --- |
+| [Same-target report](W1_SAME_TARGET_BUDGET_REPORT.md) and [local observations](W1_LOCAL_SECURITY_PROFILE.md) | Complete setup, misses, unsupported/exhausted arms, full verification, distinct proof counts, false traces and original receiver CPU settlement | A resource-bounded, semantic-ticket game; separate primitive, eligible and admitted counts; all wins within budget |
+| [Implementation comparison](W1_IMPLEMENTATION_COMPARISON.md) | Actual cold/reused setup, structured and blocked-zero producers, one-level Strassen, periodic maintenance and split-limb alternatives, exact bytes and independent arithmetic controls | Explicit advice lifetime, shared preprocessing across a parent forest, adaptive-selection costs and registered adversary families |
+| [Zero paired accounting](W1_ZERO_PAIRED_COST_ACCOUNTING.md) | Complete cohorts, fastest fixed-arm comparisons, retained slower outcomes and prohibition of hindsight dispatch | Predeclared sensitivity targets and valid finite-family statistical interpretation |
+| Native zero-task lifecycle and maintenance paired conformance linked from the implementation comparison | Signed eligibility, renewal/revocation, real parents, fork/reopen checks and mathematical reuse | Resource accounting over those transitions and simultaneous parents; these are not the first parent-conformance tests |
+| [Work-cost/DAA boundaries](WORK_COST_DAA_BOUNDARIES.md) | Effective-work share formula; freeze tasks, targets, reuse horizons and hardware; charge executable adaptive selection; native target/chainwork cases | A common probability game, explicit composition premises, upper-tail obligations and falsifiable acceptance records |
+| [Mathematical-fact reuse](W1_FACT_REUSE_V1.md) | Exact verified facts, context rechecks, concurrency/cancellation and local metered integration | No new mining credit from replay, cache hit, process identity or receiver reservation |
+
+The existing first-win comparisons remain meaningful complete-search
+measurements. They do not become a fixed-resource, all-winning-ticket experiment
+by relabeling their final winner or conditioning a binomial calculation on the
+observed stopping time.
+
+## 3. Freeze the game before its evaluation
+
+Each campaign declares one immutable game record. Exploratory development can
+precede it, but exploration and held-out evaluation have separate receipts.
+
+| Field | Required declaration |
+| --- | --- |
+| Protocol context | Chain/genesis and parameter commitments, W1 relation, canonical encodings, target policy and exact native eligibility version |
+| Workload policy | Supplied operands versus source-extracted material; allowed task families; eligible task sets; reference task-selection policy; provenance evidence if claimed |
+| Adversary | Executable and algorithm hash, allowed public/private state, selection/dispatch policy, hardware, parallelism and any training/search used to select it |
+| Preprocessing | What is known before challenge release, advice/cache bytes, actual preparation cost or explicitly unknown historical cost, storage bound, reuse horizon and credit capacity of already revealed winning inputs |
+| Challenge process | Input-commitment/reveal order, allowed header fields, parent supply/advancement, seed generation, selection/abort rights and when the target and credit weight become fixed |
+| Scope | Number of tasks and parents, epochs/renewals/restarts, cache sharing, target strata, budget and stopping rule |
+| Measurement | Resource units and instruments, included/excluded work, start/end boundaries, worker aggregation, transport and output retention |
+| Inference | Preselected kappa target, registered comparisons, repetitions, holdout construction, confidence allocation and assumptions for any tail bound |
+
+Current W1 already binds its complete header. Its existing
+[wire contract](LEDGER_WIRE.md) commits network, parameters, parent, height,
+timestamp, target, miner, transaction/state/receipt roots, task and nonce before
+deriving the challenge. Research must preserve that fact. A synthetic challenge
+stream is labeled synthetic; it cannot stand in for a legal branch-derived
+header or a live task lease.
+
+The useful product `A*B` can still be reused across these challenges, as existing
+prepared producers demonstrate. A different header nonce requires a valid
+challenge-specific transcript. That binding does not prove that its cheapest
+production method repeats a whole reference multiplication. Current W1 has no
+separate floor nonce added after its transcript; section 8's extra-nonce examples
+are hypothetical composition controls, not current-W1 vulnerability findings.
+
+### 3.1 Preparation and adaptive challenge selection
+
+Allow the adversary to know long-lived public matrices, fixed maintenance
+material, protocol code and earlier transcripts. Declare which additional advice
+it receives. A public precomputed product is possible knowledge, not a prohibition
+that can be enforced by asking a miner to run a constructor.
+
+The cold experiment starts from the declared raw inputs and charges its actual
+construction. The warm experiment starts with a committed cache and records both
+its preparation receipt and online cost. If the cache's historical cost is
+unknown, label the result **conditional online cost with unaccounted preparation**;
+do not manufacture an amortized full cost. A preprocessing claim requires its
+time, memory, input dependence and lifetime to be specified.
+
+Retain already revealed winning lottery inputs even when their useful witnesses
+are not complete at the online start. An adversary could screen a floor win
+during preparation and complete its witness later. Counting only complete initial
+proofs would hide that advantage. Section 6 uses an explicit upper bound on the
+bank's remaining credit capacity, distinct from verified initial work. Identities
+already credited cannot receive a second credit.
+
+The adversary may select among eligible tasks, inspect public challenge-derived
+material, discard unfavorable seeds, choose kernels, batch work, and stop early,
+unless an actual protocol rule forbids that action. Charge all such activity.
+Do not give a free verifier/selection oracle to the measured algorithm: its own
+verification calls are producer work. A separate post-run checker establishes
+the record's truth and is outside the producer budget, with no feedback into the
+held-out run.
+
+In a random-oracle analysis, fresh, distinct oracle inputs have independent
+outputs even when the inputs are chosen adaptively. This does not make the
+resource cost of obtaining valid transcript inputs independent or constant.
+The reduction must cover cheap guessed traces, screening, aborts and adaptive
+input selection; defining an opportunity as a full reference execution would
+exclude the shortcuts that the game is intended to test.
+
+The simple oracle-query and binomial models below concern classical adaptive
+queries. They do not cover quantum superposition queries or assert a physical
+hash-cost lower bound. Any broader adversary class requires its own stated
+query/resource model and reduction.
+
+### 3.2 Several parents, tasks and reuse horizons
+
+Maintain one adversary state and one aggregate campaign budget over a forest of
+actual parents. A fork, renewed lease, selected task, new key, restarted process
+or reorganization must not reset already spent resources. Charge shared setup
+once when it is actually performed, not once per fork; charge every subsequent
+branch-specific operation. Work discarded after a reorganization is still work
+performed. No physical-compute refund follows from its loss of reward eligibility.
+
+Each candidate is checked against its own exact parent state and branch-derived
+target. Mathematical A/B/product reuse carries no current-parent lease,
+revocation, clock, state-root or application authority. An offline supplied-parent
+experiment must say which parent construction and task-source costs are excluded.
+An advancing-parent experiment charges the work needed to produce its new
+parents; it cannot obtain an unlimited free history oracle.
+
+A later context chosen after inspecting the cache is not an independent fresh
+context. For example, two paid fair lottery queries in one of four contexts give
+probability `3/16` of a usable cached hit under a later uniform independent context,
+but `3/4` when that context can be selected after seeing the bank. A bound
+`min(1, R*q/2^h)` on `R` releases overlapping `q` prequeried contexts requires
+conditional context min-entropy at least `h` given the bank and earlier history.
+It is only an overlap bound. Actual parent/header choices must not be relabeled
+external independent seeds to obtain that premise.
+
+Record reuse horizons explicitly, including one search, many challenges for one
+task, several simultaneous parents and lease/profile changes. A measured finite
+horizon is not unlimited amortization. Pooling tasks from many customers is an
+allowed adversary strategy when its data rights and actual protocol eligibility
+permit it; the campaign must charge scheduling, acquisition and transfer costs.
+
+## 4. What counts as a ticket
+
+Use semantic statement identity, not a count of proof files, signatures, clients
+or successful verifier invocations. For current W1, the existing block identity
+binds the exact header and canonical transcript digest. Retain the chain/profile,
+header, task and proof commitments needed to reconstruct that identity. Under the
+explicit collision-resistance assumption, equivalent encodings, repeated proofs,
+alternate producer algorithms and randomized wrappers do not create new credit.
+
+| Counter | Required predicate | Permitted interpretation |
+| --- | --- | --- |
+| Attempt | Actual attempted production/selection operation, including misses and aborts | Work performed; not a valid ticket |
+| Unverified target hit | Claimed digest meets the threshold | Admission-filter result only |
+| Distinct full-valid W1 ticket, `N_W` | Exact ordinary full W1 verification and target pass for a new semantic identity | Primitive lottery result |
+| Distinct parent-eligible ticket, `N_E` | `N_W` plus the actual selected parent's task, profile, clock and target eligibility | Eligible work; application/root validity remains explicit |
+| Distinct admitted block, `N_B` | Complete native application/root checks and ordinary block admission | Accepted block on a named branch |
+| Canonical confirmed result | Existing fork-choice and confirmation rules on actual admitted history | Separate ledger outcome; not equal to all fork tickets |
+
+The primary cost report must identify which counter it actually measures.
+Primitive-only runs cannot claim `N_E` or `N_B`. Valid W1 with intentionally
+false state roots belongs in a receiver/admission experiment, not the admitted
+block numerator. A cancelled or incomplete verification is unknown validity,
+not a full-valid ticket or a proved-invalid ticket.
+
+Within each run, count a semantic identity once across all retries, processes,
+algorithms and receipt encodings. Across counterfactual strategy runs, compare
+the same deterministic ticket sets; do not add them into newly produced work.
+Different parent-bound identities may count in an adversary's all-branch search
+capability, but cannot all be called canonical rewards. Reject stale-parent
+claims where the game requires current eligibility.
+
+Preparation or native context acquisition can itself mine valid parent/template
+proofs. Record those auxiliary outcomes and their semantic identities separately
+from the selected producer's outputs. In an end-to-end budget game, the numerator
+is their deduplicated union at the chosen validity tier. Charging acquisition
+while discarding every acquisition win understates that game's attainable rate;
+it cannot support an upper bound on adversarial ticket production. A supplied-
+parent conditional game may exclude both the external acquisition budget and
+its outputs, but must name that assumption. If only total acquisition time is
+known and it crosses the budget, individual acquisition wins have unknown
+within-budget status; retain a count interval rather than inventing completion
+times or assuming there were zero such wins.
+
+Use equal, frozen targets for raw ticket-rate comparisons. If targets vary,
+stratify results and separately sum the installed exact `required_work` over
+distinct eligible/admitted statements. An easier ticket is not equal chainwork
+to a harder ticket. A weighted, adaptive-DAA tail analysis is a separate
+obligation; substituting an unweighted ticket count does not satisfy it.
+
+## 5. Complete resource accounting
+
+Report a resource vector rather than adding unlike units:
+
+`(arithmetic/hash counts, aggregate CPU ns, accelerator work/time, wall ns,
+peak live memory, transferred bytes, measured joules)`.
+
+Keep estimated dollars separate with an explicit price, utilization, rental,
+capital and residual-value model. A CPU thread clock omits concurrent worker or
+GPU work unless it is explicitly aggregated. A fixed-host wall-time rate is a
+throughput observation under that parallelism; it is not aggregate physical
+work. Missing energy/CPU/transport measurements remain unknown. Reference FLOPs,
+scalar multiplication counts and nominal accelerator throughput are not lower
+bounds on any of these resources.
+
+A zero or unmeasured charge in one resource dimension cannot be replaced by a
+positive unit cost. If fresh queries or submissions cost zero in the declared
+scalar model and no namespace/output cap is supplied, there is no finite
+resource-only query cap. A finite namespace can cap counts without establishing
+a physical cost lower bound. Positive-cost finite models do not prohibit these
+adversaries in the real qualification game.
+
+For one declared scalar resource `C`, record actual disjoint charges:
+
+`C_total = C_prepare + C_select + C_challenge + C_compute + C_transcript
+         + C_proof + C_transfer + C_failed_or_cancelled_tail`.
+
+This is an accounting partition, not a theorem that these phases are independent
+or cannot be fused. Nested setup/search/trial timers are not added again to total
+time. Shared computations are paid once; all work of every unsuccessful strategy
+selection or aborted attempt is paid. State excluded common supplied inputs and
+offline compilation explicitly. A full operational claim additionally accounts
+for material acquisition, actual header/application preparation and transport.
+
+The residual `whole cohort - charged stages - measured observers` is not
+automatically logging overhead. It may also contain producer dispatch, queue
+growth, selection bookkeeping, cache destruction and failed-call cleanup.
+Separate those obligations by instrumentation, or label the result as a
+timed-kernel budget with unallocated overhead. A conservative envelope charging
+all residual work can be reported separately with its inclusion rules; it is
+not interchangeable with a measured complete producer cost. A missing final
+record after an early error leaves the affected total unknown, never zero.
+
+At horizon `m`, an amortized full-cost observation is
+
+`(actual shared preparation + sum(actual online charges)) / distinct_valid_count`.
+
+With zero valid tickets the denominator is undefined. Retain the full budget,
+zero count and exhaustion/failure; never print zero cost, discard the cohort, or
+impute a winner. Do not divide setup by an unexecuted future horizon. Do not use
+`mean(cost / winners)` interchangeably with `sum(cost) / sum(winners)`.
+
+### 5.1 Enforcing and observing the budget
+
+Freeze the budget and stopping rule before seeing held-out outputs. For each
+completed attempt, retain cumulative charges, outcome and semantic identity.
+Continue after a hit when measuring all valid tickets within the budget. A
+first-win arm can remain a separately labeled stopping-time experiment.
+
+Check for budget exhaustion before starting more work and retain the actual
+charge of in-flight work. Nonpreemptive proof/batch overshoot must be measured.
+Outputs completed after the declared resource boundary do not become within-
+budget wins, and their spent work cannot be silently carried into a free next
+cohort. If the instrumentation cannot enforce or reconstruct the boundary,
+report a bounded-attempt observation and actual overshoot, not a hard budget
+claim. Cancellation cleanup and worker settlement remain charged.
+
+Receiver start reservations are not miner effort. Returning an unused
+reservation is compatible with charging all actual CPU; refunding an attempted
+lottery after a miss is not. Restoring a branch snapshot or a cache must not
+rewind the research budget ledger. Instrumentation is evidence about the
+registered experiment, not an on-chain meter enforcing honest adversary reports.
+
+## 6. Resource-to-success definitions and upper tails
+
+Let `A` range over the declared adversary class, `P` its preprocessing allowance,
+`B` its online budget in one declared resource model, and `N_A(P,B)` its distinct
+valid count at the selected validity tier. Record both budgets; a cold claim may
+charge `P+B`, whereas a conditional online claim keeps `P` fixed and visible.
+
+For a frozen reference algorithm and workload policy, a useful finite-horizon
+research quantity is
+
+`kappa_registered(B,P) = max_A E[N_A(P,B)] / E[N_reference(P_reference,B)]`.
+
+Include the reference itself in that registered family, so its exact
+expectation-ratio maximum is at least one. The maximum is over registered
+executable policies and declared environments,
+not all possible algorithms or hardware. The reference policy is fixed before
+measurement. Its denominator must be positive. A matched fixed-input ratio
+measures implementation advantage; a task-selection game must also allow the
+adversary its actual task choices and charge selection. Hindsight minimum cost
+per sample is an oracle selector, not a measured executable miner.
+
+A theoretical cost-rate objective could instead assert
+
+`E[N_A(P,B)] <= E[K_0(P)] + kappa * (B / c_reference) * p + delta`,
+
+where `c_reference` is resource per defined reference opportunity, `p` its
+lottery probability, `K_0` bounds the already revealed bank's remaining credit
+capacity, and `delta` bounds the **expected extra count**.
+If a proof supplies only bad-event probability `epsilon`, converting it into
+this expectation bound requires a finite maximum output count, for example
+`delta <= N_max * epsilon`. Do not add a probability to a count without that
+step. `K_0` includes outputs supported by known winning inputs whose witnesses
+will be completed online; it is an upper bound, not a count of verified proofs.
+Preprocessing and initial credits stay in the theorem's parameters. This
+document does not assert this inequality for W1.
+
+### 6.1 Conditions for a binomial upper bound
+
+For current W1's inclusive uniform 256-bit ticket comparison, nonzero target `T`
+has `p=(T+1)/2^256`; target zero is explicitly refused, so `p=0` there. Thus the
+existing `7f...ff` and `07...ff` diagnostic targets have probabilities `1/2` and
+`1/32`, respectively, under the uniform-ticket model.
+
+Fix the information `F_0` at online start. A binomial domination reduction must
+establish all of the following, rather than assuming them from reference code:
+
+1. `K_0` bounds remaining credit supported by the already revealed winning bank,
+   including incomplete witnesses. Declare its conditioning and preprocessing
+   cost. Zero target permits no eligible initial winning credit.
+2. `Q_A(P,B)` bounds distinct fresh adversarial lottery-oracle queries and `G(P,B)`
+   bounds distinct submitted lottery inputs not previously queried. Complete
+   those inputs lazily when a verifier checks them: at most `Q_A+G` fresh answers
+   are revealed. Both caps are deterministic for the conditional claim, not an
+   observed stopping count selected after a win.
+3. Given prior information, each fresh answer hits with probability at most `p`.
+   Inputs, target predicates and credit weights are fixed before that answer.
+   Include screening, aborts and any verifier response used for online selection.
+4. Outside a coupled failure event with `Pr[Bad | F_0] <= epsilon`, each counted
+   outcome maps to an appropriate successful answer or the initial bank. At most
+   `L` outcomes may map to one fresh success; the intended injective rule has
+   `L=1`. Eligibility, semantic deduplication, budget endpoints and branch changes
+   must obey the actual game. Repeated encodings are not new credit.
+
+On that coupling, `N_A(P,B) <= K_0 + L*sum(Y_i)` for at most `Q_A+G` answers.
+Conditional Bernoulli domination and padding to the deterministic cap give
+
+`Pr[N_A(P,B) >= k | F_0] <= Pr[Binomial(Q_A+G,p) >= ceil((k-K_0)/L)] + epsilon`.
+
+The tail is one for `k<=K_0`; clip the final bound to one. A random `K_0` needs
+integration over `F_0` or a justified deterministic upper bound. Apply the bad-event
+term through a coupling/union bound, not by assuming that conditioning on no
+failure preserves independent answers. With finite output cap `N_max`, a
+corresponding conditional expectation bound is
+`K_0 + L*(Q_A+G)*p + N_max*epsilon`.
+
+A full-valid candidate submitted without first querying its target hash still
+succeeds with probability `p`. With `Q_A=0`, `G=1`, `p=1/2`, the chance is `1/2`,
+not zero or automatically `2^-256`. An incorrect guessed trace failing full
+verification is a different event. A query-only physical floor must also cover
+the cost/cap of this direct-submission path. When a failure-probability approach
+is used instead, the explicit `G*p` union bound is not negligible at diagnostic
+targets. The verifier performing a hash does not certify miner expenditure.
+
+For `S=sum(Y_i)`, an exact rational Chernoff control is
+`Pr[S>=s] <= min(1, (1-p+p*z)^(Q_A+G)/z^s)` for rational `z>=1`.
+The missing W1 obligation is the actual budget-to-opportunity reduction; defining
+an opportunity as one complete reference execution would beg the question.
+Adversarial withholding requires domination/counting bounds, not a demand that
+the published stream be exactly Poisson. A mean alone supplies only Markov's
+inequality `Pr[N>=k] <= E[N]/k` for `k>0`.
+
+### 6.2 Predictable choices and optional stopping
+
+Let `p_i` and nonnegative integer `w_i` be fixed given the information before
+fresh answer `i`, with `Pr[Y_i=1 | F_(i-1)] <= p_i`. For fixed rational `z>=1`, set
+
+`M_t = product_(i<=t) z^(w_i*Y_i)/(1-p_i+p_i*z^w_i), M_0=1`.
+
+Each factor's conditional expectation is at most one, so `M_t` is a nonnegative
+supermartingale. Ville's inequality gives
+`Pr[exists t: M_t >= 1/alpha] <= alpha`, including adaptive stopping. This permits
+predictable target/weight choices, not choices made after seeing that same answer.
+It requires all relevant fresh reveals, including screened misses and verifier
+completion of unqueried outputs. A serialized record alone cannot prove the
+conditional probability or predictability premises.
+
+The weighting must match actual target-derived credit. Application to an online
+physical budget still needs `K_0`, `Q_A`, `G`, multiplicity and failure control.
+No empirical mean, histogram or finite e-process check establishes those premises
+or the honest-growth/network/DAA conditions for chain security. Use a predeclared
+sampling/stopping rule or a valid time-uniform method; repeated inspection of
+fixed-sample intervals is not an optional-stopping guarantee.
+
+### 6.3 Small countermodels the inference must survive
+
+* Eight independent fair opportunities have mean four and probability `1/256`
+  of eight successes. Eight perfectly correlated fair indicators have the same
+  marginals and mean, but probability `1/2` of eight successes. Marginal
+  unpredictability and equal average rate do not establish the required tail.
+* After stopping at the first hit, conditioning on the observed attempt count
+  being one makes success certain. Substituting that observed count into an
+  independent one-trial experiment would incorrectly give probability `1/2`.
+* At probability `1/2`, eight actual attempts yield at least one success with
+  probability `255/256`. If misses are refunded and only the winner is charged,
+  calling this a one-attempt budget would incorrectly bound it by `1/2`.
+* One shared setup costing eight units and four parent searches costing two
+  units each cost sixteen units jointly, not forty. Losing three forks does not
+  refund the resources spent on them.
+
+The [exact arithmetic controls](../../../../formal/pon-nakamoto-v1/experiments/w1_cost_security_math.py)
+and [finite checks](../../../../formal/pon-nakamoto-v1/experiments/test_w1_cost_security_math.py)
+reproduce these examples using rational arithmetic. They prove no W1 reduction.
+
+The supplemental [adaptive models](../../../../formal/pon-nakamoto-v1/experiments/w1_adaptive_cost_models.py)
+and [exhaustive controls](../../../../formal/pon-nakamoto-v1/experiments/test_w1_adaptive_cost_models.py)
+cover the initial-bank and `Q_A+G` cases above, and the following additional cases:
+
+* One fair floor query authorizing three different outcomes gives probability
+  `1/2` of at least two outcomes; an injective one-query binomial tail is zero.
+* A one-unit screen that reveals the target bit, followed by an eight-unit
+  completion, succeeds with probability `15/16` in budget twelve by screening
+  up to four fair candidates. The selected completion is not a fresh fair coin.
+  This is a deliberately specified leakage model, not a demonstrated W1 shortcut.
+* Keeping only that selected hit gives e-value `3/2` at `z=3` with probability
+  `15/16`, exceeding the supposed `2/3` crossing bound. Retaining the preceding
+  misses gives crossing probability `1/2`, consistent with the bound.
+
+The paid-screening model also separates public cost signals from target leakage.
+For class frequencies `a_j`, screen cost `s`, completion cost `c_j` and conditional
+hit rate `p_j`, its optimal mean satisfies
+`V(b)=sum_j a_j*max(V(b-s), p_j+V(b-s-c_j))`, with infeasible terms omitted.
+For at-least-`k` probability the finish term is
+`p_j*V_(k-1)(b-s-c_j)+(1-p_j)*V_k(b-s-c_j)`, with `V_0=1`.
+Different thresholds can select different policies and do not define one PMF.
+Small independent policy-distribution enumeration checks the dynamic program.
+Native experiments must measure the real signal extraction and discarded-seed
+costs and retain full validity evidence; the synthetic class distribution does
+not establish an actual W1 cost or leakage distribution.
+
+## 7. Preselected kappa sensitivity targets and evidence grades
+
+The following are **research sensitivity targets selected for this campaign**,
+not existing PoN security parameters, release thresholds or automatic acceptance
+rules. Report results against all four; do not select one after seeing outcomes.
+
+| Target `kappa_*` | Research interpretation | Conditional raw resource share reaching half effective work |
+| --- | --- | --- |
+| `11/10` | Study whether a ten-percent advantage envelope is even plausible | `10/21` |
+| `5/4` | Study a twenty-five-percent advantage envelope | `4/9` |
+| `2` | Stress a twofold advantage envelope | `1/3` |
+| `4` | Stress a fourfold advantage envelope | `1/5` |
+
+The share calculation is
+
+`q_effective = kappa*q / (1-q+kappa*q)`;
+
+for any chosen effective-share threshold `tau`, inversion gives
+
+`q_at_threshold = tau / (kappa*(1-tau)+tau)`.
+
+These formulas require linear resource-to-throughput conversion, the same
+resource unit, reference honest throughput, comparable eligible task/target
+availability and no omitted hardware/network asymmetry. A mean-only kappa does
+not provide the upper tail or honest-growth lower bound needed for chain
+security. Half effective work is a sensitivity point, not a complete finality
+theorem under delay, withholding, DAA or changing demand.
+
+Use explicit evidence grades:
+
+| Grade | What it establishes | What remains open |
+| --- | --- | --- |
+| Specified | Frozen game, implementation identities and falsifiable claims | Whether any run completed |
+| Reproduced relation | Full native/oracle validity and negative controls | Producer cost, freshness distribution and tail |
+| Measured strategy | Complete resource observations for a named executable | Optimal adversary and untested workloads/hardware |
+| Finite-family statistical envelope | A stated simultaneous interval over registered strategies/environments, under its sampling assumptions | Unregistered algorithms, nonstationarity and theoretical hardness |
+| Conditional theoretical bound | A proved reduction under explicit complexity/randomness/resource assumptions | Whether finite W1 and physical hardware meet those assumptions |
+
+No grade is a production-qualification flag. A source-bound, reproducible
+counterexample exceeding a claimed envelope can falsify that claim. An absence
+of found counterexamples cannot establish a universal envelope.
+
+### 7.1 Statistical acceptance within a registered family
+
+Use independent held-out cohort seeds, or state why independence is unavailable.
+Deterministic replays on different machines, or the same inputs through several
+kernels, are paired controls, not new independent lottery samples. Register
+family size and confidence allocation before evaluation. Retain all arms,
+timeouts, unsupported cases, zero-win cohorts, slower observations and missing
+measurements. An unsupported arm is not a zero-cost successful adversary.
+
+One conservative option for independent equal-budget cohorts is to bound their
+integer counts in `[0,L]` with a **predeclared** cap. With `m` such samples,
+Hoeffding gives a one-sided mean-count margin
+
+`L * sqrt(log(1/alpha)/(2*m))`.
+
+Construct an upper bound `U_A` for each attack mean and a lower bound `L_H` for
+the reference mean with a declared simultaneous error allocation. A conditional
+finite-family ratio upper bound is `max_A U_A/L_H` only when `L_H>0`. Otherwise
+the result is inconclusive, not zero advantage. The bound assumes independent
+cohorts and a fixed evaluated policy/distribution. Persistent adaptive state
+between cohorts needs a different conditional analysis or a frozen complete
+stateful campaign as the sampling unit.
+
+Such a confidence interval concerns registered mean performance; it does not
+establish rare-event domination, future nonstationary operation, or a universal
+minimum cost. Use a predeclared fixed sampling plan or an appropriate
+time-uniform procedure; repeated optional stopping on ordinary fixed-sample
+intervals is not valid. A very wide interval is an informative inconclusive
+result, not grounds to silently relax the target or omit failures.
+
+## 8. Conditional hybrid comparison
+
+The pure matrix game remains the primary target. This section defines what a
+hash-floor comparison would have to establish; it installs no fallback or new
+consensus rule.
+
+### 8.1 What an independently bound hash floor can guarantee
+
+Assume an AND construction requires both a valid useful-work statement and a
+fresh hash-floor success. The floor input must commit to the complete relevant
+context and semantic useful-work identity; proof randomness, alternate encoding,
+parent changes and extra nonce choices must have declared lottery consequences.
+Credit cannot reuse one floor success for many distinct counted outcomes without
+an explicit multiplicity bound. The useful witness may be reusable on misses
+even when semantic deduplication limits it to one eventual credited result.
+
+Let `Q_H` cap fresh floor queries and `G_H` cap fresh inputs submitted without a
+prior floor query; complete the latter at verification. With conditional hit
+probability at most `p_H`, bounded initial credit capacity `K_0`, and at most `L`
+outputs per floor hit, section 6 gives the conditional bound using `Q_H+G_H`.
+Binding/validity failures need their own explicit term. A correctly formed
+unqueried output is not automatically a negligible guessing failure.
+Converting physical budget `B` to `Q_H`, `G_H` and initial capacity requires its
+own resource assumptions; the random-oracle query model proves no joule, dollar
+or ASIC equality and cannot erase preprocessing or submission alternatives.
+
+Without a useful-work cost theorem, the guaranteed component is only this
+independent floor. One must not add an unproved useful-work lower bound. Even
+two valid individual lower bounds imply only their maximum unless a composition
+argument rules out resource overlap and shared work. Fix whether a useful
+result can be reused while scanning many floor nonces, whether a floor can be
+screened first, and which misses trigger another useful computation. These
+different schedules have different expected costs. Multiplying two target
+probabilities or adding two advertised costs without that schedule is invalid.
+
+### 8.2 Additive-cost sensitivity calculation
+
+For comparison only, assume the reference expected cost of a **comparable
+complete opportunity**, including failed work, is normalized to one. Let `beta`
+be its independently accounted floor fraction. Assume the useful component can
+be accelerated by at most `kappa_U`, the floor by at most `kappa_H`, and their
+charges add without hidden reuse or overlap. Then
+
+`kappa_combined <= 1 / (beta/kappa_H + (1-beta)/kappa_U)`.
+
+Equality is the sensitivity model in which both component accelerations are
+simultaneously attained under the declared schedule. Independently measured
+best speeds may be incompatible on the same hardware, so equality is not
+automatic. This conditional cost bound is not a theorem about any unspecified
+AND protocol. It does not turn expected component costs into a finite-budget
+tail bound; that needs the separate opportunity/rate reduction. `beta` is not
+the fraction of code lines, nominal FLOPs or successful checks. It is a
+measured/justified cost fraction under the same resource model, failure schedule
+and hardware assumptions used for both participants.
+
+With `kappa_H=1`, unknown/unbounded useful acceleration has limiting advantage
+`1/beta` for `beta>0`; at `beta=0` there is no finite bound from the floor. With
+a bounded floor hardware advantage it becomes `kappa_H/beta`. A ten-percent
+floor would therefore leave a limiting advantage of ten, or twenty if its own
+hardware acceleration is two. A small floor is not automatically a small-risk
+insurance policy.
+
+For `1 <= kappa_H < kappa_* < kappa_U`, the minimum floor fraction in this model is
+
+`beta >= (1/kappa_* - 1/kappa_U) / (1/kappa_H - 1/kappa_U)`.
+
+If the useful arm already meets the target, zero floor suffices **in the model**.
+If both components exceed the target, no fraction can meet it. For
+`kappa_H=1`, `kappa_U=4`, and `kappa_*=5/4`, the fraction is `11/15`.
+If useful acceleration is entirely unbounded, the fractions for research
+targets `11/10`, `5/4`, `2` and `4` are at least `10/11`, `4/5`, `1/2` and `1/4`
+respectively.
+These results explain the cost of relying only on the floor; they do not select
+a production mixture or replace research on the pure matrix primitive.
+
+### 8.3 Failed floor nonces and genuine non-amortization
+
+For positive abstract costs `U` per useful statement and `H` per floor query,
+and independent floor success probability `p>0`, the following are different
+schedules. They must not inherit the same cost fraction or reduction by name.
+
+| Hypothetical rule | First-win expected cost | Required distinction |
+| --- | --- | --- |
+| Recompute useful work for every floor nonce | `(U+H)/p` | Requires a real dependency/non-amortization argument, not a mandated honest implementation |
+| Reuse useful result on misses, consume it at its first hit | `U+H/p` | At most one final credit per useful statement still permits this saving |
+| Reuse one useful result for many separately credited floor nonces | `U` once, then `H` per fresh query | Every permitted new outcome and its floor mapping must be counted |
+
+With `U=9`, `H=1`, `p=1/2`, the first two means are twenty and eleven. In finite
+budget twenty the expected counts are respectively `1` and `2559/2048`; the last
+schedule gives `11/2`. Thus even the finite-budget count ratio differs from the
+inverse first-win mean-cost ratio. The supplemental exact models independently
+enumerate these schedules. They make no native timing or W1 hardness claim.
+
+Floor-first screening is another possibility if a floor input can be known
+before the useful result. Fix actual dependencies and what each failed check
+forces the miner to do. A true non-amortization claim must bound the resources
+for producing multiple newly credited outcomes jointly, with preprocessing,
+concurrent tasks/parents and all nonce choices allowed by the real protocol.
+Separate validity checks, separate benchmark costs, or an expected cost for one
+honest success do not prove that direct-sum property. This obligation remains
+open for pure W1 and for any proposed useful-plus-floor composition.
+
+## 9. Research obligations and executable acceptance
+
+The four stages below refine the existing PN1 work, without creating another
+development plan or claiming completion before evidence exists.
+
+| Stage | Executable evidence required | Exit interpretation |
+| --- | --- | --- |
+| 1. Freeze the game | Source-bound game record; semantic deduplication; tiered validity counts; exact budget/target/stopping and preparation policy; mathematical controls below | Specification and arithmetic consistency only |
+| 2. Attack the relation and cost model | Complete legal producers over zero, identity, low-rank, sparse and special dense inputs; fixed-task reuse, batches, adaptive task/seed selection, multi-parent contexts, exact low-precision arithmetic, cancellation and duplicate-proof controls | Named attacks reproduced or ruled out only for their exact inputs/implementations; rejected false traces add zero valid work |
+| 3. Measure complete cost | Cold/hot/batch cohorts, fastest known fixed and executable adaptive baselines, complete failures, resource vectors and actual transfers, source/host/compiler identities and independent checking | Descriptive results and, if justified, finite-family intervals; no universal lower bound |
+| 4. Compare architectures | Apply the same game to pure matrix and an explicitly specified hypothetical hybrid; separately evaluate numerical error/useful quality, verification proof cost and any multiple-ticket mapping | Conditional comparison; no automatic profile, reward or verifier change |
+
+Use the full native verifier and independent arithmetic checker for retained
+winners. To infer bounds from complete attempt streams, additionally establish
+validity coverage of the relevant losing attempts or the generator's exact
+relation; a hash commitment to unretained losing bytes alone is not independent
+replay of those bytes. State the coverage and retain bounded deterministic
+replay inputs. A checker mismatch, lost cost interval or missing raw record
+prevents the affected measurement claim, even if other arms completed.
+
+For stage 2, noise cancellation is a research control, not an assumed attack on
+current W1. In KW's separate rotation appendix as written, `R=H D` and `d=1`
+give `(AHD)[i,k]*(D^T H^T B)[k,j]=(AH)[i,k]*(H^T B)[k,j]`: signs cancel locally.
+This exposes a preprocessing possibility in that stated subcase, not a break
+of the main additive low-rank construction or W1. Any adopted rotation/quantized
+variant needs its own exact relation and security game. Merely passing rank,
+noise-sensitivity or reconstruction checks cannot replace its cost argument.
+
+Float/error and Hepta quality work remains separate: bit-exact reconstruction,
+acceptable model perturbation, genuine task fulfillment, held-out improvement
+and release authority have different predicates. A ZK proof can compress a
+specified correctness relation; it does not by itself establish costly witness
+generation. If several tiles, proof randomizations or encodings can produce
+lottery opportunities, specify overlap and charge each eligible opportunity in
+a fresh game rather than importing W1's one-transcript-one-ticket analysis.
+
+### 9.1 Exact arithmetic reproduction
+
+Run the existing project preflight before edits/builds, then from the repository
+root:
+
+```sh
+python3 -B formal/pon-nakamoto-v1/experiments/test_w1_cost_security_math.py -v
+python3 -B formal/pon-nakamoto-v1/experiments/w1_cost_security_math.py
+python3 -B formal/pon-nakamoto-v1/experiments/test_w1_adaptive_cost_models.py -v
+python3 -B formal/pon-nakamoto-v1/experiments/w1_adaptive_cost_models.py
+```
+
+The second command emits `pon-w1-cost-security-math-v1` to stdout. Capture it only
+to a fresh path with the usual source/command/exit receipt. All displayed
+probabilities and hybrid/share calculations use `fractions.Fraction`; no native
+work timing, empirical confidence result or hardness qualification is emitted.
+Tests enumerate small Bernoulli spaces independently, check generating-function
+bounds, expose correlation/stopping/refund countermodels, and verify hybrid
+threshold inversions and explicit floor hardware advantages. Their success is
+arithmetic evidence under the stated premises, not evidence that W1 meets them.
+
+The supplemental output is `pon-w1-adaptive-cost-models-v1`. It additionally
+checks unqueried submissions, bounded floor fanout, initial banks, zero-cost query
+caps, paid adaptive screening and predictable weighted tails. Its finite dynamic
+programs are checked against small independent execution/policy enumerations.
+Mathematical premises, consequences proved under those premises, native
+observations and open resource reductions must retain separate labels. No test
+result promotes a hardware, universal-hardness or production-activation flag.
+
+### 9.2 Actual compact trace, prefix algebra and a charged model
+
+The source inspected for this refinement starts at
+`b33a30fae35daf79db6d03895c33311dd36820ea`. Its
+[original relation and prepared producer](../../../../trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs)
+fix `N=64`, `R=8` and `q=2^32-5`. For each row tile, column tile and
+inner prefix ending at `p=8,16,...,64`, the trace hashes every canonical word
+of `(A+UV)[:,0:p] * (B+XY)[0:p,:]`, in tile/prefix/row/column order.
+`U,V,X,Y` are the four challenge-expanded rank-eight factors. No choice of
+reassociation may change any intermediate residue or its byte order.
+
+The literal encoding has the following geometry. These are **layout and
+ordinary implementation counts**, not lower bounds for an arbitrary algorithm.
+
+| Quantity | Exact value for current W1 | Meaning |
+| --- | --- | --- |
+| Prefix words | `N^2*(N/R) = 32,768` | All eight prefixes of every output cell |
+| Prefix word bytes | `131,072` | Four canonical little-endian bytes per word |
+| Trace message bytes | `16+32+131,072 = 131,120` | Trace domain, challenge, then prefix words |
+| Ordinary SHA-256 compression blocks | `ceil((131,120+9)/64) = 2,049` | Includes SHA-256 padding; excludes noise/ticket hashes |
+| Submitted PNW1 proof bytes | `4+3*64^2*4+32 = 49,188` | A, B, their final product, and a digest, without prefix arrays |
+
+In particular, serially hashing 2,049 blocks is an implementation schedule. It
+is not a proof that every SHA-256 algorithm, prepared circuit, shared computation
+or specialized device pays 2,049 independent physical costs. No compression-
+oracle or ideal whole-message-oracle theorem is established merely by that count.
+
+The exact low-rank identity for any prefix is
+
+`S_p = P_p + (A[:,0:p] X[0:p,:])Y
+       + U(V[:,0:p] B[0:p,:]) + U(V[:,0:p] X[0:p,:])Y`,
+
+where `P_p=A[:,0:p] B[0:p,:]`. The `P_p` matrices can be prepared once for a
+fixed task, but their preparation, storage and reuse horizon belong in `P`.
+That identity does not remove the challenge-dependent terms. In the zero/zero
+case it simplifies to `S_p=U M_p Y`, with `M_p=V[:,0:p] X[0:p,:]`.
+The existing [blocked-zero producer](../../../../trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_zero.rs)
+uses this identity while streaming the required words; it does not claim the
+wire proof contains the intermediate arrays.
+
+More generally, supplied factors `A'=L R0` and `B'=S T` of inner dimensions
+`a,b` give `S_p=L (R0[:,0:p] S[0:p,:]) T`. With `m=n/tile`, a classical
+scalar schedule first updates all middle prefixes, then chooses `(L M_p)T`
+or `L(M_p T)` according to the smaller final inner dimension. Its multiplication
+count is
+
+`n*a*b + m*n*a*b + m*n^2*min(a,b)`.
+
+For zero tasks with `n=64`, `tile=a=b=8`, this is
+`4,096 + 32,768 + 262,144 = 299,008` scalar multiplications. The ordinary
+perturbed-matrix/trace schedule uses `2*n^2*8+n^3=327,680`, excluding the useful
+product's preparation. Both counts exclude additions, reductions, hash work,
+encoding, allocation, transport and input/factor acquisition. They are
+constructive upper bounds for named schedules. Fast matrix multiplication,
+integer pairing, batching and hardware may change them; neither is the fastest
+possible cost or an asymptotic direct-sum bound. For supplied rank-one task
+factors plus rank-eight noise, the same simple rank-nine schedule actually has
+`341,568` multiplies, exceeding that ordinary count. Low rank alone is therefore
+insufficient to select a universally faster implementation at this fixed size.
+
+The [exact model controls](../../../../formal/pon-nakamoto-v1/experiments/test_w1_adaptive_cost_models.py)
+compare this factorized prefix schedule against independently computed restricted
+matrix products over a small field and the actual W1 field, with zero, extreme
+and mixed residues. Those small-dimension algebra controls do not replace
+actual n64 native-proof parity or benchmark a new producer. They also reconstruct
+the byte framing and SHA-256 padding independently of the geometry formula.
+
+### 9.3 Conditional trace extraction and the remaining reduction
+
+**Model boundary:** the lemma below uses an independent, domain-separated,
+ideal **whole-message trace oracle** `H_tr:{0,1}* -> {0,1}^lambda`. Actual W1
+uses SHA-256, including SHA-256 in other domains. Ideal whole-message queries,
+queries to an ideal compression function and actual SHA-256 algorithms are
+three different models. A partial-prefix hash state, a compressed description
+of a message, or a hardware circuit cannot be silently treated as an explicit
+whole-message query of the same cost. This is a conditional modeling result,
+not a SHA-256 instantiation theorem.
+
+Freeze a batch-output game with the following premises:
+
+1. Count all distinct preparation trace queries in a declared cap `Q_P^tr`,
+   and all distinct online adversary trace queries in `Q_A^tr`. Any
+   oracle-dependent advice, table, delegated query or helper response available
+   to the adversary must come from that charged, logged history. Undeclared
+   prepared trace values invalidate the premise.
+2. The adversary adaptively queries its oracles, then fixes at most `G_out`
+   complete candidate outputs before private verification of this batch. Each
+   output's header, task and claimed digest are fixed; a canonical trace message
+   is determined by the accepted relation and the other domains. Count every
+   candidate, not only winners eventually accepted. These are prevalid caps,
+   not selected observed totals after success.
+3. Verification privately completes `H_tr` on each candidate's canonical
+   message where needed. It does not expose its computed transcript or digest
+   for use in selecting this batch. Live verifier feedback, timing leakage or
+   free external trace computation requires a separate interaction/charge
+   argument; this lemma does not cover it by default.
+4. A query exposes its explicit bytes or a fully charged byte stream. The
+   recorder can associate each returned digest with that query input. Duplicate
+   calls can share a record, but distinct inputs remain distinct. A value
+   oracle on an uncharged compressed message description is not this interface.
+
+Let `q=Q_P^tr+Q_A^tr+G_out`. From the beginning of preparation, a conservative
+bad-event bound is
+
+`epsilon_extract <= min(1, (G_out + q*(q-1)/2)/2^lambda)`.
+
+The first term covers an accepted guess of a canonical digest whose message
+was never queried by the adversary; all output pairs were fixed before private
+verification, so a fresh canonical oracle value matches each guess with
+probability `2^-lambda`. A union bound applies even when guesses share a message.
+The second term separately covers response collisions among at most `q` distinct
+adversary and private-verifier inputs. Adaptive selection of a fresh input does
+not bias its independently sampled oracle answer. In particular, querying a
+wrong transcript that happens to share the canonical digest must not be omitted
+from the failure analysis.
+
+Outside those bad events, an extractor indexes the logged adversary queries by
+returned digest. For each candidate it returns the unique matching query input,
+if one exists. Every accepted candidate then has its actual canonical trace
+message in that log: absence would be an unqueried successful guess, and a
+noncanonical matching input would be a response collision. The extractor need
+not compute the matrix relation or decide which candidates are valid to return
+these candidates; the implication concerns the accepted subset. It supplies
+no native eligibility, target probability, work credit or proof of that subset's
+size. Challenge/task binding and semantic-ticket injectivity remain separate
+premises with their own failure terms.
+
+A conditional version is available for a particular `F_0` only if it contains a
+fully logged **collision-free** preparation table, and all remaining advice
+reveals no unseen trace answers. With `u=Q_A^tr+G_out`, the fresh response-collision
+term is at most `[Q_P^tr*u+u*(u-1)/2]/2^lambda`; add the same `G_out/2^lambda`
+guess term and clip at one. This excludes already known preparation collisions,
+rather than assigning them a new tiny probability. A state containing such a
+collision, hidden oracle-dependent advice or information from a differently
+specified interaction cannot use this conditional formula. Therefore neither
+formula automatically supplies section 6's `epsilon(F_0)` for actual W1.
+
+The [executable model](../../../../formal/pon-nakamoto-v1/experiments/w1_adaptive_cost_models.py)
+reports both arithmetic modes and independently enumerated tiny-oracle controls.
+For `Q_P^tr=2`, `Q_A^tr=1`, `G_out=1`, the unconditional bound is `7/2^256`;
+the expressly premised collision-free-table conditional bound is `6/2^256`.
+These values test formulas, not the applicability of a 256-bit idealization.
+
+The cost of the reduction is part of the claim. Copying all logged inputs takes
+linear time and storage in their total byte length; retaining references needs
+persistent input storage and forbids a disappearing unlogged stream. Outputting
+extracted transcript candidates also costs their bytes. No verification
+computation performed only by the extractor or honest nodes may be charged to
+the adversary retroactively. If the oracle interface explicitly charges a word
+read for every queried input word, a fresh canonical query consumes that
+**declared input-access resource**; this gives no field-multiplication, CPU-time,
+energy or hardware lower bound. A unit-cost whole-message oracle does not even
+supply that per-byte read charge. Shared prepared bytes and query setup remain
+visible rather than becoming independent physical work by definition.
+
+This refinement closes the literal layout/algebra checks and states a precise
+conditional digest-to-transcript extraction implication. The resource-to-ticket
+blocker still requires all of the following on the actual accepted adversary
+class: an applicable correlated-prefix computation assumption, a multi-instance
+bound including task/parent selection and advice, accounting of query-recording
+and extraction overhead, a SHA-256/interaction instantiation argument, and a
+resource conversion that yields useful `Q_A(P,B)`, `G(P,B)` and `K_0(P)` bounds.
+Counting 32,768 prefix words or accepting a digest does not supply those results.
+
+### 9.4 Temporal resource transfer and exact chain weighting
+
+The [temporal resource refinement](W1_RESOURCE_REDUCTION_V1.md) extends the
+fixed-final-batch extraction question to canonical work available before the
+first lottery answer. It explicitly includes late header/task openings, all
+early trace guesses, unseen prepared opportunities, already revealed winning
+capacity and the cost of extracting incorrect as well as correct candidates.
+The resulting resource bound remains conditional on an enlarged multi-instance
+prefix problem, a positive net lower bound and an applicable SHA-256 simulation.
+Completed-pair counts cannot supply an unbiased lottery cap when proof generation
+is deferred until winning. Exact finite controls preserve that obstruction.
+
+The [separated miner experiment](W1_MINER_RESOURCE_RESEARCH_V1.md) measures a
+physically distinct producer phase before receiver and audit execution. It
+changes no older budget endpoint and supplies no minimum attacker cost. The
+[chain envelope](W1_CHAIN_SECURITY_ENVELOPE_V1.md) uses actual integer required
+work, weighted initial banks, conditional honest progress and full validation
+delay. Its fixed-target examples and exact adaptive probability controls do not
+prove the native branch-local DAA or a production confirmation policy. These
+remain separate, named prerequisites for global O01–O03 closure.
+
+## 10. Primary references and their applicability
+
+* Komargodski and Weinstein, [Proofs of Useful Work from Arbitrary Matrix
+  Multiplication, arXiv v4](https://arxiv.org/abs/2504.09971v4), 2025-11-13;
+  [ESA 2026 proceedings](https://doi.org/10.4230/LIPIcs.ESA.2026.2), published
+  2026-08-25. ESA Definition 3, pp.2:6-2:7 gives a single-instance success bound;
+  Assumption 10, p.2:10 concerns correlated low-rank intermediate computations;
+  Appendix B, p.2:16 states the stronger blockchain-process target. The optimal
+  security claim remains conditional. Asymptotic hardness and unspecified
+  constants do not supply an n64/r8 hardware-cost bound. Appendix A, p.2:15 is a
+  separate candidate; its literal `d=1` cancellation is the local algebra above.
+* Ball, Rosen, Sabin and Vasudevan, [Proofs of Work from Worst-Case
+  Assumptions](https://eprint.iacr.org/2018/559), CRYPTO 2018,
+  [DOI](https://doi.org/10.1007/978-3-319-96884-1_26). Non-amortization and
+  multi-proof success are relevant qualification goals; its assumptions and
+  constructions are not a theorem about arbitrary ML inputs or W1 hardware.
+  The accessible author-hosted [Vasudevan thesis](https://www.comp.nus.edu.sg/~prashant/files/papers/phd_thesis.pdf),
+  September 2018, section 3.1.1, printed pp.53-55 and section 3.4, states the
+  multi-challenge definition and direct-sum development. Independent generated
+  challenges, nonuniform Word-RAM cost and asymptotic assumptions must not be
+  replaced by arbitrary ML inputs and physical hardware without a reduction.
+* Howard, Ramdas, McAuliffe and Sekhon, [Time-uniform Chernoff bounds via
+  nonnegative supermartingales, arXiv v8](https://arxiv.org/abs/1808.03204v8),
+  2025-12-17; [full text](https://arxiv.org/html/1808.03204v8), section 2.3,
+  Lemma 1. Journal publication: Probability Surveys 17 (2020), 257-317,
+  [DOI](https://doi.org/10.1214/18-PS321). Ville's inequality needs an actual
+  nonnegative supermartingale; a selected empirical stream does not establish it.
+* Ding, [On Pearl Blockchain's Proof of Useful Work: Systematization and
+  Flexibility](https://arxiv.org/abs/2610.25347v1), 2026-10-18. Its Theorem 4.1
+  establishes efficient sensitivity checking. That local numerical condition
+  is not a proof of resource-to-lottery optimality for W1.
+* Bünz, Chen and Guan, [It Takes Two: Proofs of Work for Fiat-Shamir](https://eprint.iacr.org/2026/2326),
+  preprint received 2026-10-03 and approved 2026-10-05. The official abstract
+  distinguishes strong PoW and non-amortizing PoW and reports a separation under
+  sufficiently cheap verification, plus a composition. Only its metadata and
+  abstract were retrievable in this review. This is a related boundary, not an
+  applied W1 theorem or proof that pure matrix PoN is impossible.
+* Dotan and Tochner, [Proofs of Useless Work, arXiv v2](https://arxiv.org/abs/2007.01046v2),
+  2021-11-06; [full text](https://arxiv.org/html/2007.01046v2), sections 3-4.
+  Miner-selected tasks and known solutions belong in the adversary model.
+  Their negative conclusions depend on the specified REMS and efficiency model.
+* Demirel, [Proof of Demand Is Not Proof of Work](https://eprint.iacr.org/2026/1492),
+  received 2026-07-21, revised 2026-10-07. The checked official metadata/abstract
+  separates work soundness, job binding and exogenous demand. Coalition
+  self-payments cannot simply be treated as irrecoverable computation cost.
+  Demand qualification is separate from W1's missing computational reduction.
+
+The [KW ePrint entry](https://eprint.iacr.org/2025/685) lists a 2025-12-08
+revision; the preceding literature review could read its metadata but not its
+PDF. The detailed references here identify the arXiv and ESA texts actually
+read, rather than asserting an unchecked byte-for-byte equivalence. The primary
+metadata/version checks above were repeated on 2026-10-25; no unverified later
+paper or search-index summary is treated as an established result.

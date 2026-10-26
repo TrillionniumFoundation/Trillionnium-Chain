@@ -1,0 +1,31 @@
+{
+  "all_failed_and_successful_validation_logs_in_delivery": true,
+  "full_frozen_analysis": {
+    "bytes": 733777,
+    "file": "analysis-b951208-v1.json",
+    "sha256": "51c2c36142d59d30159070c6263bb8e8ec056ef68924a78dbbd217fca38883cb"
+  },
+  "full_replay": {
+    "bytes": 2104821,
+    "file": "readback-b951208-v1.json",
+    "sha256": "951778ac18e0d5b44cfc0c03d050ea7acd8aa758069503c1a6454ac812ee1f15"
+  },
+  "measured_source": {
+    "commit": "b951208273472fda11bd78dc7c01923591652224",
+    "tree": "40e619e4c188f22126d9ce63db87f125343a2378"
+  },
+  "outer_delivery_receipt": "delivery.json",
+  "outer_receipt_is_external_to_archive_to_avoid_self_hash_cycle": true,
+  "raw_core": {
+    "bytes": 60317056,
+    "members_verified": 312,
+    "path": "/workspace/scratch/3863a747524b/w1-cost-raw/next-stage-campaign-core-b951208-v1.tar.gz",
+    "raw_source_not_deleted": true,
+    "schema": "w1-lossless-campaign-core-receipt-v1",
+    "sha256": "48895e1e1f9f2f43bfc08d999c0713e07a7afbd326c11060a32a409ac2900b58",
+    "uncompressed_member_bytes": 292355226,
+    "verification": "every regular member byte count and SHA-256 compared to original files; duplicate and extra names rejected"
+  },
+  "raw_core_index_sha256": "fa0f46c46f11efafa220e05d81722bb69ced31e5a48a35eef12c7f8db72cb3d4",
+  "schema": "pon-w1-adaptive-joint-artifact-index-v1"
+}

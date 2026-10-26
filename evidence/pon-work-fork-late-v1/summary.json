@@ -1,0 +1,216 @@
+{
+  "schema": "w1-fork-late-completed-evidence-v1",
+  "measured_head": "dac8e6167f19994222f636b0fa19cea8c5426d69",
+  "measured_tree": "0dabca690d55793fc62f1c6cb4c0fc9d73c52e48",
+  "fork": {
+    "adaptive_scope": "only registered paid greedy mean-service policy; its selection divergence is retained and is not a matched stream",
+    "aggregate_count_scope": "sum of per-job observations; counterfactual job identities are not globally deduplicated",
+    "all_main_miner_budget_observations_complete": true,
+    "analysis_source_sha256": "90d9c622dd0bf2fb59c60129a91d72e5d84af77b9fa42727bc4383bc57b928be",
+    "arbitrary_strategy_bound": false,
+    "comparison_directions": {
+      "arm": {
+        "higher": 7,
+        "lower": 5,
+        "unpaired_or_censored": 8
+      },
+      "policy": {
+        "unpaired_or_censored": 14
+      },
+      "reuse": {
+        "higher": 4
+      },
+      "strassen_against_specialized": {
+        "higher": 1,
+        "lower": 1,
+        "unpaired_or_censored": 2
+      }
+    },
+    "control_jobs": [
+      "control-setup-zero",
+      "control-setup-tight",
+      "control-miner-zero",
+      "control-miner-tight",
+      "control-attempt-cap",
+      "control-cold-cap"
+    ],
+    "counts": {
+      "controls": 6,
+      "main_jobs": 36,
+      "phase_cpu_ns": {
+        "audit": 8289699046,
+        "miner": 4633152151,
+        "receiver": 16314093368,
+        "setup": 5183450277
+      },
+      "registered_jobs": 42,
+      "retained_records": {
+        "all_full_proof_records": 5816,
+        "eventually_native_accepted_from_B": 2189,
+        "miner_unique_complete_by_B": 4474,
+        "miner_unique_target_hits_by_B": 2189,
+        "original_reconstruction_records": 848,
+        "original_winner_records": 460,
+        "research_late_proofs": 34,
+        "research_late_target_hits": 18,
+        "research_proof_records": 4508,
+        "research_target_hits": 2207
+      }
+    },
+    "energy_joules": null,
+    "fastest_known_global_algorithm_established": false,
+    "hardness_accepted": false,
+    "hardware_attested": false,
+    "known_bank_scope": "finite disclosed paid common-root native sibling paths; no free or unbounded initial bank",
+    "main_jobs": [
+      "main-w1-d1-round-robin-integer-paired-general-s5101",
+      "main-w1-d1-round-robin-structure-specialized-s5101",
+      "main-w1-d1-adaptive-cost-integer-paired-general-s5101",
+      "main-w1-d1-adaptive-cost-structure-specialized-s5101",
+      "main-w4-d1-round-robin-integer-paired-general-s5101",
+      "main-w4-d1-round-robin-structure-specialized-s5101",
+      "main-w4-d1-adaptive-cost-integer-paired-general-s5101",
+      "main-w4-d1-adaptive-cost-structure-specialized-s5101",
+      "main-w4-d2-round-robin-integer-paired-general-s5101",
+      "main-w4-d2-round-robin-structure-specialized-s5101",
+      "main-w4-d2-adaptive-cost-integer-paired-general-s5101",
+      "main-w4-d2-adaptive-cost-structure-specialized-s5101",
+      "main-w4-d2-round-robin-structure-specialized-s5102",
+      "main-w4-d2-round-robin-integer-paired-general-s5102",
+      "main-w4-d2-adaptive-cost-structure-specialized-s5102",
+      "main-w4-d2-adaptive-cost-integer-paired-general-s5102",
+      "main-w4-d1-round-robin-structure-specialized-s5102",
+      "main-w4-d1-round-robin-integer-paired-general-s5102",
+      "main-w4-d1-adaptive-cost-structure-specialized-s5102",
+      "main-w4-d1-adaptive-cost-integer-paired-general-s5102",
+      "main-w1-d1-round-robin-structure-specialized-s5102",
+      "main-w1-d1-round-robin-integer-paired-general-s5102",
+      "main-w1-d1-adaptive-cost-structure-specialized-s5102",
+      "main-w1-d1-adaptive-cost-integer-paired-general-s5102",
+      "window-w4-d2-integer-paired-general-s5101",
+      "window-w4-d2-structure-specialized-s5101",
+      "window-w4-d2-structure-specialized-s5102",
+      "window-w4-d2-integer-paired-general-s5102",
+      "screen-w4-d1-integer-paired-general-s5101",
+      "screen-w4-d1-structure-specialized-s5101",
+      "screen-w4-d1-structure-specialized-s5102",
+      "screen-w4-d1-integer-paired-general-s5102",
+      "strassen-w4-d1-round-robin-s5101",
+      "strassen-w4-d1-adaptive-cost-s5101",
+      "strassen-w4-d1-adaptive-cost-s5102",
+      "strassen-w4-d1-round-robin-s5102"
+    ],
+    "maximum_attacker_yield_established": false,
+    "network_transfer_measured": false,
+    "new_training_qualification": false,
+    "ordinary_receiver_feedback_to_miner": false,
+    "plan_sha256": "f8024935d0592e6d1392f393cfa3124cdf718579b62a6c5c2abf7a2223b8f8d1",
+    "production_activation": false,
+    "ratios_are_finite_descriptive_observations": true,
+    "readback_sha256": "9e5036553cc7cf20f578b93fb9b246c77fbe6424967a45891680d057c29f586e",
+    "same_B_across_all_epochs": true,
+    "schema": "pon-w1-fork-resource-analysis-v1",
+    "setup_plus_miner_rate_is_not_equal_total_budget_yield": true,
+    "setup_plus_miner_rate_numerator": "new research wins available by B only; paid setup winners are reported separately",
+    "source": {
+      "branch": "feature/chain-w1-cost-research-20261025",
+      "head": "dac8e6167f19994222f636b0fa19cea8c5426d69",
+      "status": "",
+      "tree": "0dabca690d55793fc62f1c6cb4c0fc9d73c52e48"
+    },
+    "sum_of_candidate_work_is_chain_growth": false,
+    "unbounded_reuse_bound": false,
+    "universal_kappa_bound_established": false
+  },
+  "late": {
+    "analyzer_sha256": "134cf2a7083435312231f45bc3df043a06bfd7128555376034a3f5e84fe55e55",
+    "canonical_research_chain_growth": 0,
+    "controls": 6,
+    "energy_measured": false,
+    "independent_hardware_evidence": false,
+    "jobs": 14,
+    "lower_bound_proved": false,
+    "main_jobs": 8,
+    "network_bandwidth_measured": false,
+    "original_miss_trace_retention": true,
+    "phase_cpu_ns": {
+      "audit": 5382398064,
+      "miner": 2570991818,
+      "receiver": 5820390350,
+      "setup": 160752981
+    },
+    "plan_sha256": "83c885e75645cd73bd6e808f8d44c4b1a68665025d91644e8eda5dd84cd76216",
+    "posthoc_credit": 0,
+    "production_kappa_established": false,
+    "pure_matrix_relation_changed": false,
+    "raw_manifest_sha256": "a0f198e20dd9bcefb64be05613aa1660dcede2b51024ad242683bad1dd9a5152",
+    "readback_sha256": "3980e785dbf8ecbe4610d32719bac1363f331b693b83d26bf169baed13c730a1",
+    "schema": "pon-w1-late-assembly-analysis-v1",
+    "source": {
+      "branch": "feature/chain-w1-cost-research-20261025",
+      "head": "dac8e6167f19994222f636b0fa19cea8c5426d69",
+      "status": "",
+      "tree": "0dabca690d55793fc62f1c6cb4c0fc9d73c52e48"
+    },
+    "totals": {
+      "attempts": 3319,
+      "full_proof_records_replayed": 3343,
+      "full_proofs_available_by_B": 2389,
+      "full_winners_available_by_B": 1661,
+      "late_attempts": 9,
+      "late_winners": 5,
+      "native_accepted": 1666,
+      "native_accepted_from_B": 1661,
+      "original_miner_full_proofs": 2397,
+      "posthoc_miss_proofs": 922,
+      "traces_available_by_B": 3310
+    }
+  },
+  "daa": {
+    "O03_closed": false,
+    "branch_work32": {
+      "ease": 2,
+      "tighten": 31,
+      "unchanged": 7
+    },
+    "common_prefix_established": false,
+    "full_proofs_replayed": 36,
+    "greatest_branch_work": 173,
+    "hidden_miss_proofs_not_retained": 134,
+    "independent_clock_attestation": false,
+    "native_execution_attested_by_reader": false,
+    "native_search_attempts": 170,
+    "original_node_execution_is_source_bound_observation": true,
+    "original_rows": 72,
+    "physical_cost_bound": false,
+    "raw_bytes": 3656907,
+    "raw_sha256": "43c7b4335f659be846f1cad9f7ae168580d643f1364ac994054e3d7be437b2d2",
+    "schema": "pon-w1-native-daa-resource-readback-v2",
+    "total_forest_work": 196
+  },
+  "full_proof_record_executions": 9195,
+  "record_total_is_not_distinct_credit_count": true,
+  "fork_pins": {
+    "head": "dac8e6167f19994222f636b0fa19cea8c5426d69",
+    "tree": "0dabca690d55793fc62f1c6cb4c0fc9d73c52e48",
+    "plan_sha256": "f8024935d0592e6d1392f393cfa3124cdf718579b62a6c5c2abf7a2223b8f8d1",
+    "miner_binary_sha256": "d2caaa1e29645b4873409876916c540644ff265ed468b105a61157439d10c2df",
+    "manifest_sha256": "176c92e9e44689885719b7cdfd6d85ee06562f7552535b1c9a7f134e25bfa595"
+  },
+  "late_pins": {
+    "head": "dac8e6167f19994222f636b0fa19cea8c5426d69",
+    "tree": "0dabca690d55793fc62f1c6cb4c0fc9d73c52e48",
+    "plan_sha256": "83c885e75645cd73bd6e808f8d44c4b1a68665025d91644e8eda5dd84cd76216",
+    "miner_binary_sha256": "138ebd4efc5a225d7ed0d6bfc47f65e798ec71ccf3c125bfd98ee143edbb76f4",
+    "manifest_sha256": "a0f198e20dd9bcefb64be05613aa1660dcede2b51024ad242683bad1dd9a5152"
+  },
+  "fork_candidate_work_from_B": 4378,
+  "research_canonical_chainwork_growth": 0,
+  "hardware_exclusive": false,
+  "energy_measured": false,
+  "network_bandwidth_measured": false,
+  "all_original_blockers_closed": false,
+  "production_activation": false,
+  "hardware_operator_count": 1,
+  "new_independent_hardware_operators": 0
+}

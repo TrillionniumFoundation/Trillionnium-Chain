@@ -1,0 +1,93 @@
+{
+  "events": [
+    {
+      "raw": [
+        "task-product-native-v1/format-1.json",
+        "task-product-native-v1/format-2.json"
+      ],
+      "result": "Two ordinary rustfmt operations returned0 before freeze; not a failed test or additional runtime execution.",
+      "stage": "ordinary pre-freeze formatting context"
+    },
+    {
+      "raw": [
+        "task-product-native-v1/clippy-1.json",
+        "task-product-native-v1/clippy-2.json"
+      ],
+      "result": "three style lints repaired before freeze; original failed log retained",
+      "stage": "native pre-freeze strict Clippy"
+    },
+    {
+      "raw": [
+        "product-service-validation-b6f2322-v1/validation.json",
+        "product-service-validation-b6f2322-v2/validation.json",
+        "product-service-validation-b6f2322-v3/validation.json"
+      ],
+      "result": "first and second attempts failed ENOSPC during complete roughly700 MB source copy; unchanged third attempt passed50 repository and28 formal checks",
+      "stage": "frozen full canonical source-mutant check"
+    },
+    {
+      "raw": [
+        "product-service-stage-root-v1/validation-archive-control-failure-v1.json",
+        "product-service-stage-root-v1/validation-executable-reclaim-v2.json"
+      ],
+      "result": "first roundtrip verifier incorrectly rejected tar hardlink aliases; original archive retained, second archive dereferenced and every retained ELF path verified before deleting rebuildable cache",
+      "stage": "validation executable archive verifier"
+    },
+    {
+      "raw": [
+        "product-service-stage-root-v1/reader-isolation-v1.json",
+        "product-service-stage-root-v1/reader-initial-bytecode-snapshot-v1.tar.gz"
+      ],
+      "result": "READER_SOURCE_FILE_SET before scalar replay, caused by21 preexisting ignored Python bytecode files in the required complete source scope. No proof rejection or native rerun.",
+      "stage": "first formal reader invocation"
+    },
+    {
+      "raw": [
+        "product-service-stage-root-v1/formal-build-cache-reclaim-v1.json",
+        "product-service-stage-root-v1/reader-isolation-v1.json"
+      ],
+      "result": "mkdir then a later copy hit ENOSPC; original bytes and17 completed copies retained. A subsequent assertion expected21 paths but observed24 including3 new transfer temporary paths. Original tracked source and reader acceptance remained unchanged.",
+      "stage": "bytecode quarantine recovery"
+    },
+    {
+      "raw": [
+        "product-service-stage-root-v1/reader-isolation-v1.json",
+        "task-product-readback-b6f2322-v1.run.json"
+      ],
+      "result": "A separate local shared Git clone materialized every one of434 scripts/formal/config files from the original frozen commit. The unchanged strict reader passed and replayed all56 proofs; no exclusions, proof sampling, threshold changes or native remeasurement.",
+      "stage": "successful complete replay recovery"
+    },
+    {
+      "raw": [
+        "product-service-stage-root-v1/reader-isolation-v1.json"
+      ],
+      "result": "17 of21 retained pyc code objects equal current source compilation;4 differ and all4 have invalid source timestamp/size headers. These caches were not present in the successful isolated reader checkout; no blanket cache identity claim is made.",
+      "stage": "source-cache diagnosis"
+    },
+    {
+      "raw": [
+        "product-service-stage-root-v1/prior-raw-deduplication-v4.json",
+        "product-service-stage-root-v1/redundant-copy-reclaim.json",
+        "product-service-stage-root-v1/test-copy-reclaim.json",
+        "product-service-stage-root-v1/formal-build-cache-reclaim-v1.json"
+      ],
+      "result": "Exact prior raw duplicates were removed only after archive member/hash verification. Formal fresh build cache removed only after complete campaign and byte-identical retained executable verification. Previous complete user archives remain available, two through byte-verified temporary-memory symlinks.",
+      "stage": "storage reclamation"
+    },
+    {
+      "raw": [
+        "final-report-review.json",
+        "report-before-final-review-v1.md"
+      ],
+      "result": "Corrected by-deadline to at-deadline, preserving fixed-time rather than anytime event; added explicit theorem domains and tightened checker upper-cap wording. Original draft retained. No frozen source, formula, test or native observation changed.",
+      "stage": "final report review before publication"
+    }
+  ],
+  "historical_failures": "Prior stage failures retain their original status in evidence/pon-work-compact-v1/failure-history.json",
+  "hosted_ci_inspected_or_executed": false,
+  "measurement_parameters_changed_after_sampling": false,
+  "native_formal_jobs_failed": 0,
+  "native_formal_jobs_rerun": 0,
+  "schema": "w1-product-service-failure-history-v1",
+  "source_changed_after_sampling_before_replay": false
+}

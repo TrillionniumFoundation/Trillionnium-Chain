@@ -1,0 +1,2765 @@
+{
+  "actual_results_review": {
+    "path": "W1-task-product-independent-results-review-v1.json",
+    "review": {
+      "aggregates": {
+        "all": {
+          "all": {
+            "cache_lifecycle_wall_ns": 158296,
+            "case_count": 56,
+            "equal": 0,
+            "facts_faster": 51,
+            "facts_slower": 5,
+            "facts_wall_ns": 33521559,
+            "raw_over_facts_plus_cache_lifecycle_wall_ratio": {
+              "decimal": 1.2326599683995076,
+              "denominator": 33679855,
+              "numerator": 41515809
+            },
+            "raw_over_facts_wall_ratio": {
+              "decimal": 1.2384808534710452,
+              "denominator": 11173853,
+              "numerator": 13838603
+            },
+            "raw_wall_ns": 41515809
+          },
+          "cold": {
+            "case_count": 18,
+            "equal": 0,
+            "facts_faster": 13,
+            "facts_slower": 5,
+            "facts_wall_ns": 13235444,
+            "raw_over_facts_wall_ratio": {
+              "decimal": 1.0688795177555055,
+              "denominator": 13235444,
+              "numerator": 14147095
+            },
+            "raw_wall_ns": 14147095
+          },
+          "warm": {
+            "case_count": 38,
+            "equal": 0,
+            "facts_faster": 38,
+            "facts_slower": 0,
+            "facts_wall_ns": 20286115,
+            "raw_over_facts_wall_ratio": {
+              "decimal": 1.3491353075736778,
+              "denominator": 20286115,
+              "numerator": 27368714
+            },
+            "raw_wall_ns": 27368714
+          }
+        },
+        "eviction": {
+          "all": {
+            "cache_lifecycle_wall_ns": 860,
+            "case_count": 8,
+            "equal": 0,
+            "facts_faster": 6,
+            "facts_slower": 2,
+            "facts_wall_ns": 5613968,
+            "raw_over_facts_plus_cache_lifecycle_wall_ratio": {
+              "decimal": 1.1919065018554442,
+              "denominator": 2807414,
+              "numerator": 3346175
+            },
+            "raw_over_facts_wall_ratio": {
+              "decimal": 1.192089089214616,
+              "denominator": 2806984,
+              "numerator": 3346175
+            },
+            "raw_wall_ns": 6692350
+          },
+          "cold": {
+            "case_count": 6,
+            "equal": 0,
+            "facts_faster": 4,
+            "facts_slower": 2,
+            "facts_wall_ns": 4498962,
+            "raw_over_facts_wall_ratio": {
+              "decimal": 1.0322843358090155,
+              "denominator": 2249481,
+              "numerator": 2322104
+            },
+            "raw_wall_ns": 4644208
+          },
+          "warm": {
+            "case_count": 2,
+            "equal": 0,
+            "facts_faster": 2,
+            "facts_slower": 0,
+            "facts_wall_ns": 1115006,
+            "raw_over_facts_wall_ratio": {
+              "decimal": 1.836888770105273,
+              "denominator": 557503,
+              "numerator": 1024071
+            },
+            "raw_wall_ns": 2048142
+          }
+        },
+        "main": {
+          "all": {
+            "cache_lifecycle_wall_ns": 157436,
+            "case_count": 48,
+            "equal": 0,
+            "facts_faster": 45,
+            "facts_slower": 3,
+            "facts_wall_ns": 27907591,
+            "raw_over_facts_plus_cache_lifecycle_wall_ratio": {
+              "decimal": 1.2408133083214208,
+              "denominator": 28065027,
+              "numerator": 34823459
+            },
+            "raw_over_facts_wall_ratio": {
+              "decimal": 1.2478131487594182,
+              "denominator": 27907591,
+              "numerator": 34823459
+            },
+            "raw_wall_ns": 34823459
+          },
+          "cold": {
+            "case_count": 12,
+            "equal": 0,
+            "facts_faster": 9,
+            "facts_slower": 3,
+            "facts_wall_ns": 8736482,
+            "raw_over_facts_wall_ratio": {
+              "decimal": 1.0877246699529628,
+              "denominator": 8736482,
+              "numerator": 9502887
+            },
+            "raw_wall_ns": 9502887
+          },
+          "warm": {
+            "case_count": 36,
+            "equal": 0,
+            "facts_faster": 36,
+            "facts_slower": 0,
+            "facts_wall_ns": 19171109,
+            "raw_over_facts_wall_ratio": {
+              "decimal": 1.3207672023564208,
+              "denominator": 19171109,
+              "numerator": 25320572
+            },
+            "raw_wall_ns": 25320572
+          }
+        }
+      },
+      "all_regressions": [
+        {
+          "case_id": "main-zero-0",
+          "challenge": "a1103c7451bcab5005e5333320a8f7a9adfd8b3226d34cac53a6bac4203d864f",
+          "facts_minus_raw_percent_of_raw": 26.976932620970803,
+          "facts_minus_raw_wall_ns": 170464,
+          "facts_wall_ns": 802352,
+          "family": "zero",
+          "material_wall_ns": 52398,
+          "ordinal": 0,
+          "original_proof_sha256": "da5a2a18df3c9d893262138081750c7456157b76026c49b79d4564de648a8527",
+          "product_sha256": "4fe7b59af6de3b665b67788cc2f99892ab827efae3a467342b3bb4e3bc8e5bfe",
+          "prove_wall_ns": 693961,
+          "raw_over_facts_wall_ratio": {
+            "decimal": 0.7875446188206673,
+            "denominator": 50147,
+            "numerator": 39493
+          },
+          "raw_wall_ns": 631888,
+          "reference_wall_ns": 2845452,
+          "scope": "main",
+          "seed": 8101,
+          "task": "6618f8a794517852f621993ccb6ac311c684e1db2b9d1d47166fa00a744c4c29",
+          "ticket": "7f91380439aa0dcfa04f1e1e1053a721458456d48b5fee8e4202f405dac44c8c",
+          "warm": false
+        },
+        {
+          "case_id": "main-sparse-0",
+          "challenge": "ca98127947c2e020bf2735dc8461f7c5a9ab781dd9f0c4836febfc4ab781c9b9",
+          "facts_minus_raw_percent_of_raw": 12.465652199501703,
+          "facts_minus_raw_wall_ns": 95313,
+          "facts_wall_ns": 859918,
+          "family": "sparse",
+          "material_wall_ns": 39739,
+          "ordinal": 0,
+          "original_proof_sha256": "d5ab445ae59c0c0a12d022a35488e99dfe53d43d9ff642a689245f7e3cf7df6b",
+          "product_sha256": "6e9f9c360b46af80fbd552a4943f3c472632cf0001264c06ae5f77fdc8184247",
+          "prove_wall_ns": 887739,
+          "raw_over_facts_wall_ratio": {
+            "decimal": 0.8891603618019392,
+            "denominator": 859918,
+            "numerator": 764605
+          },
+          "raw_wall_ns": 764605,
+          "reference_wall_ns": 927728,
+          "scope": "main",
+          "seed": 8101,
+          "task": "9ea544d1ceb8a96371a0eb66e93159d881f2ff123e1ebdbf70c0ff128a72342d",
+          "ticket": "769a6484e9eedb5f209b6d732ce25c32addf9f5ebe94d855ecf11850e3bd98fe",
+          "warm": false
+        },
+        {
+          "case_id": "main-zero-0",
+          "challenge": "1de5c387b4b98cd5f385e23de1cdd5ebce056d7cae15fb3bdf25a4a34fe3d60b",
+          "facts_minus_raw_percent_of_raw": 67.18916711671957,
+          "facts_minus_raw_wall_ns": 357056,
+          "facts_wall_ns": 888475,
+          "family": "zero",
+          "material_wall_ns": 52248,
+          "ordinal": 0,
+          "original_proof_sha256": "92c6a04a94b233ae731195329fffd54bd3b21a7c30122f48bd448cbd66990763",
+          "product_sha256": "4fe7b59af6de3b665b67788cc2f99892ab827efae3a467342b3bb4e3bc8e5bfe",
+          "prove_wall_ns": 679950,
+          "raw_over_facts_wall_ratio": {
+            "decimal": 0.5981248768958046,
+            "denominator": 126925,
+            "numerator": 75917
+          },
+          "raw_wall_ns": 531419,
+          "reference_wall_ns": 674552,
+          "scope": "main",
+          "seed": 8102,
+          "task": "6618f8a794517852f621993ccb6ac311c684e1db2b9d1d47166fa00a744c4c29",
+          "ticket": "a3e29080669e95aad9bd16f7638051bec0a088e1e62b3fc26d9482b2418bd7d7",
+          "warm": false
+        },
+        {
+          "case_id": "eviction-0",
+          "challenge": "7ba60a6481e3e1ebf1624c6a67623dc11adeebf83ef802074ced9ed984d4d4e9",
+          "facts_minus_raw_percent_of_raw": 3.5961427918699425,
+          "facts_minus_raw_wall_ns": 19519,
+          "facts_wall_ns": 562295,
+          "family": "zero",
+          "material_wall_ns": 24216,
+          "ordinal": 0,
+          "original_proof_sha256": "a6b7ff808c364c20879d0e6f6228d7cc3347df6a81ca60b899d612d567475065",
+          "product_sha256": "4fe7b59af6de3b665b67788cc2f99892ab827efae3a467342b3bb4e3bc8e5bfe",
+          "prove_wall_ns": 501665,
+          "raw_over_facts_wall_ratio": {
+            "decimal": 0.9652869045607733,
+            "denominator": 562295,
+            "numerator": 542776
+          },
+          "raw_wall_ns": 542776,
+          "reference_wall_ns": 612760,
+          "scope": "eviction",
+          "seed": 8102,
+          "task": "6618f8a794517852f621993ccb6ac311c684e1db2b9d1d47166fa00a744c4c29",
+          "ticket": "8115b143f965145f29bde752a39340d714dfc451100dae08189c5c9150f536ad",
+          "warm": false
+        },
+        {
+          "case_id": "eviction-1",
+          "challenge": "aeb77a775150222c29450f7b9a00c514040726fccf9285bc9f6ac9b70bb57c18",
+          "facts_minus_raw_percent_of_raw": 27.27527394292082,
+          "facts_minus_raw_wall_ns": 176231,
+          "facts_wall_ns": 822351,
+          "family": "identity",
+          "material_wall_ns": 24506,
+          "ordinal": 1,
+          "original_proof_sha256": "2a4fa0fa56f4bacd485ef395dd06ab1e2b2133e135126419b1f04db3dcb2db89",
+          "product_sha256": "fcafebe14c7b5efa2a08dc569b67a1243538e36f0439b4c37e7a67c545ae9d01",
+          "prove_wall_ns": 706850,
+          "raw_over_facts_wall_ratio": {
+            "decimal": 0.7856985642383848,
+            "denominator": 822351,
+            "numerator": 646120
+          },
+          "raw_wall_ns": 646120,
+          "reference_wall_ns": 570998,
+          "scope": "eviction",
+          "seed": 8102,
+          "task": "e9e9e2bb493cf1e6f65ae53117bb69a3bc590ae47f98f3e574586d7ab834f038",
+          "ticket": "7e4529e483d9f0ffec0dd461553aeb337990d3219609b0a692e2c8a6c5612466",
+          "warm": false
+        }
+      ],
+      "distinct_task_products_field_meaning": "Reader computes len of current case task hashes, not len of AB product outputs. Report as distinct task identities; this review separately counts exact input pairs and full product byte values.",
+      "externally_supplied_pins_verified": {
+        "binary": {
+          "bytes": 623240,
+          "path": "/workspace/scratch/3863a747524b/w1-cost-raw/task-product-campaign-b6f2322-v1/pon_task_product_facts",
+          "sha256": "e8303ab882d4c19851ebbc626c13c0a69646a816824e8a6e45ffa597b78a872e"
+        },
+        "manifest": {
+          "bytes": 19827,
+          "path": "/workspace/scratch/3863a747524b/w1-cost-raw/task-product-campaign-b6f2322-v1/campaign.json",
+          "sha256": "d5be47140723a216e8b3e505a4fd19f21077b86e519853644eb91d19813bee28"
+        },
+        "readback": {
+          "bytes": 154031,
+          "path": "/dev/shm/W1-task-product-readback-b6f2322-v1.json",
+          "sha256": "cce5a5275827625149a660f9bd9bd440e2ef44b22416e26052f24dc6f1a2dc91"
+        }
+      },
+      "implementation_matrix_product_counts": {
+        "fraction_of_these_matrix_multiplications_removed": {
+          "denominator": 7,
+          "numerator": 2
+        },
+        "per_raw_or_cold_fact_call": 458752,
+        "per_warm_fact_call": 327680,
+        "removed_across_38_warm_calls": 4980736,
+        "removed_per_warm_call": 131072,
+        "scope": "static source arithmetic count for specified matrix kernels, excludes hash/reduction/indexing/copy/cache/allocator and unmeasured proof/reference paths; not physical cost",
+        "total_fact_measured_arm": 20709376,
+        "total_raw_measured_arm": 25690112
+      },
+      "jobs": [
+        {
+          "cache_groups": [
+            {
+              "cache_capacity": 2,
+              "cache_create_wall_ns": 149973,
+              "cache_drop_wall_ns": 201,
+              "cache_software_bytes": 98368,
+              "group": "main-zero"
+            },
+            {
+              "cache_capacity": 2,
+              "cache_create_wall_ns": 240,
+              "cache_drop_wall_ns": 230,
+              "cache_software_bytes": 98368,
+              "group": "main-identity"
+            },
+            {
+              "cache_capacity": 2,
+              "cache_create_wall_ns": 351,
+              "cache_drop_wall_ns": 91,
+              "cache_software_bytes": 98368,
+              "group": "main-rank1"
+            },
+            {
+              "cache_capacity": 2,
+              "cache_create_wall_ns": 411,
+              "cache_drop_wall_ns": 200,
+              "cache_software_bytes": 98368,
+              "group": "main-sparse"
+            },
+            {
+              "cache_capacity": 2,
+              "cache_create_wall_ns": 641,
+              "cache_drop_wall_ns": 200,
+              "cache_software_bytes": 98368,
+              "group": "main-near_q"
+            },
+            {
+              "cache_capacity": 2,
+              "cache_create_wall_ns": 351,
+              "cache_drop_wall_ns": 210,
+              "cache_software_bytes": 98368,
+              "group": "main-dense"
+            },
+            {
+              "cache_capacity": 1,
+              "cache_create_wall_ns": 390,
+              "cache_drop_wall_ns": 90,
+              "cache_software_bytes": 49212,
+              "group": "eviction"
+            }
+          ],
+          "cache_owners": 7,
+          "case_observations": [
+            {
+              "case_id": "main-zero-0",
+              "challenge": "a1103c7451bcab5005e5333320a8f7a9adfd8b3226d34cac53a6bac4203d864f",
+              "facts_minus_raw_percent_of_raw": 26.976932620970803,
+              "facts_minus_raw_wall_ns": 170464,
+              "facts_wall_ns": 802352,
+              "family": "zero",
+              "material_wall_ns": 52398,
+              "ordinal": 0,
+              "original_proof_sha256": "da5a2a18df3c9d893262138081750c7456157b76026c49b79d4564de648a8527",
+              "product_sha256": "4fe7b59af6de3b665b67788cc2f99892ab827efae3a467342b3bb4e3bc8e5bfe",
+              "prove_wall_ns": 693961,
+              "raw_over_facts_wall_ratio": {
+                "decimal": 0.7875446188206673,
+                "denominator": 50147,
+                "numerator": 39493
+              },
+              "raw_wall_ns": 631888,
+              "reference_wall_ns": 2845452,
+              "scope": "main",
+              "seed": 8101,
+              "task": "6618f8a794517852f621993ccb6ac311c684e1db2b9d1d47166fa00a744c4c29",
+              "ticket": "7f91380439aa0dcfa04f1e1e1053a721458456d48b5fee8e4202f405dac44c8c",
+              "warm": false
+            },
+            {
+              "case_id": "main-zero-1",
+              "challenge": "597d39899a967feb31fefa162ea050d17953ff1f8a67462d287785b7200b9105",
+              "facts_minus_raw_percent_of_raw": -14.718283696487248,
+              "facts_minus_raw_wall_ns": -81612,
+              "facts_wall_ns": 472882,
+              "family": "zero",
+              "material_wall_ns": 25037,
+              "ordinal": 1,
+              "original_proof_sha256": "35f3c956ba39c67b1789ce182ca367e6731085279ad0c19bb38fffaa65c93b33",
+              "product_sha256": "4fe7b59af6de3b665b67788cc2f99892ab827efae3a467342b3bb4e3bc8e5bfe",
+              "prove_wall_ns": 537228,
+              "raw_over_facts_wall_ratio": {
+                "decimal": 1.1725842810680043,
+                "denominator": 236441,
+                "numerator": 277247
+              },
+              "raw_wall_ns": 554494,
+              "reference_wall_ns": 597117,
+              "scope": "main",
+              "seed": 8101,
+              "task": "6618f8a794517852f621993ccb6ac311c684e1db2b9d1d47166fa00a744c4c29",
+              "ticket": "a7ef863a1ebe1df0eed06483b294d6c665e75b2a804c8dc78cf350b930a4efa1",
+              "warm": true
+            },
+            {
+              "case_id": "main-zero-2",
+              "challenge": "b439a6546d98449ce025d572a1760afc2fc7787dea4a8227bb3bcb837d087927",
+              "facts_minus_raw_percent_of_raw": -32.86064368567227,
+              "facts_minus_raw_wall_ns": -201140,
+              "facts_wall_ns": 410960,
+              "family": "zero",
+              "material_wall_ns": 23966,
+              "ordinal": 2,
+              "original_proof_sha256": "0ed65735a797b411d3c0cf01fa80badb13736c693bb3637b8414946da2e3a718",
+              "product_sha256": "4fe7b59af6de3b665b67788cc2f99892ab827efae3a467342b3bb4e3bc8e5bfe",
+              "prove_wall_ns": 535465,
+              "raw_over_facts_wall_ratio": {
+                "decimal": 1.489439361495036,
+                "denominator": 20548,
+                "numerator": 30605
+              },
+              "raw_wall_ns": 612100,
+              "reference_wall_ns": 621523,
+              "scope": "main",
+              "seed": 8101,
+              "task": "6618f8a794517852f621993ccb6ac311c684e1db2b9d1d47166fa00a744c4c29",
+              "ticket": "fa073ba7f46de58cd1b59b1bacc520b3e7adeabe84a7a860ebac34d73355b64a",
+              "warm": true
+            },
+            {
+              "case_id": "main-zero-3",
+              "challenge": "3e6d3f3509a380b0d4bd953e793ea989caa463b2aee7cba1f9280e0e69c37c9e",
+              "facts_minus_raw_percent_of_raw": -44.50247074122237,
+              "facts_minus_raw_wall_ns": -385002,
+              "facts_wall_ns": 480123,
+              "family": "zero",
+              "material_wall_ns": 23995,
+              "ordinal": 3,
+              "original_proof_sha256": "9c93ce52c71ea24c98dfb1aa9d4c3d50c9bc2dfa0b2573147c36affc9010ad09",
+              "product_sha256": "4fe7b59af6de3b665b67788cc2f99892ab827efae3a467342b3bb4e3bc8e5bfe",
+              "prove_wall_ns": 891654,
+              "raw_over_facts_wall_ratio": {
+                "decimal": 1.801882017732956,
+                "denominator": 53347,
+                "numerator": 96125
+              },
+              "raw_wall_ns": 865125,
+              "reference_wall_ns": 647422,
+              "scope": "main",
+              "seed": 8101,
+              "task": "6618f8a794517852f621993ccb6ac311c684e1db2b9d1d47166fa00a744c4c29",
+              "ticket": "d9c5abeb227a96b602ee1c7bb95812a3f03942ec0ad965d2827e6089b4e3ea80",
+              "warm": true
+            },
+            {
+              "case_id": "main-identity-0",
+              "challenge": "9bae095fd47410444147dc58a46aa43097b0ee174f9e3855c6dc801e2f2af8db",
+              "facts_minus_raw_percent_of_raw": -47.100290757389544,
+              "facts_minus_raw_wall_ns": -802507,
+              "facts_wall_ns": 901319,
+              "family": "identity",
+              "material_wall_ns": 42002,
+              "ordinal": 0,
+              "original_proof_sha256": "258ef7f603dd82362942a57cce4f88b0e4b48a08a4824e70aeb14de616b8dcd6",
+              "product_sha256": "fcafebe14c7b5efa2a08dc569b67a1243538e36f0439b4c37e7a67c545ae9d01",
+              "prove_wall_ns": 516327,
+              "raw_over_facts_wall_ratio": {
+                "decimal": 1.890369558391646,
+                "denominator": 901319,
+                "numerator": 1703826
+              },
+              "raw_wall_ns": 1703826,
+              "reference_wall_ns": 690826,
+              "scope": "main",
+              "seed": 8101,
+              "task": "e9e9e2bb493cf1e6f65ae53117bb69a3bc590ae47f98f3e574586d7ab834f038",
+              "ticket": "aeb3190aea7b2669cd6e441ddc21bb11fc86ce87587f5c300dd6a4a65746d3d1",
+              "warm": false
+            },
+            {
+              "case_id": "main-identity-1",
+              "challenge": "b4b3681fc0a9c60d108a29a853a45aa73cbaeb7b5725d770fa24735a7555a165",
+              "facts_minus_raw_percent_of_raw": -21.202985810782362,
+              "facts_minus_raw_wall_ns": -176253,
+              "facts_wall_ns": 655012,
+              "family": "identity",
+              "material_wall_ns": 28543,
+              "ordinal": 1,
+              "original_proof_sha256": "4ecc09f8ed012deaee599a79ae470567739c535159db9db6bf6d8bb607f58b1b",
+              "product_sha256": "fcafebe14c7b5efa2a08dc569b67a1243538e36f0439b4c37e7a67c545ae9d01",
+              "prove_wall_ns": 865986,
+              "raw_over_facts_wall_ratio": {
+                "decimal": 1.2690836198420792,
+                "denominator": 655012,
+                "numerator": 831265
+              },
+              "raw_wall_ns": 831265,
+              "reference_wall_ns": 908340,
+              "scope": "main",
+              "seed": 8101,
+              "task": "e9e9e2bb493cf1e6f65ae53117bb69a3bc590ae47f98f3e574586d7ab834f038",
+              "ticket": "9429e49dc6de1fffac0952af0b9ec0bae38e01ad82f027c175698ba1001dba70",
+              "warm": true
+            },
+            {
+              "case_id": "main-identity-2",
+              "challenge": "66ce8972130e7894a6d593c0ff634312e6ddcf1ccdbc20c881beb581217129d3",
+              "facts_minus_raw_percent_of_raw": -23.387972824340412,
+              "facts_minus_raw_wall_ns": -206687,
+              "facts_wall_ns": 677045,
+              "family": "identity",
+              "material_wall_ns": 28362,
+              "ordinal": 2,
+              "original_proof_sha256": "ad20da5c26aaaea81bd990a9e06557084b1065041252064d6e1609b24198cc3a",
+              "product_sha256": "fcafebe14c7b5efa2a08dc569b67a1243538e36f0439b4c37e7a67c545ae9d01",
+              "prove_wall_ns": 880067,
+              "raw_over_facts_wall_ratio": {
+                "decimal": 1.3052780834361084,
+                "denominator": 677045,
+                "numerator": 883732
+              },
+              "raw_wall_ns": 883732,
+              "reference_wall_ns": 953326,
+              "scope": "main",
+              "seed": 8101,
+              "task": "e9e9e2bb493cf1e6f65ae53117bb69a3bc590ae47f98f3e574586d7ab834f038",
+              "ticket": "69f104e0fcd3a851b5c292544fd52c3834e3c3c7e709f830099a57dd5f119c6e",
+              "warm": true
+            },
+            {
+              "case_id": "main-identity-3",
+              "challenge": "b58a3f16af68f363868aac35471b5639a3619ef5e908e4c2fca82faac6ef86d8",
+              "facts_minus_raw_percent_of_raw": -18.501826411069217,
+              "facts_minus_raw_wall_ns": -154029,
+              "facts_wall_ns": 678478,
+              "family": "identity",
+              "material_wall_ns": 28101,
+              "ordinal": 3,
+              "original_proof_sha256": "8aea91ffbdf046a80b907b3fba4982195a78f7f2d447eadb75c651e75dcc0097",
+              "product_sha256": "fcafebe14c7b5efa2a08dc569b67a1243538e36f0439b4c37e7a67c545ae9d01",
+              "prove_wall_ns": 858846,
+              "raw_over_facts_wall_ratio": {
+                "decimal": 1.227021362520229,
+                "denominator": 678478,
+                "numerator": 832507
+              },
+              "raw_wall_ns": 832507,
+              "reference_wall_ns": 897373,
+              "scope": "main",
+              "seed": 8101,
+              "task": "e9e9e2bb493cf1e6f65ae53117bb69a3bc590ae47f98f3e574586d7ab834f038",
+              "ticket": "3eee74543961ee668df5ea804104968276ad187198106d23cd782630e37378e1",
+              "warm": true
+            },
+            {
+              "case_id": "main-rank1-0",
+              "challenge": "b0d2fd5fd51cc7432e083665faef7f469987f33db415771f49fdf27274f1e52f",
+              "facts_minus_raw_percent_of_raw": -1.5798839783650478,
+              "facts_minus_raw_wall_ns": -13530,
+              "facts_wall_ns": 842862,
+              "family": "rank1",
+              "material_wall_ns": 32278,
+              "ordinal": 0,
+              "original_proof_sha256": "d4c9b3ec52fb86de924e343c738a176f8cee01a14da91458224b93bd797df32d",
+              "product_sha256": "05f040eccb8f9d8b8a15032e9a11f5f830c7752e57980667074ffa0dca866919",
+              "prove_wall_ns": 840268,
+              "raw_over_facts_wall_ratio": {
+                "decimal": 1.016052449867238,
+                "denominator": 140477,
+                "numerator": 142732
+              },
+              "raw_wall_ns": 856392,
+              "reference_wall_ns": 914418,
+              "scope": "main",
+              "seed": 8101,
+              "task": "ed431037699f752fd5ec2d190840efe8dfeaa1291c38f029484778d0490c59a9",
+              "ticket": "fdfb7d767ba79f734b5a9a65b8215b57dbdeda85528452e5520aea9026634925",
+              "warm": false
+            },
+            {
+              "case_id": "main-rank1-1",
+              "challenge": "e73fc7f348a75c3cf57b6e74a4aef02bac92962c90e9406e79963fc64455ee62",
+              "facts_minus_raw_percent_of_raw": -18.218710311279384,
+              "facts_minus_raw_wall_ns": -152057,
+              "facts_wall_ns": 682563,
+              "family": "rank1",
+              "material_wall_ns": 31326,
+              "ordinal": 1,
+              "original_proof_sha256": "9ddc96ee1645b21385275ab4a5fbac7d2f07791a25ca1ab61e8e4572465893dc",
+              "product_sha256": "05f040eccb8f9d8b8a15032e9a11f5f830c7752e57980667074ffa0dca866919",
+              "prove_wall_ns": 857523,
+              "raw_over_facts_wall_ratio": {
+                "decimal": 1.2227735754794795,
+                "denominator": 682563,
+                "numerator": 834620
+              },
+              "raw_wall_ns": 834620,
+              "reference_wall_ns": 929140,
+              "scope": "main",
+              "seed": 8101,
+              "task": "ed431037699f752fd5ec2d190840efe8dfeaa1291c38f029484778d0490c59a9",
+              "ticket": "fcde6a8513f4780a4a7f6a5c63fefe6b68a258c2fb59e2640c48253371e163c7",
+              "warm": true
+            },
+            {
+              "case_id": "main-rank1-2",
+              "challenge": "9b026dc9aef0a12405f401e2acafbf7ad2b96cf39e261488c8f5d906f5220ea5",
+              "facts_minus_raw_percent_of_raw": -21.982614014768487,
+              "facts_minus_raw_wall_ns": -185435,
+              "facts_wall_ns": 658118,
+              "family": "rank1",
+              "material_wall_ns": 31627,
+              "ordinal": 2,
+              "original_proof_sha256": "fb2374baa1f41f6659540938ba75fe5b3b1870d91e6f0e20b83abd146db4dcea",
+              "product_sha256": "05f040eccb8f9d8b8a15032e9a11f5f830c7752e57980667074ffa0dca866919",
+              "prove_wall_ns": 867850,
+              "raw_over_facts_wall_ratio": {
+                "decimal": 1.28176558003276,
+                "denominator": 658118,
+                "numerator": 843553
+              },
+              "raw_wall_ns": 843553,
+              "reference_wall_ns": 912555,
+              "scope": "main",
+              "seed": 8101,
+              "task": "ed431037699f752fd5ec2d190840efe8dfeaa1291c38f029484778d0490c59a9",
+              "ticket": "9893a8d5474a3c69a4dee76f93b5286b6b9a9bc4902cde77d98cc31557e292dd",
+              "warm": true
+            },
+            {
+              "case_id": "main-rank1-3",
+              "challenge": "9b4110836bb7e754300d3078d19999b2264b5df83d6cd599583ba162f2bc9656",
+              "facts_minus_raw_percent_of_raw": -8.57827695418076,
+              "facts_minus_raw_wall_ns": -60590,
+              "facts_wall_ns": 645729,
+              "family": "rank1",
+              "material_wall_ns": 32358,
+              "ordinal": 3,
+              "original_proof_sha256": "f2b52221c38f19f3e1ba91b1db55b971acf5a60e29898e0822c6cdf5fd1d8ce6",
+              "product_sha256": "05f040eccb8f9d8b8a15032e9a11f5f830c7752e57980667074ffa0dca866919",
+              "prove_wall_ns": 846438,
+              "raw_over_facts_wall_ratio": {
+                "decimal": 1.0938319325909167,
+                "denominator": 645729,
+                "numerator": 706319
+              },
+              "raw_wall_ns": 706319,
+              "reference_wall_ns": 910993,
+              "scope": "main",
+              "seed": 8101,
+              "task": "ed431037699f752fd5ec2d190840efe8dfeaa1291c38f029484778d0490c59a9",
+              "ticket": "4164416532d3445646e9074ccf647d0a1c46157cb81c98680f4d79ea50355802",
+              "warm": true
+            },
+            {
+              "case_id": "main-sparse-0",
+              "challenge": "ca98127947c2e020bf2735dc8461f7c5a9ab781dd9f0c4836febfc4ab781c9b9",
+              "facts_minus_raw_percent_of_raw": 12.465652199501703,
+              "facts_minus_raw_wall_ns": 95313,
+              "facts_wall_ns": 859918,
+              "family": "sparse",
+              "material_wall_ns": 39739,
+              "ordinal": 0,
+              "original_proof_sha256": "d5ab445ae59c0c0a12d022a35488e99dfe53d43d9ff642a689245f7e3cf7df6b",
+              "product_sha256": "6e9f9c360b46af80fbd552a4943f3c472632cf0001264c06ae5f77fdc8184247",
+              "prove_wall_ns": 887739,
+              "raw_over_facts_wall_ratio": {
+                "decimal": 0.8891603618019392,
+                "denominator": 859918,
+                "numerator": 764605
+              },
+              "raw_wall_ns": 764605,
+              "reference_wall_ns": 927728,
+              "scope": "main",
+              "seed": 8101,
+              "task": "9ea544d1ceb8a96371a0eb66e93159d881f2ff123e1ebdbf70c0ff128a72342d",
+              "ticket": "769a6484e9eedb5f209b6d732ce25c32addf9f5ebe94d855ecf11850e3bd98fe",
+              "warm": false
+            },
+            {
+              "case_id": "main-sparse-1",
+              "challenge": "8a4e41892f52d2cc9d800cc5389b2c2768652d38dcc4a7a1c7eac42ca188d072",
+              "facts_minus_raw_percent_of_raw": -24.536306520319282,
+              "facts_minus_raw_wall_ns": -212255,
+              "facts_wall_ns": 652810,
+              "family": "sparse",
+              "material_wall_ns": 42283,
+              "ordinal": 1,
+              "original_proof_sha256": "97a6826a8dbfe60ded20da53c0ca3b0dfd74b178749567e8fd5ccdebd17021ef",
+              "product_sha256": "6e9f9c360b46af80fbd552a4943f3c472632cf0001264c06ae5f77fdc8184247",
+              "prove_wall_ns": 830013,
+              "raw_over_facts_wall_ratio": {
+                "decimal": 1.325140546253887,
+                "denominator": 130562,
+                "numerator": 173013
+              },
+              "raw_wall_ns": 865065,
+              "reference_wall_ns": 933416,
+              "scope": "main",
+              "seed": 8101,
+              "task": "9ea544d1ceb8a96371a0eb66e93159d881f2ff123e1ebdbf70c0ff128a72342d",
+              "ticket": "1f9317eb629f23c849ab8f48a527dec910bbd4cae5c4286d690c539d37a8559b",
+              "warm": true
+            },
+            {
+              "case_id": "main-sparse-2",
+              "challenge": "7016572afbd0579c75b3cc9373fc83524b38c9b6b82b553ccf5b402c52b1dcf5",
+              "facts_minus_raw_percent_of_raw": -14.396193654472443,
+              "facts_minus_raw_wall_ns": -112678,
+              "facts_wall_ns": 670015,
+              "family": "sparse",
+              "material_wall_ns": 39959,
+              "ordinal": 2,
+              "original_proof_sha256": "16131252d2b6899fa07dc6ad6482ac02c9c7473ce185f0bfc16e52b4a7abc7ba",
+              "product_sha256": "6e9f9c360b46af80fbd552a4943f3c472632cf0001264c06ae5f77fdc8184247",
+              "prove_wall_ns": 671397,
+              "raw_over_facts_wall_ratio": {
+                "decimal": 1.1681723543502758,
+                "denominator": 670015,
+                "numerator": 782693
+              },
+              "raw_wall_ns": 782693,
+              "reference_wall_ns": 793489,
+              "scope": "main",
+              "seed": 8101,
+              "task": "9ea544d1ceb8a96371a0eb66e93159d881f2ff123e1ebdbf70c0ff128a72342d",
+              "ticket": "7d18d8813d6ef0022edf2eeedfa9ad4ff2a1e74e57fa9d595475124bb6bf3e08",
+              "warm": true
+            },
+            {
+              "case_id": "main-sparse-3",
+              "challenge": "460ec0a1ff7f16913f8848b783403c8f46e0908b817141b9051503f65da75165",
+              "facts_minus_raw_percent_of_raw": -26.29748138687989,
+              "facts_minus_raw_wall_ns": -227327,
+              "facts_wall_ns": 637117,
+              "family": "sparse",
+              "material_wall_ns": 41312,
+              "ordinal": 3,
+              "original_proof_sha256": "45481939236dd1376e033afdbc89b89f6364c25faf96278e3a0f591e35bdfff4",
+              "product_sha256": "6e9f9c360b46af80fbd552a4943f3c472632cf0001264c06ae5f77fdc8184247",
+              "prove_wall_ns": 732568,
+              "raw_over_facts_wall_ratio": {
+                "decimal": 1.3568057358381584,
+                "denominator": 637117,
+                "numerator": 864444
+              },
+              "raw_wall_ns": 864444,
+              "reference_wall_ns": 876352,
+              "scope": "main",
+              "seed": 8101,
+              "task": "9ea544d1ceb8a96371a0eb66e93159d881f2ff123e1ebdbf70c0ff128a72342d",
+              "ticket": "27aac0c52a2dcd861e108b5a55ca0c92c69e40e576cc8eb088613e3c97d8c563",
+              "warm": true
+            },
+            {
+              "case_id": "main-near_q-0",
+              "challenge": "5d7ebd450d8fbd92927e606c034850201997a3264ab148b0f67d8046133ad811",
+              "facts_minus_raw_percent_of_raw": -9.773647663341253,
+              "facts_minus_raw_wall_ns": -87800,
+              "facts_wall_ns": 810534,
+              "family": "near_q",
+              "material_wall_ns": 33259,
+              "ordinal": 0,
+              "original_proof_sha256": "5c278d60831b209cde204edda93026ef372eea9796e25423148545906fa76c93",
+              "product_sha256": "e9ad578d52c49c4fb43d24d5d316bc25be7cf0c4c5be3f47219a9be954f59043",
+              "prove_wall_ns": 843644,
+              "raw_over_facts_wall_ratio": {
+                "decimal": 1.1083236483602168,
+                "denominator": 405267,
+                "numerator": 449167
+              },
+              "raw_wall_ns": 898334,
+              "reference_wall_ns": 886046,
+              "scope": "main",
+              "seed": 8101,
+              "task": "afbcb928a6eed7c23e0b7208b99c3c782661f5fd28738f38eecd3693bd040fc8",
+              "ticket": "196a46db7ea5a6bc93cad72af555016383b9dfd96f40ccfeb8bbad811663607a",
+              "warm": false
+            },
+            {
+              "case_id": "main-near_q-1",
+              "challenge": "aad414dd9ca4cde79c9b20d41eef53aae0faef3fd464f7ad456b701cafa32e1c",
+              "facts_minus_raw_percent_of_raw": -30.08876235136493,
+              "facts_minus_raw_wall_ns": -269490,
+              "facts_wall_ns": 626160,
+              "family": "near_q",
+              "material_wall_ns": 35252,
+              "ordinal": 1,
+              "original_proof_sha256": "0d1a5fa00a0fb5dc5c98154370c76846358f29acdb868558ddaad87e6cc7cb7f",
+              "product_sha256": "e9ad578d52c49c4fb43d24d5d316bc25be7cf0c4c5be3f47219a9be954f59043",
+              "prove_wall_ns": 891083,
+              "raw_over_facts_wall_ratio": {
+                "decimal": 1.4303852050594097,
+                "denominator": 20872,
+                "numerator": 29855
+              },
+              "raw_wall_ns": 895650,
+              "reference_wall_ns": 885636,
+              "scope": "main",
+              "seed": 8101,
+              "task": "afbcb928a6eed7c23e0b7208b99c3c782661f5fd28738f38eecd3693bd040fc8",
+              "ticket": "a10f55522b17e62d44e44aea266c4d68dab61bf2616b62b19e779db516516a7b",
+              "warm": true
+            },
+            {
+              "case_id": "main-near_q-2",
+              "challenge": "5c10a739396769fc864d547320c494a5c000fbed9a64a7bef448e945f400913a",
+              "facts_minus_raw_percent_of_raw": -25.91884707984951,
+              "facts_minus_raw_wall_ns": -227688,
+              "facts_wall_ns": 650777,
+              "family": "near_q",
+              "material_wall_ns": 34641,
+              "ordinal": 2,
+              "original_proof_sha256": "a93063cc89cc4a182d1621381be2038f43cb4d849f8b789fe19c583c3fc2ad16",
+              "product_sha256": "e9ad578d52c49c4fb43d24d5d316bc25be7cf0c4c5be3f47219a9be954f59043",
+              "prove_wall_ns": 859356,
+              "raw_over_facts_wall_ratio": {
+                "decimal": 1.3498710003580336,
+                "denominator": 650777,
+                "numerator": 878465
+              },
+              "raw_wall_ns": 878465,
+              "reference_wall_ns": 896993,
+              "scope": "main",
+              "seed": 8101,
+              "task": "afbcb928a6eed7c23e0b7208b99c3c782661f5fd28738f38eecd3693bd040fc8",
+              "ticket": "3f78ecb8fc48b4acd8ce9b1b0d1989fac9c617624ea48801f58bae6a07dffae2",
+              "warm": true
+            },
+            {
+              "case_id": "main-near_q-3",
+              "challenge": "e9a5d85e757f9bc0008756794db6fd31757e99d27c814ba806a65453a3a1d2e8",
+              "facts_minus_raw_percent_of_raw": -33.3487340989714,
+              "facts_minus_raw_wall_ns": -318313,
+              "facts_wall_ns": 636185,
+              "family": "near_q",
+              "material_wall_ns": 35143,
+              "ordinal": 3,
+              "original_proof_sha256": "1065c436ab96700f51c9e824e25c49eea23f9f308d06f245145c60e99e01eed2",
+              "product_sha256": "e9ad578d52c49c4fb43d24d5d316bc25be7cf0c4c5be3f47219a9be954f59043",
+              "prove_wall_ns": 842722,
+              "raw_over_facts_wall_ratio": {
+                "decimal": 1.500346597294812,
+                "denominator": 636185,
+                "numerator": 954498
+              },
+              "raw_wall_ns": 954498,
+              "reference_wall_ns": 995879,
+              "scope": "main",
+              "seed": 8101,
+              "task": "afbcb928a6eed7c23e0b7208b99c3c782661f5fd28738f38eecd3693bd040fc8",
+              "ticket": "6027804ad513f86da800b5c93cba5dff6d82b273cccd7588bc4b3e75b17a7491",
+              "warm": true
+            },
+            {
+              "case_id": "main-dense-0",
+              "challenge": "c8b6c16643df92e34f1f0ec882b30afcd23c595a0999174fd14b05f3a19c7122",
+              "facts_minus_raw_percent_of_raw": -3.5730527675327095,
+              "facts_minus_raw_wall_ns": -31427,
+              "facts_wall_ns": 848129,
+              "family": "dense",
+              "material_wall_ns": 540243,
+              "ordinal": 0,
+              "original_proof_sha256": "893e87ad007d985ebf05b2e8526c6d51bc40632ad6b3f532a6d0800af4abd65e",
+              "product_sha256": "b1a7237382b5329233a3e51aadfe20352fe569739feccf9300ec7af76fbd7368",
+              "prove_wall_ns": 869602,
+              "raw_over_facts_wall_ratio": {
+                "decimal": 1.0370545046803021,
+                "denominator": 848129,
+                "numerator": 879556
+              },
+              "raw_wall_ns": 879556,
+              "reference_wall_ns": 930452,
+              "scope": "main",
+              "seed": 8101,
+              "task": "8b9a8b0f365bf7d7f04868f963f0f38629d8217654d9a0f56cdc6abaf8fe9dc5",
+              "ticket": "a0f0a58e281b9cea89d53206dc1482d9ac2bfb66291fe35e1f843e53a66300c9",
+              "warm": false
+            },
+            {
+              "case_id": "main-dense-1",
+              "challenge": "eed3a0fb875375ef58d650d74b04387a47540e517e3e4d627a928a7b7d4d64b1",
+              "facts_minus_raw_percent_of_raw": -26.17005609338791,
+              "facts_minus_raw_wall_ns": -217503,
+              "facts_wall_ns": 613611,
+              "family": "dense",
+              "material_wall_ns": 537779,
+              "ordinal": 1,
+              "original_proof_sha256": "069de73cdfe0edcb4210aebdf7205f02e25a15efee44ac7c2220ab79e898d12b",
+              "product_sha256": "b1a7237382b5329233a3e51aadfe20352fe569739feccf9300ec7af76fbd7368",
+              "prove_wall_ns": 841220,
+              "raw_over_facts_wall_ratio": {
+                "decimal": 1.3544639845113597,
+                "denominator": 68179,
+                "numerator": 92346
+              },
+              "raw_wall_ns": 831114,
+              "reference_wall_ns": 896281,
+              "scope": "main",
+              "seed": 8101,
+              "task": "8b9a8b0f365bf7d7f04868f963f0f38629d8217654d9a0f56cdc6abaf8fe9dc5",
+              "ticket": "3122d8ee4f9261f861579b056abc114a37340b06e52fd5451159ca6fbf81677c",
+              "warm": true
+            },
+            {
+              "case_id": "main-dense-2",
+              "challenge": "248de03ac046b8197d87215687ffb74f3640df7e80feb6a7a816b6e6ca12e0f3",
+              "facts_minus_raw_percent_of_raw": -24.503677261430287,
+              "facts_minus_raw_wall_ns": -222130,
+              "facts_wall_ns": 684387,
+              "family": "dense",
+              "material_wall_ns": 528915,
+              "ordinal": 2,
+              "original_proof_sha256": "aec3112e5211bb3e23cc28333b73fa6dd39ad41a8cd0885e6c2a5510e94febdd",
+              "product_sha256": "b1a7237382b5329233a3e51aadfe20352fe569739feccf9300ec7af76fbd7368",
+              "prove_wall_ns": 885144,
+              "raw_over_facts_wall_ratio": {
+                "decimal": 1.3245678249294623,
+                "denominator": 684387,
+                "numerator": 906517
+              },
+              "raw_wall_ns": 906517,
+              "reference_wall_ns": 935390,
+              "scope": "main",
+              "seed": 8101,
+              "task": "8b9a8b0f365bf7d7f04868f963f0f38629d8217654d9a0f56cdc6abaf8fe9dc5",
+              "ticket": "1913dedc9b565e2109cae254688993e31e31fb12a0ece49c1df5d9afe3fe8038",
+              "warm": true
+            },
+            {
+              "case_id": "main-dense-3",
+              "challenge": "62ce16125a60e77d15f5ede1a1608a9fdd8e3c832aa2e23cc5d25db5a699cf4f",
+              "facts_minus_raw_percent_of_raw": -1.6800289849760268,
+              "facts_minus_raw_wall_ns": -11917,
+              "facts_wall_ns": 697416,
+              "family": "dense",
+              "material_wall_ns": 559161,
+              "ordinal": 3,
+              "original_proof_sha256": "c49dff3bbbbea2e736581cc115518244811a60a240b00a586ece80f0c9823754",
+              "product_sha256": "b1a7237382b5329233a3e51aadfe20352fe569739feccf9300ec7af76fbd7368",
+              "prove_wall_ns": 871214,
+              "raw_over_facts_wall_ratio": {
+                "decimal": 1.0170873624924006,
+                "denominator": 697416,
+                "numerator": 709333
+              },
+              "raw_wall_ns": 709333,
+              "reference_wall_ns": 895721,
+              "scope": "main",
+              "seed": 8101,
+              "task": "8b9a8b0f365bf7d7f04868f963f0f38629d8217654d9a0f56cdc6abaf8fe9dc5",
+              "ticket": "1ba0d1d9f0a54c052c58afb7bc05f7b0f176cfd1f7917bdaab18a9f95ffa6ddb",
+              "warm": true
+            },
+            {
+              "case_id": "eviction-0",
+              "challenge": "68b8b78c5ad093c68b1c94d7bb0da41cdd9d272626f329cab84dccf0ada7ec69",
+              "facts_minus_raw_percent_of_raw": -2.0644223014100915,
+              "facts_minus_raw_wall_ns": -17687,
+              "facts_wall_ns": 839066,
+              "family": "zero",
+              "material_wall_ns": 25288,
+              "ordinal": 0,
+              "original_proof_sha256": "668c82d07c2cb0978eece70a09880bdf95c43b3d9debd1a1e5c4b7eb7afb98b7",
+              "product_sha256": "4fe7b59af6de3b665b67788cc2f99892ab827efae3a467342b3bb4e3bc8e5bfe",
+              "prove_wall_ns": 795021,
+              "raw_over_facts_wall_ratio": {
+                "decimal": 1.0210793906558007,
+                "denominator": 839066,
+                "numerator": 856753
+              },
+              "raw_wall_ns": 856753,
+              "reference_wall_ns": 924623,
+              "scope": "eviction",
+              "seed": 8101,
+              "task": "6618f8a794517852f621993ccb6ac311c684e1db2b9d1d47166fa00a744c4c29",
+              "ticket": "1666c3edc0194203e7b059640ca70bf12e89b82af6750e1e04e70069e12a2edc",
+              "warm": false
+            },
+            {
+              "case_id": "eviction-1",
+              "challenge": "f84854e3b73bb3604e40f1d37e0f0972c7d46d39d06a7a7c7416a41f3a90e487",
+              "facts_minus_raw_percent_of_raw": -1.0785387717582497,
+              "facts_minus_raw_wall_ns": -9363,
+              "facts_wall_ns": 858756,
+              "family": "identity",
+              "material_wall_ns": 28722,
+              "ordinal": 1,
+              "original_proof_sha256": "34110a930620a6212f6f19868bb4d6b5d71fdb7780b206d197fa5552e26ec92d",
+              "product_sha256": "fcafebe14c7b5efa2a08dc569b67a1243538e36f0439b4c37e7a67c545ae9d01",
+              "prove_wall_ns": 846126,
+              "raw_over_facts_wall_ratio": {
+                "decimal": 1.0109029805905285,
+                "denominator": 286252,
+                "numerator": 289373
+              },
+              "raw_wall_ns": 868119,
+              "reference_wall_ns": 920848,
+              "scope": "eviction",
+              "seed": 8101,
+              "task": "e9e9e2bb493cf1e6f65ae53117bb69a3bc590ae47f98f3e574586d7ab834f038",
+              "ticket": "88af31b211fd0229837303fe99c038c6dcf8424688e80334d5bd37dd5d07cbb2",
+              "warm": false
+            },
+            {
+              "case_id": "eviction-2",
+              "challenge": "142c6a780bdbc443e8698bd13548629ea5463be2d2b71f6c4d8dca7651c56a73",
+              "facts_minus_raw_percent_of_raw": -3.0802246696969324,
+              "facts_minus_raw_wall_ns": -27601,
+              "facts_wall_ns": 868470,
+              "family": "zero",
+              "material_wall_ns": 26359,
+              "ordinal": 2,
+              "original_proof_sha256": "dcf859012a4e653b0c1c923fe829177315b14adfbd96b9709d8ead759ae1b297",
+              "product_sha256": "4fe7b59af6de3b665b67788cc2f99892ab827efae3a467342b3bb4e3bc8e5bfe",
+              "prove_wall_ns": 880928,
+              "raw_over_facts_wall_ratio": {
+                "decimal": 1.0317811783941875,
+                "denominator": 868470,
+                "numerator": 896071
+              },
+              "raw_wall_ns": 896071,
+              "reference_wall_ns": 931043,
+              "scope": "eviction",
+              "seed": 8101,
+              "task": "6618f8a794517852f621993ccb6ac311c684e1db2b9d1d47166fa00a744c4c29",
+              "ticket": "50ddd905c180d6533073a73098fe1f33e9867f4a92d8a03d37cad16b10fe032b",
+              "warm": false
+            },
+            {
+              "case_id": "eviction-3",
+              "challenge": "096ae3a0252fee9251a29e03046905fa867e7936f6415fd9588f74a11af2cf39",
+              "facts_minus_raw_percent_of_raw": -20.15045194707634,
+              "facts_minus_raw_wall_ns": -173818,
+              "facts_wall_ns": 688783,
+              "family": "zero",
+              "material_wall_ns": 26840,
+              "ordinal": 3,
+              "original_proof_sha256": "2f926fa2bd6c61aa07d58b353d0ac1977b59a0b053ce0fc35579293871a321a1",
+              "product_sha256": "4fe7b59af6de3b665b67788cc2f99892ab827efae3a467342b3bb4e3bc8e5bfe",
+              "prove_wall_ns": 862050,
+              "raw_over_facts_wall_ratio": {
+                "decimal": 1.252355241055601,
+                "denominator": 688783,
+                "numerator": 862601
+              },
+              "raw_wall_ns": 862601,
+              "reference_wall_ns": 904834,
+              "scope": "eviction",
+              "seed": 8101,
+              "task": "6618f8a794517852f621993ccb6ac311c684e1db2b9d1d47166fa00a744c4c29",
+              "ticket": "fe063cda63582e220158f04e2b3588f67036e0bbcc85a591dc4d835068af7b1a",
+              "warm": true
+            }
+          ],
+          "different_product_byte_values": 6,
+          "exact_input_pair_count": 6,
+          "fact_publication_counts": {
+            "none": 19,
+            "stored": 9
+          },
+          "job": "task-product-s8101",
+          "measured_verifier_calls": 56,
+          "observations": {
+            "accounted_operation_wall_ns": 95492339,
+            "gnu_command_maximum_resident_set_kib": 2780,
+            "gnu_printed_cpu_ns": 110000000,
+            "native_observed_wall_before_final_output_ns": 119755524,
+            "outer_wall_minus_native_wall_ns": 14048001,
+            "per_arm_cpu_attribution": null,
+            "per_phase_wall_ns": {
+              "cache_create_wall_ns": 152357,
+              "cache_drop_wall_ns": 1222,
+              "facts_wall_ns": 19549577,
+              "material_wall_ns": 2954888,
+              "prove_wall_ns": 22601440,
+              "raw_wall_ns": 23869639,
+              "reference_wall_ns": 26363216
+            },
+            "rss_scopes_separate": true,
+            "runner_lifetime_max_child_rss_kib": 281156,
+            "unallocated_native_wall_ns": 24263185,
+            "waited_minus_gnu_printed_cpu_ns": 9215000,
+            "whole_waited_cpu_ns": 119215000,
+            "whole_waited_system_cpu_ns": 20401000,
+            "whole_waited_user_cpu_ns": 98814000,
+            "whole_waited_wall_ns": 133803525
+          },
+          "progress_totals": {
+            "before_product": 56,
+            "before_replay": 56,
+            "before_verified_work": 56,
+            "matrix_rows_after_product": 7400,
+            "matrix_rows_before_product": 7168,
+            "noise": 14336,
+            "transcript_tiles": 28672
+          },
+          "proof_records": 28,
+          "regressions": [
+            {
+              "case_id": "main-zero-0",
+              "challenge": "a1103c7451bcab5005e5333320a8f7a9adfd8b3226d34cac53a6bac4203d864f",
+              "facts_minus_raw_percent_of_raw": 26.976932620970803,
+              "facts_minus_raw_wall_ns": 170464,
+              "facts_wall_ns": 802352,
+              "family": "zero",
+              "material_wall_ns": 52398,
+              "ordinal": 0,
+              "original_proof_sha256": "da5a2a18df3c9d893262138081750c7456157b76026c49b79d4564de648a8527",
+              "product_sha256": "4fe7b59af6de3b665b67788cc2f99892ab827efae3a467342b3bb4e3bc8e5bfe",
+              "prove_wall_ns": 693961,
+              "raw_over_facts_wall_ratio": {
+                "decimal": 0.7875446188206673,
+                "denominator": 50147,
+                "numerator": 39493
+              },
+              "raw_wall_ns": 631888,
+              "reference_wall_ns": 2845452,
+              "scope": "main",
+              "seed": 8101,
+              "task": "6618f8a794517852f621993ccb6ac311c684e1db2b9d1d47166fa00a744c4c29",
+              "ticket": "7f91380439aa0dcfa04f1e1e1053a721458456d48b5fee8e4202f405dac44c8c",
+              "warm": false
+            },
+            {
+              "case_id": "main-sparse-0",
+              "challenge": "ca98127947c2e020bf2735dc8461f7c5a9ab781dd9f0c4836febfc4ab781c9b9",
+              "facts_minus_raw_percent_of_raw": 12.465652199501703,
+              "facts_minus_raw_wall_ns": 95313,
+              "facts_wall_ns": 859918,
+              "family": "sparse",
+              "material_wall_ns": 39739,
+              "ordinal": 0,
+              "original_proof_sha256": "d5ab445ae59c0c0a12d022a35488e99dfe53d43d9ff642a689245f7e3cf7df6b",
+              "product_sha256": "6e9f9c360b46af80fbd552a4943f3c472632cf0001264c06ae5f77fdc8184247",
+              "prove_wall_ns": 887739,
+              "raw_over_facts_wall_ratio": {
+                "decimal": 0.8891603618019392,
+                "denominator": 859918,
+                "numerator": 764605
+              },
+              "raw_wall_ns": 764605,
+              "reference_wall_ns": 927728,
+              "scope": "main",
+              "seed": 8101,
+              "task": "9ea544d1ceb8a96371a0eb66e93159d881f2ff123e1ebdbf70c0ff128a72342d",
+              "ticket": "769a6484e9eedb5f209b6d732ce25c32addf9f5ebe94d855ecf11850e3bd98fe",
+              "warm": false
+            }
+          ],
+          "scopes": {
+            "all": {
+              "all": {
+                "cache_lifecycle_wall_ns": 153579,
+                "case_count": 28,
+                "equal": 0,
+                "facts_faster": 26,
+                "facts_slower": 2,
+                "facts_wall_ns": 19549577,
+                "raw_over_facts_plus_cache_lifecycle_wall_ratio": {
+                  "decimal": 1.2114627220126561,
+                  "denominator": 19703156,
+                  "numerator": 23869639
+                },
+                "raw_over_facts_wall_ratio": {
+                  "decimal": 1.2209798196656634,
+                  "denominator": 19549577,
+                  "numerator": 23869639
+                },
+                "raw_wall_ns": 23869639
+              },
+              "cold": {
+                "case_count": 9,
+                "equal": 0,
+                "facts_faster": 7,
+                "facts_slower": 2,
+                "facts_wall_ns": 7631406,
+                "raw_over_facts_wall_ratio": {
+                  "decimal": 1.0948891986614262,
+                  "denominator": 3815703,
+                  "numerator": 4177772
+                },
+                "raw_wall_ns": 8355544
+              },
+              "warm": {
+                "case_count": 19,
+                "equal": 0,
+                "facts_faster": 19,
+                "facts_slower": 0,
+                "facts_wall_ns": 11918171,
+                "raw_over_facts_wall_ratio": {
+                  "decimal": 1.3017177719635,
+                  "denominator": 11918171,
+                  "numerator": 15514095
+                },
+                "raw_wall_ns": 15514095
+              }
+            },
+            "eviction": {
+              "all": {
+                "cache_lifecycle_wall_ns": 480,
+                "case_count": 4,
+                "equal": 0,
+                "facts_faster": 4,
+                "facts_slower": 0,
+                "facts_wall_ns": 3255075,
+                "raw_over_facts_plus_cache_lifecycle_wall_ratio": {
+                  "decimal": 1.0700307628038845,
+                  "denominator": 3255555,
+                  "numerator": 3483544
+                },
+                "raw_over_facts_wall_ratio": {
+                  "decimal": 1.0701885517230785,
+                  "denominator": 3255075,
+                  "numerator": 3483544
+                },
+                "raw_wall_ns": 3483544
+              },
+              "cold": {
+                "case_count": 3,
+                "equal": 0,
+                "facts_faster": 3,
+                "facts_slower": 0,
+                "facts_wall_ns": 2566292,
+                "raw_over_facts_wall_ratio": {
+                  "decimal": 1.0212957060225414,
+                  "denominator": 2566292,
+                  "numerator": 2620943
+                },
+                "raw_wall_ns": 2620943
+              },
+              "warm": {
+                "case_count": 1,
+                "equal": 0,
+                "facts_faster": 1,
+                "facts_slower": 0,
+                "facts_wall_ns": 688783,
+                "raw_over_facts_wall_ratio": {
+                  "decimal": 1.252355241055601,
+                  "denominator": 688783,
+                  "numerator": 862601
+                },
+                "raw_wall_ns": 862601
+              }
+            },
+            "main": {
+              "all": {
+                "cache_lifecycle_wall_ns": 153099,
+                "case_count": 24,
+                "equal": 0,
+                "facts_faster": 22,
+                "facts_slower": 2,
+                "facts_wall_ns": 16294502,
+                "raw_over_facts_plus_cache_lifecycle_wall_ratio": {
+                  "decimal": 1.2394570490857604,
+                  "denominator": 16447601,
+                  "numerator": 20386095
+                },
+                "raw_over_facts_wall_ratio": {
+                  "decimal": 1.2511026725456231,
+                  "denominator": 16294502,
+                  "numerator": 20386095
+                },
+                "raw_wall_ns": 20386095
+              },
+              "cold": {
+                "case_count": 6,
+                "equal": 0,
+                "facts_faster": 4,
+                "facts_slower": 2,
+                "facts_wall_ns": 5065114,
+                "raw_over_facts_wall_ratio": {
+                  "decimal": 1.1321760971223944,
+                  "denominator": 5065114,
+                  "numerator": 5734601
+                },
+                "raw_wall_ns": 5734601
+              },
+              "warm": {
+                "case_count": 18,
+                "equal": 0,
+                "facts_faster": 18,
+                "facts_slower": 0,
+                "facts_wall_ns": 11229388,
+                "raw_over_facts_wall_ratio": {
+                  "decimal": 1.3047455480209607,
+                  "denominator": 5614694,
+                  "numerator": 7325747
+                },
+                "raw_wall_ns": 14651494
+              }
+            }
+          },
+          "seed": 8101,
+          "source_record_rows": 100,
+          "task_identity_count": 6
+        },
+        {
+          "cache_groups": [
+            {
+              "cache_capacity": 2,
+              "cache_create_wall_ns": 2603,
+              "cache_drop_wall_ns": 60,
+              "cache_software_bytes": 98368,
+              "group": "main-zero"
+            },
+            {
+              "cache_capacity": 2,
+              "cache_create_wall_ns": 240,
+              "cache_drop_wall_ns": 60,
+              "cache_software_bytes": 98368,
+              "group": "main-identity"
+            },
+            {
+              "cache_capacity": 2,
+              "cache_create_wall_ns": 231,
+              "cache_drop_wall_ns": 70,
+              "cache_software_bytes": 98368,
+              "group": "main-rank1"
+            },
+            {
+              "cache_capacity": 2,
+              "cache_create_wall_ns": 251,
+              "cache_drop_wall_ns": 80,
+              "cache_software_bytes": 98368,
+              "group": "main-sparse"
+            },
+            {
+              "cache_capacity": 2,
+              "cache_create_wall_ns": 261,
+              "cache_drop_wall_ns": 70,
+              "cache_software_bytes": 98368,
+              "group": "main-near_q"
+            },
+            {
+              "cache_capacity": 2,
+              "cache_create_wall_ns": 241,
+              "cache_drop_wall_ns": 170,
+              "cache_software_bytes": 98368,
+              "group": "main-dense"
+            },
+            {
+              "cache_capacity": 1,
+              "cache_create_wall_ns": 310,
+              "cache_drop_wall_ns": 70,
+              "cache_software_bytes": 49212,
+              "group": "eviction"
+            }
+          ],
+          "cache_owners": 7,
+          "case_observations": [
+            {
+              "case_id": "main-zero-0",
+              "challenge": "1de5c387b4b98cd5f385e23de1cdd5ebce056d7cae15fb3bdf25a4a34fe3d60b",
+              "facts_minus_raw_percent_of_raw": 67.18916711671957,
+              "facts_minus_raw_wall_ns": 357056,
+              "facts_wall_ns": 888475,
+              "family": "zero",
+              "material_wall_ns": 52248,
+              "ordinal": 0,
+              "original_proof_sha256": "92c6a04a94b233ae731195329fffd54bd3b21a7c30122f48bd448cbd66990763",
+              "product_sha256": "4fe7b59af6de3b665b67788cc2f99892ab827efae3a467342b3bb4e3bc8e5bfe",
+              "prove_wall_ns": 679950,
+              "raw_over_facts_wall_ratio": {
+                "decimal": 0.5981248768958046,
+                "denominator": 126925,
+                "numerator": 75917
+              },
+              "raw_wall_ns": 531419,
+              "reference_wall_ns": 674552,
+              "scope": "main",
+              "seed": 8102,
+              "task": "6618f8a794517852f621993ccb6ac311c684e1db2b9d1d47166fa00a744c4c29",
+              "ticket": "a3e29080669e95aad9bd16f7638051bec0a088e1e62b3fc26d9482b2418bd7d7",
+              "warm": false
+            },
+            {
+              "case_id": "main-zero-1",
+              "challenge": "e2b8f3c01cf7e16e98e361e3a41cd809324ffc867c957e1665a136fdce2d486b",
+              "facts_minus_raw_percent_of_raw": -21.762039815059687,
+              "facts_minus_raw_wall_ns": -119318,
+              "facts_wall_ns": 428967,
+              "family": "zero",
+              "material_wall_ns": 45568,
+              "ordinal": 1,
+              "original_proof_sha256": "5dc63cb5fd24ca62cea4fb5530e5b9f3a0ee63e461910c4896d4ce6cf9d3582e",
+              "product_sha256": "4fe7b59af6de3b665b67788cc2f99892ab827efae3a467342b3bb4e3bc8e5bfe",
+              "prove_wall_ns": 543197,
+              "raw_over_facts_wall_ratio": {
+                "decimal": 1.278151932433031,
+                "denominator": 428967,
+                "numerator": 548285
+              },
+              "raw_wall_ns": 548285,
+              "reference_wall_ns": 554574,
+              "scope": "main",
+              "seed": 8102,
+              "task": "6618f8a794517852f621993ccb6ac311c684e1db2b9d1d47166fa00a744c4c29",
+              "ticket": "8e3bca84293f17e5c48f0ca8228fbe004a1c234178cf20975d223d2e35d093dd",
+              "warm": true
+            },
+            {
+              "case_id": "main-zero-2",
+              "challenge": "e0eb7d032a9600001024126a374f04dc6b6ba33269c00db3dcbb5657966cd5b1",
+              "facts_minus_raw_percent_of_raw": -35.72717532284442,
+              "facts_minus_raw_wall_ns": -228078,
+              "facts_wall_ns": 410310,
+              "family": "zero",
+              "material_wall_ns": 26369,
+              "ordinal": 2,
+              "original_proof_sha256": "53424534bd7688c1c613096ef2a71a54a0a22b652e4a409245cde71d6815978e",
+              "product_sha256": "4fe7b59af6de3b665b67788cc2f99892ab827efae3a467342b3bb4e3bc8e5bfe",
+              "prove_wall_ns": 535185,
+              "raw_over_facts_wall_ratio": {
+                "decimal": 1.5558675148058785,
+                "denominator": 22795,
+                "numerator": 35466
+              },
+              "raw_wall_ns": 638388,
+              "reference_wall_ns": 548564,
+              "scope": "main",
+              "seed": 8102,
+              "task": "6618f8a794517852f621993ccb6ac311c684e1db2b9d1d47166fa00a744c4c29",
+              "ticket": "04a99afeb4fccbebedc16db7ce20f456aacc1e81b868e0fb1efe229d7e50ac67",
+              "warm": true
+            },
+            {
+              "case_id": "main-zero-3",
+              "challenge": "6b2fbd4179b4be7993f5b5072a01043916f0e8707a54194cc94a9114df2be40c",
+              "facts_minus_raw_percent_of_raw": -25.074514745438243,
+              "facts_minus_raw_wall_ns": -144865,
+              "facts_wall_ns": 432873,
+              "family": "zero",
+              "material_wall_ns": 24055,
+              "ordinal": 3,
+              "original_proof_sha256": "3147280c6781f27d92d80e219fb870401eadd95b15e501f2848edb56f1d4cbe7",
+              "product_sha256": "4fe7b59af6de3b665b67788cc2f99892ab827efae3a467342b3bb4e3bc8e5bfe",
+              "prove_wall_ns": 593832,
+              "raw_over_facts_wall_ratio": {
+                "decimal": 1.3346593573634762,
+                "denominator": 61839,
+                "numerator": 82534
+              },
+              "raw_wall_ns": 577738,
+              "reference_wall_ns": 567883,
+              "scope": "main",
+              "seed": 8102,
+              "task": "6618f8a794517852f621993ccb6ac311c684e1db2b9d1d47166fa00a744c4c29",
+              "ticket": "ef828a2c7f8f368f08619c7a8fab21209a53a71c00c69f9e6f997dc23113b4bb",
+              "warm": true
+            },
+            {
+              "case_id": "main-identity-0",
+              "challenge": "767e07a76090e29ac4ad92d2226ff0a21ee9438bcef7f2b70792acbb492a45c7",
+              "facts_minus_raw_percent_of_raw": -17.454553635709143,
+              "facts_minus_raw_wall_ns": -116373,
+              "facts_wall_ns": 550347,
+              "family": "identity",
+              "material_wall_ns": 131385,
+              "ordinal": 0,
+              "original_proof_sha256": "5c79715510990480d82be52d4833f86f274a161968adb47293f401a198eb9f37",
+              "product_sha256": "fcafebe14c7b5efa2a08dc569b67a1243538e36f0439b4c37e7a67c545ae9d01",
+              "prove_wall_ns": 510999,
+              "raw_over_facts_wall_ratio": {
+                "decimal": 1.211453864561813,
+                "denominator": 183449,
+                "numerator": 222240
+              },
+              "raw_wall_ns": 666720,
+              "reference_wall_ns": 554494,
+              "scope": "main",
+              "seed": 8102,
+              "task": "e9e9e2bb493cf1e6f65ae53117bb69a3bc590ae47f98f3e574586d7ab834f038",
+              "ticket": "043eef5e64c97f08df19089ece3266d2479476aaea8ad8d5267f40bcece48d71",
+              "warm": false
+            },
+            {
+              "case_id": "main-identity-1",
+              "challenge": "d74796fab3310a6c4f2cdc5627508309578d2598f5673026385de875a645fed9",
+              "facts_minus_raw_percent_of_raw": -28.549229810405873,
+              "facts_minus_raw_wall_ns": -170864,
+              "facts_wall_ns": 427625,
+              "family": "identity",
+              "material_wall_ns": 23915,
+              "ordinal": 1,
+              "original_proof_sha256": "6d6115fcee4c921af4e711a1a4642f4eb86ca5f73aee94caef259661dd6e5b3b",
+              "product_sha256": "fcafebe14c7b5efa2a08dc569b67a1243538e36f0439b4c37e7a67c545ae9d01",
+              "prove_wall_ns": 542626,
+              "raw_over_facts_wall_ratio": {
+                "decimal": 1.3995650394621455,
+                "denominator": 427625,
+                "numerator": 598489
+              },
+              "raw_wall_ns": 598489,
+              "reference_wall_ns": 633220,
+              "scope": "main",
+              "seed": 8102,
+              "task": "e9e9e2bb493cf1e6f65ae53117bb69a3bc590ae47f98f3e574586d7ab834f038",
+              "ticket": "57f3b573063d155f1488ff5c184b3ab31e1a163463d6494667146f818016ca11",
+              "warm": true
+            },
+            {
+              "case_id": "main-identity-2",
+              "challenge": "0aecf7cb3df97d40895d105f5d675369017be212bf078bf3caf16d58810295b7",
+              "facts_minus_raw_percent_of_raw": -23.265950479119503,
+              "facts_minus_raw_wall_ns": -130723,
+              "facts_wall_ns": 431141,
+              "family": "identity",
+              "material_wall_ns": 23735,
+              "ordinal": 2,
+              "original_proof_sha256": "f6b90ebee7b460a35830bb7fcf471d4edb0112c992084b61901afbebbda27bb7",
+              "product_sha256": "fcafebe14c7b5efa2a08dc569b67a1243538e36f0439b4c37e7a67c545ae9d01",
+              "prove_wall_ns": 539000,
+              "raw_over_facts_wall_ratio": {
+                "decimal": 1.3032024326148521,
+                "denominator": 431141,
+                "numerator": 561864
+              },
+              "raw_wall_ns": 561864,
+              "reference_wall_ns": 570017,
+              "scope": "main",
+              "seed": 8102,
+              "task": "e9e9e2bb493cf1e6f65ae53117bb69a3bc590ae47f98f3e574586d7ab834f038",
+              "ticket": "9b760ee25b1c45401576a5a3617f7fdf3b490c622ac5982d387625dec4630d59",
+              "warm": true
+            },
+            {
+              "case_id": "main-identity-3",
+              "challenge": "ad35468ba8f9805d03506fc6d1b5c842fff83b5e476a5c2739da851c6f7bf6b7",
+              "facts_minus_raw_percent_of_raw": -27.654227962737203,
+              "facts_minus_raw_wall_ns": -155612,
+              "facts_wall_ns": 407094,
+              "family": "identity",
+              "material_wall_ns": 23575,
+              "ordinal": 3,
+              "original_proof_sha256": "4e69df69f1e7c9d61752168b5bc59171ab083204af689da98c35e28fda02faac",
+              "product_sha256": "fcafebe14c7b5efa2a08dc569b67a1243538e36f0439b4c37e7a67c545ae9d01",
+              "prove_wall_ns": 522977,
+              "raw_over_facts_wall_ratio": {
+                "decimal": 1.3822507823745867,
+                "denominator": 203547,
+                "numerator": 281353
+              },
+              "raw_wall_ns": 562706,
+              "reference_wall_ns": 557088,
+              "scope": "main",
+              "seed": 8102,
+              "task": "e9e9e2bb493cf1e6f65ae53117bb69a3bc590ae47f98f3e574586d7ab834f038",
+              "ticket": "653b97e9bdd589e37664fbcf1cdaaf98f981bfe493c7e7cf734ecca4aa9eab08",
+              "warm": true
+            },
+            {
+              "case_id": "main-rank1-0",
+              "challenge": "9c98f3ad048c77174cd36511f323b9e6d259e38a485cdf9cd7fc399450605068",
+              "facts_minus_raw_percent_of_raw": -12.069933680796476,
+              "facts_minus_raw_wall_ns": -74801,
+              "facts_wall_ns": 544929,
+              "family": "rank1",
+              "material_wall_ns": 25879,
+              "ordinal": 0,
+              "original_proof_sha256": "5b1056d7772daf9775d49241f24ee86017415a406c2f0f873effe9985a806eb0",
+              "product_sha256": "05f040eccb8f9d8b8a15032e9a11f5f830c7752e57980667074ffa0dca866919",
+              "prove_wall_ns": 657457,
+              "raw_over_facts_wall_ratio": {
+                "decimal": 1.1372674238295264,
+                "denominator": 544929,
+                "numerator": 619730
+              },
+              "raw_wall_ns": 619730,
+              "reference_wall_ns": 641062,
+              "scope": "main",
+              "seed": 8102,
+              "task": "ed431037699f752fd5ec2d190840efe8dfeaa1291c38f029484778d0490c59a9",
+              "ticket": "1f04772681cd21bae1c52cb405f81c459d9ca56fb5364ddfddd2b9661ce75282",
+              "warm": false
+            },
+            {
+              "case_id": "main-rank1-1",
+              "challenge": "77ce07e5aef31c3c23f9125d456cd14da000f164d3a0532a6b1d2069cfb8d509",
+              "facts_minus_raw_percent_of_raw": -27.06408397813215,
+              "facts_minus_raw_wall_ns": -154950,
+              "facts_wall_ns": 417580,
+              "family": "rank1",
+              "material_wall_ns": 26149,
+              "ordinal": 1,
+              "original_proof_sha256": "a3382ea82dc7b0d772b6a454afda45166a967f980a312b2b97b218e93155f9a7",
+              "product_sha256": "05f040eccb8f9d8b8a15032e9a11f5f830c7752e57980667074ffa0dca866919",
+              "prove_wall_ns": 691697,
+              "raw_over_facts_wall_ratio": {
+                "decimal": 1.3710666219646535,
+                "denominator": 41758,
+                "numerator": 57253
+              },
+              "raw_wall_ns": 572530,
+              "reference_wall_ns": 910151,
+              "scope": "main",
+              "seed": 8102,
+              "task": "ed431037699f752fd5ec2d190840efe8dfeaa1291c38f029484778d0490c59a9",
+              "ticket": "d3c1fffc5def26e7c1b6481fdde4b0cfe6c494e47016d3df4eca5d7f290af1be",
+              "warm": true
+            },
+            {
+              "case_id": "main-rank1-2",
+              "challenge": "08d1e7e263a0c324b0cfd662bca9bb00398eedf383215661245648823313a153",
+              "facts_minus_raw_percent_of_raw": -16.130034398614335,
+              "facts_minus_raw_wall_ns": -92939,
+              "facts_wall_ns": 483247,
+              "family": "rank1",
+              "material_wall_ns": 26159,
+              "ordinal": 2,
+              "original_proof_sha256": "454bcb4a4130d43cb6f1ad71402a039a350ee9f8691b9557cd77c16ebfba3d3b",
+              "product_sha256": "05f040eccb8f9d8b8a15032e9a11f5f830c7752e57980667074ffa0dca866919",
+              "prove_wall_ns": 508255,
+              "raw_over_facts_wall_ratio": {
+                "decimal": 1.1923219388842559,
+                "denominator": 483247,
+                "numerator": 576186
+              },
+              "raw_wall_ns": 576186,
+              "reference_wall_ns": 567753,
+              "scope": "main",
+              "seed": 8102,
+              "task": "ed431037699f752fd5ec2d190840efe8dfeaa1291c38f029484778d0490c59a9",
+              "ticket": "91f5b92ab02ebbd442870526641cc71b9c43585470ffcb5faa77c36ea652f9d0",
+              "warm": true
+            },
+            {
+              "case_id": "main-rank1-3",
+              "challenge": "cd2ab0fc9265265e57aa9ac9232a28f6aa1306ccc6780ec7d2b0522fdd855f21",
+              "facts_minus_raw_percent_of_raw": -33.32746113337654,
+              "facts_minus_raw_wall_ns": -211884,
+              "facts_wall_ns": 423880,
+              "family": "rank1",
+              "material_wall_ns": 25928,
+              "ordinal": 3,
+              "original_proof_sha256": "16678aede6280ac33e38daf199088289dbb59a4726f835292fdf9fd03af03f5a",
+              "product_sha256": "05f040eccb8f9d8b8a15032e9a11f5f830c7752e57980667074ffa0dca866919",
+              "prove_wall_ns": 559531,
+              "raw_over_facts_wall_ratio": {
+                "decimal": 1.4998678871378692,
+                "denominator": 105970,
+                "numerator": 158941
+              },
+              "raw_wall_ns": 635764,
+              "reference_wall_ns": 574013,
+              "scope": "main",
+              "seed": 8102,
+              "task": "ed431037699f752fd5ec2d190840efe8dfeaa1291c38f029484778d0490c59a9",
+              "ticket": "2f3b36f85b7e158edc2cb048e400131ec0fb824ad4ffa47f96ed619526cfae78",
+              "warm": true
+            },
+            {
+              "case_id": "main-sparse-0",
+              "challenge": "0f6cfafbe19ebcdb46891578a10c0ac242ee2d28a6d7d66c34be156cb6d01ad2",
+              "facts_minus_raw_percent_of_raw": -19.87065831972366,
+              "facts_minus_raw_wall_ns": -136392,
+              "facts_wall_ns": 550007,
+              "family": "sparse",
+              "material_wall_ns": 32158,
+              "ordinal": 0,
+              "original_proof_sha256": "d11213128bdb75018b5284918b6c5bbdc5028dd21e522b89c39abef2d063eb19",
+              "product_sha256": "6e9f9c360b46af80fbd552a4943f3c472632cf0001264c06ae5f77fdc8184247",
+              "prove_wall_ns": 509867,
+              "raw_over_facts_wall_ratio": {
+                "decimal": 1.2479822984071112,
+                "denominator": 550007,
+                "numerator": 686399
+              },
+              "raw_wall_ns": 686399,
+              "reference_wall_ns": 590778,
+              "scope": "main",
+              "seed": 8102,
+              "task": "9ea544d1ceb8a96371a0eb66e93159d881f2ff123e1ebdbf70c0ff128a72342d",
+              "ticket": "49b4ec7e433e2fc3143a518b114d3e0c2919c349c0b09a4178858eb2941c35ae",
+              "warm": false
+            },
+            {
+              "case_id": "main-sparse-1",
+              "challenge": "17d3866529d4b98e697a93c372e0eed9edb19dd686be84f2ca8f1925b7a5c27c",
+              "facts_minus_raw_percent_of_raw": -22.02509643570775,
+              "facts_minus_raw_wall_ns": -123674,
+              "facts_wall_ns": 437840,
+              "family": "sparse",
+              "material_wall_ns": 32318,
+              "ordinal": 1,
+              "original_proof_sha256": "08badf08247a478d8c5ed64c6af846a174afbf87c87cb03e1f99354559e8e2ec",
+              "product_sha256": "6e9f9c360b46af80fbd552a4943f3c472632cf0001264c06ae5f77fdc8184247",
+              "prove_wall_ns": 528485,
+              "raw_over_facts_wall_ratio": {
+                "decimal": 1.2824639137584506,
+                "denominator": 218920,
+                "numerator": 280757
+              },
+              "raw_wall_ns": 561514,
+              "reference_wall_ns": 567964,
+              "scope": "main",
+              "seed": 8102,
+              "task": "9ea544d1ceb8a96371a0eb66e93159d881f2ff123e1ebdbf70c0ff128a72342d",
+              "ticket": "f97dff3d9355eaaa6ee9f06a22a08359ac5d2d36b335ed62212cb1847dc40d2a",
+              "warm": true
+            },
+            {
+              "case_id": "main-sparse-2",
+              "challenge": "05093d994333dc19b75da8b3602bd156b089d317246b0b97cebe7bca951c4200",
+              "facts_minus_raw_percent_of_raw": -28.544360759793474,
+              "facts_minus_raw_wall_ns": -162702,
+              "facts_wall_ns": 407295,
+              "family": "sparse",
+              "material_wall_ns": 31917,
+              "ordinal": 2,
+              "original_proof_sha256": "b01bed433a8e9c2f38862e5dd5f46bc58ee101c978bcb218e864df108fc08dfa",
+              "product_sha256": "6e9f9c360b46af80fbd552a4943f3c472632cf0001264c06ae5f77fdc8184247",
+              "prove_wall_ns": 539451,
+              "raw_over_facts_wall_ratio": {
+                "decimal": 1.399469671859463,
+                "denominator": 15085,
+                "numerator": 21111
+              },
+              "raw_wall_ns": 569997,
+              "reference_wall_ns": 551038,
+              "scope": "main",
+              "seed": 8102,
+              "task": "9ea544d1ceb8a96371a0eb66e93159d881f2ff123e1ebdbf70c0ff128a72342d",
+              "ticket": "8407ee2a5a3c3c54ec7d82848c1643c37a599b01cd2c10215ff7381f4fe32986",
+              "warm": true
+            },
+            {
+              "case_id": "main-sparse-3",
+              "challenge": "296c8c38ca586adab93824341ae5f296d6fde98b0dce0876604f6e4054872a5a",
+              "facts_minus_raw_percent_of_raw": -12.59601798330122,
+              "facts_minus_raw_wall_ns": -68642,
+              "facts_wall_ns": 476308,
+              "family": "sparse",
+              "material_wall_ns": 31777,
+              "ordinal": 3,
+              "original_proof_sha256": "5ae92799ab78884d64675c37d78fe1c392ee4ad1720704423404b5075909c98a",
+              "product_sha256": "6e9f9c360b46af80fbd552a4943f3c472632cf0001264c06ae5f77fdc8184247",
+              "prove_wall_ns": 522867,
+              "raw_over_facts_wall_ratio": {
+                "decimal": 1.1441126330021751,
+                "denominator": 34022,
+                "numerator": 38925
+              },
+              "raw_wall_ns": 544950,
+              "reference_wall_ns": 585300,
+              "scope": "main",
+              "seed": 8102,
+              "task": "9ea544d1ceb8a96371a0eb66e93159d881f2ff123e1ebdbf70c0ff128a72342d",
+              "ticket": "d997fb71c81b43510880d20de93250426c05e7c0a5aef512cdaeef6d2ed3962d",
+              "warm": true
+            },
+            {
+              "case_id": "main-near_q-0",
+              "challenge": "e8ae4ee4b601c421738c86ca58dd76cc5d281b946650c88926d9877d4cbb81f1",
+              "facts_minus_raw_percent_of_raw": -0.4416490861412883,
+              "facts_minus_raw_wall_ns": -2464,
+              "facts_wall_ns": 555445,
+              "family": "near_q",
+              "material_wall_ns": 34541,
+              "ordinal": 0,
+              "original_proof_sha256": "cd3ecb417c4e9d879b9c5c9e0b4b049aa10a34d904e4d8f79f9b9ad215e32e95",
+              "product_sha256": "e9ad578d52c49c4fb43d24d5d316bc25be7cf0c4c5be3f47219a9be954f59043",
+              "prove_wall_ns": 534444,
+              "raw_over_facts_wall_ratio": {
+                "decimal": 1.0044360827804732,
+                "denominator": 50495,
+                "numerator": 50719
+              },
+              "raw_wall_ns": 557909,
+              "reference_wall_ns": 528936,
+              "scope": "main",
+              "seed": 8102,
+              "task": "afbcb928a6eed7c23e0b7208b99c3c782661f5fd28738f38eecd3693bd040fc8",
+              "ticket": "f0fa74069de5c1692a75f285033d7db7d719e4818696f856242edef5ef15ddbd",
+              "warm": false
+            },
+            {
+              "case_id": "main-near_q-1",
+              "challenge": "5393728e3f63e1b0874a324e57bbee1033f8459e88c88b3695094a9c8d6c84c7",
+              "facts_minus_raw_percent_of_raw": -18.845672229178913,
+              "facts_minus_raw_wall_ns": -103243,
+              "facts_wall_ns": 444591,
+              "family": "near_q",
+              "material_wall_ns": 27441,
+              "ordinal": 1,
+              "original_proof_sha256": "88692be5403eb7447109bcfc4a6f8d55e7cb2b562d8a8604499068d3b9b111c0",
+              "product_sha256": "e9ad578d52c49c4fb43d24d5d316bc25be7cf0c4c5be3f47219a9be954f59043",
+              "prove_wall_ns": 577157,
+              "raw_over_facts_wall_ratio": {
+                "decimal": 1.2322201753971629,
+                "denominator": 63513,
+                "numerator": 78262
+              },
+              "raw_wall_ns": 547834,
+              "reference_wall_ns": 599811,
+              "scope": "main",
+              "seed": 8102,
+              "task": "afbcb928a6eed7c23e0b7208b99c3c782661f5fd28738f38eecd3693bd040fc8",
+              "ticket": "444b4c4068548461219bae1516a12c106dd6f4447692f34f889c75ffb1c0f288",
+              "warm": true
+            },
+            {
+              "case_id": "main-near_q-2",
+              "challenge": "c5af537686ed2552c44f4d43d6fc7bdbc062f8d648cef11d3fc121ee1247c6dc",
+              "facts_minus_raw_percent_of_raw": -22.908082646171298,
+              "facts_minus_raw_wall_ns": -130043,
+              "facts_wall_ns": 437630,
+              "family": "near_q",
+              "material_wall_ns": 27581,
+              "ordinal": 2,
+              "original_proof_sha256": "5057333222005929554a20a7ff271e7dffdcd2e7a05270541210034faf4ede21",
+              "product_sha256": "e9ad578d52c49c4fb43d24d5d316bc25be7cf0c4c5be3f47219a9be954f59043",
+              "prove_wall_ns": 560062,
+              "raw_over_facts_wall_ratio": {
+                "decimal": 1.297152846011471,
+                "denominator": 437630,
+                "numerator": 567673
+              },
+              "raw_wall_ns": 567673,
+              "reference_wall_ns": 530909,
+              "scope": "main",
+              "seed": 8102,
+              "task": "afbcb928a6eed7c23e0b7208b99c3c782661f5fd28738f38eecd3693bd040fc8",
+              "ticket": "44e464ecc46fbfcb69eceecb753e59bdb6ace5dd0da80bfef10171d09bf3f85c",
+              "warm": true
+            },
+            {
+              "case_id": "main-near_q-3",
+              "challenge": "ae9007058550379b9cd66374942fe4a01c1b26d80f1db5636c2cfa366b148625",
+              "facts_minus_raw_percent_of_raw": -29.218550104948555,
+              "facts_minus_raw_wall_ns": -187508,
+              "facts_wall_ns": 454235,
+              "family": "near_q",
+              "material_wall_ns": 29834,
+              "ordinal": 3,
+              "original_proof_sha256": "eeb26f73b900ca997eb983ad30e48b09b75a5e6191bd7e98188344a4298c9ed6",
+              "product_sha256": "e9ad578d52c49c4fb43d24d5d316bc25be7cf0c4c5be3f47219a9be954f59043",
+              "prove_wall_ns": 520653,
+              "raw_over_facts_wall_ratio": {
+                "decimal": 1.4127995420872457,
+                "denominator": 454235,
+                "numerator": 641743
+              },
+              "raw_wall_ns": 641743,
+              "reference_wall_ns": 579331,
+              "scope": "main",
+              "seed": 8102,
+              "task": "afbcb928a6eed7c23e0b7208b99c3c782661f5fd28738f38eecd3693bd040fc8",
+              "ticket": "a435394f2237a662574fe3590e1a14f4fd9757c71c285222c58a9270e6729e15",
+              "warm": true
+            },
+            {
+              "case_id": "main-dense-0",
+              "challenge": "f6becc3dd27599d2869c7d1826aa985181b1a32d4200e2bf43720ec7a7f7e60c",
+              "facts_minus_raw_percent_of_raw": -17.55309732633347,
+              "facts_minus_raw_wall_ns": -123944,
+              "facts_wall_ns": 582165,
+              "family": "dense",
+              "material_wall_ns": 482997,
+              "ordinal": 0,
+              "original_proof_sha256": "655458b96a3ca597e01b86cf7262ec598a01a1453eb5b7bc06af7bd25fbb97ab",
+              "product_sha256": "9beddf1e90b7020a2db0f0139f64ebe10a01f4172c8923f7b5dea705085646d9",
+              "prove_wall_ns": 585169,
+              "raw_over_facts_wall_ratio": {
+                "decimal": 1.2129018405434886,
+                "denominator": 582165,
+                "numerator": 706109
+              },
+              "raw_wall_ns": 706109,
+              "reference_wall_ns": 660481,
+              "scope": "main",
+              "seed": 8102,
+              "task": "30d3b216b9d672e434e1d493f9859cf9c9591987a37865a452278280e959f9fa",
+              "ticket": "1b9f6a785f634d8efb259b216d71838d9e04d0b91805779a68e867552ce76db6",
+              "warm": false
+            },
+            {
+              "case_id": "main-dense-1",
+              "challenge": "f62e029f83c882f50e52ccf94a05441a11863b017d19d28087346946008d4825",
+              "facts_minus_raw_percent_of_raw": -31.714873951472295,
+              "facts_minus_raw_wall_ns": -267573,
+              "facts_wall_ns": 576110,
+              "family": "dense",
+              "material_wall_ns": 479773,
+              "ordinal": 1,
+              "original_proof_sha256": "8c7b7331224daa91e414d136611e7a9e4c939ae6dfb5783f10d937267cc59a32",
+              "product_sha256": "9beddf1e90b7020a2db0f0139f64ebe10a01f4172c8923f7b5dea705085646d9",
+              "prove_wall_ns": 572090,
+              "raw_over_facts_wall_ratio": {
+                "decimal": 1.464447761712173,
+                "denominator": 576110,
+                "numerator": 843683
+              },
+              "raw_wall_ns": 843683,
+              "reference_wall_ns": 1074345,
+              "scope": "main",
+              "seed": 8102,
+              "task": "30d3b216b9d672e434e1d493f9859cf9c9591987a37865a452278280e959f9fa",
+              "ticket": "8e4cbf52e33f08ca1110624e7a2c6df216d41b5aa3350d107eb353e111ee4451",
+              "warm": true
+            },
+            {
+              "case_id": "main-dense-2",
+              "challenge": "9bcd7c061445a51824ea0c099580ecf90e465b174ef949e98eb615177271603f",
+              "facts_minus_raw_percent_of_raw": -24.820882899345754,
+              "facts_minus_raw_wall_ns": -138816,
+              "facts_wall_ns": 420455,
+              "family": "dense",
+              "material_wall_ns": 517018,
+              "ordinal": 2,
+              "original_proof_sha256": "b7af682cf11436645b71a9afb1cb08a90ea1cc24feb351fb73b1efb6b3aae086",
+              "product_sha256": "9beddf1e90b7020a2db0f0139f64ebe10a01f4172c8923f7b5dea705085646d9",
+              "prove_wall_ns": 696334,
+              "raw_over_facts_wall_ratio": {
+                "decimal": 1.3301566160469016,
+                "denominator": 420455,
+                "numerator": 559271
+              },
+              "raw_wall_ns": 559271,
+              "reference_wall_ns": 547013,
+              "scope": "main",
+              "seed": 8102,
+              "task": "30d3b216b9d672e434e1d493f9859cf9c9591987a37865a452278280e959f9fa",
+              "ticket": "9eb840eaf9f33cd9017bdc41c6b0fce67ed285f437e185820bd8d716fa34772b",
+              "warm": true
+            },
+            {
+              "case_id": "main-dense-3",
+              "challenge": "202c18141e669fb01766ed222e96da3505cf1d6caf90c44d80b2c88498567dc2",
+              "facts_minus_raw_percent_of_raw": -24.251913150377455,
+              "facts_minus_raw_wall_ns": -135923,
+              "facts_wall_ns": 424540,
+              "family": "dense",
+              "material_wall_ns": 590297,
+              "ordinal": 3,
+              "original_proof_sha256": "3a7d1ee10bdca58f4e285d71e16e93c5b645e87c96ec0a59b986942da60856e7",
+              "product_sha256": "9beddf1e90b7020a2db0f0139f64ebe10a01f4172c8923f7b5dea705085646d9",
+              "prove_wall_ns": 532451,
+              "raw_over_facts_wall_ratio": {
+                "decimal": 1.3201653554435389,
+                "denominator": 424540,
+                "numerator": 560463
+              },
+              "raw_wall_ns": 560463,
+              "reference_wall_ns": 609345,
+              "scope": "main",
+              "seed": 8102,
+              "task": "30d3b216b9d672e434e1d493f9859cf9c9591987a37865a452278280e959f9fa",
+              "ticket": "11e95bd7187e414db997d9cdd0db74bb3fe4a1d616489b29d143d21328b900c5",
+              "warm": true
+            },
+            {
+              "case_id": "eviction-0",
+              "challenge": "7ba60a6481e3e1ebf1624c6a67623dc11adeebf83ef802074ced9ed984d4d4e9",
+              "facts_minus_raw_percent_of_raw": 3.5961427918699425,
+              "facts_minus_raw_wall_ns": 19519,
+              "facts_wall_ns": 562295,
+              "family": "zero",
+              "material_wall_ns": 24216,
+              "ordinal": 0,
+              "original_proof_sha256": "a6b7ff808c364c20879d0e6f6228d7cc3347df6a81ca60b899d612d567475065",
+              "product_sha256": "4fe7b59af6de3b665b67788cc2f99892ab827efae3a467342b3bb4e3bc8e5bfe",
+              "prove_wall_ns": 501665,
+              "raw_over_facts_wall_ratio": {
+                "decimal": 0.9652869045607733,
+                "denominator": 562295,
+                "numerator": 542776
+              },
+              "raw_wall_ns": 542776,
+              "reference_wall_ns": 612760,
+              "scope": "eviction",
+              "seed": 8102,
+              "task": "6618f8a794517852f621993ccb6ac311c684e1db2b9d1d47166fa00a744c4c29",
+              "ticket": "8115b143f965145f29bde752a39340d714dfc451100dae08189c5c9150f536ad",
+              "warm": false
+            },
+            {
+              "case_id": "eviction-1",
+              "challenge": "aeb77a775150222c29450f7b9a00c514040726fccf9285bc9f6ac9b70bb57c18",
+              "facts_minus_raw_percent_of_raw": 27.27527394292082,
+              "facts_minus_raw_wall_ns": 176231,
+              "facts_wall_ns": 822351,
+              "family": "identity",
+              "material_wall_ns": 24506,
+              "ordinal": 1,
+              "original_proof_sha256": "2a4fa0fa56f4bacd485ef395dd06ab1e2b2133e135126419b1f04db3dcb2db89",
+              "product_sha256": "fcafebe14c7b5efa2a08dc569b67a1243538e36f0439b4c37e7a67c545ae9d01",
+              "prove_wall_ns": 706850,
+              "raw_over_facts_wall_ratio": {
+                "decimal": 0.7856985642383848,
+                "denominator": 822351,
+                "numerator": 646120
+              },
+              "raw_wall_ns": 646120,
+              "reference_wall_ns": 570998,
+              "scope": "eviction",
+              "seed": 8102,
+              "task": "e9e9e2bb493cf1e6f65ae53117bb69a3bc590ae47f98f3e574586d7ab834f038",
+              "ticket": "7e4529e483d9f0ffec0dd461553aeb337990d3219609b0a692e2c8a6c5612466",
+              "warm": false
+            },
+            {
+              "case_id": "eviction-2",
+              "challenge": "6e2721f8c2fa9377827f65363965ade7bbf18dc7cfea0f173935fae568fdc860",
+              "facts_minus_raw_percent_of_raw": -34.31874865916639,
+              "facts_minus_raw_wall_ns": -286345,
+              "facts_wall_ns": 548024,
+              "family": "zero",
+              "material_wall_ns": 26429,
+              "ordinal": 2,
+              "original_proof_sha256": "48964ff33cfd5be9185edd326fdc234890a3d104e9e5fe722fa9c6feedf1012f",
+              "product_sha256": "4fe7b59af6de3b665b67788cc2f99892ab827efae3a467342b3bb4e3bc8e5bfe",
+              "prove_wall_ns": 502526,
+              "raw_over_facts_wall_ratio": {
+                "decimal": 1.5225044888545027,
+                "denominator": 548024,
+                "numerator": 834369
+              },
+              "raw_wall_ns": 834369,
+              "reference_wall_ns": 755052,
+              "scope": "eviction",
+              "seed": 8102,
+              "task": "6618f8a794517852f621993ccb6ac311c684e1db2b9d1d47166fa00a744c4c29",
+              "ticket": "bd0cae22aa6cf238579474ab60d80aef740a10146a8586b878c67962bfa4e0ae",
+              "warm": false
+            },
+            {
+              "case_id": "eviction-3",
+              "challenge": "974e80ff0a30270e676e1c8b98f9f592d5d33338c101e0a4b1f602ebc71922fd",
+              "facts_minus_raw_percent_of_raw": -64.04822777111885,
+              "facts_minus_raw_wall_ns": -759318,
+              "facts_wall_ns": 426223,
+              "family": "zero",
+              "material_wall_ns": 24386,
+              "ordinal": 3,
+              "original_proof_sha256": "0c5db4732471ebc40621cb12658329de676ea789e5f369b1c4978a1b74ce653f",
+              "product_sha256": "4fe7b59af6de3b665b67788cc2f99892ab827efae3a467342b3bb4e3bc8e5bfe",
+              "prove_wall_ns": 705068,
+              "raw_over_facts_wall_ratio": {
+                "decimal": 2.7815040483502766,
+                "denominator": 60889,
+                "numerator": 169363
+              },
+              "raw_wall_ns": 1185541,
+              "reference_wall_ns": 766608,
+              "scope": "eviction",
+              "seed": 8102,
+              "task": "6618f8a794517852f621993ccb6ac311c684e1db2b9d1d47166fa00a744c4c29",
+              "ticket": "67938e2b3fe5b21b8e9f7bb9cffdf4c51f118e71c25fc63f50d8925177d837c5",
+              "warm": true
+            }
+          ],
+          "different_product_byte_values": 6,
+          "exact_input_pair_count": 6,
+          "fact_publication_counts": {
+            "none": 19,
+            "stored": 9
+          },
+          "job": "task-product-s8102",
+          "measured_verifier_calls": 56,
+          "observations": {
+            "accounted_operation_wall_ns": 67958908,
+            "gnu_command_maximum_resident_set_kib": 2864,
+            "gnu_printed_cpu_ns": 70000000,
+            "native_observed_wall_before_final_output_ns": 79320746,
+            "outer_wall_minus_native_wall_ns": 9547651,
+            "per_arm_cpu_attribution": null,
+            "per_phase_wall_ns": {
+              "cache_create_wall_ns": 4137,
+              "cache_drop_wall_ns": 580,
+              "facts_wall_ns": 13971982,
+              "material_wall_ns": 2872154,
+              "prove_wall_ns": 15979845,
+              "raw_wall_ns": 17646170,
+              "reference_wall_ns": 17484040
+            },
+            "rss_scopes_separate": true,
+            "runner_lifetime_max_child_rss_kib": 281156,
+            "unallocated_native_wall_ns": 11361838,
+            "waited_minus_gnu_printed_cpu_ns": 10684000,
+            "whole_waited_cpu_ns": 80684000,
+            "whole_waited_system_cpu_ns": 4034000,
+            "whole_waited_user_cpu_ns": 76650000,
+            "whole_waited_wall_ns": 88868397
+          },
+          "progress_totals": {
+            "before_product": 56,
+            "before_replay": 56,
+            "before_verified_work": 56,
+            "matrix_rows_after_product": 7400,
+            "matrix_rows_before_product": 7168,
+            "noise": 14336,
+            "transcript_tiles": 28672
+          },
+          "proof_records": 28,
+          "regressions": [
+            {
+              "case_id": "main-zero-0",
+              "challenge": "1de5c387b4b98cd5f385e23de1cdd5ebce056d7cae15fb3bdf25a4a34fe3d60b",
+              "facts_minus_raw_percent_of_raw": 67.18916711671957,
+              "facts_minus_raw_wall_ns": 357056,
+              "facts_wall_ns": 888475,
+              "family": "zero",
+              "material_wall_ns": 52248,
+              "ordinal": 0,
+              "original_proof_sha256": "92c6a04a94b233ae731195329fffd54bd3b21a7c30122f48bd448cbd66990763",
+              "product_sha256": "4fe7b59af6de3b665b67788cc2f99892ab827efae3a467342b3bb4e3bc8e5bfe",
+              "prove_wall_ns": 679950,
+              "raw_over_facts_wall_ratio": {
+                "decimal": 0.5981248768958046,
+                "denominator": 126925,
+                "numerator": 75917
+              },
+              "raw_wall_ns": 531419,
+              "reference_wall_ns": 674552,
+              "scope": "main",
+              "seed": 8102,
+              "task": "6618f8a794517852f621993ccb6ac311c684e1db2b9d1d47166fa00a744c4c29",
+              "ticket": "a3e29080669e95aad9bd16f7638051bec0a088e1e62b3fc26d9482b2418bd7d7",
+              "warm": false
+            },
+            {
+              "case_id": "eviction-0",
+              "challenge": "7ba60a6481e3e1ebf1624c6a67623dc11adeebf83ef802074ced9ed984d4d4e9",
+              "facts_minus_raw_percent_of_raw": 3.5961427918699425,
+              "facts_minus_raw_wall_ns": 19519,
+              "facts_wall_ns": 562295,
+              "family": "zero",
+              "material_wall_ns": 24216,
+              "ordinal": 0,
+              "original_proof_sha256": "a6b7ff808c364c20879d0e6f6228d7cc3347df6a81ca60b899d612d567475065",
+              "product_sha256": "4fe7b59af6de3b665b67788cc2f99892ab827efae3a467342b3bb4e3bc8e5bfe",
+              "prove_wall_ns": 501665,
+              "raw_over_facts_wall_ratio": {
+                "decimal": 0.9652869045607733,
+                "denominator": 562295,
+                "numerator": 542776
+              },
+              "raw_wall_ns": 542776,
+              "reference_wall_ns": 612760,
+              "scope": "eviction",
+              "seed": 8102,
+              "task": "6618f8a794517852f621993ccb6ac311c684e1db2b9d1d47166fa00a744c4c29",
+              "ticket": "8115b143f965145f29bde752a39340d714dfc451100dae08189c5c9150f536ad",
+              "warm": false
+            },
+            {
+              "case_id": "eviction-1",
+              "challenge": "aeb77a775150222c29450f7b9a00c514040726fccf9285bc9f6ac9b70bb57c18",
+              "facts_minus_raw_percent_of_raw": 27.27527394292082,
+              "facts_minus_raw_wall_ns": 176231,
+              "facts_wall_ns": 822351,
+              "family": "identity",
+              "material_wall_ns": 24506,
+              "ordinal": 1,
+              "original_proof_sha256": "2a4fa0fa56f4bacd485ef395dd06ab1e2b2133e135126419b1f04db3dcb2db89",
+              "product_sha256": "fcafebe14c7b5efa2a08dc569b67a1243538e36f0439b4c37e7a67c545ae9d01",
+              "prove_wall_ns": 706850,
+              "raw_over_facts_wall_ratio": {
+                "decimal": 0.7856985642383848,
+                "denominator": 822351,
+                "numerator": 646120
+              },
+              "raw_wall_ns": 646120,
+              "reference_wall_ns": 570998,
+              "scope": "eviction",
+              "seed": 8102,
+              "task": "e9e9e2bb493cf1e6f65ae53117bb69a3bc590ae47f98f3e574586d7ab834f038",
+              "ticket": "7e4529e483d9f0ffec0dd461553aeb337990d3219609b0a692e2c8a6c5612466",
+              "warm": false
+            }
+          ],
+          "scopes": {
+            "all": {
+              "all": {
+                "cache_lifecycle_wall_ns": 4717,
+                "case_count": 28,
+                "equal": 0,
+                "facts_faster": 25,
+                "facts_slower": 3,
+                "facts_wall_ns": 13971982,
+                "raw_over_facts_plus_cache_lifecycle_wall_ratio": {
+                  "decimal": 1.2625420351400571,
+                  "denominator": 13976699,
+                  "numerator": 17646170
+                },
+                "raw_over_facts_wall_ratio": {
+                  "decimal": 1.2629682746513702,
+                  "denominator": 6985991,
+                  "numerator": 8823085
+                },
+                "raw_wall_ns": 17646170
+              },
+              "cold": {
+                "case_count": 9,
+                "equal": 0,
+                "facts_faster": 6,
+                "facts_slower": 3,
+                "facts_wall_ns": 5604038,
+                "raw_over_facts_wall_ratio": {
+                  "decimal": 1.0334603369927184,
+                  "denominator": 5604038,
+                  "numerator": 5791551
+                },
+                "raw_wall_ns": 5791551
+              },
+              "warm": {
+                "case_count": 19,
+                "equal": 0,
+                "facts_faster": 19,
+                "facts_slower": 0,
+                "facts_wall_ns": 8367944,
+                "raw_over_facts_wall_ratio": {
+                  "decimal": 1.4166704509494805,
+                  "denominator": 8367944,
+                  "numerator": 11854619
+                },
+                "raw_wall_ns": 11854619
+              }
+            },
+            "eviction": {
+              "all": {
+                "cache_lifecycle_wall_ns": 380,
+                "case_count": 4,
+                "equal": 0,
+                "facts_faster": 2,
+                "facts_slower": 2,
+                "facts_wall_ns": 2358893,
+                "raw_over_facts_plus_cache_lifecycle_wall_ratio": {
+                  "decimal": 1.360082533899214,
+                  "denominator": 2359273,
+                  "numerator": 3208806
+                },
+                "raw_over_facts_wall_ratio": {
+                  "decimal": 1.3603016330117559,
+                  "denominator": 2358893,
+                  "numerator": 3208806
+                },
+                "raw_wall_ns": 3208806
+              },
+              "cold": {
+                "case_count": 3,
+                "equal": 0,
+                "facts_faster": 1,
+                "facts_slower": 2,
+                "facts_wall_ns": 1932670,
+                "raw_over_facts_wall_ratio": {
+                  "decimal": 1.0468755659269302,
+                  "denominator": 386534,
+                  "numerator": 404653
+                },
+                "raw_wall_ns": 2023265
+              },
+              "warm": {
+                "case_count": 1,
+                "equal": 0,
+                "facts_faster": 1,
+                "facts_slower": 0,
+                "facts_wall_ns": 426223,
+                "raw_over_facts_wall_ratio": {
+                  "decimal": 2.7815040483502766,
+                  "denominator": 60889,
+                  "numerator": 169363
+                },
+                "raw_wall_ns": 1185541
+              }
+            },
+            "main": {
+              "all": {
+                "cache_lifecycle_wall_ns": 4337,
+                "case_count": 24,
+                "equal": 0,
+                "facts_faster": 23,
+                "facts_slower": 1,
+                "facts_wall_ns": 11613089,
+                "raw_over_facts_plus_cache_lifecycle_wall_ratio": {
+                  "decimal": 1.2427334592017198,
+                  "denominator": 5808713,
+                  "numerator": 7218682
+                },
+                "raw_over_facts_wall_ratio": {
+                  "decimal": 1.2431975678477967,
+                  "denominator": 11613089,
+                  "numerator": 14437364
+                },
+                "raw_wall_ns": 14437364
+              },
+              "cold": {
+                "case_count": 6,
+                "equal": 0,
+                "facts_faster": 5,
+                "facts_slower": 1,
+                "facts_wall_ns": 3671368,
+                "raw_over_facts_wall_ratio": {
+                  "decimal": 1.026398334353843,
+                  "denominator": 1835684,
+                  "numerator": 1884143
+                },
+                "raw_wall_ns": 3768286
+              },
+              "warm": {
+                "case_count": 18,
+                "equal": 0,
+                "facts_faster": 18,
+                "facts_slower": 0,
+                "facts_wall_ns": 7941721,
+                "raw_over_facts_wall_ratio": {
+                  "decimal": 1.3434214070224828,
+                  "denominator": 7941721,
+                  "numerator": 10669078
+                },
+                "raw_wall_ns": 10669078
+              }
+            }
+          },
+          "seed": 8102,
+          "source_record_rows": 100,
+          "task_identity_count": 6
+        }
+      ],
+      "method": "Independent standard-library parsing of pinned original native JSONL; exact proof-byte/statement/ticket/product-byte hashes checked and all case/group wall/counter/resource sums recomputed without invoking repository reader, oracle, native executable or tests. Prior full scalar validity replay is the separately pinned reader result.",
+      "preserved_failure_history": {
+        "acceptance_rules_modified": false,
+        "failure_stage": "before scalar replay",
+        "initial_reader_failure": "READER_SOURCE_FILE_SET",
+        "native_jobs_rerun": false,
+        "path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-stage-root-v1/reader-isolation-v1.json",
+        "retained_bytecode_all_matches_current_source": false,
+        "sha256": "bff7cdbbb58d15d2253fd7262a64b152c5707a4c5e6f7015ddaa587f714b8390"
+      },
+      "raw_stream_pins_verified": [
+        {
+          "job": "task-product-s8101",
+          "stderr_bytes": 0,
+          "stdout_bytes": 2802413,
+          "stdout_sha256": "c3014dd3ec83a59b6d9301ebec5cb6af12eb6e4e903a4f6a43152b5f13b663e1"
+        },
+        {
+          "job": "task-product-s8102",
+          "stderr_bytes": 0,
+          "stdout_bytes": 2802407,
+          "stdout_sha256": "67a40ccda9c160f940b969df1e40f786ac1834ef11a25678948c5a5c57d8dd0f"
+        }
+      ],
+      "reader_closure": {
+        "all_current_bytes_match_git_blobs": true,
+        "bytes": 7304507,
+        "files": 434,
+        "hardware_or_interpreter_attestation": false,
+        "scopes": [
+          "scripts",
+          "formal",
+          "config"
+        ],
+        "sha256": "90745571e5862c4bf34bdc5f7cb6fb5fe0d935c1c43e42ae76379571c6773367",
+        "tested_commit": "b6f2322dacc4a23ec43e3207be008614e07c60b7"
+      },
+      "reader_run_receipt": {
+        "path": "/dev/shm/W1-task-product-readback-b6f2322-v1.run.json",
+        "returncode": 0,
+        "scalar_replay_executed_by_this_review": false,
+        "sha256": "b98f4432babe29f14599badb94936f50d032c854c950221cba2ddb536bd395e2"
+      },
+      "recorded_at_utc": "2026-10-26T07:52:30.994873+00:00",
+      "result": "PASS_WITH_DECLARED_LIMITS",
+      "reviewer": "/root/native_amortization_v4",
+      "schema": "w1-task-product-independent-results-review-v1",
+      "scope_limits": [
+        "no new native timing, resampling, scalar replay or tests in this review",
+        "one nonexclusive x86 operator; no independent physical operator, ARM/GPU or energy measurement",
+        "empty fact owner is not cold physical cache; scalar reference and original proof output precede both measured calls",
+        "per-operation wall ratios are not process CPU ratios; whole waited CPU contains generation, reference, both arms, output and wrapper",
+        "all-target-ff complete relation service benchmark, no registered Node task/admission/chain growth/settlement/TPS or model utility claim",
+        "all case regressions and eviction controls retained; fixed finite cases and reversed order across two different seeds do not establish statistical advantage ceiling",
+        "RSS maximum for one GNU-time command differs from cumulative maximum across all waited children including compiler",
+        "positive AB fact is not task lease, parent eligibility, reward or model adoption authority",
+        "original O01-O07 closure standards unchanged; no global closure or production activation"
+      ],
+      "source": {
+        "head": "b6f2322dacc4a23ec43e3207be008614e07c60b7",
+        "tree": "895b472f7a2b8c532081a0dea4c021e1b30cb9a1"
+      },
+      "totals": {
+        "accounted_operation_wall_ns": 163451247,
+        "cache_owner_lifecycles": 14,
+        "cold_fact_calls": 18,
+        "fact_publications": 18,
+        "maximum_simultaneously_live_owner_capacity": 2,
+        "measured_verifier_calls": 112,
+        "native_wall_before_final_output_ns": 199076270,
+        "original_proof_payload_bytes": 2754528,
+        "original_proof_records": 56,
+        "progress_totals": {
+          "before_product": 112,
+          "before_replay": 112,
+          "before_verified_work": 112,
+          "matrix_rows_after_product": 14800,
+          "matrix_rows_before_product": 14336,
+          "noise": 28672,
+          "transcript_tiles": 57344
+        },
+        "raw_stdout_bytes": 5604820,
+        "unallocated_native_wall_ns": 35625023,
+        "unique_challenges": 56,
+        "unique_exact_input_pairs": 7,
+        "unique_product_byte_values": 7,
+        "unique_proof_byte_hashes": 56,
+        "unique_recorded_ticket_values": 56,
+        "unique_task_identities": 7,
+        "warm_fact_calls": 38,
+        "whole_waited_cpu_ns": 199899000,
+        "whole_waited_wall_ns": 222671922
+      }
+    },
+    "sha256": "8e4b56c3d6c3e6a156f702370665455b89dac1c46ac39ec291fd11f6e055de42"
+  },
+  "internal_agents_not_independent_operators": true,
+  "reviews": [
+    {
+      "raw_path": "task-product-native-v1/collector-reader-independent-review-v1.json",
+      "review": {
+        "findings": [
+          {
+            "finding": "hardware raw pins and child affinity not readback-checked",
+            "resolution": "fixed before freeze: both hardware file hashes checked, requested CPU and allowed affinity typed, child command CPU exact"
+          },
+          {
+            "finding": "bundle clock/output envelope not compared with registration",
+            "resolution": "fixed before freeze: exact wall clock and typed outputlimit checked"
+          },
+          {
+            "finding": "setup commands/timeouts not checked explicitly",
+            "resolution": "fixed before freeze: exact preflight/version/metadata/build commands and timeouts, cwd and retained executable checked"
+          },
+          {
+            "finding": "complete 100-row schedule lacked full-grammar controls",
+            "resolution": "added ten explicitly synthetic controls with deliberately invalid non-hex proof marker and mocked verify_case; real scalar verification retained in separate controls"
+          }
+        ],
+        "inspected_head": "5301a319d4011f24f808f8644583cb4322cdbc97",
+        "limitations": [
+          "no native timing example executed by this reviewer",
+          "no hardware or process attestation",
+          "one operator with internal independent review, not independent physical operator",
+          "no Node admission/chain throughput/mining-cost-floor/production kappa claim"
+        ],
+        "raw_checks": {
+          "binding-tests-1": {
+            "json": {
+              "bytes": 230,
+              "sha256": "6a0ae40694106488b5e05a112b6abfc587c922c58f70e9a093cbc2c5cb87697a"
+            },
+            "stderr": {
+              "bytes": 109,
+              "sha256": "3ab25c16a2e8728f4658a1a67c4a537f59eedf439e8ae22101c138fa2c5a00a1"
+            },
+            "stdout": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          },
+          "binding-tests-final": {
+            "json": {
+              "bytes": 230,
+              "sha256": "057bb0943d6d926fe4dea183f6d430991b3e0d9f822f268cb7ed87f9ad1fdf8d"
+            },
+            "stderr": {
+              "bytes": 109,
+              "sha256": "7053c4a34ca3e8a546643695fef526149639a5c88c4eaf822ce9d2449a5551ca"
+            },
+            "stdout": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          },
+          "clippy-1": {
+            "json": {
+              "bytes": 407,
+              "sha256": "04f7500b53a08466101df69e5a3849b917f5d70505f552b6c5ee4ef409c60b5f"
+            },
+            "stderr": {
+              "bytes": 2040,
+              "sha256": "cd1b7b4744c6a4868ec2ea1af13abf2af79d1b723e6f3ec3d5a75272405c03a5"
+            },
+            "stdout": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          },
+          "clippy-2": {
+            "json": {
+              "bytes": 405,
+              "sha256": "6bab938d300891aaed66aea7e0e20422291e2c70bda4f9b121bb736f8d1958a9"
+            },
+            "stderr": {
+              "bytes": 202,
+              "sha256": "65d254b9e7a45392be67f851e55704e137ac2ad5eb04803176501a244a682583"
+            },
+            "stdout": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          },
+          "example-check-1": {
+            "json": {
+              "bytes": 372,
+              "sha256": "025a68d0d28baeeb8a9ad2adf786c1fc12a1740ac2d2b347ca6dfde048181223"
+            },
+            "stderr": {
+              "bytes": 899,
+              "sha256": "b3fd971dd76173708a21912e677103d8347e5fdba878ce0d4f15e791d366ac17"
+            },
+            "stdout": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          },
+          "functional-tests-1": {
+            "json": {
+              "bytes": 416,
+              "sha256": "a4134bd874397e69bff05d06a158ebb1de506177fb60d643116dc94d1c79e41d"
+            },
+            "stderr": {
+              "bytes": 774,
+              "sha256": "188f79f1ac57beab69b3914e48f62d45c5f28e40d68e1282f3f89c683e99be42"
+            },
+            "stdout": {
+              "bytes": 1175,
+              "sha256": "d42aef87a1d0bbf34cc53857e89660e104cc6180b21c85d9ec5eeb2b6841cd1b"
+            }
+          }
+        },
+        "recorded_at_utc": "2026-10-26T07:19:12.735626+00:00",
+        "result": "PASS_WITH_DECLARED_LIMITS",
+        "review_scope": "independent internal source review of root collector/reader/registration and full-row negative controls; cache implementation is reviewer-authored and not independently certified here",
+        "reviewed_invariants": [
+          "full100-row order and exact28case/56call schedule",
+          "fixed6family material/challenge formulas and capacity1 eviction miss-miss-miss-hit",
+          "actual complete512tile transcript every acceptedcall;128noise MatrixRows and cold200/warm0correction rows",
+          "typed integer/boolean distinction, duplicateJSON rejection, originalproof bytes/fullscalar replay",
+          "externally required head/tree/plan/binary/manifest pins; retained executable checked",
+          "complete sourceclosure unchanged beforeafter; registered commands and rawstream hashes",
+          "wall observations and wholecommand CPU kept separate; negativewall residual refused; regressions retained"
+        ],
+        "reviewer": "/root/native_amortization_v4",
+        "schema": "w1-task-product-independent-reader-review-v1",
+        "source_pins": {
+          "formal/pon-nakamoto-v1/experiments/w1_task_product_plan_v1.json": {
+            "bytes": 470,
+            "sha256": "f44e98f40bd9d3a85ed3e61024652d7b6e03b9dde593fc02e1039ad4961a9dc3"
+          },
+          "scripts/ci/test_w1_task_product_binding.py": {
+            "bytes": 10715,
+            "sha256": "b5d66ae4115bd7b575e34e8f8761fa2cc0421dc2ff6f3e485c85190ee7c5eb45"
+          },
+          "scripts/ci/test_w1_task_product_research.py": {
+            "bytes": 8507,
+            "sha256": "23102190f2ba6f8c3a8d8008432f1543ab8477d3feb1a816444081380a262b10"
+          },
+          "scripts/read_w1_task_product_research.py": {
+            "bytes": 23411,
+            "sha256": "8d590b299cd712ee749d0e4fd8a8b5991d7eee5dfd0e24ce34469f6a10c9b108"
+          },
+          "scripts/run_w1_task_product_research.py": {
+            "bytes": 12563,
+            "sha256": "b01aa46e78da6542580bcbcf6f80db515c4d724df53ca0d67a97a5540d253b86"
+          }
+        },
+        "tests": {
+          "binding_final_passed": 10,
+          "compile_only_example_check_passed": true,
+          "native_preliminary_passed": 9,
+          "native_preliminary_source_limit": "functional-tests-1 preceded formatting and semantically unchanged is_multiple_of test-style repair; frozen-source regression remains root responsibility",
+          "preliminary_clippy_style_failure_preserved": true,
+          "strict_crypto_clippy_alltargets_allfeatures_passed": true
+        },
+        "uncommitted_pre_freeze_review": true
+      },
+      "sha256": "734056f5c5fd8bdb420e1d5ff6c95f9f9a80a80dc83201b92da952742802d8ab"
+    },
+    {
+      "raw_path": "next-instantiation-barriers-v4/service-independent-review-v1.json",
+      "review": {
+        "ci_called": false,
+        "created_utc": "2026-10-26T07:19:10.784147+00:00",
+        "executed_native_jobs": 0,
+        "executed_service_tests": 0,
+        "files": [
+          {
+            "bytes": 19486,
+            "path": "docs/protocol/pon-nakamoto-v1/details/W1_SERVICE_GROWTH_V4.md",
+            "sha256": "91f7c06715b60d2a028114ee9add3770ae2830dd7a1372195bf927a78f937482"
+          },
+          {
+            "bytes": 14297,
+            "path": "formal/pon-nakamoto-v1/experiments/w1_service_growth_v4.py",
+            "sha256": "0d37d77e17a410f6c50cb202162a724a7f1c6e6b5df6658c21673284e1bd3d94"
+          },
+          {
+            "bytes": 12753,
+            "path": "formal/pon-nakamoto-v1/experiments/test_w1_service_growth_v4.py",
+            "sha256": "8b6c5dc84b10124e1e2004bc53fb284507f2fc44347dfeffadaa9b9a28f15e30"
+          }
+        ],
+        "findings": [
+          {
+            "finding": "Backlog language should give a sufficient allocation/upper occupancy bound, not a necessary lower bound on actual occupancy.",
+            "id": "service-review-1",
+            "severity": "clarification",
+            "status": "author corrected to sufficient buffer allocation; reviewed updated text"
+          },
+          {
+            "finding": "Honest and adversarial comparison laws must hold in a single joint reference experiment; marginal couplings are insufficient.",
+            "id": "service-review-2",
+            "severity": "clarification",
+            "status": "author added explicit single joint reference requirement; reviewed updated text"
+          }
+        ],
+        "head": "5301a319d4011f24f808f8644583cb4322cdbc97",
+        "is_formal_proof_certificate": false,
+        "result": "No algebraic counterexample found within the stated hypotheses; original actual service/coupling/common-prefix blockers remain open.",
+        "review_type": "read-only internal separate-agent mathematical/source review; not independent physical operator",
+        "reviewer": "/root/cost_instantiation_v4",
+        "schema": "w1-service-growth-v4-independent-cost-review-v1",
+        "scope": [
+          "Unconditional fresh-response lower envelope and the separate actual-honest reference hypothesis",
+          "Adapted all-failure product without independent trials or conditioning on future no-Join",
+          "Conservative target/weight endpoint lower-tail factor",
+          "Nonoverlapping parent-frontier and all-node visibility induction",
+          "Rate-latency arrival/service and leftover-service premises",
+          "Pure-private strict overtake threshold, old weighted bank and union bound",
+          "No transfer of common-prefix security, physical service or actual SHA hypotheses"
+        ]
+      },
+      "sha256": "877421ffe71047a3607f78cfd2dad00fe481b55fcc25db1861ab72748a60bff1"
+    },
+    {
+      "raw_path": "service-growth-v4/cost-instantiation-independent-review-v2.json",
+      "review": {
+        "blocking_mathematical_finding": null,
+        "checked_claims": [
+          {
+            "claim": "public deterministic SHA E versus unrestricted sampled ideal family has one-query advantage1-1/M",
+            "verdict": "valid for stated distinguisher; does not produce W1 work forgery or imply SHA weakness"
+          },
+          {
+            "claim": "0^b||R counterfamily is asymptotically one-way/collision resistant for polynomial queries but biases threshold",
+            "verdict": "valid in stated random-function query experiment;192-bit suffix/96-bit birthday concrete limitation accurately disclosed"
+          },
+          {
+            "claim": "coarse seeded H<=P capacity combined with Ccomb=Q+3594G cannot yield a nontrivial direct CDG lift",
+            "verdict": "both branches correct: multiplicative P>=24Ccomb>G; additive nonempty violation forcesP<G andloss>1; scoped to this proof route"
+          },
+          {
+            "claim": "conditional actual-W1 event comparison",
+            "verdict": "unknown losses preserved; sufficient unproved hypothesis explicit; same old bank/fixedd,k/fanout1 identity preserved"
+          }
+        ],
+        "ci_accessed": false,
+        "files": [
+          {
+            "bytes": 18760,
+            "path": "docs/protocol/pon-nakamoto-v1/details/W1_INSTANTIATION_BARRIERS_V4.md",
+            "sha256": "9b8e8b43742df572b08487b5c8986850eeeb86d7a702bfaa67d3d60f91a327a7"
+          },
+          {
+            "bytes": 11701,
+            "path": "formal/pon-nakamoto-v1/experiments/w1_instantiation_barriers_v4.py",
+            "sha256": "a1437569738cab0e14bcdd13622906ca1fede4339326ed171335e145bd7d9fde"
+          },
+          {
+            "bytes": 13986,
+            "path": "formal/pon-nakamoto-v1/experiments/test_w1_instantiation_barriers_v4.py",
+            "sha256": "cf9f3fde97e514016c6fadd28f379b04b6d0c88b648bbbb8f3bcac3eefb2a509"
+          },
+          {
+            "bytes": 26462,
+            "path": "docs/protocol/pon-nakamoto-v1/details/W1_ROOTED_CIPHER_PATHS_V1.md",
+            "sha256": "08f25ce79810745ab0a37eb90b9c5556a7ea6dd16e6adfc05dec5ed6d456e382"
+          },
+          {
+            "bytes": 32142,
+            "path": "docs/protocol/pon-nakamoto-v1/details/W1_TICKET_COMPOSITION_V3.md",
+            "sha256": "755d3dd0f3cf3acc5d88ebc18a37e34dfe8a41fbab274f43f1c74fc9a062ef04"
+          }
+        ],
+        "final_narrow_review": {
+          "claims_strengthened": false,
+          "large_exact_tail": "raises OverflowError above128trials for nontrivial expansions; impossible k>n returnsdelta; saturated failure returns1",
+          "native_target_limit": "target<=size//2-1 checked, beyond-limit rejected",
+          "review_result": "No blocking issue identified in final v2 sources",
+          "source_theorem_conditions": "N>=16 and gamma>0 now explicit",
+          "toy_geometry": "matches_w1_geometry explicitly false unless both actualsize and2049pathsize match"
+        },
+        "independent_agent_same_operator": true,
+        "independent_physical_operator": false,
+        "original_O01_O02_closed": false,
+        "primary_sources_opened": [
+          {
+            "checked": "Theorem1 p9 and combined-query definition: exact additive/multiplicative constants; N>=16, gamma>0",
+            "refs": [
+              "turn174view0",
+              "turn175view0",
+              "turn175view2"
+            ],
+            "url": "https://cs.nyu.edu/~dodis/ps/ai-perms.pdf"
+          },
+          {
+            "checked": "2026-05-01 author full version, FOCS2024 provenance, AI-ROM PRF simulation scope",
+            "refs": [
+              "turn174view1"
+            ],
+            "url": "https://cs.nyu.edu/~dodis/ps/ro-sim.pdf"
+          },
+          {
+            "checked": "ideal permutation/cipher scope, no actual-SHA instantiation",
+            "refs": [
+              "turn174view2"
+            ],
+            "url": "https://arxiv.org/html/2609.28469v1"
+          }
+        ],
+        "prior_review_sha256": "30585596a06a89795d881a687483015d54e8276ef9240203332b5446a7ad503f",
+        "requested_clarification": "Resolved: state-space and gamma conditions now explicit.",
+        "review_type": "read-only mathematical/source/primary-research review; no new native execution",
+        "reviewer": "/root/consensus_service_v4",
+        "schema": "w1-instantiation-barriers-v4-independent-review-final"
+      },
+      "sha256": "917161987c99bcb91258f4487db7b26147eaad71e6ba4e1f96069586f6e8ac3a"
+    },
+    {
+      "raw_path": "service-growth-v4/service-peer-review-capture-01.json",
+      "review": {
+        "code_tests_changed": false,
+        "findings": [
+          {
+            "finding": "Backlog curve gives upper occupancy bound/sufficient buffer, not actual occupancy lower bound",
+            "resolution": "Clarified sufficient sigma+lambda*L buffer; no theorem/model arithmetic change"
+          },
+          {
+            "finding": "The honest and adversarial laws must inhabit one joint reference experiment; marginal couplings alone insufficient",
+            "resolution": "Added explicit single-joint-reference requirement before transfer argument"
+          }
+        ],
+        "independent_agent_same_operator": true,
+        "independent_hardware_operator": false,
+        "native_execution": false,
+        "reviewed_doc_sha256": "321a6d198a54cd9b838f5c4af633b0db4e4768d3c22f6090e12025c618320c78",
+        "reviewer": "/root/cost_instantiation_v4",
+        "revised_doc_sha256": "91f7c06715b60d2a028114ee9add3770ae2830dd7a1372195bf927a78f937482",
+        "schema": "w1-service-growth-v4-peer-review-capture",
+        "source": "collaboration.send_message received 2026-10-26; captured by author; no external signature",
+        "verdict": "No algebraic counterexample identified within explicit conditional scope; two clarifications requested and accepted."
+      },
+      "sha256": "0722bba4e89b4f53ee48fff188b0820d2a4497a5b1c079b3f0db3d6786f36eb9"
+    }
+  ],
+  "schema": "w1-product-service-independent-reviews-v1"
+}

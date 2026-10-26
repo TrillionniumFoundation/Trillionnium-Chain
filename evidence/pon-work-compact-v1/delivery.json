@@ -1,0 +1,22 @@
+{
+  "schema": "w1-compact-evidence-delivery-v1",
+  "archive_filename": "W1_compact_cost_evidence_20261026.tar.gz",
+  "workspace_path": "/workspace/scratch/3863a747524b/W1_compact_cost_evidence_20261026.tar.gz",
+  "bytes": 161446035,
+  "sha256": "e7f7657f8335b012c6499fe6f0afbbb2148e278495758d2356027c7fca6c46ca",
+  "payload_files": 295,
+  "archive_members_including_index": 296,
+  "payload_bytes": 208758341,
+  "artifact_index_sha256": "8e9728512aa139a3818cd990dc8d37932ac22763feb4ae977f1e6d24fc411c5c",
+  "all_members_roundtrip_verified": true,
+  "native_raw_omissions": 0,
+  "new_formal_native_executions_after_sampling": 0,
+  "measured_source": "4b18f6bdf226553514b07caf9259360d44631a06",
+  "readback_sha256": "a028fe3d660c959b4e58b356fb4f0089f95072dc99f1e572909827c9b72f0897",
+  "analysis_sha256": "db84a3a38e103dc1c8b6710daf609079dc22c9318ad535407f0e420953126bbd",
+  "git_published_summary_path": "evidence/pon-work-compact-v1",
+  "raw_archive_in_git": false,
+  "historical_archive_sha256": "87cb16e6e78274b36969abb2421b51533227bfec8ddb3f8e8880d4ddb17b784d",
+  "production_activation": false,
+  "hosted_ci_queried": false
+}

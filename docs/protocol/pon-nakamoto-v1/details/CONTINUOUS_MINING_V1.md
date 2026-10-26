@@ -40,8 +40,14 @@ before its requested runtime or block limit; neither is an indefinite liveness c
 
 1. Check the monotonic runtime/stop budget and wait for the configured pause.
 2. Acquire the shared Node owner without indefinitely blocking shutdown. Read the
-   actual active parent/generation and local wall-clock seconds. If the parent
-   timestamp is not earlier than the current clock, wait for the real clock.
+   actual active parent/generation and local wall-clock seconds. Check that exact
+   wall-clock timestamp against the same validated parent-first window and
+   native timestamp predicate used by admission. Read at most 11 validated header
+   projections; deeper DAA checks remain in their original later stages. Refuse
+   the unsupported ordinary pool/native-growth combination before using the
+   ordinary header projection. If the timestamp has not exceeded the
+   upper median, wait for the real clock; propagate other context/storage
+   errors. Do not synthesize a timestamp from the parent or median.
 3. Reconcile and select complete retained queue groups with actual M05 admission
    and M06 execution. Bind the exact parent/generation, pool context and miner.
    Check stop/deadline after selection and again after the configured miner check;

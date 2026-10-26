@@ -518,6 +518,16 @@ impl Node {
     }
 }
 
+// Only the native median-time refusal is a wait condition. Context, storage,
+// and other admission failures retain their original error and stop the caller.
+fn wall_clock_time_ready(check: Result<()>) -> Result<bool> {
+    match check {
+        Ok(()) => Ok(true),
+        Err(error) if error.to_string() == "TIME" => Ok(false),
+        Err(error) => Err(error),
+    }
+}
+
 fn pause_until(deadline: Instant, end: Instant, stop: &AtomicBool) {
     while !stop.load(Ordering::Acquire) && Instant::now() < deadline && Instant::now() < end {
         let remaining = deadline.min(end).saturating_duration_since(Instant::now());
@@ -592,14 +602,10 @@ where
         report.initial_owner_wait_ns += elapsed;
         let acquired_wait = std::mem::take(&mut initial_owner_wait_ns);
         let (parent, generation) = owner.active()?;
-        // A retained future timestamp is never converted into a logical mining clock.
+        // Keep the actual wall clock; eligibility uses the original admission
+        // median, not an extra ordering constraint on the immediate parent.
         let now = ingress::now()?;
-        let parent_time = if owner.parent_height(parent)? == 0 {
-            owner.settings().genesis_time()
-        } else {
-            owner.packet(parent)?.header.timestamp
-        };
-        if now <= parent_time {
+        if !wall_clock_time_ready(owner.check_mining_wall_time(parent, now))? {
             drop(owner);
             next = Instant::now() + Duration::from_millis(25);
             continue;
@@ -1079,5 +1085,133 @@ mod cooperative_search_tests {
             .unwrap();
         assert_eq!(starts, 2);
         assert!(matches!(result, SearchOutcome::Stopped(1)));
+    }
+}
+
+#[cfg(test)]
+mod wall_clock_time_tests {
+    use super::*;
+    use crate::{consensus, development_public, Error, ErrorCode, Settings};
+
+    fn open() -> (tempfile::TempDir, Node) {
+        let dir = tempfile::tempdir().unwrap();
+        let settings = Settings::development(Some(1)).unwrap();
+        let node = Node::open(dir.path(), settings, 1).unwrap();
+        (dir, node)
+    }
+
+    // Deterministic local regression inputs, checked by the original builder,
+    // admission and activation. This does not replace the loop's real clock.
+    fn append(node: &mut Node, timestamp: u64) -> Hash {
+        let parent = node.active().unwrap().0;
+        assert!(wall_clock_time_ready(node.check_mining_wall_time(parent, timestamp)).unwrap());
+        let packet = node
+            .make(
+                parent,
+                vec![],
+                development_public(0).unwrap(),
+                timestamp,
+                4096,
+            )
+            .unwrap();
+        assert_eq!(packet.header.timestamp, timestamp);
+        let id = node.admit(&packet, timestamp).unwrap();
+        assert_eq!(node.activate_observed(id, timestamp).unwrap(), id);
+        id
+    }
+
+    #[test]
+    fn wall_clock_gate_matches_native_short_window_and_strict_median() {
+        let (_dir, mut node) = open();
+        let genesis = node.settings().genesis();
+        assert!(!wall_clock_time_ready(node.check_mining_wall_time(genesis, 1)).unwrap());
+        assert!(wall_clock_time_ready(node.check_mining_wall_time(genesis, 2)).unwrap());
+
+        let parent = append(&mut node, 3);
+        // The native upper median of the short parent-first window [3, 1] is 3.
+        assert!(!wall_clock_time_ready(node.check_mining_wall_time(parent, 2)).unwrap());
+        assert!(!wall_clock_time_ready(node.check_mining_wall_time(parent, 3)).unwrap());
+        assert!(wall_clock_time_ready(node.check_mining_wall_time(parent, 4)).unwrap());
+    }
+
+    #[test]
+    fn wall_clock_gate_allows_equal_or_earlier_parent_time_when_admissible() {
+        let (_dir, mut node) = open();
+        for timestamp in [2, 4, 6] {
+            append(&mut node, timestamp);
+        }
+        let parent = node.active().unwrap().0;
+        assert_eq!(node.packet(parent).unwrap().header.timestamp, 6);
+        // The window [6, 4, 2, 1] has upper median 4. Both candidate times are
+        // native-admissible, including equality with the immediate parent.
+        assert!(wall_clock_time_ready(node.check_mining_wall_time(parent, 6)).unwrap());
+        assert!(wall_clock_time_ready(node.check_mining_wall_time(parent, 5)).unwrap());
+        assert!(!wall_clock_time_ready(node.check_mining_wall_time(parent, 4)).unwrap());
+        append(&mut node, 6);
+        // Now [6, 6, 4, 2, 1] still has median 4: a wall-clock rollback to 5
+        // remains valid. Full native admission independently checks this child.
+        let backdated = append(&mut node, 5);
+        assert_eq!(node.packet(backdated).unwrap().header.timestamp, 5);
+        assert!(!wall_clock_time_ready(node.check_mining_wall_time(backdated, 5)).unwrap());
+        assert!(wall_clock_time_ready(node.check_mining_wall_time(backdated, 6)).unwrap());
+    }
+
+    #[test]
+    fn wall_clock_gate_preserves_context_and_non_median_errors() {
+        let (_dir, node) = open();
+        let error = wall_clock_time_ready(node.check_mining_wall_time([255; 32], 2)).unwrap_err();
+        assert!(error.is(ErrorCode::UnknownParent));
+        for code in [ErrorCode::TimeDeferred, ErrorCode::StoragePacket] {
+            let error = wall_clock_time_ready(Err(Error::new(code))).unwrap_err();
+            assert!(error.is(code));
+        }
+        let error = wall_clock_time_ready(consensus::check_time(2, &[], 2, 120)).unwrap_err();
+        assert!(error.is(ErrorCode::UnknownParent));
+    }
+
+    #[test]
+    fn wall_clock_gate_rejects_native_growth_before_ordinary_projection() {
+        let dir = tempfile::tempdir().unwrap();
+        let settings = Settings::development_with_profiles(
+            Some(1),
+            "native-public-evaluation-dev-v1",
+            continuity_v1::PROFILE,
+        )
+        .unwrap()
+        .with_permanent_account_growth_v2("wall-time-native-growth-test")
+        .unwrap();
+        let genesis = settings.genesis();
+        let node = Node::open_with_permanent_account_growth_v2(dir.path(), settings).unwrap();
+        let active = node.active().unwrap();
+        let before = node.history_read_counters();
+        let error = wall_clock_time_ready(node.check_mining_wall_time(genesis, 2)).unwrap_err();
+        assert_eq!(error.to_string(), "GROWTH_COMPLETE_STATE_UNAVAILABLE");
+        let after = node.history_read_counters();
+        assert_eq!(after.header_link_queries, before.header_link_queries);
+        assert_eq!(after.header_trace_bytes, before.header_trace_bytes);
+        assert_eq!(node.active().unwrap(), active);
+    }
+
+    #[test]
+    fn wall_clock_gate_preserves_native_wide_time_arithmetic() {
+        let (_dir, node) = open();
+        let genesis = node.settings().genesis();
+        assert!(wall_clock_time_ready(node.check_mining_wall_time(genesis, u64::MAX)).unwrap());
+        // These arithmetic-only predicate boundaries do not claim that a header
+        // with this timestamp passes other native encoding/storage constraints.
+        assert!(wall_clock_time_ready(consensus::check_time(
+            u64::MAX,
+            &[u64::MAX - 1],
+            u64::MAX,
+            120,
+        ))
+        .unwrap());
+        assert!(!wall_clock_time_ready(consensus::check_time(
+            u64::MAX,
+            &[u64::MAX],
+            u64::MAX,
+            120,
+        ))
+        .unwrap());
     }
 }

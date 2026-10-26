@@ -1,0 +1,902 @@
+{
+  "complete_proof_replay": {
+    "manifest_sha256": "f945085845b48251d3a79a07cb0d8134a63b88a45ecbc93fc1f1cfde7e00f454",
+    "readback_sha256": "3fd96bcf3d2a65bd1e4a1b8a5a9550d422a28ab4ffd2ece5df504f87636a5262",
+    "records": 6608,
+    "returncode": 0,
+    "source_closure": {
+      "all_current_bytes_match_git_blobs": true,
+      "bytes": 6491725,
+      "files": 394,
+      "hardware_or_interpreter_attestation": false,
+      "scopes": [
+        "scripts",
+        "formal",
+        "config"
+      ],
+      "sha256": "15781d3d61d73592321c6e260c7b3e616498588054fbb083c62fcb64ceb53968",
+      "tested_commit": "42bea72eb74409d72d580dad9bde08c1bce3f8f2"
+    }
+  },
+  "full_workspace_rust_test_run_claimed": false,
+  "hosted_head_and_merge_execution_required_separately": true,
+  "independent_reviews": [
+    {
+      "bytes": 236343,
+      "path_in_evidence_packet": "raw/resource-stage-math-v1/formal-analysis-independent-review-v1.json",
+      "sha256": "2eb37eee20b6fffeb8ccd503ddef0cc72468ea1922672d81972f6c9a01d5af3b"
+    },
+    {
+      "bytes": 251635,
+      "path_in_evidence_packet": "raw/resource-stage-math-v1/formal-analysis-independent-review-v2.json",
+      "sha256": "e84f630c6929db7fef299d8e1096a9b4328d22a428cdd7403d9cecb631e5af07"
+    },
+    {
+      "bytes": 5886,
+      "path_in_evidence_packet": "raw/resource-stage-chain-v1/resource-reduction-independent-review.json",
+      "sha256": "a6c73fbeff4c2cd040fceb5707fc4679a5cd8cdc59c6395be1800d65a9606b56"
+    },
+    {
+      "bytes": 8320,
+      "path_in_evidence_packet": "raw/resource-stage-native-v1/chain-envelope-independent-review.json",
+      "sha256": "ded0d680ef5e6337edaa864dd2706ab71382e9ad8ecde921ec4b63d813eae377"
+    },
+    {
+      "bytes": 8150,
+      "path_in_evidence_packet": "raw/resource-stage-chain-v1/external-qualification-independent-review.json",
+      "sha256": "2c7850596a5226869923f576f9d9c57a85265b864ed842cb087a018d9250619d"
+    },
+    {
+      "bytes": 2552,
+      "path_in_evidence_packet": "raw/resource-stage-chain-v1/native-cross-review-final.json",
+      "sha256": "7fd9621c83d1cc7ab42037f3a759025c72594e4fb4e0d34e839db873444b89a8"
+    },
+    {
+      "bytes": 3498,
+      "path_in_evidence_packet": "raw/resource-stage-math-v1/analysis-cost-review.json",
+      "sha256": "ec646c345148b827be0297a1829487b85162b43d3998c9754ee5690d432f492f"
+    }
+  ],
+  "measured_commit": "42bea72eb74409d72d580dad9bde08c1bce3f8f2",
+  "measured_tree": "070942d172e3fa87e657a24b2bae7c5a6c43ce37",
+  "production_activation": false,
+  "python": {
+    "all_commands_passed": true,
+    "cache_lookup_prefix": "/tmp/w1-resource-empty-pyc-gates-v2",
+    "cwd": "/workspace/scratch/3863a747524b/Chain-cost-research",
+    "direct_python_test_count": 396,
+    "failed_runs_retained": true,
+    "full_workspace_rust_tests_claimed": false,
+    "schema": "pon-w1-resource-exact-source-python-gates-v2",
+    "source": "42bea72eb74409d72d580dad9bde08c1bce3f8f2",
+    "steps": [
+      {
+        "command": [
+          "bash",
+          "scripts/project-preflight.sh"
+        ],
+        "name": "preflight",
+        "returncode": 0,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "925ce0a3ef88fc536ffb549e3273a3ed5b528d969c4e1e8c30e811772af18ca8",
+        "test_summaries": [],
+        "tests_reported": null,
+        "wall_ns": 252610330
+      },
+      {
+        "command": [
+          "python3",
+          "-B",
+          "scripts/ci/verify_ci_source.py",
+          "--kind",
+          "head",
+          "--expected-head",
+          "42bea72eb74409d72d580dad9bde08c1bce3f8f2"
+        ],
+        "name": "source-before",
+        "returncode": 0,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "78ad881e770817867303a21ce09b823ed39132e1f3874eb8a9fc9a48371494c2",
+        "test_summaries": [],
+        "tests_reported": null,
+        "wall_ns": 1944088898
+      },
+      {
+        "command": [
+          "python3",
+          "-B",
+          "scripts/ci/test_w1_next_research.py"
+        ],
+        "name": "test_w1_next_research",
+        "returncode": 0,
+        "stderr_sha256": "1118e0eeddb44ac1d524c356a7a8130568bd42a1155a905c4dbeb8489a4511c5",
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "test_summaries": [
+          12
+        ],
+        "tests_reported": 12,
+        "wall_ns": 910592288
+      },
+      {
+        "command": [
+          "python3",
+          "-B",
+          "scripts/ci/test_w1_joint_challenge_reader.py"
+        ],
+        "name": "test_w1_joint_challenge_reader",
+        "returncode": 0,
+        "stderr_sha256": "7f060f927459139dcc812251f347ccb01f54516af094d067937c67326190edd9",
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "test_summaries": [
+          22
+        ],
+        "tests_reported": 22,
+        "wall_ns": 7777222005
+      },
+      {
+        "command": [
+          "python3",
+          "-B",
+          "scripts/ci/test_w1_parent_reuse_reader.py"
+        ],
+        "name": "test_w1_parent_reuse_reader",
+        "returncode": 0,
+        "stderr_sha256": "4774c8fc8c146827a1a9f2e25f8eb98dab418f905aa9624dd47797b8c6364ee0",
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "test_summaries": [
+          42
+        ],
+        "tests_reported": 42,
+        "wall_ns": 28622155378
+      },
+      {
+        "command": [
+          "python3",
+          "-B",
+          "scripts/ci/test_w1_cost_research_runner.py"
+        ],
+        "name": "test_w1_cost_research_runner",
+        "returncode": 0,
+        "stderr_sha256": "833af8ba6fd734ac45299e0d9055beaf978ada37598f7c54df8d6ea27b95c9f1",
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "test_summaries": [
+          8
+        ],
+        "tests_reported": 8,
+        "wall_ns": 535477936
+      },
+      {
+        "command": [
+          "python3",
+          "-B",
+          "scripts/ci/test_w1_cost_research_reader.py"
+        ],
+        "name": "test_w1_cost_research_reader",
+        "returncode": 0,
+        "stderr_sha256": "59102d4171f8851450d90905fb5455f2a7d8489550f53b34259e241e7edee490",
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "test_summaries": [
+          20
+        ],
+        "tests_reported": 20,
+        "wall_ns": 1908535385
+      },
+      {
+        "command": [
+          "python3",
+          "-B",
+          "scripts/ci/test_ci_source_integrity.py"
+        ],
+        "name": "test_ci_source_integrity",
+        "returncode": 0,
+        "stderr_sha256": "9ef17d9af12e5239d348f6dac129e18a4d3dbd78a65d44bb17f9136511c488fc",
+        "stdout_sha256": "be935f39c1b104345835c6efde96f1010de5be80cd5013fafc52978614e052fe",
+        "test_summaries": [
+          34
+        ],
+        "tests_reported": 34,
+        "wall_ns": 3783952669
+      },
+      {
+        "command": [
+          "python3",
+          "-B",
+          "scripts/ci/test_ci_contract.py"
+        ],
+        "name": "test_ci_contract",
+        "returncode": 0,
+        "stderr_sha256": "b9d5b8cdf4f94c1227b0432ba465189b28f61d3d84357651b64eb903914f8550",
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "test_summaries": [
+          91
+        ],
+        "tests_reported": 91,
+        "wall_ns": 5940146513
+      },
+      {
+        "command": [
+          "python3",
+          "-B",
+          "formal/pon-nakamoto-v1/experiments/test_w1_adaptive_cost_models.py"
+        ],
+        "name": "test_w1_adaptive_cost_models",
+        "returncode": 0,
+        "stderr_sha256": "084be0b897fc080ce8a21f517058490226856a5e50e6ac80365344d8d3872bf6",
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "test_summaries": [
+          22
+        ],
+        "tests_reported": 22,
+        "wall_ns": 282765913
+      },
+      {
+        "command": [
+          "python3",
+          "-B",
+          "formal/pon-nakamoto-v1/experiments/test_analyze_w1_adaptive_joint.py"
+        ],
+        "name": "test_analyze_w1_adaptive_joint",
+        "returncode": 0,
+        "stderr_sha256": "33dbefe337bca8525d07257e52829bf436e852676566bf62b7dcb6310d6df695",
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "test_summaries": [
+          7
+        ],
+        "tests_reported": 7,
+        "wall_ns": 408148223
+      },
+      {
+        "command": [
+          "python3",
+          "-B",
+          "formal/pon-nakamoto-v1/experiments/test_analyze_w1_native_budget.py"
+        ],
+        "name": "test_analyze_w1_native_budget",
+        "returncode": 0,
+        "stderr_sha256": "8291979b307800a2411ed99e4708747c62ec4cba471072141b444acc35421016",
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "test_summaries": [
+          8
+        ],
+        "tests_reported": 8,
+        "wall_ns": 336236542
+      },
+      {
+        "command": [
+          "python3",
+          "-B",
+          "formal/pon-nakamoto-v1/experiments/test_w1_cost_security_math.py"
+        ],
+        "name": "test_w1_cost_security_math",
+        "returncode": 0,
+        "stderr_sha256": "e41f5b5abb045943ad8cdeaf6888b08e484050b9a2af42746411083a598e0cff",
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "test_summaries": [
+          11
+        ],
+        "tests_reported": 11,
+        "wall_ns": 241613159
+      },
+      {
+        "command": [
+          "python3",
+          "-B",
+          "scripts/ci/test_w1_resource_research.py"
+        ],
+        "name": "test_w1_resource_research",
+        "returncode": 0,
+        "stderr_sha256": "736288dc8c3ef1abc7bc8f839330a0ac01d82fded4d3ef74b0bd0f2b43c678a6",
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "test_summaries": [
+          14
+        ],
+        "tests_reported": 14,
+        "wall_ns": 679588145
+      },
+      {
+        "command": [
+          "python3",
+          "-B",
+          "scripts/ci/test_w1_miner_budget_reader.py"
+        ],
+        "name": "test_w1_miner_budget_reader",
+        "returncode": 0,
+        "stderr_sha256": "7a2de50baa74b047911c1c19665291c9a866ab15be4d757ce18deac5395a01d0",
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "test_summaries": [
+          44
+        ],
+        "tests_reported": 44,
+        "wall_ns": 25222898157
+      },
+      {
+        "command": [
+          "python3",
+          "-B",
+          "formal/pon-nakamoto-v1/experiments/test_analyze_w1_miner_resource.py"
+        ],
+        "name": "test_analyze_w1_miner_resource",
+        "returncode": 0,
+        "stderr_sha256": "ca18ffc8e8fdc6b71e49e9b4fd64e04661daa3243fb767d57a64ce80ea2d7b63",
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "test_summaries": [
+          9
+        ],
+        "tests_reported": 9,
+        "wall_ns": 394401329
+      },
+      {
+        "command": [
+          "python3",
+          "-B",
+          "formal/pon-nakamoto-v1/experiments/test_w1_resource_reduction.py"
+        ],
+        "name": "test_w1_resource_reduction",
+        "returncode": 0,
+        "stderr_sha256": "1b8ad4fba883c37517eb4c03ffaeb31fcb326944bba14c8944f8d6d51d87ff32",
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "test_summaries": [
+          21
+        ],
+        "tests_reported": 21,
+        "wall_ns": 320746411
+      },
+      {
+        "command": [
+          "python3",
+          "-B",
+          "formal/pon-nakamoto-v1/experiments/test_w1_chain_security_envelope.py"
+        ],
+        "name": "test_w1_chain_security_envelope",
+        "returncode": 0,
+        "stderr_sha256": "a3b90bb5eedce11fc821e1f56f904bbfad521882c7fd5d83d4d66fc27e2bc1a2",
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "test_summaries": [
+          31
+        ],
+        "tests_reported": 31,
+        "wall_ns": 546805398
+      },
+      {
+        "command": [
+          "python3",
+          "-B",
+          "scripts/ci/check_repository.py"
+        ],
+        "name": "repository",
+        "returncode": 0,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "08d9db6a9c00d205b14b960c0880d43b0c92b0b9760f858877b6c897c50a8fe9",
+        "test_summaries": [],
+        "tests_reported": null,
+        "wall_ns": 40803779461
+      },
+      {
+        "command": [
+          "python3",
+          "-B",
+          "scripts/refresh_distributed_source_inventory.py",
+          "--check"
+        ],
+        "name": "source-inventory",
+        "returncode": 0,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+        "test_summaries": [],
+        "tests_reported": null,
+        "wall_ns": 175673555
+      },
+      {
+        "command": [
+          "bash",
+          "scripts/ci/check_canonical_development_plan.sh"
+        ],
+        "name": "canonical-plan",
+        "returncode": 0,
+        "stderr_sha256": "504f7567c2358f9f9c6c510ded8d64f65dd05e3e92f3df99a1ac80457ec66724",
+        "stdout_sha256": "08d9db6a9c00d205b14b960c0880d43b0c92b0b9760f858877b6c897c50a8fe9",
+        "test_summaries": [
+          50,
+          28
+        ],
+        "tests_reported": 78,
+        "wall_ns": 172372667594
+      },
+      {
+        "command": [
+          "python3",
+          "-B",
+          "scripts/ci/check_ci_contract.py"
+        ],
+        "name": "ci-contract",
+        "returncode": 0,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "9dc9c460bfb8a0da9730ff9e6acc8d76cbdf3bfd873c933e273c775ada8233b3",
+        "test_summaries": [],
+        "tests_reported": null,
+        "wall_ns": 294971745
+      },
+      {
+        "command": [
+          "python3",
+          "-B",
+          "formal/pon-nakamoto-v1/experiments/w1_resource_reduction.py"
+        ],
+        "name": "resource-model",
+        "returncode": 0,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "b72e4988632adee470baed9cc82ae94532dd0f44a9d17dd29aeba6d3c6e68838",
+        "test_summaries": [],
+        "tests_reported": null,
+        "wall_ns": 210410599
+      },
+      {
+        "command": [
+          "python3",
+          "-B",
+          "formal/pon-nakamoto-v1/experiments/w1_chain_security_envelope.py"
+        ],
+        "name": "chain-model",
+        "returncode": 0,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "856547c76dd05dd1f11e6b9fcc11ca8f34071c48bdde199de39bcd7827aff183",
+        "test_summaries": [],
+        "tests_reported": null,
+        "wall_ns": 218503271
+      },
+      {
+        "command": [
+          "python3",
+          "-B",
+          "scripts/ci/verify_ci_source.py",
+          "--kind",
+          "head",
+          "--expected-head",
+          "42bea72eb74409d72d580dad9bde08c1bce3f8f2"
+        ],
+        "name": "source-after",
+        "returncode": 0,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "78ad881e770817867303a21ce09b823ed39132e1f3874eb8a9fc9a48371494c2",
+        "test_summaries": [],
+        "tests_reported": null,
+        "wall_ns": 2206384360
+      }
+    ]
+  },
+  "retained_rust_ignored_tests": [
+    {
+      "gate": "crypto-protocol-tests",
+      "observation": "test pon_state::bulk_tests::bulk_complete_construction_cost_observation ... ignored, explicit full-build paired timing; not native Node throughput or public qualification",
+      "target": "Running unittests src/lib.rs (/tmp/w1-resource-campaign-target-42bea72-v2/release/deps/trnm_protocol-f0b8f22c27c38f44)"
+    },
+    {
+      "gate": "crypto-protocol-tests",
+      "observation": "test pon_wire::streamed_state_root_tests::state_node_and_complete_root_paired_cost_observation ... ignored, explicit complete-root paired observation; not Node or WAN throughput",
+      "target": "Running unittests src/lib.rs (/tmp/w1-resource-campaign-target-42bea72-v2/release/deps/trnm_protocol-f0b8f22c27c38f44)"
+    }
+  ],
+  "rust": {
+    "all_passed": true,
+    "all_requested_completed": true,
+    "completed": [
+      {
+        "argv": [
+          "/tmp/hepta-native-rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+          "fmt",
+          "--all",
+          "--check"
+        ],
+        "log_bytes": 0,
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "name": "fmt",
+        "returncode": 0,
+        "source_head_after": "42bea72eb74409d72d580dad9bde08c1bce3f8f2",
+        "source_head_before": "42bea72eb74409d72d580dad9bde08c1bce3f8f2",
+        "source_status_after": "",
+        "source_status_before": "",
+        "test_results": [],
+        "wall_ns": 11413181273
+      },
+      {
+        "argv": [
+          "/tmp/hepta-native-rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+          "test",
+          "--offline",
+          "--locked",
+          "--release",
+          "--jobs",
+          "2",
+          "-p",
+          "trnm-crypto-primitives",
+          "-p",
+          "trnm-protocol",
+          "--all-targets",
+          "--all-features"
+        ],
+        "log_bytes": 24411,
+        "log_sha256": "273f587996f5247b7a98f75d5e8667dc4f96c974a95af756169ff2f422586533",
+        "name": "crypto-protocol-tests",
+        "returncode": 0,
+        "source_head_after": "42bea72eb74409d72d580dad9bde08c1bce3f8f2",
+        "source_head_before": "42bea72eb74409d72d580dad9bde08c1bce3f8f2",
+        "source_status_after": "",
+        "source_status_before": "",
+        "test_results": [
+          {
+            "failed": 0,
+            "filtered": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 97,
+            "status": "ok"
+          },
+          {
+            "failed": 0,
+            "filtered": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 4,
+            "status": "ok"
+          },
+          {
+            "failed": 0,
+            "filtered": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 5,
+            "status": "ok"
+          },
+          {
+            "failed": 0,
+            "filtered": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 0,
+            "status": "ok"
+          },
+          {
+            "failed": 0,
+            "filtered": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 0,
+            "status": "ok"
+          },
+          {
+            "failed": 0,
+            "filtered": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 4,
+            "status": "ok"
+          },
+          {
+            "failed": 0,
+            "filtered": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 3,
+            "status": "ok"
+          },
+          {
+            "failed": 0,
+            "filtered": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 5,
+            "status": "ok"
+          },
+          {
+            "failed": 0,
+            "filtered": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 0,
+            "status": "ok"
+          },
+          {
+            "failed": 0,
+            "filtered": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 0,
+            "status": "ok"
+          },
+          {
+            "failed": 0,
+            "filtered": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 2,
+            "status": "ok"
+          },
+          {
+            "failed": 0,
+            "filtered": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 3,
+            "status": "ok"
+          },
+          {
+            "failed": 0,
+            "filtered": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 7,
+            "status": "ok"
+          },
+          {
+            "failed": 0,
+            "filtered": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 0,
+            "status": "ok"
+          },
+          {
+            "failed": 0,
+            "filtered": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 0,
+            "status": "ok"
+          },
+          {
+            "failed": 0,
+            "filtered": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 0,
+            "status": "ok"
+          },
+          {
+            "failed": 0,
+            "filtered": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 2,
+            "status": "ok"
+          },
+          {
+            "failed": 0,
+            "filtered": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 6,
+            "status": "ok"
+          },
+          {
+            "failed": 0,
+            "filtered": 0,
+            "ignored": 2,
+            "measured": 0,
+            "passed": 29,
+            "status": "ok"
+          },
+          {
+            "failed": 0,
+            "filtered": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 2,
+            "status": "ok"
+          },
+          {
+            "failed": 0,
+            "filtered": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 4,
+            "status": "ok"
+          },
+          {
+            "failed": 0,
+            "filtered": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 2,
+            "status": "ok"
+          },
+          {
+            "failed": 0,
+            "filtered": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 4,
+            "status": "ok"
+          },
+          {
+            "failed": 0,
+            "filtered": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 0,
+            "status": "ok"
+          }
+        ],
+        "wall_ns": 42323898826
+      },
+      {
+        "argv": [
+          "/tmp/hepta-native-rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+          "test",
+          "--offline",
+          "--locked",
+          "--release",
+          "--jobs",
+          "2",
+          "-p",
+          "trnm-pon-node",
+          "--all-features",
+          "--example",
+          "pon_w1_cost_game",
+          "--example",
+          "pon_w1_joint_research",
+          "--example",
+          "pon_w1_parent_reuse_research",
+          "--example",
+          "pon_w1_miner_budget_research"
+        ],
+        "log_bytes": 3982,
+        "log_sha256": "3199f5447ca64bace4c96d4797b8c513d0edac4eb84c4a006b3a2b8fedbdf4e8",
+        "name": "four-example-tests",
+        "returncode": 0,
+        "source_head_after": "42bea72eb74409d72d580dad9bde08c1bce3f8f2",
+        "source_head_before": "42bea72eb74409d72d580dad9bde08c1bce3f8f2",
+        "source_status_after": "",
+        "source_status_before": "",
+        "test_results": [
+          {
+            "failed": 0,
+            "filtered": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 7,
+            "status": "ok"
+          },
+          {
+            "failed": 0,
+            "filtered": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 10,
+            "status": "ok"
+          },
+          {
+            "failed": 0,
+            "filtered": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 6,
+            "status": "ok"
+          },
+          {
+            "failed": 0,
+            "filtered": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 7,
+            "status": "ok"
+          }
+        ],
+        "wall_ns": 4646407465
+      },
+      {
+        "argv": [
+          "/tmp/hepta-native-rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+          "test",
+          "--offline",
+          "--locked",
+          "--release",
+          "--jobs",
+          "2",
+          "-p",
+          "trnm-pon-node",
+          "--all-features",
+          "--lib",
+          "consensus::tests"
+        ],
+        "log_bytes": 914,
+        "log_sha256": "edf7e261ff0a512dc855757ae170044efabc55213cbd3818c8d95f6a0f144511",
+        "name": "node-consensus-tests",
+        "returncode": 0,
+        "source_head_after": "42bea72eb74409d72d580dad9bde08c1bce3f8f2",
+        "source_head_before": "42bea72eb74409d72d580dad9bde08c1bce3f8f2",
+        "source_status_after": "",
+        "source_status_before": "",
+        "test_results": [
+          {
+            "failed": 0,
+            "filtered": 689,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 6,
+            "status": "ok"
+          }
+        ],
+        "wall_ns": 166387748808
+      },
+      {
+        "argv": [
+          "/tmp/hepta-native-rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+          "test",
+          "--offline",
+          "--locked",
+          "--release",
+          "--jobs",
+          "2",
+          "-p",
+          "trnm-pon-node",
+          "--all-features",
+          "--test",
+          "daa_adversarial_schedule"
+        ],
+        "log_bytes": 618,
+        "log_sha256": "13fac81fc8f468933a1fa1869cc39348c6246db318de216785eeed7ba4c11bc0",
+        "name": "daa-adversarial-tests",
+        "returncode": 0,
+        "source_head_after": "42bea72eb74409d72d580dad9bde08c1bce3f8f2",
+        "source_head_before": "42bea72eb74409d72d580dad9bde08c1bce3f8f2",
+        "source_status_after": "",
+        "source_status_before": "",
+        "test_results": [
+          {
+            "failed": 0,
+            "filtered": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 2,
+            "status": "ok"
+          }
+        ],
+        "wall_ns": 11799172837
+      },
+      {
+        "argv": [
+          "/tmp/hepta-native-rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+          "clippy",
+          "--offline",
+          "--locked",
+          "--release",
+          "--jobs",
+          "2",
+          "--workspace",
+          "--all-targets",
+          "--all-features",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "log_bytes": 5078,
+        "log_sha256": "23d87252d97000a59edd36f0fdcbbb0011006adc177a9ef291b49dc9bb3da5db",
+        "name": "workspace-strict-clippy",
+        "returncode": 0,
+        "source_head_after": "42bea72eb74409d72d580dad9bde08c1bce3f8f2",
+        "source_head_before": "42bea72eb74409d72d580dad9bde08c1bce3f8f2",
+        "source_status_after": "",
+        "source_status_before": "",
+        "test_results": [],
+        "wall_ns": 69713401009
+      }
+    ],
+    "requested_gates": 6,
+    "schema": "native-final-rust-gates-v1",
+    "source_head": "42bea72eb74409d72d580dad9bde08c1bce3f8f2",
+    "source_head_after": "42bea72eb74409d72d580dad9bde08c1bce3f8f2",
+    "source_status_after": "",
+    "source_tree_after": "070942d172e3fa87e657a24b2bae7c5a6c43ce37"
+  },
+  "rust_review_sha256": "6dc0442c64a41f10e88d2b4abc540986afc80e18a7f89dbecae01684a0362633",
+  "rust_totals": {
+    "failed": 0,
+    "filtered": 689,
+    "ignored": 2,
+    "measured": 0,
+    "passed": 217
+  },
+  "schema": "pon-w1-miner-resource-source-validation-v1",
+  "software_source_identity_is_not_hardware_attestation": true,
+  "strict_clippy_scope": "workspace / all-targets / all-features / release / -D warnings"
+}

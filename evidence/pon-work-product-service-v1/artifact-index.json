@@ -1,0 +1,1582 @@
+{
+  "files": [
+    {
+      "bytes": 230,
+      "member": "raw/task-product-native-v1/binding-tests-1.json",
+      "mode": 420,
+      "mtime": 1792999064,
+      "sha256": "6a0ae40694106488b5e05a112b6abfc587c922c58f70e9a093cbc2c5cb87697a",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/task-product-native-v1/binding-tests-1.json"
+    },
+    {
+      "bytes": 109,
+      "member": "raw/task-product-native-v1/binding-tests-1.stderr",
+      "mode": 420,
+      "mtime": 1792999064,
+      "sha256": "3ab25c16a2e8728f4658a1a67c4a537f59eedf439e8ae22101c138fa2c5a00a1",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/task-product-native-v1/binding-tests-1.stderr"
+    },
+    {
+      "bytes": 0,
+      "member": "raw/task-product-native-v1/binding-tests-1.stdout",
+      "mode": 420,
+      "mtime": 1792999064,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/task-product-native-v1/binding-tests-1.stdout"
+    },
+    {
+      "bytes": 230,
+      "member": "raw/task-product-native-v1/binding-tests-final.json",
+      "mode": 420,
+      "mtime": 1792999152,
+      "sha256": "057bb0943d6d926fe4dea183f6d430991b3e0d9f822f268cb7ed87f9ad1fdf8d",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/task-product-native-v1/binding-tests-final.json"
+    },
+    {
+      "bytes": 109,
+      "member": "raw/task-product-native-v1/binding-tests-final.stderr",
+      "mode": 420,
+      "mtime": 1792999152,
+      "sha256": "7053c4a34ca3e8a546643695fef526149639a5c88c4eaf822ce9d2449a5551ca",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/task-product-native-v1/binding-tests-final.stderr"
+    },
+    {
+      "bytes": 0,
+      "member": "raw/task-product-native-v1/binding-tests-final.stdout",
+      "mode": 420,
+      "mtime": 1792999152,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/task-product-native-v1/binding-tests-final.stdout"
+    },
+    {
+      "bytes": 407,
+      "member": "raw/task-product-native-v1/clippy-1.json",
+      "mode": 420,
+      "mtime": 1792998930,
+      "sha256": "04f7500b53a08466101df69e5a3849b917f5d70505f552b6c5ee4ef409c60b5f",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/task-product-native-v1/clippy-1.json"
+    },
+    {
+      "bytes": 2040,
+      "member": "raw/task-product-native-v1/clippy-1.stderr",
+      "mode": 420,
+      "mtime": 1792998930,
+      "sha256": "cd1b7b4744c6a4868ec2ea1af13abf2af79d1b723e6f3ec3d5a75272405c03a5",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/task-product-native-v1/clippy-1.stderr"
+    },
+    {
+      "bytes": 0,
+      "member": "raw/task-product-native-v1/clippy-1.stdout",
+      "mode": 420,
+      "mtime": 1792998927,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/task-product-native-v1/clippy-1.stdout"
+    },
+    {
+      "bytes": 405,
+      "member": "raw/task-product-native-v1/clippy-2.json",
+      "mode": 420,
+      "mtime": 1792999067,
+      "sha256": "6bab938d300891aaed66aea7e0e20422291e2c70bda4f9b121bb736f8d1958a9",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/task-product-native-v1/clippy-2.json"
+    },
+    {
+      "bytes": 202,
+      "member": "raw/task-product-native-v1/clippy-2.stderr",
+      "mode": 420,
+      "mtime": 1792999067,
+      "sha256": "65d254b9e7a45392be67f851e55704e137ac2ad5eb04803176501a244a682583",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/task-product-native-v1/clippy-2.stderr"
+    },
+    {
+      "bytes": 0,
+      "member": "raw/task-product-native-v1/clippy-2.stdout",
+      "mode": 420,
+      "mtime": 1792999064,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/task-product-native-v1/clippy-2.stdout"
+    },
+    {
+      "bytes": 6338,
+      "member": "raw/task-product-native-v1/collector-reader-independent-review-v1.json",
+      "mode": 420,
+      "mtime": 1792999152,
+      "sha256": "734056f5c5fd8bdb420e1d5ff6c95f9f9a80a80dc83201b92da952742802d8ab",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/task-product-native-v1/collector-reader-independent-review-v1.json"
+    },
+    {
+      "bytes": 372,
+      "member": "raw/task-product-native-v1/example-check-1.json",
+      "mode": 420,
+      "mtime": 1792998900,
+      "sha256": "025a68d0d28baeeb8a9ad2adf786c1fc12a1740ac2d2b347ca6dfde048181223",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/task-product-native-v1/example-check-1.json"
+    },
+    {
+      "bytes": 899,
+      "member": "raw/task-product-native-v1/example-check-1.stderr",
+      "mode": 420,
+      "mtime": 1792998900,
+      "sha256": "b3fd971dd76173708a21912e677103d8347e5fdba878ce0d4f15e791d366ac17",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/task-product-native-v1/example-check-1.stderr"
+    },
+    {
+      "bytes": 0,
+      "member": "raw/task-product-native-v1/example-check-1.stdout",
+      "mode": 420,
+      "mtime": 1792998893,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/task-product-native-v1/example-check-1.stdout"
+    },
+    {
+      "bytes": 502,
+      "member": "raw/task-product-native-v1/format-1.json",
+      "mode": 420,
+      "mtime": 1792998893,
+      "sha256": "82238d34a7060528edf559c7063ba36f0ae3bb80dfa4d17075a113d1e52893e3",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/task-product-native-v1/format-1.json"
+    },
+    {
+      "bytes": 0,
+      "member": "raw/task-product-native-v1/format-1.stderr",
+      "mode": 420,
+      "mtime": 1792998892,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/task-product-native-v1/format-1.stderr"
+    },
+    {
+      "bytes": 0,
+      "member": "raw/task-product-native-v1/format-1.stdout",
+      "mode": 420,
+      "mtime": 1792998892,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/task-product-native-v1/format-1.stdout"
+    },
+    {
+      "bytes": 417,
+      "member": "raw/task-product-native-v1/format-2.json",
+      "mode": 420,
+      "mtime": 1792999064,
+      "sha256": "237e4cac96a49eb1eee4aca991ea7f6ca4b07378bfe3536a9c8779c63382ad6c",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/task-product-native-v1/format-2.json"
+    },
+    {
+      "bytes": 0,
+      "member": "raw/task-product-native-v1/format-2.stderr",
+      "mode": 420,
+      "mtime": 1792999064,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/task-product-native-v1/format-2.stderr"
+    },
+    {
+      "bytes": 0,
+      "member": "raw/task-product-native-v1/format-2.stdout",
+      "mode": 420,
+      "mtime": 1792999064,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/task-product-native-v1/format-2.stdout"
+    },
+    {
+      "bytes": 416,
+      "member": "raw/task-product-native-v1/functional-tests-1.json",
+      "mode": 420,
+      "mtime": 1792998834,
+      "sha256": "a4134bd874397e69bff05d06a158ebb1de506177fb60d643116dc94d1c79e41d",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/task-product-native-v1/functional-tests-1.json"
+    },
+    {
+      "bytes": 774,
+      "member": "raw/task-product-native-v1/functional-tests-1.stderr",
+      "mode": 420,
+      "mtime": 1792998834,
+      "sha256": "188f79f1ac57beab69b3914e48f62d45c5f28e40d68e1282f3f89c683e99be42",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/task-product-native-v1/functional-tests-1.stderr"
+    },
+    {
+      "bytes": 1175,
+      "member": "raw/task-product-native-v1/functional-tests-1.stdout",
+      "mode": 420,
+      "mtime": 1792998834,
+      "sha256": "d42aef87a1d0bbf34cc53857e89660e104cc6180b21c85d9ec5eeb2b6841cd1b",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/task-product-native-v1/functional-tests-1.stdout"
+    },
+    {
+      "bytes": 4085,
+      "member": "raw/next-instantiation-barriers-v4/controls-v1.log",
+      "mode": 420,
+      "mtime": 1792998964,
+      "sha256": "3f6f784eddaca66feb74bd81229849ef47c3f581960c5bac3fa33a6e322fd9ae",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/next-instantiation-barriers-v4/controls-v1.log"
+    },
+    {
+      "bytes": 4475,
+      "member": "raw/next-instantiation-barriers-v4/controls-v2.log",
+      "mode": 420,
+      "mtime": 1792999113,
+      "sha256": "7a81052f750f7c6807d549f368dcc66d20d63caa2a1ba664f71daea01fc28a4f",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/next-instantiation-barriers-v4/controls-v2.log"
+    },
+    {
+      "bytes": 18312,
+      "member": "raw/next-instantiation-barriers-v4/first-draft/W1_INSTANTIATION_BARRIERS_V4.md",
+      "mode": 420,
+      "mtime": 1792999090,
+      "sha256": "f11cd41cde1cd96a8834af49e887deec9c8b1aae1897008305ffd84fea336a8f",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/next-instantiation-barriers-v4/first-draft/W1_INSTANTIATION_BARRIERS_V4.md"
+    },
+    {
+      "bytes": 12983,
+      "member": "raw/next-instantiation-barriers-v4/first-draft/test_w1_instantiation_barriers_v4.py",
+      "mode": 420,
+      "mtime": 1792999090,
+      "sha256": "8f23131a0cde75981bc3031e4088963bb59bc860fd3d970806788f0095af091b",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/next-instantiation-barriers-v4/first-draft/test_w1_instantiation_barriers_v4.py"
+    },
+    {
+      "bytes": 11223,
+      "member": "raw/next-instantiation-barriers-v4/first-draft/w1_instantiation_barriers_v4.py",
+      "mode": 420,
+      "mtime": 1792999090,
+      "sha256": "2d257be3439173d3ad0056763c04a7ee81eebf5af56ad45c84ec83e2955c729f",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/next-instantiation-barriers-v4/first-draft/w1_instantiation_barriers_v4.py"
+    },
+    {
+      "bytes": 6470,
+      "member": "raw/next-instantiation-barriers-v4/model-v1.log",
+      "mode": 420,
+      "mtime": 1792998964,
+      "sha256": "2cdd1573de3ac3ba80318bc5eb57a974e1504973fe1f25642552df800e21e696",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/next-instantiation-barriers-v4/model-v1.log"
+    },
+    {
+      "bytes": 6628,
+      "member": "raw/next-instantiation-barriers-v4/model-v2.log",
+      "mode": 420,
+      "mtime": 1792999114,
+      "sha256": "d46390be8638ce04023c9da245d695b257c6d4f15f5e0a183b2339e6aa582994",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/next-instantiation-barriers-v4/model-v2.log"
+    },
+    {
+      "bytes": 170,
+      "member": "raw/next-instantiation-barriers-v4/preflight-v1.log",
+      "mode": 420,
+      "mtime": 1792998964,
+      "sha256": "925ce0a3ef88fc536ffb549e3273a3ed5b528d969c4e1e8c30e811772af18ca8",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/next-instantiation-barriers-v4/preflight-v1.log"
+    },
+    {
+      "bytes": 1663,
+      "member": "raw/next-instantiation-barriers-v4/retrieval-and-failure-notes-v1.json",
+      "mode": 420,
+      "mtime": 1792999150,
+      "sha256": "cea45a1314bebd839e1eceb9945a1a3466b86bebd409d5654708d2a77a3d0ca8",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/next-instantiation-barriers-v4/retrieval-and-failure-notes-v1.json"
+    },
+    {
+      "bytes": 2454,
+      "member": "raw/next-instantiation-barriers-v4/service-independent-review-v1.json",
+      "mode": 420,
+      "mtime": 1792999150,
+      "sha256": "877421ffe71047a3607f78cfd2dad00fe481b55fcc25db1861ab72748a60bff1",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/next-instantiation-barriers-v4/service-independent-review-v1.json"
+    },
+    {
+      "bytes": 2074,
+      "member": "raw/next-instantiation-barriers-v4/validation-v1.json",
+      "mode": 420,
+      "mtime": 1792998964,
+      "sha256": "a3848c787f098861cb1abe4e0768b5014a6e5abf9b363da250eaaa1ab66ffc10",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/next-instantiation-barriers-v4/validation-v1.json"
+    },
+    {
+      "bytes": 1931,
+      "member": "raw/next-instantiation-barriers-v4/validation-v2.json",
+      "mode": 420,
+      "mtime": 1792999114,
+      "sha256": "6aaba0a34b5f12fb31f8ea72a5594340b70938bcb1feaa8c93037dd070970eb6",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/next-instantiation-barriers-v4/validation-v2.json"
+    },
+    {
+      "bytes": 1119,
+      "member": "raw/service-growth-v4/author-final-v1.json",
+      "mode": 420,
+      "mtime": 1792999120,
+      "sha256": "1eaa1aae682478f845a93fcc5381a99b7f046afd50b188033bbd1b216e2eb5e7",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/service-growth-v4/author-final-v1.json"
+    },
+    {
+      "bytes": 2349,
+      "member": "raw/service-growth-v4/controls-01.json",
+      "mode": 420,
+      "mtime": 1792998967,
+      "sha256": "b8b2677fa63f07b4070cf6713bad5af68d8e4a0913f754492a4f6d6556ff7afb",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/service-growth-v4/controls-01.json"
+    },
+    {
+      "bytes": 0,
+      "member": "raw/service-growth-v4/controls-01.stderr",
+      "mode": 420,
+      "mtime": 1792998967,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/service-growth-v4/controls-01.stderr"
+    },
+    {
+      "bytes": 3337,
+      "member": "raw/service-growth-v4/cost-instantiation-independent-review-v1.json",
+      "mode": 420,
+      "mtime": 1792999120,
+      "sha256": "30585596a06a89795d881a687483015d54e8276ef9240203332b5446a7ad503f",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/service-growth-v4/cost-instantiation-independent-review-v1.json"
+    },
+    {
+      "bytes": 3904,
+      "member": "raw/service-growth-v4/cost-instantiation-independent-review-v2.json",
+      "mode": 420,
+      "mtime": 1792999151,
+      "sha256": "917161987c99bcb91258f4487db7b26147eaad71e6ba4e1f96069586f6e8ac3a",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/service-growth-v4/cost-instantiation-independent-review-v2.json"
+    },
+    {
+      "bytes": 1197,
+      "member": "raw/service-growth-v4/research-01.json",
+      "mode": 420,
+      "mtime": 1792998967,
+      "sha256": "9007bb6f1f995fc59d8391212a081a7809c9def389f1ccab3e9c8e132e1c3559",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/service-growth-v4/research-01.json"
+    },
+    {
+      "bytes": 19106,
+      "member": "raw/service-growth-v4/service-draft-before-peer-review.md",
+      "mode": 420,
+      "mtime": 1792999085,
+      "sha256": "321a6d198a54cd9b838f5c4af633b0db4e4768d3c22f6090e12025c618320c78",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/service-growth-v4/service-draft-before-peer-review.md"
+    },
+    {
+      "bytes": 1165,
+      "member": "raw/service-growth-v4/service-peer-review-capture-01.json",
+      "mode": 420,
+      "mtime": 1792999085,
+      "sha256": "0722bba4e89b4f53ee48fff188b0820d2a4497a5b1c079b3f0db3d6786f36eb9",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/service-growth-v4/service-peer-review-capture-01.json"
+    },
+    {
+      "bytes": 4107,
+      "member": "raw/service-growth-v4/source-review-01.json",
+      "mode": 420,
+      "mtime": 1792998967,
+      "sha256": "28df3b5379a19e1afed54f16f0c461805a1124b206dd457d859f1a1355340ae1",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/service-growth-v4/source-review-01.json"
+    },
+    {
+      "bytes": 460,
+      "member": "raw/service-growth-v4/test-run-01.json",
+      "mode": 420,
+      "mtime": 1792998727,
+      "sha256": "29f5660322235f5677dc6caaf1cfc7584359cd17eb623a0aac1d563378b56182",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/service-growth-v4/test-run-01.json"
+    },
+    {
+      "bytes": 4035,
+      "member": "raw/service-growth-v4/test-run-01.log",
+      "mode": 420,
+      "mtime": 1792998727,
+      "sha256": "0ae91ba88cae2e360e79ea0fea23c545ab57a5f3a043883febe34d29ea78cf38",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/service-growth-v4/test-run-01.log"
+    },
+    {
+      "bytes": 1203,
+      "member": "raw/product-service-stage-root-v1/formal-build-cache-reclaim-v1.json",
+      "mode": 420,
+      "mtime": 1793000770,
+      "sha256": "5b809ef5c851b63d8d033967b9b33b1d9e23925eed405e71644c91d0358b6d58",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-stage-root-v1/formal-build-cache-reclaim-v1.json"
+    },
+    {
+      "bytes": 0,
+      "member": "raw/product-service-stage-root-v1/preflight-01.stderr",
+      "mode": 420,
+      "mtime": 1792998953,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-stage-root-v1/preflight-01.stderr"
+    },
+    {
+      "bytes": 170,
+      "member": "raw/product-service-stage-root-v1/preflight-01.stdout",
+      "mode": 420,
+      "mtime": 1792998953,
+      "sha256": "925ce0a3ef88fc536ffb549e3273a3ed5b528d969c4e1e8c30e811772af18ca8",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-stage-root-v1/preflight-01.stdout"
+    },
+    {
+      "bytes": 1247,
+      "member": "raw/product-service-stage-root-v1/preflight-01.step.json",
+      "mode": 420,
+      "mtime": 1792998953,
+      "sha256": "1818b456f6f223f1f970f2870ed678fde53cd6729c0672d8c0ca1c6231a12280",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-stage-root-v1/preflight-01.step.json"
+    },
+    {
+      "bytes": 60535,
+      "member": "raw/product-service-stage-root-v1/prior-raw-deduplication-v4.json",
+      "mode": 420,
+      "mtime": 1793000109,
+      "sha256": "4e19efb2f732f6f2220f303455c4c538c34b8526b276d490a9e8fa56af7e1631",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-stage-root-v1/prior-raw-deduplication-v4.json"
+    },
+    {
+      "bytes": 16476,
+      "member": "raw/product-service-stage-root-v1/reader-bytecode-quarantine-v1/formal/pon-nakamoto-v1/__pycache__/bounded_process.cpython-312.pyc",
+      "mode": 420,
+      "mtime": 1792934862,
+      "sha256": "218932b5ea0084c3a4b753a17152351d5217fbb6d6ccd19ef5a1e13e590a3237",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-stage-root-v1/reader-bytecode-quarantine-v1/formal/pon-nakamoto-v1/__pycache__/bounded_process.cpython-312.pyc"
+    },
+    {
+      "bytes": 18176,
+      "member": "raw/product-service-stage-root-v1/reader-bytecode-quarantine-v1/formal/pon-nakamoto-v1/__pycache__/contract_wire.cpython-312.pyc",
+      "mode": 420,
+      "mtime": 1792934862,
+      "sha256": "a5a7929b9f9c43f90ec8777c9b6ced0dda172cc8a8118a60419d29f26f24683a",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-stage-root-v1/reader-bytecode-quarantine-v1/formal/pon-nakamoto-v1/__pycache__/contract_wire.cpython-312.pyc"
+    },
+    {
+      "bytes": 64447,
+      "member": "raw/product-service-stage-root-v1/reader-bytecode-quarantine-v1/formal/pon-nakamoto-v1/__pycache__/ledger.cpython-312.pyc",
+      "mode": 420,
+      "mtime": 1792934862,
+      "sha256": "2f8941f323894df92b2fecd930b58ba196aeff92f0497999d4f48f301d3c3009",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-stage-root-v1/reader-bytecode-quarantine-v1/formal/pon-nakamoto-v1/__pycache__/ledger.cpython-312.pyc"
+    },
+    {
+      "bytes": 8716,
+      "member": "raw/product-service-stage-root-v1/reader-bytecode-quarantine-v1/formal/pon-nakamoto-v1/__pycache__/reference.cpython-312.pyc",
+      "mode": 420,
+      "mtime": 1792934862,
+      "sha256": "82e42420733b91c3e59fcf334dd0a365fb643f16d70e3827e3d91081f1ab2356",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-stage-root-v1/reader-bytecode-quarantine-v1/formal/pon-nakamoto-v1/__pycache__/reference.cpython-312.pyc"
+    },
+    {
+      "bytes": 3996,
+      "member": "raw/product-service-stage-root-v1/reader-bytecode-quarantine-v1/formal/pon-nakamoto-v1/__pycache__/strict_signature.cpython-312.pyc",
+      "mode": 420,
+      "mtime": 1792934862,
+      "sha256": "e7e68af88afb36c0530fa0d028447b78149dd3d2f18622f55c41612343a4bd53",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-stage-root-v1/reader-bytecode-quarantine-v1/formal/pon-nakamoto-v1/__pycache__/strict_signature.cpython-312.pyc"
+    },
+    {
+      "bytes": 3847,
+      "member": "raw/product-service-stage-root-v1/reader-bytecode-quarantine-v1/formal/pon-nakamoto-v1/__pycache__/work_backend.cpython-312.pyc",
+      "mode": 420,
+      "mtime": 1792934862,
+      "sha256": "b0eae5fe3eddf4cc6da144282544e1b84695c65613ef58dd0de7bb252882aaf2",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-stage-root-v1/reader-bytecode-quarantine-v1/formal/pon-nakamoto-v1/__pycache__/work_backend.cpython-312.pyc"
+    },
+    {
+      "bytes": 7852,
+      "member": "raw/product-service-stage-root-v1/reader-bytecode-quarantine-v1/formal/pon-nakamoto-v1/__pycache__/work_oracle.cpython-312.pyc",
+      "mode": 420,
+      "mtime": 1792934862,
+      "sha256": "53b3b5b54cba5d6958eb523a3cdee3ac271059116bece93c12cdf77c0f07d11f",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-stage-root-v1/reader-bytecode-quarantine-v1/formal/pon-nakamoto-v1/__pycache__/work_oracle.cpython-312.pyc"
+    },
+    {
+      "bytes": 30417,
+      "member": "raw/product-service-stage-root-v1/reader-bytecode-quarantine-v1/formal/pon-nakamoto-v1/experiments/__pycache__/numerical_boundary.cpython-312.pyc",
+      "mode": 420,
+      "mtime": 1792935071,
+      "sha256": "ddd066783448b92248717fdaa0427f2bff96e4117a84e9756b7d50600f2e74de",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-stage-root-v1/reader-bytecode-quarantine-v1/formal/pon-nakamoto-v1/experiments/__pycache__/numerical_boundary.cpython-312.pyc"
+    },
+    {
+      "bytes": 33965,
+      "member": "raw/product-service-stage-root-v1/reader-bytecode-quarantine-v1/formal/pon-nakamoto-v1/experiments/__pycache__/qualification_separation.cpython-312.pyc",
+      "mode": 420,
+      "mtime": 1792935068,
+      "sha256": "0f533c91559b56078f09b5700677f4bd1fa6d0f5818535a87fc162d565ba66bd",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-stage-root-v1/reader-bytecode-quarantine-v1/formal/pon-nakamoto-v1/experiments/__pycache__/qualification_separation.cpython-312.pyc"
+    },
+    {
+      "bytes": 10936,
+      "member": "raw/product-service-stage-root-v1/reader-bytecode-quarantine-v1/formal/pon-nakamoto-v1/experiments/__pycache__/test_numerical_boundary.cpython-312.pyc",
+      "mode": 420,
+      "mtime": 1792935071,
+      "sha256": "73cd068477ed29efbdd1d86c4a9e7e4715179cdc2f6829e4c3bdbe3963369c2c",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-stage-root-v1/reader-bytecode-quarantine-v1/formal/pon-nakamoto-v1/experiments/__pycache__/test_numerical_boundary.cpython-312.pyc"
+    },
+    {
+      "bytes": 10657,
+      "member": "raw/product-service-stage-root-v1/reader-bytecode-quarantine-v1/formal/pon-nakamoto-v1/experiments/__pycache__/test_qualification_separation.cpython-312.pyc",
+      "mode": 420,
+      "mtime": 1792935068,
+      "sha256": "a3a0f4b38410c6b19b9c546f092d0d992542f262ed00622dd54a326c29f2fa5c",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-stage-root-v1/reader-bytecode-quarantine-v1/formal/pon-nakamoto-v1/experiments/__pycache__/test_qualification_separation.cpython-312.pyc"
+    },
+    {
+      "bytes": 12740,
+      "member": "raw/product-service-stage-root-v1/reader-bytecode-quarantine-v1/formal/pon-nakamoto-v1/experiments/__pycache__/test_w1_cost_security_math.cpython-312.pyc",
+      "mode": 420,
+      "mtime": 1792935466,
+      "sha256": "5f97a5bc67a3b95cc765ef4ab9e4af171f440992de6665e17fe8c445a1b7f162",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-stage-root-v1/reader-bytecode-quarantine-v1/formal/pon-nakamoto-v1/experiments/__pycache__/test_w1_cost_security_math.cpython-312.pyc"
+    },
+    {
+      "bytes": 36918,
+      "member": "raw/product-service-stage-root-v1/reader-bytecode-quarantine-v1/formal/pon-nakamoto-v1/experiments/__pycache__/test_w1_ticket_composition_v3.cpython-312.pyc",
+      "mode": 420,
+      "mtime": 1792994359,
+      "sha256": "6cc19d39cc3c709d288c12defb7ae72bb2c0ed85c2dcc991e26074db3ff4bd72",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-stage-root-v1/reader-bytecode-quarantine-v1/formal/pon-nakamoto-v1/experiments/__pycache__/test_w1_ticket_composition_v3.cpython-312.pyc"
+    },
+    {
+      "bytes": 21149,
+      "member": "raw/product-service-stage-root-v1/reader-bytecode-quarantine-v1/formal/pon-nakamoto-v1/experiments/__pycache__/w1_chain_security_envelope.cpython-312.pyc",
+      "mode": 420,
+      "mtime": 1792977087,
+      "sha256": "02378776132369265be3c0ccbbbc70af6e0e8b0477a5fe1166cb749673fcb26f",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-stage-root-v1/reader-bytecode-quarantine-v1/formal/pon-nakamoto-v1/experiments/__pycache__/w1_chain_security_envelope.cpython-312.pyc"
+    },
+    {
+      "bytes": 11683,
+      "member": "raw/product-service-stage-root-v1/reader-bytecode-quarantine-v1/formal/pon-nakamoto-v1/experiments/__pycache__/w1_cost_security_math.cpython-312.pyc",
+      "mode": 420,
+      "mtime": 1792935473,
+      "sha256": "394c76f2fbffb61a530c44b659ba5f8a170845178a8d2b815e8778119d6bbccf",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-stage-root-v1/reader-bytecode-quarantine-v1/formal/pon-nakamoto-v1/experiments/__pycache__/w1_cost_security_math.cpython-312.pyc"
+    },
+    {
+      "bytes": 39939,
+      "member": "raw/product-service-stage-root-v1/reader-bytecode-quarantine-v1/formal/pon-nakamoto-v1/experiments/__pycache__/w1_multi_instance_cost_v2.cpython-312.pyc",
+      "mode": 420,
+      "mtime": 1792993827,
+      "sha256": "28d8685f611527f9e63b34630f3c22273a799d7e3e121435d3db8ccce8f007ce",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-stage-root-v1/reader-bytecode-quarantine-v1/formal/pon-nakamoto-v1/experiments/__pycache__/w1_multi_instance_cost_v2.cpython-312.pyc"
+    },
+    {
+      "bytes": 42039,
+      "member": "raw/product-service-stage-root-v1/reader-bytecode-quarantine-v1/formal/pon-nakamoto-v1/experiments/__pycache__/w1_ticket_composition_v3.cpython-312.pyc",
+      "mode": 420,
+      "mtime": 1792994359,
+      "sha256": "22abd9752085cc5c29d00fa7ed815b642b27879574ab17e3c3294bf30d4b5609",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-stage-root-v1/reader-bytecode-quarantine-v1/formal/pon-nakamoto-v1/experiments/__pycache__/w1_ticket_composition_v3.cpython-312.pyc"
+    },
+    {
+      "bytes": 0,
+      "member": "raw/product-service-stage-root-v1/reader-bytecode-quarantine-v1/scripts/__pycache__/read_w1_cost_research.cpython-312.pyc",
+      "mode": 420,
+      "mtime": 1793000785,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-stage-root-v1/reader-bytecode-quarantine-v1/scripts/__pycache__/read_w1_cost_research.cpython-312.pyc"
+    },
+    {
+      "bytes": 2165,
+      "member": "raw/product-service-stage-root-v1/reader-controls-01.stderr",
+      "mode": 420,
+      "mtime": 1792998953,
+      "sha256": "2ca7a40da757d3b2134309cf27a45102cbd9ababbe906da229cd02f8f85c1d94",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-stage-root-v1/reader-controls-01.stderr"
+    },
+    {
+      "bytes": 0,
+      "member": "raw/product-service-stage-root-v1/reader-controls-01.stdout",
+      "mode": 420,
+      "mtime": 1792998953,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-stage-root-v1/reader-controls-01.stdout"
+    },
+    {
+      "bytes": 1308,
+      "member": "raw/product-service-stage-root-v1/reader-controls-01.step.json",
+      "mode": 420,
+      "mtime": 1792998953,
+      "sha256": "80b2cfe4ac2ffc02ab7a346b7a873725c8d4c1ab8b28ee6485976d30b34f209c",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-stage-root-v1/reader-controls-01.step.json"
+    },
+    {
+      "bytes": 337108,
+      "member": "raw/product-service-stage-root-v1/reader-initial-bytecode-snapshot-v1.tar.gz",
+      "mode": 420,
+      "mtime": 1793000961,
+      "sha256": "00f3f9cee8f23e6251299b747df5b013d36ec9612aa7b95543948d89d7659b2a",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-stage-root-v1/reader-initial-bytecode-snapshot-v1.tar.gz"
+    },
+    {
+      "bytes": 15904,
+      "member": "raw/product-service-stage-root-v1/reader-isolation-v1.json",
+      "mode": 420,
+      "mtime": 1793000961,
+      "sha256": "bff7cdbbb58d15d2253fd7262a64b152c5707a4c5e6f7015ddaa587f714b8390",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-stage-root-v1/reader-isolation-v1.json"
+    },
+    {
+      "bytes": 14889,
+      "member": "raw/product-service-stage-root-v1/redundant-copy-reclaim.json",
+      "mode": 420,
+      "mtime": 1792998534,
+      "sha256": "e5fa82c01ae9611bd330c53d2277af9fe1ac6e46fdf3a306c9b3f6bb93017e19",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-stage-root-v1/redundant-copy-reclaim.json"
+    },
+    {
+      "bytes": 29644660,
+      "member": "raw/product-service-stage-root-v1/retained-validation-executables-v1.tar.gz",
+      "mode": 420,
+      "mtime": 1792999856,
+      "sha256": "bf7b58b09e272d3309cd6583bba86e613e241c11eda68d67254cf560ec6db0e5",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-stage-root-v1/retained-validation-executables-v1.tar.gz"
+    },
+    {
+      "bytes": 34912086,
+      "member": "raw/product-service-stage-root-v1/retained-validation-executables-v2.tar.gz",
+      "mode": 420,
+      "mtime": 1792999908,
+      "sha256": "6f2cf5154b96504aec78c8b43beb5c8e352a129f755293c814df295c4ae55e8d",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-stage-root-v1/retained-validation-executables-v2.tar.gz"
+    },
+    {
+      "bytes": 314,
+      "member": "raw/product-service-stage-root-v1/source-fetch.json",
+      "mode": 420,
+      "mtime": 1792999479,
+      "sha256": "326ee86a70dd9ff2c5366e6df37d37d3f9f0fb820c7f12df96551c3f437f9e89",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-stage-root-v1/source-fetch.json"
+    },
+    {
+      "bytes": 341,
+      "member": "raw/product-service-stage-root-v1/source-freeze.json",
+      "mode": 420,
+      "mtime": 1792999479,
+      "sha256": "a40ea71804266a0fd3ae4e6a4778550b2c872aac1ca0ece3cfebdcddc32f35aa",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-stage-root-v1/source-freeze.json"
+    },
+    {
+      "bytes": 306,
+      "member": "raw/product-service-stage-root-v1/source-staging.json",
+      "mode": 420,
+      "mtime": 1792999230,
+      "sha256": "8afda1445f03e46c6a7be72fe2b83983a05fe53310f28b939fefb0eaa40495e9",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-stage-root-v1/source-staging.json"
+    },
+    {
+      "bytes": 931066,
+      "member": "raw/product-service-stage-root-v1/source-tree-elements.json",
+      "mode": 420,
+      "mtime": 1792999230,
+      "sha256": "ad8f6673b49f106ba744b4030e932229e71c214080931ce17e4671a23f972435",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-stage-root-v1/source-tree-elements.json"
+    },
+    {
+      "bytes": 557,
+      "member": "raw/product-service-stage-root-v1/task-product-external-pins-v1.json",
+      "mode": 420,
+      "mtime": 1793000657,
+      "sha256": "ef053aea0ac6284682150ae5dc1725131b348376d6f77a3f76d4bc4b481a8a16",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-stage-root-v1/task-product-external-pins-v1.json"
+    },
+    {
+      "bytes": 573004,
+      "member": "raw/product-service-stage-root-v1/test-copy-reclaim.json",
+      "mode": 420,
+      "mtime": 1792999130,
+      "sha256": "7e7a170fe7a57d39d23c31f6fd3d23d98cb843ab763f83e16c9dcc5e7851c691",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-stage-root-v1/test-copy-reclaim.json"
+    },
+    {
+      "bytes": 4914,
+      "member": "raw/product-service-stage-root-v1/validation-archive-control-failure-v1.json",
+      "mode": 420,
+      "mtime": 1792999906,
+      "sha256": "e7dc74f215fca43eaf39f823d59cdbbc7eb4f96c1140da1a285b0d5f29a54031",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-stage-root-v1/validation-archive-control-failure-v1.json"
+    },
+    {
+      "bytes": 16507,
+      "member": "raw/product-service-stage-root-v1/validation-executable-reclaim-v2.json",
+      "mode": 420,
+      "mtime": 1792999908,
+      "sha256": "2655c2a09c44301b6e1d529887d5ee0889324f31a55684675ed517ef01e60f88",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-stage-root-v1/validation-executable-reclaim-v2.json"
+    },
+    {
+      "bytes": 31001,
+      "member": "raw/product-service-validation-b6f2322-v1/canonical-plan.stderr",
+      "mode": 420,
+      "mtime": 1792999802,
+      "sha256": "61959fd75959073198f82f9729165094b09eb15c75d6a0edf0176ca5935db7d4",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-validation-b6f2322-v1/canonical-plan.stderr"
+    },
+    {
+      "bytes": 306,
+      "member": "raw/product-service-validation-b6f2322-v1/canonical-plan.stdout",
+      "mode": 420,
+      "mtime": 1792999802,
+      "sha256": "bb080d599347dccd30827134aef936956957398451a7a721005806fa64f4cb9f",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-validation-b6f2322-v1/canonical-plan.stdout"
+    },
+    {
+      "bytes": 1298,
+      "member": "raw/product-service-validation-b6f2322-v1/canonical-plan.step.json",
+      "mode": 420,
+      "mtime": 1792999802,
+      "sha256": "4ed32bdb9be6d85ac9e009e687d0ccf214fdabaa29f9d7e702e36f00a15f606d",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-validation-b6f2322-v1/canonical-plan.step.json"
+    },
+    {
+      "bytes": 4471,
+      "member": "raw/product-service-validation-b6f2322-v1/crypto-protocol.stderr",
+      "mode": 420,
+      "mtime": 1792999603,
+      "sha256": "be07f4e76b2b1a1f0f70a6e05fea26f6e8c88d184bf71bf043d73942006317da",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-validation-b6f2322-v1/crypto-protocol.stderr"
+    },
+    {
+      "bytes": 21490,
+      "member": "raw/product-service-validation-b6f2322-v1/crypto-protocol.stdout",
+      "mode": 420,
+      "mtime": 1792999603,
+      "sha256": "a47e84d978b72f2aa6078a226e3c28237b648db9b00532c030fe6c276a0d8fc3",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-validation-b6f2322-v1/crypto-protocol.stdout"
+    },
+    {
+      "bytes": 1579,
+      "member": "raw/product-service-validation-b6f2322-v1/crypto-protocol.step.json",
+      "mode": 420,
+      "mtime": 1792999603,
+      "sha256": "ddeeac1bd34e937d70ff0023c0e2b95d97cb47a4cd6569b4b68f96d4d9626338",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-validation-b6f2322-v1/crypto-protocol.step.json"
+    },
+    {
+      "bytes": 0,
+      "member": "raw/product-service-validation-b6f2322-v1/fmt.stderr",
+      "mode": 420,
+      "mtime": 1792999520,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-validation-b6f2322-v1/fmt.stderr"
+    },
+    {
+      "bytes": 0,
+      "member": "raw/product-service-validation-b6f2322-v1/fmt.stdout",
+      "mode": 420,
+      "mtime": 1792999520,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-validation-b6f2322-v1/fmt.stdout"
+    },
+    {
+      "bytes": 1365,
+      "member": "raw/product-service-validation-b6f2322-v1/fmt.step.json",
+      "mode": 420,
+      "mtime": 1792999531,
+      "sha256": "719cef31e157f44a57e806f09f366457498578d8510597a3f51d99e0d136dc31",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-validation-b6f2322-v1/fmt.step.json"
+    },
+    {
+      "bytes": 0,
+      "member": "raw/product-service-validation-b6f2322-v1/inventory.stderr",
+      "mode": 420,
+      "mtime": 1792999533,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-validation-b6f2322-v1/inventory.stderr"
+    },
+    {
+      "bytes": 35,
+      "member": "raw/product-service-validation-b6f2322-v1/inventory.stdout",
+      "mode": 420,
+      "mtime": 1792999533,
+      "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-validation-b6f2322-v1/inventory.stdout"
+    },
+    {
+      "bytes": 1286,
+      "member": "raw/product-service-validation-b6f2322-v1/inventory.step.json",
+      "mode": 420,
+      "mtime": 1792999533,
+      "sha256": "26424106478d4a203ec81ca67be91bf22cebbbca1032c1c35ede15b827166274",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-validation-b6f2322-v1/inventory.step.json"
+    },
+    {
+      "bytes": 0,
+      "member": "raw/product-service-validation-b6f2322-v1/metadata.stderr",
+      "mode": 420,
+      "mtime": 1792999532,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-validation-b6f2322-v1/metadata.stderr"
+    },
+    {
+      "bytes": 724839,
+      "member": "raw/product-service-validation-b6f2322-v1/metadata.stdout",
+      "mode": 420,
+      "mtime": 1792999532,
+      "sha256": "ea0248c30b2ea24b39a4fd4e8adaf65c9b488b4174f01a81cddd1f9fd7441ff2",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-validation-b6f2322-v1/metadata.stdout"
+    },
+    {
+      "bytes": 1422,
+      "member": "raw/product-service-validation-b6f2322-v1/metadata.step.json",
+      "mode": 420,
+      "mtime": 1792999532,
+      "sha256": "22f3966c9ca6bfe663160d1f5aee31b8bb0a652b7ae55ad140ab6d092f9cf773",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-validation-b6f2322-v1/metadata.step.json"
+    },
+    {
+      "bytes": 0,
+      "member": "raw/product-service-validation-b6f2322-v1/preflight.stderr",
+      "mode": 420,
+      "mtime": 1792999519,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-validation-b6f2322-v1/preflight.stderr"
+    },
+    {
+      "bytes": 170,
+      "member": "raw/product-service-validation-b6f2322-v1/preflight.stdout",
+      "mode": 420,
+      "mtime": 1792999519,
+      "sha256": "925ce0a3ef88fc536ffb549e3273a3ed5b528d969c4e1e8c30e811772af18ca8",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-validation-b6f2322-v1/preflight.stdout"
+    },
+    {
+      "bytes": 1239,
+      "member": "raw/product-service-validation-b6f2322-v1/preflight.step.json",
+      "mode": 420,
+      "mtime": 1792999519,
+      "sha256": "5061e8f833020ceb0bdaea77f74fd62386fcffd05f5780e2ef39506c20ec5c9d",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-validation-b6f2322-v1/preflight.step.json"
+    },
+    {
+      "bytes": 5436,
+      "member": "raw/product-service-validation-b6f2322-v1/registration.json",
+      "mode": 420,
+      "mtime": 1792999517,
+      "sha256": "1df50b37bdfe30abe535fd84dca8a251c312f3fed5f45ee23cd66af1e82b60ae",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-validation-b6f2322-v1/registration.json"
+    },
+    {
+      "bytes": 4633,
+      "member": "raw/product-service-validation-b6f2322-v1/strict-clippy.stderr",
+      "mode": 420,
+      "mtime": 1792999747,
+      "sha256": "84a96558120a176ae59a53d71e2b60cce54105835fc77eedd941bd97a8cb3a29",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-validation-b6f2322-v1/strict-clippy.stderr"
+    },
+    {
+      "bytes": 0,
+      "member": "raw/product-service-validation-b6f2322-v1/strict-clippy.stdout",
+      "mode": 420,
+      "mtime": 1792999605,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-validation-b6f2322-v1/strict-clippy.stdout"
+    },
+    {
+      "bytes": 1562,
+      "member": "raw/product-service-validation-b6f2322-v1/strict-clippy.step.json",
+      "mode": 420,
+      "mtime": 1792999747,
+      "sha256": "f74b5bbc6b7518c9ae5dc81556495a6c4d71ccff663c4d0f48c2979a52453e43",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-validation-b6f2322-v1/strict-clippy.step.json"
+    },
+    {
+      "bytes": 5025,
+      "member": "raw/product-service-validation-b6f2322-v1/test_ci_source_integrity.stderr",
+      "mode": 420,
+      "mtime": 1792999761,
+      "sha256": "e5e191c6c3f8b93eac680b095f0cff92f3cbc9b1d52aa26b93a4d61ac589f079",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-validation-b6f2322-v1/test_ci_source_integrity.stderr"
+    },
+    {
+      "bytes": 484,
+      "member": "raw/product-service-validation-b6f2322-v1/test_ci_source_integrity.stdout",
+      "mode": 420,
+      "mtime": 1792999761,
+      "sha256": "8970ff70a554b32472478ef57b5e72359f34723c8a1e505994747a0afb37f656",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-validation-b6f2322-v1/test_ci_source_integrity.stdout"
+    },
+    {
+      "bytes": 1328,
+      "member": "raw/product-service-validation-b6f2322-v1/test_ci_source_integrity.step.json",
+      "mode": 420,
+      "mtime": 1792999761,
+      "sha256": "df4263bee014ab82734b71a2049ecf93eb76992cf96100591660bafe25fcb53b",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-validation-b6f2322-v1/test_ci_source_integrity.step.json"
+    },
+    {
+      "bytes": 123,
+      "member": "raw/product-service-validation-b6f2322-v1/test_w1_instantiation_barriers_v4.stderr",
+      "mode": 420,
+      "mtime": 1792999749,
+      "sha256": "7493e59a43ad3217f24fc5aa48cb5d2eceae5dd0cdd706d28220ab6ba0e2d5dd",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-validation-b6f2322-v1/test_w1_instantiation_barriers_v4.stderr"
+    },
+    {
+      "bytes": 0,
+      "member": "raw/product-service-validation-b6f2322-v1/test_w1_instantiation_barriers_v4.stdout",
+      "mode": 420,
+      "mtime": 1792999749,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-validation-b6f2322-v1/test_w1_instantiation_barriers_v4.stdout"
+    },
+    {
+      "bytes": 1366,
+      "member": "raw/product-service-validation-b6f2322-v1/test_w1_instantiation_barriers_v4.step.json",
+      "mode": 420,
+      "mtime": 1792999749,
+      "sha256": "95c166f7e6e1dfebafe2f7c4e7ade957fd51c156cc85e38436d343f6525e19c0",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-validation-b6f2322-v1/test_w1_instantiation_barriers_v4.step.json"
+    },
+    {
+      "bytes": 123,
+      "member": "raw/product-service-validation-b6f2322-v1/test_w1_multi_instance_cost_v2.stderr",
+      "mode": 420,
+      "mtime": 1792999753,
+      "sha256": "5669c18c33a4adbc759ae326427e50f9709a290fb3cd1ddacf9dcb5a54762da1",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-validation-b6f2322-v1/test_w1_multi_instance_cost_v2.stderr"
+    },
+    {
+      "bytes": 0,
+      "member": "raw/product-service-validation-b6f2322-v1/test_w1_multi_instance_cost_v2.stdout",
+      "mode": 420,
+      "mtime": 1792999752,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-validation-b6f2322-v1/test_w1_multi_instance_cost_v2.stdout"
+    },
+    {
+      "bytes": 1360,
+      "member": "raw/product-service-validation-b6f2322-v1/test_w1_multi_instance_cost_v2.step.json",
+      "mode": 420,
+      "mtime": 1792999753,
+      "sha256": "4efe218b5fcf5310e374bedc7af4a259478ded2e3bb97ec8ed3353dbc41c5a4e",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-validation-b6f2322-v1/test_w1_multi_instance_cost_v2.step.json"
+    },
+    {
+      "bytes": 122,
+      "member": "raw/product-service-validation-b6f2322-v1/test_w1_native_daa_resource_v2.stderr",
+      "mode": 420,
+      "mtime": 1792999755,
+      "sha256": "c6eec30cec1dabb80bfbf43fcb6ced47d6fef91ea2900b535c8dd13f70b9db5f",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-validation-b6f2322-v1/test_w1_native_daa_resource_v2.stderr"
+    },
+    {
+      "bytes": 0,
+      "member": "raw/product-service-validation-b6f2322-v1/test_w1_native_daa_resource_v2.stdout",
+      "mode": 420,
+      "mtime": 1792999755,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-validation-b6f2322-v1/test_w1_native_daa_resource_v2.stdout"
+    },
+    {
+      "bytes": 1356,
+      "member": "raw/product-service-validation-b6f2322-v1/test_w1_native_daa_resource_v2.step.json",
+      "mode": 420,
+      "mtime": 1792999755,
+      "sha256": "06e831f8966c1e010abf83842347fae236b880c6a5c603e4d5943e2b030b67ec",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-validation-b6f2322-v1/test_w1_native_daa_resource_v2.step.json"
+    },
+    {
+      "bytes": 123,
+      "member": "raw/product-service-validation-b6f2322-v1/test_w1_service_growth_v4.stderr",
+      "mode": 420,
+      "mtime": 1792999750,
+      "sha256": "c6844226cae7815fc378c3a3c1540d258c73513c5de4ad074546f7f775b7cd19",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-validation-b6f2322-v1/test_w1_service_growth_v4.stderr"
+    },
+    {
+      "bytes": 0,
+      "member": "raw/product-service-validation-b6f2322-v1/test_w1_service_growth_v4.stdout",
+      "mode": 420,
+      "mtime": 1792999750,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-validation-b6f2322-v1/test_w1_service_growth_v4.stdout"
+    },
+    {
+      "bytes": 1335,
+      "member": "raw/product-service-validation-b6f2322-v1/test_w1_service_growth_v4.step.json",
+      "mode": 420,
+      "mtime": 1792999750,
+      "sha256": "32d3e72203717e8e0b15c691f6180b0a08c8c027bdb59e639e7b3ffc9900482b",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-validation-b6f2322-v1/test_w1_service_growth_v4.step.json"
+    },
+    {
+      "bytes": 101,
+      "member": "raw/product-service-validation-b6f2322-v1/test_w1_sha256_model_boundary.stderr",
+      "mode": 420,
+      "mtime": 1792999754,
+      "sha256": "cafe0befc6204d742636f5a24376ea4683600e3bfa4dbf7d1f6d93fa609e5024",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-validation-b6f2322-v1/test_w1_sha256_model_boundary.stderr"
+    },
+    {
+      "bytes": 0,
+      "member": "raw/product-service-validation-b6f2322-v1/test_w1_sha256_model_boundary.stdout",
+      "mode": 420,
+      "mtime": 1792999754,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-validation-b6f2322-v1/test_w1_sha256_model_boundary.stdout"
+    },
+    {
+      "bytes": 1352,
+      "member": "raw/product-service-validation-b6f2322-v1/test_w1_sha256_model_boundary.step.json",
+      "mode": 420,
+      "mtime": 1792999754,
+      "sha256": "7a208c63148cce93b5b3b3403771a3eee5cd0e7485fa263e3569e8b01494a685",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-validation-b6f2322-v1/test_w1_sha256_model_boundary.step.json"
+    },
+    {
+      "bytes": 109,
+      "member": "raw/product-service-validation-b6f2322-v1/test_w1_task_product_binding.stderr",
+      "mode": 420,
+      "mtime": 1792999757,
+      "sha256": "970ec884a81f24ec72cf115b5112ad801be88171d21fb757eb5ff44c114858ce",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-validation-b6f2322-v1/test_w1_task_product_binding.stderr"
+    },
+    {
+      "bytes": 0,
+      "member": "raw/product-service-validation-b6f2322-v1/test_w1_task_product_binding.stdout",
+      "mode": 420,
+      "mtime": 1792999757,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-validation-b6f2322-v1/test_w1_task_product_binding.stdout"
+    },
+    {
+      "bytes": 1329,
+      "member": "raw/product-service-validation-b6f2322-v1/test_w1_task_product_binding.step.json",
+      "mode": 420,
+      "mtime": 1792999757,
+      "sha256": "789ea09e5b142d9dafcd3703b3db693bfc372e4b0038db6518d2b07294da197f",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-validation-b6f2322-v1/test_w1_task_product_binding.step.json"
+    },
+    {
+      "bytes": 113,
+      "member": "raw/product-service-validation-b6f2322-v1/test_w1_task_product_research.stderr",
+      "mode": 420,
+      "mtime": 1792999756,
+      "sha256": "1196ff0962f42583ce30f85119b376cf500bb200d5f82985d7b3a8fa8cd375a3",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-validation-b6f2322-v1/test_w1_task_product_research.stderr"
+    },
+    {
+      "bytes": 0,
+      "member": "raw/product-service-validation-b6f2322-v1/test_w1_task_product_research.stdout",
+      "mode": 420,
+      "mtime": 1792999756,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-validation-b6f2322-v1/test_w1_task_product_research.stdout"
+    },
+    {
+      "bytes": 1334,
+      "member": "raw/product-service-validation-b6f2322-v1/test_w1_task_product_research.step.json",
+      "mode": 420,
+      "mtime": 1792999756,
+      "sha256": "0017ce146245c83647ef3b63c389165e053c3127309281daffc6db49d892d51a",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-validation-b6f2322-v1/test_w1_task_product_research.step.json"
+    },
+    {
+      "bytes": 120,
+      "member": "raw/product-service-validation-b6f2322-v1/test_w1_ticket_composition_v3.stderr",
+      "mode": 420,
+      "mtime": 1792999751,
+      "sha256": "6fb16e2fdc3e5723fd2ca49514a43593fa206f62264f7d9093b85026353301ac",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-validation-b6f2322-v1/test_w1_ticket_composition_v3.stderr"
+    },
+    {
+      "bytes": 0,
+      "member": "raw/product-service-validation-b6f2322-v1/test_w1_ticket_composition_v3.stdout",
+      "mode": 420,
+      "mtime": 1792999750,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-validation-b6f2322-v1/test_w1_ticket_composition_v3.stdout"
+    },
+    {
+      "bytes": 1355,
+      "member": "raw/product-service-validation-b6f2322-v1/test_w1_ticket_composition_v3.step.json",
+      "mode": 420,
+      "mtime": 1792999751,
+      "sha256": "9f1318921f53c9a085e769eee1eb6be14c7a0fc9ac780bf4abd251e9e039dc6e",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-validation-b6f2322-v1/test_w1_ticket_composition_v3.step.json"
+    },
+    {
+      "bytes": 30581,
+      "member": "raw/product-service-validation-b6f2322-v1/validation.json",
+      "mode": 420,
+      "mtime": 1792999803,
+      "sha256": "ba7a477ac44ec469ede66e424ce42c98ef3a40d9c9adf49f8ef7ac9a3b86220b",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-validation-b6f2322-v1/validation.json"
+    },
+    {
+      "bytes": 33350,
+      "member": "raw/product-service-validation-b6f2322-v2/canonical-plan.stderr",
+      "mode": 420,
+      "mtime": 1792999980,
+      "sha256": "011ba973e76c5d704bdb73622f2ec83d37dfa0db4c0fd119d6ff0176ca8d1f10",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-validation-b6f2322-v2/canonical-plan.stderr"
+    },
+    {
+      "bytes": 306,
+      "member": "raw/product-service-validation-b6f2322-v2/canonical-plan.stdout",
+      "mode": 420,
+      "mtime": 1792999980,
+      "sha256": "bb080d599347dccd30827134aef936956957398451a7a721005806fa64f4cb9f",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-validation-b6f2322-v2/canonical-plan.stdout"
+    },
+    {
+      "bytes": 1298,
+      "member": "raw/product-service-validation-b6f2322-v2/canonical-plan.step.json",
+      "mode": 420,
+      "mtime": 1792999980,
+      "sha256": "563ce589cb0bc2169179e1d652b266f950c92a3ecb1fee131ab2e8f6e908f601",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-validation-b6f2322-v2/canonical-plan.step.json"
+    },
+    {
+      "bytes": 1286,
+      "member": "raw/product-service-validation-b6f2322-v2/registration.json",
+      "mode": 420,
+      "mtime": 1792999938,
+      "sha256": "f12bced7d92d2e4c1271c3b032836bde4d2e3aa93dc23c101a8f9bc043bfb658",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-validation-b6f2322-v2/registration.json"
+    },
+    {
+      "bytes": 3424,
+      "member": "raw/product-service-validation-b6f2322-v2/validation.json",
+      "mode": 420,
+      "mtime": 1792999982,
+      "sha256": "83c0e8daa451ad41e263a72c00acb9191b59fd2de7ed2aef169b703856497b38",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-validation-b6f2322-v2/validation.json"
+    },
+    {
+      "bytes": 8118,
+      "member": "raw/product-service-validation-b6f2322-v3/canonical-plan.stderr",
+      "mode": 420,
+      "mtime": 1793000532,
+      "sha256": "d38750d123b6c1044c008684d8d9ee86533162d58a51169e6ce27b66355c10ae",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-validation-b6f2322-v3/canonical-plan.stderr"
+    },
+    {
+      "bytes": 306,
+      "member": "raw/product-service-validation-b6f2322-v3/canonical-plan.stdout",
+      "mode": 420,
+      "mtime": 1793000532,
+      "sha256": "bb080d599347dccd30827134aef936956957398451a7a721005806fa64f4cb9f",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-validation-b6f2322-v3/canonical-plan.stdout"
+    },
+    {
+      "bytes": 1304,
+      "member": "raw/product-service-validation-b6f2322-v3/canonical-plan.step.json",
+      "mode": 420,
+      "mtime": 1793000532,
+      "sha256": "5f54b4bf75f72049323366ef0681a637d249de1986c9b0b441638b79b9d155d5",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-validation-b6f2322-v3/canonical-plan.step.json"
+    },
+    {
+      "bytes": 1482,
+      "member": "raw/product-service-validation-b6f2322-v3/registration.json",
+      "mode": 420,
+      "mtime": 1793000376,
+      "sha256": "1561686ec7d808bcaba5ed937358f98c9f8974e358244ada0f77237171cbf051",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-validation-b6f2322-v3/registration.json"
+    },
+    {
+      "bytes": 3625,
+      "member": "raw/product-service-validation-b6f2322-v3/validation.json",
+      "mode": 420,
+      "mtime": 1793000535,
+      "sha256": "6dfa30373b46fe0f83adb46eadfee79dfad6f6f4314d5fc3d7748bf971cd9b91",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/product-service-validation-b6f2322-v3/validation.json"
+    },
+    {
+      "bytes": 1233,
+      "member": "raw/task-product-campaign-b6f2322-v1/build.stderr",
+      "mode": 420,
+      "mtime": 1793000628,
+      "sha256": "9fb4a55cc8bdcc71a8761388536ed3370af976b02e4d39b9456118f32098daf2",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/task-product-campaign-b6f2322-v1/build.stderr"
+    },
+    {
+      "bytes": 38650,
+      "member": "raw/task-product-campaign-b6f2322-v1/build.stdout",
+      "mode": 420,
+      "mtime": 1793000628,
+      "sha256": "cd8876a875b57df7763bec2f454c95f5855371cf071487dddd8267b3c4903732",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/task-product-campaign-b6f2322-v1/build.stdout"
+    },
+    {
+      "bytes": 1553,
+      "member": "raw/task-product-campaign-b6f2322-v1/build.step.json",
+      "mode": 420,
+      "mtime": 1793000628,
+      "sha256": "989fe4ca5e1b9b92943a53dc42310dbf4d9bede30cfde2d94931f18089ec1e56",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/task-product-campaign-b6f2322-v1/build.step.json"
+    },
+    {
+      "bytes": 19827,
+      "member": "raw/task-product-campaign-b6f2322-v1/campaign.json",
+      "mode": 420,
+      "mtime": 1793000632,
+      "sha256": "d5be47140723a216e8b3e505a4fd19f21077b86e519853644eb91d19813bee28",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/task-product-campaign-b6f2322-v1/campaign.json"
+    },
+    {
+      "bytes": 0,
+      "member": "raw/task-product-campaign-b6f2322-v1/cargo-version.stderr",
+      "mode": 420,
+      "mtime": 1793000601,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/task-product-campaign-b6f2322-v1/cargo-version.stderr"
+    },
+    {
+      "bytes": 336,
+      "member": "raw/task-product-campaign-b6f2322-v1/cargo-version.stdout",
+      "mode": 420,
+      "mtime": 1793000601,
+      "sha256": "bfd735e736b354adabe72cea24bc1b393488223889b6ab95e974fd8fb963552e",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/task-product-campaign-b6f2322-v1/cargo-version.stdout"
+    },
+    {
+      "bytes": 1297,
+      "member": "raw/task-product-campaign-b6f2322-v1/cargo-version.step.json",
+      "mode": 420,
+      "mtime": 1793000601,
+      "sha256": "bb47d26cf5baa25d68826ff3ad5499783dcb8a6ae5a38b168f45df7fec2d5e96",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/task-product-campaign-b6f2322-v1/cargo-version.step.json"
+    },
+    {
+      "bytes": 1915,
+      "member": "raw/task-product-campaign-b6f2322-v1/hardware-after.json",
+      "mode": 420,
+      "mtime": 1793000632,
+      "sha256": "d70ddf1d02a4f764175590898fd3454a03d16e9db29fb6bd0b726f180ceb2521",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/task-product-campaign-b6f2322-v1/hardware-after.json"
+    },
+    {
+      "bytes": 1915,
+      "member": "raw/task-product-campaign-b6f2322-v1/hardware-before.json",
+      "mode": 420,
+      "mtime": 1793000600,
+      "sha256": "80aa6651c19ead22d30d2403bfc41cf21fafde3d042a09fd17b24e0e8de889d7",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/task-product-campaign-b6f2322-v1/hardware-before.json"
+    },
+    {
+      "bytes": 0,
+      "member": "raw/task-product-campaign-b6f2322-v1/metadata.stderr",
+      "mode": 420,
+      "mtime": 1793000601,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/task-product-campaign-b6f2322-v1/metadata.stderr"
+    },
+    {
+      "bytes": 724863,
+      "member": "raw/task-product-campaign-b6f2322-v1/metadata.stdout",
+      "mode": 420,
+      "mtime": 1793000601,
+      "sha256": "7cb36263ee539df147d362cb95b8a9b5edde4413021b22aadbf599f900fb22d0",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/task-product-campaign-b6f2322-v1/metadata.stdout"
+    },
+    {
+      "bytes": 1423,
+      "member": "raw/task-product-campaign-b6f2322-v1/metadata.step.json",
+      "mode": 420,
+      "mtime": 1793000601,
+      "sha256": "c66b74ece587602239d34d28203d5ef561a7e44b0686f4e7f1009aa0e6f7e171",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/task-product-campaign-b6f2322-v1/metadata.step.json"
+    },
+    {
+      "bytes": 623240,
+      "member": "raw/task-product-campaign-b6f2322-v1/pon_task_product_facts",
+      "mode": 493,
+      "mtime": 1793000628,
+      "sha256": "e8303ab882d4c19851ebbc626c13c0a69646a816824e8a6e45ffa597b78a872e",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/task-product-campaign-b6f2322-v1/pon_task_product_facts"
+    },
+    {
+      "bytes": 0,
+      "member": "raw/task-product-campaign-b6f2322-v1/preflight.stderr",
+      "mode": 420,
+      "mtime": 1793000600,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/task-product-campaign-b6f2322-v1/preflight.stderr"
+    },
+    {
+      "bytes": 170,
+      "member": "raw/task-product-campaign-b6f2322-v1/preflight.stdout",
+      "mode": 420,
+      "mtime": 1793000601,
+      "sha256": "925ce0a3ef88fc536ffb549e3273a3ed5b528d969c4e1e8c30e811772af18ca8",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/task-product-campaign-b6f2322-v1/preflight.stdout"
+    },
+    {
+      "bytes": 1238,
+      "member": "raw/task-product-campaign-b6f2322-v1/preflight.step.json",
+      "mode": 420,
+      "mtime": 1793000601,
+      "sha256": "ba7e403878a695ec6961de79326ca37ddca332be1b4b4ff7c883f3f7116db686",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/task-product-campaign-b6f2322-v1/preflight.step.json"
+    },
+    {
+      "bytes": 470,
+      "member": "raw/task-product-campaign-b6f2322-v1/preregistered-plan.json",
+      "mode": 420,
+      "mtime": 1793000600,
+      "sha256": "f44e98f40bd9d3a85ed3e61024652d7b6e03b9dde593fc02e1039ad4961a9dc3",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/task-product-campaign-b6f2322-v1/preregistered-plan.json"
+    },
+    {
+      "bytes": 0,
+      "member": "raw/task-product-campaign-b6f2322-v1/rustc-version.stderr",
+      "mode": 420,
+      "mtime": 1793000601,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/task-product-campaign-b6f2322-v1/rustc-version.stderr"
+    },
+    {
+      "bytes": 196,
+      "member": "raw/task-product-campaign-b6f2322-v1/rustc-version.stdout",
+      "mode": 420,
+      "mtime": 1793000601,
+      "sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/task-product-campaign-b6f2322-v1/rustc-version.stdout"
+    },
+    {
+      "bytes": 1297,
+      "member": "raw/task-product-campaign-b6f2322-v1/rustc-version.step.json",
+      "mode": 420,
+      "mtime": 1793000601,
+      "sha256": "f0f9bca261e2727e46b94067a9c8f35803693f8ffdfb9933f01f306d3f05e727",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/task-product-campaign-b6f2322-v1/rustc-version.step.json"
+    },
+    {
+      "bytes": 786,
+      "member": "raw/task-product-campaign-b6f2322-v1/task-product-s8101.observer.json",
+      "mode": 420,
+      "mtime": 1793000629,
+      "sha256": "50d02f910b8b75a6aa9d539f42671145a4fb6ff002dc124f631f10ded7a7396e",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/task-product-campaign-b6f2322-v1/task-product-s8101.observer.json"
+    },
+    {
+      "bytes": 0,
+      "member": "raw/task-product-campaign-b6f2322-v1/task-product-s8101.stderr",
+      "mode": 420,
+      "mtime": 1793000629,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/task-product-campaign-b6f2322-v1/task-product-s8101.stderr"
+    },
+    {
+      "bytes": 2802413,
+      "member": "raw/task-product-campaign-b6f2322-v1/task-product-s8101.stdout",
+      "mode": 420,
+      "mtime": 1793000629,
+      "sha256": "c3014dd3ec83a59b6d9301ebec5cb6af12eb6e4e903a4f6a43152b5f13b663e1",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/task-product-campaign-b6f2322-v1/task-product-s8101.stdout"
+    },
+    {
+      "bytes": 1643,
+      "member": "raw/task-product-campaign-b6f2322-v1/task-product-s8101.step.json",
+      "mode": 420,
+      "mtime": 1793000629,
+      "sha256": "80b4625acee172c6c2de402476b241481493fe5d4692d5c0b01e1871e7c1564b",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/task-product-campaign-b6f2322-v1/task-product-s8101.step.json"
+    },
+    {
+      "bytes": 20,
+      "member": "raw/task-product-campaign-b6f2322-v1/task-product-s8101.usage",
+      "mode": 420,
+      "mtime": 1793000629,
+      "sha256": "9c7466f109514b55fb6a3d43c4931714f3daf9d6b5ed28c5a04176fb9fe0043a",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/task-product-campaign-b6f2322-v1/task-product-s8101.usage"
+    },
+    {
+      "bytes": 786,
+      "member": "raw/task-product-campaign-b6f2322-v1/task-product-s8102.observer.json",
+      "mode": 420,
+      "mtime": 1793000631,
+      "sha256": "0dd1deb5d50c6b23567286bff26efc576169f6da220337ee6b8f015a879f0045",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/task-product-campaign-b6f2322-v1/task-product-s8102.observer.json"
+    },
+    {
+      "bytes": 0,
+      "member": "raw/task-product-campaign-b6f2322-v1/task-product-s8102.stderr",
+      "mode": 420,
+      "mtime": 1793000631,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/task-product-campaign-b6f2322-v1/task-product-s8102.stderr"
+    },
+    {
+      "bytes": 2802407,
+      "member": "raw/task-product-campaign-b6f2322-v1/task-product-s8102.stdout",
+      "mode": 420,
+      "mtime": 1793000631,
+      "sha256": "67a40ccda9c160f940b969df1e40f786ac1834ef11a25678948c5a5c57d8dd0f",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/task-product-campaign-b6f2322-v1/task-product-s8102.stdout"
+    },
+    {
+      "bytes": 1641,
+      "member": "raw/task-product-campaign-b6f2322-v1/task-product-s8102.step.json",
+      "mode": 420,
+      "mtime": 1793000631,
+      "sha256": "e7292d359311402a4553f4d6e089940c64cc3e9bfb071e4d08709de0817f5b79",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/task-product-campaign-b6f2322-v1/task-product-s8102.step.json"
+    },
+    {
+      "bytes": 20,
+      "member": "raw/task-product-campaign-b6f2322-v1/task-product-s8102.usage",
+      "mode": 420,
+      "mtime": 1793000631,
+      "sha256": "fee573b809cfbd3339d1ba2ebf1fd0e8cff3b368f948c6884dd792eda8667333",
+      "source_path": "/workspace/scratch/3863a747524b/w1-cost-raw/task-product-campaign-b6f2322-v1/task-product-s8102.usage"
+    },
+    {
+      "bytes": 154031,
+      "member": "raw/task-product-readback-b6f2322-v1.json",
+      "mode": 420,
+      "mtime": 1793000994,
+      "sha256": "cce5a5275827625149a660f9bd9bd440e2ef44b22416e26052f24dc6f1a2dc91",
+      "source_path": "/dev/shm/W1-task-product-readback-b6f2322-v1.json"
+    },
+    {
+      "bytes": 1198,
+      "member": "raw/task-product-readback-b6f2322-v1.run.json",
+      "mode": 420,
+      "mtime": 1793000995,
+      "sha256": "b98f4432babe29f14599badb94936f50d032c854c950221cba2ddb536bd395e2",
+      "source_path": "/dev/shm/W1-task-product-readback-b6f2322-v1.run.json"
+    },
+    {
+      "bytes": 97316,
+      "member": "raw/task-product-independent-results-review-v1.json",
+      "mode": 420,
+      "mtime": 1793001150,
+      "sha256": "8e4b56c3d6c3e6a156f702370665455b89dac1c46ac39ec291fd11f6e055de42",
+      "source_path": "/dev/shm/W1-task-product-independent-results-review-v1.json"
+    },
+    {
+      "bytes": 24950,
+      "member": "raw/report-before-final-review-v1.md",
+      "mode": 420,
+      "mtime": 1793001626,
+      "sha256": "2b18cde64b51a8bb9d2a2a94edb104b73c8958bba98c00afa27ae9d2a53a9f64",
+      "source_path": "/dev/shm/W1-product-service-report-before-final-review-v1.md"
+    },
+    {
+      "bytes": 627,
+      "member": "raw/archive-space-plan-v1.json",
+      "mode": 420,
+      "mtime": 1793001540,
+      "sha256": "3e98c90ade3ea171e14a8aff3fd80a6cfdd0f5d6837e556e2f13d2c665739c5b",
+      "source_path": "/dev/shm/W1-product-service-archive-space-plan-v1.json"
+    },
+    {
+      "bytes": 25228,
+      "member": "report/RESULTS.md",
+      "mode": 420,
+      "mtime": 1793001626,
+      "sha256": "edbab491f677196976d9ec08fd9a24223e2f393be43e04fc7e9c7bb94f84a660",
+      "source_path": "/dev/shm/W1-product-service-report-stage-v1/RESULTS.md"
+    },
+    {
+      "bytes": 7821,
+      "member": "report/analysis.json",
+      "mode": 420,
+      "mtime": 1793001171,
+      "sha256": "140686d90cdb57c5f95a6cd75adb8045c916e55346bc2ed6c44d5302a3c63e73",
+      "source_path": "/dev/shm/W1-product-service-report-stage-v1/analysis.json"
+    },
+    {
+      "bytes": 5635,
+      "member": "report/blockers.json",
+      "mode": 420,
+      "mtime": 1793001171,
+      "sha256": "772ef824c49cf9295711c56f194a4e57b8bb5d9f9d6ca4f0bd8a3182dfe18c4d",
+      "source_path": "/dev/shm/W1-product-service-report-stage-v1/blockers.json"
+    },
+    {
+      "bytes": 4863,
+      "member": "report/failure-history.json",
+      "mode": 420,
+      "mtime": 1793001626,
+      "sha256": "d1490248db072444db52b7872305893d08cc4a4004b2dcdd7f430bb549e13647",
+      "source_path": "/dev/shm/W1-product-service-report-stage-v1/failure-history.json"
+    },
+    {
+      "bytes": 973,
+      "member": "report/final-report-review.json",
+      "mode": 420,
+      "mtime": 1793001626,
+      "sha256": "04a41d56e1eccd11831b5ff9e8c6074a290aec1da11f7d446761453b8014befa",
+      "source_path": "/dev/shm/W1-product-service-report-stage-v1/final-report-review.json"
+    },
+    {
+      "bytes": 2716,
+      "member": "report/hepta-source.json",
+      "mode": 420,
+      "mtime": 1793001350,
+      "sha256": "3f0420081aca7ce32fed22757f26811efeea2850a515aedf2993c1401986c9e2",
+      "source_path": "/dev/shm/W1-product-service-report-stage-v1/hepta-source.json"
+    },
+    {
+      "bytes": 123864,
+      "member": "report/independent-reviews.json",
+      "mode": 420,
+      "mtime": 1793001350,
+      "sha256": "5e82f039e438d74d12e18ff83ae4f44e59007cf8381ef80c04a180234557318b",
+      "source_path": "/dev/shm/W1-product-service-report-stage-v1/independent-reviews.json"
+    },
+    {
+      "bytes": 1744,
+      "member": "report/prior-compact-shm-deduplication.json",
+      "mode": 420,
+      "mtime": 1793001626,
+      "sha256": "e728cd6084ffe3dc3c05b1205bebc29d26cfd737298ddaded54eee4d8acd071d",
+      "source_path": "/dev/shm/W1-product-service-report-stage-v1/prior-compact-shm-deduplication.json"
+    },
+    {
+      "bytes": 1198,
+      "member": "report/readback-run.json",
+      "mode": 420,
+      "mtime": 1793000995,
+      "sha256": "b98f4432babe29f14599badb94936f50d032c854c950221cba2ddb536bd395e2",
+      "source_path": "/dev/shm/W1-product-service-report-stage-v1/readback-run.json"
+    },
+    {
+      "bytes": 154031,
+      "member": "report/readback.json",
+      "mode": 420,
+      "mtime": 1793000994,
+      "sha256": "cce5a5275827625149a660f9bd9bd440e2ef44b22416e26052f24dc6f1a2dc91",
+      "source_path": "/dev/shm/W1-product-service-report-stage-v1/readback.json"
+    },
+    {
+      "bytes": 926,
+      "member": "report/reader-checkout-reclaim.json",
+      "mode": 420,
+      "mtime": 1793001412,
+      "sha256": "cd094c37398c9a1ec8ef63085df440143637aac683c3945613ec4a1081d4441e",
+      "source_path": "/dev/shm/W1-product-service-report-stage-v1/reader-checkout-reclaim.json"
+    },
+    {
+      "bytes": 312,
+      "member": "report/report-preflight.json",
+      "mode": 420,
+      "mtime": 1793001171,
+      "sha256": "1d25fd2a93c132f3d65fb4cd131800ac1513c0e6e49c4998f8bf510b53224f1e",
+      "source_path": "/dev/shm/W1-product-service-report-stage-v1/report-preflight.json"
+    },
+    {
+      "bytes": 5020,
+      "member": "report/source-pins.json",
+      "mode": 420,
+      "mtime": 1793001171,
+      "sha256": "f4bb8b8b84c92fc9f4279c1cb932e798b393ae80a4925d5fc74f3d828b189c85",
+      "source_path": "/dev/shm/W1-product-service-report-stage-v1/source-pins.json"
+    },
+    {
+      "bytes": 41934,
+      "member": "report/validation.json",
+      "mode": 420,
+      "mtime": 1793001171,
+      "sha256": "01b666f58f0bc639964d158e006a10547df709f382871a17282f20b27e7c84a5",
+      "source_path": "/dev/shm/W1-product-service-report-stage-v1/validation.json"
+    }
+  ],
+  "formal_native_jobs": 2,
+  "measured_head": "b6f2322dacc4a23ec43e3207be008614e07c60b7",
+  "measured_tree": "895b472f7a2b8c532081a0dea4c021e1b30cb9a1",
+  "native_raw_omissions": 0,
+  "original_native_proof_records": 56,
+  "payload_bytes": 75609605,
+  "payload_files": 196,
+  "prior_complete_campaign_archives_not_reembedded": true,
+  "publication_receipts_after_seal_included": false,
+  "schema": "w1-product-service-full-raw-artifact-index-v1"
+}

@@ -1,0 +1,84 @@
+{
+  "all_original_blockers_closed": false,
+  "bounded_closures": [
+    {
+      "boundary": "Rejects only these inference shortcuts. Actual SHA, arbitrary advice, resource conversion and event/cap/identity losses remain unproved.",
+      "evidence": "W1_INSTANTIATION_BARRIERS_V4 proofs and24 exact frozen controls; independent theory review",
+      "id": "C38",
+      "scope": "Applicability of three concrete actual-instantiation inference routes and complete one-sided native-event obligation interface",
+      "status": "CLOSED_WITHIN_DECLARED_SCOPE"
+    },
+    {
+      "boundary": "No actual honest service/DA/coupling certification, all-fork settlement, production kappa or unlimited-horizon guarantee.",
+      "evidence": "W1_SERVICE_GROWTH_V4 proof, single joint reference hypotheses,24 exact controls, independent cross-review",
+      "id": "C39",
+      "scope": "Conditional service-to-honest-frontier lower tail and fixed-deadline purely private-fork comparison",
+      "status": "CLOSED_WITHIN_DECLARED_SCOPE"
+    },
+    {
+      "boundary": "Default verifier and Node unchanged; receiver kernel optimization only, no miner cost floor or installation authority.",
+      "evidence": "Frozen native implementation and9 meaningful acceptance/isolation/cancellation/concurrency/storage tests within188 crypto/protocol passes",
+      "id": "C40",
+      "scope": "Opt-in exact A/B positive-product cache with all fresh challenge transcript checks retained",
+      "status": "CLOSED_WITHIN_DECLARED_SCOPE"
+    },
+    {
+      "boundary": "One nonexclusive x86 host/operator,finite families and opposing fixed arm order. Wall ratios are not CPU ratios, Node TPS or universal cost bounds.",
+      "evidence": "Two registered jobs complete,56full original proofs/112accepted verifier calls,all57,344measured tile callbacks,434source-file closure; all regressions and first reader rejection retained",
+      "id": "C41",
+      "scope": "Fixed two-seed complete original-proof verification comparison and externally pinned full replay",
+      "status": "CLOSED_WITHIN_DECLARED_SCOPE"
+    }
+  ],
+  "hosted_ci_work_requested_or_followed": false,
+  "original_closure_standards_unchanged": true,
+  "original_obligations": [
+    {
+      "id": "O01",
+      "name": "\u5b9e\u9645 W1 \u8d44\u6e90\u5230\u6709\u6548\u673a\u4f1a\u7684\u5f52\u7ea6",
+      "remaining": "Actual-SHA native-event instantiation, complete real resource-to-QP/QA conversion, nonvacuous arbitrary-advice treatment, numerical epsilon_W1/epsilon_cap/epsilon_id and global reward consumption remain unproved. The current coarse seeded/CDG direct composition is mathematically vacuous, not an impossibility result for other routes.",
+      "status": "OPEN"
+    },
+    {
+      "id": "O02",
+      "name": "\u4efb\u610f\u81ea\u9002\u5e94\u7b56\u7565",
+      "remaining": "The finite captured ideal model allows adaptive and joint arithmetic/oracle strategies. Uncaptured long-term advice, favorable initial states, arbitrary actual-SHA kernels/circuits/hardware, task/parent selection, external help and unbounded reuse remain outside an established real-cost guarantee. Receiver AB reuse does not settle arbitrary miner cost.",
+      "status": "OPEN"
+    },
+    {
+      "id": "O03",
+      "name": "\u751f\u4ea7 kappa \u4e0e\u94fe\u5b89\u5168",
+      "remaining": "Conditional joint service/honest-frontier/private-deadline integration is now explicit. Actual joint coupling, physical opportunities, honest all-window service, full DA/native admission, all-fork settlement, numerical production kappa and failure-response policy remain open.",
+      "status": "OPEN"
+    },
+    {
+      "id": "O04",
+      "name": "\u72ec\u7acb\u786c\u4ef6\u7269\u7406\u6210\u672c",
+      "remaining": "Only one nonexclusive x86_64 host and one operator. Real independent ARM/GPU/available specialized hardware, energy and memory/WAN bandwidth measurements remain absent.",
+      "status": "OPEN"
+    },
+    {
+      "id": "O05",
+      "name": "\u6df7\u5408\u57fa\u7840\u5de5\u4f5c",
+      "remaining": "If adopted, actual shared binding, failed-attempt reuse, consumption uniqueness and composable physical-cost guarantee are required. Cost overlap and winner-only proof generation prevent an unproved additive floor. Pure matrix remains selected.",
+      "status": "OPEN_CONDITIONAL_NOT_ADOPTED"
+    },
+    {
+      "id": "O06",
+      "name": "Hepta \u6548\u7528\u4e0e\u91c7\u7528\u6743\u9650",
+      "remaining": "Original owner-selected fixed genesis material exists in Hepta de133b601e133917cbe1ae03efb3a2ffc06dcd4a. The distinct ordinary initial-only host constructor and real measured base forward/ordinary parent remain absent in inspected source and evidence. Initial parent creation does not require a previously improved child. Real task lineage, independent quality/poisoning, later evaluated-child CURRENT/FinalUse, adoption, cross-node complete-Cell loading and rollback remain open.",
+      "status": "OPEN"
+    },
+    {
+      "id": "O07",
+      "name": "ZK \u540e\u7684\u7968\u636e\u6269\u589e",
+      "remaining": "No actual ZK backend adopted. Requires actual public statement and reward identity binding, joint/adaptive soundness and multi-proof amortization/full-workflow cost analysis; randomizing or wrapping one proof must not create extra credit.",
+      "status": "OPEN_CONDITIONAL_NOT_ADOPTED"
+    }
+  ],
+  "previous_ledger": "../pon-work-compact-v1/blockers.json",
+  "previous_ledger_sha256": "ce9f92406aab8d3d8f99d29ff8177148204d31762ee285d0a547ca1461b9ae8c",
+  "production_activation": false,
+  "pure_matrix_primary": true,
+  "schema": "w1-original-blocker-ledger-v3"
+}

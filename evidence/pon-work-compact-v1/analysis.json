@@ -1,0 +1,859 @@
+{
+  "all_attempts_reconstructed_after_seal": true,
+  "analyzer_sha256": "49e8629c47a639177ef208005a49a9a2540175bcfc4ba0d4653dfd096758c670",
+  "canonical_research_chain_growth": 0,
+  "compact_original_miss_records_retained": false,
+  "comparisons": [
+    {
+      "all_collected_raw_byte_ratio": {
+        "decimal": 0.45054189185632976,
+        "denominator": 18201879,
+        "numerator": 8200709
+      },
+      "byte_ratio_scope": "all local research output, including posthoc audit; not measured network bandwidth",
+      "compact": "main-s7101-b128000000-compact",
+      "identical_paid_setup": true,
+      "identical_shared_opportunity_prefix": true,
+      "late": "main-s7101-b128000000-late",
+      "matched": true,
+      "miner_budget_ns": 128000000,
+      "miner_observed_win_rate_ratio": {
+        "decimal": 1.9030874967764877,
+        "denominator": 2759377553,
+        "numerator": 5251336920
+      },
+      "null_reasons": [],
+      "same_resource_envelope": true,
+      "scope": "one frozen local observation per arm; no statistical or universal advantage ceiling",
+      "seed": 7101,
+      "setup_plus_miner_observed_win_rate_ratio": {
+        "decimal": 1.9257948725831744,
+        "denominator": 6072313069,
+        "numerator": 11694029373
+      },
+      "shared_attempts": 178,
+      "uncensored_complete_setup": true,
+      "winners_by_B": {
+        "compact": 162,
+        "late": 86
+      },
+      "winning_ticket_ratio": {
+        "decimal": 1.8837209302325582,
+        "denominator": 43,
+        "numerator": 81
+      }
+    },
+    {
+      "all_collected_raw_byte_ratio": {
+        "decimal": 0.5932306531794045,
+        "denominator": 50646009,
+        "numerator": 30044765
+      },
+      "byte_ratio_scope": "all local research output, including posthoc audit; not measured network bandwidth",
+      "compact": "main-s7101-b512000000-compact",
+      "identical_paid_setup": true,
+      "identical_shared_opportunity_prefix": true,
+      "late": "main-s7101-b512000000-late",
+      "matched": true,
+      "miner_budget_ns": 512000000,
+      "miner_observed_win_rate_ratio": {
+        "decimal": 2.634872374699997,
+        "denominator": 7556390308,
+        "numerator": 19910124075
+      },
+      "null_reasons": [],
+      "same_resource_envelope": true,
+      "scope": "one frozen local observation per arm; no statistical or universal advantage ceiling",
+      "seed": 7101,
+      "setup_plus_miner_observed_win_rate_ratio": {
+        "decimal": 2.6369697486675987,
+        "denominator": 30906113311,
+        "numerator": 81498485850
+      },
+      "shared_attempts": 500,
+      "uncensored_complete_setup": true,
+      "winners_by_B": {
+        "compact": 600,
+        "late": 236
+      },
+      "winning_ticket_ratio": {
+        "decimal": 2.542372881355932,
+        "denominator": 59,
+        "numerator": 150
+      }
+    },
+    {
+      "all_collected_raw_byte_ratio": {
+        "decimal": 0.3817577420687367,
+        "denominator": 922331,
+        "numerator": 352107
+      },
+      "byte_ratio_scope": "all local research output, including posthoc audit; not measured network bandwidth",
+      "compact": "main-s7102-b128000000-compact",
+      "identical_paid_setup": true,
+      "identical_shared_opportunity_prefix": true,
+      "late": "main-s7102-b128000000-late",
+      "matched": true,
+      "miner_budget_ns": 128000000,
+      "miner_observed_win_rate_ratio": {
+        "decimal": 1.4145591313239048,
+        "denominator": 3560913,
+        "numerator": 5037122
+      },
+      "null_reasons": [],
+      "same_resource_envelope": true,
+      "scope": "one frozen local observation per arm; no statistical or universal advantage ceiling",
+      "seed": 7102,
+      "setup_plus_miner_observed_win_rate_ratio": {
+        "decimal": 1.408916985695725,
+        "denominator": 1182887285,
+        "numerator": 1666589988
+      },
+      "shared_attempts": 217,
+      "uncensored_complete_setup": true,
+      "winners_by_B": {
+        "compact": 168,
+        "late": 119
+      },
+      "winning_ticket_ratio": {
+        "decimal": 1.411764705882353,
+        "denominator": 17,
+        "numerator": 24
+      }
+    },
+    {
+      "all_collected_raw_byte_ratio": {
+        "decimal": 0.4889956471017754,
+        "denominator": 25182762,
+        "numerator": 12314261
+      },
+      "byte_ratio_scope": "all local research output, including posthoc audit; not measured network bandwidth",
+      "compact": "main-s7102-b512000000-compact",
+      "identical_paid_setup": true,
+      "identical_shared_opportunity_prefix": true,
+      "late": "main-s7102-b512000000-late",
+      "matched": true,
+      "miner_budget_ns": 512000000,
+      "miner_observed_win_rate_ratio": {
+        "decimal": 1.8734912771601206,
+        "denominator": 16819918115,
+        "numerator": 31511969871
+      },
+      "null_reasons": [],
+      "same_resource_envelope": true,
+      "scope": "one frozen local observation per arm; no statistical or universal advantage ceiling",
+      "seed": 7102,
+      "setup_plus_miner_observed_win_rate_ratio": {
+        "decimal": 1.8754469235800177,
+        "denominator": 34345046192,
+        "numerator": 64412311221
+      },
+      "shared_attempts": 747,
+      "uncensored_complete_setup": true,
+      "winners_by_B": {
+        "compact": 738,
+        "late": 394
+      },
+      "winning_ticket_ratio": {
+        "decimal": 1.8730964467005076,
+        "denominator": 197,
+        "numerator": 369
+      }
+    }
+  ],
+  "controls": 5,
+  "energy_joules": null,
+  "external_readback_pin_checked": true,
+  "independent_hardware_evidence": false,
+  "job_metrics": [
+    {
+      "actual_network_bytes": null,
+      "attempts": 178,
+      "censored_by_attempt_cap": false,
+      "energy_joules": null,
+      "full_proof_records_replayed": 180,
+      "full_winners_available_by_B": 86,
+      "job": "main-s7101-b128000000-late",
+      "late_attempts": 1,
+      "late_winners": 0,
+      "native_accepted_from_B": 86,
+      "options": {
+        "max_attempts": 4096,
+        "miner_budget_ns": 128000000,
+        "mode": "deferred",
+        "seed": 7101,
+        "setup_budget_ns": 1000000000
+      },
+      "original_miner_full_proofs": 86,
+      "original_research_trace_count": 178,
+      "phase_cpu_ns": {
+        "audit": 323862191,
+        "miner": 129662640,
+        "receiver": 347062760,
+        "setup": 14708093
+      },
+      "posthoc_miss_proofs": 92,
+      "raw_bytes": 18201879,
+      "setup_complete": true,
+      "total_process_cpu_ns": 815305629,
+      "traces_available_by_B": 177,
+      "whole_command_scope": "includes receiver, posthoc audit and output; not online mining or network delivery",
+      "whole_waited_cpu_ns": 819537000,
+      "within_B_winners_per_allocated_miner_second": {
+        "decimal": 671.875,
+        "denominator": 8,
+        "numerator": 5375
+      },
+      "within_B_winners_per_observed_miner_second": {
+        "decimal": 663.2596714057341,
+        "denominator": 1620783,
+        "numerator": 1075000000
+      },
+      "within_B_winners_per_observed_setup_plus_miner_second": {
+        "decimal": 595.6886012347114,
+        "denominator": 144370733,
+        "numerator": 86000000000
+      }
+    },
+    {
+      "actual_network_bytes": null,
+      "attempts": 340,
+      "attempts_available_by_B": 339,
+      "availability_to_accounting_observation_cpu_ns": 160263,
+      "censored_by_attempt_cap": false,
+      "deterministic_attempts_recomputed": 341,
+      "energy_joules": null,
+      "full_proof_records_replayed": 164,
+      "full_winners_available_by_B": 162,
+      "job": "main-s7101-b128000000-compact",
+      "late_attempts": 1,
+      "late_winners": 1,
+      "native_accepted_from_B": 162,
+      "options": {
+        "max_attempts": 4096,
+        "miner_budget_ns": 128000000,
+        "seed": 7101,
+        "setup_budget_ns": 1000000000
+      },
+      "original_miss_records": 0,
+      "original_research_packet_count": 163,
+      "phase_cpu_ns": {
+        "audit": 404401258,
+        "miner": 128343142,
+        "receiver": 592095892,
+        "setup": 12873441
+      },
+      "post_stop_seal_cpu_ns": 11256,
+      "raw_bytes": 8200709,
+      "setup_complete": true,
+      "total_process_cpu_ns": 1137720182,
+      "whole_command_scope": "includes receiver, posthoc audit and output; not online mining or network delivery",
+      "whole_waited_cpu_ns": 1141280000,
+      "within_B_winners_per_allocated_miner_second": {
+        "decimal": 1265.625,
+        "denominator": 8,
+        "numerator": 10125
+      },
+      "within_B_winners_per_observed_miner_second": {
+        "decimal": 1262.2411877683344,
+        "denominator": 64171571,
+        "numerator": 81000000000
+      },
+      "within_B_winners_per_observed_setup_plus_miner_second": {
+        "decimal": 1147.1740539140505,
+        "denominator": 141216583,
+        "numerator": 162000000000
+      }
+    },
+    {
+      "actual_network_bytes": null,
+      "attempts": 313,
+      "attempts_available_by_B": 312,
+      "availability_to_accounting_observation_cpu_ns": 205192,
+      "censored_by_attempt_cap": false,
+      "deterministic_attempts_recomputed": 314,
+      "energy_joules": null,
+      "full_proof_records_replayed": 169,
+      "full_winners_available_by_B": 168,
+      "job": "main-s7102-b128000000-compact",
+      "late_attempts": 1,
+      "late_winners": 0,
+      "native_accepted_from_B": 168,
+      "options": {
+        "max_attempts": 4096,
+        "miner_budget_ns": 128000000,
+        "seed": 7102,
+        "setup_budget_ns": 1000000000
+      },
+      "original_miss_records": 0,
+      "original_research_packet_count": 168,
+      "phase_cpu_ns": {
+        "audit": 431218160,
+        "miner": 128192868,
+        "receiver": 629187014,
+        "setup": 10970342
+      },
+      "post_stop_seal_cpu_ns": 20130,
+      "raw_bytes": 8450568,
+      "setup_complete": true,
+      "total_process_cpu_ns": 1199573341,
+      "whole_command_scope": "includes receiver, posthoc audit and output; not online mining or network delivery",
+      "whole_waited_cpu_ns": 1203332000,
+      "within_B_winners_per_allocated_miner_second": {
+        "decimal": 1312.5,
+        "denominator": 2,
+        "numerator": 2625
+      },
+      "within_B_winners_per_observed_miner_second": {
+        "decimal": 1310.525325012621,
+        "denominator": 10682739,
+        "numerator": 14000000000
+      },
+      "within_B_winners_per_observed_setup_plus_miner_second": {
+        "decimal": 1207.2156139542915,
+        "denominator": 13916321,
+        "numerator": 16800000000
+      }
+    },
+    {
+      "actual_network_bytes": null,
+      "attempts": 217,
+      "censored_by_attempt_cap": false,
+      "energy_joules": null,
+      "full_proof_records_replayed": 219,
+      "full_winners_available_by_B": 119,
+      "job": "main-s7102-b128000000-late",
+      "late_attempts": 1,
+      "late_winners": 1,
+      "native_accepted_from_B": 119,
+      "options": {
+        "max_attempts": 4096,
+        "miner_budget_ns": 128000000,
+        "mode": "deferred",
+        "seed": 7102,
+        "setup_budget_ns": 1000000000
+      },
+      "original_miner_full_proofs": 120,
+      "original_research_trace_count": 217,
+      "phase_cpu_ns": {
+        "audit": 384277526,
+        "miner": 128446611,
+        "receiver": 405416217,
+        "setup": 10435888
+      },
+      "posthoc_miss_proofs": 97,
+      "raw_bytes": 22135944,
+      "setup_complete": true,
+      "total_process_cpu_ns": 928587408,
+      "traces_available_by_B": 216,
+      "whole_command_scope": "includes receiver, posthoc audit and output; not online mining or network delivery",
+      "whole_waited_cpu_ns": 932642000,
+      "within_B_winners_per_allocated_miner_second": {
+        "decimal": 929.6875,
+        "denominator": 16,
+        "numerator": 14875
+      },
+      "within_B_winners_per_observed_miner_second": {
+        "decimal": 926.4549611199941,
+        "denominator": 7555683,
+        "numerator": 7000000000
+      },
+      "within_B_winners_per_observed_setup_plus_miner_second": {
+        "decimal": 856.8394207825999,
+        "denominator": 19840357,
+        "numerator": 17000000000
+      }
+    },
+    {
+      "actual_network_bytes": null,
+      "attempts": 1245,
+      "attempts_available_by_B": 1244,
+      "availability_to_accounting_observation_cpu_ns": 571663,
+      "censored_by_attempt_cap": false,
+      "deterministic_attempts_recomputed": 1246,
+      "energy_joules": null,
+      "full_proof_records_replayed": 601,
+      "full_winners_available_by_B": 600,
+      "job": "main-s7101-b512000000-compact",
+      "late_attempts": 1,
+      "late_winners": 0,
+      "native_accepted_from_B": 600,
+      "options": {
+        "max_attempts": 4096,
+        "miner_budget_ns": 512000000,
+        "seed": 7101,
+        "setup_budget_ns": 1000000000
+      },
+      "original_miss_records": 0,
+      "original_research_packet_count": 600,
+      "phase_cpu_ns": {
+        "audit": 1398371541,
+        "miner": 512297648,
+        "receiver": 2125389374,
+        "setup": 11534781
+      },
+      "post_stop_seal_cpu_ns": 20150,
+      "raw_bytes": 30044765,
+      "setup_complete": true,
+      "total_process_cpu_ns": 4047598642,
+      "whole_command_scope": "includes receiver, posthoc audit and output; not online mining or network delivery",
+      "whole_waited_cpu_ns": 4053181000,
+      "within_B_winners_per_allocated_miner_second": {
+        "decimal": 1171.875,
+        "denominator": 8,
+        "numerator": 9375
+      },
+      "within_B_winners_per_observed_miner_second": {
+        "decimal": 1171.194133610389,
+        "denominator": 32018603,
+        "numerator": 37500000000
+      },
+      "within_B_winners_per_observed_setup_plus_miner_second": {
+        "decimal": 1145.40445910423,
+        "denominator": 523832429,
+        "numerator": 600000000000
+      }
+    },
+    {
+      "actual_network_bytes": null,
+      "attempts": 500,
+      "censored_by_attempt_cap": false,
+      "energy_joules": null,
+      "full_proof_records_replayed": 502,
+      "full_winners_available_by_B": 236,
+      "job": "main-s7101-b512000000-late",
+      "late_attempts": 1,
+      "late_winners": 0,
+      "native_accepted_from_B": 236,
+      "options": {
+        "max_attempts": 4096,
+        "miner_budget_ns": 512000000,
+        "mode": "deferred",
+        "seed": 7101,
+        "setup_budget_ns": 1000000000
+      },
+      "original_miner_full_proofs": 236,
+      "original_research_trace_count": 500,
+      "phase_cpu_ns": {
+        "audit": 944761649,
+        "miner": 530936642,
+        "receiver": 976598097,
+        "setup": 12386597
+      },
+      "posthoc_miss_proofs": 264,
+      "raw_bytes": 50646009,
+      "setup_complete": true,
+      "total_process_cpu_ns": 2464696214,
+      "traces_available_by_B": 499,
+      "whole_command_scope": "includes receiver, posthoc audit and output; not online mining or network delivery",
+      "whole_waited_cpu_ns": 2469111000,
+      "within_B_winners_per_allocated_miner_second": {
+        "decimal": 460.9375,
+        "denominator": 16,
+        "numerator": 7375
+      },
+      "within_B_winners_per_observed_miner_second": {
+        "decimal": 444.49748111376346,
+        "denominator": 265468321,
+        "numerator": 118000000000
+      },
+      "within_B_winners_per_observed_setup_plus_miner_second": {
+        "decimal": 434.36389806253067,
+        "denominator": 543323239,
+        "numerator": 236000000000
+      }
+    },
+    {
+      "actual_network_bytes": null,
+      "attempts": 747,
+      "censored_by_attempt_cap": false,
+      "energy_joules": null,
+      "full_proof_records_replayed": 749,
+      "full_winners_available_by_B": 394,
+      "job": "main-s7102-b512000000-late",
+      "late_attempts": 1,
+      "late_winners": 1,
+      "native_accepted_from_B": 394,
+      "options": {
+        "max_attempts": 4096,
+        "miner_budget_ns": 512000000,
+        "mode": "deferred",
+        "seed": 7102,
+        "setup_budget_ns": 1000000000
+      },
+      "original_miner_full_proofs": 395,
+      "original_research_trace_count": 747,
+      "phase_cpu_ns": {
+        "audit": 1341697257,
+        "miner": 512389754,
+        "receiver": 1541631642,
+        "setup": 11287573
+      },
+      "posthoc_miss_proofs": 352,
+      "raw_bytes": 75548286,
+      "setup_complete": true,
+      "total_process_cpu_ns": 3407022269,
+      "traces_available_by_B": 746,
+      "whole_command_scope": "includes receiver, posthoc audit and output; not online mining or network delivery",
+      "whole_waited_cpu_ns": 3412017000,
+      "within_B_winners_per_allocated_miner_second": {
+        "decimal": 769.53125,
+        "denominator": 32,
+        "numerator": 24625
+      },
+      "within_B_winners_per_observed_miner_second": {
+        "decimal": 768.9458989455125,
+        "denominator": 256194877,
+        "numerator": 197000000000
+      },
+      "within_B_winners_per_observed_setup_plus_miner_second": {
+        "decimal": 752.3716985364157,
+        "denominator": 523677327,
+        "numerator": 394000000000
+      }
+    },
+    {
+      "actual_network_bytes": null,
+      "attempts": 1408,
+      "attempts_available_by_B": 1407,
+      "availability_to_accounting_observation_cpu_ns": 577210,
+      "censored_by_attempt_cap": false,
+      "deterministic_attempts_recomputed": 1409,
+      "energy_joules": null,
+      "full_proof_records_replayed": 739,
+      "full_winners_available_by_B": 738,
+      "job": "main-s7102-b512000000-compact",
+      "late_attempts": 1,
+      "late_winners": 0,
+      "native_accepted_from_B": 738,
+      "options": {
+        "max_attempts": 4096,
+        "miner_budget_ns": 512000000,
+        "seed": 7102,
+        "setup_budget_ns": 1000000000
+      },
+      "original_miss_records": 0,
+      "original_research_packet_count": 738,
+      "phase_cpu_ns": {
+        "audit": 1839747739,
+        "miner": 512281770,
+        "receiver": 2595041350,
+        "setup": 10739238
+      },
+      "post_stop_seal_cpu_ns": 24236,
+      "raw_bytes": 36942783,
+      "setup_complete": true,
+      "total_process_cpu_ns": 4957815065,
+      "whole_command_scope": "includes receiver, posthoc audit and output; not online mining or network delivery",
+      "whole_waited_cpu_ns": 4963902000,
+      "within_B_winners_per_allocated_miner_second": {
+        "decimal": 1441.40625,
+        "denominator": 32,
+        "numerator": 46125
+      },
+      "within_B_winners_per_observed_miner_second": {
+        "decimal": 1440.6134342824653,
+        "denominator": 17076059,
+        "numerator": 24600000000
+      },
+      "within_B_winners_per_observed_setup_plus_miner_second": {
+        "decimal": 1411.0331874087933,
+        "denominator": 10896271,
+        "numerator": 15375000000
+      }
+    },
+    {
+      "actual_network_bytes": null,
+      "attempts": 0,
+      "attempts_available_by_B": 0,
+      "availability_to_accounting_observation_cpu_ns": 0,
+      "censored_by_attempt_cap": false,
+      "deterministic_attempts_recomputed": 0,
+      "energy_joules": null,
+      "full_proof_records_replayed": 0,
+      "full_winners_available_by_B": 0,
+      "job": "control-setupzero",
+      "late_attempts": 0,
+      "late_winners": 0,
+      "native_accepted_from_B": 0,
+      "options": {
+        "max_attempts": 4096,
+        "miner_budget_ns": 128000000,
+        "seed": 7103,
+        "setup_budget_ns": 0
+      },
+      "original_miss_records": 0,
+      "original_research_packet_count": 0,
+      "phase_cpu_ns": {
+        "audit": 5909,
+        "miner": 6179,
+        "receiver": 2684,
+        "setup": 53089
+      },
+      "post_stop_seal_cpu_ns": 3225,
+      "raw_bytes": 2888,
+      "setup_complete": false,
+      "total_process_cpu_ns": 69724,
+      "whole_command_scope": "includes receiver, posthoc audit and output; not online mining or network delivery",
+      "whole_waited_cpu_ns": 3123000,
+      "within_B_winners_per_allocated_miner_second": {
+        "decimal": 0.0,
+        "denominator": 1,
+        "numerator": 0
+      },
+      "within_B_winners_per_observed_miner_second": {
+        "decimal": 0.0,
+        "denominator": 1,
+        "numerator": 0
+      },
+      "within_B_winners_per_observed_setup_plus_miner_second": {
+        "decimal": 0.0,
+        "denominator": 1,
+        "numerator": 0
+      }
+    },
+    {
+      "actual_network_bytes": null,
+      "attempts": 0,
+      "attempts_available_by_B": 0,
+      "availability_to_accounting_observation_cpu_ns": 0,
+      "censored_by_attempt_cap": false,
+      "deterministic_attempts_recomputed": 0,
+      "energy_joules": null,
+      "full_proof_records_replayed": 0,
+      "full_winners_available_by_B": 0,
+      "job": "control-setuptight",
+      "late_attempts": 0,
+      "late_winners": 0,
+      "native_accepted_from_B": 0,
+      "options": {
+        "max_attempts": 4096,
+        "miner_budget_ns": 128000000,
+        "seed": 7103,
+        "setup_budget_ns": 1000000
+      },
+      "original_miss_records": 0,
+      "original_research_packet_count": 0,
+      "phase_cpu_ns": {
+        "audit": 21452,
+        "miner": 6059,
+        "receiver": 168801,
+        "setup": 5915376
+      },
+      "post_stop_seal_cpu_ns": 3024,
+      "raw_bytes": 3265,
+      "setup_complete": false,
+      "total_process_cpu_ns": 6113631,
+      "whole_command_scope": "includes receiver, posthoc audit and output; not online mining or network delivery",
+      "whole_waited_cpu_ns": 9482000,
+      "within_B_winners_per_allocated_miner_second": {
+        "decimal": 0.0,
+        "denominator": 1,
+        "numerator": 0
+      },
+      "within_B_winners_per_observed_miner_second": {
+        "decimal": 0.0,
+        "denominator": 1,
+        "numerator": 0
+      },
+      "within_B_winners_per_observed_setup_plus_miner_second": {
+        "decimal": 0.0,
+        "denominator": 1,
+        "numerator": 0
+      }
+    },
+    {
+      "actual_network_bytes": null,
+      "attempts": 0,
+      "attempts_available_by_B": 0,
+      "availability_to_accounting_observation_cpu_ns": 0,
+      "censored_by_attempt_cap": false,
+      "deterministic_attempts_recomputed": 1,
+      "energy_joules": null,
+      "full_proof_records_replayed": 1,
+      "full_winners_available_by_B": 0,
+      "job": "control-minerzero",
+      "late_attempts": 0,
+      "late_winners": 0,
+      "native_accepted_from_B": 0,
+      "options": {
+        "max_attempts": 4096,
+        "miner_budget_ns": 0,
+        "seed": 7103,
+        "setup_budget_ns": 1000000000
+      },
+      "original_miss_records": 0,
+      "original_research_packet_count": 0,
+      "phase_cpu_ns": {
+        "audit": 1091092,
+        "miner": 6790,
+        "receiver": 222301,
+        "setup": 11461723
+      },
+      "post_stop_seal_cpu_ns": 3836,
+      "raw_bytes": 53516,
+      "setup_complete": true,
+      "total_process_cpu_ns": 12784680,
+      "whole_command_scope": "includes receiver, posthoc audit and output; not online mining or network delivery",
+      "whole_waited_cpu_ns": 15805000,
+      "within_B_winners_per_allocated_miner_second": null,
+      "within_B_winners_per_observed_miner_second": {
+        "decimal": 0.0,
+        "denominator": 1,
+        "numerator": 0
+      },
+      "within_B_winners_per_observed_setup_plus_miner_second": {
+        "decimal": 0.0,
+        "denominator": 1,
+        "numerator": 0
+      }
+    },
+    {
+      "actual_network_bytes": null,
+      "attempts": 1,
+      "attempts_available_by_B": 0,
+      "availability_to_accounting_observation_cpu_ns": 391,
+      "censored_by_attempt_cap": false,
+      "deterministic_attempts_recomputed": 2,
+      "energy_joules": null,
+      "full_proof_records_replayed": 2,
+      "full_winners_available_by_B": 0,
+      "job": "control-minertight",
+      "late_attempts": 1,
+      "late_winners": 1,
+      "native_accepted_from_B": 0,
+      "options": {
+        "max_attempts": 4096,
+        "miner_budget_ns": 100000,
+        "seed": 7103,
+        "setup_budget_ns": 1000000000
+      },
+      "original_miss_records": 0,
+      "original_research_packet_count": 1,
+      "phase_cpu_ns": {
+        "audit": 2611143,
+        "miner": 382238,
+        "receiver": 3812298,
+        "setup": 12795366
+      },
+      "post_stop_seal_cpu_ns": 4116,
+      "raw_bytes": 103681,
+      "setup_complete": true,
+      "total_process_cpu_ns": 19604160,
+      "whole_command_scope": "includes receiver, posthoc audit and output; not online mining or network delivery",
+      "whole_waited_cpu_ns": 22379000,
+      "within_B_winners_per_allocated_miner_second": {
+        "decimal": 0.0,
+        "denominator": 1,
+        "numerator": 0
+      },
+      "within_B_winners_per_observed_miner_second": {
+        "decimal": 0.0,
+        "denominator": 1,
+        "numerator": 0
+      },
+      "within_B_winners_per_observed_setup_plus_miner_second": {
+        "decimal": 0.0,
+        "denominator": 1,
+        "numerator": 0
+      }
+    },
+    {
+      "actual_network_bytes": null,
+      "attempts": 2,
+      "attempts_available_by_B": 2,
+      "availability_to_accounting_observation_cpu_ns": 471,
+      "censored_by_attempt_cap": true,
+      "deterministic_attempts_recomputed": 3,
+      "energy_joules": null,
+      "full_proof_records_replayed": 2,
+      "full_winners_available_by_B": 1,
+      "job": "control-attemptcap2",
+      "late_attempts": 0,
+      "late_winners": 0,
+      "native_accepted_from_B": 1,
+      "options": {
+        "max_attempts": 2,
+        "miner_budget_ns": 512000000,
+        "seed": 7103,
+        "setup_budget_ns": 1000000000
+      },
+      "original_miss_records": 0,
+      "original_research_packet_count": 1,
+      "phase_cpu_ns": {
+        "audit": 3470180,
+        "miner": 633091,
+        "receiver": 4120917,
+        "setup": 11256428
+      },
+      "post_stop_seal_cpu_ns": 10325,
+      "raw_bytes": 103675,
+      "setup_complete": true,
+      "total_process_cpu_ns": 19484101,
+      "whole_command_scope": "includes receiver, posthoc audit and output; not online mining or network delivery",
+      "whole_waited_cpu_ns": 23109000,
+      "within_B_winners_per_allocated_miner_second": {
+        "decimal": 1.953125,
+        "denominator": 64,
+        "numerator": 125
+      },
+      "within_B_winners_per_observed_miner_second": {
+        "decimal": 1579.551754803022,
+        "denominator": 633091,
+        "numerator": 1000000000
+      },
+      "within_B_winners_per_observed_setup_plus_miner_second": {
+        "decimal": 84.10769182504356,
+        "denominator": 11889519,
+        "numerator": 1000000000
+      }
+    }
+  ],
+  "jobs": 13,
+  "main_jobs": 8,
+  "mature_reward_claim": false,
+  "network_bandwidth_measured": false,
+  "phase_cpu_ns": {
+    "audit": 7075537097,
+    "miner": 2583585432,
+    "receiver": 9220749347,
+    "setup": 136417935
+  },
+  "physical_minimum_cost_proved": false,
+  "plan_sha256": "893c2be3ede87d951c94fea93079b25cc6a9dead173f85b0be9e6a48ff423c3b",
+  "posthoc_credit": 0,
+  "production_activation": false,
+  "proof_record_classes": {
+    "compact_all_deterministic_nonce_recomputations": 3316,
+    "compact_original_miss_records": 0,
+    "compact_original_research_packets": 1671,
+    "compact_original_setup_packets": 7,
+    "compact_posthoc_miss_recomputations": 1638,
+    "late_original_research_proofs": 837,
+    "late_original_setup_proofs": 4,
+    "late_posthoc_research_proof_records": 805,
+    "late_posthoc_setup_proof_records": 4
+  },
+  "ratio_to_older_source_campaign_permitted": false,
+  "raw_manifest_sha256": "fcb7ec43037f32ebc775801eaccd6df5614924ab947662d4784e29d3a1dd2679",
+  "readback_sha256": "a028fe3d660c959b4e58b356fb4f0089f95072dc99f1e572909827c9b72f0897",
+  "record_totals_are_not_unique_reward_identities": true,
+  "schema": "pon-w1-compact-miner-analysis-v1",
+  "source": {
+    "branch": "feature/chain-w1-cost-research-20261025",
+    "head": "4b18f6bdf226553514b07caf9259360d44631a06",
+    "status": "",
+    "tree": "8739627f52d68fc8dcff84282838edb940bfe81c"
+  },
+  "totals": {
+    "attempts": 4951,
+    "full_proof_records_replayed": 3328,
+    "full_winners_available_by_B": 2504,
+    "late_attempts": 9,
+    "late_winners": 4,
+    "native_accepted_from_B": 2504,
+    "raw_bytes": 250437968
+  },
+  "trace_commitment_is_removable_diagnostic_cost": true,
+  "universal_kappa_established": false
+}

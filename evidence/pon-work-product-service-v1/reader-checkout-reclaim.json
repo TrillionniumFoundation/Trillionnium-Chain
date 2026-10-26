@@ -1,0 +1,21 @@
+{
+  "all_source_scopes_exact_before_removal": {
+    "all_current_bytes_match_git_blobs": true,
+    "bytes": 7304507,
+    "files": 434,
+    "hardware_or_interpreter_attestation": false,
+    "scopes": [
+      "scripts",
+      "formal",
+      "config"
+    ],
+    "sha256": "90745571e5862c4bf34bdc5f7cb6fb5fe0d935c1c43e42ae76379571c6773367",
+    "tested_commit": "b6f2322dacc4a23ec43e3207be008614e07c60b7"
+  },
+  "completed_reader_run_sha256": "b98f4432babe29f14599badb94936f50d032c854c950221cba2ddb536bd395e2",
+  "native_execution_rerun": false,
+  "original_shared_git_objects_untouched": true,
+  "reason": "Reclaim only independent materialized reader checkout after successful complete replay and source closure verification; original source remains in published Git object and report source pins.",
+  "removed_reproducible_checkout": "/dev/shm/W1-task-product-reader-b6f2322-v1",
+  "schema": "w1-reader-checkout-reclaim-v1"
+}

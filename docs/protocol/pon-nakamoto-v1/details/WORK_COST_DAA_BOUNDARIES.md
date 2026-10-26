@@ -8,6 +8,36 @@ profile, request budget, timeout or confirmation rule. Cost hardness, an
 attacker work fraction, timestamp attack profitability and public network
 qualification remain unestablished.
 
+## Supplemental resource-budget research
+
+The [cost security game](W1_COST_SECURITY_GAME.md) specifies the stronger
+resource-budget-to-distinct-ticket question, including offline preprocessing,
+batching, adaptive choices and several parent states. The new
+[local research runner](../../../../scripts/run_w1_cost_research.py) and
+[strict reader](../../../../scripts/read_w1_cost_research.py) preserve their own
+source, binary, registered plan and actual hardware envelope. The
+[research evidence](../../../../evidence/pon-work-cost-research-v1/README.md)
+is supplemental; it does not revise the original runners or qualification below.
+
+Its `cold` mode rebuilds each prepared object without flushing processor caches;
+`hot` reuses preparation; `batch` stores a sequential queue, and `adaptive`
+charges actual algorithm-selection training on a fixed task. The new
+[general integer-paired arm](W1_INTEGER_PAIRED_GENERAL_RESEARCH.md) is an exact
+input generalization of an existing arithmetic kernel. Algebraic multiplication
+counts do not establish a measured speedup or the cheapest possible producer.
+The [cross-layer experiment](W1_QUALIFICATION_SEPARATION_RESEARCH.md) keeps
+fulfillment, model quality, distinct work tickets and numerical hypotheses separate.
+
+Report both the registered-stage CPU ledger and the inclusive completion clock.
+The latter includes dispatch, preceding logging and preparation cleanup, subtracts
+explicit verification/admission observers, and ends before final Node/TempDir
+destruction. Public input construction is separately observed. Neither clock is
+an energy measurement or full network/lifecycle cost. All five original Node
+proofs used to construct parent contexts and templates belong in the all-work
+ticket union. A candidate produced within budget but confirmed by an observer
+later is not an admission completed within budget. Sibling candidates and repeated
+counterfactual arm runs cannot be summed into canonical chain growth.
+
 ## Complete costs on two retained hosts
 
 Use the existing
