@@ -34,3 +34,20 @@ class Tests(unittest.TestCase):
   p=S.direct(c,a,b,base);self.assertFalse(S.verify(c,W.task_id(a,b),self.target,p)['verified_work'])
  def test_ticket_not_authority(self):
   self.assertNotIn('VerifiedWork',str(S.verify(self.challenge,self.task,self.target,self.proof)))
+ def test_ticket_valid_false_product_does_not_earn_work(self):
+  # A fake PND0 statement with correct base C=0 but false masked C'=0
+  # can win the cheap ticket lottery without any legitimate masked product.
+  import hashlib
+  zeros=[0]*W.CELLS
+  proof=b'PND0'+W.field_bytes(zeros)*4
+  target=bytes.fromhex('7f'+'ff'*31)
+  task=W.task_id(zeros,zeros)
+  hits=0
+  for nonce in range(64):
+   challenge=H('w2d-forged-ticket-control',nonce.to_bytes(8,'little'))
+   if S.ticket(challenge,proof)>target:continue
+   hits+=1
+   with self.assertRaisesRegex(ValueError,'MASKED_PROJECTION'):
+    S.verify(challenge,task,target,proof)
+   if hits==4:break
+  self.assertEqual(hits,4)
