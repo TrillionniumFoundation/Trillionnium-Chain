@@ -126,3 +126,52 @@ code or an approved V3 policy change. The original V3 signed profile,
 W1 and all consensus state stay unchanged. CPU/GPU economic adequacy,
 unpaid issuance capacity, physically independent hosts, native
 integration, and third-party crypto review remain open.
+
+
+## P5 independent stateless-offer alternative (2026-10-26)
+
+The original receiver research prototype stores a pending entry *at offer*,
+even if the requester does no Hashcash work. Consequently a burst of at most
+\`capacity\` unpaid offers can fill it. The separate research-only
+\`formal/pon-nakamoto-v1/w2c_stateless_receiver.py\` tests a stricter
+resource-accounting boundary:
+
+- An issuer-owned, fixed difficulty is MACed into a short-lived grant,
+  bound to receiver, process epoch, exact original proposal and fresh token.
+  Issuance changes **no retained grant table**. It is a research API, not a
+  replacement V3 Cookie or a production listener.
+- Only an authenticated, unexpired *valid cost solution* can claim one
+  bounded spent-record slot. A lock linearizes the first claim. Subsequent
+  exact replays refuse before W1. Failure of the later W1 does not refund.
+  The spent key binds the complete signed grant, not a caller-generated
+  identity or unverified packet's claimed chainwork.
+- When spent records reach the finite original study cap, another actually
+  paid solution gets \`PAID_CAPACITY_BUSY\` (local resource refusal, **never**
+  consensus-invalid work). Expired paid claims can be reclaimed on the next
+  valid, paid submission; untrusted junk cannot force a full-table scan on
+  every rejected input.
+- A fixed 8–24 bit receiver policy, HMAC, issuer epoch, trusted monotonic
+  clock and expiry are rechecked. A signed lower-bits grant cannot downgrade
+  the receiver's selected difficulty.
+- \`test_w2c_stateless_receiver.py\` defines eight cases including 256 unpaid
+  grants without a stored reservation, 32 concurrent uses of one valid
+  grant (only one resource READY), two independent receiving nodes,
+  paid-capacity busy, full-W1 TRANSCRIPT rejection after a paid ticket,
+  issuer-policy downgrade, malformed context/MAC/nonce and expiry/clock
+  rollback.
+
+**Important:** this experiment has not created a cryptographically
+independent useful-work proof, eliminated the cheap paid-ticket versus
+expensive-W1 rejection cost gap, or established globally fair front-door
+issuance. An unbounded stream of issue requests can still consume HMAC,
+connection, bandwidth and signature resources; real deployment must
+reuse the original V3 global protected admission infrastructure.
+A paid Sybil coalition can also fill the finite spent table; that
+remains a bounded service-degradation counterexample, not an accepted
+admission-economics theorem.
+
+No native Rust/W1 byte, original V3 signed cookie, activated W2, consensus,
+Chainwork or production flag changes. P1 host and restart evidence,
+P2 native/GPU calibration, P3 actual malicious/honest mix,
+P4 original A03 3 modes x 3 runs x 3 confirmations, W2 cryptographic
+soundness and P6 external independent review remain OPEN.
