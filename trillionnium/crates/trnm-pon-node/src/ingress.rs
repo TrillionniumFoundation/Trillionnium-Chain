@@ -2377,7 +2377,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn W1_history_kernel_checkpoints_are_bounded_and_cover_each_tile_row_group() {
+    fn w1_history_kernel_checkpoints_are_bounded_and_cover_each_tile_row_group() {
         use trnm_crypto_primitives::pon_work::VerificationProgress as P;
         assert!(history_work_checkpoint(P::BeforeReplay));
         assert!(history_work_checkpoint(P::BeforeProduct));
