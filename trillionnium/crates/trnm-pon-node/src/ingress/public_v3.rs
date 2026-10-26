@@ -2849,6 +2849,12 @@ pub struct PublicClientMetrics {
     pub construction_ns: u64,
     pub challenge_ns: u64,
     pub solution_search_ns: u64,
+    /// Actual calling-thread CPU for the full local Cookie-ID + SHA256 nonce
+    /// search, including every failed trial and its final success/error tail.
+    /// None means unavailable, never zero. Independent of server-W1 CPU.
+    /// Optional local diagnostic; it changes no signed policy or wire bytes.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub solution_search_thread_cpu_ns: Option<u64>,
     pub solution_trials: u64,
     pub solution_found: bool,
     pub solution_body_response_ns: u64,
@@ -2999,27 +3005,36 @@ fn call_public_protected_v3_with_profile(
         metrics.challenge_ns = elapsed_ns(phase_start);
         phase = PublicClientStage::SolutionSearch;
         phase_start = Instant::now();
-        let started = Instant::now();
-        let id = cookie.id()?;
-        let mut solved = None;
-        for nonce in 0..1_048_576u64 {
-            if nonce % 256 == 0 {
-                if outer_deadline.is_some() {
-                    ensure(Instant::now() < total_deadline, "PUBLIC_CLIENT_DEADLINE")?;
+        let search_cpu_start = ThreadCpuStamp::start();
+        // Close the actual CPU interval even if Cookie identity, deadline
+        // or the bounded hash search fails. This reports real client work,
+        // not a guessed fraction of wall time or an attacker price theorem.
+        let search = (|| -> Result<(Hash, u64, u64)> {
+            let started = Instant::now();
+            let id = cookie.id()?;
+            let mut solved = None;
+            for nonce in 0..1_048_576u64 {
+                if nonce % 256 == 0 {
+                    if outer_deadline.is_some() {
+                        ensure(Instant::now() < total_deadline, "PUBLIC_CLIENT_DEADLINE")?;
+                    }
+                    ensure(
+                        started.elapsed() < Duration::from_millis(policy.lifetime_ms),
+                        "PUBLIC_SOLVE_EXPIRED",
+                    )?;
                 }
-                ensure(
-                    started.elapsed() < Duration::from_millis(policy.lifetime_ms),
-                    "PUBLIC_SOLVE_EXPIRED",
-                )?;
+                metrics.solution_trials = nonce + 1;
+                if winner(id, nonce, policy.bits) {
+                    solved = Some(nonce);
+                    break;
+                }
             }
-            metrics.solution_trials = nonce + 1;
-            if winner(id, nonce, policy.bits) {
-                solved = Some(nonce);
-                break;
-            }
-        }
-        let nonce = solved.ok_or("PUBLIC_SOLVE_BUDGET")?;
-        let solve_elapsed_ns = elapsed_ns(started);
+            let nonce = solved.ok_or("PUBLIC_SOLVE_BUDGET")?;
+            Ok((id, nonce, elapsed_ns(started)))
+        })();
+        metrics.solution_search_thread_cpu_ns =
+            search_cpu_start.and_then(ThreadCpuStamp::finish);
+        let (id, nonce, solve_elapsed_ns) = search?;
         metrics.solution_search_ns = elapsed_ns(phase_start);
         metrics.solution_found = true;
         phase = PublicClientStage::SolutionBodyResponse;
@@ -3350,6 +3365,12 @@ mod shared_cpu_domain_source_tests {
             read.0.unwrap().ok,
             "unpaid Head must survive real CPU exhaustion"
         );
+        // Unlike the synthetic CPU proxy, this is an actual signed V3
+        // loopback Cookie acquired through the original TCP client.
+        assert!(read.1.solution_found);
+        assert!(read.1.solution_trials > 0);
+        assert!(read.1.solution_search_thread_cpu_ns.is_some(),
+            "real signed Cookie search must report actual thread CPU");
         let honest = call_public_protected_v3_with_deadline(
             address,
             &Request::Submit {
@@ -3365,6 +3386,10 @@ mod shared_cpu_domain_source_tests {
             honest.0.unwrap().ok,
             "signed honest Submit must recover via original CPU refill"
         );
+        assert!(honest.1.solution_found);
+        assert!(honest.1.solution_trials > 0);
+        assert!(honest.1.solution_search_thread_cpu_ns.is_some(),
+            "honest signed Submit must retain actual Cookie CPU and failed trials");
         terminate.store(true, Ordering::Release);
         let finished = worker.join().unwrap().unwrap();
         assert_eq!(finished.mutation_cpu_in_flight_after_shutdown, 0);
@@ -3379,6 +3404,38 @@ mod shared_cpu_domain_source_tests {
             .activate_observed(accepted_id, super::super::now().unwrap())
             .unwrap();
         assert_eq!(actual_state, independent.read_active().unwrap());
+        // Separate from the original service CPU experiment: these metrics
+        // come from two REAL signed V3 TCP Cookie exchanges. Search CPU and
+        // trials are locally observed by the client; receiver aggregate W1
+        // CPU is a DIFFERENT denominator, not to be summed as attacker cost.
+        let p2_cookie_observation = json!({
+            "schema": "trnm-p2-real-v3-cookie-client-cpu-v1",
+            "host_scenario": "existing finite process-cold W1 budget depletion and honest recovery",
+            "signed_tcp_cookie": true,
+            "honest_head_client_metrics": &read.1,
+            "honest_submit_client_metrics": &honest.1,
+            "server_total_paid_mutation_cpu_ns": finished.mutation_cpu_charged_ns,
+            "server_full_W1_cpu_ns": finished.mutation_full_work_cpu_ns,
+            "server_w1_false_replay_count": replayed,
+            "client_full_search_hash_trials_included": true,
+            "receiver_cpu_is_separate_denominator": true,
+            "attacker_gpu_cost": null,
+            "independent_operator_count": null,
+            "public_network_ready": false,
+            "production_activation": false,
+        });
+        if let Some(path) = std::env::var_os("TRNM_P2_REAL_V3_COOKIE_REPORT") {
+            use std::io::Write;
+            let mut file = std::fs::OpenOptions::new()
+                .write(true)
+                .create_new(true)
+                .open(path)
+                .unwrap();
+            serde_json::to_writer_pretty(&mut file, &p2_cookie_observation).unwrap();
+            file.write_all(b"\n").unwrap();
+            file.sync_all().unwrap();
+        }
+        println!("{p2_cookie_observation}");
         println!(
             "{}",
             json!({"schema":"original-W1-paid-CPU-real-depletion-lab-v1",
@@ -3400,6 +3457,128 @@ mod shared_cpu_domain_source_tests {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[cfg(target_os = "linux")]
+    #[test]
+    fn native_v3_cookie_search_and_real_w1_costs_keep_disjoint_cpu_denominators() {
+        use trnm_crypto_primitives::pon_work;
+        // Directly use the original V3 winner predicate, domain and nonce
+        // grammar. This is not a signed TCP cookie / remote operator experiment.
+        let mut cookie_rows = Vec::new();
+        for bits in [8_u8, 12, 16] {
+            for sample in 0_u64..2 {
+                let id = hash(
+                    b"v3-native-cookie-cost-fixed-id-v1",
+                    &[&[bits], &sample.to_le_bytes()],
+                );
+                let wall = Instant::now();
+                let cpu = ThreadCpuStamp::start();
+                let mut accepted = None;
+                let mut attempts = 0_u64;
+                for nonce in 0..1_048_576_u64 {
+                    attempts += 1;
+                    if winner(id, nonce, bits) {
+                        accepted = Some(nonce);
+                        break;
+                    }
+                }
+                let cpu_ns = cpu.and_then(ThreadCpuStamp::finish);
+                cookie_rows.push(json!({
+                    "bits": bits,
+                    "sample": sample,
+                    "cookie_id_sha256": hex::encode(sha2::Sha256::digest(id)),
+                    "attempts": attempts,
+                    "cap": 1_048_576,
+                    "winning_nonce": accepted,
+                    "status": if accepted.is_some() { "TARGET_HIT" } else { "CAPPED" },
+                    "client_cookie_search_thread_cpu_ns": cpu_ns,
+                    "client_cookie_search_wall_ns":
+                        u64::try_from(wall.elapsed().as_nanos()).ok(),
+                }));
+                assert!((1..=1_048_576).contains(&attempts));
+                if let Some(nonce) = accepted {
+                    assert!(winner(id, nonce, bits));
+                }
+            }
+        }
+
+        let zeros = vec![0_u32; pon_work::CELLS];
+        let task = pon_work::task_id(&zeros, &zeros).unwrap();
+        let challenge = hash(b"p2-native-matched-w1-challenge-v1", &[b"fixed-case"]);
+        let create_wall = Instant::now();
+        let create_cpu = ThreadCpuStamp::start();
+        let legal = pon_work::prove(challenge, &zeros, &zeros).unwrap();
+        let create_cpu_ns = create_cpu.and_then(ThreadCpuStamp::finish);
+        let create_wall_ns = u64::try_from(create_wall.elapsed().as_nanos()).ok();
+
+        let legal_wall = Instant::now();
+        let legal_cpu = ThreadCpuStamp::start();
+        let validated = pon_work::verify(challenge, task, [255; 32], &legal);
+        let legal_cpu_ns = legal_cpu.and_then(ThreadCpuStamp::finish);
+        assert!(validated.is_ok());
+        let legal_wall_ns = u64::try_from(legal_wall.elapsed().as_nanos()).ok();
+
+        // This caller never acquires a valid transcript to make its fake
+        // ticket. The canonical zero product is supplied, but its trace is
+        // an uncomputed claim and must consume the complete W1 rejection.
+        let mut forged = vec![0_u8; pon_work::PROOF_BYTES];
+        forged[..4].copy_from_slice(b"PNW1");
+        let fake_digest = hash(b"p2-native-false-trace-v1", &[&challenge]);
+        forged[pon_work::PROOF_BYTES - 32..].copy_from_slice(&fake_digest);
+        assert_ne!(&legal[pon_work::PROOF_BYTES - 32..], fake_digest.as_slice());
+        let reject_wall = Instant::now();
+        let reject_cpu = ThreadCpuStamp::start();
+        let mut tiles = 0_usize;
+        let rejected = pon_work::verify_with_progress(
+            challenge, task, [255; 32], &forged,
+            &mut |phase| {
+                if matches!(phase, pon_work::VerificationProgress::TranscriptTile { .. }) {
+                    tiles += 1;
+                }
+                Ok::<(), ()>(())
+            },
+        );
+        let reject_cpu_ns = reject_cpu.and_then(ThreadCpuStamp::finish);
+        let reject_wall_ns = u64::try_from(reject_wall.elapsed().as_nanos()).ok();
+        assert!(matches!(
+            rejected,
+            Err(pon_work::VerificationError::Relation(pon_work::WorkError::Transcript))
+        ));
+        assert_eq!(tiles, 512);
+        let report = json!({
+            "schema": "trnm-p2-v3-cookie-native-cpu-diagnostic-v1",
+            "scope": "original native V3 SHA256 predicate on synthetic Cookie IDs and native W1 zero-work arithmetic; no TCP handshake, GPU, attacker lower bound or host fairness claim",
+            "cookie_rows": cookie_rows,
+            "w1_input_task": hex::encode(task),
+            "w1_challenge": hex::encode(challenge),
+            "honest_native_producer_thread_cpu_ns": create_cpu_ns,
+            "honest_native_producer_wall_ns": create_wall_ns,
+            "honest_native_verify_thread_cpu_ns": legal_cpu_ns,
+            "honest_native_verify_wall_ns": legal_wall_ns,
+            "false_native_rejection_thread_cpu_ns": reject_cpu_ns,
+            "false_native_rejection_wall_ns": reject_wall_ns,
+            "false_replayed_tiles": tiles,
+            "false_relation": "TRANSCRIPT",
+            "verified_work_from_false": false,
+            "real_signed_cookie_wire": false,
+            "gpu_cost": null,
+            "independent_operators": false,
+            "new_consensus_authority": false,
+            "production_activation": false,
+        });
+        if let Some(path) = std::env::var_os("TRNM_P2_NATIVE_COOKIE_COST_REPORT") {
+            use std::io::Write;
+            let mut file = std::fs::OpenOptions::new()
+                .write(true)
+                .create_new(true)
+                .open(path)
+                .unwrap();
+            serde_json::to_writer_pretty(&mut file, &report).unwrap();
+            file.write_all(b"\n").unwrap();
+            file.sync_all().unwrap();
+        }
+        println!("{report}");
+    }
 
     #[test]
     fn w1_negative_cache_is_explicit_bounded_and_never_activated_by_default() {
@@ -3432,6 +3611,7 @@ mod tests {
             construction_ns: 11,
             challenge_ns: 12,
             solution_search_ns: 13,
+            solution_search_thread_cpu_ns: None,
             solution_trials: 17,
             solution_found: true,
             solution_body_response_ns: 14,
@@ -3449,6 +3629,11 @@ mod tests {
             "failed_stage": null,
         });
         assert_eq!(serde_json::to_value(initial()).unwrap(), expected);
+        let mut measured = initial();
+        measured.solution_search_thread_cpu_ns = Some(71);
+        expected["solution_search_thread_cpu_ns"] = json!(71);
+        assert_eq!(serde_json::to_value(measured).unwrap(), expected);
+        expected.as_object_mut().unwrap().remove("solution_search_thread_cpu_ns");
         for (stage, label, changed_field) in [
             (
                 PublicClientStage::Construction,
