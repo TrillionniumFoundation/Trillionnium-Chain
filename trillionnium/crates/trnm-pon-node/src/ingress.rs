@@ -2377,6 +2377,34 @@ mod tests {
     use super::*;
 
     #[test]
+    fn W1_history_kernel_checkpoints_are_bounded_and_cover_each_tile_row_group() {
+        use trnm_crypto_primitives::pon_work::VerificationProgress as P;
+        assert!(history_work_checkpoint(P::BeforeReplay));
+        assert!(history_work_checkpoint(P::BeforeProduct));
+        assert!(history_work_checkpoint(P::BeforeVerifiedWork));
+        let noise_checks = (0..4)
+            .flat_map(|label| (0..128).map(move |counter| P::Noise { label, counter }))
+            .filter(|point| history_work_checkpoint(*point))
+            .count();
+        assert_eq!(noise_checks, 4, "one check per noise label, not each hash");
+        let transcript_checks = (0..8)
+            .flat_map(|row| {
+                (0..8).flat_map(move |column| {
+                    (0..8).map(move |inner| P::TranscriptTile { row, column, inner })
+                })
+            })
+            .filter(|point| history_work_checkpoint(*point))
+            .count();
+        assert_eq!(transcript_checks, 8, "only one check per transcript row group");
+        assert!(!history_work_checkpoint(P::TranscriptTile {
+            row: 0,
+            column: 0,
+            inner: 1,
+        }));
+        assert!(!history_work_checkpoint(P::MatrixRow { row: 1 }));
+    }
+
+    #[test]
     fn history_page_checks_original_owner_between_valid_w1_packets() {
         // Fixed two-block Page, not a synthetic verification result. Inject an
         // original-resource checkpoint failure *before* the second W1 proof.
