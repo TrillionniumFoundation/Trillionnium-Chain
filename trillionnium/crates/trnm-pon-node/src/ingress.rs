@@ -2265,6 +2265,12 @@ pub fn sync_from(
     // administrator-owned host cgroup used by V3 must already contain this
     // actual sync thread; no new per-peer budget or consensus authority.
     let host_kernel = crate::host_kernel_parent::require_for_listener(address)?;
+    if !address.ip().is_loopback() {
+        node.prepare_remote_sync_cpu_domain(
+            address,
+            Instant::now() + Duration::from_secs(2),
+        )?;
+    }
     for _ in 0..page_budget {
         if let Some(kernel) = &host_kernel {
             kernel.verify()?;
@@ -2310,6 +2316,12 @@ pub fn sync_from_authenticated(
     // administrator-owned host cgroup used by V3 must already contain this
     // actual sync thread; no new per-peer budget or consensus authority.
     let host_kernel = crate::host_kernel_parent::require_for_listener(address)?;
+    if !address.ip().is_loopback() {
+        node.prepare_remote_sync_cpu_domain(
+            address,
+            Instant::now() + Duration::from_secs(2),
+        )?;
+    }
     let settings = node.settings().clone();
     for _ in 0..page_budget {
         if let Some(kernel) = &host_kernel {
@@ -2357,6 +2369,12 @@ pub fn sync_from_authenticated_durable(
     // administrator-owned host cgroup used by V3 must already contain this
     // actual sync thread; no new per-peer budget or consensus authority.
     let host_kernel = crate::host_kernel_parent::require_for_listener(address)?;
+    if !address.ip().is_loopback() {
+        node.prepare_remote_sync_cpu_domain(
+            address,
+            Instant::now() + Duration::from_secs(2),
+        )?;
+    }
     for _ in 0..page_budget {
         if let Some(kernel) = &host_kernel {
             kernel.verify()?;
