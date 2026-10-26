@@ -201,13 +201,15 @@ fn overflow_wrong_pid_and_wrong_handle_are_sticky_refusals() {
 #[test]
 fn dropping_scopes_does_not_drop_or_reinstall_the_connection_observer() {
     let db = Connection::open_in_memory().unwrap();
-    let scope = TransactionScope::capture(&db).unwrap();
-    let pointer = scope.observer;
-    drop(scope);
+    let pointer = {
+        let scope = TransactionScope::capture(&db).unwrap();
+        scope.observer
+    };
     db.execute_batch("BEGIN; COMMIT").unwrap();
-    let scope = TransactionScope::capture(&db).unwrap();
-    assert_eq!(scope.observer, pointer);
-    assert!(unsafe { &*pointer }.controls.load(Ordering::SeqCst) >= 2);
-    drop(scope);
+    {
+        let scope = TransactionScope::capture(&db).unwrap();
+        assert_eq!(scope.observer, pointer);
+        assert!(unsafe { &*pointer }.controls.load(Ordering::SeqCst) >= 2);
+    }
     db.close().unwrap();
 }
