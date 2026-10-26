@@ -89,6 +89,7 @@ impl NativeIoLease {
         self.finish(connection)
     }
     fn finish(&self, connection: Connection) -> Result<OwnedConnection> {
+        crate::transaction_scope::install(&connection)?;
         // A last read-only WAL connection cannot acquire the write lock used
         // by SQLite's optional close-time checkpoint. Configure this before
         // any schema/read access; writer checkpoint and FULL sync stay intact.

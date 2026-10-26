@@ -11,7 +11,7 @@ use rusqlite::{params, Connection, OptionalExtension};
 use serde::{Deserialize, Serialize};
 use trnm_mvcc_fee::{continuity_v1, pon_executor::State};
 use trnm_protocol::pon_wire::{hash, Hash};
-use trnm_sqlite_io_boundary::{NativeIoLease, FILE_BYTES};
+use trnm_sqlite_io_boundary::{NativeIoLease, TransactionScope, FILE_BYTES};
 
 const DDL: &str =
     "CREATE TABLE native_io_shared_snapshots(block BLOB PRIMARY KEY,data BLOB NOT NULL);";
@@ -142,6 +142,9 @@ impl Snapshot {
 /// A failed rollback is owner-fatal and never authorizes a successful State.
 pub(super) fn in_read_snapshot<T>(db: &Connection, run: impl FnOnce() -> Result<T>) -> Result<T> {
     if !db.is_autocommit() {
+        let scope = TransactionScope::capture(db).map_err(|error| {
+            Error::local_replay_source("NATIVE_SHARED_TRANSACTION_SCOPE", error)
+        })?;
         let result = run();
         if db.is_autocommit() {
             return Err(match result {
@@ -151,10 +154,15 @@ pub(super) fn in_read_snapshot<T>(db: &Connection, run: impl FnOnce() -> Result<
                 Ok(_) => Error::from("NATIVE_SHARED_READ_TRANSACTION_LOST").local_integrity(),
             });
         }
-        return result;
+        return checked_scope(&scope, result);
     }
     let read = db.unchecked_transaction()?;
-    let result = run();
+    let result = (|| {
+        let scope = TransactionScope::capture(db).map_err(|error| {
+            Error::local_replay_source("NATIVE_SHARED_TRANSACTION_SCOPE", error)
+        })?;
+        checked_scope(&scope, run())
+    })();
     match (result, read.rollback()) {
         (Ok(value), Ok(())) => Ok(value),
         (Err(first), Ok(())) => Err(first),
@@ -168,14 +176,30 @@ pub(super) fn in_read_snapshot<T>(db: &Connection, run: impl FnOnce() -> Result<
         )),
     }
 }
+
+fn checked_scope<T>(scope: &TransactionScope<'_>, result: Result<T>) -> Result<T> {
+    match (result, scope.unchanged()) {
+        (result, Ok(())) => result,
+        (Ok(_), Err(error)) => Err(Error::local_replay_source(
+            "NATIVE_SHARED_READ_TRANSACTION_CHANGED",
+            error,
+        )),
+        (Err(first), Err(_)) => Err(Error::local_replay_source(
+            "NATIVE_SHARED_READ_TRANSACTION_CHANGED",
+            first,
+        )),
+    }
+}
 /// These observations cover same-connection side effects only, never foreign
 /// data_version or a storage-health verdict. Actual full graph/State checks
 /// still run. Take this fence AFTER the final caller callback so legitimate
 /// earlier accounting is not mistaken for a write by this final read phase.
 pub(super) fn final_read<T>(db: &Connection, run: impl FnOnce() -> Result<T>) -> Result<T> {
     check_authoritative_namespace(db)?;
+    let scope = TransactionScope::capture(db)
+        .map_err(|error| Error::local_replay_source("NATIVE_SHARED_TRANSACTION_SCOPE", error))?;
     let before = (db.total_changes(), db.is_autocommit());
-    let result = run()?;
+    let result = checked_scope(&scope, run())?;
     check_authoritative_namespace(db)?;
     ensure(
         (db.total_changes(), db.is_autocommit()) == before,
@@ -263,6 +287,22 @@ pub(super) fn load(
     load_with_limit(db, settings, block, progress, cache, RETAINED)
 }
 fn load_with_limit(
+    db: &Connection,
+    settings: &Settings,
+    block: Hash,
+    progress: &mut dyn FnMut() -> Result<()>,
+    cache: &native_authenticated::ArithmeticCache,
+    limit: usize,
+) -> Result<Option<State>> {
+    let scope = TransactionScope::capture(db)
+        .map_err(|error| Error::local_replay_source("NATIVE_SHARED_TRANSACTION_SCOPE", error))?;
+    checked_scope(
+        &scope,
+        load_in_scope(db, settings, block, progress, cache, limit),
+    )
+}
+
+fn load_in_scope(
     db: &Connection,
     settings: &Settings,
     block: Hash,

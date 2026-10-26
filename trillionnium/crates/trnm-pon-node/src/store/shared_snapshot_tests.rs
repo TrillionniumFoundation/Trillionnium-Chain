@@ -2,6 +2,8 @@
 //! The normal AuthV1 fixture retains its original full-JSON snapshots. These
 //! tests exercise new shared records against real admitted native COW nodes;
 //! the unchanged native-IO campaign must separately qualify the factory route.
+#[path = "shared_snapshot_transaction_tests.rs"]
+mod transaction_controls;
 use super::*;
 use crate::store::Node;
 use crate::{development_public, Packet};
