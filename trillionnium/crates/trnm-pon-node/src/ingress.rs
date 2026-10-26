@@ -2253,18 +2253,6 @@ pub fn receive_page_from(
     native
 }
 
-/// Unit-only trusted local parser; untrusted callers use receive_page_from.
-#[cfg(test)]
-fn receive_page(
-    node: &mut Node,
-    page: Page,
-    tip: Hash,
-    after: Hash,
-    clock: u64,
-) -> Result<Hash> {
-    receive_page_with_cpu(node, page, tip, after, clock, None)
-}
-
 pub fn sync_from(
     node: &mut Node,
     address: SocketAddr,
