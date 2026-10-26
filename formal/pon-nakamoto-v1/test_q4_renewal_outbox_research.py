@@ -300,7 +300,10 @@ class RenewalOutboxTests(unittest.TestCase):
             self.assertEqual(db.audit(), 0)
 
 
-class OutboxStatusSnapshotTests(RenewalOutboxTests):
+class OutboxStatusSnapshotTests(unittest.TestCase):
+    setUp = RenewalOutboxTests.setUp
+    tearDown = RenewalOutboxTests.tearDown
+    open = RenewalOutboxTests.open
     """Status is a checked local projection, not independent chain authority."""
 
     def test_status_rejects_corruption_committed_after_open(self):
@@ -323,6 +326,7 @@ class OutboxStatusSnapshotTests(RenewalOutboxTests):
         with self.open() as reader, self.open() as writer:
             key = reader.prepare(intent())
             reader.dispatch_unknown(key)
+            another = writer.prepare(replace(intent(tx=b'Z'*1187), operation_id=h(b'another-operation')))
             original_audit = reader._audit_snapshot
 
             def pinned_audit():
@@ -330,14 +334,14 @@ class OutboxStatusSnapshotTests(RenewalOutboxTests):
                 # Reader already began its snapshot. A second owner cannot
                 # commit a new event between auditing and projecting status.
                 with self.assertRaises(sqlite3.OperationalError):
-                    writer.dispatch_unknown(key)
+                    writer.dispatch_unknown(another)
                 return value
 
             reader._audit_snapshot = pinned_audit
             self.assertTrue(reader.status(key)['dispatch_unknown'])
             self.assertFalse(reader.db.in_transaction)
-            with self.assertRaisesRegex(OutboxError, 'NO_REDISPATCH'):
-                writer.dispatch_unknown(key)
+            writer.dispatch_unknown(another)
+            self.assertEqual(reader.audit(), 2)
 
     def test_status_fails_closed_on_reentrant_transaction(self):
         with self.open() as db:
