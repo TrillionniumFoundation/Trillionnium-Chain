@@ -205,6 +205,14 @@
       "role": "Native development composition with a single branch/replay/outbox SQLite owner, explicit maintenance choice, bounded public entrypoints, typed local error identity, checked history projections and explicit revision16 model/task-window CLI context binding; not a publicly qualified deployment.",
       "consensus_authority": false,
       "production_activation": false
+    },
+    {
+      "package": "trnm-sqlite-io-boundary",
+      "module": "M15",
+      "path": "trillionnium/crates/trnm-sqlite-io-boundary",
+      "role": "Explicit process-owned native SQLite VFS safe boundary; fresh local PN1 receipt domain, not a default VFS or consensus authority.",
+      "consensus_authority": false,
+      "production_activation": false
     }
   ],
   "source_disposition": [

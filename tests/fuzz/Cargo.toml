@@ -8,7 +8,7 @@ license = "MIT"
 [package.metadata]
 cargo-fuzz = true
 
-# Fuzzing has its own lockfile and graph. No fuzz dependency enters the 25-package
+# Fuzzing has its own lockfile and graph. No fuzz dependency enters the
 # native workspace or a normal node binary.
 [workspace]
 members = ["."]

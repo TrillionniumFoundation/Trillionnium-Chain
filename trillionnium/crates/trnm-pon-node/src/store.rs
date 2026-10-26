@@ -70,6 +70,7 @@ use trnm_protocol::qualified_work_task::lifecycle_v4::PROFILE as OVERLAP_TASK_PR
 use trnm_protocol::qualified_work_task::{
     QualifiedWorkTask, SignedQualifiedWorkTask, TaskPurpose, SIGNED_TASK_BYTES,
 };
+use trnm_sqlite_io_boundary::{NativeIoLease, OwnedConnection};
 use trnm_transport::{
     AuthenticatedPeerFrameV0, CandidateP2pAdmissionV0, IoDigest32V0, PeerFrameSourceV0,
     PeerReplayRecoverySourceV0, PeerReplayStateV0, PeerSessionIdentityV0,
@@ -611,9 +612,25 @@ fn next_nonce_from_state(state: &State, sender: Hash) -> Result<u64> {
         .ok_or_else(|| "NONCE_OVERFLOW".into())
 }
 
+pub(crate) fn native_connection(
+    io: &Option<NativeIoLease>,
+    path: &Path,
+    flags: OpenFlags,
+) -> Result<OwnedConnection> {
+    if let Some(io) = io {
+        io.open(path, flags).map_err(|e| Error::from(e.to_string()))
+    } else {
+        Ok(OwnedConnection::legacy(Connection::open_with_flags(
+            path, flags,
+        )?))
+    }
+}
+
 /// One private native namespace; no reference subprocess or remote state setter exists.
 pub struct Node {
-    db: Connection,
+    db: OwnedConnection,
+    // Explicit candidate only: the default openers retain their legacy VFS.
+    native_io: Option<NativeIoLease>,
     owner: File,
     // Declared after db/owner so SQLite closes before private files are removed.
     // The guard also retains the existing source namespace's exclusive lock.
@@ -691,6 +708,11 @@ impl StateBackend {
         };
         hash(domain, &[self.ddl().as_bytes()])
     }
+}
+struct NativeStoreOpening {
+    state_backend: StateBackend,
+    growth_observation_only: bool,
+    native_io: Option<NativeIoLease>,
 }
 struct NativeOwners {
     policy: Option<OwnerPolicy>,
@@ -878,6 +900,79 @@ impl Node {
     pub fn open(path: &Path, settings: Settings, workers: usize) -> Result<Self> {
         Self::open_with_fault(path, settings, workers, None)
     }
+    /// Fresh local PN1 I/O domain, never a consensus/profile activation.
+    /// All cold reopens must retain the same owner's lease. Other migration
+    /// destinations and external/default-VFS writers are not admitted.
+    pub fn open_with_native_io(
+        native_io: NativeIoLease,
+        settings: Settings,
+        workers: usize,
+    ) -> Result<Self> {
+        native_io.check().map_err(|e| Error::from(e.to_string()))?;
+        let path = native_io.directory();
+        ensure(!owner_marker_present(&path)?, "OWNER_TASK_POLICY_REQUIRED")?;
+        Self::open_selected_with_io(
+            &path,
+            settings,
+            workers,
+            None,
+            NativeOwners {
+                policy: None,
+                mining: None,
+                continuous: None,
+            },
+            NativeStoreOpening {
+                state_backend: StateBackend::Legacy,
+                growth_observation_only: false,
+                native_io: Some(native_io),
+            },
+        )
+    }
+    pub fn native_io_receipt(&self) -> Result<Option<trnm_sqlite_io_boundary::RootReceipt>> {
+        self.native_io
+            .as_ref()
+            .map(|io| io.receipt().map_err(|e| Error::from(e.to_string())))
+            .transpose()
+    }
+    /// The original PN1 campaign's AuthenticatedV1 backend in a fresh held I/O
+    /// domain. This preserves the original constructor's owners/backend/hook
+    /// selection; it does not downgrade the campaign to Legacy or authorize an
+    /// operator-policy namespace through an unrestricted constructor.
+    pub fn open_with_authenticated_state_and_native_io(
+        native_io: NativeIoLease,
+        settings: Settings,
+        workers: usize,
+    ) -> Result<Self> {
+        Self::open_with_authenticated_state_and_native_io_and_fault(
+            native_io, settings, workers, None,
+        )
+    }
+    pub fn open_with_authenticated_state_and_native_io_and_fault(
+        native_io: NativeIoLease,
+        settings: Settings,
+        workers: usize,
+        hook: Option<&mut Hook<'_>>,
+    ) -> Result<Self> {
+        native_io.check().map_err(|e| Error::from(e.to_string()))?;
+        let path = native_io.directory();
+        ensure(!owner_marker_present(&path)?, "OWNER_TASK_POLICY_REQUIRED")?;
+        Self::open_selected_with_io(
+            &path,
+            settings,
+            workers,
+            hook,
+            NativeOwners {
+                policy: None,
+                mining: None,
+                continuous: None,
+            },
+            NativeStoreOpening {
+                state_backend: StateBackend::AuthenticatedV1,
+                growth_observation_only: false,
+                native_io: Some(native_io),
+            },
+        )
+    }
     pub fn open_with_fault(
         path: &Path,
         settings: Settings,
@@ -1057,11 +1152,41 @@ impl Node {
         path: &Path,
         settings: Settings,
         workers: usize,
-        mut hook: Option<&mut Hook<'_>>,
+        hook: Option<&mut Hook<'_>>,
         owners: NativeOwners,
         state_backend: StateBackend,
         growth_observation_only: bool,
     ) -> Result<Self> {
+        Self::open_selected_with_io(
+            path,
+            settings,
+            workers,
+            hook,
+            owners,
+            NativeStoreOpening {
+                state_backend,
+                growth_observation_only,
+                native_io: None,
+            },
+        )
+    }
+    fn open_selected_with_io(
+        path: &Path,
+        settings: Settings,
+        workers: usize,
+        mut hook: Option<&mut Hook<'_>>,
+        owners: NativeOwners,
+        opening: NativeStoreOpening,
+    ) -> Result<Self> {
+        let NativeStoreOpening {
+            state_backend,
+            growth_observation_only,
+            native_io,
+        } = opening;
+        if let Some(io) = &native_io {
+            io.check().map_err(|e| Error::from(e.to_string()))?;
+            ensure(path == io.directory(), "NATIVE_IO_HELD_ROOT")?;
+        }
         ensure(
             !authenticated_migration_pending(path)?,
             "NATIVE_STATE_MIGRATION_PENDING",
@@ -1112,12 +1237,20 @@ impl Node {
             fs::create_dir_all(path)?;
             fs::set_permissions(path, fs::Permissions::from_mode(0o700))?;
         }
-        let metadata = fs::symlink_metadata(path)?;
+        let metadata = if native_io.is_some() {
+            fs::metadata(path)?
+        } else {
+            fs::symlink_metadata(path)?
+        };
         ensure(
             metadata.is_dir() && !metadata.file_type().is_symlink(),
             "NAMESPACE",
         )?;
-        let directory = path.canonicalize()?;
+        let directory = if let Some(io) = &native_io {
+            io.directory()
+        } else {
+            path.canonicalize()?
+        };
         let dbpath = directory.join("native.sqlite");
         let marker = directory.join("initializing.json");
         ensure(
@@ -1175,7 +1308,12 @@ impl Node {
         if intent {
             ensure(fs::read(&marker)? == expected, "INITIALIZATION_CONTEXT")?;
         }
-        let expected_db = Connection::open_in_memory()?;
+        let expected_db = if let Some(io) = &native_io {
+            io.open_in_memory()
+                .map_err(|e| Error::from(e.to_string()))?
+        } else {
+            OwnedConnection::legacy(Connection::open_in_memory()?)
+        };
         expected_db.execute_batch(&ddl)?;
         let expected_schema = schema(&expected_db)?;
         let mut initialized = false;
@@ -1183,7 +1321,8 @@ impl Node {
         if dbpath.exists() {
             let m = fs::metadata(&dbpath)?;
             prior_inode = Some((m.dev(), m.ino()));
-            let probe = Connection::open_with_flags(
+            let probe = native_connection(
+                &native_io,
                 &dbpath,
                 OpenFlags::SQLITE_OPEN_READ_ONLY | OpenFlags::SQLITE_OPEN_NO_MUTEX,
             )?;
@@ -1233,12 +1372,15 @@ impl Node {
             "GROWTH_PACKET_STATUS_EXISTING_STORE_REQUIRED",
         )?;
         let mut db = if growth_observation_only {
-            Connection::open_with_flags(
+            native_connection(
+                &native_io,
                 &dbpath,
                 OpenFlags::SQLITE_OPEN_READ_ONLY | OpenFlags::SQLITE_OPEN_NO_MUTEX,
             )?
+        } else if native_io.is_some() {
+            native_connection(&native_io, &dbpath, OpenFlags::default())?
         } else {
-            Connection::open(&dbpath)?
+            OwnedConnection::legacy(Connection::open(&dbpath)?)
         };
         let dm = fs::metadata(&dbpath)?;
         if let Some(previous) = prior_inode {
@@ -1319,6 +1461,7 @@ impl Node {
         }
         let mut node = Self {
             db,
+            native_io,
             owner,
             growth_observer_snapshot: None,
             directory,
@@ -1973,7 +2116,12 @@ impl Node {
             !authenticated_migration_pending(&self.directory)?,
             "NATIVE_STATE_MIGRATION_PENDING",
         )?;
-        let meta = fs::symlink_metadata(&self.directory)?;
+        let meta = if let Some(io) = &self.native_io {
+            io.check().map_err(|e| Error::from(e.to_string()))?;
+            fs::metadata(&self.directory)?
+        } else {
+            fs::symlink_metadata(&self.directory)?
+        };
         ensure(
             meta.is_dir() && (meta.dev(), meta.ino()) == self.directory_id,
             "NAMESPACE_CHANGED",

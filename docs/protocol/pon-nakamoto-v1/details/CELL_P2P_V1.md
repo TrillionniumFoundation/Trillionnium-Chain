@@ -381,8 +381,13 @@ complete release, CURRENT installation, funded storage or the three-round loop.
 
 This is I09 of the
 [sole plan](../../../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md).
-The TCM1 configured-peer pilot above is implemented; the release closure,
-ordinary loader integration and public storage duties below are target work.
+The TCM1 configured-peer pilot above and a fixed-profile eleven-material
+controlled byte closure are implemented. The latter [source-bound observation](../../../../evidence/pon-upgrade-implementation-20261018/native-rounds/real-model-owner-controlled-20261025/i09-eleven-material-controlled-20261026.json)
+on Chain `915f933c` / Hepta `da4a920` passes the original signed native case
+using all eleven objects from one loopback peer. Its overall handoff still fails
+at I10 selected installation. General selected dependency closure, ordinary
+loader/I10 integration, full runtime closure and public storage duties below
+remain target work; the target message names are not new exported APIs.
 Reuse the existing chunk/store/fetch owner rather than add another weight store.
 P1 closure/loader integration is a required delivery for the P0 PN3 full-loop
 gate; completing only its P0 interface prerequisites cannot close that gate.

@@ -19,7 +19,7 @@ default = []
 [dependencies]
 borsh = { version = "1", features = ["derive"] }
 ed25519-dalek = "2"
-rusqlite = { version = "0.32", features = ["bundled"] }
+rusqlite = { version = "=0.39.0", features = ["bundled", "fallible_uint"] }
 sha2 = "0.10"
 serde_json = "1"
 trnm-task-kernel = { path = "../trnm-task-kernel", version = "=0.1.0" }

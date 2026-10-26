@@ -71,6 +71,7 @@ CURRENT_READER_COMMANDS = (
     'python3 scripts/ci/test_pon_w1_cost_matrix_reader.py',
     'python3 scripts/ci/test_pon_public_v3_policy_read.py',
     'python3 scripts/ci/test_llm_cell_handoff_deadline.py',
+    'python3 scripts/test_llm_cell_release.py',
 )
 LLM_RUNTIME_TESTS = (
     '    python3 scripts/test_llm_runtime_rss_owner.py\n'

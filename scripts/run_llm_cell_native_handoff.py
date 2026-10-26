@@ -49,6 +49,7 @@ def remaining_fetch_budget(deadline: float) -> tuple[float, int, int]:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--controlled-consumer-profile", choices=("smollm-signed-read-v1",))
     # Retain the original absolute-path invocation arguments. Hepta, Python,
     # just and target paths do not enable an unshipped native consumer.
     for name in ("chain", "hepta", "source-parent", "source-materials", "output",
@@ -78,6 +79,9 @@ def main() -> None:
         "native_consumer_status": "UNAVAILABLE", "native_receipt_status": "UNVERIFIED",
         "cell_binary_sha256": sha(args.cell_bin), "members": [],
     }
+    if args.controlled_consumer_profile:
+        evidence.update(schema="pon-smollm-cell-controlled-handoff-v2",
+            scope="controlled-eleven-object-byte-closure-and-original-signed-read-not-I10")
     server = None
     try:
         family_path = args.chain / "config/pon/model-family-smollm2-135m-v1.json"
@@ -156,6 +160,10 @@ def main() -> None:
         evidence["release"] = {"prepare": release, "source_file": str(release_file),
             "source_sha256": sha(release_file), "max_response_bytes": response_budget,
             "max_connections": connection_budget, "selection_authority": False}
+        if args.controlled_consumer_profile:
+            import llm_cell_release
+            evidence["controlled_byte_closure"] = llm_cell_release.prepare_sidecar(
+                args, family, parent, contract, evidence["members"], release_file, release["release"], producer)
         if consumer.exists():
             raise ValueError("controlled consumer store must initially be absent")
         evidence["release"]["consumer_initially_absent"] = True
@@ -270,6 +278,11 @@ def main() -> None:
         write_json(consumer_parent, parent)
         evidence["source_parent_sha256"] = sha(args.source_parent)
         evidence["consumer_parent_sha256"] = sha(consumer_parent)
+        if args.controlled_consumer_profile:
+            evidence["controlled_native"] = llm_cell_release.consume_controlled(
+                args, consumer_parent, evidence["controlled_byte_closure"])
+            evidence["native_consumer_status"] = "CONTROLLED_LOAD_OBSERVED"
+            raise RuntimeError("I10 selected installation UNAVAILABLE; controlled byte-closure load is not installation authority")
         # No supported native consumer or owner-receipt contract is shipped.
         # Do not invoke an unknown selector, parse arbitrary JSON as authority,
         # or invent success fields for a future I10 implementation.

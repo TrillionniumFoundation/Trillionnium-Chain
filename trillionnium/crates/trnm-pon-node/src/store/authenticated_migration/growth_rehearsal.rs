@@ -323,7 +323,8 @@ fn read_only_archive(directory: &Path, settings: Settings, backend: StateBackend
     #[cfg(test)]
     let expected_schema = schema(&db)?;
     Ok(Node {
-        db,
+        db: trnm_sqlite_io_boundary::OwnedConnection::legacy(db),
+        native_io: None,
         owner,
         growth_observer_snapshot: None,
         directory,
@@ -654,6 +655,7 @@ impl Node {
         namespace: &str,
         progress: &(impl Fn(GrowthRehearsalProgressV2) -> Result<()> + Sync),
     ) -> Result<GrowthRehearsalReceiptV2> {
+        ensure(self.native_io.is_none(), "NATIVE_IO_MIGRATION_UNSUPPORTED")?;
         ensure(
             !trnm_mvcc_fee::growth_profile_v2::enabled(&self.settings.app),
             "GROWTH_REFERENCE_MIGRATION_UNSUPPORTED",
