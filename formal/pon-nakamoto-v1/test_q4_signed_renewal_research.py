@@ -86,7 +86,8 @@ class SignedQ4Research(unittest.TestCase):
                             old if old is not None else f['old'],f['net'],f['params'],
                             containing_height=kwargs.pop('height',90),
                             old_source_sequence=kwargs.pop('source_sequence',1),
-                            expected_requester_sequence=kwargs.pop('requester_sequence',9),**kwargs)
+                            expected_requester_sequence=kwargs.pop('requester_sequence',9),
+                            expected_old_lease_id=kwargs.pop('expected_old_lease_id',decode_lease(f['old']).lease_id),**kwargs)
 
     def test_real_two_signature_packet_bound_to_actual_bytes(self):
         result=self.verify()
@@ -128,6 +129,24 @@ class SignedQ4Research(unittest.TestCase):
         for seq in (0,8,10):
             with self.subTest(requester=seq):
                 with self.assertRaises(Q4PacketError):self.verify(requester_sequence=seq)
+
+    def test_all_old_lease_bytes_are_independently_pinned(self):
+        """A valid new dual signature must not authenticate an altered old lease."""
+        original=self.fixture['old']
+        original_id=decode_lease(original).lease_id
+        for pos in range(len(original)):
+            altered=bytearray(original)
+            altered[pos]^=1
+            with self.subTest(byte=pos):
+                with self.assertRaises(Q4PacketError):
+                    self.verify(old=bytes(altered), expected_old_lease_id=original_id)
+        # Changing the old not_before at byte 312 keeps its syntactic bounds
+        # legal but changes its identity; the independent old pin must fail.
+        changed=bytearray(original)
+        changed[312]^=1
+        self.assertNotEqual(decode_lease(bytes(changed)).lease_id,original_id)
+        with self.assertRaisesRegex(Q4PacketError,'OLD_LEASE_PIN'):
+            self.verify(old=bytes(changed),expected_old_lease_id=original_id)
 
     def test_every_byte_in_signed_transaction_is_fenced(self):
         """All 1187 byte positions must change a bound statement or a signature."""

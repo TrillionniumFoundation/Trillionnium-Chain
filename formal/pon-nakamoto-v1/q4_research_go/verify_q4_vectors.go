@@ -112,6 +112,11 @@ func verify(v TestVector, raw []byte) (Expected, error) {
 	if e != nil {
 		return blank, e
 	}
+	// The previous lease is not covered by either signature on the successor.
+	// It must therefore come from an independently pinned original parent view.
+	if hex.EncodeToString(oldid[:]) != v.Expected.Old {
+		return blank, fail("OLD_LEASE_PIN")
+	}
 	if len(raw) != 1187 {
 		return blank, fail("PACKET_LENGTH")
 	}
@@ -217,6 +222,28 @@ func main() {
 	if got != v.Expected {
 		panic(fmt.Sprintf("expected %+v, got %+v", v.Expected, got))
 	}
+	// Full-byte adversarial differential: only the exact signed packet and
+	// originally declared lease may be used in this research verification.
+	for i := range b {
+		mutant := append([]byte(nil), b...)
+		mutant[i] ^= 1
+		if _, e = verify(v, mutant); e == nil {
+			panic(fmt.Sprintf("accepted mutated signed byte at %d", i))
+		}
+	}
+	old, e := decodeHex(v.OldLease)
+	if e != nil {
+		panic(e)
+	}
+	for i := range old {
+		mutant := append([]byte(nil), old...)
+		mutant[i] ^= 1
+		changed := v
+		changed.OldLease = hex.EncodeToString(mutant)
+		if _, e = verify(changed, b); e == nil {
+			panic(fmt.Sprintf("accepted changed old-lease byte at %d", i))
+		}
+	}
 	for _, test := range v.Rejected {
 		b, e = decodeHex(test.Raw)
 		if e != nil {
@@ -226,5 +253,5 @@ func main() {
 			panic("accepted negative case: " + test.Name)
 		}
 	}
-	fmt.Printf("PASS independently decoded dual-signed Q4 packet and %d negative mutations; no Node authority\n", len(v.Rejected))
+	fmt.Printf("PASS dual-signed Q4: 1187 packet mutations + 344 old-lease mutations + %d named negative vectors; no Node authority\n", len(v.Rejected))
 }

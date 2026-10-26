@@ -123,12 +123,16 @@ class ParsedRenewal:
 
 def verify_tag22(raw: bytes, old_lease_raw: bytes, network: bytes, parameters: bytes,
                  *, containing_height: int, old_source_sequence: int,
-                 expected_requester_sequence: int) -> ParsedRenewal:
+                 expected_requester_sequence: int,
+                 expected_old_lease_id: bytes) -> ParsedRenewal:
     """Pure packet and signature check, never a chain or lease-ownership verdict."""
     require(type(raw) is bytes and len(raw) == PNX_BYTES, "PNX_LENGTH")
     network = hash32(network, "NETWORK")
     parameters = hash32(parameters, "PARAMETERS")
     old = decode_lease(old_lease_raw)
+    # The successor's signatures DO NOT cover the predecessor lease bytes.
+    # Refuse any old-lease rewrite absent the independently pinned original ID.
+    require(old.lease_id == hash32(expected_old_lease_id, "OLD_LEASE_PIN"), "OLD_LEASE_PIN")
     require(old.network == network and old.parameters == parameters, "OLD_CONTEXT")
     require(type(containing_height) is int and 1 <= containing_height <= UINT64_MAX, "HEIGHT")
     require(type(old_source_sequence) is int and 1 <= old_source_sequence < UINT64_MAX, "SOURCE_SEQUENCE")
@@ -195,7 +199,8 @@ def checked_prepare(outbox, intent, old_lease_raw: bytes, *, containing_height: 
                           intent.network,intent.parameters,
                           containing_height=containing_height,
                           old_source_sequence=old_source_sequence,
-                          expected_requester_sequence=intent.requester_sequence)
+                          expected_requester_sequence=intent.requester_sequence,
+                          expected_old_lease_id=intent.old_lease_digest)
     require(intent.old_lease_digest == parsed.old_lease_id and
             intent.next_lease_digest == parsed.new_lease_id and
             intent.signed_from == parsed.new_start and
