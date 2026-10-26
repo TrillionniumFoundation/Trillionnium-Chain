@@ -23,7 +23,9 @@ for each free challenge issuance. Each claim uses:
 
 - One owner context bound by
   H('w2c-stored-owner-v1', receiver, epoch, original_secret).
-  Different Epoch, key, receiver or finite capacity must not reuse it.
+  The SQLite owner row also persists its **exact capacity**. A second
+  process must not reopen it with a larger quota. Different Epoch,
+  key, receiver or finite capacity must not reuse it.
 - The already-existing exact paid identity from the unmodified W2-C
   grant MAC, authenticated caller, proposal, nonce and ticket checks.
   Bad tickets are filtered before SQLite's W1-start permission.
@@ -53,10 +55,10 @@ Standalone selectors:
     python3 formal/pon-nakamoto-v1/test_w2c_stateless_durable_spends.py -v
 
 One local Python 3 isolated test run dated 2026-10-26 completed
-**12 / 12 PASS** in ~5 s: exact-once across 32 threads, exact-once
+**13 / 13 PASS** in ~4.5 s: exact-once across 32 threads, exact-once
 across six real spawned processes, actual child process exit
 immediately after a committed claim, new-process reopen, capacity,
-expiry/high-water rollback, changed context, unsafe symlink and
+expiry/high-water rollback, changed context/capacity, unsafe symlink and
 out-of-range identity refusal, cloned-instance spend and fake W1
 TRANSCRIPT rejection after an actual research cost ticket.
 
