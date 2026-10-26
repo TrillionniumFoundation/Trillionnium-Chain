@@ -2420,24 +2420,38 @@ mod tests {
             complete: true,
         };
         let mut receiving = Node::open(dir.path(), settings.clone(), 2).unwrap();
-        let mut checked = 0;
+        let mut before_packets = 0;
+        let mut after_packets = 0;
+        let mut w1_checkpoints = 0;
         let error = receive_page(
             &mut receiving,
             page(),
             second_id,
             settings.genesis(),
             now,
-            &mut || {
-                checked += 1;
-                if checked == 3 {
-                    Err("TEST_RESOURCE_OWNER_REVOKED".into())
-                } else {
+            &mut |point| match point {
+                HistoryImportCheckpoint::BeforePacket => {
+                    before_packets += 1;
+                    if before_packets == 2 {
+                        Err("TEST_RESOURCE_OWNER_REVOKED".into())
+                    } else {
+                        Ok(())
+                    }
+                }
+                HistoryImportCheckpoint::AfterPacket => {
+                    after_packets += 1;
+                    Ok(())
+                }
+                HistoryImportCheckpoint::DuringWork(stage) => {
+                    assert!(history_work_checkpoint(stage));
+                    w1_checkpoints += 1;
                     Ok(())
                 }
             },
         ).unwrap_err();
         assert_eq!(error.to_string(), "TEST_RESOURCE_OWNER_REVOKED");
-        assert_eq!(checked, 3, "first pre+post, then second pre");
+        assert_eq!((before_packets, after_packets), (2, 1));
+        assert!(w1_checkpoints > 0, "new first packet must have real W1 checkpoints");
         assert_eq!(receiving.parent_height(first_id).unwrap(), 1);
         assert!(receiving.parent_height(second_id).is_err());
         assert_eq!(receiving.read_active().unwrap().0, settings.genesis());
@@ -2445,7 +2459,9 @@ mod tests {
         let mut recovered = Node::open(dir.path(), settings.clone(), 2).unwrap();
         assert_eq!(recovered.parent_height(first_id).unwrap(), 1);
         assert!(recovered.parent_height(second_id).is_err());
-        let mut completed_checks = 0;
+        let mut completed_before = 0;
+        let mut completed_after = 0;
+        let mut replay_stages = 0;
         assert_eq!(
             receive_page(
                 &mut recovered,
@@ -2453,15 +2469,79 @@ mod tests {
                 second_id,
                 settings.genesis(),
                 now,
-                &mut || {
-                    completed_checks += 1;
+                &mut |point| {
+                    match point {
+                        HistoryImportCheckpoint::BeforePacket => completed_before += 1,
+                        HistoryImportCheckpoint::AfterPacket => completed_after += 1,
+                        HistoryImportCheckpoint::DuringWork(stage) => {
+                            assert!(history_work_checkpoint(stage));
+                            replay_stages += 1;
+                        }
+                    }
                     Ok(())
                 },
             ).unwrap(),
             second_id
         );
-        assert_eq!(completed_checks, 4, "check each packet before and after");
+        assert_eq!((completed_before, completed_after), (2, 2));
+        assert!(replay_stages > 0, "second new W1 must be checked during replay");
         assert_eq!(recovered.read_active().unwrap().0, second_id);
+    }
+
+    #[test]
+    fn hostile_host_owner_loss_during_w1_replay_leaves_no_verified_block() {
+        let now = now().unwrap();
+        let settings = crate::Settings::development(Some(now - 100)).unwrap();
+        let dir = tempfile::tempdir().unwrap();
+        let producer_dir = tempfile::tempdir().unwrap();
+        let producer = Node::open(producer_dir.path(), settings.clone(), 2).unwrap();
+        let packet = producer.make(
+            settings.genesis(),
+            vec![],
+            crate::development_public(0).unwrap(),
+            settings.genesis_time() + 10,
+            4096,
+        ).unwrap();
+        let id = packet.id().unwrap();
+        let page = Page {
+            schema: "pon-native-history-v1".into(),
+            network: hex::encode(settings.network()),
+            parameters: hex::encode(settings.parameters()),
+            genesis: hex::encode(settings.genesis()),
+            tip: hex::encode(id),
+            after: hex::encode(settings.genesis()),
+            packets: vec![hex::encode(packet.encode().unwrap())],
+            next: hex::encode(id),
+            complete: true,
+        };
+        let mut receiving = Node::open(dir.path(), settings.clone(), 2).unwrap();
+        let baseline = receiving.stats().unwrap();
+        let mut checked_tile = false;
+        let error = receive_page(
+            &mut receiving,
+            page,
+            id,
+            settings.genesis(),
+            now,
+            &mut |point| match point {
+                HistoryImportCheckpoint::DuringWork(
+                    trnm_crypto_primitives::pon_work::VerificationProgress::TranscriptTile {
+                        column: 0,
+                        inner: 0,
+                        ..
+                    },
+                ) => {
+                    checked_tile = true;
+                    Err("TEST_HOST_REVOKED_DURING_W1".into())
+                }
+                _ => Ok(()),
+            },
+        ).unwrap_err();
+        assert_eq!(error.to_string(), "TEST_HOST_REVOKED_DURING_W1");
+        assert!(checked_tile, "W1 callback must actually enter transcript arithmetic");
+        assert_eq!(receiving.stats().unwrap(), baseline);
+        assert!(receiving.parent_height(id).is_err());
+        assert_eq!(receiving.read_active().unwrap().0, settings.genesis());
     }
 
     #[test]
