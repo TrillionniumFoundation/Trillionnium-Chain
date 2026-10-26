@@ -2109,13 +2109,17 @@ fn call_authenticated_durable_inner(
     Err(Error::authenticated_remote(terminal, error))
 }
 
-fn receive_page(
+fn receive_page_with_operation(
     node: &mut Node,
     page: Page,
     tip: Hash,
     after: Hash,
     clock: u64,
+    operation: Option<&public_v3::ServiceMutationCpuOperation>,
 ) -> Result<Hash> {
+    let live = operation.map(public_v3::ServiceMutationCpuOperation::checkpoint_handle);
+    let checked = || live.as_ref().map_or(Ok(()), |meter| meter.checkpoint());
+    checked()?;
     ensure(
         page.schema == "pon-native-history-v1"
             && page.network == hex::encode(node.settings().network())
@@ -2137,13 +2141,14 @@ fn receive_page(
         page.packets.iter().map(String::len).sum::<usize>() <= MAX_FRAME - 1024,
         "PAGE_LIMIT",
     )?;
-    let packets = page
-        .packets
-        .iter()
-        .map(|s| hex_packet(s))
-        .collect::<Result<Vec<_>>>()?;
+    let mut packets = Vec::with_capacity(page.packets.len());
+    for wire in &page.packets {
+        checked()?;
+        packets.push(hex_packet(wire)?);
+    }
     let mut next = after;
     for packet in &packets {
+        checked()?;
         ensure(packet.header.parent == next, "PAGE_PARENT")?;
         next = packet.id()?;
     }
@@ -2152,20 +2157,94 @@ fn receive_page(
         "PAGE_COMPLETE",
     )?;
     for packet in &packets {
-        node.admit(packet, clock)?;
+        checked()?;
+        if let Some(operation) = operation {
+            let mut progress = || checked();
+            if node
+                .check_admission_context_with_progress(packet, clock, &mut progress)?
+                .is_some()
+            {
+                continue;
+            }
+            checked()?;
+            let permit = node.begin_owner_work(packet)?;
+            let verified = WorkCheckedPacket::verify_with_progress(
+                packet.clone(),
+                &mut |_| checked(),
+            )?;
+            let verified = node.attach_owner_work(verified, permit)?;
+            checked()?;
+            let execute = |_: trnm_mvcc_fee::pon_executor::ExecutionProgress| checked();
+            let control = trnm_mvcc_fee::pon_executor::ExecutionControl::new(
+                &execute,
+                operation.worker_accounting(),
+            );
+            node.admit_work_checked_with_control(verified, clock, &control)?;
+        } else {
+            // Trusted, local-only developer parser: never selected for a WAN
+            // source lacking the Node's original shared CPU account.
+            node.admit(packet, clock)?;
+        }
     }
     if page.complete {
-        node.activate_observed(tip, clock)?;
+        checked()?;
+        node.activate_observed_with_progress(tip, clock, &mut || checked())?;
+        checked()?;
     }
     Ok(next)
 }
 
-/// Public untrusted History import. Unlike the private local parser, this
-/// entry REQUIRES a concrete original source address and checks the existing
-/// fixed, administrator-owned host resource parent around every possible
-/// W1 replay. A caller cannot bypass the guard by calling the addressless
-/// parser from another crate or by supplying a fake already-verified work
-/// token. Only the full native Node determines consensus validity.
+fn receive_page_from_decoder(
+    node: &mut Node,
+    source: SocketAddr,
+    tip: Hash,
+    after: Hash,
+    clock: u64,
+    decode: impl FnOnce() -> Result<Page>,
+) -> Result<Hash> {
+    let host_kernel = crate::host_kernel_parent::require_for_listener(source)?;
+    if let Some(kernel) = &host_kernel {
+        kernel.verify()?;
+    }
+    // No peer/client controls the Node's original mutation CPU account.
+    // Nonloopback without an owned account refuses before deserialization.
+    let cpu = match node.public_service_cpu_domain() {
+        Ok(domain) => Some(domain),
+        Err(error)
+            if source.ip().is_loopback()
+                && error.is(ErrorCode::OwnerPublicServiceDomainUnbound) =>
+        {
+            None
+        }
+        Err(error) => return Err(error),
+    };
+    let operation = cpu
+        .as_ref()
+        .map(public_v3::ServiceMutationCpuDomain::begin)
+        .transpose()?;
+    // Reservation spans JSON decode, canonical page/packet validation, full
+    // W1, complete scoped M06 and tip activation. No extra worker/domain.
+    let native = (|| -> Result<Hash> {
+        let page = decode()?;
+        receive_page_with_operation(node, page, tip, after, clock, operation.as_ref())
+    })();
+    let bad_cpu = operation
+        .map(public_v3::ServiceMutationCpuOperation::finish)
+        .is_some_and(|settlement| settlement.accounting_unavailable);
+    // The original kernel membership/limits remain valid before and after
+    // every untrusted page. An accepted native fact survives a later fault.
+    if let Some(kernel) = &host_kernel {
+        kernel.verify()?;
+    }
+    if bad_cpu {
+        return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+    }
+    native
+}
+
+/// Source-bound typed History entry for already-decoded trusted framing.
+/// No caller can expose the private mathematical parser or mint a new CPU
+/// balance. The original Packet/Task/State/Chainwork owners remain intact.
 pub fn receive_page_from(
     node: &mut Node,
     source: SocketAddr,
@@ -2174,18 +2253,41 @@ pub fn receive_page_from(
     after: Hash,
     clock: u64,
 ) -> Result<Hash> {
-    let host_kernel = crate::host_kernel_parent::require_for_listener(source)?;
-    if let Some(kernel) = &host_kernel {
-        kernel.verify()?;
-    }
-    let native = receive_page(node, page, tip, after, clock);
-    // A completed native admission cannot be undone by a post-verification
-    // host fault. That fault still makes the overall synchronization fail.
-    if let Some(kernel) = &host_kernel {
-        kernel.verify()?;
-    }
-    native
+    receive_page_from_decoder(node, source, tip, after, clock, || Ok(page))
 }
+
+/// Source-bound raw History frame: reserve original shared CPU credit before
+/// JSON parsing. Frame-length rejection is O(1) and precedes allocation.
+pub fn receive_page_wire_from(
+    node: &mut Node,
+    source: SocketAddr,
+    raw: &[u8],
+    tip: Hash,
+    after: Hash,
+    clock: u64,
+) -> Result<Hash> {
+    ensure(raw.len() <= MAX_FRAME, "PAGE_LIMIT")?;
+    receive_page_from_decoder(node, source, tip, after, clock, || {
+        Ok(serde_json::from_slice::<Page>(raw)?)
+    })
+}
+
+/// Source-bound decoded client Value: the conversion to typed History Page
+/// runs inside the shared CPU account. The upstream RPC decoder/transport
+/// still has its own independent byte, socket and resource owners.
+pub fn receive_page_value_from(
+    node: &mut Node,
+    source: SocketAddr,
+    value: Value,
+    tip: Hash,
+    after: Hash,
+    clock: u64,
+) -> Result<Hash> {
+    receive_page_from_decoder(node, source, tip, after, clock, || {
+        Ok(serde_json::from_value::<Page>(value)?)
+    })
+}
+
 pub fn sync_from(
     node: &mut Node,
     address: SocketAddr,
@@ -2198,6 +2300,12 @@ pub fn sync_from(
     // administrator-owned host cgroup used by V3 must already contain this
     // actual sync thread; no new per-peer budget or consensus authority.
     let host_kernel = crate::host_kernel_parent::require_for_listener(address)?;
+    if !address.ip().is_loopback() {
+        node.prepare_remote_sync_cpu_domain(
+            address,
+            Instant::now() + Duration::from_secs(2),
+        )?;
+    }
     for _ in 0..page_budget {
         if let Some(kernel) = &host_kernel {
             kernel.verify()?;
@@ -2210,9 +2318,9 @@ pub fn sync_from(
         stream.set_read_timeout(Some(Duration::from_secs(5)))?;
         stream.set_write_timeout(Some(Duration::from_secs(5)))?;
         write_frame(&mut stream, &serde_json::to_vec(&request)?)?;
-        let page: Page = serde_json::from_slice(&read_frame(&mut stream)?)?;
-        let complete = page.complete;
-        after = receive_page_from(node, address, page, tip, after, now()?)?;
+        let raw = read_frame(&mut stream)?;
+        after = receive_page_wire_from(node, address, &raw, tip, after, now()?)?;
+        let complete = after == tip;
         // Resource-counter/membership failure does not roll back any already
         // admitted native block; it makes this sync result unqualified.
         if let Some(kernel) = &host_kernel {
@@ -2243,6 +2351,12 @@ pub fn sync_from_authenticated(
     // administrator-owned host cgroup used by V3 must already contain this
     // actual sync thread; no new per-peer budget or consensus authority.
     let host_kernel = crate::host_kernel_parent::require_for_listener(address)?;
+    if !address.ip().is_loopback() {
+        node.prepare_remote_sync_cpu_domain(
+            address,
+            Instant::now() + Duration::from_secs(2),
+        )?;
+    }
     let settings = node.settings().clone();
     for _ in 0..page_budget {
         if let Some(kernel) = &host_kernel {
@@ -2258,9 +2372,8 @@ pub fn sync_from_authenticated(
             client,
             replay_nonce,
         )?;
-        let page: Page = serde_json::from_value(value)?;
-        let complete = page.complete;
-        after = receive_page_from(node, address, page, tip, after, now()?)?;
+        after = receive_page_value_from(node, address, value, tip, after, now()?)?;
+        let complete = after == tip;
         // Resource-counter/membership failure does not roll back any already
         // admitted native block; it makes this sync result unqualified.
         if let Some(kernel) = &host_kernel {
@@ -2290,6 +2403,12 @@ pub fn sync_from_authenticated_durable(
     // administrator-owned host cgroup used by V3 must already contain this
     // actual sync thread; no new per-peer budget or consensus authority.
     let host_kernel = crate::host_kernel_parent::require_for_listener(address)?;
+    if !address.ip().is_loopback() {
+        node.prepare_remote_sync_cpu_domain(
+            address,
+            Instant::now() + Duration::from_secs(2),
+        )?;
+    }
     for _ in 0..page_budget {
         if let Some(kernel) = &host_kernel {
             kernel.verify()?;
@@ -2303,9 +2422,8 @@ pub fn sync_from_authenticated_durable(
             },
             client,
         )?;
-        let page: Page = serde_json::from_value(value)?;
-        let complete = page.complete;
-        after = receive_page_from(node, address, page, tip, after, now()?)?;
+        after = receive_page_value_from(node, address, value, tip, after, now()?)?;
+        let complete = after == tip;
         // Resource-counter/membership failure does not roll back any already
         // admitted native block; it makes this sync result unqualified.
         if let Some(kernel) = &host_kernel {
@@ -2325,6 +2443,173 @@ pub fn sync_from_authenticated_durable(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[cfg(target_os = "linux")]
+    #[test]
+    fn metered_history_rejects_false_product_and_keeps_same_ticket_valid() {
+        let time = now().unwrap();
+        let settings = crate::Settings::development(Some(time - 100)).unwrap();
+        let dir = tempfile::tempdir().unwrap();
+        let mut node = Node::open(dir.path(), settings.clone(), 2).unwrap();
+        let genesis = settings.genesis();
+        let valid = node.make(
+            genesis,
+            vec![],
+            crate::development_public(0).unwrap(),
+            settings.genesis_time() + 10,
+            4096,
+        ).unwrap();
+        let expected = valid.id().unwrap();
+        let mut bad = valid.clone();
+        // Change C only. The exact Header/challenge/trace/winning ticket
+        // remain unchanged, so the full work verifier must return Product.
+        let offset = 4 + 2 * trnm_crypto_primitives::pon_work::CELLS * 4;
+        let original_word =
+            u32::from_le_bytes(bad.proof[offset..offset + 4].try_into().unwrap());
+        let changed_word = ((u128::from(original_word) + 1)
+            % trnm_crypto_primitives::pon_work::Q) as u32;
+        bad.proof[offset..offset + 4].copy_from_slice(&changed_word.to_le_bytes());
+        assert_eq!(bad.id().unwrap(), expected);
+        let page_for = |packet: &Packet| Page {
+            schema: "pon-native-history-v1".into(),
+            network: hex::encode(settings.network()),
+            parameters: hex::encode(settings.parameters()),
+            genesis: hex::encode(genesis),
+            tip: hex::encode(expected),
+            after: hex::encode(genesis),
+            packets: vec![hex::encode(packet.encode().unwrap())],
+            next: hex::encode(expected),
+            complete: true,
+        };
+        let source: SocketAddr = "127.0.0.1:12345".parse().unwrap();
+        let cpu = public_v3::ServiceMutationCpuDomain::standalone();
+        node.bind_public_service_cpu_domain(&cpu).unwrap();
+        assert!(node.public_service_cpu_domain().unwrap().shares_domain_with(&cpu));
+        let original_state = node.stats().unwrap();
+        let initial = cpu.observe().unwrap();
+        let error = receive_page_from(
+            &mut node, source, page_for(&bad), expected, genesis, time,
+        ).unwrap_err();
+        assert_eq!(error.to_string(), "WORK:Product");
+        assert_eq!(node.stats().unwrap(), original_state);
+        assert_eq!(node.read_active().unwrap().0, genesis);
+        let paid = cpu.observe().unwrap();
+        assert_eq!(paid.in_flight, 0);
+        assert!(!paid.accounting_unavailable);
+        assert!(paid.stored_credit_ns <= initial.stored_credit_ns);
+        // Invalid packet has not poisoned its (Header, transcript) block ID.
+        // The legitimate copy still takes its complete native path.
+        let id = receive_page_from(
+            &mut node, source, page_for(&valid), expected, genesis, time,
+        ).unwrap();
+        assert_eq!(id, expected);
+        assert_eq!(node.read_active().unwrap().0, expected);
+        let completed = cpu.observe().unwrap();
+        assert_eq!(completed.in_flight, 0);
+        assert!(!completed.accounting_unavailable);
+        drop(node);
+        let reopened = Node::open(dir.path(), settings, 2).unwrap();
+        assert_eq!(reopened.read_active().unwrap().0, expected);
+    }
+
+    #[cfg(target_os = "linux")]
+    #[test]
+    fn raw_and_value_history_parsers_reserve_cpu_before_json_decode() {
+        let time = now().unwrap();
+        let settings = crate::Settings::development(Some(time - 100)).unwrap();
+        let dir = tempfile::tempdir().unwrap();
+        let mut node = Node::open(dir.path(), settings.clone(), 2).unwrap();
+        let genesis = settings.genesis();
+        let initial = node.stats().unwrap();
+        let cpu = public_v3::ServiceMutationCpuDomain::standalone();
+        node.bind_public_service_cpu_domain(&cpu).unwrap();
+        let source: SocketAddr = "127.0.0.1:22222".parse().unwrap();
+        let first = cpu.begin().unwrap();
+        let second = cpu.begin().unwrap();
+        // If parsing happened BEFORE CPU reservation, malformed JSON would
+        // produce a serde error instead of the original local CPU Busy.
+        let raw_error = receive_page_wire_from(
+            &mut node, source, b"{bad json", genesis, genesis, time,
+        ).unwrap_err();
+        assert_eq!(raw_error.to_string(), "PUBLIC_MUTATION_CPU_BUDGET");
+        let value_error = receive_page_value_from(
+            &mut node,
+            source,
+            serde_json::json!({"schema":"wrong"}),
+            genesis,
+            genesis,
+            time,
+        ).unwrap_err();
+        assert_eq!(value_error.to_string(), "PUBLIC_MUTATION_CPU_BUDGET");
+        first.finish();
+        second.finish();
+        assert_eq!(cpu.observe().unwrap().in_flight, 0);
+        // With CPU credit available, these same malformed inputs are now
+        // rejected by their actual typed page/JSON contracts, not W1.
+        assert!(receive_page_wire_from(
+            &mut node, source, b"{bad json", genesis, genesis, time,
+        ).is_err());
+        assert!(receive_page_value_from(
+            &mut node, source,
+            serde_json::json!({"schema":"wrong"}),
+            genesis, genesis, time,
+        ).is_err());
+        assert_eq!(node.stats().unwrap(), initial);
+        assert_eq!(node.read_active().unwrap().0, genesis);
+        let observed = cpu.observe().unwrap();
+        assert_eq!(observed.in_flight, 0);
+        assert!(!observed.accounting_unavailable);
+    }
+
+    #[cfg(target_os = "linux")]
+    #[test]
+    fn history_cpu_reservation_exhaustion_is_local_busy_not_invalid_work() {
+        let time = now().unwrap();
+        let settings = crate::Settings::development(Some(time - 100)).unwrap();
+        let dir = tempfile::tempdir().unwrap();
+        let mut node = Node::open(dir.path(), settings.clone(), 2).unwrap();
+        let genesis = settings.genesis();
+        let valid = node.make(
+            genesis,
+            vec![],
+            crate::development_public(0).unwrap(),
+            settings.genesis_time() + 10,
+            4096,
+        ).unwrap();
+        let tip = valid.id().unwrap();
+        let page = Page {
+            schema: "pon-native-history-v1".into(),
+            network: hex::encode(settings.network()),
+            parameters: hex::encode(settings.parameters()),
+            genesis: hex::encode(genesis),
+            tip: hex::encode(tip),
+            after: hex::encode(genesis),
+            packets: vec![hex::encode(valid.encode().unwrap())],
+            next: hex::encode(tip),
+            complete: true,
+        };
+        let cpu = public_v3::ServiceMutationCpuDomain::standalone();
+        node.bind_public_service_cpu_domain(&cpu).unwrap();
+        let before = node.stats().unwrap();
+        // Exhaust precisely the existing two in-flight original mutations.
+        // Admission may decode the frame, but must not perform full W1 replay.
+        let first = cpu.begin().unwrap();
+        let second = cpu.begin().unwrap();
+        let err = receive_page_from(
+            &mut node,
+            "127.0.0.1:12345".parse().unwrap(),
+            page,
+            tip,
+            genesis,
+            time,
+        ).unwrap_err();
+        assert_eq!(err.to_string(), "PUBLIC_MUTATION_CPU_BUDGET");
+        assert_eq!(node.stats().unwrap(), before);
+        assert_eq!(node.read_active().unwrap().0, genesis);
+        first.finish();
+        second.finish();
+        assert_eq!(cpu.observe().unwrap().in_flight, 0);
+    }
 
     #[test]
     fn remote_sync_without_original_host_cgroup_rejects_before_any_network_or_w1() {

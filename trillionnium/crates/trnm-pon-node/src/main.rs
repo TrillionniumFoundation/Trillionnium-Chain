@@ -2087,6 +2087,14 @@ fn run() -> Result<Value> {
             if let Some(kernel) = &host_kernel {
                 kernel.verify()?;
             }
+            // One Node-bound cold CPU epoch across all imported History pages
+            // and its existing V3 owner; the trusted peer never mints credit.
+            if !address.ip().is_loopback() {
+                node.prepare_remote_sync_cpu_domain(
+                    address,
+                    Instant::now() + Duration::from_secs(2),
+                )?;
+            }
             let tip = digest(need(&args, "--tip")?)?;
             let after = args
                 .get("--after")
@@ -2122,9 +2130,15 @@ fn run() -> Result<Value> {
                     if !reply.ok {
                         return Err(format!("PUBLIC_REMOTE_REFUSED:{}", reply.value).into());
                     }
-                    let page: ingress::Page = serde_json::from_value(reply.value)?;
-                    complete = page.complete;
-                    cursor = ingress::receive_page_from(&mut node, address, page, tip, cursor, ingress::now()?)?;
+                    cursor = ingress::receive_page_value_from(
+                        &mut node,
+                        address,
+                        reply.value,
+                        tip,
+                        cursor,
+                        ingress::now()?,
+                    )?;
+                    complete = cursor == tip;
                     if let Some(kernel) = &host_kernel {
                         kernel.verify()?;
                     }

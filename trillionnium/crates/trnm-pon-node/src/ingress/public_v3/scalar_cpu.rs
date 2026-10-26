@@ -891,6 +891,14 @@ impl ServiceMutationCpuDomain {
             budget: Arc::new(Mutex::new(PaidMutationCpuBudget::new())),
         }
     }
+    /// New operator-initiated WAN sync starts with ZERO service CPU credit.
+    /// The original fixed Host cgroup independently caps aggregate processes.
+    /// This is an owned Node epoch, not peer- or credential-scoped credit.
+    pub(crate) fn process_cold_sync() -> Self {
+        Self {
+            budget: Arc::new(Mutex::new(PaidMutationCpuBudget::cold_start())),
+        }
+    }
     pub fn shares_domain_with(&self, other: &Self) -> bool {
         Arc::ptr_eq(&self.budget, &other.budget)
     }
@@ -1078,6 +1086,37 @@ impl ServiceMutationCpuCheckpoint {
 impl ServiceMutationCpuDomain {
     pub(super) fn shared_budget(&self) -> Arc<Mutex<PaidMutationCpuBudget>> {
         self.budget.clone()
+    }
+}
+
+impl ServiceMutationCpuDomain {
+    /// The original CPU bucket may need to refill from a genuinely cold zero.
+    /// This observation never reserves extra credit, renews any work deadline,
+    /// or grants a caller permission to produce VerifiedWork.
+    pub(crate) fn await_one_mutation_start(&self, deadline: Instant) -> Result<()> {
+        loop {
+            let now = Instant::now();
+            ensure(now < deadline, "PUBLIC_MUTATION_CPU_BUDGET")?;
+            let ready = {
+                let mut budget = self
+                    .budget
+                    .lock()
+                    .map_err(|_| "PUBLIC_MUTATION_CPU_UNAVAILABLE")?;
+                budget.refill(now);
+                ensure(!budget.unavailable, "PUBLIC_MUTATION_CPU_UNAVAILABLE")?;
+                budget.verified_completions == 0
+                    && budget.in_flight < MUTATION_CPU_WORKERS
+                    && budget.credit_ns >= i128::from(MUTATION_CPU_START_RESERVE_NS)
+            };
+            if ready {
+                return Ok(());
+            }
+            thread::sleep(
+                deadline
+                    .saturating_duration_since(Instant::now())
+                    .min(Duration::from_millis(5)),
+            );
+        }
     }
 }
 
@@ -1547,5 +1586,41 @@ impl ServiceMutationCpuDomain {
             survives_process_restart: false,
             full_capacity_disables_ordinary_verification: false,
         })
+    }
+}
+
+#[cfg(all(test, target_os = "linux"))]
+mod cold_sync_replay_tests {
+    use super::*;
+
+    #[test]
+    fn remote_sync_begins_at_zero_then_uses_only_original_refill() {
+        let cpu = ServiceMutationCpuDomain::process_cold_sync();
+        let another_handle = cpu.clone();
+        assert!(cpu.shares_domain_with(&another_handle));
+        let start = cpu.observe().unwrap();
+        assert_eq!(start.stored_credit_ns, 0);
+        assert_eq!(start.in_flight, 0);
+        assert!(!start.accounting_unavailable);
+        assert_eq!(
+            cpu.await_one_mutation_start(Instant::now())
+                .unwrap_err()
+                .to_string(),
+            "PUBLIC_MUTATION_CPU_BUDGET"
+        );
+        cpu.await_one_mutation_start(Instant::now() + Duration::from_secs(5))
+            .unwrap();
+        let refilled = another_handle.observe().unwrap();
+        assert!(refilled.stored_credit_ns >= i128::from(MUTATION_CPU_START_RESERVE_NS));
+        assert!(refilled.stored_credit_ns <= i128::from(MUTATION_CPU_BURST_NS));
+        let work = cpu.begin().unwrap();
+        assert_eq!(another_handle.observe().unwrap().in_flight, 1);
+        let settled = work.finish();
+        assert!(!settled.accounting_unavailable);
+        let after = cpu.observe().unwrap();
+        assert_eq!(after.in_flight, 0);
+        assert!(!after.accounting_unavailable);
+        // Reusing a cloned handle never creates another starting burst.
+        assert_eq!(another_handle.observe().unwrap(), after);
     }
 }

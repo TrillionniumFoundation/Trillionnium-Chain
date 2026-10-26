@@ -428,6 +428,36 @@ impl Node {
             .cloned()
             .ok_or_else(|| "OWNER_PUBLIC_SERVICE_DOMAIN_UNBOUND".into())
     }
+    /// Explicit operator-initiated remote History: reuse the already bound
+    /// CPU epoch or create exactly ONE process-cold epoch for this Node.
+    /// An administrator-provisioned original physical cgroup is mandatory;
+    /// the remote peer, caller identity or request never selects its own
+    /// service budget. This does not establish permissionless peer fairness.
+    pub fn prepare_remote_sync_cpu_domain(
+        &mut self,
+        source: std::net::SocketAddr,
+        deadline: std::time::Instant,
+    ) -> Result<()> {
+        ensure(!source.ip().is_loopback(), "OWNER_REMOTE_SYNC_NONLOOPBACK")?;
+        let host = crate::host_kernel_parent::require_for_listener(source)?
+            .ok_or("PUBLIC_HOST_KERNEL_REQUIRED")?;
+        host.verify()?;
+        let cpu = match self.public_service_cpu_domain() {
+            Ok(cpu) => cpu,
+            Err(error) if error.is(crate::ErrorCode::OwnerPublicServiceDomainUnbound) => {
+                // Untrusted WAN sync begins cold: never grant a freshly opened
+                // process or a replaced peer a second 2-CPU-second warm burst.
+                let cold = ServiceMutationCpuDomain::process_cold_sync();
+                self.bind_public_service_cpu_domain(&cold)?;
+                cold
+            }
+            Err(error) => return Err(error),
+        };
+        cpu.await_one_mutation_start(deadline)?;
+        host.verify()?;
+        Ok(())
+    }
+
     #[cfg(test)]
     pub(crate) fn continuous_domain_matches(&self, cpu: &ServiceMutationCpuDomain) -> bool {
         self.continuous_owner
