@@ -2444,6 +2444,94 @@ mod tests {
     use super::*;
 
     #[test]
+    fn history_receive_requires_one_existing_cpu_owner_and_charges_late_false_product() {
+        let (_temporary, guarded, mut packet) = pending_packet();
+        let mut node = guarded.into_inner().unwrap();
+        let settings = node.settings().clone();
+        let address: SocketAddr = "127.0.0.1:34567".parse().unwrap();
+        let before = node.stats().unwrap();
+        let genesis = settings.genesis();
+        let active_before = node.read_active().unwrap();
+
+        // No source, even loopback, can bypass the original CPU scope when
+        // using the exposed untrusted History importer.
+        let wrong_page = Page {
+            schema: String::new(),
+            network: String::new(),
+            parameters: String::new(),
+            genesis: String::new(),
+            tip: String::new(),
+            after: String::new(),
+            packets: Vec::new(),
+            next: String::new(),
+            complete: false,
+        };
+        assert_eq!(
+            receive_page_from(&mut node, address, wrong_page, genesis, genesis, now().unwrap())
+                .unwrap_err()
+                .to_string(),
+            "OWNER_PUBLIC_SERVICE_DOMAIN_UNBOUND",
+        );
+        prepare_history_cpu_domain(&mut node, address).unwrap();
+        let original_cpu = node.public_service_cpu_domain().unwrap();
+        let original_balance = original_cpu.observe().unwrap();
+        prepare_history_cpu_domain(&mut node, address).unwrap();
+        assert!(node.public_service_cpu_domain().unwrap().shares_domain_with(&original_cpu));
+
+        let offset = 4 + 2 * trnm_crypto_primitives::pon_work::CELLS * 4;
+        let first = u32::from_le_bytes(packet.proof[offset..offset + 4].try_into().unwrap());
+        let changed = ((u128::from(first) + 1) % trnm_crypto_primitives::pon_work::Q) as u32;
+        packet.proof[offset..offset + 4].copy_from_slice(&changed.to_le_bytes());
+        assert_eq!(
+            trnm_crypto_primitives::pon_work::verify(
+                packet.header.challenge(),
+                packet.header.work_task,
+                packet.header.target,
+                &packet.proof,
+            )
+            .unwrap_err(),
+            trnm_crypto_primitives::pon_work::WorkError::Product
+        );
+        let id = packet.id().unwrap();
+        let page = Page {
+            schema: "pon-native-history-v1".into(),
+            network: hex::encode(settings.network()),
+            parameters: hex::encode(settings.parameters()),
+            genesis: hex::encode(genesis),
+            tip: hex::encode(id),
+            after: hex::encode(genesis),
+            packets: vec![hex::encode(packet.encode().unwrap())],
+            next: hex::encode(id),
+            complete: true,
+        };
+        assert_eq!(
+            receive_page_from(&mut node, address, page, id, genesis, now().unwrap())
+                .unwrap_err()
+                .to_string(),
+            "WORK:Product",
+        );
+        let balance = original_cpu.observe().unwrap();
+        assert_eq!(balance.in_flight, 0);
+        assert!(!balance.accounting_unavailable);
+        assert!(balance.stored_credit_ns <= original_balance.stored_credit_ns);
+        assert_eq!(node.stats().unwrap(), before);
+        assert_eq!(node.read_active().unwrap(), active_before);
+    }
+
+    #[test]
+    fn history_remote_cold_budget_starts_at_zero_and_cannot_be_reissued_per_peer() {
+        let cold = public_v3::ServiceMutationCpuDomain::cold_for_history_sync();
+        let initial = cold.observe().unwrap();
+        assert_eq!(initial.stored_credit_ns, 0);
+        assert_eq!(initial.in_flight, 0);
+        assert!(!initial.accounting_unavailable);
+        // A second handle is the same owner, not another ticket/budget.
+        let shared = cold.clone();
+        assert!(shared.shares_domain_with(&cold));
+        assert_eq!(shared.observe().unwrap().stored_credit_ns, initial.stored_credit_ns);
+    }
+
+    #[test]
     fn remote_sync_without_original_host_cgroup_rejects_before_any_network_or_w1() {
         // Documentation-only network address. If this host really has the
         // registered fixed cgroup, its owner is tested by the kernel checker.
