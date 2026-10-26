@@ -734,7 +734,7 @@ pub(crate) mod packet_encoding_tests {
         match (packet.encode(), reference(packet)) {
             (Ok(actual), Ok(expected)) => assert_eq!(actual, expected),
             (Err(actual), Err(expected)) => assert_eq!(actual.to_string(), expected.to_string()),
-            (actual, expected) => panic!("codec disagreement: {actual:?} {expected:?}"),
+            (_actual, _expected) => panic!("codec disagreement"),
         }
     }
 

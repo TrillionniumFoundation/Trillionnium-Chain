@@ -325,10 +325,7 @@ fn root_rejection_retains_only_the_actual_bound_parent_across_sql_faults() {
             Ok(())
         },
     );
-    assert!(
-        accepted.is_ok(),
-        "B's refusal cannot reject A: {accepted:?}"
-    );
+    assert!(accepted.is_ok(), "B's refusal cannot reject A");
     assert_eq!(accepted.unwrap(), valid.id().unwrap());
     assert!(prepared.load(Ordering::Relaxed) > 0);
 }

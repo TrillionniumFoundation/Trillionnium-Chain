@@ -3111,7 +3111,7 @@ mod tests {
             assert!(
                 matches!(&outcome, Err(error) if error.is(ErrorCode::PublicRequestCancelled)
                     && !error.requires_owner_stop()),
-                "existing replay ignored cancellation: active={already_active} authenticated={authenticated} visits={} outcome={outcome:?}",
+                "existing replay ignored cancellation: active={already_active} authenticated={authenticated} visits={}",
                 visits.get(),
             );
             assert!(visits.get() >= 2);
