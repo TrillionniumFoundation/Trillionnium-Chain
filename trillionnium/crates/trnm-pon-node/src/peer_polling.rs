@@ -1082,6 +1082,50 @@ mod tests {
     }
 
     #[test]
+    fn wan_pinned_peer_cannot_bypass_fixed_host_parent_using_loopback_listener() {
+        // The currently selected public listener address is irrelevant:
+        // this worker obtains packets from its actual pinned peer address.
+        let remote: SocketAddr = "192.0.2.31:4242".parse().unwrap();
+        let host = crate::host_kernel_parent::require_for_listener(remote);
+        assert!(!matches!(host, Ok(None)), "WAN must have a real kernel owner");
+        match host {
+            Ok(Some(ref kernel)) => kernel.verify().unwrap(),
+            Err(ref expected) => {
+                let settings = Settings::development(Some(1)).unwrap();
+                for mixed_roster in [false, true] {
+                    let directory = tempfile::tempdir().unwrap();
+                    let owner = Arc::new(Mutex::new(Node::open(
+                        directory.path(),
+                        settings.clone(),
+                        1,
+                    ).unwrap()));
+                    let original = owner.lock().unwrap().stats().unwrap();
+                    let mut cfg = config(&settings);
+                    if mixed_roster {
+                        let public = cfg.peers[0].server_public.clone();
+                        cfg.peers.push(PinnedPeer {
+                            address: remote,
+                            server_public: public,
+                        });
+                    } else {
+                        cfg.peers[0].address = remote;
+                    }
+                    cfg.validate(&settings).unwrap();
+                    let stop = Arc::new(AtomicBool::new(false));
+                    let result = run_pinned_peer_polling(
+                        owner.clone(), cfg, identity(72), stop.clone(),
+                        |_| panic!("no remote RPC/observer before a valid host owner"),
+                    );
+                    assert_eq!(result.unwrap_err().to_string(), expected.to_string());
+                    assert!(stop.load(Ordering::Acquire));
+                    assert_eq!(owner.lock().unwrap().stats().unwrap(), original);
+                }
+            }
+            Ok(None) => unreachable!("remote parent cannot be None"),
+        }
+    }
+
+    #[test]
     fn config_has_exact_context_finite_limits_and_no_discovery() {
         let settings = Settings::development(Some(1)).unwrap();
         let cfg = config(&settings);
