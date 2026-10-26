@@ -622,3 +622,44 @@ pub fn require_for_listener(
         (!address.ip().is_loopback()).then_some(FIXED_PUBLIC_KERNEL_PARENT),
     )
 }
+
+/// Untrusted PUBLIC history import is not the same as a trusted local
+/// development listener. A loopback TCP endpoint can be a tunnel/relay for
+/// hostile WAN bytes, so the address class must NEVER waive the original
+/// shared Host CPU/memory/pids parent on this specific public entrypoint.
+/// No new cgroup is created; the original administrator provisioned parent
+/// must already contain the actual calling thread.
+pub fn require_for_public_history(
+    address: std::net::SocketAddr,
+) -> crate::Result<HostKernelBudget> {
+    require_host_kernel_budget(address, Some(FIXED_PUBLIC_KERNEL_PARENT))?
+        .ok_or_else(|| "PUBLIC_HOST_KERNEL_REQUIRED".into())
+}
+
+#[cfg(test)]
+mod public_history_proxy_tests {
+    use super::*;
+
+    #[test]
+    fn public_history_requires_real_original_host_parent_even_at_loopback() {
+        // A 127.0.0.1 local tunnel provides no provenance or CPU exemption.
+        // With an eligible fixed admin parent, verify actual thread identity;
+        // without that parent, fail closed before accepting any W1 packet.
+        let loopback: std::net::SocketAddr = "127.0.0.1:12345".parse().unwrap();
+        let remote: std::net::SocketAddr = "192.0.2.10:12345".parse().unwrap();
+        for source in [loopback, remote] {
+            let original = require_host_kernel_budget(source, Some(FIXED_PUBLIC_KERNEL_PARENT));
+            match (require_for_public_history(source), original) {
+                (Ok(actual), Ok(Some(reference))) => {
+                    actual.verify().unwrap();
+                    reference.verify().unwrap();
+                }
+                (Err(actual), Err(reference)) => {
+                    assert_eq!(actual.to_string(), reference.to_string());
+                }
+                _ => panic!("public history obtained a different or missing Host owner"),
+            }
+        }
+    }
+}
+
