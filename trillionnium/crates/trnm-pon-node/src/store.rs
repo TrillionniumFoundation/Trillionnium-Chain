@@ -3261,6 +3261,7 @@ impl Node {
         packet: &Packet,
         observed_now: u64,
         progress: &mut impl FnMut(pon_work::VerificationProgress) -> Result<()>,
+        execution_progress: &(impl Fn(ExecutionProgress) -> Result<()> + Sync),
     ) -> Result<Hash> {
         if let Some(id) = self.check_admission_context(packet, observed_now)? {
             return Ok(id);
@@ -3270,7 +3271,11 @@ impl Node {
             WorkCheckedPacket::verify_with_progress(packet.clone(), progress)?,
             permit,
         )?;
-        self.admit_work_checked(checked, observed_now)
+        // The *same* original owner must survive not only W1 replay but
+        // native State preparation, M06 application and precommit progress.
+        // Missing owner is an operational cancellation, never a new W1
+        // invalidity verdict or a forged ledger rollback.
+        self.admit_work_checked_with_progress(checked, observed_now, execution_progress)
     }
 
     fn precheck_owner_packet(&self, packet: &Packet) -> Result<()> {
