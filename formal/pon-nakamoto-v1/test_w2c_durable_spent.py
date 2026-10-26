@@ -18,6 +18,14 @@ def spend_child(args):
     return owner.spend(K, 2000, 120)
 
 
+def abrupt_exit_after_paid_commit(path):
+    # Test exits without Python finally, destructor or clean SQLite close.
+    owner = Owner(path, R, E, capacity=4)
+    if owner.spend(K, 2000, 120) == 'READY_RESOURCE_ONLY':
+        os._exit(0)
+    os._exit(2)
+
+
 class TestDurableOwner(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
@@ -36,6 +44,14 @@ class TestDurableOwner(unittest.TestCase):
         self.assertEqual(verdicts.count('READY_RESOURCE_ONLY'), 1)
         self.assertEqual(verdicts.count('REPLAY'), 23)
         self.assertEqual(self.owner.pending_paid(), 1)
+
+    def test_process_crash_after_paid_commit_cannot_unspend(self):
+        child = multiprocessing.get_context('spawn').Process(
+            target=abrupt_exit_after_paid_commit, args=(str(self.path),))
+        child.start()
+        child.join(10)
+        self.assertEqual(child.exitcode, 0)
+        self.assertEqual(Owner(self.path,R,E,4).spend(K,2000,121), 'REPLAY')
 
     def test_restart_clone_same_epoch_is_no_longer_free(self):
         self.assertEqual(self.owner.spend(K, 2000, 100), 'READY_RESOURCE_ONLY')
