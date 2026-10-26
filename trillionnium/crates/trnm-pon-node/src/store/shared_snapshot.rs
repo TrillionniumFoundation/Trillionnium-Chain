@@ -19,6 +19,9 @@ const SCHEMA: &str = "native-io-shared-authenticated-snapshot-v1";
 const MAX_BYTES: usize = FILE_BYTES as usize;
 const RETAINED: usize = 64;
 
+#[path = "shared_snapshot_binding.rs"]
+mod binding;
+
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub(super) enum Layout {
     CanonicalJson,
@@ -101,8 +104,7 @@ fn check_typed_rows(db: &Connection, limit: usize) -> Result<()> {
 }
 
 pub(super) fn check_layout(db: &Connection, settings: &Settings) -> Result<()> {
-    check_authoritative_namespace(db)?;
-    check_typed_rows(db, RETAINED)?;
+    binding::check(db, settings, RETAINED)?;
     let (all, genesis): (u64, u64) = db.query_row(
         "SELECT (SELECT COUNT(*) FROM main.snapshots),(SELECT COUNT(*) FROM main.snapshots WHERE block=?)",
         [settings.genesis().as_slice()],
@@ -207,8 +209,7 @@ pub(super) fn save(
     progress: &mut dyn FnMut() -> Result<()>,
     cache: &native_authenticated::ArithmeticCache,
 ) -> Result<()> {
-    check_authoritative_namespace(db)?;
-    check_typed_rows(db, RETAINED)?;
+    binding::check(db, settings, RETAINED)?;
     ensure(block != settings.genesis(), "NATIVE_SHARED_GENESIS").map_err(Error::local_integrity)?;
     let native = native_authenticated::load(db, block)?;
     let mut snapshot = Snapshot {
@@ -249,8 +250,7 @@ pub(super) fn save(
         |row| row.get(0),
     )?;
     ensure(count <= RETAINED as u64, "SNAPSHOT_LIMIT").map_err(Error::local_integrity)?;
-    check_authoritative_namespace(db)?;
-    check_typed_rows(db, RETAINED)
+    binding::check(db, settings, RETAINED)
 }
 
 pub(super) fn load(
@@ -273,34 +273,16 @@ fn load_with_limit(
     let schema_version: u64 = db.query_row("PRAGMA main.schema_version", [], |row| row.get(0))?;
     let autocommit = db.is_autocommit();
     progress()?;
+    binding::check(db, settings, limit)?;
     let bytes = encoded_with_limit(db, block, limit)?;
     let Some(bytes) = bytes else {
-        // A pruned OPTIONAL index uses the original checked delta replay.
+        // Absence is optional, but every PRESENT row must still be bound. In
+        // particular, moving this row to a known pruned key is not absence.
+        // No caller callback crosses this last check before returning None.
+        binding::check(db, settings, limit)?;
         return Ok(None);
     };
-    ensure(bytes.len() <= MAX_BYTES, "NATIVE_SHARED_SNAPSHOT_LIMIT")
-        .map_err(Error::local_integrity)?;
-    let snapshot: Snapshot =
-        serde_json::from_slice(&bytes).map_err(|error| Error::from(error).local_integrity())?;
-    ensure(
-        canonical(&snapshot)? == bytes
-            && snapshot.schema == SCHEMA
-            && snapshot.block == block
-            && block != settings.genesis()
-            && snapshot.id == snapshot.digest(settings)?
-            && snapshot
-                .working
-                .keys()
-                .all(|key| !key.starts_with("account:")),
-        "NATIVE_SHARED_SNAPSHOT_RECORD",
-    )
-    .map_err(Error::local_integrity)?;
-    let native = native_authenticated::load(db, block)?;
-    ensure(
-        snapshot.native_commitment == native.id,
-        "NATIVE_SHARED_SNAPSHOT_BINDING",
-    )
-    .map_err(Error::local_integrity)?;
+    let (snapshot, native) = binding::decode(db, settings, block, &bytes)?;
     let accounts =
         native_store::materialize_accounts(db, &native.accounts, progress, Some(&cache.lifts))?;
     let mut state = snapshot.working;
@@ -359,6 +341,7 @@ fn load_with_limit(
             "NATIVE_SHARED_SNAPSHOT_CHANGED",
         )
         .map_err(Error::local_integrity)?;
+        binding::check(db, settings, limit)?;
         Ok(Some(state))
     })
 }
