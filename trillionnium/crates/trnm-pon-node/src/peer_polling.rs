@@ -28,12 +28,29 @@ use std::{
     time::{Duration, Instant},
 };
 use trnm_crypto_primitives::verifying_key_from_hex;
+use trnm_crypto_primitives::pon_work::VerificationProgress;
 use trnm_mvcc_fee::pon_executor::{ExecutionControl, ExecutionProgress};
 use trnm_protocol::pon_wire::{hash, Hash};
 const MAX_CONFIG_BYTES: u64 = 16384;
 const MAX_PACKET_BYTES: usize = 1_048_576;
 const MAX_ERROR_BYTES: usize = 2048;
 pub const PEER_POLLING_SCHEMA: &str = "pon-native-pinned-peer-poll-config-v1";
+/// A remote pinned peer can still be malicious. A loopback V3 *listener*
+/// otherwise carries no compulsory cgroup, so a remote outbound poller must
+/// independently join the one original fixed administrator resource parent.
+/// No resource budget or admission authority is created here.
+fn original_remote_host_owner(
+    cfg: &PeerPollingConfig,
+) -> Result<Option<crate::host_kernel_parent::HostKernelBudget>> {
+    let Some(peer) = cfg.peers.iter().find(|p| !p.address.ip().is_loopback()) else {
+        return Ok(None);
+    };
+    let kernel = crate::host_kernel_parent::require_for_listener(peer.address)?
+        .ok_or("PUBLIC_HOST_KERNEL_REQUIRED")?;
+    kernel.verify()?;
+    Ok(Some(kernel))
+}
+
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct PinnedPeer {
@@ -337,7 +354,16 @@ fn page(
 }
 /// Native task/parent/clock checks bracket the immutable owned full proof replay.
 /// A repeated already-admitted exact packet uses the existing durable admission fact.
-fn admit_page(node: &Mutex<Node>, packet: Packet, end: Instant, stop: &AtomicBool) -> Result<bool> {
+fn admit_page(
+    node: &Mutex<Node>,
+    packet: Packet,
+    end: Instant,
+    stop: &AtomicBool,
+    host_kernel: Option<&crate::host_kernel_parent::HostKernelBudget>,
+) -> Result<bool> {
+    if let Some(kernel) = host_kernel {
+        kernel.verify()?;
+    }
     let cpu = {
         let owner = lock(node, end, stop)?;
         // The peer is authenticated, not CPU-funded. A pinned peer must
@@ -359,16 +385,30 @@ fn admit_page(node: &Mutex<Node>, packet: Packet, end: Instant, stop: &AtomicBoo
     let native = (|| -> Result<bool> {
         progress(end, stop)?;
         checkpoint.checkpoint()?;
-        let checked = WorkCheckedPacket::verify_with_progress(packet, &mut |_| {
+        let checked = WorkCheckedPacket::verify_with_progress(packet, &mut |stage| {
             progress(end, stop)?;
-            checkpoint.checkpoint()
+            checkpoint.checkpoint()?;
+            // Sparse real-kernel membership checks avoid an OS file-read on
+            // every one of 512 tiles while bounding work between checks.
+            if matches!(stage, VerificationProgress::BeforeReplay | VerificationProgress::BeforeVerifiedWork)
+                || matches!(stage, VerificationProgress::TranscriptTile { column: 0, inner: 0, .. })
+            {
+                if let Some(kernel) = host_kernel {
+                    kernel.verify()?;
+                }
+            }
+            Ok(())
         })?;
         progress(end, stop)?;
         checkpoint.checkpoint()?;
         let mut owner = lock(node, end, stop)?;
         let check_execution = |_stage: ExecutionProgress| {
             progress(end, stop)?;
-            checkpoint.checkpoint()
+            checkpoint.checkpoint()?;
+            if let Some(kernel) = host_kernel {
+                kernel.verify()?;
+            }
+            Ok(())
         };
         let control = ExecutionControl::new(&check_execution, operation.worker_accounting());
         owner.admit_work_checked_with_control(checked, ingress::now()?, &control)?;
@@ -379,6 +419,11 @@ fn admit_page(node: &Mutex<Node>, packet: Packet, end: Instant, stop: &AtomicBoo
     // settles even after a native rejection. Post-commit accounting cannot
     // retroactively invalidate an already admitted fact.
     let settlement = operation.finish();
+    // Post-commit host loss must not erase existing native admission; it
+    // prevents reporting a successful complete synchronization receipt.
+    if let Some(kernel) = host_kernel {
+        kernel.verify()?;
+    }
     if settlement.accounting_unavailable {
         // Preserve any durable native block, but an outbound poller cannot
         // report complete historical synchronization with UNKNOWN CPU.
@@ -392,6 +437,7 @@ struct PollContext<'a> {
     settings: &'a Settings,
     end: Instant,
     stop: &'a AtomicBool,
+    host_kernel: Option<&'a crate::host_kernel_parent::HostKernelBudget>,
 }
 struct EventDetail {
     stage: &'static str,
@@ -494,6 +540,7 @@ impl Engine {
             settings,
             end,
             stop,
+            host_kernel,
         } = *context;
         progress(end, stop)?;
         if self.calls >= cfg.max_calls {
@@ -641,7 +688,7 @@ impl Engine {
         };
         let mut verified = false;
         if let Some(packet) = packet {
-            match admit_page(node, packet, end, stop) {
+            match admit_page(node, packet, end, stop, host_kernel) {
                 Ok(value) => verified = value,
                 Err(error) => {
                     self.reject(
@@ -737,6 +784,7 @@ impl Engine {
             settings: _,
             end,
             stop,
+            host_kernel: _,
         } = *context;
         let count = self.states.len();
         let mut attempted_pages = 0;
@@ -799,6 +847,7 @@ where
         let startup_end = started + Duration::from_secs(10);
         let settings = lock(&node, startup_end, &stop)?.settings().clone();
         cfg.validate(&settings)?;
+        let host_kernel = original_remote_host_owner(&cfg)?;
         // The sibling V3 listener and this poller start concurrently.
         // Await its original Node CPU binding before any remote history Work;
         // absent/unknown identity fails closed after the original startup cap.
@@ -821,14 +870,21 @@ where
         let mut cycles = 0;
         let mut next = started;
         let mut rpc = |index: usize, request: &Request| {
-            public_v3::call_public_protected_v3(
+            if let Some(kernel) = &host_kernel {
+                kernel.verify()?;
+            }
+            let reply = public_v3::call_public_protected_v3(
                 cfg.peers[index].address,
                 request,
                 &settings,
                 &cfg.peers[index].server_public,
                 &caller,
                 policy,
-            )
+            )?;
+            if let Some(kernel) = &host_kernel {
+                kernel.verify()?;
+            }
+            Ok(reply)
         };
         let poll_context = PollContext {
             node: &node,
@@ -836,6 +892,7 @@ where
             settings: &settings,
             end,
             stop: &stop,
+            host_kernel: host_kernel.as_ref(),
         };
         while Instant::now() < end && !stop.load(Ordering::Acquire) && engine.calls < cfg.max_calls
         {
@@ -849,6 +906,9 @@ where
             match engine.cycle(&poll_context, &mut rpc, &mut observe) {
                 Err(error) if error.is(ErrorCode::PeerPollCancelled) => break,
                 other => other?,
+            }
+            if let Some(kernel) = &host_kernel {
+                kernel.verify()?;
             }
             next = Instant::now() + Duration::from_millis(cfg.poll_interval_ms);
         }
@@ -960,6 +1020,7 @@ mod tests {
             settings: s,
             end: Instant::now() + Duration::from_secs(120),
             stop,
+            host_kernel: None,
         }
     }
     #[test]
@@ -983,6 +1044,7 @@ mod tests {
             packet,
             Instant::now() + Duration::from_secs(10),
             &stop,
+            None,
         ).unwrap_err();
         assert_eq!(refused.to_string(), "OWNER_PUBLIC_SERVICE_DOMAIN_UNBOUND");
         assert_eq!(guarded.lock().unwrap().stats().unwrap(), before);
@@ -1030,6 +1092,7 @@ mod tests {
             packet,
             Instant::now() + Duration::from_secs(10),
             &stop,
+            None,
         ).unwrap_err();
         assert_eq!(refused.to_string(), "WORK:Product");
         let final_state = cpu.observe().unwrap();
@@ -1041,6 +1104,25 @@ mod tests {
         assert!(final_state.stored_credit_ns <= initial.stored_credit_ns);
         assert_eq!(guarded.lock().unwrap().stats().unwrap(), before);
         assert_eq!(guarded.lock().unwrap().read_active().unwrap().0, settings.genesis());
+    }
+
+    #[test]
+    fn nonloopback_pinned_peer_needs_original_physical_host_owner() {
+        let settings = Settings::development(Some(1)).unwrap();
+        let mut cfg = config(&settings);
+        assert!(original_remote_host_owner(&cfg).unwrap().is_none());
+        cfg.peers[0].address = "192.0.2.21:12345".parse().unwrap();
+        cfg.validate(&settings).unwrap();
+        // A machine either has the administrator-owned fixed cgroup (and
+        // its actual thread is checked), or must deny this peer BEFORE W1.
+        match original_remote_host_owner(&cfg) {
+            Ok(Some(kernel)) => kernel.verify().unwrap(),
+            Err(error) => assert!(
+                !error.to_string().is_empty(),
+                "unbudgeted remote pinned peers must not be silently admitted"
+            ),
+            Ok(None) => panic!("nonloopback peer received unbudgeted host owner"),
+        }
     }
 
     #[test]
