@@ -2405,6 +2405,124 @@ pub fn sync_from_authenticated_durable(
 mod tests {
     use super::*;
 
+    #[cfg(target_os = "linux")]
+    #[test]
+    fn metered_history_rejects_false_product_and_keeps_same_ticket_valid() {
+        let time = now().unwrap();
+        let settings = crate::Settings::development(Some(time - 100)).unwrap();
+        let dir = tempfile::tempdir().unwrap();
+        let mut node = Node::open(dir.path(), settings.clone(), 2).unwrap();
+        let genesis = settings.genesis();
+        let valid = node.make(
+            genesis,
+            vec![],
+            crate::development_public(0).unwrap(),
+            settings.genesis_time() + 10,
+            4096,
+        ).unwrap();
+        let expected = valid.id().unwrap();
+        let mut bad = valid.clone();
+        // Change C only. The exact Header/challenge/trace/winning ticket
+        // remain unchanged, so the full work verifier must return Product.
+        let offset = 4 + 2 * trnm_crypto_primitives::pon_work::CELLS * 4;
+        let original_word =
+            u32::from_le_bytes(bad.proof[offset..offset + 4].try_into().unwrap());
+        let changed_word = ((u128::from(original_word) + 1)
+            % trnm_crypto_primitives::pon_work::Q) as u32;
+        bad.proof[offset..offset + 4].copy_from_slice(&changed_word.to_le_bytes());
+        assert_eq!(bad.id().unwrap(), expected);
+        let page_for = |packet: &Packet| Page {
+            schema: "pon-native-history-v1".into(),
+            network: hex::encode(settings.network()),
+            parameters: hex::encode(settings.parameters()),
+            genesis: hex::encode(genesis),
+            tip: hex::encode(expected),
+            after: hex::encode(genesis),
+            packets: vec![hex::encode(packet.encode().unwrap())],
+            next: hex::encode(expected),
+            complete: true,
+        };
+        let source: SocketAddr = "127.0.0.1:12345".parse().unwrap();
+        let cpu = public_v3::ServiceMutationCpuDomain::standalone();
+        node.bind_public_service_cpu_domain(&cpu).unwrap();
+        assert!(node.public_service_cpu_domain().unwrap().shares_domain_with(&cpu));
+        let original_state = node.stats().unwrap();
+        let initial = cpu.observe().unwrap();
+        let error = receive_page_from(
+            &mut node, source, page_for(&bad), expected, genesis, time,
+        ).unwrap_err();
+        assert_eq!(error.to_string(), "WORK:Product");
+        assert_eq!(node.stats().unwrap(), original_state);
+        assert_eq!(node.read_active().unwrap().0, genesis);
+        let paid = cpu.observe().unwrap();
+        assert_eq!(paid.in_flight, 0);
+        assert!(!paid.accounting_unavailable);
+        assert!(paid.stored_credit_ns <= initial.stored_credit_ns);
+        // Invalid packet has not poisoned its (Header, transcript) block ID.
+        // The legitimate copy still takes its complete native path.
+        let id = receive_page_from(
+            &mut node, source, page_for(&valid), expected, genesis, time,
+        ).unwrap();
+        assert_eq!(id, expected);
+        assert_eq!(node.read_active().unwrap().0, expected);
+        let completed = cpu.observe().unwrap();
+        assert_eq!(completed.in_flight, 0);
+        assert!(!completed.accounting_unavailable);
+        drop(node);
+        let reopened = Node::open(dir.path(), settings, 2).unwrap();
+        assert_eq!(reopened.read_active().unwrap().0, expected);
+    }
+
+    #[cfg(target_os = "linux")]
+    #[test]
+    fn history_cpu_reservation_exhaustion_is_local_busy_not_invalid_work() {
+        let time = now().unwrap();
+        let settings = crate::Settings::development(Some(time - 100)).unwrap();
+        let dir = tempfile::tempdir().unwrap();
+        let mut node = Node::open(dir.path(), settings.clone(), 2).unwrap();
+        let genesis = settings.genesis();
+        let valid = node.make(
+            genesis,
+            vec![],
+            crate::development_public(0).unwrap(),
+            settings.genesis_time() + 10,
+            4096,
+        ).unwrap();
+        let tip = valid.id().unwrap();
+        let page = Page {
+            schema: "pon-native-history-v1".into(),
+            network: hex::encode(settings.network()),
+            parameters: hex::encode(settings.parameters()),
+            genesis: hex::encode(genesis),
+            tip: hex::encode(tip),
+            after: hex::encode(genesis),
+            packets: vec![hex::encode(valid.encode().unwrap())],
+            next: hex::encode(tip),
+            complete: true,
+        };
+        let cpu = public_v3::ServiceMutationCpuDomain::standalone();
+        node.bind_public_service_cpu_domain(&cpu).unwrap();
+        let before = node.stats().unwrap();
+        // Exhaust precisely the existing two in-flight original mutations.
+        // Admission may decode the frame, but must not perform full W1 replay.
+        let first = cpu.begin().unwrap();
+        let second = cpu.begin().unwrap();
+        let err = receive_page_from(
+            &mut node,
+            "127.0.0.1:12345".parse().unwrap(),
+            page,
+            tip,
+            genesis,
+            time,
+        ).unwrap_err();
+        assert_eq!(err.to_string(), "PUBLIC_MUTATION_CPU_BUDGET");
+        assert_eq!(node.stats().unwrap(), before);
+        assert_eq!(node.read_active().unwrap().0, genesis);
+        first.finish();
+        second.finish();
+        assert_eq!(cpu.observe().unwrap().in_flight, 0);
+    }
+
     #[test]
     fn remote_sync_without_original_host_cgroup_rejects_before_any_network_or_w1() {
         // Documentation-only network address. If this host really has the
