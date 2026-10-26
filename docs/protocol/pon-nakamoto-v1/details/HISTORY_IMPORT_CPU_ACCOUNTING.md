@@ -95,3 +95,22 @@ A code commit and these test definitions are **not** runtime qualification.
   OPEN. This branch alone cannot certify 0 remaining blockers.
 
 Final state: SHADOW_ONLY / HOLD_NO_GO / no production activation.
+
+
+## Additional P3 fault: real W1 + deliberately wrong StateRoot
+
+The native test
+'paid_history_valid_w1_with_false_state_root_rejects_without_chainwork'
+changes the StateRoot of a normally mined genesis-child packet and searches
+new nonces using the exact source A/B under the CHANGED header challenge.
+The full W1 production verifier must first accept that exact new proof;
+the imported History page then must fail at 'ROOT' during native block
+application, with no new active or stored chain state and a fully settled,
+actually charged original CPU account. A wrong-root packet cannot simply
+reuse an earlier valid W1 proof with another challenge and call it a
+late-root attack.
+
+This is an **authored test**, not an executed current-head physical stress
+campaign. Even if it passes, one fixed signed local candidate with no
+mixed caller/key churn, no honest 3/3 confirmation and no independent WAN
+operators does not close P3/P4/A03.
