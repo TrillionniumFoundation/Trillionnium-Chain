@@ -32,6 +32,26 @@ Required top level:
       "cases": [ ... ]
     }
 
+For **this from-zero false-transcript profile**, every case also carries
+header_hex (the exact canonical 318-byte PNH1 wire), a_hex and b_hex
+(each exactly 16,384 canonical field bytes encoded in lowercase hex).
+The reader independently parses fixed Header offsets, extracts target and
+work_task, validates canonical Fq words, rederives TaskId and
+challenge = H("challenge", header). It recomputes for every nonce the
+precise fake trace H("public-v3-from-zero-v1", challenge, LE64(nonce))
+and resulting W1 ticket H("ticket", challenge, trace), checking the
+caller-provided ticket_hit on **every** attempt against the exact Header
+target. Finally it constructs the canonical fake PNW1 with zero claimed C
+and the winning fake trace and verifies its exact SHA256 against
+proof_sha256. This prevents accidentally pairing another Header, a
+different task/target, missing ticket misses or unrelated proof bytes.
+
+It does **not** verify that the reconstructed trace is invalid by an
+independent W1 relation replay, nor that the caller really spent the
+reported measured CPU, nor that the destination node actually received
+the claimed bytes. The special from-zero forged-C-zero material is
+research-scoped, not a generic interface for all attack variants.
+
 Each unique cases[] item binds one **SHA256 exact proof** by proof_sha256
 (64 canonical lowercase hexadecimal characters), an inclusive
 complete_attacker_cpu_ns, attempted_trials, the complete bounded trials[]
