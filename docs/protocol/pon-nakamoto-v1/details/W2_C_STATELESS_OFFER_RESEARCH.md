@@ -97,3 +97,45 @@ durable CAS, certified randomness or OS CPU owner.
 
 No code in this experiment may set an activation, usefulness, chainwork,
 trust-root or FinalUse flag.
+
+
+## Deterministic bounded same-task CPU diagnostic (new P2 observation)
+
+Source: 'formal/pon-nakamoto-v1/w2c_stateless_cost.py', exact published
+Git blob 'ebd9814d87edb4bb2f017ff2160e4b322f48fc20'.
+It reconstructs the same 64×64 W1 scalar relation in the independent
+'work_oracle.py', validates a genuine proof, then records eight actual
+TRANSCRIPT-only replays for a fixed false W1 statement. The cost arms
+use deterministic offer salt derived from the frozen seed and context;
+all failed hash attempts are counted, not silently excluded.
+
+    python3 formal/pon-nakamoto-v1/w2c_stateless_cost.py \
+      --seed 7 --bits 8 12 --samples 4 --cap 65536 \
+      --unpaid 1000 --out /new/unique/w2c-stateless-cost.json
+
+One actual *local Python process-CPU* run on 2026-10-25 recorded median
+false W1 rejection 78.92 ms. The synthetic trusted clock did not advance
+with solver execution, so neither live Cookie expiry nor network latency
+was measured. Four independent fixed challenges per research cost class:
+
+| Bits | Full-ticket search attempts | Observed CPU ms |
+| --- | --- | --- |
+| 8 | 145, 548, 686, 390 | 0.368, 1.545, 1.777, 0.986 |
+| 12 | 10,967, 1,590, 1,460, 15,699 | 29.425, 4.563, 4.054, 44.376 |
+
+Separately, 1,000 unpaid calls in the same fixed-clock burst issued 32
+offers (the original bounded global issue-credit ceiling) and took zero
+paid replay rows. It does not prove any upper bound on authentic network
+socket occupancy or HMAC CPU under unlimited client requests.
+
+The data **refutes** calling 8/12-bit ticket payment equivalent to the
+complete W1 replay cost. Even at 12 bits, favorable hash outcomes can
+arrive after very few attempts; no finite ticket target sets a hard
+attacker cost floor per accepted request. GPU hashing may further reduce
+the attacker price. Legitimate users still bear the extra ticket burden.
+
+All CPU times are conditional on this particular Python interpreter,
+one host and one source version. Real native V3 receipt/signed Cookie,
+GPU/ASIC, whole-host costs, fair honest completion and full A03 runs
+remain **unmeasured / NOT PASSED**. Do not retrofit these numbers into
+any production policy or claim a closed P2/P5 gate.
