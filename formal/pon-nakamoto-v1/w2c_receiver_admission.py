@@ -81,10 +81,13 @@ def solve(grant, cap=1 << 18):
 
 class ReceiverAdmission:
     def __init__(self, receiver, secret, epoch, lifetime_ms=2000,
-                 capacity=64, entropy=None):
+                 capacity=64, entropy=None, bits=8):
         self.receiver = bytes32(receiver, 'RECEIVER')
         self.secret = bytes32(secret, 'SECRET')
         self.epoch = bytes32(epoch, 'EPOCH')
+        if type(bits) is not int or not 8 <= bits <= 24:
+            raise ValueError('BITS')
+        self.bits = bits  # Set by trusted receiver policy, never by a peer request.
         if type(lifetime_ms) is not int or not 100 <= lifetime_ms <= 2000:
             raise ValueError('LIFETIME')
         if type(capacity) is not int or not 1 <= capacity <= 1024:
@@ -114,8 +117,8 @@ class ReceiverAdmission:
 
     def _offer(self, proposal, bits, now_ms):
         bytes32(proposal, 'PROPOSAL')
-        if type(bits) is not int or not 8 <= bits <= 24:
-            raise ValueError('BITS')
+        if type(bits) is not int or bits != self.bits:
+            raise ValueError('BITS_POLICY')
         self.clock(now_ms)
         if len(self.issued) >= self.capacity:
             return None  # BUSY, never consensus-invalid.
@@ -152,6 +155,11 @@ class ReceiverAdmission:
             return 'CONTEXT'
         if not hmac.compare_digest(hmac.new(self.secret, payload, hashlib.sha256).digest(), mac):
             return 'GRANT_MAC'
+        # MAC and process epoch are not an entitlement to an older, cheaper
+        # difficulty. An independently configured trusted receiver policy
+        # must match the grant even if an earlier issuer signed it.
+        if grant.bits != self.bits:
+            return 'BITS_POLICY'
         if not grant.issued_ms <= now_ms < grant.expires_ms:
             return 'EXPIRED_OR_FUTURE'
         state = self.issued.get(grant.token)
