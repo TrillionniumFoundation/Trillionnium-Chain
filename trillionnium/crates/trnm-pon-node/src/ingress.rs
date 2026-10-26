@@ -2146,6 +2146,7 @@ fn receive_page(
     after: Hash,
     clock: u64,
     progress: &mut impl FnMut(HistoryImportCheckpoint) -> Result<()>,
+    execution_progress: &(impl Fn(trnm_mvcc_fee::pon_executor::ExecutionProgress) -> Result<()> + Sync),
 ) -> Result<Hash> {
     ensure(
         page.schema == "pon-native-history-v1"
@@ -2188,12 +2189,17 @@ fn receive_page(
         // the whole batch; a hostile page must pay at most one full replay
         // between consecutive checks, rather than a batch of sixteen.
         progress(HistoryImportCheckpoint::BeforePacket)?;
-        node.admit_with_verification_progress(packet, clock, &mut |point| {
-            if history_work_checkpoint(point) {
-                progress(HistoryImportCheckpoint::DuringWork(point))?;
-            }
-            Ok(())
-        })?;
+        node.admit_with_verification_progress(
+            packet,
+            clock,
+            &mut |point| {
+                if history_work_checkpoint(point) {
+                    progress(HistoryImportCheckpoint::DuringWork(point))?;
+                }
+                Ok(())
+            },
+            execution_progress,
+        )?;
         // This guard does not revoke a just-committed native result; failure
         // marks the remaining History sync incomplete without inventing an
         // invalid consensus verdict or rewinding an earlier accepted block.
@@ -2223,12 +2229,25 @@ pub fn receive_page_from(
     if let Some(kernel) = &host_kernel {
         kernel.verify()?;
     }
-    let native = receive_page(node, page, tip, after, clock, &mut |_| {
-        if let Some(kernel) = &host_kernel {
-            kernel.verify()?;
-        }
-        Ok(())
-    });
+    let native = receive_page(
+        node,
+        page,
+        tip,
+        after,
+        clock,
+        &mut |_| {
+            if let Some(kernel) = &host_kernel {
+                kernel.verify()?;
+            }
+            Ok(())
+        },
+        &|_stage| {
+            if let Some(kernel) = &host_kernel {
+                kernel.verify()?;
+            }
+            Ok(())
+        },
+    );
     // A completed native admission cannot be undone by a post-verification
     // host fault. That fault still makes the overall synchronization fail.
     if let Some(kernel) = &host_kernel {
@@ -2476,6 +2495,7 @@ mod tests {
                     Ok(())
                 }
             },
+            &|_stage| Ok(()),
         ).unwrap_err();
         assert_eq!(error.to_string(), "TEST_RESOURCE_OWNER_REVOKED");
         assert_eq!((before_packets, after_packets), (2, 1));
@@ -2508,6 +2528,7 @@ mod tests {
                     }
                     Ok(())
                 },
+                &|_stage| Ok(()),
             ).unwrap(),
             second_id
         );
@@ -2564,6 +2585,7 @@ mod tests {
                 }
                 _ => Ok(()),
             },
+            &|_stage| Ok(()),
         ).unwrap_err();
         assert_eq!(error.to_string(), "TEST_HOST_REVOKED_DURING_W1");
         assert!(checked_tile, "W1 callback must actually enter transcript arithmetic");
