@@ -95,3 +95,28 @@ reconcile the original owner before claiming a completed sync.
 This is NOT a signed public V3 outcome modification. The exact current
 source requires native Rust execution and physical CPU-owner evidence before
 P1 is accepted; code inspection alone is not a receipt.
+
+
+## Fatality of lost original accounting (2026-10-26 addendum)
+
+The existing `peer_polling::Engine::reject` derives whether to stop
+from `Error::requires_owner_stop`. Although unknown CPU accounting
+previously returned `PUBLIC_MUTATION_CPU_UNAVAILABLE`, this variant was
+classified `DependencyUnavailable` and was not itself an owner-stop
+condition. Subsequent peer cycles could therefore continue after an
+untrusted accounting state, obscuring the initial local resource fault
+and consuming network/queue resources. The source now stops pinned
+polling for **local typed** `PublicMutationCpuUnavailable`,
+`OwnerPublicServiceCpuDomain`,
+`OwnerPublicServiceDomainUnbound` and
+`OwnerPublicServiceUncleanEpoch`. An ordinary
+`PublicMutationCpuBudget` (finite paid capacity) remains retryable
+under the original deadline/fairness policy. A peer-supplied signed
+error *string* resembling `PUBLIC_MUTATION_CPU_UNAVAILABLE`
+retains `RemoteRefusal` origin and **cannot kill the owner**.
+
+Exact Rust selectors added:
+`error::tests::unavailable_original_cpu_owner_is_fatal_but_budget_and_remote_refusals_are_not`
+and `peer_polling::tests::pinned_polling_stops_on_local_cpu_account_failure_but_not_remote_error_text`.
+This is a **source-level fix pending exact native compilation and
+physical resource failure injection**, not a new P1 pass.
