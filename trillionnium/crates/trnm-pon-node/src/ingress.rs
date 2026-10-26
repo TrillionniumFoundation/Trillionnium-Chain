@@ -2514,6 +2514,55 @@ mod tests {
 
     #[cfg(target_os = "linux")]
     #[test]
+    fn raw_and_value_history_parsers_reserve_cpu_before_json_decode() {
+        let time = now().unwrap();
+        let settings = crate::Settings::development(Some(time - 100)).unwrap();
+        let dir = tempfile::tempdir().unwrap();
+        let mut node = Node::open(dir.path(), settings.clone(), 2).unwrap();
+        let genesis = settings.genesis();
+        let initial = node.stats().unwrap();
+        let cpu = public_v3::ServiceMutationCpuDomain::standalone();
+        node.bind_public_service_cpu_domain(&cpu).unwrap();
+        let source: SocketAddr = "127.0.0.1:22222".parse().unwrap();
+        let first = cpu.begin().unwrap();
+        let second = cpu.begin().unwrap();
+        // If parsing happened BEFORE CPU reservation, malformed JSON would
+        // produce a serde error instead of the original local CPU Busy.
+        let raw_error = receive_page_wire_from(
+            &mut node, source, b"{bad json", genesis, genesis, time,
+        ).unwrap_err();
+        assert_eq!(raw_error.to_string(), "PUBLIC_MUTATION_CPU_BUDGET");
+        let value_error = receive_page_value_from(
+            &mut node,
+            source,
+            serde_json::json!({"schema":"wrong"}),
+            genesis,
+            genesis,
+            time,
+        ).unwrap_err();
+        assert_eq!(value_error.to_string(), "PUBLIC_MUTATION_CPU_BUDGET");
+        first.finish();
+        second.finish();
+        assert_eq!(cpu.observe().unwrap().in_flight, 0);
+        // With CPU credit available, these same malformed inputs are now
+        // rejected by their actual typed page/JSON contracts, not W1.
+        assert!(receive_page_wire_from(
+            &mut node, source, b"{bad json", genesis, genesis, time,
+        ).is_err());
+        assert!(receive_page_value_from(
+            &mut node, source,
+            serde_json::json!({"schema":"wrong"}),
+            genesis, genesis, time,
+        ).is_err());
+        assert_eq!(node.stats().unwrap(), initial);
+        assert_eq!(node.read_active().unwrap().0, genesis);
+        let observed = cpu.observe().unwrap();
+        assert_eq!(observed.in_flight, 0);
+        assert!(!observed.accounting_unavailable);
+    }
+
+    #[cfg(target_os = "linux")]
+    #[test]
     fn history_cpu_reservation_exhaustion_is_local_busy_not_invalid_work() {
         let time = now().unwrap();
         let settings = crate::Settings::development(Some(time - 100)).unwrap();
