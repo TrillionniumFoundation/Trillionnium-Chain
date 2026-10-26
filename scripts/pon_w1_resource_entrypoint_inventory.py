@@ -133,6 +133,16 @@ def exercise_negative_controls(inputs: dict[str, str]):
          "UNMETERED_SOURCE", "addressless_history_import_private_and_source_guarded"),
         ("v3", "#[serde(skip_serializing)]", "#[serde(skip_serializing = \"not-real\")]",
          "p2_client_cpu_observation_never_changes_old_json"),
+        ("v3", "PaidMutationCpuPermit::acquire_before(", "UNMETERED_START(",
+         "v3_true_cpu_reserve_and_complete_work"),
+        ("v2", "PUBLIC_V2_LOOPBACK_ONLY", "V2_WAN_ALLOWED",
+         "v2_network_loopback_only"),
+        ("ingress", "DEVELOPMENT_REMOTE_ADMISSION_REQUIRED", "UNPRICED_WAN_ALLOWED",
+         "legacy_unauthenticated_loopback_or_protected_wan"),
+        ("owner_continuous", "o.operation(&permit, None)?", "UNACCOUNTED_CONTINUOUS_WORK",
+         "owned_continuous_real_cpu_before_w1"),
+        ("owner_mining", "owner.begin_cpu(cpu)?", "UNACCOUNTED_MINING_WINNER",
+         "owned_mining_real_cpu_before_w1"),
     ]
     for name, original, changed, expected in changes:
         if original not in inputs[name]:
