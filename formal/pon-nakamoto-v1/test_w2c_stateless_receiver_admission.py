@@ -71,7 +71,7 @@ class StatelessW2CResearchTests(unittest.TestCase):
         self.assertEqual(self.s.consume(c,H('third'),n3,122),'BUSY_RESOURCE_ONLY')
         self.assertEqual(self.s.consume(a,self.proposal,n,122),'REPLAY')
         self.assertEqual(len(self.s.spent),2)
-        self.s.offer(self.proposal,8,2120)
+        self.assertEqual(self.s.consume(c,H('third'),n3,2121),'EXPIRED')
         self.assertEqual(len(self.s.spent),0)
 
     def test_context_and_numeric_bounds(self):
