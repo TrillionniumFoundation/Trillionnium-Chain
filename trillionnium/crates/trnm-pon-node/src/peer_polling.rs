@@ -1082,6 +1082,98 @@ mod tests {
     }
 
     #[test]
+    fn actual_ticket_passing_false_trace_quarantines_only_its_pinned_source() {
+        // The source packet was initially a legal native fixture, but the
+        // attack input below is a NEW fake trace with a fresh cheap ticket.
+        // The local full W1 verifier, never a remote error string, identifies
+        // TRANSCRIPT and starts the existing peer's bounded retry delay.
+        let clock = ingress::now().unwrap();
+        let settings = Settings::development(Some(clock - 100)).unwrap();
+        let producer_dir = tempfile::tempdir().unwrap();
+        let receiver_dir = tempfile::tempdir().unwrap();
+        let producer = Node::open(producer_dir.path(), settings.clone(), 1).unwrap();
+        let mut packet = producer
+            .make(
+                settings.genesis(),
+                vec![],
+                development_public(0).unwrap(),
+                settings.genesis_time() + 10,
+                4096,
+            )
+            .unwrap();
+        let challenge = packet.header.challenge();
+        let real_trace: Hash = packet.proof[pon_work::PROOF_BYTES - 32..]
+            .try_into()
+            .unwrap();
+        let fake_trace = (0_u64..4096)
+            .find_map(|nonce| {
+                let fake = pon_work::hash(
+                    b"pinned-peer-full-replay-false-trace",
+                    &[&challenge, &nonce.to_le_bytes()],
+                );
+                (fake != real_trace
+                    && hash(b"ticket", &[&challenge, &fake]) <= packet.header.target)
+                    .then_some(fake)
+            })
+            .expect("fixed development target must permit bounded false ticket");
+        packet.proof[pon_work::PROOF_BYTES - 32..].copy_from_slice(&fake_trace);
+        assert!(matches!(
+            pon_work::verify(
+                challenge,
+                packet.header.work_task,
+                packet.header.target,
+                &packet.proof,
+            ),
+            Err(pon_work::WorkError::Transcript)
+        ));
+        let malicious_id = packet.id().unwrap();
+        let local = Mutex::new(Node::open(receiver_dir.path(), settings.clone(), 1).unwrap());
+        let before = local.lock().unwrap().stats().unwrap();
+        let config = config(&settings);
+        let stop = AtomicBool::new(false);
+        let context = context(&local, &config, &settings, &stop);
+        let mut engine = Engine::new(&config, &settings);
+        engine.states[0].target = Some(malicious_id);
+        let mut calls = 0usize;
+        engine
+            .cycle(
+                &context,
+                &mut |_, _| {
+                    calls += 1;
+                    Ok(reply(
+                        true,
+                        page_value(
+                            &settings,
+                            malicious_id,
+                            settings.genesis(),
+                            Some(&packet),
+                        ),
+                    ))
+                },
+                &mut |_| Ok(()),
+            )
+            .unwrap();
+        assert_eq!(calls, 1);
+        assert_eq!(engine.states[0].last_error.as_ref().unwrap().message, "WORK:Transcript");
+        assert_eq!(engine.states[0].invalid_w1_streak, 1);
+        assert!(engine.states[0].invalid_w1_delayed(Instant::now()));
+        assert_eq!(engine.states[0].cursor, settings.genesis());
+        assert_eq!(local.lock().unwrap().stats().unwrap(), before);
+        engine
+            .cycle(
+                &context,
+                &mut |_, _| {
+                    calls += 1;
+                    Ok(reply(false, serde_json::json!({"error":"BUSY"})))
+                },
+                &mut |_| Ok(()),
+            )
+            .unwrap();
+        assert_eq!(calls, 1, "no second expensive peer RPC during invalid-W1 cooldown");
+        assert!(!stop.load(Ordering::Acquire));
+    }
+
+    #[test]
     fn invalid_w1_backoff_is_bounded_monotone_and_clears_only_on_new_valid_work() {
         let origin = Instant::now();
         let mut peer = PeerState::new([1; 32]);
