@@ -162,29 +162,7 @@ else:
         self.assertIsNotNone(nonce)
         self.assertEqual(self.owner.consume(grant,proposal,self.caller,nonce),
                          'READY_RESOURCE_ONLY')
-        with self.assertRaisesRegex(ValueError,'^TRANSCRIPT
-        # Here the parent first closes its DB owner, then a real subprocess
-        # creates the durable row and calls os._exit without graceful close.
-        self.owner.close()
-        code='''import os,sys,json
-from contract_wire import H
-from w2c_durable_receiver import DurableReceiver,solve
-p=sys.argv[1];o=DurableReceiver(p,b'A'*32,b'K'*32)
-g=o.offer(H('fixed-proposal'),H('fixed-authenticated-caller'),8)
-n,_=solve(g,65536)
-a=o.consume(g,H('fixed-proposal'),H('fixed-authenticated-caller'),n)
-assert a=='READY_RESOURCE_ONLY'
-os._exit(0)
-'''
-        child=subprocess.run([sys.executable,'-c',code,str(self.path)],capture_output=True,text=True,timeout=15,env={**os.environ,'PYTHONPATH':str(Path(__file__).parent)})
-        self.assertEqual(child.returncode,0,child.stderr)
-        self.open_owner()
-        self.assertEqual(self.owner.paid_rows(),1)
-        g,n=self.mint()
-        self.assertEqual(self.owner.consume(g,self.proposal,self.caller,n),'READY_RESOURCE_ONLY')
-
-if __name__=='__main__':unittest.main(verbosity=2)
-):
+        with self.assertRaisesRegex(ValueError,'^TRANSCRIPT$'):
             W.verify(challenge,task,bytes([255])*32,proof)
         self.assertEqual(self.owner.consume(grant,proposal,self.caller,nonce),'REPLAY')
 
