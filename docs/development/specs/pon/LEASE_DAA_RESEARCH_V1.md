@@ -714,3 +714,30 @@ within this research lineage. None of these cases runs native Rust, produces
 PNW1 valid work, admits a block, proves an independent validator, or qualifies
 public-network difficulty/security. Local proof/admission tests and third-party
 review remain explicit blockers. No legacy DAA or production flag changes.
+
+### Short-lease, 32-occupied-slot native fast-path (2026-10-26)
+
+An additional opt-in native W1 regression reuses the installed Revision12
+genesis without changing Q4 signed bytes. It opens 31 independently signed
+short-lived leases (expires at height 4, retained through height 104) beside
+the original genesis slot 0 (retained through height 1100), then revokes all
+32 records. After explicitly mining Maintenance up to height 103, it verifies
+a fresh signed open for slot 1 at height 104 is atomically refused.
+At height 105, only the 31 old short-lived slots accept new signed
+generation-33..63 leases; the genesis slot remains revoked and retained.
+Additional real W1 Maintenance blocks confirm the inclusion under the original
+depth+work policy, then the exact database is cold reopened.
+
+This does not replace the full 1100-block all-slot retirement campaign.
+No synthetic signature, alternate work proof, early genesis recycling or
+inferred client FinalUse token is introduced. Research only: this test source
+still requires an actual native run, and cannot close W1 economics or WAN safety.
+
+Opt-in command from the exact checked-out candidate:
+
+```sh
+cargo test --locked --manifest-path trillionnium/Cargo.toml \
+ -p trnm-pon-node --lib \
+ native_31_short_retention_slots_reopen_without_releasing_retained_genesis_slot \
+ -- --ignored --test-threads=1
+```
