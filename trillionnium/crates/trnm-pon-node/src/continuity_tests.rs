@@ -1318,6 +1318,46 @@ fn long_native_all_32_retained_slots_reopen_only_after_retention_boundary() {
     assert!(confirmed.confirmed && !confirmed.reorged);
     assert!(!confirmed.finalized && !confirmed.execution_authority);
     let tip = node.read_active().unwrap();
+
+    // A different durable receiver starts with an empty SQLite namespace and
+    // re-admits all 1,111 exact historical packets. The pre-existing Node is
+    // never asked for a cached "confirmed" answer on the receiver's behalf.
+    // This is separate-state native recomputation, NOT another implementation,
+    // administrative identity, or an independently operated network client.
+    let mut ancestry = Vec::new();
+    let mut cursor = tip.0;
+    while cursor != settings.genesis() {
+        assert!(ancestry.len() < 1111, "unexpected or cyclic ancestor history");
+        let packet = node.packet(cursor).unwrap();
+        assert_eq!(packet.id().unwrap(), cursor);
+        ancestry.push(cursor);
+        cursor = packet.header.parent;
+    }
+    assert_eq!(ancestry.len(), 1111);
+    ancestry.reverse();
+    let receiver_dir = tempfile::tempdir().unwrap();
+    let mut receiver = Node::open(receiver_dir.path(), settings.clone(), 1).unwrap();
+    for block_id in ancestry {
+        let packet = node.packet(block_id).unwrap();
+        let received_id = receiver.admit(&packet, 100_000).unwrap();
+        assert_eq!(received_id, block_id);
+        receiver.activate(received_id).unwrap();
+    }
+    assert_eq!(receiver.read_active().unwrap(), tip);
+    assert!(receiver.confirmation(watched, included, 100_000).unwrap().confirmed);
+    assert!(receiver.confirmation(
+        source_tx_id, registered_block, 100_000
+    ).unwrap().confirmed);
+    // Altered proof bytes must not create historical work or mutate the reader.
+    let mut invalid = node.packet(registered_block).unwrap();
+    let last = invalid.proof.len() - 1;
+    invalid.proof[last] ^= 1;
+    assert!(receiver.admit(&invalid, 100_000).is_err());
+    assert_eq!(receiver.read_active().unwrap(), tip);
+    drop(receiver);
+    let receiver = Node::open(receiver_dir.path(), settings.clone(), 1).unwrap();
+    assert_eq!(receiver.read_active().unwrap(), tip);
+
     drop(node);
     let reopened = Node::open(dir.path(), settings, 1).unwrap();
     assert_eq!(reopened.read_active().unwrap(), tip);
