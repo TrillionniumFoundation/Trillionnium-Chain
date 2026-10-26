@@ -2207,7 +2207,13 @@ fn receive_page_with_cpu(
                 // A native rejection still owes its full actual CPU. If an
                 // accounting fault occurs after durable success, do not
                 // rewrite or roll back an existing native fact.
-                let _accounting = operation.finish();
+                let accounting = operation.finish();
+                if accounting.accounting_unavailable {
+                    // A durable native outcome is not undone. However this
+                    // outbound local-sync caller must NOT report a qualified
+                    // complete import when actual worker CPU is unknown.
+                    return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+                }
                 native?;
             }
         }
@@ -2229,7 +2235,13 @@ fn receive_page_with_cpu(
                     checkpoint.checkpoint()?;
                     node.activate_observed(tip, clock)
                 })();
-                let _accounting = operation.finish();
+                let accounting = operation.finish();
+                if accounting.accounting_unavailable {
+                    // A durable native outcome is not undone. However this
+                    // outbound local-sync caller must NOT report a qualified
+                    // complete import when actual worker CPU is unknown.
+                    return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+                }
                 native?;
             }
         }

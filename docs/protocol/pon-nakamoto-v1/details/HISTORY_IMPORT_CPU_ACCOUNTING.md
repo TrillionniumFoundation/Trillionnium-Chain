@@ -114,3 +114,21 @@ This is an **authored test**, not an executed current-head physical stress
 campaign. Even if it passes, one fixed signed local candidate with no
 mixed caller/key churn, no honest 3/3 confirmation and no independent WAN
 operators does not close P3/P4/A03.
+
+
+## Fail-closed incomplete CPU settlement (additional source safeguard)
+
+Both per-packet Work/M06 operations and the subsequent activation operation
+now inspect the original 'ServiceMutationCpuSettlement.accounting_unavailable'
+after .finish(). An unavailable/reversed owner clock, missing child CPU
+sample, poisoned account or failed residual settlement causes the
+**local outbound sync** to return typed
+'PUBLIC_MUTATION_CPU_UNAVAILABLE' instead of reporting a complete verified
+synchronization. Previously ignoring the settlement would allow an
+unqualified local success result.
+
+This never rewinds a previously durable native block or marks it W1-invalid.
+An operator must reconcile the existing durable block/source and the CPU
+owner before reporting the history sync complete. This is a **local outbound
+status** rule, not a changed signed public V3 ACK, consensus invalidity,
+new account or retry authorization. No test execution has been asserted.
