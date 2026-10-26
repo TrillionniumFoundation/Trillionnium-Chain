@@ -39,17 +39,16 @@ def decide(record):
         ticket = integer(row.get("actual_ticket_search_cpu_ns"),"TICKET_CPU")
         forge = integer(row.get("full_forgery_build_cpu_ns"),"FORGERY_CPU",True)
         receiver = integer(row.get("complete_receiver_reject_cpu_ns"),"RECEIVER_CPU")
-        sender_total = ticket + forge
-        if sender_total >= 1<<63:
-            raise ValueError("TOTAL_OVERFLOW")
+        # Different receiver-bound tickets are paid once per receiver, but
+        # the original forged W1 proof/material may be prepared only ONCE.
+        # A globally replayable ticket and its source network send may both
+        # fan out to receivers through honest peer propagation.
         if row.get("full_send_transport_cpu_ns") is None:
             reasons.append("TRANSPORT_CPU_UNKNOWN")
+            transport = None
         else:
-            integer(row["full_send_transport_cpu_ns"],"TRANSPORT_CPU",True)
-            sender_total += row["full_send_transport_cpu_ns"]
-        if sender_total >= 1<<63:
-            raise ValueError("TOTAL_OVERFLOW")
-        ratios.append((sender_total,receiver))
+            transport = integer(row["full_send_transport_cpu_ns"],"TRANSPORT_CPU",True)
+        ratios.append((ticket, forge, transport, receiver))
     for name in ("gpu_cpu_speedup_upper_bound","asic_cpu_speedup_upper_bound"):
         value=record.get(name)
         if value is not None:
@@ -62,14 +61,25 @@ def decide(record):
     # Hardware ratios must be measured upper bounds, not marketing claims.
     advantage=max(1,record["gpu_cpu_speedup_upper_bound"],
                   record["asic_cpu_speedup_upper_bound"])
-    # One preimage can be replayed at N independent receivers for a global
-    # ticket; independent receiver MACs require distinct tickets. That latter
-    # statement fails if operators clone secrets/epochs and is an assumption.
-    sender_copies=record["receiver_count"] if mode=="receiver-bound" else 1
+    # Globally replayable grant: one security search, one fake proof, one
+    # initial send can propagate to N verifying nodes. Receiver-bound grants:
+    # N distinct search solutions and N sends, but still just ONE fake-proof
+    # construction on the same fixed W1 statement. This pessimistically gives
+    # the attacker the right to share all legal reusable preparation.
+    # Cloned receiver secrets/epochs would invalidate even the N-ticket rule.
     receiver_copies=record["receiver_count"]
-    # Worst observed per-request ratio, including all stated cost components.
-    worst_numerator=max(receiver for _,receiver in ratios)*receiver_copies*advantage
-    worst_denominator=min(sender for sender,_ in ratios)*sender_copies
+    sender_copies=receiver_copies if mode=="receiver-bound" else 1
+    denominators=[]
+    for ticket, forge, transport, _receiver in ratios:
+        sender=(ticket+transport)*sender_copies+forge
+        if sender>=1<<63:
+            raise ValueError("TOTAL_OVERFLOW")
+        denominators.append(sender)
+    # Worst *observed* envelope combines the slowest receiver with the
+    # cheapest complete sender. This remains an observation, never a minimum
+    # attack-cost theorem, and always has production_qualified=false.
+    worst_numerator=max(receiver for *_, receiver in ratios)*receiver_copies*advantage
+    worst_denominator=min(denominators)
     amplified=worst_numerator>worst_denominator
     return {"schema":SCHEMA,"status":"OBSERVED_AMPLIFICATION" if amplified else "NO_OBSERVED_AMPLIFICATION",
             "cost_ratio_numerator":worst_numerator,
