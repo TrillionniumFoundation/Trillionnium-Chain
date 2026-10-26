@@ -5,7 +5,6 @@ native Rust, PoN consensus, proof mining, or public-node admission.
 """
 from __future__ import annotations
 
-from dataclasses import replace
 from pathlib import Path
 from unittest.mock import patch
 import shutil
@@ -51,32 +50,20 @@ class DaaGoErrorParity(unittest.TestCase):
             )
             with patch('daa_go_differential.cases',
                        return_value=iter(cases)):
-                report = run(binary, count=len(cases), seed=20261026)
+                report = run(binary, count=len(cases), seed=20261026,
+                             expose_rows=True)
         self.assertEqual(report['cases'], 9)
         self.assertEqual(report['compared'], 1)
         self.assertEqual(report['rejected'], 8)
         self.assertEqual(
-            [x['kind'] for x in cases_to_records(report, cases)],
+            [row['kind'] for row in report['rows']],
             ['target'] + ['rejected-parameters']*6 + ['rejected-range']*2
         )
-
-
-def cases_to_records(report, cases):
-    # Reuse the actual report? run() returns counts and a digest by design,
-    # never a raw list of secret/unsigned user data. Confirm the expected kind
-    # partition independently from the immutable explicit test inputs.
-    from daa_research_oracle import asert_target
-    out = []
-    for case in cases:
-        try:
-            asert_target(**case)
-            kind = 'target'
-        except ValueError as error:
-            message = str(error)
-            kind = ('rejected-range' if 'overflows i128' in message
-                    else 'rejected-parameters')
-        out.append({'kind': kind})
-    return out
+        self.assertEqual(
+            [row['go_result'] for row in report['rows'][1:]],
+            ['ASERT_RESEARCH_PARAMETERS']*6
+            + ['ASERT_RESEARCH_RANGE']*2,
+        )
 
 
 if __name__ == '__main__':

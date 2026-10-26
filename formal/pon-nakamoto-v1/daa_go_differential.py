@@ -50,7 +50,11 @@ def cases(count=N_CASES, seed=FIXTURE_SEED):
                "spacing": spacing, "half_life": half_life}
 
 
-def run(binary: Path, count=N_CASES, seed=FIXTURE_SEED):
+def run(binary: Path, count=N_CASES, seed=FIXTURE_SEED, *, expose_rows=False):
+    """Compare real Go process results; optional raw rows are test-only.
+
+    Default return schema/digest remains unchanged for frozen evidence.
+    """
     rows = []
     for i, x in enumerate(cases(count, seed)):
         args = [str(binary), "--anchor", f"{x['anchor_target']:064x}",
@@ -100,13 +104,18 @@ def run(binary: Path, count=N_CASES, seed=FIXTURE_SEED):
         if not match:
             raise RuntimeError(f"independent oracle mismatch case={i} input={x} go_rc={native.returncode} got={actual!r} expected={want!r}")
         rows.append({"case": i, "kind": kind, "go_result": actual})
-    return {"schema": "pon-asert-go-python-differential-v1",
-            "seed": seed, "cases": len(rows), "compared": sum(1 for x in rows if x['kind'] == 'target'),
-            "rejected": sum(1 for x in rows if x['kind'] != 'target'),
-            "all_equal": True,
-            "outputs_sha256": hashlib.sha256(json.dumps(rows, separators=(',', ':'), sort_keys=True).encode()).hexdigest(),
-            "observed_go_binary": str(binary), "consensus_activation": False,
-            "valid_w1_proofs": 0, "independent_operators": 0}
+    report = {"schema": "pon-asert-go-python-differential-v1",
+              "seed": seed, "cases": len(rows),
+              "compared": sum(1 for x in rows if x['kind'] == 'target'),
+              "rejected": sum(1 for x in rows if x['kind'] != 'target'),
+              "all_equal": True,
+              "outputs_sha256": hashlib.sha256(json.dumps(
+                  rows, separators=(',', ':'), sort_keys=True).encode()).hexdigest(),
+              "observed_go_binary": str(binary), "consensus_activation": False,
+              "valid_w1_proofs": 0, "independent_operators": 0}
+    if expose_rows:
+        report["rows"] = rows
+    return report
 
 
 def main():
