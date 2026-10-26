@@ -163,3 +163,28 @@ and loopback-proxy policy require physical deployment evidence. A03 three
 modes × three runs × three timely confirmations, fair queue service, calibrated
 attacker CPU/GPU costs, actual mathematically sound and efficient W2 proof,
 and independent cryptography review remain mandatory. HOLD_NO_GO.
+
+
+### Final completed-page activation CPU scope
+
+An additional P1 review found that after verifying every W1 packet the original
+private History parser called Node::activate_observed **outside the service
+CPU account**. That activation can walk retained ancestry, replay/recover
+reorganizations and update durable State even if all received W1 proofs
+were valid.
+
+The candidate now reserves **one more original operation under the SAME
+immutable five-second page window** and invokes
+Node::activate_observed_with_progress with the existing live CPU/deadline
+callbacks. It settles regardless of success/failure, leaves native durable
+facts intact after late settlement loss and requires known actual
+calling-thread CPU; no extra credits, receipts or worker pool are minted.
+The underlying activation is still *cooperatively* checked and may include
+non-preemptive SQLite/root stages. Any future activation subworker CPU must
+be separately registered rather than assumed zero; the host cgroup remains
+the only physical aggregate bound.
+
+The normal valid imported-block regression now exercises and charges the
+completed-page activation in addition to W1 and M06. This code has **not**
+been compiled or physically profiled on the frozen exact branch in the
+current session. No A03 honest-service or mainnet permission is inferred.
