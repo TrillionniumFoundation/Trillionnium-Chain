@@ -99,3 +99,47 @@ can itself be exhausted by unpaid senders without an earlier front-door limit.
 W2-C admission research must NOT be advertised as a decentralized consensus
 safety theorem. Until these gates close, continue to deny production PoN
 activation.
+
+
+## Next revision: stateless issuance, paid-only replay state
+
+The earlier receiver-local research issuer allocated one pending row **on
+every HMAC grant issuance**. A sender who did not solve any proof-of-cost could
+obtain a finite batch of pending grants and fill the admission table. This
+is an independent cheap state-exhaustion path.
+
+The additive, separate module
+'formal/pon-nakamoto-v1/w2c_stateless_receiver_admission.py' now supports a
+**stateless grant issue** mode: every signed grant binds exactly receiver,
+process epoch, proposal, random token, bits and fixed expiry, but issuing
+it creates NO pending state. The only mutating table contains hashes of
+grants that have **actually passed** an authenticated, receiver-local Hashcash
+check; the insertion is atomic and bounded. Existing live spent facts are
+never evicted to allow replay. The issuer's untrusted-grant method does not
+scan the spent table on issuance, so with respect to memory and table size,
+grant issuance is O(1).
+
+The separate negative selector
+'python3 formal/pon-nakamoto-v1/test_w2c_stateless_receiver_admission.py'
+tests 5000 unpaid grants consuming zero pending rows, exact 32-way
+single-grant contention, receiver copy, old process epoch, credential
+tampering, invalid ticket, expired/clock-regressed grant, bounded paid-table
+full with fail-closed Busy, and exact paid-row expiry. The suite passed
+8/8 in a local standalone Python execution; published source/test blob SHA
+must match the tested bytes. No Rust native verification or WAN request was
+part of this run.
+
+This is NOT free anti-DoS: 5000 grant issuances still consume HMAC, socket,
+entropy, framing and wall-clock resources. Those must be bounded by the
+already selected V3 front-end and one physical Host owner before this
+research could be considered for integration. Paid requests can still
+fill the bounded spent table until expiry; anonymous honest fairness and
+GPU/ASIC economics remain open. A real restart MUST select a fresh
+cryptographically independent epoch or persist the spent table; reusing
+an old epoch with lost replay state is forbidden. The original V3 Cookie
+and W1 remain unchanged and unqualified for public launch.
+
+The stateful and stateless examples deliberately live side by side for
+paired counterexamples; selecting the stateless one at runtime would
+require a new signed policy namespace, negative compatibility tests and
+explicit governed adoption rather than silent replacement.
