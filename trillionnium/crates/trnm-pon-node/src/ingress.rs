@@ -2532,7 +2532,8 @@ mod tests {
 
         // A canonical wrong C preserves the *same* full real W1 transcript,
         // ticket/challenge, task and target, reaching a late Product rejection.
-        for step in [1u128, 2u128] {
+        let mut original_domain: Option<public_v3::ServiceMutationCpuDomain> = None;
+        for (step, source_port) in [(1u128, 12345u16), (2u128, 23456u16)] {
             let mut fake = good.clone();
             let offset = 4 + 2 * trnm_crypto_primitives::pon_work::CELLS * 4;
             let prior = u32::from_le_bytes(
@@ -2541,13 +2542,21 @@ mod tests {
             let changed =
                 ((u128::from(prior) + step) % trnm_crypto_primitives::pon_work::Q) as u32;
             fake.proof[offset..offset + 4].copy_from_slice(&changed.to_le_bytes());
+            // Changing the purported source/connection must not buy new
+            // original CPU credit or create a second Node owner.
+            let source = SocketAddr::from(([127, 0, 0, 1], source_port));
             assert_eq!(
                 receive_page_from(
-                    &mut node, localhost, page_for(&fake), block, genesis, time,
+                    &mut node, source, page_for(&fake), block, genesis, time,
                 ).unwrap_err().to_string(),
                 "WORK:Product",
             );
             let cpu = node.public_service_cpu_domain().unwrap();
+            if let Some(prior) = &original_domain {
+                assert!(prior.shares_domain_with(&cpu));
+            } else {
+                original_domain = Some(cpu.clone());
+            }
             let meter = cpu.observe().unwrap();
             let flow = cpu.observe_actual_flow().unwrap().unwrap();
             assert_eq!(meter.in_flight, 0);
