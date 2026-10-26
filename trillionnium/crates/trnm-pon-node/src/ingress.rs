@@ -2109,13 +2109,43 @@ fn call_authenticated_durable_inner(
     Err(Error::authenticated_remote(terminal, error))
 }
 
+/// Resource-only checkpoints for an untrusted History batch. The native
+/// verifier, not the callback, remains sole W1 consensus authority.
+#[derive(Clone, Copy)]
+enum HistoryImportCheckpoint {
+    BeforePacket,
+    DuringWork(trnm_crypto_primitives::pon_work::VerificationProgress),
+    AfterPacket,
+}
+
+/// The physical cgroup read is relatively expensive. Check W1 progress only
+/// at bounded, deterministic boundaries rather than on every transcript tile.
+fn history_work_checkpoint(
+    progress: trnm_crypto_primitives::pon_work::VerificationProgress,
+) -> bool {
+    use trnm_crypto_primitives::pon_work::VerificationProgress as P;
+    matches!(
+        progress,
+        P::BeforeReplay
+            | P::BeforeProduct
+            | P::BeforeVerifiedWork
+            | P::Noise { counter: 0, .. }
+            | P::MatrixRow { row: 0 | 16 | 32 | 48 }
+            | P::TranscriptTile {
+                column: 0,
+                inner: 0,
+                ..
+            }
+    )
+}
+
 fn receive_page(
     node: &mut Node,
     page: Page,
     tip: Hash,
     after: Hash,
     clock: u64,
-    progress: &mut impl FnMut() -> Result<()>,
+    progress: &mut impl FnMut(HistoryImportCheckpoint) -> Result<()>,
 ) -> Result<Hash> {
     ensure(
         page.schema == "pon-native-history-v1"
@@ -2157,12 +2187,17 @@ fn receive_page(
         // Never defer physical host/membership and quota checks until *after*
         // the whole batch; a hostile page must pay at most one full replay
         // between consecutive checks, rather than a batch of sixteen.
-        progress()?;
-        node.admit(packet, clock)?;
+        progress(HistoryImportCheckpoint::BeforePacket)?;
+        node.admit_with_verification_progress(packet, clock, &mut |point| {
+            if history_work_checkpoint(point) {
+                progress(HistoryImportCheckpoint::DuringWork(point))?;
+            }
+            Ok(())
+        })?;
         // This guard does not revoke a just-committed native result; failure
         // marks the remaining History sync incomplete without inventing an
         // invalid consensus verdict or rewinding an earlier accepted block.
-        progress()?;
+        progress(HistoryImportCheckpoint::AfterPacket)?;
     }
     if page.complete {
         node.activate_observed(tip, clock)?;
@@ -2188,7 +2223,7 @@ pub fn receive_page_from(
     if let Some(kernel) = &host_kernel {
         kernel.verify()?;
     }
-    let native = receive_page(node, page, tip, after, clock, &mut || {
+    let native = receive_page(node, page, tip, after, clock, &mut |_| {
         if let Some(kernel) = &host_kernel {
             kernel.verify()?;
         }
@@ -2342,6 +2377,34 @@ mod tests {
     use super::*;
 
     #[test]
+    fn w1_history_kernel_checkpoints_are_bounded_and_cover_each_tile_row_group() {
+        use trnm_crypto_primitives::pon_work::VerificationProgress as P;
+        assert!(history_work_checkpoint(P::BeforeReplay));
+        assert!(history_work_checkpoint(P::BeforeProduct));
+        assert!(history_work_checkpoint(P::BeforeVerifiedWork));
+        let noise_checks = (0..4)
+            .flat_map(|label| (0..128).map(move |counter| P::Noise { label, counter }))
+            .filter(|point| history_work_checkpoint(*point))
+            .count();
+        assert_eq!(noise_checks, 4, "one check per noise label, not each hash");
+        let transcript_checks = (0..8)
+            .flat_map(|row| {
+                (0..8).flat_map(move |column| {
+                    (0..8).map(move |inner| P::TranscriptTile { row, column, inner })
+                })
+            })
+            .filter(|point| history_work_checkpoint(*point))
+            .count();
+        assert_eq!(transcript_checks, 8, "only one check per transcript row group");
+        assert!(!history_work_checkpoint(P::TranscriptTile {
+            row: 0,
+            column: 0,
+            inner: 1,
+        }));
+        assert!(!history_work_checkpoint(P::MatrixRow { row: 1 }));
+    }
+
+    #[test]
     fn history_page_checks_original_owner_between_valid_w1_packets() {
         // Fixed two-block Page, not a synthetic verification result. Inject an
         // original-resource checkpoint failure *before* the second W1 proof.
@@ -2385,24 +2448,38 @@ mod tests {
             complete: true,
         };
         let mut receiving = Node::open(dir.path(), settings.clone(), 2).unwrap();
-        let mut checked = 0;
+        let mut before_packets = 0;
+        let mut after_packets = 0;
+        let mut w1_checkpoints = 0;
         let error = receive_page(
             &mut receiving,
             page(),
             second_id,
             settings.genesis(),
             now,
-            &mut || {
-                checked += 1;
-                if checked == 3 {
-                    Err("TEST_RESOURCE_OWNER_REVOKED".into())
-                } else {
+            &mut |point| match point {
+                HistoryImportCheckpoint::BeforePacket => {
+                    before_packets += 1;
+                    if before_packets == 2 {
+                        Err("TEST_RESOURCE_OWNER_REVOKED".into())
+                    } else {
+                        Ok(())
+                    }
+                }
+                HistoryImportCheckpoint::AfterPacket => {
+                    after_packets += 1;
+                    Ok(())
+                }
+                HistoryImportCheckpoint::DuringWork(stage) => {
+                    assert!(history_work_checkpoint(stage));
+                    w1_checkpoints += 1;
                     Ok(())
                 }
             },
         ).unwrap_err();
         assert_eq!(error.to_string(), "TEST_RESOURCE_OWNER_REVOKED");
-        assert_eq!(checked, 3, "first pre+post, then second pre");
+        assert_eq!((before_packets, after_packets), (2, 1));
+        assert!(w1_checkpoints > 0, "new first packet must have real W1 checkpoints");
         assert_eq!(receiving.parent_height(first_id).unwrap(), 1);
         assert!(receiving.parent_height(second_id).is_err());
         assert_eq!(receiving.read_active().unwrap().0, settings.genesis());
@@ -2410,7 +2487,9 @@ mod tests {
         let mut recovered = Node::open(dir.path(), settings.clone(), 2).unwrap();
         assert_eq!(recovered.parent_height(first_id).unwrap(), 1);
         assert!(recovered.parent_height(second_id).is_err());
-        let mut completed_checks = 0;
+        let mut completed_before = 0;
+        let mut completed_after = 0;
+        let mut replay_stages = 0;
         assert_eq!(
             receive_page(
                 &mut recovered,
@@ -2418,15 +2497,79 @@ mod tests {
                 second_id,
                 settings.genesis(),
                 now,
-                &mut || {
-                    completed_checks += 1;
+                &mut |point| {
+                    match point {
+                        HistoryImportCheckpoint::BeforePacket => completed_before += 1,
+                        HistoryImportCheckpoint::AfterPacket => completed_after += 1,
+                        HistoryImportCheckpoint::DuringWork(stage) => {
+                            assert!(history_work_checkpoint(stage));
+                            replay_stages += 1;
+                        }
+                    }
                     Ok(())
                 },
             ).unwrap(),
             second_id
         );
-        assert_eq!(completed_checks, 4, "check each packet before and after");
+        assert_eq!((completed_before, completed_after), (2, 2));
+        assert!(replay_stages > 0, "second new W1 must be checked during replay");
         assert_eq!(recovered.read_active().unwrap().0, second_id);
+    }
+
+    #[test]
+    fn hostile_host_owner_loss_during_w1_replay_leaves_no_verified_block() {
+        let now = now().unwrap();
+        let settings = crate::Settings::development(Some(now - 100)).unwrap();
+        let dir = tempfile::tempdir().unwrap();
+        let producer_dir = tempfile::tempdir().unwrap();
+        let producer = Node::open(producer_dir.path(), settings.clone(), 2).unwrap();
+        let packet = producer.make(
+            settings.genesis(),
+            vec![],
+            crate::development_public(0).unwrap(),
+            settings.genesis_time() + 10,
+            4096,
+        ).unwrap();
+        let id = packet.id().unwrap();
+        let page = Page {
+            schema: "pon-native-history-v1".into(),
+            network: hex::encode(settings.network()),
+            parameters: hex::encode(settings.parameters()),
+            genesis: hex::encode(settings.genesis()),
+            tip: hex::encode(id),
+            after: hex::encode(settings.genesis()),
+            packets: vec![hex::encode(packet.encode().unwrap())],
+            next: hex::encode(id),
+            complete: true,
+        };
+        let mut receiving = Node::open(dir.path(), settings.clone(), 2).unwrap();
+        let baseline = receiving.stats().unwrap();
+        let mut checked_tile = false;
+        let error = receive_page(
+            &mut receiving,
+            page,
+            id,
+            settings.genesis(),
+            now,
+            &mut |point| match point {
+                HistoryImportCheckpoint::DuringWork(
+                    trnm_crypto_primitives::pon_work::VerificationProgress::TranscriptTile {
+                        column: 0,
+                        inner: 0,
+                        ..
+                    },
+                ) => {
+                    checked_tile = true;
+                    Err("TEST_HOST_REVOKED_DURING_W1".into())
+                }
+                _ => Ok(()),
+            },
+        ).unwrap_err();
+        assert_eq!(error.to_string(), "TEST_HOST_REVOKED_DURING_W1");
+        assert!(checked_tile, "W1 callback must actually enter transcript arithmetic");
+        assert_eq!(receiving.stats().unwrap(), baseline);
+        assert!(receiving.parent_height(id).is_err());
+        assert_eq!(receiving.read_active().unwrap().0, settings.genesis());
     }
 
     #[test]

@@ -3251,6 +3251,28 @@ impl Node {
         let checked = self.attach_owner_work(WorkCheckedPacket::verify(packet.clone())?, permit)?;
         self.admit_work_checked(checked, observed_now)
     }
+    /// Existing owned Native admission with cooperative W1 *resource* checks.
+    /// Used only by guarded History import. Every original task, context,
+    /// owner permit, exact W1 relation, application and durable state check
+    /// remains the same as 'admit'. A caller callback never grants work.
+    /// A local cancellation before verified work is not an invalid block.
+    pub(crate) fn admit_with_verification_progress(
+        &mut self,
+        packet: &Packet,
+        observed_now: u64,
+        progress: &mut impl FnMut(pon_work::VerificationProgress) -> Result<()>,
+    ) -> Result<Hash> {
+        if let Some(id) = self.check_admission_context(packet, observed_now)? {
+            return Ok(id);
+        }
+        let permit = self.begin_owner_work(packet)?;
+        let checked = self.attach_owner_work(
+            WorkCheckedPacket::verify_with_progress(packet.clone(), progress)?,
+            permit,
+        )?;
+        self.admit_work_checked(checked, observed_now)
+    }
+
     fn precheck_owner_packet(&self, packet: &Packet) -> Result<()> {
         ensure(
             self.state_backend != StateBackend::PermanentAccountGrowthV2,
