@@ -166,6 +166,38 @@ else:
             W.verify(challenge,task,bytes([255])*32,proof)
         self.assertEqual(self.owner.consume(grant,proposal,self.caller,nonce),'REPLAY')
 
+    def test_actual_sqlite_page_exhaustion_rejects_without_ready_or_refund(self):
+        # Constrain SQLite's actual page allocator, rather than mocking an
+        # exception: a successful ticket cannot proceed on a full database.
+        self.owner.close()
+        self.open_owner(capacity=1024)
+        pages=self.owner.db.execute('PRAGMA page_count').fetchone()[0]
+        self.assertEqual(self.owner.db.execute(
+            f'PRAGMA max_page_count={pages}').fetchone()[0],pages)
+        completed=0
+        for i in range(1024):
+            proposal=H('disk-exhaustion-proposal',i.to_bytes(4,'little'))
+            grant=self.owner.offer(proposal,self.caller,8)
+            nonce,_=solve(grant,65536)
+            self.assertIsNotNone(nonce)
+            try:
+                decision=self.owner.consume(grant,proposal,self.caller,nonce)
+            except RuntimeError as error:
+                self.assertEqual(str(error),'DURABLE_SPEND_UNKNOWN')
+                break
+            self.assertEqual(decision,'READY_RESOURCE_ONLY')
+            completed+=1
+        else:
+            self.fail('fixed SQLite capacity did not produce a real page exhaustion')
+        self.assertGreater(completed,0)
+        self.assertLess(completed,1024)
+        with self.assertRaisesRegex(ValueError,'OWNER_UNAVAILABLE'):
+            self.owner.offer(self.proposal,self.caller,8)
+        self.owner.close()
+        self.open_owner(capacity=1024)
+        self.assertEqual(self.owner.paid_rows(),completed)
+        self.assertEqual(self.owner.consume(grant,proposal,self.caller,nonce),'CONTEXT')
+
     def test_real_crash_after_durable_commit_and_reopen(self):
         # Here the parent first closes its DB owner, then a real subprocess
         # creates the durable row and calls os._exit without graceful close.
