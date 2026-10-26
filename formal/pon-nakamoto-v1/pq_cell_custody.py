@@ -333,3 +333,72 @@ class OfflineOneUseJournal:
             if self.db.in_transaction:
                 self.db.execute("ROLLBACK")
             raise
+
+# PCA1 is an additional versioned release-signer attestation, not part of PCB1.
+# The trusted caller MUST have independently verified the original signed PCB1
+# release frame and its review/consent context before pinning its exact digest.
+
+def release_frame_id(frame: bytes) -> bytes:
+    from pq_envelope import parse_signed
+    statement, _ = parse_signed(frame)
+    if statement.purpose != 4:
+        raise Reject("release frame purpose")
+    return _h(b"release-frame\x00", frame)
+
+
+def _catalog_binding_payload(c: Catalog, release_id: bytes, prior_head: bytes) -> bytes:
+    return (b"PCA1" + c.encode() + _exact(release_id, 48, "release frame", True)
+            + _exact(prior_head, 48, "previous catalog head"))
+
+
+def _catalog_binding_context(c: Catalog, release_id: bytes, prior_head: bytes) -> bytes:
+    return hashlib.sha256(DOMAIN + b"catalog-bind-context\x00"
+                          + catalog_id(c) + release_id + prior_head).digest()
+
+
+def sign_catalog_binding_fixture(c: Catalog, *, release_frame: bytes,
+                                previous_head: bytes, signer_public_pem: bytes,
+                                signer_private_path: Path, sequence: int,
+                                expires_at: int) -> bytes:
+    """Offline signer. Does not attest reviewer independence or source consent."""
+    rid = release_frame_id(release_frame)
+    unsigned = make_unsigned(purpose=4, network=c.network,
+                             context=_catalog_binding_context(c, rid, previous_head),
+                             signer_key_id=public_key_id(signer_public_pem),
+                             owner_generation=c.generation, operation_sequence=sequence,
+                             expires_at=expires_at,
+                             payload=_catalog_binding_payload(c, rid, previous_head))
+    return sign_reference(unsigned, private_key_path=signer_private_path)
+
+
+@dataclass(frozen=True)
+class CatalogPinObservation:
+    """Cryptographic signer/catalog link only: NOT an adopted release or grant."""
+    catalog_digest: bytes
+    release_frame_digest: bytes
+    signer_key_id: bytes
+
+
+def verify_catalog_binding_research(catalog_bytes: bytes, *, release_frame: bytes,
+                                    binding_frame: bytes, signer_public_pem: bytes,
+                                    expected_release_frame_id: bytes,
+                                    expected_signer_key_id: bytes,
+                                    expected_previous_head: bytes,
+                                    expected_network: bytes, expected_release_manifest: bytes,
+                                    expected_generation: int, expected_sequence: int,
+                                    now: int) -> CatalogPinObservation:
+    c = parse_catalog(catalog_bytes)
+    rid = release_frame_id(release_frame)
+    if (rid != _exact(expected_release_frame_id, 48, "expected release frame", True)
+            or public_key_id(signer_public_pem) != _exact(expected_signer_key_id, 32, "release signer", True)
+            or c.network != _exact(expected_network, 32, "network", True)
+            or c.release_manifest != _exact(expected_release_manifest, 48, "manifest", True)
+            or type(expected_generation) is not int or c.generation != expected_generation):
+        raise Reject("pinned release/catalog context")
+    previous = _exact(expected_previous_head, 48, "previous head")
+    verify_reference(binding_frame, payload=_catalog_binding_payload(c, rid, previous),
+                     public_pem=signer_public_pem, expected_network=c.network,
+                     expected_context=_catalog_binding_context(c, rid, previous),
+                     expected_purpose=4, expected_generation=c.generation,
+                     expected_sequence=expected_sequence, now=now)
+    return CatalogPinObservation(catalog_id(c), rid, expected_signer_key_id)
