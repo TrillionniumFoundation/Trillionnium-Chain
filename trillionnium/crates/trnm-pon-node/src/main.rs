@@ -2132,7 +2132,14 @@ fn run() -> Result<Value> {
                     }
                     let page: ingress::Page = serde_json::from_value(reply.value)?;
                     complete = page.complete;
-                    cursor = ingress::receive_page_from_public_sync(&mut node, address, page, tip, cursor, ingress::now()?)?;
+                    cursor = ingress::receive_page_from_public_sync(
+                        &mut node,
+                        address,
+                        page,
+                        tip,
+                        cursor,
+                        ingress::now()?,
+                    )?;
                     if let Some(kernel) = &host_kernel {
                         kernel.verify()?;
                     }
