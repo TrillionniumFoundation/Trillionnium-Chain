@@ -2109,12 +2109,13 @@ fn call_authenticated_durable_inner(
     Err(Error::authenticated_remote(terminal, error))
 }
 
-fn receive_page(
+fn receive_page_with_cpu(
     node: &mut Node,
     page: Page,
     tip: Hash,
     after: Hash,
     clock: u64,
+    cpu: Option<&public_v3::ServiceMutationCpuDomain>,
 ) -> Result<Hash> {
     ensure(
         page.schema == "pon-native-history-v1"
@@ -2152,10 +2153,62 @@ fn receive_page(
         "PAGE_COMPLETE",
     )?;
     for packet in &packets {
-        node.admit(packet, clock)?;
+        if let Some(cpu) = cpu {
+            // One already-bound Node CPU account for inbound V3, outbound sync
+            // and every externally obtained proof. Never create peer credit.
+            let operation = cpu.begin()?;
+            let live = operation.checkpoint_handle();
+            let native = (|| -> Result<Hash> {
+                live.checkpoint()?;
+                if let Some(id) =
+                    node.check_admission_context_with_progress(packet, clock, &mut || {
+                        live.checkpoint()
+                    })?
+                {
+                    return Ok(id);
+                }
+                live.checkpoint()?;
+                let permit = node.begin_owner_work(packet)?;
+                let checked = WorkCheckedPacket::verify_with_progress(
+                    packet.clone(),
+                    &mut |_| live.checkpoint(),
+                )?;
+                let checked = node.attach_owner_work(checked, permit)?;
+                live.checkpoint()?;
+                let execute = |_: trnm_mvcc_fee::pon_executor::ExecutionProgress| {
+                    live.checkpoint()
+                };
+                let control = trnm_mvcc_fee::pon_executor::ExecutionControl::new(
+                    &execute,
+                    operation.worker_accounting(),
+                );
+                node.admit_work_checked_with_control(checked, clock, &control)
+            })();
+            // Full rejected transcript and every M06 worker still owe actual
+            // CPU. An unavailable post-commit sample never rewrites Chainwork.
+            let settlement = operation.finish();
+            if settlement.accounting_unavailable {
+                return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+            }
+            native?;
+        } else {
+            // Trusted loopback-only developer import; the externally exposed
+            // source-bound entry refuses any unbudgeted nonloopback source.
+            node.admit(packet, clock)?;
+        }
     }
     if page.complete {
-        node.activate_observed(tip, clock)?;
+        if let Some(cpu) = cpu {
+            let operation = cpu.begin()?;
+            let native = node.activate_observed(tip, clock);
+            let settlement = operation.finish();
+            if settlement.accounting_unavailable {
+                return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+            }
+            native?;
+        } else {
+            node.activate_observed(tip, clock)?;
+        }
     }
     Ok(next)
 }
@@ -2178,7 +2231,15 @@ pub fn receive_page_from(
     if let Some(kernel) = &host_kernel {
         kernel.verify()?;
     }
-    let native = receive_page(node, page, tip, after, clock);
+    // A Host cgroup alone does not price distinct remote W1 proofs. A WAN
+    // source requires the Node's EXISTING original shared CPU domain; only
+    // strictly loopback development traffic may retain the old local path.
+    let cpu = match node.public_service_cpu_domain() {
+        Ok(domain) => Some(domain),
+        Err(_) if source.ip().is_loopback() => None,
+        Err(error) => return Err(error),
+    };
+    let native = receive_page_with_cpu(node, page, tip, after, clock, cpu.as_ref());
     // A completed native admission cannot be undone by a post-verification
     // host fault. That fault still makes the overall synchronization fail.
     if let Some(kernel) = &host_kernel {
@@ -2186,6 +2247,19 @@ pub fn receive_page_from(
     }
     native
 }
+
+/// Unit-only trusted local parser; untrusted callers use receive_page_from.
+#[cfg(test)]
+fn receive_page(
+    node: &mut Node,
+    page: Page,
+    tip: Hash,
+    after: Hash,
+    clock: u64,
+) -> Result<Hash> {
+    receive_page_with_cpu(node, page, tip, after, clock, None)
+}
+
 pub fn sync_from(
     node: &mut Node,
     address: SocketAddr,
