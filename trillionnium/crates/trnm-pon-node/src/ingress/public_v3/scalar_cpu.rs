@@ -891,6 +891,14 @@ impl ServiceMutationCpuDomain {
             budget: Arc::new(Mutex::new(PaidMutationCpuBudget::new())),
         }
     }
+    /// New operator-initiated WAN sync starts with ZERO service CPU credit.
+    /// The original fixed Host cgroup independently caps aggregate processes.
+    /// This is an owned Node epoch, not peer- or credential-scoped credit.
+    pub(crate) fn process_cold_sync() -> Self {
+        Self {
+            budget: Arc::new(Mutex::new(PaidMutationCpuBudget::cold_start())),
+        }
+    }
     pub fn shares_domain_with(&self, other: &Self) -> bool {
         Arc::ptr_eq(&self.budget, &other.budget)
     }
@@ -1078,6 +1086,37 @@ impl ServiceMutationCpuCheckpoint {
 impl ServiceMutationCpuDomain {
     pub(super) fn shared_budget(&self) -> Arc<Mutex<PaidMutationCpuBudget>> {
         self.budget.clone()
+    }
+}
+
+impl ServiceMutationCpuDomain {
+    /// The original CPU bucket may need to refill from a genuinely cold zero.
+    /// This observation never reserves extra credit, renews any work deadline,
+    /// or grants a caller permission to produce VerifiedWork.
+    pub(crate) fn await_one_mutation_start(&self, deadline: Instant) -> Result<()> {
+        loop {
+            let now = Instant::now();
+            ensure(now < deadline, "PUBLIC_MUTATION_CPU_BUDGET")?;
+            let ready = {
+                let mut budget = self
+                    .budget
+                    .lock()
+                    .map_err(|_| "PUBLIC_MUTATION_CPU_UNAVAILABLE")?;
+                budget.refill(now);
+                ensure(!budget.unavailable, "PUBLIC_MUTATION_CPU_UNAVAILABLE")?;
+                budget.verified_completions == 0
+                    && budget.in_flight < MUTATION_CPU_WORKERS
+                    && budget.credit_ns >= i128::from(MUTATION_CPU_START_RESERVE_NS)
+            };
+            if ready {
+                return Ok(());
+            }
+            thread::sleep(
+                deadline
+                    .saturating_duration_since(Instant::now())
+                    .min(Duration::from_millis(5)),
+            );
+        }
     }
 }
 
