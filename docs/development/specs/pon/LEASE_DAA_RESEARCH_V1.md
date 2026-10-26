@@ -714,3 +714,23 @@ within this research lineage. None of these cases runs native Rust, produces
 PNW1 valid work, admits a block, proves an independent validator, or qualifies
 public-network difficulty/security. Local proof/admission tests and third-party
 review remain explicit blockers. No legacy DAA or production flag changes.
+
+
+### Independent Go/Python DAA refusal taxonomy (2026-10-26)
+
+The existing Go scalar ASERT reference distinguishes two on-wire failure
+categories: malformed anchor/context parameters (`ASERT_RESEARCH_PARAMETERS`)
+and signed i128 arithmetic overflow (`ASERT_RESEARCH_RANGE`). The research
+Python comparator previously classified every Python `ValueError` as the
+range category. Its ordinary seeded generator primarily generated valid
+inputs and range failures, so that hidden classification mistake was not
+exercised by the frozen 512-case digest. The differential now explicitly
+classifies both cases and refuses uncomparable language/flag grammars.
+
+`python3 -m unittest -v test_daa_go_error_parity.py` runs a real Go
+binary on nine bounded scalar cases, including six malformed-parameter and
+two i128 overflow refusals. This does **not** replace the original 512
+frozen vectors or their expected digest. Go absence is an explicit test skip,
+not a successful third-verifier claim. The commit is a new research-only
+candidate; exact-branch Go, Rust and independent network acceptance remain
+separate.
