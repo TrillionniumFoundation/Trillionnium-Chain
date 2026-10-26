@@ -2302,6 +2302,19 @@ unsigned train-only evidence; V2 evaluation/readback, matched quality evidence,
 selection, I10 installation and ordinary next-task/three-round closure remain
 required. Setup changes and training loss do not count as useful gain.
 
+A separate [candidate-only V2 observation](../../evidence/pon-upgrade-implementation-20261018/native-rounds/real-model-owner-controlled-20261025/initial-v2-candidate-observation-20261026.json)
+on isolated Chain `0dcf8001` then loads that actual `a23b5f2d` trained 135M
+candidate, reads back the original parent and all 120 candidate factors, and
+executes eight tasks / sixty-four real forwards. The actual derived contract
+`c9b06f9a` stays distinct from parent `2bb480a2`; no parent or task registration
+is silently rewritten. Its original 600-second / eight-GiB supervisor reports
+success and exact wait4 in 8.854378 seconds, with all seven stages and the
+original missing-RSS reconciliation retained. This unsigned observer is a
+separate explicit route: the parent-step V2 evaluate/readback dispatcher stays
+closed. Outputs are engineering observations, not quality gain, FinalUse,
+selection, I10 installation, CURRENT, ordinary next-task or three-round success.
+The fixed V1 zero-parent profile and prior strict same-plan refusals remain.
+
 A separate [new-engine I09 run002](../../evidence/pon-upgrade-implementation-20261018/native-rounds/real-model-owner-controlled-20261025/i09-eleven-material-sqlite3513-controlled-20261026.json)
 on Chain `4c8c2ee7` / Hepta `8d25c5d7` uses fresh SQLite 3.51.3 databases, fetches
 all eleven objects in 4.257683 seconds within the original 35 seconds, and passes
