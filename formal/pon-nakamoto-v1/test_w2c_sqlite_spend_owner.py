@@ -85,6 +85,11 @@ class DurablePaidSpendTests(unittest.TestCase):
             SqlitePaidSpendOwner(self.path, bytes([8]) * 32)
         self.assertEqual(self.owner.pending_paid(), 0)
 
+    def test_shared_db_cannot_change_original_capacity(self):
+        with self.assertRaisesRegex(ValueError, 'OWNER_CONTEXT_MISMATCH'):
+            SqlitePaidSpendOwner(self.path, self.context, capacity=8)
+        self.assertEqual(self.owner.pending_paid(), 0)
+
     def test_copied_database_separate_owner_still_not_safe(self):
         first = bytes([42]) * 32
         self.assertEqual(self.owner.claim(first, 2000, 100), 'READY_RESOURCE_ONLY')
