@@ -2849,6 +2849,12 @@ pub struct PublicClientMetrics {
     pub construction_ns: u64,
     pub challenge_ns: u64,
     pub solution_search_ns: u64,
+    /// Actual calling-thread CPU for the full local Cookie-ID + SHA256 nonce
+    /// search, including every failed trial and its final success/error tail.
+    /// None means unavailable, never zero. Independent of server-W1 CPU.
+    /// Optional local diagnostic; it changes no signed policy or wire bytes.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub solution_search_thread_cpu_ns: Option<u64>,
     pub solution_trials: u64,
     pub solution_found: bool,
     pub solution_body_response_ns: u64,
@@ -2999,27 +3005,36 @@ fn call_public_protected_v3_with_profile(
         metrics.challenge_ns = elapsed_ns(phase_start);
         phase = PublicClientStage::SolutionSearch;
         phase_start = Instant::now();
-        let started = Instant::now();
-        let id = cookie.id()?;
-        let mut solved = None;
-        for nonce in 0..1_048_576u64 {
-            if nonce % 256 == 0 {
-                if outer_deadline.is_some() {
-                    ensure(Instant::now() < total_deadline, "PUBLIC_CLIENT_DEADLINE")?;
+        let search_cpu_start = ThreadCpuStamp::start();
+        // Close the actual CPU interval even if Cookie identity, deadline
+        // or the bounded hash search fails. This reports real client work,
+        // not a guessed fraction of wall time or an attacker price theorem.
+        let search = (|| -> Result<(Hash, u64, u64)> {
+            let started = Instant::now();
+            let id = cookie.id()?;
+            let mut solved = None;
+            for nonce in 0..1_048_576u64 {
+                if nonce % 256 == 0 {
+                    if outer_deadline.is_some() {
+                        ensure(Instant::now() < total_deadline, "PUBLIC_CLIENT_DEADLINE")?;
+                    }
+                    ensure(
+                        started.elapsed() < Duration::from_millis(policy.lifetime_ms),
+                        "PUBLIC_SOLVE_EXPIRED",
+                    )?;
                 }
-                ensure(
-                    started.elapsed() < Duration::from_millis(policy.lifetime_ms),
-                    "PUBLIC_SOLVE_EXPIRED",
-                )?;
+                metrics.solution_trials = nonce + 1;
+                if winner(id, nonce, policy.bits) {
+                    solved = Some(nonce);
+                    break;
+                }
             }
-            metrics.solution_trials = nonce + 1;
-            if winner(id, nonce, policy.bits) {
-                solved = Some(nonce);
-                break;
-            }
-        }
-        let nonce = solved.ok_or("PUBLIC_SOLVE_BUDGET")?;
-        let solve_elapsed_ns = elapsed_ns(started);
+            let nonce = solved.ok_or("PUBLIC_SOLVE_BUDGET")?;
+            Ok((id, nonce, elapsed_ns(started)))
+        })();
+        metrics.solution_search_thread_cpu_ns =
+            search_cpu_start.and_then(ThreadCpuStamp::finish);
+        let (id, nonce, solve_elapsed_ns) = search?;
         metrics.solution_search_ns = elapsed_ns(phase_start);
         metrics.solution_found = true;
         phase = PublicClientStage::SolutionBodyResponse;
@@ -3432,6 +3447,7 @@ mod tests {
             construction_ns: 11,
             challenge_ns: 12,
             solution_search_ns: 13,
+            solution_search_thread_cpu_ns: None,
             solution_trials: 17,
             solution_found: true,
             solution_body_response_ns: 14,
@@ -3449,6 +3465,11 @@ mod tests {
             "failed_stage": null,
         });
         assert_eq!(serde_json::to_value(initial()).unwrap(), expected);
+        let mut measured = initial();
+        measured.solution_search_thread_cpu_ns = Some(71);
+        expected["solution_search_thread_cpu_ns"] = json!(71);
+        assert_eq!(serde_json::to_value(measured).unwrap(), expected);
+        expected.as_object_mut().unwrap().remove("solution_search_thread_cpu_ns");
         for (stage, label, changed_field) in [
             (
                 PublicClientStage::Construction,
