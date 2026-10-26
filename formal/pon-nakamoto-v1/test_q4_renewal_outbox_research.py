@@ -299,4 +299,56 @@ class RenewalOutboxTests(unittest.TestCase):
                 db.db.execute('ROLLBACK')
             self.assertEqual(db.audit(), 0)
 
+
+class OutboxStatusSnapshotTests(RenewalOutboxTests):
+    """Status is a checked local projection, not independent chain authority."""
+
+    def test_status_rejects_corruption_committed_after_open(self):
+        with self.open() as db:
+            key = db.prepare(intent())
+            db.dispatch_unknown(key)
+            db.observe(key, observation())
+            self.assertEqual(db.status(key)['observations'], 1)
+            # An external writer damages a stored row AFTER the owner opened.
+            with sqlite3.connect(self.file) as raw:
+                raw.execute(
+                    'UPDATE q4_outbox_events_v1 SET observation=? WHERE ordinal=2',
+                    (b'forged',),
+                )
+            with self.assertRaisesRegex(OutboxError, 'EVENT_DIGEST'):
+                db.status(key)
+            self.assertFalse(db.db.in_transaction)
+
+    def test_status_snapshot_pins_writer_until_finished(self):
+        with self.open() as reader, self.open() as writer:
+            key = reader.prepare(intent())
+            reader.dispatch_unknown(key)
+            original_audit = reader._audit_snapshot
+
+            def pinned_audit():
+                value = original_audit()
+                # Reader already began its snapshot. A second owner cannot
+                # commit a new event between auditing and projecting status.
+                with self.assertRaises(sqlite3.OperationalError):
+                    writer.dispatch_unknown(key)
+                return value
+
+            reader._audit_snapshot = pinned_audit
+            self.assertTrue(reader.status(key)['dispatch_unknown'])
+            self.assertFalse(reader.db.in_transaction)
+            with self.assertRaisesRegex(OutboxError, 'NO_REDISPATCH'):
+                writer.dispatch_unknown(key)
+
+    def test_status_fails_closed_on_reentrant_transaction(self):
+        with self.open() as db:
+            key = db.prepare(intent())
+            db.db.execute('BEGIN')
+            try:
+                with self.assertRaisesRegex(OutboxError, 'STATUS_REENTRANT'):
+                    db.status(key)
+                self.assertTrue(db.db.in_transaction)
+            finally:
+                db.db.execute('ROLLBACK')
+            self.assertTrue(db.status(key)['has_no_durable_dispatch_fence'])
+
 if __name__ == '__main__': unittest.main()
