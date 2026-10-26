@@ -16,10 +16,10 @@ python3 -m unittest -v test_q4_signed_renewal_research.py
 go run q4_research_go/verify_q4_vectors.go q4_signed_vectors_v1.json
 ```
 
-The local source files were tested on a single research host: **10 Python tests PASS**, including 1,187 mutated full packets, and **1 Go positive plus 9 negative vectors PASS**. Git blob SHA-1 identities for this candidate are:
+The local source files were tested on a single research host: **10 Python tests PASS**, including 1,187 mutated full packets, and **1 Go positive plus 9 negative vectors PASS**. The Go source additionally passes `gofmt` and `go vet` in this local environment. Git blob SHA-1 identities for this candidate are:
 - Python verifier: `6becf1226df7f9b9b36615760c20e3af3ecd4fa3`
-- Python tests: `8e1ad71737712267e66049719649867bd4d38d4f`
-- Go verifier: `d18bc50cff624ffd399b4030fa13f1c402eaeaf7`
+- Python tests: `58cdb27314f2c68e0aa3310e803383d21c079632`
+- Go verifier: `7ddda9f9ad46881cd08a17f0ebc635b5e236029a`
 - JSON vector: `d9e776e38751ee27307a086e57fb7d92056aed13`
 
 These are same-operator research observations, **not a native Rust test run or an independent institutional audit**. The Python `cryptography` and Go `crypto/ed25519` verification APIs do not inherit the full original native `verify_strict` weak-key/canonical-equivalence claim; future native differential tests must include low-order/canonical-negative vectors.
