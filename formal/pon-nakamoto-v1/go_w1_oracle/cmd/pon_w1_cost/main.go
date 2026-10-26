@@ -143,13 +143,13 @@ func measure(index, workCap, falseCap, cookieCap int) (map[string]any, error) {
 	return map[string]any{"sample_index": index, "challenge": hex.EncodeToString(challenge[:]), "task": hex.EncodeToString(task[:]), "target": hex.EncodeToString(target[:]), "material": "canonical-zero", "honest_attempts": attempts, "honest_search": honestCost, "honest_verify": validCost, "honest_proof_sha256": hexHash(good), "false_attempts": falseAttempts, "false_search": falseCost, "false_reject": invalidCost, "false_result": "Transcript", "false_proof_sha256": hexHash(bad), "synthetic_cookie_searches": cookies}, nil
 }
 func main() {
-	n := flag.Int("samples", 3, "1..8 bounded samples")
+	n := flag.Int("samples", 3, "1..64 bounded samples")
 	work := flag.Int("work-cap", 32, "1..256 complete W1 attempts")
 	fake := flag.Int("false-cap", 128, "1..4096 fake trace attempts")
 	cookie := flag.Int("cookie-cap", 262144, "1..1048576 cookie attempts")
 	out := flag.String("out", "", "optional new, never overwritten report path")
 	flag.Parse()
-	if *n < 1 || *n > 8 || *work < 1 || *work > 256 || *fake < 1 || *fake > 4096 || *cookie < 1 || *cookie > 1048576 || len(flag.Args()) != 0 {
+	if *n < 1 || *n > 64 || *work < 1 || *work > 256 || *fake < 1 || *fake > 4096 || *cookie < 1 || *cookie > 1048576 || len(flag.Args()) != 0 {
 		fmt.Fprintln(os.Stderr, "BOUNDS")
 		os.Exit(2)
 	}
