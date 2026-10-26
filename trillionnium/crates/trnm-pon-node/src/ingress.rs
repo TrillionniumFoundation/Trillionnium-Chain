@@ -2471,6 +2471,84 @@ mod tests {
     }
 
     #[test]
+    fn imported_history_reuses_one_cold_cpu_owner_and_charges_distinct_late_forgery() {
+        let time = now().unwrap();
+        let settings = Settings::development(Some(time - 100)).unwrap();
+        let dir = tempfile::tempdir().unwrap();
+        let mut node = Node::open(dir.path(), settings.clone(), 2).unwrap();
+        let genesis = settings.genesis();
+        let good = node.make(
+            genesis, vec![], crate::development_public(0).unwrap(),
+            settings.genesis_time() + 10, 4096,
+        ).unwrap();
+        let block = good.id().unwrap();
+        let baseline = node.stats().unwrap();
+        let localhost: SocketAddr = "127.0.0.1:12345".parse().unwrap();
+        let page_for = |packet: &Packet| Page {
+            schema: "pon-native-history-v1".into(),
+            network: hex::encode(settings.network()),
+            parameters: hex::encode(settings.parameters()),
+            genesis: hex::encode(genesis),
+            tip: hex::encode(block),
+            after: hex::encode(genesis),
+            packets: vec![hex::encode(packet.encode().unwrap())],
+            next: hex::encode(block),
+            complete: true,
+        };
+        assert!(node.public_service_cpu_domain().is_err());
+
+        // A canonical wrong C preserves the *same* full real W1 transcript,
+        // ticket/challenge, task and target, reaching a late Product rejection.
+        for step in [1u128, 2u128] {
+            let mut fake = good.clone();
+            let offset = 4 + 2 * trnm_crypto_primitives::pon_work::CELLS * 4;
+            let prior = u32::from_le_bytes(
+                fake.proof[offset..offset + 4].try_into().unwrap(),
+            );
+            let changed =
+                ((u128::from(prior) + step) % trnm_crypto_primitives::pon_work::Q) as u32;
+            fake.proof[offset..offset + 4].copy_from_slice(&changed.to_le_bytes());
+            assert_eq!(
+                receive_page_from(
+                    &mut node, localhost, page_for(&fake), block, genesis, time,
+                ).unwrap_err().to_string(),
+                "WORK:Product",
+            );
+            let cpu = node.public_service_cpu_domain().unwrap();
+            let meter = cpu.observe().unwrap();
+            let flow = cpu.observe_actual_flow().unwrap().unwrap();
+            assert_eq!(meter.in_flight, 0);
+            assert!(!meter.accounting_unavailable);
+            assert_eq!(flow.initial_credit_ns, 0);
+            assert_eq!(flow.live_owners, 0);
+            assert_eq!(flow.booked_reservation_ns, 0);
+            assert!(flow.balance_identity_verified);
+            assert!(flow.settled_full_cpu_ns > 0);
+            assert!(flow.paid_cpu_debit_ns > 0);
+            assert_eq!(node.stats().unwrap(), baseline);
+            assert_eq!(node.read_active().unwrap().0, genesis);
+        }
+        // No new service allowance was created by a changed payload or page.
+        let original = node.public_service_cpu_domain().unwrap();
+        let credit_before_valid = original.observe_actual_flow().unwrap().unwrap();
+        assert!(credit_before_valid.paid_cpu_debit_ns > 0);
+        let accepted = receive_page_from(
+            &mut node, localhost, page_for(&good), block, genesis, time,
+        ).unwrap();
+        assert_eq!(accepted, block);
+        assert_eq!(node.read_active().unwrap().0, block);
+        assert_eq!(node.stats().unwrap()["height"], 1);
+        let same = node.public_service_cpu_domain().unwrap();
+        assert!(original.shares_domain_with(&same));
+        let final_flow = same.observe_actual_flow().unwrap().unwrap();
+        assert!(final_flow.balance_identity_verified);
+        assert_eq!(final_flow.initial_credit_ns, 0);
+        assert!(final_flow.paid_cpu_debit_ns > credit_before_valid.paid_cpu_debit_ns);
+        assert_eq!(final_flow.live_owners, 0);
+        assert_eq!(final_flow.booked_reservation_ns, 0);
+    }
+
+    #[test]
     fn protected_hello_rendezvous_from_reserved_socket_preserves_full_native_admission() {
         let (_dir, node, packet) = pending_packet();
         let settings = node.lock().unwrap().settings().clone();
