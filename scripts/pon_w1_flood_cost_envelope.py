@@ -191,7 +191,10 @@ def analyze(data):
                     'INVALID_ATTACK_CHAINWORK')
             cost = number(record.get('whole_receiver_cpu_ns'),
                           'WHOLE_RECEIVER_CPU', allow_null=True)
-            if cost is None:
+            if cost is None or (cost == 0 and outcome in ('TRANSCRIPT', 'PRODUCT')):
+                # A completed full arithmetic replay cannot be advertised as
+                # zero-cost merely because a sampling clock lacked resolution.
+                # Keep that observation but withhold any cost completeness.
                 receiver_known = False
                 all_receiver_known = False
             else:
