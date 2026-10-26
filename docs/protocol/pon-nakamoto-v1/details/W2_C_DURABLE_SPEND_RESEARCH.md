@@ -85,6 +85,51 @@ and a locally copied, equivalent domain-separated 'H' function, not a
 full-pinned complete repository checkout or Rust binary. It is a test of
 a research mechanism, not source/machine-level production qualification.
 
+## P2 matched-cost negative experiment on the committed reference code
+
+The separate executable
+'formal/pon-nakamoto-v1/w2c_durable_costs.py' records **all**
+producer misses until each honest work winner, then uses precisely the
+same 318-byte synthetic header, challenge, target, zero A/B and task for
+a from-zero bogus W1 trace. It compares W1 success and complete false
+rejection with receiver-bound W2-C tickets and real durable SQLite
+consumption, including hash attempts and exhaustion. No task substitution,
+reused valid proof or fabricated CPU reading pays for a false W1 producer.
+
+Run manually with one new exclusive path:
+
+    python3 formal/pon-nakamoto-v1/w2c_durable_costs.py \
+      --samples 3 --bits 8 12 \
+      --out /unique/new/w2c-durable-matched-costs.json
+
+An executed current-turn Python-only three-seed cost cohort (same underlying
+W1 challenge/target within each seed) reported:
+
+| Arm | Measured process CPU ms / attempts | Scope |
+| --- | --- | --- |
+| Honest complete W1 search (3 seeds) | 74.58 / 151.75 / 213.23 ms | all attempted genuine W1 candidates, including target misses |
+| Honest complete W1 verification | 72.52 / 76.70 / 80.35 ms | raw independent Python verification |
+| From-zero fake W1 search | 0.032 / 0.026 / 0.033 ms | public canonical material + hash trial search, no valid W1 generated |
+| False W1 complete rejection | 76.03 / 75.89 / 80.45 ms | all cases refused TRANSCRIPT |
+| W2-C durable 8-bit search + paid insert | 0.891 / 0.776 / 2.798 ms | trials 275 / 243 / 981, plus one original SQLite commit |
+| W2-C durable 12-bit search + paid insert | 11.877 / 57.939 / 0.819 ms | trials 4514 / 14749 / 267, plus one original SQLite commit |
+
+Cold SQLite epoch initialization cost was separately observed as approximately
+1.58–2.97 ms; the recorded paid-insert CPU alone was 0.14–0.502 ms.
+These are different resource phases; they cannot be silently omitted or
+added twice to nested timing intervals. The raw JSON was retained with SHA256
+'c4d16de1ed3ef0ad5cb39f6e43968848e104d7d202f2601cbabf98ef3be67cca'
+(7,085 bytes). Exact committed benchmark source Git blob SHA-1:
+'4a77f02b57d0edf45a4861c76610a9e32268eb0b'.
+
+**Negative result:** on this Python host and small finite cohort, even a
+receiver-bound 12-bit ticket often costs less CPU than one full false W1
+rejection. Hardware/grinding advantage may be much worse on GPU/ASIC.
+Per-receiver cost ownership and durable one-use semantics are not
+sufficient to close P2 economic anti-amplification. No preferred production
+difficulty, Node throughput or public readiness is inferred from these
+synthetic Python costs.
+
 ## Remaining material blockers
 
 - The persisted epoch fences **process restarts with one shared original
