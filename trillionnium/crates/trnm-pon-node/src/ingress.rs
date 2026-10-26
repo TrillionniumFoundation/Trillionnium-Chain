@@ -2483,6 +2483,99 @@ mod tests {
         }
     }
 
+    #[cfg(target_os = "linux")]
+    #[test]
+    fn loopback_proxy_with_original_cpu_owner_pays_for_false_history_and_valid_activation() {
+        // A loopback relay cannot bypass CPU metering once the original
+        // Node owner already belongs to the selected V3 resource epoch.
+        let now = now().unwrap();
+        let settings = crate::Settings::development(Some(now - 100)).unwrap();
+        let dir = tempfile::tempdir().unwrap();
+        let mut node = Node::open(dir.path(), settings.clone(), 2).unwrap();
+        let original = public_v3::ServiceMutationCpuDomain::standalone();
+        node.bind_public_service_cpu_domain(&original).unwrap();
+        let beginning = original.observe().unwrap();
+        let packet = node.make(
+            settings.genesis(),
+            vec![],
+            crate::development_public(0).unwrap(),
+            settings.genesis_time() + 10,
+            4096,
+        ).unwrap();
+        let id = packet.id().unwrap();
+        let page_for = |packet: &Packet| Page {
+            schema: "pon-native-history-v1".into(),
+            network: hex::encode(settings.network()),
+            parameters: hex::encode(settings.parameters()),
+            genesis: hex::encode(settings.genesis()),
+            tip: hex::encode(id),
+            after: hex::encode(settings.genesis()),
+            packets: vec![hex::encode(packet.encode().unwrap())],
+            next: hex::encode(id),
+            complete: true,
+        };
+        let initial_state = node.stats().unwrap();
+        let source: SocketAddr = "127.0.0.1:1".parse().unwrap();
+        let mut false_packet = packet.clone();
+        // Keep the correct W1 transcript, challenge and ticket. Only corrupt
+        // the canonical claimed matrix product to force expensive late refusal.
+        let offset = 4 + 2 * trnm_crypto_primitives::pon_work::CELLS * 4;
+        let old = u32::from_le_bytes(false_packet.proof[offset..offset + 4].try_into().unwrap());
+        false_packet.proof[offset..offset + 4].copy_from_slice(
+            &(((u128::from(old) + 1) % trnm_crypto_primitives::pon_work::Q) as u32).to_le_bytes(),
+        );
+        let rejected = receive_page_from(
+            &mut node, source, page_for(&false_packet),
+            id, settings.genesis(), now,
+        ).unwrap_err();
+        assert_eq!(rejected.to_string(), "WORK:Product");
+        let after_false = original.observe().unwrap();
+        assert_eq!(after_false.in_flight, 0);
+        assert!(!after_false.accounting_unavailable);
+        assert!(after_false.stored_credit_ns < beginning.stored_credit_ns);
+        assert_eq!(node.stats().unwrap(), initial_state);
+        assert_eq!(node.read_active().unwrap().0, settings.genesis());
+
+        let verified = receive_page_from(
+            &mut node, source, page_for(&packet),
+            id, settings.genesis(), now,
+        ).unwrap();
+        assert_eq!(verified, id);
+        assert_eq!(node.read_active().unwrap().0, id);
+        let after_valid = original.observe().unwrap();
+        assert_eq!(after_valid.in_flight, 0);
+        assert!(!after_valid.accounting_unavailable);
+        assert!(after_valid.stored_credit_ns <= after_false.stored_credit_ns);
+    }
+
+    #[test]
+    fn externally_guarded_history_requires_cpu_owner_when_original_host_is_present() {
+        let remote: SocketAddr = "192.0.2.1:12345".parse().unwrap();
+        // On unprivileged hosts, the strict fixed kernel parent rejects first.
+        // On a physically budgeted Host it must proceed to the same Node
+        // CPU-domain check without any W1 replay or network operation.
+        let kernel = crate::host_kernel_parent::require_for_listener(remote);
+        if let Ok(Some(checked)) = kernel {
+            checked.verify().unwrap();
+            let dir = tempfile::tempdir().unwrap();
+            let settings = crate::Settings::development(Some(now().unwrap() - 100)).unwrap();
+            let mut node = Node::open(dir.path(), settings.clone(), 2).unwrap();
+            let before = node.stats().unwrap();
+            let invalid = Page {
+                schema: String::new(), network: String::new(),
+                parameters: String::new(), genesis: String::new(),
+                tip: String::new(), after: String::new(),
+                packets: vec![], next: String::new(), complete: false,
+            };
+            let error = receive_page_from(
+                &mut node, remote, invalid,
+                settings.genesis(), settings.genesis(), now().unwrap(),
+            ).unwrap_err();
+            assert_eq!(error.to_string(), "OWNER_PUBLIC_SERVICE_DOMAIN_UNBOUND");
+            assert_eq!(node.stats().unwrap(), before);
+        }
+    }
+
     #[test]
     fn protected_hello_rendezvous_from_reserved_socket_preserves_full_native_admission() {
         let (_dir, node, packet) = pending_packet();
