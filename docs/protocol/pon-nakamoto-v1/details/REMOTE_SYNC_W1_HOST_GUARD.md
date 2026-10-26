@@ -68,3 +68,41 @@ establish a host-wide CPU budget or honest-service fairness.
    cryptographic third-party review are all separate **OPEN** gates.
 
 Status: SHADOW_ONLY / HOLD_NO_GO. Production activation stays disabled.
+
+
+## Subsequent API-boundary remediation
+
+A second P1 pass found that guarding the three sync callers was insufficient:
+the previously public five-argument 'ingress::receive_page' had **no peer
+locator or kernel-owner parameter**, allowing an embedding application to
+bypass the native sync entrypoint checks.
+
+The previous addressless page parser is now **module private**, and its
+only public history-page import replacement is:
+
+    ingress::receive_page_from(node, configured_source_address, page,
+                                tip, after, observed_clock)
+
+The new exported function checks the **same fixed Host kernel parent**
+through 'require_for_listener(configured_source_address)' immediately
+before and after invoking the private exact native import. The ordinary,
+authenticated and durable sync variants and the CLI V3 public-sync branch
+all call this checked function. The negative remote-sync test also passes
+an invalid Page into the exported guarded API and requires the Host
+policy refusal **before any Page parsing or expensive proof check**.
+No decoded Page, signed Peer response or missing local clock is a
+'VerifiedWork' authority.
+
+The explicit 'configured_source_address' is a **caller-supplied routing
+context**, not cryptographic proof of the true historical origin. A
+loopback proxy/tunnel can still relay hostile WAN bytes without changing
+the configured address. Only an administrator-approved deployment
+policy with the real physical host and transport boundary can close
+this residual; neither the new wrapper nor 'ip.is_loopback()' prove
+peer location. A malicious host operator can always submit local bytes
+to Node, so the resource containment and public-network threat model
+must be tested separately.
+
+The new unexported parser remains useful for unit coverage and does
+not expose a second public unchecked history-import symbol.
+This is an API-path reduction, **not** a production/security gate PASS.
