@@ -197,3 +197,41 @@ and worst-case cancellation latency; no economic-hardness, honest-fairness,
 WAN or A03 P4 result is claimed. Loopback forwarding, all native/sync
 caller budgets, P2 GPU/ASIC cost, P3 mixed traffic, P5 sound succinct work
 and independent P6 review remain HOLD_NO_GO.
+
+
+## Native M06 / precommit Host ownership continuation
+
+The W1 cooperative checkpoint is not enough if the verified History block
+then enters M06 State execution while its original physical CPU owner has
+become unavailable. The guarded-only crate-local Node method
+'admit_with_verification_progress' now requires a SECOND, independent
+'ExecutionProgress' callback with the existing 'Fn + Sync' executor contract.
+Its final stage calls 'admit_work_checked_with_progress' instead of the
+no-checkpoint 'admit_work_checked'. The earlier W1 path remains the same
+full verifier; consensus acceptance, task, header, work ticket, historical
+state, durable database ownership and rollback semantics are unchanged.
+
+The sole exported 'receive_page_from' wires both callbacks to the
+**same fixed HostKernelBudget**:
+- sparse, bounded 'VerificationProgress' cgroup checks inside W1;
+- complete M06 ExecutionProgress checkpoints on the existing native
+  execution path, including its pre-parent/precommit fences;
+- already preserved pre/post packet checks and the outer page checks.
+
+The native test
+'history_import_loses_host_owner_after_valid_w1_before_m06_commit'
+creates an actual fully valid W1 packet, observes
+'VerificationProgress::BeforeVerifiedWork', then has the Host
+ExecutionProgress callback fail. It requires no accepted block, no active
+head movement, no metadata/stat change and identical cold-reopen state.
+This is not simulated acceptance: the native verifier runs normally and
+the injected failure is at the subsequent operational resource boundary.
+
+Uninterruptible filesystem, SQLite or long single-stage State work still
+needs target machine measurements and the root-owned kernel aggregate
+limits; this cooperative callback is not a hard CPU/time preemption or a
+general fairness guarantee. Unknown accounting cannot be relabelled as
+WORK:Transcript, Product, or consensus-invalid chainwork. A previously
+committed native result is not undone if its later physical resource
+observation fails. No deployment or P0–P6 gate is promoted by these
+source-only tests until exact source/binary and physical acceptance.
