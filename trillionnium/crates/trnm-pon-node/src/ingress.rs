@@ -2115,6 +2115,7 @@ fn receive_page(
     tip: Hash,
     after: Hash,
     clock: u64,
+    cpu: &public_v3::ServiceMutationCpuOperation,
 ) -> Result<Hash> {
     ensure(
         page.schema == "pon-native-history-v1"
@@ -2151,12 +2152,36 @@ fn receive_page(
         page.next == hex::encode(next) && page.complete == (next == tip),
         "PAGE_COMPLETE",
     )?;
+    // A single original-domain reservation pays for the whole History page:
+    // all 16 possible full W1 verifications, relevant parent checks, scoped
+    // M06 workers, activation and failed/partial-page CPU tails. No peer can
+    // mint extra credit by adding pages, identities or different false traces.
+    let checkpoint = cpu.checkpoint_handle();
+    let execution_progress =
+        |_stage: trnm_mvcc_fee::pon_executor::ExecutionProgress| checkpoint.checkpoint();
+    let control = trnm_mvcc_fee::pon_executor::ExecutionControl::new(
+        &execution_progress,
+        cpu.worker_accounting(),
+    );
     for packet in &packets {
-        node.admit(packet, clock)?;
+        checkpoint.checkpoint()?;
+        let existing = node.check_admission_context_with_progress(
+            packet, clock, &mut || checkpoint.checkpoint()
+        )?;
+        if existing.is_none() {
+            let permit = node.begin_owner_work(packet)?;
+            let checked = WorkCheckedPacket::verify_with_progress(
+                packet.clone(), &mut |_| checkpoint.checkpoint()
+            )?;
+            let checked = node.attach_owner_work(checked, permit)?;
+            node.admit_work_checked_with_control(checked, clock, &control)?;
+        }
     }
+    checkpoint.checkpoint()?;
     if page.complete {
         node.activate_observed(tip, clock)?;
     }
+    checkpoint.checkpoint()?;
     Ok(next)
 }
 
@@ -2178,7 +2203,46 @@ pub fn receive_page_from(
     if let Some(kernel) = &host_kernel {
         kernel.verify()?;
     }
-    let native = receive_page(node, page, tip, after, clock);
+    // Bind the already-existing Node's CPU owner, once. If a V3 listener or
+    // continuous owner has bound its original domain, it MUST be reused.
+    // Only a fresh, otherwise-unbound local Node may create a ZERO-credit
+    // epoch; the caller/peer/page cannot replace that binding.
+    let domain = match node.public_service_cpu_domain() {
+        Ok(original) => original,
+        Err(error) if error.is(ErrorCode::OwnerPublicServiceDomainUnbound) => {
+            let cold = public_v3::ServiceMutationCpuDomain::process_cold();
+            node.bind_public_service_cpu_domain(&cold)?;
+            cold
+        }
+        Err(error) => return Err(error),
+    };
+    // Original bucket needs 100ms CPU credit to start; a freshly opened sync
+    // begins at zero. Bounded wait preserves refill (250ms CPU / wall second)
+    // and does not invent a burst or an identity-specific entitlement.
+    let started = Instant::now();
+    let operation = loop {
+        match domain.begin() {
+            Ok(operation) => break operation,
+            Err(error)
+                if error.is(ErrorCode::PublicMutationCpuBudget)
+                    && started.elapsed() < Duration::from_secs(2) =>
+            {
+                thread::sleep(Duration::from_millis(5));
+            }
+            Err(error) => return Err(error),
+        }
+    };
+    let native = receive_page(node, page, tip, after, clock, &operation);
+    // Settlement must happen for successful, malformed, cancelled and
+    // partly admitted pages. Known original CPU and scoped workers pay once.
+    let settled = operation.finish();
+    if settled.accounting_unavailable {
+        // A commit cannot be erased; its already durable state remains.
+        // Unknown accounting prevents a successful sync receipt and fences
+        // future work under the original shared CPU owner.
+        node.operator_task_accounting_unknown()?;
+        return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+    }
     // A completed native admission cannot be undone by a post-verification
     // host fault. That fault still makes the overall synchronization fail.
     if let Some(kernel) = &host_kernel {
