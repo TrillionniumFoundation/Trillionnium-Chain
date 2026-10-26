@@ -73,9 +73,13 @@ class Summary:
     anchor_target: int | None
     anchor_parent_time: int | None
     rule_commitment: Hash
+    network: Hash
+    parameters: Hash
+    genesis: Hash
 
     def __post_init__(self) -> None:
-        if not (_hash(self.block_id) and _u64(self.height) and _u64(self.timestamp)
+        if not (all(_hash(k) for k in (self.network, self.parameters, self.genesis))
+                and _hash(self.block_id) and _u64(self.height) and _u64(self.timestamp)
                 and type(self.recent_parent_first) is tuple
                 and 1 <= len(self.recent_parent_first) <= 11
                 and all(_u64(t) for t in self.recent_parent_first)
@@ -87,7 +91,7 @@ class Summary:
 def genesis(ctx: Context) -> Summary:
     return Summary(ctx.genesis, 0, ctx.genesis_timestamp,
                    (ctx.genesis_timestamp,), None, None, None, None,
-                   ctx.rule_commitment)
+                   ctx.rule_commitment, ctx.network, ctx.parameters, ctx.genesis)
 
 
 def extend(ctx: Context, parent: Summary, header: Header) -> Summary:
@@ -98,6 +102,9 @@ def extend(ctx: Context, parent: Summary, header: Header) -> Summary:
     """
     if not (isinstance(parent, Summary) and isinstance(header, Header)
             and parent.rule_commitment == ctx.rule_commitment
+            and parent.network == ctx.network
+            and parent.parameters == ctx.parameters
+            and parent.genesis == ctx.genesis
             and header.network == ctx.network and header.parameters == ctx.parameters
             and _hash(header.claimed_id) and _hash(header.parent)
             and header.claimed_id != ctx.genesis and header.claimed_id != header.parent
@@ -126,12 +133,14 @@ def extend(ctx: Context, parent: Summary, header: Header) -> Summary:
         header.claimed_id, header.height, header.timestamp,
         (header.timestamp, *parent.recent_parent_first)[:11],
         anchor_id, anchor_parent_id, anchor_target, anchor_parent_time,
-        ctx.rule_commitment)
+        ctx.rule_commitment, ctx.network, ctx.parameters, ctx.genesis)
 
 
 def expected_shadow_target(ctx: Context, parent: Summary) -> int:
     """Shadow target only: MUST NOT feed current native consensus validity."""
-    if not isinstance(parent, Summary) or parent.rule_commitment != ctx.rule_commitment:
+    if not (isinstance(parent, Summary) and parent.rule_commitment == ctx.rule_commitment
+            and parent.network == ctx.network and parent.parameters == ctx.parameters
+            and parent.genesis == ctx.genesis):
         raise ValueError('ASERT_SUMMARY_CONTEXT')
     if parent.height < ctx.activation_height or parent.anchor_id is None:
         raise ValueError('ASERT_NOT_ACTIVE')

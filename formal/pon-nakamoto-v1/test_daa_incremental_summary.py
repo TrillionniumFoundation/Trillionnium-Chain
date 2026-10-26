@@ -132,6 +132,10 @@ class SummaryResearch(unittest.TestCase):
             ix.observe_already_validated(h)
         with self.assertRaisesRegex(ValueError,'ASERT_SUMMARY_CONTEXT'):
             expected_shadow_target(replace(c,rule_commitment=bytes.fromhex('bb'*32)),p)
+        with self.assertRaisesRegex(ValueError,'ASERT_SUMMARY_CONTEXT'):
+            expected_shadow_target(replace(c, network=bytes.fromhex('ee'*32)), p)
+        with self.assertRaisesRegex(ValueError,'ASERT_SUMMARY_PARENT_OR_CONTEXT'):
+            extend(replace(c, parameters=bytes.fromhex('bb'*32)), p, child(p, START+20))
         with self.assertRaisesRegex(ValueError,'ASERT_NOT_ACTIVE'):
             expected_shadow_target(c,p)
 

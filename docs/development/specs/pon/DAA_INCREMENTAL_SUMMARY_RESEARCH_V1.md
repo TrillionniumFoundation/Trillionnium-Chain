@@ -61,3 +61,24 @@ proof campaign; the corresponding strict P0-C / P1-C / P2 blockers remain open.
 
 This is subordinate to the sole development plan and does not change the
 existing profile registry, stored schemas, launch flags or formal acceptance.
+
+## Follow-on read-only Rust prototype (compile not yet observed)
+
+`trnm-pon-node/src/consensus.rs::daa_incremental_research` adds a **shadow-only**
+`Summary::extend_verified` and `Summary::shadow_target` with the same finite 11-time
+window and pinned-context checks, plus an `OwnerIndex` which refuses unknown
+parents rather than importing peer-provided summaries. Its `#[test]` controls
+compare two candidate clocks over an 8192-parent sequence, retain independent
+fork anchors and reject foreign parent/context/duplicate inputs. No `Node`
+consensus function calls this module; the ordinary `retarget` remains unchanged.
+
+This Rust source and native test have **not** been compiled or executed by the
+current environment; a source-visible selector is not a passing receipt. Further
+native integration requires original fully validated `WorkChecked` production,
+branch-scoped persistence, crash-safe reorg/reopen, complete history retention,
+and exact-head native runs before P1-C can be marked closed.
+
+The paired Python summary now pins network, parameters and genesis in addition
+to rule commitment before any incremental derivation; foreign-network summary
+reuse fails before computing a target. 10/10 local research tests passed on
+that updated exact Python content, including a wrong-network negative control.
