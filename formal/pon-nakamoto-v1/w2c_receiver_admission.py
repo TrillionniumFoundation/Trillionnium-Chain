@@ -81,7 +81,7 @@ def solve(grant, cap=1 << 18):
 
 class ReceiverAdmission:
     def __init__(self, receiver, secret, epoch, lifetime_ms=2000,
-                 capacity=64, entropy=None):
+                 capacity=64, entropy=None, epoch_issue_limit=4096):
         self.receiver = bytes32(receiver, 'RECEIVER')
         self.secret = bytes32(secret, 'SECRET')
         self.epoch = bytes32(epoch, 'EPOCH')
@@ -89,7 +89,11 @@ class ReceiverAdmission:
             raise ValueError('LIFETIME')
         if type(capacity) is not int or not 1 <= capacity <= 1024:
             raise ValueError('CAPACITY')
+        if type(epoch_issue_limit) is not int or not 1 <= epoch_issue_limit <= 65536:
+            raise ValueError('EPOCH_ISSUE_LIMIT')
         self.lifetime_ms, self.capacity = lifetime_ms, capacity
+        self.epoch_issue_limit = epoch_issue_limit
+        self.issued_total = 0  # Never refunded on expiry, cancellation, or spend.
         self.entropy = entropy if entropy is not None else secrets.token_bytes
         self.issued = {}  # token -> (expiry, spent); never evict a live token.
         self.last_now_ms = 0
@@ -117,8 +121,8 @@ class ReceiverAdmission:
         if type(bits) is not int or not 8 <= bits <= 24:
             raise ValueError('BITS')
         self.clock(now_ms)
-        if len(self.issued) >= self.capacity:
-            return None  # BUSY, never consensus-invalid.
+        if len(self.issued) >= self.capacity or self.issued_total >= self.epoch_issue_limit:
+            return None  # BUSY, never consensus-invalid. No identity reset.
         if now_ms > MAX_U64 - self.lifetime_ms:
             raise ValueError('CLOCK_OVERFLOW')
         token = bytes32(self.entropy(32), 'ENTROPY')
@@ -129,6 +133,7 @@ class ReceiverAdmission:
         mac = hmac.new(self.secret, unsigned.unsigned(), hashlib.sha256).digest()
         grant = replace(unsigned, mac=mac)
         self.issued[token] = (grant.expires_ms, False)
+        self.issued_total += 1
         return grant
 
     def consume(self, grant, proposal, nonce, now_ms):
