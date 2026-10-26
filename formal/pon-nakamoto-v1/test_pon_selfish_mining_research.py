@@ -30,6 +30,7 @@ class WithholdingTests(unittest.TestCase):
         x=simulate(p)
         self.assertEqual(x['discoveries'],20)
         self.assertEqual(x['terminal_reason'],'no_available_work_capacity')
+        self.assertTrue(x['source_outage_reached'])
         self.assertIsNone(x['post_outage_effective_share'])
 
     def test_outage_effective_share_changes_without_changing_chainwork(self):
