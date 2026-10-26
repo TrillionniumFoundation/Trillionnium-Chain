@@ -33,6 +33,8 @@ def run(seed=1,samples=2):
     oracle_blob = hashlib.sha1(b'blob '+str(len(original)).encode()+b'\0'+original).hexdigest()
     if oracle_blob != SOURCE_BLOB:
         raise ValueError('W1_ORACLE_SOURCE_CHANGED')
+    proto_bytes = Path(D.__file__).read_bytes()
+    proto_blob = hashlib.sha1(b'blob '+str(len(proto_bytes)).encode()+b'\0'+proto_bytes).hexdigest()
     rows=[]
     for sample in range(samples):
         label = 'zero' if sample%2 == 0 else 'dense'
@@ -47,6 +49,10 @@ def run(seed=1,samples=2):
             raise AssertionError('W1_BYTES_DIVERGED')
         original_verdict, original_cpu_ns=cpu(lambda:W.verify(challenge,task,target,candidate.proof))
         new_verdict, new_cpu_ns=cpu(lambda:D.verify(challenge,task,target,candidate.proof,candidate.sidecar))
+        if (not isinstance(original_verdict,tuple) or
+            not isinstance(new_verdict,dict) or
+            new_verdict.get('outcome')!='RESEARCH_PROBABILISTIC_RELATION_CHECKED'):
+            raise AssertionError('HONEST_W1_W2D_RELATION_DIVERGED')
         if new_verdict['verified_work'] or new_verdict['chainwork']:
             raise AssertionError('AUTHORITY_ESCAPE')
         only_trace=candidate.proof[:-32]+H('w2d-claim-only-false-trace',challenge)
@@ -79,6 +85,7 @@ def run(seed=1,samples=2):
                      'verified_work':False,'chainwork':0,
                      'original_relation_output_correct':isinstance(original_verdict,tuple)})
     return {'schema':SCHEMA,'source_w1_oracle_blob':oracle_blob,
+            'source_w2d_prototype_blob':proto_blob,
             'test_target':'all ff; mathematical research only, NOT consensus difficulty',
             'python_process_cpu':True,'platform':platform.platform(),
             'gpu_cost':None,'independent_review':False,'rust_native':False,
