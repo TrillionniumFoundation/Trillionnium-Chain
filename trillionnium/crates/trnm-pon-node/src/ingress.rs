@@ -2212,7 +2212,7 @@ fn receive_page_with_operation(
     }
     if page.complete {
         checked()?;
-        node.activate_observed(tip, clock)?;
+        node.activate_observed_with_progress(tip, clock, &mut || checked())?;
         checked()?;
     }
     Ok(next)
