@@ -68,6 +68,11 @@ The whole receiver CPU interval includes replay when it occurred; adding W1
 subphase CPU again would double-charge it. BUSY, CANCELLED and UNKNOWN do
 not constitute invalidity of the mathematical relation.
 
+The reader opens its JSON input with O_NOFOLLOW/O_NONBLOCK, accepts only an
+unchanged regular file under the 4 MiB ceiling and refuses symlink/FIFO/device
+or mutated readback. This is a local safety constraint, **not** evidence of
+physical source authenticity or a signed operator receipt.
+
 The reader refuses duplicate JSON keys, nonfinite/float input, excessive
 bytes/cases/calls, duplicate proof digests, duplicate call IDs, nonce gaps,
 multiple claimed target hits, premature target wins, missing trial count,
