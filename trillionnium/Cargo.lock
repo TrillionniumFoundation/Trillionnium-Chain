@@ -957,6 +957,7 @@ name = "trnm-mvcc-fee"
 version = "0.1.0"
 dependencies = [
  "borsh",
+ "getrandom 0.4.2",
  "hex",
  "rusqlite",
  "serde",

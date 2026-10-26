@@ -148,6 +148,17 @@ pub fn growth_reference_snapshot(
         return Err("GROWTH_PROFILE");
     }
     let root = pon_executor::root_for_config(actual, cfg)?;
+    growth_reference_observation(actual, root, expected)
+}
+
+// Private post-root accounting, never a root-checking public entry point. The
+// caller must compute the complete actual root in this same operation before
+// supplying it. All payload grammar and checked byte charges remain here.
+fn growth_reference_observation(
+    actual: &State,
+    root: Hash,
+    expected: Option<Hash>,
+) -> Result<PreparedCommitment> {
     if expected.is_some_and(|value| value != root) {
         return Err("COMMITMENT_ROOT");
     }
@@ -186,7 +197,8 @@ pub fn execute_growth_reference_with_control<E: Send>(
     (control.progress)(ExecutionProgress::BeforeParentBinding)
         .map_err(ExecutionError::Cancelled)?;
     growth_reference_snapshot(actual_parent, Some(expected_parent_root), cfg)?;
-    let output = pon_executor::execute_with_control(
+    let mut computed_root = None;
+    let output = pon_executor::execute_with_commitment_and_control(
         actual_parent,
         BlockExecution {
             transactions: request.transactions,
@@ -196,9 +208,24 @@ pub fn execute_growth_reference_with_control<E: Send>(
             workers: request.workers,
         },
         cfg,
+        |_, next| {
+            let root = pon_executor::root_for_config(next, cfg)?;
+            computed_root = Some(root);
+            Ok(root)
+        },
         control,
     )?;
-    let mut commitment = growth_reference_snapshot(&output.state, Some(output.root), cfg)?;
+    // The executor only checks progress and moves this same State after its
+    // commitment callback. Reuse only the root actually checked above; do not
+    // move payload/delta accounting before AfterCommitment or BeforeOutput.
+    if !crate::growth_profile_v2::enabled(cfg) {
+        return Err("GROWTH_PROFILE".into());
+    }
+    let mut commitment = growth_reference_observation(
+        &output.state,
+        computed_root.ok_or("COMMITMENT_STAGED")?,
+        Some(output.root),
+    )?;
     let mut old = actual_parent.iter().peekable();
     let mut next = output.state.iter().peekable();
     while old.peek().is_some() || next.peek().is_some() {
@@ -2497,3 +2524,369 @@ mod bounded_encoding_tests {
 #[cfg(test)]
 #[path = "pon_commitment_binding_tests.rs"]
 mod checked_binding_tests;
+
+#[cfg(all(test, any(unix, windows, target_os = "wasi")))]
+mod growth_reference_single_successor_tests {
+    use super::*;
+    use serde_json::json;
+    use std::sync::Mutex;
+
+    fn original_growth_reference_snapshot(
+        actual: &State,
+        expected: Option<Hash>,
+        cfg: &Config,
+    ) -> Result<PreparedCommitment> {
+        if !crate::growth_profile_v2::enabled(cfg) {
+            return Err("GROWTH_PROFILE");
+        }
+        let root = pon_executor::root_for_config(actual, cfg)?;
+        if expected.is_some_and(|value| value != root) {
+            return Err("COMMITMENT_ROOT");
+        }
+        let mut payload = 0usize;
+        for (key, value) in actual {
+            let encoded = pon_executor::canonical(value)?;
+            payload = payload
+                .checked_add(key.len())
+                .and_then(|n| n.checked_add(encoded.len()))
+                .ok_or("COMMITMENT_CHARGE")?;
+        }
+        Ok(PreparedCommitment {
+            root,
+            snapshot: None,
+            changes: Vec::new(),
+            observation: CommitmentObservation {
+                method: CommitmentMethod::FullRoot(FullRootReason::GrowthReferenceProfile),
+                actual_keys: actual.len(),
+                actual_payload_bytes: payload,
+                changed_keys: 0,
+                changed_payload_bytes: 0,
+                compressed_nodes: None,
+                // Reference State/root memory is not a legacy optional-cache charge.
+                workspace_charge_bytes: 0,
+            },
+        })
+    }
+
+    fn original_growth_reference_with_control<E: Send>(
+        actual_parent: &State,
+        expected_parent_root: Hash,
+        request: ExecutionRequest<'_>,
+        cfg: &Config,
+        control: &pon_executor::ExecutionControl<'_, E>,
+    ) -> ControlledResult<StagedOutput, E> {
+        (control.progress)(ExecutionProgress::BeforeParentBinding)
+            .map_err(ExecutionError::Cancelled)?;
+        original_growth_reference_snapshot(actual_parent, Some(expected_parent_root), cfg)?;
+        let output = pon_executor::execute_with_control(
+            actual_parent,
+            BlockExecution {
+                transactions: request.transactions,
+                height: request.height,
+                miner: request.miner,
+                parent_id: request.parent_id,
+                workers: request.workers,
+            },
+            cfg,
+            control,
+        )?;
+        let mut commitment =
+            original_growth_reference_snapshot(&output.state, Some(output.root), cfg)?;
+        let mut old = actual_parent.iter().peekable();
+        let mut next = output.state.iter().peekable();
+        while old.peek().is_some() || next.peek().is_some() {
+            let key = match (old.peek(), next.peek()) {
+                (Some((a, _)), Some((b, _))) => (*a).min(*b),
+                (Some((a, _)), None) => a,
+                (None, Some((b, _))) => b,
+                (None, None) => break,
+            };
+            let before = if old.peek().is_some_and(|(name, _)| name == &key) {
+                let (_, value) = old.next().ok_or("COMMITMENT_CHARGE")?;
+                Some(pon_executor::canonical(value)?)
+            } else {
+                None
+            };
+            let after = if next.peek().is_some_and(|(name, _)| name == &key) {
+                let (_, value) = next.next().ok_or("COMMITMENT_CHARGE")?;
+                Some(pon_executor::canonical(value)?)
+            } else {
+                None
+            };
+            if before != after {
+                commitment.observation.changed_payload_bytes = commitment
+                    .observation
+                    .changed_payload_bytes
+                    .checked_add(key.len())
+                    .and_then(|n| n.checked_add(before.as_ref().map_or(0, Vec::len)))
+                    .and_then(|n| n.checked_add(after.as_ref().map_or(0, Vec::len)))
+                    .ok_or("COMMITMENT_CHARGE")?;
+                commitment.changes.push(Change {
+                    key: key.as_bytes().to_vec(),
+                    before,
+                    after,
+                });
+            }
+        }
+        commitment.observation.changed_keys = commitment.changes.len();
+        (control.progress)(ExecutionProgress::BeforeOutput).map_err(ExecutionError::Cancelled)?;
+        Ok(StagedOutput { output, commitment })
+    }
+
+    fn fixture() -> (State, Config, Vec<Vec<u8>>) {
+        use trnm_crypto_primitives::{public_key_hex, sign_hex, signing_key_from_hex};
+        use trnm_protocol::pon_wire::Envelope;
+        let cfg = Config::installed_with_profiles(
+            "native-public-evaluation-dev-v1",
+            crate::growth_profile_v2::PROFILE,
+        )
+        .unwrap();
+        let mut seed = [0_u8; 32];
+        getrandom::fill(&mut seed).expect("OS entropy must be available for the signing fixture");
+        let key = signing_key_from_hex(&hex::encode(seed)).unwrap();
+        let public = public_key_hex(&key);
+        let sender = hex::decode(&public).unwrap().try_into().unwrap();
+        let mut state = State::from([
+            ("meta:issued".into(), json!(1_000_000_000u64)),
+            ("model:current".into(), json!(hex::encode([0; 32]))),
+            (
+                format!("account:{public}"),
+                json!({"balance":1_000_000_000u64,"nonce":0}),
+            ),
+        ]);
+        state.extend(crate::continuity_v1::bootstrap_state(&cfg).unwrap());
+        let raws = (1..=4)
+            .map(|nonce| {
+                let mut payload = [2; 32].to_vec();
+                payload.extend(1u64.to_le_bytes());
+                let mut tx = Envelope {
+                    network: cfg.network,
+                    sender,
+                    nonce,
+                    expiry: 2000,
+                    fee_limit: 1_000_000,
+                    tag: 1,
+                    payload,
+                    signature: [0; 64],
+                };
+                tx.signature = hex::decode(sign_hex(&key, &tx.signing_digest().unwrap()))
+                    .unwrap()
+                    .try_into()
+                    .unwrap();
+                tx.encode().unwrap()
+            })
+            .collect();
+        (state, cfg, raws)
+    }
+
+    fn request(transactions: &[Vec<u8>], workers: usize) -> ExecutionRequest<'_> {
+        ExecutionRequest {
+            transactions,
+            height: 1,
+            miner: [3; 32],
+            parent_id: [4; 32],
+            workers,
+        }
+    }
+
+    fn same_output(actual: &StagedOutput, original: &StagedOutput, cfg: &Config) {
+        assert_eq!(actual.output.state, original.output.state);
+        assert_eq!(
+            serde_json::to_vec(&actual.output.state).unwrap(),
+            serde_json::to_vec(&original.output.state).unwrap()
+        );
+        assert_eq!(actual.output.root, original.output.root);
+        assert_eq!(actual.output.receipts, original.output.receipts);
+        assert_eq!(actual.commitment.root, original.commitment.root);
+        assert_eq!(
+            actual.commitment.observation,
+            original.commitment.observation
+        );
+        assert!(actual.commitment.snapshot.is_none());
+        assert!(original.commitment.snapshot.is_none());
+        let changes = |value: &PreparedCommitment| {
+            value
+                .changes
+                .iter()
+                .map(|change| {
+                    (
+                        change.key.clone(),
+                        change.before.clone(),
+                        change.after.clone(),
+                    )
+                })
+                .collect::<Vec<_>>()
+        };
+        assert_eq!(changes(&actual.commitment), changes(&original.commitment));
+        let fresh =
+            growth_reference_snapshot(&actual.output.state, Some(actual.output.root), cfg).unwrap();
+        assert_eq!(fresh.root, actual.commitment.root);
+        assert_eq!(
+            fresh.observation.actual_keys,
+            actual.commitment.observation.actual_keys
+        );
+        assert_eq!(
+            fresh.observation.actual_payload_bytes,
+            actual.commitment.observation.actual_payload_bytes
+        );
+    }
+
+    #[test]
+    fn growth_single_successor_root_preserves_signed_output_and_rechecks_each_call() {
+        let (state, cfg, raws) = fixture();
+        let frozen = state.clone();
+        for count in [0, 1, 4] {
+            for workers in [1, 2] {
+                let root = pon_executor::root_for_config(&state, &cfg).unwrap();
+                let progress = |_| Ok::<(), &str>(());
+                let control = pon_executor::ExecutionControl::new(&progress, &());
+                let actual = execute_growth_reference_with_control(
+                    &state,
+                    root,
+                    request(&raws[..count], workers),
+                    &cfg,
+                    &control,
+                )
+                .unwrap();
+                let original = original_growth_reference_with_control(
+                    &state,
+                    root,
+                    request(&raws[..count], workers),
+                    &cfg,
+                    &control,
+                )
+                .unwrap();
+                same_output(&actual, &original, &cfg);
+                assert_eq!(state, frozen);
+            }
+        }
+        let mut changed = state.clone();
+        let recipient = format!("account:{}", hex::encode([2; 32]));
+        changed.insert(recipient, json!({"balance":0,"nonce":7}));
+        let root = pon_executor::root_for_config(&changed, &cfg).unwrap();
+        let progress = |_| Ok::<(), &str>(());
+        let control = pon_executor::ExecutionControl::new(&progress, &());
+        let actual =
+            execute_growth_reference_with_control(&changed, root, request(&[], 1), &cfg, &control)
+                .unwrap();
+        let original =
+            original_growth_reference_with_control(&changed, root, request(&[], 1), &cfg, &control)
+                .unwrap();
+        same_output(&actual, &original, &cfg);
+        assert_ne!(
+            actual.output.root,
+            pon_executor::root_for_config(&state, &cfg).unwrap()
+        );
+        assert_eq!(state, frozen);
+    }
+
+    #[test]
+    fn growth_single_successor_root_preserves_every_serial_cancellation_boundary() {
+        let (state, cfg, raws) = fixture();
+        let frozen = state.clone();
+        let root = pon_executor::root_for_config(&state, &cfg).unwrap();
+        let trace = Mutex::new(Vec::new());
+        let progress = |point| {
+            trace.lock().unwrap().push(point);
+            Ok::<(), &str>(())
+        };
+        original_growth_reference_with_control(
+            &state,
+            root,
+            request(&raws, 1),
+            &cfg,
+            &pon_executor::ExecutionControl::new(&progress, &()),
+        )
+        .unwrap();
+        let complete = trace.into_inner().unwrap();
+        assert_eq!(
+            complete
+                .iter()
+                .filter(|&&p| p == ExecutionProgress::BeforeOutput)
+                .count(),
+            2
+        );
+        for stop in 0..complete.len() {
+            let run = |original| {
+                let trace = Mutex::new(Vec::new());
+                let progress = |point| {
+                    let mut trace = trace.lock().unwrap();
+                    let index = trace.len();
+                    trace.push(point);
+                    if index == stop {
+                        Err("stop")
+                    } else {
+                        Ok(())
+                    }
+                };
+                let control = pon_executor::ExecutionControl::new(&progress, &());
+                let result = if original {
+                    original_growth_reference_with_control(
+                        &state,
+                        root,
+                        request(&raws, 1),
+                        &cfg,
+                        &control,
+                    )
+                } else {
+                    execute_growth_reference_with_control(
+                        &state,
+                        root,
+                        request(&raws, 1),
+                        &cfg,
+                        &control,
+                    )
+                };
+                (result.err(), trace.into_inner().unwrap())
+            };
+            let original = run(true);
+            let actual = run(false);
+            assert_eq!(actual.0, Some(ExecutionError::Cancelled("stop")));
+            assert_eq!(actual, original);
+            assert_eq!(actual.1, complete[..=stop]);
+            assert_eq!(state, frozen);
+        }
+    }
+
+    #[test]
+    fn growth_single_successor_root_preserves_relation_rejection_and_parent_immutability() {
+        let (state, cfg, raws) = fixture();
+        let root = pon_executor::root_for_config(&state, &cfg).unwrap();
+        let compare = |state: &State, root: Hash, cfg: &Config, txs: &[Vec<u8>]| {
+            let frozen = state.clone();
+            let progress = |_| Ok::<(), &str>(());
+            let control = pon_executor::ExecutionControl::new(&progress, &());
+            let a =
+                execute_growth_reference_with_control(state, root, request(txs, 1), cfg, &control)
+                    .err();
+            let b =
+                original_growth_reference_with_control(state, root, request(txs, 1), cfg, &control)
+                    .err();
+            assert!(matches!(a, Some(ExecutionError::Relation(_))));
+            assert_eq!(a, b);
+            assert_eq!(state, &frozen);
+        };
+        compare(&state, [9; 32], &cfg, &raws);
+        compare(&state, root, &Config::installed().unwrap(), &raws);
+        let mut forged = cfg.clone();
+        forged.params["growth_reference_policy_hash"] = json!(hex::encode([0; 32]));
+        compare(&state, root, &forged, &raws);
+        let mut invalid = state.clone();
+        invalid.insert("a".repeat(161), json!(0));
+        invalid.insert("zz".into(), json!("非ASCII"));
+        compare(&invalid, root, &cfg, &raws);
+        let mut invalid = state.clone();
+        invalid.insert(
+            format!("account:{}", hex::encode([8; 32])),
+            json!({"balance":0,"nonce":0,"extra":0}),
+        );
+        compare(&invalid, root, &cfg, &raws);
+        let mut invalid = state.clone();
+        invalid.insert("meta:issued".into(), json!(1_000_000_001u64));
+        compare(&invalid, root, &cfg, &raws);
+        compare(&state, root, &cfg, &raws[1..2]);
+        let mut invalid_signature = raws[0].clone();
+        *invalid_signature.last_mut().unwrap() ^= 1;
+        compare(&state, root, &cfg, &[invalid_signature]);
+    }
+}
