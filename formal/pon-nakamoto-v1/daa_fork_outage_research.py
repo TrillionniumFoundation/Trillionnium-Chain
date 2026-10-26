@@ -96,6 +96,10 @@ class ForkSimulator:
         self.reorg_confirmed_depth6 = 0
         self.work_at_heal_a = self.work_at_heal_b = 0
         self.heal_preferred = "none"
+        self.equal_work_tie_at_heal = False
+        self.tie_resolved_after_heal = False
+        self.tie_resolution_rounds = 0
+        self.heal_resolution_winner = "none"
         self.stopped = False
         self.stop_reason: str | None = None
 
@@ -163,10 +167,17 @@ class ForkSimulator:
         return key
 
     def round(self, phase: str) -> bool:
-        if phase == "shared" or phase == "healed":
+        if phase not in ("shared", "partition", "healed"):
+            raise ValueError("unknown partition phase")
+        if phase == "shared" or (phase == "healed" and self.tip_a == self.tip_b):
             tip_a = tip_b = self.tip_a
         else:
+            # An equal-work partition has no common winning tip yet. Each
+            # operator keeps its own locally selected branch until new,
+            # strictly greater verified work permits adoption.
             tip_a, tip_b = self.tip_a, self.tip_b
+        if phase == "healed" and tip_a != tip_b:
+            self.tie_resolution_rounds += 1
         ra, rb = self.rate("A", tip_a), self.rate("B", tip_b)
         total = ra + rb
         if total <= 0:
@@ -181,23 +192,29 @@ class ForkSimulator:
         miner = "A" if self.rng.random() * total < ra else "B"
         next_tip = self.mine(miner, tip_a if miner == "A" else tip_b)
         if next_tip is not None:
-            if phase in ("shared", "healed"):
+            if phase == "shared" or (phase == "healed" and tip_a == tip_b):
                 self.tip_a = self.tip_b = next_tip
+            elif phase == "healed":
+                other = tip_b if miner == "A" else tip_a
+                if self.blocks[next_tip].chainwork > self.blocks[other].chainwork:
+                    self._converge(next_tip, other)
+                    self.tie_resolved_after_heal = True
+                    self.heal_resolution_winner = miner
+                elif miner == "A":
+                    self.tip_a = next_tip
+                else:
+                    self.tip_b = next_tip
             elif miner == "A":
                 self.tip_a = next_tip
             else:
                 self.tip_b = next_tip
         return True
 
-    def heal(self) -> None:
-        self.work_at_heal_a = self.blocks[self.tip_a].chainwork
-        self.work_at_heal_b = self.blocks[self.tip_b].chainwork
-        if self.work_at_heal_a >= self.work_at_heal_b:
-            winner, loser = self.tip_a, self.tip_b
-            self.heal_preferred = "A"
-        else:
-            winner, loser = self.tip_b, self.tip_a
-            self.heal_preferred = "B"
+    def _converge(self, winner: int, loser: int) -> None:
+        # This is a *simulated* delivery of the complete heavier branch.
+        # It must never be used to resolve a distinct equal-work tie.
+        if winner != loser:
+            assert self.blocks[winner].chainwork > self.blocks[loser].chainwork
         ancestors = {x.key for x in self.ancestry(winner)}
         old_path = self.ancestry(loser)
         orphaned = [x for x in old_path if x.key not in ancestors]
@@ -206,7 +223,25 @@ class ForkSimulator:
         self.reorg_confirmed_depth6 = sum(
             1 for x in orphaned if losing_tip.height - x.height >= 6)
         self.tip_a = self.tip_b = winner
+
+    def heal(self) -> None:
+        self.work_at_heal_a = self.blocks[self.tip_a].chainwork
+        self.work_at_heal_b = self.blocks[self.tip_b].chainwork
         self.healed = True
+        if self.tip_a == self.tip_b:
+            self.heal_preferred = "same"
+            return
+        if self.work_at_heal_a == self.work_at_heal_b:
+            self.equal_work_tie_at_heal = True
+            self.heal_preferred = "tie-retained"
+            return
+        if self.work_at_heal_a > self.work_at_heal_b:
+            winner, loser = self.tip_a, self.tip_b
+            self.heal_preferred = "A"
+        else:
+            winner, loser = self.tip_b, self.tip_a
+            self.heal_preferred = "B"
+        self._converge(winner, loser)
 
     def verify_all(self) -> None:
         # Recompute branch-local state, not just the winning chain summary.
@@ -221,9 +256,13 @@ class ForkSimulator:
                 [x.timestamp for x in self.ancestry(block.parent)[:11]])
             assert block.target == self.next_target(block.parent)
         if self.healed:
-            assert self.tip_a == self.tip_b
-            assert self.blocks[self.tip_a].chainwork >= min(
-                self.work_at_heal_a, self.work_at_heal_b)
+            if self.tip_a != self.tip_b:
+                assert self.equal_work_tie_at_heal
+                assert not self.tie_resolved_after_heal
+                assert self.blocks[self.tip_a].chainwork == self.blocks[self.tip_b].chainwork
+            else:
+                assert self.blocks[self.tip_a].chainwork >= max(
+                    self.work_at_heal_a, self.work_at_heal_b)
 
     def report(self) -> dict:
         self.verify_all()
@@ -242,6 +281,15 @@ class ForkSimulator:
             "lease_outage_reached": effective,
             "partition_healed": self.healed,
             "partition_heal_preferred": self.heal_preferred,
+            "equal_work_tie_at_heal": self.equal_work_tie_at_heal,
+            "tie_resolved_by_strict_work": self.tie_resolved_after_heal,
+            "tie_resolution_rounds": self.tie_resolution_rounds,
+            "heal_resolution_winner": self.heal_resolution_winner,
+            "shared_tip_after_heal": self.healed and self.tip_a == self.tip_b,
+            "local_a_tip": self.tip_a,
+            "local_b_tip": self.tip_b,
+            "local_b_tip_chainwork": str(self.blocks[self.tip_b].chainwork),
+            "final_required_work_scope": "shared" if self.tip_a == self.tip_b else "local-A-only",
             "partition_a_chainwork": str(self.work_at_heal_a),
             "partition_b_chainwork": str(self.work_at_heal_b),
             "losing_branch_blocks_removed": self.reorg_removed,

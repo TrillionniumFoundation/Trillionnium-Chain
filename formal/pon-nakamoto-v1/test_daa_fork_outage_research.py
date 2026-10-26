@@ -14,6 +14,65 @@ class ForkOutageScreenTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 required_work(bad)
 
+    def test_equal_work_heal_preserves_local_fork_choices_until_strictly_heavier(self):
+        p = Parameters(seed=11, share_a=.5, task_outage_at=1000,
+                       timestamp_policy_a="honest", timestamp_policy_b="honest")
+        s = ForkSimulator(p)
+        left = s.mine("A", 0)
+        right = s.mine("B", 0)
+        self.assertIsNotNone(left)
+        self.assertIsNotNone(right)
+        self.assertNotEqual(left, right)
+        s.tip_a, s.tip_b = left, right
+        self.assertEqual(s.blocks[left].chainwork, s.blocks[right].chainwork)
+        s.heal()
+        self.assertTrue(s.equal_work_tie_at_heal)
+        self.assertEqual(s.heal_preferred, "tie-retained")
+        self.assertNotEqual(s.tip_a, s.tip_b)
+        self.assertEqual(s.reorg_removed, 0)
+        self.assertFalse(s.tie_resolved_after_heal)
+        s.verify_all()
+        self.assertTrue(s.round("healed"))
+        self.assertEqual(s.tip_a, s.tip_b)
+        self.assertEqual(s.tie_resolution_rounds, 1)
+        self.assertTrue(s.tie_resolved_after_heal)
+        self.assertIn(s.heal_resolution_winner, ("A", "B"))
+        self.assertEqual(s.reorg_removed, 1)
+        self.assertTrue(s.report()["shared_tip_after_heal"])
+
+    def test_equal_work_partition_without_successor_reports_nonconvergence(self):
+        p = Parameters(seed=7, share_a=.5, max_clock_seconds=100,
+                       timestamp_policy_a="honest", timestamp_policy_b="honest")
+        s = ForkSimulator(p)
+        a, b = s.mine("A", 0), s.mine("B", 0)
+        s.tip_a, s.tip_b = a, b
+        s.heal()
+        s.wall = float(s.p.genesis_time + s.p.max_clock_seconds + 1)
+        self.assertFalse(s.round("healed"))
+        self.assertNotEqual(s.tip_a, s.tip_b)
+        out = s.report()
+        self.assertEqual(out["stop_reason"], "bounded_wall_window_exhausted")
+        self.assertFalse(out["shared_tip_after_heal"])
+        self.assertEqual(out["final_required_work_scope"], "local-A-only")
+        self.assertEqual(out["partition_heal_preferred"], "tie-retained")
+        self.assertFalse(out["tie_resolved_by_strict_work"])
+
+    def test_strict_work_fork_heals_without_waiting_for_another_block(self):
+        s = ForkSimulator(Parameters(seed=13, share_a=.5,
+                          timestamp_policy_a="honest", timestamp_policy_b="honest"))
+        a = s.mine("A", 0)
+        b = s.mine("B", 0)
+        heavier = s.mine("B", b)
+        s.tip_a, s.tip_b = a, heavier
+        self.assertGreater(s.blocks[heavier].chainwork, s.blocks[a].chainwork)
+        s.heal()
+        self.assertEqual(s.heal_preferred, "B")
+        self.assertEqual(s.tip_a, heavier)
+        self.assertEqual(s.tip_b, heavier)
+        self.assertFalse(s.equal_work_tie_at_heal)
+        self.assertEqual(s.reorg_removed, 1)
+        s.verify_all()
+
     def test_seeded_forks_and_heal_replay_exactly(self):
         p = Parameters(seed=11)
         a, b = simulate(p), simulate(p)
