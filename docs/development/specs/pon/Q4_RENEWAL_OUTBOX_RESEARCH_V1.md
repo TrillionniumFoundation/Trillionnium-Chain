@@ -79,3 +79,22 @@ owner. The signed Q4 owner, real kernel.operations outbox, native PoN
 confirmation, authority to redispatch, physical power loss and independent
 operators remain separate blockers. No original Q4 signed bytes, W1, genesis
 Maintenance, DAA target, Node source or production flag is changed.
+
+## Single-snapshot diagnostic status (2026-10-26)
+
+The read-only `status()` path now opens one explicit SQLite read transaction for its
+intent row and ordered dispatch/observation rows, rolling the read transaction back
+on both success and error. This prevents a concurrent writer from committing an
+event between those reads and producing a hybrid diagnostic status. Reentrant reads
+inside a pending original-owner transaction fail closed as `STATUS_REENTRANT`
+without rolling back or publishing that owner's pending effect.
+
+An empty status snapshot **is not** `NotDispatched` authority: after the read
+transaction ends, another owner can publish `DISPATCH_UNKNOWN`. The existing
+single-dispatch unique index and original operation identity remain the only
+local journal protections. The result must never be used to sign, resubmit,
+refresh a nonce/budget, infer original Hepta authority or activate consensus.
+Two negative tests force an independent SQLite writer to attempt dispatch during
+the second read and verify the original writer can proceed only after the
+snapshot releases. No real native W1, physical crash, WAN or owner admission
+was executed by this research change.

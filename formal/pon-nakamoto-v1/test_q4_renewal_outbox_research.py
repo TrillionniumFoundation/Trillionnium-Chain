@@ -288,6 +288,48 @@ class RenewalOutboxTests(unittest.TestCase):
             writer.prepare(another)
             self.assertEqual(reader.audit(), 0)
 
+    def test_status_snapshot_blocks_competing_dispatch_until_read_is_complete(self):
+        # A competing writer tries to publish DISPATCH_UNKNOWN between the two
+        # status SELECTs.  A moving autocommit reader permits that interleave;
+        # this read-only snapshot must not report mixed table generations.
+        with self.open() as reader, self.open() as writer:
+            key = reader.prepare(intent())
+            observations = []
+            def trace(sql):
+                if sql.startswith('SELECT kind,observation FROM q4_outbox_events_v1'):
+                    try:
+                        writer.dispatch_unknown(key)
+                    except sqlite3.OperationalError:
+                        observations.append('write_busy')
+                    else:
+                        observations.append('unexpected_commit')
+            reader.db.set_trace_callback(trace)
+            try:
+                view = reader.status(key)
+            finally:
+                reader.db.set_trace_callback(None)
+            self.assertEqual(observations, ['write_busy'])
+            self.assertTrue(view['has_no_durable_dispatch_fence'])
+            self.assertFalse(view['dispatch_unknown'])
+            self.assertEqual(reader.audit(), 0)
+            writer.dispatch_unknown(key)
+            self.assertTrue(reader.status(key)['dispatch_unknown'])
+            self.assertFalse(reader.status(key)['has_no_durable_dispatch_fence'])
+            self.assertEqual(reader.audit(), 1)
+
+    def test_status_reentrant_read_refuses_without_rolling_back_writer(self):
+        with self.open() as db:
+            key = db.prepare(intent())
+            db.db.execute('BEGIN IMMEDIATE')
+            try:
+                with self.assertRaisesRegex(OutboxError, 'STATUS_REENTRANT'):
+                    db.status(key)
+                self.assertTrue(db.db.in_transaction)
+            finally:
+                db.db.execute('ROLLBACK')
+            self.assertTrue(db.status(key)['has_no_durable_dispatch_fence'])
+            self.assertEqual(db.audit(), 0)
+
     def test_nested_audit_refuses_without_rolling_back_writer_intent(self):
         with self.open() as db:
             db.db.execute('BEGIN IMMEDIATE')

@@ -334,12 +334,42 @@ class RenewalOutbox:
         self._event(ident,kind,wire,fail_at=fail_at)
 
     def status(self, ident: bytes) -> dict:
+        """Read intent and dispatch history in ONE SQLite read snapshot.
+
+        This is diagnostic only. Even an empty snapshot never authorizes
+        external submission: another owner may commit a dispatch immediately
+        after this read transaction releases its lock.
+        """
         identity(ident,'operation')
-        row = self.db.execute('SELECT packet_id,wire FROM q4_outbox_intents_v1 WHERE id=?',(ident,)).fetchone()
-        if row is None: raise OutboxError('UNKNOWN_INTENT')
-        events = self.db.execute('SELECT kind,observation FROM q4_outbox_events_v1 WHERE intent_id=? ORDER BY ordinal',(ident,)).fetchall()
-        return {'intent_id':ident.hex(),'transaction_id':row[0].hex(),
-                'dispatch_unknown':any(x[0]=='DISPATCH_UNKNOWN' for x in events),
-                'last_untrusted_observation':next((x[0].replace('OBSERVED_','').lower() for x in reversed(events) if x[0].startswith('OBSERVED_')),None),
-                'observations':sum(1 for x in events if x[0].startswith('OBSERVED_')),
-                'has_no_durable_dispatch_fence':len(events)==0}
+        if self.db.in_transaction:
+            raise OutboxError('STATUS_REENTRANT')
+        self.db.execute('BEGIN')
+        try:
+            row = self.db.execute(
+                'SELECT packet_id,wire FROM q4_outbox_intents_v1 WHERE id=?',
+                (ident,)
+            ).fetchone()
+            if row is None:
+                raise OutboxError('UNKNOWN_INTENT')
+            events = self.db.execute(
+                'SELECT kind,observation FROM q4_outbox_events_v1 '
+                'WHERE intent_id=? ORDER BY ordinal',
+                (ident,)
+            ).fetchall()
+            result = {
+                'intent_id': ident.hex(),
+                'transaction_id': row[0].hex(),
+                'dispatch_unknown': any(x[0]=='DISPATCH_UNKNOWN' for x in events),
+                'last_untrusted_observation': next(
+                    (x[0].replace('OBSERVED_','').lower()
+                     for x in reversed(events) if x[0].startswith('OBSERVED_')),
+                    None
+                ),
+                'observations': sum(1 for x in events if x[0].startswith('OBSERVED_')),
+                'has_no_durable_dispatch_fence': len(events)==0,
+            }
+        except BaseException:
+            self.db.execute('ROLLBACK')
+            raise
+        self.db.execute('ROLLBACK')
+        return result
