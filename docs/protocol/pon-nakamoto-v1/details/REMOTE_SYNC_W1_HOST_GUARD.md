@@ -184,7 +184,7 @@ Added exact Rust negative selectors:
 - 'hostile_host_owner_loss_during_w1_replay_leaves_no_verified_block':
   cancel a genuine W1 replay on its first selected transcript tile.
   The original block must remain unadmitted with unchanged state;
-- 'W1_history_kernel_checkpoints_are_bounded_and_cover_each_tile_row_group':
+- 'w1_history_kernel_checkpoints_are_bounded_and_cover_each_tile_row_group':
   deterministic check counts: 4/512 noise-epoch labels, 8/512 transcript
   tiles and only named matrix rows, plus all three authority boundaries.
 
