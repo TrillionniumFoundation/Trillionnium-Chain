@@ -43,6 +43,64 @@ class W2DFullTiles(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,'^TILE_RELATION$'):
             D.verify(self.challenge,self.task,self.target,claim,raw)
 
+    def test_every_prefix_region_first_middle_last_is_checked(self):
+        # W2-A sampled openings can miss a forged location; W2-D checks every
+        # committed tile, including the final state on the last block pair.
+        for index in (0,D.TILES//2,D.TILES-1):
+            raw=bytearray(self.sidecar)
+            position=index*D.TILE_BYTES
+            prior=int.from_bytes(raw[position:position+4],'little')
+            raw[position:position+4]=struct.pack('<I',(prior+1)%W.Q)
+            changed=bytes(raw)
+            forged=self.proof[:-32]+hashlib.sha256(
+                b'TRNM-PON-TRACE1\0'+self.challenge+changed).digest()
+            with self.subTest(tile=index):
+                with self.assertRaisesRegex(ValueError,'^TILE_RELATION        changed=bytearray(self.proof)
+        i=4+2*W.CELLS*4
+        original=int.from_bytes(changed[i:i+4],'little')
+        changed[i:i+4]=struct.pack('<I',(original+1)%W.Q)
+        with self.assertRaisesRegex(ValueError,'^PRODUCT_RELATION$'):
+            D.verify(self.challenge,self.task,self.target,bytes(changed),self.sidecar)
+
+    def test_four_cheap_fabricated_trace_claims_rejected_early(self):
+        claims=set()
+        for nonce in range(4):
+            bogus=H('w2d-false-from-zero',self.challenge,struct.pack('<Q',nonce))
+            claims.add(bogus)
+            with self.assertRaisesRegex(ValueError,'^TRANSCRIPT$'):
+                D.verify(self.challenge,self.task,self.target,self.proof[:-32]+bogus,self.sidecar)
+        self.assertEqual(len(claims),4)
+
+    def test_change_challenge_task_or_target_rejected(self):
+        with self.assertRaisesRegex(ValueError,'TRANSCRIPT'):
+            D.verify(bytes([1])*32,self.task,self.target,self.proof,self.sidecar)
+        with self.assertRaisesRegex(ValueError,'TASK'):
+            D.verify(self.challenge,bytes([2])*32,self.target,self.proof,self.sidecar)
+        with self.assertRaisesRegex(ValueError,'TARGET'):
+            D.verify(self.challenge,self.task,bytes(32),self.proof,self.sidecar)
+
+    def test_noncanonical_or_ill_shaped_sidecar_rejected(self):
+        for blob in (self.sidecar[:-1],self.sidecar+b'\x00'):
+            with self.assertRaisesRegex(ValueError,'SIDECAR_LENGTH'):
+                D.verify(self.challenge,self.task,self.target,self.proof,blob)
+        blob=bytearray(self.sidecar)
+        blob[:4]=struct.pack('<I',W.Q)
+        with self.assertRaisesRegex(ValueError,'SIDECAR_FIELD'):
+            D.verify(self.challenge,self.task,self.target,self.proof,bytes(blob))
+
+    def test_randomized_checks_not_promoted_to_native_authority(self):
+        result=D.verify(self.challenge,self.task,self.target,self.proof,self.sidecar)
+        self.assertIs(result['verified_work'],False)
+        self.assertIs(result['chainwork'],False)
+        self.assertIs(result['production_activation'],False)
+        self.assertEqual(result['freivalds_rounds'],2)
+        self.assertEqual(len(D.field_vector(bytes(32),b'product',b'0',W.N)),64)
+
+
+if __name__=='__main__':unittest.main(verbosity=2)
+):
+                    D.verify(self.challenge,self.task,self.target,forged,changed)
+
     def test_claimed_product_fraud_with_real_trace_rejected(self):
         changed=bytearray(self.proof)
         i=4+2*W.CELLS*4
