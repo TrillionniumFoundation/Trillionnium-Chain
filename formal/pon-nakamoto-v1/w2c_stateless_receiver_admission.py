@@ -99,18 +99,20 @@ class StatelessReceiver:
         self.now_ms = 0
         self.lock = threading.Lock()
 
-    def _clock(self, now_ms):
+    def _clock(self, now_ms, *, sweep=True):
         u64(now_ms, 'CLOCK')
         if now_ms < self.now_ms:
             raise ValueError('CLOCK_REGRESSION')
         self.now_ms = now_ms
-        for key, expiry in tuple(self.spent.items()):
-            if expiry <= now_ms:
-                del self.spent[key]
+        if sweep:
+            for key, expiry in tuple(self.spent.items()):
+                if expiry <= now_ms:
+                    del self.spent[key]
 
     def offer(self, proposal, bits, now_ms):
         with self.lock:
-            self._clock(now_ms)
+            # Cheap untrusted issuance MUST NOT scan the entire paid spent table.
+            self._clock(now_ms, sweep=False)
             fixed32(proposal, 'PROPOSAL')
             if type(bits) is not int or not 8 <= bits <= 24:
                 raise ValueError('BITS')
