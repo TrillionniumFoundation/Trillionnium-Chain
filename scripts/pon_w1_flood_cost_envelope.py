@@ -16,6 +16,7 @@ import stat
 from pathlib import Path
 import re
 import struct
+import sys
 
 SCHEMA = 'pon-w1-flood-cost-input-v1'
 OUT_SCHEMA = 'pon-w1-flood-cost-accounting-v1'
@@ -121,7 +122,14 @@ def ratio(numerator, denominator):
             'decimal_6': f'{float(q):.6f}'}
 
 
-def analyze(data):
+def analyze(data, *, oracle_check=False):
+    # Optional *offline* full matrix replay by the separately coded scalar
+    # Python oracle. This check is NEVER used by any native public listener.
+    W = None
+    if oracle_check:
+        sys.path.insert(0, str(Path(__file__).resolve().parents[1]
+                               / 'formal/pon-nakamoto-v1'))
+        import work_oracle as W
     require(type(data) is dict and data.get('schema') == SCHEMA, 'SCHEMA')
     source = data.get('source')
     require(type(source) is dict, 'SOURCE')
@@ -180,6 +188,13 @@ def analyze(data):
         require(len(forged_w1) == 49188
                 and hashlib.sha256(forged_w1).hexdigest() == proof,
                 'EXACT_FALSE_PROOF')
+        if W is not None:
+            try:
+                W.verify(challenge, task, target, forged_w1)
+            except ValueError as error:
+                require(str(error) == 'TRANSCRIPT', 'ORACLE_NOT_TRANSCRIPT')
+            else:
+                raise ValueError('ORACLE_ACCEPTED_FALSE_PROOF')
         require(complete_cpu is None or complete_cpu >= trial_cost,
                 'NESTED_CPU_NOT_IN_TOTAL')
         if complete_cpu is None or complete_cpu == 0 or not all_trials_known:
@@ -241,6 +256,8 @@ def analyze(data):
         'sample_hardware_independence_checked': False,
         'attacker_gpu_asic_cost_measured': False,
         'payload_relation_independently_verified': False,
+        'local_scalar_oracle_replayed_every_case': oracle_check,
+        'local_oracle_is_external_cryptanalysis': False,
         'p0_to_p6_closed': False,
         'production_activation': False,
         'cases': len(cases),
@@ -265,8 +282,10 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--input', required=True)
     ap.add_argument('--out')
+    ap.add_argument('--oracle-check', action='store_true',
+                    help='offline Python full W1 replay; not native admission or P6 review')
     args = ap.parse_args()
-    out = analyze(read(args.input))
+    out = analyze(read(args.input), oracle_check=args.oracle_check)
     raw = json.dumps(out, sort_keys=True, indent=2, allow_nan=False) + '\n'
     if args.out:
         # Exclusive creation: prior actual failures or observations survive.
