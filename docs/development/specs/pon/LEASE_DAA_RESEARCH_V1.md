@@ -686,3 +686,31 @@ remain OPEN. Future protocol integration must commit its own signed context,
 runtime activation rule, anti-rollback/reorg policy, persistent bounded
 ancestry proofs and independent client confirmations, without changing any
 historical revision.
+
+## Executed, exact-source Go/Python arithmetic differential (2026-10-26)
+
+A new **single local host** observation executed the original repository Go and
+Python oracle blobs, and independently checked their Git blob identifiers
+before running any arithmetic. The paired exact blob IDs at this observation:
+
+- `formal/pon-nakamoto-v1/daa_reference_go/main.go`:
+  `bf5142df7297a6f0dffa2d331785674061143c13`.
+- `formal/pon-nakamoto-v1/daa_research_oracle.py`:
+  `5cce6222769f1ab2f968516f15fcdf330fb695bd`.
+
+The source-exact Go program compiled under Go 1.23.2 and produced its original
+512-case fixed-input digest
+`6be87e237c37aec8c50af8d4eaf9e14a0ca60e7dc69f18143ede1ef70c420c97`.
+An additional local deterministically seeded 393-case process/Python differential
+(`seed=20261026`) observed 147 exact matching 256-bit integer targets,
+231 matched parameter refusals, 15 matched i128-range refusals and **zero
+mismatches**. The local raw JSON evidence SHA-256 is
+`7c43acf7e6f04ee0d677475348318b451e6e61de454f5ff54200cee5b172b84b`.
+The raw 393-row file is supplied as a separate conversation artifact, not
+committed to this repository; the checksum is provenance, not a hosted receipt.
+
+**Scope is strictly scalar arithmetic** on one host with two languages authored
+within this research lineage. None of these cases runs native Rust, produces
+PNW1 valid work, admits a block, proves an independent validator, or qualifies
+public-network difficulty/security. Local proof/admission tests and third-party
+review remain explicit blockers. No legacy DAA or production flag changes.
