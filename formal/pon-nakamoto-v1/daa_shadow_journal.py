@@ -267,6 +267,22 @@ class ShadowJournal:
             raise
 
     def audit(self) -> int:
+        """Read graph and active tip in one durable SQLite read snapshot.
+
+        A concurrent writer may append/activate a branch while an audit runs.
+        Without an explicit transaction, the final active-tip SELECT can see
+        a later generation than the graph rows already scanned.
+        """
+        if self.db.in_transaction:
+            raise JournalError('AUDIT_REENTRANT')
+        self.db.execute('BEGIN')
+        try:
+            count = self._audit_snapshot()
+        finally:
+            self.db.execute('ROLLBACK')
+        return count
+
+    def _audit_snapshot(self) -> int:
         """Cold graph and canonical-identity check; NOT packet/W1 proof replay.
 
         An attacker able to rewrite the entire local database may recompute all
@@ -315,11 +331,13 @@ class ShadowJournal:
             raise JournalError('OWNER_AUDIT_BUDGET_OR_CALLBACK')
         # One read snapshot: the application must not let the upstream owner
         # advance a branch or append a row while an audit is being assembled.
+        if self.db.in_transaction:
+            raise JournalError('OWNER_AUDIT_REENTRANT')
         self.db.execute('BEGIN')
         try:
             if self.db.execute('SELECT COUNT(*) FROM daa_shadow_headers_v1').fetchone()[0] > max_rows:
                 raise JournalError('OWNER_AUDIT_BUDGET')
-            self.audit()  # local graph/index consistency under this snapshot
+            self._audit_snapshot()  # graph and tip in the same upstream read snapshot
             scanned = 0
             cursor = self.db.execute('SELECT canonical FROM daa_shadow_headers_v1 '
                                      'ORDER BY height,block_id')

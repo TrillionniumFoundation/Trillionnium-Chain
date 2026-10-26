@@ -192,6 +192,50 @@ class ShadowJournalTests(unittest.TestCase):
         with self.assertRaisesRegex(JournalError, 'HEADER_BUDGET'):
             ShadowJournal(self.path, CTX, GEN, max_headers=0)
 
+    def test_graph_audit_pins_one_snapshot_against_competing_branch_append(self):
+        # Scanning rows and selecting the active tip must share ONE SQLite
+        # snapshot. A second writer cannot insert a new branch at that cut.
+        with ShadowJournal(self.path, CTX, GEN) as reader, ShadowJournal(self.path, CTX, GEN) as writer:
+            first, original_packet = candidate(GEN, 1)
+            reader.append(first, original_packet)
+            next_block, next_packet = candidate(first.block_id, 2)
+            attempted = []
+            def trace(sql):
+                if sql.startswith("SELECT value FROM daa_shadow_meta_v1 WHERE key='active_tip'"):
+                    try:
+                        writer.append(next_block, next_packet)
+                    except sqlite3.OperationalError:
+                        attempted.append('busy')
+                    else:
+                        attempted.append('unexpected_commit')
+            reader.db.set_trace_callback(trace)
+            try:
+                self.assertEqual(reader.audit(), 1)
+            finally:
+                reader.db.set_trace_callback(None)
+            self.assertEqual(attempted, ['busy'])
+            with self.assertRaisesRegex(JournalError, 'UNKNOWN_PARENT_OR_HEADER'):
+                reader.get(next_block.block_id)
+            writer.append(next_block, next_packet)
+            writer.activate(next_block.block_id, GEN)
+            self.assertEqual(reader.audit(), 2)
+            self.assertEqual(reader.active(), next_block.block_id)
+
+    def test_reentrant_audit_refuses_without_rolling_back_owner_write(self):
+        with ShadowJournal(self.path, CTX, GEN) as journal:
+            journal.db.execute('BEGIN IMMEDIATE')
+            try:
+                with self.assertRaisesRegex(JournalError, 'AUDIT_REENTRANT'):
+                    journal.audit()
+                with self.assertRaisesRegex(JournalError, 'OWNER_AUDIT_REENTRANT'):
+                    journal.audit_against_upstream(
+                        lambda _: b'proof', lambda *_: bytes(32), max_rows=1
+                    )
+                self.assertTrue(journal.db.in_transaction)
+            finally:
+                journal.db.execute('ROLLBACK')
+            self.assertEqual(journal.audit(), 0)
+
     def test_external_owner_byte_and_projection_audit_accepts_exact_replay(self):
         with ShadowJournal(self.path, CTX, GEN) as journal:
             first, packet_a = candidate(GEN, 1)

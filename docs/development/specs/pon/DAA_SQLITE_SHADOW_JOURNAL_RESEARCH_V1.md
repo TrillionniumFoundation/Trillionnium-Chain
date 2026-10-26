@@ -83,3 +83,20 @@ transactions are rolled back on every success/error path. The requested
 negative test checks reentrant writer refusal, unchanged tip and resumed
 ordinary append after the audit. The local research suite is 13/13; this is
 not a replacement for native atomic M07 packet/projection persistence.
+
+## Same-snapshot graph/active-tip audit (2026-10-26)
+
+The read-only `audit()` now pins its complete ordered header scan and the active
+branch pointer to **one SQLite read transaction**. An external research writer
+cannot commit a newly appended or activated branch between those observations.
+The complete read transaction is rolled back on success and failure, and a
+reentrant audit inside an original writer transaction refuses with a typed
+`AUDIT_REENTRANT` error rather than releasing a caller-owned transaction.
+
+The external-owner comparison `audit_against_upstream()` calls the internal
+`_audit_snapshot()` under its existing one read transaction. It refuses
+reentrant entry as `OWNER_AUDIT_REENTRANT`; it never performs a second BEGIN,
+accepts new authority or rewrites local history. Competing real SQLite writers
+are covered by a negative-control interleaving which confirms the original
+writer can commit only after the audit releases its snapshot. No native W1
+proof, public fork-choice rule or production consensus is affected.
