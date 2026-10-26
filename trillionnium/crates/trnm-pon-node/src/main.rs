@@ -2082,8 +2082,16 @@ fn run() -> Result<Value> {
             // arbitrary remote W1 proofs into this existing Node. A WAN sync
             // must join the SAME fixed kernel parent as the public receiver.
             // Loopback-only developer sync retains its original behavior.
-            let host_kernel =
-                trnm_pon_node::host_kernel_parent::require_for_listener(address)?;
+            let host_kernel = if public_profile(&args) {
+                // Public History may be proxied through 127.0.0.1, so
+                // loopback never exempts explicitly untrusted public sync
+                // from the original administrator-controlled host budget.
+                Some(trnm_pon_node::host_kernel_parent::require_for_untrusted_public_sync(
+                    address,
+                )?)
+            } else {
+                trnm_pon_node::host_kernel_parent::require_for_listener(address)?
+            };
             if let Some(kernel) = &host_kernel {
                 kernel.verify()?;
             }
@@ -2124,7 +2132,7 @@ fn run() -> Result<Value> {
                     }
                     let page: ingress::Page = serde_json::from_value(reply.value)?;
                     complete = page.complete;
-                    cursor = ingress::receive_page_from(&mut node, address, page, tip, cursor, ingress::now()?)?;
+                    cursor = ingress::receive_page_from_public_sync(&mut node, address, page, tip, cursor, ingress::now()?)?;
                     if let Some(kernel) = &host_kernel {
                         kernel.verify()?;
                     }
