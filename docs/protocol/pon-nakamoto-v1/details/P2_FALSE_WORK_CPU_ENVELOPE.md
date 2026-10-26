@@ -91,8 +91,18 @@ Run on one actual measured, source-pinned input:
 
     python3 scripts/pon_w1_flood_cost_envelope.py \
       --input /unique/actual/collected-w1.json \
+      --expected-head <externally-frozen-40-hex-commit> \
+      --expected-tree <externally-frozen-40-hex-tree> \
       --oracle-check \
       --out /unique/new/envelope.json
+
+The caller must supply the exact source SHA-1 commit/tree values from an
+**external frozen authority**. The tool rejects a mismatch with the report,
+rather than trusting its self-proclaimed SHA. This guards accidental cross-
+source comparisons but does not verify Git commit signatures, binary identity,
+actual execution or that a dishonest caller did not invent both inputs.
+The W1 mathematical profile must be the exact installed
+'pon-matmul-transcript-64-v1'; other profile names are rejected.
 
 Output uses exclusive create: prior negative raw evidence is not overwritten.
 Tests (synthetic counterexamples only) are:
