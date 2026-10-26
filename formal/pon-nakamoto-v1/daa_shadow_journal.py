@@ -335,3 +335,4 @@ class ShadowJournal:
                 raise JournalError('OWNER_PROJECTION_MISMATCH')
         # No authority is granted: a callback that lies can still pass.
         return scanned
+
