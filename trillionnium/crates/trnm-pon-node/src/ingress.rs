@@ -2170,7 +2170,11 @@ fn admit_history_packet_with_cpu(
     let progress = operation.checkpoint_handle();
     let native = (|| -> Result<Hash> {
         progress.checkpoint()?;
-        if let Some(existing) = node.check_admission_context(packet, clock)? {
+        if let Some(existing) = node.check_admission_context_with_progress(
+            packet,
+            clock,
+            &mut || progress.checkpoint(),
+        )? {
             return Ok(existing);
         }
         let permit = node.begin_owner_work(packet)?;
