@@ -99,3 +99,67 @@ can itself be exhausted by unpaid senders without an earlier front-door limit.
 W2-C admission research must NOT be advertised as a decentralized consensus
 safety theorem. Until these gates close, continue to deny production PoN
 activation.
+
+
+## W2-C stateless issuance and paid-only replay ownership (2026-10-26)
+
+The earlier `ReceiverAdmission.offer` reserves a finite server-side row
+**before** a client pays any Hashcash cost. An unsigned request flood could
+fill all pending issuance slots without earning even an admission ticket.
+The new **separate** research-only candidate
+`formal/pon-nakamoto-v1/w2c_stateless_receiver.py` does not allocate any
+issue record. Every offer returns a short-lived HMAC-authenticated grant
+bound to receiver, unique process epoch, original proposal bytes **and
+authenticated caller identity**, and a server-generated token. Upstream
+authentication of the caller is an explicit assumption; caller-provided keys
+alone are not identities.
+
+Only a ticket that passes its declared 8..24-bit target consumes a row
+in the bounded original receiver's local `spent` map, under one mutex,
+before it could request full W1 verification. Failed W1 never refunds that
+row. Spent-capacity exhaustion returns a *local* `PAID_CAPACITY_BUSY`
+without entering W1 and is not consensus-invalid work. Expiration frees
+old rows. No valid ticket can construct VerifiedWork, Chainwork or Model
+authority. This is NOT wired into V3, and cannot replace the existing
+signed original Cookie without its own versioned network/profile review.
+
+Run exact existing-Python-oracle controls:
+
+    python3 formal/pon-nakamoto-v1/test_w2c_stateless_receiver.py -v
+
+The ten tests cover 4,096 independent UNPAID grants with zero stored
+spent entries, thirty-two simultaneous identical paid submissions
+(exactly one READY and thirty-one REPLAY), full paid-slot refusal and
+expiry recovery, caller and proposal binding, cross-receiver and new
+epoch failure, HMAC/nonce/field tampering, clock regression, and actual
+W1 fake transcript rejected after paid resource admission.
+
+In the 2026-10-26 scratch environment, the exact committed Python
+source blobs `8a800f526bbcfddb3308a1966fc4c406ee29c5d0` and
+`55c0e8a3dee0d25999f9ea259545e1d6b8c332d3` were independently
+copied, checked against Git object blob identity and executed with the
+original 2,944-byte Python W1 oracle blob
+`9cbfccd2d50af48fc43522b967ffdfb1f45ec098`.
+Result: **10/10 tests PASS**, approximately 0.12 seconds of local
+Python wall time. The stateless candidate's `Grant` and `ticket`
+dependencies used the corresponding original W2-C semantics (not a
+production V3 transport replay). This is local testing only, not physical
+operator evidence, Rust native verification, Hashcash economic hardness,
+A03, P5 soundness or P6 third-party review.
+
+**Deliberately retained red-team failure**: restarting with a cloned
+receiver key AND the same Epoch silently recreates an empty spent map,
+and an old ticket can once again return READY. The test explicitly
+demonstrates this double-admission; **there is no safe-restart claim**.
+An independently fresh unshared epoch, or a durable shared spent owner
+with enforced uniqueness across all replicas, is a mandatory deployment
+property. Even secure epoch rotation does not prove crash debt settlement,
+CPU cost equivalence or fair service.
+
+**Residual anonymous DoS**: Offer is now O(1) memory, but many unpaid
+offers still cost RNG, HMAC, serialization and network bandwidth. Existing
+V3 global connection, issuance and CPU resource owners remain required;
+this experiment does not replace them. An attacker with a faster SHA-256
+device can still earn a cheap locally accepted Hashcash ticket and force
+costly full W1 replay. Thus **P2–P6 remain OPEN**, and production
+activation stays disabled.
