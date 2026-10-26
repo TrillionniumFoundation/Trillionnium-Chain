@@ -1921,6 +1921,50 @@ settlement or production kappa. Pure matrix remains primary, hybrid/ZK remain
 unadopted, and the original Hepta selection, quality and adoption owners retain
 their independent obligations.
 
+
+#### Frozen task-product observations and bounded closures
+
+The completed [task-product stage](../../evidence/pon-work-product-service-v1/RESULTS.md)
+measured source `b6f2322dacc4a23ec43e3207be008614e07c60b7`, tree
+`895b472f7a2b8c532081a0dea4c021e1b30cb9a1`. Both registered seeds completed
+without native reruns. All 56 original 49,188-byte proofs passed 112 measured
+verification calls and full scalar replay, preserving 57,344 measured transcript
+tile callbacks. There were 18 fact misses and 38 hits, including the separate
+one-slot eviction sequence. No Node task eligibility, admission, canonical
+growth or reward was claimed.
+
+For the six main material families, the two raw/facts verifier wall ratios on
+18 hits per seed were 1.304746 and1.343421. Across all 24 main cases per seed,
+including each main owner's creation/destruction, the ratios were 1.239457 and
+1.242733. Including eviction, the all 28-case/lifecycle ratios were 1.211463 and
+1.262542. Five individual misses were slower and remain fully reported. These
+finite nonexclusive x86 observations are not per-arm CPU, miner-cost or Node
+throughput bounds. The current implementation removes 2/7 of the counted matrix
+multiplications on a hit while retaining all fresh transcript work; this is not
+a physical minimum-cost theorem. Default verification and admission are unchanged.
+
+Frozen validation passed 188 Rust tests, with the two original ignored cost
+observations retained, plus 255 Python checks and whole-workspace strict release
+Clippy. The unchanged full-copy source-mutant gate passed after two retained
+storage-capacity failures. The first complete reader refused old generated
+bytecode at its strict source-set boundary. A separate local checkout of all 434
+required frozen scripts/formal/config files then passed the unchanged reader,
+with no exclusions or measurement reruns. Source-set digest:
+`90745571e5862c4bf34bdc5f7cb6fb5fe0d935c1c43e42ae76379571c6773367`.
+
+The [updated ledger](../../evidence/pon-work-product-service-v1/blockers.json)
+closes C38 for the three concrete instantiation-route applicability judgments,
+C39 for the explicitly conditional service/honest-frontier/private-fixed-deadline
+interface, C40 for the opt-in exact-product owner and C41 for this complete
+source-bound observation/replay. The fixed-time private-fork event is **at** a
+predeclared deadline, not arbitrary crossing before it. The generic advice
+theorem remains valid; direct use with the current coarse seeded capacity and
+full-checker upper cap gives a vacuous bound. Actual event/resource/identity and
+world losses remain unknown. O01–O04/O06 remain OPEN and O05/O07 remain conditional
+and unadopted. Hepta source remains `de133b601e133917cbe1ae03efb3a2ffc06dcd4a`
+with no new model execution or adoption evidence in this stage. Original closure
+standards, pure matrix priority and the no-hosted-CI constraint are preserved.
+
 ## 1. Product mission: shared intelligence from real work
 
 Every Hepta node can learn compatible small-model parameters from authorized real tasks.

@@ -1,0 +1,245 @@
+{
+  "canonical_growth": 0,
+  "independent_samples_claimed": false,
+  "jobs": [
+    {
+      "accounted_operation_wall_ns": 95492339,
+      "arm_order": [
+        "raw",
+        "facts"
+      ],
+      "cache_lifecycle_wall_ns": 153579,
+      "cache_owner_count": 7,
+      "cache_retained_software_bytes": [
+        49212,
+        98368
+      ],
+      "gnu_time_reported": {
+        "bytes": 20,
+        "elapsed_seconds_decimal": "0.12",
+        "file": "task-product-s8101.usage",
+        "maximum_resident_set_kib": 2780,
+        "resolution": "GNU time printed precision; do not replace native nanosecond clocks with these rounded values",
+        "scope": "whole native verifier study including proof generation, reference checks, all arms, controls, output and teardown; not per-arm CPU",
+        "sha256": "9c7466f109514b55fb6a3d43c4931714f3daf9d6b5ed28c5a04176fb9fe0043a",
+        "system_seconds_decimal": "0.02",
+        "user_seconds_decimal": "0.09"
+      },
+      "material_wall_ns": 2954888,
+      "observed_wall_before_final_output_ns": 119755524,
+      "prove_wall_ns": 22601440,
+      "raw_over_facts_plus_lifecycle": 1.2114627220126561,
+      "reference_wall_ns": 26363216,
+      "regressions": [
+        {
+          "facts_wall_ns": 802352,
+          "family": "zero",
+          "id": "main-zero-0",
+          "raw_over_facts_wall_ratio": 0.7875446188206673,
+          "raw_wall_ns": 631888,
+          "warm": false
+        },
+        {
+          "facts_wall_ns": 859918,
+          "family": "sparse",
+          "id": "main-sparse-0",
+          "raw_over_facts_wall_ratio": 0.8891603618019392,
+          "raw_wall_ns": 764605,
+          "warm": false
+        }
+      ],
+      "seed": 8101,
+      "subsets": {
+        "all": {
+          "cases": 28,
+          "facts_wall_ns": 19549577,
+          "raw_over_facts_wall_ratio": 1.2209798196656634,
+          "raw_wall_ns": 23869639
+        },
+        "cold": {
+          "cases": 9,
+          "facts_wall_ns": 7631406,
+          "raw_over_facts_wall_ratio": 1.0948891986614262,
+          "raw_wall_ns": 8355544
+        },
+        "eviction": {
+          "cases": 4,
+          "facts_wall_ns": 3255075,
+          "raw_over_facts_wall_ratio": 1.0701885517230785,
+          "raw_wall_ns": 3483544
+        },
+        "main": {
+          "cases": 24,
+          "facts_wall_ns": 16294502,
+          "raw_over_facts_wall_ratio": 1.2511026725456231,
+          "raw_wall_ns": 20386095
+        },
+        "main_cold": {
+          "cases": 6,
+          "facts_wall_ns": 5065114,
+          "raw_over_facts_wall_ratio": 1.1321760971223944,
+          "raw_wall_ns": 5734601
+        },
+        "main_warm": {
+          "cases": 18,
+          "facts_wall_ns": 11229388,
+          "raw_over_facts_wall_ratio": 1.3047455480209607,
+          "raw_wall_ns": 14651494
+        },
+        "warm": {
+          "cases": 19,
+          "facts_wall_ns": 11918171,
+          "raw_over_facts_wall_ratio": 1.3017177719635,
+          "raw_wall_ns": 15514095
+        }
+      },
+      "unallocated_native_wall_ns": 24263185,
+      "whole_waited_cpu_ns": 119215000,
+      "whole_waited_wall_ns": 133803525
+    },
+    {
+      "accounted_operation_wall_ns": 67958908,
+      "arm_order": [
+        "facts",
+        "raw"
+      ],
+      "cache_lifecycle_wall_ns": 4717,
+      "cache_owner_count": 7,
+      "cache_retained_software_bytes": [
+        49212,
+        98368
+      ],
+      "gnu_time_reported": {
+        "bytes": 20,
+        "elapsed_seconds_decimal": "0.08",
+        "file": "task-product-s8102.usage",
+        "maximum_resident_set_kib": 2864,
+        "resolution": "GNU time printed precision; do not replace native nanosecond clocks with these rounded values",
+        "scope": "whole native verifier study including proof generation, reference checks, all arms, controls, output and teardown; not per-arm CPU",
+        "sha256": "fee573b809cfbd3339d1ba2ebf1fd0e8cff3b368f948c6884dd792eda8667333",
+        "system_seconds_decimal": "0.00",
+        "user_seconds_decimal": "0.07"
+      },
+      "material_wall_ns": 2872154,
+      "observed_wall_before_final_output_ns": 79320746,
+      "prove_wall_ns": 15979845,
+      "raw_over_facts_plus_lifecycle": 1.2625420351400571,
+      "reference_wall_ns": 17484040,
+      "regressions": [
+        {
+          "facts_wall_ns": 888475,
+          "family": "zero",
+          "id": "main-zero-0",
+          "raw_over_facts_wall_ratio": 0.5981248768958046,
+          "raw_wall_ns": 531419,
+          "warm": false
+        },
+        {
+          "facts_wall_ns": 562295,
+          "family": "zero",
+          "id": "eviction-0",
+          "raw_over_facts_wall_ratio": 0.9652869045607733,
+          "raw_wall_ns": 542776,
+          "warm": false
+        },
+        {
+          "facts_wall_ns": 822351,
+          "family": "identity",
+          "id": "eviction-1",
+          "raw_over_facts_wall_ratio": 0.7856985642383848,
+          "raw_wall_ns": 646120,
+          "warm": false
+        }
+      ],
+      "seed": 8102,
+      "subsets": {
+        "all": {
+          "cases": 28,
+          "facts_wall_ns": 13971982,
+          "raw_over_facts_wall_ratio": 1.2629682746513702,
+          "raw_wall_ns": 17646170
+        },
+        "cold": {
+          "cases": 9,
+          "facts_wall_ns": 5604038,
+          "raw_over_facts_wall_ratio": 1.0334603369927184,
+          "raw_wall_ns": 5791551
+        },
+        "eviction": {
+          "cases": 4,
+          "facts_wall_ns": 2358893,
+          "raw_over_facts_wall_ratio": 1.3603016330117559,
+          "raw_wall_ns": 3208806
+        },
+        "main": {
+          "cases": 24,
+          "facts_wall_ns": 11613089,
+          "raw_over_facts_wall_ratio": 1.2431975678477967,
+          "raw_wall_ns": 14437364
+        },
+        "main_cold": {
+          "cases": 6,
+          "facts_wall_ns": 3671368,
+          "raw_over_facts_wall_ratio": 1.026398334353843,
+          "raw_wall_ns": 3768286
+        },
+        "main_warm": {
+          "cases": 18,
+          "facts_wall_ns": 7941721,
+          "raw_over_facts_wall_ratio": 1.3434214070224828,
+          "raw_wall_ns": 10669078
+        },
+        "warm": {
+          "cases": 19,
+          "facts_wall_ns": 8367944,
+          "raw_over_facts_wall_ratio": 1.4166704509494805,
+          "raw_wall_ns": 11854619
+        }
+      },
+      "unallocated_native_wall_ns": 11361838,
+      "whole_waited_cpu_ns": 80684000,
+      "whole_waited_wall_ns": 88868397
+    }
+  ],
+  "mining_tickets_or_rewards_claimed": false,
+  "native_measurements_rerun": false,
+  "node_admissions": 0,
+  "observed_ratios_are_wall_not_cpu": true,
+  "production_activation": false,
+  "readback_sha256": "cce5a5275827625149a660f9bd9bd440e2ef44b22416e26052f24dc6f1a2dc91",
+  "reader_source": {
+    "all_current_bytes_match_git_blobs": true,
+    "bytes": 7304507,
+    "files": 434,
+    "hardware_or_interpreter_attestation": false,
+    "scopes": [
+      "scripts",
+      "formal",
+      "config"
+    ],
+    "sha256": "90745571e5862c4bf34bdc5f7cb6fb5fe0d935c1c43e42ae76379571c6773367",
+    "tested_commit": "b6f2322dacc4a23ec43e3207be008614e07c60b7"
+  },
+  "schema": "w1-task-product-report-analysis-v1",
+  "source": {
+    "branch": "feature/chain-w1-cost-research-20261025",
+    "head": "b6f2322dacc4a23ec43e3207be008614e07c60b7",
+    "status": "",
+    "tree": "895b472f7a2b8c532081a0dea4c021e1b30cb9a1"
+  },
+  "totals": {
+    "accepted_verifier_calls": 112,
+    "cold_facts": 18,
+    "correction_matrix_row_observations": 14800,
+    "distinct_challenges": 56,
+    "distinct_task_material_identities": 7,
+    "noise_callback_observations": 28672,
+    "pre_product_matrix_row_observations": 14336,
+    "proof_records": 56,
+    "regression_cases": 5,
+    "transcript_tile_observations": 57344,
+    "warm_facts": 38,
+    "warm_regression_cases": 0,
+    "whole_waited_cpu_ns": 199899000
+  }
+}

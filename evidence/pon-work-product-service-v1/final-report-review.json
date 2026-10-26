@@ -1,0 +1,16 @@
+{
+  "corrected_sha256": "edbab491f677196976d9ec08fd9a24223e2f393be43e04fc7e9c7bb94f84a660",
+  "draft_sha256": "2b18cde64b51a8bb9d2a2a94edb104b73c8958bba98c00afa27ae9d2a53a9f64",
+  "frozen_implementation_or_theorem_source_changed": false,
+  "instantiation_review": {
+    "change": "3,594 described as declared full-checker upper allowance, not a required lower cost; d,k explicitly predeclared fixed. CDG theorem remains valid but current-interface derived bound vacuous.",
+    "decision": "PASS_WITH_WORDING_TIGHTENING"
+  },
+  "native_jobs_rerun": false,
+  "original_draft_retained": "W1-product-service-report-before-final-review-v1.md",
+  "schema": "w1-product-service-final-report-review-v1",
+  "service_review": {
+    "change": "by the fixed deadline corrected to at the fixed deadline; a fixed-time overtake event does not imply an anytime crossing bound. Explicit1<=C<=M,h>=1 integer,h=0empty event,d0>=0 added.",
+    "decision": "CORRECTED_BEFORE_PUBLICATION"
+  }
+}

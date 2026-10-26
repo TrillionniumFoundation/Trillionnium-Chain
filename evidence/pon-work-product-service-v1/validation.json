@@ -1,0 +1,1099 @@
+{
+  "applicable_final_checks_passed": true,
+  "canonical_retry2": {
+    "complete_success": false,
+    "ended_utc": "2026-10-26T07:33:02.096527+00:00",
+    "head": "b6f2322dacc4a23ec43e3207be008614e07c60b7",
+    "hosted_ci_queried": false,
+    "original_timeout_seconds": 1200,
+    "prior_failure_preserved": "../product-service-validation-b6f2322-v1/validation.json",
+    "raw_source_after": {
+      "base": null,
+      "candidate": "b6f2322dacc4a23ec43e3207be008614e07c60b7",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "b6f2322dacc4a23ec43e3207be008614e07c60b7",
+      "tested_tree": "895b472f7a2b8c532081a0dea4c021e1b30cb9a1",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 700344288,
+      "tracked_entries": 5025,
+      "tracked_worktree_verified": true
+    },
+    "raw_source_before": {
+      "base": null,
+      "candidate": "b6f2322dacc4a23ec43e3207be008614e07c60b7",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "b6f2322dacc4a23ec43e3207be008614e07c60b7",
+      "tested_tree": "895b472f7a2b8c532081a0dea4c021e1b30cb9a1",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 700344288,
+      "tracked_entries": 5025,
+      "tracked_worktree_verified": true
+    },
+    "reason": "original canonical test failed ENOSPC while copying complete test workspace; no source/test/threshold changes",
+    "schema": "w1-canonical-validation-after-storage-reclaim-v1",
+    "source_after": {
+      "branch": "feature/chain-w1-cost-research-20261025",
+      "head": "b6f2322dacc4a23ec43e3207be008614e07c60b7",
+      "status": "",
+      "tree": "895b472f7a2b8c532081a0dea4c021e1b30cb9a1"
+    },
+    "source_before": {
+      "branch": "feature/chain-w1-cost-research-20261025",
+      "head": "b6f2322dacc4a23ec43e3207be008614e07c60b7",
+      "status": "",
+      "tree": "895b472f7a2b8c532081a0dea4c021e1b30cb9a1"
+    },
+    "started_utc": "2026-10-26T07:32:18.715248+00:00",
+    "step": {
+      "command": [
+        "bash",
+        "scripts/ci/check_canonical_development_plan.sh"
+      ],
+      "complete_success": false,
+      "cwd": "/workspace/scratch/3863a747524b/Chain-cost-research",
+      "error": null,
+      "name": "canonical-plan",
+      "output_limit_bytes": 67108864,
+      "returncode": 1,
+      "stderr": "canonical-plan.stderr",
+      "stderr_bytes": 33350,
+      "stderr_sha256": "011ba973e76c5d704bdb73622f2ec83d37dfa0db4c0fd119d6ff0176ca8d1f10",
+      "stderr_truncated": false,
+      "stdout": "canonical-plan.stdout",
+      "stdout_bytes": 306,
+      "stdout_sha256": "bb080d599347dccd30827134aef936956957398451a7a721005806fa64f4cb9f",
+      "stdout_truncated": false,
+      "timeout_seconds": 1200,
+      "wall_ns": 41480888849,
+      "whole_waited_child_resources": {
+        "block_counts_are_network_bytes": false,
+        "cpu_scope": "whole waited child including all observers, logging and teardown; not producer-only",
+        "input_blocks": 9504,
+        "involuntary_context_switches": 371,
+        "major_page_faults": 0,
+        "minor_page_faults": 211634,
+        "output_blocks": 834816,
+        "rss_scope": "Linux cumulative maximum over waited children, including setup; not this step's peak or a sum",
+        "runner_lifetime_max_child_rss_kib": 71696,
+        "system_cpu_ns": 1061872000,
+        "user_cpu_ns": 40231534000,
+        "voluntary_context_switches": 217
+      }
+    },
+    "temporary_directory": "/workspace/scratch/3863a747524b/w1-product-service-validation-tmp-v2",
+    "tree": "895b472f7a2b8c532081a0dea4c021e1b30cb9a1"
+  },
+  "canonical_retry3": {
+    "complete_success": true,
+    "ended_utc": "2026-10-26T07:42:15.621590+00:00",
+    "filesystem_free_bytes_before": 935866368,
+    "head": "b6f2322dacc4a23ec43e3207be008614e07c60b7",
+    "hosted_ci_queried": false,
+    "original_timeout_seconds": 1200,
+    "prior_failures_preserved": [
+      "../product-service-validation-b6f2322-v1/validation.json",
+      "../product-service-validation-b6f2322-v2/validation.json"
+    ],
+    "raw_source_after": {
+      "base": null,
+      "candidate": "b6f2322dacc4a23ec43e3207be008614e07c60b7",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "b6f2322dacc4a23ec43e3207be008614e07c60b7",
+      "tested_tree": "895b472f7a2b8c532081a0dea4c021e1b30cb9a1",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 700344288,
+      "tracked_entries": 5025,
+      "tracked_worktree_verified": true
+    },
+    "raw_source_before": {
+      "base": null,
+      "candidate": "b6f2322dacc4a23ec43e3207be008614e07c60b7",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "b6f2322dacc4a23ec43e3207be008614e07c60b7",
+      "tested_tree": "895b472f7a2b8c532081a0dea4c021e1b30cb9a1",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 700344288,
+      "tracked_entries": 5025,
+      "tracked_worktree_verified": true
+    },
+    "reason": "Retain original ENOSPC failures; reclaim only exact archived redundant bytes and preserved reproducible task build cache. Same original full-copy test, no source/test/threshold changes.",
+    "schema": "w1-canonical-validation-after-storage-reclaim-v1",
+    "source_after": {
+      "branch": "feature/chain-w1-cost-research-20261025",
+      "head": "b6f2322dacc4a23ec43e3207be008614e07c60b7",
+      "status": "",
+      "tree": "895b472f7a2b8c532081a0dea4c021e1b30cb9a1"
+    },
+    "source_before": {
+      "branch": "feature/chain-w1-cost-research-20261025",
+      "head": "b6f2322dacc4a23ec43e3207be008614e07c60b7",
+      "status": "",
+      "tree": "895b472f7a2b8c532081a0dea4c021e1b30cb9a1"
+    },
+    "started_utc": "2026-10-26T07:39:36.725782+00:00",
+    "step": {
+      "command": [
+        "bash",
+        "scripts/ci/check_canonical_development_plan.sh"
+      ],
+      "complete_success": true,
+      "cwd": "/workspace/scratch/3863a747524b/Chain-cost-research",
+      "error": null,
+      "name": "canonical-plan",
+      "output_limit_bytes": 67108864,
+      "returncode": 0,
+      "stderr": "canonical-plan.stderr",
+      "stderr_bytes": 8118,
+      "stderr_sha256": "d38750d123b6c1044c008684d8d9ee86533162d58a51169e6ce27b66355c10ae",
+      "stderr_truncated": false,
+      "stdout": "canonical-plan.stdout",
+      "stdout_bytes": 306,
+      "stdout_sha256": "bb080d599347dccd30827134aef936956957398451a7a721005806fa64f4cb9f",
+      "stdout_truncated": false,
+      "timeout_seconds": 1200,
+      "wall_ns": 156170532567,
+      "whole_waited_child_resources": {
+        "block_counts_are_network_bytes": false,
+        "cpu_scope": "whole waited child including all observers, logging and teardown; not producer-only",
+        "input_blocks": 959176,
+        "involuntary_context_switches": 1641,
+        "major_page_faults": 0,
+        "minor_page_faults": 2380824,
+        "output_blocks": 1422736,
+        "rss_scope": "Linux cumulative maximum over waited children, including setup; not this step's peak or a sum",
+        "runner_lifetime_max_child_rss_kib": 76360,
+        "system_cpu_ns": 8183267000,
+        "user_cpu_ns": 147096058000,
+        "voluntary_context_switches": 2494
+      }
+    },
+    "temporary_directory": "/workspace/scratch/3863a747524b/w1-product-service-validation-tmp-v3",
+    "tree": "895b472f7a2b8c532081a0dea4c021e1b30cb9a1"
+  },
+  "first_attempt_result": {
+    "complete_success": false,
+    "ended_utc": "2026-10-26T07:30:03.208675+00:00",
+    "environment": {
+      "CARGO_BUILD_JOBS": "1",
+      "CARGO_HOME": "/tmp/w1-cost-game-cargo",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_TARGET_DIR": "/workspace/scratch/3863a747524b/w1-budget-campaign-target-v1",
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "failure": "STEP_FAILED:canonical-plan",
+    "full_workspace_runtime_tests_claimed": false,
+    "head": "b6f2322dacc4a23ec43e3207be008614e07c60b7",
+    "hosted_ci_queried": false,
+    "raw_source_after": {
+      "base": null,
+      "candidate": "b6f2322dacc4a23ec43e3207be008614e07c60b7",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "b6f2322dacc4a23ec43e3207be008614e07c60b7",
+      "tested_tree": "895b472f7a2b8c532081a0dea4c021e1b30cb9a1",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 700344288,
+      "tracked_entries": 5025,
+      "tracked_worktree_verified": true
+    },
+    "raw_source_before": {
+      "base": null,
+      "candidate": "b6f2322dacc4a23ec43e3207be008614e07c60b7",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "b6f2322dacc4a23ec43e3207be008614e07c60b7",
+      "tested_tree": "895b472f7a2b8c532081a0dea4c021e1b30cb9a1",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 700344288,
+      "tracked_entries": 5025,
+      "tracked_worktree_verified": true
+    },
+    "registered_steps": [
+      {
+        "command": [
+          "bash",
+          "scripts/project-preflight.sh"
+        ],
+        "name": "preflight",
+        "timeout_seconds": 60
+      },
+      {
+        "command": [
+          "/tmp/hepta-native-rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+          "fmt",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--all",
+          "--check"
+        ],
+        "name": "fmt",
+        "timeout_seconds": 120
+      },
+      {
+        "command": [
+          "/tmp/hepta-native-rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+          "metadata",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--offline",
+          "--locked",
+          "--format-version",
+          "1"
+        ],
+        "name": "metadata",
+        "timeout_seconds": 120
+      },
+      {
+        "command": [
+          "python3",
+          "-B",
+          "scripts/refresh_distributed_source_inventory.py",
+          "--check"
+        ],
+        "name": "inventory",
+        "timeout_seconds": 60
+      },
+      {
+        "command": [
+          "/tmp/hepta-native-rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+          "test",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--offline",
+          "--locked",
+          "--release",
+          "--jobs",
+          "1",
+          "-p",
+          "trnm-crypto-primitives",
+          "-p",
+          "trnm-protocol",
+          "--all-targets",
+          "--all-features"
+        ],
+        "name": "crypto-protocol",
+        "timeout_seconds": 900
+      },
+      {
+        "command": [
+          "/tmp/hepta-native-rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+          "clippy",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--offline",
+          "--locked",
+          "--release",
+          "--jobs",
+          "1",
+          "--workspace",
+          "--all-targets",
+          "--all-features",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "name": "strict-clippy",
+        "timeout_seconds": 1200
+      },
+      {
+        "command": [
+          "python3",
+          "-B",
+          "formal/pon-nakamoto-v1/experiments/test_w1_instantiation_barriers_v4.py"
+        ],
+        "name": "test_w1_instantiation_barriers_v4",
+        "timeout_seconds": 900
+      },
+      {
+        "command": [
+          "python3",
+          "-B",
+          "formal/pon-nakamoto-v1/experiments/test_w1_service_growth_v4.py"
+        ],
+        "name": "test_w1_service_growth_v4",
+        "timeout_seconds": 900
+      },
+      {
+        "command": [
+          "python3",
+          "-B",
+          "formal/pon-nakamoto-v1/experiments/test_w1_ticket_composition_v3.py"
+        ],
+        "name": "test_w1_ticket_composition_v3",
+        "timeout_seconds": 900
+      },
+      {
+        "command": [
+          "python3",
+          "-B",
+          "formal/pon-nakamoto-v1/experiments/test_w1_multi_instance_cost_v2.py"
+        ],
+        "name": "test_w1_multi_instance_cost_v2",
+        "timeout_seconds": 900
+      },
+      {
+        "command": [
+          "python3",
+          "-B",
+          "formal/pon-nakamoto-v1/experiments/test_w1_sha256_model_boundary.py"
+        ],
+        "name": "test_w1_sha256_model_boundary",
+        "timeout_seconds": 900
+      },
+      {
+        "command": [
+          "python3",
+          "-B",
+          "formal/pon-nakamoto-v1/experiments/test_w1_native_daa_resource_v2.py"
+        ],
+        "name": "test_w1_native_daa_resource_v2",
+        "timeout_seconds": 900
+      },
+      {
+        "command": [
+          "python3",
+          "-B",
+          "scripts/ci/test_w1_task_product_research.py"
+        ],
+        "name": "test_w1_task_product_research",
+        "timeout_seconds": 900
+      },
+      {
+        "command": [
+          "python3",
+          "-B",
+          "scripts/ci/test_w1_task_product_binding.py"
+        ],
+        "name": "test_w1_task_product_binding",
+        "timeout_seconds": 900
+      },
+      {
+        "command": [
+          "python3",
+          "-B",
+          "scripts/ci/test_ci_source_integrity.py"
+        ],
+        "name": "test_ci_source_integrity",
+        "timeout_seconds": 900
+      },
+      {
+        "command": [
+          "bash",
+          "scripts/ci/check_canonical_development_plan.sh"
+        ],
+        "name": "canonical-plan",
+        "timeout_seconds": 1200
+      }
+    ],
+    "schema": "w1-product-service-frozen-validation-v1",
+    "source_after": {
+      "branch": "feature/chain-w1-cost-research-20261025",
+      "head": "b6f2322dacc4a23ec43e3207be008614e07c60b7",
+      "status": "",
+      "tree": "895b472f7a2b8c532081a0dea4c021e1b30cb9a1"
+    },
+    "source_before": {
+      "branch": "feature/chain-w1-cost-research-20261025",
+      "head": "b6f2322dacc4a23ec43e3207be008614e07c60b7",
+      "status": "",
+      "tree": "895b472f7a2b8c532081a0dea4c021e1b30cb9a1"
+    },
+    "started_utc": "2026-10-26T07:25:17.301924+00:00",
+    "steps": [
+      {
+        "command": [
+          "bash",
+          "scripts/project-preflight.sh"
+        ],
+        "complete_success": true,
+        "cwd": "/workspace/scratch/3863a747524b/Chain-cost-research",
+        "error": null,
+        "name": "preflight",
+        "output_limit_bytes": 67108864,
+        "returncode": 0,
+        "stderr": "preflight.stderr",
+        "stderr_bytes": 0,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr_truncated": false,
+        "stdout": "preflight.stdout",
+        "stdout_bytes": 170,
+        "stdout_sha256": "925ce0a3ef88fc536ffb549e3273a3ed5b528d969c4e1e8c30e811772af18ca8",
+        "stdout_truncated": false,
+        "timeout_seconds": 60,
+        "wall_ns": 90074406,
+        "whole_waited_child_resources": {
+          "block_counts_are_network_bytes": false,
+          "cpu_scope": "whole waited child including all observers, logging and teardown; not producer-only",
+          "input_blocks": 488,
+          "involuntary_context_switches": 8,
+          "major_page_faults": 3,
+          "minor_page_faults": 4203,
+          "output_blocks": 0,
+          "rss_scope": "Linux cumulative maximum over waited children, including setup; not this step's peak or a sum",
+          "runner_lifetime_max_child_rss_kib": 23176,
+          "system_cpu_ns": 55262000,
+          "user_cpu_ns": 29602000,
+          "voluntary_context_switches": 23
+        }
+      },
+      {
+        "command": [
+          "/tmp/hepta-native-rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+          "fmt",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--all",
+          "--check"
+        ],
+        "complete_success": true,
+        "cwd": "/workspace/scratch/3863a747524b/Chain-cost-research",
+        "error": null,
+        "name": "fmt",
+        "output_limit_bytes": 67108864,
+        "returncode": 0,
+        "stderr": "fmt.stderr",
+        "stderr_bytes": 0,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr_truncated": false,
+        "stdout": "fmt.stdout",
+        "stdout_bytes": 0,
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_truncated": false,
+        "timeout_seconds": 120,
+        "wall_ns": 11728704826,
+        "whole_waited_child_resources": {
+          "block_counts_are_network_bytes": false,
+          "cpu_scope": "whole waited child including all observers, logging and teardown; not producer-only",
+          "input_blocks": 404440,
+          "involuntary_context_switches": 260,
+          "major_page_faults": 67,
+          "minor_page_faults": 25070,
+          "output_blocks": 0,
+          "rss_scope": "Linux cumulative maximum over waited children, including setup; not this step's peak or a sum",
+          "runner_lifetime_max_child_rss_kib": 121304,
+          "system_cpu_ns": 176192000,
+          "user_cpu_ns": 11491167000,
+          "voluntary_context_switches": 85
+        }
+      },
+      {
+        "command": [
+          "/tmp/hepta-native-rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+          "metadata",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--offline",
+          "--locked",
+          "--format-version",
+          "1"
+        ],
+        "complete_success": true,
+        "cwd": "/workspace/scratch/3863a747524b/Chain-cost-research",
+        "error": null,
+        "name": "metadata",
+        "output_limit_bytes": 67108864,
+        "returncode": 0,
+        "stderr": "metadata.stderr",
+        "stderr_bytes": 0,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr_truncated": false,
+        "stdout": "metadata.stdout",
+        "stdout_bytes": 724839,
+        "stdout_sha256": "ea0248c30b2ea24b39a4fd4e8adaf65c9b488b4174f01a81cddd1f9fd7441ff2",
+        "stdout_truncated": false,
+        "timeout_seconds": 120,
+        "wall_ns": 240969986,
+        "whole_waited_child_resources": {
+          "block_counts_are_network_bytes": false,
+          "cpu_scope": "whole waited child including all observers, logging and teardown; not producer-only",
+          "input_blocks": 97608,
+          "involuntary_context_switches": 1,
+          "major_page_faults": 24,
+          "minor_page_faults": 12209,
+          "output_blocks": 216,
+          "rss_scope": "Linux cumulative maximum over waited children, including setup; not this step's peak or a sum",
+          "runner_lifetime_max_child_rss_kib": 121304,
+          "system_cpu_ns": 62923000,
+          "user_cpu_ns": 83548000,
+          "voluntary_context_switches": 503
+        }
+      },
+      {
+        "command": [
+          "python3",
+          "-B",
+          "scripts/refresh_distributed_source_inventory.py",
+          "--check"
+        ],
+        "complete_success": true,
+        "cwd": "/workspace/scratch/3863a747524b/Chain-cost-research",
+        "error": null,
+        "name": "inventory",
+        "output_limit_bytes": 67108864,
+        "returncode": 0,
+        "stderr": "inventory.stderr",
+        "stderr_bytes": 0,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr_truncated": false,
+        "stdout": "inventory.stdout",
+        "stdout_bytes": 35,
+        "stdout_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+        "stdout_truncated": false,
+        "timeout_seconds": 60,
+        "wall_ns": 79194983,
+        "whole_waited_child_resources": {
+          "block_counts_are_network_bytes": false,
+          "cpu_scope": "whole waited child including all observers, logging and teardown; not producer-only",
+          "input_blocks": 8,
+          "involuntary_context_switches": 15,
+          "major_page_faults": 0,
+          "minor_page_faults": 4461,
+          "output_blocks": 0,
+          "rss_scope": "Linux cumulative maximum over waited children, including setup; not this step's peak or a sum",
+          "runner_lifetime_max_child_rss_kib": 121304,
+          "system_cpu_ns": 25461000,
+          "user_cpu_ns": 61245000,
+          "voluntary_context_switches": 181
+        }
+      },
+      {
+        "command": [
+          "/tmp/hepta-native-rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+          "test",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--offline",
+          "--locked",
+          "--release",
+          "--jobs",
+          "1",
+          "-p",
+          "trnm-crypto-primitives",
+          "-p",
+          "trnm-protocol",
+          "--all-targets",
+          "--all-features"
+        ],
+        "complete_success": true,
+        "cwd": "/workspace/scratch/3863a747524b/Chain-cost-research",
+        "error": null,
+        "name": "crypto-protocol",
+        "output_limit_bytes": 67108864,
+        "returncode": 0,
+        "stderr": "crypto-protocol.stderr",
+        "stderr_bytes": 4471,
+        "stderr_sha256": "be07f4e76b2b1a1f0f70a6e05fea26f6e8c88d184bf71bf043d73942006317da",
+        "stderr_truncated": false,
+        "stdout": "crypto-protocol.stdout",
+        "stdout_bytes": 21490,
+        "stdout_sha256": "a47e84d978b72f2aa6078a226e3c28237b648db9b00532c030fe6c276a0d8fc3",
+        "stdout_truncated": false,
+        "timeout_seconds": 900,
+        "wall_ns": 68553240899,
+        "whole_waited_child_resources": {
+          "block_counts_are_network_bytes": false,
+          "cpu_scope": "whole waited child including all observers, logging and teardown; not producer-only",
+          "input_blocks": 895368,
+          "involuntary_context_switches": 2286,
+          "major_page_faults": 317,
+          "minor_page_faults": 834770,
+          "output_blocks": 98984,
+          "rss_scope": "Linux cumulative maximum over waited children, including setup; not this step's peak or a sum",
+          "runner_lifetime_max_child_rss_kib": 357220,
+          "system_cpu_ns": 3327635000,
+          "user_cpu_ns": 66891366000,
+          "voluntary_context_switches": 14779
+        }
+      },
+      {
+        "command": [
+          "/tmp/hepta-native-rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+          "clippy",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--offline",
+          "--locked",
+          "--release",
+          "--jobs",
+          "1",
+          "--workspace",
+          "--all-targets",
+          "--all-features",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "complete_success": true,
+        "cwd": "/workspace/scratch/3863a747524b/Chain-cost-research",
+        "error": null,
+        "name": "strict-clippy",
+        "output_limit_bytes": 67108864,
+        "returncode": 0,
+        "stderr": "strict-clippy.stderr",
+        "stderr_bytes": 4633,
+        "stderr_sha256": "84a96558120a176ae59a53d71e2b60cce54105835fc77eedd941bd97a8cb3a29",
+        "stderr_truncated": false,
+        "stdout": "strict-clippy.stdout",
+        "stdout_bytes": 0,
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_truncated": false,
+        "timeout_seconds": 1200,
+        "wall_ns": 141686793483,
+        "whole_waited_child_resources": {
+          "block_counts_are_network_bytes": false,
+          "cpu_scope": "whole waited child including all observers, logging and teardown; not producer-only",
+          "input_blocks": 1657768,
+          "involuntary_context_switches": 3782,
+          "major_page_faults": 527,
+          "minor_page_faults": 4902408,
+          "output_blocks": 156520,
+          "rss_scope": "Linux cumulative maximum over waited children, including setup; not this step's peak or a sum",
+          "runner_lifetime_max_child_rss_kib": 1179624,
+          "system_cpu_ns": 17569144000,
+          "user_cpu_ns": 120789153000,
+          "voluntary_context_switches": 8507
+        }
+      },
+      {
+        "command": [
+          "python3",
+          "-B",
+          "formal/pon-nakamoto-v1/experiments/test_w1_instantiation_barriers_v4.py"
+        ],
+        "complete_success": true,
+        "cwd": "/workspace/scratch/3863a747524b/Chain-cost-research",
+        "error": null,
+        "name": "test_w1_instantiation_barriers_v4",
+        "output_limit_bytes": 67108864,
+        "returncode": 0,
+        "stderr": "test_w1_instantiation_barriers_v4.stderr",
+        "stderr_bytes": 123,
+        "stderr_sha256": "7493e59a43ad3217f24fc5aa48cb5d2eceae5dd0cdd706d28220ab6ba0e2d5dd",
+        "stderr_truncated": false,
+        "stdout": "test_w1_instantiation_barriers_v4.stdout",
+        "stdout_bytes": 0,
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_truncated": false,
+        "timeout_seconds": 900,
+        "wall_ns": 121074936,
+        "whole_waited_child_resources": {
+          "block_counts_are_network_bytes": false,
+          "cpu_scope": "whole waited child including all observers, logging and teardown; not producer-only",
+          "input_blocks": 2136,
+          "involuntary_context_switches": 9,
+          "major_page_faults": 0,
+          "minor_page_faults": 4828,
+          "output_blocks": 0,
+          "rss_scope": "Linux cumulative maximum over waited children, including setup; not this step's peak or a sum",
+          "runner_lifetime_max_child_rss_kib": 1179624,
+          "system_cpu_ns": 0,
+          "user_cpu_ns": 111820000,
+          "voluntary_context_switches": 49
+        }
+      },
+      {
+        "command": [
+          "python3",
+          "-B",
+          "formal/pon-nakamoto-v1/experiments/test_w1_service_growth_v4.py"
+        ],
+        "complete_success": true,
+        "cwd": "/workspace/scratch/3863a747524b/Chain-cost-research",
+        "error": null,
+        "name": "test_w1_service_growth_v4",
+        "output_limit_bytes": 67108864,
+        "returncode": 0,
+        "stderr": "test_w1_service_growth_v4.stderr",
+        "stderr_bytes": 123,
+        "stderr_sha256": "c6844226cae7815fc378c3a3c1540d258c73513c5de4ad074546f7f775b7cd19",
+        "stderr_truncated": false,
+        "stdout": "test_w1_service_growth_v4.stdout",
+        "stdout_bytes": 0,
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_truncated": false,
+        "timeout_seconds": 900,
+        "wall_ns": 96875015,
+        "whole_waited_child_resources": {
+          "block_counts_are_network_bytes": false,
+          "cpu_scope": "whole waited child including all observers, logging and teardown; not producer-only",
+          "input_blocks": 0,
+          "involuntary_context_switches": 2,
+          "major_page_faults": 0,
+          "minor_page_faults": 3431,
+          "output_blocks": 0,
+          "rss_scope": "Linux cumulative maximum over waited children, including setup; not this step's peak or a sum",
+          "runner_lifetime_max_child_rss_kib": 1179624,
+          "system_cpu_ns": 16223000,
+          "user_cpu_ns": 80011000,
+          "voluntary_context_switches": 1
+        }
+      },
+      {
+        "command": [
+          "python3",
+          "-B",
+          "formal/pon-nakamoto-v1/experiments/test_w1_ticket_composition_v3.py"
+        ],
+        "complete_success": true,
+        "cwd": "/workspace/scratch/3863a747524b/Chain-cost-research",
+        "error": null,
+        "name": "test_w1_ticket_composition_v3",
+        "output_limit_bytes": 67108864,
+        "returncode": 0,
+        "stderr": "test_w1_ticket_composition_v3.stderr",
+        "stderr_bytes": 120,
+        "stderr_sha256": "6fb16e2fdc3e5723fd2ca49514a43593fa206f62264f7d9093b85026353301ac",
+        "stderr_truncated": false,
+        "stdout": "test_w1_ticket_composition_v3.stdout",
+        "stdout_bytes": 0,
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_truncated": false,
+        "timeout_seconds": 900,
+        "wall_ns": 583896444,
+        "whole_waited_child_resources": {
+          "block_counts_are_network_bytes": false,
+          "cpu_scope": "whole waited child including all observers, logging and teardown; not producer-only",
+          "input_blocks": 56,
+          "involuntary_context_switches": 33,
+          "major_page_faults": 0,
+          "minor_page_faults": 6299,
+          "output_blocks": 0,
+          "rss_scope": "Linux cumulative maximum over waited children, including setup; not this step's peak or a sum",
+          "runner_lifetime_max_child_rss_kib": 1179624,
+          "system_cpu_ns": 23916000,
+          "user_cpu_ns": 558582000,
+          "voluntary_context_switches": 3
+        }
+      },
+      {
+        "command": [
+          "python3",
+          "-B",
+          "formal/pon-nakamoto-v1/experiments/test_w1_multi_instance_cost_v2.py"
+        ],
+        "complete_success": true,
+        "cwd": "/workspace/scratch/3863a747524b/Chain-cost-research",
+        "error": null,
+        "name": "test_w1_multi_instance_cost_v2",
+        "output_limit_bytes": 67108864,
+        "returncode": 0,
+        "stderr": "test_w1_multi_instance_cost_v2.stderr",
+        "stderr_bytes": 123,
+        "stderr_sha256": "5669c18c33a4adbc759ae326427e50f9709a290fb3cd1ddacf9dcb5a54762da1",
+        "stderr_truncated": false,
+        "stdout": "test_w1_multi_instance_cost_v2.stdout",
+        "stdout_bytes": 0,
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_truncated": false,
+        "timeout_seconds": 900,
+        "wall_ns": 1293804402,
+        "whole_waited_child_resources": {
+          "block_counts_are_network_bytes": false,
+          "cpu_scope": "whole waited child including all observers, logging and teardown; not producer-only",
+          "input_blocks": 0,
+          "involuntary_context_switches": 32,
+          "major_page_faults": 0,
+          "minor_page_faults": 6558,
+          "output_blocks": 0,
+          "rss_scope": "Linux cumulative maximum over waited children, including setup; not this step's peak or a sum",
+          "runner_lifetime_max_child_rss_kib": 1179624,
+          "system_cpu_ns": 13654000,
+          "user_cpu_ns": 1279181000,
+          "voluntary_context_switches": 1
+        }
+      },
+      {
+        "command": [
+          "python3",
+          "-B",
+          "formal/pon-nakamoto-v1/experiments/test_w1_sha256_model_boundary.py"
+        ],
+        "complete_success": true,
+        "cwd": "/workspace/scratch/3863a747524b/Chain-cost-research",
+        "error": null,
+        "name": "test_w1_sha256_model_boundary",
+        "output_limit_bytes": 67108864,
+        "returncode": 0,
+        "stderr": "test_w1_sha256_model_boundary.stderr",
+        "stderr_bytes": 101,
+        "stderr_sha256": "cafe0befc6204d742636f5a24376ea4683600e3bfa4dbf7d1f6d93fa609e5024",
+        "stderr_truncated": false,
+        "stdout": "test_w1_sha256_model_boundary.stdout",
+        "stdout_bytes": 0,
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_truncated": false,
+        "timeout_seconds": 900,
+        "wall_ns": 78683274,
+        "whole_waited_child_resources": {
+          "block_counts_are_network_bytes": false,
+          "cpu_scope": "whole waited child including all observers, logging and teardown; not producer-only",
+          "input_blocks": 0,
+          "involuntary_context_switches": 10,
+          "major_page_faults": 0,
+          "minor_page_faults": 3317,
+          "output_blocks": 0,
+          "rss_scope": "Linux cumulative maximum over waited children, including setup; not this step's peak or a sum",
+          "runner_lifetime_max_child_rss_kib": 1179624,
+          "system_cpu_ns": 19279000,
+          "user_cpu_ns": 58638000,
+          "voluntary_context_switches": 1
+        }
+      },
+      {
+        "command": [
+          "python3",
+          "-B",
+          "formal/pon-nakamoto-v1/experiments/test_w1_native_daa_resource_v2.py"
+        ],
+        "complete_success": true,
+        "cwd": "/workspace/scratch/3863a747524b/Chain-cost-research",
+        "error": null,
+        "name": "test_w1_native_daa_resource_v2",
+        "output_limit_bytes": 67108864,
+        "returncode": 0,
+        "stderr": "test_w1_native_daa_resource_v2.stderr",
+        "stderr_bytes": 122,
+        "stderr_sha256": "c6eec30cec1dabb80bfbf43fcb6ced47d6fef91ea2900b535c8dd13f70b9db5f",
+        "stderr_truncated": false,
+        "stdout": "test_w1_native_daa_resource_v2.stdout",
+        "stdout_bytes": 0,
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_truncated": false,
+        "timeout_seconds": 900,
+        "wall_ns": 104606876,
+        "whole_waited_child_resources": {
+          "block_counts_are_network_bytes": false,
+          "cpu_scope": "whole waited child including all observers, logging and teardown; not producer-only",
+          "input_blocks": 0,
+          "involuntary_context_switches": 0,
+          "major_page_faults": 0,
+          "minor_page_faults": 3446,
+          "output_blocks": 0,
+          "rss_scope": "Linux cumulative maximum over waited children, including setup; not this step's peak or a sum",
+          "runner_lifetime_max_child_rss_kib": 1179624,
+          "system_cpu_ns": 30204000,
+          "user_cpu_ns": 73484000,
+          "voluntary_context_switches": 1
+        }
+      },
+      {
+        "command": [
+          "python3",
+          "-B",
+          "scripts/ci/test_w1_task_product_research.py"
+        ],
+        "complete_success": true,
+        "cwd": "/workspace/scratch/3863a747524b/Chain-cost-research",
+        "error": null,
+        "name": "test_w1_task_product_research",
+        "output_limit_bytes": 67108864,
+        "returncode": 0,
+        "stderr": "test_w1_task_product_research.stderr",
+        "stderr_bytes": 113,
+        "stderr_sha256": "1196ff0962f42583ce30f85119b376cf500bb200d5f82985d7b3a8fa8cd375a3",
+        "stderr_truncated": false,
+        "stdout": "test_w1_task_product_research.stdout",
+        "stdout_bytes": 0,
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_truncated": false,
+        "timeout_seconds": 900,
+        "wall_ns": 555636117,
+        "whole_waited_child_resources": {
+          "block_counts_are_network_bytes": false,
+          "cpu_scope": "whole waited child including all observers, logging and teardown; not producer-only",
+          "input_blocks": 744,
+          "involuntary_context_switches": 1,
+          "major_page_faults": 0,
+          "minor_page_faults": 6107,
+          "output_blocks": 104,
+          "rss_scope": "Linux cumulative maximum over waited children, including setup; not this step's peak or a sum",
+          "runner_lifetime_max_child_rss_kib": 1179624,
+          "system_cpu_ns": 25916000,
+          "user_cpu_ns": 526803000,
+          "voluntary_context_switches": 11
+        }
+      },
+      {
+        "command": [
+          "python3",
+          "-B",
+          "scripts/ci/test_w1_task_product_binding.py"
+        ],
+        "complete_success": true,
+        "cwd": "/workspace/scratch/3863a747524b/Chain-cost-research",
+        "error": null,
+        "name": "test_w1_task_product_binding",
+        "output_limit_bytes": 67108864,
+        "returncode": 0,
+        "stderr": "test_w1_task_product_binding.stderr",
+        "stderr_bytes": 109,
+        "stderr_sha256": "970ec884a81f24ec72cf115b5112ad801be88171d21fb757eb5ff44c114858ce",
+        "stderr_truncated": false,
+        "stdout": "test_w1_task_product_binding.stdout",
+        "stdout_bytes": 0,
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_truncated": false,
+        "timeout_seconds": 900,
+        "wall_ns": 188435530,
+        "whole_waited_child_resources": {
+          "block_counts_are_network_bytes": false,
+          "cpu_scope": "whole waited child including all observers, logging and teardown; not producer-only",
+          "input_blocks": 40,
+          "involuntary_context_switches": 4,
+          "major_page_faults": 0,
+          "minor_page_faults": 5962,
+          "output_blocks": 3256,
+          "rss_scope": "Linux cumulative maximum over waited children, including setup; not this step's peak or a sum",
+          "runner_lifetime_max_child_rss_kib": 1179624,
+          "system_cpu_ns": 23671000,
+          "user_cpu_ns": 163142000,
+          "voluntary_context_switches": 6
+        }
+      },
+      {
+        "command": [
+          "python3",
+          "-B",
+          "scripts/ci/test_ci_source_integrity.py"
+        ],
+        "complete_success": true,
+        "cwd": "/workspace/scratch/3863a747524b/Chain-cost-research",
+        "error": null,
+        "name": "test_ci_source_integrity",
+        "output_limit_bytes": 67108864,
+        "returncode": 0,
+        "stderr": "test_ci_source_integrity.stderr",
+        "stderr_bytes": 5025,
+        "stderr_sha256": "e5e191c6c3f8b93eac680b095f0cff92f3cbc9b1d52aa26b93a4d61ac589f079",
+        "stderr_truncated": false,
+        "stdout": "test_ci_source_integrity.stdout",
+        "stdout_bytes": 484,
+        "stdout_sha256": "8970ff70a554b32472478ef57b5e72359f34723c8a1e505994747a0afb37f656",
+        "stdout_truncated": false,
+        "timeout_seconds": 900,
+        "wall_ns": 2556366064,
+        "whole_waited_child_resources": {
+          "block_counts_are_network_bytes": false,
+          "cpu_scope": "whole waited child including all observers, logging and teardown; not producer-only",
+          "input_blocks": 264,
+          "involuntary_context_switches": 236,
+          "major_page_faults": 0,
+          "minor_page_faults": 233878,
+          "output_blocks": 13112,
+          "rss_scope": "Linux cumulative maximum over waited children, including setup; not this step's peak or a sum",
+          "runner_lifetime_max_child_rss_kib": 1179624,
+          "system_cpu_ns": 469530000,
+          "user_cpu_ns": 1094375000,
+          "voluntary_context_switches": 2584
+        }
+      },
+      {
+        "command": [
+          "bash",
+          "scripts/ci/check_canonical_development_plan.sh"
+        ],
+        "complete_success": false,
+        "cwd": "/workspace/scratch/3863a747524b/Chain-cost-research",
+        "error": null,
+        "name": "canonical-plan",
+        "output_limit_bytes": 67108864,
+        "returncode": 1,
+        "stderr": "canonical-plan.stderr",
+        "stderr_bytes": 31001,
+        "stderr_sha256": "61959fd75959073198f82f9729165094b09eb15c75d6a0edf0176ca5935db7d4",
+        "stderr_truncated": false,
+        "stdout": "canonical-plan.stdout",
+        "stdout_bytes": 306,
+        "stdout_sha256": "bb080d599347dccd30827134aef936956957398451a7a721005806fa64f4cb9f",
+        "stdout_truncated": false,
+        "timeout_seconds": 1200,
+        "wall_ns": 40600594084,
+        "whole_waited_child_resources": {
+          "block_counts_are_network_bytes": false,
+          "cpu_scope": "whole waited child including all observers, logging and teardown; not producer-only",
+          "input_blocks": 3216,
+          "involuntary_context_switches": 452,
+          "major_page_faults": 0,
+          "minor_page_faults": 218131,
+          "output_blocks": 659168,
+          "rss_scope": "Linux cumulative maximum over waited children, including setup; not this step's peak or a sum",
+          "runner_lifetime_max_child_rss_kib": 1179624,
+          "system_cpu_ns": 904283000,
+          "user_cpu_ns": 39535847000,
+          "voluntary_context_switches": 51
+        }
+      }
+    ],
+    "tree": "895b472f7a2b8c532081a0dea4c021e1b30cb9a1"
+  },
+  "full_workspace_runtime_tests_claimed": false,
+  "head": "b6f2322dacc4a23ec43e3207be008614e07c60b7",
+  "hosted_ci_queried": false,
+  "preliminary_or_failed_attempt_passes_double_counted": false,
+  "python_canonical_passed": 78,
+  "python_direct_passed": 177,
+  "python_final_controls": [
+    {
+      "name": "test_w1_instantiation_barriers_v4",
+      "passed": 24,
+      "receipt_sha256": "95c166f7e6e1dfebafe2f7c4e7ade957fd51c156cc85e38436d343f6525e19c0"
+    },
+    {
+      "name": "test_w1_service_growth_v4",
+      "passed": 24,
+      "receipt_sha256": "32d3e72203717e8e0b15c691f6180b0a08c8c027bdb59e639e7b3ffc9900482b"
+    },
+    {
+      "name": "test_w1_ticket_composition_v3",
+      "passed": 21,
+      "receipt_sha256": "9f1318921f53c9a085e769eee1eb6be14c7a0fc9ac780bf4abd251e9e039dc6e"
+    },
+    {
+      "name": "test_w1_multi_instance_cost_v2",
+      "passed": 24,
+      "receipt_sha256": "4efe218b5fcf5310e374bedc7af4a259478ded2e3bb97ec8ed3353dbc41c5a4e"
+    },
+    {
+      "name": "test_w1_sha256_model_boundary",
+      "passed": 3,
+      "receipt_sha256": "7a208c63148cce93b5b3b3403771a3eee5cd0e7485fa263e3569e8b01494a685"
+    },
+    {
+      "name": "test_w1_native_daa_resource_v2",
+      "passed": 23,
+      "receipt_sha256": "06e831f8966c1e010abf83842347fae236b880c6a5c603e4d5943e2b030b67ec"
+    },
+    {
+      "name": "test_w1_task_product_research",
+      "passed": 14,
+      "receipt_sha256": "0017ce146245c83647ef3b63c389165e053c3127309281daffc6db49d892d51a"
+    },
+    {
+      "name": "test_w1_task_product_binding",
+      "passed": 10,
+      "receipt_sha256": "789ea09e5b142d9dafcd3703b3db693bfc372e4b0038db6518d2b07294da197f"
+    },
+    {
+      "name": "test_ci_source_integrity",
+      "passed": 34,
+      "receipt_sha256": "df4263bee014ab82734b71a2049ecf93eb76992cf96100591660bafe25fcb53b"
+    }
+  ],
+  "python_final_passed": 255,
+  "rust_failed": 0,
+  "rust_original_ignored": 2,
+  "rust_passed": 188,
+  "schema": "w1-product-service-frozen-validation-v1",
+  "strict_whole_workspace_all_targets_all_features_release_clippy_passed": true,
+  "tree": "895b472f7a2b8c532081a0dea4c021e1b30cb9a1"
+}
