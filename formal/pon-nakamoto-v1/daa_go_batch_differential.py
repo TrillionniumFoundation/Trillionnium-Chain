@@ -46,6 +46,29 @@ def sample_inputs(seed:int, count:int)->list[dict]:
         })
     return samples
 
+def negative_inputs(seed: int, count: int) -> list[dict]:
+    rng=random.Random(seed ^ 0xFA17DAA)
+    rows=[]
+    for i in range(count):
+        row=sample_inputs(rng.randrange(1<<30),1)[0]
+        kind=i%8
+        if kind==0: row['anchor_target']='0'
+        if kind==1: row['pow_limit']='0'
+        if kind==2: row['anchor_target']=str(CAP+1)
+        if kind==3: row['anchor_height']=row['candidate_height']
+        if kind==4: row['spacing']=0
+        if kind==5: row['half_life']=0
+        if kind==6:
+            row['candidate_height']=UINT64_MAX
+            row['anchor_height']=1
+            row['spacing']=UINT64_MAX
+        if kind==7:
+            row['candidate_height']=UINT64_MAX
+            row['anchor_height']=1
+            row['spacing']=1<<62
+        rows.append(row)
+    return rows
+
 def run(go_binary:Path,seed:int,count:int,output:Path|None)->dict:
     if not 1<=count<=100000:raise ValueError('SAMPLE_COUNT')
     vectors=sample_inputs(seed,count)
@@ -71,9 +94,25 @@ def run(go_binary:Path,seed:int,count:int,output:Path|None)->dict:
         result_digest.update(i.to_bytes(4,'big'))
         result_digest.update(hashlib.sha256(json.dumps(data,sort_keys=True).encode()).digest())
         result_digest.update(hashlib.sha256(raw).digest())
+    negative=negative_inputs(seed,max(128,min(1024,count//8)))
+    negative_payload=b''.join(json.dumps(x,sort_keys=True,separators=(',',':')).encode()+b'\n' for x in negative)
+    negative_process=subprocess.run([str(exe)],input=negative_payload,stdout=subprocess.PIPE,
+                                    stderr=subprocess.PIPE,timeout=120,check=True)
+    negative_output=negative_process.stdout.splitlines()
+    if len(negative_output)!=len(negative):raise AssertionError('GO_NEGATIVE_COUNT')
+    for i,(data,raw) in enumerate(zip(negative,negative_output)):
+        try:
+            asert_target(int(data['anchor_target']),data['anchor_parent_time'],data['evaluation_parent_time'],data['anchor_height'],data['candidate_height'],data['spacing'],data['half_life'],int(data['pow_limit']))
+        except ValueError:
+            pass
+        else:
+            raise AssertionError(f'negative {i} unexpectedly accepted by Python')
+        if 'error' not in json.loads(raw):
+            raise AssertionError(f'negative {i} unexpectedly accepted by Go')
     report={'schema':'trnm-daa-independent-go-python-v1','research_only':True,
             'source_identity':'local-run-not-exact-GitHub-Rust-checkout','seed':seed,
-            'sample_count':count,'matches':reasons,'vector_digest':hashlib.sha256(payload).hexdigest(),
+            'sample_count':count,'negative_count':len(negative),
+            'negative_digest':hashlib.sha256(negative_payload+negative_process.stdout).hexdigest(),'matches':reasons,'vector_digest':hashlib.sha256(payload).hexdigest(),
             'result_digest':result_digest.hexdigest(),
             'limitations':['no native Rust test executed','no W1 PoW','no authenticated chain ancestry','no WAN or operator independence','no consensus activation']}
     if output:
