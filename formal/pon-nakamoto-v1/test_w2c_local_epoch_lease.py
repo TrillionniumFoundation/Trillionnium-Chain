@@ -17,7 +17,7 @@ PROPOSAL = H('single-host-real-process-p5')
 
 def _child_try_lease(path, receiver, result):
     try:
-        with LocalEpochLeasedReceiver(path, receiver) as node:
+        with LocalEpochLeasedReceiver(path, receiver , policy_bits=8) as node:
             result.put(('ACQUIRED', node.epoch.hex()))
     except Exception as error:
         result.put(('REFUSED', str(error)))
@@ -64,14 +64,14 @@ class LocalEpochLeaseTests(unittest.TestCase):
         return value
 
     def test_two_real_processes_cannot_share_one_live_receiver_epoch(self):
-        with LocalEpochLeasedReceiver(self.path, RECEIVER) as parent:
+        with LocalEpochLeasedReceiver(self.path, RECEIVER , policy_bits=8) as parent:
             outcome = self._fork(_child_try_lease, self.path, RECEIVER)
             self.assertEqual(outcome[0], 'REFUSED')
             self.assertEqual(outcome[1], 'EPOCH_ALREADY_OWNED')
             self.assertEqual(parent.paid_count(), 0)
 
     def test_crash_style_reopen_rekeys_and_refuses_predecessor_paid_ticket(self):
-        parent = LocalEpochLeasedReceiver(self.path, RECEIVER)
+        parent = LocalEpochLeasedReceiver(self.path, RECEIVER , policy_bits=8)
         old_epoch = parent.epoch
         grant, nonce = self._ticket(parent)
         self.assertEqual(parent.consume(grant, PROPOSAL, CALLER, nonce),
@@ -79,7 +79,7 @@ class LocalEpochLeaseTests(unittest.TestCase):
         self.assertEqual(parent.consume(grant, PROPOSAL, CALLER, nonce),
                          'REPLAY')
         parent.close()
-        with LocalEpochLeasedReceiver(self.path, RECEIVER) as fresh:
+        with LocalEpochLeasedReceiver(self.path, RECEIVER , policy_bits=8) as fresh:
             self.assertNotEqual(fresh.epoch, old_epoch)
             self.assertEqual(fresh.consume(grant, PROPOSAL, CALLER, nonce),
                              'CONTEXT')
@@ -89,7 +89,7 @@ class LocalEpochLeaseTests(unittest.TestCase):
                              'READY_RESOURCE_ONLY')
 
     def test_fork_inherited_python_object_cannot_reissue_old_credentials(self):
-        with LocalEpochLeasedReceiver(self.path, RECEIVER) as parent:
+        with LocalEpochLeasedReceiver(self.path, RECEIVER , policy_bits=8) as parent:
             failure = self._fork(_child_reuse_parent, parent)
             self.assertEqual(failure, 'EPOCH_PROCESS_OWNER')
             ticket, nonce = self._ticket(parent)
@@ -97,7 +97,7 @@ class LocalEpochLeaseTests(unittest.TestCase):
                              'READY_RESOURCE_ONLY')
 
     def test_file_replacement_is_detected_before_any_paid_grant(self):
-        with LocalEpochLeasedReceiver(self.path, RECEIVER) as parent:
+        with LocalEpochLeasedReceiver(self.path, RECEIVER , policy_bits=8) as parent:
             self.path.unlink()
             self.path.write_bytes(b'')
             os.chmod(self.path, 0o600)
@@ -105,27 +105,44 @@ class LocalEpochLeaseTests(unittest.TestCase):
                 parent.offer(PROPOSAL, CALLER, 8)
 
     def test_untrusted_permission_symlink_and_path_alias_refused(self):
-        with LocalEpochLeasedReceiver(self.path, RECEIVER):
+        with LocalEpochLeasedReceiver(self.path, RECEIVER , policy_bits=8):
             pass
         os.chmod(self.path, 0o666)
         with self.assertRaisesRegex(ValueError, 'EPOCH_LOCK_UNTRUSTED'):
-            LocalEpochLeasedReceiver(self.path, RECEIVER)
+            LocalEpochLeasedReceiver(self.path, RECEIVER , policy_bits=8)
         self.path.unlink()
         other = self.path.with_name('real.lock')
         other.write_bytes(b'')
         os.chmod(other, 0o600)
         self.path.symlink_to(other)
         with self.assertRaises(OSError):
-            LocalEpochLeasedReceiver(self.path, RECEIVER)
+            LocalEpochLeasedReceiver(self.path, RECEIVER , policy_bits=8)
         with self.assertRaisesRegex(ValueError, 'EPOCH_LOCK_IDENTITY'):
-            LocalEpochLeasedReceiver(other, RECEIVER)
+            LocalEpochLeasedReceiver(other, RECEIVER , policy_bits=8)
         self.path.unlink()
         os.chmod(self.root.name, 0o777)
         with self.assertRaisesRegex(ValueError, 'EPOCH_PARENT_UNTRUSTED'):
-            LocalEpochLeasedReceiver(self.path, RECEIVER)
+            LocalEpochLeasedReceiver(self.path, RECEIVER , policy_bits=8)
+
+    def test_cost_bits_and_live_parent_lock_metadata_cannot_downgrade(self):
+        with LocalEpochLeasedReceiver(self.path, RECEIVER, policy_bits=12) as node:
+            with self.assertRaisesRegex(ValueError, 'EPOCH_BITS_POLICY'):
+                node.offer(PROPOSAL, CALLER, 8)
+            grant = node.offer(PROPOSAL, CALLER, 12)
+            self.assertEqual(grant.bits, 12)
+            os.chmod(self.root.name, 0o777)
+            try:
+                with self.assertRaisesRegex(ValueError, 'EPOCH_PARENT_UNTRUSTED'):
+                    node.offer(PROPOSAL, CALLER, 12)
+            finally:
+                os.chmod(self.root.name, 0o700)
+            os.chmod(self.path, 0o666)
+            with self.assertRaisesRegex(ValueError, 'EPOCH_LOCK_UNTRUSTED'):
+                node.offer(PROPOSAL, CALLER, 12)
+            os.chmod(self.path, 0o600)
 
     def test_close_does_not_leave_a_reusable_live_epoch(self):
-        node = LocalEpochLeasedReceiver(self.path, RECEIVER)
+        node = LocalEpochLeasedReceiver(self.path, RECEIVER , policy_bits=8)
         node.close()
         node.close()
         with self.assertRaisesRegex(ValueError, 'EPOCH_PROCESS_OWNER'):
