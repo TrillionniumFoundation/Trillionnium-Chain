@@ -4445,3 +4445,25 @@ All 477 original boundary pins, 467 original Rust test files, the 79,958-byte in
 
 
 PN1 R6 first actual development typecheck retained an E0282 failure for the SQLite observer's raw pointer. [Original failure and narrow correction](../../evidence/pon-native-io-pn1-20261026-v25-pointer-typecheck-red/README.md) explicitly bind that pointer to the already required private `Observer` type. No original assertion, schema, authority or limit changes. The14 new controls were not fully compiled or executed in that failed attempt. Any corrected development check stays inside its original inherited560/620s window without refund; this is separate from public preparation, the unchanged1200s/164.257s balance and all native/release/3FD/whole-writer/strict-reader/full4097 gates. **NO_GO**.
+
+
+#### PN1 retained hosted 3-hour runtime qualification failure — 2026-10-26 (OPEN)
+
+[Original source-bound failure and complete evidence](../../evidence/pon-runtime-head-3h-timeout-20261026/README.md)
+retain the first actual head-runtime 3-hour qualification observation in run
+`40310512277`, attempt1, job`121574328675`, on source
+`53fb654b532ed8e737e0dea635a31dce3b73b3cc` / tree
+`d82ba0c7bbaea04200f11d38f6e9c4dccac81f78`. It did not qualify:
+the official conclusion is `cancelled`, with the explicit maximum-execution
+annotation `3h0m0s`. The release 65,537-account growth test ran
+4,293.980079 seconds before cancellation; its last observed state was
+61,444 accounts / height240. Completion, cold reopen and subsequent growth-v2
+and account-verification-cost execution remain unproved.
+
+The complete original log, annotation, exact source/attempt, two official ZIPs
+and partial-transfer history are preserved with member hashes. This is not the
+earlier 0.5-second timeout or procfs ESRCH finding, and establishes no performance
+cause, minimum-cost or hardware claim. No rerun or increased limit was used.
+The original 3-hour maximum, assertions and resources remain fixed; R4/R5/R6
+and all original PN1 native/release/three-FD/whole-writer/strict-reader/full4097
+gates remain unqualified. `task_complete=false`, `merge_ready=false`, **NO_GO**.
