@@ -141,6 +141,19 @@ class LocalEpochLeaseTests(unittest.TestCase):
                 node.offer(PROPOSAL, CALLER, 12)
             os.chmod(self.path, 0o600)
 
+    def test_closed_epoch_owner_and_secret_not_retained_by_global_fork_callback(self):
+        import gc
+        import weakref
+        node = LocalEpochLeasedReceiver(self.path, RECEIVER, policy_bits=8)
+        owner = weakref.ref(node)
+        node.close()
+        del node
+        gc.collect()
+        self.assertIsNone(
+            owner(),
+            'process-global at-fork registration must not keep old Epoch secrets alive',
+        )
+
     def test_close_does_not_leave_a_reusable_live_epoch(self):
         node = LocalEpochLeasedReceiver(self.path, RECEIVER , policy_bits=8)
         node.close()
