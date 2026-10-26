@@ -2166,7 +2166,7 @@ fn receive_page(
 /// W1 replay. A caller cannot bypass the guard by calling the addressless
 /// parser from another crate or by supplying a fake already-verified work
 /// token. Only the full native Node determines consensus validity.
-pub fn receive_page_from(
+pub(crate) fn receive_page_from(
     node: &mut Node,
     source: SocketAddr,
     page: Page,
