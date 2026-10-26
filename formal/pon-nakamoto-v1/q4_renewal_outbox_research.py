@@ -109,6 +109,28 @@ class ChainObservation:
                 + (identity(self.included_block, 'block') if self.included_block else ZERO)
                 + identity(self.source_receipt_digest, 'receipt'))
 
+
+def _audit_observation_wire(obs: bytes, event_kind: str) -> int:
+    """Cold-open byte grammar only: not independent client or chain authority."""
+    if type(obs) is not bytes or len(obs) != 113:
+        raise OutboxError('OBSERVATION_WIRE')
+    generation = int.from_bytes(obs[:8], 'big')
+    # Exact fields from ChainObservation.wire: generation/Tip/height/kind/block/receipt.
+    if generation == 0 or obs[8:40] == ZERO or obs[81:113] == ZERO:
+        raise OutboxError('OBSERVATION_WIRE')
+    code = obs[48]
+    expected = {1:'OBSERVED_INCLUDED', 2:'OBSERVED_CONFIRMED',
+                3:'OBSERVED_REORGED', 4:'OBSERVED_UNAVAILABLE',
+                5:'OBSERVED_EXPIRED'}.get(code)
+    if expected != event_kind:
+        raise OutboxError('OBSERVATION_MISMATCH')
+    block = obs[49:81]
+    if ((code in (1, 2) and block == ZERO)
+            or (code in (3, 4, 5) and block != ZERO)):
+        raise OutboxError('OBSERVATION_MEMBERSHIP')
+    return generation
+
+
 class RenewalOutbox:
     """Bounded SINGLE LOCAL RESEARCH owner. Its facts grant no publication authority."""
     def __init__(self, path: Path, network: bytes, parameters: bytes, genesis: bytes,
@@ -197,12 +219,9 @@ class RenewalOutbox:
                 dispatch.add(ident)
             elif kind.startswith('OBSERVED_'):
                 if ident not in dispatch: raise OutboxError('OBSERVATION_BEFORE_DISPATCH')
-                if len(obs) != 113: raise OutboxError('OBSERVATION_WIRE')
-                generation = int.from_bytes(obs[:8],'big')
+                generation = _audit_observation_wire(obs, kind)
                 if generation < last_generation.get(ident,0): raise OutboxError('OBSERVATION_REGRESSION')
                 last_generation[ident] = generation
-                if kind != 'OBSERVED_' + {1:'included',2:'confirmed',3:'reorged',4:'unavailable',5:'expired'}.get(obs[48], '').upper():
-                    raise OutboxError('OBSERVATION_MISMATCH')
             else:
                 raise OutboxError('UNKNOWN_EVENT')
             prior = digest

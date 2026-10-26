@@ -16,6 +16,8 @@ After durable `prepare`, the application must persist `DISPATCH_UNKNOWN` **befor
 
 `ChainObservation` records a caller-supplied active-generation, tip, height, membership class and exact upstream receipt digest. The class label is **untrusted local research metadata**: `OBSERVED_CONFIRMED` does not mean an independently validated client confirmation, and `OBSERVED_REORGED` cannot rewind an already attempted physical submission. Generation is monotonic per operation. The original client must verify packet bytes, inclusion in a fully validated active chain and an installed depth+work policy; reconnect must re-read actual generation/confirmation instead of trusting this journal's event labels.
 
+Cold reopen additionally revalidates every untrusted observation's full fixed-width grammar: positive generation, nonzero tip/receipt, known event classification and the included-block presence rule. A locally recomputed event digest must not make a malformed observation accepted. This structural consistency check still does not verify a real client proof, signature or upstream chain.
+
 Every event is finite, append-only, context-bound, sequence-numbered and predecessor-hash-linked. `BEGIN IMMEDIATE`, `synchronous=FULL`, create-only identities, single-dispatch unique index, bounded max intents/events, post-COMMIT `UnknownEffect`, and an O(record count) cold-open audit detect local inconsistency and preserve uncertain outcomes. A hash chain in a local SQLite file **does not** protect against privileged database rewrites or assert physical power-loss durability. Filesystem pathname checks are not race-safe against hostile local processes. No storage budget external to the finite row count is claimed.
 
 ## Executed qualification and open native boundary

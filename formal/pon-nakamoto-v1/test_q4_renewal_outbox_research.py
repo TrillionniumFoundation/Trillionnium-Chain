@@ -185,6 +185,43 @@ class RenewalOutboxTests(unittest.TestCase):
             self.assertEqual(db.audit(),0)
             self.assertFalse(db.status(key)['dispatch_unknown'])
 
+    def test_cold_audit_rejects_semantic_observation_with_recomputed_event_hash(self):
+        # Local adversarial SQLite rewrite, not an external chain or signature claim.
+        # Both event checksum and event predecessor are valid after mutation.
+        from q4_renewal_outbox_research import EVENT_DOMAIN
+        cases = (
+            ('zero-gen','included',0,8,bytes(8),'OBSERVATION_WIRE'),
+            ('zero-tip','included',8,40,bytes(32),'OBSERVATION_WIRE'),
+            ('zero-receipt','included',81,113,bytes(32),'OBSERVATION_WIRE'),
+            ('missing-block','confirmed',49,81,bytes(32),'OBSERVATION_MEMBERSHIP'),
+            ('invented-block','reorged',49,81,bytes([9])*32,'OBSERVATION_MEMBERSHIP'),
+            ('unknown-class','included',48,49,bytes([255]),'OBSERVATION_MISMATCH'),
+        )
+        for name, observed_kind, first, end, replacement, expected in cases:
+            with self.subTest(name=name):
+                path = Path(self.tmp.name) / (name + '.sqlite')
+                with RenewalOutbox(path,N,P,G) as db:
+                    key = db.prepare(intent())
+                    db.dispatch_unknown(key)
+                    db.observe(key,observation(observed_kind))
+                    self.assertEqual(db.audit(),2)
+                with sqlite3.connect(path) as raw:
+                    ident,kind,prior,wire=raw.execute(
+                        'SELECT intent_id,kind,prev,observation FROM q4_outbox_events_v1 WHERE ordinal=2'
+                    ).fetchone()
+                    changed=wire[:first]+replacement+wire[end:]
+                    self.assertEqual(len(changed),113)
+                    altered_digest=hashlib.sha256(
+                        EVENT_DOMAIN + (2).to_bytes(8,'big') + ident
+                        + kind.encode('ascii') + changed + prior
+                    ).digest()
+                    raw.execute('UPDATE q4_outbox_events_v1 SET observation=?,digest=? WHERE ordinal=2',
+                                (changed,altered_digest))
+                    row=raw.execute('SELECT digest FROM q4_outbox_events_v1 WHERE ordinal=2').fetchone()
+                    self.assertEqual(row[0],altered_digest)
+                with self.assertRaisesRegex(OutboxError,expected):
+                    RenewalOutbox(path,N,P,G)
+
     def test_transaction_id_matches_explicit_pon_hash_domain(self):
         raw=TX
         manual=h(b'TRNM-PON1\0'+(5).to_bytes(2,'little')+b'tx-id'
