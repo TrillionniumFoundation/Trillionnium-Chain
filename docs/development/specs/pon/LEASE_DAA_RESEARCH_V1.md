@@ -760,3 +760,18 @@ exposed an overstrict, non-protocol <400 test assertion. That assertion was
 corrected to the existing 1024 budget; original native long-run tests likewise
 use the existing READ_SQL_BUDGET instead of inventing a stricter numeric SLO.
 The failed first observation and correction are retained here.
+
+### Further negative: branch-specific anchor target and short-genesis MTP
+
+The independent index simulator adds an explicitly different ASERT target
+at the competing branch's activation block (not merely a different block ID).
+The old-branch and new-branch research results must therefore differ. A
+separate short-genesis case evaluates both raw and MTP11 when the anchor
+predecessor is the genesis timestamp and fewer than 11 parents exist.
+
+Five local Python tests PASS on the **byte-identical new test and indexed
+index module** (Git blob test source 662a0f7f225d9caf4f2b19aea0d7a1e17341c215,
+module 41df577186751706f10e46bdfbd1f345cad8e5dc).
+The imported ASERT arithmetic was the pre-existing local research copy, not
+an execution of the exact PR parent source. None of these synthetic blocks
+carries W1 or source-signer authority.

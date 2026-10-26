@@ -31,15 +31,25 @@ class IndexedAsertShadowTests(unittest.TestCase):
         parent = trunk[10]
         fork = {}
         for height in range(11, 62):
-            parent = ix.append(parent, height * 10 + 2, ix.headers[parent].target)
+            parent = ix.append(parent, height * 10 + 2, (1 << 221) if height >= 16 else (1 << 220))
             fork[height] = parent
         trunk_result = ix.asert_shadow(trunk[60], 16, False)
         fork_result = ix.asert_shadow(fork[61], 16, False)
         self.assertNotEqual(trunk_result[2], fork_result[2])
+        self.assertNotEqual(trunk_result[0], fork_result[0])
         self.assertEqual(trunk_result[2], trunk[16])
         self.assertEqual(fork_result[2], fork[16])
         for median in (False, True):
             self.assertLess(ix.asert_shadow(fork[61], 16, median)[1], 400)
+
+    def test_short_genesis_predecessor_mtp_uses_genesis_timestamp(self):
+        ix = ValidatedInputIndex()
+        one = ix.append(GENESIS, 10)
+        for median in (False, True):
+            target, cost, anchor = ix.asert_shadow(one, 1, median)
+            self.assertEqual(anchor, one)
+            self.assertGreater(target, 0)
+            self.assertLess(cost, 1024)
 
     def test_corruption_and_budget_fail_closed(self):
         ix = ValidatedInputIndex()
