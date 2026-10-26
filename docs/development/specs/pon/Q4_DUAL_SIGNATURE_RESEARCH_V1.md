@@ -16,9 +16,9 @@ python3 -m unittest -v test_q4_signed_renewal_research.py
 go run q4_research_go/verify_q4_vectors.go q4_signed_vectors_v1.json
 ```
 
-The local source files were tested on a single research host: **11 Python tests PASS**, including 1,187 mutated full packets and all 344 old QDL2 bytes, and **1 Go positive plus 9 negative vectors PASS**. The Go source additionally passes `gofmt` and `go vet` in this local environment. Git blob SHA-1 identities for this candidate are:
-- Python verifier: `46ccb72861f962217a45e0ac1cadca1e07dbabe8`
-- Python tests: `4c648ac12e380fba8099caedab549ff82fee38d8`
+The local source files were tested on a single research host: **12 Python tests PASS**, including 1,187 mutated full packets and all 344 old QDL2 bytes, and **1 Go positive plus 9 negative vectors PASS**. The Go source additionally passes `gofmt` and `go vet` in this local environment. Git blob SHA-1 identities for this candidate are:
+- Python verifier: `f1258581ec211af7d9b3db51a05bdeb2b80aeb39`
+- Python tests: `a961a9430854e647a39711a8d3997bb001b9995f`
 - Go verifier: `f770d1c79c2eff6e9bd1d48e7f6d5d50a7b90546`
 - JSON vector: `d9e776e38751ee27307a086e57fb7d92056aed13`
 
@@ -26,9 +26,9 @@ These are same-operator research observations, **not a native Rust test run or a
 
 ## Fixed old-Lease identity bypass in the research verifier
 
-An independently discovered negative control changed the still-canonical old QDL2 `not_before` at byte offset 312. The original research decoder accepted the newly signed successor because it validated the old lease's format and temporal overlap but did not pin that supplied predecessor to an independently expected old lease ID. **This was a defect in the research verifier, not a demonstrated original native M06 bug.** The exact previously expected old lease ID is now a *mandatory*, caller-supplied and hash-checked argument; the old lease has no authority when it differs. The caller must obtain this ID from the genuinely verified parent-state owner, not from a peer or from the same submitted renewal request.
+An independently discovered negative control changed the still-canonical old QDL2 `not_before` at byte offset 312. The original research decoder accepted the newly signed successor because it validated the old lease's format and temporal overlap but did not pin that supplied predecessor to an independently expected old lease ID. **This was a defect in the research verifier, not a demonstrated original native M06 bug.** The exact previously expected old lease ID is now a *mandatory*, caller-supplied and hash-checked argument; the old lease has no authority when it differs. The research outbox `intent.old_lease_digest` is *submitted metadata*, not an independently authenticated source: `checked_prepare` now takes an additionally mandatory `expected_old_lease_id` supplied by the original parent-state owner. A forged old lease and forged matching intent together must still fail before any journal write. The caller must obtain this ID from the genuinely verified parent-state owner, not from a peer or from the same submitted renewal request; the new negative control mutates both old lease and intent together to enforce that independent pin.
 
-The new Python+Go experiments mutate every one of the 1,187 signed transaction bytes and every one of the 344 predecessor lease bytes, retaining 9 named negative vectors. **11/11** local Python tests PASS, plus Go valid/negative/exhaustive mutations and local Go vet PASS. No original Node/W1/fork-owned chain admissibility, native Rust strict-signature compatibility or independent institutional review follows from these research-only tests.
+The new Python+Go experiments mutate every one of the 1,187 signed transaction bytes and every one of the 344 predecessor lease bytes, retaining 9 named negative vectors. **12/12** local Python tests PASS, plus Go valid/negative/exhaustive mutations and local Go vet PASS. No original Node/W1/fork-owned chain admissibility, native Rust strict-signature compatibility or independent institutional review follows from these research-only tests.
 
 ## Unclosed authorities and blockers
 

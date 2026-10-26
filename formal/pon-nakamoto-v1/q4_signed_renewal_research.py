@@ -187,7 +187,7 @@ def verify_tag22(raw: bytes, old_lease_raw: bytes, network: bytes, parameters: b
 
 
 def checked_prepare(outbox, intent, old_lease_raw: bytes, *, containing_height: int,
-                    old_source_sequence: int) -> bytes:
+                    old_source_sequence: int, expected_old_lease_id: bytes) -> bytes:
     """Require dual-signature verification before invoking the SAME old research journal.
 
     Refuses on any mismatch and never writes journal state before both signatures,
@@ -195,12 +195,17 @@ def checked_prepare(outbox, intent, old_lease_raw: bytes, *, containing_height: 
     journal itself remains a research owner; it does not dispatch a transaction.
     """
     require((intent.network,intent.parameters,intent.genesis) == outbox.context, "INTENT_CONTEXT")
+    # Caller must obtain expected_old_lease_id from the actual parent-state owner.
+    # Intent.old_lease_digest itself is untrusted proposal metadata and cannot
+    # independently authenticate its own predecessor even if signed next bytes match.
+    require(intent.old_lease_digest == hash32(expected_old_lease_id, "OLD_LEASE_OWNER_PIN"),
+            "OLD_LEASE_OWNER_PIN")
     parsed = verify_tag22(intent.signed_transaction, old_lease_raw,
                           intent.network,intent.parameters,
                           containing_height=containing_height,
                           old_source_sequence=old_source_sequence,
                           expected_requester_sequence=intent.requester_sequence,
-                          expected_old_lease_id=intent.old_lease_digest)
+                          expected_old_lease_id=expected_old_lease_id)
     require(intent.old_lease_digest == parsed.old_lease_id and
             intent.next_lease_digest == parsed.new_lease_id and
             intent.signed_from == parsed.new_start and

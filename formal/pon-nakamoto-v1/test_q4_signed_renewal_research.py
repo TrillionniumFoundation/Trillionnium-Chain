@@ -194,7 +194,7 @@ class SignedQ4Research(unittest.TestCase):
             signed_from=80;last_legal_height=100
             requester_sequence=9;source_sequence=2
         out=FakeOutbox(); intent=FakeIntent()
-        self.assertEqual(checked_prepare(out,intent,f['old'],containing_height=90,old_source_sequence=1),intent.operation_id)
+        self.assertEqual(checked_prepare(out,intent,f['old'],containing_height=90,old_source_sequence=1,expected_old_lease_id=parsed.old_lease_id),intent.operation_id)
         self.assertEqual(out.calls,1)
         for key,value in [('old_lease_digest',h('wrong')),('source_sequence',3),('signed_from',81),
                           ('requester_sequence',8),('last_legal_height',99),('genesis',h('different genesis'))]:
@@ -205,8 +205,41 @@ class SignedQ4Research(unittest.TestCase):
             setattr(broken,key,value)
             with self.subTest(key=key):
                 with self.assertRaises(Q4PacketError):
-                    checked_prepare(out,broken,f['old'],containing_height=90,old_source_sequence=1)
+                    checked_prepare(out,broken,f['old'],containing_height=90,old_source_sequence=1,expected_old_lease_id=parsed.old_lease_id)
         self.assertEqual(out.calls,1)
+
+    def test_renamed_intent_and_mutated_old_lease_cannot_create_authority(self):
+        """Outbox metadata cannot self-attest a different old lease identity."""
+        f=self.fixture
+        parsed=self.verify()
+        old=bytearray(f['old']); old[312]^=1  # remains a well-formed old lease
+        forged_id=decode_lease(bytes(old)).lease_id
+        self.assertNotEqual(forged_id,parsed.old_lease_id)
+        class FakeOutbox:
+            context=(f['net'],f['params'],f['genesis'])
+            calls=0
+            def prepare(self,intent):
+                self.calls+=1
+                return intent.operation_id
+        class FakeIntent:
+            operation_id=h('new operation alias')
+            network=f['net'];parameters=f['params'];genesis=f['genesis']
+            signed_transaction=f['raw']
+            old_lease_digest=forged_id  # caller changes its own metadata too
+            next_lease_digest=parsed.new_lease_id
+            signed_from=80;last_legal_height=100
+            requester_sequence=9;source_sequence=2
+        out=FakeOutbox()
+        with self.assertRaisesRegex(Q4PacketError,'OLD_LEASE_OWNER_PIN'):
+            checked_prepare(out,FakeIntent(),bytes(old),containing_height=90,
+                            old_source_sequence=1,expected_old_lease_id=parsed.old_lease_id)
+        self.assertEqual(out.calls,0)
+        # The non-authoritative research check deliberately cannot certify its
+        # own caller's expected pin; production must fetch parent-state identity.
+        with self.assertRaisesRegex(Q4PacketError,'OLD_LEASE_OWNER_PIN'):
+            checked_prepare(out,FakeIntent(),f['old'],containing_height=90,
+                            old_source_sequence=1,expected_old_lease_id=parsed.old_lease_id)
+        self.assertEqual(out.calls,0)
 
 
 if __name__=='__main__':
