@@ -2109,30 +2109,6 @@ fn call_authenticated_durable_inner(
     Err(Error::authenticated_remote(terminal, error))
 }
 
-fn receive_page_with_cpu(
-    node: &mut Node,
-    page: Page,
-    tip: Hash,
-    after: Hash,
-    clock: u64,
-    cpu: Option<&public_v3::ServiceMutationCpuDomain>,
-) -> Result<Hash> {
-    // Reserve BEFORE parsing or allocating the untrusted page. Reusing ONE
-    // original owner across up to 16 packets charges framing, full W1 and all
-    // scoped M06 workers; packet/peer identities never mint fresh credit.
-    let operation = cpu.map(public_v3::ServiceMutationCpuDomain::begin).transpose()?;
-    let native = receive_page_with_operation(node, page, tip, after, clock, operation.as_ref());
-    if let Some(operation) = operation {
-        // Settle even after malformed page, full TRANSCRIPT/Product failure,
-        // partial native admission or local cancellation. A postcommit meter
-        // failure never declares an earlier valid block invalid.
-        if operation.finish().accounting_unavailable {
-            return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
-        }
-    }
-    native
-}
-
 fn receive_page_with_operation(
     node: &mut Node,
     page: Page,
@@ -2218,12 +2194,57 @@ fn receive_page_with_operation(
     Ok(next)
 }
 
-/// Public untrusted History import. Unlike the private local parser, this
-/// entry REQUIRES a concrete original source address and checks the existing
-/// fixed, administrator-owned host resource parent around every possible
-/// W1 replay. A caller cannot bypass the guard by calling the addressless
-/// parser from another crate or by supplying a fake already-verified work
-/// token. Only the full native Node determines consensus validity.
+fn receive_page_from_decoder(
+    node: &mut Node,
+    source: SocketAddr,
+    tip: Hash,
+    after: Hash,
+    clock: u64,
+    decode: impl FnOnce() -> Result<Page>,
+) -> Result<Hash> {
+    let host_kernel = crate::host_kernel_parent::require_for_listener(source)?;
+    if let Some(kernel) = &host_kernel {
+        kernel.verify()?;
+    }
+    // No peer/client controls the Node's original mutation CPU account.
+    // Nonloopback without an owned account refuses before deserialization.
+    let cpu = match node.public_service_cpu_domain() {
+        Ok(domain) => Some(domain),
+        Err(error)
+            if source.ip().is_loopback()
+                && error.is(ErrorCode::OwnerPublicServiceDomainUnbound) =>
+        {
+            None
+        }
+        Err(error) => return Err(error),
+    };
+    let operation = cpu
+        .as_ref()
+        .map(public_v3::ServiceMutationCpuDomain::begin)
+        .transpose()?;
+    // Reservation spans JSON decode, canonical page/packet validation, full
+    // W1, complete scoped M06 and tip activation. No extra worker/domain.
+    let native = (|| -> Result<Hash> {
+        let page = decode()?;
+        receive_page_with_operation(node, page, tip, after, clock, operation.as_ref())
+    })();
+    let bad_cpu = operation
+        .map(public_v3::ServiceMutationCpuOperation::finish)
+        .is_some_and(|settlement| settlement.accounting_unavailable);
+    // The original kernel membership/limits remain valid before and after
+    // every untrusted page. An accepted native fact survives a later fault.
+    if let Some(kernel) = &host_kernel {
+        kernel.verify()?;
+    }
+    if bad_cpu {
+        return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+    }
+    native
+}
+
+/// Source-bound typed History entry for already-decoded trusted framing.
+/// No caller can expose the private mathematical parser or mint a new CPU
+/// balance. The original Packet/Task/State/Chainwork owners remain intact.
 pub fn receive_page_from(
     node: &mut Node,
     source: SocketAddr,
@@ -2232,30 +2253,39 @@ pub fn receive_page_from(
     after: Hash,
     clock: u64,
 ) -> Result<Hash> {
-    let host_kernel = crate::host_kernel_parent::require_for_listener(source)?;
-    if let Some(kernel) = &host_kernel {
-        kernel.verify()?;
-    }
-    // A Host cgroup alone does not price distinct remote W1 proofs. A WAN
-    // source requires the Node's EXISTING original shared CPU domain; only
-    // strictly loopback development traffic may retain the old local path.
-    let cpu = match node.public_service_cpu_domain() {
-        Ok(domain) => Some(domain),
-        Err(error)
-            if source.ip().is_loopback()
-                && error.is(ErrorCode::OwnerPublicServiceDomainUnbound) =>
-        {
-            None
-        },
-        Err(error) => return Err(error),
-    };
-    let native = receive_page_with_cpu(node, page, tip, after, clock, cpu.as_ref());
-    // A completed native admission cannot be undone by a post-verification
-    // host fault. That fault still makes the overall synchronization fail.
-    if let Some(kernel) = &host_kernel {
-        kernel.verify()?;
-    }
-    native
+    receive_page_from_decoder(node, source, tip, after, clock, || Ok(page))
+}
+
+/// Source-bound raw History frame: reserve original shared CPU credit before
+/// JSON parsing. Frame-length rejection is O(1) and precedes allocation.
+pub fn receive_page_wire_from(
+    node: &mut Node,
+    source: SocketAddr,
+    raw: &[u8],
+    tip: Hash,
+    after: Hash,
+    clock: u64,
+) -> Result<Hash> {
+    ensure(raw.len() <= MAX_FRAME, "PAGE_LIMIT")?;
+    receive_page_from_decoder(node, source, tip, after, clock, || {
+        Ok(serde_json::from_slice::<Page>(raw)?)
+    })
+}
+
+/// Source-bound decoded client Value: the conversion to typed History Page
+/// runs inside the shared CPU account. The upstream RPC decoder/transport
+/// still has its own independent byte, socket and resource owners.
+pub fn receive_page_value_from(
+    node: &mut Node,
+    source: SocketAddr,
+    value: Value,
+    tip: Hash,
+    after: Hash,
+    clock: u64,
+) -> Result<Hash> {
+    receive_page_from_decoder(node, source, tip, after, clock, || {
+        Ok(serde_json::from_value::<Page>(value)?)
+    })
 }
 
 pub fn sync_from(
@@ -2288,9 +2318,9 @@ pub fn sync_from(
         stream.set_read_timeout(Some(Duration::from_secs(5)))?;
         stream.set_write_timeout(Some(Duration::from_secs(5)))?;
         write_frame(&mut stream, &serde_json::to_vec(&request)?)?;
-        let page: Page = serde_json::from_slice(&read_frame(&mut stream)?)?;
-        let complete = page.complete;
-        after = receive_page_from(node, address, page, tip, after, now()?)?;
+        let raw = read_frame(&mut stream)?;
+        after = receive_page_wire_from(node, address, &raw, tip, after, now()?)?;
+        let complete = after == tip;
         // Resource-counter/membership failure does not roll back any already
         // admitted native block; it makes this sync result unqualified.
         if let Some(kernel) = &host_kernel {
@@ -2342,9 +2372,8 @@ pub fn sync_from_authenticated(
             client,
             replay_nonce,
         )?;
-        let page: Page = serde_json::from_value(value)?;
-        let complete = page.complete;
-        after = receive_page_from(node, address, page, tip, after, now()?)?;
+        after = receive_page_value_from(node, address, value, tip, after, now()?)?;
+        let complete = after == tip;
         // Resource-counter/membership failure does not roll back any already
         // admitted native block; it makes this sync result unqualified.
         if let Some(kernel) = &host_kernel {
@@ -2393,9 +2422,8 @@ pub fn sync_from_authenticated_durable(
             },
             client,
         )?;
-        let page: Page = serde_json::from_value(value)?;
-        let complete = page.complete;
-        after = receive_page_from(node, address, page, tip, after, now()?)?;
+        after = receive_page_value_from(node, address, value, tip, after, now()?)?;
+        let complete = after == tip;
         // Resource-counter/membership failure does not roll back any already
         // admitted native block; it makes this sync result unqualified.
         if let Some(kernel) = &host_kernel {
