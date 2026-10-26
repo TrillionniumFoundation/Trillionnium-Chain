@@ -128,3 +128,28 @@ SQLite observation, proves that no new event is persisted, repairs the same
 original bytes and resumes without any renewed dispatch fence. This is a
 bounded fail-closed local predecessor check, not a full history audit on every
 write, an authenticated client observation or a durable physical reorg oracle.
+
+## Fail-closed append after damage anywhere in the durable history (2026-10-26)
+
+The read-only `audit()` and `status()` already checked a complete SQLite snapshot,
+but `prepare` and `_event` previously checked only their local intent or most
+recent observation before writing. A corrupt *earlier* durable event could remain
+undetected while an unrelated intent or a later observation was committed.
+
+Both mutation paths now call the existing `_audit_snapshot()` **after
+`BEGIN IMMEDIATE` and before any durable mutation**. Thus the original
+context, every intent, prior event digest/ordinal, full observation grammar
+and generation history are checked inside the same writer-owned snapshot.
+A failed scan rolls back its writer transaction and grants no new dispatch,
+source signature, fresh nonce, payment or external-operation authority.
+Two new tests corrupt a nonterminal earlier event and an intent through a
+separate SQLite connection, require zero extra durable rows, restore the exact
+original bytes and verify ordinary append/reopen audit can resume.
+
+This trades finite local append cost for conservatism: each mutation performs
+O(intents + events) verified row work and the sequence has quadratic total
+worst-case CPU over a filled research journal. It is NOT a scalable public
+M05/M15 submission owner, a physical anti-tamper mechanism or a production
+Hepta lost-ACK path. A later native owner should use a separately reviewed
+authenticated bounded high-water/frontier with periodic full cold audit.
+No schema or Q4, W1, Maintenance, legacy DAA or activation rule changes.

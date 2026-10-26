@@ -264,6 +264,10 @@ class RenewalOutbox:
         self.db.execute('BEGIN IMMEDIATE')
         committed = False
         try:
+            # Audit the complete immutable prefix in the SAME writer snapshot.
+            # A damaged earlier event/intent may not be extended just because the
+            # latest observed generation was valid. No chain authority is inferred.
+            self._audit_snapshot()
             if self.db.execute('SELECT 1 FROM q4_outbox_intents_v1 WHERE id=?', (ident,)).fetchone() is None:
                 raise OutboxError('UNKNOWN_INTENT')
             latest = self.db.execute('SELECT ordinal,digest FROM q4_outbox_events_v1 ORDER BY ordinal DESC LIMIT 1').fetchone()
@@ -299,6 +303,9 @@ class RenewalOutbox:
         if fail_at not in (None,'before_commit','after_commit'): raise OutboxError('FAULT_POINT')
         self.db.execute('BEGIN IMMEDIATE'); committed=False
         try:
+            # Even a new unrelated operation cannot append after corrupt prior
+            # durable history. This is a bounded research journal, not hot-path RPC.
+            self._audit_snapshot()
             row = self.db.execute('SELECT id,wire FROM q4_outbox_intents_v1 WHERE packet_id=? OR operation_id=?',(packet,intent.operation_id)).fetchone()
             if row:
                 if row != (ident,wire): raise OutboxError('SIGNED_PACKET_RENAMED')

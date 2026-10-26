@@ -399,4 +399,55 @@ class RenewalOutboxTests(unittest.TestCase):
                 db.db.execute('ROLLBACK')
             self.assertEqual(db.audit(), 0)
 
+
+    def test_corrupt_earlier_event_blocks_new_intent_and_observation_before_write(self):
+        with self.open() as db:
+            key = db.prepare(intent())
+            db.dispatch_unknown(key)
+            db.observe(key, observation('included', 3))
+            with sqlite3.connect(self.file) as raw:
+                raw.execute('UPDATE q4_outbox_events_v1 SET kind=? WHERE ordinal=1',
+                            ('OBSERVED_CONFIRMED',))
+            next_intent = replace(intent(tx=b'Y' * 1187),
+                                  operation_id=h(b'another durable operation'))
+            # The corrupt event is not the latest one: last-generation checks
+            # alone would allow both mutations of an already invalid prefix.
+            with self.assertRaisesRegex(OutboxError, 'EVENT_DIGEST'):
+                db.observe(key, observation('confirmed', 4))
+            with self.assertRaisesRegex(OutboxError, 'EVENT_DIGEST'):
+                db.prepare(next_intent)
+            self.assertFalse(db.db.in_transaction)
+            with sqlite3.connect(self.file) as raw:
+                self.assertEqual(raw.execute('SELECT COUNT(*) FROM q4_outbox_events_v1').fetchone()[0], 2)
+                self.assertEqual(raw.execute('SELECT COUNT(*) FROM q4_outbox_intents_v1').fetchone()[0], 1)
+                raw.execute('UPDATE q4_outbox_events_v1 SET kind=? WHERE ordinal=1',
+                            ('DISPATCH_UNKNOWN',))
+            self.assertEqual(db.audit(), 2)
+            db.observe(key, observation('confirmed', 4))
+            other_key = db.prepare(next_intent)
+            self.assertNotEqual(other_key, key)
+            self.assertEqual(db.audit(), 3)
+
+    def test_corrupt_earlier_intent_blocks_dispatch_and_new_prepare_atomically(self):
+        with self.open() as db:
+            original = intent()
+            key = db.prepare(original)
+            with sqlite3.connect(self.file) as raw:
+                raw.execute('UPDATE q4_outbox_intents_v1 SET wire=? WHERE id=?',
+                            (original.wire() + b'corrupt', key))
+            with self.assertRaisesRegex(OutboxError, 'INTENT_CORRUPT'):
+                db.dispatch_unknown(key)
+            new_intent = replace(intent(tx=b'Z' * 1187),
+                                 operation_id=h(b'new independent operation'))
+            with self.assertRaisesRegex(OutboxError, 'INTENT_CORRUPT'):
+                db.prepare(new_intent)
+            self.assertFalse(db.db.in_transaction)
+            with sqlite3.connect(self.file) as raw:
+                self.assertEqual(raw.execute('SELECT COUNT(*) FROM q4_outbox_events_v1').fetchone()[0], 0)
+                self.assertEqual(raw.execute('SELECT COUNT(*) FROM q4_outbox_intents_v1').fetchone()[0], 1)
+                raw.execute('UPDATE q4_outbox_intents_v1 SET wire=? WHERE id=?',
+                            (original.wire(), key))
+            self.assertEqual(db.audit(), 0)
+            db.dispatch_unknown(key)
+            self.assertEqual(db.audit(), 1)
 if __name__ == '__main__': unittest.main()
