@@ -750,3 +750,51 @@ timestamp-endpoint adjustment attempts, and a two-block withholding toy.
 **Closure status stays unchanged:** P0-C cheapest real W1 producer/public flood,
 P1-B real W1 + WAN/partition/withholding, P1-C versioned native ASERT
 fork/reorg/recovery, and P2 independent-operator retention/delivery remain open.
+
+## 1,800-sample complete-denominator research campaign (2026-10-26)
+
+Follow-on to the same abstract network event simulator. New files are
+`formal/pon-nakamoto-v1/daa_lease_network_aggregate_v1.py` and
+`test_daa_lease_network_aggregate_v1.py`; the existing mathematical event
+simulator and all old network/consensus profiles are unchanged.
+
+```sh
+cd formal/pon-nakamoto-v1
+python3 -m unittest -v test_daa_lease_network_sim_v1.py test_daa_lease_network_aggregate_v1.py
+python3 daa_lease_network_aggregate_v1.py --trials 100 > /tmp/pon-daa-mathematical-research.json
+```
+
+**Executed local observation:** 11/11 Python test methods across simulator and
+aggregator passed, then a same-host 18 x 100 = **1,800-trial** deterministic
+seeded campaign completed with zero process failures. Every trial is retained
+in the research JSON. The raw data remains an external conversation artifact,
+not a hosted, independently reproduced GitHub evidence package.
+
+The fixed 100-trial, 600-second finite-horizon synthetic tip-agreement numerators
+for (legacy, raw-ASERT, MTP11-ASERT) are:
+
+| Scenario | Legacy | Raw ASERT | MTP11 ASERT |
+|---|---:|---:|---:|
+| Steady | 93 | 95 | 95 |
+| Simulated partition/heal | 95 | 95 | 95 |
+| External lease source lost | 100 | 100 | 100 |
+| One faster abstract prover | 95 | 92 | 91 |
+| Timestamp endpoint strategy | 89 | 95 | 95 |
+| Simplified block withholding | 49 | 49 | 49 |
+
+This is an intentionally **non-qualifying stochastic toy comparison**. It samples
+winning events from exponential distributions in lieu of checking actual PNW1
+certificates, assumes perfect historical byte retrieval from a shared in-memory
+graph, uses no independent operators, and counts *finite-horizon tip agreement*
+rather than eventual common prefix or double-spend failure probability. Some
+ordinary trials may end in temporary competing tips. A higher observed ratio is
+**not** evidence for selecting a DAA, improving real security, reducing cost or
+qualifying public consensus.
+
+The aggregator freezes all trial seeds and preserves both successes and failures
+in the denominator. It provides bounded Wilson 95% intervals and descriptive
+nearest-rank median/p95 header counts, without calling correlated simulated trials
+independent external hosts. It never issues source signing, consensus activation,
+production work security or FinalUse permissions. The real W1, Q4 native-owner,
+resource-accounting, adversarial WAN, physical failure and independent actor
+acceptance gates remain **OPEN**.
