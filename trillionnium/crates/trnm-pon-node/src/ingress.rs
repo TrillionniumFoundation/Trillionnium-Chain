@@ -2116,6 +2116,20 @@ fn receive_page(
     after: Hash,
     clock: u64,
 ) -> Result<Hash> {
+    receive_page_with_cpu(node, page, tip, after, clock, None)
+}
+
+// The pre-existing unowned local parser remains private for source fixtures.
+// Remote callers must route through receive_page_from and the bound Node's
+// original CPU domain. The optional domain never grants consensus authority.
+fn receive_page_with_cpu(
+    node: &mut Node,
+    page: Page,
+    tip: Hash,
+    after: Hash,
+    clock: u64,
+    domain: Option<&public_v3::ServiceMutationCpuDomain>,
+) -> Result<Hash> {
     ensure(
         page.schema == "pon-native-history-v1"
             && page.network == hex::encode(node.settings().network())
@@ -2152,10 +2166,67 @@ fn receive_page(
         "PAGE_COMPLETE",
     )?;
     for packet in &packets {
-        node.admit(packet, clock)?;
+        match domain {
+            None => {
+                // Only local development source without an existing paid owner.
+                node.admit(packet, clock)?;
+            }
+            Some(domain) => {
+                // Charge the original shared V3 CPU owner *before* parent/State
+                // lookups, complete W1 replay and downstream M06 execution.
+                let operation = domain.begin()?;
+                let checkpoint = operation.checkpoint_handle();
+                let native = (|| -> Result<Hash> {
+                    checkpoint.checkpoint()?;
+                    if let Some(previous) = node.check_admission_context_with_progress(
+                        packet,
+                        clock,
+                        &mut || checkpoint.checkpoint(),
+                    )? {
+                        return Ok(previous);
+                    }
+                    let permit = node.begin_owner_work(packet)?;
+                    let checked = WorkCheckedPacket::verify_with_progress(
+                        packet.clone(),
+                        &mut |_| checkpoint.checkpoint(),
+                    )?;
+                    checkpoint.checkpoint()?;
+                    let checked = node.attach_owner_work(checked, permit)?;
+                    let stage = |_stage: trnm_mvcc_fee::pon_executor::ExecutionProgress| {
+                        checkpoint.checkpoint()
+                    };
+                    let control = trnm_mvcc_fee::pon_executor::ExecutionControl::new(
+                        &stage,
+                        operation.worker_accounting(),
+                    );
+                    node.admit_work_checked_with_control(checked, clock, &control)
+                })();
+                // A native rejection still owes its full actual CPU. If an
+                // accounting fault occurs after durable success, do not
+                // rewrite or roll back an existing native fact.
+                let _accounting = operation.finish();
+                native?;
+            }
+        }
     }
     if page.complete {
-        node.activate_observed(tip, clock)?;
+        match domain {
+            None => {
+                node.activate_observed(tip, clock)?;
+            }
+            Some(domain) => {
+                // Also debit branch activation work on the same service
+                // account. Deep State/SQLite operations remain nonpreemptive.
+                let operation = domain.begin()?;
+                let checkpoint = operation.checkpoint_handle();
+                let native = (|| {
+                    checkpoint.checkpoint()?;
+                    node.activate_observed(tip, clock)
+                })();
+                let _accounting = operation.finish();
+                native?;
+            }
+        }
     }
     Ok(next)
 }
@@ -2178,7 +2249,21 @@ pub fn receive_page_from(
     if let Some(kernel) = &host_kernel {
         kernel.verify()?;
     }
-    let native = receive_page(node, page, tip, after, clock);
+    // The exact Node owner binds this once; caller identity/address never
+    // mints a per-page budget. A nonloopback unbound owner fails closed before
+    // receiving or replaying the first untrusted proof. Loopback fixtures may
+    // remain locally unbound; if bound, they pay the same account too.
+    let domain = match node.public_service_cpu_domain() {
+        Ok(original) => Some(original),
+        Err(error)
+            if source.ip().is_loopback()
+                && error.is(ErrorCode::OwnerPublicServiceDomainUnbound) =>
+        {
+            None
+        }
+        Err(error) => return Err(error),
+    };
+    let native = receive_page_with_cpu(node, page, tip, after, clock, domain.as_ref());
     // A completed native admission cannot be undone by a post-verification
     // host fault. That fault still makes the overall synchronization fail.
     if let Some(kernel) = &host_kernel {
