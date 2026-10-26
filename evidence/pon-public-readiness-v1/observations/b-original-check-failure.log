@@ -1,0 +1,13 @@
+{"original_source_commit": "4b7c02d7ae7e8b799758c92dfebbd507a9bc8321", "original_source_tree": "3c4ec16a98bd0f9ea2532a75647360e046182058", "original_source_script": "/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/pon-historical-source-zpobr3hv/source/scripts/ci/check_public_readiness_evidence.py", "command": ["/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/Trillionnium-Chain/../runtime-env/bin/python3", "/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/pon-historical-source-zpobr3hv/source/scripts/ci/check_public_readiness_evidence.py", "--root", "/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/pon-historical-source-zpobr3hv/source", "--evidence", "/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/public-readiness-qualification-20261001-b"], "tests_reexecuted": false, "scope": "original measured source checker, failed evidence retained"}
+Traceback (most recent call last):
+  File "/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/pon-historical-source-zpobr3hv/source/scripts/ci/check_public_readiness_evidence.py", line 520, in <module>
+    result = validate(args.root,folder)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/pon-historical-source-zpobr3hv/source/scripts/ci/check_public_readiness_evidence.py", line 497, in validate
+    validate_socket_log(safe(folder,socket['log']).read_text())
+  File "/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/pon-historical-source-zpobr3hv/source/scripts/ci/check_public_readiness_evidence.py", line 378, in validate_socket_log
+    require(row['attack_connections'] == row['admission_hash_trials'] == row['paid_full_work_rejections'] == row['submitted_wire_bytes'] == 0, 'baseline attack contamination')
+  File "/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/pon-historical-source-zpobr3hv/source/scripts/ci/check_public_readiness_evidence.py", line 30, in require
+    raise ValueError(message)
+ValueError: baseline attack contamination
+{"exit_code": 1, "elapsed_ns": 86496215492}

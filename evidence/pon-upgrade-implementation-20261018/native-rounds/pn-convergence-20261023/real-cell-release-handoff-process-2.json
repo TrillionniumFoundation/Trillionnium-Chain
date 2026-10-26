@@ -1,0 +1,14 @@
+[
+  {
+    "name": "build-cell-release",
+    "exit": 0,
+    "seconds": 94.826,
+    "source_head": "eb62ebc9fdfe6a0e8e666394fb99341982c1aae6"
+  },
+  {
+    "name": "real-cell-release-handoff-2",
+    "exit": 1,
+    "seconds": 66.751,
+    "source_head": "eb62ebc9fdfe6a0e8e666394fb99341982c1aae6"
+  }
+]

@@ -1,0 +1,23 @@
+{
+  "command": [
+    "cargo",
+    "+1.95.0",
+    "test",
+    "--release",
+    "--offline",
+    "--locked",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-pon-node",
+    "--test",
+    "model_evidence_v3",
+    "objective_release_shared_source_reward_reopen_and_review_fork_are_native",
+    "--",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "returncode": 0,
+  "seconds": 136.84454035758972,
+  "log_sha256": "7c2fe4833ecfe7ee8c054c2df5ff1bb6955b024a2e2123e5956526de548fdb38"
+}

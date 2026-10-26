@@ -1,0 +1,103 @@
+{
+  "schema": "pn1-held-native002-independent-readback-v1",
+  "observed_utc": "2026-10-26T00:11:27.062041+00:00",
+  "verdict": "FINITE_HELD_DIRECTORY_COMPONENT_PASS_WITH_RETAINED_BUCKET_CLASSIFICATION_DEFECT",
+  "original_execution_receipt_sha256": "4a3220bf4c48dbe6b60f17296bde14d1431ba9fa27c10e47247293c3beac240f",
+  "actual_native_parent_exit_code": 0,
+  "actual_native_elapsed_seconds": 0.3712886309949681,
+  "actual_fresh_child_count": 4,
+  "actual_metadata": 43,
+  "actual_RootReceipt_rows": 18,
+  "negative_actual_owner_counts": [
+    0,
+    0,
+    0
+  ],
+  "actual_child_identities": [
+    [
+      3098958,
+      "5094762"
+    ],
+    [
+      3098969,
+      "5094779"
+    ],
+    [
+      3098971,
+      "5094784"
+    ],
+    [
+      3098973,
+      "5094789"
+    ]
+  ],
+  "actual_native_parent_identity": {
+    "pid": 3098956,
+    "kernel_start_tick": "5094761",
+    "actual_image": [
+      2050,
+      56938822
+    ],
+    "held_ELF_identity": [
+      2050,
+      56938822
+    ]
+  },
+  "actual_C_witness_files_hashed": 8,
+  "actual_archive_member_count": 1168,
+  "actual_archive_bytes_including_two_final_receipts": 35779805,
+  "blocks_change_diagnostic_only": [],
+  "inventory_and_execution_final_fixedpoint_bytes_verified": true,
+  "all_source_witness_and_copied_ELF_before_after_stable": true,
+  "held_ELF_sha256": "d4d038562aabbe61395a3f5c2e6938f3e063960a437575387146ac747758915c",
+  "held_ELF_bytes": 18958392,
+  "held_ELF_dev_ino": [
+    2050,
+    56938822
+  ],
+  "same_original_WAL_FULL_4KiB_profile_and_actual_cold_asserts_passed": true,
+  "actual_database_bytes_raw_read_only_no_SQLite_connection_opened": true,
+  "real_parent_rename_twice_and_replacement_paths_unchanged": true,
+  "negative_specific_type_basename_symlink_errors_and_sentinel_unchanged": true,
+  "claim_not_reset_original_both_factory_retries_rejected": true,
+  "all_original_three_completeness_flags_true_and_closed_refs_zero": true,
+  "actual_launch_and_after_caps_4CPU_16GiB_Nice19_AS3GiB_FSIZE16MiB": true,
+  "declared_collection_budget_5184MiB_and_actual8GiB_limit_retained": true,
+  "known_bucket_classification_defect": {
+    "path": "observations/held_parent_rename_sqlite_cold/renamed-again-parent/root-0/native.sqlite",
+    "bytes": 8192,
+    "original_charged_bucket": "provenance",
+    "correct_namespace_bucket": "sqlite",
+    "original_sqlite_labeled_bucket222_does_not_mean_actual_database_bytes": true,
+    "all_bytes_counted_under_stricter_256MiB_provenance_cap": true,
+    "does_not_invalidate_finite_case_or_whole_byte_cap": true,
+    "fix_not_applied_and_no_rerun_for_label": true
+  },
+  "original001_overall": "FAIL_MemoryError_MISSING_FINAL_RECEIPTS_ORIGINAL_RAW_RETAINED",
+  "cgroup_path_observed_from_original_resources": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a17588f66f-96a-692.service",
+  "original_owned_cgroup_present_on_readback": false,
+  "reviewer_collector_validator_build_native_or_SQLite_executed": false,
+  "original_outputs_or_source_modified": false,
+  "new_W1_proofs": 0,
+  "Node_AuthenticatedV1_requalified_on_new_owner": false,
+  "full_campaign_held_FD_bridge_implemented": false,
+  "full_writer_caller_and_reader_qualified": false,
+  "full_W1_4097_qualified": false,
+  "full_guard_enabled": false,
+  "SQLite_WAL_reset_dependency_blocker_resolved": false,
+  "exact_committed_source_qualified": false,
+  "merge_ready": false,
+  "task_complete": false,
+  "actual_workspace_source_files_hashed": 1077,
+  "all_original_inventory_members_SHA_size_dev_ino_mode_nlink_rechecked": true,
+  "two_final_receipts_actual_SHA_and_sizes_independently_measured": true,
+  "after_input_rows_exactly_match_each_frozen_manifest_original_path_pin_and_identity_in_order": true,
+  "positive_seven_input_files_actual_same_held_parent_identity_and_basename_bytes": true,
+  "all_observed_lifecycle_sequence_numbers_distinct_across_ordinary_and_cleanup": true,
+  "all_observed_reserved_pending_open_flags_false": true,
+  "actual_owned_operator_terminal_exit_code": 0,
+  "actual_owned_operator_terminal_output_complete": true,
+  "actual_owned_operator_terminal_state": "succeeded",
+  "actual_owned_operator_terminal_status_receipt_sha256": "fae6bdc3aa1519ff9b41590387282209cf48fd95bea154716aea76c1d5493e91",
+  "finalized_review_utc": "2026-10-26T00:12:09.916251+00:00"
+}

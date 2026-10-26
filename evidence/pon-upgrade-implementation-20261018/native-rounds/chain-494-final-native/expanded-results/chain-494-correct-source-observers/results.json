@@ -1,0 +1,49 @@
+{
+  "head": "4940b7a8072761807c5da75b322eecb05a5f193f",
+  "tree": "e336a673fa763ad117b4b4dc40677fb85ba0c00e",
+  "prior_incorrect_invocations_retained": true,
+  "steps": [
+    {
+      "name": "preflight",
+      "command": [
+        "/usr/bin/bash",
+        "scripts/project-preflight.sh"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.08534504700219259
+    },
+    {
+      "name": "w1-reader-negative-controls",
+      "command": [
+        "/usr/bin/python3",
+        "scripts/ci/test_pon_w1_budget_readers.py",
+        "--raw-dir",
+        "evidence/pon-upgrade-implementation-20261018/native-rounds/chain-p0-native-54",
+        "-v"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 3.809178081981372
+    },
+    {
+      "name": "complete-source-check",
+      "command": [
+        "/usr/bin/python3",
+        "scripts/ci/check_repository.py"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 72.87503765599104
+    },
+    {
+      "name": "negative-source-integrity",
+      "command": [
+        "/usr/bin/python3",
+        "-m",
+        "unittest",
+        "-v",
+        "test_ci_source_integrity"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 3.588958323991392
+    }
+  ]
+}

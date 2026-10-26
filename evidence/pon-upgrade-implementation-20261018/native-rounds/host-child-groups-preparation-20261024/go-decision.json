@@ -1,0 +1,23 @@
+{
+  "root_decision": "GO_ONE_FRESH_U_CHILD_GROUPS_DIAGNOSTIC_PROBE_ONLY",
+  "source": "03b67a955b8fcb6b6c920be584eaad5c0a71d34d",
+  "source_tree": "17502e548cb6fd393a7139a7342db52093371d88",
+  "profile": "FRESH_U_CHILD_GROUPS_ONLY_V1",
+  "preparation_freeze_sha256": "4f556f9fdc013621bbb5f16b0c6a5f14a73e943f12b23a082a93b82de5782478",
+  "preparation_manifest_sha256": "73262b2e4176c82ab9fbe0b8584b6276f57c7b65000d2394c4751151e0fba8f8",
+  "source_manifest_sha256": "eed36395892893ff43e07c5012d0876b8743b5251e0f7c15ab3065a2b8822894",
+  "archive_sha256": "54d79dca01c62b61adf0f67e8658f3d4e6360e91187966fc917d74ef47adaa09",
+  "archive_bytes": 266240,
+  "executor_sha256": "79bb5838e72215b21f0eef2ee637dc3dd66df03de97c2e8d8586edf5c1115b5f",
+  "remote_run": "/home/qian-qi/Documents/Codex/2026-10-22/pon-controlled-qualification/work/host-child-groups-native-20261024T134248Z-ee0d0d35dd97",
+  "local_run": "/home/qian-qi/Documents/Codex/2026-10-22/github-trillionnium-chain-https-github-com/work/host-child-groups-native-20261024T134248Z-ee0d0d35dd97",
+  "max_launches": 1,
+  "max_exports": 12,
+  "old_unit_cap_reuse": false,
+  "original8s_and_assertions_unchanged": true,
+  "authorization_basis": "User requests continued P0/P1/P2 implementation and controlled testing on the six existing machines; root independently reviewed this exact diagnostic executor.",
+  "independent_driver_review_sha256": "bbcdd6f096f63178f9f841ad63eb437111b8477d11d1cf133bd16b21a30f60ab",
+  "only_empty_child_group_preparation": true,
+  "native_process_birth": false,
+  "funding_or_terminal_or_refund_authority": false
+}
