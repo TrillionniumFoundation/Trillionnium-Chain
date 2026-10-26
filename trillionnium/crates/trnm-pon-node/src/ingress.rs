@@ -2327,6 +2327,50 @@ mod tests {
     use super::*;
 
     #[test]
+    fn guarded_loopback_history_page_keeps_legitimate_w1_and_native_admission() {
+        // Positive complement to the remote host-ownership refusal: the
+        // checked public API must not break explicit local-only development
+        // sync when it receives one fully genuine canonical W1 packet.
+        let clock = now().unwrap();
+        let settings = crate::Settings::development(Some(clock - 100)).unwrap();
+        let temp = tempfile::tempdir().unwrap();
+        let mut node = Node::open(temp.path(), settings.clone(), 2).unwrap();
+        let parent = settings.genesis();
+        let packet = node.make(
+            parent,
+            vec![],
+            crate::development_public(0).unwrap(),
+            settings.genesis_time() + 10,
+            4096,
+        ).unwrap();
+        let tip = packet.id().unwrap();
+        let page = Page {
+            schema: "pon-native-history-v1".into(),
+            network: hex::encode(settings.network()),
+            parameters: hex::encode(settings.parameters()),
+            genesis: hex::encode(settings.genesis()),
+            tip: hex::encode(tip),
+            after: hex::encode(parent),
+            packets: vec![hex::encode(packet.encode().unwrap())],
+            next: hex::encode(tip),
+            complete: true,
+        };
+        let imported = receive_page_from(
+            &mut node,
+            "127.0.0.1:33001".parse().unwrap(),
+            page,
+            tip,
+            parent,
+            clock,
+        ).unwrap();
+        assert_eq!(imported, tip);
+        assert_eq!(node.read_active().unwrap().0, tip);
+        assert_eq!(node.stats().unwrap()["stored_blocks"], 2);
+        // A successfully accepted block is not a timeout, budget defer or
+        // cached fake transcript. Its original W1 relation was revalidated.
+    }
+
+    #[test]
     fn remote_sync_without_original_host_cgroup_rejects_before_any_network_or_w1() {
         // Documentation-only network address. If this host really has the
         // registered fixed cgroup, its owner is tested by the kernel checker.
