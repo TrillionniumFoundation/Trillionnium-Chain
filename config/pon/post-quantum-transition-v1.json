@@ -23,7 +23,9 @@
       "data_custody": 5,
       "peer_identity": 6
     },
-    "release_policy": "none: verification cannot issue release/final-use/chainwork"
+    "release_policy": "none: verification cannot issue release/final-use/chainwork",
+    "offline_dual_possession_migration_test_present": true,
+    "native_account_migration_integrated": false
   },
   "reference_key_exchange": {
     "algorithm": "ML-KEM-768",
@@ -69,7 +71,9 @@
       "formal/pon-nakamoto-v1/pq_envelope.py",
       "formal/pon-nakamoto-v1/test_pq_envelope.py",
       "formal/pon-nakamoto-v1/test_pq_kem.py",
-      "formal/pon-nakamoto-v1/test_pq_tls.py"
+      "formal/pon-nakamoto-v1/test_pq_tls.py",
+      "formal/pon-nakamoto-v1/pq_account_migration.py",
+      "formal/pon-nakamoto-v1/test_pq_account_migration.py"
     ],
     "tests_are_product_activation": false,
     "independent_accepted": false,
