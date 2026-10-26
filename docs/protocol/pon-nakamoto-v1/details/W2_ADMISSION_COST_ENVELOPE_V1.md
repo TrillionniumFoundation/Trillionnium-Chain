@@ -73,6 +73,14 @@ Its four deterministic tests deliberately include an extremely fast
 attacker, the 16-bit vs 20-bit honest deadline tradeoff, unknown GPU
 data and invalid numeric inputs.
 
+The reader rejects duplicate JSON object keys and nonfinite JSON
+constants rather than silently overriding an attacker-cost input. With all
+five required numeric inputs present, it returns one of two *conditional*
+research states: `SOME_BITS_EXPECTED_COST_ONLY` or
+`NO_BIT_FEASIBLE_UNDER_DECLARED_COSTS`. Missing GPU or other inputs returns
+`UNKNOWN_INCOMPLETE_MEASUREMENTS`. None of these three states can set a
+public-readiness or production activation flag.
+
 No amount of this CPU-only arithmetic demonstrates Sybil-safe admission,
 valid neural-work mining hardness, true GPU/ASIC economics or the full
 A03 three-mode three-run three-timely-confirmation safety criterion.
