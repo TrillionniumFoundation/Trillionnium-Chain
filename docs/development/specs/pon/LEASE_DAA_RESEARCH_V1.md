@@ -738,3 +738,25 @@ The native design still needs a separately versioned, reviewed consensus
 activation context, work-validating alternate verifier, independent operator
 WAN risk research and actual longest-retained-state/retention policy.
 Nothing in this research changes the production eligibility flags.
+
+
+### Independent simulated 4105-height indexed lookup
+
+New exact Git research blobs:
+- daa_indexed_shadow_oracle.py: 41df577186751706f10e46bdfbd1f345cad8e5dc
+- test_daa_indexed_shadow_oracle.py: 4fd06521ea598430e564d55946b1a2d89c049a26
+
+Four local tests executed successfully using identical Git blob bytes for these
+two new files: 4105 synthetic assumed-validated headers; raw/MTP11 target
+comparison; fork below the activation anchor; reversed/duplicate/out-of-range,
+budget exhausted and altered-jump refusals. The local imported ASERT Python
+module was the earlier research working copy, NOT the exact later GitHub
+dependency hash; current-source complete regression remains NOT_RUN. The
+simulator uses conservative APPROXIMATE query costs, not native SQLite read
+telemetry, and signs/mines zero W1 blocks.
+
+The first conservative 4105-height simulation needed 432 cost units and
+exposed an overstrict, non-protocol <400 test assertion. That assertion was
+corrected to the existing 1024 budget; original native long-run tests likewise
+use the existing READ_SQL_BUDGET instead of inventing a stricter numeric SLO.
+The failed first observation and correction are retained here.

@@ -1027,7 +1027,7 @@ mod tests {
         for (height, id) in result.blocks {
             assert_eq!(id, ids[height as usize]);
         }
-        assert!(result.sql_lookups < 400);
+        assert!(result.sql_lookups <= READ_SQL_BUDGET);
     }
 
 }

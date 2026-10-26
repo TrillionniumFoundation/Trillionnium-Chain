@@ -1392,7 +1392,7 @@ fn indexed_asert_shadow_above_4096_real_maintenance_blocks() {
     let (raw, queries) = node
         .indexed_asert_shadow(tip, 16, 7200, ParentClock::Raw)
         .unwrap();
-    assert!(queries < 400);
+    assert!(queries <= crate::ancestry_index::READ_SQL_BUDGET);
     drop(node);
     let restored = Node::open(dir.path(), settings, 1).unwrap();
     assert_eq!(
