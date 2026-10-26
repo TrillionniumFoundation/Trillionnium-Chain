@@ -1038,8 +1038,8 @@ mod tests {
         let guarded = Mutex::new(node);
         let stop = AtomicBool::new(false);
         let deadline = Instant::now() + Duration::from_secs(1);
-        for mut packet in [valid.clone(), valid] {
-            if packet.proof[0] == b'P' {
+        for (index, mut packet) in [valid.clone(), valid].into_iter().enumerate() {
+            if index == 1 {
                 packet.header.nonce = packet.header.nonce.wrapping_add(1);
                 packet.proof[0] ^= 1;
             }
