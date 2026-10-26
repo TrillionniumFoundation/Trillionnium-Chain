@@ -2290,6 +2290,27 @@ same training/evaluation budget and lineage, verify the full 135M model, and
 complete ordinary installation and next-task readback. No CURRENT, selection,
 FinalUse, reward or three-round gate is opened by these controls.
 
+A later [single controlled V2 train](../../evidence/pon-upgrade-implementation-20261018/native-rounds/real-model-owner-controlled-20261025/initial-v2-controlled-train-20261026.json)
+on isolated Chain `a23b5f2d` loads the real 135M backbone and original canonical
+parent, checks the distinct new-task contract, and completes ten optimizer steps
+under the original 1,800-second / 16-GiB supervisor. Setup changes sixty A factors
+with B still zero; subsequent training changes all 120 factors, separately from
+setup. Original completion and exact wait4 succeed in 25.334008 seconds, with
+the missing-RSS/terminal-reconciliation record preserved. The fourteen raw pins
+include thirteen result-tree files and one separate launcher stream. This is
+unsigned train-only evidence; V2 evaluation/readback, matched quality evidence,
+selection, I10 installation and ordinary next-task/three-round closure remain
+required. Setup changes and training loss do not count as useful gain.
+
+A separate [new-engine I09 run002](../../evidence/pon-upgrade-implementation-20261018/native-rounds/real-model-owner-controlled-20261025/i09-eleven-material-sqlite3513-controlled-20261026.json)
+on Chain `4c8c2ee7` / Hepta `8d25c5d7` uses fresh SQLite 3.51.3 databases, fetches
+all eleven objects in 4.257683 seconds within the original 35 seconds, and passes
+the original signed native case in 10.357 seconds. Three authorizer bindings
+yield two durable nonce claims. The controller still fails exit1 at unavailable
+I10 selected installation. Run001 retains its original `915f933c` / `da4a920`
+sources; neither observation grants CURRENT, ordinary, WAN or three-round
+acceptance, and this finite run does not qualify full PN1 or the SDK.
+
 The controlled 135M five-control observation in the inspected Hepta source
 reports zero gain against the strongest control and no ordinary installation
 or three-round closure. Preserve that result. Require frozen matched training
