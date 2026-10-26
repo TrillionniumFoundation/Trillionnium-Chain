@@ -162,6 +162,16 @@ Exact new Rust selectors on this branch:
   while other peers continue, and spoofed remote text, real CPU shortage
   and bad StateRoot do not cause quarantine.
 
+Additional end-to-end native negative selector:
+`actual_ticket_passing_false_trace_quarantines_only_its_pinned_source`
+mines one **separate legal fixture** to obtain valid header/task context,
+then substitutes a freshly chosen bogus trace whose cheap W1 ticket
+passes the original target. It confirms a real `WORK:Transcript` result
+from the Node, unchanged active history/stats/cursor, one peer request,
+and no second RPC while the original 250ms invalid-work cooldown is
+active. This uses a valid fixture to construct the negative input and
+is NOT misrepresented as the original four-from-zero attack producer.
+
 This is **not** a Sybil-safe public network admission algorithm: one
 honest pinned peer wrongly serving invalid material is temporarily
 deprioritized, and a malicious operator controlling many independent
