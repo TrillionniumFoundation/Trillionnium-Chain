@@ -59,7 +59,12 @@ class FloodCostSourceTests(unittest.TestCase):
         row['cases'][0]['complete_attacker_cpu_ns']=0
         row['cases'][0]['trials'][0]['cpu_ns']=0
         row['cases'][0]['trials'][1]['cpu_ns']=0
-        self.assertIsNone(E.analyze(row)['observed_aggregate_amplification'])
+        observed=E.analyze(row)
+        self.assertIsNone(observed['observed_aggregate_amplification'])
+        self.assertEqual(observed['scope_verdict'], 'UNKNOWN')
+        row=fixture()
+        row['cases'][0]['trials'][0]['cpu_ns']=None
+        self.assertEqual(E.analyze(row)['scope_verdict'], 'UNKNOWN')
 
     def test_proof_double_charge_and_duplicate_calls_refuse(self):
         for target in ('cases','receivers'):
