@@ -517,3 +517,27 @@ worst-case honest/full-node ingress, Sybil attack, independent hardware
 or operator qualification occurred. P0-C remains OPEN. This evidence
 does not change W1, consensus revision, reward, task permissions, old
 DAA, production flags or the source-sensitive historic evidence package.
+
+
+## Equal-chainwork partition-heal simulator correction
+
+Previously the Python DAA/fork-outage simulator selected A's tip when
+two *different* branches had exactly equal required chainwork, then
+forced every local view to that branch. This violates PoN's rule that
+a node replaces its own valid tip only for strictly greater cumulative
+work and can falsely erase unresolved confirmation/reorg risk.
+
+The corrected screening model retains both local tips on an equal-work
+network heal. A subsequently simulated block is announced to both
+views; adoption is recorded only if its branch has strictly more work
+than the other tip. A genuine stronger branch already available on
+healing still converges immediately. Reporting now separates local-A
+chainwork from a genuinely shared tip, and records a tie that cannot
+resolve after every source lease lapses and no miner elects Maintenance.
+
+New tests cover equal-work survival, strictly greater work to break
+the tie, timeout before any successor, stronger-work immediate heal,
+and zero opted-in Maintenance capacity following source loss. Historical
+campaign hashes must not be relabelled as results from this changed
+research simulator. No real PNW1 mining, network transport, Q4 signature,
+W1 security, or production DAA activation is established.

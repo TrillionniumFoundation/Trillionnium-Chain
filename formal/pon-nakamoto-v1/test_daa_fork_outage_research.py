@@ -57,6 +57,27 @@ class ForkOutageScreenTests(unittest.TestCase):
         self.assertEqual(out["partition_heal_preferred"], "tie-retained")
         self.assertFalse(out["tie_resolved_by_strict_work"])
 
+    def test_zero_maintenance_participation_cannot_end_equal_work_tie(self):
+        # Both fixed, distinct branch tips have equal required work. With
+        # expired lease sources and no explicit maintenance miner there is no
+        # new work to resolve the tie.
+        p = Parameters(seed=29, share_a=.5, task_outage_at=2,
+                       a_maintenance_fraction=0, b_maintenance_fraction=0,
+                       timestamp_policy_a="honest", timestamp_policy_b="honest")
+        s = ForkSimulator(p)
+        a, b = s.mine("A", 0), s.mine("B", 0)
+        s.tip_a, s.tip_b = a, b
+        s.heal()
+        self.assertFalse(s.round("healed"))
+        self.assertEqual(s.stop_reason, "no_assumed_work_capacity")
+        self.assertNotEqual(s.tip_a, s.tip_b)
+        result = s.report()
+        self.assertTrue(result["lease_outage_reached"])
+        self.assertTrue(result["equal_work_tie_at_heal"])
+        self.assertFalse(result["shared_tip_after_heal"])
+        self.assertFalse(result["tie_resolved_by_strict_work"])
+        self.assertEqual(result["final_required_work_scope"], "local-A-only")
+
     def test_strict_work_fork_heals_without_waiting_for_another_block(self):
         s = ForkSimulator(Parameters(seed=13, share_a=.5,
                           timestamp_policy_a="honest", timestamp_policy_b="honest"))
