@@ -152,7 +152,7 @@ bound, fork-choice activation or attack-service SLA is inferred from
 these four Python-only cases. The added two cost-report tests expand
 the isolated local suite to **14/14 passed**. The new source blob is
 'd231675b41a8c0cb36be8aa5ef4e3282eeaa8849' and latest test blob is
-'53af98b551886c3c2d9086248721aaf9e0e0a50e'.
+'da8864af75311452426b51e0636987d59481beaf'.
 
 **Security verdict remains HOLD_NO_GO**. These observations confirm that
 8-bit W2-C tickets can be hundreds of times cheaper in this Python setup
@@ -161,3 +161,9 @@ paid record. The two 12-bit samples vary substantially; selecting bits
 from a finite winning sample would be an invalid hardness/fairness claim.
 GPU/ASIC cost, actual V3 signed-cookie overhead, multi-receiver network,
 operator economics and independent attack/cryptography signoff remain OPEN.
+
+The final 14-case test source isolates the actual `fork()` negative inside its own
+single-threaded Python subprocess rather than forking a potentially
+multithreaded test runner. All 14 local cases were rerun and passed with
+that final exact test blob. The original cloned-database negative remains
+intentionally reproducible and blocks claims of cross-host ownership.
