@@ -87,6 +87,54 @@ class DurablePaidSpendTests(unittest.TestCase):
             self.assertEqual(owner.consume(grant,PROPOSAL,CALLER,nonce,115),
                              'READY_RESOURCE_ONLY')
 
+    def test_real_child_unclean_exit_releases_flock_and_fences_old_epoch(self):
+        import json
+        import subprocess
+        import sys
+        from w2c_receiver_admission import Grant
+        out=self.root/'child-paid-receipt.json'
+        # This is an actual separate Python process. It commits the paid row
+        # and exits without destructor, close(), context manager or atexit.
+        script = r'''
+import json,os,sys
+from pathlib import Path
+sys.path.insert(0,sys.argv[3])
+from contract_wire import H
+from w2c_receiver_admission import solve
+from w2c_durable_receiver import DurableReceiverAdmission as D
+owner=D(sys.argv[1],bytes([11])*32,bytes([12])*32)
+p=H('w2c-durable-proposal-test')
+g=owner.offer(p,bytes([13])*32,8,100)
+n,c=solve(g,65536)
+assert n is not None and owner.consume(g,p,bytes([13])*32,n,110)=='READY_RESOURCE_ONLY'
+data={'epoch':owner.epoch.hex(),'nonce':n,
+      'grant':{k:(v.hex() if isinstance(v,bytes) else v)
+               for k,v in vars(g).items()}}
+path=Path(sys.argv[2])
+with path.open('x',encoding='utf-8') as f:
+    json.dump(data,f)
+    f.flush()
+    os.fsync(f.fileno())
+os._exit(17)
+'''
+        completed=subprocess.run([sys.executable,'-c',script,str(self.root),
+                                   str(out),str(Path(__file__).resolve().parent)],
+                                  stdout=subprocess.PIPE,stderr=subprocess.PIPE,
+                                  text=True,timeout=30)
+        self.assertEqual(completed.returncode,17,completed.stderr)
+        payload=json.loads(out.read_text())
+        values={k:(bytes.fromhex(v) if k in
+                 ('receiver','epoch','proposal','token','mac') else v)
+                for k,v in payload['grant'].items()}
+        old=Grant(**values)
+        with self.open() as next_owner:
+            self.assertNotEqual(next_owner.epoch.hex(),payload['epoch'])
+            self.assertEqual(next_owner.consume(
+                old,PROPOSAL,CALLER,payload['nonce'],111),'CONTEXT')
+            self.assertEqual(next_owner.paid_count(),0)
+            # Old spent rows are pruned only after a durable new epoch. This
+            # does not claim a physical power loss or cross-host exclusivity.
+
     def test_wrong_recovery_key_cannot_resume_old_epoch(self):
         with self.open() as owner:
             grant,nonce=self.paid(owner)
