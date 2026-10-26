@@ -1,0 +1,13 @@
+{
+  "schema": "pon-w1-task-product-research-plan-v1",
+  "production_activation": false,
+  "hardness_accepted": false,
+  "hardware_attested": false,
+  "node_admission_measured": false,
+  "operation_clock": "std::time::Instant-wall",
+  "collection_output_limit_bytes": 33554432,
+  "jobs": [
+    {"name": "task-product-s8101", "args": ["--seed", "8101"], "timeout_seconds": 180},
+    {"name": "task-product-s8102", "args": ["--seed", "8102"], "timeout_seconds": 180}
+  ]
+}

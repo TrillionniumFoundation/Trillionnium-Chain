@@ -1,6 +1,6 @@
 # Trillionnium Chain Development Plan — PoN / Hepta-PoH revision
 
-Plan ID: `trnm-chain-development-plan-v2` (stable registry identity; content revision 33).
+Plan ID: `trnm-chain-development-plan-v2` (stable registry identity; content revision 34).
 Effective: 2026-09-28; priority implementation revision: 2026-10-26 America/New_York (2026-10-26 UTC). Status: selected development direction; no runtime activation.
 Canonical destination: `refs/heads/main`; continuation uses the current main lineage, not retired PR #194.
 Current source/head/tree/base and prospective merge are derived at verification time.
@@ -1880,6 +1880,46 @@ material already present and the separate missing initial-only ordinary host
 composition; it does not require an improved child before the first parent.
 Pure matrix remains primary; hybrid and ZK remain unadopted conditional options.
 Hosted CI was not inspected, launched, rerun or awaited for this continuation.
+
+### PN1 task-product reuse and actual-instantiation/service boundaries — 2026-10-26
+
+This continuation keeps the same O01–O07 standards and excludes hosted CI.
+The new explicit [task-product fact owner](../protocol/pon-nakamoto-v1/details/W1_TASK_PRODUCT_FACTS_V1.md)
+reuses only a fully computed positive AB result across fresh challenges with the
+same complete canonical A/B bytes. Every call still performs the original
+current field/task/target checks and all challenge noise and transcript tiles.
+Current C and trace claims are never cached verdicts. The original verifier,
+Node admission, public-intake policy and consensus wire retain their behavior.
+The capacity, retained storage, contention and final cancellation boundaries are
+explicit. An empty mathematical owner is not a physically cold CPU cache.
+
+The [fixed two-seed service registration](../../formal/pon-nakamoto-v1/experiments/w1_task_product_plan_v1.json)
+owns six material families, four fresh challenges each, opposite fixed arm order
+and a separate one-slot eviction sequence. Each process retains 28 full proof
+cases and 56 verifier calls. Source and executable freezing precede formal
+collection. Per-call wall time, preparation/reference/output costs and outer
+whole-child CPU are separate; no wall ratio is a miner-cost or Node-TPS result.
+The independent reader replays every full proof through the scalar relation and
+checks the exact material, challenge, cache path, current outputs and source pins.
+
+The [actual-instantiation analysis](../protocol/pon-nakamoto-v1/details/W1_INSTANTIATION_BARRIERS_V4.md)
+rules out three specific inference shortcuts: unrestricted public-SHA/ideal-
+primitive indistinguishability, unspecified collision/preimage security as a
+threshold law, and the direct generic auxiliary-input lift of the current coarse
+seeded-path allowance. It gives a one-sided native-event transfer interface with
+unknown resource/event/identity losses preserved as unknown. These are concrete
+route obstructions, not an actual-SHA lower bound or a native attack.
+
+The [service/growth interface](../protocol/pon-nakamoto-v1/details/W1_SERVICE_GROWTH_V4.md)
+adds a conditional finite honest-work lower tail and fixed-deadline private-fork
+comparison within one joint reference experiment. All-node complete admission,
+fresh valid honest opportunities, all-window service and interference budgets,
+eligible parent/frontier monotonicity and the common world-failure event remain
+explicit hypotheses. A global CPU quota or average receiver rate supplies no
+positive honest service guarantee by itself. This does not establish all-fork
+settlement or production kappa. Pure matrix remains primary, hybrid/ZK remain
+unadopted, and the original Hepta selection, quality and adoption owners retain
+their independent obligations.
 
 ## 1. Product mission: shared intelligence from real work
 
