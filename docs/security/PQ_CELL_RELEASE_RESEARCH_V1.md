@@ -59,8 +59,9 @@ values; all signatures expire against an externally admitted `now`.
 **Critical remaining authority**: a supplied roster is not a verified independent
 reviewer committee, and signatures alone do not authenticate task provenance,
 actual model scores, stronger baselines, holder diversity, export permission,
-anti-Sybil independence, future utility or network availability. The output is
-`ResearchObservation(adoption_authorized=False)`; this cannot issue Hepta
+anti-Sybil independence, future utility or network availability. The output is a non-authoritative `ResearchObservation` containing only
+manifest and observed signer identities **without any adoption or release
+authorization field**; it cannot issue Hepta
 Final-use, activate a release pointer, mint a settlement or override revocation.
 
 ## Reproduction and negative cases
@@ -76,7 +77,7 @@ shared-Base and Cell bytes, every manifest byte mutation, reordered/duplicate
 Cell IDs, wrong key/expiry/network/family/parent/generation/sequence, altered
 evaluation plan, forged/duplicated reviewer, one signer exercising two roles,
 signature tampering and no authority elevation. Exact local test artifact and
-blob identities appear at [evidence](../../evidence/pon-pq-cell-release-v1/README.md).
+blob identities appear at [evidence](../../evidence/pon-pq-cell-release-v2/README.md).
 
 ## Still unclosed for real Chain/Hepta production
 
