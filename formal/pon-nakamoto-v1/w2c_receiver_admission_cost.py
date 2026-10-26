@@ -25,7 +25,8 @@ def observe(bits, cap):
     for idx in (0, 1):
         issuer = C.ReceiverAdmission(bytes([idx + 1])*32, bytes([idx + 3])*32,
                                      bytes([idx + 5])*32, capacity=2,
-                                     entropy=lambda n, idx=idx:bytes([idx + 7])*n)
+                                     entropy=lambda n, idx=idx:bytes([idx + 7])*n,
+                                     bits=bits)
         grant = issuer.offer(proposal, bits, 100)
         nonce,search = C.solve(grant, cap)
         if nonce is None:

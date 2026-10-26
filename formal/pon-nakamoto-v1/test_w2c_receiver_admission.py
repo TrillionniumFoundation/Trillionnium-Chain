@@ -80,6 +80,33 @@ class ReceiverScopedCostTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, '^TRANSCRIPT$'):
             W.verify(challenge, task, bytes([255]) * 32, false_proof)
 
+    def test_receiver_owns_fixed_difficulty_even_if_weak_grant_has_valid_mac(self):
+        import hashlib
+        import hmac
+        issuer = R.ReceiverAdmission(
+            bytes([1]) * 32, bytes([3]) * 32, bytes([5]) * 32,
+            bits=12, entropy=lambda n: bytes([7]) * n,
+        )
+        with self.assertRaisesRegex(ValueError, 'BITS_POLICY'):
+            issuer.offer(self.proposal, 8, 100)
+        self.assertEqual(len(issuer.issued), 0,
+                         "weak attempt cannot occupy one original grant slot")
+        grant = issuer.offer(self.proposal, 12, 100)
+        self.assertEqual(grant.bits, 12)
+        # Even a grant signed with this trusted issuer's secret cannot
+        # downgrade the resource policy. A peer must never choose bits.
+        weak = replace(grant, bits=8, mac=bytes(32))
+        signed_weak = replace(
+            weak,
+            mac=hmac.new(issuer.secret, weak.unsigned(), hashlib.sha256).digest(),
+        )
+        nonce, _ = R.solve(signed_weak, 4096)
+        self.assertIsNotNone(nonce)
+        self.assertEqual(issuer.consume(signed_weak, self.proposal, nonce, 120),
+                         'BITS_POLICY')
+        self.assertEqual(len(issuer.issued), 1)
+        self.assertFalse(issuer.issued[grant.token][1])
+
     def test_invalid_cost_ticket_is_not_valid_work(self):
         grant,_ = self.minted()
         miss = next(n for n in range(32) if not R.qualifies(R.ticket(grant,n),grant.bits))

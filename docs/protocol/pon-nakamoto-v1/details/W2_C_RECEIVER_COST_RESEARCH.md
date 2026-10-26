@@ -99,3 +99,30 @@ can itself be exhausted by unpaid senders without an earlier front-door limit.
 W2-C admission research must NOT be advertised as a decentralized consensus
 safety theorem. Until these gates close, continue to deny production PoN
 activation.
+
+## Receiver-owned difficulty policy (incremental research child)
+
+This change closes an additional research-only downgrade hazard in the
+first receiver-bound prototype: issuer method `offer(proposal, bits, now)`
+originally allowed different difficulties to be issued by the **same**
+receiver, and `consume` checked only the signed grant's own bits. If a
+remote request could select this field on a later transport adapter,
+8-bit grants could bypass an intended 12-bit server cost price while
+retaining valid MACs and one-use semantics.
+
+The trusted issuer now pins `bits` on `ReceiverAdmission` construction,
+requires exact equality before issuance, and independently checks
+`grant.bits == issuer.bits` **after validating its MAC** and before the
+Hashcash acceptance check. Research price comparisons instantiate a
+separate issuer with the exact requested 8/12-bit policy instead of
+changing the same issuer per incoming proposal. A new negative test
+builds an otherwise MAC-valid weak grant under the same receiver secret
+and epoch, finds a genuine 8-bit ticket, and expects `BITS_POLICY`
+with the original unspent record unchanged. The deterministic test
+ticket finds its first winning nonce at 485.
+
+This is NOT a cryptographic defense against compromised issuer policy
+code or an approved V3 policy change. The original V3 signed profile,
+W1 and all consensus state stay unchanged. CPU/GPU economic adequacy,
+unpaid issuance capacity, physically independent hosts, native
+integration, and third-party crypto review remain open.
