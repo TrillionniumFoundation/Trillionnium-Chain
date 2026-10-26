@@ -2174,6 +2174,9 @@ fn receive_page_with_cpu(
             Some(domain) => {
                 // Charge the original shared V3 CPU owner *before* parent/State
                 // lookups, complete W1 replay and downstream M06 execution.
+                domain.await_history_work_credit(
+                    Instant::now() + Duration::from_secs(10),
+                )?;
                 let operation = domain.begin()?;
                 let checkpoint = operation.checkpoint_handle();
                 let native = (|| -> Result<Hash> {
@@ -2217,6 +2220,9 @@ fn receive_page_with_cpu(
             Some(domain) => {
                 // Also debit branch activation work on the same service
                 // account. Deep State/SQLite operations remain nonpreemptive.
+                domain.await_history_work_credit(
+                    Instant::now() + Duration::from_secs(10),
+                )?;
                 let operation = domain.begin()?;
                 let checkpoint = operation.checkpoint_handle();
                 let native = (|| {
