@@ -75,10 +75,14 @@ SECTIONS = {
         'budget.refill(now)', 'MUTATION_CPU_START_RESERVE_NS',
         'MUTATION_CPU_WORKERS', 'PUBLIC_MUTATION_CPU_BUDGET',
     )),
-    'public-v3-worker': (V3, 'fn serve_public_protected_v3_inner(',
+    'public-v3-metered-work': (V3, 'fn public_dispatch(',
+        'pub fn serve_public_protected_v3(', (
+        'WorkCheckedPacket::verify_with_progress(',
+        'mutation_cpu.ok_or(',
+    )),
+    'public-v3-paid-worker': (V3, 'fn serve_public_protected_v3_inner(',
         '#[cfg(test)]', (
         'PaidMutationCpuPermit::acquire_before(',
-        'WorkCheckedPacket::verify_with_progress(',
     )),
     'cli-sync': (MAIN, '"sync" => {', '"serve" => {', (
         'ingress::bind_host_verified_history_cpu_domain(&mut node, address)?',
