@@ -6,12 +6,13 @@ import subprocess
 import tempfile
 import unittest
 
-from pq_envelope import Reject, public_key_id
+from pq_envelope import Reject, public_key_id, make_unsigned, sign_reference
 from pq_cell_custody import (
     Catalog, Challenge, OfflineOneUseJournal, RetrievalObservation, _layers,
     catalog_from_chunks, catalog_id, chunk_proof, parse_catalog,
     parse_challenge, sign_response_fixture, verify_chunk, verify_response_research,
-    MAX_CHALLENGE_TTL, MAX_CHUNK_BYTES,
+    MAX_CHALLENGE_TTL, MAX_CHUNK_BYTES, CatalogPinObservation, release_frame_id,
+    sign_catalog_binding_fixture, verify_catalog_binding_research,
 )
 
 
@@ -182,6 +183,60 @@ class PQCellCustodyTests(unittest.TestCase):
             for i, chunk in enumerate(data):
                 with self.subTest(total=len(data), index=i):
                     self.assertEqual(verify_chunk(cat,i,chunk,chunk_proof(data,i)), _layers(data)[0][i])
+
+    def test_release_key_signed_catalog_pin_chains_into_retrieval(self):
+        # Caller accepts this release frame identity ONLY after independent PCB1
+        # release/reviewer validation. Local fixture verifies the separate signer.
+        unsigned = make_unsigned(purpose=4, network=self.network,
+                                 context=bytes([7])*32, signer_key_id=self.provider,
+                                 owner_generation=9, operation_sequence=7,
+                                 expires_at=200, payload=b"already-reviewed-PCB1-release-fixture")
+        release_frame = sign_reference(unsigned, private_key_path=self.key)
+        prev = bytes(48)
+        binding = sign_catalog_binding_fixture(self.catalog, release_frame=release_frame,
+                                               previous_head=prev, signer_public_pem=self.pub_pem,
+                                               signer_private_path=self.key, sequence=7,
+                                               expires_at=200)
+        args = dict(release_frame=release_frame, binding_frame=binding,
+                    signer_public_pem=self.pub_pem,
+                    expected_release_frame_id=release_frame_id(release_frame),
+                    expected_signer_key_id=self.provider,
+                    expected_previous_head=prev, expected_network=self.network,
+                    expected_release_manifest=self.release,
+                    expected_generation=9, expected_sequence=7, now=150)
+        obs = verify_catalog_binding_research(self.catalog.encode(), **args)
+        self.assertIsInstance(obs, CatalogPinObservation)
+        self.assertEqual(obs.catalog_digest, catalog_id(self.catalog))
+        self.assertEqual(self.check(expected_catalog_digest=obs.catalog_digest).provider_key_id, self.provider)
+        self.assertFalse(hasattr(obs, "adoption_authorized"))
+        for change in (dict(expected_release_frame_id=bytes([9])*48),
+                       dict(expected_signer_key_id=bytes([8])*32),
+                       dict(expected_previous_head=bytes([8])*48),
+                       dict(expected_generation=8), dict(expected_sequence=8),
+                       dict(now=201), dict(signer_public_pem=self.wrong_pub.read_bytes())):
+            with self.subTest(change=change), self.assertRaises(Reject):
+                verify_catalog_binding_research(self.catalog.encode(), **(args | change))
+        altered = bytearray(binding)
+        altered[-1] ^= 1
+        with self.assertRaises(Reject):
+            verify_catalog_binding_research(self.catalog.encode(), **(args | {"binding_frame": bytes(altered)}))
+        # Even a signer-originated different catalog needs its OWN attestation,
+        # and cannot replace this signed original merely by sharing release ID.
+        different = catalog_from_chunks(self.network,self.release,9,(b"f"*32,b"g"*32,b"h"*17),32)
+        with self.assertRaises(Reject):
+            verify_catalog_binding_research(different.encode(), **args)
+
+    def test_catalog_binding_requires_real_release_purpose(self):
+        other = make_unsigned(purpose=1, network=self.network, context=bytes(32),
+                              signer_key_id=self.provider, owner_generation=9,
+                              operation_sequence=7, expires_at=200, payload=b"not release")
+        fake_release = sign_reference(other, private_key_path=self.key)
+        with self.assertRaises(Reject):
+            release_frame_id(fake_release)
+        with self.assertRaises(Reject):
+            sign_catalog_binding_fixture(self.catalog, release_frame=fake_release,
+                                         previous_head=bytes(48), signer_public_pem=self.pub_pem,
+                                         signer_private_path=self.key, sequence=7, expires_at=200)
 
     def test_journal_first_exact_retry_and_cold_reopen(self):
         db_path = Path(self.temp.name)/"one-use.db"
