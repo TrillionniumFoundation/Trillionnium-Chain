@@ -14,6 +14,7 @@ import secrets
 import stat
 import threading
 import time
+import weakref
 from w2c_stateless_receiver import StatelessReceiverAdmission
 from w2c_receiver_admission import bytes32
 
@@ -78,7 +79,16 @@ class LocalEpochLeasedReceiver:
         self._inner = inner
         self._lifecycle = threading.RLock()
         if hasattr(os, 'register_at_fork'):
-            os.register_at_fork(after_in_child=self._after_fork_child)
+            # Never give Python's process-global at-fork callback registry a
+            # strong reference to the closed owner and its old secret/epoch.
+            owner = weakref.ref(self)
+
+            def disown_child():
+                live = owner()
+                if live is not None:
+                    live._after_fork_child()
+
+            os.register_at_fork(after_in_child=disown_child)
 
     def _after_fork_child(self):
         # Child inherits an open-description flock; merely checking the PID
