@@ -2109,13 +2109,43 @@ fn call_authenticated_durable_inner(
     Err(Error::authenticated_remote(terminal, error))
 }
 
+/// Resource-only checkpoints for an untrusted History batch. The native
+/// verifier, not the callback, remains sole W1 consensus authority.
+#[derive(Clone, Copy)]
+enum HistoryImportCheckpoint {
+    BeforePacket,
+    DuringWork(trnm_crypto_primitives::pon_work::VerificationProgress),
+    AfterPacket,
+}
+
+/// The physical cgroup read is relatively expensive. Check W1 progress only
+/// at bounded, deterministic boundaries rather than on every transcript tile.
+fn history_work_checkpoint(
+    progress: trnm_crypto_primitives::pon_work::VerificationProgress,
+) -> bool {
+    use trnm_crypto_primitives::pon_work::VerificationProgress as P;
+    matches!(
+        progress,
+        P::BeforeReplay
+            | P::BeforeProduct
+            | P::BeforeVerifiedWork
+            | P::Noise { counter: 0, .. }
+            | P::MatrixRow { row: 0 | 16 | 32 | 48 }
+            | P::TranscriptTile {
+                column: 0,
+                inner: 0,
+                ..
+            }
+    )
+}
+
 fn receive_page(
     node: &mut Node,
     page: Page,
     tip: Hash,
     after: Hash,
     clock: u64,
-    progress: &mut impl FnMut() -> Result<()>,
+    progress: &mut impl FnMut(HistoryImportCheckpoint) -> Result<()>,
 ) -> Result<Hash> {
     ensure(
         page.schema == "pon-native-history-v1"
@@ -2157,12 +2187,17 @@ fn receive_page(
         // Never defer physical host/membership and quota checks until *after*
         // the whole batch; a hostile page must pay at most one full replay
         // between consecutive checks, rather than a batch of sixteen.
-        progress()?;
-        node.admit(packet, clock)?;
+        progress(HistoryImportCheckpoint::BeforePacket)?;
+        node.admit_with_verification_progress(packet, clock, &mut |point| {
+            if history_work_checkpoint(point) {
+                progress(HistoryImportCheckpoint::DuringWork(point))?;
+            }
+            Ok(())
+        })?;
         // This guard does not revoke a just-committed native result; failure
         // marks the remaining History sync incomplete without inventing an
         // invalid consensus verdict or rewinding an earlier accepted block.
-        progress()?;
+        progress(HistoryImportCheckpoint::AfterPacket)?;
     }
     if page.complete {
         node.activate_observed(tip, clock)?;
@@ -2188,7 +2223,7 @@ pub fn receive_page_from(
     if let Some(kernel) = &host_kernel {
         kernel.verify()?;
     }
-    let native = receive_page(node, page, tip, after, clock, &mut || {
+    let native = receive_page(node, page, tip, after, clock, &mut |_| {
         if let Some(kernel) = &host_kernel {
             kernel.verify()?;
         }
