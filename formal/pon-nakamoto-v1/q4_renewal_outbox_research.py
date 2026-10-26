@@ -178,6 +178,17 @@ class RenewalOutbox:
     def close(self): self.db.close()
 
     def audit(self) -> int:
+        """One stable SQLite view for *both* intents and events, not chain authority."""
+        if self.db.in_transaction:
+            raise OutboxError('AUDIT_REENTRANT')
+        self.db.execute('BEGIN')
+        try:
+            return self._audit_snapshot()
+        finally:
+            # Release the original read snapshot on EVERY return/error.
+            self.db.execute('ROLLBACK')
+
+    def _audit_snapshot(self) -> int:
         """Local integrity/monotonicity audit, NOT an external attestation."""
         intents = {}
         operation_ids = set()
