@@ -54,7 +54,10 @@ consumer owns model interpretation and must independently reconstruct every
 original manifest from received bytes before using its existing signed native
 owner. M09 supplies no selected CURRENT or installation authority. The default
 handoff refusal and original 35-second transfer/readback deadline remain;
-complete native loading and I10 acceptance are still required.
+the [source-bound eleven-material controlled load/query/terminal-unload](../../evidence/pon-upgrade-implementation-20261018/native-rounds/real-model-owner-controlled-20261025/i09-eleven-material-controlled-20261026.json)
+has now been observed through the original owner. The overall handoff still
+fails at unavailable I10 selected installation; ordinary next-task readback and
+complete product acceptance remain required.
 
 **Atomic/commit boundary:** Retention obligations separate from self-contained historical work certificates.
 

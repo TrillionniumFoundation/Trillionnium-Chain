@@ -936,8 +936,9 @@ and its 16/32 equal gen2/gen3/zero-changed-decision Ineligible result keep their
 original source scope. This merge adds no model, cgroup, FinalUse or I10 result.
 
 The existing [Cell/native handoff script](../../scripts/run_llm_cell_native_handoff.py)
-implements controlled dependency transport and byte readback, but its native
-Hepta consumer and owner-receipt contract are not shipped. Inspection of Hepta
+implements controlled dependency transport and byte readback. Its default route
+continues to refuse an unavailable native consumer and unverified owner receipt.
+The earlier inspection, before the additive controlled profile below, covered Hepta
 `deaf31954d53fa8eba543525221c34f9b1b3d1b6`, primary
 `061f14c8f4722506b38a39ff3921b6bd42b8c8aa` and PoN base
 `c38e7727220f32c7410f59083c5ea7878bbae078` finds no matching consumer.
@@ -964,9 +965,16 @@ The original transfer and readback budget stays 35 seconds; model compilation
 and the explicitly selected original native case are separate observations.
 The default refusal remains unchanged, and even a controlled positive keeps
 the overall handoff failed because I10 selected installation is unavailable.
-The new bounded/duplicate-key/typed-readback refusal controls and the retained
-deadline controls are parser evidence; complete actual eleven-material native
-loading, selected installation and three installed-parent rounds remain open.
+The bounded/duplicate-key/typed-readback refusal and retained deadline controls
+are parser evidence. The later [source-bound controlled observation](../../evidence/pon-upgrade-implementation-20261018/native-rounds/real-model-owner-controlled-20261025/i09-eleven-material-controlled-20261026.json)
+on Chain `915f933c` / Hepta `da4a920` fetches all eleven model-data objects
+(272,190,131 payload bytes / 269 chunks) from one loopback peer. Transfer and
+final readback take 3.240547 seconds within the original 35 seconds; the original
+signed native load/query/denied-query/terminal-unload case passes in 10.133 seconds.
+Three authorizer binding calls yield two durable nonce claims. The overall
+handoff remains failed/exit1 at I10 selected-installation UNAVAILABLE. CURRENT,
+ordinary-task use, three installed-parent upgrades, funded Whole-U return,
+runtime dependency closure, durable repair and independent WAN custody remain open.
 
 The same PN1/PN2/I05 M09 cache path now uses fresh TCL4/schema4 with immutable
 logical bytes, chunk/manifest rows and an explicit main-database image/file-length
