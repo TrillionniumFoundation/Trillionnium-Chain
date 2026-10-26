@@ -2512,6 +2512,71 @@ mod tests {
     }
 
     #[test]
+    fn four_distinct_ticket_valid_fake_history_traces_each_pay_original_cpu() {
+        use trnm_crypto_primitives::pon_work;
+        let (_dir, owner, legal) = pending_packet();
+        let mut node = owner.into_inner().unwrap();
+        let original = node.stats().unwrap();
+        let parent = node.settings().genesis();
+        let challenge = legal.header.challenge();
+        let target = legal.header.target;
+        let mut prefix = vec![0u8; pon_work::PROOF_BYTES];
+        prefix[..4].copy_from_slice(b"PNW1");
+        // Source material is an original registered task; forged candidates
+        // contain NO copied valid product or transcript.
+        let ab_end = 4 + 2 * pon_work::CELLS * 4;
+        prefix[4..ab_end].copy_from_slice(&legal.proof[4..ab_end]);
+        let real_trace = &legal.proof[pon_work::PROOF_BYTES - 32..];
+        let mut counter = 0_u64;
+        let mut fakes = Vec::new();
+        while fakes.len() < 4 && counter < 128 {
+            let fake = hash(
+                b"p1-history-false-transcript-v1",
+                &[&challenge, &counter.to_le_bytes()],
+            );
+            let ticket = hash(b"ticket", &[&challenge, &fake]);
+            if ticket <= target && fake.as_slice() != real_trace {
+                let mut wire = prefix.clone();
+                wire[pon_work::PROOF_BYTES - 32..].copy_from_slice(&fake);
+                fakes.push((counter, wire));
+            }
+            counter += 1;
+        }
+        assert_eq!(fakes.len(), 4);
+        let source: SocketAddr = "127.0.0.1:19423".parse().unwrap();
+        let mut prior_charge = 0;
+        for (_nonce, proof) in fakes {
+            assert_eq!(
+                pon_work::precheck_proof_statement(
+                    challenge, legal.header.work_task, target, &proof
+                ),
+                Ok(())
+            );
+            let fake_packet = Packet {
+                header: legal.header.clone(),
+                proof,
+                transactions: vec![],
+            };
+            let tip = fake_packet.id().unwrap();
+            let page = p1_history_page(&node, &fake_packet);
+            let error =
+                receive_page_from(&mut node, source, page, tip, parent, now().unwrap())
+                    .unwrap_err();
+            assert_eq!(error.to_string(), "WORK:Transcript");
+            assert_eq!(node.stats().unwrap(), original);
+            assert_eq!(node.read_active().unwrap().0, parent);
+            let cpu = node.public_service_cpu_domain().unwrap();
+            let flow = cpu.observe_actual_flow().unwrap().unwrap();
+            assert_eq!(flow.initial_credit_ns, 0);
+            assert_eq!(flow.live_owners, 0);
+            assert!(flow.balance_identity_verified);
+            assert!(flow.settled_full_cpu_ns > prior_charge);
+            prior_charge = flow.settled_full_cpu_ns;
+        }
+        assert!(prior_charge > 0);
+    }
+
+    #[test]
     fn loopback_relay_false_w1_claim_pays_cpu_without_chainwork() {
         use trnm_crypto_primitives::pon_work;
         let (_dir, owner, mut packet) = pending_packet();
