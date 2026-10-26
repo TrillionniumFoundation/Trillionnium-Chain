@@ -116,3 +116,15 @@ Maintenance or installed DAA.
 This is a local integrity improvement, not tamper evidence against a privileged
 attacker who can rewrite all SQLite bytes and checksum history, and not an
 ordinary Hepta/native operator or independent client/WAN acceptance result.
+
+## Reject malformed predecessor before appending an observation (2026-10-26)
+
+The research journal's `_event` write transaction now revalidates the prior
+`OBSERVED_*` event's complete 113-byte grammar before comparing generations
+and appending a successor. In the old local logic, a malformed or zero-length
+prior observation could be interpreted as generation zero and allow a fresh
+append to an already-damaged journal. The added negative control edits a prior
+SQLite observation, proves that no new event is persisted, repairs the same
+original bytes and resumes without any renewed dispatch fence. This is a
+bounded fail-closed local predecessor check, not a full history audit on every
+write, an authenticated client observation or a durable physical reorg oracle.

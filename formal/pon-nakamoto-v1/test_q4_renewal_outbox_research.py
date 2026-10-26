@@ -365,6 +365,29 @@ class RenewalOutboxTests(unittest.TestCase):
             with self.assertRaisesRegex(OutboxError, 'NO_REDISPATCH'):
                 db.dispatch_unknown(key)
 
+    def test_corrupt_previous_observation_refuses_new_event_before_commit(self):
+        with self.open() as db:
+            key = db.prepare(intent())
+            db.dispatch_unknown(key)
+            original = observation('included', 3).wire()
+            db.observe(key, observation('included', 3))
+            malformed = bytes(8) + original[8:]
+            with sqlite3.connect(self.file) as raw:
+                raw.execute('UPDATE q4_outbox_events_v1 SET observation=? WHERE ordinal=2',
+                            (malformed,))
+            # Old code read only the first eight bytes as an integer and
+            # could append after invalid prior bytes.
+            with self.assertRaisesRegex(OutboxError, 'OBSERVATION_WIRE'):
+                db.observe(key, observation('confirmed', 4))
+            self.assertFalse(db.db.in_transaction)
+            with sqlite3.connect(self.file) as raw:
+                self.assertEqual(raw.execute(
+                    'SELECT COUNT(*) FROM q4_outbox_events_v1').fetchone()[0], 2)
+                raw.execute('UPDATE q4_outbox_events_v1 SET observation=? WHERE ordinal=2',
+                            (original,))
+            db.observe(key, observation('confirmed', 4))
+            self.assertEqual(db.audit(), 3)
+
     def test_nested_audit_refuses_without_rolling_back_writer_intent(self):
         with self.open() as db:
             db.db.execute('BEGIN IMMEDIATE')

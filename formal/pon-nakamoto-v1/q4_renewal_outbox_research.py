@@ -275,8 +275,11 @@ class RenewalOutbox:
             elif kind.startswith('OBSERVED_'):
                 if self.db.execute("SELECT 1 FROM q4_outbox_events_v1 WHERE intent_id=? AND kind='DISPATCH_UNKNOWN'",(ident,)).fetchone() is None:
                     raise OutboxError('OBSERVATION_BEFORE_DISPATCH')
-                last = self.db.execute("SELECT observation FROM q4_outbox_events_v1 WHERE intent_id=? AND kind LIKE 'OBSERVED_%' ORDER BY ordinal DESC LIMIT 1",(ident,)).fetchone()
-                if last and int.from_bytes(last[0][:8],'big') > int.from_bytes(obs[:8],'big'):
+                last = self.db.execute("SELECT kind,observation FROM q4_outbox_events_v1 WHERE intent_id=? AND kind LIKE 'OBSERVED_%' ORDER BY ordinal DESC LIMIT 1",(ident,)).fetchone()
+                # Never derive the next local generation from malformed prior
+                # bytes. The last observation is re-validated INSIDE the same
+                # SQLite write transaction before any new event is appended.
+                if last and _validate_observation_wire(last[0], last[1]) > int.from_bytes(obs[:8],'big'):
                     raise OutboxError('OBSERVATION_REGRESSION')
             else: raise OutboxError('UNKNOWN_EVENT')
             digest = hashlib.sha256(EVENT_DOMAIN + u64(n,'ordinal') + ident + kind.encode('ascii') + obs + prev).digest()
