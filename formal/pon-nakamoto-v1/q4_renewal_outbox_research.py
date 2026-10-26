@@ -237,9 +237,12 @@ class RenewalOutbox:
             if obs: raise OutboxError('DISPATCH_DUPLICATE')
         else:
             raise OutboxError('UNKNOWN_EVENT')
+        identity(ident, 'operation')
         self.db.execute('BEGIN IMMEDIATE')
         committed = False
         try:
+            if self.db.execute('SELECT 1 FROM q4_outbox_intents_v1 WHERE id=?', (ident,)).fetchone() is None:
+                raise OutboxError('UNKNOWN_INTENT')
             latest = self.db.execute('SELECT ordinal,digest FROM q4_outbox_events_v1 ORDER BY ordinal DESC LIMIT 1').fetchone()
             n,prev = (latest[0]+1,latest[1]) if latest else (1,ZERO)
             if n > self.max_events: raise OutboxError('EVENT_BUDGET')
