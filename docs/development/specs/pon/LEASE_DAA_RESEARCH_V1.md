@@ -714,3 +714,87 @@ within this research lineage. None of these cases runs native Rust, produces
 PNW1 valid work, admits a block, proves an independent validator, or qualifies
 public-network difficulty/security. Local proof/admission tests and third-party
 review remain explicit blockers. No legacy DAA or production flag changes.
+
+## Mathematical multi-peer Lease × DAA fault-campaign v1 (2026-10-26)
+
+A separate non-activated research simulator and its executable tests now exercise the
+**same seeded abstract work budget** across legacy 16-block DAA, raw ASERT, and
+MTP11-ASERT under six explicit workload modes: steady mining, network partition/heal,
+all external source leases lost, one specialized miner's production-cost advantage,
+timestamp-endpoint adjustment attempts, and a two-block withholding toy.
+
+- Source: `formal/pon-nakamoto-v1/daa_lease_network_sim_v1.py`.
+- Tests: `formal/pon-nakamoto-v1/test_daa_lease_network_sim_v1.py`.
+- Local command: `cd formal/pon-nakamoto-v1 && python3 -m unittest -v test_daa_lease_network_sim_v1.py`.
+- Recompute the 18 deterministic scenarios with `python3 daa_lease_network_sim_v1.py`.
+- Original local files were executed on Python; **6 of 6** new unit tests passed.
+  This does **not** prove that the integrated exact-head checkout, native Rust or
+  W1-qualified network service passes.
+- Finite campaigns use an exponentially sampled, abstract winning-work event.
+  **No actual PNW1 transcript, source signature, true peer socket, independent
+  operator, stored body, transaction application or energy measurement is produced.**
+  Simplified catch-up can fetch a complete ancestor chain from a global in-memory
+  map, and this expressly assumes perfect history availability. The fixed
+  withholding toy can leave peer views divergent and is retained as an observed
+  negative outcome rather than forced consensus agreement.
+- The maintenance and leased-only modes are explicit at actor construction.
+  Loss of the last external lease stops only leased-only actors; no source
+  signature is fabricated and no expired selected task is silently switched.
+  A differential CPU/GPU/ASIC work-production proof and a real signed Q4 →
+  Maintenance → fresh authorized task → confirmed consumer sequence remain open.
+- The simulator's toy confirmation count uses the installed **depth plus
+  required-work** arithmetic, not finalized or Hepta FinalUse. Work-cost
+  advantages are declared rate multipliers, not evidence that W1 permits them.
+  Results cannot be used to choose or activate a difficulty schedule.
+
+**Closure status stays unchanged:** P0-C cheapest real W1 producer/public flood,
+P1-B real W1 + WAN/partition/withholding, P1-C versioned native ASERT
+fork/reorg/recovery, and P2 independent-operator retention/delivery remain open.
+
+## 1,800-sample complete-denominator research campaign (2026-10-26)
+
+Follow-on to the same abstract network event simulator. New files are
+`formal/pon-nakamoto-v1/daa_lease_network_aggregate_v1.py` and
+`test_daa_lease_network_aggregate_v1.py`; the existing mathematical event
+simulator and all old network/consensus profiles are unchanged.
+
+```sh
+cd formal/pon-nakamoto-v1
+python3 -m unittest -v test_daa_lease_network_sim_v1.py test_daa_lease_network_aggregate_v1.py
+python3 daa_lease_network_aggregate_v1.py --trials 100 > /tmp/pon-daa-mathematical-research.json
+```
+
+**Executed local observation:** 11/11 Python test methods across simulator and
+aggregator passed, then a same-host 18 x 100 = **1,800-trial** deterministic
+seeded campaign completed with zero process failures. Every trial is retained
+in the research JSON. The raw data remains an external conversation artifact,
+not a hosted, independently reproduced GitHub evidence package.
+
+The fixed 100-trial, 600-second finite-horizon synthetic tip-agreement numerators
+for (legacy, raw-ASERT, MTP11-ASERT) are:
+
+| Scenario | Legacy | Raw ASERT | MTP11 ASERT |
+|---|---:|---:|---:|
+| Steady | 93 | 95 | 95 |
+| Simulated partition/heal | 95 | 95 | 95 |
+| External lease source lost | 100 | 100 | 100 |
+| One faster abstract prover | 95 | 92 | 91 |
+| Timestamp endpoint strategy | 89 | 95 | 95 |
+| Simplified block withholding | 49 | 49 | 49 |
+
+This is an intentionally **non-qualifying stochastic toy comparison**. It samples
+winning events from exponential distributions in lieu of checking actual PNW1
+certificates, assumes perfect historical byte retrieval from a shared in-memory
+graph, uses no independent operators, and counts *finite-horizon tip agreement*
+rather than eventual common prefix or double-spend failure probability. Some
+ordinary trials may end in temporary competing tips. A higher observed ratio is
+**not** evidence for selecting a DAA, improving real security, reducing cost or
+qualifying public consensus.
+
+The aggregator freezes all trial seeds and preserves both successes and failures
+in the denominator. It provides bounded Wilson 95% intervals and descriptive
+nearest-rank median/p95 header counts, without calling correlated simulated trials
+independent external hosts. It never issues source signing, consensus activation,
+production work security or FinalUse permissions. The real W1, Q4 native-owner,
+resource-accounting, adversarial WAN, physical failure and independent actor
+acceptance gates remain **OPEN**.

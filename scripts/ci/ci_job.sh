@@ -52,6 +52,8 @@ case "${1:?required job}" in
     python3 formal/pon-nakamoto-v1/test_contracts.py
     python3 formal/pon-nakamoto-v1/test_invariants.py
     python3 -B formal/pon-nakamoto-v1/test_daa_lease_research.py -v
+    python3 -B formal/pon-nakamoto-v1/test_daa_lease_network_sim_v1.py -v
+    python3 -B formal/pon-nakamoto-v1/test_daa_lease_network_aggregate_v1.py -v
     cargo fetch --locked --manifest-path trillionnium/Cargo.toml
     cargo build --offline --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --bins --examples
     cargo test --offline --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib daa_research_tests -- --test-threads=1
