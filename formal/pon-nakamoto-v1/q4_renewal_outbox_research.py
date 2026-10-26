@@ -20,6 +20,15 @@ UINT64 = (1 << 64) - 1
 ZERO = bytes(32)
 TX_BYTES = 1187  # historical PNX1(tag22) envelope length, NOT signature verification
 
+# Versioned v1 SQLite object grammar. The research journal must refuse
+# altered UNIQUE dispatch semantics, user triggers/views, and foreign DDL.
+FROZEN_SCHEMA_DDL = {
+    'q4_outbox_meta_v1': ('table', 'CREATE TABLE q4_outbox_meta_v1 (key TEXT PRIMARY KEY, value BLOB NOT NULL) WITHOUT ROWID'),
+    'q4_outbox_intents_v1': ('table', 'CREATE TABLE q4_outbox_intents_v1 (id BLOB PRIMARY KEY, operation_id BLOB NOT NULL UNIQUE, packet_id BLOB NOT NULL UNIQUE, wire BLOB NOT NULL) WITHOUT ROWID'),
+    'q4_outbox_events_v1': ('table', 'CREATE TABLE q4_outbox_events_v1 (ordinal INTEGER PRIMARY KEY, intent_id BLOB NOT NULL, kind TEXT NOT NULL, observation BLOB NOT NULL, prev BLOB NOT NULL, digest BLOB NOT NULL)'),
+    'q4_outbox_once_v1': ('index', "CREATE UNIQUE INDEX q4_outbox_once_v1 ON q4_outbox_events_v1(intent_id) WHERE kind='DISPATCH_UNKNOWN'"),
+}
+
 class OutboxError(ValueError):
     pass
 
@@ -180,6 +189,13 @@ class RenewalOutbox:
 
     def audit(self) -> int:
         """Local integrity/monotonicity audit, NOT an external attestation."""
+        # SQLite-generated sqlite_autoindex_* entries are implementation details.
+        # Every user-defined table/index/view/trigger must match the frozen v1 DDL.
+        schema = {name: (kind, sql) for kind,name,sql in self.db.execute(
+            "SELECT type,name,sql FROM sqlite_master WHERE name NOT LIKE 'sqlite_%'"
+        )}
+        if schema != FROZEN_SCHEMA_DDL:
+            raise OutboxError('FOREIGN_SCHEMA_OBJECT')
         intents = {}
         operation_ids = set()
         for ident,op_id,packet_id,wire in self.db.execute('SELECT id,operation_id,packet_id,wire FROM q4_outbox_intents_v1'):
