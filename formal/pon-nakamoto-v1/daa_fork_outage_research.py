@@ -31,6 +31,21 @@ def required_work(target: int) -> int:
     return (1 << 256) // (target + 1)
 
 
+def branch_local_policy_confirmed(included: "Header", observed: "Header") -> bool:
+    """Depth+required-work only. Caller must establish ancestry separately.
+
+    This matches the arithmetic part of the installed development client's
+    depth-six and six-times-inclusion-work confirmation rule. A local losing
+    branch's orphaned blocks were ancestors of its own pre-reorg tip, but
+    such historical confirmation does NOT survive adopting another branch.
+    """
+    return (observed.height >= included.height
+            and observed.height - included.height >= 6
+            and observed.chainwork >= included.chainwork
+            and observed.chainwork - included.chainwork >=
+                required_work(included.target) * 6)
+
+
 @dataclass(frozen=True)
 class Parameters:
     seed: int = 20261025
@@ -94,6 +109,7 @@ class ForkSimulator:
         self.healed = False
         self.reorg_removed = 0
         self.reorg_confirmed_depth6 = 0
+        self.reorg_confirmed_depth6_work6 = 0
         self.work_at_heal_a = self.work_at_heal_b = 0
         self.heal_preferred = "none"
         self.equal_work_tie_at_heal = False
@@ -222,6 +238,8 @@ class ForkSimulator:
         losing_tip = self.blocks[loser]
         self.reorg_confirmed_depth6 = sum(
             1 for x in orphaned if losing_tip.height - x.height >= 6)
+        self.reorg_confirmed_depth6_work6 = sum(
+            1 for x in orphaned if branch_local_policy_confirmed(x, losing_tip))
         self.tip_a = self.tip_b = winner
 
     def heal(self) -> None:
@@ -294,6 +312,7 @@ class ForkSimulator:
             "partition_b_chainwork": str(self.work_at_heal_b),
             "losing_branch_blocks_removed": self.reorg_removed,
             "losing_branch_depth6_blocks_removed": self.reorg_confirmed_depth6,
+            "losing_branch_depth6_work6_blocks_removed": self.reorg_confirmed_depth6_work6,
             "timestamp_unavailable_attempts": self.stale_time_attempts,
             "terminal_stopped": self.stopped,
             "stop_reason": self.stop_reason,

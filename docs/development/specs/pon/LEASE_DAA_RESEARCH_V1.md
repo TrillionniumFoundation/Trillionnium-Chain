@@ -541,3 +541,27 @@ and zero opted-in Maintenance capacity following source loss. Historical
 campaign hashes must not be relabelled as results from this changed
 research simulator. No real PNW1 mining, network transport, Q4 signature,
 W1 security, or production DAA activation is established.
+
+
+## Branch-local policy-confirmation falsification
+
+The isolated fork-outage simulation previously reported only losing-branch
+blocks that had at least six descendants. The installed Node's actual
+`confirmation` additionally checks the confirmed chainwork delta against
+six times the inclusion block's `required_work(target)`. After a fourfold
+DAA target relaxation, six cheap successor blocks can meet *depth six* but
+fail the *six-times-original-work* threshold. Reporting these as confirmed
+would overstate historical confirmation-reorg risk.
+
+The model now reports both the older depth-only metric and an additional
+`losing_branch_depth6_work6_blocks_removed` research field. It derives
+historical local policy status only for validated *losing-branch ancestors*
+immediately before simulated reorganization, never from unproven block
+membership or post-reorg local views. A deterministic native-equivalent
+integer DAA schedule supplies one expensive inclusion block, six
+subsequent fourfold-easier blocks, and a strictly heavier competing
+branch; a positive constant-target control checks both thresholds.
+
+Neither metric is a confirmation issued by a real Node: this campaign
+generates no PNW1, signed transaction, actual WAN packet or cost receipt.
+Production DAA, source trust, W1 cost-hardness and P2 remain OPEN.

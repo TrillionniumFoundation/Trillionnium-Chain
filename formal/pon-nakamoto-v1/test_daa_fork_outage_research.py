@@ -2,7 +2,7 @@
 from dataclasses import replace
 import unittest
 from daa_fork_outage_research import (
-    ALGORITHMS, ForkSimulator, Parameters, required_work, simulate, campaign,
+    ALGORITHMS, ForkSimulator, Parameters, required_work, branch_local_policy_confirmed, simulate, campaign,
     INITIAL, POW_LIMIT,
 )
 
@@ -56,6 +56,56 @@ class ForkOutageScreenTests(unittest.TestCase):
         self.assertEqual(out["final_required_work_scope"], "local-A-only")
         self.assertEqual(out["partition_heal_preferred"], "tie-retained")
         self.assertFalse(out["tie_resolved_by_strict_work"])
+
+    def test_six_easier_successors_do_not_satisfy_six_times_inclusion_work(self):
+        # Real PoN confirmation requires BOTH depth and chainwork delta.
+        # The same synthetic branch histories exercise the exact difficulty
+        # arithmetic, but do not mint actual W1 certificates.
+        p = Parameters(seed=31, share_a=.5, task_outage_at=1000,
+                       timestamp_policy_a="honest", timestamp_policy_b="mtp_min")
+        s = ForkSimulator(p)
+        a, inclusion = 0, None
+        for h in range(1, 22):
+            s.wall = float(p.genesis_time +
+                           (h * 40 if h <= 15 else 600 + (h - 15) * 10))
+            a = s.mine("A", a)
+            self.assertIsNotNone(a)
+            if h == 15:
+                inclusion = a
+        s.tip_a = a
+        hard, old_tip = s.blocks[inclusion], s.blocks[a]
+        self.assertEqual(old_tip.height - hard.height, 6)
+        self.assertEqual(old_tip.target, hard.target * 4)
+        self.assertFalse(branch_local_policy_confirmed(hard, old_tip))
+        self.assertLess(old_tip.chainwork - hard.chainwork,
+                        6 * required_work(hard.target))
+        b = 0
+        for _ in range(24):
+            b = s.mine("B", b)
+            self.assertIsNotNone(b)
+        s.tip_b = b
+        self.assertGreater(s.blocks[b].chainwork, s.blocks[a].chainwork)
+        s.heal()
+        self.assertEqual(s.tip_a, s.tip_b)
+        self.assertGreater(s.reorg_confirmed_depth6,
+                           s.reorg_confirmed_depth6_work6)
+        result = s.report()
+        self.assertEqual(result["losing_branch_depth6_work6_blocks_removed"],
+                         s.reorg_confirmed_depth6_work6)
+        s.verify_all()
+
+    def test_six_equal_cost_successors_meet_both_confirmation_components(self):
+        p = Parameters(seed=22, share_a=.5, task_outage_at=1000,
+                       timestamp_policy_a="honest", timestamp_policy_b="honest")
+        s = ForkSimulator(p)
+        a, inclusion = 0, None
+        for h in range(1, 8):
+            s.wall = float(p.genesis_time + 10 * h)
+            a = s.mine("A", a)
+            if h == 1:
+                inclusion = a
+        self.assertTrue(branch_local_policy_confirmed(s.blocks[inclusion],
+                                                      s.blocks[a]))
 
     def test_zero_maintenance_participation_cannot_end_equal_work_tie(self):
         # Both fixed, distinct branch tips have equal required work. With
