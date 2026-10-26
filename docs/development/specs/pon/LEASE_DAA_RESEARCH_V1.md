@@ -740,7 +740,7 @@ python3 pon_selfish_mining_research.py --output /absolute/new/withholding-outage
 
 Nine focused Python tests passed in the isolated container; the two published
 Python Git blobs were checked against the exact bytes tested locally:
-`8271f9419daa61b848b6d7d21f3b151e4e810dee` (model) and
+`d4dec82c27f85885e4b3c7417e90c820d4dc4505` (model) and
 `ab45f7d4d86946e902c55b2c41def9b13d441606` (tests).
 The frozen 54-case canonical row digest is
 `4a5785c5144e6560a7a52131723ca1cbb0882c22de83063fdaa1ab00c63381f4`.
