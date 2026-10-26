@@ -1,0 +1,4 @@
+
+thread 'two_process_real_w1_prefix_and_pressure_native_io_component_v1' (2989333) panicked at crates/trnm-pon-node/tests/support/identity_churn_work.rs:50:73:
+called `Result::unwrap()` on an `Err` value: Error { code: None, kind: LocalStructure, message: "STORAGE: database or disk is full", source: Some(SqliteFailure(Error { code: DiskFull, extended_code: 13 }, Some("database or disk is full"))), request_history_budget: false }
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace

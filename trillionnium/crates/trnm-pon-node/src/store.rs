@@ -1395,6 +1395,19 @@ impl Node {
             db.execute_batch(
                 "PRAGMA trusted_schema=OFF; PRAGMA foreign_keys=ON; PRAGMA journal_mode=WAL; PRAGMA synchronous=FULL;",
             )?;
+            if native_io.is_some() {
+                // The original 4KiB WAL and every held-inode/lifecycle limit stay
+                // intact. Earlier PASSIVE checkpoints permit real WAL-offset
+                // reuse; they never reset the lease, refund high water or drop
+                // events. Long readers or large transactions can still exceed
+                // the unchanged caps and must fail closed. This is a connection
+                // policy, not a physical WAL-size guarantee or a stored schema.
+                db.pragma_update(None, "wal_autocheckpoint", 64_i64)?;
+                let checkpoint_pages: i64 =
+                    db.query_row("PRAGMA wal_autocheckpoint", [], |row| row.get(0))?;
+                ensure(checkpoint_pages == 64, "NATIVE_IO_CHECKPOINT_POLICY")
+                    .map_err(Error::local_integrity)?;
+            }
         }
         if !initialized {
             ensure(intent, "INITIALIZATION_INTENT_REQUIRED")?;

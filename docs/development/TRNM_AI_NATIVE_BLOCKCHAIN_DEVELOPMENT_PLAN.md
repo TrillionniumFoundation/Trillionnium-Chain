@@ -4402,3 +4402,7 @@ normal-C/nm/public prepare/execute/independent reader remain due. Conservative
 1200 build limit; failure history and original180-second execution contract stay.
 [Original failures, correction and bounded controls](../../evidence/pon-native-io-pn1-20261026-v20/README.md)
 are mechanism/source evidence only; full W1/Windows/model/WAN/merge gates remain OPEN.
+
+### PN1/I02 — original399 native SQLite13 and checkpoint-policy candidate (2026-10-26)
+
+The [retained original run and forensic evidence](../../evidence/pon-native-io-pn1-20261026-v21/README.md) records real normal-C v3 support followed by a nativeFAIL101: the fourth unchanged256-transfer seed exhausted the original1024-event ledger. Original source, assertion, failure, single consumed claim and all limits remain. A native-IO writer-only `wal_autocheckpoint=64` policy is a candidate for real WAL-offset reuse, with strict readback; it changes no schema, page geometry, fixture, caller, lifetime or evidence capacity. PASSIVE is not a hard WAL bound. The conditional default-hook checkpoint-error/lease-health propagation risk remains open. Acceptance requires the original fresh-claim native terminal and unchanged reader to succeed within all original budgets; no global W1 cost, full4097, Windows, three-round model, release or WAN result follows from source review or pragma configuration.
