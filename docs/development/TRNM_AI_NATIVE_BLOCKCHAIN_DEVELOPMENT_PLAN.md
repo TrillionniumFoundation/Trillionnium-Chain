@@ -1,7 +1,7 @@
 # Trillionnium Chain Development Plan — PoN / Hepta-PoH revision
 
-Plan ID: `trnm-chain-development-plan-v2` (stable registry identity; content revision 30).
-Effective: 2026-09-28; priority implementation revision: 2026-10-26. Status: selected development direction; no runtime activation.
+Plan ID: `trnm-chain-development-plan-v2` (stable registry identity; content revision 31).
+Effective: 2026-09-28; priority implementation revision: 2026-10-25 America/New_York (2026-10-26 UTC). Status: selected development direction; no runtime activation.
 Canonical destination: `refs/heads/main`; continuation uses the current main lineage, not retired PR #194.
 Current source/head/tree/base and prospective merge are derived at verification time.
 Assessed legacy baseline: `c552c31c6d3c5ac47522a124e02c6b8bca4e23f2`, tree
@@ -1642,6 +1642,60 @@ multi-instance physical hardness and Node settlement coupling remain missing.
 The external Hepta review now names a prospective/test merge, and keeps the
 historical tabular execution on its original source tuple. No production,
 quality, independent-operator or adoption qualification is promoted.
+
+
+### PN1 actual fork, deferred proof and dynamic work refinement — 2026-10-25 America/New_York
+
+This increment continues O01–O07 without managing hosted CI. It retains the
+pure-matrix research direction and every original global closure standard.
+The new [multi-instance analysis](../protocol/pon-nakamoto-v1/details/W1_MULTI_INSTANCE_COST_V2.md)
+separates an ideal compression-query model from actual SHA-256/physical costs,
+and constructs an exact finite-field zero-task Strassen/paired algorithm.
+A literal SHA-256 forward/inverse-round control constructs arbitrary-IV fixed
+points. It disproves direct actual-SHA instantiation of the model's global
+arbitrary-CV no-Bad event; it does not construct a standard-IV canonical W1
+shortcut. Rooted reachable paths need a different, explicitly justified model.
+Fewer scalar multiplications must be compared with its additional additions,
+reductions and memory use; they are not an observed speedup or a lower bound.
+
+The [fork resource contract](../protocol/pon-nakamoto-v1/details/W1_FORK_RESOURCE_RESEARCH_V1.md)
+constructs actual simultaneously retained sibling
+branches from an admitted common registration state, with bounded branch depth,
+paid acquisition, shared/window/cold reuse and measured-past-cost selection.
+The planned 42 jobs include the original general/specialized producers and four
+new Strassen-arm observations. Every epoch shares one total miner B. Adaptive
+strategies may select different challenge sequences; only exact matching paid
+forests and overlapping semantic identities permit paired ratios. This finite
+policy class does not close the arbitrary or unbounded O02 attacker class.
+
+The [late-assembly contract](../protocol/pon-nakamoto-v1/details/W1_LATE_ASSEMBLY_V1.md)
+keeps the actual trace kernel identical while deferring full proof assembly and
+output until the ticket meets the target. Its 14-job registration separately
+counts original traces, complete winning proofs available by B, later native
+admission and zero-credit posthoc loser reconstruction. Existing preparation
+already pays AB once; this increment does not claim that saving anew. All raw
+command bytes are retained with verified lossless post-command compression.
+
+The [dynamic weighted-work interface](../protocol/pon-nakamoto-v1/details/W1_NATIVE_DAA_RESOURCE_V2.md)
+proves a conditional query-budget bound for an adaptively mined forest using
+the actual target/weight floor, without fixed independent epochs. Already known
+winners require weighted W0; prepared unseen opportunities remain in N. A useful
+jump bound must also account for externally supplied ancestry. The associated
+native DAA/time vectors use the original development rules and public Node
+entrypoints. Neither the conditional theorem nor a legality-vector pass proves
+native all-fork settlement, honest progress, physical resource hardness or an
+accepted production kappa. Source freezing precedes formal collection.
+
+The [latest Hepta source review](../protocol/pon-nakamoto-v1/details/W1_HEPTA_QUALIFICATION_V2.md)
+pins the newer actual candidate `de133b601e133917cbe1ae03efb3a2ffc06dcd4a`.
+Ordinary neural bootstrap wiring exists, but pins and controlled Qualification
+receipts do not grant installation or CURRENT authority. The current Hepta plan
+allows public/previously seen engineering tasks and explicit no-update cycles;
+unseen future data is not a prerequisite for controlled mechanism testing.
+Real initial selected-parent, ordinary next-use, successful transfer/install,
+beneficial-release and public independent-operation results remain distinct.
+Absent real hardware, independent operation or product evidence remains open;
+no simulation, document status or test label can supply it.
 
 ## 1. Product mission: shared intelligence from real work
 

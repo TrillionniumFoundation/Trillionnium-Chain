@@ -1,0 +1,258 @@
+{
+  "schema": "pon-w1-late-assembly-plan-v1",
+  "production_activation": false,
+  "hardness_accepted": false,
+  "hardware_attested": false,
+  "proof_retention": "winner-only-original-proofs-and-posthoc-miss-audit",
+  "independent_replay": "all-retained-full-proofs-posthoc-no-selection-feedback",
+  "waited_cpu_endpoint_allowance_ns": 2000,
+  "gnu_time_print_allowance_ns": 20000000,
+  "generation_then_receiver_then_audit": true,
+  "miner_feedback_from_receiver": false,
+  "collection_output_limit_bytes": 268435456,
+  "hypothesis": "Identical paid prepared integer-paired trace; only complete PNW1 assembly and output schedule differs. No matrix lower-bound or physical throughput claim.",
+  "frozen_before_performance": true,
+  "comparison_policy": "Pair only same seed/budgets/uncensored complete setup and identical actual setup proof; verify shared opportunity prefix identities. Report both improvements and regressions.",
+  "setup_credit": "Original template winner and internal acquisition misses are separate from online opportunities; hidden misses reconstructed posthoc with zero additional credit.",
+  "compression": "Verified lossless gzip after original command exit; native output and clocks unchanged; whole command energy/bandwidth not measured.",
+  "jobs": [
+    {
+      "name": "main-s4101-b128000000-eager",
+      "binary": "pon_w1_late_assembly_research",
+      "args": [
+        "--setup-budget-ns",
+        "1000000000",
+        "--miner-budget-ns",
+        "128000000",
+        "--max-attempts",
+        "4096",
+        "--seed",
+        "4101",
+        "--mode",
+        "eager"
+      ],
+      "timeout_seconds": 180
+    },
+    {
+      "name": "main-s4101-b128000000-deferred",
+      "binary": "pon_w1_late_assembly_research",
+      "args": [
+        "--setup-budget-ns",
+        "1000000000",
+        "--miner-budget-ns",
+        "128000000",
+        "--max-attempts",
+        "4096",
+        "--seed",
+        "4101",
+        "--mode",
+        "deferred"
+      ],
+      "timeout_seconds": 180
+    },
+    {
+      "name": "main-s4101-b512000000-eager",
+      "binary": "pon_w1_late_assembly_research",
+      "args": [
+        "--setup-budget-ns",
+        "1000000000",
+        "--miner-budget-ns",
+        "512000000",
+        "--max-attempts",
+        "4096",
+        "--seed",
+        "4101",
+        "--mode",
+        "eager"
+      ],
+      "timeout_seconds": 180
+    },
+    {
+      "name": "main-s4101-b512000000-deferred",
+      "binary": "pon_w1_late_assembly_research",
+      "args": [
+        "--setup-budget-ns",
+        "1000000000",
+        "--miner-budget-ns",
+        "512000000",
+        "--max-attempts",
+        "4096",
+        "--seed",
+        "4101",
+        "--mode",
+        "deferred"
+      ],
+      "timeout_seconds": 180
+    },
+    {
+      "name": "main-s4102-b128000000-eager",
+      "binary": "pon_w1_late_assembly_research",
+      "args": [
+        "--setup-budget-ns",
+        "1000000000",
+        "--miner-budget-ns",
+        "128000000",
+        "--max-attempts",
+        "4096",
+        "--seed",
+        "4102",
+        "--mode",
+        "eager"
+      ],
+      "timeout_seconds": 180
+    },
+    {
+      "name": "main-s4102-b128000000-deferred",
+      "binary": "pon_w1_late_assembly_research",
+      "args": [
+        "--setup-budget-ns",
+        "1000000000",
+        "--miner-budget-ns",
+        "128000000",
+        "--max-attempts",
+        "4096",
+        "--seed",
+        "4102",
+        "--mode",
+        "deferred"
+      ],
+      "timeout_seconds": 180
+    },
+    {
+      "name": "main-s4102-b512000000-eager",
+      "binary": "pon_w1_late_assembly_research",
+      "args": [
+        "--setup-budget-ns",
+        "1000000000",
+        "--miner-budget-ns",
+        "512000000",
+        "--max-attempts",
+        "4096",
+        "--seed",
+        "4102",
+        "--mode",
+        "eager"
+      ],
+      "timeout_seconds": 180
+    },
+    {
+      "name": "main-s4102-b512000000-deferred",
+      "binary": "pon_w1_late_assembly_research",
+      "args": [
+        "--setup-budget-ns",
+        "1000000000",
+        "--miner-budget-ns",
+        "512000000",
+        "--max-attempts",
+        "4096",
+        "--seed",
+        "4102",
+        "--mode",
+        "deferred"
+      ],
+      "timeout_seconds": 180
+    },
+    {
+      "name": "control-p0",
+      "binary": "pon_w1_late_assembly_research",
+      "args": [
+        "--setup-budget-ns",
+        "0",
+        "--miner-budget-ns",
+        "128000000",
+        "--max-attempts",
+        "4096",
+        "--seed",
+        "4101",
+        "--mode",
+        "eager"
+      ],
+      "timeout_seconds": 180
+    },
+    {
+      "name": "control-ptight",
+      "binary": "pon_w1_late_assembly_research",
+      "args": [
+        "--setup-budget-ns",
+        "1",
+        "--miner-budget-ns",
+        "128000000",
+        "--max-attempts",
+        "4096",
+        "--seed",
+        "4101",
+        "--mode",
+        "eager"
+      ],
+      "timeout_seconds": 180
+    },
+    {
+      "name": "control-b0",
+      "binary": "pon_w1_late_assembly_research",
+      "args": [
+        "--setup-budget-ns",
+        "1000000000",
+        "--miner-budget-ns",
+        "0",
+        "--max-attempts",
+        "4096",
+        "--seed",
+        "4101",
+        "--mode",
+        "eager"
+      ],
+      "timeout_seconds": 180
+    },
+    {
+      "name": "control-btight",
+      "binary": "pon_w1_late_assembly_research",
+      "args": [
+        "--setup-budget-ns",
+        "1000000000",
+        "--miner-budget-ns",
+        "100000",
+        "--max-attempts",
+        "4096",
+        "--seed",
+        "4101",
+        "--mode",
+        "eager"
+      ],
+      "timeout_seconds": 180
+    },
+    {
+      "name": "control-eagercap",
+      "binary": "pon_w1_late_assembly_research",
+      "args": [
+        "--setup-budget-ns",
+        "1000000000",
+        "--miner-budget-ns",
+        "128000000",
+        "--max-attempts",
+        "4",
+        "--seed",
+        "4101",
+        "--mode",
+        "eager"
+      ],
+      "timeout_seconds": 180
+    },
+    {
+      "name": "control-deferredcap",
+      "binary": "pon_w1_late_assembly_research",
+      "args": [
+        "--setup-budget-ns",
+        "1000000000",
+        "--miner-budget-ns",
+        "128000000",
+        "--max-attempts",
+        "4",
+        "--seed",
+        "4101",
+        "--mode",
+        "deferred"
+      ],
+      "timeout_seconds": 180
+    }
+  ]
+}
