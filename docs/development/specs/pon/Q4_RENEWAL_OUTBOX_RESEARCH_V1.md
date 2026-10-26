@@ -60,3 +60,22 @@ checkout; the local separately reconstructed observation-codec probe passed.
 Real Q4 signatures, original-owner journals, independent PoN client proofs,
 WAN lost-ACK handling, uninterrupted mining and production admission remain
 strictly unqualified. No old Q4, Maintenance, W1 or DAA consensus rule changed.
+
+## 2026-10-26 schema-bound replay and independent-W1-receiver follow-up
+
+Retain the upstream canonical-observation validation unchanged. A separate
+incremental hardening checks exact v1 SQLite schema objects during cold audit,
+including the partial UNIQUE dispatch fence, and rejects additional SQLite
+triggers, views, tables and downgraded indexes before trusting stored events.
+The negative tests create each foreign object on disk and require a closed
+refusal. This guards research schema drift, not privileged on-disk rewrites or
+independent authenticated confirmations.
+
+The unchanged existing non-ignored all-32-slot native Maintenance revocation
+fixture additionally feeds all original real W1 packets through a second fresh
+SQLite Node, independent block-by-block admission, full wire decode and
+required-work/depth confirmation. That receiver cold-reopens separately and
+must preserve the producer-observed result. Same-admin fixtures do not
+establish independent operators, and these added Rust assertions remain NOT_RUN
+until a source-matched Rust toolchain can execute them. No Q4/W1/DAA signed
+bytes, consensus validity or production activation changes.

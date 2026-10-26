@@ -261,4 +261,26 @@ class RenewalOutboxTests(unittest.TestCase):
             self.assertEqual(db.audit(), 2)
             self.assertTrue(db.status(key)['dispatch_unknown'])
 
+
+    def test_cold_audit_rejects_foreign_trigger_view_and_weakened_dispatch_index(self):
+        alterations = {
+            'view': 'CREATE VIEW q4_shadow AS SELECT 1',
+            'trigger': 'CREATE TRIGGER q4_shadow AFTER INSERT ON q4_outbox_events_v1 '
+                       'BEGIN DELETE FROM q4_outbox_events_v1; END',
+            'index': 'DROP INDEX q4_outbox_once_v1; '
+                     'CREATE INDEX q4_outbox_once_v1 ON q4_outbox_events_v1(intent_id)',
+            'table': 'CREATE TABLE q4_shadow (data BLOB)',
+        }
+        for label, sql in alterations.items():
+            with self.subTest(label=label):
+                self.file = Path(self.tmp.name) / (label + '.sqlite')
+                with self.open() as db:
+                    key = db.prepare(intent())
+                    db.dispatch_unknown(key)
+                    self.assertEqual(db.audit(), 1)
+                with sqlite3.connect(self.file) as raw:
+                    raw.executescript(sql)
+                with self.assertRaisesRegex(OutboxError, 'FOREIGN_SCHEMA_OBJECT'):
+                    self.open()
+
 if __name__ == '__main__': unittest.main()
