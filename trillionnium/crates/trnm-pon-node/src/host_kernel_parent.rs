@@ -622,3 +622,19 @@ pub fn require_for_listener(
         (!address.ip().is_loopback()).then_some(FIXED_PUBLIC_KERNEL_PARENT),
     )
 }
+
+/// An explicitly selected untrusted PUBLIC history source may be a loopback
+/// proxy for a real WAN peer. Caller-supplied SocketAddr is not source
+/// provenance. Always demand the same fixed administrator-owned cgroup and
+/// verify the actual calling thread, even if the destination is 127.0.0.1.
+///
+/// Only a resource obligation; this does NOT provide work validity, producer
+/// cost-hardness, W1 VerifiedWork or persistent authorization. Local-only
+/// developer sync retains require_for_listener and its old loopback rules.
+pub fn require_for_untrusted_public_sync(
+    address: std::net::SocketAddr,
+) -> crate::Result<HostKernelBudget> {
+    require_host_kernel_budget(address, Some(FIXED_PUBLIC_KERNEL_PARENT))?
+        .ok_or_else(|| crate::Error::from("PUBLIC_HOST_KERNEL_REQUIRED"))
+}
+
