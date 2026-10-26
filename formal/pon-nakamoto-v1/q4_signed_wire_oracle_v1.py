@@ -139,7 +139,8 @@ class CheckedQ4Bytes:
 
 
 def inspect_presigned_q4(raw: bytes, old_lease_bytes: bytes, *, containing_height: int,
-                         network: bytes, parameters: bytes, expected_requester_sequence: int,
+                         network: bytes, parameters: bytes, expected_old_lease_id: bytes,
+                         expected_requester_sequence: int,
                          previous_source_sequence: int, previous_material: Mapping[str,bytes],
                          previous_status: str = 'active') -> CheckedQ4Bytes:
     """Offline, read-only independent signature/structural Q4 check for EXACT inclusion height.
@@ -149,6 +150,7 @@ def inspect_presigned_q4(raw: bytes, old_lease_bytes: bytes, *, containing_heigh
     source permissions, actual material bytes, peer retention or chain inclusion.
     """
     _id(network,'network');_id(parameters,'parameters')
+    _id(expected_old_lease_id,'expected_old_lease_id')
     h = _num(containing_height,'height')
     request_nonce = _num(expected_requester_sequence,'requester_nonce')
     old_source_nonce = _num(previous_source_sequence,'source_nonce')
@@ -164,6 +166,8 @@ def inspect_presigned_q4(raw: bytes, old_lease_bytes: bytes, *, containing_heigh
             or raw[92] != 22 or struct.unpack_from('<H',raw,93)[0] != 1028):
         raise Q4Reject('TRANSACTION_CONTEXT')
     successor = parse_lease(raw[95:439]); old = parse_lease(old_lease_bytes)
+    if old['id'] != expected_old_lease_id:
+        raise Q4Reject('OLD_LEASE_SNAPSHOT_DRIFT')
     if (old['network'] != network or old['parameters'] != parameters or
             successor['network'] != network or successor['parameters'] != parameters):
         raise Q4Reject('LEASE_CONTEXT')

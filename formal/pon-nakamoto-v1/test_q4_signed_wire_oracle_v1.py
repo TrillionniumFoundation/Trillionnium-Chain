@@ -105,6 +105,7 @@ class Fixture:
         return inspect_presigned_q4(raw if raw is not None else self.packet(),self.old,
                 containing_height=kwargs.pop('height',900),network=kwargs.pop('network',self.network),
                 parameters=kwargs.pop('parameters',self.parameters),
+                expected_old_lease_id=kwargs.pop('expected_old_lease_id',H('qualified-demand-lease-v2',self.old)),
                 expected_requester_sequence=kwargs.pop('nonce',4),
                 previous_source_sequence=kwargs.pop('source_sequence',1),
                 previous_material=kwargs.pop('bound',self.bound),
