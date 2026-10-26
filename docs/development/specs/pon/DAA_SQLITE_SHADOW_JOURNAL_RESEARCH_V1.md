@@ -30,7 +30,7 @@ state root, deployment or activation bit changes.
 ## Testing and precise limits
 
 Run `cd formal/pon-nakamoto-v1 && python3 -m unittest -v test_daa_shadow_journal.py`.
-Ten source-derived local Python/SQLite tests on 2026-10-26 passed: atomic replay,
+Twelve source-derived local Python/SQLite tests on 2026-10-26 passed: atomic replay,
 durable branch switch, 3 pre-commit faults, post-commit Unknown, active-tip
 CAS restart, duplicate corruption, hot index drift, cold byte tampering,
 missing parent, foreign DB/symlink refusal, height and row resource bounds.
@@ -57,3 +57,18 @@ Inject detach/attach crash cuts, corrupt early ancestry, cold/audited replay,
 deep forks, version/context mismatches, missing history, and live-client
 confirmation under measured bounded resources. Do not import this research DB
 as authority, alter historical DAA or mark public readiness true.
+
+## Cross-check against original owner facts (advisory, not authority)
+
+`audit_against_upstream(read_packet, derive_projection, max_rows=...)` now
+compares each stored row against actual caller-provided upstream packet bytes
+and an independently derived projection digest. Missing, mutated, oversized
+packets, incorrect projections and bounded audit exhaustion reject. Both
+callbacks remain untrusted Python callables in this research experiment;
+there is **no** native VerifiedWork/Node capability or proof that a callback
+speaks for M02/M07. The audit is read-only and never calls a signer, repairs
+external effects, changes active tip, or grants model/consensus final use.
+
+This additional research contract has two focused positive/negative tests;
+the exact local Python total is now 12/12. No physical power loss, native W1
+packets, Rust compiler or independent operator was exercised.

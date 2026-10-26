@@ -12,6 +12,7 @@ from dataclasses import dataclass
 import hashlib
 from pathlib import Path
 import sqlite3
+from typing import Callable
 
 ZERO = b'\0' * 32
 MAX_U64 = (1 << 64) - 1
@@ -294,3 +295,43 @@ class ShadowJournal:
         if self.active() not in seen:
             raise JournalError('ACTIVE_TIP_UNAVAILABLE')
         return count
+
+    def audit_against_upstream(
+        self,
+        read_packet: Callable[[ShadowHeader], bytes],
+        derive_projection: Callable[[ShadowHeader, bytes], bytes],
+        *,
+        max_rows: int,
+    ) -> int:
+        """Compare all local rows to independently supplied upstream bytes/facts.
+
+        Neither callback is authenticated here. Only the original native Node
+        verifier may decide work/state/target authority. A forged callback can
+        still make forged research receipts; this method issues no such token.
+        No owner effects or repairs are dispatched in this read-only audit.
+        """
+        if (not callable(read_packet) or not callable(derive_projection)
+                or type(max_rows) is not int or not 1 <= max_rows <= self.max_headers):
+            raise JournalError('OWNER_AUDIT_BUDGET_OR_CALLBACK')
+        # The row graph and indices must pass local verification first.
+        self.audit()
+        scanned = 0
+        cursor = self.db.execute('SELECT canonical FROM daa_shadow_headers_v1 '
+                                 'ORDER BY height,block_id')
+        for (encoded,) in cursor:
+            scanned += 1
+            if scanned > max_rows:
+                raise JournalError('OWNER_AUDIT_BUDGET')
+            header = ShadowHeader.decode(encoded)
+            packet = read_packet(header)
+            if type(packet) is not bytes or not 1 <= len(packet) <= MAX_PACKET:
+                raise JournalError('OWNER_PACKET_UNAVAILABLE')
+            if hashlib.sha256(packet).digest() != header.packet_hash:
+                raise JournalError('OWNER_PACKET_MISMATCH')
+            projection = derive_projection(header, packet)
+            if type(projection) is not bytes or len(projection) != 32:
+                raise JournalError('OWNER_PROJECTION_UNAVAILABLE')
+            if projection != header.projection_hash:
+                raise JournalError('OWNER_PROJECTION_MISMATCH')
+        # No authority is granted: a callback that lies can still pass.
+        return scanned
