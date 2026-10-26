@@ -17,6 +17,7 @@ import re
 SCHEMA = 'pon-w1-flood-cost-input-v1'
 OUT_SCHEMA = 'pon-w1-flood-cost-accounting-v1'
 HEX = re.compile(r'[0-9a-f]{64}\Z')
+GIT_SHA = re.compile(r'[0-9a-f]{40}\Z')
 MAX_BYTES = 4 * 1024 * 1024
 MAX_CASES = 512
 MAX_RECEIVERS = 4096
@@ -69,8 +70,10 @@ def analyze(data):
     require(type(data) is dict and data.get('schema') == SCHEMA, 'SCHEMA')
     source = data.get('source')
     require(type(source) is dict, 'SOURCE')
-    head = digest(source.get('head'), 'HEAD')
-    tree = digest(source.get('tree'), 'TREE')
+    head = source.get('head')
+    tree = source.get('tree')
+    require(type(head) is str and GIT_SHA.fullmatch(head), 'HEAD')
+    require(type(tree) is str and GIT_SHA.fullmatch(tree), 'TREE')
     require(type(source.get('profile')) is str and source['profile'],
             'PROFILE')
     cases = data.get('cases')
