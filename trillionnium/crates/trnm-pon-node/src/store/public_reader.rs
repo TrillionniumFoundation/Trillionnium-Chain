@@ -303,7 +303,8 @@ impl Node {
         ready(&self.db, &mut budget, progress)?;
         context_values(
             &self.db,
-            self.state_backend.schema_id(),
+            self.storage_layout
+                .schema_id(self.state_backend.schema_id()),
             self.settings.parameters(),
             self.settings.genesis(),
             &self.expected_schema,
@@ -323,7 +324,9 @@ impl Node {
             owner: self.owner.try_clone()?,
             schema: self.expected_schema.clone(),
             context: self.ancestry_context(),
-            schema_id: self.state_backend.schema_id(),
+            schema_id: self
+                .storage_layout
+                .schema_id(self.state_backend.schema_id()),
             active: selected,
             active_record,
             slot,
@@ -353,7 +356,10 @@ impl Node {
         ensure(
             self.directory_id == read.pin.directory_id
                 && self.database_id == read.pin.database_id
-                && self.state_backend.schema_id() == read.pin.schema_id
+                && self
+                    .storage_layout
+                    .schema_id(self.state_backend.schema_id())
+                    == read.pin.schema_id
                 && self.settings.network() == read.pin.context.network,
             "STORAGE_CONTEXT",
         )

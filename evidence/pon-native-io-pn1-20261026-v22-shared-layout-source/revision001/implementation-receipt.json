@@ -1,0 +1,123 @@
+{
+  "recorded_utc": "2026-10-26T14:53:14.021035+00:00",
+  "schema": "PN1-I02-shared-authenticated-snapshot-source-candidate-v1",
+  "scope": "Real source candidate in isolated scratch only. Original native-IO production factory/Node API is wired through versioned physical schema, same transaction writes, actual complete account traversal plus working reconstruction, original validation and cold/read path. Not compiled, tested or executed.",
+  "base_head": "94b3fb60b7aa32c8bf5b7c8679d3c46a980b4060",
+  "base_tree": "da71738463a4d451e0b0246985dc69c7ab1f24fe",
+  "branch": "docs/chain-audit-remediation-20261022",
+  "origin": "https://github.com/TrillionniumFoundation/Trillionnium-Chain.git",
+  "status": "M trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs\n M trillionnium/crates/trnm-pon-node/src/store.rs\n M trillionnium/crates/trnm-pon-node/src/store/public_reader.rs\n A trillionnium/crates/trnm-pon-node/src/store/shared_snapshot.rs\n A trillionnium/crates/trnm-pon-node/src/store/shared_snapshot_tests.rs",
+  "root_or_ROG_source_modified": false,
+  "commit_or_push": false,
+  "files": {
+    "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs": {
+      "bytes": 31858,
+      "sha256": "ad9e41b68379ec9e5aade1bc2339d2710c9128e142738488dec35eee20b5979f",
+      "base_sha256": "402fa2acbee954bbde3cc1ea391add90c22b4bf15f215106a27c1d45eba26351",
+      "lines": 869
+    },
+    "trillionnium/crates/trnm-pon-node/src/store.rs": {
+      "bytes": 305713,
+      "sha256": "7441972c57980a00895b7588da1b60dcb330838319fb534008dd151cc3d92f3b",
+      "base_sha256": "61953b312c62a5045b9ac87a4a97789a82177a0013140a2c93ccdf7332a88231",
+      "lines": 7546
+    },
+    "trillionnium/crates/trnm-pon-node/src/store/public_reader.rs": {
+      "bytes": 19088,
+      "sha256": "b8bf23dca2b77f9554c8a1b1fbe37d6e1a4580680ef3e52f077d045cd4d0f7b6",
+      "base_sha256": "a7f837f4450c1f6565e61a303f5449c0f692c59b69db970d1791377a61312afb",
+      "lines": 540
+    },
+    "trillionnium/crates/trnm-pon-node/src/store/shared_snapshot.rs": {
+      "bytes": 10213,
+      "sha256": "c9d92fcdf514bb564beeb91424b8a15f3dd264008b3662dd8036b4b92db3b9bb",
+      "base_sha256": null,
+      "lines": 283
+    },
+    "trillionnium/crates/trnm-pon-node/src/store/shared_snapshot_tests.rs": {
+      "bytes": 12348,
+      "sha256": "cb75a7885c62b8b70e052c79d3b370b7d9f3745528a861d2cc61a0a50c76f808",
+      "base_sha256": null,
+      "lines": 385
+    }
+  },
+  "artifacts": {
+    "candidate.patch": {
+      "bytes": 38405,
+      "sha256": "e675ce21ee6167f2fd00833e17a4190d980922204e241b392379c2f5f7aecfb3"
+    },
+    "production-only.patch": {
+      "bytes": 25364,
+      "sha256": "5c44e51ac3b03f391d76feab9f83bd277d991f8a4398acda29dcdd5ea46065ca"
+    },
+    "new-controls-only.patch": {
+      "bytes": 13041,
+      "sha256": "23a13829b844781b7c5284173fe1092af984a91d6796dc6063db57225483f11a"
+    },
+    "unchanged-original-tests-and-boundaries.json": {
+      "bytes": 96859,
+      "sha256": "fb6f0167eb721343f48cb448b05f63fcb15416ae55b7c394143fc25e3ac325c5"
+    },
+    "preflight-receipt.json": {
+      "bytes": 1700,
+      "sha256": "01d11fd299ca36d77ad058fe1c9c643e71ac6cb38f327d71e5f9fb2c056d6385"
+    }
+  },
+  "integration": {
+    "factory": "Node::open_with_authenticated_state_and_native_io(_and_fault) retains API and StateBackend::AuthenticatedV1; trusted constructor derives SharedAccountsV1 physical layout. Normal AuthV1/legacy still CanonicalJson. No fixture/env/profile switch.",
+    "namespace": "Fresh native-io-shared-authenticated-branch-schema-v1 hash binds old base schema, new DDL and new snapshot record schema. Original initintent uses this hash, actual schema/metadata are checked, old/mixed layout fails. Source-derived expected DDL retained only for shared owner and actual schema is reread on use; no cached validity verdict.",
+    "stored_bytes": "Existing blocks/deltas/KV/native_state_commitments/account archive remain; genesis snapshot stays original canonical State. Non-genesis shared table stores actual native commitment reference and complete nonaccount working State in a fresh canonical strict codec/digest domain.",
+    "materialization": "New native_store::materialize_accounts actually reads all current COW nodes, preserves original path/depth/hash/duplicate/seen/count/balance checks, creates canonical lower-case account keys (original parser already requires this), and merges with checked complete working State. No root-only substitute.",
+    "validation": "Load runs original continuity/full StateCommitment/account graph/history verification, then raw shared row/native record identity fence. Original state_at continues original historical commitment/full State checks and retained-delta reconstruction if optional shared index pruned; malformed present row always errors. Shared reads own one SQLite snapshot or borrow existing writer transaction; rollback failure is owner-fatal with original failure retained in source.",
+    "writes": "Original block Immediate transaction writes original native account record/COW first then shared snapshot and full actual reread. Shared insert verified before pruning so a valid low-height fork can be pruned without rejecting its block.64-index pruning and ignore-suppression limit are checked in same transaction. Original normal fullJSON dense path retains its original body/64 policy.",
+    "cold": "Original Node constructor/read_active/history/recovery remain; shared layout additionally audits actual retained shared references within a read transaction. Mixed raw child snapshot rows/unknown schema, malformed/missing referenced nodes/foreign root/working corruption fail closed. Same-lease factory path retained.",
+    "migration": "Original NATIVE_IO_MIGRATION_UNSUPPORTED file/guards byte-preserved. No converter or old-failure-store mutation. New/old physical stores are not silently mixed, converted, vacuumed or auto-fallback reopened."
+  },
+  "unchanged_original_contracts": {
+    "original_tracked_Rust_test_files": 467,
+    "store_inline_tests_tail_bytes": 79958,
+    "all_old_test_files_and_inline_tail_byte_equal": true,
+    "old_complete_account_verifier_body_byte_equal": true,
+    "original_harness_readers_seed_tests_caps_VFS_ledger_Cargo_AGENTS_plan_byte_equal": true,
+    "limits": "Original4KiB/WAL/FULL,16MiB/file48MiB/root336MiBdomain,1024+256events655360bytes,original FD/lease/CPU/AS/resource/2s/whole deadlines unchanged. No new test assertion replaces originals.",
+    "normal_routes": "Production common wrappers gain conditional shared handling; CanonicalJson schema/cadence/codec and old test/assertion bytes retained. Old tests passing later would only certify their old format, not this candidate."
+  },
+  "new_test_candidates": {
+    "count": 7,
+    "kind": "Actual ordinary Node/COW SQLite codec/reference and fault controls; deliberately not presented as held native-IO factory/campaign qualification",
+    "coverage": [
+      "full State equality with actual current accounts and no duplicate account values in shared working payload",
+      "resealed foreign block/native record/context/schema/working/account partition plus unknown field/trailing whitespace/truncation/SQL wrong type/missing actual node",
+      "real SQL ignored insert, corrupted inserted row, deleted account graph/genesis anchor within rollbacked transaction",
+      "real distinct admitted forks and codec read after all original SQL connections close",
+      "raw shared record mutation at final callback must fail instead of returning valid State",
+      "64-index pruning suppression returns original SNAPSHOT_LIMIT owner-fatal and rolls back insert",
+      "mixed legacy child snapshots or missing genesis fail physical-layout guard"
+    ],
+    "executed": false
+  },
+  "source_observations": {
+    "preflight": 0,
+    "git_diff_check": 0,
+    "rustfmt_final2021_source_only": 0,
+    "first_formatter2024_was_wrong_style_not_a_product_run": "Original logs retained; final2021 formatting restored every original test file/inline test tail byte-for-byte. No compile/test was claimed.",
+    "typecheck_or_clippy": "NOT_RUN",
+    "actual_C_or_native": "NOT_RUN; prior94 C/prepared/failed claim are not inherited or reused"
+  },
+  "remaining": [
+    "Independent source/negative-control review required before root application.",
+    "Exact-commit Cargo/type/lint/full original tests and actual native factory/caller/reader verification remain. Remaining original cumulative build/run budgets must not reset.",
+    "Complete State materialization and repeated original verification remain linear and may exceed original2s; no performance success or throughput bound claimed.",
+    "Working-partition copies/retained proofs/nodes and long-term storage can still grow under unchanged caps; no universal1024-budget theorem or full4097 success.",
+    "Separate known postCOMMIT checkpoint failure/committed-versus-storage-health interface issue is not fixed by this snapshot-source candidate.",
+    "Independent decoder for new physical record and explicit migration qualification are not implemented; old-format oracle pass cannot substitute."
+  ],
+  "mechanism_qualified": false,
+  "whole_writer_qualified": false,
+  "original_three_FD_caller_qualified": false,
+  "independent_reader_qualified": false,
+  "full_W1_4097_qualified": false,
+  "full_guard_enabled": false,
+  "task_complete": false,
+  "merge_ready": false
+}
