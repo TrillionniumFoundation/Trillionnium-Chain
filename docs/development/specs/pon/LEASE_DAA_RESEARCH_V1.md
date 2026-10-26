@@ -714,3 +714,34 @@ within this research lineage. None of these cases runs native Rust, produces
 PNW1 valid work, admits a block, proves an independent validator, or qualifies
 public-network difficulty/security. Local proof/admission tests and third-party
 review remain explicit blockers. No legacy DAA or production flag changes.
+
+
+### Q4 research journal: external SQLite writer fence (2026-10-26)
+
+The research-only Q4 outbox now pins SQLite `PRAGMA data_version` after the
+initial full cold audit. Every `prepare` and event append acquires its original
+`BEGIN IMMEDIATE` writer transaction before checking the version. When another
+connection has committed any database change, the writer re-audits all canonical
+intents and events **within that same write transaction** before appending.
+An intact concurrent publisher remains legal; corrupted older observations or
+intents must refuse the new write without extending invalid durable history.
+Three new regression selectors cover those interleavings.
+
+This is a **local research integrity guard** only. It is not a cross-process
+exclusive writer, immutable trusted disk, Hepta signer, dispatched original
+operation, complete Q4 owner/recovery acceptance, real PoN proof or consensus
+activation. Another actor with direct access to the same SQLite connection,
+external key custody or the filesystem may exceed this trust boundary. A full
+re-audit is charged only after a different SQLite connection's commit, avoiding
+quadratic scans in the ordinary same-owner append path. Hostile repeated
+external changes remain a separately bounded operational threat.
+
+Execute, on a checkout of the exact candidate source, with no CI dependency:
+
+```sh
+cd formal/pon-nakamoto-v1
+python3 -m unittest -v test_q4_renewal_outbox_research.py
+```
+
+Rust native and independent WAN/W1 acceptance remain OPEN. This documentation
+is not an executed exact-source test receipt.
