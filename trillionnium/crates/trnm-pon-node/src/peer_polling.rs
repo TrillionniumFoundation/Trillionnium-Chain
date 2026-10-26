@@ -11,6 +11,7 @@ use crate::{
     store::WorkCheckedPacket,
     Error, ErrorCode, Node, Packet, Result, Settings,
 };
+use crate::host_kernel_parent::{self, HostKernelBudget};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::{
@@ -337,7 +338,18 @@ fn page(
 }
 /// Native task/parent/clock checks bracket the immutable owned full proof replay.
 /// A repeated already-admitted exact packet uses the existing durable admission fact.
-fn admit_page(node: &Mutex<Node>, packet: Packet, end: Instant, stop: &AtomicBool) -> Result<bool> {
+fn admit_page(
+    node: &Mutex<Node>,
+    packet: Packet,
+    end: Instant,
+    stop: &AtomicBool,
+    host_kernel: Option<&HostKernelBudget>,
+) -> Result<bool> {
+    // A pinned peer's signature cannot replace actual aggregate Host CPU
+    // ownership, even when the local service listens only on loopback.
+    if let Some(kernel) = host_kernel {
+        kernel.verify()?;
+    }
     let cpu = {
         let owner = lock(node, end, stop)?;
         // The peer is authenticated, not CPU-funded. A pinned peer must
@@ -379,6 +391,11 @@ fn admit_page(node: &Mutex<Node>, packet: Packet, end: Instant, stop: &AtomicBoo
     // settles even after a native rejection. Post-commit accounting cannot
     // retroactively invalidate an already admitted fact.
     let settlement = operation.finish();
+    // Recheck the same physical parent AFTER the last actual W1/M06 worker.
+    // A durable success cannot be rolled back merely by reporting this fault.
+    if let Some(kernel) = host_kernel {
+        kernel.verify()?;
+    }
     if settlement.accounting_unavailable {
         // Preserve any durable native block, but an outbound poller cannot
         // report complete historical synchronization with UNKNOWN CPU.
@@ -392,6 +409,7 @@ struct PollContext<'a> {
     settings: &'a Settings,
     end: Instant,
     stop: &'a AtomicBool,
+    host_kernel: Option<&'a HostKernelBudget>,
 }
 struct EventDetail {
     stage: &'static str,
@@ -494,6 +512,7 @@ impl Engine {
             settings,
             end,
             stop,
+            host_kernel,
         } = *context;
         progress(end, stop)?;
         if self.calls >= cfg.max_calls {
@@ -626,7 +645,7 @@ impl Engine {
                 }
             };
             if known {
-                self.complete(index, node, end, stop, observe)?;
+                self.complete(index, node, end, stop, host_kernel, observe)?;
             }
             return Ok(false);
         }
@@ -641,7 +660,7 @@ impl Engine {
         };
         let mut verified = false;
         if let Some(packet) = packet {
-            match admit_page(node, packet, end, stop) {
+            match admit_page(node, packet, end, stop, host_kernel) {
                 Ok(value) => verified = value,
                 Err(error) => {
                     self.reject(
@@ -681,7 +700,7 @@ impl Engine {
             observe,
         )?;
         if complete {
-            self.complete(index, node, end, stop, observe)?;
+            self.complete(index, node, end, stop, host_kernel, observe)?;
         }
         Ok(true)
     }
@@ -691,6 +710,7 @@ impl Engine {
         node: &Mutex<Node>,
         end: Instant,
         stop: &AtomicBool,
+        host_kernel: Option<&HostKernelBudget>,
         observe: &mut F,
     ) -> Result<()>
     where
@@ -698,9 +718,18 @@ impl Engine {
     {
         let target = self.states[index].target.ok_or("PEER_TARGET")?;
         let activated = (|| -> Result<Hash> {
+            // A valid remote W1 packet is not permission to activate outside
+            // the originally pinned physical host resource boundary.
+            if let Some(kernel) = host_kernel {
+                kernel.verify()?;
+            }
             let mut owner = lock(node, end, stop)?;
             // Native accumulated work chooses; lower/equal work never takes over.
-            owner.activate_observed(target, ingress::now()?)
+            let result = owner.activate_observed(target, ingress::now()?);
+            if let Some(kernel) = host_kernel {
+                kernel.verify()?;
+            }
+            result
         })();
         let active = match activated {
             Ok(active) => active,
@@ -737,6 +766,7 @@ impl Engine {
             settings: _,
             end,
             stop,
+            host_kernel: _,
         } = *context;
         let count = self.states.len();
         let mut attempted_pages = 0;
@@ -781,6 +811,20 @@ impl Engine {
         Ok(())
     }
 }
+/// A physical Host resource entitlement is mandatory for ANY configured
+/// nonloopback pinned peer, regardless of the local listener's bind address.
+/// This is the original root-owned parent; neither the peer nor this poller
+/// may create or widen the cgroup or supply a separate CPU allowance.
+fn require_remote_peer_host_kernel(cfg: &PeerPollingConfig) -> Result<Option<HostKernelBudget>> {
+    let Some(remote) = cfg.peers.iter().find(|p| !p.address.ip().is_loopback()) else {
+        return Ok(None);
+    };
+    let kernel = host_kernel_parent::require_for_listener(remote.address)?
+        .ok_or("PUBLIC_HOST_KERNEL_REQUIRED")?;
+    kernel.verify()?;
+    Ok(Some(kernel))
+}
+
 /// Ordinary network/peer refusals retain a bounded cursor and retry next cycle.
 /// A structural owner or observer failure is fatal and sets the shared stop flag;
 /// a normal runtime/call-budget exit leaves the service running for other siblings.
@@ -799,6 +843,9 @@ where
         let startup_end = started + Duration::from_secs(10);
         let settings = lock(&node, startup_end, &stop)?.settings().clone();
         cfg.validate(&settings)?;
+        // Guard the remote SOURCE, not merely the V3 listener's loopback
+        // address. Use one pinned physical Host parent for all remote peers.
+        let host_kernel = require_remote_peer_host_kernel(&cfg)?;
         // The sibling V3 listener and this poller start concurrently.
         // Await its original Node CPU binding before any remote history Work;
         // absent/unknown identity fails closed after the original startup cap.
@@ -836,6 +883,7 @@ where
             settings: &settings,
             end,
             stop: &stop,
+            host_kernel: host_kernel.as_ref(),
         };
         while Instant::now() < end && !stop.load(Ordering::Acquire) && engine.calls < cfg.max_calls
         {
@@ -846,9 +894,15 @@ where
                 break;
             }
             cycles += 1;
+            if let Some(kernel) = &host_kernel {
+                kernel.verify()?;
+            }
             match engine.cycle(&poll_context, &mut rpc, &mut observe) {
                 Err(error) if error.is(ErrorCode::PeerPollCancelled) => break,
                 other => other?,
+            }
+            if let Some(kernel) = &host_kernel {
+                kernel.verify()?;
             }
             next = Instant::now() + Duration::from_millis(cfg.poll_interval_ms);
         }
@@ -960,6 +1014,7 @@ mod tests {
             settings: s,
             end: Instant::now() + Duration::from_secs(120),
             stop,
+            host_kernel: None,
         }
     }
     #[test]
@@ -983,6 +1038,7 @@ mod tests {
             packet,
             Instant::now() + Duration::from_secs(10),
             &stop,
+            None,
         ).unwrap_err();
         assert_eq!(refused.to_string(), "OWNER_PUBLIC_SERVICE_DOMAIN_UNBOUND");
         assert_eq!(guarded.lock().unwrap().stats().unwrap(), before);
@@ -1030,6 +1086,7 @@ mod tests {
             packet,
             Instant::now() + Duration::from_secs(10),
             &stop,
+            None,
         ).unwrap_err();
         assert_eq!(refused.to_string(), "WORK:Product");
         let final_state = cpu.observe().unwrap();
@@ -1041,6 +1098,60 @@ mod tests {
         assert!(final_state.stored_credit_ns <= initial.stored_credit_ns);
         assert_eq!(guarded.lock().unwrap().stats().unwrap(), before);
         assert_eq!(guarded.lock().unwrap().read_active().unwrap().0, settings.genesis());
+    }
+
+    #[test]
+    fn remote_pinned_peer_uses_original_kernel_even_with_loopback_service() {
+        let settings = Settings::development(Some(1)).unwrap();
+        let mut cfg = config(&settings);
+        assert!(require_remote_peer_host_kernel(&cfg).unwrap().is_none());
+        // This peer is a trust-pinned network source, not a loopback client
+        // of the service. The host cannot accept it on a new CPU account.
+        cfg.peers[0].address = "198.51.100.7:12345".parse().unwrap();
+        assert!(!matches!(
+            require_remote_peer_host_kernel(&cfg),
+            Ok(None)
+        ));
+    }
+
+    #[test]
+    fn wan_and_mixed_peer_rosters_cannot_rpc_without_original_host_owner() {
+        let remote: SocketAddr = "192.0.2.31:4242".parse().unwrap();
+        let original = crate::host_kernel_parent::require_for_listener(remote);
+        assert!(!matches!(original, Ok(None)));
+        match original {
+            Ok(Some(ref kernel)) => kernel.verify().unwrap(),
+            Err(ref expected) => {
+                let settings = Settings::development(Some(1)).unwrap();
+                for mixed in [false, true] {
+                    let dir = tempfile::tempdir().unwrap();
+                    let owner = Arc::new(Mutex::new(
+                        Node::open(dir.path(), settings.clone(), 1).unwrap(),
+                    ));
+                    let before = owner.lock().unwrap().stats().unwrap();
+                    let mut cfg = config(&settings);
+                    if mixed {
+                        let original_key = cfg.peers[0].server_public.clone();
+                        cfg.peers.push(PinnedPeer {
+                            address: remote,
+                            server_public: original_key,
+                        });
+                    } else {
+                        cfg.peers[0].address = remote;
+                    }
+                    cfg.validate(&settings).unwrap();
+                    let stop = Arc::new(AtomicBool::new(false));
+                    let outcome = run_pinned_peer_polling(
+                        owner.clone(), cfg, identity(72), stop.clone(),
+                        |_| panic!("Host-less WAN client performed RPC before admission"),
+                    );
+                    assert_eq!(outcome.unwrap_err().to_string(), expected.to_string());
+                    assert!(stop.load(Ordering::Acquire));
+                    assert_eq!(owner.lock().unwrap().stats().unwrap(), before);
+                }
+            }
+            Ok(None) => unreachable!("nonloopback Host cannot be unbudgeted"),
+        }
     }
 
     #[test]
