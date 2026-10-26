@@ -2109,12 +2109,36 @@ fn call_authenticated_durable_inner(
     Err(Error::authenticated_remote(terminal, error))
 }
 
+// Remote History has no previously paid inbound V3 mutation permit. Start one
+// original Node-owned operation at a time; do not invent credit or restart the
+// epoch for each page. Original refill is the ONLY source of future credit.
+// A bounded wait is local scheduling (not W1 invalidity or new consensus TTL).
+fn begin_history_cpu(
+    cpu: &public_v3::ServiceMutationCpuDomain,
+) -> Result<public_v3::ServiceMutationCpuOperation> {
+    let deadline = Instant::now() + Duration::from_secs(5);
+    loop {
+        match cpu.begin() {
+            Ok(operation) => return Ok(operation),
+            Err(error) if error.is(ErrorCode::PublicMutationCpuBudget)
+                && Instant::now() < deadline =>
+            {
+                thread::sleep(
+                    Duration::from_millis(5).min(deadline.saturating_duration_since(Instant::now())),
+                );
+            }
+            Err(error) => return Err(error),
+        }
+    }
+}
+
 fn receive_page(
     node: &mut Node,
     page: Page,
     tip: Hash,
     after: Hash,
     clock: u64,
+    cpu: &public_v3::ServiceMutationCpuDomain,
 ) -> Result<Hash> {
     ensure(
         page.schema == "pon-native-history-v1"
@@ -2152,7 +2176,44 @@ fn receive_page(
         "PAGE_COMPLETE",
     )?;
     for packet in &packets {
-        node.admit(packet, clock)?;
+        // A signed remote History page does NOT pay for local W1/M06. Claim
+        // this exact Node's one original CPU domain BEFORE context/State work,
+        // and settle the measured owner+scoped-worker total on every outcome.
+        // The original bucket starts cold and cannot be reset per page/peer.
+        let original = begin_history_cpu(cpu)?;
+        let live = original.checkpoint_handle();
+        let native = (|| -> Result<()> {
+            live.checkpoint()?;
+            // Preserve exactly Node::admit's context -> owner reservation ->
+            // W1 relation -> current-parent/state/commit ordering. A duplicate
+            // still checks context and cannot inherit another packet's rights.
+            if node.check_admission_context_with_progress(
+                packet, clock, &mut || live.checkpoint(),
+            )?.is_some() {
+                return Ok(());
+            }
+            let permit = node.begin_owner_work(packet)?;
+            live.checkpoint()?;
+            let checked = WorkCheckedPacket::verify_with_progress(
+                packet.clone(), &mut |_| live.checkpoint(),
+            )?;
+            live.checkpoint()?;
+            let checked = node.attach_owner_work(checked, permit)?;
+            let execute_progress = |_step| live.checkpoint();
+            let control = trnm_mvcc_fee::pon_executor::ExecutionControl::new(
+                &execute_progress,
+                original.worker_accounting(),
+            );
+            node.admit_work_checked_with_control(checked, clock, &control)?;
+            Ok(())
+        })();
+        // No early '?' may skip settlement. Any verified native commit is a
+        // factual durable operation, even if its CPU accounting fails later.
+        let paid = original.finish();
+        if paid.accounting_unavailable {
+            return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+        }
+        native?;
     }
     if page.complete {
         node.activate_observed(tip, clock)?;
@@ -2178,7 +2239,18 @@ pub fn receive_page_from(
     if let Some(kernel) = &host_kernel {
         kernel.verify()?;
     }
-    let native = receive_page(node, page, tip, after, clock);
+    // The checked Node, not the peer/caller, chooses its one CPU owner.
+    // Never permit a new Process/Peer/Page to replace an existing domain.
+    let cpu = match node.public_service_cpu_domain() {
+        Ok(existing) => existing,
+        Err(error) if error.is(ErrorCode::OwnerPublicServiceDomainUnbound) => {
+            let cold = public_v3::ServiceMutationCpuDomain::cold_remote_sync_epoch();
+            node.bind_public_service_cpu_domain(&cold)?;
+            cold
+        }
+        Err(error) => return Err(error),
+    };
+    let native = receive_page(node, page, tip, after, clock, &cpu);
     // A completed native admission cannot be undone by a post-verification
     // host fault. That fault still makes the overall synchronization fail.
     if let Some(kernel) = &host_kernel {
