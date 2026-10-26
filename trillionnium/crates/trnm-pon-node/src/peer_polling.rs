@@ -1005,6 +1005,52 @@ mod tests {
         assert_eq!(guarded.lock().unwrap().read_active().unwrap().0, settings.genesis());
     }
 
+    #[cfg(target_os = "linux")]
+    #[test]
+    fn pinned_peer_cannot_reconstruct_parent_on_an_exhausted_original_cpu_domain() {
+        let now = ingress::now().unwrap();
+        let settings = Settings::development(Some(now - 100)).unwrap();
+        let dir = tempfile::tempdir().unwrap();
+        let mut node = Node::open(dir.path(), settings.clone(), 2).unwrap();
+        let valid = node.make(
+            settings.genesis(),
+            vec![],
+            development_public(0).unwrap(),
+            settings.genesis_time() + 10,
+            4096,
+        ).unwrap();
+        let id = node.admit(&valid, now).unwrap();
+        node.activate_observed(id, now).unwrap();
+        let before = node.stats().unwrap();
+        let before_active = node.read_active().unwrap();
+
+        // An actual original cold process account cannot grant another
+        // free request just because its body is a duplicate or has an early
+        // invalid-header precheck. This catches accidental context-before-CPU
+        // regressions in the expensive State reconstruction path.
+        let cold_server = crate::ingress::public_v3::PublicServer::new_process_cold(
+            identity(72),
+            PublicPolicy::new(8, Duration::from_secs(2)).unwrap(),
+        ).unwrap();
+        let original = cold_server.mutation_cpu_domain();
+        assert_eq!(original.observe().unwrap().stored_credit_ns, 0);
+        node.bind_public_service_cpu_domain(&original).unwrap();
+        let guarded = Mutex::new(node);
+        let stop = AtomicBool::new(false);
+        let deadline = Instant::now() + Duration::from_secs(1);
+        for mut packet in [valid.clone(), valid] {
+            if packet.proof[0] == b'P' {
+                packet.header.nonce = packet.header.nonce.wrapping_add(1);
+                packet.proof[0] ^= 1;
+            }
+            let error = admit_page(&guarded, packet, deadline, &stop).unwrap_err();
+            assert_eq!(error.to_string(), "PUBLIC_MUTATION_CPU_BUDGET");
+            assert_eq!(guarded.lock().unwrap().stats().unwrap(), before);
+            assert_eq!(guarded.lock().unwrap().read_active().unwrap(), before_active);
+        }
+        assert_eq!(original.observe().unwrap().in_flight, 0);
+    }
+
     #[test]
     fn pinned_peer_false_product_spends_the_same_real_cpu_bucket_without_chainwork() {
         let now = ingress::now().unwrap();
