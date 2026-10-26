@@ -156,7 +156,22 @@ class ShadowJournal:
                 'SELECT 1 FROM daa_shadow_headers_v1 WHERE block_id=?', (tip,)).fetchone() is None:
             raise JournalError('ACTIVE_TIP_UNAVAILABLE')
 
+    def _check_context_snapshot(self) -> None:
+        """Read the COMPLETE immutable namespace before any hot mutation.
+
+        This detects foreign/corrupt metadata in the caller's current SQLite
+        snapshot. It authenticates neither a remote packet nor native W1 work.
+        """
+        expected = {'schema': SCHEMA, 'context': self.context,
+                    'genesis': self.genesis}
+        actual = dict(self.db.execute(
+            'SELECT key, value FROM daa_shadow_meta_v1'))
+        if (set(actual) != {*expected, 'active_tip'}
+                or any(actual[k] != value for k, value in expected.items())):
+            raise JournalError('DATABASE_CONTEXT')
+
     def active(self) -> bytes:
+        self._check_context_snapshot()
         value = self.db.execute("SELECT value FROM daa_shadow_meta_v1 WHERE key='active_tip'").fetchone()
         if value is None:
             raise JournalError('ACTIVE_TIP_MISSING')
@@ -196,6 +211,9 @@ class ShadowJournal:
         self.db.execute('BEGIN IMMEDIATE')
         committed = False
         try:
+            # Detect drift in immutable context and active-tip identity inside
+            # the original BEGIN IMMEDIATE writer snapshot, before any append.
+            self.active()
             prior = self.db.execute('SELECT canonical FROM daa_shadow_headers_v1 WHERE block_id=?',
                                     (header.block_id,)).fetchone()
             if prior is not None:

@@ -283,5 +283,56 @@ class ShadowJournalTests(unittest.TestCase):
             ShadowJournal(link, CTX, GEN)
 
 
+
+    def test_live_context_mutation_refuses_append_activation_and_audit(self):
+        with ShadowJournal(self.path, CTX, GEN) as journal:
+            first, packet1 = candidate(GEN, 1)
+            journal.append(first, packet1)
+            another, packet2 = candidate(first.block_id, 2)
+            # Mutate immutable metadata AFTER the original Node-like journal
+            # opened. Old hot paths would accept headers/CAS under wrong context.
+            with sqlite3.connect(self.path) as raw:
+                raw.execute("UPDATE daa_shadow_meta_v1 SET value=? WHERE key='context'",
+                            (sha(b'foreign-network-context'),))
+            with self.assertRaisesRegex(JournalError, 'DATABASE_CONTEXT'):
+                journal.append(another, packet2)
+            with self.assertRaisesRegex(JournalError, 'DATABASE_CONTEXT'):
+                journal.activate(first.block_id, GEN)
+            with self.assertRaisesRegex(JournalError, 'DATABASE_CONTEXT'):
+                journal.audit()
+            self.assertFalse(journal.db.in_transaction)
+            with sqlite3.connect(self.path) as raw:
+                self.assertEqual(raw.execute(
+                    'SELECT COUNT(*) FROM daa_shadow_headers_v1').fetchone()[0], 1)
+                self.assertEqual(raw.execute(
+                    "SELECT value FROM daa_shadow_meta_v1 WHERE key='active_tip'"
+                ).fetchone()[0], GEN)
+                raw.execute("UPDATE daa_shadow_meta_v1 SET value=? WHERE key='context'",
+                            (CTX,))
+            self.assertEqual(journal.audit(), 1)
+            journal.append(another, packet2)
+            self.assertEqual(journal.activate(another.block_id, GEN), another.block_id)
+            self.assertEqual(journal.audit(), 2)
+
+    def test_live_genesis_and_schema_loss_never_mutate_branch_history(self):
+        with ShadowJournal(self.path, CTX, GEN) as journal:
+            first, packet = candidate(GEN, 1)
+            for key in ('schema', 'genesis'):
+                with sqlite3.connect(self.path) as raw:
+                    raw.execute('DELETE FROM daa_shadow_meta_v1 WHERE key=?', (key,))
+                with self.assertRaisesRegex(JournalError, 'DATABASE_CONTEXT'):
+                    journal.append(first, packet)
+                with self.assertRaisesRegex(JournalError, 'DATABASE_CONTEXT'):
+                    journal.activate(GEN, GEN)
+                self.assertFalse(journal.db.in_transaction)
+                with sqlite3.connect(self.path) as raw:
+                    self.assertEqual(raw.execute(
+                        'SELECT COUNT(*) FROM daa_shadow_headers_v1').fetchone()[0], 0)
+                    raw.execute('INSERT INTO daa_shadow_meta_v1 VALUES (?,?)',
+                                (key, SCHEMA if key == 'schema' else GEN))
+                self.assertEqual(journal.audit(), 0)
+            journal.append(first, packet)
+            self.assertEqual(journal.audit(), 1)
+
 if __name__ == '__main__':
     unittest.main()

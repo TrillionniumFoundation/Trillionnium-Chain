@@ -100,3 +100,26 @@ accepts new authority or rewrites local history. Competing real SQLite writers
 are covered by a negative-control interleaving which confirms the original
 writer can commit only after the audit releases its snapshot. No native W1
 proof, public fork-choice rule or production consensus is affected.
+
+## Immutable meta drift during hot append/activation (2026-10-26)
+
+A cold open originally validated the fresh research context and genesis; the
+original hot `append` path checked only header/parent rows, and `activate`
+read only the active-tip value. A second local SQLite owner could corrupt or
+remove immutable meta rows after open and before a later research mutation.
+
+The corrected read-only context fence checks the **complete** meta keyset and
+exact `schema`, `context`, `genesis` values on `active()`. `append()`
+calls that same fence **inside its existing `BEGIN IMMEDIATE`** before
+writing any row; `activate()` already calls `active()` inside its original
+writer transaction. The full read-only audit also reaches the same fence within
+its pinned snapshot. Two new tests mutate context, delete schema/genesis after
+open, verify every mutation is refused and no partial header/active tip exists,
+then restore original bytes and verify a normal branch may be appended/activated.
+
+This is O(1) in meta rows plus the original indexed tip lookup, not a
+per-append full graph scan. Earlier-ancestry corruption still needs cold/full
+upstream auditing; self-consistent forged metadata, W1 proofs or projection
+hashes cannot be authenticated by this research database. SQLite file-path race
+and physical power-cut isolation are still unqualified. Native M07/M08 custody,
+versioned consensus ASERT acceptance and activation remain **OPEN**.
