@@ -86,6 +86,14 @@ class FloodCostSourceTests(unittest.TestCase):
         row['cases'][0]['trials'][0]['cpu_ns']=None
         self.assertEqual(E.analyze(row)['scope_verdict'], 'UNKNOWN')
 
+    def test_zero_time_claimed_full_replay_is_unknown_not_free(self):
+        row=fixture()
+        row['cases'][0]['receivers'][0]['whole_receiver_cpu_ns']=0
+        observed=E.analyze(row)
+        self.assertEqual(observed['scope_verdict'], 'UNKNOWN')
+        self.assertIsNone(observed['total_receiver_cpu_ns'])
+        self.assertIsNone(observed['observed_aggregate_amplification'])
+
     def test_proof_double_charge_and_duplicate_calls_refuse(self):
         for target in ('cases','receivers'):
             row=fixture()
