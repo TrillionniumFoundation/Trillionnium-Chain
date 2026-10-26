@@ -161,8 +161,9 @@ def preflight_transfer(raw: bytes, *, public_pem: bytes, account: AccountView,
     if (account.network != t.network or account.account != t.sender
             or t.generation != account.generation or t.nonce != account.next_nonce):
         raise Reject("untrusted/stale account view")
-    if account.signer_key_id != _bytes(account.signer_key_id, 32, "signer_key_id"):
-        raise Reject("signer_id")
+    _bytes(account.network, 32, "account_network")
+    _bytes(account.account, 32, "account_id")
+    _bytes(account.signer_key_id, 32, "signer_key_id")
     if account.signer_key_id != public_key_id(public_pem):
         raise Reject("key does not own account")
     _u64(now, "now")
