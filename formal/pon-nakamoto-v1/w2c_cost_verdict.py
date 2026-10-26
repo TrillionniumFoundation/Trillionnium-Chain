@@ -48,6 +48,11 @@ def decide(record):
             transport = None
         else:
             transport = integer(row["full_send_transport_cpu_ns"],"TRANSPORT_CPU",True)
+            copies=record["receiver_count"] if mode=="receiver-bound" else 1
+            # Malformed large inputs must reject even when independent GPU
+            # measurements are missing and the economic verdict is UNKNOWN.
+            if (ticket+transport)*copies+forge >= 1<<63:
+                raise ValueError("TOTAL_OVERFLOW")
         ratios.append((ticket, forge, transport, receiver))
     for name in ("gpu_cpu_speedup_upper_bound","asic_cpu_speedup_upper_bound"):
         value=record.get(name)
