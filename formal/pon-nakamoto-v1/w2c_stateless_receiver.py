@@ -22,7 +22,7 @@ class StatelessReceiverAdmission:
 
     def __init__(self, receiver: bytes, secret: bytes, epoch: bytes,
                  *, lifetime_ms: int = 2000, capacity: int = 64,
-                 entropy=None):
+                 entropy=None, required_bits: int = 8, spent_owner=None):
         self.receiver = bytes32(receiver, 'RECEIVER')
         self.secret = bytes32(secret, 'SECRET')
         self.epoch = bytes32(epoch, 'EPOCH')
@@ -30,6 +30,14 @@ class StatelessReceiverAdmission:
             raise ValueError('LIFETIME')
         if type(capacity) is not int or not 1 <= capacity <= 1024:
             raise ValueError('CAPACITY')
+        if type(required_bits) is not int or not 8 <= required_bits <= 24:
+            raise ValueError('BITS_POLICY')
+        self.required_bits = required_bits
+        if spent_owner is not None and (
+                spent_owner.receiver != self.receiver or spent_owner.epoch != self.epoch
+                or spent_owner.capacity != capacity):
+            raise ValueError('OWNER_CONTEXT')
+        self.spent_owner = spent_owner
         self.lifetime_ms = lifetime_ms
         self.capacity = capacity
         self.entropy = secrets.token_bytes if entropy is None else entropy
@@ -52,6 +60,8 @@ class StatelessReceiverAdmission:
 
     def pending_paid(self) -> int:
         with self.lock:
+            if self.spent_owner is not None:
+                return self.spent_owner.pending_paid()
             return len(self.spent)
 
     def offer(self, proposal: bytes, caller: bytes, bits: int, now_ms: int) -> Grant:
@@ -61,6 +71,8 @@ class StatelessReceiverAdmission:
             bytes32(caller, 'CALLER')
             if type(bits) is not int or not 8 <= bits <= 24:
                 raise ValueError('BITS')
+            if bits != self.required_bits:
+                raise ValueError('BITS_POLICY')
             self._clock(now_ms)
             if now_ms > MAX_U64 - self.lifetime_ms:
                 raise ValueError('CLOCK_OVERFLOW')
@@ -92,6 +104,8 @@ class StatelessReceiverAdmission:
                 return 'CONTEXT'
             if grant.expires_ms - grant.issued_ms != self.lifetime_ms:
                 return 'LIFETIME_POLICY'
+            if grant.bits != self.required_bits:
+                return 'BITS_POLICY'
             if not hmac.compare_digest(
                     hmac.new(self.secret, payload, hashlib.sha256).digest(), mac):
                 return 'GRANT_MAC'
@@ -102,6 +116,11 @@ class StatelessReceiverAdmission:
             # MAC binds the exact grant. One paid ticket spends once, regardless
             # of caller key, retransmission, or other signed connection identity.
             key = H('w2c-stateless-paid-grant-v1', payload, mac)
+            if self.spent_owner is not None:
+                # The shared original durable writer serializes same-epoch
+                # processes and must commit the spend before W1 starts.
+                # Database/accounting errors raise OwnerUnavailable, never READY.
+                return self.spent_owner.spend(key, grant.expires_ms, now_ms)
             if key in self.spent:
                 return 'REPLAY'
             # Fail closed on saturation *before* expensive W1 replay.
