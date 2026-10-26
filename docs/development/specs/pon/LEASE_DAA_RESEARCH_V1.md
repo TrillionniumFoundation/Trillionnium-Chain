@@ -714,3 +714,20 @@ within this research lineage. None of these cases runs native Rust, produces
 PNW1 valid work, admits a block, proves an independent validator, or qualifies
 public-network difficulty/security. Local proof/admission tests and third-party
 review remain explicit blockers. No legacy DAA or production flag changes.
+
+## 2026-10-26 — bounded hot-tail integrity fences (research continuation)
+
+A source-only extension of the existing non-authoritative Python owners adds
+two fail-closed protections: the Q4 outbox writer validates the last durable event
+and its immediately preceding ordinal/digest inside the original BEGIN IMMEDIATE
+before extending the chain; the shadow DAA active-tip lookup and CAS validate
+the selected stored header's canonical row/digest rather than merely its existence.
+
+These are O(1) *local* integrity checks. The full Q4 status/cold audit and the
+shadow graph/cold audit remain necessary: an older rewritten history or a
+malicious actor who can rewrite SQLite and recompute unsalted digests cannot
+be authenticated by these checks. They do not prove genuine requester/source
+signatures, a native W1 statement, work hardness, fork choice, or public liveness.
+The existing Q4 signed bytes, Revision12 Maintenance, consensus DAA and
+production flags remain untouched. Original native/whole-workspace regression
+and independent operator acceptance remain open.

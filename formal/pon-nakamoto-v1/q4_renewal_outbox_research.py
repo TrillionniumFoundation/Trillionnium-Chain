@@ -266,8 +266,55 @@ class RenewalOutbox:
         try:
             if self.db.execute('SELECT 1 FROM q4_outbox_intents_v1 WHERE id=?', (ident,)).fetchone() is None:
                 raise OutboxError('UNKNOWN_INTENT')
-            latest = self.db.execute('SELECT ordinal,digest FROM q4_outbox_events_v1 ORDER BY ordinal DESC LIMIT 1').fetchone()
-            n,prev = (latest[0]+1,latest[1]) if latest else (1,ZERO)
+            # Bound the writer by a checked *durable* tail, not an unchecked
+            # (ordinal, digest) read.  Hot corruption must not silently become
+            # the predecessor for a newly acknowledged event.  A cold/status
+            # audit still verifies the *entire* history and context.
+            latest = self.db.execute(
+                'SELECT ordinal,intent_id,kind,observation,prev,digest '
+                'FROM q4_outbox_events_v1 ORDER BY ordinal DESC LIMIT 1'
+            ).fetchone()
+            if latest is None:
+                n,prev = 1,ZERO
+            else:
+                last_ordinal,last_ident,last_kind,last_obs,last_prev,last_digest = latest
+                if (type(last_ordinal) is not int
+                        or not 1 <= last_ordinal <= self.max_events
+                        or type(last_ident) is not bytes or len(last_ident) != 32
+                        or type(last_kind) is not str
+                        or type(last_obs) is not bytes
+                        or type(last_prev) is not bytes or len(last_prev) != 32
+                        or type(last_digest) is not bytes or len(last_digest) != 32):
+                    raise OutboxError('EVENT_TAIL_CORRUPT')
+                if last_kind == 'DISPATCH_UNKNOWN':
+                    if last_obs:
+                        raise OutboxError('EVENT_TAIL_CORRUPT')
+                elif last_kind.startswith('OBSERVED_'):
+                    try:
+                        _validate_observation_wire(last_kind, last_obs)
+                    except OutboxError as error:
+                        raise OutboxError('EVENT_TAIL_CORRUPT') from error
+                else:
+                    raise OutboxError('EVENT_TAIL_CORRUPT')
+                expected = hashlib.sha256(
+                    EVENT_DOMAIN + u64(last_ordinal,'ordinal')
+                    + last_ident + last_kind.encode('ascii')
+                    + last_obs + last_prev
+                ).digest()
+                if expected != last_digest:
+                    raise OutboxError('EVENT_TAIL_CORRUPT')
+                if last_ordinal == 1:
+                    if last_prev != ZERO:
+                        raise OutboxError('EVENT_TAIL_CORRUPT')
+                else:
+                    penultimate = self.db.execute(
+                        'SELECT ordinal,digest FROM q4_outbox_events_v1 '
+                        'ORDER BY ordinal DESC LIMIT 1 OFFSET 1'
+                    ).fetchone()
+                    if (penultimate is None or
+                            penultimate != (last_ordinal-1, last_prev)):
+                        raise OutboxError('EVENT_TAIL_CORRUPT')
+                n,prev = last_ordinal+1,last_digest
             if n > self.max_events: raise OutboxError('EVENT_BUDGET')
             if kind == 'DISPATCH_UNKNOWN':
                 if self.db.execute("SELECT 1 FROM q4_outbox_events_v1 WHERE intent_id=? AND kind='DISPATCH_UNKNOWN'",(ident,)).fetchone():
