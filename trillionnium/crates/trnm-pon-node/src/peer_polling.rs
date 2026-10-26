@@ -645,7 +645,7 @@ impl Engine {
                 }
             };
             if known {
-                self.complete(index, node, end, stop, observe)?;
+                self.complete(index, node, end, stop, host_kernel, observe)?;
             }
             return Ok(false);
         }
@@ -700,7 +700,7 @@ impl Engine {
             observe,
         )?;
         if complete {
-            self.complete(index, node, end, stop, observe)?;
+            self.complete(index, node, end, stop, host_kernel, observe)?;
         }
         Ok(true)
     }
@@ -710,6 +710,7 @@ impl Engine {
         node: &Mutex<Node>,
         end: Instant,
         stop: &AtomicBool,
+        host_kernel: Option<&HostKernelBudget>,
         observe: &mut F,
     ) -> Result<()>
     where
@@ -717,9 +718,18 @@ impl Engine {
     {
         let target = self.states[index].target.ok_or("PEER_TARGET")?;
         let activated = (|| -> Result<Hash> {
+            // A valid remote W1 packet is not permission to activate outside
+            // the originally pinned physical host resource boundary.
+            if let Some(kernel) = host_kernel {
+                kernel.verify()?;
+            }
             let mut owner = lock(node, end, stop)?;
             // Native accumulated work chooses; lower/equal work never takes over.
-            owner.activate_observed(target, ingress::now()?)
+            let result = owner.activate_observed(target, ingress::now()?);
+            if let Some(kernel) = host_kernel {
+                kernel.verify()?;
+            }
+            result
         })();
         let active = match activated {
             Ok(active) => active,
