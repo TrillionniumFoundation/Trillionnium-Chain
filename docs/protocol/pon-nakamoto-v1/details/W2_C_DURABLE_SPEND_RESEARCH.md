@@ -121,3 +121,31 @@ filesystem cannot provide that guarantee.
 
 The kernel, transport and mining runtime still use their original signed
 profiles and no production W2-C admission is enabled.
+
+
+## Local admission overhead observation, not native cost acceptance
+
+An additional nonexclusive Python-only trial on 2026-10-26 reused twenty
+identical pre-solved, valid 8-bit receiver-local W2-C grants and caller
+identities with the two existing research implementations. Each admitted
+twenty unique grants and rejected the exact twenty later replays; the original
+Hashcash searches, host context, W1 transcript, network, V3 signatures,
+storage provisioning and any physical GPU costs are **outside** these
+per-spend measurements. The run executed the memory arm first, then the
+SQLite arm, so warm caches, process contention and ordering were not
+controlled. Its preliminary paired medians were:
+
+| Local research-only arm | Median per-grant wall | Median process CPU |
+| --- | ---: | ---: |
+| Volatile in-memory spent map | 0.010 ms | 0.010 ms |
+| SQLite WAL + synchronous FULL original owner | 2.414 ms | 0.736 ms |
+
+These are exploratory readings from one scratch run, not statistically
+qualified Rust or WAN measurements and not the minimum durable transaction
+cost. The SQLite configuration is deliberately durability-conservative;
+simply changing synchronous mode, removing commit-before-READY, or faking
+a zero-cost journal would silently reopen the crash/replay bug. The
+per-grant storage latency must be included in any genuine P2 end-to-end
+admission price and P4 honest-service SLA. Deployment cannot infer that
+persistence is free or that the 8-bit/hashcash attacker economically pays
+for the verified W1 CPU.
