@@ -3876,16 +3876,28 @@ mod tests {
         let mut h = hello(1, 1);
         h.caller = digest(caller.public_key()).unwrap();
         assert!(paid_grant(address, h, &caller, policy).is_err());
-        let reply = call_public_protected_v3(
-            address,
-            &Request::Head,
-            &settings,
-            identity(71).public_key(),
-            &identity(84),
-            policy,
-        )
-        .unwrap();
+        let (reply, existing, cpu_observation) =
+            call_public_protected_v3_with_cpu_observation(
+                address,
+                &Request::Head,
+                &settings,
+                identity(71).public_key(),
+                &identity(84),
+                policy,
+            );
+        let reply = reply.unwrap();
         assert!(reply.ok);
+        // A real signed-Cookie loopback client completed the original full
+        // admission flow, not a synthetic nonce/search-only implementation.
+        assert!(cpu_observation.solution_found);
+        assert!(cpu_observation.solution_trials > 0);
+        assert_eq!(cpu_observation.solution_trials, existing.solution_trials);
+        assert_eq!(cpu_observation.solution_search_wall_ns, existing.solution_search_ns);
+        assert!(cpu_observation.client_wall_ns >= existing.total_elapsed_ns);
+        if let Some(actual) = cpu_observation.client_thread_cpu_ns {
+            assert!(actual > 0);
+        }
+        assert_eq!(cpu_observation.failed_stage, None);
         assert_eq!(reply.value["height"], 0);
         drop(held);
         stop.store(true, Ordering::Release);
