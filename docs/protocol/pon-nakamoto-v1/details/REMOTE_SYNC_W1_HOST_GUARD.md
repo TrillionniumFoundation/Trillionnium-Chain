@@ -106,3 +106,56 @@ must be tested separately.
 The new unexported parser remains useful for unit coverage and does
 not expose a second public unchecked history-import symbol.
 This is an API-path reduction, **not** a production/security gate PASS.
+
+
+## P1 continuation: meter each History W1/M06 inside one original CPU owner
+
+The prior cgroup and exported API guard bounded the **host aggregate**, but
+the private receive_page still called Node::admit without its per-request
+CPU account for each remotely supplied proof. Cgroup enforcement alone could
+leave another trusted operation starved by a malicious remote source.
+
+New candidate scope (child of the last committed #342 head):
+
+1. ServiceMutationCpuDomain::cold_remote_sync_epoch uses the same original
+   PaidMutationCpuBudget::cold_start(): **zero initial credit**, no synthetic
+   warm two-second grant. The only refill and reservation are the unchanged
+   250M CPU-ns/wall-second shared budget, 100M CPU-ns start quantum and at
+   most two in-flight workers. This factory is crate-private and the Node
+   owner binds its result once, only after original source-dependent Host
+   kernel eligibility/membership checks. Existing V3 or continuous owners
+   take precedence: **no per-page/peer/caller reset**.
+2. Every decoded History packet begins one bounded, budgeted original
+   ServiceMutationCpuOperation before potentially expensive parent/State
+   inspection. It repeats Node::admit's exact progression:
+   current context/exact-block → owner permit → complete W1 proof with
+   cooperative live CPU checkpoints → verified packet rebind → native
+   M06 execution with the same operation's scoped-worker accounting.
+   The signed remote page does not provide proof authority.
+3. The operation always settles after the native result, including incorrect
+   transcripts/products, cancellation and bad execution roots. An unknown
+   clock or failed settlement makes the sync result unqualified and fences
+   later CPU operations, but **cannot undo an already durable block**.
+4. A cold start may wait at most five seconds to acquire an original start
+   quantum through original refill; there is no new grant or altered consensus
+   TTL. Insufficient credit remains local PUBLIC_MUTATION_CPU_BUDGET, not an
+   invalid W1 verdict. Individual deep stages remain cooperative rather than
+   hard-preemptible.
+5. A source claiming loopback still pays this original Node-local account.
+   A local TCP tunnel can lie about true origin and bypass the nonloopback
+   cgroup requirement; it cannot thereby skip this local CPU charge.
+6. A native Rust test imports **two distinct canonical wrong-C claims** under
+   one valid transcript/header/target and expects late WORK:Product refusal
+   and no State/chainwork change. It checks the same cold initial credit zero,
+   positive measured total CPU, zero outstanding reservations and balance
+   conservation. A subsequent valid packet must still be accepted through
+   the exact same CPU owner.
+
+**Qualification still OPEN:** exact-head Rust compilation and project preflight
+are unavailable in the current assistant environment; no physical cgroup
+throttle/readback or signed independent WAN A03 campaign was run. The existing
+source locator is not cryptographic proof of remote identity. Cross-process
+and loopback-proxy policy require physical deployment evidence. A03 three
+modes × three runs × three timely confirmations, fair queue service, calibrated
+attacker CPU/GPU costs, actual mathematically sound and efficient W2 proof,
+and independent cryptography review remain mandatory. HOLD_NO_GO.
