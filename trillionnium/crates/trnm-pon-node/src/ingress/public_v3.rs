@@ -3404,6 +3404,38 @@ mod shared_cpu_domain_source_tests {
             .activate_observed(accepted_id, super::super::now().unwrap())
             .unwrap();
         assert_eq!(actual_state, independent.read_active().unwrap());
+        // Separate from the original service CPU experiment: these metrics
+        // come from two REAL signed V3 TCP Cookie exchanges. Search CPU and
+        // trials are locally observed by the client; receiver aggregate W1
+        // CPU is a DIFFERENT denominator, not to be summed as attacker cost.
+        let p2_cookie_observation = json!({
+            "schema": "trnm-p2-real-v3-cookie-client-cpu-v1",
+            "host_scenario": "existing finite process-cold W1 budget depletion and honest recovery",
+            "signed_tcp_cookie": true,
+            "honest_head_client_metrics": &read.1,
+            "honest_submit_client_metrics": &honest.1,
+            "server_total_paid_mutation_cpu_ns": finished.mutation_cpu_charged_ns,
+            "server_full_W1_cpu_ns": finished.mutation_full_work_cpu_ns,
+            "server_w1_false_replay_count": replayed,
+            "client_full_search_hash_trials_included": true,
+            "receiver_cpu_is_separate_denominator": true,
+            "attacker_gpu_cost": null,
+            "independent_operator_count": null,
+            "public_network_ready": false,
+            "production_activation": false,
+        });
+        if let Some(path) = std::env::var_os("TRNM_P2_REAL_V3_COOKIE_REPORT") {
+            use std::io::Write;
+            let mut file = std::fs::OpenOptions::new()
+                .write(true)
+                .create_new(true)
+                .open(path)
+                .unwrap();
+            serde_json::to_writer_pretty(&mut file, &p2_cookie_observation).unwrap();
+            file.write_all(b"\n").unwrap();
+            file.sync_all().unwrap();
+        }
+        println!("{p2_cookie_observation}");
         println!(
             "{}",
             json!({"schema":"original-W1-paid-CPU-real-depletion-lab-v1",
