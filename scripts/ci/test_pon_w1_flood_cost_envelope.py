@@ -3,6 +3,7 @@
 import copy
 import json
 import hashlib
+import os
 import struct
 import sys
 import tempfile
@@ -138,6 +139,26 @@ class FloodCostSourceTests(unittest.TestCase):
                 path.write_text(raw)
                 with self.assertRaises(ValueError):
                     E.read(path)
+
+    @unittest.skipUnless(hasattr(os, 'mkfifo') and hasattr(os, 'O_NOFOLLOW'),
+                         'requires POSIX nofollow and FIFOs')
+    def test_nonregular_untrusted_input_cannot_hang_or_follow_symlink(self):
+        with tempfile.TemporaryDirectory() as d:
+            root=Path(d)
+            original=root/'original.json'
+            original.write_text('{"schema":"x"}')
+            link=root/'alias.json'
+            link.symlink_to(original)
+            with self.assertRaises((OSError, ValueError)):
+                E.read(link)
+            fifo=root/'cost.fifo'
+            os.mkfifo(fifo)
+            with self.assertRaises((OSError, ValueError)):
+                E.read(fifo)
+            big=root/'oversize.json'
+            big.write_bytes(b'x'*(E.MAX_BYTES+1))
+            with self.assertRaises(ValueError):
+                E.read(big)
 
     def test_wrong_header_task_material_ticket_or_payload_identity_refuses(self):
         for mutation in (
