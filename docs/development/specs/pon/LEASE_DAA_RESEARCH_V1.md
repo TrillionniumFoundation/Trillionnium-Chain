@@ -517,3 +517,53 @@ worst-case honest/full-node ingress, Sybil attack, independent hardware
 or operator qualification occurred. P0-C remains OPEN. This evidence
 does not change W1, consensus revision, reward, task permissions, old
 DAA, production flags or the source-sensitive historic evidence package.
+
+## P0-C: full-W1 valid-producer output reuse across challenges (non-activated)
+
+The additive Go selector `formal/pon-nakamoto-v1/work_go_reuse_test.go` examines
+an independently selectable, fully legal producer optimization for the already
+published `pon-matmul-transcript-64-v1` relation: when an eligible source fixes
+A and B, the exact useful C=A*B can be computed **once** and reused across fresh
+header challenges. Every new challenge still recomputes the four SHA256-derived
+noise factors, the two noisy matrices, all prescribed per-tile accumulations and
+the complete challenge-bound transcript hash. The proof remains the original
+49,188-byte PNW1 statement. This is not a stored-ticket replay or free mining.
+
+Run (requires Go, within `formal/pon-nakamoto-v1`):
+
+```sh
+GO111MODULE=off go test -count=1 -v work_go_probe.go work_go_reuse_test.go
+GO111MODULE=off go test -run '^$' -bench '^BenchmarkW1Maintenance' -benchtime=40x work_go_probe.go work_go_reuse_test.go
+```
+
+The test compares full **bit-identical** proofs with the original Go producer for
+12 public structure/seed cases and the exact Revision12 genesis Maintenance
+matrix (52 distinct fresh challenge proofs), and validates actual W1 work at a
+nonwinning-independent maximal threshold. It separately searches the SAME
+half-range target with the generic and precomputed producers for five input
+classes, comparing every loser and full verified winner. Negative controls
+check stale challenge replay, changed input after task preparation, mutated
+cached output, wrong TaskId, noncanonical fields and malformed sizes. The
+amortization observations use identical challenge streams and horizon
+1/4/16/64. The cached inclusive interval counts the one preparation; the
+per-proof benchmark deliberately excludes setup and therefore must NOT be
+reported as an all-in full search or fastest valid work cost.
+
+**Local development evidence, 2026-10-25:** Go 1.23.2 on Linux ran all four
+new named selectors against a locally reconstructed mathematical Go stand-in;
+52 positive complete proofs, same-threshold winner tests, negative controls and
+four bounded time horizons passed. The independently committed test blob is
+`1cd5a2b441d0e07a2de4e6e92adc523bf4d82ee8`, matching the locally
+executed additive test source exactly. The original checked-in
+`work_go_probe.go` source was *not* available to the local compiler because the
+container cannot download the repository, so these results are **not** an
+exact-source test of the combined GitHub Go pair or a native Rust test. The
+original W1 reference remains unchanged; the local stand-in was not checked in.
+No timing from this development probe is a GPU/ASIC/minimum attacker-cost bound.
+
+This new legitimate production strategy demonstrates why P0-C must compare
+complete setup and amortized winning costs for an adaptive legal producer, not
+only a generic prover against a cheap *invalid* ticket. It does not establish
+that cached AB is the best possible producer. P0-C is still OPEN, as are P1-B,
+P1-C and P2. No signed task, original Q4 bytes, Revision12 Maintenance rule,
+DAA, lottery, admission priority, fork choice or activation bit is modified.
