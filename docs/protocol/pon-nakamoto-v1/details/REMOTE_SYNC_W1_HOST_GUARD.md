@@ -145,3 +145,55 @@ stage can still run between two checks; the fixed kernel continues to be
 the host resource owner. The loopback-relay issue remains an explicit
 open operator-deployment P1 threat. All P2–P6 qualification requirements
 and production HOLD_NO_GO flags remain unchanged.
+
+
+## Bounded cooperative Host checks inside real W1 replay
+
+The next source-only P1 candidate extends the existing per-packet guard without
+adding any new CPU allowance or changing the immutable W1 relation. An
+untrusted History packet is now sent through the Node's private
+'admit_with_verification_progress' (not through a second work verifier).
+This uses the existing owner-context check, original task-operation permit,
+'WorkCheckedPacket::verify_with_progress', exact native attachment and
+'admit_work_checked' to preserve the original admission/ledger semantics.
+
+The original external 'receive_page_from' remains the only exported source-bound
+History import. It still checks the fixed root-owned HostKernelBudget before
+parsing and after importing a page. Its private page implementation also checks
+before and after each packet. Inside W1 it additionally asks the **same** budget
+for checks at a fixed, bounded subset of existing progress events:
+
+- BeforeReplay, BeforeProduct and BeforeVerifiedWork;
+- the first noise hash of each of the four challenge labels;
+- matrix rows 0, 16, 32, 48, where those rows exist;
+- **8 of 512** transcript tiles: exactly column 0, inner 0 in each of the
+  eight distinct block-row groups.
+
+This avoids the avoidable per-tile Linux cgroup read amplification of
+checking all 512 transcript tiles. The actual complete W1 arithmetic still
+runs and authenticates its entire transcript and product; an early
+resource-cancellation is a **local operational error**, not an invalid
+consensus proof or a false 'VerifiedWork' capability.
+
+Added exact Rust negative selectors:
+- 'history_page_checks_original_owner_between_valid_w1_packets': real two
+  W1 block History page; force a checkpoint failure just before the second
+  packet; first stored block stays intact while second is absent, active head
+  is still old, cold reopen retains correct partial state, then full
+  resumption yields the original intended tip;
+- 'hostile_host_owner_loss_during_w1_replay_leaves_no_verified_block':
+  cancel a genuine W1 replay on its first selected transcript tile.
+  The original block must remain unadmitted with unchanged state;
+- 'W1_history_kernel_checkpoints_are_bounded_and_cover_each_tile_row_group':
+  deterministic check counts: 4/512 noise-epoch labels, 8/512 transcript
+  tiles and only named matrix rows, plus all three authority boundaries.
+
+These are source-level *tests to be executed* on the exact committed Rust
+checkout, not attestations of native test success in this chat. Every
+high-cost nonpreemptible parent-State/SQLite stage still needs separate
+physical duration/resource measurement and a full Host cgroup envelope.
+The selected checkpoints must be calibrated with actual sysfs overhead
+and worst-case cancellation latency; no economic-hardness, honest-fairness,
+WAN or A03 P4 result is claimed. Loopback forwarding, all native/sync
+caller budgets, P2 GPU/ASIC cost, P3 mixed traffic, P5 sound succinct work
+and independent P6 review remain HOLD_NO_GO.
