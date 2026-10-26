@@ -1052,5 +1052,5 @@
   "proof_retention": "all-completed-research-proofs-including-misses",
   "purpose": "Measured equal-inclusive-CPU-budget native admitted ticket counts after a paid advancing prefix, with a fixed final parent and explicit safety caps; not maximum yield over arbitrary policies or canonical chain growth.",
   "schema": "pon-w1-adaptive-joint-plan-v1",
-  "waited_endpoint_allowance_ns": 2000
+  "waited_cpu_endpoint_allowance_ns": 2000
 }

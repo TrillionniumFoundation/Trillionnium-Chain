@@ -32,6 +32,8 @@ SCHEMA = "pon-w1-next-research-bundle-v1"
 PLAN_SCHEMA = "pon-w1-adaptive-joint-plan-v1"
 BINARIES = ("pon_w1_joint_research", "pon_w1_parent_reuse_research")
 MAX_OUTPUT = 256 * 1024 * 1024
+WAITED_CPU_ALLOWANCE_NS = 2000
+GNU_TIME_PRINT_ALLOWANCE_NS = 20_000_000
 
 
 def unique_object(pairs):
@@ -56,6 +58,10 @@ def validate_plan(plan):
             "PLAN_PROOF_RETENTION")
     require(plan.get("independent_replay") == "all-retained-full-proofs-posthoc-no-selection-feedback",
             "PLAN_REPLAY")
+    for field, expected in (("waited_cpu_endpoint_allowance_ns", WAITED_CPU_ALLOWANCE_NS),
+                            ("gnu_time_print_allowance_ns", GNU_TIME_PRINT_ALLOWANCE_NS)):
+        require(type(plan.get(field)) is int and plan[field] == expected,
+                "REGISTERED_OBSERVER_ALLOWANCES")
     limit = plan.get("collection_output_limit_bytes")
     require(type(limit) is int and 1024 * 1024 <= limit <= MAX_OUTPUT, "PLAN_OUTPUT_LIMIT")
     jobs = plan.get("jobs")

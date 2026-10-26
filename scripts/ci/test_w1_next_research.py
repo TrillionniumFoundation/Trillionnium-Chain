@@ -33,6 +33,8 @@ def plan():
         "proof_retention": "all-completed-research-proofs-including-misses",
         "independent_replay": "all-retained-full-proofs-posthoc-no-selection-feedback",
         "collection_output_limit_bytes": 1024 * 1024,
+        "waited_cpu_endpoint_allowance_ns": runner.WAITED_CPU_ALLOWANCE_NS,
+        "gnu_time_print_allowance_ns": runner.GNU_TIME_PRINT_ALLOWANCE_NS,
         "jobs": [{"name": "joint", "binary": runner.BINARIES[0],
                   "args": ["--attempts", "1"], "timeout_seconds": 10}],
     }
@@ -55,6 +57,23 @@ class CollectionControls(unittest.TestCase):
             changed["jobs"][0].update(mutation)
             with self.subTest(mutation=mutation), self.assertRaises(ValueError):
                 runner.validate_plan(changed)
+
+    def test_observer_allowances_are_rejected_before_expensive_collection(self):
+        self.assertEqual(runner.WAITED_CPU_ALLOWANCE_NS, reader.WAITED_CPU_ALLOWANCE_NS)
+        self.assertEqual(runner.GNU_TIME_PRINT_ALLOWANCE_NS, reader.GNU_TIME_PRINT_ALLOWANCE_NS)
+        for field in ("waited_cpu_endpoint_allowance_ns", "gnu_time_print_allowance_ns"):
+            for value in (None, 0, True, float(plan()[field]), plan()[field]+1):
+                changed=plan()
+                if value is None:
+                    changed.pop(field)
+                else:
+                    changed[field]=value
+                with self.subTest(field=field,value=value), self.assertRaisesRegex(ValueError,"REGISTERED_OBSERVER_ALLOWANCES"):
+                    runner.validate_plan(changed)
+        changed=plan()
+        changed["waited_endpoint_allowance_ns"]=changed.pop("waited_cpu_endpoint_allowance_ns")
+        with self.assertRaisesRegex(ValueError,"REGISTERED_OBSERVER_ALLOWANCES"):
+            runner.validate_plan(changed)
 
     def test_plan_cannot_promote_authority_or_drop_failed_proofs(self):
         for field, value in (
