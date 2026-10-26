@@ -105,6 +105,31 @@ class StatelessTests(unittest.TestCase):
         self.assertEqual(b.pay(offer,self.proposal,nonce,140),'READY_RESOURCE_ONLY')
         # Actual deployment must enforce one host-shared owner or unique epochs.
 
+    def test_paid_offer_cannot_promote_fake_w1_transcript_into_work(self):
+        import work_oracle as W
+        challenge=bytes(range(32))
+        zeros=[0]*W.CELLS
+        task=W.task_id(zeros,zeros)
+        false_proof=(b'PNW1'+W.field_bytes(zeros)*3
+                     +H('w2c-paid-from-zero-false-trace',challenge))
+        proposal=H('paid-fake-proposal',challenge,false_proof)
+        offer=self.issuer.issue(proposal,100)
+        nonce,attempts=solve(offer,4096)
+        self.assertIsNotNone(nonce)
+        self.assertEqual(self.issuer.pay(offer,proposal,nonce,120),'READY_RESOURCE_ONLY')
+        # Hashcash paid-for *access to verification*, not useful work, and no
+        # train/evaluate/state/ledger authority is available in this module.
+        with self.assertRaisesRegex(ValueError,'^TRANSCRIPT        for bits in (7,25):
+            with self.assertRaisesRegex(ValueError,'BITS'):
+                make(bits=bits)
+        with self.assertRaisesRegex(ValueError,'NONCE'):
+            ticket(self.paid()[0],-1)
+
+if __name__=='__main__':unittest.main(verbosity=2)
+):
+            W.verify(challenge,task,bytes([255])*32,false_proof)
+        self.assertEqual(self.issuer.pay(offer,proposal,nonce,120),'REPLAY')
+
     def test_invalid_config_rejected(self):
         for bits in (7,25):
             with self.assertRaisesRegex(ValueError,'BITS'):
