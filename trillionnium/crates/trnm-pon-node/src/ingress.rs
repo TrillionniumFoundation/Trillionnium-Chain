@@ -2462,6 +2462,93 @@ mod tests {
         }
     }
 
+    // A forged remote-origin payload cannot mint a fresh CPU budget per page
+    // and cannot use its ticket to earn even one unit of native Chainwork.
+    fn p1_history_page(node: &Node, packet: &Packet) -> Page {
+        let genesis = node.settings().genesis();
+        let tip = packet.id().unwrap();
+        Page {
+            schema: "pon-native-history-v1".into(),
+            network: hex::encode(node.settings().network()),
+            parameters: hex::encode(node.settings().parameters()),
+            genesis: hex::encode(genesis),
+            tip: hex::encode(tip),
+            after: hex::encode(genesis),
+            packets: vec![hex::encode(packet.encode().unwrap())],
+            next: hex::encode(tip),
+            complete: true,
+        }
+    }
+
+    #[test]
+    fn loopback_relay_valid_history_uses_original_cold_cpu_and_can_activate() {
+        let (_dir, owner, packet) = pending_packet();
+        let mut node = owner.into_inner().unwrap();
+        let parent = node.settings().genesis();
+        let tip = packet.id().unwrap();
+        let page = p1_history_page(&node, &packet);
+        let source: SocketAddr = "127.0.0.1:19422".parse().unwrap();
+        assert!(node.public_service_cpu_domain().is_err());
+        let imported =
+            receive_page_from(&mut node, source, page, tip, parent, now().unwrap()).unwrap();
+        assert_eq!(imported, tip);
+        assert_eq!(node.read_active().unwrap().0, tip);
+        let domain = node.public_service_cpu_domain().unwrap();
+        let flow = domain.observe_actual_flow().unwrap().unwrap();
+        assert_eq!(flow.initial_credit_ns, 0);
+        assert_eq!(flow.live_owners, 0);
+        assert!(flow.settled_full_cpu_ns > 0);
+        assert!(flow.balance_identity_verified);
+        // The retained owner cannot be overwritten with a warm two-second
+        // per-peer or per-session admission credit.
+        let other = public_v3::ServiceMutationCpuDomain::standalone();
+        assert!(!domain.shares_domain_with(&other));
+        assert_eq!(
+            node.bind_public_service_cpu_domain(&other)
+                .unwrap_err()
+                .to_string(),
+            "OWNER_PUBLIC_SERVICE_CPU_DOMAIN"
+        );
+    }
+
+    #[test]
+    fn loopback_relay_false_w1_claim_pays_cpu_without_chainwork() {
+        use trnm_crypto_primitives::pon_work;
+        let (_dir, owner, mut packet) = pending_packet();
+        let mut node = owner.into_inner().unwrap();
+        let parent = node.settings().genesis();
+        let stats_before = node.stats().unwrap();
+        let offset = 4 + 2 * pon_work::CELLS * 4;
+        let old = u32::from_le_bytes(packet.proof[offset..offset + 4].try_into().unwrap());
+        let changed = ((u128::from(old) + 1) % pon_work::Q) as u32;
+        packet.proof[offset..offset + 4].copy_from_slice(&changed.to_le_bytes());
+        assert_eq!(
+            pon_work::verify(
+                packet.header.challenge(),
+                packet.header.work_task,
+                packet.header.target,
+                &packet.proof
+            ).unwrap_err(),
+            pon_work::WorkError::Product
+        );
+        let page = p1_history_page(&node, &packet);
+        let tip = packet.id().unwrap();
+        let source: SocketAddr = "127.0.0.1:19422".parse().unwrap();
+        let error =
+            receive_page_from(&mut node, source, page, tip, parent, now().unwrap())
+                .unwrap_err();
+        assert_eq!(error.to_string(), "WORK:Product");
+        assert_eq!(node.stats().unwrap(), stats_before);
+        assert_eq!(node.read_active().unwrap().0, parent);
+        let cpu = node.public_service_cpu_domain().unwrap();
+        let flow = cpu.observe_actual_flow().unwrap().unwrap();
+        assert_eq!(flow.initial_credit_ns, 0);
+        assert!(flow.settled_full_cpu_ns > 0);
+        assert_eq!(flow.live_owners, 0);
+        assert!(flow.balance_identity_verified);
+        assert!(!cpu.observe().unwrap().accounting_unavailable);
+    }
+
     #[test]
     fn protected_hello_rendezvous_from_reserved_socket_preserves_full_native_admission() {
         let (_dir, node, packet) = pending_packet();
