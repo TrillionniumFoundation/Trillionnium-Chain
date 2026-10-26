@@ -1,0 +1,1 @@
+{"cases": ["valid", "invalid_signature", "invalid_budget", "invalid_magic", "valid_max_memo"], "observations": 320, "max_signed_bytes": 4143, "max_batch_bytes": 1060608, "full_chain_tps_measured": false}
