@@ -45,6 +45,14 @@ class CostEnvelopeTests(unittest.TestCase):
         self.assertFalse(item["permissionless_sybil_safety_proven"])
         self.assertTrue(all(x["worst_case_one_hash_attack_possible"] for x in item["rows"]))
 
+    def test_duplicate_or_nonfinite_pricing_inputs_are_never_silently_normalized(self):
+        with self.assertRaisesRegex(ValueError, "DUPLICATE_JSON_FIELD"):
+            E.strict_json('{"honest_hash_cpu_ns":1,"honest_hash_cpu_ns":100}')
+        with self.assertRaisesRegex(ValueError, "NONFINITE_JSON"):
+            E.strict_json('{"attacker_fastest_hash_ns":NaN}')
+        with self.assertRaisesRegex(ValueError, "NONFINITE_JSON"):
+            E.strict_json('{"attacker_fastest_hash_ns":Infinity}')
+
     def test_monotone_geometric_quantile_and_strict_bounds(self):
         qs=[E.quantile_trials(b) for b in E.BITS]
         self.assertEqual(qs,sorted(qs))
