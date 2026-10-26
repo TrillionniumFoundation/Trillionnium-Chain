@@ -891,6 +891,15 @@ impl ServiceMutationCpuDomain {
             budget: Arc::new(Mutex::new(PaidMutationCpuBudget::new())),
         }
     }
+    /// Trusted, already Host-kernel-verified remote History sync only. Unlike
+    /// standalone(), this starts with ZERO paid CPU credit; one actual Node
+    /// binds the returned epoch ONCE. Cgroup caps span independent processes.
+    /// No guest/peer/socket can call this crate-private constructor.
+    pub(crate) fn cold_for_host_verified_history_sync() -> Self {
+        Self {
+            budget: Arc::new(Mutex::new(PaidMutationCpuBudget::cold_start())),
+        }
+    }
     pub fn shares_domain_with(&self, other: &Self) -> bool {
         Arc::ptr_eq(&self.budget, &other.budget)
     }
