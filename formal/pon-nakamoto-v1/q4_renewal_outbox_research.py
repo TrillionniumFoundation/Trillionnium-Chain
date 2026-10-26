@@ -170,6 +170,10 @@ class RenewalOutbox:
             if actual != dict([('schema',SCHEMA),('network',self.context[0]),('parameters',self.context[1]),('genesis',self.context[2])]):
                 raise OutboxError('CONTEXT_MISMATCH')
             self.audit()
+            # PRAGMA data_version changes on THIS connection when another
+            # SQLite owner commits. Pin it only after a complete cold audit.
+            self._external_data_version = self.db.execute(
+                'PRAGMA data_version').fetchone()[0]
         except BaseException:
             self.db.close()
             raise
@@ -251,6 +255,25 @@ class RenewalOutbox:
             prior = digest
         return count
 
+    def _audit_after_external_commit(self) -> None:
+        """Fail closed on another SQLite writer's committed mutations.
+
+        Caller MUST hold BEGIN IMMEDIATE. The version is read after acquiring
+        that fence; external writers cannot race between this check and the
+        subsequent mutation. Same-connection journal writes do not advance
+        PRAGMA data_version, so ordinary append cost remains bounded O(1)
+        without re-scanning old events. A changed version requires one full
+        size-bounded intent/event audit before any new write.
+
+        This detects accidental/concurrent SQLite mutations, NOT a malicious
+        filesystem owner, a forged upstream chain observation or a local
+        caller that directly mutates this owner's exposed SQLite handle.
+        """
+        version = self.db.execute('PRAGMA data_version').fetchone()[0]
+        if version != self._external_data_version:
+            self._audit_snapshot()
+            self._external_data_version = version
+
     def _event(self, ident: bytes, kind: str, obs: bytes=b'', *, fail_at: str | None=None) -> None:
         if fail_at not in (None,'before_commit','after_commit'):
             raise OutboxError('FAULT_POINT')
@@ -264,6 +287,7 @@ class RenewalOutbox:
         self.db.execute('BEGIN IMMEDIATE')
         committed = False
         try:
+            self._audit_after_external_commit()
             if self.db.execute('SELECT 1 FROM q4_outbox_intents_v1 WHERE id=?', (ident,)).fetchone() is None:
                 raise OutboxError('UNKNOWN_INTENT')
             latest = self.db.execute('SELECT ordinal,digest FROM q4_outbox_events_v1 ORDER BY ordinal DESC LIMIT 1').fetchone()
@@ -299,6 +323,7 @@ class RenewalOutbox:
         if fail_at not in (None,'before_commit','after_commit'): raise OutboxError('FAULT_POINT')
         self.db.execute('BEGIN IMMEDIATE'); committed=False
         try:
+            self._audit_after_external_commit()
             row = self.db.execute('SELECT id,wire FROM q4_outbox_intents_v1 WHERE packet_id=? OR operation_id=?',(packet,intent.operation_id)).fetchone()
             if row:
                 if row != (ident,wire): raise OutboxError('SIGNED_PACKET_RENAMED')
