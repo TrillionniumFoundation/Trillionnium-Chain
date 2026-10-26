@@ -633,3 +633,56 @@ as an executable checkout and this is not an exact complete-current-branch
 Python run. No CI outcome is being used for closure. The full PR source pair,
 real W1 valid-work/native fork source, full network service, independent
 hardware and WAN tests remain open; P0-C, P1-B and P2 are not closed.
+
+## P1-C activation-height branch anchor research — no consensus activation
+
+The existing `daa_branch_context_oracle.py` is intentionally restricted to
+a genesis-adjacent block-one anchor. A separate **non-activated** helper now
+covers a future DAA transition at arbitrary, precommitted `activation_height`
+without inventing an irreversible administrative block-hash checkpoint:
+
+- `formal/pon-nakamoto-v1/daa_activation_branch_oracle.py` derives the ASERT
+  anchor **target and parent time from the candidate branch's own previously
+  verified ancestry**. The activation-height block keeps the old difficulty
+  interpretation. Only its successor is eligible for the shadow new rule.
+- A heavier valid fork crossing the activation height obtains its *own*
+  branch-local anchor; a fork after that height shares the common anchor.
+  A peer-supplied alternate anchor/nonce/height cannot select difficulty.
+- For experimental MTP11-ASERT, calculate **both**
+  `MTP11(candidate parent)` and `MTP11(anchor predecessor)` on their
+  respective ancestor windows. MTP(current) minus raw(anchor predecessor)
+  would bias a perfectly regular 10-second chain, so it is an explicit negative.
+  The raw ASERT research arm continues to use raw timestamps on both ends.
+- An immutable, already W1-verified/target-checked ancestry snapshot is an
+  **assumption**, not something this Python helper authenticates. Context
+  digests and a nonzero rule commitment are selectors, not signatures.
+  The 4096-read bound refuses old anchors beyond its horizon rather than
+  trusting an unauthenticated shortcut. A native authenticated ancestry index
+  is still needed for unbounded long-lived operation.
+- Reorg, missing/corrupt/cyclic ancestry, context substitution, short-genesis
+  MTP windows, the exact first ASERT successor and 32-bit/64-bit numeric
+  refusal boundaries are covered by
+  `formal/pon-nakamoto-v1/test_daa_activation_branch.py`.
+  The two newly committed Git blobs are `930808c28d9312d5505f6ddab761d2e438d7f9d6`
+  (helper) and `b25abd50c9a41ecf727a953dd068be2b3a126d52` (tests).
+  The existing upstream dependencies `daa_branch_context_oracle.py` and
+  `daa_research_oracle.py` match the local exact Git blobs
+  `cb33b0444d51b1a97bb409175c02a776f24c3131` and
+  `5cce6222769f1ab2f968516f15fcdf330fb695bd`, respectively.
+
+Local command from `formal/pon-nakamoto-v1`:
+
+```sh
+python3 -m unittest -v test_daa_activation_branch.py
+```
+
+**Actual observation**: 11/11 local Python tests pass against the exact
+Git-blob-matched module and its exact two existing Python dependencies.
+The tests' ancestry is an explicitly *synthetic assumed-validated mapping*;
+no new Rust miner, native real W1 packets, signed lease, exact-head Cargo test,
+production consensus revision, actual independent operator or 72-hour WAN
+cohort was executed by this helper. The existing P1-C/P2 exit conditions
+remain OPEN. Future protocol integration must commit its own signed context,
+runtime activation rule, anti-rollback/reorg policy, persistent bounded
+ancestry proofs and independent client confirmations, without changing any
+historical revision.
