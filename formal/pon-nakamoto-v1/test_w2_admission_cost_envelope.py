@@ -31,6 +31,7 @@ class CostEnvelopeTests(unittest.TestCase):
             honest_nonhash_ns=1_000_000,honest_deadline_ns=2_000_000_000))
         self.assertTrue(all(row["conditional_feasibility"] is False for row in item["rows"]))
         self.assertLess(item["rows"][-1]["expected_attacker_over_receiver_cpu"],1)
+        self.assertEqual(item["research_verdict"],"NO_BIT_FEASIBLE_UNDER_DECLARED_COSTS")
 
     def test_sample_expected_pricing_cannot_be_relabelled_cryptographic_security(self):
         item=E.evaluate(evidence(
@@ -40,7 +41,7 @@ class CostEnvelopeTests(unittest.TestCase):
         result={row["bits"]:row for row in item["rows"]}
         self.assertTrue(result[16]["conditional_feasibility"])
         self.assertFalse(result[20]["conditional_feasibility"])
-        self.assertEqual(item["research_verdict"],"EXPECTED_COST_CONDITIONAL_ONLY")
+        self.assertEqual(item["research_verdict"],"SOME_BITS_EXPECTED_COST_ONLY")
         self.assertFalse(item["gpu_asic_independence_proven"])
         self.assertFalse(item["permissionless_sybil_safety_proven"])
         self.assertTrue(all(x["worst_case_one_hash_attack_possible"] for x in item["rows"]))
