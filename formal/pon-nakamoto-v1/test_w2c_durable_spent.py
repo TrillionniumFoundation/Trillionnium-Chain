@@ -53,6 +53,9 @@ class TestDurableOwner(unittest.TestCase):
         for receiver, epoch, capacity in [(b'X'*32,E,4),(R,b'Z'*32,4),(R,E,5)]:
             with self.assertRaises(OwnerUnavailable):
                 Owner(self.path, receiver, epoch, capacity)
+        for changes in [dict(required_bits=16), dict(lifetime_ms=1000)]:
+            with self.assertRaises(OwnerUnavailable):
+                Owner(self.path, R, E, 4, **changes)
 
     def test_capacity_busy_then_expired_recovery(self):
         for i in range(4):
