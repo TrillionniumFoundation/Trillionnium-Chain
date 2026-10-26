@@ -153,6 +153,36 @@ def validate_service_report(path: Path) -> dict:
             number(call.get('client_thread_cpu_ns'))
         require(number(phase.get('honest_read_successes')) == 8
                 and phase.get('honest_build_error', 'missing') is None, 'NATIVE_SERVICE_HONEST_GAP')
+        # Optional P2-on-P0 integrated observation. Historical archived P0
+        # receipts without this added field retain their original meaning;
+        # a new candidate asserting actual signed V3 Cookie CPU must prove
+        # that claim from its OWN raw calls, not a summary Boolean.
+        if 'signed_v3_cookie_search_thread_cpu_known' in phase:
+            require(phase['signed_v3_cookie_search_thread_cpu_known'] is True
+                    and phase.get('signed_v3_cookie_cpu_is_nested_in_full_client_cpu') is True,
+                    'P2_COOKIE_CPU_SCOPE')
+            def actual_cookie_cpu(call):
+                if not isinstance(call, dict):
+                    return False
+                metrics = call.get('metrics')
+                if not isinstance(metrics, dict) or metrics.get('solution_found') is not True:
+                    return False
+                trials = metrics.get('solution_trials')
+                cpu = metrics.get('solution_search_thread_cpu_ns')
+                whole = call.get('client_thread_cpu_ns')
+                return (type(trials) is int and 1 <= trials <= 1_048_576
+                        and type(cpu) is int and 0 <= cpu
+                        and type(whole) is int and cpu <= whole)
+            require(all(actual_cookie_cpu(call) for call in reads)
+                    and actual_cookie_cpu(phase.get('honest_submit')),
+                    'P2_COOKIE_CPU_HONEST')
+            for item in attacks:
+                call = item['call']
+                if (isinstance(call, dict) and call.get('status') == 'refused'
+                        and isinstance(call.get('response'), dict)
+                        and isinstance(call['response'].get('value'), dict)
+                        and call['response']['value'].get('error') == 'WORK:Transcript'):
+                    require(actual_cookie_cpu(call), 'P2_COOKIE_CPU_ATTACK')
         preparation = number(phase.get('all_preparation_thread_cpu_ns'))
         worker = number(phase.get('attacker_worker_cpu_ns'))
         require(number(phase.get('attacker_preparation_and_worker_cpu_ns')) == preparation + worker,
