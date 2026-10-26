@@ -43,13 +43,18 @@ checks remain required. An internal call to `_event` cannot bypass this validati
 
 Two negative suites cover malformed internal append and cold SQLite observations
 whose checksum was deliberately recomputed to match their corrupted fields.
+The internal append now also validates the referenced intent ID inside the same
+SQLite immediate transaction, so an internal caller cannot journal an orphan
+DISPATCH_UNKNOWN or OBSERVED event. Both orphan cases have negative tests.
 Recomputing a local row digest is **not** forging an authenticated chain receipt;
 the experiment proves a canonical decoder invariant, not tamper resistance
 against an administrator who can rewrite both the SQLite bytes and hash chain.
 
 These changes were published on the existing draft research branch as
 `9c848875dfdf5756af8292b3f13e808269260c38` and
-`774fc4bb08a4162be24a56e759a9718d11b961c8`. The exact-branch Python
+`774fc4bb08a4162be24a56e759a9718d11b961c8`; orphan-identity
+guards are added in `d9e4a722c643acf543bf1676ffaf7e3b5816fdd3` and
+`11a8feb8fc611882fa93087d8372f7ddd54833e5`. The exact-branch Python
 outbox tests still need execution in an environment possessing this full source
 checkout; the local separately reconstructed observation-codec probe passed.
 Real Q4 signatures, original-owner journals, independent PoN client proofs,
