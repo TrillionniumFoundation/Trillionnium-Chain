@@ -296,6 +296,9 @@ def verify_campaign(report: dict, *, audit_search: bool = False) -> WorkReplay:
         except (ValueError, TypeError) as error:
             raise ValueError('PROOF_WIRE') from error
         parsed = _strict_decode(raw_header)
+        expected_miner = H('research-miner', b'B' if phase == 'B' else b'A')
+        if parsed['miner'] != expected_miner:
+            raise ValueError('MINER_ID')
         if parsed['nonce'] != event['attempts'] - 1:
             raise ValueError('ATTEMPT_NONCE')
         if audit_search:

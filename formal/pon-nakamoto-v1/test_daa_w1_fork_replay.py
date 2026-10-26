@@ -81,7 +81,7 @@ class FullW1ForkResearch(unittest.TestCase):
 
     def test_corrupt_proof_target_timestamp_and_parent_fail_closed(self):
         report = self.report
-        for change in ('proof', 'target', 'time', 'parent'):
+        for change in ('proof', 'target', 'time', 'parent', 'miner'):
             with self.subTest(change=change):
                 modified = deepcopy(report)
                 event = modified['events'][0]
@@ -95,8 +95,10 @@ class FullW1ForkResearch(unittest.TestCase):
                         header['target'] = (1).to_bytes(32, 'big')
                     elif change == 'time':
                         event['now'] = START - 500
-                    else:
+                    elif change == 'parent':
                         header['parent'] = bytes.fromhex('ee' * 32)
+                    else:
+                        header['miner'] = bytes(32)
                     event['header'] = header_encode(header).hex()
                 with self.assertRaises(ValueError):
                     verify_campaign(modified)
