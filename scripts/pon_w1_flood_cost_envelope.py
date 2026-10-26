@@ -11,6 +11,8 @@ import argparse
 from fractions import Fraction
 import hashlib
 import json
+import os
+import stat
 from pathlib import Path
 import re
 import struct
@@ -89,9 +91,23 @@ def unique(pairs):
 
 
 def read(path):
-    with open(path, 'rb') as stream:
+    # A file-borne cost report is untrusted input, not an authority.
+    # Refuse symlinks, FIFOs/devices and concurrent replacement rather than
+    # blocking in a pipe or confusing a mutable path with immutable evidence.
+    require(bool(getattr(os, 'O_NOFOLLOW', 0)), 'NOFOLLOW_UNSUPPORTED')
+    fd = os.open(path, os.O_RDONLY | os.O_CLOEXEC
+                 | os.O_NOFOLLOW | os.O_NONBLOCK)
+    with os.fdopen(fd, 'rb') as stream:
+        before = os.fstat(stream.fileno())
+        require(stat.S_ISREG(before.st_mode)
+                and before.st_size <= MAX_BYTES, 'INPUT_REGULAR_FILE_LIMIT')
         raw = stream.read(MAX_BYTES + 1)
-    require(len(raw) <= MAX_BYTES, 'INPUT_BYTE_LIMIT')
+        after = os.fstat(stream.fileno())
+        require((before.st_dev, before.st_ino, before.st_size, before.st_mtime_ns,
+                 before.st_ctime_ns) ==
+                (after.st_dev, after.st_ino, after.st_size, after.st_mtime_ns,
+                 after.st_ctime_ns), 'INPUT_MUTATED')
+    require(len(raw) <= MAX_BYTES and len(raw) == before.st_size, 'INPUT_BYTE_LIMIT')
     return json.loads(raw, object_pairs_hook=unique,
                       parse_constant=lambda _: require(False, 'NONFINITE'),
                       parse_float=lambda _: require(False, 'FLOAT_NOT_ALLOWED'))
