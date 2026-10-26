@@ -1,0 +1,2460 @@
+{
+  "analysis_sha256": "121c7aa8dcacfe68389ad51af78a4a694401105f736841b4c6a6e44c792980f6",
+  "comparisons": {
+    "acquisition": [
+      {
+        "actual_miner_accepted_rate_ratio": null,
+        "both_complete_uncensored_observations": true,
+        "canonical_chain_growth_ratio": false,
+        "comparable": false,
+        "dimension": "acquisition",
+        "equal_B_complete_proof_ratio": null,
+        "equal_B_eventually_accepted_ratio": null,
+        "left_job": "miner.shared.maintenance-only.hot.4101",
+        "left_label": "shared",
+        "matched_prefix_records": 0,
+        "overlapping_semantic_prefix_matches": false,
+        "reason": "incomplete-or-censored-observation-or-divergent-paid-identity",
+        "right_job": "miner.fixed.maintenance-only.hot.4101.structure-paired",
+        "right_label": "selective",
+        "same_complete_template_bank": false,
+        "same_paid_acquisition_history": false,
+        "setup_plus_miner_accepted_rate_ratio": null,
+        "unequal_record_counts_retained": true,
+        "universal_kappa_bound": false
+      },
+      {
+        "actual_miner_accepted_rate_ratio": null,
+        "both_complete_uncensored_observations": true,
+        "canonical_chain_growth_ratio": false,
+        "comparable": false,
+        "dimension": "acquisition",
+        "equal_B_complete_proof_ratio": null,
+        "equal_B_eventually_accepted_ratio": null,
+        "left_job": "miner.shared.maintenance-only.cold.4101",
+        "left_label": "shared",
+        "matched_prefix_records": 0,
+        "overlapping_semantic_prefix_matches": false,
+        "reason": "incomplete-or-censored-observation-or-divergent-paid-identity",
+        "right_job": "miner.fixed.maintenance-only.cold.4101.structure-paired",
+        "right_label": "selective",
+        "same_complete_template_bank": false,
+        "same_paid_acquisition_history": false,
+        "setup_plus_miner_accepted_rate_ratio": null,
+        "unequal_record_counts_retained": true,
+        "universal_kappa_bound": false
+      },
+      {
+        "actual_miner_accepted_rate_ratio": null,
+        "both_complete_uncensored_observations": true,
+        "canonical_chain_growth_ratio": false,
+        "comparable": false,
+        "dimension": "acquisition",
+        "equal_B_complete_proof_ratio": null,
+        "equal_B_eventually_accepted_ratio": null,
+        "left_job": "miner.shared.zero-only.hot.4101",
+        "left_label": "shared",
+        "matched_prefix_records": 0,
+        "overlapping_semantic_prefix_matches": false,
+        "reason": "incomplete-or-censored-observation-or-divergent-paid-identity",
+        "right_job": "miner.fixed.zero-only.hot.4101.structure-paired",
+        "right_label": "selective",
+        "same_complete_template_bank": false,
+        "same_paid_acquisition_history": false,
+        "setup_plus_miner_accepted_rate_ratio": null,
+        "unequal_record_counts_retained": true,
+        "universal_kappa_bound": false
+      },
+      {
+        "actual_miner_accepted_rate_ratio": null,
+        "both_complete_uncensored_observations": true,
+        "canonical_chain_growth_ratio": false,
+        "comparable": false,
+        "dimension": "acquisition",
+        "equal_B_complete_proof_ratio": null,
+        "equal_B_eventually_accepted_ratio": null,
+        "left_job": "miner.shared.zero-only.cold.4101",
+        "left_label": "shared",
+        "matched_prefix_records": 0,
+        "overlapping_semantic_prefix_matches": false,
+        "reason": "incomplete-or-censored-observation-or-divergent-paid-identity",
+        "right_job": "miner.fixed.zero-only.cold.4101.structure-paired",
+        "right_label": "selective",
+        "same_complete_template_bank": false,
+        "same_paid_acquisition_history": false,
+        "setup_plus_miner_accepted_rate_ratio": null,
+        "unequal_record_counts_retained": true,
+        "universal_kappa_bound": false
+      }
+    ],
+    "arm": [
+      {
+        "actual_miner_accepted_rate_ratio": {
+          "decimal": 0.9380158661475707,
+          "denominator": 8104622841,
+          "numerator": 7602264814,
+          "reduced_denominator": 8104622841,
+          "reduced_numerator": 7602264814
+        },
+        "both_complete_uncensored_observations": true,
+        "canonical_chain_growth_ratio": false,
+        "comparable": true,
+        "dimension": "arm",
+        "equal_B_complete_proof_ratio": {
+          "decimal": 0.9466666666666667,
+          "denominator": 150,
+          "numerator": 142,
+          "reduced_denominator": 75,
+          "reduced_numerator": 71
+        },
+        "equal_B_eventually_accepted_ratio": {
+          "decimal": 0.9365079365079365,
+          "denominator": 63,
+          "numerator": 59,
+          "reduced_denominator": 63,
+          "reduced_numerator": 59
+        },
+        "left_job": "miner.fixed.maintenance-only.hot.4101.prepared-generic",
+        "left_label": "prepared-generic",
+        "matched_prefix_records": 143,
+        "overlapping_semantic_prefix_matches": true,
+        "reason": null,
+        "right_job": "miner.fixed.maintenance-only.hot.4101.integer-paired-general",
+        "right_label": "integer-paired-general",
+        "same_complete_template_bank": true,
+        "same_paid_acquisition_history": true,
+        "setup_plus_miner_accepted_rate_ratio": {
+          "decimal": 0.9399031550927479,
+          "denominator": 9013073013,
+          "numerator": 8471415762,
+          "reduced_denominator": 1001452557,
+          "reduced_numerator": 941268418
+        },
+        "unequal_record_counts_retained": true,
+        "universal_kappa_bound": false
+      },
+      {
+        "actual_miner_accepted_rate_ratio": {
+          "decimal": 0.985591213228924,
+          "denominator": 8105612697,
+          "numerator": 7988820652,
+          "reduced_denominator": 8105612697,
+          "reduced_numerator": 7988820652
+        },
+        "both_complete_uncensored_observations": true,
+        "canonical_chain_growth_ratio": false,
+        "comparable": true,
+        "dimension": "arm",
+        "equal_B_complete_proof_ratio": {
+          "decimal": 0.98,
+          "denominator": 150,
+          "numerator": 147,
+          "reduced_denominator": 50,
+          "reduced_numerator": 49
+        },
+        "equal_B_eventually_accepted_ratio": {
+          "decimal": 0.9841269841269841,
+          "denominator": 63,
+          "numerator": 62,
+          "reduced_denominator": 63,
+          "reduced_numerator": 62
+        },
+        "left_job": "miner.fixed.maintenance-only.hot.4101.structure-specialized",
+        "left_label": "structure-specialized",
+        "matched_prefix_records": 148,
+        "overlapping_semantic_prefix_matches": true,
+        "reason": null,
+        "right_job": "miner.fixed.maintenance-only.hot.4101.integer-paired-general",
+        "right_label": "integer-paired-general",
+        "same_complete_template_bank": true,
+        "same_paid_acquisition_history": true,
+        "setup_plus_miner_accepted_rate_ratio": {
+          "decimal": 0.9899418306685734,
+          "denominator": 8992614960,
+          "numerator": 8902165716,
+          "reduced_denominator": 249794860,
+          "reduced_numerator": 247282381
+        },
+        "unequal_record_counts_retained": true,
+        "universal_kappa_bound": false
+      },
+      {
+        "actual_miner_accepted_rate_ratio": {
+          "decimal": 1.1020005733566371,
+          "denominator": 8067858120,
+          "numerator": 8890784274,
+          "reduced_denominator": 58462740,
+          "reduced_numerator": 64425973
+        },
+        "both_complete_uncensored_observations": true,
+        "canonical_chain_growth_ratio": false,
+        "comparable": true,
+        "dimension": "arm",
+        "equal_B_complete_proof_ratio": {
+          "decimal": 1.04,
+          "denominator": 150,
+          "numerator": 156,
+          "reduced_denominator": 25,
+          "reduced_numerator": 26
+        },
+        "equal_B_eventually_accepted_ratio": {
+          "decimal": 1.0952380952380953,
+          "denominator": 63,
+          "numerator": 69,
+          "reduced_denominator": 21,
+          "reduced_numerator": 23
+        },
+        "left_job": "miner.fixed.maintenance-only.hot.4101.structure-paired",
+        "left_label": "structure-paired",
+        "matched_prefix_records": 151,
+        "overlapping_semantic_prefix_matches": true,
+        "reason": null,
+        "right_job": "miner.fixed.maintenance-only.hot.4101.integer-paired-general",
+        "right_label": "integer-paired-general",
+        "same_complete_template_bank": true,
+        "same_paid_acquisition_history": true,
+        "setup_plus_miner_accepted_rate_ratio": {
+          "decimal": 1.0869936681766423,
+          "denominator": 9114357546,
+          "numerator": 9907248942,
+          "reduced_denominator": 168784399,
+          "reduced_numerator": 183467573
+        },
+        "unequal_record_counts_retained": true,
+        "universal_kappa_bound": false
+      },
+      {
+        "actual_miner_accepted_rate_ratio": {
+          "decimal": 1.2050245138058975,
+          "denominator": 5013148530,
+          "numerator": 6040966870,
+          "reduced_denominator": 501314853,
+          "reduced_numerator": 604096687
+        },
+        "both_complete_uncensored_observations": true,
+        "canonical_chain_growth_ratio": false,
+        "comparable": true,
+        "dimension": "arm",
+        "equal_B_complete_proof_ratio": {
+          "decimal": 1.2608695652173914,
+          "denominator": 92,
+          "numerator": 116,
+          "reduced_denominator": 23,
+          "reduced_numerator": 29
+        },
+        "equal_B_eventually_accepted_ratio": {
+          "decimal": 1.205128205128205,
+          "denominator": 39,
+          "numerator": 47,
+          "reduced_denominator": 39,
+          "reduced_numerator": 47
+        },
+        "left_job": "miner.fixed.maintenance-only.cold.4101.prepared-generic",
+        "left_label": "prepared-generic",
+        "matched_prefix_records": 93,
+        "overlapping_semantic_prefix_matches": true,
+        "reason": null,
+        "right_job": "miner.fixed.maintenance-only.cold.4101.integer-paired-general",
+        "right_label": "integer-paired-general",
+        "same_complete_template_bank": true,
+        "same_paid_acquisition_history": true,
+        "setup_plus_miner_accepted_rate_ratio": {
+          "decimal": 1.218645270861945,
+          "denominator": 5549300601,
+          "numerator": 6762628934,
+          "reduced_denominator": 5549300601,
+          "reduced_numerator": 6762628934
+        },
+        "unequal_record_counts_retained": true,
+        "universal_kappa_bound": false
+      },
+      {
+        "actual_miner_accepted_rate_ratio": {
+          "decimal": 1.4839947187855667,
+          "denominator": 5023474872,
+          "numerator": 7454810180,
+          "reduced_denominator": 1255868718,
+          "reduced_numerator": 1863702545
+        },
+        "both_complete_uncensored_observations": true,
+        "canonical_chain_growth_ratio": false,
+        "comparable": true,
+        "dimension": "arm",
+        "equal_B_complete_proof_ratio": {
+          "decimal": 1.5326086956521738,
+          "denominator": 92,
+          "numerator": 141,
+          "reduced_denominator": 92,
+          "reduced_numerator": 141
+        },
+        "equal_B_eventually_accepted_ratio": {
+          "decimal": 1.4871794871794872,
+          "denominator": 39,
+          "numerator": 58,
+          "reduced_denominator": 39,
+          "reduced_numerator": 58
+        },
+        "left_job": "miner.fixed.maintenance-only.cold.4101.structure-specialized",
+        "left_label": "structure-specialized",
+        "matched_prefix_records": 93,
+        "overlapping_semantic_prefix_matches": true,
+        "reason": null,
+        "right_job": "miner.fixed.maintenance-only.cold.4101.integer-paired-general",
+        "right_label": "integer-paired-general",
+        "same_complete_template_bank": true,
+        "same_paid_acquisition_history": true,
+        "setup_plus_miner_accepted_rate_ratio": {
+          "decimal": 1.49448442934111,
+          "denominator": 5584114302,
+          "numerator": 8345371876,
+          "reduced_denominator": 2792057151,
+          "reduced_numerator": 4172685938
+        },
+        "unequal_record_counts_retained": true,
+        "universal_kappa_bound": false
+      },
+      {
+        "actual_miner_accepted_rate_ratio": {
+          "decimal": 1.4409478697151792,
+          "denominator": 4995147924,
+          "numerator": 7197747760,
+          "reduced_denominator": 1248786981,
+          "reduced_numerator": 1799436940
+        },
+        "both_complete_uncensored_observations": true,
+        "canonical_chain_growth_ratio": false,
+        "comparable": true,
+        "dimension": "arm",
+        "equal_B_complete_proof_ratio": {
+          "decimal": 1.4782608695652173,
+          "denominator": 92,
+          "numerator": 136,
+          "reduced_denominator": 23,
+          "reduced_numerator": 34
+        },
+        "equal_B_eventually_accepted_ratio": {
+          "decimal": 1.435897435897436,
+          "denominator": 39,
+          "numerator": 56,
+          "reduced_denominator": 39,
+          "reduced_numerator": 56
+        },
+        "left_job": "miner.fixed.maintenance-only.cold.4101.structure-paired",
+        "left_label": "structure-paired",
+        "matched_prefix_records": 93,
+        "overlapping_semantic_prefix_matches": true,
+        "reason": null,
+        "right_job": "miner.fixed.maintenance-only.cold.4101.integer-paired-general",
+        "right_label": "integer-paired-general",
+        "same_complete_template_bank": true,
+        "same_paid_acquisition_history": true,
+        "setup_plus_miner_accepted_rate_ratio": {
+          "decimal": 1.4451833742185636,
+          "denominator": 5575486527,
+          "numerator": 8057600432,
+          "reduced_denominator": 5575486527,
+          "reduced_numerator": 8057600432
+        },
+        "unequal_record_counts_retained": true,
+        "universal_kappa_bound": false
+      },
+      {
+        "actual_miner_accepted_rate_ratio": {
+          "decimal": 0.7360276771316507,
+          "denominator": 10655337978,
+          "numerator": 7842623661,
+          "reduced_denominator": 1183926442,
+          "reduced_numerator": 871402629
+        },
+        "both_complete_uncensored_observations": true,
+        "canonical_chain_growth_ratio": false,
+        "comparable": true,
+        "dimension": "arm",
+        "equal_B_complete_proof_ratio": {
+          "decimal": 0.7528735632183908,
+          "denominator": 174,
+          "numerator": 131,
+          "reduced_denominator": 174,
+          "reduced_numerator": 131
+        },
+        "equal_B_eventually_accepted_ratio": {
+          "decimal": 0.7349397590361446,
+          "denominator": 83,
+          "numerator": 61,
+          "reduced_denominator": 83,
+          "reduced_numerator": 61
+        },
+        "left_job": "miner.fixed.zero-only.hot.4101.prepared-generic",
+        "left_label": "prepared-generic",
+        "matched_prefix_records": 132,
+        "overlapping_semantic_prefix_matches": true,
+        "reason": null,
+        "right_job": "miner.fixed.zero-only.hot.4101.integer-paired-general",
+        "right_label": "integer-paired-general",
+        "same_complete_template_bank": true,
+        "same_paid_acquisition_history": true,
+        "setup_plus_miner_accepted_rate_ratio": {
+          "decimal": 0.7261327061047838,
+          "denominator": 12755302469,
+          "numerator": 9262042299,
+          "reduced_denominator": 12755302469,
+          "reduced_numerator": 9262042299
+        },
+        "unequal_record_counts_retained": true,
+        "universal_kappa_bound": false
+      },
+      {
+        "actual_miner_accepted_rate_ratio": {
+          "decimal": 0.9422137624218326,
+          "denominator": 10643309701,
+          "numerator": 10028272878,
+          "reduced_denominator": 10643309701,
+          "reduced_numerator": 10028272878
+        },
+        "both_complete_uncensored_observations": true,
+        "canonical_chain_growth_ratio": false,
+        "comparable": true,
+        "dimension": "arm",
+        "equal_B_complete_proof_ratio": {
+          "decimal": 0.9367816091954023,
+          "denominator": 174,
+          "numerator": 163,
+          "reduced_denominator": 174,
+          "reduced_numerator": 163
+        },
+        "equal_B_eventually_accepted_ratio": {
+          "decimal": 0.9397590361445783,
+          "denominator": 83,
+          "numerator": 78,
+          "reduced_denominator": 83,
+          "reduced_numerator": 78
+        },
+        "left_job": "miner.fixed.zero-only.hot.4101.structure-specialized",
+        "left_label": "structure-specialized",
+        "matched_prefix_records": 164,
+        "overlapping_semantic_prefix_matches": true,
+        "reason": null,
+        "right_job": "miner.fixed.zero-only.hot.4101.integer-paired-general",
+        "right_label": "integer-paired-general",
+        "same_complete_template_bank": true,
+        "same_paid_acquisition_history": true,
+        "setup_plus_miner_accepted_rate_ratio": {
+          "decimal": 0.9337522073988976,
+          "denominator": 12683522575,
+          "numerator": 11843267202,
+          "reduced_denominator": 12683522575,
+          "reduced_numerator": 11843267202
+        },
+        "unequal_record_counts_retained": true,
+        "universal_kappa_bound": false
+      },
+      {
+        "actual_miner_accepted_rate_ratio": {
+          "decimal": 0.8934465336007531,
+          "denominator": 10648653407,
+          "numerator": 9514002474,
+          "reduced_denominator": 10648653407,
+          "reduced_numerator": 9514002474
+        },
+        "both_complete_uncensored_observations": true,
+        "canonical_chain_growth_ratio": false,
+        "comparable": true,
+        "dimension": "arm",
+        "equal_B_complete_proof_ratio": {
+          "decimal": 0.867816091954023,
+          "denominator": 174,
+          "numerator": 151,
+          "reduced_denominator": 174,
+          "reduced_numerator": 151
+        },
+        "equal_B_eventually_accepted_ratio": {
+          "decimal": 0.891566265060241,
+          "denominator": 83,
+          "numerator": 74,
+          "reduced_denominator": 83,
+          "reduced_numerator": 74
+        },
+        "left_job": "miner.fixed.zero-only.hot.4101.structure-paired",
+        "left_label": "structure-paired",
+        "matched_prefix_records": 152,
+        "overlapping_semantic_prefix_matches": true,
+        "reason": null,
+        "right_job": "miner.fixed.zero-only.hot.4101.integer-paired-general",
+        "right_label": "integer-paired-general",
+        "same_complete_template_bank": true,
+        "same_paid_acquisition_history": true,
+        "setup_plus_miner_accepted_rate_ratio": {
+          "decimal": 0.8891868664024576,
+          "denominator": 12636174229,
+          "numerator": 11235920166,
+          "reduced_denominator": 12636174229,
+          "reduced_numerator": 11235920166
+        },
+        "unequal_record_counts_retained": true,
+        "universal_kappa_bound": false
+      },
+      {
+        "actual_miner_accepted_rate_ratio": {
+          "decimal": 0.8759866945312312,
+          "denominator": 7312516206,
+          "numerator": 6405666900,
+          "reduced_denominator": 1218752701,
+          "reduced_numerator": 1067611150
+        },
+        "both_complete_uncensored_observations": true,
+        "canonical_chain_growth_ratio": false,
+        "comparable": true,
+        "dimension": "arm",
+        "equal_B_complete_proof_ratio": {
+          "decimal": 0.860655737704918,
+          "denominator": 122,
+          "numerator": 105,
+          "reduced_denominator": 122,
+          "reduced_numerator": 105
+        },
+        "equal_B_eventually_accepted_ratio": {
+          "decimal": 0.8771929824561403,
+          "denominator": 57,
+          "numerator": 50,
+          "reduced_denominator": 57,
+          "reduced_numerator": 50
+        },
+        "left_job": "miner.fixed.zero-only.cold.4101.prepared-generic",
+        "left_label": "prepared-generic",
+        "matched_prefix_records": 106,
+        "overlapping_semantic_prefix_matches": true,
+        "reason": null,
+        "right_job": "miner.fixed.zero-only.cold.4101.integer-paired-general",
+        "right_label": "integer-paired-general",
+        "same_complete_template_bank": true,
+        "same_paid_acquisition_history": true,
+        "setup_plus_miner_accepted_rate_ratio": {
+          "decimal": 0.8536510308211681,
+          "denominator": 8979066531,
+          "numerator": 7664989400,
+          "reduced_denominator": 8979066531,
+          "reduced_numerator": 7664989400
+        },
+        "unequal_record_counts_retained": true,
+        "universal_kappa_bound": false
+      },
+      {
+        "actual_miner_accepted_rate_ratio": {
+          "decimal": 1.311849981574799,
+          "denominator": 7324389591,
+          "numerator": 9608500350,
+          "reduced_denominator": 2441463197,
+          "reduced_numerator": 3202833450
+        },
+        "both_complete_uncensored_observations": true,
+        "canonical_chain_growth_ratio": false,
+        "comparable": true,
+        "dimension": "arm",
+        "equal_B_complete_proof_ratio": {
+          "decimal": 1.2868852459016393,
+          "denominator": 122,
+          "numerator": 157,
+          "reduced_denominator": 122,
+          "reduced_numerator": 157
+        },
+        "equal_B_eventually_accepted_ratio": {
+          "decimal": 1.3157894736842106,
+          "denominator": 57,
+          "numerator": 75,
+          "reduced_denominator": 19,
+          "reduced_numerator": 25
+        },
+        "left_job": "miner.fixed.zero-only.cold.4101.structure-specialized",
+        "left_label": "structure-specialized",
+        "matched_prefix_records": 123,
+        "overlapping_semantic_prefix_matches": true,
+        "reason": null,
+        "right_job": "miner.fixed.zero-only.cold.4101.integer-paired-general",
+        "right_label": "integer-paired-general",
+        "same_complete_template_bank": true,
+        "same_paid_acquisition_history": true,
+        "setup_plus_miner_accepted_rate_ratio": {
+          "decimal": 1.2838427079699386,
+          "denominator": 8955523935,
+          "numerator": 11497484100,
+          "reduced_denominator": 597034929,
+          "reduced_numerator": 766498940
+        },
+        "unequal_record_counts_retained": true,
+        "universal_kappa_bound": false
+      },
+      {
+        "actual_miner_accepted_rate_ratio": {
+          "decimal": 1.2591183246041928,
+          "denominator": 7325888406,
+          "numerator": 9224160336,
+          "reduced_denominator": 1220981401,
+          "reduced_numerator": 1537360056
+        },
+        "both_complete_uncensored_observations": true,
+        "canonical_chain_growth_ratio": false,
+        "comparable": true,
+        "dimension": "arm",
+        "equal_B_complete_proof_ratio": {
+          "decimal": 1.1885245901639345,
+          "denominator": 122,
+          "numerator": 145,
+          "reduced_denominator": 122,
+          "reduced_numerator": 145
+        },
+        "equal_B_eventually_accepted_ratio": {
+          "decimal": 1.263157894736842,
+          "denominator": 57,
+          "numerator": 72,
+          "reduced_denominator": 19,
+          "reduced_numerator": 24
+        },
+        "left_job": "miner.fixed.zero-only.cold.4101.structure-paired",
+        "left_label": "structure-paired",
+        "matched_prefix_records": 123,
+        "overlapping_semantic_prefix_matches": true,
+        "reason": null,
+        "right_job": "miner.fixed.zero-only.cold.4101.integer-paired-general",
+        "right_label": "integer-paired-general",
+        "same_complete_template_bank": true,
+        "same_paid_acquisition_history": true,
+        "setup_plus_miner_accepted_rate_ratio": {
+          "decimal": 1.261381179702291,
+          "denominator": 8750395926,
+          "numerator": 11037584736,
+          "reduced_denominator": 486133107,
+          "reduced_numerator": 613199152
+        },
+        "unequal_record_counts_retained": true,
+        "universal_kappa_bound": false
+      },
+      {
+        "actual_miner_accepted_rate_ratio": {
+          "decimal": 0.8759656836901033,
+          "denominator": 9234023616,
+          "numerator": 8088687810,
+          "reduced_denominator": 513001312,
+          "reduced_numerator": 449371545
+        },
+        "both_complete_uncensored_observations": true,
+        "canonical_chain_growth_ratio": false,
+        "comparable": true,
+        "dimension": "arm",
+        "equal_B_complete_proof_ratio": {
+          "decimal": 0.9,
+          "denominator": 140,
+          "numerator": 126,
+          "reduced_denominator": 10,
+          "reduced_numerator": 9
+        },
+        "equal_B_eventually_accepted_ratio": {
+          "decimal": 0.875,
+          "denominator": 72,
+          "numerator": 63,
+          "reduced_denominator": 8,
+          "reduced_numerator": 7
+        },
+        "left_job": "miner.fixed.maintenance-only.hot.4102.structure-paired",
+        "left_label": "structure-paired",
+        "matched_prefix_records": 127,
+        "overlapping_semantic_prefix_matches": true,
+        "reason": null,
+        "right_job": "miner.fixed.maintenance-only.hot.4102.integer-paired-general",
+        "right_label": "integer-paired-general",
+        "same_complete_template_bank": true,
+        "same_paid_acquisition_history": true,
+        "setup_plus_miner_accepted_rate_ratio": {
+          "decimal": 0.8660112676557326,
+          "denominator": 10452830544,
+          "numerator": 9052269030,
+          "reduced_denominator": 580712808,
+          "reduced_numerator": 502903835
+        },
+        "unequal_record_counts_retained": true,
+        "universal_kappa_bound": false
+      },
+      {
+        "actual_miner_accepted_rate_ratio": {
+          "decimal": 1.0668591994852314,
+          "denominator": 9266615496,
+          "numerator": 9886173990,
+          "reduced_denominator": 1544435916,
+          "reduced_numerator": 1647695665
+        },
+        "both_complete_uncensored_observations": true,
+        "canonical_chain_growth_ratio": false,
+        "comparable": true,
+        "dimension": "arm",
+        "equal_B_complete_proof_ratio": {
+          "decimal": 1.0785714285714285,
+          "denominator": 140,
+          "numerator": 151,
+          "reduced_denominator": 140,
+          "reduced_numerator": 151
+        },
+        "equal_B_eventually_accepted_ratio": {
+          "decimal": 1.0694444444444444,
+          "denominator": 72,
+          "numerator": 77,
+          "reduced_denominator": 72,
+          "reduced_numerator": 77
+        },
+        "left_job": "miner.fixed.maintenance-only.hot.4102.structure-specialized",
+        "left_label": "structure-specialized",
+        "matched_prefix_records": 141,
+        "overlapping_semantic_prefix_matches": true,
+        "reason": null,
+        "right_job": "miner.fixed.maintenance-only.hot.4102.integer-paired-general",
+        "right_label": "integer-paired-general",
+        "same_complete_template_bank": true,
+        "same_paid_acquisition_history": true,
+        "setup_plus_miner_accepted_rate_ratio": {
+          "decimal": 1.075690987205148,
+          "denominator": 10285374240,
+          "numerator": 11063884370,
+          "reduced_denominator": 1028537424,
+          "reduced_numerator": 1106388437
+        },
+        "unequal_record_counts_retained": true,
+        "universal_kappa_bound": false
+      },
+      {
+        "actual_miner_accepted_rate_ratio": {
+          "decimal": 0.9007995373837416,
+          "denominator": 9407046816,
+          "numerator": 8473863420,
+          "reduced_denominator": 261306856,
+          "reduced_numerator": 235385095
+        },
+        "both_complete_uncensored_observations": true,
+        "canonical_chain_growth_ratio": false,
+        "comparable": true,
+        "dimension": "arm",
+        "equal_B_complete_proof_ratio": {
+          "decimal": 0.9285714285714286,
+          "denominator": 140,
+          "numerator": 130,
+          "reduced_denominator": 14,
+          "reduced_numerator": 13
+        },
+        "equal_B_eventually_accepted_ratio": {
+          "decimal": 0.9166666666666666,
+          "denominator": 72,
+          "numerator": 66,
+          "reduced_denominator": 12,
+          "reduced_numerator": 11
+        },
+        "left_job": "miner.fixed.maintenance-only.hot.4102.prepared-generic",
+        "left_label": "prepared-generic",
+        "matched_prefix_records": 131,
+        "overlapping_semantic_prefix_matches": true,
+        "reason": null,
+        "right_job": "miner.fixed.maintenance-only.hot.4102.integer-paired-general",
+        "right_label": "integer-paired-general",
+        "same_complete_template_bank": true,
+        "same_paid_acquisition_history": true,
+        "setup_plus_miner_accepted_rate_ratio": {
+          "decimal": 0.9121706428699476,
+          "denominator": 10396442304,
+          "numerator": 9483329460,
+          "reduced_denominator": 866370192,
+          "reduced_numerator": 790277455
+        },
+        "unequal_record_counts_retained": true,
+        "universal_kappa_bound": false
+      },
+      {
+        "actual_miner_accepted_rate_ratio": {
+          "decimal": 1.306930347793118,
+          "denominator": 7172906048,
+          "numerator": 9374488596,
+          "reduced_denominator": 163020592,
+          "reduced_numerator": 213056559
+        },
+        "both_complete_uncensored_observations": true,
+        "canonical_chain_growth_ratio": false,
+        "comparable": true,
+        "dimension": "arm",
+        "equal_B_complete_proof_ratio": {
+          "decimal": 1.3,
+          "denominator": 110,
+          "numerator": 143,
+          "reduced_denominator": 10,
+          "reduced_numerator": 13
+        },
+        "equal_B_eventually_accepted_ratio": {
+          "decimal": 1.3035714285714286,
+          "denominator": 56,
+          "numerator": 73,
+          "reduced_denominator": 56,
+          "reduced_numerator": 73
+        },
+        "left_job": "miner.fixed.maintenance-only.cold.4102.structure-paired",
+        "left_label": "structure-paired",
+        "matched_prefix_records": 111,
+        "overlapping_semantic_prefix_matches": true,
+        "reason": null,
+        "right_job": "miner.fixed.maintenance-only.cold.4102.integer-paired-general",
+        "right_label": "integer-paired-general",
+        "same_complete_template_bank": true,
+        "same_paid_acquisition_history": true,
+        "setup_plus_miner_accepted_rate_ratio": {
+          "decimal": 1.292181181732559,
+          "denominator": 8084014008,
+          "numerator": 10446010774,
+          "reduced_denominator": 4042007004,
+          "reduced_numerator": 5223005387
+        },
+        "unequal_record_counts_retained": true,
+        "universal_kappa_bound": false
+      },
+      {
+        "actual_miner_accepted_rate_ratio": {
+          "decimal": 1.3412369248739981,
+          "denominator": 7180926592,
+          "numerator": 9631323900,
+          "reduced_denominator": 1795231648,
+          "reduced_numerator": 2407830975
+        },
+        "both_complete_uncensored_observations": true,
+        "canonical_chain_growth_ratio": false,
+        "comparable": true,
+        "dimension": "arm",
+        "equal_B_complete_proof_ratio": {
+          "decimal": 1.3363636363636364,
+          "denominator": 110,
+          "numerator": 147,
+          "reduced_denominator": 110,
+          "reduced_numerator": 147
+        },
+        "equal_B_eventually_accepted_ratio": {
+          "decimal": 1.3392857142857142,
+          "denominator": 56,
+          "numerator": 75,
+          "reduced_denominator": 56,
+          "reduced_numerator": 75
+        },
+        "left_job": "miner.fixed.maintenance-only.cold.4102.structure-specialized",
+        "left_label": "structure-specialized",
+        "matched_prefix_records": 111,
+        "overlapping_semantic_prefix_matches": true,
+        "reason": null,
+        "right_job": "miner.fixed.maintenance-only.cold.4102.integer-paired-general",
+        "right_label": "integer-paired-general",
+        "same_complete_template_bank": true,
+        "same_paid_acquisition_history": true,
+        "setup_plus_miner_accepted_rate_ratio": {
+          "decimal": 1.3558277349090804,
+          "denominator": 7915609464,
+          "numerator": 10732202850,
+          "reduced_denominator": 1319268244,
+          "reduced_numerator": 1788700475
+        },
+        "unequal_record_counts_retained": true,
+        "universal_kappa_bound": false
+      },
+      {
+        "actual_miner_accepted_rate_ratio": {
+          "decimal": 0.8166275378562499,
+          "denominator": 7233667392,
+          "numerator": 5907211992,
+          "reduced_denominator": 301402808,
+          "reduced_numerator": 246133833
+        },
+        "both_complete_uncensored_observations": true,
+        "canonical_chain_growth_ratio": false,
+        "comparable": true,
+        "dimension": "arm",
+        "equal_B_complete_proof_ratio": {
+          "decimal": 0.8090909090909091,
+          "denominator": 110,
+          "numerator": 89,
+          "reduced_denominator": 110,
+          "reduced_numerator": 89
+        },
+        "equal_B_eventually_accepted_ratio": {
+          "decimal": 0.8214285714285714,
+          "denominator": 56,
+          "numerator": 46,
+          "reduced_denominator": 28,
+          "reduced_numerator": 23
+        },
+        "left_job": "miner.fixed.maintenance-only.cold.4102.prepared-generic",
+        "left_label": "prepared-generic",
+        "matched_prefix_records": 90,
+        "overlapping_semantic_prefix_matches": true,
+        "reason": null,
+        "right_job": "miner.fixed.maintenance-only.cold.4102.integer-paired-general",
+        "right_label": "integer-paired-general",
+        "same_complete_template_bank": true,
+        "same_paid_acquisition_history": true,
+        "setup_plus_miner_accepted_rate_ratio": {
+          "decimal": 0.7902922438570309,
+          "denominator": 8329093192,
+          "numerator": 6582417748,
+          "reduced_denominator": 2082273298,
+          "reduced_numerator": 1645604437
+        },
+        "unequal_record_counts_retained": true,
+        "universal_kappa_bound": false
+      },
+      {
+        "actual_miner_accepted_rate_ratio": {
+          "decimal": 0.9600621951523434,
+          "denominator": 6404100400,
+          "numerator": 6148334688,
+          "reduced_denominator": 400256275,
+          "reduced_numerator": 384270918
+        },
+        "both_complete_uncensored_observations": true,
+        "canonical_chain_growth_ratio": false,
+        "comparable": true,
+        "dimension": "arm",
+        "equal_B_complete_proof_ratio": {
+          "decimal": 0.963963963963964,
+          "denominator": 111,
+          "numerator": 107,
+          "reduced_denominator": 111,
+          "reduced_numerator": 107
+        },
+        "equal_B_eventually_accepted_ratio": {
+          "decimal": 0.96,
+          "denominator": 50,
+          "numerator": 48,
+          "reduced_denominator": 25,
+          "reduced_numerator": 24
+        },
+        "left_job": "miner.fixed.zero-only.hot.4102.structure-paired",
+        "left_label": "structure-paired",
+        "matched_prefix_records": 107,
+        "overlapping_semantic_prefix_matches": true,
+        "reason": null,
+        "right_job": "miner.fixed.zero-only.hot.4102.integer-paired-general",
+        "right_label": "integer-paired-general",
+        "same_complete_template_bank": true,
+        "same_paid_acquisition_history": true,
+        "setup_plus_miner_accepted_rate_ratio": {
+          "decimal": 0.9881576047337969,
+          "denominator": 7755136350,
+          "numerator": 7663296960,
+          "reduced_denominator": 258504545,
+          "reduced_numerator": 255443232
+        },
+        "unequal_record_counts_retained": true,
+        "universal_kappa_bound": false
+      },
+      {
+        "actual_miner_accepted_rate_ratio": {
+          "decimal": 1.3484595863944981,
+          "denominator": 6459326550,
+          "numerator": 8710140808,
+          "reduced_denominator": 3229663275,
+          "reduced_numerator": 4355070404
+        },
+        "both_complete_uncensored_observations": true,
+        "canonical_chain_growth_ratio": false,
+        "comparable": true,
+        "dimension": "arm",
+        "equal_B_complete_proof_ratio": {
+          "decimal": 1.2702702702702702,
+          "denominator": 111,
+          "numerator": 141,
+          "reduced_denominator": 37,
+          "reduced_numerator": 47
+        },
+        "equal_B_eventually_accepted_ratio": {
+          "decimal": 1.36,
+          "denominator": 50,
+          "numerator": 68,
+          "reduced_denominator": 25,
+          "reduced_numerator": 34
+        },
+        "left_job": "miner.fixed.zero-only.hot.4102.structure-specialized",
+        "left_label": "structure-specialized",
+        "matched_prefix_records": 112,
+        "overlapping_semantic_prefix_matches": true,
+        "reason": null,
+        "right_job": "miner.fixed.zero-only.hot.4102.integer-paired-general",
+        "right_label": "integer-paired-general",
+        "same_complete_template_bank": true,
+        "same_paid_acquisition_history": true,
+        "setup_plus_miner_accepted_rate_ratio": {
+          "decimal": 1.3977963104924922,
+          "denominator": 7766752050,
+          "numerator": 10856337360,
+          "reduced_denominator": 258891735,
+          "reduced_numerator": 361877912
+        },
+        "unequal_record_counts_retained": true,
+        "universal_kappa_bound": false
+      },
+      {
+        "actual_miner_accepted_rate_ratio": {
+          "decimal": 1.054551458726008,
+          "denominator": 6437605450,
+          "numerator": 6788786218,
+          "reduced_denominator": 3218802725,
+          "reduced_numerator": 3394393109
+        },
+        "both_complete_uncensored_observations": true,
+        "canonical_chain_growth_ratio": false,
+        "comparable": true,
+        "dimension": "arm",
+        "equal_B_complete_proof_ratio": {
+          "decimal": 1.054054054054054,
+          "denominator": 111,
+          "numerator": 117,
+          "reduced_denominator": 37,
+          "reduced_numerator": 39
+        },
+        "equal_B_eventually_accepted_ratio": {
+          "decimal": 1.06,
+          "denominator": 50,
+          "numerator": 53,
+          "reduced_denominator": 50,
+          "reduced_numerator": 53
+        },
+        "left_job": "miner.fixed.zero-only.hot.4102.prepared-generic",
+        "left_label": "prepared-generic",
+        "matched_prefix_records": 112,
+        "overlapping_semantic_prefix_matches": true,
+        "reason": null,
+        "right_job": "miner.fixed.zero-only.hot.4102.integer-paired-general",
+        "right_label": "integer-paired-general",
+        "same_complete_template_bank": true,
+        "same_paid_acquisition_history": true,
+        "setup_plus_miner_accepted_rate_ratio": {
+          "decimal": 1.064908274562147,
+          "denominator": 7945808350,
+          "numerator": 8461557060,
+          "reduced_denominator": 794580835,
+          "reduced_numerator": 846155706
+        },
+        "unequal_record_counts_retained": true,
+        "universal_kappa_bound": false
+      },
+      {
+        "actual_miner_accepted_rate_ratio": {
+          "decimal": 1.6764088094112433,
+          "denominator": 4996893525,
+          "numerator": 8376836325,
+          "reduced_denominator": 5125019,
+          "reduced_numerator": 8591627
+        },
+        "both_complete_uncensored_observations": true,
+        "canonical_chain_growth_ratio": false,
+        "comparable": true,
+        "dimension": "arm",
+        "equal_B_complete_proof_ratio": {
+          "decimal": 1.5517241379310345,
+          "denominator": 87,
+          "numerator": 135,
+          "reduced_denominator": 29,
+          "reduced_numerator": 45
+        },
+        "equal_B_eventually_accepted_ratio": {
+          "decimal": 1.6666666666666667,
+          "denominator": 39,
+          "numerator": 65,
+          "reduced_denominator": 3,
+          "reduced_numerator": 5
+        },
+        "left_job": "miner.fixed.zero-only.cold.4102.structure-paired",
+        "left_label": "structure-paired",
+        "matched_prefix_records": 88,
+        "overlapping_semantic_prefix_matches": true,
+        "reason": null,
+        "right_job": "miner.fixed.zero-only.cold.4102.integer-paired-general",
+        "right_label": "integer-paired-general",
+        "same_complete_template_bank": true,
+        "same_paid_acquisition_history": true,
+        "setup_plus_miner_accepted_rate_ratio": {
+          "decimal": 1.7959441617003775,
+          "denominator": 5987727174,
+          "numerator": 10753623660,
+          "reduced_denominator": 76765733,
+          "reduced_numerator": 137866970
+        },
+        "unequal_record_counts_retained": true,
+        "universal_kappa_bound": false
+      },
+      {
+        "actual_miner_accepted_rate_ratio": {
+          "decimal": 1.339297738236018,
+          "denominator": 5003718642,
+          "numerator": 6701469060,
+          "reduced_denominator": 64150239,
+          "reduced_numerator": 85916270
+        },
+        "both_complete_uncensored_observations": true,
+        "canonical_chain_growth_ratio": false,
+        "comparable": true,
+        "dimension": "arm",
+        "equal_B_complete_proof_ratio": {
+          "decimal": 1.3218390804597702,
+          "denominator": 87,
+          "numerator": 115,
+          "reduced_denominator": 87,
+          "reduced_numerator": 115
+        },
+        "equal_B_eventually_accepted_ratio": {
+          "decimal": 1.3333333333333333,
+          "denominator": 39,
+          "numerator": 52,
+          "reduced_denominator": 3,
+          "reduced_numerator": 4
+        },
+        "left_job": "miner.fixed.zero-only.cold.4102.structure-specialized",
+        "left_label": "structure-specialized",
+        "matched_prefix_records": 88,
+        "overlapping_semantic_prefix_matches": true,
+        "reason": null,
+        "right_job": "miner.fixed.zero-only.cold.4102.integer-paired-general",
+        "right_label": "integer-paired-general",
+        "same_complete_template_bank": true,
+        "same_paid_acquisition_history": true,
+        "setup_plus_miner_accepted_rate_ratio": {
+          "decimal": 1.4122781419339996,
+          "denominator": 6091504692,
+          "numerator": 8602898928,
+          "reduced_denominator": 39048107,
+          "reduced_numerator": 55146788
+        },
+        "unequal_record_counts_retained": true,
+        "universal_kappa_bound": false
+      },
+      {
+        "actual_miner_accepted_rate_ratio": {
+          "decimal": 1.0311141447836112,
+          "denominator": 4999423416,
+          "numerator": 5154976200,
+          "reduced_denominator": 208309309,
+          "reduced_numerator": 214790675
+        },
+        "both_complete_uncensored_observations": true,
+        "canonical_chain_growth_ratio": false,
+        "comparable": true,
+        "dimension": "arm",
+        "equal_B_complete_proof_ratio": {
+          "decimal": 1.0114942528735633,
+          "denominator": 87,
+          "numerator": 88,
+          "reduced_denominator": 87,
+          "reduced_numerator": 88
+        },
+        "equal_B_eventually_accepted_ratio": {
+          "decimal": 1.0256410256410255,
+          "denominator": 39,
+          "numerator": 40,
+          "reduced_denominator": 39,
+          "reduced_numerator": 40
+        },
+        "left_job": "miner.fixed.zero-only.cold.4102.prepared-generic",
+        "left_label": "prepared-generic",
+        "matched_prefix_records": 88,
+        "overlapping_semantic_prefix_matches": true,
+        "reason": null,
+        "right_job": "miner.fixed.zero-only.cold.4102.integer-paired-general",
+        "right_label": "integer-paired-general",
+        "same_complete_template_bank": true,
+        "same_paid_acquisition_history": true,
+        "setup_plus_miner_accepted_rate_ratio": {
+          "decimal": 1.0664179102818023,
+          "denominator": 6205460820,
+          "numerator": 6617614560,
+          "reduced_denominator": 103424347,
+          "reduced_numerator": 110293576
+        },
+        "unequal_record_counts_retained": true,
+        "universal_kappa_bound": false
+      },
+      {
+        "actual_miner_accepted_rate_ratio": {
+          "decimal": 1.0369653061789676,
+          "denominator": 6316497390,
+          "numerator": 6549988650,
+          "reduced_denominator": 12385289,
+          "reduced_numerator": 12843115
+        },
+        "both_complete_uncensored_observations": true,
+        "canonical_chain_growth_ratio": false,
+        "comparable": true,
+        "dimension": "arm",
+        "equal_B_complete_proof_ratio": {
+          "decimal": 1.0510204081632653,
+          "denominator": 98,
+          "numerator": 103,
+          "reduced_denominator": 98,
+          "reduced_numerator": 103
+        },
+        "equal_B_eventually_accepted_ratio": {
+          "decimal": 1.0408163265306123,
+          "denominator": 49,
+          "numerator": 51,
+          "reduced_denominator": 49,
+          "reduced_numerator": 51
+        },
+        "left_job": "miner.bank.round-robin.p1.4101.structure-paired",
+        "left_label": "structure-paired",
+        "matched_prefix_records": 99,
+        "overlapping_semantic_prefix_matches": true,
+        "reason": null,
+        "right_job": "miner.bank.round-robin.p1.4101.integer-paired-general",
+        "right_label": "integer-paired-general",
+        "same_complete_template_bank": true,
+        "same_paid_acquisition_history": true,
+        "setup_plus_miner_accepted_rate_ratio": {
+          "decimal": 1.0187606838432088,
+          "denominator": 8607584902,
+          "numerator": 8769069081,
+          "reduced_denominator": 8607584902,
+          "reduced_numerator": 8769069081
+        },
+        "unequal_record_counts_retained": true,
+        "universal_kappa_bound": false
+      },
+      {
+        "actual_miner_accepted_rate_ratio": {
+          "decimal": 0.8695011062072261,
+          "denominator": 9872944004,
+          "numerator": 8584535733,
+          "reduced_denominator": 9872944004,
+          "reduced_numerator": 8584535733
+        },
+        "both_complete_uncensored_observations": true,
+        "canonical_chain_growth_ratio": false,
+        "comparable": true,
+        "dimension": "arm",
+        "equal_B_complete_proof_ratio": {
+          "decimal": 0.8278145695364238,
+          "denominator": 151,
+          "numerator": 125,
+          "reduced_denominator": 151,
+          "reduced_numerator": 125
+        },
+        "equal_B_eventually_accepted_ratio": {
+          "decimal": 0.8701298701298701,
+          "denominator": 77,
+          "numerator": 67,
+          "reduced_denominator": 77,
+          "reduced_numerator": 67
+        },
+        "left_job": "miner.bank.round-robin.p4.4101.structure-paired",
+        "left_label": "structure-paired",
+        "matched_prefix_records": 126,
+        "overlapping_semantic_prefix_matches": true,
+        "reason": null,
+        "right_job": "miner.bank.round-robin.p4.4101.integer-paired-general",
+        "right_label": "integer-paired-general",
+        "same_complete_template_bank": true,
+        "same_paid_acquisition_history": true,
+        "setup_plus_miner_accepted_rate_ratio": {
+          "decimal": 0.8397528175165797,
+          "denominator": 17504839583,
+          "numerator": 14699738360,
+          "reduced_denominator": 17504839583,
+          "reduced_numerator": 14699738360
+        },
+        "unequal_record_counts_retained": true,
+        "universal_kappa_bound": false
+      },
+      {
+        "actual_miner_accepted_rate_ratio": {
+          "decimal": 1.208211322194442,
+          "denominator": 4485552890,
+          "numerator": 5419495788,
+          "reduced_denominator": 320396635,
+          "reduced_numerator": 387106842
+        },
+        "both_complete_uncensored_observations": true,
+        "canonical_chain_growth_ratio": false,
+        "comparable": true,
+        "dimension": "arm",
+        "equal_B_complete_proof_ratio": {
+          "decimal": 1.2794117647058822,
+          "denominator": 68,
+          "numerator": 87,
+          "reduced_denominator": 68,
+          "reduced_numerator": 87
+        },
+        "equal_B_eventually_accepted_ratio": {
+          "decimal": 1.2,
+          "denominator": 35,
+          "numerator": 42,
+          "reduced_denominator": 5,
+          "reduced_numerator": 6
+        },
+        "left_job": "miner.bank.paid-noise-screen.p1.4101.structure-paired",
+        "left_label": "structure-paired",
+        "matched_prefix_records": 69,
+        "overlapping_semantic_prefix_matches": true,
+        "reason": null,
+        "right_job": "miner.bank.paid-noise-screen.p1.4101.integer-paired-general",
+        "right_label": "integer-paired-general",
+        "same_complete_template_bank": true,
+        "same_paid_acquisition_history": true,
+        "setup_plus_miner_accepted_rate_ratio": {
+          "decimal": 1.251978727196563,
+          "denominator": 5612733665,
+          "numerator": 7027023150,
+          "reduced_denominator": 160363819,
+          "reduced_numerator": 200772090
+        },
+        "unequal_record_counts_retained": true,
+        "universal_kappa_bound": false
+      },
+      {
+        "actual_miner_accepted_rate_ratio": {
+          "decimal": 1.0397796190894737,
+          "denominator": 3342694602,
+          "numerator": 3475665720,
+          "reduced_denominator": 557115767,
+          "reduced_numerator": 579277620
+        },
+        "both_complete_uncensored_observations": true,
+        "canonical_chain_growth_ratio": false,
+        "comparable": true,
+        "dimension": "arm",
+        "equal_B_complete_proof_ratio": {
+          "decimal": 1.1219512195121952,
+          "denominator": 41,
+          "numerator": 46,
+          "reduced_denominator": 41,
+          "reduced_numerator": 46
+        },
+        "equal_B_eventually_accepted_ratio": {
+          "decimal": 1.0384615384615385,
+          "denominator": 26,
+          "numerator": 27,
+          "reduced_denominator": 26,
+          "reduced_numerator": 27
+        },
+        "left_job": "miner.bank.paid-noise-screen.p4.4101.structure-paired",
+        "left_label": "structure-paired",
+        "matched_prefix_records": 41,
+        "overlapping_semantic_prefix_matches": true,
+        "reason": null,
+        "right_job": "miner.bank.paid-noise-screen.p4.4101.integer-paired-general",
+        "right_label": "integer-paired-general",
+        "same_complete_template_bank": true,
+        "same_paid_acquisition_history": true,
+        "setup_plus_miner_accepted_rate_ratio": {
+          "decimal": 0.9913948937243136,
+          "denominator": 5988369504,
+          "numerator": 5936838948,
+          "reduced_denominator": 499030792,
+          "reduced_numerator": 494736579
+        },
+        "unequal_record_counts_retained": true,
+        "universal_kappa_bound": false
+      },
+      {
+        "actual_miner_accepted_rate_ratio": {
+          "decimal": 0.7698066914641727,
+          "denominator": 9491376530,
+          "numerator": 7306525164,
+          "reduced_denominator": 4745688265,
+          "reduced_numerator": 3653262582
+        },
+        "both_complete_uncensored_observations": true,
+        "canonical_chain_growth_ratio": false,
+        "comparable": true,
+        "dimension": "arm",
+        "equal_B_complete_proof_ratio": {
+          "decimal": 0.7803030303030303,
+          "denominator": 132,
+          "numerator": 103,
+          "reduced_denominator": 132,
+          "reduced_numerator": 103
+        },
+        "equal_B_eventually_accepted_ratio": {
+          "decimal": 0.7702702702702703,
+          "denominator": 74,
+          "numerator": 57,
+          "reduced_denominator": 74,
+          "reduced_numerator": 57
+        },
+        "left_job": "miner.bank.round-robin.p1.4102.structure-paired",
+        "left_label": "structure-paired",
+        "matched_prefix_records": 104,
+        "overlapping_semantic_prefix_matches": true,
+        "reason": null,
+        "right_job": "miner.bank.round-robin.p1.4102.integer-paired-general",
+        "right_label": "integer-paired-general",
+        "same_complete_template_bank": true,
+        "same_paid_acquisition_history": true,
+        "setup_plus_miner_accepted_rate_ratio": {
+          "decimal": 0.7278500449126937,
+          "denominator": 13169410518,
+          "numerator": 9585356037,
+          "reduced_denominator": 4389803506,
+          "reduced_numerator": 3195118679
+        },
+        "unequal_record_counts_retained": true,
+        "universal_kappa_bound": false
+      },
+      {
+        "actual_miner_accepted_rate_ratio": {
+          "decimal": 0.9444275213944818,
+          "denominator": 7626419473,
+          "numerator": 7202600440,
+          "reduced_denominator": 7626419473,
+          "reduced_numerator": 7202600440
+        },
+        "both_complete_uncensored_observations": true,
+        "canonical_chain_growth_ratio": false,
+        "comparable": true,
+        "dimension": "arm",
+        "equal_B_complete_proof_ratio": {
+          "decimal": 0.9181818181818182,
+          "denominator": 110,
+          "numerator": 101,
+          "reduced_denominator": 110,
+          "reduced_numerator": 101
+        },
+        "equal_B_eventually_accepted_ratio": {
+          "decimal": 0.9491525423728814,
+          "denominator": 59,
+          "numerator": 56,
+          "reduced_denominator": 59,
+          "reduced_numerator": 56
+        },
+        "left_job": "miner.bank.round-robin.p4.4102.structure-paired",
+        "left_label": "structure-paired",
+        "matched_prefix_records": 102,
+        "overlapping_semantic_prefix_matches": true,
+        "reason": null,
+        "right_job": "miner.bank.round-robin.p4.4102.integer-paired-general",
+        "right_label": "integer-paired-general",
+        "same_complete_template_bank": true,
+        "same_paid_acquisition_history": true,
+        "setup_plus_miner_accepted_rate_ratio": {
+          "decimal": 0.8896210024364404,
+          "denominator": 14643093475,
+          "numerator": 13026803496,
+          "reduced_denominator": 14643093475,
+          "reduced_numerator": 13026803496
+        },
+        "unequal_record_counts_retained": true,
+        "universal_kappa_bound": false
+      },
+      {
+        "actual_miner_accepted_rate_ratio": {
+          "decimal": 1.0672438257545007,
+          "denominator": 3870600060,
+          "numerator": 4130874016,
+          "reduced_denominator": 967650015,
+          "reduced_numerator": 1032718504
+        },
+        "both_complete_uncensored_observations": true,
+        "canonical_chain_growth_ratio": false,
+        "comparable": true,
+        "dimension": "arm",
+        "equal_B_complete_proof_ratio": {
+          "decimal": 1.0266666666666666,
+          "denominator": 75,
+          "numerator": 77,
+          "reduced_denominator": 75,
+          "reduced_numerator": 77
+        },
+        "equal_B_eventually_accepted_ratio": {
+          "decimal": 1.0666666666666667,
+          "denominator": 30,
+          "numerator": 32,
+          "reduced_denominator": 15,
+          "reduced_numerator": 16
+        },
+        "left_job": "miner.bank.paid-noise-screen.p1.4102.structure-paired",
+        "left_label": "structure-paired",
+        "matched_prefix_records": 76,
+        "overlapping_semantic_prefix_matches": true,
+        "reason": null,
+        "right_job": "miner.bank.paid-noise-screen.p1.4102.integer-paired-general",
+        "right_label": "integer-paired-general",
+        "same_complete_template_bank": true,
+        "same_paid_acquisition_history": true,
+        "setup_plus_miner_accepted_rate_ratio": {
+          "decimal": 1.1346513386865713,
+          "denominator": 4975142160,
+          "numerator": 5645051712,
+          "reduced_denominator": 103648795,
+          "reduced_numerator": 117605244
+        },
+        "unequal_record_counts_retained": true,
+        "universal_kappa_bound": false
+      },
+      {
+        "actual_miner_accepted_rate_ratio": {
+          "decimal": 0.6919945326775168,
+          "denominator": 2962061969,
+          "numerator": 2049730688,
+          "reduced_denominator": 2962061969,
+          "reduced_numerator": 2049730688
+        },
+        "both_complete_uncensored_observations": true,
+        "canonical_chain_growth_ratio": false,
+        "comparable": true,
+        "dimension": "arm",
+        "equal_B_complete_proof_ratio": {
+          "decimal": 0.7916666666666666,
+          "denominator": 48,
+          "numerator": 38,
+          "reduced_denominator": 24,
+          "reduced_numerator": 19
+        },
+        "equal_B_eventually_accepted_ratio": {
+          "decimal": 0.6956521739130435,
+          "denominator": 23,
+          "numerator": 16,
+          "reduced_denominator": 23,
+          "reduced_numerator": 16
+        },
+        "left_job": "miner.bank.paid-noise-screen.p4.4102.structure-paired",
+        "left_label": "structure-paired",
+        "matched_prefix_records": 38,
+        "overlapping_semantic_prefix_matches": true,
+        "reason": null,
+        "right_job": "miner.bank.paid-noise-screen.p4.4102.integer-paired-general",
+        "right_label": "integer-paired-general",
+        "same_complete_template_bank": true,
+        "same_paid_acquisition_history": true,
+        "setup_plus_miner_accepted_rate_ratio": {
+          "decimal": 0.6689562524279622,
+          "denominator": 5308914625,
+          "numerator": 3551431632,
+          "reduced_denominator": 758416375,
+          "reduced_numerator": 507347376
+        },
+        "unequal_record_counts_retained": true,
+        "universal_kappa_bound": false
+      }
+    ],
+    "cache": [
+      {
+        "actual_miner_accepted_rate_ratio": {
+          "decimal": 1.2543185904015808,
+          "denominator": 6046305929,
+          "numerator": 7583993930,
+          "reduced_denominator": 6046305929,
+          "reduced_numerator": 7583993930
+        },
+        "both_complete_uncensored_observations": true,
+        "canonical_chain_growth_ratio": false,
+        "comparable": true,
+        "dimension": "cache",
+        "equal_B_complete_proof_ratio": {
+          "decimal": 1.2241379310344827,
+          "denominator": 116,
+          "numerator": 142,
+          "reduced_denominator": 58,
+          "reduced_numerator": 71
+        },
+        "equal_B_eventually_accepted_ratio": {
+          "decimal": 1.2553191489361701,
+          "denominator": 47,
+          "numerator": 59,
+          "reduced_denominator": 47,
+          "reduced_numerator": 59
+        },
+        "left_job": "miner.fixed.maintenance-only.hot.4101.prepared-generic",
+        "left_label": "hot",
+        "matched_prefix_records": 117,
+        "overlapping_semantic_prefix_matches": true,
+        "reason": null,
+        "right_job": "miner.fixed.maintenance-only.cold.4101.prepared-generic",
+        "right_label": "cold",
+        "same_complete_template_bank": true,
+        "same_paid_acquisition_history": true,
+        "setup_plus_miner_accepted_rate_ratio": {
+          "decimal": 1.2485198679177065,
+          "denominator": 6724038597,
+          "numerator": 8395095781,
+          "reduced_denominator": 6724038597,
+          "reduced_numerator": 8395095781
+        },
+        "unequal_record_counts_retained": true,
+        "universal_kappa_bound": false
+      },
+      {
+        "actual_miner_accepted_rate_ratio": {
+          "decimal": 1.611363628382991,
+          "denominator": 5025225894,
+          "numerator": 8097466230,
+          "reduced_denominator": 837537649,
+          "reduced_numerator": 1349577705
+        },
+        "both_complete_uncensored_observations": true,
+        "canonical_chain_growth_ratio": false,
+        "comparable": true,
+        "dimension": "cache",
+        "equal_B_complete_proof_ratio": {
+          "decimal": 1.6304347826086956,
+          "denominator": 92,
+          "numerator": 150,
+          "reduced_denominator": 46,
+          "reduced_numerator": 75
+        },
+        "equal_B_eventually_accepted_ratio": {
+          "decimal": 1.6153846153846154,
+          "denominator": 39,
+          "numerator": 63,
+          "reduced_denominator": 13,
+          "reduced_numerator": 21
+        },
+        "left_job": "miner.fixed.maintenance-only.hot.4101.integer-paired-general",
+        "left_label": "hot",
+        "matched_prefix_records": 93,
+        "overlapping_semantic_prefix_matches": true,
+        "reason": null,
+        "right_job": "miner.fixed.maintenance-only.cold.4101.integer-paired-general",
+        "right_label": "cold",
+        "same_complete_template_bank": true,
+        "same_paid_acquisition_history": true,
+        "setup_plus_miner_accepted_rate_ratio": {
+          "decimal": 1.618786812631727,
+          "denominator": 5599749402,
+          "numerator": 9064800486,
+          "reduced_denominator": 311097189,
+          "reduced_numerator": 503600027
+        },
+        "unequal_record_counts_retained": true,
+        "universal_kappa_bound": false
+      },
+      {
+        "actual_miner_accepted_rate_ratio": {
+          "decimal": 1.070182941587972,
+          "denominator": 7462310102,
+          "numerator": 7986036976,
+          "reduced_denominator": 3731155051,
+          "reduced_numerator": 3993018488
+        },
+        "both_complete_uncensored_observations": true,
+        "canonical_chain_growth_ratio": false,
+        "comparable": true,
+        "dimension": "cache",
+        "equal_B_complete_proof_ratio": {
+          "decimal": 1.0425531914893618,
+          "denominator": 141,
+          "numerator": 147,
+          "reduced_denominator": 47,
+          "reduced_numerator": 49
+        },
+        "equal_B_eventually_accepted_ratio": {
+          "decimal": 1.0689655172413792,
+          "denominator": 58,
+          "numerator": 62,
+          "reduced_denominator": 29,
+          "reduced_numerator": 31
+        },
+        "left_job": "miner.fixed.maintenance-only.hot.4101.structure-specialized",
+        "left_label": "hot",
+        "matched_prefix_records": 142,
+        "overlapping_semantic_prefix_matches": true,
+        "reason": null,
+        "right_job": "miner.fixed.maintenance-only.cold.4101.structure-specialized",
+        "right_label": "cold",
+        "same_complete_template_bank": true,
+        "same_paid_acquisition_history": true,
+        "setup_plus_miner_accepted_rate_ratio": {
+          "decimal": 1.0722793421576906,
+          "denominator": 8278915360,
+          "numerator": 8877309916,
+          "reduced_denominator": 2069728840,
+          "reduced_numerator": 2219327479
+        },
+        "unequal_record_counts_retained": true,
+        "universal_kappa_bound": false
+      },
+      {
+        "actual_miner_accepted_rate_ratio": {
+          "decimal": 1.2323302457257392,
+          "denominator": 7171429440,
+          "numerator": 8837569404,
+          "reduced_denominator": 25983440,
+          "reduced_numerator": 32020179
+        },
+        "both_complete_uncensored_observations": true,
+        "canonical_chain_growth_ratio": false,
+        "comparable": true,
+        "dimension": "cache",
+        "equal_B_complete_proof_ratio": {
+          "decimal": 1.1470588235294117,
+          "denominator": 136,
+          "numerator": 156,
+          "reduced_denominator": 34,
+          "reduced_numerator": 39
+        },
+        "equal_B_eventually_accepted_ratio": {
+          "decimal": 1.2321428571428572,
+          "denominator": 56,
+          "numerator": 69,
+          "reduced_denominator": 56,
+          "reduced_numerator": 69
+        },
+        "left_job": "miner.fixed.maintenance-only.hot.4101.structure-paired",
+        "left_label": "hot",
+        "matched_prefix_records": 136,
+        "overlapping_semantic_prefix_matches": true,
+        "reason": null,
+        "right_job": "miner.fixed.maintenance-only.cold.4101.structure-paired",
+        "right_label": "cold",
+        "same_complete_template_bank": true,
+        "same_paid_acquisition_history": true,
+        "setup_plus_miner_accepted_rate_ratio": {
+          "decimal": 1.2175693734436914,
+          "denominator": 8101651152,
+          "numerator": 9864322317,
+          "reduced_denominator": 2700550384,
+          "reduced_numerator": 3288107439
+        },
+        "unequal_record_counts_retained": true,
+        "universal_kappa_bound": false
+      },
+      {
+        "actual_miner_accepted_rate_ratio": {
+          "decimal": 1.219165541431125,
+          "denominator": 6418878300,
+          "numerator": 7825675238,
+          "reduced_denominator": 3209439150,
+          "reduced_numerator": 3912837619
+        },
+        "both_complete_uncensored_observations": true,
+        "canonical_chain_growth_ratio": false,
+        "comparable": true,
+        "dimension": "cache",
+        "equal_B_complete_proof_ratio": {
+          "decimal": 1.2476190476190476,
+          "denominator": 105,
+          "numerator": 131,
+          "reduced_denominator": 105,
+          "reduced_numerator": 131
+        },
+        "equal_B_eventually_accepted_ratio": {
+          "decimal": 1.22,
+          "denominator": 50,
+          "numerator": 61,
+          "reduced_denominator": 50,
+          "reduced_numerator": 61
+        },
+        "left_job": "miner.fixed.zero-only.hot.4101.prepared-generic",
+        "left_label": "hot",
+        "matched_prefix_records": 106,
+        "overlapping_semantic_prefix_matches": true,
+        "reason": null,
+        "right_job": "miner.fixed.zero-only.cold.4101.prepared-generic",
+        "right_label": "cold",
+        "same_complete_template_bank": true,
+        "same_paid_acquisition_history": true,
+        "setup_plus_miner_accepted_rate_ratio": {
+          "decimal": 1.2505570108860427,
+          "denominator": 7683917150,
+          "numerator": 9609176463,
+          "reduced_denominator": 7683917150,
+          "reduced_numerator": 9609176463
+        },
+        "unequal_record_counts_retained": true,
+        "universal_kappa_bound": false
+      },
+      {
+        "actual_miner_accepted_rate_ratio": {
+          "decimal": 1.450995425724467,
+          "denominator": 7328353257,
+          "numerator": 10633407054,
+          "reduced_denominator": 2442784419,
+          "reduced_numerator": 3544469018
+        },
+        "both_complete_uncensored_observations": true,
+        "canonical_chain_growth_ratio": false,
+        "comparable": true,
+        "dimension": "cache",
+        "equal_B_complete_proof_ratio": {
+          "decimal": 1.4262295081967213,
+          "denominator": 122,
+          "numerator": 174,
+          "reduced_denominator": 61,
+          "reduced_numerator": 87
+        },
+        "equal_B_eventually_accepted_ratio": {
+          "decimal": 1.456140350877193,
+          "denominator": 57,
+          "numerator": 83,
+          "reduced_denominator": 57,
+          "reduced_numerator": 83
+        },
+        "left_job": "miner.fixed.zero-only.hot.4101.integer-paired-general",
+        "left_label": "hot",
+        "matched_prefix_records": 123,
+        "overlapping_semantic_prefix_matches": true,
+        "reason": null,
+        "right_job": "miner.fixed.zero-only.cold.4101.integer-paired-general",
+        "right_label": "cold",
+        "same_complete_template_bank": true,
+        "same_paid_acquisition_history": true,
+        "setup_plus_miner_accepted_rate_ratio": {
+          "decimal": 1.4701710478930816,
+          "denominator": 8654695263,
+          "numerator": 12723882404,
+          "reduced_denominator": 8654695263,
+          "reduced_numerator": 12723882404
+        },
+        "unequal_record_counts_retained": true,
+        "universal_kappa_bound": false
+      },
+      {
+        "actual_miner_accepted_rate_ratio": {
+          "decimal": 1.042152592545329,
+          "denominator": 9617448525,
+          "numerator": 10022848914,
+          "reduced_denominator": 3205816175,
+          "reduced_numerator": 3340949638
+        },
+        "both_complete_uncensored_observations": true,
+        "canonical_chain_growth_ratio": false,
+        "comparable": true,
+        "dimension": "cache",
+        "equal_B_complete_proof_ratio": {
+          "decimal": 1.0382165605095541,
+          "denominator": 157,
+          "numerator": 163,
+          "reduced_denominator": 157,
+          "reduced_numerator": 163
+        },
+        "equal_B_eventually_accepted_ratio": {
+          "decimal": 1.04,
+          "denominator": 75,
+          "numerator": 78,
+          "reduced_denominator": 25,
+          "reduced_numerator": 26
+        },
+        "left_job": "miner.fixed.zero-only.hot.4101.structure-specialized",
+        "left_label": "hot",
+        "matched_prefix_records": 158,
+        "overlapping_semantic_prefix_matches": true,
+        "reason": null,
+        "right_job": "miner.fixed.zero-only.cold.4101.structure-specialized",
+        "right_label": "cold",
+        "same_complete_template_bank": true,
+        "same_paid_acquisition_history": true,
+        "setup_plus_miner_accepted_rate_ratio": {
+          "decimal": 1.0692707546665126,
+          "denominator": 11461014375,
+          "numerator": 12254927490,
+          "reduced_denominator": 764067625,
+          "reduced_numerator": 816995166
+        },
+        "unequal_record_counts_retained": true,
+        "universal_kappa_bound": false
+      },
+      {
+        "actual_miner_accepted_rate_ratio": {
+          "decimal": 1.0295988931712172,
+          "denominator": 9237386088,
+          "numerator": 9510802492,
+          "reduced_denominator": 2309346522,
+          "reduced_numerator": 2377700623
+        },
+        "both_complete_uncensored_observations": true,
+        "canonical_chain_growth_ratio": false,
+        "comparable": true,
+        "dimension": "cache",
+        "equal_B_complete_proof_ratio": {
+          "decimal": 1.0413793103448277,
+          "denominator": 145,
+          "numerator": 151,
+          "reduced_denominator": 145,
+          "reduced_numerator": 151
+        },
+        "equal_B_eventually_accepted_ratio": {
+          "decimal": 1.0277777777777777,
+          "denominator": 72,
+          "numerator": 74,
+          "reduced_denominator": 36,
+          "reduced_numerator": 37
+        },
+        "left_job": "miner.fixed.zero-only.hot.4101.structure-paired",
+        "left_label": "hot",
+        "matched_prefix_records": 146,
+        "overlapping_semantic_prefix_matches": true,
+        "reason": null,
+        "right_job": "miner.fixed.zero-only.cold.4101.structure-paired",
+        "right_label": "cold",
+        "same_complete_template_bank": true,
+        "same_paid_acquisition_history": true,
+        "setup_plus_miner_accepted_rate_ratio": {
+          "decimal": 1.0363693451175506,
+          "denominator": 10961500536,
+          "numerator": 11360163132,
+          "reduced_denominator": 304486126,
+          "reduced_numerator": 315560087
+        },
+        "unequal_record_counts_retained": true,
+        "universal_kappa_bound": false
+      },
+      {
+        "actual_miner_accepted_rate_ratio": {
+          "decimal": 0.8619187338746387,
+          "denominator": 9362273944,
+          "numerator": 8069519304,
+          "reduced_denominator": 1170284243,
+          "reduced_numerator": 1008689913
+        },
+        "both_complete_uncensored_observations": true,
+        "canonical_chain_growth_ratio": false,
+        "comparable": true,
+        "dimension": "cache",
+        "equal_B_complete_proof_ratio": {
+          "decimal": 0.8811188811188811,
+          "denominator": 143,
+          "numerator": 126,
+          "reduced_denominator": 143,
+          "reduced_numerator": 126
+        },
+        "equal_B_eventually_accepted_ratio": {
+          "decimal": 0.863013698630137,
+          "denominator": 73,
+          "numerator": 63,
+          "reduced_denominator": 73,
+          "reduced_numerator": 63
+        },
+        "left_job": "miner.fixed.maintenance-only.hot.4102.structure-paired",
+        "left_label": "hot",
+        "matched_prefix_records": 127,
+        "overlapping_semantic_prefix_matches": true,
+        "reason": null,
+        "right_job": "miner.fixed.maintenance-only.cold.4102.structure-paired",
+        "right_label": "cold",
+        "same_complete_template_bank": true,
+        "same_paid_acquisition_history": true,
+        "setup_plus_miner_accepted_rate_ratio": {
+          "decimal": 0.8581343889183464,
+          "denominator": 10598008746,
+          "numerator": 9094515759,
+          "reduced_denominator": 3532669582,
+          "reduced_numerator": 3031505253
+        },
+        "unequal_record_counts_retained": true,
+        "universal_kappa_bound": false
+      },
+      {
+        "actual_miner_accepted_rate_ratio": {
+          "decimal": 1.022900227761862,
+          "denominator": 9652724475,
+          "numerator": 9873774064,
+          "reduced_denominator": 9652724475,
+          "reduced_numerator": 9873774064
+        },
+        "both_complete_uncensored_observations": true,
+        "canonical_chain_growth_ratio": false,
+        "comparable": true,
+        "dimension": "cache",
+        "equal_B_complete_proof_ratio": {
+          "decimal": 1.0272108843537415,
+          "denominator": 147,
+          "numerator": 151,
+          "reduced_denominator": 147,
+          "reduced_numerator": 151
+        },
+        "equal_B_eventually_accepted_ratio": {
+          "decimal": 1.0266666666666666,
+          "denominator": 75,
+          "numerator": 77,
+          "reduced_denominator": 75,
+          "reduced_numerator": 77
+        },
+        "left_job": "miner.fixed.maintenance-only.hot.4102.structure-specialized",
+        "left_label": "hot",
+        "matched_prefix_records": 148,
+        "overlapping_semantic_prefix_matches": true,
+        "reason": null,
+        "right_job": "miner.fixed.maintenance-only.cold.4102.structure-specialized",
+        "right_label": "cold",
+        "same_complete_template_bank": true,
+        "same_paid_acquisition_history": true,
+        "setup_plus_miner_accepted_rate_ratio": {
+          "decimal": 1.015870132546582,
+          "denominator": 10713931500,
+          "numerator": 10883963013,
+          "reduced_denominator": 3571310500,
+          "reduced_numerator": 3627987671
+        },
+        "unequal_record_counts_retained": true,
+        "universal_kappa_bound": false
+      },
+      {
+        "actual_miner_accepted_rate_ratio": {
+          "decimal": 1.2859724662806586,
+          "denominator": 7189944720,
+          "numerator": 9246070944,
+          "reduced_denominator": 149790515,
+          "reduced_numerator": 192626478
+        },
+        "both_complete_uncensored_observations": true,
+        "canonical_chain_growth_ratio": false,
+        "comparable": true,
+        "dimension": "cache",
+        "equal_B_complete_proof_ratio": {
+          "decimal": 1.2727272727272727,
+          "denominator": 110,
+          "numerator": 140,
+          "reduced_denominator": 11,
+          "reduced_numerator": 14
+        },
+        "equal_B_eventually_accepted_ratio": {
+          "decimal": 1.2857142857142858,
+          "denominator": 56,
+          "numerator": 72,
+          "reduced_denominator": 7,
+          "reduced_numerator": 9
+        },
+        "left_job": "miner.fixed.maintenance-only.hot.4102.integer-paired-general",
+        "left_label": "hot",
+        "matched_prefix_records": 111,
+        "overlapping_semantic_prefix_matches": true,
+        "reason": null,
+        "right_job": "miner.fixed.maintenance-only.cold.4102.integer-paired-general",
+        "right_label": "cold",
+        "same_complete_template_bank": true,
+        "same_paid_acquisition_history": true,
+        "setup_plus_miner_accepted_rate_ratio": {
+          "decimal": 1.2804280384936815,
+          "denominator": 8046461360,
+          "numerator": 10302914736,
+          "reduced_denominator": 502903835,
+          "reduced_numerator": 643932171
+        },
+        "unequal_record_counts_retained": true,
+        "universal_kappa_bound": false
+      },
+      {
+        "actual_miner_accepted_rate_ratio": {
+          "decimal": 1.4185211115397867,
+          "denominator": 6010057688,
+          "numerator": 8525393712,
+          "reduced_denominator": 751257211,
+          "reduced_numerator": 1065674214
+        },
+        "both_complete_uncensored_observations": true,
+        "canonical_chain_growth_ratio": false,
+        "comparable": true,
+        "dimension": "cache",
+        "equal_B_complete_proof_ratio": {
+          "decimal": 1.4606741573033708,
+          "denominator": 89,
+          "numerator": 130,
+          "reduced_denominator": 89,
+          "reduced_numerator": 130
+        },
+        "equal_B_eventually_accepted_ratio": {
+          "decimal": 1.434782608695652,
+          "denominator": 46,
+          "numerator": 66,
+          "reduced_denominator": 23,
+          "reduced_numerator": 33
+        },
+        "left_job": "miner.fixed.maintenance-only.hot.4102.prepared-generic",
+        "left_label": "hot",
+        "matched_prefix_records": 90,
+        "overlapping_semantic_prefix_matches": true,
+        "reason": null,
+        "right_job": "miner.fixed.maintenance-only.cold.4102.prepared-generic",
+        "right_label": "cold",
+        "same_complete_template_bank": true,
+        "same_paid_acquisition_history": true,
+        "setup_plus_miner_accepted_rate_ratio": {
+          "decimal": 1.4778948877458309,
+          "denominator": 6642171472,
+          "numerator": 9816431262,
+          "reduced_denominator": 3321085736,
+          "reduced_numerator": 4908215631
+        },
+        "unequal_record_counts_retained": true,
+        "universal_kappa_bound": false
+      },
+      {
+        "actual_miner_accepted_rate_ratio": {
+          "decimal": 0.7387121490523118,
+          "denominator": 8325330520,
+          "numerator": 6150022800,
+          "reduced_denominator": 208133263,
+          "reduced_numerator": 153750570
+        },
+        "both_complete_uncensored_observations": true,
+        "canonical_chain_growth_ratio": false,
+        "comparable": true,
+        "dimension": "cache",
+        "equal_B_complete_proof_ratio": {
+          "decimal": 0.7925925925925926,
+          "denominator": 135,
+          "numerator": 107,
+          "reduced_denominator": 135,
+          "reduced_numerator": 107
+        },
+        "equal_B_eventually_accepted_ratio": {
+          "decimal": 0.7384615384615385,
+          "denominator": 65,
+          "numerator": 48,
+          "reduced_denominator": 65,
+          "reduced_numerator": 48
+        },
+        "left_job": "miner.fixed.zero-only.hot.4102.structure-paired",
+        "left_label": "hot",
+        "matched_prefix_records": 107,
+        "overlapping_semantic_prefix_matches": true,
+        "reason": null,
+        "right_job": "miner.fixed.zero-only.cold.4102.structure-paired",
+        "right_label": "cold",
+        "same_complete_template_bank": true,
+        "same_paid_acquisition_history": true,
+        "setup_plus_miner_accepted_rate_ratio": {
+          "decimal": 0.7309805880112952,
+          "denominator": 10081677255,
+          "numerator": 7369510368,
+          "reduced_denominator": 3360559085,
+          "reduced_numerator": 2456503456
+        },
+        "unequal_record_counts_retained": true,
+        "universal_kappa_bound": false
+      },
+      {
+        "actual_miner_accepted_rate_ratio": {
+          "decimal": 1.2987232248990892,
+          "denominator": 6717699612,
+          "numerator": 8724432504,
+          "reduced_denominator": 559808301,
+          "reduced_numerator": 727036042
+        },
+        "both_complete_uncensored_observations": true,
+        "canonical_chain_growth_ratio": false,
+        "comparable": true,
+        "dimension": "cache",
+        "equal_B_complete_proof_ratio": {
+          "decimal": 1.2260869565217392,
+          "denominator": 115,
+          "numerator": 141,
+          "reduced_denominator": 115,
+          "reduced_numerator": 141
+        },
+        "equal_B_eventually_accepted_ratio": {
+          "decimal": 1.3076923076923077,
+          "denominator": 52,
+          "numerator": 68,
+          "reduced_denominator": 13,
+          "reduced_numerator": 17
+        },
+        "left_job": "miner.fixed.zero-only.hot.4102.structure-specialized",
+        "left_label": "hot",
+        "matched_prefix_records": 116,
+        "overlapping_semantic_prefix_matches": true,
+        "reason": null,
+        "right_job": "miner.fixed.zero-only.cold.4102.structure-specialized",
+        "right_label": "cold",
+        "same_complete_template_bank": true,
+        "same_paid_acquisition_history": true,
+        "setup_plus_miner_accepted_rate_ratio": {
+          "decimal": 1.3149102436930802,
+          "denominator": 8077422132,
+          "numerator": 10621085104,
+          "reduced_denominator": 2019355533,
+          "reduced_numerator": 2655271276
+        },
+        "unequal_record_counts_retained": true,
+        "universal_kappa_bound": false
+      },
+      {
+        "actual_miner_accepted_rate_ratio": {
+          "decimal": 1.2898993008405035,
+          "denominator": 4995521934,
+          "numerator": 6443720250,
+          "reduced_denominator": 832586989,
+          "reduced_numerator": 1073953375
+        },
+        "both_complete_uncensored_observations": true,
+        "canonical_chain_growth_ratio": false,
+        "comparable": true,
+        "dimension": "cache",
+        "equal_B_complete_proof_ratio": {
+          "decimal": 1.2758620689655173,
+          "denominator": 87,
+          "numerator": 111,
+          "reduced_denominator": 29,
+          "reduced_numerator": 37
+        },
+        "equal_B_eventually_accepted_ratio": {
+          "decimal": 1.2820512820512822,
+          "denominator": 39,
+          "numerator": 50,
+          "reduced_denominator": 39,
+          "reduced_numerator": 50
+        },
+        "left_job": "miner.fixed.zero-only.hot.4102.integer-paired-general",
+        "left_label": "hot",
+        "matched_prefix_records": 88,
+        "overlapping_semantic_prefix_matches": true,
+        "reason": null,
+        "right_job": "miner.fixed.zero-only.cold.4102.integer-paired-general",
+        "right_label": "cold",
+        "same_complete_template_bank": true,
+        "same_paid_acquisition_history": true,
+        "setup_plus_miner_accepted_rate_ratio": {
+          "decimal": 1.3285333362473633,
+          "denominator": 6226428780,
+          "numerator": 8272018200,
+          "reduced_denominator": 103773813,
+          "reduced_numerator": 137866970
+        },
+        "unequal_record_counts_retained": true,
+        "universal_kappa_bound": false
+      },
+      {
+        "actual_miner_accepted_rate_ratio": {
+          "decimal": 1.319218823825247,
+          "denominator": 5150084360,
+          "numerator": 6794088232,
+          "reduced_denominator": 643760545,
+          "reduced_numerator": 849261029
+        },
+        "both_complete_uncensored_observations": true,
+        "canonical_chain_growth_ratio": false,
+        "comparable": true,
+        "dimension": "cache",
+        "equal_B_complete_proof_ratio": {
+          "decimal": 1.3295454545454546,
+          "denominator": 88,
+          "numerator": 117,
+          "reduced_denominator": 88,
+          "reduced_numerator": 117
+        },
+        "equal_B_eventually_accepted_ratio": {
+          "decimal": 1.325,
+          "denominator": 40,
+          "numerator": 53,
+          "reduced_denominator": 40,
+          "reduced_numerator": 53
+        },
+        "left_job": "miner.fixed.zero-only.hot.4102.prepared-generic",
+        "left_label": "hot",
+        "matched_prefix_records": 89,
+        "overlapping_semantic_prefix_matches": true,
+        "reason": null,
+        "right_job": "miner.fixed.zero-only.cold.4102.prepared-generic",
+        "right_label": "cold",
+        "same_complete_template_bank": true,
+        "same_paid_acquisition_history": true,
+        "setup_plus_miner_accepted_rate_ratio": {
+          "decimal": 1.326652646360392,
+          "denominator": 6356646680,
+          "numerator": 8433062140,
+          "reduced_denominator": 317832334,
+          "reduced_numerator": 421653107
+        },
+        "unequal_record_counts_retained": true,
+        "universal_kappa_bound": false
+      },
+      {
+        "actual_miner_accepted_rate_ratio": {
+          "decimal": 1.450591923482498,
+          "denominator": 7606369798,
+          "numerator": 11033738596,
+          "reduced_denominator": 3803184899,
+          "reduced_numerator": 5516869298
+        },
+        "both_complete_uncensored_observations": true,
+        "canonical_chain_growth_ratio": false,
+        "comparable": true,
+        "dimension": "cache",
+        "equal_B_complete_proof_ratio": {
+          "decimal": 1.6122448979591837,
+          "denominator": 98,
+          "numerator": 158,
+          "reduced_denominator": 49,
+          "reduced_numerator": 79
+        },
+        "equal_B_eventually_accepted_ratio": {
+          "decimal": 1.4576271186440677,
+          "denominator": 59,
+          "numerator": 86,
+          "reduced_denominator": 59,
+          "reduced_numerator": 86
+        },
+        "left_job": "miner.shared.maintenance-only.hot.4101",
+        "left_label": "hot",
+        "matched_prefix_records": 99,
+        "overlapping_semantic_prefix_matches": true,
+        "reason": null,
+        "right_job": "miner.shared.maintenance-only.cold.4101",
+        "right_label": "cold",
+        "same_complete_template_bank": true,
+        "same_paid_acquisition_history": true,
+        "setup_plus_miner_accepted_rate_ratio": {
+          "decimal": 1.573236993387858,
+          "denominator": 9532137704,
+          "numerator": 14996311662,
+          "reduced_denominator": 4766068852,
+          "reduced_numerator": 7498155831
+        },
+        "unequal_record_counts_retained": true,
+        "universal_kappa_bound": false
+      },
+      {
+        "actual_miner_accepted_rate_ratio": {
+          "decimal": 0.8002566032177831,
+          "denominator": 8997642430,
+          "numerator": 7200422768,
+          "reduced_denominator": 642688745,
+          "reduced_numerator": 514315912
+        },
+        "both_complete_uncensored_observations": true,
+        "canonical_chain_growth_ratio": false,
+        "comparable": true,
+        "dimension": "cache",
+        "equal_B_complete_proof_ratio": {
+          "decimal": 0.823943661971831,
+          "denominator": 142,
+          "numerator": 117,
+          "reduced_denominator": 142,
+          "reduced_numerator": 117
+        },
+        "equal_B_eventually_accepted_ratio": {
+          "decimal": 0.8,
+          "denominator": 70,
+          "numerator": 56,
+          "reduced_denominator": 5,
+          "reduced_numerator": 4
+        },
+        "left_job": "miner.shared.zero-only.hot.4101",
+        "left_label": "hot",
+        "matched_prefix_records": 118,
+        "overlapping_semantic_prefix_matches": true,
+        "reason": null,
+        "right_job": "miner.shared.zero-only.cold.4101",
+        "right_label": "cold",
+        "same_complete_template_bank": true,
+        "same_paid_acquisition_history": true,
+        "setup_plus_miner_accepted_rate_ratio": {
+          "decimal": 0.7648197650520109,
+          "denominator": 11819587010,
+          "numerator": 9039853760,
+          "reduced_denominator": 168851243,
+          "reduced_numerator": 129140768
+        },
+        "unequal_record_counts_retained": true,
+        "universal_kappa_bound": false
+      }
+    ]
+  },
+  "reference_acquisition": "selective",
+  "reference_arm": "integer-paired-general",
+  "reference_cache": "cold",
+  "schema": "pon-w1-miner-resource-comparison-projection-v1",
+  "source": {
+    "branch": "feature/chain-w1-cost-research-20261025",
+    "head": "42bea72eb74409d72d580dad9bde08c1bce3f8f2",
+    "status": "",
+    "tree": "070942d172e3fa87e657a24b2bae7c5a6c43ce37"
+  },
+  "statistics": {
+    "acquisition": {
+      "actual_miner_accepted_rate_ratio": {
+        "above_one": 0,
+        "below_one": 0,
+        "comparable": 0,
+        "equal_one": 0,
+        "maximum": null,
+        "minimum": null
+      },
+      "equal_B_complete_proof_ratio": {
+        "above_one": 0,
+        "below_one": 0,
+        "comparable": 0,
+        "equal_one": 0,
+        "maximum": null,
+        "minimum": null
+      },
+      "equal_B_eventually_accepted_ratio": {
+        "above_one": 0,
+        "below_one": 0,
+        "comparable": 0,
+        "equal_one": 0,
+        "maximum": null,
+        "minimum": null
+      },
+      "setup_plus_miner_accepted_rate_ratio": {
+        "above_one": 0,
+        "below_one": 0,
+        "comparable": 0,
+        "equal_one": 0,
+        "maximum": null,
+        "minimum": null
+      }
+    },
+    "arm": {
+      "actual_miner_accepted_rate_ratio": {
+        "above_one": 18,
+        "below_one": 14,
+        "comparable": 32,
+        "equal_one": 0,
+        "maximum": 1.6764088094112433,
+        "minimum": 0.6919945326775168
+      },
+      "equal_B_complete_proof_ratio": {
+        "above_one": 18,
+        "below_one": 14,
+        "comparable": 32,
+        "equal_one": 0,
+        "maximum": 1.5517241379310345,
+        "minimum": 0.7528735632183908
+      },
+      "equal_B_eventually_accepted_ratio": {
+        "above_one": 18,
+        "below_one": 14,
+        "comparable": 32,
+        "equal_one": 0,
+        "maximum": 1.6666666666666667,
+        "minimum": 0.6956521739130435
+      },
+      "setup_plus_miner_accepted_rate_ratio": {
+        "above_one": 17,
+        "below_one": 15,
+        "comparable": 32,
+        "equal_one": 0,
+        "maximum": 1.7959441617003775,
+        "minimum": 0.6689562524279622
+      }
+    },
+    "cache": {
+      "actual_miner_accepted_rate_ratio": {
+        "above_one": 15,
+        "below_one": 3,
+        "comparable": 18,
+        "equal_one": 0,
+        "maximum": 1.611363628382991,
+        "minimum": 0.7387121490523118
+      },
+      "equal_B_complete_proof_ratio": {
+        "above_one": 15,
+        "below_one": 3,
+        "comparable": 18,
+        "equal_one": 0,
+        "maximum": 1.6304347826086956,
+        "minimum": 0.7925925925925926
+      },
+      "equal_B_eventually_accepted_ratio": {
+        "above_one": 15,
+        "below_one": 3,
+        "comparable": 18,
+        "equal_one": 0,
+        "maximum": 1.6153846153846154,
+        "minimum": 0.7384615384615385
+      },
+      "setup_plus_miner_accepted_rate_ratio": {
+        "above_one": 15,
+        "below_one": 3,
+        "comparable": 18,
+        "equal_one": 0,
+        "maximum": 1.618786812631727,
+        "minimum": 0.7309805880112952
+      }
+    }
+  },
+  "universal_kappa_bound_established": false
+}

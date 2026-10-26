@@ -1,0 +1,1309 @@
+{
+  "chain": {
+    "O03_closed": false,
+    "actual_W1_resource_bound_established": false,
+    "all_adversarial_network_security_established": false,
+    "conditional_adaptive_lead_control": {
+      "actual_Node_settlement_coupling_established": false,
+      "exact_crossing_probability": {
+        "decimal_rounded_for_display": "0.02625313",
+        "denominator": 100000000,
+        "numerator": 2625313
+      },
+      "hurdle": 4,
+      "rounds": 8,
+      "step_mgf_values": [
+        {
+          "decimal_rounded_for_display": "1",
+          "denominator": 1,
+          "numerator": 1
+        },
+        {
+          "decimal_rounded_for_display": "0.925",
+          "denominator": 40,
+          "numerator": 37
+        }
+      ],
+      "ville_upper_bound": {
+        "decimal_rounded_for_display": "0.197530864197530864197530864197530864197530864",
+        "denominator": 81,
+        "numerator": 16
+      },
+      "z": {
+        "decimal_rounded_for_display": "1.5",
+        "denominator": 2,
+        "numerator": 3
+      }
+    },
+    "executable_control_limits": {
+      "adaptive_rounds": 12,
+      "honest_wait_blocks": 512,
+      "lead_hurdle_or_bank": 4096,
+      "lead_weights": 4096,
+      "limits_are_not_protocol_rules": true,
+      "private_initial_bank": 2048
+    },
+    "fixed_target_rate_sensitivity": [
+      {
+        "adversary_rate": {
+          "decimal_rounded_for_display": "0.0366666666666666666666666666666666666666666667",
+          "denominator": 300,
+          "numerator": 11
+        },
+        "effective_share": {
+          "decimal_rounded_for_display": "0.354838709677419354838709677419354838709677419",
+          "denominator": 31,
+          "numerator": 11
+        },
+        "fixed_target_model_feasible": true,
+        "honest_rate": {
+          "decimal_rounded_for_display": "0.0666666666666666666666666666666666666666666667",
+          "denominator": 15,
+          "numerator": 1
+        },
+        "kappa_assumed": {
+          "decimal_rounded_for_display": "1.1",
+          "denominator": 10,
+          "numerator": 11
+        },
+        "margin": {
+          "decimal_rounded_for_display": "0.03",
+          "denominator": 100,
+          "numerator": 3
+        },
+        "pacer_rate": {
+          "decimal_rounded_for_display": "0.0666666666666666666666666666666666666666666667",
+          "denominator": 15,
+          "numerator": 1
+        },
+        "raw_resource_fraction": {
+          "decimal_rounded_for_display": "0.333333333333333333333333333333333333333333333",
+          "denominator": 3,
+          "numerator": 1
+        },
+        "reference_hit_rate_per_second_assumed": {
+          "decimal_rounded_for_display": "0.1",
+          "denominator": 10,
+          "numerator": 1
+        },
+        "status": "strictly-inside",
+        "strict_kappa_ceiling": {
+          "decimal_rounded_for_display": "2",
+          "denominator": 1,
+          "numerator": 2
+        },
+        "validated_delay_seconds_assumed": {
+          "decimal_rounded_for_display": "0",
+          "denominator": 1,
+          "numerator": 0
+        }
+      },
+      {
+        "adversary_rate": {
+          "decimal_rounded_for_display": "0.0366666666666666666666666666666666666666666667",
+          "denominator": 300,
+          "numerator": 11
+        },
+        "effective_share": {
+          "decimal_rounded_for_display": "0.354838709677419354838709677419354838709677419",
+          "denominator": 31,
+          "numerator": 11
+        },
+        "fixed_target_model_feasible": true,
+        "honest_rate": {
+          "decimal_rounded_for_display": "0.0666666666666666666666666666666666666666666667",
+          "denominator": 15,
+          "numerator": 1
+        },
+        "kappa_assumed": {
+          "decimal_rounded_for_display": "1.1",
+          "denominator": 10,
+          "numerator": 11
+        },
+        "margin": {
+          "decimal_rounded_for_display": "0.0258333333333333333333333333333333333333333333",
+          "denominator": 1200,
+          "numerator": 31
+        },
+        "pacer_rate": {
+          "decimal_rounded_for_display": "0.0625",
+          "denominator": 16,
+          "numerator": 1
+        },
+        "raw_resource_fraction": {
+          "decimal_rounded_for_display": "0.333333333333333333333333333333333333333333333",
+          "denominator": 3,
+          "numerator": 1
+        },
+        "reference_hit_rate_per_second_assumed": {
+          "decimal_rounded_for_display": "0.1",
+          "denominator": 10,
+          "numerator": 1
+        },
+        "status": "strictly-inside",
+        "strict_kappa_ceiling": {
+          "decimal_rounded_for_display": "1.875",
+          "denominator": 8,
+          "numerator": 15
+        },
+        "validated_delay_seconds_assumed": {
+          "decimal_rounded_for_display": "1",
+          "denominator": 1,
+          "numerator": 1
+        }
+      },
+      {
+        "adversary_rate": {
+          "decimal_rounded_for_display": "0.0366666666666666666666666666666666666666666667",
+          "denominator": 300,
+          "numerator": 11
+        },
+        "effective_share": {
+          "decimal_rounded_for_display": "0.354838709677419354838709677419354838709677419",
+          "denominator": 31,
+          "numerator": 11
+        },
+        "fixed_target_model_feasible": true,
+        "honest_rate": {
+          "decimal_rounded_for_display": "0.0666666666666666666666666666666666666666666667",
+          "denominator": 15,
+          "numerator": 1
+        },
+        "kappa_assumed": {
+          "decimal_rounded_for_display": "1.1",
+          "denominator": 10,
+          "numerator": 11
+        },
+        "margin": {
+          "decimal_rounded_for_display": "0.00333333333333333333333333333333333333333333333",
+          "denominator": 300,
+          "numerator": 1
+        },
+        "pacer_rate": {
+          "decimal_rounded_for_display": "0.04",
+          "denominator": 25,
+          "numerator": 1
+        },
+        "raw_resource_fraction": {
+          "decimal_rounded_for_display": "0.333333333333333333333333333333333333333333333",
+          "denominator": 3,
+          "numerator": 1
+        },
+        "reference_hit_rate_per_second_assumed": {
+          "decimal_rounded_for_display": "0.1",
+          "denominator": 10,
+          "numerator": 1
+        },
+        "status": "strictly-inside",
+        "strict_kappa_ceiling": {
+          "decimal_rounded_for_display": "1.2",
+          "denominator": 5,
+          "numerator": 6
+        },
+        "validated_delay_seconds_assumed": {
+          "decimal_rounded_for_display": "10",
+          "denominator": 1,
+          "numerator": 10
+        }
+      },
+      {
+        "adversary_rate": {
+          "decimal_rounded_for_display": "0.0366666666666666666666666666666666666666666667",
+          "denominator": 300,
+          "numerator": 11
+        },
+        "effective_share": {
+          "decimal_rounded_for_display": "0.354838709677419354838709677419354838709677419",
+          "denominator": 31,
+          "numerator": 11
+        },
+        "fixed_target_model_feasible": false,
+        "honest_rate": {
+          "decimal_rounded_for_display": "0.0666666666666666666666666666666666666666666667",
+          "denominator": 15,
+          "numerator": 1
+        },
+        "kappa_assumed": {
+          "decimal_rounded_for_display": "1.1",
+          "denominator": 10,
+          "numerator": 11
+        },
+        "margin": {
+          "decimal_rounded_for_display": "-0.00809523809523809523809523809523809523809523810",
+          "denominator": 2100,
+          "numerator": -17
+        },
+        "pacer_rate": {
+          "decimal_rounded_for_display": "0.0285714285714285714285714285714285714285714286",
+          "denominator": 35,
+          "numerator": 1
+        },
+        "raw_resource_fraction": {
+          "decimal_rounded_for_display": "0.333333333333333333333333333333333333333333333",
+          "denominator": 3,
+          "numerator": 1
+        },
+        "reference_hit_rate_per_second_assumed": {
+          "decimal_rounded_for_display": "0.1",
+          "denominator": 10,
+          "numerator": 1
+        },
+        "status": "outside",
+        "strict_kappa_ceiling": {
+          "decimal_rounded_for_display": "0.857142857142857142857142857142857142857142857",
+          "denominator": 7,
+          "numerator": 6
+        },
+        "validated_delay_seconds_assumed": {
+          "decimal_rounded_for_display": "20",
+          "denominator": 1,
+          "numerator": 20
+        }
+      },
+      {
+        "adversary_rate": {
+          "decimal_rounded_for_display": "0.0416666666666666666666666666666666666666666667",
+          "denominator": 24,
+          "numerator": 1
+        },
+        "effective_share": {
+          "decimal_rounded_for_display": "0.384615384615384615384615384615384615384615385",
+          "denominator": 13,
+          "numerator": 5
+        },
+        "fixed_target_model_feasible": true,
+        "honest_rate": {
+          "decimal_rounded_for_display": "0.0666666666666666666666666666666666666666666667",
+          "denominator": 15,
+          "numerator": 1
+        },
+        "kappa_assumed": {
+          "decimal_rounded_for_display": "1.25",
+          "denominator": 4,
+          "numerator": 5
+        },
+        "margin": {
+          "decimal_rounded_for_display": "0.025",
+          "denominator": 40,
+          "numerator": 1
+        },
+        "pacer_rate": {
+          "decimal_rounded_for_display": "0.0666666666666666666666666666666666666666666667",
+          "denominator": 15,
+          "numerator": 1
+        },
+        "raw_resource_fraction": {
+          "decimal_rounded_for_display": "0.333333333333333333333333333333333333333333333",
+          "denominator": 3,
+          "numerator": 1
+        },
+        "reference_hit_rate_per_second_assumed": {
+          "decimal_rounded_for_display": "0.1",
+          "denominator": 10,
+          "numerator": 1
+        },
+        "status": "strictly-inside",
+        "strict_kappa_ceiling": {
+          "decimal_rounded_for_display": "2",
+          "denominator": 1,
+          "numerator": 2
+        },
+        "validated_delay_seconds_assumed": {
+          "decimal_rounded_for_display": "0",
+          "denominator": 1,
+          "numerator": 0
+        }
+      },
+      {
+        "adversary_rate": {
+          "decimal_rounded_for_display": "0.0416666666666666666666666666666666666666666667",
+          "denominator": 24,
+          "numerator": 1
+        },
+        "effective_share": {
+          "decimal_rounded_for_display": "0.384615384615384615384615384615384615384615385",
+          "denominator": 13,
+          "numerator": 5
+        },
+        "fixed_target_model_feasible": true,
+        "honest_rate": {
+          "decimal_rounded_for_display": "0.0666666666666666666666666666666666666666666667",
+          "denominator": 15,
+          "numerator": 1
+        },
+        "kappa_assumed": {
+          "decimal_rounded_for_display": "1.25",
+          "denominator": 4,
+          "numerator": 5
+        },
+        "margin": {
+          "decimal_rounded_for_display": "0.0208333333333333333333333333333333333333333333",
+          "denominator": 48,
+          "numerator": 1
+        },
+        "pacer_rate": {
+          "decimal_rounded_for_display": "0.0625",
+          "denominator": 16,
+          "numerator": 1
+        },
+        "raw_resource_fraction": {
+          "decimal_rounded_for_display": "0.333333333333333333333333333333333333333333333",
+          "denominator": 3,
+          "numerator": 1
+        },
+        "reference_hit_rate_per_second_assumed": {
+          "decimal_rounded_for_display": "0.1",
+          "denominator": 10,
+          "numerator": 1
+        },
+        "status": "strictly-inside",
+        "strict_kappa_ceiling": {
+          "decimal_rounded_for_display": "1.875",
+          "denominator": 8,
+          "numerator": 15
+        },
+        "validated_delay_seconds_assumed": {
+          "decimal_rounded_for_display": "1",
+          "denominator": 1,
+          "numerator": 1
+        }
+      },
+      {
+        "adversary_rate": {
+          "decimal_rounded_for_display": "0.0416666666666666666666666666666666666666666667",
+          "denominator": 24,
+          "numerator": 1
+        },
+        "effective_share": {
+          "decimal_rounded_for_display": "0.384615384615384615384615384615384615384615385",
+          "denominator": 13,
+          "numerator": 5
+        },
+        "fixed_target_model_feasible": false,
+        "honest_rate": {
+          "decimal_rounded_for_display": "0.0666666666666666666666666666666666666666666667",
+          "denominator": 15,
+          "numerator": 1
+        },
+        "kappa_assumed": {
+          "decimal_rounded_for_display": "1.25",
+          "denominator": 4,
+          "numerator": 5
+        },
+        "margin": {
+          "decimal_rounded_for_display": "-0.00166666666666666666666666666666666666666666667",
+          "denominator": 600,
+          "numerator": -1
+        },
+        "pacer_rate": {
+          "decimal_rounded_for_display": "0.04",
+          "denominator": 25,
+          "numerator": 1
+        },
+        "raw_resource_fraction": {
+          "decimal_rounded_for_display": "0.333333333333333333333333333333333333333333333",
+          "denominator": 3,
+          "numerator": 1
+        },
+        "reference_hit_rate_per_second_assumed": {
+          "decimal_rounded_for_display": "0.1",
+          "denominator": 10,
+          "numerator": 1
+        },
+        "status": "outside",
+        "strict_kappa_ceiling": {
+          "decimal_rounded_for_display": "1.2",
+          "denominator": 5,
+          "numerator": 6
+        },
+        "validated_delay_seconds_assumed": {
+          "decimal_rounded_for_display": "10",
+          "denominator": 1,
+          "numerator": 10
+        }
+      },
+      {
+        "adversary_rate": {
+          "decimal_rounded_for_display": "0.0416666666666666666666666666666666666666666667",
+          "denominator": 24,
+          "numerator": 1
+        },
+        "effective_share": {
+          "decimal_rounded_for_display": "0.384615384615384615384615384615384615384615385",
+          "denominator": 13,
+          "numerator": 5
+        },
+        "fixed_target_model_feasible": false,
+        "honest_rate": {
+          "decimal_rounded_for_display": "0.0666666666666666666666666666666666666666666667",
+          "denominator": 15,
+          "numerator": 1
+        },
+        "kappa_assumed": {
+          "decimal_rounded_for_display": "1.25",
+          "denominator": 4,
+          "numerator": 5
+        },
+        "margin": {
+          "decimal_rounded_for_display": "-0.0130952380952380952380952380952380952380952381",
+          "denominator": 840,
+          "numerator": -11
+        },
+        "pacer_rate": {
+          "decimal_rounded_for_display": "0.0285714285714285714285714285714285714285714286",
+          "denominator": 35,
+          "numerator": 1
+        },
+        "raw_resource_fraction": {
+          "decimal_rounded_for_display": "0.333333333333333333333333333333333333333333333",
+          "denominator": 3,
+          "numerator": 1
+        },
+        "reference_hit_rate_per_second_assumed": {
+          "decimal_rounded_for_display": "0.1",
+          "denominator": 10,
+          "numerator": 1
+        },
+        "status": "outside",
+        "strict_kappa_ceiling": {
+          "decimal_rounded_for_display": "0.857142857142857142857142857142857142857142857",
+          "denominator": 7,
+          "numerator": 6
+        },
+        "validated_delay_seconds_assumed": {
+          "decimal_rounded_for_display": "20",
+          "denominator": 1,
+          "numerator": 20
+        }
+      },
+      {
+        "adversary_rate": {
+          "decimal_rounded_for_display": "0.0666666666666666666666666666666666666666666667",
+          "denominator": 15,
+          "numerator": 1
+        },
+        "effective_share": {
+          "decimal_rounded_for_display": "0.5",
+          "denominator": 2,
+          "numerator": 1
+        },
+        "fixed_target_model_feasible": false,
+        "honest_rate": {
+          "decimal_rounded_for_display": "0.0666666666666666666666666666666666666666666667",
+          "denominator": 15,
+          "numerator": 1
+        },
+        "kappa_assumed": {
+          "decimal_rounded_for_display": "2",
+          "denominator": 1,
+          "numerator": 2
+        },
+        "margin": {
+          "decimal_rounded_for_display": "0",
+          "denominator": 1,
+          "numerator": 0
+        },
+        "pacer_rate": {
+          "decimal_rounded_for_display": "0.0666666666666666666666666666666666666666666667",
+          "denominator": 15,
+          "numerator": 1
+        },
+        "raw_resource_fraction": {
+          "decimal_rounded_for_display": "0.333333333333333333333333333333333333333333333",
+          "denominator": 3,
+          "numerator": 1
+        },
+        "reference_hit_rate_per_second_assumed": {
+          "decimal_rounded_for_display": "0.1",
+          "denominator": 10,
+          "numerator": 1
+        },
+        "status": "boundary",
+        "strict_kappa_ceiling": {
+          "decimal_rounded_for_display": "2",
+          "denominator": 1,
+          "numerator": 2
+        },
+        "validated_delay_seconds_assumed": {
+          "decimal_rounded_for_display": "0",
+          "denominator": 1,
+          "numerator": 0
+        }
+      },
+      {
+        "adversary_rate": {
+          "decimal_rounded_for_display": "0.0666666666666666666666666666666666666666666667",
+          "denominator": 15,
+          "numerator": 1
+        },
+        "effective_share": {
+          "decimal_rounded_for_display": "0.5",
+          "denominator": 2,
+          "numerator": 1
+        },
+        "fixed_target_model_feasible": false,
+        "honest_rate": {
+          "decimal_rounded_for_display": "0.0666666666666666666666666666666666666666666667",
+          "denominator": 15,
+          "numerator": 1
+        },
+        "kappa_assumed": {
+          "decimal_rounded_for_display": "2",
+          "denominator": 1,
+          "numerator": 2
+        },
+        "margin": {
+          "decimal_rounded_for_display": "-0.00416666666666666666666666666666666666666666667",
+          "denominator": 240,
+          "numerator": -1
+        },
+        "pacer_rate": {
+          "decimal_rounded_for_display": "0.0625",
+          "denominator": 16,
+          "numerator": 1
+        },
+        "raw_resource_fraction": {
+          "decimal_rounded_for_display": "0.333333333333333333333333333333333333333333333",
+          "denominator": 3,
+          "numerator": 1
+        },
+        "reference_hit_rate_per_second_assumed": {
+          "decimal_rounded_for_display": "0.1",
+          "denominator": 10,
+          "numerator": 1
+        },
+        "status": "outside",
+        "strict_kappa_ceiling": {
+          "decimal_rounded_for_display": "1.875",
+          "denominator": 8,
+          "numerator": 15
+        },
+        "validated_delay_seconds_assumed": {
+          "decimal_rounded_for_display": "1",
+          "denominator": 1,
+          "numerator": 1
+        }
+      },
+      {
+        "adversary_rate": {
+          "decimal_rounded_for_display": "0.0666666666666666666666666666666666666666666667",
+          "denominator": 15,
+          "numerator": 1
+        },
+        "effective_share": {
+          "decimal_rounded_for_display": "0.5",
+          "denominator": 2,
+          "numerator": 1
+        },
+        "fixed_target_model_feasible": false,
+        "honest_rate": {
+          "decimal_rounded_for_display": "0.0666666666666666666666666666666666666666666667",
+          "denominator": 15,
+          "numerator": 1
+        },
+        "kappa_assumed": {
+          "decimal_rounded_for_display": "2",
+          "denominator": 1,
+          "numerator": 2
+        },
+        "margin": {
+          "decimal_rounded_for_display": "-0.0266666666666666666666666666666666666666666667",
+          "denominator": 75,
+          "numerator": -2
+        },
+        "pacer_rate": {
+          "decimal_rounded_for_display": "0.04",
+          "denominator": 25,
+          "numerator": 1
+        },
+        "raw_resource_fraction": {
+          "decimal_rounded_for_display": "0.333333333333333333333333333333333333333333333",
+          "denominator": 3,
+          "numerator": 1
+        },
+        "reference_hit_rate_per_second_assumed": {
+          "decimal_rounded_for_display": "0.1",
+          "denominator": 10,
+          "numerator": 1
+        },
+        "status": "outside",
+        "strict_kappa_ceiling": {
+          "decimal_rounded_for_display": "1.2",
+          "denominator": 5,
+          "numerator": 6
+        },
+        "validated_delay_seconds_assumed": {
+          "decimal_rounded_for_display": "10",
+          "denominator": 1,
+          "numerator": 10
+        }
+      },
+      {
+        "adversary_rate": {
+          "decimal_rounded_for_display": "0.0666666666666666666666666666666666666666666667",
+          "denominator": 15,
+          "numerator": 1
+        },
+        "effective_share": {
+          "decimal_rounded_for_display": "0.5",
+          "denominator": 2,
+          "numerator": 1
+        },
+        "fixed_target_model_feasible": false,
+        "honest_rate": {
+          "decimal_rounded_for_display": "0.0666666666666666666666666666666666666666666667",
+          "denominator": 15,
+          "numerator": 1
+        },
+        "kappa_assumed": {
+          "decimal_rounded_for_display": "2",
+          "denominator": 1,
+          "numerator": 2
+        },
+        "margin": {
+          "decimal_rounded_for_display": "-0.0380952380952380952380952380952380952380952381",
+          "denominator": 105,
+          "numerator": -4
+        },
+        "pacer_rate": {
+          "decimal_rounded_for_display": "0.0285714285714285714285714285714285714285714286",
+          "denominator": 35,
+          "numerator": 1
+        },
+        "raw_resource_fraction": {
+          "decimal_rounded_for_display": "0.333333333333333333333333333333333333333333333",
+          "denominator": 3,
+          "numerator": 1
+        },
+        "reference_hit_rate_per_second_assumed": {
+          "decimal_rounded_for_display": "0.1",
+          "denominator": 10,
+          "numerator": 1
+        },
+        "status": "outside",
+        "strict_kappa_ceiling": {
+          "decimal_rounded_for_display": "0.857142857142857142857142857142857142857142857",
+          "denominator": 7,
+          "numerator": 6
+        },
+        "validated_delay_seconds_assumed": {
+          "decimal_rounded_for_display": "20",
+          "denominator": 1,
+          "numerator": 20
+        }
+      },
+      {
+        "adversary_rate": {
+          "decimal_rounded_for_display": "0.133333333333333333333333333333333333333333333",
+          "denominator": 15,
+          "numerator": 2
+        },
+        "effective_share": {
+          "decimal_rounded_for_display": "0.666666666666666666666666666666666666666666667",
+          "denominator": 3,
+          "numerator": 2
+        },
+        "fixed_target_model_feasible": false,
+        "honest_rate": {
+          "decimal_rounded_for_display": "0.0666666666666666666666666666666666666666666667",
+          "denominator": 15,
+          "numerator": 1
+        },
+        "kappa_assumed": {
+          "decimal_rounded_for_display": "4",
+          "denominator": 1,
+          "numerator": 4
+        },
+        "margin": {
+          "decimal_rounded_for_display": "-0.0666666666666666666666666666666666666666666667",
+          "denominator": 15,
+          "numerator": -1
+        },
+        "pacer_rate": {
+          "decimal_rounded_for_display": "0.0666666666666666666666666666666666666666666667",
+          "denominator": 15,
+          "numerator": 1
+        },
+        "raw_resource_fraction": {
+          "decimal_rounded_for_display": "0.333333333333333333333333333333333333333333333",
+          "denominator": 3,
+          "numerator": 1
+        },
+        "reference_hit_rate_per_second_assumed": {
+          "decimal_rounded_for_display": "0.1",
+          "denominator": 10,
+          "numerator": 1
+        },
+        "status": "outside",
+        "strict_kappa_ceiling": {
+          "decimal_rounded_for_display": "2",
+          "denominator": 1,
+          "numerator": 2
+        },
+        "validated_delay_seconds_assumed": {
+          "decimal_rounded_for_display": "0",
+          "denominator": 1,
+          "numerator": 0
+        }
+      },
+      {
+        "adversary_rate": {
+          "decimal_rounded_for_display": "0.133333333333333333333333333333333333333333333",
+          "denominator": 15,
+          "numerator": 2
+        },
+        "effective_share": {
+          "decimal_rounded_for_display": "0.666666666666666666666666666666666666666666667",
+          "denominator": 3,
+          "numerator": 2
+        },
+        "fixed_target_model_feasible": false,
+        "honest_rate": {
+          "decimal_rounded_for_display": "0.0666666666666666666666666666666666666666666667",
+          "denominator": 15,
+          "numerator": 1
+        },
+        "kappa_assumed": {
+          "decimal_rounded_for_display": "4",
+          "denominator": 1,
+          "numerator": 4
+        },
+        "margin": {
+          "decimal_rounded_for_display": "-0.0708333333333333333333333333333333333333333333",
+          "denominator": 240,
+          "numerator": -17
+        },
+        "pacer_rate": {
+          "decimal_rounded_for_display": "0.0625",
+          "denominator": 16,
+          "numerator": 1
+        },
+        "raw_resource_fraction": {
+          "decimal_rounded_for_display": "0.333333333333333333333333333333333333333333333",
+          "denominator": 3,
+          "numerator": 1
+        },
+        "reference_hit_rate_per_second_assumed": {
+          "decimal_rounded_for_display": "0.1",
+          "denominator": 10,
+          "numerator": 1
+        },
+        "status": "outside",
+        "strict_kappa_ceiling": {
+          "decimal_rounded_for_display": "1.875",
+          "denominator": 8,
+          "numerator": 15
+        },
+        "validated_delay_seconds_assumed": {
+          "decimal_rounded_for_display": "1",
+          "denominator": 1,
+          "numerator": 1
+        }
+      },
+      {
+        "adversary_rate": {
+          "decimal_rounded_for_display": "0.133333333333333333333333333333333333333333333",
+          "denominator": 15,
+          "numerator": 2
+        },
+        "effective_share": {
+          "decimal_rounded_for_display": "0.666666666666666666666666666666666666666666667",
+          "denominator": 3,
+          "numerator": 2
+        },
+        "fixed_target_model_feasible": false,
+        "honest_rate": {
+          "decimal_rounded_for_display": "0.0666666666666666666666666666666666666666666667",
+          "denominator": 15,
+          "numerator": 1
+        },
+        "kappa_assumed": {
+          "decimal_rounded_for_display": "4",
+          "denominator": 1,
+          "numerator": 4
+        },
+        "margin": {
+          "decimal_rounded_for_display": "-0.0933333333333333333333333333333333333333333333",
+          "denominator": 75,
+          "numerator": -7
+        },
+        "pacer_rate": {
+          "decimal_rounded_for_display": "0.04",
+          "denominator": 25,
+          "numerator": 1
+        },
+        "raw_resource_fraction": {
+          "decimal_rounded_for_display": "0.333333333333333333333333333333333333333333333",
+          "denominator": 3,
+          "numerator": 1
+        },
+        "reference_hit_rate_per_second_assumed": {
+          "decimal_rounded_for_display": "0.1",
+          "denominator": 10,
+          "numerator": 1
+        },
+        "status": "outside",
+        "strict_kappa_ceiling": {
+          "decimal_rounded_for_display": "1.2",
+          "denominator": 5,
+          "numerator": 6
+        },
+        "validated_delay_seconds_assumed": {
+          "decimal_rounded_for_display": "10",
+          "denominator": 1,
+          "numerator": 10
+        }
+      },
+      {
+        "adversary_rate": {
+          "decimal_rounded_for_display": "0.133333333333333333333333333333333333333333333",
+          "denominator": 15,
+          "numerator": 2
+        },
+        "effective_share": {
+          "decimal_rounded_for_display": "0.666666666666666666666666666666666666666666667",
+          "denominator": 3,
+          "numerator": 2
+        },
+        "fixed_target_model_feasible": false,
+        "honest_rate": {
+          "decimal_rounded_for_display": "0.0666666666666666666666666666666666666666666667",
+          "denominator": 15,
+          "numerator": 1
+        },
+        "kappa_assumed": {
+          "decimal_rounded_for_display": "4",
+          "denominator": 1,
+          "numerator": 4
+        },
+        "margin": {
+          "decimal_rounded_for_display": "-0.104761904761904761904761904761904761904761905",
+          "denominator": 105,
+          "numerator": -11
+        },
+        "pacer_rate": {
+          "decimal_rounded_for_display": "0.0285714285714285714285714285714285714285714286",
+          "denominator": 35,
+          "numerator": 1
+        },
+        "raw_resource_fraction": {
+          "decimal_rounded_for_display": "0.333333333333333333333333333333333333333333333",
+          "denominator": 3,
+          "numerator": 1
+        },
+        "reference_hit_rate_per_second_assumed": {
+          "decimal_rounded_for_display": "0.1",
+          "denominator": 10,
+          "numerator": 1
+        },
+        "status": "outside",
+        "strict_kappa_ceiling": {
+          "decimal_rounded_for_display": "0.857142857142857142857142857142857142857142857",
+          "denominator": 7,
+          "numerator": 6
+        },
+        "validated_delay_seconds_assumed": {
+          "decimal_rounded_for_display": "20",
+          "denominator": 1,
+          "numerator": 20
+        }
+      }
+    ],
+    "limitations": [
+      "Rates, resource conversion, delay bound and process coupling are assumptions, not measured parameters.",
+      "Fixed-target asymptotic feasibility supplies neither confirmation depth nor variable-difficulty safety.",
+      "Mean kappa alone does not establish Poisson arrivals or conditional tail domination.",
+      "The lead certificate requires honest settled-progress lower bounds; raw honest sibling counts do not suffice.",
+      "Targets and weights must be fixed before the relevant fresh lottery reveal.",
+      "The entire preprocessing bank must be charged once across forks and epochs, never reset by DAA.",
+      "Reference DAA agreement and finite exact controls do not select production parameters."
+    ],
+    "native_parameters": {
+      "confirmation_depth": 6,
+      "confirmation_work_multiplier": 6,
+      "future_skew_seconds": 120,
+      "production_activation": false,
+      "retarget_interval": 16,
+      "target_spacing_seconds": 10
+    },
+    "private_attack_examples": [
+      {
+        "adversarial_event_fraction": {
+          "decimal_rounded_for_display": "0.1",
+          "denominator": 10,
+          "numerator": 1
+        },
+        "full_chain_common_prefix_bound": false,
+        "honest_wait_blocks": 6,
+        "private_attack_including_wait_period": {
+          "decimal_rounded_for_display": "0.000110317207111111111111111111111111111111111111",
+          "denominator": 562500000000,
+          "numerator": 62053429
+        },
+        "private_attack_with_two_initial_blocks": {
+          "decimal_rounded_for_display": "0.0029570608",
+          "denominator": 625000000,
+          "numerator": 1848163
+        },
+        "strict_catchup_if_known_deficit_six": {
+          "decimal_rounded_for_display": "2.09075158128768971741192552157457010488673458E-7",
+          "denominator": 4782969,
+          "numerator": 1
+        }
+      },
+      {
+        "adversarial_event_fraction": {
+          "decimal_rounded_for_display": "0.25",
+          "denominator": 4,
+          "numerator": 1
+        },
+        "full_chain_common_prefix_bound": false,
+        "honest_wait_blocks": 6,
+        "private_attack_including_wait_period": {
+          "decimal_rounded_for_display": "0.0323868592580159505208333333333333333333333333",
+          "denominator": 12582912,
+          "numerator": 407521
+        },
+        "private_attack_with_two_initial_blocks": {
+          "decimal_rounded_for_display": "0.137310028076171875",
+          "denominator": 262144,
+          "numerator": 35995
+        },
+        "strict_catchup_if_known_deficit_six": {
+          "decimal_rounded_for_display": "0.000457247370827617741197988111568358481938728852",
+          "denominator": 2187,
+          "numerator": 1
+        }
+      },
+      {
+        "adversarial_event_fraction": {
+          "decimal_rounded_for_display": "0.333333333333333333333333333333333333333333333",
+          "denominator": 3,
+          "numerator": 1
+        },
+        "full_chain_common_prefix_bound": false,
+        "honest_wait_blocks": 6,
+        "private_attack_including_wait_period": {
+          "decimal_rounded_for_display": "0.155308867776479421045798122463264972028879970",
+          "denominator": 354294,
+          "numerator": 55025
+        },
+        "private_attack_with_two_initial_blocks": {
+          "decimal_rounded_for_display": "0.366255144032921810699588477366255144032921811",
+          "denominator": 243,
+          "numerator": 89
+        },
+        "strict_catchup_if_known_deficit_six": {
+          "decimal_rounded_for_display": "0.0078125",
+          "denominator": 128,
+          "numerator": 1
+        }
+      }
+    ],
+    "production_activation": false,
+    "reference_DAA_arithmetic": [
+      {
+        "branch": "ordinary",
+        "first": 320,
+        "last": 470,
+        "next_target_hex": "0836fa3857bed3fda227f571010bf82c0e0475c862ab07df9899480b4968cfe4",
+        "required_work": 31,
+        "scope": "independent arithmetic reconstruction of existing native test schedule; not a new native execution"
+      },
+      {
+        "branch": "lower",
+        "first": 32,
+        "last": 47,
+        "next_target_hex": "0214c11883749c1ab506b5a52939a5452feca65f233c64fb344fca923824cada",
+        "required_work": 123,
+        "scope": "independent arithmetic reconstruction of existing native test schedule; not a new native execution"
+      },
+      {
+        "branch": "upper",
+        "first": 27,
+        "last": 627,
+        "next_target_hex": "20dbe8e15efb4ff6889fd5c4042fe0b03811d7218aac1f7e6265202d25a33f90",
+        "required_work": 7,
+        "scope": "independent arithmetic reconstruction of existing native test schedule; not a new native execution"
+      }
+    ],
+    "schema": "pon-w1-chain-security-envelope-v1",
+    "source_bindings": [
+      {
+        "path": "config/pon/devnet-v1.json",
+        "sha256": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4"
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/consensus.rs",
+        "sha256": "53088562316151516348ea723e03b9132b9994fee14167da18c79c2c3b3fed29"
+      },
+      {
+        "path": "docs/protocol/pon-nakamoto-v1/CONSENSUS.md",
+        "sha256": "44b2c5c395d6c73803bc59931d1e8d69a211138424dd5bb578b6cac007dc03f2"
+      }
+    ],
+    "target_work_geometry": [
+      {
+        "expected_work_per_opportunity": {
+          "decimal_rounded_for_display": "1",
+          "denominator": 1,
+          "numerator": 1
+        },
+        "label": "devnet-pow-limit",
+        "probability": {
+          "decimal_rounded_for_display": "0.5",
+          "denominator": 2,
+          "numerator": 1
+        },
+        "required_work": 2,
+        "target_hex": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+      },
+      {
+        "expected_work_per_opportunity": {
+          "decimal_rounded_for_display": "0.666666666666666666666666666666666666666666667",
+          "denominator": 28948022309329048855892746252171976963317496166410141009864396001978282409984,
+          "numerator": 19298681539552699237261830834781317975544997444273427339909597334652188273323
+        },
+        "label": "floor-efficiency-minimizer",
+        "probability": {
+          "decimal_rounded_for_display": "0.333333333333333333333333333333333333333333333",
+          "denominator": 57896044618658097711785492504343953926634992332820282019728792003956564819968,
+          "numerator": 19298681539552699237261830834781317975544997444273427339909597334652188273323
+        },
+        "required_work": 2,
+        "target_hex": "5555555555555555555555555555555555555555555555555555555555555555"
+      },
+      {
+        "expected_work_per_opportunity": {
+          "decimal_rounded_for_display": "1",
+          "denominator": 1,
+          "numerator": 1
+        },
+        "label": "quarter-lottery",
+        "probability": {
+          "decimal_rounded_for_display": "0.25",
+          "denominator": 4,
+          "numerator": 1
+        },
+        "required_work": 4,
+        "target_hex": "3fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+      },
+      {
+        "expected_work_per_opportunity": {
+          "decimal_rounded_for_display": "1",
+          "denominator": 1,
+          "numerator": 1
+        },
+        "label": "small-probability-example",
+        "probability": {
+          "decimal_rounded_for_display": "0.0009765625",
+          "denominator": 1024,
+          "numerator": 1
+        },
+        "required_work": 1024,
+        "target_hex": "003fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+      },
+      {
+        "expected_work_per_opportunity": {
+          "decimal_rounded_for_display": "1",
+          "denominator": 1,
+          "numerator": 1
+        },
+        "label": "hardest-positive-target",
+        "probability": {
+          "decimal_rounded_for_display": "1.72723371101888892507727037256007991422320007E-77",
+          "denominator": 57896044618658097711785492504343953926634992332820282019728792003956564819968,
+          "numerator": 1
+        },
+        "required_work": 57896044618658097711785492504343953926634992332820282019728792003956564819968,
+        "target_hex": "0000000000000000000000000000000000000000000000000000000000000001"
+      }
+    ],
+    "virtual_OR_countermodel": {
+      "actual_block_count_pmf": [
+        {
+          "decimal_rounded_for_display": "0.25",
+          "denominator": 4,
+          "numerator": 1
+        },
+        {
+          "decimal_rounded_for_display": "0.75",
+          "denominator": 4,
+          "numerator": 3
+        }
+      ],
+      "groups": [
+        2
+      ],
+      "probability": {
+        "decimal_rounded_for_display": "0.5",
+        "denominator": 2,
+        "numerator": 1
+      },
+      "same_at_least_one_probability": true,
+      "same_count_distribution": false,
+      "virtual_trial_count_pmf": [
+        {
+          "decimal_rounded_for_display": "0.25",
+          "denominator": 4,
+          "numerator": 1
+        },
+        {
+          "decimal_rounded_for_display": "0.5",
+          "denominator": 2,
+          "numerator": 1
+        },
+        {
+          "decimal_rounded_for_display": "0.25",
+          "denominator": 4,
+          "numerator": 1
+        }
+      ]
+    }
+  },
+  "empirical_hardware_qualification": false,
+  "resource": {
+    "abstract_resource_transfer": {
+      "declared_parameters": {
+        "budget": 100,
+        "candidate_cap": 40,
+        "fixed_overhead": 3,
+        "per_candidate_overhead": 1,
+        "per_correct_overhead": 2,
+        "prefix_cost": 12,
+        "preprocessing_credit": 5
+      },
+      "new_prefix_cap": 14,
+      "output_only_bound_cancels": null
+    },
+    "adaptive_prefix_hardness_established": false,
+    "consumption_scope": {
+      "events": [
+        [
+          "parent-a",
+          "same-useful-result"
+        ],
+        [
+          "parent-a",
+          "same-useful-result"
+        ],
+        [
+          "parent-b",
+          "same-useful-result"
+        ]
+      ],
+      "global_monotone_key_credits": 1,
+      "parent_scoped_key_credits": 2
+    },
+    "ideal_oracle_illustration": {
+      "early_trace_guess": "3/28948022309329048855892746252171976963317496166410141009864396001978282409984",
+      "header_response_collision": "7/28948022309329048855892746252171976963317496166410141009864396001978282409984",
+      "late_header_opening": "3/3618502788666131106986593281521497120414687020801267626233049500247285301248",
+      "late_task_opening": "3/14474011154664524427946373126085988481658748083205070504932198000989141204992",
+      "lottery_reference_cap_including_submissions": 12,
+      "model": "independent-ideal-whole-message-domains-before-preprocessing",
+      "task_response_collision": "3/115792089237316195423570985008687907853269984665640564039457584007913129639936",
+      "trace_query_cap_including_terminal_audit": 8,
+      "trace_response_collision": "7/28948022309329048855892746252171976963317496166410141009864396001978282409984",
+      "union_bound": "191/115792089237316195423570985008687907853269984665640564039457584007913129639936"
+    },
+    "o01_closed": false,
+    "o05_production_composition_closed": false,
+    "o07_production_zk_closed": false,
+    "overlapping_work": {
+      "first": 10,
+      "joint": 10,
+      "overlap": 10,
+      "second": 10,
+      "unjustified_sum": 20
+    },
+    "physical_resource_floor_established": false,
+    "production_activation": false,
+    "proof_gating": {
+      "budget": 36,
+      "eager_expected_credits": "1",
+      "eager_first_accepted_win": "36",
+      "eager_per_started_useful_attempt": "18",
+      "eager_pmf": [
+        "1/4",
+        "1/2",
+        "1/4"
+      ],
+      "probability": "1/2",
+      "proof_cost": 9,
+      "useful_cost": 9,
+      "winner_only_expected_credits": "9/8",
+      "winner_only_first_accepted_win": "27",
+      "winner_only_per_started_useful_attempt": "27/2",
+      "winner_only_pmf": [
+        "1/8",
+        "5/8",
+        "1/4"
+      ]
+    },
+    "proof_randomness_policies": {
+      "lottery_proof_0_credit_proof_0": {
+        "any_credit": "1/2",
+        "credit_pmf": [
+          "1/2",
+          "1/2"
+        ],
+        "expected_credits": "1/2",
+        "unique_credit_keys": 1,
+        "unique_lottery_inputs": 1
+      },
+      "lottery_proof_0_credit_proof_1": {
+        "any_credit": "1/2",
+        "credit_pmf": [
+          "1/2",
+          "0",
+          "0",
+          "0",
+          "1/2"
+        ],
+        "expected_credits": "2",
+        "unique_credit_keys": 4,
+        "unique_lottery_inputs": 1
+      },
+      "lottery_proof_1_credit_proof_0": {
+        "any_credit": "15/16",
+        "credit_pmf": [
+          "1/16",
+          "15/16"
+        ],
+        "expected_credits": "15/16",
+        "unique_credit_keys": 1,
+        "unique_lottery_inputs": 4
+      },
+      "lottery_proof_1_credit_proof_1": {
+        "any_credit": "15/16",
+        "credit_pmf": [
+          "1/16",
+          "1/4",
+          "3/8",
+          "1/4",
+          "1/16"
+        ],
+        "expected_credits": "2",
+        "unique_credit_keys": 4,
+        "unique_lottery_inputs": 4
+      }
+    },
+    "schema": "pon-w1-resource-reduction-v1",
+    "sha256_extraction_established": false,
+    "status": "exact-conditional-implications-and-countermodels-only",
+    "temporal_guess_control": {
+      "accepted_winning_pair": "1/4",
+      "incorrect_final_one_output_guess_bound": "1/8",
+      "matched_early_guess": "1/2"
+    }
+  },
+  "schema": "pon-w1-resource-and-chain-exact-model-results-v1",
+  "source": {
+    "branch": "feature/chain-w1-cost-research-20261025",
+    "head": "42bea72eb74409d72d580dad9bde08c1bce3f8f2",
+    "status": "",
+    "tree": "070942d172e3fa87e657a24b2bae7c5a6c43ce37"
+  },
+  "source_execution_receipt": "validation.json"
+}

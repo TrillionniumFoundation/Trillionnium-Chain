@@ -1,0 +1,263 @@
+{
+  "all_project_blockers_closed": false,
+  "closed": [
+    {
+      "boundary": "规定P/B、K0、Q_A+G、fanout、停止时刻、直接提交与资源维度；不宣称CPU下界",
+      "evidence": "W1_COST_SECURITY_GAME.md §§4–8；26个已执行精确数学控制",
+      "id": "W1R-C01",
+      "status": "closed-for-declared-bounded-scope",
+      "title": "成本游戏与条件概率承诺"
+    },
+    {
+      "boundary": "仅冻结AVX2实现、所测关系及取消/部分lane边界",
+      "evidence": "10个joint Rust控制；22个reader控制；42 jobs的1822份完整proof重放",
+      "id": "W1R-C02",
+      "status": "closed-for-declared-bounded-scope",
+      "title": "真实四挑战联合实现"
+    },
+    {
+      "boundary": "原Node隔离开发权限；两个预算控制保持不完整；不授予公开任务权限",
+      "evidence": "16 parent jobs；14完整生命周期；907份parent完整记录重放",
+      "id": "W1R-C03",
+      "status": "closed-for-declared-bounded-scope",
+      "title": "付费原生任务与父状态流程"
+    },
+    {
+      "boundary": "研究proof全部保留；原Node内部miss事后重建，不冒称生成时保留",
+      "evidence": "2270研究记录、168辅助winner、291事后重建，共2729记录",
+      "id": "W1R-C04",
+      "status": "closed-for-declared-bounded-scope",
+      "title": "全量研究proof及负结果取证"
+    },
+    {
+      "boundary": "软件来源一致性；不构成硬件/时钟/解释器attestation",
+      "evidence": "commit/tree、plan、两fresh Cargo artifact、manifest；379个reader闭包文件",
+      "id": "W1R-C05",
+      "status": "closed-for-declared-bounded-scope",
+      "title": "冻结来源与外部pins"
+    },
+    {
+      "boundary": "CPU、费用、RSS分开；能耗/网络未测；未完成无成功资格",
+      "evidence": "58 jobs；分母、超支、cap、观察成本、whole-child残差、RSS",
+      "id": "W1R-C06",
+      "status": "closed-for-declared-bounded-scope",
+      "title": "成本口径与预算会计"
+    },
+    {
+      "boundary": "不等于完整远端CI、发布资格或共识安全证明",
+      "evidence": "83新增Python、39既有reader/math、34来源负例、91 CI契约；200 Rust/2既有ignore；fmt/Clippy/link/inventory",
+      "id": "W1R-C07",
+      "status": "closed-for-declared-bounded-scope",
+      "title": "提交源码验证与既有控制保留"
+    },
+    {
+      "boundary": "只闭合注册策略在同一宿主上的完整预算观察，不是最大攻击产出或全局kappa",
+      "evidence": "30个主作业均到达最终父状态、在4096上限前因预算停止；15组producer和12组cache具有相同付费历史及重叠语义身份",
+      "id": "W1R-C08",
+      "status": "closed-for-declared-bounded-scope",
+      "title": "固定次数截断缺口"
+    },
+    {
+      "boundary": "协作检查不构成硬实时上界；完整生命周期仍由两个v1控制单独证明",
+      "evidence": "22次晚于B的研究接纳均零预算内credit；超支、零/紧预算及两个cap控制全部保留",
+      "id": "W1R-C09",
+      "status": "closed-for-declared-bounded-scope",
+      "title": "预算边界、原子尾部与上限拒绝"
+    },
+    {
+      "boundary": "未修改reader放宽规则；失败原始数据未并入成功结果；所有38个命令和顺序保持",
+      "evidence": "首次38作业因观察器字段拼写被既有reader拒绝；新增collector前置校验与负例后，完整重新采集",
+      "id": "W1R-C10",
+      "status": "closed-for-declared-bounded-scope",
+      "title": "注册元数据在采集前严格校验"
+    },
+    {
+      "boundary": "事后重建无新增credit；原生State未由Python二次执行；硬件和时钟未认证",
+      "evidence": "5322份保留记录完整重放；独立重算全部27组比率和原生阶段计数；382个reader闭包文件匹配Git",
+      "id": "W1R-C11",
+      "status": "closed-for-declared-bounded-scope",
+      "title": "修正来源的完整证据重放"
+    },
+    {
+      "boundary": "有限代数控制与条件引理不证明实际SHA-256、批量direct-sum或物理成本下界",
+      "evidence": "固定W1布局、前缀代数、具体上界和显式整消息理想oracle猜测/碰撞项；22个模型控制",
+      "id": "W1R-C12",
+      "status": "closed-for-declared-bounded-scope",
+      "title": "字面trace及条件提取模型"
+    },
+    {
+      "boundary": "远端ARM head/merge仍未运行，此项仅关闭已定位源码缺陷，不关闭hosted gate",
+      "evidence": "将AVX2专用import/enum/test限制到x86_64，保留真实非x86拒绝路径；本地严格Clippy通过",
+      "id": "W1R-C13",
+      "status": "closed-for-declared-bounded-scope",
+      "title": "ARM Clippy架构作用域源码修复"
+    },
+    {
+      "boundary": "不冒称完整workspace Rust测试或全部远端CI通过",
+      "evidence": "277项Python、203项Rust通过，保留2项既有ignore；whole-workspace/all-target/all-feature strict release Clippy、fmt、inventory、links通过",
+      "id": "W1R-C14",
+      "status": "closed-for-declared-bounded-scope",
+      "title": "922冻结来源的本地验证"
+    },
+    {
+      "boundary": "只限实现的过程CPU、诊断输出和有限策略；不是最低攻击成本",
+      "evidence": "58 jobs；miner无Node/Context/verifier反馈；完整输出可用性在接收前记录",
+      "id": "W1R-C15",
+      "measured_source": "42bea72eb74409d72d580dad9bde08c1bce3f8f2",
+      "status": "closed-for-declared-bounded-scope",
+      "title": "物理分离的 setup/miner/receiver/audit"
+    },
+    {
+      "boundary": "不是任意合法任务、长期复用或同时分叉森林；4组不同身份取得比较压制比率",
+      "evidence": "32 fixed、16 bank、4 shared、6 controls；1/4实际祖先；52主预算完整",
+      "id": "W1R-C16",
+      "measured_source": "42bea72eb74409d72d580dad9bde08c1bce3f8f2",
+      "status": "closed-for-declared-bounded-scope",
+      "title": "按需任务取得、历史父bank与付费筛选的实测覆盖"
+    },
+    {
+      "boundary": "接纳发生于独立receiver阶段；候选work5876、research canonical growth0",
+      "evidence": "6091份预算内proof；2938后续接纳；45晚proof中的26晚赢家不计预算内",
+      "id": "W1R-C17",
+      "measured_source": "42bea72eb74409d72d580dad9bde08c1bce3f8f2",
+      "status": "closed-for-declared-bounded-scope",
+      "title": "截止B的完整输出与晚赢家排除"
+    },
+    {
+      "boundary": "软件证据解析边界修复，不是发现或修补四个链上共识漏洞，也不认证真实宿主",
+      "evidence": "修复phase整数/布尔别名、fee浮点别名、未消费registration-tail计数类型、step收据类型别名；44+14 reader/collector控制",
+      "id": "W1R-C18",
+      "measured_source": "42bea72eb74409d72d580dad9bde08c1bce3f8f2",
+      "status": "closed-for-declared-bounded-scope",
+      "title": "类型敏感的证据读回与反例保留"
+    },
+    {
+      "boundary": "只验证指定套件；不冒称完整workspace Rust测试或最终hosted head/merge已运行",
+      "evidence": "6608完整记录、394文件reader闭包；396直接Python、规范门禁78；217 Rust/2既有ignore；fmt与严格Clippy、inventory、links通过",
+      "id": "W1R-C19",
+      "measured_source": "42bea72eb74409d72d580dad9bde08c1bce3f8f2",
+      "status": "closed-for-declared-bounded-scope",
+      "title": "更正源码的完整读回与本地门禁"
+    },
+    {
+      "boundary": "实际SHA实例化、任意自适应多实例下界与物理资源转换仍未成立",
+      "evidence": "21项精确控制；QC/QD/R晚绑定/早猜项；K0/U0分离；ell>h_correct；独立手工复核",
+      "id": "W1R-C20",
+      "measured_source": "42bea72eb74409d72d580dad9bde08c1bce3f8f2",
+      "status": "closed-for-declared-bounded-scope",
+      "title": "Temporal归约和提取器成本的条件接口"
+    },
+    {
+      "boundary": "没有实际资源到DAA/传播/诚实settlement过程的coupling；O03仍开放",
+      "evidence": "31项精确控制；实际整数work；固定目标Poisson门槛；带权可预测界；等待期与初始bank；6+2 native规则测试",
+      "id": "W1R-C21",
+      "measured_source": "42bea72eb74409d72d580dad9bde08c1bce3f8f2",
+      "status": "closed-for-declared-bounded-scope",
+      "title": "链权、传播与确认风险的条件连接"
+    },
+    {
+      "boundary": "未引入混合floor或ZK；没有实际生产组合证明或硬件实测",
+      "evidence": "winner-only u+pz；两项下界不能直接相加；4变体即便只计一次仍有15/16中奖概率",
+      "id": "W1R-C22",
+      "measured_source": "42bea72eb74409d72d580dad9bde08c1bce3f8f2",
+      "status": "closed-for-declared-bounded-scope",
+      "title": "混合/ZK的时序、重叠和身份反例"
+    },
+    {
+      "boundary": "源码检阅与历史报告复核，不是当前源的真实需求、独立质量或三代神经升级证据",
+      "evidence": "四份c38e7727文件blob核对；原API支持PR2559/main/PR1681；更正test merge和旧tabular tuple表述",
+      "id": "W1R-C23",
+      "measured_source": "42bea72eb74409d72d580dad9bde08c1bce3f8f2",
+      "status": "closed-for-declared-bounded-scope",
+      "title": "Hepta候选源码与历史执行身份追溯"
+    }
+  ],
+  "completion_scope": "declared finite native measurements, strict source/evidence checks and conditional mathematical interfaces",
+  "external_execution": [
+    {
+      "completion_criterion": "原有全部head/merge gates在实际runner执行并给出正确source receipts；无禁用lane、模拟ARM或旧提交替代",
+      "id": "W1R-E01",
+      "observation_scope": "最终发布后单独采样，结果随publication receipts交付；本文件不把未观察的CI写为通过",
+      "status": "open-awaiting-source-specific-hosted-execution",
+      "title": "最终报告head及实际prospective merge的hosted gates"
+    }
+  ],
+  "hardness_accepted": false,
+  "measured_commit": "42bea72eb74409d72d580dad9bde08c1bce3f8f2",
+  "measurement_limitations": [
+    "Finite observations on one nonexclusive reported x86_64 host and one operator; no authenticated hardware, ARM/GPU/ASIC execution, joules or WAN bandwidth.",
+    "Counts are sums after per-job deduplication, not a globally unique set across counterfactual jobs or the two campaigns.",
+    "The miner budget includes this implementation’s complete proof serialization and local output flush; that diagnostic representation/sink is not an enforced minimum attacker cost.",
+    "Setup includes original Node acquisition observers; the separated online miner has no receiver/audit feedback. Setup plus miner is a measured rate, not equal-total-budget optimization.",
+    "Only two development task materials, four named algorithms, two seeds, and one/four ancestors on a paid path; no arbitrary fork forest, perpetual preprocessing or optimal adaptive selector.",
+    "Hot/cold are arithmetic-preparation policies; processor caches were not forcibly flushed and CPU affinity does not provide exclusive hardware.",
+    "A proof available by B and eventually admitted is not an admission completed by B, canonical growth, mature reward or network throughput.",
+    "A named-stage residual is unclassified observed CPU; it must not be automatically labeled logging or removed from the denominator.",
+    "Observed research headers cover only T=2^255-1 and work=2; p=1/2 is induced only under the explicitly assumed fresh conditional-uniform digest model, not established by measurement. No variable-difficulty resource-to-chain-security claim follows.",
+    "The first campaign, reader environment rejections, setup errors, gate failures and all negative results remain separate retained evidence.",
+    "Finite tests and exact conditional models do not prove actual SHA-256 instantiation, multi-instance hardness, a physical floor, production kappa or model improvement."
+  ],
+  "open": [
+    {
+      "completion_criterion": "给出适用于实际压缩transcript、选择、预处理、批量算法的困难性假设与归约或下界，说明K0、Q_A+G、L、epsilon如何受(P,B)限制",
+      "current_limitation": "已写清temporal理想oracle、K0/U0、QA+G、早猜R、晚绑定、fanout、抽取开销和停止耦合；实际SHA-256实例化、全自适应多实例prefix下界及正净成本间隙仍缺，未把参考CPU/FLOPs当下界。",
+      "id": "W1R-O01",
+      "kind": "研究阻塞",
+      "status": "open",
+      "title": "实际W1资源预算到新鲜机会的归约"
+    },
+    {
+      "completion_criterion": "覆盖任意合法结构、同时父状态森林、长期预处理、最快已知专用算法；形式结论明确攻击者类",
+      "current_limitation": "已实际覆盖选择性/共享任务取得、四算法、两任务、1/4历史祖先和付费筛选；仍无任意合法结构、长期辅助状态、同时分叉森林、最优任务获得及最快全局联合算法的覆盖或生产形式限制。",
+      "id": "W1R-O02",
+      "kind": "研究阻塞",
+      "status": "open",
+      "title": "任意自适应任务、种子与多父状态"
+    },
+    {
+      "completion_criterion": "指定生产可接受优势和资源模型，接入honest growth、DAA、重组/传播与公平性论证，并定义假设失败时的停止/升级规则",
+      "current_limitation": "已连接真实floor work、条件传播门槛、初始bank和加权尾界；本轮仅覆盖target=2^255-1/work=2；p=1/2须另假设新鲜摘要条件均匀，研究候选不激活。生产kappa、实际DAA/网络/诚实settlement耦合与可接受失败概率尚缺；失效响应只在既有权限边界中提出，未自动切换共识。",
+      "id": "W1R-O03",
+      "kind": "协议资格阻塞",
+      "status": "open",
+      "title": "生产kappa与完整链安全参数"
+    },
+    {
+      "completion_criterion": "真实ARM/GPU及可得专用硬件执行完整关系和失败路径，独立操作者复核，测joules、内存/带宽及必要通信",
+      "current_limitation": "只有一个自报x86_64非独占宿主和一个操作者；无真实ARM/GPU/专用硬件执行、独立管理员、仪表能耗或带宽/WAN读数。模板、仿真、多个进程key不补足实物证据。",
+      "id": "W1R-O04",
+      "kind": "外部实测阻塞",
+      "status": "open",
+      "title": "独立硬件与物理成本"
+    },
+    {
+      "applicability": "conditional-on-adopting-this-architecture; not required to turn off pure-matrix research",
+      "completion_criterion": "固定失败nonce复用/结果消费，证明绑定和fanout，再建立floor物理成本及与useful成本的可加性",
+      "current_limitation": "未采用混合架构。已给出winner-only计费、成本重叠和消费作用域反例；仍缺实际基础工作绑定、失败复用/消费规则、资源floor及可组合成本保证。",
+      "id": "W1R-O05",
+      "kind": "研究阻塞",
+      "status": "open",
+      "title": "混合基础工作的可组合成本"
+    },
+    {
+      "completion_criterion": "实际Hepta任务和外生需求，独立质量/毒化评测，模型采用、回滚与发布权限完整证据",
+      "current_limitation": "检阅了真实Hepta候选c38e7727及原接口；报告的三代研究是旧tuple、同一admin/host的tabular合成任务。没有本轮真实需求/授权数据、独立质量毒化评估、当前完整神经模型采用/回滚及ordinary next-use三代证据。",
+      "id": "W1R-O06",
+      "kind": "独立产品资格阻塞",
+      "status": "open",
+      "title": "真实Hepta效用、需求与采用权限"
+    },
+    {
+      "applicability": "conditional-on-adopting-this-architecture; not required to turn off pure-matrix research",
+      "completion_criterion": "若引入ZK或批量验证，单独证明任务/父状态/计奖身份绑定、健全性、多证明摊销边界，测全流程",
+      "current_limitation": "未采用ZK。已区分固定lottery身份与计奖身份、终态去重与先验grinding；仍须对实际压缩方案证明多证明摊销/健全性/唯一消费，并测完整生产路径。",
+      "id": "W1R-O07",
+      "kind": "后续架构资格阻塞",
+      "status": "open",
+      "title": "验证压缩/ZK后的票据扩增"
+    }
+  ],
+  "prior_ledger": "../pon-work-native-budget-v1/blockers.json",
+  "production_activation": false,
+  "schema": "pon-w1-miner-resource-blocker-ledger-v1"
+}

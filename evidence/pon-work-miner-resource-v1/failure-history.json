@@ -1,0 +1,66 @@
+{
+  "all_original_raw_folders_and_receipts_preserved_in_packet": true,
+  "earlier_functional_build_and_parser_attempts": "Retained verbatim in raw/resource-stage-native-v1, resource-stage-math-v1, resource-stage-chain-v1 and resource-stage-root-v1; their synthetic parser fixtures are not labeled native executions.",
+  "entries": [
+    {
+      "id": "F01",
+      "observation": "36a first campaign fully collected and replayed, but embedded native source inventory lacked the two new Rust files.",
+      "raw_receipts": [
+        "raw/resource-stage-validation-v1/source-inventory.stderr",
+        "raw/resource-stage-root-v1/inventory-correction-preflight.stdout"
+      ],
+      "resolution": "14 generated include lines restored by existing inventory generator; correction commit42bea; unchanged58-job plan fully recollected and all required gates repeated.",
+      "source_or_threshold_relaxed": false
+    },
+    {
+      "id": "F02",
+      "observation": "Initial full reader refused ignored pre-existing Python bytecode files with READER_SOURCE_FILE_SET.",
+      "raw_receipts": [
+        "raw/resource-stage-root-v1/formal-reader-receipt.json",
+        "raw/resource-stage-root-v1/reader-initial-cache-rejection.json",
+        "raw/resource-stage-root-v1/formal-reader-isolated-v2-receipt.json"
+      ],
+      "resolution": "Retained rejection and 18 cache files; used a clean sparse checkout of the same frozen source. Rules and campaign bytes unchanged."
+    },
+    {
+      "id": "F03",
+      "observation": "First no-checkout reader worktree had not yet populated files; interpreter exited before replay.",
+      "raw_receipts": [
+        "raw/resource-stage-root-v1/formal-reader-isolated-receipt.json",
+        "raw/resource-stage-root-v1/reader-isolation-populate.stdout"
+      ],
+      "resolution": "Ran git read-tree -mu HEAD under the declared sparse configuration, then replayed from the same commit."
+    },
+    {
+      "id": "F04",
+      "observation": "Initial CI-contract setUpClass failed with a truncated83-byte traceback; canonical-plan fixture copy explicitly reported ENOSPC.",
+      "raw_receipts": [
+        "raw/resource-stage-validation-v1/test_ci_contract.stderr",
+        "raw/resource-stage-validation-v1/canonical-plan.stderr",
+        "raw/resource-stage-root-v1/source-gate-space-recovery.json",
+        "raw/resource-stage-root-v1/ci-contract-space-retry.json"
+      ],
+      "resolution": "Verified raw archives and preserved measured binaries; removed only redundant data/builds and two clean reproducible old worktrees. Unchanged91-test suite passed, then complete corrected-source gates passed. Do not claim an unrecorded stack trace for the first error."
+    },
+    {
+      "id": "F05",
+      "observation": "Manual pre-push invocation omitted Git update stdin; existing guard rejected no exact push updates supplied.",
+      "raw_receipts": [
+        "raw/resource-stage-root-v1/correction-freeze-local.stderr",
+        "raw/resource-stage-root-v1/correction-freeze-pre-push.json"
+      ],
+      "resolution": "Retained refusal; supplied exact old/new ref line to original hook, passed, and used expected-sha CAS update without force."
+    },
+    {
+      "id": "F06",
+      "observation": "Pre-freeze adversarial evidence-reader PoCs accepted bool/int or equal numeric aliases in four specific metadata boundaries.",
+      "raw_receipts": [
+        "raw/resource-stage-chain-v1/native-cross-review-final.json",
+        "raw/resource-stage-chain-v1/root-reader-cross-review-type-alias.json",
+        "raw/resource-stage-chain-v1/native_tail_prefix_parser_fixture.py"
+      ],
+      "resolution": "Strict typed equality and native charge grammar enforced before source freeze; original PoCs, fixtures and negative controls retained."
+    }
+  ],
+  "schema": "pon-w1-miner-resource-retained-failures-v1"
+}

@@ -1,0 +1,293 @@
+{
+  "all_counts": {
+    "all_full_proof_records": 6608,
+    "eventually_native_accepted_from_B": 2938,
+    "miner_unique_complete_by_B": 6091,
+    "miner_unique_target_hits_by_B": 2938,
+    "original_reconstruction_records": 280,
+    "original_winner_records": 192,
+    "research_late_proofs": 45,
+    "research_late_target_hits": 26,
+    "research_proof_records": 6136,
+    "research_target_hits": 2964
+  },
+  "all_main_miner_budget_observations_complete": true,
+  "all_project_blockers_closed": false,
+  "analysis_sha256": "121c7aa8dcacfe68389ad51af78a4a694401105f736841b4c6a6e44c792980f6",
+  "analysis_source_sha256": "0bd33ab902290fd5252bc2add5c02212927fcf819b9ef729c581f7728122fd93",
+  "arm_win_directions": {
+    "prepared-generic": {
+      "above_one": 3,
+      "below_one": 5,
+      "comparable": 8,
+      "equal_one": 0,
+      "maximum": 1.205128205128205,
+      "minimum": 0.7349397590361446
+    },
+    "structure-paired": {
+      "above_one": 9,
+      "below_one": 7,
+      "comparable": 16,
+      "equal_one": 0,
+      "maximum": 1.6666666666666667,
+      "minimum": 0.6956521739130435
+    },
+    "structure-specialized": {
+      "above_one": 6,
+      "below_one": 2,
+      "comparable": 8,
+      "equal_one": 0,
+      "maximum": 1.4871794871794872,
+      "minimum": 0.9397590361445783
+    }
+  },
+  "candidate_chainwork_from_B": 5876,
+  "canonical_chainwork_added_by_research": 0,
+  "comparison_statistics": {
+    "acquisition": {
+      "actual_miner_accepted_rate_ratio": {
+        "above_one": 0,
+        "below_one": 0,
+        "comparable": 0,
+        "equal_one": 0,
+        "maximum": null,
+        "minimum": null
+      },
+      "equal_B_complete_proof_ratio": {
+        "above_one": 0,
+        "below_one": 0,
+        "comparable": 0,
+        "equal_one": 0,
+        "maximum": null,
+        "minimum": null
+      },
+      "equal_B_eventually_accepted_ratio": {
+        "above_one": 0,
+        "below_one": 0,
+        "comparable": 0,
+        "equal_one": 0,
+        "maximum": null,
+        "minimum": null
+      },
+      "setup_plus_miner_accepted_rate_ratio": {
+        "above_one": 0,
+        "below_one": 0,
+        "comparable": 0,
+        "equal_one": 0,
+        "maximum": null,
+        "minimum": null
+      }
+    },
+    "arm": {
+      "actual_miner_accepted_rate_ratio": {
+        "above_one": 18,
+        "below_one": 14,
+        "comparable": 32,
+        "equal_one": 0,
+        "maximum": 1.6764088094112433,
+        "minimum": 0.6919945326775168
+      },
+      "equal_B_complete_proof_ratio": {
+        "above_one": 18,
+        "below_one": 14,
+        "comparable": 32,
+        "equal_one": 0,
+        "maximum": 1.5517241379310345,
+        "minimum": 0.7528735632183908
+      },
+      "equal_B_eventually_accepted_ratio": {
+        "above_one": 18,
+        "below_one": 14,
+        "comparable": 32,
+        "equal_one": 0,
+        "maximum": 1.6666666666666667,
+        "minimum": 0.6956521739130435
+      },
+      "setup_plus_miner_accepted_rate_ratio": {
+        "above_one": 17,
+        "below_one": 15,
+        "comparable": 32,
+        "equal_one": 0,
+        "maximum": 1.7959441617003775,
+        "minimum": 0.6689562524279622
+      }
+    },
+    "cache": {
+      "actual_miner_accepted_rate_ratio": {
+        "above_one": 15,
+        "below_one": 3,
+        "comparable": 18,
+        "equal_one": 0,
+        "maximum": 1.611363628382991,
+        "minimum": 0.7387121490523118
+      },
+      "equal_B_complete_proof_ratio": {
+        "above_one": 15,
+        "below_one": 3,
+        "comparable": 18,
+        "equal_one": 0,
+        "maximum": 1.6304347826086956,
+        "minimum": 0.7925925925925926
+      },
+      "equal_B_eventually_accepted_ratio": {
+        "above_one": 15,
+        "below_one": 3,
+        "comparable": 18,
+        "equal_one": 0,
+        "maximum": 1.6153846153846154,
+        "minimum": 0.7384615384615385
+      },
+      "setup_plus_miner_accepted_rate_ratio": {
+        "above_one": 15,
+        "below_one": 3,
+        "comparable": 18,
+        "equal_one": 0,
+        "maximum": 1.618786812631727,
+        "minimum": 0.7309805880112952
+      }
+    }
+  },
+  "control_counts": {
+    "all_full_proof_records": 100,
+    "eventually_native_accepted_from_B": 0,
+    "miner_unique_complete_by_B": 8,
+    "miner_unique_target_hits_by_B": 0,
+    "original_reconstruction_records": 56,
+    "original_winner_records": 36,
+    "research_late_proofs": 0,
+    "research_late_target_hits": 0,
+    "research_proof_records": 8,
+    "research_target_hits": 0
+  },
+  "controls": 6,
+  "energy_joules": null,
+  "hardness_accepted": false,
+  "hardware_attested": false,
+  "hardware_observation": {
+    "cpu_models": [
+      "AMD EPYC 9V74 80-Core Processor"
+    ],
+    "energy_joules": null,
+    "exclusive_cpu": false,
+    "hardware_attested": false,
+    "machine": "x86_64",
+    "network_transfer_measured": false,
+    "requested_child_cpu": 0
+  },
+  "initial_campaign": {
+    "all_counts": {
+      "all_full_proof_records": 6343,
+      "eventually_native_accepted_from_B": 2812,
+      "miner_unique_complete_by_B": 5827,
+      "miner_unique_target_hits_by_B": 2812,
+      "original_reconstruction_records": 280,
+      "original_winner_records": 192,
+      "research_late_proofs": 44,
+      "research_late_target_hits": 19,
+      "research_proof_records": 5871,
+      "research_target_hits": 2831
+    },
+    "gate_disposition": "complete raw replay passed; embedded inventory failed; retained and not pooled with corrected campaign",
+    "source": "36a47400138220244728bdd5fc7bb0a338c9ba85"
+  },
+  "main_attempt_safety_cap": 4096,
+  "main_counts": {
+    "all_full_proof_records": 6508,
+    "eventually_native_accepted_from_B": 2938,
+    "miner_unique_complete_by_B": 6083,
+    "miner_unique_target_hits_by_B": 2938,
+    "original_reconstruction_records": 224,
+    "original_winner_records": 156,
+    "research_late_proofs": 45,
+    "research_late_target_hits": 26,
+    "research_proof_records": 6128,
+    "research_target_hits": 2964
+  },
+  "main_jobs": 52,
+  "main_miner_overshoot_ns_range": [
+    61240,
+    2653428
+  ],
+  "main_unattributed_miner_fraction_range": [
+    0.3478099460449704,
+    0.6591395739235385
+  ],
+  "maximum_attacker_yield_established": false,
+  "measurement_limitations": [
+    "Finite observations on one nonexclusive reported x86_64 host and one operator; no authenticated hardware, ARM/GPU/ASIC execution, joules or WAN bandwidth.",
+    "Counts are sums after per-job deduplication, not a globally unique set across counterfactual jobs or the two campaigns.",
+    "The miner budget includes this implementation’s complete proof serialization and local output flush; that diagnostic representation/sink is not an enforced minimum attacker cost.",
+    "Setup includes original Node acquisition observers; the separated online miner has no receiver/audit feedback. Setup plus miner is a measured rate, not equal-total-budget optimization.",
+    "Only two development task materials, four named algorithms, two seeds, and one/four ancestors on a paid path; no arbitrary fork forest, perpetual preprocessing or optimal adaptive selector.",
+    "Hot/cold are arithmetic-preparation policies; processor caches were not forcibly flushed and CPU affinity does not provide exclusive hardware.",
+    "A proof available by B and eventually admitted is not an admission completed by B, canonical growth, mature reward or network throughput.",
+    "A named-stage residual is unclassified observed CPU; it must not be automatically labeled logging or removed from the denominator.",
+    "Observed research headers cover only T=2^255-1 and work=2; p=1/2 is induced only under the explicitly assumed fresh conditional-uniform digest model, not established by measurement. No variable-difficulty resource-to-chain-security claim follows.",
+    "The first campaign, reader environment rejections, setup errors, gate failures and all negative results remain separate retained evidence.",
+    "Finite tests and exact conditional models do not prove actual SHA-256 instantiation, multi-instance hardness, a physical floor, production kappa or model improvement."
+  ],
+  "network_transfer_measured": false,
+  "new_training_qualification": false,
+  "nominal_main_miner_budget_ns": 128000000,
+  "nominal_main_setup_budget_ns": 1000000000,
+  "owner_pins": {
+    "expected_head": "42bea72eb74409d72d580dad9bde08c1bce3f8f2",
+    "expected_manifest_sha256": "f945085845b48251d3a79a07cb0d8134a63b88a45ecbc93fc1f1cfde7e00f454",
+    "expected_miner_binary_sha256": "1a8ad8b5680aa6b716c61c8cd3d5da31f3e01a51af3898a84e9e517fe5dd6dea",
+    "expected_plan_sha256": "bc4b57a47c84e69f32d5235536df7a60de30dc45985367fad39aa91b90db1381",
+    "expected_tree": "070942d172e3fa87e657a24b2bae7c5a6c43ce37"
+  },
+  "phase_cpu_ns": {
+    "audit": 8726445868,
+    "miner": 6723005852,
+    "receiver": 13972339592,
+    "setup": 2395751420
+  },
+  "production_activation": false,
+  "raw_archives": [
+    {
+      "archive_bytes": 66536009,
+      "archive_sha256": "0554874fd1c1c22458aeb8ba70d1eadbd7da1d56391ffff5f747e8a86e53afc4",
+      "files_verified": 309,
+      "index_sha256": "1a46a97ecc8ccf40e22639115ad48220ebc207e6b65326d2b9986ac45758e468",
+      "raw_bytes_verified": 677843215,
+      "source": "36a47400138220244728bdd5fc7bb0a338c9ba85"
+    },
+    {
+      "archive_bytes": 68358220,
+      "archive_sha256": "1f5f968ba8a19251458f4460da6d0ab6d60baaca7eb5fdceea4bf4d8a8bd1ce1",
+      "files_verified": 309,
+      "index_sha256": "639794aaf2c505f85d0401214dac5fa1177cf27215b0e5e32a893a6c4a994f55",
+      "raw_bytes_verified": 704698642,
+      "source": "42bea72eb74409d72d580dad9bde08c1bce3f8f2"
+    }
+  ],
+  "readback_sha256": "3fd96bcf3d2a65bd1e4a1b8a5a9550d422a28ab4ffd2ece5df504f87636a5262",
+  "reader_source_closure": {
+    "all_current_bytes_match_git_blobs": true,
+    "bytes": 6491725,
+    "files": 394,
+    "hardware_or_interpreter_attestation": false,
+    "scopes": [
+      "scripts",
+      "formal",
+      "config"
+    ],
+    "sha256": "15781d3d61d73592321c6e260c7b3e616498588054fbb083c62fcb64ceb53968",
+    "tested_commit": "42bea72eb74409d72d580dad9bde08c1bce3f8f2"
+  },
+  "registered_jobs": 58,
+  "schema": "pon-w1-miner-resource-evidence-summary-v1",
+  "signed_whole_waited_cpu_residual_ns_range": [
+    3240857,
+    6009961
+  ],
+  "source": {
+    "branch": "feature/chain-w1-cost-research-20261025",
+    "head": "42bea72eb74409d72d580dad9bde08c1bce3f8f2",
+    "status": "",
+    "tree": "070942d172e3fa87e657a24b2bae7c5a6c43ce37"
+  },
+  "total_phase_cpu_ns": 31817542732,
+  "universal_kappa_bound_established": false
+}

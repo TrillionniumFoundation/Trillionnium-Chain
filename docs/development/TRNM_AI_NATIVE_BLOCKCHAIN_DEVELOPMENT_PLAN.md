@@ -1,6 +1,6 @@
 # Trillionnium Chain Development Plan — PoN / Hepta-PoH revision
 
-Plan ID: `trnm-chain-development-plan-v2` (stable registry identity; content revision 29).
+Plan ID: `trnm-chain-development-plan-v2` (stable registry identity; content revision 30).
 Effective: 2026-09-28; priority implementation revision: 2026-10-26. Status: selected development direction; no runtime activation.
 Canonical destination: `refs/heads/main`; continuation uses the current main lineage, not retired PR #194.
 Current source/head/tree/base and prospective merge are derived at verification time.
@@ -1613,6 +1613,35 @@ historical neural, independent hardware and ordinary product-use boundaries.
 An absent physical device or independent evaluator cannot be replaced by a
 passing fixture. Source/plan freezing precedes formal measurement; all existing
 failed evidence and open PN0–PN6 obligations retain their meanings.
+
+
+The corrected execution at `42bea72eb74409d72d580dad9bde08c1bce3f8f2`
+(tree `070942d172e3fa87e657a24b2bae7c5a6c43ce37`) completed the same 58-job
+plan after restoring the two embedded Rust inventory entries. All 6,608 retained
+full proof records replayed through the unchanged strict reader, whose 394-file
+closure matches the measured Git source. All 52 main observations exhausted
+the separate miner budget without reaching the safety cap: 6,083 complete main
+proofs were available by B and 2,938 were later accepted. Forty-five late proofs,
+including 26 winners, stayed outside budget credit. Controls add eight complete
+proofs and no winner. Research candidates add no canonical chain growth.
+
+The [final results](../../evidence/pon-work-miner-resource-v1/RESULTS.md) retain
+all 32 identity-matched arm pairs, 18 cache pairs, four identity-divergent
+acquisition comparisons with null ratios, both full campaigns and the original
+failures. Exact corrected-source validation passed 396 direct Python controls,
+the canonical-plan gate's 78 reported tests, 217 selected Rust tests with two
+existing ignores, formatting, source inventory and whole-workspace all-target /
+all-feature strict release Clippy. These do not certify unexecuted hosted
+head/merge gates, hardware independence or a full-workspace Rust test run.
+
+The [blocker ledger](../../evidence/pon-work-miner-resource-v1/blockers.json)
+adds bounded closures C15–C23 while preserving O01–O07 and separate hosted
+execution E01. Conditional temporal/weighted proofs and hybrid/ZK countermodels
+have independent source/mathematical reviews; actual SHA instantiation,
+multi-instance physical hardness and Node settlement coupling remain missing.
+The external Hepta review now names a prospective/test merge, and keeps the
+historical tabular execution on its original source tuple. No production,
+quality, independent-operator or adoption qualification is promoted.
 
 ## 1. Product mission: shared intelligence from real work
 

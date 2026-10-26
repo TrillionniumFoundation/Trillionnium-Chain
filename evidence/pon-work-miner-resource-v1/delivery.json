@@ -1,0 +1,35 @@
+{
+  "all_project_blockers_closed": false,
+  "archive": {
+    "all_inner_campaign_members_previously_verified": true,
+    "all_outer_members_verified": true,
+    "bytes": 137665313,
+    "corrected_campaign_members": 309,
+    "filename": "W1_miner_resource_evidence_20261026.tar.gz",
+    "first_campaign_members": 309,
+    "payload_files": 441,
+    "payload_index_sha256": "e1bcefee0f636d4b0fbafb0530b4b43bc5b102f0c0eaf66ee15e68d5db5c5a3f",
+    "regular_members_including_index": 442,
+    "repository_source_is_pinned_in_git_not_copied_into_packet": true,
+    "sha256": "322cc2ec3eb3c8ddc4b822b3cb445ac3b81874782f1a7187f9e780060ff6d492"
+  },
+  "archive_sealed_before_publication_receipts": true,
+  "delivery": {
+    "approval_review_rejected_before_process_execution": true,
+    "local_archive_generated_and_verified": true,
+    "no_further_upload_attempt_without_authorization": true,
+    "no_library_file_id_claimed": true,
+    "persistent_upload_completed": false,
+    "read_only_destination_and_public_repository_checks_completed": true,
+    "reviewed_destination": "current user owned ChatGPT Library",
+    "specific_remaining_condition": "Explicit end-user authorization to save this exact archive to their ChatGPT Library",
+    "status": "blocked-by-automatic-approval-review-pending-explicit-end-user-authorization"
+  },
+  "later_publication_and_approval_receipts_are_outside_sealed_archive": true,
+  "measured_commit": "42bea72eb74409d72d580dad9bde08c1bce3f8f2",
+  "measured_tree": "070942d172e3fa87e657a24b2bae7c5a6c43ce37",
+  "production_acceptance": false,
+  "schema": "pon-w1-miner-resource-delivery-v1",
+  "scope_of_block": "artifact persistence only; mathematical, hardware, product and hosted-CI obligations remain separate",
+  "source_of_delivery_block": "automatic approval review, not a repository protocol or skill gate"
+}
