@@ -99,3 +99,107 @@ can itself be exhausted by unpaid senders without an earlier front-door limit.
 W2-C admission research must NOT be advertised as a decentralized consensus
 safety theorem. Until these gates close, continue to deny production PoN
 activation.
+
+
+## Next revision: stateless issuance, paid-only replay state
+
+The earlier receiver-local research issuer allocated one pending row **on
+every HMAC grant issuance**. A sender who did not solve any proof-of-cost could
+obtain a finite batch of pending grants and fill the admission table. This
+is an independent cheap state-exhaustion path.
+
+The additive, separate module
+'formal/pon-nakamoto-v1/w2c_stateless_receiver_admission.py' now supports a
+**stateless grant issue** mode: every signed grant binds exactly receiver,
+process epoch, proposal, random token, bits and fixed expiry, but issuing
+it creates NO pending state. The only mutating table contains hashes of
+grants that have **actually passed** an authenticated, receiver-local Hashcash
+check; the insertion is atomic and bounded. Existing live spent facts are
+never evicted to allow replay. The issuer's untrusted-grant method does not
+scan the spent table on issuance, so with respect to memory and table size,
+grant issuance is O(1).
+
+The separate negative selector
+'python3 formal/pon-nakamoto-v1/test_w2c_stateless_receiver_admission.py'
+tests 5000 unpaid grants consuming zero pending rows, exact 32-way
+single-grant contention, receiver copy, old process epoch, credential
+tampering, invalid ticket, expired/clock-regressed grant, bounded paid-table
+full with fail-closed Busy, and exact paid-row expiry. The suite passed
+8/8 in a local standalone Python execution; published source/test blob SHA
+must match the tested bytes. No Rust native verification or WAN request was
+part of this run.
+
+This is NOT free anti-DoS: 5000 grant issuances still consume HMAC, socket,
+entropy, framing and wall-clock resources. Those must be bounded by the
+already selected V3 front-end and one physical Host owner before this
+research could be considered for integration. Paid requests can still
+fill the bounded spent table until expiry; anonymous honest fairness and
+GPU/ASIC economics remain open. A real restart MUST select a fresh
+cryptographically independent epoch or persist the spent table; reusing
+an old epoch with lost replay state is forbidden. The original V3 Cookie
+and W1 remain unchanged and unqualified for public launch.
+
+The stateful and stateless examples deliberately live side by side for
+paired counterexamples; selecting the stateless one at runtime would
+require a new signed policy namespace, negative compatibility tests and
+explicit governed adoption rather than silent replacement.
+
+
+### Server-pinned cost policy: no caller-selected difficulty
+
+A further counterexample showed that signed HMAC grants alone do NOT stop
+an authenticated requester choosing the cheapest allowed search difficulty.
+The stateless research variant now freezes 'bits' in its receiving issuer
+configuration and refuses 'offer' calls requesting any other number of
+leading-zero bits, even if the value is syntactically valid. After verifying
+the MAC, 'consume' also refuses old, correctly signed grants whose bits differ
+from this current receiver policy. This prevents a policy downgrade when an
+operator raises the local research cost floor; the old grant receives
+'BITS_POLICY', not VerifiedWork, chainwork or a free workload.
+
+An additional ninth Python negative regression exercises a fixed 12-bit
+receiver rejecting an 8-bit request and a historically valid 8-bit grant.
+All nine research tests passed locally; this does not establish the correct
+production bits, GPU/ASIC fairness or resistance to issuance CPU floods.
+A real deployer must pin difficulty to a versioned signed transport policy
+and enforce an authentic server clock; the caller-supplied research time and
+difficulty values are **not** a production-safe remote API.
+
+
+## Matched-reference CPU experiment: the original amplification persists
+
+The executable 'formal/pon-nakamoto-v1/w2c_stateless_paired_cost.py'
+compares the original independently coded W1 Python oracle against its
+own fixed 64x64 zero task, the unchanged half-target
+'7f' followed by 31 'ff' bytes and a deterministic fresh challenge stream.
+It requires the **exact Git blob SHA**
+'9cbfccd2d50af48fc43522b967ffdfb1f45ec098' for 'work_oracle.py'
+before accepting the report. Every failed legal challenge, winner,
+independently searched fabricated trace, early precheck and full verifier
+outcome is retained, including bounded exhaustion cases. A third test
+selector 'test_w2c_stateless_paired_cost.py' refuses bad bounds, impossible
+ticket payments and omitted valid-work attempt denominators.
+
+A local exploratory Python process-CPU run used
+'--seed 1 --samples 2 --bits 8 12 --w1-attempts 8
+--ticket-attempts 8192' and retained JSON SHA256
+'b681deddd4bc953a840799b17d953c8effbaef67a305190448323b39cea05a0a'.
+This was one executable process and two deterministic samples, with *both
+difficulty arms reusing each sample's same task/challenge stream*: four
+observations are **not** four independently sourced tasks.
+
+| Sample / local receiver bits | W1 legal attempts | Full legal producer CPU ms | False producer CPU ms | Full false rejection CPU ms | Receiver / false producer CPU | Extra stateless ticket CPU ms |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| 0 / 8 | 2 | 150.80 | 0.0888 | 74.42 | 838.3x | 0.47 |
+| 0 / 12 | 2 | 152.71 | 0.1074 | 76.15 | 709.0x | 0.66 |
+| 1 / 8 | 2 | 149.83 | 0.0609 | 77.17 | 1267.1x | 0.53 |
+| 1 / 12 | 2 | 156.87 | 0.0888 | 79.11 | 890.7x | 12.94 |
+
+Each paid local ticket remained **non-authoritative**; every forged W1
+proof was rejected as TRANSCRIPT. These are *Python-only CPU* observations:
+no actual native Rust W1 path, V3 signed Cookie/body handling, WAN/cgroup
+contention, GPU/ASIC hashes, honest pending work or independent operator.
+Neither the raw CPU ratios nor the synthetic bits determine an acceptable
+public security price. The exact-source-native security qualification,
+A03 3x3x3, GPU calibration, W2 soundness, and third-party cryptanalysis are
+still OPEN.
