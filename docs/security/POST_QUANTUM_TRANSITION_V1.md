@@ -39,10 +39,12 @@ Requires OpenSSL with default-provider FIPS 203/204 algorithms:
 
 ```shell
 cd formal/pon-nakamoto-v1
-python3 -m unittest -v test_pq_envelope.py test_pq_kem.py
+python3 -m unittest -v test_pq_envelope.py test_pq_kem.py test_pq_tls.py
 ```
 
 Tests use actual generated ML-DSA-65 keys, real signature and verification, verify every signed-header byte's mutation rejection, bad signatures, wrong public key, Ed25519 key downgrade, changed purpose/network/generation/sequence/expiry/payload and noncanonical frames. ML-KEM-768 tests exercise real encapsulation/decapsulation, wrong recipient key, and ciphertext corruption (implicit rejection yields a different secret; a decapsulation API need not return an error). The canonical frame only binds content; the actual owner must separately enforce **current authority, withdrawal, durable one-shot use, monotonic generation and rollback**.
+
+The additional `test_pq_tls.py` starts a **loopback-only** real TLS 1.3 OpenSSL server with an ML-DSA-65 certificate, requires the X25519MLKEM768 negotiated group and certificate/hostname verification, and tests explicit wrong-hostname and classical-X25519-only handshake failures. It closes only the **offline primitive and handshake-conformance example**, not a deployed transport integration, persistent peer keys, issuer governance, production authentication, or independent WAN tests.
 
 ### Network: encryption is not authentication
 
