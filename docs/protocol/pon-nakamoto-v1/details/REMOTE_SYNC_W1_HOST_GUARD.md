@@ -106,3 +106,61 @@ must be tested separately.
 The new unexported parser remains useful for unit coverage and does
 not expose a second public unchecked history-import symbol.
 This is an API-path reduction, **not** a production/security gate PASS.
+
+
+## Follow-up: each imported History packet charges the original CPU domain
+
+**Draft engineering follow-up, not accepted or production-ready.** The prior
+host-cgroup-only guard bounds aggregate CPU but does not consume the V3 shared
+per-Node CPU account. This new candidate changes that source behavior while
+leaving the original W1 consensus and admission semantics unchanged.
+
+- 'ingress::prepare_history_cpu_domain(node, source)' verifies the original
+  fixed physical host parent and binds a SINGLE existing Node service domain.
+  A new **nonloopback** Node starts through the original 'cold_start' with
+  zero CPU credit. Loopback developer sync uses only the historical bounded
+  warm standalone developer epoch. No additional budget per remote peer,
+  page, protocol request or rotated signing identity is allowed.
+- 'receive_page_from' now requires the Node to be prepared even on
+  loopback. An unprepared call returns
+  'OWNER_PUBLIC_SERVICE_DOMAIN_UNBOUND' before page data is parsed or
+  full W1 begins. The original addressless reader remains private.
+  The public CLI and all three native sync_from variants prepare once before
+  requesting any History pages.
+- 'admit_history_packet_with_cpu' preserves the exact original Node::admit
+  authority sequence: check_admission_context, begin_owner_work,
+  WorkCheckedPacket::verify_with_progress, attach_owner_work and
+  admit_work_checked_with_control. ONE original CPU operation covers context,
+  full W1 arithmetic and real M06 scoped workers, with original cooperative
+  progress checkpoints. Complete invalid W1 earns zero Chainwork.
+- Operations reserve before parent State reconstruction. If the original
+  cold domain lacks its existing 100ms start reserve, wait at most 1500ms for
+  the ordinary 250ms CPU per second refill; return the original typed local
+  PUBLIC_MUTATION_CPU_BUDGET if it cannot acquire. No new credit, queue,
+  per-peer priority, signed profile or difficulty change.
+- History tip activation receives a separate original-domain CPU operation.
+  Unknown accounting returns local PUBLIC_MUTATION_CPU_UNAVAILABLE. Native
+  commits already performed are never reclassified as unexecuted work and
+  cannot be silently rolled back on a late resource fault.
+
+The new source has two Rust test selectors:
+'history_receive_requires_one_existing_cpu_owner_and_charges_late_false_product'
+and 'history_remote_cold_budget_starts_at_zero_and_cannot_be_reissued_per_peer'.
+The Product counterexample retains legal challenge, target, A/B and trace,
+changes only the claimed C, and requires a complete mathematical refusal,
+zero live permits and unchanged Node stats/active head.
+
+**OPEN blockers:** The full exact-source Rust checkout, Cargo, fmt,
+preflight, strict Clippy, real fixed parent cgroup and original A03 3x3x3
+hostile network experiment have NOT been executed in the current tool
+environment. Per-packet W1 cost accounting does not prove that hostile
+read/JSON/authentication traffic is fairly scheduled; deep nonpreemptible
+State/SQLite operations and loopback proxies are still resource surfaces.
+If a process forwards untrusted WAN pages over loopback, caller-supplied
+source addresses cannot attest remote origin, despite in-process W1 CPU
+metering. Process restarts still need the original aggregate kernel cgroup
+and continuous owner reconciliation for durable debt.
+
+P2 GPU/ASIC attacker prices, P3 mixed hostile traffic, P4 3x3x3 timely
+honest confirmation, P5 sound/efficient W2 and P6 independent external
+cryptography review all remain HOLD_NO_GO. Do not activate consensus.
