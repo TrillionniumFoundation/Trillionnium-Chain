@@ -2115,9 +2115,12 @@ fn call_authenticated_durable_inner(
 // A bounded wait is local scheduling (not W1 invalidity or new consensus TTL).
 fn begin_history_cpu(
     cpu: &public_v3::ServiceMutationCpuDomain,
+    deadline: Instant,
 ) -> Result<public_v3::ServiceMutationCpuOperation> {
-    let deadline = Instant::now() + Duration::from_secs(5);
     loop {
+        // One absolute page-level budget, never 5 seconds *per attacker proof*.
+        // Exhaustion is local Busy, NOT proof invalidity or new chainwork.
+        ensure(Instant::now() < deadline, "PUBLIC_MUTATION_CPU_BUDGET")?;
         match cpu.begin() {
             Ok(operation) => return Ok(operation),
             Err(error) if error.is(ErrorCode::PublicMutationCpuBudget)
@@ -2140,6 +2143,9 @@ fn receive_page(
     clock: u64,
     cpu: &public_v3::ServiceMutationCpuDomain,
 ) -> Result<Hash> {
+    // Same absolute deadline for every proof in this one incoming page.
+    // Neither a new peer nor a later packet replenishes the waiting window.
+    let page_deadline = Instant::now() + Duration::from_secs(5);
     ensure(
         page.schema == "pon-native-history-v1"
             && page.network == hex::encode(node.settings().network())
@@ -2180,26 +2186,30 @@ fn receive_page(
         // this exact Node's one original CPU domain BEFORE context/State work,
         // and settle the measured owner+scoped-worker total on every outcome.
         // The original bucket starts cold and cannot be reset per page/peer.
-        let original = begin_history_cpu(cpu)?;
+        let original = begin_history_cpu(cpu, page_deadline)?;
         let live = original.checkpoint_handle();
+        let check = || {
+            ensure(Instant::now() < page_deadline, "PUBLIC_MUTATION_CPU_BUDGET")?;
+            live.checkpoint()
+        };
         let native = (|| -> Result<()> {
-            live.checkpoint()?;
+            check()?;
             // Preserve exactly Node::admit's context -> owner reservation ->
             // W1 relation -> current-parent/state/commit ordering. A duplicate
             // still checks context and cannot inherit another packet's rights.
             if node.check_admission_context_with_progress(
-                packet, clock, &mut || live.checkpoint(),
+                packet, clock, &mut || check(),
             )?.is_some() {
                 return Ok(());
             }
             let permit = node.begin_owner_work(packet)?;
-            live.checkpoint()?;
+            check()?;
             let checked = WorkCheckedPacket::verify_with_progress(
-                packet.clone(), &mut |_| live.checkpoint(),
+                packet.clone(), &mut |_| check(),
             )?;
-            live.checkpoint()?;
+            check()?;
             let checked = node.attach_owner_work(checked, permit)?;
-            let execute_progress = |_step| live.checkpoint();
+            let execute_progress = |_step| check();
             let control = trnm_mvcc_fee::pon_executor::ExecutionControl::new(
                 &execute_progress,
                 original.worker_accounting(),
