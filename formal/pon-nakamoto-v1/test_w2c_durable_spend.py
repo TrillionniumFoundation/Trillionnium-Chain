@@ -1,4 +1,4 @@
-import tempfile,os,unittest,hmac,hashlib
+import tempfile,os,unittest,hmac,hashlib,shutil
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import replace
 from contract_wire import H
@@ -59,6 +59,31 @@ class DurableTests(unittest.TestCase):
             self.gate(capacity=1024)
         with self.assertRaisesRegex(ValueError,'HOST_POLICY_MISMATCH'):
             self.gate(capacity=1,lifetime_ms=1000)
+    def test_copied_database_is_not_a_global_replay_proof(self):
+        # Explicit failure boundary: two independent copies of the same
+        # trusted DB do not share a spent claim or an anti-rollback witness.
+        original=self.gate();original.close()
+        duplicate=os.path.join(self.tmp.name,'other-spend.db')
+        shutil.copy2(self.path,duplicate)
+        grant,nonce=make(9)
+        first=self.gate()
+        second=DurableSpendGate(duplicate,A,S,E)
+        self.assertEqual(first.consume(grant,P,C,nonce,120),'READY_RESOURCE_ONLY')
+        self.assertEqual(second.consume(grant,P,C,nonce,120),'READY_RESOURCE_ONLY')
+        first.close();second.close()
+    def test_preexisting_symlink_and_hardlink_database_refused(self):
+        original=self.gate();original.close()
+        linked=os.path.join(self.tmp.name,'hardlink.db')
+        os.link(self.path,linked)
+        with self.assertRaisesRegex(ValueError,'UNTRUSTED_DATABASE'):
+            self.gate()
+        with self.assertRaisesRegex(ValueError,'UNTRUSTED_DATABASE'):
+            DurableSpendGate(linked,A,S,E)
+        os.unlink(linked)
+        symlink=os.path.join(self.tmp.name,'alias.db')
+        os.symlink(self.path,symlink)
+        with self.assertRaisesRegex(ValueError,'UNTRUSTED_DATABASE'):
+            DurableSpendGate(symlink,A,S,E)
     def test_scope_clone_rejected_on_same_db(self):
         x=self.gate();x.close()
         with self.assertRaisesRegex(ValueError,'HOST_SCOPE_MISMATCH'):
