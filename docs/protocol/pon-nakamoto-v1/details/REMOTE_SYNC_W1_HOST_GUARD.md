@@ -128,7 +128,11 @@ Public untrusted History imports now use
 new public import checks kernel identity/limits before and after native
 verification; it does not create VerifiedWork or a second CPU allowance.
 Native and private loopback-only developer sync retain
-'require_for_listener' without protocol semantic changes.
+'require_for_listener' without protocol semantic changes. The prior
+'pub fn receive_page_from' adapter is now 'pub(crate)' (same-crate only);
+external library consumers cannot accidentally bypass the explicit public
+'pub fn receive_page_from_public_sync' source-owner contract by using that
+legacy loopback-development helper.
 
 The new Rust counterexample
 'explicit_public_sync_loopback_proxy_does_not_bypass_host_budget' fixes a
