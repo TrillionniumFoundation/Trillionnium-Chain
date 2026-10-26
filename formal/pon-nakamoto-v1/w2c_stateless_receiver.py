@@ -22,7 +22,7 @@ class StatelessReceiverAdmission:
 
     def __init__(self, receiver: bytes, secret: bytes, epoch: bytes,
                  *, lifetime_ms: int = 2000, capacity: int = 64,
-                 entropy=None):
+                 entropy=None, minimum_bits: int = 8):
         self.receiver = bytes32(receiver, 'RECEIVER')
         self.secret = bytes32(secret, 'SECRET')
         self.epoch = bytes32(epoch, 'EPOCH')
@@ -30,6 +30,9 @@ class StatelessReceiverAdmission:
             raise ValueError('LIFETIME')
         if type(capacity) is not int or not 1 <= capacity <= 1024:
             raise ValueError('CAPACITY')
+        if type(minimum_bits) is not int or not 8 <= minimum_bits <= 24:
+            raise ValueError('PRICE_BITS')
+        self.minimum_bits = minimum_bits
         self.lifetime_ms = lifetime_ms
         self.capacity = capacity
         self.entropy = secrets.token_bytes if entropy is None else entropy
@@ -54,6 +57,15 @@ class StatelessReceiverAdmission:
         with self.lock:
             return len(self.spent)
 
+    def raise_minimum_bits(self, bits: int) -> None:
+        """One service epoch can raise the cost floor, never lower it."""
+        with self.lock:
+            if type(bits) is not int or not 8 <= bits <= 24:
+                raise ValueError('PRICE_BITS')
+            if bits < self.minimum_bits:
+                raise ValueError('PRICE_ROLLBACK')
+            self.minimum_bits = bits
+
     def offer(self, proposal: bytes, caller: bytes, bits: int, now_ms: int) -> Grant:
         """Caller identity is checked by an upstream authenticated transport."""
         with self.lock:
@@ -61,6 +73,8 @@ class StatelessReceiverAdmission:
             bytes32(caller, 'CALLER')
             if type(bits) is not int or not 8 <= bits <= 24:
                 raise ValueError('BITS')
+            if bits < self.minimum_bits:
+                raise ValueError('PRICE_POLICY')
             self._clock(now_ms)
             if now_ms > MAX_U64 - self.lifetime_ms:
                 raise ValueError('CLOCK_OVERFLOW')
@@ -95,6 +109,11 @@ class StatelessReceiverAdmission:
             if not hmac.compare_digest(
                     hmac.new(self.secret, payload, hashlib.sha256).digest(), mac):
                 return 'GRANT_MAC'
+            # A MAC authenticates the originally issued cost, but never
+            # authorizes a historic discount after the server raises its
+            # policy. This is local admission only, not Chainwork/VerifiedWork.
+            if grant.bits < self.minimum_bits:
+                return 'PRICE_POLICY'
             if not grant.issued_ms <= now_ms < grant.expires_ms:
                 return 'EXPIRED_OR_FUTURE'
             if not qualifies(ticket(grant, nonce), grant.bits):
