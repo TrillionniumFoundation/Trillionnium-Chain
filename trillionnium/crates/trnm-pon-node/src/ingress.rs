@@ -2226,7 +2226,26 @@ fn receive_page(
         native?;
     }
     if page.complete {
-        node.activate_observed(tip, clock)?;
+        // History completion may activate/reorganize a whole valid branch.
+        // This is a separate potentially expensive native operation, never
+        // free CPU merely because all received W1 proofs were valid.
+        let original = begin_history_cpu(cpu, page_deadline)?;
+        let live = original.checkpoint_handle();
+        let activated = node.activate_observed_with_progress(
+            tip,
+            clock,
+            &mut || {
+                ensure(Instant::now() < page_deadline, "PUBLIC_MUTATION_CPU_BUDGET")?;
+                live.checkpoint()
+            },
+        );
+        // Preserve original committed chain facts if a late accounting
+        // failure happens; never re-label native success as consensus-invalid.
+        let paid = original.finish();
+        if paid.accounting_unavailable {
+            return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+        }
+        activated?;
     }
     Ok(next)
 }
