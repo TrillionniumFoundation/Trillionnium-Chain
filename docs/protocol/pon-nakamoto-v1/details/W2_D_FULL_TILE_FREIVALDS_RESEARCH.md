@@ -73,7 +73,7 @@ Run:
 
     python3 formal/pon-nakamoto-v1/test_w2d_full_tile_freivalds.py -v
 
-The new test module has eight explicit negative/control selectors: dense,
+The new test module has nine explicit negative/control selectors: dense,
 zero, four forged trace claims, one wrong intermediate tile with a
 recomputed forged digest, wrong product, changed task/challenge/target,
 noncanonical/malformed witness, and explicit no-authority outputs.
@@ -149,3 +149,54 @@ alternate variants need **different versioned statement domains** before
 any wire compatibility claim. An adaptive adversary's total commitments,
 grinding and GPU advantage still reduce security margins. This NEGATIVE
 result blocks treating the 2-round performance gain as P5 closure.
+
+
+## Decisive failure of the *invalid-proof* economics: late tile replay
+
+The research verifier is probabilistically resistant to the **acceptance**
+of a false fixed arithmetic relation; it is NOT economical to **reject** every
+false relation. A determined producer can prepare a genuine W1 witness once,
+then change the **last** of the 512 prefix tiles, recompute SHA256 over the
+131,072-byte sidecar, and cheaply search an ordinary W1 ticket over the
+new claimed transcript. The receiver verifies 511 genuine tile steps and
+rejects at the final falsified tile with TILE_RELATION.
+
+This is a more direct counterexample to original issue 3 than the unsound
+sampled W2-A test. It spends genuine computation **once** and then
+amortizes that setup across arbitrarily many false claims for the same
+challenge/task. No W1 VerifiedWork or block is created.
+
+Executable source and tests:
+
+    python3 formal/pon-nakamoto-v1/test_w2d_late_tile_attack.py -v
+    python3 formal/pon-nakamoto-v1/w2d_late_tile_attack.py \
+      --seeds 1 2 3 4 --cap 128 --out /new/unique/late-tile.json
+
+All four test selectors passed locally on 2026-10-26. The committed attack
+source and test source each have Git blobs identical to the bytes directly
+executed in the local scratch environment. The report preserves every
+hash attempt, miss, measured CPU interval, one-time legal setup cost and
+the final rejection. One exploratory process-CPU cohort with the W1 initial
+research target 7f followed by 31 ff bytes (hit probability one half):
+
+| Seed | False-trace ticket attempts | One-time full setup | Marginal fake search | Last-tile W2-D rejection | Receiver / fake CPU |
+| ---: | ---: | ---: | ---: | ---: | ---: |
+| 1 | 1 | 282.0 ms | 0.270 ms | 66.5 ms | 246x |
+| 2 | 1 | 197.3 ms | 0.151 ms | 65.6 ms | 434x |
+| 3 | 5 | 193.7 ms | 0.689 ms | 60.3 ms | 88x |
+| 4 | 1 | 209.8 ms | 0.284 ms | 65.5 ms | 230x |
+
+Ratios compare marginal already-prepared attacker CPU to **one** complete
+negative receiver call, not full service/network costs or a universal lower
+bound. Actual service/connection/host CPU, GPU/ASIC, bandwidth, OS scheduling
+and independent operators were NOT measured. Setup cannot be omitted from
+a complete, bounded single-shot attack budget.
+
+**P5 VERDICT: HOLD_NO_GO.** W2-D reduces CPU for *valid* two-round relation
+verification but **does not fix invalid-proof amplification**; an attacker
+can force an expensive *late rejection*. More rounds also tend to erase the
+valid-path CPU gain. Future W2 candidates must pass two independent gates:
+(1) soundness of accepted work versus grinding and (2) worst-case
+invalid-proof rejection cost, including amortized preprocessing, client hash
+advantage and multi-receiver dissemination. Probabilistic nonacceptance
+alone does NOT close the PoN DoS blocker.
