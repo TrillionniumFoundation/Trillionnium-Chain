@@ -155,6 +155,55 @@ class ShadowJournalTests(unittest.TestCase):
             journal.append(second, next_packet)
             self.assertEqual(journal.audit(), 2)
 
+    def test_standalone_graph_tip_audit_holds_one_sqlite_snapshot(self):
+        with ShadowJournal(self.path,CTX,GEN) as first, ShadowJournal(self.path,CTX,GEN) as second:
+            one,packet_a=candidate(GEN,1)
+            first.append(one,packet_a)
+            two,packet_b=candidate(one.block_id,2)
+            original=first.db
+            attempts=[]
+
+            class InterleavingConnection:
+                @property
+                def in_transaction(self):
+                    return original.in_transaction
+
+                def execute(self, sql, *args):
+                    # Force a true writer attempt AFTER the header scan but
+                    # BEFORE the active-tip lookup. Without an explicit read
+                    # snapshot, it could commit and change this audit's view.
+                    if ("SELECT value FROM daa_shadow_meta_v1 WHERE key='active_tip'" == sql
+                            and not attempts):
+                        attempts.append(True)
+                        with self_owner.assertRaises(sqlite3.OperationalError):
+                            second.append(two,packet_b)
+                    return original.execute(sql,*args)
+
+            self_owner=self
+            first.db=InterleavingConnection()
+            try:
+                self.assertEqual(first.audit(),1)
+            finally:
+                first.db=original
+            self.assertEqual(attempts,[True])
+            self.assertFalse(first.db.in_transaction)
+            with self.assertRaisesRegex(JournalError,'UNKNOWN_PARENT_OR_HEADER'):
+                first.get(two.block_id)
+            # No permanent reader ownership or stale generation survives audit.
+            second.append(two,packet_b)
+            self.assertEqual(first.audit(),2)
+
+    def test_standalone_audit_refuses_nested_transaction_without_stealing_it(self):
+        with ShadowJournal(self.path,CTX,GEN) as journal:
+            journal.db.execute('BEGIN')
+            try:
+                with self.assertRaisesRegex(JournalError,'AUDIT_ALREADY_IN_TRANSACTION'):
+                    journal.audit()
+                self.assertTrue(journal.db.in_transaction)
+            finally:
+                journal.db.execute('ROLLBACK')
+            self.assertEqual(journal.audit(),0)
+
     def test_hot_read_refuses_noncanonical_height_index(self):
         with ShadowJournal(self.path, CTX, GEN) as journal:
             one, packet = candidate(GEN, 1)

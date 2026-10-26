@@ -185,6 +185,94 @@ class RenewalOutboxTests(unittest.TestCase):
             self.assertEqual(db.audit(),0)
             self.assertFalse(db.status(key)['dispatch_unknown'])
 
+    def test_cold_audit_rejects_semantic_observation_with_recomputed_event_hash(self):
+        # Local adversarial SQLite rewrite, not an external chain or signature claim.
+        # Both event checksum and event predecessor are valid after mutation.
+        from q4_renewal_outbox_research import EVENT_DOMAIN
+        cases = (
+            ('zero-gen','included',0,8,bytes(8),'OBSERVATION_WIRE'),
+            ('zero-tip','included',8,40,bytes(32),'OBSERVATION_WIRE'),
+            ('zero-receipt','included',81,113,bytes(32),'OBSERVATION_WIRE'),
+            ('missing-block','confirmed',49,81,bytes(32),'OBSERVATION_MEMBERSHIP'),
+            ('invented-block','reorged',49,81,bytes([9])*32,'OBSERVATION_MEMBERSHIP'),
+            ('unknown-class','included',48,49,bytes([255]),'OBSERVATION_MISMATCH'),
+        )
+        for name, observed_kind, first, end, replacement, expected in cases:
+            with self.subTest(name=name):
+                path = Path(self.tmp.name) / (name + '.sqlite')
+                with RenewalOutbox(path,N,P,G) as db:
+                    key = db.prepare(intent())
+                    db.dispatch_unknown(key)
+                    db.observe(key,observation(observed_kind))
+                    self.assertEqual(db.audit(),2)
+                with sqlite3.connect(path) as raw:
+                    ident,kind,prior,wire=raw.execute(
+                        'SELECT intent_id,kind,prev,observation FROM q4_outbox_events_v1 WHERE ordinal=2'
+                    ).fetchone()
+                    changed=wire[:first]+replacement+wire[end:]
+                    self.assertEqual(len(changed),113)
+                    altered_digest=hashlib.sha256(
+                        EVENT_DOMAIN + (2).to_bytes(8,'big') + ident
+                        + kind.encode('ascii') + changed + prior
+                    ).digest()
+                    raw.execute('UPDATE q4_outbox_events_v1 SET observation=?,digest=? WHERE ordinal=2',
+                                (changed,altered_digest))
+                    row=raw.execute('SELECT digest FROM q4_outbox_events_v1 WHERE ordinal=2').fetchone()
+                    self.assertEqual(row[0],altered_digest)
+                with self.assertRaisesRegex(OutboxError,expected):
+                    RenewalOutbox(path,N,P,G)
+
+    def test_audit_pins_intents_and_events_to_one_sqlite_read_snapshot(self):
+        with self.open() as first, self.open() as second:
+            original = first.prepare(intent())
+            first.dispatch_unknown(original)
+            raw_connection = first.db
+            attempt = replace(intent(tx=b'J'*1187),operation_id=h(b'new operation'))
+            triggered = []
+
+            class ObserveInterleave:
+                # Intercept only the handoff BETWEEN the completed Intent scan and
+                # first Event scan; use an actual second SQLite owner to attempt
+                # an otherwise valid new durable prepare while the snapshot is live.
+                @property
+                def in_transaction(self):
+                    return raw_connection.in_transaction
+
+                def execute(self, statement, *args):
+                    if (statement.startswith('SELECT ordinal,intent_id,kind,observation,prev,digest')
+                            and not triggered):
+                        triggered.append(True)
+                        with self_outer.assertRaises(sqlite3.OperationalError):
+                            second.prepare(attempt)
+                    return raw_connection.execute(statement, *args)
+
+            self_outer = self
+            first.db = ObserveInterleave()
+            try:
+                self.assertEqual(first.audit(),1)
+            finally:
+                first.db = raw_connection
+            self.assertEqual(triggered,[True])
+            self.assertFalse(first.db.in_transaction)
+            # The failed concurrent prepare left neither an Intent nor a partial
+            # dispatch event. It can succeed only AFTER audit's snapshot releases.
+            self.assertEqual(first.audit(),1)
+            second.prepare(attempt)
+            self.assertEqual(first.audit(),1)
+            self.assertTrue(first.status(original)['dispatch_unknown'])
+
+    def test_nested_audit_is_refused_without_ending_the_original_transaction(self):
+        with self.open() as db:
+            db.prepare(intent())
+            db.db.execute('BEGIN')
+            try:
+                with self.assertRaisesRegex(OutboxError,'AUDIT_REENTRANT'):
+                    db.audit()
+                self.assertTrue(db.db.in_transaction)
+            finally:
+                db.db.execute('ROLLBACK')
+            self.assertEqual(db.audit(),0)
+
     def test_transaction_id_matches_explicit_pon_hash_domain(self):
         raw=TX
         manual=h(b'TRNM-PON1\0'+(5).to_bytes(2,'little')+b'tx-id'

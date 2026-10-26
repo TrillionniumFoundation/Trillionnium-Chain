@@ -25,7 +25,11 @@ state root, deployment or activation bit changes.
   pointer, **not** Nakamoto heaviest-work selection.
 - Cold open checks schema, context and a bounded streaming ancestry audit,
   including canonical row fields, hashes, parent existence, increasing height,
-  immutable tip membership and a finite record budget.
+  immutable tip membership and a finite record budget. Both header graph and
+  active-tip check now share ONE explicit SQLite read snapshot; a concurrent
+  writer cannot make a valid database appear corrupted by changing the active
+  tip between scans. The auditor releases only its own read transaction on any
+  return/error and refuses reentrant use inside an unrelated transaction.
 
 ## Testing and precise limits
 

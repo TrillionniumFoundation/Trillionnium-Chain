@@ -267,7 +267,17 @@ class ShadowJournal:
             raise
 
     def audit(self) -> int:
-        """Cold graph and canonical-identity check; NOT packet/W1 proof replay.
+        """One stable cold graph + active-tip snapshot; no consensus authority."""
+        if self.db.in_transaction:
+            raise JournalError('AUDIT_ALREADY_IN_TRANSACTION')
+        self.db.execute('BEGIN')
+        try:
+            return self._audit_within_snapshot()
+        finally:
+            self.db.execute('ROLLBACK')
+
+    def _audit_within_snapshot(self) -> int:
+        """Local graph/index integrity within a caller-held read snapshot.
 
         An attacker able to rewrite the entire local database may recompute all
         checks. Native trusted packet/state replay remains required at startup.
@@ -319,7 +329,7 @@ class ShadowJournal:
         try:
             if self.db.execute('SELECT COUNT(*) FROM daa_shadow_headers_v1').fetchone()[0] > max_rows:
                 raise JournalError('OWNER_AUDIT_BUDGET')
-            self.audit()  # local graph/index consistency under this snapshot
+            self._audit_within_snapshot()  # caller already holds one consistent read snapshot
             scanned = 0
             cursor = self.db.execute('SELECT canonical FROM daa_shadow_headers_v1 '
                                      'ORDER BY height,block_id')
