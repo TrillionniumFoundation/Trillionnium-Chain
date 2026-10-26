@@ -26,6 +26,29 @@ class OutboxError(ValueError):
 class UnknownEffect(OutboxError):
     """COMMIT may have succeeded; reconcile original identity before any action."""
 
+def _validate_observation_wire(kind: str, obs: bytes) -> int:
+    """Check complete canonical observation bytes on input AND cold journal replay.
+
+    Only syntax and exact event identity are checked. The caller still owns
+    verification of genuine native chain membership and confirmation.
+    """
+    tags = {'OBSERVED_INCLUDED': 1, 'OBSERVED_CONFIRMED': 2,
+            'OBSERVED_REORGED': 3, 'OBSERVED_UNAVAILABLE': 4,
+            'OBSERVED_EXPIRED': 5}
+    if kind not in tags:
+        raise OutboxError('OBSERVATION_KIND')
+    if type(obs) is not bytes or len(obs) != 113:
+        raise OutboxError('OBSERVATION_WIRE')
+    generation = int.from_bytes(obs[:8], 'big')
+    tip, tag, block, receipt = obs[8:40], obs[48], obs[49:81], obs[81:113]
+    if generation == 0 or tip == ZERO or receipt == ZERO:
+        raise OutboxError('OBSERVATION_WIRE')
+    if tag != tags[kind]:
+        raise OutboxError('OBSERVATION_MISMATCH')
+    if (tag in (1, 2) and block == ZERO) or (tag in (3, 4, 5) and block != ZERO):
+        raise OutboxError('OBSERVATION_MEMBERSHIP')
+    return generation
+
 def identity(value: bytes, name: str) -> bytes:
     if type(value) is not bytes or len(value) != 32 or value == ZERO:
         raise OutboxError(name + '_IDENTITY')
@@ -197,12 +220,9 @@ class RenewalOutbox:
                 dispatch.add(ident)
             elif kind.startswith('OBSERVED_'):
                 if ident not in dispatch: raise OutboxError('OBSERVATION_BEFORE_DISPATCH')
-                if len(obs) != 113: raise OutboxError('OBSERVATION_WIRE')
-                generation = int.from_bytes(obs[:8],'big')
+                generation = _validate_observation_wire(kind, obs)
                 if generation < last_generation.get(ident,0): raise OutboxError('OBSERVATION_REGRESSION')
                 last_generation[ident] = generation
-                if kind != 'OBSERVED_' + {1:'included',2:'confirmed',3:'reorged',4:'unavailable',5:'expired'}.get(obs[48], '').upper():
-                    raise OutboxError('OBSERVATION_MISMATCH')
             else:
                 raise OutboxError('UNKNOWN_EVENT')
             prior = digest
@@ -211,6 +231,12 @@ class RenewalOutbox:
     def _event(self, ident: bytes, kind: str, obs: bytes=b'', *, fail_at: str | None=None) -> None:
         if fail_at not in (None,'before_commit','after_commit'):
             raise OutboxError('FAULT_POINT')
+        if kind.startswith('OBSERVED_'):
+            _validate_observation_wire(kind, obs)
+        elif kind == 'DISPATCH_UNKNOWN':
+            if obs: raise OutboxError('DISPATCH_DUPLICATE')
+        else:
+            raise OutboxError('UNKNOWN_EVENT')
         self.db.execute('BEGIN IMMEDIATE')
         committed = False
         try:
