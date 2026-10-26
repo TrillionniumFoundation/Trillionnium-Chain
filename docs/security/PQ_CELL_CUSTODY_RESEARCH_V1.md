@@ -6,7 +6,7 @@ This is an incremental M09/M01 **offline** extension of PQ Cell releases in PR #
 
 The objective is to ensure that a responding peer supplies *exactly* a challenged chunk from a caller-pinned Cell weight catalog and signs the retrieval observation with a genuinely verified ML-DSA-65 key. The signature is not proof that the key belongs to a real custodian, that the peer held bytes before the challenge, that storage is continuously available or that a model may be adopted. RetrievalObservation provides only non-authoritative diagnostic facts, not VerifiedWork, a grant, a storage reward or a final-use token. The one-use SQLite table is purely local; never use it for chain-wide nullifiers, payment, consistency with a reorg or historical rights.
 
-**Critical trust requirement:** The caller must provide *independently authenticated* `expected_catalog_digest`, `expected_release`, trusted provider key ID, requester identity and challenge nonce. Reading these from the same peer-controlled catalog or signed response proves only self-consistency. The current PR #406 PCB1 release format does not itself anchor the new catalog root; production activation requires an explicitly reviewed versioned release extension and real Hepta export/final-use authorization.
+**Critical trust requirement:** The caller must provide *independently authenticated* `expected_catalog_digest`, `expected_release`, trusted provider key ID, requester identity and challenge nonce. Reading these from the same peer-controlled catalog or signed response proves only self-consistency. The current PR #406 PCB1 release format does not itself anchor the new catalog root. The separately signed research PCA1 catalog binding (below) demonstrates one path to obtain a cryptographic catalog pin from an explicitly trusted release signer, but production activation still requires a reviewed versioned release extension, independently accepted PCB1 evaluation/reviewer evidence, immutable catalog selection, and real Hepta export/final-use authorization.
 
 ## Binary formats and proof derivation
 
@@ -18,6 +18,12 @@ PCR1 response: magic (4) + chunk index (u32 BE) + chunk length (u32 BE) + raw by
 
 Exact messages and hash domain separators are encoded by the executable research file, not negotiable by peer data.
 
+## PCA1 — optional PQ release-signer catalog binding (not an installed PCB1 field)
+
+A separate ML-DSA-65 TPQ1 purpose=4 signature commits to `PCA1 || exact PCC1 catalog bytes || release_frame_id || previous_catalog_head`, where `release_frame_id=SHA384(DOMAIN || "release-frame\\0" || exact signed PCB1 release frame)`. The signature binds a 32-byte signer identity, network, generation, sequence, expiry and domain-separated context of the signed catalog/release/prior head.
+
+The receiving caller must independently authenticate the exact original PCB1 release frame **and** the release signer/roster/review/consent facts before accepting the expected release-frame digest. The PCA1 research verifier itself checks the original frame's **canonical purpose only**; it does not re-verify that prior frame's reviewers, independently authorized source or original signature/payload. Treat `CatalogPinObservation` strictly as diagnostic cryptographic signer-to-catalog linkage. It is not a chain canonical release pointer, final-use authorization, storage reward or tamper-proof uniqueness registry. Multiple conflicting PCA1 attestations by the same signer still require an externally owned fork/revocation/equivocation policy.
+
 ## Local execution and evidence
 
 ```sh
@@ -25,11 +31,11 @@ cd formal/pon-nakamoto-v1
 python3 -m unittest -v test_pq_cell_custody.py
 ```
 
-The local campaign executed 13 tests with Python 3.13.5 and OpenSSL 3.5.5 default-provider genuine ML-DSA-65; source blobs on GitHub match the executed local file bytes. Tests include all 217 per-byte PCQ1 mutations; altered chunk, proof and ML-DSA signature; odd-branch Merkle malleability; wrong signer, release, generation, nonce, requester, catalog or expiry; a *fully self-consistent malicious replacement tree under the same release ID*; strict frame and size limits; SQLite foreign schema/trigger/primary-key downgrades; cold reopening, exact retry and eight parallel independent SQLite connections allowing exactly one FIRST_RECORD. See `evidence/pon-pq-cell-custody-v1/`. This is a local environment, not independent operator acceptance.
+The v1 local campaign executed 13 tests with Python 3.13.5 and OpenSSL 3.5.5 default-provider genuine ML-DSA-65; source blobs on GitHub match the executed local file bytes. Tests include all 217 per-byte PCQ1 mutations; altered chunk, proof and ML-DSA signature; odd-branch Merkle malleability; wrong signer, release, generation, nonce, requester, catalog or expiry; a *fully self-consistent malicious replacement tree under the same release ID*; strict frame and size limits; SQLite foreign schema/trigger/primary-key downgrades; cold reopening, exact retry and eight parallel independent SQLite connections allowing exactly one FIRST_RECORD. The v2 follow-up adds two real-signer PCA1 tests and executed **15 PASS** on the updated exact source (see `evidence/pon-pq-cell-custody-v2/`). The v1 raw evidence remains immutable and bound to its older source. This is a local environment, not independent operator acceptance.
 
 ## Remaining critical blockers
 
-1. Authenticated PQ catalog root publication must be part of the release/Chain/Hepta owner contract; current PCB1 does not sign it.
+1. Authenticated PQ catalog root publication must be part of the production release/Chain/Hepta owner contract; current PCB1 does not sign it, and standalone research PCA1 is not a production chain pointer.
 2. A signed retrieval can be produced by downloading bytes **after** receiving a challenge. Periodic challenge sampling does not prove geographic retention or continuous data availability.
 3. Admission CPU/bandwidth cost, source diversity, DHT discovery, loss/recovery/repair, erasure coding, network Sybil and eclipse resistance remain unbuilt.
 4. Local SQLite is not globally replicated, rollback-proof, owner-provisioned or acceptable for payment; recovery needs a production state machine and chain reorg semantics.
