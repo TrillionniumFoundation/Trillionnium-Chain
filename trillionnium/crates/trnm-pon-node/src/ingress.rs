@@ -2403,6 +2403,56 @@ mod tests {
     use super::*;
 
     #[test]
+    fn history_valid_w1_cannot_commit_after_m06_host_owner_rejection() {
+        use trnm_crypto_primitives::pon_work::VerificationProgress;
+        use trnm_mvcc_fee::pon_executor::ExecutionProgress;
+        use std::sync::atomic::{AtomicUsize, Ordering};
+        let (dir, mutex, packet) = pending_packet();
+        let mut node = mutex.into_inner().unwrap();
+        let original = node.stats().unwrap();
+        let original_active = node.read_active().unwrap();
+        let id = packet.id().unwrap();
+        let m06_checks = AtomicUsize::new(0);
+        let mut tiles = 0_usize;
+        let result = node.admit_with_work_progress(
+            &packet,
+            now().unwrap(),
+            &mut |point| {
+                if matches!(point, VerificationProgress::TranscriptTile { .. }) {
+                    tiles += 1;
+                }
+                Ok(())
+            },
+            &|stage| {
+                if stage == ExecutionProgress::BeforeDurableCommit {
+                    m06_checks.fetch_add(1, Ordering::SeqCst);
+                    // The real Host checker returns an operational refusal,
+                    // never a mathematical WorkError or forged BlockId.
+                    return Err(Error::from("PUBLIC_HOST_KERNEL_LIMITS_CHANGED"));
+                }
+                Ok(())
+            },
+        );
+        assert_eq!(result.unwrap_err().to_string(), "PUBLIC_HOST_KERNEL_LIMITS_CHANGED");
+        assert_eq!(tiles, 512, "valid W1 must have completed full replay");
+        assert!(m06_checks.load(Ordering::SeqCst) > 0);
+        assert_eq!(node.stats().unwrap(), original);
+        assert_eq!(node.read_active().unwrap(), original_active);
+        let persisted: u64 = rusqlite::Connection::open(dir.path().join("native.sqlite"))
+            .unwrap()
+            .query_row(
+                "SELECT COUNT(*) FROM blocks WHERE id=?",
+                [id.as_slice()],
+                |row| row.get(0),
+            )
+            .unwrap();
+        assert_eq!(persisted, 0, "precommit owner fault must roll back all block rows");
+        // A resource refusal is not an invalid-W1 cache entry. The identical
+        // actual proof can later be verified by the normal Node owner.
+        assert_eq!(node.admit(&packet, now().unwrap()).unwrap(), id);
+    }
+
+    #[test]
     fn kernel_progress_rechecks_original_host_at_most_every_64_tiles() {
         use trnm_crypto_primitives::pon_work::VerificationProgress;
         let mut owner_checks = Vec::new();
