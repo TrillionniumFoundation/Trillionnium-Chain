@@ -6,7 +6,7 @@ use trnm_mvcc_fee::{continuity_v1, qualified_task_lifecycle};
 use trnm_pon_node::{development_public, Node, Settings};
 use trnm_protocol::{
     pon_wire::{hash, Envelope, Hash},
-    qualified_work_task::lifecycle_v2::{DemandLeaseV2, DemandRevocationV2},
+    qualified_work_task::{lifecycle_v2::{DemandLeaseV2, DemandRevocationV2}, TaskPurpose},
 };
 
 fn public(owner: u64) -> Hash {
@@ -45,6 +45,7 @@ fn new_lease(
 ) -> DemandLeaseV2 {
     let mut lease = original.clone();
     lease.slot = slot;
+    lease.purpose = TaskPurpose::InferenceContraction;
     lease.generation = generation;
     lease.requester = public(2);
     lease.not_before = 1;
