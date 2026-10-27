@@ -254,7 +254,10 @@ mod tests {
     use super::*;
     use crate::pon_work::{prove, task_id, CELLS, PROOF_BYTES};
 
-    use std::sync::{mpsc, Arc, Barrier};
+    use std::sync::{
+        atomic::{AtomicUsize, Ordering as TestOrdering},
+        mpsc, Arc, Barrier,
+    };
     use std::thread;
 
     fn false_w1(challenge: Hash, nonce: u64) -> (Hash, Vec<u8>) {
@@ -307,30 +310,45 @@ mod tests {
             .recv_timeout(Duration::from_secs(5))
             .expect("leader must start its only replay");
         let barrier = Arc::new(Barrier::new(FOLLOWERS + 1));
+        let reached_wait = Arc::new(AtomicUsize::new(0));
         let mut followers = Vec::new();
         for _ in 0..FOLLOWERS {
             let cache = cache.clone();
             let proof = proof.clone();
             let barrier = barrier.clone();
+            let reached_wait = reached_wait.clone();
             followers.push(thread::spawn(move || {
                 barrier.wait();
+                let mut observed_wait = false;
                 cache.verify_with_progress(
                     challenge,
                     task,
                     [255; 32],
                     &proof,
-                    &mut |_| Ok::<(), ()>(()),
+                    &mut |point| {
+                        if !observed_wait
+                            && matches!(point, VerificationProgress::BeforeReplay)
+                        {
+                            observed_wait = true;
+                            reached_wait.fetch_add(1, TestOrdering::SeqCst);
+                        }
+                        Ok::<(), ()>(())
+                    },
                 )
             }));
         }
         barrier.wait();
         let deadline = Instant::now() + Duration::from_secs(5);
-        while cache.counters().wait_polls < FOLLOWERS as u64 && Instant::now() < deadline {
+        while (reached_wait.load(TestOrdering::SeqCst) < FOLLOWERS
+            || cache.counters().wait_polls < FOLLOWERS as u64)
+            && Instant::now() < deadline
+        {
             thread::sleep(Duration::from_millis(1));
         }
         // Release the leader even if a loaded host did not schedule every
         // waiter. The failure assertion cannot strand a native test worker.
-        let all_queued = cache.counters().wait_polls >= FOLLOWERS as u64;
+        let all_queued = reached_wait.load(TestOrdering::SeqCst) == FOLLOWERS
+            && cache.counters().wait_polls >= FOLLOWERS as u64;
         let (lock, changed) = &*gate;
         *lock.lock().unwrap() = true;
         changed.notify_all();
@@ -373,6 +391,42 @@ mod tests {
         );
         assert!(matches!(
             result,
+            Err(VerificationError::Relation(WorkError::Transcript))
+        ));
+        assert_eq!(tiles, 512);
+        assert_eq!(cache.counters().started_replays, 2);
+        assert_eq!(cache.counters().exact_hits, 0);
+    }
+
+    #[test]
+    fn leader_panic_does_not_leave_a_busy_slot_or_false_invalid_fact() {
+        let challenge = [92; 32];
+        let (task, proof) = false_w1(challenge, 3);
+        let cache = RejectionCache::new(1, Duration::from_secs(2)).unwrap();
+        let caught = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+            let _ = cache.verify_with_progress(
+                challenge, task, [255; 32], &proof,
+                &mut |point| -> Result<(), ()> {
+                    if matches!(point, VerificationProgress::TranscriptTile { .. }) {
+                        panic!("intentional observer unwind before full W1 result");
+                    }
+                    Ok(())
+                },
+            );
+        }));
+        assert!(caught.is_err());
+        let mut tiles = 0;
+        let resumed = cache.verify_with_progress(
+            challenge, task, [255; 32], &proof,
+            &mut |point| {
+                if matches!(point, VerificationProgress::TranscriptTile { .. }) {
+                    tiles += 1;
+                }
+                Ok::<(), ()>(())
+            },
+        );
+        assert!(matches!(
+            resumed,
             Err(VerificationError::Relation(WorkError::Transcript))
         ));
         assert_eq!(tiles, 512);
