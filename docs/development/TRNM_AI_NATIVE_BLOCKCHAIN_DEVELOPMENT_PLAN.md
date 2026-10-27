@@ -4558,3 +4558,33 @@ outside the shared layout; it does not guarantee physical WAL size. All twenty
 guards, eight original lanes, assertions and resource limits remain. Source
 identity agreement grants no SQL, C ABI, layout, two-second service or native
 qualification; the original lane executions and fullT/Layout003 remain open.
+
+
+### P0 work cost — executed native v2 x64 evidence (2026-10-27)
+
+The [complete original v2 observation](../../evidence/pon-w1-native-v2-e9c4bb0-20261027/README.md)
+now replaces the earlier “compiled only” status for these two low-rank research
+producers. Exact source `e9c4bb0d3a324b1d79b7b99326512bfb707d0025`, focused run
+`40490909605`, actually completed all 4,032 offered cohorts and 702,232 attempts
+in 494.775912 captured seconds. All misses, exhausted searches, unsupported
+cases and setup costs are preserved in the original 28,291,500-byte log; the
+source-aware checker and full-grid reader pass. This evidence-only update does
+not change the default miner, native work primitive, task eligibility or limits.
+
+Each new low-rank arm completed 48,604 attempts and 6,452 primitive-valid winning
+calls, but zero native admission calls. Across all supported aggregate groups,
+scalar/paired low-rank beat Prepared CPU in 15/4 groups respectively; neither
+was the least-cost measured supported algorithm in any group. The long-horizon
+representative comparisons alone must not be generalized into “always slower.”
+Registered genesis-maintenance produced 10,464 original Node admission calls,
+with only 509 distinct winning header contexts after shared-stream deduplication.
+Repeated admissions are not additional rewards or finalized blocks.
+
+This is one shared x64 host and two rounds, not a minimum-cost or fairness proof.
+Native verification/admission and report costs remain outside the measured
+producer denominator. The original artifact records the executable's stable
+before/after hash but does not contain that executable. Current-v2 ARM64, genuine
+GPU and energy measurements remain **OPEN**; older architecture results cannot
+close them. Correct-product/false-trace native replay, full transparent W1 proof,
+permissionless public-service security and all PN0–PN6 production exits remain
+**OPEN / NO_GO**. The additional complete readback performs no new benchmark run.
