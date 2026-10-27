@@ -2143,6 +2143,15 @@ is counted as executed. The complete W1 oracle ledger is static accounting only:
 the conditional `r=0.25` DAA model is not an implemented reversible W1 circuit,
 and quantum physical costs, fresh-work hardness and joint qualification stay open.
 
+The [original native CI readback](../../evidence/pon-native-campaign-ci-20261027/README.md)
+retains every predeclared campaign at exact heads `63ae5018` and `e9c4bb0d`:
+FAIL/PASS/FAIL and FAIL/FAIL/FAIL. The five failing from-zero phases observed real
+CPU-credit depletion after their last business round; all original predicates
+remain unchanged and no passing run replaces a failure. These legacy regressions
+explicitly used an eight-bit protected transport ticket, so they do not qualify
+the separate zero-grinding pure-PoN profile. Full original reports, metadata and
+logs remain hashed; directed integration success does not erase this gate failure.
+
 **Local implementation observation, 2026-10-22.** The explicitly selected
 [permanent-account growth v2](../protocol/pon-nakamoto-v1/details/NATIVE_ACCOUNT_GROWTH_V2.md)
 now connects the original-parent AAM1 proof, bounded complete working partition,

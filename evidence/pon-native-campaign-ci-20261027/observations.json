@@ -1,0 +1,1390 @@
+{
+  "cohorts": [
+    {
+      "artifact_id": 12727497016,
+      "attempts": [
+        {
+          "actual_seed_transfers": 1024,
+          "business_blocks": 21,
+          "number": 1,
+          "original_criteria_met": false,
+          "phases": [
+            {
+              "attacker_calls": 0,
+              "depletion_at_ns": null,
+              "false_conditions": [],
+              "final_actual_flow": {
+                "balance_identity_verified": true,
+                "booked_reservation_ns": 0,
+                "credited_refill_ns": 1205992532,
+                "discarded_refill_ns": 1246766251,
+                "initial_credit_ns": 2000000000,
+                "live_debited_cpu_ns": 1531588139,
+                "live_owners": 0,
+                "paid_cpu_debit_ns": 1531618848,
+                "remaining_paid_credit_ns": 1674373684,
+                "schema": "public-v3-local-actual-cpu-flow-v1",
+                "settled_full_cpu_ns": 1531618848,
+                "settlement_discard_ns": 0,
+                "settlement_residual_cpu_ns": 30709,
+                "stored_credit_ns": 1674373684,
+                "unsettled_known_live_cpu_ns": 0
+              },
+              "full_work_accepted": 21,
+              "full_work_failed": 0,
+              "last_business_round_end_ns": 11080231121,
+              "mode": "baseline",
+              "original_criteria_met": true,
+              "readback_conditions": {
+                "accounting_available": true,
+                "all_signed_rounds_confirmed": true,
+                "no_verifier_errors": true,
+                "observer_complete": true,
+                "receiver_client_state_equal": true,
+                "service_succeeded": true,
+                "zero_in_flight": true,
+                "zero_mutation_clock_failures": true
+              },
+              "rounds": [
+                {
+                  "confirmed_inside_pressure_window": true,
+                  "ended_ns": 3713635580,
+                  "paid_credit_depletion_observed_during_round": false,
+                  "receiver_hostile_work_rejected_during_round": false,
+                  "round": 0,
+                  "started_ns": 1001483142
+                },
+                {
+                  "confirmed_inside_pressure_window": true,
+                  "ended_ns": 6612831688,
+                  "paid_credit_depletion_observed_during_round": false,
+                  "receiver_hostile_work_rejected_during_round": false,
+                  "round": 1,
+                  "started_ns": 5001756781
+                },
+                {
+                  "confirmed_inside_pressure_window": true,
+                  "ended_ns": 11080231121,
+                  "paid_credit_depletion_observed_during_round": false,
+                  "receiver_hostile_work_rejected_during_round": false,
+                  "round": 2,
+                  "started_ns": 9001808960
+                }
+              ]
+            },
+            {
+              "attacker_calls": 3545,
+              "depletion_at_ns": 12090179762,
+              "false_conditions": [
+                "depletion_during_a_business_round"
+              ],
+              "final_actual_flow": {
+                "balance_identity_verified": true,
+                "booked_reservation_ns": 0,
+                "credited_refill_ns": 7495529292,
+                "discarded_refill_ns": 188874348,
+                "initial_credit_ns": 2000000000,
+                "live_debited_cpu_ns": 9391313099,
+                "live_owners": 0,
+                "paid_cpu_debit_ns": 9394341436,
+                "remaining_paid_credit_ns": 101187856,
+                "schema": "public-v3-local-actual-cpu-flow-v1",
+                "settled_full_cpu_ns": 9394341436,
+                "settlement_discard_ns": 0,
+                "settlement_residual_cpu_ns": 3028337,
+                "stored_credit_ns": 101187856,
+                "unsettled_known_live_cpu_ns": 0
+              },
+              "full_work_accepted": 21,
+              "full_work_failed": 3522,
+              "last_business_round_end_ns": 11680925092,
+              "mode": "from-zero",
+              "original_criteria_met": false,
+              "readback_conditions": {
+                "accounting_available": true,
+                "actors_exited_without_cap_or_kill": true,
+                "all_24_actors_ready": true,
+                "all_signed_rounds_confirmed": true,
+                "at_least_21_full_work_accepted": true,
+                "depletion_during_a_business_round": false,
+                "depletion_seen_in_phase": true,
+                "hostile_work_rejected_during_every_round": true,
+                "invalid_full_work_rejected": true,
+                "no_attack_call_accepted": true,
+                "no_verifier_errors": true,
+                "observer_complete": true,
+                "receiver_client_state_equal": true,
+                "service_succeeded": true,
+                "three_nonempty_attack_overlaps": true,
+                "zero_in_flight": true,
+                "zero_mutation_clock_failures": true
+              },
+              "rounds": [
+                {
+                  "confirmed_inside_pressure_window": true,
+                  "ended_ns": 4190464442,
+                  "paid_credit_depletion_observed_during_round": false,
+                  "receiver_hostile_work_rejected_during_round": true,
+                  "round": 0,
+                  "started_ns": 1001014027
+                },
+                {
+                  "confirmed_inside_pressure_window": true,
+                  "ended_ns": 7433378085,
+                  "paid_credit_depletion_observed_during_round": false,
+                  "receiver_hostile_work_rejected_during_round": true,
+                  "round": 1,
+                  "started_ns": 5000539281
+                },
+                {
+                  "confirmed_inside_pressure_window": true,
+                  "ended_ns": 11680925092,
+                  "paid_credit_depletion_observed_during_round": false,
+                  "receiver_hostile_work_rejected_during_round": true,
+                  "round": 2,
+                  "started_ns": 9000004577
+                }
+              ]
+            },
+            {
+              "attacker_calls": 3118,
+              "depletion_at_ns": 9809360817,
+              "false_conditions": [],
+              "final_actual_flow": {
+                "balance_identity_verified": true,
+                "booked_reservation_ns": 0,
+                "credited_refill_ns": 7495173226,
+                "discarded_refill_ns": 69532290,
+                "initial_credit_ns": 2000000000,
+                "live_debited_cpu_ns": 9391411150,
+                "live_owners": 0,
+                "paid_cpu_debit_ns": 9393986891,
+                "remaining_paid_credit_ns": 101186335,
+                "schema": "public-v3-local-actual-cpu-flow-v1",
+                "settled_full_cpu_ns": 9393986891,
+                "settlement_discard_ns": 0,
+                "settlement_residual_cpu_ns": 2575741,
+                "stored_credit_ns": 101186335,
+                "unsettled_known_live_cpu_ns": 0
+              },
+              "full_work_accepted": 21,
+              "full_work_failed": 3095,
+              "last_business_round_end_ns": 12733747982,
+              "mode": "late-product",
+              "original_criteria_met": true,
+              "readback_conditions": {
+                "accounting_available": true,
+                "actors_exited_without_cap_or_kill": true,
+                "all_24_actors_ready": true,
+                "all_signed_rounds_confirmed": true,
+                "at_least_21_full_work_accepted": true,
+                "depletion_during_a_business_round": true,
+                "depletion_seen_in_phase": true,
+                "hostile_work_rejected_during_every_round": true,
+                "invalid_full_work_rejected": true,
+                "no_attack_call_accepted": true,
+                "no_verifier_errors": true,
+                "observer_complete": true,
+                "receiver_client_state_equal": true,
+                "service_succeeded": true,
+                "three_nonempty_attack_overlaps": true,
+                "zero_in_flight": true,
+                "zero_mutation_clock_failures": true
+              },
+              "rounds": [
+                {
+                  "confirmed_inside_pressure_window": true,
+                  "ended_ns": 3316850840,
+                  "paid_credit_depletion_observed_during_round": false,
+                  "receiver_hostile_work_rejected_during_round": true,
+                  "round": 0,
+                  "started_ns": 1001181688
+                },
+                {
+                  "confirmed_inside_pressure_window": true,
+                  "ended_ns": 7332823602,
+                  "paid_credit_depletion_observed_during_round": false,
+                  "receiver_hostile_work_rejected_during_round": true,
+                  "round": 1,
+                  "started_ns": 5001445929
+                },
+                {
+                  "confirmed_inside_pressure_window": true,
+                  "ended_ns": 12733747982,
+                  "paid_credit_depletion_observed_during_round": true,
+                  "receiver_hostile_work_rejected_during_round": true,
+                  "round": 2,
+                  "started_ns": 9000413872
+                }
+              ]
+            }
+          ],
+          "public_resource_policy": {
+            "lifetime_ms": 2000,
+            "policy_id": "c110c3ccb1e229c3a85f4819b1e087fa819c865b50f8bd3ab78d3b8f45206cb2",
+            "schema": "public-protected-resource-policy-observation-v1",
+            "ticket_bits": 8,
+            "transport_profile": "public-protected-development-v3"
+          },
+          "raw_report_sha256": "4b59688fa91ab41550aa99df564f9962543ac2290896e8ed75fad12066ca1074",
+          "returncode": 101,
+          "settings_profile": "native-public-evaluation-dev-v1 + continuity_v1 explicit maintenance"
+        },
+        {
+          "actual_seed_transfers": 1024,
+          "business_blocks": 21,
+          "number": 2,
+          "original_criteria_met": true,
+          "phases": [
+            {
+              "attacker_calls": 0,
+              "depletion_at_ns": null,
+              "false_conditions": [],
+              "final_actual_flow": {
+                "balance_identity_verified": true,
+                "booked_reservation_ns": 0,
+                "credited_refill_ns": 1160305561,
+                "discarded_refill_ns": 1249590531,
+                "initial_credit_ns": 2000000000,
+                "live_debited_cpu_ns": 1535318078,
+                "live_owners": 0,
+                "paid_cpu_debit_ns": 1535347517,
+                "remaining_paid_credit_ns": 1624958044,
+                "schema": "public-v3-local-actual-cpu-flow-v1",
+                "settled_full_cpu_ns": 1535347517,
+                "settlement_discard_ns": 0,
+                "settlement_residual_cpu_ns": 29439,
+                "stored_credit_ns": 1624958044,
+                "unsettled_known_live_cpu_ns": 0
+              },
+              "full_work_accepted": 21,
+              "full_work_failed": 0,
+              "last_business_round_end_ns": 10532532378,
+              "mode": "baseline",
+              "original_criteria_met": true,
+              "readback_conditions": {
+                "accounting_available": true,
+                "all_signed_rounds_confirmed": true,
+                "no_verifier_errors": true,
+                "observer_complete": true,
+                "receiver_client_state_equal": true,
+                "service_succeeded": true,
+                "zero_in_flight": true,
+                "zero_mutation_clock_failures": true
+              },
+              "rounds": [
+                {
+                  "confirmed_inside_pressure_window": true,
+                  "ended_ns": 2460907266,
+                  "paid_credit_depletion_observed_during_round": false,
+                  "receiver_hostile_work_rejected_during_round": false,
+                  "round": 0,
+                  "started_ns": 1001964630
+                },
+                {
+                  "confirmed_inside_pressure_window": true,
+                  "ended_ns": 6462377959,
+                  "paid_credit_depletion_observed_during_round": false,
+                  "receiver_hostile_work_rejected_during_round": false,
+                  "round": 1,
+                  "started_ns": 5001224485
+                },
+                {
+                  "confirmed_inside_pressure_window": true,
+                  "ended_ns": 10532532378,
+                  "paid_credit_depletion_observed_during_round": false,
+                  "receiver_hostile_work_rejected_during_round": false,
+                  "round": 2,
+                  "started_ns": 9000871681
+                }
+              ]
+            },
+            {
+              "attacker_calls": 3465,
+              "depletion_at_ns": 10512952053,
+              "false_conditions": [],
+              "final_actual_flow": {
+                "balance_identity_verified": true,
+                "booked_reservation_ns": 0,
+                "credited_refill_ns": 7494890428,
+                "discarded_refill_ns": 15834392,
+                "initial_credit_ns": 2000000000,
+                "live_debited_cpu_ns": 9392903109,
+                "live_owners": 0,
+                "paid_cpu_debit_ns": 9395972410,
+                "remaining_paid_credit_ns": 98918018,
+                "schema": "public-v3-local-actual-cpu-flow-v1",
+                "settled_full_cpu_ns": 9395972410,
+                "settlement_discard_ns": 0,
+                "settlement_residual_cpu_ns": 3069301,
+                "stored_credit_ns": 98918018,
+                "unsettled_known_live_cpu_ns": 0
+              },
+              "full_work_accepted": 21,
+              "full_work_failed": 3442,
+              "last_business_round_end_ns": 11512652265,
+              "mode": "from-zero",
+              "original_criteria_met": true,
+              "readback_conditions": {
+                "accounting_available": true,
+                "actors_exited_without_cap_or_kill": true,
+                "all_24_actors_ready": true,
+                "all_signed_rounds_confirmed": true,
+                "at_least_21_full_work_accepted": true,
+                "depletion_during_a_business_round": true,
+                "depletion_seen_in_phase": true,
+                "hostile_work_rejected_during_every_round": true,
+                "invalid_full_work_rejected": true,
+                "no_attack_call_accepted": true,
+                "no_verifier_errors": true,
+                "observer_complete": true,
+                "receiver_client_state_equal": true,
+                "service_succeeded": true,
+                "three_nonempty_attack_overlaps": true,
+                "zero_in_flight": true,
+                "zero_mutation_clock_failures": true
+              },
+              "rounds": [
+                {
+                  "confirmed_inside_pressure_window": true,
+                  "ended_ns": 3358807993,
+                  "paid_credit_depletion_observed_during_round": false,
+                  "receiver_hostile_work_rejected_during_round": true,
+                  "round": 0,
+                  "started_ns": 1000970770
+                },
+                {
+                  "confirmed_inside_pressure_window": true,
+                  "ended_ns": 7393679999,
+                  "paid_credit_depletion_observed_during_round": false,
+                  "receiver_hostile_work_rejected_during_round": true,
+                  "round": 1,
+                  "started_ns": 5001092525
+                },
+                {
+                  "confirmed_inside_pressure_window": true,
+                  "ended_ns": 11512652265,
+                  "paid_credit_depletion_observed_during_round": true,
+                  "receiver_hostile_work_rejected_during_round": true,
+                  "round": 2,
+                  "started_ns": 9001455960
+                }
+              ]
+            },
+            {
+              "attacker_calls": 3014,
+              "depletion_at_ns": 9459613971,
+              "false_conditions": [],
+              "final_actual_flow": {
+                "balance_identity_verified": true,
+                "booked_reservation_ns": 0,
+                "credited_refill_ns": 7494872854,
+                "discarded_refill_ns": 17414843,
+                "initial_credit_ns": 2000000000,
+                "live_debited_cpu_ns": 9393233924,
+                "live_owners": 0,
+                "paid_cpu_debit_ns": 9395772678,
+                "remaining_paid_credit_ns": 99100176,
+                "schema": "public-v3-local-actual-cpu-flow-v1",
+                "settled_full_cpu_ns": 9395772678,
+                "settlement_discard_ns": 0,
+                "settlement_residual_cpu_ns": 2538754,
+                "stored_credit_ns": 99100176,
+                "unsettled_known_live_cpu_ns": 0
+              },
+              "full_work_accepted": 21,
+              "full_work_failed": 2992,
+              "last_business_round_end_ns": 13180103344,
+              "mode": "late-product",
+              "original_criteria_met": true,
+              "readback_conditions": {
+                "accounting_available": true,
+                "actors_exited_without_cap_or_kill": true,
+                "all_24_actors_ready": true,
+                "all_signed_rounds_confirmed": true,
+                "at_least_21_full_work_accepted": true,
+                "depletion_during_a_business_round": true,
+                "depletion_seen_in_phase": true,
+                "hostile_work_rejected_during_every_round": true,
+                "invalid_full_work_rejected": true,
+                "no_attack_call_accepted": true,
+                "no_verifier_errors": true,
+                "observer_complete": true,
+                "receiver_client_state_equal": true,
+                "service_succeeded": true,
+                "three_nonempty_attack_overlaps": true,
+                "zero_in_flight": true,
+                "zero_mutation_clock_failures": true
+              },
+              "rounds": [
+                {
+                  "confirmed_inside_pressure_window": true,
+                  "ended_ns": 3389179707,
+                  "paid_credit_depletion_observed_during_round": false,
+                  "receiver_hostile_work_rejected_during_round": true,
+                  "round": 0,
+                  "started_ns": 1001563957
+                },
+                {
+                  "confirmed_inside_pressure_window": true,
+                  "ended_ns": 7404519720,
+                  "paid_credit_depletion_observed_during_round": false,
+                  "receiver_hostile_work_rejected_during_round": true,
+                  "round": 1,
+                  "started_ns": 5000867952
+                },
+                {
+                  "confirmed_inside_pressure_window": true,
+                  "ended_ns": 13180103344,
+                  "paid_credit_depletion_observed_during_round": true,
+                  "receiver_hostile_work_rejected_during_round": true,
+                  "round": 2,
+                  "started_ns": 9000259665
+                }
+              ]
+            }
+          ],
+          "public_resource_policy": {
+            "lifetime_ms": 2000,
+            "policy_id": "c110c3ccb1e229c3a85f4819b1e087fa819c865b50f8bd3ab78d3b8f45206cb2",
+            "schema": "public-protected-resource-policy-observation-v1",
+            "ticket_bits": 8,
+            "transport_profile": "public-protected-development-v3"
+          },
+          "raw_report_sha256": "67935d4ea6c41b408ab3b47ef86258eb54b606a0e80bac7499f3945f56b4eac0",
+          "returncode": 0,
+          "settings_profile": "native-public-evaluation-dev-v1 + continuity_v1 explicit maintenance"
+        },
+        {
+          "actual_seed_transfers": 1024,
+          "business_blocks": 21,
+          "number": 3,
+          "original_criteria_met": false,
+          "phases": [
+            {
+              "attacker_calls": 0,
+              "depletion_at_ns": null,
+              "false_conditions": [],
+              "final_actual_flow": {
+                "balance_identity_verified": true,
+                "booked_reservation_ns": 0,
+                "credited_refill_ns": 1152875469,
+                "discarded_refill_ns": 1254643347,
+                "initial_credit_ns": 2000000000,
+                "live_debited_cpu_ns": 1523142681,
+                "live_owners": 0,
+                "paid_cpu_debit_ns": 1523173503,
+                "remaining_paid_credit_ns": 1629701966,
+                "schema": "public-v3-local-actual-cpu-flow-v1",
+                "settled_full_cpu_ns": 1523173503,
+                "settlement_discard_ns": 0,
+                "settlement_residual_cpu_ns": 30822,
+                "stored_credit_ns": 1629701966,
+                "unsettled_known_live_cpu_ns": 0
+              },
+              "full_work_accepted": 21,
+              "full_work_failed": 0,
+              "last_business_round_end_ns": 10514164249,
+              "mode": "baseline",
+              "original_criteria_met": true,
+              "readback_conditions": {
+                "accounting_available": true,
+                "all_signed_rounds_confirmed": true,
+                "no_verifier_errors": true,
+                "observer_complete": true,
+                "receiver_client_state_equal": true,
+                "service_succeeded": true,
+                "zero_in_flight": true,
+                "zero_mutation_clock_failures": true
+              },
+              "rounds": [
+                {
+                  "confirmed_inside_pressure_window": true,
+                  "ended_ns": 2473812839,
+                  "paid_credit_depletion_observed_during_round": false,
+                  "receiver_hostile_work_rejected_during_round": false,
+                  "round": 0,
+                  "started_ns": 1001659219
+                },
+                {
+                  "confirmed_inside_pressure_window": true,
+                  "ended_ns": 6874296640,
+                  "paid_credit_depletion_observed_during_round": false,
+                  "receiver_hostile_work_rejected_during_round": false,
+                  "round": 1,
+                  "started_ns": 5001439320
+                },
+                {
+                  "confirmed_inside_pressure_window": true,
+                  "ended_ns": 10514164249,
+                  "paid_credit_depletion_observed_during_round": false,
+                  "receiver_hostile_work_rejected_during_round": false,
+                  "round": 2,
+                  "started_ns": 9000109855
+                }
+              ]
+            },
+            {
+              "attacker_calls": 3611,
+              "depletion_at_ns": 14673674589,
+              "false_conditions": [
+                "depletion_during_a_business_round"
+              ],
+              "final_actual_flow": {
+                "balance_identity_verified": true,
+                "booked_reservation_ns": 0,
+                "credited_refill_ns": 7496005610,
+                "discarded_refill_ns": 15171858,
+                "initial_credit_ns": 2000000000,
+                "live_debited_cpu_ns": 9392744288,
+                "live_owners": 0,
+                "paid_cpu_debit_ns": 9395718284,
+                "remaining_paid_credit_ns": 100287326,
+                "schema": "public-v3-local-actual-cpu-flow-v1",
+                "settled_full_cpu_ns": 9395718284,
+                "settlement_discard_ns": 0,
+                "settlement_residual_cpu_ns": 2973996,
+                "stored_credit_ns": 100287326,
+                "unsettled_known_live_cpu_ns": 0
+              },
+              "full_work_accepted": 21,
+              "full_work_failed": 3589,
+              "last_business_round_end_ns": 11384273631,
+              "mode": "from-zero",
+              "original_criteria_met": false,
+              "readback_conditions": {
+                "accounting_available": true,
+                "actors_exited_without_cap_or_kill": true,
+                "all_24_actors_ready": true,
+                "all_signed_rounds_confirmed": true,
+                "at_least_21_full_work_accepted": true,
+                "depletion_during_a_business_round": false,
+                "depletion_seen_in_phase": true,
+                "hostile_work_rejected_during_every_round": true,
+                "invalid_full_work_rejected": true,
+                "no_attack_call_accepted": true,
+                "no_verifier_errors": true,
+                "observer_complete": true,
+                "receiver_client_state_equal": true,
+                "service_succeeded": true,
+                "three_nonempty_attack_overlaps": true,
+                "zero_in_flight": true,
+                "zero_mutation_clock_failures": true
+              },
+              "rounds": [
+                {
+                  "confirmed_inside_pressure_window": true,
+                  "ended_ns": 3329458362,
+                  "paid_credit_depletion_observed_during_round": false,
+                  "receiver_hostile_work_rejected_during_round": true,
+                  "round": 0,
+                  "started_ns": 1000680573
+                },
+                {
+                  "confirmed_inside_pressure_window": true,
+                  "ended_ns": 7350379974,
+                  "paid_credit_depletion_observed_during_round": false,
+                  "receiver_hostile_work_rejected_during_round": true,
+                  "round": 1,
+                  "started_ns": 5001576198
+                },
+                {
+                  "confirmed_inside_pressure_window": true,
+                  "ended_ns": 11384273631,
+                  "paid_credit_depletion_observed_during_round": false,
+                  "receiver_hostile_work_rejected_during_round": true,
+                  "round": 2,
+                  "started_ns": 9000222914
+                }
+              ]
+            },
+            {
+              "attacker_calls": 3117,
+              "depletion_at_ns": 9709996753,
+              "false_conditions": [],
+              "final_actual_flow": {
+                "balance_identity_verified": true,
+                "booked_reservation_ns": 0,
+                "credited_refill_ns": 7492173427,
+                "discarded_refill_ns": 17535038,
+                "initial_credit_ns": 2000000000,
+                "live_debited_cpu_ns": 9390696474,
+                "live_owners": 0,
+                "paid_cpu_debit_ns": 9393264930,
+                "remaining_paid_credit_ns": 98908497,
+                "schema": "public-v3-local-actual-cpu-flow-v1",
+                "settled_full_cpu_ns": 9393264930,
+                "settlement_discard_ns": 0,
+                "settlement_residual_cpu_ns": 2568456,
+                "stored_credit_ns": 98908497,
+                "unsettled_known_live_cpu_ns": 0
+              },
+              "full_work_accepted": 21,
+              "full_work_failed": 3093,
+              "last_business_round_end_ns": 12435684117,
+              "mode": "late-product",
+              "original_criteria_met": true,
+              "readback_conditions": {
+                "accounting_available": true,
+                "actors_exited_without_cap_or_kill": true,
+                "all_24_actors_ready": true,
+                "all_signed_rounds_confirmed": true,
+                "at_least_21_full_work_accepted": true,
+                "depletion_during_a_business_round": true,
+                "depletion_seen_in_phase": true,
+                "hostile_work_rejected_during_every_round": true,
+                "invalid_full_work_rejected": true,
+                "no_attack_call_accepted": true,
+                "no_verifier_errors": true,
+                "observer_complete": true,
+                "receiver_client_state_equal": true,
+                "service_succeeded": true,
+                "three_nonempty_attack_overlaps": true,
+                "zero_in_flight": true,
+                "zero_mutation_clock_failures": true
+              },
+              "rounds": [
+                {
+                  "confirmed_inside_pressure_window": true,
+                  "ended_ns": 3343702391,
+                  "paid_credit_depletion_observed_during_round": false,
+                  "receiver_hostile_work_rejected_during_round": true,
+                  "round": 0,
+                  "started_ns": 1000005763
+                },
+                {
+                  "confirmed_inside_pressure_window": true,
+                  "ended_ns": 7402382496,
+                  "paid_credit_depletion_observed_during_round": false,
+                  "receiver_hostile_work_rejected_during_round": true,
+                  "round": 1,
+                  "started_ns": 5001263546
+                },
+                {
+                  "confirmed_inside_pressure_window": true,
+                  "ended_ns": 12435684117,
+                  "paid_credit_depletion_observed_during_round": true,
+                  "receiver_hostile_work_rejected_during_round": true,
+                  "round": 2,
+                  "started_ns": 9000799661
+                }
+              ]
+            }
+          ],
+          "public_resource_policy": {
+            "lifetime_ms": 2000,
+            "policy_id": "c110c3ccb1e229c3a85f4819b1e087fa819c865b50f8bd3ab78d3b8f45206cb2",
+            "schema": "public-protected-resource-policy-observation-v1",
+            "ticket_bits": 8,
+            "transport_profile": "public-protected-development-v3"
+          },
+          "raw_report_sha256": "52938c9bb6d640bfc7281df881f9aaf14aea634e19c2e39038ecf8e2dde4ff6a",
+          "returncode": 101,
+          "settings_profile": "native-public-evaluation-dev-v1 + continuity_v1 explicit maintenance"
+        }
+      ],
+      "downloaded_zip_bytes": 69321621,
+      "downloaded_zip_sha256": "5a00e74e9e30ba662630b43e037eca6a1b262d95c7e36a5103055395cfbc31a5",
+      "original_complete_success": false,
+      "original_failure": "ORIGINAL_THREE_RUN_CAMPAIGN_FAILED",
+      "source_head": "63ae5018158d62d6c75a3d690ce009b396e8d9bd",
+      "workflow_run": 40489614467
+    },
+    {
+      "artifact_id": 12727494603,
+      "attempts": [
+        {
+          "actual_seed_transfers": 1024,
+          "business_blocks": 21,
+          "number": 1,
+          "original_criteria_met": false,
+          "phases": [
+            {
+              "attacker_calls": 0,
+              "depletion_at_ns": null,
+              "false_conditions": [],
+              "final_actual_flow": {
+                "balance_identity_verified": true,
+                "booked_reservation_ns": 0,
+                "credited_refill_ns": 1145598686,
+                "discarded_refill_ns": 1336077174,
+                "initial_credit_ns": 2000000000,
+                "live_debited_cpu_ns": 1397577980,
+                "live_owners": 0,
+                "paid_cpu_debit_ns": 1397608087,
+                "remaining_paid_credit_ns": 1747990599,
+                "schema": "public-v3-local-actual-cpu-flow-v1",
+                "settled_full_cpu_ns": 1397608087,
+                "settlement_discard_ns": 0,
+                "settlement_residual_cpu_ns": 30107,
+                "stored_credit_ns": 1747990599,
+                "unsettled_known_live_cpu_ns": 0
+              },
+              "full_work_accepted": 21,
+              "full_work_failed": 0,
+              "last_business_round_end_ns": 10858687071,
+              "mode": "baseline",
+              "original_criteria_met": true,
+              "readback_conditions": {
+                "accounting_available": true,
+                "all_signed_rounds_confirmed": true,
+                "no_verifier_errors": true,
+                "observer_complete": true,
+                "receiver_client_state_equal": true,
+                "service_succeeded": true,
+                "zero_in_flight": true,
+                "zero_mutation_clock_failures": true
+              },
+              "rounds": [
+                {
+                  "confirmed_inside_pressure_window": true,
+                  "ended_ns": 2341363660,
+                  "paid_credit_depletion_observed_during_round": false,
+                  "receiver_hostile_work_rejected_during_round": false,
+                  "round": 0,
+                  "started_ns": 1000244979
+                },
+                {
+                  "confirmed_inside_pressure_window": true,
+                  "ended_ns": 6381874237,
+                  "paid_credit_depletion_observed_during_round": false,
+                  "receiver_hostile_work_rejected_during_round": false,
+                  "round": 1,
+                  "started_ns": 5001325266
+                },
+                {
+                  "confirmed_inside_pressure_window": true,
+                  "ended_ns": 10858687071,
+                  "paid_credit_depletion_observed_during_round": false,
+                  "receiver_hostile_work_rejected_during_round": false,
+                  "round": 2,
+                  "started_ns": 9001252310
+                }
+              ]
+            },
+            {
+              "attacker_calls": 3659,
+              "depletion_at_ns": 15695277369,
+              "false_conditions": [
+                "depletion_during_a_business_round"
+              ],
+              "final_actual_flow": {
+                "balance_identity_verified": true,
+                "booked_reservation_ns": 0,
+                "credited_refill_ns": 7498228818,
+                "discarded_refill_ns": 24998068,
+                "initial_credit_ns": 2000000000,
+                "live_debited_cpu_ns": 9393327711,
+                "live_owners": 0,
+                "paid_cpu_debit_ns": 9397193141,
+                "remaining_paid_credit_ns": 101035677,
+                "schema": "public-v3-local-actual-cpu-flow-v1",
+                "settled_full_cpu_ns": 9397193141,
+                "settlement_discard_ns": 0,
+                "settlement_residual_cpu_ns": 3865430,
+                "stored_credit_ns": 101035677,
+                "unsettled_known_live_cpu_ns": 0
+              },
+              "full_work_accepted": 21,
+              "full_work_failed": 3637,
+              "last_business_round_end_ns": 11401921969,
+              "mode": "from-zero",
+              "original_criteria_met": false,
+              "readback_conditions": {
+                "accounting_available": true,
+                "actors_exited_without_cap_or_kill": true,
+                "all_24_actors_ready": true,
+                "all_signed_rounds_confirmed": true,
+                "at_least_21_full_work_accepted": true,
+                "depletion_during_a_business_round": false,
+                "depletion_seen_in_phase": true,
+                "hostile_work_rejected_during_every_round": true,
+                "invalid_full_work_rejected": true,
+                "no_attack_call_accepted": true,
+                "no_verifier_errors": true,
+                "observer_complete": true,
+                "receiver_client_state_equal": true,
+                "service_succeeded": true,
+                "three_nonempty_attack_overlaps": true,
+                "zero_in_flight": true,
+                "zero_mutation_clock_failures": true
+              },
+              "rounds": [
+                {
+                  "confirmed_inside_pressure_window": true,
+                  "ended_ns": 3262231009,
+                  "paid_credit_depletion_observed_during_round": false,
+                  "receiver_hostile_work_rejected_during_round": true,
+                  "round": 0,
+                  "started_ns": 1000143137
+                },
+                {
+                  "confirmed_inside_pressure_window": true,
+                  "ended_ns": 7243594396,
+                  "paid_credit_depletion_observed_during_round": false,
+                  "receiver_hostile_work_rejected_during_round": true,
+                  "round": 1,
+                  "started_ns": 5001077858
+                },
+                {
+                  "confirmed_inside_pressure_window": true,
+                  "ended_ns": 11401921969,
+                  "paid_credit_depletion_observed_during_round": false,
+                  "receiver_hostile_work_rejected_during_round": true,
+                  "round": 2,
+                  "started_ns": 9000014535
+                }
+              ]
+            },
+            {
+              "attacker_calls": 3186,
+              "depletion_at_ns": 9990915556,
+              "false_conditions": [],
+              "final_actual_flow": {
+                "balance_identity_verified": true,
+                "booked_reservation_ns": 0,
+                "credited_refill_ns": 7496345474,
+                "discarded_refill_ns": 17814662,
+                "initial_credit_ns": 2000000000,
+                "live_debited_cpu_ns": 9391801616,
+                "live_owners": 0,
+                "paid_cpu_debit_ns": 9395106270,
+                "remaining_paid_credit_ns": 101239204,
+                "schema": "public-v3-local-actual-cpu-flow-v1",
+                "settled_full_cpu_ns": 9395106270,
+                "settlement_discard_ns": 0,
+                "settlement_residual_cpu_ns": 3304654,
+                "stored_credit_ns": 101239204,
+                "unsettled_known_live_cpu_ns": 0
+              },
+              "full_work_accepted": 21,
+              "full_work_failed": 3163,
+              "last_business_round_end_ns": 11886080469,
+              "mode": "late-product",
+              "original_criteria_met": true,
+              "readback_conditions": {
+                "accounting_available": true,
+                "actors_exited_without_cap_or_kill": true,
+                "all_24_actors_ready": true,
+                "all_signed_rounds_confirmed": true,
+                "at_least_21_full_work_accepted": true,
+                "depletion_during_a_business_round": true,
+                "depletion_seen_in_phase": true,
+                "hostile_work_rejected_during_every_round": true,
+                "invalid_full_work_rejected": true,
+                "no_attack_call_accepted": true,
+                "no_verifier_errors": true,
+                "observer_complete": true,
+                "receiver_client_state_equal": true,
+                "service_succeeded": true,
+                "three_nonempty_attack_overlaps": true,
+                "zero_in_flight": true,
+                "zero_mutation_clock_failures": true
+              },
+              "rounds": [
+                {
+                  "confirmed_inside_pressure_window": true,
+                  "ended_ns": 3332191354,
+                  "paid_credit_depletion_observed_during_round": false,
+                  "receiver_hostile_work_rejected_during_round": true,
+                  "round": 0,
+                  "started_ns": 1000203093
+                },
+                {
+                  "confirmed_inside_pressure_window": true,
+                  "ended_ns": 7279908018,
+                  "paid_credit_depletion_observed_during_round": false,
+                  "receiver_hostile_work_rejected_during_round": true,
+                  "round": 1,
+                  "started_ns": 5001738191
+                },
+                {
+                  "confirmed_inside_pressure_window": true,
+                  "ended_ns": 11886080469,
+                  "paid_credit_depletion_observed_during_round": true,
+                  "receiver_hostile_work_rejected_during_round": true,
+                  "round": 2,
+                  "started_ns": 9001085088
+                }
+              ]
+            }
+          ],
+          "public_resource_policy": {
+            "lifetime_ms": 2000,
+            "policy_id": "c110c3ccb1e229c3a85f4819b1e087fa819c865b50f8bd3ab78d3b8f45206cb2",
+            "schema": "public-protected-resource-policy-observation-v1",
+            "ticket_bits": 8,
+            "transport_profile": "public-protected-development-v3"
+          },
+          "raw_report_sha256": "01e53bc8df2efbfb0c2fb902ab58767fbe4a4282c8cf2de95fd24063712a890e",
+          "returncode": 101,
+          "settings_profile": "native-public-evaluation-dev-v1 + continuity_v1 explicit maintenance"
+        },
+        {
+          "actual_seed_transfers": 1024,
+          "business_blocks": 21,
+          "number": 2,
+          "original_criteria_met": false,
+          "phases": [
+            {
+              "attacker_calls": 0,
+              "depletion_at_ns": null,
+              "false_conditions": [],
+              "final_actual_flow": {
+                "balance_identity_verified": true,
+                "booked_reservation_ns": 0,
+                "credited_refill_ns": 1239103921,
+                "discarded_refill_ns": 1325914348,
+                "initial_credit_ns": 2000000000,
+                "live_debited_cpu_ns": 1412722068,
+                "live_owners": 0,
+                "paid_cpu_debit_ns": 1412752975,
+                "remaining_paid_credit_ns": 1826350946,
+                "schema": "public-v3-local-actual-cpu-flow-v1",
+                "settled_full_cpu_ns": 1412752975,
+                "settlement_discard_ns": 0,
+                "settlement_residual_cpu_ns": 30907,
+                "stored_credit_ns": 1826350946,
+                "unsettled_known_live_cpu_ns": 0
+              },
+              "full_work_accepted": 21,
+              "full_work_failed": 0,
+              "last_business_round_end_ns": 11287093572,
+              "mode": "baseline",
+              "original_criteria_met": true,
+              "readback_conditions": {
+                "accounting_available": true,
+                "all_signed_rounds_confirmed": true,
+                "no_verifier_errors": true,
+                "observer_complete": true,
+                "receiver_client_state_equal": true,
+                "service_succeeded": true,
+                "zero_in_flight": true,
+                "zero_mutation_clock_failures": true
+              },
+              "rounds": [
+                {
+                  "confirmed_inside_pressure_window": true,
+                  "ended_ns": 2656247092,
+                  "paid_credit_depletion_observed_during_round": false,
+                  "receiver_hostile_work_rejected_during_round": false,
+                  "round": 0,
+                  "started_ns": 1001927680
+                },
+                {
+                  "confirmed_inside_pressure_window": true,
+                  "ended_ns": 6576898386,
+                  "paid_credit_depletion_observed_during_round": false,
+                  "receiver_hostile_work_rejected_during_round": false,
+                  "round": 1,
+                  "started_ns": 5001857520
+                },
+                {
+                  "confirmed_inside_pressure_window": true,
+                  "ended_ns": 11287093572,
+                  "paid_credit_depletion_observed_during_round": false,
+                  "receiver_hostile_work_rejected_during_round": false,
+                  "round": 2,
+                  "started_ns": 9000224931
+                }
+              ]
+            },
+            {
+              "attacker_calls": 3623,
+              "depletion_at_ns": 15846911302,
+              "false_conditions": [
+                "depletion_during_a_business_round"
+              ],
+              "final_actual_flow": {
+                "balance_identity_verified": true,
+                "booked_reservation_ns": 0,
+                "credited_refill_ns": 7494762064,
+                "discarded_refill_ns": 27321361,
+                "initial_credit_ns": 2000000000,
+                "live_debited_cpu_ns": 9392377962,
+                "live_owners": 0,
+                "paid_cpu_debit_ns": 9395940728,
+                "remaining_paid_credit_ns": 98821336,
+                "schema": "public-v3-local-actual-cpu-flow-v1",
+                "settled_full_cpu_ns": 9395940728,
+                "settlement_discard_ns": 0,
+                "settlement_residual_cpu_ns": 3562766,
+                "stored_credit_ns": 98821336,
+                "unsettled_known_live_cpu_ns": 0
+              },
+              "full_work_accepted": 21,
+              "full_work_failed": 3600,
+              "last_business_round_end_ns": 11639962661,
+              "mode": "from-zero",
+              "original_criteria_met": false,
+              "readback_conditions": {
+                "accounting_available": true,
+                "actors_exited_without_cap_or_kill": true,
+                "all_24_actors_ready": true,
+                "all_signed_rounds_confirmed": true,
+                "at_least_21_full_work_accepted": true,
+                "depletion_during_a_business_round": false,
+                "depletion_seen_in_phase": true,
+                "hostile_work_rejected_during_every_round": true,
+                "invalid_full_work_rejected": true,
+                "no_attack_call_accepted": true,
+                "no_verifier_errors": true,
+                "observer_complete": true,
+                "receiver_client_state_equal": true,
+                "service_succeeded": true,
+                "three_nonempty_attack_overlaps": true,
+                "zero_in_flight": true,
+                "zero_mutation_clock_failures": true
+              },
+              "rounds": [
+                {
+                  "confirmed_inside_pressure_window": true,
+                  "ended_ns": 3234304158,
+                  "paid_credit_depletion_observed_during_round": false,
+                  "receiver_hostile_work_rejected_during_round": true,
+                  "round": 0,
+                  "started_ns": 1000954269
+                },
+                {
+                  "confirmed_inside_pressure_window": true,
+                  "ended_ns": 7467133722,
+                  "paid_credit_depletion_observed_during_round": false,
+                  "receiver_hostile_work_rejected_during_round": true,
+                  "round": 1,
+                  "started_ns": 5001110418
+                },
+                {
+                  "confirmed_inside_pressure_window": true,
+                  "ended_ns": 11639962661,
+                  "paid_credit_depletion_observed_during_round": false,
+                  "receiver_hostile_work_rejected_during_round": true,
+                  "round": 2,
+                  "started_ns": 9001370662
+                }
+              ]
+            },
+            {
+              "attacker_calls": 3150,
+              "depletion_at_ns": 10006147643,
+              "false_conditions": [],
+              "final_actual_flow": {
+                "balance_identity_verified": true,
+                "booked_reservation_ns": 0,
+                "credited_refill_ns": 7498634431,
+                "discarded_refill_ns": 18774260,
+                "initial_credit_ns": 2000000000,
+                "live_debited_cpu_ns": 9394082822,
+                "live_owners": 0,
+                "paid_cpu_debit_ns": 9397352715,
+                "remaining_paid_credit_ns": 101281716,
+                "schema": "public-v3-local-actual-cpu-flow-v1",
+                "settled_full_cpu_ns": 9397352715,
+                "settlement_discard_ns": 0,
+                "settlement_residual_cpu_ns": 3269893,
+                "stored_credit_ns": 101281716,
+                "unsettled_known_live_cpu_ns": 0
+              },
+              "full_work_accepted": 21,
+              "full_work_failed": 3127,
+              "last_business_round_end_ns": 12460661097,
+              "mode": "late-product",
+              "original_criteria_met": true,
+              "readback_conditions": {
+                "accounting_available": true,
+                "actors_exited_without_cap_or_kill": true,
+                "all_24_actors_ready": true,
+                "all_signed_rounds_confirmed": true,
+                "at_least_21_full_work_accepted": true,
+                "depletion_during_a_business_round": true,
+                "depletion_seen_in_phase": true,
+                "hostile_work_rejected_during_every_round": true,
+                "invalid_full_work_rejected": true,
+                "no_attack_call_accepted": true,
+                "no_verifier_errors": true,
+                "observer_complete": true,
+                "receiver_client_state_equal": true,
+                "service_succeeded": true,
+                "three_nonempty_attack_overlaps": true,
+                "zero_in_flight": true,
+                "zero_mutation_clock_failures": true
+              },
+              "rounds": [
+                {
+                  "confirmed_inside_pressure_window": true,
+                  "ended_ns": 3624554837,
+                  "paid_credit_depletion_observed_during_round": false,
+                  "receiver_hostile_work_rejected_during_round": true,
+                  "round": 0,
+                  "started_ns": 1000296416
+                },
+                {
+                  "confirmed_inside_pressure_window": true,
+                  "ended_ns": 7239821325,
+                  "paid_credit_depletion_observed_during_round": false,
+                  "receiver_hostile_work_rejected_during_round": true,
+                  "round": 1,
+                  "started_ns": 5000211431
+                },
+                {
+                  "confirmed_inside_pressure_window": true,
+                  "ended_ns": 12460661097,
+                  "paid_credit_depletion_observed_during_round": true,
+                  "receiver_hostile_work_rejected_during_round": true,
+                  "round": 2,
+                  "started_ns": 9000741599
+                }
+              ]
+            }
+          ],
+          "public_resource_policy": {
+            "lifetime_ms": 2000,
+            "policy_id": "c110c3ccb1e229c3a85f4819b1e087fa819c865b50f8bd3ab78d3b8f45206cb2",
+            "schema": "public-protected-resource-policy-observation-v1",
+            "ticket_bits": 8,
+            "transport_profile": "public-protected-development-v3"
+          },
+          "raw_report_sha256": "57311727663f2fd25539b07e7a19706451e39726606ba62d6e79549b379fc9ca",
+          "returncode": 101,
+          "settings_profile": "native-public-evaluation-dev-v1 + continuity_v1 explicit maintenance"
+        },
+        {
+          "actual_seed_transfers": 1024,
+          "business_blocks": 21,
+          "number": 3,
+          "original_criteria_met": false,
+          "phases": [
+            {
+              "attacker_calls": 0,
+              "depletion_at_ns": null,
+              "false_conditions": [],
+              "final_actual_flow": {
+                "balance_identity_verified": true,
+                "booked_reservation_ns": 0,
+                "credited_refill_ns": 1171969163,
+                "discarded_refill_ns": 1286907066,
+                "initial_credit_ns": 2000000000,
+                "live_debited_cpu_ns": 1461904793,
+                "live_owners": 0,
+                "paid_cpu_debit_ns": 1461940017,
+                "remaining_paid_credit_ns": 1710029146,
+                "schema": "public-v3-local-actual-cpu-flow-v1",
+                "settled_full_cpu_ns": 1461940017,
+                "settlement_discard_ns": 0,
+                "settlement_residual_cpu_ns": 35224,
+                "stored_credit_ns": 1710029146,
+                "unsettled_known_live_cpu_ns": 0
+              },
+              "full_work_accepted": 21,
+              "full_work_failed": 0,
+              "last_business_round_end_ns": 10704592599,
+              "mode": "baseline",
+              "original_criteria_met": true,
+              "readback_conditions": {
+                "accounting_available": true,
+                "all_signed_rounds_confirmed": true,
+                "no_verifier_errors": true,
+                "observer_complete": true,
+                "receiver_client_state_equal": true,
+                "service_succeeded": true,
+                "zero_in_flight": true,
+                "zero_mutation_clock_failures": true
+              },
+              "rounds": [
+                {
+                  "confirmed_inside_pressure_window": true,
+                  "ended_ns": 2665885436,
+                  "paid_credit_depletion_observed_during_round": false,
+                  "receiver_hostile_work_rejected_during_round": false,
+                  "round": 0,
+                  "started_ns": 1001207441
+                },
+                {
+                  "confirmed_inside_pressure_window": true,
+                  "ended_ns": 6274229104,
+                  "paid_credit_depletion_observed_during_round": false,
+                  "receiver_hostile_work_rejected_during_round": false,
+                  "round": 1,
+                  "started_ns": 5001242796
+                },
+                {
+                  "confirmed_inside_pressure_window": true,
+                  "ended_ns": 10704592599,
+                  "paid_credit_depletion_observed_during_round": false,
+                  "receiver_hostile_work_rejected_during_round": false,
+                  "round": 2,
+                  "started_ns": 9000735001
+                }
+              ]
+            },
+            {
+              "attacker_calls": 3657,
+              "depletion_at_ns": 16503928402,
+              "false_conditions": [
+                "depletion_during_a_business_round"
+              ],
+              "final_actual_flow": {
+                "balance_identity_verified": true,
+                "booked_reservation_ns": 0,
+                "credited_refill_ns": 7495881433,
+                "discarded_refill_ns": 21735177,
+                "initial_credit_ns": 2000000000,
+                "live_debited_cpu_ns": 9393850809,
+                "live_owners": 0,
+                "paid_cpu_debit_ns": 9397624294,
+                "remaining_paid_credit_ns": 98257139,
+                "schema": "public-v3-local-actual-cpu-flow-v1",
+                "settled_full_cpu_ns": 9397624294,
+                "settlement_discard_ns": 0,
+                "settlement_residual_cpu_ns": 3773485,
+                "stored_credit_ns": 98257139,
+                "unsettled_known_live_cpu_ns": 0
+              },
+              "full_work_accepted": 21,
+              "full_work_failed": 3635,
+              "last_business_round_end_ns": 11242049139,
+              "mode": "from-zero",
+              "original_criteria_met": false,
+              "readback_conditions": {
+                "accounting_available": true,
+                "actors_exited_without_cap_or_kill": true,
+                "all_24_actors_ready": true,
+                "all_signed_rounds_confirmed": true,
+                "at_least_21_full_work_accepted": true,
+                "depletion_during_a_business_round": false,
+                "depletion_seen_in_phase": true,
+                "hostile_work_rejected_during_every_round": true,
+                "invalid_full_work_rejected": true,
+                "no_attack_call_accepted": true,
+                "no_verifier_errors": true,
+                "observer_complete": true,
+                "receiver_client_state_equal": true,
+                "service_succeeded": true,
+                "three_nonempty_attack_overlaps": true,
+                "zero_in_flight": true,
+                "zero_mutation_clock_failures": true
+              },
+              "rounds": [
+                {
+                  "confirmed_inside_pressure_window": true,
+                  "ended_ns": 3717799261,
+                  "paid_credit_depletion_observed_during_round": false,
+                  "receiver_hostile_work_rejected_during_round": true,
+                  "round": 0,
+                  "started_ns": 1000942533
+                },
+                {
+                  "confirmed_inside_pressure_window": true,
+                  "ended_ns": 7178945881,
+                  "paid_credit_depletion_observed_during_round": false,
+                  "receiver_hostile_work_rejected_during_round": true,
+                  "round": 1,
+                  "started_ns": 5000651428
+                },
+                {
+                  "confirmed_inside_pressure_window": true,
+                  "ended_ns": 11242049139,
+                  "paid_credit_depletion_observed_during_round": false,
+                  "receiver_hostile_work_rejected_during_round": true,
+                  "round": 2,
+                  "started_ns": 9001122679
+                }
+              ]
+            },
+            {
+              "attacker_calls": 3163,
+              "depletion_at_ns": 9848759727,
+              "false_conditions": [],
+              "final_actual_flow": {
+                "balance_identity_verified": true,
+                "booked_reservation_ns": 0,
+                "credited_refill_ns": 7494294636,
+                "discarded_refill_ns": 15899743,
+                "initial_credit_ns": 2000000000,
+                "live_debited_cpu_ns": 9390813133,
+                "live_owners": 0,
+                "paid_cpu_debit_ns": 9394083274,
+                "remaining_paid_credit_ns": 100211362,
+                "schema": "public-v3-local-actual-cpu-flow-v1",
+                "settled_full_cpu_ns": 9394083274,
+                "settlement_discard_ns": 0,
+                "settlement_residual_cpu_ns": 3270141,
+                "stored_credit_ns": 100211362,
+                "unsettled_known_live_cpu_ns": 0
+              },
+              "full_work_accepted": 21,
+              "full_work_failed": 3140,
+              "last_business_round_end_ns": 12065353040,
+              "mode": "late-product",
+              "original_criteria_met": true,
+              "readback_conditions": {
+                "accounting_available": true,
+                "actors_exited_without_cap_or_kill": true,
+                "all_24_actors_ready": true,
+                "all_signed_rounds_confirmed": true,
+                "at_least_21_full_work_accepted": true,
+                "depletion_during_a_business_round": true,
+                "depletion_seen_in_phase": true,
+                "hostile_work_rejected_during_every_round": true,
+                "invalid_full_work_rejected": true,
+                "no_attack_call_accepted": true,
+                "no_verifier_errors": true,
+                "observer_complete": true,
+                "receiver_client_state_equal": true,
+                "service_succeeded": true,
+                "three_nonempty_attack_overlaps": true,
+                "zero_in_flight": true,
+                "zero_mutation_clock_failures": true
+              },
+              "rounds": [
+                {
+                  "confirmed_inside_pressure_window": true,
+                  "ended_ns": 3212645936,
+                  "paid_credit_depletion_observed_during_round": false,
+                  "receiver_hostile_work_rejected_during_round": true,
+                  "round": 0,
+                  "started_ns": 1001960125
+                },
+                {
+                  "confirmed_inside_pressure_window": true,
+                  "ended_ns": 7368656434,
+                  "paid_credit_depletion_observed_during_round": false,
+                  "receiver_hostile_work_rejected_during_round": true,
+                  "round": 1,
+                  "started_ns": 5000132183
+                },
+                {
+                  "confirmed_inside_pressure_window": true,
+                  "ended_ns": 12065353040,
+                  "paid_credit_depletion_observed_during_round": true,
+                  "receiver_hostile_work_rejected_during_round": true,
+                  "round": 2,
+                  "started_ns": 9001693854
+                }
+              ]
+            }
+          ],
+          "public_resource_policy": {
+            "lifetime_ms": 2000,
+            "policy_id": "c110c3ccb1e229c3a85f4819b1e087fa819c865b50f8bd3ab78d3b8f45206cb2",
+            "schema": "public-protected-resource-policy-observation-v1",
+            "ticket_bits": 8,
+            "transport_profile": "public-protected-development-v3"
+          },
+          "raw_report_sha256": "e2e160e227fefff290ce71029a2a770ba47d2bec47d5461556b19bb7632c2bd9",
+          "returncode": 101,
+          "settings_profile": "native-public-evaluation-dev-v1 + continuity_v1 explicit maintenance"
+        }
+      ],
+      "downloaded_zip_bytes": 69431195,
+      "downloaded_zip_sha256": "7aafec32b97c9acba6be6d6935e7c798a8ca4ce80a9e86f1ea342bc348f14c70",
+      "original_complete_success": false,
+      "original_failure": "ORIGINAL_THREE_RUN_CAMPAIGN_FAILED",
+      "source_head": "e9c4bb0d3a324b1d79b7b99326512bfb707d0025",
+      "workflow_run": 40490909572
+    }
+  ],
+  "pure_pon_acceptance": false,
+  "reason": "These mandatory legacy regressions use public-protected-development-v3 with ticket_bits=8. They are not the zero-grinding pure-PoN campaign.",
+  "schema": "pon-original-native-campaign-ci-readback-v1",
+  "scope": "Readback of six original fixed campaigns; no new experiment or changed verdict."
+}
