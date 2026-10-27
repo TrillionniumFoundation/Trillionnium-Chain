@@ -120,12 +120,12 @@ class EqualWorkForkSimulator(ForkSimulator):
         assert self.blocks[self.tip_a].chainwork == self.blocks[self.tip_b].chainwork
 
     def report(self) -> dict:
-        if self.equal_work_pending:
+        if self.equal_work_pending or (not self.healed and self.tip_a != self.tip_b):
             self.verify_all()
             return {
                 "schema": "pon-daa-equal-work-recovery-v2",
                 "assumptions": asdict(self.p),
-                "partition_healed": True,
+                "partition_healed": self.healed,
                 "partition_converged": False,
                 "tip_a": self.tip_a,
                 "tip_b": self.tip_b,
@@ -133,7 +133,9 @@ class EqualWorkForkSimulator(ForkSimulator):
                 "work_b": str(self.blocks[self.tip_b].chainwork),
                 "chosen_global_tip": None,
                 "claimed_global_confirmations": None,
-                "equal_work_unresolved": True,
+                "equal_work_unresolved": (
+                    self.blocks[self.tip_a].chainwork == self.blocks[self.tip_b].chainwork
+                ),
                 "equal_work_resolution_discoveries": self.equal_work_resolution_discoveries,
                 "equal_work_unresolved_attempts": self.equal_work_unresolved_attempts,
                 "terminal_stopped": self.stopped,
@@ -147,7 +149,7 @@ class EqualWorkForkSimulator(ForkSimulator):
         result = super().report()
         result.update({
             "schema": "pon-daa-equal-work-recovery-v2",
-            "partition_converged": not self.healed or self.tip_a == self.tip_b,
+            "partition_converged": self.healed and self.tip_a == self.tip_b,
             "equal_work_seen": self.equal_work_seen,
             "equal_work_unresolved": False,
             "equal_work_resolution_discoveries": self.equal_work_resolution_discoveries,

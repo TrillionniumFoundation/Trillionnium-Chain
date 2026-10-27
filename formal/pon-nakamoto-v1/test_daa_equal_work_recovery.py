@@ -32,6 +32,24 @@ class EqualWorkHealingTests(unittest.TestCase):
         self.assertEqual(old.heal_preferred, "A")
         self.assertEqual(old.tip_a, old.tip_b)
 
+    def test_unhealed_partition_never_reports_global_confirmation(self):
+        s = force_equal_fork(self.params(), 7)
+        snapshot = s.report()
+        self.assertFalse(snapshot["partition_healed"])
+        self.assertFalse(snapshot["partition_converged"])
+        self.assertTrue(snapshot["equal_work_unresolved"])
+        self.assertIsNone(snapshot["chosen_global_tip"])
+        self.assertIsNone(snapshot["claimed_global_confirmations"])
+
+    def test_unhealed_unequal_work_still_has_no_global_observation(self):
+        s = force_equal_fork(self.params(), 2)
+        s.wall += 11
+        s.tip_b = s.mine("B", s.tip_b)
+        snapshot = s.report()
+        self.assertFalse(snapshot["partition_healed"])
+        self.assertFalse(snapshot["partition_converged"])
+        self.assertFalse(snapshot["equal_work_unresolved"])
+        self.assertIsNone(snapshot["chosen_global_tip"])
     def test_no_automatic_tie_breaker_or_global_confirmation(self):
         s = force_equal_fork(self.params(), 7)
         old_a, old_b = s.tip_a, s.tip_b

@@ -736,7 +736,7 @@ This is a two-operator synthetic research policy, not a live gossip
 algorithm, validated consensus host, finality guarantee or proof of a
 publicly safe common-prefix probability.
 
-The deterministic `test_daa_equal_work_recovery.py` contains nine named
+The deterministic `test_daa_equal_work_recovery.py` contains eleven named
 regressions: historical v1 counterexample, unresolved equal-work tie,
 strict-successor reorganization under all three research DAAs, depth-six
 rollback of one *simulated* observation, outage with no work, timestamp
@@ -760,3 +760,14 @@ check two independent original receiver/client tips and six-depth/work
 confirmation histories, recover after restart, and repeat with simultaneous
 source outage, skew and hostile transport. W1 cheapest-legal-cost and
 cross-operator WAN validation remain independently open.
+
+### Unhealed partition report is not global confirmation
+
+A second research-only counterexample found that the convenience predicate
+`not healed or same tip` reported **unhealed** divergent peer views as
+`partition_converged=true`. The v2 model now declares convergence only
+AFTER observed network heal AND matching current tips. An unhealed fork
+reports neither a globally selected tip nor globally valid confirmation,
+even if one branch already has strictly more work and the other peer
+has not received it. The two added tests cover pre-heal equal and unequal
+work. No native W1 behavior, deployed consensus RPC or finality changes.
