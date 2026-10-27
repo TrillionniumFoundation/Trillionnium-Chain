@@ -22,16 +22,8 @@ pub enum RelationError {
 /// Fixed-length input: exact 318-byte PNH1, then exact 49,188-byte PNW1.
 /// Header task/target/challenge are not separate prover-selected public inputs.
 pub fn check_complete_relation(input: &[u8]) -> Result<Vec<u8>, RelationError> {
-    if input.len() != INPUT_BYTES {
-        return Err(RelationError::InputLength);
-    }
-    let header = Header::decode(&input[..HEADER_BYTES]).map_err(|_| RelationError::Header)?;
+    let (header, verified) = native_replay(input)?;
     let proof = &input[HEADER_BYTES..];
-    // Includes canonical decoding, task commitment, nonzero target, full noise
-    // rejection, all transcript prefixes, product reconstruction and ticket.
-    // Do not replace this with precheck_proof_statement or sampled openings.
-    let verified = pon_work::verify(header.challenge(), header.work_task, header.target, proof)
-        .map_err(RelationError::Work)?;
     let trace: [u8; 32] = proof[pon_work::PROOF_BYTES - 32..].try_into().unwrap();
     let mut journal = Vec::with_capacity(JOURNAL_BYTES);
     journal.extend_from_slice(DOMAIN);
@@ -46,6 +38,21 @@ pub fn check_complete_relation(input: &[u8]) -> Result<Vec<u8>, RelationError> {
     }
     assert_eq!(journal.len(), JOURNAL_BYTES);
     Ok(journal)
+}
+
+/// Original native replay, without the additional experimental journal cost.
+pub fn native_replay(input: &[u8]) -> Result<(Header, pon_work::VerifiedWork), RelationError> {
+    if input.len() != INPUT_BYTES {
+        return Err(RelationError::InputLength);
+    }
+    let header = Header::decode(&input[..HEADER_BYTES]).map_err(|_| RelationError::Header)?;
+    let proof = &input[HEADER_BYTES..];
+    // Includes canonical decoding, task commitment, nonzero target, full noise
+    // rejection, all transcript prefixes, product reconstruction and ticket.
+    // Do not replace this with precheck_proof_statement or sampled openings.
+    let verified = pon_work::verify(header.challenge(), header.work_task, header.target, proof)
+        .map_err(RelationError::Work)?;
+    Ok((header, verified))
 }
 
 /// Check the public statement AFTER cryptographic receipt verification.

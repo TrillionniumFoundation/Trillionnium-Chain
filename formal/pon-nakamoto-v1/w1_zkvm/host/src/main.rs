@@ -12,7 +12,9 @@ use std::{
     time::Instant,
 };
 use trnm_w1_zk_methods::{TRNM_W1_FULL_GUEST_ELF, TRNM_W1_FULL_GUEST_ID};
-use trnm_w1_zk_relation::{check_complete_relation, check_public_journal, fixture, JOURNAL_BYTES};
+use trnm_w1_zk_relation::{
+    check_complete_relation, check_public_journal, fixture, native_replay, JOURNAL_BYTES,
+};
 
 fn sha(bytes: &[u8]) -> String {
     hex::encode(Sha256::digest(bytes))
@@ -48,6 +50,17 @@ fn verify(expected: &[u8], receipt: &Receipt) -> Result<[u8; 32]> {
 }
 
 fn main() -> Result<()> {
+    for key in [
+        "RISC0_DEV_MODE",
+        "BONSAI_API_URL",
+        "BONSAI_API_KEY",
+        "RISC0_PROVER",
+    ] {
+        ensure!(
+            std::env::var_os(key).is_none(),
+            "unexpected proof-selection environment: {key}"
+        );
+    }
     let mut args = std::env::args().skip(1);
     let first = args.next().context(
         "usage: trnm-w1-zk-host NEW_OUT_DIR [trials=3] | verify HEADER_FILE RECEIPT_FILE",
@@ -74,17 +87,6 @@ fn main() -> Result<()> {
         (1..=100).contains(&trials) && args.next().is_none(),
         "trial bounds"
     );
-    for key in [
-        "RISC0_DEV_MODE",
-        "BONSAI_API_URL",
-        "BONSAI_API_KEY",
-        "RISC0_PROVER",
-    ] {
-        ensure!(
-            std::env::var_os(key).is_none(),
-            "unexpected proof-selection environment: {key}"
-        );
-    }
     fs::create_dir(&out).context("output must be new; never overwrite failed observations")?;
     let mut log = fs::OpenOptions::new()
         .create_new(true)
@@ -104,8 +106,7 @@ fn main() -> Result<()> {
         let expected = check_complete_relation(&input).map_err(|e| anyhow::anyhow!("{e:?}"))?;
         for _ in 0..100 {
             let start = Instant::now();
-            let value =
-                check_complete_relation(black_box(&input)).map_err(|e| anyhow::anyhow!("{e:?}"))?;
+            let value = native_replay(black_box(&input)).map_err(|e| anyhow::anyhow!("{e:?}"))?;
             black_box(value);
             native_ns.push(start.elapsed().as_nanos());
         }
@@ -135,7 +136,9 @@ fn main() -> Result<()> {
         fs::write(out.join(format!("receipt-{trial}.bin")), &encoded)?;
         // Measure and verify the actual saved bytes, not just the prover's
         // in-memory object. The separate verify command permits a fresh process.
+        let read_started = Instant::now();
         let receipt = read_receipt(&out.join(format!("receipt-{trial}.bin")))?;
+        let disk_read_and_decode_ns = read_started.elapsed().as_nanos();
         let mut trailing = encoded.clone();
         trailing.push(0);
         ensure!(
@@ -160,6 +163,13 @@ fn main() -> Result<()> {
             black_box(verify(&input[..318], &receipt)?);
             verifier_ns.push(start.elapsed().as_nanos());
         }
+        let mut decode_verify_ns = Vec::new();
+        for _ in 0..100 {
+            let start = Instant::now();
+            let decoded = decode_receipt(black_box(&encoded))?;
+            black_box(verify(&input[..318], &decoded)?);
+            decode_verify_ns.push(start.elapsed().as_nanos());
+        }
         let mut wrong_header = input[..318].to_vec();
         wrong_header[310] ^= 1;
         ensure!(
@@ -181,7 +191,24 @@ fn main() -> Result<()> {
             verify(&input[..318], &wrong_seal).is_err(),
             "tampered seal accepted"
         );
-        let row = json!({"trial":trial,"outcome":"REAL_SUCCINCT_STARK_VERIFIED", "input_sha256":sha(&input),"fixture_generation_ns":fixture_ns,"native_full_verifier_ns":native_ns,"prover_ns":prover_ns,"succinct_verifier_ns":verifier_ns,"receipt_bytes":encoded.len(),"journal_bytes":receipt.journal.bytes.len(),"receipt_sha256":sha(&encoded),"work_id":hex::encode(verify(&input[..318], &receipt)?),"stats":format!("{:?}",info.stats),"negative_controls": ["wrong_public_header","tampered_product_journal","tampered_seal","fake_receipt","truncated_encoding","trailing_encoding"],"consensus_admission":false});
+        let succinct = receipt.inner.succinct()?;
+        let row = json!({
+            "trial":trial, "outcome":"REAL_SUCCINCT_STARK_VERIFIED",
+            "input_sha256":sha(&input), "fixture_generation_ns":fixture_ns,
+            "native_full_verifier_ns":native_ns, "prover_ns":prover_ns,
+            "succinct_crypto_verify_ns":verifier_ns,
+            "succinct_decode_and_verify_ns":decode_verify_ns,
+            "disk_read_and_decode_ns":disk_read_and_decode_ns,
+            "receipt_bytes":encoded.len(), "journal_bytes":receipt.journal.bytes.len(),
+            "receipt_sha256":sha(&encoded),
+            "work_id":hex::encode(verify(&input[..318], &receipt)?),
+            "proof_hash_suite":succinct.hashfn,
+            "control_id":succinct.control_id.to_string(),
+            "verifier_parameters":succinct.verifier_parameters.to_string(),
+            "stats":format!("{:?}",info.stats),
+            "negative_controls": ["wrong_public_header","tampered_product_journal","tampered_seal","fake_receipt","truncated_encoding","trailing_encoding"],
+            "consensus_admission":false
+        });
         writeln!(log, "{row}")?;
         log.sync_all()?;
         println!("{row}");
