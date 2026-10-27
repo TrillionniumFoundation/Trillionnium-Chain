@@ -1,0 +1,177 @@
+{
+  "schema": "trnm-pq-cell-deadline-native-local-v1",
+  "parent": "6f4b9cae0dafcb0e6bc171e2aa9b8f630e74eca6",
+  "scope": "one-host controlled loopback and native cryptographic component qualification",
+  "commands": [
+    {
+      "log": "baseline-real-tcp.log",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-m",
+        "unittest",
+        "-v",
+        "test_pq_cell_swarm_deadline.PQCellTransportDeadlineTests.test_slow_frame_prefix_cannot_reset_absolute_deadline",
+        "test_pq_cell_swarm_deadline.PQCellTransportDeadlineTests.test_slow_frame_body_cannot_reset_absolute_deadline"
+      ],
+      "cwd": "/tmp/pcs1-parent-repro-qrwm2uvj",
+      "returncode": 1,
+      "expected_returncode": 1,
+      "elapsed_seconds": 3.050063
+    },
+    {
+      "log": "fixed-python.log",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-m",
+        "unittest",
+        "-v",
+        "test_pq_cell_swarm_deadline.py",
+        "test_pq_cell_swarm.py",
+        "test_pq_cell_custody.py",
+        "test_pq_envelope.py"
+      ],
+      "cwd": "/workspace/scratch/56818e4fba76/chain-pq-cell/formal/pon-nakamoto-v1",
+      "returncode": 0,
+      "expected_returncode": 0,
+      "elapsed_seconds": 5.830288
+    },
+    {
+      "log": "native-rust.log",
+      "argv": [
+        "/workspace/scratch/56818e4fba76/toolchains/rust-1.95.0/bin/cargo",
+        "test",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-crypto-primitives",
+        "--features",
+        "pq-native-openssl"
+      ],
+      "cwd": "/workspace/scratch/56818e4fba76/chain-pq-cell",
+      "returncode": 0,
+      "expected_returncode": 0,
+      "elapsed_seconds": 1.456212
+    },
+    {
+      "log": "native-clippy.log",
+      "argv": [
+        "/workspace/scratch/56818e4fba76/toolchains/rust-1.95.0/bin/cargo-clippy",
+        "clippy",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-crypto-primitives",
+        "--features",
+        "pq-native-openssl",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "cwd": "/workspace/scratch/56818e4fba76/chain-pq-cell",
+      "returncode": 0,
+      "expected_returncode": 0,
+      "elapsed_seconds": 0.132385
+    },
+    {
+      "log": "native-format.log",
+      "argv": [
+        "/workspace/scratch/56818e4fba76/toolchains/rust-1.95.0/bin/rustfmt",
+        "--check",
+        "--edition",
+        "2021",
+        "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs",
+        "trillionnium/crates/trnm-crypto-primitives/tests/pq_openssl_native.rs"
+      ],
+      "cwd": "/workspace/scratch/56818e4fba76/chain-pq-cell",
+      "returncode": 0,
+      "expected_returncode": 0,
+      "elapsed_seconds": 0.017256
+    },
+    {
+      "log": "source-integrity.log",
+      "argv": [
+        "python3",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "cwd": "/workspace/scratch/56818e4fba76/chain-pq-cell",
+      "returncode": 0,
+      "expected_returncode": 0,
+      "elapsed_seconds": 0.055873
+    },
+    {
+      "log": "source-integrity-negative.log",
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/ci",
+        "-p",
+        "test_pq_research_integration.py",
+        "-v"
+      ],
+      "cwd": "/workspace/scratch/56818e4fba76/chain-pq-cell",
+      "returncode": 0,
+      "expected_returncode": 0,
+      "elapsed_seconds": 1.021201
+    },
+    {
+      "log": "repository-check.log",
+      "argv": [
+        "python3",
+        "scripts/ci/check_repository.py"
+      ],
+      "cwd": "/workspace/scratch/56818e4fba76/chain-pq-cell",
+      "returncode": 0,
+      "expected_returncode": 0,
+      "elapsed_seconds": 1.145152
+    }
+  ],
+  "source_git_blobs": {
+    "formal/pon-nakamoto-v1/pq_cell_swarm.py": "05c1ec97d4fe0663551155e8fc65df35a0b5b12a",
+    "formal/pon-nakamoto-v1/pq_cell_custody.py": "5e989915151d5214eb29777d416260984e049383",
+    "formal/pon-nakamoto-v1/pq_envelope.py": "777930873ae3d0d64db03ffa2e4c8861dc44f698",
+    "formal/pon-nakamoto-v1/pq_operation_budget.py": "ea69fa80d7f0749ced70e7836976b89a0d3d79dd",
+    "formal/pon-nakamoto-v1/test_pq_cell_swarm_deadline.py": "e97a7c1149941d8206cb273641be53e95794ffd2",
+    "trillionnium/crates/trnm-crypto-primitives/Cargo.toml": "6f41e3326cdfe75582e657b9c8602959163a9c2c",
+    "trillionnium/crates/trnm-crypto-primitives/src/lib.rs": "0d5585b8c45de6737783910f1314669a04db61a0",
+    "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs": "8cadf4321f887a7b9309f5f1bdfe250b0cabe6fd",
+    "trillionnium/crates/trnm-crypto-primitives/tests/pq_openssl_native.rs": "b25837b85608c6ef452139c1fe918a0f0553d091",
+    "trillionnium/Cargo.lock": "69b9a22e498722d6771715c9fc959f515960829d",
+    "trillionnium/crates/trnm-protocol/src/pq_frame.rs": "6e9f52fa2ca4e3afd15f4e396e95e0ae0a9ec8a0"
+  },
+  "tool_versions": {
+    "openssl": "OpenSSL 3.5.9 29 Sep 2026 (Library: OpenSSL 3.5.9 29 Sep 2026)",
+    "rustc": "rustc 1.95.0 (59807616e 2026-04-14)",
+    "cargo": "cargo 1.95.0 (f2d3ce0bd 2026-03-21)",
+    "python": "Python 3.12.14"
+  },
+  "openssl_source_sha256": "603f5602e2eef00d77fbd429d34dcd5822bb301757a1bc9cdb24c670f1eb859a",
+  "assertions": {
+    "production_activation": false,
+    "independent_accepted": false,
+    "native_pq_node_integrated": false,
+    "quantum_pon_hardness_qualified": false,
+    "physical_rollback_resistant": false,
+    "hepta_final_use_integrated": false,
+    "public_wan_accepted": false,
+    "allow_legacy_fallback": false
+  },
+  "log_sha256": {
+    "fixed-python.log": "659f884e81dd7c6fae7a6f2b4afbd1d7a84223cc495f29e037a0a653410143cd",
+    "native-format.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "native-rust.log": "fc0587f0b1d8985ab8d04a4d530a52d1eed0200959fb2bd0ba02f300bf69b4f9",
+    "source-integrity-negative.log": "2c4455324a3947ba825f9f48c7c0ffc77f1aa4090fc9be3d04779d931e7dd02e",
+    "repository-check.log": "885117175905b357a8de21e0ca1615dce9c50323c4d3529bca3b6cf118c3a675",
+    "baseline-real-tcp.log": "dd41360db03cf391879eddaba046a8ea7150b35206cd85d5a4379e2cb6e316db",
+    "native-clippy.log": "c92508a29848820f033cd2ea015c85dde0953c88b07cc967ce34b7c08f610549",
+    "source-integrity.log": "863dfb9317f32da574753290b2810f8acfb1f2716840ce3b11950f1ec307a54d"
+  },
+  "log_capture": "combined stdout/stderr; only terminal empty lines normalized in native-rust.log"
+}

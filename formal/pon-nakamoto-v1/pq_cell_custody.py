@@ -15,6 +15,7 @@ import stat
 
 from pq_envelope import (Reject, SIGNED_BYTES, make_unsigned, public_key_id,
                          sign_reference, verify_reference)
+from pq_operation_budget import OperationBudget
 
 CAT_MAGIC = b"PCC1"
 CHALLENGE_MAGIC = b"PCQ1"
@@ -220,17 +221,18 @@ def _context(c: Catalog, q: Challenge) -> bytes:
 
 def sign_response_fixture(c: Catalog, q: Challenge, *, chunk: bytes,
                           path: tuple[bytes, ...], public_pem: bytes,
-                          private_key_path: Path, now: int) -> bytes:
+                          private_key_path: Path, now: int,
+                          budget: OperationBudget | None = None) -> bytes:
     """Local fixture: signs an actual valid response, not a durable storage claim."""
     _check_challenge(c, q, now)
-    if q.provider_key_id != public_key_id(public_pem):
+    if q.provider_key_id != public_key_id(public_pem, budget=budget):
         raise Reject("wrong signer")
     leaf = verify_chunk(c, q.chunk_index, chunk, path)
     statement = make_unsigned(purpose=5, network=c.network, context=_context(c,q),
                               signer_key_id=q.provider_key_id,
                               owner_generation=q.generation, operation_sequence=q.sequence,
                               expires_at=q.expires_at, payload=_payload(c,q,leaf,path))
-    signed = sign_reference(statement, private_key_path=private_key_path)
+    signed = sign_reference(statement, private_key_path=private_key_path, budget=budget)
     return (RESPONSE_MAGIC + _int(q.chunk_index,4,"index")
             + _int(len(chunk),4,"chunk len",1) + chunk
             + bytes([len(path)]) + b"".join(path) + signed)
@@ -248,7 +250,8 @@ class RetrievalObservation:
 def verify_response_research(raw: bytes, *, catalog_bytes: bytes, challenge_bytes: bytes,
                              provider_public_pem: bytes, expected_release: bytes,
                              expected_catalog_digest: bytes, expected_requester: bytes, expected_nonce: bytes,
-                             expected_provider_key_id: bytes, now: int) -> RetrievalObservation:
+                             expected_provider_key_id: bytes, now: int,
+                             budget: OperationBudget | None = None) -> RetrievalObservation:
     c, q = parse_catalog(catalog_bytes), parse_challenge(challenge_bytes)
     _check_challenge(c, q, now)
     if (c.release_manifest != _exact(expected_release,48,"expected release",True)
@@ -256,7 +259,7 @@ def verify_response_research(raw: bytes, *, catalog_bytes: bytes, challenge_byte
             or q.requester_id != _exact(expected_requester,32,"requester",True)
             or q.nonce != _exact(expected_nonce,32,"nonce",True)
             or q.provider_key_id != _exact(expected_provider_key_id,32,"provider",True)
-            or q.provider_key_id != public_key_id(provider_public_pem)):
+            or q.provider_key_id != public_key_id(provider_public_pem, budget=budget)):
         raise Reject("caller trust/context mismatch")
     if type(raw) is not bytes or not 4+4+4+1+SIGNED_BYTES <= len(raw) <= 4+4+4+MAX_CHUNK_BYTES+1+12*48+SIGNED_BYTES:
         raise Reject("response length")
@@ -278,7 +281,7 @@ def verify_response_research(raw: bytes, *, catalog_bytes: bytes, challenge_byte
     verify_reference(frame, payload=_payload(c,q,leaf,path), public_pem=provider_public_pem,
                      expected_network=c.network, expected_context=_context(c,q),
                      expected_purpose=5, expected_generation=q.generation,
-                     expected_sequence=q.sequence, now=now)
+                     expected_sequence=q.sequence, now=now, budget=budget)
     return RetrievalObservation(_h(b"challenge\x00",q.encode()), leaf,
                                 q.provider_key_id, _h(b"response\x00",raw))
 

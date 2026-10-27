@@ -13,6 +13,9 @@ import os
 from pathlib import Path
 import subprocess
 import tempfile
+import time
+
+from pq_operation_budget import BudgetExpired, OperationBudget
 
 MAGIC = b"TPQ1"
 VERSION = 1
@@ -50,16 +53,31 @@ def _digest_payload(payload: bytes) -> bytes:
     return hashlib.sha384(DOMAIN + b"payload\x00" + len(payload).to_bytes(8, "big") + payload).digest()
 
 
-def _run(argv: list[str], *, stdin: bytes | None = None) -> bytes:
+def _run(argv: list[str], *, stdin: bytes | None = None,
+         budget: OperationBudget | None = None) -> bytes:
     # Separate argument vector; never launch a shell. Bounded input and offline only.
+    # One caller budget crosses ALL commands; retrying/decoding never resets it.
+    operation = budget if budget is not None else OperationBudget(time.monotonic() + 15)
     try:
-        result = subprocess.run(argv, input=stdin, stdout=subprocess.PIPE,
-                                stderr=subprocess.PIPE, timeout=15, check=False)
-    except (OSError, subprocess.TimeoutExpired) as exc:
+        operation.check()
+        with subprocess.Popen(argv, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                              stderr=subprocess.PIPE) as child:
+            try:
+                with operation.abort_on_cancel(child.kill):
+                    stdout, _ = child.communicate(input=stdin, timeout=operation.remaining(15))
+                    operation.check()
+            except BaseException:
+                if child.poll() is None:
+                    child.kill()
+                # Reap the actual child before the worker can terminate.
+                child.communicate()
+                raise
+            returncode = child.returncode
+    except (OSError, subprocess.TimeoutExpired, BudgetExpired) as exc:
         raise Reject("OpenSSL unavailable") from exc
-    if result.returncode != 0:
+    if returncode != 0:
         raise Reject("OpenSSL refused cryptographic operation")
-    return result.stdout
+    return stdout
 
 
 def _der_length(data: bytes, start: int) -> tuple[int, int]:
@@ -96,14 +114,19 @@ def _verify_spki_algorithm(der: bytes) -> None:
         raise Reject("SPKI public key size/padding")
 
 
-def public_key_id(public_pem: bytes) -> bytes:
+def public_key_id(public_pem: bytes, *, budget: OperationBudget | None = None) -> bytes:
+    if budget is not None:
+        budget.check()
     if type(public_pem) is not bytes or not 0 < len(public_pem) <= MAX_PEM_BYTES:
         raise Reject("public PEM size/type")
     with tempfile.TemporaryDirectory(prefix="trnm-pq-key-") as root:
         key = Path(root) / "key.pem"
         key.write_bytes(public_pem)  # public key only, not private material
-        der = _run(["openssl", "pkey", "-pubin", "-in", str(key), "-outform", "DER"])
+        der = _run(["openssl", "pkey", "-pubin", "-in", str(key), "-outform", "DER"],
+                   budget=budget)
     _verify_spki_algorithm(der)
+    if budget is not None:
+        budget.check()
     return hashlib.sha256(b"TRNM/PoN/PQKey/v1\x00" + der).digest()
 
 
@@ -181,7 +204,8 @@ def parse_signed(frame: bytes) -> tuple[Unsigned, bytes]:
 def verify_reference(frame: bytes, *, payload: bytes, public_pem: bytes,
                      expected_network: bytes, expected_context: bytes,
                      expected_purpose: int, expected_generation: int,
-                     expected_sequence: int, now: int) -> Unsigned:
+                     expected_sequence: int, now: int,
+                     budget: OperationBudget | None = None) -> Unsigned:
     """Offline crypto check only; caller MUST separately enforce durable replay and authority."""
     unsigned, signature = parse_signed(frame)
     _u64(now, "now")
@@ -194,7 +218,7 @@ def verify_reference(frame: bytes, *, payload: bytes, public_pem: bytes,
             or unsigned.owner_generation != expected_generation
             or unsigned.operation_sequence != expected_sequence
             or now > unsigned.expires_at
-            or unsigned.signer_key_id != public_key_id(public_pem)
+            or unsigned.signer_key_id != public_key_id(public_pem, budget=budget)
             or unsigned.payload_digest != _digest_payload(payload)):
         raise Reject("context/identity/payload/expiry")
     with tempfile.TemporaryDirectory(prefix="trnm-pq-verify-") as root:
@@ -203,15 +227,21 @@ def verify_reference(frame: bytes, *, payload: bytes, public_pem: bytes,
         (p / "message.bin").write_bytes(unsigned.encode())
         (p / "sig.bin").write_bytes(signature)
         _run(["openssl", "pkeyutl", "-verify", "-pubin", "-inkey", str(p / "public.pem"),
-              "-rawin", "-in", str(p / "message.bin"), "-sigfile", str(p / "sig.bin")])
+              "-rawin", "-in", str(p / "message.bin"), "-sigfile", str(p / "sig.bin")],
+             budget=budget)
+    if budget is not None:
+        budget.check()
     return unsigned
 
 
-def sign_reference(unsigned: Unsigned, *, private_key_path: Path) -> bytes:
+def sign_reference(unsigned: Unsigned, *, private_key_path: Path,
+                   budget: OperationBudget | None = None) -> bytes:
     """Offline test-key use ONLY. Product key custody must never call this function."""
     with tempfile.TemporaryDirectory(prefix="trnm-pq-sign-") as root:
         msg, sig = Path(root) / "message.bin", Path(root) / "sig.bin"
         msg.write_bytes(unsigned.encode())
         _run(["openssl", "pkeyutl", "-sign", "-inkey", os.fspath(private_key_path),
-              "-rawin", "-in", str(msg), "-out", str(sig)])
+              "-rawin", "-in", str(msg), "-out", str(sig)], budget=budget)
+        if budget is not None:
+            budget.check()
         return attach_signature(unsigned, sig.read_bytes())

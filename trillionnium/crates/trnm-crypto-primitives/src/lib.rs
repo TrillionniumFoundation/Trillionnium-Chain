@@ -219,3 +219,6 @@ mod tests {
 }
 
 pub mod pon_work;
+
+#[cfg(feature = "pq-native-openssl")]
+pub mod pq_auth;

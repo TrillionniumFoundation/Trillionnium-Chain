@@ -15,6 +15,14 @@ Every retried chunk request has a fresh 32-byte nonce, provider key binding, gen
 
 Per-request constraints: <=8 peers, <=4 client workers, <=8 attempts/chunk, <=300 seconds configured wall budget, <=1MiB/chunk, <=4096 chunks and <=64MiB per object. Client worker count is further limited by actual provider count, preventing oversubscribing a single signed provider. At most one batch of futures is in memory. Complete downloaded bytes are rehashed from a new local file using the inherited PCB1 SHA-384 domain, rather than trusting a remote Merkle commitment in isolation.
 
+The historical idle-timeout implementation did not enforce that total wall
+budget against a slow-drip peer. The [deadline/native-crypto refinement](PQ_CELL_DEADLINE_NATIVE_CRYPTO_V1.md)
+propagates one absolute deadline through key parsing, network and crypto work,
+interrupts active sockets/children before joining workers, and checks readback
+and publication. Its real TCP regression evidence is separate from the original
+30-test run below. Uninterruptible filesystem calls and OS scheduling are not
+hard real-time guarantees; post-link failures require caller reconciliation.
+
 Partial files are not published. After complete content verification, an exclusive hardlink makes the finished object visible without overwriting an existing object. A local failure removes its unpublished staging path. Existing paths and symlink leaves are refused. This does not protect a hostile filesystem parent being replaced concurrently; native directory-fd and OS isolation remain production blockers.
 
 The result is **FetchObservation**, a non-authoritative diagnostic. Its failed_attempts merges Busy, timeout, missing, forged and invalid results; these are not interchangeable fraud judgments. No release, custody reward, model adoption, trusted grant, Chainwork, Final-use or storage contract can be constructed.
