@@ -83,8 +83,10 @@ def check(ingress, owner, cpu, host):
             "prior_epoch.is_none()" in owner and
             "ORDINARY_PUBLIC_EPOCH_KEY" in owner,
             "HISTORY_UNKNOWN_EPOCH_FENCE")
-    require("pub(crate) fn cold_remote_history_epoch()" in cpu and
-            "PaidMutationCpuBudget::cold_start()" in cpu and
+    cold_start = cpu.find("pub(crate) fn cold_remote_history_epoch()")
+    cold_end = cpu.find("pub fn standalone()", cold_start)
+    require(cold_start >= 0 and cold_end > cold_start and
+            "PaidMutationCpuBudget::cold_start()" in cpu[cold_start:cold_end] and
             "pub fn begin_untrusted_peer_sync(" in cpu and
             "self.begin_with_priority(true)" in cpu and
             "budget.in_flight == 0" in cpu and
