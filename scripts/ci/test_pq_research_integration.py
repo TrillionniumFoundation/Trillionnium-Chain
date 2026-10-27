@@ -28,7 +28,6 @@ REQUIRED = (
     "formal/pon-nakamoto-v1/pqg_native_verify.c",
     "formal/pon-nakamoto-v1/pq_import_projection_verify.c",
     "formal/pon-nakamoto-v1/pql3_native_verify.c",
-    "formal/pon-nakamoto-v1/pqg_native_verify.c",
     "formal/pon-nakamoto-v1/pq_qtx1_verify.c",
     "formal/pon-nakamoto-v1/pq_pql5_native_verify.c",
 )
@@ -172,6 +171,39 @@ class CorpusGateTests(unittest.TestCase):
                 with self.assertRaisesRegex(IntegrityError, "unpinned PQ source"):
                     check(self.root)
                 path.unlink()
+
+    def test_duplicate_required_pin_refuses_but_base_fixture_is_unique(self):
+        # Original #494 fixture duplicated pqg_native_verify.c, masking all
+        # positive and many negative checks with early 'incomplete source pins'.
+        self.assertEqual(len(REQUIRED), len(set(REQUIRED)))
+        self.manifest["required_paths"].append("formal/pon-nakamoto-v1/pqg_native_verify.c")
+        self.save()
+        with self.assertRaisesRegex(IntegrityError, "incomplete source pins"):
+            check(self.root)
+
+    def test_unpinned_pq_named_nested_module_rejects_renamed_native_file(self):
+        # #494 scans descendants, but only recognizes PQ-prefixed leaf names.
+        for name in (
+            "trillionnium/crates/trnm-protocol/src/pq_verifier/native.rs",
+            "trillionnium/crates/trnm-crypto-primitives/src/core/pq_authority/mod.rs",
+            "formal/pon-nakamoto-v1/pq_next/helper.py",
+        ):
+            with self.subTest(path=name):
+                path = self.root / name
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_bytes(b"untracked nested source with innocent filename")
+                with self.assertRaisesRegex(IntegrityError, "unpinned PQ source"):
+                    check(self.root)
+                path.unlink()
+
+    def test_pinned_pq_named_module_keeps_original_byte_identity(self):
+        name = "trillionnium/crates/trnm-protocol/src/pq_verifier/native.rs"
+        self.put(name, b"//! independently pinned, no production authority")
+        self.save()
+        self.assertEqual(check(self.root)["status"], "HOLD_NO_GO")
+        (self.root / name).write_bytes(b"changed after pin")
+        with self.assertRaisesRegex(IntegrityError, "changed source"):
+            check(self.root)
 
     def test_pq_source_directory_symlink_is_not_trusted(self):
         source = self.root / "trillionnium/crates/trnm-crypto-primitives/src"

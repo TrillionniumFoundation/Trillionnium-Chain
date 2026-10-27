@@ -99,8 +99,12 @@ def _check_pq_source_coverage(root: Path, pins: dict[str, str]) -> None:
                 if source.is_dir():
                     pending.append(source)
                     continue
-                if (source.suffix not in (".py", ".c", ".rs")
-                        or not source.name.startswith(("pq_", "pqg_", "pql"))):
+                # Nested Rust/C/Python files inside a PQ-named module are
+                # implementations too, even when called native.rs or mod.rs.
+                parts = source.relative_to(parent).parts
+                is_pq_source = any(part.startswith(("pq_", "pqg_", "pql"))
+                                   for part in parts)
+                if source.suffix not in (".py", ".c", ".rs") or not is_pq_source:
                     continue
                 if relative not in pins:
                     raise IntegrityError("unpinned PQ source: " + relative)
