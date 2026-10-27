@@ -2511,7 +2511,7 @@ mod tests {
         let mut node = Node::open(dir.path(), settings, 2).unwrap();
         node.mark_ordinary_public_service_epoch_unknown();
         assert_eq!(
-            node.remote_history_cpu_domain().unwrap_err().to_string(),
+            node.remote_history_cpu_domain().err().unwrap().to_string(),
             "OWNER_PUBLIC_SERVICE_UNCLEAN_EPOCH"
         );
     }
