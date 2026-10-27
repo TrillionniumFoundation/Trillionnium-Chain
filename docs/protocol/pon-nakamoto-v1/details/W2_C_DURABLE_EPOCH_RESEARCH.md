@@ -88,3 +88,24 @@ real CPU accounting and physical deployment qualification remain separate.
    independent review and exact activation/fork tests.
 
 Status remains SHADOW_ONLY / HOLD_NO_GO; no production activation or merge.
+
+
+## Additional whole-suite observation and timing control
+
+After the initial individual test success, one whole-suite run of 12 + 1
+tests **FAILED** because the SIGKILL child process did not announce its
+original persisted Epoch within the first 5-second local observation
+deadline. That result remains a failed observation, not a 13/13 pass.
+The source was subsequently changed to retain bounded 15-second process
+readiness, diagnostic child exit status, and available child stderr.
+No W2-C relation, epoch validity or native-node deadline was relaxed;
+this change affects this scratch test's OS child startup observation only.
+Two complete source-equivalent 13-test combined runs then passed in
+opposite test order. The earlier failed run is not retroactively erased.
+The revised real-crash test Git blob is
+'e43ac3c831ad0d68058f6027a1d7f1f9d363d9f3'.
+
+This is a local Python process startup result, not a proof that 15 seconds
+is acceptable for a real protected public W1 service. Production P3 must
+preregister separate startup, proof, and honest-business confirmation
+deadlines and report all failures.
