@@ -744,3 +744,105 @@ fn isolated_asert_context_rejects_wrong_anchor_and_uses_real_w1_branch_history()
         raw
     );
 }
+
+
+/// Future activation is branch-local, not an administrator-pinned height-1
+/// anchor. Every observed packet uses real native W1 and the OLD consensus DAA.
+#[test]
+fn native_w1_future_asert_anchor_survives_reorg_and_cold_reopen() {
+    use consensus::daa_activation_research::{shadow_from_verified_ancestry, Context};
+    use consensus::daa_branch_research::ParentClock;
+    use consensus::daa_research::{asert_target, AsertInputs};
+    let temporary = tempfile::tempdir().unwrap();
+    let path = temporary.path().join("activation-shadow");
+    let settings = Settings::development(Some(GENESIS_TIME)).unwrap();
+    let mut node = Node::open(&path, settings.clone(), 1).unwrap();
+    let mut common = settings.genesis();
+    for h in 1..=15u64 {
+        let p = extend(&mut node, common, GENESIS_TIME + h*10, h, 0);
+        verify_work(&p);
+        common = p.id().unwrap();
+    }
+    let mut a = common;
+    let mut b = common;
+    let (mut a16, mut b16) = ([0u8;32], [0u8;32]);
+    for h in 16..=23u64 {
+        let x = extend(&mut node, a, GENESIS_TIME + h*10, h, 0);
+        let y = extend(&mut node, b, GENESIS_TIME + h*10 - 4, h, 1);
+        verify_work(&x);
+        verify_work(&y);
+        assert_eq!(x.header.target, y.header.target);
+        if h == 16 { a16 = x.id().unwrap(); b16 = y.id().unwrap(); }
+        a = x.id().unwrap();
+        b = y.id().unwrap();
+    }
+    assert_ne!(a16, b16);
+    let mut cap = [255u8;32];
+    cap[0] = 127;
+    let ctx = Context {
+        network: settings.network(), parameters: settings.parameters(),
+        genesis: settings.genesis(), genesis_timestamp: GENESIS_TIME,
+        rule_commitment: hash(b"asert-future-anchor", &[b"research-only"]),
+        activation_height: 16, spacing: 10, half_life: 7200,
+        pow_limit: cap, clock: ParentClock::Raw, max_reads: 128,
+    };
+    let installed_a = node.expected_target(a).unwrap();
+    let installed_b = node.expected_target(b).unwrap();
+    assert_eq!(installed_a, installed_b);
+    let shadow_a = shadow_from_verified_ancestry(ctx, a, |id| node.packet(id)).unwrap();
+    let shadow_b = shadow_from_verified_ancestry(ctx, b, |id| node.packet(id)).unwrap();
+    assert_eq!(shadow_a.anchor_block, a16);
+    assert_eq!(shadow_b.anchor_block, b16);
+    assert_eq!(shadow_a.anchor_parent, common);
+    assert_eq!(shadow_b.anchor_parent, common);
+    assert_eq!(shadow_a.anchor_parent_time, GENESIS_TIME + 150);
+    assert_eq!(shadow_b.anchor_parent_time, GENESIS_TIME + 150);
+    assert_eq!(shadow_a.observed_parent_time, GENESIS_TIME + 230);
+    assert_eq!(shadow_b.observed_parent_time, GENESIS_TIME + 226);
+    assert_eq!(shadow_a.candidate_height, 24);
+    assert_eq!(shadow_a.target, shadow_a.anchor_target);
+    assert_ne!(shadow_a.target, shadow_b.target);
+    for (tip, observed) in [(a, shadow_a), (b, shadow_b)] {
+        assert_eq!(observed.target, asert_target(AsertInputs {
+            anchor_target: observed.anchor_target,
+            anchor_parent_time: observed.anchor_parent_time,
+            evaluation_parent_time: observed.observed_parent_time,
+            anchor_height: 16, candidate_height: 24,
+            spacing: 10, half_life: 7200, pow_limit: cap,
+        }).unwrap());
+        let median = shadow_from_verified_ancestry(
+            Context { clock: ParentClock::Median11, ..ctx },
+            tip, |id| node.packet(id)
+        ).unwrap();
+        assert_eq!(median.anchor_block, observed.anchor_block);
+        assert_ne!(median.observed_parent_time, observed.observed_parent_time);
+    }
+    for bad in [
+        Context { max_reads: 22, ..ctx },
+        Context { activation_height: 24, ..ctx },
+        Context { genesis: [3;32], ..ctx },
+        Context { parameters: [4;32], ..ctx },
+    ] {
+        assert!(shadow_from_verified_ancestry(bad, a, |id| node.packet(id)).is_err());
+    }
+    assert!(shadow_from_verified_ancestry(ctx, a, |id| {
+        let mut packet = node.packet(id)?;
+        let end = packet.proof.len() - 1;
+        packet.proof[end] ^= 1;
+        Ok(packet)
+    }).is_err());
+    node.activate(a).unwrap();
+    let extra = extend(&mut node, b, GENESIS_TIME + 236, 24, 1);
+    verify_work(&extra);
+    let heavier = extra.id().unwrap();
+    node.activate(heavier).unwrap();
+    let original = node.read_active().unwrap();
+    assert_eq!(original.0, heavier);
+    drop(node);
+    let restored = Node::open(&path, settings, 1).unwrap();
+    assert_eq!(restored.read_active().unwrap(), original);
+    assert_eq!(restored.expected_target(a).unwrap(), installed_a);
+    assert_eq!(restored.expected_target(b).unwrap(), installed_b);
+    assert_eq!(shadow_from_verified_ancestry(ctx, a, |id| restored.packet(id)).unwrap(), shadow_a);
+    assert_eq!(shadow_from_verified_ancestry(ctx, b, |id| restored.packet(id)).unwrap(), shadow_b);
+}
