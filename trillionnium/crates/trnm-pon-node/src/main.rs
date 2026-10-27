@@ -2653,10 +2653,7 @@ mod tests {
         // This preserved plain-developer profile never claims a public
         // network resource budget or public-network readiness.
         assert!(matches!(sync_host_kernel_owner(loopback, false), Ok(None)));
-        let original = require_host_kernel_budget(
-            loopback,
-            Some(FIXED_PUBLIC_KERNEL_PARENT),
-        );
+        let original = require_host_kernel_budget(loopback, Some(FIXED_PUBLIC_KERNEL_PARENT));
         let protected = sync_host_kernel_owner(loopback, true);
         match (protected, original) {
             (Ok(Some(a)), Ok(Some(b))) => {
