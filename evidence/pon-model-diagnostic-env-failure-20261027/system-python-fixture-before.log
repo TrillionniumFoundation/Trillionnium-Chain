@@ -1,0 +1,17 @@
+setUpClass (__main__.RuntimeMaterialTests) ... ERROR
+
+======================================================================
+ERROR: setUpClass (__main__.RuntimeMaterialTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/301262829a43/pon-hepta-impl/chain-model-diagnostic-7149/scripts/test_llm_runtime_release.py", line 115, in setUpClass
+    cls.spec, cls.loader = runtime_fixture(cls.template)
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/301262829a43/pon-hepta-impl/chain-model-diagnostic-7149/scripts/test_llm_runtime_release.py", line 58, in runtime_fixture
+    raise RuntimeError("fixture dependency unavailable: " + name)
+RuntimeError: fixture dependency unavailable: libz.so.1
+
+----------------------------------------------------------------------
+Ran 0 tests in 0.021s
+
+FAILED (errors=1)

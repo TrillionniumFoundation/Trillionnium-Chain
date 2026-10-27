@@ -35,6 +35,7 @@ jobs:
           mkdir "$out"
           mkdir "$out/evidence"
           printf 'MODEL_DIAGNOSTIC_OUT=%s\n' "$out" >> "$GITHUB_ENV"
+          export MODEL_DIAGNOSTIC_OUT="$out"
           python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$EXPECTED_HEAD" --output "$out/evidence/source-before.json"
           printf '%s\n' 'Fresh original five-participant diagnostic. New source, run and candidate; does not substitute for the local V2 parent candidate, an ordinary Hepta task, installation, cold runtime closure, independent evaluation or public reward.' > "$out/evidence/SCOPE.txt"
           cp scripts/ci/model-runtime-cpu-requirements.txt "$out/evidence/requirements.txt"

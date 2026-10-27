@@ -4593,3 +4593,28 @@ ordinary closure. Timeout/missing evidence remains failure; early setup failure
 or hard job termination may prevent uploads. The diagnostic is NOT_RUN at this
 source freeze. Existing model matrices gain only13 small material checks, not
 extra pretrained-model runs. `task_complete=false`, `merge_ready=false`.
+
+### PN3 initial CI preparation failures and bounded repair — 2026-10-27
+
+The first published source `abe552b6d2a408adbf82e27c817b4f914a7322a2`
+produced two genuine CI failures, preserved in the
+[preparation failure evidence](../../evidence/pon-model-diagnostic-env-failure-20261027/README.md).
+Independent diagnostic run `40485837206` passed exact-source verification, then
+failed because its same-step Python probe could not read a value written only
+to `GITHUB_ENV`. No model execution occurred. Exporting that exact directory
+in the current shell passes a real old/new shell reproduction and a fresh
+subsequent-step control; input pins and the 15/10-minute limits are unchanged.
+
+Parent-evidence run `40485837111` failed its new runtime suite before any of its
+thirteen tests executed, on all four architecture/source matrix jobs. The
+fixture confused a library's mapped real filename with its SONAME alias. The
+fix resolves only unique aliases to files already mapped into the current test
+process. It does not execute a loader, alter the production runtime validator,
+skip any test or relax the strict roster. Actual system-Python red-to-green
+fixture execution, all thirteen primary-Python material controls, eight original
+Cell controls and four registration controls pass locally. A new exact-source
+CI run must establish the full system-Python and ARM results.
+
+The original failed runs, local full-tune SIGKILL, all-yes candidate results,
+Cell failures and uncompleted ordinary I10/runtime/benefit gates remain intact.
+This repair carries no neural improvement, installation or release authority.

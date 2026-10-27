@@ -37,7 +37,27 @@ def runtime_fixture(root):
     for line in Path("/proc/self/maps").read_text().splitlines():
         parts = line.split()
         if len(parts) == 6 and parts[-1].startswith("/"):
-            mapped[Path(parts[-1]).name] = Path(parts[-1])
+            source = Path(parts[-1]).resolve(strict=True)
+            mapped.setdefault(source.name, set()).add(source)
+    mapped_files = {source for sources in mapped.values() for source in sources}
+    mapped_directories = {source.parent for source in mapped_files}
+
+    def mapped_dependency(name):
+        # /proc maps records real filenames (e.g. libz.so.1.3), whereas
+        # DT_NEEDED uses SONAME aliases (libz.so.1). A host alias is usable
+        # only when it resolves to bytes already mapped into this process.
+        # This is fixture assembly, not a resolver for untrusted runtimes.
+        candidates = set(mapped.get(name, ()))
+        for directory in mapped_directories:
+            alias = directory / name
+            if alias.is_file():
+                source = alias.resolve(strict=True)
+                if source in mapped_files:
+                    candidates.add(source)
+        if len(candidates) != 1:
+            raise RuntimeError("fixture dependency unavailable or ambiguous: " + name)
+        return candidates.pop()
+
     machine = platform.machine()
     pending = [(Path(sys.executable).resolve(), "bin/python3.12")]
     copied = set()
@@ -54,9 +74,7 @@ def runtime_fixture(root):
         with path.open("rb") as handle:
             native = release.elf_dependencies(handle.fileno(), path.stat().st_size, machine)
         for name in native["needed"]:
-            if name not in mapped:
-                raise RuntimeError("fixture dependency unavailable: " + name)
-            pending.append((mapped[name], "lib/" + name))
+            pending.append((mapped_dependency(name), "lib/" + name))
         if native["interpreter"]:
             loader = native["interpreter"][1:]
             pending.append((Path(native["interpreter"]).resolve(), loader))
