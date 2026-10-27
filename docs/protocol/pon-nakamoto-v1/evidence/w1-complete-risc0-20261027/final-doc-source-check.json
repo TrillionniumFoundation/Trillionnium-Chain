@@ -1,0 +1,70 @@
+{
+  "schema": "pon-w1-doc-source-validation-v1",
+  "local_links_checked": [
+    {
+      "document": "docs/protocol/pon-nakamoto-v1/details/W1_COMPLETE_RELATION_RESEARCH.md",
+      "target": "../../../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
+    },
+    {
+      "document": "docs/protocol/pon-nakamoto-v1/details/W1_COMPLETE_RELATION_RESEARCH.md",
+      "target": "../../../../trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/README.md"
+    },
+    {
+      "document": "docs/protocol/pon-nakamoto-v1/details/W1_COMPLETE_RELATION_RESEARCH.md",
+      "target": "../evidence/w1-complete-risc0-20261027/README.md"
+    },
+    {
+      "document": "docs/protocol/pon-nakamoto-v1/evidence/w1-complete-risc0-20261027/README.md",
+      "target": "../../details/W1_COMPLETE_RELATION_RESEARCH.md"
+    },
+    {
+      "document": "docs/protocol/pon-nakamoto-v1/evidence/w1-complete-risc0-20261027/README.md",
+      "target": "../../../../../trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/README.md"
+    },
+    {
+      "document": "docs/protocol/pon-nakamoto-v1/evidence/w1-complete-risc0-20261027/README.md",
+      "target": "baseline-full_relation.rs"
+    },
+    {
+      "document": "docs/protocol/pon-nakamoto-v1/evidence/w1-complete-risc0-20261027/README.md",
+      "target": "runtime-source-to-commit.json"
+    },
+    {
+      "document": "docs/protocol/pon-nakamoto-v1/evidence/w1-complete-risc0-20261027/README.md",
+      "target": "w1-local-prover-source.json"
+    },
+    {
+      "document": "docs/protocol/pon-nakamoto-v1/evidence/w1-complete-risc0-20261027/README.md",
+      "target": "backend-manifest.local-prove.json"
+    },
+    {
+      "document": "docs/protocol/pon-nakamoto-v1/evidence/w1-complete-risc0-20261027/README.md",
+      "target": "prove-folded.process.json"
+    },
+    {
+      "document": "docs/protocol/pon-nakamoto-v1/evidence/w1-complete-risc0-20261027/README.md",
+      "target": "prove-folded.live-resource-samples.jsonl"
+    },
+    {
+      "document": "docs/protocol/pon-nakamoto-v1/evidence/w1-complete-risc0-20261027/README.md",
+      "target": "soundness-profile/soundness-observation.json"
+    },
+    {
+      "document": "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/README.md",
+      "target": "../../../../../docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
+    },
+    {
+      "document": "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/README.md",
+      "target": "../../src/pon_work/full_relation.rs"
+    },
+    {
+      "document": "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/README.md",
+      "target": "../../../../../.github/workflows/pon-complete-w1-proof-research.yml"
+    },
+    {
+      "document": "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/README.md",
+      "target": "../../../../../docs/protocol/pon-nakamoto-v1/evidence/w1-complete-risc0-20261027/README.md"
+    }
+  ],
+  "python_sources_parse": true
+}

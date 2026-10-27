@@ -1,0 +1,2 @@
+# Raw retained command/unit-test observations may end with blank lines.
+*.log -whitespace

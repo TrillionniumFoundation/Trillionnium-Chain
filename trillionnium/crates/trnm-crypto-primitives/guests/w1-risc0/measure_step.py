@@ -6,6 +6,7 @@ or manufacture success. Timeout cleanup is confined to the child process group
 created by this invocation. All stdout/stderr and exit status are retained.
 """
 import argparse
+from contextlib import nullcontext
 from datetime import datetime, timezone
 import json
 import os
@@ -16,12 +17,50 @@ import signal
 import subprocess
 import time
 
+from proc_group_sampler import INTERVAL_SECONDS, ProcGroupSampler
+
+
+def wait_with_samples(child, timeout, sampler):
+    if sampler is None:
+        return child.wait(timeout=timeout)
+    deadline = time.monotonic() + timeout
+    sampler.sample("started")
+    next_sample = time.monotonic() + INTERVAL_SECONDS
+    while True:
+        remaining = min(deadline, next_sample) - time.monotonic()
+        if remaining <= 0 and time.monotonic() >= deadline:
+            raise subprocess.TimeoutExpired(child.args, timeout)
+        try:
+            return child.wait(timeout=max(remaining, 0.001))
+        except subprocess.TimeoutExpired:
+            if time.monotonic() >= deadline:
+                raise
+            sampler.sample("periodic")
+            next_sample = time.monotonic() + INTERVAL_SECONDS
+
+
+def terminate_owned_group(child):
+    try:
+        os.killpg(child.pid, signal.SIGTERM)
+    except ProcessLookupError:
+        pass
+    try:
+        child.wait(timeout=5)
+    except subprocess.TimeoutExpired:
+        try:
+            os.killpg(child.pid, signal.SIGKILL)
+        except ProcessLookupError:
+            pass
+        child.wait()
+
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--name", required=True)
     parser.add_argument("--timeout", type=int, required=True)
+    parser.add_argument("--sample-proc-group", action="store_true",
+                        help="sample this new Linux process group every 15s; lower bounds only")
     parser.add_argument("command", nargs=argparse.REMAINDER)
     args = parser.parse_args()
     if not re.fullmatch(r"[a-z0-9][a-z0-9-]*", args.name):
@@ -42,21 +81,44 @@ def main():
     started = time.monotonic()
     with report_path.open("x") as output:
         try:
+            samples_path = args.out / f"{args.name}.proc-group.jsonl"
             with (args.out / f"{args.name}.stdout.log").open("xb") as stdout, \
-                 (args.out / f"{args.name}.stderr.log").open("xb") as stderr:
+                 (args.out / f"{args.name}.stderr.log").open("xb") as stderr, \
+                 (samples_path.open("x") if args.sample_proc_group else nullcontext(None)) as samples:
                 child = subprocess.Popen(command, stdout=stdout, stderr=stderr,
                                          start_new_session=True)
+                sampler = None
+                termination_reason = None
                 try:
-                    report["returncode"] = child.wait(timeout=args.timeout)
+                    if samples is not None:
+                        sampler = ProcGroupSampler(child.pid, samples)
+                    report["returncode"] = wait_with_samples(child, args.timeout, sampler)
                 except subprocess.TimeoutExpired:
                     report["timed_out"] = True
-                    os.killpg(child.pid, signal.SIGTERM)
-                    try:
-                        child.wait(timeout=5)
-                    except subprocess.TimeoutExpired:
-                        os.killpg(child.pid, signal.SIGKILL)
-                        child.wait()
+                    termination_reason = "timeout"
+                    if sampler is not None:
+                        sampler.sample("before_timeout_termination")
+                    terminate_owned_group(child)
                     report["returncode"] = 124
+                except BaseException:
+                    termination_reason = "runner_error"
+                    if child.poll() is None:
+                        terminate_owned_group(child)
+                    raise
+                finally:
+                    # Also clean up if observation I/O failed inside a timeout
+                    # handler; never leave a new unmeasured prover running.
+                    if child.poll() is None:
+                        termination_reason = termination_reason or "runner_error"
+                        terminate_owned_group(child)
+                    if sampler is not None:
+                        event = f"terminated_{termination_reason}" if termination_reason else "exit_observed"
+                        try:
+                            sampler.sample(event, after_exit=True)
+                        except (OSError, ValueError) as error:
+                            report["proc_group_sampling_error"] = repr(error)
+                        report["proc_group_sampling"] = sampler.summary()
+                        report["proc_group_sampling"]["jsonl_file"] = samples_path.name
         except BaseException as error:
             report["runner_error"] = repr(error)
             report["returncode"] = 125

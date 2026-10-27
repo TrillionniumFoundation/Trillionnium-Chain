@@ -86,6 +86,31 @@ hash-based proving is not automatically a quantified post-quantum security claim
 Neural lottery hardness against quantum search is also independent of signature
 security. No production or whole-chain post-quantum qualification flag changes.
 
+## Actual authorization call boundaries reviewed on 2026-10-27
+
+The following read-only trace distinguishes actual ordinary call paths from
+library components used only in tests. It is not a completed whole-repository
+security audit. No new concrete TPQ1 downgrade or authorization bypass was found
+in these inspected paths; this does not qualify the remaining classical paths.
+
+| Authorization boundary | Actual current implementation and caller | Required migration owner |
+| --- | --- | --- |
+| TPQ1 helper | `pq_auth::verify_tpq1` is called by `pq_authority::PqAuthorizationOwner::record_authorization`; that owner's current callers are its tests. It verifies ML-DSA-65 and returns errors without a classical fallback. | Each eventual effect owner must adopt the explicit new profile while retaining scope, generation, revocation, replay and atomic effect rules. |
+| Ordinary PNX1 transactions | `trnm-protocol/src/pon_wire.rs::Envelope` retains a 32-byte sender and 64-byte signature. `trnm-pon-node/src/store/mempool.rs::SignedAdmissionHooks::verify_signature` reaches `pon_executor::validate_main_envelope`; `trnm-mvcc-fee/src/pon_executor.rs::prepare` executes Ed25519 `verify_hex_strict`. Secondary quota/use authorization also calls that primitive. | Wire/account identity, M05 admission, M06 execution and secondary consumer/service authorization. Migrating only the main envelope is incomplete. |
+| Authenticated and public transport | `trnm-pon-node/src/ingress.rs` signs and verifies Ed25519 identities. The actual `trnm-pon-node/src/ingress/public_v3.rs` service loop verifies caller signatures; `validate_response_context` and `validate_challenge_context` verify the fixed server. Public bootstrap uses this same path. | Caller/server keys, request/cookie/response domains, generation/replay and frame limits. Removing extra hashcash does not change signatures; ML-DSA authentication is not ML-KEM encryption. |
+| Task source and optional operator policy | `trnm-crypto-primitives/src/qualified_work_task/lifecycle_v2.rs::verify_lifecycle_statement` verifies an Ed25519 source signature and is called by M06 lifecycle and Node CLI. `trnm-pon-node/src/operator_task_policy.rs::authenticate` verifies registry/task signatures and is called by explicitly configured store open/refresh paths. | Source/lease and configured operator owners, preserving lease scope, withdrawal and high-water marks. A local operator policy remains distinct from permissionless PoN consensus. |
+| Cell provider discovery | `trnm-data-availability/src/cell/discovery.rs::CellProviderRecordV1::verify_signature` verifies Ed25519; `trnm-data-availability/src/cell/discovery/transport.rs` actually decodes and verifies before `directory.accept_verified`. | Advertisement identity, sequence/equivocation history and discovery wire. Content hashes do not authenticate a provider or establish storage availability/model-use authority. |
+| Governance and upgrade | `trnm-governance-guard/src/lib.rs::GovernanceGuard` compares an externally supplied caller with admin/role sets. The inspected instantiations are component tests; no ordinary Node authorization entry was found. | Establish the actual effect entry, independently fixed identity, profile/epoch, timelock and durable replay. A string parameter alone is not evidence of a reachable network spoofing vulnerability. |
+| Hepta handoff | `trnm-research-protocol/src/hepta_handoff.rs::SignedHeptaAdmissionV1` verifies Ed25519, then independently fixed authority role and external context. Current uses found were definitions/exports and protocol tests, not ordinary Node final adoption. | Handoff trust pins and actual installer/CURRENT/runtime owners. A PQ signature still cannot substitute for product qualification, latest withdrawal checks or the final-use operation journal. |
+| Release-finality component | `trnm-pon-node/src/release_finality.rs::verify_certificate` verifies classical signed votes under externally fixed context. No nondefinition Node caller was found. Its result explicitly grants no model-quality, availability, final-use or production capability. | Any legitimate consumer must retain those nonauthorizing boundaries. This component is not adopted as a committee replacement for pure PoN. |
+
+All paths above are relative to `trillionnium/crates/`; function/module names
+identify the actual source seam. The shared native `verify_hex_strict` in
+`trnm-crypto-primitives/src/lib.rs` calls
+`ed25519_dalek::VerifyingKey::verify_strict`. The inspected ordinary paths did
+not establish an ECDSA/secp256k1 dependency, so they must not be described as one.
+The complete-chain conclusion remains **not post-quantum qualified**.
+
 ## Primary references
 
 - [FIPS 204](https://csrc.nist.gov/pubs/fips/204/final)

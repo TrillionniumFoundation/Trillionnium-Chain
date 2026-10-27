@@ -1,0 +1,31 @@
+{
+  "run_start_head": "576b3864256b61e8b5c27255f06b22ff7029dc84",
+  "run_start_working_tree_dirty": true,
+  "subsequent_matching_source_commit": "9e9939b2d9ac97c7172ef141c9920225d2516236",
+  "all_19_runtime_file_hashes_match_subsequent_commit": true,
+  "file_matches": {
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/build_guest.py": true,
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/backend-manifest.json": true,
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host_linker_bfd.sh": true,
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/Cargo.toml": true,
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/measure_step.py": true,
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/check_observations.py": true,
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/install_backend.py": true,
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/Cargo.lock": true,
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host/Cargo.toml": true,
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/relation/Cargo.toml": true,
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/guest/Cargo.toml": true,
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host/src/main.rs": true,
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host/src/receipt_bounds.rs": true,
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host/src/receipt_bounds_tests.rs": true,
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/relation/src/parameters.rs": true,
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/relation/src/lib.rs": true,
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/guest/src/main.rs": true,
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/full_relation.rs": true,
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/full_relation_tests.rs": true
+  },
+  "scope": "The later commit identifies identical source bytes. It was not the HEAD at proof launch.",
+  "reachable_exact_source_commit": "5c8cd8bd59cd9d8197617239664e66dd8b086baa",
+  "reachable_exact_source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/5c8cd8bd59cd9d8197617239664e66dd8b086baa",
+  "exact_source_tree": "fb4ec104a54451829f666cfba752083118f19f58"
+}

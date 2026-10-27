@@ -115,14 +115,15 @@ independent hashcash gate or permissive fallback. The integration input is Chain
 `c96022b897c1235fdbdbfcfa32764403511c6aab`; the paired Hepta input is
 `e1537d7deea32f29ec9612c0a7b90655b14aa904`. The continuing Chain review is
 [PR #499](https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/499),
-targeting the existing audit integration branch. Neither those pins nor this
+with paired [Hepta PR #4071](https://github.com/TrillionniumFoundation/hepta-private-ci/pull/4071),
+both targeting their existing audit integration branches. Neither those pins nor this
 section imply that a later source has passed its required checks.
 
 | Priority / owner | Concrete increment | Remaining veto condition |
 | --- | --- | --- |
-| P0 / M01 complete W1 | The independent [PWG1/PWJ1 relation](../protocol/pon-nakamoto-v1/details/W1_COMPLETE_RELATION_RESEARCH.md) binds all 318 header bytes, canonical PNW1, task/target, all noise, all 512 trace tiles and the corrected product. Differential tests compare native kernels and mutations. | Local execution is not a transferable computational proof. A real pinned proof, complete journal binding and bounded rejection still need their own evidence; proving only the final product is insufficient. |
+| P0 / M01 complete W1 | The independent [PWG1/PWJ1 relation](../protocol/pon-nakamoto-v1/details/W1_COMPLETE_RELATION_RESEARCH.md) binds all 318 header bytes, canonical PNW1, task/target, all noise, all 512 trace tiles and the corrected product. Eleven native differential tests pass. The optimized pinned guest executes the complete relation in 13,364,385 user cycles, with 62 actual segments at po2=18. | Execution is not a transferable proof. The first actual local Composite proving attempt timed out after 1,800 seconds without a receipt. Real proof verification, late-corruption rejection and a quantitatively acceptable full proof profile require their own evidence; proving only the final product is insufficient. |
 | P0 / M03/M04/M15 adversarial cost | The [pure public profile](../protocol/pon-nakamoto-v1/details/PURE_PON_PUBLIC_BOOTSTRAP_V1.md) has no caller nonce search and retains the original shared budgets. A fixed exact-public-product fact rejects wrong C before replay; [native campaigns](../protocol/pon-nakamoto-v1/details/PURE_PON_COST_CAMPAIGNS_V1.md) retain unique invalid traces, honest calls and cold reopens. | A correct C with a false trace still reaches full native W1 replay. Therefore the no-full-replay bad-certificate requirement is not closed by this filter or by a finite service pass. Reactor CPU, arbitrary hostile scheduling and WAN fairness remain separate. |
-| P0 / M01/M02 work cost | The fixed matrix offers all 12 current producer strategies, nine input classes, cold/reused preparation, paired complete streams, multiple horizons and two targets. Every miss and unsupported constructor remains in the denominator/report. | Finite software observations do not prove a minimum physical cost, non-amortization, task-selection safety, accelerator parity or quantum mining assumptions. Structural task availability is not useful-demand registration. |
+| P0 / M01/M02 work cost | The fixed matrix offers all 12 current producer strategies, nine input classes, cold/reused preparation, paired complete streams, multiple horizons and two targets. Both original and hosted complete streams retain 3,456 cohorts, 605,024 attempts, 80,836 winning verifier calls and 50,764 exhausted searches. Every miss and unsupported constructor remains in the denominator/report. | Finite software observations do not prove a minimum physical cost, non-amortization, task-selection safety, accelerator parity or quantum mining assumptions. Repeated winning verifier calls are not unique fresh blocks. Structural task availability is not useful-demand registration. |
 | P1 / M02/M03 public task supply | A fresh node can derive or fetch the exact public genesis maintenance bundle and mine through the actual native producer without pre-existing balance or private provider credentials. | Maintenance remains maintenance: useful-output credit is zero. This does not demonstrate sustained beneficial neural-task supply or model-quality gain. |
 | P1 / M00/M01/M15 PQ path | [Native ML-DSA-65](../protocol/pon-nakamoto-v1/details/PQ_NATIVE_AUTHORIZATION_V1.md), 210 pinned Wycheproof vectors, independent OpenSSL fixtures, and a separate durable TPQ1 authorization owner replace the syntax-only research seam. | PNX1, ordinary transport, other authorization owners and the work-proof security parameters have not become post-quantum through this helper. A new signature namespace cannot clear the whole-chain gate. |
 | P1 / PN3 and existing Hepta owners | The paired work implements an ordinary initial-model CognitiveRanker path and a separately identified public initial genesis v2 because the old pinned contract bytes cannot be reproduced from the published closure. | v1 pins and evaluated-child qualification remain strict. Cold installation, actual ordinary reads, three real training rounds, matched controls and beneficial accepted releases require distinct actual outcomes. |
@@ -136,6 +137,29 @@ to its own observation. The focused native workflow runs exact candidate source
 and preserves failures; it does not replace the original required head/merge,
 cross-architecture, original-pressure or long-capacity lanes. All acceptance and
 activation flags remain unchanged.
+
+The [completed focused native run and all 29 original artifact files](../../evidence/pon-pure-integration-20261027/README.md#exact-source-native-integration-completed-on-d9613853)
+bind their PASS to `d96138532b656d767d1ef46f6db86e7effae485e` and its exact tree.
+It includes strict all-target Clippy, real native PQ vectors and durable-owner
+tests, public bootstrap and CLI, the fixed matrix, finite rejection tails and
+105.539 seconds of actual TCP observations. Honest p99 changed from 29.027 ms
+to 165.403/155.632 ms under the two finite hostile phases; all 6,114 hostile
+trace calls were refused. This is fixed-parent loopback service, not chain-growth
+TPS or arbitrary-Sybil fairness, and it does not clear the false-trace full-replay
+veto. Reachable immutable source snapshots preserve the original local campaign
+trees without relabeling their run-start commits.
+
+The [complete W1 proof evidence](../protocol/pon-nakamoto-v1/evidence/w1-complete-risc0-20261027/README.md)
+retains the real timeout, source and binary identities, same-input native costs,
+and the executed upstream parameter calculator. For the observed 62 segments,
+the conditional Toy/proven-list/strict model estimates are 92.68822/39.34720/
+72.63889 bits. They are neither demonstrated attack costs nor quantum security
+bits; full adaptive Fiat-Shamir, hash, QROM and profile-wide composition remain
+unqualified. The [complete-transcript sidecar analysis](../protocol/pon-nakamoto-v1/details/PURE_PON_TRANSCRIPT_SIDECAR_RESEARCH.md)
+also rejects a direct N64 Freivalds replacement as a demonstrated throughput gain:
+the screened eight/nine-repeat variants need more field multiplications and an
+additional 128 KiB. Correctness, work cost and model usefulness retain separate
+acceptance decisions.
 
 ### Audit contract refinement — 2026-10-25
 

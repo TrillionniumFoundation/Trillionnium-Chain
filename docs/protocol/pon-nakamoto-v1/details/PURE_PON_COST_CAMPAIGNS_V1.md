@@ -114,3 +114,11 @@ Loopback success is not a WAN or Sybil-liveness proof. Bounded resource use can
 coexist with zero honest goodput under attack; retain that outcome. Real model
 tasks, accelerator kernels, task supply, non-amortization arguments, multiple
 physical hosts and independently reproduced longer runs remain separate work.
+
+## Separate transcript-sidecar research
+
+The [full-transcript sidecar cost and soundness screen](PURE_PON_TRANSCRIPT_SIDECAR_RESEARCH.md)
+analyzes all 512 intermediate tiles, grouped Freivalds checks, random folding,
+matrix-size thresholds and the missing quantum Fiat-Shamir argument. Its counts
+are analytical, not a new campaign or proof of useful-work hardness. It does not
+change any retained measurement, native acceptance rule or activation state.

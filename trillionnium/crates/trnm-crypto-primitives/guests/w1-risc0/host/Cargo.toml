@@ -13,4 +13,3 @@ risc0-binfmt = "=3.0.5"
 risc0-zkos-v1compat = "=2.2.3"
 risc0-zkvm = { version = "=3.0.6", default-features = false, features = ["client", "disable-dev-mode"] }
 trnm-w1-guest-relation = { path = "../relation" }
-

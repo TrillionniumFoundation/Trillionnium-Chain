@@ -18,4 +18,3 @@ panic = "abort"
 
 [profile.dev]
 debug = 0
-

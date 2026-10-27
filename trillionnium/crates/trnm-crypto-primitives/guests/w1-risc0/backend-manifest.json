@@ -11,7 +11,7 @@
   "sha256_guest_accelerator_commit": "7fd6900c4f637bd15ee2642dfa77110f8f1ad065",
   "guest_image_id": "3ea1bcbf7900a32be73d7e78102de085562893732473667e1f3af07e585696b4",
   "guest_raw_elf_sha256": "651d8efabd091811fbf11b78e80793a4acb02b3c2eec95260373c58636d774b5",
-  "guest_relation_source_commit": null,
+  "guest_relation_source_commit": "9e9939b2d9ac97c7172ef141c9920225d2516236",
   "compatibility_kernel_crate": "risc0-zkos-v1compat = 2.2.3",
   "work_profile": "pon-matmul-transcript-64-v1",
   "work_n": 64,
@@ -25,7 +25,6 @@
   "proof_fri_inverse_rate": 4,
   "independent_hashcash_grinding": false,
   "proof_grinding_review_scope": "pinned core, zkp prover/verifier, zkvm and rv32im/recursion circuit source; not an independent cryptographic audit",
-  "backend_claimed_conjectured_security_bits": 98,
   "pq_128_security_qualified": false,
   "fake_receipts_allowed": false,
   "groth16_receipts_allowed": false,
@@ -36,12 +35,46 @@
     "relation/src/lib.rs": "afe2f2cb5a0605eae3b6cd643e4a7bbb09fa0b0fe4db36fd2fe1155875152fb7",
     "relation/src/parameters.rs": "53d9d680fe76ac57203e10c7642b5add2da07dd05f2c76d036d59cb420360428",
     "guest/src/main.rs": "02567b1388b074138c2993bc5769692bff0d81ddc1207f2091df91dfc1d8f22e",
-    "Cargo.toml": "315b2227e5dc453328a4627727911ebcf4df7ada2d024dacd838d4864faf3861",
-    "guest/Cargo.toml": "c750dd4c1551df139880dda3583c6f1af27b3d01e3aadfc6a84441c06710104c",
+    "Cargo.toml": "b669bd421a0b513231ddf347439a4d7be195289e7655fd7d89035a7500876962",
+    "guest/Cargo.toml": "ab0406ba33b226f04a57591185f32491769f582e330152279100215fddee4e23",
     "relation/Cargo.toml": "d54c76ef1f5d5a5682ad63e1b3d9afb87b869551d113ff0718bdd0d6904faeb5",
     "Cargo.lock": "b3bb8518308ee9a175d878e5cafaab269be20f2bf990ec3fbb4d6e49bf110996"
   },
   "guest_native_differential_source": "../../src/pon_work/full_relation_tests.rs",
-  "guest_relation_source_identity": "exact SHA-256 entries in guest_source_sha256; optimization and thin adapter pending review",
-  "guest_program_sha256": "b8f32cd9c1b1edbb0cde04acf9aab146b7ff1aeeeaee0188e4d6e80d077b0c0a"
+  "guest_relation_source_identity": "Exact SHA-256 entries are authoritative. The relation and guest program source were committed at 9e9939; later Cargo EOF normalization and verifier-only metadata changes do not alter the guest image.",
+  "guest_program_sha256": "b8f32cd9c1b1edbb0cde04acf9aab146b7ff1aeeeaee0188e4d6e80d077b0c0a",
+  "upstream_security_descriptions": [
+    {
+      "source": "https://github.com/risc0/risc0/tree/1cc70cf05033a79ebc90f07c679cb4bd1cd301b9",
+      "claimed_bits": 98,
+      "scope": "README conjectured headline, not a parameter-specific observation"
+    },
+    {
+      "source": "https://github.com/risc0/risc0/blob/1cc70cf05033a79ebc90f07c679cb4bd1cd301b9/risc0/zkp/src/prove/soundness.rs",
+      "claimed_bits_po2_20": 97,
+      "claimed_bits_po2_24": 95,
+      "scope": "pinned source comments; actual numerical formulas and segment composition must be reported separately"
+    },
+    {
+      "source": "https://dev.risczero.com/api/security-model",
+      "document_version": "3.0",
+      "observed_date": "2026-10-27",
+      "claimed_riscv_bits": 96,
+      "claimed_recursion_bits": 99,
+      "scope": "current official security table; this backend uses Composite, not recursion"
+    }
+  ],
+  "security_calculator": "soundness_report.py executes the pinned upstream f32 formulas on actual segment dimensions; it is not a complete FS/QROM or PQ128 argument",
+  "quantum_security_bits": null,
+  "receipt_resource_policy": {
+    "total_bytes": 134217728,
+    "segments": 2048,
+    "seal_words_per_segment": 262144,
+    "po2_min": 13,
+    "po2_max": 20,
+    "total_padded_cycles": 268435456,
+    "journal_bytes": 228,
+    "nested_assumption_receipts": 0,
+    "scope": "standalone research profile; not a measured public ingress service guarantee"
+  }
 }

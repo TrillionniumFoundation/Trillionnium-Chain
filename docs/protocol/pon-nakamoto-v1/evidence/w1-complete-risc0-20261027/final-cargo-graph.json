@@ -1,0 +1,2065 @@
+{
+  "schema": "pon-w1-locked-cargo-graph-v1",
+  "command": [
+    "/dev/shm/trnm-pure-pon-20261027/rust-1.95/bin/cargo",
+    "metadata",
+    "--locked",
+    "--format-version",
+    "1",
+    "--manifest-path",
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/Cargo.toml"
+  ],
+  "returncode": 0,
+  "workspace_members": [
+    {
+      "name": "trnm-w1-risc0-guest",
+      "version": "0.1.0"
+    },
+    {
+      "name": "trnm-w1-guest-relation",
+      "version": "0.1.0"
+    },
+    {
+      "name": "trnm-w1-risc0-host",
+      "version": "0.1.0"
+    }
+  ],
+  "resolved_package_count": 279,
+  "cargo_lock_sha256": "b3bb8518308ee9a175d878e5cafaab269be20f2bf990ec3fbb4d6e49bf110996",
+  "nodes": [
+    {
+      "name": "ahash",
+      "version": "0.8.12",
+      "features": []
+    },
+    {
+      "name": "aho-corasick",
+      "version": "1.1.5",
+      "features": [
+        "perf-literal",
+        "std"
+      ]
+    },
+    {
+      "name": "allocator-api2",
+      "version": "0.2.21",
+      "features": [
+        "alloc"
+      ]
+    },
+    {
+      "name": "android_system_properties",
+      "version": "0.1.6",
+      "features": []
+    },
+    {
+      "name": "anyhow",
+      "version": "1.0.104",
+      "features": [
+        "default",
+        "std"
+      ]
+    },
+    {
+      "name": "ark-bn254",
+      "version": "0.5.0",
+      "features": [
+        "curve",
+        "default",
+        "scalar_field",
+        "std"
+      ]
+    },
+    {
+      "name": "ark-crypto-primitives",
+      "version": "0.5.0",
+      "features": [
+        "merlin",
+        "snark",
+        "sponge",
+        "std"
+      ]
+    },
+    {
+      "name": "ark-crypto-primitives-macros",
+      "version": "0.5.0",
+      "features": []
+    },
+    {
+      "name": "ark-ec",
+      "version": "0.5.0",
+      "features": [
+        "default",
+        "std"
+      ]
+    },
+    {
+      "name": "ark-ff",
+      "version": "0.5.0",
+      "features": [
+        "default",
+        "std"
+      ]
+    },
+    {
+      "name": "ark-ff-asm",
+      "version": "0.5.0",
+      "features": []
+    },
+    {
+      "name": "ark-ff-macros",
+      "version": "0.5.0",
+      "features": []
+    },
+    {
+      "name": "ark-groth16",
+      "version": "0.5.0",
+      "features": [
+        "std"
+      ]
+    },
+    {
+      "name": "ark-poly",
+      "version": "0.5.0",
+      "features": [
+        "std"
+      ]
+    },
+    {
+      "name": "ark-r1cs-std",
+      "version": "0.5.0",
+      "features": [
+        "std"
+      ]
+    },
+    {
+      "name": "ark-relations",
+      "version": "0.5.1",
+      "features": [
+        "std",
+        "tracing-subscriber"
+      ]
+    },
+    {
+      "name": "ark-serialize",
+      "version": "0.5.0",
+      "features": [
+        "ark-serialize-derive",
+        "derive",
+        "std"
+      ]
+    },
+    {
+      "name": "ark-serialize-derive",
+      "version": "0.5.0",
+      "features": []
+    },
+    {
+      "name": "ark-snark",
+      "version": "0.5.1",
+      "features": []
+    },
+    {
+      "name": "ark-std",
+      "version": "0.5.0",
+      "features": [
+        "std"
+      ]
+    },
+    {
+      "name": "arraydeque",
+      "version": "0.5.1",
+      "features": [
+        "default",
+        "std"
+      ]
+    },
+    {
+      "name": "arrayvec",
+      "version": "0.7.8",
+      "features": []
+    },
+    {
+      "name": "autocfg",
+      "version": "1.5.1",
+      "features": []
+    },
+    {
+      "name": "base64",
+      "version": "0.23.1",
+      "features": [
+        "alloc"
+      ]
+    },
+    {
+      "name": "base64ct",
+      "version": "1.8.3",
+      "features": [
+        "alloc"
+      ]
+    },
+    {
+      "name": "bincode",
+      "version": "1.3.3",
+      "features": []
+    },
+    {
+      "name": "bit-vec",
+      "version": "0.8.0",
+      "features": [
+        "default",
+        "std"
+      ]
+    },
+    {
+      "name": "bitflags",
+      "version": "1.3.2",
+      "features": [
+        "default"
+      ]
+    },
+    {
+      "name": "bitflags",
+      "version": "2.13.2",
+      "features": [
+        "std"
+      ]
+    },
+    {
+      "name": "blake2",
+      "version": "0.10.6",
+      "features": []
+    },
+    {
+      "name": "block",
+      "version": "0.1.6",
+      "features": []
+    },
+    {
+      "name": "block-buffer",
+      "version": "0.10.4",
+      "features": []
+    },
+    {
+      "name": "borsh",
+      "version": "1.8.1",
+      "features": [
+        "borsh-derive",
+        "derive"
+      ]
+    },
+    {
+      "name": "borsh-derive",
+      "version": "1.8.1",
+      "features": [
+        "default"
+      ]
+    },
+    {
+      "name": "bs58",
+      "version": "0.5.1",
+      "features": [
+        "alloc",
+        "std"
+      ]
+    },
+    {
+      "name": "bumpalo",
+      "version": "3.20.3",
+      "features": [
+        "default"
+      ]
+    },
+    {
+      "name": "bytemuck",
+      "version": "1.25.2",
+      "features": [
+        "bytemuck_derive",
+        "derive",
+        "extern_crate_alloc"
+      ]
+    },
+    {
+      "name": "bytemuck_derive",
+      "version": "1.12.1",
+      "features": []
+    },
+    {
+      "name": "byteorder",
+      "version": "1.5.0",
+      "features": []
+    },
+    {
+      "name": "bytes",
+      "version": "1.12.1",
+      "features": [
+        "default",
+        "serde",
+        "std"
+      ]
+    },
+    {
+      "name": "camino",
+      "version": "1.2.6",
+      "features": [
+        "serde1"
+      ]
+    },
+    {
+      "name": "cargo-platform",
+      "version": "0.1.9",
+      "features": []
+    },
+    {
+      "name": "cargo_metadata",
+      "version": "0.19.2",
+      "features": [
+        "default"
+      ]
+    },
+    {
+      "name": "cc",
+      "version": "1.2.59",
+      "features": []
+    },
+    {
+      "name": "cfg-if",
+      "version": "1.0.5",
+      "features": []
+    },
+    {
+      "name": "cfg_aliases",
+      "version": "0.2.2",
+      "features": []
+    },
+    {
+      "name": "chacha20",
+      "version": "0.10.2",
+      "features": [
+        "rng"
+      ]
+    },
+    {
+      "name": "chrono",
+      "version": "0.4.45",
+      "features": [
+        "alloc",
+        "clock",
+        "iana-time-zone",
+        "now",
+        "serde",
+        "std",
+        "winapi",
+        "windows-link"
+      ]
+    },
+    {
+      "name": "cobs",
+      "version": "0.3.0",
+      "features": []
+    },
+    {
+      "name": "const-oid",
+      "version": "0.9.6",
+      "features": []
+    },
+    {
+      "name": "core-foundation",
+      "version": "0.9.4",
+      "features": [
+        "link"
+      ]
+    },
+    {
+      "name": "core-foundation-sys",
+      "version": "0.8.7",
+      "features": [
+        "default",
+        "link"
+      ]
+    },
+    {
+      "name": "core-graphics-types",
+      "version": "0.1.3",
+      "features": [
+        "default",
+        "link"
+      ]
+    },
+    {
+      "name": "core_detect",
+      "version": "1.0.0",
+      "features": [
+        "default"
+      ]
+    },
+    {
+      "name": "cpufeatures",
+      "version": "0.2.17",
+      "features": []
+    },
+    {
+      "name": "cpufeatures",
+      "version": "0.3.1",
+      "features": []
+    },
+    {
+      "name": "crypto-common",
+      "version": "0.1.7",
+      "features": [
+        "std"
+      ]
+    },
+    {
+      "name": "darling",
+      "version": "0.20.11",
+      "features": [
+        "default",
+        "suggestions"
+      ]
+    },
+    {
+      "name": "darling",
+      "version": "0.24.1",
+      "features": [
+        "default",
+        "suggestions"
+      ]
+    },
+    {
+      "name": "darling_core",
+      "version": "0.20.11",
+      "features": [
+        "strsim",
+        "suggestions"
+      ]
+    },
+    {
+      "name": "darling_core",
+      "version": "0.24.1",
+      "features": [
+        "strsim",
+        "suggestions"
+      ]
+    },
+    {
+      "name": "darling_macro",
+      "version": "0.20.11",
+      "features": []
+    },
+    {
+      "name": "darling_macro",
+      "version": "0.24.1",
+      "features": []
+    },
+    {
+      "name": "defmt",
+      "version": "1.2.0",
+      "features": [
+        "alloc"
+      ]
+    },
+    {
+      "name": "defmt-macros",
+      "version": "1.2.0",
+      "features": []
+    },
+    {
+      "name": "defmt-parser",
+      "version": "1.1.0",
+      "features": []
+    },
+    {
+      "name": "der",
+      "version": "0.7.10",
+      "features": [
+        "alloc",
+        "oid",
+        "pem",
+        "std",
+        "zeroize"
+      ]
+    },
+    {
+      "name": "deranged",
+      "version": "0.5.9",
+      "features": [
+        "default",
+        "serde"
+      ]
+    },
+    {
+      "name": "derivative",
+      "version": "2.2.0",
+      "features": [
+        "use_core"
+      ]
+    },
+    {
+      "name": "derive_builder",
+      "version": "0.20.2",
+      "features": [
+        "default",
+        "std"
+      ]
+    },
+    {
+      "name": "derive_builder_core",
+      "version": "0.20.2",
+      "features": [
+        "lib_has_std"
+      ]
+    },
+    {
+      "name": "derive_builder_macro",
+      "version": "0.20.2",
+      "features": [
+        "lib_has_std"
+      ]
+    },
+    {
+      "name": "derive_more",
+      "version": "2.1.1",
+      "features": [
+        "add",
+        "add_assign",
+        "debug",
+        "std"
+      ]
+    },
+    {
+      "name": "derive_more-impl",
+      "version": "2.1.1",
+      "features": [
+        "add",
+        "add_assign",
+        "debug",
+        "default"
+      ]
+    },
+    {
+      "name": "digest",
+      "version": "0.10.7",
+      "features": [
+        "alloc",
+        "block-buffer",
+        "const-oid",
+        "core-api",
+        "default",
+        "mac",
+        "oid",
+        "std",
+        "subtle"
+      ]
+    },
+    {
+      "name": "dirs",
+      "version": "6.0.0",
+      "features": []
+    },
+    {
+      "name": "dirs-sys",
+      "version": "0.5.0",
+      "features": []
+    },
+    {
+      "name": "docker-generate",
+      "version": "0.1.3",
+      "features": []
+    },
+    {
+      "name": "downcast-rs",
+      "version": "1.2.1",
+      "features": [
+        "default",
+        "std"
+      ]
+    },
+    {
+      "name": "dyn-clone",
+      "version": "1.0.20",
+      "features": []
+    },
+    {
+      "name": "educe",
+      "version": "0.6.0",
+      "features": [
+        "Clone",
+        "Copy",
+        "Debug",
+        "Default",
+        "Deref",
+        "DerefMut",
+        "Eq",
+        "Hash",
+        "Into",
+        "Ord",
+        "PartialEq",
+        "PartialOrd",
+        "default"
+      ]
+    },
+    {
+      "name": "either",
+      "version": "1.19.0",
+      "features": [
+        "std",
+        "use_std"
+      ]
+    },
+    {
+      "name": "elf",
+      "version": "0.7.4",
+      "features": [
+        "std"
+      ]
+    },
+    {
+      "name": "embedded-io",
+      "version": "0.4.0",
+      "features": [
+        "alloc"
+      ]
+    },
+    {
+      "name": "embedded-io",
+      "version": "0.6.1",
+      "features": [
+        "alloc"
+      ]
+    },
+    {
+      "name": "encoding_rs",
+      "version": "0.8.42",
+      "features": [
+        "alloc",
+        "default"
+      ]
+    },
+    {
+      "name": "enum-ordinalize",
+      "version": "4.4.2",
+      "features": [
+        "derive"
+      ]
+    },
+    {
+      "name": "enum-ordinalize-derive",
+      "version": "4.4.2",
+      "features": []
+    },
+    {
+      "name": "equivalent",
+      "version": "1.0.3",
+      "features": []
+    },
+    {
+      "name": "errno",
+      "version": "0.3.14",
+      "features": [
+        "std"
+      ]
+    },
+    {
+      "name": "fastrand",
+      "version": "2.5.0",
+      "features": [
+        "alloc",
+        "default",
+        "std"
+      ]
+    },
+    {
+      "name": "find-msvc-tools",
+      "version": "0.1.9",
+      "features": []
+    },
+    {
+      "name": "fnv",
+      "version": "1.0.7",
+      "features": [
+        "default",
+        "std"
+      ]
+    },
+    {
+      "name": "foldhash",
+      "version": "0.1.5",
+      "features": []
+    },
+    {
+      "name": "foreign-types",
+      "version": "0.5.0",
+      "features": [
+        "default",
+        "std"
+      ]
+    },
+    {
+      "name": "foreign-types-macros",
+      "version": "0.2.4",
+      "features": [
+        "std"
+      ]
+    },
+    {
+      "name": "foreign-types-shared",
+      "version": "0.3.1",
+      "features": []
+    },
+    {
+      "name": "futures-core",
+      "version": "0.3.34",
+      "features": [
+        "alloc",
+        "std"
+      ]
+    },
+    {
+      "name": "futures-task",
+      "version": "0.3.34",
+      "features": [
+        "alloc",
+        "std"
+      ]
+    },
+    {
+      "name": "futures-util",
+      "version": "0.3.34",
+      "features": [
+        "alloc",
+        "slab",
+        "std"
+      ]
+    },
+    {
+      "name": "generic-array",
+      "version": "0.14.7",
+      "features": [
+        "more_lengths"
+      ]
+    },
+    {
+      "name": "getrandom",
+      "version": "0.2.17",
+      "features": [
+        "custom",
+        "std"
+      ]
+    },
+    {
+      "name": "getrandom",
+      "version": "0.3.4",
+      "features": []
+    },
+    {
+      "name": "getrandom",
+      "version": "0.4.3",
+      "features": []
+    },
+    {
+      "name": "hashbrown",
+      "version": "0.12.3",
+      "features": [
+        "raw"
+      ]
+    },
+    {
+      "name": "hashbrown",
+      "version": "0.15.5",
+      "features": [
+        "allocator-api2",
+        "default-hasher",
+        "inline-more"
+      ]
+    },
+    {
+      "name": "hashbrown",
+      "version": "0.17.1",
+      "features": []
+    },
+    {
+      "name": "hashlink",
+      "version": "0.10.0",
+      "features": []
+    },
+    {
+      "name": "heck",
+      "version": "0.5.0",
+      "features": []
+    },
+    {
+      "name": "hex",
+      "version": "0.4.3",
+      "features": [
+        "alloc",
+        "default",
+        "std"
+      ]
+    },
+    {
+      "name": "hex-literal",
+      "version": "0.4.1",
+      "features": []
+    },
+    {
+      "name": "iana-time-zone",
+      "version": "0.1.65",
+      "features": [
+        "fallback"
+      ]
+    },
+    {
+      "name": "iana-time-zone-haiku",
+      "version": "0.1.2",
+      "features": []
+    },
+    {
+      "name": "ident_case",
+      "version": "1.0.1",
+      "features": []
+    },
+    {
+      "name": "include_bytes_aligned",
+      "version": "0.1.4",
+      "features": []
+    },
+    {
+      "name": "indexmap",
+      "version": "1.9.3",
+      "features": [
+        "serde",
+        "serde-1",
+        "std"
+      ]
+    },
+    {
+      "name": "indexmap",
+      "version": "2.14.2",
+      "features": [
+        "default",
+        "serde",
+        "std"
+      ]
+    },
+    {
+      "name": "itertools",
+      "version": "0.13.0",
+      "features": [
+        "use_alloc",
+        "use_std"
+      ]
+    },
+    {
+      "name": "itertools",
+      "version": "0.14.0",
+      "features": [
+        "default",
+        "use_alloc",
+        "use_std"
+      ]
+    },
+    {
+      "name": "itoa",
+      "version": "1.0.18",
+      "features": []
+    },
+    {
+      "name": "jiff",
+      "version": "0.2.38",
+      "features": [
+        "alloc",
+        "std",
+        "tz-system",
+        "tzdb-bundle-platform",
+        "tzdb-concatenated",
+        "tzdb-zoneinfo"
+      ]
+    },
+    {
+      "name": "jiff-core",
+      "version": "0.1.1",
+      "features": [
+        "alloc",
+        "default",
+        "std",
+        "tz-fat"
+      ]
+    },
+    {
+      "name": "jiff-static",
+      "version": "0.2.38",
+      "features": [
+        "default"
+      ]
+    },
+    {
+      "name": "jiff-tzdb",
+      "version": "0.1.9",
+      "features": []
+    },
+    {
+      "name": "jiff-tzdb-platform",
+      "version": "0.1.3",
+      "features": []
+    },
+    {
+      "name": "js-sys",
+      "version": "0.3.106",
+      "features": [
+        "default",
+        "std",
+        "unsafe-eval"
+      ]
+    },
+    {
+      "name": "keccak",
+      "version": "0.1.6",
+      "features": []
+    },
+    {
+      "name": "lazy-regex",
+      "version": "3.6.2",
+      "features": [
+        "default",
+        "regex"
+      ]
+    },
+    {
+      "name": "lazy-regex-proc_macros",
+      "version": "3.6.2",
+      "features": []
+    },
+    {
+      "name": "lazy_static",
+      "version": "1.5.1",
+      "features": [
+        "spin",
+        "spin_no_std"
+      ]
+    },
+    {
+      "name": "libc",
+      "version": "0.2.191",
+      "features": [
+        "default",
+        "std"
+      ]
+    },
+    {
+      "name": "libm",
+      "version": "0.2.16",
+      "features": [
+        "arch",
+        "default"
+      ]
+    },
+    {
+      "name": "libredox",
+      "version": "0.1.25",
+      "features": [
+        "base",
+        "call",
+        "libc",
+        "std"
+      ]
+    },
+    {
+      "name": "linux-raw-sys",
+      "version": "0.12.1",
+      "features": [
+        "auxvec",
+        "elf",
+        "errno",
+        "general",
+        "ioctl",
+        "no_std"
+      ]
+    },
+    {
+      "name": "log",
+      "version": "0.4.34",
+      "features": [
+        "alloc",
+        "std"
+      ]
+    },
+    {
+      "name": "malloc_buf",
+      "version": "0.0.6",
+      "features": []
+    },
+    {
+      "name": "memchr",
+      "version": "2.8.3",
+      "features": [
+        "alloc",
+        "std"
+      ]
+    },
+    {
+      "name": "merlin",
+      "version": "3.0.0",
+      "features": []
+    },
+    {
+      "name": "metal",
+      "version": "0.29.0",
+      "features": [
+        "default",
+        "link"
+      ]
+    },
+    {
+      "name": "multiversion_no_op",
+      "version": "1.0.0",
+      "features": []
+    },
+    {
+      "name": "no_std_strings",
+      "version": "0.1.3",
+      "features": []
+    },
+    {
+      "name": "num-bigint",
+      "version": "0.4.8",
+      "features": [
+        "std"
+      ]
+    },
+    {
+      "name": "num-bigint-dig",
+      "version": "0.8.6",
+      "features": [
+        "i128",
+        "prime",
+        "rand",
+        "u64_digit",
+        "zeroize"
+      ]
+    },
+    {
+      "name": "num-conv",
+      "version": "0.2.2",
+      "features": []
+    },
+    {
+      "name": "num-integer",
+      "version": "0.1.47",
+      "features": [
+        "i128",
+        "std"
+      ]
+    },
+    {
+      "name": "num-iter",
+      "version": "0.1.46",
+      "features": []
+    },
+    {
+      "name": "num-traits",
+      "version": "0.2.19",
+      "features": [
+        "i128",
+        "libm",
+        "std"
+      ]
+    },
+    {
+      "name": "num_enum",
+      "version": "0.7.6",
+      "features": []
+    },
+    {
+      "name": "num_enum_derive",
+      "version": "0.7.6",
+      "features": []
+    },
+    {
+      "name": "objc",
+      "version": "0.2.7",
+      "features": []
+    },
+    {
+      "name": "once_cell",
+      "version": "1.21.4",
+      "features": [
+        "alloc",
+        "default",
+        "race",
+        "std"
+      ]
+    },
+    {
+      "name": "option-ext",
+      "version": "0.2.0",
+      "features": []
+    },
+    {
+      "name": "paste",
+      "version": "1.0.15",
+      "features": []
+    },
+    {
+      "name": "pem-rfc7468",
+      "version": "0.7.0",
+      "features": [
+        "alloc"
+      ]
+    },
+    {
+      "name": "pin-project-lite",
+      "version": "0.2.17",
+      "features": []
+    },
+    {
+      "name": "pkcs1",
+      "version": "0.7.5",
+      "features": [
+        "alloc",
+        "pem",
+        "pkcs8",
+        "std",
+        "zeroize"
+      ]
+    },
+    {
+      "name": "pkcs8",
+      "version": "0.10.2",
+      "features": [
+        "alloc",
+        "pem",
+        "std"
+      ]
+    },
+    {
+      "name": "portable-atomic",
+      "version": "1.15.0",
+      "features": [
+        "require-cas"
+      ]
+    },
+    {
+      "name": "portable-atomic-util",
+      "version": "0.2.8",
+      "features": [
+        "alloc"
+      ]
+    },
+    {
+      "name": "postcard",
+      "version": "1.1.3",
+      "features": [
+        "alloc"
+      ]
+    },
+    {
+      "name": "powerfmt",
+      "version": "0.2.1",
+      "features": []
+    },
+    {
+      "name": "ppv-lite86",
+      "version": "0.2.21",
+      "features": [
+        "simd"
+      ]
+    },
+    {
+      "name": "proc-macro-crate",
+      "version": "3.5.0",
+      "features": []
+    },
+    {
+      "name": "proc-macro2",
+      "version": "1.0.107",
+      "features": [
+        "default",
+        "proc-macro"
+      ]
+    },
+    {
+      "name": "proptest",
+      "version": "1.12.0",
+      "features": [
+        "alloc",
+        "no_std"
+      ]
+    },
+    {
+      "name": "prost",
+      "version": "0.13.5",
+      "features": [
+        "default",
+        "derive",
+        "std"
+      ]
+    },
+    {
+      "name": "prost-derive",
+      "version": "0.13.5",
+      "features": []
+    },
+    {
+      "name": "quote",
+      "version": "1.0.47",
+      "features": [
+        "default",
+        "proc-macro"
+      ]
+    },
+    {
+      "name": "r-efi",
+      "version": "5.3.0",
+      "features": []
+    },
+    {
+      "name": "r-efi",
+      "version": "6.0.0",
+      "features": []
+    },
+    {
+      "name": "rand",
+      "version": "0.8.8",
+      "features": [
+        "alloc",
+        "rand_chacha",
+        "std_rng"
+      ]
+    },
+    {
+      "name": "rand",
+      "version": "0.9.5",
+      "features": [
+        "alloc"
+      ]
+    },
+    {
+      "name": "rand",
+      "version": "0.10.3",
+      "features": [
+        "alloc"
+      ]
+    },
+    {
+      "name": "rand_chacha",
+      "version": "0.3.1",
+      "features": []
+    },
+    {
+      "name": "rand_core",
+      "version": "0.6.4",
+      "features": [
+        "alloc",
+        "getrandom",
+        "std"
+      ]
+    },
+    {
+      "name": "rand_core",
+      "version": "0.9.5",
+      "features": []
+    },
+    {
+      "name": "rand_core",
+      "version": "0.10.1",
+      "features": []
+    },
+    {
+      "name": "rand_xorshift",
+      "version": "0.5.0",
+      "features": []
+    },
+    {
+      "name": "redox_users",
+      "version": "0.5.3",
+      "features": []
+    },
+    {
+      "name": "ref-cast",
+      "version": "1.0.27",
+      "features": []
+    },
+    {
+      "name": "ref-cast-impl",
+      "version": "1.0.27",
+      "features": []
+    },
+    {
+      "name": "regex",
+      "version": "1.13.1",
+      "features": [
+        "default",
+        "perf",
+        "perf-backtrack",
+        "perf-cache",
+        "perf-dfa",
+        "perf-inline",
+        "perf-literal",
+        "perf-onepass",
+        "std",
+        "unicode",
+        "unicode-age",
+        "unicode-bool",
+        "unicode-case",
+        "unicode-gencat",
+        "unicode-perl",
+        "unicode-script",
+        "unicode-segment"
+      ]
+    },
+    {
+      "name": "regex-automata",
+      "version": "0.4.18",
+      "features": [
+        "alloc",
+        "dfa-onepass",
+        "hybrid",
+        "meta",
+        "nfa-backtrack",
+        "nfa-pikevm",
+        "nfa-thompson",
+        "perf-inline",
+        "perf-literal",
+        "perf-literal-multisubstring",
+        "perf-literal-substring",
+        "std",
+        "syntax",
+        "unicode",
+        "unicode-age",
+        "unicode-bool",
+        "unicode-case",
+        "unicode-gencat",
+        "unicode-perl",
+        "unicode-script",
+        "unicode-segment",
+        "unicode-word-boundary"
+      ]
+    },
+    {
+      "name": "regex-syntax",
+      "version": "0.8.11",
+      "features": [
+        "default",
+        "std",
+        "unicode",
+        "unicode-age",
+        "unicode-bool",
+        "unicode-case",
+        "unicode-gencat",
+        "unicode-perl",
+        "unicode-script",
+        "unicode-segment"
+      ]
+    },
+    {
+      "name": "risc0-binfmt",
+      "version": "3.0.5",
+      "features": [
+        "default",
+        "rand",
+        "std"
+      ]
+    },
+    {
+      "name": "risc0-build",
+      "version": "3.0.6",
+      "features": []
+    },
+    {
+      "name": "risc0-circuit-keccak",
+      "version": "4.0.6",
+      "features": []
+    },
+    {
+      "name": "risc0-circuit-recursion",
+      "version": "4.0.5",
+      "features": []
+    },
+    {
+      "name": "risc0-circuit-rv32im",
+      "version": "4.0.5",
+      "features": []
+    },
+    {
+      "name": "risc0-core",
+      "version": "3.0.2",
+      "features": []
+    },
+    {
+      "name": "risc0-groth16",
+      "version": "3.0.5",
+      "features": [
+        "std"
+      ]
+    },
+    {
+      "name": "risc0-zkos-v1compat",
+      "version": "2.2.3",
+      "features": []
+    },
+    {
+      "name": "risc0-zkp",
+      "version": "3.0.5",
+      "features": [
+        "default",
+        "std"
+      ]
+    },
+    {
+      "name": "risc0-zkvm",
+      "version": "3.0.6",
+      "features": [
+        "client",
+        "disable-dev-mode",
+        "std"
+      ]
+    },
+    {
+      "name": "risc0-zkvm-platform",
+      "version": "2.2.3",
+      "features": [
+        "export-getrandom",
+        "export-libm",
+        "export-syscalls",
+        "rust-runtime"
+      ]
+    },
+    {
+      "name": "rrs-lib",
+      "version": "0.1.0",
+      "features": []
+    },
+    {
+      "name": "rsa",
+      "version": "0.9.10",
+      "features": [
+        "default",
+        "pem",
+        "std",
+        "u64_digit"
+      ]
+    },
+    {
+      "name": "ruint",
+      "version": "1.21.1",
+      "features": [
+        "alloc",
+        "borsh",
+        "rand-09",
+        "serde"
+      ]
+    },
+    {
+      "name": "ruint-macro",
+      "version": "1.2.1",
+      "features": []
+    },
+    {
+      "name": "rustc_version",
+      "version": "0.4.1",
+      "features": []
+    },
+    {
+      "name": "rustix",
+      "version": "1.1.6",
+      "features": [
+        "alloc",
+        "default",
+        "fs",
+        "std"
+      ]
+    },
+    {
+      "name": "rustversion",
+      "version": "1.0.23",
+      "features": []
+    },
+    {
+      "name": "rzup",
+      "version": "0.5.2",
+      "features": []
+    },
+    {
+      "name": "schemars",
+      "version": "0.9.0",
+      "features": [
+        "std"
+      ]
+    },
+    {
+      "name": "schemars",
+      "version": "1.2.3",
+      "features": [
+        "std"
+      ]
+    },
+    {
+      "name": "scopeguard",
+      "version": "1.2.0",
+      "features": []
+    },
+    {
+      "name": "semver",
+      "version": "1.0.28",
+      "features": [
+        "default",
+        "serde",
+        "std"
+      ]
+    },
+    {
+      "name": "serde",
+      "version": "1.0.229",
+      "features": [
+        "alloc",
+        "default",
+        "derive",
+        "rc",
+        "serde_derive",
+        "std"
+      ]
+    },
+    {
+      "name": "serde_core",
+      "version": "1.0.229",
+      "features": [
+        "alloc",
+        "default",
+        "rc",
+        "result",
+        "std"
+      ]
+    },
+    {
+      "name": "serde_derive",
+      "version": "1.0.229",
+      "features": [
+        "default"
+      ]
+    },
+    {
+      "name": "serde_json",
+      "version": "1.0.154",
+      "features": [
+        "alloc",
+        "default",
+        "std",
+        "unbounded_depth"
+      ]
+    },
+    {
+      "name": "serde_spanned",
+      "version": "0.6.9",
+      "features": [
+        "serde"
+      ]
+    },
+    {
+      "name": "serde_with",
+      "version": "3.24.0",
+      "features": [
+        "alloc",
+        "default",
+        "macros",
+        "std"
+      ]
+    },
+    {
+      "name": "serde_with_macros",
+      "version": "3.24.0",
+      "features": []
+    },
+    {
+      "name": "sha2",
+      "version": "0.10.6",
+      "features": [
+        "compress",
+        "default",
+        "std"
+      ]
+    },
+    {
+      "name": "shlex",
+      "version": "1.3.0",
+      "features": [
+        "default",
+        "std"
+      ]
+    },
+    {
+      "name": "signature",
+      "version": "2.2.0",
+      "features": [
+        "alloc",
+        "digest",
+        "rand_core",
+        "std"
+      ]
+    },
+    {
+      "name": "simdutf8",
+      "version": "0.1.5",
+      "features": [
+        "aarch64_neon",
+        "public_imp"
+      ]
+    },
+    {
+      "name": "slab",
+      "version": "0.4.12",
+      "features": [
+        "std"
+      ]
+    },
+    {
+      "name": "smallvec",
+      "version": "1.16.4",
+      "features": []
+    },
+    {
+      "name": "spin",
+      "version": "0.9.9",
+      "features": [
+        "once"
+      ]
+    },
+    {
+      "name": "spki",
+      "version": "0.7.3",
+      "features": [
+        "alloc",
+        "pem",
+        "std"
+      ]
+    },
+    {
+      "name": "stability",
+      "version": "0.2.1",
+      "features": []
+    },
+    {
+      "name": "strsim",
+      "version": "0.11.1",
+      "features": []
+    },
+    {
+      "name": "strum",
+      "version": "0.27.2",
+      "features": [
+        "default",
+        "derive",
+        "std",
+        "strum_macros"
+      ]
+    },
+    {
+      "name": "strum_macros",
+      "version": "0.27.2",
+      "features": []
+    },
+    {
+      "name": "subtle",
+      "version": "2.6.1",
+      "features": []
+    },
+    {
+      "name": "syn",
+      "version": "1.0.109",
+      "features": [
+        "clone-impls",
+        "default",
+        "derive",
+        "extra-traits",
+        "parsing",
+        "printing",
+        "proc-macro",
+        "quote",
+        "visit"
+      ]
+    },
+    {
+      "name": "syn",
+      "version": "2.0.119",
+      "features": [
+        "clone-impls",
+        "default",
+        "derive",
+        "extra-traits",
+        "full",
+        "parsing",
+        "printing",
+        "proc-macro",
+        "visit",
+        "visit-mut"
+      ]
+    },
+    {
+      "name": "syn",
+      "version": "3.0.9",
+      "features": [
+        "clone-impls",
+        "default",
+        "derive",
+        "extra-traits",
+        "fold",
+        "full",
+        "parsing",
+        "printing",
+        "proc-macro",
+        "visit",
+        "visit-mut"
+      ]
+    },
+    {
+      "name": "tempfile",
+      "version": "3.27.0",
+      "features": [
+        "default",
+        "getrandom"
+      ]
+    },
+    {
+      "name": "thiserror",
+      "version": "2.0.21",
+      "features": [
+        "default",
+        "std"
+      ]
+    },
+    {
+      "name": "thiserror-impl",
+      "version": "2.0.21",
+      "features": []
+    },
+    {
+      "name": "time",
+      "version": "0.3.55",
+      "features": [
+        "alloc",
+        "formatting",
+        "parsing",
+        "serde",
+        "serde-well-known",
+        "std"
+      ]
+    },
+    {
+      "name": "time-core",
+      "version": "0.1.9",
+      "features": []
+    },
+    {
+      "name": "time-macros",
+      "version": "0.2.32",
+      "features": [
+        "formatting",
+        "parsing",
+        "serde"
+      ]
+    },
+    {
+      "name": "tinyvec",
+      "version": "1.13.3",
+      "features": [
+        "alloc",
+        "grab_spare_slice",
+        "std"
+      ]
+    },
+    {
+      "name": "toml",
+      "version": "0.8.23",
+      "features": [
+        "default",
+        "display",
+        "parse"
+      ]
+    },
+    {
+      "name": "toml_datetime",
+      "version": "0.6.11",
+      "features": [
+        "serde"
+      ]
+    },
+    {
+      "name": "toml_datetime",
+      "version": "1.1.2+spec-1.1.0",
+      "features": [
+        "alloc",
+        "default",
+        "std"
+      ]
+    },
+    {
+      "name": "toml_edit",
+      "version": "0.22.27",
+      "features": [
+        "display",
+        "parse",
+        "serde"
+      ]
+    },
+    {
+      "name": "toml_edit",
+      "version": "0.25.17+spec-1.1.0",
+      "features": [
+        "parse"
+      ]
+    },
+    {
+      "name": "toml_parser",
+      "version": "1.1.5+spec-1.1.0",
+      "features": [
+        "alloc",
+        "default",
+        "std"
+      ]
+    },
+    {
+      "name": "toml_write",
+      "version": "0.1.2",
+      "features": [
+        "alloc",
+        "default",
+        "std"
+      ]
+    },
+    {
+      "name": "tracing",
+      "version": "0.1.44",
+      "features": [
+        "attributes",
+        "log",
+        "std",
+        "tracing-attributes"
+      ]
+    },
+    {
+      "name": "tracing-attributes",
+      "version": "0.1.31",
+      "features": []
+    },
+    {
+      "name": "tracing-core",
+      "version": "0.1.36",
+      "features": [
+        "default",
+        "once_cell",
+        "std"
+      ]
+    },
+    {
+      "name": "tracing-subscriber",
+      "version": "0.2.25",
+      "features": []
+    },
+    {
+      "name": "trnm-w1-guest-relation",
+      "version": "0.1.0",
+      "features": []
+    },
+    {
+      "name": "trnm-w1-risc0-guest",
+      "version": "0.1.0",
+      "features": []
+    },
+    {
+      "name": "trnm-w1-risc0-host",
+      "version": "0.1.0",
+      "features": []
+    },
+    {
+      "name": "typenum",
+      "version": "1.20.1",
+      "features": []
+    },
+    {
+      "name": "unarray",
+      "version": "0.1.4",
+      "features": []
+    },
+    {
+      "name": "unicode-ident",
+      "version": "1.0.27",
+      "features": []
+    },
+    {
+      "name": "unicode-xid",
+      "version": "0.2.6",
+      "features": [
+        "default"
+      ]
+    },
+    {
+      "name": "valuable",
+      "version": "0.1.1",
+      "features": [
+        "alloc",
+        "std"
+      ]
+    },
+    {
+      "name": "version_check",
+      "version": "0.9.5",
+      "features": []
+    },
+    {
+      "name": "wasi",
+      "version": "0.11.1+wasi-snapshot-preview1",
+      "features": []
+    },
+    {
+      "name": "wasip2",
+      "version": "1.0.2+wasi-0.2.9",
+      "features": []
+    },
+    {
+      "name": "wasm-bindgen",
+      "version": "0.2.129",
+      "features": [
+        "default",
+        "std"
+      ]
+    },
+    {
+      "name": "wasm-bindgen-macro",
+      "version": "0.2.129",
+      "features": []
+    },
+    {
+      "name": "wasm-bindgen-macro-support",
+      "version": "0.2.129",
+      "features": []
+    },
+    {
+      "name": "wasm-bindgen-shared",
+      "version": "0.2.129",
+      "features": []
+    },
+    {
+      "name": "windows-core",
+      "version": "0.62.2",
+      "features": [
+        "default",
+        "std"
+      ]
+    },
+    {
+      "name": "windows-implement",
+      "version": "0.60.2",
+      "features": []
+    },
+    {
+      "name": "windows-interface",
+      "version": "0.59.3",
+      "features": []
+    },
+    {
+      "name": "windows-link",
+      "version": "0.2.1",
+      "features": []
+    },
+    {
+      "name": "windows-result",
+      "version": "0.4.1",
+      "features": [
+        "std"
+      ]
+    },
+    {
+      "name": "windows-strings",
+      "version": "0.5.1",
+      "features": [
+        "std"
+      ]
+    },
+    {
+      "name": "windows-sys",
+      "version": "0.61.2",
+      "features": [
+        "Win32",
+        "Win32_Foundation",
+        "Win32_Globalization",
+        "Win32_Networking",
+        "Win32_Networking_WinSock",
+        "Win32_Storage",
+        "Win32_Storage_FileSystem",
+        "Win32_System",
+        "Win32_System_Com",
+        "Win32_System_Diagnostics",
+        "Win32_System_Diagnostics_Debug",
+        "Win32_UI",
+        "Win32_UI_Shell",
+        "default"
+      ]
+    },
+    {
+      "name": "winnow",
+      "version": "0.7.15",
+      "features": [
+        "alloc",
+        "default",
+        "std"
+      ]
+    },
+    {
+      "name": "winnow",
+      "version": "1.0.4",
+      "features": [
+        "alloc",
+        "ascii",
+        "binary",
+        "default",
+        "parser",
+        "std"
+      ]
+    },
+    {
+      "name": "wit-bindgen",
+      "version": "0.51.0",
+      "features": []
+    },
+    {
+      "name": "yaml-rust2",
+      "version": "0.10.4",
+      "features": [
+        "default",
+        "encoding"
+      ]
+    },
+    {
+      "name": "zerocopy",
+      "version": "0.8.63",
+      "features": [
+        "simd"
+      ]
+    },
+    {
+      "name": "zerocopy-derive",
+      "version": "0.8.63",
+      "features": []
+    },
+    {
+      "name": "zeroize",
+      "version": "1.9.1",
+      "features": [
+        "alloc",
+        "default",
+        "zeroize_derive"
+      ]
+    },
+    {
+      "name": "zeroize_derive",
+      "version": "1.5.0",
+      "features": []
+    },
+    {
+      "name": "zmij",
+      "version": "1.0.23",
+      "features": []
+    }
+  ],
+  "no_dependencies_changed": true
+}

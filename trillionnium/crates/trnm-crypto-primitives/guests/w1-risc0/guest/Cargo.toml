@@ -16,4 +16,3 @@ risc0-zkvm = { version = "=3.0.6", default-features = false, features = ["std", 
 # unpatched registry release. This nested workspace has its own exact lockfile.
 sha2 = "=0.10.6"
 trnm-w1-guest-relation = { path = "../relation" }
-

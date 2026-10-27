@@ -46,6 +46,11 @@ parameters and unresolved assumptions. It requires `RISC0_DEV_MODE` to be absent
 and disables development mode in the SDK. Only an explicitly named local r0vm is
 used; no remote proving service is selected.
 
+The driver retains a size-bounded candidate returned by the SDK even if a later
+strict profile check fails, so such a failure can be inspected. A file's
+existence never signals successful verification. Only the explicit result after
+all checks, with a successful process status, can qualify the observation.
+
 The upstream security descriptions have different scopes and numbers. The
 README's 98-bit conjectured headline is the historical value recorded in this
 run's initial manifest; it is not a measured security result. The pinned
@@ -56,6 +61,15 @@ po2=20 and 95 at po2=24. The current
 proofs, not recursion. The actual circuit parameters and segment distribution
 must be passed to the pinned calculator and reported separately, including the
 calculator's conjectures and its hardcoded degree assumption.
+
+`soundness_report.py` copies hash-pinned upstream formula and parameter sources,
+then compiles a small descriptor harness around the unmodified
+[calculator source](https://github.com/risc0/risc0/blob/1cc70cf05033a79ebc90f07c679cb4bd1cd301b9/risc0/zkp/src/prove/soundness.rs).
+It implements no prover, verifier or cryptographic HAL. It reports the actual
+po2 histogram, three upstream f32 estimates and a conditional sum of segment
+error estimates. The receipt metadata reader is not a proof check; a separate
+real verifier must authenticate the same receipt. An execution-only mode is
+explicitly labeled and cannot satisfy the proof-observation checker.
 
 None of those numbers is a PQ128 qualification. Dividing a classical number by
 two does not establish quantum security. Fiat-Shamir in the QROM, Poseidon2,
@@ -130,6 +144,30 @@ gates. `measure_step.py` gives each command a separate process observation and
 terminates only its own process group on timeout. `check_observations.py` requires
 the actual native journal, real positive proof, independent verification and all
 adversarial controls. Uploading a workflow alone is not proof evidence.
+
+After a successful independent verification, run the parameter calculation:
+
+```sh
+python3 "$backend/soundness_report.py" --receipt /actual/run/receipt.bin \
+  --out /new/run/soundness --rustc "$(rustup which --toolchain 1.95.0 rustc)"
+```
+
+For a run that only completed execution, `--execution-observation` can instead
+read the host's actual `execute.stdout.log`. That report has
+`model_input_kind=execution_only_metadata` and asserts no completed proof.
+The checker accepts only one result of the expected schema and operation from
+each raw stdout log; information lines remain intact, while missing or duplicate
+result lines fail. Its adversarial controls run with:
+
+```sh
+python3 -m unittest discover -s "$backend" -p test_observations.py -v
+```
+
+The local [full experiment evidence](../../../../../docs/protocol/pon-nakamoto-v1/evidence/w1-complete-risc0-20261027/README.md)
+includes both real program images, the fixed input/journal, source correspondence,
+execution and native costs, failed builds and the original 1,800-second proof
+timeout. A separate hosted proof run must retain its own status and resource
+record; it does not turn that timeout into a local success.
 
 ## Performance interpretation
 

@@ -62,8 +62,8 @@ proof encoding cannot alter the lottery or the original
 
 `unverified_claimed_journal` constructs only the expected public-output bytes,
 without replaying W1. It deliberately accepts arithmetic falsehoods and must
-never be used as a proof or admission verdict. Its purpose is to let a future
-real computation-proof verifier compare the authenticated journal with the
+never be used as a proof or admission verdict. Its purpose is to let the
+standalone computation-proof verifier compare the authenticated journal with the
 complete requested statement without reintroducing expensive W1 recomputation.
 A commitment, signature, successful parsing or these claimed journal bytes do
 not authenticate any computation.
@@ -110,3 +110,14 @@ passing finite test suite nor a local timing establishes production security,
 worst-case invalid-proof service affordability, quantum security or permissionless
 fairness. Actual backend proofs and their independent verification must be
 reported separately from these native controls.
+
+## Real proof-backend experiment
+
+The [isolated RISC Zero guest and verifier](../../../../trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/README.md)
+compile this complete relation into a hash-pinned real guest and accept only a
+fixed transparent Composite proof profile. The
+[2026-10-27 evidence](../evidence/w1-complete-risc0-20261027/README.md) distinguishes
+actual execution, full native replay, proof attempts and independent proof
+verification. The original bounded local proof attempt timed out after 1,800
+seconds without a receipt. Neither that attempt nor the existing successful
+execution turns `LocalExecution` into a proof or enables Node admission.

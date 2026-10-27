@@ -1,0 +1,15 @@
+{
+  "schema": "pon-proc-sampler-namespace-controls-v1",
+  "environment": "authorized native /proc namespace",
+  "tests_run": 7,
+  "success": true,
+  "failures": 0,
+  "errors": 0,
+  "wall_seconds": 16.451287057992886,
+  "source_sha256": {
+    "measure_step.py": "538aa032af5e6a391b59bed18f7d6f8d469d5fe3673f55bd57b8d4e564efc90b",
+    "proc_group_sampler.py": "53ff70f41aed8e15e9b4127ce2c9e4708b0acc8b0dff9d59cfc7f6807a5b36ce",
+    "test_proc_group_sampler.py": "10fbe883835a13d2732070caee0a2faff7638bb82dc6063e7cba31480450ce8d"
+  },
+  "scope": "Parser/identity refusal controls and actual bounded self-created process groups; no proof generated."
+}

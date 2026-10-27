@@ -6,6 +6,7 @@ use risc0_zkvm::{
     compute_image_id, Executor, ExecutorEnv, ExternalProver, InnerReceipt, Prover, ProverOpts,
     Receipt, ReceiptKind, VerifierContext,
 };
+use std::collections::BTreeMap;
 use std::fs::{File, OpenOptions};
 use std::io::{Read, Write};
 use std::path::Path;
@@ -66,38 +67,36 @@ fn strict_verify(receipt: &Receipt, elf: &[u8], expected_journal: &[u8]) -> Resu
         padded_cycles += receipt_bounds::check_seal(&segment.seal)?;
         receipt_bounds::check_padded_cycles(padded_cycles)?;
     }
-    ensure!(
-        composite.assumption_receipts.is_empty(),
-        "no unproven assumptions permitted"
-    );
-    ensure!(
-        composite
-            .segments
-            .iter()
-            .all(|segment| segment.hashfn == "poseidon2"),
-        "pinned v3.0.6 segment verifier supports only Poseidon2 commitments"
-    );
+    if !composite.assumption_receipts.is_empty() {
+        return Err(BoundaryError::Refused("no nested assumptions supported").into());
+    }
+    if !composite
+        .segments
+        .iter()
+        .all(|segment| segment.hashfn == "poseidon2")
+    {
+        return Err(BoundaryError::Refused("unsupported proof commitment hash").into());
+    }
     let context = VerifierContext::default().with_dev_mode(false);
     let composite_parameters = context
         .composite_verifier_parameters()
         .context("pinned Composite verifier parameters missing")?
         .digest::<risc0_zkvm::sha::Impl>();
-    ensure!(
-        composite.verifier_parameters == composite_parameters,
-        "Composite parameters differ from the fixed backend profile"
-    );
+    if composite.verifier_parameters != composite_parameters {
+        return Err(BoundaryError::Refused("unsupported Composite verifier parameters").into());
+    }
     let parameters = context
         .segment_verifier_parameters
         .as_ref()
         .context("pinned segment verifier parameters missing")?
         .digest::<risc0_zkvm::sha::Impl>();
-    ensure!(
-        composite
-            .segments
-            .iter()
-            .all(|segment| segment.verifier_parameters == parameters),
-        "segment proof parameters differ from the fixed backend profile"
-    );
+    if !composite
+        .segments
+        .iter()
+        .all(|segment| segment.verifier_parameters == parameters)
+    {
+        return Err(BoundaryError::Refused("unsupported segment verifier parameters").into());
+    }
     receipt.verify_with_context(&context, compute_image_id(elf)?)?;
     Ok(())
 }
@@ -249,10 +248,9 @@ fn require_pinned_image(elf: &[u8]) -> Result<()> {
     let expected = manifest["guest_image_id"]
         .as_str()
         .context("no reviewed guest image is pinned; execution/proof acceptance is disabled")?;
-    ensure!(
-        compute_image_id(elf)?.to_string() == expected,
-        "ELF differs from the pinned full-W1 guest image"
-    );
+    if compute_image_id(elf)?.to_string() != expected {
+        return Err(BoundaryError::Refused("unsupported full-W1 guest image").into());
+    }
     Ok(())
 }
 
@@ -317,7 +315,21 @@ fn main() -> Result<()> {
             session.journal.bytes == expected.journal(),
             "guest/native full-relation journal mismatch"
         );
-        println!("{{\"schema\":\"pon-w1-risc0-research-v1\",\"operation\":\"execute\",\"guest_matches_native\":true,\"journal_hex\":\"{}\",\"user_cycles\":{},\"segments\":{},\"segment_po2_limit\":{},\"execute_wall_ns\":{},\"image_id\":\"{}\",\"cryptographic_proof_verified\":false,\"consensus_authority\":false}}", hex::encode(&session.journal.bytes), session.cycles(), session.segments.len(), po2, started.elapsed().as_nanos(), compute_image_id(&elf)?);
+        let execute_ns = started.elapsed().as_nanos();
+        let mut histogram = BTreeMap::<u32, usize>::new();
+        for segment in &session.segments {
+            *histogram.entry(segment.po2).or_default() += 1;
+        }
+        println!(
+            "{}",
+            serde_json::json!({"schema":"pon-w1-risc0-research-v1",
+            "operation":"execute", "guest_matches_native":true,
+            "journal_hex":hex::encode(&session.journal.bytes), "user_cycles":session.cycles(),
+            "segments":session.segments.len(), "segment_po2_limit":po2,
+            "actual_segment_po2_histogram":histogram, "execute_wall_ns":execute_ns,
+            "image_id":compute_image_id(&elf)?.to_string(),
+            "cryptographic_proof_verified":false, "consensus_authority":false})
+        );
         return Ok(());
     }
     // No default backend selection, remote proving, recursion or elliptic-curve
@@ -329,11 +341,7 @@ fn main() -> Result<()> {
     let context = VerifierContext::default().with_dev_mode(false);
     let info = prover.prove_with_ctx(environment(&input, po2)?, &context, &elf, &options)?;
     let prove_ns = started.elapsed().as_nanos();
-    let verify_started = Instant::now();
-    strict_verify(&info.receipt, &elf, &expected.journal())?;
-    let verify_ns = verify_started.elapsed().as_nanos();
     let encoded = bincode::serialize(&info.receipt)?;
-    receipt_bounds::preflight(&encoded)?;
     ensure!(
         encoded.len() <= MAX_RECEIPT_BYTES,
         "receipt exceeds research byte cap"
@@ -344,6 +352,14 @@ fn main() -> Result<()> {
         .open(&args[6])?;
     output.write_all(&encoded)?;
     output.sync_all()?;
+    // Retain a bounded returned candidate even if our stricter profile checks
+    // fail. File existence is never an authentication or a successful result.
+    // The SDK already verified integrity in prove_with_ctx; failures before it
+    // returns still have only their process/log evidence.
+    receipt_bounds::preflight(&encoded)?;
+    let verify_started = Instant::now();
+    strict_verify(&info.receipt, &elf, &expected.journal())?;
+    let verify_ns = verify_started.elapsed().as_nanos();
     println!("{{\"schema\":\"pon-w1-risc0-research-v1\",\"operation\":\"prove\",\"real_composite_stark_verified\":true,\"user_cycles\":{},\"total_cycles\":{},\"segments\":{},\"segment_po2_limit\":{},\"prove_including_execution_and_integrity_verify_wall_ns\":{},\"additional_verify_wall_ns\":{},\"receipt_bytes\":{},\"image_id\":\"{}\",\"statement_id\":\"{}\",\"independent_hashcash\":false,\"consensus_authority\":false}}", info.stats.user_cycles, info.stats.total_cycles, info.stats.segments, po2, prove_ns, verify_ns, encoded.len(), compute_image_id(&elf)?, hex::encode(expected.statement_id()));
     Ok(())
 }

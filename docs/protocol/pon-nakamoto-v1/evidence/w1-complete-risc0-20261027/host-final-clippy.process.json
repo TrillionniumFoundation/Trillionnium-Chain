@@ -1,0 +1,32 @@
+{
+  "schema": "pon-w1-actual-process-v1",
+  "command": [
+    "/dev/shm/trnm-pure-pon-20261027/rust-1.95/bin/cargo",
+    "clippy",
+    "--release",
+    "--locked",
+    "--offline",
+    "--manifest-path",
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/Cargo.toml",
+    "-p",
+    "trnm-w1-risc0-host",
+    "-p",
+    "trnm-w1-guest-relation",
+    "--all-targets",
+    "--",
+    "-D",
+    "warnings"
+  ],
+  "started_utc": "2026-10-27T10:06:01.882901+00:00",
+  "timeout_seconds": 900,
+  "source_sha": null,
+  "timed_out": false,
+  "consensus_authority": false,
+  "returncode": 0,
+  "wall_seconds": 124.57543925900245,
+  "user_cpu_seconds": 109.700594,
+  "system_cpu_seconds": 13.318113,
+  "max_waited_descendant_rss_kib": 370924,
+  "rss_scope": "maximum reported for the waited child family; not total cgroup peak",
+  "finished_utc": "2026-10-27T10:08:06.458382+00:00"
+}

@@ -16,6 +16,27 @@
       "uncompressed_json_sha256": "295f0dbc7969a886339537bc00c77283a3c810f2607e683c79890c2d954aa24d",
       "decoded_log_utf8_sha256": "9dc4e35cf05a4f0ce4a658ce4ab7f27ddfc4550f6da2a06ac7b7fcca7f96acef",
       "decoded_log_utf8_bytes": 928728
+    },
+    {
+      "path": "codeql-d961-job.json.gz",
+      "bytes": 16324,
+      "sha256": "354ba89f2270687aaeb1afde363da9d7471607a88a8927137594c476a368f874",
+      "uncompressed_json_sha256": "f356c468d80c87686b0326b25a65e5442a22776c2823b35164bc99dd5f194674",
+      "decoded_log_utf8_sha256": "f8febd3982ded70186c8f2405ef5116694c25c6cefaa2022dd478a62245c9002",
+      "decoded_log_utf8_bytes": 88161
+    },
+    {
+      "path": "codeql-d961-observation.json",
+      "bytes": 811,
+      "sha256": "d5a2dacbe7b1edd8b3d5f1d203052114852b0158645bd84bcf046f5217650697"
+    },
+    {
+      "path": "external-evidence-d961-job.json.gz",
+      "bytes": 30073,
+      "sha256": "457e91d3aa0d6b86915e9a64bbb2e906a164c6ec8fa0e1987f62a9275380398f",
+      "uncompressed_json_sha256": "56ca60be7bbdd8324c6cd7a1dee34999012ab5b5fbf5fa0fecee746dcfb83296",
+      "decoded_log_utf8_sha256": "0a9dcd6b463f62ce380a95d6ec8df9e445216a5779aaa92ec90f51241625f204",
+      "decoded_log_utf8_bytes": 215628
     }
   ],
   "observations": [
@@ -34,6 +55,39 @@
       "outcome": "Setup failed while reading absent cgroup-v2 memory.max. No guest build or proof attempted in this CI run. Source checks passed.",
       "artifact_id": 12722134775,
       "artifact_zip_sha256": "848fe9b36761586024d12b89b82625dd30f9e6fad0a5078e6863fc96e35dac37"
+    },
+    {
+      "source": "d96138532b656d767d1ef46f6db86e7effae485e",
+      "run_id": 40482711973,
+      "job_id": 122116969627,
+      "outcome": "CodeQL exporter timed out after 1200 seconds waiting for exact-source analyses/checks. Sixteen exporter tests and source checks passed; no completed CodeQL assessment.",
+      "artifact_id": 12725066471,
+      "artifact_zip_sha256": "6660ba0e63a80ed194c9f0b3f8f7d13523e2780a8b7a9e15d1e402b41ce54aa4"
+    },
+    {
+      "source": "d96138532b656d767d1ef46f6db86e7effae485e",
+      "run_id": 40482711802,
+      "job_id": 122121426080,
+      "outcome": "External-evidence-contract failed: public-readiness reader suite ran 48 tests with 40 failure reports and 19 errors. The durable-schema reader/test anchors expect the old unwrapped ddl/schema-id pair; actual source uses shared_snapshot::Layout wrappers. The three relevant source files are byte-identical at the original c960 integration base and tested d961 source. This existing gate failure is retained; no acceptance assertion is relaxed.",
+      "artifact_id": 12724581600,
+      "artifact_zip_sha256": "98d5666115c802393fcb1c9b8ef3e11827925567a9fd734cd74b81ad6f992d23",
+      "baseline_comparisons": [
+        {
+          "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+          "base_equals_tested_source": true,
+          "sha256": "48e3301d9a60ed62aed976249bf7816c2df94a19ab0a72273ba275feb8448df2"
+        },
+        {
+          "path": "scripts/ci/check_public_readiness_evidence.py",
+          "base_equals_tested_source": true,
+          "sha256": "01da9c348bf097bbe53a9aa90c1668bceb6ef11e79dd21ec1eb46538491fd07b"
+        },
+        {
+          "path": "scripts/ci/test_public_readiness_evidence.py",
+          "base_equals_tested_source": true,
+          "sha256": "366cd40b562634b7cc608263d3945798d630baa8b0830c9c30c8925573e26366"
+        }
+      ]
     }
   ]
 }
