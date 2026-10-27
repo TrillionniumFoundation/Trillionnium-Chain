@@ -85,6 +85,7 @@ def evaluate(manifest, observations):
     if not schedule or len(schedule) != len(manifest["schedule"]) or len(schedule) > 1_000_000:
         raise ValueError("SCHEDULE_IDENTITY_OR_BOUND")
     groups = collections.defaultdict(list)
+    operations = set()
     for row in schedule.values():
         if row["operator"] not in operators or row["cohort"] not in cohorts:
             raise ValueError("UNKNOWN_SCHEDULE_OWNER")
@@ -92,6 +93,9 @@ def evaluate(manifest, observations):
         if at + cohorts[row["cohort"]]["max_confirmation_ms"] > end:
             raise ValueError("SCHEDULE_OUTSIDE_WINDOW")
         digest(row["operation_sha256"], "ORIGINAL_OPERATION")
+        if row["operation_sha256"] in operations:
+            raise ValueError("REPEATED_ORIGINAL_OPERATION")
+        operations.add(row["operation_sha256"])
         groups[row["operator"], row["cohort"]].append(row)
     # A strong aggregate cannot hide a missing administrator or hostile cohort.
     for operator in operators:
@@ -110,7 +114,11 @@ def evaluate(manifest, observations):
                 raise ValueError("OBSERVATION_CONTEXT_MISMATCH")
         if row["outcome"] not in OUTCOMES:
             raise ValueError("OUTCOME")
-        integer(row["elapsed_ms"], "ELAPSED")
+        elapsed = integer(row["elapsed_ms"], "ELAPSED")
+        started = integer(row["started_unix_ms"], "STARTED", planned["scheduled_unix_ms"])
+        terminal = integer(row["terminal_unix_ms"], "TERMINAL", started)
+        if elapsed != terminal - planned["scheduled_unix_ms"]:
+            raise ValueError("SCHEDULED_TO_TERMINAL_LATENCY_REQUIRED")
         for name in ("cpu_ns", "peak_rss_bytes", "rx_bytes", "tx_bytes"):
             integer(row[name], name)
         digest(row["raw_receipt_sha256"], "RAW_RECEIPT_REFERENCE")

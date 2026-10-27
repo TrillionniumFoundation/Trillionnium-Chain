@@ -20,7 +20,7 @@ def fixture():
         for j in range(2):
             row=dict(id=f"o{i}-r{j}",operator=f"o{i}",cohort="hostile",operation_sha256=f"{i*2+j:064x}",scheduled_unix_ms=start+j*10000)
             manifest["schedule"].append(row)
-            rows.append({k:v for k,v in row.items() if k != "scheduled_unix_ms"} | dict(outcome="confirmed",elapsed_ms=1000,cpu_ns=1000000,peak_rss_bytes=1000000,rx_bytes=100,tx_bytes=100,raw_receipt_sha256="a"*64,block_id="b"*64,confirmed_depth=6,observed_chainwork_delta=10))
+            rows.append({k:v for k,v in row.items() if k != "scheduled_unix_ms"} | dict(outcome="confirmed",elapsed_ms=1000,started_unix_ms=row["scheduled_unix_ms"],terminal_unix_ms=row["scheduled_unix_ms"]+1000,cpu_ns=1000000,peak_rss_bytes=1000000,rx_bytes=100,tx_bytes=100,raw_receipt_sha256="a"*64,block_id="b"*64,confirmed_depth=6,observed_chainwork_delta=10))
     return manifest, rows
 
 
@@ -48,7 +48,24 @@ class Accounting(unittest.TestCase):
 
     def test_late_success_is_not_timely_success(self):
         manifest,rows=fixture(); rows[-1]["elapsed_ms"]=5001
+        rows[-1]["terminal_unix_ms"]=manifest["schedule"][-1]["scheduled_unix_ms"]+5001
         self.assertFalse(W.evaluate(manifest,rows)["all_cohort_arithmetic_slos_met"])
+
+    def test_delayed_send_cannot_reset_confirmation_clock(self):
+        manifest,rows=fixture()
+        rows[0]["started_unix_ms"]+=10000
+        rows[0]["terminal_unix_ms"]+=10000
+        with self.assertRaisesRegex(ValueError,"SCHEDULED_TO_TERMINAL"):
+            W.evaluate(manifest,rows)
+        rows[0]["elapsed_ms"]+=10000
+        self.assertFalse(W.evaluate(manifest,rows)["all_cohort_arithmetic_slos_met"])
+
+    def test_repeated_polls_cannot_inflate_unique_operations(self):
+        manifest,rows=fixture()
+        manifest["schedule"][1]["operation_sha256"]=manifest["schedule"][0]["operation_sha256"]
+        rows[1]["operation_sha256"]=rows[0]["operation_sha256"]
+        with self.assertRaisesRegex(ValueError,"REPEATED_ORIGINAL_OPERATION"):
+            W.evaluate(manifest,rows)
 
     def test_duplicates_unknown_ids_and_original_operation_swaps_reject(self):
         manifest,rows=fixture()
