@@ -714,3 +714,74 @@ within this research lineage. None of these cases runs native Rust, produces
 PNW1 valid work, admits a block, proves an independent validator, or qualifies
 public-network difficulty/security. Local proof/admission tests and third-party
 review remain explicit blockers. No legacy DAA or production flag changes.
+
+## P1-B: equal cumulative-work tie at partition heal (2026-10-26)
+
+A concrete research-model counterexample was found in the frozen
+`daa_fork_outage_research.py` study: `ForkSimulator.heal()` selected
+operator A whenever two distinct branches had exactly equal cumulative
+required work. That synthetic A-preference is NOT the native PoN fork choice.
+Under `CONSENSUS.md`, nodes keep their own valid current tip on equal work;
+only a STRICTLY heavier fully verified branch can replace it. Physical gossip
+reconnection is not itself a global consensus tie-break or confirmation.
+
+The additive `formal/pon-nakamoto-v1/daa_equal_work_recovery.py` model
+does **not** rewrite v1 campaign artifacts or its digest. It preserves
+distinct current tips at equal chainwork, reports no globally selected tip
+or confirmation while unresolved, and permits a later simulated legal
+successor to trigger strict heavier-branch adoption. A zero-work outage
+preserves the disagreement instead of inventing a winning block. The
+model retains explicit, branch-local target/chainwork/time verification.
+This is a two-operator synthetic research policy, not a live gossip
+algorithm, validated consensus host, finality guarantee or proof of a
+publicly safe common-prefix probability.
+
+The deterministic `test_daa_equal_work_recovery.py` contains eleven named
+regressions: historical v1 counterexample, unresolved equal-work tie,
+strict-successor reorganization under all three research DAAs, depth-six
+rollback of one *simulated* observation, outage with no work, timestamp
+failure, original unequal-work behavior, invalid input, and create-only
+18-case report. The local isolated Python run passed 9/9 against a
+reconstructed functional v1 simulator; the native Rust node, all current
+GitHub-source dependencies and real PNW1 proofs were NOT run or certified
+by that local execution. Reproduce on a fully fetched exact source:
+
+```sh
+cd formal/pon-nakamoto-v1
+python3 -m unittest -v test_daa_equal_work_recovery.py
+python3 daa_equal_work_recovery.py --output /new/absolute/path/equal-work.json
+```
+
+This fixes a **research model's attribution boundary**, not a production
+consensus or safety blocker. To close the actual P1-B/PN1 obligation,
+prove and validate two independently mined W1 full branches with equal
+cumulative work, reconcile on a nonpreferred genuinely heavier branch,
+check two independent original receiver/client tips and six-depth/work
+confirmation histories, recover after restart, and repeat with simultaneous
+source outage, skew and hostile transport. W1 cheapest-legal-cost and
+cross-operator WAN validation remain independently open.
+
+### Unhealed partition report is not global confirmation
+
+A second research-only counterexample found that the convenience predicate
+`not healed or same tip` reported **unhealed** divergent peer views as
+`partition_converged=true`. The v2 model now declares convergence only
+AFTER observed network heal AND matching current tips. An unhealed fork
+reports neither a globally selected tip nor globally valid confirmation,
+even if one branch already has strictly more work and the other peer
+has not received it. The two added tests cover pre-heal equal and unequal
+work. No native W1 behavior, deployed consensus RPC or finality changes.
+
+### Native full-W1 equality/reorganization acceptance selector (2026-10-26)
+
+The additive test `trillionnium/crates/trnm-pon-node/tests/daa_adversarial_schedule.rs::native_maintenance_equal_work_peers_reconcile_only_on_strictly_heavier_branch` uses two *separate* controlled authenticated SQLite stores. It revokes the sole optional task in a real Revision12 Maintenance block, creates two distinct full PNW1 height-two candidates with equal expected target/chainwork, exchanges both packets and checks that each native owner preserves its chosen tip. A full PNW1 branch successor must be strictly heavier before the second owner detaches/attaches. The owners reexecute a signed transfer, reach the installed depth/work confirmation policy after six native descendants, preserve both non-finality flags, and cold-reopen a retained orphaned packet and exact active state.
+
+**Status: SOURCE ADDED, NOT_RUN.** This environment cannot compile Rust or run the full chain host. Successful Python fork simulations do not qualify this native selector. Even a passing test would prove only controlled same-administrator stores in one process, not independent public WAN delivery, genuine Hepta operation or P0-C W1 cheapest-work security. Exact-head native execution, resource accounting, real hostile ingress and independent operator acceptance remain OPEN.
+
+Run on a clean exact checked-out candidate:
+
+```sh
+cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node \
+  --test daa_adversarial_schedule \
+  native_maintenance_equal_work_peers_reconcile_only_on_strictly_heavier_branch -- --exact
+```
