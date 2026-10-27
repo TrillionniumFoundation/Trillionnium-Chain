@@ -1,0 +1,12 @@
+{
+  "binary_sha256": "b663b1659e4fc4ad22ffb82a34f438bbb933b08140dd07c16f37a558e6c45057",
+  "concurrent_workloads": [
+    "actual local W1 prover with RAYON_NUM_THREADS=2",
+    "separate native M06 build/test experiments"
+  ],
+  "input_sha256": "67b74fa2f417c0240d974e5ecea410d2b68d97d6dde667603aeb4d7ce59036cb",
+  "production_latency_qualification": false,
+  "proof_host_sha256_unchanged": "de867e2b77079b8d73b890823d3b3cc23f6b6d810660a5291216b32d886b43d5",
+  "source_commit": "f6c6380abc1b1a942ad90120f87e44e36b07f83c",
+  "tracked_dirty": false
+}
