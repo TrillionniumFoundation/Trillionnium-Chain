@@ -670,6 +670,60 @@ fn growth_network_options(command: &str, args: &BTreeMap<String, String>) -> Res
 
 // Refuse an option/profile mismatch BEFORE opening a Node or service
 // ledger, rather than silently accepting a kernel-cap claim on another lane.
+fn priced_sync_context(args: &BTreeMap<String, String>) -> bool {
+    // A signed authenticated peer proves identity, not CPU payment. Incomplete
+    // authentication options will be refused later but must never become a
+    // free loopback import in the meantime.
+    public_profile(args)
+        || ["--auth-secret", "--server-public", "--session-generation"]
+            .iter()
+            .any(|option| args.contains_key(*option))
+}
+
+/// A public History source remains untrusted even if its configured transport
+/// address is loopback: a local proxy can forward arbitrary WAN proof bytes.
+/// Public sync always joins the SAME fixed, root-owned host CPU/memory/pid
+/// envelope as V3. Plain development sync retains its existing locality
+/// contract; this is a host resource check, not verified work authority.
+fn sync_host_kernel_owner(
+    address: std::net::SocketAddr,
+    selected_public: bool,
+) -> Result<Option<trnm_pon_node::host_kernel_parent::HostKernelBudget>> {
+    if selected_public {
+        let owner = trnm_pon_node::host_kernel_parent::require_host_kernel_budget(
+            address,
+            Some(trnm_pon_node::host_kernel_parent::FIXED_PUBLIC_KERNEL_PARENT),
+        )?
+        .ok_or("PUBLIC_HOST_KERNEL_REQUIRED")?;
+        owner.verify()?;
+        Ok(Some(owner))
+    } else {
+        trnm_pon_node::host_kernel_parent::require_for_listener(address)
+    }
+}
+
+/// A pinned peer can return arbitrary W1 bytes to the same process even
+/// when the public V3 listener itself binds loopback. The entire combined
+/// service must use the ONE administrator-pinned Host cgroup once polling is
+/// configured: no separate listener, relay, PID or peer budget is granted.
+fn pinned_peer_service_host_kernel(
+    listener: std::net::SocketAddr,
+    configured_parent: Option<&str>,
+    polling_enabled: bool,
+) -> Result<Option<trnm_pon_node::host_kernel_parent::HostKernelBudget>> {
+    let parent = configured_parent.or_else(|| {
+        polling_enabled.then_some(trnm_pon_node::host_kernel_parent::FIXED_PUBLIC_KERNEL_PARENT)
+    });
+    let owner = host_public_guard::require_host_kernel_budget(listener, parent)?;
+    if polling_enabled && owner.is_none() {
+        return Err("PUBLIC_HOST_KERNEL_REQUIRED".into());
+    }
+    if let Some(kernel) = &owner {
+        kernel.verify()?;
+    }
+    Ok(owner)
+}
+
 fn validate_host_kernel_profile(command: &str, args: &BTreeMap<String, String>) -> Result<()> {
     if args.contains_key("--host-kernel-parent")
         && (command != "serve"
@@ -2082,8 +2136,7 @@ fn run() -> Result<Value> {
             // arbitrary remote W1 proofs into this existing Node. A WAN sync
             // must join the SAME fixed kernel parent as the public receiver.
             // Loopback-only developer sync retains its original behavior.
-            let host_kernel =
-                trnm_pon_node::host_kernel_parent::require_for_listener(address)?;
+            let host_kernel = sync_host_kernel_owner(address, priced_sync_context(&args))?;
             if let Some(kernel) = &host_kernel {
                 kernel.verify()?;
             }
@@ -2124,7 +2177,7 @@ fn run() -> Result<Value> {
                     }
                     let page: ingress::Page = serde_json::from_value(reply.value)?;
                     complete = page.complete;
-                    cursor = ingress::receive_page_from(&mut node, address, page, tip, cursor, ingress::now()?)?;
+                    cursor = ingress::receive_public_page_from(&mut node, address, page, tip, cursor, ingress::now()?)?;
                     if let Some(kernel) = &host_kernel {
                         kernel.verify()?;
                     }
@@ -2250,9 +2303,10 @@ fn run() -> Result<Value> {
                     // Existing root-provisioned cgroup v2 parent: the actual
                     // kernel, not another local counter, enforces aggregate
                     // CPU/memory/task ceilings across independent processes.
-                    let host_kernel = host_public_guard::require_host_kernel_budget(
+                    let host_kernel = pinned_peer_service_host_kernel(
                         listener.local_addr()?,
                         args.get("--host-kernel-parent").map(String::as_str),
+                        polling.is_some(),
                     )?;
                     // Host counters aggregate ALL child processes of this same
                     // parent; never interpret them as one client's paid CPU.
@@ -2611,6 +2665,79 @@ mod tests {
         assert_eq!(cli_error_line(&error), "PUBLIC_MUTATION_CPU_BUDGET");
         assert_eq!(error.to_string(), "PUBLIC_MUTATION_CPU_BUDGET");
         assert!(error.is(trnm_pon_node::ErrorCode::PublicMutationCpuBudget));
+    }
+
+    #[test]
+    fn public_sync_cannot_use_loopback_proxy_to_avoid_fixed_host_cpu_owner() {
+        use trnm_pon_node::host_kernel_parent::{
+            require_host_kernel_budget, FIXED_PUBLIC_KERNEL_PARENT,
+        };
+        let loopback: std::net::SocketAddr = "127.0.0.1:11223".parse().unwrap();
+        // This preserved plain-developer profile never claims a public
+        // network resource budget or public-network readiness.
+        assert!(matches!(sync_host_kernel_owner(loopback, false), Ok(None)));
+        let original = require_host_kernel_budget(loopback, Some(FIXED_PUBLIC_KERNEL_PARENT));
+        let protected = sync_host_kernel_owner(loopback, true);
+        match (protected, original) {
+            (Ok(Some(a)), Ok(Some(b))) => {
+                a.verify().unwrap();
+                b.verify().unwrap();
+            }
+            (Err(left), Err(right)) => {
+                assert_eq!(left.to_string(), right.to_string());
+            }
+            _ => panic!("public History cannot bypass fixed Host resource owner"),
+        }
+        // Signed authenticated and public V2/V3 transports are untrusted
+        // sources regardless of their loopback destination or caller identity.
+        let mut args = BTreeMap::new();
+        assert!(!priced_sync_context(&args));
+        for profile in [
+            ingress::public_v2::PROFILE,
+            ingress::public_v3::PROFILE,
+            ingress::public_v3::GROWTH_PROFILE,
+        ] {
+            args.insert("--admission-profile".into(), profile.into());
+            assert!(priced_sync_context(&args));
+        }
+        args.clear();
+        for option in ["--auth-secret", "--server-public", "--session-generation"] {
+            args.insert(option.into(), "test-selection".into());
+            assert!(priced_sync_context(&args));
+            args.clear();
+        }
+    }
+
+    #[test]
+    fn pinned_peer_remote_history_must_share_fixed_host_even_with_loopback_listener() {
+        let listen: std::net::SocketAddr = "127.0.0.1:44222".parse().unwrap();
+        // A genuinely local V3 development listener without a poller keeps
+        // the existing original exemption (not a public WAN qualification).
+        assert!(matches!(
+            pinned_peer_service_host_kernel(listen, None, false),
+            Ok(None)
+        ));
+        let strict = pinned_peer_service_host_kernel(listen, None, true);
+        let original = host_public_guard::require_host_kernel_budget(
+            listen,
+            Some(trnm_pon_node::host_kernel_parent::FIXED_PUBLIC_KERNEL_PARENT),
+        );
+        match (strict, original) {
+            (Ok(Some(a)), Ok(Some(b))) => {
+                a.verify().unwrap();
+                b.verify().unwrap();
+            }
+            (Err(a), Err(b)) => assert_eq!(a.to_string(), b.to_string()),
+            _ => panic!("pinned peer cannot evade fixed host by local listener"),
+        }
+        // A configured foreign parent cannot create an alternative allowance;
+        // the original fixed-parent validation remains authoritative.
+        assert!(pinned_peer_service_host_kernel(
+            listen,
+            Some("/sys/fs/cgroup/not-the-approved-parent.slice"),
+            true
+        )
+        .is_err());
     }
 
     #[test]

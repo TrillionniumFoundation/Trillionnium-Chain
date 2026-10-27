@@ -120,3 +120,37 @@ Exact Rust selectors added:
 and `peer_polling::tests::pinned_polling_stops_on_local_cpu_account_failure_but_not_remote_error_text`.
 This is a **source-level fix pending exact native compilation and
 physical resource failure injection**, not a new P1 pass.
+
+## 2026-10-27: Background pinned-peer polling requires fixed Host parent
+
+The earlier CLI `serve` Host checker decided whether to require a root-owned
+cgroup from the **listener's bind address** and the optional
+`--host-kernel-parent` argument. A loopback-only V3 listener could launch
+automatic pinned-peer polling against arbitrary signed remote History packets
+without joining the fixed parent. The P1 per-W1 scalar CPU account still
+charged proof work, but sibling processes/listeners were not subject to the
+administrator-enforced aggregate CPU/memory/PID envelope. Pinned peer identity
+does not turn these untrusted proof bytes into self-paid work.
+
+`main.rs::pinned_peer_service_host_kernel` now requires the original fixed
+`/sys/fs/cgroup/trnmponpublic.slice` parent whenever `--peers` enables the
+background poller, **even if `--listen` is loopback**. It preserves the
+unmodified original fixed-parent verifier, original current-thread membership,
+resource limits and post-service readbacks; it does not create a second budget.
+An explicitly configured foreign parent cannot be accepted as a replacement.
+The combined service's mining, polling and public workers share this process
+and therefore the same parent. A local V3 service with *no* background peers
+retains its original unqualified loopback developer mode.
+
+Regression:
+`pinned_peer_remote_history_must_share_fixed_host_even_with_loopback_listener`
+compares local-listener+polling against the original explicit fixed-parent
+checker on either a genuinely eligible host or an unprovisioned test host.
+This remains source-only until exact Rust compilation and physical same-parent
+CPU contention/fault tests; no A03, P1 or production PASS is claimed.
+
+An embedding application invoking the exported polling function directly
+must independently provide a trusted physical owner. The signature and
+per-request logical CPU domain cannot prove another process shares the Host
+cgroup. Loopback forwarding is addressed for this **combined CLI service**,
+not as a universal network provenance proof.

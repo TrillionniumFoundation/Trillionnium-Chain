@@ -3251,6 +3251,25 @@ impl Node {
         let checked = self.attach_owner_work(WorkCheckedPacket::verify(packet.clone())?, permit)?;
         self.admit_work_checked(checked, observed_now)
     }
+    /// Only the original Node checks current parent/task/permit/state/clock.
+    /// The caller may refuse LOCAL resource continuation at mathematical W1
+    /// checkpoints; cancellation must never masquerade as invalid work.
+    pub(crate) fn admit_with_work_progress(
+        &mut self,
+        packet: &Packet,
+        observed_now: u64,
+        progress: &mut impl FnMut(pon_work::VerificationProgress) -> Result<()>,
+    ) -> Result<Hash> {
+        if let Some(id) = self.check_admission_context(packet, observed_now)? {
+            return Ok(id);
+        }
+        let permit = self.begin_owner_work(packet)?;
+        let checked = self.attach_owner_work(
+            WorkCheckedPacket::verify_with_progress(packet.clone(), progress)?,
+            permit,
+        )?;
+        self.admit_work_checked(checked, observed_now)
+    }
     fn precheck_owner_packet(&self, packet: &Packet) -> Result<()> {
         ensure(
             self.state_backend != StateBackend::PermanentAccountGrowthV2,
