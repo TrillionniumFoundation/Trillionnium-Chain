@@ -34,7 +34,7 @@ class DurableReceiverTests(unittest.TestCase):
         self.tmp = tempfile.TemporaryDirectory()
         self.addCleanup(self.tmp.cleanup)
         self.file = str(Path(self.tmp.name) / 'paid.db')
-        provision(self.file)
+        provision(self.file, R, E, capacity=4)
         self.server = DurableStatelessReceiver(R, S, E, db_path=self.file, capacity=4)
 
     def grant(self, server=None):
@@ -93,7 +93,7 @@ class DurableReceiverTests(unittest.TestCase):
         other_temp = tempfile.TemporaryDirectory()
         self.addCleanup(other_temp.cleanup)
         other = str(Path(other_temp.name) / 'paid.db')
-        provision(other)
+        provision(other, R, E, capacity=4)
         clone = DurableStatelessReceiver(R, S, E, db_path=other, capacity=4)
         # Explicit retained failure: distinct databases with cloned credentials
         # defeat global exactly-once admission across hosts.
@@ -118,6 +118,20 @@ class DurableReceiverTests(unittest.TestCase):
         restarted = DurableStatelessReceiver(R, S, E, db_path=self.file, capacity=4)
         self.assertEqual(restarted.consume(grant, P, A, nonce, 121), 'REPLAY')
 
+    def test_different_capacity_or_epoch_cannot_mint_larger_claim_budget(self):
+        with self.assertRaisesRegex(ValueError, 'SPEND_OWNER_POLICY'):
+            DurableStatelessReceiver(R, S, E, db_path=self.file, capacity=1024)
+        with self.assertRaisesRegex(ValueError, 'SPEND_OWNER_POLICY'):
+            DurableStatelessReceiver(R, S, bytes([6])*32, db_path=self.file, capacity=4)
+
+    def test_live_database_policy_change_fails_before_w1(self):
+        grant, nonce = self.grant()
+        db = sqlite3.connect(self.file)
+        db.execute('UPDATE policy SET capacity=1024 WHERE singleton=1')
+        db.commit()
+        db.close()
+        self.assertEqual(self.server.consume(grant, P, A, nonce, 120), 'SPEND_OWNER_POLICY')
+
     def test_modified_schema_cannot_be_restarted_as_free_epoch(self):
         db = sqlite3.connect(self.file)
         db.execute('PRAGMA user_version=2')
@@ -128,7 +142,7 @@ class DurableReceiverTests(unittest.TestCase):
 
     def test_bad_unowned_paths_and_missing_schema_fail_closed(self):
         with self.assertRaisesRegex(ValueError, 'ABSOLUTE_PATH'):
-            provision('relative-paid.db')
+            provision('relative-paid.db', R, E, capacity=4)
         link = str(Path(self.tmp.name) / 'link.db')
         os.symlink(self.file, link)
         with self.assertRaisesRegex(ValueError, 'SPEND_OWNER_FILE'):
