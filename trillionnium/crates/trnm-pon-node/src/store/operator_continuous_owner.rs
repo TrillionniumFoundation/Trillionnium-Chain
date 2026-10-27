@@ -486,10 +486,7 @@ impl Node {
                 |row| row.get(0),
             )
             .optional()?;
-        ensure(
-            prior_epoch.is_none(),
-            "OWNER_PUBLIC_SERVICE_UNCLEAN_EPOCH",
-        )?;
+        ensure(prior_epoch.is_none(), "OWNER_PUBLIC_SERVICE_UNCLEAN_EPOCH")?;
         let cold = ServiceMutationCpuDomain::cold_remote_history_epoch();
         self.bind_public_service_cpu_domain(&cold)?;
         Ok(cold)
@@ -1561,7 +1558,11 @@ impl Node {
         let result = (|| {
             progress()?;
             self.continuous_actual_packet_binding(&permit, &packet)?;
-            if let Some(id) = self.check_admission_context(&packet, observed_now)? {
+            if let Some(id) =
+                self.check_admission_context_with_progress(&packet, observed_now, &mut || {
+                    progress()
+                })?
+            {
                 return Ok(id);
             }
             let checked = WorkCheckedPacket::verify_with_progress(packet, &mut |_| progress())?;
@@ -1610,19 +1611,12 @@ impl Node {
             &crate::operator_task_policy::digest_bytes(&raw),
         )?;
         let operation = o.operation(&permit, None)?;
-        let _scope = o.enter(
-            permit,
-            None,
-            operation.checkpoint_handle().map_err(continuous_error)?,
-            Binding::none(),
-        )?;
-        let result = (|| {
-            operation
-                .checkpoint_handle()
-                .map_err(continuous_error)?
-                .checkpoint()?;
-            self.activate_observed(tip, observed_now)
-        })();
+        let checkpoint = operation.checkpoint_handle().map_err(continuous_error)?;
+        let _scope = o.enter(permit.clone(), None, checkpoint.clone(), Binding::none())?;
+        let result = self.activate_observed_with_progress(tip, observed_now, &mut || {
+            permit.progress().map_err(continuous_error)?;
+            checkpoint.checkpoint()
+        });
         let settled = operation.finish().map_err(continuous_error)?;
         Ok(OwnedMutationResult {
             schema: "restricted-owner-continuous-activation-v1",

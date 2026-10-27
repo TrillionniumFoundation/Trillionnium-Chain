@@ -29,10 +29,7 @@ impl RejectionCache {
     /// A finite direct-mapped cache is deliberately not a second block registry.
     /// No caller ID, header height or work score grants priority or authority.
     pub fn new(slots: usize, lifetime: Duration) -> Option<Self> {
-        if !(1..=256).contains(&slots)
-            || lifetime.is_zero()
-            || lifetime > Duration::from_secs(30)
-        {
+        if !(1..=256).contains(&slots) || lifetime.is_zero() || lifetime > Duration::from_secs(30) {
             return None;
         }
         Some(Self {
@@ -84,8 +81,7 @@ impl RejectionCache {
         if let Some(error) = self.hit(key) {
             // A cached error is only a performance hint. Callers must still be
             // able to cancel, and must have checked present branch authority.
-            progress(VerificationProgress::BeforeReplay)
-                .map_err(VerificationError::Cancelled)?;
+            progress(VerificationProgress::BeforeReplay).map_err(VerificationError::Cancelled)?;
             return Err(VerificationError::Relation(error));
         }
         let result = verify_with_progress(challenge, expected_task, target, proof, progress);
@@ -111,17 +107,14 @@ mod tests {
         let valid = prove(challenge, &a, &a).unwrap();
         let mut bad = valid.clone();
         bad[PROOF_BYTES - 1] ^= 1;
-        let mut replays = 0;
         for expected in [512, 0] {
-            replays = 0;
-            let r = cache.verify_with_progress(
-                challenge, task, target, &bad, &mut |point| {
-                    if matches!(point, VerificationProgress::TranscriptTile { .. }) {
-                        replays += 1;
-                    }
-                    Ok::<(), ()>(())
-                },
-            );
+            let mut replays = 0;
+            let r = cache.verify_with_progress(challenge, task, target, &bad, &mut |point| {
+                if matches!(point, VerificationProgress::TranscriptTile { .. }) {
+                    replays += 1;
+                }
+                Ok::<(), ()>(())
+            });
             assert!(matches!(
                 r,
                 Err(VerificationError::Relation(WorkError::Transcript))
@@ -129,22 +122,18 @@ mod tests {
             assert_eq!(replays, expected);
         }
         assert!(cache
-            .verify_with_progress(
-                challenge, task, target, &valid, &mut |_| Ok::<(), ()>(())
-            )
+            .verify_with_progress(challenge, task, target, &valid, &mut |_| Ok::<(), ()>(()))
             .is_ok());
         let mut changed_context = challenge;
         changed_context[0] ^= 1;
         // A different challenge never inherits the old negative fact.
         let mut other_replay = 0;
-        let _ = cache.verify_with_progress(
-            changed_context, task, target, &bad, &mut |point| {
-                if matches!(point, VerificationProgress::TranscriptTile { .. }) {
-                    other_replay += 1;
-                }
-                Ok::<(), ()>(())
-            },
-        );
+        let _ = cache.verify_with_progress(changed_context, task, target, &bad, &mut |point| {
+            if matches!(point, VerificationProgress::TranscriptTile { .. }) {
+                other_replay += 1;
+            }
+            Ok::<(), ()>(())
+        });
         assert_eq!(other_replay, 512);
     }
 
@@ -161,42 +150,49 @@ mod tests {
         let mut digests = std::collections::BTreeSet::new();
         for nonce in 0_u64..4 {
             // Deliberately never call prove() or reuse a valid transcript.
-            let fake = hash(b"w1-negative-cache-from-zero-v1", &[
-                &challenge,
-                &nonce.to_le_bytes(),
-            ]);
+            let fake = hash(
+                b"w1-negative-cache-from-zero-v1",
+                &[&challenge, &nonce.to_le_bytes()],
+            );
             assert!(digests.insert(fake));
             let mut wire = vec![0u8; PROOF_BYTES];
             wire[..4].copy_from_slice(b"PNW1");
             wire[PROOF_BYTES - 32..].copy_from_slice(&fake);
             let mut tiles = 0;
-            let result = cache.verify_with_progress(
-                challenge, task, target, &wire, &mut |point| {
-                    if matches!(point, VerificationProgress::TranscriptTile { .. }) {
-                        tiles += 1;
-                    }
-                    Ok::<(), ()>(())
-                },
+            let result = cache.verify_with_progress(challenge, task, target, &wire, &mut |point| {
+                if matches!(point, VerificationProgress::TranscriptTile { .. }) {
+                    tiles += 1;
+                }
+                Ok::<(), ()>(())
+            });
+            assert!(matches!(
+                result,
+                Err(VerificationError::Relation(WorkError::Transcript))
+            ));
+            assert_eq!(
+                tiles, 512,
+                "new fake claim must not inherit prior negative fact"
             );
-            assert!(matches!(result,
-                Err(VerificationError::Relation(WorkError::Transcript))));
-            assert_eq!(tiles, 512, "new fake claim must not inherit prior negative fact");
             if first.is_none() {
                 first = Some(wire);
             }
         }
         let mut replayed = 0;
-        let hit = cache.verify_with_progress(
-            challenge, task, target, &first.unwrap(), &mut |point| {
+        let hit =
+            cache.verify_with_progress(challenge, task, target, &first.unwrap(), &mut |point| {
                 if matches!(point, VerificationProgress::TranscriptTile { .. }) {
                     replayed += 1;
                 }
                 Ok::<(), ()>(())
-            },
+            });
+        assert!(matches!(
+            hit,
+            Err(VerificationError::Relation(WorkError::Transcript))
+        ));
+        assert_eq!(
+            replayed, 0,
+            "only an exact cached false proof is short-circuited"
         );
-        assert!(matches!(hit,
-            Err(VerificationError::Relation(WorkError::Transcript))));
-        assert_eq!(replayed, 0, "only an exact cached false proof is short-circuited");
     }
 
     #[test]
@@ -207,13 +203,16 @@ mod tests {
         let task = task_id(&zeros, &zeros).unwrap();
         let mut false_proof = prove(challenge, &zeros, &zeros).unwrap();
         false_proof[PROOF_BYTES - 1] ^= 1;
-        let _ = cache.verify_with_progress(
-            challenge, task, [255; 32], &false_proof, &mut |_| Ok::<(), &str>(())
-        );
+        let _ = cache.verify_with_progress(challenge, task, [255; 32], &false_proof, &mut |_| {
+            Ok::<(), &str>(())
+        });
         assert!(matches!(
-            cache.verify_with_progress(
-                challenge, task, [255; 32], &false_proof, &mut |_| Err::<(), _>("CANCEL")
-            ),
+            cache.verify_with_progress(challenge, task, [255; 32], &false_proof, &mut |_| Err::<
+                (),
+                _,
+            >(
+                "CANCEL"
+            )),
             Err(VerificationError::Cancelled("CANCEL"))
         ));
         assert!(RejectionCache::new(0, Duration::from_secs(1)).is_none());

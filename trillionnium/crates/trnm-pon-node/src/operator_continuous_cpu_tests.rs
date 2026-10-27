@@ -115,3 +115,89 @@ fn mode4_clean_zero_credit_restart_waits_original_refill_in_the_same_domain() {
     assert!(!actual.accounting_unavailable);
     assert!(cpu.shares_domain_with(&receiver));
 }
+
+#[test]
+fn mode4_joined_child_cpu_and_failed_child_stay_charged_after_cold_reopen() {
+    use crate::operator_continuous_test_support::identity;
+    use sha2::{Digest, Sha256};
+
+    let (dir, journal, claim) = claimed_journal();
+    let sink = Arc::new(journal.fault_sink().unwrap());
+    let journal = Arc::new(Mutex::new(journal));
+    let cpu = ServiceMutationCpuDomain::standalone();
+    let operation = DurableOperation::begin(journal.clone(), &cpu, start(&claim), sink).unwrap();
+    let workers = operation.worker_accounting().unwrap();
+    let checkpoint = operation.checkpoint_handle().unwrap();
+    std::thread::scope(|scope| {
+        let jobs: Vec<_> = (0..2)
+            .map(|index| {
+                let child_checkpoint = checkpoint.clone();
+                let job = scope.spawn(move || {
+                    let _interval = workers.worker_started().unwrap();
+                    let mut value = [index as u8; 32];
+                    for _ in 0..128 {
+                        child_checkpoint.checkpoint().unwrap();
+                        value = Sha256::digest(value).into();
+                        std::hint::black_box(value);
+                    }
+                    if index == 1 {
+                        panic!("deliberate child failure after real accounted CPU");
+                    }
+                });
+                workers.worker_spawn_succeeded();
+                job
+            })
+            .collect();
+        for (index, job) in jobs.into_iter().enumerate() {
+            assert_eq!(job.join().is_err(), index == 1);
+        }
+    });
+    let settled = operation.finish().unwrap();
+    assert!(settled.accounting_record_persisted);
+    assert!(!settled.accounting_fault_persistence_failed);
+    assert!(!settled.actual.accounting_unavailable);
+    assert_eq!(settled.actual.spawned_workers, 2);
+    assert_eq!(settled.actual.started_workers, 2);
+    assert_eq!(settled.actual.finished_workers, 2);
+    assert_eq!(settled.actual.known_workers, 2);
+    assert!(settled.actual.scoped_worker_cpu_ns.unwrap() > 0);
+    let receipt = journal
+        .lock()
+        .unwrap()
+        .scope_receipt(&"aa".repeat(32))
+        .unwrap();
+    assert_eq!(receipt.total_cpu_ns, settled.actual.total_cpu_ns.unwrap());
+    assert_eq!(
+        receipt.owner_cpu_ns + receipt.scoped_worker_cpu_ns,
+        receipt.total_cpu_ns
+    );
+    journal
+        .lock()
+        .unwrap()
+        .close_clean("12".repeat(32), 0)
+        .unwrap();
+    let head = journal.lock().unwrap().anchor();
+    let usage = journal.lock().unwrap().usage_digest().unwrap();
+    drop(journal);
+
+    let mut reopened = history::Journal::open(
+        dir.path(),
+        rustix::process::geteuid().as_raw(),
+        &identity(),
+        &head,
+    )
+    .unwrap();
+    assert_eq!(reopened.usage_digest().unwrap(), usage);
+    let retained = reopened.scope_receipt(&"aa".repeat(32)).unwrap();
+    assert_eq!(retained.total_cpu_ns, receipt.total_cpu_ns);
+    assert_eq!(retained.scoped_worker_cpu_ns, receipt.scoped_worker_cpu_ns);
+    assert!(reopened.operation_used(&claim.operation));
+    let restarted = ServiceMutationCpuDomain::from_clean_continuous_restart(
+        reopened.issue_clean_restart().unwrap(),
+    );
+    assert!(
+        restarted.begin().is_err(),
+        "cold reopen must not grant a new warm burst"
+    );
+    assert_eq!(reopened.usage_digest().unwrap(), usage);
+}

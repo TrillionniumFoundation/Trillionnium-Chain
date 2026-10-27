@@ -644,11 +644,15 @@ fn calling_thread_cpu_ns() -> Option<u64> {
     let time = clock_gettime_dynamic(DynamicClockId::Known(ClockId::ThreadCPUTime)).ok()?;
     let seconds = u64::try_from(time.tv_sec).ok()?;
     let nanos = u64::try_from(time.tv_nsec).ok()?;
-    if nanos >= 1_000_000_000 { return None; }
+    if nanos >= 1_000_000_000 {
+        return None;
+    }
     seconds.checked_mul(1_000_000_000)?.checked_add(nanos)
 }
 #[cfg(not(target_os = "linux"))]
-fn calling_thread_cpu_ns() -> Option<u64> { None }
+fn calling_thread_cpu_ns() -> Option<u64> {
+    None
+}
 
 fn measured_work_verify(packet: Packet, metrics: &Mutex<Metrics>) -> Result<WorkCheckedPacket> {
     let start = Instant::now();
@@ -658,20 +662,24 @@ fn measured_work_verify(packet: Packet, metrics: &Mutex<Metrics>) -> Result<Work
         .map_err(|_| "METRICS_POISONED")?
         .work_verifications += 1;
     let result = WorkCheckedPacket::verify(packet);
-    let actual_cpu = start_cpu.zip(calling_thread_cpu_ns())
+    let actual_cpu = start_cpu
+        .zip(calling_thread_cpu_ns())
         .and_then(|(before, after)| after.checked_sub(before));
     let mut counts = metrics.lock().map_err(|_| "METRICS_POISONED")?;
     counts.work_verification_ns = counts
         .work_verification_ns
         .saturating_add(elapsed_ns(start));
     if let Some(cpu) = actual_cpu {
-        counts.work_verification_thread_cpu_known_ns =
-            counts.work_verification_thread_cpu_known_ns.saturating_add(cpu);
-        counts.work_verification_thread_cpu_known_calls =
-            counts.work_verification_thread_cpu_known_calls.saturating_add(1);
+        counts.work_verification_thread_cpu_known_ns = counts
+            .work_verification_thread_cpu_known_ns
+            .saturating_add(cpu);
+        counts.work_verification_thread_cpu_known_calls = counts
+            .work_verification_thread_cpu_known_calls
+            .saturating_add(1);
     } else {
-        counts.work_verification_thread_cpu_unknown_calls =
-            counts.work_verification_thread_cpu_unknown_calls.saturating_add(1);
+        counts.work_verification_thread_cpu_unknown_calls = counts
+            .work_verification_thread_cpu_unknown_calls
+            .saturating_add(1);
     }
     result
 }
@@ -2123,9 +2131,7 @@ fn history_kernel_work_checkpoint(
         | VerificationProgress::BeforeVerifiedWork => true,
         VerificationProgress::Noise { counter, .. } => counter % 32 == 0,
         VerificationProgress::MatrixRow { row } => row % 32 == 0,
-        VerificationProgress::TranscriptTile { column, inner, .. } => {
-            column == 0 && inner == 0
-        }
+        VerificationProgress::TranscriptTile { column, inner, .. } => column == 0 && inner == 0,
     }
 }
 
@@ -2180,27 +2186,22 @@ fn metered_history_packet(
         let progress = operation.checkpoint_handle();
         progress.checkpoint()?;
         resource_checkpoint()?;
-        if let Some(already) = owner.check_admission_context_with_progress(
-            packet,
-            clock,
-            &mut || {
+        if let Some(already) =
+            owner.check_admission_context_with_progress(packet, clock, &mut || {
                 progress.checkpoint()?;
                 resource_checkpoint()
-            },
-        )? {
+            })?
+        {
             return Ok(already);
         }
         let permit = owner.begin_owner_work(packet)?;
-        let checked = WorkCheckedPacket::verify_with_progress(
-            packet.clone(),
-            &mut |point| {
-                progress.checkpoint()?;
-                if history_kernel_work_checkpoint(point) {
-                    resource_checkpoint()?;
-                }
-                Ok(())
-            },
-        )?;
+        let checked = WorkCheckedPacket::verify_with_progress(packet.clone(), &mut |point| {
+            progress.checkpoint()?;
+            if history_kernel_work_checkpoint(point) {
+                resource_checkpoint()?;
+            }
+            Ok(())
+        })?;
         progress.checkpoint()?;
         resource_checkpoint()?;
         let checked = owner.attach_owner_work(checked, permit)?;
@@ -2253,56 +2254,60 @@ fn receive_page(
     // top-level input must not acquire an unclean persistent epoch.
     let owned_epoch = node.begin_remote_history_cpu_epoch()?;
     let native = (|| -> Result<Hash> {
-    // Charge canonical proof decoding, packet IDs and parent-chain checks
-    // separately from the later full W1/M06 intervals. No nested operation:
-    // actual decoder CPU must not be double-billed or run at no cost.
-    resource_checkpoint()?;
-    let (packets, next) = metered_history_operation(node, domain, |_owner, operation| {
-        operation.checkpoint()?;
-        let packets = page
-            .packets
-            .iter()
-            .map(|s| hex_packet(s))
-            .collect::<Result<Vec<_>>>()?;
-        let mut next = after;
-        for packet in &packets {
-            ensure(packet.header.parent == next, "PAGE_PARENT")?;
-            next = packet.id()?;
-        }
-        ensure(
-            page.next == hex::encode(next) && page.complete == (next == tip),
-            "PAGE_COMPLETE",
-        )?;
-        operation.checkpoint()?;
+        // Charge canonical proof decoding, packet IDs and parent-chain checks
+        // separately from the later full W1/M06 intervals. No nested operation:
+        // actual decoder CPU must not be double-billed or run at no cost.
         resource_checkpoint()?;
-        Ok((packets, next))
-    })?;
-    for packet in &packets {
-        resource_checkpoint()?;
-        metered_history_packet(node, domain, packet, clock, &resource_checkpoint)?;
-        resource_checkpoint()?;
-    }
-    if page.complete {
-        // Reorganization/activation has its own original CPU reservation.
-        // Already durable native effects cannot be undone by late CPU faults.
-        metered_history_operation(node, domain, |owner, operation| {
+        let (packets, next) = metered_history_operation(node, domain, |_owner, operation| {
+            operation.checkpoint()?;
+            let packets = page
+                .packets
+                .iter()
+                .map(|s| hex_packet(s))
+                .collect::<Result<Vec<_>>>()?;
+            let mut next = after;
+            for packet in &packets {
+                ensure(packet.header.parent == next, "PAGE_PARENT")?;
+                next = packet.id()?;
+            }
+            ensure(
+                page.next == hex::encode(next) && page.complete == (next == tip),
+                "PAGE_COMPLETE",
+            )?;
             operation.checkpoint()?;
             resource_checkpoint()?;
-            owner.activate_observed(tip, clock)?;
-            resource_checkpoint()?;
-            operation.checkpoint()
+            Ok((packets, next))
         })?;
-    }
-    Ok(next)
+        for packet in &packets {
+            resource_checkpoint()?;
+            metered_history_packet(node, domain, packet, clock, &resource_checkpoint)?;
+            resource_checkpoint()?;
+        }
+        if page.complete {
+            // Reorganization/activation has its own original CPU reservation.
+            // Already durable native effects cannot be undone by late CPU faults.
+            metered_history_operation(node, domain, |owner, operation| {
+                operation.checkpoint()?;
+                resource_checkpoint()?;
+                // An activation walks ancestors and may apply multiple durable
+                // reorganization steps. Keep the ORIGINAL operation and Host
+                // fence live inside that work, not just around the outer call.
+                owner.activate_observed_with_progress(tip, clock, &mut || {
+                    operation.checkpoint()?;
+                    resource_checkpoint()
+                })?;
+                resource_checkpoint()?;
+                operation.checkpoint()
+            })?;
+        }
+        Ok(next)
     })();
     if owned_epoch {
         // Finish only this standalone History epoch. A concurrent V3 listener
         // already holds and eventually settles its OWN original marker; it
         // never yields last-close authority to a History importer.
         let clean = domain.observe().ok().is_some_and(|state| {
-            state.in_flight == 0
-                && !state.accounting_unavailable
-                && state.stored_credit_ns >= 0
+            state.in_flight == 0 && !state.accounting_unavailable && state.stored_credit_ns >= 0
         }) && domain.observe_actual_flow().ok().flatten().is_some();
         node.finish_ordinary_public_service_epoch(clean)?;
         if !clean {
@@ -2515,6 +2520,10 @@ pub fn sync_from_authenticated_durable(
     .into())
 }
 
+#[cfg(all(test, target_os = "linux"))]
+#[path = "ingress/history_activation_tests.rs"]
+mod history_activation_tests;
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -2534,12 +2543,19 @@ mod tests {
         drop(original);
         let mut reopened = Node::open(dir.path(), settings, 2).unwrap();
         assert_eq!(
-            reopened.remote_history_cpu_domain().err().unwrap().to_string(),
+            reopened
+                .remote_history_cpu_domain()
+                .err()
+                .unwrap()
+                .to_string(),
             "OWNER_PUBLIC_SERVICE_UNCLEAN_EPOCH"
         );
         assert!(reopened.public_service_cpu_domain().is_err());
         assert_eq!(
-            reopened.begin_remote_history_cpu_epoch().unwrap_err().to_string(),
+            reopened
+                .begin_remote_history_cpu_epoch()
+                .unwrap_err()
+                .to_string(),
             "OWNER_PUBLIC_SERVICE_UNCLEAN_EPOCH"
         );
     }
@@ -2565,21 +2581,27 @@ mod tests {
         };
         let loopback: SocketAddr = "127.0.0.1:1".parse().unwrap();
         assert!(receive_page_from(
-            &mut node, loopback, page, [19; 32],
-            settings.genesis(), observed,
-        ).is_err());
+            &mut node,
+            loopback,
+            page,
+            [19; 32],
+            settings.genesis(),
+            observed,
+        )
+        .is_err());
         let account = node.public_service_cpu_domain().unwrap();
         let metered = account.observe().unwrap();
         assert_eq!(metered.in_flight, 0);
         assert!(!metered.accounting_unavailable);
         assert!(metered.stored_credit_ns >= 0);
-        let marker_count: i64 = rusqlite::Connection::open(
-            dir.path().join("native.sqlite")
-        ).unwrap().query_row(
-            "SELECT COUNT(*) FROM metadata WHERE key=?1",
-            ["ordinary-public-v3-epoch-v1"],
-            |row| row.get(0),
-        ).unwrap();
+        let marker_count: i64 = rusqlite::Connection::open(dir.path().join("native.sqlite"))
+            .unwrap()
+            .query_row(
+                "SELECT COUNT(*) FROM metadata WHERE key=?1",
+                ["ordinary-public-v3-epoch-v1"],
+                |row| row.get(0),
+            )
+            .unwrap();
         assert_eq!(marker_count, 0, "paid known rejection must clean its epoch");
         assert_eq!(node.stats().unwrap(), initial);
         drop(node);
@@ -2599,7 +2621,10 @@ mod tests {
         node.bind_public_service_cpu_domain(&public).unwrap();
         assert!(node.begin_ordinary_public_service_epoch().unwrap());
         assert!(!node.begin_remote_history_cpu_epoch().unwrap());
-        assert!(node.public_service_cpu_domain().unwrap().shares_domain_with(&public));
+        assert!(node
+            .public_service_cpu_domain()
+            .unwrap()
+            .shares_domain_with(&public));
         // Only the actual V3 owner holds the last-close right.
         node.finish_ordinary_public_service_epoch(true).unwrap();
         assert_eq!(
@@ -2609,7 +2634,8 @@ mod tests {
                     "SELECT COUNT(*) FROM metadata WHERE key=?1",
                     ["ordinary-public-v3-epoch-v1"],
                     |row| row.get::<_, i64>(0),
-                ).unwrap(),
+                )
+                .unwrap(),
             0
         );
     }
@@ -2634,8 +2660,14 @@ mod tests {
             complete: true,
         };
         assert!(receive_page_from(
-            &mut node, source, page, [9; 32], settings.genesis(), observed,
-        ).is_err());
+            &mut node,
+            source,
+            page,
+            [9; 32],
+            settings.genesis(),
+            observed,
+        )
+        .is_err());
         let account = node.public_service_cpu_domain().unwrap().observe().unwrap();
         assert_eq!(account.in_flight, 0);
         assert!(!account.accounting_unavailable);
@@ -2650,19 +2682,20 @@ mod tests {
         let settings = crate::Settings::development(Some(observed - 100)).unwrap();
         let dir = tempfile::tempdir().unwrap();
         let mut node = Node::open(dir.path(), settings.clone(), 2).unwrap();
-        let good = node.make(
-            settings.genesis(),
-            vec![],
-            crate::development_public(0).unwrap(),
-            settings.genesis_time() + 10,
-            4096,
-        ).unwrap();
+        let good = node
+            .make(
+                settings.genesis(),
+                vec![],
+                crate::development_public(0).unwrap(),
+                settings.genesis_time() + 10,
+                4096,
+            )
+            .unwrap();
         let id = good.id().unwrap();
         let mut bad = good.clone();
         let cell = 4 + 2 * trnm_crypto_primitives::pon_work::CELLS * 4;
         let prior = u32::from_le_bytes(bad.proof[cell..cell + 4].try_into().unwrap());
-        let altered = ((u128::from(prior) + 1)
-            % trnm_crypto_primitives::pon_work::Q) as u32;
+        let altered = ((u128::from(prior) + 1) % trnm_crypto_primitives::pon_work::Q) as u32;
         bad.proof[cell..cell + 4].copy_from_slice(&altered.to_le_bytes());
         assert_eq!(bad.id().unwrap(), id);
         let make_page = |packet: &Packet| Page {
@@ -2681,27 +2714,49 @@ mod tests {
         let initial = node.stats().unwrap();
         assert_eq!(
             receive_page_from(
-                &mut node, first, make_page(&bad), id, settings.genesis(), observed,
-            ).unwrap_err().to_string(),
+                &mut node,
+                first,
+                make_page(&bad),
+                id,
+                settings.genesis(),
+                observed,
+            )
+            .unwrap_err()
+            .to_string(),
             "WORK:Product"
         );
         assert_eq!(node.stats().unwrap(), initial);
         let original_domain = node.public_service_cpu_domain().unwrap();
         assert_eq!(
             receive_page_from(
-                &mut node, second, make_page(&good), id, settings.genesis(), observed,
-            ).unwrap(),
+                &mut node,
+                second,
+                make_page(&good),
+                id,
+                settings.genesis(),
+                observed,
+            )
+            .unwrap(),
             id
         );
-        assert!(node.public_service_cpu_domain().unwrap().shares_domain_with(&original_domain));
+        assert!(node
+            .public_service_cpu_domain()
+            .unwrap()
+            .shares_domain_with(&original_domain));
         assert_eq!(node.read_active().unwrap().0, id);
         assert_eq!(original_domain.observe().unwrap().in_flight, 0);
         let success_state = node.stats().unwrap();
         // The exact block ID's stored byte identity is authoritative; the
         // previously invalid C cannot overwrite the now accepted legal proof.
         let repeated = receive_page_from(
-            &mut node, first, make_page(&bad), id, settings.genesis(), observed,
-        ).unwrap_err();
+            &mut node,
+            first,
+            make_page(&bad),
+            id,
+            settings.genesis(),
+            observed,
+        )
+        .unwrap_err();
         assert_eq!(repeated.to_string(), "DUPLICATE_CONTENT");
         assert_eq!(node.stats().unwrap(), success_state);
     }
@@ -2715,13 +2770,15 @@ mod tests {
         let mut node = Node::open(dir.path(), settings.clone(), 2).unwrap();
         // The legal packet is the honest control only. Attacker proofs below
         // are synthesized by hashing arbitrary trace claims without replay.
-        let honest = node.make(
-            settings.genesis(),
-            vec![],
-            crate::development_public(0).unwrap(),
-            settings.genesis_time() + 10,
-            4096,
-        ).unwrap();
+        let honest = node
+            .make(
+                settings.genesis(),
+                vec![],
+                crate::development_public(0).unwrap(),
+                settings.genesis_time() + 10,
+                4096,
+            )
+            .unwrap();
         let challenge = honest.header.challenge();
         let task = honest.header.work_task;
         let target = honest.header.target;
@@ -2739,13 +2796,15 @@ mod tests {
             }
             let mut fake = honest.clone();
             let product = 4 + 2 * trnm_crypto_primitives::pon_work::CELLS * 4;
-            fake.proof[product..product + trnm_crypto_primitives::pon_work::CELLS * 4]
-                .fill(0);
+            fake.proof[product..product + trnm_crypto_primitives::pon_work::CELLS * 4].fill(0);
             fake.proof[trnm_crypto_primitives::pon_work::PROOF_BYTES - 32..]
                 .copy_from_slice(&trace);
             assert_eq!(
                 trnm_crypto_primitives::pon_work::precheck_proof_statement(
-                    challenge, task, target, &fake.proof,
+                    challenge,
+                    task,
+                    target,
+                    &fake.proof,
                 ),
                 Ok(())
             );
@@ -2762,9 +2821,9 @@ mod tests {
                 complete: true,
             };
             let source: SocketAddr = format!("127.0.0.1:{}", nonce + 1).parse().unwrap();
-            let error = receive_page_from(
-                &mut node, source, page, id, settings.genesis(), observed,
-            ).unwrap_err();
+            let error =
+                receive_page_from(&mut node, source, page, id, settings.genesis(), observed)
+                    .unwrap_err();
             assert_eq!(error.to_string(), "WORK:Transcript");
             let domain = node.public_service_cpu_domain().unwrap();
             if let Some(previous) = &original_budget {
@@ -2780,7 +2839,10 @@ mod tests {
                 break;
             }
         }
-        assert_eq!(accepted_tickets, 4, "the fixed target must yield four false claims");
+        assert_eq!(
+            accepted_tickets, 4,
+            "the fixed target must yield four false claims"
+        );
         let id = honest.id().unwrap();
         let legal_page = Page {
             schema: "pon-native-history-v1".into(),
@@ -2795,15 +2857,26 @@ mod tests {
         };
         assert_eq!(
             receive_page_from(
-                &mut node, "127.0.0.1:999".parse().unwrap(), legal_page,
-                id, settings.genesis(), observed,
-            ).unwrap(),
+                &mut node,
+                "127.0.0.1:999".parse().unwrap(),
+                legal_page,
+                id,
+                settings.genesis(),
+                observed,
+            )
+            .unwrap(),
             id
         );
         assert_eq!(node.read_active().unwrap().0, id);
-        assert_eq!(node.public_service_cpu_domain().unwrap().observe().unwrap().in_flight, 0);
+        assert_eq!(
+            node.public_service_cpu_domain()
+                .unwrap()
+                .observe()
+                .unwrap()
+                .in_flight,
+            0
+        );
     }
-
 
     #[cfg(target_os = "linux")]
     #[test]
@@ -2812,21 +2885,20 @@ mod tests {
         let settings = crate::Settings::development(Some(observed - 100)).unwrap();
         let dir = tempfile::tempdir().unwrap();
         let mut node = Node::open(dir.path(), settings.clone(), 2).unwrap();
-        let mut packet = node.make(
-            settings.genesis(),
-            vec![],
-            crate::development_public(0).unwrap(),
-            settings.genesis_time() + 10,
-            4096,
-        ).unwrap();
+        let mut packet = node
+            .make(
+                settings.genesis(),
+                vec![],
+                crate::development_public(0).unwrap(),
+                settings.genesis_time() + 10,
+                4096,
+            )
+            .unwrap();
         // Keep a correct winning trace/ticket; forge only canonical C, forcing
         // a late complete W1 Product rejection, not a cheap target miss.
         let cell = 4 + 2 * trnm_crypto_primitives::pon_work::CELLS * 4;
-        let original = u32::from_le_bytes(
-            packet.proof[cell..cell + 4].try_into().unwrap(),
-        );
-        let forged = ((u128::from(original) + 1)
-            % trnm_crypto_primitives::pon_work::Q) as u32;
+        let original = u32::from_le_bytes(packet.proof[cell..cell + 4].try_into().unwrap());
+        let forged = ((u128::from(original) + 1) % trnm_crypto_primitives::pon_work::Q) as u32;
         packet.proof[cell..cell + 4].copy_from_slice(&forged.to_le_bytes());
         let id = packet.id().unwrap();
         let page = Page {
@@ -2843,9 +2915,8 @@ mod tests {
         assert!(node.public_service_cpu_domain().is_err());
         let state_before = node.stats().unwrap();
         let address: SocketAddr = "127.0.0.1:1".parse().unwrap();
-        let error = receive_page_from(
-            &mut node, address, page, id, settings.genesis(), observed,
-        ).unwrap_err();
+        let error = receive_page_from(&mut node, address, page, id, settings.genesis(), observed)
+            .unwrap_err();
         assert_eq!(error.to_string(), "WORK:Product");
         let domain = node.public_service_cpu_domain().unwrap();
         let reloaded = node.remote_history_cpu_domain().unwrap();
@@ -2869,13 +2940,15 @@ mod tests {
         let settings = crate::Settings::development(Some(observed - 100)).unwrap();
         let dir = tempfile::tempdir().unwrap();
         let mut node = Node::open(dir.path(), settings.clone(), 2).unwrap();
-        let packet = node.make(
-            settings.genesis(),
-            vec![],
-            crate::development_public(0).unwrap(),
-            settings.genesis_time() + 10,
-            4096,
-        ).unwrap();
+        let packet = node
+            .make(
+                settings.genesis(),
+                vec![],
+                crate::development_public(0).unwrap(),
+                settings.genesis_time() + 10,
+                4096,
+            )
+            .unwrap();
         let id = packet.id().unwrap();
         let page = Page {
             schema: "pon-native-history-v1".into(),
@@ -2913,7 +2986,11 @@ mod tests {
         let mut reopened = Node::open(dir.path(), settings.clone(), 2).unwrap();
         let stats = reopened.stats().unwrap();
         assert_eq!(
-            reopened.remote_history_cpu_domain().err().unwrap().to_string(),
+            reopened
+                .remote_history_cpu_domain()
+                .err()
+                .unwrap()
+                .to_string(),
             "OWNER_PUBLIC_SERVICE_UNCLEAN_EPOCH"
         );
         assert!(reopened.public_service_cpu_domain().is_err());
@@ -2952,7 +3029,6 @@ mod tests {
             "OWNER_PUBLIC_SERVICE_UNCLEAN_EPOCH"
         );
     }
-
 
     #[test]
     fn history_valid_w1_cannot_commit_after_m06_host_owner_rejection() {
@@ -3027,13 +3103,19 @@ mod tests {
             VerificationProgress::BeforeReplay,
             VerificationProgress::BeforeProduct,
             VerificationProgress::BeforeVerifiedWork,
-            VerificationProgress::Noise { label: 1, counter: 0 },
+            VerificationProgress::Noise {
+                label: 1,
+                counter: 0,
+            },
             VerificationProgress::MatrixRow { row: 0 },
         ] {
             assert!(history_kernel_work_checkpoint(point));
         }
         assert!(!history_kernel_work_checkpoint(
-            VerificationProgress::Noise { label: 1, counter: 1 }
+            VerificationProgress::Noise {
+                label: 1,
+                counter: 1
+            }
         ));
     }
 
@@ -3061,7 +3143,10 @@ mod tests {
         )
         .unwrap_err();
         assert_eq!(refused.to_string(), "PUBLIC_HOST_KERNEL_LIMITS_CHANGED");
-        assert_eq!(tiles, 1, "full W1 must abort cooperatively before verified work");
+        assert_eq!(
+            tiles, 1,
+            "full W1 must abort cooperatively before verified work"
+        );
         assert_eq!(node.stats().unwrap(), before_stats);
         assert_eq!(node.read_active().unwrap(), before_active);
         // Recovery from a LOCAL Host refusal must not poison the unchanged
@@ -3074,7 +3159,10 @@ mod tests {
     fn public_loopback_history_requires_real_fixed_host_parent() {
         let loopback: SocketAddr = "127.0.0.1:12345".parse().unwrap();
         let legacy = crate::host_kernel_parent::require_for_listener(loopback).unwrap();
-        assert!(legacy.is_none(), "weak local compatibility remains local only");
+        assert!(
+            legacy.is_none(),
+            "weak local compatibility remains local only"
+        );
         let strict = crate::host_kernel_parent::require_host_kernel_budget(
             loopback,
             Some(crate::host_kernel_parent::FIXED_PUBLIC_KERNEL_PARENT),
@@ -3097,13 +3185,8 @@ mod tests {
             let settings = crate::Settings::development(Some(now().unwrap() - 100)).unwrap();
             let mut node = Node::open(dir.path(), settings.clone(), 2).unwrap();
             let original = node.stats().unwrap();
-            let error = sync_from(
-                &mut node,
-                remote,
-                settings.genesis(),
-                settings.genesis(),
-                1,
-            ).unwrap_err();
+            let error = sync_from(&mut node, remote, settings.genesis(), settings.genesis(), 1)
+                .unwrap_err();
             assert_eq!(error.to_string(), expected.to_string());
             // Public untrusted page API refuses the same unbudgeted source
             // before it even attempts a page context/W1/State lookup.
@@ -3125,7 +3208,8 @@ mod tests {
                 settings.genesis(),
                 settings.genesis(),
                 now().unwrap(),
-            ).unwrap_err();
+            )
+            .unwrap_err();
             assert_eq!(page_error.to_string(), expected.to_string());
             // Authenticating a remote service is not equivalent to a CPU
             // budget. Both signed and durable signed sync must refuse before
@@ -3140,7 +3224,8 @@ mod tests {
                 1,
                 &client,
                 &mut replay_nonce,
-            ).unwrap_err();
+            )
+            .unwrap_err();
             assert_eq!(auth_error.to_string(), expected.to_string());
             let durable_error = sync_from_authenticated_durable(
                 &mut node,
@@ -3149,7 +3234,8 @@ mod tests {
                 settings.genesis(),
                 1,
                 &client,
-            ).unwrap_err();
+            )
+            .unwrap_err();
             assert_eq!(durable_error.to_string(), expected.to_string());
             assert_eq!(node.stats().unwrap(), original);
             assert_eq!(node.read_active().unwrap().0, settings.genesis());
@@ -4364,9 +4450,13 @@ mod tests {
             let node = Node::open(dir.path(), settings, 2).unwrap();
             let listener = TcpListener::bind(remote).unwrap();
             let error = serve_authenticated(
-                listener, node, Duration::from_secs(1),
-                Arc::new(AtomicBool::new(true)), authentication,
-            ).unwrap_err();
+                listener,
+                node,
+                Duration::from_secs(1),
+                Arc::new(AtomicBool::new(true)),
+                authentication,
+            )
+            .unwrap_err();
             assert_eq!(error.to_string(), "DEVELOPMENT_REMOTE_ADMISSION_REQUIRED");
         }
         // The priced, authenticated legacy WAN route requires the original
@@ -4378,10 +4468,14 @@ mod tests {
             let node = Node::open(dir.path(), settings, 2).unwrap();
             let listener = TcpListener::bind(remote).unwrap();
             let error = serve_authenticated_protected(
-                listener, node, Duration::from_secs(1),
+                listener,
+                node,
+                Duration::from_secs(1),
                 Arc::new(AtomicBool::new(true)),
-                authentication, AdmissionPolicy::development(),
-            ).unwrap_err();
+                authentication,
+                AdmissionPolicy::development(),
+            )
+            .unwrap_err();
             assert_eq!(error.to_string(), expected.to_string());
         }
     }
@@ -4391,11 +4485,15 @@ mod tests {
         let dir = tempfile::tempdir().unwrap();
         let settings = Settings::development(Some(now().unwrap() - 100)).unwrap();
         let node = Node::open(dir.path(), settings.clone(), 2).unwrap();
-        let original = node.make(
-            settings.genesis(), vec![],
-            crate::development_public(0).unwrap(),
-            settings.genesis_time() + 10, 4096,
-        ).unwrap();
+        let original = node
+            .make(
+                settings.genesis(),
+                vec![],
+                crate::development_public(0).unwrap(),
+                settings.genesis_time() + 10,
+                4096,
+            )
+            .unwrap();
         let mut bad = original;
         let last = bad.proof.len() - 1;
         bad.proof[last] ^= 1;
@@ -4405,8 +4503,11 @@ mod tests {
         assert!(measured_work_verify(bad, &metrics).is_err());
         let snapshot = metrics.lock().unwrap();
         assert_eq!(snapshot.work_verifications, 1);
-        assert_eq!(snapshot.work_verification_thread_cpu_unknown_calls
-                   + snapshot.work_verification_thread_cpu_known_calls, 1);
+        assert_eq!(
+            snapshot.work_verification_thread_cpu_unknown_calls
+                + snapshot.work_verification_thread_cpu_known_calls,
+            1
+        );
         assert!(snapshot.work_verification_ns > 0);
     }
 

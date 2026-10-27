@@ -596,6 +596,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-crypto-primitives/src/pon_work/rejection_cache.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-crypto-primitives/src/pon_work/rejection_cache.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-crypto-primitives/src/pon_work/structured.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -3407,6 +3414,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-pon-node/src/ingress.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/ingress/history_activation_tests.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/ingress/history_activation_tests.rs"
         )),
     ),
     (
