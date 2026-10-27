@@ -2418,6 +2418,36 @@ mod tests {
 
     #[cfg(target_os = "linux")]
     #[test]
+    fn malformed_remote_history_decode_pays_original_cpu_and_preserves_state() {
+        let observed = now().unwrap();
+        let settings = crate::Settings::development(Some(observed - 100)).unwrap();
+        let dir = tempfile::tempdir().unwrap();
+        let mut node = Node::open(dir.path(), settings.clone(), 2).unwrap();
+        let start = node.stats().unwrap();
+        let source: SocketAddr = "127.0.0.1:1".parse().unwrap();
+        let page = Page {
+            schema: "pon-native-history-v1".into(),
+            network: hex::encode(settings.network()),
+            parameters: hex::encode(settings.parameters()),
+            genesis: hex::encode(settings.genesis()),
+            tip: hex::encode([9; 32]),
+            after: hex::encode(settings.genesis()),
+            packets: vec!["00".into()],
+            next: hex::encode([9; 32]),
+            complete: true,
+        };
+        assert!(receive_page_from(
+            &mut node, source, page, [9; 32], settings.genesis(), observed,
+        ).is_err());
+        let account = node.public_service_cpu_domain().unwrap().observe().unwrap();
+        assert_eq!(account.in_flight, 0);
+        assert!(!account.accounting_unavailable);
+        assert_eq!(node.stats().unwrap(), start);
+        assert_eq!(node.read_active().unwrap().0, settings.genesis());
+    }
+
+    #[cfg(target_os = "linux")]
+    #[test]
     fn loopback_history_false_product_charges_one_cold_node_cpu_domain() {
         let observed = now().unwrap();
         let settings = crate::Settings::development(Some(observed - 100)).unwrap();
