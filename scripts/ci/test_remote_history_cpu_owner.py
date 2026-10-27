@@ -54,7 +54,10 @@ def check(ingress, owner, cpu):
             and "self.public_service_cpu_domain()" in owner,
             "HISTORY_ONE_NODE_DOMAIN")
     require("!self.public_service_epoch_unknown" in owner
-            and "self.public_service_epoch_listeners == 0" in owner,
+            and "self.public_service_epoch_listeners == 0" in owner
+            and "let prior_epoch: Option<Vec<u8>>" in owner
+            and "prior_epoch.is_none()" in owner
+            and "ORDINARY_PUBLIC_EPOCH_KEY" in owner,
             "HISTORY_UNKNOWN_EPOCH_FENCE")
     require("pub(crate) fn cold_remote_history_epoch()" in cpu
             and "PaidMutationCpuBudget::cold_start()" in cpu,
@@ -66,6 +69,8 @@ def check(ingress, owner, cpu):
         "four_distinct_ticket_valid_false_history_traces_never_obtain_work",
         "malformed_remote_history_decode_pays_original_cpu_and_preserves_state",
         "unclean_public_epoch_cannot_mint_fresh_remote_history_credit",
+        "cold_reopen_with_durable_active_v3_epoch_cannot_mint_history_cpu",
+        "clean_v3_epoch_close_permits_only_one_cold_history_owner",
     ):
         require(name in ingress, "HISTORY_NATIVE_REGRESSION_" + name)
     return True
