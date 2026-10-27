@@ -205,7 +205,7 @@ impl RejectionCache {
                         progress,
                     );
                     if let Err(VerificationError::Relation(error)) = &result {
-                        if matches!(error, WorkError::Transcript | WorkError::Product) {
+                        if matches!(*error, WorkError::Transcript | WorkError::Product) {
                             owner.publish(*error, self.lifetime);
                         }
                     }
@@ -253,6 +253,199 @@ impl Drop for Computing<'_> {
 mod tests {
     use super::*;
     use crate::pon_work::{prove, task_id, CELLS, PROOF_BYTES};
+
+    use std::sync::{mpsc, Arc, Barrier};
+    use std::thread;
+
+    fn false_w1(challenge: Hash, nonce: u64) -> (Hash, Vec<u8>) {
+        let a = vec![0; CELLS];
+        let task = task_id(&a, &a).unwrap();
+        let mut proof = vec![0; PROOF_BYTES];
+        proof[..4].copy_from_slice(b"PNW1");
+        let trace = hash(
+            b"w1-negative-singleflight-from-zero-v1",
+            &[&challenge, &nonce.to_le_bytes()],
+        );
+        proof[PROOF_BYTES - 32..].copy_from_slice(&trace);
+        (task, proof)
+    }
+
+    #[test]
+    fn twelve_concurrent_exact_false_traces_require_only_one_full_w1_replay() {
+        const FOLLOWERS: usize = 12;
+        let challenge = [89; 32];
+        let (task, proof) = false_w1(challenge, 1);
+        let cache = Arc::new(RejectionCache::new(8, Duration::from_secs(3)).unwrap());
+        let gate = Arc::new((Mutex::new(false), Condvar::new()));
+        let (started_tx, started_rx) = mpsc::channel();
+        let leader_cache = cache.clone();
+        let leader_proof = proof.clone();
+        let leader_gate = gate.clone();
+        let leader = thread::spawn(move || {
+            let mut ready = Some(started_tx);
+            leader_cache.verify_with_progress(
+                challenge,
+                task,
+                [255; 32],
+                &leader_proof,
+                &mut |point| {
+                    if matches!(point, VerificationProgress::TranscriptTile { .. }) {
+                        if let Some(sender) = ready.take() {
+                            sender.send(()).unwrap();
+                            let (lock, changed) = &*leader_gate;
+                            let mut open = lock.lock().unwrap();
+                            while !*open {
+                                open = changed.wait(open).unwrap();
+                            }
+                        }
+                    }
+                    Ok::<(), ()>(())
+                },
+            )
+        });
+        started_rx
+            .recv_timeout(Duration::from_secs(5))
+            .expect("leader must start its only replay");
+        let barrier = Arc::new(Barrier::new(FOLLOWERS + 1));
+        let mut followers = Vec::new();
+        for _ in 0..FOLLOWERS {
+            let cache = cache.clone();
+            let proof = proof.clone();
+            let barrier = barrier.clone();
+            followers.push(thread::spawn(move || {
+                barrier.wait();
+                cache.verify_with_progress(
+                    challenge,
+                    task,
+                    [255; 32],
+                    &proof,
+                    &mut |_| Ok::<(), ()>(()),
+                )
+            }));
+        }
+        barrier.wait();
+        let deadline = Instant::now() + Duration::from_secs(5);
+        while cache.counters().wait_polls < FOLLOWERS as u64 && Instant::now() < deadline {
+            thread::sleep(Duration::from_millis(1));
+        }
+        // Release the leader even if a loaded host did not schedule every
+        // waiter. The failure assertion cannot strand a native test worker.
+        let all_queued = cache.counters().wait_polls >= FOLLOWERS as u64;
+        let (lock, changed) = &*gate;
+        *lock.lock().unwrap() = true;
+        changed.notify_all();
+        assert!(matches!(
+            leader.join().unwrap(),
+            Err(VerificationError::Relation(WorkError::Transcript))
+        ));
+        for follower in followers {
+            assert!(matches!(
+                follower.join().unwrap(),
+                Err(VerificationError::Relation(WorkError::Transcript))
+            ));
+        }
+        assert!(all_queued, "test did not observe all real concurrent followers");
+        assert_eq!(cache.counters().started_replays, 1);
+        assert_eq!(cache.counters().exact_hits, FOLLOWERS as u64);
+    }
+
+    #[test]
+    fn leader_cancellation_does_not_publish_invalidity_or_strand_next_waiter() {
+        let challenge = [90; 32];
+        let (task, proof) = false_w1(challenge, 1);
+        let cache = RejectionCache::new(2, Duration::from_secs(2)).unwrap();
+        assert!(matches!(
+            cache.verify_with_progress(
+                challenge, task, [255; 32], &proof,
+                &mut |_| Err::<(), _>("leader cancelled")
+            ),
+            Err(VerificationError::Cancelled("leader cancelled"))
+        ));
+        let mut tiles = 0;
+        let result = cache.verify_with_progress(
+            challenge, task, [255; 32], &proof,
+            &mut |point| {
+                if matches!(point, VerificationProgress::TranscriptTile { .. }) {
+                    tiles += 1;
+                }
+                Ok::<(), ()>(())
+            },
+        );
+        assert!(matches!(
+            result,
+            Err(VerificationError::Relation(WorkError::Transcript))
+        ));
+        assert_eq!(tiles, 512);
+        assert_eq!(cache.counters().started_replays, 2);
+        assert_eq!(cache.counters().exact_hits, 0);
+    }
+
+    #[test]
+    fn unrelated_hash_slot_collision_does_not_block_behind_false_leader() {
+        let cache = Arc::new(RejectionCache::new(1, Duration::from_secs(2)).unwrap());
+        let challenge = [91; 32];
+        let (task, proof) = false_w1(challenge, 1);
+        let (_, other) = false_w1(challenge, 2);
+        let gate = Arc::new((Mutex::new(false), Condvar::new()));
+        let (started_tx, started_rx) = mpsc::channel();
+        let leader_cache = cache.clone();
+        let leader_gate = gate.clone();
+        let leader = thread::spawn(move || {
+            let mut once = Some(started_tx);
+            leader_cache.verify_with_progress(
+                challenge, task, [255; 32], &proof,
+                &mut |point| {
+                    if matches!(point, VerificationProgress::TranscriptTile { .. }) {
+                        if let Some(sender) = once.take() {
+                            sender.send(()).unwrap();
+                            let (lock, changed) = &*leader_gate;
+                            let mut open = lock.lock().unwrap();
+                            while !*open {
+                                open = changed.wait(open).unwrap();
+                            }
+                        }
+                    }
+                    Ok::<(), ()>(())
+                },
+            )
+        });
+        started_rx
+            .recv_timeout(Duration::from_secs(5))
+            .expect("leader must own the single slot");
+        let (done_tx, done_rx) = mpsc::channel();
+        let contender_cache = cache.clone();
+        let contender = thread::spawn(move || {
+            let mut tiles = 0;
+            let result = contender_cache.verify_with_progress(
+                challenge, task, [255; 32], &other,
+                &mut |point| {
+                    if matches!(point, VerificationProgress::TranscriptTile { .. }) {
+                        tiles += 1;
+                    }
+                    Ok::<(), ()>(())
+                },
+            );
+            done_tx.send((result, tiles)).unwrap();
+        });
+        let observed = done_rx.recv_timeout(Duration::from_secs(5));
+        let (lock, changed) = &*gate;
+        *lock.lock().unwrap() = true;
+        changed.notify_all();
+        assert!(matches!(
+            leader.join().unwrap(),
+            Err(VerificationError::Relation(WorkError::Transcript))
+        ));
+        contender.join().unwrap();
+        let (result, tiles) = observed.expect("distinct statement must not wait on the slot");
+        assert!(matches!(
+            result,
+            Err(VerificationError::Relation(WorkError::Transcript))
+        ));
+        assert_eq!(tiles, 512);
+        assert_eq!(cache.counters().collision_bypasses, 1);
+        assert_eq!(cache.counters().started_replays, 1);
+    }
+
 
     #[test]
     fn false_transcript_replay_is_skipped_but_real_proof_still_passes() {
