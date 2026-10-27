@@ -1,6 +1,6 @@
 {
   "schema": "pon-pure-integration-observation-v1",
-  "observed_utc": "2026-10-27T08:49:00Z",
+  "failure_reported_utc": "2026-10-27T08:46:13.6756147Z",
   "source_commit": "5e797326b9c7635e43b93f97c65a309e51eafb46",
   "source_tree": "784b932e581eb97629f91553dc24aebb99c8e488",
   "run_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40475784076",

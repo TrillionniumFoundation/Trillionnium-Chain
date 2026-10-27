@@ -6,6 +6,13 @@ reports and deadlines, preserve failures, and cannot qualify hardness, useful
 model work, public fairness or production operation. Run each in isolation from
 other campaigns when interpreting timing; record any host contention.
 
+The complete 2026-10-27 observation, its source/binary capture manifests, all
+3,456 producer cohorts, both attacked cold-reopen phases and limitations are
+retained in [the evidence report](../../../../evidence/pon-pure-cost-bootstrap-20261027/README.md).
+That host was not exclusive. The fixed-cohort reduction includes every offered
+strategy, unsupported setup, both targets and preparation modes; it does not
+select a fastest observed arm or turn a benchmark into a hardness qualification.
+
 ## Fixed producer matrix
 
 `pon_pure_cost_campaign` offers all twelve current concrete producer strategies
@@ -44,6 +51,8 @@ cargo build --locked --profile test --manifest-path trillionnium/Cargo.toml \
 target/debug/examples/pon_pure_cost_campaign \
   --searches 256 --attempts 8 --rounds 2 --seed 1 --seconds 900 > cost.jsonl
 python3 scripts/ci/check_pure_pon_cost_campaign.py cost.jsonl --output cost-check.json
+python3 scripts/ci/summarize_pure_pon_cost_campaign.py cost.jsonl \
+  --output fixed-cohorts.json --csv fixed-cohorts.csv
 ```
 
 Use the actual `CARGO_TARGET_DIR` path in place of `target`. The repository's
@@ -97,6 +106,8 @@ cargo build --locked --profile test --manifest-path trillionnium/Cargo.toml \
 target/debug/examples/pon_pure_ingress_campaign \
   --baseline-seconds 15 --attack-seconds 45 --receivers 2 \
   --attack-workers 4 --max-groups 8192 > ingress.jsonl
+python3 scripts/ci/check_pure_pon_ingress_campaign.py ingress.jsonl \
+  --output ingress-check.json
 ```
 
 Loopback success is not a WAN or Sybil-liveness proof. Bounded resource use can

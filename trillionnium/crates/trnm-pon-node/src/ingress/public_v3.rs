@@ -6487,7 +6487,23 @@ mod tests {
         assert!(Hello::parse(&hello(1, MAX_BODY + 1).encode()).is_err());
         assert!(Hello::parse(&hello(2, MAX_READ_BODY).encode()).is_ok());
         assert!(Hello::parse(&hello(2, MAX_READ_BODY + 1).encode()).is_err());
-        assert!(Hello::parse(&hello(9, 1).encode()).is_err());
+        // Opcode 9 is the separately profiled public task-bootstrap read.
+        // Framing accepts its read-sized body; cookie/profile admission still
+        // rejects this operation on legacy, arithmetic and growth servers.
+        assert!(Hello::parse(&hello(9, MAX_READ_BODY).encode()).is_ok());
+        assert!(Hello::parse(&hello(9, MAX_READ_BODY + 1).encode()).is_err());
+        for unsupported in [0, 10, u8::MAX] {
+            assert!(Hello::parse(&hello(unsupported, 1).encode()).is_err());
+        }
+        let settings = Settings::development(Some(1)).unwrap();
+        assert_eq!(
+            server()
+                .cookie(&settings, hello(9, 1), "127.0.0.1:1".parse().unwrap())
+                .err()
+                .expect("legacy profile must reject the bootstrap opcode")
+                .to_string(),
+            "PUBLIC_OPERATION_PROFILE"
+        );
         assert!(Hello::parse(&hello(1, 0).encode()).is_err());
         let mut bytes = hello(1, 1).encode();
         bytes[5] = 1;
