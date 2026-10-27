@@ -17,7 +17,6 @@ mod ledger;
 #[cfg(target_os = "linux")]
 mod owner;
 mod sql;
-mod transaction_scope;
 #[cfg(target_os = "linux")]
 mod unix_abi;
 #[cfg(not(target_os = "linux"))]
@@ -29,7 +28,6 @@ pub use ledger::{LifecycleReceipt, ObjectReceipt, RootReceipt, SecondaryFailureR
 #[cfg(target_os = "linux")]
 pub use owner::{NativeIoLease, NativeIoOwner};
 pub use sql::OwnedConnection;
-pub use transaction_scope::TransactionScope;
 #[cfg(not(target_os = "linux"))]
 pub use unsupported::{registered_receipt, NativeIoLease, NativeIoOwner};
 #[cfg(target_os = "linux")]

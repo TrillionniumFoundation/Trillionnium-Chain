@@ -1,1 +1,0 @@
-{"command": ["cargo", "test", "--locked", "-p", "trnm-worker-agent", "--bin", "trnm-worker-agent", "--", "--test-threads=1"], "pid": 3721145, "source_sha256": "f80c0a93d58f1d148bd553f0ceba9d5bc92bd58692942c31353406a6d1216a99", "remaining_local_seconds": 404.10697682900354, "not_native_prepared": true}

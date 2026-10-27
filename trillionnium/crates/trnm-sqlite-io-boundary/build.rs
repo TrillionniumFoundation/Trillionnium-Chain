@@ -1,7 +1,4 @@
 //! Fail-closed build fence for the exact private Unix layout witness.
-mod build_loader_paths;
-
-use build_loader_paths::{canonical_directory, LoaderPaths};
 use sha2::{Digest, Sha256};
 use std::collections::BTreeSet;
 use std::env;
@@ -18,7 +15,7 @@ const AMALGAMATION_SHA256: &str =
     "9512509b1bccb7461f79bea8aad6280ae4699e925fa4804381b71f59e7efb0c5";
 const UPSTREAM_BUILD_SHA256: &str =
     "239297962bfdc78cd420b44142ee6801d2fc9375bf8470207669f416446ebb9e";
-const BUILD_FENCE: &str = "sqlite-3.51.3-normal-native-linux-layout-v3";
+const BUILD_FENCE: &str = "sqlite-3.51.3-normal-native-linux-layout-v2";
 const NM_OUTPUT_BYTES: usize = 16 * 1024;
 const NM_TIMEOUT: Duration = Duration::from_secs(20);
 const WITNESS_GLOBALS: [&str; 4] = [
@@ -171,10 +168,21 @@ fn pin_text(path: &Path, expected_bytes: u64, expected_sha256: &str) -> Result<(
 // and admit only the optional base profile output Cargo adds for build/test.
 // This is a path constraint, not a magic qualification token or a claim that
 // this process can recover the parent's original environment provenance.
-fn validate_cargo_loader_paths() -> Result<LoaderPaths, String> {
-    let target = env::var_os("CARGO_TARGET_DIR");
-    let mut paths = LoaderPaths::capture(target.as_deref())?;
-    let out = paths.out_directory(Path::new(&required("OUT_DIR")?))?;
+fn canonical_directory(path: &Path) -> Result<PathBuf, String> {
+    if !path.is_absolute() {
+        return Err("loader directory must be absolute".into());
+    }
+    let canonical = path
+        .canonicalize()
+        .map_err(|_| "loader directory missing")?;
+    if canonical != path || !canonical.is_dir() {
+        return Err("loader directory must be a canonical existing directory".into());
+    }
+    Ok(canonical)
+}
+
+fn validate_cargo_loader_paths() -> Result<(), String> {
+    let out = canonical_directory(Path::new(&required("OUT_DIR")?))?;
     if out.file_name() != Some(OsStr::new("out")) {
         return Err("unexpected Cargo OUT_DIR leaf".into());
     }
@@ -219,9 +227,8 @@ fn validate_cargo_loader_paths() -> Result<LoaderPaths, String> {
         return Err("unexpected compiler layout".into());
     }
     let toolchain = bin.parent().ok_or("missing compiler toolchain root")?;
-    let target_deps = paths.target_directory(&profile.join("deps"))?;
     let required: BTreeSet<PathBuf> = [
-        target_deps.clone(),
+        canonical_directory(&profile.join("deps"))?,
         canonical_directory(
             &toolchain
                 .join("lib")
@@ -240,8 +247,7 @@ fn validate_cargo_loader_paths() -> Result<LoaderPaths, String> {
     // build/test mode. This is one exact derived path, not any target subtree
     // or arbitrary native dependency build output.
     let mut allowed = required.clone();
-    let target_profile = paths.target_directory(profile)?;
-    if !allowed.insert(target_profile.clone()) {
+    if !allowed.insert(canonical_directory(profile)?) {
         return Err("base profile directory overlaps required loader set".into());
     }
     let value = env::var_os("LD_LIBRARY_PATH").ok_or("missing normal Cargo loader paths")?;
@@ -252,20 +258,7 @@ fn validate_cargo_loader_paths() -> Result<LoaderPaths, String> {
                 "extra Cargo loader directory: observed={path:?}; derived_normal={allowed:?}"
             ));
         }
-        let path = match canonical_directory(&path) {
-            Ok(canonical) => canonical,
-            Err(canonical_error) => {
-                let canonical = paths
-                    .target_alias_directory(&path)
-                    .map_err(|_| canonical_error)?;
-                if canonical != target_deps && canonical != target_profile {
-                    return Err(
-                        "held loader alias is not the exact profile or deps directory".into(),
-                    );
-                }
-                canonical
-            }
-        };
+        let path = canonical_directory(&path)?;
         if !allowed.contains(&path) || !seen.insert(path.clone()) {
             return Err(format!("unknown or duplicate Cargo loader directory: observed={path:?}; derived_normal={allowed:?}"));
         }
@@ -273,12 +266,11 @@ fn validate_cargo_loader_paths() -> Result<LoaderPaths, String> {
     if !required.is_subset(&seen) {
         return Err("normal Cargo loader directory set incomplete".into());
     }
-    paths.validate()?;
-    Ok(paths)
+    Ok(())
 }
 
-fn reject_external_overrides() -> Result<LoaderPaths, String> {
-    let paths = validate_cargo_loader_paths()?;
+fn reject_external_overrides() -> Result<(), String> {
+    validate_cargo_loader_paths()?;
     // cc's unqualified, HOST_/TARGET_, and target-qualified flag/tool inputs
     // are all rejected. A normal Cargo jobserver/OPT_LEVEL/DEBUG is retained.
     // Empty variables do not add flags. pkg-config's literal zero is the
@@ -347,7 +339,6 @@ fn reject_external_overrides() -> Result<LoaderPaths, String> {
         "RUSTC_WRAPPER",
         "RUSTC",
         "OUT_DIR",
-        "CARGO_TARGET_DIR",
         "PROFILE",
         "LIBSQLITE3_FLAGS",
         "CC",
@@ -373,14 +364,12 @@ fn reject_external_overrides() -> Result<LoaderPaths, String> {
     ] {
         println!("cargo:rerun-if-env-changed={name}");
     }
-    paths.validate()?;
-    Ok(paths)
+    Ok(())
 }
 
 fn main() {
     println!("cargo:rustc-check-cfg=cfg(trnm_sqlite_layout_witness)");
     println!("cargo:rerun-if-changed=build.rs");
-    println!("cargo:rerun-if-changed=build_loader_paths.rs");
     println!("cargo:rerun-if-changed=unix_layout_witness.c");
     println!("cargo:rerun-if-env-changed=DEP_SQLITE3_INCLUDE");
     println!("cargo:rerun-if-env-changed=HOST");
@@ -413,7 +402,7 @@ fn qualify_build() -> Result<(), String> {
             "only native little-endian Linux x86_64/aarch64 GNU or musl builds are admitted".into(),
         );
     }
-    let loader_paths = reject_external_overrides()?;
+    reject_external_overrides()?;
     let include = PathBuf::from(required("DEP_SQLITE3_INCLUDE")?)
         .canonicalize()
         .map_err(|_| "dependency did not expose a real bundled include directory")?;
@@ -473,18 +462,12 @@ fn qualify_build() -> Result<(), String> {
     if !(compiler.is_like_gnu() || compiler.is_like_clang()) {
         return Err("only the normal GNU/Clang native C ABI is admitted".into());
     }
-    loader_paths.validate()?;
     cfg.try_compile("trnm_sqlite_layout_witness").map_err(|_| {
         "the exact C layout witness did not compile; bounded API remains unsupported"
     })?;
-    loader_paths.validate()?;
     pin_text(&amalgamation, 9_390_466, AMALGAMATION_SHA256)?;
     pin_text(&dependency.join("build.rs"), 33_727, UPSTREAM_BUILD_SHA256)?;
-    loader_paths.validate()?;
     verify_witness_symbols(&PathBuf::from(required("OUT_DIR")?))?;
-    // Retain and revalidate the capability through C compile and nm; publish no
-    // qualifying cfg/fence until all original checks and this final check pass.
-    loader_paths.validate()?;
     println!("cargo:rustc-cfg=trnm_sqlite_layout_witness");
     println!("cargo:rustc-env=TRNM_SQLITE3_BUILD_FENCE={BUILD_FENCE}");
     println!("cargo:rustc-env=TRNM_SQLITE3_AMALGAMATION_SHA256={AMALGAMATION_SHA256}");

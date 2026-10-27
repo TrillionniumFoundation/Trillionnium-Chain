@@ -51,8 +51,12 @@ case "${1:?required job}" in
     cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-transport proof_admission --all-targets
     python3 formal/pon-nakamoto-v1/test_contracts.py
     python3 formal/pon-nakamoto-v1/test_invariants.py
+    python3 -B formal/pon-nakamoto-v1/test_daa_lease_research.py -v
+    python3 -B formal/pon-nakamoto-v1/test_daa_joint_liveness_boundaries.py -v
     cargo fetch --locked --manifest-path trillionnium/Cargo.toml
     cargo build --offline --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --bins --examples
+    cargo test --offline --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib daa_research_tests -- --test-threads=1
+    cargo test --offline --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib maintenance_recovers_signed_task_registration_and_policy_confirmation_after_revoke -- --test-threads=1
     python3 formal/pon-nakamoto-v1/test_account_archive_oracle.py -v
     python3 scripts/ci/run_account_archive_conformance.py
     python3 formal/pon-nakamoto-v1/test_account_execution_oracle.py -v

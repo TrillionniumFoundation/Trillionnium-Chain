@@ -128,3 +128,89 @@ impl LeaseEdge {
 #[cfg(test)]
 #[path = "operator_continuous_lease_tests.rs"]
 pub(crate) mod tests;
+
+
+/// Read-only Q4 overlap forecast for an independently signed *future* source
+/// statement. This never checks a signature or returns admission authority:
+/// the caller must re-read the actual parent, perform original dual-signature
+/// verification and submit tag22 before the old lease expires.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum Q4RenewalPhase {
+    AwaitSignedWindow,
+    WindowOpenByTime,
+    AtRisk,
+    Expired,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct Q4RenewalForecast {
+    pub phase: Q4RenewalPhase,
+    pub earliest_possible_height: u64,
+    pub last_legal_height: u64,
+    pub inclusion_slack_blocks: u64,
+    pub assumed_queue_lag_blocks: u64,
+    pub assumed_safety_margin_blocks: u64,
+}
+
+/// Conservative timing *advice*, not a scheduler, lease issuer or consensus
+/// validity check. Assumed lag/margin have no network guarantee. Every call
+/// must use the active parent branch's canonical original lease and an already
+/// independently prepared successor; reorg or signature withdrawal invalidates
+/// the forecast.
+pub fn forecast_q4_renewal_window(
+    old: &DemandLeaseV2,
+    next: &DemandLeaseV2,
+    next_block_height: u64,
+    assumed_queue_lag_blocks: u64,
+    assumed_safety_margin_blocks: u64,
+) -> Result<Q4RenewalForecast> {
+    check(old.encode().is_ok() && next.encode().is_ok())?;
+    check(
+        old.network == next.network
+            && old.parameters == next.parameters
+            && old.slot == next.slot
+            && old.generation == next.generation
+            && old.demand_id == next.demand_id
+            && old.requester == next.requester
+            && old.source == next.source
+            && old.purpose == next.purpose
+            && old.cost_class == next.cost_class
+            && old.source_record == next.source_record
+            && old.authorization_scope == next.authorization_scope
+            && old.availability_manifest == next.availability_manifest
+            && old.availability_root == next.availability_root
+            && old.revision.checked_add(1) == Some(next.revision)
+            && old.not_before <= next.not_before
+            && next.not_before <= old.expires
+            && next.expires > old.expires,
+    )?;
+    check(
+        assumed_queue_lag_blocks <= 1000 && assumed_safety_margin_blocks <= 1000,
+    )?;
+    let need = assumed_queue_lag_blocks
+        .checked_add(assumed_safety_margin_blocks)
+        .ok_or(PolicyError::Budget)?;
+    let earliest = next_block_height.max(next.not_before);
+    let remaining = old.expires.saturating_sub(earliest);
+    // If the future signed window opens too near old.expires, the assumed
+    // queue delay plus safety margin may already be impossible. Report that
+    // risk even before next.not_before; an advisory AwaitSignedWindow alone
+    // would hide the exhausted height budget. This is not admission authority.
+    let phase = if next_block_height > old.expires {
+        Q4RenewalPhase::Expired
+    } else if remaining < need {
+        Q4RenewalPhase::AtRisk
+    } else if next_block_height < next.not_before {
+        Q4RenewalPhase::AwaitSignedWindow
+    } else {
+        Q4RenewalPhase::WindowOpenByTime
+    };
+    Ok(Q4RenewalForecast {
+        phase,
+        earliest_possible_height: earliest,
+        last_legal_height: old.expires,
+        inclusion_slack_blocks: remaining,
+        assumed_queue_lag_blocks,
+        assumed_safety_margin_blocks,
+    })
+}

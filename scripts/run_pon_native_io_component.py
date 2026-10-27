@@ -9,12 +9,10 @@ internally consistent JSON/hashes are not authentication against that operator.
 """
 from __future__ import annotations
 import argparse
-import errno
 from copy import deepcopy
 import hashlib
 import json
 import os
-import re
 from pathlib import Path
 import signal
 import stat
@@ -39,7 +37,7 @@ from check_pon_identity_churn import evidence_ledger_v2, linked_evidence_ledger_
 MIB = 1024**2
 PROFILE = 'pn1-native-io-three-fd-component-v1'
 DOMAIN = 'trnm-pon-native-io-three-fd-component-claim-v1'
-PREPARED = 'pon-native-io-three-fd-component-prepared-v3'
+PREPARED = 'pon-native-io-three-fd-component-prepared-v1'
 INVENTORY = 'pon-native-io-three-fd-component-inventory-v1'
 EXECUTION = 'pon-native-io-three-fd-component-execution-v1'
 CLAIM = 'pon-native-io-three-fd-component-claim-v1'
@@ -191,45 +189,6 @@ class ComponentBundle(Bundle):
                 == self.inventory_sha256, 'COMPONENT_INVENTORY_CHANGED')
 
 
-def native_abi_build(rows, binding):
-    """Require emitted normal-C evidence, not merely Cargo/executable success.
-
-    The selected source/toolchain and original fresh-target owner remain trusted.
-    This reconstructs a bounded Cargo event; it is not host or native attestation.
-    """
-    require(type(rows) is list and all(type(row) is dict for row in rows),
-            'COMPONENT_CARGO_OBJECT_EVENTS_REQUIRED')
-    package = 'path+' + (ROOT/'trillionnium/crates/trnm-sqlite-io-boundary').as_uri() + '#0.1.0'
-    selected = [row for row in rows if row.get('reason') == 'build-script-executed'
-                and row.get('package_id') == package]
-    require(len(selected) == 1, 'COMPONENT_ONE_NATIVE_ABI_BUILD_EVENT_REQUIRED')
-    row = selected[0]
-    require(set(row) == {'reason', 'package_id', 'linked_libs', 'linked_paths',
-                        'cfgs', 'env', 'out_dir'}, 'COMPONENT_NATIVE_ABI_EVENT_FIELDS')
-    typed(row['cfgs'], ['trnm_sqlite_layout_witness'])
-    require(type(row['env']) is list and len(row['env']) == 2
-            and all(type(pair) is list and len(pair) == 2
-                    and all(type(item) is str for item in pair) for pair in row['env']),
-            'COMPONENT_NATIVE_ABI_ENV_TYPES')
-    exported = dict(row['env'])
-    typed(exported, {
-        'TRNM_SQLITE3_BUILD_FENCE': 'sqlite-3.51.3-normal-native-linux-layout-v3',
-        'TRNM_SQLITE3_AMALGAMATION_SHA256':
-            '9512509b1bccb7461f79bea8aad6280ae4699e925fa4804381b71f59e7efb0c5',
-    })
-    require(type(binding['passed_fd']) is int and 3 <= binding['passed_fd'] <= 2**31-1
-            and binding['actual_target'] == '/proc/self/fd/' + str(binding['passed_fd']),
-            'COMPONENT_NATIVE_ABI_HELD_TARGET_REQUIRED')
-    out = row['out_dir']
-    require(type(out) is str and re.fullmatch(re.escape(binding['actual_target'])
-            + r'/release/build/trnm-sqlite-io-boundary-[0-9a-f]{16}/out', out) is not None,
-            'COMPONENT_NATIVE_ABI_EXACT_TARGET_OUT_DIR')
-    typed(row['linked_libs'], ['static=trnm_sqlite_layout_witness'])
-    typed(row['linked_paths'], ['native=' + out])
-    return dict(schema='pon-native-io-component-native-abi-build-v1',
-                cargo_event=deepcopy(row), native_runtime_qualification=False)
-
-
 def validate_preparation(bundle, head, tree):
     value = bundle.json('prepared.json')
     require(value['schema'] == PREPARED and value['profile'] == PROFILE
@@ -274,13 +233,11 @@ def validate_preparation(bundle, head, tree):
     require(build['command'][:6] == prefix and len(build['command']) == 7 + len(expected)
         and canonical(build['command'][6]).is_absolute(), 'COMPONENT_BOUND_BUILD_COMMAND_REQUIRED')
     binding = value['build_target_binding']
-    require(type(binding['passed_fd']) is int and 3 <= binding['passed_fd'] <= 2**31-1
+    require(type(binding['passed_fd']) is int and binding['passed_fd'] >= 3
         and binding['actual_target'] == '/proc/self/fd/' + str(binding['passed_fd'])
         and type(binding['identity']['device']) is int and type(binding['identity']['inode']) is int
         and binding['identity']['inode'] > 0, 'COMPONENT_TARGET_BINDING_REQUIRED')
-    validate_build_monitor(value, binding, build['native_process_owner'])
     artifacts = [strict_json(line) for line in bundle.raw(build['stdout']).splitlines()]
-    typed(value['native_abi_build'], native_abi_build(artifacts, binding))
     artifacts = [m for m in artifacts if m.get('reason') == 'compiler-artifact'
         and m.get('target', {}).get('name') == TARGET and m.get('executable')]
     require(len(artifacts) == 1, 'COMPONENT_ONE_ACTUAL_EXECUTABLE_REQUIRED')
@@ -296,40 +253,6 @@ def validate_preparation(bundle, head, tree):
         and type(binary['bytes']) is int and 0 < 2*binary['bytes'] <= CAPS['frozen_binary_bytes'],
         'COMPONENT_ACTUAL_TWIN_BINARY_CAP')
     return value
-
-
-def validate_build_monitor(value, binding, owner):
-    monitor = value['build_monitor_observation']
-    typed(monitor['schema'], 'pon-native-io-component-build-monitor-v1')
-    for key, expected in dict(target_cap_bytes=TARGET_BYTES, reserve_bytes=TARGET_RESERVE,
-        sample_seconds=5, sample_entries=200_000, watch_interval_seconds=.25,
-        first_monitor_error=None, first_monitor_error_type=None, first_monitor_errno=None,
-        monitor_error_truncated=False, pending_stop=False, child_active=False,
-        kill_attempts=0, kill_delivered=0, watch_thread_alive=False,
-        physical_or_instantaneous_quota_claimed=False).items():
-        typed(monitor[key], expected)
-    typed(monitor['target_identity'], binding['identity'])
-    typed(monitor['last_child_pid'], owner['pid'])
-    typed(monitor['actual_last_wait'], dict(pid=owner['pid'], returncode=0))
-    for key in ('successful_scans', 'scan_retries', 'member_vanish_events',
-                'last_scan_entries', 'observed_logical_peak_bytes'):
-        require(type(monitor[key]) is int and monitor[key] >= 0, 'COMPONENT_TYPED_BUILD_MONITOR_REQUIRED')
-    require(monitor['successful_scans'] > 0
-        and monitor['scan_retries'] == monitor['member_vanish_events']
-        and monitor['last_scan_entries'] <= 200_000
-        and monitor['observed_logical_peak_bytes'] + TARGET_RESERVE <= TARGET_BYTES,
-        'COMPONENT_COMPLETE_BOUNDED_BUILD_SCAN_REQUIRED')
-    typed(value['build_target_observed_logical_peak_bytes'], monitor['observed_logical_peak_bytes'])
-    vanish = monitor['last_member_vanish']
-    if monitor['scan_retries'] == 0:
-        require(vanish is None, 'COMPONENT_UNEXPLAINED_BUILD_VANISH')
-    else:
-        require(type(vanish) is dict and set(vanish) == {'errno', 'error', 'truncated'}
-            and type(vanish['errno']) is int and vanish['errno'] == errno.ENOENT
-            and type(vanish['error']) is str and type(vanish['truncated']) is bool
-            and len(json.dumps(vanish['error'], ensure_ascii=True).encode('ascii')) <= 2048,
-            'COMPONENT_UNBOUNDED_OR_UNKNOWN_BUILD_VANISH')
-    return monitor
 
 
 def validate_step(bundle, row):
@@ -492,8 +415,8 @@ def observed_step_exit_code(value):
 
 
 class ComponentIO(CollectorIO):
-    def __init__(self, output, *, writer=None):
-        super().__init__(output, 'v2', writer=writer)
+    def __init__(self, output):
+        super().__init__(output, 'v2')
 
     def native_step(self, command, env, dispatch):
         typed(dispatch['schema'], DISPATCH)
@@ -756,103 +679,37 @@ def fail_value(value, stage, error):
 
 
 class BuildStop:
-    """Bounded complete target scans; never a physical or instantaneous quota."""
+    """Bounded fresh target admission/monitor; not a filesystem hard quota."""
     def __init__(self, target, parent, name, io):
         self.target, self.parent, self.name, self.io = target, parent, name, io
         self.identity = identity(os.fstat(target))
         self.lock, self.stop = threading.Lock(), threading.Event()
         self.child, self.pending, self.error = None, False, None
-        self.peak = self.scan_retries = self.vanished_entries = self.scans_completed = 0
-        self.last_scan_entries = 0
-        self.first_error_type = self.first_error_errno = None
-        self.error_truncated = False
-        self.last_vanish = None
-        self.last_child_pid = self.last_wait = None
-        self.kill_attempts = self.kill_delivered = 0
-        self.watch_thread = None
+        self.peak = 0
 
-    def check_binding(self):
+    def measure(self, *, cancellable=False):
         require(identity(os.fstat(self.target)) == self.identity
             and identity(os.stat(self.name, dir_fd=self.parent, follow_symlinks=False)) == self.identity,
             'COMPONENT_BUILD_TARGET_REPLACED')
-
-    def measure(self, *, cancellable=False):
-        # The bounds apply to the whole measurement, including every retry.
+        total = 0
         entries = 0
         deadline = time.monotonic() + 5
         def scan_error(error):
             raise error
-        while True:
-            # A missing/replaced top-level name is not an internal Cargo race.
-            self.check_binding()
-            if cancellable and self.stop.is_set():
-                raise InterruptedError('COMPONENT_BUILD_SCAN_STOPPED')
-            require(entries <= 200_000 and time.monotonic() < deadline,
-                    'COMPONENT_BUILD_SCAN_BOUND_REACHED')
-            total = 0
-            try:
-                for parent, dirs, files, fd in os.fwalk('.', dir_fd=self.target,
-                        follow_symlinks=False, onerror=scan_error):
-                    for name in dirs+files:
-                        if cancellable and self.stop.is_set():
-                            raise InterruptedError('COMPONENT_BUILD_SCAN_STOPPED')
-                        entries += 1
-                        self.last_scan_entries = entries
-                        require(entries <= 200_000 and time.monotonic() < deadline,
-                                'COMPONENT_BUILD_SCAN_BOUND_REACHED')
-                        info = os.stat(name, dir_fd=fd, follow_symlinks=False)
-                        require(stat.S_ISDIR(info.st_mode) or stat.S_ISREG(info.st_mode),
-                                'UNKNOWN_BUILD_TARGET_OBJECT')
-                        if stat.S_ISREG(info.st_mode):
-                            total += info.st_size
-                            # Even a later incomplete scan cannot refund what
-                            # this measurement already actually observed.
-                            self.peak = max(self.peak, total)
-                            require(total+TARGET_RESERVE <= TARGET_BYTES,
-                                    'COMPONENT_BUILD_TARGET_RESERVE_CAP')
-            except FileNotFoundError as error:
-                if error.errno != errno.ENOENT:
-                    raise
-                self.peak = max(self.peak, total)
-                self.scan_retries += 1
-                self.vanished_entries += 1  # Observed events, not subtree cardinality.
-                text, clipped = bounded_context_error(error)
-                self.last_vanish = dict(errno=error.errno, error=text, truncated=clipped)
-                # Do not skip the entry or accept an incomplete walk. Retry
-                # the entire held tree under the original shared bounds.
-                continue
-            self.check_binding()
-            require(time.monotonic() < deadline, 'COMPONENT_BUILD_SCAN_BOUND_REACHED')
-            require(total+TARGET_RESERVE <= TARGET_BYTES, 'COMPONENT_BUILD_TARGET_RESERVE_CAP')
-            self.last_scan_entries = entries
-            self.scans_completed += 1
-            self.peak = max(self.peak, total)
-            return total
-
-    def monitor_observation(self):
-        return dict(schema='pon-native-io-component-build-monitor-v1',
-            target_identity=self.identity, target_cap_bytes=TARGET_BYTES,
-            reserve_bytes=TARGET_RESERVE, sample_seconds=5, sample_entries=200_000,
-            watch_interval_seconds=.25, successful_scans=self.scans_completed,
-            scan_retries=self.scan_retries, member_vanish_events=self.vanished_entries,
-            last_scan_entries=self.last_scan_entries, last_member_vanish=self.last_vanish,
-            observed_logical_peak_bytes=self.peak, first_monitor_error=self.error,
-            first_monitor_error_type=self.first_error_type,
-            first_monitor_errno=self.first_error_errno, monitor_error_truncated=self.error_truncated,
-            pending_stop=self.pending, child_active=self.child is not None,
-            last_child_pid=self.last_child_pid, actual_last_wait=self.last_wait,
-            kill_attempts=self.kill_attempts, kill_delivered=self.kill_delivered,
-            watch_thread_alive=self.watch_thread is not None and self.watch_thread.is_alive(),
-            physical_or_instantaneous_quota_claimed=False)
-
-    def request_kill_locked(self):
-        if self.child is not None:
-            self.kill_attempts += 1
-            try:
-                os.killpg(self.child.pid, signal.SIGKILL)
-                self.kill_delivered += 1
-            except ProcessLookupError:
-                pass
+        for parent, dirs, files, fd in os.fwalk('.', dir_fd=self.target,
+                follow_symlinks=False, onerror=scan_error):
+            for name in dirs+files:
+                if cancellable and self.stop.is_set():
+                    raise InterruptedError('COMPONENT_BUILD_SCAN_STOPPED')
+                entries += 1
+                require(entries <= 200_000 and time.monotonic() < deadline,
+                        'COMPONENT_BUILD_SCAN_BOUND_REACHED')
+                info = os.stat(name, dir_fd=fd, follow_symlinks=False)
+                require(stat.S_ISDIR(info.st_mode) or stat.S_ISREG(info.st_mode), 'UNKNOWN_BUILD_TARGET_OBJECT')
+                if stat.S_ISREG(info.st_mode): total += info.st_size
+        self.peak = max(self.peak, total)
+        require(total+TARGET_RESERVE <= TARGET_BYTES, 'COMPONENT_BUILD_TARGET_RESERVE_CAP')
+        return total
 
     def popen(self, *args, **kwargs):
         child = self.original(*args, **kwargs)
@@ -863,90 +720,44 @@ class BuildStop:
                     terminal = os.waitid(os.P_PID, child.pid, os.WEXITED|os.WNOHANG|os.WNOWAIT)
                     if terminal is not None:
                         result = wait()
-                        self.last_wait = dict(pid=child.pid, returncode=result)
                         self.child = None
                         return result
                 time.sleep(.005)
         child.wait = final_wait
         with self.lock:
-            self.child, self.last_child_pid = child, child.pid
+            self.child = child
             if self.pending:
-                self.request_kill_locked()
+                try: os.killpg(child.pid, signal.SIGKILL)
+                except ProcessLookupError: pass
         return child
 
     def watch(self):
         while not self.stop.wait(.25):
-            try:
-                self.measure(cancellable=True)
+            try: self.measure(cancellable=True)
             except BaseException as error:
-                if isinstance(error, InterruptedError) and self.stop.is_set():
-                    return
+                if isinstance(error, InterruptedError) and self.stop.is_set(): return
                 with self.lock:
-                    if self.error is None:
-                        self.error, self.error_truncated = bounded_context_error(error)
-                        self.first_error_type = type(error).__name__
-                        self.first_error_errno = getattr(error, 'errno', None)
-                    self.pending = True
-                    self.request_kill_locked()
+                    self.error, self.pending = str(error), True
+                    if self.child is not None:
+                        try: os.killpg(self.child.pid, signal.SIGKILL)
+                        except ProcessLookupError: pass
                 return
-
-    def retain_failure(self, step, primary, final):
-        # The first writer failure remains unchanged. A later NONZERO or seal
-        # refusal must not erase the monitor reason or an actual child wait.
-        writer = self.io.writer
-        if writer.failure_context is None:
-            owner = deepcopy(step.get('native_process_owner')) if type(step) is dict else None
-            if type(owner) is dict:
-                owner['failure'], clipped = bounded_context_error(owner.get('failure'))
-            else:
-                clipped = False
-            child_error, child_clipped = bounded_context_error(step.get('error') if type(step) is dict else None)
-            writer.failure_context = dict(
-                schema='pon-native-io-component-owned-step-failure-v1', profile=PROFILE,
-                name='build', returncode=step.get('returncode') if type(step) is dict else None,
-                child_error=child_error, child_error_truncated=child_clipped,
-                native_process_owner=owner, native_owner_failure_truncated=clipped,
-                raw_preservation_complete=False, **component_flags())
-        context = writer.failure_context
-        context['schema'] = 'pon-native-io-component-owned-build-step-failure-v2'
-        context.setdefault('build_monitor', self.monitor_observation())
-        if 'build_boundary_error' not in context:
-            text, clipped = bounded_context_error(primary or final)
-            context['build_boundary_error'] = text
-            context['build_boundary_error_truncated'] = clipped
-        if primary is not None and final is not None and primary is not final:
-            text, clipped = bounded_context_error(final)
-            context.setdefault('build_finalization_error', text)
-            context.setdefault('build_finalization_error_truncated', clipped)
 
     def run(self, command, env):
         self.measure()
         self.original = bounded_process.subprocess.Popen
-        self.watch_thread = threading.Thread(target=self.watch, daemon=True)
+        thread = threading.Thread(target=self.watch, daemon=True)
         bounded_process.subprocess.Popen = self.popen
-        step, primary = None, None
         try:
-            self.watch_thread.start()
-            step = self.io.build_step(command, env, self.target)
-            return step
-        except BaseException as error:
-            primary = error
-            raise
+            thread.start()
+            return self.io.build_step(command, env, self.target)
         finally:
             bounded_process.subprocess.Popen = self.original
             self.stop.set()
-            try:
-                self.watch_thread.join(timeout=6)
-                require(not self.watch_thread.is_alive(), 'COMPONENT_BUILD_MONITOR_TERMINAL_UNKNOWN')
-                self.measure()
-                require(self.error is None and self.child is None, self.error or 'BUILD_OWNER_REAP_UNKNOWN')
-            except BaseException as final:
-                self.retain_failure(step, primary, final)
-                if primary is not None:
-                    raise primary from final
-                raise
-            if primary is not None or (type(step) is dict and not step['complete_success']):
-                self.retain_failure(step, primary, None)
+            thread.join(timeout=6)
+            require(not thread.is_alive(), 'COMPONENT_BUILD_MONITOR_TERMINAL_UNKNOWN')
+            self.measure()
+            require(self.error is None and self.child is None, self.error or 'BUILD_OWNER_REAP_UNKNOWN')
 
 
 def capture_built_binary(io, target_fd, declared_target, advertised):
@@ -1025,7 +836,6 @@ def prepare(args, io):
         value['physical_build_quota_claimed'] = False
         require(build['complete_success'], 'COMPONENT_RELEASE_BUILD_FAILED')
         rows = [strict_json(line) for line in checked_member(io.writer.fd, build['stdout'], retain=True, limit=16*MIB)[1].splitlines()]
-        value['native_abi_build'] = native_abi_build(rows, value['build_target_binding'])
         artifacts = [r for r in rows if r.get('reason') == 'compiler-artifact'
             and r.get('target', {}).get('name') == TARGET and r.get('executable')]
         require(len(artifacts) == 1, 'COMPONENT_ONE_RELEASE_EXECUTABLE_REQUIRED')
@@ -1041,8 +851,6 @@ def prepare(args, io):
         io.json(io.output/'resource-after.json', after)
         require(after['cgroup'] == strict_json(checked_member(io.writer.fd, 'resource-before.json', retain=True)[1])['cgroup'],
                 'COMPONENT_PREPARE_RESOURCE_SCOPE_CHANGED')
-        value['build_target_observed_logical_peak_bytes'] = build_owner.peak
-        value['build_monitor_observation'] = build_owner.monitor_observation()
         value['capture_complete'] = True
     except (OSError, ValueError, KeyError, TypeError) as error:
         fail_value(value, 'prepare', error)

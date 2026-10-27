@@ -13,6 +13,7 @@ mod operator_continuous_cpu;
 mod operator_continuous_history;
 mod operator_continuous_lease;
 pub mod operator_continuous_policy;
+pub use operator_continuous_lease::{forecast_q4_renewal_window, Q4RenewalForecast, Q4RenewalPhase};
 pub mod operator_continuous_pool;
 mod operator_continuous_recipient;
 mod operator_continuous_recovery;
@@ -734,7 +735,7 @@ pub(crate) mod packet_encoding_tests {
         match (packet.encode(), reference(packet)) {
             (Ok(actual), Ok(expected)) => assert_eq!(actual, expected),
             (Err(actual), Err(expected)) => assert_eq!(actual.to_string(), expected.to_string()),
-            (_actual, _expected) => panic!("codec disagreement"),
+            (actual, expected) => panic!("codec disagreement: {actual:?} {expected:?}"),
         }
     }
 

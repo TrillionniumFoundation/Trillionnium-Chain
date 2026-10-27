@@ -4528,3 +4528,17 @@ outside the shared layout; it does not guarantee physical WAL size. All twenty
 guards, eight original lanes, assertions and resource limits remain. Source
 identity agreement grants no SQL, C ABI, layout, two-second service or native
 qualification; the original lane executions and fullT/Layout003 remain open.
+
+
+## Isolated lease-continuity and DAA research continuation (no activation)
+
+The additive [lease/DAA research acceptance contract](specs/pon/LEASE_DAA_RESEARCH_V1.md)
+exercises the existing revision12 maintenance/no-lease boundary, Q4 temporal
+negative cases, and independent integer ASERT variants. It preserves all prior
+signed domains, profiles, genesis and M02 work/retarget/time rules. The new
+native ASERT arithmetic is research-only and has **no** Node or mining call.
+The Python integer oracle/campaign is synthetic and does not issue W1 proofs,
+independent operators or deployment receipts. PN1 work-cost hardness, PN2
+native cross-version integration, PN3 ordinary Hepta, PN5 hostile WAN,
+physical loss and independent security qualification remain open; no flag
+may be promoted from these scoped tests.

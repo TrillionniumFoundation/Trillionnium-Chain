@@ -1512,10 +1512,7 @@ fn actual_membership_readiness_does_not_replace_installed_confirmation() {
         .unwrap()
         .confirmation(transaction, included, ingress::now().unwrap())
         .unwrap();
-    assert!(
-        final_observation.confirmed,
-        "final transaction confirmation was not reached"
-    );
+    assert!(final_observation.confirmed, "{final_observation:?}");
 }
 
 #[test]

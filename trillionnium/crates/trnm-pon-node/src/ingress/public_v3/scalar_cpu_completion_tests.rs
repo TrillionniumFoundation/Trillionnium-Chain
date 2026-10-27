@@ -291,7 +291,10 @@ fn only_fresh_successful_native_w1_promotes_not_false_product_or_existing_packet
         if index == 0 {
             assert_eq!(outcome.unwrap_err().to_string(), "WORK:Product");
         } else {
-            assert!(outcome.is_ok(), "native completion/replay failed");
+            assert!(
+                outcome.is_ok(),
+                "native completion/replay failed: {outcome:?}"
+            );
         }
         assert_eq!(
             server.mutation_cpu.lock().unwrap().verified_completions,
@@ -386,7 +389,7 @@ fn same_valid_w1_native_invalid_packet_cannot_reacquire_completion_priority() {
         assert!(
             matches!(&outcome, Err(error) if error.to_string() == "ROOT"
             && !error.requires_owner_stop()),
-            "full-W1 native-invalid outcome changed"
+            "full-W1 native-invalid outcome changed: {outcome:?}"
         );
         assert_eq!(node.lock().unwrap().read_active().unwrap(), before);
         assert!(node

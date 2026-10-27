@@ -3193,13 +3193,6 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
-        "trillionnium/crates/trnm-pon-node/examples/pon_w1_real_header_reuse_v1.rs",
-        include_bytes!(concat!(
-            env!("CARGO_MANIFEST_DIR"),
-            "/../../../trillionnium/crates/trnm-pon-node/examples/pon_w1_real_header_reuse_v1.rs"
-        )),
-    ),
-    (
         "trillionnium/crates/trnm-pon-node/examples/public_pool_fixture.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -3239,13 +3232,6 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-pon-node/examples/support/w1_from_zero.rs"
-        )),
-    ),
-    (
-        "trillionnium/crates/trnm-pon-node/examples/support/w1_real_header_reuse_v1.rs",
-        include_bytes!(concat!(
-            env!("CARGO_MANIFEST_DIR"),
-            "/../../../trillionnium/crates/trnm-pon-node/examples/support/w1_real_header_reuse_v1.rs"
         )),
     ),
     (
@@ -4166,34 +4152,6 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
-        "trillionnium/crates/trnm-pon-node/src/store/shared_snapshot.rs",
-        include_bytes!(concat!(
-            env!("CARGO_MANIFEST_DIR"),
-            "/../../../trillionnium/crates/trnm-pon-node/src/store/shared_snapshot.rs"
-        )),
-    ),
-    (
-        "trillionnium/crates/trnm-pon-node/src/store/shared_snapshot_binding.rs",
-        include_bytes!(concat!(
-            env!("CARGO_MANIFEST_DIR"),
-            "/../../../trillionnium/crates/trnm-pon-node/src/store/shared_snapshot_binding.rs"
-        )),
-    ),
-    (
-        "trillionnium/crates/trnm-pon-node/src/store/shared_snapshot_tests.rs",
-        include_bytes!(concat!(
-            env!("CARGO_MANIFEST_DIR"),
-            "/../../../trillionnium/crates/trnm-pon-node/src/store/shared_snapshot_tests.rs"
-        )),
-    ),
-    (
-        "trillionnium/crates/trnm-pon-node/src/store/shared_snapshot_transaction_tests.rs",
-        include_bytes!(concat!(
-            env!("CARGO_MANIFEST_DIR"),
-            "/../../../trillionnium/crates/trnm-pon-node/src/store/shared_snapshot_transaction_tests.rs"
-        )),
-    ),
-    (
         "trillionnium/crates/trnm-pon-node/src/store/storage_service.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -5111,20 +5069,6 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
-        "trillionnium/crates/trnm-sqlite-io-boundary/build_loader_paths.rs",
-        include_bytes!(concat!(
-            env!("CARGO_MANIFEST_DIR"),
-            "/../../../trillionnium/crates/trnm-sqlite-io-boundary/build_loader_paths.rs"
-        )),
-    ),
-    (
-        "trillionnium/crates/trnm-sqlite-io-boundary/build_loader_paths_tests.rs",
-        include_bytes!(concat!(
-            env!("CARGO_MANIFEST_DIR"),
-            "/../../../trillionnium/crates/trnm-sqlite-io-boundary/build_loader_paths_tests.rs"
-        )),
-    ),
-    (
         "trillionnium/crates/trnm-sqlite-io-boundary/src/ledger.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -5150,20 +5094,6 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-sqlite-io-boundary/src/sql.rs"
-        )),
-    ),
-    (
-        "trillionnium/crates/trnm-sqlite-io-boundary/src/transaction_scope.rs",
-        include_bytes!(concat!(
-            env!("CARGO_MANIFEST_DIR"),
-            "/../../../trillionnium/crates/trnm-sqlite-io-boundary/src/transaction_scope.rs"
-        )),
-    ),
-    (
-        "trillionnium/crates/trnm-sqlite-io-boundary/src/transaction_scope_tests.rs",
-        include_bytes!(concat!(
-            env!("CARGO_MANIFEST_DIR"),
-            "/../../../trillionnium/crates/trnm-sqlite-io-boundary/src/transaction_scope_tests.rs"
         )),
     ),
     (

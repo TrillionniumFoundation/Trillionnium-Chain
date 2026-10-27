@@ -102,3 +102,84 @@ fn mode5_lease_edge_forbids_duplicate_or_unknown_json_fields_and_partial_lease()
         .truncate(edge.new_complete_lease.len() - 2);
     assert!(edge.payload().is_err());
 }
+
+
+#[test]
+fn q4_renewal_window_is_advisory_and_never_resurrects_expired_source() {
+    let (_, _, edge) = fixture();
+    let old = DemandLeaseV2::decode(&hex::decode(&edge.old_complete_lease).unwrap()).unwrap();
+    let next = DemandLeaseV2::decode(&hex::decode(&edge.new_complete_lease).unwrap()).unwrap();
+
+    let ready = forecast_q4_renewal_window(&old, &next, 50, 5, 10).unwrap();
+    assert_eq!(ready.phase, Q4RenewalPhase::WindowOpenByTime);
+    assert_eq!(ready.earliest_possible_height, 50);
+    assert_eq!(ready.last_legal_height, 100);
+    assert_eq!(ready.inclusion_slack_blocks, 50);
+
+    let risk = forecast_q4_renewal_window(&old, &next, 90, 10, 10).unwrap();
+    assert_eq!(risk.phase, Q4RenewalPhase::AtRisk);
+    assert_eq!(risk.inclusion_slack_blocks, 10);
+
+    // Inclusion at the final legal height is valid only with no modeled delay.
+    assert_eq!(
+        forecast_q4_renewal_window(&old, &next, 100, 0, 0).unwrap().phase,
+        Q4RenewalPhase::WindowOpenByTime,
+    );
+    assert_eq!(
+        forecast_q4_renewal_window(&old, &next, 101, 0, 0).unwrap().phase,
+        Q4RenewalPhase::Expired,
+    );
+    assert_eq!(
+        forecast_q4_renewal_window(&old, &next, 101, 0, 0)
+            .unwrap().inclusion_slack_blocks,
+        0,
+    );
+
+    let mut later = next.clone();
+    later.not_before = 95;
+    assert_eq!(
+        forecast_q4_renewal_window(&old, &later, 50, 0, 0).unwrap().phase,
+        Q4RenewalPhase::AwaitSignedWindow,
+    );
+    assert_eq!(
+        forecast_q4_renewal_window(&old, &later, 50, 0, 0)
+            .unwrap().earliest_possible_height,
+        95,
+    );
+
+    // New future signed start 95 is legally possible only through height
+    // 100, leaving five inclusion heights. Queue lag 10 + margin 10 is
+    // already impossible even at observation height 50: do not report merely
+    // AwaitSignedWindow when the configured timing budget cannot fit.
+    let future_but_at_risk =
+        forecast_q4_renewal_window(&old, &later, 50, 10, 10).unwrap();
+    assert_eq!(future_but_at_risk.phase, Q4RenewalPhase::AtRisk);
+    assert_eq!(future_but_at_risk.earliest_possible_height, 95);
+    assert_eq!(future_but_at_risk.last_legal_height, 100);
+    assert_eq!(future_but_at_risk.inclusion_slack_blocks, 5);
+    assert_eq!(future_but_at_risk.assumed_queue_lag_blocks, 10);
+    assert_eq!(future_but_at_risk.assumed_safety_margin_blocks, 10);
+
+    // Existing zero-lag case remains AwaitSignedWindow, and an already
+    // expired observed height takes precedence over any remaining timing risk.
+    assert_eq!(
+        forecast_q4_renewal_window(&old, &later, 101, 10, 10)
+            .unwrap()
+            .phase,
+        Q4RenewalPhase::Expired,
+    );
+
+    let mut bad = next.clone();
+    bad.revision = old.revision;
+    assert!(forecast_q4_renewal_window(&old, &bad, 50, 0, 0).is_err());
+    bad = next.clone();
+    bad.source = [77; 32];
+    assert!(forecast_q4_renewal_window(&old, &bad, 50, 0, 0).is_err());
+    bad = next.clone();
+    bad.not_before = 101;
+    assert!(forecast_q4_renewal_window(&old, &bad, 50, 0, 0).is_err());
+    assert!(forecast_q4_renewal_window(&old, &next, 50, u64::MAX, 1).is_err());
+
+    // Forecast never verifies requester/source signatures or signs replacements.
+    // A reorg must re-read the actual parent lease and inspect it again.
+}
