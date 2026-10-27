@@ -418,17 +418,22 @@ class ExecutionBoundaryTests(unittest.TestCase):
     def test_zero_match_exit_zero_is_still_failure(self):
         result, _ = self.exercise(zero=driver.TESTS[0])
         self.assertFalse(result['passed'])
-        self.assertEqual([r['passed'] for r in result['runs']], [False, True, True, True])
+        self.assertEqual([r['name'] for r in result['runs']], list(driver.TESTS))
+        self.assertEqual([r['passed'] for r in result['runs']],
+                         [False] + [True] * (len(driver.TESTS) - 1))
 
     def test_ignored_exit_zero_is_still_failure(self):
         result, _ = self.exercise(ignored=driver.TESTS[1])
         self.assertFalse(result['passed'])
-        self.assertEqual([r['passed'] for r in result['runs']], [True, False, True, True])
+        self.assertEqual([r['name'] for r in result['runs']], list(driver.TESTS))
+        self.assertEqual([r['passed'] for r in result['runs']],
+                         [True, False] + [True] * (len(driver.TESTS) - 2))
 
     def test_nonzero_exit_cannot_be_overridden_by_success_text(self):
         result, _ = self.exercise(fail=driver.TESTS[0])
         self.assertFalse(result['passed'])
-        self.assertEqual(len(result['runs']), 4)
+        self.assertEqual([r['name'] for r in result['runs']], list(driver.TESTS))
+        self.assertEqual(len(result['runs']), len(driver.TESTS))
         self.assertFalse(result['runs'][0]['passed'])
 
     def test_timeout_cannot_be_overridden_by_success_text(self):
