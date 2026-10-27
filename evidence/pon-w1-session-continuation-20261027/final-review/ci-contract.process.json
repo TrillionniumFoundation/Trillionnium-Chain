@@ -1,0 +1,40 @@
+{
+  "schema": "pon-w1-actual-process-v2",
+  "command": [
+    "python3",
+    "scripts/ci/test_ci_contract.py"
+  ],
+  "started_utc": "2026-10-27T18:43:48.514691+00:00",
+  "timeout_seconds": 60,
+  "source_sha": null,
+  "timed_out": false,
+  "consensus_authority": false,
+  "child_pid": 9,
+  "child_returncode": 0,
+  "child_reaped": true,
+  "cleanup_actions": [],
+  "cleanup_errors": [],
+  "subreaper_enabled": true,
+  "leader_exited_before_group": false,
+  "adopted_child_terminals": [],
+  "owned_process_group_empty": true,
+  "returncode": 0,
+  "wall_seconds": 14.895946028998878,
+  "user_cpu_seconds": 11.116242,
+  "system_cpu_seconds": 3.557654,
+  "max_waited_descendant_rss_kib": 21836,
+  "rss_scope": "maximum reported for the waited child family; not total cgroup peak",
+  "finished_utc": "2026-10-27T18:44:03.410672+00:00",
+  "raw_logs": {
+    "stdout": {
+      "path": "ci-contract.stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "path": "ci-contract.stderr.log",
+      "bytes": 15866,
+      "sha256": "a24e083df1c01a0ab6e05b27080f1f065f7c666fd3647bfc8c54b99cadd2bb6c"
+    }
+  }
+}

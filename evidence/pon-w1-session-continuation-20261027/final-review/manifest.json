@@ -1,0 +1,157 @@
+{
+  "raw_files": {
+    "all-backend-python-final.process.json": {
+      "bytes": 1340,
+      "sha256": "4f4eea2b5d6ba0d6de2fb892f0e40df2b0a10de001d5a1f3e468c4021d28724b"
+    },
+    "all-backend-python-final.stderr.log": {
+      "bytes": 12413,
+      "sha256": "666d03b6c5321dd2f9cecf7467b452c4ea3efad9197f4af60879229b5f88d815"
+    },
+    "all-backend-python-final.stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "ci-contract.process.json": {
+      "bytes": 1181,
+      "sha256": "27d3daaff4a79bccf4ef58a7d684b3eac9933741e172f2ac86570f7cb75c9048"
+    },
+    "ci-contract.stderr.log": {
+      "bytes": 15866,
+      "sha256": "a24e083df1c01a0ab6e05b27080f1f065f7c666fd3647bfc8c54b99cadd2bb6c"
+    },
+    "ci-contract.stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "continuation-final.process.json": {
+      "bytes": 1246,
+      "sha256": "4cdc7384477c837d28db0f437d9a483f10fabad8bd7ecadbedb89adbd89aa77d"
+    },
+    "continuation-final.stderr.log": {
+      "bytes": 5286,
+      "sha256": "e9c411380e4dce4b0d82d981715785e93f5a4056b808d294055fd614b47c0ac1"
+    },
+    "continuation-final.stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "continuation.process.json": {
+      "bytes": 1244,
+      "sha256": "0414d7266834df1fb8b691ec8a4db3056874d430e8d698e33f5b70a72b3d184a"
+    },
+    "continuation.stderr.log": {
+      "bytes": 5127,
+      "sha256": "b19e5442ebfce5d1a6e2a6dfe0c1ad3c193ad5718bceaa14957dd81f7676e2a6"
+    },
+    "continuation.stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "loopback-permitted.process.json": {
+      "bytes": 1259,
+      "sha256": "31b125e9a9015520cc2c215261088d7b3ce7882e175f5ae00c180937de5740d7"
+    },
+    "loopback-permitted.stderr.log": {
+      "bytes": 113,
+      "sha256": "3b7b3a97fcae2b4400b5f42b02ba1882653c2240a6a0ecbb2e43a992fc6daf9a"
+    },
+    "loopback-permitted.stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "loopback.process.json": {
+      "bytes": 1249,
+      "sha256": "ab1fee5d2bb0b6d93d1955ec9a0a7fb94d4e4600e190ef3ca971248838bc29d4"
+    },
+    "loopback.stderr.log": {
+      "bytes": 10709,
+      "sha256": "c260feb086dcff61bd9a54cd539eca2dbf4b8253fad58b04025cf4caaa3c4c8e"
+    },
+    "loopback.stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "report-provenance-red-corrected-fixture.process.json": {
+      "bytes": 1376,
+      "sha256": "293101736059c57e37df5a0834fdf2c60104e456276b2eb35829848ed5716cac"
+    },
+    "report-provenance-red-corrected-fixture.stderr.log": {
+      "bytes": 7102,
+      "sha256": "06819cacd9451770759123742edb555307df52e034faf80750ff497e7d9f3c0d"
+    },
+    "report-provenance-red-corrected-fixture.stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "report-provenance-red.process.json": {
+      "bytes": 1342,
+      "sha256": "d9e2559ba0c6f61c1df6a69800dfb9288a571bc270bac29babff907b230b3004"
+    },
+    "report-provenance-red.stderr.log": {
+      "bytes": 3082,
+      "sha256": "b1b50cc7e802bdea5b946b4caf62b63970f1a455a97e63198b43bd825452ebec"
+    },
+    "report-provenance-red.stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "repository-final.process.json": {
+      "bytes": 1208,
+      "sha256": "094665a2cd303ffedf9c079da4e48781d8fb217f68fdd8edee1a44a5d33a04c8"
+    },
+    "repository-final.stderr.log": {
+      "bytes": 84,
+      "sha256": "e9d6779920685ac8631f9cfe3fc344fa5a64886cd36ed304305284c108a90361"
+    },
+    "repository-final.stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source-integrity.process.json": {
+      "bytes": 3275,
+      "sha256": "d10600a4ac6a82596c3cafd9757b282e5de532d6a3d6bb4e0ca66e19e36a6092"
+    },
+    "source-integrity.stderr.log": {
+      "bytes": 5025,
+      "sha256": "ec97a207b1f8a1740e334779f05435ff05b369be38ddf2a44778a0a70632a4c8"
+    },
+    "source-integrity.stdout.log": {
+      "bytes": 484,
+      "sha256": "b7e4912f0d9529ad40b204c4b699971067f5f21022b41c9fd9905eeb59218c88"
+    }
+  },
+  "schema": "pon-w1-continuation-final-review-v1",
+  "scope": "local component and provenance controls; no complete W1 receipt generated",
+  "source_commit_before_changes": "5d957878ea82b09b555c713976f5157fde1089a0",
+  "source_files": {
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/_loopback_tcp.py": {
+      "bytes": 9706,
+      "sha256": "61da1485a609a7df932af587a0e2f6a6a55beea9fc24b12244316d4af40e5476"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/continuation_validate.py": {
+      "bytes": 7064,
+      "sha256": "d8d1e2849cda57e79059d217faf0b9c6257d59497c09616265b1059707dbc6f2"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/measure_loopback.py": {
+      "bytes": 15363,
+      "sha256": "a9df36e429f9223e5fc9806851c4932a827cd1fbfd1df8395a5735cd3bb00207"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/segment_continue.py": {
+      "bytes": 21408,
+      "sha256": "39f7997eda1f1d79bee531470e46370407160a7e9d4b24350d6b2587a3d50b89"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/segment_continue_source.py": {
+      "bytes": 17482,
+      "sha256": "2f872a711efae77d10ee46c0b63e426b51f1f6fdbefe8a8e2fb0e265aab0e958"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/test_measure_loopback.py": {
+      "bytes": 9974,
+      "sha256": "8a519d78b22b05495ae3146c4ecaf48ee082c6c60d37ace4b512feca3147cd62"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/test_segment_continue.py": {
+      "bytes": 22233,
+      "sha256": "3080d7cca62b837ac474e2388ca890df83cb649518a9ab9943ef19c69bdf5d14"
+    }
+  }
+}

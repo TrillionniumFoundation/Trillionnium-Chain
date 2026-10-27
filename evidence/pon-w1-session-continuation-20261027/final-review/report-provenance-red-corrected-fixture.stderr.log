@@ -1,0 +1,76 @@
+test_report_rejects_substituted_phase_source_budget_and_run (__main__.ContinuationControls.test_report_rejects_substituted_phase_source_budget_and_run) ... 
+  test_report_rejects_substituted_phase_source_budget_and_run (__main__.ContinuationControls.test_report_rejects_substituted_phase_source_budget_and_run) (phase='assembly', field='source_sha') ... FAIL
+  test_report_rejects_substituted_phase_source_budget_and_run (__main__.ContinuationControls.test_report_rejects_substituted_phase_source_budget_and_run) (phase='soundness', field='source_sha') ... FAIL
+  test_report_rejects_substituted_phase_source_budget_and_run (__main__.ContinuationControls.test_report_rejects_substituted_phase_source_budget_and_run) (phase='assembly', field='timeout_seconds') ... FAIL
+  test_report_rejects_substituted_phase_source_budget_and_run (__main__.ContinuationControls.test_report_rejects_substituted_phase_source_budget_and_run) (phase='soundness', field='timeout_seconds') ... FAIL
+  test_report_rejects_substituted_phase_source_budget_and_run (__main__.ContinuationControls.test_report_rejects_substituted_phase_source_budget_and_run) (phase='result', field='source_sha') ... FAIL
+  test_report_rejects_substituted_phase_source_budget_and_run (__main__.ContinuationControls.test_report_rejects_substituted_phase_source_budget_and_run) (phase='result', field='run_id') ... FAIL
+  test_report_rejects_substituted_phase_source_budget_and_run (__main__.ContinuationControls.test_report_rejects_substituted_phase_source_budget_and_run) (phase='result', field='run_attempt') ... FAIL
+
+======================================================================
+FAIL: test_report_rejects_substituted_phase_source_budget_and_run (__main__.ContinuationControls.test_report_rejects_substituted_phase_source_budget_and_run) (phase='assembly', field='source_sha')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3d4ec372c488/w1-continuation/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/test_segment_continue.py", line 406, in test_report_rejects_substituted_phase_source_budget_and_run
+    with self.assertRaisesRegex(ValueError, "incomplete or unverified"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_report_rejects_substituted_phase_source_budget_and_run (__main__.ContinuationControls.test_report_rejects_substituted_phase_source_budget_and_run) (phase='soundness', field='source_sha')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3d4ec372c488/w1-continuation/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/test_segment_continue.py", line 406, in test_report_rejects_substituted_phase_source_budget_and_run
+    with self.assertRaisesRegex(ValueError, "incomplete or unverified"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_report_rejects_substituted_phase_source_budget_and_run (__main__.ContinuationControls.test_report_rejects_substituted_phase_source_budget_and_run) (phase='assembly', field='timeout_seconds')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3d4ec372c488/w1-continuation/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/test_segment_continue.py", line 406, in test_report_rejects_substituted_phase_source_budget_and_run
+    with self.assertRaisesRegex(ValueError, "incomplete or unverified"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_report_rejects_substituted_phase_source_budget_and_run (__main__.ContinuationControls.test_report_rejects_substituted_phase_source_budget_and_run) (phase='soundness', field='timeout_seconds')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3d4ec372c488/w1-continuation/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/test_segment_continue.py", line 406, in test_report_rejects_substituted_phase_source_budget_and_run
+    with self.assertRaisesRegex(ValueError, "incomplete or unverified"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_report_rejects_substituted_phase_source_budget_and_run (__main__.ContinuationControls.test_report_rejects_substituted_phase_source_budget_and_run) (phase='result', field='source_sha')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3d4ec372c488/w1-continuation/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/test_segment_continue.py", line 406, in test_report_rejects_substituted_phase_source_budget_and_run
+    with self.assertRaisesRegex(ValueError, "incomplete or unverified"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_report_rejects_substituted_phase_source_budget_and_run (__main__.ContinuationControls.test_report_rejects_substituted_phase_source_budget_and_run) (phase='result', field='run_id')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3d4ec372c488/w1-continuation/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/test_segment_continue.py", line 406, in test_report_rejects_substituted_phase_source_budget_and_run
+    with self.assertRaisesRegex(ValueError, "incomplete or unverified"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_report_rejects_substituted_phase_source_budget_and_run (__main__.ContinuationControls.test_report_rejects_substituted_phase_source_budget_and_run) (phase='result', field='run_attempt')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3d4ec372c488/w1-continuation/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/test_segment_continue.py", line 406, in test_report_rejects_substituted_phase_source_budget_and_run
+    with self.assertRaisesRegex(ValueError, "incomplete or unverified"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+----------------------------------------------------------------------
+Ran 1 test in 1.545s
+
+FAILED (failures=7)

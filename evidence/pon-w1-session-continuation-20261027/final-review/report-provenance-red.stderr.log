@@ -1,0 +1,35 @@
+test_report_rejects_substituted_assembly_and_soundness_source (__main__.ContinuationControls.test_report_rejects_substituted_assembly_and_soundness_source) ... 
+  test_report_rejects_substituted_assembly_and_soundness_source (__main__.ContinuationControls.test_report_rejects_substituted_assembly_and_soundness_source) (phase='assembly') ... FAIL
+  test_report_rejects_substituted_assembly_and_soundness_source (__main__.ContinuationControls.test_report_rejects_substituted_assembly_and_soundness_source) (phase='soundness') ... ERROR
+
+======================================================================
+ERROR: test_report_rejects_substituted_assembly_and_soundness_source (__main__.ContinuationControls.test_report_rejects_substituted_assembly_and_soundness_source) (phase='soundness')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3d4ec372c488/w1-continuation/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/test_segment_continue.py", line 392, in test_report_rejects_substituted_assembly_and_soundness_source
+    continuation.report(self.root)
+  File "/workspace/scratch/3d4ec372c488/w1-continuation/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/segment_continue.py", line 359, in report
+    write_json(out / "continuation-costs.json", value)
+  File "/workspace/scratch/3d4ec372c488/w1-continuation/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/segment_continue_source.py", line 154, in write_json
+    write_bytes(path, (json.dumps(value, indent=2, sort_keys=True, allow_nan=False) + "\n").encode())
+  File "/workspace/scratch/3d4ec372c488/w1-continuation/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/segment_continue_source.py", line 147, in write_bytes
+    with path.open("xb") as stream:
+         ^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileExistsError: [Errno 17] File exists: '/tmp/tmpq5jbn038/continuation-costs.json'
+
+======================================================================
+FAIL: test_report_rejects_substituted_assembly_and_soundness_source (__main__.ContinuationControls.test_report_rejects_substituted_assembly_and_soundness_source) (phase='assembly')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3d4ec372c488/w1-continuation/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/test_segment_continue.py", line 391, in test_report_rejects_substituted_assembly_and_soundness_source
+    with self.assertRaisesRegex(ValueError, "incomplete or unverified"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+----------------------------------------------------------------------
+Ran 1 test in 1.226s
+
+FAILED (failures=1, errors=1)

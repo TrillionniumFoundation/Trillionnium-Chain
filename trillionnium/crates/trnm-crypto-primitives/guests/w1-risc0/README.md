@@ -330,3 +330,17 @@ If native N=64 W1 is already cheaper than this proof verifier, this backend does
 not meet the throughput or permissionless-ingress objective for that workload.
 The full relation, pinned guest and real proof are necessary evidence for the
 candidate, not a substitute for that cost comparison or work-hardness analysis.
+
+The separate [controlled loopback cost helper](LOOPBACK_COST.md) requires two
+actual original-host verifications around bounded TCP transmission. Its current
+finite controls use explicitly synthetic bytes; complete-proof propagation is
+still unobserved. Its CI wiring remains a proposal until the original proof run
+is terminal and an exact reviewed receipt reuse or segment recovery is available.
+# Same-session continuation successor
+
+The [bounded continuation protocol](CONTINUATION.md) retains the original
+source-5d9578 failed run and its 26 actual partial receipts. It adds exactly
+two independent missing-segment budgets and requires unchanged native full
+Composite assembly, actual hostile-proof audit and separately measured
+loopback transfer. At source freeze those full runs remain **NOT_RUN**;
+36 local provenance/process controls are not a complete proof.

@@ -1,0 +1,68 @@
+{
+  "schema": "pon-w1-continuation-local-controls-archive-v1",
+  "archive_bytes": 5606,
+  "archive_sha256": "8e98c2dc688410e4eae85cc9f0bcabe124a2bcca4d872125a606b6b6490861fb",
+  "members": {
+    "controls-001/continuation-controls.process.json": {
+      "bytes": 1311,
+      "sha256": "ac13cda2feb1d240668c11c99235059aacd39b11df0352f560cab62d7104e7ec"
+    },
+    "controls-001/continuation-controls.stderr.log": {
+      "bytes": 2908,
+      "sha256": "6977c63117ea0e4f8e7bf7f710e2f94fc0c75b8875f8c14a7cfa6986aaa5de93"
+    },
+    "controls-001/continuation-controls.stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "controls-001/source-after.json": {
+      "bytes": 8585,
+      "sha256": "42e8a028b652064bf27265773e229851bfa99ff64a5d30024039734e08557f92"
+    },
+    "controls-001/source-before.json": {
+      "bytes": 8585,
+      "sha256": "42e8a028b652064bf27265773e229851bfa99ff64a5d30024039734e08557f92"
+    },
+    "controls-001/wrapper.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "controls-001/wrapper.stdout.log": {
+      "bytes": 1311,
+      "sha256": "ac13cda2feb1d240668c11c99235059aacd39b11df0352f560cab62d7104e7ec"
+    },
+    "controls-002/continuation-controls.process.json": {
+      "bytes": 1312,
+      "sha256": "f7f7026fe7c2ea9cd16871448967a0c0443540c42893b39718bc2c55389b4b98"
+    },
+    "controls-002/continuation-controls.stderr.log": {
+      "bytes": 4958,
+      "sha256": "0edeb0cf179c766e663c1fb7adba63293506abd9d8352fe5c905d3ba35fdce8a"
+    },
+    "controls-002/continuation-controls.stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "controls-002/source-after.json": {
+      "bytes": 5267,
+      "sha256": "377be822ab68d83711b6ce831e74cbec8d6ad38c757fb9185a547e046e4268fa"
+    },
+    "controls-002/source-before.json": {
+      "bytes": 5267,
+      "sha256": "377be822ab68d83711b6ce831e74cbec8d6ad38c757fb9185a547e046e4268fa"
+    },
+    "controls-002/wrapper.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "controls-002/wrapper.stdout.log": {
+      "bytes": 1312,
+      "sha256": "f7f7026fe7c2ea9cd16871448967a0c0443540c42893b39718bc2c55389b4b98"
+    }
+  },
+  "actual_control_counts": {
+    "controls-001": 21,
+    "controls-002": 35
+  },
+  "native_complete_proof_executed": false
+}
