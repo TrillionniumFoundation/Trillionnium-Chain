@@ -66,6 +66,14 @@ The committed `../experiments/w1_proof_cost.py` runner records actual kernel
 child CPU/RSS, timeout and process exit, retains incomplete trials, and runs
 the saved-receipt verifier in a fresh process for every successful trial.
 
+The separate `w1-native-cost` binary replays the exact saved full input 1,000
+times and records every native-verifier duration independently of the prover's
+terminal result. It retains a usable baseline if proving fails or times out;
+it does not produce a proof or qualify a mining-cost or production-tail
+distribution. `w1-execute-control` runs the actual guest for execution and
+negative controls without claiming a cryptographic receipt. A generic executor
+failure remains an execution failure, not a successful rejection test.
+
 For each full input the host measures 100 native verifications, one actual
 proof generation, proof bytes and 100 proof verifications. Multiple proof
 trials expose run variation; three trials do not estimate a reliable p99
