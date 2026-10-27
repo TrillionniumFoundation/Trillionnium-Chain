@@ -2197,13 +2197,15 @@ fn receive_page(
     Ok(next)
 }
 
-/// Public untrusted History import. Unlike the private local parser, this
-/// entry REQUIRES a concrete original source address and checks the existing
-/// fixed, administrator-owned host resource parent around every possible
-/// W1 replay. A caller cannot bypass the guard by calling the addressless
-/// parser from another crate or by supplying a fake already-verified work
-/// token. Only the full native Node determines consensus validity.
-pub fn receive_page_from(
+/// Compatibility entry for this library's original native sync callers.
+/// NOT an externally callable/public untrusted import: a loopback address
+/// (including an untrusted tunnel/proxy) does not imply physical origin.
+/// For public History bytes callers MUST use receive_public_page_from, which
+/// requires the fixed administrator-owned kernel parent even on loopback.
+///
+/// These entrypoints check original parent/task/State as before; no local
+/// resource refusal may turn into a consensus-invalid W1 proof.
+pub(crate) fn receive_page_from(
     node: &mut Node,
     source: SocketAddr,
     page: Page,
@@ -2233,6 +2235,14 @@ pub fn receive_page_from(
 /// loopback source wrapper, this path ALWAYS requires the same fixed
 /// administrator-owned cgroup parent. A forged loopback source address cannot
 /// manufacture a resource waiver.
+///
+/// The legacy weakly trusted loopback compatibility entry is intentionally
+/// NOT a public API. An external integration cannot import it:
+///
+/// ```compile_fail
+/// use trnm_pon_node::ingress::receive_page_from;
+/// fn main() {}
+/// ```
 pub fn receive_public_page_from(
     node: &mut Node,
     source: SocketAddr,
@@ -2545,6 +2555,107 @@ mod tests {
         assert_eq!(node.read_active().unwrap().0, settings.genesis());
         assert_eq!(node.parent_height(tip).unwrap(), 1,
             "already admitted native block is durable but not activated");
+    }
+
+    #[test]
+    fn two_history_w1s_preserve_original_first_commit_across_owner_fault_and_cold_retry() {
+        // One remote page can carry multiple *independent* expensive work
+        // proofs. The first proof is legal and durable when the original Host
+        // checkpoint fails; do not report the whole page as synchronized.
+        let observed = now().unwrap();
+        let settings = crate::Settings::development(Some(observed - 100)).unwrap();
+        let dir = tempfile::tempdir().unwrap();
+        let mut producer =
+            Node::open(dir.path().join("producer"), settings.clone(), 2).unwrap();
+        let genesis = settings.genesis();
+        let first = producer
+            .make(
+                genesis, vec![], crate::development_public(0).unwrap(),
+                settings.genesis_time() + 10, 4096,
+            )
+            .unwrap();
+        let first_id = producer.admit(&first, observed).unwrap();
+        producer.activate_observed(first_id, observed).unwrap();
+        let second = producer
+            .make(
+                first_id, vec![], crate::development_public(0).unwrap(),
+                settings.genesis_time() + 20, 4096,
+            )
+            .unwrap();
+        let second_id = second.id().unwrap();
+        let page = || Page {
+            schema: "pon-native-history-v1".into(),
+            network: hex::encode(settings.network()),
+            parameters: hex::encode(settings.parameters()),
+            genesis: hex::encode(genesis),
+            tip: hex::encode(second_id),
+            after: hex::encode(genesis),
+            packets: vec![
+                hex::encode(first.encode().unwrap()),
+                hex::encode(second.encode().unwrap()),
+            ],
+            next: hex::encode(second_id),
+            complete: true,
+        };
+        // Count only the same actual work-progress checkpoints used by the
+        // existing one-block source regression. No fabricated time budget.
+        let mut first_checkpoints = 0_u64;
+        trnm_crypto_primitives::pon_work::verify_with_progress(
+            first.header.challenge(),
+            first.header.work_task,
+            first.header.target,
+            &first.proof,
+            &mut |point| {
+                if history_kernel_work_checkpoint(point) {
+                    first_checkpoints += 1;
+                }
+                Ok::<(), ()>(())
+            },
+        ).unwrap();
+        let fault_after_first = first_checkpoints + 2;
+        let mut receiver =
+            Node::open(dir.path().join("receiver"), settings.clone(), 2).unwrap();
+        let mut calls = 0_u64;
+        let error = receive_page(
+            &mut receiver, page(), second_id, genesis, observed,
+            || {
+                calls += 1;
+                if calls == fault_after_first {
+                    Err("PUBLIC_HOST_KERNEL_LIMITS_CHANGED".into())
+                } else {
+                    Ok(())
+                }
+            },
+        ).unwrap_err();
+        assert_eq!(error.to_string(), "PUBLIC_HOST_KERNEL_LIMITS_CHANGED");
+        assert_eq!(calls, fault_after_first);
+        assert_eq!(receiver.parent_height(first_id).unwrap(), 1);
+        assert!(receiver.parent_height(second_id).is_err(),
+            "next W1 must not run after the original host owner failed");
+        assert_eq!(receiver.read_active().unwrap().0, genesis);
+        drop(receiver);
+
+        // Reopen one existing durable Node, retry with the unchanged byte
+        // page. The already admitted first work cannot be counted again,
+        // while the second work and activation remain required.
+        let mut receiver =
+            Node::open(dir.path().join("receiver"), settings.clone(), 2).unwrap();
+        let mut retry_checks = 0_u64;
+        assert_eq!(
+            receive_page(
+                &mut receiver, page(), second_id, genesis, observed,
+                || {
+                    retry_checks += 1;
+                    Ok(())
+                },
+            ).unwrap(),
+            second_id
+        );
+        assert!(retry_checks > first_checkpoints,
+            "second independent W1 still has an owned verification path");
+        assert_eq!(receiver.parent_height(first_id).unwrap(), 1);
+        assert_eq!(receiver.parent_height(second_id).unwrap(), 2);
+        assert_eq!(receiver.read_active().unwrap().0, second_id);
     }
 
     #[test]

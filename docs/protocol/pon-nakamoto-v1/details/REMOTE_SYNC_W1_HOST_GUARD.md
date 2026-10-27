@@ -150,3 +150,50 @@ build, Rust native test execution, actual cgroup capture, WAN independent
 operators, A03 3x3x3 campaign, GPU/ASIC calibration, succinct W2 proof and
 independent cryptanalysis remain unqualified; the tests are source-defined,
 not asserted to have passed in this assistant's runtime.
+
+## P1 integrated API visibility hardening: public loopback proxy cannot select weak import
+
+The unified candidate had already added strict
+`ingress::receive_public_page_from` with the same mandatory fixed Host parent
+for all sources, including `127.0.0.1`, and changed the public V3 CLI to use
+that hardened function. It also retained a **second externally callable**
+`pub fn ingress::receive_page_from`, however, whose trusted-local
+`require_for_listener(source)` path waives the cgroup check on loopback.
+An embedding library could choose that weaker symbol and submit adversarial
+WAN certificates through a local relay, bypassing the strict public path.
+
+The code now changes that legacy symbol to **`pub(crate)` only**, retaining
+its three original module-local native sync call sites and their explicit
+development loopback compatibility. The *only* exported History page import
+symbol intended for arbitrary caller-supplied untrusted public bytes is
+`receive_public_page_from`, which forces
+`FIXED_PUBLIC_KERNEL_PARENT` even when the supplied address is loopback.
+A rustdoc `compile_fail` vector asserts an independent crate cannot import
+the old weak entry. The genuine W1 native validation and per-W1 original
+kernel checkpoint logic remain unchanged.
+
+This fixes a public API reachability ambiguity, **not** the fundamental
+actor-cost lower bound, malicious local operator issue, synthetic loopback
+relay via an explicitly trusted native development CLI, or independent
+physical-host resource/fairness qualification. Rustdoc and actual native
+compilation are still outstanding in the current source-only environment;
+retain the failed/unknown status if either check is missing.
+
+## P1 two-work replay/recovery negative (integrated candidate)
+
+A new `ingress::tests::two_history_w1s_preserve_original_first_commit_across_owner_fault_and_cold_retry`
+asserts the original Host's physical-ownership checkpoint remains effective
+across two separate valid W1 proofs in a **single** History page. The test
+does not use a fabricated W1 result or a new consensus transition:
+it mines two legal packets against the exact parent chain, counts the
+original verifier's selected Host rechecks, and injects one local cgroup
+failure immediately **after** durable admission of the first block.
+That failure must withhold page completion, keep the first block durably
+available, prevent running the second W1, and leave the active head at
+Genesis. An actual cold reopen then retries identical bytes using the
+same original native admission rules: the already stored first packet
+is not new work, the second W1 remains mandatory, and only after the
+full successful page does the active head reach its real second block.
+The after-commit fault is **not** a consensus-Invalid or automatic
+rollback. Exact Rust and physical ownership execution still must be
+recorded separately; this source-level test cannot close P1/P4 alone.
