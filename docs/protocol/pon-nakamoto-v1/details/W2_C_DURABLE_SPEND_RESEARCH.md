@@ -59,14 +59,14 @@ resource consumption to one SQLite WAL-backed paid owner.
 python3 formal/pon-nakamoto-v1/test_w2c_durable_paid_claims.py -v
 ```
 
-The 12 cases cover a real separate-process pool with 12 concurrent/contending
+The 13 cases cover a real separate-process pool with 12 concurrent/contending
 submissions (exactly one READY), restart and replay, abrupt process exit
 after **durable commit before W1**, capacity exhaustion, cloned key plus
 different DB as a **deliberate replay vulnerability**, persisted clock
 high-watermark, changed policy/schema/capacity/epoch, missing file,
 symlink/path ownership, changed authenticated caller and fail-closed outcomes.
 
-In this assistant execution environment, 12/12 local tests completed.
+In this assistant execution environment, 13/13 local tests completed.
 The generated source and test bytes were uploaded to GitHub unchanged and their
 Git blob SHA-1 values matched the local `git hash-object` output.
 This local execution used the original H domain/Grant interface reproduced in
@@ -98,3 +98,20 @@ adversarial acceptance. No other source or local test can silently close
 these dependencies.
 
 Status stays **SHADOW_ONLY / HOLD_NO_GO / production off**.
+
+The 13th test additionally uses the unmodified Python W1 oracle
+(`work_oracle.py`, Git blob `9cbfccd2d50af48fc43522b967ffdfb1f45ec098`)
+to assert that **paying and durably consuming** a W2-C resource ticket
+still produces `TRANSCRIPT` for a complete forged W1 matrix trace, while
+the previously paid ticket stays spent after a second local process restarts.
+
+Local evidence captured on 2026-10-27: all 13 tests passed with process
+exit code 0. Exact Git blobs: `w2c_receiver_admission.py`
+`045700db730d330df05670351fa40a94fe4dd510`,
+`w2c_stateless_receiver.py` `8a800f526bbcfddb3308a1966fc4c406ee29c5d0`,
+new `w2c_durable_paid_claims.py`
+`7b8a51e7912749d4ad284b711e9339f85be8e7fb`, and new test
+`cf91d3b9405409cf287b3811d69ab41828e507d2`.
+These are local Python observations, not a verified Rust binary or public
+A03/cryptographic qualification. Independent database clones remain an
+explicit **FAILED** security boundary, not a hidden success.
