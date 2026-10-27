@@ -106,3 +106,62 @@ must be tested separately.
 The new unexported parser remains useful for unit coverage and does
 not expose a second public unchecked history-import symbol.
 This is an API-path reduction, **not** a production/security gate PASS.
+
+## Public loopback-proxy hardening and per-proof host checkpoints (P1 continuation)
+
+The previous public `receive_page_from` was source-address-bound but still
+allowed an **unmetered loopback exemption**, since `require_for_listener`
+returns no required cgroup for a `127.0.0.1` endpoint. An operator or
+untrusted local proxy can redirect externally supplied W1 certificates onto
+that loopback endpoint without changing their mathematical contents.
+The public destination string is **not** origin authentication.
+
+The new public `ingress::receive_page_from` always requires the **same**
+`FIXED_PUBLIC_KERNEL_PARENT` via
+`require_host_kernel_budget(source, Some(FIXED_PUBLIC_KERNEL_PARENT))`,
+including for loopback. If the original administrator-owned parent is
+unavailable, public History pages are rejected **before** Page parsing or
+full W1 replay. This is an explicit compatibility/security tightening:
+a public V3 CLI syncing from a loopback address now also needs the fixed
+cgroup. It cannot silently fall back to an unpriced public admission path.
+
+Three pre-existing native `sync_from*` routines instead use the separate
+**module-private** `receive_page_from_local_development`. Its local-loopback
+historical test/development behavior remains unchanged; a nonloopback native
+destination still must join the fixed parent. This private path is neither a
+public imported-verification API nor evidence that an untrusted loopback
+relay is economically safe. The caller and local deployment remain
+explicitly trusted for that limited development profile.
+
+The previous page-level budget guard also had a coarse granularity:
+a legal History page may hold **16 separate full W1 proof replays**. An
+administrator changing the cgroup context after the page starts might leave
+additional expensive replays unchecked until the entire page completed.
+The original `receive_page` parsing/admission logic is now performed by a
+single private `receive_page_with_checkpoint` loop. Hardened public pages
+check the **same actual Host owner before and after every W1 replay**, and
+before/after final activation. The private developer path applies the
+same per-W1 checks whenever its destination already required the fixed
+parent; its unprivileged, deliberately trusted loopback use keeps the
+original no-cgroup behavior. The source does **not** create a new owner,
+rewrite W1 work or change the target/fork choice.
+
+New native counterexamples in `ingress.rs`:
+
+- `untrusted_public_history_rejects_loopback_proxies_without_original_host_owner`:
+  public loopback cannot skip the same original fixed parent even when the
+  legacy private test caller can parse and refuse an invalid Page normally.
+  No Node state or chainwork changes on refusal.
+- `history_multi_packet_budget_checkpoint_is_per_w1_and_preserves_retryable_native_facts`:
+  two valid W1 blocks in one History page; simulated original Host-owner
+  failure **after** first durable admission rejects the sync without
+  inventing a bad W1 verdict or rewinding the existing block. Cold-reopen
+  replay must complete with two per-work before/after checks plus two
+  activation checks, and select the actual second block.
+
+These are **source-level negative regression definitions, not completed
+native runs** in this tool environment. There is no independent physical
+Host cgroup readback, Rust compile, original A03 mixed valid/false-TRACE/
+false-StateRoot WAN qualification, GPU/ASIC pricing, mathematical W2 proof,
+or P6 independent external cryptanalysis. All these remain OPEN.
+The only permitted status is HOLD_NO_GO; production activation stays off.
