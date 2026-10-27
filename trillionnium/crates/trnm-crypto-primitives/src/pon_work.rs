@@ -7,6 +7,7 @@ pub mod blocked_one_zero;
 pub mod blocked_zero;
 pub mod blocked_zero_paired;
 pub mod facts;
+pub mod full_relation;
 mod integer_paired;
 pub mod maintenance_limb;
 pub mod maintenance_periodic;
