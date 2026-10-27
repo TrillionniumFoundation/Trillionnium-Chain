@@ -161,8 +161,13 @@ class LocalWitness:
         if not path.is_absolute() or path.is_symlink(): raise Reject("witness owned file")
         fresh = not path.exists()
         if path.exists() and not stat.S_ISREG(path.lstat().st_mode): raise Reject("witness file kind")
+        self.path = path
         self.db = sqlite3.connect(path, isolation_level=None, timeout=10)
         try:
+            leaf = os.lstat(path)
+            if not stat.S_ISREG(leaf.st_mode):
+                raise Reject("witness inode is not regular")
+            self._inode = (leaf.st_dev, leaf.st_ino)
             if not fresh:
                 self.db.execute("BEGIN")
                 try: self._audit()  # verify before ANY writable PRAGMA
@@ -193,6 +198,16 @@ class LocalWitness:
         schema = self.db.execute("SELECT name,type,sql FROM sqlite_master ORDER BY name").fetchall()
         if schema != sorted((name,"table",sql) for name,sql in SCHEMA.items()):
             raise Reject("foreign witness DDL")
+        # Per-connection TEMP triggers/tables do not appear in sqlite_master.
+        # Both signed observation and append must reject namespace shadowing.
+        if self.db.execute("SELECT name FROM sqlite_temp_master WHERE name NOT LIKE 'sqlite_%' LIMIT 1").fetchone():
+            raise Reject("temporary witness SQLite schema forbidden")
+        try:
+            leaf = os.lstat(self.path)
+        except FileNotFoundError:
+            raise Reject("witness journal disappeared") from None
+        if not stat.S_ISREG(leaf.st_mode) or (leaf.st_dev, leaf.st_ino) != self._inode:
+            raise Reject("witness journal inode replaced")
         pins = self.db.execute("SELECT slot,network,import_root,genesis,observer,witness FROM pins").fetchall()
         if pins != [(1,self.network,self.root,self.genesis,self.observer_id,self.witness_id)]:
             raise Reject("witness context substitution")
@@ -212,6 +227,26 @@ class LocalWitness:
             prior, generation = fid, head.generation
         return WitnessHead(len(rows),prior)
 
+    def _acknowledge_committed_head(self, candidate):
+        """A committed append on a detached inode is UNKNOWN, never accepted."""
+        self.db.execute("BEGIN IMMEDIATE")
+        try:
+            persisted = self._audit()
+            if (persisted.sequence, persisted.frontier_id) != (
+                    candidate.sequence, candidate.frontier_id):
+                raise Reject("witness committed head readback mismatch")
+            self.db.execute("COMMIT")
+        except BaseException:
+            if self.db.in_transaction:
+                self.db.execute("ROLLBACK")
+            raise
+        try:
+            leaf = os.lstat(self.path)
+        except FileNotFoundError:
+            raise Reject("witness journal disappeared before ACK") from None
+        if (leaf.st_dev, leaf.st_ino) != self._inode:
+            raise Reject("witness journal replaced before ACK")
+
     def append(self, pql4_signed, *, now):
         candidate = parse_pql4(pql4_signed,self.observer_pub,now=now)
         if (candidate.network,candidate.import_root,candidate.genesis) != (
@@ -221,13 +256,16 @@ class LocalWitness:
         try:
             prior = self._audit()
             if candidate.sequence == prior.sequence and candidate.frontier_id == prior.frontier_id:
-                self.db.execute("COMMIT"); return "ALREADY_RECORDED"
+                self.db.execute("COMMIT")
+                self._acknowledge_committed_head(candidate)
+                return "ALREADY_RECORDED"
             if (candidate.sequence != prior.sequence+1 or candidate.previous != prior.frontier_id
                     or prior.sequence >= MAX_EVENTS):
                 raise Reject("stale, conflicting or skipped frontier")
             self.db.execute("INSERT INTO events VALUES (?,?,?)",
                             (candidate.sequence,candidate.frontier_id,pql4_signed))
             self.db.execute("COMMIT")
+            self._acknowledge_committed_head(candidate)
             return "FIRST_RECORD"
         except BaseException:
             if self.db.in_transaction: self.db.execute("ROLLBACK")
