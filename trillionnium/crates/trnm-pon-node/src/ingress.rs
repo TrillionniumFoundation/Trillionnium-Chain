@@ -2109,12 +2109,13 @@ fn call_authenticated_durable_inner(
     Err(Error::authenticated_remote(terminal, error))
 }
 
-pub fn receive_page(
+fn receive_page(
     node: &mut Node,
     page: Page,
     tip: Hash,
     after: Hash,
     clock: u64,
+    host_kernel: Option<&crate::host_kernel_parent::HostKernelBudget>,
 ) -> Result<Hash> {
     ensure(
         page.schema == "pon-native-history-v1"
@@ -2152,12 +2153,58 @@ pub fn receive_page(
         "PAGE_COMPLETE",
     )?;
     for packet in &packets {
-        node.admit(packet, clock)?;
+        // Native History permits up to 16 real W1 replays in one signed page.
+        // Check the fixed, original host owner for EACH expensive proof,
+        // not merely before and after an attacker-controlled page batch.
+        // A post-admission fault is an operational sync failure; it cannot
+        // retroactively erase an already durably accepted block.
+        if let Some(kernel) = host_kernel {
+            kernel.verify()?;
+        }
+        let result = node.admit(packet, clock);
+        if let Some(kernel) = host_kernel {
+            kernel.verify()?;
+        }
+        result?;
     }
     if page.complete {
-        node.activate_observed(tip, clock)?;
+        if let Some(kernel) = host_kernel {
+            kernel.verify()?;
+        }
+        let result = node.activate_observed(tip, clock);
+        if let Some(kernel) = host_kernel {
+            kernel.verify()?;
+        }
+        result?;
     }
     Ok(next)
+}
+
+/// Public untrusted History import. Unlike the private local parser, this
+/// entry REQUIRES a concrete original source address and checks the existing
+/// fixed, administrator-owned host resource parent around every possible
+/// W1 replay. A caller cannot bypass the guard by calling the addressless
+/// parser from another crate or by supplying a fake already-verified work
+/// token. Only the full native Node determines consensus validity.
+pub fn receive_page_from(
+    node: &mut Node,
+    source: SocketAddr,
+    page: Page,
+    tip: Hash,
+    after: Hash,
+    clock: u64,
+) -> Result<Hash> {
+    let host_kernel = crate::host_kernel_parent::require_for_listener(source)?;
+    if let Some(kernel) = &host_kernel {
+        kernel.verify()?;
+    }
+    let native = receive_page(node, page, tip, after, clock, host_kernel.as_ref());
+    // A completed native admission cannot be undone by a post-verification
+    // host fault. That fault still makes the overall synchronization fail.
+    if let Some(kernel) = &host_kernel {
+        kernel.verify()?;
+    }
+    native
 }
 pub fn sync_from(
     node: &mut Node,
@@ -2167,7 +2214,14 @@ pub fn sync_from(
     page_budget: usize,
 ) -> Result<Hash> {
     ensure((1..=4096).contains(&page_budget), "SYNC_BUDGET")?;
+    // Every WAN page may contain 16 untrusted W1 proofs. The same fixed,
+    // administrator-owned host cgroup used by V3 must already contain this
+    // actual sync thread; no new per-peer budget or consensus authority.
+    let host_kernel = crate::host_kernel_parent::require_for_listener(address)?;
     for _ in 0..page_budget {
+        if let Some(kernel) = &host_kernel {
+            kernel.verify()?;
+        }
         let request = Request::History {
             tip: hex::encode(tip),
             after: hex::encode(after),
@@ -2178,7 +2232,12 @@ pub fn sync_from(
         write_frame(&mut stream, &serde_json::to_vec(&request)?)?;
         let page: Page = serde_json::from_slice(&read_frame(&mut stream)?)?;
         let complete = page.complete;
-        after = receive_page(node, page, tip, after, now()?)?;
+        after = receive_page_from(node, address, page, tip, after, now()?)?;
+        // Resource-counter/membership failure does not roll back any already
+        // admitted native block; it makes this sync result unqualified.
+        if let Some(kernel) = &host_kernel {
+            kernel.verify()?;
+        }
         if complete {
             return Ok(after);
         }
@@ -2200,8 +2259,15 @@ pub fn sync_from_authenticated(
     replay_nonce: &mut u64,
 ) -> Result<Hash> {
     ensure((1..=4096).contains(&page_budget), "SYNC_BUDGET")?;
+    // Every WAN page may contain 16 untrusted W1 proofs. The same fixed,
+    // administrator-owned host cgroup used by V3 must already contain this
+    // actual sync thread; no new per-peer budget or consensus authority.
+    let host_kernel = crate::host_kernel_parent::require_for_listener(address)?;
     let settings = node.settings().clone();
     for _ in 0..page_budget {
+        if let Some(kernel) = &host_kernel {
+            kernel.verify()?;
+        }
         let value = call_authenticated(
             address,
             &Request::History {
@@ -2214,7 +2280,12 @@ pub fn sync_from_authenticated(
         )?;
         let page: Page = serde_json::from_value(value)?;
         let complete = page.complete;
-        after = receive_page(node, page, tip, after, now()?)?;
+        after = receive_page_from(node, address, page, tip, after, now()?)?;
+        // Resource-counter/membership failure does not roll back any already
+        // admitted native block; it makes this sync result unqualified.
+        if let Some(kernel) = &host_kernel {
+            kernel.verify()?;
+        }
         if complete {
             return Ok(after);
         }
@@ -2235,7 +2306,14 @@ pub fn sync_from_authenticated_durable(
     client: &AuthenticatedClient,
 ) -> Result<Hash> {
     ensure((1..=4096).contains(&page_budget), "SYNC_BUDGET")?;
+    // Every WAN page may contain 16 untrusted W1 proofs. The same fixed,
+    // administrator-owned host cgroup used by V3 must already contain this
+    // actual sync thread; no new per-peer budget or consensus authority.
+    let host_kernel = crate::host_kernel_parent::require_for_listener(address)?;
     for _ in 0..page_budget {
+        if let Some(kernel) = &host_kernel {
+            kernel.verify()?;
+        }
         let value = call_authenticated_durable(
             node,
             address,
@@ -2247,7 +2325,12 @@ pub fn sync_from_authenticated_durable(
         )?;
         let page: Page = serde_json::from_value(value)?;
         let complete = page.complete;
-        after = receive_page(node, page, tip, after, now()?)?;
+        after = receive_page_from(node, address, page, tip, after, now()?)?;
+        // Resource-counter/membership failure does not roll back any already
+        // admitted native block; it makes this sync result unqualified.
+        if let Some(kernel) = &host_kernel {
+            kernel.verify()?;
+        }
         if complete {
             return Ok(after);
         }
@@ -2262,6 +2345,78 @@ pub fn sync_from_authenticated_durable(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn remote_sync_without_original_host_cgroup_rejects_before_any_network_or_w1() {
+        // Documentation-only network address. If this host really has the
+        // registered fixed cgroup, its owner is tested by the kernel checker.
+        // Otherwise remote history cannot reach a complete W1 verifier.
+        let remote: SocketAddr = "192.0.2.1:12345".parse().unwrap();
+        let budget = crate::host_kernel_parent::require_for_listener(remote);
+        assert!(!matches!(budget, Ok(None)), "remote must never be unowned");
+        if let Err(expected) = budget {
+            let dir = tempfile::tempdir().unwrap();
+            let settings = crate::Settings::development(Some(now().unwrap() - 100)).unwrap();
+            let mut node = Node::open(dir.path(), settings.clone(), 2).unwrap();
+            let original = node.stats().unwrap();
+            let error = sync_from(
+                &mut node,
+                remote,
+                settings.genesis(),
+                settings.genesis(),
+                1,
+            ).unwrap_err();
+            assert_eq!(error.to_string(), expected.to_string());
+            // Public untrusted page API refuses the same unbudgeted source
+            // before it even attempts a page context/W1/State lookup.
+            let unchecked_page = Page {
+                schema: String::new(),
+                network: String::new(),
+                parameters: String::new(),
+                genesis: String::new(),
+                tip: String::new(),
+                after: String::new(),
+                packets: vec![],
+                next: String::new(),
+                complete: false,
+            };
+            let page_error = receive_page_from(
+                &mut node,
+                remote,
+                unchecked_page,
+                settings.genesis(),
+                settings.genesis(),
+                now().unwrap(),
+            ).unwrap_err();
+            assert_eq!(page_error.to_string(), expected.to_string());
+            // Authenticating a remote service is not equivalent to a CPU
+            // budget. Both signed and durable signed sync must refuse before
+            // connecting, same as the unauthenticated remote sync above.
+            let (_, client) = authentication_fixture(&settings);
+            let mut replay_nonce = 1_u64;
+            let auth_error = sync_from_authenticated(
+                &mut node,
+                remote,
+                settings.genesis(),
+                settings.genesis(),
+                1,
+                &client,
+                &mut replay_nonce,
+            ).unwrap_err();
+            assert_eq!(auth_error.to_string(), expected.to_string());
+            let durable_error = sync_from_authenticated_durable(
+                &mut node,
+                remote,
+                settings.genesis(),
+                settings.genesis(),
+                1,
+                &client,
+            ).unwrap_err();
+            assert_eq!(durable_error.to_string(), expected.to_string());
+            assert_eq!(node.stats().unwrap(), original);
+            assert_eq!(node.read_active().unwrap().0, settings.genesis());
+        }
+    }
 
     #[test]
     fn protected_hello_rendezvous_from_reserved_socket_preserves_full_native_admission() {
