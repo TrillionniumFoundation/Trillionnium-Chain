@@ -152,3 +152,14 @@ switches the local selected tip and rejects a stale external expectation
 before invoking callbacks, then cold-reopens the same identity. No existing
 legacy DAA, Q4 signature, W1 work or production flag is changed. Exact-source
 Python/Rust native tests and WAN acceptance remain separate OPEN gates.
+
+### Early read bounds before SQLite shadow replay (2026-10-27)
+
+The shadow research owner checks metadata TEXT/BLOB lengths against 4096 bytes
+before materialization on cold open and hot readback. Auditing first checks
+its exact fixed-width header-table schema and configured row count **before**
+reading header BLOBs in the existing SQLite read snapshot. An oversized
+metadata row must refuse get, activation, audit and cold reopen without new
+branch publication. Native Node, W1, old DAA, Q4, Revision12 and activation
+flags are unchanged. This does NOT bound DB/WAL/RSS, authenticate external
+W1 facts or close P1-C/P2 independent acceptance.
