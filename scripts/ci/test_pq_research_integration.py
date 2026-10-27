@@ -162,6 +162,8 @@ class CorpusGateTests(unittest.TestCase):
             "formal/pon-nakamoto-v1/pqg_hidden_downgrade.c",
             "formal/pon-nakamoto-v1/pql99_hidden.py",
             "trillionnium/crates/trnm-protocol/src/pq_hidden_downgrade.rs",
+            "formal/pon-nakamoto-v1/experiments/pq_nested_downgrade.py",
+            "trillionnium/crates/trnm-protocol/src/research/pq_nested_downgrade.rs",
         ):
             with self.subTest(path=name):
                 path = self.root / name
@@ -177,6 +179,32 @@ class CorpusGateTests(unittest.TestCase):
         source.rename(moved)
         source.symlink_to(moved, target_is_directory=True)
         with self.assertRaisesRegex(IntegrityError, "symlink"):
+            check(self.root)
+
+    def test_nested_symlink_directory_refuses_even_without_named_pq_file(self):
+        parent = self.root / "formal/pon-nakamoto-v1/experiments"
+        parent.mkdir(parents=True, exist_ok=True)
+        target = self.root / "foreign"
+        target.mkdir()
+        (parent / "untracked").symlink_to(target, target_is_directory=True)
+        with self.assertRaisesRegex(IntegrityError, "symlink PQ source entry"):
+            check(self.root)
+
+    def test_pinned_nested_source_is_checked_by_byte_identity(self):
+        name = "formal/pon-nakamoto-v1/experiments/pq_accepted_experiment.py"
+        self.put(name, b"research-only verified source\\n")
+        self.save()
+        self.assertEqual(check(self.root)["status"], "HOLD_NO_GO")
+        (self.root / name).write_bytes(b"changed after pin")
+        with self.assertRaisesRegex(IntegrityError, "changed source"):
+            check(self.root)
+
+    def test_traversal_budget_refuses_before_unbounded_tree_scan(self):
+        parent = self.root / "formal/pon-nakamoto-v1/experiments"
+        parent.mkdir(parents=True, exist_ok=True)
+        for idx in range(10001):
+            (parent / f"unused-{idx:05d}").touch()
+        with self.assertRaisesRegex(IntegrityError, "traversal budget"):
             check(self.root)
 
 
