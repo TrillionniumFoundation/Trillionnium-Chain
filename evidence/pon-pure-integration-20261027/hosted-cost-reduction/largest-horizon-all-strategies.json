@@ -1,0 +1,99 @@
+{
+  "schema": "pon-pure-w1-all-strategies-largest-horizon-v1",
+  "campaign_head": "d96138532b656d767d1ef46f6db86e7effae485e",
+  "run_id": 40482711707,
+  "artifact_id": 12724159202,
+  "input_sha256": "f48e6d83edfa4d1c25f7112380875297447031ec5103b70dcc327706d9083a98",
+  "selected_horizon": 256,
+  "selection": "Every supported strategy/material/target/preparation group at the largest predeclared horizon; both rounds retained; no speed-ranked selection",
+  "ratio": "prepared-general total CPU divided by strategy total CPU for the exact same material, target, horizon and reuse policy; greater than one means less observed CPU",
+  "groups": [
+    {
+      "strategy": "blocked-one-zero-rank-one",
+      "paired_groups": 8,
+      "minimum_ratio": 1.056047848520353,
+      "median_ratio": 1.0984429822240085,
+      "maximum_ratio": 1.3506625210818068
+    },
+    {
+      "strategy": "blocked-zero",
+      "paired_groups": 4,
+      "minimum_ratio": 1.125613148561656,
+      "median_ratio": 1.1783150287910749,
+      "maximum_ratio": 1.4798241740290252
+    },
+    {
+      "strategy": "blocked-zero-integer-paired",
+      "paired_groups": 4,
+      "minimum_ratio": 0.8490316232332966,
+      "median_ratio": 0.8867480645009425,
+      "maximum_ratio": 1.115639925461929
+    },
+    {
+      "strategy": "maintenance-integer-paired",
+      "paired_groups": 4,
+      "minimum_ratio": 0.7406219254661084,
+      "median_ratio": 0.7699157680764257,
+      "maximum_ratio": 0.9408370306543886
+    },
+    {
+      "strategy": "maintenance-periodic",
+      "paired_groups": 4,
+      "minimum_ratio": 1.0003249700237469,
+      "median_ratio": 1.036093476007391,
+      "maximum_ratio": 1.2518710943395461
+    },
+    {
+      "strategy": "maintenance-prefix",
+      "paired_groups": 4,
+      "minimum_ratio": 0.5592013554004803,
+      "median_ratio": 0.5823169727322324,
+      "maximum_ratio": 0.7160176787636428
+    },
+    {
+      "strategy": "maintenance-split-limb",
+      "paired_groups": 4,
+      "minimum_ratio": 1.0397030692994293,
+      "median_ratio": 1.0769362881940912,
+      "maximum_ratio": 1.298195474921487
+    },
+    {
+      "strategy": "paired-field-products",
+      "paired_groups": 36,
+      "minimum_ratio": 0.7011826792886572,
+      "median_ratio": 0.7373006851468267,
+      "maximum_ratio": 0.8201420682386309
+    },
+    {
+      "strategy": "prepared-general",
+      "paired_groups": 36,
+      "minimum_ratio": 1.0,
+      "median_ratio": 1.0,
+      "maximum_ratio": 1.0
+    },
+    {
+      "strategy": "structured",
+      "paired_groups": 24,
+      "minimum_ratio": 0.7903404166137104,
+      "median_ratio": 1.0068849584756534,
+      "maximum_ratio": 1.3014193203329785
+    },
+    {
+      "strategy": "tiled-classical",
+      "paired_groups": 36,
+      "minimum_ratio": 0.9262683321332751,
+      "median_ratio": 0.9409058411426372,
+      "maximum_ratio": 0.980264955412563
+    },
+    {
+      "strategy": "tiled-strassen-one-level",
+      "paired_groups": 36,
+      "minimum_ratio": 0.6427747867399543,
+      "median_ratio": 0.6484421553091462,
+      "maximum_ratio": 0.6586012989052984
+    }
+  ],
+  "scope": "paired finite observations on a contended host; nested horizons and kernels reuse challenge streams; ratios are neither confidence intervals nor stable speedups",
+  "hardness_proved": false,
+  "production_qualified": false
+}

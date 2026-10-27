@@ -1,0 +1,25 @@
+{
+  "schema": "pon-w1-actual-process-v1",
+  "command": [
+    "/home/runner/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+    "test",
+    "--locked",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-crypto-primitives",
+    "full_relation"
+  ],
+  "started_utc": "2026-10-27T09:41:54.248250+00:00",
+  "timeout_seconds": 1800,
+  "source_sha": "d96138532b656d767d1ef46f6db86e7effae485e",
+  "timed_out": false,
+  "consensus_authority": false,
+  "returncode": 0,
+  "wall_seconds": 22.72260609700001,
+  "user_cpu_seconds": 41.819642,
+  "system_cpu_seconds": 2.185964,
+  "max_waited_descendant_rss_kib": 547952,
+  "rss_scope": "maximum reported for the waited child family; not total cgroup peak",
+  "finished_utc": "2026-10-27T09:42:16.970879+00:00"
+}

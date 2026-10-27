@@ -1,0 +1,2 @@
+# Preserve exact raw retained log whitespace and decoded terminal output.
+*.log -whitespace

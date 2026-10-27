@@ -45,9 +45,15 @@ never automatically replaced. Output files use create-new semantics.
 
 This exposes the already existing revision-12 continuity task. Its indefinite
 public availability supplies development chain continuity, **not new useful
-neural demand**. Permissionless useful neural task registration still needs a
-typed registry, task-admission and demand/evaluation rules; no source or model
-quality qualification is inferred here.
+neural demand**. Existing signed M02/M06 task leases do not make the first neural
+task balance-free or demonstrate useful learning. Public neural work still needs
+an end-to-end typed material and consumer contract; no source or model quality
+qualification is inferred here.
+
+The [public neural task research contract](PUBLIC_NEURAL_TASK_CONTRACT_RESEARCH.md)
+identifies the reusable checkpoint compiler, the new endogenous eligibility and
+numeric namespaces, and the actual-consumer tests needed to close that gap. It
+is a source-based design constraint, not an implemented profile or activation.
 
 ## CLI example
 

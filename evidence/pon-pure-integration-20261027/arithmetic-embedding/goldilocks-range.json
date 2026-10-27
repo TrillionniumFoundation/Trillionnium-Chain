@@ -1,0 +1,97 @@
+{
+  "schema": "pon-w1-exact-arithmetic-embedding-research-v1",
+  "observed_at": "2026-10-27T11:17:44.162482+00:00",
+  "native_source": "9e05ad5d237660fb0ea8b40dd5c29af4225551d3",
+  "native_modulus": 4294967291,
+  "candidate_constraint_modulus": 18446744069414584321,
+  "universal_range_argument": {
+    "variables": "a,b,s,k,r are integers in [0,q-1]",
+    "constraint": "a*b+s=q*k+r in F_P",
+    "max_left": 18446744026464911390,
+    "max_right": 18446744030759878680,
+    "max_left_strictly_below_P": true,
+    "max_right_strictly_below_P": true,
+    "implication": "Since both integer sides are in [0,P-1], field equality implies integer equality and the unique canonical reduction modulo q."
+  },
+  "positive_corner_examples": [
+    {
+      "a": 0,
+      "b": 0,
+      "s": 0,
+      "quotient": 0,
+      "remainder": 0
+    },
+    {
+      "a": 0,
+      "b": 0,
+      "s": 4294967290,
+      "quotient": 0,
+      "remainder": 4294967290
+    },
+    {
+      "a": 0,
+      "b": 4294967290,
+      "s": 0,
+      "quotient": 0,
+      "remainder": 0
+    },
+    {
+      "a": 0,
+      "b": 4294967290,
+      "s": 4294967290,
+      "quotient": 0,
+      "remainder": 4294967290
+    },
+    {
+      "a": 4294967290,
+      "b": 0,
+      "s": 0,
+      "quotient": 0,
+      "remainder": 0
+    },
+    {
+      "a": 4294967290,
+      "b": 0,
+      "s": 4294967290,
+      "quotient": 0,
+      "remainder": 4294967290
+    },
+    {
+      "a": 4294967290,
+      "b": 4294967290,
+      "s": 0,
+      "quotient": 4294967289,
+      "remainder": 1
+    },
+    {
+      "a": 4294967290,
+      "b": 4294967290,
+      "s": 4294967290,
+      "quotient": 4294967290,
+      "remainder": 0
+    }
+  ],
+  "missing_quotient_range_counterexample": {
+    "a": 0,
+    "b": 0,
+    "s": 0,
+    "r": 1,
+    "k": 878416384462359601,
+    "field_constraint_holds": true,
+    "native_remainder": 0,
+    "canonical_quotient_range_holds": false
+  },
+  "wrong_accumulation_field_counterexample": {
+    "product_count": 2,
+    "a": 4294967290,
+    "b": 4294967290,
+    "P_mod_q": 21,
+    "native_mod_q": 2,
+    "first_mod_P_then_mod_q": 4294967272
+  },
+  "scope": "Exact integer derivations and eight corner examples only; no AIR, range-lookup, PCS, cryptographic proof, benchmark or Node admission implementation. The universal implication is the stated range argument, not exhaustive testing.",
+  "performance_measured": false,
+  "full_w1_proof_produced": false,
+  "quantum_security_qualified": false,
+  "production_qualified": false
+}

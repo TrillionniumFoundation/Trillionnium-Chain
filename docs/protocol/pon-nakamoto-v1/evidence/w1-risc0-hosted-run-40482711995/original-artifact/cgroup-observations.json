@@ -1,0 +1,36 @@
+{
+  "schema": "pon-w1-cgroup-observation-v1",
+  "observations": {
+    "/proc/self/cgroup": {
+      "status": "read",
+      "raw": "0::/system.slice/hosted-compute-agent.service\n"
+    },
+    "/sys/fs/cgroup/memory.max": {
+      "status": "unavailable",
+      "errno": 2,
+      "raw": null
+    },
+    "/sys/fs/cgroup/cpu.max": {
+      "status": "unavailable",
+      "errno": 2,
+      "raw": null
+    },
+    "/sys/fs/cgroup/memory/memory.limit_in_bytes": {
+      "status": "unavailable",
+      "errno": 2,
+      "raw": null
+    },
+    "/sys/fs/cgroup/cpu/cpu.cfs_quota_us": {
+      "status": "unavailable",
+      "errno": 2,
+      "raw": null
+    },
+    "/sys/fs/cgroup/cpu/cpu.cfs_period_us": {
+      "status": "unavailable",
+      "errno": 2,
+      "raw": null
+    }
+  },
+  "missing_means_unlimited": false,
+  "resource_qualification": false
+}

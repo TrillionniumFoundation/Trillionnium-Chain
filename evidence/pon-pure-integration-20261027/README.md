@@ -84,6 +84,12 @@ samples. All misses, setup costs and unsupported strategies remain visible.
 This is a second environment's observation alongside the original local run,
 not a replacement for the original timings and source identity.
 
+[The complete fixed-cohort reduction](hosted-cost-reduction/README.md) retains
+all 1,728 strategy groups, including unsupported pairs, and a separate view of
+all 200 supported pairs at horizon 256. Plain JSON/CSV and byte-equivalent gzip
+copies remain available. Ratios include setup and unsuccessful attempts; they
+are paired observations, not confidence intervals or a lowest-cost theorem.
+
 The hosted TCP experiment lasted 105.539 seconds with two receivers, two
 listeners per receiver, four malicious workers and cold budget reopens. There
 were 3,057 unique malicious packets, delivered to both receivers for 6,114
@@ -118,10 +124,46 @@ Each fake-trace case passes the native target before rejection is measured.
 | Correct product, false trace, filter then verifier | 27 | 0.720053 ms | 0.720053 ms |
 
 The last two rows preserve the blocker: a public-product fact cannot validate a
-trace. Correct-product false-trace packets still trigger the complete native W1
-relation. None of these finite maxima is a mathematical or scheduler-independent
+trace. Correct-product false-trace packets still require all native transcript
+updates; the trace mismatch skips the later product corrections. None of these
+finite maxima is a mathematical or scheduler-independent
 upper bound. A real complete-relation certificate needs separate verifier,
 late-corruption and global-service measurements before admission can change.
+
+## Separate exact-source completion on 9e05
+
+[Run 40492528017](ci-9e05-40492528017/README.md) separately completed on
+`9e05ad5d237660fb0ea8b40dd5c29af4225551d3`, tree
+`952666bff72a49d8bc7693b27ff747f56a56b240`. All 29 original artifact members,
+full decoded job/API logs and three byte-identical reader reruns are retained.
+No result is copied from d961 to supply a pass for this newer source.
+
+The full producer matrix again retained 3,456 cohorts / 605,024 attempts /
+80,836 winning calls / 50,764 exhausted searches, including all unsupported
+combinations. Capture wall time was 282.578592011 seconds. The tail experiment
+again retained 747 pairs / 2,988 calls. Those repeated deterministic streams
+are not additional independent block samples or a hardness lower bound.
+
+| 9e05 TCP phase | Honest accepted / offered calls | Honest accepted p99 | Accepted receiver calls/s | Hostile calls, all refused |
+| --- | ---: | ---: | ---: | ---: |
+| Cold baseline | 792 / 792 | 21.881358 ms | 52.73600155 | 0 |
+| First cold-reopen attack | 1498 / 1498 | 75.752861 ms | 33.25021235 | 5294 |
+| Second cold-reopen attack | 1510 / 1510 | 72.131166 ms | 33.51132001 | 5222 |
+
+The TCP capture lasted 105.386577965 seconds. All 10,516 hostile calls recorded
+`full_work_started`; that marker does not establish that every call completed
+all transcript updates or later product corrections. This is one nonexclusive
+host with fixed-parent candidates, not chain TPS or a global fairness claim.
+Cross-run timing changes are not presented as an implementation speedup.
+
+The [same-source CodeQL export](codeql-9e05-40492528004/README.md) failed after
+its original 1,200-second deadline. Its complete 200-member ZIP and all 38 empty
+analysis/selection snapshots remain available. This is no completed CodeQL
+assessment. Required baseline/head/merge checks retain their own outcomes.
+
+The [original two-thread hosted complete-W1 proof attempt](../../docs/protocol/pon-nakamoto-v1/evidence/w1-risc0-hosted-run-40482711995/README.md)
+is separately retained with all 47 original members and its 5,400-second timeout.
+It is unrelated to the native focused workflow's PASS and supplies no receipt.
 
 ## Reproducible observed source snapshots
 
