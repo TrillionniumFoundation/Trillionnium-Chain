@@ -747,3 +747,24 @@ A separate lease remains unfenced. These values are read-only diagnostics,
 not authorization to send; only the original operation owner can decide
 NotDispatched or reconcile an unknown external effect. Competing-writer and
 cold-reopen controls test the exact cross-operation status.
+### 2026-10-27 PN0/P0-A original native signed re-entry regression (source only)
+
+The existing \`trnm-pon-node/tests/continuity_authenticated.rs\` now contains
+\`maintenance_reentry_registers_signed_task_and_independent_client_confirms\`.
+It uses the original Revision12 Genesis Maintenance for actual PNW1 blocks:
+revokes the original only optional lease at height 1; carries an independently
+signed new tag18 demand and tag21 source statement at height 2 (not a revoked
+lease renewal); extends real Maintenance work through height 9; and checks
+three actual signed transaction memberships against a separately reopened,
+packet-replaying client, including the installed depth+required-work policy.
+It requires the old task to remain ineligible, the new task to be eligible
+from the next parent, equal checked native/reference state, and fresh cold
+SQLite client readback. No production identity, W1/DAA byte, signature
+domain, legacy rule or activation flag changes.
+
+**Test execution on this exact source is NOT_RUN:** this local environment has
+no Rust toolchain or full repository checkout. Source assertions do not make
+independent administrators, real Hepta request ownership, W1 work-cost
+qualification or 72-hour WAN acceptance true. P0-A remains OPEN pending
+a real native exit plus a separately administered client/operator campaign.
+

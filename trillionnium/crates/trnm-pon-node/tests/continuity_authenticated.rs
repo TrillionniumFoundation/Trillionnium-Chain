@@ -224,3 +224,203 @@ fn revoked_optional_work_keeps_maintenance_maturity_and_interrupted_native_recov
     assert_eq!(native.read_active().unwrap(), recovered);
     eprintln!("native continuity: admitted_packets=24, signed_transactions=2, all_optional_tasks_revoked=true, maturity_height=21, reorg_cut=detach:0, cold_reopens=3, useful_output_credit=0, full_capacity=false");
 }
+/// PN0/P0-A: Maintenance must carry honest signed task re-entry after all
+/// optional work is revoked, not merely emit empty blocks. A second durable
+/// native backend and a third, fresh independently replaying client check the
+/// same actual PNW1 packet bytes and installed depth+work confirmation policy.
+/// This does not grant source/operator independence or W1 hardness qualification.
+#[test]
+fn maintenance_reentry_registers_signed_task_and_independent_client_confirms() {
+    use trnm_crypto_primitives::qualified_work_task::derive_matrices;
+    use trnm_protocol::qualified_work_task::{
+        lifecycle_v2::SignedLifecycleTaskV2, QualifiedWorkTask, TaskPurpose,
+    };
+
+    let dir = tempfile::tempdir().unwrap();
+    let settings = Settings::development_with_profiles(
+        Some(1),
+        "native-public-evaluation-dev-v1",
+        continuity_v1::PROFILE,
+    )
+    .unwrap();
+    let bootstrap = settings.bootstrap_lifecycle_task().unwrap();
+    let revoked_task = bootstrap.signed.manifest.matrix_task;
+
+    // Construct a new source-authenticated demand from canonical public test
+    // keys. No extension, impersonation or silent renewal of the revoked lease.
+    let mut lease = bootstrap.lease.clone();
+    lease.slot = 1;
+    lease.generation = 2;
+    lease.purpose = TaskPurpose::InferenceContraction;
+    lease.not_before = 1;
+    lease.expires = 1001;
+    lease.available_until = 1101;
+    lease.demand_id = lease.derived_demand_id();
+    let model: Vec<u8> = (0..4096_u32)
+        .flat_map(|i| ((i * 11 + 7) % 97).to_le_bytes())
+        .collect();
+    let input: Vec<u8> = (0..4096_u32)
+        .flat_map(|i| ((i * 17 + 5) % 101).to_le_bytes())
+        .collect();
+    let (a, b) = derive_matrices(&model, &input).unwrap();
+    let new_task = trnm_crypto_primitives::pon_work::task_id(&a, &b).unwrap();
+    assert_ne!(new_task, revoked_task);
+    assert_ne!(new_task, continuity_v1::maintenance_task().unwrap());
+
+    let mut manifest = bootstrap.signed.manifest;
+    manifest.purpose = lease.purpose;
+    manifest.source = lease.source;
+    manifest.demand_id = lease.demand_id;
+    manifest.source_record = lease.bound_source_record().unwrap();
+    manifest.model = hash(b"artifact", &[&model]);
+    manifest.layer = QualifiedWorkTask::layer_id(manifest.model);
+    manifest.input = hash(b"qualified-task-input-v1", &[&input]);
+    manifest.matrix_task = new_task;
+    manifest.authorization_scope = lease.authorization_scope;
+    manifest.availability_manifest = lease.availability_manifest;
+    manifest.availability_root = lease.availability_root;
+    manifest.withdrawal_head = lease.withdrawal_frontier().unwrap();
+    manifest.not_before = lease.not_before;
+    manifest.expires = lease.expires;
+    manifest.available_until = lease.available_until;
+    manifest.demand_nonce = 1;
+    manifest.useful_output_limit = lease.purpose.output_limit();
+    manifest.output_meter = manifest.derived_output_meter();
+
+    let mut statement = SignedLifecycleTaskV2 {
+        lease_id: lease.id().unwrap(),
+        manifest,
+        signature: [0; 64],
+    };
+    let source_key = signing_key_from_hex(&hex::encode(hash(
+        b"DEV-ONLY-KEY",
+        &[&0_u64.to_le_bytes()],
+    )))
+    .unwrap();
+    statement.signature = hex::decode(sign_hex(
+        &source_key,
+        &statement.signing_message().unwrap(),
+    ))
+    .unwrap()
+    .try_into()
+    .unwrap();
+
+    let revoke = DemandRevocationV2 {
+        network: settings.network(),
+        parameters: settings.parameters(),
+        slot: bootstrap.lease.slot,
+        demand_id: bootstrap.lease.demand_id,
+        requester: bootstrap.lease.requester,
+        expected_revision: bootstrap.lease.revision,
+    };
+    let revoke_tx = signed(&settings, 1, 1, 20, revoke.encode().unwrap());
+    let open_tx = signed(&settings, 1, 2, 18, lease.encode().unwrap());
+    let registration_tx = signed(&settings, 0, 1, 21, statement.encode().unwrap());
+    let revoke_id = hash(b"tx-id", &[&revoke_tx]);
+    let open_id = hash(b"tx-id", &[&open_tx]);
+    let registration_id = hash(b"tx-id", &[&registration_tx]);
+
+    let mut reference =
+        Node::open(&dir.path().join("reference"), settings.clone(), 1).unwrap();
+    let mut native = Node::open_with_authenticated_state(
+        &dir.path().join("native"),
+        settings.clone(),
+        2,
+    )
+    .unwrap();
+    let mut parent = settings.genesis();
+    let mut admitted = Vec::new();
+    let mut revoke_block = None;
+    let mut registered_block = None;
+
+    for height in 1..=9 {
+        let txs = match height {
+            1 => vec![revoke_tx.clone()],
+            2 => vec![open_tx.clone(), registration_tx.clone()],
+            _ => vec![],
+        };
+        let id = admit_pair(
+            &mut reference,
+            &mut native,
+            parent,
+            height,
+            txs,
+            public(0),
+            0,
+        );
+        reference.activate(id).unwrap();
+        native.activate(id).unwrap();
+        if height == 1 {
+            revoke_block = Some(id);
+            assert!(native
+                .lifecycle_task_lease(id, revoked_task, 2)
+                .is_err());
+        }
+        if height == 2 {
+            registered_block = Some(id);
+            assert!(native
+                .lifecycle_task_lease(id, new_task, 3)
+                .is_ok());
+        }
+        assert_eq!(
+            native.read_active().unwrap(),
+            reference.read_active().unwrap()
+        );
+        admitted.push(id);
+        parent = id;
+    }
+
+    // A freshly opened independent consumer independently checks each actual
+    // signed PNX1 / full PNW1 packet, not producer status or a hand-entered
+    // confirmation Boolean. All accepted bytes remain bound to Revision12.
+    let mut consumer = Node::open_with_authenticated_state(
+        &dir.path().join("consumer"),
+        settings.clone(),
+        1,
+    )
+    .unwrap();
+    for id in admitted {
+        let packet = reference.packet(id).unwrap();
+        assert_eq!(consumer.admit(&packet, 100_000).unwrap(), id);
+        consumer.activate(id).unwrap();
+    }
+    assert_eq!(
+        consumer.read_active().unwrap(),
+        native.read_active().unwrap()
+    );
+    assert!(consumer
+        .lifecycle_task_lease(parent, revoked_task, 10)
+        .is_err());
+    let admitted_lease = consumer
+        .lifecycle_task_lease(parent, new_task, 10)
+        .unwrap();
+    assert_eq!(admitted_lease.slot, 1);
+    assert_eq!(admitted_lease.generation, 2);
+
+    for (transaction, included) in [
+        (revoke_id, revoke_block.unwrap()),
+        (open_id, registered_block.unwrap()),
+        (registration_id, registered_block.unwrap()),
+    ] {
+        let receipt = consumer
+            .confirmation(transaction, included, 100_000)
+            .unwrap();
+        assert!(receipt.confirmed);
+        assert!(!receipt.reorged);
+        assert!(!receipt.finalized);
+        assert!(!receipt.execution_authority);
+        assert_eq!(receipt.observed_tip, hex::encode(parent));
+    }
+    drop(consumer);
+    let cold = Node::open_with_authenticated_state(
+        &dir.path().join("consumer"),
+        settings,
+        1,
+    )
+    .unwrap();
+    assert_eq!(cold.read_active().unwrap(), native.read_active().unwrap());
+    assert!(cold
+        .lifecycle_task_lease(parent, new_task, 10)
+        .is_ok());
+}
+
