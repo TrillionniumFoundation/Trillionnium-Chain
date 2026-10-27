@@ -2158,7 +2158,7 @@ fn receive_page(
     // migrates to a different cgroup or the original quotas are changed.
     for packet in &packets {
         resource_checkpoint()?;
-        node.admit(packet, clock)?;
+        node.admit_with_work_progress(packet, clock, &mut |_| resource_checkpoint())?;
         // This can fail *after* durable admission. Preserve the accepted
         // fact, but never report an entirely successful page/sync.
         resource_checkpoint()?;
@@ -2383,11 +2383,27 @@ mod tests {
         // The second resource fence triggers AFTER exactly one valid native
         // W1 is durably admitted. Do not misreport this as complete sync or
         // retroactively rewrite the accepted block as consensus-invalid.
+        // Count the exact same full native W1 callback progression on this
+        // fixed statement. Reject just after all full replay checkpoints,
+        // never by guessing the number of internal kernel calls.
+        let mut work_checkpoints = 0_u64;
+        trnm_crypto_primitives::pon_work::verify_with_progress(
+            packet.header.challenge(),
+            packet.header.work_task,
+            packet.header.target,
+            &packet.proof,
+            &mut |_| {
+                work_checkpoints += 1;
+                Ok::<(), ()>(())
+            }
+        ).unwrap();
+        assert!(work_checkpoints > 512);
+        let post_admission_checkpoint = work_checkpoints + 2;
         calls = 0;
         let failure = receive_page(
             &mut node, page, tip, settings.genesis(), now, || {
                 calls += 1;
-                if calls == 2 {
+                if calls == post_admission_checkpoint {
                     Err("PUBLIC_HOST_KERNEL_LIMITS_CHANGED".into())
                 } else {
                     Ok(())
@@ -2395,7 +2411,8 @@ mod tests {
             }
         ).unwrap_err();
         assert_eq!(failure.to_string(), "PUBLIC_HOST_KERNEL_LIMITS_CHANGED");
-        assert_eq!(calls, 2, "every packet has before/after kernel fences");
+        assert_eq!(calls, post_admission_checkpoint,
+            "every W1 math checkpoint is resource-fenced");
         assert_eq!(node.read_active().unwrap().0, settings.genesis());
         assert_eq!(node.parent_height(tip).unwrap(), 1,
             "already admitted native block is durable but not activated");
