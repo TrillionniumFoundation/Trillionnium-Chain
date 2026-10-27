@@ -63,6 +63,7 @@ def check(ingress, owner, cpu):
         "loopback_history_false_product_charges_one_cold_node_cpu_domain",
         "loopback_history_valid_work_still_accepts_under_cold_cpu_meter",
         "mixed_false_then_valid_history_across_source_ports_reuses_one_cpu_owner",
+        "four_distinct_ticket_valid_false_history_traces_never_obtain_work",
         "malformed_remote_history_decode_pays_original_cpu_and_preserves_state",
         "unclean_public_epoch_cannot_mint_fresh_remote_history_credit",
     ):
