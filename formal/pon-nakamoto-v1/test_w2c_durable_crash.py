@@ -4,6 +4,7 @@ from pathlib import Path
 import select
 import subprocess
 import sys
+import time
 import tempfile
 import unittest
 from w2c_durable_epoch import DurableEpochOwner, EpochOwnerError
@@ -29,8 +30,21 @@ with DurableEpochOwner(sys.argv[1],entropy=lambda n:bytes([0x12])*n) as owner:
                 stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, env=env,
             )
             try:
-                readable, _, _ = select.select([process.stdout], [], [], 5)
-                self.assertTrue(readable, 'child did not persist original Epoch')
+                # Startup fsync and Python import may contend with other tests.
+                # A retained deadline and a process-status diagnostic distinguish
+                # actual startup failure from slow readiness; never count timeout
+                # as crash-recovery acceptance.
+                deadline = time.monotonic() + 15
+                readable = []
+                while not readable and time.monotonic() < deadline:
+                    readable, _, _ = select.select(
+                        [process.stdout], [], [], min(1, deadline-time.monotonic()))
+                    if process.poll() is not None:
+                        break
+                if not readable:
+                    status = process.poll()
+                    stderr = process.stderr.read(4096) if status is not None else '<child-live>'
+                    self.fail(f'child did not persist original Epoch: status={status} stderr={stderr}')
                 prior = process.stdout.readline().strip()
                 self.assertEqual(len(prior), 64)
                 with self.assertRaisesRegex(EpochOwnerError, 'EPOCH_OWNER_BUSY'):
