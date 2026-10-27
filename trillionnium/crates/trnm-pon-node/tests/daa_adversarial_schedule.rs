@@ -804,8 +804,7 @@ fn native_w1_forks_feed_branch_pinned_asert_shadow_without_changing_legacy_daa()
         max_ancestor_reads: 64,
     };
     let legacy_main = node.expected_target(active).unwrap();
-    let shadow_main =
-        shadow_target_from_ancestry(context, active, |id| node.packet(id)).unwrap();
+    let shadow_main = shadow_target_from_ancestry(context, active, |id| node.packet(id)).unwrap();
     assert_eq!(shadow_main, anchor_target);
     assert_eq!(legacy_main, anchor_target);
     let mut median_context = context;
@@ -865,8 +864,7 @@ fn native_w1_forks_feed_branch_pinned_asert_shadow_without_changing_legacy_daa()
     }
     assert_eq!(node.activate(branch).unwrap(), branch);
     assert_eq!(node.read_active().unwrap().0, branch);
-    let shadow_branch =
-        shadow_target_from_ancestry(context, branch, |id| node.packet(id)).unwrap();
+    let shadow_branch = shadow_target_from_ancestry(context, branch, |id| node.packet(id)).unwrap();
     // A different, valid branch-specific parent timestamp changes the research
     // result. Neither branch's own legacy expected-target is rewritten.
     assert_ne!(shadow_branch, shadow_main);
