@@ -2580,7 +2580,7 @@ mod tests {
         // An exact retry recovers from the original durable bytes. The
         // second W1 still requires its own before/after owner checkpoints.
         let mut receiver =
-            Node::open(dir.path().join("receiver"), settings, 2).unwrap();
+            Node::open(dir.path().join("receiver"), settings.clone(), 2).unwrap();
         let mut complete_checks = 0;
         assert_eq!(
             receive_page_with_checkpoint(
