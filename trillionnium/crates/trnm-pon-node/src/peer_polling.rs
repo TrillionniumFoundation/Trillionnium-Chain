@@ -340,6 +340,13 @@ fn page(
 fn admit_page(node: &Mutex<Node>, packet: Packet, end: Instant, stop: &AtomicBool) -> Result<bool> {
     let cpu = {
         let owner = lock(node, end, stop)?;
+        // The original persistent continuous owner requires a durable
+        // operation-ID/journal claim; this peer poller only holds a volatile
+        // scalar CPU operation. Refuse before full W1 or an accepted packet.
+        ensure(
+            !owner.is_continuous(),
+            "OWNER_CONTINUOUS_HISTORY_DURABLE_REQUIRED",
+        )?;
         // The peer is authenticated, not CPU-funded. A pinned peer must
         // never mint its own allowance or bypass the public service budget.
         let cpu = owner.public_service_cpu_domain()?;

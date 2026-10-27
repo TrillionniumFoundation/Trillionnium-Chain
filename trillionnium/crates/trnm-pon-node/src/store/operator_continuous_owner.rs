@@ -438,7 +438,16 @@ impl Node {
     /// expensive History decode/W1/M06 operation; a real crash leaves it
     /// behind so a later process cannot silently forgive unknown CPU debt.
     pub(crate) fn begin_remote_history_cpu_epoch(&mut self) -> Result<bool> {
-        if self.is_continuous() || self.public_service_epoch_listeners != 0 {
+        // A continuous Node has a durable operation-ID journal, but the
+        // generic ServiceMutationCpuDomain::begin used by History imports
+        // does NOT enter that journal. Never mislabel volatile CPU debit as
+        // recoverable continuous work; this path must fail closed until the
+        // original continuous owner provides an authorized durable scope.
+        ensure(
+            !self.is_continuous(),
+            "OWNER_CONTINUOUS_HISTORY_DURABLE_REQUIRED",
+        )?;
+        if self.public_service_epoch_listeners != 0 {
             return Ok(false);
         }
         self.begin_ordinary_public_service_epoch()
