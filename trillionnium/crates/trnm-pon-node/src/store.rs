@@ -3259,6 +3259,7 @@ impl Node {
         packet: &Packet,
         observed_now: u64,
         progress: &mut impl FnMut(pon_work::VerificationProgress) -> Result<()>,
+        execution_progress: &(impl Fn(ExecutionProgress) -> Result<()> + Sync),
     ) -> Result<Hash> {
         if let Some(id) = self.check_admission_context(packet, observed_now)? {
             return Ok(id);
@@ -3268,7 +3269,10 @@ impl Node {
             WorkCheckedPacket::verify_with_progress(packet.clone(), progress)?,
             permit,
         )?;
-        self.admit_work_checked(checked, observed_now)
+        // Keep the SAME caller-local Host owner through M06, authenticated
+        // State and SQL deltas. A resource refusal before durable commit must
+        // roll back the original Node transaction, not become invalid W1.
+        self.admit_work_checked_with_progress(checked, observed_now, execution_progress)
     }
     fn precheck_owner_packet(&self, packet: &Packet) -> Result<()> {
         ensure(

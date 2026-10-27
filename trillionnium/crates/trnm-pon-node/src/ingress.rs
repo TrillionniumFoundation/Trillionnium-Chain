@@ -2135,7 +2135,7 @@ fn receive_page(
     tip: Hash,
     after: Hash,
     clock: u64,
-    mut resource_checkpoint: impl FnMut() -> Result<()>,
+    resource_checkpoint: impl Fn() -> Result<()> + Sync,
 ) -> Result<Hash> {
     ensure(
         page.schema == "pon-native-history-v1"
@@ -2174,12 +2174,19 @@ fn receive_page(
     )?;
     for packet in &packets {
         resource_checkpoint()?;
-        node.admit_with_work_progress(packet, clock, &mut |point| {
-            if history_kernel_work_checkpoint(point) {
-                resource_checkpoint()?;
-            }
-            Ok(())
-        })?;
+        node.admit_with_work_progress(
+            packet,
+            clock,
+            &mut |point| {
+                if history_kernel_work_checkpoint(point) {
+                    resource_checkpoint()?;
+                }
+                Ok(())
+            },
+            // All W1 and M06 checkpoints use the SAME fixed physical owner,
+            // including authenticated State work and BeforeDurableCommit.
+            &|_| resource_checkpoint(),
+        )?;
         // This can run after durable admission: an owner fault never revokes
         // a committed block, but it stops this unqualified sync response.
         resource_checkpoint()?;
@@ -2395,6 +2402,60 @@ mod tests {
     use super::*;
 
     #[test]
+    fn history_valid_w1_cannot_commit_after_m06_host_owner_rejection() {
+        use std::sync::atomic::{AtomicUsize, Ordering};
+        use trnm_crypto_primitives::pon_work::VerificationProgress;
+        use trnm_mvcc_fee::pon_executor::ExecutionProgress;
+        let (dir, mutex, packet) = pending_packet();
+        let mut node = mutex.lock().unwrap();
+        let original = node.stats().unwrap();
+        let original_active = node.read_active().unwrap();
+        let id = packet.id().unwrap();
+        let m06_checks = AtomicUsize::new(0);
+        let mut tiles = 0_usize;
+        let result = node.admit_with_work_progress(
+            &packet,
+            now().unwrap(),
+            &mut |point| {
+                if matches!(point, VerificationProgress::TranscriptTile { .. }) {
+                    tiles += 1;
+                }
+                Ok(())
+            },
+            &|stage| {
+                if stage == ExecutionProgress::BeforeDurableCommit {
+                    m06_checks.fetch_add(1, Ordering::SeqCst);
+                    return Err(Error::from("PUBLIC_HOST_KERNEL_LIMITS_CHANGED"));
+                }
+                Ok(())
+            },
+        );
+        assert_eq!(
+            result.unwrap_err().to_string(),
+            "PUBLIC_HOST_KERNEL_LIMITS_CHANGED"
+        );
+        assert_eq!(tiles, 512, "valid W1 must have completed full replay");
+        assert!(m06_checks.load(Ordering::SeqCst) > 0);
+        assert_eq!(node.stats().unwrap(), original);
+        assert_eq!(node.read_active().unwrap(), original_active);
+        let persisted: u64 = rusqlite::Connection::open(dir.path().join("native.sqlite"))
+            .unwrap()
+            .query_row(
+                "SELECT COUNT(*) FROM blocks WHERE id=?",
+                [id.as_slice()],
+                |row| row.get(0),
+            )
+            .unwrap();
+        assert_eq!(
+            persisted, 0,
+            "precommit owner fault must roll back all block rows"
+        );
+        // Host error is local, not mathematical Invalid. Later reuse of the
+        // exact valid W1 must succeed after the resource owner is restored.
+        assert_eq!(node.admit(&packet, now().unwrap()).unwrap(), id);
+    }
+
+    #[test]
     fn kernel_progress_rechecks_original_host_at_most_every_64_tiles() {
         use trnm_crypto_primitives::pon_work::VerificationProgress;
         let mut owner_checks = Vec::new();
@@ -2442,8 +2503,10 @@ mod tests {
                     return Err("PUBLIC_HOST_KERNEL_LIMITS_CHANGED".into());
                 }
                 Ok(())
-            })
-            .unwrap_err();
+            },
+            &|_| Ok(()),
+        )
+        .unwrap_err();
         assert_eq!(refused.to_string(), "PUBLIC_HOST_KERNEL_LIMITS_CHANGED");
         assert_eq!(tiles, 1, "full W1 must abort cooperatively before verified work");
         assert_eq!(node.stats().unwrap(), before_stats);
