@@ -1,0 +1,100 @@
+# W2-C durable paid-spend ownership across cloned local processes
+
+Status: **research-only / HOLD_NO_GO**. Exact parent is Chain PR #339 at
+`2787ad3959359bc5377d982a7ab46a2d76d44e0e`. This adds a candidate
+durable *resource-admission* experiment, not a consensus profile, W1 replacement,
+signed V3 protocol change, Chainwork credit, model reward or activation.
+
+## Actual cloned-epoch counterexample
+
+`w2c_stateless_receiver.StatelessReceiverAdmission` binds a server
+HMAC/receiver/process epoch/caller/proposal/ticket and tracks exact paid
+grants in an **in-memory** map. If a second process starts with a clone of
+the same receiver credential and epoch but an empty map, the old paid ticket
+can again return READY and trigger costly invalid W1 replay. The original
+red test remains and must not be deleted.
+
+The new optional `w2c_durable_paid_claims.DurableStatelessReceiver`
+derives from the research stateless admission verifier and binds all granted
+resource consumption to one SQLite WAL-backed paid owner.
+
+- One trusted operator provisions the database **once**, in an owner-only
+  directory with an owner-only regular file, through
+  `provision(absolute_path, receiver, epoch, capacity=..., lifetime_ms=...)`.
+  Re-provisioning over an existing database is rejected, never treated as
+  an empty new epoch.
+- The database holds a single policy row binding original **receiver,
+  epoch, 1..1024 maximum concurrent paid claims and exact grant lifetime**.
+  Processes with larger capacity, a different epoch or altered live policy
+  fail closed. DB schema version, file mode/link count and clock watermark
+  are checked rather than invented after a crash.
+- The original stateless HMAC, proposal/caller, expiry, ticket target and
+  strict encoding checks remain mandatory before a resource ticket can be
+  claimed. This is NOT an independent verifier of cryptographic arithmetic.
+- The accepted claim's exact SHA-256 identity is written in a SQLite
+  `BEGIN IMMEDIATE` transaction, with `synchronous=FULL` and a WAL
+  journal. Atomic uniqueness and an unexpired-row capacity test are carried
+  under the same database write lock **before the caller can begin W1**.
+  Failed verification does not refund a spent grant. A process exit after
+  commit but before W1 never grants the same claim again.
+- Storage failure, busy/locked owner, unknown commit outcome, schema or
+  policy change fail closed as a **local resource refusal**, never as
+  consensus-invalid W1 or a new Chainwork claim. The service does not
+  silently recreate a lost DB or widen resource limits. A DB high-watermark
+  disallows clock regression among processes accessing the same owner.
+- A separate independent process that copies the credentials **AND
+  uses a different database** can still accept the same ticket. This is
+  an explicit negative test. One local SQLite file does not prove unique
+  authority among permissionless operators, remote hosts, other file
+  namespaces, or a compromised privileged storage administrator.
+- The path checks are research-only and are not a hardened production
+  directory/file-descriptor capability: there remains a TOCTOU window
+  between checking a pathname and SQLite opening it. No WAN, user-supplied
+  path, untrusted local filesystem, shared NFS or remote DB placement is
+  authorized by this prototype.
+
+## Executable local controls
+
+```sh
+python3 formal/pon-nakamoto-v1/test_w2c_durable_paid_claims.py -v
+```
+
+The 12 cases cover a real separate-process pool with 12 concurrent/contending
+submissions (exactly one READY), restart and replay, abrupt process exit
+after **durable commit before W1**, capacity exhaustion, cloned key plus
+different DB as a **deliberate replay vulnerability**, persisted clock
+high-watermark, changed policy/schema/capacity/epoch, missing file,
+symlink/path ownership, changed authenticated caller and fail-closed outcomes.
+
+In this assistant execution environment, 12/12 local tests completed.
+The generated source and test bytes were uploaded to GitHub unchanged and their
+Git blob SHA-1 values matched the local `git hash-object` output.
+This local execution used the original H domain/Grant interface reproduced in
+a small test sandbox; it is **not** a full checked-out Trillionnium-Chain,
+signed native V3 execution, external reviewer, exact-source Cargo test, measured
+W1 verification, cost-hardness qualification or P4 A03 physical campaign.
+
+## Costs, threat boundaries and remaining blockers
+
+Durable SQLite writes add filesystem latency, CPU, WAL disk usage, pressure
+on the global write lock and crash/recovery obligations. Under attack, a
+full paid table can refuse honest callers, and a GPU attacker may still
+spend very little on a valid admission ticket relative to the server's
+complete rejected W1. This changes neither W1's mathematical validity nor
+proof-of-useful-work cost asymmetry. It is an experimental anti-replay
+component, not a ready-to-install second receiver.
+
+P0 must retain all original four false transcripts and exact native Rust
+admission invariants. P1 needs physical host-wide verification across V3,
+pinned polling, native sync, relay/loopback and independent processes with a
+monotonic original owner. P2 needs actual CPU/GPU/ASIC cost and public signed
+Cookie calibration. P3 needs sustained malicious peer, rotated identity,
+false-trace, valid-work/wrong-StateRoot traffic alongside signed honest work.
+P4 requires three runs in each of three attack modes with 3/3 timely
+independently verified honest confirmations each run. P5 still lacks a
+sound *succinct* W2 proof with qualified economics. P6 still requires
+genuinely independent cryptographic review and cross-implementation
+adversarial acceptance. No other source or local test can silently close
+these dependencies.
+
+Status stays **SHADOW_ONLY / HOLD_NO_GO / production off**.
