@@ -162,6 +162,14 @@ class ShadowJournal:
         This detects foreign/corrupt metadata in the caller's current SQLite
         snapshot. It authenticates neither a remote packet nor native W1 work.
         """
+        # Block schema-injected triggers/views/indexes before any DAA research
+        # writer operation; the check shares its existing SQLite snapshot.
+        objects = self.db.execute(
+            "SELECT type,name FROM sqlite_master WHERE name NOT LIKE 'sqlite_%'"
+        ).fetchall()
+        if set(objects) != {('table', 'daa_shadow_meta_v1'),
+                            ('table', 'daa_shadow_headers_v1')}:
+            raise JournalError('DATABASE_SCHEMA_DRIFT')
         expected = {'schema': SCHEMA, 'context': self.context,
                     'genesis': self.genesis}
         actual = dict(self.db.execute(
