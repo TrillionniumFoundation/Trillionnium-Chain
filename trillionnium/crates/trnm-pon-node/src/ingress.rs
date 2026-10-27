@@ -2404,11 +2404,11 @@ mod tests {
 
     #[test]
     fn history_valid_w1_cannot_commit_after_m06_host_owner_rejection() {
+        use std::sync::atomic::{AtomicUsize, Ordering};
         use trnm_crypto_primitives::pon_work::VerificationProgress;
         use trnm_mvcc_fee::pon_executor::ExecutionProgress;
-        use std::sync::atomic::{AtomicUsize, Ordering};
         let (dir, mutex, packet) = pending_packet();
-        let mut node = mutex.into_inner().unwrap();
+        let mut node = mutex.lock().unwrap();
         let original = node.stats().unwrap();
         let original_active = node.read_active().unwrap();
         let id = packet.id().unwrap();
@@ -2433,7 +2433,10 @@ mod tests {
                 Ok(())
             },
         );
-        assert_eq!(result.unwrap_err().to_string(), "PUBLIC_HOST_KERNEL_LIMITS_CHANGED");
+        assert_eq!(
+            result.unwrap_err().to_string(),
+            "PUBLIC_HOST_KERNEL_LIMITS_CHANGED"
+        );
         assert_eq!(tiles, 512, "valid W1 must have completed full replay");
         assert!(m06_checks.load(Ordering::SeqCst) > 0);
         assert_eq!(node.stats().unwrap(), original);
@@ -2446,7 +2449,10 @@ mod tests {
                 |row| row.get(0),
             )
             .unwrap();
-        assert_eq!(persisted, 0, "precommit owner fault must roll back all block rows");
+        assert_eq!(
+            persisted, 0,
+            "precommit owner fault must roll back all block rows"
+        );
         // A resource refusal is not an invalid-W1 cache entry. The identical
         // actual proof can later be verified by the normal Node owner.
         assert_eq!(node.admit(&packet, now().unwrap()).unwrap(), id);
