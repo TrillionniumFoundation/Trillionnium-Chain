@@ -51,7 +51,7 @@ Until all are independently closed, keep every production flag false, public mai
 
 `trillionnium/crates/trnm-protocol/src/pq_frame.rs` now holds a bounded, non-authoritative Rust parser for exact 176-byte TPQ1 statements plus 3309-byte signatures. It checks purpose, algorithm, reserved fields, caller-pinned network/context/key ID, generation, sequence, expiry, 64 MiB payload ceiling, SHA-384 domain-separated payload commitment and exact 3487-byte framing. Its return type is deliberately `UnverifiedPqFrame`, **not** a verified key/transaction/Chainwork/Final-use authority. It does not call OpenSSL or change the installed Ed25519 PoN format.
 
-Five Rust regression tests are provided (full signed-statement byte mutation, legacy downgrade, zero-generation/nonces, stale/wrong payload and explicit non-verification of arbitrary signature bytes). The exact source has **not** been compiled or run with Rust in this tool environment; source/build qualification is still required.
+Six Rust regression tests are provided, including an independently calculated Python SHA-384 payload-commitment vector; additional cases (full signed-statement byte mutation, legacy downgrade, zero-generation/nonces, stale/wrong payload and explicit non-verification of arbitrary signature bytes). The exact source has **not** been compiled or run with Rust in this tool environment; source/build qualification is still required.
 
 Required command on an independently checked-out exact SHA:
 

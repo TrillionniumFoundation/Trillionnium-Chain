@@ -219,6 +219,16 @@ mod tests {
     }
 
     #[test]
+    fn sha384_payload_commitment_matches_independent_python_oracle() {
+        let payload = b"public Cell release manifest hash and consent";
+        let digest = payload_commitment(payload).unwrap();
+        assert_eq!(
+            hex::encode(digest),
+            "2ceb9c0f29a40392386f5644c998adedaf5ae91f46b2faff977a66ad8153cbfe2bc62af16fd4125e7f516fc09a1382e4"
+        );
+    }
+
+    #[test]
     fn old_devnet_transaction_size_cannot_hold_pq_signature() {
         assert!(TPQ1_SIGNED_BYTES > 2048);
         assert!(ML_DSA_65_SIGNATURE_BYTES > 2048);

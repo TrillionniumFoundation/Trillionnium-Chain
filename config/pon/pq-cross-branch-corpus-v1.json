@@ -132,7 +132,7 @@
     "trillionnium/crates/trnm-crypto-primitives/src/lib.rs": "82681cda36693644a8fd66ad9cc7d4956431ee9f",
     "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs": "194a4cc1d7668be8f43d43e1a30fa08e99b32fda",
     "trillionnium/crates/trnm-protocol/src/lib.rs": "577ec27d0af60757d7e9ed49a1a82b9196ac993e",
-    "trillionnium/crates/trnm-protocol/src/pq_frame.rs": "e960d82d992119d307e6513f7ffb9c71f5dfce3f"
+    "trillionnium/crates/trnm-protocol/src/pq_frame.rs": "e9904db38a75475104ea12ed7933e62468d29bf1"
   },
   "assertions": {
     "production_activation": false,
@@ -158,7 +158,7 @@
   "native_wire_preflight": {
     "module": "trillionnium/crates/trnm-protocol/src/pq_frame.rs",
     "scope": "M00 TPQ1 canonical preflight ONLY; does not verify ML-DSA signatures",
-    "tests_added": 5,
+    "tests_added": 6,
     "exact_head_rust_compilation": "NOT_RUN",
     "openssl_backend": "NOT_CONNECTED",
     "production_or_verified_identity": false
