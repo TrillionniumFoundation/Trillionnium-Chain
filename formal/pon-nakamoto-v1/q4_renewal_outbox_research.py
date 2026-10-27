@@ -3,7 +3,9 @@
 The caller alone owns legitimate source/requester signatures, real verified chain queries
 and authorization. This journal never sends a transaction or constructs a new lease.
 It persists DispatchUnknown BEFORE a separately owned external submit attempt: after
-that transition only the ORIGINAL operation/transaction may be reconciled; a reorg,
+that transition only the ORIGINAL operation/transaction may be reconciled. Even
+different signed operations for the same old lease share one monotonic dispatch
+fence; an un-dispatched alternate may be prepared but cannot also be sent. A reorg,
 expiry or lost ACK never resets this fence or authorizes another payment/nonce.
 """
 from __future__ import annotations
@@ -204,6 +206,7 @@ class RenewalOutbox:
         if actual != pinned:
             raise OutboxError('CONTEXT_MISMATCH')
         intents = {}
+        old_leases = {}
         operation_ids = set()
         for ident,op_id,packet_id,wire in self.db.execute('SELECT id,operation_id,packet_id,wire FROM q4_outbox_intents_v1'):
             if type(ident) is not bytes or type(wire) is not bytes or hashlib.sha256(wire).digest() != ident:
@@ -226,10 +229,12 @@ class RenewalOutbox:
                 raise OutboxError('OPERATION_ID_CORRUPT')
             operation_ids.add(op_id)
             intents[ident] = packet_id
+            old_leases[ident] = decoded.old_lease_digest
             if len(intents) > self.max_intents: raise OutboxError('INTENT_BUDGET')
         prior = ZERO
         count = 0
         dispatch = set()
+        dispatched_leases = set()
         last_generation = {}
         for ordinal, ident,kind,obs,prev,digest in self.db.execute('SELECT ordinal,intent_id,kind,observation,prev,digest FROM q4_outbox_events_v1 ORDER BY ordinal'):
             count += 1
@@ -240,6 +245,12 @@ class RenewalOutbox:
             if computed != digest: raise OutboxError('EVENT_DIGEST')
             if kind == 'DISPATCH_UNKNOWN':
                 if ident in dispatch or obs: raise OutboxError('DISPATCH_DUPLICATE')
+                # Different signed operations cannot both be in-flight on the
+                # same old lease. Reorg/expiry never resets this local fence.
+                lease = old_leases[ident]
+                if lease in dispatched_leases:
+                    raise OutboxError('LEASE_DISPATCH_CONFLICT')
+                dispatched_leases.add(lease)
                 dispatch.add(ident)
             elif kind.startswith('OBSERVED_'):
                 if ident not in dispatch: raise OutboxError('OBSERVATION_BEFORE_DISPATCH')
@@ -286,6 +297,20 @@ class RenewalOutbox:
             # the full prefix digest verdict. Still audit the entire original
             # SQLite writer snapshot BEFORE inserting any new event.
             self._audit_snapshot()
+            if kind == 'DISPATCH_UNKNOWN':
+                own_wire = self.db.execute(
+                    'SELECT wire FROM q4_outbox_intents_v1 WHERE id=?', (ident,)
+                ).fetchone()[0]
+                old_offset = len(DOMAIN) + 5 * 32
+                old_lease = own_wire[old_offset:old_offset + 32]
+                previous_dispatches = self.db.execute(
+                    'SELECT i.wire FROM q4_outbox_events_v1 AS e '
+                    'JOIN q4_outbox_intents_v1 AS i ON e.intent_id=i.id '
+                    "WHERE e.kind='DISPATCH_UNKNOWN'"
+                )
+                for (prior_wire,) in previous_dispatches:
+                    if prior_wire[old_offset:old_offset + 32] == old_lease:
+                        raise OutboxError('LEASE_DISPATCH_CONFLICT')
             digest = hashlib.sha256(EVENT_DOMAIN + u64(n,'ordinal') + ident + kind.encode('ascii') + obs + prev).digest()
             self.db.execute('INSERT INTO q4_outbox_events_v1 VALUES (?,?,?,?,?,?)',(n,ident,kind,obs,prev,digest))
             if fail_at == 'before_commit': raise OutboxError('INJECTED_BEFORE_COMMIT')

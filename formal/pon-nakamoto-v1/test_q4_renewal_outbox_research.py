@@ -7,7 +7,7 @@ import sqlite3
 import tempfile
 import unittest
 from q4_renewal_outbox_research import (RenewalOutbox, RenewalIntent, ChainObservation,
-                                         OutboxError, UnknownEffect, transaction_id)
+                                         OutboxError, UnknownEffect, transaction_id, EVENT_DOMAIN)
 
 def h(x: bytes) -> bytes: return hashlib.sha256(x).digest()
 N,P,G = h(b'network'),h(b'parameters'),h(b'genesis')
@@ -450,4 +450,70 @@ class RenewalOutboxTests(unittest.TestCase):
             self.assertEqual(db.audit(), 0)
             db.dispatch_unknown(key)
             self.assertEqual(db.audit(), 1)
+
+    def test_conflicting_signed_successors_share_one_old_lease_dispatch_fence(self):
+        first = intent()
+        alternate = replace(first, operation_id=h(b'other signed operation'),
+                            next_lease_digest=h(b'other successor lease'),
+                            signed_transaction=b'B' * 1187)
+        independent = replace(first, operation_id=h(b'distinct old lease operation'),
+                              old_lease_digest=h(b'distinct old lease'),
+                              next_lease_digest=h(b'distinct successor lease'),
+                              signed_transaction=b'C' * 1187)
+        with self.open() as db:
+            a, b, c = (db.prepare(x) for x in (first, alternate, independent))
+            self.assertNotEqual(a, b)
+            db.dispatch_unknown(a)
+            db.observe(a, observation('reorged', 2))
+            with self.assertRaisesRegex(OutboxError, 'LEASE_DISPATCH_CONFLICT'):
+                db.dispatch_unknown(b)
+            self.assertTrue(db.status(b)['has_no_durable_dispatch_fence'])
+            db.dispatch_unknown(c)
+            self.assertEqual(db.audit(), 3)
+        with self.open() as reopened:
+            with self.assertRaisesRegex(OutboxError, 'LEASE_DISPATCH_CONFLICT'):
+                reopened.dispatch_unknown(b)
+            self.assertEqual(reopened.audit(), 3)
+
+    def test_competing_writers_cannot_dispatch_two_successors_of_same_old_lease(self):
+        first = intent()
+        second = replace(first, operation_id=h(b'competing writer operation'),
+                         signed_transaction=b'D' * 1187)
+        with self.open() as left, self.open() as right:
+            a = left.prepare(first)
+            b = right.prepare(second)
+            right.dispatch_unknown(b)
+            with self.assertRaisesRegex(OutboxError, 'LEASE_DISPATCH_CONFLICT'):
+                left.dispatch_unknown(a)
+            self.assertEqual(left.audit(), 1)
+            self.assertFalse(left.status(a)['dispatch_unknown'])
+            self.assertTrue(right.status(b)['dispatch_unknown'])
+
+    def test_rehashed_second_old_lease_dispatch_refused_on_cold_replay(self):
+        first = intent()
+        second = replace(first, operation_id=h(b'mutated replayer operation'),
+                         next_lease_digest=h(b'replayed replacement'),
+                         signed_transaction=b'E' * 1187)
+        with self.open() as owner:
+            a = owner.prepare(first)
+            b = owner.prepare(second)
+            owner.dispatch_unknown(a)
+            self.assertEqual(owner.audit(), 1)
+        # Syntactically valid hash-chained rows alone do not make this safe.
+        with sqlite3.connect(self.file) as raw:
+            previous = raw.execute(
+                'SELECT digest FROM q4_outbox_events_v1 ORDER BY ordinal DESC LIMIT 1'
+            ).fetchone()[0]
+            ordinal = 2
+            digest = hashlib.sha256(
+                EVENT_DOMAIN + ordinal.to_bytes(8, 'big') + b
+                + b'DISPATCH_UNKNOWN' + previous
+            ).digest()
+            raw.execute(
+                'INSERT INTO q4_outbox_events_v1 VALUES (?,?,?,?,?,?)',
+                (ordinal, b, 'DISPATCH_UNKNOWN', b'', previous, digest)
+            )
+        with self.assertRaisesRegex(OutboxError, 'LEASE_DISPATCH_CONFLICT'):
+            self.open()
+
 if __name__ == '__main__': unittest.main()

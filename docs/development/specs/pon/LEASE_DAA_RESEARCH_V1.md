@@ -714,3 +714,25 @@ within this research lineage. None of these cases runs native Rust, produces
 PNW1 valid work, admits a block, proves an independent validator, or qualifies
 public-network difficulty/security. Local proof/admission tests and third-party
 review remain explicit blockers. No legacy DAA or production flag changes.
+
+## Q4 single-old-lease dispatch fencing (research continuation)
+
+The Q4 lost-ACK research outbox refuses **two independently named dispatches
+against the same immutable old lease**, even when signed transaction bytes and
+operation identifiers differ. Preparing multiple un-dispatched proposals remains
+allowed. The first durable `DISPATCH_UNKNOWN` fences the old lease; reorg, expiry,
+unavailable observations or another child signature cannot replenish dispatch.
+Distinct old leases remain independently dispatchable.
+
+The fence is checked within one SQLite writer snapshot following a full-prefix
+audit. Cold readback refuses a second, correctly rehashed `DISPATCH_UNKNOWN`
+against the same old lease. Two competing SQLite writers cannot bypass it.
+The research outbox does **not** verify real PNX1 signatures, reconcile external
+effects, establish NotDispatched or grant a fresh submit authorization. Any
+subsequent operation requires the original Hepta owner to resolve the original
+effect identity, not rename it. No Q4 tag22 bytes, consensus revision, signer,
+chain state, DAA, release or production authority is changed.
+
+Research-only negative controls:
+`python3 -m unittest -v test_q4_renewal_outbox_research.py` from
+`formal/pon-nakamoto-v1`. P0-B/P2 strict acceptance remains OPEN.
