@@ -335,3 +335,12 @@ account nonce rollback and the completed active generation. No optional lease is
 renewed or silently substituted. The capacity-observation cancellation check retains
 its typed nonfatal origin. This is an installed-genesis integration regression, not
 the separate full65,536-key fixture or a permanent-account growth solution.
+
+## Rev12 × Q4 regression continuation (research only)
+
+[The bounded lease/DAA research note](../../../development/specs/pon/LEASE_DAA_ADVERSARIAL_RESEARCH_V1.md)
+adds an explicit source candidate checking new signed task registration inside an
+unleased Maintenance block, real confirmation and 32-slot retention before reuse.
+It does not change this Revision 12 profile, install an auto-signer or qualify
+Maintenance computational hardness. Exact-head native execution and external
+acceptance remain open.

@@ -356,3 +356,11 @@ production DAA replacement still needs an explicit protocol version, time
 and network assumptions, oscillation and partition analysis, adversarial work
 share simulations and independently reproduced native campaigns. This test
 does not switch an existing namespace to a new rule.
+
+## Non-activated cross-DAA adversarial continuation
+
+[The isolated lease/DAA research note](../../../development/specs/pon/LEASE_DAA_ADVERSARIAL_RESEARCH_V1.md)
+provides a Python/Rust fixed-target ASERT comparison, frozen independent vectors,
+legal timestamp hypotheses and paired synthetic arrival inputs. Neither a new
+consensus profile nor work/DAA acceptance is installed. All historical W1 and
+DAA source/evidence identifiers keep their original meanings.
