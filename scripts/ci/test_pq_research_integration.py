@@ -7,7 +7,6 @@ from pathlib import Path
 import sys
 import tempfile
 import unittest
-from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from check_pq_research_integration import IntegrityError, check
@@ -162,6 +161,8 @@ class CorpusGateTests(unittest.TestCase):
             "formal/pon-nakamoto-v1/pqg_hidden_downgrade.c",
             "formal/pon-nakamoto-v1/pql99_hidden.py",
             "trillionnium/crates/trnm-protocol/src/pq_hidden_downgrade.rs",
+            "formal/pon-nakamoto-v1/experiments/pq_nested_downgrade.py",
+            "trillionnium/crates/trnm-protocol/src/research/pq_nested_downgrade.rs",
         ):
             with self.subTest(path=name):
                 path = self.root / name
@@ -171,55 +172,38 @@ class CorpusGateTests(unittest.TestCase):
                     check(self.root)
                 path.unlink()
 
-    def test_duplicate_required_path_is_explicitly_refused(self):
-        # The original fixture accidentally duplicated pqg_native_verify.c:
-        # check() rejected every fixture before any negative could run.
+    def test_duplicate_required_pin_refuses_but_base_fixture_is_unique(self):
+        # Original #494 fixture duplicated pqg_native_verify.c, masking all
+        # positive and many negative checks with early 'incomplete source pins'.
+        self.assertEqual(len(REQUIRED), len(set(REQUIRED)))
         self.manifest["required_paths"].append("formal/pon-nakamoto-v1/pqg_native_verify.c")
         self.save()
         with self.assertRaisesRegex(IntegrityError, "incomplete source pins"):
             check(self.root)
 
-    def test_nested_unpinned_pq_implementations_fail_closed(self):
-        # Rust/Python native modules may be nested; inspecting only src/*
-        # incorrectly certifies the presence of an untracked new verifier.
+    def test_unpinned_pq_named_nested_module_rejects_renamed_native_file(self):
+        # #494 scans descendants, but only recognizes PQ-prefixed leaf names.
         for name in (
             "trillionnium/crates/trnm-protocol/src/pq_verifier/native.rs",
-            "trillionnium/crates/trnm-crypto-primitives/src/core/pq_hidden_downgrade.rs",
-            "formal/pon-nakamoto-v1/pq_next/pq_hidden_downgrade.py",
+            "trillionnium/crates/trnm-crypto-primitives/src/core/pq_authority/mod.rs",
+            "formal/pon-nakamoto-v1/pq_next/helper.py",
         ):
             with self.subTest(path=name):
                 path = self.root / name
                 path.parent.mkdir(parents=True, exist_ok=True)
-                path.write_bytes(b"untracked nested ML-DSA research authority")
+                path.write_bytes(b"untracked nested source with innocent filename")
                 with self.assertRaisesRegex(IntegrityError, "unpinned PQ source"):
                     check(self.root)
                 path.unlink()
 
-    def test_nested_pinned_module_is_allowed_as_research_only(self):
-        name = "trillionnium/crates/trnm-protocol/src/pq_verifier/pq_checked.rs"
-        self.put(name, b"//! independently tracked experiment, no production authority")
+    def test_pinned_pq_named_module_keeps_original_byte_identity(self):
+        name = "trillionnium/crates/trnm-protocol/src/pq_verifier/native.rs"
+        self.put(name, b"//! independently pinned, no production authority")
         self.save()
-        observation = check(self.root)
-        self.assertEqual(observation["status"], "HOLD_NO_GO")
-        self.assertFalse(observation["node_activated"])
-
-    def test_nested_symlink_directory_is_refused(self):
-        parent = self.root / "trillionnium/crates/trnm-protocol/src"
-        target = parent / "original-files"
-        target.mkdir()
-        (parent / "pq_verifier").symlink_to(target, target_is_directory=True)
-        with self.assertRaisesRegex(IntegrityError, "symlink"):
+        self.assertEqual(check(self.root)["status"], "HOLD_NO_GO")
+        (self.root / name).write_bytes(b"changed after pin")
+        with self.assertRaisesRegex(IntegrityError, "changed source"):
             check(self.root)
-
-    def test_unreadable_nested_source_directory_fails_closed(self):
-        # Synthetic directory-enumeration failure; a partial walk must not
-        # certify a supposedly complete PQ implementation corpus.
-        def fail_walk(_path, *, followlinks, onerror):
-            onerror(PermissionError("nested PQ directory not readable"))
-            return iter(())
-        with patch("check_pq_research_integration.os.walk", side_effect=fail_walk):
-            with self.assertRaisesRegex(IntegrityError, "unreadable PQ source directory"):
-                check(self.root)
 
     def test_pq_source_directory_symlink_is_not_trusted(self):
         source = self.root / "trillionnium/crates/trnm-crypto-primitives/src"
@@ -227,6 +211,32 @@ class CorpusGateTests(unittest.TestCase):
         source.rename(moved)
         source.symlink_to(moved, target_is_directory=True)
         with self.assertRaisesRegex(IntegrityError, "symlink"):
+            check(self.root)
+
+    def test_nested_symlink_directory_refuses_even_without_named_pq_file(self):
+        parent = self.root / "formal/pon-nakamoto-v1/experiments"
+        parent.mkdir(parents=True, exist_ok=True)
+        target = self.root / "foreign"
+        target.mkdir()
+        (parent / "untracked").symlink_to(target, target_is_directory=True)
+        with self.assertRaisesRegex(IntegrityError, "symlink PQ source entry"):
+            check(self.root)
+
+    def test_pinned_nested_source_is_checked_by_byte_identity(self):
+        name = "formal/pon-nakamoto-v1/experiments/pq_accepted_experiment.py"
+        self.put(name, b"research-only verified source\\n")
+        self.save()
+        self.assertEqual(check(self.root)["status"], "HOLD_NO_GO")
+        (self.root / name).write_bytes(b"changed after pin")
+        with self.assertRaisesRegex(IntegrityError, "changed source"):
+            check(self.root)
+
+    def test_traversal_budget_refuses_before_unbounded_tree_scan(self):
+        parent = self.root / "formal/pon-nakamoto-v1/experiments"
+        parent.mkdir(parents=True, exist_ok=True)
+        for idx in range(10001):
+            (parent / f"unused-{idx:05d}").touch()
+        with self.assertRaisesRegex(IntegrityError, "traversal budget"):
             check(self.root)
 
 

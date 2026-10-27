@@ -8,7 +8,6 @@ from __future__ import annotations
 
 import hashlib
 import json
-import os
 from pathlib import Path
 import re
 import stat
@@ -84,30 +83,33 @@ def _check_pq_source_coverage(root: Path, pins: dict[str, str]) -> None:
         parent = root / directory
         if parent.is_symlink() or not parent.is_dir():
             raise IntegrityError("missing or symlink PQ source directory: " + directory)
-        # Recursive coverage matters: Rust `mod pq_verifier` may live at
-        # src/pq_verifier/native.rs. A one-level iterdir() silently misses it.
-        # Never follow an intervening symlink to a second, unpinned corpus.
-        def fail_walk_error(exc: OSError) -> None:
-            raise IntegrityError("unreadable PQ source directory: " + str(exc)) from exc
-        for current, dirs, files in os.walk(parent, followlinks=False, onerror=fail_walk_error):
-            here = Path(current)
-            for name in dirs:
-                if (here / name).is_symlink():
-                    raise IntegrityError("symlink PQ source directory: " + (here / name).relative_to(root).as_posix())
-            for name in files:
-                source = here / name
-                # Any code under a PQ-named module directory is itself PQ
-                # implementation, even if called native.rs or mod.rs.
-                module_parts = source.relative_to(parent).parts
-                pq_named = any(part.startswith(("pq_", "pqg_", "pql"))
-                               for part in module_parts)
-                if source.suffix not in (".py", ".c", ".rs") or not pq_named:
-                    continue
+        # Every descendant matters: a future verifier in experiments/ or an
+        # owner submodule must not evade the fixed-source manifest.
+        pending = [parent]
+        visited = 0
+        while pending:
+            current = pending.pop()
+            for source in current.iterdir():
+                visited += 1
+                if visited > 10000:
+                    raise IntegrityError("PQ source traversal budget exhausted")
                 relative = source.relative_to(root).as_posix()
                 if source.is_symlink():
-                    raise IntegrityError("symlink PQ source: " + relative)
+                    raise IntegrityError("symlink PQ source entry refused: " + relative)
+                if source.is_dir():
+                    pending.append(source)
+                    continue
+                # Nested Rust/C/Python files inside a PQ-named module are
+                # implementations too, even when called native.rs or mod.rs.
+                parts = source.relative_to(parent).parts
+                is_pq_source = any(part.startswith(("pq_", "pqg_", "pql"))
+                                   for part in parts)
+                if source.suffix not in (".py", ".c", ".rs") or not is_pq_source:
+                    continue
                 if relative not in pins:
                     raise IntegrityError("unpinned PQ source: " + relative)
+                # A pinned path is already byte-checked by check(); never
+                # treat source enumeration as cryptographic authority.
 
 def check(root: Path) -> dict:
     root = Path(root).resolve(strict=True)
