@@ -15,6 +15,8 @@ REQUIRED = (
     "config/consensus-mainline.json", "config/pon/devnet-v1.json",
     "config/pon/post-quantum-transition-v1.json",
     "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+    "trillionnium/crates/trnm-protocol/src/lib.rs",
+    "trillionnium/crates/trnm-protocol/src/pq_frame.rs",
     "formal/pon-nakamoto-v1/pq_envelope.py",
     "formal/pon-nakamoto-v1/pq_account_migration.py",
     "formal/pon-nakamoto-v1/pq_transaction.py",

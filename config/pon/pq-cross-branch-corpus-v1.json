@@ -42,7 +42,9 @@
     "formal/pon-nakamoto-v1/pql3_native_verify.c",
     "formal/pon-nakamoto-v1/pqg_native_verify.c",
     "formal/pon-nakamoto-v1/pq_qtx1_verify.c",
-    "formal/pon-nakamoto-v1/pq_pql5_native_verify.c"
+    "formal/pon-nakamoto-v1/pq_pql5_native_verify.c",
+    "trillionnium/crates/trnm-protocol/src/lib.rs",
+    "trillionnium/crates/trnm-protocol/src/pq_frame.rs"
   ],
   "pinned_blobs": {
     "config/consensus-mainline.json": "969ddfec9ead64bc3eb7e0cc9997a0950947e09e",
@@ -128,7 +130,9 @@
     "formal/pon-nakamoto-v1/test_pqg_native_verify.py": "2dc4ec67d4e95d7c00bceb764cb6bbe2b277aeaf",
     "formal/pon-nakamoto-v1/test_pql3_native_verify.py": "5961721b393281be6b505b3149b598cdcde25915",
     "trillionnium/crates/trnm-crypto-primitives/src/lib.rs": "82681cda36693644a8fd66ad9cc7d4956431ee9f",
-    "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs": "194a4cc1d7668be8f43d43e1a30fa08e99b32fda"
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs": "194a4cc1d7668be8f43d43e1a30fa08e99b32fda",
+    "trillionnium/crates/trnm-protocol/src/lib.rs": "577ec27d0af60757d7e9ed49a1a82b9196ac993e",
+    "trillionnium/crates/trnm-protocol/src/pq_frame.rs": "e960d82d992119d307e6513f7ffb9c71f5dfce3f"
   },
   "assertions": {
     "production_activation": false,
@@ -150,5 +154,13 @@
     "P1 independent PQ custodians and retention/disaster-recovery under WAN failure",
     "P1 Hepta artifact export, revocation, Final-use, evaluation and real publisher integration",
     "P1 independent cryptographic and systems review plus physical fault and performance acceptance"
-  ]
+  ],
+  "native_wire_preflight": {
+    "module": "trillionnium/crates/trnm-protocol/src/pq_frame.rs",
+    "scope": "M00 TPQ1 canonical preflight ONLY; does not verify ML-DSA signatures",
+    "tests_added": 5,
+    "exact_head_rust_compilation": "NOT_RUN",
+    "openssl_backend": "NOT_CONNECTED",
+    "production_or_verified_identity": false
+  }
 }
