@@ -1,0 +1,44 @@
+{
+  "schema": "trnm-pq-genesis-bridge-local-v1",
+  "status": "HOLD_NO_GO",
+  "recorded_utc": "2026-10-27T01:04:01.771412+00:00",
+  "repository_lineage": "stacked on Chain PR #440 research/pq-cell-native-openssl-20261026 @ 5396fb177fef3b15aa325573f06b45a26bddc738",
+  "test_command": "PYTHONWARNINGS=error::ResourceWarning python3 -m unittest -v test_pq_genesis_state_bridge.py",
+  "test_directory": "formal/pon-nakamoto-v1",
+  "named_tests": 18,
+  "passed": 18,
+  "failed": 0,
+  "returncode": 0,
+  "log": "local-unittest.log",
+  "log_sha256": "40056b28280c4e0ee94ca7ba29ba0ce70c96afaf202a151da83c43658430caba",
+  "test_environment": {
+    "python": "3.13.5",
+    "system": "Linux",
+    "machine": "x86_64",
+    "filesystem": "overlayfs"
+  },
+  "source_files": {
+    "formal/pon-nakamoto-v1/pq_genesis_state_bridge.py": {
+      "sha256": "d37429dd78eb2dab4e3ac09b9f6b0fc4256d30721051a02e332ce8b5346f0bb3",
+      "git_blob_sha1": "a395ed4f419bb2d5ee278dc80e7246c58c06f9e8",
+      "bytes": 13044
+    },
+    "formal/pon-nakamoto-v1/test_pq_genesis_state_bridge.py": {
+      "sha256": "4f88f8851918814978742e113b53f4bfb2a448194ea157c52cf27a696ef799fd",
+      "git_blob_sha1": "f5182343844ad9af3928788985511459616b6286",
+      "bytes": 12641
+    },
+    "docs/security/PQ_GENESIS_NONCE_LIABILITY_BRIDGE_V1.md": {
+      "sha256": "d4dbea686837da6847c7fac15fa23af60c9d99b67f7b5296d7ed0f0a5c33190a",
+      "git_blob_sha1": "fa9e33351439e76d315e290b5ef070aefce94979",
+      "bytes": 6830
+    }
+  },
+  "actual_signatures_tested_in_this_increment": false,
+  "independent_accepted": false,
+  "rust_node_integrated": false,
+  "native_pon_consensus_activated": false,
+  "source_chain_identity_authenticated": false,
+  "production_eligible": false,
+  "whole_chain_quantum_safe": false
+}
