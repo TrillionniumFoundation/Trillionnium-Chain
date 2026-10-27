@@ -897,6 +897,18 @@ impl ServiceMutationCpuDomain {
     /// Begin on the actual owner thread, after separate task-purpose authority
     /// but before expensive Native work. No ledger authority is minted here.
     pub fn begin(&self) -> Result<ServiceMutationCpuOperation> {
+        self.begin_with_priority(false)
+    }
+    /// The existing pinned-peer History poller is not a paid Submit and can
+    /// be fed adversarial full W1 proofs by a compromised configured peer.
+    /// Do not let it start two concurrent replays or consume the last ordinary
+    /// public request start reserve. This is a LOCAL scheduling rule within
+    /// the one original CPU domain: no additional tokens, caller identity,
+    /// claim of fair WAN access, or change to W1 validity/Chainwork.
+    pub fn begin_untrusted_peer_sync(&self) -> Result<ServiceMutationCpuOperation> {
+        self.begin_with_priority(true)
+    }
+    fn begin_with_priority(&self, untrusted_peer_sync: bool) -> Result<ServiceMutationCpuOperation> {
         let stamp = ThreadCpuStamp::start();
         let mut budget = self
             .budget
@@ -904,6 +916,18 @@ impl ServiceMutationCpuDomain {
             .map_err(|_| "PUBLIC_MUTATION_CPU_UNAVAILABLE")?;
         if stamp.is_none() {
             budget.unavailable = true;
+        }
+        if untrusted_peer_sync {
+            // Preserve two original 100-ms quanta as available credit after
+            // this peer's own start reservation. A full W1 may still overshoot;
+            // actual CPU is charged and later operations are then refused.
+            budget.refill(Instant::now());
+            ensure(!budget.unavailable, "PUBLIC_MUTATION_CPU_UNAVAILABLE")?;
+            ensure(
+                budget.in_flight == 0
+                    && budget.credit_ns >= i128::from(3 * MUTATION_CPU_START_RESERVE_NS),
+                "PUBLIC_MUTATION_CPU_BUDGET",
+            )?;
         }
         budget.reserve(Instant::now())?;
         drop(budget);
