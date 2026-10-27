@@ -2442,7 +2442,7 @@ mod tests {
         let settings = crate::Settings::development(Some(now().unwrap() - 100)).unwrap();
         let mut node = Node::open(dir.path(), settings.clone(), 2).unwrap();
         let before = node.stats().unwrap();
-        let page = Page {
+        let malformed = || Page {
             schema: String::new(),
             network: String::new(),
             parameters: String::new(),
@@ -2458,7 +2458,7 @@ mod tests {
         let dev = receive_page_from_local_development(
             &mut node,
             local,
-            page.clone(),
+            malformed(),
             settings.genesis(),
             settings.genesis(),
             now().unwrap(),
@@ -2469,7 +2469,7 @@ mod tests {
             let refused = receive_page_from(
                 &mut node,
                 local,
-                page,
+                malformed(),
                 settings.genesis(),
                 settings.genesis(),
                 now().unwrap(),
