@@ -110,6 +110,7 @@
     "formal/pon-nakamoto-v1/pq_qtx1_cost.py": "87a088d7f2a8fab36c1b57fa198b073072ea8fb5",
     "formal/pon-nakamoto-v1/pq_qtx1_verify.c": "b0744709bf866d7d15e3de5c83bf49c7f14c940a",
     "formal/pon-nakamoto-v1/pq_transaction.py": "c8ac18136ef447eaa958111392eee05f92819aac",
+    "formal/pon-nakamoto-v1/pqg_native_verify.c": "d052f0cb49b413105cb60d9f752e21c01f3bb2be",
     "formal/pon-nakamoto-v1/pql3_native_verify.c": "bc1ec6384c5c6e2121ffedacd5d25c2e53c45561",
     "formal/pon-nakamoto-v1/test_pq_account_migration.py": "99e9b003f4aea2f230a51fb8b56fb2e33640c960",
     "formal/pon-nakamoto-v1/test_pq_branch_execution.py": "9bf7c360ad1acce786f30aef233f51bbfcbf1b89",

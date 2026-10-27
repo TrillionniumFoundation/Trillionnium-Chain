@@ -21,6 +21,14 @@ REQUIRED_FALSE = frozenset((
     "hepta_final_use_integrated", "public_wan_accepted", "allow_legacy_fallback",
 ))
 
+# Enumerate research implementation entrypoints, not just manually listed pins.
+# This prevents a new PQ verifier from being silently omitted from the
+# source-integrity manifest. This is NOT proof of cryptographic acceptance.
+PQ_SOURCE_DIRS = (
+    "formal/pon-nakamoto-v1",
+    "trillionnium/crates/trnm-protocol/src",
+    "trillionnium/crates/trnm-crypto-primitives/src",
+)
 
 class IntegrityError(ValueError):
     pass
@@ -69,6 +77,20 @@ def _git_blob(data: bytes) -> str:
     return hashlib.sha1(b"blob " + str(len(data)).encode("ascii") + b"\0" + data).hexdigest()
 
 
+def _check_pq_source_coverage(root: Path, pins: dict[str, str]) -> None:
+    """Fail closed when a newly added PQ implementation evades the blob manifest."""
+    for directory in PQ_SOURCE_DIRS:
+        parent = root / directory
+        if parent.is_symlink() or not parent.is_dir():
+            raise IntegrityError("missing or symlink PQ source directory: " + directory)
+        for source in parent.iterdir():
+            if (source.suffix not in (".py", ".c", ".rs")
+                    or not source.name.startswith(("pq_", "pqg_", "pql"))):
+                continue
+            relative = source.relative_to(root).as_posix()
+            if relative not in pins:
+                raise IntegrityError("unpinned PQ source: " + relative)
+
 def check(root: Path) -> dict:
     root = Path(root).resolve(strict=True)
     m = _json(root, REL_MANIFEST)
@@ -97,6 +119,7 @@ def check(root: Path) -> dict:
             raise IntegrityError("invalid pinned blob")
         if _git_blob(_safe_regular(root, relative)) != sha:
             raise IntegrityError("changed source: " + relative)
+    _check_pq_source_coverage(root, pins)
     overwrites = m.get("overwrites")
     expected_overwrites = {
         "formal/pon-nakamoto-v1/pq_cell_custody.py": "cell",
