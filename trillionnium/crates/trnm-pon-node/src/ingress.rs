@@ -2149,35 +2149,71 @@ fn metered_history_operation<T>(
     outcome
 }
 
+/// Kernel files must NOT be reread for all 512 transcript tiles. Cooperate at
+/// deterministic sparse arithmetic boundaries while the original CPU account
+/// independently checks every normal W1 progress event.
+fn history_host_checkpoint(point: trnm_crypto_primitives::pon_work::VerificationProgress) -> bool {
+    use trnm_crypto_primitives::pon_work::VerificationProgress as P;
+    matches!(
+        point,
+        P::BeforeReplay | P::BeforeProduct | P::BeforeVerifiedWork
+            | P::Noise { counter: 0, .. }
+            | P::MatrixRow { row: 0 | 16 | 32 | 48 }
+            | P::TranscriptTile { column: 0, inner: 0, .. }
+    )
+}
+
 fn metered_history_packet(
     node: &mut Node,
     domain: &public_v3::ServiceMutationCpuDomain,
     packet: &Packet,
     clock: u64,
+    host_check: &(impl Fn() -> Result<()> + Sync),
 ) -> Result<Hash> {
     metered_history_operation(node, domain, |owner, operation| {
         let progress = operation.checkpoint_handle();
+        host_check()?;
         progress.checkpoint()?;
         if let Some(already) = owner.check_admission_context_with_progress(
             packet,
             clock,
-            &mut || progress.checkpoint(),
+            &mut || {
+                host_check()?;
+                progress.checkpoint()
+            },
         )? {
             return Ok(already);
         }
         let permit = owner.begin_owner_work(packet)?;
         let checked = WorkCheckedPacket::verify_with_progress(
             packet.clone(),
-            &mut |_| progress.checkpoint(),
+            &mut |point| {
+                // The original CPU meter remains on EVERY callback. The
+                // more expensive kernel membership check is sampled only
+                // at known points in the unchanged full W1 replay.
+                progress.checkpoint()?;
+                if history_host_checkpoint(point) {
+                    host_check()?;
+                }
+                Ok(())
+            },
         )?;
+        host_check()?;
         progress.checkpoint()?;
         let checked = owner.attach_owner_work(checked, permit)?;
-        let execution_progress = |_phase| progress.checkpoint();
+        let execution_progress = |_phase| {
+            host_check()?;
+            progress.checkpoint()
+        };
         let control = trnm_mvcc_fee::pon_executor::ExecutionControl::new(
             &execution_progress,
             operation.worker_accounting(),
         );
-        owner.admit_work_checked_with_control(checked, clock, &control)
+        let result = owner.admit_work_checked_with_control(checked, clock, &control);
+        // A postcommit Host error must not rewrite already durable native
+        // facts; the caller treats the overall sync as incomplete.
+        host_check()?;
+        result
     })
 }
 
@@ -2188,7 +2224,9 @@ fn receive_page(
     tip: Hash,
     after: Hash,
     clock: u64,
+    host_check: &(impl Fn() -> Result<()> + Sync),
 ) -> Result<Hash> {
+    host_check()?;
     ensure(
         page.schema == "pon-native-history-v1"
             && page.network == hex::encode(node.settings().network())
@@ -2214,6 +2252,7 @@ fn receive_page(
     // separately from the later full W1/M06 intervals. No nested operation:
     // actual decoder CPU must not be double-billed or run at no cost.
     let (packets, next) = metered_history_operation(node, domain, |_owner, operation| {
+        host_check()?;
         operation.checkpoint()?;
         let packets = page
             .packets
@@ -2229,18 +2268,28 @@ fn receive_page(
             page.next == hex::encode(next) && page.complete == (next == tip),
             "PAGE_COMPLETE",
         )?;
+        host_check()?;
         operation.checkpoint()?;
         Ok((packets, next))
     })?;
     for packet in &packets {
-        metered_history_packet(node, domain, packet, clock)?;
+        host_check()?;
+        metered_history_packet(node, domain, packet, clock, host_check)?;
     }
     if page.complete {
         // Reorganization/activation has its own original CPU reservation.
         // Already durable native effects cannot be undone by late CPU faults.
         metered_history_operation(node, domain, |owner, operation| {
+            host_check()?;
             operation.checkpoint()?;
-            owner.activate_observed(tip, clock).map(|_| ())
+            let result = owner.activate_observed_with_progress(
+                tip, clock, &mut || {
+                    host_check()?;
+                    operation.checkpoint()
+                },
+            ).map(|_| ());
+            host_check()?;
+            result
         })?;
     }
     Ok(next)
@@ -2268,7 +2317,13 @@ pub(crate) fn receive_page_from(
     // Node must share its already-bound live account. A standalone sync Node
     // starts with zero original credit; no per-peer/page allowance is minted.
     let domain = node.remote_history_cpu_domain()?;
-    let native = receive_page(node, &domain, page, tip, after, clock);
+    let host_check = || {
+        if let Some(kernel) = &host_kernel {
+            kernel.verify()?;
+        }
+        Ok(())
+    };
+    let native = receive_page(node, &domain, page, tip, after, clock, &host_check);
     // A completed native admission cannot be undone by a post-verification
     // host fault. That fault still makes the overall synchronization fail.
     if let Some(kernel) = &host_kernel {
@@ -2291,7 +2346,11 @@ pub fn receive_page_from_public_sync(
 ) -> Result<Hash> {
     let host = crate::host_kernel_parent::require_for_untrusted_public_sync(source)?;
     host.verify()?;
-    let result = receive_page_from(node, source, page, tip, after, clock);
+    // Do not fall back through a caller-supplied loopback address. Enforce
+    // both the physical Host and original Node-owned CPU account throughout
+    // this exact public page, including W1/M06 and activation checkpoints.
+    let domain = node.remote_history_cpu_domain()?;
+    let result = receive_page(node, &domain, page, tip, after, clock, &|| host.verify());
     // Native success may already be durable when the post-check fails; never
     // rewrite the ledger fact, but do not claim completed sync either.
     host.verify()?;
@@ -2775,6 +2834,27 @@ mod tests {
             node.remote_history_cpu_domain().err().unwrap().to_string(),
             "OWNER_PUBLIC_SERVICE_UNCLEAN_EPOCH"
         );
+    }
+
+    #[test]
+    fn history_host_checks_are_bounded_while_cpu_checks_remain_each_w1_progress() {
+        use trnm_crypto_primitives::pon_work::VerificationProgress as P;
+        assert!(history_host_checkpoint(P::BeforeReplay));
+        assert!(history_host_checkpoint(P::BeforeProduct));
+        assert!(history_host_checkpoint(P::BeforeVerifiedWork));
+        assert!(history_host_checkpoint(P::Noise { label: 0, counter: 0 }));
+        assert!(!history_host_checkpoint(P::Noise { label: 0, counter: 1 }));
+        assert!(history_host_checkpoint(P::MatrixRow { row: 16 }));
+        assert!(!history_host_checkpoint(P::MatrixRow { row: 15 }));
+        assert!(history_host_checkpoint(P::TranscriptTile {
+            row: 4, column: 0, inner: 0,
+        }));
+        assert!(!history_host_checkpoint(P::TranscriptTile {
+            row: 4, column: 0, inner: 1,
+        }));
+        assert!(!history_host_checkpoint(P::TranscriptTile {
+            row: 4, column: 1, inner: 0,
+        }));
     }
 
     #[test]
