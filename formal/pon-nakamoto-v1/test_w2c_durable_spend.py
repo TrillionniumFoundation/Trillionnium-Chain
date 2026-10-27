@@ -172,9 +172,15 @@ class DurableReceiverCostControls(unittest.TestCase):
     def test_copied_private_database_is_not_a_shared_spend_authority(self):
         # Negative, not a pass for decentralized replay safety:
         # cloning the on-disk state before spending makes two isolated stores.
-        import shutil
+        import sqlite3
         sibling=Path(self.temp.name)/'sibling.sqlite'
-        shutil.copyfile(self.path,sibling)
+        # Copy a complete SQLite snapshot, including committed WAL entries;
+        # a raw filesystem copy of the main DB would omit uncheckpointed WAL.
+        clone=sqlite3.connect(str(sibling))
+        try:
+            self.receiver.db.backup(clone)
+        finally:
+            clone.close()
         os.chmod(sibling,0o600)
         grant,nonce=self.paid()
         self.assertEqual(self.receiver.consume(grant,PROPOSAL,CALLER,nonce,120),
