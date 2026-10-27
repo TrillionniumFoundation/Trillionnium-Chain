@@ -39,6 +39,8 @@ jobs:
           printf 'CARGO_HOME=%s/cargo-%s\n' "$RUNNER_TEMP" "$GITHUB_JOB" >> "$GITHUB_ENV"
           printf 'CARGO_TARGET_DIR=%s/target-%s\n' "$RUNNER_TEMP" "$GITHUB_JOB" >> "$GITHUB_ENV"
           printf 'TRNM_CI_RECEIPT_DIR=%s/ci-observations\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
+      - name: Check PQ provider CI wiring and failure controls
+        run: python3 scripts/ci/test_pq_provider_ci.py
       - name: Run actual repository-truth checks
         run: bash scripts/ci/ci_job.sh repository-truth
       - name: Verify source remained unchanged
@@ -188,6 +190,9 @@ jobs:
           python3 -m venv "$RUNNER_TEMP/pon-contract-env"
           "$RUNNER_TEMP/pon-contract-env/bin/python" -m pip install --disable-pip-version-check --only-binary=:all: -r formal/pon-nakamoto-v1/requirements.txt
           echo "$RUNNER_TEMP/pon-contract-env/bin" >> "$GITHUB_PATH"
+      - name: Prepare pinned OpenSSL 3.5.9 PQ provider
+        shell: bash
+        run: bash scripts/ci/prepare_pq_provider.sh
       - name: Run actual protocol-contract checks
         run: bash scripts/ci/ci_job.sh protocol-contract
       - name: Verify source remained unchanged
@@ -273,6 +278,9 @@ jobs:
           python3 -m venv "$RUNNER_TEMP/pon-state-env"
           "$RUNNER_TEMP/pon-state-env/bin/python" -m pip install --disable-pip-version-check --only-binary=:all: -r formal/pon-nakamoto-v1/requirements.txt
           echo "$RUNNER_TEMP/pon-state-env/bin" >> "$GITHUB_PATH"
+      - name: Prepare pinned OpenSSL 3.5.9 PQ provider
+        shell: bash
+        run: bash scripts/ci/prepare_pq_provider.sh
       - name: Run retained Rust shard
         run: python3 scripts/ci/rust_baseline_shards.py run --kind head --candidate "$TRNM_EXPECTED_SOURCE_SHA" --tested "$TRNM_EXPECTED_SOURCE_SHA" --shard "${{ matrix.shard }}" --output "$RUNNER_TEMP/ci-observations/rust-shard.json"
       - name: Verify source remained unchanged
@@ -372,6 +380,9 @@ jobs:
           python3 -m venv "$RUNNER_TEMP/pon-state-env"
           "$RUNNER_TEMP/pon-state-env/bin/python" -m pip install --disable-pip-version-check --only-binary=:all: -r formal/pon-nakamoto-v1/requirements.txt
           echo "$RUNNER_TEMP/pon-state-env/bin" >> "$GITHUB_PATH"
+      - name: Prepare pinned OpenSSL 3.5.9 PQ provider
+        shell: bash
+        run: bash scripts/ci/prepare_pq_provider.sh
       - name: Run retained Rust shard
         run: python3 scripts/ci/rust_baseline_shards.py run --kind prospective-merge --candidate "$TRNM_EXPECTED_CANDIDATE_SHA" --base "$TRNM_EXPECTED_BASE_SHA" --tested "$TRNM_EXPECTED_SOURCE_SHA" --shard "${{ matrix.shard }}" --output "$RUNNER_TEMP/ci-observations/rust-shard.json"
       - name: Verify source remained unchanged
@@ -517,6 +528,13 @@ jobs:
       - name: Install pinned dependency auditor
         if: matrix.lane == 'rust-baseline'
         run: bash scripts/ci/install_ci_tools.sh supply-chain
+      - name: Check PQ provider CI wiring and failure controls
+        if: matrix.lane == 'repository-truth'
+        run: python3 scripts/ci/test_pq_provider_ci.py
+      - name: Prepare pinned OpenSSL 3.5.9 PQ provider
+        if: matrix.lane == 'protocol-contract'
+        shell: bash
+        run: bash scripts/ci/prepare_pq_provider.sh
       - name: Execute the same lane on the prospective merge
         run: bash scripts/ci/ci_job.sh "${{ matrix.lane }}"
       - name: Verify merge source remained unchanged
