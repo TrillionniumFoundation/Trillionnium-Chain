@@ -714,3 +714,22 @@ within this research lineage. None of these cases runs native Rust, produces
 PNW1 valid work, admits a block, proves an independent validator, or qualifies
 public-network difficulty/security. Local proof/admission tests and third-party
 review remain explicit blockers. No legacy DAA or production flag changes.
+
+
+## Q4 research outbox atomic post-write readback (2026-10-26)
+
+The bounded, non-authoritative Q4 SQLite research outbox verifies exact
+post-INSERT intent and event rows under its existing `BEGIN IMMEDIATE` writer
+transaction, before reporting a prepared identity or dispatch/observation
+acknowledgment. Full bounded event/intent history is re-audited after writes.
+An injected SQLite AFTER INSERT trigger deleting a new intent/event previously
+permitted successful SQL with zero new rows; the research repair rolls back the
+original writer transaction instead. Three regressions cover intent deletion,
+dispatch-event deletion, observation mutation, and ordinary success after
+removing the offending local trigger.
+
+These are controlled local database mutation tests. This outbox still verifies
+no QDL2/QWA2 signatures, real chain history, independent operators, W1 proof
+or authentic client confirmation. It creates no permission to dispatch/retry.
+Q4 Revision9, Revision12, installed DAA, signed wire and production eligibility
+are unchanged. P0-A/B/C, P1-C and P2 remain independently OPEN.

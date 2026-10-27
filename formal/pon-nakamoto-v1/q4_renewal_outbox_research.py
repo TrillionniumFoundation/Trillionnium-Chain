@@ -288,6 +288,16 @@ class RenewalOutbox:
             self._audit_snapshot()
             digest = hashlib.sha256(EVENT_DOMAIN + u64(n,'ordinal') + ident + kind.encode('ascii') + obs + prev).digest()
             self.db.execute('INSERT INTO q4_outbox_events_v1 VALUES (?,?,?,?,?,?)',(n,ident,kind,obs,prev,digest))
+            # A successful INSERT can be erased or rewritten by a local AFTER
+            # INSERT trigger. Check the exact new event in the SAME writer
+            # transaction before reporting a durable dispatch/observation.
+            checked = self._audit_snapshot()
+            stored = self.db.execute(
+                'SELECT intent_id,kind,observation,prev,digest '
+                'FROM q4_outbox_events_v1 WHERE ordinal=?', (n,)
+            ).fetchone()
+            if checked != n or stored != (ident, kind, obs, prev, digest):
+                raise OutboxError('EVENT_POSTWRITE')
             if fail_at == 'before_commit': raise OutboxError('INJECTED_BEFORE_COMMIT')
             self.db.execute('COMMIT');committed = True
             if fail_at == 'after_commit': raise UnknownEffect('INJECTED_AFTER_COMMIT')
@@ -314,6 +324,16 @@ class RenewalOutbox:
             count = self.db.execute('SELECT COUNT(*) FROM q4_outbox_intents_v1').fetchone()[0]
             if count >= self.max_intents: raise OutboxError('INTENT_BUDGET')
             self.db.execute('INSERT INTO q4_outbox_intents_v1 VALUES (?,?,?,?)',(ident,intent.operation_id,packet,wire))
+            # Refuse successful SQL that leaves no exact durable intent. The
+            # bounded full-history re-audit also catches collateral mutations.
+            stored = self.db.execute(
+                'SELECT id,operation_id,packet_id,wire FROM q4_outbox_intents_v1 WHERE id=?',
+                (ident,)
+            ).fetchone()
+            written = self.db.execute('SELECT COUNT(*) FROM q4_outbox_intents_v1').fetchone()[0]
+            if stored != (ident, intent.operation_id, packet, wire) or written != count + 1:
+                raise OutboxError('INTENT_POSTWRITE')
+            self._audit_snapshot()
             if fail_at == 'before_commit': raise OutboxError('INJECTED_BEFORE_COMMIT')
             self.db.execute('COMMIT');committed=True
             if fail_at == 'after_commit': raise UnknownEffect('INJECTED_AFTER_COMMIT')
