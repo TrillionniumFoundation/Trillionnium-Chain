@@ -396,6 +396,19 @@ mod tests {
     use std::error::Error as _;
 
     #[test]
+    fn continuous_history_without_a_durable_claim_is_a_local_owner_stop() {
+        let message = "OWNER_CONTINUOUS_HISTORY_DURABLE_REQUIRED";
+        let local = Error::from(message);
+        assert!(local.is(ErrorCode::OwnerContinuousHistoryDurableRequired));
+        assert_eq!(local.kind(), ErrorKind::DependencyUnavailable);
+        assert!(local.requires_owner_stop());
+        // A remote peer's arbitrary string is not local resource authority.
+        let remote = Error::remote(message);
+        assert!(!remote.requires_owner_stop());
+        assert!(!remote.is(ErrorCode::OwnerContinuousHistoryDurableRequired));
+    }
+
+    #[test]
     fn display_changes_cannot_change_typed_retry_or_owner_stop_identity() {
         let mut budget = Error::new(ErrorCode::PublicMutationCpuBudget);
         assert_eq!(budget.to_string(), "PUBLIC_MUTATION_CPU_BUDGET");
