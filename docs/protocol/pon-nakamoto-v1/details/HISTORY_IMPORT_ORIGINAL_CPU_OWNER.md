@@ -81,6 +81,16 @@ creating or debiting any Node CPU account. The new code is an
 unqualified source candidate until its native compiler and original
 project-preflight checks are available.
 
+## Read-only regression for future merge safety
+
+`python3 scripts/ci/test_remote_history_cpu_owner.py -v` is wired to
+the existing repository-truth lane. Its in-memory negative mutations
+reject restoration of `node.admit` as an unchecked History parser,
+per-request warm `standalone()` CPU credits, or any use of a
+nonzero cold-import startup burst. Its checks are **source assertions
+only** and do not substitute for `cargo test`, the actual Host cgroup
+budget, an independent oracle or security qualification.
+
 ## Remaining blockers (must not silently close P0–P6)
 
 - Host `trnmponpublic.slice` quotas must be physically checked across
