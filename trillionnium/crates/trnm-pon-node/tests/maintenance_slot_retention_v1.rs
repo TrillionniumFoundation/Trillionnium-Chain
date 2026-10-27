@@ -6,7 +6,10 @@ use trnm_mvcc_fee::{continuity_v1, qualified_task_lifecycle};
 use trnm_pon_node::{development_public, Node, Settings};
 use trnm_protocol::{
     pon_wire::{hash, Envelope, Hash},
-    qualified_work_task::{lifecycle_v2::{DemandLeaseV2, DemandRevocationV2}, TaskPurpose},
+    qualified_work_task::{
+        lifecycle_v2::{DemandLeaseV2, DemandRevocationV2},
+        TaskPurpose,
+    },
 };
 
 fn public(owner: u64) -> Hash {
@@ -23,26 +26,15 @@ fn tx(settings: &Settings, owner: u64, nonce: u64, tag: u8, payload: Vec<u8>) ->
         payload,
         signature: [0; 64],
     };
-    let private = signing_key_from_hex(&hex::encode(hash(
-        b"DEV-ONLY-KEY",
-        &[&owner.to_le_bytes()],
-    )))
-    .unwrap();
-    signed.signature = hex::decode(sign_hex(
-        &private,
-        &signed.signing_digest().unwrap(),
-    ))
-    .unwrap()
-    .try_into()
-    .unwrap();
+    let private =
+        signing_key_from_hex(&hex::encode(hash(b"DEV-ONLY-KEY", &[&owner.to_le_bytes()]))).unwrap();
+    signed.signature = hex::decode(sign_hex(&private, &signed.signing_digest().unwrap()))
+        .unwrap()
+        .try_into()
+        .unwrap();
     signed.encode().unwrap()
 }
-fn new_lease(
-    original: &DemandLeaseV2,
-    slot: u8,
-    generation: u64,
-    expires: u64,
-) -> DemandLeaseV2 {
+fn new_lease(original: &DemandLeaseV2, slot: u8, generation: u64, expires: u64) -> DemandLeaseV2 {
     let mut lease = original.clone();
     lease.slot = slot;
     lease.purpose = TaskPurpose::InferenceContraction;
@@ -113,53 +105,49 @@ fn full_slot_reuse_only_after_retention_requires_fresh_authorized_generation() {
     // Q4 OPEN needs not_before >= actual inclusion height, not the old height.
     replacement.not_before = 104;
     let next_open = tx(&settings, 2, 32, 18, replacement.encode().unwrap());
+    // For the negative controls, construct independently valid future windows
+    // at their actual inclusion heights. A refusal then tests old slot
+    // retention rather than an unrelated TASK_WINDOW violation.
+    let mut at_two = replacement.clone();
+    at_two.not_before = 2;
+    let early_open = tx(&settings, 2, 32, 18, at_two.encode().unwrap());
+    let mut at_103 = replacement.clone();
+    at_103.not_before = 103;
+    let last_retained_open = tx(&settings, 2, 32, 18, at_103.encode().unwrap());
     // At height2 the old record is occupied; an attempted next-generation
     // OPEN is NOT a free bypass of the 100-block retention obligation.
     let before = node.read_active().unwrap();
-    assert!(
-        node.make_consensus_maintenance(
-            tip,
-            vec![next_open.clone()],
-            public(0),
-            21,
-            4096,
-        )
-        .is_err()
-    );
+    assert!(node
+        .make_consensus_maintenance(tip, vec![early_open], public(0), 21, 4096,)
+        .is_err());
     assert_eq!(node.read_active().unwrap(), before);
 
     // No optional task remains eligible. Advance only via the public,
     // genesis-committed Maintenance source; do not synthesize source renewal.
     for height in 2_u64..=102_u64 {
         tip = maintenance(&mut node, tip, height, vec![]);
-        assert!(node.lifecycle_task_lease(tip, old_task, height + 1).is_err());
+        assert!(node
+            .lifecycle_task_lease(tip, old_task, height + 1)
+            .is_err());
     }
     // Exactly at height103 the retired record is still retained. The
     // prospective successor is otherwise valid, but may not replace it.
     let retained = node.read_active().unwrap();
-    assert!(
-        node.make_consensus_maintenance(
-            tip,
-            vec![next_open.clone()],
-            public(0),
-            1031,
-            4096,
-        )
-        .is_err()
-    );
+    assert!(node
+        .make_consensus_maintenance(tip, vec![last_retained_open], public(0), 1031, 4096,)
+        .is_err());
     assert_eq!(node.read_active().unwrap(), retained);
     tip = maintenance(&mut node, tip, 103, vec![]);
     let before_expiry = node.read_active().unwrap();
-    assert!(
-        node.make_consensus_maintenance(
+    assert!(node
+        .make_consensus_maintenance(
             tip,
             vec![next_open.clone()],
             public(0),
             1041, // actual successor is height104; old retention ends103
             4096,
         )
-        .is_ok()
-    );
+        .is_ok());
     assert_eq!(node.read_active().unwrap(), before_expiry);
     // The validity here comes only from an authentic requester PNX1 OPEN.
     // It creates no source-signed QWA2 and therefore no new work authority.

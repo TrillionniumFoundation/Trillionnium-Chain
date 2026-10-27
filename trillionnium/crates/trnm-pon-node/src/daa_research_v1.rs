@@ -56,9 +56,7 @@ pub fn asert_target_research_v1(input: AsertResearchInputV1) -> Result<[u8; 32]>
     // Rust signed integer division truncates toward zero, as required by
     // the ASERT reference. div_euclid below is intentionally FLOOR for
     // splitting the fixed-point exponent (including negative values).
-    let exponent = residual
-        .checked_mul(RADIX)
-        .ok_or("DAA_RESEARCH_RANGE")?
+    let exponent = residual.checked_mul(RADIX).ok_or("DAA_RESEARCH_RANGE")?
         / i128::from(input.half_life_seconds);
     let shifts = exponent.div_euclid(RADIX);
     let x = exponent.rem_euclid(RADIX) as u128;
@@ -170,7 +168,10 @@ fn shift_right(words: [u64; 8], amount: usize) -> [u64; 8] {
 /// Median of the *caller-verified* parent-first ancestor window. This is a
 /// clock observation only: it does not itself grant time or parent validity.
 pub fn median_parent_time_research_v1(ancestors: &[u64]) -> Result<u64> {
-    ensure((1..=11).contains(&ancestors.len()), "DAA_RESEARCH_ANCESTORS")?;
+    ensure(
+        (1..=11).contains(&ancestors.len()),
+        "DAA_RESEARCH_ANCESTORS",
+    )?;
     let mut ordered = ancestors.to_vec();
     ordered.sort_unstable();
     Ok(ordered[ordered.len() / 2])
@@ -198,7 +199,10 @@ mod tests {
     #[test]
     fn exact_zero_positive_and_negative_half_life() {
         let steady = input();
-        assert_eq!(asert_target_research_v1(steady).unwrap(), steady.anchor_target);
+        assert_eq!(
+            asert_target_research_v1(steady).unwrap(),
+            steady.anchor_target
+        );
         let mut slow = steady;
         slow.parent_time += 7200;
         let mut twice = [0; 32];
@@ -244,9 +248,7 @@ mod tests {
         ))
         .unwrap();
         assert_eq!(reference["production_consensus_activation"], false);
-        let hex32 = |s: &str| -> [u8; 32] {
-            hex::decode(s).unwrap().try_into().unwrap()
-        };
+        let hex32 = |s: &str| -> [u8; 32] { hex::decode(s).unwrap().try_into().unwrap() };
         let anchor = hex32(reference["anchor_target_hex"].as_str().unwrap());
         let pow_limit = hex32(reference["pow_limit_hex"].as_str().unwrap());
         for row in reference["cases"].as_array().unwrap() {
@@ -268,5 +270,4 @@ mod tests {
             );
         }
     }
-
 }

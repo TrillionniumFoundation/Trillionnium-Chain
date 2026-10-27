@@ -2,7 +2,9 @@
 //! lease. The test constructs real signed PNX1, W1, native branch state,
 //! independently checked receipt and cold recovery; it is not public WAN proof.
 use trnm_crypto_primitives::{
-    qualified_work_task::{derive_matrices, lifecycle_v2::verify_lifecycle_admission, TaskMaterial},
+    qualified_work_task::{
+        derive_matrices, lifecycle_v2::verify_lifecycle_admission, TaskMaterial,
+    },
     sign_hex, signing_key_from_hex,
 };
 use trnm_mvcc_fee::continuity_v1;
@@ -29,11 +31,8 @@ fn transaction(settings: &Settings, owner: u64, nonce: u64, tag: u8, payload: Ve
         payload,
         signature: [0; 64],
     };
-    let key = signing_key_from_hex(&hex::encode(hash(
-        b"DEV-ONLY-KEY",
-        &[&owner.to_le_bytes()],
-    )))
-    .unwrap();
+    let key =
+        signing_key_from_hex(&hex::encode(hash(b"DEV-ONLY-KEY", &[&owner.to_le_bytes()]))).unwrap();
     tx.signature = hex::decode(sign_hex(&key, &tx.signing_digest().unwrap()))
         .unwrap()
         .try_into()
@@ -72,11 +71,8 @@ fn signed_new_task(
         manifest,
         signature: [0; 64],
     };
-    let key = signing_key_from_hex(&hex::encode(hash(
-        b"DEV-ONLY-KEY",
-        &[&0_u64.to_le_bytes()],
-    )))
-    .unwrap();
+    let key =
+        signing_key_from_hex(&hex::encode(hash(b"DEV-ONLY-KEY", &[&0_u64.to_le_bytes()]))).unwrap();
     signed.signature = hex::decode(sign_hex(&key, &signed.signing_message().unwrap()))
         .unwrap()
         .try_into()
@@ -198,31 +194,38 @@ fn all_external_leases_revoked_maintenance_registers_new_signed_task_and_confirm
     // Six additional complete maintenance blocks yield policy confirmation.
     for height in 4..=10 {
         let packet = producer
-            .make_consensus_maintenance(
-                tip,
-                vec![],
-                public(0),
-                1 + height * 10,
-                4096,
-            )
+            .make_consensus_maintenance(tip, vec![], public(0), 1 + height * 10, 4096)
             .unwrap();
         tip = packet.id().unwrap();
         assert_eq!(producer.admit(&packet, 100_000).unwrap(), tip);
         assert_eq!(replica.admit(&packet, 100_000).unwrap(), tip);
         producer.activate(tip).unwrap();
         replica.activate(tip).unwrap();
-        assert_eq!(producer.read_active().unwrap(), replica.read_active().unwrap());
+        assert_eq!(
+            producer.read_active().unwrap(),
+            replica.read_active().unwrap()
+        );
     }
-    let receipt = replica.confirmation(register_id, included, 100_000).unwrap();
+    let receipt = replica
+        .confirmation(register_id, included, 100_000)
+        .unwrap();
     assert!(receipt.confirmed);
     assert!(!receipt.reorged);
     assert!(!receipt.finalized);
     assert!(!receipt.execution_authority);
-    assert_eq!(producer.read_active().unwrap(), replica.read_active().unwrap());
+    assert_eq!(
+        producer.read_active().unwrap(),
+        replica.read_active().unwrap()
+    );
     let before = replica.read_active().unwrap();
     drop(replica);
     replica = Node::open_with_authenticated_state(&replica_path, settings, 1).unwrap();
     assert_eq!(replica.read_active().unwrap(), before);
-    assert!(replica.confirmation(register_id, included, 100_000).unwrap().confirmed);
+    assert!(
+        replica
+            .confirmation(register_id, included, 100_000)
+            .unwrap()
+            .confirmed
+    );
     eprintln!("continuity research: revoked=true, maintenance_block=true, new_signed_task=true, real_W1=true, client_confirmation=true, independent_operators=false, work_hardness=false");
 }
