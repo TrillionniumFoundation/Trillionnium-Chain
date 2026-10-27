@@ -106,3 +106,22 @@ must be tested separately.
 The new unexported parser remains useful for unit coverage and does
 not expose a second public unchecked history-import symbol.
 This is an API-path reduction, **not** a production/security gate PASS.
+
+
+### Stronger per-packet original-host verification (integrated candidate)
+
+One untrusted History page can contain up to **16** complete W1 proofs.
+Checking cgroup membership only before/after the whole page leaves all
+intermediate proof computations without a new source-bound observation.
+The integration update now passes the *same original verified HostKernelBudget*
+to the private page parser, rechecking actual worker-thread membership and
+the fixed parent limits **before and after every individual Node admission**
+and around the page's final activation. No per-packet Host budget is minted;
+a kernel fault after an actual admission must fail the sync result without
+pretending an already written block was invalid or undone.
+
+This is a cooperative security fence and hard cgroup aggregate quota, not
+a preemptive per-proof CPU timer, not proof of Sybil-safe scheduling, and
+not a replacement for the original P4 attacked-service benchmark. The
+public caller still must supply a truthful source SocketAddr; untrusted
+loopback relays and out-of-band Node::admit paths remain in the audit scope.
