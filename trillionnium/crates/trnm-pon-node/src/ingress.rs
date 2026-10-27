@@ -2252,7 +2252,7 @@ fn receive_page(
 /// W1 replay. A caller cannot bypass the guard by calling the addressless
 /// parser from another crate or by supplying a fake already-verified work
 /// token. Only the full native Node determines consensus validity.
-pub fn receive_page_from(
+pub(crate) fn receive_page_from(
     node: &mut Node,
     source: SocketAddr,
     page: Page,
@@ -2276,6 +2276,28 @@ pub fn receive_page_from(
     }
     native
 }
+/// Strict public-V3 History import. An apparent loopback peer may tunnel a
+/// hostile WAN source, so destination SocketAddr is not resource provenance.
+/// Require the ORIGINAL administrator-owned Host cgroup even for 127.0.0.1.
+/// Then use the SINGLE Node-bound CPU account for decoding, every W1/M06 and
+/// final tip activation; a ticket or signed transport alone grants no work.
+pub fn receive_page_from_public_sync(
+    node: &mut Node,
+    source: SocketAddr,
+    page: Page,
+    tip: Hash,
+    after: Hash,
+    clock: u64,
+) -> Result<Hash> {
+    let host = crate::host_kernel_parent::require_for_untrusted_public_sync(source)?;
+    host.verify()?;
+    let result = receive_page_from(node, source, page, tip, after, clock);
+    // Native success may already be durable when the post-check fails; never
+    // rewrite the ledger fact, but do not claim completed sync either.
+    host.verify()?;
+    result
+}
+
 pub fn sync_from(
     node: &mut Node,
     address: SocketAddr,
@@ -2753,6 +2775,35 @@ mod tests {
             node.remote_history_cpu_domain().err().unwrap().to_string(),
             "OWNER_PUBLIC_SERVICE_UNCLEAN_EPOCH"
         );
+    }
+
+    #[test]
+    fn public_loopback_history_proxy_requires_real_host_owner_before_cpu_or_state() {
+        let relay: SocketAddr = "127.0.0.1:12345".parse().unwrap();
+        let expected = crate::host_kernel_parent::require_for_untrusted_public_sync(relay);
+        let dir = tempfile::tempdir().unwrap();
+        let settings = crate::Settings::development(Some(now().unwrap() - 100)).unwrap();
+        let mut node = Node::open(dir.path(), settings.clone(), 2).unwrap();
+        let before = node.stats().unwrap();
+        let bad_page = Page {
+            schema: String::new(), network: String::new(),
+            parameters: String::new(), genesis: String::new(),
+            tip: String::new(), after: String::new(),
+            packets: vec![], next: String::new(), complete: false,
+        };
+        let error = receive_page_from_public_sync(
+            &mut node, relay, bad_page,
+            settings.genesis(), settings.genesis(), now().unwrap(),
+        ).unwrap_err();
+        match expected {
+            Err(guard_error) => assert_eq!(error.to_string(), guard_error.to_string()),
+            Ok(host) => {
+                host.verify().unwrap();
+                assert_eq!(error.to_string(), "PAGE_CONTEXT");
+            }
+        }
+        assert_eq!(node.stats().unwrap(), before);
+        assert_eq!(node.read_active().unwrap().0, settings.genesis());
     }
 
     #[test]
