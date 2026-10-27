@@ -118,12 +118,14 @@ class OriginalHostControls(unittest.TestCase):
         command = ['python3', 'scripts/ci/run_from_zero_native.py', '--out', '/tmp/out']
         argv = host.service_command('trnm-from-zero-1-1-cost-55.service', Path('/tmp/receipt'),
                                     command, 1001, 1002, {'PATH': '/original/bin',
-                                    'CARGO_BUILD_JOBS': '2', 'GITHUB_TOKEN': 'synthetic-not-a-token'})
+                                    'CARGO_BUILD_JOBS': '2', 'RUSTUP_TOOLCHAIN': '1.95.0',
+                                    'GITHUB_TOKEN': 'synthetic-not-a-token'})
         self.assertEqual(argv[-4:], command)
         for item in ('--slice=trnmponpublic.slice', '--uid=1001', '--gid=1002',
                      '--property=Delegate=no', '--property=NoNewPrivileges=yes',
                      '--property=CapabilityBoundingSet=', '--property=KillMode=control-group',
-                     '--setenv=PATH=/original/bin', '--setenv=CARGO_BUILD_JOBS=2'):
+                     '--setenv=PATH=/original/bin', '--setenv=CARGO_BUILD_JOBS=2',
+                     '--setenv=RUSTUP_TOOLCHAIN=1.95.0'):
             self.assertIn(item, argv)
         self.assertFalse(any('GITHUB_TOKEN' in item for item in argv))
         self.assertFalse(any('CPUQuota=' in item or 'MemoryMax=' in item for item in argv))

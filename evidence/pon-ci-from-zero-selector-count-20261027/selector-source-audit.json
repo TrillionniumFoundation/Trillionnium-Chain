@@ -1,0 +1,190 @@
+{
+  "schema": "original-from-zero-five-selector-audit-v1",
+  "original_failed_chain_source": "0c804e9f5bcf6e972bbb4524c744d4b3c8801c34",
+  "correction_parent": "176822ae27692aefb288f62d751695501da5c0f0",
+  "runner_unchanged_from_both_commits": true,
+  "runner_sha256": "c4879cac3d5e37c16285435280db5be05cbd6791088640b35b9ed0dc05e354ed",
+  "independently_written_expected_selectors": [
+    "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+    "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+    "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+    "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+    "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline"
+  ],
+  "actual_ast_TESTS": [
+    "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+    "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+    "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+    "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+    "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline"
+  ],
+  "native_fifth_test_definition_present": true,
+  "native_test_source_sha256": "d10a3871e19ae2479c9eb3420ddf0bc47e89a1ef72d34ac5be5b82fad99eb023",
+  "original_native_execution_readback": [
+    {
+      "architecture": "x64",
+      "artifact_id": 12728108214,
+      "artifact_sha256": "a0d4851c857d8d816d66942ee51ce351bb63d37d955f73e91750892b291c16cd",
+      "executed_named_tests": [
+        {
+          "name": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+          "passed": true,
+          "named_execution": {
+            "result": "PASS",
+            "test": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+            "executed_tests": 1,
+            "scope": "named-libtest-execution-only"
+          }
+        },
+        {
+          "name": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+          "passed": true,
+          "named_execution": {
+            "result": "PASS",
+            "test": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+            "executed_tests": 1,
+            "scope": "named-libtest-execution-only"
+          }
+        },
+        {
+          "name": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+          "passed": true,
+          "named_execution": {
+            "result": "PASS",
+            "test": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+            "executed_tests": 1,
+            "scope": "named-libtest-execution-only"
+          }
+        },
+        {
+          "name": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+          "passed": true,
+          "named_execution": {
+            "result": "PASS",
+            "test": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+            "executed_tests": 1,
+            "scope": "named-libtest-execution-only"
+          }
+        },
+        {
+          "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+          "passed": true,
+          "named_execution": {
+            "result": "PASS",
+            "test": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+            "executed_tests": 1,
+            "scope": "named-libtest-execution-only"
+          }
+        }
+      ],
+      "harness_passed": false,
+      "business_confirmation_accepted": false
+    },
+    {
+      "architecture": "arm64",
+      "artifact_id": 12727958291,
+      "artifact_sha256": "b14bbb55e2678a0f9a4b0446dc6bc0ebb4fc5218f9017c3ba60cef1ed1c6326b",
+      "executed_named_tests": [
+        {
+          "name": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+          "passed": true,
+          "named_execution": {
+            "result": "PASS",
+            "test": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+            "executed_tests": 1,
+            "scope": "named-libtest-execution-only"
+          }
+        },
+        {
+          "name": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+          "passed": true,
+          "named_execution": {
+            "result": "PASS",
+            "test": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+            "executed_tests": 1,
+            "scope": "named-libtest-execution-only"
+          }
+        },
+        {
+          "name": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+          "passed": true,
+          "named_execution": {
+            "result": "PASS",
+            "test": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+            "executed_tests": 1,
+            "scope": "named-libtest-execution-only"
+          }
+        },
+        {
+          "name": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+          "passed": true,
+          "named_execution": {
+            "result": "PASS",
+            "test": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+            "executed_tests": 1,
+            "scope": "named-libtest-execution-only"
+          }
+        },
+        {
+          "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+          "passed": true,
+          "named_execution": {
+            "result": "PASS",
+            "test": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+            "executed_tests": 1,
+            "scope": "named-libtest-execution-only"
+          }
+        }
+      ],
+      "harness_passed": false,
+      "business_confirmation_accepted": false
+    }
+  ],
+  "explicit_assertion_changes": [
+    {
+      "test": "test_zero_match_exit_zero_is_still_failure",
+      "before": [
+        false,
+        true,
+        true,
+        true
+      ],
+      "after": [
+        false,
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "test": "test_ignored_exit_zero_is_still_failure",
+      "before": [
+        true,
+        false,
+        true,
+        true
+      ],
+      "after": [
+        true,
+        false,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "test": "test_nonzero_exit_cannot_be_overridden_by_success_text",
+      "before_run_count": 4,
+      "after_run_count": 5
+    }
+  ],
+  "all_three_overall_failure_assertions_retained": true,
+  "test_inventory_or_runner_changed": false,
+  "RUSTUP_TOOLCHAIN_forwarded_unchanged": true,
+  "host_control_suite": {
+    "tests": 12,
+    "exit_code": 0,
+    "scope": "synthetic refusal and argv wiring controls; no local host provisioning or native execution"
+  }
+}
