@@ -10,6 +10,7 @@ import sqlite3
 import subprocess
 import tempfile
 import unittest
+from unittest.mock import patch
 
 from pq_pql5_quorum import (LocalWitness, Reject, PQL4_SIGN, PQL4_ID, PQL4_SIGNED,
     PQL4_UNSIGNED, RESP_SIGNED, ZERO48, key_id, parse_pql4,
@@ -214,6 +215,45 @@ class PQL5ActualTests(unittest.TestCase):
         self.assertEqual(self.stores[0].append(self.frame1,now=1500),"ALREADY_RECORDED")
         self.assertEqual(self.stores[0].append(self.frame2,now=1500),"FIRST_RECORD")
         with self.assertRaises(Reject):self.stores[0].append(wrong,now=1500)
+
+    def test_connection_temp_trigger_never_erases_acknowledged_witness(self):
+        store=self.stores[0]
+        store.db.execute("CREATE TEMP TRIGGER erase AFTER INSERT ON events "
+                         "BEGIN DELETE FROM events; END")
+        with self.assertRaisesRegex(Reject, "temporary witness"):
+            store.append(self.frame1,now=1500)
+        self.assertEqual(store.db.execute("SELECT count(*) FROM main.events").fetchone()[0],0)
+
+    def test_connection_temp_table_cannot_shadow_witness_history(self):
+        store=self.stores[0]
+        store.db.execute("CREATE TEMP TABLE events(seq INTEGER PRIMARY KEY, "
+                         "fid BLOB NOT NULL, signed_frame BLOB NOT NULL)")
+        with self.assertRaisesRegex(Reject, "temporary witness"):
+            store.append(self.frame1,now=1500)
+        with self.assertRaisesRegex(Reject, "temporary witness"):
+            store.observe(challenge=bytes([0x66])*32,now=1500,
+                          witness_pub=self.keys["w0"][1],
+                          witness_secret=self.keys["w0"][0])
+        self.assertEqual(store.db.execute("SELECT count(*) FROM main.events").fetchone()[0],0)
+
+    def test_file_moved_inside_transaction_never_acks_signed_frontier(self):
+        store=self.stores[0]
+        before=store._audit
+        moved=Path(self.tmp.name)/"detached-w0.sqlite"
+        relocated=False
+
+        def move_after_audit():
+            nonlocal relocated
+            result=before()
+            if not relocated:
+                os.rename(self.paths[0],moved)
+                relocated=True
+            return result
+
+        with patch.object(store,"_audit",side_effect=move_after_audit):
+            with self.assertRaisesRegex(Reject, "disappeared"):
+                store.append(self.frame1,now=1500)
+        self.assertTrue(moved.exists())
 
     def test_cold_readback_and_foreign_ddl_refuse(self):
         self.append(self.frame1)

@@ -1,0 +1,32 @@
+PQL7 exact-source local checker unit fixtures
+Source git blob check:
+  check_pq_research_integration.py  ef5fc1e2e68ed2622ae839023995ec16fd3f3d44 MATCH
+  test_pq_research_integration.py  1dc4250cb288a536002d73dbb5edd87ffba3af35 MATCH
+
+test_changed_signature_or_source_refuses ... ok
+test_default_chain_activation_refuses ... ok
+test_duplicate_json_field_refuses ... ok
+test_malformed_pq_gate_refuses ... ok
+test_missing_source_pin_refuses ... ok
+test_missing_source_refuses ... ok
+test_source_symlink_refuses ... ok
+test_traversal_pin_refuses ... ok
+test_unreviewed_overlay_refuses ... ok
+test_valid_offline_fixture_is_still_hold ... ok
+
+Ran 10 tests in 0.024s
+
+OK
+
+GitHub composition check:
+  source file Git blob pins: 84 / 84 matched.
+  required paths absent: 0.
+  source pin mismatches: 0.
+  original source function/class names removed across four overrides: 0.
+  production consensus activation: false.
+  native PQ chain integrated: false.
+  production release: HOLD_NO_GO.
+
+LIMIT: these are isolated fixtures, not tests on a full checkout. No runtime/WAN/cryptographic
+or public PoN quantum security qualification is claimed. Historical upstream evidence
+does not automatically apply to the new combined SHA.
