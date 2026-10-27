@@ -127,9 +127,9 @@ fn all_external_leases_revoked_maintenance_registers_new_signed_task_and_confirm
     lease.generation = 2;
     lease.purpose = TaskPurpose::InferenceContraction;
     lease.requester = public(2);
-    lease.not_before = 1;
-    lease.expires = 1001;
-    lease.available_until = 1101;
+    lease.not_before = 2;
+    lease.expires = 1002;
+    lease.available_until = 1102;
     lease.demand_id = lease.derived_demand_id();
     let model: Vec<u8> = (0..4096_u32)
         .flat_map(|i| ((i * 11 + 7) % 97).to_le_bytes())

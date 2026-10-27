@@ -108,7 +108,9 @@ fn full_slot_reuse_only_after_retention_requires_fresh_authorized_generation() {
             "missing original bounded slot {slot}"
         );
     }
-    let replacement = new_lease(&boot.lease, 1, 33, 105);
+    let mut replacement = new_lease(&boot.lease, 1, 33, 105);
+    // Q4 OPEN needs not_before >= actual inclusion height, not the old height.
+    replacement.not_before = 104;
     let next_open = tx(&settings, 2, 32, 18, replacement.encode().unwrap());
     // At height2 the old record is occupied; an attempted next-generation
     // OPEN is NOT a free bypass of the 100-block retention obligation.
@@ -127,10 +129,25 @@ fn full_slot_reuse_only_after_retention_requires_fresh_authorized_generation() {
 
     // No optional task remains eligible. Advance only via the public,
     // genesis-committed Maintenance source; do not synthesize source renewal.
-    for height in 2_u64..=103_u64 {
+    for height in 2_u64..=102_u64 {
         tip = maintenance(&mut node, tip, height, vec![]);
         assert!(node.lifecycle_task_lease(tip, old_task, height + 1).is_err());
     }
+    // Exactly at height103 the retired record is still retained. The
+    // prospective successor is otherwise valid, but may not replace it.
+    let retained = node.read_active().unwrap();
+    assert!(
+        node.make_consensus_maintenance(
+            tip,
+            vec![next_open.clone()],
+            public(0),
+            1031,
+            4096,
+        )
+        .is_err()
+    );
+    assert_eq!(node.read_active().unwrap(), retained);
+    tip = maintenance(&mut node, tip, 103, vec![]);
     let before_expiry = node.read_active().unwrap();
     assert!(
         node.make_consensus_maintenance(
