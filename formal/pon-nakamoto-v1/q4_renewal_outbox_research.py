@@ -51,6 +51,25 @@ def _validate_observation_wire(kind: str, obs: bytes) -> int:
         raise OutboxError('OBSERVATION_MEMBERSHIP')
     return generation
 
+# A native active generation identifies exactly one tip and height. Chain
+# observations are still caller-supplied/untrusted: this consistency check
+# fences contradictions, but proves neither inclusion nor external authority.
+_MEMBERSHIP_OBSERVATIONS = {'OBSERVED_INCLUDED', 'OBSERVED_CONFIRMED',
+                            'OBSERVED_REORGED'}
+
+def _check_same_generation_view(previous_kind: str, previous: bytes,
+                                next_kind: str, following: bytes) -> None:
+    # Callers have already checked both complete canonical 113-byte wires.
+    if previous[:8] != following[:8]:
+        return
+    if previous[8:48] != following[8:48]:
+        raise OutboxError('OBSERVATION_VIEW_CONFLICT')
+    if previous_kind in _MEMBERSHIP_OBSERVATIONS and next_kind in _MEMBERSHIP_OBSERVATIONS:
+        old = previous[49:81] if previous_kind != 'OBSERVED_REORGED' else ZERO
+        new = following[49:81] if next_kind != 'OBSERVED_REORGED' else ZERO
+        if old != new:
+            raise OutboxError('OBSERVATION_MEMBERSHIP_CONFLICT')
+
 def identity(value: bytes, name: str) -> bytes:
     if type(value) is not bytes or len(value) != 32 or value == ZERO:
         raise OutboxError(name + '_IDENTITY')
@@ -281,6 +300,7 @@ class RenewalOutbox:
         dispatch = set()
         dispatched_leases = set()
         last_generation = {}
+        generation_views = {}
         for ordinal, ident,kind,obs,prev,digest in self.db.execute('SELECT ordinal,intent_id,kind,observation,prev,digest FROM q4_outbox_events_v1 ORDER BY ordinal'):
             count += 1
             if count > self.max_events: raise OutboxError('EVENT_BUDGET')
@@ -302,6 +322,17 @@ class RenewalOutbox:
                 generation = _validate_observation_wire(kind, obs)
                 if generation < last_generation.get(ident,0): raise OutboxError('OBSERVATION_REGRESSION')
                 last_generation[ident] = generation
+                # Do not let a later unavailable/expired observation obscure
+                # an earlier membership fact for the exact same generation.
+                key = (ident, generation)
+                previous = generation_views.get(key)
+                if previous is not None:
+                    _check_same_generation_view(previous[0], previous[1], kind, obs)
+                if previous is None or (
+                    previous[0] not in _MEMBERSHIP_OBSERVATIONS
+                    and kind in _MEMBERSHIP_OBSERVATIONS
+                ):
+                    generation_views[key] = (kind, obs)
             else:
                 raise OutboxError('UNKNOWN_EVENT')
             prior = digest
@@ -342,6 +373,20 @@ class RenewalOutbox:
             # the full prefix digest verdict. Still audit the entire original
             # SQLite writer snapshot BEFORE inserting any new event.
             self._audit_snapshot()
+            if kind.startswith('OBSERVED_'):
+                # Same original SQLite write snapshot as the eventual INSERT:
+                # a competing owner cannot append a contradictory tip/height
+                # or membership while this original transaction is held.
+                previous_observations = self.db.execute(
+                    'SELECT kind,observation FROM q4_outbox_events_v1 '
+                    "WHERE intent_id=? AND kind LIKE 'OBSERVED_%' ORDER BY ordinal",
+                    (ident,)
+                )
+                for previous_kind, previous_wire in previous_observations:
+                    if previous_wire[:8] == obs[:8]:
+                        _check_same_generation_view(
+                            previous_kind, previous_wire, kind, obs
+                        )
             if kind == 'DISPATCH_UNKNOWN':
                 own_wire = self.db.execute(
                     'SELECT wire FROM q4_outbox_intents_v1 WHERE id=?', (ident,)

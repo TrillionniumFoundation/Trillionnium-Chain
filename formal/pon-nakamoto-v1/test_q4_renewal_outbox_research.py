@@ -619,4 +619,62 @@ class RenewalOutboxTests(unittest.TestCase):
             self.assertFalse(cold.status(alias)['has_no_durable_dispatch_fence'])
             self.assertTrue(cold.status(alias)['old_lease_dispatch_fenced'])
 
+
+    def test_same_native_generation_cannot_change_tip_height_or_membership(self):
+        with self.open() as db:
+            original = db.prepare(intent())
+            db.dispatch_unknown(original)
+            included = observation('included', generation=4, seed=b'same-view')
+            db.observe(original, included)
+            db.observe(original, observation('confirmed', generation=4, seed=b'same-view'))
+            # Transient inability to retrieve evidence need not rewrite a
+            # previously observed inclusion; it is not a negative certificate.
+            db.observe(original, observation('unavailable', generation=4, seed=b'same-view'))
+            bad = (
+                observation('included', generation=4, seed=b'other-tip'),
+                replace(included, observed_height=included.observed_height+1),
+                replace(included, included_block=h(b'another-included-block')),
+                observation('reorged', generation=4, seed=b'same-view'),
+            )
+            for candidate in bad:
+                with self.assertRaisesRegex(
+                    OutboxError, r'OBSERVATION_(VIEW|MEMBERSHIP)_CONFLICT'
+                ):
+                    db.observe(original, candidate)
+            # Reorganization after an actually changed active generation
+            # retains the original irreversible dispatch fence.
+            db.observe(original, observation('reorged', generation=5, seed=b'new-view'))
+            self.assertEqual(db.audit(), 5)
+            self.assertEqual(db.status(original)['observations'], 4)
+            self.assertTrue(db.status(original)['old_lease_dispatch_fenced'])
+        with self.open() as cold:
+            self.assertEqual(cold.audit(), 5)
+            self.assertEqual(cold.status(original)['last_untrusted_observation'], 'reorged')
+
+    def test_rehashed_same_generation_membership_conflict_refuses_cold_open(self):
+        with self.open() as owner:
+            original = owner.prepare(intent())
+            owner.dispatch_unknown(original)
+            owner.observe(original, observation('included', generation=7, seed=b'fixed'))
+        # Bypass application methods to simulate a corrupted, validly rehashed
+        # historical SQLite row. A digest chain is not a semantic proof.
+        with sqlite3.connect(self.file) as raw:
+            prior = raw.execute(
+                'SELECT ordinal,digest FROM q4_outbox_events_v1 ORDER BY ordinal DESC LIMIT 1'
+            ).fetchone()
+            ordinal = prior[0] + 1
+            prior_digest = prior[1]
+            name = 'OBSERVED_REORGED'
+            wire = observation('reorged', generation=7, seed=b'fixed').wire()
+            digest = hashlib.sha256(
+                EVENT_DOMAIN + ordinal.to_bytes(8,'big') + original
+                + name.encode('ascii') + wire + prior_digest
+            ).digest()
+            raw.execute(
+                'INSERT INTO q4_outbox_events_v1 VALUES (?,?,?,?,?,?)',
+                (ordinal, original, name, wire, prior_digest, digest)
+            )
+        with self.assertRaisesRegex(OutboxError, 'OBSERVATION_MEMBERSHIP_CONFLICT'):
+            self.open()
+
 if __name__ == '__main__': unittest.main()
