@@ -1,0 +1,546 @@
+{
+  "assessment": {
+    "all_required_controls_executed": true,
+    "authenticated_inference_accepted": false,
+    "calibration_selected_control": "fresh-budget-matched-lora",
+    "consumption_not_assumed_equal": true,
+    "experiment": "7f321ce80c38f8ad86e501047ff2714074041a59d6f4678f34448b317fce21f9",
+    "gain_vs_strongest_evaluation_control": [
+      0,
+      1
+    ],
+    "independent_accepted": false,
+    "output_byte_metric": "equal-source-group-exact-output-bytes",
+    "positive_vs_all_controls": false,
+    "prospective_accepted": false,
+    "public_network_ready": false,
+    "public_reward_eligible": false,
+    "roster": "648a94be29489502cb5c35206789602147df5798895e97071dcd9bdf48d42c83",
+    "schema": "llm-runtime-actual-pilot-assessment-v1",
+    "scope": "actual-local-short-LLM-pilot-no-future-independent-quality-or-native-admission",
+    "scores": {
+      "budget-matched-full-tune": {
+        "calibration": [
+          1,
+          2
+        ],
+        "evaluation": [
+          1,
+          2
+        ]
+      },
+      "candidate": {
+        "calibration": [
+          1,
+          2
+        ],
+        "evaluation": [
+          1,
+          2
+        ]
+      },
+      "current-backbone": {
+        "calibration": [
+          0,
+          1
+        ],
+        "evaluation": [
+          0,
+          1
+        ]
+      },
+      "fresh-budget-matched-lora": {
+        "calibration": [
+          1,
+          2
+        ],
+        "evaluation": [
+          1,
+          2
+        ]
+      },
+      "randomized-rank-matched-lora": {
+        "calibration": [
+          0,
+          1
+        ],
+        "evaluation": [
+          0,
+          1
+        ]
+      }
+    },
+    "source": "65ccc6454befd96fa5ce1f5bdde2c56cb6cbb741cf495b8d24a758039f99f755",
+    "training_budget_matched_by_steps_and_token_schedule": true
+  },
+  "checkpoint_download": {
+    "artifact_id": 12726735299,
+    "artifact_sha256": "091238479dc94e2755aea854d07f1a7fc44c838e862762988736c739795274d4",
+    "reported_inventory": [
+      {
+        "locally_downloaded": false,
+        "path": "pilot/train-budget-matched-full-tune/artifact.safetensors",
+        "sha256": "f74740e1fd3cbe6e5a218cc3c4de5862a407ca50067fe5ee5fa81f36ce0a4918",
+        "size": 538090376
+      },
+      {
+        "locally_downloaded": false,
+        "path": "pilot/train-candidate/artifact.safetensors",
+        "sha256": "77a33bfc034dd8637ec71ace227d3b1f1a332380552195d9b11181f934d423ca",
+        "size": 933544
+      },
+      {
+        "locally_downloaded": false,
+        "path": "pilot/train-fresh-budget-matched-lora/artifact.safetensors",
+        "sha256": "f16e55fa8db8e6cb5e5181d167bacbdbafe1fb37e82611a0d2a9352a27284ed4",
+        "size": 933544
+      },
+      {
+        "locally_downloaded": false,
+        "path": "pilot/train-randomized-rank-matched-lora/artifact.safetensors",
+        "sha256": "0b2e2c6e4f00753c7d11f2d641b6306e0461dfe1775dac04909244b98606c980",
+        "size": 933544
+      }
+    ],
+    "size_bytes": 540891786,
+    "status": "REFUSED_ABOVE_DOWNLOAD_TOOL_LIMIT_NOT_LOCALLY_VERIFIED",
+    "tool_maximum_bytes": 536870912
+  },
+  "cost_totals": {
+    "cpu_scope": "Exact owned-child Linux wait4 user-plus-system CPU; includes inherited waited-descendant accounting",
+    "maximum_wait4_single_process_rss_bytes": 6141497344,
+    "memory_scope": "sampled_peak_rss_bytes is direct-child 50ms RSS; waited_child_peak_rss_bytes is exact owned-child Linux wait4 ru_maxrss in KiB times 1024, a maximum single-process high-water with inherited waited-descendant accounting; neither is simultaneous process-tree RSS",
+    "summed_child_cpu_ns": 310018861000,
+    "summed_phase_wall_ns": 226827036961
+  },
+  "diagnostic_job": 122133657558,
+  "diagnostic_run": 40487735989,
+  "experiment": "7f321ce80c38f8ad86e501047ff2714074041a59d6f4678f34448b317fce21f9",
+  "material_scope": "Canonical original-wheel extraction material validation; real pip installation rewrites all 31 RECORDs. These tests do not qualify a held Torch runtime.",
+  "matrix_run": 40487735846,
+  "matrix_runtime_material_controls": [
+    {
+      "architecture": "arm64",
+      "executed_tests": 13,
+      "job_id": 122133656851,
+      "result": "PASS",
+      "scope": "small unit controls, not pretrained-model qualification",
+      "skipped_tests": 0,
+      "source_kind": "prospective-merge",
+      "suite": "runtime-release",
+      "test_names": [
+        "__main__.RuntimeMaterialTests.test_actual_cold_python_and_original_wheel_bytes_roundtrip",
+        "__main__.RuntimeMaterialTests.test_byte_copy_survives_origin_removal",
+        "__main__.RuntimeMaterialTests.test_changed_missing_and_extra_materials_refuse",
+        "__main__.RuntimeMaterialTests.test_missing_native_dependency_and_ambiguous_shadow_refuse",
+        "__main__.RuntimeMaterialTests.test_installed_wheel_change_or_undeclared_distribution_refuse",
+        "__main__.RuntimeMaterialTests.test_real_pip_installation_is_not_canonical_extracted_wheel_layout",
+        "__main__.RuntimeMaterialTests.test_real_metadata_dependency_markers_extras_and_python_version",
+        "__main__.RuntimeMaterialTests.test_symlink_hardlink_fifo_and_import_side_effect_files_refuse",
+        "__main__.RuntimeMaterialTests.test_bad_pins_context_budget_and_manifest_encoding_refuse",
+        "__main__.RuntimeMaterialTests.test_float_integer_alias_cannot_change_the_exact_wire_contract",
+        "__main__.RuntimeMaterialTests.test_mid_inspection_mutation_cannot_publish_a_readback",
+        "__main__.RuntimeMaterialTests.test_change_then_restore_bytes_is_still_a_changed_observation",
+        "__main__.RuntimeMaterialTests.test_original_release_cli_is_create_only_and_wrong_pin_writes_no_result"
+      ],
+      "tested_commit": "3fda491679e9c093abc6ebf3f4ee3ab21cfaa7cb"
+    },
+    {
+      "architecture": "x86_64",
+      "executed_tests": 13,
+      "job_id": 122133657300,
+      "result": "PASS",
+      "scope": "small unit controls, not pretrained-model qualification",
+      "skipped_tests": 0,
+      "source_kind": "prospective-merge",
+      "suite": "runtime-release",
+      "test_names": [
+        "__main__.RuntimeMaterialTests.test_actual_cold_python_and_original_wheel_bytes_roundtrip",
+        "__main__.RuntimeMaterialTests.test_byte_copy_survives_origin_removal",
+        "__main__.RuntimeMaterialTests.test_changed_missing_and_extra_materials_refuse",
+        "__main__.RuntimeMaterialTests.test_missing_native_dependency_and_ambiguous_shadow_refuse",
+        "__main__.RuntimeMaterialTests.test_installed_wheel_change_or_undeclared_distribution_refuse",
+        "__main__.RuntimeMaterialTests.test_real_pip_installation_is_not_canonical_extracted_wheel_layout",
+        "__main__.RuntimeMaterialTests.test_real_metadata_dependency_markers_extras_and_python_version",
+        "__main__.RuntimeMaterialTests.test_symlink_hardlink_fifo_and_import_side_effect_files_refuse",
+        "__main__.RuntimeMaterialTests.test_bad_pins_context_budget_and_manifest_encoding_refuse",
+        "__main__.RuntimeMaterialTests.test_float_integer_alias_cannot_change_the_exact_wire_contract",
+        "__main__.RuntimeMaterialTests.test_mid_inspection_mutation_cannot_publish_a_readback",
+        "__main__.RuntimeMaterialTests.test_change_then_restore_bytes_is_still_a_changed_observation",
+        "__main__.RuntimeMaterialTests.test_original_release_cli_is_create_only_and_wrong_pin_writes_no_result"
+      ],
+      "tested_commit": "3fda491679e9c093abc6ebf3f4ee3ab21cfaa7cb"
+    },
+    {
+      "architecture": "x86_64",
+      "executed_tests": 13,
+      "job_id": 122133657466,
+      "result": "PASS",
+      "scope": "small unit controls, not pretrained-model qualification",
+      "skipped_tests": 0,
+      "source_kind": "head",
+      "suite": "runtime-release",
+      "test_names": [
+        "__main__.RuntimeMaterialTests.test_actual_cold_python_and_original_wheel_bytes_roundtrip",
+        "__main__.RuntimeMaterialTests.test_byte_copy_survives_origin_removal",
+        "__main__.RuntimeMaterialTests.test_changed_missing_and_extra_materials_refuse",
+        "__main__.RuntimeMaterialTests.test_missing_native_dependency_and_ambiguous_shadow_refuse",
+        "__main__.RuntimeMaterialTests.test_installed_wheel_change_or_undeclared_distribution_refuse",
+        "__main__.RuntimeMaterialTests.test_real_pip_installation_is_not_canonical_extracted_wheel_layout",
+        "__main__.RuntimeMaterialTests.test_real_metadata_dependency_markers_extras_and_python_version",
+        "__main__.RuntimeMaterialTests.test_symlink_hardlink_fifo_and_import_side_effect_files_refuse",
+        "__main__.RuntimeMaterialTests.test_bad_pins_context_budget_and_manifest_encoding_refuse",
+        "__main__.RuntimeMaterialTests.test_float_integer_alias_cannot_change_the_exact_wire_contract",
+        "__main__.RuntimeMaterialTests.test_mid_inspection_mutation_cannot_publish_a_readback",
+        "__main__.RuntimeMaterialTests.test_change_then_restore_bytes_is_still_a_changed_observation",
+        "__main__.RuntimeMaterialTests.test_original_release_cli_is_create_only_and_wrong_pin_writes_no_result"
+      ],
+      "tested_commit": "678c9e00b97885b1af9fa2dcf3572f65a5ac3b45"
+    },
+    {
+      "architecture": "arm64",
+      "executed_tests": 13,
+      "job_id": 122133657631,
+      "result": "PASS",
+      "scope": "small unit controls, not pretrained-model qualification",
+      "skipped_tests": 0,
+      "source_kind": "head",
+      "suite": "runtime-release",
+      "test_names": [
+        "__main__.RuntimeMaterialTests.test_actual_cold_python_and_original_wheel_bytes_roundtrip",
+        "__main__.RuntimeMaterialTests.test_byte_copy_survives_origin_removal",
+        "__main__.RuntimeMaterialTests.test_changed_missing_and_extra_materials_refuse",
+        "__main__.RuntimeMaterialTests.test_missing_native_dependency_and_ambiguous_shadow_refuse",
+        "__main__.RuntimeMaterialTests.test_installed_wheel_change_or_undeclared_distribution_refuse",
+        "__main__.RuntimeMaterialTests.test_real_pip_installation_is_not_canonical_extracted_wheel_layout",
+        "__main__.RuntimeMaterialTests.test_real_metadata_dependency_markers_extras_and_python_version",
+        "__main__.RuntimeMaterialTests.test_symlink_hardlink_fifo_and_import_side_effect_files_refuse",
+        "__main__.RuntimeMaterialTests.test_bad_pins_context_budget_and_manifest_encoding_refuse",
+        "__main__.RuntimeMaterialTests.test_float_integer_alias_cannot_change_the_exact_wire_contract",
+        "__main__.RuntimeMaterialTests.test_mid_inspection_mutation_cannot_publish_a_readback",
+        "__main__.RuntimeMaterialTests.test_change_then_restore_bytes_is_still_a_changed_observation",
+        "__main__.RuntimeMaterialTests.test_original_release_cli_is_create_only_and_wrong_pin_writes_no_result"
+      ],
+      "tested_commit": "678c9e00b97885b1af9fa2dcf3572f65a5ac3b45"
+    }
+  ],
+  "outcome": "EXECUTION_COMPLETE_NO_POSITIVE_BENEFIT_NO_ADOPTION",
+  "phase_costs": [
+    {
+      "budget": {
+        "rss_bytes": 8589934592,
+        "wall_seconds": 600
+      },
+      "child_cpu_ns": 19419349000,
+      "exit_code": 0,
+      "name": "loader-1thread",
+      "observed_wall_ns": 19543897671,
+      "outcome": "success",
+      "sampled_peak_rss_bytes": 1004888064,
+      "waited_child_peak_rss_bytes": 1153163264
+    },
+    {
+      "budget": {
+        "rss_bytes": 8589934592,
+        "wall_seconds": 600
+      },
+      "child_cpu_ns": 23597433000,
+      "exit_code": 0,
+      "name": "loader-reference",
+      "observed_wall_ns": 13742472181,
+      "outcome": "success",
+      "sampled_peak_rss_bytes": 1088106496,
+      "waited_child_peak_rss_bytes": 1153069056
+    },
+    {
+      "budget": {
+        "rss_bytes": 17179869184,
+        "wall_seconds": 1800
+      },
+      "child_cpu_ns": 36436106000,
+      "exit_code": 0,
+      "name": "train-candidate",
+      "observed_wall_ns": 32249228548,
+      "outcome": "success",
+      "sampled_peak_rss_bytes": 3100516352,
+      "waited_child_peak_rss_bytes": 3100110848
+    },
+    {
+      "budget": {
+        "rss_bytes": 17179869184,
+        "wall_seconds": 1800
+      },
+      "child_cpu_ns": 4718774000,
+      "exit_code": 0,
+      "name": "train-current-backbone",
+      "observed_wall_ns": 4407578519,
+      "outcome": "success",
+      "sampled_peak_rss_bytes": 1002348544,
+      "waited_child_peak_rss_bytes": 1152929792
+    },
+    {
+      "budget": {
+        "rss_bytes": 17179869184,
+        "wall_seconds": 1800
+      },
+      "child_cpu_ns": 36587609000,
+      "exit_code": 0,
+      "name": "train-fresh-budget-matched-lora",
+      "observed_wall_ns": 32420580901,
+      "outcome": "success",
+      "sampled_peak_rss_bytes": 3101564928,
+      "waited_child_peak_rss_bytes": 3101200384
+    },
+    {
+      "budget": {
+        "rss_bytes": 17179869184,
+        "wall_seconds": 1800
+      },
+      "child_cpu_ns": 47807732000,
+      "exit_code": 0,
+      "name": "train-budget-matched-full-tune",
+      "observed_wall_ns": 39758589990,
+      "outcome": "success",
+      "sampled_peak_rss_bytes": 6141718528,
+      "waited_child_peak_rss_bytes": 6141497344
+    },
+    {
+      "budget": {
+        "rss_bytes": 17179869184,
+        "wall_seconds": 1800
+      },
+      "child_cpu_ns": 5184390000,
+      "exit_code": 0,
+      "name": "train-randomized-rank-matched-lora",
+      "observed_wall_ns": 4873186179,
+      "outcome": "success",
+      "sampled_peak_rss_bytes": 1008197632,
+      "waited_child_peak_rss_bytes": 1153015808
+    },
+    {
+      "budget": {
+        "rss_bytes": 8589934592,
+        "wall_seconds": 600
+      },
+      "child_cpu_ns": 25149909000,
+      "exit_code": 0,
+      "name": "evaluate-candidate",
+      "observed_wall_ns": 14785013405,
+      "outcome": "success",
+      "sampled_peak_rss_bytes": 1004703744,
+      "waited_child_peak_rss_bytes": 1153462272
+    },
+    {
+      "budget": {
+        "rss_bytes": 8589934592,
+        "wall_seconds": 600
+      },
+      "child_cpu_ns": 24696249000,
+      "exit_code": 0,
+      "name": "evaluate-current-backbone",
+      "observed_wall_ns": 14426592456,
+      "outcome": "success",
+      "sampled_peak_rss_bytes": 1125335040,
+      "waited_child_peak_rss_bytes": 1153507328
+    },
+    {
+      "budget": {
+        "rss_bytes": 8589934592,
+        "wall_seconds": 600
+      },
+      "child_cpu_ns": 29358743000,
+      "exit_code": 0,
+      "name": "evaluate-fresh-budget-matched-lora",
+      "observed_wall_ns": 17046349674,
+      "outcome": "success",
+      "sampled_peak_rss_bytes": 1073635328,
+      "waited_child_peak_rss_bytes": 1153224704
+    },
+    {
+      "budget": {
+        "rss_bytes": 8589934592,
+        "wall_seconds": 600
+      },
+      "child_cpu_ns": 30180678000,
+      "exit_code": 0,
+      "name": "evaluate-budget-matched-full-tune",
+      "observed_wall_ns": 17833289723,
+      "outcome": "success",
+      "sampled_peak_rss_bytes": 1540464640,
+      "waited_child_peak_rss_bytes": 1540313088
+    },
+    {
+      "budget": {
+        "rss_bytes": 8589934592,
+        "wall_seconds": 600
+      },
+      "child_cpu_ns": 26881889000,
+      "exit_code": 0,
+      "name": "evaluate-randomized-rank-matched-lora",
+      "observed_wall_ns": 15740257714,
+      "outcome": "success",
+      "sampled_peak_rss_bytes": 1002213376,
+      "waited_child_peak_rss_bytes": 1153150976
+    }
+  ],
+  "previous_local_v2_full_tune": "Original SIGKILL -9 is unchanged, cause unknown, incomplete local cohort; no replacement by CI cohort.",
+  "roles": {
+    "budget-matched-full-tune": {
+      "artifact": "25c029c501f956acda399a944b724f3a8ec69ab2f59e85495426c34fdf898030",
+      "calibration": [
+        1,
+        2
+      ],
+      "evaluation": [
+        1,
+        2
+      ],
+      "training": {
+        "flop_scope": "profiler-supported-operators-only-not-total-work",
+        "loss": [
+          "3.96015453339",
+          "1.37642788887",
+          "0.41266348958",
+          "0.0867239311337",
+          "0.367405056953",
+          "0.0116766560823",
+          "0.01309708599",
+          "1.81795537472",
+          "1.17798316479",
+          "0.559696793556"
+        ],
+        "steps": 10,
+        "supervised_tokens": 40,
+        "supported_profile_flops": 430775813284,
+        "tokens": 526
+      }
+    },
+    "candidate": {
+      "artifact": "eff04d147bc2194039c906371635b356b197dd38682033910bcc50e3a6bc4d4d",
+      "calibration": [
+        1,
+        2
+      ],
+      "evaluation": [
+        1,
+        2
+      ],
+      "training": {
+        "flop_scope": "profiler-supported-operators-only-not-total-work",
+        "loss": [
+          "3.96015453339",
+          "3.62071871758",
+          "1.08996677399",
+          "1.42350816727",
+          "0.814253926277",
+          "0.438866347075",
+          "0.286465346813",
+          "0.614637732506",
+          "0.488371014595",
+          "0.269324421883"
+        ],
+        "steps": 10,
+        "supervised_tokens": 40,
+        "supported_profile_flops": 289144351496,
+        "tokens": 526
+      }
+    },
+    "current-backbone": {
+      "artifact": "c320c094769446c21d7e4a33795d7f9310b5e4c8ca5a6fecca40207b1f735b7c",
+      "calibration": [
+        0,
+        1
+      ],
+      "evaluation": [
+        0,
+        1
+      ],
+      "training": {
+        "flop_scope": "profiler-supported-operators-only-not-total-work",
+        "loss": [],
+        "steps": 0,
+        "supervised_tokens": 0,
+        "supported_profile_flops": 0,
+        "tokens": 0
+      }
+    },
+    "fresh-budget-matched-lora": {
+      "artifact": "9ddf1c845aa05b5a8943d74efdcf9630ec8936f930d63adc6cd560fb72a34520",
+      "calibration": [
+        1,
+        2
+      ],
+      "evaluation": [
+        1,
+        2
+      ],
+      "training": {
+        "flop_scope": "profiler-supported-operators-only-not-total-work",
+        "loss": [
+          "3.96015453339",
+          "4.20002937317",
+          "2.45798254013",
+          "2.30425906181",
+          "1.31384801865",
+          "1.2855039835",
+          "1.01381671429",
+          "0.619206666946",
+          "0.500874936581",
+          "0.318747729063"
+        ],
+        "steps": 10,
+        "supervised_tokens": 40,
+        "supported_profile_flops": 289144351496,
+        "tokens": 526
+      }
+    },
+    "randomized-rank-matched-lora": {
+      "artifact": "7a695f7538d91d6fccc16bb69f648f099a8ae60dcc4b3bcac15970bd185a4105",
+      "calibration": [
+        0,
+        1
+      ],
+      "evaluation": [
+        0,
+        1
+      ],
+      "training": {
+        "flop_scope": "profiler-supported-operators-only-not-total-work",
+        "loss": [],
+        "steps": 0,
+        "supervised_tokens": 0,
+        "supported_profile_flops": 0,
+        "tokens": 0
+      }
+    }
+  },
+  "runtime_source_sha256": "65ccc6454befd96fa5ce1f5bdde2c56cb6cbb741cf495b8d24a758039f99f755",
+  "schema": "pon-model-five-controls-observation-v1",
+  "scope": "Fresh independent CI diagnostic cohort; does not replace local V2 candidate, Cell004, ordinary native owner or qualification.",
+  "source": {
+    "base": null,
+    "candidate": "678c9e00b97885b1af9fa2dcf3572f65a5ac3b45",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "678c9e00b97885b1af9fa2dcf3572f65a5ac3b45",
+    "tested_tree": "3e5ce9ef4bca9080e91b1d57e550a772cd4bdd7c",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 739018177,
+    "tracked_entries": 5674,
+    "tracked_worktree_verified": true
+  },
+  "upstream_hepta_scope": {
+    "descendants": "SKIPPED",
+    "head": "3b308ce2ca0c5117280c2820ca034ca5e5e0287f",
+    "job": 122134588088,
+    "ordinary_failed_before_ready": "Codex executable path is not configured",
+    "ordinary_route_exists_in_source": true,
+    "pr": 4071,
+    "proposal_rounds": "SKIPPED",
+    "qualification_issued": false,
+    "run": 40488014123,
+    "scoped_rust_passed": 519,
+    "scoped_rust_skipped": 24
+  }
+}

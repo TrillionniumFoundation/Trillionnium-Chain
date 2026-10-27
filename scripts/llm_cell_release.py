@@ -156,3 +156,54 @@ def consume_controlled(args, consumer_parent, sidecar):
     return dict(source=before, command=command, exit_code=result.returncode,
         elapsed_seconds=time.monotonic() - started, readback_sha256=digest(readback_raw),
         readback=readback, scope="CONTROLLED_LOAD_ONLY_NOT_I10_OR_INSTALLATION")
+
+
+def runtime_material_command(args):
+    """Use the release owner's create-only output; grant no loader capability."""
+    import llm_runtime_release as closure
+    root = args.root
+    output = args.output.absolute()
+    if output.resolve().is_relative_to(root):
+        raise ValueError("runtime declaration output must be outside its material root")
+    if args.command == "declare-runtime-material":
+        raw = closure.declare_runtime_release(root,
+            read_regular(args.spec, closure.MAX_MANIFEST), args.spec_sha256, args.maximum_bytes)
+        summary = dict(runtime_root=digest(closure.DOMAIN + len(raw).to_bytes(8, "big") + raw),
+            scope="DECLARED_MATERIAL_AND_STATIC_ELF_CLOSURE_ONLY",
+            runtime_execution_qualified=False, ordinary_installation_qualified=False,
+            public_reward_eligible=False)
+    else:
+        context_raw = read_regular(args.context, closure.MAX_MANIFEST)
+        if digest(context_raw) != args.context_sha256:
+            raise ValueError("runtime context differs from its independent pin")
+        summary = closure.verify_runtime_release(root,
+            read_regular(args.manifest, closure.MAX_MANIFEST), args.runtime_root,
+            closure.decode(context_raw), args.maximum_bytes)
+        raw = canonical(summary)
+    write_new(output, raw)
+    return summary
+
+
+def main():
+    import argparse
+    os.umask(0o077)
+    parser = argparse.ArgumentParser(description="Read-only runtime material declarations; no I10 admission")
+    commands = parser.add_subparsers(dest="command", required=True)
+    for name in ("declare-runtime-material", "verify-runtime-material"):
+        command = commands.add_parser(name)
+        for option in ("root", "output"):
+            command.add_argument("--" + option, type=Path, required=True)
+        command.add_argument("--maximum-bytes", type=int, required=True)
+        if name == "declare-runtime-material":
+            command.add_argument("--spec", type=Path, required=True)
+            command.add_argument("--spec-sha256", required=True)
+        else:
+            command.add_argument("--manifest", type=Path, required=True)
+            command.add_argument("--runtime-root", required=True)
+            command.add_argument("--context", type=Path, required=True)
+            command.add_argument("--context-sha256", required=True)
+    print(json.dumps(runtime_material_command(parser.parse_args()), sort_keys=True))
+
+
+if __name__ == "__main__":
+    main()

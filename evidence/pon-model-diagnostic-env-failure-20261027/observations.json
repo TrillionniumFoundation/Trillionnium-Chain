@@ -1,0 +1,54 @@
+{
+  "credential_pattern_scan": {
+    "files": 15,
+    "hits": 0,
+    "scope": "limited standard key/token/password-URL patterns; not a formal absence proof"
+  },
+  "diagnostic": {
+    "conclusion": "failure",
+    "evaluation": "NOT_RUN",
+    "failure": "KeyError: MODEL_DIAGNOSTIC_OUT before current-step export",
+    "job_id": 122127272384,
+    "model_download": "NOT_RUN",
+    "run_id": 40485837206,
+    "source_check": "PASS",
+    "training": "NOT_RUN",
+    "upload": "NOT_RUN"
+  },
+  "full_system_python_and_arm_runtime_test_result": "PENDING_NEW_CI",
+  "local_repair": {
+    "all_thirteen_test_method_asts_unchanged": true,
+    "material_skips": 0,
+    "material_tests": 13,
+    "original_cell_tests": 8,
+    "primary_python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+    "production_runtime_validator_unchanged": true,
+    "registration_tests": 4,
+    "same_shell_red_then_green": true,
+    "subsequent_step_same_value": true,
+    "system_python_3_12_3_fixture": {
+      "after_executed_tests": 1,
+      "after_exit_code": 0,
+      "before_executed_tests": 0,
+      "before_exit_code": 5
+    }
+  },
+  "model_benefit_established": false,
+  "new_ci_result": "PENDING",
+  "ordinary_installation_qualified": false,
+  "parent": "abe552b6d2a408adbf82e27c817b4f914a7322a2",
+  "parent_matrix": {
+    "conclusion": "failure",
+    "job_ids": [
+      122127272084,
+      122127272501,
+      122127272571,
+      122127272658
+    ],
+    "run_id": 40485837111,
+    "runtime_suite_executed_tests": 0,
+    "runtime_suite_failure": "setUpClass fixture dependency unavailable: libz.so.1"
+  },
+  "runtime_execution_qualified": false,
+  "schema": "pon-ci-preparation-failures-v1"
+}

@@ -4586,3 +4586,124 @@ Hepta task. It does not complete ordinary I10 installation, runtime execution
 closure, parent-to-successor neural improvement, cross-node custody, next-task
 readback, work hardness or full-chain post-quantum qualification. All production,
 public reward and installation qualification flags remain false.
+
+
+### PN3 runtime material declaration and real neural observations — 2026-10-27 (PARTIAL / OPEN)
+
+The existing Cell release owner gains a fresh `hepta-runtime-material-release-v1`
+read-only declaration/readback interface. It checks canonical original-wheel
+extraction and static ELF dependencies, with13 material controls, the original8
+Cell release controls, and the existing strict CI roster checks. It creates no
+execution namespace capability, installation selector or new resource owner.
+The actual31-wheel pip environment remains incompatible: all31 top-level RECORDs
+were rewritten; generated/vendored metadata and `.pth` need reviewed handling.
+The tiny cold-interpreter control is not complete cold SmolLM execution.
+
+[Retained real component observations and failures](../../evidence/pon-neural-material-controls-20261027/README.md)
+bind Chain c96022 and Hepta e1537. Original V2 training completed10 CPU steps,
+526 tokens/40 supervised tokens, and changed230400 FP32 adapter values. Original
+candidate observation completed8 requests/64 forwards; every output was `yes`,
+scoring2/4 on calibration and2/4 on evaluation. The actual four-control follow-up
+aborted on full-tune SIGKILL(-9) with no successful full-tune receipt; its
+`INCOMPLETE_NO_ADOPTION` result remains. Post-failure OOM counters cannot establish
+the exact kill cause without a before counter. No unknown host service is stopped.
+
+The three Cell cohorts preserve sandbox bind denial, dev deadline failure and
+release connection reset. None verified all11 materials; no ordinary installation
+or next request was reached. Do not interpret initialized UNAVAILABLE fields as
+an executed installation denial. Model improvement, cold runtime, independent
+operators, complete useful-work accounting, I10, three beneficial rounds and WAN
+acceptance remain OPEN under their original gates.
+
+The dedicated fresh five-participant CI diagnostic reuses the existing fixed
+public inputs and original pilot owner at10 steps/two threads. It keeps a15-minute
+job ceiling and10-minute outer model step; original per-role caps are unchanged.
+It has a new source/run/candidate, and does not replace the local V2 receipt or
+ordinary closure. Timeout/missing evidence remains failure; early setup failure
+or hard job termination may prevent uploads. The diagnostic is NOT_RUN at this
+source freeze. Existing model matrices gain only13 small material checks, not
+extra pretrained-model runs. `task_complete=false`, `merge_ready=false`.
+
+### PN3 initial CI preparation failures and bounded repair — 2026-10-27
+
+The first published source `abe552b6d2a408adbf82e27c817b4f914a7322a2`
+produced two genuine CI failures, preserved in the
+[preparation failure evidence](../../evidence/pon-model-diagnostic-env-failure-20261027/README.md).
+Independent diagnostic run `40485837206` passed exact-source verification, then
+failed because its same-step Python probe could not read a value written only
+to `GITHUB_ENV`. No model execution occurred. Exporting that exact directory
+in the current shell passes a real old/new shell reproduction and a fresh
+subsequent-step control; input pins and the 15/10-minute limits are unchanged.
+
+Parent-evidence run `40485837111` failed its new runtime suite before any of its
+thirteen tests executed, on all four architecture/source matrix jobs. The
+fixture confused a library's mapped real filename with its SONAME alias. The
+fix resolves only unique aliases to files already mapped into the current test
+process. It does not execute a loader, alter the production runtime validator,
+skip any test or relax the strict roster. Actual system-Python red-to-green
+fixture execution, all thirteen primary-Python material controls, eight original
+Cell controls and four registration controls pass locally. A new exact-source
+CI run must establish the full system-Python and ARM results.
+
+The original failed runs, local full-tune SIGKILL, all-yes candidate results,
+Cell failures and uncompleted ordinary I10/runtime/benefit gates remain intact.
+This repair carries no neural improvement, installation or release authority.
+
+### PN3 new Cell004 and actual downloaded-model readback — 2026-10-27
+
+The [new source-bound Cell004 observation](../../evidence/pon-cell004-model-readback-20261027/README.md)
+uses the reviewed provider source `57fbdfeead5cfa1436eeef0d1691ee9933246d4d`.
+The empty consumer genuinely downloaded all eleven materials/269 chunks and
+272,189,870 payload bytes; aggregate fetch, cache-only materialization and final
+hash readback took25.906427551s within the unchanged35s limit. The provider
+retained45s/two workers and exited0 with280 completed/zero overloaded connections.
+The final original controller still exited1 at native-consumer/owner-receipt
+UNAVAILABLE. Batch003 remains failed, unchanged and causally undetermined.
+
+The original backend then loaded the downloaded candidate bytes and executed the
+predeclared next request. Actual loaded parent/artifact match `d3b3e79e`; eight
+generated tokens decode to `yes`. Original supervisor wall29.929171552s,
+CPU33.798063s and wait4 peak1,147,097,088B are retained under their actual scopes.
+This is direct controlled backend readback, not ordinary Agentd task execution.
+
+Hepta's separate `hepta-neural-agentd` qualified bootstrap already exists; the
+remaining integration must consume its real SystemLongitudinal eligibility,
+selection/CURRENT, resources and FinalUse, and propagate actual load/forward
+provenance into the ordinary Context/AppServer route. Initial-only selected
+material cannot become an evaluated child or an ordinary installation. The
+all-yes candidate and incomplete matched controls remain unqualified; this
+component result closes neither ordinary I10 nor full cold runtime, model benefit,
+three installed rounds, independent operators or WAN gates.
+
+### PN3 actual fresh five-control CI result: zero benefit — 2026-10-27
+
+The [fresh CI diagnostic evidence](../../evidence/pon-model-five-controls-ci-20261027/README.md)
+at source `678c9e00b97885b1af9fa2dcf3572f65a5ac3b45`, run40487735989,
+job122133657558, completes all twelve original phases, including real full-tune
+training and all five evaluations. Candidate, fresh LoRA and full tune each score
+1/2 under the original source-group evaluation metric; candidate gain over the
+strongest control is0/1 and `positive_vs_all_controls=false`. All authentication,
+independent/prospective acceptance, public reward and public-network flags remain
+false. The fresh candidate `eff04d14` does not replace local V2 `d3b3e79e`, the
+original incomplete SIGKILL cohort or Cell004. No candidate is adopted.
+
+The three trained arms retain10 steps/526 tokens/40 supervised tokens. All twelve
+phase walls sum to226.827036961s and child CPU to310.018861s; full-tune wait4 peak
+is6,141,497,344B, a single-process high-water under the recorded scope. Original
+per-role600s/8GiB, outer-step10m and job15m limits remain unchanged. All81 retrieved
+non-checkpoint files match their inventory. The540,891,786B checkpoint artifact
+exceeds the536,870,912B download limit and is not locally verified.
+
+Parent-evidence run40487735846 also completes the four ARM/x86 source/merge
+material jobs: each original13-test runtime roster passes once with zero skips.
+This validates the canonical extraction material controls, not the real pip
+installation's rewritten31 RECORDs or held runtime closure.
+
+Newer Hepta4071 at `3b308ce2ca0c5117280c2820ca034ca5e5e0287f` does implement a
+distinct public-initial V2 ordinary route. Its actual run40488014123 passes519
+scoped tests (24 skipped), then fails the required ordinary model test before
+readiness because the original fixture omitted the Codex executable path;
+proposal rounds and descendants are skipped. Preserve that source/run outcome
+and the separate original qualified-child gates. Any later provenance/fixture
+repair needs its own actual CI; this evidence closes no ordinary I10, model
+benefit, held runtime, beneficial installation or three-upgrade gate.

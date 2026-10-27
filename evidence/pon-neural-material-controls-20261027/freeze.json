@@ -1,0 +1,93 @@
+{
+  "schema": "runtime-material-diagnostic-source-freeze-v1",
+  "base_commit": "7149e24207542dd393cdf0f9d462f5af5550e875",
+  "candidate_commit": null,
+  "scope": "reviewable-uncommitted-source-plus-retained-local-observations; future CI commit must be independently observed",
+  "files": {
+    ".github/workflows/pon-model-controls-diagnostic.yml": {
+      "bytes": 6973,
+      "sha256": "e227df61d8eb5f6c370bd58f8a682b54a1a4a1ede45ce6dd34115949dfe03fee"
+    },
+    ".github/workflows/pon-model-parent-acceptance.yml": {
+      "bytes": 6836,
+      "sha256": "48754a9e61fc553f3290c371388fa21fcad1b788cff5f501f705b0013ebb4d06"
+    },
+    "scripts/ci/check_ci_contract.py": {
+      "bytes": 55699,
+      "sha256": "4475fb74b3903b96bbf3aa86eeaeaa1656dedef3a027232ed2ea5c36d543ba37"
+    },
+    "scripts/ci/check_model_runtime_unit_log.py": {
+      "bytes": 2902,
+      "sha256": "b6201980e83be6c77dfa51af9135bdc7139ec0ec9e7e71546dcb23c7d57553c8"
+    },
+    "scripts/ci/test_ci_contract.py": {
+      "bytes": 77953,
+      "sha256": "34b68015233cdbc03ff60d0b056f9709b7db6de0e28609ae35ba3b967db61f81"
+    },
+    "scripts/llm_cell_release.py": {
+      "bytes": 11877,
+      "sha256": "14a64d421c1052e1e07440e1e13ee29a9e05a9c0857e4c33097d0ca0fee822cb"
+    },
+    "scripts/llm_runtime_release.py": {
+      "bytes": 25050,
+      "sha256": "e13a3fa6e4d70d08b88595defbad0e65ac3b4a208226000f3fed597869c5b39c"
+    },
+    "scripts/test_llm_runtime_release.py": {
+      "bytes": 16767,
+      "sha256": "c8cda4d81abaa3cc1c66f461d153771b689115d919bb617802f6747fa7b3a6ba"
+    },
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md": {
+      "bytes": 379426,
+      "sha256": "00e2200c77f017a3aa2e34f6bc5643cf5a784798e7b4066a7232bbf837602e95"
+    }
+  },
+  "evidence_files": {
+    "README.md": {
+      "bytes": 9329,
+      "sha256": "df71e78a1322c0f9840c473164b3c510069e50324476afc584a06bb54fe2f650"
+    },
+    "archive.json": {
+      "bytes": 192,
+      "sha256": "68d8f25f3a2bfb0a421883eb10f53c585629b3ff1f7b9325914b4db8d3abb99c"
+    },
+    "ci-contract.json": {
+      "bytes": 123,
+      "sha256": "9dc9c460bfb8a0da9730ff9e6acc8d76cbdf3bfd873c933e273c775ada8233b3"
+    },
+    "ci-registration-tests.log": {
+      "bytes": 840,
+      "sha256": "47efb37c2099847709a5537bad5c3e7aa7466083b4353c2b66548b0eeb25ee73"
+    },
+    "observations.json": {
+      "bytes": 12016,
+      "sha256": "ac7deb8dcb1fc13a25c689ee7ee2b218ddd5603ccd2f893f1943dcbc40a4fb3c"
+    },
+    "original-cell-tests.log": {
+      "bytes": 106,
+      "sha256": "e96a151adb0fb0f5a62b58cc02d544afa43c29e51a0d26209c08a8d5870b62fc"
+    },
+    "preflight.json": {
+      "bytes": 171,
+      "sha256": "a1e21c43234cf7514f5ca7cd66355995475c6bd3464df96d044cbcc209d3f15d"
+    },
+    "raw-evidence.tar.gz": {
+      "bytes": 2380578,
+      "sha256": "1a504618bcdefb2b22929f06d3b4c92177bdc2f710aa78f789a4e8c9741998df"
+    },
+    "runtime-material-test-readback.json": {
+      "bytes": 1373,
+      "sha256": "639d20ad11105b7d07afebf9a75c572c76bdcee1d75c12ea32c24d684f5f0bd6"
+    },
+    "runtime-material-tests.log": {
+      "bytes": 2148,
+      "sha256": "4c202761f8aa0fc7ee7d5d59f42f7aa90cff8a4d0ac956591bc33a5ca44eae8a"
+    }
+  },
+  "runtime_tests": 13,
+  "original_cell_release_tests": 8,
+  "ci_registration_tests": 4,
+  "actual_new_ci_run": "NOT_RUN",
+  "ordinary_installation_qualified": false,
+  "complete_runtime_closure": false,
+  "merge_ready": false
+}

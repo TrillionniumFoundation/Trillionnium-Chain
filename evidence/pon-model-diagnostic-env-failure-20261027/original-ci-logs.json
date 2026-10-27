@@ -1,0 +1,21 @@
+{
+  "archive": "original-ci-logs.tar.gz",
+  "files": {
+    "job.log": {
+      "sha256": "35bb29cb7e07c689ff322f244888e7825dd277bc4d6ebe661569caa7ad676a57",
+      "size": 76616
+    },
+    "parent-arm-head.log": {
+      "sha256": "3fe83cb2b406daf0f9a7c853b91a1c522652d21fcb0f269f87a2592fec1e6668",
+      "size": 128203
+    },
+    "parent-x86-head.log": {
+      "sha256": "200fe704dad51dde7195468934c3460878e9b71c825b339f86863778365e3ec2",
+      "size": 128146
+    }
+  },
+  "raw_logs_byte_for_byte_preserved": true,
+  "reason": "Preserve original timestamp-line trailing whitespace without introducing source whitespace-check violations.",
+  "sha256": "d495fc73bdf6a6ac53198ad927e2142b8cda540a352874f2c3c7fe025a8685dd",
+  "size": 60267
+}
