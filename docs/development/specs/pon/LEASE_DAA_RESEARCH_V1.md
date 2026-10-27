@@ -789,3 +789,41 @@ NOT_RUN here. P0-B and P2 remain strictly OPEN.
 ### Actual new-task work following zero-lease maintenance reentry
 
 The existing `maintenance_reentry_registers_signed_task_and_independent_client_confirms` development regression now extends its nine original Maintenance blocks with an actual signed `make_with_task` PNW1 candidate for the registered new source/task at height 10. Both real SQLite-backed nodes must verify and activate identical bytes/state, the new task's output meter must become one, and a fresh independent Node must replay all ten blocks and confirm the originally signed revoke/open/registration operations before cold reopen. This closes a previously missing *test-path step*, not work hardness, independent administrators, signed production key custody or public release qualification. No historical Revision12/Q4/DAA bytes or activation flags change.
+
+
+### Native W1 ancestry → ASERT shadow fork/reopen bridge (research-only)
+
+The original `trnm-pon-node/tests/daa_adversarial_schedule.rs` now includes
+`native_w1_forks_feed_branch_pinned_asert_shadow_without_changing_legacy_daa`:
+
+- Build and activate **32 real native PNW1 packets** at an honest ten-second
+  cadence using unchanged original `Node::make`, full W1 verification,
+  original expected target, and durable `Node::admit/activate`.
+- Read back every shadow input from the original Node's stored packets through
+  `daa_branch_research::shadow_target_from_ancestry`. On this controlled
+  regular-history input, the non-activated raw ASERT target must equal the
+  original PoN target and the actual first-block anchor target.
+- Replace the callback's actual header timestamp and require the byte-derived
+  packet identity mismatch to reject. A two-ancestor read budget must refuse
+  rather than invent an anchor or silently trust an alternate branch.
+- Cold reopen the native durable store; retain identical actual active state
+  and read-only ASERT shadow result.
+- Extend a **competing branch from its actual height-16 ancestor** with
+  independently generated valid W1 work, admit its packets via unchanged old
+  DAA, activate the genuinely heavier branch, and recompute a branch-specific
+  ASERT shadow target. Old-branch expected target remains unchanged. Cold
+  reopen the reorganization and verify both native active state and the
+  shadow readback again.
+
+The candidate is a **Rust integration test only**; no new consensus profile,
+DAA selector, admission predicate, signed byte, target, genesis, live node
+service, heuristic approval or activation flag changes. The existing
+`daa_branch_research` reader deliberately verifies packet/ancestry linkage
+but relies on the original Node for full W1/State validity.
+
+**Execution status on this exact commit: NOT_RUN** in the current working
+environment, where Cargo/rustc and a complete source checkout are absent.
+This newly committed test source, its SHA and the non-activated Python scalar
+results are not a native execution receipt. P1-C/P0-C/P2 remain OPEN pending
+actual native exit, independent work-cost challenge, full alternate-context
+integration and separately administered WAN qualification.
