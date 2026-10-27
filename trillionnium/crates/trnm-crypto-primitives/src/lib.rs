@@ -221,3 +221,6 @@ mod tests {
 pub mod pon_work;
 
 pub mod qualified_work_task;
+
+#[cfg(feature = "pq-native-openssl")]
+pub mod pq_auth;

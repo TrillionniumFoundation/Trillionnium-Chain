@@ -1,0 +1,27 @@
+test_slow_frame_prefix_cannot_reset_absolute_deadline (test_pq_cell_swarm_deadline.PQCellTransportDeadlineTests.test_slow_frame_prefix_cannot_reset_absolute_deadline) ... FAIL
+test_slow_frame_body_cannot_reset_absolute_deadline (test_pq_cell_swarm_deadline.PQCellTransportDeadlineTests.test_slow_frame_body_cannot_reset_absolute_deadline) ... FAIL
+
+======================================================================
+FAIL: test_slow_frame_prefix_cannot_reset_absolute_deadline (test_pq_cell_swarm_deadline.PQCellTransportDeadlineTests.test_slow_frame_prefix_cannot_reset_absolute_deadline)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/pcs1-parent-repro-qrwm2uvj/test_pq_cell_swarm_deadline.py", line 98, in test_slow_frame_prefix_cannot_reset_absolute_deadline
+    self.run_attack(True)
+  File "/tmp/pcs1-parent-repro-qrwm2uvj/test_pq_cell_swarm_deadline.py", line 94, in run_attack
+    self.assertLess(elapsed, 0.9,
+AssertionError: 1.4056288849997145 not less than 0.9 : peer progress must not reset the absolute deadline
+
+======================================================================
+FAIL: test_slow_frame_body_cannot_reset_absolute_deadline (test_pq_cell_swarm_deadline.PQCellTransportDeadlineTests.test_slow_frame_body_cannot_reset_absolute_deadline)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/pcs1-parent-repro-qrwm2uvj/test_pq_cell_swarm_deadline.py", line 101, in test_slow_frame_body_cannot_reset_absolute_deadline
+    self.run_attack(False)
+  File "/tmp/pcs1-parent-repro-qrwm2uvj/test_pq_cell_swarm_deadline.py", line 94, in run_attack
+    self.assertLess(elapsed, 0.9,
+AssertionError: 1.4070880230001421 not less than 0.9 : peer progress must not reset the absolute deadline
+
+----------------------------------------------------------------------
+Ran 2 tests in 2.815s
+
+FAILED (failures=2)

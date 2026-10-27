@@ -1,0 +1,36 @@
+   Compiling trnm-crypto-primitives v0.1.0 (/workspace/scratch/56818e4fba76/chain-pq-cell/trillionnium/crates/trnm-crypto-primitives)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.22s
+     Running unittests src/lib.rs (/workspace/scratch/56818e4fba76/chain-pq-target/debug/deps/trnm_crypto_primitives-521dfa73f919b5d4)
+
+running 11 tests
+test pon_work::tests::exact_length_and_field_are_required ... ok
+test pon_work::tests::expansion_cannot_exceed_fixed_hash_budget ... ok
+test tests::domain_hash_is_framed_and_domain_separated ... ok
+test tests::strict_signatures_reject_small_order_and_noncanonical_points ... ok
+test tests::ed25519_roundtrip_rejects_tamper ... ok
+test tests::fixed_hash_text_reproduces_every_byte_value_without_normalization ... ok
+test pon_work::tests::decoded_output_is_the_real_matrix_product ... ok
+test pon_work::tests::final_output_only_shortcut_is_not_a_transcript_proof ... ok
+test pon_work::tests::bad_proof_never_gains_a_verified_type ... ok
+test tests::fixed_hash_text_preserves_all_ascii_substitutions_and_error_precedence ... ok
+test pon_work::tests::work_binds_challenge_and_inputs ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.11s
+
+     Running tests/pq_openssl_native.rs (/workspace/scratch/56818e4fba76/chain-pq-target/debug/deps/pq_openssl_native-f498fa65d7035ae3)
+
+running 5 tests
+test canonical_spki_and_classical_downgrade_refuse_without_fallback ... ok
+test adapter_and_direct_evp_interoperate_on_the_same_native_frame ... ok
+test syntactically_valid_fake_signature_never_becomes_verified ... ok
+test all_six_purposes_use_actual_native_sign_and_verify ... ok
+test all_signed_bytes_context_payload_lifetime_and_pin_fail_closed ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+   Doc-tests trnm_crypto_primitives
+
+running 1 test
+test crates/trnm-crypto-primitives/src/pq_auth.rs - pq_auth::PqSignatureObservation (line 66) - compile fail ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s

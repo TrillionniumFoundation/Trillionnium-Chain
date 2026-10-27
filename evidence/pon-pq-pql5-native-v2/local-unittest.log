@@ -1,0 +1,20 @@
+test_all_269_signed_header_byte_mutations_fail (test_pq_pql5_native_verify.NativePQL5NTests.test_all_269_signed_header_byte_mutations_fail) ... ok
+test_caller_decimal_and_boundaries (test_pq_pql5_native_verify.NativePQL5NTests.test_caller_decimal_and_boundaries) ... ok
+test_duplicate_witness_response_and_roster_fail_closed (test_pq_pql5_native_verify.NativePQL5NTests.test_duplicate_witness_response_and_roster_fail_closed) ... ok
+test_empty_head_zero_frontier_and_inconsistent_identity (test_pq_pql5_native_verify.NativePQL5NTests.test_empty_head_zero_frontier_and_inconsistent_identity) ... ok
+test_frame_malleation_truncation_oversize_and_length (test_pq_pql5_native_verify.NativePQL5NTests.test_frame_malleation_truncation_oversize_and_length) ... ok
+test_majority_clone_with_rewound_caller_pin_still_passes_as_negative (test_pq_pql5_native_verify.NativePQL5NTests.test_majority_clone_with_rewound_caller_pin_still_passes_as_negative) ... ok
+test_optional_inherited_python_reference_parity (test_pq_pql5_native_verify.NativePQL5NTests.test_optional_inherited_python_reference_parity) ... skipped 'inherited full PR #458 checkout unavailable in isolated runtime'
+test_pem_algorithm_downgrade_trailing_or_symlink (test_pq_pql5_native_verify.NativePQL5NTests.test_pem_algorithm_downgrade_trailing_or_symlink) ... ok
+test_real_signature_wrong_secret_and_signed_byte_modification (test_pq_pql5_native_verify.NativePQL5NTests.test_real_signature_wrong_secret_and_signed_byte_modification) ... ok
+test_replay_expired_future_and_expiry_overflow (test_pq_pql5_native_verify.NativePQL5NTests.test_replay_expired_future_and_expiry_overflow) ... ok
+test_same_sequence_split_no_quorum (test_pq_pql5_native_verify.NativePQL5NTests.test_same_sequence_split_no_quorum) ... ok
+test_singular_highest_head_cannot_override_two_older_witnesses (test_pq_pql5_native_verify.NativePQL5NTests.test_singular_highest_head_cannot_override_two_older_witnesses) ... ok
+test_two_and_three_real_pq_signatures_quorum (test_pq_pql5_native_verify.NativePQL5NTests.test_two_and_three_real_pq_signatures_quorum) ... ok
+test_wrong_external_monotone_pin_and_old_signed_quorum_refuse (test_pq_pql5_native_verify.NativePQL5NTests.test_wrong_external_monotone_pin_and_old_signed_quorum_refuse) ... ok
+test_wrong_network_genesis_root_and_challenge (test_pq_pql5_native_verify.NativePQL5NTests.test_wrong_network_genesis_root_and_challenge) ... ok
+
+----------------------------------------------------------------------
+Ran 15 tests in 2.861s
+
+OK (skipped=1)

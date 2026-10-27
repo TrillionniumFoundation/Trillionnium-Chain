@@ -76,7 +76,7 @@ create extra chances or extra cumulative work.
 
 ## 3. Cost model and security assumptions that remain open
 
-For the current single qualified equal-cost class the specification uses
+Under the single equal-cost-class assumption the specification uses
 `p(T)=(T+1)/2^256`, `w(T)=floor(2^256/(T+1))`, and adds the required
 branch target's w exactly once. A lucky smaller digest earns no extra work.
 At equal chainwork retain the current valid tip; height, receipt count and
