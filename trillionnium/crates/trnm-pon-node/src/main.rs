@@ -670,6 +670,16 @@ fn growth_network_options(command: &str, args: &BTreeMap<String, String>) -> Res
 
 // Refuse an option/profile mismatch BEFORE opening a Node or service
 // ledger, rather than silently accepting a kernel-cap claim on another lane.
+fn priced_sync_context(args: &BTreeMap<String, String>) -> bool {
+    // A signed authenticated peer proves identity, not CPU payment. Incomplete
+    // authentication options will be refused later but must never become a
+    // free loopback import in the meantime.
+    public_profile(args)
+        || ["--auth-secret", "--server-public", "--session-generation"]
+            .iter()
+            .any(|option| args.contains_key(*option))
+}
+
 /// A public History source remains untrusted even if its configured transport
 /// address is loopback: a local proxy can forward arbitrary WAN proof bytes.
 /// Public sync always joins the SAME fixed, root-owned host CPU/memory/pid
@@ -2104,7 +2114,7 @@ fn run() -> Result<Value> {
             // arbitrary remote W1 proofs into this existing Node. A WAN sync
             // must join the SAME fixed kernel parent as the public receiver.
             // Loopback-only developer sync retains its original behavior.
-            let host_kernel = sync_host_kernel_owner(address, public_profile(&args))?;
+            let host_kernel = sync_host_kernel_owner(address, priced_sync_context(&args))?;
             if let Some(kernel) = &host_kernel {
                 kernel.verify()?;
             }
@@ -2658,16 +2668,23 @@ mod tests {
             }
             _ => panic!("public History cannot bypass fixed Host resource owner"),
         }
-        // V2 and V3 are both selected public signed cost profiles; changing
-        // protocol names may never restore a free loopback import path.
+        // Signed authenticated and public V2/V3 transports are untrusted
+        // sources regardless of their loopback destination or caller identity.
         let mut args = BTreeMap::new();
+        assert!(!priced_sync_context(&args));
         for profile in [
             ingress::public_v2::PROFILE,
             ingress::public_v3::PROFILE,
             ingress::public_v3::GROWTH_PROFILE,
         ] {
             args.insert("--admission-profile".into(), profile.into());
-            assert!(public_profile(&args));
+            assert!(priced_sync_context(&args));
+        }
+        args.clear();
+        for option in ["--auth-secret", "--server-public", "--session-generation"] {
+            args.insert(option.into(), "test-selection".into());
+            assert!(priced_sync_context(&args));
+            args.clear();
         }
     }
 
