@@ -115,3 +115,46 @@ new `w2c_durable_paid_claims.py`
 These are local Python observations, not a verified Rust binary or public
 A03/cryptographic qualification. Independent database clones remain an
 explicit **FAILED** security boundary, not a hidden success.
+
+## Original same-proof CPU overhead research (2026-10-27)
+
+Bounded local command, from a fresh owner-only temporary SQLite WAL path:
+
+```sh
+python3 formal/pon-nakamoto-v1/w2c_durable_cost.py \
+  --samples 8 --bits 8 --cap 16384 \
+  --out /new/unique/w2c-durable-cost.json
+```
+
+For each of eight unique, valid 8-bit resource tickets under one fixed
+synthetic header/challenge/task and **identical false W1 proof**, the experiment
+records every hash search, an in-memory baseline consumption, a durable
+`BEGIN IMMEDIATE`+FULL synchronous consumption, one unmodified Python
+W1 oracle `TRANSCRIPT` rejection, and another process-local admission
+instance refusing exact replay against the durable paid record.
+
+| Stage | Local Python CPU median | Local wall median |
+| --- | ---: | ---: |
+| In-memory stateless paid consumption | 0.026 ms | 0.026 ms |
+| SQLite durable paid consumption | 2.017 ms | 6.908 ms |
+| Full fake-W1 Python oracle rejection | 121.068 ms | 121.300 ms |
+| Replay check after new local receiver instance | 2.248 ms | 2.250 ms |
+
+Observed per-ticket hash attempts were 532, 127, 1145, 121, 172, 144,
+466 and 18; all eight passed their ticket cost then still failed full
+W1 with `TRANSCRIPT`.
+
+These **single-host, nonexclusive, Python-only** measurements must not
+be compared as if they were matched with the previously reported Rust
+full-replay costs. In particular a ~7 ms fsync/wall delay may be larger
+than the entire native W1 invalid rejection on faster kernels, harming
+honest queue latency even if replay is fenced. This prototype therefore
+must **not** be inserted directly into the native V3 public path.
+Prospective research must compare a carefully bounded single durable
+writer, group commit with *no READY before durability*, or a
+kernel-enforced immutable epoch with trusted hardware ownership.
+None of those is implemented or accepted here.
+
+No GPU/ASIC price, public transport, actual Rust native W1 budget,
+multi-host WAN, Source A03 original-service 3×3×3 outcomes or
+independent cryptography acceptance is conferred by these numbers.
