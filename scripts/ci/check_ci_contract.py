@@ -77,6 +77,7 @@ CURRENT_READER_COMMANDS = (
 LLM_RUNTIME_TESTS = (
     '    python3 scripts/test_llm_runtime_rss_owner.py\n'
     '    python3 scripts/test_llm_runtime_exit_observation.py\n'
+    '    python3 scripts/test_llm_runtime_exit_mm_observation.py\n'
     '    python3 scripts/test_llm_inherited_runtime.py\n'
     '    python3 scripts/test_llm_neural_read_worker.py\n'
 )
@@ -270,6 +271,7 @@ PROTOCOL_CONTRACT_BLOCK = '''    python3 scripts/ci/run_from_zero_native.py --ou
     python3 scripts/test_llm_runtime_parent_step.py
     python3 scripts/test_llm_runtime_rss_owner.py
     python3 scripts/test_llm_runtime_exit_observation.py
+    python3 scripts/test_llm_runtime_exit_mm_observation.py
     python3 scripts/test_llm_inherited_runtime.py
     python3 scripts/test_llm_neural_read_worker.py
     python3 scripts/test_llm_runtime_parent_step_v2.py

@@ -67,6 +67,7 @@ case "${1:?required job}" in
     python3 scripts/test_llm_runtime_parent_step.py
     python3 scripts/test_llm_runtime_rss_owner.py
     python3 scripts/test_llm_runtime_exit_observation.py
+    python3 scripts/test_llm_runtime_exit_mm_observation.py
     python3 scripts/test_llm_inherited_runtime.py
     python3 scripts/test_llm_neural_read_worker.py
     python3 scripts/test_llm_runtime_parent_step_v2.py

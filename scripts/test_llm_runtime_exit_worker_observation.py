@@ -317,7 +317,7 @@ class WorkerPidfdTests(unittest.TestCase):
         for key in ('observer_source_sha256','base_observer_source_sha256','diagnostic_source_sha256','maximum_drain_ns'):
             changed=copy.deepcopy(plan);changed['exit_observation'][key]='0'*64 if key.endswith('sha256') else 100_000_001
             with self.subTest(changed=key), self.assertRaises(ValueError): runtime.validate_plan(changed)
-        for profile in runtime.EXIT_PROFILES[:-1]:
+        for profile in (value for value in runtime.EXIT_PROFILES if value != worker.PROFILE):
             wrong=runtime.experiment_plan({'explicit':'fixture'},exit_observation=profile)
             changed=copy.deepcopy(plan); changed['schema']=wrong['schema']
             with self.assertRaises(ValueError): runtime.validate_plan(changed)

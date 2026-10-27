@@ -4747,3 +4747,61 @@ public diagnostic would still lack independent evaluation custody, original
 SystemLongitudinal/EligibleForIndependentSelection authorization, qualified
 selection/CURRENT installation and actual child FinalUse. Ordinary useful-model
 evolution, held runtime closure and the three-upgrade gate remain OPEN.
+
+### PN3 original-sample detached-mm observer V5 — 2026-10-27
+
+The independent `linux-owned-exit-mm-detached-v5` profile introduces the explicit
+`llm-runtime-public-pilot-plan-v5` namespace. Strict V1 remains the default.
+Before the original child status read, the original held-pidfd owner retains
+group/task descriptors and records the complete bounded thread set's
+PF_EXITING, starttime and zero attached-mm stat frontier. Identity, namespace,
+descriptor signatures and the stable task frontier are checked again within
+that same observation. A later diagnostic dictionary or newly appearing flag
+cannot repair an unknown original sample. Old profile semantics remain intact;
+new source hashes require new source-bound plans and cannot relabel old receipts.
+The preceding byte-identical-pilot statement belongs to the separate frozen
+9035 V3 recipe source. This later observer fork deliberately changes supervisor
+code and does not change any existing Hepta source pin or qualify an old plan.
+
+The new observer can classify an exiting R/S/D leader with no observable user
+mm, rather than requiring the leader to have reached Z. It reuses the original
+stable-group observer, not V4's worker-retirement authority. Missing/changed
+workers and unknown ownership still refuse. It grants only the original
+bounded terminal wait: the earlier of the existing wall deadline and 100ms
+after the missing sample. The reservation and sampled high-water are retained;
+exact original wait4 CPU/ru_maxrss, successful reaping and all existing caps
+remain necessary. No zero-RSS or physically released-memory value is invented,
+and no arbitrary process-descendant or simultaneous process-tree bound is claimed.
+
+The source ordering in Linux [v6.17 exit.c](https://github.com/torvalds/linux/blob/v6.17/kernel/exit.c)
+and [proc array.c](https://github.com/torvalds/linux/blob/v6.17/fs/proc/array.c)
+explains why PF_EXITING and mm detachment can precede EXIT_ZOMBIE. In particular,
+`current->mm = NULL` precedes `mmput`, so absent VmRSS cannot release memory
+credit. These upstream sources do not attest the kernel used by an older CI run.
+The original Hepta 173 missing-RSS failure remains RED.
+
+Final-source controls record 14 new passing tests plus the original V2/V3/V4,
+RSS-owner, pilot and CI-contract rosters. Their successful executions cover 484
+tests: 373 pass and 111 original optional pilot tests skip; overlapping rosters
+are not claimed as distinct tests. Initial harness mistakes, the old V4 test's
+positional "last profile" assumption and an initial legacy-path V5 import are
+retained as failed runs. The latter two fixes name the profile explicitly and
+keep the V5 dependency behind its exact class check. No validator is weakened.
+One final-source pilot execution also fails the original V4 fixture's 100ms
+construction deadline. The identical 194-source-hash roster passes on the
+separate next execution without changing that deadline; both results remain.
+Source/checker/inventory registration is part of this separate slice.
+
+The fixed tiny real-process probe uses the original 50ms supervisor, 16 owned
+64MiB Python children, 2s/128MiB caps and the original wait4 owner. Final-source
+batch 002 completes all 16; three capture an original R-state missing-RSS
+observation and finish terminal wait4 within 5.132–14.795ms. The earlier batch
+001 and its five R-state observations remain separately identified. The
+reported host kernel is 6.18.55 and CPython 3.12.14; neither kernel binary nor
+held runtime is attested. Batch 002 maximum wait4 RSS is 75,169,792B, child CPU
+sums to 2.171113s and observer CPU to 0.115320577s. These are this probe's costs,
+not a model or throughput benchmark. Neither batch records a new cgroup OOM
+event. Raw source-bound plans, outcomes, original failures and limits are
+retained under `evidence/llm-exit-mm-v5-20261027`. No 135M training, beneficial
+release, qualification or ordinary child installation is claimed by this
+observer; independent evaluation and FinalUse requirements remain OPEN.

@@ -159,12 +159,17 @@ class ExitOnlyObservation:
     def _leader(self, fields):
         _require(_one(fields, 'Pid') == self.visible and _one(fields, 'Tgid') == self.visible and
                  _one(fields, 'PPid') == self.parent and tuple(_namespace(fields, 'NSpid')) == self.namespace and
-                 fields['State'][0] == 'Z' and len(fields['State'][0]) == 1 and
+                 len(fields['State'][0]) == 1 and
                  tuple(_namespace(fields, 'NStgid')) == self.namespace and
                  'VmRSS' not in fields, 'exit-leader')
+        self._leader_state(fields['State'][0])
         count = _one(fields, 'Threads')
         _require(count <= MAX_TASKS, 'exit-task-count')
         return count
+
+    def _leader_state(self, status_state, stat_state=None):
+        _require(status_state == 'Z' and (stat_state is None or stat_state == 'Z'),
+                 'exit-leader' if stat_state is None else 'exit-leader-state')
 
     def _frontier(self):
         count = self._leader(_status(_read(self.group_fd, 'status')))
@@ -185,7 +190,7 @@ class ExitOnlyObservation:
                      observed['flags'] & PF_EXITING and not observed['flags'] & PF_KTHREAD and
                      observed['vsize'] == 0 and observed['rss'] == 0, 'exit-task-not-exit-only')
             if int(name) == self.visible:
-                _require(fields['State'][0] == observed['state'] == 'Z', 'exit-leader-state')
+                self._leader_state(fields['State'][0], observed['state'])
             result[name] = observed
         _require(_task_names(self.tasks_fd) == self.names and
                  self._leader(_status(_read(self.group_fd, 'status'))) == count, 'exit-task-set')
