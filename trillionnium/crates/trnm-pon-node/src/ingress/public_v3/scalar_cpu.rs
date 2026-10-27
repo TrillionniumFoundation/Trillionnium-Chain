@@ -1210,6 +1210,51 @@ mod request_owned_reserve_tests {
     }
 
     #[test]
+    fn background_peer_cpu_start_keeps_honest_original_slot() {
+        // The real service epoch has two workers and one 100ms reservation
+        // per started job. Pinned-peer traffic can never start both jobs,
+        // while an ordinary paid request may use the second original slot.
+        let domain = ServiceMutationCpuDomain::standalone();
+        let untrusted = domain.begin_untrusted_peer_sync().unwrap();
+        assert_eq!(domain.observe().unwrap().in_flight, 1);
+        let second = domain.begin_untrusted_peer_sync();
+        assert_eq!(
+            second.err().unwrap().to_string(),
+            "PUBLIC_MUTATION_CPU_BUDGET"
+        );
+        let honest = domain.begin().unwrap();
+        assert_eq!(domain.observe().unwrap().in_flight, 2);
+        let honest_settlement = honest.finish();
+        let untrusted_settlement = untrusted.finish();
+        assert!(!honest_settlement.accounting_unavailable);
+        assert!(!untrusted_settlement.accounting_unavailable);
+        assert_eq!(domain.observe().unwrap().in_flight, 0);
+    }
+
+    #[test]
+    fn background_peer_must_leave_two_original_start_quanta_available() {
+        let domain = ServiceMutationCpuDomain::standalone();
+        // Deliberately supply *known* finite original CPU credit below the
+        // peer headroom threshold. This test never pretends the synthetic
+        // stored balance is physical kernel accounting or a valid CI receipt.
+        {
+            let mut original = domain.budget.lock().unwrap();
+            original.credit_ns = i128::from(2 * MUTATION_CPU_START_RESERVE_NS);
+            original.updated = Instant::now();
+            original.flow = None; // In-memory test perturbation, no false ledger.
+        }
+        let peer = domain.begin_untrusted_peer_sync();
+        assert_eq!(
+            peer.err().unwrap().to_string(),
+            "PUBLIC_MUTATION_CPU_BUDGET"
+        );
+        let paid = domain.begin().unwrap();
+        let result = paid.finish();
+        assert!(!result.accounting_unavailable);
+        assert_eq!(domain.observe().unwrap().in_flight, 0);
+    }
+
+    #[test]
     fn owned_quantum_remains_credited_when_request_crosses_its_first_quantum() {
         let reserve = MUTATION_CPU_START_RESERVE_NS;
         let initial = reserve + reserve / 2;
