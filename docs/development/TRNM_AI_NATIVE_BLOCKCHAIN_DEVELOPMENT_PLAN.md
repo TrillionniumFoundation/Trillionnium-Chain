@@ -52,6 +52,33 @@ release requires their own real evidence, not completion of the retired PoCO roa
 
 ### Reconstruction and upgrade order
 
+#### Pure PoN work-package execution — 2026-10-27
+
+The user's seven work packages refine PN0–PN5, without creating another
+roadmap or activating a fallback. Freeze the exact relation and adversary
+freedoms in [pure PoN work/security model v1](../protocol/pon-nakamoto-v1/details/PURE_PON_WORK_SECURITY_MODEL_V1.md)
+before comparing implementations. Original source inputs for this execution
+are native #498 `4b6b8a91b6dfe41fbd7f40f40b359d535c2c4251`, PQ #495
+`6f4b9cae0dafcb0e6bc171e2aa9b8f630e74eca6`, and DAA #487
+`84a0c697a3178eaee31ff9f60851a42c479b73f9`. Their ancestry and actual integrated
+tree must be recorded independently; the labels do not imply integration.
+
+| Order / existing owner | Required concrete evidence | Exit criterion |
+| --- | --- | --- |
+| 1 / PN0, M00/M01/M02/M17 | Complete W1 relation, unique work identity, preprocessing/hardware/quantum/network assumptions and exact weight rule | Every freedom and unproved assumption explicit; pure PoN has no implicit fallback |
+| 2A / PN1, M01/M02/M17 | Complete-relation cryptographic prototype, native equivalence, real prover/verifier cost, size and tails | Measured benefit over full W1 without omitted relations or proof-randomness tickets; a measured regression remains NO_GO |
+| 2B / PN1/PN2, M03/M04/M07/M15 | Original hostile matrix and all honest requests, same CPU owner, short critical sections, real SIGKILL cuts and settlements | Honest service meets original depleted-budget targets; restart creates no credit; physical crash scope remains separate |
+| 2C / PN1, M01/M02/M17 | Existing DAA, branch-local ASERT and fixed-p/variable-work models with counterexamples and resource assumptions | Analytic query-cost models never count as real quantum attacks or native admission |
+| 3 / PN0/PN2, M01/M03/M04/M05/M08 | Versioned PQ wire plus real native crypto, accounts/migration/nonce/reorg and network authorization inventory | Every production authorization path has one reviewed policy; optional research adapters do not close migration |
+| 4 / PN3, M09–M14 and original Hepta owners | Publisher-offline retrieval, complete actual model closure, original install/readback, future task comparison and no-update | Actual measured improvement or explicit no-benefit result; byte transport cannot grant install authority |
+| 5 / PN5, M04/M09/M15/M17 and independent operators | Preregistered multi-day WAN evidence, administrator/failure domains, complete failed/timeout/resource/confirmation denominators | All frozen cohorts and safety/service thresholds met by at least three genuinely independent administrators over at least 72 hours |
+
+Implement these as isolated, reviewable changes in the existing integration
+lineage. Native tests, research mathematics, local process tests, model
+experiments, hosted CI and independent WAN acceptance retain separate results.
+Keep initial failures and unavailable tests. No optional test adapter, source
+scan, SHA pin, document change or successful proof promotes readiness flags.
+
 The initial 2026-10-20 audit amendment uses Chain PR #323 commit
 `9bd8b20da68f0dc199aab78c27644ed004af7411` (tree
 `9a408fd7d9446dca3b319337f4a10078469df426`) against main

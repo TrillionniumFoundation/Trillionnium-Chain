@@ -66,6 +66,7 @@ MODEL_EVOLUTION_ORACLES = ('    python3 formal/pon-nakamoto-v1/test_model_evolut
 COST_BOUNDARY_READERS = ('    python3 scripts/ci/test_pon_w1_budget_readers.py --raw-dir evidence/pon-upgrade-implementation-20261018/native-rounds/chain-p0-native-54\n'
                          '    python3 scripts/ci/test_pon_public_v3_phase_read.py\n'
                          '    python3 scripts/ci/test_pon_public_v3_policy_read.py\n'
+                         '    python3 scripts/ci/test_pon_v3_cookie_cpu_study.py\n'
                          '    python3 scripts/ci/test_run_pon_w1_native_campaign.py\n')
 CURRENT_READER_COMMANDS = (
     'python3 scripts/ci/test_pon_w1_cost_matrix_reader.py',
