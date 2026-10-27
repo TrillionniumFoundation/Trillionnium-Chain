@@ -22,7 +22,7 @@ class StatelessReceiverAdmission:
 
     def __init__(self, receiver: bytes, secret: bytes, epoch: bytes,
                  *, lifetime_ms: int = 2000, capacity: int = 64,
-                 entropy=None):
+                 required_bits: int = 8, entropy=None):
         self.receiver = bytes32(receiver, 'RECEIVER')
         self.secret = bytes32(secret, 'SECRET')
         self.epoch = bytes32(epoch, 'EPOCH')
@@ -30,6 +30,11 @@ class StatelessReceiverAdmission:
             raise ValueError('LIFETIME')
         if type(capacity) is not int or not 1 <= capacity <= 1024:
             raise ValueError('CAPACITY')
+        if type(required_bits) is not int or not 8 <= required_bits <= 24:
+            raise ValueError('REQUIRED_BITS')
+        # An unauthenticated caller is never allowed to price its own W1 replay.
+        # Policy is selected by the receiver owner and checked again on consume.
+        self.required_bits = required_bits
         self.lifetime_ms = lifetime_ms
         self.capacity = capacity
         self.entropy = secrets.token_bytes if entropy is None else entropy
@@ -61,6 +66,8 @@ class StatelessReceiverAdmission:
             bytes32(caller, 'CALLER')
             if type(bits) is not int or not 8 <= bits <= 24:
                 raise ValueError('BITS')
+            if bits != self.required_bits:
+                raise ValueError('REQUIRED_BITS')
             self._clock(now_ms)
             if now_ms > MAX_U64 - self.lifetime_ms:
                 raise ValueError('CLOCK_OVERFLOW')
@@ -92,6 +99,11 @@ class StatelessReceiverAdmission:
                 return 'CONTEXT'
             if grant.expires_ms - grant.issued_ms != self.lifetime_ms:
                 return 'LIFETIME_POLICY'
+            # Reject even an authentic previously signed cheaper grant after
+            # the operator raises the policy. Never rehash it against its
+            # attacker-supplied lower threshold.
+            if grant.bits != self.required_bits:
+                return 'REQUIRED_BITS'
             if not hmac.compare_digest(
                     hmac.new(self.secret, payload, hashlib.sha256).digest(), mac):
                 return 'GRANT_MAC'
