@@ -7,6 +7,8 @@ policy and respect reorg, global storage and independent revocation authorities.
 from __future__ import annotations
 from dataclasses import dataclass
 import hashlib
+import os
+import stat
 from pathlib import Path
 import sqlite3
 from cryptography.exceptions import InvalidSignature
@@ -104,14 +106,13 @@ def verify_migration(proof: SignedMigration, *, new_public_pem: bytes,
 
 
 class OfflineMigrationJournal:
-    """Local single-writer proof-consumption journal; never consensus-replicated authority."""
-    def __init__(self, path: Path):
-        self.db = sqlite3.connect(str(path), timeout=10, isolation_level=None)
-        self.db.execute("PRAGMA busy_timeout=10000")
-        self.db.execute("PRAGMA journal_mode=WAL")
-        self.db.execute("PRAGMA synchronous=FULL")
-        self.db.execute("""
-        CREATE TABLE IF NOT EXISTS pq_migration (
+    """Offline one-use migration fact journal; never a Chain authority issuer.
+
+    The caller must own trustworthy parent directories and provide independent
+    current chain/source and revocation anchors. A local SQLite DB cannot
+    prevent full-store rollback or malicious same-UID ancestor replacement.
+    """
+    DDL = """CREATE TABLE pq_migration (
           network BLOB NOT NULL,
           old_pub BLOB NOT NULL,
           new_key_id BLOB NOT NULL,
@@ -119,11 +120,102 @@ class OfflineMigrationJournal:
           receipt BLOB NOT NULL,
           PRIMARY KEY (network,old_pub),
           UNIQUE (network,new_key_id)
-        ) WITHOUT ROWID
-        """)
+        ) WITHOUT ROWID"""
+    SCHEMA_QUERY = "SELECT type,name,sql FROM sqlite_master WHERE name NOT LIKE 'sqlite_%' ORDER BY type,name"
+    TEMP_QUERY = "SELECT name FROM sqlite_temp_master WHERE name NOT LIKE 'sqlite_%' LIMIT 1"
+    EXPECTED_SCHEMA = [("table", "pq_migration", DDL)]
+
+    @staticmethod
+    def _leaf_inode(path: Path, *, allow_missing: bool = False):
+        try:
+            value = os.lstat(path)
+        except FileNotFoundError:
+            if allow_missing:
+                return None
+            raise Reject("PQ migration journal disappeared") from None
+        if not stat.S_ISREG(value.st_mode) or value.st_nlink != 1:
+            raise Reject("PQ migration journal must be a single-link regular file")
+        if value.st_mode & 0o077:
+            raise Reject("PQ migration journal requires owner-only permissions")
+        return (value.st_dev, value.st_ino)
+
+    def _audit_owned_schema(self):
+        """Execute under BEGIN IMMEDIATE to pin actual table and temp namespace."""
+        if self.db.execute(self.SCHEMA_QUERY).fetchall() != self.EXPECTED_SCHEMA:
+            raise Reject("PQ migration foreign or altered SQLite schema")
+        if self.db.execute(self.TEMP_QUERY).fetchone() is not None:
+            raise Reject("PQ migration temporary SQLite schema forbidden")
+        if self.db.execute("PRAGMA journal_mode").fetchone() != ("wal",):
+            raise Reject("PQ migration WAL missing")
+        if self.db.execute("PRAGMA synchronous").fetchone() != (2,):
+            raise Reject("PQ migration FULL durability missing")
+        if self._leaf_inode(self.path) != self._inode:
+            raise Reject("PQ migration journal inode replaced")
+
+    def __init__(self, path: Path):
+        self.path = Path(path)
+        if not self.path.name or self.path.name in {".", ".."}:
+            raise Reject("PQ migration journal path")
+        existed = self._leaf_inode(self.path, allow_missing=True)
+        created = existed is None
+        if created:
+            if not hasattr(os, "O_NOFOLLOW"):
+                raise Reject("PQ migration journal requires O_NOFOLLOW")
+            try:
+                fd = os.open(self.path, os.O_WRONLY | os.O_CREAT | os.O_EXCL |
+                             os.O_NOFOLLOW, 0o600)
+            except FileExistsError as exc:
+                raise Reject("concurrent/foreign PQ journal creation") from exc
+            else:
+                os.close(fd)
+        self._inode = self._leaf_inode(self.path)
+        self.db = sqlite3.connect(str(self.path), timeout=10, isolation_level=None)
+        try:
+            self.db.execute("PRAGMA busy_timeout=10000")
+            existing_schema = self.db.execute(self.SCHEMA_QUERY).fetchall()
+            if (created and existing_schema) or (not created and existing_schema != self.EXPECTED_SCHEMA):
+                raise Reject("foreign or empty PQ migration namespace; no in-place import")
+            if self.db.execute(self.TEMP_QUERY).fetchone() is not None:
+                raise Reject("PQ migration temporary SQLite schema forbidden")
+            if self.db.execute("PRAGMA journal_mode=WAL").fetchone() != ("wal",):
+                raise Reject("PQ migration WAL unavailable")
+            self.db.execute("PRAGMA synchronous=FULL")
+            if self.db.execute("PRAGMA synchronous").fetchone() != (2,):
+                raise Reject("PQ migration FULL unavailable")
+            self.db.execute("BEGIN IMMEDIATE")
+            try:
+                if created:
+                    self.db.execute(self.DDL)
+                self._audit_owned_schema()
+                self.db.execute("COMMIT")
+            except BaseException:
+                if self.db.in_transaction:
+                    self.db.execute("ROLLBACK")
+                raise
+        except BaseException:
+            self.db.close()
+            raise
 
     def close(self):
         self.db.close()
+
+    def _confirm_postcommit(self, m: MigrationStatement, data: bytes, receipt: bytes):
+        """Missing/renamed/corrupted record after COMMIT is indeterminate, not ACK."""
+        self.db.execute("BEGIN IMMEDIATE")
+        try:
+            self._audit_owned_schema()
+            readback = self.db.execute(
+                "SELECT new_key_id, statement, receipt FROM pq_migration WHERE network=? AND old_pub=?",
+                (m.network, m.old_ed25519_pub)).fetchone()
+            if readback != (m.new_pq_key_id, data, receipt):
+                raise Reject("PQ migration committed readback mismatch")
+            self.db.execute("COMMIT")
+        except BaseException:
+            if self.db.in_transaction:
+                self.db.execute("ROLLBACK")
+            raise
+        if self._leaf_inode(self.path) != self._inode:
+            raise Reject("PQ migration path moved before acknowledgement")
 
     def consume(self, proof: SignedMigration, *, new_public_pem: bytes,
                 expected_network: bytes, expected_old_pub: bytes,
@@ -134,28 +226,32 @@ class OfflineMigrationJournal:
                     expected_authority_head=expected_authority_head,
                     expected_generation=expected_generation,
                     expected_sequence=expected_sequence, now=now)
+        # This is actual dual-signature verification, not a cached success flag.
         receipt = verify_migration(proof, **args)
         m = proof.statement
         data = m.encode()
         self.db.execute("BEGIN IMMEDIATE")
         try:
+            self._audit_owned_schema()
             found = self.db.execute(
                 "SELECT new_key_id, statement, receipt FROM pq_migration WHERE network=? AND old_pub=?",
                 (m.network, m.old_ed25519_pub)).fetchone()
             if found is not None:
                 if found != (m.new_pq_key_id, data, receipt):
                     raise Reject("conflicting or stale old-key migration")
-                self.db.execute("COMMIT")
-                return "ALREADY_RECORDED", receipt
-            try:
-                self.db.execute(
-                    "INSERT INTO pq_migration(network,old_pub,new_key_id,statement,receipt) VALUES(?,?,?,?,?)",
-                    (m.network, m.old_ed25519_pub, m.new_pq_key_id, data, receipt))
-            except sqlite3.IntegrityError as exc:
-                raise Reject("PQ key reused by another old account") from exc
+                result = "ALREADY_RECORDED"
+            else:
+                try:
+                    self.db.execute(
+                        "INSERT INTO pq_migration(network,old_pub,new_key_id,statement,receipt) VALUES(?,?,?,?,?)",
+                        (m.network, m.old_ed25519_pub, m.new_pq_key_id, data, receipt))
+                except sqlite3.IntegrityError as exc:
+                    raise Reject("PQ key reused by another old account") from exc
+                result = "FIRST_RECORD"
             self.db.execute("COMMIT")
-            return "FIRST_RECORD", receipt
         except BaseException:
             if self.db.in_transaction:
                 self.db.execute("ROLLBACK")
             raise
+        self._confirm_postcommit(m, data, receipt)
+        return result, receipt
