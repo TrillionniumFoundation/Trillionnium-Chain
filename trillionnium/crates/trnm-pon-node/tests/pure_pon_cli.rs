@@ -41,7 +41,7 @@ fn accepted(out: Output) -> Value {
         String::from_utf8_lossy(&out.stdout),
         String::from_utf8_lossy(&out.stderr)
     );
-    serde_json::from_slice::<Value>(&out.stdout).unwrap()["result"].clone()
+    serde_json::from_slice::<Value>(&out.stdout).unwrap()
 }
 fn refused(out: Output, expected: &str) {
     assert_eq!(out.status.code(), Some(2));
@@ -145,7 +145,7 @@ fn explicit_pure_cli_fetch_mine_push_and_invalid_profile_have_no_fallback() {
                 .output()
                 .unwrap(),
         );
-        assert_eq!(mined["admitted"], true);
+        assert_eq!(mined["result"]["admitted"], true);
         let pushed = accepted(
             command("push", genesis)
                 .args([

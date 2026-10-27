@@ -1,0 +1,28 @@
+{
+  "schema": "pon-pure-integration-observation-v1",
+  "observed_utc": "2026-10-27T08:49:00Z",
+  "source_commit": "5e797326b9c7635e43b93f97c65a309e51eafb46",
+  "source_tree": "784b932e581eb97629f91553dc24aebb99c8e488",
+  "run_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40475784076",
+  "failed_jobs": [122093539024, 122093538893],
+  "result": "FAIL",
+  "diagnostic": "CI contract: fuzz must instrument the same shared dependency versions as the native lockfile: typenum",
+  "scope": "The first published integration changed native typenum to 1.20.1 through ML-DSA dependencies but had not updated the isolated fuzz lock. Source identity checks passed; repository-truth and external-evidence-contract did not pass.",
+  "repair": "Resolve the fuzz lock with the same shared versions and refresh the cold-build source inventory, including the binary PQ fixtures needed by include_bytes. Do not modify the gate or relabel this failure.",
+  "local_repair_attempts": [
+    {
+      "command": "cargo update --offline --manifest-path tests/fuzz/Cargo.toml -p typenum --precise 1.20.1",
+      "exit_code": 101,
+      "diagnostic": "no matching package named libfuzzer-sys found in the local crates.io index",
+      "result": "FAIL"
+    },
+    {
+      "command": "cargo update --manifest-path tests/fuzz/Cargo.toml -p typenum --precise 1.20.1",
+      "exit_code": 0,
+      "shared_version_mismatches_after_resolution": [],
+      "result": "lock resolution only; no fuzz execution inferred"
+    }
+  ],
+  "production_activation": false,
+  "work_profile_qualified": false
+}
