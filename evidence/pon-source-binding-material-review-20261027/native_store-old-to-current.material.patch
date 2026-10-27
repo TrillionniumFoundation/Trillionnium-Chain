@@ -1,0 +1,77 @@
+diff --git a/d4327221fe1af4d0479915371634bdbf6e9cf4c1 b/5b09b2e473dbba311a398e9ed77d2b619eaa906c
+index d4327221f..5b09b2e47 100644
+--- a/d4327221fe1af4d0479915371634bdbf6e9cf4c1
++++ b/5b09b2e473dbba311a398e9ed77d2b619eaa906c
+@@ -449,6 +449,72 @@ fn child_with_lifts(
+     Ok(out)
+ }
+ 
++/// Recover every actual account from one retained root. The result is local to
++/// this read operation: neither a caller digest nor a previous successful audit
++/// can stand in for the current SQL bytes and complete graph traversal.
++pub(crate) fn materialize_accounts(
++    db: &Connection,
++    root: &Root,
++    progress: &mut dyn FnMut() -> Result<()>,
++    lifts: Option<&LiftCache>,
++) -> Result<BTreeMap<Hash, Account>> {
++    let empty = empty_hashes();
++    let mut reader = NodeReader::new(db);
++    let node = root
++        .node
++        .map(|id| reader.load(id, lifts))
++        .transpose()
++        .map_err(storage)?;
++    crate::ensure(
++        root.count <= 65_536
++            && root.node.is_none() == (root.count == 0)
++            && node.as_ref().map_or(empty[0], |node| {
++                lifts.map_or_else(|| node.lift(0, &empty), |cache| cache.lift(node, 0))
++            }) == root.digest,
++        "NATIVE_ACCOUNT_ROOT",
++    )
++    .map_err(Error::local_integrity)?;
++    let mut stack = node.into_iter().collect::<Vec<_>>();
++    let mut seen = BTreeSet::new();
++    let mut retained = BTreeMap::new();
++    let mut balance = 0u64;
++    while let Some(node) = stack.pop() {
++        progress()?;
++        crate::ensure(
++            seen.insert(node.id) && seen.len() <= 131_071,
++            "NATIVE_ACCOUNT_GRAPH",
++        )
++        .map_err(Error::local_integrity)?;
++        match node.kind {
++            Kind::Leaf(owner, value) => {
++                crate::ensure(
++                    retained.insert(owner, value).is_none(),
++                    "NATIVE_ACCOUNT_DUPLICATE",
++                )
++                .map_err(Error::local_integrity)?;
++                balance = balance
++                    .checked_add(value.balance)
++                    .ok_or_else(|| Error::from("NATIVE_ACCOUNT_BALANCE").local_integrity())?;
++            }
++            Kind::Fork { .. } => {
++                stack.push(
++                    child_with_lifts(&mut reader, &node, true, &empty, lifts).map_err(storage)?,
++                );
++                stack.push(
++                    child_with_lifts(&mut reader, &node, false, &empty, lifts).map_err(storage)?,
++                );
++            }
++        }
++    }
++    crate::ensure(
++        retained.len() as u64 == root.count && balance == root.balance,
++        "NATIVE_ACCOUNT_STATE",
++    )
++    .map_err(Error::local_integrity)?;
++    progress()?;
++    Ok(retained)
++}
++
+ /// An opaque point-query binding to one actual native block. It makes no claim
+ /// of a separately persisted AccountArchive checkpoint or archive ancestry.
+ pub(crate) fn query_checkpoint(

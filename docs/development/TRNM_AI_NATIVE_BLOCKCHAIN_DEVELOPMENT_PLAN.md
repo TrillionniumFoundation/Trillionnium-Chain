@@ -4517,3 +4517,14 @@ That complete-State reference result leaves the historical `53fb` failure
 intact. It does not qualify the later local root-reuse optimization, bounded
 witnesses, paid 4,096/fresh-4,097 W1 campaign or full native IO boundary.
 The existing PN0–PN6 exits remain **NO_GO**.
+
+The two stale workflow blob guards were subsequently reviewed against their
+actual old and current Git objects and synchronised only to those exact source
+identities. The [material review and preserved diffs](../../evidence/pon-source-binding-material-review-20261027/receipt.json)
+record the existing full-graph account materialisation and versioned shared
+snapshot, read-scope, final-read and lease-health changes. The 64-page WAL
+checkpoint policy applies to every opening with native IO, including openings
+outside the shared layout; it does not guarantee physical WAL size. All twenty
+guards, eight original lanes, assertions and resource limits remain. Source
+identity agreement grants no SQL, C ABI, layout, two-second service or native
+qualification; the original lane executions and fullT/Layout003 remain open.
