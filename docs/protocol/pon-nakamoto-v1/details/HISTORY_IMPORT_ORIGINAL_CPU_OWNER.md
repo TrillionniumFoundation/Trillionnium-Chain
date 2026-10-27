@@ -31,7 +31,12 @@ proof. Even a signed remote peer can submit expensive bad transcripts.
    execution share one CPU operation. W1 uses its production
    `verify_with_progress` and original per-noise/row/tile/product
    checkpoints; all real scoped M06 workers charge the same domain.
-3. Success, false Product/Transcript, cancellation and expensive
+3. After fixed-size Page shape checks, canonical hex/packet decoding,
+   packet-ID calculation and contiguous-parent checking receive a
+   **separate** CPU operation before any full W1. This avoids an
+   unmetered decoder batch and avoids double charging nested W1 CPU.
+   A malformed packet is still rejected without Native acceptance.
+4. Success, false Product/Transcript, cancellation and expensive
    state failures each settle the original CPU account exactly once.
    A known start refusal may wait at most two seconds for the ORIGINAL
    refill; no credit is minted. An unknown CPU clock fails closed and
@@ -63,6 +68,13 @@ proof. Even a signed remote peer can submit expensive bad transcripts.
 - `ingress::tests::unclean_public_epoch_cannot_mint_fresh_remote_history_credit`:
   reject a new entitlement after the original public epoch is marked
   unclean.
+
+
+- `ingress::tests::malformed_remote_history_decode_pays_original_cpu_and_preserves_state`:
+  malformed packet decoding also returns an error, with no live CPU
+  reservation after return, no accounting-unknown event and no state
+  mutation. Its initial ordinary Page shape checks remain bounded and
+  outside this decoder interval.
 
 The earlier #342 remote no-cgroup negative still runs *before*
 creating or debiting any Node CPU account. The new code is an
