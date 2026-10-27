@@ -2109,12 +2109,13 @@ fn call_authenticated_durable_inner(
     Err(Error::authenticated_remote(terminal, error))
 }
 
-fn receive_page(
+fn receive_page_with_checkpoint(
     node: &mut Node,
     page: Page,
     tip: Hash,
     after: Hash,
     clock: u64,
+    mut checkpoint: impl FnMut() -> Result<()>,
 ) -> Result<Hash> {
     ensure(
         page.schema == "pon-native-history-v1"
@@ -2152,12 +2153,34 @@ fn receive_page(
         "PAGE_COMPLETE",
     )?;
     for packet in &packets {
+        // A single History page may contain 16 full W1 proofs. Keep the
+        // original physical owner checked before and after EACH expensive
+        // native relation, not merely at the page boundary.
+        checkpoint()?;
         node.admit(packet, clock)?;
+        checkpoint()?;
     }
     if page.complete {
+        checkpoint()?;
         node.activate_observed(tip, clock)?;
+        checkpoint()?;
     }
     Ok(next)
+}
+
+
+/// Original private development parser: its callers cannot publish this
+/// as verified work and retain their existing W1/State checks. Public
+/// untrusted pages instead use receive_page_with_checkpoint with a real
+/// administrator-owned kernel guard on each individual full replay.
+fn receive_page(
+    node: &mut Node,
+    page: Page,
+    tip: Hash,
+    after: Hash,
+    clock: u64,
+) -> Result<Hash> {
+    receive_page_with_checkpoint(node, page, tip, after, clock, || Ok(()))
 }
 
 /// Public/externally callable untrusted History import. Even when a
@@ -2182,7 +2205,8 @@ pub fn receive_page_from(
     )?
     .ok_or("PUBLIC_HOST_KERNEL_REQUIRED")?;
     kernel.verify()?;
-    let native = receive_page(node, page, tip, after, clock);
+    let native =
+        receive_page_with_checkpoint(node, page, tip, after, clock, || kernel.verify());
     // Never rewrite a durably accepted block as unexecuted: an original
     // host counter/membership fault makes this sync result unavailable.
     kernel.verify()?;
@@ -2209,7 +2233,12 @@ fn receive_page_from_local_development(
     if let Some(kernel) = &host_kernel {
         kernel.verify()?;
     }
-    let native = receive_page(node, page, tip, after, clock);
+    let native = match &host_kernel {
+        Some(kernel) => {
+            receive_page_with_checkpoint(node, page, tip, after, clock, || kernel.verify())
+        }
+        None => receive_page(node, page, tip, after, clock),
+    };
     if let Some(kernel) = &host_kernel {
         kernel.verify()?;
     }
