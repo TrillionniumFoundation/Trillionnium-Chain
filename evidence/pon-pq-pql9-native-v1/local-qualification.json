@@ -1,0 +1,78 @@
+{
+  "base_pr": 486,
+  "base_sha": "8d29130ecf5124d21449f0f1d549aacc27de99ad",
+  "crypto": "real ephemeral OpenSSL ML-DSA-65 and Ed25519 downgrade controls",
+  "der_prefix_byte_mutations": 22,
+  "environment": {
+    "gcc": "gcc (Debian 14.2.0-19) 14.2.0",
+    "openssl": "OpenSSL 3.5.5 27 Jan 2026 (Library: OpenSSL 3.5.5 27 Jan 2026)",
+    "os": "Linux x86_64",
+    "python": "3.13.5"
+  },
+  "limits": "Cryptographic validity is not signer authorization, trusted clock, durable replay ownership, finality, or Cell release.",
+  "not_run": [
+    "exact stacked GitHub checkout",
+    "Cargo/Rust native library",
+    "full repository test suite",
+    "production Chain Node",
+    "independent cryptographic audit",
+    "physical power loss",
+    "WAN attacks",
+    "Hepta FinalUse"
+  ],
+  "qualification": {
+    "independent_accepted": false,
+    "main_consensus_activation": false,
+    "native_C_openssl_reference_crypto": true,
+    "product_native_rust": false,
+    "public_wan_qualified": false,
+    "w1_quantum_effective_work": false
+  },
+  "schema": "trnm-pql9-generic-crypto-local-v1",
+  "signature_byte_mutations": 3309,
+  "source_blobs": {
+    "README.md": {
+      "bytes": 3048,
+      "git_blob_sha1": "4f80678a4c75270452ffb717bfb9de268232f67d",
+      "sha256": "e4e62626f99e46a4d6514a4517eaee7c80b0c29bc6fb98aed2768b987698c491"
+    },
+    "pq_tpq1_crypto_verify.c": {
+      "bytes": 5483,
+      "git_blob_sha1": "8dc5d553c9a658892e8bf92864026ce851936761",
+      "sha256": "4fabf4f11d68ba5b67153073ba73f062c6f34adda12107096a9e92e621b5517a"
+    },
+    "pq_tpq1_crypto_verify.h": {
+      "bytes": 983,
+      "git_blob_sha1": "e17165e9ea6fe9b367c551f6a8f6d456961827de",
+      "sha256": "5e4d693ceb24aa8f233c84a6e9c3f5ad6047de5fac65d16363315021f8ecb33e"
+    },
+    "test_pq_tpq1_crypto_verify.py": {
+      "bytes": 9079,
+      "git_blob_sha1": "d997540f9937b778decf9868a1dc04dea354f233",
+      "sha256": "d20afe39d5cc9f180f7dc6d02ee5038a48852ed35efd2e3389c9b626e0977920"
+    }
+  },
+  "statement_byte_mutations": 176,
+  "status": "RESEARCH_ONLY_HOLD_NO_GO",
+  "tests": [
+    {
+      "command": "PYTHONWARNINGS=error::ResourceWarning python3 -m unittest -v test_pq_tpq1_crypto_verify.py",
+      "log_sha256": "870fb394fc12dcdf3d045b8ea577291d7c077339471013c00af8f4609b0cef17",
+      "name": "normal",
+      "result": "10 PASS, 0 FAIL"
+    },
+    {
+      "command": "PQL9_UBSAN=1 UBSAN_OPTIONS=halt_on_error=1 PYTHONWARNINGS=error::ResourceWarning python3 -m unittest -v test_pq_tpq1_crypto_verify.py",
+      "log_sha256": "bdb2668483039fc44f0275995844217aa6cb46735c6a17a9b8565e95d0349784",
+      "name": "ubsan",
+      "result": "10 PASS, 0 FAIL"
+    },
+    {
+      "command": "PQL9_SANITIZE=1 LD_PRELOAD=$(cc -print-file-name=libasan.so) ASAN_OPTIONS=detect_leaks=0:abort_on_error=1 UBSAN_OPTIONS=halt_on_error=1 PYTHONWARNINGS=error::ResourceWarning python3 -m unittest -v test_pq_tpq1_crypto_verify.py",
+      "log_sha256": "928736db60b9759b9b55e72d4037df8e2ea91336178e6534824d1821837dd950",
+      "name": "asan_ubsan",
+      "result": "10 PASS, 0 FAIL"
+    }
+  ],
+  "trust_counterexample": "A real attacker-controlled ML-DSA key/signature returns cryptographically valid if caller allows attacker-chosen pins; never authority."
+}

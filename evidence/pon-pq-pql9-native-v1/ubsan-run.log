@@ -1,0 +1,15 @@
+test_all_176_signed_statement_byte_flips_rejected (test_pq_tpq1_crypto_verify.CryptoCases.test_all_176_signed_statement_byte_flips_rejected) ... ok
+test_all_3309_real_signature_byte_flips_rejected (test_pq_tpq1_crypto_verify.CryptoCases.test_all_3309_real_signature_byte_flips_rejected) ... ok
+test_attacker_self_pinned_key_is_crypto_valid_but_not_ownership (test_pq_tpq1_crypto_verify.CryptoCases.test_attacker_self_pinned_key_is_crypto_valid_but_not_ownership) ... ok
+test_buffer_memory_ceiling_without_giant_allocation (test_pq_tpq1_crypto_verify.CryptoCases.test_buffer_memory_ceiling_without_giant_allocation) ... ok
+test_caller_context_and_cross_domain_replay_refused (test_pq_tpq1_crypto_verify.CryptoCases.test_caller_context_and_cross_domain_replay_refused) ... ok
+test_generation_nonce_expiry_floor_and_boundary (test_pq_tpq1_crypto_verify.CryptoCases.test_generation_nonce_expiry_floor_and_boundary) ... ok
+test_independent_openssl_reference_accepts_same_signature (test_pq_tpq1_crypto_verify.CryptoCases.test_independent_openssl_reference_accepts_same_signature) ... ok
+test_malformed_lengths_zero_fake_signature_and_ed25519_refused (test_pq_tpq1_crypto_verify.CryptoCases.test_malformed_lengths_zero_fake_signature_and_ed25519_refused) ... ok
+test_six_real_signed_purpose_domains (test_pq_tpq1_crypto_verify.CryptoCases.test_six_real_signed_purpose_domains) ... ok
+test_spki_der_header_and_key_substitution_refused (test_pq_tpq1_crypto_verify.CryptoCases.test_spki_der_header_and_key_substitution_refused) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 1.130s
+
+OK
