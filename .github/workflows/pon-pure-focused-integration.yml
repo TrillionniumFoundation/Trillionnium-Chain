@@ -8,6 +8,8 @@ on:
       - scripts/ci/capture_pure_pon_campaign.py
       - scripts/ci/check_pure_pon_cost_campaign.py
       - scripts/ci/test_check_pure_pon_cost_campaign.py
+      - scripts/ci/check_pure_pon_ingress_campaign.py
+      - scripts/ci/test_check_pure_pon_ingress_campaign.py
       - scripts/refresh_distributed_source_inventory.py
 permissions:
   contents: read
@@ -54,6 +56,7 @@ jobs:
           python3 scripts/refresh_distributed_source_inventory.py --check 2>&1 | tee "$OUT/inventory.log"
           python3 scripts/ci/test_ci_source_integrity.py 2>&1 | tee "$OUT/source-negatives.log"
           python3 scripts/ci/test_check_pure_pon_cost_campaign.py 2>&1 | tee "$OUT/cost-reader-negatives.log"
+          python3 scripts/ci/test_check_pure_pon_ingress_campaign.py 2>&1 | tee "$OUT/ingress-reader-negatives.log"
       - name: Verify locked graph and formatting
         run: |
           set -euo pipefail
@@ -89,6 +92,7 @@ jobs:
         run: |
           set -euo pipefail
           python3 scripts/ci/capture_pure_pon_campaign.py --binary "$CARGO_TARGET_DIR/debug/examples/pon_pure_ingress_campaign" --output "$OUT/ingress" --timeout 180 -- --baseline-seconds 15 --attack-seconds 45 --receivers 2 --attack-workers 4 --max-groups 8192
+          python3 scripts/ci/check_pure_pon_ingress_campaign.py "$OUT/ingress/stdout.jsonl.gz" --output "$OUT/ingress/consistency.json"
       - name: Verify final source bytes independently of command success
         if: always()
         run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$EXPECTED_HEAD"
