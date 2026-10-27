@@ -49,7 +49,7 @@ _RSS_OWNER_CONTEXT = contextvars.ContextVar('llm-owned-rss-owner', default=None)
 _RSS_EXIT_OBSERVATION = contextvars.ContextVar('llm-owned-rss-exit-observation', default=None)
 _RSS_EXIT_CLASS = contextvars.ContextVar('llm-owned-rss-exit-class', default=None)
 EXIT_PROFILES = ('strict-v1', 'linux-owned-exit-cleanup-v2', 'linux-owned-exit-terminal-subset-v3',
-                 'linux-owned-exit-worker-pidfd-v4')
+                 'linux-owned-exit-worker-pidfd-v4', 'linux-owned-exit-mm-detached-v5')
 
 
 def exit_observation_profile(profile='linux-owned-exit-cleanup-v2'):
@@ -68,6 +68,11 @@ def exit_observation_profile(profile='linux-owned-exit-cleanup-v2'):
         result.update(profile=WORKER_PROFILE,
             base_observer_source_sha256=result['observer_source_sha256'],
             observer_source_sha256=file_sha(REPOSITORY/'scripts/llm_runtime_exit_worker_observation.py'))
+    elif profile == EXIT_PROFILES[4]:
+        from llm_runtime_exit_mm_observation import PROFILE as MM_PROFILE
+        result.update(profile=MM_PROFILE,
+            base_observer_source_sha256=result['observer_source_sha256'],
+            observer_source_sha256=file_sha(REPOSITORY/'scripts/llm_runtime_exit_mm_observation.py'))
     return result
 
 
@@ -85,15 +90,19 @@ def exit_observation_class(profile):
     if profile['profile'] == EXIT_PROFILES[2]:
         from llm_runtime_exit_subset_observation import TerminalSubsetObservation
         return TerminalSubsetObservation
-    from llm_runtime_exit_worker_observation import WorkerPidfdObservation
-    return WorkerPidfdObservation
+    if profile['profile'] == EXIT_PROFILES[3]:
+        from llm_runtime_exit_worker_observation import WorkerPidfdObservation
+        return WorkerPidfdObservation
+    from llm_runtime_exit_mm_observation import MmDetachedObservation
+    return MmDetachedObservation
 
 
 def plan_exit_profile(plan):
     profiles = dict(zip(('llm-runtime-public-pilot-plan-v1',
                          'llm-runtime-public-pilot-plan-v2',
                          'llm-runtime-public-pilot-plan-v3',
-                         'llm-runtime-public-pilot-plan-v4'), EXIT_PROFILES))
+                         'llm-runtime-public-pilot-plan-v4',
+                         'llm-runtime-public-pilot-plan-v5'), EXIT_PROFILES))
     require(type(plan) is dict and plan.get('schema') in profiles, 'RUNTIME_EXIT_OBSERVER_PROFILE')
     expected = profiles[plan['schema']]
     if expected == 'strict-v1':
@@ -370,6 +379,7 @@ def current_rss(pid=None):
         except (OSError, AttributeError) as error:
             unavailable('pidfd-open', error)
             raise
+        sample = None
         try:
             identity_path = Path(f'/proc/self/fdinfo/{descriptor}')
             identity = status(identity_path)
@@ -379,8 +389,14 @@ def current_rss(pid=None):
             if (visible_pid <= 0 or len(namespace) <= coordinate or
                     namespace[0] != visible_pid or namespace[coordinate] != pid):
                 return unavailable('pidfd-namespace-mismatch')
-            fields = status(Path(f'/proc/{visible_pid}/status'))
-            missing_sample_ns = time.monotonic_ns() if 'VmRSS' not in fields else None
+            selected_observer = _RSS_EXIT_CLASS.get()
+            if borrowed and getattr(selected_observer, '__module__', None) == 'llm_runtime_exit_mm_observation':
+                from llm_runtime_exit_mm_observation import MmDetachedObservation, _BeforeStatusSample
+                if selected_observer is MmDetachedObservation:
+                    sample = _BeforeStatusSample(pid, descriptor, owner[2])
+            fields = sample.fields if sample is not None else status(Path(f'/proc/{visible_pid}/status'))
+            missing_sample_ns = ((sample.sample_started_ns if sample is not None else time.monotonic_ns())
+                                 if 'VmRSS' not in fields else None)
             child_pid, = map(int, fields['Pid'])
             child_parent, = map(int, fields['PPid'])
             if (child_pid != visible_pid or child_parent != parent_pid or
@@ -401,10 +417,13 @@ def current_rss(pid=None):
                     missing_sample_ns=missing_sample_ns, borrowed_owner_present=borrowed,
                     initial_state=state, initial_threads=threads, attempted=False,
                     precondition=('no-matching-owner-context' if not borrowed else
+                                  'owned-mm-frontier-before-status' if sample is not None and sample.before else
+                                  'mm-prior-frontier-unqualified' if sample is not None else
                                   'initial-leader-not-zombie' if state != 'Z' else
                                   'owned-zombie-leader'), result='not-attempted', diagnostic_only=True)
                 trace['same_sample_exit_classification'] = classification_trace
-            if missing_sample_ns is not None and borrowed and fields.get('State', [None])[0] == 'Z':
+            if missing_sample_ns is not None and borrowed and (sample is not None or
+                                                              fields.get('State', [None])[0] == 'Z'):
                 # Classification is completed within this missing sample, using
                 # the supervisor's original pidfd and held task-directory FDs.
                 # A later post-gap diagnostic can never grant this authority.
@@ -413,7 +432,15 @@ def current_rss(pid=None):
                         classification_trace['attempted'] = True
                     from llm_runtime_exit_observation import ExitOnlyObservation
                     observation_type = _RSS_EXIT_CLASS.get() or ExitOnlyObservation
-                    observation = observation_type(pid, descriptor, owner[2], fields, missing_sample_ns)
+                    if sample is None:
+                        observation = observation_type(pid, descriptor, owner[2], fields, missing_sample_ns)
+                    else:
+                        observation = sample.finish(fields, missing_sample_ns)
+                        try:
+                            sample.close()
+                        except BaseException:
+                            observation.close()
+                            raise
                     _RSS_EXIT_OBSERVATION.set(observation)
                     if classification_trace is not None:
                         classification_trace['result'] = 'typed-observation-created'
@@ -428,6 +455,8 @@ def current_rss(pid=None):
             return rss(fields)
         finally:
             try:
+                if sample is not None:
+                    sample.close()
                 if not borrowed:
                     os.close(descriptor)
             except OSError as error:
@@ -1534,6 +1563,9 @@ def _exit_recheck_refusal(error):
         'exit-worker-task-set', 'exit-worker-frontier-change',
         'exit-worker-remaining-not-zombie', 'exit-worker-recapture-bound',
         'exit-worker-sticky-failure', 'exit-worker-deadline',
+        'exit-mm-owner', 'exit-mm-prior-identity', 'exit-mm-prior-frontier',
+        'exit-mm-no-prior-frontier', 'exit-mm-same-sample-capability',
+        'exit-mm-capture-identity', 'exit-mm-leader-state', 'exit-mm-prior-starttime',
     }
     code = (error.args[0] if type(error) is ExitObservationError and len(error.args) == 1 and
             type(error.args[0]) is str and error.args[0] in codes else None)
@@ -1552,7 +1584,7 @@ def _drain_exit_cleanup(process, observation, owner_token, start, budget, *, exi
     try:
         observation_type = (exit_observation_class(exit_observation)
                             if exit_observation is not None else ExitOnlyObservation)
-        is_subset = observation_type is not ExitOnlyObservation
+        is_subset = exit_observation is not None and exit_observation['profile'] in EXIT_PROFILES[2:4]
         require(type(observation) is observation_type and
                 observation.belongs_to(process.pid, process.termination_fd, owner_token),
                 'RUNTIME_EXIT_OBSERVER_OWNER')
@@ -1713,6 +1745,10 @@ def supervise(command, directory, budget, *, exit_observation=None, _controlled_
                                 reason, exit_cleanup_observation = _drain_exit_cleanup(
                                     process, exit_sample, owner_token, start, budget,
                                     exit_observation=exit_observation)
+                            elif exit_observation['profile'] == EXIT_PROFILES[4]:
+                                # V5 cannot retrofit a later terminal/diagnostic read
+                                # when its original pre-status frontier was unknown.
+                                reason = 'rss-exit-cleanup-observation-unavailable'
                             elif exit_sample is not None and (
                                     observation_type is not ExitOnlyObservation or
                                     isinstance(exit_sample, ExitOnlyObservation)):

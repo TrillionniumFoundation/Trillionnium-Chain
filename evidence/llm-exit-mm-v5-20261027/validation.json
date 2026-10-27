@@ -1,0 +1,167 @@
+{
+  "schema": "llm-exit-mm-v5-local-validation-v1",
+  "parent": "9035171271e9f437b7224b53532f41a2b2894be7",
+  "final_source_map_sha256": "5c3e2689f788dbdacf7e609f1b1ae97ab64cbeae5d5a9f7c874f44979d945114",
+  "final_source_map_count": 194,
+  "successful_rosters": [
+    {
+      "batch": "003",
+      "test": "scripts/test_llm_runtime_exit_mm_observation.py",
+      "ran": 14,
+      "passed": 14,
+      "skipped": 0
+    },
+    {
+      "batch": "003",
+      "test": "scripts/test_llm_runtime_exit_observation.py",
+      "ran": 19,
+      "passed": 19,
+      "skipped": 0
+    },
+    {
+      "batch": "003",
+      "test": "scripts/test_llm_runtime_exit_subset_observation.py",
+      "ran": 11,
+      "passed": 11,
+      "skipped": 0
+    },
+    {
+      "batch": "003",
+      "test": "scripts/test_llm_runtime_exit_worker_observation.py",
+      "ran": 17,
+      "passed": 17,
+      "skipped": 0
+    },
+    {
+      "batch": "003",
+      "test": "scripts/test_llm_runtime_exit_worker_frontier.py",
+      "ran": 10,
+      "passed": 10,
+      "skipped": 0
+    },
+    {
+      "batch": "003",
+      "test": "scripts/test_llm_runtime_exit_worker_wait4.py",
+      "ran": 4,
+      "passed": 4,
+      "skipped": 0
+    },
+    {
+      "batch": "003",
+      "test": "scripts/test_llm_runtime_rss_owner.py",
+      "ran": 43,
+      "passed": 43,
+      "skipped": 0
+    },
+    {
+      "batch": "004",
+      "test": "scripts/test_llm_runtime_pilot.py",
+      "ran": 271,
+      "passed": 160,
+      "skipped": 111
+    },
+    {
+      "batch": "004",
+      "test": "scripts/ci/test_ci_contract.py",
+      "ran": 95,
+      "passed": 95,
+      "skipped": 0
+    }
+  ],
+  "passed_test_executions": 373,
+  "skipped_test_executions": 111,
+  "distinct_test_count_not_claimed": true,
+  "earlier_failures_retained": [
+    "initial test harness discovery/mocked function error",
+    "second test harness result-field error with explicit asynchronous after-run hash caveat",
+    "V4 roster positional profile assumption",
+    "legacy V5 import before explicit opt-in",
+    "final-source V4 fixture 100ms construction deadline in batch003; same-source004 subsequently passes"
+  ],
+  "real_probes": [
+    {
+      "batch": "001",
+      "final_runtime_source": false,
+      "plan_sha256": "0f9882df6de30f9519d57ef371bb16490b4001369c074ce3852830ac588cebce",
+      "children": 16,
+      "supervisor_failures": 0,
+      "running_leader_captures": [
+        {
+          "index": 1,
+          "drain_ns": 1270808,
+          "sampled_peak_rss_bytes": 61726720
+        },
+        {
+          "index": 7,
+          "drain_ns": 7939575,
+          "sampled_peak_rss_bytes": 69062656
+        },
+        {
+          "index": 9,
+          "drain_ns": 44735252,
+          "sampled_peak_rss_bytes": 68022272
+        },
+        {
+          "index": 11,
+          "drain_ns": 17525091,
+          "sampled_peak_rss_bytes": 75272192
+        },
+        {
+          "index": 13,
+          "drain_ns": 5450294,
+          "sampled_peak_rss_bytes": 74928128
+        }
+      ],
+      "max_waited_rss_bytes": 75247616,
+      "max_wall_ns": 1037358418,
+      "child_cpu_ns": 6487369000,
+      "observer_cpu_ns": 596492900,
+      "new_oom_events": 0,
+      "reported_kernel": "6.18.55",
+      "kernel_binary_attested": false
+    },
+    {
+      "batch": "002",
+      "final_runtime_source": true,
+      "plan_sha256": "b9720bbd2e99de99864805475fdcea79c19b59e8a1ccf5bf6b8b9f5103e4825b",
+      "children": 16,
+      "supervisor_failures": 0,
+      "running_leader_captures": [
+        {
+          "index": 0,
+          "drain_ns": 14794406,
+          "sampled_peak_rss_bytes": 57978880
+        },
+        {
+          "index": 1,
+          "drain_ns": 5131456,
+          "sampled_peak_rss_bytes": 45998080
+        },
+        {
+          "index": 8,
+          "drain_ns": 5843398,
+          "sampled_peak_rss_bytes": 75194368
+        }
+      ],
+      "max_waited_rss_bytes": 75169792,
+      "max_wall_ns": 310505943,
+      "child_cpu_ns": 2171113000,
+      "observer_cpu_ns": 115320577,
+      "new_oom_events": 0,
+      "reported_kernel": "6.18.55",
+      "kernel_binary_attested": false
+    }
+  ],
+  "scope": "Local source-bound controls and tiny original-owner process observations only",
+  "model_executed": false,
+  "held_runtime_closed": false,
+  "independent_qualification": false,
+  "installed_child": false,
+  "archive": {
+    "path": "raw-evidence.tar.gz",
+    "size": 93521,
+    "sha256": "3a17b77b318d0e05e939acb8587b2a8f70530e3950e252faf8f8999776070ee9",
+    "members": 109,
+    "private_keys_credentials_issuer_or_model_payload": false
+  }
+}
