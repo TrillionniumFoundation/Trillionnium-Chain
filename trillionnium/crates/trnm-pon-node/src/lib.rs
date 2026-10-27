@@ -2,6 +2,8 @@
 #![forbid(unsafe_code)]
 mod ancestry_index;
 pub mod consensus;
+/// Non-activated fixed-point difficulty research: never selected by Node.
+pub mod daa_research_v1;
 mod error;
 /// One fixed Linux cgroup-v2 parent checker, shared by CLI and public V3 library.
 pub mod host_kernel_parent;
