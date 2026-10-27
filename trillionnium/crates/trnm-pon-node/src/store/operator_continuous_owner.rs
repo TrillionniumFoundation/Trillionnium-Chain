@@ -448,6 +448,23 @@ impl Node {
             self.public_service_epoch_listeners == 0,
             "OWNER_PUBLIC_SERVICE_UNCLEAN_EPOCH",
         )?;
+        // A process may have died with outstanding public W1 CPU. The
+        // volatile marker then resets on Node::open, but the original SQLite
+        // active-epoch row survives. Refuse a cold History budget BEFORE
+        // attempting any new verification. The existing V3 service uses the
+        // same canonical durable key and exact unknown-debt semantics.
+        let prior_epoch: Option<Vec<u8>> = self
+            .db
+            .query_row(
+                "SELECT value FROM metadata WHERE key=?1",
+                [ORDINARY_PUBLIC_EPOCH_KEY],
+                |row| row.get(0),
+            )
+            .optional()?;
+        ensure(
+            prior_epoch.is_none(),
+            "OWNER_PUBLIC_SERVICE_UNCLEAN_EPOCH",
+        )?;
         let cold = ServiceMutationCpuDomain::cold_remote_history_epoch();
         self.bind_public_service_cpu_domain(&cold)?;
         Ok(cold)
