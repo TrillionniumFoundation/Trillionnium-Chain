@@ -22,6 +22,8 @@ pub mod operator_mining_policy;
 pub mod operator_task_policy;
 pub mod peer_polling;
 pub mod public_submit;
+/// Public genesis maintenance bytes; availability never grants work or model credit.
+pub mod public_task_bootstrap;
 /// Isolated V2 certificate reader; never votes, installs models or activates consensus.
 pub mod release_finality;
 mod store;
