@@ -670,6 +670,38 @@ fn growth_network_options(command: &str, args: &BTreeMap<String, String>) -> Res
 
 // Refuse an option/profile mismatch BEFORE opening a Node or service
 // ledger, rather than silently accepting a kernel-cap claim on another lane.
+fn priced_sync_context(args: &BTreeMap<String, String>) -> bool {
+    // A signed authenticated peer proves identity, not CPU payment. Incomplete
+    // authentication options will be refused later but must never become a
+    // free loopback import in the meantime.
+    public_profile(args)
+        || ["--auth-secret", "--server-public", "--session-generation"]
+            .iter()
+            .any(|option| args.contains_key(*option))
+}
+
+/// A public History source remains untrusted even if its configured transport
+/// address is loopback: a local proxy can forward arbitrary WAN proof bytes.
+/// Public sync always joins the SAME fixed, root-owned host CPU/memory/pid
+/// envelope as V3. Plain development sync retains its existing locality
+/// contract; this is a host resource check, not verified work authority.
+fn sync_host_kernel_owner(
+    address: std::net::SocketAddr,
+    selected_public: bool,
+) -> Result<Option<trnm_pon_node::host_kernel_parent::HostKernelBudget>> {
+    if selected_public {
+        let owner = trnm_pon_node::host_kernel_parent::require_host_kernel_budget(
+            address,
+            Some(trnm_pon_node::host_kernel_parent::FIXED_PUBLIC_KERNEL_PARENT),
+        )?
+        .ok_or("PUBLIC_HOST_KERNEL_REQUIRED")?;
+        owner.verify()?;
+        Ok(Some(owner))
+    } else {
+        trnm_pon_node::host_kernel_parent::require_for_listener(address)
+    }
+}
+
 fn validate_host_kernel_profile(command: &str, args: &BTreeMap<String, String>) -> Result<()> {
     if args.contains_key("--host-kernel-parent")
         && (command != "serve"
@@ -2082,8 +2114,7 @@ fn run() -> Result<Value> {
             // arbitrary remote W1 proofs into this existing Node. A WAN sync
             // must join the SAME fixed kernel parent as the public receiver.
             // Loopback-only developer sync retains its original behavior.
-            let host_kernel =
-                trnm_pon_node::host_kernel_parent::require_for_listener(address)?;
+            let host_kernel = sync_host_kernel_owner(address, priced_sync_context(&args))?;
             if let Some(kernel) = &host_kernel {
                 kernel.verify()?;
             }
@@ -2611,6 +2642,47 @@ mod tests {
         assert_eq!(cli_error_line(&error), "PUBLIC_MUTATION_CPU_BUDGET");
         assert_eq!(error.to_string(), "PUBLIC_MUTATION_CPU_BUDGET");
         assert!(error.is(trnm_pon_node::ErrorCode::PublicMutationCpuBudget));
+    }
+
+    #[test]
+    fn public_sync_cannot_use_loopback_proxy_to_avoid_fixed_host_cpu_owner() {
+        use trnm_pon_node::host_kernel_parent::{
+            require_host_kernel_budget, FIXED_PUBLIC_KERNEL_PARENT,
+        };
+        let loopback: std::net::SocketAddr = "127.0.0.1:11223".parse().unwrap();
+        // This preserved plain-developer profile never claims a public
+        // network resource budget or public-network readiness.
+        assert!(matches!(sync_host_kernel_owner(loopback, false), Ok(None)));
+        let original = require_host_kernel_budget(loopback, Some(FIXED_PUBLIC_KERNEL_PARENT));
+        let protected = sync_host_kernel_owner(loopback, true);
+        match (protected, original) {
+            (Ok(Some(a)), Ok(Some(b))) => {
+                a.verify().unwrap();
+                b.verify().unwrap();
+            }
+            (Err(left), Err(right)) => {
+                assert_eq!(left.to_string(), right.to_string());
+            }
+            _ => panic!("public History cannot bypass fixed Host resource owner"),
+        }
+        // Signed authenticated and public V2/V3 transports are untrusted
+        // sources regardless of their loopback destination or caller identity.
+        let mut args = BTreeMap::new();
+        assert!(!priced_sync_context(&args));
+        for profile in [
+            ingress::public_v2::PROFILE,
+            ingress::public_v3::PROFILE,
+            ingress::public_v3::GROWTH_PROFILE,
+        ] {
+            args.insert("--admission-profile".into(), profile.into());
+            assert!(priced_sync_context(&args));
+        }
+        args.clear();
+        for option in ["--auth-secret", "--server-public", "--session-generation"] {
+            args.insert(option.into(), "test-selection".into());
+            assert!(priced_sync_context(&args));
+            args.clear();
+        }
     }
 
     #[test]
