@@ -1,0 +1,13 @@
+{
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "-B",
+    "scripts/ci/test_ci_source_integrity.py"
+  ],
+  "exit_code": 0,
+  "name": "source-negatives",
+  "observed_reaped_child_system_seconds": 2.7358490000000004,
+  "observed_reaped_child_user_seconds": 2.6165769999999995,
+  "quantum_cost_measurement": false,
+  "wall_ns": 6438043088
+}
