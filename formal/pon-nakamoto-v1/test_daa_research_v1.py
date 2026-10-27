@@ -27,8 +27,8 @@ class IndependentDaaReferenceTests(unittest.TestCase):
         self.assertEqual(asert_target(parent_time=110, **args), base // 2)
         # -1 second exponent truncates toward zero before flooring the radix.
         args["parent_height"] = 11
-        self.assertEqual(asert_target(parent_time=109, **args),
-                         asert_target(parent_time=109, **args))
+        self.assertLess(asert_target(parent_time=109, **args), base)
+        self.assertGreater(asert_target(parent_time=111, **args), base)
 
     def test_independent_exact_vectors(self):
         vectors = json.loads(VECTORS.read_text(encoding="utf-8"))
