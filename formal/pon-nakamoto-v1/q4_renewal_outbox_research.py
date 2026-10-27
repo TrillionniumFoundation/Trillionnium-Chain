@@ -395,6 +395,20 @@ class RenewalOutbox:
                 'WHERE intent_id=? ORDER BY ordinal',
                 (ident,)
             ).fetchall()
+            # A different operation for the SAME old lease can already
+            # own a durable DispatchUnknown. The requested intent's empty
+            # event list must not be advertised as a free dispatch slot.
+            offset = len(DOMAIN) + 5 * 32
+            old_lease = row[1][offset:offset + 32]
+            prior_dispatches = self.db.execute(
+                'SELECT i.wire FROM q4_outbox_events_v1 AS e '
+                'JOIN q4_outbox_intents_v1 AS i ON e.intent_id=i.id '
+                "WHERE e.kind='DISPATCH_UNKNOWN'"
+            )
+            lease_dispatch_fenced = any(
+                prior_wire[offset:offset + 32] == old_lease
+                for (prior_wire,) in prior_dispatches
+            )
             result = {
                 'intent_id': ident.hex(),
                 'transaction_id': row[0].hex(),
@@ -405,7 +419,8 @@ class RenewalOutbox:
                     None
                 ),
                 'observations': sum(1 for x in events if x[0].startswith('OBSERVED_')),
-                'has_no_durable_dispatch_fence': len(events)==0,
+                'has_no_durable_dispatch_fence': len(events)==0 and not lease_dispatch_fenced,
+                'old_lease_dispatch_fenced': lease_dispatch_fenced,
             }
         except BaseException:
             self.db.execute('ROLLBACK')

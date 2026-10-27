@@ -736,3 +736,14 @@ chain state, DAA, release or production authority is changed.
 Research-only negative controls:
 `python3 -m unittest -v test_q4_renewal_outbox_research.py` from
 `formal/pon-nakamoto-v1`. P0-B/P2 strict acceptance remains OPEN.
+
+### Cross-operation readback consistency
+
+The same snapshot-backed `status()` now reports
+`old_lease_dispatch_fenced`, computed across **all** original durable dispatch
+events. `has_no_durable_dispatch_fence` is false for an un-dispatched alternate
+operation whenever a distinct transaction has already fenced the same old lease.
+A separate lease remains unfenced. These values are read-only diagnostics,
+not authorization to send; only the original operation owner can decide
+NotDispatched or reconcile an unknown external effect. Competing-writer and
+cold-reopen controls test the exact cross-operation status.

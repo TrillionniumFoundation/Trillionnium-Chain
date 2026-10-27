@@ -467,7 +467,8 @@ class RenewalOutboxTests(unittest.TestCase):
             db.observe(a, observation('reorged', 2))
             with self.assertRaisesRegex(OutboxError, 'LEASE_DISPATCH_CONFLICT'):
                 db.dispatch_unknown(b)
-            self.assertTrue(db.status(b)['has_no_durable_dispatch_fence'])
+            self.assertFalse(db.status(b)['has_no_durable_dispatch_fence'])
+            self.assertTrue(db.status(b)['old_lease_dispatch_fenced'])
             db.dispatch_unknown(c)
             self.assertEqual(db.audit(), 3)
         with self.open() as reopened:
@@ -515,5 +516,34 @@ class RenewalOutboxTests(unittest.TestCase):
             )
         with self.assertRaisesRegex(OutboxError, 'LEASE_DISPATCH_CONFLICT'):
             self.open()
+
+
+    def test_status_reads_other_operation_old_lease_fence_from_one_snapshot(self):
+        first = intent()
+        alternate = replace(first, operation_id=h(b'alias-status-operation'),
+                            signed_transaction=b'F' * 1187)
+        independent = replace(first, operation_id=h(b'independent-status-operation'),
+                              old_lease_digest=h(b'independent-status-old-lease'),
+                              signed_transaction=b'G' * 1187)
+        with self.open() as a, self.open() as b:
+            original = a.prepare(first)
+            alias = b.prepare(alternate)
+            separate = b.prepare(independent)
+            self.assertTrue(b.status(alias)['has_no_durable_dispatch_fence'])
+            self.assertFalse(b.status(alias)['old_lease_dispatch_fenced'])
+            a.dispatch_unknown(original)
+            report = b.status(alias)
+            self.assertFalse(report['dispatch_unknown'])
+            self.assertFalse(report['has_no_durable_dispatch_fence'])
+            self.assertTrue(report['old_lease_dispatch_fenced'])
+            self.assertEqual(report['observations'], 0)
+            self.assertFalse(report['last_untrusted_observation'])
+            self.assertTrue(b.status(separate)['has_no_durable_dispatch_fence'])
+            self.assertFalse(b.status(separate)['old_lease_dispatch_fenced'])
+            with self.assertRaisesRegex(OutboxError, 'LEASE_DISPATCH_CONFLICT'):
+                b.dispatch_unknown(alias)
+        with self.open() as cold:
+            self.assertFalse(cold.status(alias)['has_no_durable_dispatch_fence'])
+            self.assertTrue(cold.status(alias)['old_lease_dispatch_fenced'])
 
 if __name__ == '__main__': unittest.main()
