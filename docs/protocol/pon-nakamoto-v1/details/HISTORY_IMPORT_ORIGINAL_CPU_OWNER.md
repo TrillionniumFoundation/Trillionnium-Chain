@@ -25,6 +25,11 @@ proof. Even a signed remote peer can submit expensive bad transcripts.
    in its Node for its entire lifetime. This is not a new entitlement
    per requester, page, peer key, trace or retry. A standalone import's
    credit refills using the original 0.25 CPU-sec/sec equation.
+   **Before creating that cold budget**, the Node also checks the
+   canonical SQLite `ordinary-public-v3-epoch-v1` row, not just its
+   volatile unknown flag. A leftover active service epoch after a
+   process crash refuses the new Sync CPU domain; successful clean
+   service closure permits only the original zero-credit cold start.
 2. For EACH remotely supplied packet, `receive_page` now starts a
    `ServiceMutationCpuOperation` with the original 100ms reservation.
    The original task/parent checks, full W1 replay and M06 native
@@ -74,6 +79,13 @@ proof. Even a signed remote peer can submit expensive bad transcripts.
   Node CPU domain across changed source ports, and leaves no change in
   live State or confirmed work. The original honest proof must still
   be admitted after those refusals.
+- `ingress::tests::cold_reopen_with_durable_active_v3_epoch_cannot_mint_history_cpu`:
+  leave the original SQLite V3 active marker in place, close/reopen the
+  Node and require the new History CPU owner to refuse **without**
+  creating an account.
+- `ingress::tests::clean_v3_epoch_close_permits_only_one_cold_history_owner`:
+  close the prior persistent service epoch cleanly, reopen the Node,
+  then prove two History lookups share one zero-initial-credit account.
 - `ingress::tests::unclean_public_epoch_cannot_mint_fresh_remote_history_credit`:
   reject a new entitlement after the original public epoch is marked
   unclean.
@@ -102,6 +114,12 @@ budget, an independent oracle or security qualification.
 
 ## Remaining blockers (must not silently close P0–P6)
 
+- The new standalone History CPU epoch is still **volatile**. Its
+  own interrupted per-page operations do not yet have durable
+  operation-ID/charged-CPU reconciliation equivalent to the
+  continuous owner. Rejecting a *prior V3* unclean marker does not
+  independently prove safe reconciliation of a *prior History*
+  crash. This is a remaining P1 crash/restart blocker.
 - Host `trnmponpublic.slice` quotas must be physically checked across
   inbound V3, sync CLI, automatic peer polling, process restarts and
   third-party/loopback forwarding. A loopback proxy remains outside
