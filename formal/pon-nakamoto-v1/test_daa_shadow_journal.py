@@ -35,6 +35,36 @@ class ShadowJournalTests(unittest.TestCase):
     def tearDown(self):
         self.tmp.cleanup()
 
+    def test_weakened_same_name_table_refuses_hot_and_cold_shadow_writes(self):
+        with ShadowJournal(self.path, CTX, GEN) as journal:
+            first, packet = candidate(GEN, 1)
+            with sqlite3.connect(self.path) as external:
+                external.execute('ALTER TABLE daa_shadow_meta_v1 RENAME TO old_meta_v1')
+                external.execute('CREATE TABLE daa_shadow_meta_v1 (key TEXT, value BLOB)')
+                external.execute('INSERT INTO daa_shadow_meta_v1 SELECT key,value FROM old_meta_v1')
+                external.execute('DROP TABLE old_meta_v1')
+            with self.assertRaisesRegex(JournalError, 'DATABASE_SCHEMA_DRIFT'):
+                journal.append(first, packet)
+            with self.assertRaisesRegex(JournalError, 'DATABASE_SCHEMA_DRIFT'):
+                journal.activate(GEN, GEN)
+            with self.assertRaisesRegex(JournalError, 'DATABASE_SCHEMA_DRIFT'):
+                journal.audit()
+            self.assertFalse(journal.db.in_transaction)
+            with sqlite3.connect(self.path) as external:
+                self.assertEqual(external.execute(
+                    'SELECT COUNT(*) FROM daa_shadow_headers_v1').fetchone()[0], 0)
+                self.assertEqual(external.execute(
+                    "SELECT value FROM daa_shadow_meta_v1 WHERE key='active_tip'"
+                ).fetchone()[0], GEN)
+        with self.assertRaisesRegex(JournalError, 'DATABASE_SCHEMA_DRIFT'):
+            ShadowJournal(self.path, CTX, GEN)
+
+    def test_sqlite_ephemeral_targets_refused_before_shadow_open(self):
+        for target in (':memory:', 'file::memory:?cache=shared'):
+            with self.subTest(target=target):
+                with self.assertRaisesRegex(JournalError, 'DATABASE_PATH'):
+                    ShadowJournal(Path(target), CTX, GEN)
+
     def test_reboot_exact_identity_replay_cas_and_branch_retention(self):
         with ShadowJournal(self.path, CTX, GEN) as journal:
             first, packet1 = candidate(GEN, 1)

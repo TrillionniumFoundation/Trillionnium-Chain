@@ -97,6 +97,9 @@ class ShadowJournal:
             raise JournalError('HEADER_BUDGET')
         self.max_headers = max_headers
         path = Path(path)
+        # A research crash journal must never silently use an ephemeral SQLite DB.
+        if str(path) == ':memory:' or str(path).startswith('file:'):
+            raise JournalError('DATABASE_PATH')
         if path.is_symlink() or (path.exists() and not path.is_file()):
             raise JournalError('DATABASE_PATH')
         self.db = sqlite3.connect(str(path), isolation_level=None, timeout=0.1)
@@ -164,11 +167,24 @@ class ShadowJournal:
         """
         # Block schema-injected triggers/views/indexes before any DAA research
         # writer operation; the check shares its existing SQLite snapshot.
+        # Exact DDL matters: a table with the original name but no uniqueness
+        # or canonical-byte CHECK constraints is a foreign storage owner.
         objects = self.db.execute(
-            "SELECT type,name FROM sqlite_master WHERE name NOT LIKE 'sqlite_%'"
+            "SELECT type,name,sql FROM sqlite_master "
+            "WHERE name NOT LIKE 'sqlite_%'"
         ).fetchall()
-        if set(objects) != {('table', 'daa_shadow_meta_v1'),
-                            ('table', 'daa_shadow_headers_v1')}:
+        if set(objects) != {
+            ('table', 'daa_shadow_meta_v1',
+             'CREATE TABLE daa_shadow_meta_v1 '
+             '(key TEXT PRIMARY KEY, value BLOB NOT NULL) WITHOUT ROWID'),
+            ('table', 'daa_shadow_headers_v1',
+             'CREATE TABLE daa_shadow_headers_v1 '
+             '(block_id BLOB PRIMARY KEY CHECK(length(block_id)=32), '
+             'parent_id BLOB NOT NULL CHECK(length(parent_id)=32), '
+             'height BLOB NOT NULL CHECK(length(height)=8), '
+             'canonical BLOB NOT NULL CHECK(length(canonical)=176), '
+             'digest BLOB NOT NULL CHECK(length(digest)=32)) WITHOUT ROWID'),
+        }:
             raise JournalError('DATABASE_SCHEMA_DRIFT')
         expected = {'schema': SCHEMA, 'context': self.context,
                     'genesis': self.genesis}

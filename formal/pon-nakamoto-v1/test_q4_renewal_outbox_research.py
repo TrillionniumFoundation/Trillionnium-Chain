@@ -29,6 +29,34 @@ class RenewalOutboxTests(unittest.TestCase):
     def tearDown(self): self.tmp.cleanup()
     def open(self,**kw): return RenewalOutbox(self.file,N,P,G,**kw)
 
+    def test_weakened_same_name_table_refuses_hot_and_cold_dispatch(self):
+        # Keep all row contents, original names and indexes; weaken only DDL.
+        with self.open() as owner:
+            key = owner.prepare(intent())
+            with sqlite3.connect(self.file) as external:
+                external.execute('ALTER TABLE q4_outbox_meta_v1 RENAME TO old_meta_v1')
+                external.execute('CREATE TABLE q4_outbox_meta_v1 (key TEXT, value BLOB)')
+                external.execute('INSERT INTO q4_outbox_meta_v1 SELECT key,value FROM old_meta_v1')
+                external.execute('DROP TABLE old_meta_v1')
+            with self.assertRaisesRegex(OutboxError, 'SCHEMA_DRIFT'):
+                owner.dispatch_unknown(key)
+            with self.assertRaisesRegex(OutboxError, 'SCHEMA_DRIFT'):
+                owner.status(key)
+            with self.assertRaisesRegex(OutboxError, 'SCHEMA_DRIFT'):
+                owner.prepare(intent(tx=b'B' * 1187))
+            self.assertFalse(owner.db.in_transaction)
+            with sqlite3.connect(self.file) as external:
+                self.assertEqual(external.execute(
+                    'SELECT COUNT(*) FROM q4_outbox_events_v1').fetchone()[0], 0)
+        with self.assertRaisesRegex(OutboxError, 'SCHEMA_DRIFT'):
+            self.open()
+
+    def test_sqlite_ephemeral_targets_refused_before_outbox_open(self):
+        for target in (':memory:', 'file::memory:?cache=shared'):
+            with self.subTest(target=target):
+                with self.assertRaisesRegex(OutboxError, 'DATABASE_PATH'):
+                    RenewalOutbox(Path(target), N, P, G)
+
     def test_untrusted_sql_triggers_and_missing_dispatch_index_refuse(self):
         # Neither a hostile trigger nor a removed uniqueness guard can be
         # trusted even when every original table and row digest is unchanged.

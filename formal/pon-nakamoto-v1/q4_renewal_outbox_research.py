@@ -145,6 +145,9 @@ class RenewalOutbox:
             raise OutboxError('BUDGET')
         self.max_intents, self.max_events = max_intents, max_events
         path = Path(path)
+        # SQLite's special :memory: / file: targets are not durable dispatch journals.
+        if str(path) == ':memory:' or str(path).startswith('file:'):
+            raise OutboxError('DATABASE_PATH')
         if path.is_symlink() or (path.exists() and not path.is_file()):
             raise OutboxError('DATABASE_PATH')
         self.db = sqlite3.connect(str(path), isolation_level=None, timeout=0.2)
@@ -206,11 +209,25 @@ class RenewalOutbox:
         audit, while missing uniqueness indexes weaken original ownership.
         A same-name table list is not enough to defend against either case.
         """
-        tables = {name for (name,) in self.db.execute(
-            "SELECT name FROM sqlite_master WHERE type='table'"
-        )}
-        if tables != {'q4_outbox_meta_v1', 'q4_outbox_intents_v1',
-                      'q4_outbox_events_v1'}:
+        # Name-only matching misses a replaced table with weakened KEY/NOT NULL
+        # constraints. Pin the exact SQLite DDL of this research schema.
+        tables = dict(self.db.execute(
+            "SELECT name,sql FROM sqlite_master WHERE type='table'"
+        ))
+        if tables != {
+            'q4_outbox_meta_v1': (
+                'CREATE TABLE q4_outbox_meta_v1 '
+                '(key TEXT PRIMARY KEY, value BLOB NOT NULL) WITHOUT ROWID'),
+            'q4_outbox_intents_v1': (
+                'CREATE TABLE q4_outbox_intents_v1 '
+                '(id BLOB PRIMARY KEY, operation_id BLOB NOT NULL UNIQUE, '
+                'packet_id BLOB NOT NULL UNIQUE, wire BLOB NOT NULL) WITHOUT ROWID'),
+            'q4_outbox_events_v1': (
+                'CREATE TABLE q4_outbox_events_v1 '
+                '(ordinal INTEGER PRIMARY KEY, intent_id BLOB NOT NULL, '
+                'kind TEXT NOT NULL, observation BLOB NOT NULL, '
+                'prev BLOB NOT NULL, digest BLOB NOT NULL)'),
+        }:
             raise OutboxError('SCHEMA_DRIFT')
         if self.db.execute(
             "SELECT 1 FROM sqlite_master WHERE type IN ('trigger','view') LIMIT 1"
