@@ -27,6 +27,15 @@ const MAX_RECEIPT_BYTES: u64 = 16 * 1024 * 1024;
 const R0VM_SHA256: &str = "2acdf550f9aca4d05b74072463e4ed307c3824309c754a5cb5f93aa84f3390e6";
 fn decode_receipt(bytes: &[u8]) -> Result<Receipt> {
     ensure!(bytes.len() as u64 <= MAX_RECEIPT_BYTES, "receipt bound");
+    // Pinned SDK 3.0.3 Receipt starts with InnerReceipt. Fixed-int bincode
+    // represents Succinct (the second variant) as LE u32(1). Reject every
+    // other wire variant BEFORE deserialization: Composite can recursively
+    // contain Composite assumption receipts, so a byte cap alone cannot
+    // prevent deeply nested rejected input from exhausting the stack.
+    ensure!(
+        bytes.get(..4) == Some(1u32.to_le_bytes().as_slice()),
+        "succinct receipt wire tag required"
+    );
     Ok(bincode::DefaultOptions::new()
         .with_fixint_encoding()
         .with_limit(MAX_RECEIPT_BYTES)
@@ -235,4 +244,63 @@ fn main() -> Result<()> {
         )?,
     )?;
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn recursive_composite_is_rejected_before_general_deserialization() {
+        // Canonical fixed-int shape of 4,096 nested Composite assumptions.
+        // Construct bytes, never a recursively allocated Receipt object, and
+        // never feed them to the original unguarded SDK decoder.
+        let depth = 4096;
+        let mut bytes = Vec::new();
+        bytes.extend_from_slice(&0u32.to_le_bytes()); // outer Composite
+        for _ in 0..depth {
+            bytes.extend_from_slice(&0u64.to_le_bytes()); // no segments
+            bytes.extend_from_slice(&1u64.to_le_bytes()); // one assumption
+            bytes.extend_from_slice(&0u32.to_le_bytes()); // nested Composite
+        }
+        bytes.extend_from_slice(&0u64.to_le_bytes()); // terminal segments
+        bytes.extend_from_slice(&0u64.to_le_bytes()); // terminal assumptions
+        bytes.extend_from_slice(&[0; 32]); // terminal verifier parameters
+        for _ in 0..depth {
+            bytes.extend_from_slice(&[0; 32]); // enclosing verifier parameters
+        }
+        bytes.extend_from_slice(&0u64.to_le_bytes()); // journal
+        bytes.extend_from_slice(&[0; 32]); // metadata
+        assert_eq!(bytes.len(), 213_084);
+        assert_eq!(
+            decode_receipt(&bytes).unwrap_err().to_string(),
+            "succinct receipt wire tag required"
+        );
+    }
+
+    #[test]
+    fn only_bounded_succinct_wire_enters_the_decoder() {
+        for tag in [0u32, 2, 3, u32::MAX] {
+            assert_eq!(
+                decode_receipt(&tag.to_le_bytes()).unwrap_err().to_string(),
+                "succinct receipt wire tag required"
+            );
+        }
+        for length in 0..4 {
+            assert_eq!(
+                decode_receipt(&[1, 0, 0, 0][..length])
+                    .unwrap_err()
+                    .to_string(),
+                "succinct receipt wire tag required"
+            );
+        }
+        let error = decode_receipt(&1u32.to_le_bytes()).unwrap_err();
+        assert_ne!(error.to_string(), "succinct receipt wire tag required");
+        let mut oversized = vec![0u8; MAX_RECEIPT_BYTES as usize + 1];
+        oversized[..4].copy_from_slice(&1u32.to_le_bytes());
+        assert_eq!(
+            decode_receipt(&oversized).unwrap_err().to_string(),
+            "receipt bound"
+        );
+    }
 }
