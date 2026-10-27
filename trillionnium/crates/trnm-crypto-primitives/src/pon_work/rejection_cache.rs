@@ -107,9 +107,8 @@ mod tests {
         let valid = prove(challenge, &a, &a).unwrap();
         let mut bad = valid.clone();
         bad[PROOF_BYTES - 1] ^= 1;
-        let mut replays = 0;
         for expected in [512, 0] {
-            replays = 0;
+            let mut replays = 0;
             let r = cache.verify_with_progress(challenge, task, target, &bad, &mut |point| {
                 if matches!(point, VerificationProgress::TranscriptTile { .. }) {
                     replays += 1;
