@@ -581,3 +581,158 @@ fn full_32_slot_maintenance_rejects_premature_native_replacement() {
     let reopened = Node::open_with_authenticated_state(&native_path, settings, 1).unwrap();
     assert_eq!(reopened.read_active().unwrap(), before_reopen);
 }
+
+
+/// Release-only native evidence for all Q4 slots exhausted, last-source
+/// revocation, exact 1100/1101 retention cut, heavier reorg, reauthorization
+/// and cold recovery. Uses real W1 packets, not a synthetic height leap.
+#[test]
+#[ignore = "release-only 1103-block native Q4 retention and reorg campaign"]
+fn full_slot_native_retention_reclaim_and_heavier_fork_restore() {
+    use trnm_protocol::qualified_work_task::lifecycle_v2::DEMAND_SLOTS;
+
+    let dir = tempfile::tempdir().unwrap();
+    let settings = Settings::development_with_profiles(
+        Some(1),
+        "native-public-evaluation-dev-v1",
+        continuity_v1::PROFILE,
+    )
+    .unwrap();
+    let boot = settings.bootstrap_lifecycle_task().unwrap();
+    let mut reference = Node::open(&dir.path().join("reference"), settings.clone(), 1).unwrap();
+    let native_path = dir.path().join("native");
+    let mut native =
+        Node::open_with_authenticated_state(&native_path, settings.clone(), 2).unwrap();
+    let opens: Vec<Vec<u8>> = (1..DEMAND_SLOTS)
+        .map(|slot| {
+            let mut lease = boot.lease.clone();
+            lease.slot = slot;
+            lease.generation = u64::from(slot) + 1;
+            lease.not_before = 1;
+            lease.expires = 1001;
+            lease.available_until = 1101;
+            lease.demand_id = lease.derived_demand_id();
+            signed(&settings, 1, u64::from(slot), 18, lease.encode().unwrap())
+        })
+        .collect();
+    let mut tip = admit_pair(
+        &mut reference,
+        &mut native,
+        settings.genesis(),
+        1,
+        opens,
+        public(0),
+        0,
+    );
+    reference.activate(tip).unwrap();
+    native.activate(tip).unwrap();
+    let revoke = DemandRevocationV2 {
+        network: settings.network(),
+        parameters: settings.parameters(),
+        slot: 0,
+        demand_id: boot.lease.demand_id,
+        requester: boot.lease.requester,
+        expected_revision: boot.lease.revision,
+    };
+    tip = admit_pair(
+        &mut reference,
+        &mut native,
+        tip,
+        2,
+        vec![signed(&settings, 1, 32, 20, revoke.encode().unwrap())],
+        public(0),
+        0,
+    );
+    reference.activate(tip).unwrap();
+    native.activate(tip).unwrap();
+    assert_eq!(
+        native.read_active().unwrap().2[&qualified_task_lifecycle::slot_key(0).unwrap()]["status"],
+        "revoked"
+    );
+    for height in 3..=1099 {
+        tip = admit_pair(&mut reference, &mut native, tip, height, vec![], public(0), 0);
+        reference.activate(tip).unwrap();
+        native.activate(tip).unwrap();
+    }
+
+    let mut successor = boot.lease.clone();
+    successor.generation = 33;
+    successor.revision = 1;
+    successor.not_before = 1101;
+    successor.expires = 2101;
+    successor.available_until = 2201;
+    successor.demand_id = successor.derived_demand_id();
+    let authorized = signed(&settings, 1, 33, 18, successor.encode().unwrap());
+    assert_eq!(
+        reference
+            .make_consensus_maintenance(tip, vec![authorized.clone()], public(0), 11001, 4096)
+            .unwrap_err()
+            .to_string(),
+        "TASK_RETAINED"
+    );
+    let retained = admit_pair(&mut reference, &mut native, tip, 1100, vec![], public(0), 0);
+    reference.activate(retained).unwrap();
+    native.activate(retained).unwrap();
+    let replacement = admit_pair(
+        &mut reference,
+        &mut native,
+        retained,
+        1101,
+        vec![authorized],
+        public(0),
+        0,
+    );
+    reference.activate(replacement).unwrap();
+    native.activate(replacement).unwrap();
+    assert_eq!(reference.read_active().unwrap(), native.read_active().unwrap());
+    assert_eq!(
+        native.read_active().unwrap().2[qualified_task_lifecycle::GENERATION_KEY],
+        33
+    );
+
+    // Two original PNW1 fork packets beat the shorter replacement branch;
+    // rollback restores generation 32, old revoked slot and requester nonce.
+    let fork_1101 =
+        admit_pair(&mut reference, &mut native, retained, 1101, vec![], public(0), 1);
+    let fork_1102 =
+        admit_pair(&mut reference, &mut native, fork_1101, 1102, vec![], public(0), 1);
+    reference.activate(fork_1102).unwrap();
+    native.activate(fork_1102).unwrap();
+    assert_eq!(reference.read_active().unwrap(), native.read_active().unwrap());
+    assert_eq!(
+        native.read_active().unwrap().2[qualified_task_lifecycle::GENERATION_KEY],
+        32
+    );
+    assert_eq!(
+        native.read_active().unwrap().2[&qualified_task_lifecycle::slot_key(0).unwrap()]["status"],
+        "revoked"
+    );
+
+    // The original transaction had signed not_before=1101, so at 1103 it
+    // cannot be silently reissued. This is a new signed operation at 1103.
+    successor.not_before = 1103;
+    successor.expires = 2103;
+    successor.available_until = 2203;
+    successor.demand_id = successor.derived_demand_id();
+    let new_authorization = signed(&settings, 1, 33, 18, successor.encode().unwrap());
+    let recovered = admit_pair(
+        &mut reference,
+        &mut native,
+        fork_1102,
+        1103,
+        vec![new_authorization],
+        public(0),
+        1,
+    );
+    reference.activate(recovered).unwrap();
+    native.activate(recovered).unwrap();
+    assert_eq!(reference.read_active().unwrap(), native.read_active().unwrap());
+    assert_eq!(
+        native.read_active().unwrap().2[qualified_task_lifecycle::GENERATION_KEY],
+        33
+    );
+    let snapshot = native.read_active().unwrap();
+    drop(native);
+    let cold = Node::open_with_authenticated_state(&native_path, settings, 1).unwrap();
+    assert_eq!(cold.read_active().unwrap(), snapshot);
+}
