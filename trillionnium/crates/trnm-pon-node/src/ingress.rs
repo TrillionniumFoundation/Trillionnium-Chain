@@ -2160,13 +2160,44 @@ fn receive_page(
     Ok(next)
 }
 
-/// Public untrusted History import. Unlike the private local parser, this
-/// entry REQUIRES a concrete original source address and checks the existing
-/// fixed, administrator-owned host resource parent around every possible
-/// W1 replay. A caller cannot bypass the guard by calling the addressless
-/// parser from another crate or by supplying a fake already-verified work
-/// token. Only the full native Node determines consensus validity.
+/// Public/externally callable untrusted History import. Even when a
+/// transport endpoint appears to be 127.0.0.1, it can be a proxy for an
+/// adversarial WAN source. Require the SAME original fixed administrator
+/// cgroup for *all* untrusted public page bytes; callers cannot claim
+/// loopback to bypass this host resource boundary.
+///
+/// This is only aggregate kernel resource containment. It grants no W1
+/// validity and cannot establish per-peer fairness or W2 hardness.
 pub fn receive_page_from(
+    node: &mut Node,
+    source: SocketAddr,
+    page: Page,
+    tip: Hash,
+    after: Hash,
+    clock: u64,
+) -> Result<Hash> {
+    let kernel = crate::host_kernel_parent::require_host_kernel_budget(
+        source,
+        Some(crate::host_kernel_parent::FIXED_PUBLIC_KERNEL_PARENT),
+    )?
+    .ok_or("PUBLIC_HOST_KERNEL_REQUIRED")?;
+    kernel.verify()?;
+    let native = receive_page(node, page, tip, after, clock);
+    // Never rewrite a durably accepted block as unexecuted: an original
+    // host counter/membership fault makes this sync result unavailable.
+    kernel.verify()?;
+    native
+}
+
+/// Deliberately private, explicit loopback-only local-development import for
+/// the three historical native sync entrypoints. A remote destination still
+/// requires the original fixed cgroup. Never export this parser as a public
+/// proof-validation or externally reachable resource-bypass API.
+///
+/// Loopback forwarding is NOT intrinsically trustworthy. Its caller must
+/// operate inside a trusted local-only development deployment; hardened
+/// public V3 sync always uses receive_page_from above.
+fn receive_page_from_local_development(
     node: &mut Node,
     source: SocketAddr,
     page: Page,
@@ -2179,8 +2210,6 @@ pub fn receive_page_from(
         kernel.verify()?;
     }
     let native = receive_page(node, page, tip, after, clock);
-    // A completed native admission cannot be undone by a post-verification
-    // host fault. That fault still makes the overall synchronization fail.
     if let Some(kernel) = &host_kernel {
         kernel.verify()?;
     }
@@ -2212,7 +2241,7 @@ pub fn sync_from(
         write_frame(&mut stream, &serde_json::to_vec(&request)?)?;
         let page: Page = serde_json::from_slice(&read_frame(&mut stream)?)?;
         let complete = page.complete;
-        after = receive_page_from(node, address, page, tip, after, now()?)?;
+        after = receive_page_from_local_development(node, address, page, tip, after, now()?)?;
         // Resource-counter/membership failure does not roll back any already
         // admitted native block; it makes this sync result unqualified.
         if let Some(kernel) = &host_kernel {
@@ -2260,7 +2289,7 @@ pub fn sync_from_authenticated(
         )?;
         let page: Page = serde_json::from_value(value)?;
         let complete = page.complete;
-        after = receive_page_from(node, address, page, tip, after, now()?)?;
+        after = receive_page_from_local_development(node, address, page, tip, after, now()?)?;
         // Resource-counter/membership failure does not roll back any already
         // admitted native block; it makes this sync result unqualified.
         if let Some(kernel) = &host_kernel {
@@ -2305,7 +2334,7 @@ pub fn sync_from_authenticated_durable(
         )?;
         let page: Page = serde_json::from_value(value)?;
         let complete = page.complete;
-        after = receive_page_from(node, address, page, tip, after, now()?)?;
+        after = receive_page_from_local_development(node, address, page, tip, after, now()?)?;
         // Resource-counter/membership failure does not roll back any already
         // admitted native block; it makes this sync result unqualified.
         if let Some(kernel) = &host_kernel {
@@ -2394,6 +2423,60 @@ mod tests {
             ).unwrap_err();
             assert_eq!(durable_error.to_string(), expected.to_string());
             assert_eq!(node.stats().unwrap(), original);
+            assert_eq!(node.read_active().unwrap().0, settings.genesis());
+        }
+    }
+
+    #[test]
+    fn untrusted_public_history_rejects_loopback_proxies_without_original_host_owner() {
+        // A loopback endpoint can be a proxy. The *public* import is never
+        // exempt from the administrator-owned original kernel CPU budget.
+        let local: SocketAddr = "127.0.0.1:12345".parse().unwrap();
+        assert!(crate::host_kernel_parent::require_for_listener(local)
+            .unwrap().is_none());
+        let strict = crate::host_kernel_parent::require_host_kernel_budget(
+            local,
+            Some(crate::host_kernel_parent::FIXED_PUBLIC_KERNEL_PARENT),
+        );
+        let dir = tempfile::tempdir().unwrap();
+        let settings = crate::Settings::development(Some(now().unwrap() - 100)).unwrap();
+        let mut node = Node::open(dir.path(), settings.clone(), 2).unwrap();
+        let before = node.stats().unwrap();
+        let page = Page {
+            schema: String::new(),
+            network: String::new(),
+            parameters: String::new(),
+            genesis: String::new(),
+            tip: String::new(),
+            after: String::new(),
+            packets: vec![],
+            next: String::new(),
+            complete: false,
+        };
+        // The legacy *private* loopback developer path remains available but
+        // validates the page; it is not a public import or consensus grant.
+        let dev = receive_page_from_local_development(
+            &mut node,
+            local,
+            page.clone(),
+            settings.genesis(),
+            settings.genesis(),
+            now().unwrap(),
+        )
+        .unwrap_err();
+        assert_eq!(dev.to_string(), "PAGE_CONTEXT");
+        if let Err(expected) = strict {
+            let refused = receive_page_from(
+                &mut node,
+                local,
+                page,
+                settings.genesis(),
+                settings.genesis(),
+                now().unwrap(),
+            )
+            .unwrap_err();
+            assert_eq!(refused.to_string(), expected.to_string());
+            assert_eq!(node.stats().unwrap(), before);
             assert_eq!(node.read_active().unwrap().0, settings.genesis());
         }
     }
