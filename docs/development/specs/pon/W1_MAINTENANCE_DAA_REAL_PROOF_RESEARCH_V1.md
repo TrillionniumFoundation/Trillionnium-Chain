@@ -82,3 +82,39 @@ versioned native test context with real application roots and leases, perform
 receiver-side full-cost and honest-service trials on exact source, then obtain
 independently administered WAN/physical experiments without changing old Q4,
 old W1 proof bytes, Revision12 Genesis Maintenance, or the deployed DAA.
+
+## Additional complete-byte archive readback
+
+`formal/pon-nakamoto-v1/w1_maintenance_daa_archive_reader.py` is a separate,
+read-only replay boundary for raw `<block_id>.pnh1` and `.pnw1` files. It does not
+trust the producer's `full_verifier_pass`, claimed target, timestamps, nonce,
+chainwork or source-level authority flags. It reconstructs all 31 headers,
+verifies the full W1 relations, derives the 16-block DAA from each branch's
+actual ancestry, recomputes cumulative required work, and checks the forged
+Ticket **against the exact honest header** before requiring Transcript refusal.
+Both a mislabelled real proof and an altered false transcript fail explicitly.
+
+The read-only CLI refuses duplicate JSON keys, oversized report files *before
+reading*, nonregular/symlinked proof files, incomplete byte sequences, unknown
+or duplicate parent identities, changed headers, noncanonical claimed hashes,
+negative/non-integer CPU observation fields, and attempted promotion of
+unverified research facts into production authority. Its report itself does
+not authorize a Node block, history checkpoint, model install or settlement.
+
+```sh
+python3 -m unittest -v test_w1_maintenance_daa_archive_reader.py
+python3 w1_maintenance_daa_archive_reader.py \
+  --report /new/path/w1-daa-report.json \
+  --artifact-dir /new/path/w1-pnw1-raw
+```
+
+The added **8/8 local Python readback tests pass**, including byte mutation,
+missing proof, false metadata, duplicate keys, path safety, unearned authority,
+wrong chainwork and a real proof mislabeled as an invalid one. During the first
+local test execution, four tests failed with an accidental Python test-harness
+bound-method `TypeError`; the test-only callback binding was corrected and the
+unchanged actual readback then passed 8/8. This result is an actual replay of
+full local W1 data, **not a second independently implemented cryptographic
+verifier**; it calls the same original scalar oracle. Independently authored
+third verifier, native exact-head tests, paid public network fairness and real
+operator evidence remain open.
