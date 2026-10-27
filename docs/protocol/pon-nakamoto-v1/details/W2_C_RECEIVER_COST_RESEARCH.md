@@ -163,3 +163,52 @@ this experiment does not replace them. An attacker with a faster SHA-256
 device can still earn a cheap locally accepted Hashcash ticket and force
 costly full W1 replay. Thus **P2–P6 remain OPEN**, and production
 activation stays disabled.
+
+
+## Durable local paid-spend prototype: cloned receiver processes
+
+The source-integrated, **research-only** module
+'formal/pon-nakamoto-v1/w2c_durable_spend.py' is a new optional adapter
+around the original stateless W2-C checker. Its attack case is a
+*single operator running two process instances with the same receiver
+identity/MAC key/epoch*. The original in-memory spent maps are
+independent, so even a MAC-valid one-use nonce may be spent twice.
+
+The adapter first performs the unchanged stateless issuer/receiver/caller,
+MAC, lifetime and Hashcash validation. Only when this already returns
+READY_RESOURCE_ONLY does it attempt the **same SHA-256 paid-grant identity**
+in one trusted, shared SQLite file. BEGIN IMMEDIATE plus a unique
+binary primary key allows at most one committed spend across its
+cooperating processes. Its trusted parent directory cannot be group/world
+writable; the file must be a same-UID, regular, single-link 0600 file.
+SQLite WAL + synchronous FULL is explicitly requested. Crash/power-loss
+durability is **not** proven by a source PRAGMA.
+
+The single persisted monotonic frontier rejects clock regression across
+process reopening; expired entries can be GC'd after their original bound.
+A fixed 1..1024 active-spend capacity never silently evicts a live paid
+grant; saturation is PAID_CAPACITY_BUSY, not consensus invalidity.
+Untrusted/poisoned ledger and SQL errors fail closed to
+DURABLE_LEDGER_UNAVAILABLE. The prototype limits its SQLite clock range
+to 0..2^63-1 instead of silently truncating 64-bit wire time.
+
+The proposed native-independent selectors are:
+
+    python3 formal/pon-nakamoto-v1/test_w2c_durable_spend.py -v
+
+They include eight **real forked OS processes** contending for one
+SQLite file (expected 1 READY, 7 REPLAY), close/reopen, original caller
+binding, capacity, failed monotonic clock, filesystem ownership and
+a mandatory *negative counterexample*: **two cloned credentials/epochs
+using DIFFERENT SQLite database files can each still accept the same
+ticket**. Separate independent operators have neither the same
+persistent spend ledger nor necessarily the same trusted time horizon,
+so this experiment cannot qualify permissionless cross-host replay
+safety. A requester can still cheaply trigger one expensive local W1
+verification after paying a valid Hashcash ticket. No root service
+accounting, new W1 verifier, consensus activation, block Chainwork,
+Hepta learning/model adoption or FinalUse is conferred.
+
+Until actual same-source Python tests, multi-process WAL crash cut,
+quota/fairness experiments, GPU/ASIC study and external crypto review
+exist, P5 remains **OPEN / HOLD_NO_GO**.
