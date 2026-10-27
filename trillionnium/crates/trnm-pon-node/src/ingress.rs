@@ -2424,6 +2424,37 @@ mod tests {
     }
 
     #[test]
+    fn host_owner_failure_during_w1_tile_does_not_commit_or_poison_retry() {
+        // Exercise the actual Node verification path, not just the progress
+        // selector. A local Host guard failure is NOT invalid chain work.
+        let (_dir, owner, packet) = pending_packet();
+        let mut node = owner.lock().unwrap();
+        let before_stats = node.stats().unwrap();
+        let before_active = node.read_active().unwrap();
+        let mut tiles = 0_usize;
+        let refused = node
+            .admit_with_work_progress(&packet, now().unwrap(), &mut |point| {
+                if matches!(
+                    point,
+                    trnm_crypto_primitives::pon_work::VerificationProgress::TranscriptTile { .. }
+                ) {
+                    tiles += 1;
+                    return Err("PUBLIC_HOST_KERNEL_LIMITS_CHANGED".into());
+                }
+                Ok(())
+            })
+            .unwrap_err();
+        assert_eq!(refused.to_string(), "PUBLIC_HOST_KERNEL_LIMITS_CHANGED");
+        assert_eq!(tiles, 1, "full W1 must abort cooperatively before verified work");
+        assert_eq!(node.stats().unwrap(), before_stats);
+        assert_eq!(node.read_active().unwrap(), before_active);
+        // Recovery from a LOCAL Host refusal must not poison the unchanged
+        // mathematical statement or turn it into a cached invalid W1 fact.
+        let admitted = node.admit(&packet, now().unwrap()).unwrap();
+        assert_eq!(admitted, packet.id().unwrap());
+    }
+
+    #[test]
     fn public_loopback_history_requires_real_fixed_host_parent() {
         let loopback: SocketAddr = "127.0.0.1:12345".parse().unwrap();
         let legacy = crate::host_kernel_parent::require_for_listener(loopback).unwrap();
