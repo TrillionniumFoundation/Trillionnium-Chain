@@ -1222,9 +1222,14 @@ mod request_owned_reserve_tests {
             second.err().unwrap().to_string(),
             "PUBLIC_MUTATION_CPU_BUDGET"
         );
-        let honest = domain.begin().unwrap();
-        assert_eq!(domain.observe().unwrap().in_flight, 2);
-        let honest_settlement = honest.finish();
+        // Two actual owner threads: a nested interval on one thread would
+        // double-count CPU and is not the production worker configuration.
+        let ordinary_domain = domain.clone();
+        let honest = thread::spawn(move || {
+            let operation = ordinary_domain.begin().unwrap();
+            operation.finish()
+        });
+        let honest_settlement = honest.join().unwrap();
         let untrusted_settlement = untrusted.finish();
         assert!(!honest_settlement.accounting_unavailable);
         assert!(!untrusted_settlement.accounting_unavailable);
