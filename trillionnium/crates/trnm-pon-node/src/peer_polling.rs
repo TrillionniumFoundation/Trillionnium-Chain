@@ -1,5 +1,6 @@
 //! M15 operator-pinned paid peer polling, sharing the existing exclusive Node.
 //! Transport signatures authenticate replies, never remote chainwork or ledger rights.
+//! Every expensive received W1 replay uses the Node's ORIGINAL V3 mutation CPU domain.
 use crate::{
     digest, ensure,
     ingress::{
@@ -27,6 +28,7 @@ use std::{
     time::{Duration, Instant},
 };
 use trnm_crypto_primitives::verifying_key_from_hex;
+use trnm_mvcc_fee::pon_executor::{ExecutionControl, ExecutionProgress};
 use trnm_protocol::pon_wire::{hash, Hash};
 const MAX_CONFIG_BYTES: u64 = 16384;
 const MAX_PACKET_BYTES: usize = 1_048_576;
@@ -333,24 +335,86 @@ fn page(
     )?;
     Ok((Some(packet), next, parsed.complete))
 }
+// A local listener may have a WAN pinned peer even when its bind address is
+// loopback. Peer egress must require the same administrator-owned physical
+// cgroup as the public receiver; authentication alone is not CPU funding.
+fn require_peer_host_budget(
+    source: SocketAddr,
+) -> Result<Option<crate::host_kernel_parent::HostKernelBudget>> {
+    if source.ip().is_loopback() {
+        return Ok(None); // Explicit local developer peer only.
+    }
+    let budget = crate::host_kernel_parent::require_host_kernel_budget(
+        source,
+        Some(crate::host_kernel_parent::FIXED_PUBLIC_KERNEL_PARENT),
+    )?
+    .ok_or("PUBLIC_HOST_KERNEL_REQUIRED")?;
+    budget.verify()?;
+    Ok(Some(budget))
+}
+
 /// Native task/parent/clock checks bracket the immutable owned full proof replay.
 /// A repeated already-admitted exact packet uses the existing durable admission fact.
-fn admit_page(node: &Mutex<Node>, packet: Packet, end: Instant, stop: &AtomicBool) -> Result<bool> {
-    {
+fn admit_page(
+    node: &Mutex<Node>, packet: Packet, end: Instant, stop: &AtomicBool,
+    source: SocketAddr,
+) -> Result<bool> {
+    let host_kernel = require_peer_host_budget(source)?;
+    let cpu = {
+        if let Some(kernel) = &host_kernel {
+            kernel.verify()?;
+        }
         let owner = lock(node, end, stop)?;
+        // The peer is authenticated, not CPU-funded. A pinned peer must
+        // never mint its own allowance or bypass the public service budget.
+        let cpu = owner.public_service_cpu_domain()?;
         if owner
             .check_admission_context(&packet, ingress::now()?)?
             .is_some()
         {
             return Ok(false);
         }
+        cpu
+    };
+    progress(end, stop)?;
+    // Exactly the original service bucket, across identities/listeners and
+    // inbound V3 and outbound peer polling. No new budget or chain authority.
+    let operation = cpu.begin()?;
+    let checkpoint = operation.checkpoint_handle();
+    let native = (|| -> Result<bool> {
+        progress(end, stop)?;
+        checkpoint.checkpoint()?;
+        let checked = WorkCheckedPacket::verify_with_progress(packet, &mut |_| {
+            progress(end, stop)?;
+            checkpoint.checkpoint()
+        })?;
+        progress(end, stop)?;
+        checkpoint.checkpoint()?;
+        let mut owner = lock(node, end, stop)?;
+        let check_execution = |_stage: ExecutionProgress| {
+            progress(end, stop)?;
+            checkpoint.checkpoint()
+        };
+        let control = ExecutionControl::new(&check_execution, operation.worker_accounting());
+        owner.admit_work_checked_with_control(checked, ingress::now()?, &control)?;
+        Ok(true)
+    })();
+    // Success, false transcript, cancellation, M06 failures and panics cannot
+    // invent a refund. The operation owns all actual scoped workers and
+    // settles even after a native rejection. Post-commit accounting cannot
+    // retroactively invalidate an already admitted fact.
+    let settlement = operation.finish();
+    if settlement.accounting_unavailable {
+        // Preserve any durable native block, but an outbound poller cannot
+        // report complete historical synchronization with UNKNOWN CPU.
+        return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
     }
-    progress(end, stop)?;
-    let checked = WorkCheckedPacket::verify(packet)?; // outside the only owner lock
-    progress(end, stop)?;
-    let mut owner = lock(node, end, stop)?;
-    owner.admit_work_checked(checked, ingress::now()?)?;
-    Ok(true)
+    if let Some(kernel) = &host_kernel {
+        // A completed native acceptance is retained even if the Host's
+        // membership or physical limits fail during the last W1 call.
+        kernel.verify()?;
+    }
+    native
 }
 struct PollContext<'a> {
     node: &'a Mutex<Node>,
@@ -607,7 +671,7 @@ impl Engine {
         };
         let mut verified = false;
         if let Some(packet) = packet {
-            match admit_page(node, packet, end, stop) {
+            match admit_page(node, packet, end, stop, cfg.peers[index].address) {
                 Ok(value) => verified = value,
                 Err(error) => {
                     self.reject(
@@ -765,6 +829,26 @@ where
         let startup_end = started + Duration::from_secs(10);
         let settings = lock(&node, startup_end, &stop)?.settings().clone();
         cfg.validate(&settings)?;
+        // A loopback listener is not an exemption for remote pinned peers.
+        // Check the original fixed kernel parent before any hostile peer RPC.
+        let host_kernels = cfg.peers.iter().map(|peer| {
+            require_peer_host_budget(peer.address)
+        }).collect::<Result<Vec<_>>>()?;
+        // The sibling V3 listener and this poller start concurrently.
+        // Await its original Node CPU binding before any remote history Work;
+        // absent/unknown identity fails closed after the original startup cap.
+        loop {
+            let bound = lock(&node, startup_end, &stop)?.public_service_cpu_domain();
+            match bound {
+                Ok(_) => break,
+                Err(error) if error.is(ErrorCode::OwnerPublicServiceDomainUnbound)
+                    && Instant::now() < startup_end =>
+                {
+                    thread::sleep(Duration::from_millis(2));
+                }
+                Err(error) => return Err(error),
+            }
+        }
         let context = hex::encode(cfg.context()?);
         let policy = cfg.policy()?;
         let end = started + Duration::from_millis(cfg.runtime_ms);
@@ -796,10 +880,18 @@ where
             if Instant::now() >= end || stop.load(Ordering::Acquire) {
                 break;
             }
+            // Per-cycle physical checks supplement, not replace, real W1
+            // CPU-account checks and original OS cgroup enforcement.
+            for kernel in host_kernels.iter().flatten() {
+                kernel.verify()?;
+            }
             cycles += 1;
             match engine.cycle(&poll_context, &mut rpc, &mut observe) {
                 Err(error) if error.is(ErrorCode::PeerPollCancelled) => break,
                 other => other?,
+            }
+            for kernel in host_kernels.iter().flatten() {
+                kernel.verify()?;
             }
             next = Instant::now() + Duration::from_millis(cfg.poll_interval_ms);
         }
@@ -895,6 +987,16 @@ mod tests {
         s: &'a Settings,
         stop: &'a AtomicBool,
     ) -> PollContext<'a> {
+        // A test-only local Node shares one stable original CPU domain for
+        // the entire fixture; production can never mint it here.
+        {
+            let mut owner = node.lock().unwrap();
+            if owner.public_service_cpu_domain().is_err() {
+                let original =
+                    crate::ingress::public_v3::ServiceMutationCpuDomain::standalone();
+                owner.bind_public_service_cpu_domain(&original).unwrap();
+            }
+        }
         PollContext {
             node,
             cfg,
@@ -903,6 +1005,119 @@ mod tests {
             stop,
         }
     }
+    #[test]
+    fn nonloopback_pinned_peer_cannot_bypass_host_limit_via_loopback_listener() {
+        let local: SocketAddr = "127.0.0.1:19999".parse().unwrap();
+        assert!(require_peer_host_budget(local).unwrap().is_none());
+        let remote: SocketAddr = "192.0.2.10:19999".parse().unwrap();
+        let probe = require_peer_host_budget(remote);
+        assert!(!matches!(probe, Ok(None)), "remote W1 must have a Host owner");
+        if let Err(expected) = probe {
+            let now = ingress::now().unwrap();
+            let settings = Settings::development(Some(now - 100)).unwrap();
+            let cfg = {
+                let mut candidate = config(&settings);
+                candidate.peers[0].address = remote;
+                candidate
+            };
+            let dir = tempfile::tempdir().unwrap();
+            let node = Arc::new(Mutex::new(
+                Node::open(dir.path(), settings.clone(), 2).unwrap(),
+            ));
+            let initial = node.lock().unwrap().stats().unwrap();
+            let stop = Arc::new(AtomicBool::new(false));
+            let denied = run_pinned_peer_polling(
+                node.clone(), cfg, identity(72), stop.clone(), |_| Ok(())
+            ).unwrap_err();
+            assert_eq!(denied.to_string(), expected.to_string());
+            assert!(stop.load(Ordering::Acquire));
+            assert_eq!(node.lock().unwrap().stats().unwrap(), initial);
+        }
+    }
+
+    #[test]
+    fn pinned_peer_requires_the_existing_service_domain_before_full_work() {
+        let now = ingress::now().unwrap();
+        let settings = Settings::development(Some(now - 100)).unwrap();
+        let dir = tempfile::tempdir().unwrap();
+        let node = Node::open(dir.path(), settings.clone(), 2).unwrap();
+        let packet = node.make(
+            settings.genesis(),
+            vec![],
+            development_public(0).unwrap(),
+            settings.genesis_time() + 10,
+            4096,
+        ).unwrap();
+        let before = node.stats().unwrap();
+        let guarded = Mutex::new(node);
+        let stop = AtomicBool::new(false);
+        let refused = admit_page(
+            &guarded,
+            packet,
+            Instant::now() + Duration::from_secs(10),
+            &stop,
+            "127.0.0.1:1".parse().unwrap(),
+        ).unwrap_err();
+        assert_eq!(refused.to_string(), "OWNER_PUBLIC_SERVICE_DOMAIN_UNBOUND");
+        assert_eq!(guarded.lock().unwrap().stats().unwrap(), before);
+        assert_eq!(guarded.lock().unwrap().read_active().unwrap().0, settings.genesis());
+    }
+
+    #[test]
+    fn pinned_peer_false_product_spends_the_same_real_cpu_bucket_without_chainwork() {
+        let now = ingress::now().unwrap();
+        let settings = Settings::development(Some(now - 100)).unwrap();
+        let dir = tempfile::tempdir().unwrap();
+        let node = Node::open(dir.path(), settings.clone(), 2).unwrap();
+        let mut packet = node.make(
+            settings.genesis(),
+            vec![],
+            development_public(0).unwrap(),
+            settings.genesis_time() + 10,
+            4096,
+        ).unwrap();
+        // Corrupt only C; keep the canonical challenge, A/B, task and winning
+        // W1 transcript unchanged so this forces a full late Product refusal.
+        let offset = 4 + 2 * pon_work::CELLS * 4;
+        let prior = u32::from_le_bytes(packet.proof[offset..offset + 4].try_into().unwrap());
+        let forged = ((u128::from(prior) + 1) % pon_work::Q) as u32;
+        packet.proof[offset..offset + 4].copy_from_slice(&forged.to_le_bytes());
+        assert_eq!(
+            pon_work::verify(
+                packet.header.challenge(),
+                packet.header.work_task,
+                packet.header.target,
+                &packet.proof
+            ).unwrap_err(),
+            pon_work::WorkError::Product
+        );
+        let before = node.stats().unwrap();
+        let guarded = Mutex::new(node);
+        let cpu = crate::ingress::public_v3::ServiceMutationCpuDomain::standalone();
+        guarded.lock().unwrap().bind_public_service_cpu_domain(&cpu).unwrap();
+        assert!(guarded.lock().unwrap().public_service_cpu_domain()
+            .unwrap().shares_domain_with(&cpu));
+        let initial = cpu.observe().unwrap();
+        let stop = AtomicBool::new(false);
+        let refused = admit_page(
+            &guarded,
+            packet,
+            Instant::now() + Duration::from_secs(10),
+            &stop,
+            "127.0.0.1:1".parse().unwrap(),
+        ).unwrap_err();
+        assert_eq!(refused.to_string(), "WORK:Product");
+        let final_state = cpu.observe().unwrap();
+        assert_eq!(final_state.in_flight, 0);
+        assert!(!final_state.accounting_unavailable);
+        // Balance cannot increase above the original full warm burst;
+        // metered intervals and entire settlement belong to this exact
+        // service epoch. Dedicated hardware cost campaigns measure CPU ns.
+        assert!(final_state.stored_credit_ns <= initial.stored_credit_ns);
+        assert_eq!(guarded.lock().unwrap().stats().unwrap(), before);
+        assert_eq!(guarded.lock().unwrap().read_active().unwrap().0, settings.genesis());
+    }
+
     #[test]
     fn config_has_exact_context_finite_limits_and_no_discovery() {
         let settings = Settings::development(Some(1)).unwrap();
@@ -1407,12 +1622,62 @@ mod tests {
         assert_eq!(engine.states[0].failures, 7);
     }
     #[test]
+    fn pinned_polling_stops_on_local_cpu_account_failure_but_not_remote_error_text() {
+        let settings = Settings::development(Some(1)).unwrap();
+        let cfg = config(&settings);
+        let mut engine = Engine::new(&cfg, &settings);
+        let mut observed = 0;
+        let error = engine
+            .reject(
+                0,
+                "native_admission",
+                Error::new(ErrorCode::PublicMutationCpuUnavailable),
+                42,
+                None,
+                &mut |event| {
+                    observed += 1;
+                    assert_eq!(event.kind, "failure_cursor_retained");
+                    Ok(())
+                },
+            )
+            .expect_err("unknown original W1 CPU ownership must stop the poller");
+        assert!(error.is(ErrorCode::PublicMutationCpuUnavailable));
+        assert_eq!(engine.states[0].cursor, settings.genesis());
+        assert_eq!(engine.states[0].failures, 1);
+        assert_eq!(observed, 1);
+        // A malicious signed peer cannot force the entire local runtime to
+        // stop by returning the same text as a LOCAL failure.
+        engine.reject(
+            0,
+            "history",
+            Error::remote("PUBLIC_MUTATION_CPU_UNAVAILABLE"),
+            43,
+            None,
+            &mut |event| {
+                observed += 1;
+                assert_eq!(event.kind, "failure_cursor_retained");
+                Ok(())
+            },
+        ).unwrap();
+        assert_eq!(engine.states[0].failures, 2);
+        assert_eq!(observed, 2);
+    }
+
+    #[test]
     fn normal_zero_progress_runtime_does_not_stop_service_and_observer_error_does() {
         let settings = Settings::development(Some(1)).unwrap();
         let dir = tempfile::tempdir().unwrap();
         let node = Arc::new(Mutex::new(
             Node::open(dir.path(), settings.clone(), 1).unwrap(),
         ));
+        // The direct public function must have the same actual service
+        // domain that a real V3 listener binds before it polls.
+        {
+            let mut owner = node.lock().unwrap();
+            let original =
+                crate::ingress::public_v3::ServiceMutationCpuDomain::standalone();
+            owner.bind_public_service_cpu_domain(&original).unwrap();
+        }
         let mut cfg = config(&settings);
         cfg.runtime_ms = 1;
         let stop = Arc::new(AtomicBool::new(false));

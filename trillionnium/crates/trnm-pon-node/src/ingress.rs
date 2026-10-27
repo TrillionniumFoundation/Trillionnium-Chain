@@ -2109,12 +2109,34 @@ fn call_authenticated_durable_inner(
     Err(Error::authenticated_remote(terminal, error))
 }
 
-pub fn receive_page(
+// The original cgroup v2 parent enforces CPU/memory/tasks continuously in
+// the kernel. Re-reading its boot marker, inode, quotas and current TID at
+// EVERY W1 tile is both unnecessary and an attacker-controlled syscall
+// amplifier. Check at deterministic stage boundaries: no transcript work
+// proceeds for more than 64 tiles without an independent owner recheck.
+fn history_kernel_work_checkpoint(
+    point: trnm_crypto_primitives::pon_work::VerificationProgress,
+) -> bool {
+    use trnm_crypto_primitives::pon_work::VerificationProgress;
+    match point {
+        VerificationProgress::BeforeReplay
+        | VerificationProgress::BeforeProduct
+        | VerificationProgress::BeforeVerifiedWork => true,
+        VerificationProgress::Noise { counter, .. } => counter % 32 == 0,
+        VerificationProgress::MatrixRow { row } => row % 32 == 0,
+        VerificationProgress::TranscriptTile { column, inner, .. } => {
+            column == 0 && inner == 0
+        }
+    }
+}
+
+fn receive_page(
     node: &mut Node,
     page: Page,
     tip: Hash,
     after: Hash,
     clock: u64,
+    mut resource_checkpoint: impl FnMut() -> Result<()>,
 ) -> Result<Hash> {
     ensure(
         page.schema == "pon-native-history-v1"
@@ -2151,14 +2173,86 @@ pub fn receive_page(
         page.next == hex::encode(next) && page.complete == (next == tip),
         "PAGE_COMPLETE",
     )?;
+    // Up to sixteen attacker-controlled W1 proofs fit in one paid History
+    // page. The original physical resource owner must be checked between
+    // every full replay: one check per page is insufficient after a thread
+    // migrates to a different cgroup or the original quotas are changed.
     for packet in &packets {
-        node.admit(packet, clock)?;
+        resource_checkpoint()?;
+        node.admit_with_work_progress(packet, clock, &mut |point| {
+            if history_kernel_work_checkpoint(point) {
+                resource_checkpoint()?;
+            }
+            Ok(())
+        })?;
+        // This can fail *after* durable admission. Preserve the accepted
+        // fact, but never report an entirely successful page/sync.
+        resource_checkpoint()?;
     }
     if page.complete {
+        resource_checkpoint()?;
         node.activate_observed(tip, clock)?;
+        resource_checkpoint()?;
     }
     Ok(next)
 }
+
+/// Public untrusted History import. Unlike the private local parser, this
+/// entry REQUIRES a concrete original source address and checks the existing
+/// fixed, administrator-owned host resource parent around every possible
+/// W1 replay. A caller cannot bypass the guard by calling the addressless
+/// parser from another crate or by supplying a fake already-verified work
+/// token. Only the full native Node determines consensus validity.
+pub fn receive_page_from(
+    node: &mut Node,
+    source: SocketAddr,
+    page: Page,
+    tip: Hash,
+    after: Hash,
+    clock: u64,
+) -> Result<Hash> {
+    let host_kernel = crate::host_kernel_parent::require_for_listener(source)?;
+    if let Some(kernel) = &host_kernel {
+        kernel.verify()?;
+    }
+    let native = receive_page(node, page, tip, after, clock, || {
+        if let Some(kernel) = &host_kernel {
+            kernel.verify()?;
+        }
+        Ok(())
+    });
+    // A completed native admission cannot be undone by a post-verification
+    // host fault. That fault still makes the overall synchronization fail.
+    if let Some(kernel) = &host_kernel {
+        kernel.verify()?;
+    }
+    native
+}
+/// Public V3 History import is untrusted even when a local TCP proxy forwards
+/// remote bytes to 127.0.0.1. Unlike the ordinary explicitly developmental
+/// loopback source wrapper, this path ALWAYS requires the same fixed
+/// administrator-owned cgroup parent. A forged loopback source address cannot
+/// manufacture a resource waiver.
+pub fn receive_public_page_from(
+    node: &mut Node,
+    source: SocketAddr,
+    page: Page,
+    tip: Hash,
+    after: Hash,
+    clock: u64,
+) -> Result<Hash> {
+    let kernel = crate::host_kernel_parent::require_host_kernel_budget(
+        source,
+        Some(crate::host_kernel_parent::FIXED_PUBLIC_KERNEL_PARENT),
+    )?
+    .ok_or("PUBLIC_HOST_KERNEL_REQUIRED")?;
+    kernel.verify()?;
+    let native = receive_page(node, page, tip, after, clock, || kernel.verify());
+    // Never revoke an already-admitted block for a local resource failure.
+    kernel.verify()?;
+    native
+}
+
 pub fn sync_from(
     node: &mut Node,
     address: SocketAddr,
@@ -2167,7 +2261,14 @@ pub fn sync_from(
     page_budget: usize,
 ) -> Result<Hash> {
     ensure((1..=4096).contains(&page_budget), "SYNC_BUDGET")?;
+    // Every WAN page may contain 16 untrusted W1 proofs. The same fixed,
+    // administrator-owned host cgroup used by V3 must already contain this
+    // actual sync thread; no new per-peer budget or consensus authority.
+    let host_kernel = crate::host_kernel_parent::require_for_listener(address)?;
     for _ in 0..page_budget {
+        if let Some(kernel) = &host_kernel {
+            kernel.verify()?;
+        }
         let request = Request::History {
             tip: hex::encode(tip),
             after: hex::encode(after),
@@ -2178,7 +2279,12 @@ pub fn sync_from(
         write_frame(&mut stream, &serde_json::to_vec(&request)?)?;
         let page: Page = serde_json::from_slice(&read_frame(&mut stream)?)?;
         let complete = page.complete;
-        after = receive_page(node, page, tip, after, now()?)?;
+        after = receive_page_from(node, address, page, tip, after, now()?)?;
+        // Resource-counter/membership failure does not roll back any already
+        // admitted native block; it makes this sync result unqualified.
+        if let Some(kernel) = &host_kernel {
+            kernel.verify()?;
+        }
         if complete {
             return Ok(after);
         }
@@ -2200,8 +2306,15 @@ pub fn sync_from_authenticated(
     replay_nonce: &mut u64,
 ) -> Result<Hash> {
     ensure((1..=4096).contains(&page_budget), "SYNC_BUDGET")?;
+    // Every WAN page may contain 16 untrusted W1 proofs. The same fixed,
+    // administrator-owned host cgroup used by V3 must already contain this
+    // actual sync thread; no new per-peer budget or consensus authority.
+    let host_kernel = crate::host_kernel_parent::require_for_listener(address)?;
     let settings = node.settings().clone();
     for _ in 0..page_budget {
+        if let Some(kernel) = &host_kernel {
+            kernel.verify()?;
+        }
         let value = call_authenticated(
             address,
             &Request::History {
@@ -2214,7 +2327,12 @@ pub fn sync_from_authenticated(
         )?;
         let page: Page = serde_json::from_value(value)?;
         let complete = page.complete;
-        after = receive_page(node, page, tip, after, now()?)?;
+        after = receive_page_from(node, address, page, tip, after, now()?)?;
+        // Resource-counter/membership failure does not roll back any already
+        // admitted native block; it makes this sync result unqualified.
+        if let Some(kernel) = &host_kernel {
+            kernel.verify()?;
+        }
         if complete {
             return Ok(after);
         }
@@ -2235,7 +2353,14 @@ pub fn sync_from_authenticated_durable(
     client: &AuthenticatedClient,
 ) -> Result<Hash> {
     ensure((1..=4096).contains(&page_budget), "SYNC_BUDGET")?;
+    // Every WAN page may contain 16 untrusted W1 proofs. The same fixed,
+    // administrator-owned host cgroup used by V3 must already contain this
+    // actual sync thread; no new per-peer budget or consensus authority.
+    let host_kernel = crate::host_kernel_parent::require_for_listener(address)?;
     for _ in 0..page_budget {
+        if let Some(kernel) = &host_kernel {
+            kernel.verify()?;
+        }
         let value = call_authenticated_durable(
             node,
             address,
@@ -2247,7 +2372,12 @@ pub fn sync_from_authenticated_durable(
         )?;
         let page: Page = serde_json::from_value(value)?;
         let complete = page.complete;
-        after = receive_page(node, page, tip, after, now()?)?;
+        after = receive_page_from(node, address, page, tip, after, now()?)?;
+        // Resource-counter/membership failure does not roll back any already
+        // admitted native block; it makes this sync result unqualified.
+        if let Some(kernel) = &host_kernel {
+            kernel.verify()?;
+        }
         if complete {
             return Ok(after);
         }
@@ -2262,6 +2392,268 @@ pub fn sync_from_authenticated_durable(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn history_owner_rechecks_have_bounded_64_tile_gaps_and_no_syscall_per_tile() {
+        use trnm_crypto_primitives::pon_work::VerificationProgress;
+        let mut last = None;
+        let mut count = 0_usize;
+        for row in 0..8 {
+            for column in 0..8 {
+                for inner in 0..8 {
+                    let index = row * 64 + column * 8 + inner;
+                    let selected = history_kernel_work_checkpoint(
+                        VerificationProgress::TranscriptTile { row, column, inner }
+                    );
+                    if selected {
+                        if let Some(previous) = last {
+                            assert!(index - previous <= 64);
+                        }
+                        last = Some(index);
+                        count += 1;
+                    } else if let Some(previous) = last {
+                        assert!(index - previous < 64);
+                    }
+                }
+            }
+        }
+        assert_eq!(count, 8);
+        assert_eq!(last, Some(448));
+        assert!(history_kernel_work_checkpoint(VerificationProgress::BeforeReplay));
+        assert!(history_kernel_work_checkpoint(VerificationProgress::BeforeProduct));
+        assert!(history_kernel_work_checkpoint(VerificationProgress::BeforeVerifiedWork));
+        assert!(history_kernel_work_checkpoint(
+            VerificationProgress::Noise { label: 0, counter: 32 }));
+        assert!(!history_kernel_work_checkpoint(
+            VerificationProgress::Noise { label: 0, counter: 31 }));
+    }
+
+    #[test]
+    fn history_page_resource_checkpoint_fences_each_native_w1_without_chainwork() {
+        let dir = tempfile::tempdir().unwrap();
+        let now = now().unwrap();
+        let settings = crate::Settings::development(Some(now - 100)).unwrap();
+        let mut node = Node::open(dir.path(), settings.clone(), 2).unwrap();
+        let packet = node.make(
+            settings.genesis(),
+            vec![],
+            crate::development_public(0).unwrap(),
+            settings.genesis_time() + 10,
+            4096,
+        ).unwrap();
+        let tip = packet.id().unwrap();
+        let page = Page {
+            schema: "pon-native-history-v1".into(),
+            network: hex::encode(settings.network()),
+            parameters: hex::encode(settings.parameters()),
+            genesis: hex::encode(settings.genesis()),
+            tip: hex::encode(tip),
+            after: hex::encode(settings.genesis()),
+            packets: vec![hex::encode(packet.encode().unwrap())],
+            next: hex::encode(tip),
+            complete: true,
+        };
+        let before = node.stats().unwrap();
+        let mut calls = 0_u64;
+        let failure = receive_page(
+            &mut node, page.clone(), tip, settings.genesis(), now, || {
+                calls += 1;
+                Err("PUBLIC_HOST_KERNEL_LIMITS_CHANGED".into())
+            }
+        ).unwrap_err();
+        assert_eq!(failure.to_string(), "PUBLIC_HOST_KERNEL_LIMITS_CHANGED");
+        assert_eq!(calls, 1, "no W1 replay on first failed resource check");
+        assert_eq!(node.stats().unwrap(), before);
+        assert_eq!(node.read_active().unwrap().0, settings.genesis());
+
+        // A mid-transcript host failure is a typed local cancellation, NOT
+        // WorkError::Transcript and never creates partial Chainwork.
+        let mut expected_position = 0_u64;
+        let mut first_tile_position = None;
+        trnm_crypto_primitives::pon_work::verify_with_progress(
+            packet.header.challenge(),
+            packet.header.work_task,
+            packet.header.target,
+            &packet.proof,
+            &mut |point| {
+                if history_kernel_work_checkpoint(point) {
+                    expected_position += 1;
+                    if first_tile_position.is_none()
+                        && matches!(point, trnm_crypto_primitives::pon_work::VerificationProgress::TranscriptTile { .. })
+                    {
+                        first_tile_position = Some(expected_position);
+                    }
+                }
+                Ok::<(), ()>(())
+            }
+        ).unwrap();
+        let interrupt_at = first_tile_position.unwrap() + 1;
+        calls = 0;
+        let failure = receive_page(
+            &mut node, page.clone(), tip, settings.genesis(), now, || {
+                calls += 1;
+                if calls == interrupt_at {
+                    Err("PUBLIC_HOST_KERNEL_LIMITS_CHANGED".into())
+                } else {
+                    Ok(())
+                }
+            }
+        ).unwrap_err();
+        assert_eq!(failure.to_string(), "PUBLIC_HOST_KERNEL_LIMITS_CHANGED");
+        assert_eq!(calls, interrupt_at);
+        assert_eq!(node.stats().unwrap(), before);
+        assert_eq!(node.read_active().unwrap().0, settings.genesis());
+
+        // The next resource fence triggers AFTER exactly one valid native
+        // W1 is durably admitted. Do not misreport this as complete sync or
+        // retroactively rewrite the accepted block as consensus-invalid.
+        // Count the exact same full native W1 callback progression on this
+        // fixed statement. Reject just after all full replay checkpoints,
+        // never by guessing the number of internal kernel calls.
+        let mut work_checkpoints = 0_u64;
+        trnm_crypto_primitives::pon_work::verify_with_progress(
+            packet.header.challenge(),
+            packet.header.work_task,
+            packet.header.target,
+            &packet.proof,
+            &mut |point| {
+                if history_kernel_work_checkpoint(point) {
+                    work_checkpoints += 1;
+                }
+                Ok::<(), ()>(())
+            }
+        ).unwrap();
+        assert!(work_checkpoints >= 8,
+            "each W1 transcript row tile must retain a physical-owner fence");
+        assert!(work_checkpoints < 64,
+            "do not create a full-cgroup-syscall amplifier per W1 tile");
+        let post_admission_checkpoint = work_checkpoints + 2;
+        calls = 0;
+        let failure = receive_page(
+            &mut node, page, tip, settings.genesis(), now, || {
+                calls += 1;
+                if calls == post_admission_checkpoint {
+                    Err("PUBLIC_HOST_KERNEL_LIMITS_CHANGED".into())
+                } else {
+                    Ok(())
+                }
+            }
+        ).unwrap_err();
+        assert_eq!(failure.to_string(), "PUBLIC_HOST_KERNEL_LIMITS_CHANGED");
+        assert_eq!(calls, post_admission_checkpoint,
+            "every W1 math checkpoint is resource-fenced");
+        assert_eq!(node.read_active().unwrap().0, settings.genesis());
+        assert_eq!(node.parent_height(tip).unwrap(), 1,
+            "already admitted native block is durable but not activated");
+    }
+
+    #[test]
+    fn loopback_proxied_public_history_is_not_exempt_from_fixed_host_budget() {
+        let source: SocketAddr = "127.0.0.1:12345".parse().unwrap();
+        let required = crate::host_kernel_parent::require_host_kernel_budget(
+            source,
+            Some(crate::host_kernel_parent::FIXED_PUBLIC_KERNEL_PARENT),
+        );
+        assert!(!matches!(required, Ok(None)),
+            "public History must not accept a loopback proxy as a budget waiver");
+        if let Err(expected) = required {
+            let dir = tempfile::tempdir().unwrap();
+            let now = now().unwrap();
+            let settings = crate::Settings::development(Some(now - 100)).unwrap();
+            let mut node = Node::open(dir.path(), settings.clone(), 2).unwrap();
+            let initial = node.stats().unwrap();
+            let malformed = Page {
+                schema: String::new(),
+                network: String::new(),
+                parameters: String::new(),
+                genesis: String::new(),
+                tip: String::new(),
+                after: String::new(),
+                packets: vec![],
+                next: String::new(),
+                complete: false,
+            };
+            let result = receive_public_page_from(
+                &mut node, source, malformed, settings.genesis(),
+                settings.genesis(), now,
+            ).unwrap_err();
+            assert_eq!(result.to_string(), expected.to_string());
+            assert_eq!(node.stats().unwrap(), initial);
+            assert_eq!(node.read_active().unwrap().0, settings.genesis());
+        }
+    }
+
+    #[test]
+    fn remote_sync_without_original_host_cgroup_rejects_before_any_network_or_w1() {
+        // Documentation-only network address. If this host really has the
+        // registered fixed cgroup, its owner is tested by the kernel checker.
+        // Otherwise remote history cannot reach a complete W1 verifier.
+        let remote: SocketAddr = "192.0.2.1:12345".parse().unwrap();
+        let budget = crate::host_kernel_parent::require_for_listener(remote);
+        assert!(!matches!(budget, Ok(None)), "remote must never be unowned");
+        if let Err(expected) = budget {
+            let dir = tempfile::tempdir().unwrap();
+            let settings = crate::Settings::development(Some(now().unwrap() - 100)).unwrap();
+            let mut node = Node::open(dir.path(), settings.clone(), 2).unwrap();
+            let original = node.stats().unwrap();
+            let error = sync_from(
+                &mut node,
+                remote,
+                settings.genesis(),
+                settings.genesis(),
+                1,
+            ).unwrap_err();
+            assert_eq!(error.to_string(), expected.to_string());
+            // Public untrusted page API refuses the same unbudgeted source
+            // before it even attempts a page context/W1/State lookup.
+            let unchecked_page = Page {
+                schema: String::new(),
+                network: String::new(),
+                parameters: String::new(),
+                genesis: String::new(),
+                tip: String::new(),
+                after: String::new(),
+                packets: vec![],
+                next: String::new(),
+                complete: false,
+            };
+            let page_error = receive_page_from(
+                &mut node,
+                remote,
+                unchecked_page,
+                settings.genesis(),
+                settings.genesis(),
+                now().unwrap(),
+            ).unwrap_err();
+            assert_eq!(page_error.to_string(), expected.to_string());
+            // Authenticating a remote service is not equivalent to a CPU
+            // budget. Both signed and durable signed sync must refuse before
+            // connecting, same as the unauthenticated remote sync above.
+            let (_, client) = authentication_fixture(&settings);
+            let mut replay_nonce = 1_u64;
+            let auth_error = sync_from_authenticated(
+                &mut node,
+                remote,
+                settings.genesis(),
+                settings.genesis(),
+                1,
+                &client,
+                &mut replay_nonce,
+            ).unwrap_err();
+            assert_eq!(auth_error.to_string(), expected.to_string());
+            let durable_error = sync_from_authenticated_durable(
+                &mut node,
+                remote,
+                settings.genesis(),
+                settings.genesis(),
+                1,
+                &client,
+            ).unwrap_err();
+            assert_eq!(durable_error.to_string(), expected.to_string());
+            assert_eq!(node.stats().unwrap(), original);
+            assert_eq!(node.read_active().unwrap().0, settings.genesis());
+        }
+    }
 
     #[test]
     fn protected_hello_rendezvous_from_reserved_socket_preserves_full_native_admission() {

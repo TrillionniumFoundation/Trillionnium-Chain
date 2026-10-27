@@ -3251,6 +3251,27 @@ impl Node {
         let checked = self.attach_owner_work(WorkCheckedPacket::verify(packet.clone())?, permit)?;
         self.admit_work_checked(checked, observed_now)
     }
+    /// Owned untrusted History importer: preserve Node::admit's full parent,
+    /// task, permit, state and durable admission checks, while allowing the
+    /// original Host resource owner to interrupt W1 at each arithmetic
+    /// checkpoint. This is a LOCAL cancellation callback, never a relation
+    /// error or an alternate W1 verifier/authority.
+    pub(crate) fn admit_with_work_progress(
+        &mut self,
+        packet: &Packet,
+        observed_now: u64,
+        progress: &mut impl FnMut(pon_work::VerificationProgress) -> Result<()>,
+    ) -> Result<Hash> {
+        if let Some(id) = self.check_admission_context(packet, observed_now)? {
+            return Ok(id);
+        }
+        let permit = self.begin_owner_work(packet)?;
+        let checked = self.attach_owner_work(
+            WorkCheckedPacket::verify_with_progress(packet.clone(), progress)?,
+            permit,
+        )?;
+        self.admit_work_checked(checked, observed_now)
+    }
     fn precheck_owner_packet(&self, packet: &Packet) -> Result<()> {
         ensure(
             self.state_backend != StateBackend::PermanentAccountGrowthV2,

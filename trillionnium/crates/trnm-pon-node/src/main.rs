@@ -2078,6 +2078,15 @@ fn run() -> Result<Value> {
             let address = need(&args, "--peer")?
                 .parse()
                 .map_err(|_| Error::from("PEER_ADDRESS"))?;
+            // Public V3 History and authenticated legacy History both carry
+            // arbitrary remote W1 proofs into this existing Node. A WAN sync
+            // must join the SAME fixed kernel parent as the public receiver.
+            // Loopback-only developer sync retains its original behavior.
+            let host_kernel =
+                trnm_pon_node::host_kernel_parent::require_for_listener(address)?;
+            if let Some(kernel) = &host_kernel {
+                kernel.verify()?;
+            }
             let tip = digest(need(&args, "--tip")?)?;
             let after = args
                 .get("--after")
@@ -2085,6 +2094,15 @@ fn run() -> Result<Value> {
                 .transpose()?
                 .unwrap_or(node.settings().genesis());
             if public_profile(&args) {
+                // Public V3 cannot treat loopback as trusted: proxies can
+                // forward untrusted remote W1 traffic to a local port.
+                let public_kernel =
+                    trnm_pon_node::host_kernel_parent::require_host_kernel_budget(
+                        address,
+                        Some(trnm_pon_node::host_kernel_parent::FIXED_PUBLIC_KERNEL_PARENT),
+                    )?
+                    .ok_or("PUBLIC_HOST_KERNEL_REQUIRED")?;
+                public_kernel.verify()?;
                 let pages = number(&args, "--pages", 256)?;
                 if !(1..=4096).contains(&pages) {
                     return Err("SYNC_BUDGET".into());
@@ -2096,6 +2114,7 @@ fn run() -> Result<Value> {
                     if complete {
                         break;
                     }
+                    public_kernel.verify()?;
                     let reply = public_call(
                         &args,
                         &ingress::Request::History {
@@ -2112,7 +2131,10 @@ fn run() -> Result<Value> {
                     }
                     let page: ingress::Page = serde_json::from_value(reply.value)?;
                     complete = page.complete;
-                    cursor = ingress::receive_page(&mut node, page, tip, cursor, ingress::now()?)?;
+                    cursor = ingress::receive_public_page_from(
+                        &mut node, address, page, tip, cursor, ingress::now()?,
+                    )?;
+                    public_kernel.verify()?;
                 }
                 if !complete {
                     return Err(format!(
@@ -2235,9 +2257,21 @@ fn run() -> Result<Value> {
                     // Existing root-provisioned cgroup v2 parent: the actual
                     // kernel, not another local counter, enforces aggregate
                     // CPU/memory/task ceilings across independent processes.
+                    // Outbound pinned History from a real WAN peer is
+                    // untrusted W1 work even when this listener is loopback.
+                    // Demand the SAME immutable root-provisioned Host parent
+                    // at CLI startup rather than starting an unbudgeted server.
+                    let polling_wan = polling.as_ref().is_some_and(|p| {
+                        p.peers.iter().any(|peer| !peer.address.ip().is_loopback())
+                    });
+                    let host_parent = if polling_wan {
+                        Some(trnm_pon_node::host_kernel_parent::FIXED_PUBLIC_KERNEL_PARENT)
+                    } else {
+                        args.get("--host-kernel-parent").map(String::as_str)
+                    };
                     let host_kernel = host_public_guard::require_host_kernel_budget(
                         listener.local_addr()?,
-                        args.get("--host-kernel-parent").map(String::as_str),
+                        host_parent,
                     )?;
                     // Host counters aggregate ALL child processes of this same
                     // parent; never interpret them as one client's paid CPU.
