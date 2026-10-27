@@ -169,3 +169,15 @@ their current GitHub-source Rust/Python execution is not claimed here.
 ### Strict-schema and durable-path boundary
 
 The bounded Q4 research outbox now rejects special SQLite in-memory/URI targets and checks full canonical table DDL on every writer/audit/status snapshot. Same-name tables with weakened uniqueness/nullability constraints cannot support a lost-ACK dispatch fence, even if original row bytes and digest-chain values look unchanged. This does not grant signed renewal or an external NotDispatched certificate.
+
+### Bounded durable-field readback (2026-10-27)
+
+The research Q4 owner checks persisted SQLite TEXT/BLOB lengths against a
+4096-byte per-column limit **before** materializing historical intents or
+events. The check runs in the same snapshot as original dispatch-fence replay.
+It also checks configured event/intent counts before reading full rows.
+Oversized persistent intent, event and metadata controls must refuse hot
+status, dispatch, prepare and cold reopen without new writes. Small malformed
+records preserve their original digest and wire error classifications. This is
+NOT a physical DB/WAL/RSS quota, native signer or NotDispatched certificate;
+P0-B and independent P2 remain OPEN.
