@@ -123,3 +123,7 @@ upstream auditing; self-consistent forged metadata, W1 proofs or projection
 hashes cannot be authenticated by this research database. SQLite file-path race
 and physical power-cut isolation are still unqualified. Native M07/M08 custody,
 versioned consensus ASERT acceptance and activation remain **OPEN**.
+
+### Strict-schema readback boundary
+
+The research `ShadowJournal.get` read API now performs the same immutable context and canonical table-DDL check as the native-independent writer/audit boundary before returning a locally hash-matching header. A foreign schema or changed context invalidates even an unchanged row's research readback. This is not independent W1, target or fork-choice authority.

@@ -204,6 +204,9 @@ class ShadowJournal:
 
     def get(self, block_id: bytes) -> ShadowHeader:
         _id(block_id, 'block_id')
+        # A hash-consistent header in a foreign-schema or changed-context
+        # journal must not be returned as a trustworthy research readback.
+        self._check_context_snapshot()
         result = self.db.execute('SELECT parent_id,height,canonical,digest '
                                  'FROM daa_shadow_headers_v1 WHERE block_id=?',
                                  (block_id,)).fetchone()

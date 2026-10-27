@@ -165,3 +165,7 @@ rather than substituting `EVENT_DIGEST`, while still detecting corrupt
 nonterminal earlier history before any new write. Existing positive, fault
 injection and two newly added damaged-prefix tests remain the named selectors;
 their current GitHub-source Rust/Python execution is not claimed here.
+
+### Strict-schema and durable-path boundary
+
+The bounded Q4 research outbox now rejects special SQLite in-memory/URI targets and checks full canonical table DDL on every writer/audit/status snapshot. Same-name tables with weakened uniqueness/nullability constraints cannot support a lost-ACK dispatch fence, even if original row bytes and digest-chain values look unchanged. This does not grant signed renewal or an external NotDispatched certificate.

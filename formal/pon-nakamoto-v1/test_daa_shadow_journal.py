@@ -46,6 +46,8 @@ class ShadowJournalTests(unittest.TestCase):
             with self.assertRaisesRegex(JournalError, 'DATABASE_SCHEMA_DRIFT'):
                 journal.append(first, packet)
             with self.assertRaisesRegex(JournalError, 'DATABASE_SCHEMA_DRIFT'):
+                journal.get(first.block_id)
+            with self.assertRaisesRegex(JournalError, 'DATABASE_SCHEMA_DRIFT'):
                 journal.activate(GEN, GEN)
             with self.assertRaisesRegex(JournalError, 'DATABASE_SCHEMA_DRIFT'):
                 journal.audit()
@@ -326,6 +328,8 @@ class ShadowJournalTests(unittest.TestCase):
                             (sha(b'foreign-network-context'),))
             with self.assertRaisesRegex(JournalError, 'DATABASE_CONTEXT'):
                 journal.append(another, packet2)
+            with self.assertRaisesRegex(JournalError, 'DATABASE_CONTEXT'):
+                journal.get(first.block_id)
             with self.assertRaisesRegex(JournalError, 'DATABASE_CONTEXT'):
                 journal.activate(first.block_id, GEN)
             with self.assertRaisesRegex(JournalError, 'DATABASE_CONTEXT'):
