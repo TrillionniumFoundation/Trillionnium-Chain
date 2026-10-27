@@ -65,6 +65,15 @@ proof. Even a signed remote peer can submit expensive bad transcripts.
   invalid C from loopback port A is rejected, the exact corresponding
   valid statement from port B still commits under the identical Node CPU
   domain, then an incompatible duplicate C cannot replace it.
+- `ingress::tests::four_distinct_ticket_valid_false_history_traces_never_obtain_work`:
+  construct four different fake transcript digests directly by SHA256
+  ticket search under one honest fixed Header/Task/Target (the honest
+  source packet is a separate positive control). Every false claim
+  passes the cheap statement precheck, is rejected as WORK:Transcript
+  after complete mathematical verification, consumes the identical
+  Node CPU domain across changed source ports, and leaves no change in
+  live State or confirmed work. The original honest proof must still
+  be admitted after those refusals.
 - `ingress::tests::unclean_public_epoch_cannot_mint_fresh_remote_history_credit`:
   reject a new entitlement after the original public epoch is marked
   unclean.
