@@ -507,6 +507,30 @@ pub(crate) fn verify_catalog(
         PolicyError::ExternalContext,
     )?;
     let permission = permit.allocation.claim();
+    verify_catalog_bound(
+        &inputs.materials,
+        inputs.expected_uid,
+        &permit.view.body.declared_binding,
+        permission.allocation.material_bytes,
+        permission.allocation.da_bytes,
+        &|| {
+            permit.progress()?;
+            progress()
+        },
+    )
+}
+
+/// The immutable material reader does not create authority. Each owner must
+/// supply an already verified binding, reserved limits and its paid checkpoint.
+pub(crate) fn verify_catalog_bound(
+    materials: &[MaterialInput],
+    expected_uid: u32,
+    binding: &DeclaredBinding,
+    material_limit: u64,
+    received_limit: u64,
+    progress: &impl Fn() -> Result<()>,
+) -> Result<HeldCatalog> {
+    progress()?;
     const ROLES: [&str; 6] = [
         "activation",
         "bootstrap",
@@ -515,14 +539,11 @@ pub(crate) fn verify_catalog(
         "model",
         "spec",
     ];
-    check(
-        inputs.materials.len() == ROLES.len(),
-        PolicyError::NativeBinding,
-    )?;
+    check(materials.len() == ROLES.len(), PolicyError::NativeBinding)?;
     let mut catalog = b"TRNM-RESTRICTED-NODE-CATALOG1".to_vec();
     let mut total = 0u64;
     let mut held_rows = Vec::new();
-    for (row, role) in inputs.materials.iter().zip(ROLES) {
+    for (row, role) in materials.iter().zip(ROLES) {
         check(
             row.role == role && row.path.is_absolute() && row.bytes > 0,
             PolicyError::NativeBinding,
@@ -530,16 +551,14 @@ pub(crate) fn verify_catalog(
         hex_id(&row.sha256, 32)?;
         total = total.checked_add(row.bytes).ok_or(PolicyError::Budget)?;
         check(
-            total <= 512 << 20
-                && total <= permission.allocation.material_bytes
-                && total <= permission.allocation.da_bytes,
+            total <= 512 << 20 && total <= material_limit && total <= received_limit,
             PolicyError::Budget,
         )?;
         let before = io(fs::symlink_metadata(&row.path))?;
         check(
             before.is_file()
                 && before.nlink() == 1
-                && before.uid() == inputs.expected_uid
+                && before.uid() == expected_uid
                 && before.mode() & 0o022 == 0
                 && before.len() == row.bytes,
             PolicyError::NativeBinding,
@@ -557,7 +576,6 @@ pub(crate) fn verify_catalog(
         let mut buffer = [0u8; 65_536];
         let mut count = 0u64;
         loop {
-            permit.progress()?;
             progress()?;
             let n = io(file.read(&mut buffer))?;
             if n == 0 {
@@ -592,13 +610,13 @@ pub(crate) fn verify_catalog(
         )?;
         if role == "model" {
             check(
-                row.sha256 == permit.view.body.declared_binding.task.model_material,
+                row.sha256 == binding.task.model_material,
                 PolicyError::NativeBinding,
             )?;
         }
         if role == "input" {
             check(
-                row.sha256 == permit.view.body.declared_binding.task.input_material,
+                row.sha256 == binding.task.input_material,
                 PolicyError::NativeBinding,
             )?;
         }
@@ -608,7 +626,7 @@ pub(crate) fn verify_catalog(
         held_rows.push((row.path.clone(), file, same_meta_continuous(&before)));
     }
     check(
-        sha(&catalog) == permit.view.body.declared_binding.task.full_material_catalog,
+        sha(&catalog) == binding.task.full_material_catalog,
         PolicyError::NativeBinding,
     )?;
     Ok(HeldCatalog {

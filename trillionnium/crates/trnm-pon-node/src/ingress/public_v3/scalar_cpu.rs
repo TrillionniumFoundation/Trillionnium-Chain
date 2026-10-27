@@ -1052,6 +1052,16 @@ impl ServiceMutationCpuDomain {
 /// Consume an outside-pinned known clean cold-close token. This never starts a
 /// fresh burst: only the original time refill can create new volatile credit.
 impl ServiceMutationCpuDomain {
+    /// A new V6 epoch is backed by a durable full predebit and an externally
+    /// pinned journal with no unresolved prior process. It earns the ORIGINAL
+    /// credit from zero; this token does not forgive an unknown old interval.
+    pub(crate) fn from_history_effect_v6_epoch(
+        _checkpoint: crate::store::history_effect_v6::VerifiedEpoch,
+    ) -> Self {
+        Self {
+            budget: Arc::new(Mutex::new(PaidMutationCpuBudget::cold_start())),
+        }
+    }
     pub(crate) fn from_clean_continuous_restart(
         _checkpoint: crate::operator_continuous_history::VerifiedCleanRestart,
     ) -> Self {

@@ -88,7 +88,9 @@ fn backend_name(backend: StateBackend) -> Result<&'static str> {
     match backend {
         StateBackend::Legacy => Ok("legacy"),
         StateBackend::AuthenticatedV1 => Ok("authenticated-v1"),
-        StateBackend::PermanentAccountGrowthV2 => Err("GROWTH_REHEARSAL_SOURCE_PROFILE".into()),
+        StateBackend::PermanentAccountGrowthV2 | StateBackend::HistoryEffectV6 => {
+            Err("GROWTH_REHEARSAL_SOURCE_PROFILE".into())
+        }
     }
 }
 fn schema_id() -> Hash {
@@ -349,6 +351,7 @@ fn read_only_archive(directory: &Path, settings: Settings, backend: StateBackend
         owner_policy: None,
         mining_owner: None,
         continuous_owner: None,
+        history_effect_owner: None,
         public_service_cpu: None,
         public_service_epoch_listeners: 0,
         public_service_epoch_unknown: false,

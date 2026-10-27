@@ -12,7 +12,7 @@ use std::sync::{
     Arc, Mutex,
 };
 use trnm_protocol::pon_wire::Envelope;
-mod history_import;
+pub(super) mod history_import;
 mod history_recovery;
 pub use history_recovery::{ContinuousHistoryRecovery, HistoryRecoverySelection};
 fn continuous_error(e: crate::operator_task_policy::PolicyError) -> Error {
@@ -284,7 +284,7 @@ impl ContinuousEpochCancellation {
             .is_ok())
     }
 }
-fn check_actual_task_fields(
+pub(super) fn check_actual_task_fields(
     task: &crate::operator_task_policy::Task,
     purpose: TaskPurpose,
     model: Hash,
