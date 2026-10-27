@@ -1,0 +1,46 @@
+{
+  "schema": "pon-pure-campaign-environment-disclosure-v1",
+  "measured_source_commit": "a26623359d01ba6b9429726f3b05cb2e4145d4e6",
+  "campaigns_sequential_with_each_other": true,
+  "exclusive_host": false,
+  "host_contention_controlled": false,
+  "observations": [
+    {
+      "source": "parent agent report",
+      "activity": "RISC0 host release LTO",
+      "approximate_utc_interval": "2026-10-27 08:44 to 08:52",
+      "timing_precision": "approximate, not a machine-recorded campaign interval"
+    },
+    {
+      "source": "parent agent report",
+      "activity": "light root source checks and cargo fmt",
+      "timing_precision": "concurrent work disclosed; exact intervals not captured"
+    },
+    {
+      "source": "parent agent live notification during cost-long",
+      "activity": "root strict Clippy for two packages, one build job",
+      "session": 56723,
+      "timing_precision": "no exact start/end captured"
+    },
+    {
+      "source": "parent agent report",
+      "activity": "RISC0 guest optimization rebuild was being prepared after host LTO",
+      "timing_precision": "do not assume absent without a controlled host trace"
+    }
+  ],
+  "cpu_observation_scope": "Process CPU for producer cohorts; scoped thread CPU for ingress sender/receiver intervals. Excludes other processes but does not eliminate shared cache, frequency, memory or scheduling effects.",
+  "capture_memory_scope": "The historical capture key child_max_rss_kib is getrusage(RUSAGE_CHILDREN).ru_maxrss after the child, a high-water value that may also include earlier reaped git/rustc preflight children; it is not an isolated per-child wait4 RSS proof.",
+  "timing_claims": {
+    "stable_speedup_proved": false,
+    "confidence_interval_estimated": false,
+    "energy_measured": false,
+    "economic_cost_lower_bound_proved": false,
+    "hardware_authenticated": false
+  },
+  "qualification": {
+    "production": false,
+    "work_hardness": false,
+    "public_fairness": false,
+    "useful_model_work": false
+  }
+}
