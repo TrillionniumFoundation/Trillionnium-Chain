@@ -1,14 +1,20 @@
 //! Optional exact W1 mathematical rejection cache. No acceptance/authority cache.
-//! A fresh forged trace still incurs full W1 replay; this protects ONLY exact
-//! repeated bogus mathematical statements in the same local receiver epoch.
+//! New forged traces still each incur full W1 replay. Exact simultaneous
+//! forgeries share one pending replay; unrelated colliding inputs NEVER wait.
+//! This is optional local work conservation, not an admission cost floor.
 use super::{
     hash, verify_with_progress, Hash, VerificationError, VerificationProgress, VerifiedWork,
     WorkError, PROFILE,
 };
 use std::{
-    sync::Mutex,
+    sync::{
+        atomic::{AtomicU64, Ordering},
+        Condvar, Mutex,
+    },
     time::{Duration, Instant},
 };
+
+const WAIT_POLL: Duration = Duration::from_millis(5);
 
 #[derive(Clone, Copy)]
 struct InvalidFact {
@@ -17,17 +23,45 @@ struct InvalidFact {
     expires: Instant,
 }
 
-/// Immutable negative mathematical facts only. Every caller must separately
-/// recheck current parent, eligibility, expected target, time and body state.
-/// The optional cache neither constructs VerifiedWork nor provides a CPU quota.
-pub struct RejectionCache {
-    slots: Mutex<Vec<Option<InvalidFact>>>,
-    lifetime: Duration,
+enum State {
+    Empty,
+    Computing(Hash),
+    Invalid(InvalidFact),
+}
+struct Slot {
+    state: Mutex<State>,
+    changed: Condvar,
 }
 
+/// Local observations only. A replay count is not Chainwork or consensus
+/// evidence; waits are non-CPU scheduling observations.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub struct RejectionCacheCounters {
+    pub started_replays: u64,
+    pub exact_hits: u64,
+    pub wait_polls: u64,
+    pub collision_bypasses: u64,
+}
+
+/// A finite direct-mapped negative mathematical fact cache.
+/// An exact in-flight proof has one replay owner; distinct proofs are never
+/// serialized by a hash-index collision. Each caller retains its own deadline,
+/// cancellation and already-acquired ingress CPU reservation.
+pub struct RejectionCache {
+    slots: Box<[Slot]>,
+    lifetime: Duration,
+    started_replays: AtomicU64,
+    exact_hits: AtomicU64,
+    wait_polls: AtomicU64,
+    collision_bypasses: AtomicU64,
+}
+fn count(value: &AtomicU64) {
+    let _ = value.fetch_update(Ordering::Relaxed, Ordering::Relaxed, |n| {
+        Some(n.saturating_add(1))
+    });
+}
 impl RejectionCache {
-    /// A finite direct-mapped cache is deliberately not a second block registry.
-    /// No caller ID, header height or work score grants priority or authority.
+    /// A finite optional cache is never a second block registry or peer budget.
     pub fn new(slots: usize, lifetime: Duration) -> Option<Self> {
         if !(1..=256).contains(&slots)
             || lifetime.is_zero()
@@ -36,9 +70,27 @@ impl RejectionCache {
             return None;
         }
         Some(Self {
-            slots: Mutex::new(vec![None; slots]),
+            slots: (0..slots)
+                .map(|_| Slot {
+                    state: Mutex::new(State::Empty),
+                    changed: Condvar::new(),
+                })
+                .collect(),
             lifetime,
+            started_replays: AtomicU64::new(0),
+            exact_hits: AtomicU64::new(0),
+            wait_polls: AtomicU64::new(0),
+            collision_bypasses: AtomicU64::new(0),
         })
+    }
+
+    pub fn counters(&self) -> RejectionCacheCounters {
+        RejectionCacheCounters {
+            started_replays: self.started_replays.load(Ordering::Relaxed),
+            exact_hits: self.exact_hits.load(Ordering::Relaxed),
+            wait_polls: self.wait_polls.load(Ordering::Relaxed),
+            collision_bypasses: self.collision_bypasses.load(Ordering::Relaxed),
+        }
     }
 
     fn key(challenge: Hash, task: Hash, target: Hash, bytes: &[u8]) -> Hash {
@@ -46,30 +98,6 @@ impl RejectionCache {
             b"w1-exact-invalid-math-v1",
             &[PROFILE.as_bytes(), &challenge, &task, &target, bytes],
         )
-    }
-
-    fn hit(&self, key: Hash) -> Option<WorkError> {
-        let entries = self.slots.lock().ok()?;
-        let i = u64::from_le_bytes(key[..8].try_into().ok()?) as usize % entries.len();
-        entries[i]
-            .filter(|entry| entry.key == key && Instant::now() < entry.expires)
-            .map(|entry| entry.error)
-    }
-
-    fn insert(&self, key: Hash, error: WorkError) {
-        if !matches!(error, WorkError::Transcript | WorkError::Product) {
-            return;
-        }
-        // Poisoning disables cache reuse, never mathematical verification.
-        if let Ok(mut entries) = self.slots.lock() {
-            let i = (u64::from_le_bytes(key[..8].try_into().expect("32-byte key")) as usize)
-                % entries.len();
-            entries[i] = Some(InvalidFact {
-                key,
-                error,
-                expires: Instant::now() + self.lifetime,
-            });
-        }
     }
 
     pub fn verify_with_progress<E>(
@@ -81,18 +109,143 @@ impl RejectionCache {
         progress: &mut impl FnMut(VerificationProgress) -> Result<(), E>,
     ) -> Result<VerifiedWork, VerificationError<E>> {
         let key = Self::key(challenge, expected_task, target, proof);
-        if let Some(error) = self.hit(key) {
-            // A cached error is only a performance hint. Callers must still be
-            // able to cancel, and must have checked present branch authority.
-            progress(VerificationProgress::BeforeReplay)
-                .map_err(VerificationError::Cancelled)?;
-            return Err(VerificationError::Relation(error));
+        let index = u64::from_le_bytes(key[..8].try_into().expect("32-byte SHA-256 key"))
+            as usize
+            % self.slots.len();
+        let slot = &self.slots[index];
+
+        loop {
+            let mut state = match slot.state.lock() {
+                Ok(locked) => locked,
+                Err(_) => {
+                    // A poisoned OPTIONAL cache is not mathematical-invalid
+                    // Work and must never mint success or prevent full replay.
+                    return verify_with_progress(
+                        challenge,
+                        expected_task,
+                        target,
+                        proof,
+                        progress,
+                    );
+                }
+            };
+            match &*state {
+                State::Invalid(fact)
+                    if fact.key == key && Instant::now() < fact.expires =>
+                {
+                    let error = fact.error;
+                    drop(state);
+                    progress(VerificationProgress::BeforeReplay)
+                        .map_err(VerificationError::Cancelled)?;
+                    count(&self.exact_hits);
+                    // Only the unchanged full verifier may ever mint
+                    // VerifiedWork; this fast path returns a late negative fact.
+                    return Err(VerificationError::Relation(error));
+                }
+                State::Computing(current) if *current == key => {
+                    // No caller callback or arithmetic under the cache lock.
+                    drop(state);
+                    progress(VerificationProgress::BeforeReplay)
+                        .map_err(VerificationError::Cancelled)?;
+                    // Recheck after reacquiring: the leader may have completed.
+                    let locked = match slot.state.lock() {
+                        Ok(locked) => locked,
+                        Err(_) => {
+                            return verify_with_progress(
+                                challenge,
+                                expected_task,
+                                target,
+                                proof,
+                                progress,
+                            )
+                        }
+                    };
+                    if matches!(&*locked, State::Computing(active) if *active == key) {
+                        count(&self.wait_polls);
+                        // Poll only the caller's existing cancellation/deadline
+                        // callback; this creates no new TTL, worker or CPU credit.
+                        match slot.changed.wait_timeout(locked, WAIT_POLL) {
+                            Ok((guard, _)) => drop(guard),
+                            Err(_) => {
+                                return verify_with_progress(
+                                    challenge,
+                                    expected_task,
+                                    target,
+                                    proof,
+                                    progress,
+                                )
+                            }
+                        }
+                    }
+                }
+                State::Computing(_) => {
+                    // Different statements have distinct relation validity.
+                    // A malicious slot-index collision cannot stall an honest
+                    // independent proof behind an attacker-controlled leader.
+                    drop(state);
+                    count(&self.collision_bypasses);
+                    return verify_with_progress(
+                        challenge,
+                        expected_task,
+                        target,
+                        proof,
+                        progress,
+                    );
+                }
+                State::Empty | State::Invalid(_) => {
+                    *state = State::Computing(key);
+                    drop(state);
+                    let mut owner = Computing { slot, key };
+                    count(&self.started_replays);
+                    let result = verify_with_progress(
+                        challenge,
+                        expected_task,
+                        target,
+                        proof,
+                        progress,
+                    );
+                    if let Err(VerificationError::Relation(error)) = &result {
+                        if matches!(error, WorkError::Transcript | WorkError::Product) {
+                            owner.publish(*error, self.lifetime);
+                        }
+                    }
+                    // Valid work, cheap relation errors, cancellation, a
+                    // poisoned lock or a panic must not publish a negative
+                    // mathematical verdict. Drop wakes every existing waiter.
+                    drop(owner);
+                    return result;
+                }
+            }
         }
-        let result = verify_with_progress(challenge, expected_task, target, proof, progress);
-        if let Err(VerificationError::Relation(error)) = &result {
-            self.insert(key, *error);
+    }
+}
+
+struct Computing<'a> {
+    slot: &'a Slot,
+    key: Hash,
+}
+impl Computing<'_> {
+    fn publish(&mut self, error: WorkError, lifetime: Duration) {
+        if let Ok(mut state) = self.slot.state.lock() {
+            if matches!(&*state, State::Computing(active) if *active == self.key) {
+                *state = State::Invalid(InvalidFact {
+                    key: self.key,
+                    error,
+                    expires: Instant::now() + lifetime,
+                });
+            }
         }
-        result
+        self.slot.changed.notify_all();
+    }
+}
+impl Drop for Computing<'_> {
+    fn drop(&mut self) {
+        if let Ok(mut state) = self.slot.state.lock() {
+            if matches!(&*state, State::Computing(active) if *active == self.key) {
+                *state = State::Empty;
+            }
+        }
+        self.slot.changed.notify_all();
     }
 }
 
