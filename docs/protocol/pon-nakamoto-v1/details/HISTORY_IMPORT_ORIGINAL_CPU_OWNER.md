@@ -43,11 +43,11 @@ proof. Even a signed remote peer can submit expensive bad transcripts.
    the existing owner is marked unavailable. If a block was already
    committed before an unknown settlement, no false rollback or
    automatic replay authority is created.
-4. Page-complete native activation, including possible chain switching,
+5. Page-complete native activation, including possible chain switching,
    gets its own original CPU reservation. This is a worker-thread
    metering interval, NOT guaranteed preemption inside every deep
    SQLite/state/root primitive.
-5. The existing exact canonical page, parent, task, target and BlockId
+6. The existing exact canonical page, parent, task, target and BlockId
    checks remain mandatory; a locally full queue or exhausted CPU
    returns a local capacity error and does NOT mark a possibly valid
    historical packet as consensus-invalid.
