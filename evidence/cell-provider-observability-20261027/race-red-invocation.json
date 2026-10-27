@@ -1,0 +1,27 @@
+{
+  "scope": "actual native M09 lib test, locked 21e graph; original serving semantics plus test-only completion barrier; not batch003 attribution",
+  "command": [
+    "cargo",
+    "test",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--locked",
+    "--offline",
+    "-j",
+    "1",
+    "-p",
+    "trnm-data-availability",
+    "--lib",
+    "completed_after_reap_before_accept_reuses_slot_without_a_queue",
+    "--",
+    "--nocapture"
+  ],
+  "source_base": "21e3ccb5b7e5f3e60cc7e79db676e9708bea3a59",
+  "source_sha256": {
+    "trillionnium/crates/trnm-data-availability/src/cell/network/serving.rs": "2cf448e17a6b522a02c8b8e22032dcc47159c6e0666d664d164fbe12bb22a12c",
+    "trillionnium/crates/trnm-data-availability/src/cell/network/serving/tests.rs": "02edc50c15a00f9a11e8236513ccc6c97a89793c47ba4363fbebf7ac9c61a628",
+    "trillionnium/Cargo.lock": "3707ed772a9fd851638dca36e5b2472ac0657de65754480c448d3078107d9ff9"
+  },
+  "CARGO_TARGET_DIR": "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target",
+  "CARGO_HOME": "/workspace/scratch/301262829a43/pon-build-inputs/native-cargo-home"
+}

@@ -17,7 +17,6 @@ import hashlib
 import json
 import os
 from pathlib import Path
-import selectors
 import subprocess
 import time
 
@@ -45,6 +44,95 @@ def remaining_fetch_budget(deadline: float) -> tuple[float, int, int]:
     if overall_ms < 10:
         raise TimeoutError("original aggregate transfer window is below the 10ms minimum request deadline")
     return remaining, overall_ms, min(2000, overall_ms)
+
+
+def wait_for_provider_listener(server: subprocess.Popen, stdout_path: Path,
+                               timeout: float = 5.0) -> str:
+    """Read the first complete line from the already durable raw stdout stream.
+
+    The provider writes directly to a file, never a pipe that can be lost on an
+    exception or fill while the consumer runs. This is an announcement wait,
+    not a connection retry or additional transfer window.
+    """
+    deadline = time.monotonic() + timeout
+    line = bytearray()
+    with stdout_path.open("rb") as stream:
+        while True:
+            piece = stream.readline(65_537 - len(line))
+            line.extend(piece)
+            if len(line) > 65_536:
+                raise ValueError("finite producer listener announcement exceeds 65536 bytes")
+            if line.endswith(b"\n"):
+                announcement = json.loads(line)
+                if (not isinstance(announcement, dict)
+                        or announcement.get("schema") != "trnm.cell.listen.v1"
+                        or not isinstance(announcement.get("address"), str)):
+                    raise ValueError("finite producer listener announcement has an unknown shape")
+                return announcement["address"]
+            if server.poll() is not None:
+                raise RuntimeError("finite producer exited before a complete listener announcement")
+            remaining = deadline - time.monotonic()
+            if remaining <= 0:
+                raise TimeoutError("finite producer did not announce its listener")
+            time.sleep(min(0.01, remaining))
+
+
+def retain_provider_terminal(server: subprocess.Popen | None, output: Path,
+                             command: list[str] | None,
+                             cleanup_timeout: float = 5.0) -> dict:
+    """Reap the exact provider, then preserve actual logs and observed reports.
+
+    A terminated provider may never emit a final serve report. Record that
+    absence explicitly; do not fabricate counters or infer a network cause.
+    """
+    terminal = {"schema": "cell-native-provider-terminal-v1", "started": server is not None,
+        "argv": command, "pid": None, "returncode": None, "cleanup_actions": [],
+        "cleanup_errors": [], "reaped": server is None}
+    if server is not None:
+        terminal["pid"] = server.pid
+        for action in ("terminate", "kill"):
+            if server.poll() is not None:
+                break
+            terminal["cleanup_actions"].append(action)
+            try:
+                getattr(server, action)()
+            except ProcessLookupError:
+                pass
+            except OSError as error:
+                terminal["cleanup_errors"].append(f"{action}: {error}")
+            try:
+                server.wait(timeout=cleanup_timeout)
+            except subprocess.TimeoutExpired:
+                terminal["cleanup_errors"].append(f"{action}: wait timed out")
+            except OSError as error:
+                terminal["cleanup_errors"].append(f"{action}: wait: {error}")
+        terminal["returncode"] = server.poll()
+        terminal["reaped"] = terminal["returncode"] is not None
+    for name in ("server-stdout.log", "server-stderr.log"):
+        path = output / name
+        if not path.exists():
+            path.touch(exist_ok=False)
+        with path.open("rb") as stream:
+            os.fsync(stream.fileno())
+        terminal[name] = {"bytes": path.stat().st_size, "sha256": sha(path)}
+    write_json(output / "server-terminal.json", terminal)
+    reports, malformed = [], []
+    with (output / "server-stdout.log").open("rb") as stream:
+        for number, line in enumerate(stream, 1):
+            try:
+                item = json.loads(line)
+            except (ValueError, UnicodeError):
+                malformed.append(number)
+                continue
+            if isinstance(item, dict) and item.get("schema") == "trnm.cell.serve.bounded.v1":
+                reports.append({"stdout_line": number, "report": item})
+    write_json(output / "server-serve-report.json", {
+        "schema": "cell-native-provider-serve-observation-v1",
+        "observation": "observed" if reports else "not_emitted",
+        "source": "server-stdout.log", "reports": reports,
+        "malformed_stdout_lines": malformed,
+        "network_failure_cause_inferred": False})
+    return terminal
 
 
 def main() -> None:
@@ -77,13 +165,17 @@ def main() -> None:
         "independent_operators": False, "independent_evaluation": False,
         "product_qualification": False, "production_activation": False,
         "native_consumer_status": "UNAVAILABLE", "native_receipt_status": "UNVERIFIED",
-        "cell_binary_sha256": sha(args.cell_bin), "members": [],
+        "members": [],
     }
     if args.controlled_consumer_profile:
         evidence.update(schema="pon-smollm-cell-controlled-handoff-v2",
             scope="controlled-eleven-object-byte-closure-and-original-signed-read-not-I10")
     server = None
+    server_command = None
     try:
+        for name in ("server-stdout.log", "server-stderr.log"):
+            (args.output / name).touch(exist_ok=False)
+        evidence["cell_binary_sha256"] = sha(args.cell_bin)
         family_path = args.chain / "config/pon/model-family-smollm2-135m-v1.json"
         family = json.loads(family_path.read_text())
         parent = json.loads(args.source_parent.read_text())
@@ -169,18 +261,14 @@ def main() -> None:
         evidence["release"]["consumer_initially_absent"] = True
         # One finite producer, one initially empty consumer. These are controlled
         # loopback processes and never count as independent custody or a WAN test.
-        with (args.output / "server-stderr.log").open("w") as server_error:
-            server = subprocess.Popen([str(args.cell_bin), "serve", "--store", str(producer),
+        with (args.output / "server-stdout.log").open("ab", buffering=0) as server_output, \
+                (args.output / "server-stderr.log").open("ab", buffering=0) as server_error:
+            server_command = [str(args.cell_bin), "serve", "--store", str(producer),
                 "--bind", "127.0.0.1:0", "--seconds", "45", "--bounded-workers", "2",
                 "--max-connections", str(connection_budget),
-                "--max-served-bytes", str(response_budget)], stdout=subprocess.PIPE,
-                stderr=server_error, text=True)
-            with selectors.DefaultSelector() as poll:
-                poll.register(server.stdout, selectors.EVENT_READ)
-                if not poll.select(5):
-                    raise TimeoutError("finite producer did not announce its listener")
-                listen_line = server.stdout.readline()
-            address = json.loads(listen_line)["address"]
+                "--max-served-bytes", str(response_budget)]
+            server = subprocess.Popen(server_command, stdout=server_output, stderr=server_error)
+            address = wait_for_provider_listener(server, args.output / "server-stdout.log")
             transfer_started = time.monotonic()
             transfer_deadline = transfer_started + 35
             transfer = {"schema": "cell-native-aggregate-transfer-v2", "clock": "monotonic",
@@ -268,8 +356,7 @@ def main() -> None:
             # to accept a late final file or readback as an in-window transfer.
             if not transfer["within_original_deadline"]:
                 raise TimeoutError("original aggregate transfer deadline exhausted after consumer readback")
-            tail, _ = server.communicate(timeout=50)
-            (args.output / "server-stdout.log").write_text(listen_line + tail)
+            server.wait(timeout=50)
             if server.returncode != 0:
                 raise RuntimeError("finite producer did not stop successfully")
             evidence["producer_exit_code_before_consumer_load"] = server.returncode
@@ -293,17 +380,22 @@ def main() -> None:
         evidence["error"] = str(error)
         raise
     finally:
-        if server is not None and server.poll() is None:
-            server.terminate()
-            try:
-                server.wait(timeout=5)
-            except subprocess.TimeoutExpired:
-                server.kill()
-                server.wait(timeout=5)
-            evidence["producer_cleanup_after_failure"] = True
-        evidence["elapsed_seconds"] = time.monotonic() - started
-        write_json(args.output / "handoff.json", evidence)
-        print(json.dumps({"status": evidence["status"], "report": str(args.output / "handoff.json")}))
+        try:
+            terminal = retain_provider_terminal(server, args.output, server_command)
+            evidence["provider_terminal_file"] = "server-terminal.json"
+            evidence["provider_serve_report_file"] = "server-serve-report.json"
+            if terminal["cleanup_actions"]:
+                evidence["producer_cleanup_after_failure"] = True
+            if not terminal["reaped"]:
+                raise RuntimeError("finite producer cleanup did not reap the child")
+        except BaseException as cleanup_error:
+            evidence["provider_evidence_error"] = {
+                "type": type(cleanup_error).__name__, "message": str(cleanup_error)}
+            raise
+        finally:
+            evidence["elapsed_seconds"] = time.monotonic() - started
+            write_json(args.output / "handoff.json", evidence)
+            print(json.dumps({"status": evidence["status"], "report": str(args.output / "handoff.json")}))
 
 
 if __name__ == "__main__":

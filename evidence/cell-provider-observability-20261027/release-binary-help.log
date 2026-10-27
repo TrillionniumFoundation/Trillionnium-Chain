@@ -1,0 +1,13 @@
+trnm-cell: finite configured-peer content cache (no model authority)
+Writers (pack,fetch,verify,prepare-release,fetch-release,verify-release) also require --cache-max-bytes N --cache-max-chunks N --cache-max-manifests N --cache-max-db-bytes N. Persisted TCL4/schema4 caps must match on every reopen; the main DB image cap derives separate WAL/SHM file-length caps; held readers can refuse writes before mutation. No allocated-block reservation or journal/TEMP/output/global-disk quota is claimed.
+pack --store DB --input FILE --family FAMILY --base HEX --parent HEX --tokenizer HEX --layout HEX --runtime HEX [--chunk-bytes 1048576]
+serve --store DB --bind IP:PORT --seconds N [--request-ms 2000] [--max-connections 8192] [--bounded-workers 1..4 --max-served-bytes N]
+fetch --store DB --manifest HEX --peers IP:PORT,IP:PORT --output ABSENT_FILE --max-bytes N (--seconds N | --overall-ms N) [--parallelism 2] [--request-ms 2000] [--max-connections 32768] [--max-response-bytes N]
+  Response-byte default: 2 * max-bytes + 2097152 + 9 * max-connections; 0 is cache-only.
+verify --store DB --manifest HEX
+manifest --store DB --manifest HEX --output ABSENT_FILE
+prepare-release --store DB --manifests HEX,HEX --output ABSENT_TCR1 --max-bytes N --max-chunks N (--seconds N | --overall-ms N)
+  Verify all locally declared members and prepare their canonical TCR1 root; no selection authority.
+fetch-release --store DB --release-file OWNER_TCR1 --release HEX --peers IP:PORT,IP:PORT --output ABSENT_MARKER --max-bytes N --max-chunks N (--seconds N | --overall-ms N) --max-response-bytes N [--parallelism 2] [--request-ms 2000] [--max-connections 32768]
+  One aggregate reservation covers all declared members. Output is the exact TCR1 completion marker, not weights or use authority.
+verify-release --store DB --release-file OWNER_TCR1 --release HEX --max-bytes N --max-chunks N (--seconds N | --overall-ms N)

@@ -1,0 +1,31 @@
+{
+  "schema": "cell-provider-source-control-gates-v1",
+  "base": "21e3ccb5b7e5f3e60cc7e79db676e9708bea3a59",
+  "source_same_as_c960_for_original_serving_and_driver": true,
+  "original_semantics_counterexample": "native real TCP expected FAIL overload=1 after both original workers finished",
+  "fixed_native_serving_tests": {
+    "passed": 11,
+    "failed": 0,
+    "ignored": 0,
+    "filtered": 125,
+    "locked": true,
+    "offline": true,
+    "log": "fixed-serving-fresh-suite.log"
+  },
+  "python_real_subprocess_tests": {
+    "passed": 6,
+    "failed": 0
+  },
+  "python_retained_deadline_consumer_tests": {
+    "passed": 5,
+    "failed": 0
+  },
+  "m09_all_targets_strict_clippy": "PASS",
+  "changed_rustfmt": "PASS",
+  "source_inventory": "PASS",
+  "new_relative_document_links": 20,
+  "original_003_root_cause": "UNDETERMINED",
+  "model_transfer_pass": false,
+  "full_workspace_qualified": false,
+  "production_activation": false
+}

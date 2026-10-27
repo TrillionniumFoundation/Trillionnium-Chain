@@ -1,0 +1,240 @@
+{
+  "schema": "cell-provider-fixed-native-release-build-v1",
+  "source_commit": "57fbdfeead5cfa1436eeef0d1691ee9933246d4d",
+  "source_tree": "ef5265fdc67141058cd4e3bde43e3170b8763dd2",
+  "source_clean_at_build_start": true,
+  "command": [
+    "cargo",
+    "build",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--locked",
+    "--offline",
+    "-j",
+    "1",
+    "--release",
+    "-p",
+    "trnm-data-availability",
+    "--bin",
+    "trnm-cell"
+  ],
+  "source_inputs": [
+    {
+      "path": "trillionnium/Cargo.toml",
+      "bytes": 2204,
+      "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+    },
+    {
+      "path": "trillionnium/Cargo.lock",
+      "bytes": 37959,
+      "sha256": "3707ed772a9fd851638dca36e5b2472ac0657de65754480c448d3078107d9ff9"
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/Cargo.toml",
+      "bytes": 830,
+      "sha256": "bd4b80a8f42bd7c372aec81fd991ac20363ed8cb32a0d72c2d8a6b5f01116578"
+    },
+    {
+      "path": "scripts/run_llm_cell_native_handoff.py",
+      "bytes": 24197,
+      "sha256": "fe55b3d15ce6e85bbbc8fda53187ae27bc9308d5179c92b3af9dc3136eaf24ca"
+    },
+    {
+      "path": "scripts/llm_cell_release.py",
+      "bytes": 9401,
+      "sha256": "ad9d9a7124c04d87bf039d704b6f16ef34b4fde45c578a05e211719aa372c028"
+    },
+    {
+      "path": "scripts/llm_neural_read_worker.py",
+      "bytes": 10834,
+      "sha256": "791fbe67ae7d2b2e0551e5f9f6fd77797ed9f8c210e7ca47f9acb6ac02895769"
+    },
+    {
+      "path": "config/pon/model-family-smollm2-135m-v1.json",
+      "bytes": 5293,
+      "sha256": "0837bbfb31f3f2b9a8731545c9f742aee1ebd32daed392a936a3ec9719537e52"
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/bin/trnm-cell-discovery.rs",
+      "bytes": 22393,
+      "sha256": "897a9fd193b75530e1d98b10d7c769c04c90a1e6b363e2a4e9f2d130fa6163e7"
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/bin/trnm-cell.rs",
+      "bytes": 18295,
+      "sha256": "8cc3736e43ce8506d75d22424fbedb851739fc0d99bde49a7e8d8b8e08c02bad"
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell.rs",
+      "bytes": 3730,
+      "sha256": "279d55f5f5c7d5336e6bbd8e6d598fd525745bc115510bc471ec9a7987503d2a"
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/cache_budget.rs",
+      "bytes": 16301,
+      "sha256": "a8f06ff894cc69a770a062728d6437fc1c1f50b4d695c48c5d39d3455813564a"
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/cache_budget_tests.rs",
+      "bytes": 18313,
+      "sha256": "58ee0bb02795ef0ded49be8ce6dd2750a3fad465faf534318ef4c55d4eab2c57"
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/cache_catalog_tests.rs",
+      "bytes": 7136,
+      "sha256": "d217cbc10cba81882fe21410c36e6e37f9c85733e81747a7808e03605c5ad12c"
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/cache_image_tests.rs",
+      "bytes": 17815,
+      "sha256": "7d37f3e68012fe6451d71b89eb8a44f7cfb0723b9bf5cd3fd18ed8dc8c9aac22"
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/cache_wal.rs",
+      "bytes": 5992,
+      "sha256": "eb1b67e4a4a8078dbeef90c5335f369830d001f0312cac2597078eda2e7a733d"
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/cache_wal_tests.rs",
+      "bytes": 12038,
+      "sha256": "f5f05f495815b086f4e73d201fe4f1d81946b039080fdce2f92a759cca6f171e"
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery.rs",
+      "bytes": 14866,
+      "sha256": "37964c0d88ea6a1521f106f87418b8da9ae1dd7f25926b2fc20631605767cbbf"
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/directory.rs",
+      "bytes": 21600,
+      "sha256": "0ec86d5e348e3be8604f3f832f9c0667455d2b0d96d8d43de3b4030532098ddd"
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/equivocation_history_tests.rs",
+      "bytes": 10726,
+      "sha256": "4d3066245a02147b331eee2d7cf4ef6561cdeb469ae0a0c09e400849caff1065"
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/platform_tests.rs",
+      "bytes": 643,
+      "sha256": "ceb9a2a80a58457c755b0f51cb3e4d5938c2d2163ce3b13e18684d1811d2bf0f"
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/sequence_tests.rs",
+      "bytes": 24154,
+      "sha256": "ba85b6bd81f2109e54af2878c31f0b75e5c3600d0f17eec861778efd3c4e1bd3"
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/tests.rs",
+      "bytes": 41759,
+      "sha256": "c36a09c69b05c143653b5081f3ef8c35d172e732721d283edb33366043313cfd"
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/transport.rs",
+      "bytes": 24190,
+      "sha256": "c0ef1562047339fc4d8c3d236a646abb104961e1218f7f6ec25529664629ea11"
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/vectors.rs",
+      "bytes": 2179,
+      "sha256": "4a984253f039aa1535a4b146d8c0ae1a8cf132e96931052420e52878664199d2"
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/historical_tcl3_cache_budget.rs",
+      "bytes": 15261,
+      "sha256": "254ccb0e0a8171f2a00dfb919c8153c45518d16eb9499104850d5b49a9075e52"
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/manifest.rs",
+      "bytes": 11106,
+      "sha256": "6e34ed036e2a3d7d963e44dfba033180bdf0d10cb9dc40392cd96118e49a8f51"
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/network.rs",
+      "bytes": 29937,
+      "sha256": "281b01b8affffb9ccf51b885b4a13e8f82495b28269a69a4347750818d0c2319"
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/network/serving.rs",
+      "bytes": 7050,
+      "sha256": "d9a0e8e4fe07b1b95b4b6f3deacb5d336a6fe9a65735d94b876f5ac11d068fe7"
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/network/serving/tests.rs",
+      "bytes": 21107,
+      "sha256": "750bc8a7ab0d970e3ab93a7b7ac4c091a94df359cdce7a04a7e7beefe07575fe"
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/release.rs",
+      "bytes": 8438,
+      "sha256": "b6959b9f954b5b74f956a3d82507377aa2700700225f8a4977f8b0537eba6b67"
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/release_tests.rs",
+      "bytes": 21753,
+      "sha256": "78043a6efa1e58cbb6c56aae3abed1492c05169ad3bd3f9aeac0d1a2249ea1a3"
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/retention.rs",
+      "bytes": 52678,
+      "sha256": "443afda7758bdbe79817d7253022de32bf853e3b3faa342cff717ad8b30e3f12"
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/retention/tests.rs",
+      "bytes": 38516,
+      "sha256": "cdbed9b29a570bbbf5183cb1f2ff5d7fa880f99b1a1338079f01cda167d374de"
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/store.rs",
+      "bytes": 19020,
+      "sha256": "760375ab8fd21dfb165fc4239871ac6db2cbc48d9a7460aa2dfbcf64bc0cd1c4"
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/tests.rs",
+      "bytes": 44462,
+      "sha256": "29445acfc01c743222732b64f17e1dfa51b88ff3c8f0635b61620f969f95ef07"
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/codec.rs",
+      "bytes": 2067,
+      "sha256": "46347640129eda17a5dd545e9d8a6556f9fa43d3f6315a3246d4aa3d08c87bfc"
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/error.rs",
+      "bytes": 1582,
+      "sha256": "77c737a84424a97c0cd5b13a746e22a90a02c99f536b1c841c690f545d11c5f4"
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/lib.rs",
+      "bytes": 3204,
+      "sha256": "ca4da489184f7d4a4b87b462463c264906e783eaf150342c0156530fd8ecacd9"
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/retrieval.rs",
+      "bytes": 34764,
+      "sha256": "188930642a116a212a6badef9f359fe48970e2f311f14f31bdba4584e823019e"
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/store.rs",
+      "bytes": 108388,
+      "sha256": "33ae114d6f7adbfb5706779be20ec863a2bfbf32288da9274d63d1a49863759c"
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/tests.rs",
+      "bytes": 48182,
+      "sha256": "4a336b9d3d7b2b4abff8475ae87484145fab1ceffcefe7835403efa5ad6315a6"
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/types.rs",
+      "bytes": 57484,
+      "sha256": "9251274c47edc1ddc5fef34c0130f5341d6977681a4e07c2eab89a235c6d55f1"
+    }
+  ],
+  "toolchain": "rustc 1.95.0 (59807616e 2026-04-14)",
+  "scope": "same frozen native M09 owner with completion-reaping correction and persistent provider evidence; not a model-transfer pass",
+  "returncode": 0,
+  "elapsed_seconds": 241.36947059500017,
+  "binary_path": "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/release/trnm-cell",
+  "binary_bytes": 3167448,
+  "binary_sha256": "e9b71c605cb15f37dc6522a19fffc428f455381122b76ba051c4e7d3ba3b2bb1"
+}

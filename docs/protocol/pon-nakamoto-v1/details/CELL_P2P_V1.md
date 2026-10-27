@@ -167,6 +167,25 @@ remain separate work. These TCP bytes are not encrypted. Private model bytes
 need an authorized private transport or an independently specified encrypted
 artifact format before public distribution.
 
+### Controlled provider failure evidence
+
+The explicit native handoff driver retains provider stdout and stderr directly
+in new raw files from process startup. Listener parsing reads the retained stdout
+under the original five-second announcement window. Every exit path after output
+creation records `server-terminal.json`, including the real child PID, argv,
+return code, termination/kill actions and log hashes. `server-serve-report.json`
+copies only bounded-serve reports actually emitted in stdout, with their line
+numbers. If the process never emitted that report, the observation is
+`not_emitted`; missing counters are never converted to zero or success.
+
+The controlled transfer remains 35 seconds, the provider remains 45 seconds,
+and both sides retain the explicit two-worker setting. Failure cleanup retains
+the existing terminate/wait/kill policy. Capturing its output does not establish
+that a TCP reset was overload, prove model use, or qualify public service. The
+retained [source controls and observations](../../../../evidence/cell-provider-observability-20261027/README.md)
+distinguish real subprocess evidence, a deterministic native scheduling control,
+and the earlier model-transfer failure whose provider report was not retained.
+
 ## Cache integrity and publication
 
 `CellStoreV1` uses the fresh TCL4 SQLite namespace, application ID `0x54434c34`
