@@ -197,7 +197,35 @@ class RenewalOutbox:
         self.db.execute('ROLLBACK')
         return result
 
+    def _check_schema_snapshot(self) -> None:
+        """Reject altered SQL DDL, removed uniqueness and injected triggers.
+
+        Research-local SQLite schema matching cannot certify any Q4 signature,
+        native client observation, signer, dispatcher or consensus authority.
+        """
+        expected = {
+            ('table', 'q4_outbox_meta_v1', 'q4_outbox_meta_v1'):
+                'CREATE TABLE q4_outbox_meta_v1 (key TEXT PRIMARY KEY, value BLOB NOT NULL) WITHOUT ROWID',
+            ('table', 'q4_outbox_intents_v1', 'q4_outbox_intents_v1'):
+                'CREATE TABLE q4_outbox_intents_v1 (id BLOB PRIMARY KEY, operation_id BLOB NOT NULL UNIQUE, '
+                'packet_id BLOB NOT NULL UNIQUE, wire BLOB NOT NULL) WITHOUT ROWID',
+            ('table', 'q4_outbox_events_v1', 'q4_outbox_events_v1'):
+                'CREATE TABLE q4_outbox_events_v1 (ordinal INTEGER PRIMARY KEY, intent_id BLOB NOT NULL, '
+                'kind TEXT NOT NULL, observation BLOB NOT NULL, prev BLOB NOT NULL, digest BLOB NOT NULL)',
+            ('index', 'q4_outbox_once_v1', 'q4_outbox_events_v1'):
+                "CREATE UNIQUE INDEX q4_outbox_once_v1 ON q4_outbox_events_v1(intent_id) WHERE kind='DISPATCH_UNKNOWN'",
+        }
+        actual = {
+            (kind, name, table): sql
+            for kind, name, table, sql in self.db.execute(
+                'SELECT type,name,tbl_name,sql FROM sqlite_master WHERE sql IS NOT NULL'
+            )
+        }
+        if actual != expected:
+            raise OutboxError('DATABASE_SCHEMA')
+
     def _audit_snapshot(self) -> int:
+        self._check_schema_snapshot()
         pinned = dict([('schema',SCHEMA),('network',self.context[0]),
                        ('parameters',self.context[1]),('genesis',self.context[2])])
         actual = dict(self.db.execute('SELECT key,value FROM q4_outbox_meta_v1'))

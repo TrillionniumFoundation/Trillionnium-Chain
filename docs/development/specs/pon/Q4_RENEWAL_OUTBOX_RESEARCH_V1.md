@@ -165,3 +165,14 @@ rather than substituting `EVENT_DIGEST`, while still detecting corrupt
 nonterminal earlier history before any new write. Existing positive, fault
 injection and two newly added damaged-prefix tests remain the named selectors;
 their current GitHub-source Rust/Python execution is not claimed here.
+
+### SQLite schema identity fence (research only, 2026-10-26)
+
+The original Q4 research outbox refuses changed table DDL, unknown triggers or
+views, and loss of its dispatch-unique partial index. It makes this check
+inside the existing snapshot read or BEGIN IMMEDIATE writer transaction before
+prepare, dispatch or observation insertion. Negative tests inject a live SQL
+trigger and remove the required index, verifying no additional event/intent,
+unchanged context, restoration and cold reopen. A SQLite catalog check grants
+neither source/requester signatures nor a chain-confirmed receipt, a new dispatch
+permission or production-ready Q4 recovery; old QDL2/QWA2 bytes are unchanged.

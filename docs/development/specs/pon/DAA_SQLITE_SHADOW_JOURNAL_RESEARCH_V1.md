@@ -123,3 +123,15 @@ upstream auditing; self-consistent forged metadata, W1 proofs or projection
 hashes cannot be authenticated by this research database. SQLite file-path race
 and physical power-cut isolation are still unqualified. Native M07/M08 custody,
 versioned consensus ASERT acceptance and activation remain **OPEN**.
+
+### SQLite schema identity fence (research only, 2026-10-26)
+
+The same existing shadow-writer BEGIN IMMEDIATE and cold-audit read snapshot
+now check exact table DDL and refuse unknown SQL catalog objects, including
+injected triggers. A hot active-tip read returns the tip from the same metadata
+row set as context validation, not a second SELECT. A new live-schema negative
+test injects a post-insert trigger, verifies zero new header/tip effects, removes
+the trigger and tests cold reopen. These guards neither authenticate upstream
+packets nor prove W1, ASERT target validity, native branch storage or deployment.
+A database attacker with host write access can still rewrite both rows and
+checksums; cryptographic native replay remains an independent obligation.
