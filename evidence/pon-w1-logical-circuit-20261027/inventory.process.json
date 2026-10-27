@@ -1,0 +1,14 @@
+{
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "-B",
+    "scripts/refresh_distributed_source_inventory.py",
+    "--check"
+  ],
+  "exit_code": 0,
+  "name": "inventory",
+  "observed_reaped_child_system_seconds": 0.10976000000000141,
+  "observed_reaped_child_user_seconds": 0.1705330000000025,
+  "quantum_cost_measurement": false,
+  "wall_ns": 266478527
+}

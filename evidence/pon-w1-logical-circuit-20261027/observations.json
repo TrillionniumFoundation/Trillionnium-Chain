@@ -1,0 +1,137 @@
+{
+  "all_commands_passed": true,
+  "base_commit": "829c5d28ec9a0fc13de2bd098b477cbacacdb4b7",
+  "historical_evidence_sparse": true,
+  "initial_preflight_refusal": {
+    "branch": "research/chain-full-w1-quantum-oracle-20261027",
+    "correction": "renamed only the unpublished own branch to allowed test/chain-full-w1-quantum-oracle-20261027; no boundary rule changed",
+    "reason": "not an allowed development branch"
+  },
+  "local_full_repository_source_guard_passed": false,
+  "native_cargo_build_or_rust_parity_executed_in_this_run": false,
+  "physical_quantum_resource_estimate": null,
+  "production_activation": false,
+  "results": [
+    {
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--dev"
+      ],
+      "exit_code": 0,
+      "name": "preflight",
+      "observed_reaped_child_system_seconds": 0.181201,
+      "observed_reaped_child_user_seconds": 0.18922099999999997,
+      "quantum_cost_measurement": false,
+      "wall_ns": 391428054
+    },
+    {
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_w1_oracle_blueprint.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "name": "gate-controls",
+      "observed_reaped_child_system_seconds": 0.12267199999999998,
+      "observed_reaped_child_user_seconds": 3.3156969999999997,
+      "quantum_cost_measurement": false,
+      "wall_ns": 3470946830
+    },
+    {
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "formal/pon-nakamoto-v1/w1_oracle_blueprint.py",
+        "--output",
+        "/workspace/scratch/301262829a43/pon-quantum-circuit-impl/evidence/pon-w1-logical-circuit-20261027/logical-circuit-upper-bound.json"
+      ],
+      "exit_code": 0,
+      "name": "logical-report",
+      "observed_reaped_child_system_seconds": 0.08065899999999998,
+      "observed_reaped_child_user_seconds": 0.8071899999999999,
+      "quantum_cost_measurement": false,
+      "wall_ns": 933399124
+    },
+    {
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "formal/pon-nakamoto-v1/quantum_daa.py",
+        "--output",
+        "/workspace/scratch/301262829a43/pon-quantum-circuit-impl/evidence/pon-w1-logical-circuit-20261027/conditional-daa.json"
+      ],
+      "exit_code": 0,
+      "name": "conditional-daa",
+      "observed_reaped_child_system_seconds": 0.04644200000000004,
+      "observed_reaped_child_user_seconds": 1.733035,
+      "quantum_cost_measurement": false,
+      "wall_ns": 1788680002
+    },
+    {
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "scripts/ci/test_ci_contract.py"
+      ],
+      "exit_code": 0,
+      "name": "ci-contract",
+      "observed_reaped_child_system_seconds": 2.443955,
+      "observed_reaped_child_user_seconds": 9.324925,
+      "quantum_cost_measurement": false,
+      "wall_ns": 11843916577
+    },
+    {
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "scripts/ci/test_ci_source_integrity.py"
+      ],
+      "exit_code": 0,
+      "name": "source-negatives",
+      "observed_reaped_child_system_seconds": 2.7358490000000004,
+      "observed_reaped_child_user_seconds": 2.6165769999999995,
+      "quantum_cost_measurement": false,
+      "wall_ns": 6438043088
+    },
+    {
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "scripts/ci/test_project_boundary.py"
+      ],
+      "exit_code": 0,
+      "name": "boundary-negatives",
+      "observed_reaped_child_system_seconds": 3.470850999999999,
+      "observed_reaped_child_user_seconds": 6.590418,
+      "quantum_cost_measurement": false,
+      "wall_ns": 10080514810
+    },
+    {
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "exit_code": 0,
+      "name": "inventory",
+      "observed_reaped_child_system_seconds": 0.10976000000000141,
+      "observed_reaped_child_user_seconds": 0.1705330000000025,
+      "quantum_cost_measurement": false,
+      "wall_ns": 266478527
+    }
+  ],
+  "schema": "pon-w1-logical-circuit-local-observations-v1",
+  "source_before_after_equal": true,
+  "source_paths_checked": 12,
+  "tested_worktree_was_dirty": true,
+  "whole_quantum_circuit_expanded_or_simulated": false
+}

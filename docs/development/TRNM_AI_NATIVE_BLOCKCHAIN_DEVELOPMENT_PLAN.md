@@ -2143,6 +2143,18 @@ is counted as executed. The complete W1 oracle ledger is static accounting only:
 the conditional `r=0.25` DAA model is not an implemented reversible W1 circuit,
 and quantum physical costs, fresh-work hardness and joint qualification stay open.
 
+The separate [complete W1 logical-circuit blueprint](../security/PON_W1_LOGICAL_CIRCUIT_BLUEPRINT_V1.md)
+adds actual X/CNOT/Toffoli templates, coherent bounded noise compaction, all 512
+transcript prefixes and explicit phase/adjoint costs. Its two specified schedules
+trade retained intermediates for compute/copy/uncompute. These are conditional
+upper bounds for the stated hierarchical wiring; the full gate list has not been
+expanded or formally verified. Actual template and classical full-W1 differential
+controls do not establish the cheapest quantum oracle, a physical mining rate,
+PQ128 security or a change to the original DAA/activation verdict. Existing native
+DAA parity evidence remains separate, and its assumed r=0.25 is not calibrated by
+the new logical counts. Complete native PQ account migration/Node integration
+and the original whole-chain gates remain open.
+
 The [original native CI readback](../../evidence/pon-native-campaign-ci-20261027/README.md)
 retains every predeclared campaign at exact heads `63ae5018` and `e9c4bb0d`:
 FAIL/PASS/FAIL and FAIL/FAIL/FAIL. The five failing from-zero phases observed real

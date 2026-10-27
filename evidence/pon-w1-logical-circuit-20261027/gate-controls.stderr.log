@@ -1,0 +1,16 @@
+test_actual_dot_gate_template_at_boundary_and_random_values (test_w1_oracle_blueprint.Arithmetic.test_actual_dot_gate_template_at_boundary_and_random_values) ... ok
+test_compute_copy_uncompute_really_clears_scratch (test_w1_oracle_blueprint.Arithmetic.test_compute_copy_uncompute_really_clears_scratch) ... ok
+test_modular_add_all_small_inputs_and_adjoint (test_w1_oracle_blueprint.Arithmetic.test_modular_add_all_small_inputs_and_adjoint) ... ok
+test_remainder_all_small_inputs_and_adjoint (test_w1_oracle_blueprint.Arithmetic.test_remainder_all_small_inputs_and_adjoint) ... ok
+test_actual_32bit_noise_boundary (test_w1_oracle_blueprint.BoundedControlFlow.test_actual_32bit_noise_boundary) ... ok
+test_phase_predicate_target_nonce_noise_and_cleanup (test_w1_oracle_blueprint.BoundedControlFlow.test_phase_predicate_target_nonce_noise_and_cleanup) ... ok
+test_rejection_compaction_exhaustion_saturation_and_adjoint (test_w1_oracle_blueprint.BoundedControlFlow.test_rejection_compaction_exhaustion_saturation_and_adjoint) ... ok
+test_actual_bound_keeps_unknowns_and_full_control_flow (test_w1_oracle_blueprint.Scope.test_actual_bound_keeps_unknowns_and_full_control_flow) ... ok
+test_exact_message_framing_and_fixed_nonce_midstate (test_w1_oracle_blueprint.ShaAndCompleteRelation.test_exact_message_framing_and_fixed_nonce_midstate) ... ok
+test_full_padded_schedule_matches_independent_complete_relation (test_w1_oracle_blueprint.ShaAndCompleteRelation.test_full_padded_schedule_matches_independent_complete_relation) ... ok
+test_real_sha_gate_sequence_multiple_padding_boundaries (test_w1_oracle_blueprint.ShaAndCompleteRelation.test_real_sha_gate_sequence_multiple_padding_boundaries) ... ok
+
+----------------------------------------------------------------------
+Ran 11 tests in 2.925s
+
+OK

@@ -1,0 +1,15 @@
+{
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "-B",
+    "formal/pon-nakamoto-v1/w1_oracle_blueprint.py",
+    "--output",
+    "/workspace/scratch/301262829a43/pon-quantum-circuit-impl/evidence/pon-w1-logical-circuit-20261027/logical-circuit-upper-bound.json"
+  ],
+  "exit_code": 0,
+  "name": "logical-report",
+  "observed_reaped_child_system_seconds": 0.08065899999999998,
+  "observed_reaped_child_user_seconds": 0.8071899999999999,
+  "quantum_cost_measurement": false,
+  "wall_ns": 933399124
+}

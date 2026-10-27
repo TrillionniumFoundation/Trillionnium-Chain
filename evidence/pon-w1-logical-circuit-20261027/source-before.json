@@ -1,0 +1,50 @@
+{
+  ".github/workflows/pon-w1-logical-oracle-research.yml": {
+    "bytes": 2778,
+    "sha256": "188eecb6d85f9021821138c3b992d9a1a1f4da87e6860cc987ca502b59237287"
+  },
+  "config/pon/devnet-v1.json": {
+    "bytes": 1964,
+    "sha256": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4"
+  },
+  "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md": {
+    "bytes": 383768,
+    "sha256": "4141f924e3bb3f89926d538a915a19417e87370018fb3f46eecbf884b9190897"
+  },
+  "docs/security/PON_W1_LOGICAL_CIRCUIT_BLUEPRINT_V1.md": {
+    "bytes": 9618,
+    "sha256": "142ef0ad95df2dbeb35de2afd79c2473e4dc92f93e859fa18a8f503451e1af90"
+  },
+  "formal/pon-nakamoto-v1/contract_wire.py": {
+    "bytes": 8924,
+    "sha256": "cbe45d72ad20ed5683d50dceaa97b93bc74cdafced7d0896386edf9cbe9f98f6"
+  },
+  "formal/pon-nakamoto-v1/quantum_daa.py": {
+    "bytes": 13783,
+    "sha256": "233c7b2d3c2421b3fb82a1d6802d1b134126c64ec833b074063e1bd161ae673c"
+  },
+  "formal/pon-nakamoto-v1/reversible_bits.py": {
+    "bytes": 6835,
+    "sha256": "611b1f12ebaaf1d71db320400bac24e232380b891118d973bcb0b90b37fe9f79"
+  },
+  "formal/pon-nakamoto-v1/test_w1_oracle_blueprint.py": {
+    "bytes": 8539,
+    "sha256": "acb844831349506af2bb6b7d1e5166f5492f217d5eb24b185bbfd2becaf6a61e"
+  },
+  "formal/pon-nakamoto-v1/w1_oracle_blueprint.py": {
+    "bytes": 16397,
+    "sha256": "523699b3ba76313eb2784c3a58033423960efaa2c1530e90f31a27620acacd79"
+  },
+  "formal/pon-nakamoto-v1/work_oracle.py": {
+    "bytes": 2944,
+    "sha256": "2b90584fc4f102e9eb40ed5ab138746f4a4b3748544cd287f076a8804c955c18"
+  },
+  "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs": {
+    "bytes": 72074,
+    "sha256": "9d28d64da80fd059c1619a17d24b6959a76bbdb64108600adc4dc95fe6c2636d"
+  },
+  "trillionnium/crates/trnm-pon-node/src/consensus.rs": {
+    "bytes": 13091,
+    "sha256": "53088562316151516348ea723e03b9132b9994fee14167da18c79c2c3b3fed29"
+  }
+}
