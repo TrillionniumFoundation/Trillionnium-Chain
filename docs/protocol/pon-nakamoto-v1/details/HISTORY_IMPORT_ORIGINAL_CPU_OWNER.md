@@ -107,6 +107,18 @@ budget, an independent oracle or security qualification.
   third-party/loopback forwarding. A loopback proxy remains outside
   origin detection; a root/administrator who clones running services
   must be considered separately.
+- **Shared-Node lock contention remains unqualified**: this exported
+  import takes `&mut Node`. An embedding app that holds the same
+  `Arc<Mutex<Node>>` writer lock across `receive_page_from` may hold it
+  during CPU-budget refill waits, W1 replay and M06/activation. CPU
+  containment does **not** guarantee bounded honest-request lock wait.
+  The standalone CLI Sync has an exclusive owner, whereas a true
+  concurrent service must do expensive W1 **outside** the Node lock
+  using the existing `WorkCheckedPacket` checked-context and
+  precommit recheck design (as pinned-peer polling/ordinary dispatch
+  already attempt), with fail-safe scope settlement. A real mixed
+  writer/reader pressure campaign must confirm lock fairness before
+  a shared-node embedding can be qualified.
 - Original CPU credit starts at zero for a standalone Node, which
   changes initial legitimate Sync readiness. Measure actual throughput,
   honest catch-up times and failure/retry dynamics on real machines.
