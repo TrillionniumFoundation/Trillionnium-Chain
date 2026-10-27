@@ -297,6 +297,7 @@ class OfflineOneUseJournal:
         ) WITHOUT ROWID"""
     SCHEMA = [("table", "pq_custody_observation", DDL)]
     SCHEMA_QUERY = "SELECT type,name,sql FROM sqlite_master WHERE name NOT LIKE 'sqlite_%' ORDER BY type,name"
+    TEMP_QUERY = "SELECT name FROM sqlite_temp_master WHERE name NOT LIKE 'sqlite_%' LIMIT 1"
 
     @staticmethod
     def _leaf_inode(path: Path, *, allow_missing: bool = False):
@@ -316,6 +317,10 @@ class OfflineOneUseJournal:
         """Call while holding SQLite BEGIN IMMEDIATE so competing DDL can't race."""
         if self.db.execute(self.SCHEMA_QUERY).fetchall() != self.SCHEMA:
             raise Reject("custody SQLite schema changed after open")
+        # TEMP triggers and same-name TEMP tables are invisible in sqlite_master.
+        # They can delete or redirect an otherwise acknowledged INSERT.
+        if self.db.execute(self.TEMP_QUERY).fetchone() is not None:
+            raise Reject("custody temporary SQLite schema is not empty")
         # Application-controlled PRAGMA settings are not authority by themselves;
         # they must remain in force during every durable write.
         if self.db.execute("PRAGMA journal_mode").fetchone() != ("wal",):
@@ -374,6 +379,31 @@ class OfflineOneUseJournal:
     def close(self):
         self.db.close()
 
+    def _confirm_postcommit(self, observation: RetrievalObservation) -> None:
+        """Read back the committed fact under a new owned write snapshot.
+
+        Commit may have succeeded on a detached SQLite inode if its path was
+        renamed after the pre-write audit. In that case the result is UNKNOWN,
+        never an acknowledged one-use grant. This is not same-UID or full-disk
+        rollback protection: directories and an external monotonic anchor still
+        require independently trusted owners.
+        """
+        self.db.execute("BEGIN IMMEDIATE")
+        try:
+            self._audit_owned_schema()
+            stored = self.db.execute(
+                "SELECT response_digest,provider_key_id FROM pq_custody_observation WHERE challenge_id=?",
+                (observation.challenge_id,)).fetchone()
+            if stored != (observation.response_digest, observation.provider_key_id):
+                raise Reject("custody committed receipt missing or changed")
+            self.db.execute("COMMIT")
+        except BaseException:
+            if self.db.in_transaction:
+                self.db.execute("ROLLBACK")
+            raise
+        if self._leaf_inode(self.filename) != self._inode:
+            raise Reject("custody journal changed before acknowledgement")
+
     def record(self, raw: bytes, **verified_inputs) -> tuple[str, RetrievalObservation]:
         observation = verify_response_research(raw, **verified_inputs)
         self.db.execute("BEGIN IMMEDIATE")
@@ -389,10 +419,12 @@ class OfflineOneUseJournal:
                 if found != (observation.response_digest, observation.provider_key_id):
                     raise Reject("same challenge changed response")
                 self.db.execute("COMMIT")
+                self._confirm_postcommit(observation)
                 return "ALREADY_RECORDED", observation
             self.db.execute("INSERT INTO pq_custody_observation VALUES(?,?,?)",
                             (observation.challenge_id, observation.response_digest, observation.provider_key_id))
             self.db.execute("COMMIT")
+            self._confirm_postcommit(observation)
             return "FIRST_RECORD", observation
         except BaseException:
             if self.db.in_transaction:
