@@ -94,6 +94,7 @@ def check(ingress, owner, cpu, host):
             "HISTORY_ONE_COLD_LOW_PRIORITY_BUDGET")
     for name in (
         "loopback_history_false_product_charges_one_cold_node_cpu_domain",
+        "untrusted_history_cpu_import_cannot_take_an_active_honest_second_slot",
         "loopback_history_valid_work_still_accepts_under_cold_cpu_meter",
         "mixed_false_then_valid_history_across_source_ports_reuses_one_cpu_owner",
         "four_distinct_ticket_valid_false_history_traces_never_obtain_work",
