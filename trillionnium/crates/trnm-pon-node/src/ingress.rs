@@ -2135,7 +2135,7 @@ fn receive_page(
     tip: Hash,
     after: Hash,
     clock: u64,
-    mut resource_checkpoint: impl FnMut() -> Result<()>,
+    resource_checkpoint: impl Fn() -> Result<()> + Sync,
 ) -> Result<Hash> {
     ensure(
         page.schema == "pon-native-history-v1"
@@ -2174,12 +2174,20 @@ fn receive_page(
     )?;
     for packet in &packets {
         resource_checkpoint()?;
-        node.admit_with_work_progress(packet, clock, &mut |point| {
-            if history_kernel_work_checkpoint(point) {
-                resource_checkpoint()?;
-            }
-            Ok(())
-        })?;
+        node.admit_with_work_progress(
+            packet,
+            clock,
+            &mut |point| {
+                if history_kernel_work_checkpoint(point) {
+                    resource_checkpoint()?;
+                }
+                Ok(())
+            },
+            // W1 success does not complete validation. Use the same physical
+            // Host owner for M06, State/root, SQLite deltas and final precommit.
+            // No new allowance/permission is created by an Exec checkpoint.
+            &|_| resource_checkpoint(),
+        )?;
         // This can run after durable admission: an owner fault never revokes
         // a committed block, but it stops this unqualified sync response.
         resource_checkpoint()?;
