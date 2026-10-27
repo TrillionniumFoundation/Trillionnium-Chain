@@ -8,8 +8,10 @@ OpenSSL is used only by pq_envelope's offline fixture helper.
 from __future__ import annotations
 from dataclasses import dataclass
 import hashlib
+import os
 from pathlib import Path
 import sqlite3
+import stat
 
 from pq_envelope import (Reject, SIGNED_BYTES, make_unsigned, public_key_id,
                          sign_reference, verify_reference)
@@ -282,34 +284,92 @@ def verify_response_research(raw: bytes, *, catalog_bytes: bytes, challenge_byte
 
 
 class OfflineOneUseJournal:
-    """Single local SQLite anti-double-count observer; not a global chain nullifier."""
+    """Local replay observation, *never* Chain authority or a global nullifier.
+
+    SQLite cannot protect its own history from an administrator restoring every
+    database/anchor together. The caller owns trustworthy parent directories and
+    independently supplies the exact cryptographic inputs.
+    """
     DDL = """CREATE TABLE pq_custody_observation (
             challenge_id BLOB PRIMARY KEY NOT NULL,
             response_digest BLOB NOT NULL,
             provider_key_id BLOB NOT NULL
         ) WITHOUT ROWID"""
-    def __init__(self, filename: Path):
-        self.db = sqlite3.connect(str(filename), timeout=10, isolation_level=None)
-        self.db.execute("PRAGMA busy_timeout=10000")
-        query = "SELECT type,name,sql FROM sqlite_master WHERE name NOT LIKE 'sqlite_%' ORDER BY type,name"
-        expected = [("table", "pq_custody_observation", self.DDL)]
-        pre = self.db.execute(query).fetchall()
-        if pre not in ([], expected):
-            self.db.close()
-            raise Reject("foreign/corrupt SQLite journal schema")
-        if self.db.execute("PRAGMA journal_mode=WAL").fetchone() != ("wal",):
-            self.db.close()
-            raise Reject("WAL unavailable")
-        self.db.execute("PRAGMA synchronous=FULL")
+    SCHEMA = [("table", "pq_custody_observation", DDL)]
+    SCHEMA_QUERY = "SELECT type,name,sql FROM sqlite_master WHERE name NOT LIKE 'sqlite_%' ORDER BY type,name"
+
+    @staticmethod
+    def _leaf_inode(path: Path, *, allow_missing: bool = False):
+        try:
+            details = os.lstat(path)
+        except FileNotFoundError:
+            if allow_missing:
+                return None
+            raise Reject("custody journal file disappeared") from None
+        if not stat.S_ISREG(details.st_mode) or details.st_nlink != 1:
+            raise Reject("custody journal leaf must be a single-link regular file")
+        if details.st_mode & 0o077:
+            raise Reject("custody journal requires owner-only file permissions")
+        return (details.st_dev, details.st_ino)
+
+    def _audit_owned_schema(self):
+        """Call while holding SQLite BEGIN IMMEDIATE so competing DDL can't race."""
+        if self.db.execute(self.SCHEMA_QUERY).fetchall() != self.SCHEMA:
+            raise Reject("custody SQLite schema changed after open")
+        # Application-controlled PRAGMA settings are not authority by themselves;
+        # they must remain in force during every durable write.
+        if self.db.execute("PRAGMA journal_mode").fetchone() != ("wal",):
+            raise Reject("custody WAL changed")
         if self.db.execute("PRAGMA synchronous").fetchone() != (2,):
+            raise Reject("custody FULL durability changed")
+        if self._leaf_inode(self.filename) != self._inode:
+            raise Reject("custody journal file replaced after open")
+
+    def __init__(self, filename: Path):
+        self.filename = Path(filename)
+        if not self.filename.name or self.filename.name in {".", ".."}:
+            raise Reject("custody journal path")
+        inode = self._leaf_inode(self.filename, allow_missing=True)
+        if inode is None:
+            # Creation is exclusive and no-follow. Existing unknown/empty SQLite
+            # namespaces are never silently initialized into trusted journals.
+            if not hasattr(os, "O_NOFOLLOW"):
+                raise Reject("custody journal requires O_NOFOLLOW")
+            try:
+                fd = os.open(self.filename, os.O_WRONLY | os.O_CREAT | os.O_EXCL |
+                             os.O_NOFOLLOW, 0o600)
+            except FileExistsError as exc:
+                raise Reject("concurrent/unowned custody initialization") from exc
+            else:
+                os.close(fd)
+            newly_created = True
+        else:
+            newly_created = False
+        self._inode = self._leaf_inode(self.filename)
+        self.db = sqlite3.connect(str(self.filename), timeout=10, isolation_level=None)
+        try:
+            self.db.execute("PRAGMA busy_timeout=10000")
+            pre = self.db.execute(self.SCHEMA_QUERY).fetchall()
+            if pre != self.SCHEMA and (pre or not newly_created):
+                raise Reject("foreign/corrupt/empty custody SQLite namespace")
+            if self.db.execute("PRAGMA journal_mode=WAL").fetchone() != ("wal",):
+                raise Reject("WAL unavailable")
+            self.db.execute("PRAGMA synchronous=FULL")
+            if self.db.execute("PRAGMA synchronous").fetchone() != (2,):
+                raise Reject("FULL durability unavailable")
+            if newly_created:
+                self.db.execute(self.DDL)
+            self.db.execute("BEGIN IMMEDIATE")
+            try:
+                self._audit_owned_schema()
+                self.db.execute("COMMIT")
+            except BaseException:
+                if self.db.in_transaction:
+                    self.db.execute("ROLLBACK")
+                raise
+        except BaseException:
             self.db.close()
-            raise Reject("FULL durability unavailable")
-        if not pre:
-            # Fresh initialization must be owned, not raced by unrelated creators.
-            self.db.execute(self.DDL)
-        if self.db.execute(query).fetchall() != expected:
-            self.db.close()
-            raise Reject("SQLite schema changed after initialization")
+            raise
 
     def close(self):
         self.db.close()
@@ -318,8 +378,13 @@ class OfflineOneUseJournal:
         observation = verify_response_research(raw, **verified_inputs)
         self.db.execute("BEGIN IMMEDIATE")
         try:
-            found = self.db.execute("SELECT response_digest,provider_key_id FROM pq_custody_observation WHERE challenge_id=?",
-                                    (observation.challenge_id,)).fetchone()
+            # Authenticating the signed response *before* taking the write lock
+            # is safe only when schema and file ownership are rechecked INSIDE
+            # that lock, before any read/insert/acknowledgement.
+            self._audit_owned_schema()
+            found = self.db.execute(
+                "SELECT response_digest,provider_key_id FROM pq_custody_observation WHERE challenge_id=?",
+                (observation.challenge_id,)).fetchone()
             if found is not None:
                 if found != (observation.response_digest, observation.provider_key_id):
                     raise Reject("same challenge changed response")
