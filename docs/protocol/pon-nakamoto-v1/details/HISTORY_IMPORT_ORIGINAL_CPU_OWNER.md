@@ -159,3 +159,57 @@ budget, an independent oracle or security qualification.
 
 Do not merge to protected main, change the signed protocol
 unreviewed or activate the public PoN network.
+
+
+## Strict public-loopback Host + original CPU cooperation (draft follow-up)
+
+The incremental merged child
+'dot/p1-history-public-proxy-metered-20261026'
+combines **only** research-pinned source work from #437 and #401.
+The public V3 CLI calls 'receive_page_from_public_sync', which requires the
+original administrator-controlled cgroup even when a peer is presented as
+'127.0.0.1'. That entry then calls the same **metered**
+'receive_page(node, &original_domain, ...)' as ordinary History, not the
+previous full-work parser.
+
+Current source further separates **two actual, complementary protections**:
+
+1. Every original 'ServiceMutationCpuOperation' owns and settles real CPU
+   for page decode, each immutable W1+M06 and tip activation. The budget
+   checkpoint remains active on **every** W1 'VerificationProgress' callback.
+   The one Node domain is never replaced by a peer/caller budget. Unknown
+   accounting must not generate a successful full-sync receipt.
+2. The expensive original Host cgroup verifier is invoked only at the
+   frozen W1 points: before full replay/product/VerifiedWork; first noise
+   block of each label; matrix rows 0/16/32/48; first k tile on each outer
+   transcript row. It is additionally checked before and after each packet,
+   at native M06 execution progress and during existing
+   'activate_observed_with_progress' callbacks. This bounds expensive
+   resource-path checks without ignoring a whole 16-packet page. A deep
+   native root/SQLite individual stage remains nonpreemptive: this is not
+   a hard per-operation CPU-seconds theorem.
+
+These changes do not alter 'PNW1' 49,188-byte grammar, challenge/ticket,
+task source, WorkError precedence, target/fork weight, durable state or
+V3 signed-resource policy. A local CPU/host failure is not consensus-invalid
+W1 work. A late failure after an actual commit cannot undo that commit;
+subsequent History sync must remain incomplete until reconciled.
+
+### P1 remaining evidence (must not be relabelled as closed)
+
+- Exact Rust source preflight/format/Clippy/tests and complete negative
+  tests on a checked-out repository. The present tool environment can edit
+  via GitHub but does not have a local checkout or rustc/cargo.
+- Real original 'trnmponpublic.slice' sysfs/owner/cgroup-v2 readbacks with
+  independent processes, restart, worker migration, refusal and recovery.
+  Explicit public loopback proxy and pinned peer must be included.
+- Observed CPU cost of periodic Host checks versus W1/M06 and legitimate
+  confirmation latency; choose no performance threshold after seeing data.
+- Three A03 attack modes, three complete runs each and 3/3 timely
+  signed independent confirmations in *each* run, retaining all Busy,
+  cancelled, unknown and late requests. This draft does not execute those.
+- P2 real CPU/GPU/ASIC attacker pricing, P5 mathematically sound and
+  efficient W2, and external P6 cryptographic reviewer remain OPEN.
+
+This is an incremental source mitigation, not an independently accepted
+physical service or production consensus authorization.

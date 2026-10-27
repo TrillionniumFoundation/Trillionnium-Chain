@@ -106,3 +106,44 @@ must be tested separately.
 The new unexported parser remains useful for unit coverage and does
 not expose a second public unchecked history-import symbol.
 This is an API-path reduction, **not** a production/security gate PASS.
+
+
+## 2026-10-26 follow-up: untrusted public loopback relays fail closed
+
+The previous 'require_for_listener(source)' guard intentionally exempted
+loopback-only local developer tools. An explicitly selected public-V3 History
+sync may nevertheless connect to a local TCP proxy that relays arbitrary
+remote W1 proofs. Neither the requested SocketAddr nor a signed response
+can prove the physical origin or bound the receiver's W1 CPU.
+
+This child candidate adds
+'host_kernel_parent::require_for_untrusted_public_sync(source)': it requires
+the one fixed, root-provisioned 'trnmponpublic.slice' cgroup irrespective of
+whether the destination is 127.0.0.1, ::1, or nonloopback. The API always
+returns an actual verified HostKernelBudget, never 'None'.
+
+Public untrusted History imports now use
+'ingress::receive_page_from_public_sync' and the CLI's explicit public-profile
+'sync' selects the same mandatory owner before making any request. The
+new public import checks kernel identity/limits before and after native
+verification; it does not create VerifiedWork or a second CPU allowance.
+Native and private loopback-only developer sync retain
+'require_for_listener' without protocol semantic changes. The prior
+'pub fn receive_page_from' adapter is now 'pub(crate)' (same-crate only);
+external library consumers cannot accidentally bypass the explicit public
+'pub fn receive_page_from_public_sync' source-owner contract by using that
+legacy loopback-development helper.
+
+The new Rust counterexample
+'explicit_public_sync_loopback_proxy_does_not_bypass_host_budget' fixes a
+127.0.0.1 source, an invalid public page and an unchanged Node. On an
+unprovisioned Host the cgroup refusal must preempt PAGE_CONTEXT and W1;
+on a valid fixed parent, the page must instead fail PAGE_CONTEXT after
+the host checks. It never promotes an invalid page to a valid block.
+
+This is still aggregate Host containment, not measured hash-cost parity,
+authenticated WAN fairness, sybil resistance, a complete causal origin
+attestation or an independent P0–P6 qualification. In particular direct
+embedding code can invoke loopback-only development APIs and make its own
+external proxy; the deployment interface must distinguish trusted local
+fixtures from public untrusted traffic. No production activation is claimed.

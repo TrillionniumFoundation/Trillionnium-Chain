@@ -2149,35 +2149,71 @@ fn metered_history_operation<T>(
     outcome
 }
 
+/// Kernel files must NOT be reread for all 512 transcript tiles. Cooperate at
+/// deterministic sparse arithmetic boundaries while the original CPU account
+/// independently checks every normal W1 progress event.
+fn history_host_checkpoint(point: trnm_crypto_primitives::pon_work::VerificationProgress) -> bool {
+    use trnm_crypto_primitives::pon_work::VerificationProgress as P;
+    matches!(
+        point,
+        P::BeforeReplay | P::BeforeProduct | P::BeforeVerifiedWork
+            | P::Noise { counter: 0, .. }
+            | P::MatrixRow { row: 0 | 16 | 32 | 48 }
+            | P::TranscriptTile { column: 0, inner: 0, .. }
+    )
+}
+
 fn metered_history_packet(
     node: &mut Node,
     domain: &public_v3::ServiceMutationCpuDomain,
     packet: &Packet,
     clock: u64,
+    host_check: &(impl Fn() -> Result<()> + Sync),
 ) -> Result<Hash> {
     metered_history_operation(node, domain, |owner, operation| {
         let progress = operation.checkpoint_handle();
+        host_check()?;
         progress.checkpoint()?;
         if let Some(already) = owner.check_admission_context_with_progress(
             packet,
             clock,
-            &mut || progress.checkpoint(),
+            &mut || {
+                host_check()?;
+                progress.checkpoint()
+            },
         )? {
             return Ok(already);
         }
         let permit = owner.begin_owner_work(packet)?;
         let checked = WorkCheckedPacket::verify_with_progress(
             packet.clone(),
-            &mut |_| progress.checkpoint(),
+            &mut |point| {
+                // The original CPU meter remains on EVERY callback. The
+                // more expensive kernel membership check is sampled only
+                // at known points in the unchanged full W1 replay.
+                progress.checkpoint()?;
+                if history_host_checkpoint(point) {
+                    host_check()?;
+                }
+                Ok(())
+            },
         )?;
+        host_check()?;
         progress.checkpoint()?;
         let checked = owner.attach_owner_work(checked, permit)?;
-        let execution_progress = |_phase| progress.checkpoint();
+        let execution_progress = |_phase| {
+            host_check()?;
+            progress.checkpoint()
+        };
         let control = trnm_mvcc_fee::pon_executor::ExecutionControl::new(
             &execution_progress,
             operation.worker_accounting(),
         );
-        owner.admit_work_checked_with_control(checked, clock, &control)
+        let result = owner.admit_work_checked_with_control(checked, clock, &control);
+        // A postcommit Host error must not rewrite already durable native
+        // facts; the caller treats the overall sync as incomplete.
+        host_check()?;
+        result
     })
 }
 
@@ -2188,7 +2224,9 @@ fn receive_page(
     tip: Hash,
     after: Hash,
     clock: u64,
+    host_check: &(impl Fn() -> Result<()> + Sync),
 ) -> Result<Hash> {
+    host_check()?;
     ensure(
         page.schema == "pon-native-history-v1"
             && page.network == hex::encode(node.settings().network())
@@ -2214,6 +2252,7 @@ fn receive_page(
     // separately from the later full W1/M06 intervals. No nested operation:
     // actual decoder CPU must not be double-billed or run at no cost.
     let (packets, next) = metered_history_operation(node, domain, |_owner, operation| {
+        host_check()?;
         operation.checkpoint()?;
         let packets = page
             .packets
@@ -2229,18 +2268,28 @@ fn receive_page(
             page.next == hex::encode(next) && page.complete == (next == tip),
             "PAGE_COMPLETE",
         )?;
+        host_check()?;
         operation.checkpoint()?;
         Ok((packets, next))
     })?;
     for packet in &packets {
-        metered_history_packet(node, domain, packet, clock)?;
+        host_check()?;
+        metered_history_packet(node, domain, packet, clock, host_check)?;
     }
     if page.complete {
         // Reorganization/activation has its own original CPU reservation.
         // Already durable native effects cannot be undone by late CPU faults.
         metered_history_operation(node, domain, |owner, operation| {
+            host_check()?;
             operation.checkpoint()?;
-            owner.activate_observed(tip, clock).map(|_| ())
+            let result = owner.activate_observed_with_progress(
+                tip, clock, &mut || {
+                    host_check()?;
+                    operation.checkpoint()
+                },
+            ).map(|_| ());
+            host_check()?;
+            result
         })?;
     }
     Ok(next)
@@ -2252,7 +2301,7 @@ fn receive_page(
 /// W1 replay. A caller cannot bypass the guard by calling the addressless
 /// parser from another crate or by supplying a fake already-verified work
 /// token. Only the full native Node determines consensus validity.
-pub fn receive_page_from(
+pub(crate) fn receive_page_from(
     node: &mut Node,
     source: SocketAddr,
     page: Page,
@@ -2268,7 +2317,13 @@ pub fn receive_page_from(
     // Node must share its already-bound live account. A standalone sync Node
     // starts with zero original credit; no per-peer/page allowance is minted.
     let domain = node.remote_history_cpu_domain()?;
-    let native = receive_page(node, &domain, page, tip, after, clock);
+    let host_check = || {
+        if let Some(kernel) = &host_kernel {
+            kernel.verify()?;
+        }
+        Ok(())
+    };
+    let native = receive_page(node, &domain, page, tip, after, clock, &host_check);
     // A completed native admission cannot be undone by a post-verification
     // host fault. That fault still makes the overall synchronization fail.
     if let Some(kernel) = &host_kernel {
@@ -2276,6 +2331,32 @@ pub fn receive_page_from(
     }
     native
 }
+/// Strict public-V3 History import. An apparent loopback peer may tunnel a
+/// hostile WAN source, so destination SocketAddr is not resource provenance.
+/// Require the ORIGINAL administrator-owned Host cgroup even for 127.0.0.1.
+/// Then use the SINGLE Node-bound CPU account for decoding, every W1/M06 and
+/// final tip activation; a ticket or signed transport alone grants no work.
+pub fn receive_page_from_public_sync(
+    node: &mut Node,
+    source: SocketAddr,
+    page: Page,
+    tip: Hash,
+    after: Hash,
+    clock: u64,
+) -> Result<Hash> {
+    let host = crate::host_kernel_parent::require_for_untrusted_public_sync(source)?;
+    host.verify()?;
+    // Do not fall back through a caller-supplied loopback address. Enforce
+    // both the physical Host and original Node-owned CPU account throughout
+    // this exact public page, including W1/M06 and activation checkpoints.
+    let domain = node.remote_history_cpu_domain()?;
+    let result = receive_page(node, &domain, page, tip, after, clock, &|| host.verify());
+    // Native success may already be durable when the post-check fails; never
+    // rewrite the ledger fact, but do not claim completed sync either.
+    host.verify()?;
+    result
+}
+
 pub fn sync_from(
     node: &mut Node,
     address: SocketAddr,
@@ -2753,6 +2834,118 @@ mod tests {
             node.remote_history_cpu_domain().err().unwrap().to_string(),
             "OWNER_PUBLIC_SERVICE_UNCLEAN_EPOCH"
         );
+    }
+
+    #[cfg(target_os = "linux")]
+    #[test]
+    fn revoked_host_before_full_history_admission_settles_cpu_without_chainwork() {
+        use std::sync::atomic::{AtomicUsize, Ordering};
+        let observed = now().unwrap();
+        let settings = crate::Settings::development(Some(observed - 100)).unwrap();
+        let producer_dir = tempfile::tempdir().unwrap();
+        let producer = Node::open(producer_dir.path(), settings.clone(), 2).unwrap();
+        let packet = producer.make(
+            settings.genesis(),
+            vec![],
+            crate::development_public(0).unwrap(),
+            settings.genesis_time() + 10,
+            4096,
+        ).unwrap();
+        let id = packet.id().unwrap();
+        let page = Page {
+            schema: "pon-native-history-v1".into(),
+            network: hex::encode(settings.network()),
+            parameters: hex::encode(settings.parameters()),
+            genesis: hex::encode(settings.genesis()),
+            tip: hex::encode(id),
+            after: hex::encode(settings.genesis()),
+            packets: vec![hex::encode(packet.encode().unwrap())],
+            next: hex::encode(id),
+            complete: true,
+        };
+        let dir = tempfile::tempdir().unwrap();
+        let mut receiver = Node::open(dir.path(), settings.clone(), 2).unwrap();
+        let before = receiver.stats().unwrap();
+        let domain = receiver.remote_history_cpu_domain().unwrap();
+        let calls = AtomicUsize::new(0);
+        let result = receive_page(
+            &mut receiver,
+            &domain,
+            page,
+            id,
+            settings.genesis(),
+            observed,
+            &|| {
+                // After the paid page decode has started, simulate an
+                // original Host identity/limit loss at one real checkpoint.
+                if calls.fetch_add(1, Ordering::SeqCst) >= 8 {
+                    return Err("TEST_HOST_OWNER_REVOKED".into());
+                }
+                Ok(())
+            },
+        ).unwrap_err();
+        assert_eq!(result.to_string(), "TEST_HOST_OWNER_REVOKED");
+        assert!(calls.load(Ordering::SeqCst) >= 9);
+        let account = domain.observe().unwrap();
+        assert_eq!(account.in_flight, 0);
+        assert!(!account.accounting_unavailable);
+        assert_eq!(receiver.stats().unwrap(), before);
+        assert_eq!(receiver.read_active().unwrap().0, settings.genesis());
+        assert!(receiver.parent_height(id).is_err());
+        drop(receiver);
+        let recovered = Node::open(dir.path(), settings, 2).unwrap();
+        assert_eq!(recovered.stats().unwrap(), before);
+        assert!(recovered.parent_height(id).is_err());
+    }
+
+    #[test]
+    fn history_host_checks_are_bounded_while_cpu_checks_remain_each_w1_progress() {
+        use trnm_crypto_primitives::pon_work::VerificationProgress as P;
+        assert!(history_host_checkpoint(P::BeforeReplay));
+        assert!(history_host_checkpoint(P::BeforeProduct));
+        assert!(history_host_checkpoint(P::BeforeVerifiedWork));
+        assert!(history_host_checkpoint(P::Noise { label: 0, counter: 0 }));
+        assert!(!history_host_checkpoint(P::Noise { label: 0, counter: 1 }));
+        assert!(history_host_checkpoint(P::MatrixRow { row: 16 }));
+        assert!(!history_host_checkpoint(P::MatrixRow { row: 15 }));
+        assert!(history_host_checkpoint(P::TranscriptTile {
+            row: 4, column: 0, inner: 0,
+        }));
+        assert!(!history_host_checkpoint(P::TranscriptTile {
+            row: 4, column: 0, inner: 1,
+        }));
+        assert!(!history_host_checkpoint(P::TranscriptTile {
+            row: 4, column: 1, inner: 0,
+        }));
+    }
+
+    #[test]
+    fn public_loopback_history_proxy_requires_real_host_owner_before_cpu_or_state() {
+        let relay: SocketAddr = "127.0.0.1:12345".parse().unwrap();
+        let expected = crate::host_kernel_parent::require_for_untrusted_public_sync(relay);
+        let dir = tempfile::tempdir().unwrap();
+        let settings = crate::Settings::development(Some(now().unwrap() - 100)).unwrap();
+        let mut node = Node::open(dir.path(), settings.clone(), 2).unwrap();
+        let before = node.stats().unwrap();
+        let bad_page = Page {
+            schema: String::new(), network: String::new(),
+            parameters: String::new(), genesis: String::new(),
+            tip: String::new(), after: String::new(),
+            packets: vec![], next: String::new(), complete: false,
+        };
+        let error = receive_page_from_public_sync(
+            &mut node, relay, bad_page,
+            settings.genesis(), settings.genesis(), now().unwrap(),
+        ).unwrap_err();
+        match expected {
+            Err(guard_error) => assert_eq!(error.to_string(), guard_error.to_string()),
+            Ok(host) => {
+                host.verify().unwrap();
+                assert_eq!(error.to_string(), "PAGE_CONTEXT");
+            }
+        }
+        assert_eq!(node.stats().unwrap(), before);
+        assert_eq!(node.read_active().unwrap().0, settings.genesis());
     }
 
     #[test]
