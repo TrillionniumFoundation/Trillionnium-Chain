@@ -1680,8 +1680,13 @@ fn serve_inner(
                         }
                     };
                     let mut progress = |_: u64| -> Result<()> {
-                        ensure(!stop.load(Ordering::Acquire), "CANCELLED")?;
-                        ensure(Instant::now() < request_deadline, "REQUEST_DEADLINE")
+                        if stop.load(Ordering::Acquire) {
+                            return Err(Error::new(ErrorCode::LegacyRequestCancelled));
+                        }
+                        if Instant::now() >= request_deadline {
+                            return Err(Error::new(ErrorCode::LegacyRequestDeadline));
+                        }
+                        Ok(())
                     };
                     if let Some(authentication) = authentication.as_ref() {
                         let request = match authenticate_request(&bytes, &settings, authentication)

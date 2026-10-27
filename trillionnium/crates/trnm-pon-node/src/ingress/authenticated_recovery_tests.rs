@@ -106,13 +106,15 @@ impl Running {
     fn raw(&self, bytes: &[u8]) -> Vec<u8> {
         let mut stream = TcpStream::connect(self.address).unwrap();
         stream
-            .set_read_timeout(Some(Duration::from_secs(5)))
+            .set_read_timeout(Some(Duration::from_secs(15)))
             .unwrap();
         stream
             .set_write_timeout(Some(Duration::from_secs(5)))
             .unwrap();
         write_frame(&mut stream, bytes).unwrap();
-        read_frame(&mut stream).unwrap()
+        // The service's original request deadline is ten seconds. This is
+        // only the observing client's socket limit; it grants no service time.
+        read_frame_budget(&mut stream, Duration::from_secs(15)).unwrap()
     }
     fn signed(&self, bytes: &[u8]) -> (Vec<u8>, bool, bool, Value) {
         let response = self.raw(bytes);
@@ -162,9 +164,15 @@ impl Running {
         json!({"reorg_done":done,"target":hex::encode(target),"active":hex::encode(active),"highest_ack":ack,"pending_nonce":pending,"audit_rows":audit})
     }
     fn interrupted(&self) {
+        let started = Instant::now();
         let (_, terminal, ok, value) = self.signed(&self.wire);
         assert!(!terminal && !ok);
-        assert_eq!(value["error"], "PUBLIC_REQUEST_CANCELLED");
+        assert_eq!(value["error"], "REQUEST_DEADLINE");
+        assert!(started.elapsed() >= Duration::from_secs(9));
+        println!(
+            "{}",
+            json!({"schema":"native-actual-legacy-request-deadline-v1","request_deadline_not_renewed":true,"actual_original_request_timeout_seconds":10,"observed_wall_ns":started.elapsed().as_nanos(),"terminal":terminal,"ok":ok,"value":value,"typed_error_was_not_injected":true})
+        );
         let durable = self.durable();
         assert_eq!(durable["reorg_done"], 0);
         assert_eq!(durable["target"], hex::encode(self.target.id().unwrap()));
@@ -192,7 +200,9 @@ fn signed_socket_exact_pending_frame_resumes_only_its_original_committed_intent(
     running.interrupted();
     let before = running.durable();
     let mut changed_payload = running.target.clone();
-    changed_payload.transactions.push(vec![0]);
+    // Keep the original packet ID and legal packet framing while changing
+    // the signed payload bytes. Its changed proof must never be replayed.
+    changed_payload.proof[0] ^= 1;
     assert_eq!(changed_payload.id().unwrap(), running.target.id().unwrap());
     for (nonce, request) in [
         (

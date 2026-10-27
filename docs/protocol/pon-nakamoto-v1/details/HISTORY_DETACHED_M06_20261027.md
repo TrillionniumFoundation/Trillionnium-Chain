@@ -108,6 +108,19 @@ row. Cancellation returns a nonterminal signed response and preserves that
 pending scope. A new explicit signed attempt can finish and ACK it once; a
 changed frame, target, payload, session or current time still refuses. This
 does not provide autonomous recovery when the original sender disappears.
+The legacy listener's actual `CANCELLED` and `REQUEST_DEADLINE` diagnostics
+retain their wire text but now have typed local cancellation identities.
+The socket experiment waits for the listener's actual original ten-second
+request deadline after the committed intent; it does not inject a substitute
+public-profile error or renew that request's deadline.
+
+The first committed large-parent observation on `08d647017` exhausted its
+original scalar CPU budget before spawning M06 workers: the actual 8,625,548
+byte parent produced `PUBLIC_MUTATION_CPU_BUDGET`. That failed service test
+is retained. The explicit held scheduling branch preserves native checks,
+but repeated full-parent preparation still has material cost; this prototype
+has not established that all honest large-State requests meet the original
+service budget. No extra credit or replacement account is added to hide it.
 
 The unused legacy `RecoveryIngress` capability is only a concurrency reservation,
 not CPU credit or a durable recovery authority. The ordinary V3 original CPU

@@ -102,6 +102,8 @@ error_codes! {
     PublicEof => ("PUBLIC_EOF", Transport),
     PublicClientDeadline => ("PUBLIC_CLIENT_DEADLINE", Cancelled),
     PeerPollCancelled => ("PEER_POLL_CANCELLED", Cancelled),
+    LegacyRequestCancelled => ("CANCELLED", Cancelled),
+    LegacyRequestDeadline => ("REQUEST_DEADLINE", Cancelled),
     PublicRequestCancelled => ("PUBLIC_REQUEST_CANCELLED", Cancelled),
     PublicRequestDeadline => ("PUBLIC_REQUEST_DEADLINE", Cancelled),
     SubmitRecoveryDeadline => ("SUBMIT_RECOVERY_DEADLINE", Cancelled),
@@ -405,6 +407,24 @@ impl From<serde_json::Error> for Error {
 mod tests {
     use super::*;
     use std::error::Error as _;
+
+    #[test]
+    fn legacy_request_controls_keep_original_wire_and_typed_local_cancellation() {
+        for (code, wire) in [
+            (ErrorCode::LegacyRequestCancelled, "CANCELLED"),
+            (ErrorCode::LegacyRequestDeadline, "REQUEST_DEADLINE"),
+        ] {
+            let local = Error::new(code);
+            assert_eq!(local.to_string(), wire);
+            assert_eq!(local.kind(), ErrorKind::Cancelled);
+            assert!(!local.requires_owner_stop());
+            assert!(Error::from(wire).is(code));
+            let remote = Error::remote(wire);
+            assert_eq!(remote.kind(), ErrorKind::RemoteRefusal);
+            assert_eq!(remote.code(), None);
+            assert!(!remote.is(code));
+        }
+    }
 
     #[test]
     fn continuous_history_without_a_durable_claim_is_a_local_owner_stop() {

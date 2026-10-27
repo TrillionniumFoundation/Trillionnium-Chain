@@ -4836,9 +4836,19 @@ impl Node {
         cut(&mut hook, "intent")?;
         #[cfg(test)]
         if std::mem::take(&mut self.cancel_next_activation_intent) {
-            // A test-only one-shot cut AFTER the original durable intent commit.
+            // A test-only pause AFTER the original durable intent commit.
+            // Observe the actual caller's original deadline/control: do not
+            // inject a different typed error and call it a production timeout.
             // No production environment, socket or caller can select this cut.
-            return Err(Error::new(crate::ErrorCode::PublicRequestCancelled));
+            let test_end = std::time::Instant::now() + std::time::Duration::from_secs(11);
+            loop {
+                progress()?;
+                assert!(
+                    std::time::Instant::now() < test_end,
+                    "test activation cut did not observe the original bounded request deadline"
+                );
+                std::thread::sleep(std::time::Duration::from_millis(2));
+            }
         }
         self.resume_intent_with_progress(&mut hook, progress)
     }
