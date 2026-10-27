@@ -712,9 +712,7 @@ fn pinned_peer_service_host_kernel(
     polling_enabled: bool,
 ) -> Result<Option<trnm_pon_node::host_kernel_parent::HostKernelBudget>> {
     let parent = configured_parent.or_else(|| {
-        polling_enabled.then_some(
-            trnm_pon_node::host_kernel_parent::FIXED_PUBLIC_KERNEL_PARENT,
-        )
+        polling_enabled.then_some(trnm_pon_node::host_kernel_parent::FIXED_PUBLIC_KERNEL_PARENT)
     });
     let owner = host_public_guard::require_host_kernel_budget(listener, parent)?;
     if polling_enabled && owner.is_none() {
