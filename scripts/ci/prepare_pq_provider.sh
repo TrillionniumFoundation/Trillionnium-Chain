@@ -34,6 +34,7 @@ pq_log="$pq_observations/build-and-smoke.log"
 touch "$pq_log"
 pq_script_sha256="$(sha256sum "${BASH_SOURCE[0]}" | cut -d ' ' -f 1)"
 pq_stage='download'
+pq_source_transport='download'
 pq_smoke_passed=false
 pq_started="$SECONDS"
 
@@ -43,15 +44,16 @@ pq_record_exit() {
   set +e
   python3 - "$pq_observations/provider.json" "$pq_exit" "$pq_stage" \
     "$openssl_version" "$openssl_sha256" "$openssl_url" "$pq_build" "$pq_prefix" \
-    "$pq_script_sha256" "$pq_smoke_passed" "$((SECONDS - pq_started))" <<'PY'
+    "$pq_script_sha256" "$pq_smoke_passed" "$((SECONDS - pq_started))" "$pq_source_transport" <<'PY'
 import json, os, pathlib, sys
-path, code, stage, version, archive_sha, url, build, prefix, script_sha, smoke, elapsed = sys.argv[1:]
+path, code, stage, version, archive_sha, url, build, prefix, script_sha, smoke, elapsed, transport = sys.argv[1:]
 payload = {
-    "schema": "trnm-ci-pq-provider-v1",
+    "schema": "trnm-ci-pq-provider-v2",
     "result": "PREPARED_AND_SMOKE_VERIFIED" if code == "0" and smoke == "true" else "FAILED",
     "exit_code": int(code), "last_stage": stage,
     "version": version, "source_url": url, "source_archive_sha256_expected": archive_sha,
-    "source_digest_verified": stage not in ("download", "archive-digest"),
+    "source_transport": transport,
+    "source_digest_verified": stage not in ("download", "local-archive-copy", "archive-digest"),
     "preparation_script_sha256": script_sha, "build_directory": build,
     "install_prefix": prefix, "static_build": smoke == "true", "upstream_full_tests_run": False,
     "ml_dsa_65_sign_verify_and_wrong_message_rejection": smoke == "true",
@@ -75,9 +77,21 @@ PY
 }
 trap pq_record_exit EXIT
 
-printf '%s\n' "Downloading pinned OpenSSL $openssl_version; log: $pq_log"
-curl --fail --location --retry 3 --connect-timeout 20 --max-time 300 \
-  --proto '=https' --tlsv1.2 --output "$pq_archive" "$openssl_url" >> "$pq_log" 2>&1
+# An explicit offline source avoids another download, never a build or smoke.
+# It is copied into the fresh build directory and checked against the same pin.
+if test -n "${TRNM_PQ_SOURCE_ARCHIVE:-}"; then
+  pq_stage='local-archive-copy'
+  pq_source_transport='explicit-local-archive'
+  case "$TRNM_PQ_SOURCE_ARCHIVE" in /*) ;; *) exit 2 ;; esac
+  test -f "$TRNM_PQ_SOURCE_ARCHIVE"
+  test ! -L "$TRNM_PQ_SOURCE_ARCHIVE"
+  printf '%s\n' "Copying explicit pinned OpenSSL source; log: $pq_log"
+  cp -- "$TRNM_PQ_SOURCE_ARCHIVE" "$pq_archive" >> "$pq_log" 2>&1
+else
+  printf '%s\n' "Downloading pinned OpenSSL $openssl_version; log: $pq_log"
+  curl --fail --location --retry 3 --connect-timeout 20 --max-time 300 \
+    --proto '=https' --tlsv1.2 --output "$pq_archive" "$openssl_url" >> "$pq_log" 2>&1
+fi
 pq_stage='archive-digest'
 printf '%s  %s\n' "$openssl_sha256" "$pq_archive" | sha256sum --check --strict >> "$pq_log" 2>&1
 pq_stage='extract'
