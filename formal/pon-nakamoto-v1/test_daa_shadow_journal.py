@@ -334,5 +334,42 @@ class ShadowJournalTests(unittest.TestCase):
             journal.append(first, packet)
             self.assertEqual(journal.audit(), 1)
 
+
+    def test_live_trigger_schema_change_rejected_before_append_and_cas(self):
+        with ShadowJournal(self.path, CTX, GEN) as journal:
+            first, packet1 = candidate(GEN, 1)
+            journal.append(first, packet1)
+            second, packet2 = candidate(first.block_id, 2)
+            with sqlite3.connect(self.path) as raw:
+                raw.execute(
+                    "CREATE TRIGGER foreign_rewrite AFTER INSERT ON daa_shadow_headers_v1 "
+                    "BEGIN UPDATE daa_shadow_meta_v1 SET value=x'00' WHERE key='context'; END"
+                )
+            # An opened journal must refuse the foreign trigger before it can
+            # mutate header rows or publish the active-tip CAS.
+            with self.assertRaisesRegex(JournalError, 'DATABASE_SCHEMA'):
+                journal.append(second, packet2)
+            with self.assertRaisesRegex(JournalError, 'DATABASE_SCHEMA'):
+                journal.activate(first.block_id, GEN)
+            with self.assertRaisesRegex(JournalError, 'DATABASE_SCHEMA'):
+                journal.audit()
+            self.assertFalse(journal.db.in_transaction)
+            with sqlite3.connect(self.path) as raw:
+                self.assertEqual(raw.execute(
+                    'SELECT COUNT(*) FROM daa_shadow_headers_v1').fetchone()[0], 1)
+                self.assertEqual(raw.execute(
+                    "SELECT value FROM daa_shadow_meta_v1 WHERE key='context'"
+                ).fetchone()[0], CTX)
+                self.assertEqual(raw.execute(
+                    "SELECT value FROM daa_shadow_meta_v1 WHERE key='active_tip'"
+                ).fetchone()[0], GEN)
+                raw.execute('DROP TRIGGER foreign_rewrite')
+            self.assertEqual(journal.audit(), 1)
+            journal.append(second, packet2)
+            journal.activate(second.block_id, GEN)
+            self.assertEqual(journal.active(), second.block_id)
+        with ShadowJournal(self.path, CTX, GEN) as cold:
+            self.assertEqual(cold.audit(), 2)
+
 if __name__ == '__main__':
     unittest.main()
