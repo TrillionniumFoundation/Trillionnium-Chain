@@ -293,7 +293,7 @@ pub fn execute(statement: &PublicStatement, bytes: &[u8]) -> Result<LocalExecuti
         .iter()
         .zip(correction1)
         .zip(correction2)
-        .map(|((x, y), z)| ((u128::from(*x) + 2 * Q - u128::from(y) - u128::from(z)) % Q) as u32)
+        .map(|((x, y), z)| reduce_bounded(u128::from(*x) + 2 * Q - u128::from(y) - u128::from(z)))
         .collect();
     if product != claimed {
         return Err(WorkError::Product.into());
@@ -372,14 +372,38 @@ fn expand(challenge: Hash, label: u8) -> Result<Vec<u32>, WorkError> {
     Err(WorkError::NoiseBudget)
 }
 
+/// Exact reduction for this fixed relation's bounded accumulators.
+///
+/// Every canonical word is below q = 2^32 - 5 and each dot product has at most
+/// 64 terms, so its sum is strictly below 2^70. Since 2^32 = 5 (mod q), two
+/// folds yield a value below 2q; one conditional subtraction is sufficient.
+/// The bound is checked in release builds too: an internal range regression
+/// must fail instead of truncating high bits and changing the proved relation.
+fn reduce_bounded(value: u128) -> u32 {
+    assert!(value < (1u128 << 70), "complete W1 reduction range");
+    let first = u64::from(value as u32) + 5 * ((value >> 32) as u64);
+    let second = u64::from(first as u32) + 5 * (first >> 32);
+    if second >= Q as u64 {
+        (second - Q as u64) as u32
+    } else {
+        second as u32
+    }
+}
+
+fn wide_product(a: u32, b: u32) -> u128 {
+    // A 32-by-32 product fits in u64, including noncanonical u32 values. Avoid
+    // compiling an unnecessarily general 128-by-128 multiplication in RV32.
+    u128::from(u64::from(a) * u64::from(b))
+}
+
 fn matrix_product(a: &[u32], b: &[u32], rows: usize, inner: usize, columns: usize) -> Vec<u32> {
     let mut output = vec![0; rows * columns];
     for i in 0..rows {
         for j in 0..columns {
             let total: u128 = (0..inner)
-                .map(|k| u128::from(a[i * inner + k]) * u128::from(b[k * columns + j]))
+                .map(|k| wide_product(a[i * inner + k], b[k * columns + j]))
                 .sum();
-            output[i * columns + j] = (total % Q) as u32;
+            output[i * columns + j] = reduce_bounded(total);
         }
     }
     output
@@ -412,12 +436,12 @@ fn replay(
     let ap: Vec<_> = a
         .iter()
         .zip(e)
-        .map(|(x, y)| ((u128::from(*x) + u128::from(y)) % Q) as u32)
+        .map(|(x, y)| reduce_bounded(u128::from(*x) + u128::from(y)))
         .collect();
     let bp: Vec<_> = b
         .iter()
         .zip(f)
-        .map(|(x, y)| ((u128::from(*x) + u128::from(y)) % Q) as u32)
+        .map(|(x, y)| reduce_bounded(u128::from(*x) + u128::from(y)))
         .collect();
     let mut cp = vec![0u32; CELLS];
     let mut transcript = Sha256::new();
@@ -427,19 +451,26 @@ fn replay(
     for bi in 0..N / R {
         for bj in 0..N / R {
             for bk in 0..N / R {
+                let mut tile_bytes = [0u8; R * R * 4];
+                let mut tile_offset = 0;
                 for i in bi * R..(bi + 1) * R {
                     for j in bj * R..(bj + 1) * R {
                         let mut total = u128::from(cp[i * N + j]);
                         for k in bk * R..(bk + 1) * R {
-                            total += u128::from(ap[i * N + k]) * u128::from(bp[k * N + j]);
+                            total += wide_product(ap[i * N + k], bp[k * N + j]);
                         }
-                        let value = (total % Q) as u32;
+                        let value = reduce_bounded(total);
                         cp[i * N + j] = value;
-                        transcript.update(value.to_le_bytes());
+                        tile_bytes[tile_offset..tile_offset + 4]
+                            .copy_from_slice(&value.to_le_bytes());
+                        tile_offset += 4;
                         observe(position, value);
                         position += 1;
                     }
                 }
+                // Exactly the original 64 ordered little-endian words; only
+                // the API call boundary changes, not any hashed byte.
+                transcript.update(tile_bytes);
             }
         }
     }

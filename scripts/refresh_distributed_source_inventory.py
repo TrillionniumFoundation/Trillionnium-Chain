@@ -14,7 +14,7 @@ def render():
     if shutil.which("rg"):
         # Native include_bytes! fixtures are part of the cold build closure too.
         # Restrict discovery to the repository's declared source/config roots.
-        args = ["rg", "--files", "trillionnium/crates", "config", "-g", "*.rs", "-g", "Cargo.toml", "-g", "*.json", "-g", "*.bin", "-g", "*.der"]
+        args = ["rg", "--files", "trillionnium/crates", "config", "-g", "*.rs", "-g", "Cargo.toml", "-g", "*.json", "-g", "*.bin", "-g", "*.der", "-g", "WYCHEPROOF_LICENSE"]
         paths = set(subprocess.check_output(args, cwd=ROOT, text=True).splitlines())
     else:
         # Hosted runners need not install ripgrep. Git applies the repository's
@@ -23,7 +23,7 @@ def render():
                                        "--exclude-standard", "--", "trillionnium/crates", "config"], cwd=ROOT)
         paths = {path for item in raw.split(b"\0") if item
                  for path in [item.decode("utf-8")]
-                 if Path(path).suffix in {".rs", ".json", ".bin", ".der"} or Path(path).name == "Cargo.toml"}
+                 if Path(path).suffix in {".rs", ".json", ".bin", ".der"} or Path(path).name in {"Cargo.toml", "WYCHEPROOF_LICENSE"}}
     paths.update(("trillionnium/Cargo.toml", "trillionnium/Cargo.lock", str(OUTPUT.relative_to(ROOT))))
     rows = ["// Embedded exact bytes. Regenerate inventory when adding native source files.", "pub const FILES: &[(&str, &[u8])] = &["]
     for path in sorted(paths):
