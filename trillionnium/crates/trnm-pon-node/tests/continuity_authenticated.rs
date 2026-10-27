@@ -421,10 +421,9 @@ fn maintenance_reentry_registers_signed_task_and_independent_client_confirms() {
     reference.activate(new_id).unwrap();
     native.activate(new_id).unwrap();
     assert_eq!(native.read_active().unwrap(), reference.read_active().unwrap());
-    assert_eq!(
-        native.read_active().unwrap().2[&qualified_task_lifecycle::slot_key(1).unwrap()]
-            ["output_count"], 1
-    );
+    let slot = qualified_task_lifecycle::slot_key(1).unwrap();
+    let active = native.read_active().unwrap();
+    assert_eq!(active.2[&slot]["output_count"], 1);
     admitted.push(new_id);
     parent = new_id;
 
