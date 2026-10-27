@@ -2109,12 +2109,33 @@ fn call_authenticated_durable_inner(
     Err(Error::authenticated_remote(terminal, error))
 }
 
+// A fixed cgroup is enforced by the kernel. Recheck current worker and
+// unchanged Host limits at original W1 stage boundaries: at most 64 transcript
+// tiles proceed without a physical owner recheck. These are resource checks,
+// not mathematical W1 validity or blockchain authorization.
+fn history_kernel_work_checkpoint(
+    point: trnm_crypto_primitives::pon_work::VerificationProgress,
+) -> bool {
+    use trnm_crypto_primitives::pon_work::VerificationProgress;
+    match point {
+        VerificationProgress::BeforeReplay
+        | VerificationProgress::BeforeProduct
+        | VerificationProgress::BeforeVerifiedWork => true,
+        VerificationProgress::Noise { counter, .. } => counter % 32 == 0,
+        VerificationProgress::MatrixRow { row } => row % 32 == 0,
+        VerificationProgress::TranscriptTile { column, inner, .. } => {
+            column == 0 && inner == 0
+        }
+    }
+}
+
 fn receive_page(
     node: &mut Node,
     page: Page,
     tip: Hash,
     after: Hash,
     clock: u64,
+    mut resource_checkpoint: impl FnMut() -> Result<()>,
 ) -> Result<Hash> {
     ensure(
         page.schema == "pon-native-history-v1"
@@ -2152,10 +2173,21 @@ fn receive_page(
         "PAGE_COMPLETE",
     )?;
     for packet in &packets {
-        node.admit(packet, clock)?;
+        resource_checkpoint()?;
+        node.admit_with_work_progress(packet, clock, &mut |point| {
+            if history_kernel_work_checkpoint(point) {
+                resource_checkpoint()?;
+            }
+            Ok(())
+        })?;
+        // This can run after durable admission: an owner fault never revokes
+        // a committed block, but it stops this unqualified sync response.
+        resource_checkpoint()?;
     }
     if page.complete {
+        resource_checkpoint()?;
         node.activate_observed(tip, clock)?;
+        resource_checkpoint()?;
     }
     Ok(next)
 }
@@ -2166,7 +2198,7 @@ fn receive_page(
 /// W1 replay. A caller cannot bypass the guard by calling the addressless
 /// parser from another crate or by supplying a fake already-verified work
 /// token. Only the full native Node determines consensus validity.
-pub fn receive_page_from(
+pub(crate) fn receive_page_from(
     node: &mut Node,
     source: SocketAddr,
     page: Page,
@@ -2178,7 +2210,12 @@ pub fn receive_page_from(
     if let Some(kernel) = &host_kernel {
         kernel.verify()?;
     }
-    let native = receive_page(node, page, tip, after, clock);
+    let native = receive_page(node, page, tip, after, clock, || {
+        if let Some(kernel) = &host_kernel {
+            kernel.verify()?;
+        }
+        Ok(())
+    });
     // A completed native admission cannot be undone by a post-verification
     // host fault. That fault still makes the overall synchronization fail.
     if let Some(kernel) = &host_kernel {
@@ -2186,6 +2223,37 @@ pub fn receive_page_from(
     }
     native
 }
+/// Public History import is untrusted even when a local TCP proxy carries
+/// remote packets through a loopback address. No external caller can select
+/// the weaker native development compatibility wrapper.
+///
+/// ```compile_fail
+/// use trnm_pon_node::ingress::receive_page_from;
+/// fn main() {}
+/// ```
+pub fn receive_public_page_from(
+    node: &mut Node,
+    source: SocketAddr,
+    page: Page,
+    tip: Hash,
+    after: Hash,
+    clock: u64,
+) -> Result<Hash> {
+    // The ORIGINAL fixed administrator-owned Host parent is required even
+    // for a loopback source: a caller's socket address is not provenance.
+    let kernel = crate::host_kernel_parent::require_host_kernel_budget(
+        source,
+        Some(crate::host_kernel_parent::FIXED_PUBLIC_KERNEL_PARENT),
+    )?
+    .ok_or("PUBLIC_HOST_KERNEL_REQUIRED")?;
+    kernel.verify()?;
+    let native = receive_page(node, page, tip, after, clock, || kernel.verify());
+    // Do not convert an already committed block into an invalid work proof
+    // when the last local Host owner observation fails.
+    kernel.verify()?;
+    native
+}
+
 pub fn sync_from(
     node: &mut Node,
     address: SocketAddr,
@@ -2325,6 +2393,49 @@ pub fn sync_from_authenticated_durable(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn kernel_progress_rechecks_original_host_at_most_every_64_tiles() {
+        use trnm_crypto_primitives::pon_work::VerificationProgress;
+        let mut owner_checks = Vec::new();
+        for ordinal in 0..512_usize {
+            let point = VerificationProgress::TranscriptTile {
+                row: ordinal / 64,
+                column: (ordinal / 8) % 8,
+                inner: ordinal % 8,
+            };
+            if history_kernel_work_checkpoint(point) {
+                owner_checks.push(ordinal);
+            }
+        }
+        assert_eq!(owner_checks, vec![0, 64, 128, 192, 256, 320, 384, 448]);
+        for point in [
+            VerificationProgress::BeforeReplay,
+            VerificationProgress::BeforeProduct,
+            VerificationProgress::BeforeVerifiedWork,
+            VerificationProgress::Noise { label: 1, counter: 0 },
+            VerificationProgress::MatrixRow { row: 0 },
+        ] {
+            assert!(history_kernel_work_checkpoint(point));
+        }
+        assert!(!history_kernel_work_checkpoint(
+            VerificationProgress::Noise { label: 1, counter: 1 }
+        ));
+    }
+
+    #[test]
+    fn public_loopback_history_requires_real_fixed_host_parent() {
+        let loopback: SocketAddr = "127.0.0.1:12345".parse().unwrap();
+        let legacy = crate::host_kernel_parent::require_for_listener(loopback).unwrap();
+        assert!(legacy.is_none(), "weak local compatibility remains local only");
+        let strict = crate::host_kernel_parent::require_host_kernel_budget(
+            loopback,
+            Some(crate::host_kernel_parent::FIXED_PUBLIC_KERNEL_PARENT),
+        );
+        // A real matching parent yields Some; an unprovisioned one returns an
+        // operational refusal. Neither is an unguarded None for public import.
+        assert!(!matches!(strict, Ok(None)));
+    }
 
     #[test]
     fn remote_sync_without_original_host_cgroup_rejects_before_any_network_or_w1() {

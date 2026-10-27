@@ -92,8 +92,7 @@ class FourFromZeroTicketRegression(unittest.TestCase):
                 precheck_ns=time.process_time_ns()-started
                 with patch.object(W,'evaluate',wraps=W.evaluate) as replay:
                     started=time.process_time_ns()
-                    with self.assertRaisesRegex(ValueError,'^TRANSCRIPT
-):
+                    with self.assertRaisesRegex(ValueError,'^TRANSCRIPT$'):
                         W.verify(challenge,task,target,proof)
                     receiver_ns=time.process_time_ns()-started
                 self.assertEqual(replay.call_count,1)

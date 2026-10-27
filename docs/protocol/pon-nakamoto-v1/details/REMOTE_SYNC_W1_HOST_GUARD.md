@@ -106,3 +106,42 @@ must be tested separately.
 The new unexported parser remains useful for unit coverage and does
 not expose a second public unchecked history-import symbol.
 This is an API-path reduction, **not** a production/security gate PASS.
+
+## 2026-10-27: Public and signed CLI loopback-proxy cost floor
+
+The original `require_for_listener(source)` deliberately permits plain
+loopback-only development without an administrator-provisioned cgroup. This
+was still unsafe for **explicitly selected public or authenticated History
+sync**, because a local forwarder can present remote malicious W1 bytes under
+a loopback destination. The source locator does not attest provenance.
+
+`main.rs::priced_sync_context` now selects the existing **fixed Host kernel
+parent**, irrespective of destination IP family or loopback bit, whenever a
+public V2/V3/growth admission profile or any authenticated-sync credentials
+are requested. In this mode `sync_host_kernel_owner` requires an actual
+`HostKernelBudget` for `/sys/fs/cgroup/trnmponpublic.slice`, rechecks its
+real calling-thread membership and immutable resource ceilings, and refuses
+before the first socket request or W1 proof if unavailable. Subsequent page
+checks retain this same original verified budget instance. A profile with
+partial authentication flags cannot accidentally access a cheap fallback.
+The original `receive_page_from` contextual import retains its own checks.
+
+Plain non-public, explicitly local development sync retains its original
+loopback-only exception for compatibility, and remains outside public
+hardening qualification. An embedding caller that directly invokes
+`receive_page_from` can still supply a loopback address without a real
+end-to-end source attestation; local Node ownership is a trusted
+application boundary. A hostile local process that invokes Node admission
+directly is not made economically honest by transport policy.
+
+Added regression
+`public_sync_cannot_use_loopback_proxy_to_avoid_fixed_host_cpu_owner`
+compares the strict loopback caller against the original fixed kernel-parent
+checker and covers all public profiles and partial authentication options.
+Source-only behavior must be compiled and exercised under an actual
+root-provisioned cgroup before P1 can be considered satisfied.
+
+This removes a free loopback override for **public and authenticated CLI
+sync**, not the unresolved developer tunnel/embedding boundary, global
+service fairness or original W1 cheap-false-transcript economics.
+P1-P6 and A03 remain unqualified.
