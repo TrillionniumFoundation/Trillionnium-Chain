@@ -481,3 +481,103 @@ fn maintenance_reentry_registers_signed_task_and_independent_client_confirms() {
         .is_ok());
 }
 
+
+/// P0-B: all 32 original demand slots are occupied by actual signed main
+/// envelopes, then both native backends must reject an early replacement.
+/// Genesis maintenance is still a permitted next-block work source. Unlike
+/// the M06 pure transition test, this exercises real PNW1 and cold persistence.
+/// It grants no independent signer, public network or production authority.
+#[test]
+fn full_32_slot_maintenance_rejects_premature_native_replacement() {
+    use trnm_protocol::qualified_work_task::lifecycle_v2::DEMAND_SLOTS;
+
+    let dir = tempfile::tempdir().unwrap();
+    let settings = Settings::development_with_profiles(
+        Some(1),
+        "native-public-evaluation-dev-v1",
+        continuity_v1::PROFILE,
+    )
+    .unwrap();
+    let bootstrap = settings.bootstrap_lifecycle_task().unwrap();
+    let opens: Vec<Vec<u8>> = (1..DEMAND_SLOTS)
+        .map(|slot| {
+            let mut lease = bootstrap.lease.clone();
+            lease.slot = slot;
+            lease.generation = u64::from(slot) + 1;
+            lease.not_before = 1;
+            lease.expires = 1001;
+            lease.available_until = 1101;
+            lease.demand_id = lease.derived_demand_id();
+            signed(&settings, 1, u64::from(slot), 18, lease.encode().unwrap())
+        })
+        .collect();
+    assert_eq!(opens.len(), usize::from(DEMAND_SLOTS) - 1);
+
+    let mut reference = Node::open(&dir.path().join("reference"), settings.clone(), 1).unwrap();
+    let native_path = dir.path().join("native");
+    let mut native =
+        Node::open_with_authenticated_state(&native_path, settings.clone(), 2).unwrap();
+    let full = admit_pair(
+        &mut reference,
+        &mut native,
+        settings.genesis(),
+        1,
+        opens,
+        public(0),
+        0,
+    );
+    reference.activate(full).unwrap();
+    native.activate(full).unwrap();
+    let before = native.read_active().unwrap();
+    assert_eq!(reference.read_active().unwrap(), before);
+    assert_eq!(
+        before.2[qualified_task_lifecycle::GENERATION_KEY],
+        32
+    );
+    assert_eq!(
+        before
+            .2
+            .keys()
+            .filter(|key| key.starts_with("qualified-demand-slot-v2:"))
+            .count(),
+        usize::from(DEMAND_SLOTS)
+    );
+
+    let mut successor = bootstrap.lease.clone();
+    successor.generation = 33;
+    successor.revision = 1;
+    successor.not_before = 2;
+    successor.expires = 1002;
+    successor.available_until = 1102;
+    successor.demand_id = successor.derived_demand_id();
+    let premature = signed(&settings, 1, 32, 18, successor.encode().unwrap());
+    for node in [&reference, &native] {
+        assert_eq!(
+            node.make_consensus_maintenance(
+                full,
+                vec![premature.clone()],
+                public(0),
+                21,
+                4096,
+            )
+            .unwrap_err()
+            .to_string(),
+            "TASK_RETAINED"
+        );
+        assert_eq!(node.read_active().unwrap(), before);
+    }
+
+    let maintenance =
+        admit_pair(&mut reference, &mut native, full, 2, vec![], public(0), 0);
+    reference.activate(maintenance).unwrap();
+    native.activate(maintenance).unwrap();
+    assert_eq!(reference.read_active().unwrap(), native.read_active().unwrap());
+    assert_eq!(
+        native.read_active().unwrap().2[qualified_task_lifecycle::GENERATION_KEY],
+        32
+    );
+    let before_reopen = native.read_active().unwrap();
+    drop(native);
+    let reopened = Node::open_with_authenticated_state(&native_path, settings, 1).unwrap();
+    assert_eq!(reopened.read_active().unwrap(), before_reopen);
+}
