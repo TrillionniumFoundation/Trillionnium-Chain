@@ -1,0 +1,9 @@
+{
+  "name": "ci-contract",
+  "command": [
+    "python",
+    "scripts/ci/check_ci_contract.py"
+  ],
+  "exit_code": 0,
+  "elapsed_ns": 399726458
+}
