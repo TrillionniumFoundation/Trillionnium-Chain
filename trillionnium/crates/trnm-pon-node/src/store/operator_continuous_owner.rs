@@ -428,6 +428,25 @@ impl Node {
             .cloned()
             .ok_or_else(|| "OWNER_PUBLIC_SERVICE_DOMAIN_UNBOUND".into())
     }
+    /// Use one existing Node-owned budget for all remotely sourced History
+    /// proof imports, including loopback and nonloopback sources. A standalone
+    /// sync Node receives a COLD original CPU epoch, not the 2s diagnostic
+    /// warm burst; a V3/continuous Node keeps its already bound owner.
+    /// Never issue fresh credit on every peer, page or new signing identity.
+    pub(crate) fn remote_history_cpu_domain(&mut self) -> Result<ServiceMutationCpuDomain> {
+        if let Ok(domain) = self.public_service_cpu_domain() {
+            return Ok(domain);
+        }
+        // An unclean public-service epoch may own unsettled historical CPU.
+        // It is not permission to start a new import allowance.
+        ensure(
+            !self.public_service_epoch_unknown && self.public_service_epoch_listeners == 0,
+            "OWNER_PUBLIC_SERVICE_UNCLEAN_EPOCH",
+        )?;
+        let cold = ServiceMutationCpuDomain::cold_remote_history_epoch();
+        self.bind_public_service_cpu_domain(&cold)?;
+        Ok(cold)
+    }
     #[cfg(test)]
     pub(crate) fn continuous_domain_matches(&self, cpu: &ServiceMutationCpuDomain) -> bool {
         self.continuous_owner
