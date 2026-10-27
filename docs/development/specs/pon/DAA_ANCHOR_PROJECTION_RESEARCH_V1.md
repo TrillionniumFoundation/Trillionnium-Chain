@@ -117,3 +117,33 @@ It stores an **untrusted upstream-supplied projection digest**, so it neither
 verifies actual W1 nor supplies native M07 ownership or a production DAA. Its
 10 Python tests are not native consensus qualification. This experimental
 writer must NOT be wired as a second authoritative Node database.
+
+## Real-W1 fork-local future activation research (PR #467)
+
+New research function: consensus::daa_activation_research::shadow_from_verified_ancestry.
+Source: trillionnium/crates/trnm-pon-node/src/consensus.rs.
+Regression: native_w1_future_asert_anchor_survives_reorg_and_cold_reopen,
+in trillionnium/crates/trnm-pon-node/tests/daa_adversarial_schedule.rs.
+
+The candidate branch, not an administrator-pinned block ID, supplies the
+activation-height anchor and its actual predecessor. Both raw and MTP11
+clocks use the SAME anchor-parent time policy. The full parent-hash chain
+is replayed to a caller-pinned genesis under a 4096-record research budget.
+The activation block itself remains under the OLD DAA; its successor is
+only projected under experimental ASERT arithmetic. A hash-only packet ID
+recheck does not replace the native Node full W1/state verifier.
+
+The new integration selector constructs full native W1 packets on two
+branches diverging at height 16, inspects independent raw/MTP11 projections,
+checks malicious context and packet mutations, selects a genuinely heavier
+legacy chain, closes/reopens SQLite and checks both shadow outcomes again.
+Results have NOT been executed on this exact source because this host lacks
+a Rust compiler. The source code itself is NOT a native acceptance receipt.
+
+Still required: exact-head compilation and native runtime replay; an
+independent third verifier; authenticated, bounded ancestry indexes for
+long chains; fully specified/newly committed DAA context and state/schema;
+live-client confirmations and the preregistered time-warp/withholding
+cost-and-risk campaign; independent operators and WAN fault observations.
+Old Q4 signatures, R12 Maintenance, W1 lottery, target selection, and
+production activation are intentionally unchanged.

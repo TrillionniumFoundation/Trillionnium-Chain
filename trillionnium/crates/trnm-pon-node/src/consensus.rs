@@ -1133,3 +1133,147 @@ mod daa_anchor_projection_research_tests {
         assert!(first.append(&changed, Observation { height: 2, ..observation }).is_err());
     }
 }
+
+
+/// Future-height ASERT projection from a fully verified native W1 ancestry.
+/// RESEARCH ONLY: no installed Node target selector calls this module. The
+/// activation block remains subject to the historical DAA; its successor is
+/// the first shadow candidate. The candidate branch determines the anchor.
+pub mod daa_activation_research {
+    use super::{daa_research::{asert_target, AsertInputs}, daa_branch_research::ParentClock, ensure, Result};
+    use crate::Packet;
+    use trnm_protocol::pon_wire::Hash;
+
+    #[derive(Clone, Copy, Debug)]
+    pub struct Context {
+        pub network: Hash,
+        pub parameters: Hash,
+        pub genesis: Hash,
+        pub genesis_timestamp: u64,
+        pub rule_commitment: Hash,
+        pub activation_height: u64,
+        pub spacing: u64,
+        pub half_life: u64,
+        pub pow_limit: Hash,
+        pub clock: ParentClock,
+        pub max_reads: usize,
+    }
+
+    #[derive(Clone, Copy, Debug, Eq, PartialEq)]
+    pub struct Projection {
+        pub anchor_block: Hash,
+        pub anchor_parent: Hash,
+        pub anchor_target: Hash,
+        pub anchor_parent_time: u64,
+        pub observed_parent_time: u64,
+        pub candidate_height: u64,
+        pub target: Hash,
+        pub reads: usize,
+    }
+
+    fn median11(times: &[u64]) -> Result<u64> {
+        ensure((1..=11).contains(&times.len()), "ASERT_MTP_WINDOW")?;
+        let mut sorted = times.to_vec();
+        sorted.sort_unstable();
+        Ok(sorted[sorted.len() / 2])
+    }
+
+    pub fn shadow_from_verified_ancestry(
+        ctx: Context,
+        observed_parent: Hash,
+        mut read_verified: impl FnMut(Hash) -> Result<Packet>,
+    ) -> Result<Projection> {
+        ensure(ctx.network != [0;32] && ctx.parameters != [0;32]
+            && ctx.genesis != [0;32] && ctx.rule_commitment != [0;32]
+            && observed_parent != ctx.genesis && ctx.activation_height > 0
+            && ctx.activation_height < u64::MAX && ctx.spacing > 0
+            && ctx.half_life > 0 && ctx.pow_limit != [0;32]
+            && (1..=4096).contains(&ctx.max_reads), "ASERT_ACTIVATION_CONTEXT")?;
+        let mut cursor = observed_parent;
+        let mut expected_height: Option<u64> = None;
+        let mut parent_height = None;
+        let mut parent_raw = None;
+        let mut parent_window = Vec::with_capacity(11);
+        let mut anchor_id = None;
+        let mut anchor_parent = None;
+        let mut anchor_target = None;
+        let mut anchor_parent_raw = None;
+        let mut anchor_window = Vec::with_capacity(11);
+        let mut saw_predecessor = false;
+        let mut reads = 0usize;
+
+        // Deliberate O(height), bounded genesis replay rather than a magic
+        // ancestor cache. A future production candidate needs an authenticated
+        // index, resource budgets and a separate consensus version.
+        loop {
+            if cursor == ctx.genesis {
+                ensure(expected_height == Some(0), "ASERT_GENESIS_HEIGHT")?;
+                if anchor_parent == Some(ctx.genesis) {
+                    anchor_parent_raw = Some(ctx.genesis_timestamp);
+                    saw_predecessor = true;
+                }
+                if parent_window.len() < 11 { parent_window.push(ctx.genesis_timestamp); }
+                if saw_predecessor && anchor_window.len() < 11 {
+                    anchor_window.push(ctx.genesis_timestamp);
+                }
+                break;
+            }
+            ensure(reads < ctx.max_reads, "ASERT_ANCESTRY_BUDGET")?;
+            let packet = read_verified(cursor)?;
+            ensure(packet.id()? == cursor, "ASERT_PACKET_ID")?;
+            let header = packet.header;
+            ensure(header.network == ctx.network && header.parameters == ctx.parameters
+                && header.height > 0 && header.parent != cursor
+                && header.target != [0;32] && header.target <= ctx.pow_limit,
+                "ASERT_ANCESTRY_CONTEXT")?;
+            if let Some(height) = expected_height {
+                ensure(header.height == height, "ASERT_ANCESTRY_HEIGHT")?;
+            }
+            if parent_height.is_none() {
+                ensure(header.height >= ctx.activation_height && header.height < u64::MAX,
+                    "ASERT_NOT_ACTIVE")?;
+                parent_height = Some(header.height);
+                parent_raw = Some(header.timestamp);
+            }
+            if parent_window.len() < 11 { parent_window.push(header.timestamp); }
+            if header.height == ctx.activation_height {
+                anchor_id = Some(cursor);
+                anchor_parent = Some(header.parent);
+                anchor_target = Some(header.target);
+            }
+            if header.height.checked_add(1) == Some(ctx.activation_height)
+                && anchor_id.is_some() {
+                ensure(anchor_parent == Some(cursor), "ASERT_ANCHOR_PARENT")?;
+                anchor_parent_raw = Some(header.timestamp);
+                saw_predecessor = true;
+            }
+            if saw_predecessor && anchor_window.len() < 11 {
+                anchor_window.push(header.timestamp);
+            }
+            expected_height = header.height.checked_sub(1);
+            cursor = header.parent;
+            reads += 1;
+        }
+        let anchor_block = anchor_id.ok_or("ASERT_ANCHOR_MISSING")?;
+        let anchor_parent = anchor_parent.ok_or("ASERT_ANCHOR_PARENT")?;
+        let anchor_target = anchor_target.ok_or("ASERT_ANCHOR_MISSING")?;
+        let candidate_height = parent_height.ok_or("ASERT_ANCESTRY_EMPTY")?
+            .checked_add(1).ok_or("ASERT_ANCESTRY_HEIGHT")?;
+        let (anchor_parent_time, observed_parent_time) = match ctx.clock {
+            ParentClock::Raw => (anchor_parent_raw.ok_or("ASERT_ANCHOR_PARENT_TIME")?,
+                parent_raw.ok_or("ASERT_ANCESTRY_EMPTY")?),
+            ParentClock::Median11 => (median11(&anchor_window)?, median11(&parent_window)?),
+        };
+        let target = asert_target(AsertInputs {
+            anchor_target, anchor_parent_time,
+            evaluation_parent_time: observed_parent_time,
+            anchor_height: ctx.activation_height,
+            candidate_height, spacing: ctx.spacing,
+            half_life: ctx.half_life, pow_limit: ctx.pow_limit,
+        })?;
+        Ok(Projection {
+            anchor_block, anchor_parent, anchor_target, anchor_parent_time,
+            observed_parent_time, candidate_height, target, reads,
+        })
+    }
+}
