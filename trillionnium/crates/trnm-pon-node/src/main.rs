@@ -702,6 +702,30 @@ fn sync_host_kernel_owner(
     }
 }
 
+/// A pinned peer can return arbitrary W1 bytes to the same process even
+/// when the public V3 listener itself binds loopback. The entire combined
+/// service must use the ONE administrator-pinned Host cgroup once polling is
+/// configured: no separate listener, relay, PID or peer budget is granted.
+fn pinned_peer_service_host_kernel(
+    listener: std::net::SocketAddr,
+    configured_parent: Option<&str>,
+    polling_enabled: bool,
+) -> Result<Option<trnm_pon_node::host_kernel_parent::HostKernelBudget>> {
+    let parent = configured_parent.or_else(|| {
+        polling_enabled.then_some(
+            trnm_pon_node::host_kernel_parent::FIXED_PUBLIC_KERNEL_PARENT,
+        )
+    });
+    let owner = host_public_guard::require_host_kernel_budget(listener, parent)?;
+    if polling_enabled && owner.is_none() {
+        return Err("PUBLIC_HOST_KERNEL_REQUIRED".into());
+    }
+    if let Some(kernel) = &owner {
+        kernel.verify()?;
+    }
+    Ok(owner)
+}
+
 fn validate_host_kernel_profile(command: &str, args: &BTreeMap<String, String>) -> Result<()> {
     if args.contains_key("--host-kernel-parent")
         && (command != "serve"
@@ -2281,9 +2305,10 @@ fn run() -> Result<Value> {
                     // Existing root-provisioned cgroup v2 parent: the actual
                     // kernel, not another local counter, enforces aggregate
                     // CPU/memory/task ceilings across independent processes.
-                    let host_kernel = host_public_guard::require_host_kernel_budget(
+                    let host_kernel = pinned_peer_service_host_kernel(
                         listener.local_addr()?,
                         args.get("--host-kernel-parent").map(String::as_str),
+                        polling.is_some(),
                     )?;
                     // Host counters aggregate ALL child processes of this same
                     // parent; never interpret them as one client's paid CPU.
@@ -2683,6 +2708,38 @@ mod tests {
             assert!(priced_sync_context(&args));
             args.clear();
         }
+    }
+
+    #[test]
+    fn pinned_peer_remote_history_must_share_fixed_host_even_with_loopback_listener() {
+        let listen: std::net::SocketAddr = "127.0.0.1:44222".parse().unwrap();
+        // A genuinely local V3 development listener without a poller keeps
+        // the existing original exemption (not a public WAN qualification).
+        assert!(matches!(
+            pinned_peer_service_host_kernel(listen, None, false),
+            Ok(None)
+        ));
+        let strict = pinned_peer_service_host_kernel(listen, None, true);
+        let original = host_public_guard::require_host_kernel_budget(
+            listen,
+            Some(trnm_pon_node::host_kernel_parent::FIXED_PUBLIC_KERNEL_PARENT),
+        );
+        match (strict, original) {
+            (Ok(Some(a)), Ok(Some(b))) => {
+                a.verify().unwrap();
+                b.verify().unwrap();
+            }
+            (Err(a), Err(b)) => assert_eq!(a.to_string(), b.to_string()),
+            _ => panic!("pinned peer cannot evade fixed host by local listener"),
+        }
+        // A configured foreign parent cannot create an alternative allowance;
+        // the original fixed-parent validation remains authoritative.
+        assert!(pinned_peer_service_host_kernel(
+            listen,
+            Some("/sys/fs/cgroup/not-the-approved-parent.slice"),
+            true
+        )
+        .is_err());
     }
 
     #[test]
