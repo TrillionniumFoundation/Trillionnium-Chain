@@ -1,0 +1,1310 @@
+{
+  "all_acceptance": "HOLD",
+  "archive": {
+    "bytes": 4404916,
+    "chunk_limit_bytes": 6291456,
+    "encoding": "tar + xz / Python lzma preset6",
+    "logical_filename": "readbacks.tar.xz",
+    "member_count": 145,
+    "parts": [
+      {
+        "bytes": 4404916,
+        "file": "readbacks.tar.xz",
+        "git_blob": "40316a488f61d1685273f8391a215f870e0d49a8",
+        "offset": 0,
+        "ordinal": 0,
+        "sha256": "9147ddbbd64751f2a50850e5f073ecea88664338038e0058c4252cdbb52c3525"
+      }
+    ],
+    "raw_member_bytes": 161759808,
+    "sha256": "9147ddbbd64751f2a50850e5f073ecea88664338038e0058c4252cdbb52c3525"
+  },
+  "archive_members": [
+    {
+      "bytes": 638,
+      "path": "verification/docs-base-native-check.json",
+      "scope": "packaging verification; no native or CI execution",
+      "sha256": "18196ae481d77f8a952281282e7e493dd77d1b450a3fa013c531ba1b8a08b1a3",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/successor-final-readback-package-v2/generated/docs-base-native-check.json"
+    },
+    {
+      "bytes": 128077,
+      "path": "publication/ci-corrections-publication-receipt.json",
+      "scope": "exact original publication or identity readback; no CI acceptance",
+      "sha256": "168271bc1a847334d62138210f017017eb11e57e364d4d69dddb363b3dee0cf2",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/ci-corrections-publication-receipt.json"
+    },
+    {
+      "bytes": 13111,
+      "path": "publication/ci-host-immutable-publication-receipt.json",
+      "scope": "exact original publication or identity readback; no CI acceptance",
+      "sha256": "bb9f8c42ee4f2232b304d1d5dfef658bb308c9807e88bb622c71dd7823a3fccc",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/ci-host-immutable-publication-receipt.json"
+    },
+    {
+      "bytes": 990,
+      "path": "publication/chain506-ci-repaired-native-pair.json",
+      "scope": "exact original publication or identity readback; no CI acceptance",
+      "sha256": "6b5924cbbc91d639e5e892e90826a6393e5855fa8bcf32e60ac3672ee9d0d5a5",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-ci-repaired-native-pair.json"
+    },
+    {
+      "bytes": 103933,
+      "path": "publication/chain506-ci-repaired-api-bracket.json",
+      "scope": "exact original publication or identity readback; no CI acceptance",
+      "sha256": "8940a83482e3a1290e5c28781c78b3ad15b3b974a89cfe29328d13cfa28352c6",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-ci-repaired-api-bracket.json"
+    },
+    {
+      "bytes": 96471,
+      "path": "publication/hepta-host-corrected-publication-receipt.json",
+      "scope": "exact original publication or identity readback; no CI acceptance",
+      "sha256": "c0fccc540f21047888b59b080c4bcb3c9509d62ecf7c4a9e6ae2e97fde10347e",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/hepta-host-corrected-publication-receipt.json"
+    },
+    {
+      "bytes": 1010,
+      "path": "publication/hepta4080-host-corrected-native-pair.json",
+      "scope": "exact original publication or identity readback; no CI acceptance",
+      "sha256": "72e2cc23b8a9eac0294b79d128e33610b67d0af06869622886431a3f5294af95",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/hepta4080-host-corrected-native-pair.json"
+    },
+    {
+      "bytes": 4751,
+      "path": "publication/readback-docs-branch-receipt.json",
+      "scope": "exact original publication or identity readback; no CI acceptance",
+      "sha256": "115cd25edce74c6ff410780e9a37c954c3472adb080246f5bd5db470c6653b32",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/readback-docs-branch-receipt.json"
+    },
+    {
+      "bytes": 10594,
+      "path": "publication/from-zero-original-ci-publication-receipt.json",
+      "scope": "exact original publication or identity readback; no CI acceptance",
+      "sha256": "6dfdb9f8e51fb8b03b8520741d4ba97dc31e3588fadd7a87eb0dc651b64bcd73",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/from-zero-original-ci-publication-receipt.json"
+    },
+    {
+      "bytes": 880,
+      "path": "publication/docs-base-final-readback-initial-probe.json",
+      "scope": "exact original publication or identity readback; no CI acceptance",
+      "sha256": "d7da16e556b5d92890122e55b43df57d76a9287aebc7b085da5a2a5ac9000235",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/docs-base-final-readback-initial-probe.json"
+    },
+    {
+      "bytes": 7675,
+      "path": "publication/chain506-final-body.md",
+      "scope": "exact original publication or identity readback; no CI acceptance",
+      "sha256": "e56a48edbff9e88f9d6467fe7f55696a19574cea098b03e81d3f3ba2c5cf0a3c",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-final-body.md"
+    },
+    {
+      "bytes": 4718,
+      "path": "publication/hepta4080-final-body.md",
+      "scope": "exact original publication or identity readback; no CI acceptance",
+      "sha256": "544eccaebf02f9aaac9571e13b9c56b2ebdc776a698fa75b9a8121ffb899ccbb",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/hepta4080-final-body.md"
+    },
+    {
+      "bytes": 896,
+      "path": "publication/successor-readback-packaging-attempt1.json",
+      "scope": "exact original publication or identity readback; no CI acceptance",
+      "sha256": "5aa78f68d8be0c8534fb2b13bcf88155b183e9d320d1f57f266b7a8a9fddf647",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/successor-readback-packaging-attempt1.json"
+    },
+    {
+      "bytes": 0,
+      "path": "publication/successor-readback-packaging-attempt1.stdout.log",
+      "scope": "exact original publication or identity readback; no CI acceptance",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/successor-readback-packaging-attempt1.stdout.log"
+    },
+    {
+      "bytes": 557,
+      "path": "publication/successor-readback-packaging-attempt1.stderr.log",
+      "scope": "exact original publication or identity readback; no CI acceptance",
+      "sha256": "3b94080685819983bd4124f208b95a6ceb846cbd98bf9809facb499963dae952",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/successor-readback-packaging-attempt1.stderr.log"
+    },
+    {
+      "bytes": 38407,
+      "path": "publication/successor-readback-packaging-attempt1.script.py",
+      "scope": "exact original publication or identity readback; no CI acceptance",
+      "sha256": "1e531068ada9f3b0b7bf232313cd32513fb75bc360574ebf8fa29a09b5c15920",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/successor-readback-packaging-attempt1.script.py"
+    },
+    {
+      "bytes": 254,
+      "path": "raw-commits/chain/original/17b824d2546d9593f23a6446a769c299c2052233",
+      "scope": "exact Git commit payload; SHA-1 object framing verified",
+      "sha256": "18bec2dd2c128b823a38c81aaab55b677568fd883c4cdd6948897436ddb37247",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/successor-final-readback-package-v2/generated/raw-commits/chain/original/17b824d2546d9593f23a6446a769c299c2052233"
+    },
+    {
+      "bytes": 313,
+      "path": "raw-commits/chain/mapped-remote/1fd875cabc734cb82eb8a698441df64bb69329ba",
+      "scope": "exact Git commit payload; SHA-1 object framing verified",
+      "sha256": "264f31e9a69e6ed12031f7eb2e7b6ed8919f9e755e0dd8460f014df7990da508",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/successor-final-readback-package-v2/generated/raw-commits/chain/mapped-remote/1fd875cabc734cb82eb8a698441df64bb69329ba"
+    },
+    {
+      "bytes": 261,
+      "path": "raw-commits/chain/original/176822ae27692aefb288f62d751695501da5c0f0",
+      "scope": "exact Git commit payload; SHA-1 object framing verified",
+      "sha256": "279209da781803c140340a84406b0f1475b2868533af47ce974f1f5580e8219e",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/successor-final-readback-package-v2/generated/raw-commits/chain/original/176822ae27692aefb288f62d751695501da5c0f0"
+    },
+    {
+      "bytes": 321,
+      "path": "raw-commits/chain/mapped-remote/62bcab588b06b2410147361f4dcf744dd1769c32",
+      "scope": "exact Git commit payload; SHA-1 object framing verified",
+      "sha256": "0ed6dfb930f1c570f60bbe2d6c65c99a3203cf64b706446d09adf361887104be",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/successor-final-readback-package-v2/generated/raw-commits/chain/mapped-remote/62bcab588b06b2410147361f4dcf744dd1769c32"
+    },
+    {
+      "bytes": 250,
+      "path": "raw-commits/chain/original/8148f53f23b5510bb51964adbc050612cb337c38",
+      "scope": "exact Git commit payload; SHA-1 object framing verified",
+      "sha256": "daf5b23f720302c0d4ce41a2865ae906e37dd976467f9af92927d7e576a83af1",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/successor-final-readback-package-v2/generated/raw-commits/chain/original/8148f53f23b5510bb51964adbc050612cb337c38"
+    },
+    {
+      "bytes": 310,
+      "path": "raw-commits/chain/mapped-remote/4d52231048b99b9b8c639580edd5255208266a15",
+      "scope": "exact Git commit payload; SHA-1 object framing verified",
+      "sha256": "128b63dc94958083943c5fe86abdf4b72da531040c97bfecbf3e68046cd7d948",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/successor-final-readback-package-v2/generated/raw-commits/chain/mapped-remote/4d52231048b99b9b8c639580edd5255208266a15"
+    },
+    {
+      "bytes": 261,
+      "path": "raw-commits/chain/original/498b4fc2c0394bc4aa9f987d991ef272e8b302a4",
+      "scope": "exact Git commit payload; SHA-1 object framing verified",
+      "sha256": "c6578c236a1327e4fe7b9e1f666b0f3dcf0f9698a24cab48c8dbff5d366f91d9",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/successor-final-readback-package-v2/generated/raw-commits/chain/original/498b4fc2c0394bc4aa9f987d991ef272e8b302a4"
+    },
+    {
+      "bytes": 321,
+      "path": "raw-commits/chain/mapped-remote/2a49d6ea2da0eb28b82283dc90bb1cbf96f4d42f",
+      "scope": "exact Git commit payload; SHA-1 object framing verified",
+      "sha256": "439ddcbeeda6d12c6bfb1dec4daf0e6a2b964ff864aef50abcd4871893035011",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/successor-final-readback-package-v2/generated/raw-commits/chain/mapped-remote/2a49d6ea2da0eb28b82283dc90bb1cbf96f4d42f"
+    },
+    {
+      "bytes": 258,
+      "path": "raw-commits/chain/original/516d077effb27351dca227bbfbd3d55f8fe3c333",
+      "scope": "exact Git commit payload; SHA-1 object framing verified",
+      "sha256": "95e5e1f661eff4df27d4ab006893631c9fdf3799ca07c7447b8d5f7c282bc157",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/successor-final-readback-package-v2/generated/raw-commits/chain/original/516d077effb27351dca227bbfbd3d55f8fe3c333"
+    },
+    {
+      "bytes": 318,
+      "path": "raw-commits/chain/mapped-remote/ac469237422d43805845e8b9a6839ad14e1028e7",
+      "scope": "exact Git commit payload; SHA-1 object framing verified",
+      "sha256": "a5e3420e3da9a49e02d0fbfcb27f5e344f6ff48ca94b5f340f632e9858533288",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/successor-final-readback-package-v2/generated/raw-commits/chain/mapped-remote/ac469237422d43805845e8b9a6839ad14e1028e7"
+    },
+    {
+      "bytes": 267,
+      "path": "raw-commits/hepta/original/4fa84b3d2e4796ab576ca4ee462a0fe6bee33667",
+      "scope": "exact Git commit payload; SHA-1 object framing verified",
+      "sha256": "a750382755c98394d06cda4b42d9867842db21ac98054bae3403195c5db9fb5d",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/successor-final-readback-package-v2/generated/raw-commits/hepta/original/4fa84b3d2e4796ab576ca4ee462a0fe6bee33667"
+    },
+    {
+      "bytes": 326,
+      "path": "raw-commits/hepta/mapped-remote/1d9f262f9965d30105ee58d4218cd6e27ef7a431",
+      "scope": "exact Git commit payload; SHA-1 object framing verified",
+      "sha256": "303dabee37205c5fd04538d96ed707eccf506e3a8b2e15adcc7ec5ad5d25a66b",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/successor-final-readback-package-v2/generated/raw-commits/hepta/mapped-remote/1d9f262f9965d30105ee58d4218cd6e27ef7a431"
+    },
+    {
+      "bytes": 4304,
+      "path": "verification/limited-new-commit-mapping.json",
+      "scope": "packaging verification; no native or CI execution",
+      "sha256": "1049bbf07bf45e9f5104956aecbbb80dc122807b3466caf73a37a6e8d9ddafb7",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/successor-final-readback-package-v2/generated/limited-new-commit-mapping.json"
+    },
+    {
+      "bytes": 6257,
+      "path": "publication/ci-host-176822ae-original-commits.json",
+      "scope": "original finite source publication archive metadata",
+      "sha256": "588b6e66f81c6a8a9cd3a8f7c0fb873bc055aefd3c7bca363a98dc83bf8c21af",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/ci-host-176822ae/original-commits.json"
+    },
+    {
+      "bytes": 8836,
+      "path": "publication/ci-corrections-through-516d077e-original-commits.json",
+      "scope": "original finite source publication archive metadata",
+      "sha256": "f6bae818af37b73e3079a6754c6ba78462cb7438ca5c371c89bd84c67206c842",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/ci-corrections-through-516d077e/original-commits.json"
+    },
+    {
+      "bytes": 968701,
+      "path": "successor-ci/successor-ci-snapshot-20261027.json",
+      "scope": "frozen 4 list +16 job API responses and clock/summary records; no new CI polling",
+      "sha256": "69eeec135a43dab240b13f338854172d1bee6aa8d48b11eaf7d52aa4a280b816",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/successor-ci-snapshot-20261027.json"
+    },
+    {
+      "bytes": 1113,
+      "path": "verification/successor-ci-counts.json",
+      "scope": "packaging verification; no native or CI execution",
+      "sha256": "0b8509cfc61cab87151abf2488e87d7e0cc1d24fea150deb719c3685e3350357",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/successor-final-readback-package-v2/generated/successor-ci-counts.json"
+    },
+    {
+      "bytes": 2493487,
+      "path": "original-hepta-ci/raw/job-122146096003.log",
+      "scope": "original decoded connector log or exact API envelope; not a GitHub native ZIP claim",
+      "sha256": "3a90053cba3cc67d3f76ab8067c2f5a7f9113af7f89fd04b2cc5d53acd8e9226",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/hepta-original-pair-ci-20261027/job-122146096003.log"
+    },
+    {
+      "bytes": 2504105,
+      "path": "original-hepta-ci/raw/job-122146096385.log",
+      "scope": "original decoded connector log or exact API envelope; not a GitHub native ZIP claim",
+      "sha256": "c8d2e12d1acb18e191793e8ad4d813e17345aa1542091c702f19a6f7924fe018",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/hepta-original-pair-ci-20261027/job-122146096385.log"
+    },
+    {
+      "bytes": 2496916,
+      "path": "original-hepta-ci/raw/job-122146096513.log",
+      "scope": "original decoded connector log or exact API envelope; not a GitHub native ZIP claim",
+      "sha256": "36c751a703364590e1dcc06efc057ca6670884305cdf188c1f118bbe730bc36c",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/hepta-original-pair-ci-20261027/job-122146096513.log"
+    },
+    {
+      "bytes": 2506990,
+      "path": "original-hepta-ci/raw/job-122146096567.log",
+      "scope": "original decoded connector log or exact API envelope; not a GitHub native ZIP claim",
+      "sha256": "5dd50f819042e78888f9300b57659f5ed583fefa4886731eb12a4ab32fd7586a",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/hepta-original-pair-ci-20261027/job-122146096567.log"
+    },
+    {
+      "bytes": 142455,
+      "path": "original-hepta-ci/raw/pair-jobs.json",
+      "scope": "original decoded connector log or exact API envelope; not a GitHub native ZIP claim",
+      "sha256": "e6da0e7a8871fbf7aa8f17affe22c7e014aa7490af7c10c2710f13b4598076ce",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/hepta-original-pair-ci-20261027/pair-jobs.json"
+    },
+    {
+      "bytes": 1173,
+      "path": "original-hepta-ci/raw/readback-files.json",
+      "scope": "original decoded connector log or exact API envelope; not a GitHub native ZIP claim",
+      "sha256": "397096079de468b8e32465d59f3b708b20f383e781b1379dffbd3c30ba5fd29b",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/hepta-original-pair-ci-20261027/readback-files.json"
+    },
+    {
+      "bytes": 130158,
+      "path": "original-hepta-ci/raw/runs.json",
+      "scope": "original decoded connector log or exact API envelope; not a GitHub native ZIP claim",
+      "sha256": "fcc11a9afb357d7d7d3ab3514956cbe05f893ca053fb74970d3e50121a76e13b",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/hepta-original-pair-ci-20261027/runs.json"
+    },
+    {
+      "bytes": 14725,
+      "path": "original-hepta-ci/verification/coverage.json",
+      "scope": "prior raw-byte preservation and scope verification",
+      "sha256": "fe11c2acfd50e9560fefc48a74ea650743fc7d6808decc1af0cfbeca81001734",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/hepta-original-pair-readback-preparation/coverage.json"
+    },
+    {
+      "bytes": 3099,
+      "path": "original-hepta-ci/verification/credential-screen.json",
+      "scope": "prior raw-byte preservation and scope verification",
+      "sha256": "790105edecff083da856437a23fc0c5a31e81e15be420523767abfaf5dafd9c8",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/hepta-original-pair-readback-preparation/credential-screen.json"
+    },
+    {
+      "bytes": 2733,
+      "path": "original-hepta-ci/verification/input-manifest.json",
+      "scope": "prior raw-byte preservation and scope verification",
+      "sha256": "690bc5edaba82eec926b369fec4a0d26b2b8a83a7cc9c4fce3854f506c61c7c6",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/hepta-original-pair-readback-preparation/input-manifest.json"
+    },
+    {
+      "bytes": 527453,
+      "path": "original-chain-late-ci/checks.json",
+      "scope": "original 64-check snapshot and five representative decoded logs; failures unchanged",
+      "sha256": "c931cdb15508ad0fb70e2916890577e4686883a064abe02c29a38c8f108cec32",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain-original-late-ci-20261027/checks.json"
+    },
+    {
+      "bytes": 401,
+      "path": "original-chain-late-ci/codeql-annotations-rejected.json",
+      "scope": "original 64-check snapshot and five representative decoded logs; failures unchanged",
+      "sha256": "32f9807a1c18edaabdae37a922a9c94684927f67e0a209d2443f7b2030a895f2",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain-original-late-ci-20261027/codeql-annotations-rejected.json"
+    },
+    {
+      "bytes": 121539,
+      "path": "original-chain-late-ci/job-122143727380.log",
+      "scope": "original 64-check snapshot and five representative decoded logs; failures unchanged",
+      "sha256": "d8297f7c766eb839d65df36515340f9c20bf1d46bf345f56b73f8bf4b5953739",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain-original-late-ci-20261027/job-122143727380.log"
+    },
+    {
+      "bytes": 89140,
+      "path": "original-chain-late-ci/job-122143728086.log",
+      "scope": "original 64-check snapshot and five representative decoded logs; failures unchanged",
+      "sha256": "7208a5470b1c94bd2035dc5843cad74d069ca807a5fccbcbe219de82460e985c",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain-original-late-ci-20261027/job-122143728086.log"
+    },
+    {
+      "bytes": 96686,
+      "path": "original-chain-late-ci/job-122143728507.log",
+      "scope": "original 64-check snapshot and five representative decoded logs; failures unchanged",
+      "sha256": "cb6d56b6e6035f8aa66c8290e9e2ed3d9f024141593dc34d94e56259ad89fe2e",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain-original-late-ci-20261027/job-122143728507.log"
+    },
+    {
+      "bytes": 1730037,
+      "path": "original-chain-late-ci/job-122143728556.log",
+      "scope": "original 64-check snapshot and five representative decoded logs; failures unchanged",
+      "sha256": "cbe8df7709f115ab5f383a54c452a9b00ca72f9e088de9c7d06277968aa954a2",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain-original-late-ci-20261027/job-122143728556.log"
+    },
+    {
+      "bytes": 93856,
+      "path": "original-chain-late-ci/job-122143728623.log",
+      "scope": "original 64-check snapshot and five representative decoded logs; failures unchanged",
+      "sha256": "fdbf61789b7a518a7b626f32ca98f4dfcc9f19b73759bac98e32722e834d5bd2",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain-original-late-ci-20261027/job-122143728623.log"
+    },
+    {
+      "bytes": 1581,
+      "path": "original-chain-late-ci/readback-files.json",
+      "scope": "original 64-check snapshot and five representative decoded logs; failures unchanged",
+      "sha256": "90dc0cfeaefb2613136dbc0ee19370510962af6f19c0101dfbcfbb2de012a69f",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain-original-late-ci-20261027/readback-files.json"
+    },
+    {
+      "bytes": 394518,
+      "path": "original-chain-late-ci/runs.json",
+      "scope": "original 64-check snapshot and five representative decoded logs; failures unchanged",
+      "sha256": "46bf90bcdb9df84c7f4ef2b11503d16c7f2a62a80b1754272852ff4b4af968fb",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain-original-late-ci-20261027/runs.json"
+    },
+    {
+      "bytes": 3956,
+      "path": "hepta-local-static/README.md",
+      "scope": "nine local static checks only; no Hepta Rust/Cargo/Bazel or model execution claim",
+      "sha256": "3ed08aefef3f5077daeac2d217975d0caceabbc9f9cd7743b2a9383d584341e9",
+      "source_file": "/workspace/scratch/56818e4fba76/hepta-pair-work/qualification/learning-generations/smollm-pair-host-20261027/README.md"
+    },
+    {
+      "bytes": 990,
+      "path": "hepta-local-static/chain506-ci-repaired-native-pair.json",
+      "scope": "nine local static checks only; no Hepta Rust/Cargo/Bazel or model execution claim",
+      "sha256": "6b5924cbbc91d639e5e892e90826a6393e5855fa8bcf32e60ac3672ee9d0d5a5",
+      "source_file": "/workspace/scratch/56818e4fba76/hepta-pair-work/qualification/learning-generations/smollm-pair-host-20261027/chain506-ci-repaired-native-pair.json"
+    },
+    {
+      "bytes": 1815,
+      "path": "hepta-local-static/local-smollm-static.log",
+      "scope": "nine local static checks only; no Hepta Rust/Cargo/Bazel or model execution claim",
+      "sha256": "1e8f79595b5abb7f964476fa6a40e059c301313d39b3aca046d3b132de5d269e",
+      "source_file": "/workspace/scratch/56818e4fba76/hepta-pair-work/qualification/learning-generations/smollm-pair-host-20261027/local-smollm-static.log"
+    },
+    {
+      "bytes": 1028,
+      "path": "hepta-local-static/local-static-validation.json",
+      "scope": "nine local static checks only; no Hepta Rust/Cargo/Bazel or model execution claim",
+      "sha256": "c72c0851b673644df98c99a7fc57127a4446a7c3353630c86b525a744d8c1110",
+      "source_file": "/workspace/scratch/56818e4fba76/hepta-pair-work/qualification/learning-generations/smollm-pair-host-20261027/local-static-validation.json"
+    },
+    {
+      "bytes": 303,
+      "path": "native-host/selected/campaign/SCOPE.txt",
+      "scope": "exact selected original ZIP member; complete top report retained, original ZIP not embedded",
+      "sha256": "ce6e78baf98f002f35edf9e67a9c04614f5ba357365acff42313d8dc18542ab9",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/selected/campaign/SCOPE.txt"
+    },
+    {
+      "bytes": 594,
+      "path": "native-host/selected/campaign/binary-before.json",
+      "scope": "exact selected original ZIP member; complete top report retained, original ZIP not embedded",
+      "sha256": "627376fd16db6a9e6d1dd198c50d4a69354d2bafe0a5a2301411c712fba208db",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/selected/campaign/binary-before.json"
+    },
+    {
+      "bytes": 160675,
+      "path": "native-host/selected/campaign/artifact-files.json",
+      "scope": "exact selected original ZIP member; complete top report retained, original ZIP not embedded",
+      "sha256": "d78ba581ba4f48b0aebf9f76559cd06cf1f19efe4e65713725ea44a0d7dfe1d1",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/selected/campaign/artifact-files.json"
+    },
+    {
+      "bytes": 3516,
+      "path": "native-host/selected/campaign/build.stderr.log",
+      "scope": "exact selected original ZIP member; complete top report retained, original ZIP not embedded",
+      "sha256": "3f3e7bb25bbc5ec7d6c15a6e965abb8667ef602c49957b082f5b2145e82b9964",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/selected/campaign/build.stderr.log"
+    },
+    {
+      "bytes": 91018,
+      "path": "native-host/selected/campaign/build.stdout.log",
+      "scope": "exact selected original ZIP member; complete top report retained, original ZIP not embedded",
+      "sha256": "bade06514cc734516a96ecac6ece6984727f6a84a29814b697830f356f83d756",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/selected/campaign/build.stdout.log"
+    },
+    {
+      "bytes": 911,
+      "path": "native-host/selected/campaign/build.step.json",
+      "scope": "exact selected original ZIP member; complete top report retained, original ZIP not embedded",
+      "sha256": "1c176b78e6c0fb10c82c2f91835ff05fd6de7b9e8dbcbdeeacb283f09c966925",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/selected/campaign/build.step.json"
+    },
+    {
+      "bytes": 336,
+      "path": "native-host/selected/campaign/cargo-version.txt",
+      "scope": "exact selected original ZIP member; complete top report retained, original ZIP not embedded",
+      "sha256": "bfd735e736b354adabe72cea24bc1b393488223889b6ab95e974fd8fb963552e",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/selected/campaign/cargo-version.txt"
+    },
+    {
+      "bytes": 3051,
+      "path": "native-host/selected/campaign/dependency-fetch.log",
+      "scope": "exact selected original ZIP member; complete top report retained, original ZIP not embedded",
+      "sha256": "eb9ffd7dd3fc3fe6ba3d12bfbb24f5c4988b163e47e1bb44c05a0d9d92a4c050",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/selected/campaign/dependency-fetch.log"
+    },
+    {
+      "bytes": 1900,
+      "path": "native-host/selected/campaign/hardware.json",
+      "scope": "exact selected original ZIP member; complete top report retained, original ZIP not embedded",
+      "sha256": "188a958f80a993cc0f30a464db87a00f8a84f1f5253c6ee69b65ec906c809927",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/selected/campaign/hardware.json"
+    },
+    {
+      "bytes": 133,
+      "path": "native-host/selected/campaign/preflight.log",
+      "scope": "exact selected original ZIP member; complete top report retained, original ZIP not embedded",
+      "sha256": "0b44c512357b1923d3676127e495b65140c8e6b6c037b9e15d099196803ebcf7",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/selected/campaign/preflight.log"
+    },
+    {
+      "bytes": 1527,
+      "path": "native-host/selected/campaign/resource-after-native.json",
+      "scope": "exact selected original ZIP member; complete top report retained, original ZIP not embedded",
+      "sha256": "0e78aa2ba7e3ea8321f78cea4afb628b3bad7107112705da98c5b33c0428972f",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/selected/campaign/resource-after-native.json"
+    },
+    {
+      "bytes": 1501,
+      "path": "native-host/selected/campaign/resource-before-build.json",
+      "scope": "exact selected original ZIP member; complete top report retained, original ZIP not embedded",
+      "sha256": "a4e7b96d7e5cc6ed3637a505e4f17549c5a07ce5298f78ea63ee867a80eebcc7",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/selected/campaign/resource-before-build.json"
+    },
+    {
+      "bytes": 8055,
+      "path": "native-host/selected/campaign/results.json",
+      "scope": "exact selected original ZIP member; complete top report retained, original ZIP not embedded",
+      "sha256": "987867c30e681e553309eda9db029c81c8903662e79c5407b83b9cfcdac51abb",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/selected/campaign/results.json"
+    },
+    {
+      "bytes": 151752,
+      "path": "native-host/selected/campaign/run-1-phase-readback.json",
+      "scope": "exact selected original ZIP member; complete top report retained, original ZIP not embedded",
+      "sha256": "14e2e9653bc4a6f781d9996a3739e955583e50240d53a81df5b06b45eec70b16",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/selected/campaign/run-1-phase-readback.json"
+    },
+    {
+      "bytes": 337,
+      "path": "native-host/selected/campaign/run-1-raw/campaign-failure.json",
+      "scope": "exact selected original ZIP member; complete top report retained, original ZIP not embedded",
+      "sha256": "2e40c5a27e8845efc454cbe5c971f523323528c87a14dc9cde51382360702875",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/selected/campaign/run-1-raw/campaign-failure.json"
+    },
+    {
+      "bytes": 47764279,
+      "path": "native-host/selected/campaign/run-1-raw/report.json",
+      "scope": "exact selected original ZIP member; complete top report retained, original ZIP not embedded",
+      "sha256": "c04c6bd2cfe0faf16e4e1d4a79dc1cd42f6812bd1481e1d7b413abd407362769",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/selected/campaign/run-1-raw/report.json"
+    },
+    {
+      "bytes": 1527,
+      "path": "native-host/selected/campaign/run-1-resource-after.json",
+      "scope": "exact selected original ZIP member; complete top report retained, original ZIP not embedded",
+      "sha256": "0a87868efd47923eeb781d1b388dacad8c807a94f3d7f3900b86354c6c96ab43",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/selected/campaign/run-1-resource-after.json"
+    },
+    {
+      "bytes": 1526,
+      "path": "native-host/selected/campaign/run-1-resource-before.json",
+      "scope": "exact selected original ZIP member; complete top report retained, original ZIP not embedded",
+      "sha256": "bdac39c1ef7f821496de6df1e2c28479a0d736d96a58fc31497e0eee1f172c97",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/selected/campaign/run-1-resource-before.json"
+    },
+    {
+      "bytes": 1335,
+      "path": "native-host/selected/campaign/run-1-result.json",
+      "scope": "exact selected original ZIP member; complete top report retained, original ZIP not embedded",
+      "sha256": "e08fa639f8e302deb7eda736d92017980d163185164bb679d92aae4ac4ba28dd",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/selected/campaign/run-1-result.json"
+    },
+    {
+      "bytes": 421,
+      "path": "native-host/selected/campaign/run-1-source-after.json",
+      "scope": "exact selected original ZIP member; complete top report retained, original ZIP not embedded",
+      "sha256": "5cea8c6aaf69f99a6a4c2db448599c9bbdfe1ea5a121acfdf21b42c85e9e671f",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/selected/campaign/run-1-source-after.json"
+    },
+    {
+      "bytes": 1615,
+      "path": "native-host/selected/campaign/run-1.stderr.log",
+      "scope": "exact selected original ZIP member; complete top report retained, original ZIP not embedded",
+      "sha256": "863f94f730200629057d98329017e6333aad96fb25c8abe36af555fdcd41af6f",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/selected/campaign/run-1.stderr.log"
+    },
+    {
+      "bytes": 270,
+      "path": "native-host/selected/campaign/run-1.stdout.log",
+      "scope": "exact selected original ZIP member; complete top report retained, original ZIP not embedded",
+      "sha256": "45489509e27103a215e4359ec84c6ba287b9df5bec5f44cd3a8190901992c12b",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/selected/campaign/run-1.stdout.log"
+    },
+    {
+      "bytes": 1010,
+      "path": "native-host/selected/campaign/run-1.step.json",
+      "scope": "exact selected original ZIP member; complete top report retained, original ZIP not embedded",
+      "sha256": "4dd8d0c5ce635d9d949208ca90101b269bbcf0f3e1c95e844339f8ed09800a9b",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/selected/campaign/run-1.step.json"
+    },
+    {
+      "bytes": 151791,
+      "path": "native-host/selected/campaign/run-2-phase-readback.json",
+      "scope": "exact selected original ZIP member; complete top report retained, original ZIP not embedded",
+      "sha256": "6009809d5d0e13fddd6421b5e60d0390aea33841e2f1e7cf4eb4cd57bc66ef9f",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/selected/campaign/run-2-phase-readback.json"
+    },
+    {
+      "bytes": 337,
+      "path": "native-host/selected/campaign/run-2-raw/campaign-failure.json",
+      "scope": "exact selected original ZIP member; complete top report retained, original ZIP not embedded",
+      "sha256": "513f8e469099f9246a760a0df6bfd909606e17deaa48259b7e1f01ee69955357",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/selected/campaign/run-2-raw/campaign-failure.json"
+    },
+    {
+      "bytes": 1527,
+      "path": "native-host/selected/campaign/run-2-resource-after.json",
+      "scope": "exact selected original ZIP member; complete top report retained, original ZIP not embedded",
+      "sha256": "015510ea5a6f3ab3ee1c2b4042654117800497476aebfb8aeb3d3630c55fbe8d",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/selected/campaign/run-2-resource-after.json"
+    },
+    {
+      "bytes": 47765850,
+      "path": "native-host/selected/campaign/run-2-raw/report.json",
+      "scope": "exact selected original ZIP member; complete top report retained, original ZIP not embedded",
+      "sha256": "5022d000bdaeaede40735ea594baa7a373c39c396263ea466454d8cc71e9a262",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/selected/campaign/run-2-raw/report.json"
+    },
+    {
+      "bytes": 1527,
+      "path": "native-host/selected/campaign/run-2-resource-before.json",
+      "scope": "exact selected original ZIP member; complete top report retained, original ZIP not embedded",
+      "sha256": "6d192a9ff4f01868ed5c9a1c5eea8ce75e1e3e27daadb196c7eec0c013a4dfaa",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/selected/campaign/run-2-resource-before.json"
+    },
+    {
+      "bytes": 1336,
+      "path": "native-host/selected/campaign/run-2-result.json",
+      "scope": "exact selected original ZIP member; complete top report retained, original ZIP not embedded",
+      "sha256": "ae5184a349548201768cb4698991f89970cfcb569a3fc8272dc2cf697c4a7a0e",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/selected/campaign/run-2-result.json"
+    },
+    {
+      "bytes": 1615,
+      "path": "native-host/selected/campaign/run-2.stderr.log",
+      "scope": "exact selected original ZIP member; complete top report retained, original ZIP not embedded",
+      "sha256": "796eeb969a1a2e7d24f0728a24fbef2b99a846c347bd83f7416f2f431dcb28a1",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/selected/campaign/run-2.stderr.log"
+    },
+    {
+      "bytes": 421,
+      "path": "native-host/selected/campaign/run-2-source-after.json",
+      "scope": "exact selected original ZIP member; complete top report retained, original ZIP not embedded",
+      "sha256": "5cea8c6aaf69f99a6a4c2db448599c9bbdfe1ea5a121acfdf21b42c85e9e671f",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/selected/campaign/run-2-source-after.json"
+    },
+    {
+      "bytes": 1011,
+      "path": "native-host/selected/campaign/run-2.step.json",
+      "scope": "exact selected original ZIP member; complete top report retained, original ZIP not embedded",
+      "sha256": "673d709d50f881f9482303a11df75d319be7a944c1620dcb8a8220e22fcae4aa",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/selected/campaign/run-2.step.json"
+    },
+    {
+      "bytes": 270,
+      "path": "native-host/selected/campaign/run-2.stdout.log",
+      "scope": "exact selected original ZIP member; complete top report retained, original ZIP not embedded",
+      "sha256": "3be5a0ca41cfc281c1fd6cfd7970876b6f66e6b8f721dcbb8603e38d500c1b91",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/selected/campaign/run-2.stdout.log"
+    },
+    {
+      "bytes": 151657,
+      "path": "native-host/selected/campaign/run-3-phase-readback.json",
+      "scope": "exact selected original ZIP member; complete top report retained, original ZIP not embedded",
+      "sha256": "001759f5f4bcc6b9f3b5555ee87f5bf3f0b42554e613d9c2fde0cae610e4a362",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/selected/campaign/run-3-phase-readback.json"
+    },
+    {
+      "bytes": 337,
+      "path": "native-host/selected/campaign/run-3-raw/campaign-failure.json",
+      "scope": "exact selected original ZIP member; complete top report retained, original ZIP not embedded",
+      "sha256": "c48abb0e5fdd86641d3002800bfcb17bb33229aa21c7a89c24704464f949204c",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/selected/campaign/run-3-raw/campaign-failure.json"
+    },
+    {
+      "bytes": 1527,
+      "path": "native-host/selected/campaign/run-3-resource-after.json",
+      "scope": "exact selected original ZIP member; complete top report retained, original ZIP not embedded",
+      "sha256": "7abdc8d23f7c9fac5f2b430988d4df8069b4e4721d15de07b6c03faf8c785050",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/selected/campaign/run-3-resource-after.json"
+    },
+    {
+      "bytes": 47762874,
+      "path": "native-host/selected/campaign/run-3-raw/report.json",
+      "scope": "exact selected original ZIP member; complete top report retained, original ZIP not embedded",
+      "sha256": "acc269afe8618975dde99992b4d08d8785f8b770b321dc08e8fc36da4a6edae4",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/selected/campaign/run-3-raw/report.json"
+    },
+    {
+      "bytes": 1527,
+      "path": "native-host/selected/campaign/run-3-resource-before.json",
+      "scope": "exact selected original ZIP member; complete top report retained, original ZIP not embedded",
+      "sha256": "084d7c0913e7b4cce64e6dae0cc09fbb001385a2d497cd04292d40752f209b17",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/selected/campaign/run-3-resource-before.json"
+    },
+    {
+      "bytes": 1336,
+      "path": "native-host/selected/campaign/run-3-result.json",
+      "scope": "exact selected original ZIP member; complete top report retained, original ZIP not embedded",
+      "sha256": "8a5278c2459f623445b89065173c92b12cda9b779125f7f26828d46b5b1ed590",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/selected/campaign/run-3-result.json"
+    },
+    {
+      "bytes": 421,
+      "path": "native-host/selected/campaign/run-3-source-after.json",
+      "scope": "exact selected original ZIP member; complete top report retained, original ZIP not embedded",
+      "sha256": "5cea8c6aaf69f99a6a4c2db448599c9bbdfe1ea5a121acfdf21b42c85e9e671f",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/selected/campaign/run-3-source-after.json"
+    },
+    {
+      "bytes": 1615,
+      "path": "native-host/selected/campaign/run-3.stderr.log",
+      "scope": "exact selected original ZIP member; complete top report retained, original ZIP not embedded",
+      "sha256": "17637ed9ec0de70c858719baa5381252867949157f2faee8090168fab4a00189",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/selected/campaign/run-3.stderr.log"
+    },
+    {
+      "bytes": 270,
+      "path": "native-host/selected/campaign/run-3.stdout.log",
+      "scope": "exact selected original ZIP member; complete top report retained, original ZIP not embedded",
+      "sha256": "61ff6455c693f2ef173853606e54fce639bdbd834824e4ea1f8448665fc7ca84",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/selected/campaign/run-3.stdout.log"
+    },
+    {
+      "bytes": 1011,
+      "path": "native-host/selected/campaign/run-3.step.json",
+      "scope": "exact selected original ZIP member; complete top report retained, original ZIP not embedded",
+      "sha256": "b2c7227b84ba985659b039ab6100320c7e22c2fa7c1ce5bbf60dc67675678cae",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/selected/campaign/run-3.step.json"
+    },
+    {
+      "bytes": 10812,
+      "path": "native-host/selected/campaign/run-native-campaign.py",
+      "scope": "exact selected original ZIP member; complete top report retained, original ZIP not embedded",
+      "sha256": "5a7e518d285d46417ecf50141314bfab50df4bd879d0a74bf4f52b8146bd887f",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/selected/campaign/run-native-campaign.py"
+    },
+    {
+      "bytes": 196,
+      "path": "native-host/selected/campaign/rustc-version.txt",
+      "scope": "exact selected original ZIP member; complete top report retained, original ZIP not embedded",
+      "sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/selected/campaign/rustc-version.txt"
+    },
+    {
+      "bytes": 421,
+      "path": "native-host/selected/campaign/source-after-native.json",
+      "scope": "exact selected original ZIP member; complete top report retained, original ZIP not embedded",
+      "sha256": "5cea8c6aaf69f99a6a4c2db448599c9bbdfe1ea5a121acfdf21b42c85e9e671f",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/selected/campaign/source-after-native.json"
+    },
+    {
+      "bytes": 421,
+      "path": "native-host/selected/campaign/source-after.json",
+      "scope": "exact selected original ZIP member; complete top report retained, original ZIP not embedded",
+      "sha256": "5cea8c6aaf69f99a6a4c2db448599c9bbdfe1ea5a121acfdf21b42c85e9e671f",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/selected/campaign/source-after.json"
+    },
+    {
+      "bytes": 421,
+      "path": "native-host/selected/campaign/source-after.log",
+      "scope": "exact selected original ZIP member; complete top report retained, original ZIP not embedded",
+      "sha256": "5cea8c6aaf69f99a6a4c2db448599c9bbdfe1ea5a121acfdf21b42c85e9e671f",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/selected/campaign/source-after.log"
+    },
+    {
+      "bytes": 421,
+      "path": "native-host/selected/campaign/source-before-build.json",
+      "scope": "exact selected original ZIP member; complete top report retained, original ZIP not embedded",
+      "sha256": "5cea8c6aaf69f99a6a4c2db448599c9bbdfe1ea5a121acfdf21b42c85e9e671f",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/selected/campaign/source-before-build.json"
+    },
+    {
+      "bytes": 421,
+      "path": "native-host/selected/campaign/source-before-campaigns.json",
+      "scope": "exact selected original ZIP member; complete top report retained, original ZIP not embedded",
+      "sha256": "5cea8c6aaf69f99a6a4c2db448599c9bbdfe1ea5a121acfdf21b42c85e9e671f",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/selected/campaign/source-before-campaigns.json"
+    },
+    {
+      "bytes": 421,
+      "path": "native-host/selected/campaign/source-before.json",
+      "scope": "exact selected original ZIP member; complete top report retained, original ZIP not embedded",
+      "sha256": "5cea8c6aaf69f99a6a4c2db448599c9bbdfe1ea5a121acfdf21b42c85e9e671f",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/selected/campaign/source-before.json"
+    },
+    {
+      "bytes": 6715,
+      "path": "native-host/selected/campaign/systemd-run.log",
+      "scope": "exact selected original ZIP member; complete top report retained, original ZIP not embedded",
+      "sha256": "17ee715ceacecc4924b7de64fdb2269ab2ac66579df879bc770b49c1d44fbccf",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/selected/campaign/systemd-run.log"
+    },
+    {
+      "bytes": 330,
+      "path": "native-host/selected/campaign/systemd-version.txt",
+      "scope": "exact selected original ZIP member; complete top report retained, original ZIP not embedded",
+      "sha256": "24e682030f54829600ce9c96ef9d8be4297eb4cd1b11eca8fa7f83c5c4595fc7",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/selected/campaign/systemd-version.txt"
+    },
+    {
+      "bytes": 257,
+      "path": "native-host/selected/campaign/toolchain-install.log",
+      "scope": "exact selected original ZIP member; complete top report retained, original ZIP not embedded",
+      "sha256": "5f75ffd1584354e30e6c4ead246d2a4807422b220697104064d8a7c296b79d22",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/selected/campaign/toolchain-install.log"
+    },
+    {
+      "bytes": 150,
+      "path": "native-host/selected/campaign/unit-cleanup.log",
+      "scope": "exact selected original ZIP member; complete top report retained, original ZIP not embedded",
+      "sha256": "13bb8e49e17e574ab13ed1e60c2e2432f0eae9fb2a68d310aba98bbfa0508f8b",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/selected/campaign/unit-cleanup.log"
+    },
+    {
+      "bytes": 155,
+      "path": "native-host/selected/history/history-binary.sha256",
+      "scope": "exact selected original ZIP member; complete top report retained, original ZIP not embedded",
+      "sha256": "b6b7074d35206b11f4dca272d4202050125305981b8db1465dd5186105945544",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/selected/history/history-binary.sha256"
+    },
+    {
+      "bytes": 88447,
+      "path": "native-host/selected/history/history-build.jsonl",
+      "scope": "exact selected original ZIP member; complete top report retained, original ZIP not embedded",
+      "sha256": "2f25b8f4ec727bab57e356769acf17147659ec96a686f6a1e954fb0baee70b4b",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/selected/history/history-build.jsonl"
+    },
+    {
+      "bytes": 5925,
+      "path": "native-host/selected/history/history-build.stderr",
+      "scope": "exact selected original ZIP member; complete top report retained, original ZIP not embedded",
+      "sha256": "db81b56934a9fc65cc3a9b3161c347122f5e4ed766fb22db6297d9b8e3a9aa68",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/selected/history/history-build.stderr"
+    },
+    {
+      "bytes": 89,
+      "path": "native-host/selected/history/history-executable.txt",
+      "scope": "exact selected original ZIP member; complete top report retained, original ZIP not embedded",
+      "sha256": "45306506c5cbc770b7664bae43e83066eee414c72a4b638cd145b5e7002731a2",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/selected/history/history-executable.txt"
+    },
+    {
+      "bytes": 27,
+      "path": "native-host/selected/history/history-exit.txt",
+      "scope": "exact selected original ZIP member; complete top report retained, original ZIP not embedded",
+      "sha256": "7fca594453efe06c7a13e2e13b20a671eead99c1d1ffba19df3d8dac2b9e5665",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/selected/history/history-exit.txt"
+    },
+    {
+      "bytes": 967,
+      "path": "native-host/selected/history/history-resources.txt",
+      "scope": "exact selected original ZIP member; complete top report retained, original ZIP not embedded",
+      "sha256": "025275bf9ecdca36128e651bbd2245c8670c07e3be25b70fa0d4ecd76c1c655b",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/selected/history/history-resources.txt"
+    },
+    {
+      "bytes": 1611,
+      "path": "native-host/selected/history/history.log",
+      "scope": "exact selected original ZIP member; complete top report retained, original ZIP not embedded",
+      "sha256": "5ebf1b4d9ad134ebcdef4284efade7b0e2fd09b99ab04b6d8b37ee0afed0b311",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/selected/history/history.log"
+    },
+    {
+      "bytes": 632,
+      "path": "native-host/selected/history/long-history/config.json",
+      "scope": "exact selected original ZIP member; complete top report retained, original ZIP not embedded",
+      "sha256": "067f8016c744132596255008bbc1c794f496edac204d5c0e678b5014b3b10e19",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/selected/history/long-history/config.json"
+    },
+    {
+      "bytes": 514,
+      "path": "native-host/selected/history/long-history/source.json",
+      "scope": "exact selected original ZIP member; complete top report retained, original ZIP not embedded",
+      "sha256": "fae9c3ab3144e9a779c041dd3eb24d66e48ac8ad6191f7d5c4d7db125323f15d",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/selected/history/long-history/source.json"
+    },
+    {
+      "bytes": 247,
+      "path": "native-host/selected/history/long-history/summary.json",
+      "scope": "exact selected original ZIP member; complete top report retained, original ZIP not embedded",
+      "sha256": "cc63423c835ce1ab6f4adaa6e8477ab92f0d92b00d111aebcd5d1872ba11e562",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/selected/history/long-history/summary.json"
+    },
+    {
+      "bytes": 421,
+      "path": "native-host/selected/history/source.json",
+      "scope": "exact selected original ZIP member; complete top report retained, original ZIP not embedded",
+      "sha256": "5cea8c6aaf69f99a6a4c2db448599c9bbdfe1ea5a121acfdf21b42c85e9e671f",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/selected/history/source.json"
+    },
+    {
+      "bytes": 214741,
+      "path": "native-host/campaign-members.json",
+      "scope": "raw original lookup, full member digest manifest, or source-bound diagnosis; explicit excluded-byte scope",
+      "sha256": "dce5784045158971987d4ece7e18d7386291db945a750859e6a79986e7e1125c",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/campaign-members.json"
+    },
+    {
+      "bytes": 927457,
+      "path": "native-host/history-members.json",
+      "scope": "raw original lookup, full member digest manifest, or source-bound diagnosis; explicit excluded-byte scope",
+      "sha256": "924f9380287d1e15120dcf01acb703afdab8f2f147dff5880e0464e92d66ade7",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/history-members.json"
+    },
+    {
+      "bytes": 34862,
+      "path": "native-host/diagnosis.json",
+      "scope": "raw original lookup, full member digest manifest, or source-bound diagnosis; explicit excluded-byte scope",
+      "sha256": "c5021c357cd0823c1ff7af561f05c274e6d1e01a11c93d0297ab5ca34ccf3e71",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/diagnosis.json"
+    },
+    {
+      "bytes": 13763,
+      "path": "native-host/campaign-phase-summary.json",
+      "scope": "raw original lookup, full member digest manifest, or source-bound diagnosis; explicit excluded-byte scope",
+      "sha256": "30fd7f95bdff606d95f56842a5b49e588ea4820b9bee868b5a6505b965ddc78b",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/campaign-phase-summary.json"
+    },
+    {
+      "bytes": 50799,
+      "path": "native-host/exact-source-excerpts.json",
+      "scope": "raw original lookup, full member digest manifest, or source-bound diagnosis; explicit excluded-byte scope",
+      "sha256": "8478cc1b08e8e301240971a78f3314692a6624b945b68bb6a8d1d3cc30fad490",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/exact-source-excerpts.json"
+    },
+    {
+      "bytes": 21371,
+      "path": "native-host/selected-member-manifest.json",
+      "scope": "raw original lookup, full member digest manifest, or source-bound diagnosis; explicit excluded-byte scope",
+      "sha256": "94f522b4ef4541894ae8f2ed12c7674fc561eb1e4327fb57cc49bd9d44b7cf85",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/selected-member-manifest.json"
+    },
+    {
+      "bytes": 1774,
+      "path": "native-host/selected-credential-screen.json",
+      "scope": "raw original lookup, full member digest manifest, or source-bound diagnosis; explicit excluded-byte scope",
+      "sha256": "e485a4b26f9e34742bd3ed16571c27e79bdc69b62b1495191d1570cd0b7be674",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/selected-credential-screen.json"
+    },
+    {
+      "bytes": 2897,
+      "path": "native-host/campaign-artifacts-readback.json",
+      "scope": "raw original lookup, full member digest manifest, or source-bound diagnosis; explicit excluded-byte scope",
+      "sha256": "1862eeb9b0eb8c663875dabd3f1cd6b5bf9214569e7d1e9e7797448a230c7fea",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/campaign-artifacts-readback.json"
+    },
+    {
+      "bytes": 15444,
+      "path": "native-host/history-artifacts-readback.json",
+      "scope": "raw original lookup, full member digest manifest, or source-bound diagnosis; explicit excluded-byte scope",
+      "sha256": "42856e6a90046b1c533ef2ecf6fe6cdf8d5b55f66ec05000f0924d1b96aea8f9",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/history-artifacts-readback.json"
+    },
+    {
+      "bytes": 664,
+      "path": "native-host/history-job-readback.json",
+      "scope": "raw original lookup, full member digest manifest, or source-bound diagnosis; explicit excluded-byte scope",
+      "sha256": "3a70c54c8b1a169789c493674a1331b70179d6441cb6a917f013b5086d0dbbff",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/history-job-readback.json"
+    },
+    {
+      "bytes": 407,
+      "path": "native-host/campaign-download-receipt.json",
+      "scope": "raw original lookup, full member digest manifest, or source-bound diagnosis; explicit excluded-byte scope",
+      "sha256": "6c586979b635c8d74a48c64e3bfc0c0288acb42a84aab46293c5df61481fe60d",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/campaign-download-receipt.json"
+    },
+    {
+      "bytes": 404,
+      "path": "native-host/history-download-receipt.json",
+      "scope": "raw original lookup, full member digest manifest, or source-bound diagnosis; explicit excluded-byte scope",
+      "sha256": "5bfb1401f2dab3f2854af2619333e69b1ba36de8953ad1fe3c055393f2722cdf",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/history-download-receipt.json"
+    },
+    {
+      "bytes": 574,
+      "path": "native-host/diagnosis-preparation-attempt1.json",
+      "scope": "raw original lookup, full member digest manifest, or source-bound diagnosis; explicit excluded-byte scope",
+      "sha256": "6f451e71e4f7d2958bda3d074ab85313cfe14fe630549a35b43e210c54504eab",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/diagnosis-preparation-attempt1.json"
+    },
+    {
+      "bytes": 325,
+      "path": "native-host/wrapper-reference/config/systemd/trnmponpublic.slice",
+      "scope": "exact local8148 wrapper reference used in diagnosis; no runtime source mutation",
+      "sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/wrapper-reference/config/systemd/trnmponpublic.slice"
+    },
+    {
+      "bytes": 5452,
+      "path": "native-host/wrapper-reference/scripts/ci/public_host_ci_observation.py",
+      "scope": "exact local8148 wrapper reference used in diagnosis; no runtime source mutation",
+      "sha256": "27f0c506592f26f3a218a6d1723c4694e4d7a59f0786e16dbf853e2d5cdb60de",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/wrapper-reference/scripts/ci/public_host_ci_observation.py"
+    },
+    {
+      "bytes": 11861,
+      "path": "native-host/wrapper-reference/scripts/ci/run_from_zero_host.py",
+      "scope": "exact local8148 wrapper reference used in diagnosis; no runtime source mutation",
+      "sha256": "36b6b290912b3f89a84f8a04be293503bb007cc7e386244fa46355ff964bf7d8",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/chain506-native-host-diagnosis/wrapper-reference/scripts/ci/run_from_zero_host.py"
+    },
+    {
+      "bytes": 111889,
+      "path": "codeql/triage.json",
+      "scope": "same-operator exact-source nine-alert read-only review; original failed security gate remains failed",
+      "sha256": "e431f89684eec5cd80eb9aef4807e05abe5f8e7539221b28454d7f94d4e59979",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/codeql-triage-0c804-20261027/triage.json"
+    },
+    {
+      "bytes": 22802,
+      "path": "codeql/review-manifest.json",
+      "scope": "same-operator exact-source nine-alert read-only review; original failed security gate remains failed",
+      "sha256": "c1c23f5fb2167bc66bc6b79788b0b0ac9755edfb0b27e436dd1c0815e9956028",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/codeql-triage-0c804-20261027/review-manifest.json"
+    },
+    {
+      "bytes": 722798,
+      "path": "codeql/review.tar.gz",
+      "scope": "same-operator exact-source nine-alert read-only review; original failed security gate remains failed",
+      "sha256": "f5a980c68af9173c5b4162ed2e257be1ca5957e7c5a1316670cc4e54d2226637",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/codeql-triage-0c804-20261027/review.tar.gz"
+    },
+    {
+      "bytes": 584461,
+      "path": "codeql/additional-scope-inventory.json",
+      "scope": "finite 316-result scope inventory and bounded production-risk screen; not 307 additional per-alert audits or alert clearance",
+      "sha256": "c5ddf156b2a5747abdba7f15ddbd5cc94a3131393a808c9a618cf5a16f707501",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/codeql-triage-0c804-20261027/additional-scope-inventory.json"
+    },
+    {
+      "bytes": 8548,
+      "path": "codeql/additional-scope-inventory.md",
+      "scope": "finite 316-result scope inventory and bounded production-risk screen; not 307 additional per-alert audits or alert clearance",
+      "sha256": "e439182bcc2e914704a1f8733bb1477cb8132c49d0b56e646abfd134dda7b301",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/codeql-triage-0c804-20261027/additional-scope-inventory.md"
+    },
+    {
+      "bytes": 15390,
+      "path": "verification/credential-screen-final-append.json",
+      "scope": "packaging verification; no native or CI execution",
+      "sha256": "81e104b4389e1153768ed31801d57d100f3fa34ca092ff82e83d29471fde2ddc",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/successor-final-readback-package-v2/generated/credential-screen-final-append.json"
+    },
+    {
+      "bytes": 61032,
+      "path": "verification/archive-inputs.json",
+      "scope": "packaging verification; no native or CI execution",
+      "sha256": "548ced7f6cebfdd9d9e37fce6d626d95563daf8b0d2d8bcee6a13cba08a99a59",
+      "source_file": "/workspace/scratch/56818e4fba76/publication/successor-final-readback-package-v2/generated/archive-inputs.json"
+    }
+  ],
+  "ci_accepted": false,
+  "codeql_additional_scope_counts": {
+    "example": 5,
+    "fuzz-target": 8,
+    "integration-test": 23,
+    "production-or-unknown": 1,
+    "unit-test": 279
+  },
+  "codeql_additional_scope_inventory_count": 316,
+  "codeql_original_gate_conclusion": "failure",
+  "codeql_other_exposed_rust_results_without_individual_semantic_audit": 307,
+  "codeql_production_candidate_1024": "OPEN; full source relations not available, no actual disclosure established by bounded inspection",
+  "codeql_reviewed_annotations": 9,
+  "complete_original_campaign_total_reports_retained": 3,
+  "docs_parent_commit": "163832173a36ceae3f6d8ffd29c1c7ac0ea92c76",
+  "docs_parent_tree": "b0b13a564778f80dde42c5c5d413d5a6c1873ccb",
+  "frozen_ci_snapshot": {
+    "counts": {
+      "chain": {
+        "checks": {
+          "collected": 35,
+          "states": {
+            "queued": 35
+          },
+          "total_count": 35
+        },
+        "runs": {
+          "collected": 12,
+          "states": {
+            "pending": 2,
+            "queued": 10
+          },
+          "total_count": 12
+        }
+      },
+      "hepta": {
+        "checks": {
+          "collected": 7,
+          "states": {
+            "in_progress": 1,
+            "queued": 6
+          },
+          "total_count": 7
+        },
+        "runs": {
+          "collected": 4,
+          "states": {
+            "pending": 2,
+            "queued": 2
+          },
+          "total_count": 4
+        }
+      }
+    },
+    "jobs_completed": {
+      "current_time": "2026-10-27 11:30:30 UTC"
+    },
+    "list_observed_utc": "2026-10-27 11:29:56 UTC",
+    "sha256": "69eeec135a43dab240b13f338854172d1bee6aa8d48b11eaf7d52aa4a280b816"
+  },
+  "independent_wan_accepted": false,
+  "limited_raw_commit_mappings": [
+    {
+      "exact_same_tree": "589eb76886b79668856ba44354c9d963c3d1bf86",
+      "mapped_remote_commit": "1fd875cabc734cb82eb8a698441df64bb69329ba",
+      "mapped_remote_parents": [
+        "0c804e9f5bcf6e972bbb4524c744d4b3c8801c34"
+      ],
+      "mapped_remote_raw_sha256": "264f31e9a69e6ed12031f7eb2e7b6ed8919f9e755e0dd8460f014df7990da508",
+      "original_commit": "17b824d2546d9593f23a6446a769c299c2052233",
+      "original_id_not_rewritten_as_remote_id": true,
+      "original_parents": [
+        "0c804e9f5bcf6e972bbb4524c744d4b3c8801c34"
+      ],
+      "original_raw_sha256": "18bec2dd2c128b823a38c81aaab55b677568fd883c4cdd6948897436ddb37247",
+      "repository": "chain"
+    },
+    {
+      "exact_same_tree": "51ea48ea522aaf5f001b1845ca195a81d6845b47",
+      "mapped_remote_commit": "62bcab588b06b2410147361f4dcf744dd1769c32",
+      "mapped_remote_parents": [
+        "1fd875cabc734cb82eb8a698441df64bb69329ba"
+      ],
+      "mapped_remote_raw_sha256": "0ed6dfb930f1c570f60bbe2d6c65c99a3203cf64b706446d09adf361887104be",
+      "original_commit": "176822ae27692aefb288f62d751695501da5c0f0",
+      "original_id_not_rewritten_as_remote_id": true,
+      "original_parents": [
+        "17b824d2546d9593f23a6446a769c299c2052233"
+      ],
+      "original_raw_sha256": "279209da781803c140340a84406b0f1475b2868533af47ce974f1f5580e8219e",
+      "repository": "chain"
+    },
+    {
+      "exact_same_tree": "1b83164ea85b192c310f4873ecf4d35b0f0b6491",
+      "mapped_remote_commit": "4d52231048b99b9b8c639580edd5255208266a15",
+      "mapped_remote_parents": [
+        "62bcab588b06b2410147361f4dcf744dd1769c32"
+      ],
+      "mapped_remote_raw_sha256": "128b63dc94958083943c5fe86abdf4b72da531040c97bfecbf3e68046cd7d948",
+      "original_commit": "8148f53f23b5510bb51964adbc050612cb337c38",
+      "original_id_not_rewritten_as_remote_id": true,
+      "original_parents": [
+        "176822ae27692aefb288f62d751695501da5c0f0"
+      ],
+      "original_raw_sha256": "daf5b23f720302c0d4ce41a2865ae906e37dd976467f9af92927d7e576a83af1",
+      "repository": "chain"
+    },
+    {
+      "exact_same_tree": "880753b592b9aa87b674076d73f45e8ddcfb9818",
+      "mapped_remote_commit": "2a49d6ea2da0eb28b82283dc90bb1cbf96f4d42f",
+      "mapped_remote_parents": [
+        "4d52231048b99b9b8c639580edd5255208266a15"
+      ],
+      "mapped_remote_raw_sha256": "439ddcbeeda6d12c6bfb1dec4daf0e6a2b964ff864aef50abcd4871893035011",
+      "original_commit": "498b4fc2c0394bc4aa9f987d991ef272e8b302a4",
+      "original_id_not_rewritten_as_remote_id": true,
+      "original_parents": [
+        "8148f53f23b5510bb51964adbc050612cb337c38"
+      ],
+      "original_raw_sha256": "c6578c236a1327e4fe7b9e1f666b0f3dcf0f9698a24cab48c8dbff5d366f91d9",
+      "repository": "chain"
+    },
+    {
+      "exact_same_tree": "aa000d8883cbffdf0ac4fbfb57b63394693c99c6",
+      "mapped_remote_commit": "ac469237422d43805845e8b9a6839ad14e1028e7",
+      "mapped_remote_parents": [
+        "2a49d6ea2da0eb28b82283dc90bb1cbf96f4d42f"
+      ],
+      "mapped_remote_raw_sha256": "a5e3420e3da9a49e02d0fbfcb27f5e344f6ff48ca94b5f340f632e9858533288",
+      "original_commit": "516d077effb27351dca227bbfbd3d55f8fe3c333",
+      "original_id_not_rewritten_as_remote_id": true,
+      "original_parents": [
+        "498b4fc2c0394bc4aa9f987d991ef272e8b302a4"
+      ],
+      "original_raw_sha256": "95e5e1f661eff4df27d4ab006893631c9fdf3799ca07c7447b8d5f7c282bc157",
+      "repository": "chain"
+    },
+    {
+      "exact_same_tree": "3c8a7f5f18325de728b2fc08d5b7bac2e499bfae",
+      "mapped_remote_commit": "1d9f262f9965d30105ee58d4218cd6e27ef7a431",
+      "mapped_remote_parents": [
+        "2bfceaa3226611a72f43d24e67d13e30091c7449"
+      ],
+      "mapped_remote_raw_sha256": "303dabee37205c5fd04538d96ed707eccf506e3a8b2e15adcc7ec5ad5d25a66b",
+      "original_commit": "4fa84b3d2e4796ab576ca4ee462a0fe6bee33667",
+      "original_id_not_rewritten_as_remote_id": true,
+      "original_parents": [
+        "2bfceaa3226611a72f43d24e67d13e30091c7449"
+      ],
+      "original_raw_sha256": "a750382755c98394d06cda4b42d9867842db21ac98054bae3403195c5db9fb5d",
+      "repository": "hepta"
+    }
+  ],
+  "m06_integrated": false,
+  "manifest_self_hash_location": "external publication-plan.json; excluded from self to avoid recursion",
+  "model_adoption": "no-update",
+  "network_mutations_performed": false,
+  "original_a03_denominators": {
+    "attack_call_status_counts": {
+      "error": 144,
+      "refused": 22737
+    },
+    "attack_calls": 22881,
+    "budget_sample_errors": 0,
+    "budget_samples": 5337,
+    "campaign_run_denominator": 3,
+    "campaign_runs_succeeded": 0,
+    "confirmed_rounds": 0,
+    "ending_credit_ns_range": [
+      1699955733,
+      1998730606
+    ],
+    "history_attempts": 576,
+    "history_network_ok_on_time": 576,
+    "mutation_cpu_clock_failures": 0,
+    "mutation_cpu_refusals": 0,
+    "native_import_errors": {
+      "PUBLIC_HOST_KERNEL_PARENT": 576
+    },
+    "native_imports_succeeded": 0,
+    "observed_confirmation_rounds": 9,
+    "phase_denominator": 9,
+    "phases_succeeded": 0,
+    "planned_blocks_not_attempted": 126,
+    "planned_business_blocks": 189,
+    "pressure_actor_instances_ready": 144,
+    "pressure_actor_instances_requested": 144,
+    "pressure_actor_instances_success_without_cap_or_kill": 144,
+    "pressure_phase_denominator": 6,
+    "pressure_phases_with_genuine_budget_depletion": 0,
+    "scheduled_confirmation_rounds": 27,
+    "submissions_acknowledged_on_time": 63,
+    "submissions_attempted": 63,
+    "unobserved_confirmation_rounds": 18
+  },
+  "original_full_artifact_zip_bytes_included": false,
+  "original_zip_digests_and_full_member_manifests_retained": true,
+  "production_activation": false,
+  "public_readable_files": {
+    "A03-history-diagnosis.md": {
+      "bytes": 15688,
+      "git_blob": "81655e6f0ed45d7ad0cc567819481b86b51c44cb",
+      "sha256": "c424754200ee9b7c57a45fc247eda867a59f48ec9cb34c9fea690e0b65a357fc"
+    },
+    "README.md": {
+      "bytes": 11975,
+      "git_blob": "c81211b02b6be8fafee5fd75318517c0b811b4f3",
+      "sha256": "87822509d554f6a3b5e77fb09d3835f53d0f8167f4fe947582171d7e45f85048"
+    },
+    "codeql-additional-scope.md": {
+      "bytes": 8548,
+      "git_blob": "beabaee01736ae88f19ead9b303d344da7697d76",
+      "sha256": "e439182bcc2e914704a1f8733bb1477cb8132c49d0b56e646abfd134dda7b301"
+    },
+    "codeql-review.md": {
+      "bytes": 51333,
+      "git_blob": "d9039f10e48c4b080e58fc592498b7215d9ecc9d",
+      "sha256": "2cef4823373c803dd5d8a8c5e6122fef08b0c18736f1ad30fb6c63a5c2a9ff7e"
+    }
+  },
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "runtime_source_changed": false,
+  "schema": "final-source-bound-successor-readback-package-v1",
+  "successor_sources": {
+    "chain": {
+      "actual_github_merge": "47727c4f8335427710b4f3608768b4e9cc7c2a64",
+      "actual_merge_tree": "aa000d8883cbffdf0ac4fbfb57b63394693c99c6",
+      "ancestor_count": 12480,
+      "base": "57c1ed545d067937cbd7aaa7570d5f22123265e6",
+      "canonical_merge_tree": "aa000d8883cbffdf0ac4fbfb57b63394693c99c6",
+      "checked_out_worktree_head": "c4a2bc4e45a7317df5bff831f9615761605d8e09",
+      "ci_accepted": false,
+      "head": "ac469237422d43805845e8b9a6839ad14e1028e7",
+      "head_tree": "aa000d8883cbffdf0ac4fbfb57b63394693c99c6",
+      "isolated_m06_commits_excluded": [
+        "eb36361d4d412a369ff7909f91407a1fa2103ef8",
+        "8f33c8a02cafa3f5c320739fb860df33dd958300",
+        "c26e683902c1c1d7b66f6ad8f523a60c827a1e2c",
+        "dcdf0503a1c52c4423963e9acba176f13fea2913"
+      ],
+      "native_fetch_and_tree_check": "PASS",
+      "ordered_merge_parents": [
+        "57c1ed545d067937cbd7aaa7570d5f22123265e6",
+        "ac469237422d43805845e8b9a6839ad14e1028e7"
+      ],
+      "production_activation": false,
+      "schema": "chain506-ci-repaired-native-pair-v1"
+    },
+    "hepta": {
+      "actual_github_merge": "7cdbb08558b899e23fe029423ef9a762d424e95e",
+      "actual_merge_tree": "3c8a7f5f18325de728b2fc08d5b7bac2e499bfae",
+      "base": "3e9efb15faa261a4dc3ffc3205cd259aaee41a3f",
+      "canonical_merge_tree": "3c8a7f5f18325de728b2fc08d5b7bac2e499bfae",
+      "chain_actual_merge": "47727c4f8335427710b4f3608768b4e9cc7c2a64",
+      "chain_source": "ac469237422d43805845e8b9a6839ad14e1028e7",
+      "checked_out_worktree_head": "4fa84b3d2e4796ab576ca4ee462a0fe6bee33667",
+      "ci_accepted": false,
+      "head": "1d9f262f9965d30105ee58d4218cd6e27ef7a431",
+      "head_tree": "3c8a7f5f18325de728b2fc08d5b7bac2e499bfae",
+      "hepta_rust_cargo_bazel_executed_locally": false,
+      "native_fetch_and_tree_check": "PASS",
+      "ordered_merge_parents": [
+        "3e9efb15faa261a4dc3ffc3205cd259aaee41a3f",
+        "1d9f262f9965d30105ee58d4218cd6e27ef7a431"
+      ],
+      "pair_workflow_sha256": "90614854bcd8893b6b82c8f3ff9b355fd1ac1a2e6ca495cd1d4ddb700842477d",
+      "production_activation": false,
+      "schema": "hepta4080-host-corrected-native-pair-v1"
+    }
+  },
+  "whole_chain_post_quantum_accepted": false
+}
