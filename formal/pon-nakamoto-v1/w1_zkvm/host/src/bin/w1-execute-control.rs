@@ -81,10 +81,11 @@ fn main() -> Result<()> {
             json!({"exit_code":format!("{:?}",session.exit_code),"segments":session.segments.len(),"user_cycles":session.cycles(),"journal_bytes":session.journal.bytes.len(),"journal_sha256":sha(&session.journal.bytes)})
         }
         Err(error) => {
-            ensure!(expected.is_err(), "valid guest execution failed: {error}");
-            // The error text is retained; callers must distinguish a guest
-            // assertion from infrastructure failure in their evidence review.
-            json!({"executor_error":error.to_string(),"guest_rejection_requires_error_readback":true})
+            println!(
+                "{}",
+                json!({"schema":"trnm-w1-real-guest-execution-control-v1","mode":mode,"input_sha256":sha(&input),"executor_error":error.to_string(),"guest_rejection_established":false,"cryptographic_proof_generated":false,"consensus_admission":false})
+            );
+            anyhow::bail!("execution unavailable; no guest rejection established: {error}");
         }
     };
     println!(
