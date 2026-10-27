@@ -399,6 +399,7 @@ fn discover_with_progress(
     let output = pon_executor::execute_with_account_point_access(
         parent_state,
         pon_executor::BlockExecution {
+            timestamp: None,
             transactions: block.transactions,
             height: block.height,
             miner: block.miner,

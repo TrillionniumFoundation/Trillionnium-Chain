@@ -715,6 +715,7 @@ fn execute_from_checkpoint_source(
             }
         };
         let execution = pon_executor::BlockExecution {
+            timestamp: None,
             transactions: block.transactions,
             height: block.height,
             miner: block.miner,

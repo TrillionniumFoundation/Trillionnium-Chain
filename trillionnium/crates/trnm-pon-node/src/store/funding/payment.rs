@@ -421,6 +421,7 @@ impl Node {
         let mut output = pon_executor::execute_observed(
             &before,
             pon_executor::BlockExecution {
+                timestamp: None,
                 transactions: &packet.transactions,
                 height: h.height,
                 miner: h.miner,

@@ -23,6 +23,7 @@ pub mod operator_task_policy;
 pub mod peer_polling;
 /// Explicit native PQ signature/replay owner; not installed by legacy Node.
 pub mod pq_authority;
+pub mod pq_native_v1;
 pub mod public_submit;
 /// Public genesis maintenance bytes; availability never grants work or model credit.
 pub mod public_task_bootstrap;

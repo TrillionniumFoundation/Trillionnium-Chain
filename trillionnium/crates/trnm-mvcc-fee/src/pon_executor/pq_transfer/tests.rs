@@ -10,6 +10,7 @@ fn config() -> Config {
     let mut fees = [0; 25];
     fees[1] = 17;
     Config {
+        native_pq: None,
         network: [1; 32],
         parameters: [2; 32],
         family: [3; 32],

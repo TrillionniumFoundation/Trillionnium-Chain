@@ -339,6 +339,7 @@ fn reference(settings: &Settings, state: &State, packet: &GrowthPacket) -> State
     let out = limits::execute_with_commitment(
         state,
         pon_executor::BlockExecution {
+            timestamp: None,
             transactions: &packet.transactions,
             height: h.height,
             miner: h.miner,

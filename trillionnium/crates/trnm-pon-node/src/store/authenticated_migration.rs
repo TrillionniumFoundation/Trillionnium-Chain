@@ -1055,6 +1055,7 @@ fn checked_successor(
     let executed = node.execute_derived_core(
         &prior,
         ExecutionRequest {
+            timestamp: None,
             transactions: &packet.transactions,
             height: header.height,
             miner: header.miner,

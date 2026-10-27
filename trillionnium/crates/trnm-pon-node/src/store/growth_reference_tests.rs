@@ -60,6 +60,7 @@ fn native_growth_reference_public_checked_apis_bind_actual_profile_parent() {
     let (parent, _, actual) = node.read_active().unwrap();
     let root = cfg.state_root(&actual).unwrap();
     let request = || ExecutionRequest {
+        timestamp: None,
         transactions: &[],
         height: 1,
         miner: development_public(0).unwrap(),

@@ -129,6 +129,7 @@ pub struct StagedOutput {
 }
 /// All ordinary execution inputs; keeps the adapter independent of any Node owner.
 pub struct ExecutionRequest<'a> {
+    pub timestamp: Option<u64>,
     pub transactions: &'a [Vec<u8>],
     pub height: u64,
     pub miner: Hash,
@@ -201,6 +202,7 @@ pub fn execute_growth_reference_with_control<E: Send>(
     let output = pon_executor::execute_with_commitment_and_control(
         actual_parent,
         BlockExecution {
+            timestamp: request.timestamp,
             transactions: request.transactions,
             height: request.height,
             miner: request.miner,
@@ -928,6 +930,7 @@ impl<'a> CheckedExecutionParent<'a> {
         let output = pon_executor::execute_with_commitment_and_control(
             self.state,
             BlockExecution {
+                timestamp: request.timestamp,
                 transactions: request.transactions,
                 height: request.height,
                 miner: request.miner,
@@ -1090,6 +1093,7 @@ mod tests {
                 for txs in [raws[..4].to_vec(), vec![raws[1].clone()], vec![invalid]] {
                     for workers in [1, 4] {
                         let request = || ExecutionRequest {
+                            timestamp: None,
                             transactions: &txs,
                             height: 1,
                             miner: [3; 32],
@@ -1200,6 +1204,7 @@ mod tests {
                     pon_executor::execute(&state, &raws, 1, [3; 32], [4; 32], workers, &cfg)
                         .unwrap();
                 let request = || ExecutionRequest {
+                    timestamp: None,
                     transactions: &raws,
                     height: 1,
                     miner: [3; 32],
@@ -1349,6 +1354,7 @@ mod tests {
             ExecutionProgress::BeforeOutput,
         ] {
             let request = || ExecutionRequest {
+                timestamp: None,
                 transactions: &raws,
                 height: 1,
                 miner: [3; 32],
@@ -1405,6 +1411,7 @@ mod tests {
                 let result = parent
                     .execute(
                         ExecutionRequest {
+                            timestamp: None,
                             transactions: &raws,
                             height: 1,
                             miner: [3; 32],
@@ -1488,6 +1495,7 @@ mod tests {
                     pon_executor::execute(&state, transactions, 1, [3; 32], [4; 32], workers, &cfg);
                 let observed = parent.execute_with_progress(
                     ExecutionRequest {
+                        timestamp: None,
                         transactions,
                         height: 1,
                         miner: [3; 32],
@@ -1540,6 +1548,7 @@ mod tests {
                 let seen = std::sync::atomic::AtomicUsize::new(0);
                 let observed = parent.execute_with_progress(
                     ExecutionRequest {
+                        timestamp: None,
                         transactions: &raws,
                         height: 1,
                         miner: [3; 32],
@@ -1567,6 +1576,7 @@ mod tests {
                 let retry = parent
                     .execute(
                         ExecutionRequest {
+                            timestamp: None,
                             transactions: &raws,
                             height: 1,
                             miner: [3; 32],
@@ -1596,6 +1606,7 @@ mod tests {
             let result = pon_executor::execute_with_progress(
                 &state,
                 BlockExecution {
+                    timestamp: None,
                     transactions: &raws,
                     height: 1,
                     miner: [3; 32],
@@ -1685,6 +1696,7 @@ mod tests {
             for transactions in [&raws, &invalid] {
                 let accounting = AccountedWorkers::default();
                 let request = || ExecutionRequest {
+                    timestamp: None,
                     transactions,
                     height: 1,
                     miner: [3; 32],
@@ -1722,6 +1734,7 @@ mod tests {
             let result = pon_executor::execute_with_control(
                 &state,
                 BlockExecution {
+                    timestamp: None,
                     transactions: &raws,
                     height: 1,
                     miner: [3; 32],
@@ -1794,6 +1807,7 @@ mod tests {
                     pon_executor::execute(&state, &transactions, 1, [3; 32], [4; 32], 1, &cfg);
                 let actual = parent.execute(
                     ExecutionRequest {
+                        timestamp: None,
                         transactions: &transactions,
                         height: 1,
                         miner: [3; 32],
@@ -1854,6 +1868,7 @@ mod tests {
         let actual = parent
             .execute(
                 ExecutionRequest {
+                    timestamp: None,
                     transactions: &raws,
                     height: 1,
                     miner: [3; 32],
@@ -1911,6 +1926,7 @@ mod tests {
                             root,
                             checked.snapshot.as_ref(),
                             ExecutionRequest {
+                                timestamp: None,
                                 transactions: &raws[..n],
                                 height: 1,
                                 miner: [3; 32],
@@ -1937,6 +1953,7 @@ mod tests {
                         let actual = parent
                             .execute(
                                 ExecutionRequest {
+                                    timestamp: None,
                                     transactions: &raws[..n],
                                     height: 1,
                                     miner: [3; 32],
@@ -2581,6 +2598,7 @@ mod growth_reference_single_successor_tests {
         let output = pon_executor::execute_with_control(
             actual_parent,
             BlockExecution {
+                timestamp: request.timestamp,
                 transactions: request.transactions,
                 height: request.height,
                 miner: request.miner,
@@ -2681,6 +2699,7 @@ mod growth_reference_single_successor_tests {
 
     fn request(transactions: &[Vec<u8>], workers: usize) -> ExecutionRequest<'_> {
         ExecutionRequest {
+            timestamp: None,
             transactions,
             height: 1,
             miner: [3; 32],

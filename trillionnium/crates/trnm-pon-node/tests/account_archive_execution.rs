@@ -1370,6 +1370,7 @@ fn compact_native_export_step(
     let reference = pon_executor::execute_with_authenticated_state_input(
         &parent,
         pon_executor::BlockExecution {
+            timestamp: None,
             transactions: txs,
             height: block.height,
             miner: block.miner,

@@ -4693,6 +4693,7 @@ mod tests {
         let result = pon_executor::execute_with_control(
             &state,
             BlockExecution {
+                timestamp: None,
                 transactions: &transactions,
                 height: 1,
                 miner: crate::development_public(0).unwrap(),
@@ -4872,6 +4873,7 @@ mod tests {
             let rejected = pon_executor::execute_with_control(
                 &state,
                 BlockExecution {
+                    timestamp: None,
                     transactions: &invalid,
                     height: 1,
                     miner: crate::development_public(0).unwrap(),
@@ -4895,6 +4897,7 @@ mod tests {
             let result = pon_executor::execute_with_control(
                 &state,
                 BlockExecution {
+                    timestamp: None,
                     transactions: &transactions,
                     height: 1,
                     miner: crate::development_public(0).unwrap(),
@@ -4980,6 +4983,7 @@ mod tests {
             let result = pon_executor::execute_with_control(
                 &state,
                 BlockExecution {
+                    timestamp: None,
                     transactions: &transactions,
                     height: 1,
                     miner: crate::development_public(0).unwrap(),
@@ -5325,6 +5329,7 @@ mod tests {
                     let result = pon_executor::execute_with_control(
                         state,
                         BlockExecution {
+                            timestamp: None,
                             transactions,
                             height: 1,
                             miner: crate::development_public(0).unwrap(),

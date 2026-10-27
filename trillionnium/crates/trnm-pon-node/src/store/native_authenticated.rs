@@ -9,7 +9,7 @@ use crate::account_archive_execution::state_witness::{
     commitment_from_complete_state, StateCommitment,
 };
 use crate::account_archive_prototype::native_store::{self, Root};
-use crate::{consensus, ensure, sequence_root, Error, Packet, Result, Settings};
+use crate::{consensus, ensure, sequence_root, Error, Result, Settings};
 use rusqlite::{params, Connection, OptionalExtension};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
@@ -168,7 +168,7 @@ fn native_block_with_cache(
         let (header, packet_id, transactions, cached_digest) = match cached {
             Some(math) => (math.header, math.id, math.transactions, Some(math.digest)),
             None => {
-                let packet = Packet::decode(&raw)?;
+                let packet = settings.decode_packet(&raw)?;
                 let h = &packet.header;
                 let packet_id = packet.id()?;
                 // Keep the original short-circuit field order. In particular,

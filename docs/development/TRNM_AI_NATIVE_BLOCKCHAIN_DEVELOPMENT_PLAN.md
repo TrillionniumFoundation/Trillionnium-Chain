@@ -4602,3 +4602,32 @@ outside the shared layout; it does not guarantee physical WAL size. All twenty
 guards, eight original lanes, assertions and resource limits remain. Source
 identity agreement grants no SQL, C ABI, layout, two-second service or native
 qualification; the original lane executions and fullT/Layout003 remain open.
+
+
+#### P1 native PQ transfer slice — 2026-10-27 (RESEARCH / OPEN)
+
+The [fresh NPQ1/PQP1 native transfer composition](../protocol/pon-nakamoto-v1/details/NATIVE_PQ_TRANSFER_V1.md)
+continues M00/M01/M05/M06/M15 in one explicit fresh namespace based on PR 504
+`829c5d28ec9a0fc13de2bd098b477cbacacdb4b7`. The opaque `PqNodeV1` delegates to
+the original Node. Full ML-DSA signature and SPKI bytes enter original M05/M06,
+with exact header-time expiry, current three-leaf authority State/root, pure PoN
+work, original SQLite/deltas/ancestry and branch activation. Full 6,129-byte
+transactions retain the 524,288-byte budget (85 at maximum size). No dummy
+Ed25519 envelope, implicit old-store/profile fallback or transport installation
+is allowed. Chain nonces may reorg; local pool ordinals/removal history may not.
+
+Source-bound M00/M06 subset results and Node metadata checks are recorded
+separately from the actual native integration attempt. Retain every original
+failure and exact compiler/source identity; a metadata check is not runtime
+acceptance. The new controls cover cold reopen, real heavier forks/requeue,
+randomized-signature duplicates, exact expiry/MTP/overflow, whole-byte caps and
+interrupted original reorganization. Their actual terminal records govern any
+pass claim. The original workspace/native/security gates remain required.
+
+This first slice only accepts genesis-registered, generation-one PQ accounts.
+Registration, key rotation/migration, other tags, transport/governance and Hepta
+final-use remain open. Fresh public test balances are not a deployed asset
+migration. Shor-compromised old Ed authorization cannot be repaired into a
+unique original identity merely by adding a second signature. Neither this
+transfer path nor the existing PQ component closes quantum W1/proof security,
+physical rollback, physical I/O or production activation. **P1 / NO_GO**.

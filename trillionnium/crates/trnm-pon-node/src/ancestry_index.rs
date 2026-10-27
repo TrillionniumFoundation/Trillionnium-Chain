@@ -5,7 +5,9 @@ use rusqlite::{params, Connection, OptionalExtension};
 #[cfg(test)]
 use std::collections::BTreeMap;
 use trnm_crypto_primitives::pon_work;
-use trnm_protocol::pon_wire::{hash, Hash, Header, HEADER_BYTES};
+#[cfg(test)]
+use trnm_protocol::pon_wire::Header;
+use trnm_protocol::pon_wire::{hash, Hash};
 
 pub(crate) const LEVELS: u8 = 63;
 pub(crate) const READ_SQL_BUDGET: u64 = 1024;
@@ -20,6 +22,7 @@ pub(crate) struct Context {
     pub network: Hash,
     pub parameters: Hash,
     pub genesis: Hash,
+    pub pq_packet: bool,
 }
 #[derive(Clone, Copy)]
 struct Metadata {
@@ -87,7 +90,7 @@ impl Budget<'_> {
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 enum ReadKey {
     Shape(Hash),
-    Header(Hash),
+    Header(Hash, bool),
     Jump(Hash, u8),
 }
 
@@ -126,7 +129,7 @@ impl ReadSet {
             let actual = (|| -> Result<Hash> {
                 Ok(match *key {
                     ReadKey::Shape(id) => shape_digest(&read_shape(db, id)?),
-                    ReadKey::Header(id) => header_digest(&read_header(db, id)?),
+                    ReadKey::Header(id, pq) => header_digest(&read_header(db, id, pq)?),
                     ReadKey::Jump(id, level) => jump_digest(&read_jump(db, id, level)?),
                 })
             })()
@@ -146,9 +149,9 @@ fn read_shape(db: &Connection, id: Hash) -> rusqlite::Result<Option<StoredShape>
     )
     .optional()
 }
-fn read_header(db: &Connection, id: Hash) -> rusqlite::Result<Option<HeaderProjection>> {
+fn read_header(db: &Connection, id: Hash, pq: bool) -> rusqlite::Result<Option<HeaderProjection>> {
     db.query_row("SELECT parent,state_root,substr(packet,1,?),substr(packet,-32) FROM blocks WHERE id=? AND length(parent)=32 AND length(state_root)=32 AND length(packet)<=?",
-        params![HEADER_BYTES,id.as_slice(),MAX_PACKET], |r| Ok((r.get(0)?,r.get(1)?,r.get(2)?,r.get(3)?))).optional()
+        params![crate::pq_native_v1::header_prefix_bytes(pq),id.as_slice(),MAX_PACKET], |r| Ok((r.get(0)?,r.get(1)?,r.get(2)?,r.get(3)?))).optional()
 }
 fn read_jump(db: &Connection, id: Hash, level: u8) -> rusqlite::Result<Option<JumpProjection>> {
     db.query_row("SELECT ancestor,ancestor_height,left_seal,right_seal,seal FROM ancestry_jump WHERE block=? AND level=? AND length(ancestor)=32 AND length(left_seal)=32 AND length(right_seal)=32 AND length(seal)=32",
@@ -243,21 +246,24 @@ fn metadata(db: &Connection, ctx: Context, id: Hash, budget: &mut Budget<'_>) ->
         height > 0
             && parent_len == Some(32)
             && packet_len.is_some_and(|n| {
-                (HEADER_BYTES + 2 + pon_work::PROOF_BYTES..=MAX_PACKET).contains(&n)
+                (crate::pq_native_v1::header_prefix_bytes(ctx.pq_packet) + 2 + pon_work::PROOF_BYTES
+                    ..=MAX_PACKET)
+                    .contains(&n)
             }),
         "ANCESTRY_INDEX_PACKET_BYTES",
     )?;
     budget.charge()?;
     // Predicates precede prefix/trace extraction: even corrupt oversized BLOBs
     // never enter the projection or Rust Vec allocation.
-    let row = read_header(db, id)?;
+    let row = read_header(db, id, ctx.pq_packet)?;
     #[cfg(test)]
-    budget.observe(ReadKey::Header(id), || header_digest(&row))?;
+    budget.observe(ReadKey::Header(id, ctx.pq_packet), || header_digest(&row))?;
     let (parent, root, prefix, trace) = row.ok_or("ANCESTRY_INDEX_METADATA")?;
     let parent = bytes32(parent)?;
     let root = bytes32(root)?;
     let trace = bytes32(trace)?;
-    let header = Header::decode(&prefix).map_err(|_| Error::from("ANCESTRY_INDEX_HEADER"))?;
+    let header = crate::pq_native_v1::decode_header_projection(&prefix, ctx.pq_packet)
+        .map_err(|_| Error::from("ANCESTRY_INDEX_HEADER"))?;
     ensure(
         header.block_id(trace) == id
             && header.network == ctx.network
@@ -650,6 +656,7 @@ mod tests {
             network: [1; 32],
             parameters: [2; 32],
             genesis: [3; 32],
+            pq_packet: false,
         };
         db.execute(
             "INSERT INTO blocks VALUES(?,NULL,0,?,NULL,?)",
