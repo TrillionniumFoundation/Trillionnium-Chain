@@ -688,8 +688,7 @@ pub struct PublicServer {
     mutation_cpu: Arc<Mutex<PaidMutationCpuBudget>>,
     arithmetic_facts:
         Option<trnm_crypto_primitives::pon_work::arithmetic_facts::ArithmeticFactCache>,
-    w1_rejection_cache:
-        Option<trnm_crypto_primitives::pon_work::rejection_cache::RejectionCache>,
+    w1_rejection_cache: Option<trnm_crypto_primitives::pon_work::rejection_cache::RejectionCache>,
     #[cfg(test)]
     fail_next_output: AtomicBool,
     #[cfg(test)]
@@ -732,10 +731,10 @@ impl PublicServer {
     /// Future public rollout requires a separately reviewed resource profile.
     pub fn with_w1_rejection_cache(mut self, slots: usize, ttl: Duration) -> Result<Self> {
         ensure(self.arithmetic_facts.is_none(), "PUBLIC_W1_CACHE_MODE")?;
-        self.w1_rejection_cache =
-            Some(trnm_crypto_primitives::pon_work::rejection_cache::RejectionCache::new(
-                slots, ttl,
-            ).ok_or("PUBLIC_W1_CACHE_LIMIT")?);
+        self.w1_rejection_cache = Some(
+            trnm_crypto_primitives::pon_work::rejection_cache::RejectionCache::new(slots, ttl)
+                .ok_or("PUBLIC_W1_CACHE_LIMIT")?,
+        );
         Ok(self)
     }
     /// Actual fresh native CLI process: zero initial CPU and challenge credit.
@@ -1518,9 +1517,13 @@ fn public_dispatch(
                     let result = match arithmetic_facts {
                         None => match w1_rejection_cache {
                             Some(cache) => WorkCheckedPacket::verify_with_rejection_cache(
-                                packet, cache, &mut checkpoint,
+                                packet,
+                                cache,
+                                &mut checkpoint,
                             ),
-                            None => WorkCheckedPacket::verify_with_progress(packet, &mut checkpoint),
+                            None => {
+                                WorkCheckedPacket::verify_with_progress(packet, &mut checkpoint)
+                            }
                         },
                         Some(facts) => {
                             if let Some(record) = observation {

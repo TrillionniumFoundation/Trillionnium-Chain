@@ -533,7 +533,13 @@ impl WorkCheckedPacket {
     ) -> Result<Self> {
         let h = &packet.header;
         let work = cache
-            .verify_with_progress(h.challenge(), h.work_task, h.target, &packet.proof, progress)
+            .verify_with_progress(
+                h.challenge(),
+                h.work_task,
+                h.target,
+                &packet.proof,
+                progress,
+            )
             .map_err(|error| match error {
                 pon_work::VerificationError::Relation(error) => {
                     Error::from(format!("WORK:{error:?}"))
