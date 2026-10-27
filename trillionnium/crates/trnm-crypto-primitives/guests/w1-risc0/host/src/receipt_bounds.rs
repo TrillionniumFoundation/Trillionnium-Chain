@@ -137,6 +137,27 @@ impl<'a> Cursor<'a> {
         self.input()?;
         self.output()
     }
+    fn segment(&mut self, index: usize) -> Result<(u64, u32)> {
+        let words = self.length(MAX_SEAL_WORDS, "segment seal word budget")?;
+        if words < MIN_SEAL_WORDS {
+            return Err(BoundaryError::Malformed("empty or incomplete seal header"));
+        }
+        let seal = self.take(words * 4)?;
+        let version = u32::from_le_bytes(seal[..4].try_into().unwrap());
+        let offset = 4 * (1 + OUTPUT_WORDS);
+        let po2 = u32::from_le_bytes(seal[offset..offset + 4].try_into().unwrap());
+        let cycles = seal_shape(words, version, po2)?;
+        if self.u32()? as usize != index {
+            return Err(BoundaryError::Malformed("noncanonical segment index"));
+        }
+        let hash_name_bytes = self.length(9, "hash-name string budget")?;
+        if self.take(hash_name_bytes)? != b"poseidon2" {
+            return Err(BoundaryError::Refused("unsupported commitment hash"));
+        }
+        self.take(32)?;
+        self.claim()?;
+        Ok((cycles, po2))
+    }
 }
 
 fn seal_shape(word_count: usize, version: u32, po2: u32) -> Result<u64> {
@@ -169,6 +190,32 @@ pub fn check_padded_cycles(total: u64) -> Result<()> {
     Ok(())
 }
 
+/// Same allocation bounds for a real SDK segment receipt before assembly.
+pub fn preflight_segment(bytes: &[u8], index: usize) -> Result<u64> {
+    if bytes.len() > 2 * 1024 * 1024 || index >= MAX_SEGMENTS {
+        return Err(BoundaryError::Refused("segment asset budget"));
+    }
+    let mut cursor = Cursor { remaining: bytes };
+    let (cycles, _) = cursor.segment(index)?;
+    if !cursor.remaining.is_empty() {
+        return Err(BoundaryError::Malformed("trailing segment bytes"));
+    }
+    Ok(cycles)
+}
+
+/// A claimed session is still untrusted until the complete receipt verifies.
+pub fn preflight_claim(bytes: &[u8]) -> Result<()> {
+    if bytes.len() > 16 * 1024 {
+        return Err(BoundaryError::Refused("session claim byte budget"));
+    }
+    let mut cursor = Cursor { remaining: bytes };
+    cursor.claim()?;
+    if !cursor.remaining.is_empty() {
+        return Err(BoundaryError::Malformed("trailing session claim bytes"));
+    }
+    Ok(())
+}
+
 /// Parse all lengths and supported variants without allocating any Vec/String.
 /// Success says only that subsequent SDK deserialization has bounded shapes.
 pub fn preflight(bytes: &[u8]) -> Result<BoundedShape> {
@@ -188,26 +235,10 @@ pub fn preflight(bytes: &[u8]) -> Result<BoundedShape> {
     let mut padded_cycles = 0u64;
     let mut maximum_po2 = 0;
     for index in 0..segments {
-        let words = cursor.length(MAX_SEAL_WORDS, "segment seal word budget")?;
-        if words < MIN_SEAL_WORDS {
-            return Err(BoundaryError::Malformed("empty or incomplete seal header"));
-        }
-        let seal = cursor.take(words * 4)?; // Multiplication follows the 2^18 bound.
-        let version = u32::from_le_bytes(seal[..4].try_into().unwrap());
-        let offset = 4 * (1 + OUTPUT_WORDS);
-        let po2 = u32::from_le_bytes(seal[offset..offset + 4].try_into().unwrap());
-        padded_cycles += seal_shape(words, version, po2)?;
+        let (cycles, po2) = cursor.segment(index)?;
+        padded_cycles += cycles;
         check_padded_cycles(padded_cycles)?;
         maximum_po2 = maximum_po2.max(po2);
-        if cursor.u32()? as usize != index {
-            return Err(BoundaryError::Malformed("noncanonical segment index"));
-        }
-        let hash_name_bytes = cursor.length(9, "hash-name string budget")?;
-        if cursor.take(hash_name_bytes)? != b"poseidon2" {
-            return Err(BoundaryError::Refused("unsupported commitment hash"));
-        }
-        cursor.take(32)?; // Segment verifier-parameter digest, checked by verifier.
-        cursor.claim()?;
     }
     cursor.length(0, "nested assumption receipts are unsupported")?;
     cursor.take(32)?; // Composite verifier parameters.

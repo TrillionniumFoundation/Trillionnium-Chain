@@ -6,8 +6,9 @@ or manufacture success. Timeout cleanup is confined to the child process group
 created by this invocation. All stdout/stderr and exit status are retained.
 """
 import argparse
-from contextlib import nullcontext
+import ctypes
 from datetime import datetime, timezone
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -39,19 +40,67 @@ def wait_with_samples(child, timeout, sampler):
             next_sample = time.monotonic() + INTERVAL_SECONDS
 
 
-def terminate_owned_group(child):
+def become_subreaper():
+    # This fresh Linux wrapper owns only the one child family below. Reparent
+    # orphaned r0vm children here if their host dies first, so cleanup can wait
+    # for them instead of leaving live proving work or uncollected zombies.
+    libc = ctypes.CDLL(None, use_errno=True)
+    if libc.prctl(36, 1, 0, 0, 0) != 0:  # Linux PR_SET_CHILD_SUBREAPER
+        raise OSError(ctypes.get_errno(), "cannot become the owned-child subreaper")
+
+
+def group_exists(pgid):
     try:
-        os.killpg(child.pid, signal.SIGTERM)
+        os.killpg(pgid, 0)
+        return True
     except ProcessLookupError:
-        pass
-    try:
-        child.wait(timeout=5)
-    except subprocess.TimeoutExpired:
+        return False
+
+
+def reap_owned_children(child, report):
+    child.poll()
+    while True:
         try:
-            os.killpg(child.pid, signal.SIGKILL)
+            pid, status = os.waitpid(-1, os.WNOHANG)
+        except ChildProcessError:
+            break
+        if pid == 0:
+            break
+        code = os.waitstatus_to_exitcode(status)
+        if pid == child.pid:
+            child.returncode = code
+        else:
+            report["adopted_child_terminals"].append({"pid": pid, "returncode": code})
+
+
+def finish_owned_group(child, report):
+    reap_owned_children(child, report)
+    # A successful leader that leaves a live descendant is not a successfully
+    # bounded observation. Preserve its real terminal code separately.
+    if child.returncode is not None and group_exists(child.pid):
+        report["leader_exited_before_group"] = True
+        if report["returncode"] == 0:
+            report["returncode"] = 125
+    for sig in [signal.SIGTERM, signal.SIGKILL]:
+        if not group_exists(child.pid):
+            break
+        try:
+            os.killpg(child.pid, sig)
+            report["cleanup_actions"].append(sig.name)
         except ProcessLookupError:
-            pass
-        child.wait()
+            break
+        except OSError as error:
+            report["cleanup_errors"].append(repr(error))
+        deadline = time.monotonic() + 5
+        while time.monotonic() < deadline:
+            reap_owned_children(child, report)
+            if not group_exists(child.pid):
+                break
+            time.sleep(0.025)
+    reap_owned_children(child, report)
+    report["owned_process_group_empty"] = not group_exists(child.pid)
+    if not report["owned_process_group_empty"]:
+        report["cleanup_errors"].append("owned process group remains after bounded cleanup")
 
 
 def main():
@@ -72,57 +121,71 @@ def main():
         raise SystemExit("missing actual command")
     args.out.mkdir(parents=True, exist_ok=True)
     report_path = args.out / f"{args.name}.process.json"
-    report = {"schema": "pon-w1-actual-process-v1", "command": command,
+    report = {"schema": "pon-w1-actual-process-v2", "command": command,
               "started_utc": datetime.now(timezone.utc).isoformat(),
               "timeout_seconds": args.timeout,
               "source_sha": os.environ.get("TRNM_EXPECTED_SOURCE_SHA"),
-              "timed_out": False, "consensus_authority": False}
+              "timed_out": False, "consensus_authority": False,
+              "child_pid": None, "child_returncode": None,
+              "child_reaped": False, "cleanup_actions": [], "cleanup_errors": [],
+              "subreaper_enabled": False, "leader_exited_before_group": False,
+              "adopted_child_terminals": [], "owned_process_group_empty": None}
     before = resource.getrusage(resource.RUSAGE_CHILDREN)
     started = time.monotonic()
+    child = None
+    sampler = None
+    samples = None
+    samples_path = args.out / f"{args.name}.proc-group.jsonl"
     with report_path.open("x") as output:
         try:
-            samples_path = args.out / f"{args.name}.proc-group.jsonl"
             with (args.out / f"{args.name}.stdout.log").open("xb") as stdout, \
-                 (args.out / f"{args.name}.stderr.log").open("xb") as stderr, \
-                 (samples_path.open("x") if args.sample_proc_group else nullcontext(None)) as samples:
+                 (args.out / f"{args.name}.stderr.log").open("xb") as stderr:
+                if args.sample_proc_group:
+                    samples = samples_path.open("x")
+                become_subreaper()
+                report["subreaper_enabled"] = True
                 child = subprocess.Popen(command, stdout=stdout, stderr=stderr,
                                          start_new_session=True)
-                sampler = None
-                termination_reason = None
+                report["child_pid"] = child.pid
                 try:
                     if samples is not None:
                         sampler = ProcGroupSampler(child.pid, samples)
                     report["returncode"] = wait_with_samples(child, args.timeout, sampler)
                 except subprocess.TimeoutExpired:
                     report["timed_out"] = True
-                    termination_reason = "timeout"
-                    if sampler is not None:
-                        sampler.sample("before_timeout_termination")
-                    terminate_owned_group(child)
+                    # 124 is this wrapper's timeout status. Preserve the actual
+                    # child's signal/exit status independently in finally.
                     report["returncode"] = 124
-                except BaseException:
-                    termination_reason = "runner_error"
-                    if child.poll() is None:
-                        terminate_owned_group(child)
-                    raise
-                finally:
-                    # Also clean up if observation I/O failed inside a timeout
-                    # handler; never leave a new unmeasured prover running.
-                    if child.poll() is None:
-                        termination_reason = termination_reason or "runner_error"
-                        terminate_owned_group(child)
                     if sampler is not None:
-                        event = f"terminated_{termination_reason}" if termination_reason else "exit_observed"
-                        try:
-                            sampler.sample(event, after_exit=True)
-                        except (OSError, ValueError) as error:
-                            report["proc_group_sampling_error"] = repr(error)
-                        report["proc_group_sampling"] = sampler.summary()
-                        report["proc_group_sampling"]["jsonl_file"] = samples_path.name
+                        sampler.sample("before_timeout_cleanup")
         except BaseException as error:
             report["runner_error"] = repr(error)
             report["returncode"] = 125
         finally:
+            if child is not None:
+                try:
+                    finish_owned_group(child, report)
+                except OSError as error:
+                    report["cleanup_errors"].append(repr(error))
+                report["child_returncode"] = child.poll()
+                report["child_reaped"] = child.returncode is not None
+                if not report["child_reaped"] or report["cleanup_errors"]:
+                    report["returncode"] = 125
+            if sampler is not None:
+                try:
+                    event = "terminated_timeout" if report["timed_out"] else (
+                        "terminated_runner_error" if "runner_error" in report else "exit_observed")
+                    sampler.sample(event, after_exit=True)
+                except (OSError, ValueError) as error:
+                    report["proc_group_sampling_error"] = repr(error)
+                report["proc_group_sampling"] = sampler.summary()
+                report["proc_group_sampling"]["jsonl_file"] = samples_path.name
+                report["proc_group_sampling"]["sampled_after_owned_group_cleanup"] = True
+            if samples is not None:
+                try:
+                    samples.close()
+                except OSError as error:
+                    report["proc_group_sampling_error"] = repr(error)
             after = resource.getrusage(resource.RUSAGE_CHILDREN)
             report.update({
                 "wall_seconds": time.monotonic() - started,
@@ -132,6 +195,16 @@ def main():
                 "rss_scope": "maximum reported for the waited child family; not total cgroup peak",
                 "finished_utc": datetime.now(timezone.utc).isoformat(),
             })
+            report["raw_logs"] = {}
+            for label in ["stdout", "stderr"]:
+                path = args.out / f"{args.name}.{label}.log"
+                if path.is_file():
+                    digest = hashlib.sha256()
+                    with path.open("rb") as stream:
+                        for block in iter(lambda: stream.read(1024 * 1024), b""):
+                            digest.update(block)
+                    report["raw_logs"][label] = {"path": path.name,
+                        "bytes": path.stat().st_size, "sha256": digest.hexdigest()}
             json.dump(report, output, indent=2)
             output.write("\n")
     print(json.dumps(report, indent=2))

@@ -1,0 +1,145 @@
+{
+  "total_count": 1,
+  "jobs": [
+    {
+      "id": 122149746292,
+      "run_id": 40492528095,
+      "workflow_name": "PoN complete W1 transparent proof research",
+      "head_branch": "feature/chain-pure-pon-integration-20261027",
+      "run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40492528095",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOTty1_c8AAAAccLE2dA",
+      "head_sha": "9e05ad5d237660fb0ea8b40dd5c29af4225551d3",
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/122149746292",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40492528095/job/122149746292",
+      "status": "completed",
+      "conclusion": "failure",
+      "created_at": "2026-10-27T10:57:53Z",
+      "started_at": "2026-10-27T11:10:52Z",
+      "completed_at": "2026-10-27T12:46:31Z",
+      "name": "full W1 real Composite STARK (research only)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-27T11:10:53Z",
+          "completed_at": "2026-10-27T11:10:54Z"
+        },
+        {
+          "name": "Checkout exact candidate head",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-27T11:10:54Z",
+          "completed_at": "2026-10-27T11:11:06Z"
+        },
+        {
+          "name": "Reserve output and record exact source",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-27T11:11:06Z",
+          "completed_at": "2026-10-27T11:11:07Z"
+        },
+        {
+          "name": "Install pinned native toolchain",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-27T11:11:07Z",
+          "completed_at": "2026-10-27T11:11:15Z"
+        },
+        {
+          "name": "Run native differential controls and produce independent fixture",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-10-27T11:11:15Z",
+          "completed_at": "2026-10-27T11:12:23Z"
+        },
+        {
+          "name": "Download and verify actual backend and guest compiler",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-10-27T11:12:23Z",
+          "completed_at": "2026-10-27T11:12:32Z"
+        },
+        {
+          "name": "Build locked full guest and verifier",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-10-27T11:12:32Z",
+          "completed_at": "2026-10-27T11:16:25Z"
+        },
+        {
+          "name": "Execute the full pinned W1 image",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-10-27T11:16:25Z",
+          "completed_at": "2026-10-27T11:16:25Z"
+        },
+        {
+          "name": "Produce actual transparent proof with no development receipt",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 9,
+          "started_at": "2026-10-27T11:16:25Z",
+          "completed_at": "2026-10-27T12:46:25Z"
+        },
+        {
+          "name": "Independently verify and attack the actual proof",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 10,
+          "started_at": "2026-10-27T12:46:25Z",
+          "completed_at": "2026-10-27T12:46:25Z"
+        },
+        {
+          "name": "Verify source did not change",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-10-27T12:46:25Z",
+          "completed_at": "2026-10-27T12:46:26Z"
+        },
+        {
+          "name": "Retain actual proof, ELF, inputs, costs and failures",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12,
+          "started_at": "2026-10-27T12:46:26Z",
+          "completed_at": "2026-10-27T12:46:28Z"
+        },
+        {
+          "name": "Post Checkout exact candidate head",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 24,
+          "started_at": "2026-10-27T12:46:28Z",
+          "completed_at": "2026-10-27T12:46:28Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 25,
+          "started_at": "2026-10-27T12:46:28Z",
+          "completed_at": "2026-10-27T12:46:28Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/122149746292",
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "runner_id": 1000265405,
+      "runner_name": "GitHub Actions 1000265405",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    }
+  ]
+}

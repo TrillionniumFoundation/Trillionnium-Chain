@@ -171,10 +171,26 @@ class ActualProcessControls(unittest.TestCase):
         actual, report, samples, _ = self.run_case("normal", 5, "import time; time.sleep(0.1)", True)
         self.assertEqual(actual.returncode, 0)
         self.assertEqual(samples[-1]["event"], "exit_observed")
-        self.assertTrue(report["proc_group_sampling"]["proc_self_identity_verified"])
-        self.assertGreaterEqual(len(report["proc_group_sampling"]["last_observed_processes"]), 1)
+        summary = report["proc_group_sampling"]
+        self.assertTrue(summary["sampled_after_owned_group_cleanup"])
+        self.assertTrue(report["owned_process_group_empty"])
+        if summary["proc_self_identity_verified"]:
+            self.assertGreaterEqual(len(summary["last_observed_processes"]), 1)
+        else:
+            # Real local procfs namespaces can differ; that is unknown resource
+            # evidence, not a positive same-namespace sampling observation.
+            self.assert_unknown_namespace(summary, samples)
 
-    def test_real_grandchild_is_sampled_before_timeout_without_child_cpu_double_count(self):
+    def assert_unknown_namespace(self, summary, samples):
+        self.assertIsNotNone(summary["namespace_unavailable_reason"])
+        self.assertIsNone(summary["maximum_sampled_sum_rss_bytes"])
+        self.assertIsNone(summary["observed_self_user_cpu_seconds_lower_bound"])
+        self.assertIsNone(summary["observed_self_system_cpu_seconds_lower_bound"])
+        self.assertEqual(summary["last_observed_processes"], [])
+        self.assertTrue(all(sample["sampled_sum_rss_bytes"] is None
+                            and not sample["proc_self_identity_verified"] for sample in samples))
+
+    def test_real_grandchild_timeout_preserves_sampling_or_explicit_namespace_unknown(self):
         worker = "import time\nend=time.process_time()+0.1\nwhile time.process_time()<end: pass\ntime.sleep(60)"
         parent = ("import subprocess,sys,json\np=subprocess.Popen([sys.executable,'-c',"
                   + repr(worker) + "])\nprint(json.dumps({'owned_test_child_pid':p.pid}),flush=True)\np.wait()")
@@ -185,9 +201,15 @@ class ActualProcessControls(unittest.TestCase):
         child_pid = json.loads(stdout)["owned_test_child_pid"]
         summary = report["proc_group_sampling"]
         records = summary["last_observed_processes"]
-        self.assertIn(child_pid, {value["pid"] for value in records})
         self.assertIn("periodic", {value["event"] for value in samples})
         self.assertEqual(samples[-1]["event"], "terminated_timeout")
+        self.assertTrue(report["owned_process_group_empty"])
+        self.assertTrue(report["child_reaped"])
+        self.assertTrue(summary["sampled_after_owned_group_cleanup"])
+        if not summary["proc_self_identity_verified"]:
+            self.assert_unknown_namespace(summary, samples)
+            return
+        self.assertIn(child_pid, {value["pid"] for value in records})
         self.assertTrue(all(value["process_group_id"] == summary["process_group_id"]
                             and value["session_id"] == summary["process_group_id"] for value in records))
         expected = sum(value["maximum_observed_user_ticks"] for value in records) / summary["clock_ticks_per_second"]

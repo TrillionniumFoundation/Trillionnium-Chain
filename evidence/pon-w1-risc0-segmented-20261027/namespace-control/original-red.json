@@ -1,0 +1,7 @@
+{
+  "source_sha256": "83e104287d551343b03d51d6c765f11106b609f3fb87b3075609c43983cc909d",
+  "source_stable": true,
+  "returncode": 0,
+  "stdout": "{\"pid\": 9, \"pgid\": 9, \"proc_self_pgid\": 206283, \"processes_seen\": 0, \"self_reported\": false, \"sample_rss_bytes\": 0}\n",
+  "stderr": ""
+}

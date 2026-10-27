@@ -1,0 +1,9 @@
+{
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "test_receipt_reuse.py"
+  ],
+  "cwd": "/workspace/scratch/301262829a43/pon-work-impl/integration/w1-transparent21e/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0",
+  "returncode": 0,
+  "wall_seconds": 0.3652893239996047
+}

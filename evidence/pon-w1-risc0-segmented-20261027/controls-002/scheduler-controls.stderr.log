@@ -1,0 +1,11 @@
+test_actual_failed_worker_cancels_other_worker_and_retains_terminal_logs (__main__.ActualProcesses.test_actual_failed_worker_cancels_other_worker_and_retains_terminal_logs) ... ok
+test_actual_per_worker_deadline_retains_sigkill_without_claiming_a_proof (__main__.ActualProcesses.test_actual_per_worker_deadline_retains_sigkill_without_claiming_a_proof) ... ok
+test_real_owned_group_is_observed_across_the_actual_pid_namespace_mapping (__main__.ActualProcesses.test_real_owned_group_is_observed_across_the_actual_pid_namespace_mapping) ... ok
+test_unverifiable_proc_mapping_never_reports_zero_memory (__main__.ActualProcesses.test_unverifiable_proc_mapping_never_reports_zero_memory) ... ok
+test_actual_membership_includes_all_visible_ancestors_and_namespace_root (__main__.Resources.test_actual_membership_includes_all_visible_ancestors_and_namespace_root) ... ok
+test_missing_limits_never_mean_unlimited_or_a_smaller_profile (__main__.Resources.test_missing_limits_never_mean_unlimited_or_a_smaller_profile) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 5.978s
+
+OK

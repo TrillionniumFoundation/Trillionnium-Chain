@@ -1,0 +1,18 @@
+{
+  "schema": "pon-w1-segment-worker-process-v1",
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "-c",
+    "print('worker-a'); raise SystemExit(7)"
+  ],
+  "name": "failed",
+  "pid": 11,
+  "process_group": 10,
+  "timeout_seconds": 2,
+  "source_sha": null,
+  "started_monotonic": 15801.640228,
+  "child_reaped": false,
+  "returncode": null,
+  "complete_w1_proof_verified": false,
+  "consensus_authority": false
+}

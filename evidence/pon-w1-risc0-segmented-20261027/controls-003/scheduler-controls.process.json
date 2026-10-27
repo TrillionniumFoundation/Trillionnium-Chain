@@ -1,0 +1,40 @@
+{
+  "schema": "pon-w1-actual-process-v2",
+  "command": [
+    "python3",
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/test_segment_scheduler.py"
+  ],
+  "started_utc": "2026-10-27T12:03:55.812457+00:00",
+  "timeout_seconds": 60,
+  "source_sha": null,
+  "timed_out": false,
+  "consensus_authority": false,
+  "child_pid": 8,
+  "child_returncode": 1,
+  "child_reaped": true,
+  "cleanup_actions": [],
+  "cleanup_errors": [],
+  "subreaper_enabled": true,
+  "leader_exited_before_group": false,
+  "adopted_child_terminals": [],
+  "owned_process_group_empty": true,
+  "returncode": 1,
+  "wall_seconds": 7.468308587000138,
+  "user_cpu_seconds": 1.9099319999999997,
+  "system_cpu_seconds": 0.451748,
+  "max_waited_descendant_rss_kib": 21120,
+  "rss_scope": "maximum reported for the waited child family; not total cgroup peak",
+  "finished_utc": "2026-10-27T12:04:03.280808+00:00",
+  "raw_logs": {
+    "stdout": {
+      "path": "scheduler-controls.stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "path": "scheduler-controls.stderr.log",
+      "bytes": 1773,
+      "sha256": "cd8e4557d3f80f29cedeaad2485c97855efc08c5a762366b0d3a9ee5e566ee99"
+    }
+  }
+}

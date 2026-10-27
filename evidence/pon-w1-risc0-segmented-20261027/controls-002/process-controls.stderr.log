@@ -1,0 +1,10 @@
+test_exited_or_killed_leader_cannot_leave_its_prover_running (__main__.ProcessObservations.test_exited_or_killed_leader_cannot_leave_its_prover_running) ... ok
+test_sigkill_preserves_partial_raw_bytes_and_genuine_negative_status (__main__.ProcessObservations.test_sigkill_preserves_partial_raw_bytes_and_genuine_negative_status) ... ok
+test_spawn_failure_is_not_a_reaped_or_successful_child (__main__.ProcessObservations.test_spawn_failure_is_not_a_reaped_or_successful_child) ... ok
+test_success_and_real_nonzero_exit_keep_both_streams (__main__.ProcessObservations.test_success_and_real_nonzero_exit_keep_both_streams) ... ok
+test_timeout_retains_sigterm_tail_and_actual_child_terminal (__main__.ProcessObservations.test_timeout_retains_sigterm_tail_and_actual_child_terminal) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 8.449s
+
+OK

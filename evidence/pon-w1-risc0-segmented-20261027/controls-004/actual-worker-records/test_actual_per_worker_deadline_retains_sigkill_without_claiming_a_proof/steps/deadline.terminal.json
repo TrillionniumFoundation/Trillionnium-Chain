@@ -1,0 +1,24 @@
+{
+  "schema": "pon-w1-segment-worker-process-v1",
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "-c",
+    "import signal,time; signal.signal(signal.SIGTERM,signal.SIG_IGN); print('ready',flush=True); time.sleep(20)"
+  ],
+  "name": "deadline",
+  "pid": 15,
+  "process_group": 14,
+  "timeout_seconds": 0.05,
+  "source_sha": null,
+  "started_monotonic": 15802.206668297,
+  "child_reaped": true,
+  "returncode": -9,
+  "complete_w1_proof_verified": false,
+  "consensus_authority": false,
+  "wall_seconds": 5.152591347999987,
+  "user_cpu_seconds": 0.083788,
+  "system_cpu_seconds": 0.026055,
+  "max_waited_descendant_rss_kib": 12860,
+  "cpu_rss_scope": "this independently waited host and descendants it waited for; orphan cleanup belongs to the outer phase record",
+  "raw_logs_hashed_after_phase_cleanup": false
+}

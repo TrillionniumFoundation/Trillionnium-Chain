@@ -1,0 +1,24 @@
+{
+  "schema": "pon-w1-segment-worker-process-v1",
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "-c",
+    "import signal,time,sys; signal.signal(signal.SIGTERM,lambda *_: (print('worker-b-tail',file=sys.stderr,flush=True),sys.exit(23))); print('ready',flush=True); time.sleep(20)"
+  ],
+  "name": "cancelled",
+  "pid": 12,
+  "process_group": 10,
+  "timeout_seconds": 2,
+  "source_sha": null,
+  "started_monotonic": 15801.648147346,
+  "child_reaped": true,
+  "returncode": 23,
+  "complete_w1_proof_verified": false,
+  "consensus_authority": false,
+  "wall_seconds": 0.255744648999098,
+  "user_cpu_seconds": 0.027181999999999998,
+  "system_cpu_seconds": 0.012277999999999999,
+  "max_waited_descendant_rss_kib": 13032,
+  "cpu_rss_scope": "this independently waited host and descendants it waited for; orphan cleanup belongs to the outer phase record",
+  "raw_logs_hashed_after_phase_cleanup": false
+}

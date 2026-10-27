@@ -34,6 +34,10 @@ def main():
     if args.build_only:
         print(json.dumps({"build_identity_checked": True, "proof_checked": False}))
         return
+    reuse_path = out / "receipt-reuse-observation.json"
+    reuse = load(reuse_path) if reuse_path.exists() else None
+    current_source = load(out / "source-before.json")["tested_commit"]
+    proof_dir = out / "prior-proof" if reuse else out
     observations = {}
     for name, schema, operation in [
         ("native-execute", "pon-w1-local-relation-v1", "execute"),
@@ -41,10 +45,27 @@ def main():
         *[(name, "pon-w1-risc0-research-v1", name)
           for name in ["execute", "prove", "verify", "audit"]],
     ]:
-        observations[name] = read_single_result(out / f"{name}.stdout.log", schema, operation)
-    processes = {name: load(out / f"{name}.process.json") for name in observations}
+        directory = proof_dir if name == "prove" else out
+        observations[name] = read_single_result(directory / f"{name}.stdout.log", schema, operation)
+    processes = {name: load((proof_dir if name == "prove" else out) / f"{name}.process.json")
+                 for name in observations}
     for name, process in processes.items():
         require(process["returncode"] == 0 and not process["timed_out"], f"failed actual {name}")
+        if name == "prove" and reuse:
+            require(process["source_sha"] == reuse["policy"]["source_commit"], "prior prove source mismatch")
+            require(reuse["proof_generated_in_current_run"] is False
+                    and reuse["required_acceptance_waived"] is False
+                    and reuse["new_guest_raw_elf_and_program_and_input_identical"] is True,
+                    "unsupported reuse observation")
+            require(reuse["current_source_sha"] == current_source, "reuse caller source mismatch")
+        else:
+            require(process["schema"] == "pon-w1-actual-process-v2"
+                    and process["child_returncode"] == 0 and process["child_reaped"] is True
+                    and process["owned_process_group_empty"] is True
+                    and process["subreaper_enabled"] is True
+                    and process["leader_exited_before_group"] is False
+                    and not process["cleanup_errors"] and process["source_sha"] == current_source,
+                    f"current {name} lacks its genuine terminal/source observation")
     native, benchmark, executed, proved, verified, audited = (
         observations[name] for name in
         ["native-execute", "native-benchmark", "execute", "prove", "verify", "audit"])
@@ -71,7 +92,7 @@ def main():
     require(verified["native_w1_recomputed"] is False, "verifier silently recomputed W1")
     require(audited["real_proof_positive_control"], "adversarial tests lack real positive proof")
     expected_cases = {"wrong_image", "wrong_statement_miner", "truncated_receipt",
-                      "first_seal_tamper", "last_seal_tamper", "wrong_hash_profile",
+                      "first_seal_tamper", "last_seal_tamper", "last_seal_tamper_wire", "wrong_hash_profile",
                       "wrong_verifier_parameters", "fake_receipt_refused", "groth16_kind_refused",
                       "segment_count_allocation_bomb", "seal_length_allocation_bomb",
                       "empty_seal_before_sdk", "outer_journal_allocation_bomb",
@@ -79,6 +100,35 @@ def main():
     cases = audited["negative_cases"]
     require({case["case"] for case in cases} == expected_cases, "missing or duplicate negative controls")
     require(len(cases) == len(expected_cases) and all(case["rejected"] for case in cases), "accepted adversarial control")
+    require(all(type(case["reject_process_cpu_ns"]) is int and case["reject_process_cpu_ns"] >= 0
+                for case in cases), "missing actual verifier CPU observations")
+    guest_negatives = []
+    for case, error in [("correct-product-false-trace", "Work(Transcript)"),
+                        ("correct-trace-wrong-product", "Work(Product)")]:
+        prepared = read_single_result(out / f"prepare-{case}.stdout.log",
+                                      "pon-w1-guest-negative-v1", "make-invalid")
+        rejected = read_single_result(out / f"guest-{case}.stdout.log",
+                                      "pon-w1-guest-negative-v1", "reject-input")
+        actual_process = load(out / f"guest-{case}.process.json")
+        require(prepared["native_late_failure_checked"] is True
+                and prepared["witness_commitment_rebound"] is True
+                and prepared["expected_error"] == error, "native negative did not reach its late failure")
+        require(rejected["guest_executed"] is True
+                and rejected["exact_guest_relation_rejection"] is True
+                and rejected["native_w1_recomputed"] is False
+                and rejected["expected_error"] == error
+                and rejected["cryptographic_proof_generated"] is False,
+                "native rejection or invalid-proof rejection was substituted for real guest execution")
+        require(actual_process["schema"] == "pon-w1-actual-process-v2"
+                and actual_process["returncode"] == actual_process["child_returncode"] == 0
+                and actual_process["child_reaped"] is True and not actual_process["timed_out"]
+                and actual_process["owned_process_group_empty"] is True
+                and actual_process["subreaper_enabled"] is True
+                and actual_process["leader_exited_before_group"] is False
+                and not actual_process["cleanup_errors"] and actual_process["source_sha"] == current_source,
+                "guest negative did not complete under the current process/source boundary")
+        guest_negatives.append({"case": case, "native_preparation": prepared,
+                                "guest": rejected, "process": actual_process})
     receipt = out / "receipt.bin"
     require(receipt.stat().st_size == proved["receipt_bytes"] == verified["receipt_bytes"], "proof byte count mismatch")
     receipt_sha256 = hashlib.sha256(receipt.read_bytes()).hexdigest()
@@ -88,13 +138,18 @@ def main():
     require(sum(soundness["actual_segment_po2_histogram"].values()) == proved["segments"], "calculator segment count mismatch")
     late_reject_ns = next(case["reject_wall_ns"] for case in cases if case["case"] == "last_seal_tamper")
     native_median_ns = kernels["native_production"]["median_wall_ns"]
-    result = {"schema": "pon-complete-w1-actual-proof-observation-v1",
+    result = {"schema": "pon-complete-w1-actual-proof-observation-v2",
               "backend_manifest": manifest, "observations": observations,
               "processes": processes, "receipt_sha256": receipt_sha256,
               "input_sha256": hashlib.sha256((out / "input.bin").read_bytes()).hexdigest(),
               "soundness_formula_observation": soundness,
               "full_work_profile_preserved": True, "real_proof_verified": True,
+              "current_source_sha": current_source, "receipt_reuse": reuse,
+              "proof_generated_in_current_run": reuse is None,
+              "proof_generation_cost_is_current_runner_measurement": reuse is None,
+              "guest_negative_observations": guest_negatives,
               "maximum_tested_reject_wall_ns": max(case["reject_wall_ns"] for case in cases),
+              "maximum_tested_reject_process_cpu_ns": max(case["reject_process_cpu_ns"] for case in cases),
               "native_complete_replay_wall_ns": native["elapsed_wall_ns"],
               "proof_verify_to_native_production_median_ratio": verified["verify_wall_ns"] / native_median_ns,
               "last_seal_reject_to_native_production_median_ratio": late_reject_ns / native_median_ns,

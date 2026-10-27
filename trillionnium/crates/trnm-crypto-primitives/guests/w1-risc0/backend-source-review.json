@@ -1,0 +1,163 @@
+{
+  "schema": "pon-w1-risc0-primary-audit-v1",
+  "repository": "risc0/risc0",
+  "commit": "1cc70cf05033a79ebc90f07c679cb4bd1cd301b9",
+  "backend_version": "3.0.6",
+  "scope": "Source review and arithmetic parameters for this Composite receipt path; not binary reproducibility, an independent cryptographic audit, a QROM bound, work hardness, or production qualification.",
+  "proof_path": [
+    "risc0/zkvm/src/host/server/prove/prover_impl.rs",
+    "risc0/circuit/rv32im/src/prove/hal/mod.rs",
+    "risc0/zkp/src/prove/prover.rs",
+    "risc0/zkp/src/prove/fri.rs"
+  ],
+  "verification_path": [
+    "risc0/zkp/src/verify/mod.rs",
+    "risc0/zkp/src/verify/fri.rs"
+  ],
+  "additional_hashcash_or_fri_grinding_in_reviewed_path": false,
+  "recursion_used": false,
+  "groth16_used": false,
+  "source_parameters": {
+    "field_prime": 2013265921,
+    "extension_degree": 4,
+    "fri_queries": 50,
+    "inverse_rate": 4,
+    "fold_factor": 16,
+    "accumulation_columns": 103,
+    "code_columns": 1,
+    "data_columns": 211,
+    "maximum_constraint_degree_in_calculator": 5,
+    "degree_is_hardcoded_upstream": true
+  },
+  "upstream_descriptions": [
+    {
+      "scope": "zkp lib.rs and soundness.rs comment at segment po2=20",
+      "conjectured_bits": 97,
+      "url": "https://github.com/risc0/risc0/blob/1cc70cf05033a79ebc90f07c679cb4bd1cd301b9/risc0/zkp/src/prove/soundness.rs"
+    },
+    {
+      "scope": "current official 3.0 security-model page RISC-V prover; page retrieved 2026-10-27",
+      "conjectured_bits": 96,
+      "url": "https://dev.risczero.com/api/security-model"
+    },
+    {
+      "scope": "original experiment backend-manifest historical headline; preserved as provenance",
+      "conjectured_bits": 98,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/d96138532b656d767d1ef46f6db86e7effae485e/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/backend-manifest.json"
+    }
+  ],
+  "pq128_qualified": false,
+  "segmented_prover_review": {
+    "same_guest_and_statement": true,
+    "proof_attempt_cap_seconds": 3600,
+    "worker_processes": 2,
+    "rayon_threads_per_worker": 2,
+    "per_worker_cap_seconds": 300,
+    "assembly": "Every actual segment is verified and its pre/post state chained by the original complete Composite verifier; last-output disclosure requires equality of the already committed digest; no assumptions or PoVW job.",
+    "partial_segment_is_complete_W1_proof": false,
+    "process_group": "Pinned SDK ParentProcessConnector spawns ordinary children without creating a new session; outer Linux subreaper owns the entire host/r0vm group.",
+    "actual_performance_outcome": "Pending real bounded CI; original d961 5400-second attempt has no receipt."
+  },
+  "files": [
+    {
+      "path": "risc0/zkvm/src/host/api/mod.rs",
+      "git_blob_sha1": "a707ae6b403ddedd8d4a3aece7edd094d880fd6b",
+      "url": "https://github.com/risc0/risc0/blob/1cc70cf05033a79ebc90f07c679cb4bd1cd301b9/risc0/zkvm/src/host/api/mod.rs"
+    },
+    {
+      "path": "risc0/zkvm/src/host/api/client.rs",
+      "git_blob_sha1": "9a65116fac138821bac079b8f99605ae95a8ce43",
+      "url": "https://github.com/risc0/risc0/blob/1cc70cf05033a79ebc90f07c679cb4bd1cd301b9/risc0/zkvm/src/host/api/client.rs"
+    },
+    {
+      "path": "risc0/zkvm/src/host/api/server.rs",
+      "git_blob_sha1": "e17fc307786148c932f148e311626768207b6f04",
+      "url": "https://github.com/risc0/risc0/blob/1cc70cf05033a79ebc90f07c679cb4bd1cd301b9/risc0/zkvm/src/host/api/server.rs"
+    },
+    {
+      "path": "risc0/zkvm/src/host/server/session.rs",
+      "git_blob_sha1": "099a3c2278c020d0eec80160e17fee9e4c2216de",
+      "url": "https://github.com/risc0/risc0/blob/1cc70cf05033a79ebc90f07c679cb4bd1cd301b9/risc0/zkvm/src/host/server/session.rs"
+    },
+    {
+      "path": "risc0/zkvm/src/receipt/segment.rs",
+      "git_blob_sha1": "ea8f721082b0736fbaf408720a34c2b3f1a02589",
+      "url": "https://github.com/risc0/risc0/blob/1cc70cf05033a79ebc90f07c679cb4bd1cd301b9/risc0/zkvm/src/receipt/segment.rs"
+    },
+    {
+      "path": "risc0/zkvm/src/receipt/composite.rs",
+      "git_blob_sha1": "43a410a4cf4ccbb4c35cf76040a8c7cd3add2149",
+      "url": "https://github.com/risc0/risc0/blob/1cc70cf05033a79ebc90f07c679cb4bd1cd301b9/risc0/zkvm/src/receipt/composite.rs"
+    },
+    {
+      "path": "risc0/zkp/src/lib.rs",
+      "git_blob_sha1": "de0ffeb566be8ec5a85ef9e68b9376cdd8e85907",
+      "url": "https://github.com/risc0/risc0/blob/1cc70cf05033a79ebc90f07c679cb4bd1cd301b9/risc0/zkp/src/lib.rs"
+    },
+    {
+      "path": "risc0/zkp/src/prove/soundness.rs",
+      "git_blob_sha1": "ab38c13f6f9c5eb77fdb942916c81c8640d544fd",
+      "url": "https://github.com/risc0/risc0/blob/1cc70cf05033a79ebc90f07c679cb4bd1cd301b9/risc0/zkp/src/prove/soundness.rs"
+    },
+    {
+      "path": "risc0/circuit/rv32im/src/zirgen/taps.rs",
+      "git_blob_sha1": "94612132b37e792b9c3a33420c9fa7442059bd64",
+      "url": "https://github.com/risc0/risc0/blob/1cc70cf05033a79ebc90f07c679cb4bd1cd301b9/risc0/circuit/rv32im/src/zirgen/taps.rs"
+    },
+    {
+      "path": "risc0/circuit/rv32im/src/zirgen/info.rs",
+      "git_blob_sha1": "7933ba3f245da082788f166cae10864409a641f1",
+      "url": "https://github.com/risc0/risc0/blob/1cc70cf05033a79ebc90f07c679cb4bd1cd301b9/risc0/circuit/rv32im/src/zirgen/info.rs"
+    },
+    {
+      "path": "risc0/zkvm/src/host/server/prove/prover_impl.rs",
+      "git_blob_sha1": "43198e72b392399c44e2a2e63f76a9bae3618317",
+      "url": "https://github.com/risc0/risc0/blob/1cc70cf05033a79ebc90f07c679cb4bd1cd301b9/risc0/zkvm/src/host/server/prove/prover_impl.rs"
+    },
+    {
+      "path": "risc0/circuit/rv32im/src/prove/hal/mod.rs",
+      "git_blob_sha1": "957fa7df829fae97bb0632cb419ad85c027f1d76",
+      "url": "https://github.com/risc0/risc0/blob/1cc70cf05033a79ebc90f07c679cb4bd1cd301b9/risc0/circuit/rv32im/src/prove/hal/mod.rs"
+    },
+    {
+      "path": "risc0/zkp/src/prove/prover.rs",
+      "git_blob_sha1": "1fbf29dc8d730fc2db4f762d6b2d991a9d5da053",
+      "url": "https://github.com/risc0/risc0/blob/1cc70cf05033a79ebc90f07c679cb4bd1cd301b9/risc0/zkp/src/prove/prover.rs"
+    },
+    {
+      "path": "risc0/zkp/src/prove/fri.rs",
+      "git_blob_sha1": "c48b3de90d47b78d140fa379a33e91c24a752090",
+      "url": "https://github.com/risc0/risc0/blob/1cc70cf05033a79ebc90f07c679cb4bd1cd301b9/risc0/zkp/src/prove/fri.rs"
+    },
+    {
+      "path": "risc0/zkp/src/verify/mod.rs",
+      "git_blob_sha1": "e7ddb1a285d85c1bb74e45540cf5f827eb89faff",
+      "url": "https://github.com/risc0/risc0/blob/1cc70cf05033a79ebc90f07c679cb4bd1cd301b9/risc0/zkp/src/verify/mod.rs"
+    },
+    {
+      "path": "risc0/zkp/src/verify/fri.rs",
+      "git_blob_sha1": "2eefff59b74e92586b1e0a314dbf4f2930d675e5",
+      "url": "https://github.com/risc0/risc0/blob/1cc70cf05033a79ebc90f07c679cb4bd1cd301b9/risc0/zkp/src/verify/fri.rs"
+    },
+    {
+      "path": "risc0/zkp/src/prove/write_iop.rs",
+      "git_blob_sha1": "18b52d5f044d9b4c3eee3d9de69645bb7c6bbb93",
+      "url": "https://github.com/risc0/risc0/blob/1cc70cf05033a79ebc90f07c679cb4bd1cd301b9/risc0/zkp/src/prove/write_iop.rs"
+    },
+    {
+      "path": "risc0/zkp/src/verify/read_iop.rs",
+      "git_blob_sha1": "762afe44b9665f1b6ae32ba588b985620791b8a8",
+      "url": "https://github.com/risc0/risc0/blob/1cc70cf05033a79ebc90f07c679cb4bd1cd301b9/risc0/zkp/src/verify/read_iop.rs"
+    },
+    {
+      "path": "risc0/zkp/src/core/hash/poseidon2/rng.rs",
+      "git_blob_sha1": "de17a70ab81f2e4661f877e13455a88974f4ac2c",
+      "url": "https://github.com/risc0/risc0/blob/1cc70cf05033a79ebc90f07c679cb4bd1cd301b9/risc0/zkp/src/core/hash/poseidon2/rng.rs"
+    },
+    {
+      "path": "risc0/zkvm/src/host/server/exec/syscall/panic.rs",
+      "git_blob_sha1": "3a48a4ab3b4eaec368d2d25248130e47dc14b888",
+      "url": "https://github.com/risc0/risc0/blob/1cc70cf05033a79ebc90f07c679cb4bd1cd301b9/risc0/zkvm/src/host/server/exec/syscall/panic.rs"
+    }
+  ]
+}
