@@ -744,3 +744,132 @@ fn isolated_asert_context_rejects_wrong_anchor_and_uses_real_w1_branch_history()
         raw
     );
 }
+
+
+/// Non-activated P1-C bridge: feed genuinely admitted W1 packet ancestry to the
+/// existing ASERT shadow reader. This neither installs a new DAA nor treats a
+/// hash-consistent packet as independently verified model/security evidence.
+#[test]
+fn native_w1_forks_feed_branch_pinned_asert_shadow_without_changing_legacy_daa() {
+    use consensus::daa_branch_research::{
+        shadow_target_from_ancestry, AnchoredResearchContext, ParentClock,
+    };
+
+    let root = tempfile::tempdir().unwrap();
+    let store = root.path().join("native-w1-branch-shadow");
+    let settings = Settings::development(Some(GENESIS_TIME)).unwrap();
+    let genesis = settings.genesis();
+    let mut node = Node::open(&store, settings.clone(), 1).unwrap();
+    let mut active = genesis;
+    let mut anchor_id = [0u8; 32];
+    let mut anchor_target = [0u8; 32];
+    let mut fork_at_16 = genesis;
+    for height in 1..=32_u64 {
+        let packet = node
+            .make(
+                active,
+                vec![],
+                development_public(0).unwrap(),
+                GENESIS_TIME + 10 * height,
+                4096,
+            )
+            .unwrap();
+        verify_work(&packet);
+        let id = node.admit(&packet, GENESIS_TIME + 10 * height).unwrap();
+        assert_eq!(node.activate(id).unwrap(), id);
+        if height == 1 {
+            anchor_id = id;
+            anchor_target = packet.header.target;
+        }
+        if height == 16 {
+            fork_at_16 = id;
+        }
+        active = id;
+    }
+    // The same honest 10-second schedule used by PoN's unchanged 16-block
+    // DAA has no deviation from a raw-clock fixed-anchor ASERT research rule.
+    let mut pow_limit = [255u8; 32];
+    pow_limit[0] = 127;
+    let context = AnchoredResearchContext {
+        network: settings.network(),
+        parameters: settings.parameters(),
+        genesis,
+        genesis_timestamp: settings.genesis_time(),
+        anchor_block: anchor_id,
+        anchor_target,
+        anchor_height: 1,
+        spacing: 10,
+        half_life: 7200,
+        pow_limit,
+        parent_clock: ParentClock::Raw,
+        max_ancestor_reads: 64,
+    };
+    let legacy_main = node.expected_target(active).unwrap();
+    let shadow_main =
+        shadow_target_from_ancestry(context, active, |id| node.packet(id)).unwrap();
+    assert_eq!(shadow_main, anchor_target);
+    assert_eq!(legacy_main, anchor_target);
+
+    // An invalid research callback cannot replace a verified stored header:
+    // the changed header timestamp changes the actual block identity.
+    let altered = shadow_target_from_ancestry(context, active, |id| {
+        let mut packet = node.packet(id)?;
+        packet.header.timestamp += 1;
+        Ok(packet)
+    });
+    assert_eq!(altered.unwrap_err().to_string(), "ASERT_ANCESTRY_CONTEXT");
+
+    let mut short_budget = context;
+    short_budget.max_ancestor_reads = 2;
+    let exhausted = shadow_target_from_ancestry(short_budget, active, |id| node.packet(id));
+    assert_eq!(exhausted.unwrap_err().to_string(), "ASERT_ANCESTRY_BUDGET");
+
+    let snapshot = node.read_active().unwrap();
+    drop(node);
+    let mut node = Node::open(&store, settings.clone(), 2).unwrap();
+    assert_eq!(node.read_active().unwrap(), snapshot);
+    assert_eq!(
+        shadow_target_from_ancestry(context, active, |id| node.packet(id)).unwrap(),
+        shadow_main
+    );
+
+    // Fork from an actually retained native height-16 ancestor. All competing
+    // W1 packets use their own current parent, valid proof, signed-free empty
+    // application and native expected-target calculation. A genuinely heavier
+    // branch is selected; no shadow value is used to admit any of these blocks.
+    let mut branch = fork_at_16;
+    for height in 17..=33_u64 {
+        let packet = node
+            .make(
+                branch,
+                vec![],
+                development_public(0).unwrap(),
+                GENESIS_TIME + 10 * height - 1,
+                4096,
+            )
+            .unwrap();
+        verify_work(&packet);
+        branch = node
+            .admit(&packet, GENESIS_TIME + 10 * height)
+            .unwrap();
+    }
+    assert_eq!(node.activate(branch).unwrap(), branch);
+    assert_eq!(node.read_active().unwrap().0, branch);
+    let shadow_branch =
+        shadow_target_from_ancestry(context, branch, |id| node.packet(id)).unwrap();
+    // A different, valid branch-specific parent timestamp changes the research
+    // result. Neither branch's own legacy expected-target is rewritten.
+    assert_ne!(shadow_branch, shadow_main);
+    let legacy_branch = node.expected_target(branch).unwrap();
+    assert_eq!(node.expected_target(active).unwrap(), legacy_main);
+
+    let final_view = node.read_active().unwrap();
+    drop(node);
+    let node = Node::open(&store, settings, 1).unwrap();
+    assert_eq!(node.read_active().unwrap(), final_view);
+    assert_eq!(node.expected_target(branch).unwrap(), legacy_branch);
+    assert_eq!(
+        shadow_target_from_ancestry(context, branch, |id| node.packet(id)).unwrap(),
+        shadow_branch
+    );
+}
