@@ -884,6 +884,15 @@ impl ServiceMutationCpuDomain {
     pub(super) fn from_shared(budget: Arc<Mutex<PaidMutationCpuBudget>>) -> Self {
         Self { budget }
     }
+    /// Only the existing Node may construct a cold remote-History import epoch.
+    /// No initial CPU burst: the original 100ms start reserve is earned through
+    /// the original 0.25 CPU-sec/sec refill. This is one Node-scoped accounting
+    /// handle, not a per-peer, per-page or per-restart entitlement.
+    pub(crate) fn cold_remote_history_epoch() -> Self {
+        Self {
+            budget: Arc::new(Mutex::new(PaidMutationCpuBudget::cold_start())),
+        }
+    }
     /// Explicit standalone local epoch for a trusted local caller. A serving
     /// miner must instead clone PublicServer::mutation_cpu_domain().
     pub fn standalone() -> Self {
