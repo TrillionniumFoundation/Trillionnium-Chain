@@ -2197,13 +2197,15 @@ fn receive_page(
     Ok(next)
 }
 
-/// Public untrusted History import. Unlike the private local parser, this
-/// entry REQUIRES a concrete original source address and checks the existing
-/// fixed, administrator-owned host resource parent around every possible
-/// W1 replay. A caller cannot bypass the guard by calling the addressless
-/// parser from another crate or by supplying a fake already-verified work
-/// token. Only the full native Node determines consensus validity.
-pub fn receive_page_from(
+/// Compatibility entry for this library's original native sync callers.
+/// NOT an externally callable/public untrusted import: a loopback address
+/// (including an untrusted tunnel/proxy) does not imply physical origin.
+/// For public History bytes callers MUST use receive_public_page_from, which
+/// requires the fixed administrator-owned kernel parent even on loopback.
+///
+/// These entrypoints check original parent/task/State as before; no local
+/// resource refusal may turn into a consensus-invalid W1 proof.
+pub(crate) fn receive_page_from(
     node: &mut Node,
     source: SocketAddr,
     page: Page,
@@ -2233,6 +2235,14 @@ pub fn receive_page_from(
 /// loopback source wrapper, this path ALWAYS requires the same fixed
 /// administrator-owned cgroup parent. A forged loopback source address cannot
 /// manufacture a resource waiver.
+///
+/// The legacy weakly trusted loopback compatibility entry is intentionally
+/// NOT a public API. An external integration cannot import it:
+///
+/// ```compile_fail
+/// use trnm_pon_node::ingress::receive_page_from;
+/// fn main() {}
+/// ```
 pub fn receive_public_page_from(
     node: &mut Node,
     source: SocketAddr,
