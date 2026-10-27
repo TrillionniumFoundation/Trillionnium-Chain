@@ -68,6 +68,14 @@ The existing original tests remain unchanged. Additional tests in
 3. 'unrelated_hash_slot_collision_does_not_block_behind_false_leader':
    force one slot, block the first false statement and submit another false
    trace. It must finish 512 tiles before the first leader is released.
+4. 'leader_panic_does_not_leave_a_busy_slot_or_false_invalid_fact':
+   force a callback unwind during the first transcript tile; RAII releases
+   computing ownership, does not cache an invalid verdict, and a subsequent
+   caller must replay all 512 tiles correctly.
+
+The 12-caller regression counts distinct callers reaching the in-flight
+BeforeReplay checkpoint, not simply one rapidly polling caller accruing 12
+wait observations. This avoids inflating a concurrency claim.
 
 Manual native controls (not run by this tool session, which has no Rust
 toolchain / checked-out candidate and cannot run project preflight):
