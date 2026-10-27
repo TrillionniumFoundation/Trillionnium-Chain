@@ -3259,6 +3259,7 @@ impl Node {
         packet: &Packet,
         observed_now: u64,
         progress: &mut impl FnMut(pon_work::VerificationProgress) -> Result<()>,
+        execution_progress: &(impl Fn(ExecutionProgress) -> Result<()> + Sync),
     ) -> Result<Hash> {
         if let Some(id) = self.check_admission_context(packet, observed_now)? {
             return Ok(id);
@@ -3268,7 +3269,12 @@ impl Node {
             WorkCheckedPacket::verify_with_progress(packet.clone(), progress)?,
             permit,
         )?;
-        self.admit_work_checked(checked, observed_now)
+        // The SAME caller-local resource owner must remain in force during
+        // M06, authenticated State work, deltas and BeforeDurableCommit.
+        // The old no-progress path silently stopped at the W1 boundary.
+        // Native admission remains the only authority; any precommit
+        // checkpoint failure drops the existing SQLite transaction.
+        self.admit_work_checked_with_progress(checked, observed_now, execution_progress)
     }
     fn precheck_owner_packet(&self, packet: &Packet) -> Result<()> {
         ensure(
