@@ -1,0 +1,188 @@
+{
+  "schema": "native-history-2b-local-validation-v1",
+  "measured_commit": "bb2d444a3f5fe24b0077c1f01ed1d0953c2b6ff1",
+  "measured_tree": "9d646f30c7db395079836ddce491966612f8ae67",
+  "source_before": {
+    "head": "bb2d444a3f5fe24b0077c1f01ed1d0953c2b6ff1",
+    "tree": "9d646f30c7db395079836ddce491966612f8ae67",
+    "status_porcelain": "",
+    "branch": "fix/chain-history-budget-killcuts-20261027"
+  },
+  "source_after": {
+    "head": "bb2d444a3f5fe24b0077c1f01ed1d0953c2b6ff1",
+    "tree": "9d646f30c7db395079836ddce491966612f8ae67",
+    "status_porcelain": "",
+    "branch": "fix/chain-history-budget-killcuts-20261027"
+  },
+  "precommit_regressions": {
+    "history_before_remote_code_fix": {
+      "passed": 69,
+      "failed": 1,
+      "ignored": 4
+    },
+    "history_after_remote_code_fix": {
+      "passed": 70,
+      "failed": 0,
+      "ignored": 4
+    },
+    "error_tests_passed": 8,
+    "peer_tests_passed": 14,
+    "real_socket_tests_passed": 1,
+    "new_history_controls_passed": 6,
+    "real_sigkill_cuts_passed": [
+      "epoch",
+      "mid-w1-transcript",
+      "native-admit-before-settle",
+      "activation-before-settle"
+    ],
+    "strict_clippy_all_targets_passed": true,
+    "negative_source_integrity_tests_passed": 34,
+    "full_workspace_format_passed": false,
+    "scope": "Before commit observations, not a clean-source campaign; exact post-commit campaign identity and binary are separately captured."
+  },
+  "original_service_campaign": {
+    "attempts": 130,
+    "lanes": {
+      "honest_mutation": {
+        "ok": 16
+      },
+      "honest_probe": {
+        "ok": 32
+      },
+      "injected_eof": {
+        "error": 2
+      },
+      "paid_false_transcript": {
+        "refused": 16
+      },
+      "paid_invalid": {
+        "refused": 32
+      },
+      "unpaid_invalid": {
+        "sent": 32
+      }
+    },
+    "finite_target_met": true,
+    "honest_probe_max_gap_including_restart_ns": 45102914,
+    "resource_fairness_qualified": false
+  },
+  "original_from_zero_runner": {
+    "named_tests_passed": 5,
+    "named_tests_planned": 5,
+    "passed": false,
+    "failures": [
+      "CONFIRMATION_TARGET",
+      "NATIVE_FORMAT_CHECK_FAILED"
+    ],
+    "sustained_report": {
+      "sha256": "c134332ff79b8dd1380db4c9cbe334c102066f1e413661389dab6290a7f73827",
+      "schema": "public-v3-sustained-local-from-zero-v1",
+      "phases": [
+        {
+          "phase": 0,
+          "attacks": 471,
+          "late_rejections": 471,
+          "honest_reads": 78,
+          "honest_submissions": 1,
+          "connections": 551,
+          "mutation_cpu_refusals": 0,
+          "minimum_sampled_stored_credit_ns": 1861886037
+        },
+        {
+          "phase": 1,
+          "attacks": 460,
+          "late_rejections": 460,
+          "honest_reads": 76,
+          "honest_submissions": 1,
+          "connections": 538,
+          "mutation_cpu_refusals": 0,
+          "minimum_sampled_stored_credit_ns": 1890095836
+        }
+      ],
+      "scope": "retained local report consistency; no independent work/state oracle, saturation or fairness qualification"
+    },
+    "confirmation_modes": [
+      {
+        "mode": "attack-free-baseline",
+        "confirmed_transactions": 0,
+        "confirmed_before_end": false,
+        "finite_business_target_met": false
+      },
+      {
+        "mode": "from-zero-pressure",
+        "confirmed_transactions": 0,
+        "confirmed_before_end": false,
+        "finite_business_target_met": false
+      }
+    ],
+    "actual_confirmation_resource_errors": {
+      "PUBLIC_HOST_KERNEL_PARENT": 32
+    }
+  },
+  "original_a03": {
+    "source_commit": "bb2d444a3f5fe24b0077c1f01ed1d0953c2b6ff1",
+    "source_tree": "9d646f30c7db395079836ddce491966612f8ae67",
+    "selector": "separate_process_work_and_signed_confirmation_campaign",
+    "planned_runs": 3,
+    "modes": [
+      "baseline",
+      "from-zero",
+      "late-product"
+    ],
+    "planned_phase_count": 9,
+    "planned_honest_confirmations": 27,
+    "planned_attackers_per_mode": [
+      0,
+      24,
+      24
+    ],
+    "phase_seconds": 30,
+    "seed_transfers": 1024,
+    "seed_blocks": 4,
+    "business_blocks": 21,
+    "resource_validation_failure": "ACTUAL_400_PERCENT_16_GIB_REQUIRED",
+    "observed_resources": {
+      "schema": "trnm.resource-observation.v1",
+      "cgroup": "/",
+      "limits": [
+        {
+          "path": "/sys/fs/cgroup",
+          "cpu.max": "800000 100000",
+          "cpu.stat": "usage_usec 10825583325\nuser_usec 9815874741\nsystem_usec 1009708583\nnice_usec 0\nnr_periods 35504\nnr_throttled 5682\nthrottled_usec 475382802\nnr_bursts 0\nburst_usec 0",
+          "cpuset.cpus.effective": "0-8",
+          "memory.max": "8589934592",
+          "memory.events": "low 0\nhigh 0\nmax 396010\noom 0\noom_kill 0\noom_group_kill 0"
+        }
+      ],
+      "nice": 0,
+      "cpu_affinity": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ]
+    },
+    "executed_runs": 0,
+    "executed_phases": 0,
+    "native_matrix_executed": false,
+    "original_campaign_qualified": false,
+    "scope": "Actual original physical resource preflight refused; no weakened profile or invented native campaign rows."
+  },
+  "archive": {
+    "path": "observations.tar.gz",
+    "bytes": 4968319,
+    "sha256": "9e46c7ad94828e57af5e4f8b15422baefac94fd01cc205e6b0dcc07fe60883e3",
+    "files_manifest_sha256": "dc6ee016225fe55011a30ea4b5328b12d4b238697bdeb46a62f170fa8820a978"
+  },
+  "budget_depletion_proven": false,
+  "full_original_hostile_matrix_executed": false,
+  "public_network_ready": false,
+  "independent_wan_accepted": false,
+  "physical_power_loss_qualified": false,
+  "production_activation": false
+}
