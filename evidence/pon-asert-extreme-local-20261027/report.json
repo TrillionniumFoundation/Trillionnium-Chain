@@ -1,0 +1,13 @@
+{
+  "accepted": 3055,
+  "binary_sha256": "f5179a51be0cdf84c6deea4ff7df5622ae7d484fbb8543f1bbe69d241d121380",
+  "cases_attempted": 4096,
+  "expected_refusals": 1041,
+  "input_source_c_sha256": "799eb5e5a1db247d5b1d044ca9cc38854f1db8012b34e042f81a90f92f70adce",
+  "input_source_python_sha256": "7d3a94021e9e6c915a94b3f5eaf9c8b67f88398bd6244b5597d7ae98d76ed353",
+  "mismatches": [],
+  "result_digest": "694d68fc84e7dce207336870eebf9a76c2440d0b7cfb586a752d153e2655191d",
+  "schema": "trnm-daa-asert-c-python-extreme-differential-local-v1",
+  "scope": "same-owner local C/GMP versus Python; no native Rust/W1/WAN/PoW hardness",
+  "test_seed": 539365415
+}
