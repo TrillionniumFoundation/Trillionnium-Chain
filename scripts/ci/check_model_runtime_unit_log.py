@@ -11,6 +11,7 @@ SUITES = {
     'setup': ('scripts/test_llm_initial_trainable_setup_v2.py', 'ActualInitialSetupTests', 13),
     'observer': ('scripts/test_llm_runtime_candidate_observation_v1.py', 'CandidateObservationTests', 9),
     'runtime-release': ('scripts/test_llm_runtime_release.py', 'RuntimeMaterialTests', 13),
+    'answer-eos-loss-v3': ('scripts/test_llm_answer_eos_loss_v3.py', 'AnswerEosLossTests', 5),
 }
 
 

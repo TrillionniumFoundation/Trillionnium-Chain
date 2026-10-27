@@ -52,7 +52,7 @@ def attempt_binding(value):
 
 def preflight(value):
     """All exact-context/byte checks precede model imports and output creation."""
-    if type(value) is dict and value.get('schema') == 'llm-runtime-parent-step-input-v2':
+    if type(value) is dict and value.get('schema') in ('llm-runtime-parent-step-input-v2', 'llm-runtime-parent-step-input-v3'):
         from llm_runtime_parent_step_v2 import preflight as preflight_v2
         return preflight_v2(value)
     closed(value, 'schema scope attempt_id operation experiment source files parent candidate output flags')
@@ -141,7 +141,7 @@ def preflight(value):
 
 def verify_completion(value):
     """Check fixed-child local readback; this is not independent execution proof."""
-    if type(value) is dict and value.get('schema') == 'llm-runtime-parent-step-input-v2':
+    if type(value) is dict and value.get('schema') in ('llm-runtime-parent-step-input-v2', 'llm-runtime-parent-step-input-v3'):
         from llm_runtime_parent_step_v2 import verify_completion as verify_v2
         return verify_v2(value)
     plan, _, _, _, _, _, summary = preflight(value)
@@ -231,7 +231,7 @@ def copy_factors(model, contract, factors, expected_adapter, torch):
 
 def child(args):
     value = read_object(args.parent_step_input)
-    if type(value) is dict and value.get('schema') == 'llm-runtime-parent-step-input-v2':
+    if type(value) is dict and value.get('schema') in ('llm-runtime-parent-step-input-v2', 'llm-runtime-parent-step-input-v3'):
         from llm_runtime_parent_step_v2 import child as child_v2
         return child_v2(args, value)
     runtime.require(runtime.identity(value) == digest(args.expected_parent_step_input),
@@ -311,7 +311,9 @@ def run(args):
         from llm_runtime_parent_step_v2 import run as run_v2
         return run_v2(args)
     runtime.require(not getattr(args, 'parent_material', None) and
-                    not getattr(args, 'parent_material_sha256', None), 'PARENT_V2_ARGUMENTS')
+                    not getattr(args, 'parent_material_sha256', None) and
+                    not getattr(args, 'research_plan', None) and
+                    not getattr(args, 'research_plan_sha256', None), 'PARENT_V2_ARGUMENTS')
     files = {name: str(Path(getattr(args, name)).absolute()) for name in
         ('materials', 'plan', 'parent_contract', 'parent_adapter', 'parent_artifact')}
     files['candidate_directory'] = str(Path(args.candidate_directory).absolute()) if args.candidate_directory else None

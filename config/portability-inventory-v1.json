@@ -615,6 +615,9 @@
       "decision": "retain-controlled-linux-in-process-spawn-primitive",
       "supporting_sources": [
         "scripts/llm_runtime_pilot.py",
+        "scripts/llm_answer_eos_research_v3.py",
+        "scripts/test_llm_answer_eos_research_v3.py",
+        "scripts/test_llm_answer_eos_loss_v3.py",
         "scripts/llm_runtime_host_scope.py",
         "scripts/llm_runtime_host_controller.py",
         "scripts/test_llm_runtime_host_controller.py",

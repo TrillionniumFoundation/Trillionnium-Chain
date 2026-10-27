@@ -4707,3 +4707,43 @@ proposal rounds and descendants are skipped. Preserve that source/run outcome
 and the separate original qualified-child gates. Any later provenance/fixture
 repair needs its own actual CI; this evidence closes no ordinary I10, model
 benefit, held runtime, beneficial installation or three-upgrade gate.
+
+### PN3 prespecified answer/EOS research V3 — 2026-10-27
+
+This separate diagnostic retains the exact old pilot, its public4+4 evaluation,
+all four controls and an actual CURRENT-incumbent sixth arm. Those public tasks
+are already inspected fixtures, not an independent or unseen holdout. Original
+zero-gain campaigns, the ordinary hold-only loop and all qualification gates
+remain unchanged. Equal observed scores did not imply equal learned weights;
+later descendant predictions also differed while their scores remained tied.
+
+The only new candidate recipe is `answer-eos-balanced-loss-v1`: fixed AdamW
+learning rate0.001, matching the established fresh-LoRA control's prior rate;
+one answer token receives half the per-example loss, and the three existing EOS
+tokens each receive one sixth. All40 target tokens have positive weights. The
+same10 steps,526 physical tokens, initializer seed7, rank4, alpha8, zero dropout,
+frozen parent, row order, forward shapes and original per-role caps remain. No
+single-EOS shortcut, fabricated token count, holdout-driven parameter search or
+equal-cost claim is permitted. Native wall/CPU/RSS and supported FLOPs must be
+measured again. This tests a plausible objective imbalance; the old failures
+have not established that imbalance as their cause.
+
+The old pilot plan remains byte-identical as the material/forward and original
+control contract. It still contains its original candidate learning-rate stanza;
+the new research plan explicitly marks that stanza unused for this new candidate.
+The V3 plan separately freezes the recipe, exact source hashes, original plan,
+parent descriptor, task identities and six-arm roster before execution. The
+original parent-step supervisor/load/setup/export owner dispatches only the
+explicit V3 profile; input, attempt, actual, candidate and result domains are
+versioned. V1/V2 reject the new request fields. The unchanged initial setup receipt
+still makes only its original algebraic B-zero claim.
+
+The new byte controls and small actual CPU-gradient controls check source/recipe
+drift, old-namespace relabelling, missing pre-execution plans, false qualification,
+original failed-reap semantics, all four live causal target losses, masked prompt
+positions and measured tiny-model token counts. They do not qualify a135M model.
+The planned single new six-arm run is NOT_RUN at this source freeze. A positive
+public diagnostic would still lack independent evaluation custody, original
+SystemLongitudinal/EligibleForIndependentSelection authorization, qualified
+selection/CURRENT installation and actual child FinalUse. Ordinary useful-model
+evolution, held runtime closure and the three-upgrade gate remain OPEN.
