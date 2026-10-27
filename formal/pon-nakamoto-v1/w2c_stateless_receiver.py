@@ -22,7 +22,7 @@ class StatelessReceiverAdmission:
 
     def __init__(self, receiver: bytes, secret: bytes, epoch: bytes,
                  *, lifetime_ms: int = 2000, capacity: int = 64,
-                 required_bits: int = 8, entropy=None):
+                 required_bits: int = 8, entropy=None, durable_spend=None):
         self.receiver = bytes32(receiver, 'RECEIVER')
         self.secret = bytes32(secret, 'SECRET')
         self.epoch = bytes32(epoch, 'EPOCH')
@@ -35,6 +35,18 @@ class StatelessReceiverAdmission:
         # An unauthenticated caller is never allowed to price its own W1 replay.
         # Policy is selected by the receiver owner and checked again on consume.
         self.required_bits = required_bits
+        # Only an explicitly configured durable journal shares spent tokens
+        # between process clones. The original ephemeral research mode remains
+        # unchanged and deliberately retains its clone-epoch replay negative.
+        if durable_spend is not None:
+            from w2c_durable_spend import SQLiteSpentOwner
+            if (not isinstance(durable_spend, SQLiteSpentOwner)
+                    or durable_spend.receiver != self.receiver
+                    or durable_spend.epoch != self.epoch
+                    or durable_spend.required_bits != required_bits
+                    or durable_spend.capacity != capacity):
+                raise ValueError('SPEND_OWNER_CONTEXT')
+        self.durable_spend = durable_spend
         self.lifetime_ms = lifetime_ms
         self.capacity = capacity
         self.entropy = secrets.token_bytes if entropy is None else entropy
@@ -57,6 +69,8 @@ class StatelessReceiverAdmission:
 
     def pending_paid(self) -> int:
         with self.lock:
+            if self.durable_spend is not None:
+                return self.durable_spend.pending_paid()
             return len(self.spent)
 
     def offer(self, proposal: bytes, caller: bytes, bits: int, now_ms: int) -> Grant:
@@ -114,6 +128,11 @@ class StatelessReceiverAdmission:
             # MAC binds the exact grant. One paid ticket spends once, regardless
             # of caller key, retransmission, or other signed connection identity.
             key = H('w2c-stateless-paid-grant-v1', payload, mac)
+            if self.durable_spend is not None:
+                # SQLite transaction commits before returning READY. A process
+                # crash or duplicate worker cannot mint a second admission
+                # using the same shared original durable owner.
+                return self.durable_spend.spend(key, grant.expires_ms, now_ms)
             if key in self.spent:
                 return 'REPLAY'
             # Fail closed on saturation *before* expensive W1 replay.
