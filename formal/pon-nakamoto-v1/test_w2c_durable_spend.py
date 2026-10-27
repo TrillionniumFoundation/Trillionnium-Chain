@@ -114,6 +114,16 @@ class DurableW2CSpendResearchTests(unittest.TestCase):
             finally:
                 restarted.close()
 
+    def test_closed_or_unavailable_db_does_not_fall_back_to_memory_ready(self):
+        with tempfile.TemporaryDirectory() as root:
+            path = str(Path(root) / 'unavailable.sqlite')
+            fence = DurableSpentFence(path)
+            fence.close()
+            self.assertEqual(
+                fence.spend(H('paid',b'unavailable'), 1100, 100),
+                'DURABLE_LEDGER_UNAVAILABLE',
+                'a failed SQL owner must never release a W1 verification permit')
+
     def test_untrusted_parent_symlink_and_long_expiry_fail_closed(self):
         with tempfile.TemporaryDirectory() as root:
             path = Path(root)/'spend.sqlite'
