@@ -1,0 +1,19 @@
+{
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "-B",
+    "/workspace/scratch/20f5e808bfa5/chain-audit/scripts/ci/check_pure_pon_ingress_campaign.py",
+    "/workspace/scratch/20f5e808bfa5/ci9-focused-40492528017-capture/original-members/ingress/stdout.jsonl.gz",
+    "--output",
+    "/workspace/scratch/20f5e808bfa5/chain-cost/evidence/pon-pure-integration-20261027/ci-9e05-40492528017/readback/ingress.json"
+  ],
+  "source_commit": "9e05ad5d237660fb0ea8b40dd5c29af4225551d3",
+  "reader_sha256": "b3c3a180a2eba02087e73cda5afadb4db0cf0e809a32f749f623dcbdf1aa3fbd",
+  "started_at": "2026-10-27T11:25:54.586795+00:00",
+  "wall_seconds": 0.7162598090071697,
+  "returncode": 0,
+  "timed_out": false,
+  "python_version": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "python_executable": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+  "new_native_experiment_executed": false
+}

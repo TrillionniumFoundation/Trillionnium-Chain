@@ -1,0 +1,24 @@
+{
+  "schema": "pon-w1-actual-process-v1",
+  "command": [
+    "/home/runner/work/_temp/complete-w1-build-40482711995-1/host-target/release/trnm-w1-risc0-host",
+    "prove",
+    "/home/runner/work/_temp/complete-w1-build-40482711995-1/backend/tools/r0vm",
+    "/home/runner/work/_temp/complete-w1-proof-40482711995-1/guest.bin",
+    "/home/runner/work/_temp/complete-w1-proof-40482711995-1/input.bin",
+    "18",
+    "/home/runner/work/_temp/complete-w1-proof-40482711995-1/receipt.bin"
+  ],
+  "started_utc": "2026-10-27T09:45:18.368192+00:00",
+  "timeout_seconds": 5400,
+  "source_sha": "d96138532b656d767d1ef46f6db86e7effae485e",
+  "timed_out": true,
+  "consensus_authority": false,
+  "returncode": 124,
+  "wall_seconds": 5400.0016535859995,
+  "user_cpu_seconds": 0.015739,
+  "system_cpu_seconds": 0.002084,
+  "max_waited_descendant_rss_kib": 13792,
+  "rss_scope": "maximum reported for the waited child family; not total cgroup peak",
+  "finished_utc": "2026-10-27T11:15:18.369874+00:00"
+}

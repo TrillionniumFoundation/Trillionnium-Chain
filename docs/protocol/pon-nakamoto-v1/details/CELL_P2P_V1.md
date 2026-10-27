@@ -5,6 +5,11 @@ This is the M09 native byte-distribution pilot selected by the
 It is separate from transaction-batch DA, consensus, model quality, CURRENT and
 FinalUse. Its native entrypoint is `trnm-cell` in `trnm-data-availability`.
 
+The [distribution and availability research note](CELL_DISTRIBUTION_AVAILABILITY_RESEARCH.md)
+maps this implementation to BT/IPFS mechanisms, complete executable-version
+dependencies, retention tradeoffs and the remaining provider PQ migration.
+It changes no wire profile, runtime or qualification claim.
+
 ## Authority and exact identity
 
 The caller obtains a pinned manifest digest from its existing model-release

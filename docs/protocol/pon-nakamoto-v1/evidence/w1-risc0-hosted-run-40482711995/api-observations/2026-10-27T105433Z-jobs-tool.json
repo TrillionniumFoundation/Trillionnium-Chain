@@ -1,0 +1,108 @@
+{
+  "observed_time": "2026-10-27 10:54:33 UTC",
+  "request": {
+    "repo_full_name": "TrillionniumFoundation/Trillionnium-Chain",
+    "run_id": 40482711995
+  },
+  "tool_result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "Action completed."
+      }
+    ],
+    "structuredContent": {
+      "jobs": [
+        {
+          "id": 122116759593,
+          "name": "full W1 real Composite STARK (research only)",
+          "status": "in_progress",
+          "conclusion": null,
+          "run_id": 40482711995,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Checkout exact candidate head",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Reserve output and record exact source",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Install pinned native toolchain",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Run native differential controls and produce independent fixture",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Download and verify actual backend and guest compiler",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Build locked full guest and verifier",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7
+            },
+            {
+              "name": "Execute the full pinned W1 image",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8
+            },
+            {
+              "name": "Produce actual transparent proof with no development receipt",
+              "status": "in_progress",
+              "conclusion": null,
+              "number": 9
+            },
+            {
+              "name": "Independently verify and attack the actual proof",
+              "status": "pending",
+              "conclusion": null,
+              "number": 10
+            },
+            {
+              "name": "Verify source did not change",
+              "status": "pending",
+              "conclusion": null,
+              "number": 11
+            },
+            {
+              "name": "Retain actual proof, ELF, inputs, costs and failures",
+              "status": "pending",
+              "conclusion": null,
+              "number": 12
+            },
+            {
+              "name": "Post Checkout exact candidate head",
+              "status": "pending",
+              "conclusion": null,
+              "number": 24
+            }
+          ]
+        }
+      ]
+    },
+    "isError": false
+  }
+}

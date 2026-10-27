@@ -176,6 +176,100 @@ separate research candidates. Before acceptance, require exact relation and QROM
 arguments, first/interior/final transition fraud controls, complete honest and
 malicious-path costs including bytes, and unchanged pure-PoN work boundaries.
 
+## Backend choice after the actual complete-W1 execution
+
+The pinned general VM is a useful executable reference for the whole relation,
+including its byte encodings and SHA-256 transcript. It is not yet an economical
+consensus verifier design. The retained local attempt exhausted 1,800 seconds
+without a receipt; a [separate original two-thread hosted attempt](../evidence/w1-risc0-hosted-run-40482711995/README.md)
+exhausted 5,400 seconds and also retained no receipt. The 13,364,385 guest cycles
+are execution measurements, not a proving-time estimate. A future successful receipt must be measured independently
+before any native comparison. Increasing requested prover threads alone does not
+establish either a CPU allocation or proportional speedup.
+
+There is an additional field constraint. For the exact native prime
+q=4,294,967,291, q-1=4,294,967,290 has 2-adicity 1 and q+1=4,294,967,292 has
+2-adicity 2. Thus neither its multiplicative group nor its base-field circle
+group provides the large power-of-two domain used by ordinary radix-two or
+Mersenne31 Circle FFTs. The efficient Circle construction in [7] specifically
+needs a large power of two dividing p+1. This does **not** prove that every STARK
+over q is impossible: alternative domains, ECFFT or different encodings require
+their own implementation and cost study. Replacing q with BabyBear, Mersenne31,
+Goldilocks or a binary field without constraining the original reductions would
+prove a different statement and requires a new work-profile namespace.
+
+| Research path | What it can reuse | What remains necessary before a decision |
+| --- | --- | --- |
+| Keep the pinned general VM as the reference | Full relation, native differential fixtures, fixed ELF/image, strict parser and real-receipt audit | Actual receipt, full proving/verification resources and acceptable concrete security. Do not infer throughput from guest execution or upstream headlines. |
+| Dedicated AIR or arithmetic circuit preserving W1 | The exact native relation, all prefix states, context codec and independent kernels | Constrain canonical q arithmetic, bounded integer reductions, all 512 ordered updates and every transcript hash. Measure the non-native arithmetic and SHA costs; preserve all mutation controls. |
+| Specialized sumcheck/GKR plus a transparent PCS | Structured matrix tensor checks from [2], and field-agnostic commitment directions such as [6] | Bind the complete transition tensor and input/context; give degree, commitment/opening and multi-round QROM arguments. Small q needs a sound challenge-domain/composition design. Full source, verifier budget and actual receipts are still absent. |
+| A newly specified proof-friendly neural work profile | Task/compiler interfaces and the existing reference implementation as a comparison | Reassess useful semantics, hardness, structured shortcuts, task selection, quantum search, fork choice accounting and all network/storage domains. This is a new consensus experiment, not an invisible W1 optimization. |
+
+Brakedown [6] is a relevant field-agnostic, transparent research construction,
+described by its authors as plausibly post-quantum. Its arbitrary-field statement
+requires a sufficiently large field; it is not evidence that this q32 workload
+already has cheap, PQ128-qualified proofs. Its polynomial commitment technique
+also cannot be substituted for the current verifier without the rest of the
+statement and composition argument.
+
+### A bounded exact-arithmetic embedding candidate
+
+A dedicated circuit can preserve the native q without using q as its proof
+field. One concrete arithmetic observation uses the Goldilocks prime
+P=2^64-2^32+1 [10]. For a modular multiply-accumulate, constrain
+
+```text
+a*b + s = q*k + r  in F_P, with a,b,s,k,r all integers in [0,q-1].
+```
+
+The integer left side is at most q*(q-1)=18,446,744,026,464,911,390 and the
+right side at most q^2-1=18,446,744,030,759,878,680. Both are strictly below
+P=18,446,744,069,414,584,321. Therefore equality in F_P implies equality over
+the integers and, with r<q, the unique original-q remainder. This is a
+degree-two arithmetic relation plus essential range constraints, not a complete
+AIR or proof backend. The range constraints must be enforced by the proof,
+not merely by host-language types or honest witness generation. A 32-bit label
+alone permits the five noncanonical values q through 2^32-1.
+
+Two exact counterexamples explain the constraints. If the quotient is unbounded,
+a=b=s=0, r=1 and k=878416384462359601 satisfy the field equation despite the
+wrong remainder. Also P mod q=21: for two products of (q-1)*(q-1), direct native
+reduction gives 2, while first accumulating modulo P and then reducing modulo q
+gives 4294967272. Thus a complete dot product cannot be accumulated in F_P
+without the individual bounded reductions or an explicitly constrained wider
+integer representation.
+
+The [integer observations](../../../../evidence/pon-pure-integration-20261027/arithmetic-embedding/goldilocks-range.json)
+retain these bounds, both counterexamples and eight corner examples. The
+universal implication follows from the range argument above, not exhaustive
+testing. All original noise derivation, ordered tiles, SHA-256 bytes, canonical
+encodings, target and block-context bindings still require complete constraints.
+Lookup/range overhead, actual proving and rejection costs, commitment parameters
+and Fiat-Shamir/QROM security are unmeasured. No throughput or PQ claim follows.
+
+Neural proof papers can inform arithmetic scheduling without supplying the PQ
+trust boundary. For example, zkLLM [8] uses tensor sumchecks and GPU parallelism,
+but its actual Hyrax/Pedersen commitment is instantiated over BLS12-381 and relies
+on discrete logarithms. Importing that complete backend would introduce a
+classical cryptographic dependency. A transparent replacement changes both
+performance and security; the paper's benchmark must not be copied as an
+estimate for this chain.
+
+The upstream RISC Zero 3.0 security page [9] distinguishes the STARK provers
+from the BN254/Groth16 wrapper and labels the latter not quantum safe. This
+research host already refuses that wrapper. The page's conditional 96-bit
+RISC-V headline is not a proof of PQ128 for the actual multi-segment profile;
+the retained per-receipt parameter calculation and its stated limitations remain
+the controlling observation.
+
+For every path, chainwork continues to count the required fresh PoN relation.
+No independent hashcash gate, stake weight or committee vote is introduced.
+Any proof-system-internal challenge grinding must be accounted for in the full
+classical/quantum analysis and prover cost; it cannot be left unanalysed or
+quietly counted as additional consensus authority. An implementation must also
+budget malformed-byte parsing, maximum seal work, verification queues and cold
+restart state globally before its proofs become public Node admission inputs.
+
 ## Primary sources
 
 1. Justin Thaler, [Proofs, Arguments, and Zero-Knowledge](https://people.cs.georgetown.edu/jthaler/ProofsArgsAndZK.pdf), author manuscript, July 18, 2023; sections 2.2, 4.1 and 4.4.
@@ -183,3 +277,8 @@ malicious-path costs including bytes, and unchanged pure-PoN work boundaries.
 3. Lov Grover, [A fast quantum mechanical algorithm for database search](https://arxiv.org/abs/quant-ph/9605043), version 3; quadratic search speedup.
 4. Don, Fehr, Majenz and Schaffner, [Security of the Fiat-Shamir Transformation in the Quantum Random-Oracle Model](https://arxiv.org/abs/1902.07556), version 4; conditions and quantum reductions.
 5. Don, Fehr and Majenz, [The Measure-and-Reprogram Technique 2.0: Multi-Round Fiat-Shamir and More](https://arxiv.org/abs/2003.05207), version 3; Corollary 3 and the multi-round analysis. Oracle-query count in this paper is not the field modulus q used above.
+6. Golovnev, Lee, Setty, Thaler and Wahby, [Brakedown: Linear-time and field-agnostic SNARKs for R1CS](https://eprint.iacr.org/2021/1043); transparent linear-time prover and sufficiently large arbitrary-field construction.
+7. Habock, Levit and Papini, [Circle STARKs](https://eprint.iacr.org/2024/278), revision dated 2025-02-20; the large power-of-two divisor of p+1 is part of the efficient-domain condition.
+8. Sun, Li and Zhang, [zkLLM: Zero Knowledge Proofs for Large Language Models](https://arxiv.org/html/2404.16109v1), sections 3.4 and 8; Hyrax/Pedersen, discrete-log assumption and BLS12-381 implementation.
+9. RISC Zero, [Cryptographic Security Model](https://dev.risczero.com/api/security-model), version 3.0, accessed 2026-10-27; conditional STARK assumptions and the distinct non-PQ Groth16 wrapper.
+10. Plonky3, [p3-goldilocks 0.8.0 Goldilocks field documentation](https://docs.rs/p3-goldilocks/0.8.0/p3_goldilocks/struct.Goldilocks.html); exact prime definition only. No new dependency or claim about that crate's proof security is introduced here.

@@ -1,0 +1,21 @@
+{
+  "schema": "trnm-codeql-export-independent-readback-v1",
+  "source": "9e05ad5d237660fb0ea8b40dd5c29af4225551d3",
+  "tree": "952666bff72a49d8bc7693b27ff747f56a56b240",
+  "run_id": 40492528004,
+  "job_id": 122149745072,
+  "artifact_id": 12729429089,
+  "original_member_count": 200,
+  "original_outer_checksum_entries_checked": 198,
+  "original_outer_checksum_excludes_both_checksum_manifests": true,
+  "complete_zip_sha256": "f9b1514ae929629b758d8bd0a285008c46e74a3d1e6d8ef94b1ff5413095a2fd",
+  "complete_zip_bytes": 251365,
+  "poll_count": 38,
+  "all_polled_analyses_empty": true,
+  "all_selected_analysis_and_check_sets_empty": true,
+  "original_workflow_conclusion": "failure",
+  "codeql_analysis_completed": false,
+  "source_changed": false,
+  "new_codeql_scan_run_by_readback": false,
+  "initial_readback_assumption_failure": "First readback incorrectly expected the original outer checksum map to exclude only the root sha256.json. The original workflow excludes every file named sha256.json; its nested analysis/sha256.json is also excluded. No original bytes or checksums changed. The complete artifact SHA256 binds both manifests."
+}

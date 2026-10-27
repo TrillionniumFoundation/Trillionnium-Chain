@@ -1,0 +1,20 @@
+{
+  "schema": "pon-w1-actual-process-v1",
+  "command": [
+    "/home/runner/work/_temp/complete-w1-build-40482711995-1/host-target/release/examples/pon_w1_complete_relation",
+    "benchmark",
+    "/home/runner/work/_temp/complete-w1-proof-40482711995-1/input.bin"
+  ],
+  "started_utc": "2026-10-27T09:42:28.198761+00:00",
+  "timeout_seconds": 60,
+  "source_sha": "d96138532b656d767d1ef46f6db86e7effae485e",
+  "timed_out": false,
+  "consensus_authority": false,
+  "returncode": 0,
+  "wall_seconds": 0.06393066999999064,
+  "user_cpu_seconds": 0.047444,
+  "system_cpu_seconds": 0.001976,
+  "max_waited_descendant_rss_kib": 13720,
+  "rss_scope": "maximum reported for the waited child family; not total cgroup peak",
+  "finished_utc": "2026-10-27T09:42:28.262720+00:00"
+}

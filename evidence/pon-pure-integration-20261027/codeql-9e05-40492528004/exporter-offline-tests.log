@@ -1,0 +1,21 @@
+test_absent_pr_association_is_source_only_never_a_pr_gate_claim (__main__.ExportTests.test_absent_pr_association_is_source_only_never_a_pr_gate_claim) ... ok
+test_absent_pr_binding_cannot_hide_metadata_change_or_malformed_associations (__main__.ExportTests.test_absent_pr_binding_cannot_hide_metadata_change_or_malformed_associations) ... ok
+test_annotation_checks_keep_head_and_verified_merge_provenance_separate (__main__.ExportTests.test_annotation_checks_keep_head_and_verified_merge_provenance_separate) ... ok
+test_annotation_count_change_or_short_page_cannot_claim_completion (__main__.ExportTests.test_annotation_count_change_or_short_page_cannot_claim_completion) ... ok
+test_annotation_later_page_permission_failure_preserves_partial_evidence (__main__.ExportTests.test_annotation_later_page_permission_failure_preserves_partial_evidence) ... ok
+test_annotation_metadata_cannot_change_source_pr_or_endpoint (__main__.ExportTests.test_annotation_metadata_cannot_change_source_pr_or_endpoint) ... ok
+test_annotations_without_ids_keep_pages_duplicates_and_gate_subset_limit (__main__.ExportTests.test_annotations_without_ids_keep_pages_duplicates_and_gate_subset_limit) ... ok
+test_changed_snapshot_after_export_cannot_claim_completion (__main__.ExportTests.test_changed_snapshot_after_export_cannot_claim_completion) ... ok
+test_default_setup_head_ref_exports_all_pages_and_categories (__main__.ExportTests.test_default_setup_head_ref_exports_all_pages_and_categories) ... ok
+test_head_ref_cannot_claim_merge_commit (__main__.ExportTests.test_head_ref_cannot_claim_merge_commit) ... ok
+test_merge_ref_keeps_actual_commit_provenance (__main__.ExportTests.test_merge_ref_keeps_actual_commit_provenance) ... ok
+test_pending_or_missing_configurations_wait_then_fail (__main__.ExportTests.test_pending_or_missing_configurations_wait_then_fail) ... ok
+test_permission_denial_and_processing_error_fail_with_evidence (__main__.ExportTests.test_permission_denial_and_processing_error_fail_with_evidence) ... ok
+test_pr_source_drift_and_wrong_merge_parents_fail (__main__.ExportTests.test_pr_source_drift_and_wrong_merge_parents_fail) ... ok
+test_real_neutral_missing_configuration_updates_in_place (__main__.ExportTests.test_real_neutral_missing_configuration_updates_in_place) ... ok
+test_wrong_ref_and_stale_only_source_cannot_complete (__main__.ExportTests.test_wrong_ref_and_stale_only_source_cannot_complete) ... ok
+
+----------------------------------------------------------------------
+Ran 16 tests in 0.198s
+
+OK

@@ -111,9 +111,58 @@ identify the actual source seam. The shared native `verify_hex_strict` in
 not establish an ECDSA/secp256k1 dependency, so they must not be described as one.
 The complete-chain conclusion remains **not post-quantum qualified**.
 
+## Separate the four quantum-security claims
+
+The next profile needs four independently reviewable claims, with a declared
+adversary budget and failure probability. No one claim substitutes for another.
+
+| Claim | Exact obligation |
+| --- | --- |
+| Native authorization | Every reachable transaction, transport, task, provider, install and final-use owner authenticates its intended message under an independently fixed PQ key, preserves generation/revocation/replay, and rejects classical downgrade. FIPS 204 standardizes ML-DSA; it does not certify this entire application or its key custody. |
+| Computation-proof soundness | Pin the concrete commitment/hash, field and challenge extensions, polynomial degrees, query counts, all segment/round composition and adaptive Fiat-Shamir/QROM assumptions. Use the actual receipt dimensions. The retained upstream conditional estimates are not quantum security bits. |
+| Hash commitments | Inventory the exact domain, algorithm, output width, input choice and consumer. Distinguish an independently fixed content root from an adversary who chooses both committed messages. Include multi-target and lifetime composition rather than assuming every 256-bit digest has the same claim. |
+| PoN mining and chain selection | Model the cost of a reversible oracle for the full challenge/noise/trace/ticket predicate, coherent query depth, memory, parent changes, parallelism and the adversarial fraction of effective successful work. PQ signatures and proof soundness do not rule out a mining advantage. |
+
+For orientation only, ideal black-box search for a fraction p of marked items
+has the familiar order `1/sqrt(p)` quantum-query scale rather than `1/p`
+classical trials [5]. A W1 mining oracle would need to implement and uncompute
+the complete W1 predicate; replacing it with a bare SHA call is not a cost
+estimate. This observation neither supplies such an implementation nor measures
+an attack on this chain. Difficulty adjustment does not by itself remove a
+relative hardware/oracle advantage or prove an honest-work majority.
+
+Likewise, the ideal quantum collision algorithm in [6] has a cube-root query
+scale and an associated space/time tradeoff. An ideal n-bit hash gives the
+usual generic screening exponents n/2 for targeted search and n/3 for collision
+search; for n=256 those are 128 and about 85.3. These are oracle-model screens,
+not practical attack costs, a full SHA-256 reduction, or a reason to call every
+SHA-256 use a broken authorization path. In this source, TPQ1 payload and durable
+policy/statement commitments use SHA-384, while its 32-byte key identifier uses
+SHA-256. The verifier still requires the independently pinned complete SPKI;
+an arbitrary colliding key identifier alone is not permission to replace that
+key. TCM1 content checks and W1 trace/ticket bindings have different consumers
+and must be analyzed on their own terms.
+
+If the new commitment profile aims at a 128-bit generic quantum collision
+screen, a 384-bit hash output is a candidate, with its complete construction,
+composition and cost still subject to review. Replacing an existing 32-byte
+field silently changes IDs, manifests, signed domains, Merkle roots and proof
+parameters. Such a migration needs versioned encodings and exact cross-profile
+refusal; this note changes none of them.
+
+An actual authorization migration must bind new PQ ownership while the old
+authorization is still trustworthy, or start from an independently authorized
+new genesis/profile. After a classical signature scheme is assumed forgeable,
+another signature in that scheme cannot establish which PQ replacement key is
+the rightful owner's. Preserve the original effect owner and pending-operation
+reconciliation; a new key registry or successful TPQ1 helper call does not grant
+installation authority. The pure-PoN fork-choice rule stays unchanged.
+
 ## Primary references
 
 - [FIPS 204](https://csrc.nist.gov/pubs/fips/204/final)
 - [RustCrypto ML-DSA 0.1.1](https://docs.rs/ml-dsa/0.1.1/ml_dsa/)
 - [Duplicate-hint advisory](https://github.com/RustCrypto/signatures/security/advisories/GHSA-5x2r-hc65-25f9)
 - [Pinned Wycheproof corpus](https://github.com/C2SP/wycheproof/blob/d17cc89fa5c8f4f4d378b5385ebf75da5d0926c9/testvectors_v1/mldsa_65_verify_test.json)
+- [5: Tight bounds on quantum searching](https://arxiv.org/abs/quant-ph/9605034)
+- [6: Quantum Algorithm for the Collision Problem](https://arxiv.org/abs/quant-ph/9705002)

@@ -1,0 +1,19 @@
+{
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "-B",
+    "/workspace/scratch/20f5e808bfa5/chain-audit/scripts/ci/check_pure_pon_rejection_tail.py",
+    "/workspace/scratch/20f5e808bfa5/ci9-focused-40492528017-capture/original-members/rejection-tail/stdout.jsonl.gz",
+    "--output",
+    "/workspace/scratch/20f5e808bfa5/chain-cost/evidence/pon-pure-integration-20261027/ci-9e05-40492528017/readback/rejection-tail.json"
+  ],
+  "source_commit": "9e05ad5d237660fb0ea8b40dd5c29af4225551d3",
+  "reader_sha256": "a63dfc6dccdc3511be77896d51c5e0cad16db622eb044534a8258027a8a10840",
+  "started_at": "2026-10-27T11:25:55.313843+00:00",
+  "wall_seconds": 0.16480268999293912,
+  "returncode": 0,
+  "timed_out": false,
+  "python_version": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "python_executable": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+  "new_native_experiment_executed": false
+}

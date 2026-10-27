@@ -1,0 +1,117 @@
+{
+  "jobs": {
+    "content": [
+      {
+        "type": "text",
+        "text": "Action completed."
+      }
+    ],
+    "structuredContent": {
+      "jobs": [
+        {
+          "id": 122149745072,
+          "name": "export",
+          "status": "completed",
+          "conclusion": "failure",
+          "run_id": 40492528004,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Reserve a fresh evidence directory",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Checkout the immutable exporter source",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Verify exporter source before reading existing analyses",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Export exact PR analyses with the existing read-only token",
+              "status": "completed",
+              "conclusion": "failure",
+              "number": 5
+            },
+            {
+              "name": "Verify unchanged exporter source",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Hash all available evidence, including failures",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7
+            },
+            {
+              "name": "Preserve metadata, API SARIF subsets and partial failures",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8
+            },
+            {
+              "name": "Post Checkout the immutable exporter source",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 16
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 17
+            }
+          ]
+        }
+      ]
+    },
+    "isError": false
+  },
+  "artifacts": {
+    "content": [
+      {
+        "type": "text",
+        "text": "Action completed."
+      }
+    ],
+    "structuredContent": {
+      "artifacts": [
+        {
+          "id": 12729429089,
+          "name": "codeql-analysis-export-40492528004-1",
+          "size_in_bytes": 251365,
+          "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/12729429089",
+          "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/12729429089/zip",
+          "expired": false,
+          "created_at": "2026-10-27T11:21:04Z",
+          "expires_at": "2026-11-26T11:21:03Z",
+          "updated_at": "2026-10-27T11:21:04Z",
+          "digest": "sha256:f9b1514ae929629b758d8bd0a285008c46e74a3d1e6d8ef94b1ff5413095a2fd",
+          "workflow_run": {
+            "id": 40492528004,
+            "repository_id": 1323087357,
+            "head_repository_id": 1323087357,
+            "head_branch": "feature/chain-pure-pon-integration-20261027",
+            "head_sha": "9e05ad5d237660fb0ea8b40dd5c29af4225551d3"
+          }
+        }
+      ]
+    },
+    "isError": false
+  }
+}

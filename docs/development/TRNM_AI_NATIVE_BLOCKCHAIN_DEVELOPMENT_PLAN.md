@@ -121,8 +121,8 @@ section imply that a later source has passed its required checks.
 
 | Priority / owner | Concrete increment | Remaining veto condition |
 | --- | --- | --- |
-| P0 / M01 complete W1 | The independent [PWG1/PWJ1 relation](../protocol/pon-nakamoto-v1/details/W1_COMPLETE_RELATION_RESEARCH.md) binds all 318 header bytes, canonical PNW1, task/target, all noise, all 512 trace tiles and the corrected product. Eleven native differential tests pass. The optimized pinned guest executes the complete relation in 13,364,385 user cycles, with 62 actual segments at po2=18. | Execution is not a transferable proof. The first actual local Composite proving attempt timed out after 1,800 seconds without a receipt. Real proof verification, late-corruption rejection and a quantitatively acceptable full proof profile require their own evidence; proving only the final product is insufficient. |
-| P0 / M03/M04/M15 adversarial cost | The [pure public profile](../protocol/pon-nakamoto-v1/details/PURE_PON_PUBLIC_BOOTSTRAP_V1.md) has no caller nonce search and retains the original shared budgets. A fixed exact-public-product fact rejects wrong C before replay; [native campaigns](../protocol/pon-nakamoto-v1/details/PURE_PON_COST_CAMPAIGNS_V1.md) retain unique invalid traces, honest calls and cold reopens. | A correct C with a false trace still reaches full native W1 replay. Therefore the no-full-replay bad-certificate requirement is not closed by this filter or by a finite service pass. Reactor CPU, arbitrary hostile scheduling and WAN fairness remain separate. |
+| P0 / M01 complete W1 | The independent [PWG1/PWJ1 relation](../protocol/pon-nakamoto-v1/details/W1_COMPLETE_RELATION_RESEARCH.md) binds all 318 header bytes, canonical PNW1, task/target, all noise, all 512 trace tiles and the corrected product. Eleven native differential tests pass. The optimized pinned guest executes the complete relation in 13,364,385 user cycles, with 62 actual segments at po2=18. | Execution is not a transferable proof. The first actual local Composite attempt timed out after 1,800 seconds; the separate original two-thread hosted attempt timed out after 5,400 seconds. Neither retained a receipt. Real proof verification, late-corruption rejection and a quantitatively acceptable full proof profile require their own evidence; proving only the final product is insufficient. |
+| P0 / M03/M04/M15 adversarial cost | The [pure public profile](../protocol/pon-nakamoto-v1/details/PURE_PON_PUBLIC_BOOTSTRAP_V1.md) has no caller nonce search and retains the original shared budgets. A fixed exact-public-product fact rejects wrong C before replay; [native campaigns](../protocol/pon-nakamoto-v1/details/PURE_PON_COST_CAMPAIGNS_V1.md) retain unique invalid traces, honest calls and cold reopens. | A correct C with a false trace still requires complete native transcript replay, although that mismatch skips the later product corrections. Therefore the no-full-replay bad-certificate requirement is not closed by this filter or by a finite service pass. Reactor CPU, arbitrary hostile scheduling and WAN fairness remain separate. |
 | P0 / M01/M02 work cost | The fixed matrix offers all 12 current producer strategies, nine input classes, cold/reused preparation, paired complete streams, multiple horizons and two targets. Both original and hosted complete streams retain 3,456 cohorts, 605,024 attempts, 80,836 winning verifier calls and 50,764 exhausted searches. Every miss and unsupported constructor remains in the denominator/report. | Finite software observations do not prove a minimum physical cost, non-amortization, task-selection safety, accelerator parity or quantum mining assumptions. Repeated winning verifier calls are not unique fresh blocks. Structural task availability is not useful-demand registration. |
 | P1 / M02/M03 public task supply | A fresh node can derive or fetch the exact public genesis maintenance bundle and mine through the actual native producer without pre-existing balance or private provider credentials. | Maintenance remains maintenance: useful-output credit is zero. This does not demonstrate sustained beneficial neural-task supply or model-quality gain. |
 | P1 / M00/M01/M15 PQ path | [Native ML-DSA-65](../protocol/pon-nakamoto-v1/details/PQ_NATIVE_AUTHORIZATION_V1.md), 210 pinned Wycheproof vectors, independent OpenSSL fixtures, and a separate durable TPQ1 authorization owner replace the syntax-only research seam. | PNX1, ordinary transport, other authorization owners and the work-proof security parameters have not become post-quantum through this helper. A new signature namespace cannot clear the whole-chain gate. |
@@ -160,6 +160,49 @@ also rejects a direct N64 Freivalds replacement as a demonstrated throughput gai
 the screened eight/nine-repeat variants need more field multiplications and an
 additional 128 KiB. Correctness, work cost and model usefulness retain separate
 acceptance decisions.
+
+The same analysis now records why the current q32 field is not a direct fit for
+the usual radix-two or Mersenne31 Circle FFT domains. It compares retaining the
+complete VM reference with dedicated exact arithmetic and transparent
+sumcheck/PCS research; no alternative backend is implemented or qualified by
+that comparison. Neural proof papers with elliptic-curve commitments cannot be
+imported as evidence for this project's required complete post-quantum path.
+
+The [original two-thread hosted full-W1 attempt](../protocol/pon-nakamoto-v1/evidence/w1-risc0-hosted-run-40482711995/README.md)
+retains its complete 47-member artifact, original ZIP, full decoded job log and
+independent readback. It timed out after 5400.001653586 seconds on `d9613853`;
+receipt verification and attack controls did not execute. Its same-run native
+production median was 0.398401 ms across all 31 samples. The original wrapper's
+waited-child resource fields omit the terminated prover grandchild and are not
+prover CPU/RSS measurements. A later four-thread attempt has a separate source
+and sampler; no later receipt may be substituted for this failed attempt.
+
+The [complete hosted producer-cohort reduction](../../evidence/pon-pure-integration-20261027/hosted-cost-reduction/README.md)
+retains all 1,728 paired groups, including 928 unsupported combinations, and all
+200 supported groups at the largest declared horizon. It compares whole charged
+CPU under each exact material/target/preparation pairing rather than selecting
+the fastest sample. The [public neural-task research contract](../protocol/pon-nakamoto-v1/details/PUBLIC_NEURAL_TASK_CONTRACT_RESEARCH.md)
+distinguishes public maintenance from a parent-derived neural program, and exact
+integer W1 outputs from the current FP32 Hepta target. A complete q_proj needs
+81 tiles and checked integer aggregation; this design note is not an implemented
+consumer, model upgrade or useful-work qualification.
+
+The [separate completed focused run on 9e05](../../evidence/pon-pure-integration-20261027/ci-9e05-40492528017/README.md)
+retains all 29 original artifact members and complete decoded logs. Its original
+three readers returned the same byte-identical reports on independent readback.
+The same full cost matrix completed; its TCP phases accepted 792/1498/1510 honest
+receiver calls with p99 21.881358/75.752861/72.131166 ms, and refused all 10,516
+hostile trace calls. Every hostile call recorded starting full work; that marker
+alone does not prove how far each ran. Different-run timing differences are not
+attributed to an algorithmic speedup. The required baseline remains a separate
+gate; the [same-source CodeQL export](../../evidence/pon-pure-integration-20261027/codeql-9e05-40492528004/README.md)
+failed with no selected analyses/checks in its 38 retained poll snapshots.
+
+The [Cell availability review](../protocol/pon-nakamoto-v1/details/CELL_DISTRIBUTION_AVAILABILITY_RESEARCH.md)
+records actual bounded multi-peer fetch, local funded retention and repair,
+while separating these from a complete executable model-version closure,
+independent long-lived replicas and PQ provider authorization. Neither a cached
+Cell union nor a paid storage obligation grants model-install or chainwork authority.
 
 ### Audit contract refinement — 2026-10-25
 

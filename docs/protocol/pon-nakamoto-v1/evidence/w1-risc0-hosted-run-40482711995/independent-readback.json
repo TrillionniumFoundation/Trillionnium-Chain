@@ -1,0 +1,140 @@
+{
+  "schema": "pon-w1-hosted-failed-proof-readback-v1",
+  "run_id": 40482711995,
+  "job_id": 122116759593,
+  "artifact_id": 12729397861,
+  "original_source_sha": "d96138532b656d767d1ef46f6db86e7effae485e",
+  "original_source_tree": "bcf061827dd81cbd4c29378ef53ebac23cd976be",
+  "source_before_after_exact_match": true,
+  "raw_original_artifact_completely_retained": true,
+  "artifact_member_count": 47,
+  "original_pipeline_conclusion": "failure",
+  "proof_outcome": "bounded_actual_attempt_timed_out_without_retained_receipt",
+  "prove_process": {
+    "schema": "pon-w1-actual-process-v1",
+    "command": [
+      "/home/runner/work/_temp/complete-w1-build-40482711995-1/host-target/release/trnm-w1-risc0-host",
+      "prove",
+      "/home/runner/work/_temp/complete-w1-build-40482711995-1/backend/tools/r0vm",
+      "/home/runner/work/_temp/complete-w1-proof-40482711995-1/guest.bin",
+      "/home/runner/work/_temp/complete-w1-proof-40482711995-1/input.bin",
+      "18",
+      "/home/runner/work/_temp/complete-w1-proof-40482711995-1/receipt.bin"
+    ],
+    "started_utc": "2026-10-27T09:45:18.368192+00:00",
+    "timeout_seconds": 5400,
+    "source_sha": "d96138532b656d767d1ef46f6db86e7effae485e",
+    "timed_out": true,
+    "consensus_authority": false,
+    "returncode": 124,
+    "wall_seconds": 5400.0016535859995,
+    "user_cpu_seconds": 0.015739,
+    "system_cpu_seconds": 0.002084,
+    "max_waited_descendant_rss_kib": 13792,
+    "rss_scope": "maximum reported for the waited child family; not total cgroup peak",
+    "finished_utc": "2026-10-27T11:15:18.369874+00:00"
+  },
+  "receipt_present": false,
+  "completed_proof_generation_seconds": null,
+  "receipt_size_bytes": null,
+  "cryptographic_proof_verification_seconds": null,
+  "strict_receipt_verifier_executed": false,
+  "proof_adversarial_audit_executed": false,
+  "receipt_parameter_report_available": false,
+  "receipt_parameter_report_reason": "no receipt; old execution output has no actual per-segment size histogram",
+  "guest_execution": {
+    "schema": "pon-w1-risc0-research-v1",
+    "operation": "execute",
+    "guest_matches_native": true,
+    "journal_hex": "50574a31412e233a4d2ca6e660dd50ff468e52476a69b78a8992f61f97da66b1590a728bc00507dd229e4920ed0a7a9c2536e6839f4344ba992508f63e0525ab02850c9dc982eea0545c228d0bf48d6d06e623020b4031f2ba79da56cc6bdccde2c63496add78510fb5ef0f62188fef2d00be6336adef91cebee983e4a883e632c225200ae2801f16dea0004888313a6b283c13ec03c0ffa117cf0f01d6d8bb739976b19cb35821c92fa659bcb645c964829f4d3d3c68d1295b703993155fe93b9621da5654ec6ac33163baff4f3350cbac7653ff78cfbcb0e46edeaa2ba55380c909d37",
+    "user_cycles": 13364385,
+    "segments": 62,
+    "segment_po2_limit": 18,
+    "execute_wall_ns": 172442696,
+    "image_id": "3ea1bcbf7900a32be73d7e78102de085562893732473667e1f3af07e585696b4",
+    "cryptographic_proof_verified": false,
+    "consensus_authority": false
+  },
+  "native_same_input_kernels_recomputed": {
+    "native_production": {
+      "samples": 31,
+      "min_wall_ns": 395766,
+      "median_wall_ns": 398401,
+      "max_wall_ns": 423929
+    },
+    "native_scalar_reference": {
+      "samples": 31,
+      "min_wall_ns": 396167,
+      "median_wall_ns": 397208,
+      "max_wall_ns": 419202
+    },
+    "native_limb": {
+      "samples": 31,
+      "min_wall_ns": 346973,
+      "median_wall_ns": 348876,
+      "max_wall_ns": 360172
+    },
+    "complete_relation": {
+      "samples": 31,
+      "min_wall_ns": 389787,
+      "median_wall_ns": 390909,
+      "max_wall_ns": 401415
+    }
+  },
+  "kernel_execution_order": "four implementations invoked sequentially, 31 samples each; not four CPU cores",
+  "native_total_benchmark_process": {
+    "schema": "pon-w1-actual-process-v1",
+    "command": [
+      "/home/runner/work/_temp/complete-w1-build-40482711995-1/host-target/release/examples/pon_w1_complete_relation",
+      "benchmark",
+      "/home/runner/work/_temp/complete-w1-proof-40482711995-1/input.bin"
+    ],
+    "started_utc": "2026-10-27T09:42:28.198761+00:00",
+    "timeout_seconds": 60,
+    "source_sha": "d96138532b656d767d1ef46f6db86e7effae485e",
+    "timed_out": false,
+    "consensus_authority": false,
+    "returncode": 0,
+    "wall_seconds": 0.06393066999999064,
+    "user_cpu_seconds": 0.047444,
+    "system_cpu_seconds": 0.001976,
+    "max_waited_descendant_rss_kib": 13720,
+    "rss_scope": "maximum reported for the waited child family; not total cgroup peak",
+    "finished_utc": "2026-10-27T09:42:28.262720+00:00"
+  },
+  "native_complete_one_execute": {
+    "schema": "pon-w1-local-relation-v1",
+    "operation": "execute",
+    "result": "complete_local_recomputation_passed",
+    "profile": "pon-complete-w1-relation-v1",
+    "statement_id": "412e233a4d2ca6e660dd50ff468e52476a69b78a8992f61f97da66b1590a728b",
+    "block_id": "cb35821c92fa659bcb645c964829f4d3d3c68d1295b703993155fe93b9621da5",
+    "journal_hex": "50574a31412e233a4d2ca6e660dd50ff468e52476a69b78a8992f61f97da66b1590a728bc00507dd229e4920ed0a7a9c2536e6839f4344ba992508f63e0525ab02850c9dc982eea0545c228d0bf48d6d06e623020b4031f2ba79da56cc6bdccde2c63496add78510fb5ef0f62188fef2d00be6336adef91cebee983e4a883e632c225200ae2801f16dea0004888313a6b283c13ec03c0ffa117cf0f01d6d8bb739976b19cb35821c92fa659bcb645c964829f4d3d3c68d1295b703993155fe93b9621da5654ec6ac33163baff4f3350cbac7653ff78cfbcb0e46edeaa2ba55380c909d37",
+    "elapsed_wall_ns": 443999,
+    "succinct_proof_generated": false,
+    "cryptographic_proof_verified": false,
+    "consensus_authority": false
+  },
+  "hashes": {
+    "input.bin": "4babd290b10f7a68be27c2adf3b97448bb7bef04dba8bcb97f914acf4ac69020",
+    "guest.raw.elf": "651d8efabd091811fbf11b78e80793a4acb02b3c2eec95260373c58636d774b5",
+    "guest.bin": "b8f32cd9c1b1edbb0cde04acf9aab146b7ff1aeeeaee0188e4d6e80d077b0c0a"
+  },
+  "native_controls_passed": 11,
+  "host_boundary_controls_passed": 6,
+  "backend_strict_clippy_process_passed": true,
+  "resource_scope": {
+    "prover_cpu_seconds": null,
+    "prover_peak_rss_bytes": null,
+    "old_waited_child_cpu_seconds": 0.017823,
+    "old_waited_child_rss_kib": 13792,
+    "explanation": "original wrapper RUSAGE_CHILDREN misses killed prover grandchildren; these small observations are not total prover CPU or peak memory. Original source had no process-group sampling.",
+    "host_memtotal_kib": 16373452,
+    "host_memtotal_is_proof_peak": false
+  },
+  "later_candidate_receipt_substituted": false,
+  "proof_completed": false,
+  "consensus_authority": false,
+  "pq128_qualified": false,
+  "public_ingress_qualified": false
+}

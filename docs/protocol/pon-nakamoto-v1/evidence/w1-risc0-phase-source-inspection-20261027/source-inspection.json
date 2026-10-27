@@ -1,0 +1,96 @@
+{
+  "schema": "pon-w1-proving-phase-source-inspection-v1",
+  "observed_at_utc": "2026-10-27T11:29:40.722804+00:00",
+  "method": "read-only source inspection; no new execution, proof, instrumentation or benchmark",
+  "risc0_version": "3.0.6",
+  "receipt_kind": "Composite",
+  "w1_algorithm_hash": "SHA-256",
+  "proof_hash": "Poseidon2",
+  "stage_timing_available": false,
+  "completed_proof_asserted": false,
+  "quantum_security_qualification": false,
+  "source_files": [
+    {
+      "repository": "risc0/risc0",
+      "revision": "1cc70cf05033a79ebc90f07c679cb4bd1cd301b9",
+      "path": "risc0/zkvm/src/host/server/prove/prover_impl.rs",
+      "bytes": 14000,
+      "sha256": "2b3e6e61cfaf07d78cb935d5db6a7c0053c3581cfdf1347705b39844e15209a5"
+    },
+    {
+      "repository": "risc0/risc0",
+      "revision": "1cc70cf05033a79ebc90f07c679cb4bd1cd301b9",
+      "path": "risc0/circuit/rv32im/src/prove/hal/mod.rs",
+      "bytes": 6948,
+      "sha256": "0774d48229e450417b03afd757c381c1fb292f11916786596e6a7bce175b4dbd"
+    },
+    {
+      "repository": "risc0/risc0",
+      "revision": "1cc70cf05033a79ebc90f07c679cb4bd1cd301b9",
+      "path": "risc0/circuit/rv32im/src/prove/hal/cpu.rs",
+      "bytes": 8114,
+      "sha256": "8cb7a4e7e538fbbc71e73b37e06fd03d7657d658df4e626add6a9eebeecce479"
+    },
+    {
+      "repository": "risc0/risc0",
+      "revision": "1cc70cf05033a79ebc90f07c679cb4bd1cd301b9",
+      "path": "risc0/circuit/rv32im/src/prove/witgen/mod.rs",
+      "bytes": 11937,
+      "sha256": "f4664cd5bccf0048512e3c9f448d34750d7f015ea0faea9f288ef9e4b4316749"
+    },
+    {
+      "repository": "risc0/risc0",
+      "revision": "1cc70cf05033a79ebc90f07c679cb4bd1cd301b9",
+      "path": "risc0/zkp/src/prove/prover.rs",
+      "bytes": 14828,
+      "sha256": "bf63f227fe515dfa8b1edce90b6475a33369fb44fe66c5784a1d70d5947c4368"
+    },
+    {
+      "repository": "risc0/RustCrypto-hashes",
+      "revision": "7fd6900c4f637bd15ee2642dfa77110f8f1ad065",
+      "path": "sha2/src/sha256.rs",
+      "bytes": 1310,
+      "sha256": "7d43a36399aae99ee008ee0853d6f00e0f8570afa6ba391c78aa39f01c8506c7"
+    },
+    {
+      "repository": "risc0/RustCrypto-hashes",
+      "revision": "7fd6900c4f637bd15ee2642dfa77110f8f1ad065",
+      "path": "sha2/src/sha256/risc0.rs",
+      "bytes": 2105,
+      "sha256": "50e2a7689ff203119a6d5f3f1bebf9919d12e9a443827984b459e1135f44f601"
+    },
+    {
+      "repository": "TrillionniumFoundation/Trillionnium-Chain",
+      "revision": "9e05ad5d237660fb0ea8b40dd5c29af4225551d3",
+      "path": "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/guest/src/main.rs",
+      "bytes": 725,
+      "sha256": "02567b1388b074138c2993bc5769692bff0d81ddc1207f2091df91dfc1d8f22e"
+    },
+    {
+      "repository": "TrillionniumFoundation/Trillionnium-Chain",
+      "revision": "9e05ad5d237660fb0ea8b40dd5c29af4225551d3",
+      "path": "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host/src/main.rs",
+      "bytes": 16035,
+      "sha256": "439368f345de547e2feb0aa540994107942a3282742309bc99d60db831519dc3"
+    },
+    {
+      "repository": "TrillionniumFoundation/Trillionnium-Chain",
+      "revision": "9e05ad5d237660fb0ea8b40dd5c29af4225551d3",
+      "path": "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/Cargo.toml",
+      "bytes": 625,
+      "sha256": "b669bd421a0b513231ddf347439a4d7be195289e7655fd7d89035a7500876962"
+    },
+    {
+      "repository": "TrillionniumFoundation/Trillionnium-Chain",
+      "revision": "9e05ad5d237660fb0ea8b40dd5c29af4225551d3",
+      "path": "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/Cargo.lock",
+      "bytes": 67902,
+      "sha256": "b3bb8518308ee9a175d878e5cafaab269be20f2bf990ec3fbb4d6e49bf110996"
+    }
+  ],
+  "limitations": [
+    "Source call order does not measure phase durations.",
+    "The source revision is pinned alongside official release-binary digests; this is not a new reproducible build of r0vm.",
+    "The current four-thread run is not restarted or reconfigured by this inspection."
+  ]
+}

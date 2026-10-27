@@ -121,3 +121,40 @@ actual execution, full native replay, proof attempts and independent proof
 verification. The original bounded local proof attempt timed out after 1,800
 seconds without a receipt. Neither that attempt nor the existing successful
 execution turns `LocalExecution` into a proof or enables Node admission.
+
+The [original two-thread hosted attempt](../evidence/w1-risc0-hosted-run-40482711995/README.md)
+separately exhausted 5,400 seconds without a retained receipt. Its complete
+artifact and failed process remain intact. Neither attempt supplies a completed
+proof-generation latency or an actual proof-verification measurement.
+
+## Proof economics and online latency are separate exits
+
+Under an explicitly idealized independent-ticket model, let p be the chance
+that a complete fresh W1 attempt meets the current target, C_W the fully charged
+cost per attempt, and C_P the additional completed certificate cost for a winner.
+Ignoring forks, preprocessing differences and failed certificate generation, the
+expected charged cost per winning certified candidate is `C_W/p + C_P`.
+The present timeout records do not provide a finite measured C_P.
+
+This equation does not make a slow proof suitable for fast block propagation.
+If certification begins after finding a winner, its wall latency remains on the
+path before other nodes can independently accept that candidate. More miners or
+a harder target cannot be assumed to reduce that latency. The single fixture's
+guest execution time is neither C_P nor the network's inter-block interval.
+Publishing an uncertified header early cannot grant it validated chainwork.
+
+Measure three separate distributions on an exact new backend: complete winner
+certification including failures; valid verification; and the last possible
+rejection of each allowed adversarial proof shape. A certificate may avoid
+native W1 replay yet still cost more verifier CPU or bytes than the current
+native relation. Its bounded parser and private checked result must enter the
+original global resource owner before it becomes an online admission path.
+No STARK, sumcheck, proof aggregation, larger block or parallel ordering design
+automatically clears these three obligations.
+
+Batching needs a complete statement for every constituent header, task, target,
+ordered trace and branch context. A proof of an aggregate final product cannot
+replace those bindings. Aggregating already validated history may help bootstrap,
+but that is a different experiment from reducing online hostile rejection cost.
+Proof randomness or alternate certificate encodings must not create additional
+winning tickets or additional cumulative-work credit for the same W1 statement.

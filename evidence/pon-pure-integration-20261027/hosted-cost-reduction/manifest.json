@@ -1,0 +1,42 @@
+{
+  "schema": "pon-pure-w1-hosted-cost-reduction-manifest-v1",
+  "observed_at": "2026-10-27T11:03:32.315850+00:00",
+  "reducer_head": "0651c5946366050264eb5b9b9e518bb62913dec6",
+  "campaign_head": "d96138532b656d767d1ef46f6db86e7effae485e",
+  "run_id": 40482711707,
+  "artifact_id": 12724159202,
+  "input": {
+    "path": "../ci-success/native-focused-d961/cost/stdout.jsonl.gz",
+    "uncompressed_bytes": 24377985,
+    "uncompressed_sha256": "f48e6d83edfa4d1c25f7112380875297447031ec5103b70dcc327706d9083a98"
+  },
+  "command": "python3 -B scripts/ci/summarize_pure_pon_cost_campaign.py <retained cost/stdout.jsonl.gz> --output <new fixed-cohorts.json> --csv <new fixed-cohorts.csv>",
+  "sources": {
+    "scripts/ci/summarize_pure_pon_cost_campaign.py": "a38bbb37d997eba07492289c4115b56e9a84f4d3366664f0dd4b4623469a441a",
+    "scripts/ci/check_pure_pon_cost_campaign.py": "7baebdcf3b2be864fa7479cfe0690e16472410b473bd46c7d630eb2bf6e34f9e"
+  },
+  "outputs": {
+    "fixed-cohorts.json": {
+      "bytes": 997831,
+      "sha256": "33d63574e4df431799e43457eaeeecd780802ab305fda97caf8e995f701b7bc3",
+      "stored_as": "fixed-cohorts.json.gz",
+      "stored_bytes": 83168,
+      "stored_sha256": "489cef3db924f305c4ede7d1f70a0b8468d555d213f6ef86abe9075a81c088fc",
+      "uncompressed_copy_retained": true
+    },
+    "fixed-cohorts.csv": {
+      "bytes": 350607,
+      "sha256": "9579d91655a908045aabedb270e49a1859a02e142f4bc3ddbb7db17414bcceaf",
+      "stored_as": "fixed-cohorts.csv.gz",
+      "stored_bytes": 70305,
+      "stored_sha256": "6ff14ebd5eacf65d3b4f4b7a69e36118cc9a5e2833348d97e92e83145e9a7cfc",
+      "uncompressed_copy_retained": true
+    },
+    "largest-horizon-all-strategies.json": {
+      "bytes": 3331,
+      "sha256": "2ff439d9597c3db14063c617f98b02920c5d6cec5eb26d700f4425e1546aeb21"
+    }
+  },
+  "new_workload_execution": false,
+  "qualification": false
+}
