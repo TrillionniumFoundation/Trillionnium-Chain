@@ -897,6 +897,18 @@ impl ServiceMutationCpuDomain {
     /// Begin on the actual owner thread, after separate task-purpose authority
     /// but before expensive Native work. No ledger authority is minted here.
     pub fn begin(&self) -> Result<ServiceMutationCpuOperation> {
+        self.begin_with_priority(false)
+    }
+    /// The existing pinned-peer History poller is not a paid Submit and can
+    /// be fed adversarial full W1 proofs by a compromised configured peer.
+    /// Do not let it start two concurrent replays or consume the last ordinary
+    /// public request start reserve. This is a LOCAL scheduling rule within
+    /// the one original CPU domain: no additional tokens, caller identity,
+    /// claim of fair WAN access, or change to W1 validity/Chainwork.
+    pub fn begin_untrusted_peer_sync(&self) -> Result<ServiceMutationCpuOperation> {
+        self.begin_with_priority(true)
+    }
+    fn begin_with_priority(&self, untrusted_peer_sync: bool) -> Result<ServiceMutationCpuOperation> {
         let stamp = ThreadCpuStamp::start();
         let mut budget = self
             .budget
@@ -904,6 +916,18 @@ impl ServiceMutationCpuDomain {
             .map_err(|_| "PUBLIC_MUTATION_CPU_UNAVAILABLE")?;
         if stamp.is_none() {
             budget.unavailable = true;
+        }
+        if untrusted_peer_sync {
+            // Preserve two original 100-ms quanta as available credit after
+            // this peer's own start reservation. A full W1 may still overshoot;
+            // actual CPU is charged and later operations are then refused.
+            budget.refill(Instant::now());
+            ensure(!budget.unavailable, "PUBLIC_MUTATION_CPU_UNAVAILABLE")?;
+            ensure(
+                budget.in_flight == 0
+                    && budget.credit_ns >= i128::from(3 * MUTATION_CPU_START_RESERVE_NS),
+                "PUBLIC_MUTATION_CPU_BUDGET",
+            )?;
         }
         budget.reserve(Instant::now())?;
         drop(budget);
@@ -1183,6 +1207,66 @@ mod request_owned_reserve_tests {
         budget.credit_ns = i128::from(credit);
         let now = budget.updated;
         (budget, now)
+    }
+
+    #[test]
+    fn background_peer_cpu_start_keeps_honest_original_slot() {
+        // The real service epoch has two workers and one 100ms reservation
+        // per started job. Pinned-peer traffic can never start both jobs,
+        // while an ordinary paid request may use the second original slot.
+        let domain = ServiceMutationCpuDomain::standalone();
+        let untrusted = domain.begin_untrusted_peer_sync().unwrap();
+        assert_eq!(domain.observe().unwrap().in_flight, 1);
+        // A cloned service handle on another thread represents a different
+        // peer/client callsite but cannot mint an independent resource lane.
+        let cloned_domain = domain.clone();
+        let second = thread::spawn(move || {
+            cloned_domain
+                .begin_untrusted_peer_sync()
+                .err()
+                .map(|e| e.to_string())
+        })
+        .join()
+        .unwrap();
+        assert_eq!(
+            second.as_deref(),
+            Some("PUBLIC_MUTATION_CPU_BUDGET")
+        );
+        // Two actual owner threads: a nested interval on one thread would
+        // double-count CPU and is not the production worker configuration.
+        let ordinary_domain = domain.clone();
+        let honest = thread::spawn(move || {
+            let operation = ordinary_domain.begin().unwrap();
+            operation.finish()
+        });
+        let honest_settlement = honest.join().unwrap();
+        let untrusted_settlement = untrusted.finish();
+        assert!(!honest_settlement.accounting_unavailable);
+        assert!(!untrusted_settlement.accounting_unavailable);
+        assert_eq!(domain.observe().unwrap().in_flight, 0);
+    }
+
+    #[test]
+    fn background_peer_must_leave_two_original_start_quanta_available() {
+        let domain = ServiceMutationCpuDomain::standalone();
+        // Deliberately supply *known* finite original CPU credit below the
+        // peer headroom threshold. This test never pretends the synthetic
+        // stored balance is physical kernel accounting or a valid CI receipt.
+        {
+            let mut original = domain.budget.lock().unwrap();
+            original.credit_ns = i128::from(2 * MUTATION_CPU_START_RESERVE_NS);
+            original.updated = Instant::now();
+            original.flow = None; // In-memory test perturbation, no false ledger.
+        }
+        let peer = domain.begin_untrusted_peer_sync();
+        assert_eq!(
+            peer.err().unwrap().to_string(),
+            "PUBLIC_MUTATION_CPU_BUDGET"
+        );
+        let paid = domain.begin().unwrap();
+        let result = paid.finish();
+        assert!(!result.accounting_unavailable);
+        assert_eq!(domain.observe().unwrap().in_flight, 0);
     }
 
     #[test]
