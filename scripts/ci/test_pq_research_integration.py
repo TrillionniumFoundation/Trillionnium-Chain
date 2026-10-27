@@ -25,6 +25,7 @@ REQUIRED = (
     "formal/pon-nakamoto-v1/pq_cell_bundle_atomic.py",
     "formal/pon-nakamoto-v1/pq_pql5_quorum.py",
     "formal/pon-nakamoto-v1/pq_pql6_equivocation.py",
+    "formal/pon-nakamoto-v1/pqg_native_verify.c",
     "formal/pon-nakamoto-v1/pq_import_projection_verify.c",
     "formal/pon-nakamoto-v1/pql3_native_verify.c",
     "formal/pon-nakamoto-v1/pqg_native_verify.c",
@@ -143,6 +144,39 @@ class CorpusGateTests(unittest.TestCase):
         p = self.root / "config/pon/pq-cross-branch-corpus-v1.json"
         p.write_text('{"schema":"a","schema":"b"}')
         with self.assertRaisesRegex(IntegrityError, "duplicate JSON"):
+            check(self.root)
+
+
+    def test_pqg_native_dual_signature_source_must_have_exact_blob_pin(self):
+        # Regression for the real PQL9 corpus's missing required PQG1 verifier SHA.
+        path = "formal/pon-nakamoto-v1/pqg_native_verify.c"
+        del self.manifest["pinned_blobs"][path]
+        self.save()
+        with self.assertRaisesRegex(IntegrityError, "incomplete source pins"):
+            check(self.root)
+
+    def test_new_unpinned_pq_implementations_fail_closed(self):
+        for name in (
+            "formal/pon-nakamoto-v1/pq_hidden_downgrade.py",
+            "formal/pon-nakamoto-v1/pq_hidden_downgrade.c",
+            "formal/pon-nakamoto-v1/pqg_hidden_downgrade.c",
+            "formal/pon-nakamoto-v1/pql99_hidden.py",
+            "trillionnium/crates/trnm-protocol/src/pq_hidden_downgrade.rs",
+        ):
+            with self.subTest(path=name):
+                path = self.root / name
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_bytes(b"untracked research-only implementation")
+                with self.assertRaisesRegex(IntegrityError, "unpinned PQ source"):
+                    check(self.root)
+                path.unlink()
+
+    def test_pq_source_directory_symlink_is_not_trusted(self):
+        source = self.root / "trillionnium/crates/trnm-crypto-primitives/src"
+        moved = source.with_name("source-before-swap")
+        source.rename(moved)
+        source.symlink_to(moved, target_is_directory=True)
+        with self.assertRaisesRegex(IntegrityError, "symlink"):
             check(self.root)
 
 
