@@ -745,7 +745,6 @@ fn isolated_asert_context_rejects_wrong_anchor_and_uses_real_w1_branch_history()
     );
 }
 
-
 /// Non-activated P1-C bridge: feed genuinely admitted W1 packet ancestry to the
 /// existing ASERT shadow reader. This neither installs a new DAA nor treats a
 /// hash-consistent packet as independently verified model/security evidence.
@@ -809,6 +808,11 @@ fn native_w1_forks_feed_branch_pinned_asert_shadow_without_changing_legacy_daa()
         shadow_target_from_ancestry(context, active, |id| node.packet(id)).unwrap();
     assert_eq!(shadow_main, anchor_target);
     assert_eq!(legacy_main, anchor_target);
+    let mut median_context = context;
+    median_context.parent_clock = ParentClock::Median11;
+    let median_main =
+        shadow_target_from_ancestry(median_context, active, |id| node.packet(id)).unwrap();
+    assert!(median_main < shadow_main);
 
     // An invalid research callback cannot replace a verified stored header:
     // the changed header timestamp changes the actual block identity.
@@ -818,6 +822,10 @@ fn native_w1_forks_feed_branch_pinned_asert_shadow_without_changing_legacy_daa()
         Ok(packet)
     });
     assert_eq!(altered.unwrap_err().to_string(), "ASERT_ANCESTRY_CONTEXT");
+    let mut fake_anchor = context;
+    fake_anchor.anchor_block = fork_at_16;
+    let substituted = shadow_target_from_ancestry(fake_anchor, active, |id| node.packet(id));
+    assert_eq!(substituted.unwrap_err().to_string(), "ASERT_ANCHOR_BINDING");
 
     let mut short_budget = context;
     short_budget.max_ancestor_reads = 2;
@@ -831,6 +839,10 @@ fn native_w1_forks_feed_branch_pinned_asert_shadow_without_changing_legacy_daa()
     assert_eq!(
         shadow_target_from_ancestry(context, active, |id| node.packet(id)).unwrap(),
         shadow_main
+    );
+    assert_eq!(
+        shadow_target_from_ancestry(median_context, active, |id| node.packet(id)).unwrap(),
+        median_main
     );
 
     // Fork from an actually retained native height-16 ancestor. All competing
@@ -849,9 +861,7 @@ fn native_w1_forks_feed_branch_pinned_asert_shadow_without_changing_legacy_daa()
             )
             .unwrap();
         verify_work(&packet);
-        branch = node
-            .admit(&packet, GENESIS_TIME + 10 * height)
-            .unwrap();
+        branch = node.admit(&packet, GENESIS_TIME + 10 * height).unwrap();
     }
     assert_eq!(node.activate(branch).unwrap(), branch);
     assert_eq!(node.read_active().unwrap().0, branch);
