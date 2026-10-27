@@ -1,0 +1,37 @@
+{
+  "all_archived_raw_bytes_read_back_verified": true,
+  "archive": "clippy-attempt-03.tar.gz",
+  "archive_bytes": 160112,
+  "archive_sha256": "7cff554eddf2968c95cff23af88349cbb1b9096d418f9af610ddc49c98fa5db4",
+  "executed_binaries_retained_outside_repository": [],
+  "failed_observations_reclassified": false,
+  "raw_files": [
+    {
+      "bytes": 341,
+      "path": "clippy.log",
+      "sha256": "c6f02a67e7524281cf39b24e5e4bab5a03e4d094c51309cb2da440dfba6ddb21"
+    },
+    {
+      "bytes": 985,
+      "path": "formatter-invocation-note.json",
+      "sha256": "23952c6aa3d8976570dcc1a7b7b70c7d77e484200e053022108cd07e25138582"
+    },
+    {
+      "bytes": 1687,
+      "path": "receipt.json",
+      "sha256": "4f69d61b985bc714facb496ea08654dbebb1a16f002c079c645a57ec064fd67d"
+    },
+    {
+      "bytes": 220796,
+      "path": "source-after.json",
+      "sha256": "a60f1e9bad2abfb699ceecc8c658d3af01995639af79b28c27665918e09ca2b7"
+    },
+    {
+      "bytes": 220796,
+      "path": "source-before.json",
+      "sha256": "a60f1e9bad2abfb699ceecc8c658d3af01995639af79b28c27665918e09ca2b7"
+    }
+  ],
+  "schema": "history-v6-completed-observation-archive-v1",
+  "source_directory": "/workspace/scratch/301262829a43/pon-pq-impl/history-v6-evidence/clippy-attempt-03"
+}

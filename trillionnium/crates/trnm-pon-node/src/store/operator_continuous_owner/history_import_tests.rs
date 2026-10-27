@@ -6,7 +6,7 @@ use crate::operator_continuous_recipient as recipient;
 use serde_json::{json, Value};
 use std::time::Instant;
 #[path = "history_import_fixture.rs"]
-mod fixture;
+pub(in crate::store) mod fixture;
 use fixture::{Fixture, ViewInput};
 
 fn first(f: &Fixture) -> ViewInput {

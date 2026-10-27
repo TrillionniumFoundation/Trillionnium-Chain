@@ -10,6 +10,7 @@ pub mod growth_reference;
 mod historical_commitment;
 #[cfg(test)]
 mod historical_commitment_tests;
+pub mod history_effect_v6;
 mod history_page;
 pub mod mempool;
 pub(crate) mod native_authenticated;
@@ -681,6 +682,7 @@ pub struct Node {
     owner_policy: Option<OwnerPolicy>,
     mining_owner: Option<operator_mining_owner::MiningOwner>,
     continuous_owner: Option<operator_continuous_owner::ContinuousOwner>,
+    history_effect_owner: Option<history_effect_v6::Owner>,
     // One volatile budget domain per actual open Node owner (continuous uses its
     // already persistent owner CPU). A listener or local work caller may bind
     // exactly once; a different domain cannot replace or reset that binding.
@@ -696,6 +698,7 @@ enum StateBackend {
     Legacy,
     AuthenticatedV1,
     PermanentAccountGrowthV2,
+    HistoryEffectV6,
 }
 impl StateBackend {
     fn ddl(self) -> String {
@@ -703,6 +706,7 @@ impl StateBackend {
             Self::Legacy => ddl(),
             Self::AuthenticatedV1 => format!("{}{}", ddl(), native_authenticated::DDL),
             Self::PermanentAccountGrowthV2 => format!("{}{}", ddl(), growth::DDL),
+            Self::HistoryEffectV6 => format!("{}{}", ddl(), history_effect_v6::DDL),
         }
     }
     fn selected_schema_id(self, settings: &Settings) -> Hash {
@@ -720,6 +724,7 @@ impl StateBackend {
             Self::Legacy => b"native-branch-schema-v2",
             Self::AuthenticatedV1 => b"native-authenticated-branch-schema-v1",
             Self::PermanentAccountGrowthV2 => b"native-permanent-account-growth-schema-v2",
+            Self::HistoryEffectV6 => b"native-history-effect-schema-v6",
         };
         hash(domain, &[self.ddl().as_bytes()])
     }
@@ -728,6 +733,7 @@ struct NativeOwners {
     policy: Option<OwnerPolicy>,
     mining: Option<operator_mining_owner::MiningOwner>,
     continuous: Option<operator_continuous_owner::ContinuousOwner>,
+    history_effect: Option<history_effect_v6::Owner>,
 }
 struct OwnerPolicy {
     pool_policies: Vec<std::sync::Arc<crate::operator_task_policy::pool::VerifiedPoolPolicy>>,
@@ -946,6 +952,7 @@ impl Node {
                 policy: None,
                 mining: None,
                 continuous: None,
+                history_effect: None,
             },
             StateBackend::AuthenticatedV1,
             false,
@@ -1080,6 +1087,7 @@ impl Node {
                 policy: owner_policy,
                 mining: mining_owner,
                 continuous: continuous_owner,
+                history_effect: None,
             },
             StateBackend::Legacy,
             false,
@@ -1114,6 +1122,7 @@ impl Node {
             policy: owner_policy,
             mining: mining_owner,
             continuous: continuous_owner,
+            history_effect: history_effect_owner,
         } = owners;
         if growth_profile_v2::enabled(&settings.app) {
             ensure(
@@ -1121,7 +1130,10 @@ impl Node {
                 "GROWTH_REFERENCE_BACKEND",
             )?;
             ensure(
-                owner_policy.is_none() && mining_owner.is_none() && continuous_owner.is_none(),
+                owner_policy.is_none()
+                    && mining_owner.is_none()
+                    && continuous_owner.is_none()
+                    && history_effect_owner.is_none(),
                 "GROWTH_REFERENCE_OWNER",
             )?;
         }
@@ -1130,6 +1142,7 @@ impl Node {
             usize::from(owner_policy.is_some())
                 + usize::from(mining_owner.is_some())
                 + usize::from(continuous_owner.is_some())
+                + usize::from(history_effect_owner.is_some())
                 <= 1,
             "OWNER_MODE_AMBIGUOUS",
         )?;
@@ -1137,7 +1150,15 @@ impl Node {
             .as_ref()
             .map(|p| p.required_marker.as_slice())
             .or_else(|| mining_owner.as_ref().map(|p| p.marker.as_slice()))
-            .or_else(|| continuous_owner.as_ref().map(|p| p.marker.as_slice()));
+            .or_else(|| continuous_owner.as_ref().map(|p| p.marker.as_slice()))
+            .or_else(|| history_effect_owner.as_ref().map(|p| p.marker.as_slice()));
+        ensure(
+            (state_backend == StateBackend::HistoryEffectV6) == history_effect_owner.is_some(),
+            "HISTORY_V6_OWNER_REQUIRED",
+        )?;
+        if let Some(owner) = &history_effect_owner {
+            owner.checkpoint()?;
+        }
         ensure([1, 2, 4, 8].contains(&workers), "WORKERS")?;
         settings.replay_checkpoint_tile_material()?;
         if !path.exists() {
@@ -1264,6 +1285,34 @@ impl Node {
             !growth_observation_only || initialized,
             "GROWTH_PACKET_STATUS_EXISTING_STORE_REQUIRED",
         )?;
+        if state_backend == StateBackend::HistoryEffectV6 {
+            // Fresh V6 stores deliberately require a private database file.
+            // SQLite's default create mode otherwise follows the ambient
+            // umask (0644 was observed). Never relax/chmod an existing file or
+            // silently migrate an older namespace through this constructor.
+            let protected = OpenOptions::new()
+                .read(true)
+                .write(true)
+                .create(true)
+                .truncate(false)
+                .mode(0o600)
+                .custom_flags(libc::O_NOFOLLOW | libc::O_CLOEXEC)
+                .open(&dbpath)?;
+            let metadata = protected.metadata()?;
+            ensure(
+                metadata.is_file()
+                    && metadata.nlink() == 1
+                    && metadata.uid() == rustix::process::geteuid().as_raw()
+                    && metadata.mode() & 0o077 == 0,
+                "HISTORY_V6_NATIVE_FILE",
+            )?;
+            let actual = (metadata.dev(), metadata.ino());
+            ensure(
+                prior_inode.is_none_or(|previous| previous == actual),
+                "NAMESPACE_CHANGED",
+            )?;
+            prior_inode = Some(actual);
+        }
         let mut db = if growth_observation_only {
             Connection::open_with_flags(
                 &dbpath,
@@ -1376,6 +1425,7 @@ impl Node {
             owner_policy,
             mining_owner,
             continuous_owner,
+            history_effect_owner,
             public_service_cpu: None,
             public_service_epoch_listeners: 0,
             public_service_epoch_unknown: false,
@@ -1998,6 +2048,9 @@ impl Node {
         ))
     }
     fn namespace(&self) -> Result<()> {
+        if let Some(owner) = &self.history_effect_owner {
+            owner.checkpoint()?;
+        }
         if let Some(snapshot) = &self.growth_observer_snapshot {
             snapshot.check()?;
         }
@@ -4001,6 +4054,7 @@ impl Node {
             progress(ExecutionProgress::BeforeDurableCommit)
         })?;
         progress(ExecutionProgress::BeforeDurableCommit)?;
+        self.history_effect_admission_marker(&tx, &packet)?;
         tx.commit()?;
         // No cancellation fence after commit: the native durable fact stays true.
         Ok(id)
@@ -4587,6 +4641,7 @@ impl Node {
         self.continuous_scope_checkpoint()?;
         self.mining_scope_checkpoint()?;
         progress()?;
+        self.history_effect_activation_marker(&tx)?;
         tx.commit()?;
         // No cancellation after COMMIT: the durable result is already factual.
         Ok(result)
@@ -4659,6 +4714,7 @@ impl Node {
         }
         self.continuous_activation_gate(target)?;
         self.mining_activation_gate(target)?;
+        self.history_effect_activation_gate(target)?;
         self.namespace()?;
         self.resume_intent_with_progress(&mut hook, progress)?;
         let (old, g) = self.active()?;
@@ -5035,6 +5091,12 @@ impl Node {
         Ok(target)
     }
     pub fn recover(&mut self) -> Result<Hash> {
+        if let Some(owner) = &self.history_effect_owner {
+            owner.checkpoint()?;
+            // V6 open only verifies the externally authorized actual frontier.
+            // It NEVER resumes a reorg or activates a best stored block here.
+            return Ok(self.active()?.0);
+        }
         if self.state_backend == StateBackend::PermanentAccountGrowthV2 {
             return self.growth_recover();
         }

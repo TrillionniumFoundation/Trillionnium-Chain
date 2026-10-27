@@ -20,7 +20,7 @@ use trnm_mvcc_fee::{
     pon_executor::Config,
 };
 
-pub(super) const CLOCK: u64 = 1_800_010_000;
+pub(in crate::store) const CLOCK: u64 = 1_800_010_000;
 const BASE: &str = "081c04e893850a42b539d98d6ccfa659496e99ee";
 fn sha(raw: &[u8]) -> String {
     crate::operator_task_policy::digest_bytes(raw)
@@ -51,7 +51,7 @@ fn canonical<T: serde::Serialize>(value: &T) -> Vec<u8> {
     actors::canonical(value).unwrap()
 }
 
-pub(super) struct Fixture {
+pub(in crate::store) struct Fixture {
     pub dir: tempfile::TempDir,
     pub settings: Settings,
     pub packet: Packet,
@@ -67,7 +67,7 @@ pub(super) struct Fixture {
     issued: u64,
     expires: u64,
 }
-pub(super) struct ViewInput {
+pub(in crate::store) struct ViewInput {
     pub inputs: Option<policy::Inputs>,
     pub view_digest: String,
     pub validation: String,
@@ -489,6 +489,17 @@ impl Fixture {
     pub fn store(&self) -> PathBuf {
         self.dir.path().join("receiver")
     }
+    pub(in crate::store) fn material_inputs(&self) -> Vec<MaterialInput> {
+        self.material_rows
+            .iter()
+            .map(|(role, path, bytes, digest)| MaterialInput {
+                role: role.clone(),
+                path: path.clone(),
+                bytes: *bytes,
+                sha256: digest.clone(),
+            })
+            .collect()
+    }
     pub fn view(
         &self,
         sequence: u64,
@@ -666,16 +677,7 @@ impl Fixture {
                 journal_path: self.dir.path().join("journal"),
                 expected_uid: rustix::process::geteuid().as_raw(),
                 expected_journal: head,
-                materials: self
-                    .material_rows
-                    .iter()
-                    .map(|(role, path, bytes, h)| MaterialInput {
-                        role: role.clone(),
-                        path: path.clone(),
-                        bytes: *bytes,
-                        sha256: h.clone(),
-                    })
-                    .collect(),
+                materials: self.material_inputs(),
                 lease_transition: None,
                 known_unclean_restart: None,
             }),

@@ -255,4 +255,4 @@ impl Node {
 
 #[cfg(test)]
 #[path = "history_import_tests.rs"]
-mod tests;
+pub(in crate::store) mod tests;

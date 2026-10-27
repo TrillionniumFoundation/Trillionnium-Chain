@@ -4026,6 +4026,55 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-pon-node/src/store/history_effect_v6.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/store/history_effect_v6.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/store/history_effect_v6/journal.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/store/history_effect_v6/journal.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/store/history_effect_v6/policy.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/store/history_effect_v6/policy.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/store/history_effect_v6/recovery.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/store/history_effect_v6/recovery.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/store/history_effect_v6/storage.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/store/history_effect_v6/storage.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/store/history_effect_v6/tests.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/store/history_effect_v6/tests.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/store/history_effect_v6/tests/process.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/store/history_effect_v6/tests/process.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-pon-node/src/store/history_page.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),

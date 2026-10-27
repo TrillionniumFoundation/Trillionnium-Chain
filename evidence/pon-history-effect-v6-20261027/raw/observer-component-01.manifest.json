@@ -1,0 +1,37 @@
+{
+  "all_archived_raw_bytes_read_back_verified": true,
+  "archive": "observer-component-01.tar.gz",
+  "archive_bytes": 6695,
+  "archive_sha256": "8b8bd5c4677e3a703fd619e6615fcf5e9cba0cecbe91dd4d4fecdda0a7b55254",
+  "executed_binaries_retained_outside_repository": [],
+  "failed_observations_reclassified": false,
+  "raw_files": [
+    {
+      "bytes": 3480,
+      "path": "actual-owned-observer.log",
+      "sha256": "e86b6702ff8680487db9b8b244bfd548d5ab24314891ae099f0112b28da53ada"
+    },
+    {
+      "bytes": 14728,
+      "path": "history_effect_v6_process_guard.py",
+      "sha256": "0777028ff1163f7e0ee39e5f681bdb89cbb1b2f6515e05cc61ed2e5a5d160ae4"
+    },
+    {
+      "bytes": 279,
+      "path": "result.json",
+      "sha256": "8b09bd4531b5df12731f7b2bdca70748f5fbf2dcc5108dbc3c5fa3f2bb29e10c"
+    },
+    {
+      "bytes": 437,
+      "path": "source-recorded-after-observation.json",
+      "sha256": "22c466737b090cb1d5e5d2dc7853b1c26101c99695623179cdd23fea0e4cfedb"
+    },
+    {
+      "bytes": 4590,
+      "path": "test_history_effect_v6_guard.py",
+      "sha256": "6cf5946cc79a8c8615ddb334104bcd34f0b64d394698b0440f147021b866c038"
+    }
+  ],
+  "schema": "history-v6-completed-observation-archive-v1",
+  "source_directory": "/workspace/scratch/301262829a43/pon-pq-impl/history-v6-evidence/observer-component-01"
+}

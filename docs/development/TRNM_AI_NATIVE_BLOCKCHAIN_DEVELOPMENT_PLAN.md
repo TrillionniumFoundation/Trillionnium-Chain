@@ -3847,3 +3847,71 @@ requiring independent conservative closed-process cost evidence. It must actuall
 recover the validation and activation-commit windows; retaining V5 HOLD alone
 does not satisfy that work. V5 signed domains, stored events and production gates
 are not to be reinterpreted or relaxed.
+
+## 2026-10-27: History V6 prepaid effect recovery implementation in progress
+
+The independent `restricted-history-effect-v6` research namespace starts from
+published V5 `1116ae390e4ed408ab0899e13aec5d1f90f2192c`. It separates signed owner
+frontier from execution parent, persists the complete original allowance before
+Native work, inserts exact effect markers inside the original SQLite transaction,
+and preserves unknown owner/worker CPU splits. Recovery requires independently
+signed latest-anchor and actual closed-process evidence whose conservative
+reported CPU bound fits that specific original operation's allowance. It creates
+no Node effect or CPU credit; later startup and operations need fresh signatures.
+The original 25-package graph, Cargo.lock, V5 namespace and production gates stay
+intact. The [V6 protocol](../protocol/pon-nakamoto-v1/details/HISTORY_EFFECT_RECOVERY_V6.md)
+defines its finite local scope and remaining unqualified cut points.
+
+The first actual build failed with five compiler errors and executed zero tests.
+After those repairs, attempt02 compiled on source-bound Rust 1.95 and ran two
+passing native controls, two failing process controls and one ignored child
+helper. Actual two-worker cancellation/retry/paid close/cold reopen and signed
+authority/Host/worker/nonce fences passed. Both guardians actually SIGKILLed and
+wait4-reaped their child: reported whole-process upper bounds were 1,061,382,000 ns
+for live-worker validation and 351,766,000 ns for activation-COMMIT-before-
+settlement, within their original 4,000,000,000 ns allowance. Both subsequent new
+native processes refused SQLite mode 0644 under the required 0600 recovery gate.
+Neither process recovery is accepted by that result. The unique attempt02 binary
+SHA256 is `f20c976eeb9ff94cb758bc6eeafe1ee1c12480b05c8d57e5a1d0c0f6c14adcb9`;
+its exact source and failed process logs remain immutable.
+
+The subsequent source repair creates only fresh V6 databases at 0600 and keeps strict
+recovery checks. It also preserves actual Native/CPU results across a late
+journal-lock failure, adds exact-operation cancellation, and requires matching
+journal/SQL validation facts for every stored non-genesis block, cached reuse and
+activation. New actual negative controls target a bad product with retained trace
+in a deliberately corrupted cache and a late journal mutex fault after actual
+COMMIT. Those are final-source negative controls, not a claim that an additional
+old-version causal RED was executed.
+
+Attempt03 compiled with source and binary bytes stable and ran **four passing
+controls, two failing process controls and one ignored child helper**. The cache
+and late-lock negative controls passed, alongside actual two-worker cancellation
+and the authority fences. The activation-COMMIT crash was actually killed and
+reaped with a 574,086,000 ns reported process upper bound. Its fresh process
+reconciled the old unknown operation, cold-started at zero credit, performed the
+next real validation/activation and paid close, but final cold journal readback
+failed with EAGAIN: two fixture callback clones still retained the original
+journal flock. The worker-active observer encountered a disappearing enumerated
+`/proc` row and correctly refused closure; cleanup still killed and waited for
+its owned child. Neither control is accepted. The immutable attempt03 binary
+SHA256 is `e9955faadaa29cdaa13fad6877974a481fe438ffb66ded50d1fe0a6704acf137`.
+
+The next minimal fixture change scopes the callback clones to their live calls.
+The observer now actually SIGSTOPs its pidfd-pinned direct-owned thread-group
+leader, verifies the stopped state and requires two equal complete parent graphs
+within four total observations before the original SIGKILL/wait4. Two small
+observer-component runs each executed three passing Python owned-process controls;
+the second recorded identical source before/after. Missing rows and denied reads
+remain UNKNOWN. Those component results are not native History acceptance. The
+raw closure and its parser now explicitly restrict descendant accounting to the
+source-bound, non-subprocess native fixture; current parent graphs do not prove
+arbitrary historical orphan/adoption closure. The next six native controls remain
+pending. Strict M01/Node all-target, all-feature Clippy subsequently passed on
+stable source with warnings denied, the original locked 25-package graph and
+single-job metadata compilation. Its two earlier failed passes (three library
+lints, then two fixture lints) are retained; no lint suppression or gate reduction
+was used. Raw attempts, fixtures, source snapshots and byte-verified archives are
+retained in [the increment evidence](../../evidence/pon-history-effect-v6-20261027/README.md).
+**Whole History P0 remains OPEN**, including separately authorized bounded reorg
+continuation and unqualified journal-publication and crash cut points.

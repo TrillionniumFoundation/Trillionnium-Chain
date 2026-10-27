@@ -40,6 +40,8 @@ pub use store::evaluation_round_observation::{
 };
 pub use store::growth::{GrowthObservation, GrowthPacket, GrowthProgress, GrowthWorkingSnapshot};
 pub use store::growth_reference::GrowthReferenceObservation;
+/// Explicit protected research owner; no general Node or production activation.
+pub use store::history_effect_v6;
 pub use store::mempool::{
     PoolBatch, PoolGcSummary, PoolGroupStatus, PoolLimits, PoolReceipt, PoolState, PoolStatus,
     LOCAL_POOL_PROFILE,
