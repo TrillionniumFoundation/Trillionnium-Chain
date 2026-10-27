@@ -334,5 +334,42 @@ class ShadowJournalTests(unittest.TestCase):
             journal.append(first, packet)
             self.assertEqual(journal.audit(), 1)
 
+    def test_live_schema_injection_refuses_mutation_without_partial_write(self):
+        # Existing owner connection is already open. An outside writer installs
+        # a trigger that would delete header history after INSERT; the owner
+        # must refuse the schema before dispatching any original write.
+        with ShadowJournal(self.path, CTX, GEN) as journal:
+            first, packet = candidate(GEN, 1)
+            with sqlite3.connect(self.path) as raw:
+                raw.execute('CREATE TRIGGER hostile_shadow_after_insert '
+                            'AFTER INSERT ON daa_shadow_headers_v1 BEGIN '
+                            'DELETE FROM daa_shadow_headers_v1; END')
+            with self.assertRaisesRegex(JournalError, 'DATABASE_SCHEMA_DRIFT'):
+                journal.append(first, packet)
+            with self.assertRaisesRegex(JournalError, 'DATABASE_SCHEMA_DRIFT'):
+                journal.activate(GEN, GEN)
+            with self.assertRaisesRegex(JournalError, 'DATABASE_SCHEMA_DRIFT'):
+                journal.audit()
+            self.assertFalse(journal.db.in_transaction)
+            with sqlite3.connect(self.path) as raw:
+                self.assertEqual(raw.execute('SELECT COUNT(*) FROM daa_shadow_headers_v1').fetchone()[0], 0)
+                self.assertEqual(raw.execute("SELECT value FROM daa_shadow_meta_v1 WHERE key='active_tip'").fetchone()[0], GEN)
+                raw.execute('DROP TRIGGER hostile_shadow_after_insert')
+            self.assertEqual(journal.audit(), 0)
+            journal.append(first, packet)
+            self.assertEqual(journal.audit(), 1)
+
+    def test_cold_open_rejects_foreign_schema_trigger(self):
+        with ShadowJournal(self.path, CTX, GEN):
+            pass
+        with sqlite3.connect(self.path) as raw:
+            raw.execute('CREATE VIEW hostile_extra AS SELECT block_id FROM daa_shadow_headers_v1')
+        with self.assertRaisesRegex(JournalError, 'DATABASE_SCHEMA_DRIFT'):
+            ShadowJournal(self.path, CTX, GEN)
+        with sqlite3.connect(self.path) as raw:
+            raw.execute('DROP VIEW hostile_extra')
+        with ShadowJournal(self.path, CTX, GEN) as journal:
+            self.assertEqual(journal.audit(), 0)
+
 if __name__ == '__main__':
     unittest.main()
