@@ -92,38 +92,7 @@ class FourFromZeroTicketRegression(unittest.TestCase):
                 precheck_ns=time.process_time_ns()-started
                 with patch.object(W,'evaluate',wraps=W.evaluate) as replay:
                     started=time.process_time_ns()
-                    with self.assertRaisesRegex(ValueError,'^TRANSCRIPT
-                        W.verify(challenge,task,target,proof)
-                    receiver_ns=time.process_time_ns()-started
-                self.assertEqual(replay.call_count,1)
-                self.assertGreaterEqual(precheck_ns,0)
-                self.assertGreaterEqual(receiver_ns,0)
-                self.assertEqual(proof[-32:],trace)
-                observations.append({
-                    'nonce':nonce,'trace':trace.hex(),'ticket':ticket.hex(),
-                    'proof_sha256':__import__('hashlib').sha256(proof).hexdigest(),
-                    'precheck_cpu_ns':precheck_ns,'receiver_oracle_cpu_ns':receiver_ns,
-                    'replay_calls':replay.call_count,'outcome':'TRANSCRIPT',
-                    'verified_work':False,
-                })
-            report={
-                'schema':'trnm-four-from-zero-python-oracle-p0-v1',
-                'challenge':challenge.hex(),'target':target.hex(),'task':task.hex(),
-                'proof_generation_used':False,'cases':observations,
-                'native_node_state_verified':False,'host_cpu_owner_verified':False,
-                'production_activation':False,
-            }
-            print(__import__('json').dumps(report,sort_keys=True))
-            # New, exclusive report path; never overwrite earlier measurements.
-            path=__import__('os').environ.get('TRNM_W1_FOUR_PY_REPORT')
-            if path:
-                with open(path,'x',encoding='utf-8') as stream:
-                    __import__('json').dump(report,stream,indent=2,sort_keys=True)
-                    stream.write('\n')
-        # This oracle-only test grants no Node, chainwork, CPU-owner or WAN acceptance.
-
-if __name__=='__main__':unittest.main(verbosity=2)
-):
+                    with self.assertRaisesRegex(ValueError,'^TRANSCRIPT$'):
                         W.verify(challenge,task,target,proof)
                     receiver_ns=time.process_time_ns()-started
                 self.assertEqual(replay.call_count,1)
