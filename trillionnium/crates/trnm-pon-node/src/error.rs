@@ -114,6 +114,7 @@ error_codes! {
     OwnerPublicServiceCpuDomain => ("OWNER_PUBLIC_SERVICE_CPU_DOMAIN", PolicyRefusal),
     OwnerPublicServiceDomainUnbound => ("OWNER_PUBLIC_SERVICE_DOMAIN_UNBOUND", DependencyUnavailable),
     OwnerPublicServiceUncleanEpoch => ("OWNER_PUBLIC_SERVICE_UNCLEAN_EPOCH", DependencyUnavailable),
+    OwnerContinuousHistoryDurableRequired => ("OWNER_CONTINUOUS_HISTORY_DURABLE_REQUIRED", DependencyUnavailable),
     OwnerPublicServiceEpochCorrupt => ("OWNER_PUBLIC_SERVICE_EPOCH_CORRUPT", LocalStructure),
     PublicListenerDomainCapacity => ("PUBLIC_LISTENER_DOMAIN_CAPACITY", Capacity),
     PublicHostProcessCapacity => ("PUBLIC_HOST_PROCESS_CAPACITY", Capacity),
@@ -232,6 +233,7 @@ impl Error {
                         | ErrorCode::OwnerPublicServiceCpuDomain
                         | ErrorCode::OwnerPublicServiceDomainUnbound
                         | ErrorCode::OwnerPublicServiceUncleanEpoch
+                        | ErrorCode::OwnerContinuousHistoryDurableRequired
                 )
             )
     }
