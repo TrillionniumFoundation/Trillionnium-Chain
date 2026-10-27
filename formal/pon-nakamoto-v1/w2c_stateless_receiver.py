@@ -99,14 +99,14 @@ class StatelessReceiverAdmission:
                 return 'CONTEXT'
             if grant.expires_ms - grant.issued_ms != self.lifetime_ms:
                 return 'LIFETIME_POLICY'
-            # Reject even an authentic previously signed cheaper grant after
-            # the operator raises the policy. Never rehash it against its
-            # attacker-supplied lower threshold.
-            if grant.bits != self.required_bits:
-                return 'REQUIRED_BITS'
             if not hmac.compare_digest(
                     hmac.new(self.secret, payload, hashlib.sha256).digest(), mac):
                 return 'GRANT_MAC'
+            # Reject authentic old-policy grants after verifying the MAC, so
+            # mutated unsigned difficulty remains a tamper error rather than
+            # masquerading as a legitimate policy downgrade.
+            if grant.bits != self.required_bits:
+                return 'REQUIRED_BITS'
             if not grant.issued_ms <= now_ms < grant.expires_ms:
                 return 'EXPIRED_OR_FUTURE'
             if not qualifies(ticket(grant, nonce), grant.bits):
