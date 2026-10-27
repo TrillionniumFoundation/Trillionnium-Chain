@@ -37,6 +37,42 @@ def errors(value, reference=None):
 
 
 class OriginalHostControls(unittest.TestCase):
+    @staticmethod
+    def pristine_properties():
+        return {'Id': observation.UNIT, 'LoadState': 'loaded',
+                'ActiveState': 'inactive', 'SubState': 'dead', 'FragmentPath': '',
+                'SourcePath': '', 'DropInPaths': '', 'ControlGroup': '',
+                'Transient': 'no', 'Job': ''}
+
+    def test_inactive_implicit_parent_is_not_a_resource_owner(self):
+        for state in ('loaded', 'not-found'):
+            for job in ('', '0'):
+                values = self.pristine_properties()
+                values.update(LoadState=state, Job=job)
+                raw = ''.join(f'{key}={value}\n' for key, value in values.items())
+                self.assertEqual(host.validate_unprovisioned_parent(raw), values)
+
+    def test_existing_parent_configuration_and_activity_are_refused(self):
+        for key, value in (('Id', 'foreign.slice'), ('LoadState', 'masked'),
+                           ('ActiveState', 'active'), ('SubState', 'running'),
+                           ('FragmentPath', '/etc/systemd/system/owned.slice'),
+                           ('SourcePath', '/etc/init.d/owned'), ('DropInPaths', '/owned.conf'),
+                           ('ControlGroup', '/trnmponpublic.slice'),
+                           ('Transient', 'yes'), ('Job', '42')):
+            values = self.pristine_properties()
+            values[key] = value
+            raw = ''.join(f'{name}={content}\n' for name, content in values.items())
+            with self.subTest(key=key), self.assertRaises(ValueError):
+                host.validate_unprovisioned_parent(raw)
+
+    def test_parent_property_output_must_be_complete_and_unambiguous(self):
+        raw = ''.join(f'{key}={value}\n' for key, value in self.pristine_properties().items())
+        for bad in ('', raw + 'Id=' + observation.UNIT + '\n', raw + 'Unknown=\n',
+                    raw.replace('Job=\n', ''), raw + '\x00', raw + '\n',
+                    raw + ('x' * 65536)):
+            with self.subTest(length=len(bad)), self.assertRaises(ValueError):
+                host.validate_unprovisioned_parent(bad)
+
     def test_original_unit_bytes_and_finite_limits(self):
         raw = (host.ROOT / 'config/systemd/trnmponpublic.slice').read_bytes()
         self.assertEqual(hashlib.sha256(raw).hexdigest(), observation.UNIT_SHA256)

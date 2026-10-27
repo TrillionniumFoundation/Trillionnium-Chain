@@ -3827,3 +3827,12 @@ the three changed workflows' actionlint checks, all twenty source-blob guards
 and the exact twenty-five-package locked Cargo graph also passed. Source digests
 before and after the native tests and Clippy are retained. These checks do not
 grant production, model-efficacy, independent-security or release acceptance.
+
+### Reconstructed Host-only follow-up, 2026-10-27
+
+After a temporary-workspace loss, the narrow inactive implicit-slice repair was
+reconstructed over the unchanged `ac469237` candidate. Its [evidence](../../evidence/pon-reconstructed-host-fix-20261027/README.md)
+retains the source boundary, fresh Python controls and missing hosted-run gate.
+No native owner, work relation, resource ceiling or activation policy changes.
+The previous local commit identity and its lost records are not reconstructed
+as an allegedly identical successful publication.

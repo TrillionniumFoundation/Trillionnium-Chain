@@ -21,6 +21,10 @@ from public_host_ci_observation import (PARENT, RUNTIME_UNIT, UNIT, UNIT_SHA256,
 
 
 ROOT = Path(__file__).resolve().parents[2]
+PARENT_PROPERTIES = (
+    'Id', 'LoadState', 'ActiveState', 'SubState', 'FragmentPath', 'SourcePath',
+    'DropInPaths', 'ControlGroup', 'Transient', 'Job',
+)
 # Explicit non-secret build/source inputs only. Do not copy or inspect all env.
 ENVIRONMENT = (
     'PATH', 'CARGO_HOME', 'CARGO_TARGET_DIR', 'CARGO_BUILD_JOBS', 'CARGO_INCREMENTAL',
@@ -36,6 +40,27 @@ ENVIRONMENT = (
 def require(condition, message):
     if not condition:
         raise ValueError(message)
+
+
+def validate_unprovisioned_parent(raw: str) -> dict[str, str]:
+    """Distinguish systemd's inactive implicit slice from a provisioned owner."""
+    require(0 < len(raw) <= 65536 and '\x00' not in raw,
+            'PARENT_PROPERTIES_BOUNDED')
+    values = {}
+    for line in raw.splitlines():
+        key, separator, value = line.partition('=')
+        require(separator == '=' and key in PARENT_PROPERTIES and key not in values,
+                'PARENT_PROPERTIES_EXACT')
+        values[key] = value
+    require(set(values) == set(PARENT_PROPERTIES), 'PARENT_PROPERTIES_COMPLETE')
+    require(values['Id'] == UNIT and values['LoadState'] in ('loaded', 'not-found')
+            and values['ActiveState'] == 'inactive' and values['SubState'] == 'dead'
+            and values['Transient'] == 'no' and values['Job'] in ('', '0'),
+            'PARENT_ALREADY_OWNED_OR_ACTIVE')
+    require(all(values[key] == '' for key in (
+        'FragmentPath', 'SourcePath', 'DropInPaths', 'ControlGroup')),
+        'PARENT_ALREADY_CONFIGURED_OR_ALLOCATED')
+    return values
 
 
 def validate_command(command: list[str]) -> Path:
@@ -144,10 +169,14 @@ def outer(command: list[str]) -> int:
         # Do not overwrite or reconfigure any already provisioned Host parent.
         require(not RUNTIME_UNIT.exists() and not RUNTIME_UNIT.is_symlink()
                 and not PARENT.exists() and not PARENT.is_symlink(), 'PARENT_ALREADY_PROVISIONED')
-        run_setup(['systemctl', 'show', '--property=LoadState', '--value', UNIT],
-                  'parent-load-state', must_succeed=False)
-        require((receipts / 'parent-load-state.log').read_text().strip() == 'not-found',
-                'PARENT_ALREADY_LOADED')
+        run_setup(['systemctl', 'show', '--all',
+                   '--property=' + ','.join(PARENT_PROPERTIES), UNIT], 'parent-properties')
+        properties = validate_unprovisioned_parent(
+            (receipts / 'parent-properties.log').read_text())
+        write_new(receipts / 'unprovisioned-parent.json', properties)
+        require(not RUNTIME_UNIT.exists() and not RUNTIME_UNIT.is_symlink()
+                and not PARENT.exists() and not PARENT.is_symlink(),
+                'PARENT_CHANGED_BEFORE_INSTALL')
         run_setup(['sudo', '-n', 'install', '-o', 'root', '-g', 'root', '-m', '0644',
                    str(unit_source), str(RUNTIME_UNIT)], 'install-reviewed-unit')
         run_setup(['sudo', '-n', 'systemctl', 'daemon-reload'], 'systemd-reload')
