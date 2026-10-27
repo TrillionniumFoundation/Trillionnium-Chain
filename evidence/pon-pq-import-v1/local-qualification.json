@@ -1,0 +1,50 @@
+{
+  "schema": "trnm-pq-immutable-import-qualification-v1",
+  "parent_qualified_scope": "research/pq-genesis-native-dual-verify-20261026 exact parent f4050776006ee67de1075fb247df7a848fb12447",
+  "node_or_consensus_activated": false,
+  "independent_authority_accepted": false,
+  "cryptographic_signatures_executed_in_this_increment": false,
+  "production_native_rust_integrated": false,
+  "python_version": "3.13.5",
+  "openssl_version": "OpenSSL 3.5.5 27 Jan 2026 (Library: OpenSSL 3.5.5 27 Jan 2026)",
+  "cc_version": "14.2.0",
+  "kernel": "Linux 6.18.55",
+  "arch": "x86_64",
+  "filesystem": "container working filesystem; no physical power-loss/independent operator experiment",
+  "normal": {
+    "command": "PYTHONWARNINGS=error::ResourceWarning python -m unittest -v test_pq_import_projection.py test_pq_native_import.py",
+    "tests_passed": 25,
+    "failures": 0,
+    "log": "normal.log",
+    "sha256": "0665bd363680b86bdf0c77a42492fb5fccaa9c173e89e011f4cbb5c60e14754b"
+  },
+  "asan_ubsan": {
+    "command": "PQI1_SANITIZE=1 ASAN_OPTIONS=detect_leaks=1:abort_on_error=1 PYTHONWARNINGS=error::ResourceWarning python -m unittest -v test_pq_native_import.py",
+    "tests_passed": 10,
+    "failures": 0,
+    "log": "sanitize.log",
+    "sha256": "15ca6691c9617fdb30459ce6739f2cf7e74f118ed1d55527b87655907b3e6102"
+  },
+  "source_git_blob_sha1": {
+    "pq_import_projection.py": "33b2b30f7b2aeefaf83750771eecdec76e7dc83c",
+    "pqi1_native.c": "84af07931abca629d974e5e36432b5ff8f89cc0d",
+    "test_pq_import_projection.py": "d346e87f77ff7e431660c9d3000cb64a143818e0",
+    "test_pq_native_import.py": "0a319429db613240a97aa2cd509e63e4d1d164b5"
+  },
+  "source_sha256": {
+    "pq_import_projection.py": "79e292ec356940766a144d20e98a59690c122c5ef651b1e9fb42878eb950ec93",
+    "pqi1_native.c": "809f33f884b646135db59f1eed44b988a506e00d416588dcd7661f70133d2023",
+    "test_pq_import_projection.py": "62e2b2e67678f1fd39ef6a4142d40960c6984bd7ee50644b0bfee585a96f9a1a",
+    "test_pq_native_import.py": "2de0e3afdff781746731243395cd3f2618c3482c74733c0be7e63c5d1b4a7bc3"
+  },
+  "actual_parent_pqs1_pqi1_signed_origin_accepted": false,
+  "consensus_or_final_use_authority_granted": false,
+  "remaining_critical_blockers": [
+    "externally authenticated old-chain source/revocation/liability proof",
+    "native Rust M13 consensus state import and reorg/antirollback",
+    "Ed25519 quantum-compromise cutoff",
+    "native PQ signer/HSM/network",
+    "PoN quantum effective work proof",
+    "independent audit"
+  ]
+}
