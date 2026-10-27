@@ -659,6 +659,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-crypto-primitives/tests/fixtures/pq/WYCHEPROOF_LICENSE",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-crypto-primitives/tests/fixtures/pq/WYCHEPROOF_LICENSE"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-crypto-primitives/tests/fixtures/pq/mldsa_65_verify_test.json",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),

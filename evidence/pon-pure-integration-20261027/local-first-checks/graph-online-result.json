@@ -1,0 +1,17 @@
+{
+  "command": [
+    "cargo",
+    "metadata",
+    "--locked",
+    "--format-version",
+    "1",
+    "--manifest-path",
+    "trillionnium/Cargo.toml"
+  ],
+  "exit_code": 0,
+  "seconds": 1.5140859040111536,
+  "source_commit": "49e5ba6936fb9986a83241d89a4b588a38aa4af3",
+  "packages": 173,
+  "workspace_members": 26,
+  "resolved_nodes": 173
+}
