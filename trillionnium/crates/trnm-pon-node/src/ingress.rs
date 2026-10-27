@@ -2115,6 +2115,7 @@ fn receive_page(
     tip: Hash,
     after: Hash,
     clock: u64,
+    host_kernel: Option<&crate::host_kernel_parent::HostKernelBudget>,
 ) -> Result<Hash> {
     ensure(
         page.schema == "pon-native-history-v1"
@@ -2152,10 +2153,29 @@ fn receive_page(
         "PAGE_COMPLETE",
     )?;
     for packet in &packets {
-        node.admit(packet, clock)?;
+        // Native History permits up to 16 real W1 replays in one signed page.
+        // Check the fixed, original host owner for EACH expensive proof,
+        // not merely before and after an attacker-controlled page batch.
+        // A post-admission fault is an operational sync failure; it cannot
+        // retroactively erase an already durably accepted block.
+        if let Some(kernel) = host_kernel {
+            kernel.verify()?;
+        }
+        let result = node.admit(packet, clock);
+        if let Some(kernel) = host_kernel {
+            kernel.verify()?;
+        }
+        result?;
     }
     if page.complete {
-        node.activate_observed(tip, clock)?;
+        if let Some(kernel) = host_kernel {
+            kernel.verify()?;
+        }
+        let result = node.activate_observed(tip, clock);
+        if let Some(kernel) = host_kernel {
+            kernel.verify()?;
+        }
+        result?;
     }
     Ok(next)
 }
@@ -2178,7 +2198,7 @@ pub fn receive_page_from(
     if let Some(kernel) = &host_kernel {
         kernel.verify()?;
     }
-    let native = receive_page(node, page, tip, after, clock);
+    let native = receive_page(node, page, tip, after, clock, host_kernel.as_ref());
     // A completed native admission cannot be undone by a post-verification
     // host fault. That fault still makes the overall synchronization fail.
     if let Some(kernel) = &host_kernel {
