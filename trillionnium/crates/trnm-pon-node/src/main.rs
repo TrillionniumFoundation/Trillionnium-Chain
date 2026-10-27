@@ -2094,6 +2094,15 @@ fn run() -> Result<Value> {
                 .transpose()?
                 .unwrap_or(node.settings().genesis());
             if public_profile(&args) {
+                // Public V3 cannot treat loopback as trusted: proxies can
+                // forward untrusted remote W1 traffic to a local port.
+                let public_kernel =
+                    trnm_pon_node::host_kernel_parent::require_host_kernel_budget(
+                        address,
+                        Some(trnm_pon_node::host_kernel_parent::FIXED_PUBLIC_KERNEL_PARENT),
+                    )?
+                    .ok_or("PUBLIC_HOST_KERNEL_REQUIRED")?;
+                public_kernel.verify()?;
                 let pages = number(&args, "--pages", 256)?;
                 if !(1..=4096).contains(&pages) {
                     return Err("SYNC_BUDGET".into());
@@ -2105,9 +2114,7 @@ fn run() -> Result<Value> {
                     if complete {
                         break;
                     }
-                    if let Some(kernel) = &host_kernel {
-                        kernel.verify()?;
-                    }
+                    public_kernel.verify()?;
                     let reply = public_call(
                         &args,
                         &ingress::Request::History {
@@ -2124,10 +2131,10 @@ fn run() -> Result<Value> {
                     }
                     let page: ingress::Page = serde_json::from_value(reply.value)?;
                     complete = page.complete;
-                    cursor = ingress::receive_page_from(&mut node, address, page, tip, cursor, ingress::now()?)?;
-                    if let Some(kernel) = &host_kernel {
-                        kernel.verify()?;
-                    }
+                    cursor = ingress::receive_public_page_from(
+                        &mut node, address, page, tip, cursor, ingress::now()?,
+                    )?;
+                    public_kernel.verify()?;
                 }
                 if !complete {
                     return Err(format!(
