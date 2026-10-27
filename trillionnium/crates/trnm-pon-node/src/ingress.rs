@@ -2369,6 +2369,41 @@ mod tests {
     use super::*;
 
     #[test]
+    fn history_owner_rechecks_have_bounded_64_tile_gaps_and_no_syscall_per_tile() {
+        use trnm_crypto_primitives::pon_work::VerificationProgress;
+        let mut last = None;
+        let mut count = 0_usize;
+        for row in 0..8 {
+            for column in 0..8 {
+                for inner in 0..8 {
+                    let index = row * 64 + column * 8 + inner;
+                    let selected = history_kernel_work_checkpoint(
+                        VerificationProgress::TranscriptTile { row, column, inner }
+                    );
+                    if selected {
+                        if let Some(previous) = last {
+                            assert!(index - previous <= 64);
+                        }
+                        last = Some(index);
+                        count += 1;
+                    } else if let Some(previous) = last {
+                        assert!(index - previous < 64);
+                    }
+                }
+            }
+        }
+        assert_eq!(count, 8);
+        assert_eq!(last, Some(448));
+        assert!(history_kernel_work_checkpoint(VerificationProgress::BeforeReplay));
+        assert!(history_kernel_work_checkpoint(VerificationProgress::BeforeProduct));
+        assert!(history_kernel_work_checkpoint(VerificationProgress::BeforeVerifiedWork));
+        assert!(history_kernel_work_checkpoint(
+            VerificationProgress::Noise { label: 0, counter: 32 }));
+        assert!(!history_kernel_work_checkpoint(
+            VerificationProgress::Noise { label: 0, counter: 31 }));
+    }
+
+    #[test]
     fn history_page_resource_checkpoint_fences_each_native_w1_without_chainwork() {
         let dir = tempfile::tempdir().unwrap();
         let now = now().unwrap();
