@@ -1,0 +1,90 @@
+{
+  "schema": "trnm-ci-host-local-validation-v1",
+  "base_commit": "17b824d2546d9593f23a6446a769c299c2052233",
+  "native_or_systemd_execution_performed": false,
+  "tests_scope": "Pure Python synthetic refusal/contract tests; no native Rust rebuild, CI rerun, local systemd or sysfs provisioning.",
+  "results": [
+    {
+      "command": "bash scripts/project-preflight.sh",
+      "exit_code": 0
+    },
+    {
+      "command": "python3 scripts/ci/test_ci_contract.py",
+      "tests": 91,
+      "exit_code": 0
+    },
+    {
+      "command": "python3 scripts/ci/test_from_zero_host_ci.py -v",
+      "tests": 12,
+      "exit_code": 0
+    },
+    {
+      "command": "python3 scripts/ci/test_pq_provider_ci.py",
+      "tests": 7,
+      "exit_code": 0
+    },
+    {
+      "command": "python3 scripts/ci/check_ci_contract.py",
+      "exit_code": 0,
+      "scope": "static contract validation; no execution certification"
+    },
+    {
+      "command": "python3 scripts/ci/test_ci_source_integrity.py",
+      "tests": 34,
+      "exit_code": 0,
+      "scope": "All negative source-integrity controls; expected synthetic FAIL receipts are preserved as test assertions, not failed hosted CI."
+    },
+    {
+      "command": "python3 scripts/ci/check_repository.py",
+      "environment": "PATH uses the pinned Rust 1.95.0 toolchain; CARGO_HOME uses the existing isolated build cache",
+      "exit_code": 0,
+      "source_state": "dirty-candidate",
+      "workspace_packages": 25,
+      "rust_files": 955,
+      "local_links": 1262,
+      "runtime_implemented": false,
+      "activation": false
+    }
+  ],
+  "unchanged_native_and_original_owners": [
+    {
+      "path": "config/systemd/trnmponpublic.slice",
+      "sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622",
+      "unchanged_from": "17b824d2546d9593f23a6446a769c299c2052233"
+    },
+    {
+      "path": "scripts/ci/run_from_zero_native.py",
+      "sha256": "c4879cac3d5e37c16285435280db5be05cbd6791088640b35b9ed0dc05e354ed",
+      "unchanged_from": "17b824d2546d9593f23a6446a769c299c2052233"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs",
+      "sha256": "d10a3871e19ae2479c9eb3420ddf0bc47e89a1ef72d34ac5be5b82fad99eb023",
+      "unchanged_from": "17b824d2546d9593f23a6446a769c299c2052233"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+      "sha256": "685ba1843dd3680ad4914af18f7d06236ffe3f94050eb5c4fc6658a481547d94",
+      "unchanged_from": "17b824d2546d9593f23a6446a769c299c2052233"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs",
+      "sha256": "405a28c6dedbfa1bdc4fb54ae35d649f88003d5304032180fced08c2a3e91753",
+      "unchanged_from": "17b824d2546d9593f23a6446a769c299c2052233"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs",
+      "sha256": "246ac35e0d31f5ed79a09a00823fbc052641a95b1a470f4a8df730698e2320cd",
+      "unchanged_from": "17b824d2546d9593f23a6446a769c299c2052233"
+    }
+  ],
+  "changed_source_sha256": {
+    ".github/workflows/pon-priority-acceptance.yml": "5495ff01b1cb0f9e0208a12e32586154c07f19dd3c59b4a0e4b9a484b2572e7c",
+    ".github/workflows/trnm-required-baseline.yml": "be0e4df4f1904d8de6a9305d4f42afac8a62efaca68728d822580111b079a013",
+    "scripts/ci/check_ci_contract.py": "2ae715a2843a612802b0e3f8acfbdc2e78ec2f7104efd7dab4799cd05ed3f3ed",
+    "scripts/ci/ci_job.sh": "71390b13b9600c58f90b0a7efb60bd6d828387131c2c4f2729256698ec309ab0",
+    "scripts/ci/public_host_ci_observation.py": "27f0c506592f26f3a218a6d1723c4694e4d7a59f0786e16dbf853e2d5cdb60de",
+    "scripts/ci/run_from_zero_host.py": "35c3383335ce1adf0c0e7cb95fd19750811de80ebbd29497b38649672d5c1b02",
+    "scripts/ci/test_from_zero_host_ci.py": "dbfc68f731c509e560b23e8fdbb8babe78ee7c1e867c69be4b294d8cb9bcb3c2"
+  }
+}

@@ -189,7 +189,7 @@ NATIVE_RELEASE_BLOCK = '''    (
 # Freeze the complete straight-line lane independently of the file being checked.
 # Presence/count checks alone also match commands skipped or swallowed by shell
 # control flow. Keep their specific diagnostics before the full-lane comparison.
-PROTOCOL_CONTRACT_BLOCK = '''    python3 scripts/ci/run_from_zero_native.py --out "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/from-zero-native"
+PROTOCOL_CONTRACT_BLOCK = '''    python3 scripts/ci/run_from_zero_host.py -- python3 scripts/ci/run_from_zero_native.py --out "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/from-zero-native"
     cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-crypto-primitives -p trnm-checkpoint-types -p trnm-verification-profiles --all-targets --all-features
     cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-protocol --all-targets --all-features
     cargo build --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-protocol -p trnm-crypto-primitives -p trnm-mvcc-fee --examples
@@ -356,7 +356,35 @@ def require(ok: bool, message: str) -> None:
         raise ValueError('CI contract: ' + message)
 
 
+def check_from_zero_host_call(text: str, exact_block: str) -> None:
+    require(text.count('python3 scripts/ci/run_from_zero_native.py') == 1
+            and text.count('python3 scripts/ci/run_from_zero_host.py') == 1
+            and exact_block in text,
+            'one unchanged from-zero argv must run through the original fixed Host parent')
+
+
+def check_from_zero_host_callsites(root: Path) -> None:
+    command = ('python3 scripts/ci/run_from_zero_host.py -- '
+               'python3 scripts/ci/run_from_zero_native.py --out ')
+    workflow_command = '        run: ' + command + '"$TRNM_CI_RECEIPT_DIR/from-zero-native"\n'
+    check_from_zero_host_call((root / 'scripts/ci/ci_job.sh').read_text(),
+        '  protocol-contract)\n    ' + command
+        + '"${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/from-zero-native"\n')
+    check_from_zero_host_call((root / '.github/workflows/trnm-required-baseline.yml').read_text(),
+        '      - name: Execute exact native from-zero service controls\n'
+        '        if: always()\n' + workflow_command)
+    check_from_zero_host_call((root / '.github/workflows/pon-priority-acceptance.yml').read_text(),
+        '      - name: Execute original release from-zero controls\n'
+        "        if: ${{ !cancelled() && steps.source.outcome == 'success' && "
+        "steps.toolchain.outcome == 'success' && matrix.campaign == 'service-model' }}\n"
+        + workflow_command)
+    require('        run: python3 scripts/ci/test_from_zero_host_ci.py\n' in
+            (root / '.github/workflows/trnm-required-baseline.yml').read_text(),
+            'required repository-truth retains public Host CI refusal controls')
+
+
 def validate(root: Path = ROOT) -> dict:
+    check_from_zero_host_callsites(root)
     text = (root / WORKFLOW).read_text()
     body = text.split('\njobs:\n', 1)
     require(len(body) == 2, 'one explicit jobs mapping required')
