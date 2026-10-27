@@ -178,3 +178,22 @@ relay via an explicitly trusted native development CLI, or independent
 physical-host resource/fairness qualification. Rustdoc and actual native
 compilation are still outstanding in the current source-only environment;
 retain the failed/unknown status if either check is missing.
+
+## P1 two-work replay/recovery negative (integrated candidate)
+
+A new `ingress::tests::two_history_w1s_preserve_original_first_commit_across_owner_fault_and_cold_retry`
+asserts the original Host's physical-ownership checkpoint remains effective
+across two separate valid W1 proofs in a **single** History page. The test
+does not use a fabricated W1 result or a new consensus transition:
+it mines two legal packets against the exact parent chain, counts the
+original verifier's selected Host rechecks, and injects one local cgroup
+failure immediately **after** durable admission of the first block.
+That failure must withhold page completion, keep the first block durably
+available, prevent running the second W1, and leave the active head at
+Genesis. An actual cold reopen then retries identical bytes using the
+same original native admission rules: the already stored first packet
+is not new work, the second W1 remains mandatory, and only after the
+full successful page does the active head reach its real second block.
+The after-commit fault is **not** a consensus-Invalid or automatic
+rollback. Exact Rust and physical ownership execution still must be
+recorded separately; this source-level test cannot close P1/P4 alone.
