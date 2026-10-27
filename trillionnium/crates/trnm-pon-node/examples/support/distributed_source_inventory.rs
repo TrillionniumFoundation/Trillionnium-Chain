@@ -162,6 +162,20 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "config/pon/post-quantum-transition-v1.json",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../config/pon/post-quantum-transition-v1.json"
+        )),
+    ),
+    (
+        "config/pon/pq-cross-branch-corpus-v1.json",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../config/pon/pq-cross-branch-corpus-v1.json"
+        )),
+    ),
+    (
         "config/pon/public-evaluation-model-evolution-v5.json",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -596,10 +610,24 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-crypto-primitives/src/pon_work/rejection_cache.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-crypto-primitives/src/pon_work/rejection_cache.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-crypto-primitives/src/pon_work/structured.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-crypto-primitives/src/pon_work/structured.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs"
         )),
     ),
     (
@@ -614,6 +642,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-crypto-primitives/src/qualified_work_task/lifecycle_v2.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-crypto-primitives/tests/pq_openssl_native.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-crypto-primitives/tests/pq_openssl_native.rs"
         )),
     ),
     (
@@ -3410,6 +3445,20 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-pon-node/src/ingress/metered_work_facts.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -4695,6 +4744,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-protocol/src/pon_wire.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-protocol/src/pq_frame.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-protocol/src/pq_frame.rs"
         )),
     ),
     (
