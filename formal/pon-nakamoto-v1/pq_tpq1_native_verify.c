@@ -129,6 +129,19 @@ static int load_key(const char *path,EVP_PKEY **key,unsigned char id[32]) {
     if(!candidate || !ok || EVP_PKEY_is_a(candidate,"ML-DSA-65")!=1){
         EVP_PKEY_free(candidate);return 0;
     }
+    /* PEM_read_bio_PUBKEY silently skips preambles and ignores trailing DER
+     * bytes within base64.  Never derive a trusted key ID by normalizing an
+     * ambiguous source: demand one exact canonical OpenSSL SPKI PEM encoding.
+     * This is input-format hardening, not authentication of who supplied it. */
+    BIO *canonical=BIO_new(BIO_s_mem());
+    char *canonical_bytes=NULL;
+    long canonical_len=0;
+    if(canonical && PEM_write_bio_PUBKEY(canonical,candidate)==1)
+        canonical_len=BIO_get_mem_data(canonical,&canonical_bytes);
+    ok=canonical_len==(long)len && canonical_bytes!=NULL &&
+       exact((const unsigned char *)canonical_bytes,pem,len);
+    BIO_free(canonical);
+    if(!ok){EVP_PKEY_free(candidate);return 0;}
     int der_len=i2d_PUBKEY(candidate,NULL);
     if(der_len!=(int)SPKI_SIZE){EVP_PKEY_free(candidate);return 0;}
     unsigned char der[SPKI_SIZE],*cursor=der;

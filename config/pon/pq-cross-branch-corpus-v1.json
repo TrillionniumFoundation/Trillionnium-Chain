@@ -53,7 +53,10 @@
     "docs/security/PQ_TPQ1_NATIVE_SIGNATURE_VERIFIER_V1.md",
     "evidence/pon-pq-tpq1-native-v1/README.md",
     "evidence/pon-pq-tpq1-native-v1/native-test.log",
-    "evidence/pon-pq-tpq1-native-v1/native-sanitizer-test.log"
+    "evidence/pon-pq-tpq1-native-v1/native-sanitizer-test.log",
+    "formal/pon-nakamoto-v1/test_pq_tpq1_canonical_pem.py",
+    "docs/security/PQ_TPQ1_CANONICAL_PEM_RESEARCH_V1.md",
+    "evidence/pon-pq-pql10-pem-source-v1/local-qualification.json"
   ],
   "pinned_blobs": {
     "config/consensus-mainline.json": "969ddfec9ead64bc3eb7e0cc9997a0950947e09e",
@@ -146,12 +149,18 @@
     "formal/pon-nakamoto-v1/test_pq_native_spki.py": "5a9848b4f665002c6d55c465a4f6e8a0a8efa349",
     "docs/security/PQ_NATIVE_SPKI_IDENTITY_V1.md": "343d9d82aa78291f339b05eb99939a6506d5a25a",
     "evidence/pon-pq-spki-v1/README.md": "5d9e67e90cf335e5b0f8350577bed539e6fb1ad7",
-    "formal/pon-nakamoto-v1/pq_tpq1_native_verify.c": "f3aeade9774b1df116fd10c2449404b07ec36afb",
+    "formal/pon-nakamoto-v1/pq_tpq1_native_verify.c": "9f4aec3b83176709fd4e09ef5d150c087df7268c",
     "formal/pon-nakamoto-v1/test_pq_tpq1_native_verify.py": "1d4fe6a89a44faafadbb5cab1343d5849b66ab2e",
     "docs/security/PQ_TPQ1_NATIVE_SIGNATURE_VERIFIER_V1.md": "56856ea54ae5d515f8cbaa0e8f13adc62d0faf85",
     "evidence/pon-pq-tpq1-native-v1/README.md": "29384ad0a2cfbfd987334d12de93a0a912837512",
     "evidence/pon-pq-tpq1-native-v1/native-test.log": "08a3ee020dc978572c56c81b0ea1f834a6ebf4f7",
-    "evidence/pon-pq-tpq1-native-v1/native-sanitizer-test.log": "f7092477840b5139380251e6ec396c98b60a2143"
+    "evidence/pon-pq-tpq1-native-v1/native-sanitizer-test.log": "f7092477840b5139380251e6ec396c98b60a2143",
+    "formal/pon-nakamoto-v1/test_pq_tpq1_canonical_pem.py": "cbcf1766c0115f792f59d643e71df4d385e76310",
+    "docs/security/PQ_TPQ1_CANONICAL_PEM_RESEARCH_V1.md": "66c839a01462b6b4b03ae54549f28140ad0c7fd0",
+    "evidence/pon-pq-pql10-pem-source-v1/normal-test.log": "4768863acadbe03d793e615763cf2fe006a3332a",
+    "evidence/pon-pq-pql10-pem-source-v1/sanitizer-test.log": "2ada9806d35604801ab9a01d289d8a60867a0cac",
+    "evidence/pon-pq-pql10-pem-source-v1/combined-test.log": "1d8cd4234d1ae143434d024c8629aaf81014c62a",
+    "evidence/pon-pq-pql10-pem-source-v1/local-qualification.json": "596aa94783e6b029c73a05696fb8bdfc32b25c74"
   },
   "assertions": {
     "production_activation": false,
@@ -196,5 +205,23 @@
     "signer_authority_minted": false,
     "chain_activation": false,
     "independent_acceptance": false
+  },
+  "native_tpq1_canonical_pem": {
+    "stage": "PQL9 canonical-SPKI PEM source-input hardening; sibling #491 PQL10 composition",
+    "parent_pql9": "8679d86a75b4d5822d89180888bc8c2db4dc64d2",
+    "composed_source_guard_pql10": "1912ce4677cadc92e1c1e136172bab532984c048",
+    "native_source": "formal/pon-nakamoto-v1/pq_tpq1_native_verify.c",
+    "native_test": "formal/pon-nakamoto-v1/test_pq_tpq1_canonical_pem.py",
+    "original_native_blob": "f3aeade9774b1df116fd10c2449404b07ec36afb",
+    "patched_native_blob": "9f4aec3b83176709fd4e09ef5d150c087df7268c",
+    "prepatch_expected_failures": 3,
+    "new_crypto_tests_passed": 7,
+    "new_asan_ubsan_passed": 7,
+    "inherited_plus_new_tests_passed": 12,
+    "full_research_corpus_test": "NOT_RUN",
+    "rust_cargo": "NOT_RUN",
+    "signer_authority_minted": false,
+    "independent_accepted": false,
+    "production_activation": false
   }
 }
