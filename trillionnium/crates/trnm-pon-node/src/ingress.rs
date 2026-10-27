@@ -2228,6 +2228,31 @@ pub fn receive_page_from(
     }
     native
 }
+/// Public V3 History import is untrusted even when a local TCP proxy forwards
+/// remote bytes to 127.0.0.1. Unlike the ordinary explicitly developmental
+/// loopback source wrapper, this path ALWAYS requires the same fixed
+/// administrator-owned cgroup parent. A forged loopback source address cannot
+/// manufacture a resource waiver.
+pub fn receive_public_page_from(
+    node: &mut Node,
+    source: SocketAddr,
+    page: Page,
+    tip: Hash,
+    after: Hash,
+    clock: u64,
+) -> Result<Hash> {
+    let kernel = crate::host_kernel_parent::require_host_kernel_budget(
+        source,
+        Some(crate::host_kernel_parent::FIXED_PUBLIC_KERNEL_PARENT),
+    )?
+    .ok_or("PUBLIC_HOST_KERNEL_REQUIRED")?;
+    kernel.verify()?;
+    let native = receive_page(node, page, tip, after, clock, || kernel.verify());
+    // Never revoke an already-admitted block for a local resource failure.
+    kernel.verify()?;
+    native
+}
+
 pub fn sync_from(
     node: &mut Node,
     address: SocketAddr,
@@ -2520,6 +2545,42 @@ mod tests {
         assert_eq!(node.read_active().unwrap().0, settings.genesis());
         assert_eq!(node.parent_height(tip).unwrap(), 1,
             "already admitted native block is durable but not activated");
+    }
+
+    #[test]
+    fn loopback_proxied_public_history_is_not_exempt_from_fixed_host_budget() {
+        let source: SocketAddr = "127.0.0.1:12345".parse().unwrap();
+        let required = crate::host_kernel_parent::require_host_kernel_budget(
+            source,
+            Some(crate::host_kernel_parent::FIXED_PUBLIC_KERNEL_PARENT),
+        );
+        assert!(!matches!(required, Ok(None)),
+            "public History must not accept a loopback proxy as a budget waiver");
+        if let Err(expected) = required {
+            let dir = tempfile::tempdir().unwrap();
+            let now = now().unwrap();
+            let settings = crate::Settings::development(Some(now - 100)).unwrap();
+            let mut node = Node::open(dir.path(), settings.clone(), 2).unwrap();
+            let initial = node.stats().unwrap();
+            let malformed = Page {
+                schema: String::new(),
+                network: String::new(),
+                parameters: String::new(),
+                genesis: String::new(),
+                tip: String::new(),
+                after: String::new(),
+                packets: vec![],
+                next: String::new(),
+                complete: false,
+            };
+            let result = receive_public_page_from(
+                &mut node, source, malformed, settings.genesis(),
+                settings.genesis(), now,
+            ).unwrap_err();
+            assert_eq!(result.to_string(), expected.to_string());
+            assert_eq!(node.stats().unwrap(), initial);
+            assert_eq!(node.read_active().unwrap().0, settings.genesis());
+        }
     }
 
     #[test]
