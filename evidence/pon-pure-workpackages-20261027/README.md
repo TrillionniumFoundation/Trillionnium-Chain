@@ -18,7 +18,7 @@ quality and data-availability observations add no chainwork.
 | **1 — freeze work and security model** | Exact original W1 relation, sole work identity, target-inclusive weight, adversary freedoms and unproved assumptions documented | **Specification frozen.** Work hardness, usefulness and physical quantum cost are not proved |
 | **2A — complete succinct W1 proof** | Complete native relation in an actual guest; native equivalence and parser controls; one real local recursive-STARK attempt; all original input, guest and process observations retained | **NO_GO:** 0/1 completed receipts at the original 3,600 s limit; proof size, real crypto-verifier cost and prover tail remain unavailable |
 | **2B — History/CPU/out-of-lock work** | Shared History decode/full W1 outside Node mutex, original deadlines/CPU identity, real kill cuts and original finite service campaign; an additional M06 prototype was adversarially reviewed | **PARTIAL / NO_GO:** original exhausted-budget and confirmation exits did not pass; M06 remains a separate blocked prototype, not integrated |
-| **2C — quantum PoN and DAA** | Eleven conditional models, pinned ASERT integer vectors, 109,190 retained rows, bounded and extended counterexamples | **Research evidence only:** no native attack packets, QPU run or physical reversible-oracle estimate |
+| **2C — quantum PoN and DAA** | Eleven conditional models, pinned ASERT integer vectors, 109,190 retained rows, bounded and extended counterexamples | **Research evidence only:** no native attack packets, QPU run or verified complete reversible-oracle estimate |
 | **3 — PQ native integration** | Versioned TPQ1 wire, real in-process ML-DSA-65 provider, strict context/key checks, isolated pinned provider preparation, actual native crypto tests and owner inventory | **PARTIAL / NO_GO:** native application authorization owners, accounts, migration, reorg/nonces and transport have not all migrated |
 | **4 — real Cell/Hepta loop** | Actual three-generation SmolLM training; complete Cell publication; publisher stopped; fresh consumer fetched from replica; real model loaded; actual future comparison | **Explicit NO_UPDATE:** 16/32 versus 16/32, no action improvement. Original Hepta owner CI wiring is a separate candidate; product install/independent acceptance remains open |
 | **5 — independent WAN** | Preregistration and complete-denominator reader plus nine synthetic controls | **NOT RUN:** no three independently administered deployments or original 72-hour campaign evidence |
@@ -112,6 +112,27 @@ owners. A new generic account or an unlimited activation after deadline would
 not satisfy the requested repair. The M06 prototype is therefore **BLOCKED and
 not merged into the integrated source or its ancestry**.
 
+[Final isolated observations](m06-isolated-observations/README.md) now establish
+an actual deadline counterexample at source `dcdf0503a`: the original ten-second
+request deadline elapsed without an injected typed error. Exact-client recovery
+passed, but when that requester withheld the frame, a different honest mutation
+completed **0/1**, with `REORG_IN_PROGRESS`. A validated custom parent containing
+**8,625,548 canonical bytes** consumed **3,008,232,223 ns** of original owner CPU
+and failed before any M06 worker spawned; the authenticated-backend second half
+did not run. The detached group is **11 pass / 1 fail / 1 ignored**. The separate
+final affected group is **373 pass / 1 fail / 3 ignored, 377 planned**; its original
+256-request signed Head observation failed after the reported 64-success
+checkpoint with `REMOTE_RETRYABLE:BUSY:Duplicate`, exact failure nonce unknown.
+No assertion, original deadline or denominator was relaxed to turn these into
+successes. A finite successful recovery control is not all-client liveness.
+The affected group also actually executed the inherited small W1 depletion lab:
+164 invalid W1 replays paid 133,590,228 ns of thread CPU, one budget refusal was
+observed and the meter reached -2,880 ns; the subsequent honest read and native
+Submit recovered. This is a useful local positive control, separately scoped
+from the failed A03 host gate, complete hostile matrix and all-honest service.
+Five real SIGKILL cuts in that group retained no newly available CPU account on
+reopen; complete debt reconciliation remains unqualified.
+
 Its preliminary real 1,024-transfer cost observation also showed approximately
 23 ms preparation, 7 ms detached computation and 108 ms commit. SQL and complete
 state/readback work remain substantial. Those provisional component timings
@@ -133,6 +154,16 @@ counterexample is retained. No implementation has established those physical
 assumptions for the original W1 circuit. Logical gates, logical/physical qubits,
 fault-tolerance costs, preprocessing and sustained device rates remain unknown,
 not zero. The reported 2.838 seconds Python CPU time measures the simulator.
+
+A [conditional oracle worksheet](../pon-quantum-daa-research-20261027/conditional-oracle-worksheet/worksheet.md)
+separates the exact 2,049-block classical transcript from a proposed reversible
+circuit. A literature-based, unsynthesized SHA-only component ledger gives
+1,098,755,760 T operations for one particular forward/inverse construction,
+conditional on unverified arbitrary-IV and clean-ancilla interfaces. It is
+**neither a complete W1 circuit nor a verified attack upper/lower bound**. Noise
+sampling, finite-field arithmetic, threshold marking, preprocessing, memory
+scheduling, fault tolerance and physical rate remain unresolved. The source
+paper's single-block fixed-IV qubit count cannot be reused as W1 circuit width.
 
 ## 3. A real PQ primitive is not whole-chain PQ authorization
 
@@ -221,3 +252,5 @@ results. Publication metadata preserves original measured commit identities and
 maps them to same-tree API-created commits; original raw commits and source
 bundles are retained. No main merge, force update, self-approval, production
 activation or independent-acceptance promotion is authorized by these results.
+
+[Original source identities and remote publication mapping](../pon-source-publication-20261027/README.md) preserve the finite archive scope and explicitly exclude the blocked M06 implementation from the main candidate.

@@ -1,0 +1,133 @@
+{
+  "schema": "pure-pon-w1-quantum-conditional-resource-worksheet-v1",
+  "captured_utc": "2026-10-27T10:37:21.409995+00:00",
+  "status": "RESEARCH_ONLY_NOT_CIRCUIT_QUALIFICATION",
+  "relation_commit": "65c97a95cab4702a368855397c65413e2a754b97",
+  "relation_file": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+  "relation_file_sha256": "3ed29941eb0b9959bdeb0cd4e59d2565bbd4b82b70c9cc94d0cd46065c16b874",
+  "builds_executed": false,
+  "quantum_circuit_built": false,
+  "quantum_circuit_simulated": false,
+  "actual_qpu_attack": false,
+  "attacker_lower_bound_established": false,
+  "main_repository_edited": false,
+  "trace": {
+    "domain_bytes_including_nul": 16,
+    "challenge_bytes": 32,
+    "accumulator_words": 32768,
+    "word_bytes": 4,
+    "message_bytes": 131120,
+    "padded_bytes": 131136,
+    "compression_blocks": 2049
+  },
+  "conditional_candidate_design": {
+    "status": "UNSYNTHESIZED_COMPONENT_LEDGER_NOT_AN_ESTIMATE_OF_FULL_W1",
+    "assumptions": [
+      "Published generic round/stretch circuits can be exported and verified for arbitrary chaining state without hidden specialization or extra phase/ancilla assumptions.",
+      "Each clean block preserves original message and previous chaining state; expand schedule, run64 rounds, add8 preserved input words modulo2^32, then reverse the schedule.",
+      "Use the unoptimized textbook7T Toffoli mapping only for added feedforward; optimize neither across block nor across forward/reverse boundaries.",
+      "All intermediate chaining states and required message material are retained until full inverse. No free erase or unaccounted regeneration.",
+      "Target comparison, search reflection, challenge/noise/field transcript construction, memory preparation, routing and error correction are excluded."
+    ],
+    "round_t": 3020,
+    "stretch_t": 744,
+    "feedforward_adder32_t": 427,
+    "formula": "64*3020 + 2*48*744 + 8*(2*32-3)*7",
+    "conditional_clean_compression_t": 268120,
+    "conditional_forward_trace_t": 549377880,
+    "conditional_compute_inverse_trace_t": 1098755760,
+    "retained_chaining_register_bits_for_this_design": 524544,
+    "full_unpadded_message_materialization_bits_if_chosen": 1048960,
+    "complete_width": null,
+    "complete_depth": null,
+    "complete_W1_t": null,
+    "physical_qubits": null,
+    "wall_time": null
+  },
+  "full_iteration_model": "T_iter = T_F + T_F_inverse + T_threshold + T_reflection(k); for a chosen symmetric unitary implementation only, T_F_inverse=T_F. Successful search iteration count is conditional on actual valid-input marked fraction and coherent search space.",
+  "unknowns": [
+    "Export/test arbitrary-IV clean SHA compression with exact gate/ancilla/phase semantics.",
+    "Reversible bounded rejection sampler including128-hash cap per label and compaction; not a classical expected loop count.",
+    "Reversible canonical field arithmetic mod4294967291, transcript generation, and allowed task preprocessing/reassociation.",
+    "Whether message words are retained or generated on demand and every checkpoint recomputation cost.",
+    "Target comparator, search-register width, finite nonce space, aborted searches and competing block arrivals.",
+    "Optimized quantum algorithm and true effective accepted-work rate relative to honest production hardware.",
+    "Physical noise model, layout/routing, code distances, magic-state factories, full-run failure budget and classical feedback."
+  ],
+  "sources": [
+    {
+      "id": "S1",
+      "title": "Amy et al., Estimating the cost of generic quantum pre-image attacks on SHA-2 and SHA-3 (SAC 2016, revised 2016-11-30)",
+      "url": "https://jmschanck.info/papers/20161130-preimage.pdf",
+      "archive": "https://eprint.iacr.org/2016/992",
+      "refs": [
+        "turn97view1",
+        "turn98view1",
+        "turn98view5",
+        "turn100view0",
+        "turn100view1"
+      ],
+      "location": "Section 5, Algorithms 1-2, Table 1; Section 7.1 equations 9-10",
+      "verified": "One 512-bit block and initialized constants. Optimized round 3020 T / T-depth1100; stretch744 T / T-depth372. Published full core228992 T, T-depth70400,2402 logical qubits. Their specific phase oracle doubles the core plus equality marking; their diffusion adds separate cost."
+    },
+    {
+      "id": "S2",
+      "title": "NIST FIPS 180-4, Secure Hash Standard",
+      "url": "https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.180-4.pdf",
+      "refs": [
+        "turn98view0",
+        "turn101view2"
+      ],
+      "location": "5.1.1,5.2.1,6.2",
+      "verified": "SHA-256 uses512-bit message blocks, padding1 then zeroes to448 mod512 then64-bit length; multi-block chaining includes feedforward."
+    },
+    {
+      "id": "S3",
+      "title": "Cuccaro, Draper, Kutin, Moulton, A new quantum ripple-carry addition circuit",
+      "url": "https://arxiv.org/pdf/quant-ph/0410184",
+      "refs": [
+        "turn100view2",
+        "turn101view3",
+        "turn101view4"
+      ],
+      "location": "Section4.1, Table1",
+      "verified": "Addition modulo2^n for n>=3 uses2n-3 Toffoli and one clean ancilla; no overflow output."
+    },
+    {
+      "id": "S4",
+      "title": "Gidney, Halving the cost of quantum addition, Quantum2,74(2018)",
+      "url": "https://quantum-journal.org/papers/q-2018-06-18-74/",
+      "pdf": "https://arxiv.org/pdf/1709.06648",
+      "refs": [
+        "turn102view0",
+        "turn102view1"
+      ],
+      "location": "page2 and abstract",
+      "verified": "Textbook Toffoli uses7 T; temporary logical-AND uses4 T to compute and0 T for measurement-based erase under its conditions. Thus reversing a circuit is not always the most economical clean-up design."
+    },
+    {
+      "id": "S5",
+      "title": "Bennett, Time/space trade-offs for reversible computation, SIAM J Comput18(4)(1989)",
+      "url": "https://research.ibm.com/publications/timespace-trade-offs-for-reversible-computation",
+      "doi": "https://doi.org/10.1137/0218053",
+      "refs": [
+        "turn100view3"
+      ],
+      "location": "author institutional abstract",
+      "verified": "Checkpoint/pebbling gives reversible time-space tradeoffs while retaining input. It does not give W1-specific optimized checkpoint counts."
+    },
+    {
+      "id": "S6",
+      "title": "Beverland et al., Assessing requirements to scale to practical quantum advantage",
+      "url": "https://arxiv.org/html/2211.07629v1",
+      "refs": [
+        "turn100view4",
+        "turn101view5",
+        "turn101view6",
+        "turn102view2"
+      ],
+      "location": "SectionsIII.3-III.4, AppendixF andG",
+      "verified": "Physical-resource conversion requires logical depths/counts, acceptable total failure, code choice/distance, physical gate/measurement assumptions and factory throughput; classical control and noise assumptions remain explicit."
+    }
+  ]
+}
