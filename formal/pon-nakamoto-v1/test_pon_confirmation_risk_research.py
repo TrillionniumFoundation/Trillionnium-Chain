@@ -6,6 +6,7 @@ from fractions import Fraction
 from pon_confirmation_risk_research import (
     effective_share, eventual_catchup_probability, required_work,
     confirmation_policy, sample_catchup, campaign,
+    post_outage_effective_share, outage_campaign,
 )
 
 class PoNConfirmationRiskResearch(unittest.TestCase):
@@ -101,10 +102,43 @@ class PoNConfirmationRiskResearch(unittest.TestCase):
         self.assertLessEqual(estimate,high)
         self.assertGreaterEqual(high,low)
 
+    def test_all_sources_down_does_not_invent_mining_when_everyone_unready(self):
+        self.assertIsNone(post_outage_effective_share('3/10', '0', '0', '1'))
+        self.assertEqual(post_outage_effective_share('0', '1', '0', '1'), 0)
+        self.assertEqual(post_outage_effective_share('3/10','1','0','1'),0)
+        self.assertEqual(post_outage_effective_share('3/10','0','1','1'),1)
+
+    def test_maintenance_readiness_and_legitimate_speed_concentration(self):
+        self.assertEqual(post_outage_effective_share('3/10','1','1','1'),Fraction(3,10))
+        self.assertEqual(post_outage_effective_share('3/10','1/4','1','1'),Fraction(12,19))
+        self.assertEqual(post_outage_effective_share('3/10','1/4','1','3'),Fraction(36,43))
+
+    def test_noncanonical_outage_fractions_fail_closed(self):
+        for q,h,a,s in [('1/4','-1/4','1','1'),('1/4','1','2','1'),
+                        ('1/4','0','0','0'),(True,'1','1','1'),
+                        ('1/4',0.5,'1','1')]:
+            with self.subTest(q=q,h=h,a=a,s=s):
+                with self.assertRaises(ValueError):
+                    post_outage_effective_share(q,h,a,s)
+
+    def test_outage_cases_bind_unavailability_not_zero_risk(self):
+        report=outage_campaign()
+        self.assertEqual(report['outage_scenarios'],6)
+        self.assertEqual(len(report['outage_rows_sha256']),64)
+        lost=[r for r in report['outage_data'] if r['scenario']=='all-capacity-gone'][0]
+        self.assertFalse(lost['any_assumed_live_work'])
+        self.assertIsNone(lost['conditional_catchup_z6'])
+        self.assertIsNone(lost['effective_share'])
+        concentrated=[r for r in report['outage_data']
+                      if r['scenario']=='honest-quarter-ready'][0]
+        self.assertEqual(concentrated['effective_share'],'12/19')
+        self.assertEqual(concentrated['conditional_catchup_z6'],'1')
+
     def test_campaign_is_deterministic_and_scope_explicit(self):
         a,b=campaign(),campaign()
         self.assertEqual(a,b)
         self.assertEqual(a['cases'],64)
+        self.assertEqual(a['outage_scenarios'],6)
         self.assertTrue(a['zero_native_proofs'])
         self.assertTrue(a['zero_independent_operators'])
         self.assertEqual(len(a['rows_sha256']),64)

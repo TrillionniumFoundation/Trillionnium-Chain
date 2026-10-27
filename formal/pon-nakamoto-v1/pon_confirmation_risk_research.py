@@ -42,6 +42,29 @@ def effective_share(nominal_attacker: int | str | Fraction,
     return q * s / (1 - q + q * s)
 
 
+def post_outage_effective_share(nominal_attacker: int | str | Fraction,
+                                honest_maintenance_ready: int | str | Fraction,
+                                attacker_maintenance_ready: int | str | Fraction,
+                                attacker_valid_speedup: int | str | Fraction) -> Fraction | None:
+    """Conditional valid-ticket share when *all* outside-source leases disappear.
+
+    This is an exogenous capacity/survival model, not evidence that any miner
+    actually has ready material, valid W1 cost or network reachability. If no
+    group retains eligible Maintenance production, return None for NO LIVE WORK
+    rather than inventing a 0% adversary or a 100% confirmation guarantee.
+    """
+    q = ratio(nominal_attacker, 'ATTACKER_SHARE')
+    h = ratio(honest_maintenance_ready, 'HONEST_MAINTENANCE_READY')
+    a = ratio(attacker_maintenance_ready, 'ATTACKER_MAINTENANCE_READY')
+    s = ratio(attacker_valid_speedup, 'VALID_SPEEDUP')
+    if not (0 <= q <= 1 and 0 <= h <= 1 and 0 <= a <= 1 and 1 <= s <= 64):
+        raise ValueError('OUTAGE_CAPACITY_RANGE')
+    remaining_honest = (1-q) * h
+    remaining_attacker = q * a * s
+    total = remaining_honest + remaining_attacker
+    return remaining_attacker / total if total else None
+
+
 def eventual_catchup_probability(attacker_effective_share: Fraction,
                                  honest_confirmations: int) -> Fraction:
     """Exact probability that a hidden fork can *ever* catch up to z honest blocks.
@@ -189,7 +212,35 @@ def campaign() -> dict:
             'scope': 'constant-rate independent Poisson valid-work arrivals; no public safety guarantee',
             'cases': len(rows), 'rows_sha256': hashlib.sha256(raw).hexdigest(),
             'zero_native_proofs': True, 'zero_independent_operators': True,
-            'cases_data': rows}
+            'cases_data': rows, **outage_campaign()}
+
+
+def outage_campaign() -> dict:
+    """Controlled illustrative out-of-lease availability, never actor evidence."""
+    assumptions = (
+        ('all-maintenance-ready', '1', '1', '1'),
+        ('honest-quarter-ready', '1/4', '1', '1'),
+        ('honest-quarter-speedup3', '1/4', '1', '3'),
+        ('attacker-no-maintenance', '1', '0', '3'),
+        ('honest-no-maintenance', '0', '1', '1'),
+        ('all-capacity-gone', '0', '0', '1'),
+    )
+    rows = []
+    for label,h,a,s in assumptions:
+        effective = post_outage_effective_share('3/10',h,a,s)
+        rows.append({'scenario':label, 'nominal_attacker_share':'3/10',
+                     'assumed_honest_maintenance_ready':h,
+                     'assumed_attacker_maintenance_ready':a,
+                     'assumed_attacker_legal_speedup':s,
+                     'effective_share':str(effective) if effective is not None else None,
+                     'any_assumed_live_work': effective is not None,
+                     'conditional_catchup_z6':
+                         str(eventual_catchup_probability(effective,6))
+                         if effective is not None else None})
+    raw=json.dumps(rows,separators=(',', ':'),sort_keys=True).encode('ascii')
+    return {'outage_scenarios':len(rows),
+            'outage_rows_sha256':hashlib.sha256(raw).hexdigest(),
+            'outage_data':rows}
 
 
 def main() -> None:

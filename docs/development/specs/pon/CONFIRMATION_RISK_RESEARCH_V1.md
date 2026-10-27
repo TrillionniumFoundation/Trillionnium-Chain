@@ -94,3 +94,37 @@ independent-operator WAN, real storage/material loss and funded repair.
 **Nothing in this research permits issuance of a finality or release token,
 main-branch merge, consensus profile activation or declaration that a public
 security blocker has closed.**
+
+## Coupled source outage × Maintenance readiness (additional research)
+
+The added `post_outage_effective_share` explicitly models an outage of ALL
+external signed task leases and independently assumed fractions of honest and
+adversarial miners that are actually capable of choosing the already-committed
+genesis Maintenance work. It does not infer readiness from signed demand slots
+or silently switch a selected failed lease to Maintenance.
+
+For nominal attacker compute share q, honest Maintenance readiness fraction
+h, adversarial readiness fraction a, and legal valid-proof speed advantage s,
+the conditional remaining honest capacity is `(1-q)*h`, adversarial capacity
+is `q*a*s`, and effective q is their ratio when total capacity is positive.
+If both remaining capacities vanish, the result is **None / no live work**,
+NOT a zero-risk confirmation or proof that the chain can mine a block.
+
+The distinct six-case deterministic output has digest
+`ed892ce43519dc600b8ea468c6b42b1ba85816a9d385a0020df78f304ee3ede6`.
+Under purely illustrative q=3/10, h=1/4, a=1, s=1, q_effective becomes 12/19:
+the model predicts adversarial effective work majority despite the same
+signed-task and cumulative-work rules. When both h and a are zero, the
+conditional catch-up probability is null because no work source is operated.
+A separate no-capacity outcome is not a double-spend attack probability.
+
+Four new negative/positive tests check exact fractions, wrong types/ranges,
+remaining live-work classification and unchanged 64 original scenarios.
+The combined isolated Python suite on these source blobs passes 27/27
+(16 new confirmation/outage tests plus 11 pre-existing mounted DAA/Lease
+research tests). Current exact native Rust, operator-controlled networking,
+real W1 proof cost and hardware liveness have **not** been executed here.
+
+This strengthens the P0-C/P1-B threat matrix. It does not close the
+P0-A original host integration, P0-B physical retention/lease renewal,
+P0-C W1 cost qualification, P1-C versioned new-DAA core, or P2 WAN trials.
