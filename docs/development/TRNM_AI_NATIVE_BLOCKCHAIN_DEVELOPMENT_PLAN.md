@@ -4618,3 +4618,29 @@ CI run must establish the full system-Python and ARM results.
 The original failed runs, local full-tune SIGKILL, all-yes candidate results,
 Cell failures and uncompleted ordinary I10/runtime/benefit gates remain intact.
 This repair carries no neural improvement, installation or release authority.
+
+### PN3 new Cell004 and actual downloaded-model readback — 2026-10-27
+
+The [new source-bound Cell004 observation](../../evidence/pon-cell004-model-readback-20261027/README.md)
+uses the reviewed provider source `57fbdfeead5cfa1436eeef0d1691ee9933246d4d`.
+The empty consumer genuinely downloaded all eleven materials/269 chunks and
+272,189,870 payload bytes; aggregate fetch, cache-only materialization and final
+hash readback took25.906427551s within the unchanged35s limit. The provider
+retained45s/two workers and exited0 with280 completed/zero overloaded connections.
+The final original controller still exited1 at native-consumer/owner-receipt
+UNAVAILABLE. Batch003 remains failed, unchanged and causally undetermined.
+
+The original backend then loaded the downloaded candidate bytes and executed the
+predeclared next request. Actual loaded parent/artifact match `d3b3e79e`; eight
+generated tokens decode to `yes`. Original supervisor wall29.929171552s,
+CPU33.798063s and wait4 peak1,147,097,088B are retained under their actual scopes.
+This is direct controlled backend readback, not ordinary Agentd task execution.
+
+Hepta's separate `hepta-neural-agentd` qualified bootstrap already exists; the
+remaining integration must consume its real SystemLongitudinal eligibility,
+selection/CURRENT, resources and FinalUse, and propagate actual load/forward
+provenance into the ordinary Context/AppServer route. Initial-only selected
+material cannot become an evaluated child or an ordinary installation. The
+all-yes candidate and incomplete matched controls remain unqualified; this
+component result closes neither ordinary I10 nor full cold runtime, model benefit,
+three installed rounds, independent operators or WAN gates.
