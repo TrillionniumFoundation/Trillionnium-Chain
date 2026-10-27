@@ -1,0 +1,30 @@
+{
+  "source_commit": "215fc89386a6375e8a2663774085c3a11b24e24e",
+  "source_digest_sha256": "7c8fbc0c015229eea5620559eb46620c5d915623a238a92290820f19b446c79d",
+  "command": [
+    "/workspace/scratch/301262829a43/pon-build-inputs/unpacked/toolchain/bin/cargo",
+    "test",
+    "--offline",
+    "--locked",
+    "--message-format=json",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-protocol",
+    "--all-features",
+    "--lib",
+    "pq_frame::tests::old_devnet_transaction_size_cannot_hold_pq_signature",
+    "--",
+    "--exact"
+  ],
+  "cargo_exit": 0,
+  "cargo_log_sha256": "2f5e14819496a7e7083d713c0e991fa1641ab9c8d21156548da6b3745c2ddd63",
+  "full_repository_source_guard_passed": false,
+  "binary_name": "const-assert-c59e0b98dd-a8c991b2ca7cd86f",
+  "binary_sha256": "a8c991b2ca7cd86f1aa6d950479f4fb2fdd2e3c33dcc2b367d432f38a6cf2e97",
+  "binary_bytes": 16282864,
+  "test_exit": 0,
+  "test_log_sha256": "8f8ea757091bfb0ce5fbdd7ab02bc53957c6d33face7247d70de6b94c4c759ea",
+  "one_exact_test_executed": true,
+  "same_tracked_non_evidence_source": true
+}

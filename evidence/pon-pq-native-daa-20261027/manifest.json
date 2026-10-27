@@ -1,0 +1,317 @@
+{
+  "schema": "pon-pq-native-daa-scoped-evidence-v1",
+  "native_code_commit": "99be553ea80bee137b0bcc3b67d8786348547256",
+  "native_code_tree": "08b3b7d9dab4b767a0629cecd0dc6855cb3232e9",
+  "clippy_and_const_test_source_commit": "215fc89386a6375e8a2663774085c3a11b24e24e",
+  "only_later_native_file_change": "trillionnium/crates/trnm-protocol/src/pq_frame.rs: test-only const assertions",
+  "original_pq_base": "5e797326b9c7635e43b93f97c65a309e51eafb46",
+  "upstream_merge_parent": "21e3ccb5b7e5f3e60cc7e79db676e9708bea3a59",
+  "native_m02_blob": "2f63dd18dc5893e3020bb00b18f7dcb90bae41ae",
+  "source_digest_sha256": "7c8fbc0c015229eea5620559eb46620c5d915623a238a92290820f19b446c79d",
+  "tracked_non_evidence_blobs": 1675,
+  "atomic_native_runner_pass": false,
+  "native_copied_binary_results": {
+    "trnm_protocol": {
+      "passed": 39,
+      "ignored": 2,
+      "filtered": 0
+    },
+    "trnm_mvcc_fee": {
+      "passed": 78,
+      "ignored": 6,
+      "filtered": 0
+    },
+    "trnm_crypto_primitives": {
+      "passed": 5,
+      "ignored": 0,
+      "filtered": 108
+    },
+    "trnm_pon_node": {
+      "passed": 12,
+      "ignored": 0,
+      "filtered": 723
+    }
+  },
+  "clippy_exit": 0,
+  "clippy_same_tracked_non_evidence_source": true,
+  "const_assert_one_exact_test_exit": 0,
+  "full_repository_source_guard_passed": false,
+  "full_workspace_test_roster_executed": false,
+  "quantum_daa_tests": 7,
+  "native_arithmetic_differential_vectors": 1079,
+  "quantum_resource_estimate": null,
+  "native_pq_node_integrated": false,
+  "whole_chain_pq_qualified": false,
+  "quantum_pon_hardness_qualified": false,
+  "production_activation": false,
+  "raw_evidence_files": [
+    {
+      "path": "README.md",
+      "bytes": 8865,
+      "sha256": "8142357018d66d83f2a41d16cf9dffff4635f6ef9a0f4d5487c34c752a329e8f"
+    },
+    {
+      "path": "atomic-source-guard-observation.json",
+      "bytes": 1253,
+      "sha256": "2d92a41e60a2663411f502449ac7880e595cb7f3f4c6c6585a33a56b5d853ba2"
+    },
+    {
+      "path": "frozen-native-diagnostic-manifest.json",
+      "bytes": 2700,
+      "sha256": "408893cbccb1c2d8c7aeb78ac99a021c38c2d40fff214f596e72cbc3c2990bb2"
+    },
+    {
+      "path": "logs/base5e-mldsa-original-tests.log",
+      "bytes": 558,
+      "sha256": "42e40df983174aadfee1e86a15ed9cc87b3249469fd67c4ce5f8b3971beb83af"
+    },
+    {
+      "path": "logs/base5e-pq-baseline.log",
+      "bytes": 7113,
+      "sha256": "2dd246b9cb5e2b16ce04766ce2b239b16fcaa1938d98095380bdfc0e0347e108"
+    },
+    {
+      "path": "logs/ci-contract-merged-tests.log",
+      "bytes": 15866,
+      "sha256": "263572c2af70ee53d70ac5e7a06d0a0ff29634c28184f781bf4d585b72556e0b"
+    },
+    {
+      "path": "logs/ci-contract-tests.log",
+      "bytes": 16870,
+      "sha256": "68352952c4b0dcb4c607a74eb1aa7dfa7152791b0d1fb067a692f18268574750"
+    },
+    {
+      "path": "logs/const-assert-cargo.log",
+      "bytes": 29591,
+      "sha256": "2f5e14819496a7e7083d713c0e991fa1641ab9c8d21156548da6b3745c2ddd63"
+    },
+    {
+      "path": "logs/const-assert-format.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "logs/const-assert-frozen-test.log",
+      "bytes": 195,
+      "sha256": "8f8ea757091bfb0ce5fbdd7ab02bc53957c6d33face7247d70de6b94c4c759ea"
+    },
+    {
+      "path": "logs/const-assert-result.json",
+      "bytes": 1079,
+      "sha256": "d154830512a038fcde2d57a8459a840b5e96f4244bdf92f778e6be9da3c93c13"
+    },
+    {
+      "path": "logs/const-assert-source-commit.json",
+      "bytes": 356,
+      "sha256": "e410956b4458bcb997ff2f98631d56c7883b0a097208ea6789f3f55c12c47a32"
+    },
+    {
+      "path": "logs/final-clippy-result.json",
+      "bytes": 1174,
+      "sha256": "21856032a30427a92fd82783fe13d9088716129eb458e3c0d1f1aac26bc82322"
+    },
+    {
+      "path": "logs/final-clippy-source-after.json",
+      "bytes": 378921,
+      "sha256": "6500a7484f5bb7e56993209c8d7dc00bb664bb2e720f82689066e4bb3dbf9589"
+    },
+    {
+      "path": "logs/final-clippy-source-before.json",
+      "bytes": 378921,
+      "sha256": "6500a7484f5bb7e56993209c8d7dc00bb664bb2e720f82689066e4bb3dbf9589"
+    },
+    {
+      "path": "logs/final-clippy.log",
+      "bytes": 1888,
+      "sha256": "e38bba76941dc000da51268f3c21ba2ee0651d695bd2fd8d5062cf6f65251d49"
+    },
+    {
+      "path": "logs/final-preflight-before-docs.log",
+      "bytes": 171,
+      "sha256": "61a386dd30e172e2eb7685fc8c7e6e223e67075e270f7f3d7acc4f0802fe5b2f"
+    },
+    {
+      "path": "logs/markdown-relative-links.json",
+      "bytes": 1053,
+      "sha256": "b299c76c72116c82e1f63519602347f0e25ecea17c8ef9faf258dec83c7c2fad"
+    },
+    {
+      "path": "logs/merged-cargo-fmt.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "logs/merged-native-86b3bead680b-trnm_crypto_primitives-frozen-tests.log",
+      "bytes": 557,
+      "sha256": "ab0852256baa94aeb0de7260315b3957defdbb23c155287eea7726abbfe8efc3"
+    },
+    {
+      "path": "logs/merged-native-86b3bead680b-trnm_mvcc_fee-frozen-tests.log",
+      "bytes": 9445,
+      "sha256": "08d5d840883b73e7c01ee03b55c69b4d7a5fb47dc3a7c7e10d13bddba3305d73"
+    },
+    {
+      "path": "logs/merged-native-86b3bead680b-trnm_pon_node-frozen-tests.log",
+      "bytes": 1215,
+      "sha256": "34db46ba11bfaca4557a3c5ef050545167289dea09cb1a09b061b0747b36d465"
+    },
+    {
+      "path": "logs/merged-native-86b3bead680b-trnm_protocol-frozen-tests.log",
+      "bytes": 3883,
+      "sha256": "3525efbd68a528cc492c40bd4ab4f2295a53b43a8f94116c026ccca390137be5"
+    },
+    {
+      "path": "logs/merged-native-86b3bead680b.log",
+      "bytes": 108704,
+      "sha256": "e8474214afa2677c8ed174ab148f143116e3a1c1c2d176e870cc462a7628723b"
+    },
+    {
+      "path": "logs/pq-owner-baseline-red-compile.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "logs/pq-owner-baseline-red-tests.log",
+      "bytes": 1837,
+      "sha256": "ac094944191e38a78d12a1eb5f205e20043d5136db82035c6d799b8e56ecd0a1"
+    },
+    {
+      "path": "logs/pq-owner-baseline-red.json",
+      "bytes": 256,
+      "sha256": "69d7ed793ccb6c8965ba06d9ea04fdfb01bb125637df5192378ff3eef5eb89e7"
+    },
+    {
+      "path": "logs/pq-owner-hardened-complete-tests.log",
+      "bytes": 1506,
+      "sha256": "7ccff3547657cc2726c574e9190c7af00d0cfc942f3121a5dcecd931cd5c45a5"
+    },
+    {
+      "path": "logs/pq-owner-hardened-complete.json",
+      "bytes": 257,
+      "sha256": "c502431a28312f59ec3ffe23394bd41b1dcf9a5fb0e1f5b3f706e8623f26cfaa"
+    },
+    {
+      "path": "logs/pq-owner-hardened-diskfull-compile.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "logs/pq-owner-hardened-diskfull-tests.log",
+      "bytes": 1045,
+      "sha256": "e74f5839f3b4c2e8bddf4e28d34a2c6b8a065e49a690c7a89acc17ab6970b9a7"
+    },
+    {
+      "path": "logs/pq-owner-hardened-diskfull.json",
+      "bytes": 255,
+      "sha256": "194918e0ea49074b680afd4d5b333f8fdbed96d31a9df842a844d6d3d06f3dd6"
+    },
+    {
+      "path": "logs/preflight-attempts.txt",
+      "bytes": 421,
+      "sha256": "f4f2dd0d612486182755d6b8e0e77967fd77ebdee81714b05fb3d91534daaead"
+    },
+    {
+      "path": "logs/preflight.log",
+      "bytes": 161,
+      "sha256": "156a108231200fd4f8db95300f69e2fbc40ce59f38761b3e8279630915cf767e"
+    },
+    {
+      "path": "logs/project-boundary-tests.log",
+      "bytes": 2426,
+      "sha256": "4e8edde74f43bdc58a73ddf9bce5717b98bdd164598c39744ec6261c1d626645"
+    },
+    {
+      "path": "logs/qtx-native-cargo-tests.log",
+      "bytes": 1866,
+      "sha256": "b1c82ec42abaae2996c95bb3b32d08bb76b5b6fc53b55e9023cfe3bfeadc26ce"
+    },
+    {
+      "path": "logs/qtx-raw-real-crypto.log",
+      "bytes": 425,
+      "sha256": "20c58dc6a4df53de8faee3d8fd6024683bfdd8b3c561a11ba92b1070ee6fce72"
+    },
+    {
+      "path": "logs/quantum-daa-final-tests.log",
+      "bytes": 1277,
+      "sha256": "b38b6c7f7745bbc2f169115de4f6161eb5ee1a001e908e7469728dc47f129ca1"
+    },
+    {
+      "path": "logs/quantum-daa-final.json",
+      "bytes": 6302,
+      "sha256": "bc0fa4100d243b356c3fc157d4d089f85d452b32e1e07b57cdd2d5b01d5256da"
+    },
+    {
+      "path": "logs/red-reproduction-patch-check.json",
+      "bytes": 163,
+      "sha256": "f2a21293471bf109d44164268872f79bfb50bb7a8eab48a0e6329d674dded7d0"
+    },
+    {
+      "path": "logs/source-integrity-negatives.log",
+      "bytes": 5510,
+      "sha256": "935b6b82143c725f552f5df13cfe435ceac15874c9d5091e48832895b6eb0a23"
+    },
+    {
+      "path": "logs/staged-diff-whitespace-observation.json",
+      "bytes": 1449,
+      "sha256": "1b0da027515a6f745b32c11fd0911be3a60672318c9a4322ee9c0af595850963"
+    },
+    {
+      "path": "logs/strict-clippy-99be-red/final-clippy-result.json",
+      "bytes": 1176,
+      "sha256": "b0f7bdbb29eee4267e8182f345594e2ae38ed3d215ff0b4aed1f30f0ef234371"
+    },
+    {
+      "path": "logs/strict-clippy-99be-red/final-clippy-source-after.json",
+      "bytes": 378921,
+      "sha256": "7206791ae2b82177546cb4a7e59459199daa9567602889f5cfd97269f0b41687"
+    },
+    {
+      "path": "logs/strict-clippy-99be-red/final-clippy-source-before.json",
+      "bytes": 378921,
+      "sha256": "7206791ae2b82177546cb4a7e59459199daa9567602889f5cfd97269f0b41687"
+    },
+    {
+      "path": "logs/strict-clippy-99be-red/final-clippy.log",
+      "bytes": 6466,
+      "sha256": "7f1b6eb3fa1ab62ad0e743a031064812dd47cbc45e4125d64ea2b50313138a82"
+    },
+    {
+      "path": "recorded-runners/run_final_clippy.py.txt",
+      "bytes": 4147,
+      "sha256": "b27350fe92d56895bde328be4d385b949c773bdac161e2fa1a1234bf6d449aa1"
+    },
+    {
+      "path": "recorded-runners/run_final_clippy_with_source_pin.py.txt",
+      "bytes": 4196,
+      "sha256": "7545f781593b961482db33dd097d40f863f67f67ac6dda64ca22ea2e8b51df6e"
+    },
+    {
+      "path": "recorded-runners/run_owner_targeted.py.txt",
+      "bytes": 2605,
+      "sha256": "8492e591a38c291d4548e25cc5a393723ff7915a155b0969a8e1a39e52007b67"
+    },
+    {
+      "path": "recorded-runners/validate_const_assert.py.txt",
+      "bytes": 3941,
+      "sha256": "c8592384682cbd77c29722fbac3af8a7537de79aafe3060418e3b815f0229527"
+    },
+    {
+      "path": "recorded-runners/validate_final_native.py.txt",
+      "bytes": 6129,
+      "sha256": "c1080d61d07a0465dde9d1118dfc5b7eeddc6fe91874ee40471cb3f60bfbf90e"
+    },
+    {
+      "path": "reproduce-original-owner-red.patch",
+      "bytes": 3815,
+      "sha256": "3b998360e690702193dda3c1cf947bd52ac97f0c13d7134043949b52fc1e7296"
+    },
+    {
+      "path": "w1-static-ledger.json",
+      "bytes": 986,
+      "sha256": "7941f08bdabd659f5b4ae5efd9243ad9af34228ad7302301c84d1e45b402775a"
+    }
+  ],
+  "raw_stdout_preserved_without_whitespace_normalization": true,
+  "all_staged_whitespace_diagnostic_exit": 2,
+  "non_evidence_code_and_docs_whitespace_exit": 0
+}

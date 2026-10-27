@@ -1,0 +1,30 @@
+{
+  "source_commit": "99be553ea80bee137b0bcc3b67d8786348547256",
+  "command": [
+    "/workspace/scratch/301262829a43/pon-build-inputs/unpacked/toolchain/bin/cargo",
+    "clippy",
+    "--locked",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--workspace",
+    "--all-targets",
+    "--all-features",
+    "--",
+    "-D",
+    "warnings"
+  ],
+  "cargo_build_jobs": 1,
+  "exit_code": 101,
+  "elapsed_seconds": 371.03549985000063,
+  "rustc": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: x86_64-unknown-linux-gnu\nrelease: 1.95.0\nLLVM version: 22.1.2\n",
+  "same_tracked_non_evidence_source": true,
+  "source_digest_sha256": "70c3ca14d414f7e27ea31efa74ec20ce32e4ed469ec93889d78b48d05ae93b95",
+  "source_before": "final-clippy-source-before.json",
+  "source_after": "final-clippy-source-after.json",
+  "log": "final-clippy.log",
+  "log_sha256": "7f1b6eb3fa1ab62ad0e743a031064812dd47cbc45e4125d64ea2b50313138a82",
+  "full_repository_source_guard_passed": false,
+  "native_pq_node_integrated": false,
+  "production_activation": false,
+  "quantum_pon_hardness_qualified": false
+}

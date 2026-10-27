@@ -2132,6 +2132,50 @@ PN1 accounting; PN1/PN2 implementation may iterate before joint acceptance.
 Keep required-target/chainwork, DAA/time boundaries, fork eligibility and
 partition/reorg regressions in the existing consensus owner throughout this work.
 
+**Scoped PQ/DAA component increment, 2026-10-27.** On the separately frozen
+`5e797326b9c7635e43b93f97c65a309e51eafb46` integration base, extend the existing
+native TPQ1 owner with exact schema/TEMP refusal, pinned-owner/tip checks and
+same-transaction statement/sequence readback. QTX1 connects the existing actual
+ML-DSA-65 verifier to shared M06 nonce/fee/transfer arithmetic as an explicit
+fresh-network component preview; it adds no installed dispatch or durable account
+migration. The source-bound quantum DAA experiment checks actual M02 integer
+rules while making its assumed search-cost model and unproved fresh-work
+alternative explicit. The [component contract](../security/PQ_NATIVE_TRANSFER_AND_QUANTUM_DAA_V1.md)
+records boundaries and commands. Ordinary Node PQ admission, transport, governance,
+final-use, physical rollback resistance, quantum work hardness and joint PN1/PN2
+qualification remain open. No activation or former FAIL verdict changes.
+
+The [scoped execution archive](../../evidence/pon-pq-native-daa-20261027/README.md)
+records native code `99be553ea80bee137b0bcc3b67d8786348547256`, retaining upstream
+`21e3ccb5b7e5f3e60cc7e79db676e9708bea3a59` as a real merge parent. The original
+local owner produced three RED regressions before hardening; the final unique
+copied binaries passed M01 PQ 5 (210 pinned Wycheproof cases), M00 39 with two
+original ignored tests, M06 78 with six original ignored tests, and local PQ
+owner 12 with 723 other Node tests filtered. DAA/native parity passed seven
+tests and 1,079 vectors; CI contract 95, negative source-integrity 34 and project
+boundary 16 checks passed. Strict Clippy first refused two inherited constant
+assertions; test-only commit `215fc89386a6375e8a2663774085c3a11b24e24e` preserves
+both bounds as compile-time assertions. Workspace/all-target/all-feature strict
+Clippy, formatting and that exact one-test copied-binary selector then passed,
+without claiming a full suite at 215f. Clippy's 1,675 tracked non-evidence blobs
+matched before/after; its original physical SQLite I/O UNQUALIFIED warning
+remains. The atomic native wrapper still refused its post-source guard because
+old self-generated hex files reappeared as untracked; sparse historical evidence
+also prevents a full local repository guard claim. These failures are retained,
+and the clean published-source gates remain required. No ignored/filtered test
+is counted as executed. The complete W1 oracle ledger is static accounting only:
+the conditional `r=0.25` DAA model is not an implemented reversible W1 circuit,
+and quantum physical costs, fresh-work hardness and joint qualification stay open.
+
+The [original native CI readback](../../evidence/pon-native-campaign-ci-20261027/README.md)
+retains every predeclared campaign at exact heads `63ae5018` and `e9c4bb0d`:
+FAIL/PASS/FAIL and FAIL/FAIL/FAIL. The five failing from-zero phases observed real
+CPU-credit depletion after their last business round; all original predicates
+remain unchanged and no passing run replaces a failure. These legacy regressions
+explicitly used an eight-bit protected transport ticket, so they do not qualify
+the separate zero-grinding pure-PoN profile. Full original reports, metadata and
+logs remain hashed; directed integration success does not erase this gate failure.
+
 **Local implementation observation, 2026-10-22.** The explicitly selected
 [permanent-account growth v2](../protocol/pon-nakamoto-v1/details/NATIVE_ACCOUNT_GROWTH_V2.md)
 now connects the original-parent AAM1 proof, bounded complete working partition,

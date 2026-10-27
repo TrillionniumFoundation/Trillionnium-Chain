@@ -1,0 +1,8 @@
+{
+  "scope": "optional Git whitespace diagnostic; raw stdout artifacts are preserved verbatim",
+  "all_staged_exit": 2,
+  "all_staged_output": "evidence/pon-pq-native-daa-20261027/logs/base5e-mldsa-original-tests.log:10: new blank line at EOF.\nevidence/pon-pq-native-daa-20261027/logs/const-assert-cargo.log:61: new blank line at EOF.\nevidence/pon-pq-native-daa-20261027/logs/const-assert-frozen-test.log:6: new blank line at EOF.\nevidence/pon-pq-native-daa-20261027/logs/merged-native-86b3bead680b-trnm_crypto_primitives-frozen-tests.log:10: new blank line at EOF.\nevidence/pon-pq-native-daa-20261027/logs/merged-native-86b3bead680b-trnm_mvcc_fee-frozen-tests.log:89: new blank line at EOF.\nevidence/pon-pq-native-daa-20261027/logs/merged-native-86b3bead680b-trnm_pon_node-frozen-tests.log:17: new blank line at EOF.\nevidence/pon-pq-native-daa-20261027/logs/merged-native-86b3bead680b-trnm_protocol-frozen-tests.log:46: new blank line at EOF.\nevidence/pon-pq-native-daa-20261027/logs/merged-native-86b3bead680b.log:197: new blank line at EOF.\nevidence/pon-pq-native-daa-20261027/logs/pq-owner-hardened-diskfull-tests.log:17: new blank line at EOF.\nevidence/pon-pq-native-daa-20261027/logs/preflight-attempts.txt:8: new blank line at EOF.\nevidence/pon-pq-native-daa-20261027/logs/qtx-native-cargo-tests.log:28: new blank line at EOF.\n",
+  "code_and_docs_exit": 0,
+  "raw_log_bytes_normalized": false,
+  "ci_or_lint_gate_changed": false
+}

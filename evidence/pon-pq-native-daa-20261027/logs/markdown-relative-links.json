@@ -1,0 +1,18 @@
+{
+  "scope": "changed Markdown relative file targets, including sparse tracked paths; external URLs and heading anchors not fetched or certified",
+  "checked_files": [
+    "docs/security/PQ_NATIVE_TRANSFER_AND_QUANTUM_DAA_V1.md",
+    "docs/protocol/pon-nakamoto-v1/details/PQ_NATIVE_AUTHORIZATION_V1.md",
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+    "evidence/pon-pq-native-daa-20261027/README.md"
+  ],
+  "relative_links": 163,
+  "failures": [],
+  "source_sha256": {
+    "docs/security/PQ_NATIVE_TRANSFER_AND_QUANTUM_DAA_V1.md": "0e5b0e9b2df20bb709ecc8f78f5b91d9b946e898d6c5d1d5d8fe8393d8ba0094",
+    "docs/protocol/pon-nakamoto-v1/details/PQ_NATIVE_AUTHORIZATION_V1.md": "9e33441234205f0044c718749d984b10f3e036177bc49b6bfa63fdf99e8ea402",
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md": "e2c07d1e41c1383b4583ce30dfb5d3a43f6fe57a24063b1ba01369ea20560cea",
+    "evidence/pon-pq-native-daa-20261027/README.md": "8142357018d66d83f2a41d16cf9dffff4635f6ef9a0f4d5487c34c752a329e8f"
+  },
+  "result": "PASS"
+}

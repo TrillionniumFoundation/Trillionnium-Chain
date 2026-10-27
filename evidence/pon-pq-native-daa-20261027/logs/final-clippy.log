@@ -1,0 +1,15 @@
+    Checking trnm-protocol v0.1.0 (/workspace/scratch/301262829a43/pon-pq-impl/pq-base5e/trillionnium/crates/trnm-protocol)
+    Checking trnm-crypto-primitives v0.1.0 (/workspace/scratch/301262829a43/pon-pq-impl/pq-base5e/trillionnium/crates/trnm-crypto-primitives)
+    Checking trnm-mvcc-fee v0.1.0 (/workspace/scratch/301262829a43/pon-pq-impl/pq-base5e/trillionnium/crates/trnm-mvcc-fee)
+warning: trnm-sqlite-io-boundary@0.1.0: trnm SQLite I/O boundary UNQUALIFIED: normal Cargo loader directory set incomplete
+    Checking trnm-pon-node v0.1.0 (/workspace/scratch/301262829a43/pon-pq-impl/pq-base5e/trillionnium/crates/trnm-pon-node)
+    Checking trnm-transport v0.1.0 (/workspace/scratch/301262829a43/pon-pq-impl/pq-base5e/trillionnium/crates/trnm-transport)
+    Checking trnm-oracle v0.1.0 (/workspace/scratch/301262829a43/pon-pq-impl/pq-base5e/trillionnium/crates/trnm-oracle)
+    Checking trnm-types v0.1.0 (/workspace/scratch/301262829a43/pon-pq-impl/pq-base5e/trillionnium/crates/trnm-types)
+    Checking trnm-checkpoint-types v0.1.0 (/workspace/scratch/301262829a43/pon-pq-impl/pq-base5e/trillionnium/crates/trnm-checkpoint-types)
+    Checking trnm-release-bundle v0.1.0 (/workspace/scratch/301262829a43/pon-pq-impl/pq-base5e/trillionnium/crates/trnm-release-bundle)
+    Checking trnm-control-plane v0.1.0 (/workspace/scratch/301262829a43/pon-pq-impl/pq-base5e/trillionnium/crates/trnm-control-plane)
+    Checking trnm-verification-profiles v0.1.0 (/workspace/scratch/301262829a43/pon-pq-impl/pq-base5e/trillionnium/crates/trnm-verification-profiles)
+    Checking trnm-mempool v0.1.0 (/workspace/scratch/301262829a43/pon-pq-impl/pq-base5e/trillionnium/crates/trnm-mempool)
+    Checking trnm-audit-events v0.1.0 (/workspace/scratch/301262829a43/pon-pq-impl/pq-base5e/trillionnium/crates/trnm-audit-events)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 2m 39s
