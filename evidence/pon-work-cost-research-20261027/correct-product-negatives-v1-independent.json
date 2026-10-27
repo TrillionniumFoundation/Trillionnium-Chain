@@ -1,0 +1,11 @@
+{
+  "result": "PASS",
+  "schema": "trnm-correct-product-false-trace-readback-v1",
+  "raw_sha256": "6391f42280bacaca23da40742f31ef5c538133778ec424e32b99482eaf28de3e",
+  "independent_correct_products": 13,
+  "independent_full_transcript_rejections": 39,
+  "all_hash_trials_reconstructed": true,
+  "node_entry_executed": false,
+  "network_DoS_qualified": false,
+  "succinct_proof": false
+}
