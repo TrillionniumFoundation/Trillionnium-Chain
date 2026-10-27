@@ -2511,6 +2511,94 @@ mod tests {
     }
 
     #[test]
+    fn history_multi_packet_budget_checkpoint_is_per_w1_and_preserves_retryable_native_facts() {
+        // Two independently mined, complete valid W1 packets. The first
+        // physical-owner revocation arrives AFTER durable admission of p1;
+        // no false W1-invalid verdict or invented rollback is allowed.
+        let observed = now().unwrap();
+        let settings = crate::Settings::development(Some(observed - 100)).unwrap();
+        let dir = tempfile::tempdir().unwrap();
+        let mut producer = Node::open(dir.path().join("producer"), settings.clone(), 2).unwrap();
+        let genesis = settings.genesis();
+        let first = producer
+            .make(
+                genesis,
+                vec![],
+                crate::development_public(0).unwrap(),
+                settings.genesis_time() + 10,
+                4096,
+            )
+            .unwrap();
+        let first_id = producer.admit(&first, observed).unwrap();
+        producer.activate_observed(first_id, observed).unwrap();
+        let second = producer
+            .make(
+                first_id,
+                vec![],
+                crate::development_public(0).unwrap(),
+                settings.genesis_time() + 20,
+                4096,
+            )
+            .unwrap();
+        let tip = second.id().unwrap();
+        let page = || Page {
+            schema: "pon-native-history-v1".into(),
+            network: hex::encode(settings.network()),
+            parameters: hex::encode(settings.parameters()),
+            genesis: hex::encode(genesis),
+            tip: hex::encode(tip),
+            after: hex::encode(genesis),
+            packets: vec![
+                hex::encode(first.encode().unwrap()),
+                hex::encode(second.encode().unwrap()),
+            ],
+            next: hex::encode(tip),
+            complete: true,
+        };
+        let mut receiver = Node::open(dir.path().join("receiver"), settings.clone(), 2).unwrap();
+        let mut observed_checks = 0;
+        let err = receive_page_with_checkpoint(
+            &mut receiver, page(), tip, genesis, observed,
+            || {
+                observed_checks += 1;
+                if observed_checks == 2 {
+                    Err("PUBLIC_HOST_KERNEL_LIMITS_CHANGED".into())
+                } else {
+                    Ok(())
+                }
+            },
+        )
+        .unwrap_err();
+        assert_eq!(err.to_string(), "PUBLIC_HOST_KERNEL_LIMITS_CHANGED");
+        assert_eq!(observed_checks, 2, "one W1 replay must be bracketed");
+        assert_eq!(receiver.read_active().unwrap().0, genesis);
+        // First valid block is already durably admitted, but is not
+        // activated as a partially completed History page.
+        assert_eq!(receiver.parent_height(first_id).unwrap(), 1);
+        drop(receiver);
+
+        // An exact retry recovers from the original durable bytes. The
+        // second W1 still requires its own before/after owner checkpoints.
+        let mut receiver =
+            Node::open(dir.path().join("receiver"), settings, 2).unwrap();
+        let mut complete_checks = 0;
+        assert_eq!(
+            receive_page_with_checkpoint(
+                &mut receiver, page(), tip, genesis, observed,
+                || {
+                    complete_checks += 1;
+                    Ok(())
+                },
+            )
+            .unwrap(),
+            tip
+        );
+        assert_eq!(complete_checks, 6, "both W1s and activation bracketed");
+        assert_eq!(receiver.read_active().unwrap().0, tip);
+        assert_eq!(receiver.parent_height(tip).unwrap(), 2);
+    }
+
+    #[test]
     fn protected_hello_rendezvous_from_reserved_socket_preserves_full_native_admission() {
         let (_dir, node, packet) = pending_packet();
         let settings = node.lock().unwrap().settings().clone();
