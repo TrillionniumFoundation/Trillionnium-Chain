@@ -2109,8 +2109,81 @@ fn call_authenticated_durable_inner(
     Err(Error::authenticated_remote(terminal, error))
 }
 
+/// Begin work from the original Node-owned CPU domain. A fresh standalone
+/// History Node begins with ZERO credit and earns the original start quantum
+/// only through the original refill. This is bounded waiting, not extra credit.
+fn begin_history_import_cpu(
+    domain: &public_v3::ServiceMutationCpuDomain,
+) -> Result<public_v3::ServiceMutationCpuOperation> {
+    let deadline = Instant::now() + Duration::from_secs(2);
+    loop {
+        match domain.begin() {
+            Ok(operation) => return Ok(operation),
+            Err(error)
+                if error.is(crate::ErrorCode::PublicMutationCpuBudget)
+                    && Instant::now() < deadline =>
+            {
+                thread::sleep(Duration::from_millis(2));
+            }
+            Err(error) => return Err(error),
+        }
+    }
+}
+
+/// One packet/activation uses one original CPU operation including native M06
+/// worker scopes. The actual native result and CPU settlement are independent.
+/// A lost CPU clock after a real commit cannot undo a committed block; it
+/// does make the overall synchronization fail closed and fences new work.
+fn metered_history_operation<T>(
+    node: &mut Node,
+    domain: &public_v3::ServiceMutationCpuDomain,
+    native: impl FnOnce(&mut Node, &public_v3::ServiceMutationCpuOperation) -> Result<T>,
+) -> Result<T> {
+    let operation = begin_history_import_cpu(domain)?;
+    let outcome = native(node, &operation);
+    let receipt = operation.finish();
+    if receipt.accounting_unavailable {
+        node.operator_task_accounting_unknown()?;
+        return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+    }
+    outcome
+}
+
+fn metered_history_packet(
+    node: &mut Node,
+    domain: &public_v3::ServiceMutationCpuDomain,
+    packet: &Packet,
+    clock: u64,
+) -> Result<Hash> {
+    metered_history_operation(node, domain, |owner, operation| {
+        let progress = operation.checkpoint_handle();
+        progress.checkpoint()?;
+        if let Some(already) = owner.check_admission_context_with_progress(
+            packet,
+            clock,
+            &mut || progress.checkpoint(),
+        )? {
+            return Ok(already);
+        }
+        let permit = owner.begin_owner_work(packet)?;
+        let checked = WorkCheckedPacket::verify_with_progress(
+            packet.clone(),
+            &mut |_| progress.checkpoint(),
+        )?;
+        progress.checkpoint()?;
+        let checked = owner.attach_owner_work(checked, permit)?;
+        let execution_progress = |_phase| progress.checkpoint();
+        let control = trnm_mvcc_fee::pon_executor::ExecutionControl::new(
+            &execution_progress,
+            operation.worker_accounting(),
+        );
+        owner.admit_work_checked_with_control(checked, clock, &control)
+    })
+}
+
 fn receive_page(
     node: &mut Node,
+    domain: &public_v3::ServiceMutationCpuDomain,
     page: Page,
     tip: Hash,
     after: Hash,
@@ -2152,10 +2225,15 @@ fn receive_page(
         "PAGE_COMPLETE",
     )?;
     for packet in &packets {
-        node.admit(packet, clock)?;
+        metered_history_packet(node, domain, packet, clock)?;
     }
     if page.complete {
-        node.activate_observed(tip, clock)?;
+        // Reorganization/activation has its own original CPU reservation.
+        // Already durable native effects cannot be undone by late CPU faults.
+        metered_history_operation(node, domain, |owner, operation| {
+            operation.checkpoint()?;
+            owner.activate_observed(tip, clock).map(|_| ())
+        })?;
     }
     Ok(next)
 }
@@ -2178,7 +2256,11 @@ pub fn receive_page_from(
     if let Some(kernel) = &host_kernel {
         kernel.verify()?;
     }
-    let native = receive_page(node, page, tip, after, clock);
+    // The Node chooses this domain exactly once. A public V3 or continuous
+    // Node must share its already-bound live account. A standalone sync Node
+    // starts with zero original credit; no per-peer/page allowance is minted.
+    let domain = node.remote_history_cpu_domain()?;
+    let native = receive_page(node, &domain, page, tip, after, clock);
     // A completed native admission cannot be undone by a post-verification
     // host fault. That fault still makes the overall synchronization fail.
     if let Some(kernel) = &host_kernel {
