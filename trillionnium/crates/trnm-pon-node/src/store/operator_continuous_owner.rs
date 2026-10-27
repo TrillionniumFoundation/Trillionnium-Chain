@@ -428,6 +428,47 @@ impl Node {
             .cloned()
             .ok_or_else(|| "OWNER_PUBLIC_SERVICE_DOMAIN_UNBOUND".into())
     }
+    /// Use one existing Node-owned budget for all remotely sourced History
+    /// proof imports, including loopback and nonloopback sources. A standalone
+    /// sync Node receives a COLD original CPU epoch, not the 2s diagnostic
+    /// warm burst; a V3/continuous Node keeps its already bound owner.
+    /// Never issue fresh credit on every peer, page or new signing identity.
+    pub(crate) fn remote_history_cpu_domain(&mut self) -> Result<ServiceMutationCpuDomain> {
+        // Once an ordinary public service is marked unclean, even its
+        // previously bound account cannot authorize new History mutations.
+        ensure(
+            !self.public_service_epoch_unknown,
+            "OWNER_PUBLIC_SERVICE_UNCLEAN_EPOCH",
+        )?;
+        if let Ok(domain) = self.public_service_cpu_domain() {
+            return Ok(domain);
+        }
+        // No live listener can create an unrelated budget behind its owner.
+        ensure(
+            self.public_service_epoch_listeners == 0,
+            "OWNER_PUBLIC_SERVICE_UNCLEAN_EPOCH",
+        )?;
+        // A process may have died with outstanding public W1 CPU. The
+        // volatile marker then resets on Node::open, but the original SQLite
+        // active-epoch row survives. Refuse a cold History budget BEFORE
+        // attempting any new verification. The existing V3 service uses the
+        // same canonical durable key and exact unknown-debt semantics.
+        let prior_epoch: Option<Vec<u8>> = self
+            .db
+            .query_row(
+                "SELECT value FROM metadata WHERE key=?1",
+                [ORDINARY_PUBLIC_EPOCH_KEY],
+                |row| row.get(0),
+            )
+            .optional()?;
+        ensure(
+            prior_epoch.is_none(),
+            "OWNER_PUBLIC_SERVICE_UNCLEAN_EPOCH",
+        )?;
+        let cold = ServiceMutationCpuDomain::cold_remote_history_epoch();
+        self.bind_public_service_cpu_domain(&cold)?;
+        Ok(cold)
+    }
     #[cfg(test)]
     pub(crate) fn continuous_domain_matches(&self, cpu: &ServiceMutationCpuDomain) -> bool {
         self.continuous_owner
