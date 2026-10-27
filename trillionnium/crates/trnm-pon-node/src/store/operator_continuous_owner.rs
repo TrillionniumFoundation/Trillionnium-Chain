@@ -434,13 +434,18 @@ impl Node {
     /// warm burst; a V3/continuous Node keeps its already bound owner.
     /// Never issue fresh credit on every peer, page or new signing identity.
     pub(crate) fn remote_history_cpu_domain(&mut self) -> Result<ServiceMutationCpuDomain> {
+        // Once an ordinary public service is marked unclean, even its
+        // previously bound account cannot authorize new History mutations.
+        ensure(
+            !self.public_service_epoch_unknown,
+            "OWNER_PUBLIC_SERVICE_UNCLEAN_EPOCH",
+        )?;
         if let Ok(domain) = self.public_service_cpu_domain() {
             return Ok(domain);
         }
-        // An unclean public-service epoch may own unsettled historical CPU.
-        // It is not permission to start a new import allowance.
+        // No live listener can create an unrelated budget behind its owner.
         ensure(
-            !self.public_service_epoch_unknown && self.public_service_epoch_listeners == 0,
+            self.public_service_epoch_listeners == 0,
             "OWNER_PUBLIC_SERVICE_UNCLEAN_EPOCH",
         )?;
         let cold = ServiceMutationCpuDomain::cold_remote_history_epoch();
