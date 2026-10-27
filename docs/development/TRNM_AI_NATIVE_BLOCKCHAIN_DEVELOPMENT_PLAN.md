@@ -79,6 +79,16 @@ experiments, hosted CI and independent WAN acceptance retain separate results.
 Keep initial failures and unavailable tests. No optional test adapter, source
 scan, SHA pin, document change or successful proof promotes readiness flags.
 
+The [2026-10-27 execution record](../../evidence/pon-pure-workpackages-20261027/README.md)
+retains the actual results: W1's complete-relation CPU proof attempt timed out
+at 3,600 seconds without a receipt; original exhausted-budget/confirmation gates
+remain unpassed; M06's detached prototype is isolated because autonomous bounded
+reconciliation is still missing. Real ML-DSA-65 verification does not yet migrate
+the native authorization owners. Real publisher-offline model retrieval and
+comparison produced a legal no-update result, while original Hepta owner CI and
+independent WAN exits remain separately unqualified. Pure PoN and all existing
+production refusal flags remain unchanged.
+
 The initial 2026-10-20 audit amendment uses Chain PR #323 commit
 `9bd8b20da68f0dc199aab78c27644ed004af7411` (tree
 `9a408fd7d9446dca3b319337f4a10078469df426`) against main
