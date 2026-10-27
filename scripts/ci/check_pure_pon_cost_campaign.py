@@ -7,11 +7,13 @@ import itertools
 import json
 from pathlib import Path
 
-SCHEMA = "pon-pure-w1-amortization-campaign-v1"
-ARMS = {"prepared-general", "structured", "tiled-classical", "blocked-zero",
+SCHEMA_V1 = "pon-pure-w1-amortization-campaign-v1"
+SCHEMA = "pon-pure-w1-amortization-campaign-v2"
+ARMS_V1 = {"prepared-general", "structured", "tiled-classical", "blocked-zero",
         "tiled-strassen-one-level", "paired-field-products", "blocked-one-zero-rank-one",
         "blocked-zero-integer-paired", "maintenance-split-limb", "maintenance-periodic",
         "maintenance-prefix", "maintenance-integer-paired"}
+ARMS = ARMS_V1 | {"low-rank-prefix-scalar", "low-rank-prefix-paired"}
 MATERIALS = {"periodic-dense-fixture", "full-rank-field", "zero", "identity",
              "rank-one", "sparse-diagonal", "genesis-maintenance", "zero-left-rank-one-right",
              "rank-one-left-zero-right"}
@@ -31,10 +33,28 @@ def exact_hash(value):
     return isinstance(value, str) and len(value) == 64 and all(c in "0123456789abcdef" for c in value)
 
 
-def check(rows):
+def check(rows, source_root=None):
     require(bool(rows), "empty campaign")
-    require(all(r.get("schema") == SCHEMA for r in rows), "schema")
+    schema = rows[0].get("schema")
+    require(schema in (SCHEMA_V1, SCHEMA) and all(r.get("schema") == schema for r in rows), "schema")
     begin, terminal = rows[0], rows[-1]
+    arms = ARMS if schema == SCHEMA else ARMS_V1
+    if schema == SCHEMA:
+        source = begin.get("compiled_source_sha256", {})
+        require(set(source) == {"campaign_driver", "canonical_w1", "low_rank_prefix", "cargo_lock"}
+                and all(exact_hash(value) for value in source.values()), "compiled source digests")
+    if source_root is not None:
+        require(schema == SCHEMA, "source byte binding requires v2")
+        paths = {
+            "campaign_driver": "trillionnium/crates/trnm-pon-node/examples/pon_pure_cost_campaign.rs",
+            "canonical_w1": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+            "low_rank_prefix": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/low_rank_prefix.rs",
+            "cargo_lock": "trillionnium/Cargo.lock",
+        }
+        for key, relative in paths.items():
+            path = Path(source_root) / relative
+            require(path.is_file() and not path.is_symlink(), "source file unavailable")
+            require(hashlib.sha256(path.read_bytes()).hexdigest() == source[key], "compiled source bytes differ: " + key)
     require(begin.get("kind") == "begin", "missing begin")
     require(terminal.get("kind") == "terminal" and terminal.get("status") == "complete", "incomplete terminal")
     require(sum(r.get("kind") == "begin" for r in rows) == 1, "multiple begin")
@@ -52,7 +72,7 @@ def check(rows):
     targets = {r["target"] for r in cohorts}
     require(exact_hash(begin["native_target"]) and targets == {begin["native_target"], "07" + "ff" * 31}
             and len(targets) == 2, "targets")
-    expected = set(itertools.product(MATERIALS, ARMS, (False, True), horizons,
+    expected = set(itertools.product(MATERIALS, arms, (False, True), horizons,
                                      range(begin["rounds"]), targets))
     actual, streams = set(), {}
     total_attempts = total_winners = total_exhausted = 0
@@ -101,7 +121,10 @@ def check(rows):
     require(actual == expected, "missing offered cohort")
     rejections = [r for r in rows if r.get("kind") == "late_product_rejection"]
     require(len(rejections) == 1 and rejections[0]["cases"] == 64, "missing rejection comparison")
-    return {"schema": "pon-pure-w1-cost-consistency-v1", "cohorts": len(cohorts),
+    return {"schema": "pon-pure-w1-cost-consistency-v2" if schema == SCHEMA else "pon-pure-w1-cost-consistency-v1", "cohorts": len(cohorts),
+            "input_schema": schema, "compiled_source_sha256": begin.get("compiled_source_sha256"),
+            "compiled_source_bytes_matched": source_root is not None,
+            "binary_or_hardware_attestation": False,
             "attempts": total_attempts, "winning_calls": total_winners, "exhausted_searches": total_exhausted,
             "late_product_rejection": rejections[0], "complete_costs": summaries,
             "scope": "internally consistent finite observations; shared streams are not independent samples; no hardware authentication, timing confidence, hardness or public fairness proof",
@@ -112,13 +135,14 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("input", type=Path)
     parser.add_argument("--output", type=Path)
+    parser.add_argument("--source-root", type=Path, help="Require v2 digests to match these exact local source bytes; not binary attestation")
     args = parser.parse_args()
     opener = gzip.open if args.input.suffix == ".gz" else open
     with opener(args.input, "rb") as f:
         raw = f.read(32 * 1024 * 1024 + 1)
     require(len(raw) <= 32 * 1024 * 1024 and raw.endswith(b"\n"), "bounded complete input")
     rows = [json.loads(line) for line in raw.splitlines()]
-    result = check(rows)
+    result = check(rows, args.source_root)
     result["input_sha256"] = hashlib.sha256(raw).hexdigest()
     if args.output:
         with args.output.open("x") as f:

@@ -589,6 +589,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-crypto-primitives/src/pon_work/low_rank_prefix.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-crypto-primitives/src/pon_work/low_rank_prefix.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_limb.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),

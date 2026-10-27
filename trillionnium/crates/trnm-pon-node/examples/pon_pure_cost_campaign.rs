@@ -19,7 +19,7 @@ use trnm_pon_node::{development_public, Node, Packet, Settings};
 use trnm_protocol::pon_wire::Header;
 
 type Result<T> = std::result::Result<T, Box<dyn Error>>;
-const SCHEMA: &str = "pon-pure-w1-amortization-campaign-v1";
+const SCHEMA: &str = "pon-pure-w1-amortization-campaign-v2";
 
 #[derive(Clone, Copy)]
 enum Strategy {
@@ -35,9 +35,11 @@ enum Strategy {
     MaintenancePeriodic,
     MaintenancePrefix,
     MaintenanceIntegerPaired,
+    LowRankPrefixScalar,
+    LowRankPrefixPaired,
 }
 impl Strategy {
-    const ALL: [Self; 12] = [
+    const ALL: [Self; 14] = [
         Self::General,
         Self::Structured,
         Self::Tiled,
@@ -50,6 +52,8 @@ impl Strategy {
         Self::MaintenancePeriodic,
         Self::MaintenancePrefix,
         Self::MaintenanceIntegerPaired,
+        Self::LowRankPrefixScalar,
+        Self::LowRankPrefixPaired,
     ];
     fn name(self) -> &'static str {
         match self {
@@ -65,6 +69,8 @@ impl Strategy {
             Self::MaintenancePeriodic => "maintenance-periodic",
             Self::MaintenancePrefix => "maintenance-prefix",
             Self::MaintenanceIntegerPaired => "maintenance-integer-paired",
+            Self::LowRankPrefixScalar => "low-rank-prefix-scalar",
+            Self::LowRankPrefixPaired => "low-rank-prefix-paired",
         }
     }
 }
@@ -80,6 +86,7 @@ enum Producer {
     MaintenancePeriodic(pon_work::maintenance_periodic::MaintenancePeriodicPreparedTask),
     MaintenancePrefix(Box<pon_work::maintenance_prefix::MaintenancePrefixPreparedTask>),
     MaintenanceIntegerPaired(pon_work::maintenance_prefix::MaintenanceIntegerPairedPreparedTask),
+    LowRankPrefix(pon_work::low_rank_prefix::LowRankPrefixPrepared),
 }
 impl Producer {
     fn new(kind: Strategy, a: &[u32], b: &[u32]) -> std::result::Result<Option<Self>, WorkError> {
@@ -128,6 +135,18 @@ impl Producer {
                 pon_work::maintenance_prefix::MaintenanceIntegerPairedPreparedTask::new(a, b)?
                     .map(Self::MaintenanceIntegerPaired)
             }
+            Strategy::LowRankPrefixScalar => pon_work::low_rank_prefix::LowRankPrefixPrepared::new(
+                a,
+                b,
+                pon_work::low_rank_prefix::Kernel::Scalar,
+            )?
+            .map(Self::LowRankPrefix),
+            Strategy::LowRankPrefixPaired => pon_work::low_rank_prefix::LowRankPrefixPrepared::new(
+                a,
+                b,
+                pon_work::low_rank_prefix::Kernel::Paired,
+            )?
+            .map(Self::LowRankPrefix),
         })
     }
     fn prove(&self, challenge: Hash) -> std::result::Result<Vec<u8>, WorkError> {
@@ -143,6 +162,7 @@ impl Producer {
             Self::MaintenancePeriodic(p) => p.prove(challenge),
             Self::MaintenancePrefix(p) => p.prove(challenge),
             Self::MaintenanceIntegerPaired(p) => p.prove(challenge),
+            Self::LowRankPrefix(p) => p.prove(challenge),
         }
     }
 }
@@ -439,6 +459,12 @@ fn run() -> Result<()> {
     native.admit(&seed, seed.header.timestamp + 1)?;
     emit(
         json!({"kind":"begin","seed":plan.seed,"rounds":plan.rounds,"max_horizon":plan.searches,
+        "compiled_source_sha256":{
+            "campaign_driver":hex::encode(Sha256::digest(include_bytes!("pon_pure_cost_campaign.rs"))),
+            "canonical_w1":hex::encode(Sha256::digest(include_bytes!("../../trnm-crypto-primitives/src/pon_work.rs"))),
+            "low_rank_prefix":hex::encode(Sha256::digest(include_bytes!("../../trnm-crypto-primitives/src/pon_work/low_rank_prefix.rs"))),
+            "cargo_lock":hex::encode(Sha256::digest(include_bytes!("../../../Cargo.lock")))},
+        "source_hash_scope":"compiled source bytes, not binary attestation or hardness",
         "attempt_budget":plan.attempts,"absolute_budget_seconds":plan.seconds,
         "native_seed_header":hex::encode(seed.header.encode()),
         "native_target":hex::encode(seed.header.target),

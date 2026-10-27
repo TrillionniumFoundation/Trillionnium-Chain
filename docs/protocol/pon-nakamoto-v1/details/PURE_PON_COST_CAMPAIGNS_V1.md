@@ -8,11 +8,13 @@ other campaigns when interpreting timing; record any host contention.
 
 ## Fixed producer matrix
 
-`pon_pure_cost_campaign` offers all twelve current concrete producer strategies
+The v2 `pon_pure_cost_campaign` offers fourteen concrete producer strategies
 on every material: general, structured, tiled classical, one-level Strassen,
 paired field products, blocked zero, integer paired zero, one-zero rank-one,
 maintenance split limb, maintenance periodic, maintenance prefix, and maintenance
-integer paired. Unsupported constructors produce explicit rows with their real
+integer paired, and the research rank-at-most-eight complete-prefix producer
+with scalar and paired-product kernels. The original v1 twelve-arm roster is
+still accepted by its version-specific reader branch. Unsupported constructors produce explicit rows with their real
 setup cost. There is no fallback arm and no selection of the best observed arm.
 
 Nine input classes cover the periodic fixture, rank-checked full-field matrices,
@@ -43,7 +45,7 @@ cargo build --locked --profile test --manifest-path trillionnium/Cargo.toml \
   -p trnm-pon-node --example pon_pure_cost_campaign
 target/debug/examples/pon_pure_cost_campaign \
   --searches 256 --attempts 8 --rounds 2 --seed 1 --seconds 900 > cost.jsonl
-python3 scripts/ci/check_pure_pon_cost_campaign.py cost.jsonl --output cost-check.json
+python3 scripts/ci/check_pure_pon_cost_campaign.py cost.jsonl --source-root . --output cost-check.json
 ```
 
 Use the actual `CARGO_TARGET_DIR` path in place of `target`. The repository's
@@ -55,6 +57,22 @@ record on a bound or mismatch; an incomplete run must not become a passing
 aggregate. The consistency reader rejects dropped unsuccessful trials, missing
 offered cohorts, unpaired streams, forged CPU zeroes and native-scope promotion.
 Its own tests use synthetic fixtures explicitly separate from measured evidence.
+
+V2 embeds SHA-256 digests of the compiled campaign source, original W1 root
+module, new low-rank module and Cargo.lock. `--source-root` requires exact local
+byte equality; these hashes are neither binary attestation nor hardware timing
+authentication. Adding a research arm does not select it for ordinary mining.
+The lower-rank producer preserves every original prefix and rejects unsupported
+matrices without fallback; a successful parity test is not a work lower bound.
+
+The [retained 2026-10-27 research bundle](../../../../evidence/pon-work-cost-research-20261027/README.md)
+contains the separate source-pinned historical cost measurements, complete
+winning and losing proof streams, independent Python replay, correct-product
+false-trace controls, frozen reproduction inputs and lossless gzip objects.
+Those isolated primitive measurements are not results of this native v2
+campaign, do not close paid-ingress/hardware gates, and do not constitute a
+transparent succinct proof. The complete W1 proof backend remains open under
+the existing sole plan.
 
 ## Unique invalid trace ingress
 
