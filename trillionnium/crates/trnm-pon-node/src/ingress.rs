@@ -2246,6 +2246,13 @@ fn receive_page(
         page.packets.iter().map(String::len).sum::<usize>() <= MAX_FRAME - 1024,
         "PAGE_LIMIT",
     )?;
+    // The independent History CPU epoch must survive a crash DURING
+    // expensive replay or M06, not merely detect an older V3 listener.
+    // The original metadata marker is durable before the first paid unit.
+    // The bounded canonical Page shape checks above remain cheap; malformed
+    // top-level input must not acquire an unclean persistent epoch.
+    let owned_epoch = node.begin_remote_history_cpu_epoch()?;
+    let native = (|| -> Result<Hash> {
     // Charge canonical proof decoding, packet IDs and parent-chain checks
     // separately from the later full W1/M06 intervals. No nested operation:
     // actual decoder CPU must not be double-billed or run at no cost.
@@ -2287,6 +2294,25 @@ fn receive_page(
         })?;
     }
     Ok(next)
+    })();
+    if owned_epoch {
+        // Finish only this standalone History epoch. A concurrent V3 listener
+        // already holds and eventually settles its OWN original marker; it
+        // never yields last-close authority to a History importer.
+        let clean = domain.observe().ok().is_some_and(|state| {
+            state.in_flight == 0
+                && !state.accounting_unavailable
+                && state.stored_credit_ns >= 0
+        }) && domain.observe_actual_flow().ok().flatten().is_some();
+        node.finish_ordinary_public_service_epoch(clean)?;
+        if !clean {
+            // The original active metadata marker intentionally remains.
+            // Native success may already be durable; refuse only to qualify
+            // this sync completion, not the mathematical work or stored rows.
+            return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+        }
+    }
+    native
 }
 
 /// Public untrusted History import. Unlike the private local parser, this
@@ -2492,6 +2518,102 @@ pub fn sync_from_authenticated_durable(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[cfg(target_os = "linux")]
+    #[test]
+    fn history_paid_epoch_crash_cut_refuses_new_cold_credit() {
+        // Simulated abrupt process exit AFTER the durable active marker but
+        // BEFORE the original History CPU operation could be settled. This
+        // is a local SQLite cold-reopen negative, not a physical power cut.
+        let settings = crate::Settings::development(Some(now().unwrap() - 100)).unwrap();
+        let dir = tempfile::tempdir().unwrap();
+        let mut original = Node::open(dir.path(), settings.clone(), 2).unwrap();
+        let account = original.remote_history_cpu_domain().unwrap();
+        assert_eq!(account.observe().unwrap().stored_credit_ns, 0);
+        assert!(original.begin_remote_history_cpu_epoch().unwrap());
+        drop(original);
+        let mut reopened = Node::open(dir.path(), settings, 2).unwrap();
+        assert_eq!(
+            reopened.remote_history_cpu_domain().err().unwrap().to_string(),
+            "OWNER_PUBLIC_SERVICE_UNCLEAN_EPOCH"
+        );
+        assert!(reopened.public_service_cpu_domain().is_err());
+        assert_eq!(
+            reopened.begin_remote_history_cpu_epoch().unwrap_err().to_string(),
+            "OWNER_PUBLIC_SERVICE_UNCLEAN_EPOCH"
+        );
+    }
+
+    #[cfg(target_os = "linux")]
+    #[test]
+    fn malformed_paid_history_rejection_closes_known_epoch_without_poisoning_cold_reopen() {
+        let observed = now().unwrap();
+        let settings = crate::Settings::development(Some(observed - 100)).unwrap();
+        let dir = tempfile::tempdir().unwrap();
+        let mut node = Node::open(dir.path(), settings.clone(), 2).unwrap();
+        let initial = node.stats().unwrap();
+        let page = Page {
+            schema: "pon-native-history-v1".into(),
+            network: hex::encode(settings.network()),
+            parameters: hex::encode(settings.parameters()),
+            genesis: hex::encode(settings.genesis()),
+            tip: hex::encode([19; 32]),
+            after: hex::encode(settings.genesis()),
+            packets: vec!["00".into()],
+            next: hex::encode([19; 32]),
+            complete: true,
+        };
+        let loopback: SocketAddr = "127.0.0.1:1".parse().unwrap();
+        assert!(receive_page_from(
+            &mut node, loopback, page, [19; 32],
+            settings.genesis(), observed,
+        ).is_err());
+        let account = node.public_service_cpu_domain().unwrap();
+        let metered = account.observe().unwrap();
+        assert_eq!(metered.in_flight, 0);
+        assert!(!metered.accounting_unavailable);
+        assert!(metered.stored_credit_ns >= 0);
+        let marker_count: i64 = rusqlite::Connection::open(
+            dir.path().join("native.sqlite")
+        ).unwrap().query_row(
+            "SELECT COUNT(*) FROM metadata WHERE key=?1",
+            ["ordinary-public-v3-epoch-v1"],
+            |row| row.get(0),
+        ).unwrap();
+        assert_eq!(marker_count, 0, "paid known rejection must clean its epoch");
+        assert_eq!(node.stats().unwrap(), initial);
+        drop(node);
+        let mut reopened = Node::open(dir.path(), settings, 2).unwrap();
+        let fresh = reopened.remote_history_cpu_domain().unwrap();
+        assert_eq!(fresh.observe().unwrap().stored_credit_ns, 0);
+        assert_eq!(reopened.stats().unwrap(), initial);
+    }
+
+    #[cfg(target_os = "linux")]
+    #[test]
+    fn standalone_history_does_not_steal_live_v3_listener_epoch() {
+        let settings = crate::Settings::development(Some(now().unwrap() - 100)).unwrap();
+        let dir = tempfile::tempdir().unwrap();
+        let mut node = Node::open(dir.path(), settings, 2).unwrap();
+        let public = public_v3::ServiceMutationCpuDomain::standalone();
+        node.bind_public_service_cpu_domain(&public).unwrap();
+        assert!(node.begin_ordinary_public_service_epoch().unwrap());
+        assert!(!node.begin_remote_history_cpu_epoch().unwrap());
+        assert!(node.public_service_cpu_domain().unwrap().shares_domain_with(&public));
+        // Only the actual V3 owner holds the last-close right.
+        node.finish_ordinary_public_service_epoch(true).unwrap();
+        assert_eq!(
+            rusqlite::Connection::open(dir.path().join("native.sqlite"))
+                .unwrap()
+                .query_row(
+                    "SELECT COUNT(*) FROM metadata WHERE key=?1",
+                    ["ordinary-public-v3-epoch-v1"],
+                    |row| row.get::<_, i64>(0),
+                ).unwrap(),
+            0
+        );
+    }
+
     #[test]
     fn malformed_remote_history_decode_pays_original_cpu_and_preserves_state() {
         let observed = now().unwrap();
