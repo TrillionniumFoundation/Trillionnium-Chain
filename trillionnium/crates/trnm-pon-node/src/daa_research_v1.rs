@@ -234,4 +234,39 @@ mod tests {
         );
         assert_eq!(median_parent_time_research_v1(&[12, 9, 100]).unwrap(), 12);
     }
+
+    #[test]
+    fn python_and_native_full_target_asert_agree_on_frozen_vectors() {
+        // These literal outputs are independently calculated from the
+        // stdlib-only Python reference, not from any PoN consensus code path.
+        let reference: serde_json::Value = serde_json::from_str(include_str!(
+            "../../../../formal/pon-nakamoto-v1/vectors/daa-research-v1.json"
+        ))
+        .unwrap();
+        assert_eq!(reference["production_consensus_activation"], false);
+        let hex32 = |s: &str| -> [u8; 32] {
+            hex::decode(s).unwrap().try_into().unwrap()
+        };
+        let anchor = hex32(reference["anchor_target_hex"].as_str().unwrap());
+        let pow_limit = hex32(reference["pow_limit_hex"].as_str().unwrap());
+        for row in reference["cases"].as_array().unwrap() {
+            let input = AsertResearchInputV1 {
+                anchor_target: anchor,
+                pow_limit,
+                anchor_parent_time: reference["anchor_parent_time"].as_u64().unwrap(),
+                anchor_height: reference["anchor_height"].as_u64().unwrap(),
+                parent_height: row["parent_height"].as_u64().unwrap(),
+                parent_time: row["parent_time"].as_u64().unwrap(),
+                target_spacing_seconds: reference["spacing_seconds"].as_u64().unwrap(),
+                half_life_seconds: reference["half_life_seconds"].as_u64().unwrap(),
+            };
+            assert_eq!(
+                asert_target_research_v1(input).unwrap(),
+                hex32(row["expected_target_hex"].as_str().unwrap()),
+                "frozen ASERT research vector: {}",
+                row["name"].as_str().unwrap()
+            );
+        }
+    }
+
 }
