@@ -2380,7 +2380,43 @@ mod tests {
         assert_eq!(node.stats().unwrap(), before);
         assert_eq!(node.read_active().unwrap().0, settings.genesis());
 
-        // The second resource fence triggers AFTER exactly one valid native
+        // A mid-transcript host failure is a typed local cancellation, NOT
+        // WorkError::Transcript and never creates partial Chainwork.
+        let mut expected_position = 0_u64;
+        let mut first_tile_position = None;
+        trnm_crypto_primitives::pon_work::verify_with_progress(
+            packet.header.challenge(),
+            packet.header.work_task,
+            packet.header.target,
+            &packet.proof,
+            &mut |point| {
+                expected_position += 1;
+                if first_tile_position.is_none()
+                    && matches!(point, trnm_crypto_primitives::pon_work::VerificationProgress::TranscriptTile { .. })
+                {
+                    first_tile_position = Some(expected_position);
+                }
+                Ok::<(), ()>(())
+            }
+        ).unwrap();
+        let interrupt_at = first_tile_position.unwrap() + 1;
+        calls = 0;
+        let failure = receive_page(
+            &mut node, page.clone(), tip, settings.genesis(), now, || {
+                calls += 1;
+                if calls == interrupt_at {
+                    Err("PUBLIC_HOST_KERNEL_LIMITS_CHANGED".into())
+                } else {
+                    Ok(())
+                }
+            }
+        ).unwrap_err();
+        assert_eq!(failure.to_string(), "PUBLIC_HOST_KERNEL_LIMITS_CHANGED");
+        assert_eq!(calls, interrupt_at);
+        assert_eq!(node.stats().unwrap(), before);
+        assert_eq!(node.read_active().unwrap().0, settings.genesis());
+
+        // The next resource fence triggers AFTER exactly one valid native
         // W1 is durably admitted. Do not misreport this as complete sync or
         // retroactively rewrite the accepted block as consensus-invalid.
         // Count the exact same full native W1 callback progression on this
