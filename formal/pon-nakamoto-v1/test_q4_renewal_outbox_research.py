@@ -450,4 +450,51 @@ class RenewalOutboxTests(unittest.TestCase):
             self.assertEqual(db.audit(), 0)
             db.dispatch_unknown(key)
             self.assertEqual(db.audit(), 1)
+
+    def test_live_schema_trigger_and_removed_dispatch_index_refuse_effects(self):
+        with self.open() as db:
+            key = db.prepare(intent())
+            with sqlite3.connect(self.file) as raw:
+                raw.execute(
+                    "CREATE TRIGGER foreign_rewrite AFTER INSERT ON q4_outbox_events_v1 "
+                    "BEGIN UPDATE q4_outbox_meta_v1 SET value=x'00' WHERE key='genesis'; END"
+                )
+            with self.assertRaisesRegex(OutboxError, 'DATABASE_SCHEMA'):
+                db.dispatch_unknown(key)
+            with self.assertRaisesRegex(OutboxError, 'DATABASE_SCHEMA'):
+                db.status(key)
+            with self.assertRaisesRegex(OutboxError, 'DATABASE_SCHEMA'):
+                db.prepare(replace(intent(tx=b'Z'*1187),
+                                   operation_id=h(b'separate signed intent')))
+            self.assertFalse(db.db.in_transaction)
+            with sqlite3.connect(self.file) as raw:
+                self.assertEqual(raw.execute(
+                    'SELECT COUNT(*) FROM q4_outbox_events_v1').fetchone()[0], 0)
+                self.assertEqual(raw.execute(
+                    "SELECT value FROM q4_outbox_meta_v1 WHERE key='genesis'"
+                ).fetchone()[0], G)
+                raw.execute('DROP TRIGGER foreign_rewrite')
+            db.dispatch_unknown(key)
+            with sqlite3.connect(self.file) as raw:
+                raw.execute('DROP INDEX q4_outbox_once_v1')
+            # Losing SQLite's original partial uniqueness index must not be
+            # accepted as a weaker research journal with the same namespace.
+            with self.assertRaisesRegex(OutboxError, 'DATABASE_SCHEMA'):
+                db.observe(key, observation('included', 2))
+            with self.assertRaisesRegex(OutboxError, 'DATABASE_SCHEMA'):
+                db.audit()
+            with sqlite3.connect(self.file) as raw:
+                self.assertEqual(raw.execute(
+                    'SELECT COUNT(*) FROM q4_outbox_events_v1').fetchone()[0], 1)
+                raw.execute(
+                    "CREATE UNIQUE INDEX q4_outbox_once_v1 "
+                    "ON q4_outbox_events_v1(intent_id) WHERE kind='DISPATCH_UNKNOWN'"
+                )
+            self.assertEqual(db.audit(), 1)
+            db.observe(key, observation('included', 2))
+            self.assertEqual(db.audit(), 2)
+        with self.open() as cold:
+            self.assertEqual(cold.audit(), 2)
+            self.assertTrue(cold.status(key)['dispatch_unknown'])
+
 if __name__ == '__main__': unittest.main()
