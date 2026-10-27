@@ -1217,10 +1217,20 @@ mod request_owned_reserve_tests {
         let domain = ServiceMutationCpuDomain::standalone();
         let untrusted = domain.begin_untrusted_peer_sync().unwrap();
         assert_eq!(domain.observe().unwrap().in_flight, 1);
-        let second = domain.begin_untrusted_peer_sync();
+        // A cloned service handle on another thread represents a different
+        // peer/client callsite but cannot mint an independent resource lane.
+        let cloned_domain = domain.clone();
+        let second = thread::spawn(move || {
+            cloned_domain
+                .begin_untrusted_peer_sync()
+                .err()
+                .map(|e| e.to_string())
+        })
+        .join()
+        .unwrap();
         assert_eq!(
-            second.err().unwrap().to_string(),
-            "PUBLIC_MUTATION_CPU_BUDGET"
+            second.as_deref(),
+            Some("PUBLIC_MUTATION_CPU_BUDGET")
         );
         // Two actual owner threads: a nested interval on one thread would
         // double-count CPU and is not the production worker configuration.
