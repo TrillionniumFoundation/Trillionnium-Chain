@@ -2109,6 +2109,27 @@ fn call_authenticated_durable_inner(
     Err(Error::authenticated_remote(terminal, error))
 }
 
+// The original cgroup v2 parent enforces CPU/memory/tasks continuously in
+// the kernel. Re-reading its boot marker, inode, quotas and current TID at
+// EVERY W1 tile is both unnecessary and an attacker-controlled syscall
+// amplifier. Check at deterministic stage boundaries: no transcript work
+// proceeds for more than 64 tiles without an independent owner recheck.
+fn history_kernel_work_checkpoint(
+    point: trnm_crypto_primitives::pon_work::VerificationProgress,
+) -> bool {
+    use trnm_crypto_primitives::pon_work::VerificationProgress;
+    match point {
+        VerificationProgress::BeforeReplay
+        | VerificationProgress::BeforeProduct
+        | VerificationProgress::BeforeVerifiedWork => true,
+        VerificationProgress::Noise { counter, .. } => counter % 32 == 0,
+        VerificationProgress::MatrixRow { row } => row % 32 == 0,
+        VerificationProgress::TranscriptTile { column, inner, .. } => {
+            column == 0 && inner == 0
+        }
+    }
+}
+
 fn receive_page(
     node: &mut Node,
     page: Page,
@@ -2158,7 +2179,12 @@ fn receive_page(
     // migrates to a different cgroup or the original quotas are changed.
     for packet in &packets {
         resource_checkpoint()?;
-        node.admit_with_work_progress(packet, clock, &mut |_| resource_checkpoint())?;
+        node.admit_with_work_progress(packet, clock, &mut |point| {
+            if history_kernel_work_checkpoint(point) {
+                resource_checkpoint()?;
+            }
+            Ok(())
+        })?;
         // This can fail *after* durable admission. Preserve the accepted
         // fact, but never report an entirely successful page/sync.
         resource_checkpoint()?;
@@ -2390,11 +2416,13 @@ mod tests {
             packet.header.target,
             &packet.proof,
             &mut |point| {
-                expected_position += 1;
-                if first_tile_position.is_none()
-                    && matches!(point, trnm_crypto_primitives::pon_work::VerificationProgress::TranscriptTile { .. })
-                {
-                    first_tile_position = Some(expected_position);
+                if history_kernel_work_checkpoint(point) {
+                    expected_position += 1;
+                    if first_tile_position.is_none()
+                        && matches!(point, trnm_crypto_primitives::pon_work::VerificationProgress::TranscriptTile { .. })
+                    {
+                        first_tile_position = Some(expected_position);
+                    }
                 }
                 Ok::<(), ()>(())
             }
@@ -2428,12 +2456,17 @@ mod tests {
             packet.header.work_task,
             packet.header.target,
             &packet.proof,
-            &mut |_| {
-                work_checkpoints += 1;
+            &mut |point| {
+                if history_kernel_work_checkpoint(point) {
+                    work_checkpoints += 1;
+                }
                 Ok::<(), ()>(())
             }
         ).unwrap();
-        assert!(work_checkpoints > 512);
+        assert!(work_checkpoints >= 8,
+            "each W1 transcript row tile must retain a physical-owner fence");
+        assert!(work_checkpoints < 64,
+            "do not create a full-cgroup-syscall amplifier per W1 tile");
         let post_admission_checkpoint = work_checkpoints + 2;
         calls = 0;
         let failure = receive_page(
