@@ -2534,7 +2534,7 @@ mod tests {
         drop(original);
         let mut reopened = Node::open(dir.path(), settings, 2).unwrap();
         assert_eq!(
-            reopened.remote_history_cpu_domain().unwrap_err().to_string(),
+            reopened.remote_history_cpu_domain().err().unwrap().to_string(),
             "OWNER_PUBLIC_SERVICE_UNCLEAN_EPOCH"
         );
         assert!(reopened.public_service_cpu_domain().is_err());
