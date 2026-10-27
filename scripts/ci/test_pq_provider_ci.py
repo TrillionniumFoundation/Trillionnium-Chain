@@ -87,6 +87,7 @@ def validate_script(script: str) -> None:
         '"$pq_prefix/bin/openssl" "$@"',
         'OPENSSL_CONF=/dev/null',
         'mkdir "$pq_observations"',
+        'cp -- "$TRNM_PQ_SOURCE_ARCHIVE" "$pq_archive"',
     ):
         require(script.count(literal) == 1, "provider pin or isolation missing")
     ordered = [
@@ -176,6 +177,7 @@ class ProviderWiringTests(unittest.TestCase):
             self.script.replace(export, "").replace("pq_stage='download'", export + "\npq_stage='download'"),
             self.script.replace("make install_sw", "make install_sw || true"),
             self.script.replace("make install_sw", "sudo make install_sw"),
+            self.script.replace('cp -- "$TRNM_PQ_SOURCE_ARCHIVE" "$pq_archive"', "true"),
         ]
         for changed in changes:
             with self.assertRaises(ValueError):
@@ -184,7 +186,7 @@ class ProviderWiringTests(unittest.TestCase):
 
 class PreparationFailureTests(unittest.TestCase):
     """Transport fault injection only; never a fake successful PQ provider."""
-    def fail_download(self, curl_body: str, expected_stage: str):
+    def fail_download(self, curl_body: str, expected_stage: str, local_archive: bytes | None = None):
         with tempfile.TemporaryDirectory() as directory:
             temporary = Path(directory)
             env_file = temporary / "github-env"
@@ -197,6 +199,11 @@ class PreparationFailureTests(unittest.TestCase):
             env = dict(os.environ, RUNNER_TEMP=str(temporary), GITHUB_ENV=str(env_file),
                        TRNM_CI_RECEIPT_DIR=str(temporary / "observations"), CARGO_BUILD_JOBS="2",
                        PATH=str(fake_bin) + os.pathsep + os.environ["PATH"])
+            env.pop("TRNM_PQ_SOURCE_ARCHIVE", None)
+            if local_archive is not None:
+                archive = temporary / "explicit-source.tar.gz"
+                archive.write_bytes(local_archive)
+                env["TRNM_PQ_SOURCE_ARCHIVE"] = str(archive)
             result = subprocess.run(["bash", str(SCRIPT)], env=env, capture_output=True, text=True, timeout=10)
             self.assertNotEqual(result.returncode, 0)
             self.assertEqual(env_file.read_text(), "")
@@ -206,6 +213,9 @@ class PreparationFailureTests(unittest.TestCase):
             self.assertEqual(receipt["exit_code"], result.returncode)
             self.assertEqual(receipt["result"], "FAILED")
             self.assertEqual(receipt["last_stage"], expected_stage)
+            self.assertEqual(receipt["source_transport"],
+                             "download" if local_archive is None else "explicit-local-archive")
+            self.assertFalse(receipt["source_digest_verified"])
             self.assertFalse(receipt["static_build"])
             self.assertFalse(receipt["ml_dsa_65_sign_verify_and_wrong_message_rejection"])
             again = subprocess.run(["bash", str(SCRIPT)], env=env, capture_output=True, text=True, timeout=10)
@@ -222,6 +232,9 @@ class PreparationFailureTests(unittest.TestCase):
             '  if test "$1" = --output; then shift; printf "invalid archive" > "$1"; exit 0; fi\n'
             '  shift\n'
             'done\nexit 2', "archive-digest")
+
+    def test_explicit_archive_still_requires_exact_digest_without_network_fallback(self):
+        self.fail_download("exit 99", "archive-digest", b"wrong explicit archive")
 
 
 if __name__ == "__main__":
