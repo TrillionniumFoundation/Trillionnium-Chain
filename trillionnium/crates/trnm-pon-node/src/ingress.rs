@@ -2115,6 +2115,7 @@ fn receive_page(
     tip: Hash,
     after: Hash,
     clock: u64,
+    mut resource_checkpoint: impl FnMut() -> Result<()>,
 ) -> Result<Hash> {
     ensure(
         page.schema == "pon-native-history-v1"
@@ -2151,11 +2152,21 @@ fn receive_page(
         page.next == hex::encode(next) && page.complete == (next == tip),
         "PAGE_COMPLETE",
     )?;
+    // Up to sixteen attacker-controlled W1 proofs fit in one paid History
+    // page. The original physical resource owner must be checked between
+    // every full replay: one check per page is insufficient after a thread
+    // migrates to a different cgroup or the original quotas are changed.
     for packet in &packets {
+        resource_checkpoint()?;
         node.admit(packet, clock)?;
+        // This can fail *after* durable admission. Preserve the accepted
+        // fact, but never report an entirely successful page/sync.
+        resource_checkpoint()?;
     }
     if page.complete {
+        resource_checkpoint()?;
         node.activate_observed(tip, clock)?;
+        resource_checkpoint()?;
     }
     Ok(next)
 }
@@ -2178,7 +2189,12 @@ pub fn receive_page_from(
     if let Some(kernel) = &host_kernel {
         kernel.verify()?;
     }
-    let native = receive_page(node, page, tip, after, clock);
+    let native = receive_page(node, page, tip, after, clock, || {
+        if let Some(kernel) = &host_kernel {
+            kernel.verify()?;
+        }
+        Ok(())
+    });
     // A completed native admission cannot be undone by a post-verification
     // host fault. That fault still makes the overall synchronization fail.
     if let Some(kernel) = &host_kernel {
@@ -2325,6 +2341,65 @@ pub fn sync_from_authenticated_durable(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn history_page_resource_checkpoint_fences_each_native_w1_without_chainwork() {
+        let dir = tempfile::tempdir().unwrap();
+        let now = now().unwrap();
+        let settings = crate::Settings::development(Some(now - 100)).unwrap();
+        let mut node = Node::open(dir.path(), settings.clone(), 2).unwrap();
+        let packet = node.make(
+            settings.genesis(),
+            vec![],
+            crate::development_public(0).unwrap(),
+            settings.genesis_time() + 10,
+            4096,
+        ).unwrap();
+        let tip = packet.id().unwrap();
+        let page = Page {
+            schema: "pon-native-history-v1".into(),
+            network: hex::encode(settings.network()),
+            parameters: hex::encode(settings.parameters()),
+            genesis: hex::encode(settings.genesis()),
+            tip: hex::encode(tip),
+            after: hex::encode(settings.genesis()),
+            packets: vec![hex::encode(packet.encode().unwrap())],
+            next: hex::encode(tip),
+            complete: true,
+        };
+        let before = node.stats().unwrap();
+        let mut calls = 0_u64;
+        let failure = receive_page(
+            &mut node, page.clone(), tip, settings.genesis(), now, || {
+                calls += 1;
+                Err("PUBLIC_HOST_KERNEL_LIMITS_CHANGED".into())
+            }
+        ).unwrap_err();
+        assert_eq!(failure.to_string(), "PUBLIC_HOST_KERNEL_LIMITS_CHANGED");
+        assert_eq!(calls, 1, "no W1 replay on first failed resource check");
+        assert_eq!(node.stats().unwrap(), before);
+        assert_eq!(node.read_active().unwrap().0, settings.genesis());
+
+        // The second resource fence triggers AFTER exactly one valid native
+        // W1 is durably admitted. Do not misreport this as complete sync or
+        // retroactively rewrite the accepted block as consensus-invalid.
+        calls = 0;
+        let failure = receive_page(
+            &mut node, page, tip, settings.genesis(), now, || {
+                calls += 1;
+                if calls == 2 {
+                    Err("PUBLIC_HOST_KERNEL_LIMITS_CHANGED".into())
+                } else {
+                    Ok(())
+                }
+            }
+        ).unwrap_err();
+        assert_eq!(failure.to_string(), "PUBLIC_HOST_KERNEL_LIMITS_CHANGED");
+        assert_eq!(calls, 2, "every packet has before/after kernel fences");
+        assert_eq!(node.read_active().unwrap().0, settings.genesis());
+        assert_eq!(node.parent_height(tip).unwrap(), 1,
+            "already admitted native block is durable but not activated");
+    }
 
     #[test]
     fn remote_sync_without_original_host_cgroup_rejects_before_any_network_or_w1() {
