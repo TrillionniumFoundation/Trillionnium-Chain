@@ -4644,3 +4644,36 @@ material cannot become an evaluated child or an ordinary installation. The
 all-yes candidate and incomplete matched controls remain unqualified; this
 component result closes neither ordinary I10 nor full cold runtime, model benefit,
 three installed rounds, independent operators or WAN gates.
+
+### PN3 actual fresh five-control CI result: zero benefit — 2026-10-27
+
+The [fresh CI diagnostic evidence](../../evidence/pon-model-five-controls-ci-20261027/README.md)
+at source `678c9e00b97885b1af9fa2dcf3572f65a5ac3b45`, run40487735989,
+job122133657558, completes all twelve original phases, including real full-tune
+training and all five evaluations. Candidate, fresh LoRA and full tune each score
+1/2 under the original source-group evaluation metric; candidate gain over the
+strongest control is0/1 and `positive_vs_all_controls=false`. All authentication,
+independent/prospective acceptance, public reward and public-network flags remain
+false. The fresh candidate `eff04d14` does not replace local V2 `d3b3e79e`, the
+original incomplete SIGKILL cohort or Cell004. No candidate is adopted.
+
+The three trained arms retain10 steps/526 tokens/40 supervised tokens. All twelve
+phase walls sum to226.827036961s and child CPU to310.018861s; full-tune wait4 peak
+is6,141,497,344B, a single-process high-water under the recorded scope. Original
+per-role600s/8GiB, outer-step10m and job15m limits remain unchanged. All81 retrieved
+non-checkpoint files match their inventory. The540,891,786B checkpoint artifact
+exceeds the536,870,912B download limit and is not locally verified.
+
+Parent-evidence run40487735846 also completes the four ARM/x86 source/merge
+material jobs: each original13-test runtime roster passes once with zero skips.
+This validates the canonical extraction material controls, not the real pip
+installation's rewritten31 RECORDs or held runtime closure.
+
+Newer Hepta4071 at `3b308ce2ca0c5117280c2820ca034ca5e5e0287f` does implement a
+distinct public-initial V2 ordinary route. Its actual run40488014123 passes519
+scoped tests (24 skipped), then fails the required ordinary model test before
+readiness because the original fixture omitted the Codex executable path;
+proposal rounds and descendants are skipped. Preserve that source/run outcome
+and the separate original qualified-child gates. Any later provenance/fixture
+repair needs its own actual CI; this evidence closes no ordinary I10, model
+benefit, held runtime, beneficial installation or three-upgrade gate.
