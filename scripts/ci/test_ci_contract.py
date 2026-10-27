@@ -1159,7 +1159,7 @@ class ModelV2RegistrationTests(unittest.TestCase):
         # Synthetic log controls test the parser, never claim Tensor execution.
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / 'unit.log'
-            for suite in ('setup', 'observer'):
+            for suite in ('setup', 'observer', 'runtime-release'):
                 names = unit_names(suite)
                 rows = [f'{name.rsplit(".", 1)[1]} ({name}) ... ok' for name in names]
                 summary = f'Ran {len(rows)} tests in 0.01s\n\nOK\n'

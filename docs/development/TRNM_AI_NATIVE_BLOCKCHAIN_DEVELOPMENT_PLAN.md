@@ -4556,3 +4556,40 @@ Hepta task. It does not complete ordinary I10 installation, runtime execution
 closure, parent-to-successor neural improvement, cross-node custody, next-task
 readback, work hardness or full-chain post-quantum qualification. All production,
 public reward and installation qualification flags remain false.
+
+
+### PN3 runtime material declaration and real neural observations — 2026-10-27 (PARTIAL / OPEN)
+
+The existing Cell release owner gains a fresh `hepta-runtime-material-release-v1`
+read-only declaration/readback interface. It checks canonical original-wheel
+extraction and static ELF dependencies, with13 material controls, the original8
+Cell release controls, and the existing strict CI roster checks. It creates no
+execution namespace capability, installation selector or new resource owner.
+The actual31-wheel pip environment remains incompatible: all31 top-level RECORDs
+were rewritten; generated/vendored metadata and `.pth` need reviewed handling.
+The tiny cold-interpreter control is not complete cold SmolLM execution.
+
+[Retained real component observations and failures](../../evidence/pon-neural-material-controls-20261027/README.md)
+bind Chain c96022 and Hepta e1537. Original V2 training completed10 CPU steps,
+526 tokens/40 supervised tokens, and changed230400 FP32 adapter values. Original
+candidate observation completed8 requests/64 forwards; every output was `yes`,
+scoring2/4 on calibration and2/4 on evaluation. The actual four-control follow-up
+aborted on full-tune SIGKILL(-9) with no successful full-tune receipt; its
+`INCOMPLETE_NO_ADOPTION` result remains. Post-failure OOM counters cannot establish
+the exact kill cause without a before counter. No unknown host service is stopped.
+
+The three Cell cohorts preserve sandbox bind denial, dev deadline failure and
+release connection reset. None verified all11 materials; no ordinary installation
+or next request was reached. Do not interpret initialized UNAVAILABLE fields as
+an executed installation denial. Model improvement, cold runtime, independent
+operators, complete useful-work accounting, I10, three beneficial rounds and WAN
+acceptance remain OPEN under their original gates.
+
+The dedicated fresh five-participant CI diagnostic reuses the existing fixed
+public inputs and original pilot owner at10 steps/two threads. It keeps a15-minute
+job ceiling and10-minute outer model step; original per-role caps are unchanged.
+It has a new source/run/candidate, and does not replace the local V2 receipt or
+ordinary closure. Timeout/missing evidence remains failure; early setup failure
+or hard job termination may prevent uploads. The diagnostic is NOT_RUN at this
+source freeze. Existing model matrices gain only13 small material checks, not
+extra pretrained-model runs. `task_complete=false`, `merge_ready=false`.

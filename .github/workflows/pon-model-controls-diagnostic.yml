@@ -1,0 +1,104 @@
+name: PoN original model controls diagnostic
+on:
+  pull_request:
+    paths:
+      - .github/workflows/pon-model-controls-diagnostic.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  original-five-role-diagnostic:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      EXPECTED_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+      PYTHONDONTWRITEBYTECODE: "1"
+      PYTHONNOUSERSITE: "1"
+      OMP_NUM_THREADS: "2"
+      MKL_NUM_THREADS: "2"
+      OPENBLAS_NUM_THREADS: "2"
+    steps:
+      - name: Checkout exact diagnostic source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.EXPECTED_HEAD }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Bind source and a fresh diagnostic directory
+        id: source
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash scripts/project-preflight.sh --audit
+          python3 -c 'import platform,sys; assert sys.version_info[:2] == (3,12) and platform.system() == "Linux" and platform.machine() == "x86_64"'
+          out="$RUNNER_TEMP/pon-model-controls-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          mkdir "$out"
+          mkdir "$out/evidence"
+          printf 'MODEL_DIAGNOSTIC_OUT=%s\n' "$out" >> "$GITHUB_ENV"
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$EXPECTED_HEAD" --output "$out/evidence/source-before.json"
+          printf '%s\n' 'Fresh original five-participant diagnostic. New source, run and candidate; does not substitute for the local V2 parent candidate, an ordinary Hepta task, installation, cold runtime closure, independent evaluation or public reward.' > "$out/evidence/SCOPE.txt"
+          cp scripts/ci/model-runtime-cpu-requirements.txt "$out/evidence/requirements.txt"
+          python3 -c 'import json,os,pathlib,platform,shutil; out=pathlib.Path(os.environ["MODEL_DIAGNOSTIC_OUT"])/"evidence"; names=["/proc/meminfo","/proc/self/cgroup","/sys/fs/cgroup/memory.max","/sys/fs/cgroup/memory.current","/sys/fs/cgroup/memory.peak","/sys/fs/cgroup/memory.events"]; values={p:pathlib.Path(p).read_text() for p in names if pathlib.Path(p).is_file()}; values.update(platform=platform.platform(),disk_free_bytes=shutil.disk_usage(out).free); (out/"resources-before.json").write_text(json.dumps(values,sort_keys=True)+"\n")'
+      - name: Obtain the original pinned public model and CPU environment
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B scripts/ci/prepare_model_cloud_inputs.py fetch-model --output "$MODEL_DIAGNOSTIC_OUT/model"
+          cp "$MODEL_DIAGNOSTIC_OUT/model/material-manifest.json" "$MODEL_DIAGNOSTIC_OUT/evidence/material-manifest.json"
+          python3 -m venv "$MODEL_DIAGNOSTIC_OUT/runtime-env"
+          "$MODEL_DIAGNOSTIC_OUT/runtime-env/bin/python" -m pip --isolated install --disable-pip-version-check --no-cache-dir --only-binary=:all: --require-hashes --index-url https://pypi.org/simple --retries 0 --timeout 30 -r scripts/ci/model-runtime-cpu-requirements.txt --report "$MODEL_DIAGNOSTIC_OUT/evidence/install.json"
+          "$MODEL_DIAGNOSTIC_OUT/runtime-env/bin/python" -m pip check
+          "$MODEL_DIAGNOSTIC_OUT/runtime-env/bin/python" -m pip freeze --all > "$MODEL_DIAGNOSTIC_OUT/evidence/installed-packages.txt"
+      - name: Run the original frozen five-participant owner
+        id: model
+        timeout-minutes: 10
+        shell: bash
+        env:
+          HF_HUB_OFFLINE: "1"
+          TRANSFORMERS_OFFLINE: "1"
+        run: |
+          set -euo pipefail
+          "$MODEL_DIAGNOSTIC_OUT/runtime-env/bin/python" -B scripts/llm_runtime_pilot.py run --materials "$MODEL_DIAGNOSTIC_OUT/model" --output "$MODEL_DIAGNOSTIC_OUT/evidence/pilot" --backend cpu --threads 2 --steps 10 2>&1 | tee "$MODEL_DIAGNOSTIC_OUT/evidence/original-owner.log"
+      - name: Retain source, resource observations and exact partial results
+        if: ${{ always() && steps.source.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$EXPECTED_HEAD" --output "$MODEL_DIAGNOSTIC_OUT/evidence/source-after.json"
+          cmp "$MODEL_DIAGNOSTIC_OUT/evidence/source-before.json" "$MODEL_DIAGNOSTIC_OUT/evidence/source-after.json"
+          python3 -c 'import json,os,pathlib,shutil; out=pathlib.Path(os.environ["MODEL_DIAGNOSTIC_OUT"])/"evidence"; names=["/proc/meminfo","/sys/fs/cgroup/memory.max","/sys/fs/cgroup/memory.current","/sys/fs/cgroup/memory.peak","/sys/fs/cgroup/memory.events"]; values={p:pathlib.Path(p).read_text() for p in names if pathlib.Path(p).is_file()}; values["disk_free_bytes"]=shutil.disk_usage(out).free; (out/"resources-after.json").write_text(json.dumps(values,sort_keys=True)+"\n")'
+          python3 - <<'PY'
+          import hashlib, json, os
+          from pathlib import Path
+          out = Path(os.environ["MODEL_DIAGNOSTIC_OUT"]) / "evidence"
+          files, rows = sorted(out.rglob("*")), {}
+          assert all(not path.is_symlink() for path in files)
+          for path in files:
+              if path.is_file():
+                  with path.open("rb") as stream:
+                      digest = hashlib.file_digest(stream, "sha256").hexdigest()
+                  rows[path.relative_to(out).as_posix()] = dict(size=path.stat().st_size, sha256=digest)
+          (out / "file-inventory.json").write_text(json.dumps(rows, sort_keys=True) + "\n")
+          PY
+          tar -czf "$MODEL_DIAGNOSTIC_OUT/compact-evidence.tar.gz" --exclude='*.safetensors' -C "$MODEL_DIAGNOSTIC_OUT/evidence" .
+          sha256sum "$MODEL_DIAGNOSTIC_OUT/compact-evidence.tar.gz" > "$MODEL_DIAGNOSTIC_OUT/compact-evidence.sha256"
+      - name: Preserve compact raw diagnostic evidence
+        if: ${{ always() && steps.source.outcome == 'success' }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: pon-model-controls-compact-${{ env.EXPECTED_HEAD }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/pon-model-controls-${{ github.run_id }}-${{ github.run_attempt }}/compact-evidence.tar.gz
+            ${{ runner.temp }}/pon-model-controls-${{ github.run_id }}-${{ github.run_attempt }}/compact-evidence.sha256
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 7
+      - name: Preserve actual learned model bytes separately
+        if: ${{ always() && steps.source.outcome == 'success' }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: pon-model-controls-artifacts-${{ env.EXPECTED_HEAD }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/pon-model-controls-${{ github.run_id }}-${{ github.run_attempt }}/evidence/pilot/train-*/artifact.safetensors
+          if-no-files-found: warn
+          compression-level: 0
+          retention-days: 7

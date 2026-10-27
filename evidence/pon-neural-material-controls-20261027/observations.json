@@ -1,0 +1,301 @@
+{
+  "schema": "pon-neural-component-observations-v1",
+  "scope": "local-component-observations-not-owner-admission-or-public-qualification",
+  "delivery_base": "7149e24207542dd393cdf0f9d462f5af5550e875",
+  "executed_chain_source": "c96022b897c1235fdbdbfcfa32764403511c6aab",
+  "executed_hepta_source": "e1537d7deea32f29ec9612c0a7b90655b14aa904",
+  "runtime_preinstalled": true,
+  "full_runtime_material_closure": false,
+  "training": {
+    "source_chain": "c96022b897c1235fdbdbfcfa32764403511c6aab",
+    "actual_receipt_sha256": "a53d108e82b2cb17701c0cd985703abea81a7c990a3abc62ece0a0271b0237d3",
+    "parent": {
+      "adapter": "c22c998e50bdff375e6803c47aab796df93ecdf754f36c867138abfd39cdced4",
+      "contract": "da0f1d11ad0433e88ed21d6d81828d630dd3e21b0480391aab18025e205fdad6",
+      "file_sha256": "1c5af7b5a7144a619dfac83b14bd83ae77f1e2227b18a6a9c5dcb214889a0cba"
+    },
+    "candidate": {
+      "adapter": "d3b3e79ee9432f467881b9b7fd5eef1c6d2908da6fce73de9fd786f541094dc6",
+      "file_sha256": "eaa627e8937afa9f23fb8ab97c89d03f8e59748c6016cd610772bc594f81a90b"
+    },
+    "training_steps": 10,
+    "training_changed_from_setup": true,
+    "changed_tensors": {
+      "A": 60,
+      "B": 60
+    },
+    "changed_f32_values": 230400,
+    "immutable_original_parent_unchanged": true,
+    "training": {
+      "flop_scope": "profiler-supported-operators-only-not-total-work",
+      "loss": [
+        "3.96015644073",
+        "3.62071847916",
+        "1.08996319771",
+        "1.42350649834",
+        "0.814256906509",
+        "0.438868969679",
+        "0.286466509104",
+        "0.614645779133",
+        "0.488371759653",
+        "0.26933157444"
+      ],
+      "steps": 10,
+      "supervised_tokens": 40,
+      "supported_profile_flops": 289144351496,
+      "tokens": 526
+    },
+    "ordinary_installation_qualified": false
+  },
+  "candidate_score": {
+    "calibration": {
+      "correct": 2,
+      "total": 4
+    },
+    "evaluation": {
+      "correct": 2,
+      "total": 4
+    }
+  },
+  "candidate_all_outputs": [
+    "yes"
+  ],
+  "model_improvement_established": false,
+  "local_control_verdict": "INCOMPLETE_NO_ADOPTION",
+  "control_completed_phases": [
+    {
+      "name": "train-current-backbone",
+      "outcome": "success",
+      "exit_code": 0
+    },
+    {
+      "name": "train-fresh-budget-matched-lora",
+      "outcome": "success",
+      "exit_code": 0
+    },
+    {
+      "name": "train-budget-matched-full-tune",
+      "outcome": "failed",
+      "exit_code": -9
+    }
+  ],
+  "control_failed_supervisor": {
+    "budget": {
+      "rss_bytes": 17179869184,
+      "wall_seconds": 1800
+    },
+    "child_cpu_ns": 122647887000,
+    "child_spawned": true,
+    "cleanup_method": "wait4",
+    "cpu_scope": "Exact owned-child Linux wait4 user-plus-system CPU; includes inherited waited-descendant accounting",
+    "exit_code": -9,
+    "memory_scope": "sampled_peak_rss_bytes is direct-child 50ms RSS; waited_child_peak_rss_bytes is exact owned-child Linux wait4 ru_maxrss in KiB times 1024, a maximum single-process high-water with inherited waited-descendant accounting; neither is simultaneous process-tree RSS",
+    "observed_wall_ns": 85434078900,
+    "observer_cpu_ns": 5581114010,
+    "outcome": "failed",
+    "owned_child_echild_observed": false,
+    "owned_child_exit_observed": true,
+    "owned_child_reap_resolved": true,
+    "rss_observation_gaps": [
+      {
+        "after": {
+          "error": "pidfd-coordinate-unavailable",
+          "owned_pid": 39,
+          "parent_nspid": [
+            107057,
+            8
+          ],
+          "pidfd_nspid": [
+            -1
+          ],
+          "pidfd_ready": true,
+          "pidfd_visible_pid": -1
+        },
+        "at_wall_ns": 84849598288,
+        "before": {
+          "child": {
+            "NSpid": "108989\t39",
+            "PPid": "107057",
+            "Pid": "108989",
+            "State": "Z (zombie)",
+            "Threads": "2",
+            "VmRSS": null,
+            "VmSize": null
+          },
+          "exit_cleanup_proof": {
+            "kernel_release": "6.18.55",
+            "observed_at_monotonic_ns": 7476309126978,
+            "owned_pid": 39,
+            "pidfd_nspid": [
+              108989,
+              39
+            ],
+            "pidfd_visible_pid": 108989,
+            "rss_sample_produced": false,
+            "schema": "linux-owned-thread-group-exit-cleanup-v1",
+            "threads": [
+              {
+                "flags": 4228364,
+                "start_time_ticks": 739145,
+                "state": "Z",
+                "tid": 108989
+              },
+              {
+                "flags": 4195404,
+                "start_time_ticks": 743056,
+                "state": "R",
+                "tid": 109114
+              }
+            ]
+          },
+          "owned_pid": 39,
+          "owned_threads": [
+            {
+              "NSpid": "108989\t39",
+              "NStgid": "108989\t39",
+              "PPid": "107057",
+              "Pid": "108989",
+              "State": "Z (zombie)",
+              "Tgid": "108989",
+              "VmRSS": null,
+              "VmSize": null
+            },
+            {
+              "NSpid": "109114\t43",
+              "NStgid": "108989\t39",
+              "PPid": "107057",
+              "Pid": "109114",
+              "State": "R (running)",
+              "Tgid": "108989",
+              "VmRSS": null,
+              "VmSize": null
+            }
+          ],
+          "parent_nspid": [
+            107057,
+            8
+          ],
+          "pidfd_identity_changed_during_read": false,
+          "pidfd_nspid": [
+            108989,
+            39
+          ],
+          "pidfd_ready": false,
+          "pidfd_visible_pid": 108989
+        },
+        "reconciliation": {
+          "absolute_wall_deadline_ns": 9191458450379,
+          "elapsed_ns": 583061106,
+          "exit_cleanup_proof": {
+            "kernel_release": "6.18.55",
+            "observed_at_monotonic_ns": 7476309659815,
+            "owned_pid": 39,
+            "pidfd_nspid": [
+              108989,
+              39
+            ],
+            "pidfd_visible_pid": 108989,
+            "rss_sample_produced": false,
+            "schema": "linux-owned-thread-group-exit-cleanup-v1",
+            "threads": [
+              {
+                "flags": 4228364,
+                "start_time_ticks": 739145,
+                "state": "Z",
+                "tid": 108989
+              },
+              {
+                "flags": 4195404,
+                "start_time_ticks": 743056,
+                "state": "R",
+                "tid": 109114
+              }
+            ]
+          },
+          "initial_reap": "live",
+          "mode": "kernel-exit-cleanup",
+          "pidfd_ready_after_wait": true,
+          "terminal_reap": "terminal",
+          "wait_deadline_ns": 9191458450379,
+          "wait_polls": 12
+        }
+      }
+    ],
+    "sample_interval_ms": 50,
+    "sampled_peak_rss_bytes": 4270231552,
+    "stop_reason": null,
+    "terminal_reconciliation_profile": "linux-held-pidfd-irreversible-exit-v1",
+    "waited_child_observation_error": null,
+    "waited_child_peak_rss_bytes": 4321779712,
+    "waited_child_reaped": true
+  },
+  "cell_attempts": [
+    {
+      "attempt": "sandbox-dev-001",
+      "handoff_sha256": "53d94565fde9a48a5d79a5687fa8c78c36f7d8a02cf7ca099bfc3539fc805160",
+      "binary_sha256": "904efe919ea58881628750c3ff4a3a769f6354e122329b434ace684795f53e1d",
+      "status": "failed",
+      "elapsed_seconds": 120.38400777800052,
+      "transfer": null,
+      "error": "Expecting value: line 1 column 1 (char 0)",
+      "native_consumer_status_is_initial_capability_declaration": true
+    },
+    {
+      "attempt": "loopback-dev-002",
+      "handoff_sha256": "3eaa7c75f77f4fd4e58be81f247d6716bbdd164c82c131d40a28ce117e46ba8d",
+      "binary_sha256": "904efe919ea58881628750c3ff4a3a769f6354e122329b434ace684795f53e1d",
+      "status": "failed",
+      "elapsed_seconds": 180.26960209699973,
+      "transfer": {
+        "all_members_verified": false,
+        "clock": "monotonic",
+        "elapsed_seconds": 35.080094958999325,
+        "limit_seconds": 35,
+        "schema": "cell-native-aggregate-transfer-v2",
+        "scope": "listener announced through aggregate TCR1 fetch, cache-only materialization and final consumer readback; excludes packing, release preparation, provider drain and Hepta load",
+        "within_original_deadline": false
+      },
+      "error": "Command '['/workspace/scratch/301262829a43/pon-hepta-impl/chain-target/debug/trnm-cell', 'fetch-release', '--cache-max-bytes', '536870912', '--cache-max-chunks', '4096', '--cache-max-manifests', '256', '--cache-max-db-bytes', '536870912', '--store', '/workspace/scratch/301262829a43/pon-hepta-impl/real-model-run-001/cell-handoff-approved-loopback-002/consumer.sqlite', '--release-file', '/workspace/scratch/301262829a43/pon-hepta-impl/real-model-run-001/cell-handoff-approved-loopback-002/source-release.tcr1', '--release', '0c3b841b42f507129d24bb3f335c90756e8057fb06883c9bf62d3100bfdd0cfd', '--peers', '127.0.0.1:35719', '--output', '/workspace/scratch/301262829a43/pon-hepta-impl/real-model-run-001/cell-handoff-approved-loopback-002/consumer-release.tcr1', '--max-bytes', '272189870', '--max-chunks', '269', '--overall-ms', '34999', '--request-ms', '2000', '--max-response-bytes', '555919116', '--max-connections', '560', '--parallelism', '2']' returned non-zero exit status 1.",
+      "native_consumer_status_is_initial_capability_declaration": true
+    },
+    {
+      "attempt": "loopback-release-003",
+      "handoff_sha256": "e7594fdf57973068db7fbc36cff7ca9e29ce8814574bb84a753bb1eb3f427c5b",
+      "binary_sha256": "480ffbafbf93307859c87872e807b90c218c4fb9e238be04e6ac88e3daa407e6",
+      "status": "failed",
+      "elapsed_seconds": 30.446197899999788,
+      "transfer": {
+        "all_members_verified": false,
+        "clock": "monotonic",
+        "elapsed_seconds": 2.0745968330002142,
+        "limit_seconds": 35,
+        "schema": "cell-native-aggregate-transfer-v2",
+        "scope": "listener announced through aggregate TCR1 fetch, cache-only materialization and final consumer readback; excludes packing, release preparation, provider drain and Hepta load",
+        "within_original_deadline": true
+      },
+      "error": "Command '['/workspace/scratch/301262829a43/pon-hepta-impl/chain-target/release/trnm-cell', 'fetch-release', '--cache-max-bytes', '536870912', '--cache-max-chunks', '4096', '--cache-max-manifests', '256', '--cache-max-db-bytes', '536870912', '--store', '/workspace/scratch/301262829a43/pon-hepta-impl/real-model-run-001/cell-handoff-approved-release-003/consumer.sqlite', '--release-file', '/workspace/scratch/301262829a43/pon-hepta-impl/real-model-run-001/cell-handoff-approved-release-003/source-release.tcr1', '--release', '0c3b841b42f507129d24bb3f335c90756e8057fb06883c9bf62d3100bfdd0cfd', '--peers', '127.0.0.1:38523', '--output', '/workspace/scratch/301262829a43/pon-hepta-impl/real-model-run-001/cell-handoff-approved-release-003/consumer-release.tcr1', '--max-bytes', '272189870', '--max-chunks', '269', '--overall-ms', '34999', '--request-ms', '2000', '--max-response-bytes', '555919116', '--max-connections', '560', '--parallelism', '2']' returned non-zero exit status 1.",
+      "native_consumer_status_is_initial_capability_declaration": true
+    }
+  ],
+  "next_task_readback_run": false,
+  "ordinary_installation_run": false,
+  "ordinary_installation_qualified": false,
+  "public_reward_eligible": false,
+  "production_activation": false,
+  "fresh_ci_diagnostic": {
+    "status": "NOT_RUN_AT_FREEZE",
+    "workflow": ".github/workflows/pon-model-controls-diagnostic.yml",
+    "job_minutes": 15,
+    "outer_owner_step_minutes": 10,
+    "threads": 2,
+    "steps": 10,
+    "new_candidate_not_local_v2_receipt": true
+  },
+  "raw_evidence": {
+    "archive": "raw-evidence.tar.gz",
+    "archive_bytes": 2380578,
+    "sha256": "1a504618bcdefb2b22929f06d3b4c92177bdc2f710aa78f789a4e8c9741998df",
+    "files": 157,
+    "raw_file_bytes": 4430217
+  }
+}
