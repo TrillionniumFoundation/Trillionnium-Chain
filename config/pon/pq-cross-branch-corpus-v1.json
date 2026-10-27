@@ -164,7 +164,7 @@
     "trillionnium/crates/trnm-crypto-primitives/src/lib.rs": "f113c185d8fadbd0766e2fc45b0f22f4d8dc8f9d",
     "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs": "1c76bfa6039823196f936d668fa1148570487762",
     "trillionnium/crates/trnm-protocol/src/lib.rs": "788393bea295b075fa09386cec73be766f2db54f",
-    "trillionnium/crates/trnm-protocol/src/pq_frame.rs": "7f4133b76ec0970154e9645fd6cbe99d78252e82",
+    "trillionnium/crates/trnm-protocol/src/pq_frame.rs": "d67077da9799f7996838d853e9c3ef53796b9496",
     "formal/pon-nakamoto-v1/test_pq_native_spki.py": "5a9848b4f665002c6d55c465a4f6e8a0a8efa349",
     "docs/security/PQ_NATIVE_SPKI_IDENTITY_V1.md": "343d9d82aa78291f339b05eb99939a6506d5a25a",
     "evidence/pon-pq-spki-v1/README.md": "5d9e67e90cf335e5b0f8350577bed539e6fb1ad7",
