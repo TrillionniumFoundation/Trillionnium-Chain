@@ -245,23 +245,6 @@ fn maintenance_reentry_registers_signed_task_and_independent_client_confirms() {
     .unwrap();
     let bootstrap = settings.bootstrap_lifecycle_task().unwrap();
     let revoked_task = bootstrap.signed.manifest.matrix_task;
-    // Forecast only from the fully checked actual parent. This report is not
-    // a signer or dispatcher; real signed tag22 admission remains elsewhere.
-    let mut advisory_successor = bootstrap.lease.clone();
-    advisory_successor.revision += 1;
-    advisory_successor.not_before = 1;
-    advisory_successor.expires = 1001;
-    advisory_successor.available_until = 1101;
-    let (advisory_tip, advisory_generation, advisory) = native
-        .forecast_q4_renewal_from_active(revoked_task, &advisory_successor, 5, 10)
-        .unwrap();
-    assert_eq!(advisory_tip, settings.genesis());
-    assert_eq!(advisory_generation, native.active().unwrap().1);
-    assert_eq!(
-        advisory.phase,
-        trnm_pon_node::Q4RenewalPhase::WindowOpenByTime
-    );
-    assert_eq!(advisory.last_legal_height, 1000);
 
     // Construct a new source-authenticated demand from canonical public test
     // keys. No extension, impersonation or silent renewal of the revoked lease.
@@ -345,6 +328,24 @@ fn maintenance_reentry_registers_signed_task_and_independent_client_confirms() {
         2,
     )
     .unwrap();
+    // Forecast only from the fully checked actual parent. This report is not
+    // a signer or dispatcher; real signed tag22 admission remains elsewhere.
+    let mut advisory_successor = bootstrap.lease.clone();
+    advisory_successor.revision += 1;
+    advisory_successor.not_before = 1;
+    advisory_successor.expires = 1001;
+    advisory_successor.available_until = 1101;
+    let (advisory_tip, advisory_generation, advisory) = native
+        .forecast_q4_renewal_from_active(revoked_task, &advisory_successor, 5, 10)
+        .unwrap();
+    assert_eq!(advisory_tip, settings.genesis());
+    assert_eq!(advisory_generation, native.active().unwrap().1);
+    assert_eq!(
+        advisory.phase,
+        trnm_pon_node::Q4RenewalPhase::WindowOpenByTime
+    );
+    assert_eq!(advisory.last_legal_height, 1000);
+
     let mut parent = settings.genesis();
     let mut admitted = Vec::new();
     let mut revoke_block = None;
