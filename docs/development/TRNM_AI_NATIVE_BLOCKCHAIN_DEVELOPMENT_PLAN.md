@@ -4467,3 +4467,53 @@ cause, minimum-cost or hardware claim. No rerun or increased limit was used.
 The original 3-hour maximum, assertions and resources remain fixed; R4/R5/R6
 and all original PN1 native/release/three-FD/whole-writer/strict-reader/full4097
 gates remain unqualified. `task_complete=false`, `merge_ready=false`, **NO_GO**.
+
+#### PN1/I02 original-writer public IO handoff — 2026-10-27 (SOURCE ONLY / OPEN)
+
+The existing [outer writer](../../scripts/pon_identity_outer_owner.py) now contains
+the mechanically moved original `require`, `held_directory`, `publish_new`,
+`json_chunks` and `V2Writer` implementations. The existing collectors import and
+re-export that implementation. `CollectorIO(output, 'v2', writer=owner)` and
+`ComponentIO(output, writer=owner)` retain the exact live owner, held directory,
+version, used bytes and reservations. The public identity
+`prepare(args, output, io=io)` accepts that same IO; its ordinary CLI remains
+unchanged. Component `prepare(args, io)` and the original claim, execution,
+inventory and error paths are preserved.
+
+The required startup order remains: independently pin the bootstrap owner;
+construct the original writer; reserve capsule and record costs; retain the
+approved capsule in the original preparation; verify and load P/T; attach the
+same live writer to the collector; then use the existing public prepare and
+readback paths. A capsule loader must preserve the same verified owner module
+and class identity across this handoff. The trusted P0/T loader, actual capsule,
+record emission and all eleven admission cutpoints are still unimplemented.
+This source refactor grants no prepared, claim, installation or native authority.
+
+[Preserved raw results and correction](../../evidence/pon-original-writer-handoff-20261027/receipt.json)
+record the finite validation as **FAIL_INCOMPLETE**. The original-source phase
+failed during import because its exported baseline lacked
+`config/pon/ledger-v1.json`: zero tests ran, so its three intended counterexamples
+remain NOT_RUN. Two old mock receivers genuinely failed after implementation
+movement; only their receivers were migrated to the actual publisher. The
+candidate then passed nineteen finite controls, comprising nine new and ten
+original cases. All eighty-nine original test names and assertion ASTs remain.
+The original controller's zero exit and incomplete success accounting are
+retained alongside the explicit correction. The single 90-second ceiling,
+original 164.257-second remaining preparation balance and native gates are not
+reset or reclassified.
+
+The original source-inventory generator was actually run on the integrated
+source, followed by its unchanged `--check` and pinned Rust formatter check.
+Its observed 1,061 entries include ten previously missing Rust paths; this count
+is an observation, not a new limit or native result. New script bytes require
+new committed-source observations. Existing stale blob guards still require
+reviewed source bindings and the original eight-lane execution.
+
+The preceding published Chain source `bd81849bb47b10e912cfea84f7532ccc1175e4ee`
+and its actual PR preview `985dd37f4dc6f1859b57ffcaed8f0cd75da3a032` separately
+passed the original release 65,537-account/cold-reopen test, in jobs
+`121824408173` and `121824408381`, within the unchanged 10,800-second job limit.
+That complete-State reference result leaves the historical `53fb` failure
+intact. It does not qualify the later local root-reuse optimization, bounded
+witnesses, paid 4,096/fresh-4,097 W1 campaign or full native IO boundary.
+The existing PN0–PN6 exits remain **NO_GO**.

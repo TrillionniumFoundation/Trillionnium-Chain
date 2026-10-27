@@ -1,0 +1,72 @@
+{
+  "observed_utc": "2026-10-27T00:41:17.005875+00:00",
+  "actual_invocation_id_from_original_systemd_launcher_stderr": "85ee4ee15e4542de8d0062745c35ab11",
+  "owned_pids_absent": {
+    "2757703": true,
+    "2757745": true,
+    "2757760": true,
+    "2757890": true
+  },
+  "own_cgroup_directory_absent": true,
+  "logs": {
+    "actual-systemd-launcher.stderr": {
+      "bytes": 290,
+      "sha256": "2aaee1c397d2956bfc00fc1f7e41ef5ee1095deee6f6b15d44163ca20ea44408"
+    },
+    "actual-systemd-launcher.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "candidate-finite-fixed.stderr": {
+      "bytes": 3621,
+      "sha256": "85d21e6487806e4eaa7226607ef3c4a91865cb0225ebc23767ea6a7c21745849"
+    },
+    "candidate-finite-fixed.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "candidate-original-mock-target-RED.stderr": {
+      "bytes": 2105,
+      "sha256": "f8c1a50a2da674c285987f88e2b9b7b92b1e945f4269dce88776358e443f0682"
+    },
+    "candidate-original-mock-target-RED.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "finite-owner.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "finite-owner.stdout": {
+      "bytes": 782,
+      "sha256": "5305fa7908c44c4bac47b5165dbff0871f3fcec4376f2938783b4f997ea7dc7d"
+    },
+    "original-c758-new-handoff-RED.stderr": {
+      "bytes": 2904,
+      "sha256": "48498aead70e17ec7661044f1eb0ba0d81fd357fe2f60b0610f7230ec2586164"
+    },
+    "original-c758-new-handoff-RED.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "combined_actual_logs_bytes": 9702,
+  "log_cap_bytes": 2097152,
+  "runtime_result_metadata": {
+    "actual-external-launch-command.json": 1125,
+    "actual-external-launcher-terminal.json": 476,
+    "candidate-finite-fixed.owner.json": 184,
+    "candidate-finite-fixed.result.json": 1344,
+    "candidate-original-mock-target-RED.owner.json": 196,
+    "candidate-original-mock-target-RED.result.json": 595,
+    "external-monotonic-origin.json": 348,
+    "finite-validation-final-receipt.json": 1982,
+    "finite-validation-started.json": 124214,
+    "original-c758-new-handoff-RED.owner.json": 191
+  },
+  "runtime_result_metadata_bytes": 130655,
+  "metadata_is_extra_actual_bytes_not_native_balance_credit": true,
+  "old_native_budget_consumed_or_reset": false,
+  "unit_garbage_collected": "post-terminal unit properties are not live cap evidence; actual pre-test cgroup files are in started receipt",
+  "not_qualification": true
+}

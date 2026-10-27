@@ -1,0 +1,28 @@
+{
+  "fixed_base": "c758861fd86fcc740720501ecf956b0b5c98b3b2",
+  "raw_blocks_exact": {
+    "held_directory": {
+      "bytes": 606,
+      "sha256": "e1a2370669d3566a0bed275b736e4b44635fca9fd7cb23f75169a72a34c1a97e"
+    },
+    "publish_new": {
+      "bytes": 755,
+      "sha256": "beca1df93da6f3248d60239df8e818bc816a158d84e2134f4109b7f589338702"
+    },
+    "json_chunks": {
+      "bytes": 269,
+      "sha256": "bfa63af2d975f25b7c714592c4bb8676f886febcc82546cd8c5626cd7b4a9c9b"
+    },
+    "V2Writer": {
+      "bytes": 8117,
+      "sha256": "de2bd5386073b0508ecbe553ff2d2e0000c0766f832545a635eb16a43bdd5496"
+    },
+    "require": {
+      "bytes": 81,
+      "sha256": "fba5518dbbe127c5d736b6a2ef99ebbb28b24be84759bc3ce649d93a6815e637"
+    }
+  },
+  "old_assertions_changed": false,
+  "trust_loader_or_record_implemented": false,
+  "fullguard_enabled": false
+}

@@ -1,0 +1,8 @@
+{
+  "name": "candidate-original-mock-target-RED",
+  "returncode": 1,
+  "expected_returncode": 1,
+  "elapsed_from_original_start": 1.7261945880018175,
+  "stdout_bytes": 0,
+  "stderr_bytes": 2105
+}

@@ -1,0 +1,8 @@
+{
+  "name": "candidate-finite-fixed",
+  "returncode": 0,
+  "expected_returncode": 0,
+  "elapsed_from_original_start": 2.2031896359985694,
+  "stdout_bytes": 0,
+  "stderr_bytes": 3621
+}

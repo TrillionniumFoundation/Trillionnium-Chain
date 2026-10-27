@@ -1,0 +1,74 @@
+{
+  "role": "finite-python-original-owner-and-public-IO-only",
+  "phases": [
+    {
+      "name": "original-c758-new-handoff-RED",
+      "returncode": 1,
+      "expected_returncode": 1,
+      "elapsed_from_original_start": 0.6058758000144735,
+      "stdout_bytes": 0,
+      "stderr_bytes": 2904
+    },
+    {
+      "name": "candidate-original-mock-target-RED",
+      "returncode": 1,
+      "expected_returncode": 1,
+      "elapsed_from_original_start": 1.7261945880018175,
+      "stdout_bytes": 0,
+      "stderr_bytes": 2105
+    },
+    {
+      "name": "candidate-finite-fixed",
+      "returncode": 0,
+      "expected_returncode": 0,
+      "elapsed_from_original_start": 2.2031896359985694,
+      "stdout_bytes": 0,
+      "stderr_bytes": 3621
+    }
+  ],
+  "failure": null,
+  "elapsed_seconds": 2.3528463219990954,
+  "original90s_cutoff_observed": true,
+  "children": [
+    {
+      "pid": 2757745,
+      "birth_ticks": 13924232,
+      "observed_ppid": 2757703,
+      "wait_returncode": 1,
+      "proc_exists_after_wait": false
+    },
+    {
+      "pid": 2757760,
+      "birth_ticks": 13924264,
+      "observed_ppid": 2757703,
+      "wait_returncode": 1,
+      "proc_exists_after_wait": false
+    },
+    {
+      "pid": 2757890,
+      "birth_ticks": 13924376,
+      "observed_ppid": 2757703,
+      "wait_returncode": 0,
+      "proc_exists_after_wait": false
+    }
+  ],
+  "all_observed_direct_children_waited": true,
+  "inputs_quiescent": true,
+  "source_input_count": 686,
+  "phase_log_bytes_used": 8630,
+  "aggregate_cgroup_caps": {
+    "cpu.max": "100000 100000",
+    "memory.max": "536870912",
+    "memory.swap.max": "0",
+    "pids.max": "64",
+    "nice": 10,
+    "affinity": [
+      0
+    ],
+    "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/chain-pn0-owner-handoff-finite-20261027-001.service"
+  },
+  "no_native_SQL_network_or_preparation_qualification": true,
+  "trust_capsule_or_record_implemented": false,
+  "full_route_ready": false,
+  "merge_ready": false
+}

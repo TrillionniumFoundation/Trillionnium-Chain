@@ -1,0 +1,19 @@
+{
+  "role": "candidate-original-mock-target-RED",
+  "selectors": [
+    "OuterWriterV2Tests.test_unsupported_publish_and_terminal_failure_have_no_fallback",
+    "OuterWriterV2Tests.test_failed_first_stream_publish_keeps_observed_child_and_both_buffer_denominators"
+  ],
+  "testsRun": 2,
+  "failures": 2,
+  "errors": 0,
+  "skipped": 0,
+  "wasSuccessful": false,
+  "elapsed_seconds": 0.9719367339857854,
+  "denied_calls": [],
+  "original_prepare_native_budget_used": false,
+  "source_admission_qualified": false,
+  "prepared_qualified": false,
+  "native_qualified": false,
+  "merge_ready": false
+}

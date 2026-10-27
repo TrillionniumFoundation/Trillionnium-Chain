@@ -1,0 +1,117 @@
+{
+  "schema": "trnm.audit.original-writer-handoff-source-v1",
+  "recorded_utc": "2026-10-27T01:30:01.399026+00:00",
+  "source_code_commit": "7ad9c6470713e5c33b33360e8dd63efbade4931f",
+  "source_code_tree": "dce3fa30bd3e08442776fe42ffac5f057a9a585e",
+  "source_base": "c758861fd86fcc740720501ecf956b0b5c98b3b2",
+  "scope": "sameoriginalV2Writermechanicalstdlibowner andpublicsameIOhandoff sourceonly;noactualP0/T/capsule/record/11cutpoints",
+  "finite_validation": "FAIL_INCOMPLETE",
+  "baseline_original_c758_new3_controls": "IMPORT_FAILmissingconfig/pon/ledger-v1.json,0tests,3NOTRUN;neverclaim3testRED",
+  "old_mock_target_controls": "2actualFAIL due realpublisherimplementationmove; originalassertsunchanged,mockreceiveronlymigrated",
+  "candidate_current_controls": "19actualPASS:9new+10original,notfull89,native,sourceprofileorproductrounds",
+  "raw_controller_receipt_warning": "finite-validation-final-receipt.json is retainedoriginalexecutedcontrolleroutput:failure:null/exit0 wasinsufficientcheckingonlyexpectednonzero; authoritativecorrectionmustberead,notaswholeplanPASS",
+  "mechanical_invariants": "5oldownerrawblocks/89methodnames/alloriginalassertAST/preserveP3prepare/CLI/main/claim-link-execute/sourceinventoryderive;3mockreceiverchangesonly",
+  "budgets": "single90s ceiling,1CPU512MiBcgroup/swap0/tasks64/Nice10; no reset/retry orold164.257/native/300/952 use. Log9702B andmetadata130655B were separatelyrecorded,notfree.",
+  "original_generator": "actually regenerateddistributed_source_inventory.rs/check/fmt0; 1061 observedentries,notnewcap; no previous002/003inventory reuse",
+  "authorityFlags": {
+    "execution": false,
+    "installation": false,
+    "promotion": false,
+    "budgetRefund": false,
+    "qualification": false
+  },
+  "files": [
+    {
+      "path": "author-source-candidate-receipt.json",
+      "bytes": 4157,
+      "sha256": "9931a880e11582125be47f919906c487458dd29b7924c082c12d41d6bd3e9e35"
+    },
+    {
+      "path": "finite-validation-final-receipt.json",
+      "bytes": 1982,
+      "sha256": "89b9046fd3f1f78ff392b153d6ae7cf8d8730c692dfbee0bac3f9b240cb8d0dc"
+    },
+    {
+      "path": "actual-result-correction-and-retained-first-import-FAIL.json",
+      "bytes": 2940,
+      "sha256": "c5744693f16aaf6a0a55674aab56ce4f8f1b7163c5bfd990d4da6293ae8d34db"
+    },
+    {
+      "path": "candidate-finite-fixed.result.json",
+      "bytes": 1344,
+      "sha256": "d81f3b067d8ed0e08d44f45c312e19b5141fc1063ef247b3380c805b501a3f2b"
+    },
+    {
+      "path": "candidate-original-mock-target-RED.result.json",
+      "bytes": 595,
+      "sha256": "2a28d3b1cb98866cb12f187c73f7d9f496171972269e1329ada88a63c88343f0"
+    },
+    {
+      "path": "mechanical-extraction-invariants.json",
+      "bytes": 854,
+      "sha256": "64892212ef959dfe03ece01cf428329f2b15198bb842167a667f2b15614a9f0e"
+    },
+    {
+      "path": "pre-test-static-source-invariants.json",
+      "bytes": 1898,
+      "sha256": "a52fe2eceb9a3968c2bb675a73409e352a70b76627d103f81fd672a3b1d957c3"
+    },
+    {
+      "path": "actual-resource-log-metadata-and-terminal-readback.json",
+      "bytes": 2760,
+      "sha256": "0ffca90be8ad448f89105d35c3d5f73429032d94199634266ff295d486c79c0c"
+    },
+    {
+      "path": "original-c758-new-handoff-RED.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "original-c758-new-handoff-RED.stderr",
+      "bytes": 2904,
+      "sha256": "48498aead70e17ec7661044f1eb0ba0d81fd357fe2f60b0610f7230ec2586164"
+    },
+    {
+      "path": "original-c758-new-handoff-RED.owner.json",
+      "bytes": 191,
+      "sha256": "a436f5adc5ab6b11bd1807afe1ced030f704e374989ad2fe239c4130c2097219"
+    },
+    {
+      "path": "candidate-original-mock-target-RED.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "candidate-original-mock-target-RED.stderr",
+      "bytes": 2105,
+      "sha256": "f8c1a50a2da674c285987f88e2b9b7b92b1e945f4269dce88776358e443f0682"
+    },
+    {
+      "path": "candidate-original-mock-target-RED.owner.json",
+      "bytes": 196,
+      "sha256": "56f5d2f9c0c6b086ebd5f6e24f17e30cffae6a394d687412434742a687f0e159"
+    },
+    {
+      "path": "candidate-finite-fixed.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "candidate-finite-fixed.stderr",
+      "bytes": 3621,
+      "sha256": "85d21e6487806e4eaa7226607ef3c4a91865cb0225ebc23767ea6a7c21745849"
+    },
+    {
+      "path": "candidate-finite-fixed.owner.json",
+      "bytes": 184,
+      "sha256": "64bc16e4df7f96c0662c447d5d75e5dfefc8a423b8285f4f0da261ca446c824f"
+    },
+    {
+      "path": "independent-source-review-receipt.json",
+      "bytes": 1965,
+      "sha256": "43f315fe55edf551c69d04aea803f32b5e5062e912c7f89ddf1f8e701942dc04"
+    }
+  ],
+  "task_complete": false,
+  "merge_ready": false
+}
