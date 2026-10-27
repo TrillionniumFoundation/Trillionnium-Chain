@@ -46,9 +46,22 @@ jobs:
           python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$out/source-before.json"
           bash scripts/project-preflight.sh --audit > "$out/preflight.log" 2>&1
           cat /proc/meminfo > "$out/meminfo.txt"
-          cat /sys/fs/cgroup/memory.max > "$out/cgroup-memory-max.txt"
-          cat /sys/fs/cgroup/cpu.max > "$out/cgroup-cpu-max.txt"
-          printf 'Full 64x64/r8/512-tile W1; real local Composite STARK. Research backend only: claimed 98-bit classical conjectured security, no PQ128 or public-ingress qualification, no consensus activation. Failures remain failures.\n' > "$out/SCOPE.txt"
+          python3 - "$out/cgroup-observations.json" <<'PY'
+          import json, sys
+          from pathlib import Path
+          observed = {}
+          for name in ["/proc/self/cgroup", "/sys/fs/cgroup/memory.max",
+                       "/sys/fs/cgroup/cpu.max", "/sys/fs/cgroup/memory/memory.limit_in_bytes",
+                       "/sys/fs/cgroup/cpu/cpu.cfs_quota_us", "/sys/fs/cgroup/cpu/cpu.cfs_period_us"]:
+              try:
+                  observed[name] = {"status": "read", "raw": Path(name).read_text()}
+              except OSError as error:
+                  observed[name] = {"status": "unavailable", "errno": error.errno, "raw": None}
+          Path(sys.argv[1]).write_text(json.dumps({"schema": "pon-w1-cgroup-observation-v1",
+              "observations": observed, "missing_means_unlimited": False,
+              "resource_qualification": False}, indent=2) + "\n")
+          PY
+          printf 'Full 64x64/r8/512-tile W1; real local Composite STARK. Research backend only; quantitative security must use the pinned parameter analysis. No PQ128 or public-ingress qualification, no consensus activation. Failures remain failures.\n' > "$out/SCOPE.txt"
       - name: Install pinned native toolchain
         run: |
           set -euo pipefail
@@ -74,6 +87,7 @@ jobs:
           python3 "$BACKEND/measure_step.py" --out "$OUT" --name guest-build --timeout 1800 -- python3 "$BACKEND/build_guest.py" --cargo "$NATIVE_CARGO" --guest-rustc "$WORK/backend/guest-compiler/bin/rustc" --target-dir "$WORK/guest-target" --cargo-home "$CARGO_HOME" --host-linker "$BACKEND/host_linker_bfd.sh" --jobs 2
           cp "$WORK/guest-target/riscv32im-risc0-zkvm-elf/release/trnm-w1-risc0-guest" "$OUT/guest.raw.elf"
           python3 "$BACKEND/measure_step.py" --out "$OUT" --name host-build --timeout 1800 -- "$NATIVE_CARGO" build --release --locked --manifest-path "$BACKEND/Cargo.toml" -p trnm-w1-risc0-host
+          python3 "$BACKEND/measure_step.py" --out "$OUT" --name host-boundary-tests --timeout 1800 -- "$NATIVE_CARGO" test --release --locked --manifest-path "$BACKEND/Cargo.toml" -p trnm-w1-risc0-host
           python3 "$BACKEND/measure_step.py" --out "$OUT" --name backend-clippy --timeout 1800 -- "$NATIVE_CARGO" clippy --locked --manifest-path "$BACKEND/Cargo.toml" -p trnm-w1-risc0-host -p trnm-w1-guest-relation --all-targets -- -D warnings
           python3 "$BACKEND/measure_step.py" --out "$OUT" --name bake --timeout 60 -- "$CARGO_TARGET_DIR/release/trnm-w1-risc0-host" bake "$OUT/guest.raw.elf" "$OUT/guest.bin"
           python3 "$BACKEND/check_observations.py" --out "$OUT" --build-only
