@@ -156,5 +156,61 @@ class JournalOwnerHardeningTests(unittest.TestCase):
         with self.assertRaisesRegex(Reject, 'disappeared'):
             self.record(j, B)
 
+    def test_temp_trigger_cannot_erase_an_acknowledged_row(self):
+        j = self.open()
+        # sqlite_master stays unchanged: only sqlite_temp_master sees the trigger.
+        j.db.execute('CREATE TEMP TRIGGER erase AFTER INSERT ON pq_custody_observation '
+                     'BEGIN DELETE FROM pq_custody_observation; END')
+        with self.assertRaisesRegex(Reject, 'temporary SQLite schema'):
+            self.record(j)
+        self.assert_rows(0)
+
+    def test_temp_table_cannot_shadow_the_persistent_journal(self):
+        j = self.open()
+        j.db.execute('CREATE TEMP TABLE pq_custody_observation('
+                     'challenge_id BLOB PRIMARY KEY, response_digest BLOB, provider_key_id BLOB)')
+        with self.assertRaisesRegex(Reject, 'temporary SQLite schema'):
+            self.record(j)
+        # Unqualified INSERT would otherwise target the TEMP table, not main.
+        self.assert_rows(0)
+
+    def test_filename_rename_inside_precommit_lock_never_acks_first_write(self):
+        j = self.open()
+        moved = Path(self.temp.name) / 'detached.db'
+        genuine_audit = j._audit_owned_schema
+        relocated = False
+
+        def detach_after_audit():
+            nonlocal relocated
+            genuine_audit()
+            if not relocated:
+                os.rename(self.db, moved)
+                relocated = True
+
+        with patch.object(j, '_audit_owned_schema', side_effect=detach_after_audit):
+            with self.assertRaisesRegex(Reject, 'disappeared'):
+                self.record(j)
+        self.assertTrue(moved.exists())
+        self.assertFalse(self.db.exists())
+
+    def test_filename_rename_inside_precommit_lock_never_acks_repeat(self):
+        j = self.open()
+        self.assertEqual(self.record(j)[0], 'FIRST_RECORD')
+        moved = Path(self.temp.name) / 'detached-repeat.db'
+        genuine_audit = j._audit_owned_schema
+        relocated = False
+
+        def detach_after_audit():
+            nonlocal relocated
+            genuine_audit()
+            if not relocated:
+                os.rename(self.db, moved)
+                relocated = True
+
+        with patch.object(j, '_audit_owned_schema', side_effect=detach_after_audit):
+            with self.assertRaisesRegex(Reject, 'disappeared'):
+                self.record(j)
+        self.assertTrue(moved.exists())
+
 if __name__ == '__main__':
     unittest.main()
