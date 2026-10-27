@@ -1,0 +1,1078 @@
+{
+  "actual_arm64_binary_retained": true,
+  "actual_x64_binary_retained": false,
+  "all_cohort_non_timing_fields_equal": true,
+  "arm_capture": {
+    "argv": [
+      "/home/runner/work/_temp/pon-arm64-v2-target/debug/examples/pon_pure_cost_campaign",
+      "--searches",
+      "256",
+      "--attempts",
+      "8",
+      "--rounds",
+      "2",
+      "--seed",
+      "1",
+      "--seconds",
+      "1800"
+    ],
+    "binary_sha256_after": "a41d0d8eaa131af03cdb782ff797ac140042fa4c37e54ab63bb686e20eb678ee",
+    "binary_sha256_before": "a41d0d8eaa131af03cdb782ff797ac140042fa4c37e54ab63bb686e20eb678ee",
+    "build_jobs": 1,
+    "build_profile": "cargo --profile test; repository package overrides",
+    "child_max_rss_kib": 37288,
+    "child_system_cpu_seconds": 3.329002,
+    "child_user_cpu_seconds": 737.572342,
+    "cpu.max": null,
+    "debug_info": 0,
+    "elapsed_ns": 741246320278,
+    "exclusive_host": false,
+    "exit_code": 0,
+    "hardness_proved": false,
+    "host_contention_controlled": false,
+    "incremental": false,
+    "machine": "aarch64",
+    "memory.max": null,
+    "package_opt_levels": {
+      "trnm-crypto-primitives": 3,
+      "trnm-mvcc-fee": 1,
+      "trnm-pon-node": 3
+    },
+    "platform": "Linux-7.0.0-1017-azure-aarch64-with-glibc2.39",
+    "production_qualified": false,
+    "rustc": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: aarch64-unknown-linux-gnu\nrelease: 1.95.0\nLLVM version: 22.1.2\n",
+    "schema": "pon-pure-native-capture-v1",
+    "source": {
+      "commit": "2b070fafcdd253c142da90fd7306d211057d3418",
+      "example_sha256": "203304c581a455c71bf5bee923c8d59fc9883a2f5365d399454f7b33493ce95b",
+      "lock_sha256": "3707ed772a9fd851638dca36e5b2472ac0657de65754480c448d3078107d9ff9",
+      "tree": "2cf9c9813928ffdda3b181f521c51fe5e0e51f77",
+      "workspace_manifest_sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+    },
+    "stable_binary": true,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_bytes": 28315895,
+    "stdout_gzip_bytes": 7202421,
+    "stdout_gzip_sha256": "ea533638e13d450193e69115b9906b20d37271c012ec564c9410f5527b6bafc6",
+    "stdout_uncompressed_sha256": "4aef23b71f435877a008e3c40e88b1fc9576832ce93b37969e1a20230427e02c",
+    "stdout_within_bound": true,
+    "timed_out": false,
+    "timeout_seconds": 1860
+  },
+  "arm_native_costs": [
+    {
+      "attempts": 4,
+      "best_cpu_over_prepared": 0.8256603479413255,
+      "cpu_ns_per_win_including_failed_searches": 1270972.0,
+      "exhausted": 0,
+      "horizon": 1,
+      "native_accepted_calls": 2,
+      "prepared_cpu_ns_per_win": 1539340.0,
+      "reuse": false,
+      "rounds": 2,
+      "setup_count": 2,
+      "strategy": "maintenance-split-limb",
+      "total_producer_cpu_ns": 2541944,
+      "winners": 2
+    },
+    {
+      "attempts": 4,
+      "best_cpu_over_prepared": 0.8155893289799303,
+      "cpu_ns_per_win_including_failed_searches": 1258960.0,
+      "exhausted": 0,
+      "horizon": 1,
+      "native_accepted_calls": 2,
+      "prepared_cpu_ns_per_win": 1543620.0,
+      "reuse": true,
+      "rounds": 2,
+      "setup_count": 2,
+      "strategy": "maintenance-split-limb",
+      "total_producer_cpu_ns": 2517920,
+      "winners": 2
+    },
+    {
+      "attempts": 26,
+      "best_cpu_over_prepared": 0.7879155125311479,
+      "cpu_ns_per_win_including_failed_searches": 1036976.0,
+      "exhausted": 0,
+      "horizon": 8,
+      "native_accepted_calls": 16,
+      "prepared_cpu_ns_per_win": 1316100.5,
+      "reuse": false,
+      "rounds": 2,
+      "setup_count": 16,
+      "strategy": "maintenance-split-limb",
+      "total_producer_cpu_ns": 16591616,
+      "winners": 16
+    },
+    {
+      "attempts": 26,
+      "best_cpu_over_prepared": 0.9383562224522805,
+      "cpu_ns_per_win_including_failed_searches": 996128.0,
+      "exhausted": 0,
+      "horizon": 8,
+      "native_accepted_calls": 16,
+      "prepared_cpu_ns_per_win": 1061567.0,
+      "reuse": true,
+      "rounds": 2,
+      "setup_count": 2,
+      "strategy": "maintenance-split-limb",
+      "total_producer_cpu_ns": 15938048,
+      "winners": 16
+    },
+    {
+      "attempts": 273,
+      "best_cpu_over_prepared": 0.819784353625997,
+      "cpu_ns_per_win_including_failed_searches": 1350123.275590551,
+      "exhausted": 1,
+      "horizon": 64,
+      "native_accepted_calls": 127,
+      "prepared_cpu_ns_per_win": 1646924.9133858269,
+      "reuse": false,
+      "rounds": 2,
+      "setup_count": 128,
+      "strategy": "maintenance-split-limb",
+      "total_producer_cpu_ns": 171465656,
+      "winners": 127
+    },
+    {
+      "attempts": 273,
+      "best_cpu_over_prepared": 0.9605791510422061,
+      "cpu_ns_per_win_including_failed_searches": 1306731.275590551,
+      "exhausted": 1,
+      "horizon": 64,
+      "native_accepted_calls": 127,
+      "prepared_cpu_ns_per_win": 1360357.7322834646,
+      "reuse": true,
+      "rounds": 2,
+      "setup_count": 2,
+      "strategy": "maintenance-split-limb",
+      "total_producer_cpu_ns": 165954872,
+      "winners": 127
+    },
+    {
+      "attempts": 1055,
+      "best_cpu_over_prepared": 0.8192795685709651,
+      "cpu_ns_per_win_including_failed_searches": 1309669.0923379175,
+      "exhausted": 3,
+      "horizon": 256,
+      "native_accepted_calls": 509,
+      "prepared_cpu_ns_per_win": 1598561.8860510807,
+      "reuse": false,
+      "rounds": 2,
+      "setup_count": 512,
+      "strategy": "maintenance-split-limb",
+      "total_producer_cpu_ns": 666621568,
+      "winners": 509
+    },
+    {
+      "attempts": 1055,
+      "best_cpu_over_prepared": 0.9654226705758993,
+      "cpu_ns_per_win_including_failed_searches": 1260629.5009823183,
+      "exhausted": 3,
+      "horizon": 256,
+      "native_accepted_calls": 509,
+      "prepared_cpu_ns_per_win": 1305779.8821218074,
+      "reuse": true,
+      "rounds": 2,
+      "setup_count": 2,
+      "strategy": "maintenance-split-limb",
+      "total_producer_cpu_ns": 641660416,
+      "winners": 509
+    }
+  ],
+  "arm_reduction": {
+    "attempts": 702232,
+    "cohorts": 4032,
+    "deduplicated_header_contexts": 42316,
+    "deduplicated_native_maintenance_winning_contexts": 509,
+    "deduplicated_winning_header_contexts": 5659,
+    "deduplication_scope": "task/target/nonce tuples within this one fixed-header campaign; all other header fields are identical by pinned source. Reused algorithms, preparation policies and nested horizons are not independent trials. This is not a count of new rewards or finalized blocks.",
+    "exhausted_searches": 58916,
+    "native_accepted_calls": 10464,
+    "new_low_rank_arms": {
+      "low-rank-prefix-paired": {
+        "attempts": 48604,
+        "complete_cohorts": 128,
+        "groups_lower_cpu_than_prepared_general": 0,
+        "groups_lowest_cpu_among_all_supported_arms": 0,
+        "native_accepted_calls": 0,
+        "offered_cohorts": 288,
+        "producer_cpu_over_prepared_general_max": 1.5111509506658907,
+        "producer_cpu_over_prepared_general_min": 1.1355729604936673,
+        "supported_aggregate_groups": 64,
+        "supported_materials": [
+          "rank-one",
+          "rank-one-left-zero-right",
+          "zero",
+          "zero-left-rank-one-right"
+        ],
+        "unsupported_cohorts": 160,
+        "winning_calls": 6452
+      },
+      "low-rank-prefix-scalar": {
+        "attempts": 48604,
+        "complete_cohorts": 128,
+        "groups_lower_cpu_than_prepared_general": 2,
+        "groups_lowest_cpu_among_all_supported_arms": 0,
+        "native_accepted_calls": 0,
+        "offered_cohorts": 288,
+        "producer_cpu_over_prepared_general_max": 1.2916241092997525,
+        "producer_cpu_over_prepared_general_min": 0.9897598550067964,
+        "supported_aggregate_groups": 64,
+        "supported_materials": [
+          "rank-one",
+          "rank-one-left-zero-right",
+          "zero",
+          "zero-left-rank-one-right"
+        ],
+        "unsupported_cohorts": 160,
+        "winning_calls": 6452
+      }
+    },
+    "representative_cohorts": [
+      {
+        "attempts": 1013,
+        "cpu_ns_per_win_including_failed_searches": 1102015.639921722,
+        "eligibility_scope": "primitive-only; no native task/reward qualification",
+        "exhausted": 1,
+        "horizon": 256,
+        "material": "zero",
+        "native_accepted_calls": 0,
+        "new_low_rank_cpu_over_prepared_general": {
+          "low-rank-prefix-paired": 1.4792470454237805,
+          "low-rank-prefix-scalar": 1.2448697417524732
+        },
+        "producer_cpu_over_prepared_general": 0.8886908065601514,
+        "reuse": true,
+        "rounds": 2,
+        "setup_count": 2,
+        "strategy": "blocked-zero",
+        "target": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "total_producer_cpu_ns": 563129992,
+        "winners": 511
+      },
+      {
+        "attempts": 1062,
+        "cpu_ns_per_win_including_failed_searches": 1289951.5127701375,
+        "eligibility_scope": "primitive-only; no native task/reward qualification",
+        "exhausted": 3,
+        "horizon": 256,
+        "material": "zero-left-rank-one-right",
+        "native_accepted_calls": 0,
+        "new_low_rank_cpu_over_prepared_general": {
+          "low-rank-prefix-paired": 1.4914812233155477,
+          "low-rank-prefix-scalar": 1.2716714886233
+        },
+        "producer_cpu_over_prepared_general": 0.9874165014358794,
+        "reuse": true,
+        "rounds": 2,
+        "setup_count": 2,
+        "strategy": "blocked-one-zero-rank-one",
+        "target": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "total_producer_cpu_ns": 656585320,
+        "winners": 509
+      },
+      {
+        "attempts": 1034,
+        "cpu_ns_per_win_including_failed_searches": 1268439.749019608,
+        "eligibility_scope": "primitive-only; no native task/reward qualification",
+        "exhausted": 2,
+        "horizon": 256,
+        "material": "rank-one",
+        "native_accepted_calls": 0,
+        "new_low_rank_cpu_over_prepared_general": {
+          "low-rank-prefix-paired": 1.506320222679169,
+          "low-rank-prefix-scalar": 1.2879156036051012
+        },
+        "producer_cpu_over_prepared_general": 0.9995577561702359,
+        "reuse": true,
+        "rounds": 2,
+        "setup_count": 2,
+        "strategy": "structured",
+        "target": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "total_producer_cpu_ns": 646904272,
+        "winners": 510
+      },
+      {
+        "attempts": 1055,
+        "cpu_ns_per_win_including_failed_searches": 1260629.5009823183,
+        "eligibility_scope": "native maintenance admission calls in this fixture",
+        "exhausted": 3,
+        "horizon": 256,
+        "material": "genesis-maintenance",
+        "native_accepted_calls": 509,
+        "new_low_rank_cpu_over_prepared_general": {},
+        "producer_cpu_over_prepared_general": 0.9654226705758993,
+        "reuse": true,
+        "rounds": 2,
+        "setup_count": 2,
+        "strategy": "maintenance-split-limb",
+        "target": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "total_producer_cpu_ns": 641660416,
+        "winners": 509
+      },
+      {
+        "attempts": 993,
+        "cpu_ns_per_win_including_failed_searches": 1215385.1741682976,
+        "eligibility_scope": "primitive-only; no native task/reward qualification",
+        "exhausted": 1,
+        "horizon": 256,
+        "material": "full-rank-field",
+        "native_accepted_calls": 0,
+        "new_low_rank_cpu_over_prepared_general": {},
+        "producer_cpu_over_prepared_general": 1.0,
+        "reuse": true,
+        "rounds": 2,
+        "setup_count": 2,
+        "strategy": "prepared-general",
+        "target": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "total_producer_cpu_ns": 621061824,
+        "winners": 511
+      },
+      {
+        "attempts": 3673,
+        "cpu_ns_per_win_including_failed_searches": 16979398.8,
+        "eligibility_scope": "primitive-only; no native task/reward qualification",
+        "exhausted": 392,
+        "horizon": 256,
+        "material": "zero",
+        "native_accepted_calls": 0,
+        "new_low_rank_cpu_over_prepared_general": {
+          "low-rank-prefix-paired": 1.477614308409459,
+          "low-rank-prefix-scalar": 1.247057890091913
+        },
+        "producer_cpu_over_prepared_general": 0.8889165365176859,
+        "reuse": true,
+        "rounds": 2,
+        "setup_count": 2,
+        "strategy": "blocked-zero",
+        "target": "07ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "total_producer_cpu_ns": 2037527856,
+        "winners": 120
+      },
+      {
+        "attempts": 3655,
+        "cpu_ns_per_win_including_failed_searches": 19640425.947826087,
+        "eligibility_scope": "primitive-only; no native task/reward qualification",
+        "exhausted": 397,
+        "horizon": 256,
+        "material": "zero-left-rank-one-right",
+        "native_accepted_calls": 0,
+        "new_low_rank_cpu_over_prepared_general": {
+          "low-rank-prefix-paired": 1.4966121225662012,
+          "low-rank-prefix-scalar": 1.2759367017716856
+        },
+        "producer_cpu_over_prepared_general": 0.9905827542568688,
+        "reuse": true,
+        "rounds": 2,
+        "setup_count": 2,
+        "strategy": "blocked-one-zero-rank-one",
+        "target": "07ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "total_producer_cpu_ns": 2258648984,
+        "winners": 115
+      },
+      {
+        "attempts": 3696,
+        "cpu_ns_per_win_including_failed_searches": 18447256.576,
+        "eligibility_scope": "primitive-only; no native task/reward qualification",
+        "exhausted": 387,
+        "horizon": 256,
+        "material": "rank-one",
+        "native_accepted_calls": 0,
+        "new_low_rank_cpu_over_prepared_general": {
+          "low-rank-prefix-paired": 1.5111509506658904,
+          "low-rank-prefix-scalar": 1.2916241092997525
+        },
+        "producer_cpu_over_prepared_general": 1.0,
+        "reuse": true,
+        "rounds": 2,
+        "setup_count": 2,
+        "strategy": "prepared-general",
+        "target": "07ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "total_producer_cpu_ns": 2305907072,
+        "winners": 125
+      },
+      {
+        "attempts": 3671,
+        "cpu_ns_per_win_including_failed_searches": 18559191.12605042,
+        "eligibility_scope": "primitive-only; no native task/reward qualification",
+        "exhausted": 393,
+        "horizon": 256,
+        "material": "genesis-maintenance",
+        "native_accepted_calls": 0,
+        "new_low_rank_cpu_over_prepared_general": {},
+        "producer_cpu_over_prepared_general": 0.9640338992390511,
+        "reuse": true,
+        "rounds": 2,
+        "setup_count": 2,
+        "strategy": "maintenance-split-limb",
+        "target": "07ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "total_producer_cpu_ns": 2208543744,
+        "winners": 119
+      },
+      {
+        "attempts": 3610,
+        "cpu_ns_per_win_including_failed_searches": 17336552.246153846,
+        "eligibility_scope": "primitive-only; no native task/reward qualification",
+        "exhausted": 382,
+        "horizon": 256,
+        "material": "full-rank-field",
+        "native_accepted_calls": 0,
+        "new_low_rank_cpu_over_prepared_general": {},
+        "producer_cpu_over_prepared_general": 1.0,
+        "reuse": true,
+        "rounds": 2,
+        "setup_count": 2,
+        "strategy": "prepared-general",
+        "target": "07ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "total_producer_cpu_ns": 2253751792,
+        "winners": 130
+      }
+    ],
+    "winning_calls": 93740
+  },
+  "artifact_id": 12737063030,
+  "binary_sha256": "a41d0d8eaa131af03cdb782ff797ac140042fa4c37e54ab63bb686e20eb678ee",
+  "cheapest_adversary_proved": false,
+  "compared_cohorts": 4032,
+  "comparison_scope": "two rounds per fixed group on each of two shared hosts with different architectures; observations are not causal hardware effects or confidence bounds",
+  "consensus_authority": false,
+  "cost_scope": "producer CPU includes preparation and all winning/failed attempts; excludes verification, admission and report IO",
+  "default_miner_changed": false,
+  "energy_measured": false,
+  "fixed_workload_equal": true,
+  "gpu_executed": false,
+  "hardness_proved": false,
+  "lscpu": {
+    "lscpu": [
+      {
+        "data": "aarch64",
+        "field": "Architecture:"
+      },
+      {
+        "data": "32-bit, 64-bit",
+        "field": "CPU op-mode(s):"
+      },
+      {
+        "data": "Little Endian",
+        "field": "Byte Order:"
+      },
+      {
+        "data": "4",
+        "field": "CPU(s):"
+      },
+      {
+        "data": "0-3",
+        "field": "On-line CPU(s) list:"
+      },
+      {
+        "data": "ARM",
+        "field": "Vendor ID:"
+      },
+      {
+        "data": "Neoverse-N2",
+        "field": "Model name:"
+      },
+      {
+        "data": "0",
+        "field": "Model:"
+      },
+      {
+        "data": "1",
+        "field": "Thread(s) per core:"
+      },
+      {
+        "data": "4",
+        "field": "Core(s) per socket:"
+      },
+      {
+        "data": "1",
+        "field": "Socket(s):"
+      },
+      {
+        "data": "r0p0",
+        "field": "Stepping:"
+      },
+      {
+        "data": "2000.00",
+        "field": "BogoMIPS:"
+      },
+      {
+        "data": "fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm jscvt fcma lrcpc dcpop sha3 sm3 sm4 asimddp sha512 sve asimdfhm uscat ilrcpc flagm sb paca pacg dcpodp sve2 sveaes svebitperm svesha3 svesm4 flagm2 frint svei8mm svebf16 i8mm bf16",
+        "field": "Flags:"
+      },
+      {
+        "data": "256 KiB (4 instances)",
+        "field": "L1d cache:"
+      },
+      {
+        "data": "256 KiB (4 instances)",
+        "field": "L1i cache:"
+      },
+      {
+        "data": "4 MiB (4 instances)",
+        "field": "L2 cache:"
+      },
+      {
+        "data": "128 MiB (1 instance)",
+        "field": "L3 cache:"
+      },
+      {
+        "data": "1",
+        "field": "NUMA node(s):"
+      },
+      {
+        "data": "0-3",
+        "field": "NUMA node0 CPU(s):"
+      },
+      {
+        "data": "Not affected",
+        "field": "Vulnerability Gather data sampling:"
+      },
+      {
+        "data": "Not affected",
+        "field": "Vulnerability Ghostwrite:"
+      },
+      {
+        "data": "Not affected",
+        "field": "Vulnerability Indirect target selection:"
+      },
+      {
+        "data": "Not affected",
+        "field": "Vulnerability Itlb multihit:"
+      },
+      {
+        "data": "Not affected",
+        "field": "Vulnerability L1tf:"
+      },
+      {
+        "data": "Not affected",
+        "field": "Vulnerability Mds:"
+      },
+      {
+        "data": "Not affected",
+        "field": "Vulnerability Meltdown:"
+      },
+      {
+        "data": "Not affected",
+        "field": "Vulnerability Mmio stale data:"
+      },
+      {
+        "data": "Not affected",
+        "field": "Vulnerability Old microcode:"
+      },
+      {
+        "data": "Not affected",
+        "field": "Vulnerability Reg file data sampling:"
+      },
+      {
+        "data": "Not affected",
+        "field": "Vulnerability Retbleed:"
+      },
+      {
+        "data": "Not affected",
+        "field": "Vulnerability Spec rstack overflow:"
+      },
+      {
+        "data": "Mitigation; Speculative Store Bypass disabled via prctl",
+        "field": "Vulnerability Spec store bypass:"
+      },
+      {
+        "data": "Mitigation; __user pointer sanitization",
+        "field": "Vulnerability Spectre v1:"
+      },
+      {
+        "data": "Mitigation; CSV2, BHB",
+        "field": "Vulnerability Spectre v2:"
+      },
+      {
+        "data": "Not affected",
+        "field": "Vulnerability Srbds:"
+      },
+      {
+        "data": "Not affected",
+        "field": "Vulnerability Tsa:"
+      },
+      {
+        "data": "Not affected",
+        "field": "Vulnerability Tsx async abort:"
+      },
+      {
+        "data": "Not affected",
+        "field": "Vulnerability Vmscape:"
+      }
+    ]
+  },
+  "observations": {
+    "affinity": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "cpu.max": null,
+    "cpu_model_authenticated": false,
+    "cpuset.cpus.effective": "0-3",
+    "energy_measured": false,
+    "exclusive_host": false,
+    "gpu_measured": false,
+    "host_contention_controlled": false,
+    "machine": "aarch64",
+    "memory.max": null,
+    "platform": "Linux-7.0.0-1017-azure-aarch64-with-glibc2.39",
+    "production_qualified": false,
+    "schema": "pon-hosted-arm64-observation-v1",
+    "visible_cpu_count": 4
+  },
+  "original_zip_sha256": "fd92550ad8efb9271dd4bc1e2de3e470200fcefeb7f75396f087974fa2d64cc7",
+  "physical_hardware_authenticated": false,
+  "public_service_qualified": false,
+  "run_id": 40507587240,
+  "schema": "pon-w1-native-arm64-v2-complete-readback-v1",
+  "source_before_after": {
+    "base": null,
+    "candidate": "2b070fafcdd253c142da90fd7306d211057d3418",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "2b070fafcdd253c142da90fd7306d211057d3418",
+    "tested_tree": "2cf9c9813928ffdda3b181f521c51fe5e0e51f77",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 780587706,
+    "tracked_entries": 5984,
+    "tracked_worktree_verified": true
+  },
+  "source_commit": "2b070fafcdd253c142da90fd7306d211057d3418",
+  "source_tree": "2cf9c9813928ffdda3b181f521c51fe5e0e51f77",
+  "x64_capture": {
+    "argv": [
+      "/home/runner/work/_temp/pure-pon-target/debug/examples/pon_pure_cost_campaign",
+      "--searches",
+      "256",
+      "--attempts",
+      "8",
+      "--rounds",
+      "2",
+      "--seed",
+      "1",
+      "--seconds",
+      "900"
+    ],
+    "binary_sha256_after": "b39bc71f44ce7ed2579ee289b4c2c8c3b4eaf88df56d31e3950d82de57167bd1",
+    "binary_sha256_before": "b39bc71f44ce7ed2579ee289b4c2c8c3b4eaf88df56d31e3950d82de57167bd1",
+    "build_jobs": 1,
+    "build_profile": "cargo --profile test; repository package overrides",
+    "child_max_rss_kib": 86604,
+    "child_system_cpu_seconds": 4.502782,
+    "child_user_cpu_seconds": 489.98024699999996,
+    "cpu.max": null,
+    "debug_info": 0,
+    "elapsed_ns": 494775911515,
+    "exclusive_host": false,
+    "exit_code": 0,
+    "hardness_proved": false,
+    "host_contention_controlled": false,
+    "incremental": false,
+    "machine": "x86_64",
+    "memory.max": null,
+    "package_opt_levels": {
+      "trnm-crypto-primitives": 3,
+      "trnm-mvcc-fee": 1,
+      "trnm-pon-node": 3
+    },
+    "platform": "Linux-6.17.0-1022-azure-x86_64-with-glibc2.39",
+    "production_qualified": false,
+    "rustc": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: x86_64-unknown-linux-gnu\nrelease: 1.95.0\nLLVM version: 22.1.2\n",
+    "schema": "pon-pure-native-capture-v1",
+    "source": {
+      "commit": "e9c4bb0d3a324b1d79b7b99326512bfb707d0025",
+      "example_sha256": "203304c581a455c71bf5bee923c8d59fc9883a2f5365d399454f7b33493ce95b",
+      "lock_sha256": "3707ed772a9fd851638dca36e5b2472ac0657de65754480c448d3078107d9ff9",
+      "tree": "28bb7cb923a415ccc30ff5eaac83ffd2b99dd13f",
+      "workspace_manifest_sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+    },
+    "stable_binary": true,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_bytes": 28291500,
+    "stdout_gzip_bytes": 7292930,
+    "stdout_gzip_sha256": "915f5bfd1095d7c7c6299cdf3c3140b5c983841967bf4ae3903f9f32a5d5bfb0",
+    "stdout_uncompressed_sha256": "2c9bc3ee4a43b510c5f8597f072a79d40fbbea695e9333e852e55bd8df5e639f",
+    "stdout_within_bound": true,
+    "timed_out": false,
+    "timeout_seconds": 960
+  },
+  "x64_native_costs": [
+    {
+      "attempts": 4,
+      "best_cpu_over_prepared": 0.7802670046155263,
+      "cpu_ns_per_win_including_failed_searches": 914913.0,
+      "exhausted": 0,
+      "horizon": 1,
+      "native_accepted_calls": 2,
+      "prepared_cpu_ns_per_win": 1172564.0,
+      "reuse": false,
+      "rounds": 2,
+      "setup_count": 2,
+      "strategy": "maintenance-split-limb",
+      "total_producer_cpu_ns": 1829826,
+      "winners": 2
+    },
+    {
+      "attempts": 4,
+      "best_cpu_over_prepared": 0.7721070999696636,
+      "cpu_ns_per_win_including_failed_searches": 918800.5,
+      "exhausted": 0,
+      "horizon": 1,
+      "native_accepted_calls": 2,
+      "prepared_cpu_ns_per_win": 1189991.0,
+      "reuse": true,
+      "rounds": 2,
+      "setup_count": 2,
+      "strategy": "maintenance-split-limb",
+      "total_producer_cpu_ns": 1837601,
+      "winners": 2
+    },
+    {
+      "attempts": 26,
+      "best_cpu_over_prepared": 0.74534643188128,
+      "cpu_ns_per_win_including_failed_searches": 753784.3125,
+      "exhausted": 0,
+      "horizon": 8,
+      "native_accepted_calls": 16,
+      "prepared_cpu_ns_per_win": 1011320.75,
+      "reuse": false,
+      "rounds": 2,
+      "setup_count": 16,
+      "strategy": "maintenance-split-limb",
+      "total_producer_cpu_ns": 12060549,
+      "winners": 16
+    },
+    {
+      "attempts": 26,
+      "best_cpu_over_prepared": 0.9385611521709561,
+      "cpu_ns_per_win_including_failed_searches": 718935.4375,
+      "exhausted": 0,
+      "horizon": 8,
+      "native_accepted_calls": 16,
+      "prepared_cpu_ns_per_win": 765997.4375,
+      "reuse": true,
+      "rounds": 2,
+      "setup_count": 2,
+      "strategy": "maintenance-split-limb",
+      "total_producer_cpu_ns": 11502967,
+      "winners": 16
+    },
+    {
+      "attempts": 273,
+      "best_cpu_over_prepared": 0.7829364458342795,
+      "cpu_ns_per_win_including_failed_searches": 978197.9842519684,
+      "exhausted": 1,
+      "horizon": 64,
+      "native_accepted_calls": 127,
+      "prepared_cpu_ns_per_win": 1249396.409448819,
+      "reuse": false,
+      "rounds": 2,
+      "setup_count": 128,
+      "strategy": "maintenance-split-limb",
+      "total_producer_cpu_ns": 124231144,
+      "winners": 127
+    },
+    {
+      "attempts": 273,
+      "best_cpu_over_prepared": 0.9647109662205197,
+      "cpu_ns_per_win_including_failed_searches": 937335.1732283465,
+      "exhausted": 1,
+      "horizon": 64,
+      "native_accepted_calls": 127,
+      "prepared_cpu_ns_per_win": 971622.8031496063,
+      "reuse": true,
+      "rounds": 2,
+      "setup_count": 2,
+      "strategy": "maintenance-split-limb",
+      "total_producer_cpu_ns": 119041567,
+      "winners": 127
+    },
+    {
+      "attempts": 1055,
+      "best_cpu_over_prepared": 0.7718379739851298,
+      "cpu_ns_per_win_including_failed_searches": 949930.7838899804,
+      "exhausted": 3,
+      "horizon": 256,
+      "native_accepted_calls": 509,
+      "prepared_cpu_ns_per_win": 1230738.5952848722,
+      "reuse": false,
+      "rounds": 2,
+      "setup_count": 512,
+      "strategy": "maintenance-split-limb",
+      "total_producer_cpu_ns": 483514769,
+      "winners": 509
+    },
+    {
+      "attempts": 1055,
+      "best_cpu_over_prepared": 0.9709985579577283,
+      "cpu_ns_per_win_including_failed_searches": 903603.3870333988,
+      "exhausted": 3,
+      "horizon": 256,
+      "native_accepted_calls": 509,
+      "prepared_cpu_ns_per_win": 930591.8939096268,
+      "reuse": true,
+      "rounds": 2,
+      "setup_count": 2,
+      "strategy": "maintenance-split-limb",
+      "total_producer_cpu_ns": 459934124,
+      "winners": 509
+    }
+  ],
+  "x64_reduction": {
+    "attempts": 702232,
+    "cohorts": 4032,
+    "deduplicated_header_contexts": 42316,
+    "deduplicated_native_maintenance_winning_contexts": 509,
+    "deduplicated_winning_header_contexts": 5659,
+    "deduplication_scope": "task/target/nonce tuples within this one fixed-header campaign; all other header fields are identical by pinned source. Reused algorithms, preparation policies and nested horizons are not independent trials. This is not a count of new rewards or finalized blocks.",
+    "exhausted_searches": 58916,
+    "native_accepted_calls": 10464,
+    "new_low_rank_arms": {
+      "low-rank-prefix-paired": {
+        "attempts": 48604,
+        "complete_cohorts": 128,
+        "groups_lower_cpu_than_prepared_general": 4,
+        "groups_lowest_cpu_among_all_supported_arms": 0,
+        "native_accepted_calls": 0,
+        "offered_cohorts": 288,
+        "producer_cpu_over_prepared_general_max": 1.401430853907272,
+        "producer_cpu_over_prepared_general_min": 0.889774044032445,
+        "supported_aggregate_groups": 64,
+        "supported_materials": [
+          "rank-one",
+          "rank-one-left-zero-right",
+          "zero",
+          "zero-left-rank-one-right"
+        ],
+        "unsupported_cohorts": 160,
+        "winning_calls": 6452
+      },
+      "low-rank-prefix-scalar": {
+        "attempts": 48604,
+        "complete_cohorts": 128,
+        "groups_lower_cpu_than_prepared_general": 15,
+        "groups_lowest_cpu_among_all_supported_arms": 0,
+        "native_accepted_calls": 0,
+        "offered_cohorts": 288,
+        "producer_cpu_over_prepared_general_max": 1.1999991520031539,
+        "producer_cpu_over_prepared_general_min": 0.8181199330383022,
+        "supported_aggregate_groups": 64,
+        "supported_materials": [
+          "rank-one",
+          "rank-one-left-zero-right",
+          "zero",
+          "zero-left-rank-one-right"
+        ],
+        "unsupported_cohorts": 160,
+        "winning_calls": 6452
+      }
+    },
+    "representative_cohorts": [
+      {
+        "attempts": 1013,
+        "cpu_ns_per_win_including_failed_searches": 780153.205479452,
+        "eligibility_scope": "primitive-only; no native task/reward qualification",
+        "exhausted": 1,
+        "horizon": 256,
+        "material": "zero",
+        "native_accepted_calls": 0,
+        "new_low_rank_cpu_over_prepared_general": {
+          "low-rank-prefix-paired": 1.3414438596107425,
+          "low-rank-prefix-scalar": 1.1610381823746407
+        },
+        "producer_cpu_over_prepared_general": 0.8799687748142752,
+        "reuse": true,
+        "rounds": 2,
+        "setup_count": 2,
+        "strategy": "blocked-zero",
+        "target": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "total_producer_cpu_ns": 398658288,
+        "winners": 511
+      },
+      {
+        "attempts": 1062,
+        "cpu_ns_per_win_including_failed_searches": 884295.5206286837,
+        "eligibility_scope": "primitive-only; no native task/reward qualification",
+        "exhausted": 3,
+        "horizon": 256,
+        "material": "zero-left-rank-one-right",
+        "native_accepted_calls": 0,
+        "new_low_rank_cpu_over_prepared_general": {
+          "low-rank-prefix-paired": 1.3707431554699232,
+          "low-rank-prefix-scalar": 1.1780716491513963
+        },
+        "producer_cpu_over_prepared_general": 0.9490558373286253,
+        "reuse": true,
+        "rounds": 2,
+        "setup_count": 2,
+        "strategy": "blocked-one-zero-rank-one",
+        "target": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "total_producer_cpu_ns": 450106420,
+        "winners": 509
+      },
+      {
+        "attempts": 1034,
+        "cpu_ns_per_win_including_failed_searches": 904919.2470588235,
+        "eligibility_scope": "primitive-only; no native task/reward qualification",
+        "exhausted": 2,
+        "horizon": 256,
+        "material": "rank-one",
+        "native_accepted_calls": 0,
+        "new_low_rank_cpu_over_prepared_general": {
+          "low-rank-prefix-paired": 1.396234874737216,
+          "low-rank-prefix-scalar": 1.1945677966867985
+        },
+        "producer_cpu_over_prepared_general": 0.9950066968600478,
+        "reuse": true,
+        "rounds": 2,
+        "setup_count": 2,
+        "strategy": "structured",
+        "target": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "total_producer_cpu_ns": 461508816,
+        "winners": 510
+      },
+      {
+        "attempts": 1055,
+        "cpu_ns_per_win_including_failed_searches": 903603.3870333988,
+        "eligibility_scope": "native maintenance admission calls in this fixture",
+        "exhausted": 3,
+        "horizon": 256,
+        "material": "genesis-maintenance",
+        "native_accepted_calls": 509,
+        "new_low_rank_cpu_over_prepared_general": {},
+        "producer_cpu_over_prepared_general": 0.9709985579577283,
+        "reuse": true,
+        "rounds": 2,
+        "setup_count": 2,
+        "strategy": "maintenance-split-limb",
+        "target": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "total_producer_cpu_ns": 459934124,
+        "winners": 509
+      },
+      {
+        "attempts": 993,
+        "cpu_ns_per_win_including_failed_searches": 870306.4735812133,
+        "eligibility_scope": "primitive-only; no native task/reward qualification",
+        "exhausted": 1,
+        "horizon": 256,
+        "material": "full-rank-field",
+        "native_accepted_calls": 0,
+        "new_low_rank_cpu_over_prepared_general": {},
+        "producer_cpu_over_prepared_general": 1.0,
+        "reuse": true,
+        "rounds": 2,
+        "setup_count": 2,
+        "strategy": "prepared-general",
+        "target": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "total_producer_cpu_ns": 444726608,
+        "winners": 511
+      },
+      {
+        "attempts": 3673,
+        "cpu_ns_per_win_including_failed_searches": 12153011.041666666,
+        "eligibility_scope": "primitive-only; no native task/reward qualification",
+        "exhausted": 392,
+        "horizon": 256,
+        "material": "zero",
+        "native_accepted_calls": 0,
+        "new_low_rank_cpu_over_prepared_general": {
+          "low-rank-prefix-paired": 1.3323516152373118,
+          "low-rank-prefix-scalar": 1.1632012467880675
+        },
+        "producer_cpu_over_prepared_general": 0.8904583442773143,
+        "reuse": true,
+        "rounds": 2,
+        "setup_count": 2,
+        "strategy": "blocked-zero",
+        "target": "07ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "total_producer_cpu_ns": 1458361325,
+        "winners": 120
+      },
+      {
+        "attempts": 3655,
+        "cpu_ns_per_win_including_failed_searches": 13476055.330434782,
+        "eligibility_scope": "primitive-only; no native task/reward qualification",
+        "exhausted": 397,
+        "horizon": 256,
+        "material": "zero-left-rank-one-right",
+        "native_accepted_calls": 0,
+        "new_low_rank_cpu_over_prepared_general": {
+          "low-rank-prefix-paired": 1.3725631707738881,
+          "low-rank-prefix-scalar": 1.1797204707516602
+        },
+        "producer_cpu_over_prepared_general": 0.9516880511161446,
+        "reuse": true,
+        "rounds": 2,
+        "setup_count": 2,
+        "strategy": "blocked-one-zero-rank-one",
+        "target": "07ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "total_producer_cpu_ns": 1549746363,
+        "winners": 115
+      },
+      {
+        "attempts": 3696,
+        "cpu_ns_per_win_including_failed_searches": 13180683.16,
+        "eligibility_scope": "primitive-only; no native task/reward qualification",
+        "exhausted": 387,
+        "horizon": 256,
+        "material": "rank-one",
+        "native_accepted_calls": 0,
+        "new_low_rank_cpu_over_prepared_general": {
+          "low-rank-prefix-paired": 1.401430853907272,
+          "low-rank-prefix-scalar": 1.1998261291943535
+        },
+        "producer_cpu_over_prepared_general": 1.0,
+        "reuse": true,
+        "rounds": 2,
+        "setup_count": 2,
+        "strategy": "prepared-general",
+        "target": "07ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "total_producer_cpu_ns": 1647585395,
+        "winners": 125
+      },
+      {
+        "attempts": 3671,
+        "cpu_ns_per_win_including_failed_searches": 13333531.781512605,
+        "eligibility_scope": "primitive-only; no native task/reward qualification",
+        "exhausted": 393,
+        "horizon": 256,
+        "material": "genesis-maintenance",
+        "native_accepted_calls": 0,
+        "new_low_rank_cpu_over_prepared_general": {},
+        "producer_cpu_over_prepared_general": 0.9658978181099075,
+        "reuse": true,
+        "rounds": 2,
+        "setup_count": 2,
+        "strategy": "maintenance-split-limb",
+        "target": "07ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "total_producer_cpu_ns": 1586690282,
+        "winners": 119
+      },
+      {
+        "attempts": 3610,
+        "cpu_ns_per_win_including_failed_searches": 12375441.853846153,
+        "eligibility_scope": "primitive-only; no native task/reward qualification",
+        "exhausted": 382,
+        "horizon": 256,
+        "material": "full-rank-field",
+        "native_accepted_calls": 0,
+        "new_low_rank_cpu_over_prepared_general": {},
+        "producer_cpu_over_prepared_general": 1.0,
+        "reuse": true,
+        "rounds": 2,
+        "setup_count": 2,
+        "strategy": "prepared-general",
+        "target": "07ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "total_producer_cpu_ns": 1608807441,
+        "winners": 130
+      }
+    ],
+    "winning_calls": 93740
+  }
+}
