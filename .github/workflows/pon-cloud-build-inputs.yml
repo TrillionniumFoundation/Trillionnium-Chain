@@ -6,6 +6,9 @@ on:
       - rust-toolchain.toml
       - trillionnium/Cargo.lock
       - trillionnium/**/Cargo.toml
+      - scripts/ci/prepare_model_cloud_inputs.py
+      - scripts/ci/model-runtime-cpu-requirements.txt
+      - scripts/llm_runtime_pilot.py
   workflow_dispatch:
 permissions:
   contents: read
@@ -72,6 +75,63 @@ jobs:
             ${{ runner.temp }}/pon-build-inputs-${{ github.run_id }}-${{ github.run_attempt }}/pon-cloud-build-inputs.sha256
             ${{ runner.temp }}/pon-build-inputs-${{ github.run_id }}-${{ github.run_attempt }}/source-before.json
             ${{ runner.temp }}/pon-build-inputs-${{ github.run_id }}-${{ github.run_attempt }}/source-after.json
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 7
+  model-inputs:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      EXPECTED_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+      PYTHONDONTWRITEBYTECODE: "1"
+    steps:
+      - name: Checkout the exact input declaration without persistent credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.EXPECTED_HEAD }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify source and reserve a fresh public input directory
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash scripts/project-preflight.sh --audit
+          python3 -c 'import platform,sys; assert sys.version_info[:2] == (3,12) and platform.system() == "Linux" and platform.machine() == "x86_64"'
+          out="$RUNNER_TEMP/pon-model-inputs-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          mkdir "$out"
+          mkdir "$out/bundle"
+          printf 'MODEL_INPUT_OUT=%s\n' "$out" >> "$GITHUB_ENV"
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$EXPECTED_HEAD" --output "$out/source-before.json"
+      - name: Download the original seven pinned public model files
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B scripts/ci/prepare_model_cloud_inputs.py fetch-model --output "$MODEL_INPUT_OUT/bundle/model"
+      - name: Download only the existing hash-locked CPU wheel closure
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m venv "$MODEL_INPUT_OUT/download-env"
+          "$MODEL_INPUT_OUT/download-env/bin/python" -m pip --isolated download --disable-pip-version-check --no-cache-dir --only-binary=:all: --require-hashes --index-url https://pypi.org/simple --retries 0 --timeout 60 -r scripts/ci/model-runtime-cpu-requirements.txt --dest "$MODEL_INPUT_OUT/bundle/wheels"
+          "$MODEL_INPUT_OUT/download-env/bin/python" -m pip --version > "$MODEL_INPUT_OUT/bundle/downloader-version.txt"
+      - name: Verify unchanged source and seal the exact public input set
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$EXPECTED_HEAD" --output "$MODEL_INPUT_OUT/source-after.json"
+          cmp "$MODEL_INPUT_OUT/source-before.json" "$MODEL_INPUT_OUT/source-after.json"
+          python3 -B scripts/ci/prepare_model_cloud_inputs.py seal --bundle "$MODEL_INPUT_OUT/bundle" --source-report "$MODEL_INPUT_OUT/source-after.json"
+          tar -czf "$MODEL_INPUT_OUT/pon-cloud-model-inputs.tar.gz" -C "$MODEL_INPUT_OUT/bundle" .
+          sha256sum "$MODEL_INPUT_OUT/pon-cloud-model-inputs.tar.gz" > "$MODEL_INPUT_OUT/pon-cloud-model-inputs.sha256"
+      - name: Retain pinned public materials for offline real model execution
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: pon-cloud-model-inputs-${{ env.EXPECTED_HEAD }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/pon-model-inputs-${{ github.run_id }}-${{ github.run_attempt }}/pon-cloud-model-inputs.tar.gz
+            ${{ runner.temp }}/pon-model-inputs-${{ github.run_id }}-${{ github.run_attempt }}/pon-cloud-model-inputs.sha256
+            ${{ runner.temp }}/pon-model-inputs-${{ github.run_id }}-${{ github.run_attempt }}/source-before.json
+            ${{ runner.temp }}/pon-model-inputs-${{ github.run_id }}-${{ github.run_attempt }}/source-after.json
           if-no-files-found: error
           compression-level: 0
           retention-days: 7

@@ -4528,3 +4528,31 @@ outside the shared layout; it does not guarantee physical WAL size. All twenty
 guards, eight original lanes, assertions and resource limits remain. Source
 identity agreement grants no SQL, C ABI, layout, two-second service or native
 qualification; the original lane executions and fullT/Layout003 remain open.
+
+
+### 2026-10-27: pinned public model inputs for local P1 execution
+
+The pure-PoN continuation uses exact source `5e797326b9c7635e43b93f97c65a309e51eafb46`
+as its base for a separate public-input transport change. The existing
+`pon-cloud-build-inputs` workflow gains one bounded job that obtains the seven
+original model files declared by `llm_runtime_pilot.py` and the existing
+`model-runtime-cpu-requirements.txt` hash-locked CPU wheels. It retains the source
+commit/tree, original material hashes, wheel hashes and a complete input inventory.
+No credentials, ambient caches or unpinned model revisions enter the bundle.
+The original Rust input job and the original model training/install owners remain
+unchanged. This input preparation is not an execution or installation receipt.
+
+Local transport controls covered exact bytes, short and excess input, hash
+mismatch, HTTPS downgrade refusal and preservation of a pre-existing destination.
+The first control harness used an incorrect exception class and failed; correcting
+only that harness to catch the implementation's ValueError produced six passing
+controls. Python AST, workflow YAML parsing and source preflight passed. Actual
+network retrieval and offline model execution require their own later observations.
+The helper removes only a partial file it created itself and rejects an oversized
+input block before writing it. It bounds the complete input bundle to 768 MiB.
+
+This change addresses a concrete missing-input blocker for the requested P1 real
+Hepta task. It does not complete ordinary I10 installation, runtime execution
+closure, parent-to-successor neural improvement, cross-node custody, next-task
+readback, work hardness or full-chain post-quantum qualification. All production,
+public reward and installation qualification flags remain false.
