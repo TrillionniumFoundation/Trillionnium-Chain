@@ -1,0 +1,15 @@
+test_cross_chain_import_genesis_mismatch_reject (test_pq_pql6_equivocation.PQL6EquivocationTests.test_cross_chain_import_genesis_mismatch_reject) ... ok
+test_different_sequences_are_not_equivocation (test_pq_pql6_equivocation.PQL6EquivocationTests.test_different_sequences_are_not_equivocation) ... ok
+test_every_269_byte_header_mutation_refused (test_pq_pql6_equivocation.PQL6EquivocationTests.test_every_269_byte_header_mutation_refused) ... ok
+test_exact_envelope_truncation_reorder_and_tamper (test_pq_pql6_equivocation.PQL6EquivocationTests.test_exact_envelope_truncation_reorder_and_tamper) ... ok
+test_foreign_key_and_classical_ed25519_downgrade_reject (test_pq_pql6_equivocation.PQL6EquivocationTests.test_foreign_key_and_classical_ed25519_downgrade_reject) ... ok
+test_invalid_time_and_empty_frontier_not_signed_evidence (test_pq_pql6_equivocation.PQL6EquivocationTests.test_invalid_time_and_empty_frontier_not_signed_evidence) ... ok
+test_real_pq_double_sign_yields_non_authoritative_evidence (test_pq_pql6_equivocation.PQL6EquivocationTests.test_real_pq_double_sign_yields_non_authoritative_evidence) ... ok
+test_same_head_different_challenge_is_not_equivocation (test_pq_pql6_equivocation.PQL6EquivocationTests.test_same_head_different_challenge_is_not_equivocation) ... ok
+test_two_witnesses_signing_same_older_head_is_not_double_sign_evidence (test_pq_pql6_equivocation.PQL6EquivocationTests.test_two_witnesses_signing_same_older_head_is_not_double_sign_evidence) ... ok
+test_wrong_external_anchor_must_fail (test_pq_pql6_equivocation.PQL6EquivocationTests.test_wrong_external_anchor_must_fail) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 7.622s
+
+OK
