@@ -1,0 +1,196 @@
+{
+  "authority": {
+    "hepta_final_use": false,
+    "independent_accepted": false,
+    "installation_authorized": false,
+    "prospective_accepted": false,
+    "public_reward_eligible": false,
+    "selection_authorized": false
+  },
+  "baseline": {
+    "adapter": "27c0aa0e82719dcb0b6f32640fb36c0166dd9f3d60eada28dacb634797eeb1cf",
+    "contract": "7e667c2fea63f72c1182c7a5c38618e7123df74328ddd79a0c96abed9b5a10d3",
+    "directory": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/gen2/worker",
+    "file_sha256": "300cc55c0a87f8cb436ae9a29a4982090d73877dbe63b31f62e7fa85a8e5e0f0",
+    "generation": 2,
+    "operation_id": "cell-research-public-smoke-gen2",
+    "schema": "hepta-smollm-parent-material-v1"
+  },
+  "candidate": {
+    "adapter": "0d871c3bc4b772e5835b804073300489bd2607c87205f7ab8c99a925fae45450",
+    "contract": "7e667c2fea63f72c1182c7a5c38618e7123df74328ddd79a0c96abed9b5a10d3",
+    "directory": "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/gen3/worker",
+    "file_sha256": "4e3dfd7f06b3e7d76caf5576ec5d80ad2e792907f35f6012db9220f5c8f92358",
+    "generation": 3,
+    "operation_id": "cell-research-public-smoke-gen3",
+    "schema": "hepta-smollm-parent-material-v1"
+  },
+  "independently_custodied": false,
+  "profile": "hepta-smollm-single-token-action-score-v1",
+  "prospective_accepted": false,
+  "schema": "trnm-smollm-public-post-artifact-comparison-v1",
+  "scope": "operator-controlled-public-fixtures",
+  "seed": "2e05a347327798229ee513d1ff0409b7bd5842e720008e304875e50945e7d16c",
+  "tasks": [
+    {
+      "expected_output": "yes",
+      "prompt": "Answer with only yes or no. Is 6984 greater than 4630?",
+      "request_id": "public-next-task-0"
+    },
+    {
+      "expected_output": "no",
+      "prompt": "Answer with only yes or no. Is 1719 greater than 5315?",
+      "request_id": "public-next-task-1"
+    },
+    {
+      "expected_output": "yes",
+      "prompt": "Answer with only yes or no. Is 7629 greater than 3580?",
+      "request_id": "public-next-task-2"
+    },
+    {
+      "expected_output": "no",
+      "prompt": "Answer with only yes or no. Is 2551 greater than 4882?",
+      "request_id": "public-next-task-3"
+    },
+    {
+      "expected_output": "yes",
+      "prompt": "Answer with only yes or no. Is 1814 greater than 1753?",
+      "request_id": "public-next-task-4"
+    },
+    {
+      "expected_output": "no",
+      "prompt": "Answer with only yes or no. Is 4635 greater than 8674?",
+      "request_id": "public-next-task-5"
+    },
+    {
+      "expected_output": "yes",
+      "prompt": "Answer with only yes or no. Is 8379 greater than 5322?",
+      "request_id": "public-next-task-6"
+    },
+    {
+      "expected_output": "no",
+      "prompt": "Answer with only yes or no. Is 5202 greater than 9142?",
+      "request_id": "public-next-task-7"
+    },
+    {
+      "expected_output": "yes",
+      "prompt": "Answer with only yes or no. Is 3825 greater than 1976?",
+      "request_id": "public-next-task-8"
+    },
+    {
+      "expected_output": "no",
+      "prompt": "Answer with only yes or no. Is 5813 greater than 8234?",
+      "request_id": "public-next-task-9"
+    },
+    {
+      "expected_output": "yes",
+      "prompt": "Answer with only yes or no. Is 8832 greater than 5909?",
+      "request_id": "public-next-task-10"
+    },
+    {
+      "expected_output": "no",
+      "prompt": "Answer with only yes or no. Is 4274 greater than 4898?",
+      "request_id": "public-next-task-11"
+    },
+    {
+      "expected_output": "yes",
+      "prompt": "Answer with only yes or no. Is 3852 greater than 1289?",
+      "request_id": "public-next-task-12"
+    },
+    {
+      "expected_output": "no",
+      "prompt": "Answer with only yes or no. Is 3559 greater than 7422?",
+      "request_id": "public-next-task-13"
+    },
+    {
+      "expected_output": "yes",
+      "prompt": "Answer with only yes or no. Is 9027 greater than 4144?",
+      "request_id": "public-next-task-14"
+    },
+    {
+      "expected_output": "no",
+      "prompt": "Answer with only yes or no. Is 797 greater than 3307?",
+      "request_id": "public-next-task-15"
+    },
+    {
+      "expected_output": "yes",
+      "prompt": "Answer with only yes or no. Is 5844 greater than 833?",
+      "request_id": "public-next-task-16"
+    },
+    {
+      "expected_output": "no",
+      "prompt": "Answer with only yes or no. Is 621 greater than 6687?",
+      "request_id": "public-next-task-17"
+    },
+    {
+      "expected_output": "yes",
+      "prompt": "Answer with only yes or no. Is 4026 greater than 2031?",
+      "request_id": "public-next-task-18"
+    },
+    {
+      "expected_output": "no",
+      "prompt": "Answer with only yes or no. Is 1378 greater than 7881?",
+      "request_id": "public-next-task-19"
+    },
+    {
+      "expected_output": "yes",
+      "prompt": "Answer with only yes or no. Is 6084 greater than 3636?",
+      "request_id": "public-next-task-20"
+    },
+    {
+      "expected_output": "no",
+      "prompt": "Answer with only yes or no. Is 8598 greater than 9464?",
+      "request_id": "public-next-task-21"
+    },
+    {
+      "expected_output": "yes",
+      "prompt": "Answer with only yes or no. Is 7652 greater than 1421?",
+      "request_id": "public-next-task-22"
+    },
+    {
+      "expected_output": "no",
+      "prompt": "Answer with only yes or no. Is 6033 greater than 8500?",
+      "request_id": "public-next-task-23"
+    },
+    {
+      "expected_output": "yes",
+      "prompt": "Answer with only yes or no. Is 7985 greater than 3780?",
+      "request_id": "public-next-task-24"
+    },
+    {
+      "expected_output": "no",
+      "prompt": "Answer with only yes or no. Is 3353 greater than 7908?",
+      "request_id": "public-next-task-25"
+    },
+    {
+      "expected_output": "yes",
+      "prompt": "Answer with only yes or no. Is 1895 greater than 1671?",
+      "request_id": "public-next-task-26"
+    },
+    {
+      "expected_output": "no",
+      "prompt": "Answer with only yes or no. Is 5496 greater than 7257?",
+      "request_id": "public-next-task-27"
+    },
+    {
+      "expected_output": "yes",
+      "prompt": "Answer with only yes or no. Is 8675 greater than 1491?",
+      "request_id": "public-next-task-28"
+    },
+    {
+      "expected_output": "no",
+      "prompt": "Answer with only yes or no. Is 2875 greater than 6162?",
+      "request_id": "public-next-task-29"
+    },
+    {
+      "expected_output": "yes",
+      "prompt": "Answer with only yes or no. Is 7905 greater than 1664?",
+      "request_id": "public-next-task-30"
+    },
+    {
+      "expected_output": "no",
+      "prompt": "Answer with only yes or no. Is 6006 greater than 8027?",
+      "request_id": "public-next-task-31"
+    }
+  ]
+}
