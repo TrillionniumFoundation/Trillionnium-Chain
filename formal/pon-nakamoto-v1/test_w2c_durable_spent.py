@@ -214,6 +214,42 @@ class DurablePaidSpendTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'OWNER_DIRECTORY'):
             self.owner()
 
+    def test_sqlite_lock_timeout_refuses_without_entering_w1(self):
+        import sqlite3
+        owner = self.owner(create=True)
+        self.addCleanup(owner.close)
+        grant, nonce = self.ticket(owner)
+        blocker = sqlite3.connect(
+            str(self.directory / DB_NAME), timeout=1, isolation_level=None
+        )
+        self.addCleanup(blocker.close)
+        blocker.execute('BEGIN EXCLUSIVE')
+        try:
+            self.assertEqual(
+                owner.consume(grant, self.proposal, self.caller, nonce, 130),
+                'DURABLE_UNAVAILABLE'
+            )
+        finally:
+            blocker.execute('ROLLBACK')
+        self.assertEqual(owner.pending_paid(), 0)
+        self.assertEqual(owner.consume(grant, self.proposal, self.caller, nonce, 140),
+                         'READY_RESOURCE_ONLY')
+
+    def test_reopen_refuses_rollback_clock_and_missing_durable_file(self):
+        owner = self.owner(create=True)
+        grant, nonce = self.ticket(owner)
+        self.assertEqual(owner.consume(grant, self.proposal, self.caller, nonce, 140),
+                         'READY_RESOURCE_ONLY')
+        owner.close()
+        reopened = self.owner()
+        self.assertEqual(reopened.consume(grant, self.proposal, self.caller, nonce, 130),
+                         'CLOCK_REGRESSION')
+        reopened.close()
+        # A missing source is never silently bootstrapped as a new old epoch.
+        (self.directory / DB_NAME).unlink()
+        with self.assertRaises(FileNotFoundError):
+            self.owner(create=False)
+
     def test_copying_database_before_spend_is_not_global_replay_protection(self):
         # This deliberate negative control must CONTINUE to show two READYs.
         # A host can copy the DB, secret and epoch; no local SQLite algorithm
