@@ -1395,7 +1395,20 @@ fn test_full_transaction_pages_use_byte_limits_and_recover_all_native_state() {
                 assert!(!page.complete);
                 assert!(page.packets.len() < 12);
             }
-            after = ingress::receive_page(&mut receiver, page, tip, after, clock).unwrap();
+            // This fixture intentionally serves the explicit legacy loopback
+            // protocol. Import through its actual socket sync API; do not
+            // restore a public addressless/native-parser bypass.
+            let expected_after = digest(&page.next).unwrap();
+            let imported = ingress::sync_from(&mut receiver, address, tip, after, 1);
+            if page.complete {
+                assert_eq!(imported.unwrap(), tip);
+            } else {
+                assert!(imported
+                    .unwrap_err()
+                    .to_string()
+                    .starts_with("INCOMPLETE_HISTORY:"));
+            }
+            after = expected_after;
             page_count += 1;
             assert!(page_count <= 12);
         }

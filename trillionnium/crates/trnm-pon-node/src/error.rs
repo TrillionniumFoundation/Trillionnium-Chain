@@ -317,9 +317,16 @@ impl Error {
     /// Parse only after the caller has established its required reply authentication.
     /// Construction itself authenticates nothing and gives no local failure authority.
     pub(crate) fn remote(message: impl Into<String>) -> Self {
-        let mut error = Self::from(message.into());
-        error.kind = ErrorKind::RemoteRefusal;
-        error
+        // A peer can quote every local diagnostic. Keep that text for the
+        // caller, but never manufacture a typed local code from it. Controlled
+        // authenticated terminal/retryable status has its own constructor.
+        Self {
+            code: None,
+            kind: ErrorKind::RemoteRefusal,
+            message: message.into(),
+            source: None,
+            request_history_budget: false,
+        }
     }
     pub(crate) fn authenticated_remote(terminal: bool, message: &str) -> Self {
         let code = if terminal {
@@ -439,6 +446,8 @@ mod tests {
             // matches a local CPU owner diagnostic.
             let remote = Error::remote(local.to_string());
             assert!(!remote.requires_owner_stop(), "{code:?}");
+            assert!(!remote.is(code), "{code:?}");
+            assert_eq!(remote.code(), None);
         }
         assert!(!Error::new(ErrorCode::PublicMutationCpuBudget).requires_owner_stop());
     }
@@ -550,7 +559,8 @@ mod tests {
             let local = Error::from(message);
             assert!(local.requires_owner_stop());
             let remote = Error::remote(message);
-            assert_eq!(remote.code(), local.code());
+            assert_eq!(remote.code(), None);
+            assert!(!remote.is(local.code().unwrap()));
             assert_eq!(remote.kind(), ErrorKind::RemoteRefusal);
             assert!(!remote.requires_owner_stop());
             assert_eq!(remote.to_string(), message);

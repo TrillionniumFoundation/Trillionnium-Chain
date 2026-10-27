@@ -888,6 +888,10 @@ fn phase(
                 .and_then(|s| hex::decode(s).ok())
         })
         .collect();
+    // Capture the Rust deadline once, just before the existing measured epoch.
+    // It can only be earlier than that same 30-second pressure end; imports
+    // must not acquire another 30 seconds when each History page arrives.
+    let import_deadline = Instant::now() + Duration::from_secs(WINDOW_SECONDS);
     let epoch = support::monotonic();
     let end = epoch + WINDOW_SECONDS * 1_000_000_000;
     let temporary_marker = path.join("start.tmp.json");
@@ -994,12 +998,14 @@ fn phase(
                         serde_json::from_value::<ingress::Page>(row["response"]["value"].clone())
                             .map_err(|e| e.to_string())
                             .and_then(|page| {
-                                ingress::receive_page(
+                                ingress::receive_public_page_from_before(
                                     &mut verifier,
+                                    address,
                                     page,
                                     tip,
                                     after,
                                     support::now(),
+                                    import_deadline,
                                 )
                                 .map_err(|e| e.to_string())
                             });

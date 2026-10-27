@@ -431,9 +431,9 @@ impl Node {
     /// Begin an original durable public-service crash fence for an untrusted
     /// standalone History page. No new schema or CPU budget is constructed.
     ///
-    /// The ordinary V3 listener already owns this Node's active epoch when
-    /// the listener count is nonzero, and the continuous runtime has its
-    /// separate journal. Do not borrow another listener's last-close right.
+    /// Each import holds its own reference to the ORIGINAL active epoch.
+    /// This also fences an import which releases the Node while replaying W1:
+    /// another listener/import cannot clear the marker before it settles.
     /// In a standalone Node, start one persistent active marker BEFORE any
     /// expensive History decode/W1/M06 operation; a real crash leaves it
     /// behind so a later process cannot silently forgive unknown CPU debt.
@@ -447,10 +447,42 @@ impl Node {
             !self.is_continuous(),
             "OWNER_CONTINUOUS_HISTORY_DURABLE_REQUIRED",
         )?;
-        if self.public_service_epoch_listeners != 0 {
-            return Ok(false);
-        }
         self.begin_ordinary_public_service_epoch()
+    }
+
+    /// Release only this import's epoch reference, after its own CPU scopes
+    /// have joined and settled. Other imports/listeners may still be live;
+    /// their reservations do not make this import's shutdown unclean.
+    pub(crate) fn finish_remote_history_cpu_epoch(
+        &mut self,
+        domain: &ServiceMutationCpuDomain,
+    ) -> Result<()> {
+        ensure(
+            !self.is_continuous(),
+            "OWNER_CONTINUOUS_HISTORY_DURABLE_REQUIRED",
+        )?;
+        ensure(
+            self.public_service_cpu_domain()?.shares_domain_with(domain),
+            "OWNER_PUBLIC_SERVICE_CPU_DOMAIN",
+        )?;
+        let last = self.public_service_epoch_listeners == 1;
+        let observation = domain.observe();
+        let known = observation
+            .as_ref()
+            .is_ok_and(|state| !state.accounting_unavailable)
+            && domain.observe_actual_flow().ok().flatten().is_some();
+        if !known {
+            // Preserve the original restricted-owner journal fence too.
+            // Releasing the Node during W1 must not turn unknown CPU into a
+            // public-only failure while another local task keeps its permit.
+            self.operator_task_accounting_unknown()?;
+        }
+        let clean = known
+            && observation
+                .as_ref()
+                .is_ok_and(|state| state.in_flight == 0 && state.stored_credit_ns >= 0);
+        self.finish_ordinary_public_service_epoch(clean)?;
+        ensure(known && (!last || clean), "PUBLIC_MUTATION_CPU_UNAVAILABLE")
     }
 
     /// Use one existing Node-owned budget for all remotely sourced History
@@ -486,10 +518,7 @@ impl Node {
                 |row| row.get(0),
             )
             .optional()?;
-        ensure(
-            prior_epoch.is_none(),
-            "OWNER_PUBLIC_SERVICE_UNCLEAN_EPOCH",
-        )?;
+        ensure(prior_epoch.is_none(), "OWNER_PUBLIC_SERVICE_UNCLEAN_EPOCH")?;
         let cold = ServiceMutationCpuDomain::cold_remote_history_epoch();
         self.bind_public_service_cpu_domain(&cold)?;
         Ok(cold)

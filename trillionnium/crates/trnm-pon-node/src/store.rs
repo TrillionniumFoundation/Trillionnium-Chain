@@ -3254,6 +3254,7 @@ impl Node {
     /// Only the original Node checks current parent/task/permit/state/clock.
     /// The caller may refuse LOCAL resource continuation at mathematical W1
     /// checkpoints; cancellation must never masquerade as invalid work.
+    #[cfg(test)]
     pub(crate) fn admit_with_work_progress(
         &mut self,
         packet: &Packet,
