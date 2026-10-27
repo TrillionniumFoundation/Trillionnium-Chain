@@ -120,3 +120,40 @@ Exact Rust selectors added:
 and `peer_polling::tests::pinned_polling_stops_on_local_cpu_account_failure_but_not_remote_error_text`.
 This is a **source-level fix pending exact native compilation and
 physical resource failure injection**, not a new P1 pass.
+
+
+## Unified P1: real remote pinned-peer address owns fixed Host parent
+
+The first metered W1 patch bound the Node's **local** original V3
+ServiceMutationCpuDomain, but a service allowed to listen only on
+127.0.0.1 could still poll a remote pinned peer whose History included
+untrusted W1. The original CLI Host checker considered only the listener
+address, so it could return None despite a WAN peer workload.
+
+The unified candidate now requires the existing administrator-owned,
+root-verified trnmponpublic.slice cgroup whenever **any** configured
+pinned-peer address is nonloopback, even if the listener is loopback.
+Both the CLI before starting the public service and the exported
+run_pinned_peer_polling library entry verify the same original parent.
+The exported library checks again before each history W1 operation and
+after settlement, and across polling cycles. No extra authority, CPU
+credit, cgroup creation or per-caller identity is added. The ordinary
+pure-loopback development peer remains supported without a Host parent.
+
+nonloopback_pinned_peer_cannot_bypass_host_limit_via_loopback_listener
+is a native negative source test: when the fixed parent is unavailable,
+the outbound poller must fail before any remote RPC or W1, with no
+durable Node change. It allows the separate case of a *genuinely*
+administrator-owned preconfigured Host parent rather than claiming that
+every runner must refuse.
+
+Limits: a loopback pinned-peer address could itself be a local TCP
+forwarder of remote untrusted content, and there is no cryptographic way
+to infer that forwarding merely from the socket destination. Operators
+must either configure the true nonloopback remote peer or run local
+forwarders **inside the same fixed Host resource parent**; an actual
+adversarial forwarder/namespace test is still required. Peer-polling
+W1 CPU capacity also competes with honest V3 requests: sharing a
+budget is conservation, not an unconditional fairness theorem.
+Native Rust build, actual cgroup/run, A03 campaign and P2/P5/P6
+independent security work remain OPEN.
