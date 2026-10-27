@@ -827,3 +827,32 @@ This newly committed test source, its SHA and the non-activated Python scalar
 results are not a native execution receipt. P1-C/P0-C/P2 remain OPEN pending
 actual native exit, independent work-cost challenge, full alternate-context
 integration and separately administered WAN qualification.
+
+
+## 2026-10-27: native 32-slot saturation and 1103-block retention tests (source only)
+
+- Existing non-ignored test full_32_slot_maintenance_rejects_premature_native_replacement:
+  original dual-signed development request envelopes fill slots 0..31 by
+  native PNW1 inclusion; both the reference and authenticated SQLite owners
+  refuse premature replacement, then accept Maintenance and cold reopen.
+  The historical Q4 source signature, work, DAA and storage namespaces are untouched.
+- New ignored/release-only test full_slot_native_retention_reclaim_and_heavier_fork_restore:
+  mines original Maintenance W1 packets from 1 to 1103 with 32 occupied slots,
+  revokes the last usable lease at height 2, confirms height 1100 still rejects
+  slot recycling, accepts separately signed replacement at height 1101,
+  constructs a genuinely heavier valid competing branch, observes rollback
+  to generation 32, then requires a distinct requester-signed replacement at
+  actual height 1103. It cold reopens authenticated SQLite after the final branch.
+  No synthetic height-only State mutation is used.
+
+Execute the short case and explicit long campaign on an unchanged checked-out
+candidate with the original Rust suite:
+
+    cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test continuity_authenticated full_32_slot_maintenance_rejects_premature_native_replacement -- --test-threads=1
+    cargo test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test continuity_authenticated full_slot_native_retention_reclaim_and_heavier_fork_restore -- --ignored --test-threads=1
+
+Scope at publication: GitHub source committed, native compile/Rust tests NOT RUN;
+the current execution environment has neither Cargo/rustc nor a full local repo
+checkout. These assertions are not an executed 1103-block transcript or proof
+of independent signers, W1 cost hardness, funded storage, production finality
+or public WAN availability. Do not mark P0-B or P2 closed on source alone.
