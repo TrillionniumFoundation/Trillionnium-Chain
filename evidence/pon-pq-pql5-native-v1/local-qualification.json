@@ -1,0 +1,51 @@
+{
+  "schema": "pon-pql5-independent-native-conformance-v1",
+  "upstream_pr": 458,
+  "upstream_exact_commit": "192480f0c5e1fa6077c8c3bc2b9e1790a02c0552",
+  "research_branch": "research/pq-pql5-native-oracle-20261027",
+  "scope": "read-only C11 OpenSSL 3.5.5 ML-DSA-65 PQL5 witness quorum verifier",
+  "exact_pushed_files": {
+    "formal/pon-nakamoto-v1/pq_pql5_native_verify.c": "d62c87865026dce960913906834650f7b92d2fee",
+    "formal/pon-nakamoto-v1/test_pq_pql5_native_verify.py": "b582a1c79c277f4b1f96c50195c90103a0061260",
+    "docs/security/PQ_PQL5_NATIVE_QUORUM_RESEARCH_V1.md": "e4e077d226e9c3706b19176de1ddd1d70de1844c",
+    "evidence/pon-pq-pql5-native-v1/local-unittest.log": "6909afc68f3eb3bc108f9b6b77af64e23e53290b",
+    "evidence/pon-pq-pql5-native-v1/local-sanitizer.log": "9daeda46e8cd2cf656750e1d9be85abd0b866cca"
+  },
+  "executed_environment": {
+    "os": "Linux x86_64 isolated container",
+    "compiler": "Debian cc 14.2.0-19",
+    "openssl": "OpenSSL 3.5.5",
+    "python": "3.13.5"
+  },
+  "executed_tests": [
+    {
+      "command": "PYTHONWARNINGS=error::ResourceWarning python3 -m unittest -v test_pq_pql5_native_verify.py",
+      "passed": 14,
+      "failed": 0,
+      "skipped": 1,
+      "log": "local-unittest.log",
+      "exit_code": 0
+    },
+    {
+      "command": "PQL5N_SANITIZE=1 ASAN_OPTIONS=detect_leaks=1:abort_on_error=1 UBSAN_OPTIONS=halt_on_error=1 PYTHONWARNINGS=error::ResourceWarning python3 -m unittest -v test_pq_pql5_native_verify.py",
+      "passed": 14,
+      "failed": 0,
+      "skipped": 1,
+      "log": "local-sanitizer.log",
+      "exit_code": 0
+    }
+  ],
+  "explicitly_not_run": [
+    "exact upstream PR #458 Python cross-implementation parity test (isolated host lacks inherited full checkout)",
+    "full Cargo/Rust Chain suite and native node",
+    "independent operators, production WAN, HSM, physical failure, quantum PoN security"
+  ],
+  "adversarial_majority_clone": {
+    "newer_externally_pinned_head": "old freshly signed 2/3 quorum rejected",
+    "rewound_caller_external_pin": "old freshly signed 2/3 quorum accepted: CRITICAL unresolved",
+    "resolved": false
+  },
+  "independent_accepted": false,
+  "production_activation": false,
+  "no_consensus_wire_change": true
+}
