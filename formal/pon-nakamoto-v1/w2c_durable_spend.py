@@ -182,10 +182,19 @@ class DurableStatelessReceiver(StatelessReceiverAdmission):
                 self.db.commit()
                 return 'READY_RESOURCE_ONLY'
             except sqlite3.Error as error:
-                self.db.rollback()
+                # A lost storage connection can make ROLLBACK fail too. The
+                # original error must stay an explicit local resource fault,
+                # never be turned into a fresh READY or mathematical Invalid.
+                try:
+                    self.db.rollback()
+                except sqlite3.Error:
+                    pass
                 raise ValueError('DURABLE_RESOURCE_UNAVAILABLE') from error
             except BaseException:
-                self.db.rollback()
+                try:
+                    self.db.rollback()
+                except sqlite3.Error:
+                    pass
                 raise
 
     def pending_paid(self):
