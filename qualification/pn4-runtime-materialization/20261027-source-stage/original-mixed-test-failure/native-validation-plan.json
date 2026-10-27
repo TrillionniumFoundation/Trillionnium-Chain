@@ -1,0 +1,72 @@
+{
+  "recorded_utc": "2026-10-27T06:23:48.429386+00:00",
+  "role": "NEW_M09_RUNTIME_BYTE_CONSUMER_NATIVE_VALIDATION_NOT_ORIGINAL_PN1_1200_OR_SDK_MODEL_ALLOCATION",
+  "root": "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026",
+  "source": {
+    "config/portability-inventory-v1.json": {
+      "bytes": 30217,
+      "sha256": "5f793f286d77c0182e2e31ff813741cc013ebc2843fcc5e4ca3ec1f1ad7486a1"
+    },
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md": {
+      "bytes": 377470,
+      "sha256": "ab1185665574d1cf31c85a9f695e4da5f4f1726b44737e4e3b6d49c9ffaab079"
+    },
+    "trillionnium/crates/trnm-data-availability/src/cell.rs": {
+      "bytes": 3950,
+      "sha256": "b3ac2fae76cdec957a0e3ac49f471b6c6061f58ca7bf8c42319873a332a60b58"
+    },
+    "trillionnium/crates/trnm-data-availability/src/cell/runtime_root.rs": {
+      "bytes": 18847,
+      "sha256": "e5b22651e023db1be6f89119f8090ba0b184ed9d583eee8628e6d9ddc6e953ae"
+    },
+    "trillionnium/crates/trnm-data-availability/src/cell/runtime_root_tests.rs": {
+      "bytes": 11758,
+      "sha256": "a5e28df90c31f5236fa2640726a763ad515ae8517aeaca4facfe3738f4952e99"
+    },
+    "trillionnium/crates/trnm-data-availability/src/cell/store.rs": {
+      "bytes": 19863,
+      "sha256": "c2940adb239c83dddcdcb4f5198fa557ebf6660225dd20441360f0d22cdac274"
+    }
+  },
+  "Cargo_lock_sha256": "ecad80dd8b0b4b18df5d0e5f4ab2d71f47cffbade4fb963dfb871d93396a16d8",
+  "steps": [
+    {
+      "name": "001-original-whole-data-availability-crate-tests-plus-new-runtime-controls",
+      "argv": [
+        "cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-data-availability"
+      ]
+    },
+    {
+      "name": "002-strict-all-target-data-availability-Clippy",
+      "argv": [
+        "cargo",
+        "clippy",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-data-availability",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ]
+    }
+  ],
+  "resources": {
+    "CPUQuota": "200%",
+    "MemoryMax": "2G",
+    "MemorySwapMax": "0",
+    "TasksMax": 256,
+    "Nice": 10,
+    "cargo_build_jobs": 1
+  },
+  "original_assertions_numeric_resource_caps_and_timeout_controls_unchanged": true,
+  "no_full_952_truth_rerun_or_original_budget_reset": true,
+  "source_stage_not_I09_or_I10_or_72hWAN": true,
+  "merge_ready": false
+}

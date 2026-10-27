@@ -4528,3 +4528,90 @@ outside the shared layout; it does not guarantee physical WAL size. All twenty
 guards, eight original lanes, assertions and resource limits remain. Source
 identity agreement grants no SQL, C ABI, layout, two-second service or native
 qualification; the original lane executions and fullT/Layout003 remain open.
+
+
+### PN4 Cell runtime original-byte materialization — source stage, qualification open
+
+M09 now has an explicit Unix storage consumer for an owner-pinned sorted runtime
+file list. Interpreter, standard library, site packages, native libraries, wheels,
+distribution metadata, sources and launcher provenance use a separate runtime
+files-v1 domain. They do not relabel the existing eight base roles or their
+300-MiB member bound. The byte consumer accepts complete TCM1 segments, retains
+one original deadline, connection counter and response-byte reservation across
+all segments, and reconstructs the exact whole-file SHA256. Successful segment
+writes and their directory entries must be durable before disposable cache rows
+are retired. It re-reads the actual destination file and publishes the complete
+staging directory only after every file verifies; failures retain partial bytes
+and the create-only reservation without refund or an automatic retry reset.
+
+The existing cooperative single-owner cache namespace contract remains explicit.
+Its census includes DB/WAL/SHM, existing releases, staging, metadata and declared
+outstanding held costs. Unknown outstanding costs refuse before provider I/O.
+Reservations include filesystem-reported allocation units and the unchanged
+512-MiB cache, 2-GiB host and 64-MiB metadata ceilings. These supported-owner
+checks are not an OS-wide filesystem quota, a proof against hostile namespace
+replacement, immutable executable storage or evidence that the full Python,
+wheel, stdlib and native ABI closure fits. Provider retention duties are separate
+and are not deleted by disposable consumer-cache retirement.
+
+The source-stage controls include exact reconstruction, wrong whole-file digest
+rejection, unknown-cost refusal and a real bounded TCP transfer whose complete
+file is larger than the consumer cache. A second real transfer must stop at the
+original shared connection budget, retain its partial and never publish a
+complete root. These controls require actual native results; source presence
+alone does not pass them. Full released runtime inventory, held real loader,
+ordinary evaluated installation/readback (I09/I10), custody repair, three genuine
+SmolLM2 q/v-rank4 generations and the existing independent 72-hour WAN experiment
+remain required before PN3/PN4 or merge qualification can pass.
+
+The module interface is `materialize_runtime_root_v1`: an exclusive mutable
+`CellStoreV1`, the complete private host scope, a create-only destination basename,
+`CellRuntimePlanV1`, configured peers and `CellRuntimeLimitsV1`. The plan contains
+the sorted `CellRuntimeFileV1` list, authority-pinned expected files root and
+original Cell context. Limits retain one absolute deadline and the original
+host, metadata, connection and response-byte ceilings; unknown outstanding cost
+is a refusal. The result reports the actual reconstructed bytes and received
+responses/connections together with the unreleased original reservations. It
+grants no installation or execution authority.
+
+The [retained local source-stage evidence](../../qualification/pn4-runtime-materialization/20261027-source-stage/source-stage-readback.json)
+records six passing controls and strict all-target Clippy after two actual lint
+failures were corrected. The real TCP success reconstructed 262,144 original
+bytes with a 196,608-byte logical cache, two connections and 262,162 response
+bytes. The one-connection control retained only the first 131,072-byte partial
+and its reservation. The initial complete crate run remains **FAIL**: 139 passed,
+two original discovery functions timed out, and none were ignored. Their later
+isolated passes do not close that original parallel failure or establish its
+cause. No hosted execution or full-runtime fit is inferred from these controls.
+
+The [subsequent original-CI-thread-default observation](../../qualification/pn4-runtime-materialization/20261027-CI-default-retained-failure/retained-failure-readback.json)
+also remains **FAIL**: 140 of 141 tests passed, one failed and none were ignored.
+The existing CI entry point fixes `RUST_TEST_THREADS=1`; the first local invocation
+omitted that environment setting. Applying the original setting changed no test
+assertion, timeout or resource limit. The remaining original function,
+`tcp_newer_same_endpoint_short_ttl_expires_mid_manifest_without_publication`,
+failed while reading its announcement reply with `discovery truncated reply`.
+Its later isolated syscall-traced pass does not establish a cause or close either
+complete-crate failure. Both complete runs and their raw logs remain preserved;
+no complete-crate retry is justified merely to obtain a passing observation.
+The unchanged negative source-integrity suite separately passed 34 tests, and
+the unchanged lockfile resolved 155 packages and 26 workspace members. Those
+checks grant no runtime, loader, native boundary or release qualification.
+
+The [retained Windows GNU compile failure and source repair](../../qualification/pn4-runtime-materialization/20261027-platform-gating-RED-and-fix/platform-gating-readback.json)
+record a separate portability correction. The Unix-only runtime consumer's
+private cache-retirement helper was still compiled on Windows and failed the
+unchanged strict unused-code check. Its `cfg(unix)` now matches the consumer.
+Windows GNU cross-target and Linux all-target strict Clippy then passed, as did
+the six runtime controls, all 34 negative source-integrity tests and formatting.
+This compile result does not close the existing four-lane Windows native
+isolation failures or the complete-crate short-TTL discovery failure above.
+
+The implementation order remains within PN3/PN4: admit the complete released
+runtime/dependency inventory and original resource accounting; materialize and
+verify its actual bytes through M09; bind those bytes to the held real loader;
+then exercise the original ordinary training, evaluation, cross-node download,
+authorized installation and next-task readback. Persistent custody/repair and
+the independent WAN acceptance follow that real integration. Each step retains
+its own acceptance evidence; mechanism closure and measured model benefit remain
+separate decisions, including mandatory rejection of an upgrade without benefit.

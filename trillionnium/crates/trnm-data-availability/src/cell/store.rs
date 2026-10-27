@@ -37,8 +37,8 @@ pub struct CellReleaseLimitsV1 {
 pub struct CellStoreV1 {
     connection: Connection,
     read_only: bool,
-    config: super::CellCacheConfigV4,
-    path: PathBuf,
+    pub(super) config: super::CellCacheConfigV4,
+    pub(super) path: PathBuf,
     writer_identity: Option<File>,
 }
 
@@ -258,6 +258,29 @@ impl CellStoreV1 {
             });
         }
         Ok(None)
+    }
+
+    /// Private runtime consumer only. This deletes disposable cache rows after
+    /// their exact bytes were fsynced to the admitted destination. It does not
+    /// retire a provider lease, retention row, release authority or disk charge.
+    #[cfg(unix)]
+    pub(super) fn retire_consumed_runtime_segment(
+        &self,
+        manifest: &CellManifestV1,
+    ) -> CellResultV1<()> {
+        self.write(|connection| {
+            for chunk in manifest.chunks() {
+                connection.execute(
+                    "DELETE FROM cell_chunks_v1 WHERE hash=?1",
+                    [chunk.sha256.as_slice()],
+                )?;
+            }
+            connection.execute(
+                "DELETE FROM cell_manifests_v1 WHERE id=?1",
+                [manifest.id().as_slice()],
+            )?;
+            Ok(())
+        })
     }
 
     pub fn pack_file(

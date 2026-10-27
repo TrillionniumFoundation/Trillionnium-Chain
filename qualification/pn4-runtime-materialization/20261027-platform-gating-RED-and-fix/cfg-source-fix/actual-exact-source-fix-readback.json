@@ -1,0 +1,14 @@
+{
+  "recorded_utc": "2026-10-27T07:12:21.773830+00:00",
+  "change_exactly_one_cfg_unix_attribute": true,
+  "old_store_sha256": "c2940adb239c83dddcdcb4f5198fa557ebf6660225dd20441360f0d22cdac274",
+  "new_store_sha256": "5fe308c5edc463234954d28923f1ff6bab218d2e3766336d731243c6554c7742",
+  "original_discovery_test_bytes_still_identical_to_c960": {
+    "trillionnium/crates/trnm-data-availability/src/cell/discovery/tests.rs": "c36a09c69b05c143653b5081f3ef8c35d172e732721d283edb33366043313cfd",
+    "trillionnium/crates/trnm-data-availability/src/cell/discovery/sequence_tests.rs": "ba85b6bd81f2109e54af2878c31f0b75e5c3600d0f17eec861778efd3c4e1bd3"
+  },
+  "original_test_assertions_resource_caps_and_deadlines_unchanged": true,
+  "warning_suppression_added": false,
+  "Windows_native_isolation_qualified": false,
+  "merge_ready": false
+}

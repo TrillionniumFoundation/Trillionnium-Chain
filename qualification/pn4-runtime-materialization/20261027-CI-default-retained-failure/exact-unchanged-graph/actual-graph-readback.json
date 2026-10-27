@@ -1,0 +1,24 @@
+{
+  "recorded_utc": "2026-10-27T06:50:55.120204+00:00",
+  "actual_Cargo_wait": 0,
+  "seconds": 7.234655105014099,
+  "stdout_sha256": "180c2de0b3683d43f2fe92b1bae68965fb5f1c48e6ef2dd6fc7251378315ae39",
+  "Cargo_lock_sha256": "ecad80dd8b0b4b18df5d0e5f4ab2d71f47cffbade4fb963dfb871d93396a16d8",
+  "source_stage_only": true,
+  "merge_ready": false,
+  "nodes": 155,
+  "workspace_members": 26,
+  "sqlite_dependency_edges": [
+    {
+      "name": "libsqlite3-sys",
+      "version": "0.37.0",
+      "manifest": "/home/qian-qi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libsqlite3-sys-0.37.0/Cargo.toml"
+    },
+    {
+      "name": "rusqlite",
+      "version": "0.39.0",
+      "manifest": "/home/qian-qi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rusqlite-0.39.0/Cargo.toml"
+    }
+  ],
+  "new_evidence_link_resolves": true
+}

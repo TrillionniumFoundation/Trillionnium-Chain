@@ -1,0 +1,34 @@
+{
+  "started_utc": "2026-10-27T06:50:25.656873+00:00",
+  "pid": 939042,
+  "birth": "939042 (strace) D 939018 939018 939018 0 -1 4194304 1 0 0 0 0 0 0 0 30 10 1 0 16149162 2224128 0 18446744073709551615 0 0 140734954448144 0 0 0 0 0 0 1 0 0 17 36 0 0 0 0 0 0 0 0 140734954448144 0 0 0 0\n",
+  "command": [
+    "strace",
+    "-f",
+    "-ttt",
+    "-T",
+    "-s",
+    "48",
+    "-e",
+    "trace=network,fsync,fdatasync",
+    "-o",
+    "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/ci-follow/M09-original-short-TTL-discovery-native-syscall-diagnosis-20261027-001/network-and-durability-syscalls.original.strace",
+    "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/ci-follow/M09-streamed-runtime-materializer-root-candidate-20261027-001/native-target/debug/deps/trnm_data_availability-d51c549752eb9be4",
+    "cell::discovery::sequence_tests::tcp_newer_same_endpoint_short_ttl_expires_mid_manifest_without_publication",
+    "--exact"
+  ],
+  "finished_utc": "2026-10-27T06:50:28.100608+00:00",
+  "actual_process_wait_exit": 0,
+  "seconds": 2.46512199,
+  "raw": {
+    "stdout.original": {
+      "bytes": 234,
+      "sha256": "d139da11b2ca36fa997c55225f504cc797c2f4aebdc801f0be1438a64bb2b0c7"
+    },
+    "stderr.original": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "merge_ready": false
+}

@@ -1,0 +1,31 @@
+{
+  "recorded_utc": "2026-10-27T06:35:52.275955+00:00",
+  "source": {
+    "config/portability-inventory-v1.json": {
+      "bytes": 30217,
+      "sha256": "5f793f286d77c0182e2e31ff813741cc013ebc2843fcc5e4ca3ec1f1ad7486a1"
+    },
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md": {
+      "bytes": 377470,
+      "sha256": "ab1185665574d1cf31c85a9f695e4da5f4f1726b44737e4e3b6d49c9ffaab079"
+    },
+    "trillionnium/crates/trnm-data-availability/src/cell.rs": {
+      "bytes": 3950,
+      "sha256": "b3ac2fae76cdec957a0e3ac49f471b6c6061f58ca7bf8c42319873a332a60b58"
+    },
+    "trillionnium/crates/trnm-data-availability/src/cell/runtime_root.rs": {
+      "bytes": 18847,
+      "sha256": "e5b22651e023db1be6f89119f8090ba0b184ed9d583eee8628e6d9ddc6e953ae"
+    },
+    "trillionnium/crates/trnm-data-availability/src/cell/runtime_root_tests.rs": {
+      "bytes": 11758,
+      "sha256": "a5e28df90c31f5236fa2640726a763ad515ae8517aeaca4facfe3738f4952e99"
+    },
+    "trillionnium/crates/trnm-data-availability/src/cell/store.rs": {
+      "bytes": 19863,
+      "sha256": "c2940adb239c83dddcdcb4f5198fa557ebf6660225dd20441360f0d22cdac274"
+    }
+  },
+  "actual_strict_Clippy_wait_exit": 101,
+  "original_139_pass_2_failed_not_closed": true
+}

@@ -1,0 +1,234 @@
+{
+  "schema": "immutable-source-stage-evidence-manifest-v1",
+  "recorded_utc": "2026-10-27T06:56:56.380974+00:00",
+  "all_copied_files_actual_byte_readback_verified": true,
+  "entries": [
+    {
+      "path": "full-crate-CI-thread-default/001-full-data-availability-crate-under-original-CI-thread-default/actual-start.json",
+      "source_evidence_path": "work/ci-follow/M09-existing-CI-thread-default-full-crate-validation-20261027-001/001-full-data-availability-crate-under-original-CI-thread-default/actual-start.json",
+      "bytes": 515,
+      "sha256": "af32444258c930e9fbd1771d4afdab2cf59ca5549cfdccccf64ca37c3569c712"
+    },
+    {
+      "path": "full-crate-CI-thread-default/001-full-data-availability-crate-under-original-CI-thread-default/actual-terminal.json",
+      "source_evidence_path": "work/ci-follow/M09-existing-CI-thread-default-full-crate-validation-20261027-001/001-full-data-availability-crate-under-original-CI-thread-default/actual-terminal.json",
+      "bytes": 943,
+      "sha256": "234cb78af8704a739f841b78ff9be3a199416f19def6db2732b066feaac92644"
+    },
+    {
+      "path": "full-crate-CI-thread-default/001-full-data-availability-crate-under-original-CI-thread-default/stderr.original",
+      "source_evidence_path": "work/ci-follow/M09-existing-CI-thread-default-full-crate-validation-20261027-001/001-full-data-availability-crate-under-original-CI-thread-default/stderr.original",
+      "bytes": 613,
+      "sha256": "f15cd0fb23c9ca67f06ad19cfc5803f85516f4160a78f9b44d9e3251e39ead01"
+    },
+    {
+      "path": "full-crate-CI-thread-default/001-full-data-availability-crate-under-original-CI-thread-default/stdout.original",
+      "source_evidence_path": "work/ci-follow/M09-existing-CI-thread-default-full-crate-validation-20261027-001/001-full-data-availability-crate-under-original-CI-thread-default/stdout.original",
+      "bytes": 15353,
+      "sha256": "fe7e0b66feded3d7e7fa6d3f2d0ae0cfd60d1b709cd0479cfe572a06c54a7b97"
+    },
+    {
+      "path": "full-crate-CI-thread-default/actual-native-runner-start.json",
+      "source_evidence_path": "work/ci-follow/M09-existing-CI-thread-default-full-crate-validation-20261027-001/actual-native-runner-start.json",
+      "bytes": 633,
+      "sha256": "5cde8816d226ade6c30d92da7375c7d03346dbc5b8ed19bd1c89a700b19f8f61"
+    },
+    {
+      "path": "full-crate-CI-thread-default/actual-native-runner-terminal.json",
+      "source_evidence_path": "work/ci-follow/M09-existing-CI-thread-default-full-crate-validation-20261027-001/actual-native-runner-terminal.json",
+      "bytes": 1220,
+      "sha256": "9eca595739206ffc6d719ca3d0e578fc70861c52f6a9e987d02e61d71ebbe713"
+    },
+    {
+      "path": "full-crate-CI-thread-default/actual-unit-launch.stderr",
+      "source_evidence_path": "work/ci-follow/M09-existing-CI-thread-default-full-crate-validation-20261027-001/actual-unit-launch.stderr",
+      "bytes": 135,
+      "sha256": "5676dd0a6ed135370e2e7066f4c23272226176371edd0d4ffa124a27fba28116"
+    },
+    {
+      "path": "full-crate-CI-thread-default/actual-unit-launch.stdout",
+      "source_evidence_path": "work/ci-follow/M09-existing-CI-thread-default-full-crate-validation-20261027-001/actual-unit-launch.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "full-crate-CI-thread-default/native-validation-plan.json",
+      "source_evidence_path": "work/ci-follow/M09-existing-CI-thread-default-full-crate-validation-20261027-001/native-validation-plan.json",
+      "bytes": 3997,
+      "sha256": "cb91942bc56653ee87de3410f8d15ceaa4871784a50838b36871ed78ece7e2b4"
+    },
+    {
+      "path": "full-crate-CI-thread-default/prebuild-preflight.stderr.original",
+      "source_evidence_path": "work/ci-follow/M09-existing-CI-thread-default-full-crate-validation-20261027-001/prebuild-preflight.stderr.original",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "full-crate-CI-thread-default/prebuild-preflight.stdout.original",
+      "source_evidence_path": "work/ci-follow/M09-existing-CI-thread-default-full-crate-validation-20261027-001/prebuild-preflight.stdout.original",
+      "bytes": 168,
+      "sha256": "63a5bf3b9fc8975dac9742c8f5f7f77a05a0ea5bf4d40403dcdb791778eb44a3"
+    },
+    {
+      "path": "full-crate-CI-thread-default/preflight.stderr.original",
+      "source_evidence_path": "work/ci-follow/M09-existing-CI-thread-default-full-crate-validation-20261027-001/preflight.stderr.original",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "full-crate-CI-thread-default/preflight.stdout.original",
+      "source_evidence_path": "work/ci-follow/M09-existing-CI-thread-default-full-crate-validation-20261027-001/preflight.stdout.original",
+      "bytes": 168,
+      "sha256": "63a5bf3b9fc8975dac9742c8f5f7f77a05a0ea5bf4d40403dcdb791778eb44a3"
+    },
+    {
+      "path": "full-crate-CI-thread-default/source-inventory-actual-change.stderr.original",
+      "source_evidence_path": "work/ci-follow/M09-existing-CI-thread-default-full-crate-validation-20261027-001/source-inventory-actual-change.stderr.original",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "full-crate-CI-thread-default/source-inventory-actual-change.stdout.original",
+      "source_evidence_path": "work/ci-follow/M09-existing-CI-thread-default-full-crate-validation-20261027-001/source-inventory-actual-change.stdout.original",
+      "bytes": 1245,
+      "sha256": "d379700ff1a267b63aa02afca7b82deb91d4d666159ac5cc6572174c2d7493a6"
+    },
+    {
+      "path": "full-crate-CI-thread-default/source-inventory-actual-refresh.stderr.original",
+      "source_evidence_path": "work/ci-follow/M09-existing-CI-thread-default-full-crate-validation-20261027-001/source-inventory-actual-refresh.stderr.original",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "full-crate-CI-thread-default/source-inventory-actual-refresh.stdout.original",
+      "source_evidence_path": "work/ci-follow/M09-existing-CI-thread-default-full-crate-validation-20261027-001/source-inventory-actual-refresh.stdout.original",
+      "bytes": 35,
+      "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+    },
+    {
+      "path": "full-crate-CI-thread-default/source-inventory-after-refresh-check.stderr.original",
+      "source_evidence_path": "work/ci-follow/M09-existing-CI-thread-default-full-crate-validation-20261027-001/source-inventory-after-refresh-check.stderr.original",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "full-crate-CI-thread-default/source-inventory-after-refresh-check.stdout.original",
+      "source_evidence_path": "work/ci-follow/M09-existing-CI-thread-default-full-crate-validation-20261027-001/source-inventory-after-refresh-check.stdout.original",
+      "bytes": 35,
+      "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+    },
+    {
+      "path": "full-crate-CI-thread-default/source-inventory-original-check.stderr.original",
+      "source_evidence_path": "work/ci-follow/M09-existing-CI-thread-default-full-crate-validation-20261027-001/source-inventory-original-check.stderr.original",
+      "bytes": 76,
+      "sha256": "3060c11e06f46d1cbf92fbb40b0ecf6bfd5482816a73a13c7267e2efa34b28fb"
+    },
+    {
+      "path": "full-crate-CI-thread-default/source-inventory-original-check.stdout.original",
+      "source_evidence_path": "work/ci-follow/M09-existing-CI-thread-default-full-crate-validation-20261027-001/source-inventory-original-check.stdout.original",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "isolated-syscall-diagnostic/001-single-original-short-TTL-function-syscall-trace/actual-start.json",
+      "source_evidence_path": "work/ci-follow/M09-original-short-TTL-discovery-native-syscall-diagnosis-20261027-001/001-single-original-short-TTL-function-syscall-trace/actual-start.json",
+      "bytes": 1021,
+      "sha256": "c41af28e45e547344449c088795e3f495214fb6be20180c7f5fca749dad4bd09"
+    },
+    {
+      "path": "isolated-syscall-diagnostic/001-single-original-short-TTL-function-syscall-trace/actual-terminal.json",
+      "source_evidence_path": "work/ci-follow/M09-original-short-TTL-discovery-native-syscall-diagnosis-20261027-001/001-single-original-short-TTL-function-syscall-trace/actual-terminal.json",
+      "bytes": 1440,
+      "sha256": "11e555d2a9006f77cb5828a744b837d9434936a217a29c73c998235477201f30"
+    },
+    {
+      "path": "isolated-syscall-diagnostic/001-single-original-short-TTL-function-syscall-trace/stderr.original",
+      "source_evidence_path": "work/ci-follow/M09-original-short-TTL-discovery-native-syscall-diagnosis-20261027-001/001-single-original-short-TTL-function-syscall-trace/stderr.original",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "isolated-syscall-diagnostic/001-single-original-short-TTL-function-syscall-trace/stdout.original",
+      "source_evidence_path": "work/ci-follow/M09-original-short-TTL-discovery-native-syscall-diagnosis-20261027-001/001-single-original-short-TTL-function-syscall-trace/stdout.original",
+      "bytes": 234,
+      "sha256": "d139da11b2ca36fa997c55225f504cc797c2f4aebdc801f0be1438a64bb2b0c7"
+    },
+    {
+      "path": "isolated-syscall-diagnostic/actual-native-runner-start.json",
+      "source_evidence_path": "work/ci-follow/M09-original-short-TTL-discovery-native-syscall-diagnosis-20261027-001/actual-native-runner-start.json",
+      "bytes": 629,
+      "sha256": "e294e979e821d49a381df3a99f7f947584492fd67ed67623f484de9953d6a99f"
+    },
+    {
+      "path": "isolated-syscall-diagnostic/actual-native-runner-terminal.json",
+      "source_evidence_path": "work/ci-follow/M09-original-short-TTL-discovery-native-syscall-diagnosis-20261027-001/actual-native-runner-terminal.json",
+      "bytes": 1743,
+      "sha256": "52527b41c927cf66633ba61d36d0894ab3113f04198e773734d68df34d3edc9b"
+    },
+    {
+      "path": "isolated-syscall-diagnostic/actual-unit-launch.stderr",
+      "source_evidence_path": "work/ci-follow/M09-original-short-TTL-discovery-native-syscall-diagnosis-20261027-001/actual-unit-launch.stderr",
+      "bytes": 128,
+      "sha256": "8b321b006c248184fccf11d93a2395c407f7bb038aa218deae185dfa5f46d703"
+    },
+    {
+      "path": "isolated-syscall-diagnostic/actual-unit-launch.stdout",
+      "source_evidence_path": "work/ci-follow/M09-original-short-TTL-discovery-native-syscall-diagnosis-20261027-001/actual-unit-launch.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "isolated-syscall-diagnostic/native-validation-plan.json",
+      "source_evidence_path": "work/ci-follow/M09-original-short-TTL-discovery-native-syscall-diagnosis-20261027-001/native-validation-plan.json",
+      "bytes": 5518,
+      "sha256": "2a0050741be9cd324ae5d4407c2bfe8184f8e265200bfa484eab638f58a03568"
+    },
+    {
+      "path": "isolated-syscall-diagnostic/network-and-durability-syscalls.original.strace",
+      "source_evidence_path": "work/ci-follow/M09-original-short-TTL-discovery-native-syscall-diagnosis-20261027-001/network-and-durability-syscalls.original.strace",
+      "bytes": 233673,
+      "sha256": "54764e78ad5f22b17b1695b8855b2add643278d9c9faf4fb30ab146a3db78903"
+    },
+    {
+      "path": "retained-negative-source-tests/actual-terminal.json",
+      "source_evidence_path": "work/ci-follow/M09-original-source-integrity-negative-tests-20261027-001/actual-terminal.json",
+      "bytes": 374,
+      "sha256": "4dfb6ab945f356ef05fc55d3c01888cc808b5e71d499663f256635767d52549a"
+    },
+    {
+      "path": "retained-negative-source-tests/stderr.original",
+      "source_evidence_path": "work/ci-follow/M09-original-source-integrity-negative-tests-20261027-001/stderr.original",
+      "bytes": 5026,
+      "sha256": "104c9667f09e50f5b02f232bcf7d7de4c9978a003a5a36fe292bcf61ea07504f"
+    },
+    {
+      "path": "retained-negative-source-tests/stdout.original",
+      "source_evidence_path": "work/ci-follow/M09-original-source-integrity-negative-tests-20261027-001/stdout.original",
+      "bytes": 484,
+      "sha256": "5cb9b5645b2571f1f632afbde962757795c087c2b6194eab65bba0e15b76c9ad"
+    },
+    {
+      "path": "exact-unchanged-graph/actual-graph-readback.json",
+      "source_evidence_path": "work/ci-follow/M09-exact-unchanged-Cargo-graph-and-document-links-20261027-001/actual-graph-readback.json",
+      "bytes": 834,
+      "sha256": "8614675aa6ee2286ee956e8fde8e6364de250feb445af3a7fa032e46c52ac255"
+    },
+    {
+      "path": "exact-unchanged-graph/cargo-metadata.stderr.original",
+      "source_evidence_path": "work/ci-follow/M09-exact-unchanged-Cargo-graph-and-document-links-20261027-001/cargo-metadata.stderr.original",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "original-CI-harness.sh",
+      "repository_source": "scripts/ci/ci_job.sh",
+      "bytes": 21314,
+      "sha256": "dc5cac70a53042268263cc844a8a19e701a6fa8bdf997b00d0ca9802a33cef37"
+    },
+    {
+      "path": "retained-failure-readback.json",
+      "bytes": 2967,
+      "sha256": "737750ae5da9ec648764416b3fdde926c7de7a5181d292f5aad0b62b716d5d1d"
+    }
+  ]
+}

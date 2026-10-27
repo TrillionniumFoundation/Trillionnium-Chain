@@ -1,0 +1,104 @@
+{
+  "recorded_utc": "2026-10-27T06:50:25.265260+00:00",
+  "role": "ONE_LOCAL_ORIGINAL_DISCOVERY_FAILURE_SYSCALL_DIAGNOSTIC_NO_NATIVE_QUALIFICATION_OR_BUDGET_RESET",
+  "root": "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026",
+  "source": {
+    "config/portability-inventory-v1.json": {
+      "bytes": 30218,
+      "sha256": "ad6df812d3369e06099d14fddeaedbad1d334c28492898effaa7c073ab4c2e31"
+    },
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md": {
+      "bytes": 379557,
+      "sha256": "36a81427fa56261f8801f168ad7faf10da86cf2a2e9e4ca0ac22229d4b9c69da"
+    },
+    "trillionnium/crates/trnm-data-availability/src/cell.rs": {
+      "bytes": 3969,
+      "sha256": "b7ffc860146e7a25c3c88315013151b0d043d6ab73a62a5def493e234602c3dc"
+    },
+    "trillionnium/crates/trnm-data-availability/src/cell/runtime_root.rs": {
+      "bytes": 19142,
+      "sha256": "1a313ea51f080c81d640c00aa947a080fbe81b0c5bae93765052e6bf44168050"
+    },
+    "trillionnium/crates/trnm-data-availability/src/cell/runtime_root_tests.rs": {
+      "bytes": 12314,
+      "sha256": "e2efe1dc3f6669de484df67e58744b17ad738a35e504e9a7c1c36610abe8d378"
+    },
+    "trillionnium/crates/trnm-data-availability/src/cell/store.rs": {
+      "bytes": 19863,
+      "sha256": "c2940adb239c83dddcdcb4f5198fa557ebf6660225dd20441360f0d22cdac274"
+    },
+    "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs": {
+      "bytes": 296171,
+      "sha256": "d7983c551f9188e1e0f377341dea1e343ca7a8e4f5c7f68137460b7e8c6a4e6d"
+    }
+  },
+  "Cargo_lock_sha256": "ecad80dd8b0b4b18df5d0e5f4ab2d71f47cffbade4fb963dfb871d93396a16d8",
+  "steps": [
+    {
+      "name": "001-single-original-short-TTL-function-syscall-trace",
+      "argv": [
+        "strace",
+        "-f",
+        "-ttt",
+        "-T",
+        "-s",
+        "48",
+        "-e",
+        "trace=network,fsync,fdatasync",
+        "-o",
+        "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/ci-follow/M09-original-short-TTL-discovery-native-syscall-diagnosis-20261027-001/network-and-durability-syscalls.original.strace",
+        "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/ci-follow/M09-streamed-runtime-materializer-root-candidate-20261027-001/native-target/debug/deps/trnm_data_availability-d51c549752eb9be4",
+        "cell::discovery::sequence_tests::tcp_newer_same_endpoint_short_ttl_expires_mid_manifest_without_publication",
+        "--exact"
+      ]
+    }
+  ],
+  "resources": {
+    "CPUQuota": "200%",
+    "MemoryMax": "2G",
+    "MemorySwapMax": "0",
+    "TasksMax": 256,
+    "Nice": 10,
+    "cargo_build_jobs": 1
+  },
+  "original_assertions_numeric_resource_caps_and_timeout_controls_unchanged": true,
+  "no_full_952_truth_rerun_or_original_budget_reset": true,
+  "source_stage_not_I09_or_I10_or_72hWAN": true,
+  "merge_ready": false,
+  "target": "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/ci-follow/M09-streamed-runtime-materializer-root-candidate-20261027-001/native-target",
+  "diagnostics_do_not_close_original_parallel_failure": true,
+  "original_discovery_tests_byte_identical_to_published_c960": {
+    "trillionnium/crates/trnm-data-availability/src/cell/discovery/tests.rs": "c36a09c69b05c143653b5081f3ef8c35d172e732721d283edb33366043313cfd",
+    "trillionnium/crates/trnm-data-availability/src/cell/discovery/sequence_tests.rs": "ba85b6bd81f2109e54af2878c31f0b75e5c3600d0f17eec861778efd3c4e1bd3"
+  },
+  "preserved_strict_lint_RED": [
+    "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/ci-follow/M09-structured-plan-Clippy-source-correction-20261027-001/actual-native-runner-terminal.json",
+    "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/ci-follow/M09-strict-lint-and-original-discovery-timeout-diagnosis-20261027-001/actual-native-runner-terminal.json"
+  ],
+  "original_CI_harness": {
+    "path": "scripts/ci/ci_job.sh",
+    "sha256": "dc5cac70a53042268263cc844a8a19e701a6fa8bdf997b00d0ca9802a33cef37",
+    "exact_original_default": "export RUST_TEST_THREADS=\"${RUST_TEST_THREADS:-1}\"",
+    "test_thread_count": 1
+  },
+  "source_role_native_stage_only": true,
+  "prior_parallel_local_FAILURE_retained_not_relabelled": true,
+  "env": {
+    "RUST_TEST_THREADS": "1"
+  },
+  "actual_already_built_unit_ELF": {
+    "path": "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/ci-follow/M09-streamed-runtime-materializer-root-candidate-20261027-001/native-target/debug/deps/trnm_data_availability-d51c549752eb9be4",
+    "bytes": 40952312,
+    "sha256": "005c581a112c5990c7084337a1d4b2c51515d4a1f71cff98d75f2e6aad2e3ddb",
+    "provenance": "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/ci-follow/M09-existing-CI-thread-default-full-crate-validation-20261027-001/001-full-data-availability-crate-under-original-CI-thread-default/actual-terminal.json"
+  },
+  "trace_not_historical_causality_proof": true,
+  "trace_metadata_budget_bytes": 67108864,
+  "original_fail_receipt": {
+    "path": "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/ci-follow/M09-existing-CI-thread-default-full-crate-validation-20261027-001/actual-native-runner-terminal.json",
+    "actual_wait": 101,
+    "passed": 140,
+    "failed": 1,
+    "ignored": 0
+  }
+}

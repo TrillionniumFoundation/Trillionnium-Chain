@@ -1,0 +1,41 @@
+{
+  "finished_utc": "2026-10-27T07:10:49.741334+00:00",
+  "results": [
+    {
+      "started_utc": "2026-10-27T07:09:31.750935+00:00",
+      "pid": 1229715,
+      "birth": "1229715 (cargo) R 1229685 1229685 1229685 0 -1 4194304 11 0 0 0 0 0 0 0 30 10 1 0 16263774 18915328 0 18446744073709551615 102206061674496 102206079144108 140730636896736 0 0 0 0 0 0 0 0 0 17 14 0 0 0 0 0 102206081242016 102206082253732 102206614843392 140730636900105 140730636900223 140730636900223 140730636902361 0\n",
+      "command": [
+        "cargo",
+        "clippy",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-data-availability",
+        "--all-targets",
+        "--target",
+        "x86_64-pc-windows-gnu",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "finished_utc": "2026-10-27T07:10:48.840454+00:00",
+      "actual_process_wait_exit": 101,
+      "seconds": 77.090908821,
+      "raw": {
+        "stdout.original": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr.original": {
+          "bytes": 2650,
+          "sha256": "7cca604f4616c99c67d6bfeeb0a8aef1d29e2adf37c80179db653782ca19f40c"
+        }
+      },
+      "merge_ready": false
+    }
+  ],
+  "actual_final_child_wait_exit": 101,
+  "source_stage_only": true,
+  "merge_ready": false
+}

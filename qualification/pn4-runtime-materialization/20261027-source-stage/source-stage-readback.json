@@ -1,0 +1,129 @@
+{
+  "schema": "trnm-pn4-runtime-materialization-source-stage-v1",
+  "recorded_utc": "2026-10-27T06:44:09.595533+00:00",
+  "source_base_commit": "c96022b897c1235fdbdbfcfa32764403511c6aab",
+  "current_code_sources": {
+    "trillionnium/crates/trnm-data-availability/src/cell.rs": {
+      "bytes": 3969,
+      "sha256": "b7ffc860146e7a25c3c88315013151b0d043d6ab73a62a5def493e234602c3dc"
+    },
+    "trillionnium/crates/trnm-data-availability/src/cell/runtime_root.rs": {
+      "bytes": 19142,
+      "sha256": "1a313ea51f080c81d640c00aa947a080fbe81b0c5bae93765052e6bf44168050"
+    },
+    "trillionnium/crates/trnm-data-availability/src/cell/runtime_root_tests.rs": {
+      "bytes": 12314,
+      "sha256": "e2efe1dc3f6669de484df67e58744b17ad738a35e504e9a7c1c36610abe8d378"
+    },
+    "trillionnium/crates/trnm-data-availability/src/cell/store.rs": {
+      "bytes": 19863,
+      "sha256": "c2940adb239c83dddcdcb4f5198fa557ebf6660225dd20441360f0d22cdac274"
+    }
+  },
+  "Cargo_lock_sha256": "ecad80dd8b0b4b18df5d0e5f4ab2d71f47cffbade4fb963dfb871d93396a16d8",
+  "native_scope": "Linux x86_64 local debug build, Rust1.95.0, SQLite3.51.3 source graph; no hosted exact-commit qualification",
+  "original_whole_crate": {
+    "actual_exit": 101,
+    "tests": 141,
+    "passed": 139,
+    "failed": 2,
+    "ignored": 0,
+    "failed_original_names": [
+      "cell::discovery::sequence_tests::tcp_equal_sequence_endpoint_equivocation_disqualifies_the_identity_without_any_dial",
+      "cell::discovery::tests::discovery_and_cell_requests_share_original_connection_and_actual_byte_budgets"
+    ],
+    "cause_proven": false,
+    "parallel_failure_closed": false
+  },
+  "current_controls": [
+    {
+      "step": [
+        "cargo",
+        "clippy",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-data-availability",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "actual_wait_exit": 0,
+      "seconds": 6.185515879
+    },
+    {
+      "step": [
+        "cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-data-availability",
+        "--lib",
+        "cell::runtime_root::tests::"
+      ],
+      "actual_wait_exit": 0,
+      "seconds": 13.968305444
+    },
+    {
+      "step": [
+        "cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-data-availability",
+        "--lib",
+        "cell::discovery::sequence_tests::tcp_equal_sequence_endpoint_equivocation_disqualifies_the_identity_without_any_dial",
+        "--",
+        "--exact"
+      ],
+      "actual_wait_exit": 0,
+      "seconds": 1.378085783
+    },
+    {
+      "step": [
+        "cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-data-availability",
+        "--lib",
+        "cell::discovery::tests::discovery_and_cell_requests_share_original_connection_and_actual_byte_budgets",
+        "--",
+        "--exact"
+      ],
+      "actual_wait_exit": 0,
+      "seconds": 2.57326999
+    }
+  ],
+  "runtime_controls": {
+    "passed": 6,
+    "ignored": 0,
+    "real_network_success": {
+      "whole_file_bytes": 262144,
+      "cache_logical_ceiling": 196608,
+      "actual_connections": 2,
+      "actual_response_bytes": 262162
+    },
+    "original_one_connection_exhaustion": {
+      "actual_served_connections": 1,
+      "retained_partial_bytes": 131072,
+      "complete_root_absent": true,
+      "original_reservation_retained": true
+    }
+  },
+  "original_discovery_tests_unchanged": {
+    "trillionnium/crates/trnm-data-availability/src/cell/discovery/tests.rs": "c36a09c69b05c143653b5081f3ef8c35d172e732721d283edb33366043313cfd",
+    "trillionnium/crates/trnm-data-availability/src/cell/discovery/sequence_tests.rs": "ba85b6bd81f2109e54af2878c31f0b75e5c3600d0f17eec861778efd3c4e1bd3"
+  },
+  "diagnostic_repetitions_closed_original_parallel_failure": false,
+  "full_release_loader_custody_model_and_WAN_qualified": false,
+  "mechanism_closed": false,
+  "benefit_demonstrated": false,
+  "fullguard": false,
+  "task_complete": false,
+  "merge_ready": false
+}

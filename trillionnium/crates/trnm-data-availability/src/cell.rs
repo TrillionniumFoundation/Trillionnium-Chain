@@ -14,6 +14,8 @@ mod manifest;
 mod network;
 mod release;
 mod retention;
+#[cfg(unix)]
+mod runtime_root;
 mod store;
 
 pub use cache_budget::{CellCacheConfigV4, CellCacheUsageV2};
@@ -30,6 +32,11 @@ pub use release::{
 };
 pub use retention::{
     CellRetentionConfigV1, CellRetentionContractV1, CellRetentionReadbackV1, CellRetentionStoreV1,
+};
+#[cfg(unix)]
+pub use runtime_root::{
+    materialize_runtime_root_v1, runtime_files_root_v1, CellRuntimeFileV1, CellRuntimeLimitsV1,
+    CellRuntimeMaterializationV1, CellRuntimePlanV1, CellRuntimeRoleV1,
 };
 pub use store::{CellReleaseLimitsV1, CellStoreV1};
 

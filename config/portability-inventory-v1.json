@@ -82,7 +82,7 @@
       "package": "trnm-data-availability",
       "module": "M09",
       "path": "trillionnium/crates/trnm-data-availability",
-      "role": "Signed storage responsibility and retention plus a separate TCM1/TCQ1/TCS1 configured-peer cell byte cache with pinned identity, bounded TCP repair and complete no-replace materialization; no block consensus or model-use authority.",
+      "role": "Signed storage responsibility and retention plus a separate TCM1/TCQ1/TCS1 configured-peer cell byte cache with pinned identity, bounded TCP repair and complete no-replace materialization; no block consensus or model-use authority. Separate runtime-file original-byte segmentation/materialization consumes only disposable cache rows after durable destination writes; it is not an executable root, model loader, retention proof or model-use authority.",
       "consensus_authority": false,
       "production_activation": false
     },

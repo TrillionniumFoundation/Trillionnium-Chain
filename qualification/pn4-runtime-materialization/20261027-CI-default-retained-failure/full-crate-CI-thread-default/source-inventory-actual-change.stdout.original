@@ -1,0 +1,25 @@
+diff --git a/trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs b/trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs
+index 3298b4f03..914d44d3a 100644
+--- a/trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs
++++ b/trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs
+@@ -819,6 +819,20 @@ pub const FILES: &[(&str, &[u8])] = &[
+             "/../../../trillionnium/crates/trnm-data-availability/src/cell/retention/tests.rs"
+         )),
+     ),
++    (
++        "trillionnium/crates/trnm-data-availability/src/cell/runtime_root.rs",
++        include_bytes!(concat!(
++            env!("CARGO_MANIFEST_DIR"),
++            "/../../../trillionnium/crates/trnm-data-availability/src/cell/runtime_root.rs"
++        )),
++    ),
++    (
++        "trillionnium/crates/trnm-data-availability/src/cell/runtime_root_tests.rs",
++        include_bytes!(concat!(
++            env!("CARGO_MANIFEST_DIR"),
++            "/../../../trillionnium/crates/trnm-data-availability/src/cell/runtime_root_tests.rs"
++        )),
++    ),
+     (
+         "trillionnium/crates/trnm-data-availability/src/cell/store.rs",
+         include_bytes!(concat!(

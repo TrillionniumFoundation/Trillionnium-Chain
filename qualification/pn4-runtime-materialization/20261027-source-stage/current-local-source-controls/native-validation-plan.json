@@ -1,0 +1,114 @@
+{
+  "recorded_utc": "2026-10-27T06:37:25.924445+00:00",
+  "role": "NEW_M09_STRUCTURED_PLAN_SOURCE_VALIDATION_AND_TWO_ORIGINAL_TIMEOUT_DIAGNOSTICS_NO_OLD_BUDGET_RESET",
+  "root": "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026",
+  "source": {
+    "config/portability-inventory-v1.json": {
+      "bytes": 30217,
+      "sha256": "5f793f286d77c0182e2e31ff813741cc013ebc2843fcc5e4ca3ec1f1ad7486a1"
+    },
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md": {
+      "bytes": 377470,
+      "sha256": "ab1185665574d1cf31c85a9f695e4da5f4f1726b44737e4e3b6d49c9ffaab079"
+    },
+    "trillionnium/crates/trnm-data-availability/src/cell.rs": {
+      "bytes": 3969,
+      "sha256": "b7ffc860146e7a25c3c88315013151b0d043d6ab73a62a5def493e234602c3dc"
+    },
+    "trillionnium/crates/trnm-data-availability/src/cell/runtime_root.rs": {
+      "bytes": 19142,
+      "sha256": "1a313ea51f080c81d640c00aa947a080fbe81b0c5bae93765052e6bf44168050"
+    },
+    "trillionnium/crates/trnm-data-availability/src/cell/runtime_root_tests.rs": {
+      "bytes": 12314,
+      "sha256": "e2efe1dc3f6669de484df67e58744b17ad738a35e504e9a7c1c36610abe8d378"
+    },
+    "trillionnium/crates/trnm-data-availability/src/cell/store.rs": {
+      "bytes": 19863,
+      "sha256": "c2940adb239c83dddcdcb4f5198fa557ebf6660225dd20441360f0d22cdac274"
+    }
+  },
+  "Cargo_lock_sha256": "ecad80dd8b0b4b18df5d0e5f4ab2d71f47cffbade4fb963dfb871d93396a16d8",
+  "steps": [
+    {
+      "name": "001-strict-all-target-data-availability-Clippy",
+      "argv": [
+        "cargo",
+        "clippy",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-data-availability",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ]
+    },
+    {
+      "name": "002-six-new-runtime-original-controls-after-structured-plan-API-correction",
+      "argv": [
+        "cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-data-availability",
+        "--lib",
+        "cell::runtime_root::tests::"
+      ]
+    },
+    {
+      "name": "003-original-equal-sequence-single-function-timeout-diagnostic",
+      "argv": [
+        "cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-data-availability",
+        "--lib",
+        "cell::discovery::sequence_tests::tcp_equal_sequence_endpoint_equivocation_disqualifies_the_identity_without_any_dial",
+        "--",
+        "--exact"
+      ]
+    },
+    {
+      "name": "004-original-shared-budgets-single-function-timeout-diagnostic",
+      "argv": [
+        "cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-data-availability",
+        "--lib",
+        "cell::discovery::tests::discovery_and_cell_requests_share_original_connection_and_actual_byte_budgets",
+        "--",
+        "--exact"
+      ]
+    }
+  ],
+  "resources": {
+    "CPUQuota": "200%",
+    "MemoryMax": "2G",
+    "MemorySwapMax": "0",
+    "TasksMax": 256,
+    "Nice": 10,
+    "cargo_build_jobs": 1
+  },
+  "original_assertions_numeric_resource_caps_and_timeout_controls_unchanged": true,
+  "no_full_952_truth_rerun_or_original_budget_reset": true,
+  "source_stage_not_I09_or_I10_or_72hWAN": true,
+  "merge_ready": false,
+  "target": "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/ci-follow/M09-streamed-runtime-materializer-root-candidate-20261027-001/native-target",
+  "diagnostics_do_not_close_original_parallel_failure": true,
+  "original_discovery_tests_byte_identical_to_published_c960": {
+    "trillionnium/crates/trnm-data-availability/src/cell/discovery/tests.rs": "c36a09c69b05c143653b5081f3ef8c35d172e732721d283edb33366043313cfd",
+    "trillionnium/crates/trnm-data-availability/src/cell/discovery/sequence_tests.rs": "ba85b6bd81f2109e54af2878c31f0b75e5c3600d0f17eec861778efd3c4e1bd3"
+  },
+  "preserved_strict_lint_RED": [
+    "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/ci-follow/M09-structured-plan-Clippy-source-correction-20261027-001/actual-native-runner-terminal.json",
+    "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/ci-follow/M09-strict-lint-and-original-discovery-timeout-diagnosis-20261027-001/actual-native-runner-terminal.json"
+  ]
+}
