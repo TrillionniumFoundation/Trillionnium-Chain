@@ -428,6 +428,22 @@ impl Node {
             .cloned()
             .ok_or_else(|| "OWNER_PUBLIC_SERVICE_DOMAIN_UNBOUND".into())
     }
+    /// Begin an original durable public-service crash fence for an untrusted
+    /// standalone History page. No new schema or CPU budget is constructed.
+    ///
+    /// The ordinary V3 listener already owns this Node's active epoch when
+    /// the listener count is nonzero, and the continuous runtime has its
+    /// separate journal. Do not borrow another listener's last-close right.
+    /// In a standalone Node, start one persistent active marker BEFORE any
+    /// expensive History decode/W1/M06 operation; a real crash leaves it
+    /// behind so a later process cannot silently forgive unknown CPU debt.
+    pub(crate) fn begin_remote_history_cpu_epoch(&mut self) -> Result<bool> {
+        if self.is_continuous() || self.public_service_epoch_listeners != 0 {
+            return Ok(false);
+        }
+        self.begin_ordinary_public_service_epoch()
+    }
+
     /// Use one existing Node-owned budget for all remotely sourced History
     /// proof imports, including loopback and nonloopback sources. A standalone
     /// sync Node receives a COLD original CPU epoch, not the 2s diagnostic
