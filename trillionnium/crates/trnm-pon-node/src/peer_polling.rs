@@ -335,10 +335,35 @@ fn page(
     )?;
     Ok((Some(packet), next, parsed.complete))
 }
+// A local listener may have a WAN pinned peer even when its bind address is
+// loopback. Peer egress must require the same administrator-owned physical
+// cgroup as the public receiver; authentication alone is not CPU funding.
+fn require_peer_host_budget(
+    source: SocketAddr,
+) -> Result<Option<crate::host_kernel_parent::HostKernelBudget>> {
+    if source.ip().is_loopback() {
+        return Ok(None); // Explicit local developer peer only.
+    }
+    let budget = crate::host_kernel_parent::require_host_kernel_budget(
+        source,
+        Some(crate::host_kernel_parent::FIXED_PUBLIC_KERNEL_PARENT),
+    )?
+    .ok_or("PUBLIC_HOST_KERNEL_REQUIRED")?;
+    budget.verify()?;
+    Ok(Some(budget))
+}
+
 /// Native task/parent/clock checks bracket the immutable owned full proof replay.
 /// A repeated already-admitted exact packet uses the existing durable admission fact.
-fn admit_page(node: &Mutex<Node>, packet: Packet, end: Instant, stop: &AtomicBool) -> Result<bool> {
+fn admit_page(
+    node: &Mutex<Node>, packet: Packet, end: Instant, stop: &AtomicBool,
+    source: SocketAddr,
+) -> Result<bool> {
+    let host_kernel = require_peer_host_budget(source)?;
     let cpu = {
+        if let Some(kernel) = &host_kernel {
+            kernel.verify()?;
+        }
         let owner = lock(node, end, stop)?;
         // The peer is authenticated, not CPU-funded. A pinned peer must
         // never mint its own allowance or bypass the public service budget.
@@ -383,6 +408,11 @@ fn admit_page(node: &Mutex<Node>, packet: Packet, end: Instant, stop: &AtomicBoo
         // Preserve any durable native block, but an outbound poller cannot
         // report complete historical synchronization with UNKNOWN CPU.
         return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+    }
+    if let Some(kernel) = &host_kernel {
+        // A completed native acceptance is retained even if the Host's
+        // membership or physical limits fail during the last W1 call.
+        kernel.verify()?;
     }
     native
 }
@@ -641,7 +671,7 @@ impl Engine {
         };
         let mut verified = false;
         if let Some(packet) = packet {
-            match admit_page(node, packet, end, stop) {
+            match admit_page(node, packet, end, stop, cfg.peers[index].address) {
                 Ok(value) => verified = value,
                 Err(error) => {
                     self.reject(
@@ -799,6 +829,11 @@ where
         let startup_end = started + Duration::from_secs(10);
         let settings = lock(&node, startup_end, &stop)?.settings().clone();
         cfg.validate(&settings)?;
+        // A loopback listener is not an exemption for remote pinned peers.
+        // Check the original fixed kernel parent before any hostile peer RPC.
+        let host_kernels = cfg.peers.iter().map(|peer| {
+            require_peer_host_budget(peer.address)
+        }).collect::<Result<Vec<_>>>()?;
         // The sibling V3 listener and this poller start concurrently.
         // Await its original Node CPU binding before any remote history Work;
         // absent/unknown identity fails closed after the original startup cap.
@@ -845,10 +880,18 @@ where
             if Instant::now() >= end || stop.load(Ordering::Acquire) {
                 break;
             }
+            // Per-cycle physical checks supplement, not replace, real W1
+            // CPU-account checks and original OS cgroup enforcement.
+            for kernel in host_kernels.iter().flatten() {
+                kernel.verify()?;
+            }
             cycles += 1;
             match engine.cycle(&poll_context, &mut rpc, &mut observe) {
                 Err(error) if error.is(ErrorCode::PeerPollCancelled) => break,
                 other => other?,
+            }
+            for kernel in host_kernels.iter().flatten() {
+                kernel.verify()?;
             }
             next = Instant::now() + Duration::from_millis(cfg.poll_interval_ms);
         }
@@ -983,6 +1026,7 @@ mod tests {
             packet,
             Instant::now() + Duration::from_secs(10),
             &stop,
+            "127.0.0.1:1".parse().unwrap(),
         ).unwrap_err();
         assert_eq!(refused.to_string(), "OWNER_PUBLIC_SERVICE_DOMAIN_UNBOUND");
         assert_eq!(guarded.lock().unwrap().stats().unwrap(), before);
@@ -1030,6 +1074,7 @@ mod tests {
             packet,
             Instant::now() + Duration::from_secs(10),
             &stop,
+            "127.0.0.1:1".parse().unwrap(),
         ).unwrap_err();
         assert_eq!(refused.to_string(), "WORK:Product");
         let final_state = cpu.observe().unwrap();
