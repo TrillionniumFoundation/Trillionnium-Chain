@@ -110,3 +110,7 @@ TCP fetch/mine/reject/admit/cold-reopen. The actual CLI integration test checks
 fetch, file equality, native mining, pure push and incompatible profile refusal.
 These finite tests do not establish 72-hour adversarial WAN liveness, task
 non-amortization, energy costs, ML improvement or production activation.
+
+The separate [finite cost and ingress campaigns](PURE_PON_COST_CAMPAIGNS_V1.md)
+retain the fixed strategy matrix, all attempted work, unique false-trace floods,
+honest interleaving and cold-reopen observations without upgrading those claims.
