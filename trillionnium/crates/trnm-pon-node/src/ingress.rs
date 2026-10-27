@@ -2836,6 +2836,68 @@ mod tests {
         );
     }
 
+    #[cfg(target_os = "linux")]
+    #[test]
+    fn revoked_host_before_full_history_admission_settles_cpu_without_chainwork() {
+        use std::sync::atomic::{AtomicUsize, Ordering};
+        let observed = now().unwrap();
+        let settings = crate::Settings::development(Some(observed - 100)).unwrap();
+        let producer_dir = tempfile::tempdir().unwrap();
+        let producer = Node::open(producer_dir.path(), settings.clone(), 2).unwrap();
+        let packet = producer.make(
+            settings.genesis(),
+            vec![],
+            crate::development_public(0).unwrap(),
+            settings.genesis_time() + 10,
+            4096,
+        ).unwrap();
+        let id = packet.id().unwrap();
+        let page = Page {
+            schema: "pon-native-history-v1".into(),
+            network: hex::encode(settings.network()),
+            parameters: hex::encode(settings.parameters()),
+            genesis: hex::encode(settings.genesis()),
+            tip: hex::encode(id),
+            after: hex::encode(settings.genesis()),
+            packets: vec![hex::encode(packet.encode().unwrap())],
+            next: hex::encode(id),
+            complete: true,
+        };
+        let dir = tempfile::tempdir().unwrap();
+        let mut receiver = Node::open(dir.path(), settings.clone(), 2).unwrap();
+        let before = receiver.stats().unwrap();
+        let domain = receiver.remote_history_cpu_domain().unwrap();
+        let calls = AtomicUsize::new(0);
+        let result = receive_page(
+            &mut receiver,
+            &domain,
+            page,
+            id,
+            settings.genesis(),
+            observed,
+            &|| {
+                // After the paid page decode has started, simulate an
+                // original Host identity/limit loss at one real checkpoint.
+                if calls.fetch_add(1, Ordering::SeqCst) >= 8 {
+                    return Err("TEST_HOST_OWNER_REVOKED".into());
+                }
+                Ok(())
+            },
+        ).unwrap_err();
+        assert_eq!(result.to_string(), "TEST_HOST_OWNER_REVOKED");
+        assert!(calls.load(Ordering::SeqCst) >= 9);
+        let account = domain.observe().unwrap();
+        assert_eq!(account.in_flight, 0);
+        assert!(!account.accounting_unavailable);
+        assert_eq!(receiver.stats().unwrap(), before);
+        assert_eq!(receiver.read_active().unwrap().0, settings.genesis());
+        assert!(receiver.parent_height(id).is_err());
+        drop(receiver);
+        let recovered = Node::open(dir.path(), settings, 2).unwrap();
+        assert_eq!(recovered.stats().unwrap(), before);
+        assert!(recovered.parent_height(id).is_err());
+    }
+
     #[test]
     fn history_host_checks_are_bounded_while_cpu_checks_remain_each_w1_progress() {
         use trnm_crypto_primitives::pon_work::VerificationProgress as P;
