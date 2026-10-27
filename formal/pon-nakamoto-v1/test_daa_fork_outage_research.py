@@ -78,6 +78,22 @@ class ForkOutageScreenTests(unittest.TestCase):
             with self.subTest(p=p), self.assertRaises(ValueError):
                 ForkSimulator(p)
 
+    def test_partition_reorg_confirmation_uses_depth_and_work(self):
+        # The original depth-only count is not client policy confirmation.
+        # Preserve the historical metric and add the exact conjunction.
+        for algorithm in ALGORITHMS:
+            for seed in (0, 1, 11, 23):
+                with self.subTest(algorithm=algorithm, seed=seed):
+                    result = simulate(Parameters(algorithm=algorithm, seed=seed))
+                    self.assertTrue(result["partition_healed"])
+                    confirmed = result["losing_branch_depth_work_confirmed_removed"]
+                    depth_only = result["losing_branch_depth6_blocks_removed"]
+                    self.assertGreaterEqual(confirmed, 0)
+                    self.assertLessEqual(confirmed, depth_only)
+                    self.assertLessEqual(depth_only, result["losing_branch_blocks_removed"])
+                    self.assertEqual(result["actual_w1_proofs"], 0)
+                    self.assertFalse(result["consensus_activated"])
+
     def test_campaign_has_frozen_bound_and_reproducible_digest(self):
         out = campaign()
         self.assertEqual(out["cases"], 3 * 3 * 4 * 2)
