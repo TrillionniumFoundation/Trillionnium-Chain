@@ -131,3 +131,24 @@ The research `ShadowJournal.get` read API now performs the same immutable contex
 ### Committed-but-unreadable effects remain Unknown
 
 After an `append` or research active-tip CAS has COMMITted, any failed row/context/schema readback now produces `UnknownEffect` rather than a precommit `JournalError`. Injection regressions confirm that original header/tip bytes survive cold reopening when the immediate readback failed. The caller must reconcile the original operation identity and cannot assume the write was absent. This change grants no actual native chain, release or execution authority.
+
+## Exact active-tip pin in upstream research audit (2026-10-27)
+
+`ShadowJournal.audit_against_upstream` now requires `expected_active`,
+the 32-byte nonzero active branch tip independently pinned by the native owner.
+Inside one local SQLite read snapshot it audits the complete graph and local
+active selection, rejects a different selected tip **before** invoking packet
+callbacks, checks each externally supplied packet/projection, then rechecks
+the same local tip. This prevents a stale research CAS after a real reorg from
+passing solely because the old branch's stored rows are internally consistent.
+The extra verification is diagnostic: it is **not** proof that the upstream
+owner was held stable. A production caller must capture the native tip and
+complete header/material facts under one externally fenced owner readback;
+an attacker-supplied `expected_active` or callback remains untrusted.
+
+The existing cold SQLite and byte-verification tests retain their original
+meaning. The additional negative test creates sibling research branches,
+switches the local selected tip and rejects a stale external expectation
+before invoking callbacks, then cold-reopens the same identity. No existing
+legacy DAA, Q4 signature, W1 work or production flag is changed. Exact-source
+Python/Rust native tests and WAN acceptance remain separate OPEN gates.

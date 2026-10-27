@@ -372,17 +372,23 @@ class ShadowJournal:
         derive_projection: Callable[[ShadowHeader, bytes], bytes],
         *,
         max_rows: int,
+        expected_active: bytes,
     ) -> int:
         """Compare all local rows to independently supplied upstream bytes/facts.
 
-        Neither callback is authenticated here. Only the original native Node
-        verifier may decide work/state/target authority. A forged callback can
-        still make forged research receipts; this method issues no such token.
+        A caller must supply the independently read, pinned original-owner
+        active tip from the SAME stable upstream snapshot as the packet facts.
+        A reorged native tip cannot be hidden behind individually valid rows.
+        Neither callback nor expected_active is authenticated here: a forged
+        callback or stale supplied tip can manufacture research agreement.
+        Only the original native Node verifier may decide work/state/target.
         No owner effects or repairs are dispatched in this read-only audit.
         """
         if (not callable(read_packet) or not callable(derive_projection)
                 or type(max_rows) is not int or not 1 <= max_rows <= self.max_headers):
             raise JournalError('OWNER_AUDIT_BUDGET_OR_CALLBACK')
+        if type(expected_active) is not bytes or len(expected_active) != 32 or expected_active == ZERO:
+            raise JournalError('OWNER_ACTIVE_IDENTITY')
         # One read snapshot: the application must not let the upstream owner
         # advance a branch or append a row while an audit is being assembled.
         if self.db.in_transaction:
@@ -391,7 +397,9 @@ class ShadowJournal:
         try:
             if self.db.execute('SELECT COUNT(*) FROM daa_shadow_headers_v1').fetchone()[0] > max_rows:
                 raise JournalError('OWNER_AUDIT_BUDGET')
-            self._audit_snapshot()  # graph and tip in the same upstream read snapshot
+            self._audit_snapshot()  # graph and tip in the same local read snapshot
+            if self.active() != expected_active:
+                raise JournalError('OWNER_ACTIVE_MISMATCH')
             scanned = 0
             cursor = self.db.execute('SELECT canonical FROM daa_shadow_headers_v1 '
                                      'ORDER BY height,block_id')
@@ -410,6 +418,10 @@ class ShadowJournal:
                     raise JournalError('OWNER_PROJECTION_UNAVAILABLE')
                 if projection != header.projection_hash:
                     raise JournalError('OWNER_PROJECTION_MISMATCH')
+            # A callback with access to the same local connection cannot
+            # silently alter selection and still claim this pinned tip.
+            if self.active() != expected_active:
+                raise JournalError('OWNER_ACTIVE_MISMATCH')
             return scanned
         finally:
             # SELECT state is never published and a failed callback cannot leave

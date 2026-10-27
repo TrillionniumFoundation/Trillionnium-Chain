@@ -216,7 +216,7 @@ class ShadowJournalTests(unittest.TestCase):
                 return packet
             projection = lambda h, raw: sha(b'projection-outside-authority:' + h.parent_id + raw)
             self.assertEqual(journal.audit_against_upstream(
-                hostile_reader, projection, max_rows=1), 1)
+                hostile_reader, projection, max_rows=1, expected_active=GEN), 1)
             self.assertEqual(observed, [first.block_id])
             self.assertEqual(journal.audit(), 1)
             with self.assertRaisesRegex(JournalError, 'UNKNOWN_PARENT_OR_HEADER'):
@@ -299,7 +299,7 @@ class ShadowJournalTests(unittest.TestCase):
                     journal.audit()
                 with self.assertRaisesRegex(JournalError, 'OWNER_AUDIT_REENTRANT'):
                     journal.audit_against_upstream(
-                        lambda _: b'proof', lambda *_: bytes(32), max_rows=1
+                        lambda _: b'proof', lambda *_: bytes(32), max_rows=1, expected_active=GEN
                     )
                 self.assertTrue(journal.db.in_transaction)
             finally:
@@ -317,10 +317,10 @@ class ShadowJournalTests(unittest.TestCase):
                 return packets[header.block_id]
             def derive(header, raw):
                 return sha(b'projection-outside-authority:' + header.parent_id + raw)
-            self.assertEqual(journal.audit_against_upstream(read, derive, max_rows=2), 2)
+            self.assertEqual(journal.audit_against_upstream(read, derive, max_rows=2, expected_active=GEN), 2)
             self.assertEqual(journal.active(), GEN)  # audit must not select a tip
             with self.assertRaisesRegex(JournalError, 'OWNER_AUDIT_BUDGET'):
-                journal.audit_against_upstream(read, derive, max_rows=1)
+                journal.audit_against_upstream(read, derive, max_rows=1, expected_active=GEN)
             self.assertEqual(journal.audit(), 2)
 
     def test_external_owner_refuses_missing_changed_or_fake_evidence(self):
@@ -330,16 +330,55 @@ class ShadowJournalTests(unittest.TestCase):
             good = lambda h: packet
             derived = lambda h, raw: sha(b'projection-outside-authority:' + h.parent_id + raw)
             with self.assertRaisesRegex(JournalError, 'OWNER_PACKET_UNAVAILABLE'):
-                journal.audit_against_upstream(lambda _: None, derived, max_rows=1)
+                journal.audit_against_upstream(lambda _: None, derived, max_rows=1, expected_active=GEN)
             with self.assertRaisesRegex(JournalError, 'OWNER_PACKET_MISMATCH'):
-                journal.audit_against_upstream(lambda _: packet + b'x', derived, max_rows=1)
+                journal.audit_against_upstream(lambda _: packet + b'x', derived, max_rows=1, expected_active=GEN)
             with self.assertRaisesRegex(JournalError, 'OWNER_PROJECTION_MISMATCH'):
-                journal.audit_against_upstream(good, lambda *_: sha(b'wrong'), max_rows=1)
+                journal.audit_against_upstream(good, lambda *_: sha(b'wrong'), max_rows=1, expected_active=GEN)
             with self.assertRaisesRegex(JournalError, 'OWNER_PROJECTION_UNAVAILABLE'):
-                journal.audit_against_upstream(good, lambda *_: b'a', max_rows=1)
+                journal.audit_against_upstream(good, lambda *_: b'a', max_rows=1, expected_active=GEN)
             with self.assertRaisesRegex(JournalError, 'OWNER_AUDIT_BUDGET_OR_CALLBACK'):
-                journal.audit_against_upstream(good, derived, max_rows=0)
+                journal.audit_against_upstream(good, derived, max_rows=0, expected_active=GEN)
             self.assertEqual(journal.audit(), 1)
+
+    def test_owner_active_tip_mismatch_refuses_before_replaying_otherwise_valid_packets(self):
+        # Two valid local rows do NOT imply the selected branch still matches
+        # the independently pinned original native Node snapshot.
+        with ShadowJournal(self.path, CTX, GEN) as journal:
+            first, first_packet = candidate(GEN, 1)
+            other, other_packet = candidate(GEN, 1, 1)
+            journal.append(first, first_packet)
+            journal.append(other, other_packet)
+            sources = {first.block_id: first_packet, other.block_id: other_packet}
+            reads = []
+            def source(h):
+                reads.append(h.block_id)
+                return sources[h.block_id]
+            def derive(h, raw):
+                return sha(b'projection-outside-authority:' + h.parent_id + raw)
+            journal.activate(first.block_id, GEN)
+            with self.assertRaisesRegex(JournalError, 'OWNER_ACTIVE_MISMATCH'):
+                journal.audit_against_upstream(source, derive, max_rows=2,
+                                               expected_active=GEN)
+            self.assertEqual(reads, [])
+            self.assertEqual(journal.audit_against_upstream(
+                source, derive, max_rows=2, expected_active=first.block_id), 2)
+            journal.activate(other.block_id, first.block_id)  # research CAS; not PoN fork choice
+            with self.assertRaisesRegex(JournalError, 'OWNER_ACTIVE_MISMATCH'):
+                journal.audit_against_upstream(source, derive, max_rows=2,
+                                               expected_active=first.block_id)
+            self.assertEqual(journal.audit_against_upstream(
+                source, derive, max_rows=2, expected_active=other.block_id), 2)
+            for invalid in (None, ZERO, b'x', 'untrusted', bytearray(other.block_id)):
+                with self.subTest(invalid=type(invalid).__name__):
+                    with self.assertRaisesRegex(JournalError, 'OWNER_ACTIVE_IDENTITY'):
+                        journal.audit_against_upstream(source, derive, max_rows=2,
+                                                       expected_active=invalid)
+            self.assertEqual(journal.active(), other.block_id)
+            self.assertEqual(journal.audit(), 2)
+        with ShadowJournal(self.path, CTX, GEN) as cold:
+            self.assertEqual(cold.active(), other.block_id)
+            self.assertEqual(cold.audit(), 2)
 
     def test_symlink_and_preexisting_foreign_database_fail_closed(self):
         other = Path(self.tmp.name) / 'foreign'
