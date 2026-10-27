@@ -2121,7 +2121,7 @@ fn call_authenticated_durable_inner(
 // unchanged Host limits at original W1 stage boundaries: at most 64 transcript
 // tiles proceed without a physical owner recheck. These are resource checks,
 // not mathematical W1 validity or blockchain authorization.
-fn history_kernel_work_checkpoint(
+pub(crate) fn history_kernel_work_checkpoint(
     point: trnm_crypto_primitives::pon_work::VerificationProgress,
 ) -> bool {
     use trnm_crypto_primitives::pon_work::VerificationProgress;
@@ -2382,6 +2382,74 @@ pub fn receive_public_page_from(
     // when the last local Host owner observation fails.
     kernel.verify()?;
     native
+}
+
+/// Selects two already authenticated, independently signed operation claims.
+/// These IDs and the untrusted Page bytes confer no permission. V5 only allows
+/// one exact successor of the current active parent per signed view.
+#[derive(Clone, Copy)]
+pub struct OwnedHistoryRequest<'a> {
+    pub raw_page: &'a [u8],
+    pub tip: Hash,
+    pub after: Hash,
+    pub validation_operation_id: &'a str,
+    pub activation_operation_id: &'a str,
+    pub observed_now: u64,
+}
+
+#[derive(Serialize)]
+pub struct OwnedHistoryStepResult {
+    pub operation_id: String,
+    pub native_id: Option<Hash>,
+    pub native_error: Option<String>,
+    pub cpu: public_v3::ServiceMutationCpuSettlement,
+    pub accounting_record_persisted: bool,
+    pub accounting_fault_persistence_failed: bool,
+}
+
+/// Native effects and accounting are reported separately. A late local fault
+/// never retracts a committed block and never qualifies History completion.
+#[derive(Serialize)]
+pub struct OwnedHistoryResult {
+    pub schema: &'static str,
+    pub validation: OwnedHistoryStepResult,
+    pub activation: Option<OwnedHistoryStepResult>,
+    pub activation_start_error: Option<String>,
+    pub terminal_boundary_error: Option<String>,
+    pub completed: bool,
+    pub durable_result_preserved: bool,
+    pub public_network_ready: bool,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) enum OwnedHistoryProgress {
+    Decode,
+    Context,
+    Work(trnm_crypto_primitives::pon_work::VerificationProgress),
+    Execution(trnm_mvcc_fee::pon_executor::ExecutionProgress),
+    Activation,
+}
+
+/// Explicit authorized import. Every external caller, including a loopback
+/// proxy, must satisfy the ORIGINAL administrator-owned Host parent. Generic
+/// receive_page/sync_from still refuse continuous mode without this operation.
+pub fn receive_public_owned_history_from(
+    node: &mut Node,
+    source: SocketAddr,
+    request: OwnedHistoryRequest<'_>,
+) -> Result<OwnedHistoryResult> {
+    let kernel = crate::host_kernel_parent::require_host_kernel_budget(
+        source,
+        Some(crate::host_kernel_parent::FIXED_PUBLIC_KERNEL_PARENT),
+    )?
+    .ok_or("PUBLIC_HOST_KERNEL_REQUIRED")?;
+    kernel.verify()?;
+    let mut result = node.receive_owned_history_operation(request, &|_| kernel.verify())?;
+    if let Err(error) = kernel.verify() {
+        result.terminal_boundary_error = Some(error.to_string());
+        result.completed = false;
+    }
+    Ok(result)
 }
 
 pub fn sync_from(

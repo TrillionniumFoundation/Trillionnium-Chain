@@ -1248,12 +1248,9 @@ fn continuous_publish(value: &Value) -> Result<()> {
     out.flush()?;
     Ok(())
 }
-fn continuous_command(
+fn continuous_outside(
     args: &BTreeMap<String, String>,
-    started: Instant,
-    recovery: bool,
-) -> Result<Value> {
-    use trnm_pon_node::operator_continuous_controller::{Controller, OutsideLaunch};
+) -> Result<trnm_pon_node::operator_continuous_controller::OutsideLaunch<'_>> {
     const OPTIONS: [&str; 7] = [
         "--launch",
         "--launch-sha256",
@@ -1266,21 +1263,8 @@ fn continuous_command(
     if args.len() != OPTIONS.len() || args.keys().any(|k| !OPTIONS.contains(&k.as_str())) {
         return Err("OWNER_CONTINUOUS_ARGUMENTS".into());
     }
-    if recovery {
-        return trnm_pon_node::operator_continuous_controller::prepare_known_unclean_restart(
-            OutsideLaunch {
-                path: Path::new(need(args, "--launch")?),
-                sha256: need(args, "--launch-sha256")?,
-                registry_key: need(args, "--registry-key")?,
-                task_key: need(args, "--task-key")?,
-                source_commit: need(args, "--source-commit")?,
-                node_policy_source: need(args, "--policy-source")?,
-                registry2_package: need(args, "--registry2-package")?,
-            },
-        );
-    }
-    let mut controller = Controller::open_pinned(
-        OutsideLaunch {
+    Ok(
+        trnm_pon_node::operator_continuous_controller::OutsideLaunch {
             path: Path::new(need(args, "--launch")?),
             sha256: need(args, "--launch-sha256")?,
             registry_key: need(args, "--registry-key")?,
@@ -1289,8 +1273,21 @@ fn continuous_command(
             node_policy_source: need(args, "--policy-source")?,
             registry2_package: need(args, "--registry2-package")?,
         },
-        started,
-    )?;
+    )
+}
+fn continuous_command(
+    args: &BTreeMap<String, String>,
+    started: Instant,
+    recovery: bool,
+) -> Result<Value> {
+    use trnm_pon_node::operator_continuous_controller::Controller;
+    let outside = continuous_outside(args)?;
+    if recovery {
+        return trnm_pon_node::operator_continuous_controller::prepare_known_unclean_restart(
+            outside,
+        );
+    }
+    let mut controller = Controller::open_pinned(outside, started)?;
     continuous_publish(
         &json!({"schema":"restricted-owner-continuous-startup-v1","startup_scope":controller.startup(),"public_network_ready":false,"original8193_qualification":false}),
     )?;
@@ -1334,6 +1331,12 @@ fn run() -> Result<Value> {
     }
     if command == "operator-continuous-recover" {
         return continuous_command(&args, command_started, true);
+    }
+    if command == "operator-continuous-history-recover" {
+        return trnm_pon_node::operator_continuous_controller::resume_pinned_history_once(
+            continuous_outside(&args)?,
+            command_started,
+        );
     }
     if args.get("--development").map(String::as_str) != Some("true") {
         return Err(

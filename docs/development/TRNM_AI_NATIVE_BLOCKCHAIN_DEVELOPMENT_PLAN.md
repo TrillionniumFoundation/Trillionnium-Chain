@@ -3796,3 +3796,54 @@ grant production, model-efficacy, independent-security or release acceptance.
 The original #498 continuation now carries the existing CPU/Host/permit checkpoints inside History activation and continuous admission context. Actual two-worker settlement (including a joined failed child) survives cold journal reopen; a cancelled three-block History completion can retry and activate with its original owner. Nine distinct selected native regressions and strict all-target Clippy for M01/Node passed on source/binary-bound Rust 1.95 output. Baseline API/constructor, inventory, formatter and CI-order failures and their repairs are retained in [the complete increment evidence](../../evidence/pon-history-continuity-20261027/README.md).
 
 The P0 continuous History acceptance remains **OPEN**: generic import still lacks an authorized durable per-operation scope. Keeping that path closed prevents unjournaled work but cannot count as completion. Successful durable decode/W1/M06/activation, internal cancellation, actual crash restart and every child settlement must be demonstrated together without resetting debt or disabling import. This increment grants no public-network, whole-workspace, performance or production qualification.
+
+## 2026-10-27: authorized single-successor History and known-prefix process recovery
+
+The follow-up on PR503 parent `081c04e893850a42b539d98d6ccfa659496e99ee`
+adds an explicitly authorized, journal-backed single-successor operation. Original
+independent validation/activation claims cover paid Page decode, full W1, two
+actual M06 children, original admission and internally cancellable activation.
+An opaque recovery handle resumes an already admitted exact successor only after
+matching the original known settlement and fresh signed claims; ordinary V5
+advance/pending/unknown refusals remain intact. The concrete-source fixed Host
+permit remains mandatory at the public entry, including loopback.
+
+Actual native evidence now includes seven new passing tests and nine retained
+passing regressions on one source-bound unique executable, plus strict all-target,
+all-feature Clippy for M01/Node, 34 source-integrity tests and 91 CI-contract tests.
+The mandatory process test performs real SIGKILL/wait4 after known validation and
+cancelled-activation settlements, then starts a second native process with zero
+initial CPU credit, spends fresh selected claims, activates the target, cleanly
+closes and reads the journal back. Old receipts remain unchanged and repeated
+residual settlement is refused. A separate actual causal negative reproduced the
+original protected receiver accepting packet nonce 8 under delegation nonce 9;
+the shared original nonce fence now refuses it before Work or children.
+
+The original 25-package graph and Cargo.lock are unchanged. PR503's real CI blob
+pin failure occurred before native execution; this follow-up retains all sixteen
+checks and explicitly rebinds the three reviewed byte changes. Three earlier
+fixture-start failures, the first adapter's nonce failure, the original receiver's
+independent nonce failure, and the `/proc` observer failure are preserved in the
+[complete increment evidence](../../evidence/pon-history-journal-operation-20261027/README.md).
+The [operation/recovery protocol](../protocol/pon-nakamoto-v1/details/CONTINUOUS_HISTORY_OPERATION_V1.md)
+defines the exact enabled API and closed-process observation boundary. Synthetic
+model bytes and disclosed local test authority keys do not qualify a real model
+forward, external Registry2 admission, public Host campaign, independent security
+or production operation.
+
+The standard whole-repository Markdown gate was executed and remains locally
+blocked by intentionally unmaterialized historical evidence in the genuine sparse
+checkout. The failure is retained. All local targets in the new documents exist;
+all 53 missing historical link references resolve to preserved Git index paths.
+That supplemental check is not a full-checkout gate PASS or a new remote CI result.
+
+**Whole History P0 remains OPEN.** Validation-in-progress, admission-commit-before-
+settlement, activation-commit-before-settlement and arbitrary multistep fork/reorg
+crashes are not qualified by the known-settled process test. The next independent
+V6 research namespace must separate an externally signed owner frontier from
+each execution parent, bind effect intent to atomic native SQLite markers,
+preserve irreversible local spent anchors and retain unknown CPU splits while
+requiring independent conservative closed-process cost evidence. It must actually
+recover the validation and activation-commit windows; retaining V5 HOLD alone
+does not satisfy that work. V5 signed domains, stored events and production gates
+are not to be reinterpreted or relaxed.

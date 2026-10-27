@@ -54,9 +54,10 @@ pub use store::storage_service::{
     NativeCellRepairRequestV1, NativeCellRetentionRequestV1,
 };
 pub use store::{
-    ConfirmationBatch, ContinuousSearchRequest, DerivedCommitmentStatus, MiningEpochCancellation,
-    NativeAccountProofProgress, Node, Observation, OwnedContinuousLeaseResult,
-    OwnedContinuousPoolResult, OwnedMutationResult, OwnedSearchResult,
+    ConfirmationBatch, ContinuousEpochCancellation, ContinuousHistoryRecovery,
+    ContinuousSearchRequest, DerivedCommitmentStatus, HistoryRecoverySelection,
+    MiningEpochCancellation, NativeAccountProofProgress, Node, Observation,
+    OwnedContinuousLeaseResult, OwnedContinuousPoolResult, OwnedMutationResult, OwnedSearchResult,
 };
 use trnm_crypto_primitives::pon_work;
 use trnm_crypto_primitives::qualified_work_task::{derive_matrices, AdmissionContext};

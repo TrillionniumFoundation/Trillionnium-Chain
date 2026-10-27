@@ -24,6 +24,8 @@ use std::{
     time::{Duration, Instant},
 };
 pub const MAX_FRAME_BYTES: usize = 4 * 1024 * 1024;
+mod history_recovery_once;
+pub use history_recovery_once::resume_pinned_history_once;
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
 struct ReceiverService {
@@ -78,6 +80,14 @@ pub enum Step {
     },
     ReceiverValidation {
         packet: String,
+    },
+    ReceiverHistory {
+        source: SocketAddr,
+        raw_page: String,
+        tip: String,
+        after: String,
+        validation_operation_id: String,
+        activation_operation_id: String,
     },
     Activate {
         block: String,
@@ -420,6 +430,25 @@ impl Controller {
                 Step::ReceiverValidation { packet: value } => serde_json::to_value(
                     node.receive_owned_continuous_packet(packet(&value)?, ingress::now()?)?,
                 )?,
+                Step::ReceiverHistory {
+                    source,
+                    raw_page,
+                    tip,
+                    after,
+                    validation_operation_id,
+                    activation_operation_id,
+                } => serde_json::to_value(ingress::receive_public_owned_history_from(
+                    &mut node,
+                    source,
+                    ingress::OwnedHistoryRequest {
+                        raw_page: raw_page.as_bytes(),
+                        tip: crate::digest(&tip)?,
+                        after: crate::digest(&after)?,
+                        validation_operation_id: &validation_operation_id,
+                        activation_operation_id: &activation_operation_id,
+                        observed_now: ingress::now()?,
+                    },
+                )?)?,
                 Step::Activate { block, receiver } => {
                     serde_json::to_value(node.activate_owned_continuous_packet(
                         crate::digest(&block)?,

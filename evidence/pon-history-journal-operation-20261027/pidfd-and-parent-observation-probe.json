@@ -1,0 +1,26 @@
+{
+  "schema": "owned-child-pidfd-and-parent-observation-probe-v1",
+  "history_recovery_qualified": false,
+  "passed": true,
+  "owned_child_namespace_pid": 9,
+  "pidfd_info": {
+    "pos": "0",
+    "flags": "02000002",
+    "mnt_id": "4",
+    "ino": "210134",
+    "Pid": "208459",
+    "NSpid": "208459\t9"
+  },
+  "observed_identity": {
+    "visible_pid": 208459,
+    "visible_parent_pid": 208458,
+    "namespace_pids": [
+      208459,
+      9
+    ],
+    "pid_namespace_inode": 4026532347,
+    "starttime_ticks": 1469262
+  },
+  "observed_status_count": 22,
+  "descendants": []
+}
