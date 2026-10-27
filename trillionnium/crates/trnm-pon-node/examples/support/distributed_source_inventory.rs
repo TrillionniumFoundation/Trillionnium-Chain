@@ -2773,6 +2773,20 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_transfer.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_transfer.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_transfer/tests.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_transfer/tests.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-mvcc-fee/src/public_evaluation.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -5048,6 +5062,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-protocol/src/pq_transfer.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-protocol/src/pq_transfer.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-protocol/src/qualified_work_task.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -5073,6 +5094,83 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-protocol/src/qualified_work_task/lifecycle_v4.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-protocol/tests/fixtures/pq_transfer/duplicate-hint.bin",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-protocol/tests/fixtures/pq_transfer/duplicate-hint.bin"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-protocol/tests/fixtures/pq_transfer/generation-two.bin",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-protocol/tests/fixtures/pq_transfer/generation-two.bin"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-protocol/tests/fixtures/pq_transfer/low-fee.bin",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-protocol/tests/fixtures/pq_transfer/low-fee.bin"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-protocol/tests/fixtures/pq_transfer/manifest.json",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-protocol/tests/fixtures/pq_transfer/manifest.json"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-protocol/tests/fixtures/pq_transfer/nonce-two.bin",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-protocol/tests/fixtures/pq_transfer/nonce-two.bin"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-protocol/tests/fixtures/pq_transfer/public.der",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-protocol/tests/fixtures/pq_transfer/public.der"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-protocol/tests/fixtures/pq_transfer/same-statement-second-signature.bin",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-protocol/tests/fixtures/pq_transfer/same-statement-second-signature.bin"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-protocol/tests/fixtures/pq_transfer/transfer.bin",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-protocol/tests/fixtures/pq_transfer/transfer.bin"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-protocol/tests/fixtures/pq_transfer/wrong-network.bin",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-protocol/tests/fixtures/pq_transfer/wrong-network.bin"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-protocol/tests/fixtures/pq_transfer/wrong-public.der",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-protocol/tests/fixtures/pq_transfer/wrong-public.der"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-protocol/tests/fixtures/pq_transfer/wrong-purpose.bin",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-protocol/tests/fixtures/pq_transfer/wrong-purpose.bin"
         )),
     ),
     (

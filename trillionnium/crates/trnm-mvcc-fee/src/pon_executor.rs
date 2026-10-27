@@ -22,6 +22,7 @@ pub const LEGACY_TASK_PROFILE: &str = "legacy-task-v1";
 pub const QUALIFIED_DEMANDS: u64 = 16;
 
 pub mod growth;
+pub mod pq_transfer;
 
 pub type State = BTreeMap<String, Value>;
 pub type Result<T> = std::result::Result<T, &'static str>;
@@ -1263,6 +1264,39 @@ fn prepare(raw: &[u8], height: u64, cfg: &Config, signatures: &AtomicUsize) -> R
 fn apply_prepared(base: &State, prepared: &Prepared, height: u64, cfg: &Config) -> Result<Patch> {
     apply_prepared_with_account_access(base, prepared, height, cfg, None)
 }
+// Shared native M06 arithmetic after the selected authentication owner succeeds.
+// This private function is never a signature verifier or a public bypass.
+fn debit_authorized_fee(
+    s: &mut View<'_>,
+    sender: &str,
+    tag: u8,
+    nonce: u64,
+    fee_limit: u64,
+    encoded_len: usize,
+    cfg: &Config,
+) -> Result<u64> {
+    let acct = s.account(sender)?;
+    require(nonce == add(field(&acct, "nonce")?, 1)?, "NONCE")?;
+    let fee = add(
+        *cfg.fees.get(tag as usize).ok_or("VERSION")?,
+        (encoded_len as u64)
+            .checked_mul(cfg.limit("byte_fee_units")?)
+            .ok_or("RANGE")?,
+    )?;
+    require(fee_limit >= fee, "FEE")?;
+    if tag != 11 {
+        s.debit(sender, fee)?;
+    } else {
+        s.put(format!("account:{sender}"), acct);
+    }
+    Ok(fee)
+}
+
+fn transfer_balances(s: &mut View<'_>, sender: &str, recipient: &str, amount: u64) -> Result<()> {
+    s.debit(sender, amount)?;
+    s.credit(recipient, amount)
+}
+
 fn apply_prepared_with_account_access(
     base: &State,
     prepared: &Prepared,
@@ -1273,20 +1307,15 @@ fn apply_prepared_with_account_access(
     let tx = &prepared.envelope;
     let sender = prepared.sender.clone();
     let mut s = View::new(base, account_access);
-    let acct = s.account(&sender)?;
-    require(tx.nonce == add(field(&acct, "nonce")?, 1)?, "NONCE")?;
-    let fee = add(
-        cfg.fees[tx.tag as usize],
-        (prepared.encoded_len as u64)
-            .checked_mul(cfg.limit("byte_fee_units")?)
-            .ok_or("RANGE")?,
+    let fee = debit_authorized_fee(
+        &mut s,
+        &sender,
+        tx.tag,
+        tx.nonce,
+        tx.fee_limit,
+        prepared.encoded_len,
+        cfg,
     )?;
-    require(tx.fee_limit >= fee, "FEE")?;
-    if tx.tag != 11 {
-        s.debit(&sender, fee)?;
-    } else {
-        s.put(format!("account:{sender}"), acct);
-    }
     let mut p = Payload {
         bytes: &tx.payload,
         pos: 0,
@@ -1295,8 +1324,7 @@ fn apply_prepared_with_account_access(
         1 => {
             let recipient = hex::encode(p.h()?);
             let amount = p.n()?;
-            s.debit(&sender, amount)?;
-            s.credit(&recipient, amount)?;
+            transfer_balances(&mut s, &sender, &recipient, amount)?;
         }
         2 => {
             let task = p.h()?;

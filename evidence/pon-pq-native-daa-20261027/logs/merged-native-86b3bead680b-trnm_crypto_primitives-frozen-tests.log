@@ -1,0 +1,10 @@
+
+running 5 tests
+test pq_auth::tests::caller_context_and_key_substitution_do_not_authenticate ... ok
+test pq_auth::tests::complete_pinned_wycheproof_corpus_including_duplicate_hints ... ok
+test pq_auth::tests::every_statement_byte_and_signature_region_tamper_is_rejected ... ok
+test pq_auth::tests::independently_signed_openssl_frame_passes_native_verification ... ok
+test pq_auth::tests::malformed_der_classical_signature_and_context_downgrade_reject ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 108 filtered out; finished in 3.23s
+

@@ -1,0 +1,17 @@
+{
+  "actual_crypto_negative_vectors": [
+    "duplicate-hint.bin"
+  ],
+  "actual_crypto_positive_vectors": [
+    "generation-two.bin",
+    "low-fee.bin",
+    "nonce-two.bin",
+    "same-statement-second-signature.bin",
+    "transfer.bin",
+    "wrong-network.bin",
+    "wrong-purpose.bin"
+  ],
+  "note": "cryptographic validity of a vector is not native state permission",
+  "production_activation": false,
+  "result": "PASS"
+}

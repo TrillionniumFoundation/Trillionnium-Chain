@@ -357,7 +357,9 @@ mod tests {
 
     #[test]
     fn old_devnet_transaction_size_cannot_hold_pq_signature() {
-        assert!(TPQ1_SIGNED_BYTES > 2048);
-        assert!(ML_DSA_65_SIGNATURE_BYTES > 2048);
+        const {
+            assert!(TPQ1_SIGNED_BYTES > 2048);
+            assert!(ML_DSA_65_SIGNATURE_BYTES > 2048);
+        }
     }
 }

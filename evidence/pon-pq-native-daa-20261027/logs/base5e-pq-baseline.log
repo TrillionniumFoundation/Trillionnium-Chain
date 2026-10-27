@@ -1,0 +1,141 @@
+   Compiling version_check v0.9.5
+   Compiling typenum v1.20.1
+   Compiling proc-macro2 v1.0.106
+   Compiling unicode-ident v1.0.24
+   Compiling quote v1.0.45
+   Compiling cfg-if v1.0.4
+   Compiling cpufeatures v0.2.17
+   Compiling find-msvc-tools v0.1.9
+   Compiling shlex v1.3.0
+   Compiling semver v1.0.27
+   Compiling cmov v0.5.4
+   Compiling cc v1.2.59
+   Compiling rustc_version v0.4.1
+   Compiling ctutils v0.4.6
+   Compiling serde_core v1.0.228
+   Compiling vcpkg v0.2.15
+   Compiling generic-array v0.14.7
+   Compiling pkg-config v0.3.32
+   Compiling curve25519-dalek v4.1.3
+   Compiling winnow v1.0.4
+   Compiling hybrid-array v0.4.15
+   Compiling equivalent v1.0.2
+   Compiling hashbrown v0.16.1
+   Compiling syn v2.0.117
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling libsqlite3-sys v0.37.0
+   Compiling digest v0.10.7
+   Compiling toml_datetime v1.1.1+spec-1.1.0
+   Compiling sha2 v0.10.9
+   Compiling indexmap v2.13.1
+   Compiling foldhash v0.2.0
+   Compiling signature v2.2.0
+   Compiling toml_parser v1.1.3+spec-1.1.0
+   Compiling autocfg v1.5.1
+   Compiling bitflags v2.11.0
+   Compiling zeroize v1.8.2
+   Compiling subtle v2.6.1
+   Compiling num-traits v0.2.19
+   Compiling toml_edit v0.25.13+spec-1.1.0
+   Compiling ed25519 v2.2.3
+   Compiling crypto-common v0.2.2
+   Compiling zmij v1.0.21
+   Compiling cfg_aliases v0.2.2
+   Compiling libc v0.2.184
+   Compiling serde v1.0.228
+   Compiling borsh v1.8.0
+   Compiling hashlink v0.11.1
+   Compiling digest v0.11.3
+   Compiling proc-macro-crate v3.5.0
+   Compiling smallvec v1.15.1
+   Compiling thiserror v1.0.69
+   Compiling serde_json v1.0.149
+   Compiling fallible-iterator v0.3.0
+   Compiling once_cell v1.21.4
+   Compiling fallible-streaming-iterator v0.1.9
+   Compiling keccak v0.2.2
+   Compiling memchr v2.8.0
+   Compiling itoa v1.0.18
+   Compiling sponge-cursor v0.1.0
+   Compiling anyhow v1.0.103
+   Compiling shake v0.1.0
+   Compiling signature v3.0.0
+   Compiling module-lattice v0.2.3
+   Compiling hex v0.4.3
+   Compiling ml-dsa v0.1.1
+   Compiling getrandom v0.4.2
+   Compiling rustix v1.1.4
+   Compiling linux-raw-sys v0.12.1
+   Compiling trnm-verification-profiles v0.1.0 (/workspace/scratch/301262829a43/pon-pq-impl/pq-base5e/trillionnium/crates/trnm-verification-profiles)
+   Compiling fastrand v2.3.0
+   Compiling curve25519-dalek-derive v0.1.1
+   Compiling serde_derive v1.0.228
+   Compiling thiserror-impl v1.0.69
+   Compiling borsh-derive v1.8.0
+   Compiling trnm-sqlite-io-boundary v0.1.0 (/workspace/scratch/301262829a43/pon-pq-impl/pq-base5e/trillionnium/crates/trnm-sqlite-io-boundary)
+   Compiling fs2 v0.4.3
+   Compiling trnm-mempool v0.1.0 (/workspace/scratch/301262829a43/pon-pq-impl/pq-base5e/trillionnium/crates/trnm-mempool)
+   Compiling trnm-transport v0.1.0 (/workspace/scratch/301262829a43/pon-pq-impl/pq-base5e/trillionnium/crates/trnm-transport)
+   Compiling ed25519-dalek v2.2.0
+   Compiling trnm-protocol v0.1.0 (/workspace/scratch/301262829a43/pon-pq-impl/pq-base5e/trillionnium/crates/trnm-protocol)
+   Compiling tempfile v3.27.0
+   Compiling trnm-crypto-primitives v0.1.0 (/workspace/scratch/301262829a43/pon-pq-impl/pq-base5e/trillionnium/crates/trnm-crypto-primitives)
+   Compiling rusqlite v0.39.0
+warning: trnm-sqlite-io-boundary@0.1.0: trnm SQLite I/O boundary UNQUALIFIED: RUSTC must be absolute
+   Compiling trnm-task-kernel v0.1.0 (/workspace/scratch/301262829a43/pon-pq-impl/pq-base5e/trillionnium/crates/trnm-task-kernel)
+   Compiling trnm-data-availability v0.1.0 (/workspace/scratch/301262829a43/pon-pq-impl/pq-base5e/trillionnium/crates/trnm-data-availability)
+   Compiling trnm-mvcc-fee v0.1.0 (/workspace/scratch/301262829a43/pon-pq-impl/pq-base5e/trillionnium/crates/trnm-mvcc-fee)
+   Compiling trnm-service-settlement v0.1.0 (/workspace/scratch/301262829a43/pon-pq-impl/pq-base5e/trillionnium/crates/trnm-service-settlement)
+   Compiling trnm-pon-node v0.1.0 (/workspace/scratch/301262829a43/pon-pq-impl/pq-base5e/trillionnium/crates/trnm-pon-node)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 14m 22s
+     Running unittests src/lib.rs (/workspace/scratch/301262829a43/pon-pq-impl/target-native/debug/deps/trnm_crypto_primitives-111606d4ab6a9bc1)
+
+running 5 tests
+test pq_auth::tests::independently_signed_openssl_frame_passes_native_verification ... ok
+test pq_auth::tests::caller_context_and_key_substitution_do_not_authenticate ... ok
+test pq_auth::tests::malformed_der_classical_signature_and_context_downgrade_reject ... ok
+test pq_auth::tests::every_statement_byte_and_signature_region_tamper_is_rejected ... ok
+test pq_auth::tests::complete_pinned_wycheproof_corpus_including_duplicate_hints ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 108 filtered out; finished in 2.46s
+
+     Running unittests src/lib.rs (/workspace/scratch/301262829a43/pon-pq-impl/target-native/debug/deps/trnm_pon_node-b9600460819e6d15)
+
+running 8 tests
+test pq_authority::tests::temporary_tables_cannot_redirect_a_durable_authorization ... FAILED
+test pq_authority::tests::signature_randomness_cannot_replay_one_operation ... ok
+test pq_authority::tests::counter_reset_trigger_cannot_make_one_signature_replayable ... FAILED
+test pq_authority::tests::changed_scope_unrelated_database_and_classical_inputs_are_rejected ... ok
+test pq_authority::tests::two_connections_cannot_consume_the_same_sequence ... ok
+test pq_authority::tests::silent_insert_ignore_is_rejected_before_granting_authority ... FAILED
+test pq_authority::tests::three_real_pq_operations_survive_reopen_without_nonce_rewind ... ok
+test pq_authority::tests::failed_durable_insert_rolls_back_sequence_in_same_transaction ... ok
+
+failures:
+
+---- pq_authority::tests::temporary_tables_cannot_redirect_a_durable_authorization stdout ----
+
+thread 'pq_authority::tests::temporary_tables_cannot_redirect_a_durable_authorization' (3879) panicked at crates/trnm-pon-node/src/pq_authority_tests.rs:211:5:
+issued a record while durable sequence=0
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+---- pq_authority::tests::counter_reset_trigger_cannot_make_one_signature_replayable stdout ----
+
+thread 'pq_authority::tests::counter_reset_trigger_cannot_make_one_signature_replayable' (3875) panicked at crates/trnm-pon-node/src/pq_authority_tests.rs:231:5:
+reset trigger allowed first signature to grant authority
+
+---- pq_authority::tests::silent_insert_ignore_is_rejected_before_granting_authority stdout ----
+
+thread 'pq_authority::tests::silent_insert_ignore_is_rejected_before_granting_authority' (3878) panicked at crates/trnm-pon-node/src/pq_authority_tests.rs:192:5:
+issued a record with sequence=1, stored rows=0
+
+
+failures:
+    pq_authority::tests::counter_reset_trigger_cannot_make_one_signature_replayable
+    pq_authority::tests::silent_insert_ignore_is_rejected_before_granting_authority
+    pq_authority::tests::temporary_tables_cannot_redirect_a_durable_authorization
+
+test result: FAILED. 5 passed; 3 failed; 0 ignored; 0 measured; 723 filtered out; finished in 0.21s
+
+error: test failed, to rerun pass `-p trnm-pon-node --lib`
