@@ -61,8 +61,10 @@ def fetch_model(output):
         with opener.open(request, timeout=60) as source:
             runtime.require(source.status == 200, 'MODEL_INPUT_HTTP_STATUS')
             copy_exact(source, output / name, size, digest)
+        # Keep the original handoff's exact material-pin schema. Transport
+        # provenance belongs to the separate input inventory below.
         manifest['files'][name] = dict(size=size, sha256=digest,
-                                      revision=runtime.REVISION, source=url)
+                                      revision=runtime.REVISION)
     (output / 'material-manifest.json').write_bytes(runtime.canonical(manifest) + b'\n')
     runtime.verify_materials(output)
 
@@ -111,6 +113,8 @@ def seal(bundle, source_report):
                   revision=runtime.REVISION, platform='CPython3.12-Linux-x86_64',
                   source=runtime.read_json(source_report),
                   requirements_sha256=hashlib.sha256(lock).hexdigest(),
+                  model_sources={name: f'https://huggingface.co/{runtime.MODEL}/resolve/{runtime.REVISION}/{name}'
+                                 for name in sorted(runtime.PUBLIC_FILES)},
                   source_files_sha256={
                       'scripts/llm_runtime_pilot.py': runtime.file_sha(Path(runtime.__file__)),
                       'scripts/ci/prepare_model_cloud_inputs.py': runtime.file_sha(Path(__file__))},
