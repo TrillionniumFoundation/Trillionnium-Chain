@@ -2504,6 +2504,69 @@ mod tests {
 
     #[cfg(target_os = "linux")]
     #[test]
+    fn mixed_false_then_valid_history_across_source_ports_reuses_one_cpu_owner() {
+        let observed = now().unwrap();
+        let settings = crate::Settings::development(Some(observed - 100)).unwrap();
+        let dir = tempfile::tempdir().unwrap();
+        let mut node = Node::open(dir.path(), settings.clone(), 2).unwrap();
+        let good = node.make(
+            settings.genesis(),
+            vec![],
+            crate::development_public(0).unwrap(),
+            settings.genesis_time() + 10,
+            4096,
+        ).unwrap();
+        let id = good.id().unwrap();
+        let mut bad = good.clone();
+        let cell = 4 + 2 * trnm_crypto_primitives::pon_work::CELLS * 4;
+        let prior = u32::from_le_bytes(bad.proof[cell..cell + 4].try_into().unwrap());
+        let altered = ((u128::from(prior) + 1)
+            % trnm_crypto_primitives::pon_work::Q) as u32;
+        bad.proof[cell..cell + 4].copy_from_slice(&altered.to_le_bytes());
+        assert_eq!(bad.id().unwrap(), id);
+        let make_page = |packet: &Packet| Page {
+            schema: "pon-native-history-v1".into(),
+            network: hex::encode(settings.network()),
+            parameters: hex::encode(settings.parameters()),
+            genesis: hex::encode(settings.genesis()),
+            tip: hex::encode(id),
+            after: hex::encode(settings.genesis()),
+            packets: vec![hex::encode(packet.encode().unwrap())],
+            next: hex::encode(id),
+            complete: true,
+        };
+        let first: SocketAddr = "127.0.0.1:1".parse().unwrap();
+        let second: SocketAddr = "127.0.0.1:2".parse().unwrap();
+        let initial = node.stats().unwrap();
+        assert_eq!(
+            receive_page_from(
+                &mut node, first, make_page(&bad), id, settings.genesis(), observed,
+            ).unwrap_err().to_string(),
+            "WORK:Product"
+        );
+        assert_eq!(node.stats().unwrap(), initial);
+        let original_domain = node.public_service_cpu_domain().unwrap();
+        assert_eq!(
+            receive_page_from(
+                &mut node, second, make_page(&good), id, settings.genesis(), observed,
+            ).unwrap(),
+            id
+        );
+        assert!(node.public_service_cpu_domain().unwrap().shares_domain_with(&original_domain));
+        assert_eq!(node.read_active().unwrap().0, id);
+        assert_eq!(original_domain.observe().unwrap().in_flight, 0);
+        let success_state = node.stats().unwrap();
+        // The exact block ID's stored byte identity is authoritative; the
+        // previously invalid C cannot overwrite the now accepted legal proof.
+        let repeated = receive_page_from(
+            &mut node, first, make_page(&bad), id, settings.genesis(), observed,
+        ).unwrap_err();
+        assert_eq!(repeated.to_string(), "DUPLICATE_CONTENT");
+        assert_eq!(node.stats().unwrap(), success_state);
+    }
+
+    #[cfg(target_os = "linux")]
+    #[test]
     fn unclean_public_epoch_cannot_mint_fresh_remote_history_credit() {
         let observed = now().unwrap();
         let settings = crate::Settings::development(Some(observed - 100)).unwrap();
