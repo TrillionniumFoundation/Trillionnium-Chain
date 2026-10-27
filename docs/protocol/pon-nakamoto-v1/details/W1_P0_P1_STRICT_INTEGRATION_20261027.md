@@ -63,3 +63,36 @@ W2-B full replay or unpriced W2-C); P6 requires actual independent
 cryptographic authorship, verification and signed source-bound review.
 The sender cannot certify independent reviewers or run physical WAN
 experiments merely by adding source tests. No protocol activation is authorized.
+
+## Follow-up: valid W1 still needs Host checks through M06 and SQLite
+
+At #488 original source `7d7fd9f242830f718b9c4ff81d2796b360a0d2e3`,
+History page import checked the physical Host at W1 entry, every 64
+transcript tiles and after each native packet. But
+`Node::admit_with_work_progress` switched to the original **no-progress**
+`admit_work_checked` once W1 succeeded. A *valid* W1 packet carrying
+costly application work could cross a Host membership/quota change during
+M06, state-root generation or SQLite admission without intermediate checks.
+
+The candidate keeps exactly the same `KernelBudget::verify` callback through
+both the original W1 `VerificationProgress` and the existing
+`admit_work_checked_with_progress` / `ExecutionProgress`. This includes
+BeforeParentBinding, M06 prepare/apply, BeforePersistence, SQLite deltas
+and BeforeDurableCommit. A precommit local Host failure must roll back
+the native transaction; after-commit Host failures make the overall import
+unqualified but **never** turn durable success into invalid W1.
+
+New Rust regression
+`history_valid_w1_cannot_commit_after_m06_host_owner_rejection` uses a
+full legitimate W1 proof (512 tiles), injects Host-limits failure at actual
+BeforeDurableCommit, asserts no retained block/active change and accepts
+an independent subsequent legitimate retry. The parallel regression
+`host_owner_failure_during_w1_tile_does_not_commit_or_poison_retry`
+from #488 is retained and adapted to the new two-callback API rather
+than being overwritten.
+
+Source is draft/unqualified until real `scripts/project-preflight.sh`,
+exact Rust build/fmt/clippy, native negative selector, physical host resource
+ownership and A03 service campaigns execute successfully. The unchanged
+W1 proof/target/ticket/Chainwork, signed Cookie and production activation
+grant no new authority. All P1–P6 remaining independent gates remain OPEN.
