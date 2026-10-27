@@ -149,6 +149,9 @@ type ReplayRow = (
 const AUTH_RESPONSE_RETENTION: u64 = 16;
 #[cfg(test)]
 mod admission_parent_tests;
+mod authenticated_pending_activation;
+mod detached_admission;
+pub(crate) use detached_admission::{DetachedExecutionLease, PreparedSharedAdmission};
 #[cfg(test)]
 mod authenticated_replay_tests;
 
@@ -219,6 +222,27 @@ fn record_task_output(
     } else {
         state.insert(key,serde_json::json!({"product":digest,"arithmetic_output_count":1,"matrix_task":hex::encode(manifest.matrix_task),"scope":"source-attested-fixed-contraction-not-model-value"}));
         Ok(true)
+    }
+}
+
+fn record_eligible_output(
+    height: u64,
+    state: &mut State,
+    eligible: &ParentTaskEligibility,
+    product: &[u8],
+) -> Result<bool> {
+    match eligible {
+        ParentTaskEligibility::Lifecycle(task) => {
+            ensure(product.len() == pon_work::CELLS * 4, "TASK_OUTPUT")?;
+            Ok(qualified_task_lifecycle::consume_output(
+                state,
+                task,
+                hash(b"qualified-task-product-v1", &[product]),
+                height,
+            )?)
+        }
+        ParentTaskEligibility::Signed(manifest) => record_task_output(state, manifest, product),
+        ParentTaskEligibility::Legacy | ParentTaskEligibility::ConsensusMaintenance => Ok(false),
     }
 }
 
@@ -390,6 +414,16 @@ struct Record {
     work: Work,
     root: Hash,
 }
+// Private native output parts. External callers cannot submit this structure;
+// detached callers must return the opaque, single-use execution artifact.
+struct AdmissionPersistence {
+    packet: Packet,
+    bytes: Vec<u8>,
+    parent: Record,
+    prior: State,
+    output: trnm_mvcc_fee::pon_executor::Output,
+    commitment: PreparedCommitment,
+}
 struct StoredHeaderLink {
     header: Header,
     record: Record,
@@ -533,7 +567,13 @@ impl WorkCheckedPacket {
     ) -> Result<Self> {
         let h = &packet.header;
         let work = cache
-            .verify_with_progress(h.challenge(), h.work_task, h.target, &packet.proof, progress)
+            .verify_with_progress(
+                h.challenge(),
+                h.work_task,
+                h.target,
+                &packet.proof,
+                progress,
+            )
             .map_err(|error| match error {
                 pon_work::VerificationError::Relation(error) => {
                     Error::from(format!("WORK:{error:?}"))
@@ -683,6 +723,11 @@ pub struct Node {
     // already owner-locked Node; the durable marker survives process exit.
     public_service_epoch_listeners: usize,
     public_service_epoch_unknown: bool,
+    // A capacity/identity guard, never a second CPU account or work authority.
+    // One detached complete-State execution per original Node incarnation.
+    detached_execution: std::sync::Arc<std::sync::atomic::AtomicBool>,
+    #[cfg(test)]
+    cancel_next_activation_intent: bool,
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 enum StateBackend {
@@ -1372,6 +1417,9 @@ impl Node {
             public_service_cpu: None,
             public_service_epoch_listeners: 0,
             public_service_epoch_unknown: false,
+            detached_execution: std::sync::Arc::new(std::sync::atomic::AtomicBool::new(false)),
+            #[cfg(test)]
+            cancel_next_activation_intent: false,
         };
         if node.state_backend == StateBackend::PermanentAccountGrowthV2 {
             // Complete-State reference budget records cannot be silently ignored
@@ -3806,7 +3854,6 @@ impl Node {
         let progress = control.progress;
         let bytes = packet.encode()?;
         let h = &packet.header;
-        let id = packet.id()?;
         let parent = self.record(h.parent)?;
         // Keep the original second parent-read cancellation/CPU boundary. The
         // first full State/root/account/task/material validation was in this
@@ -3872,6 +3919,44 @@ impl Node {
             }
             return Err("ROOT".into());
         }
+        self.persist_admission_execution(
+            AdmissionPersistence {
+                packet,
+                bytes,
+                parent,
+                prior,
+                output,
+                commitment,
+            },
+            control,
+            None,
+        )
+    }
+
+    /// Both held-owner and detached execution converge on the same original
+    /// transaction, delta/packet/State readback, ancestry and active-tip fences.
+    /// This private helper is never a public StagedOutput admission interface.
+    fn persist_admission_execution(
+        &mut self,
+        admission: AdmissionPersistence,
+        control: &ExecutionControl<'_, Error>,
+        detached_fence: Option<detached_admission::CommitFence>,
+    ) -> Result<Hash> {
+        let AdmissionPersistence {
+            packet,
+            bytes,
+            parent,
+            prior,
+            output,
+            commitment,
+        } = admission;
+        let h = &packet.header;
+        let id = packet.id()?;
+        let progress = control.progress;
+        ensure(
+            h.state == output.root && h.receipts == sequence_root("receipts", &output.receipts),
+            "ROOT",
+        )?;
         if self.state_backend == StateBackend::AuthenticatedV1 {
             // Pure successor tree material is already available from M06. Offer
             // it to the existing bounded historical cache before SQL readback;
@@ -3895,6 +3980,12 @@ impl Node {
             &self.db,
             rusqlite::TransactionBehavior::Immediate,
         )?;
+        if let Some(fence) = detached_fence {
+            // BEGIN IMMEDIATE excludes foreign SQLite writers before the last
+            // epoch/context check. An out-of-lock result is never authorized by
+            // an earlier counter read followed by an unprotected write gap.
+            fence.validate(self, &packet)?;
+        }
         ensure(
             tx.execute(
                 "INSERT INTO blocks VALUES(?,?,?,?,?,?)",
@@ -4516,21 +4607,7 @@ impl Node {
         eligible: &ParentTaskEligibility,
         product: &[u8],
     ) -> Result<bool> {
-        match eligible {
-            ParentTaskEligibility::Lifecycle(task) => {
-                ensure(product.len() == pon_work::CELLS * 4, "TASK_OUTPUT")?;
-                Ok(qualified_task_lifecycle::consume_output(
-                    state,
-                    task,
-                    hash(b"qualified-task-product-v1", &[product]),
-                    height,
-                )?)
-            }
-            ParentTaskEligibility::Signed(manifest) => record_task_output(state, manifest, product),
-            ParentTaskEligibility::Legacy | ParentTaskEligibility::ConsensusMaintenance => {
-                Ok(false)
-            }
-        }
+        record_eligible_output(height, state, eligible, product)
     }
     pub fn mine(
         &mut self,
@@ -4757,6 +4834,12 @@ impl Node {
             Ok(())
         })?;
         cut(&mut hook, "intent")?;
+        #[cfg(test)]
+        if std::mem::take(&mut self.cancel_next_activation_intent) {
+            // A test-only one-shot cut AFTER the original durable intent commit.
+            // No production environment, socket or caller can select this cut.
+            return Err(Error::new(crate::ErrorCode::PublicRequestCancelled));
+        }
         self.resume_intent_with_progress(&mut hook, progress)
     }
     fn check_steps(&self, old: Hash, target: Hash, cursor: u64) -> Result<u64> {

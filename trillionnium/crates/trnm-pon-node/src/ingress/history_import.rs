@@ -1,8 +1,7 @@
 //! History replay under the original Node-owned CPU account and crash epoch.
-//! Shared owners are held for context, M06/commit and epoch metadata only;
-//! CPU refill, canonical packet decoding and full W1 run outside their mutex.
-//! M06 remains under the writer until a separately verified execution/commit
-//! split exists. No snapshot, clock verdict or peer statement is trusted here.
+//! Shared ordinary owners release their writer for CPU refill, decoding, W1
+//! and bounded M06 execution. The original owner checks the private execution
+//! artifact and retains the original transaction/readback publication fences.
 use super::{
     ensure, hex_packet, history_kernel_work_checkpoint, now, public_v3, Hash, Node, Packet, Page,
     Result, Settings, WorkCheckedPacket, MAX_FRAME,
@@ -241,17 +240,36 @@ fn admit_packet(
             Ok(())
         })?;
         check()?;
-        let id = owner.with(control, |node| {
-            let checked = node.attach_owner_work(checked, permit)?;
-            let execution_progress = |_| check();
-            let execution = trnm_mvcc_fee::pon_executor::ExecutionControl::new(
-                &execution_progress,
-                operation.worker_accounting(),
-            );
-            // Full parent/state/clock/permit checks repeat in native admission.
-            // A valid competing branch need not be the current active tip.
-            node.admit_work_checked_with_control(checked, clock, &execution)
-        })?;
+        let execution_progress = |point| {
+            check()?;
+            if point == trnm_mvcc_fee::pon_executor::ExecutionProgress::AfterMandatory {
+                cut("m06");
+            }
+            Ok(())
+        };
+        let execution = trnm_mvcc_fee::pon_executor::ExecutionControl::new(
+            &execution_progress,
+            operation.worker_accounting(),
+        );
+        let id = match owner {
+            Owner::Shared(node) => {
+                let (guard, id, _) = super::admit_shared_checked(
+                    node,
+                    checked,
+                    permit,
+                    &mut |_| check(),
+                    &execution,
+                    || Ok(clock),
+                    None,
+                )?;
+                drop(guard);
+                id
+            }
+            Owner::Exclusive(_) => owner.with(control, |node| {
+                let checked = node.attach_owner_work(checked, permit)?;
+                node.admit_work_checked_with_control(checked, clock, &execution)
+            })?,
+        };
         // Test-only cut is after the actual native COMMIT, before CPU settle.
         cut("admitted");
         Ok((id, true))
@@ -296,7 +314,13 @@ pub(super) fn receive(
         if page.complete {
             metered(cpu, &control, |operation| {
                 operation.checkpoint()?;
-                owner.with(&control, |node| node.activate_observed(tip, clock))?;
+                owner.with(&control, |node| {
+                    node.activate_observed_with_progress(tip, clock, &mut || {
+                        cut("activation_progress");
+                        control.check()?;
+                        operation.checkpoint()
+                    })
+                })?;
                 cut("activated");
                 control.check()?;
                 operation.checkpoint()

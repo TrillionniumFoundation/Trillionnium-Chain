@@ -352,6 +352,9 @@ fn read_only_archive(directory: &Path, settings: Settings, backend: StateBackend
         public_service_cpu: None,
         public_service_epoch_listeners: 0,
         public_service_epoch_unknown: false,
+        detached_execution: std::sync::Arc::new(std::sync::atomic::AtomicBool::new(false)),
+        #[cfg(test)]
+        cancel_next_activation_intent: false,
     })
 }
 fn read_receipt(directory: &Path) -> Result<GrowthRehearsalReceiptV2> {

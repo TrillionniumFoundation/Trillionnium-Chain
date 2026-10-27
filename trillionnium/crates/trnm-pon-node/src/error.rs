@@ -110,6 +110,9 @@ error_codes! {
     PublicSpentCapacity => ("PUBLIC_SPENT_CAPACITY", Capacity),
     PublicBufferCapacity => ("PUBLIC_BUFFER_CAPACITY", Capacity),
     PublicQueueBusy => ("PUBLIC_QUEUE_BUSY", Capacity),
+    PublicExecutionSnapshotCapacity => ("PUBLIC_EXECUTION_SNAPSHOT_CAPACITY", Capacity),
+    OwnerDetachedExecutionContext => ("OWNER_DETACHED_EXECUTION_CONTEXT", LocalStructure),
+    OwnerDetachedExecutionUnsupported => ("OWNER_DETACHED_EXECUTION_UNSUPPORTED", DependencyUnavailable),
     // Local service/Node budget binding, never invalid consensus Work.
     OwnerPublicServiceCpuDomain => ("OWNER_PUBLIC_SERVICE_CPU_DOMAIN", PolicyRefusal),
     OwnerPublicServiceDomainUnbound => ("OWNER_PUBLIC_SERVICE_DOMAIN_UNBOUND", DependencyUnavailable),
@@ -233,6 +236,7 @@ impl Error {
                         | ErrorCode::OwnerPublicServiceCpuDomain
                         | ErrorCode::OwnerPublicServiceDomainUnbound
                         | ErrorCode::OwnerPublicServiceUncleanEpoch
+                        | ErrorCode::OwnerDetachedExecutionUnsupported
                         | ErrorCode::OwnerContinuousHistoryDurableRequired
                 )
             )

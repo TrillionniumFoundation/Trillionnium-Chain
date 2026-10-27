@@ -14,7 +14,7 @@ use serde_json::{json, Value};
 use std::cell::{Cell, RefCell};
 use std::mem::size_of;
 use std::sync::{
-    atomic::{AtomicBool, Ordering},
+    atomic::{AtomicBool, AtomicU64, Ordering},
     Arc, Mutex,
 };
 use std::thread::{self, ThreadId};
@@ -166,30 +166,9 @@ impl HistoryArithmetic {
         historical: bool,
         method: trnm_mvcc_fee::pon_commitment::CommitmentMethod,
     ) {
-        use trnm_mvcc_fee::pon_commitment::CommitmentMethod;
         // Successful complete actual-state bindings only; a selected candidate
         // is arithmetic, never an admission or retained SQL validity verdict.
-        self.count(|c| {
-            c.execution_parent_active_candidates = c
-                .execution_parent_active_candidates
-                .saturating_add(u64::from(active));
-            c.execution_parent_historical_candidates = c
-                .execution_parent_historical_candidates
-                .saturating_add(u64::from(historical));
-            match method {
-                CommitmentMethod::CheckedApply => {
-                    c.execution_parent_checked_apply =
-                        c.execution_parent_checked_apply.saturating_add(1);
-                }
-                CommitmentMethod::RebuiltTree => {
-                    c.execution_parent_rebuilt_tree =
-                        c.execution_parent_rebuilt_tree.saturating_add(1);
-                }
-                CommitmentMethod::FullRoot(_) => {
-                    c.execution_parent_full_root = c.execution_parent_full_root.saturating_add(1);
-                }
-            }
-        });
+        self.stages.parent_binding(active, historical, method);
     }
     pub(super) fn record(&self, settings: &Settings, block: Hash, bytes: &[u8]) -> Option<Record> {
         self.count(|c| {
@@ -291,6 +270,13 @@ impl HistoryArithmetic {
         }
     }
     pub(crate) fn observation(&self) -> Value {
+        let mut counters = self.counters.get();
+        let bindings = &self.stages.parent_bindings;
+        counters.execution_parent_active_candidates = bindings[0].load(Ordering::Relaxed);
+        counters.execution_parent_historical_candidates = bindings[1].load(Ordering::Relaxed);
+        counters.execution_parent_checked_apply = bindings[2].load(Ordering::Relaxed);
+        counters.execution_parent_rebuilt_tree = bindings[3].load(Ordering::Relaxed);
+        counters.execution_parent_full_root = bindings[4].load(Ordering::Relaxed);
         let stages = self.stages.rows.try_lock().ok().map(|rows| {
             rows.iter()
                 .copied()
@@ -305,7 +291,7 @@ impl HistoryArithmetic {
             "retained_software_charge_limit_bytes":3*MAX_POOL_CHARGE,
             "charge_is_process_rss_bound":false,"has_consensus_authority":false,
             "records":self.records.status(),"packets":self.packets.status(),"deltas":self.deltas.status(),
-            "counters":self.counters.get(),"stage_observation_failed":self.stages.failed.load(Ordering::Relaxed),"stages":stages})
+            "counters":counters,"stage_observation_failed":self.stages.failed.load(Ordering::Relaxed),"stages":stages})
     }
     #[cfg(test)]
     pub(super) fn clear(&self) {
@@ -448,6 +434,33 @@ struct StageTotals {
 struct StageAccounting {
     rows: Mutex<[StageTotals; STAGES]>,
     failed: AtomicBool,
+    parent_bindings: [AtomicU64; 5],
+}
+impl StageAccounting {
+    fn parent_binding(
+        &self,
+        active: bool,
+        historical: bool,
+        method: trnm_mvcc_fee::pon_commitment::CommitmentMethod,
+    ) {
+        use trnm_mvcc_fee::pon_commitment::CommitmentMethod;
+        let method = match method {
+            CommitmentMethod::CheckedApply => 2,
+            CommitmentMethod::RebuiltTree => 3,
+            CommitmentMethod::FullRoot(_) => 4,
+        };
+        for (index, count) in [
+            (0, u64::from(active)),
+            (1, u64::from(historical)),
+            (method, 1),
+        ] {
+            let _ = self.parent_bindings[index].fetch_update(
+                Ordering::Relaxed,
+                Ordering::Relaxed,
+                |prior| Some(prior.saturating_add(count)),
+            );
+        }
+    }
 }
 pub(crate) struct StageObservation {
     accounting: Arc<StageAccounting>,
@@ -455,6 +468,16 @@ pub(crate) struct StageObservation {
     started: Instant,
     thread: ThreadId,
     cpu: Option<u64>,
+}
+impl StageObservation {
+    pub(crate) fn parent_binding(
+        &self,
+        active: bool,
+        historical: bool,
+        method: trnm_mvcc_fee::pon_commitment::CommitmentMethod,
+    ) {
+        self.accounting.parent_binding(active, historical, method);
+    }
 }
 impl Drop for StageObservation {
     fn drop(&mut self) {

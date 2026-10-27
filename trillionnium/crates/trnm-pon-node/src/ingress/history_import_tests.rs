@@ -88,27 +88,31 @@ fn expired_history_never_starts_an_epoch_or_a_cpu_account() {
 }
 
 #[test]
-fn shared_history_refill_and_full_w1_release_the_original_writer() {
+fn shared_history_refill_full_w1_and_actual_m06_release_the_original_writer() {
     let (_directory, settings, node, packet, clock) = fixture();
     let owner = Arc::new(Mutex::new(node));
     let original = owner.lock().unwrap().remote_history_cpu_domain().unwrap();
     assert_eq!(original.observe().unwrap().stored_credit_ns, 0);
     let unlocked_waits = Arc::new(AtomicUsize::new(0));
     let unlocked_w1 = Arc::new(AtomicUsize::new(0));
+    let unlocked_m06 = Arc::new(AtomicUsize::new(0));
     let observed_owner = owner.clone();
     let waits = unlocked_waits.clone();
     let works = unlocked_w1.clone();
+    let executions = unlocked_m06.clone();
     OBSERVER.with(|hook| {
         *hook.borrow_mut() = Some(Box::new(move |stage| {
-            if stage == "cpu_wait" || stage == "w1" {
+            if stage == "cpu_wait" || stage == "w1" || stage == "m06" {
                 let node = observed_owner
                     .try_lock()
-                    .expect("History held writer across refill/W1");
+                    .expect("History held writer across refill/W1/M06");
                 node.active().unwrap();
                 if stage == "cpu_wait" {
                     waits.fetch_add(1, Ordering::SeqCst);
-                } else {
+                } else if stage == "w1" {
                     works.fetch_add(1, Ordering::SeqCst);
+                } else {
+                    executions.fetch_add(1, Ordering::SeqCst);
                 }
             }
         }))
@@ -129,6 +133,7 @@ fn shared_history_refill_and_full_w1_release_the_original_writer() {
     assert_eq!(result.unwrap(), id);
     assert!(unlocked_waits.load(Ordering::SeqCst) > 0);
     assert!(unlocked_w1.load(Ordering::SeqCst) > 0);
+    assert!(unlocked_m06.load(Ordering::SeqCst) > 0);
     let node = owner.lock().unwrap();
     assert!(node
         .public_service_cpu_domain()
@@ -184,6 +189,145 @@ fn history_decode_cannot_renew_the_original_w1_deadline() {
             .in_flight,
         0
     );
+}
+
+#[test]
+fn actual_detached_m06_cannot_continue_after_original_cpu_account_is_fenced() {
+    let (directory, settings, node, packet, clock) = fixture();
+    let owner = Mutex::new(node);
+    let original = owner.lock().unwrap().remote_history_cpu_domain().unwrap();
+    let observed = original.clone();
+    let stages = Arc::new(AtomicUsize::new(0));
+    let seen = stages.clone();
+    OBSERVER.with(|hook| {
+        *hook.borrow_mut() = Some(Box::new(move |stage| {
+            if stage == "m06" {
+                seen.fetch_add(1, Ordering::SeqCst);
+                observed.abandon_history_epoch();
+            }
+        }))
+    });
+    let result = receive(
+        Owner::Shared(&owner),
+        page(&settings, &packet),
+        packet.id().unwrap(),
+        settings.genesis(),
+        clock,
+        Control {
+            deadline: Instant::now() + Duration::from_secs(10),
+            resource: &|| Ok(()),
+        },
+    );
+    OBSERVER.with(|hook| *hook.borrow_mut() = None);
+    assert!(result
+        .unwrap_err()
+        .is(crate::ErrorCode::PublicMutationCpuUnavailable));
+    assert_eq!(stages.load(Ordering::SeqCst), 1);
+    assert!(original.observe().unwrap().accounting_unavailable);
+    assert!(original
+        .begin()
+        .err()
+        .unwrap()
+        .is(crate::ErrorCode::PublicMutationCpuUnavailable));
+    {
+        let node = owner.lock().unwrap();
+        assert!(node
+            .public_service_cpu_domain()
+            .unwrap()
+            .shares_domain_with(&original));
+        assert!(node.packet(packet.id().unwrap()).is_err());
+        assert_eq!(node.read_active().unwrap().0, settings.genesis());
+    }
+    drop(owner);
+    let mut reopened = Node::open(directory.path(), settings, 2).unwrap();
+    assert!(reopened
+        .remote_history_cpu_domain()
+        .err()
+        .unwrap()
+        .is(crate::ErrorCode::OwnerPublicServiceUncleanEpoch));
+}
+
+#[test]
+fn committed_history_keeps_original_deadline_inside_native_activation() {
+    let (_directory, settings, node, packet, clock) = fixture();
+    let owner = Mutex::new(node);
+    let end = Instant::now() + Duration::from_secs(1);
+    let activations = Arc::new(AtomicUsize::new(0));
+    let observed = activations.clone();
+    OBSERVER.with(|hook| {
+        *hook.borrow_mut() = Some(Box::new(move |stage| {
+            if stage == "activation_progress" && observed.fetch_add(1, Ordering::SeqCst) == 0 {
+                // Enter the actual native activation API after block admission
+                // committed, then exceed the SAME business deadline.
+                thread::sleep(
+                    end.saturating_duration_since(Instant::now()) + Duration::from_millis(5),
+                );
+            }
+        }))
+    });
+    let result = receive(
+        Owner::Shared(&owner),
+        page(&settings, &packet),
+        packet.id().unwrap(),
+        settings.genesis(),
+        clock,
+        Control {
+            deadline: end,
+            resource: &|| Ok(()),
+        },
+    );
+    OBSERVER.with(|hook| *hook.borrow_mut() = None);
+    assert!(result
+        .unwrap_err()
+        .is(crate::ErrorCode::PublicRequestDeadline));
+    assert_eq!(activations.load(Ordering::SeqCst), 1);
+    let node = owner.lock().unwrap();
+    assert_eq!(
+        node.packet(packet.id().unwrap()).unwrap().encode().unwrap(),
+        packet.encode().unwrap()
+    );
+    // Inspect this same owner before cold recovery may activate committed work.
+    assert_eq!(node.read_active().unwrap().0, settings.genesis());
+    let original = node.public_service_cpu_domain().unwrap().observe().unwrap();
+    assert_eq!(original.in_flight, 0);
+    assert!(!original.accounting_unavailable);
+}
+
+#[test]
+fn shared_admission_owner_wait_observes_control_deadline_and_original_two_second_limit() {
+    for (business_limit, expected) in [
+        (
+            Duration::from_millis(20),
+            crate::ErrorCode::PublicRequestDeadline,
+        ),
+        (Duration::from_secs(4), crate::ErrorCode::PublicQueueBusy),
+    ] {
+        let (_directory, _settings, node, packet, clock) = fixture();
+        let checked = WorkCheckedPacket::verify(packet).unwrap();
+        let owner = Arc::new(Mutex::new(node));
+        let held = owner.lock().unwrap();
+        let request_owner = owner.clone();
+        let request = thread::spawn(move || {
+            let end = Instant::now() + business_limit;
+            let check = |_| ensure(Instant::now() < end, "PUBLIC_REQUEST_DEADLINE");
+            crate::ingress::admit_shared_checked(
+                &request_owner,
+                checked,
+                None,
+                &mut |_| Ok(()),
+                &trnm_mvcc_fee::pon_executor::ExecutionControl::new(&check, &()),
+                || Ok(clock),
+                None,
+            )
+            .err()
+            .unwrap()
+        });
+        // Hold the actual Node mutex until the caller refuses; there is no
+        // scheduler release that could accidentally pass this deadline check.
+        let error = request.join().unwrap();
+        drop(held);
+        assert!(error.is(expected), "unexpected owner-wait result: {error}");
+    }
 }
 
 #[test]
@@ -346,7 +490,7 @@ impl Drop for KillOnDrop {
 
 #[test]
 fn real_sigkill_history_cuts_preserve_debt_fence_and_committed_blocks() {
-    for stage in ["epoch", "w1", "admitted", "activated"] {
+    for stage in ["epoch", "w1", "m06", "admitted", "activated"] {
         let directory = tempfile::tempdir().unwrap();
         let clock = now().unwrap();
         let mut child = KillOnDrop(
@@ -440,5 +584,15 @@ fn real_sigkill_history_cuts_preserve_debt_fence_and_committed_blocks() {
             .unwrap_err()
             .is(crate::ErrorCode::OwnerPublicServiceUncleanEpoch));
         assert!(reopened.public_service_cpu_domain().is_err());
+        println!(
+            "{}",
+            serde_json::json!({"schema":"native-history-real-kill-cut-v1", "cut":stage,
+            "observed_signal":libc::SIGKILL, "cut_active_tip":hex::encode(cut_tip),
+            "durable_epoch_marker":String::from_utf8(marker).unwrap(),
+            "stored_block_after_reopen":reopened.packet(id).is_ok(),
+            "reopened_active_tip":hex::encode(reopened.read_active().unwrap().0),
+            "new_cpu_account_available":reopened.public_service_cpu_domain().is_ok(),
+            "physical_power_loss":false, "debt_reconciliation_complete":false})
+        );
     }
 }

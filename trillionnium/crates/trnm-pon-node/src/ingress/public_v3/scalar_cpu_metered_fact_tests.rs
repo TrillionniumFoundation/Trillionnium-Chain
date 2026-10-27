@@ -387,7 +387,7 @@ fn a_foreign_cpu_domain_is_refused_before_m05_work_and_any_reservation() {
     .err()
     .unwrap();
     assert!(reject.is(crate::error::ErrorCode::OwnerPublicServiceCpuDomain));
-    assert!(!reject.requires_owner_stop());
+    assert!(reject.requires_owner_stop());
     assert_eq!(reject.to_string(), "OWNER_PUBLIC_SERVICE_CPU_DOMAIN");
     assert_eq!(
         foreign.observe().unwrap().stored_credit_ns,

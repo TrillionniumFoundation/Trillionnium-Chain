@@ -5,6 +5,11 @@ This is an implementation continuation under the existing development plan.
 Production activation, PoN/PNW1, target/chainwork, signed domains and persistent
 schema are unchanged. It provides no public readiness or independent acceptance.
 
+This document records the first History continuation. The subsequent
+[private M06 prepare/execute/commit continuation](HISTORY_DETACHED_M06_20261027.md)
+supersedes the held-M06 description below for bounded ordinary shared owners;
+the original CPU domain, deadlines and crash marker described here remain.
+
 ## Implemented boundary
 
 `ingress/history_import.rs` is the single paid History importer used by the

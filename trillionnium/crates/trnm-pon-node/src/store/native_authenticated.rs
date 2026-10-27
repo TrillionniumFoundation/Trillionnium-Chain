@@ -19,7 +19,7 @@ use trnm_protocol::pon_wire::{hash, Hash};
 mod arithmetic_cache;
 pub(crate) use arithmetic_cache::ArithmeticCache;
 mod history_arithmetic;
-pub(crate) use history_arithmetic::HistoryStage;
+pub(crate) use history_arithmetic::{HistoryStage, StageObservation};
 
 pub(crate) const DDL: &str = "CREATE TABLE archive_nodes(id BLOB PRIMARY KEY,data BLOB NOT NULL);\nCREATE TABLE native_state_commitments(block BLOB PRIMARY KEY,data BLOB NOT NULL);";
 pub(crate) const RECORD_SCHEMA: &str = "pon-native-authenticated-state-record-v1";
