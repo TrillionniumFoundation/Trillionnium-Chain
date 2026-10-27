@@ -207,6 +207,9 @@ class NativePQL5NTests(unittest.TestCase):
         symlink.symlink_to(self.keys[0][1]); self.refused(pubs=[symlink, self.keys[1][1], self.keys[2][1]])
         link = self.work / "response-link"
         link.symlink_to(self.work / "reply0")
+        # Ensure the symlink refers to an otherwise valid response. A dangling
+        # link would prove only ENOENT, not an O_NOFOLLOW security boundary.
+        self.work.joinpath("reply0").write_bytes(self.replies[0])
         args = [self.binary, self.network.hex(), self.root_id.hex(), self.genesis.hex(),
                 self.challenge.hex(), "1500", "2", self.fid2.hex(),
                 *(k[1] for k in self.keys), link, self.work / "reply1"]
