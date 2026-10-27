@@ -194,6 +194,34 @@ class BundleAtomicTests(unittest.TestCase):
                 self.publish()
         self.assertEqual(read_published(**self.kw).objects_checked,3)
 
+    def test_stage_directory_entry_durable_before_ready_index(self):
+        import pq_cell_bundle_atomic as b
+        real = b._fsync_dir
+        order = []
+        def trace(path):
+            order.append(path.name)
+            return real(path)
+        with patch.object(b, '_fsync_dir', side_effect=trace):
+            self.publish()
+        self.assertLess(order.index(self.root.name), order.index('published'))
+        self.assertLess(next(i for i, n in enumerate(order) if n.startswith('stage-')),
+                        order.index('pending'))
+        self.assertLess(order.index('pending'), order.index('published'))
+        self.assertEqual(read_published(**self.kw).objects_checked, 3)
+
+    def test_pending_fsync_fail_never_exposes_dangling_ready_pointer(self):
+        import pq_cell_bundle_atomic as b
+        real = b._fsync_dir
+        def break_stage_name(path):
+            if path.name == 'pending':
+                raise OSError('pending stage-directory fsync failed')
+            return real(path)
+        with patch.object(b, '_fsync_dir', side_effect=break_stage_name):
+            with self.assertRaisesRegex(OSError, 'stage-directory fsync'):
+                self.publish()
+        self.assertFalse(any((self.root/'published').iterdir()))
+        self.assertFalse(any((self.root/'pending').iterdir()))
+
     def test_symlink_root_or_world_writable_root_rejects(self):
         alias=self.root.parent/(self.root.name+'-link')
         alias.symlink_to(self.root,target_is_directory=True)

@@ -215,6 +215,8 @@ def publish_bundle(*, manifest_bytes, expected_manifest_digest, expected_network
     _private_dir(root)
     pending = _subdir(root, 'pending')
     published = _subdir(root, 'published')
+    # Newly created directories themselves must survive a crash before commit.
+    _fsync_dir(root)
     pointer = published / (m.digest.hex() + '.pab1')
     if pointer.exists() or pointer.is_symlink():
         raise BundleReject('immutable release already published')
@@ -242,11 +244,13 @@ def publish_bundle(*, manifest_bytes, expected_manifest_digest, expected_network
         with idx.open('xb') as f:
             f.write(_pointer(m, token)); f.flush(); os.fsync(f.fileno())
         _fsync_dir(stage)
+        # Critical durable ordering: persist the stage *name* before publishing
+        # the pointer; otherwise a crash can leave a durable dangling index.
+        _fsync_dir(pending)
         # Hardlink is a no-replace, single-file publication linearization point.
         os.link(idx, pointer, follow_symlinks=False)
         linked = True
         _fsync_dir(published)
-        _fsync_dir(pending)
         return BundleObservation(m.digest, len(m.entries), sum(e.length for e in m.entries), pointer)
     finally:
         # Failure before publication leaves no visible release. Failure AFTER link

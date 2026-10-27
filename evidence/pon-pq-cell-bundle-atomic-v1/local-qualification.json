@@ -1,8 +1,8 @@
 {
-  "schema": "pon-pq-cell-bundle-atomic-isolated-v1",
+  "schema": "pon-pq-cell-bundle-atomic-isolated-v2",
   "base_pr": 455,
   "base_commit": "ac6f996d5cc18d60ea91b02cc911c35547d8fe0d",
-  "tests_run": 16,
+  "tests_run": 18,
   "tests_failed": 0,
   "command": [
     "python3",
@@ -18,13 +18,14 @@
     "openssl": "OpenSSL 3.5.5 27 Jan 2026 (Library: OpenSSL 3.5.5 27 Jan 2026)"
   },
   "source_files_sha256": {
-    "pq_cell_bundle_atomic.py": "b17cef5d13605ab83246e193bcea6f50586b96d2ebe9d8955a68beb1330a71ef",
-    "test_pq_cell_bundle_atomic.py": "8d70c344b6cc306d8d599074aa29fb877921178927f5b5913ac29c9e159fb688",
-    "PQ_CELL_BUNDLE_ATOMIC_RESEARCH_V1.md": "7fcb6fb8be60a7fe2fa44676da7d9dee73bc720967a6b21e2955c352de5939bd",
-    "test-output.log": "fbae9cb06d23d003c4da238c74df1d48edbb64bd9e9419a26523b4b8aef3001c"
+    "pq_cell_bundle_atomic.py": "cd996a11e164aade4604def730dc78fc55c3e4951980f3ae0d24c566481f72d5",
+    "test_pq_cell_bundle_atomic.py": "81e9255bd2b0effca0b7936a9b09e1bd1b76c3c3cf265963a572a191375902ea",
+    "PQ_CELL_BUNDLE_ATOMIC_RESEARCH_V1.md": "d0f2519a88bb035d55f54a2d62639d3d3d40df0e7ad373b4295fc5c705fa8521",
+    "test-output.log": "77836116f6a08dbd29b00859d64291f404e52da705e8eef89ad92e09356bbc07"
   },
   "scope": {
     "storage_atomicity": true,
+    "stage_directory_fsync_before_publication": true,
     "actual_pq_signed_provider_in_test": false,
     "native_rust_full_suite_run": false,
     "independent_acceptance": false,
