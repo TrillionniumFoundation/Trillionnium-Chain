@@ -714,3 +714,49 @@ within this research lineage. None of these cases runs native Rust, produces
 PNW1 valid work, admits a block, proves an independent validator, or qualifies
 public-network difficulty/security. Local proof/admission tests and third-party
 review remain explicit blockers. No legacy DAA or production flag changes.
+
+## P1-B: equal cumulative-work tie at partition heal (2026-10-26)
+
+A concrete research-model counterexample was found in the frozen
+`daa_fork_outage_research.py` study: `ForkSimulator.heal()` selected
+operator A whenever two distinct branches had exactly equal cumulative
+required work. That synthetic A-preference is NOT the native PoN fork choice.
+Under `CONSENSUS.md`, nodes keep their own valid current tip on equal work;
+only a STRICTLY heavier fully verified branch can replace it. Physical gossip
+reconnection is not itself a global consensus tie-break or confirmation.
+
+The additive `formal/pon-nakamoto-v1/daa_equal_work_recovery.py` model
+does **not** rewrite v1 campaign artifacts or its digest. It preserves
+distinct current tips at equal chainwork, reports no globally selected tip
+or confirmation while unresolved, and permits a later simulated legal
+successor to trigger strict heavier-branch adoption. A zero-work outage
+preserves the disagreement instead of inventing a winning block. The
+model retains explicit, branch-local target/chainwork/time verification.
+This is a two-operator synthetic research policy, not a live gossip
+algorithm, validated consensus host, finality guarantee or proof of a
+publicly safe common-prefix probability.
+
+The deterministic `test_daa_equal_work_recovery.py` contains nine named
+regressions: historical v1 counterexample, unresolved equal-work tie,
+strict-successor reorganization under all three research DAAs, depth-six
+rollback of one *simulated* observation, outage with no work, timestamp
+failure, original unequal-work behavior, invalid input, and create-only
+18-case report. The local isolated Python run passed 9/9 against a
+reconstructed functional v1 simulator; the native Rust node, all current
+GitHub-source dependencies and real PNW1 proofs were NOT run or certified
+by that local execution. Reproduce on a fully fetched exact source:
+
+```sh
+cd formal/pon-nakamoto-v1
+python3 -m unittest -v test_daa_equal_work_recovery.py
+python3 daa_equal_work_recovery.py --output /new/absolute/path/equal-work.json
+```
+
+This fixes a **research model's attribution boundary**, not a production
+consensus or safety blocker. To close the actual P1-B/PN1 obligation,
+prove and validate two independently mined W1 full branches with equal
+cumulative work, reconcile on a nonpreferred genuinely heavier branch,
+check two independent original receiver/client tips and six-depth/work
+confirmation histories, recover after restart, and repeat with simultaneous
+source outage, skew and hostile transport. W1 cheapest-legal-cost and
+cross-operator WAN validation remain independently open.
