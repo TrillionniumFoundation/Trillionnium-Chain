@@ -2129,8 +2129,96 @@ fn history_kernel_work_checkpoint(
     }
 }
 
+/// Begin work from the original Node-owned CPU domain. A fresh standalone
+/// History Node begins with ZERO credit and earns the original start quantum
+/// only through the original refill. This is bounded waiting, not extra credit.
+fn begin_history_import_cpu(
+    domain: &public_v3::ServiceMutationCpuDomain,
+) -> Result<public_v3::ServiceMutationCpuOperation> {
+    let deadline = Instant::now() + Duration::from_secs(2);
+    loop {
+        match domain.begin() {
+            Ok(operation) => return Ok(operation),
+            Err(error)
+                if error.is(crate::ErrorCode::PublicMutationCpuBudget)
+                    && Instant::now() < deadline =>
+            {
+                thread::sleep(Duration::from_millis(2));
+            }
+            Err(error) => return Err(error),
+        }
+    }
+}
+
+/// One packet/activation uses one original CPU operation including native M06
+/// worker scopes. The actual native result and CPU settlement are independent.
+/// A lost CPU clock after a real commit cannot undo a committed block; it
+/// does make the overall synchronization fail closed and fences new work.
+fn metered_history_operation<T>(
+    node: &mut Node,
+    domain: &public_v3::ServiceMutationCpuDomain,
+    native: impl FnOnce(&mut Node, &public_v3::ServiceMutationCpuOperation) -> Result<T>,
+) -> Result<T> {
+    let operation = begin_history_import_cpu(domain)?;
+    let outcome = native(node, &operation);
+    let receipt = operation.finish();
+    if receipt.accounting_unavailable {
+        node.operator_task_accounting_unknown()?;
+        return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+    }
+    outcome
+}
+
+fn metered_history_packet(
+    node: &mut Node,
+    domain: &public_v3::ServiceMutationCpuDomain,
+    packet: &Packet,
+    clock: u64,
+    resource_checkpoint: &(impl Fn() -> Result<()> + Sync),
+) -> Result<Hash> {
+    metered_history_operation(node, domain, |owner, operation| {
+        let progress = operation.checkpoint_handle();
+        progress.checkpoint()?;
+        resource_checkpoint()?;
+        if let Some(already) = owner.check_admission_context_with_progress(
+            packet,
+            clock,
+            &mut || {
+                progress.checkpoint()?;
+                resource_checkpoint()
+            },
+        )? {
+            return Ok(already);
+        }
+        let permit = owner.begin_owner_work(packet)?;
+        let checked = WorkCheckedPacket::verify_with_progress(
+            packet.clone(),
+            &mut |point| {
+                progress.checkpoint()?;
+                if history_kernel_work_checkpoint(point) {
+                    resource_checkpoint()?;
+                }
+                Ok(())
+            },
+        )?;
+        progress.checkpoint()?;
+        resource_checkpoint()?;
+        let checked = owner.attach_owner_work(checked, permit)?;
+        let execution_progress = |_phase| {
+            progress.checkpoint()?;
+            resource_checkpoint()
+        };
+        let control = trnm_mvcc_fee::pon_executor::ExecutionControl::new(
+            &execution_progress,
+            operation.worker_accounting(),
+        );
+        owner.admit_work_checked_with_control(checked, clock, &control)
+    })
+}
+
 fn receive_page(
     node: &mut Node,
+    domain: &public_v3::ServiceMutationCpuDomain,
     page: Page,
     tip: Hash,
     after: Hash,
@@ -2158,43 +2246,45 @@ fn receive_page(
         page.packets.iter().map(String::len).sum::<usize>() <= MAX_FRAME - 1024,
         "PAGE_LIMIT",
     )?;
-    let packets = page
-        .packets
-        .iter()
-        .map(|s| hex_packet(s))
-        .collect::<Result<Vec<_>>>()?;
-    let mut next = after;
-    for packet in &packets {
-        ensure(packet.header.parent == next, "PAGE_PARENT")?;
-        next = packet.id()?;
-    }
-    ensure(
-        page.next == hex::encode(next) && page.complete == (next == tip),
-        "PAGE_COMPLETE",
-    )?;
+    // Charge canonical proof decoding, packet IDs and parent-chain checks
+    // separately from the later full W1/M06 intervals. No nested operation:
+    // actual decoder CPU must not be double-billed or run at no cost.
+    resource_checkpoint()?;
+    let (packets, next) = metered_history_operation(node, domain, |_owner, operation| {
+        operation.checkpoint()?;
+        let packets = page
+            .packets
+            .iter()
+            .map(|s| hex_packet(s))
+            .collect::<Result<Vec<_>>>()?;
+        let mut next = after;
+        for packet in &packets {
+            ensure(packet.header.parent == next, "PAGE_PARENT")?;
+            next = packet.id()?;
+        }
+        ensure(
+            page.next == hex::encode(next) && page.complete == (next == tip),
+            "PAGE_COMPLETE",
+        )?;
+        operation.checkpoint()?;
+        resource_checkpoint()?;
+        Ok((packets, next))
+    })?;
     for packet in &packets {
         resource_checkpoint()?;
-        node.admit_with_work_progress(
-            packet,
-            clock,
-            &mut |point| {
-                if history_kernel_work_checkpoint(point) {
-                    resource_checkpoint()?;
-                }
-                Ok(())
-            },
-            // All W1 and M06 checkpoints use the SAME fixed physical owner,
-            // including authenticated State work and BeforeDurableCommit.
-            &|_| resource_checkpoint(),
-        )?;
-        // This can run after durable admission: an owner fault never revokes
-        // a committed block, but it stops this unqualified sync response.
+        metered_history_packet(node, domain, packet, clock, &resource_checkpoint)?;
         resource_checkpoint()?;
     }
     if page.complete {
-        resource_checkpoint()?;
-        node.activate_observed(tip, clock)?;
-        resource_checkpoint()?;
+        // Reorganization/activation has its own original CPU reservation.
+        // Already durable native effects cannot be undone by late CPU faults.
+        metered_history_operation(node, domain, |owner, operation| {
+            operation.checkpoint()?;
+            resource_checkpoint()?;
+            owner.activate_observed(tip, clock)?;
+            resource_checkpoint()?;
+            operation.checkpoint()
+        })?;
     }
     Ok(next)
 }
@@ -2217,7 +2307,8 @@ pub(crate) fn receive_page_from(
     if let Some(kernel) = &host_kernel {
         kernel.verify()?;
     }
-    let native = receive_page(node, page, tip, after, clock, || {
+    let domain = node.remote_history_cpu_domain()?;
+    let native = receive_page(node, &domain, page, tip, after, clock, || {
         if let Some(kernel) = &host_kernel {
             kernel.verify()?;
         }
@@ -2254,7 +2345,8 @@ pub fn receive_public_page_from(
     )?
     .ok_or("PUBLIC_HOST_KERNEL_REQUIRED")?;
     kernel.verify()?;
-    let native = receive_page(node, page, tip, after, clock, || kernel.verify());
+    let domain = node.remote_history_cpu_domain()?;
+    let native = receive_page(node, &domain, page, tip, after, clock, || kernel.verify());
     // Do not convert an already committed block into an invalid work proof
     // when the last local Host owner observation fails.
     kernel.verify()?;
