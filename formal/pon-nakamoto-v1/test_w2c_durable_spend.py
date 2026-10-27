@@ -37,6 +37,16 @@ def process_consume(arguments):
         instance.close()
 
 
+def process_hard_exit_after_paid(conn, path, grant, nonce):
+    # Actual child exits without clean Connection.close/SQLite checkpoint.
+    # Only a committed spend may tell the parent READY.
+    receiver = new_receiver(path)
+    result = receiver.consume(grant, PROPOSAL, CALLER, nonce, 150)
+    conn.send(result)
+    conn.close()
+    os._exit(23)
+
+
 class DurableReceiverCostControls(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
@@ -90,6 +100,33 @@ class DurableReceiverCostControls(unittest.TestCase):
             result = list(pool.map(process_consume, [(self.path, grant, nonce)] * 2))
         self.assertEqual(result.count('READY_RESOURCE_ONLY'), 1)
         self.assertEqual(result.count('REPLAY'), 1)
+
+    def test_actual_child_hard_exit_does_not_erase_committed_spend(self):
+        grant, nonce = self.paid()
+        context = multiprocessing.get_context('spawn')
+        parent, child = context.Pipe(duplex=False)
+        worker = context.Process(
+            target=process_hard_exit_after_paid,
+            args=(child, self.path, grant, nonce))
+        worker.start()
+        child.close()
+        self.assertTrue(parent.poll(20), 'child never committed paid admission')
+        self.assertEqual(parent.recv(), 'READY_RESOURCE_ONLY')
+        parent.close()
+        worker.join(20)
+        self.assertEqual(worker.exitcode, 23)
+        restarted = new_receiver(self.path)
+        try:
+            self.assertEqual(restarted.consume(grant, PROPOSAL, CALLER, nonce, 160),
+                             'REPLAY')
+        finally:
+            restarted.close()
+
+    def test_unavailable_sqlite_spend_owner_fails_closed(self):
+        grant, nonce = self.paid()
+        self.receiver.close()
+        with self.assertRaisesRegex(ValueError, 'DURABLE_RESOURCE_UNAVAILABLE'):
+            self.receiver.consume(grant, PROPOSAL, CALLER, nonce, 125)
 
     def test_restart_with_different_secret_epoch_or_boot_fails_closed(self):
         grant, nonce = self.paid()
