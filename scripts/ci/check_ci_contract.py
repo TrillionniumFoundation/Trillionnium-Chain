@@ -83,6 +83,7 @@ LLM_RUNTIME_TESTS = (
 LLM_INITIAL_V2_BYTE_TESTS = (
     '    python3 scripts/test_llm_runtime_parent_step_v2.py\n'
     '    python3 scripts/test_llm_runtime_parent_step_task_v2.py\n'
+    '    python3 scripts/test_llm_answer_eos_research_v3.py\n'
 )
 
 MODEL_RUNTIME_TRIGGER_PATHS = '''      - config/pon/**
@@ -117,7 +118,7 @@ MODEL_RUNTIME_TEST_STEP = '''      - name: Execute all original small Tensor and
           set -euo pipefail
           export HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1
           status=0
-          for spec in initial_trainable_setup_v2 runtime_candidate_observation_v1 runtime_release; do
+          for spec in initial_trainable_setup_v2 runtime_candidate_observation_v1 runtime_release answer_eos_loss_v3; do
             if ! "$RUNNER_TEMP/model-runtime-unit-env/bin/python" -B "scripts/test_llm_${spec}.py" 2>&1 | tee "$RUNNER_TEMP/parent-evidence/${spec}.log"; then
               status=1
             fi
@@ -125,6 +126,7 @@ MODEL_RUNTIME_TEST_STEP = '''      - name: Execute all original small Tensor and
           "$RUNNER_TEMP/model-runtime-unit-env/bin/python" -B scripts/ci/check_model_runtime_unit_log.py --suite setup --log "$RUNNER_TEMP/parent-evidence/initial_trainable_setup_v2.log" > "$RUNNER_TEMP/parent-evidence/unit-setup-readback.json" || status=1
           "$RUNNER_TEMP/model-runtime-unit-env/bin/python" -B scripts/ci/check_model_runtime_unit_log.py --suite observer --log "$RUNNER_TEMP/parent-evidence/runtime_candidate_observation_v1.log" > "$RUNNER_TEMP/parent-evidence/unit-observer-readback.json" || status=1
           "$RUNNER_TEMP/model-runtime-unit-env/bin/python" -B scripts/ci/check_model_runtime_unit_log.py --suite runtime-release --log "$RUNNER_TEMP/parent-evidence/runtime_release.log" > "$RUNNER_TEMP/parent-evidence/unit-runtime-release-readback.json" || status=1
+          "$RUNNER_TEMP/model-runtime-unit-env/bin/python" -B scripts/ci/check_model_runtime_unit_log.py --suite answer-eos-loss-v3 --log "$RUNNER_TEMP/parent-evidence/answer_eos_loss_v3.log" > "$RUNNER_TEMP/parent-evidence/unit-answer-eos-loss-v3-readback.json" || status=1
           exit "$status"
 '''
 
@@ -272,6 +274,7 @@ PROTOCOL_CONTRACT_BLOCK = '''    python3 scripts/ci/run_from_zero_native.py --ou
     python3 scripts/test_llm_neural_read_worker.py
     python3 scripts/test_llm_runtime_parent_step_v2.py
     python3 scripts/test_llm_runtime_parent_step_task_v2.py
+    python3 scripts/test_llm_answer_eos_research_v3.py
     python3 formal/pon-nakamoto-v1/test_reward_budget_oracle.py
     python3 formal/pon-nakamoto-v1/test_model_attribution.py
     python3 formal/pon-nakamoto-v1/test_model_evolution_oracle.py -v

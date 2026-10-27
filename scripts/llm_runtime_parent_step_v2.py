@@ -2,6 +2,8 @@
 
 Unsigned local execution evidence only. V1 schemas and material authority do not
 change; setup is not learning. Evaluation/readback V2 are deliberately closed.
+The explicit V3 research arm shares this lifecycle, with separate namespaces and
+a pinned objective; it grants none of the missing product qualifications.
 """
 import hashlib
 import importlib.metadata
@@ -16,6 +18,7 @@ import llm_inherited_runtime as inherited
 import llm_initial_trainable_setup_v2 as setup
 import llm_runtime_parent_step as step
 import llm_runtime_pilot as runtime
+import llm_answer_eos_research_v3 as research
 
 SCHEMA = 'llm-runtime-parent-step-input-v2'
 PROFILE = 'canonical-positive-zero-to-caller-peft-A-v2'
@@ -28,10 +31,18 @@ RESULT = 'llm-runtime-parent-step-result-v2'
 def sources(profile=PROFILE):
     result = dict(step.sources(), initial_setup=runtime.file_sha(setup.__file__),
         parent_step_v2=runtime.file_sha(__file__), inherited=runtime.file_sha(inherited.__file__),
-        family=runtime.file_sha(runtime.FAMILY_PATH))
+        family=runtime.file_sha(runtime.FAMILY_PATH), research_objective=runtime.file_sha(research.__file__))
     if profile == NEW_TASK_PROFILE:
         result['task_link'] = runtime.file_sha(Path(__file__).with_name('llm_runtime_parent_step_task_v2.py'))
     return result
+
+
+def version(value):
+    return 'v3' if research.is_research(value) else 'v2'
+
+
+def named(value, prefix):
+    return prefix + '-' + version(value)
 
 
 def new_task(value):
@@ -40,12 +51,14 @@ def new_task(value):
 
 
 def binding(value):
-    return runtime.identity(dict(schema='llm-runtime-parent-attempt-v2',
+    return runtime.identity(dict(schema=named(value, 'llm-runtime-parent-attempt'),
         attempt_id=value['attempt_id'], experiment=value['experiment'],
         source=value['source'], parent=value['parent'], initial_setup=value['initial_setup']))
 
 
 def preflight(value):
+    if research.is_research(value):
+        return research.preflight(value)
     if new_task(value):
         from llm_runtime_parent_step_task_v2 import preflight as task_preflight
         return task_preflight(value)
@@ -126,13 +139,15 @@ def verify_setup(value, descriptor, contract, original):
 
 
 def candidate_record(value, descriptor, candidate, changed, task_link=None):
-    record = dict(schema=CANDIDATE, scope=step.SCOPE, operation='train',
+    record = dict(schema=named(value, 'llm-runtime-parent-candidate'), scope=step.SCOPE, operation='train',
         attempt_binding=binding(value), input=runtime.identity(value), source=value['source'],
         contract=value['parent']['contract'], parent=value['parent'], parent_generation=1,
         candidate_generation=2, setup=descriptor, candidate=candidate,
         training_changed_from_setup=changed, flags=step.FALSES)
     if new_task(value):
         record['task_link'] = task_link if task_link is not None else value['initial_setup']['task_link']
+    if research.is_research(value):
+        record['research'] = research.context(value)
     return record
 
 
@@ -144,11 +159,14 @@ def verify_completion(value):
     step.closed(report, 'schema scope operation attempt_id attempt_binding input source experiment parent '
         'parent_preflight parent_readback actual_backend actual_device actual_threads torch_cuda environment '
         'outcome observed_wall_ns training setup candidate setup_changed_from_parent training_changed_from_setup ' +
-        ' '.join(step.FALSES) + (' task_link' if new_task(value) else ''))
+        ' '.join(step.FALSES) + (' task_link' if new_task(value) else '') +
+        (' research' if research.is_research(value) else ''))
     if new_task(value):
         from llm_runtime_parent_step_task_v2 import verify_report
         verify_report(value, report['task_link'])
-    runtime.require(report['schema'] == ACTUAL and report['scope'] == step.SCOPE and report['operation'] == 'train' and
+    if research.is_research(value):
+        runtime.require(report['research'] == research.context(value), 'RESEARCH_V3_REPORT_CONTEXT')
+    runtime.require(report['schema'] == named(value, 'llm-runtime-parent-step-actual') and report['scope'] == step.SCOPE and report['operation'] == 'train' and
         report['attempt_id'] == value['attempt_id'] and report['attempt_binding'] == binding(value) and
         report['input'] == runtime.identity(value) and report['source'] == value['source'] and
         report['experiment'] == value['experiment'] and report['parent'] == value['parent'] and
@@ -160,7 +178,8 @@ def verify_completion(value):
     runtime.require(all(type(v) is str and 0 < len(v) <= 128 for v in report['environment'].values()) and
         type(report['observed_wall_ns']) is int and report['observed_wall_ns'] >= 0, 'PARENT_V2_OBSERVATIONS')
     training = report['training']
-    step.closed(training, 'steps loss tokens supervised_tokens supported_profile_flops flop_scope')
+    step.closed(training, 'steps loss tokens supervised_tokens supported_profile_flops flop_scope' +
+                (' objective' if research.is_research(value) else ''))
     runtime.require(type(training['steps']) is int and training['steps'] == plan['training_steps'] and
         type(training['loss']) is list and len(training['loss']) == training['steps'] and
         all(type(v) is str and 0 < len(v) <= 128 and math.isfinite(float(v)) for v in training['loss']) and
@@ -168,12 +187,15 @@ def verify_completion(value):
             ('tokens', 'supervised_tokens', 'supported_profile_flops')) and
         0 < training['supervised_tokens'] <= training['tokens'] <= training['steps'] * plan['input_tokens_max'] and
         training['flop_scope'] == 'profiler-supported-operators-only-not-total-work', 'PARENT_V2_TRAINING')
+    if research.is_research(value):
+        research.verify_training(training)
     prepared = verify_setup(value, report['setup'], contract, original)
     candidate = _material(value, directory, '', report['candidate'])
     changed = candidate != prepared
-    record = step.read_object(directory / 'parent-candidate-v2.json')
+    record = step.read_object(directory / (named(value, 'parent-candidate') + '.json'))
     step.closed(record, 'schema scope operation attempt_binding input source contract parent parent_generation '
-        'candidate_generation setup candidate training_changed_from_setup flags' + (' task_link' if new_task(value) else ''))
+        'candidate_generation setup candidate training_changed_from_setup flags' + (' task_link' if new_task(value) else '') +
+        (' research' if research.is_research(value) else ''))
     runtime.require(type(record['parent_generation']) is int and type(record['candidate_generation']) is int and
         type(record['training_changed_from_setup']) is bool and all(v is False for v in record['flags'].values()) and
         type(report['training_changed_from_setup']) is bool and
@@ -195,9 +217,11 @@ def child(args, value):
     plan, manifest, contract, raw, original, _, summary = preflight(value)
     directory = Path(args.output)
     observer = runtime.Observer(directory, plan['backend'])
-    report = dict(schema=ACTUAL, scope=step.SCOPE, operation='train', attempt_id=value['attempt_id'],
+    report = dict(schema=named(value, 'llm-runtime-parent-step-actual'), scope=step.SCOPE, operation='train', attempt_id=value['attempt_id'],
         attempt_binding=binding(value), input=runtime.identity(value), source=value['source'],
         experiment=value['experiment'], parent=value['parent'], parent_preflight=summary, **step.FALSES)
+    if research.is_research(value):
+        report['research'] = research.context(value)
     begin = time.monotonic_ns()
     try:
         imports = observer.stage('runtime-import', lambda: runtime.runtime_import(plan))
@@ -232,7 +256,9 @@ def child(args, value):
             actual_device=str(device), actual_threads=torch.get_num_threads(), torch_cuda=torch.version.cuda,
             environment={n: importlib.metadata.version(n) for n in
                 ('torch', 'transformers', 'peft', 'safetensors', 'tokenizers', 'numpy', 'accelerate')})
-        report['training'] = observer.stage('training', lambda: runtime.train(model, tokenizer, plan, 'candidate', torch, device))
+        report['training'] = observer.stage('training', lambda:
+            research.train(model, tokenizer, plan, torch, device) if research.is_research(value) else
+            runtime.train(model, tokenizer, plan, 'candidate', torch, device))
         index = {n: runtime.tensor_descriptor(t) for n, t in runtime.backbone_tensors(model, shapes).items()}
         runtime.require(runtime.contract_module().H('llm-tensor-index-v1', runtime.canonical(index)).hex() ==
                         contract['backbone']['index_root'], 'PARENT_STEP_BACKBONE_MUTATION')
@@ -242,7 +268,7 @@ def child(args, value):
                                                          str(directory / 'artifact.safetensors')))
         candidate = dict(adapter=aid, file_sha256=runtime.file_sha(directory / 'artifact.safetensors'))
         changed = {n: runtime.tensor_bytes(t) for n, t in tensors.items()} != prepared
-        runtime.save(directory / 'parent-candidate-v2.json', candidate_record(value, descriptor, candidate, changed,
+        runtime.save(directory / (named(value, 'parent-candidate') + '.json'), candidate_record(value, descriptor, candidate, changed,
                                                                             report.get('task_link')))
         (directory / 'target-contract.json').write_bytes(raw)
         preflight(value)
@@ -258,8 +284,11 @@ def child(args, value):
 
 def run(args):
     runtime.require(args.operation == 'train', 'PARENT_V2_OPERATION_UNIMPLEMENTED')
-    runtime.require(args.initial_setup_profile in (PROFILE, NEW_TASK_PROFILE) and args.parent_material and args.parent_material_sha256,
+    runtime.require(args.initial_setup_profile in (PROFILE, NEW_TASK_PROFILE, research.PROFILE) and args.parent_material and args.parent_material_sha256,
                     'PARENT_V2_ARGUMENTS')
+    is_research = args.initial_setup_profile == research.PROFILE
+    plan_role = (getattr(args, 'research_plan', None), getattr(args, 'research_plan_sha256', None))
+    runtime.require(all(plan_role) if is_research else not any(plan_role), 'RESEARCH_V3_ARGUMENTS')
     runtime.require(not any(getattr(args, n) for n in ('candidate_directory', 'expected_candidate_adapter',
         'expected_candidate_file_sha256', 'expected_candidate_record_sha256', 'expected_candidate_result_sha256')),
         'PARENT_STEP_CANDIDATE_ARGUMENTS')
@@ -267,25 +296,27 @@ def run(args):
         ('materials', 'plan', 'parent_contract', 'parent_adapter', 'parent_artifact')}
     files['candidate_directory'] = None
     directory = Path(args.output).absolute()
-    value = dict(schema=SCHEMA, scope=step.SCOPE, attempt_id=args.attempt_id, operation='train',
+    value = dict(schema=research.SCHEMA if is_research else SCHEMA, scope=step.SCOPE, attempt_id=args.attempt_id, operation='train',
         experiment=args.expected_plan, source=sources(args.initial_setup_profile), files=files,
         parent=dict(contract=args.expected_contract, adapter=args.expected_parent_adapter,
                     file_sha256=args.expected_parent_file_sha256), candidate=None,
         output=str(directory / 'execution'), flags=step.FALSES,
         initial_setup=dict(profile=args.initial_setup_profile, recipe=dict(setup.RECIPE), parent_material=dict(
             path=str(Path(args.parent_material).absolute()), sha256=args.parent_material_sha256)))
+    if is_research:
+        value['initial_setup']['research_plan'] = dict(path=str(Path(plan_role[0]).absolute()), sha256=plan_role[1])
     if new_task(value):
         from llm_runtime_parent_step_task_v2 import request_link
         value['initial_setup']['task_link'] = request_link(value)
     plan, *_ = preflight(value)
     directory.mkdir(mode=0o700, parents=False, exist_ok=False)
-    frozen = directory / 'parent-step-input-v2.json'
+    frozen = directory / (named(value, 'parent-step-input') + '.json')
     runtime.save(frozen, value)
     command = [sys.executable, str(Path(runtime.__file__).resolve()), '_child', '--materials', files['materials'],
         '--plan', files['plan'], '--output', value['output'], '--phase', 'parent-step', '--role', 'candidate',
         '--parent-step-input', str(frozen), '--expected-parent-step-input', runtime.identity(value)]
     result = runtime.supervise(command, value['output'], plan['training_budget'], exit_observation=plan.get('exit_observation'))
-    completion = dict(schema=RESULT, scope=step.SCOPE, input=runtime.identity(value), attempt_binding=binding(value),
+    completion = dict(schema=named(value, 'llm-runtime-parent-step-result'), scope=step.SCOPE, input=runtime.identity(value), attempt_binding=binding(value),
         supervisor=result, outcome='failed', completion_verified=False, actual_receipt_sha256=None, flags=step.FALSES)
     try:
         runtime.require(result['outcome'] == 'success' and type(result['exit_code']) is int and result['exit_code'] == 0 and
@@ -296,10 +327,12 @@ def run(args):
         completion['actual_receipt_sha256'] = verify_completion(value)
         completion.update(outcome='success', completion_verified=True)
     finally:
-        runtime.save(directory / 'parent-step-result-v2.json', completion)
+        runtime.save(directory / (named(value, 'parent-step-result') + '.json'), completion)
 
 
 def add_arguments(parser):
-    parser.add_argument('--initial-setup-profile', choices=(PROFILE, NEW_TASK_PROFILE))
+    parser.add_argument('--initial-setup-profile', choices=(PROFILE, NEW_TASK_PROFILE, research.PROFILE))
     parser.add_argument('--parent-material')
     parser.add_argument('--parent-material-sha256')
+    parser.add_argument('--research-plan')
+    parser.add_argument('--research-plan-sha256')
