@@ -13,8 +13,8 @@ pub const ML_DSA_65_SPKI_BYTES: usize = 1_974;
 // Strict DER SPKI: SEQUENCE(1970), SEQUENCE(id-ml-dsa-65 OID), BIT STRING(1953).
 // This checks framing/algorithm identity only; it is NOT ML-DSA public-key validation.
 const ML_DSA_65_SPKI_PREFIX: [u8; 22] = [
-    0x30, 0x82, 0x07, 0xb2, 0x30, 0x0b, 0x06, 0x09, 0x60, 0x86, 0x48,
-    0x01, 0x65, 0x03, 0x04, 0x03, 0x12, 0x03, 0x82, 0x07, 0xa1, 0x00,
+    0x30, 0x82, 0x07, 0xb2, 0x30, 0x0b, 0x06, 0x09, 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03,
+    0x12, 0x03, 0x82, 0x07, 0xa1, 0x00,
 ];
 const PUBLIC_KEY_ID_DOMAIN: &[u8] = b"TRNM/PoN/PQKey/v1\0";
 pub const TPQ1_SIGNED_BYTES: usize = TPQ1_UNSIGNED_BYTES + 2 + ML_DSA_65_SIGNATURE_BYTES;
@@ -97,9 +97,7 @@ pub fn payload_commitment(payload: &[u8]) -> Result<[u8; 48], PqFrameError> {
 /// NOT checked for cryptographic validity here; a real ML-DSA-65 verifier
 /// remains mandatory before any trust or authorization can be established.
 pub fn ml_dsa_65_key_id_from_spki(spki: &[u8]) -> Result<[u8; 32], PqFrameError> {
-    if spki.len() != ML_DSA_65_SPKI_BYTES
-        || !spki.starts_with(&ML_DSA_65_SPKI_PREFIX)
-    {
+    if spki.len() != ML_DSA_65_SPKI_BYTES || !spki.starts_with(&ML_DSA_65_SPKI_PREFIX) {
         return Err(PqFrameError::PublicKeyDer);
     }
     let mut digest = Sha256::new();
@@ -219,7 +217,10 @@ mod tests {
         for idx in 0..TPQ1_UNSIGNED_BYTES {
             let mut mutated = v.clone();
             mutated[idx] ^= 1;
-            assert!(preflight_unverified(&mutated, &e).is_err(), "field byte {idx}");
+            assert!(
+                preflight_unverified(&mutated, &e).is_err(),
+                "field byte {idx}"
+            );
         }
     }
 
@@ -229,15 +230,24 @@ mod tests {
         for end in [0, 175, 3486, 3488] {
             let mut bad = v.clone();
             bad.resize(end, 0);
-            assert_eq!(preflight_unverified(&bad, &e).unwrap_err(), PqFrameError::FrameLength);
+            assert_eq!(
+                preflight_unverified(&bad, &e).unwrap_err(),
+                PqFrameError::FrameLength
+            );
         }
         let mut bad = v.clone();
         bad[5] = 0x19; // Ed25519 is not a PQ signature algorithm.
-        assert_eq!(preflight_unverified(&bad, &e).unwrap_err(), PqFrameError::HeaderVersionAlgorithm);
+        assert_eq!(
+            preflight_unverified(&bad, &e).unwrap_err(),
+            PqFrameError::HeaderVersionAlgorithm
+        );
         for range in [104..112, 112..120, 120..128] {
             let mut bad = v.clone();
             bad[range].fill(0);
-            assert_eq!(preflight_unverified(&bad, &e).unwrap_err(), PqFrameError::LifetimeOrSequence);
+            assert_eq!(
+                preflight_unverified(&bad, &e).unwrap_err(),
+                PqFrameError::LifetimeOrSequence
+            );
         }
     }
 
@@ -245,14 +255,23 @@ mod tests {
     fn stale_payload_and_signature_size_refuse() {
         let (v, mut e) = case(b"test");
         e.now = 4001;
-        assert_eq!(preflight_unverified(&v, &e).unwrap_err(), PqFrameError::Expired);
+        assert_eq!(
+            preflight_unverified(&v, &e).unwrap_err(),
+            PqFrameError::Expired
+        );
         e.now = 3999;
         e.payload = b"other";
-        assert_eq!(preflight_unverified(&v, &e).unwrap_err(), PqFrameError::PayloadDigest);
+        assert_eq!(
+            preflight_unverified(&v, &e).unwrap_err(),
+            PqFrameError::PayloadDigest
+        );
         e.payload = b"test";
         let mut bad = v.clone();
         bad[176] = 0;
-        assert_eq!(preflight_unverified(&bad, &e).unwrap_err(), PqFrameError::SignatureLength);
+        assert_eq!(
+            preflight_unverified(&bad, &e).unwrap_err(),
+            PqFrameError::SignatureLength
+        );
     }
 
     #[test]
@@ -296,7 +315,10 @@ mod tests {
         frame[72..104].copy_from_slice(&id);
         let unverified = preflight_unverified_with_spki(&frame, &expected, &spki).unwrap();
         assert_eq!(unverified.unsigned_statement().len(), TPQ1_UNSIGNED_BYTES);
-        assert_eq!(unverified.unverified_signature().len(), ML_DSA_65_SIGNATURE_BYTES);
+        assert_eq!(
+            unverified.unverified_signature().len(),
+            ML_DSA_65_SIGNATURE_BYTES
+        );
 
         // A second structurally well-formed key cannot substitute for the pinned key.
         let alternative = spki_with_payload_byte(0);
