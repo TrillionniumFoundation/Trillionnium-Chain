@@ -132,6 +132,47 @@ class DurablePaidSpendTests(unittest.TestCase):
         self.assertEqual(issuer.consume(grant, PROPOSAL, CALLER, nonce, 120),
                          'SPEND_UNAVAILABLE')
 
+    def test_two_independently_copied_stores_do_not_supply_global_replay_safety(self):
+        # Expected ATTACK counterexample, not a security pass: two separate
+        # SQLite histories can both pay the same canonical ticket if an
+        # operator clones receiver secret, epoch and entire service identity.
+        with tempfile.TemporaryDirectory() as second:
+            original = self.owner()
+            copy = SQLiteSpentOwner(
+                str((Path(second) / 'copy.sqlite').resolve()),
+                RECEIVER, EPOCH, 8, 64)
+            try:
+                grant, nonce = self.grant(self.issuer(original))
+                self.assertEqual(self.issuer(original).consume(
+                    grant, PROPOSAL, CALLER, nonce, 120), 'READY_RESOURCE_ONLY')
+                self.assertEqual(self.issuer(copy).consume(
+                    grant, PROPOSAL, CALLER, nonce, 120), 'READY_RESOURCE_ONLY')
+                self.assertEqual(original.pending_paid(), 1)
+                self.assertEqual(copy.pending_paid(), 1)
+            finally:
+                copy.close()
+
+    def test_durable_paid_false_trace_still_fails_independent_w1(self):
+        import work_oracle as W
+        zeros = [0] * W.CELLS
+        header = H('durable-false-w1-header') * 9 + bytes(30)
+        self.assertEqual(len(header), 318)
+        challenge = H('challenge', header)
+        forged = b'PNW1' + W.field_bytes(zeros) * 3 + H('false-trace', challenge)
+        proposal = H('w2c-proposal', b'w2c-research-security-v0',
+                     header, forged)
+        store = self.owner()
+        issuer = self.issuer(store)
+        grant = issuer.offer(proposal, CALLER, 8, 100)
+        nonce, _ = solve(grant, 65536)
+        self.assertIsNotNone(nonce)
+        self.assertEqual(issuer.consume(grant, proposal, CALLER, nonce, 120),
+                         'READY_RESOURCE_ONLY')
+        with self.assertRaisesRegex(ValueError, 'TRANSCRIPT'):
+            W.verify(challenge, W.task_id(zeros, zeros),
+                     bytes([255]) * 32, forged)
+        self.assertEqual(store.pending_paid(), 1)
+
     def test_issuer_still_does_not_grant_verified_work(self):
         store = self.owner()
         issuer = self.issuer(store)
