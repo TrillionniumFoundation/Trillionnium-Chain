@@ -2117,7 +2117,7 @@ fn begin_history_import_cpu(
 ) -> Result<public_v3::ServiceMutationCpuOperation> {
     let deadline = Instant::now() + Duration::from_secs(2);
     loop {
-        match domain.begin() {
+        match domain.begin_untrusted_peer_sync() {
             Ok(operation) => return Ok(operation),
             Err(error)
                 if error.is(crate::ErrorCode::PublicMutationCpuBudget)
