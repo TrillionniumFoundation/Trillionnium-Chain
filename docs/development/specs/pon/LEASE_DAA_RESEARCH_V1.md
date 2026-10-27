@@ -767,4 +767,21 @@ no Rust toolchain or full repository checkout. Source assertions do not make
 independent administrators, real Hepta request ownership, W1 work-cost
 qualification or 72-hour WAN acceptance true. P0-A remains OPEN pending
 a real native exit plus a separately administered client/operator campaign.
+### Active-branch Q4 advisory hardening (2026-10-27)
+
+The native M07 Node adds read-only `forecast_q4_renewal_from_active`
+for original Q4/Revision12 contexts. It uses the checked current active
+state/root, actual parent generation, actual source-verified eligible old
+lease, checked next-height arithmetic, unchanged pre-existing Q4 forecast
+constraints and a final active-generation comparison. It returns only the
+tip, generation and timing advice, not a verified successor signature, source
+grant, dispatch or network-inclusion permission. On a real Maintenance
+revocation it must refuse the old source instead of emitting a misleading
+green advisory for an untrusted caller-supplied obsolete Lease.
+The native test extends the existing signed Maintenance re-entry selector.
+
+The original bounded status query remains advisory and may immediately be
+stale. No operation/outbox may treat it as a NotDispatched certificate.
+Exact-source Rust compilation and real independent network acceptance are
+NOT_RUN here. P0-B and P2 remain strictly OPEN.
 

@@ -4130,6 +4130,50 @@ impl Node {
     pub fn parent_height(&self, parent: Hash) -> Result<u64> {
         Ok(self.record(parent)?.height)
     }
+    /// Active-branch read-only Q4 forecast. Unlike the generic time-only
+    /// advisor this reads and checks the ACTUAL current parent, authenticated
+    /// lifecycle/source statement and its verified state root first.
+    /// There is no signing, dispatch, slot reservation, inclusion guarantee,
+    /// permission to retry Unknown effects, or mining-mode substitution.
+    /// Reorganization or a changed local generation invalidates the advice.
+    pub fn forecast_q4_renewal_from_active(
+        &self,
+        task: Hash,
+        proposed_lease: &trnm_protocol::qualified_work_task::lifecycle_v2::DemandLeaseV2,
+        assumed_queue_lag_blocks: u64,
+        assumed_safety_margin_blocks: u64,
+    ) -> Result<(Hash, u64, crate::Q4RenewalForecast)> {
+        ensure(
+            matches!(
+                self.settings.task_profile(),
+                OVERLAP_TASK_PROFILE | CONTINUITY_TASK_PROFILE
+            ),
+            "Q4_FORECAST_PROFILE",
+        )?;
+        let (tip, generation, state) = self.read_active()?;
+        let next_height = self
+            .record(tip)?
+            .height
+            .checked_add(1)
+            .ok_or("HEIGHT")?;
+        let actual_lease = qualified_task_lifecycle::eligible_task(
+            &state,
+            task,
+            next_height,
+            &self.settings.app,
+        )?;
+        let forecast = crate::forecast_q4_renewal_window(
+            actual_lease.lease(),
+            proposed_lease,
+            next_height,
+            assumed_queue_lag_blocks,
+            assumed_safety_margin_blocks,
+        )
+        .map_err(|_| Error::from("Q4_FORECAST_REFUSED"))?;
+        ensure(self.active()? == (tip, generation), "ACTIVE_GENERATION_CONFLICT")?;
+        Ok((tip, generation, forecast))
+    }
+
     pub fn lifecycle_task_lease(
         &self,
         parent: Hash,
