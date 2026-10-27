@@ -1,0 +1,287 @@
+{
+  "schema": "history-followup-final-static-and-source-correspondence-v1",
+  "actual_standard_repository_gate": "FAIL: sparse historical evidence not materialized; original checker retained",
+  "standard_gate_log": "repository-check-final.log.gz",
+  "present_markdown_files": 162,
+  "present_markdown_local_links": 1011,
+  "present_markdown_total_local_targets": 1064,
+  "indexed_unmaterialized_targets": [
+    {
+      "source": "scripts/llm_runtime_README.md",
+      "target": "../evidence/pon-upgrade-implementation-20261018/native-rounds/host-namespace-pristine-failure-20261023/SCOPE.md",
+      "indexed_path": "evidence/pon-upgrade-implementation-20261018/native-rounds/host-namespace-pristine-failure-20261023/SCOPE.md"
+    },
+    {
+      "source": "scripts/llm_runtime_README.md",
+      "target": "../evidence/pon-upgrade-implementation-20261018/native-rounds/host-memcg-phase-boundary-20261023/SCOPE.md",
+      "indexed_path": "evidence/pon-upgrade-implementation-20261018/native-rounds/host-memcg-phase-boundary-20261023/SCOPE.md"
+    },
+    {
+      "source": "docs/README.md",
+      "target": "../evidence/pon-v1/README.md",
+      "indexed_path": "evidence/pon-v1/README.md"
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../../evidence/pon-upgrade-implementation-20261018/native-rounds/pn-convergence-20261023/SCOPE.md",
+      "indexed_path": "evidence/pon-upgrade-implementation-20261018/native-rounds/pn-convergence-20261023/SCOPE.md"
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../../evidence/pon-six-gate-closure-20261022/source-42424a-followup/readback.json",
+      "indexed_path": "evidence/pon-six-gate-closure-20261022/source-42424a-followup/readback.json"
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../../evidence/pon-six-gate-closure-20261022/source-42424a-followup/raw-evidence.gzip.json",
+      "indexed_path": "evidence/pon-six-gate-closure-20261022/source-42424a-followup/raw-evidence.gzip.json"
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../../evidence/pon-six-gate-closure-20261022/source-42424a-followup/security-terminal.gzip.json",
+      "indexed_path": "evidence/pon-six-gate-closure-20261022/source-42424a-followup/security-terminal.gzip.json"
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../../evidence/pon-upgrade-implementation-20261018/native-rounds/aggregate-charge-wait-20261023/SCOPE.md",
+      "indexed_path": "evidence/pon-upgrade-implementation-20261018/native-rounds/aggregate-charge-wait-20261023/SCOPE.md"
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../../evidence/pon-six-gate-closure-20261022/ci-security-before.json",
+      "indexed_path": "evidence/pon-six-gate-closure-20261022/ci-security-before.json"
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../../evidence/pon-six-gate-closure-20261022/codeql-current-readback.json",
+      "indexed_path": "evidence/pon-six-gate-closure-20261022/codeql-current-readback.json"
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../../evidence/pon-six-gate-closure-20261022/current-871269-ci/branch-encoding-original-failures.json",
+      "indexed_path": "evidence/pon-six-gate-closure-20261022/current-871269-ci/branch-encoding-original-failures.json"
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../../evidence/pon-six-gate-closure-20261022/current-871269-ci/security-export-exact-source.json",
+      "indexed_path": "evidence/pon-six-gate-closure-20261022/current-871269-ci/security-export-exact-source.json"
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../../evidence/pon-six-gate-closure-20261022/current-871269-ci/campaign-full-artifact-readback.json",
+      "indexed_path": "evidence/pon-six-gate-closure-20261022/current-871269-ci/campaign-full-artifact-readback.json"
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../../evidence/pon-six-gate-closure-20261022/current-871269-ci/native-growth-failure-summary.json",
+      "indexed_path": "evidence/pon-six-gate-closure-20261022/current-871269-ci/native-growth-failure-summary.json"
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../../evidence/pon-four-priority-audit-v1/README.md",
+      "indexed_path": "evidence/pon-four-priority-audit-v1/README.md"
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../../evidence/pon-upgrade-implementation-20261018/native-rounds/cell-tcl4-release-three-host-20261024/SCOPE.md",
+      "indexed_path": "evidence/pon-upgrade-implementation-20261018/native-rounds/cell-tcl4-release-three-host-20261024/SCOPE.md"
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../../evidence/pon-upgrade-implementation-20261018/native-rounds/host-namespace-pristine-failure-20261023/SCOPE.md",
+      "indexed_path": "evidence/pon-upgrade-implementation-20261018/native-rounds/host-namespace-pristine-failure-20261023/SCOPE.md"
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../../evidence/pon-upgrade-implementation-20261018/native-rounds/host-memcg-phase-boundary-20261023/SCOPE.md",
+      "indexed_path": "evidence/pon-upgrade-implementation-20261018/native-rounds/host-memcg-phase-boundary-20261023/SCOPE.md"
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../../evidence/pon-upgrade-implementation-20261018/native-rounds/host-child-groups-preparation-20261024/SCOPE.md",
+      "indexed_path": "evidence/pon-upgrade-implementation-20261018/native-rounds/host-child-groups-preparation-20261024/SCOPE.md"
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../../evidence/pon-upgrade-implementation-20261018/native-rounds/real-model-owner-controlled-20261025/SCOPE.md",
+      "indexed_path": "evidence/pon-upgrade-implementation-20261018/native-rounds/real-model-owner-controlled-20261025/SCOPE.md"
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../../evidence/pon-upgrade-implementation-20261018/native-rounds/real-model-owner-controlled-20261025/integrated-b27-original-native.json",
+      "indexed_path": "evidence/pon-upgrade-implementation-20261018/native-rounds/real-model-owner-controlled-20261025/integrated-b27-original-native.json"
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../../evidence/pon-evaluation-bundle-v1/README.md",
+      "indexed_path": "evidence/pon-evaluation-bundle-v1/README.md"
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../../evidence/pon-client-confirmation-v1/README.md",
+      "indexed_path": "evidence/pon-client-confirmation-v1/README.md"
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../../evidence/pon-native-session-v1/README.md",
+      "indexed_path": "evidence/pon-native-session-v1/README.md"
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../../evidence/pon-native-session-v1/work-cost/README.md",
+      "indexed_path": "evidence/pon-native-session-v1/work-cost/README.md"
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../../evidence/pon-native-session-v1/publication-failures/README.md",
+      "indexed_path": "evidence/pon-native-session-v1/publication-failures/README.md"
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../../evidence/pon-native-node-v1/README.md",
+      "indexed_path": "evidence/pon-native-node-v1/README.md"
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../../evidence/pon-closed-round-v1/README.md",
+      "indexed_path": "evidence/pon-closed-round-v1/README.md"
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../../evidence/pon-public-readiness-v1/README.md",
+      "indexed_path": "evidence/pon-public-readiness-v1/README.md"
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../../evidence/pon-history-continuity-20261027/README.md",
+      "indexed_path": "evidence/pon-history-continuity-20261027/README.md"
+    },
+    {
+      "source": "docs/modules/M01_CRYPTO_IDENTITY_TECHNICAL_SPEC_V1.md",
+      "target": "../../evidence/pon-native-session-v1/work-cost/README.md",
+      "indexed_path": "evidence/pon-native-session-v1/work-cost/README.md"
+    },
+    {
+      "source": "docs/modules/README.md",
+      "target": "../../evidence/pon-four-priority-audit-v1/README.md",
+      "indexed_path": "evidence/pon-four-priority-audit-v1/README.md"
+    },
+    {
+      "source": "docs/modules/README.md",
+      "target": "../../evidence/pon-v1/README.md",
+      "indexed_path": "evidence/pon-v1/README.md"
+    },
+    {
+      "source": "docs/modules/README.md",
+      "target": "../../evidence/pon-v3/README.md",
+      "indexed_path": "evidence/pon-v3/README.md"
+    },
+    {
+      "source": "docs/modules/README.md",
+      "target": "../../evidence/pon-v4/README.md",
+      "indexed_path": "evidence/pon-v4/README.md"
+    },
+    {
+      "source": "docs/modules/README.md",
+      "target": "../../evidence/pon-evaluation-bundle-v1/README.md",
+      "indexed_path": "evidence/pon-evaluation-bundle-v1/README.md"
+    },
+    {
+      "source": "docs/modules/README.md",
+      "target": "../../evidence/pon-client-confirmation-v1/README.md",
+      "indexed_path": "evidence/pon-client-confirmation-v1/README.md"
+    },
+    {
+      "source": "docs/modules/README.md",
+      "target": "../../evidence/pon-native-session-v1/README.md",
+      "indexed_path": "evidence/pon-native-session-v1/README.md"
+    },
+    {
+      "source": "docs/modules/README.md",
+      "target": "../../evidence/pon-native-session-v1/work-cost/README.md",
+      "indexed_path": "evidence/pon-native-session-v1/work-cost/README.md"
+    },
+    {
+      "source": "docs/modules/README.md",
+      "target": "../../evidence/pon-contract-authority-v1/README.md",
+      "indexed_path": "evidence/pon-contract-authority-v1/README.md"
+    },
+    {
+      "source": "docs/modules/README.md",
+      "target": "../../evidence/pon-native-node-v1/README.md",
+      "indexed_path": "evidence/pon-native-node-v1/README.md"
+    },
+    {
+      "source": "docs/protocol/pon-nakamoto-v1/README.md",
+      "target": "../../../evidence/pon-public-readiness-v1/README.md",
+      "indexed_path": "evidence/pon-public-readiness-v1/README.md"
+    },
+    {
+      "source": "docs/protocol/pon-nakamoto-v1/details/NATIVE_MODEL_EVIDENCE_V3.md",
+      "target": "../../../../evidence/pon-native-node-v1/model-current/model/evaluation_a.json",
+      "indexed_path": "evidence/pon-native-node-v1/model-current/model/evaluation_a.json"
+    },
+    {
+      "source": "docs/protocol/pon-nakamoto-v1/details/NATIVE_MODEL_EVIDENCE_V3.md",
+      "target": "../../../../evidence/pon-native-node-v1/model-current/model/evaluation-bundle.json",
+      "indexed_path": "evidence/pon-native-node-v1/model-current/model/evaluation-bundle.json"
+    },
+    {
+      "source": "docs/protocol/pon-nakamoto-v1/details/EVALUATION_BUNDLE.md",
+      "target": "../../../../evidence/pon-evaluation-bundle-v1/README.md",
+      "indexed_path": "evidence/pon-evaluation-bundle-v1/README.md"
+    },
+    {
+      "source": "docs/protocol/pon-nakamoto-v1/details/PERFORMANCE_ACCEPTANCE.md",
+      "target": "../../../../evidence/pon-v1/README.md",
+      "indexed_path": "evidence/pon-v1/README.md"
+    },
+    {
+      "source": "docs/protocol/pon-nakamoto-v1/details/PERFORMANCE_ACCEPTANCE.md",
+      "target": "../../../../evidence/pon-v3/README.md",
+      "indexed_path": "evidence/pon-v3/README.md"
+    },
+    {
+      "source": "docs/protocol/pon-nakamoto-v1/details/CELL_P2P_V1.md",
+      "target": "../../../../evidence/pon-upgrade-implementation-20261018/native-rounds/cell-tcl4-release-three-host-20261024/SCOPE.md",
+      "indexed_path": "evidence/pon-upgrade-implementation-20261018/native-rounds/cell-tcl4-release-three-host-20261024/SCOPE.md"
+    },
+    {
+      "source": "docs/protocol/pon-nakamoto-v1/details/CELL_P2P_V1.md",
+      "target": "../../../../evidence/pon-upgrade-implementation-20261018/native-rounds/real-model-owner-controlled-20261025/SCOPE.md",
+      "indexed_path": "evidence/pon-upgrade-implementation-20261018/native-rounds/real-model-owner-controlled-20261025/SCOPE.md"
+    },
+    {
+      "source": "docs/protocol/pon-nakamoto-v1/details/ADMISSION_SECURITY.md",
+      "target": "../../../../evidence/pon-contract-authority-v1/README.md",
+      "indexed_path": "evidence/pon-contract-authority-v1/README.md"
+    },
+    {
+      "source": "docs/protocol/pon-nakamoto-v1/details/ADMISSION_SECURITY.md",
+      "target": "../../../../evidence/pon-native-session-v1/work-cost/README.md",
+      "indexed_path": "evidence/pon-native-session-v1/work-cost/README.md"
+    },
+    {
+      "source": "formal/pon-nakamoto-v1/README.md",
+      "target": "../../evidence/pon-v3/README.md",
+      "indexed_path": "evidence/pon-v3/README.md"
+    },
+    {
+      "source": "formal/pon-nakamoto-v1/README.md",
+      "target": "../../evidence/pon-v1/README.md",
+      "indexed_path": "evidence/pon-v1/README.md"
+    }
+  ],
+  "targets_absent_from_index": [],
+  "new_protocol_and_evidence_links_present_locally": 13,
+  "source_changes_after_native_and_clippy": [
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+    "docs/protocol/pon-nakamoto-v1/details/CONTINUOUS_HISTORY_OPERATION_V1.md"
+  ],
+  "all_executable_inputs_unchanged": true,
+  "cargo_lock_sha256": "6efe75ea2f9293e3f0d003d6896e89e795c1ef021b9e15179db4d2e37317b864",
+  "binary_sha256": "76aeb191a35b1d13702346cab6b077b392266ba3e83c477e692944ddae8d86d7",
+  "formatter_check_passed": true,
+  "full_checkout_repository_gate_passed": false,
+  "production_qualified": false
+}

@@ -3606,6 +3606,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-pon-node/src/operator_continuous_controller/history_recovery_once.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/operator_continuous_controller/history_recovery_once.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-pon-node/src/operator_continuous_controller_tests.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -4107,6 +4114,41 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner/history_import.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner/history_import.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner/history_import_fixture.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner/history_import_fixture.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner/history_import_tests.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner/history_import_tests.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner/history_process_tests.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner/history_process_tests.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner/history_recovery.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner/history_recovery.rs"
         )),
     ),
     (

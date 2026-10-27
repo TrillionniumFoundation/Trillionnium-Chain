@@ -32,7 +32,8 @@ use fs2::FileExt;
 pub use history_page::HistoryPageReadCounters;
 pub(crate) use operator_continuous_owner::PublicContinuousScope;
 pub use operator_continuous_owner::{
-    ContinuousSearchRequest, OwnedContinuousLeaseResult, OwnedContinuousPoolResult,
+    ContinuousEpochCancellation, ContinuousHistoryRecovery, ContinuousSearchRequest,
+    HistoryRecoverySelection, OwnedContinuousLeaseResult, OwnedContinuousPoolResult,
 };
 pub use operator_mining_owner::{MiningEpochCancellation, OwnedMutationResult, OwnedSearchResult};
 use rusqlite::{params, Connection, OpenFlags, OptionalExtension};
@@ -4045,8 +4046,17 @@ impl Node {
         task: Hash,
         height: u64,
     ) -> Result<trnm_protocol::qualified_work_task::lifecycle_v2::DemandLeaseV2> {
+        self.lifecycle_task_lease_with_progress(parent, task, height, &mut || Ok(()))
+    }
+    fn lifecycle_task_lease_with_progress(
+        &self,
+        parent: Hash,
+        task: Hash,
+        height: u64,
+        progress: &mut dyn FnMut() -> Result<()>,
+    ) -> Result<trnm_protocol::qualified_work_task::lifecycle_v2::DemandLeaseV2> {
         Ok(qualified_task_lifecycle::eligible_task(
-            &self.state_at(parent)?,
+            &self.state_at_with_progress(parent, progress)?,
             task,
             height,
             &self.settings.app,

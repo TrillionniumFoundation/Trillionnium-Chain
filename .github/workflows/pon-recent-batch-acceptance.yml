@@ -3,6 +3,13 @@ on:
   pull_request:
     paths:
       - trillionnium/crates/trnm-pon-node/src/store.rs
+      - trillionnium/crates/trnm-pon-node/src/ingress.rs
+      - trillionnium/crates/trnm-pon-node/src/main.rs
+      - trillionnium/crates/trnm-pon-node/src/operator_continuous_controller.rs
+      - trillionnium/crates/trnm-pon-node/src/operator_continuous_controller/**
+      - trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner.rs
+      - trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner/**
+      - scripts/ci/history_native_process_guard.py
       - trillionnium/crates/trnm-pon-node/src/store/history_page.rs
       - trillionnium/crates/trnm-pon-node/src/native_account_query_tests.rs
       - trillionnium/crates/trnm-pon-node/src/native_authenticated_tests.rs
@@ -64,9 +71,9 @@ jobs:
             args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_MERGE")
           fi
           python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$out/source.json"
-          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store.rs)" = a255e10464938ecc189bf100462c9e8e204b0247
+          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store.rs)" = 0ab57778dbde7a0a3c650e104976989cb18f0da4
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/history_page.rs)" = c8569bd62a9c374b03a8ffc0ad02c64b0365eee4
-          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/native_authenticated_tests.rs)" = fa9b0036b9f7092831ac6d73fc50fd8fe728865e
+          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/native_authenticated_tests.rs)" = 0c793a56d78de47ee6a7dc026c5d76e3f69dce27
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs)" = d015587f5a52726fc6322efab4385d40b6e61a05
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_fixed_blob_tests.rs)" = cecb8a984c02ffca7590e69c4392223ea748b40f
           test "$(git hash-object trillionnium/crates/trnm-pon-node/tests/authenticated_storage_cli.rs)" = 7301aeb3033913f080b23767bfca52a2bf76d45b
@@ -79,7 +86,7 @@ jobs:
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs)" = 0b27b9fce9d77fed63f351c8a8e33b02a856ace1
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic.rs)" = 4ab2d3dcc08314da77066ca1941faedd15f938c9
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic/tests.rs)" = 13ecdb3e45ef78e5abcc34f4bf30af0312dd2f11
-          test "$(git hash-object trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs)" = 634ff4edb04694bb3de3807c1a859b2ed358a4ed
+          test "$(git hash-object trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs)" = 410f7a6c1b571d065f4e18ddadbb5c239c35f708
           bash scripts/project-preflight.sh --audit
       - name: Execute conditional query accounting and anytime-bound counterexamples
         shell: bash
@@ -115,6 +122,15 @@ jobs:
             printf '%s\t%s\n' "${log_file##*/}" "$selector" >> "$OUT/log-paths.tsv"
             cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib "$selector" -- --exact --show-output --test-threads=1 2>&1 | tee "$log_file"
             python3 scripts/ci/check_required_native_test.py "$log_file" --test "$selector"
+          done
+      - name: Require authorized durable History, real cancellation and actual process crash recovery
+        shell: bash
+        run: |
+          set -euo pipefail
+          for test in signed_history_single_successor_runs_two_children_and_cold_reopen_preserves_once_only_settlement signed_history_actual_child_cancellation_joins_settles_reopens_and_needs_new_signed_claim signed_history_actual_child_panic_joins_and_retains_known_original_cpu_receipt signed_history_internal_activation_cancel_retains_admission_and_requires_fresh_view_for_retry signed_history_refuses_unselected_or_malformed_input_without_free_decode_or_generic_fallback signed_history_rejects_unsigned_view_unbounded_workers_and_signed_packet_outside_budget_nonce_window signed_history_actual_sigkill_known_prefix_settles_once_and_new_process_resumes_exact_successor; do
+            selector="store::operator_continuous_owner::history_import::tests::$test"
+            TRNM_HISTORY_NATIVE_ARTIFACT_DIR="$OUT/history-native-process/$test" cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib "$selector" -- --exact --show-output --test-threads=1 2>&1 | tee "$OUT/$test.log"
+            python3 scripts/ci/check_required_native_test.py "$OUT/$test.log" --test "$selector"
           done
       - name: Execute complete original error-boundary suite and all new controls
         shell: bash
