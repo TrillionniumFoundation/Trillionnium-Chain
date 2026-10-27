@@ -1,0 +1,48 @@
+{
+  "schema": "pon-daa-research-reference-v1",
+  "production_consensus_activation": false,
+  "anchor_target_hex": "0000000000000000000000000000000100000000000000000000000000000000",
+  "pow_limit_hex": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+  "anchor_height": 1,
+  "anchor_parent_time": 0,
+  "spacing_seconds": 10,
+  "half_life_seconds": 7200,
+  "cases": [
+    {
+      "name": "steady",
+      "parent_height": 11,
+      "parent_time": 110,
+      "expected_target_hex": "0000000000000000000000000000000100000000000000000000000000000000"
+    },
+    {
+      "name": "positive-half-life",
+      "parent_height": 11,
+      "parent_time": 7310,
+      "expected_target_hex": "0000000000000000000000000000000200000000000000000000000000000000"
+    },
+    {
+      "name": "negative-half-life",
+      "parent_height": 731,
+      "parent_time": 110,
+      "expected_target_hex": "0000000000000000000000000000000080000000000000000000000000000000"
+    },
+    {
+      "name": "signed-one-second",
+      "parent_height": 11,
+      "parent_time": 109,
+      "expected_target_hex": "00000000000000000000000000000000fffa0000000000000000000000000000"
+    },
+    {
+      "name": "time-warp-raw-at-79",
+      "parent_height": 79,
+      "parent_time": 2000,
+      "expected_target_hex": "000000000000000000000000000000011fa70000000000000000000000000000"
+    },
+    {
+      "name": "time-warp-mtp-at-79",
+      "parent_height": 79,
+      "parent_time": 16,
+      "expected_target_hex": "00000000000000000000000000000000eda50000000000000000000000000000"
+    }
+  ]
+}
