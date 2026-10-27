@@ -106,3 +106,47 @@ must be tested separately.
 The new unexported parser remains useful for unit coverage and does
 not expose a second public unchecked history-import symbol.
 This is an API-path reduction, **not** a production/security gate PASS.
+
+
+## P1 integrated original-owner checkpoint refinement (2026-10-26)
+
+The unified source child PR includes both:
+- pinned-peer original V3 mutation CPU accounting (from #340);
+- all remote History sync root-cgroup containment (from #342).
+
+The retained native 'receive_page_from' now forwards a local physical-owner
+checkpoint into the **original Node::admit sequence** through
+'Node::admit_with_work_progress'. This helper preserves ordinary
+'check_admission_context', 'begin_owner_work', the private verified packet
+construction, 'attach_owner_work' and 'admit_work_checked'. It does **not**
+create an alternate verifier, allow unchecked work or invent Chainwork.
+
+All up to 16 W1 statements on a received page require a physical-owner
+check before and after their native admission, and the W1 verifier supports
+additional checks at deterministic points during expensive arithmetic.
+The parent cgroup is enforced continuously by the kernel. The userspace
+resource identity check additionally observes task/host membership at
+'BeforeReplay', 'BeforeProduct', 'BeforeVerifiedWork', every 32 noise
+hash counters, every 32 output matrix rows, and each of the eight outer
+transcript tile rows. Within the 512-tile transcript, no more than 64
+tile updates can pass without checking the original resource owner's
+membership/limits. Checking on all 512 callbacks would itself impose a
+large attacker-driven cgroup syscall cost; the 64-tile source bound is
+tested explicitly, not a claim of a measured p99 or physical preemption.
+
+The native negative controls deliberately inject:
+- a failed physical ownership check before any W1 replay;
+- a failure at the first selected transcript tile, distinct from the
+  arithmetic Transcript error, with unchanged Node stats and chainwork;
+- a failed check after genuine W1 validation and durable native admission,
+  which withholds complete sync status but does not roll back the accepted
+  immutable block.
+
+The last control reflects a fundamental operational distinction:
+**local CPU/cgroup failure is not mathematical consensus invalidity**.
+Indivisible state/root/SQLite and OS schedule boundaries still require
+dedicated physical fault campaigns. The original exact-head preflight,
+build, Rust native test execution, actual cgroup capture, WAN independent
+operators, A03 3x3x3 campaign, GPU/ASIC calibration, succinct W2 proof and
+independent cryptanalysis remain unqualified; the tests are source-defined,
+not asserted to have passed in this assistant's runtime.
