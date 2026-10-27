@@ -354,7 +354,10 @@ fn admit_page(node: &Mutex<Node>, packet: Packet, end: Instant, stop: &AtomicBoo
     progress(end, stop)?;
     // Exactly the original service bucket, across identities/listeners and
     // inbound V3 and outbound peer polling. No new budget or chain authority.
-    let operation = cpu.begin()?;
+    // Configured peers are not trusted CPU budget owners. This uses the
+    // original shared V3 budget but leaves capacity for an honest mutation
+    // to start, even during a forged-transcript History replay campaign.
+    let operation = cpu.begin_untrusted_peer_sync()?;
     let checkpoint = operation.checkpoint_handle();
     let native = (|| -> Result<bool> {
         progress(end, stop)?;
