@@ -2408,6 +2408,114 @@ pub fn sync_from_authenticated_durable(
 mod tests {
     use super::*;
 
+    #[cfg(target_os = "linux")]
+    #[test]
+    fn loopback_history_false_product_charges_one_cold_node_cpu_domain() {
+        let observed = now().unwrap();
+        let settings = crate::Settings::development(Some(observed - 100)).unwrap();
+        let dir = tempfile::tempdir().unwrap();
+        let mut node = Node::open(dir.path(), settings.clone(), 2).unwrap();
+        let mut packet = node.make(
+            settings.genesis(),
+            vec![],
+            crate::development_public(0).unwrap(),
+            settings.genesis_time() + 10,
+            4096,
+        ).unwrap();
+        // Keep a correct winning trace/ticket; forge only canonical C, forcing
+        // a late complete W1 Product rejection, not a cheap target miss.
+        let cell = 4 + 2 * trnm_crypto_primitives::pon_work::CELLS * 4;
+        let original = u32::from_le_bytes(
+            packet.proof[cell..cell + 4].try_into().unwrap(),
+        );
+        let forged = ((u128::from(original) + 1)
+            % trnm_crypto_primitives::pon_work::Q) as u32;
+        packet.proof[cell..cell + 4].copy_from_slice(&forged.to_le_bytes());
+        let id = packet.id().unwrap();
+        let page = Page {
+            schema: "pon-native-history-v1".into(),
+            network: hex::encode(settings.network()),
+            parameters: hex::encode(settings.parameters()),
+            genesis: hex::encode(settings.genesis()),
+            tip: hex::encode(id),
+            after: hex::encode(settings.genesis()),
+            packets: vec![hex::encode(packet.encode().unwrap())],
+            next: hex::encode(id),
+            complete: true,
+        };
+        assert!(node.public_service_cpu_domain().is_err());
+        let state_before = node.stats().unwrap();
+        let address: SocketAddr = "127.0.0.1:1".parse().unwrap();
+        let error = receive_page_from(
+            &mut node, address, page, id, settings.genesis(), observed,
+        ).unwrap_err();
+        assert_eq!(error.to_string(), "WORK:Product");
+        let domain = node.public_service_cpu_domain().unwrap();
+        let reloaded = node.remote_history_cpu_domain().unwrap();
+        assert!(domain.shares_domain_with(&reloaded));
+        let receipt = domain.observe().unwrap();
+        assert_eq!(receipt.in_flight, 0);
+        assert!(!receipt.accounting_unavailable);
+        assert!(receipt.stored_credit_ns <= i128::from(receipt.burst_ns));
+        assert_eq!(node.stats().unwrap(), state_before);
+        assert_eq!(node.read_active().unwrap().0, settings.genesis());
+        drop(node);
+        let reopened = Node::open(dir.path(), settings.clone(), 2).unwrap();
+        assert_eq!(reopened.stats().unwrap(), state_before);
+        assert_eq!(reopened.read_active().unwrap().0, settings.genesis());
+    }
+
+    #[cfg(target_os = "linux")]
+    #[test]
+    fn loopback_history_valid_work_still_accepts_under_cold_cpu_meter() {
+        let observed = now().unwrap();
+        let settings = crate::Settings::development(Some(observed - 100)).unwrap();
+        let dir = tempfile::tempdir().unwrap();
+        let mut node = Node::open(dir.path(), settings.clone(), 2).unwrap();
+        let packet = node.make(
+            settings.genesis(),
+            vec![],
+            crate::development_public(0).unwrap(),
+            settings.genesis_time() + 10,
+            4096,
+        ).unwrap();
+        let id = packet.id().unwrap();
+        let page = Page {
+            schema: "pon-native-history-v1".into(),
+            network: hex::encode(settings.network()),
+            parameters: hex::encode(settings.parameters()),
+            genesis: hex::encode(settings.genesis()),
+            tip: hex::encode(id),
+            after: hex::encode(settings.genesis()),
+            packets: vec![hex::encode(packet.encode().unwrap())],
+            next: hex::encode(id),
+            complete: true,
+        };
+        let address: SocketAddr = "127.0.0.1:1".parse().unwrap();
+        assert_eq!(
+            receive_page_from(&mut node, address, page, id, settings.genesis(), observed).unwrap(),
+            id
+        );
+        assert_eq!(node.read_active().unwrap().0, id);
+        let receipt = node.public_service_cpu_domain().unwrap().observe().unwrap();
+        assert_eq!(receipt.in_flight, 0);
+        assert!(!receipt.accounting_unavailable);
+    }
+
+    #[cfg(target_os = "linux")]
+    #[test]
+    fn unclean_public_epoch_cannot_mint_fresh_remote_history_credit() {
+        let observed = now().unwrap();
+        let settings = crate::Settings::development(Some(observed - 100)).unwrap();
+        let dir = tempfile::tempdir().unwrap();
+        let mut node = Node::open(dir.path(), settings, 2).unwrap();
+        node.mark_ordinary_public_service_epoch_unknown();
+        assert_eq!(
+            node.remote_history_cpu_domain().unwrap_err().to_string(),
+            "OWNER_PUBLIC_SERVICE_UNCLEAN_EPOCH"
+        );
+    }
+
     #[test]
     fn remote_sync_without_original_host_cgroup_rejects_before_any_network_or_w1() {
         // Documentation-only network address. If this host really has the
