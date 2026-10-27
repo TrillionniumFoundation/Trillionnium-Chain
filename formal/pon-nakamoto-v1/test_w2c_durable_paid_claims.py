@@ -118,6 +118,58 @@ class DurableReceiverTests(unittest.TestCase):
         restarted = DurableStatelessReceiver(R, S, E, db_path=self.file, capacity=4)
         self.assertEqual(restarted.consume(grant, P, A, nonce, 121), 'REPLAY')
 
+    def test_paid_w2c_ticket_does_not_make_false_w1_into_chainwork(self):
+        import work_oracle as W
+        zeros = [0] * W.CELLS
+        header = H('durable-w2c-header') * 9 + bytes(30)
+        self.assertEqual(len(header), 318)
+        challenge = H('challenge', header)
+        forged = (b'PNW1' + W.field_bytes(zeros) * 3
+                  + H('durable-w2c-fake-trace', challenge))
+        proposal = H('w2c-proposal', b'w2c-research-security-v0', header, forged)
+        grant = self.server.offer(proposal, A, 8, 100)
+        nonce, _ = solve(grant, 16384)
+        self.assertIsNotNone(nonce)
+        self.assertEqual(self.server.consume(grant, proposal, A, nonce, 120),
+                         'READY_RESOURCE_ONLY')
+        with self.assertRaisesRegex(ValueError, '^TRANSCRIPT        with self.assertRaisesRegex(ValueError, 'SPEND_OWNER_POLICY'):
+            DurableStatelessReceiver(R, S, E, db_path=self.file, capacity=1024)
+        with self.assertRaisesRegex(ValueError, 'SPEND_OWNER_POLICY'):
+            DurableStatelessReceiver(R, S, bytes([6])*32, db_path=self.file, capacity=4)
+
+    def test_live_database_policy_change_fails_before_w1(self):
+        grant, nonce = self.grant()
+        db = sqlite3.connect(self.file)
+        db.execute('UPDATE policy SET capacity=1024 WHERE singleton=1')
+        db.commit()
+        db.close()
+        self.assertEqual(self.server.consume(grant, P, A, nonce, 120), 'SPEND_OWNER_POLICY')
+
+    def test_modified_schema_cannot_be_restarted_as_free_epoch(self):
+        db = sqlite3.connect(self.file)
+        db.execute('PRAGMA user_version=2')
+        db.commit()
+        db.close()
+        with self.assertRaisesRegex(ValueError, 'SPEND_OWNER_SCHEMA'):
+            DurableStatelessReceiver(R, S, E, db_path=self.file, capacity=4)
+
+    def test_bad_unowned_paths_and_missing_schema_fail_closed(self):
+        with self.assertRaisesRegex(ValueError, 'ABSOLUTE_PATH'):
+            provision('relative-paid.db', R, E, capacity=4)
+        link = str(Path(self.tmp.name) / 'link.db')
+        os.symlink(self.file, link)
+        with self.assertRaisesRegex(ValueError, 'SPEND_OWNER_FILE'):
+            DurableStatelessReceiver(R, S, E, db_path=link)
+
+
+if __name__ == '__main__':
+    unittest.main(verbosity=2)
+):
+            W.verify(challenge, W.task_id(zeros, zeros), bytes([255]) * 32, forged)
+        clone = DurableStatelessReceiver(R, S, E, db_path=self.file, capacity=4)
+        self.assertEqual(clone.consume(grant, proposal, A, nonce, 121), 'REPLAY')
+        self.assertFalse(hasattr(self.server, 'VerifiedWork'))
+
     def test_different_capacity_or_epoch_cannot_mint_larger_claim_budget(self):
         with self.assertRaisesRegex(ValueError, 'SPEND_OWNER_POLICY'):
             DurableStatelessReceiver(R, S, E, db_path=self.file, capacity=1024)
