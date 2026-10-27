@@ -744,3 +744,209 @@ fn isolated_asert_context_rejects_wrong_anchor_and_uses_real_w1_branch_history()
         raw
     );
 }
+
+
+/// Actual two-owner W1/SQLite counterexample for the equal-chainwork heal
+/// model. The selected revision12 genesis Maintenance remains explicit and
+/// has zero neural-useful-output credit. No independent WAN or work-hardness
+/// qualification is inferred from two controlled local node directories.
+#[test]
+fn native_maintenance_equal_work_peers_reconcile_only_on_strictly_heavier_branch() {
+    use trnm_crypto_primitives::{sign_hex, signing_key_from_hex};
+    use trnm_mvcc_fee::{continuity_v1, qualified_task_lifecycle};
+    use trnm_protocol::{
+        pon_wire::Envelope,
+        qualified_work_task::lifecycle_v2::DemandRevocationV2,
+    };
+
+    fn signed(
+        settings: &Settings,
+        owner: u64,
+        sequence: u64,
+        tag: u8,
+        payload: Vec<u8>,
+    ) -> Vec<u8> {
+        let mut tx = Envelope {
+            network: settings.network(),
+            sender: development_public(owner).unwrap(),
+            nonce: sequence,
+            expiry: 2000,
+            fee_limit: 1_000_000,
+            tag,
+            payload,
+            signature: [0; 64],
+        };
+        let secret = signing_key_from_hex(&hex::encode(hash(
+            b"DEV-ONLY-KEY",
+            &[&owner.to_le_bytes()],
+        )))
+        .unwrap();
+        tx.signature = hex::decode(sign_hex(&secret, &tx.signing_digest().unwrap()))
+            .unwrap()
+            .try_into()
+            .unwrap();
+        tx.encode().unwrap()
+    }
+
+    let temporary = tempfile::tempdir().unwrap();
+    let left_store = temporary.path().join("operator-a");
+    let right_store = temporary.path().join("operator-b");
+    let settings = Settings::development_with_profiles(
+        Some(GENESIS_TIME),
+        "native-public-evaluation-dev-v1",
+        continuity_v1::PROFILE,
+    )
+    .unwrap();
+    let mut left =
+        Node::open_with_authenticated_state(&left_store, settings.clone(), 1).unwrap();
+    let mut right =
+        Node::open_with_authenticated_state(&right_store, settings.clone(), 1).unwrap();
+
+    // The requester signs removal of the only optional genesis lease. The
+    // containing block uses explicitly selected, public genesis Maintenance.
+    let bootstrap = settings.bootstrap_lifecycle_task().unwrap();
+    let revocation = DemandRevocationV2 {
+        network: settings.network(),
+        parameters: settings.parameters(),
+        slot: 0,
+        demand_id: bootstrap.lease.demand_id,
+        requester: bootstrap.lease.requester,
+        expected_revision: bootstrap.lease.revision,
+    };
+    let revoke = signed(&settings, 1, 1, 20, revocation.encode().unwrap());
+    let common = left
+        .make_consensus_maintenance(
+            settings.genesis(),
+            vec![revoke],
+            development_public(0).unwrap(),
+            GENESIS_TIME + 10,
+            4096,
+        )
+        .unwrap();
+    verify_work(&common);
+    let common_id = common.id().unwrap();
+    for node in [&mut left, &mut right] {
+        assert_eq!(node.admit(&common, GENESIS_TIME + 100).unwrap(), common_id);
+        assert_eq!(
+            node.activate_observed(common_id, GENESIS_TIME + 100)
+                .unwrap(),
+            common_id
+        );
+        let state = node.read_active().unwrap().2;
+        assert_eq!(
+            state[&qualified_task_lifecycle::slot_key(0).unwrap()]["status"],
+            "revoked"
+        );
+        assert_eq!(
+            state[continuity_v1::MAINTENANCE_KEY]["useful_output_credit"],
+            0
+        );
+    }
+
+    // Same genesis/context/parent/target, but distinct miners and bodies
+    // produce different fully verified block IDs at height two. B does not
+    // initially include A's independently signed transfer.
+    let mut payload = development_public(2).unwrap().to_vec();
+    payload.extend(1u64.to_le_bytes());
+    let transfer = signed(&settings, 0, 1, 1, payload);
+    let transfer_id = hash(b"tx-id", &[&transfer]);
+    let packet_a = left
+        .make_consensus_maintenance(
+            common_id,
+            vec![transfer],
+            development_public(0).unwrap(),
+            GENESIS_TIME + 20,
+            4096,
+        )
+        .unwrap();
+    let packet_b = right
+        .make_consensus_maintenance(
+            common_id,
+            vec![],
+            development_public(1).unwrap(),
+            GENESIS_TIME + 20,
+            4096,
+        )
+        .unwrap();
+    verify_work(&packet_a);
+    verify_work(&packet_b);
+    let a = packet_a.id().unwrap();
+    let b = packet_b.id().unwrap();
+    assert_ne!(a, b);
+    assert_eq!(packet_a.header.target, packet_b.header.target);
+    assert_eq!(left.admit(&packet_a, GENESIS_TIME + 100).unwrap(), a);
+    assert_eq!(right.admit(&packet_b, GENESIS_TIME + 100).unwrap(), b);
+    assert_eq!(left.activate_observed(a, GENESIS_TIME + 100).unwrap(), a);
+    assert_eq!(right.activate_observed(b, GENESIS_TIME + 100).unwrap(), b);
+    assert_eq!(active_work(&left), active_work(&right));
+
+    // Deliver BOTH complete, independently reverified W1 candidates.
+    // The reception of a same-work rival must not change an existing tip.
+    assert_eq!(left.admit(&packet_b, GENESIS_TIME + 100).unwrap(), b);
+    assert_eq!(right.admit(&packet_a, GENESIS_TIME + 100).unwrap(), a);
+    assert_eq!(left.activate_observed(b, GENESIS_TIME + 100).unwrap(), a);
+    assert_eq!(right.activate_observed(a, GENESIS_TIME + 100).unwrap(), b);
+    assert_eq!(left.active().unwrap().0, a);
+    assert_eq!(right.active().unwrap().0, b);
+    let before_heal_confirmation = right
+        .confirmation(transfer_id, a, GENESIS_TIME + 100)
+        .unwrap();
+    assert!(!before_heal_confirmation.confirmed);
+    assert!(before_heal_confirmation.reorged);
+
+    // A full challenge-dependent Maintenance work successor makes A's branch
+    // strictly heavier; B must reexecute and adopt the actual full ancestry.
+    let mut parent = a;
+    for height in 3..=8 {
+        let packet = left
+            .make_consensus_maintenance(
+                parent,
+                vec![],
+                development_public(0).unwrap(),
+                GENESIS_TIME + height * 10,
+                4096,
+            )
+            .unwrap();
+        verify_work(&packet);
+        let id = packet.id().unwrap();
+        assert_eq!(left.admit(&packet, GENESIS_TIME + 1000).unwrap(), id);
+        assert_eq!(right.admit(&packet, GENESIS_TIME + 1000).unwrap(), id);
+        assert_eq!(
+            left.activate_observed(id, GENESIS_TIME + 1000)
+                .unwrap(),
+            id
+        );
+        assert_eq!(
+            right.activate_observed(id, GENESIS_TIME + 1000)
+                .unwrap(),
+            id
+        );
+        assert_eq!(left.read_active().unwrap(), right.read_active().unwrap());
+        parent = id;
+    }
+
+    // Six descendants and the actual work-delta threshold have been reached.
+    let left_confirmation = left
+        .confirmation(transfer_id, a, GENESIS_TIME + 1000)
+        .unwrap();
+    let right_confirmation = right
+        .confirmation(transfer_id, a, GENESIS_TIME + 1000)
+        .unwrap();
+    assert!(left_confirmation.confirmed && right_confirmation.confirmed);
+    assert!(!left_confirmation.reorged && !right_confirmation.reorged);
+    assert!(!left_confirmation.finalized && !right_confirmation.finalized);
+    assert!(!left_confirmation.execution_authority);
+    assert!(!right_confirmation.execution_authority);
+    assert_eq!(left_confirmation.work_delta, right_confirmation.work_delta);
+    let stable = right.read_active().unwrap();
+    assert_eq!(stable.0, parent);
+    assert!(right.packet(b).is_ok(), "retained rival branch was erased");
+    drop(right);
+    let restored = Node::open_with_authenticated_state(&right_store, settings, 1).unwrap();
+    assert_eq!(restored.read_active().unwrap(), stable);
+    assert!(restored
+        .confirmation(transfer_id, a, GENESIS_TIME + 1000)
+        .unwrap()
+        .confirmed);
+    assert_eq!(restored.read_active().unwrap(), left.read_active().unwrap());
+}

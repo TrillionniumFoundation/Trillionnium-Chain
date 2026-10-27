@@ -771,3 +771,17 @@ reports neither a globally selected tip nor globally valid confirmation,
 even if one branch already has strictly more work and the other peer
 has not received it. The two added tests cover pre-heal equal and unequal
 work. No native W1 behavior, deployed consensus RPC or finality changes.
+
+### Native full-W1 equality/reorganization acceptance selector (2026-10-26)
+
+The additive test `trillionnium/crates/trnm-pon-node/tests/daa_adversarial_schedule.rs::native_maintenance_equal_work_peers_reconcile_only_on_strictly_heavier_branch` uses two *separate* controlled authenticated SQLite stores. It revokes the sole optional task in a real Revision12 Maintenance block, creates two distinct full PNW1 height-two candidates with equal expected target/chainwork, exchanges both packets and checks that each native owner preserves its chosen tip. A full PNW1 branch successor must be strictly heavier before the second owner detaches/attaches. The owners reexecute a signed transfer, reach the installed depth/work confirmation policy after six native descendants, preserve both non-finality flags, and cold-reopen a retained orphaned packet and exact active state.
+
+**Status: SOURCE ADDED, NOT_RUN.** This environment cannot compile Rust or run the full chain host. Successful Python fork simulations do not qualify this native selector. Even a passing test would prove only controlled same-administrator stores in one process, not independent public WAN delivery, genuine Hepta operation or P0-C W1 cheapest-work security. Exact-head native execution, resource accounting, real hostile ingress and independent operator acceptance remain OPEN.
+
+Run on a clean exact checked-out candidate:
+
+```sh
+cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node \
+  --test daa_adversarial_schedule \
+  native_maintenance_equal_work_peers_reconcile_only_on_strictly_heavier_branch -- --exact
+```
